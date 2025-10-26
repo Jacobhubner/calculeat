@@ -1,64 +1,12 @@
-import { useState } from 'react'
 import SiteHeader from '@/components/layout/SiteHeader'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useAuth } from '@/contexts/AuthContext'
 import UserProfileForm from '@/components/UserProfileForm'
-import LoginForm from '@/components/LoginForm'
-import SignUpForm from '@/components/SignUpForm'
 import { Button } from '@/components/ui/button'
 import { Activity, Apple, TrendingUp } from 'lucide-react'
 
 export default function DashboardPage() {
-  const { user, profile, signOut } = useAuth()
-  const [showSignUp, setShowSignUp] = useState(false)
-
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-neutral-50">
-        <SiteHeader />
-        <main className="container mx-auto px-4 py-20 md:px-6 lg:px-8">
-          <div className="mx-auto max-w-md">
-            <Card>
-              <CardHeader>
-                <CardTitle>{showSignUp ? 'Skapa konto' : 'Logga in'}</CardTitle>
-                <CardDescription>
-                  {showSignUp
-                    ? 'Skapa ett konto för att komma igång med CalculEat'
-                    : 'Logga in på ditt CalculEat-konto'}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {showSignUp ? <SignUpForm /> : <LoginForm />}
-                <div className="mt-4 text-center text-sm">
-                  {showSignUp ? (
-                    <>
-                      Har du redan ett konto?{' '}
-                      <button
-                        onClick={() => setShowSignUp(false)}
-                        className="text-primary-600 hover:underline"
-                      >
-                        Logga in
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      Har du inget konto?{' '}
-                      <button
-                        onClick={() => setShowSignUp(true)}
-                        className="text-primary-600 hover:underline"
-                      >
-                        Skapa konto
-                      </button>
-                    </>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </main>
-      </div>
-    )
-  }
+  const { profile, signOut } = useAuth()
 
   return (
     <div className="min-h-screen bg-neutral-50">
