@@ -1,8 +1,11 @@
 import { Link } from 'react-router-dom'
 import { Dumbbell } from 'lucide-react'
 import { Button } from '../ui/button'
+import { useAuth } from '@/contexts/AuthContext'
 
 export default function SiteHeader() {
+  const { user, signOut } = useAuth()
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6 lg:px-8">
@@ -18,19 +21,31 @@ export default function SiteHeader() {
           >
             Funktioner
           </Link>
-          <Link
-            to="/app"
-            className="text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors"
-          >
-            Dashboard
-          </Link>
+          {user && (
+            <Link
+              to="/app"
+              className="text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors"
+            >
+              Dashboard
+            </Link>
+          )}
         </nav>
 
         <div className="flex items-center space-x-4">
-          <Button variant="ghost" size="sm">
-            Logga in
-          </Button>
-          <Button size="sm">Skapa konto</Button>
+          {user ? (
+            <Button variant="ghost" size="sm" onClick={() => signOut()}>
+              Logga ut
+            </Button>
+          ) : (
+            <>
+              <Button variant="ghost" size="sm" asChild>
+                <Link to="/login">Logga in</Link>
+              </Button>
+              <Button size="sm" asChild>
+                <Link to="/register">Skapa konto</Link>
+              </Button>
+            </>
+          )}
         </div>
       </div>
     </header>
