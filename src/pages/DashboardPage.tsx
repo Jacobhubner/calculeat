@@ -1,103 +1,131 @@
+import { useState } from 'react'
 import SiteHeader from '@/components/layout/SiteHeader'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Activity, Apple, Calendar, TrendingUp } from 'lucide-react'
+import { useAuth } from '@/contexts/AuthContext'
+import UserProfileForm from '@/components/UserProfileForm'
+import LoginForm from '@/components/LoginForm'
+import SignUpForm from '@/components/SignUpForm'
+import { Button } from '@/components/ui/button'
+import { Activity, Apple, TrendingUp } from 'lucide-react'
 
 export default function DashboardPage() {
+  const { user, profile, signOut } = useAuth()
+  const [showSignUp, setShowSignUp] = useState(false)
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-neutral-50">
+        <SiteHeader />
+        <main className="container mx-auto px-4 py-20 md:px-6 lg:px-8">
+          <div className="mx-auto max-w-md">
+            <Card>
+              <CardHeader>
+                <CardTitle>{showSignUp ? 'Skapa konto' : 'Logga in'}</CardTitle>
+                <CardDescription>
+                  {showSignUp
+                    ? 'Skapa ett konto för att komma igång med CalculEat'
+                    : 'Logga in på ditt CalculEat-konto'}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {showSignUp ? <SignUpForm /> : <LoginForm />}
+                <div className="mt-4 text-center text-sm">
+                  {showSignUp ? (
+                    <>
+                      Har du redan ett konto?{' '}
+                      <button
+                        onClick={() => setShowSignUp(false)}
+                        className="text-primary-600 hover:underline"
+                      >
+                        Logga in
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      Har du inget konto?{' '}
+                      <button
+                        onClick={() => setShowSignUp(true)}
+                        className="text-primary-600 hover:underline"
+                      >
+                        Skapa konto
+                      </button>
+                    </>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </main>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-neutral-50">
       <SiteHeader />
 
       <main className="container mx-auto px-4 py-8 md:px-6 lg:px-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-neutral-900">Dashboard</h1>
-          <p className="text-neutral-600">Välkommen tillbaka! Här är din översikt.</p>
+        {/* Header */}
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-neutral-900">
+              Hej {profile?.full_name || 'där'}! 👋
+            </h1>
+            <p className="text-neutral-600">Välkommen till din dashboard</p>
+          </div>
+          <Button variant="ghost" onClick={() => signOut()}>
+            Logga ut
+          </Button>
         </div>
 
         {/* Quick Stats */}
-        <div className="mb-8 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Kalorier idag</CardTitle>
-              <Apple className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">2,450</div>
-              <p className="text-xs text-muted-foreground">+180 från målet</p>
-            </CardContent>
-          </Card>
+        {profile && (profile.weight_kg || profile.height_cm) && (
+          <div className="mb-8 grid gap-6 md:grid-cols-3">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Vikt</CardTitle>
+                <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{profile.weight_kg || '-'} kg</div>
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Protein</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">185g</div>
-              <p className="text-xs text-muted-foreground">150g mål uppnått</p>
-            </CardContent>
-          </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Längd</CardTitle>
+                <Activity className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{profile.height_cm || '-'} cm</div>
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Träningspass</CardTitle>
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">4</div>
-              <p className="text-xs text-muted-foreground">Denna vecka</p>
-            </CardContent>
-          </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">TDEE</CardTitle>
+                <Apple className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{profile.tdee || '-'}</div>
+                <p className="text-xs text-muted-foreground">kalorier/dag</p>
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Aktivitet</CardTitle>
-              <Activity className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">8,234</div>
-              <p className="text-xs text-muted-foreground">Steg idag</p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Content Sections */}
-        <div className="grid gap-6 lg:grid-cols-2">
-          <Card>
-            <CardHeader>
-              <CardTitle>Nyligen loggade måltider</CardTitle>
-              <CardDescription>Dina senaste inlägg</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center text-neutral-500">
-                <Apple className="mx-auto mb-2 h-12 w-12" />
-                <p>Inga måltider loggade ännu</p>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Nästa träningspass</CardTitle>
-              <CardDescription>Din planerade träning</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center text-neutral-500">
-                <Calendar className="mx-auto mb-2 h-12 w-12" />
-                <p>Inga träningspass schemalagda</p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Coming Soon Notice */}
-        <div className="mt-8 rounded-2xl border-2 border-dashed border-neutral-300 bg-white p-8 text-center">
-          <p className="text-lg font-semibold text-neutral-900">
-            Fullständig dashboard funktionalitet kommer snart
-          </p>
-          <p className="mt-2 text-neutral-600">
-            Vi arbetar på att implementera alla funktioner. Kom tillbaka snart!
-          </p>
-        </div>
+        {/* Profile Form */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Din profil</CardTitle>
+            <CardDescription>
+              Uppdatera din personliga information och inställningar
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <UserProfileForm />
+          </CardContent>
+        </Card>
       </main>
     </div>
   )
