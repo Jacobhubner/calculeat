@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Dumbbell } from 'lucide-react'
-import { Button } from './ui/button'
+import { Button } from '../ui/button'
 
 export default function SiteHeader() {
   return (
