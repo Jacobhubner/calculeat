@@ -1,0 +1,84 @@
+Perfekt! 🚀 Då gör vi en steg-för-steg guide för att lägga upp din hemsida på GitHub Pages – det är gratis, säkert, och alltid online.
+
+
+
+Steg 1: Skapa ett GitHub-konto
+
+Gå till github.com
+.
+
+Klicka Sign up och skapa ett konto.
+
+Bekräfta din e-post.
+
+
+
+Steg 2: Installera Git på din dator
+
+Ladda ner Git: git-scm.com
+
+Installera med standardinställningar.
+
+Öppna terminalen (Command Prompt / PowerShell på Windows).
+
+Testa att det fungerar:
+
+git --version
+
+
+Du ska se något som git version 2.x.x.
+
+
+
+Steg 3: Skapa ett repository för din hemsida
+
+Logga in på GitHub.
+
+Klicka + → New repository
+
+Ge det ett namn, t.ex. min-forsta-hemsida.
+
+Välj Public (annars kan ingen se sidan).
+
+Klicka Create repository.
+
+
+
+Steg 4: Ladda upp din hemsida
+
+I din dator, gå till mappen med din hemsida (index.html, style.css, script.js).
+
+Öppna terminalen där.
+
+Kör dessa kommandon (ett i taget):
+
+git init
+git add .
+git config --global user.name "Jacob"
+git config --global user.email "jahubnr@gmail.com"
+git commit -m "Första versionen"
+git branch -M main
+git remote add origin https://github.com/Jacobhubner/CalculEat.git
+git push -u origin main
+
+
+
+Steg 5: Aktivera GitHub Pages
+
+Gå till ditt repository på GitHub.
+
+Klicka på Settings → Pages.
+
+Under Source, välj main branch → / (root) → Save.
+
+GitHub ger dig en länk, t.ex.:
+
+https://jacobhubner.github.io/CalculEat/
+
+
+
+Steg 6: Klart!
+
+Din hemsida är nu online och tillgänglig för alla.
+
+Om du uppdaterar filer på datorn → kör git add ., git commit -m "update" och git push → sidan uppdateras automatiskt.
