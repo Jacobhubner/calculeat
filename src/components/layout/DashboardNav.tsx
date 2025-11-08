@@ -1,13 +1,17 @@
 import { Link, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard,
-  UtensilsCrossed,
   Dumbbell as DumbbellIcon,
   User,
   Settings,
   LogOut,
   ChevronLeft,
   ChevronRight,
+  Apple,
+  ChefHat,
+  Bookmark,
+  Calendar,
+  History,
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useUIStore } from '@/stores/uiStore'
@@ -30,14 +34,33 @@ export default function DashboardNav() {
       exact: true,
     },
     {
-      to: '/app/meals',
-      label: 'Måltidslogg',
-      icon: UtensilsCrossed,
-      badge: 'Kommer snart',
+      to: '/app/today',
+      label: 'Dagens logg',
+      icon: Calendar,
+    },
+    {
+      to: '/app/food-items',
+      label: 'Matvaror',
+      icon: Apple,
+    },
+    {
+      to: '/app/recipes',
+      label: 'Recept',
+      icon: ChefHat,
+    },
+    {
+      to: '/app/saved-meals',
+      label: 'Sparade måltider',
+      icon: Bookmark,
+    },
+    {
+      to: '/app/history',
+      label: 'Historik',
+      icon: History,
     },
     {
       to: '/app/workouts',
-      label: 'Träningslogg',
+      label: 'Träning',
       icon: DumbbellIcon,
       badge: 'Kommer snart',
     },

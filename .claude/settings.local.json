@@ -28,7 +28,14 @@
       "Bash(vercel link:*)",
       "Bash(vercel login:*)",
       "Bash(vercel env:*)",
-      "Bash(vercel --prod:*)"
+      "Bash(vercel --prod:*)",
+      "Bash(npm run dev)",
+      "Bash(pip install:*)",
+      "Bash(py:*)",
+      "Bash(python analyze_excel.py:*)",
+      "Bash(python3:*)",
+      "Bash(excel_analysis_output.txt)",
+      "Bash(npm run lint)"
     ],
     "deny": [],
     "ask": []
