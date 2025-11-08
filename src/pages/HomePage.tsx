@@ -5,13 +5,13 @@ import FeatureCard from '@/components/FeatureCard'
 import TestimonialCard from '@/components/TestimonialCard'
 import StatsStrip from '@/components/StatsStrip'
 import { Button } from '@/components/ui/button'
-import { Apple, Calendar, Calculator, Target, CheckCircle } from 'lucide-react'
+import { Apple, Calculator, Target, CheckCircle, TrendingUp } from 'lucide-react'
 
 export default function HomePage() {
   const stats = [
     { value: '10K+', label: 'Aktiva användare' },
     { value: '500K+', label: 'Loggade måltider' },
-    { value: '50K+', label: 'Träningspass' },
+    { value: '2M+', label: 'Kaloriberäkningar' },
     { value: '4.9/5', label: 'Användarbetyg' },
   ]
 
@@ -22,40 +22,40 @@ export default function HomePage() {
       description: 'Logga måltider, makron och följ dina näringsintag i realtid.',
     },
     {
-      icon: Calendar,
-      title: 'Träningspass',
-      description: 'Skapa passmallar, följ progression och träna smartare.',
-    },
-    {
-      icon: Target,
-      title: 'Aktivitetsnivåer',
-      description: 'Från nybörjare till avancerade bodybuilders – alla nivåer stöds.',
-    },
-    {
       icon: Calculator,
       title: 'Smart kalkyler',
       description: 'BMI, TDEE och mer – alla verktyg du behöver på ett ställe.',
+    },
+    {
+      icon: Target,
+      title: 'Målsättning',
+      description: 'Sätt och följ personliga mål för vikt, kalorier och makron.',
+    },
+    {
+      icon: TrendingUp,
+      title: 'Progress tracking',
+      description: 'Följ din utveckling över tid med detaljerade statistik och grafer.',
     },
   ]
 
   const testimonials = [
     {
       quote:
-        'CalculEat har helt förändrat min relation till mat och träning. Jag kan nu se exakt vad jag äter och följa min framgång över tid.',
+        'CalculEat har helt förändrat min relation till mat. Jag kan nu se exakt vad jag äter och följa min framgång över tid.',
       author: 'Emma Svensson',
-      role: 'Personlig tränare',
+      role: 'Nöjd användare',
     },
     {
       quote:
-        'Som bodybuilder behöver jag vara precis med mina makron. CalculEat gör det enkelt och jag kan följa min progresjon dagligen.',
+        'Jag behöver vara precis med mina makron. CalculEat gör det enkelt och jag kan följa min progression dagligen.',
       author: 'Marcus Andersson',
-      role: 'Kompetitiv bodybuilder',
+      role: 'Fitnessentusiast',
     },
     {
       quote:
-        'Perfekt för nybörjare! Appen guidar mig genom att träna rätt och äta smart. Jag har gått ner 10kg på 3 månader.',
+        'Perfekt för att hålla koll på kaloriintaget! Appen guidar mig genom att äta smart. Jag har gått ner 10kg på 3 månader.',
       author: 'Sara Lindström',
-      role: 'Började träna för 6 månader sedan',
+      role: 'Viktminskning 10kg',
     },
   ]
 
@@ -72,8 +72,7 @@ export default function HomePage() {
               <span className="text-primary-600">CalculEat</span>.
             </h1>
             <p className="mb-8 text-xl text-neutral-600">
-              Den smarta appen för kostloggning, träning och aktivitetsnivåer – för nybörjare till
-              avancerade bodybuilders.
+              Den smarta appen för att räkna kalorier, följa dina makron och nå dina hälsomål.
             </p>
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Button size="lg" asChild>
