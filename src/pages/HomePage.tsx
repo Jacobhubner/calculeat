@@ -68,7 +68,8 @@ export default function HomePage() {
         <section className="container mx-auto px-4 py-20 md:px-6 lg:px-8">
           <div className="mx-auto max-w-4xl text-center">
             <h1 className="mb-6 text-5xl font-bold tracking-tight text-neutral-900 md:text-6xl">
-              Ät smart. Träna rätt. Följ allt i <span className="text-primary-600">CalculEat</span>.
+              Ta kontroll över din kost. Nå dina mål. Enkelt med{' '}
+              <span className="text-primary-600">CalculEat</span>.
             </h1>
             <p className="mb-8 text-xl text-neutral-600">
               Den smarta appen för kostloggning, träning och aktivitetsnivåer – för nybörjare till
