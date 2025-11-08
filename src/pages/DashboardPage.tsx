@@ -44,7 +44,7 @@ export default function DashboardPage() {
     <DashboardLayout>
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-neutral-900 mb-2">
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent mb-2">
           Hej {authProfile?.full_name || 'där'}! 👋
         </h1>
         <p className="text-neutral-600">
