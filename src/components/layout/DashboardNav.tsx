@@ -1,7 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard,
-  Dumbbell as DumbbellIcon,
   User,
   Settings,
   LogOut,
@@ -57,12 +56,6 @@ export default function DashboardNav() {
       to: '/app/history',
       label: 'Historik',
       icon: History,
-    },
-    {
-      to: '/app/workouts',
-      label: 'Träning',
-      icon: DumbbellIcon,
-      badge: 'Kommer snart',
     },
     {
       to: '/app/profile',

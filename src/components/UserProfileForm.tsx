@@ -132,15 +132,22 @@ export default function UserProfileForm() {
         <Label htmlFor="bmr_formula" className="flex items-center">
           BMR-formel
           <Tooltip
-            text="Välj vilken formel som ska användas för att beräkna din basalmetabolism (t.ex. Mifflin-St Jeor eller Harris-Benedict)."
+            text="Välj vilken formel som ska användas för att beräkna din basalmetabolism. Olika formler passar olika personer beroende på träningsnivå och kroppssammansättning."
             field="bmr_formula"
           />
         </Label>
         <Select id="bmr_formula" {...register('bmr_formula')} className="mt-2">
           <option value="">Välj...</option>
-          <option value="mifflin_st_jeor">Mifflin-St Jeor</option>
-          <option value="harris_benedict">Harris-Benedict</option>
-          <option value="cunningham">Cunningham</option>
+          <option value="Mifflin-St Jeor equation">Mifflin-St Jeor (Standard)</option>
+          <option value="Cunningham equation">Cunningham (Kräver kroppsfett%)</option>
+          <option value="Oxford/Henry equation">Oxford/Henry</option>
+          <option value="Schofield equation">Schofield</option>
+          <option value="Revised Harris-Benedict equation">Revised Harris-Benedict</option>
+          <option value="Original Harris-Benedict equation">Original Harris-Benedict</option>
+          <option value="MacroFactor standard equation">MacroFactor Standard</option>
+          <option value="MacroFactor FFM equation">MacroFactor FFM</option>
+          <option value="MacroFactor athlete equation">MacroFactor Athlete</option>
+          <option value="Fitness Stuff Podcast equation">Fitness Stuff Podcast</option>
         </Select>
       </div>
 
