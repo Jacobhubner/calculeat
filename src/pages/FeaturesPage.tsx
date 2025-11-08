@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import SiteHeader from '@/components/layout/SiteHeader'
 import SiteFooter from '@/components/layout/SiteFooter'
 import { Button } from '@/components/ui/button'
-import { Apple, Calendar, Calculator, Activity, BarChart3, Shield, ArrowRight } from 'lucide-react'
+import { Apple, Calculator, Target, BarChart3, Shield, ArrowRight, TrendingUp } from 'lucide-react'
 
 export default function FeaturesPage() {
   const mainFeatures = [
@@ -10,55 +10,60 @@ export default function FeaturesPage() {
       icon: Apple,
       title: 'Kostloggning',
       description:
-        'Logga måltider, makron och följ dina näringsintag. Stöd för receptfavoriter och streckkodsskanning (roadmap).',
+        'Logga måltider, makron och följ dina näringsintag. Spara favoritrecept och håll koll på ditt kaloriintag.',
       details: [
         'Logga måltider enkelt',
         'Automatisk makroberäkning',
         'Spara favoritrecept',
-        'Skanning av streckkod (kommande)',
-      ],
-    },
-    {
-      icon: Calendar,
-      title: 'Träningspass',
-      description:
-        'Skapa passmallar (push/pull/legs), följ progression, och använd RPE-skala för bättre träning.',
-      details: [
-        'Passmallar för alla nivåer',
-        'Progression tracking',
-        'RPE-skala',
-        'Prestationsstatistik',
-      ],
-    },
-    {
-      icon: Activity,
-      title: 'Aktivitet',
-      description:
-        'Följ steg, puls, zoner och integrationer med Apple Health och Strava (roadmap).',
-      details: [
-        'Steg tracking',
-        'Pulsmätning',
-        'Träningszoner',
-        'Integrering med Apple Health/Strava (kommande)',
+        'Kaloriräkning i realtid',
       ],
     },
     {
       icon: Calculator,
-      title: 'Kalkyler',
-      description: 'Allt från nybörjare till avancerat – BMI, TDEE, cut/bulk och periodisering.',
-      details: ['BMI beräkning', 'TDEE kalkylator', 'Cut/Bulk planer', 'Periodisering verktyg'],
+      title: 'Smarta Kalkyler',
+      description: 'Beräkna BMI, TDEE, kaloribehov och makrofördelning baserat på dina mål.',
+      details: [
+        'BMI beräkning',
+        'TDEE kalkylator',
+        'Kalorimål för viktminskning/ökning',
+        'Makrofördelning',
+      ],
+    },
+    {
+      icon: Target,
+      title: 'Målsättning',
+      description:
+        'Sätt personliga mål för vikt, kalorier och makron. Följ din progress mot dina mål.',
+      details: [
+        'Viktmål tracking',
+        'Dagliga kalorimål',
+        'Makromål (protein/kolhydrater/fett)',
+        'Anpassade målnivåer',
+      ],
+    },
+    {
+      icon: TrendingUp,
+      title: 'Progress Tracking',
+      description: 'Följ din utveckling över tid med detaljerade statistik och grafer.',
+      details: ['Viktutveckling över tid', 'Kalorihistorik', 'Makrofördelning', 'Trendanalys'],
     },
     {
       icon: BarChart3,
       title: 'Dashboard & Insikter',
-      description: 'Vecko- och månadsgrafer, målspårning och visualisering av din framgång.',
-      details: ['Veckovisa grafer', 'Månadsrapporter', 'Målspårning', 'Progresionsvisualisering'],
+      description: 'Få en tydlig översikt över dina näringsintag och framsteg med visuella grafer.',
+      details: [
+        'Daglig översikt',
+        'Vecko- och månadsrapporter',
+        'Visualisering av framsteg',
+        'Näringsstatistik',
+      ],
     },
     {
       icon: Shield,
       title: 'Säkerhet & Integritet',
-      description: 'Ditt data är säkert. Exportera dina data när du vill. GDPR-kompatibel.',
-      details: ['Säker datalagring', 'Dataexport', 'GDPR-kompatibel', 'Ingen data försäljning'],
+      description:
+        'Ditt data är säkert och privat. Exportera dina data när du vill. GDPR-kompatibel.',
+      details: ['Säker datalagring', 'Dataexport', 'GDPR-kompatibel', 'Ingen dataförsäljning'],
     },
   ]
 
@@ -71,11 +76,11 @@ export default function FeaturesPage() {
         <section className="bg-gradient-to-br from-primary-50 to-neutral-50 py-20">
           <div className="container mx-auto px-4 text-center md:px-6 lg:px-8">
             <h1 className="mb-4 text-4xl font-bold text-neutral-900 md:text-5xl">
-              Allt du behöver för att hålla koll
+              Allt du behöver för att nå dina mål
             </h1>
             <p className="mx-auto max-w-2xl text-xl text-neutral-600">
-              CalculEat kombinerar kostloggning, träning och aktivitet i ett kraftfullt verktyg för
-              att hjälpa dig nå dina hälsomål.
+              CalculEat kombinerar kostloggning, kaloriräkning och målsättning i ett kraftfullt
+              verktyg för att hjälpa dig nå dina hälsomål.
             </p>
           </div>
         </section>
@@ -148,7 +153,7 @@ export default function FeaturesPage() {
                   <div>
                     <h3 className="font-semibold text-neutral-900">Börja logga</h3>
                     <p className="text-neutral-600">
-                      Logga din första måltid eller träningspass och börja se framgång
+                      Logga din första måltid och börja följa din näringsintag
                     </p>
                   </div>
                 </div>
