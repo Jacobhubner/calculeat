@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { UtensilsCrossed, Menu, X, LogOut } from 'lucide-react'
+import { Calculator, Menu, X, LogOut } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Avatar, AvatarFallback } from '../ui/avatar'
 import { useAuth } from '@/contexts/AuthContext'
@@ -36,7 +36,7 @@ export default function SiteHeader() {
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 group">
           <div className="rounded-xl bg-gradient-primary p-2 group-hover:scale-105 transition-transform">
-            <UtensilsCrossed className="h-5 w-5 text-white" />
+            <Calculator className="h-5 w-5 text-white" />
           </div>
           <span className="text-xl font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
             CalculEat
