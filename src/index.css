@@ -1,5 +1,54 @@
 @import 'tailwindcss';
 
+@theme {
+  --color-primary-50: hsl(166 76% 97%);
+  --color-primary-100: hsl(166 70% 92%);
+  --color-primary-200: hsl(166 68% 80%);
+  --color-primary-300: hsl(166 65% 65%);
+  --color-primary-400: hsl(166 62% 50%);
+  --color-primary-500: hsl(166 64% 42%);
+  --color-primary-600: hsl(166 77% 34%);
+  --color-primary-700: hsl(166 80% 27%);
+  --color-primary-800: hsl(166 82% 21%);
+  --color-primary-900: hsl(166 85% 15%);
+  --color-primary-950: hsl(166 90% 10%);
+
+  --color-accent-50: hsl(21 90% 95%);
+  --color-accent-100: hsl(21 90% 90%);
+  --color-accent-200: hsl(21 90% 80%);
+  --color-accent-300: hsl(21 90% 70%);
+  --color-accent-400: hsl(21 90% 64%);
+  --color-accent-500: hsl(21 90% 54%);
+  --color-accent-600: hsl(21 90% 48%);
+  --color-accent-700: hsl(21 90% 42%);
+  --color-accent-800: hsl(21 90% 36%);
+  --color-accent-900: hsl(21 90% 30%);
+  --color-accent-950: hsl(21 90% 20%);
+
+  --color-success-50: hsl(142 71% 95%);
+  --color-success-100: hsl(142 71% 90%);
+  --color-success-200: hsl(142 71% 80%);
+  --color-success-300: hsl(142 71% 70%);
+  --color-success-400: hsl(142 71% 55%);
+  --color-success-500: hsl(142 71% 45%);
+  --color-success-600: hsl(142 71% 40%);
+  --color-success-700: hsl(142 71% 35%);
+  --color-success-800: hsl(142 71% 30%);
+  --color-success-900: hsl(142 71% 25%);
+  --color-success-950: hsl(142 71% 15%);
+
+  --color-error-50: hsl(0 84% 95%);
+  --color-error-100: hsl(0 84% 90%);
+  --color-error-200: hsl(0 84% 80%);
+  --color-error-300: hsl(0 84% 70%);
+  --color-error-400: hsl(0 84% 64%);
+  --color-error-500: hsl(0 84% 60%);
+  --color-error-600: hsl(0 84% 55%);
+  --color-error-700: hsl(0 84% 50%);
+  --color-error-800: hsl(0 84% 45%);
+  --color-error-900: hsl(0 84% 40%);
+}
+
 @layer base {
   * {
     @apply border-neutral-200;
@@ -72,10 +121,10 @@
   }
 
   .bg-gradient-primary {
-    background: linear-gradient(135deg, hsl(166, 72%, 50%), hsl(166, 72%, 35%));
+    background: linear-gradient(135deg, hsl(166 62% 50%), hsl(166 77% 34%));
   }
 
   .bg-gradient-accent {
-    background: linear-gradient(135deg, hsl(21, 90%, 64%), hsl(21, 90%, 48%));
+    background: linear-gradient(135deg, hsl(21 90% 64%), hsl(21 90% 48%));
   }
 }
