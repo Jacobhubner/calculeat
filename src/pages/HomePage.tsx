@@ -72,7 +72,7 @@ export default function HomePage() {
               <span className="text-primary-600">CalculEat</span>.
             </h1>
             <p className="mb-8 text-xl text-neutral-600">
-              Den smarta appen för att räkna kalorier, följa dina makron och nå dina hälsomål.
+              Den smarta appen för att räkna kalorier och nå dina hälsomål.
             </p>
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Button size="lg" asChild>
