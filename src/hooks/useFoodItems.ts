@@ -1,7 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
-import { calculateNoomColor, type NoomColor, type NoomFoodType } from '@/lib/calculations/noom'
+import {
+  calculateNoomColor,
+  type NoomColor,
+  type NoomFoodType,
+} from '@/lib/calculations/colorDensity'
 
 export interface FoodItem {
   id: string

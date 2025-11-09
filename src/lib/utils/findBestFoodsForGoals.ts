@@ -5,7 +5,7 @@
  */
 
 import type { FoodItem } from '@/hooks/useFoodItems'
-import type { NoomColor } from '@/lib/calculations/noom'
+import type { NoomColor } from '@/lib/calculations/colorDensity'
 
 export interface FindBestFoodsParams {
   desiredCalories: number
