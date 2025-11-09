@@ -179,15 +179,13 @@ export default function SmartCalculator() {
             <option value="Lightly active">Lätt aktiv</option>
             <option value="Moderately active">Måttligt aktiv</option>
             <option value="Very active">Mycket aktiv</option>
-            <option value="Extremely active">Extra aktiv</option>
+            <option value="Extremely active">Extremt aktiv</option>
           </select>
 
           {/* Activity Level Description */}
           {showActivityInfo && (
             <div className="mt-3 p-4 bg-primary-50 border border-primary-200 rounded-xl">
-              <p className="text-sm text-neutral-700">
-                <strong>{activityLevel}:</strong> {ACTIVITY_DESCRIPTIONS[activityLevel]}
-              </p>
+              <p className="text-sm text-neutral-700">{ACTIVITY_DESCRIPTIONS[activityLevel]}</p>
             </div>
           )}
         </div>
