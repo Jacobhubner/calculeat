@@ -1,111 +1,124 @@
 import { Link } from 'react-router-dom'
-import { Calculator, Apple, Scale, Plus, Hash } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 export default function IconDemo() {
-  // Logo concepts - keeping CalculEat text, just changing the icon
+  // Logo concepts based on user's reference images
   const logoVariants = [
     {
-      name: 'Citron Simple ⭐',
-      description: 'Enkel citron-form (som i bild 2)',
-      icon: (
-        <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor">
-          <ellipse cx="12" cy="13" rx="7" ry="9" />
-          <path d="M 12 4 Q 10 2, 12 1 Q 14 2, 12 4 Z" />
-        </svg>
+      name: 'Citron med Linjer (Exakt som Bild 2) ⭐',
+      description: 'Gul citron med vita horisontella linjer',
+      logo: (
+        <div className="flex items-center gap-3">
+          <svg viewBox="0 0 60 80" className="h-12 w-12" fill="none">
+            {/* Lemon body */}
+            <ellipse cx="30" cy="45" rx="22" ry="28" fill="#f9ca24" />
+            {/* Stem */}
+            <path d="M 30 17 Q 28 14, 30 12 Q 32 14, 30 17 Z" fill="#8B4513" />
+            {/* White lines - progressive length */}
+            <rect x="12" y="32" width="16" height="3" rx="1.5" fill="white" />
+            <rect x="12" y="42" width="24" height="3" rx="1.5" fill="white" />
+            <rect x="12" y="52" width="32" height="3" rx="1.5" fill="white" />
+          </svg>
+          <span className="text-2xl font-bold">
+            <span style={{ color: '#52b788' }}>Calcul</span>
+            <span style={{ color: '#e76f51' }}>Eat</span>
+          </span>
+        </div>
       ),
       isSelected: true,
     },
     {
-      name: 'Citron med Linjer',
-      description: 'Citron med horisontella linjer (som i bild 2)',
-      icon: (
-        <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor">
-          <ellipse cx="12" cy="13" rx="7" ry="9" fill="currentColor" />
-          <line x1="7" y1="10" x2="12" y2="10" stroke="white" strokeWidth="1.5" />
-          <line x1="7" y1="13" x2="14" y2="13" stroke="white" strokeWidth="1.5" />
-          <line x1="7" y1="16" x2="16" y2="16" stroke="white" strokeWidth="1.5" />
-        </svg>
+      name: 'Grön Räknare med Ansikte (Som Bild 1)',
+      description: 'Grön/orange räknare med ansikte',
+      logo: (
+        <div className="flex items-center gap-3">
+          <svg viewBox="0 0 60 80" className="h-12 w-12" fill="none">
+            {/* Calculator body */}
+            <rect x="10" y="10" width="40" height="60" rx="6" fill="#6FCF97" />
+            {/* Screen */}
+            <rect x="15" y="16" width="30" height="12" rx="2" fill="#e0e0e0" />
+            {/* Eyes */}
+            <circle cx="23" cy="38" r="3" fill="#2d3748" />
+            <circle cx="37" cy="38" r="3" fill="#2d3748" />
+            {/* Smile */}
+            <path d="M 20 48 Q 30 54, 40 48" stroke="#2d3748" strokeWidth="2" fill="none" />
+            {/* Buttons */}
+            <rect x="16" y="56" width="6" height="6" rx="1" fill="#f39c12" />
+            <rect x="27" y="56" width="6" height="6" rx="1" fill="#f39c12" />
+            <rect x="38" y="56" width="6" height="6" rx="1" fill="#f39c12" />
+          </svg>
+          <span className="text-2xl font-bold">
+            <span style={{ color: '#52b788' }}>Calcul</span>
+            <span style={{ color: '#e76f51' }}>Eat</span>
+          </span>
+        </div>
       ),
       isSelected: false,
     },
     {
-      name: 'Räknare/Kalkylator',
-      description: 'Kalkylator med knappar (som i bild 1)',
-      icon: <Calculator className="h-5 w-5" />,
-      isSelected: false,
-    },
-    {
-      name: 'Tallrik med Siffror',
-      description: 'Tallrik med kalorisiffror',
-      icon: (
-        <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor">
-          <circle cx="12" cy="12" r="9" strokeWidth="2" />
-          <text
-            x="12"
-            y="15"
-            fontSize="8"
-            fill="currentColor"
-            textAnchor="middle"
-            fontWeight="bold"
-          >
-            123
-          </text>
-        </svg>
+      name: 'Orange Äpple + Citron',
+      description: 'Orange äpple bredvid citron (som i bild 1)',
+      logo: (
+        <div className="flex items-center gap-3">
+          <div className="flex gap-1">
+            {/* Orange apple/orange */}
+            <svg viewBox="0 0 40 40" className="h-10 w-10">
+              <circle cx="20" cy="22" r="14" fill="#f39c12" />
+              <rect x="19" y="8" width="2" height="6" rx="1" fill="#8B4513" />
+            </svg>
+            {/* Yellow lemon */}
+            <svg viewBox="0 0 40 40" className="h-10 w-10">
+              <ellipse cx="20" cy="22" rx="12" ry="15" fill="#f9ca24" />
+            </svg>
+          </div>
+          <span className="text-2xl font-bold">
+            <span style={{ color: '#52b788' }}>Calcul</span>
+            <span style={{ color: '#e76f51' }}>Eat</span>
+          </span>
+        </div>
       ),
       isSelected: false,
     },
     {
-      name: 'Äpple Simple',
-      description: 'Ett enkelt äpple',
-      icon: <Apple className="h-5 w-5" />,
-      isSelected: false,
-    },
-    {
-      name: 'Äpple med Blad',
-      description: 'Äpple med blad (som i bild 1)',
-      icon: (
-        <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor">
-          <circle cx="12" cy="14" r="8" />
-          <ellipse cx="15" cy="7" rx="3" ry="2" transform="rotate(-25 15 7)" />
-          <rect x="11.5" y="6" width="1" height="3" rx="0.5" />
-        </svg>
+      name: 'Citron Simple (Utan Linjer)',
+      description: 'Enkel gul citron',
+      logo: (
+        <div className="flex items-center gap-3">
+          <svg viewBox="0 0 60 80" className="h-12 w-12">
+            <ellipse cx="30" cy="45" rx="22" ry="28" fill="#f9ca24" />
+            <path d="M 30 17 Q 28 14, 30 12 Q 32 14, 30 17 Z" fill="#8B4513" />
+          </svg>
+          <span className="text-2xl font-bold">
+            <span style={{ color: '#52b788' }}>Calcul</span>
+            <span style={{ color: '#e76f51' }}>Eat</span>
+          </span>
+        </div>
       ),
       isSelected: false,
     },
     {
-      name: 'Våg/Scale',
-      description: 'En matskala för viktkontroll',
-      icon: <Scale className="h-5 w-5" />,
-      isSelected: false,
-    },
-    {
-      name: 'Gaffel + Siffror',
-      description: 'Gaffel med kalkylsiffror',
-      icon: (
-        <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor">
-          <line x1="9" y1="4" x2="9" y2="12" strokeWidth="2" />
-          <line x1="12" y1="4" x2="12" y2="12" strokeWidth="2" />
-          <line x1="15" y1="4" x2="15" y2="12" strokeWidth="2" />
-          <path d="M 7 12 L 12 12 L 17 12 L 12 20 Z" strokeWidth="2" fill="currentColor" />
-          <text x="19" y="14" fontSize="6" fill="currentColor" fontWeight="bold">
-            123
-          </text>
-        </svg>
+      name: 'Grön Räknare (Utan Ansikte)',
+      description: 'Grön räknare med knappar, utan ansikte',
+      logo: (
+        <div className="flex items-center gap-3">
+          <svg viewBox="0 0 60 80" className="h-12 w-12">
+            <rect x="10" y="10" width="40" height="60" rx="6" fill="#6FCF97" />
+            <rect x="15" y="16" width="30" height="14" rx="2" fill="#e0e0e0" />
+            {/* Button grid */}
+            <rect x="16" y="38" width="10" height="8" rx="1" fill="#f39c12" />
+            <rect x="16" y="50" width="10" height="8" rx="1" fill="#f39c12" />
+            <rect x="16" y="62" width="10" height="6" rx="1" fill="#f39c12" />
+            <rect x="30" y="38" width="8" height="8" rx="1" fill="#f39c12" />
+            <rect x="30" y="50" width="8" height="8" rx="1" fill="#f39c12" />
+            <rect x="42" y="38" width="8" height="20" rx="1" fill="#e76f51" />
+          </svg>
+          <span className="text-2xl font-bold">
+            <span style={{ color: '#52b788' }}>Calcul</span>
+            <span style={{ color: '#e76f51' }}>Eat</span>
+          </span>
+        </div>
       ),
-      isSelected: false,
-    },
-    {
-      name: 'Plus-tecken',
-      description: 'Plus för addition/kalkylering',
-      icon: <Plus className="h-5 w-5" />,
-      isSelected: false,
-    },
-    {
-      name: 'Hash/Siffertecken',
-      description: 'Hash-tecken för kalorier/nummer',
-      icon: <Hash className="h-5 w-5" />,
       isSelected: false,
     },
   ]
@@ -120,8 +133,7 @@ export default function IconDemo() {
             Olika ikonförslag baserade på dina referensbilder
           </p>
           <p className="text-sm text-neutral-500 mb-6">
-            Texten &quot;CalculEat&quot; med gradient-färger bevaras - endast ikonen i den gröna
-            boxen ändras
+            Baserat på dina referensbilder - ingen grön box, bara ikon + text
           </p>
           <Button asChild variant="outline">
             <Link to="/">Tillbaka till startsidan</Link>
@@ -129,8 +141,8 @@ export default function IconDemo() {
         </div>
 
         {/* Logo Grid */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {logoVariants.map(({ name, description, icon, isSelected }) => (
+        <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
+          {logoVariants.map(({ name, description, logo, isSelected }) => (
             <Card
               key={name}
               className={`hover:shadow-xl transition-all hover:scale-[1.02] ${
@@ -138,17 +150,7 @@ export default function IconDemo() {
               }`}
             >
               <CardHeader>
-                <div className="flex justify-center mb-4">
-                  {/* Show logo in current structure: green gradient box + CalculEat text */}
-                  <div className="flex items-center gap-2">
-                    <div className="rounded-xl bg-gradient-primary p-2 transition-transform hover:scale-105">
-                      <div className="text-white">{icon}</div>
-                    </div>
-                    <span className="text-xl font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
-                      CalculEat
-                    </span>
-                  </div>
-                </div>
+                <div className="flex justify-center mb-4">{logo}</div>
                 <CardTitle className="text-center text-lg">
                   {name}
                   {isSelected && <span className="ml-2 text-primary-600">✓</span>}
@@ -161,29 +163,21 @@ export default function IconDemo() {
 
         {/* Preview Section */}
         <div className="mt-16">
-          <h2 className="text-2xl font-bold text-center mb-8">
-            Så här ser de ut i den faktiska headern
-          </h2>
+          <h2 className="text-2xl font-bold text-center mb-8">Så här ser de ut i headern</h2>
           <Card>
             <CardContent className="pt-6">
-              <div className="space-y-3">
-                {logoVariants.map(({ name, icon, isSelected }) => {
+              <div className="space-y-4">
+                {logoVariants.map(({ name, logo, isSelected }) => {
                   return (
                     <div
                       key={`preview-${name}`}
-                      className={`flex items-center gap-3 p-4 border rounded-xl hover:shadow-md transition-all ${
+                      className={`flex items-center justify-between p-4 border rounded-xl hover:shadow-md transition-all ${
                         isSelected
                           ? 'bg-primary-50 border-primary-300 ring-2 ring-primary-400'
                           : 'bg-white hover:border-primary-300'
                       }`}
                     >
-                      {/* Exactly as it appears in header */}
-                      <div className="rounded-xl bg-gradient-primary p-2">
-                        <div className="text-white">{icon}</div>
-                      </div>
-                      <span className="text-xl font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
-                        CalculEat
-                      </span>
+                      {logo}
                       <span className="ml-auto text-xs text-neutral-400">
                         {name}
                         {isSelected && ' ✓'}
