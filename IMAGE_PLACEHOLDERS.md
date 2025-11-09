@@ -19,7 +19,7 @@ Detta dokument listar alla bildplaceholders som behöver skapas för CalculEat-p
 
 ## Startsida (HomePage)
 
-### 1. Hero Section
+### 1. Hero Section ✅
 
 **Fil:** `hero-dashboard-mockup.png`
 
@@ -27,24 +27,18 @@ Detta dokument listar alla bildplaceholders som behöver skapas för CalculEat-p
 - **Beskrivning:** Dashboard mockup som visar översikt av dagens kaloriintag, makrofördelning och progress rings
 - **Stil:** Modern app interface med gröna och orange accenter
 - **Plats:** Högra sidan av hero-sektionen
+- **Status:** ✅ KLAR - Uppladdad!
 
-### 2. Process Steps Icons (4 st)
+### 2. Process Steps Icons ✅
 
-**Filer:**
+**Status:** ✅ ANVÄNDER LUCIDE REACT ICONS - Inget behöver skapas!
 
-- `step-1-calculator.svg` (80×80px)
-- `step-2-food.svg` (80×80px)
-- `step-3-target.svg` (80×80px)
-- `step-4-progress.svg` (80×80px)
+Vi använder befintliga Lucide React ikoner:
 
-**Beskrivning:**
-
-1. Kalkylator-ikon för "Beräkna ditt behov"
-2. Mat-ikon för "Logga dina måltider"
-3. Mål-ikon för "Sätt upp dina mål"
-4. Progress-ikon för "Följ din progress"
-
-**Stil:** Enkla, ikoniska illustrationer i primär grön färg
+- Calculator (Beräkna ditt behov)
+- Utensils (Logga dina måltider)
+- Target (Sätt upp dina mål)
+- TrendingUp (Följ din progress)
 
 ### 3. Success Stories - User Avatars (3 st)
 
@@ -60,20 +54,20 @@ Detta dokument listar alla bildplaceholders som behöver skapas för CalculEat-p
 
 ## Features Page (FeaturesPage)
 
-### 4. Feature Icons för Hero Grid (8 st)
+### 4. Feature Icons för Hero Grid ✅
 
-Dessa kan antingen vara Lucide React icons ELLER custom ikoner:
+**Status:** ✅ ANVÄNDER LUCIDE REACT ICONS - Inget behöver skapas!
 
-- `icon-calculator.svg` (100×100px) - Smart Kalkyler
-- `icon-food-logging.svg` (100×100px) - Kostloggning
-- `icon-goals.svg` (100×100px) - Målsättning
-- `icon-progress.svg` (100×100px) - Progress Tracking
-- `icon-macro.svg` (100×100px) - Makro-program
-- `icon-body.svg` (100×100px) - Kroppskomposition
-- `icon-dashboard.svg` (100×100px) - Dashboard
-- `icon-database.svg` (100×100px) - Livsmedelsdatabas
+Vi använder befintliga Lucide React ikoner:
 
-**OBS:** För tillfället använder vi Lucide React icons, men dessa kan ersättas med custom ikoner senare.
+- Calculator (Smart Kalkyler)
+- Apple (Kostloggning)
+- Target (Målsättning)
+- TrendingUp (Progress Tracking)
+- Dumbbell (Makro-program)
+- Activity (Kroppskomposition)
+- BarChart3 (Dashboard)
+- Database (Livsmedelsdatabas)
 
 ### 5. Feature Screenshots (6 st, mobil format)
 
@@ -167,9 +161,9 @@ Alla screenshots ska vara i mobil format (400×800px) eftersom appen är mobile-
 
 ### Hög Prioritet (Startsida)
 
-1. ✅ Hero dashboard mockup (`hero-dashboard-mockup.png`)
-2. ✅ Process step icons (4 st)
-3. ✅ User avatars (3 st)
+1. ✅ Hero dashboard mockup (`hero-dashboard-mockup.png`) - **KLAR!**
+2. ✅ Process step icons - **ANVÄNDER LUCIDE ICONS**
+3. ⏳ User avatars (3 st) - **ÅTERSTÅR**
 
 ### Medelhög Prioritet (Features Page)
 
@@ -182,7 +176,6 @@ Alla screenshots ska vara i mobil format (400×800px) eftersom appen är mobile-
 7. ⏳ Macro modes screenshot
 8. ⏳ Goals tracking screenshot
 9. ⏳ Body composition screenshot
-10. ⏳ Custom feature icons (om Lucide icons ska ersättas)
 
 ---
 
