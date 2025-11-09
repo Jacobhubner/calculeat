@@ -2,10 +2,61 @@ import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import LemonCalculatorLogo from '@/components/icons/LemonCalculatorLogo'
+import LemonLogoVariants from '@/components/icons/LemonLogoVariants'
 
 export default function IconDemo() {
   // Custom SVG logo concepts
   const logoVariants = [
+    {
+      name: 'Original (Som bilden!) ⭐',
+      description:
+        'Orange citron med grönt "Calcul" och orange "Eat" - exakt som din inspirationsbild',
+      component: <LemonLogoVariants size={120} variant="original" />,
+      isSelected: true,
+      isWide: true,
+    },
+    {
+      name: 'Solid Green',
+      description: 'Genomgående grön färg - ren och professionell',
+      component: <LemonLogoVariants size={120} variant="solid" />,
+      isSelected: false,
+      isWide: true,
+    },
+    {
+      name: 'Duotone (Gul & Grön)',
+      description: 'Gul citron med gröna linjer och text - fräsch kombination',
+      component: <LemonLogoVariants size={120} variant="duotone" />,
+      isSelected: false,
+      isWide: true,
+    },
+    {
+      name: 'Vibrant',
+      description: 'Kraftiga färger - gul citron, turkos/röd text - energisk',
+      component: <LemonLogoVariants size={120} variant="vibrant" />,
+      isSelected: false,
+      isWide: true,
+    },
+    {
+      name: 'Pastel',
+      description: 'Mjuka pastellfärger - elegant och soft',
+      component: <LemonLogoVariants size={120} variant="pastel" />,
+      isSelected: false,
+      isWide: true,
+    },
+    {
+      name: 'Dark Mode',
+      description: 'Mörk variant för dark mode - blå/röd accenter',
+      component: <LemonLogoVariants size={120} variant="dark" />,
+      isSelected: false,
+      isWide: true,
+    },
+    {
+      name: 'Simple (Icon Only)',
+      description: 'Bara citronen utan text - för mindre utrymmen',
+      component: <LemonLogoVariants size={80} variant="simple" />,
+      isSelected: false,
+      isWide: false,
+    },
     {
       name: 'Citron Classic',
       description: 'Klassisk gul citron med vita progressiva linjer - ren och tydlig',
@@ -246,17 +297,17 @@ export default function IconDemo() {
         </div>
 
         {/* Logo Grid */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {logoVariants.map(({ name, description, svg, style, component, isSelected }) => (
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {logoVariants.map(({ name, description, svg, style, component, isSelected, isWide }) => (
             <Card
               key={name}
               className={`hover:shadow-xl transition-all hover:scale-[1.02] ${
                 isSelected ? 'ring-2 ring-primary-500 bg-primary-50' : ''
-              }`}
+              } ${isWide ? 'md:col-span-2 lg:col-span-3' : ''}`}
             >
               <CardHeader>
                 <div className="flex justify-center mb-4">
-                  <div className={`${style || ''} transition-transform hover:scale-110`}>
+                  <div className={`${style || ''} transition-transform hover:scale-105`}>
                     {component || svg}
                   </div>
                 </div>
