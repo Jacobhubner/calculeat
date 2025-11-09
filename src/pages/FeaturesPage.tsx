@@ -2,7 +2,19 @@ import { Link } from 'react-router-dom'
 import SiteHeader from '@/components/layout/SiteHeader'
 import SiteFooter from '@/components/layout/SiteFooter'
 import { Button } from '@/components/ui/button'
-import { Apple, Calculator, Target, BarChart3, Shield, ArrowRight, TrendingUp } from 'lucide-react'
+import {
+  Apple,
+  Calculator,
+  Target,
+  BarChart3,
+  Shield,
+  ArrowRight,
+  TrendingUp,
+  Activity,
+  Dumbbell,
+  Database,
+  Lightbulb,
+} from 'lucide-react'
 
 export default function FeaturesPage() {
   const mainFeatures = [
@@ -10,42 +22,84 @@ export default function FeaturesPage() {
       icon: Apple,
       title: 'Kostloggning',
       description:
-        'Logga måltider, makron och följ dina näringsintag. Spara favoritrecept och håll koll på ditt kaloriintag.',
+        'Logga måltider med Noom-färgsystemet, spara recept och håll koll på ditt kaloriintag med smarta verktyg.',
       details: [
-        'Logga måltider enkelt',
+        'Noom trafikljussystem (Grön/Gul/Orange)',
         'Automatisk makroberäkning',
-        'Spara favoritrecept',
+        'Spara favoritrecept och måltider',
         'Kaloriräkning i realtid',
       ],
     },
     {
       icon: Calculator,
-      title: 'Smarta Kalkyler',
-      description: 'Beräkna BMI, TDEE, kaloribehov och makrofördelning baserat på dina mål.',
+      title: 'Vetenskapliga Kalkyler',
+      description:
+        'Välj mellan 10 olika BMR-formler och 6 PAL-system för maximalt exakta beräkningar anpassade efter din situation.',
       details: [
-        'BMI beräkning',
-        'TDEE kalkylator',
-        'Kalorimål för viktminskning/ökning',
-        'Makrofördelning',
+        '10 BMR-formler (Mifflin-St Jeor, Cunningham, Oxford/Henry, Schofield m.fl.)',
+        '6 olika PAL-system för exakt TDEE',
+        'BMI och idealvikt',
+        'Personaliserade kalorimål',
+      ],
+    },
+    {
+      icon: Activity,
+      title: 'Kroppskomposition',
+      description:
+        'Mät din kroppssammansättning med professionella metoder - från caliper till bandmätningar.',
+      details: [
+        '12 olika metoder (Jackson/Pollock, Durnin/Womersley, U.S. Navy m.fl.)',
+        'Caliper- och bandmätningar',
+        'Fettfri massa och fettprocent',
+        'Kroppssammansättning över tid',
+      ],
+    },
+    {
+      icon: Dumbbell,
+      title: 'Professionella Makro-program',
+      description:
+        'Förinställda makroprogram för olika mål - från hälsosam kost till bodybuilding.',
+      details: [
+        'NNR-läge (Nordiska näringsrekommendationer)',
+        'Off-Season läge (Bodybuilding bulk)',
+        'On-Season läge (Bodybuilding cut)',
+        'Anpassade makromallar',
       ],
     },
     {
       icon: Target,
       title: 'Målsättning',
       description:
-        'Sätt personliga mål för vikt, kalorier och makron. Följ din progress mot dina mål.',
+        'Sätt personliga mål för vikt, kalorier och makron med avancerade proteinberäkningar och hormonal hälsa.',
       details: [
         'Viktmål tracking',
-        'Dagliga kalorimål',
-        'Makromål (protein/kolhydrater/fett)',
-        'Anpassade målnivåer',
+        'Aktivitetsbaserade proteinbehov',
+        'Makromål med hormonal hänsyn',
+        'Tid-till-mål beräkningar',
+      ],
+    },
+    {
+      icon: Lightbulb,
+      title: 'Noom-systemet',
+      description:
+        'Smartare matval med färgkodade livsmedel baserat på kaloritäthet - ät mer grönt, lagom gult, mindre orange.',
+      details: [
+        'Automatisk färgklassificering av mat',
+        'Daglig färgfördelning',
+        'Rekommenderade mål (30%+ grönt)',
+        'Olika tröskelvärden för mat, dryck & soppa',
       ],
     },
     {
       icon: TrendingUp,
       title: 'Progress Tracking',
       description: 'Följ din utveckling över tid med detaljerade statistik och grafer.',
-      details: ['Viktutveckling över tid', 'Kalorihistorik', 'Makrofördelning', 'Trendanalys'],
+      details: [
+        'Viktutveckling över tid',
+        'Kalorihistorik',
+        'Makrofördelning',
+        'Trendanalys och förloppsindikatorer',
+      ],
     },
     {
       icon: BarChart3,
@@ -56,6 +110,18 @@ export default function FeaturesPage() {
         'Vecko- och månadsrapporter',
         'Visualisering av framsteg',
         'Näringsstatistik',
+      ],
+    },
+    {
+      icon: Database,
+      title: 'Livsmedelsdatabas & Recept',
+      description:
+        'Tillgång till omfattande livsmedelsdatabaser från SLV och USDA, plus din egen personliga matbibliotek.',
+      details: [
+        'SLV (Livsmedelsverket) databas',
+        'USDA livsmedelsdatabas',
+        'Skapa egna livsmedel',
+        'Recepthantering med automatisk näringsuträkning',
       ],
     },
     {

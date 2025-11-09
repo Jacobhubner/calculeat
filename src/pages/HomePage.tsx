@@ -68,11 +68,16 @@ export default function HomePage() {
         <section className="container mx-auto px-4 py-20 md:px-6 lg:px-8">
           <div className="mx-auto max-w-4xl text-center">
             <h1 className="mb-6 text-5xl font-bold tracking-tight text-neutral-900 md:text-6xl">
-              Ta kontroll över din kost. Nå dina mål. Enkelt med{' '}
-              <span className="text-primary-600">CalculEat</span>.
+              Ta kontroll över din kost.
+              <br />
+              Enkelt med{' '}
+              <span className="bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
+                CalculEat
+              </span>
+              .
             </h1>
             <p className="mb-8 text-xl text-neutral-600">
-              Den smarta appen för att räkna kalorier och nå dina hälsomål.
+              Verktyget som gör det enkelt och inspirerande att nå dina hälsomål.
             </p>
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Button size="lg" asChild>

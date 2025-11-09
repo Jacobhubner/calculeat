@@ -34,63 +34,14 @@ export default function SiteHeader() {
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 bg-blur shadow-sm">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6 lg:px-8">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 group">
-          <svg
-            viewBox="0 0 200 200"
-            className="h-10 w-10 transition-transform group-hover:scale-105"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            {/* Background gradient circle */}
-            <defs>
-              <linearGradient id="orangeGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#FFF3B0" />
-                <stop offset="100%" stopColor="#FF9A3C" />
-              </linearGradient>
-            </defs>
-            <circle cx="100" cy="100" r="95" fill="url(#orangeGradient)" />
-
-            {/* Green leaves on top - two curved shapes */}
-            <path d="M 60 45 Q 50 20, 70 15 Q 85 20, 75 45 Z" fill="#3BB54A" />
-            <path d="M 85 40 Q 105 10, 130 20 Q 145 35, 120 50 Z" fill="#3BB54A" />
-
-            {/* White person silhouette */}
-            <circle cx="100" cy="75" r="22" fill="#FFFFFF" />
-            <ellipse cx="100" cy="135" rx="45" ry="55" fill="#FFFFFF" />
-
-            {/* Green calculator on person's body */}
-            <rect x="78" y="115" width="44" height="55" rx="5" fill="#3BB54A" />
-
-            {/* Calculator screen */}
-            <rect x="84" y="122" width="32" height="14" rx="2" fill="#FFFFFF" />
-
-            {/* Calculator buttons - simple horizontal lines */}
-            <rect x="86" y="143" width="12" height="3" rx="1.5" fill="#FFFFFF" />
-            <rect x="86" y="153" width="12" height="3" rx="1.5" fill="#FFFFFF" />
-            <rect x="86" y="163" width="12" height="3" rx="1.5" fill="#FFFFFF" />
-
-            {/* Right side buttons */}
-            <rect x="104" y="143" width="12" height="3" rx="1.5" fill="#FFFFFF" />
-            <line
-              x1="110"
-              y1="154"
-              x2="110"
-              y2="165"
-              stroke="#FFFFFF"
-              strokeWidth="3"
-              strokeLinecap="round"
-            />
-            <line
-              x1="104.5"
-              y1="159.5"
-              x2="115.5"
-              y2="159.5"
-              stroke="#FFFFFF"
-              strokeWidth="3"
-              strokeLinecap="round"
-            />
-          </svg>
-          <span className="text-xl font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
+        <Link to="/" className="flex items-center group">
+          <img
+            src="/logo.png"
+            alt="CalculEat Logo"
+            className="h-20 w-20 object-contain transition-transform group-hover:scale-105 -mr-3"
+            style={{ imageRendering: '-webkit-optimize-contrast', mixBlendMode: 'multiply' }}
+          />
+          <span className="text-3xl font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
             CalculEat
           </span>
         </Link>

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Dumbbell, Github, Mail, Twitter, Heart } from 'lucide-react'
+import { Github, Mail, Twitter, Heart } from 'lucide-react'
 import { Separator } from '../ui/separator'
 
 export default function SiteFooter() {
@@ -49,11 +49,14 @@ export default function SiteFooter() {
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-6">
           {/* Brand Section */}
           <div className="lg:col-span-2 space-y-4">
-            <Link to="/" className="flex items-center gap-2 group w-fit">
-              <div className="rounded-xl bg-gradient-primary p-2 group-hover:scale-105 transition-transform">
-                <Dumbbell className="h-5 w-5 text-white" />
-              </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
+            <Link to="/" className="flex items-center group w-fit">
+              <img
+                src="/logo.png"
+                alt="CalculEat Logo"
+                className="h-20 w-20 object-contain transition-transform group-hover:scale-105 -mr-3"
+                style={{ imageRendering: '-webkit-optimize-contrast', mixBlendMode: 'multiply' }}
+              />
+              <span className="text-3xl font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
                 CalculEat
               </span>
             </Link>
