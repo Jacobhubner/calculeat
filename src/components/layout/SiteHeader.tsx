@@ -67,19 +67,24 @@ export default function SiteHeader() {
             {/* Body/torso */}
             <ellipse cx="100" cy="130" rx="40" ry="50" fill="#FFFFFF" />
 
-            {/* Green calculator - simplified */}
-            <rect x="82" y="108" width="36" height="44" rx="4" fill="#3BB54A" />
-            {/* Calculator display screen */}
-            <rect x="86" y="113" width="28" height="10" rx="2" fill="#FFFFFF" />
-            {/* Simple button symbols */}
-            {/* Top row: minus symbol */}
-            <rect x="90" y="128" width="8" height="2" rx="1" fill="#FFFFFF" />
-            {/* Middle row: plus symbol */}
-            <rect x="90" y="138" width="2" height="8" rx="1" fill="#FFFFFF" />
-            <rect x="87" y="141" width="8" height="2" rx="1" fill="#FFFFFF" />
-            {/* Bottom row: minus and equals */}
-            <rect x="102" y="138" width="8" height="2" rx="1" fill="#FFFFFF" />
-            <rect x="102" y="142" width="8" height="2" rx="1" fill="#FFFFFF" />
+            {/* Green calculator */}
+            <rect x="80" y="105" width="40" height="50" rx="4" fill="#3BB54A" />
+            {/* Calculator display screen at top */}
+            <rect x="85" y="111" width="30" height="12" rx="2" fill="#FFFFFF" />
+            {/* Calculator buttons in 2x2 grid */}
+            {/* Top left: horizontal line (minus) */}
+            <rect x="88" y="130" width="10" height="8" rx="1.5" fill="#FFFFFF" />
+            <rect x="90.5" y="132.5" width="5" height="1.5" rx="0.75" fill="#3BB54A" />
+            {/* Top right: horizontal line */}
+            <rect x="102" y="130" width="10" height="8" rx="1.5" fill="#FFFFFF" />
+            <rect x="104.5" y="132.5" width="5" height="1.5" rx="0.75" fill="#3BB54A" />
+            {/* Bottom left: plus symbol */}
+            <rect x="88" y="141" width="10" height="8" rx="1.5" fill="#FFFFFF" />
+            <rect x="92.5" y="143.5" width="1.5" height="5" rx="0.75" fill="#3BB54A" />
+            <rect x="90.5" y="145.5" width="5" height="1.5" rx="0.75" fill="#3BB54A" />
+            {/* Bottom right: horizontal line */}
+            <rect x="102" y="141" width="10" height="8" rx="1.5" fill="#FFFFFF" />
+            <rect x="104.5" y="145.5" width="5" height="1.5" rx="0.75" fill="#3BB54A" />
           </svg>
           <span className="text-xl font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
             CalculEat
