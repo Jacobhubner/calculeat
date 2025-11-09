@@ -50,41 +50,45 @@ export default function SiteHeader() {
             </defs>
             <circle cx="100" cy="100" r="95" fill="url(#orangeGradient)" />
 
-            {/* Green leaves on top */}
-            <ellipse cx="70" cy="30" rx="28" ry="20" fill="#3BB54A" transform="rotate(-35 70 30)" />
-            <ellipse
-              cx="130"
-              cy="25"
-              rx="40"
-              ry="25"
-              fill="#3BB54A"
-              transform="rotate(20 130 25)"
-            />
+            {/* Green leaves on top - two curved shapes */}
+            <path d="M 60 45 Q 50 20, 70 15 Q 85 20, 75 45 Z" fill="#3BB54A" />
+            <path d="M 85 40 Q 105 10, 130 20 Q 145 35, 120 50 Z" fill="#3BB54A" />
 
             {/* White person silhouette */}
-            {/* Head */}
-            <circle cx="100" cy="70" r="20" fill="#FFFFFF" />
-            {/* Body/torso */}
-            <ellipse cx="100" cy="130" rx="40" ry="50" fill="#FFFFFF" />
+            <circle cx="100" cy="75" r="22" fill="#FFFFFF" />
+            <ellipse cx="100" cy="135" rx="45" ry="55" fill="#FFFFFF" />
 
-            {/* Green calculator */}
-            <rect x="80" y="105" width="40" height="50" rx="4" fill="#3BB54A" />
-            {/* Calculator display screen at top */}
-            <rect x="85" y="111" width="30" height="12" rx="2" fill="#FFFFFF" />
-            {/* Calculator buttons in 2x2 grid */}
-            {/* Top left: horizontal line (minus) */}
-            <rect x="88" y="130" width="10" height="8" rx="1.5" fill="#FFFFFF" />
-            <rect x="90.5" y="132.5" width="5" height="1.5" rx="0.75" fill="#3BB54A" />
-            {/* Top right: horizontal line */}
-            <rect x="102" y="130" width="10" height="8" rx="1.5" fill="#FFFFFF" />
-            <rect x="104.5" y="132.5" width="5" height="1.5" rx="0.75" fill="#3BB54A" />
-            {/* Bottom left: plus symbol */}
-            <rect x="88" y="141" width="10" height="8" rx="1.5" fill="#FFFFFF" />
-            <rect x="92.5" y="143.5" width="1.5" height="5" rx="0.75" fill="#3BB54A" />
-            <rect x="90.5" y="145.5" width="5" height="1.5" rx="0.75" fill="#3BB54A" />
-            {/* Bottom right: horizontal line */}
-            <rect x="102" y="141" width="10" height="8" rx="1.5" fill="#FFFFFF" />
-            <rect x="104.5" y="145.5" width="5" height="1.5" rx="0.75" fill="#3BB54A" />
+            {/* Green calculator on person's body */}
+            <rect x="78" y="115" width="44" height="55" rx="5" fill="#3BB54A" />
+
+            {/* Calculator screen */}
+            <rect x="84" y="122" width="32" height="14" rx="2" fill="#FFFFFF" />
+
+            {/* Calculator buttons - simple horizontal lines */}
+            <rect x="86" y="143" width="12" height="3" rx="1.5" fill="#FFFFFF" />
+            <rect x="86" y="153" width="12" height="3" rx="1.5" fill="#FFFFFF" />
+            <rect x="86" y="163" width="12" height="3" rx="1.5" fill="#FFFFFF" />
+
+            {/* Right side buttons */}
+            <rect x="104" y="143" width="12" height="3" rx="1.5" fill="#FFFFFF" />
+            <line
+              x1="110"
+              y1="154"
+              x2="110"
+              y2="165"
+              stroke="#FFFFFF"
+              strokeWidth="3"
+              strokeLinecap="round"
+            />
+            <line
+              x1="104.5"
+              y1="159.5"
+              x2="115.5"
+              y2="159.5"
+              stroke="#FFFFFF"
+              strokeWidth="3"
+              strokeLinecap="round"
+            />
           </svg>
           <span className="text-xl font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
             CalculEat
