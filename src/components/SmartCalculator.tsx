@@ -82,11 +82,11 @@ export default function SmartCalculator() {
     <div className="rounded-2xl border bg-white p-8 shadow-lg">
       <div className="mb-6 flex items-center space-x-3">
         <Calculator className="h-8 w-8 text-primary-600" />
-        <h2 className="text-3xl font-bold text-neutral-900">Smart kalkylator</h2>
+        <h2 className="text-3xl font-bold text-neutral-900">
+          Smart kalkylator för ditt energibehov
+        </h2>
       </div>
-      <p className="mb-6 text-neutral-600">
-        Beräkna ditt dagliga kaloribehov med Mifflin-St Jeor formeln.
-      </p>
+      <p className="mb-6 text-neutral-600">Beräkna ditt dagliga kaloribehov.</p>
 
       <div className="space-y-4">
         {/* Gender Selection */}
@@ -164,7 +164,9 @@ export default function SmartCalculator() {
         {/* Activity Level */}
         <div>
           <div className="flex items-center justify-between mb-2">
-            <label className="block text-sm font-medium text-neutral-700">Aktivitetsnivå</label>
+            <label className="block text-sm font-medium text-neutral-700">
+              Aktivitetsnivå (PAL)
+            </label>
             <button
               type="button"
               onClick={() => setShowActivityInfo(!showActivityInfo)}
@@ -178,12 +180,17 @@ export default function SmartCalculator() {
             onChange={e => setActivityLevel(e.target.value as ActivityLevel)}
             className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
           >
-            <option value="Sedentary">Stillasittande (1.2)</option>
-            <option value="Lightly active">Lätt aktiv (1.375)</option>
-            <option value="Moderately active">Måttligt aktiv (1.55)</option>
-            <option value="Very active">Mycket aktiv (1.725)</option>
-            <option value="Extremely active">Extra aktiv (1.9)</option>
+            <option value="Sedentary">Stillasittande</option>
+            <option value="Lightly active">Lätt aktiv</option>
+            <option value="Moderately active">Måttligt aktiv</option>
+            <option value="Very active">Mycket aktiv</option>
+            <option value="Extremely active">Extra aktiv</option>
           </select>
+
+          {/* PAL Explanation */}
+          <p className="mt-2 text-xs text-neutral-500">
+            PAL (Physical Activity Level) - din fysiska aktivitetsnivå
+          </p>
 
           {/* Activity Level Description */}
           {showActivityInfo && (
@@ -207,15 +214,19 @@ export default function SmartCalculator() {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="rounded-xl bg-primary-50 p-4 border border-primary-200">
-                <p className="text-sm font-medium text-neutral-600 mb-1">BMR</p>
+                <p className="text-sm font-medium text-neutral-600 mb-1">
+                  BMR (Basal Metabolic Rate)
+                </p>
                 <p className="text-3xl font-bold text-primary-600">{result.bmr}</p>
-                <p className="text-xs text-neutral-500 mt-1">kcal/dag i vila</p>
+                <p className="text-xs text-neutral-500 mt-1">Grundomsättning - kalorier i vila</p>
               </div>
 
               <div className="rounded-xl bg-accent-50 p-4 border border-accent-200">
-                <p className="text-sm font-medium text-neutral-600 mb-1">TDEE</p>
+                <p className="text-sm font-medium text-neutral-600 mb-1">
+                  TDEE (Total Daily Energy Expenditure)
+                </p>
                 <p className="text-3xl font-bold text-accent-600">{result.tdee}</p>
-                <p className="text-xs text-neutral-500 mt-1">kcal/dag totalt</p>
+                <p className="text-xs text-neutral-500 mt-1">Totalt dagligt energibehov</p>
               </div>
             </div>
 
