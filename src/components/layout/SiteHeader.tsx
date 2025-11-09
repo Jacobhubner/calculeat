@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback } from '../ui/avatar'
 import { useAuth } from '@/contexts/AuthContext'
 import { useUIStore } from '@/stores/uiStore'
 import { cn } from '@/lib/utils'
-import LemonLogoVariants from '../icons/LemonLogoVariants'
+import GreenAppleLogo from '../icons/GreenAppleLogo'
 
 export default function SiteHeader() {
   const { user, signOut, profile } = useAuth()
@@ -36,9 +36,9 @@ export default function SiteHeader() {
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6 lg:px-8">
         {/* Logo */}
         <Link to="/" className="group">
-          <LemonLogoVariants
-            size={100}
-            variant="original"
+          <GreenAppleLogo
+            size={120}
+            variant="classic"
             className="group-hover:scale-105 transition-transform"
           />
         </Link>

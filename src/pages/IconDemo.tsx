@@ -1,91 +1,45 @@
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import LemonCalculatorLogo from '@/components/icons/LemonCalculatorLogo'
-import LemonLogoVariants from '@/components/icons/LemonLogoVariants'
+import GreenAppleLogo from '@/components/icons/GreenAppleLogo'
 
 export default function IconDemo() {
   // Custom SVG logo concepts
   const logoVariants = [
     {
-      name: 'Original (Som bilden!) ⭐',
-      description:
-        'Orange citron med grönt "Calcul" och orange "Eat" - exakt som din inspirationsbild',
-      component: <LemonLogoVariants size={120} variant="original" />,
+      name: 'Grönt Äpple Classic ⭐',
+      description: 'Grönt äpple med blad + exakt textfärger från bild 2',
+      component: <GreenAppleLogo size={140} variant="classic" />,
       isSelected: true,
       isWide: true,
     },
     {
-      name: 'Solid Green',
-      description: 'Genomgående grön färg - ren och professionell',
-      component: <LemonLogoVariants size={120} variant="solid" />,
+      name: 'Grönt Äpple Minimal',
+      description: 'Ljusare, mer subtil variant med outline',
+      component: <GreenAppleLogo size={140} variant="minimal" />,
       isSelected: false,
       isWide: true,
     },
     {
-      name: 'Duotone (Gul & Grön)',
-      description: 'Gul citron med gröna linjer och text - fräsch kombination',
-      component: <LemonLogoVariants size={120} variant="duotone" />,
+      name: 'Grönt Äpple Bold',
+      description: 'Mörkare, kraftigare grön färg',
+      component: <GreenAppleLogo size={140} variant="bold" />,
       isSelected: false,
       isWide: true,
     },
     {
-      name: 'Vibrant',
-      description: 'Kraftiga färger - gul citron, turkos/röd text - energisk',
-      component: <LemonLogoVariants size={120} variant="vibrant" />,
+      name: 'Grönt Äpple Rounded',
+      description: 'Rundare, mjukare äpple-form',
+      component: <GreenAppleLogo size={140} variant="rounded" />,
       isSelected: false,
       isWide: true,
     },
     {
-      name: 'Pastel',
-      description: 'Mjuka pastellfärger - elegant och soft',
-      component: <LemonLogoVariants size={120} variant="pastel" />,
+      name: 'Grönt Äpple Flat',
+      description: 'Modern flat design',
+      component: <GreenAppleLogo size={140} variant="flat" />,
       isSelected: false,
       isWide: true,
-    },
-    {
-      name: 'Dark Mode',
-      description: 'Mörk variant för dark mode - blå/röd accenter',
-      component: <LemonLogoVariants size={120} variant="dark" />,
-      isSelected: false,
-      isWide: true,
-    },
-    {
-      name: 'Simple (Icon Only)',
-      description: 'Bara citronen utan text - för mindre utrymmen',
-      component: <LemonLogoVariants size={80} variant="simple" />,
-      isSelected: false,
-      isWide: false,
-    },
-    {
-      name: 'Citron Classic',
-      description: 'Klassisk gul citron med vita progressiva linjer - ren och tydlig',
-      component: <LemonCalculatorLogo size={48} variant="classic" />,
-      isSelected: true,
-    },
-    {
-      name: 'Citron Minimal',
-      description: 'Minimalistisk citron med subtila orange linjer - elegant och modern',
-      component: <LemonCalculatorLogo size={48} variant="minimal" />,
-      isSelected: false,
-    },
-    {
-      name: 'Citron Outline',
-      description: 'Kontur-stil med lineart - unik och artistisk',
-      component: <LemonCalculatorLogo size={48} variant="outline" />,
-      isSelected: false,
-    },
-    {
-      name: 'Citron Gradient',
-      description: 'Modern gradient från gul till orange - djup och färgrik',
-      component: <LemonCalculatorLogo size={48} variant="gradient" />,
-      isSelected: false,
-    },
-    {
-      name: 'Citron Modern',
-      description: 'Flat design med skugga och highlights - professionell känsla',
-      component: <LemonCalculatorLogo size={48} variant="modern" />,
-      isSelected: false,
     },
     {
       name: 'CE Monogram',
@@ -328,13 +282,6 @@ export default function IconDemo() {
             <CardContent className="pt-6">
               <div className="space-y-3">
                 {logoVariants.map(({ name, svg, style, component, isSelected }) => {
-                  // Extract variant from component if it exists
-                  let logoComponent = component
-                  if (component && component.type === LemonCalculatorLogo) {
-                    const variant = component.props.variant
-                    logoComponent = <LemonCalculatorLogo size={40} variant={variant} />
-                  }
-
                   return (
                     <div
                       key={`preview-${name}`}
@@ -344,7 +291,7 @@ export default function IconDemo() {
                           : 'bg-white hover:border-primary-300'
                       }`}
                     >
-                      <div className={style || ''}>{logoComponent || svg}</div>
+                      <div className={style || ''}>{component || svg}</div>
                       <span className="text-xl font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
                         CalculEat
                       </span>
