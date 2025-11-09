@@ -51,14 +51,10 @@ export default function SiteFooter() {
           <div className="lg:col-span-2 space-y-4">
             <Link to="/" className="flex items-center group w-fit">
               <img
-                src="/logo.png"
+                src="/CalculEat-logo.svg"
                 alt="CalculEat Logo"
-                className="h-20 w-20 object-contain transition-transform group-hover:scale-105 -mr-3"
-                style={{ imageRendering: '-webkit-optimize-contrast', mixBlendMode: 'multiply' }}
+                className="h-10 object-contain transition-transform group-hover:scale-105"
               />
-              <span className="text-3xl font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
-                CalculEat
-              </span>
             </Link>
             <p className="text-sm text-neutral-600 max-w-xs">
               Din kompletta plattform för kaloriräkning, måltidsplanering och träningsspårning. Ät

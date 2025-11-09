@@ -44,15 +44,7 @@ export default function ForgotPasswordPage() {
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
             <div className="flex items-center justify-center mb-4">
-              <img
-                src="/logo.png"
-                alt="CalculEat Logo"
-                className="h-20 w-20 object-contain -mr-3"
-                style={{ imageRendering: '-webkit-optimize-contrast', mixBlendMode: 'multiply' }}
-              />
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
-                CalculEat
-              </h1>
+              <img src="/CalculEat-logo.svg" alt="CalculEat Logo" className="h-16 object-contain" />
             </div>
             <p className="text-neutral-600">Återställ ditt lösenord</p>
           </div>
