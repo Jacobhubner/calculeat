@@ -4,6 +4,7 @@ import SiteFooter from '@/components/layout/SiteFooter'
 import FeatureCard from '@/components/FeatureCard'
 import TestimonialCard from '@/components/TestimonialCard'
 import StatsStrip from '@/components/StatsStrip'
+import SmartCalculator from '@/components/SmartCalculator'
 import { Button } from '@/components/ui/button'
 import { Apple, Calculator, Target, CheckCircle, TrendingUp } from 'lucide-react'
 
@@ -119,47 +120,11 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Calculator Teaser */}
+        {/* Calculator */}
         <section className="py-20">
           <div className="container mx-auto px-4 md:px-6 lg:px-8">
             <div className="mx-auto max-w-3xl">
-              <div className="rounded-2xl border bg-white p-8 shadow-lg">
-                <div className="mb-6 flex items-center space-x-3">
-                  <Calculator className="h-8 w-8 text-primary-600" />
-                  <h2 className="text-3xl font-bold text-neutral-900">Smart kalkylator</h2>
-                </div>
-                <p className="mb-6 text-neutral-600">
-                  Beräkna din BMI, TDEE och mer med vår smarta kalkylator.
-                </p>
-
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-neutral-700">Ålder</label>
-                    <input
-                      type="number"
-                      className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
-                      placeholder="25"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-neutral-700">Vikt (kg)</label>
-                    <input
-                      type="number"
-                      className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
-                      placeholder="75"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-neutral-700">Längd (cm)</label>
-                    <input
-                      type="number"
-                      className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
-                      placeholder="180"
-                    />
-                  </div>
-                  <Button className="w-full">Beräkna</Button>
-                </div>
-              </div>
+              <SmartCalculator />
             </div>
           </div>
         </section>

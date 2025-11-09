@@ -271,11 +271,16 @@ export function calculateTDEE(params: TDEEParams): number {
  * Get activity level descriptions
  */
 export const ACTIVITY_DESCRIPTIONS: Record<ActivityLevel, string> = {
-  Sedentary: 'Stillasittande - lite eller ingen träning',
-  'Lightly active': 'Lätt aktiv - lätt träning/sport 1-3 dagar per vecka',
-  'Moderately active': 'Måttligt aktiv - måttlig träning/sport 3-5 dagar per vecka',
-  'Very active': 'Mycket aktiv - hård träning/sport 6-7 dagar per vecka',
-  'Extremely active': 'Extra aktiv - mycket hård träning/sport & fysiskt arbete',
+  Sedentary:
+    'Lite till ingen träning. Passar för personer med minimal fysisk aktivitet (t.ex. kontorsjobb, ingen regelbunden träning).',
+  'Lightly active':
+    'Lätt träning eller sport 1-3 dagar/vecka. Lämplig för de som tränar lätt ibland (t.ex. promenader, lättare jogging, yoga).',
+  'Moderately active':
+    'Måttlig träning eller sport 3-5 dagar/vecka. Ideal för personer med regelbundna måttliga träningsrutiner (t.ex. gymträning, simning, cykling).',
+  'Very active':
+    'Hård träning eller sport 6-7 dagar/vecka. Passar för personer som tränar intensivt nästan dagligen (t.ex. idrottare, intensiv träning).',
+  'Extremely active':
+    'Mycket hård träning, fysiskt arbete eller träning två gånger om dagen. För de med exceptionellt hög energiförbrukning (t.ex. professionella idrottare, tungt kroppsarbete).',
 }
 
 /**
