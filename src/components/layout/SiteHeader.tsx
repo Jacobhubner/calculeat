@@ -1,10 +1,11 @@
 import { Link, useLocation } from 'react-router-dom'
-import { Calculator, Menu, X, LogOut } from 'lucide-react'
+import { Menu, X, LogOut } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Avatar, AvatarFallback } from '../ui/avatar'
 import { useAuth } from '@/contexts/AuthContext'
 import { useUIStore } from '@/stores/uiStore'
 import { cn } from '@/lib/utils'
+import AppleCalculatorLogo from '../icons/AppleCalculatorLogo'
 
 export default function SiteHeader() {
   const { user, signOut, profile } = useAuth()
@@ -35,9 +36,7 @@ export default function SiteHeader() {
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6 lg:px-8">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 group">
-          <div className="rounded-xl bg-gradient-primary p-2 group-hover:scale-105 transition-transform">
-            <Calculator className="h-5 w-5 text-white" />
-          </div>
+          <AppleCalculatorLogo size={40} className="group-hover:scale-105 transition-transform" />
           <span className="text-xl font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
             CalculEat
           </span>
