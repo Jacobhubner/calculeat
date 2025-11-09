@@ -1,17 +1,40 @@
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import AppleCalculatorLogo from '@/components/icons/AppleCalculatorLogo'
+import LemonCalculatorLogo from '@/components/icons/LemonCalculatorLogo'
 
 export default function IconDemo() {
   // Custom SVG logo concepts
   const logoVariants = [
     {
-      name: 'Apple Calculator (Vald!)',
-      description:
-        'Gult äpple med vita kalkyleringslinjer - perfekt balans mellan mat och beräkning',
-      component: <AppleCalculatorLogo size={48} />,
+      name: 'Citron Classic',
+      description: 'Klassisk gul citron med vita progressiva linjer - ren och tydlig',
+      component: <LemonCalculatorLogo size={48} variant="classic" />,
       isSelected: true,
+    },
+    {
+      name: 'Citron Minimal',
+      description: 'Minimalistisk citron med subtila orange linjer - elegant och modern',
+      component: <LemonCalculatorLogo size={48} variant="minimal" />,
+      isSelected: false,
+    },
+    {
+      name: 'Citron Outline',
+      description: 'Kontur-stil med lineart - unik och artistisk',
+      component: <LemonCalculatorLogo size={48} variant="outline" />,
+      isSelected: false,
+    },
+    {
+      name: 'Citron Gradient',
+      description: 'Modern gradient från gul till orange - djup och färgrik',
+      component: <LemonCalculatorLogo size={48} variant="gradient" />,
+      isSelected: false,
+    },
+    {
+      name: 'Citron Modern',
+      description: 'Flat design med skugga och highlights - professionell känsla',
+      component: <LemonCalculatorLogo size={48} variant="modern" />,
+      isSelected: false,
     },
     {
       name: 'CE Monogram',
@@ -253,27 +276,34 @@ export default function IconDemo() {
           <Card>
             <CardContent className="pt-6">
               <div className="space-y-3">
-                {logoVariants.map(({ name, svg, style, component, isSelected }) => (
-                  <div
-                    key={`preview-${name}`}
-                    className={`flex items-center gap-3 p-4 border rounded-xl hover:shadow-md transition-all ${
-                      isSelected
-                        ? 'bg-primary-50 border-primary-300 ring-2 ring-primary-400'
-                        : 'bg-white hover:border-primary-300'
-                    }`}
-                  >
-                    <div className={style || ''}>
-                      {component ? <AppleCalculatorLogo size={40} /> : svg}
+                {logoVariants.map(({ name, svg, style, component, isSelected }) => {
+                  // Extract variant from component if it exists
+                  let logoComponent = component
+                  if (component && component.type === LemonCalculatorLogo) {
+                    const variant = component.props.variant
+                    logoComponent = <LemonCalculatorLogo size={40} variant={variant} />
+                  }
+
+                  return (
+                    <div
+                      key={`preview-${name}`}
+                      className={`flex items-center gap-3 p-4 border rounded-xl hover:shadow-md transition-all ${
+                        isSelected
+                          ? 'bg-primary-50 border-primary-300 ring-2 ring-primary-400'
+                          : 'bg-white hover:border-primary-300'
+                      }`}
+                    >
+                      <div className={style || ''}>{logoComponent || svg}</div>
+                      <span className="text-xl font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
+                        CalculEat
+                      </span>
+                      <span className="ml-auto text-xs text-neutral-400">
+                        {name}
+                        {isSelected && ' ✓'}
+                      </span>
                     </div>
-                    <span className="text-xl font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
-                      CalculEat
-                    </span>
-                    <span className="ml-auto text-xs text-neutral-400">
-                      {name}
-                      {isSelected && ' ✓'}
-                    </span>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
             </CardContent>
           </Card>
