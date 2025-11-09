@@ -22,9 +22,9 @@ export default function FeaturesPage() {
       icon: Apple,
       title: 'Kostloggning',
       description:
-        'Logga måltider med Noom-färgsystemet, spara recept och håll koll på ditt kaloriintag med smarta verktyg.',
+        'Logga måltider med trafikljussystem baserat på kaloritäthet, spara recept och håll koll på ditt kaloriintag.',
       details: [
-        'Noom trafikljussystem (Grön/Gul/Orange)',
+        'Trafikljussystem för kaloritäthet (Grön/Gul/Orange)',
         'Automatisk makroberäkning',
         'Spara favoritrecept och måltider',
         'Kaloriräkning i realtid',
@@ -80,9 +80,9 @@ export default function FeaturesPage() {
     },
     {
       icon: Lightbulb,
-      title: 'Noom-systemet',
+      title: 'Kaloritäthetssystemet',
       description:
-        'Smartare matval med färgkodade livsmedel baserat på kaloritäthet - ät mer grönt, lagom gult, mindre orange.',
+        'Smartare matval med färgkodade livsmedel baserat på kaloritäthet (volumetrics) - ät mer grönt, lagom gult, mindre orange.',
       details: [
         'Automatisk färgklassificering av mat',
         'Daglig färgfördelning',
