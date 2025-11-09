@@ -116,12 +116,12 @@ export default function FeaturesPage() {
       icon: Database,
       title: 'Livsmedelsdatabas & Recept',
       description:
-        'Tillgång till omfattande livsmedelsdatabaser från SLV och USDA, plus din egen personliga matbibliotek.',
+        'Tillgång till en stor databas med livsmedel, plus möjlighet att skapa din egen personliga matbibliotek.',
       details: [
-        'SLV (Livsmedelsverket) databas',
-        'USDA livsmedelsdatabas',
-        'Skapa egna livsmedel',
+        'Omfattande livsmedelsdatabas',
+        'Skapa och spara egna livsmedel',
         'Recepthantering med automatisk näringsuträkning',
+        'Favoritrecept och måltidsmallar',
       ],
     },
     {
