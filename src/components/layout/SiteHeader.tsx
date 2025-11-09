@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { Dumbbell, Menu, X, LogOut } from 'lucide-react'
+import { Menu, X, LogOut } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Avatar, AvatarFallback } from '../ui/avatar'
 import { useAuth } from '@/contexts/AuthContext'
@@ -34,12 +34,24 @@ export default function SiteHeader() {
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 bg-blur shadow-sm">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6 lg:px-8">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 group">
-          <div className="rounded-xl bg-gradient-primary p-2 group-hover:scale-105 transition-transform">
-            <Dumbbell className="h-5 w-5 text-white" />
-          </div>
-          <span className="text-xl font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
-            CalculEat
+        <Link to="/" className="flex items-center gap-3 group">
+          <svg
+            viewBox="0 0 60 80"
+            className="h-10 w-10 transition-transform group-hover:scale-105"
+            fill="none"
+          >
+            {/* Lemon body */}
+            <ellipse cx="30" cy="45" rx="22" ry="28" fill="#f9ca24" />
+            {/* Stem */}
+            <path d="M 30 17 Q 28 14, 30 12 Q 32 14, 30 17 Z" fill="#8B4513" />
+            {/* White lines - progressive length */}
+            <rect x="12" y="32" width="16" height="3" rx="1.5" fill="white" />
+            <rect x="12" y="42" width="24" height="3" rx="1.5" fill="white" />
+            <rect x="12" y="52" width="32" height="3" rx="1.5" fill="white" />
+          </svg>
+          <span className="text-xl font-bold">
+            <span style={{ color: '#52b788' }}>Calcul</span>
+            <span style={{ color: '#e76f51' }}>Eat</span>
           </span>
         </Link>
 
