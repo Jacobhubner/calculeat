@@ -2,61 +2,56 @@ import { Link } from 'react-router-dom'
 import SiteHeader from '@/components/layout/SiteHeader'
 import SiteFooter from '@/components/layout/SiteFooter'
 import FeatureCard from '@/components/FeatureCard'
-import TestimonialCard from '@/components/TestimonialCard'
-import StatsStrip from '@/components/StatsStrip'
 import SmartCalculator from '@/components/SmartCalculator'
+import { HeroSection } from '@/components/HeroSection'
+import { HowItWorks } from '@/components/HowItWorks'
+import { SuccessStories } from '@/components/SuccessStories'
 import { Button } from '@/components/ui/button'
-import { Apple, Calculator, Target, CheckCircle, TrendingUp } from 'lucide-react'
+import { Apple, Calculator, Target, TrendingUp, BookOpen, Heart, CheckCircle } from 'lucide-react'
 
 export default function HomePage() {
-  const stats = [
-    { value: '10K+', label: 'Aktiva användare' },
-    { value: '500K+', label: 'Loggade måltider' },
-    { value: '2M+', label: 'Kaloriberäkningar' },
-    { value: '4.9/5', label: 'Användarbetyg' },
-  ]
-
   const features = [
-    {
-      icon: Apple,
-      title: 'Kostloggning',
-      description: 'Logga måltider, makron och följ dina näringsintag i realtid.',
-    },
     {
       icon: Calculator,
       title: 'Smart kalkyler',
-      description: 'BMI, TDEE och mer – alla verktyg du behöver på ett ställe.',
+      description:
+        'Beräkna BMR, TDEE och makron med vetenskapligt beprövade formler. Få personaliserade rekommendationer baserat på dina mål.',
+      accentColor: 'primary' as const,
+    },
+    {
+      icon: Apple,
+      title: 'Kostloggning',
+      description:
+        'Logga dina måltider enkelt med vår omfattande matdatabas. Spara favoritmåltider och recept för snabb återanvändning.',
+      accentColor: 'accent' as const,
     },
     {
       icon: Target,
       title: 'Målsättning',
-      description: 'Sätt och följ personliga mål för vikt, kalorier och makron.',
+      description:
+        'Sätt specifika mål för vikt, kalorier och makrofördelning. Få daglig feedback på din progress och justera efter behov.',
+      accentColor: 'primary' as const,
     },
     {
       icon: TrendingUp,
       title: 'Progress tracking',
-      description: 'Följ din utveckling över tid med detaljerade statistik och grafer.',
-    },
-  ]
-
-  const testimonials = [
-    {
-      quote:
-        'CalculEat har helt förändrat min relation till mat. Jag kan nu se exakt vad jag äter och följa min framgång över tid.',
-      author: 'Emma Svensson',
-      role: 'Nöjd användare',
+      description:
+        'Visualisera din utveckling med interaktiva grafer och detaljerad statistik. Se trender och mönster i dina matvanor över tid.',
+      accentColor: 'accent' as const,
     },
     {
-      quote:
-        'Jag behöver vara precis med mina makron. CalculEat gör det enkelt och jag kan följa min progression dagligen.',
-      author: 'Marcus Andersson',
-      role: 'Fitnessentusiast',
+      icon: BookOpen,
+      title: 'Recepthantering',
+      description:
+        'Skapa och spara dina egna recept med automatisk näringsberäkning. Dela med vänner eller håll dem privata.',
+      accentColor: 'primary' as const,
     },
     {
-      quote:
-        'Perfekt för att hålla koll på kaloriintaget! Appen guidar mig genom att äta smart. Jag har gått ner 10kg på 3 månader.',
-      author: 'Sara Lindström',
-      role: 'Viktminskning 10kg',
+      icon: Heart,
+      title: 'Hälsoinsikter',
+      description:
+        'Få personliga rekommendationer baserat på dina matvanor. Upptäck näringsgap och optimera din kost för bättre hälsa.',
+      accentColor: 'accent' as const,
     },
   ]
 
@@ -65,133 +60,92 @@ export default function HomePage() {
       <SiteHeader />
 
       <main>
-        {/* Hero Section */}
-        <section className="container mx-auto px-4 py-20 md:px-6 lg:px-8">
-          <div className="mx-auto max-w-4xl text-center">
-            <h1 className="mb-6 text-5xl font-bold tracking-tight text-neutral-900 md:text-6xl">
-              Ta kontroll över din kost.
-              <br />
-              Enkelt med{' '}
-              <span className="bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
-                CalculEat
-              </span>
-              .
-            </h1>
-            <p className="mb-8 text-xl text-neutral-600">
-              Verktyget som gör det enkelt och inspirerande att nå dina hälsomål.
-            </p>
-            <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <Button size="lg" asChild>
-                <Link to="/">Skapa konto</Link>
-              </Button>
-              <Button variant="secondary" size="lg" asChild>
-                <Link to="/features">Utforska funktioner</Link>
-              </Button>
-            </div>
-          </div>
+        {/* Hero Section - New MyNetDiary-inspired design */}
+        <HeroSection />
 
-          {/* Dashboard Mockup */}
-          <div className="mt-16">
-            <div className="relative mx-auto max-w-6xl overflow-hidden rounded-2xl border-4 border-neutral-200 shadow-2xl">
-              <div className="bg-neutral-100 p-8">
-                <div className="aspect-video bg-gradient-to-br from-primary-500 to-accent-500" />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Value Propositions */}
-        <section className="bg-neutral-50 py-20">
-          <div className="container mx-auto px-4 md:px-6 lg:px-8">
-            <div className="mx-auto max-w-2xl text-center">
-              <h2 className="mb-4 text-3xl font-bold text-neutral-900 md:text-4xl">
-                Allt du behöver i ett verktyg
+        {/* Features Grid Section */}
+        <section className="py-20 md:py-28 bg-white">
+          <div className="container mx-auto px-4">
+            <div className="text-center max-w-3xl mx-auto mb-16 md:mb-20">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-neutral-900 mb-4">
+                Allt du behöver för att nå dina mål
               </h2>
-              <p className="text-lg text-neutral-600">
-                CalculEat ger dig alla verktyg för att nå dina hälsomål
+              <p className="text-lg md:text-xl text-neutral-600">
+                CalculEat kombinerar kraftfulla verktyg med en enkel användarupplevelse
               </p>
             </div>
 
-            <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
               {features.map((feature, index) => (
                 <FeatureCard key={index} {...feature} />
               ))}
             </div>
+
+            {/* Link to features page */}
+            <div className="text-center mt-12">
+              <Button size="lg" variant="outline" asChild>
+                <Link to="/features">Se alla funktioner i detalj</Link>
+              </Button>
+            </div>
           </div>
         </section>
 
-        {/* Calculator */}
-        <section className="py-20">
-          <div className="container mx-auto px-4 md:px-6 lg:px-8">
-            <div className="mx-auto max-w-3xl">
+        {/* Calculator Section - BEHÅLLS MED SAMMA FUNKTIONALITET */}
+        <section id="calculator" className="py-20 md:py-28 bg-neutral-50">
+          <div className="container mx-auto px-4">
+            <div className="text-center max-w-3xl mx-auto mb-12">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-neutral-900 mb-4">
+                Prova vår kalkylator
+              </h2>
+              <p className="text-lg md:text-xl text-neutral-600">
+                Få ditt personliga kaloribehov baserat på vetenskapliga formler
+              </p>
+            </div>
+
+            <div className="max-w-3xl mx-auto">
               <SmartCalculator />
             </div>
           </div>
         </section>
 
-        {/* Stats Strip */}
-        <StatsStrip stats={stats} />
+        {/* How It Works - Process section */}
+        <HowItWorks />
 
-        {/* Testimonials */}
-        <section className="bg-white py-20">
-          <div className="container mx-auto px-4 md:px-6 lg:px-8">
-            <div className="mx-auto max-w-2xl text-center">
-              <h2 className="mb-4 text-3xl font-bold text-neutral-900 md:text-4xl">
-                Vad användare säger
-              </h2>
-              <p className="text-lg text-neutral-600">Tusentals användare litar på CalculEat</p>
-            </div>
-
-            <div className="mt-12 grid gap-6 md:grid-cols-3">
-              {testimonials.map((testimonial, index) => (
-                <TestimonialCard key={index} {...testimonial} />
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Features Teaser */}
-        <section className="bg-neutral-50 py-20">
-          <div className="container mx-auto px-4 md:px-6 lg:px-8">
-            <div className="mx-auto max-w-4xl text-center">
-              <h2 className="mb-6 text-3xl font-bold text-neutral-900 md:text-4xl">
-                Upptäck alla funktioner
-              </h2>
-              <p className="mb-8 text-lg text-neutral-600">
-                Utforska hur CalculEat kan hjälpa dig nå dina mål
-              </p>
-              <Button size="lg" asChild>
-                <Link to="/features">Se alla funktioner</Link>
-              </Button>
-            </div>
-          </div>
-        </section>
+        {/* Success Stories - Testimonials with better design */}
+        <SuccessStories />
 
         {/* CTA Footer */}
-        <section className="bg-gradient-to-br from-primary-600 to-primary-700 py-20 text-white">
-          <div className="container mx-auto px-4 text-center md:px-6 lg:px-8">
-            <h2 className="mb-4 text-3xl font-bold md:text-4xl">Redo att komma igång?</h2>
-            <p className="mb-8 text-lg text-primary-100">
-              Skapa ditt konto idag och börja din resa mot ett hälsosammare liv.
+        <section className="bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 py-20 md:py-28 text-white relative overflow-hidden">
+          {/* Background pattern */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(255,139,0,0.15),transparent_50%)]" />
+
+          <div className="container mx-auto px-4 text-center relative z-10">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
+              Redo att förändra dina matvanor?
+            </h2>
+            <p className="text-lg md:text-xl text-primary-100 mb-12 max-w-2xl mx-auto">
+              Gå med tusentals användare som redan har nått sina hälsomål med CalculEat
             </p>
 
-            <div className="mb-12 flex flex-wrap justify-center gap-4">
+            <div className="mb-12 flex flex-wrap justify-center gap-6 md:gap-8">
               <div className="flex items-center space-x-2">
-                <CheckCircle className="h-5 w-5 text-primary-200" />
-                <span className="text-primary-100">Ingen reklam</span>
+                <CheckCircle className="h-6 w-6 text-accent-400" />
+                <span className="text-primary-50 font-medium">Helt gratis att börja</span>
               </div>
               <div className="flex items-center space-x-2">
-                <CheckCircle className="h-5 w-5 text-primary-200" />
-                <span className="text-primary-100">Ditt data, din kontroll</span>
+                <CheckCircle className="h-6 w-6 text-accent-400" />
+                <span className="text-primary-50 font-medium">Ingen reklam</span>
               </div>
               <div className="flex items-center space-x-2">
-                <CheckCircle className="h-5 w-5 text-primary-200" />
-                <span className="text-primary-100">Exportera dina data</span>
+                <CheckCircle className="h-6 w-6 text-accent-400" />
+                <span className="text-primary-50 font-medium">
+                  Exportera dina data när som helst
+                </span>
               </div>
             </div>
 
-            <Button size="lg" variant="secondary">
-              Skapa konto gratis
+            <Button size="lg" variant="accent" className="shadow-2xl" asChild>
+              <Link to="/register">Skapa konto gratis</Link>
             </Button>
           </div>
         </section>
