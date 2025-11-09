@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { Dumbbell, Menu, X, LogOut } from 'lucide-react'
+import { Menu, X, LogOut } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Avatar, AvatarFallback } from '../ui/avatar'
 import { useAuth } from '@/contexts/AuthContext'
@@ -35,9 +35,57 @@ export default function SiteHeader() {
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6 lg:px-8">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 group">
-          <div className="rounded-xl bg-gradient-primary p-2 group-hover:scale-105 transition-transform">
-            <Dumbbell className="h-5 w-5 text-white" />
-          </div>
+          <svg
+            viewBox="0 0 200 200"
+            className="h-10 w-10 transition-transform group-hover:scale-105"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            {/* Background gradient circle */}
+            <defs>
+              <linearGradient id="orangeGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#FFF3B0" />
+                <stop offset="100%" stopColor="#FF9A3C" />
+              </linearGradient>
+            </defs>
+            <circle cx="100" cy="100" r="95" fill="url(#orangeGradient)" />
+
+            {/* Green leaves on top */}
+            <ellipse cx="75" cy="35" rx="25" ry="18" fill="#3BB54A" transform="rotate(-30 75 35)" />
+            <ellipse
+              cx="125"
+              cy="30"
+              rx="35"
+              ry="22"
+              fill="#3BB54A"
+              transform="rotate(15 125 30)"
+            />
+
+            {/* White person figure */}
+            {/* Head */}
+            <circle cx="100" cy="75" r="18" fill="#FFFFFF" />
+            {/* Body */}
+            <ellipse cx="100" cy="125" rx="35" ry="45" fill="#FFFFFF" />
+
+            {/* Green calculator in the middle */}
+            <rect x="85" y="110" width="30" height="38" rx="3" fill="#3BB54A" />
+            {/* Calculator screen */}
+            <rect x="88" y="114" width="24" height="8" rx="1" fill="#FFFFFF" />
+            {/* Calculator buttons */}
+            <rect x="88" y="126" width="7" height="5" rx="1" fill="#FFFFFF" />
+            <rect x="98" y="126" width="7" height="5" rx="1" fill="#FFFFFF" />
+            <rect x="108" y="126" width="4" height="5" rx="1" fill="#FFFFFF" />
+            <line x1="110" y1="128.5" x2="112" y2="128.5" stroke="#3BB54A" strokeWidth="1" />
+            <rect x="88" y="135" width="7" height="5" rx="1" fill="#FFFFFF" />
+            <line x1="91.5" y1="136" x2="91.5" y2="139" stroke="#3BB54A" strokeWidth="1" />
+            <line x1="89.5" y1="137.5" x2="93.5" y2="137.5" stroke="#3BB54A" strokeWidth="1" />
+            <rect x="98" y="135" width="7" height="5" rx="1" fill="#FFFFFF" />
+            <line x1="101.5" y1="136" x2="101.5" y2="139" stroke="#3BB54A" strokeWidth="1" />
+            <rect x="108" y="135" width="4" height="5" rx="1" fill="#FFFFFF" />
+            <line x1="110" y1="137.5" x2="112" y2="137.5" stroke="#3BB54A" strokeWidth="1" />
+            <rect x="88" y="142" width="17" height="4" rx="1" fill="#FFFFFF" />
+            <rect x="108" y="142" width="4" height="4" rx="1" fill="#FFFFFF" />
+          </svg>
           <span className="text-xl font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
             CalculEat
           </span>
