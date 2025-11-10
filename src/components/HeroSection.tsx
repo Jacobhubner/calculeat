@@ -1,7 +1,6 @@
 import { Link } from 'react-router'
 import { ArrowRight, Calculator } from 'lucide-react'
 import { Button } from './ui/button'
-import { ImagePlaceholder } from './ImagePlaceholder'
 
 export function HeroSection() {
   return (
@@ -71,14 +70,12 @@ export function HeroSection() {
           {/* Right column - Hero image/mockup */}
           <div className="flex justify-center lg:justify-end">
             <div className="w-full max-w-lg">
-              <ImagePlaceholder
-                description="Dashboard mockup - Visa översikt av dagens kaloriintag, makrofördelning och progress rings"
-                filename="hero-dashboard-mockup.png"
+              <img
+                src="/hero-dashboard-mockup.png"
+                alt="Dashboard mockup - Visa översikt av dagens kaloriintag, makrofördelning och progress rings"
+                className="shadow-2xl w-full aspect-[3/4] rounded-3xl object-cover"
                 width={600}
                 height={800}
-                aspectRatio="aspect-[3/4]"
-                rounded="rounded-3xl"
-                className="shadow-2xl w-full"
               />
             </div>
           </div>
