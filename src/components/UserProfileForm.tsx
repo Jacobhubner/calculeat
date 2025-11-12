@@ -50,8 +50,8 @@ export default function UserProfileForm() {
     <div className="relative inline-flex ml-2">
       <Info
         className="h-4 w-4 text-neutral-400 cursor-help"
-        onMouseEnter={() => setShowTooltips({ ...showTooltips, [field]: true })}
-        onMouseLeave={() => setShowTooltips({ ...showTooltips, [field]: false })}
+        onMouseEnter={() => setShowTooltips(prev => ({ ...prev, [field]: true }))}
+        onMouseLeave={() => setShowTooltips(prev => ({ ...prev, [field]: false }))}
       />
       {showTooltips[field] && (
         <div className="absolute bottom-full left-0 mb-2 w-64 p-3 bg-neutral-800 text-white text-sm rounded-lg shadow-lg z-10">
