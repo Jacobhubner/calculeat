@@ -3,7 +3,7 @@
  * Beräknar kalorimål baserat på användarens mål (viktnedgång, bibehålla, viktuppgång)
  */
 
-import type { CalorieGoal } from '../types'
+import type { CalorieGoal, DeficitLevel } from '../types'
 
 /**
  * Kaloriöverskott/underskott för olika mål
@@ -41,6 +41,7 @@ export interface CalorieGoalParams {
   tdee: number
   goal: CalorieGoal
   bmr?: number // För att sätta minimum
+  deficitLevel?: DeficitLevel // För viktnedgång
 }
 
 export interface CalorieRange {
@@ -53,17 +54,30 @@ export interface CalorieRange {
 /**
  * Beräkna kalorier för viktnedgång
  */
-function calculateWeightLossCalories(tdee: number, bmr: number = 1200): CalorieRange {
-  // Moderata underskott: -500 kcal/dag = ~0.5 kg/vecka
-  const target = Math.max(tdee - 500, bmr)
-  const min = Math.max(tdee - 750, bmr) // Max -750 för säkerhets skull
-  const max = tdee - 300 // Minst -300 för att se resultat
+function calculateWeightLossCalories(
+  tdee: number,
+  bmr: number = 1200,
+  deficitLevel: DeficitLevel = 'Moderate'
+): CalorieRange {
+  // Deficitlägen med olika veckoupptempo
+  const deficits: Record<DeficitLevel, { daily: number; weekly: number }> = {
+    Slow: { daily: -300, weekly: -0.3 }, // ~0.3 kg/vecka
+    Moderate: { daily: -500, weekly: -0.5 }, // ~0.5 kg/vecka
+    Aggressive: { daily: -750, weekly: -0.75 }, // ~0.75 kg/vecka
+  }
+
+  const deficit = deficits[deficitLevel]
+  const target = Math.max(tdee + deficit.daily, bmr)
+
+  // Skapa ett intervall ±100 kcal från target
+  const min = Math.max(target - 100, bmr)
+  const max = target + 100
 
   return {
     min: Math.round(min),
     max: Math.round(max),
     target: Math.round(target),
-    weeklyChange: -0.5,
+    weeklyChange: deficit.weekly,
   }
 }
 
@@ -103,18 +117,18 @@ function calculateWeightGainCalories(tdee: number): CalorieRange {
  * Huvudfunktion för kalorimål
  */
 export function calculateCalorieGoal(params: CalorieGoalParams): CalorieRange {
-  const { tdee, goal, bmr = 1200 } = params
+  const { tdee, goal, bmr = 1200, deficitLevel = 'Moderate' } = params
 
   if (tdee <= 0) {
     throw new Error('TDEE måste vara ett positivt värde')
   }
 
   switch (goal) {
-    case 'lose_weight':
-      return calculateWeightLossCalories(tdee, bmr)
-    case 'maintain_weight':
+    case 'Weight loss':
+      return calculateWeightLossCalories(tdee, bmr, deficitLevel)
+    case 'Maintain weight':
       return calculateMaintenanceCalories(tdee)
-    case 'gain_weight':
+    case 'Weight gain':
       return calculateWeightGainCalories(tdee)
     default:
       throw new Error(`Okänt kalorimål: ${goal}`)
@@ -145,9 +159,9 @@ export function calculateMacros(params: MacroParams): MacroSplit {
   // Proteinbehov: ~1.6-2.2g per kg kroppsvikt beroende på mål
   let proteinPerKg: number
 
-  if (goal === 'lose_weight') {
+  if (goal === 'Weight loss') {
     proteinPerKg = 2.0 // Högre protein vid viktnedgång för att bevara muskelmassa
-  } else if (goal === 'gain_weight') {
+  } else if (goal === 'Weight gain') {
     proteinPerKg = 1.8 // Protein för muskeluppbyggnad
   } else {
     proteinPerKg = 1.6 // Underhåll
@@ -157,7 +171,7 @@ export function calculateMacros(params: MacroParams): MacroSplit {
   const proteinCalories = proteinGrams * 4 // 4 kcal per gram protein
 
   // Fett: 25-30% av totala kalorier
-  const fatPercentage = goal === 'lose_weight' ? 0.25 : 0.3
+  const fatPercentage = goal === 'Weight loss' ? 0.25 : 0.3
   const fatCalories = Math.round(calories * fatPercentage)
   const fatGrams = Math.round(fatCalories / 9) // 9 kcal per gram fett
 

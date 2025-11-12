@@ -6,7 +6,10 @@
       "Bash(git push:*)",
       "Bash(dir:*)",
       "Bash(npm run build:*)",
-      "Bash(nul)"
+      "Bash(nul)",
+      "Bash(python:*)",
+      "Bash(npx supabase migration up)",
+      "Bash(npx supabase:*)"
     ],
     "deny": [],
     "ask": []

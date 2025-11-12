@@ -84,6 +84,7 @@ export interface UserProfile {
   // Goals
   calorie_goal?: CalorieGoal
   deficit_level?: DeficitLevel
+  target_weight_kg?: number
 
   // Calculated values
   bmr?: number
@@ -127,6 +128,7 @@ export interface UserProfileFormData {
   // Goals
   calorie_goal?: CalorieGoal
   deficit_level?: DeficitLevel
+  target_weight_kg?: number
 
   // Macros
   fat_min_percent?: number

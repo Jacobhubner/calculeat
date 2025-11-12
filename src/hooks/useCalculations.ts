@@ -13,9 +13,11 @@ import {
   calculateBMI,
   getBMICategory,
   calculateIdealWeightRange,
+  calculateTimeToGoal,
   type CalorieRange,
   type MacroSplit,
 } from '@/lib/calculations'
+import { useDebounce } from './useDebounce'
 
 export interface CalculationResults {
   bmr: number | null
@@ -26,11 +28,15 @@ export interface CalculationResults {
   bmi: number | null
   bmiCategory: 'undervikt' | 'normalvikt' | 'övervikt' | 'fetma' | null
   idealWeightRange: { min: number; max: number } | null
+  timeToGoal: string | null
 }
 
 export function useCalculations(profile: UserProfile | null | undefined): CalculationResults {
+  // Debounce profile updates for live calculations (300ms delay)
+  const debouncedProfile = useDebounce(profile, 300)
+
   return useMemo(() => {
-    if (!profile) {
+    if (!debouncedProfile) {
       return {
         bmr: null,
         tdee: null,
@@ -40,65 +46,124 @@ export function useCalculations(profile: UserProfile | null | undefined): Calcul
         bmi: null,
         bmiCategory: null,
         idealWeightRange: null,
+        timeToGoal: null,
       }
     }
 
     try {
       // Beräkna ålder
-      const age = profile.birth_date ? calculateAge(profile.birth_date) : null
+      const age = debouncedProfile.birth_date ? calculateAge(debouncedProfile.birth_date) : null
 
       // Beräkna BMI
       const bmi =
-        profile.weight_kg && profile.height_cm
-          ? calculateBMI(profile.weight_kg, profile.height_cm)
+        debouncedProfile.weight_kg && debouncedProfile.height_cm
+          ? calculateBMI(debouncedProfile.weight_kg, debouncedProfile.height_cm)
           : null
 
       const bmiCategory = bmi ? getBMICategory(bmi) : null
 
       // Ideal vikt range
-      const idealWeightRange = profile.height_cm
-        ? calculateIdealWeightRange(profile.height_cm)
+      const idealWeightRange = debouncedProfile.height_cm
+        ? calculateIdealWeightRange(debouncedProfile.height_cm)
         : null
 
       // Beräkna BMR om vi har all nödvändig data
       let bmr: number | null = null
-      if (profile.weight_kg && profile.height_cm && age && profile.gender && profile.bmr_formula) {
+      if (
+        debouncedProfile.weight_kg &&
+        debouncedProfile.height_cm &&
+        age &&
+        debouncedProfile.gender &&
+        debouncedProfile.bmr_formula
+      ) {
         bmr = calculateBMR(
           {
-            weight: profile.weight_kg,
-            height: profile.height_cm,
+            weight: debouncedProfile.weight_kg,
+            height: debouncedProfile.height_cm,
             age,
-            gender: profile.gender,
-            bodyFatPercentage: profile.body_fat_percentage || undefined,
+            gender: debouncedProfile.gender,
+            bodyFatPercentage: debouncedProfile.body_fat_percentage || undefined,
           },
-          profile.bmr_formula
+          debouncedProfile.bmr_formula
         )
       }
 
-      // Beräkna TDEE om vi har BMR och aktivitetsnivå
+      // Beräkna TDEE om vi har BMR och PAL-system
       let tdee: number | null = null
-      if (bmr && profile.activity_level) {
-        tdee = calculateTDEE(bmr, profile.activity_level)
+      if (bmr && debouncedProfile.pal_system && debouncedProfile.gender) {
+        // För vissa PAL-system behövs activity_level
+        const requiresActivityLevel = [
+          'FAO/WHO/UNU based PAL values',
+          'DAMNRIPPED PAL values',
+          'Pro Physique PAL values',
+          'Basic internet PAL values',
+        ].includes(debouncedProfile.pal_system)
+
+        const hasActivityLevel = debouncedProfile.activity_level
+        const isCustomPAL = debouncedProfile.pal_system === 'Custom PAL'
+        const isFitnessStuff = debouncedProfile.pal_system === 'Fitness Stuff PAL values'
+
+        if (
+          (requiresActivityLevel && hasActivityLevel) ||
+          (isCustomPAL && debouncedProfile.custom_pal) ||
+          isFitnessStuff
+        ) {
+          tdee = calculateTDEE({
+            bmr,
+            palSystem: debouncedProfile.pal_system,
+            activityLevel: debouncedProfile.activity_level || 'Sedentary',
+            gender: debouncedProfile.gender,
+            intensityLevel: debouncedProfile.intensity_level,
+            trainingFrequencyPerWeek: debouncedProfile.training_frequency_per_week,
+            trainingDurationMinutes: debouncedProfile.training_duration_minutes,
+            dailySteps: debouncedProfile.daily_steps,
+            customPAL: debouncedProfile.custom_pal,
+          })
+        }
       }
 
       // Beräkna kalorimål om vi har TDEE och mål
       let calorieGoal: CalorieRange | null = null
-      if (tdee && profile.calorie_goal) {
+      if (tdee && debouncedProfile.calorie_goal) {
         calorieGoal = calculateCalorieGoal({
           tdee,
-          goal: profile.calorie_goal,
+          goal: debouncedProfile.calorie_goal,
           bmr: bmr || undefined,
+          deficitLevel: debouncedProfile.deficit_level,
         })
       }
 
       // Beräkna makros om vi har kalorimål och vikt
       let macros: MacroSplit | null = null
-      if (calorieGoal && profile.weight_kg && profile.calorie_goal) {
+      if (calorieGoal && debouncedProfile.weight_kg && debouncedProfile.calorie_goal) {
         macros = calculateMacros({
           calories: calorieGoal.target,
-          weight: profile.weight_kg,
-          goal: profile.calorie_goal,
+          weight: debouncedProfile.weight_kg,
+          goal: debouncedProfile.calorie_goal,
         })
+      }
+
+      // Beräkna tid till målvikt
+      let timeToGoal: string | null = null
+      if (
+        debouncedProfile.target_weight_kg &&
+        debouncedProfile.weight_kg &&
+        calorieGoal &&
+        calorieGoal.weeklyChange !== 0
+      ) {
+        const timeCalc = calculateTimeToGoal(
+          debouncedProfile.weight_kg,
+          debouncedProfile.target_weight_kg,
+          calorieGoal.weeklyChange
+        )
+
+        if (timeCalc.weeks > 0) {
+          if (timeCalc.months >= 1) {
+            timeToGoal = `${timeCalc.months} månader (${timeCalc.weeks} veckor)`
+          } else {
+            timeToGoal = `${timeCalc.weeks} veckor`
+          }
+        }
       }
 
       return {
@@ -110,6 +175,7 @@ export function useCalculations(profile: UserProfile | null | undefined): Calcul
         bmi,
         bmiCategory,
         idealWeightRange,
+        timeToGoal,
       }
     } catch (error) {
       console.error('Fel vid beräkningar:', error)
@@ -122,7 +188,8 @@ export function useCalculations(profile: UserProfile | null | undefined): Calcul
         bmi: null,
         bmiCategory: null,
         idealWeightRange: null,
+        timeToGoal: null,
       }
     }
-  }, [profile])
+  }, [debouncedProfile])
 }
