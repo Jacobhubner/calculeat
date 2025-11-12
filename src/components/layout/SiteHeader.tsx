@@ -1,5 +1,6 @@
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Menu, X, LogOut } from 'lucide-react'
+import { toast } from 'sonner'
 import { Button } from '../ui/button'
 import { Avatar, AvatarFallback } from '../ui/avatar'
 import { useAuth } from '@/contexts/AuthContext'
@@ -10,8 +11,20 @@ export default function SiteHeader() {
   const { user, signOut, profile } = useAuth()
   const { mobileMenuOpen, toggleMobileMenu, setMobileMenuOpen } = useUIStore()
   const location = useLocation()
+  const navigate = useNavigate()
 
   const isActive = (path: string) => location.pathname === path
+
+  const handleSignOut = async () => {
+    try {
+      await signOut()
+      toast.success('Du har loggats ut')
+      navigate('/', { replace: true })
+    } catch (error) {
+      toast.error('Något gick fel vid utloggning')
+      console.error('Sign out error:', error)
+    }
+  }
 
   const navLinks = [
     { to: '/', label: 'Hem' },
@@ -84,7 +97,7 @@ export default function SiteHeader() {
                   <AvatarFallback className="text-xs">{getInitials()}</AvatarFallback>
                 </Avatar>
               </Link>
-              <Button variant="ghost" size="sm" onClick={() => signOut()}>
+              <Button variant="ghost" size="sm" onClick={handleSignOut}>
                 <LogOut className="h-4 w-4 mr-2" />
                 Logga ut
               </Button>
@@ -163,7 +176,7 @@ export default function SiteHeader() {
                     variant="ghost"
                     size="sm"
                     onClick={() => {
-                      signOut()
+                      handleSignOut()
                       setMobileMenuOpen(false)
                     }}
                     className="justify-start"

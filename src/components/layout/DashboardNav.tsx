@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard,
   User,
@@ -12,6 +12,7 @@ import {
   Calendar,
   History,
 } from 'lucide-react'
+import { toast } from 'sonner'
 import { useAuth } from '@/contexts/AuthContext'
 import { useUIStore } from '@/stores/uiStore'
 import { cn } from '@/lib/utils'
@@ -22,8 +23,20 @@ export default function DashboardNav() {
   const { user, profile, signOut } = useAuth()
   const { sidebarCollapsed, toggleSidebar } = useUIStore()
   const location = useLocation()
+  const navigate = useNavigate()
 
   const isActive = (path: string) => location.pathname === path
+
+  const handleSignOut = async () => {
+    try {
+      await signOut()
+      toast.success('Du har loggats ut')
+      navigate('/', { replace: true })
+    } catch (error) {
+      toast.error('Något gick fel vid utloggning')
+      console.error('Sign out error:', error)
+    }
+  }
 
   const navItems = [
     {
@@ -168,7 +181,7 @@ export default function DashboardNav() {
           </Link>
 
           <button
-            onClick={() => signOut()}
+            onClick={handleSignOut}
             className={cn(
               'w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-error-600 hover:bg-error-50 transition-colors relative group',
               sidebarCollapsed && 'justify-center px-2'

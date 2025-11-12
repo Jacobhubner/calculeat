@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { User, Session } from '@supabase/supabase-js'
+import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase'
 import { UserProfile } from '@/lib/types'
 
@@ -8,6 +9,7 @@ interface AuthContextType {
   profile: UserProfile | null
   session: Session | null
   loading: boolean
+  isProfileComplete: boolean
   signUp: (email: string, password: string, fullName: string) => Promise<void>
   signIn: (email: string, password: string) => Promise<void>
   signOut: () => Promise<void>
@@ -22,6 +24,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
+
+  // Check if user has completed essential profile fields
+  const isProfileComplete =
+    profile !== null &&
+    profile.height_cm !== undefined &&
+    profile.weight_kg !== undefined &&
+    profile.gender !== undefined &&
+    profile.birth_date !== undefined
 
   const refreshProfile = async () => {
     if (!user) return
@@ -52,9 +62,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
       setSession(session)
       setUser(session?.user ?? null)
+
+      // Handle session timeout
+      if (event === 'SIGNED_OUT') {
+        setProfile(null)
+        // Only show toast if this was an unexpected sign out (session expired)
+        // Don't show if user explicitly signed out (handled in signOut function)
+        if (window.location.pathname.startsWith('/app')) {
+          toast.error('Din session har löpt ut. Vänligen logga in igen.')
+        }
+      } else if (event === 'TOKEN_REFRESHED') {
+        // Session was successfully refreshed
+        console.log('Session refreshed successfully')
+      }
+
       if (session?.user) {
         refreshProfile()
       }
@@ -115,6 +139,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         profile,
         session,
         loading,
+        isProfileComplete,
         signUp,
         signIn,
         signOut,

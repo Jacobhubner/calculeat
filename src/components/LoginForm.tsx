@@ -1,7 +1,10 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useNavigate, useLocation } from 'react-router-dom'
+import { toast } from 'sonner'
 import { signInSchema } from '@/lib/validation'
+import { translateAuthError } from '@/lib/auth-errors'
 import { useAuth } from '@/contexts/AuthContext'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
@@ -10,8 +13,13 @@ import { Loader2 } from 'lucide-react'
 
 export default function LoginForm() {
   const { signIn } = useAuth()
+  const navigate = useNavigate()
+  const location = useLocation()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // Get the intended destination from location state, or default to /app
+  const from = (location.state as { from?: string })?.from || '/app'
 
   const {
     register,
@@ -26,8 +34,12 @@ export default function LoginForm() {
     setError(null)
     try {
       await signIn(data.email, data.password)
+      toast.success('Inloggning lyckades! Välkommen tillbaka.')
+      navigate(from, { replace: true })
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Inloggning misslyckades')
+      const errorMessage = translateAuthError(err)
+      setError(errorMessage)
+      toast.error(errorMessage)
     } finally {
       setIsLoading(false)
     }

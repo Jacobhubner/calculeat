@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { toast } from 'sonner'
 import { signUpSchema } from '@/lib/validation'
+import { translateAuthError } from '@/lib/auth-errors'
 import { useAuth } from '@/contexts/AuthContext'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
@@ -28,8 +30,11 @@ export default function SignUpForm() {
     try {
       await signUp(data.email, data.password, data.full_name)
       setSuccess(true)
+      toast.success('Registrering lyckades! Kontrollera din e-post för att verifiera ditt konto.')
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Registrering misslyckades')
+      const errorMessage = translateAuthError(err)
+      setError(errorMessage)
+      toast.error(errorMessage)
     } finally {
       setIsLoading(false)
     }

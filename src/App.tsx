@@ -6,6 +6,7 @@ import { Toaster } from './components/ui/toast'
 import { TooltipProvider } from './components/ui/tooltip'
 import ErrorBoundary from './components/ErrorBoundary'
 import ProtectedRoute from './components/ProtectedRoute'
+import PublicOnlyRoute from './components/PublicOnlyRoute'
 import HomePage from './pages/HomePage'
 import FeaturesPage from './pages/FeaturesPage'
 import IconDemo from './pages/IconDemo'
@@ -32,8 +33,22 @@ function App() {
                 <Route path="/" element={<HomePage />} />
                 <Route path="/features" element={<FeaturesPage />} />
                 <Route path="/icon-demo" element={<IconDemo />} />
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/register" element={<RegisterPage />} />
+                <Route
+                  path="/login"
+                  element={
+                    <PublicOnlyRoute>
+                      <LoginPage />
+                    </PublicOnlyRoute>
+                  }
+                />
+                <Route
+                  path="/register"
+                  element={
+                    <PublicOnlyRoute>
+                      <RegisterPage />
+                    </PublicOnlyRoute>
+                  }
+                />
                 <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                 <Route
                   path="/app"
