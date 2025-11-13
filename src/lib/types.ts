@@ -1,4 +1,4 @@
-export type Gender = 'male' | 'female' | 'other' | 'prefer_not_to_say'
+export type Gender = 'male' | 'female'
 
 // All 10 BMR formulas from Excel
 export type BMRFormula =

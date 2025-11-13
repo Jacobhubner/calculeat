@@ -293,3 +293,94 @@ export const INTENSITY_DESCRIPTIONS: Record<IntensityLevel, string> = {
   Difficult: 'Intensiv träning (tung styrketräning, intervaller)',
   Intense: 'Maximal träning (tävlingsnivå)',
 }
+
+/**
+ * PAL-system specific activity level descriptions
+ */
+export const PAL_SPECIFIC_ACTIVITY_DESCRIPTIONS: Record<
+  PALSystem,
+  Partial<Record<ActivityLevel, string>>
+> = {
+  'FAO/WHO/UNU based PAL values': {
+    Sedentary:
+      'Sittande eller liggande livsstil med minimal fysisk aktivitet. Exempel: kontorsarbete utan regelbunden träning, mycket stillasittande aktiviteter.',
+    'Lightly active':
+      'Lätt aktiv livsstil med viss daglig rörelse. Exempel: lätt kontorsarbete med regelbundna promenader, lättare hushållsarbete, stående arbete med viss rörelse.',
+    'Moderately active':
+      'Måttligt aktiv livsstil med regelbunden rörelse. Exempel: aktivt arbete som kräver stående och gående, regelbunden träning 3-5 dagar/vecka, aktivt hushållsarbete.',
+    'Very active':
+      'Mycket aktiv livsstil med intensiv daglig aktivitet. Exempel: fysiskt krävande arbete, intensiv träning 6-7 dagar/vecka, kombination av tungt arbete och träning.',
+    'Extremely active':
+      'Extremt aktiv livsstil med exceptionellt hög energiförbrukning. Exempel: tungt fysiskt arbete kombinerat med daglig intensiv träning, professionella idrottare under tävlingssäsong.',
+  },
+  'DAMNRIPPED PAL values': {
+    Sedentary:
+      'Minimal daglig aktivitet. Mestadels sittande eller liggande. Exempel: hemmaarbete vid dator utan träning.',
+    'Lightly active':
+      'Begränsad daglig aktivitet. Något stående eller gående. Exempel: kontorsarbete med kortare promenader.',
+    'Moderately active':
+      'Måttlig daglig aktivitet. Regelbundet stående och gående. Exempel: aktivt arbete eller regelbundna vardagsaktiviteter.',
+    'Very active':
+      'Hög daglig aktivitet. Mycket stående, gående och rörligt arbete. Exempel: butiksarbete, servering, byggnadsarbete.',
+    'Extremely active':
+      'Extremt hög daglig aktivitet. Konstant rörelse och fysiskt krävande arbete. Exempel: tungt byggnadsarbete, skogsarbete.',
+  },
+  'Pro Physique PAL values': {
+    Sedentary:
+      'Mycket lite vardagsaktivitet. Mestadels stillasittande. Exempel: kontorsarbete, minimal rörelse under dagen.',
+    'Lightly active':
+      'Viss vardagsaktivitet. Lättare fysiska uppgifter. Exempel: lättare kontorsarbete med viss rörelse, korta promenader.',
+    'Moderately active':
+      'Måttlig vardagsaktivitet. Regelbunden fysisk aktivitet. Exempel: aktivt arbete med stående och gående, vardagliga hushållsaktiviteter.',
+    'Very active':
+      'Hög vardagsaktivitet. Fysiskt krävande uppgifter. Exempel: fysiskt arbete, mycket aktiv livsstil.',
+  },
+  'Fitness Stuff PAL values': {},
+  'Basic internet PAL values': {
+    Sedentary:
+      'Lite eller ingen träning. Mestadels sittande livsstil. Exempel: kontorsarbete utan regelbunden fysisk aktivitet.',
+    'Lightly active':
+      'Lätt träning 1-3 dagar/vecka. Exempel: lätt jogging, yoga, lättare gymträning några gånger i veckan.',
+    'Moderately active':
+      'Måttlig träning 3-5 dagar/vecka. Exempel: regelbunden gymträning, löpning, simning flera gånger i veckan.',
+    'Very active':
+      'Intensiv träning 6-7 dagar/vecka. Exempel: daglig träning med hög intensitet, idrottande på avancerad nivå.',
+    'Extremely active':
+      'Mycket intensiv träning eller fysiskt arbete dagligen. Exempel: professionella idrottare, dubbla träningspass dagligen.',
+  },
+  'Custom PAL': {},
+}
+
+/**
+ * PAL-system specific intensity level descriptions
+ */
+export const PAL_SPECIFIC_INTENSITY_DESCRIPTIONS: Record<
+  PALSystem,
+  Partial<Record<IntensityLevel, string>>
+> = {
+  'FAO/WHO/UNU based PAL values': {},
+  'DAMNRIPPED PAL values': {
+    None: 'Ingen strukturerad träning eller extra fysisk aktivitet utöver vardagsaktiviteter.',
+    Light:
+      'Lätt träning med låg intensitet. Exempel: lätt yoga, lugna promenader, stretching, lättare styrketräning.',
+    Moderate:
+      'Måttlig träning med medelhög intensitet. Exempel: snabbare jogging, måttlig cykling, standard gymträning, grundläggande konditionsträning.',
+    Difficult:
+      'Intensiv träning med hög ansträngning. Exempel: tung styrketräning, intervallträning, längre löprundor i högt tempo, intensiv konditionsträning.',
+    Intense:
+      'Maximal träning nära eller vid prestationsgräns. Exempel: HIIT-träning, maximal styrketräning, tävlingsinriktad träning, extremt höga intensitetsnivåer.',
+  },
+  'Pro Physique PAL values': {
+    Light:
+      'Lätt träningsintensitet. Träningen utmanar minimalt. Exempel: lätt styrketräning, lugn cardio, återhämtningspass.',
+    Moderate:
+      'Måttlig träningsintensitet. Träningen är märkbar men hanterbar. Exempel: standard styrketräningsprogram, måttlig konditionsträning.',
+    Difficult:
+      'Hög träningsintensitet. Träningen är utmanande och kräver god ansträngning. Exempel: tung styrketräning nära max, intensiv cardio, krävande träningsprogram.',
+    Intense:
+      'Mycket hög träningsintensitet. Träningen är extremt krävande. Exempel: maximal styrketräning, högintensiva träningspass, avancerade träningsprogram.',
+  },
+  'Fitness Stuff PAL values': {},
+  'Basic internet PAL values': {},
+  'Custom PAL': {},
+}

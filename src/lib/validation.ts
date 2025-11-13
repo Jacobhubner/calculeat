@@ -3,7 +3,7 @@ import { z } from 'zod'
 export const userProfileSchema = z.object({
   full_name: z.string().min(1, 'Namn är obligatoriskt').optional(),
   birth_date: z.string().optional(),
-  gender: z.enum(['male', 'female', 'other', 'prefer_not_to_say']).optional(),
+  gender: z.enum(['male', 'female']).optional(),
   height_cm: z.number().min(100).max(250).optional(),
   weight_kg: z.number().min(20).max(300).optional(),
 

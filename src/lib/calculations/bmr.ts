@@ -245,3 +245,15 @@ export function calculateBMR(formula: BMRFormula, params: BMRParams): number | n
 export const calculateMifflinStJeor = mifflinStJeor
 export const calculateHarrisBenedict = revisedHarrisBenedict
 export const calculateCunningham = cunningham
+
+/**
+ * Check if a BMR formula requires body fat percentage
+ */
+export function requiresBodyFat(formula: BMRFormula): boolean {
+  return [
+    'Cunningham equation',
+    'MacroFactor FFM equation',
+    'MacroFactor athlete equation',
+    'Fitness Stuff Podcast equation',
+  ].includes(formula)
+}

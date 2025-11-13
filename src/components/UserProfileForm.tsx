@@ -11,18 +11,20 @@ import { Info, Loader2 } from 'lucide-react'
 import { useState } from 'react'
 import { translatePALSystem, deficitLevelTranslations } from '@/lib/translations'
 import PALTableContainer from './calculator/PALTableContainer'
-import ConditionalPALFields from './calculator/ConditionalPALFields'
+import { requiresBodyFat } from '@/lib/calculations/bmr'
+import type { BMRFormula } from '@/lib/types'
+import BMRFormulaModal from './calculator/BMRFormulaModal'
 
 export default function UserProfileForm() {
   const { profile, updateProfile } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
   const [showTooltips, setShowTooltips] = useState<Record<string, boolean>>({})
+  const [showBMRModal, setShowBMRModal] = useState(false)
 
   const {
     register,
     handleSubmit,
     watch,
-    setValue,
     formState: { errors },
   } = useForm<UserProfileFormData>({
     resolver: zodResolver(userProfileSchema),
@@ -32,6 +34,8 @@ export default function UserProfileForm() {
   // Watch values for conditional rendering
   const palSystem = watch('pal_system')
   const calorieGoal = watch('calorie_goal')
+  const bmrFormula = watch('bmr_formula') as BMRFormula | undefined
+  const bodyFatPercentage = watch('body_fat_percentage')
 
   const onSubmit = async (data: UserProfileFormData) => {
     setIsLoading(true)
@@ -96,8 +100,6 @@ export default function UserProfileForm() {
           <option value="">Välj...</option>
           <option value="male">Man</option>
           <option value="female">Kvinna</option>
-          <option value="other">Annat</option>
-          <option value="prefer_not_to_say">Vill ej uppge</option>
         </Select>
       </div>
 
@@ -144,6 +146,16 @@ export default function UserProfileForm() {
             text="Välj vilken formel som ska användas för att beräkna din basalmetabolism. Olika formler passar olika personer beroende på träningsnivå och kroppssammansättning."
             field="bmr_formula"
           />
+          {bmrFormula && (
+            <button
+              type="button"
+              onClick={() => setShowBMRModal(true)}
+              className="ml-2 text-primary-600 hover:text-primary-700 transition-colors"
+              aria-label="Visa detaljerad information om formeln"
+            >
+              <Info className="h-4 w-4" />
+            </button>
+          )}
         </Label>
         <Select id="bmr_formula" {...register('bmr_formula')} className="mt-2">
           <option value="">Välj...</option>
@@ -154,10 +166,25 @@ export default function UserProfileForm() {
           <option value="Revised Harris-Benedict equation">Revised Harris-Benedict</option>
           <option value="Original Harris-Benedict equation">Original Harris-Benedict</option>
           <option value="MacroFactor standard equation">MacroFactor Standard</option>
-          <option value="MacroFactor FFM equation">MacroFactor FFM</option>
-          <option value="MacroFactor athlete equation">MacroFactor Athlete</option>
-          <option value="Fitness Stuff Podcast equation">Fitness Stuff Podcast</option>
+          <option value="MacroFactor FFM equation">MacroFactor FFM (Kräver kroppsfett%)</option>
+          <option value="MacroFactor athlete equation">
+            MacroFactor Athlete (Kräver kroppsfett%)
+          </option>
+          <option value="Fitness Stuff Podcast equation">
+            Fitness Stuff Podcast (Kräver kroppsfett%)
+          </option>
         </Select>
+        {bmrFormula && requiresBodyFat(bmrFormula) && !bodyFatPercentage && (
+          <div className="bg-amber-50 border border-amber-300 rounded-lg p-3 mt-3">
+            <p className="text-sm text-amber-800 flex items-center gap-2">
+              <span className="text-lg">⚠️</span>
+              <span>
+                Denna formel kräver kroppsfettprocent. Vänligen fyll i kroppsfettprocent nedan för
+                att få korrekta beräkningar.
+              </span>
+            </p>
+          </div>
+        )}
       </div>
 
       {/* PAL System */}
@@ -191,21 +218,11 @@ export default function UserProfileForm() {
           </Select>
         </div>
 
-        {/* Show PAL table if system is selected */}
+        {/* Show PAL table if system is selected - now with embedded dropdowns */}
         {palSystem && (
           <div className="mt-4">
-            <PALTableContainer system={palSystem} />
+            <PALTableContainer system={palSystem} register={register} watch={watch} />
           </div>
-        )}
-
-        {/* Conditional fields based on PAL system */}
-        {palSystem && (
-          <ConditionalPALFields
-            palSystem={palSystem}
-            register={register}
-            watch={watch}
-            setValue={setValue}
-          />
         )}
       </div>
 
@@ -300,6 +317,15 @@ export default function UserProfileForm() {
           )}
         </Button>
       </div>
+
+      {/* BMR Formula Modal */}
+      {bmrFormula && (
+        <BMRFormulaModal
+          formula={bmrFormula}
+          isOpen={showBMRModal}
+          onClose={() => setShowBMRModal(false)}
+        />
+      )}
     </form>
   )
 }

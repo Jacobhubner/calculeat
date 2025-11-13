@@ -7,7 +7,10 @@ import {
   intensityLevelTranslations,
   dailyStepsTranslations,
 } from '@/lib/translations'
-import { ACTIVITY_DESCRIPTIONS, INTENSITY_DESCRIPTIONS } from '@/lib/calculations/tdee'
+import {
+  PAL_SPECIFIC_ACTIVITY_DESCRIPTIONS,
+  PAL_SPECIFIC_INTENSITY_DESCRIPTIONS,
+} from '@/lib/calculations/tdee'
 import type { PALSystem, ActivityLevel, IntensityLevel } from '@/lib/types'
 
 interface ConditionalPALFieldsProps {
@@ -49,11 +52,12 @@ export default function ConditionalPALFields({
                   {activityLevelTranslations['Extremely active']}
                 </option>
               </Select>
-              {selectedActivityLevel && ACTIVITY_DESCRIPTIONS[selectedActivityLevel] && (
-                <p className="text-xs text-neutral-600 mt-2 p-2 bg-blue-50 rounded border border-blue-200">
-                  {ACTIVITY_DESCRIPTIONS[selectedActivityLevel]}
-                </p>
-              )}
+              {selectedActivityLevel &&
+                PAL_SPECIFIC_ACTIVITY_DESCRIPTIONS[palSystem][selectedActivityLevel] && (
+                  <p className="text-xs text-neutral-600 mt-2 p-2 bg-blue-50 rounded border border-blue-200">
+                    {PAL_SPECIFIC_ACTIVITY_DESCRIPTIONS[palSystem][selectedActivityLevel]}
+                  </p>
+                )}
             </div>
           </div>
         )
@@ -77,11 +81,12 @@ export default function ConditionalPALFields({
                   {activityLevelTranslations['Extremely active']}
                 </option>
               </Select>
-              {selectedActivityLevel && ACTIVITY_DESCRIPTIONS[selectedActivityLevel] && (
-                <p className="text-xs text-neutral-600 mt-2 p-2 bg-blue-50 rounded border border-blue-200">
-                  {ACTIVITY_DESCRIPTIONS[selectedActivityLevel]}
-                </p>
-              )}
+              {selectedActivityLevel &&
+                PAL_SPECIFIC_ACTIVITY_DESCRIPTIONS[palSystem][selectedActivityLevel] && (
+                  <p className="text-xs text-neutral-600 mt-2 p-2 bg-blue-50 rounded border border-blue-200">
+                    {PAL_SPECIFIC_ACTIVITY_DESCRIPTIONS[palSystem][selectedActivityLevel]}
+                  </p>
+                )}
             </div>
             <div>
               <Label htmlFor="intensity_level">Intensitetsnivå *</Label>
@@ -93,11 +98,12 @@ export default function ConditionalPALFields({
                 <option value="Difficult">{intensityLevelTranslations['Difficult']}</option>
                 <option value="Intense">{intensityLevelTranslations['Intense']}</option>
               </Select>
-              {selectedIntensityLevel && INTENSITY_DESCRIPTIONS[selectedIntensityLevel] && (
-                <p className="text-xs text-neutral-600 mt-2 p-2 bg-green-50 rounded border border-green-200">
-                  {INTENSITY_DESCRIPTIONS[selectedIntensityLevel]}
-                </p>
-              )}
+              {selectedIntensityLevel &&
+                PAL_SPECIFIC_INTENSITY_DESCRIPTIONS[palSystem][selectedIntensityLevel] && (
+                  <p className="text-xs text-neutral-600 mt-2 p-2 bg-green-50 rounded border border-green-200">
+                    {PAL_SPECIFIC_INTENSITY_DESCRIPTIONS[palSystem][selectedIntensityLevel]}
+                  </p>
+                )}
             </div>
           </div>
         )
@@ -118,11 +124,12 @@ export default function ConditionalPALFields({
                 </option>
                 <option value="Very active">{activityLevelTranslations['Very active']}</option>
               </Select>
-              {selectedActivityLevel && ACTIVITY_DESCRIPTIONS[selectedActivityLevel] && (
-                <p className="text-xs text-neutral-600 mt-2 p-2 bg-blue-50 rounded border border-blue-200">
-                  {ACTIVITY_DESCRIPTIONS[selectedActivityLevel]}
-                </p>
-              )}
+              {selectedActivityLevel &&
+                PAL_SPECIFIC_ACTIVITY_DESCRIPTIONS[palSystem][selectedActivityLevel] && (
+                  <p className="text-xs text-neutral-600 mt-2 p-2 bg-blue-50 rounded border border-blue-200">
+                    {PAL_SPECIFIC_ACTIVITY_DESCRIPTIONS[palSystem][selectedActivityLevel]}
+                  </p>
+                )}
             </div>
             <div>
               <Label htmlFor="intensity_level">Intensitetsnivå *</Label>
@@ -133,11 +140,12 @@ export default function ConditionalPALFields({
                 <option value="Difficult">{intensityLevelTranslations['Difficult']}</option>
                 <option value="Intense">{intensityLevelTranslations['Intense']}</option>
               </Select>
-              {selectedIntensityLevel && INTENSITY_DESCRIPTIONS[selectedIntensityLevel] && (
-                <p className="text-xs text-neutral-600 mt-2 p-2 bg-green-50 rounded border border-green-200">
-                  {INTENSITY_DESCRIPTIONS[selectedIntensityLevel]}
-                </p>
-              )}
+              {selectedIntensityLevel &&
+                PAL_SPECIFIC_INTENSITY_DESCRIPTIONS[palSystem][selectedIntensityLevel] && (
+                  <p className="text-xs text-neutral-600 mt-2 p-2 bg-green-50 rounded border border-green-200">
+                    {PAL_SPECIFIC_INTENSITY_DESCRIPTIONS[palSystem][selectedIntensityLevel]}
+                  </p>
+                )}
             </div>
             <div>
               <Label htmlFor="training_frequency_per_week">Träningspass per vecka *</Label>
@@ -222,11 +230,12 @@ export default function ConditionalPALFields({
                   {activityLevelTranslations['Extremely active']}
                 </option>
               </Select>
-              {selectedActivityLevel && ACTIVITY_DESCRIPTIONS[selectedActivityLevel] && (
-                <p className="text-xs text-neutral-600 mt-2 p-2 bg-blue-50 rounded border border-blue-200">
-                  {ACTIVITY_DESCRIPTIONS[selectedActivityLevel]}
-                </p>
-              )}
+              {selectedActivityLevel &&
+                PAL_SPECIFIC_ACTIVITY_DESCRIPTIONS[palSystem][selectedActivityLevel] && (
+                  <p className="text-xs text-neutral-600 mt-2 p-2 bg-blue-50 rounded border border-blue-200">
+                    {PAL_SPECIFIC_ACTIVITY_DESCRIPTIONS[palSystem][selectedActivityLevel]}
+                  </p>
+                )}
             </div>
           </div>
         )
