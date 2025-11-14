@@ -1,16 +1,16 @@
 /**
- * Noom Color System
- * Implements the Noom traffic light system from Excel "New Item" sheet
+ * Calorie Density Color System
+ * Implements a traffic light system for categorizing foods based on calorie density
  * Categorizes foods based on calorie density (kcal/gram)
  */
 
-export type NoomColor = 'Green' | 'Yellow' | 'Orange'
-export type NoomFoodType = 'Solid' | 'Liquid' | 'Soup'
+export type FoodColor = 'Green' | 'Yellow' | 'Orange'
+export type FoodType = 'Solid' | 'Liquid' | 'Soup'
 
-export interface NoomCalculationParams {
+export interface CalorieDensityCalculationParams {
   calories: number
   weightGrams: number
-  foodType: NoomFoodType
+  foodType: FoodType
 }
 
 /**
@@ -24,8 +24,7 @@ export function calculateCalorieDensity(calories: number, weightGrams: number): 
 }
 
 /**
- * Determine Noom color based on food type and calorie density
- * Exact formula from Excel: "New Item" sheet, cell J14
+ * Determine food color based on food type and calorie density
  *
  * Solid foods:
  *   Green: < 1 kcal/g
@@ -42,7 +41,7 @@ export function calculateCalorieDensity(calories: number, weightGrams: number): 
  *   Yellow: 0.5-1 kcal/g
  *   Orange: > 1 kcal/g
  */
-export function calculateNoomColor(params: NoomCalculationParams): NoomColor {
+export function calculateFoodColor(params: CalorieDensityCalculationParams): FoodColor {
   const { calories, weightGrams, foodType } = params
 
   const kcalPerGram = calculateCalorieDensity(calories, weightGrams)
@@ -72,9 +71,9 @@ export function calculateNoomColor(params: NoomCalculationParams): NoomColor {
 }
 
 /**
- * Get Noom color thresholds for a food type
+ * Get color thresholds for a food type
  */
-export function getNoomThresholds(foodType: NoomFoodType): { green: number; yellow: number } {
+export function getColorThresholds(foodType: FoodType): { green: number; yellow: number } {
   switch (foodType) {
     case 'Solid':
       return { green: 1, yellow: 2.4 }
@@ -88,9 +87,9 @@ export function getNoomThresholds(foodType: NoomFoodType): { green: number; yell
 }
 
 /**
- * Get description for Noom color
+ * Get description for food color
  */
-export const NOOM_COLOR_DESCRIPTIONS: Record<NoomColor, string> = {
+export const FOOD_COLOR_DESCRIPTIONS: Record<FoodColor, string> = {
   Green: 'Låg kaloritäthet - ät mer av dessa',
   Yellow: 'Måttlig kaloritäthet - ät i måttliga mängder',
   Orange: 'Hög kaloritäthet - ät mindre av dessa',
@@ -99,16 +98,16 @@ export const NOOM_COLOR_DESCRIPTIONS: Record<NoomColor, string> = {
 /**
  * Get Swedish description for food type
  */
-export const NOOM_FOOD_TYPE_DESCRIPTIONS: Record<NoomFoodType, string> = {
+export const FOOD_TYPE_DESCRIPTIONS: Record<FoodType, string> = {
   Solid: 'Fast föda',
   Liquid: 'Vätska',
   Soup: 'Soppa',
 }
 
 /**
- * Calculate Noom color distribution for a meal or day
+ * Calculate color distribution for a meal or day
  */
-export interface NoomDistribution {
+export interface ColorDistribution {
   greenCalories: number
   yellowCalories: number
   orangeCalories: number
@@ -118,19 +117,19 @@ export interface NoomDistribution {
   orangePercentage: number
 }
 
-export function calculateNoomDistribution(
-  foods: Array<{ calories: number; noomColor: NoomColor }>
-): NoomDistribution {
+export function calculateColorDistribution(
+  foods: Array<{ calories: number; foodColor: FoodColor }>
+): ColorDistribution {
   const greenCalories = foods
-    .filter(f => f.noomColor === 'Green')
+    .filter(f => f.foodColor === 'Green')
     .reduce((sum, f) => sum + f.calories, 0)
 
   const yellowCalories = foods
-    .filter(f => f.noomColor === 'Yellow')
+    .filter(f => f.foodColor === 'Yellow')
     .reduce((sum, f) => sum + f.calories, 0)
 
   const orangeCalories = foods
-    .filter(f => f.noomColor === 'Orange')
+    .filter(f => f.foodColor === 'Orange')
     .reduce((sum, f) => sum + f.calories, 0)
 
   const totalCalories = greenCalories + yellowCalories + orangeCalories
@@ -147,10 +146,9 @@ export function calculateNoomDistribution(
 }
 
 /**
- * Recommend Noom color targets for weight loss
- * Based on Noom recommendations
+ * Recommend color targets for weight loss
  */
-export function getNoomTargets(): {
+export function getColorTargets(): {
   green: { min: number; max: number }
   yellow: { min: number; max: number }
   orange: { min: number; max: number }

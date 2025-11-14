@@ -5,7 +5,7 @@
  */
 
 import type { FoodItem } from '@/hooks/useFoodItems'
-import type { NoomColor } from '@/lib/calculations/colorDensity'
+import type { FoodColor } from '@/lib/calculations/colorDensity'
 
 export interface FindBestFoodsParams {
   desiredCalories: number
@@ -14,7 +14,7 @@ export interface FindBestFoodsParams {
   numberOfResults?: number
   recipeOnly?: boolean
   nonRecipeOnly?: boolean
-  noomColors?: NoomColor[]
+  foodColors?: FoodColor[]
   tolerance?: number // % tolerance for calories, default 10%
 }
 
@@ -46,7 +46,7 @@ export function findBestFoodsForGoals(
     numberOfResults = 10,
     recipeOnly = false,
     nonRecipeOnly = false,
-    noomColors = [],
+    foodColors = [],
     tolerance = 10,
   } = params
 
@@ -60,9 +60,9 @@ export function findBestFoodsForGoals(
     filtered = filtered.filter(food => !food.is_recipe)
   }
 
-  // Noom color filter (allow multiple)
-  if (noomColors.length > 0) {
-    filtered = filtered.filter(food => noomColors.includes(food.noom_color || 'Yellow'))
+  // Food color filter (allow multiple)
+  if (foodColors.length > 0) {
+    filtered = filtered.filter(food => foodColors.includes(food.noom_color || 'Yellow'))
   }
 
   // Calculate matches
@@ -156,13 +156,13 @@ export function findFoodsForRemainingMacros(
     macroAmount = remaining.fat
   }
 
-  // Use findBestFoodsForGoals with Green Noom preference
+  // Use findBestFoodsForGoals with green food preference (low calorie density)
   return findBestFoodsForGoals(foods, {
     desiredCalories: remaining.calories,
     desiredMacroType: macroType,
     desiredMacroAmount: macroAmount,
     numberOfResults: 10,
-    noomColors: ['Green', 'Yellow'], // Prefer healthier options
+    foodColors: ['Green', 'Yellow'], // Prefer healthier options
     tolerance: 20, // More lenient for suggestions
   })
 }
@@ -222,11 +222,14 @@ export function findLowCalorieFoods(
 }
 
 /**
- * Find foods by Noom colors (multiple selection)
+ * Find foods by color density (multiple selection)
  */
-export function findFoodsByNoomColors(foods: FoodItem[], colors: NoomColor[]): FoodItem[] {
+export function findFoodsByColors(foods: FoodItem[], colors: FoodColor[]): FoodItem[] {
   return foods.filter(food => colors.includes(food.noom_color || 'Yellow'))
 }
+
+// Legacy export for backwards compatibility
+export const findFoodsByNoomColors = findFoodsByColors
 
 /**
  * Find recipe or non-recipe foods

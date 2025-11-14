@@ -9,7 +9,8 @@
       "Bash(nul)",
       "Bash(python:*)",
       "Bash(npx supabase migration up)",
-      "Bash(npx supabase:*)"
+      "Bash(npx supabase:*)",
+      "Bash(git mv:*)"
     ],
     "deny": [],
     "ask": []

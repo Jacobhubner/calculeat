@@ -1,11 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
-import {
-  calculateNoomColor,
-  type NoomColor,
-  type NoomFoodType,
-} from '@/lib/calculations/colorDensity'
+import { calculateFoodColor, type FoodColor, type FoodType } from '@/lib/calculations/colorDensity'
 
 export interface FoodItem {
   id: string
@@ -32,9 +28,9 @@ export interface FoodItem {
   kcal_per_gram?: number
   ml_per_gram?: number
 
-  // Noom
-  noom_food_type: NoomFoodType
-  noom_color?: NoomColor
+  // Food color density tracking
+  noom_food_type: FoodType
+  noom_color?: FoodColor
 
   // Recipe flag
   is_recipe: boolean
@@ -61,7 +57,7 @@ export interface CreateFoodItemInput {
   default_amount: number
   default_unit: string
   ml_per_gram?: number
-  noom_food_type: NoomFoodType
+  noom_food_type: FoodType
   notes?: string
   source?: string
 }
@@ -94,7 +90,7 @@ export function useFoodItems() {
 /**
  * Search food items
  */
-export function useSearchFoodItems(query: string, noomFilter?: NoomColor) {
+export function useSearchFoodItems(query: string, noomFilter?: FoodColor) {
   const { user } = useAuth()
 
   return useQuery({
@@ -165,9 +161,9 @@ export function useCreateFoodItem() {
       const kcal_per_gram =
         input.default_unit === 'g' ? input.calories / input.default_amount : undefined
 
-      // Calculate Noom color
+      // Calculate food color density
       const noom_color = kcal_per_gram
-        ? calculateNoomColor({
+        ? calculateFoodColor({
             calories: input.calories,
             weightGrams: input.default_amount,
             foodType: input.noom_food_type,
@@ -225,7 +221,7 @@ export function useUpdateFoodItem() {
           const kcal_per_gram = default_unit === 'g' ? calories / default_amount : undefined
 
           const noom_color = kcal_per_gram
-            ? calculateNoomColor({
+            ? calculateFoodColor({
                 calories,
                 weightGrams: default_amount,
                 foodType: noom_food_type,
