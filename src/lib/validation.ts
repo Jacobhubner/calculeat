@@ -1,8 +1,7 @@
 import { z } from 'zod'
 
 export const userProfileSchema = z.object({
-  profile_name: z.string().min(1).max(100).optional(),
-  full_name: z.string().min(1, 'Namn är obligatoriskt').optional(),
+  profile_name: z.string().min(1, 'Profilnamn är obligatoriskt').max(100),
   birth_date: z.string().optional(),
   gender: z.enum(['male', 'female']).optional(),
   height_cm: z.number().min(100).max(250).optional(),
@@ -94,7 +93,7 @@ export const userProfileSchema = z.object({
 export const signUpSchema = z.object({
   email: z.string().email('Ogiltig e-postadress'),
   password: z.string().min(6, 'Lösenord måste vara minst 6 tecken'),
-  full_name: z.string().min(1, 'Namn är obligatoriskt'),
+  profile_name: z.string().min(1, 'Profilnamn är obligatoriskt'),
 })
 
 export const signInSchema = z.object({

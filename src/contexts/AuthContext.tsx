@@ -89,13 +89,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const signUp = async (email: string, password: string, fullName: string) => {
+  const signUp = async (email: string, password: string, profileName: string) => {
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: {
-          full_name: fullName,
+          profile_name: profileName,
         },
       },
     })

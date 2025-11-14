@@ -62,7 +62,6 @@ export interface UserProfile {
   id: string
   email: string
   profile_name?: string
-  full_name?: string
   birth_date?: string
   gender?: Gender
   height_cm?: number
@@ -108,7 +107,6 @@ export interface UserProfile {
 
 export interface UserProfileFormData {
   profile_name?: string
-  full_name?: string
   birth_date?: string
   gender?: Gender
   height_cm?: number

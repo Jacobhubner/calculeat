@@ -24,11 +24,11 @@ export default function SignUpForm() {
     resolver: zodResolver(signUpSchema),
   })
 
-  const onSubmit = async (data: { email: string; password: string; full_name: string }) => {
+  const onSubmit = async (data: { email: string; password: string; profile_name: string }) => {
     setIsLoading(true)
     setError(null)
     try {
-      await signUp(data.email, data.password, data.full_name)
+      await signUp(data.email, data.password, data.profile_name)
       setSuccess(true)
       toast.success('Registrering lyckades! Kontrollera din e-post för att verifiera ditt konto.')
     } catch (err: unknown) {
@@ -58,10 +58,10 @@ export default function SignUpForm() {
       )}
 
       <div>
-        <Label htmlFor="full_name">Fullständigt namn</Label>
-        <Input id="full_name" {...register('full_name')} className="mt-2" />
-        {errors.full_name && (
-          <p className="text-red-500 text-sm mt-1">{errors.full_name.message}</p>
+        <Label htmlFor="profile_name">Profilnamn</Label>
+        <Input id="profile_name" {...register('profile_name')} className="mt-2" />
+        {errors.profile_name && (
+          <p className="text-red-500 text-sm mt-1">{errors.profile_name.message}</p>
         )}
       </div>
 
