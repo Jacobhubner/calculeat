@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
 export const userProfileSchema = z.object({
+  profile_name: z.string().min(1).max(100).optional(),
   full_name: z.string().min(1, 'Namn är obligatoriskt').optional(),
   birth_date: z.string().optional(),
   gender: z.enum(['male', 'female']).optional(),
@@ -79,6 +80,7 @@ export const userProfileSchema = z.object({
   calorie_goal: z.enum(['Maintain weight', 'Weight loss', 'Weight gain']).optional(),
   deficit_level: z.enum(['Slow', 'Moderate', 'Aggressive']).optional(),
   target_weight_kg: z.number().min(30).max(300).optional(),
+  target_body_fat_percentage: z.number().min(3).max(50).optional(),
 
   // Macros
   fat_min_percent: z.number().min(0).max(100).optional(),

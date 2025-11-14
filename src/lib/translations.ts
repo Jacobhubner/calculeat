@@ -28,15 +28,15 @@ export const intensityLevelTranslations: Record<string, string> = {
 }
 
 export const deficitLevelTranslations: Record<string, string> = {
-  Slow: 'Långsam (15% underskott)',
-  Moderate: 'Måttlig (20-25% underskott)',
-  Aggressive: 'Aggressiv (30% underskott)',
+  Slow: 'Litet underskott (10-15%)',
+  Moderate: 'Måttligt underskott (20-25%)',
+  Aggressive: 'Stort underskott (25-30%)',
 }
 
 export const calorieGoalTranslations: Record<string, string> = {
-  'Maintain weight': 'Bibehålla vikt',
-  'Weight loss': 'Viktminskning',
-  'Weight gain': 'Viktökning',
+  'Maintain weight': 'Viktunderhåll',
+  'Weight loss': 'Viktnedgång',
+  'Weight gain': 'Viktuppgång',
 }
 
 export const dailyStepsTranslations: Record<string, string> = {
