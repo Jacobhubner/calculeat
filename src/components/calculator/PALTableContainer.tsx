@@ -1,6 +1,5 @@
-import { Info } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { getPALSystemDescription, translatePALSystem } from '@/lib/translations'
+import { translatePALSystem } from '@/lib/translations'
 import type { PALSystem } from '@/lib/types'
 import { UseFormRegister, UseFormWatch } from 'react-hook-form'
 import PALTableFAO from './PALTableFAO'
@@ -60,8 +59,6 @@ export default function PALTableContainer({ system, register, watch }: PALTableC
     }
   }
 
-  const description = getPALSystemDescription(system)
-
   return (
     <Card className="bg-gradient-to-br from-primary-50 to-accent-50 border-2 border-primary-200">
       <CardHeader>
@@ -69,16 +66,7 @@ export default function PALTableContainer({ system, register, watch }: PALTableC
           📊 {translatePALSystem(system)}
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
-        {renderTable()}
-
-        {description && (
-          <div className="flex gap-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-            <Info className="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5" />
-            <p className="text-sm text-blue-800">{description}</p>
-          </div>
-        )}
-      </CardContent>
+      <CardContent className="space-y-4">{renderTable()}</CardContent>
     </Card>
   )
 }
