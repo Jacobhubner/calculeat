@@ -74,20 +74,6 @@ export const userProfileSchema = z.object({
       'Reversed Cunningham equation',
     ])
     .optional(),
-
-  // Goals
-  calorie_goal: z.enum(['Maintain weight', 'Weight loss', 'Weight gain']).optional(),
-  deficit_level: z.enum(['Slow', 'Moderate', 'Aggressive']).optional(),
-  target_weight_kg: z.number().min(30).max(300).optional(),
-  target_body_fat_percentage: z.number().min(3).max(50).optional(),
-
-  // Macros
-  fat_min_percent: z.number().min(0).max(100).optional(),
-  fat_max_percent: z.number().min(0).max(100).optional(),
-  carb_min_percent: z.number().min(0).max(100).optional(),
-  carb_max_percent: z.number().min(0).max(100).optional(),
-  protein_min_percent: z.number().min(0).max(100).optional(),
-  protein_max_percent: z.number().min(0).max(100).optional(),
 })
 
 export const signUpSchema = z.object({
