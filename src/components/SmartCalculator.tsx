@@ -24,7 +24,7 @@ export default function SmartCalculator() {
   const [age, setAge] = useState<string>('')
   const [weight, setWeight] = useState<string>('')
   const [height, setHeight] = useState<string>('')
-  const [gender, setGender] = useState<Gender>('male')
+  const [gender, setGender] = useState<Gender | ''>('')
   const [activityLevel, setActivityLevel] = useState<ActivityLevel | ''>('')
   const [result, setResult] = useState<CalculatorResult | null>(null)
 
@@ -34,7 +34,7 @@ export default function SmartCalculator() {
     const weightNum = parseFloat(weight)
     const heightNum = parseFloat(height)
 
-    if (!ageNum || !weightNum || !heightNum || !activityLevel) {
+    if (!ageNum || !weightNum || !heightNum || !activityLevel || !gender) {
       alert('Vänligen fyll i alla fält')
       return
     }
@@ -95,7 +95,7 @@ export default function SmartCalculator() {
                 name="gender"
                 value="male"
                 checked={gender === 'male'}
-                onChange={e => setGender(e.target.value as Gender)}
+                onChange={e => setGender(e.target.value as Gender | '')}
                 className="mr-2 h-4 w-4 text-primary-600 focus:ring-primary-500"
               />
               <span className="text-neutral-700">Man</span>
@@ -106,7 +106,7 @@ export default function SmartCalculator() {
                 name="gender"
                 value="female"
                 checked={gender === 'female'}
-                onChange={e => setGender(e.target.value as Gender)}
+                onChange={e => setGender(e.target.value as Gender | '')}
                 className="mr-2 h-4 w-4 text-primary-600 focus:ring-primary-500"
               />
               <span className="text-neutral-700">Kvinna</span>
