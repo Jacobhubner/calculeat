@@ -137,6 +137,11 @@ export default function UserProfileForm() {
       return
     }
 
+    // For PAL-based calculations, require at least activity level to be filled
+    if (!activityLevel) {
+      return
+    }
+
     // For Weight loss, also need deficit level
     if (energyGoal === 'Weight loss' && !deficitLevel) {
       return
@@ -312,6 +317,10 @@ export default function UserProfileForm() {
       const weightNum = parseFloat(weight)
       const heightNum = parseFloat(height)
       const bodyFatNum = bodyFatPercentage ? parseFloat(bodyFatPercentage) : undefined
+      const customTdeeNum = customTdee ? parseFloat(customTdee) : undefined
+      const trainingFreqNum = trainingFrequency ? parseFloat(trainingFrequency) : undefined
+      const trainingDurNum = trainingDuration ? parseFloat(trainingDuration) : undefined
+      const customPALNum = customPAL ? parseFloat(customPAL) : undefined
 
       await updateProfile({
         profile_name: profileName,
@@ -322,6 +331,18 @@ export default function UserProfileForm() {
         body_fat_percentage: bodyFatNum,
         bmr_formula: bmrFormula === '' ? undefined : bmrFormula,
         pal_system: palSystem === '' ? undefined : palSystem,
+        activity_level: activityLevel || undefined,
+        intensity_level: intensityLevel || undefined,
+        training_frequency_per_week: trainingFreqNum,
+        training_duration_minutes: trainingDurNum,
+        daily_steps: dailySteps || undefined,
+        custom_pal: customPALNum,
+        calorie_goal:
+          energyGoal === ''
+            ? undefined
+            : (energyGoal as 'Maintain weight' | 'Weight gain' | 'Weight loss'),
+        deficit_level: deficitLevel || undefined,
+        custom_tdee: customTdeeNum,
         bmr: result.bmr,
         tdee: result.tdee,
       })
