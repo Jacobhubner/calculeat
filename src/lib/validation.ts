@@ -77,7 +77,7 @@ export const userProfileSchema = z.object({
 
   // Energy goals
   calorie_goal: z.enum(['Maintain weight', 'Weight loss', 'Weight gain', 'Custom TDEE']).optional(),
-  deficit_level: z.string().optional(),
+  deficit_level: z.enum(['10-15%', '20-25%', '25-30%']).optional(),
   custom_tdee: z.number().min(500).max(10000).optional(),
 })
 
