@@ -10,15 +10,9 @@ interface PALTableFitnessStuffProps {
   watch?: UseFormWatch<any>
 }
 
-export default function PALTableFitnessStuff({ register, watch }: PALTableFitnessStuffProps) {
-  const trainingFrequency = watch?.('training_frequency_per_week')
-  const trainingDuration = watch?.('training_duration_minutes')
-
-  // Calculate training hours per week for display
-  const trainingHoursPerWeek =
-    trainingFrequency && trainingDuration
-      ? ((trainingFrequency * trainingDuration) / 60).toFixed(1)
-      : '0'
+export default function PALTableFitnessStuff({ register }: PALTableFitnessStuffProps) {
+  // Training frequency and duration are captured by the form inputs
+  // PAL calculation happens in the backend based on these values
 
   return (
     <div className="w-full space-y-4">
@@ -67,41 +61,6 @@ export default function PALTableFitnessStuff({ register, watch }: PALTableFitnes
           </Select>
         </div>
       )}
-
-      <div className="mt-4 p-4 bg-neutral-50 rounded border border-neutral-200">
-        <p className="text-sm font-semibold text-neutral-700 mb-2">Fitness Stuff PAL Beräkning</p>
-        <p className="text-xs text-neutral-600 mb-3">
-          Detta system beräknar PAL baserat på träningstimmar per vecka och dagliga steg. Baserat på
-          dina inmatningar:
-        </p>
-        <div className="space-y-1 text-xs text-neutral-600">
-          <p>
-            <strong>Träningstimmar per vecka:</strong> {trainingHoursPerWeek} timmar
-          </p>
-          <p>
-            <strong>PAL-multiplikator baseras på:</strong>
-          </p>
-          <ul className="list-disc list-inside ml-2 space-y-1">
-            <li>&lt; 1 timme/vecka: 1.0</li>
-            <li>1-3 timmar/vecka: 1.2</li>
-            <li>3-5 timmar/vecka: 1.375</li>
-            <li>5-7 timmar/vecka: 1.55</li>
-            <li>7-10 timmar/vecka: 1.725</li>
-            <li>≥ 10 timmar/vecka: 1.9</li>
-          </ul>
-          <p className="mt-2">
-            <strong>Plus extra kalorier från dagliga steg:</strong>
-          </p>
-          <ul className="list-disc list-inside ml-2 space-y-1">
-            <li>3 000 – 4 999: +150 kcal</li>
-            <li>5 000 – 6 999: +240 kcal</li>
-            <li>7 000 – 8 999: +330 kcal</li>
-            <li>9 000 – 10 999: +420 kcal</li>
-            <li>11 000 – 12 999: +510 kcal</li>
-            <li>≥ 13 000: +600 kcal</li>
-          </ul>
-        </div>
-      </div>
     </div>
   )
 }

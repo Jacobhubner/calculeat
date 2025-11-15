@@ -13,7 +13,12 @@ import { translatePALSystem } from '@/lib/translations'
 interface CalculatorResult {
   bmr: number
   tdee: number
+  tdeeMin: number
+  tdeeMax: number
 }
+
+type EnergyGoal = 'Maintain weight' | 'Weight gain' | 'Weight loss' | ''
+type DeficitLevel = '10-15%' | '20-25%' | '25-30%' | ''
 
 export default function UserProfileForm() {
   const { profile, updateProfile } = useAuth()
@@ -33,6 +38,8 @@ export default function UserProfileForm() {
   const [palSystem, setPalSystem] = useState<PALSystem | ''>(
     (profile?.pal_system as PALSystem) || ''
   )
+  const [energyGoal, setEnergyGoal] = useState<EnergyGoal>('')
+  const [deficitLevel, setDeficitLevel] = useState<DeficitLevel>('')
 
   const [result, setResult] = useState<CalculatorResult | null>(null)
   const [showBMRModal, setShowBMRModal] = useState(false)
@@ -89,6 +96,16 @@ export default function UserProfileForm() {
       return
     }
 
+    if (!energyGoal) {
+      alert('Vänligen välj ett energimål')
+      return
+    }
+
+    if (energyGoal === 'Weight loss' && !deficitLevel) {
+      alert('Vänligen välj en viktnedgångstakt')
+      return
+    }
+
     if (weightNum < 20 || weightNum > 300) {
       alert('Vikt måste vara mellan 20 och 300 kg')
       return
@@ -139,11 +156,37 @@ export default function UserProfileForm() {
 
     // Use a default activity level for now
     const palMultiplier = basicPalValues['Moderately active'] || 1.55
-    const tdee = Math.round(bmr * palMultiplier)
+    const baseTdee = Math.round(bmr * palMultiplier)
+
+    // Calculate TDEE range based on energy goal
+    let tdeeMin = baseTdee
+    let tdeeMax = baseTdee
+
+    if (energyGoal === 'Maintain weight') {
+      tdeeMin = baseTdee
+      tdeeMax = baseTdee
+    } else if (energyGoal === 'Weight loss') {
+      if (deficitLevel === '10-15%') {
+        tdeeMin = Math.round(baseTdee * 0.85)
+        tdeeMax = Math.round(baseTdee * 0.9)
+      } else if (deficitLevel === '20-25%') {
+        tdeeMin = Math.round(baseTdee * 0.75)
+        tdeeMax = Math.round(baseTdee * 0.8)
+      } else if (deficitLevel === '25-30%') {
+        tdeeMin = Math.round(baseTdee * 0.7)
+        tdeeMax = Math.round(baseTdee * 0.75)
+      }
+    } else if (energyGoal === 'Weight gain') {
+      // Weight gain 10-20%
+      tdeeMin = Math.round(baseTdee * 1.1)
+      tdeeMax = Math.round(baseTdee * 1.2)
+    }
 
     setResult({
       bmr: Math.round(bmr),
-      tdee,
+      tdee: baseTdee,
+      tdeeMin,
+      tdeeMax,
     })
   }
 
@@ -181,7 +224,7 @@ export default function UserProfileForm() {
   }
 
   return (
-    <div className="rounded-2xl border border-lime-200 bg-lime-50 p-8 shadow-lg max-w-4xl mx-auto">
+    <div className="max-w-4xl mx-auto">
       <div className="mb-6 flex items-center space-x-3">
         <Calculator className="h-12 w-12 text-primary-600" />
         <h2 className="text-3xl font-bold text-neutral-900">Min Profil</h2>
@@ -246,6 +289,20 @@ export default function UserProfileForm() {
             </div>
           </div>
 
+          {/* Height */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-neutral-700 mb-2">Längd (cm) *</label>
+            <input
+              type="number"
+              value={height}
+              onChange={e => setHeight(e.target.value)}
+              className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+              placeholder="180"
+              min="100"
+              max="250"
+            />
+          </div>
+
           {/* Weight */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-neutral-700 mb-2">Vikt (kg) *</label>
@@ -258,20 +315,6 @@ export default function UserProfileForm() {
               min="20"
               max="300"
               step="0.1"
-            />
-          </div>
-
-          {/* Height */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-neutral-700 mb-2">Längd (cm) *</label>
-            <input
-              type="number"
-              value={height}
-              onChange={e => setHeight(e.target.value)}
-              className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
-              placeholder="180"
-              min="100"
-              max="250"
             />
           </div>
 
@@ -396,17 +439,57 @@ export default function UserProfileForm() {
           )}
         </div>
 
+        {/* SECTION 5: Energy Goal */}
+        <div className="border-t pt-6">
+          <h3 className="text-xl font-semibold text-neutral-900 mb-4">Energimål</h3>
+
+          <div>
+            <label className="block text-sm font-medium text-neutral-700 mb-2">
+              Välj energimål *
+            </label>
+            <select
+              value={energyGoal}
+              onChange={e => setEnergyGoal(e.target.value as EnergyGoal)}
+              className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+            >
+              <option value="">Välj energimål...</option>
+              <option value="Maintain weight">Behåll vikt</option>
+              <option value="Weight gain">Viktuppgång (10–20%)</option>
+              <option value="Weight loss">Viktnedgång</option>
+            </select>
+          </div>
+
+          {/* Show deficit level for weight loss */}
+          {energyGoal === 'Weight loss' && (
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-neutral-700 mb-2">
+                Viktnedgångstakt *
+              </label>
+              <select
+                value={deficitLevel}
+                onChange={e => setDeficitLevel(e.target.value as DeficitLevel)}
+                className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+              >
+                <option value="">Välj viktnedgångstakt...</option>
+                <option value="10-15%">Litet underskott (10–15%)</option>
+                <option value="20-25%">Måttligt underskott (20–25%)</option>
+                <option value="25-30%">Stort underskott (25–30%)</option>
+              </select>
+            </div>
+          )}
+        </div>
+
         {/* Calculate Button */}
         <div className="border-t pt-6">
           <Button onClick={handleCalculate} className="w-full">
-            Beräkna BMR och TDEE
+            Beräkna
           </Button>
         </div>
 
-        {/* SECTION 5: Results */}
+        {/* SECTION 6: Results */}
         {result && (
-          <div className="mt-6 space-y-4 border-t pt-6">
-            <h3 className="text-xl font-semibold text-neutral-900">Dina resultat</h3>
+          <div className="mt-6 rounded-2xl border border-lime-200 bg-lime-50 p-8 shadow-lg">
+            <h3 className="text-xl font-semibold text-neutral-900 mb-4">Dina resultat</h3>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="rounded-xl bg-primary-50 p-4 border border-primary-200">
@@ -421,7 +504,11 @@ export default function UserProfileForm() {
                 <p className="text-sm font-medium text-neutral-600 mb-1">
                   TDEE <span className="text-xs">(kcal/dag totalt)</span>
                 </p>
-                <p className="text-3xl font-bold text-accent-600">{result.tdee} kcal</p>
+                <p className="text-3xl font-bold text-accent-600">
+                  {result.tdeeMin === result.tdeeMax
+                    ? `${result.tdee} kcal`
+                    : `${result.tdeeMin} - ${result.tdeeMax} kcal`}
+                </p>
                 <p className="text-xs text-neutral-500 mt-1">Total Daily Energy Expenditure</p>
               </div>
             </div>

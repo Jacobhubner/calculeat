@@ -74,6 +74,10 @@ export const userProfileSchema = z.object({
       'Reversed Cunningham equation',
     ])
     .optional(),
+
+  // Energy goals
+  calorie_goal: z.enum(['Maintain weight', 'Weight loss', 'Weight gain']).optional(),
+  deficit_level: z.string().optional(),
 })
 
 export const signUpSchema = z.object({

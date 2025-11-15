@@ -128,6 +128,20 @@ export default function SmartCalculator() {
           />
         </div>
 
+        {/* Height */}
+        <div>
+          <label className="block text-sm font-medium text-neutral-700">Längd (cm)</label>
+          <input
+            type="number"
+            value={height}
+            onChange={e => setHeight(e.target.value)}
+            className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+            placeholder="180"
+            min="100"
+            max="250"
+          />
+        </div>
+
         {/* Weight */}
         <div>
           <label className="block text-sm font-medium text-neutral-700">Vikt (kg)</label>
@@ -140,20 +154,6 @@ export default function SmartCalculator() {
             min="20"
             max="300"
             step="0.1"
-          />
-        </div>
-
-        {/* Height */}
-        <div>
-          <label className="block text-sm font-medium text-neutral-700">Längd (cm)</label>
-          <input
-            type="number"
-            value={height}
-            onChange={e => setHeight(e.target.value)}
-            className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
-            placeholder="180"
-            min="100"
-            max="250"
           />
         </div>
 

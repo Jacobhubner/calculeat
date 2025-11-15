@@ -121,7 +121,7 @@ export const BMR_FORMULA_DESCRIPTIONS: Record<BMRFormula, BMRFormulaDescription>
       'Modern formel utvecklad med hänsyn till aktuell forskningsdata',
     ],
     cons: ['Relativt ny formel med begränsad långsiktig validering'],
-    references: ['https://macrofactorapp.com/macrofactors-bmr/'],
+    references: [],
   },
 
   'MacroFactor FFM equation': {
@@ -134,7 +134,7 @@ export const BMR_FORMULA_DESCRIPTIONS: Record<BMRFormula, BMRFormulaDescription>
       'Tar hänsyn till icke-linjär skalning av metabolism',
     ],
     cons: ['Kräver att du känner till din kroppsfettprocent'],
-    references: ['https://macrofactorapp.com/macrofactors-bmr/'],
+    references: [],
   },
 
   'MacroFactor athlete equation': {
@@ -150,7 +150,7 @@ export const BMR_FORMULA_DESCRIPTIONS: Record<BMRFormula, BMRFormulaDescription>
       'Kräver att du känner till din kroppsfettprocent',
       'Endast lämplig för individer med mycket hög träningsvolym (7+ timmar intensiv träning per vecka)',
     ],
-    references: ['https://macrofactorapp.com/macrofactors-bmr/'],
+    references: [],
   },
 
   'Fitness Stuff Podcast equation': {
@@ -162,6 +162,6 @@ export const BMR_FORMULA_DESCRIPTIONS: Record<BMRFormula, BMRFormulaDescription>
       'Kombinerar styrkor från både Cunningham (fettfri massa) och Mifflin-St Jeor (könsspecifik)',
     ],
     cons: ['Kräver att du känner till din kroppsfettprocent'],
-    references: ['https://www.fitnessstuffpod.com/blog/calorie-calculator'],
+    references: [],
   },
 }

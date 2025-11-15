@@ -83,30 +83,32 @@ export default function BMRFormulaModal({ formula, isOpen, onClose }: BMRFormula
           )}
 
           {/* References */}
-          <div>
-            <h3 className="text-lg font-semibold text-neutral-800 mb-3">Referenser</h3>
-            <div className="space-y-3">
-              {description.references.map((ref, index) => (
-                <div
-                  key={index}
-                  className="text-sm text-neutral-600 bg-neutral-50 p-3 rounded-lg border border-neutral-200"
-                >
-                  {ref.startsWith('http') ? (
-                    <a
-                      href={ref}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-primary-600 hover:text-primary-700 hover:underline break-all"
-                    >
-                      {ref}
-                    </a>
-                  ) : (
-                    <p className="leading-relaxed">{ref}</p>
-                  )}
-                </div>
-              ))}
+          {description.references.length > 0 && (
+            <div>
+              <h3 className="text-lg font-semibold text-neutral-800 mb-3">Referenser</h3>
+              <div className="space-y-3">
+                {description.references.map((ref, index) => (
+                  <div
+                    key={index}
+                    className="text-sm text-neutral-600 bg-neutral-50 p-3 rounded-lg border border-neutral-200"
+                  >
+                    {ref.startsWith('http') ? (
+                      <a
+                        href={ref}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary-600 hover:text-primary-700 hover:underline break-all"
+                      >
+                        {ref}
+                      </a>
+                    ) : (
+                      <p className="leading-relaxed">{ref}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Footer */}

@@ -1,9 +1,9 @@
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import UserProfileForm from '@/components/UserProfileForm'
 import MacroModesCard from '@/components/MacroModesCard'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import { User, Settings, Activity, Target } from 'lucide-react'
+import { User, Activity, Target } from 'lucide-react'
 
 export default function ProfilePage() {
   return (
@@ -14,26 +14,16 @@ export default function ProfilePage() {
           <User className="h-8 w-8 text-primary-600" />
           Min Profil
         </h1>
-        <p className="text-neutral-600">Hantera din profil och personliga inställningar</p>
+        <p className="text-neutral-600">
+          Hantera din profil och personliga inställningar. Fyll i din information för att få
+          personliga beräkningar och rekommendationer.
+        </p>
       </div>
 
       <div className="grid gap-8 lg:grid-cols-3">
         {/* Main Profile Form */}
         <div className="lg:col-span-2 space-y-8">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Settings className="h-5 w-5" />
-                Profilinformation
-              </CardTitle>
-              <CardDescription>
-                Fyll i din information för att få personliga beräkningar och rekommendationer
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <UserProfileForm />
-            </CardContent>
-          </Card>
+          <UserProfileForm />
 
           {/* Macro Modes Card */}
           <MacroModesCard />
