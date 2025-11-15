@@ -3,6 +3,7 @@ import { Info } from 'lucide-react'
 import { Button } from './ui/button'
 import { calculateBMR, requiresBodyFat } from '@/lib/calculations/bmr'
 import { calculateAge } from '@/lib/calculations/helpers'
+import { calculateTDEE } from '@/lib/calculations/tdee'
 import type { PALSystem } from '@/lib/calculations/tdee'
 import type { Gender, BMRFormula } from '@/lib/types'
 import PALTableContainer from './calculator/PALTableContainer'
@@ -168,19 +169,18 @@ export default function UserProfileForm() {
       return
     }
 
-    // For simplified version, use basic PAL multiplier
-    // In a full implementation, you'd get this from the PAL table selections
-    const basicPalValues: Record<string, number> = {
-      Sedentary: 1.2,
-      'Lightly active': 1.375,
-      'Moderately active': 1.55,
-      'Very active': 1.725,
-      'Extremely active': 1.9,
-    }
-
-    // Use a default activity level for now
-    const palMultiplier = basicPalValues['Moderately active'] || 1.55
-    const baseTdee = Math.round(bmr * palMultiplier)
+    // Calculate TDEE using the selected PAL system and user's activity data
+    const baseTdee = calculateTDEE({
+      bmr,
+      palSystem: palSystem as PALSystem,
+      activityLevel: profile?.activity_level || 'Moderately active',
+      gender,
+      intensityLevel: profile?.intensity_level,
+      trainingFrequencyPerWeek: profile?.training_frequency_per_week,
+      trainingDurationMinutes: profile?.training_duration_minutes,
+      dailySteps: profile?.daily_steps,
+      customPAL: profile?.custom_pal,
+    })
 
     // Calculate TDEE range based on energy goal
     let tdeeMin = baseTdee
