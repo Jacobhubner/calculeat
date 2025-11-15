@@ -25,7 +25,7 @@ export default function SmartCalculator() {
   const [weight, setWeight] = useState<string>('')
   const [height, setHeight] = useState<string>('')
   const [gender, setGender] = useState<Gender>('male')
-  const [activityLevel, setActivityLevel] = useState<ActivityLevel>('Sedentary')
+  const [activityLevel, setActivityLevel] = useState<ActivityLevel | ''>('')
   const [result, setResult] = useState<CalculatorResult | null>(null)
 
   const handleCalculate = () => {
@@ -34,7 +34,7 @@ export default function SmartCalculator() {
     const weightNum = parseFloat(weight)
     const heightNum = parseFloat(height)
 
-    if (!ageNum || !weightNum || !heightNum) {
+    if (!ageNum || !weightNum || !heightNum || !activityLevel) {
       alert('Vänligen fyll i alla fält')
       return
     }
@@ -162,9 +162,10 @@ export default function SmartCalculator() {
           <label className="block text-sm font-medium text-neutral-700 mb-2">Aktivitetsnivå</label>
           <select
             value={activityLevel}
-            onChange={e => setActivityLevel(e.target.value as ActivityLevel)}
+            onChange={e => setActivityLevel(e.target.value as ActivityLevel | '')}
             className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
           >
+            <option value="">Välj aktivitetsnivå...</option>
             <option value="Sedentary">Stillasittande</option>
             <option value="Lightly active">Lätt aktiv</option>
             <option value="Moderately active">Måttligt aktiv</option>
@@ -172,13 +173,15 @@ export default function SmartCalculator() {
             <option value="Extremely active">Extremt aktiv</option>
           </select>
 
-          {/* Activity Level Description - Always shown */}
-          <div className="mt-3 flex gap-3 p-4 bg-blue-50 border border-blue-200 rounded-xl">
-            <Info className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
-            <p className="text-sm text-blue-800 leading-relaxed">
-              {ACTIVITY_DESCRIPTIONS[activityLevel]}
-            </p>
-          </div>
+          {/* Activity Level Description - Only shown when activity level is selected */}
+          {activityLevel && (
+            <div className="mt-3 flex gap-3 p-4 bg-blue-50 border border-blue-200 rounded-xl">
+              <Info className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+              <p className="text-sm text-blue-800 leading-relaxed">
+                {ACTIVITY_DESCRIPTIONS[activityLevel]}
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Calculate Button */}
