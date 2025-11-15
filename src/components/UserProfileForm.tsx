@@ -366,7 +366,7 @@ export default function UserProfileForm() {
         calorie_goal:
           energyGoal === ''
             ? undefined
-            : (energyGoal as 'Maintain weight' | 'Weight gain' | 'Weight loss'),
+            : (energyGoal as 'Maintain weight' | 'Weight gain' | 'Weight loss' | 'Custom TDEE'),
         deficit_level: deficitLevel || undefined,
         custom_tdee: customTdeeNum,
         bmr: result.bmr,
