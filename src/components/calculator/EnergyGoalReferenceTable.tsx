@@ -46,9 +46,6 @@ export default function EnergyGoalReferenceTable({
   const loss25DiffMin = tdee - loss25Max
   const loss25DiffMax = tdee - loss25Min
 
-  const customMin = Math.round(tdee * 0.97)
-  const customMax = Math.round(tdee * 1.03)
-
   // Define all goals with their selection status (always show all options)
   const goals: GoalRow[] = [
     {
@@ -95,7 +92,7 @@ export default function EnergyGoalReferenceTable({
     },
     {
       label: `Anpassat TDEE (±3%)`,
-      percentage: `${customMin} - ${customMax} kcal (${tdee} kcal)`,
+      percentage: '',
       isSelected: selectedGoal === 'Custom TDEE',
       goalValue: 'Custom TDEE',
     },

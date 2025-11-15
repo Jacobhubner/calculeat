@@ -78,11 +78,7 @@ export default function SmartCalculator() {
   }
 
   return (
-    <div
-      className={`rounded-2xl border p-8 shadow-lg ${
-        result ? 'border-lime-200 bg-lime-50' : 'border-neutral-200 bg-white'
-      }`}
-    >
+    <div className="rounded-2xl border border-neutral-200 bg-white p-8 shadow-lg">
       <div className="mb-6 flex items-center space-x-3">
         <Calculator className="h-12 w-12 text-primary-600" />
         <h2 className="text-3xl font-bold text-neutral-900">Beräkna ditt dagliga kaloribehov.</h2>
@@ -195,7 +191,7 @@ export default function SmartCalculator() {
 
         {/* Results */}
         {result && (
-          <div className="mt-6 space-y-4 border-t pt-6">
+          <div className="mt-6 space-y-4 border-t border-lime-200 bg-lime-50 rounded-xl p-6 pt-6">
             <h3 className="text-xl font-semibold text-neutral-900">Dina resultat</h3>
 
             <div className="grid gap-4 sm:grid-cols-2">

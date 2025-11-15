@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useCallback } from 'react'
 import { Info } from 'lucide-react'
 import { Button } from './ui/button'
 import { calculateBMR, requiresBodyFat } from '@/lib/calculations/bmr'
@@ -137,9 +137,17 @@ export default function UserProfileForm() {
       return
     }
 
-    // For PAL-based calculations, require at least activity level to be filled
-    if (!activityLevel) {
-      return
+    // For PAL-based calculations, check required fields based on PAL system
+    if (palSystem === 'Custom PAL') {
+      // Custom PAL only requires the custom PAL value to be set
+      if (!customPAL) {
+        return
+      }
+    } else {
+      // Other PAL systems require at least activity level to be filled
+      if (!activityLevel) {
+        return
+      }
     }
 
     // For Weight loss, also need deficit level
@@ -169,7 +177,7 @@ export default function UserProfileForm() {
     customPAL,
   ])
 
-  const handleCalculate = () => {
+  const handleCalculate = useCallback(() => {
     // Validate inputs
     const weightNum = parseFloat(weight)
     const heightNum = parseFloat(height)
@@ -304,7 +312,25 @@ export default function UserProfileForm() {
       tdeeMin,
       tdeeMax,
     })
-  }
+  }, [
+    profileName,
+    energyGoal,
+    customTdee,
+    birthDate,
+    weight,
+    height,
+    gender,
+    bmrFormula,
+    palSystem,
+    activityLevel,
+    customPAL,
+    deficitLevel,
+    bodyFatPercentage,
+    intensityLevel,
+    trainingFrequency,
+    trainingDuration,
+    dailySteps,
+  ])
 
   const handleSave = async () => {
     if (!result) {
