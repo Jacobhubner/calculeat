@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Info } from 'lucide-react'
 import { Button } from './ui/button'
 import { calculateBMR, requiresBodyFat } from '@/lib/calculations/bmr'
@@ -44,39 +44,125 @@ export default function UserProfileForm() {
   const [deficitLevel, setDeficitLevel] = useState<DeficitLevel>('')
   const [customTdee, setCustomTdee] = useState('')
 
+  // PAL-related state variables for real-time tracking
+  const [activityLevel, setActivityLevel] = useState(profile?.activity_level || '')
+  const [intensityLevel, setIntensityLevel] = useState(profile?.intensity_level || '')
+  const [trainingFrequency, setTrainingFrequency] = useState(
+    profile?.training_frequency_per_week || ''
+  )
+  const [trainingDuration, setTrainingDuration] = useState(profile?.training_duration_minutes || '')
+  const [dailySteps, setDailySteps] = useState(profile?.daily_steps || '')
+  const [customPAL, setCustomPAL] = useState(profile?.custom_pal?.toString() || '')
+
   const [result, setResult] = useState<CalculatorResult | null>(null)
   const [showBMRModal, setShowBMRModal] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
 
-  // Create a form data object for PAL table
+  // Create a form data object for PAL table with current state values
   const formData = useMemo(() => {
     return {
       pal_system: palSystem,
-      activity_level: profile?.activity_level,
-      intensity_level: profile?.intensity_level,
-      training_frequency_per_week: profile?.training_frequency_per_week,
-      training_duration_minutes: profile?.training_duration_minutes,
-      daily_steps: profile?.daily_steps,
-      custom_pal: profile?.custom_pal,
+      activity_level: activityLevel,
+      intensity_level: intensityLevel,
+      training_frequency_per_week: trainingFrequency,
+      training_duration_minutes: trainingDuration,
+      daily_steps: dailySteps,
+      custom_pal: customPAL ? parseFloat(customPAL) : undefined,
     }
-  }, [palSystem, profile])
+  }, [
+    palSystem,
+    activityLevel,
+    intensityLevel,
+    trainingFrequency,
+    trainingDuration,
+    dailySteps,
+    customPAL,
+  ])
 
-  // Dummy register function for PAL table
+  // Register function for PAL table - updates state in real-time
   const register = (name: string) => {
     return {
       name,
       onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        // This is a simplified implementation - the actual PAL values
-        // will be used when calculating on save
-        console.log('Field changed:', name, e.target.value)
+        const value = e.target.value
+
+        switch (name) {
+          case 'activity_level':
+            setActivityLevel(value)
+            break
+          case 'intensity_level':
+            setIntensityLevel(value)
+            break
+          case 'training_frequency_per_week':
+            setTrainingFrequency(value)
+            break
+          case 'training_duration_minutes':
+            setTrainingDuration(value)
+            break
+          case 'daily_steps':
+            setDailySteps(value)
+            break
+          case 'custom_pal':
+            setCustomPAL(value)
+            break
+        }
       },
     }
   }
 
+  // Watch function - returns current state values
   const watch = (name?: string) => {
     if (!name) return formData
     return formData[name as keyof typeof formData]
   }
+
+  // Auto-calculate when all required fields are filled
+  useEffect(() => {
+    // Check if all required fields are filled based on energy goal
+    if (!profileName || !energyGoal) {
+      return
+    }
+
+    // For Custom TDEE, only need customTdee
+    if (energyGoal === 'Custom TDEE') {
+      const customTdeeNum = customTdee ? parseFloat(customTdee) : 0
+      if (customTdeeNum >= 500 && customTdeeNum <= 10000) {
+        handleCalculate()
+      }
+      return
+    }
+
+    // For other goals, need all basic fields
+    if (!birthDate || !weight || !height || !gender || !bmrFormula || !palSystem) {
+      return
+    }
+
+    // For Weight loss, also need deficit level
+    if (energyGoal === 'Weight loss' && !deficitLevel) {
+      return
+    }
+
+    // Trigger calculation
+    handleCalculate()
+  }, [
+    profileName,
+    birthDate,
+    weight,
+    height,
+    gender,
+    bmrFormula,
+    palSystem,
+    energyGoal,
+    deficitLevel,
+    customTdee,
+    bodyFatPercentage,
+    activityLevel,
+    intensityLevel,
+    trainingFrequency,
+    trainingDuration,
+    dailySteps,
+    customPAL,
+  ])
 
   const handleCalculate = () => {
     // Validate inputs
@@ -173,13 +259,13 @@ export default function UserProfileForm() {
     const baseTdee = calculateTDEE({
       bmr,
       palSystem: palSystem as PALSystem,
-      activityLevel: profile?.activity_level || 'Moderately active',
+      activityLevel: activityLevel || 'Moderately active',
       gender,
-      intensityLevel: profile?.intensity_level,
-      trainingFrequencyPerWeek: profile?.training_frequency_per_week,
-      trainingDurationMinutes: profile?.training_duration_minutes,
-      dailySteps: profile?.daily_steps,
-      customPAL: profile?.custom_pal,
+      intensityLevel: intensityLevel || undefined,
+      trainingFrequencyPerWeek: trainingFrequency || undefined,
+      trainingDurationMinutes: trainingDuration || undefined,
+      dailySteps: dailySteps || undefined,
+      customPAL: customPAL ? parseFloat(customPAL) : undefined,
     })
 
     // Calculate TDEE range based on energy goal
@@ -513,66 +599,56 @@ export default function UserProfileForm() {
               </select>
             </div>
           )}
+
+          {/* Energy Goal Reference Table */}
+          {result && (
+            <EnergyGoalReferenceTable
+              tdee={result.tdee}
+              selectedGoal={energyGoal}
+              selectedDeficit={deficitLevel}
+            />
+          )}
         </div>
 
-        {/* Calculate Button */}
-        <div className="border-t pt-6">
-          <Button onClick={handleCalculate} className="w-full">
-            Beräkna
-          </Button>
-        </div>
-
-        {/* SECTION 6: Results with Sidebar */}
+        {/* SECTION 6: Results */}
         {result && (
-          <div className="mt-6 grid gap-6 lg:grid-cols-[1fr,400px]">
-            {/* Left: Results */}
-            <div className="rounded-2xl border border-lime-200 bg-lime-50 p-8 shadow-lg">
-              <h3 className="text-xl font-semibold text-neutral-900 mb-4">Dina resultat</h3>
+          <div className="mt-6 rounded-2xl border border-lime-200 bg-lime-50 p-8 shadow-lg">
+            <h3 className="text-xl font-semibold text-neutral-900 mb-4">Dina resultat</h3>
 
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="rounded-xl bg-primary-50 p-4 border border-primary-200">
-                  <p className="text-sm font-medium text-neutral-600 mb-1">
-                    BMR <span className="text-xs">(kcal/dag i vila)</span>
-                  </p>
-                  <p className="text-3xl font-bold text-primary-600">
-                    {result.bmr === 0 ? 'N/A' : `${result.bmr} kcal`}
-                  </p>
-                  <p className="text-xs text-neutral-500 mt-1">Basal Metabolic Rate</p>
-                </div>
-
-                <div className="rounded-xl bg-accent-50 p-4 border border-accent-200">
-                  <p className="text-sm font-medium text-neutral-600 mb-1">
-                    TDEE <span className="text-xs">(kcal/dag totalt)</span>
-                  </p>
-                  <p className="text-3xl font-bold text-accent-600">
-                    {energyGoal === 'Maintain weight' || energyGoal === 'Custom TDEE'
-                      ? `${result.tdeeMin} - ${result.tdeeMax} kcal `
-                      : result.tdeeMin === result.tdeeMax
-                        ? `${result.tdee} kcal`
-                        : `${result.tdeeMin} - ${result.tdeeMax} kcal `}
-                    {(energyGoal === 'Maintain weight' || energyGoal === 'Custom TDEE') && (
-                      <span className="text-xl text-accent-500">({result.tdee} kcal)</span>
-                    )}
-                  </p>
-                  <p className="text-xs text-neutral-500 mt-1">Total Daily Energy Expenditure</p>
-                </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="rounded-xl bg-primary-50 p-4 border border-primary-200">
+                <p className="text-sm font-medium text-neutral-600 mb-1">
+                  BMR <span className="text-xs">(kcal/dag i vila)</span>
+                </p>
+                <p className="text-3xl font-bold text-primary-600">
+                  {result.bmr === 0 ? 'N/A' : `${result.bmr} kcal`}
+                </p>
+                <p className="text-xs text-neutral-500 mt-1">Basal Metabolic Rate</p>
               </div>
 
-              {/* Save Button */}
-              <div className="mt-6">
-                <Button onClick={handleSave} disabled={isSaving} className="w-full">
-                  {isSaving ? 'Sparar...' : 'Spara profil'}
-                </Button>
+              <div className="rounded-xl bg-accent-50 p-4 border border-accent-200">
+                <p className="text-sm font-medium text-neutral-600 mb-1">
+                  TDEE <span className="text-xs">(kcal/dag totalt)</span>
+                </p>
+                <p className="text-3xl font-bold text-accent-600">
+                  {energyGoal === 'Maintain weight' || energyGoal === 'Custom TDEE'
+                    ? `${result.tdeeMin} - ${result.tdeeMax} kcal `
+                    : result.tdeeMin === result.tdeeMax
+                      ? `${result.tdee} kcal`
+                      : `${result.tdeeMin} - ${result.tdeeMax} kcal `}
+                  {(energyGoal === 'Maintain weight' || energyGoal === 'Custom TDEE') && (
+                    <span className="text-xl text-accent-500">({result.tdee} kcal)</span>
+                  )}
+                </p>
+                <p className="text-xs text-neutral-500 mt-1">Total Daily Energy Expenditure</p>
               </div>
             </div>
 
-            {/* Right: Energy Goal Reference Table Sidebar */}
-            <div>
-              <EnergyGoalReferenceTable
-                tdee={result.tdee}
-                selectedGoal={energyGoal}
-                selectedDeficit={deficitLevel}
-              />
+            {/* Save Button */}
+            <div className="mt-6">
+              <Button onClick={handleSave} disabled={isSaving} className="w-full">
+                {isSaving ? 'Sparar...' : 'Spara profil'}
+              </Button>
             </div>
           </div>
         )}
