@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { Calculator, Info } from 'lucide-react'
+import { Info } from 'lucide-react'
 import { Button } from './ui/button'
 import { calculateBMR, requiresBodyFat } from '@/lib/calculations/bmr'
 import { calculateAge } from '@/lib/calculations/helpers'
@@ -7,6 +7,7 @@ import type { PALSystem } from '@/lib/calculations/tdee'
 import type { Gender, BMRFormula } from '@/lib/types'
 import PALTableContainer from './calculator/PALTableContainer'
 import BMRFormulaModal from './calculator/BMRFormulaModal'
+import EnergyGoalReferenceTable from './calculator/EnergyGoalReferenceTable'
 import { useAuth } from '@/contexts/AuthContext'
 import { translatePALSystem } from '@/lib/translations'
 
@@ -17,7 +18,7 @@ interface CalculatorResult {
   tdeeMax: number
 }
 
-type EnergyGoal = 'Maintain weight' | 'Weight gain' | 'Weight loss' | ''
+type EnergyGoal = 'Maintain weight' | 'Weight gain' | 'Weight loss' | 'Custom TDEE' | ''
 type DeficitLevel = '10-15%' | '20-25%' | '25-30%' | ''
 
 export default function UserProfileForm() {
@@ -40,6 +41,7 @@ export default function UserProfileForm() {
   )
   const [energyGoal, setEnergyGoal] = useState<EnergyGoal>('')
   const [deficitLevel, setDeficitLevel] = useState<DeficitLevel>('')
+  const [customTdee, setCustomTdee] = useState('')
 
   const [result, setResult] = useState<CalculatorResult | null>(null)
   const [showBMRModal, setShowBMRModal] = useState(false)
@@ -80,12 +82,39 @@ export default function UserProfileForm() {
     const weightNum = parseFloat(weight)
     const heightNum = parseFloat(height)
     const bodyFatNum = bodyFatPercentage ? parseFloat(bodyFatPercentage) : undefined
+    const customTdeeNum = customTdee ? parseFloat(customTdee) : undefined
 
     if (!profileName) {
       alert('Vänligen ange ett profilnamn')
       return
     }
 
+    if (!energyGoal) {
+      alert('Vänligen välj ett energimål')
+      return
+    }
+
+    // For Custom TDEE, only validate TDEE input
+    if (energyGoal === 'Custom TDEE') {
+      if (!customTdeeNum || customTdeeNum < 500 || customTdeeNum > 10000) {
+        alert('Vänligen ange ett giltigt TDEE-värde (500-10000 kcal)')
+        return
+      }
+
+      // Calculate ±3% range
+      const tdeeMin = Math.round(customTdeeNum * 0.97)
+      const tdeeMax = Math.round(customTdeeNum * 1.03)
+
+      setResult({
+        bmr: 0, // Will display as N/A
+        tdee: Math.round(customTdeeNum),
+        tdeeMin,
+        tdeeMax,
+      })
+      return
+    }
+
+    // For other goals, validate all fields
     if (!birthDate) {
       alert('Vänligen ange ditt födelsedatum')
       return
@@ -93,11 +122,6 @@ export default function UserProfileForm() {
 
     if (!weightNum || !heightNum || !gender || !bmrFormula || !palSystem) {
       alert('Vänligen fyll i alla obligatoriska fält')
-      return
-    }
-
-    if (!energyGoal) {
-      alert('Vänligen välj ett energimål')
       return
     }
 
@@ -163,8 +187,9 @@ export default function UserProfileForm() {
     let tdeeMax = baseTdee
 
     if (energyGoal === 'Maintain weight') {
-      tdeeMin = baseTdee
-      tdeeMax = baseTdee
+      // ±3% range for maintain weight
+      tdeeMin = Math.round(baseTdee * 0.97)
+      tdeeMax = Math.round(baseTdee * 1.03)
     } else if (energyGoal === 'Weight loss') {
       if (deficitLevel === '10-15%') {
         tdeeMin = Math.round(baseTdee * 0.85)
@@ -225,11 +250,6 @@ export default function UserProfileForm() {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <div className="mb-6 flex items-center space-x-3">
-        <Calculator className="h-12 w-12 text-primary-600" />
-        <h2 className="text-3xl font-bold text-neutral-900">Min Profil</h2>
-      </div>
-
       <div className="space-y-6">
         {/* SECTION 1: Profile Name */}
         <div>
@@ -342,9 +362,7 @@ export default function UserProfileForm() {
 
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <label className="block text-sm font-medium text-neutral-700">
-                Välj BMR-formel *
-              </label>
+              <label className="block text-sm font-medium text-neutral-700">BMR-formel *</label>
               {bmrFormula && (
                 <button
                   type="button"
@@ -397,9 +415,7 @@ export default function UserProfileForm() {
           </h3>
 
           <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-2">
-              Välj PAL-system *
-            </label>
+            <label className="block text-sm font-medium text-neutral-700 mb-2">PAL-system *</label>
             <select
               value={palSystem}
               onChange={e => setPalSystem(e.target.value as PALSystem | '')}
@@ -444,9 +460,7 @@ export default function UserProfileForm() {
           <h3 className="text-xl font-semibold text-neutral-900 mb-4">Energimål</h3>
 
           <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-2">
-              Välj energimål *
-            </label>
+            <label className="block text-sm font-medium text-neutral-700 mb-2">Energimål *</label>
             <select
               value={energyGoal}
               onChange={e => setEnergyGoal(e.target.value as EnergyGoal)}
@@ -456,8 +470,30 @@ export default function UserProfileForm() {
               <option value="Maintain weight">Behåll vikt</option>
               <option value="Weight gain">Viktuppgång (10–20%)</option>
               <option value="Weight loss">Viktnedgång</option>
+              <option value="Custom TDEE">Anpassat TDEE-värde</option>
             </select>
           </div>
+
+          {/* Show custom TDEE input */}
+          {energyGoal === 'Custom TDEE' && (
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-neutral-700 mb-2">
+                TDEE-värde (kcal) *
+              </label>
+              <input
+                type="number"
+                value={customTdee}
+                onChange={e => setCustomTdee(e.target.value)}
+                className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                placeholder="2500"
+                min="500"
+                max="10000"
+              />
+              <p className="mt-1 text-xs text-neutral-500">
+                Ange ditt eget TDEE-värde direkt (hoppar över BMR/PAL beräkningar)
+              </p>
+            </div>
+          )}
 
           {/* Show deficit level for weight loss */}
           {energyGoal === 'Weight loss' && (
@@ -476,6 +512,15 @@ export default function UserProfileForm() {
                 <option value="25-30%">Stort underskott (25–30%)</option>
               </select>
             </div>
+          )}
+
+          {/* Energy Goal Reference Table */}
+          {result && (
+            <EnergyGoalReferenceTable
+              tdee={result.tdee}
+              selectedGoal={energyGoal}
+              selectedDeficit={deficitLevel}
+            />
           )}
         </div>
 
@@ -496,7 +541,9 @@ export default function UserProfileForm() {
                 <p className="text-sm font-medium text-neutral-600 mb-1">
                   BMR <span className="text-xs">(kcal/dag i vila)</span>
                 </p>
-                <p className="text-3xl font-bold text-primary-600">{result.bmr} kcal</p>
+                <p className="text-3xl font-bold text-primary-600">
+                  {result.bmr === 0 ? 'N/A' : `${result.bmr} kcal`}
+                </p>
                 <p className="text-xs text-neutral-500 mt-1">Basal Metabolic Rate</p>
               </div>
 
@@ -505,9 +552,14 @@ export default function UserProfileForm() {
                   TDEE <span className="text-xs">(kcal/dag totalt)</span>
                 </p>
                 <p className="text-3xl font-bold text-accent-600">
-                  {result.tdeeMin === result.tdeeMax
-                    ? `${result.tdee} kcal`
-                    : `${result.tdeeMin} - ${result.tdeeMax} kcal`}
+                  {energyGoal === 'Maintain weight' || energyGoal === 'Custom TDEE'
+                    ? `${result.tdeeMin} - ${result.tdeeMax} kcal `
+                    : result.tdeeMin === result.tdeeMax
+                      ? `${result.tdee} kcal`
+                      : `${result.tdeeMin} - ${result.tdeeMax} kcal `}
+                  {(energyGoal === 'Maintain weight' || energyGoal === 'Custom TDEE') && (
+                    <span className="text-xl text-accent-500">({result.tdee} kcal)</span>
+                  )}
                 </p>
                 <p className="text-xs text-neutral-500 mt-1">Total Daily Energy Expenditure</p>
               </div>

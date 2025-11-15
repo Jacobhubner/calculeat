@@ -15,6 +15,7 @@ import RegisterPage from './pages/RegisterPage'
 import ForgotPasswordPage from './pages/ForgotPasswordPage'
 import DashboardPage from './pages/DashboardPage'
 import ProfilePage from './pages/ProfilePage'
+import BodyCompositionPage from './pages/BodyCompositionPage'
 import FoodItemsPage from './pages/FoodItemsPage'
 import RecipesPage from './pages/RecipesPage'
 import SavedMealsPage from './pages/SavedMealsPage'
@@ -63,6 +64,14 @@ function App() {
                   element={
                     <ProtectedRoute>
                       <ProfilePage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/app/body-composition"
+                  element={
+                    <ProtectedRoute>
+                      <BodyCompositionPage />
                     </ProtectedRoute>
                   }
                 />

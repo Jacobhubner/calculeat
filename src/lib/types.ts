@@ -39,7 +39,7 @@ export type DailySteps =
   | '11 000 – 12 999 steps/day'
   | '≥ 13 000 steps/day'
 
-export type CalorieGoal = 'Maintain weight' | 'Weight gain' | 'Weight loss'
+export type CalorieGoal = 'Maintain weight' | 'Weight gain' | 'Weight loss' | 'Custom TDEE'
 
 export type DeficitLevel = 'Slow' | 'Moderate' | 'Aggressive'
 
@@ -84,6 +84,7 @@ export interface UserProfile {
   // Goals
   calorie_goal?: CalorieGoal
   deficit_level?: DeficitLevel
+  custom_tdee?: number
   target_weight_kg?: number
   target_body_fat_percentage?: number
 
@@ -129,6 +130,7 @@ export interface UserProfileFormData {
   // Goals
   calorie_goal?: CalorieGoal
   deficit_level?: DeficitLevel
+  custom_tdee?: number
   target_weight_kg?: number
   target_body_fat_percentage?: number
 

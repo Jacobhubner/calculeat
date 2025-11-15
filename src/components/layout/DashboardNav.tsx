@@ -11,6 +11,7 @@ import {
   Bookmark,
   Calendar,
   History,
+  Activity,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuth } from '@/contexts/AuthContext'
@@ -74,6 +75,11 @@ export default function DashboardNav() {
       to: '/app/profile',
       label: 'Profil',
       icon: User,
+    },
+    {
+      to: '/app/body-composition',
+      label: 'Kroppssammansättning',
+      icon: Activity,
     },
   ]
 
