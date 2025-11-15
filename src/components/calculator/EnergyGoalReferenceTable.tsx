@@ -8,6 +8,7 @@ interface GoalRow {
   label: string
   percentage: string
   isSelected: boolean
+  isSubItem?: boolean
 }
 
 export default function EnergyGoalReferenceTable({
@@ -43,7 +44,7 @@ export default function EnergyGoalReferenceTable({
   const customMax = Math.round(tdee * 1.03)
 
   // Define goals with their selection status
-  const goals: GoalRow[] = [
+  const baseGoals: GoalRow[] = [
     {
       label: `Behåll vikt (±3%)`,
       percentage: `${maintainMin} - ${maintainMax} kcal (${tdee} kcal)`,
@@ -55,26 +56,42 @@ export default function EnergyGoalReferenceTable({
       isSelected: selectedGoal === 'Weight gain',
     },
     {
-      label: `Viktnedgång - Litet (10-15%)`,
+      label: `Viktnedgång`,
+      percentage: '',
+      isSelected: false,
+    },
+    {
+      label: `Litet (10-15%)`,
       percentage: `${loss10Min} - ${loss10Max} kcal (⇩ ${loss10DiffMin} - ${loss10DiffMax} kcal)`,
       isSelected: selectedGoal === 'Weight loss' && selectedDeficit === '10-15%',
+      isSubItem: true,
     },
     {
-      label: `Viktnedgång - Måttligt (20-25%)`,
+      label: `Måttligt (20-25%)`,
       percentage: `${loss20Min} - ${loss20Max} kcal (⇩ ${loss20DiffMin} - ${loss20DiffMax} kcal)`,
       isSelected: selectedGoal === 'Weight loss' && selectedDeficit === '20-25%',
+      isSubItem: true,
     },
     {
-      label: `Viktnedgång - Stort (25-30%)`,
+      label: `Stort (25-30%)`,
       percentage: `${loss25Min} - ${loss25Max} kcal (⇩ ${loss25DiffMin} - ${loss25DiffMax} kcal)`,
       isSelected: selectedGoal === 'Weight loss' && selectedDeficit === '25-30%',
-    },
-    {
-      label: `Anpassat TDEE (±3%)`,
-      percentage: `${customMin} - ${customMax} kcal (${tdee} kcal)`,
-      isSelected: selectedGoal === 'Custom TDEE',
+      isSubItem: true,
     },
   ]
+
+  // Add Custom TDEE only if it's selected
+  const goals: GoalRow[] =
+    selectedGoal === 'Custom TDEE'
+      ? [
+          ...baseGoals,
+          {
+            label: `Anpassat TDEE (±3%)`,
+            percentage: `${customMin} - ${customMax} kcal (${tdee} kcal)`,
+            isSelected: true,
+          },
+        ]
+      : baseGoals
 
   return (
     <div className="mt-4 rounded-xl border border-neutral-200 bg-white overflow-hidden shadow-sm">
@@ -85,25 +102,32 @@ export default function EnergyGoalReferenceTable({
         {goals.map((goal, index) => (
           <div
             key={index}
-            className={`px-4 py-3 transition-colors ${
+            className={`transition-colors ${
               goal.isSelected
                 ? 'bg-primary-50 border-l-4 border-l-primary-500'
                 : 'bg-white hover:bg-neutral-50'
-            }`}
+            } ${goal.isSubItem ? 'pl-8 pr-4 py-2' : 'px-4 py-3'}`}
           >
             <div className="flex justify-between items-center">
               <span
-                className={`text-sm font-medium ${
-                  goal.isSelected ? 'text-primary-900' : 'text-neutral-700'
+                className={`text-sm ${
+                  goal.isSelected
+                    ? 'font-semibold text-primary-900'
+                    : goal.isSubItem
+                      ? 'font-normal text-neutral-600'
+                      : 'font-medium text-neutral-700'
                 }`}
               >
+                {goal.isSubItem && <span className="mr-2 text-neutral-400">•</span>}
                 {goal.label}
               </span>
-              <span
-                className={`text-sm ${goal.isSelected ? 'text-primary-700 font-semibold' : 'text-neutral-600'}`}
-              >
-                {goal.percentage}
-              </span>
+              {goal.percentage && (
+                <span
+                  className={`text-sm ${goal.isSelected ? 'text-primary-700 font-semibold' : 'text-neutral-600'}`}
+                >
+                  {goal.percentage}
+                </span>
+              )}
             </div>
           </div>
         ))}

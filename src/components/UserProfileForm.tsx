@@ -513,15 +513,6 @@ export default function UserProfileForm() {
               </select>
             </div>
           )}
-
-          {/* Energy Goal Reference Table */}
-          {result && (
-            <EnergyGoalReferenceTable
-              tdee={result.tdee}
-              selectedGoal={energyGoal}
-              selectedDeficit={deficitLevel}
-            />
-          )}
         </div>
 
         {/* Calculate Button */}
@@ -531,45 +522,57 @@ export default function UserProfileForm() {
           </Button>
         </div>
 
-        {/* SECTION 6: Results */}
+        {/* SECTION 6: Results with Sidebar */}
         {result && (
-          <div className="mt-6 rounded-2xl border border-lime-200 bg-lime-50 p-8 shadow-lg">
-            <h3 className="text-xl font-semibold text-neutral-900 mb-4">Dina resultat</h3>
+          <div className="mt-6 grid gap-6 lg:grid-cols-[1fr,400px]">
+            {/* Left: Results */}
+            <div className="rounded-2xl border border-lime-200 bg-lime-50 p-8 shadow-lg">
+              <h3 className="text-xl font-semibold text-neutral-900 mb-4">Dina resultat</h3>
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="rounded-xl bg-primary-50 p-4 border border-primary-200">
-                <p className="text-sm font-medium text-neutral-600 mb-1">
-                  BMR <span className="text-xs">(kcal/dag i vila)</span>
-                </p>
-                <p className="text-3xl font-bold text-primary-600">
-                  {result.bmr === 0 ? 'N/A' : `${result.bmr} kcal`}
-                </p>
-                <p className="text-xs text-neutral-500 mt-1">Basal Metabolic Rate</p>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="rounded-xl bg-primary-50 p-4 border border-primary-200">
+                  <p className="text-sm font-medium text-neutral-600 mb-1">
+                    BMR <span className="text-xs">(kcal/dag i vila)</span>
+                  </p>
+                  <p className="text-3xl font-bold text-primary-600">
+                    {result.bmr === 0 ? 'N/A' : `${result.bmr} kcal`}
+                  </p>
+                  <p className="text-xs text-neutral-500 mt-1">Basal Metabolic Rate</p>
+                </div>
+
+                <div className="rounded-xl bg-accent-50 p-4 border border-accent-200">
+                  <p className="text-sm font-medium text-neutral-600 mb-1">
+                    TDEE <span className="text-xs">(kcal/dag totalt)</span>
+                  </p>
+                  <p className="text-3xl font-bold text-accent-600">
+                    {energyGoal === 'Maintain weight' || energyGoal === 'Custom TDEE'
+                      ? `${result.tdeeMin} - ${result.tdeeMax} kcal `
+                      : result.tdeeMin === result.tdeeMax
+                        ? `${result.tdee} kcal`
+                        : `${result.tdeeMin} - ${result.tdeeMax} kcal `}
+                    {(energyGoal === 'Maintain weight' || energyGoal === 'Custom TDEE') && (
+                      <span className="text-xl text-accent-500">({result.tdee} kcal)</span>
+                    )}
+                  </p>
+                  <p className="text-xs text-neutral-500 mt-1">Total Daily Energy Expenditure</p>
+                </div>
               </div>
 
-              <div className="rounded-xl bg-accent-50 p-4 border border-accent-200">
-                <p className="text-sm font-medium text-neutral-600 mb-1">
-                  TDEE <span className="text-xs">(kcal/dag totalt)</span>
-                </p>
-                <p className="text-3xl font-bold text-accent-600">
-                  {energyGoal === 'Maintain weight' || energyGoal === 'Custom TDEE'
-                    ? `${result.tdeeMin} - ${result.tdeeMax} kcal `
-                    : result.tdeeMin === result.tdeeMax
-                      ? `${result.tdee} kcal`
-                      : `${result.tdeeMin} - ${result.tdeeMax} kcal `}
-                  {(energyGoal === 'Maintain weight' || energyGoal === 'Custom TDEE') && (
-                    <span className="text-xl text-accent-500">({result.tdee} kcal)</span>
-                  )}
-                </p>
-                <p className="text-xs text-neutral-500 mt-1">Total Daily Energy Expenditure</p>
+              {/* Save Button */}
+              <div className="mt-6">
+                <Button onClick={handleSave} disabled={isSaving} className="w-full">
+                  {isSaving ? 'Sparar...' : 'Spara profil'}
+                </Button>
               </div>
             </div>
 
-            {/* Save Button */}
-            <div className="mt-6">
-              <Button onClick={handleSave} disabled={isSaving} className="w-full">
-                {isSaving ? 'Sparar...' : 'Spara profil'}
-              </Button>
+            {/* Right: Energy Goal Reference Table Sidebar */}
+            <div>
+              <EnergyGoalReferenceTable
+                tdee={result.tdee}
+                selectedGoal={energyGoal}
+                selectedDeficit={deficitLevel}
+              />
             </div>
           </div>
         )}
