@@ -199,7 +199,7 @@ export default function SmartCalculator() {
                 <p className="text-sm font-medium text-neutral-600 mb-1">
                   BMR <span className="text-xs">(kcal/dag i vila)</span>
                 </p>
-                <p className="text-3xl font-bold text-primary-600">{result.bmr}</p>
+                <p className="text-3xl font-bold text-primary-600">{result.bmr} kcal</p>
                 <p className="text-xs text-neutral-500 mt-1">Basal Metabolic Rate</p>
               </div>
 
@@ -207,7 +207,7 @@ export default function SmartCalculator() {
                 <p className="text-sm font-medium text-neutral-600 mb-1">
                   TDEE <span className="text-xs">(kcal/dag totalt)</span>
                 </p>
-                <p className="text-3xl font-bold text-accent-600">{result.tdee}</p>
+                <p className="text-3xl font-bold text-accent-600">{result.tdee} kcal</p>
                 <p className="text-xs text-neutral-500 mt-1">Total Daily Energy Expenditure</p>
               </div>
             </div>
