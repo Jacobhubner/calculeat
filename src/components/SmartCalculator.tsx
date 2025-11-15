@@ -78,7 +78,7 @@ export default function SmartCalculator() {
   }
 
   return (
-    <div className="rounded-2xl border bg-white p-8 shadow-lg">
+    <div className="rounded-2xl border border-lime-200 bg-lime-50 p-8 shadow-lg">
       <div className="mb-6 flex items-center space-x-3">
         <Calculator className="h-12 w-12 text-primary-600" />
         <h2 className="text-3xl font-bold text-neutral-900">Beräkna ditt dagliga kaloribehov.</h2>
