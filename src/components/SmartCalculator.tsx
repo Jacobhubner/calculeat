@@ -27,7 +27,6 @@ export default function SmartCalculator() {
   const [gender, setGender] = useState<Gender>('male')
   const [activityLevel, setActivityLevel] = useState<ActivityLevel>('Sedentary')
   const [result, setResult] = useState<CalculatorResult | null>(null)
-  const [showActivityInfo, setShowActivityInfo] = useState(false)
 
   const handleCalculate = () => {
     // Validate inputs
@@ -160,16 +159,7 @@ export default function SmartCalculator() {
 
         {/* Activity Level */}
         <div>
-          <div className="flex items-center justify-between mb-2">
-            <label className="block text-sm font-medium text-neutral-700">Aktivitetsnivå</label>
-            <button
-              type="button"
-              onClick={() => setShowActivityInfo(!showActivityInfo)}
-              className="text-primary-600 hover:text-primary-700 transition-colors"
-            >
-              <Info className="h-4 w-4" />
-            </button>
-          </div>
+          <label className="block text-sm font-medium text-neutral-700 mb-2">Aktivitetsnivå</label>
           <select
             value={activityLevel}
             onChange={e => setActivityLevel(e.target.value as ActivityLevel)}
@@ -182,12 +172,13 @@ export default function SmartCalculator() {
             <option value="Extremely active">Extremt aktiv</option>
           </select>
 
-          {/* Activity Level Description */}
-          {showActivityInfo && (
-            <div className="mt-3 p-4 bg-primary-50 border border-primary-200 rounded-xl">
-              <p className="text-sm text-neutral-700">{ACTIVITY_DESCRIPTIONS[activityLevel]}</p>
-            </div>
-          )}
+          {/* Activity Level Description - Always shown */}
+          <div className="mt-3 flex gap-3 p-4 bg-blue-50 border border-blue-200 rounded-xl">
+            <Info className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+            <p className="text-sm text-blue-800 leading-relaxed">
+              {ACTIVITY_DESCRIPTIONS[activityLevel]}
+            </p>
+          </div>
         </div>
 
         {/* Calculate Button */}

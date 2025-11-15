@@ -98,7 +98,8 @@ export default function HomePage() {
                 Prova vår kalkylator
               </h2>
               <p className="text-lg md:text-xl text-neutral-600">
-                Få ditt personliga kaloribehov baserat på vetenskapliga formler
+                Få värdet på din personliga energiomsättning snabbt och enkelt – ingen inloggning
+                krävs.
               </p>
             </div>
 
