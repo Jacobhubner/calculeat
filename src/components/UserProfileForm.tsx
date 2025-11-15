@@ -40,7 +40,7 @@ export default function UserProfileForm() {
   const [palSystem, setPalSystem] = useState<PALSystem | ''>(
     (profile?.pal_system as PALSystem) || ''
   )
-  const [energyGoal, setEnergyGoal] = useState<EnergyGoal>('')
+  const [energyGoal, setEnergyGoal] = useState<EnergyGoal>('Maintain weight')
   const [deficitLevel, setDeficitLevel] = useState<DeficitLevel>('')
   const [customTdee, setCustomTdee] = useState('')
 
