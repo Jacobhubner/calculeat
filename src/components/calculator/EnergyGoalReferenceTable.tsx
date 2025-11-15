@@ -2,6 +2,8 @@ interface EnergyGoalReferenceTableProps {
   tdee: number
   selectedGoal: string
   selectedDeficit?: string
+  onGoalSelect: (goal: string) => void
+  onDeficitSelect: (deficit: string) => void
 }
 
 interface GoalRow {
@@ -9,12 +11,16 @@ interface GoalRow {
   percentage: string
   isSelected: boolean
   isSubItem?: boolean
+  goalValue: string
+  deficitValue?: string
 }
 
 export default function EnergyGoalReferenceTable({
   tdee,
   selectedGoal,
   selectedDeficit,
+  onGoalSelect,
+  onDeficitSelect,
 }: EnergyGoalReferenceTableProps) {
   // Calculate calorie differentials
   const maintainMin = Math.round(tdee * 0.97)
@@ -43,55 +49,57 @@ export default function EnergyGoalReferenceTable({
   const customMin = Math.round(tdee * 0.97)
   const customMax = Math.round(tdee * 1.03)
 
-  // Define goals with their selection status
-  const baseGoals: GoalRow[] = [
+  // Define all goals with their selection status (always show all options)
+  const goals: GoalRow[] = [
     {
       label: `Behåll vikt (±3%)`,
       percentage: `${maintainMin} - ${maintainMax} kcal (${tdee} kcal)`,
       isSelected: selectedGoal === 'Maintain weight',
+      goalValue: 'Maintain weight',
     },
     {
       label: `Viktuppgång (10-20%)`,
       percentage: `${gain10Min} - ${gain10Max} kcal (⇧ ${gain10DiffMin} - ${gain10DiffMax} kcal)`,
       isSelected: selectedGoal === 'Weight gain',
+      goalValue: 'Weight gain',
     },
     {
       label: `Viktnedgång`,
       percentage: '',
       isSelected: false,
+      goalValue: '',
     },
     {
-      label: `Litet (10-15%)`,
+      label: `Försiktigt (10-15%)`,
       percentage: `${loss10Min} - ${loss10Max} kcal (⇩ ${loss10DiffMin} - ${loss10DiffMax} kcal)`,
       isSelected: selectedGoal === 'Weight loss' && selectedDeficit === '10-15%',
       isSubItem: true,
+      goalValue: 'Weight loss',
+      deficitValue: '10-15%',
     },
     {
-      label: `Måttligt (20-25%)`,
+      label: `Normalt (20-25%)`,
       percentage: `${loss20Min} - ${loss20Max} kcal (⇩ ${loss20DiffMin} - ${loss20DiffMax} kcal)`,
       isSelected: selectedGoal === 'Weight loss' && selectedDeficit === '20-25%',
       isSubItem: true,
+      goalValue: 'Weight loss',
+      deficitValue: '20-25%',
     },
     {
-      label: `Stort (25-30%)`,
+      label: `Aggressivt (25-30%)`,
       percentage: `${loss25Min} - ${loss25Max} kcal (⇩ ${loss25DiffMin} - ${loss25DiffMax} kcal)`,
       isSelected: selectedGoal === 'Weight loss' && selectedDeficit === '25-30%',
       isSubItem: true,
+      goalValue: 'Weight loss',
+      deficitValue: '25-30%',
+    },
+    {
+      label: `Anpassat TDEE (±3%)`,
+      percentage: `${customMin} - ${customMax} kcal (${tdee} kcal)`,
+      isSelected: selectedGoal === 'Custom TDEE',
+      goalValue: 'Custom TDEE',
     },
   ]
-
-  // Add Custom TDEE only if it's selected
-  const goals: GoalRow[] =
-    selectedGoal === 'Custom TDEE'
-      ? [
-          ...baseGoals,
-          {
-            label: `Anpassat TDEE (±3%)`,
-            percentage: `${customMin} - ${customMax} kcal (${tdee} kcal)`,
-            isSelected: true,
-          },
-        ]
-      : baseGoals
 
   return (
     <div className="mt-4 rounded-xl border border-neutral-200 bg-white overflow-hidden shadow-sm">
@@ -99,38 +107,59 @@ export default function EnergyGoalReferenceTable({
         <h4 className="text-sm font-semibold text-white">Energimål - Översikt</h4>
       </div>
       <div className="divide-y divide-neutral-200">
-        {goals.map((goal, index) => (
-          <div
-            key={index}
-            className={`transition-colors ${
-              goal.isSelected
-                ? 'bg-primary-50 border-l-4 border-l-primary-500'
-                : 'bg-white hover:bg-neutral-50'
-            } ${goal.isSubItem ? 'pl-8 pr-4 py-2' : 'px-4 py-3'}`}
-          >
-            <div className="flex justify-between items-center">
-              <span
-                className={`text-sm ${
-                  goal.isSelected
-                    ? 'font-semibold text-primary-900'
-                    : goal.isSubItem
-                      ? 'font-normal text-neutral-600'
-                      : 'font-medium text-neutral-700'
-                }`}
-              >
-                {goal.isSubItem && <span className="mr-2 text-neutral-400">•</span>}
-                {goal.label}
-              </span>
-              {goal.percentage && (
+        {goals.map((goal, index) => {
+          const handleClick = () => {
+            if (!goal.goalValue) return // Skip "Viktnedgång" header
+
+            if (goal.isSubItem && goal.deficitValue) {
+              // Clicking a weight loss sub-item
+              onGoalSelect('Weight loss')
+              onDeficitSelect(goal.deficitValue)
+            } else {
+              // Clicking a main goal
+              onGoalSelect(goal.goalValue)
+              if (goal.goalValue !== 'Weight loss') {
+                onDeficitSelect('') // Clear deficit if not weight loss
+              }
+            }
+          }
+
+          return (
+            <div
+              key={index}
+              onClick={handleClick}
+              className={`transition-colors ${
+                goal.isSelected
+                  ? 'bg-primary-50 border-l-4 border-l-primary-500'
+                  : 'bg-white hover:bg-neutral-50'
+              } ${goal.isSubItem ? 'pl-8 pr-4 py-2' : 'px-4 py-3'} ${
+                goal.goalValue ? 'cursor-pointer' : 'cursor-default'
+              }`}
+            >
+              <div className="flex justify-between items-center">
                 <span
-                  className={`text-sm ${goal.isSelected ? 'text-primary-700 font-semibold' : 'text-neutral-600'}`}
+                  className={`text-sm ${
+                    goal.isSelected
+                      ? 'font-semibold text-primary-900'
+                      : goal.isSubItem
+                        ? 'font-normal text-neutral-600'
+                        : 'font-medium text-neutral-700'
+                  }`}
                 >
-                  {goal.percentage}
+                  {goal.isSubItem && <span className="mr-2 text-neutral-400">•</span>}
+                  {goal.label}
                 </span>
-              )}
+                {goal.percentage && (
+                  <span
+                    className={`text-sm ${goal.isSelected ? 'text-primary-700 font-semibold' : 'text-neutral-600'}`}
+                  >
+                    {goal.percentage}
+                  </span>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
     </div>
   )

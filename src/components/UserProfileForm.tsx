@@ -545,68 +545,38 @@ export default function UserProfileForm() {
         <div className="border-t pt-6">
           <h3 className="text-xl font-semibold text-neutral-900 mb-4">Energimål</h3>
 
-          <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-2">Energimål *</label>
-            <select
-              value={energyGoal}
-              onChange={e => setEnergyGoal(e.target.value as EnergyGoal)}
-              className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
-            >
-              <option value="">Välj energimål...</option>
-              <option value="Maintain weight">Behåll vikt</option>
-              <option value="Weight gain">Viktuppgång (10–20%)</option>
-              <option value="Weight loss">Viktnedgång</option>
-              <option value="Custom TDEE">Anpassat TDEE-värde</option>
-            </select>
-          </div>
-
-          {/* Show custom TDEE input */}
-          {energyGoal === 'Custom TDEE' && (
-            <div className="mt-4">
-              <label className="block text-sm font-medium text-neutral-700 mb-2">
-                TDEE-värde (kcal) *
-              </label>
-              <input
-                type="number"
-                value={customTdee}
-                onChange={e => setCustomTdee(e.target.value)}
-                className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
-                placeholder="2500"
-                min="500"
-                max="10000"
-              />
-              <p className="mt-1 text-xs text-neutral-500">
-                Ange ditt eget TDEE-värde direkt (hoppar över BMR/PAL beräkningar)
-              </p>
-            </div>
-          )}
-
-          {/* Show deficit level for weight loss */}
-          {energyGoal === 'Weight loss' && (
-            <div className="mt-4">
-              <label className="block text-sm font-medium text-neutral-700 mb-2">
-                Viktnedgångstakt *
-              </label>
-              <select
-                value={deficitLevel}
-                onChange={e => setDeficitLevel(e.target.value as DeficitLevel)}
-                className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
-              >
-                <option value="">Välj viktnedgångstakt...</option>
-                <option value="10-15%">Litet underskott (10–15%)</option>
-                <option value="20-25%">Måttligt underskott (20–25%)</option>
-                <option value="25-30%">Stort underskott (25–30%)</option>
-              </select>
-            </div>
-          )}
-
-          {/* Energy Goal Reference Table */}
+          {/* Energy Goal Reference Table - always visible if we have TDEE */}
           {result && (
-            <EnergyGoalReferenceTable
-              tdee={result.tdee}
-              selectedGoal={energyGoal}
-              selectedDeficit={deficitLevel}
-            />
+            <>
+              <EnergyGoalReferenceTable
+                tdee={result.tdee}
+                selectedGoal={energyGoal}
+                selectedDeficit={deficitLevel}
+                onGoalSelect={setEnergyGoal}
+                onDeficitSelect={setDeficitLevel}
+              />
+
+              {/* Show custom TDEE input below table when selected */}
+              {energyGoal === 'Custom TDEE' && (
+                <div className="mt-4">
+                  <label className="block text-sm font-medium text-neutral-700 mb-2">
+                    TDEE-värde (kcal) *
+                  </label>
+                  <input
+                    type="number"
+                    value={customTdee}
+                    onChange={e => setCustomTdee(e.target.value)}
+                    className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                    placeholder="2500"
+                    min="500"
+                    max="10000"
+                  />
+                  <p className="mt-1 text-xs text-neutral-500">
+                    Ange ditt eget TDEE-värde direkt (hoppar över BMR/PAL beräkningar)
+                  </p>
+                </div>
+              )}
+            </>
           )}
         </div>
 
