@@ -154,8 +154,8 @@ export default function UserProfileForm() {
         return
       }
     } else if (palSystem === 'Fitness Stuff PAL values') {
-      // Fitness Stuff requires training frequency and duration (dailySteps is optional)
-      if (!trainingFrequency || !trainingDuration) {
+      // Fitness Stuff requires training frequency, duration, and daily steps
+      if (!trainingFrequency || !trainingDuration || !dailySteps) {
         return
       }
     } else {
