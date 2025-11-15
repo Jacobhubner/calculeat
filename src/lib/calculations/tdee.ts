@@ -158,16 +158,16 @@ function calculateFitnessStuff(
 ): number {
   // Base multiplier based on training hours
   let multiplier: number
-  if (trainingHoursPerWeek < 1) {
-    multiplier = 1
-  } else if (trainingHoursPerWeek < 3) {
-    multiplier = 1.123
-  } else if (trainingHoursPerWeek < 5.5) {
-    multiplier = 1.25
-  } else if (trainingHoursPerWeek < 8) {
-    multiplier = 1.375
+  if (trainingHoursPerWeek <= 1) {
+    multiplier = 1 // 0-1h
+  } else if (trainingHoursPerWeek <= 3) {
+    multiplier = 1.125 // 1-3h
+  } else if (trainingHoursPerWeek <= 5) {
+    multiplier = 1.25 // 3-5h
+  } else if (trainingHoursPerWeek <= 8) {
+    multiplier = 1.375 // 6-8h
   } else {
-    multiplier = 1.5
+    multiplier = 1.5 // >8h
   }
 
   const baseTDEE = bmr * multiplier
