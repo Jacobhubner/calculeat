@@ -137,14 +137,29 @@ export default function UserProfileForm() {
       return
     }
 
-    // For PAL-based calculations, check required fields based on PAL system
+    // For PAL-based calculations, check required fields based on specific PAL system
     if (palSystem === 'Custom PAL') {
-      // Custom PAL only requires the custom PAL value to be set
+      // Custom PAL only requires the custom PAL value
       if (!customPAL) {
         return
       }
+    } else if (palSystem === 'DAMNRIPPED PAL values') {
+      // DAMNRIPPED requires activity level and intensity level
+      if (!activityLevel || !intensityLevel) {
+        return
+      }
+    } else if (palSystem === 'Pro Physique PAL values') {
+      // Pro Physique requires activity level, intensity level, frequency and duration
+      if (!activityLevel || !intensityLevel || !trainingFrequency || !trainingDuration) {
+        return
+      }
+    } else if (palSystem === 'Fitness Stuff PAL values') {
+      // Fitness Stuff requires training frequency and duration (dailySteps is optional)
+      if (!trainingFrequency || !trainingDuration) {
+        return
+      }
     } else {
-      // Other PAL systems require at least activity level to be filled
+      // FAO/WHO/UNU and Basic Internet only need activity level
       if (!activityLevel) {
         return
       }
