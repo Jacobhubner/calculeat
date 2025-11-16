@@ -14,7 +14,8 @@
       "Bash(find:*)",
       "Bash(findstr:*)",
       "Bash(xargs cat:*)",
-      "Bash(git log:*)"
+      "Bash(git log:*)",
+      "Bash(test:*)"
     ],
     "deny": [],
     "ask": []
