@@ -142,3 +142,80 @@ export interface UserProfileFormData {
   protein_min_percent?: number
   protein_max_percent?: number
 }
+
+// Profile type for multiple profiles feature
+export interface Profile {
+  id: string
+  user_id: string
+  profile_name: string
+  is_active: boolean
+
+  // Personal information
+  birth_date?: string
+  gender?: Gender
+  height_cm?: number
+  weight_kg?: number
+
+  // BMR & TDEE calculations
+  bmr_formula?: BMRFormula
+  pal_system?: PALSystem
+  activity_level?: ActivityLevel
+  intensity_level?: IntensityLevel
+  training_frequency_per_week?: number
+  training_duration_minutes?: number
+  daily_steps?: DailySteps
+  custom_pal?: number
+
+  // Body composition
+  body_fat_percentage?: number
+  body_composition_method?: BodyCompositionMethod
+
+  // Calculated values
+  bmr?: number
+  tdee?: number
+
+  // Goals
+  calorie_goal?: CalorieGoal
+  deficit_level?: DeficitLevel
+  custom_tdee?: number
+  target_weight_kg?: number
+  target_body_fat_percentage?: number
+
+  // Timestamps
+  created_at?: string
+  updated_at?: string
+}
+
+// Form data for creating/updating profiles
+export interface ProfileFormData {
+  profile_name: string
+  birth_date?: string
+  gender?: Gender
+  height_cm?: number
+  weight_kg?: number
+
+  // BMR & TDEE
+  bmr_formula?: BMRFormula
+  pal_system?: PALSystem
+  activity_level?: ActivityLevel
+  intensity_level?: IntensityLevel
+  training_frequency_per_week?: number
+  training_duration_minutes?: number
+  daily_steps?: DailySteps
+  custom_pal?: number
+
+  // Body composition
+  body_fat_percentage?: number
+  body_composition_method?: BodyCompositionMethod
+
+  // Goals
+  calorie_goal?: CalorieGoal
+  deficit_level?: DeficitLevel
+  custom_tdee?: number
+  target_weight_kg?: number
+  target_body_fat_percentage?: number
+
+  // Calculated values
+  bmr?: number
+  tdee?: number
+}

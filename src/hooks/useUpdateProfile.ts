@@ -1,30 +1,30 @@
 /**
- * Custom hook för att uppdatera användarprofil med React Query
+ * Custom hook för att uppdatera en profil med React Query
+ * Uppdaterad för att arbeta med profiles-tabellen
  */
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { queryKeys } from '@/lib/react-query'
-import type { UserProfileFormData } from '@/lib/types'
+import type { ProfileFormData, Profile } from '@/lib/types'
 import { toast } from 'sonner'
+import { useProfileStore } from '@/stores/profileStore'
+
+interface UpdateProfileParams {
+  profileId: string
+  data: Partial<ProfileFormData>
+}
 
 export function useUpdateProfile() {
   const queryClient = useQueryClient()
+  const updateProfileInStore = useProfileStore(state => state.updateProfile)
 
   return useMutation({
-    mutationFn: async (data: Partial<UserProfileFormData>) => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-
-      if (!user) {
-        throw new Error('Ingen användare inloggad')
-      }
-
+    mutationFn: async ({ profileId, data }: UpdateProfileParams) => {
       const { data: updated, error } = await supabase
-        .from('user_profiles')
+        .from('profiles')
         .update(data)
-        .eq('id', user.id)
+        .eq('id', profileId)
         .select()
         .single()
 
@@ -32,11 +32,16 @@ export function useUpdateProfile() {
         throw error
       }
 
-      return updated
+      return updated as Profile
     },
-    onSuccess: () => {
+    onSuccess: (updated, { profileId }) => {
+      // Update store
+      updateProfileInStore(profileId, updated)
+
       // Invalidera profil-queries så de hämtas på nytt
-      queryClient.invalidateQueries({ queryKey: queryKeys.userProfile })
+      queryClient.invalidateQueries({ queryKey: queryKeys.profiles })
+      queryClient.invalidateQueries({ queryKey: queryKeys.profileById(profileId) })
+
       toast.success('Profil uppdaterad', {
         description: 'Dina ändringar har sparats',
       })
