@@ -28,7 +28,9 @@ export default function PALTableProPhysique({ register, watch }: PALTableProPhys
       {register && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="activity_level">Välj din aktivitetsnivå *</Label>
+            <Label htmlFor="activity_level">
+              Välj din aktivitetsnivå <span className="text-red-600">*</span>
+            </Label>
             <Select id="activity_level" {...register('activity_level')} className="mt-2">
               <option value="">Välj aktivitetsnivå...</option>
               <option value="Sedentary">{activityLevelTranslations['Sedentary']}</option>
@@ -52,7 +54,9 @@ export default function PALTableProPhysique({ register, watch }: PALTableProPhys
               )}
           </div>
           <div>
-            <Label htmlFor="intensity_level">Välj din intensitetsnivå *</Label>
+            <Label htmlFor="intensity_level">
+              Välj din intensitetsnivå <span className="text-red-600">*</span>
+            </Label>
             <Select id="intensity_level" {...register('intensity_level')} className="mt-2">
               <option value="">Välj intensitet...</option>
               <option value="Light">{intensityLevelTranslations['Light']}</option>
@@ -80,7 +84,9 @@ export default function PALTableProPhysique({ register, watch }: PALTableProPhys
       {register && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="training_frequency_per_week">Träningsfrekvens per vecka *</Label>
+            <Label htmlFor="training_frequency_per_week">
+              Träningsfrekvens per vecka <span className="text-red-600">*</span>
+            </Label>
             <Input
               id="training_frequency_per_week"
               type="number"
@@ -92,7 +98,9 @@ export default function PALTableProPhysique({ register, watch }: PALTableProPhys
             />
           </div>
           <div>
-            <Label htmlFor="training_duration_minutes">Minuter per träningspass *</Label>
+            <Label htmlFor="training_duration_minutes">
+              Minuter per träningspass <span className="text-red-600">*</span>
+            </Label>
             <Input
               id="training_duration_minutes"
               type="number"

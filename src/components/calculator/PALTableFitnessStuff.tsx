@@ -20,7 +20,9 @@ export default function PALTableFitnessStuff({ register }: PALTableFitnessStuffP
       {register && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="training_frequency_per_week">Träningsfrekvens per vecka *</Label>
+            <Label htmlFor="training_frequency_per_week">
+              Träningsfrekvens per vecka <span className="text-red-600">*</span>
+            </Label>
             <Input
               id="training_frequency_per_week"
               type="number"
@@ -32,7 +34,9 @@ export default function PALTableFitnessStuff({ register }: PALTableFitnessStuffP
             />
           </div>
           <div>
-            <Label htmlFor="training_duration_minutes">Minuter per träningspass *</Label>
+            <Label htmlFor="training_duration_minutes">
+              Minuter per träningspass <span className="text-red-600">*</span>
+            </Label>
             <Input
               id="training_duration_minutes"
               type="number"
@@ -49,7 +53,9 @@ export default function PALTableFitnessStuff({ register }: PALTableFitnessStuffP
       {/* Daily steps selector */}
       {register && (
         <div>
-          <Label htmlFor="daily_steps">Dagliga steg *</Label>
+          <Label htmlFor="daily_steps">
+            Dagliga steg <span className="text-red-600">*</span>
+          </Label>
           <Select id="daily_steps" {...register('daily_steps')} className="mt-2">
             <option value="">Välj dagliga steg...</option>
             <option value="3 000 – 4 999 steps/day">3 000 – 4 999 steg/dag</option>

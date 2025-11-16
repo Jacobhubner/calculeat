@@ -408,7 +408,9 @@ export default function UserProfileForm() {
       <div className="space-y-6">
         {/* SECTION 1: Profile Name */}
         <div>
-          <label className="block text-sm font-medium text-neutral-700 mb-2">Profilnamn *</label>
+          <label className="block text-sm font-medium text-neutral-700 mb-2">
+            Profilnamn <span className="text-red-600">*</span>
+          </label>
           <input
             type="text"
             value={profileName}
@@ -425,7 +427,7 @@ export default function UserProfileForm() {
           {/* Birth Date */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-neutral-700 mb-2">
-              Födelsedatum *
+              Födelsedatum <span className="text-red-600">*</span>
             </label>
             <input
               type="date"
@@ -437,7 +439,9 @@ export default function UserProfileForm() {
 
           {/* Gender Selection */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-neutral-700 mb-2">Kön *</label>
+            <label className="block text-sm font-medium text-neutral-700 mb-2">
+              Kön <span className="text-red-600">*</span>
+            </label>
             <div className="flex gap-4">
               <label className="flex items-center cursor-pointer">
                 <input
@@ -466,7 +470,9 @@ export default function UserProfileForm() {
 
           {/* Height */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-neutral-700 mb-2">Längd (cm) *</label>
+            <label className="block text-sm font-medium text-neutral-700 mb-2">
+              Längd (cm) <span className="text-red-600">*</span>
+            </label>
             <input
               type="number"
               value={height}
@@ -480,7 +486,9 @@ export default function UserProfileForm() {
 
           {/* Weight */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-neutral-700 mb-2">Vikt (kg) *</label>
+            <label className="block text-sm font-medium text-neutral-700 mb-2">
+              Vikt (kg) <span className="text-red-600">*</span>
+            </label>
             <input
               type="number"
               value={weight}
@@ -531,7 +539,9 @@ export default function UserProfileForm() {
 
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <label className="block text-sm font-medium text-neutral-700">BMR-formel *</label>
+              <label className="block text-sm font-medium text-neutral-700">
+                BMR-formel <span className="text-red-600">*</span>
+              </label>
               {bmrFormula && (
                 <button
                   type="button"
@@ -592,7 +602,9 @@ export default function UserProfileForm() {
 
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <label className="block text-sm font-medium text-neutral-700">PAL-system *</label>
+              <label className="block text-sm font-medium text-neutral-700">
+                PAL-system <span className="text-red-600">*</span>
+              </label>
               {palSystem && (
                 <button
                   type="button"

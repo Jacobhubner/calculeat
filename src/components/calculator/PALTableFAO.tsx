@@ -20,7 +20,9 @@ export default function PALTableFAO({ register, watch }: PALTableFAOProps) {
       {/* Dropdown selector */}
       {register && (
         <div>
-          <Label htmlFor="activity_level">Välj din aktivitetsnivå *</Label>
+          <Label htmlFor="activity_level">
+            Välj din aktivitetsnivå <span className="text-red-600">*</span>
+          </Label>
           <Select id="activity_level" {...register('activity_level')} className="mt-2">
             <option value="">Välj aktivitetsnivå...</option>
             <option value="Sedentary">{activityLevelTranslations['Sedentary']}</option>

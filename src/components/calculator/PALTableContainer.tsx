@@ -33,7 +33,7 @@ export default function PALTableContainer({ system, register, watch }: PALTableC
         return register ? (
           <div className="space-y-2">
             <label htmlFor="custom_pal" className="block text-sm font-medium text-neutral-700">
-              Anpassat PAL-värde (1.0 - 3.0) *
+              Anpassat PAL-värde (1.0 - 3.0) <span className="text-red-600">*</span>
             </label>
             <input
               id="custom_pal"
