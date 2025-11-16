@@ -16,7 +16,8 @@
       "Bash(xargs cat:*)",
       "Bash(git log:*)",
       "Bash(test:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(npx tailwindcss --help:*)"
     ],
     "deny": [],
     "ask": []
