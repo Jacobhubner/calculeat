@@ -1,15 +1,20 @@
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import UserProfileForm from '@/components/UserProfileForm'
 import MacroModesCard from '@/components/MacroModesCard'
-import { User } from 'lucide-react'
+import ProfileList from '@/components/ProfileList'
+import { User, Users } from 'lucide-react'
 import { useState } from 'react'
 import BMRConceptModal from '@/components/calculator/BMRConceptModal'
 import PALConceptModal from '@/components/calculator/PALConceptModal'
 import { Card } from '@/components/ui/card'
+import { useProfiles } from '@/hooks'
 
 export default function ProfilePage() {
   const [showBMRConceptModal, setShowBMRConceptModal] = useState(false)
   const [showPALConceptModal, setShowPALConceptModal] = useState(false)
+
+  // Load profiles to populate store
+  useProfiles()
 
   return (
     <DashboardLayout>
@@ -38,6 +43,18 @@ export default function ProfilePage() {
 
           {/* Sidebar - Information Panel */}
           <div className="space-y-4 md:sticky md:top-4 md:self-start">
+            {/* Profile Switcher Section */}
+            <Card>
+              <div className="flex items-center gap-2 mb-3">
+                <Users className="h-5 w-5 text-primary-600" />
+                <h3 className="text-lg font-semibold text-neutral-900">Mina Profiler</h3>
+              </div>
+              <p className="text-sm text-neutral-600 mb-4">
+                Växla mellan olika profiler eller skapa en ny
+              </p>
+              <ProfileList />
+            </Card>
+
             {/* BMR Information Section */}
             <Card className="bg-gradient-to-br from-primary-50 to-accent-50">
               <h3 className="text-lg font-semibold text-neutral-900 mb-3">Vad är BMR?</h3>

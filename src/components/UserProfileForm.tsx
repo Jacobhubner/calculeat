@@ -12,6 +12,9 @@ import PALSystemModal from './calculator/PALSystemModal'
 import EnergyGoalReferenceTable from './calculator/EnergyGoalReferenceTable'
 import { useAuth } from '@/contexts/AuthContext'
 import { translatePALSystem } from '@/lib/translations'
+import { useProfileStore } from '@/stores/profileStore'
+import { useUpdateProfile, useDeleteProfile, useCreateProfile } from '@/hooks'
+import { Trash2 } from 'lucide-react'
 
 interface CalculatorResult {
   bmr: number
@@ -24,36 +27,45 @@ type EnergyGoal = 'Maintain weight' | 'Weight gain' | 'Weight loss' | 'Custom TD
 type DeficitLevel = '10-15%' | '20-25%' | '25-30%' | ''
 
 export default function UserProfileForm() {
-  const { profile, updateProfile } = useAuth()
+  const { profile } = useAuth() // Keep for backward compatibility during transition
+  const activeProfile = useProfileStore(state => state.activeProfile)
+  const updateProfileMutation = useUpdateProfile()
+  const deleteProfileMutation = useDeleteProfile()
+  const createProfileMutation = useCreateProfile()
+
+  // Use activeProfile from store if available, fallback to old profile
+  const currentProfile = activeProfile || profile
 
   // Load initial values from profile
-  const [profileName, setProfileName] = useState(profile?.profile_name || '')
-  const [birthDate, setBirthDate] = useState(profile?.birth_date || '')
-  const [weight, setWeight] = useState(profile?.weight_kg?.toString() || '')
-  const [height, setHeight] = useState(profile?.height_cm?.toString() || '')
-  const [gender, setGender] = useState<Gender | ''>(profile?.gender || '')
+  const [profileName, setProfileName] = useState(currentProfile?.profile_name || '')
+  const [birthDate, setBirthDate] = useState(currentProfile?.birth_date || '')
+  const [weight, setWeight] = useState(currentProfile?.weight_kg?.toString() || '')
+  const [height, setHeight] = useState(currentProfile?.height_cm?.toString() || '')
+  const [gender, setGender] = useState<Gender | ''>(currentProfile?.gender || '')
   const [bodyFatPercentage, setBodyFatPercentage] = useState(
-    profile?.body_fat_percentage?.toString() || ''
+    currentProfile?.body_fat_percentage?.toString() || ''
   )
   const [bmrFormula, setBmrFormula] = useState<BMRFormula | ''>(
-    (profile?.bmr_formula as BMRFormula) || ''
+    (currentProfile?.bmr_formula as BMRFormula) || ''
   )
   const [palSystem, setPalSystem] = useState<PALSystem | ''>(
-    (profile?.pal_system as PALSystem) || ''
+    (currentProfile?.pal_system as PALSystem) || ''
   )
   const [energyGoal, setEnergyGoal] = useState<EnergyGoal>('Maintain weight')
   const [deficitLevel, setDeficitLevel] = useState<DeficitLevel>('')
   const [customTdee, setCustomTdee] = useState('')
 
   // PAL-related state variables for real-time tracking
-  const [activityLevel, setActivityLevel] = useState(profile?.activity_level || '')
-  const [intensityLevel, setIntensityLevel] = useState(profile?.intensity_level || '')
+  const [activityLevel, setActivityLevel] = useState(currentProfile?.activity_level || '')
+  const [intensityLevel, setIntensityLevel] = useState(currentProfile?.intensity_level || '')
   const [trainingFrequency, setTrainingFrequency] = useState(
-    profile?.training_frequency_per_week || ''
+    currentProfile?.training_frequency_per_week || ''
   )
-  const [trainingDuration, setTrainingDuration] = useState(profile?.training_duration_minutes || '')
-  const [dailySteps, setDailySteps] = useState(profile?.daily_steps || '')
-  const [customPAL, setCustomPAL] = useState(profile?.custom_pal?.toString() || '')
+  const [trainingDuration, setTrainingDuration] = useState(
+    currentProfile?.training_duration_minutes || ''
+  )
+  const [dailySteps, setDailySteps] = useState(currentProfile?.daily_steps || '')
+  const [customPAL, setCustomPAL] = useState(currentProfile?.custom_pal?.toString() || '')
 
   const [result, setResult] = useState<CalculatorResult | null>(null)
   const [showBMRModal, setShowBMRModal] = useState(false)
@@ -249,7 +261,6 @@ export default function UserProfileForm() {
       tdeeMax,
     })
   }, [
-    profileName,
     energyGoal,
     customTdee,
     birthDate,
@@ -366,7 +377,7 @@ export default function UserProfileForm() {
       const trainingDurNum = trainingDuration ? parseFloat(trainingDuration) : undefined
       const customPALNum = customPAL ? parseFloat(customPAL) : undefined
 
-      await updateProfile({
+      const profileData = {
         profile_name: profileName,
         birth_date: birthDate,
         gender: gender === '' ? undefined : gender,
@@ -389,13 +400,44 @@ export default function UserProfileForm() {
         custom_tdee: customTdeeNum,
         bmr: result.bmr,
         tdee: result.tdee,
-      })
-      alert('Profil sparad!')
+      }
+
+      // If activeProfile exists, update it. Otherwise, create new profile
+      if (activeProfile?.id) {
+        await updateProfileMutation.mutateAsync({
+          profileId: activeProfile.id,
+          data: profileData,
+        })
+      } else {
+        await createProfileMutation.mutateAsync(profileData)
+      }
+      // Toast notification is handled by the hooks
     } catch (error) {
       console.error('Error saving profile:', error)
-      alert('Fel vid sparande av profil')
+      // Error toast is handled by the hooks
     } finally {
       setIsSaving(false)
+    }
+  }
+
+  const handleDelete = async () => {
+    if (!activeProfile?.id) {
+      alert('Ingen profil att radera')
+      return
+    }
+
+    const confirmed = window.confirm(
+      `Är du säker på att du vill radera profilen "${activeProfile.profile_name}"? Detta går inte att ångra.`
+    )
+
+    if (!confirmed) return
+
+    try {
+      await deleteProfileMutation.mutateAsync(activeProfile.id)
+      // Success toast is handled by the hook
+    } catch (error) {
+      console.error('Error deleting profile:', error)
+      // Error toast is handled by the hook
     }
   }
 
@@ -706,10 +748,23 @@ export default function UserProfileForm() {
               </div>
 
               {/* Save Button */}
-              <div className="mt-6">
+              <div className="mt-6 space-y-3">
                 <Button onClick={handleSave} disabled={isSaving} className="w-full">
                   {isSaving ? 'Sparar...' : 'Spara profil'}
                 </Button>
+
+                {/* Delete Button - only show if profile exists */}
+                {activeProfile?.id && (
+                  <Button
+                    variant="destructive"
+                    onClick={handleDelete}
+                    disabled={deleteProfileMutation.isPending}
+                    className="w-full"
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    {deleteProfileMutation.isPending ? 'Raderar...' : 'Radera profil'}
+                  </Button>
+                )}
               </div>
             </div>
           )}
