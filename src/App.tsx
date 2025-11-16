@@ -22,6 +22,7 @@ import SavedMealsPage from './pages/SavedMealsPage'
 import TodayPage from './pages/TodayPage'
 import HistoryPage from './pages/HistoryPage'
 import HistoryDayPage from './pages/HistoryDayPage'
+import AuthCallbackPage from './pages/AuthCallbackPage'
 
 function App() {
   return (
@@ -51,6 +52,7 @@ function App() {
                   }
                 />
                 <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                <Route path="/auth/callback" element={<AuthCallbackPage />} />
                 <Route
                   path="/app"
                   element={
