@@ -8,6 +8,9 @@ import type { PALSystem } from '@/lib/calculations/tdee'
 import type { Gender, BMRFormula } from '@/lib/types'
 import PALTableContainer from './calculator/PALTableContainer'
 import BMRFormulaModal from './calculator/BMRFormulaModal'
+import BMRConceptModal from './calculator/BMRConceptModal'
+import PALConceptModal from './calculator/PALConceptModal'
+import PALSystemModal from './calculator/PALSystemModal'
 import EnergyGoalReferenceTable from './calculator/EnergyGoalReferenceTable'
 import { useAuth } from '@/contexts/AuthContext'
 import { translatePALSystem } from '@/lib/translations'
@@ -56,6 +59,9 @@ export default function UserProfileForm() {
 
   const [result, setResult] = useState<CalculatorResult | null>(null)
   const [showBMRModal, setShowBMRModal] = useState(false)
+  const [showBMRConceptModal, setShowBMRConceptModal] = useState(false)
+  const [showPALConceptModal, setShowPALConceptModal] = useState(false)
+  const [showPALModal, setShowPALModal] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
 
   // Create a form data object for PAL table with current state values
@@ -173,6 +179,7 @@ export default function UserProfileForm() {
     // Trigger calculation
     handleCalculate()
   }, [
+    handleCalculate,
     profileName,
     birthDate,
     weight,
@@ -506,7 +513,16 @@ export default function UserProfileForm() {
 
         {/* SECTION 3: BMR Formula */}
         <div className="border-t pt-6">
-          <h3 className="text-xl font-semibold text-neutral-900 mb-4">BMR-formel</h3>
+          <h3 className="text-xl font-semibold text-neutral-900 mb-4 flex items-center gap-3">
+            BMR-formel
+            <button
+              type="button"
+              onClick={() => setShowBMRConceptModal(true)}
+              className="text-sm text-primary-600 hover:text-primary-700 underline transition-colors"
+            >
+              Vad är BMR?
+            </button>
+          </h3>
 
           <div>
             <div className="flex items-center gap-2 mb-2">
@@ -558,12 +574,31 @@ export default function UserProfileForm() {
 
         {/* SECTION 4: PAL System */}
         <div className="border-t pt-6">
-          <h3 className="text-xl font-semibold text-neutral-900 mb-4">
+          <h3 className="text-xl font-semibold text-neutral-900 mb-4 flex items-center gap-3">
             PAL-system (Aktivitetsnivå)
+            <button
+              type="button"
+              onClick={() => setShowPALConceptModal(true)}
+              className="text-sm text-primary-600 hover:text-primary-700 underline transition-colors"
+            >
+              Vad är PAL?
+            </button>
           </h3>
 
           <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-2">PAL-system *</label>
+            <div className="flex items-center gap-2 mb-2">
+              <label className="block text-sm font-medium text-neutral-700">PAL-system *</label>
+              {palSystem && (
+                <button
+                  type="button"
+                  onClick={() => setShowPALModal(true)}
+                  className="text-primary-600 hover:text-primary-700 transition-colors"
+                  aria-label="Visa information om PAL-systemet"
+                >
+                  <Info className="h-4 w-4" />
+                </button>
+              )}
+            </div>
             <select
               value={palSystem}
               onChange={e => setPalSystem(e.target.value as PALSystem | '')}
@@ -692,6 +727,21 @@ export default function UserProfileForm() {
           formula={bmrFormula}
           isOpen={showBMRModal}
           onClose={() => setShowBMRModal(false)}
+        />
+      )}
+
+      {/* BMR Concept Modal */}
+      <BMRConceptModal isOpen={showBMRConceptModal} onClose={() => setShowBMRConceptModal(false)} />
+
+      {/* PAL Concept Modal */}
+      <PALConceptModal isOpen={showPALConceptModal} onClose={() => setShowPALConceptModal(false)} />
+
+      {/* PAL System Modal */}
+      {palSystem && (
+        <PALSystemModal
+          system={palSystem}
+          isOpen={showPALModal}
+          onClose={() => setShowPALModal(false)}
         />
       )}
     </div>
