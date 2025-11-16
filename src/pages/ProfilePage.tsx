@@ -25,7 +25,7 @@ export default function ProfilePage() {
       </div>
 
       <div className="max-w-7xl mx-auto">
-        <div className="grid gap-6 xl:grid-cols-[1fr,400px]">
+        <div className="grid gap-6 md:grid-cols-[1fr,280px]">
           {/* Main content column */}
           <div className="space-y-8">
             {/* Main Profile Form */}
@@ -36,7 +36,7 @@ export default function ProfilePage() {
           </div>
 
           {/* Sidebar - Information Panel */}
-          <div className="space-y-4 xl:sticky xl:top-4 xl:self-start">
+          <div className="space-y-4 md:sticky md:top-4 md:self-start">
             {/* BMR Information Section */}
             <div className="rounded-2xl bg-gradient-to-br from-primary-50 to-accent-50 p-6">
               <h3 className="text-lg font-semibold text-neutral-900 mb-3">Vad är BMR?</h3>

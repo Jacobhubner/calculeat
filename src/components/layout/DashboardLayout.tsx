@@ -22,7 +22,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             sidebarCollapsed ? 'ml-20' : 'ml-64'
           )}
         >
-          <div className="container mx-auto px-4 py-8 md:px-6 lg:px-8">{children}</div>
+          <div className="mx-auto px-4 py-8 md:px-6 lg:px-8 max-w-[1600px]">{children}</div>
         </main>
       </div>
     </div>
