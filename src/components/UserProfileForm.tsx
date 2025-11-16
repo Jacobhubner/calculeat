@@ -122,83 +122,6 @@ export default function UserProfileForm() {
     return formData[name as keyof typeof formData]
   }
 
-  // Auto-calculate when all required fields are filled
-  useEffect(() => {
-    // Check if all required fields are filled based on energy goal
-    if (!profileName || !energyGoal) {
-      return
-    }
-
-    // For Custom TDEE, only need customTdee
-    if (energyGoal === 'Custom TDEE') {
-      const customTdeeNum = customTdee ? parseFloat(customTdee) : 0
-      if (customTdeeNum >= 500 && customTdeeNum <= 10000) {
-        handleCalculate()
-      }
-      return
-    }
-
-    // For other goals, need all basic fields
-    if (!birthDate || !weight || !height || !gender || !bmrFormula || !palSystem) {
-      return
-    }
-
-    // For PAL-based calculations, check required fields based on specific PAL system
-    if (palSystem === 'Custom PAL') {
-      // Custom PAL only requires the custom PAL value
-      if (!customPAL) {
-        return
-      }
-    } else if (palSystem === 'DAMNRIPPED PAL values') {
-      // DAMNRIPPED requires activity level and intensity level
-      if (!activityLevel || !intensityLevel) {
-        return
-      }
-    } else if (palSystem === 'Pro Physique PAL values') {
-      // Pro Physique requires activity level, intensity level, frequency and duration
-      if (!activityLevel || !intensityLevel || !trainingFrequency || !trainingDuration) {
-        return
-      }
-    } else if (palSystem === 'Fitness Stuff PAL values') {
-      // Fitness Stuff requires training frequency, duration, and daily steps
-      if (!trainingFrequency || !trainingDuration || !dailySteps) {
-        return
-      }
-    } else {
-      // FAO/WHO/UNU and Basic Internet only need activity level
-      if (!activityLevel) {
-        return
-      }
-    }
-
-    // For Weight loss, also need deficit level
-    if (energyGoal === 'Weight loss' && !deficitLevel) {
-      return
-    }
-
-    // Trigger calculation
-    handleCalculate()
-  }, [
-    handleCalculate,
-    profileName,
-    birthDate,
-    weight,
-    height,
-    gender,
-    bmrFormula,
-    palSystem,
-    energyGoal,
-    deficitLevel,
-    customTdee,
-    bodyFatPercentage,
-    activityLevel,
-    intensityLevel,
-    trainingFrequency,
-    trainingDuration,
-    dailySteps,
-    customPAL,
-  ])
-
   const handleCalculate = useCallback(() => {
     // Validate inputs
     const weightNum = parseFloat(weight)
@@ -352,6 +275,83 @@ export default function UserProfileForm() {
     trainingFrequency,
     trainingDuration,
     dailySteps,
+  ])
+
+  // Auto-calculate when all required fields are filled
+  useEffect(() => {
+    // Check if all required fields are filled based on energy goal
+    if (!profileName || !energyGoal) {
+      return
+    }
+
+    // For Custom TDEE, only need customTdee
+    if (energyGoal === 'Custom TDEE') {
+      const customTdeeNum = customTdee ? parseFloat(customTdee) : 0
+      if (customTdeeNum >= 500 && customTdeeNum <= 10000) {
+        handleCalculate()
+      }
+      return
+    }
+
+    // For other goals, need all basic fields
+    if (!birthDate || !weight || !height || !gender || !bmrFormula || !palSystem) {
+      return
+    }
+
+    // For PAL-based calculations, check required fields based on specific PAL system
+    if (palSystem === 'Custom PAL') {
+      // Custom PAL only requires the custom PAL value
+      if (!customPAL) {
+        return
+      }
+    } else if (palSystem === 'DAMNRIPPED PAL values') {
+      // DAMNRIPPED requires activity level and intensity level
+      if (!activityLevel || !intensityLevel) {
+        return
+      }
+    } else if (palSystem === 'Pro Physique PAL values') {
+      // Pro Physique requires activity level, intensity level, frequency and duration
+      if (!activityLevel || !intensityLevel || !trainingFrequency || !trainingDuration) {
+        return
+      }
+    } else if (palSystem === 'Fitness Stuff PAL values') {
+      // Fitness Stuff requires training frequency, duration, and daily steps
+      if (!trainingFrequency || !trainingDuration || !dailySteps) {
+        return
+      }
+    } else {
+      // FAO/WHO/UNU and Basic Internet only need activity level
+      if (!activityLevel) {
+        return
+      }
+    }
+
+    // For Weight loss, also need deficit level
+    if (energyGoal === 'Weight loss' && !deficitLevel) {
+      return
+    }
+
+    // Trigger calculation
+    handleCalculate()
+  }, [
+    handleCalculate,
+    profileName,
+    birthDate,
+    weight,
+    height,
+    gender,
+    bmrFormula,
+    palSystem,
+    energyGoal,
+    deficitLevel,
+    customTdee,
+    bodyFatPercentage,
+    activityLevel,
+    intensityLevel,
+    trainingFrequency,
+    trainingDuration,
+    dailySteps,
+    customPAL,
   ])
 
   const handleSave = async () => {

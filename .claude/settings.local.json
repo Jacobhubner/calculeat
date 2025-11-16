@@ -12,7 +12,8 @@
       "Bash(npx supabase:*)",
       "Bash(git mv:*)",
       "Bash(find:*)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(xargs cat:*)"
     ],
     "deny": [],
     "ask": []
