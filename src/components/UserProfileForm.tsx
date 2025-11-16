@@ -129,11 +129,6 @@ export default function UserProfileForm() {
     const bodyFatNum = bodyFatPercentage ? parseFloat(bodyFatPercentage) : undefined
     const customTdeeNum = customTdee ? parseFloat(customTdee) : undefined
 
-    if (!profileName) {
-      alert('Vänligen ange ett profilnamn')
-      return
-    }
-
     if (!energyGoal) {
       alert('Vänligen välj ett energimål')
       return
@@ -280,7 +275,7 @@ export default function UserProfileForm() {
   // Auto-calculate when all required fields are filled
   useEffect(() => {
     // Check if all required fields are filled based on energy goal
-    if (!profileName || !energyGoal) {
+    if (!energyGoal) {
       return
     }
 
@@ -360,6 +355,11 @@ export default function UserProfileForm() {
       return
     }
 
+    if (!profileName) {
+      alert('Vänligen ange ett profilnamn för att spara')
+      return
+    }
+
     setIsSaving(true)
     try {
       const weightNum = parseFloat(weight)
@@ -405,13 +405,13 @@ export default function UserProfileForm() {
 
   return (
     <div className="max-w-7xl mx-auto">
-      <div className="grid gap-6 lg:grid-cols-[1fr,400px]">
+      <div className="grid gap-6 md:grid-cols-[1fr,400px]">
         {/* Main Content Column */}
         <div className="space-y-6">
           {/* SECTION 1: Profile Name */}
           <div>
             <label className="block text-sm font-medium text-neutral-700 mb-2">
-              Profilnamn <span className="text-red-600">*</span>
+              Profilnamn <span className="text-neutral-500 text-xs">(krävs för att spara)</span>
             </label>
             <input
               type="text"
@@ -650,43 +650,40 @@ export default function UserProfileForm() {
               </div>
 
               {/* SECTION 5: Energy Goal */}
-              <div>
-                <h3 className="text-xl font-semibold text-neutral-900 mb-4">Energimål</h3>
+              {result && (
+                <div>
+                  <h3 className="text-xl font-semibold text-neutral-900 mb-4">Energimål</h3>
 
-                {/* Energy Goal Reference Table - always visible if we have TDEE */}
-                {result && (
-                  <>
-                    <EnergyGoalReferenceTable
-                      tdee={result.tdee}
-                      selectedGoal={energyGoal}
-                      selectedDeficit={deficitLevel}
-                      onGoalSelect={setEnergyGoal}
-                      onDeficitSelect={setDeficitLevel}
-                    />
+                  <EnergyGoalReferenceTable
+                    tdee={result.tdee}
+                    selectedGoal={energyGoal}
+                    selectedDeficit={deficitLevel}
+                    onGoalSelect={setEnergyGoal}
+                    onDeficitSelect={setDeficitLevel}
+                  />
 
-                    {/* Show custom TDEE input below table when selected */}
-                    {energyGoal === 'Custom TDEE' && (
-                      <div className="mt-4">
-                        <label className="block text-sm font-medium text-neutral-700 mb-2">
-                          TDEE-värde (kcal) *
-                        </label>
-                        <input
-                          type="number"
-                          value={customTdee}
-                          onChange={e => setCustomTdee(e.target.value)}
-                          className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
-                          placeholder="2500"
-                          min="500"
-                          max="10000"
-                        />
-                        <p className="mt-1 text-xs text-neutral-500">
-                          Ange ditt eget TDEE-värde direkt (hoppar över BMR/PAL beräkningar)
-                        </p>
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
+                  {/* Show custom TDEE input below table when selected */}
+                  {energyGoal === 'Custom TDEE' && (
+                    <div className="mt-4">
+                      <label className="block text-sm font-medium text-neutral-700 mb-2">
+                        TDEE-värde (kcal) *
+                      </label>
+                      <input
+                        type="number"
+                        value={customTdee}
+                        onChange={e => setCustomTdee(e.target.value)}
+                        className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                        placeholder="2500"
+                        min="500"
+                        max="10000"
+                      />
+                      <p className="mt-1 text-xs text-neutral-500">
+                        Ange ditt eget TDEE-värde direkt (hoppar över BMR/PAL beräkningar)
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* SECTION 6: Results */}
               {result && (
@@ -737,7 +734,7 @@ export default function UserProfileForm() {
         </div>
 
         {/* Sidebar - Information Panel */}
-        <div className="space-y-4 lg:sticky lg:top-4 lg:self-start">
+        <div className="space-y-4 md:sticky md:top-4 md:self-start">
           {/* BMR Information Section */}
           <div className="rounded-2xl bg-gradient-to-br from-primary-50 to-accent-50 p-6">
             <h3 className="text-lg font-semibold text-neutral-900 mb-3">Vad är BMR?</h3>
