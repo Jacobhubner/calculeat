@@ -26,7 +26,7 @@ export default function ProfilePage() {
       </div>
 
       <div className="max-w-7xl mx-auto">
-        <div className="grid gap-6 md:grid-cols-[1fr,280px]">
+        <div className="grid gap-6 md:grid-cols-[1fr_280px]">
           {/* Main content column */}
           <div className="space-y-8">
             {/* Main Profile Form */}
