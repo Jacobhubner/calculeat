@@ -3,18 +3,50 @@
  */
 
 import { useProfileStore } from '@/stores/profileStore'
-import { useProfiles, useSwitchProfile } from '@/hooks'
-import { Check, User } from 'lucide-react'
+import { useProfiles, useSwitchProfile, useDeleteProfile } from '@/hooks'
+import { Check, User, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { toast } from 'sonner'
 
 export default function ProfileList() {
   const activeProfile = useProfileStore(state => state.activeProfile)
   const { data: profiles = [], isLoading } = useProfiles()
   const switchProfileMutation = useSwitchProfile()
+  const deleteProfileMutation = useDeleteProfile()
 
   const handleSwitchProfile = async (profileId: string) => {
     if (profileId !== activeProfile?.id) {
       await switchProfileMutation.mutateAsync(profileId)
+    }
+  }
+
+  const handleDeleteProfile = async (
+    e: React.MouseEvent,
+    profileId: string,
+    profileName: string
+  ) => {
+    // Stoppa event propagation så att kortet inte klickas
+    e.stopPropagation()
+
+    // Validera att det inte är sista profilen
+    if (profiles.length === 1) {
+      toast.error('Du måste ha minst en profil kvar')
+      return
+    }
+
+    // Bekräftelse
+    const confirmed = window.confirm(
+      `Är du säker på att du vill radera profilen "${profileName}"? Detta går inte att ångra.`
+    )
+
+    if (!confirmed) return
+
+    try {
+      await deleteProfileMutation.mutateAsync(profileId)
+      toast.success('Profilen har raderats')
+    } catch (error) {
+      console.error('Error deleting profile:', error)
+      toast.error('Kunde inte radera profilen')
     }
   }
 
@@ -80,7 +112,20 @@ export default function ProfileList() {
                 </div>
               </div>
 
-              {isActive && <Check className="h-5 w-5 text-primary-600 flex-shrink-0" />}
+              <div className="flex items-center gap-2 flex-shrink-0">
+                {/* Delete X icon */}
+                <button
+                  onClick={e => handleDeleteProfile(e, profile.id, profile.profile_name)}
+                  className="p-1 rounded hover:bg-red-50 transition-colors group"
+                  title="Radera profil"
+                  disabled={deleteProfileMutation.isPending}
+                >
+                  <X className="h-4 w-4 text-red-500 group-hover:text-red-700 transition-colors" />
+                </button>
+
+                {/* Check icon for active profile */}
+                {isActive && <Check className="h-5 w-5 text-primary-600 flex-shrink-0" />}
+              </div>
             </div>
           </button>
         )

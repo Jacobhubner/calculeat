@@ -13,8 +13,8 @@ import EnergyGoalReferenceTable from './calculator/EnergyGoalReferenceTable'
 import { useAuth } from '@/contexts/AuthContext'
 import { translatePALSystem } from '@/lib/translations'
 import { useProfileStore } from '@/stores/profileStore'
-import { useUpdateProfile, useDeleteProfile, useCreateProfile } from '@/hooks'
-import { Trash2 } from 'lucide-react'
+import { useUpdateProfile, useCreateProfile, useProfiles } from '@/hooks'
+import { Lock } from 'lucide-react'
 
 interface CalculatorResult {
   bmr: number
@@ -29,12 +29,24 @@ type DeficitLevel = '10-15%' | '20-25%' | '25-30%' | ''
 export default function UserProfileForm() {
   const { profile } = useAuth() // Keep for backward compatibility during transition
   const activeProfile = useProfileStore(state => state.activeProfile)
+  const { data: allProfiles = [] } = useProfiles()
   const updateProfileMutation = useUpdateProfile()
-  const deleteProfileMutation = useDeleteProfile()
   const createProfileMutation = useCreateProfile()
 
   // Use activeProfile from store if available, fallback to old profile
   const currentProfile = activeProfile || profile
+
+  // Determine if birth date and gender should be locked
+  // They can only be edited on the first profile (oldest by creation date)
+  const isFirstProfile = useMemo(() => {
+    if (!allProfiles || allProfiles.length <= 1) return true
+    if (!activeProfile) return true
+
+    const sortedByAge = [...allProfiles].sort(
+      (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+    )
+    return sortedByAge[0]?.id === activeProfile.id
+  }, [allProfiles, activeProfile])
 
   // Load initial values from profile
   const [profileName, setProfileName] = useState(currentProfile?.profile_name || '')
@@ -420,27 +432,6 @@ export default function UserProfileForm() {
     }
   }
 
-  const handleDelete = async () => {
-    if (!activeProfile?.id) {
-      alert('Ingen profil att radera')
-      return
-    }
-
-    const confirmed = window.confirm(
-      `Är du säker på att du vill radera profilen "${activeProfile.profile_name}"? Detta går inte att ångra.`
-    )
-
-    if (!confirmed) return
-
-    try {
-      await deleteProfileMutation.mutateAsync(activeProfile.id)
-      // Success toast is handled by the hook
-    } catch (error) {
-      console.error('Error deleting profile:', error)
-      // Error toast is handled by the hook
-    }
-  }
-
   return (
     <div className="space-y-6">
       {/* SECTION 1: Profile Name */}
@@ -453,7 +444,7 @@ export default function UserProfileForm() {
           value={profileName}
           onChange={e => setProfileName(e.target.value)}
           className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
-          placeholder="Mitt namn"
+          placeholder="Profilens namn"
         />
       </div>
 
@@ -465,46 +456,90 @@ export default function UserProfileForm() {
         <CardContent className="space-y-6">
           {/* Birth Date */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-neutral-700 mb-2">
+            <label className="block text-sm font-medium text-neutral-700 mb-2 flex items-center gap-2">
               Födelsedatum <span className="text-red-600">*</span>
+              {!isFirstProfile && (
+                <span className="flex items-center gap-1 text-xs text-neutral-500 font-normal">
+                  <Lock className="h-3 w-3" />
+                  Låst
+                </span>
+              )}
             </label>
             <input
               type="date"
               value={birthDate}
               onChange={e => setBirthDate(e.target.value)}
-              className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+              disabled={!isFirstProfile}
+              className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 disabled:bg-neutral-100 disabled:cursor-not-allowed disabled:text-neutral-500"
+              title={
+                !isFirstProfile
+                  ? 'Födelsedatum och kön kan endast ändras på din första profil. Radera alla profiler för att återställa.'
+                  : ''
+              }
             />
+            {!isFirstProfile && (
+              <p className="text-xs text-neutral-500 mt-1">
+                Födelsedatum kan endast ändras på din första profil
+              </p>
+            )}
           </div>
 
           {/* Gender Selection */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-neutral-700 mb-2">
+            <label className="block text-sm font-medium text-neutral-700 mb-2 flex items-center gap-2">
               Kön <span className="text-red-600">*</span>
+              {!isFirstProfile && (
+                <span className="flex items-center gap-1 text-xs text-neutral-500 font-normal">
+                  <Lock className="h-3 w-3" />
+                  Låst
+                </span>
+              )}
             </label>
             <div className="flex gap-4">
-              <label className="flex items-center cursor-pointer">
+              <label
+                className={`flex items-center ${!isFirstProfile ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}
+                title={
+                  !isFirstProfile
+                    ? 'Kön kan endast ändras på din första profil. Radera alla profiler för att återställa.'
+                    : ''
+                }
+              >
                 <input
                   type="radio"
                   name="gender"
                   value="male"
                   checked={gender === 'male'}
                   onChange={e => setGender(e.target.value as Gender | '')}
-                  className="mr-2 h-4 w-4 text-primary-600 focus:ring-primary-500"
+                  disabled={!isFirstProfile}
+                  className="mr-2 h-4 w-4 text-primary-600 focus:ring-primary-500 disabled:cursor-not-allowed"
                 />
                 <span className="text-neutral-700">Man</span>
               </label>
-              <label className="flex items-center cursor-pointer">
+              <label
+                className={`flex items-center ${!isFirstProfile ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}
+                title={
+                  !isFirstProfile
+                    ? 'Kön kan endast ändras på din första profil. Radera alla profiler för att återställa.'
+                    : ''
+                }
+              >
                 <input
                   type="radio"
                   name="gender"
                   value="female"
                   checked={gender === 'female'}
                   onChange={e => setGender(e.target.value as Gender | '')}
-                  className="mr-2 h-4 w-4 text-primary-600 focus:ring-primary-500"
+                  disabled={!isFirstProfile}
+                  className="mr-2 h-4 w-4 text-primary-600 focus:ring-primary-500 disabled:cursor-not-allowed"
                 />
                 <span className="text-neutral-700">Kvinna</span>
               </label>
             </div>
+            {!isFirstProfile && (
+              <p className="text-xs text-neutral-500 mt-1">
+                Kön kan endast ändras på din första profil
+              </p>
+            )}
           </div>
 
           {/* Height */}
@@ -748,23 +783,10 @@ export default function UserProfileForm() {
               </div>
 
               {/* Save Button */}
-              <div className="mt-6 space-y-3">
+              <div className="mt-6">
                 <Button onClick={handleSave} disabled={isSaving} className="w-full">
                   {isSaving ? 'Sparar...' : 'Spara profil'}
                 </Button>
-
-                {/* Delete Button - only show if profile exists */}
-                {activeProfile?.id && (
-                  <Button
-                    variant="destructive"
-                    onClick={handleDelete}
-                    disabled={deleteProfileMutation.isPending}
-                    className="w-full"
-                  >
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    {deleteProfileMutation.isPending ? 'Raderar...' : 'Radera profil'}
-                  </Button>
-                )}
               </div>
             </div>
           )}
