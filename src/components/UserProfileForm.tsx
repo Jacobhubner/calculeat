@@ -496,7 +496,12 @@ export default function UserProfileForm() {
           {/* Body Fat Percentage */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-neutral-700 mb-2">
-              Kroppsfettprocent (%) {bmrFormula && requiresBodyFat(bmrFormula) && '*'}
+              Kroppsfettprocent (%){' '}
+              {bmrFormula && requiresBodyFat(bmrFormula) ? (
+                <span className="text-red-600">*</span>
+              ) : (
+                <span className="text-neutral-500">(valfritt)</span>
+              )}
             </label>
             <input
               type="number"
