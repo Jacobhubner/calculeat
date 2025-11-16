@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect, useCallback } from 'react'
 import { Button } from './ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
 import { calculateBMR, requiresBodyFat } from '@/lib/calculations/bmr'
 import { calculateAge } from '@/lib/calculations/helpers'
 import { calculateTDEE } from '@/lib/calculations/tdee'
@@ -421,314 +422,324 @@ export default function UserProfileForm() {
             />
           </div>
 
-          {/* SECTION 2: Basic Information */}
-          <div className="border-t pt-6">
-            <h3 className="text-xl font-semibold text-neutral-900 mb-4">
-              Grundläggande information
-            </h3>
-
-            {/* Birth Date */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-neutral-700 mb-2">
-                Födelsedatum <span className="text-red-600">*</span>
-              </label>
-              <input
-                type="date"
-                value={birthDate}
-                onChange={e => setBirthDate(e.target.value)}
-                className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
-              />
-            </div>
-
-            {/* Gender Selection */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-neutral-700 mb-2">
-                Kön <span className="text-red-600">*</span>
-              </label>
-              <div className="flex gap-4">
-                <label className="flex items-center cursor-pointer">
-                  <input
-                    type="radio"
-                    name="gender"
-                    value="male"
-                    checked={gender === 'male'}
-                    onChange={e => setGender(e.target.value as Gender | '')}
-                    className="mr-2 h-4 w-4 text-primary-600 focus:ring-primary-500"
-                  />
-                  <span className="text-neutral-700">Man</span>
+          {/* Calculator Card */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Grundläggande information</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Birth Date */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-neutral-700 mb-2">
+                  Födelsedatum <span className="text-red-600">*</span>
                 </label>
-                <label className="flex items-center cursor-pointer">
-                  <input
-                    type="radio"
-                    name="gender"
-                    value="female"
-                    checked={gender === 'female'}
-                    onChange={e => setGender(e.target.value as Gender | '')}
-                    className="mr-2 h-4 w-4 text-primary-600 focus:ring-primary-500"
-                  />
-                  <span className="text-neutral-700">Kvinna</span>
-                </label>
-              </div>
-            </div>
-
-            {/* Height */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-neutral-700 mb-2">
-                Längd (cm) <span className="text-red-600">*</span>
-              </label>
-              <input
-                type="number"
-                value={height}
-                onChange={e => setHeight(e.target.value)}
-                className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
-                placeholder="180"
-                min="100"
-                max="250"
-              />
-            </div>
-
-            {/* Weight */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-neutral-700 mb-2">
-                Vikt (kg) <span className="text-red-600">*</span>
-              </label>
-              <input
-                type="number"
-                value={weight}
-                onChange={e => setWeight(e.target.value)}
-                className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
-                placeholder="75"
-                min="20"
-                max="300"
-                step="0.1"
-              />
-            </div>
-
-            {/* Body Fat Percentage */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-neutral-700 mb-2">
-                Kroppsfettprocent (%){' '}
-                {bmrFormula && requiresBodyFat(bmrFormula) ? (
-                  <span className="text-red-600">*</span>
-                ) : (
-                  <span className="text-neutral-500">(valfritt)</span>
-                )}
-              </label>
-              <input
-                type="number"
-                value={bodyFatPercentage}
-                onChange={e => setBodyFatPercentage(e.target.value)}
-                className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
-                placeholder="15"
-                min="0"
-                max="100"
-                step="0.1"
-              />
-            </div>
-          </div>
-
-          {/* SECTION 3: BMR Formula */}
-          <div className="border-t pt-6">
-            <h3 className="text-xl font-semibold text-neutral-900 mb-4">BMR-formel</h3>
-
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <label className="block text-sm font-medium text-neutral-700">
-                  BMR-formel <span className="text-red-600">*</span>
-                </label>
-                {bmrFormula && (
-                  <button
-                    type="button"
-                    onClick={() => setShowBMRModal(true)}
-                    className="text-sm text-primary-600 hover:text-primary-700 underline transition-colors"
-                  >
-                    Fakta om denna formel
-                  </button>
-                )}
-              </div>
-              <select
-                value={bmrFormula}
-                onChange={e => setBmrFormula(e.target.value as BMRFormula | '')}
-                className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
-              >
-                <option value="">Välj BMR-formel...</option>
-                <option value="Mifflin-St Jeor equation">Mifflin-St Jeor (Rekommenderad)</option>
-                <option value="Revised Harris-Benedict equation">Revised Harris-Benedict</option>
-                <option value="Original Harris-Benedict equation">Original Harris-Benedict</option>
-                <option value="Schofield equation">Schofield</option>
-                <option value="Oxford/Henry equation">Oxford/Henry</option>
-                <option value="MacroFactor standard equation">MacroFactor Standard</option>
-                <option value="Cunningham equation">Cunningham (Kräver kroppsfett%)</option>
-                <option value="MacroFactor FFM equation">
-                  MacroFactor FFM (Kräver kroppsfett%)
-                </option>
-                <option value="MacroFactor athlete equation">
-                  MacroFactor Athlete (Kräver kroppsfett%)
-                </option>
-                <option value="Fitness Stuff Podcast equation">
-                  Fitness Stuff Podcast (Kräver kroppsfett%)
-                </option>
-              </select>
-
-              {/* Warning if body fat required */}
-              {bmrFormula && requiresBodyFat(bmrFormula) && !bodyFatPercentage && (
-                <div className="mt-3 flex gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl">
-                  <span className="text-xl text-amber-600 flex-shrink-0">⚠</span>
-                  <p className="text-sm text-amber-800 leading-relaxed">
-                    Denna formel kräver kroppsfettprocent. Vänligen fyll i kroppsfettprocent ovan.
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* SECTION 4: PAL System */}
-          <div className="border-t pt-6">
-            <h3 className="text-xl font-semibold text-neutral-900 mb-4">
-              PAL-system (Aktivitetsnivå)
-            </h3>
-
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <label className="block text-sm font-medium text-neutral-700">
-                  PAL-system <span className="text-red-600">*</span>
-                </label>
-                {palSystem && (
-                  <button
-                    type="button"
-                    onClick={() => setShowPALModal(true)}
-                    className="text-sm text-primary-600 hover:text-primary-700 underline transition-colors"
-                  >
-                    Fakta om detta PAL-system
-                  </button>
-                )}
-              </div>
-              <select
-                value={palSystem}
-                onChange={e => setPalSystem(e.target.value as PALSystem | '')}
-                className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
-              >
-                <option value="">Välj PAL-system...</option>
-                <option value="FAO/WHO/UNU based PAL values">
-                  {translatePALSystem('FAO/WHO/UNU based PAL values')}
-                </option>
-                <option value="DAMNRIPPED PAL values">
-                  {translatePALSystem('DAMNRIPPED PAL values')}
-                </option>
-                <option value="Pro Physique PAL values">
-                  {translatePALSystem('Pro Physique PAL values')}
-                </option>
-                <option value="Fitness Stuff PAL values">
-                  {translatePALSystem('Fitness Stuff PAL values')}
-                </option>
-                <option value="Basic internet PAL values">
-                  {translatePALSystem('Basic internet PAL values')}
-                </option>
-                <option value="Custom PAL">{translatePALSystem('Custom PAL')}</option>
-              </select>
-            </div>
-
-            {/* Show PAL table if system is selected */}
-            {palSystem && (
-              <div className="mt-4">
-                <PALTableContainer
-                  system={palSystem}
-                  register={
-                    register as unknown as Parameters<typeof PALTableContainer>[0]['register']
-                  }
-                  watch={watch as unknown as Parameters<typeof PALTableContainer>[0]['watch']}
+                <input
+                  type="date"
+                  value={birthDate}
+                  onChange={e => setBirthDate(e.target.value)}
+                  className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
                 />
               </div>
-            )}
-          </div>
 
-          {/* SECTION 5: Energy Goal */}
-          <div className="border-t pt-6">
-            <h3 className="text-xl font-semibold text-neutral-900 mb-4">Energimål</h3>
-
-            {/* Energy Goal Reference Table - always visible if we have TDEE */}
-            {result && (
-              <>
-                <EnergyGoalReferenceTable
-                  tdee={result.tdee}
-                  selectedGoal={energyGoal}
-                  selectedDeficit={deficitLevel}
-                  onGoalSelect={setEnergyGoal}
-                  onDeficitSelect={setDeficitLevel}
-                />
-
-                {/* Show custom TDEE input below table when selected */}
-                {energyGoal === 'Custom TDEE' && (
-                  <div className="mt-4">
-                    <label className="block text-sm font-medium text-neutral-700 mb-2">
-                      TDEE-värde (kcal) *
-                    </label>
+              {/* Gender Selection */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-neutral-700 mb-2">
+                  Kön <span className="text-red-600">*</span>
+                </label>
+                <div className="flex gap-4">
+                  <label className="flex items-center cursor-pointer">
                     <input
-                      type="number"
-                      value={customTdee}
-                      onChange={e => setCustomTdee(e.target.value)}
-                      className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
-                      placeholder="2500"
-                      min="500"
-                      max="10000"
+                      type="radio"
+                      name="gender"
+                      value="male"
+                      checked={gender === 'male'}
+                      onChange={e => setGender(e.target.value as Gender | '')}
+                      className="mr-2 h-4 w-4 text-primary-600 focus:ring-primary-500"
                     />
-                    <p className="mt-1 text-xs text-neutral-500">
-                      Ange ditt eget TDEE-värde direkt (hoppar över BMR/PAL beräkningar)
-                    </p>
+                    <span className="text-neutral-700">Man</span>
+                  </label>
+                  <label className="flex items-center cursor-pointer">
+                    <input
+                      type="radio"
+                      name="gender"
+                      value="female"
+                      checked={gender === 'female'}
+                      onChange={e => setGender(e.target.value as Gender | '')}
+                      className="mr-2 h-4 w-4 text-primary-600 focus:ring-primary-500"
+                    />
+                    <span className="text-neutral-700">Kvinna</span>
+                  </label>
+                </div>
+              </div>
+
+              {/* Height */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-neutral-700 mb-2">
+                  Längd (cm) <span className="text-red-600">*</span>
+                </label>
+                <input
+                  type="number"
+                  value={height}
+                  onChange={e => setHeight(e.target.value)}
+                  className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                  placeholder="180"
+                  min="100"
+                  max="250"
+                />
+              </div>
+
+              {/* Weight */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-neutral-700 mb-2">
+                  Vikt (kg) <span className="text-red-600">*</span>
+                </label>
+                <input
+                  type="number"
+                  value={weight}
+                  onChange={e => setWeight(e.target.value)}
+                  className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                  placeholder="75"
+                  min="20"
+                  max="300"
+                  step="0.1"
+                />
+              </div>
+
+              {/* Body Fat Percentage */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-neutral-700 mb-2">
+                  Kroppsfettprocent (%){' '}
+                  {bmrFormula && requiresBodyFat(bmrFormula) ? (
+                    <span className="text-red-600">*</span>
+                  ) : (
+                    <span className="text-neutral-500">(valfritt)</span>
+                  )}
+                </label>
+                <input
+                  type="number"
+                  value={bodyFatPercentage}
+                  onChange={e => setBodyFatPercentage(e.target.value)}
+                  className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                  placeholder="15"
+                  min="0"
+                  max="100"
+                  step="0.1"
+                />
+              </div>
+
+              {/* SECTION 3: BMR Formula */}
+              <div>
+                <h3 className="text-xl font-semibold text-neutral-900 mb-4">BMR-formel</h3>
+
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <label className="block text-sm font-medium text-neutral-700">
+                      BMR-formel <span className="text-red-600">*</span>
+                    </label>
+                    {bmrFormula && (
+                      <button
+                        type="button"
+                        onClick={() => setShowBMRModal(true)}
+                        className="text-sm text-primary-600 hover:text-primary-700 underline transition-colors"
+                      >
+                        Fakta om denna formel
+                      </button>
+                    )}
+                  </div>
+                  <select
+                    value={bmrFormula}
+                    onChange={e => setBmrFormula(e.target.value as BMRFormula | '')}
+                    className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                  >
+                    <option value="">Välj BMR-formel...</option>
+                    <option value="Mifflin-St Jeor equation">
+                      Mifflin-St Jeor (Rekommenderad)
+                    </option>
+                    <option value="Revised Harris-Benedict equation">
+                      Revised Harris-Benedict
+                    </option>
+                    <option value="Original Harris-Benedict equation">
+                      Original Harris-Benedict
+                    </option>
+                    <option value="Schofield equation">Schofield</option>
+                    <option value="Oxford/Henry equation">Oxford/Henry</option>
+                    <option value="MacroFactor standard equation">MacroFactor Standard</option>
+                    <option value="Cunningham equation">Cunningham (Kräver kroppsfett%)</option>
+                    <option value="MacroFactor FFM equation">
+                      MacroFactor FFM (Kräver kroppsfett%)
+                    </option>
+                    <option value="MacroFactor athlete equation">
+                      MacroFactor Athlete (Kräver kroppsfett%)
+                    </option>
+                    <option value="Fitness Stuff Podcast equation">
+                      Fitness Stuff Podcast (Kräver kroppsfett%)
+                    </option>
+                  </select>
+
+                  {/* Warning if body fat required */}
+                  {bmrFormula && requiresBodyFat(bmrFormula) && !bodyFatPercentage && (
+                    <div className="mt-3 flex gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl">
+                      <span className="text-xl text-amber-600 flex-shrink-0">⚠</span>
+                      <p className="text-sm text-amber-800 leading-relaxed">
+                        Denna formel kräver kroppsfettprocent. Vänligen fyll i kroppsfettprocent
+                        ovan.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* SECTION 4: PAL System */}
+              <div>
+                <h3 className="text-xl font-semibold text-neutral-900 mb-4">
+                  PAL-system (Aktivitetsnivå)
+                </h3>
+
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <label className="block text-sm font-medium text-neutral-700">
+                      PAL-system <span className="text-red-600">*</span>
+                    </label>
+                    {palSystem && (
+                      <button
+                        type="button"
+                        onClick={() => setShowPALModal(true)}
+                        className="text-sm text-primary-600 hover:text-primary-700 underline transition-colors"
+                      >
+                        Fakta om detta PAL-system
+                      </button>
+                    )}
+                  </div>
+                  <select
+                    value={palSystem}
+                    onChange={e => setPalSystem(e.target.value as PALSystem | '')}
+                    className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                  >
+                    <option value="">Välj PAL-system...</option>
+                    <option value="FAO/WHO/UNU based PAL values">
+                      {translatePALSystem('FAO/WHO/UNU based PAL values')}
+                    </option>
+                    <option value="DAMNRIPPED PAL values">
+                      {translatePALSystem('DAMNRIPPED PAL values')}
+                    </option>
+                    <option value="Pro Physique PAL values">
+                      {translatePALSystem('Pro Physique PAL values')}
+                    </option>
+                    <option value="Fitness Stuff PAL values">
+                      {translatePALSystem('Fitness Stuff PAL values')}
+                    </option>
+                    <option value="Basic internet PAL values">
+                      {translatePALSystem('Basic internet PAL values')}
+                    </option>
+                    <option value="Custom PAL">{translatePALSystem('Custom PAL')}</option>
+                  </select>
+                </div>
+
+                {/* Show PAL table if system is selected */}
+                {palSystem && (
+                  <div className="mt-4">
+                    <PALTableContainer
+                      system={palSystem}
+                      register={
+                        register as unknown as Parameters<typeof PALTableContainer>[0]['register']
+                      }
+                      watch={watch as unknown as Parameters<typeof PALTableContainer>[0]['watch']}
+                    />
                   </div>
                 )}
-              </>
-            )}
-          </div>
+              </div>
 
-          {/* SECTION 6: Results */}
-          {result && (
-            <div className="mt-6 rounded-2xl border border-lime-200 bg-lime-50 p-8 shadow-lg">
-              <h3 className="text-xl font-semibold text-neutral-900 mb-4">Dina resultat</h3>
+              {/* SECTION 5: Energy Goal */}
+              <div>
+                <h3 className="text-xl font-semibold text-neutral-900 mb-4">Energimål</h3>
 
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="rounded-xl bg-primary-50 p-4 border border-primary-200">
-                  <p className="text-sm font-medium text-neutral-600 mb-1">
-                    BMR <span className="text-xs">(kcal/dag i vila)</span>
-                  </p>
-                  <p className="text-3xl font-bold text-primary-600">
-                    {result.bmr === 0 ? 'N/A' : `${result.bmr} kcal`}
-                  </p>
-                  <p className="text-xs text-neutral-500 mt-1">Basal Metabolic Rate</p>
-                </div>
+                {/* Energy Goal Reference Table - always visible if we have TDEE */}
+                {result && (
+                  <>
+                    <EnergyGoalReferenceTable
+                      tdee={result.tdee}
+                      selectedGoal={energyGoal}
+                      selectedDeficit={deficitLevel}
+                      onGoalSelect={setEnergyGoal}
+                      onDeficitSelect={setDeficitLevel}
+                    />
 
-                <div className="rounded-xl bg-accent-50 p-4 border border-accent-200">
-                  <p className="text-sm font-medium text-neutral-600 mb-1">
-                    TDEE <span className="text-xs">(kcal/dag totalt)</span>
-                  </p>
-                  <p className="text-3xl font-bold text-accent-600">
-                    {energyGoal === 'Maintain weight' || energyGoal === 'Custom TDEE'
-                      ? `${result.tdeeMin} - ${result.tdeeMax} kcal `
-                      : result.tdeeMin === result.tdeeMax
-                        ? `${result.tdee} kcal`
-                        : `${result.tdeeMin} - ${result.tdeeMax} kcal `}
-                    {(energyGoal === 'Maintain weight' || energyGoal === 'Custom TDEE') && (
-                      <span className="text-xl text-accent-500">({result.tdee} kcal)</span>
+                    {/* Show custom TDEE input below table when selected */}
+                    {energyGoal === 'Custom TDEE' && (
+                      <div className="mt-4">
+                        <label className="block text-sm font-medium text-neutral-700 mb-2">
+                          TDEE-värde (kcal) *
+                        </label>
+                        <input
+                          type="number"
+                          value={customTdee}
+                          onChange={e => setCustomTdee(e.target.value)}
+                          className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                          placeholder="2500"
+                          min="500"
+                          max="10000"
+                        />
+                        <p className="mt-1 text-xs text-neutral-500">
+                          Ange ditt eget TDEE-värde direkt (hoppar över BMR/PAL beräkningar)
+                        </p>
+                      </div>
                     )}
-                  </p>
-                  <p className="text-xs text-neutral-500 mt-1">Total Daily Energy Expenditure</p>
-                </div>
+                  </>
+                )}
               </div>
 
-              {/* Save Button */}
-              <div className="mt-6">
-                <Button onClick={handleSave} disabled={isSaving} className="w-full">
-                  {isSaving ? 'Sparar...' : 'Spara profil'}
-                </Button>
-              </div>
-            </div>
-          )}
+              {/* SECTION 6: Results */}
+              {result && (
+                <div className="mt-6 rounded-2xl border border-lime-200 bg-lime-50 p-8 shadow-lg">
+                  <h3 className="text-xl font-semibold text-neutral-900 mb-4">Dina resultat</h3>
+
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="rounded-xl bg-primary-50 p-4 border border-primary-200">
+                      <p className="text-sm font-medium text-neutral-600 mb-1">
+                        BMR <span className="text-xs">(kcal/dag i vila)</span>
+                      </p>
+                      <p className="text-3xl font-bold text-primary-600">
+                        {result.bmr === 0 ? 'N/A' : `${result.bmr} kcal`}
+                      </p>
+                      <p className="text-xs text-neutral-500 mt-1">Basal Metabolic Rate</p>
+                    </div>
+
+                    <div className="rounded-xl bg-accent-50 p-4 border border-accent-200">
+                      <p className="text-sm font-medium text-neutral-600 mb-1">
+                        TDEE <span className="text-xs">(kcal/dag totalt)</span>
+                      </p>
+                      <p className="text-3xl font-bold text-accent-600">
+                        {energyGoal === 'Maintain weight' || energyGoal === 'Custom TDEE'
+                          ? `${result.tdeeMin} - ${result.tdeeMax} kcal `
+                          : result.tdeeMin === result.tdeeMax
+                            ? `${result.tdee} kcal`
+                            : `${result.tdeeMin} - ${result.tdeeMax} kcal `}
+                        {(energyGoal === 'Maintain weight' || energyGoal === 'Custom TDEE') && (
+                          <span className="text-xl text-accent-500">({result.tdee} kcal)</span>
+                        )}
+                      </p>
+                      <p className="text-xs text-neutral-500 mt-1">
+                        Total Daily Energy Expenditure
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Save Button */}
+                  <div className="mt-6">
+                    <Button onClick={handleSave} disabled={isSaving} className="w-full">
+                      {isSaving ? 'Sparar...' : 'Spara profil'}
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
 
         {/* Sidebar - Information Panel */}
         <div className="space-y-4 lg:sticky lg:top-4 lg:self-start">
           {/* BMR Information Section */}
-          <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
+          <div className="rounded-2xl bg-gradient-to-br from-primary-50 to-accent-50 p-6">
             <h3 className="text-lg font-semibold text-neutral-900 mb-3">Vad är BMR?</h3>
             <p className="text-sm text-neutral-700 leading-relaxed mb-4">
               BMR (Basal Metabolic Rate) är den mängd energi kroppen behöver i vila för
@@ -744,7 +755,7 @@ export default function UserProfileForm() {
           </div>
 
           {/* PAL Information Section */}
-          <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
+          <div className="rounded-2xl bg-gradient-to-br from-primary-50 to-accent-50 p-6">
             <h3 className="text-lg font-semibold text-neutral-900 mb-3">Vad är PAL?</h3>
             <p className="text-sm text-neutral-700 leading-relaxed mb-3">
               PAL (Physical Activity Level) beskriver din genomsnittliga energiförbrukning relativt
