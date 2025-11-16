@@ -5,6 +5,7 @@ import { User } from 'lucide-react'
 import { useState } from 'react'
 import BMRConceptModal from '@/components/calculator/BMRConceptModal'
 import PALConceptModal from '@/components/calculator/PALConceptModal'
+import { Card } from '@/components/ui/card'
 
 export default function ProfilePage() {
   const [showBMRConceptModal, setShowBMRConceptModal] = useState(false)
@@ -38,7 +39,7 @@ export default function ProfilePage() {
           {/* Sidebar - Information Panel */}
           <div className="space-y-4 md:sticky md:top-4 md:self-start">
             {/* BMR Information Section */}
-            <div className="rounded-2xl bg-gradient-to-br from-primary-50 to-accent-50 p-6">
+            <Card className="bg-gradient-to-br from-primary-50 to-accent-50">
               <h3 className="text-lg font-semibold text-neutral-900 mb-3">Vad är BMR?</h3>
               <p className="text-sm text-neutral-700 leading-relaxed mb-4">
                 BMR (Basal Metabolic Rate) är den mängd energi kroppen behöver i vila för
@@ -51,10 +52,10 @@ export default function ProfilePage() {
               >
                 Läs mer →
               </button>
-            </div>
+            </Card>
 
             {/* PAL Information Section */}
-            <div className="rounded-2xl bg-gradient-to-br from-primary-50 to-accent-50 p-6">
+            <Card className="bg-gradient-to-br from-primary-50 to-accent-50">
               <h3 className="text-lg font-semibold text-neutral-900 mb-3">Vad är PAL?</h3>
               <p className="text-sm text-neutral-700 leading-relaxed mb-3">
                 PAL (Physical Activity Level) beskriver din genomsnittliga energiförbrukning
@@ -70,7 +71,7 @@ export default function ProfilePage() {
               >
                 Läs mer →
               </button>
-            </div>
+            </Card>
           </div>
         </div>
       </div>
