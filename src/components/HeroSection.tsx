@@ -4,20 +4,23 @@ import { Button } from './ui/button'
 
 export function HeroSection() {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700 pt-20 pb-24 md:pt-28 md:pb-32">
-      {/* Background pattern */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1),transparent_50%)]" />
+    <section className="relative overflow-hidden bg-gradient-to-br from-primary-50 via-white to-accent-50 pt-20 pb-24 md:pt-28 md:pb-32">
+      {/* Background pattern with gradient overlay */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(37,189,0,0.08),transparent_50%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_60%,rgba(255,139,0,0.06),transparent_50%)]" />
 
       <div className="container relative mx-auto px-4">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
           {/* Left column - Text content */}
           <div className="text-center lg:text-left space-y-8">
             <div className="space-y-4">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-neutral-900 leading-tight">
                 Ta kontroll över din kost.{' '}
-                <span className="text-accent-400">Enkelt med CalculEat.</span>
+                <span className="bg-gradient-to-r from-primary-600 to-accent-500 bg-clip-text text-transparent">
+                  Enkelt med CalculEat.
+                </span>
               </h1>
-              <p className="text-lg md:text-xl text-primary-50 max-w-2xl mx-auto lg:mx-0">
+              <p className="text-lg md:text-xl text-neutral-700 max-w-2xl mx-auto lg:mx-0">
                 Räkna kalorier, spåra makron och nå dina hälsomål med precision. Vetenskapligt
                 baserade kalkyler som hjälper dig förstå din kropp bättre.
               </p>
@@ -41,7 +44,7 @@ export function HeroSection() {
                 asChild
                 size="lg"
                 variant="outline"
-                className="text-base font-semibold bg-white/10 hover:bg-white/20 text-white border-white/30 backdrop-blur-sm"
+                className="text-base font-semibold bg-white border-neutral-300 hover:bg-neutral-50 text-neutral-900"
               >
                 <a href="#calculator">
                   <Calculator className="mr-2 h-5 w-5" />
@@ -51,17 +54,23 @@ export function HeroSection() {
             </div>
 
             {/* Social proof */}
-            <div className="flex flex-wrap gap-6 justify-center lg:justify-start text-primary-50">
+            <div className="flex flex-wrap gap-6 justify-center lg:justify-start text-neutral-600">
               <div className="text-center lg:text-left">
-                <div className="text-2xl font-bold text-white">10,000+</div>
+                <div className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-accent-500 bg-clip-text text-transparent">
+                  10,000+
+                </div>
                 <div className="text-sm">Aktiva användare</div>
               </div>
               <div className="text-center lg:text-left">
-                <div className="text-2xl font-bold text-white">500K+</div>
+                <div className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-accent-500 bg-clip-text text-transparent">
+                  500K+
+                </div>
                 <div className="text-sm">Loggade måltider</div>
               </div>
               <div className="text-center lg:text-left">
-                <div className="text-2xl font-bold text-white">4.9/5</div>
+                <div className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-accent-500 bg-clip-text text-transparent">
+                  4.9/5
+                </div>
                 <div className="text-sm">Användarbetyg</div>
               </div>
             </div>

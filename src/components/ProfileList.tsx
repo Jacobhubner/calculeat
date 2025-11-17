@@ -4,7 +4,7 @@
 
 import { useProfileStore } from '@/stores/profileStore'
 import { useProfiles, useSwitchProfile, useDeleteProfile } from '@/hooks'
-import { Check, User, X } from 'lucide-react'
+import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -63,71 +63,44 @@ export default function ProfileList() {
   }
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-1.5">
       {profiles.map(profile => {
         const isActive = profile.id === activeProfile?.id
-        const lastUpdated = profile.updated_at
-          ? new Date(profile.updated_at).toLocaleDateString('sv-SE')
-          : 'Okänt datum'
 
         return (
-          <button
+          <div
             key={profile.id}
             onClick={() => handleSwitchProfile(profile.id)}
             className={cn(
-              'w-full p-3 rounded-lg border transition-all text-left',
-              'hover:border-primary-300 hover:shadow-sm',
+              'relative px-3 py-2 rounded-lg border-2 transition-all cursor-pointer group',
+              'hover:border-primary-400 hover:shadow-sm',
               isActive
-                ? 'border-primary-500 bg-primary-50/50 shadow-sm'
-                : 'border-neutral-200 bg-white'
+                ? 'border-l-4 border-l-primary-600 border-primary-500 bg-primary-50/50 shadow-sm'
+                : 'border-neutral-200 bg-white hover:bg-neutral-50'
             )}
           >
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex items-start gap-3 flex-1 min-w-0">
-                <div
-                  className={cn('p-2 rounded-lg', isActive ? 'bg-primary-100' : 'bg-neutral-100')}
-                >
-                  <User
-                    className={cn('h-4 w-4', isActive ? 'text-primary-600' : 'text-neutral-600')}
-                  />
-                </div>
+            <div className="flex items-center justify-between gap-3">
+              {/* Profile Name */}
+              <h4
+                className={cn(
+                  'text-sm font-medium truncate flex-1',
+                  isActive ? 'text-neutral-900' : 'text-neutral-700'
+                )}
+              >
+                {profile.profile_name}
+              </h4>
 
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <h4 className="font-medium text-neutral-900 truncate">
-                      {profile.profile_name}
-                    </h4>
-                    {isActive && (
-                      <span className="text-xs bg-primary-100 text-primary-700 px-2 py-0.5 rounded-full font-medium">
-                        Aktiv
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-xs text-neutral-500 mt-0.5">Uppdaterad: {lastUpdated}</p>
-                  {profile.weight_kg && profile.height_cm && (
-                    <p className="text-xs text-neutral-600 mt-1">
-                      {profile.weight_kg} kg • {profile.height_cm} cm
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 flex-shrink-0">
-                {/* Delete X icon */}
-                <button
-                  onClick={e => handleDeleteProfile(e, profile.id, profile.profile_name)}
-                  className="p-1 rounded hover:bg-red-50 transition-colors group"
-                  title="Radera profil"
-                  disabled={deleteProfileMutation.isPending}
-                >
-                  <X className="h-4 w-4 text-red-500 group-hover:text-red-700 transition-colors" />
-                </button>
-
-                {/* Check icon for active profile */}
-                {isActive && <Check className="h-5 w-5 text-primary-600 flex-shrink-0" />}
-              </div>
+              {/* Delete X Button */}
+              <button
+                onClick={e => handleDeleteProfile(e, profile.id, profile.profile_name)}
+                className="p-1 rounded hover:bg-red-100 transition-colors z-10 opacity-60 group-hover:opacity-100"
+                title="Radera profil"
+                disabled={deleteProfileMutation.isPending}
+              >
+                <X className="h-4 w-4 text-red-500 hover:text-red-700 transition-colors" />
+              </button>
             </div>
-          </button>
+          </div>
         )
       })}
     </div>

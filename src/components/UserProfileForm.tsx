@@ -15,6 +15,7 @@ import { translatePALSystem } from '@/lib/translations'
 import { useProfileStore } from '@/stores/profileStore'
 import { useUpdateProfile, useCreateProfile, useProfiles } from '@/hooks'
 import { Lock } from 'lucide-react'
+import { toast } from 'sonner'
 
 interface CalculatorResult {
   bmr: number
@@ -39,9 +40,16 @@ export default function UserProfileForm() {
   // Determine if birth date and gender should be locked
   // They can only be edited on the first profile (oldest by creation date)
   const isFirstProfile = useMemo(() => {
+    // If creating new profile (activeProfile is null), lock the fields
+    if (!activeProfile && allProfiles.length > 0) return false
+
+    // If no profiles or only one, allow editing
     if (!allProfiles || allProfiles.length <= 1) return true
+
+    // If no active profile (new user), allow editing
     if (!activeProfile) return true
 
+    // Check if this is the first profile by creation date
     const sortedByAge = [...allProfiles].sort(
       (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
     )
@@ -83,6 +91,65 @@ export default function UserProfileForm() {
   const [showBMRModal, setShowBMRModal] = useState(false)
   const [showPALModal, setShowPALModal] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+
+  // Sync form fields when activeProfile changes
+  useEffect(() => {
+    if (activeProfile) {
+      // Load existing profile data
+      setProfileName(activeProfile.profile_name || '')
+      setBirthDate(activeProfile.birth_date || '')
+      setWeight(activeProfile.weight_kg?.toString() || '')
+      setHeight(activeProfile.height_cm?.toString() || '')
+      setGender(activeProfile.gender || '')
+      setBodyFatPercentage(activeProfile.body_fat_percentage?.toString() || '')
+      setBmrFormula((activeProfile.bmr_formula as BMRFormula) || '')
+      setPalSystem((activeProfile.pal_system as PALSystem) || '')
+      setActivityLevel(activeProfile.activity_level || '')
+      setIntensityLevel(activeProfile.intensity_level || '')
+      setTrainingFrequency(activeProfile.training_frequency_per_week || '')
+      setTrainingDuration(activeProfile.training_duration_minutes || '')
+      setDailySteps(activeProfile.daily_steps || '')
+      setCustomPAL(activeProfile.custom_pal?.toString() || '')
+
+      if (activeProfile.calorie_goal) {
+        setEnergyGoal(activeProfile.calorie_goal as EnergyGoal)
+      }
+      if (activeProfile.deficit_level) {
+        setDeficitLevel(activeProfile.deficit_level as DeficitLevel)
+      }
+      if (activeProfile.custom_tdee) {
+        setCustomTdee(activeProfile.custom_tdee.toString())
+      }
+    } else if (activeProfile === null && allProfiles.length > 0) {
+      // New profile mode - reset all fields except birth date and gender
+      // Get the first profile to copy locked fields from
+      const firstProfile = [...allProfiles].sort(
+        (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+      )[0]
+
+      // Reset editable fields
+      setProfileName('')
+      setWeight('')
+      setHeight('')
+      setBodyFatPercentage('')
+      setBmrFormula('')
+      setPalSystem('')
+      setActivityLevel('')
+      setIntensityLevel('')
+      setTrainingFrequency('')
+      setTrainingDuration('')
+      setDailySteps('')
+      setCustomPAL('')
+      setEnergyGoal('Maintain weight')
+      setDeficitLevel('')
+      setCustomTdee('')
+      setResult(null) // Clear results
+
+      // Keep locked fields from first profile
+      setBirthDate(firstProfile.birth_date || '')
+      setGender(firstProfile.gender || '')
+    }
+  }, [activeProfile?.id, allProfiles.length])
 
   // Create a form data object for PAL table with current state values
   const formData = useMemo(() => {
@@ -420,10 +487,15 @@ export default function UserProfileForm() {
           profileId: activeProfile.id,
           data: profileData,
         })
+        toast.success(`Profilen "${profileName}" har uppdaterats`, {
+          description: 'Dina ändringar har sparats',
+        })
       } else {
         await createProfileMutation.mutateAsync(profileData)
+        toast.success(`Profilen "${profileName}" har skapats`, {
+          description: 'Din nya profil har sparats',
+        })
       }
-      // Toast notification is handled by the hooks
     } catch (error) {
       console.error('Error saving profile:', error)
       // Error toast is handled by the hooks

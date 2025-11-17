@@ -116,36 +116,37 @@ export default function HomePage() {
         <SuccessStories />
 
         {/* CTA Footer */}
-        <section className="bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 py-20 md:py-28 text-white relative overflow-hidden">
-          {/* Background pattern */}
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(255,139,0,0.15),transparent_50%)]" />
+        <section className="bg-gradient-to-br from-primary-50 via-white to-accent-50 py-20 md:py-28 relative overflow-hidden border-t border-neutral-200">
+          {/* Background pattern with gradient overlay */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(37,189,0,0.08),transparent_50%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_60%,rgba(255,139,0,0.06),transparent_50%)]" />
 
           <div className="container mx-auto px-4 text-center relative z-10">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-neutral-900">
               Redo att förändra dina matvanor?
             </h2>
-            <p className="text-lg md:text-xl text-primary-100 mb-12 max-w-2xl mx-auto">
+            <p className="text-lg md:text-xl text-neutral-700 mb-12 max-w-2xl mx-auto">
               Gå med tusentals användare som redan har nått sina hälsomål med CalculEat
             </p>
 
             <div className="mb-12 flex flex-wrap justify-center gap-6 md:gap-8">
               <div className="flex items-center space-x-2">
-                <CheckCircle className="h-6 w-6 text-accent-400" />
-                <span className="text-primary-50 font-medium">Helt gratis att börja</span>
+                <CheckCircle className="h-6 w-6 text-primary-600" />
+                <span className="text-neutral-800 font-medium">Helt gratis att börja</span>
               </div>
               <div className="flex items-center space-x-2">
-                <CheckCircle className="h-6 w-6 text-accent-400" />
-                <span className="text-primary-50 font-medium">Ingen reklam</span>
+                <CheckCircle className="h-6 w-6 text-primary-600" />
+                <span className="text-neutral-800 font-medium">Ingen reklam</span>
               </div>
               <div className="flex items-center space-x-2">
-                <CheckCircle className="h-6 w-6 text-accent-400" />
-                <span className="text-primary-50 font-medium">
+                <CheckCircle className="h-6 w-6 text-primary-600" />
+                <span className="text-neutral-800 font-medium">
                   Exportera dina data när som helst
                 </span>
               </div>
             </div>
 
-            <Button size="lg" variant="accent" className="shadow-2xl" asChild>
+            <Button size="lg" variant="accent" className="shadow-lg hover:shadow-xl" asChild>
               <Link to="/register">Skapa konto gratis</Link>
             </Button>
           </div>

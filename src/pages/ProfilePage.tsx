@@ -2,12 +2,12 @@ import DashboardLayout from '@/components/layout/DashboardLayout'
 import UserProfileForm from '@/components/UserProfileForm'
 import MacroModesCard from '@/components/MacroModesCard'
 import ProfileList from '@/components/ProfileList'
-import { User, Users } from 'lucide-react'
+import { User, Users, Plus } from 'lucide-react'
 import { useState } from 'react'
 import BMRConceptModal from '@/components/calculator/BMRConceptModal'
 import PALConceptModal from '@/components/calculator/PALConceptModal'
 import { Card } from '@/components/ui/card'
-import { useProfiles } from '@/hooks'
+import { useProfiles, useNewProfile } from '@/hooks'
 
 export default function ProfilePage() {
   const [showBMRConceptModal, setShowBMRConceptModal] = useState(false)
@@ -15,6 +15,9 @@ export default function ProfilePage() {
 
   // Load profiles to populate store
   useProfiles()
+
+  // Hook for creating new profile
+  const { startNewProfile } = useNewProfile()
 
   return (
     <DashboardLayout>
@@ -45,9 +48,20 @@ export default function ProfilePage() {
           <div className="space-y-4 md:sticky md:top-4 md:self-start">
             {/* Profile Switcher Section */}
             <Card>
-              <div className="flex items-center gap-2 mb-3">
-                <Users className="h-5 w-5 text-primary-600" />
-                <h3 className="text-lg font-semibold text-neutral-900">Mina Profiler</h3>
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <Users className="h-5 w-5 text-primary-600" />
+                  <h3 className="text-lg font-semibold text-neutral-900">Mina Profiler</h3>
+                </div>
+
+                {/* Green Plus Button */}
+                <button
+                  onClick={startNewProfile}
+                  className="p-1.5 rounded-lg bg-primary-500 hover:bg-primary-600 transition-all shadow-sm hover:shadow-md active:scale-95"
+                  title="Skapa ny profil"
+                >
+                  <Plus className="h-4 w-4 text-white" />
+                </button>
               </div>
               <p className="text-sm text-neutral-600 mb-4">
                 Växla mellan olika profiler eller skapa en ny
