@@ -37,23 +37,20 @@ export default function UserProfileForm() {
   // Use activeProfile from store if available, fallback to old profile
   const currentProfile = activeProfile || profile
 
-  // Determine if birth date and gender should be locked
-  // They can only be edited on the first profile (oldest by creation date)
-  const isFirstProfile = useMemo(() => {
+  // Determine if birth date, gender and height should be locked
+  // These can ONLY be edited if you have exactly ONE profile
+  const canEditLockedFields = useMemo(() => {
     // If creating new profile (activeProfile is null), lock the fields
     if (!activeProfile && allProfiles.length > 0) return false
 
-    // If no profiles or only one, allow editing
-    if (!allProfiles || allProfiles.length <= 1) return true
+    // If exactly ONE profile exists, allow editing
+    if (allProfiles && allProfiles.length === 1) return true
 
-    // If no active profile (new user), allow editing
-    if (!activeProfile) return true
+    // If no profiles (new user), allow editing
+    if (!allProfiles || allProfiles.length === 0) return true
 
-    // Check if this is the first profile by creation date
-    const sortedByAge = [...allProfiles].sort(
-      (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-    )
-    return sortedByAge[0]?.id === activeProfile.id
+    // If more than one profile, lock the fields
+    return false
   }, [allProfiles, activeProfile])
 
   // Load initial values from profile
@@ -149,6 +146,7 @@ export default function UserProfileForm() {
       setBirthDate(firstProfile.birth_date || '')
       setGender(firstProfile.gender || '')
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeProfile?.id, allProfiles.length])
 
   // Create a form data object for PAL table with current state values
@@ -505,21 +503,7 @@ export default function UserProfileForm() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* SECTION 1: Profile Name */}
-      <div>
-        <label className="block text-sm font-medium text-neutral-700 mb-2">
-          Profilnamn <span className="text-neutral-500 text-xs">(krävs för att spara)</span>
-        </label>
-        <input
-          type="text"
-          value={profileName}
-          onChange={e => setProfileName(e.target.value)}
-          className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
-          placeholder="Profilens namn"
-        />
-      </div>
-
+    <div className="space-y-6 pb-28">
       {/* Calculator Card */}
       <Card>
         <CardHeader>
@@ -530,7 +514,7 @@ export default function UserProfileForm() {
           <div className="mb-4">
             <label className="block text-sm font-medium text-neutral-700 mb-2 flex items-center gap-2">
               Födelsedatum <span className="text-red-600">*</span>
-              {!isFirstProfile && (
+              {!canEditLockedFields && (
                 <span className="flex items-center gap-1 text-xs text-neutral-500 font-normal">
                   <Lock className="h-3 w-3" />
                   Låst
@@ -541,17 +525,17 @@ export default function UserProfileForm() {
               type="date"
               value={birthDate}
               onChange={e => setBirthDate(e.target.value)}
-              disabled={!isFirstProfile}
+              disabled={!canEditLockedFields}
               className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 disabled:bg-neutral-100 disabled:cursor-not-allowed disabled:text-neutral-500"
               title={
-                !isFirstProfile
-                  ? 'Födelsedatum och kön kan endast ändras på din första profil. Radera alla profiler för att återställa.'
+                !canEditLockedFields
+                  ? 'Födelsedatum, kön och längd kan endast ändras om du har en enda profil. Radera övriga profiler för att ändra.'
                   : ''
               }
             />
-            {!isFirstProfile && (
+            {!canEditLockedFields && (
               <p className="text-xs text-neutral-500 mt-1">
-                Födelsedatum kan endast ändras på din första profil
+                Kan endast ändras om du har en enda profil
               </p>
             )}
           </div>
@@ -560,7 +544,7 @@ export default function UserProfileForm() {
           <div className="mb-4">
             <label className="block text-sm font-medium text-neutral-700 mb-2 flex items-center gap-2">
               Kön <span className="text-red-600">*</span>
-              {!isFirstProfile && (
+              {!canEditLockedFields && (
                 <span className="flex items-center gap-1 text-xs text-neutral-500 font-normal">
                   <Lock className="h-3 w-3" />
                   Låst
@@ -569,10 +553,10 @@ export default function UserProfileForm() {
             </label>
             <div className="flex gap-4">
               <label
-                className={`flex items-center ${!isFirstProfile ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}
+                className={`flex items-center ${!canEditLockedFields ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}
                 title={
-                  !isFirstProfile
-                    ? 'Kön kan endast ändras på din första profil. Radera alla profiler för att återställa.'
+                  !canEditLockedFields
+                    ? 'Kön kan endast ändras om du har en enda profil. Radera övriga profiler för att ändra.'
                     : ''
                 }
               >
@@ -582,16 +566,16 @@ export default function UserProfileForm() {
                   value="male"
                   checked={gender === 'male'}
                   onChange={e => setGender(e.target.value as Gender | '')}
-                  disabled={!isFirstProfile}
+                  disabled={!canEditLockedFields}
                   className="mr-2 h-4 w-4 text-primary-600 focus:ring-primary-500 disabled:cursor-not-allowed"
                 />
                 <span className="text-neutral-700">Man</span>
               </label>
               <label
-                className={`flex items-center ${!isFirstProfile ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}
+                className={`flex items-center ${!canEditLockedFields ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}
                 title={
-                  !isFirstProfile
-                    ? 'Kön kan endast ändras på din första profil. Radera alla profiler för att återställa.'
+                  !canEditLockedFields
+                    ? 'Kön kan endast ändras om du har en enda profil. Radera övriga profiler för att ändra.'
                     : ''
                 }
               >
@@ -601,33 +585,50 @@ export default function UserProfileForm() {
                   value="female"
                   checked={gender === 'female'}
                   onChange={e => setGender(e.target.value as Gender | '')}
-                  disabled={!isFirstProfile}
+                  disabled={!canEditLockedFields}
                   className="mr-2 h-4 w-4 text-primary-600 focus:ring-primary-500 disabled:cursor-not-allowed"
                 />
                 <span className="text-neutral-700">Kvinna</span>
               </label>
             </div>
-            {!isFirstProfile && (
+            {!canEditLockedFields && (
               <p className="text-xs text-neutral-500 mt-1">
-                Kön kan endast ändras på din första profil
+                Kan endast ändras om du har en enda profil
               </p>
             )}
           </div>
 
           {/* Height */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-neutral-700 mb-2">
+            <label className="block text-sm font-medium text-neutral-700 mb-2 flex items-center gap-2">
               Längd (cm) <span className="text-red-600">*</span>
+              {!canEditLockedFields && (
+                <span className="flex items-center gap-1 text-xs text-neutral-500 font-normal">
+                  <Lock className="h-3 w-3" />
+                  Låst
+                </span>
+              )}
             </label>
             <input
               type="number"
               value={height}
               onChange={e => setHeight(e.target.value)}
-              className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+              disabled={!canEditLockedFields}
+              className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 disabled:bg-neutral-100 disabled:cursor-not-allowed disabled:text-neutral-500"
               placeholder="180"
               min="100"
               max="250"
+              title={
+                !canEditLockedFields
+                  ? 'Längd kan endast ändras om du har en enda profil. Radera övriga profiler för att ändra.'
+                  : ''
+              }
             />
+            {!canEditLockedFields && (
+              <p className="text-xs text-neutral-500 mt-1">
+                Kan endast ändras om du har en enda profil
+              </p>
+            )}
           </div>
 
           {/* Weight */}
@@ -853,13 +854,6 @@ export default function UserProfileForm() {
                   <p className="text-xs text-neutral-500 mt-1">Total Daily Energy Expenditure</p>
                 </div>
               </div>
-
-              {/* Save Button */}
-              <div className="mt-6">
-                <Button onClick={handleSave} disabled={isSaving} className="w-full">
-                  {isSaving ? 'Sparar...' : 'Spara profil'}
-                </Button>
-              </div>
             </div>
           )}
         </CardContent>
@@ -882,6 +876,40 @@ export default function UserProfileForm() {
           onClose={() => setShowPALModal(false)}
         />
       )}
+
+      {/* Sticky Footer with Profile Name and Save Button */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-neutral-200 shadow-[0_-4px_12px_rgba(0,0,0,0.08)] z-40">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="grid gap-4 md:grid-cols-[1fr_auto] items-end">
+            {/* Profile Name Input */}
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 mb-2">
+                Profilnamn <span className="text-red-600">*</span>{' '}
+                <span className="text-neutral-500 text-xs font-normal">(krävs för att spara)</span>
+              </label>
+              <input
+                type="text"
+                value={profileName}
+                onChange={e => setProfileName(e.target.value)}
+                className="block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                placeholder="Profilens namn"
+              />
+            </div>
+
+            {/* Save Button */}
+            <div className="md:min-w-[200px]">
+              <Button
+                onClick={handleSave}
+                disabled={isSaving || !result}
+                className="w-full h-[42px]"
+                size="lg"
+              >
+                {isSaving ? 'Sparar...' : 'Spara profil'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

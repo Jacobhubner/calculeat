@@ -1,6 +1,8 @@
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import UserProfileForm from '@/components/UserProfileForm'
 import MacroModesCard from '@/components/MacroModesCard'
+import MacroDistributionCard from '@/components/MacroDistributionCard'
+import MealSettingsCard from '@/components/MealSettingsCard'
 import ProfileList from '@/components/ProfileList'
 import { User, Users, Plus } from 'lucide-react'
 import { useState } from 'react'
@@ -8,6 +10,7 @@ import BMRConceptModal from '@/components/calculator/BMRConceptModal'
 import PALConceptModal from '@/components/calculator/PALConceptModal'
 import { Card } from '@/components/ui/card'
 import { useProfiles, useNewProfile } from '@/hooks'
+import { useProfileStore } from '@/stores/profileStore'
 
 export default function ProfilePage() {
   const [showBMRConceptModal, setShowBMRConceptModal] = useState(false)
@@ -18,6 +21,10 @@ export default function ProfilePage() {
 
   // Hook for creating new profile
   const { startNewProfile } = useNewProfile()
+
+  // Get active profile for TDEE calculation
+  const activeProfile = useProfileStore(state => state.activeProfile)
+  const tdee = activeProfile?.tdee
 
   return (
     <DashboardLayout>
@@ -39,6 +46,12 @@ export default function ProfilePage() {
           <div className="space-y-8">
             {/* Main Profile Form */}
             <UserProfileForm />
+
+            {/* Macro Distribution Settings */}
+            <MacroDistributionCard tdee={tdee} />
+
+            {/* Meal Settings */}
+            <MealSettingsCard tdee={tdee} />
 
             {/* Macro Modes Card */}
             <MacroModesCard />

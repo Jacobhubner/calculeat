@@ -181,6 +181,22 @@ export interface Profile {
   target_weight_kg?: number
   target_body_fat_percentage?: number
 
+  // Macro preferences
+  fat_min_percent?: number
+  fat_max_percent?: number
+  carb_min_percent?: number
+  carb_max_percent?: number
+  protein_min_percent?: number
+  protein_max_percent?: number
+
+  // Meal configuration
+  meals_config?: {
+    meals: Array<{
+      name: string
+      percentage: number
+    }>
+  }
+
   // Timestamps
   created_at?: string
   updated_at?: string
@@ -218,4 +234,20 @@ export interface ProfileFormData {
   // Calculated values
   bmr?: number
   tdee?: number
+
+  // Macro preferences
+  fat_min_percent?: number
+  fat_max_percent?: number
+  carb_min_percent?: number
+  carb_max_percent?: number
+  protein_min_percent?: number
+  protein_max_percent?: number
+
+  // Meal configuration
+  meals_config?: {
+    meals: Array<{
+      name: string
+      percentage: number
+    }>
+  }
 }
