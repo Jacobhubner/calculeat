@@ -459,10 +459,18 @@ export function calculateBodyFat(
 }
 
 /**
- * Calculate lean body mass from body fat percentage
+ * Calculate fat free mass (FFM) from body fat percentage
+ */
+export function calculateFatFreeMass(weight: number, bodyFatPercentage: number): number {
+  return weight * (1 - bodyFatPercentage / 100)
+}
+
+/**
+ * @deprecated Use calculateFatFreeMass instead
+ * Legacy alias for backwards compatibility
  */
 export function calculateLeanMass(weight: number, bodyFatPercentage: number): number {
-  return weight * (1 - bodyFatPercentage / 100)
+  return calculateFatFreeMass(weight, bodyFatPercentage)
 }
 
 /**

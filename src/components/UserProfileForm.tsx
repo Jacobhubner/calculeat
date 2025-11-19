@@ -503,7 +503,7 @@ export default function UserProfileForm() {
   }
 
   return (
-    <div className="space-y-6 pb-28">
+    <div className="space-y-6 pb-20 md:pb-28">
       {/* Calculator Card */}
       <Card>
         <CardHeader>
@@ -879,30 +879,31 @@ export default function UserProfileForm() {
 
       {/* Sticky Footer with Profile Name and Save Button */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-neutral-200 shadow-[0_-4px_12px_rgba(0,0,0,0.08)] z-40">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="grid gap-4 md:grid-cols-[1fr_auto] items-end">
+        <div className="max-w-7xl mx-auto px-3 py-3 md:px-4 md:py-4">
+          <div className="flex flex-col gap-2 md:flex-row md:gap-4 md:items-end">
             {/* Profile Name Input */}
-            <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-2">
+            <div className="flex-1">
+              <label className="block text-xs md:text-sm font-medium text-neutral-700 mb-1 md:mb-2">
                 Profilnamn <span className="text-red-600">*</span>{' '}
-                <span className="text-neutral-500 text-xs font-normal">(krävs för att spara)</span>
+                <span className="text-neutral-500 text-[10px] md:text-xs font-normal">
+                  (krävs för att spara)
+                </span>
               </label>
               <input
                 type="text"
                 value={profileName}
                 onChange={e => setProfileName(e.target.value)}
-                className="block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                className="block w-full text-sm md:text-base rounded-lg md:rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 py-2"
                 placeholder="Profilens namn"
               />
             </div>
 
             {/* Save Button */}
-            <div className="md:min-w-[200px]">
+            <div className="md:min-w-[180px]">
               <Button
                 onClick={handleSave}
                 disabled={isSaving || !result}
-                className="w-full h-[42px]"
-                size="lg"
+                className="w-full h-9 md:h-[42px] text-sm md:text-base"
               >
                 {isSaving ? 'Sparar...' : 'Spara profil'}
               </Button>

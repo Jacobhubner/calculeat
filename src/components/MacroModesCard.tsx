@@ -63,8 +63,8 @@ export default function MacroModesCard() {
     }
   }
 
-  const canApplyOnSeason = !!profile?.lean_body_mass
-  const canApplyAny = !!profile?.weight && !!profile?.calories_min && !!profile?.calories_max
+  const canApplyOnSeason = !!profile?.body_fat_percentage && !!profile?.weight_kg
+  const canApplyAny = !!profile?.weight_kg && !!profile?.calories_min && !!profile?.calories_max
 
   return (
     <Card>
@@ -194,7 +194,7 @@ export default function MacroModesCard() {
           </p>
           {!canApplyOnSeason && (
             <div className="text-xs text-yellow-700 bg-yellow-50 border border-yellow-200 rounded p-2">
-              Kräver Lean Body Mass (fettfri kroppsmassa)
+              Kräver kroppsvikt och kroppsfettprocent för att beräkna FFM (fettfri kroppsmassa)
             </div>
           )}
           {onseasonPreview && canApplyOnSeason && (

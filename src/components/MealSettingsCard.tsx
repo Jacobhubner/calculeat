@@ -96,21 +96,21 @@ export default function MealSettingsCard({ tdee }: MealSettingsCardProps) {
           Anpassa hur många måltider du vill ha och hur kalorierna ska fördelas över dagen.
         </p>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-4">
         {/* Meals List */}
-        <div className="space-y-4">
+        <div className="space-y-3">
           {meals.map((meal, index) => (
             <div
               key={index}
-              className="p-4 border-2 border-neutral-200 rounded-xl bg-neutral-50 space-y-3"
+              className="p-3 border border-neutral-200 rounded-lg bg-neutral-50 space-y-2"
             >
               {/* Meal Header */}
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
                 <input
                   type="text"
                   value={meal.name}
                   onChange={e => handleMealNameChange(index, e.target.value)}
-                  className="flex-1 px-3 py-2 rounded-lg border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 bg-white"
+                  className="flex-1 px-2 py-1.5 text-sm rounded-lg border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 bg-white"
                   placeholder="Måltidsnamn"
                 />
 
@@ -118,21 +118,21 @@ export default function MealSettingsCard({ tdee }: MealSettingsCardProps) {
                 <button
                   onClick={() => handleRemoveMeal(index)}
                   disabled={meals.length === 1}
-                  className="p-2 rounded-lg bg-red-100 hover:bg-red-200 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="p-1.5 rounded-lg bg-red-100 hover:bg-red-200 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                   title={meals.length === 1 ? 'Du måste ha minst en måltid' : 'Ta bort måltid'}
                 >
-                  <X className="h-4 w-4 text-red-600" />
+                  <X className="h-3.5 w-3.5 text-red-600" />
                 </button>
               </div>
 
               {/* Percentage Slider */}
               <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm text-neutral-600">Procent av dagligt intag</span>
-                  <div className="text-sm font-semibold text-primary-600">
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-xs text-neutral-600">Procent</span>
+                  <div className="text-xs font-semibold text-primary-600">
                     {meal.percentage}%
                     {tdee && (
-                      <span className="text-neutral-500 font-normal ml-2">
+                      <span className="text-neutral-500 font-normal ml-1.5">
                         ({calculateCalories(meal.percentage)} kcal)
                       </span>
                     )}
@@ -163,25 +163,25 @@ export default function MealSettingsCard({ tdee }: MealSettingsCardProps) {
 
         {/* Total Summary */}
         <div
-          className={`p-4 rounded-xl border-2 ${
+          className={`p-3 rounded-lg border ${
             isValidTotal ? 'bg-green-50 border-green-300' : 'bg-amber-50 border-amber-300'
           }`}
         >
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-neutral-700">Total fördelning:</span>
-            <div className="flex items-center gap-2">
+            <span className="text-xs font-medium text-neutral-700">Total fördelning:</span>
+            <div className="flex items-center gap-1.5">
               <span
-                className={`text-lg font-bold ${
+                className={`text-base font-bold ${
                   isValidTotal ? 'text-green-700' : 'text-amber-700'
                 }`}
               >
                 {totalPercentage}%
               </span>
-              <span className="text-sm text-neutral-600">{isValidTotal ? '✓' : '⚠️'}</span>
+              <span className="text-xs text-neutral-600">{isValidTotal ? '✓' : '⚠️'}</span>
             </div>
           </div>
           {!isValidTotal && (
-            <p className="text-xs text-amber-700 mt-2">
+            <p className="text-[10px] text-amber-700 mt-1.5">
               Totalen måste vara exakt 100%. Justera procentsatserna ovan.
             </p>
           )}

@@ -5,7 +5,7 @@
 
 import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
-import { Slider } from './ui/slider'
+import { RangeSlider } from './ui/RangeSlider'
 import { useProfileStore } from '@/stores/profileStore'
 
 interface MacroDistributionCardProps {
@@ -16,26 +16,32 @@ export default function MacroDistributionCard({ tdee }: MacroDistributionCardPro
   const activeProfile = useProfileStore(state => state.activeProfile)
 
   // Fat: 13-39%
-  const [fatMin, setFatMin] = useState(activeProfile?.fat_min_percent ?? 20)
-  const [fatMax, setFatMax] = useState(activeProfile?.fat_max_percent ?? 30)
+  const [fatRange, setFatRange] = useState<[number, number]>([
+    activeProfile?.fat_min_percent ?? 20,
+    activeProfile?.fat_max_percent ?? 30,
+  ])
 
   // Carb: 35-68%
-  const [carbMin, setCarbMin] = useState(activeProfile?.carb_min_percent ?? 40)
-  const [carbMax, setCarbMax] = useState(activeProfile?.carb_max_percent ?? 50)
+  const [carbRange, setCarbRange] = useState<[number, number]>([
+    activeProfile?.carb_min_percent ?? 40,
+    activeProfile?.carb_max_percent ?? 50,
+  ])
 
   // Protein: 19-26%
-  const [proteinMin, setProteinMin] = useState(activeProfile?.protein_min_percent ?? 20)
-  const [proteinMax, setProteinMax] = useState(activeProfile?.protein_max_percent ?? 25)
+  const [proteinRange, setProteinRange] = useState<[number, number]>([
+    activeProfile?.protein_min_percent ?? 20,
+    activeProfile?.protein_max_percent ?? 25,
+  ])
 
   // Sync with active profile when it changes
   useEffect(() => {
     if (activeProfile) {
-      setFatMin(activeProfile.fat_min_percent ?? 20)
-      setFatMax(activeProfile.fat_max_percent ?? 30)
-      setCarbMin(activeProfile.carb_min_percent ?? 40)
-      setCarbMax(activeProfile.carb_max_percent ?? 50)
-      setProteinMin(activeProfile.protein_min_percent ?? 20)
-      setProteinMax(activeProfile.protein_max_percent ?? 25)
+      setFatRange([activeProfile.fat_min_percent ?? 20, activeProfile.fat_max_percent ?? 30])
+      setCarbRange([activeProfile.carb_min_percent ?? 40, activeProfile.carb_max_percent ?? 50])
+      setProteinRange([
+        activeProfile.protein_min_percent ?? 20,
+        activeProfile.protein_max_percent ?? 25,
+      ])
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeProfile?.id])
@@ -64,51 +70,23 @@ export default function MacroDistributionCard({ tdee }: MacroDistributionCardPro
           beräkna dina måltider.
         </p>
       </CardHeader>
-      <CardContent className="space-y-8">
+      <CardContent className="space-y-6">
         {/* Fat Slider */}
         <div>
           <div className="flex items-center justify-between mb-3">
             <label className="text-sm font-medium text-neutral-700">Fett</label>
             <div className="text-sm font-semibold text-accent-600">
-              {fatMin}% - {fatMax}%
+              {fatRange[0]}% - {fatRange[1]}%
               {tdee && (
                 <span className="text-neutral-500 font-normal ml-2">
-                  ({calculateFatGrams(fatMin)}g - {calculateFatGrams(fatMax)}g)
+                  ({calculateFatGrams(fatRange[0])}g - {calculateFatGrams(fatRange[1])}g)
                 </span>
               )}
             </div>
           </div>
 
-          <div className="space-y-4">
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs text-neutral-600">Minimum</span>
-                <span className="text-xs font-medium text-neutral-700">{fatMin}%</span>
-              </div>
-              <Slider
-                value={[fatMin]}
-                onValueChange={([value]) => setFatMin(Math.min(value, fatMax))}
-                min={13}
-                max={39}
-                step={1}
-                className="cursor-pointer"
-              />
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs text-neutral-600">Maximum</span>
-                <span className="text-xs font-medium text-neutral-700">{fatMax}%</span>
-              </div>
-              <Slider
-                value={[fatMax]}
-                onValueChange={([value]) => setFatMax(Math.max(value, fatMin))}
-                min={13}
-                max={39}
-                step={1}
-                className="cursor-pointer"
-              />
-            </div>
+          <div className="pt-2">
+            <RangeSlider value={fatRange} onValueChange={setFatRange} min={13} max={39} step={1} />
           </div>
         </div>
 
@@ -117,45 +95,23 @@ export default function MacroDistributionCard({ tdee }: MacroDistributionCardPro
           <div className="flex items-center justify-between mb-3">
             <label className="text-sm font-medium text-neutral-700">Kolhydrater</label>
             <div className="text-sm font-semibold text-primary-600">
-              {carbMin}% - {carbMax}%
+              {carbRange[0]}% - {carbRange[1]}%
               {tdee && (
                 <span className="text-neutral-500 font-normal ml-2">
-                  ({calculateGrams(carbMin)}g - {calculateGrams(carbMax)}g)
+                  ({calculateGrams(carbRange[0])}g - {calculateGrams(carbRange[1])}g)
                 </span>
               )}
             </div>
           </div>
 
-          <div className="space-y-4">
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs text-neutral-600">Minimum</span>
-                <span className="text-xs font-medium text-neutral-700">{carbMin}%</span>
-              </div>
-              <Slider
-                value={[carbMin]}
-                onValueChange={([value]) => setCarbMin(Math.min(value, carbMax))}
-                min={35}
-                max={68}
-                step={1}
-                className="cursor-pointer"
-              />
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs text-neutral-600">Maximum</span>
-                <span className="text-xs font-medium text-neutral-700">{carbMax}%</span>
-              </div>
-              <Slider
-                value={[carbMax]}
-                onValueChange={([value]) => setCarbMax(Math.max(value, carbMin))}
-                min={35}
-                max={68}
-                step={1}
-                className="cursor-pointer"
-              />
-            </div>
+          <div className="pt-2">
+            <RangeSlider
+              value={carbRange}
+              onValueChange={setCarbRange}
+              min={35}
+              max={68}
+              step={1}
+            />
           </div>
         </div>
 
@@ -164,45 +120,23 @@ export default function MacroDistributionCard({ tdee }: MacroDistributionCardPro
           <div className="flex items-center justify-between mb-3">
             <label className="text-sm font-medium text-neutral-700">Protein</label>
             <div className="text-sm font-semibold text-blue-600">
-              {proteinMin}% - {proteinMax}%
+              {proteinRange[0]}% - {proteinRange[1]}%
               {tdee && (
                 <span className="text-neutral-500 font-normal ml-2">
-                  ({calculateGrams(proteinMin)}g - {calculateGrams(proteinMax)}g)
+                  ({calculateGrams(proteinRange[0])}g - {calculateGrams(proteinRange[1])}g)
                 </span>
               )}
             </div>
           </div>
 
-          <div className="space-y-4">
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs text-neutral-600">Minimum</span>
-                <span className="text-xs font-medium text-neutral-700">{proteinMin}%</span>
-              </div>
-              <Slider
-                value={[proteinMin]}
-                onValueChange={([value]) => setProteinMin(Math.min(value, proteinMax))}
-                min={19}
-                max={26}
-                step={1}
-                className="cursor-pointer"
-              />
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs text-neutral-600">Maximum</span>
-                <span className="text-xs font-medium text-neutral-700">{proteinMax}%</span>
-              </div>
-              <Slider
-                value={[proteinMax]}
-                onValueChange={([value]) => setProteinMax(Math.max(value, proteinMin))}
-                min={19}
-                max={26}
-                step={1}
-                className="cursor-pointer"
-              />
-            </div>
+          <div className="pt-2">
+            <RangeSlider
+              value={proteinRange}
+              onValueChange={setProteinRange}
+              min={19}
+              max={26}
+              step={1}
+            />
           </div>
         </div>
 

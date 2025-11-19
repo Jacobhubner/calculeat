@@ -68,10 +68,10 @@ export function offSeasonMode(weight: number, avgCalories: number): MacroMode {
  * On-Season Mode (Bodybuilding cut)
  * Weight loss with very high protein to preserve muscle
  */
-export function onSeasonMode(leanBodyMass: number, avgCalories: number): MacroMode {
+export function onSeasonMode(fatFreeMass: number, avgCalories: number): MacroMode {
   // High protein for muscle preservation
-  const proteinMinGrams = leanBodyMass * 2.3
-  const proteinMaxGrams = leanBodyMass * 3.1
+  const proteinMinGrams = fatFreeMass * 2.3
+  const proteinMaxGrams = fatFreeMass * 3.1
 
   // Lower fat
   const fatMinPercent = 15
@@ -104,7 +104,7 @@ export function applyMacroMode(
   mode: 'nnr' | 'offseason' | 'onseason',
   params: {
     weight: number
-    leanBodyMass?: number
+    fatFreeMass?: number
     caloriesMin: number
     caloriesMax: number
   }
@@ -119,10 +119,10 @@ export function applyMacroMode(
       return offSeasonMode(params.weight, avgCalories)
 
     case 'onseason':
-      if (!params.leanBodyMass) {
-        throw new Error('Lean body mass required for on-season mode')
+      if (!params.fatFreeMass) {
+        throw new Error('Fat free mass (FFM) required for on-season mode')
       }
-      return onSeasonMode(params.leanBodyMass, avgCalories)
+      return onSeasonMode(params.fatFreeMass, avgCalories)
 
     default:
       return nnrMode(avgCalories)

@@ -5,7 +5,7 @@
 
 import type { Gender } from '../types'
 
-export type MacroUnit = '%' | 'gram' | 'kcal' | 'g/kg body weight' | 'g/kg lean body mass'
+export type MacroUnit = '%' | 'gram' | 'kcal' | 'g/kg body weight' | 'g/kg FFM'
 
 export type CalorieGoal = 'Maintain weight' | 'Weight gain' | 'Weight loss'
 
@@ -150,11 +150,11 @@ export function convertMacroUnit(
   context: {
     totalCalories?: number
     bodyWeight?: number
-    leanBodyMass?: number
+    fatFreeMass?: number
     macroType: 'fat' | 'carb' | 'protein'
   }
 ): number | null {
-  const { totalCalories, bodyWeight, leanBodyMass, macroType } = context
+  const { totalCalories, bodyWeight, fatFreeMass, macroType } = context
 
   // Same unit - no conversion needed
   if (fromUnit === toUnit) {
@@ -185,9 +185,9 @@ export function convertMacroUnit(
       grams = value * bodyWeight
       break
 
-    case 'g/kg lean body mass':
-      if (!leanBodyMass) return null
-      grams = value * leanBodyMass
+    case 'g/kg FFM':
+      if (!fatFreeMass) return null
+      grams = value * fatFreeMass
       break
 
     default:
@@ -214,9 +214,9 @@ export function convertMacroUnit(
       if (!bodyWeight) return null
       return grams / bodyWeight
 
-    case 'g/kg lean body mass':
-      if (!leanBodyMass) return null
-      return grams / leanBodyMass
+    case 'g/kg FFM':
+      if (!fatFreeMass) return null
+      return grams / fatFreeMass
 
     default:
       return null
@@ -229,11 +229,11 @@ export function convertMacroUnit(
  */
 export function calculateProteinRequirement(params: {
   bodyWeight: number
-  leanBodyMass?: number
+  fatFreeMass?: number
   goal: CalorieGoal
   activityLevel: 'sedentary' | 'active' | 'very_active'
 }): { minGrams: number; maxGrams: number; recommendation: string } {
-  const { bodyWeight, leanBodyMass, goal, activityLevel } = params
+  const { bodyWeight, fatFreeMass, goal, activityLevel } = params
 
   let minPerKg: number
   let maxPerKg: number
@@ -286,8 +286,8 @@ export function calculateProteinRequirement(params: {
     }
   }
 
-  // Use lean body mass if available, otherwise total body weight
-  const referenceWeight = leanBodyMass || bodyWeight
+  // Use fat free mass if available, otherwise total body weight
+  const referenceWeight = fatFreeMass || bodyWeight
 
   return {
     minGrams: Math.round(minPerKg * referenceWeight),
