@@ -14,21 +14,21 @@ export function HowItWorks() {
     },
     {
       step: 2,
-      title: 'Logga dina måltider',
-      description:
-        'Registrera enkelt vad du äter med vår omfattande matdatabas. Få direkt feedback på kalorier, protein, kolhydrater och fett. Spara dina favoritmåltider för snabb loggning.',
-      iconName: 'Mat-ikon',
-      iconFilename: 'step-2-food.svg',
-      Icon: Utensils,
-    },
-    {
-      step: 3,
       title: 'Sätt upp dina mål',
       description:
         'Definiera ditt viktmål och få personaliserade kalori- och makrorekommendationer. Välj mellan viktminskning, viktökning eller underhåll med flexibla makrofördelningar.',
       iconName: 'Mål-ikon',
       iconFilename: 'step-3-target.svg',
       Icon: Target,
+    },
+    {
+      step: 3,
+      title: 'Logga dina måltider',
+      description:
+        'Registrera enkelt vad du äter med vår omfattande matdatabas. Få direkt feedback på kalorier, protein, kolhydrater och fett. Spara dina favoritmåltider för snabb loggning.',
+      iconName: 'Mat-ikon',
+      iconFilename: 'step-2-food.svg',
+      Icon: Utensils,
     },
     {
       step: 4,
