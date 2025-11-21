@@ -3,7 +3,6 @@
  * Allows users to quickly apply predefined macro modes
  */
 
-import { useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -16,11 +15,33 @@ import { toast } from 'sonner'
 export default function MacroModesCard() {
   const { data: profile } = useUserProfile()
   const applyMode = useApplyMacroMode()
-  const [selectedMode, setSelectedMode] = useState<'nnr' | 'offseason' | 'onseason' | null>(null)
 
   const nnrPreview = usePreviewMacroMode('nnr')
   const offseasonPreview = usePreviewMacroMode('offseason')
   const onseasonPreview = usePreviewMacroMode('onseason')
+
+  // Function to check if a preset already matches current profile settings
+  const isModeActive = (mode: 'nnr' | 'offseason' | 'onseason'): boolean => {
+    if (!profile) return false
+
+    const preview =
+      mode === 'nnr' ? nnrPreview : mode === 'offseason' ? offseasonPreview : onseasonPreview
+    if (!preview) return false
+
+    // Compare with tolerance of 1% for rounding differences
+    const tolerance = 1
+    const matchesFat =
+      Math.abs((profile.fat_min_percent ?? 0) - preview.fatMinPercent) <= tolerance &&
+      Math.abs((profile.fat_max_percent ?? 0) - preview.fatMaxPercent) <= tolerance
+    const matchesCarb =
+      Math.abs((profile.carb_min_percent ?? 0) - preview.carbMinPercent) <= tolerance &&
+      Math.abs((profile.carb_max_percent ?? 0) - preview.carbMaxPercent) <= tolerance
+    const matchesProtein =
+      Math.abs((profile.protein_min_percent ?? 0) - preview.proteinMinPercent) <= tolerance &&
+      Math.abs((profile.protein_max_percent ?? 0) - preview.proteinMaxPercent) <= tolerance
+
+    return matchesFat && matchesCarb && matchesProtein
+  }
 
   const handleApplyMode = (mode: 'nnr' | 'offseason' | 'onseason') => {
     applyMode.mutate(
@@ -30,7 +51,6 @@ export default function MacroModesCard() {
           toast.success(`${getModeTitle(mode)} tillämpat!`, {
             description: 'Dina makromål har uppdaterats.',
           })
-          setSelectedMode(null)
         },
         onError: error => {
           toast.error('Kunde inte tillämpa makroläge', {
@@ -96,11 +116,11 @@ export default function MacroModesCard() {
             </div>
             <Button
               size="sm"
-              variant={selectedMode === 'nnr' ? 'default' : 'outline'}
+              variant={isModeActive('nnr') ? 'default' : 'outline'}
               onClick={() => handleApplyMode('nnr')}
-              disabled={!canApplyAny || applyMode.isPending}
+              disabled={!canApplyAny || applyMode.isPending || isModeActive('nnr')}
             >
-              Använd
+              {isModeActive('nnr') ? 'Redan aktivt' : 'Använd'}
             </Button>
           </div>
           <p className="text-sm text-neutral-600">
@@ -140,11 +160,11 @@ export default function MacroModesCard() {
             </div>
             <Button
               size="sm"
-              variant={selectedMode === 'offseason' ? 'default' : 'outline'}
+              variant={isModeActive('offseason') ? 'default' : 'outline'}
               onClick={() => handleApplyMode('offseason')}
-              disabled={!canApplyAny || applyMode.isPending}
+              disabled={!canApplyAny || applyMode.isPending || isModeActive('offseason')}
             >
-              Använd
+              {isModeActive('offseason') ? 'Redan aktivt' : 'Använd'}
             </Button>
           </div>
           <p className="text-sm text-neutral-600">
@@ -182,11 +202,11 @@ export default function MacroModesCard() {
             </div>
             <Button
               size="sm"
-              variant={selectedMode === 'onseason' ? 'default' : 'outline'}
+              variant={isModeActive('onseason') ? 'default' : 'outline'}
               onClick={() => handleApplyMode('onseason')}
-              disabled={!canApplyOnSeason || applyMode.isPending}
+              disabled={!canApplyOnSeason || applyMode.isPending || isModeActive('onseason')}
             >
-              Använd
+              {isModeActive('onseason') ? 'Redan aktivt' : 'Använd'}
             </Button>
           </div>
           <p className="text-sm text-neutral-600">
