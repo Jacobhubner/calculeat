@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect, useCallback } from 'react'
-import { Button } from './ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
 import { calculateBMR, requiresBodyFat } from '@/lib/calculations/bmr'
 import { calculateAge } from '@/lib/calculations/helpers'
@@ -1047,41 +1046,6 @@ export default function UserProfileForm() {
         isSaving={isSaving}
         hasChanges={!!result}
       />
-
-      {/* Sticky Footer with Profile Name and Save Button */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-neutral-200 shadow-[0_-4px_12px_rgba(0,0,0,0.08)] z-40">
-        <div className="max-w-7xl mx-auto px-3 py-3 md:px-4 md:py-4">
-          <div className="flex flex-col gap-2 md:flex-row md:gap-4 md:items-end">
-            {/* Profile Name Input */}
-            <div className="flex-1">
-              <label className="block text-xs md:text-sm font-medium text-neutral-700 mb-1 md:mb-2">
-                Profilnamn <span className="text-red-600">*</span>{' '}
-                <span className="text-neutral-500 text-[10px] md:text-xs font-normal">
-                  (krävs för att spara)
-                </span>
-              </label>
-              <input
-                type="text"
-                value={profileName}
-                onChange={e => setProfileName(e.target.value)}
-                className="block w-full text-sm md:text-base rounded-lg md:rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 py-2"
-                placeholder="Profilens namn"
-              />
-            </div>
-
-            {/* Save Button */}
-            <div className="md:min-w-[180px]">
-              <Button
-                onClick={handleSave}
-                disabled={isSaving || !result}
-                className="w-full h-9 md:h-[42px] text-sm md:text-base"
-              >
-                {isSaving ? 'Sparar...' : 'Spara profil'}
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   )
 }
