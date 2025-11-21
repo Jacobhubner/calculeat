@@ -56,6 +56,15 @@ export default function UserProfileForm() {
   // Load initial values from profile
   const [profileName, setProfileName] = useState(currentProfile?.profile_name || '')
   const [birthDate, setBirthDate] = useState(currentProfile?.birth_date || '')
+
+  // Parse birth date into day, month, year for dropdowns
+  const parsedDate = birthDate ? new Date(birthDate) : null
+  const [birthDay, setBirthDay] = useState(parsedDate?.getDate().toString() || '')
+  const [birthMonth, setBirthMonth] = useState(
+    parsedDate ? (parsedDate.getMonth() + 1).toString() : ''
+  )
+  const [birthYear, setBirthYear] = useState(parsedDate?.getFullYear().toString() || '')
+
   const [weight, setWeight] = useState(currentProfile?.weight_kg?.toString() || '')
   const [height, setHeight] = useState(currentProfile?.height_cm?.toString() || '')
   const [gender, setGender] = useState<Gender | ''>(currentProfile?.gender || '')
@@ -88,6 +97,20 @@ export default function UserProfileForm() {
   const [showBMRModal, setShowBMRModal] = useState(false)
   const [showPALModal, setShowPALModal] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+
+  // Sync birth date dropdowns when birthDate changes
+  useEffect(() => {
+    if (birthDate) {
+      const date = new Date(birthDate)
+      setBirthDay(date.getDate().toString())
+      setBirthMonth((date.getMonth() + 1).toString())
+      setBirthYear(date.getFullYear().toString())
+    } else {
+      setBirthDay('')
+      setBirthMonth('')
+      setBirthYear('')
+    }
+  }, [birthDate])
 
   // Sync form fields when activeProfile changes
   useEffect(() => {
@@ -199,6 +222,46 @@ export default function UserProfileForm() {
         }
       },
     }
+  }
+
+  // Handler for birth date dropdowns - combines day/month/year into ISO format
+  const handleBirthDateChange = (day: string, month: string, year: string) => {
+    if (day && month && year) {
+      // Validate date
+      const dayNum = parseInt(day)
+      const monthNum = parseInt(month)
+      const yearNum = parseInt(year)
+
+      // Check if date is valid
+      const date = new Date(yearNum, monthNum - 1, dayNum)
+      if (
+        date.getDate() === dayNum &&
+        date.getMonth() === monthNum - 1 &&
+        date.getFullYear() === yearNum
+      ) {
+        // Valid date - format as ISO string (YYYY-MM-DD)
+        const isoDate = `${yearNum}-${monthNum.toString().padStart(2, '0')}-${dayNum.toString().padStart(2, '0')}`
+        setBirthDate(isoDate)
+      }
+    } else {
+      // If any field is empty, clear birthDate
+      setBirthDate('')
+    }
+  }
+
+  const handleDayChange = (value: string) => {
+    setBirthDay(value)
+    handleBirthDateChange(value, birthMonth, birthYear)
+  }
+
+  const handleMonthChange = (value: string) => {
+    setBirthMonth(value)
+    handleBirthDateChange(birthDay, value, birthYear)
+  }
+
+  const handleYearChange = (value: string) => {
+    setBirthYear(value)
+    handleBirthDateChange(birthDay, birthMonth, value)
   }
 
   // Watch function - returns current state values
@@ -521,18 +584,107 @@ export default function UserProfileForm() {
                 </span>
               )}
             </label>
-            <input
-              type="date"
-              value={birthDate}
-              onChange={e => setBirthDate(e.target.value)}
-              disabled={!canEditLockedFields}
-              className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 disabled:bg-neutral-100 disabled:cursor-not-allowed disabled:text-neutral-500"
-              title={
-                !canEditLockedFields
-                  ? 'Födelsedatum, kön och längd kan endast ändras om du har en enda profil. Radera övriga profiler för att ändra.'
-                  : ''
-              }
-            />
+            <div className="grid grid-cols-3 gap-2">
+              {/* Day Dropdown */}
+              <div className="relative">
+                {!canEditLockedFields && (
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400 z-10 pointer-events-none" />
+                )}
+                <select
+                  value={birthDay}
+                  onChange={e => handleDayChange(e.target.value)}
+                  disabled={!canEditLockedFields}
+                  className={`block w-full rounded-xl shadow-sm focus:border-primary-500 focus:ring-primary-500 ${
+                    !canEditLockedFields
+                      ? 'bg-neutral-200 cursor-not-allowed text-neutral-400 border-dashed border-2 border-neutral-300 pl-9'
+                      : 'border-neutral-300'
+                  }`}
+                  title={
+                    !canEditLockedFields
+                      ? 'Födelsedatum, kön och längd kan endast ändras om du har en enda profil. Radera övriga profiler för att ändra.'
+                      : ''
+                  }
+                >
+                  <option value="">Dag</option>
+                  {Array.from({ length: 31 }, (_, i) => i + 1).map(day => (
+                    <option key={day} value={day}>
+                      {day}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Month Dropdown */}
+              <div className="relative">
+                {!canEditLockedFields && (
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400 z-10 pointer-events-none" />
+                )}
+                <select
+                  value={birthMonth}
+                  onChange={e => handleMonthChange(e.target.value)}
+                  disabled={!canEditLockedFields}
+                  className={`block w-full rounded-xl shadow-sm focus:border-primary-500 focus:ring-primary-500 ${
+                    !canEditLockedFields
+                      ? 'bg-neutral-200 cursor-not-allowed text-neutral-400 border-dashed border-2 border-neutral-300 pl-9'
+                      : 'border-neutral-300'
+                  }`}
+                  title={
+                    !canEditLockedFields
+                      ? 'Födelsedatum, kön och längd kan endast ändras om du har en enda profil. Radera övriga profiler för att ändra.'
+                      : ''
+                  }
+                >
+                  <option value="">Månad</option>
+                  {[
+                    'Januari',
+                    'Februari',
+                    'Mars',
+                    'April',
+                    'Maj',
+                    'Juni',
+                    'Juli',
+                    'Augusti',
+                    'September',
+                    'Oktober',
+                    'November',
+                    'December',
+                  ].map((month, index) => (
+                    <option key={index + 1} value={index + 1}>
+                      {month}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Year Dropdown */}
+              <div className="relative">
+                {!canEditLockedFields && (
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400 z-10 pointer-events-none" />
+                )}
+                <select
+                  value={birthYear}
+                  onChange={e => handleYearChange(e.target.value)}
+                  disabled={!canEditLockedFields}
+                  className={`block w-full rounded-xl shadow-sm focus:border-primary-500 focus:ring-primary-500 ${
+                    !canEditLockedFields
+                      ? 'bg-neutral-200 cursor-not-allowed text-neutral-400 border-dashed border-2 border-neutral-300 pl-9'
+                      : 'border-neutral-300'
+                  }`}
+                  title={
+                    !canEditLockedFields
+                      ? 'Födelsedatum, kön och längd kan endast ändras om du har en enda profil. Radera övriga profiler för att ändra.'
+                      : ''
+                  }
+                >
+                  <option value="">År</option>
+                  {Array.from({ length: 105 }, (_, i) => new Date().getFullYear() - i).map(year => (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
             {!canEditLockedFields && (
               <p className="text-xs text-neutral-500 mt-1">
                 Kan endast ändras om du har en enda profil
@@ -609,21 +761,30 @@ export default function UserProfileForm() {
                 </span>
               )}
             </label>
-            <input
-              type="number"
-              value={height}
-              onChange={e => setHeight(e.target.value)}
-              disabled={!canEditLockedFields}
-              className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 disabled:bg-neutral-100 disabled:cursor-not-allowed disabled:text-neutral-500"
-              placeholder="180"
-              min="100"
-              max="250"
-              title={
-                !canEditLockedFields
-                  ? 'Längd kan endast ändras om du har en enda profil. Radera övriga profiler för att ändra.'
-                  : ''
-              }
-            />
+            <div className="relative">
+              {!canEditLockedFields && (
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400 z-10 pointer-events-none" />
+              )}
+              <input
+                type="number"
+                value={height}
+                onChange={e => setHeight(e.target.value)}
+                disabled={!canEditLockedFields}
+                className={`mt-1 block w-full rounded-xl shadow-sm focus:border-primary-500 focus:ring-primary-500 ${
+                  !canEditLockedFields
+                    ? 'bg-neutral-200 cursor-not-allowed text-neutral-400 border-dashed border-2 border-neutral-300 pl-10'
+                    : 'border-neutral-300'
+                }`}
+                placeholder="180"
+                min="100"
+                max="250"
+                title={
+                  !canEditLockedFields
+                    ? 'Längd kan endast ändras om du har en enda profil. Radera övriga profiler för att ändra.'
+                    : ''
+                }
+              />
+            </div>
             {!canEditLockedFields && (
               <p className="text-xs text-neutral-500 mt-1">
                 Kan endast ändras om du har en enda profil

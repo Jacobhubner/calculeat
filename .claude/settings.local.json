@@ -18,7 +18,8 @@
       "Bash(test:*)",
       "Bash(git checkout:*)",
       "Bash(npx tailwindcss --help:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(npm run dev:*)"
     ],
     "deny": [],
     "ask": []

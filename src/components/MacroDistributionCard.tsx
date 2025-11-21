@@ -15,32 +15,30 @@ interface MacroDistributionCardProps {
 export default function MacroDistributionCard({ tdee }: MacroDistributionCardProps) {
   const activeProfile = useProfileStore(state => state.activeProfile)
 
-  // Fat: 13-39%
+  // NNR 2023 defaults - Fat: 25-40%, Carb: 45-60%, Protein: 10-20%
   const [fatRange, setFatRange] = useState<[number, number]>([
-    activeProfile?.fat_min_percent ?? 20,
-    activeProfile?.fat_max_percent ?? 30,
+    activeProfile?.fat_min_percent ?? 25,
+    activeProfile?.fat_max_percent ?? 40,
   ])
 
-  // Carb: 35-68%
   const [carbRange, setCarbRange] = useState<[number, number]>([
-    activeProfile?.carb_min_percent ?? 40,
-    activeProfile?.carb_max_percent ?? 50,
+    activeProfile?.carb_min_percent ?? 45,
+    activeProfile?.carb_max_percent ?? 60,
   ])
 
-  // Protein: 19-26%
   const [proteinRange, setProteinRange] = useState<[number, number]>([
-    activeProfile?.protein_min_percent ?? 20,
-    activeProfile?.protein_max_percent ?? 25,
+    activeProfile?.protein_min_percent ?? 10,
+    activeProfile?.protein_max_percent ?? 20,
   ])
 
   // Sync with active profile when it changes
   useEffect(() => {
     if (activeProfile) {
-      setFatRange([activeProfile.fat_min_percent ?? 20, activeProfile.fat_max_percent ?? 30])
-      setCarbRange([activeProfile.carb_min_percent ?? 40, activeProfile.carb_max_percent ?? 50])
+      setFatRange([activeProfile.fat_min_percent ?? 25, activeProfile.fat_max_percent ?? 40])
+      setCarbRange([activeProfile.carb_min_percent ?? 45, activeProfile.carb_max_percent ?? 60])
       setProteinRange([
-        activeProfile.protein_min_percent ?? 20,
-        activeProfile.protein_max_percent ?? 25,
+        activeProfile.protein_min_percent ?? 10,
+        activeProfile.protein_max_percent ?? 20,
       ])
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -57,6 +55,12 @@ export default function MacroDistributionCard({ tdee }: MacroDistributionCardPro
     if (!tdee) return null
     return Math.round((tdee * (percentage / 100)) / 9)
   }
+
+  // Calculate total percentage (using midpoints of ranges)
+  const fatMid = (fatRange[0] + fatRange[1]) / 2
+  const carbMid = (carbRange[0] + carbRange[1]) / 2
+  const proteinMid = (proteinRange[0] + proteinRange[1]) / 2
+  const totalPercentage = Math.round(fatMid + carbMid + proteinMid)
 
   return (
     <Card>
@@ -86,7 +90,7 @@ export default function MacroDistributionCard({ tdee }: MacroDistributionCardPro
           </div>
 
           <div className="pt-2">
-            <RangeSlider value={fatRange} onValueChange={setFatRange} min={13} max={39} step={1} />
+            <RangeSlider value={fatRange} onValueChange={setFatRange} min={0} max={100} step={1} />
           </div>
         </div>
 
@@ -108,8 +112,8 @@ export default function MacroDistributionCard({ tdee }: MacroDistributionCardPro
             <RangeSlider
               value={carbRange}
               onValueChange={setCarbRange}
-              min={35}
-              max={68}
+              min={0}
+              max={100}
               step={1}
             />
           </div>
@@ -133,19 +137,63 @@ export default function MacroDistributionCard({ tdee }: MacroDistributionCardPro
             <RangeSlider
               value={proteinRange}
               onValueChange={setProteinRange}
-              min={19}
-              max={26}
+              min={0}
+              max={100}
               step={1}
             />
           </div>
         </div>
 
+        {/* Total percentage indicator */}
+        <div
+          className={`p-3 rounded-lg border-2 ${
+            totalPercentage === 100
+              ? 'bg-green-50 border-green-300'
+              : totalPercentage < 95 || totalPercentage > 105
+                ? 'bg-red-50 border-red-300'
+                : 'bg-yellow-50 border-yellow-300'
+          }`}
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-neutral-700">
+              Total (genomsnitt av intervaller):
+            </span>
+            <div className="flex items-center gap-2">
+              <span
+                className={`text-lg font-bold ${
+                  totalPercentage === 100
+                    ? 'text-green-700'
+                    : totalPercentage < 95 || totalPercentage > 105
+                      ? 'text-red-700'
+                      : 'text-yellow-700'
+                }`}
+              >
+                {totalPercentage}%
+              </span>
+              <span className="text-xl">
+                {totalPercentage === 100
+                  ? '✓'
+                  : totalPercentage < 95 || totalPercentage > 105
+                    ? '⚠️'
+                    : '~'}
+              </span>
+            </div>
+          </div>
+          {totalPercentage !== 100 && (
+            <p className="text-xs mt-2 text-neutral-600">
+              {totalPercentage < 95 || totalPercentage > 105
+                ? 'Rekommenderat: Justera intervallen så genomsnittet närmar sig 100%.'
+                : 'Nära 100% - justera gärna för optimal fördelning.'}
+            </p>
+          )}
+        </div>
+
         {/* Info message */}
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
           <p className="text-xs text-neutral-700 leading-relaxed">
-            💡 <strong>Tips:</strong> Dessa procentandelar används för att beräkna dina
-            makrofördelningar. De behöver inte summera till 100% - du väljer önskade spann för varje
-            makro oberoende.
+            💡 <strong>Tips:</strong> Standardvärdena följer NNR 2023-rekommendationerna (Fett:
+            25-40%, Kolhydrater: 45-60%, Protein: 10-20%). Du kan justera dessa fritt mellan 0-100%
+            för varje makronutrient.
           </p>
         </div>
       </CardContent>

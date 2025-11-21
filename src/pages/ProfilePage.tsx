@@ -43,18 +43,23 @@ export default function ProfilePage() {
       <div className="max-w-7xl mx-auto">
         <div className="grid gap-6 md:grid-cols-[1fr_280px]">
           {/* Main content column */}
-          <div className="space-y-8">
+          <div className="space-y-4">
             {/* Main Profile Form */}
             <UserProfileForm />
 
-            {/* Macro Distribution Settings */}
-            <MacroDistributionCard tdee={tdee} />
+            {/* Only show macro cards if results (TDEE) exist */}
+            {tdee && (
+              <>
+                {/* Macro Distribution Settings */}
+                <MacroDistributionCard tdee={tdee} />
 
-            {/* Meal Settings */}
-            <MealSettingsCard tdee={tdee} />
+                {/* Meal Settings */}
+                <MealSettingsCard tdee={tdee} />
 
-            {/* Macro Modes Card */}
-            <MacroModesCard />
+                {/* Macro Modes Card */}
+                <MacroModesCard />
+              </>
+            )}
           </div>
 
           {/* Sidebar - Information Panel */}
