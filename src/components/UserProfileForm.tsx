@@ -16,6 +16,7 @@ import { useProfileStore } from '@/stores/profileStore'
 import { useUpdateProfile, useCreateProfile, useProfiles } from '@/hooks'
 import { Lock } from 'lucide-react'
 import { toast } from 'sonner'
+import FloatingProfileSaveCard from './FloatingProfileSaveCard'
 
 interface CalculatorResult {
   bmr: number
@@ -1037,6 +1038,15 @@ export default function UserProfileForm() {
           onClose={() => setShowPALModal(false)}
         />
       )}
+
+      {/* Floating Profile Save Card - appears after scrolling */}
+      <FloatingProfileSaveCard
+        profileName={profileName}
+        onProfileNameChange={setProfileName}
+        onSave={handleSave}
+        isSaving={isSaving}
+        hasChanges={!!result}
+      />
 
       {/* Sticky Footer with Profile Name and Save Button */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-neutral-200 shadow-[0_-4px_12px_rgba(0,0,0,0.08)] z-40">

@@ -4,18 +4,17 @@ import MacroModesCard from '@/components/MacroModesCard'
 import MacroDistributionCard from '@/components/MacroDistributionCard'
 import MealSettingsCard from '@/components/MealSettingsCard'
 import ProfileList from '@/components/ProfileList'
+import InfoCardWithModal from '@/components/InfoCardWithModal'
+import BMRvsRMRContent from '@/components/info/BMRvsRMRContent'
+import PALvsMETContent from '@/components/info/PALvsMETContent'
+import TDEEContent from '@/components/info/TDEEContent'
+import LBMvsFFMContent from '@/components/info/LBMvsFFMContent'
 import { User, Users, Plus } from 'lucide-react'
-import { useState } from 'react'
-import BMRConceptModal from '@/components/calculator/BMRConceptModal'
-import PALConceptModal from '@/components/calculator/PALConceptModal'
 import { Card } from '@/components/ui/card'
 import { useProfiles, useNewProfile } from '@/hooks'
 import { useProfileStore } from '@/stores/profileStore'
 
 export default function ProfilePage() {
-  const [showBMRConceptModal, setShowBMRConceptModal] = useState(false)
-  const [showPALConceptModal, setShowPALConceptModal] = useState(false)
-
   // Load profiles to populate store
   useProfiles()
 
@@ -87,47 +86,33 @@ export default function ProfilePage() {
               <ProfileList />
             </Card>
 
-            {/* BMR Information Section */}
-            <Card className="bg-gradient-to-br from-primary-50 to-accent-50">
-              <h3 className="text-lg font-semibold text-neutral-900 mb-3">Vad är BMR?</h3>
-              <p className="text-sm text-neutral-700 leading-relaxed mb-4">
-                BMR (Basal Metabolic Rate) är den mängd energi kroppen behöver i vila för
-                grundläggande funktioner. Det är din kropps grundförbrukning.
-              </p>
-              <button
-                type="button"
-                onClick={() => setShowBMRConceptModal(true)}
-                className="text-sm text-primary-600 hover:text-primary-700 underline transition-colors"
-              >
-                Läs mer →
-              </button>
-            </Card>
+            {/* Info Cards with Modals */}
+            <InfoCardWithModal
+              title="Vad är BMR och RMR?"
+              modalTitle="BMR vs RMR - Skillnaden förklarad"
+              modalContent={<BMRvsRMRContent />}
+            />
 
-            {/* PAL Information Section */}
-            <Card className="bg-gradient-to-br from-primary-50 to-accent-50">
-              <h3 className="text-lg font-semibold text-neutral-900 mb-3">Vad är PAL?</h3>
-              <p className="text-sm text-neutral-700 leading-relaxed mb-3">
-                PAL (Physical Activity Level) beskriver din genomsnittliga energiförbrukning
-                relativt din BMR. Ju högre PAL, desto högre kaloribehov.
-              </p>
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
-                <p className="text-sm text-neutral-800 font-medium text-center">TDEE = BMR × PAL</p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setShowPALConceptModal(true)}
-                className="text-sm text-primary-600 hover:text-primary-700 underline transition-colors"
-              >
-                Läs mer →
-              </button>
-            </Card>
+            <InfoCardWithModal
+              title="Vad är PAL och MET?"
+              modalTitle="PAL vs MET - Aktivitetsnivåer förklarade"
+              modalContent={<PALvsMETContent />}
+            />
+
+            <InfoCardWithModal
+              title="Vad är TDEE?"
+              modalTitle="TDEE - Total Daily Energy Expenditure"
+              modalContent={<TDEEContent />}
+            />
+
+            <InfoCardWithModal
+              title="Skillnad på LBM och FFM?"
+              modalTitle="LBM vs FFM - Fettfri massa förklarad"
+              modalContent={<LBMvsFFMContent />}
+            />
           </div>
         </div>
       </div>
-
-      {/* Modals */}
-      <BMRConceptModal isOpen={showBMRConceptModal} onClose={() => setShowBMRConceptModal(false)} />
-      <PALConceptModal isOpen={showPALConceptModal} onClose={() => setShowPALConceptModal(false)} />
     </DashboardLayout>
   )
 }
