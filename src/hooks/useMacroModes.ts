@@ -6,7 +6,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { applyMacroMode, type MacroMode } from '@/lib/utils/macroModes'
-import { useUserProfile } from './useUserProfile'
+import { useProfileStore } from '@/stores/profileStore'
+import { useAuth } from '@/contexts/AuthContext'
 import { calculateLeanMass } from '@/lib/calculations/bodyComposition'
 
 export interface ApplyMacroModeInput {
@@ -18,7 +19,11 @@ export interface ApplyMacroModeInput {
  */
 export function useApplyMacroMode() {
   const queryClient = useQueryClient()
-  const { data: profile } = useUserProfile()
+  const activeProfile = useProfileStore(state => state.activeProfile)
+  const { profile: legacyProfile } = useAuth()
+
+  // Use active profile from store if available, otherwise fall back to legacy profile
+  const profile = activeProfile || legacyProfile
 
   return useMutation({
     mutationFn: async (input: ApplyMacroModeInput) => {
@@ -53,30 +58,46 @@ export function useApplyMacroMode() {
         caloriesMax: profile.calories_max,
       })
 
-      // Update profile with new macro settings
-      const { data, error } = await supabase
-        .from('user_profiles')
-        .update({
-          calorie_goal: macroMode.calorieGoal,
-          deficit_level: macroMode.deficitLevel || null,
-          fat_min_percent: macroMode.fatMinPercent,
-          fat_max_percent: macroMode.fatMaxPercent,
-          carb_min_percent: macroMode.carbMinPercent,
-          carb_max_percent: macroMode.carbMaxPercent,
-          protein_min_percent: macroMode.proteinMinPercent,
-          protein_max_percent: macroMode.proteinMaxPercent,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('user_id', profile.user_id)
-        .select()
-        .single()
+      const macroData = {
+        calorie_goal: macroMode.calorieGoal,
+        deficit_level: macroMode.deficitLevel || null,
+        fat_min_percent: macroMode.fatMinPercent,
+        fat_max_percent: macroMode.fatMaxPercent,
+        carb_min_percent: macroMode.carbMinPercent,
+        carb_max_percent: macroMode.carbMaxPercent,
+        protein_min_percent: macroMode.proteinMinPercent,
+        protein_max_percent: macroMode.proteinMaxPercent,
+        updated_at: new Date().toISOString(),
+      }
 
-      if (error) throw error
-      return data
+      // Update active profile if using multi-profile system, otherwise update user_profiles
+      if (activeProfile?.id) {
+        const { data, error } = await supabase
+          .from('profiles')
+          .update(macroData)
+          .eq('id', activeProfile.id)
+          .select()
+          .single()
+
+        if (error) throw error
+        return data
+      } else {
+        // Legacy: update user_profiles for backward compatibility
+        const { data, error } = await supabase
+          .from('user_profiles')
+          .update(macroData)
+          .eq('id', profile.id)
+          .select()
+          .single()
+
+        if (error) throw error
+        return data
+      }
     },
     onSuccess: () => {
-      // Invalidate profile query
+      // Invalidate profile queries
       queryClient.invalidateQueries({ queryKey: ['userProfile'] })
+      queryClient.invalidateQueries({ queryKey: ['profiles'] })
     },
   })
 }
@@ -85,7 +106,11 @@ export function useApplyMacroMode() {
  * Preview macro mode without applying
  */
 export function usePreviewMacroMode(mode: 'nnr' | 'offseason' | 'onseason'): MacroMode | null {
-  const { data: profile } = useUserProfile()
+  const activeProfile = useProfileStore(state => state.activeProfile)
+  const { profile: legacyProfile } = useAuth()
+
+  // Use active profile from store if available, otherwise fall back to legacy profile
+  const profile = activeProfile || legacyProfile
 
   if (!profile?.weight_kg || !profile?.calories_min || !profile?.calories_max) {
     return null

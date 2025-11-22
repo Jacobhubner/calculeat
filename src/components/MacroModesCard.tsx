@@ -9,11 +9,17 @@ import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Target, TrendingUp, TrendingDown, Minus } from 'lucide-react'
 import { useApplyMacroMode, usePreviewMacroMode } from '@/hooks/useMacroModes'
-import { useUserProfile } from '@/hooks/useUserProfile'
+import { useProfileStore } from '@/stores/profileStore'
+import { useAuth } from '@/contexts/AuthContext'
 import { toast } from 'sonner'
 
 export default function MacroModesCard() {
-  const { data: profile } = useUserProfile()
+  const activeProfile = useProfileStore(state => state.activeProfile)
+  const { profile: legacyProfile } = useAuth()
+
+  // Use active profile from store if available, otherwise fall back to legacy profile
+  const profile = activeProfile || legacyProfile
+
   const applyMode = useApplyMacroMode()
 
   const nnrPreview = usePreviewMacroMode('nnr')
