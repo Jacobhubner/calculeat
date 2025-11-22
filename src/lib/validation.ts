@@ -3,7 +3,9 @@ import { z } from 'zod'
 export const userProfileSchema = z.object({
   profile_name: z.string().min(1, 'Profilnamn är obligatoriskt').max(100),
   birth_date: z.string().optional(),
-  gender: z.enum(['male', 'female']).optional(),
+  gender: z.enum(['male', 'female'], {
+    errorMap: () => ({ message: 'Kön är obligatoriskt för att beräkna resultat' }),
+  }),
   height_cm: z.number().min(100).max(250).optional(),
   weight_kg: z.number().min(20).max(300).optional(),
 
