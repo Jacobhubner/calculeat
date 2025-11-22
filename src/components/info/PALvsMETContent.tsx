@@ -70,6 +70,43 @@ export default function PALvsMETContent() {
         </div>
       </section>
 
+      {/* Tumregel för steg och PAL */}
+      <section>
+        <h3 className="text-lg font-semibold text-neutral-900 mb-2">En ungefärlig tumregel</h3>
+        <p className="text-neutral-700 mb-3">
+          Sambandet mellan antal steg per dag och en rimlig uppskattning av <strong>PAL</strong>.
+        </p>
+
+        <div className="overflow-x-auto">
+          <table className="min-w-full border border-neutral-200 rounded-lg text-sm">
+            <thead className="bg-neutral-100">
+              <tr>
+                <th className="px-4 py-2 text-left font-medium text-neutral-900">Steg per dag</th>
+                <th className="px-4 py-2 text-left font-medium text-neutral-900">Rimlig PAL</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="border-t">
+                <td className="px-4 py-2">≤ 5 000</td>
+                <td className="px-4 py-2">~1,2–1,3 (stillasittande)</td>
+              </tr>
+              <tr className="border-t bg-neutral-50">
+                <td className="px-4 py-2">7 000–10 000</td>
+                <td className="px-4 py-2">~1,4–1,6 (måttlig aktivitet)</td>
+              </tr>
+              <tr className="border-t">
+                <td className="px-4 py-2">&gt; 10 000</td>
+                <td className="px-4 py-2">~1,6+ beroende på tempo och övrig aktivitet</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p className="text-xs text-neutral-600 mt-2">
+          10 000 steg motsvarar ungefär 6,5–8 kilometer.
+        </p>
+      </section>
+
       {/* När används vad */}
       <section>
         <h3 className="text-lg font-semibold text-neutral-900 mb-2">När används vad?</h3>
@@ -96,8 +133,8 @@ export default function PALvsMETContent() {
             <p className="font-medium text-blue-900">PAL inkluderar träning</p>
             <p className="text-sm text-neutral-700 mt-1">RMR × PAL + RMR × (MET − 1) × tid</p>
             <p className="text-xs text-neutral-600 mt-2">
-              MET − 1 lägger endast till den extra energin över vila, eftersom träningens “vilodel”
-              redan ingår i PAL.
+              MET − 1 lägger endast till den extra energin över vila, eftersom träningens
+              &ldquo;vilodel&rdquo; redan ingår i PAL.
             </p>
           </div>
           <div className="bg-green-50 border border-green-200 rounded-lg p-4">
