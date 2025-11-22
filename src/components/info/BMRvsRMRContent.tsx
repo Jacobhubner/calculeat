@@ -4,67 +4,87 @@
 
 export default function BMRvsRMRContent() {
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
+      {/* Vad är BMR & RMR */}
       <section>
-        <h3 className="text-lg font-semibold text-neutral-900 mb-2">Vad är BMR?</h3>
+        <h3 className="text-lg font-semibold text-neutral-900 mb-2">Vad är BMR och RMR?</h3>
         <p>
-          <strong>BMR (Basal Metabolic Rate)</strong> är den energi din kropp behöver för att
-          upprätthålla grundläggande livsfunktioner i fullständig vila. Detta inkluderar:
+          <strong>BMR och RMR</strong> beskriver kroppens energiförbrukning i vila – alltså hur
+          mycket energi din kropp förbränner när du inte rör dig alls.
         </p>
-        <ul className="list-disc list-inside mt-2 space-y-1">
-          <li>Andning och syrgastransport</li>
-          <li>Cellulär metabolism</li>
-          <li>Blodcirkulation</li>
-          <li>Proteinsyntes</li>
-          <li>Temperaturreglering</li>
-        </ul>
-        <p className="mt-2">
-          BMR mäts under strikta laboratorieförhållanden: personen är fastande, i fullständig vila,
-          i en neutral temperatur, och i liggande position.
-        </p>
-      </section>
-
-      <section>
-        <h3 className="text-lg font-semibold text-neutral-900 mb-2">Vad är RMR?</h3>
-        <p>
-          <strong>RMR (Resting Metabolic Rate)</strong> är energiförbrukningen under mer avslappnade
-          förhållanden. RMR mäts i vila men kräver inte lika strikta förutsättningar som BMR.
-        </p>
-        <p className="mt-2">
-          RMR är vanligtvis <strong>cirka 10% högre än BMR</strong> eftersom det inkluderar mindre
-          aktiviteter som att sitta upp, liten rörelse, och normal matsmältning.
-        </p>
-      </section>
-
-      <section>
-        <h3 className="text-lg font-semibold text-neutral-900 mb-2">Skillnaden i praktiken</h3>
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-2">
-          <p className="font-medium">RMR ≈ BMR × 1.10</p>
-          <p className="text-sm">Om din BMR är 1500 kcal, är din RMR cirka 1650 kcal per dag.</p>
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-3">
+          <p className="font-medium text-center text-neutral-900">
+            BMR &amp; RMR = Energiförbrukning i vila
+          </p>
         </div>
-        <p className="mt-3">
-          De flesta kalkylatorer (inklusive denna) beräknar <strong>BMR</strong>, men i praktiken är
-          det närmare din <strong>RMR</strong> du upplever i vardagen.
-        </p>
       </section>
 
+      {/* BMR */}
       <section>
-        <h3 className="text-lg font-semibold text-neutral-900 mb-2">Vanliga BMR-formler</h3>
-        <ul className="list-disc list-inside space-y-1">
-          <li>
-            <strong>Harris-Benedict:</strong> Klassisk formel från 1919, reviderad 1984
-          </li>
-          <li>
-            <strong>Mifflin-St Jeor:</strong> Modern formel (1990), mer noggrann för dagens
-            befolkning
-          </li>
-          <li>
-            <strong>Katch-McArdle:</strong> Tar hänsyn till kroppsfett%, bäst för atleter
-          </li>
-          <li>
-            <strong>Cunningham:</strong> Lik Katch-McArdle, specifik för aktiva individer
-          </li>
+        <h3 className="text-lg font-semibold text-neutral-900 mb-2">BMR – Basal Metabolic Rate</h3>
+        <p>
+          <strong>BMR</strong> är energiförbrukningen i <em>absolut vila</em>. Det är kroppens
+          &ldquo;lägsta möjliga&rdquo; energibehov för att hålla dig vid liv.
+        </p>
+        <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4 mt-3 space-y-2">
+          <p className="font-medium text-neutral-800">BMR inkluderar:</p>
+          <ul className="list-disc list-inside space-y-1 text-sm text-neutral-700">
+            <li>Andning och syrgastransport</li>
+            <li>Blodcirkulation</li>
+            <li>Temperaturreglering</li>
+            <li>Organens arbete</li>
+            <li>Cellernas grundläggande processer</li>
+          </ul>
+        </div>
+      </section>
+
+      {/* RMR */}
+      <section>
+        <h3 className="text-lg font-semibold text-neutral-900 mb-2">
+          RMR – Resting Metabolic Rate
+        </h3>
+        <p>
+          <strong>RMR</strong> är energiförbrukningen i <em>realistisk vila</em>. Du är vaken,
+          avslappnad och stilla – men kroppen behöver ändå energi för att hålla hållning, temperatur
+          och basal muskelspänning.
+        </p>
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4 mt-3">
+          <p className="font-medium text-center text-neutral-900">
+            RMR är vanligtvis 5–10% högre än BMR
+          </p>
+        </div>
+        <p className="mt-3 text-neutral-900">RMR används oftast inom:</p>
+        <ul className="list-disc list-inside mt-2 space-y-1 text-sm text-neutral-700">
+          <li>Forskning</li>
+          <li>Klinisk vardag</li>
+          <li>Kost- och träningsappar</li>
+          <li>Online-kalkylatorer</li>
         </ul>
+      </section>
+
+      {/* Ekvationer */}
+      <section>
+        <h3 className="text-lg font-semibold text-neutral-900 mb-2">
+          Vilka ekvationer räknar ut vad?
+        </h3>
+        <div className="grid md:grid-cols-2 gap-4">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <p className="font-medium text-blue-900 mb-2">Formler som beräknar RMR</p>
+            <ul className="text-sm space-y-1 text-neutral-700">
+              <li>Mifflin–St Jeor</li>
+              <li>Cunningham</li>
+              <li>Henry (Oxford) – används ibland för RMR i modern forskning</li>
+            </ul>
+          </div>
+          <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4">
+            <p className="font-medium text-neutral-900 mb-2">Formler som beräknar BMR</p>
+            <ul className="text-sm space-y-1 text-neutral-700">
+              <li>Harris–Benedict (original &amp; reviderad)</li>
+              <li>Schofield</li>
+              <li>Henry (Oxford) – kan användas för BMR i vissa modeller</li>
+            </ul>
+          </div>
+        </div>
       </section>
     </div>
   )
