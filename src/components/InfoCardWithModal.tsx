@@ -5,6 +5,7 @@
 
 import { useState } from 'react'
 import { Card } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 import { X } from 'lucide-react'
 
 interface InfoCardWithModalProps {
@@ -38,7 +39,7 @@ export default function InfoCardWithModal({
       {/* Modal */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50"
           onClick={() => setIsOpen(false)}
         >
           <div
@@ -61,6 +62,13 @@ export default function InfoCardWithModal({
 
             {/* Content */}
             <div className="p-6">{modalContent}</div>
+
+            {/* Footer */}
+            <div className="sticky bottom-0 bg-neutral-50 p-6 rounded-b-2xl border-t border-neutral-200">
+              <Button onClick={() => setIsOpen(false)} className="w-full">
+                Stäng
+              </Button>
+            </div>
           </div>
         </div>
       )}
