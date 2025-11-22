@@ -27,11 +27,24 @@ interface CalculatorResult {
 type EnergyGoal = 'Maintain weight' | 'Weight gain' | 'Weight loss' | 'Custom TDEE' | ''
 type DeficitLevel = '10-15%' | '20-25%' | '25-30%' | ''
 
-interface UserProfileFormProps {
-  onResultChange?: (result: CalculatorResult | null) => void
+interface MacroRanges {
+  fatMin: number
+  fatMax: number
+  carbMin: number
+  carbMax: number
+  proteinMin: number
+  proteinMax: number
 }
 
-export default function UserProfileForm({ onResultChange }: UserProfileFormProps = {}) {
+interface UserProfileFormProps {
+  onResultChange?: (result: CalculatorResult | null) => void
+  macroRanges?: MacroRanges | null
+}
+
+export default function UserProfileForm({
+  onResultChange,
+  macroRanges,
+}: UserProfileFormProps = {}) {
   const { profile } = useAuth() // Keep for backward compatibility during transition
   const activeProfile = useProfileStore(state => state.activeProfile)
   const previousProfile = useProfileStore(state => state.previousProfile)
@@ -622,6 +635,13 @@ export default function UserProfileForm({ onResultChange }: UserProfileFormProps
         tdee: result.tdee,
         calories_min: caloriesMin,
         calories_max: caloriesMax,
+        // Include macro ranges if they exist
+        fat_min_percent: macroRanges?.fatMin,
+        fat_max_percent: macroRanges?.fatMax,
+        carb_min_percent: macroRanges?.carbMin,
+        carb_max_percent: macroRanges?.carbMax,
+        protein_min_percent: macroRanges?.proteinMin,
+        protein_max_percent: macroRanges?.proteinMax,
       }
 
       // If activeProfile exists, update it. Otherwise, create new profile

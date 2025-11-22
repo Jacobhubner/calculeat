@@ -22,6 +22,15 @@ interface CalculatorResult {
   tdeeMax: number
 }
 
+interface MacroRanges {
+  fatMin: number
+  fatMax: number
+  carbMin: number
+  carbMax: number
+  proteinMin: number
+  proteinMax: number
+}
+
 export default function ProfilePage() {
   // Load profiles to populate store
   useProfiles()
@@ -34,6 +43,9 @@ export default function ProfilePage() {
 
   // Local state for calculation results (used when creating new profile)
   const [localResult, setLocalResult] = useState<CalculatorResult | null>(null)
+
+  // Local state for macro ranges (used when creating/editing profile)
+  const [macroRanges, setMacroRanges] = useState<MacroRanges | null>(null)
 
   // Use local result if available (new profile mode), otherwise use saved tdee
   const tdee = localResult?.tdee || activeProfile?.tdee
@@ -57,13 +69,13 @@ export default function ProfilePage() {
           {/* Main content column */}
           <div className="space-y-4">
             {/* Main Profile Form */}
-            <UserProfileForm onResultChange={setLocalResult} />
+            <UserProfileForm onResultChange={setLocalResult} macroRanges={macroRanges} />
 
             {/* Only show macro cards if results (TDEE) exist */}
             {tdee && (
               <>
                 {/* Macro Distribution Settings */}
-                <MacroDistributionCard tdee={tdee} />
+                <MacroDistributionCard tdee={tdee} onMacroChange={setMacroRanges} />
 
                 {/* Meal Settings */}
                 <MealSettingsCard tdee={tdee} />

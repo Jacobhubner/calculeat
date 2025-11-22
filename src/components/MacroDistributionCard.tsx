@@ -10,9 +10,17 @@ import { useProfileStore } from '@/stores/profileStore'
 
 interface MacroDistributionCardProps {
   tdee?: number
+  onMacroChange?: (macros: {
+    fatMin: number
+    fatMax: number
+    carbMin: number
+    carbMax: number
+    proteinMin: number
+    proteinMax: number
+  }) => void
 }
 
-export default function MacroDistributionCard({ tdee }: MacroDistributionCardProps) {
+export default function MacroDistributionCard({ tdee, onMacroChange }: MacroDistributionCardProps) {
   const activeProfile = useProfileStore(state => state.activeProfile)
 
   // NNR 2023 defaults - Fat: 25-40%, Carb: 45-60%, Protein: 10-20%
@@ -43,6 +51,20 @@ export default function MacroDistributionCard({ tdee }: MacroDistributionCardPro
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeProfile?.id])
+
+  // Notify parent component when macro ranges change
+  useEffect(() => {
+    if (onMacroChange) {
+      onMacroChange({
+        fatMin: fatRange[0],
+        fatMax: fatRange[1],
+        carbMin: carbRange[0],
+        carbMax: carbRange[1],
+        proteinMin: proteinRange[0],
+        proteinMax: proteinRange[1],
+      })
+    }
+  }, [fatRange, carbRange, proteinRange, onMacroChange])
 
   // Calculate grams from percentages
   const calculateGrams = (percentage: number) => {
