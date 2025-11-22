@@ -12,6 +12,9 @@ interface ProfileState {
   activeProfile: Profile | null
   setActiveProfile: (profile: Profile | null) => void
 
+  // Previously viewed profile (for copying settings to new profile)
+  previousProfile: Profile | null
+
   // All user profiles
   profiles: Profile[]
   setProfiles: (profiles: Profile[]) => void
@@ -40,13 +43,16 @@ export const useProfileStore = create<ProfileState>()(
     (set, get) => ({
       // Initial state
       activeProfile: null,
+      previousProfile: null,
       profiles: [],
 
       // Set active profile
       setActiveProfile: profile =>
-        set({
+        set(state => ({
+          // Store the current active profile as previous before switching
+          previousProfile: state.activeProfile,
           activeProfile: profile,
-        }),
+        })),
 
       // Set all profiles
       setProfiles: profiles =>
@@ -117,6 +123,7 @@ export const useProfileStore = create<ProfileState>()(
         set({
           profiles: [],
           activeProfile: null,
+          previousProfile: null,
         }),
 
       // Get profile by ID

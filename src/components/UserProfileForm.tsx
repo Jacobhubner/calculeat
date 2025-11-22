@@ -30,6 +30,7 @@ type DeficitLevel = '10-15%' | '20-25%' | '25-30%' | ''
 export default function UserProfileForm() {
   const { profile } = useAuth() // Keep for backward compatibility during transition
   const activeProfile = useProfileStore(state => state.activeProfile)
+  const previousProfile = useProfileStore(state => state.previousProfile)
   const { data: allProfiles = [] } = useProfiles()
   const updateProfileMutation = useUpdateProfile()
   const createProfileMutation = useCreateProfile()
@@ -141,33 +142,49 @@ export default function UserProfileForm() {
         setCustomTdee(activeProfile.custom_tdee.toString())
       }
     } else if (activeProfile === null && allProfiles.length > 0) {
-      // New profile mode - reset all fields except locked fields (birth date, gender, height)
-      // Get the first profile to copy locked fields from
-      const firstProfile = [...allProfiles].sort(
-        (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-      )[0]
+      // New profile mode - copy all fields from previously viewed profile
+      // Use previousProfile if available, otherwise use first profile
+      const sourceProfile =
+        previousProfile ||
+        [...allProfiles].sort(
+          (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+        )[0]
 
-      // Reset editable fields
+      // Copy all editable fields from source profile
       setProfileName('')
-      setWeight('')
-      setBodyFatPercentage('')
-      setBmrFormula('')
-      setPalSystem('')
-      setActivityLevel('')
-      setIntensityLevel('')
-      setTrainingFrequency('')
-      setTrainingDuration('')
-      setDailySteps('')
-      setCustomPAL('')
-      setEnergyGoal('Maintain weight')
-      setDeficitLevel('')
-      setCustomTdee('')
+      setWeight(sourceProfile.weight_kg?.toString() || '')
+      setBodyFatPercentage(sourceProfile.body_fat_percentage?.toString() || '')
+      setBmrFormula((sourceProfile.bmr_formula as BMRFormula) || '')
+      setPalSystem((sourceProfile.pal_system as PALSystem) || '')
+      setActivityLevel(sourceProfile.activity_level || '')
+      setIntensityLevel(sourceProfile.intensity_level || '')
+      setTrainingFrequency(sourceProfile.training_frequency_per_week || '')
+      setTrainingDuration(sourceProfile.training_duration_minutes || '')
+      setDailySteps(sourceProfile.daily_steps || '')
+      setCustomPAL(sourceProfile.custom_pal?.toString() || '')
+
+      if (sourceProfile.calorie_goal) {
+        setEnergyGoal(sourceProfile.calorie_goal as EnergyGoal)
+      } else {
+        setEnergyGoal('Maintain weight')
+      }
+      if (sourceProfile.deficit_level) {
+        setDeficitLevel(sourceProfile.deficit_level as DeficitLevel)
+      } else {
+        setDeficitLevel('')
+      }
+      if (sourceProfile.custom_tdee) {
+        setCustomTdee(sourceProfile.custom_tdee.toString())
+      } else {
+        setCustomTdee('')
+      }
+
       setResult(null) // Clear results
 
-      // Keep locked fields from first profile (birth date, gender, height)
-      setBirthDate(firstProfile.birth_date || '')
-      setGender(firstProfile.gender || '')
-      setHeight(firstProfile.height_cm?.toString() || '')
+      // Keep locked fields from source profile (birth date, gender, height)
+      setBirthDate(sourceProfile.birth_date || '')
+      setGender(sourceProfile.gender || '')
+      setHeight(sourceProfile.height_cm?.toString() || '')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeProfile?.id, allProfiles.length])

@@ -1,10 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
+import { useProfileStore } from '@/stores/profileStore'
 
 export interface MealSetting {
   id: string
-  user_id: string
+  profile_id: string
   meal_name: string
   meal_order: number
   percentage_of_daily_calories: number
@@ -22,23 +23,25 @@ export interface CreateMealSettingInput {
  * Get user's meal settings
  */
 export function useMealSettings() {
-  const { user } = useAuth()
+  const activeProfile = useProfileStore(state => state.activeProfile)
+  const { profile: legacyProfile } = useAuth()
+  const profile = activeProfile || legacyProfile
 
   return useQuery({
-    queryKey: ['mealSettings', user?.id],
+    queryKey: ['mealSettings', profile?.id],
     queryFn: async () => {
-      if (!user) throw new Error('User not authenticated')
+      if (!profile) throw new Error('Profile not found')
 
       const { data, error } = await supabase
         .from('user_meal_settings')
         .select('*')
-        .eq('user_id', user.id)
+        .eq('profile_id', profile.id)
         .order('meal_order')
 
       if (error) throw error
       return data as MealSetting[]
     },
-    enabled: !!user,
+    enabled: !!profile,
   })
 }
 
@@ -46,12 +49,14 @@ export function useMealSettings() {
  * Create default meal settings (if user has none)
  */
 export function useCreateDefaultMealSettings() {
-  const { user } = useAuth()
+  const activeProfile = useProfileStore(state => state.activeProfile)
+  const { profile: legacyProfile } = useAuth()
+  const profile = activeProfile || legacyProfile
   const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: async () => {
-      if (!user) throw new Error('User not authenticated')
+      if (!profile) throw new Error('Profile not found')
 
       // Default 3 meals + 2 snacks = 5 meals
       const defaultMeals = [
@@ -62,14 +67,14 @@ export function useCreateDefaultMealSettings() {
         { meal_name: 'Mellanmål 2', meal_order: 4, percentage_of_daily_calories: 7 },
       ]
 
-      const mealsWithUserId = defaultMeals.map(meal => ({
+      const mealsWithProfileId = defaultMeals.map(meal => ({
         ...meal,
-        user_id: user.id,
+        profile_id: profile.id,
       }))
 
       const { data, error } = await supabase
         .from('user_meal_settings')
-        .insert(mealsWithUserId)
+        .insert(mealsWithProfileId)
         .select()
 
       if (error) throw error
@@ -85,18 +90,20 @@ export function useCreateDefaultMealSettings() {
  * Create a custom meal setting
  */
 export function useCreateMealSetting() {
-  const { user } = useAuth()
+  const activeProfile = useProfileStore(state => state.activeProfile)
+  const { profile: legacyProfile } = useAuth()
+  const profile = activeProfile || legacyProfile
   const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: async (input: CreateMealSettingInput) => {
-      if (!user) throw new Error('User not authenticated')
+      if (!profile) throw new Error('Profile not found')
 
       // Validate total percentage doesn't exceed 100%
       const { data: existing } = await supabase
         .from('user_meal_settings')
         .select('percentage_of_daily_calories')
-        .eq('user_id', user.id)
+        .eq('profile_id', profile.id)
 
       const currentTotal =
         existing?.reduce((sum, m) => sum + m.percentage_of_daily_calories, 0) || 0
@@ -108,7 +115,7 @@ export function useCreateMealSetting() {
       const { data, error } = await supabase
         .from('user_meal_settings')
         .insert({
-          user_id: user.id,
+          profile_id: profile.id,
           ...input,
         })
         .select()
@@ -127,19 +134,21 @@ export function useCreateMealSetting() {
  * Update a meal setting
  */
 export function useUpdateMealSetting() {
-  const { user } = useAuth()
+  const activeProfile = useProfileStore(state => state.activeProfile)
+  const { profile: legacyProfile } = useAuth()
+  const profile = activeProfile || legacyProfile
   const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: async ({ id, ...input }: Partial<CreateMealSettingInput> & { id: string }) => {
-      if (!user) throw new Error('User not authenticated')
+      if (!profile) throw new Error('Profile not found')
 
       // Validate total percentage if changing percentage
       if (input.percentage_of_daily_calories !== undefined) {
         const { data: existing } = await supabase
           .from('user_meal_settings')
           .select('percentage_of_daily_calories')
-          .eq('user_id', user.id)
+          .eq('profile_id', profile.id)
           .neq('id', id)
 
         const otherTotal =
@@ -154,7 +163,7 @@ export function useUpdateMealSetting() {
         .from('user_meal_settings')
         .update(input)
         .eq('id', id)
-        .eq('user_id', user.id)
+        .eq('profile_id', profile.id)
         .select()
         .single()
 
@@ -171,18 +180,20 @@ export function useUpdateMealSetting() {
  * Delete a meal setting
  */
 export function useDeleteMealSetting() {
-  const { user } = useAuth()
+  const activeProfile = useProfileStore(state => state.activeProfile)
+  const { profile: legacyProfile } = useAuth()
+  const profile = activeProfile || legacyProfile
   const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: async (id: string) => {
-      if (!user) throw new Error('User not authenticated')
+      if (!profile) throw new Error('Profile not found')
 
       // Ensure at least 1 meal remains
       const { count } = await supabase
         .from('user_meal_settings')
         .select('*', { count: 'exact', head: true })
-        .eq('user_id', user.id)
+        .eq('profile_id', profile.id)
 
       if (count && count <= 1) {
         throw new Error('Du måste ha minst en måltid konfigurerad')
@@ -192,7 +203,7 @@ export function useDeleteMealSetting() {
         .from('user_meal_settings')
         .delete()
         .eq('id', id)
-        .eq('user_id', user.id)
+        .eq('profile_id', profile.id)
 
       if (error) throw error
     },
@@ -206,12 +217,14 @@ export function useDeleteMealSetting() {
  * Reorder meal settings
  */
 export function useReorderMealSettings() {
-  const { user } = useAuth()
+  const activeProfile = useProfileStore(state => state.activeProfile)
+  const { profile: legacyProfile } = useAuth()
+  const profile = activeProfile || legacyProfile
   const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: async (meals: Array<{ id: string; meal_order: number }>) => {
-      if (!user) throw new Error('User not authenticated')
+      if (!profile) throw new Error('Profile not found')
 
       // Update each meal's order
       const updates = meals.map(meal =>
@@ -219,7 +232,7 @@ export function useReorderMealSettings() {
           .from('user_meal_settings')
           .update({ meal_order: meal.meal_order })
           .eq('id', meal.id)
-          .eq('user_id', user.id)
+          .eq('profile_id', profile.id)
       )
 
       await Promise.all(updates)
@@ -234,15 +247,17 @@ export function useReorderMealSettings() {
  * Reset to default meal settings (deletes all and creates defaults)
  */
 export function useResetMealSettings() {
-  const { user } = useAuth()
+  const activeProfile = useProfileStore(state => state.activeProfile)
+  const { profile: legacyProfile } = useAuth()
+  const profile = activeProfile || legacyProfile
   const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: async () => {
-      if (!user) throw new Error('User not authenticated')
+      if (!profile) throw new Error('Profile not found')
 
       // Delete all existing
-      await supabase.from('user_meal_settings').delete().eq('user_id', user.id)
+      await supabase.from('user_meal_settings').delete().eq('profile_id', profile.id)
 
       // Create defaults
       const defaultMeals = [
@@ -253,14 +268,14 @@ export function useResetMealSettings() {
         { meal_name: 'Mellanmål 2', meal_order: 4, percentage_of_daily_calories: 7 },
       ]
 
-      const mealsWithUserId = defaultMeals.map(meal => ({
+      const mealsWithProfileId = defaultMeals.map(meal => ({
         ...meal,
-        user_id: user.id,
+        profile_id: profile.id,
       }))
 
       const { data, error } = await supabase
         .from('user_meal_settings')
-        .insert(mealsWithUserId)
+        .insert(mealsWithProfileId)
         .select()
 
       if (error) throw error
