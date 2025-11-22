@@ -26,7 +26,7 @@ export default function BMRvsRMRContent() {
           <strong>BMR</strong> är energiförbrukningen i <em>absolut vila</em>. Det är kroppens
           &ldquo;lägsta möjliga&rdquo; energibehov för att hålla dig vid liv.
         </p>
-        <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4 mt-3 space-y-2">
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4 mt-3 space-y-2">
           <p className="font-medium text-neutral-800">BMR inkluderar:</p>
           <ul className="list-disc list-inside space-y-1 text-sm text-neutral-700">
             <li>Andning och syrgastransport</li>
@@ -48,7 +48,7 @@ export default function BMRvsRMRContent() {
           avslappnad och stilla – men kroppen behöver ändå energi för att hålla hållning, temperatur
           och basal muskelspänning.
         </p>
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4 mt-3">
+        <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4 mt-3">
           <p className="font-medium text-center text-neutral-900">
             RMR är vanligtvis 5–10% högre än BMR
           </p>
@@ -70,18 +70,17 @@ export default function BMRvsRMRContent() {
         <div className="grid md:grid-cols-2 gap-4">
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
             <p className="font-medium text-blue-900 mb-2">Formler som beräknar RMR</p>
-            <ul className="text-sm space-y-1 text-neutral-700">
+            <ul className="list-disc list-inside text-sm space-y-1 text-neutral-700">
               <li>Mifflin–St Jeor</li>
               <li>Cunningham</li>
-              <li>Henry (Oxford) – används ibland för RMR i modern forskning</li>
             </ul>
           </div>
-          <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4">
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
             <p className="font-medium text-neutral-900 mb-2">Formler som beräknar BMR</p>
-            <ul className="text-sm space-y-1 text-neutral-700">
+            <ul className="list-disc list-inside text-sm space-y-1 text-neutral-700">
               <li>Harris–Benedict (original &amp; reviderad)</li>
               <li>Schofield</li>
-              <li>Henry (Oxford) – kan användas för BMR i vissa modeller</li>
+              <li>Henry (Oxford)</li>
             </ul>
           </div>
         </div>
