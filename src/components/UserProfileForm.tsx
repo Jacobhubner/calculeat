@@ -442,6 +442,9 @@ export default function UserProfileForm() {
     }
 
     // For other goals, need all basic fields
+    const weightNum = weight ? parseFloat(weight) : 0
+    const heightNum = height ? parseFloat(height) : 0
+
     if (
       !birthDate ||
       !weight ||
@@ -450,6 +453,11 @@ export default function UserProfileForm() {
       !bmrFormula ||
       !palSystem
     ) {
+      return
+    }
+
+    // Validate numeric ranges before triggering calculation
+    if (weightNum < 20 || weightNum > 300 || heightNum < 100 || heightNum > 250) {
       return
     }
 
