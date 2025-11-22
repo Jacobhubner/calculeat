@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import UserProfileForm from '@/components/UserProfileForm'
 import MacroModesCard from '@/components/MacroModesCard'
@@ -14,6 +15,13 @@ import { Card } from '@/components/ui/card'
 import { useProfiles, useNewProfile } from '@/hooks'
 import { useProfileStore } from '@/stores/profileStore'
 
+interface CalculatorResult {
+  bmr: number
+  tdee: number
+  tdeeMin: number
+  tdeeMax: number
+}
+
 export default function ProfilePage() {
   // Load profiles to populate store
   useProfiles()
@@ -23,7 +31,12 @@ export default function ProfilePage() {
 
   // Get active profile for TDEE calculation
   const activeProfile = useProfileStore(state => state.activeProfile)
-  const tdee = activeProfile?.tdee
+
+  // Local state for calculation results (used when creating new profile)
+  const [localResult, setLocalResult] = useState<CalculatorResult | null>(null)
+
+  // Use local result if available (new profile mode), otherwise use saved tdee
+  const tdee = localResult?.tdee || activeProfile?.tdee
 
   return (
     <DashboardLayout>
@@ -44,7 +57,7 @@ export default function ProfilePage() {
           {/* Main content column */}
           <div className="space-y-4">
             {/* Main Profile Form */}
-            <UserProfileForm />
+            <UserProfileForm onResultChange={setLocalResult} />
 
             {/* Only show macro cards if results (TDEE) exist */}
             {tdee && (

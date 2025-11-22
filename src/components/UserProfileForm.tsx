@@ -27,7 +27,11 @@ interface CalculatorResult {
 type EnergyGoal = 'Maintain weight' | 'Weight gain' | 'Weight loss' | 'Custom TDEE' | ''
 type DeficitLevel = '10-15%' | '20-25%' | '25-30%' | ''
 
-export default function UserProfileForm() {
+interface UserProfileFormProps {
+  onResultChange?: (result: CalculatorResult | null) => void
+}
+
+export default function UserProfileForm({ onResultChange }: UserProfileFormProps = {}) {
   const { profile } = useAuth() // Keep for backward compatibility during transition
   const activeProfile = useProfileStore(state => state.activeProfile)
   const previousProfile = useProfileStore(state => state.previousProfile)
@@ -94,10 +98,19 @@ export default function UserProfileForm() {
   const [dailySteps, setDailySteps] = useState(currentProfile?.daily_steps || '')
   const [customPAL, setCustomPAL] = useState(currentProfile?.custom_pal?.toString() || '')
 
-  const [result, setResult] = useState<CalculatorResult | null>(null)
+  const [result, setResultState] = useState<CalculatorResult | null>(null)
   const [showBMRModal, setShowBMRModal] = useState(false)
   const [showPALModal, setShowPALModal] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+
+  // Wrapper to update both local state and notify parent
+  const setResult = useCallback(
+    (newResult: CalculatorResult | null) => {
+      setResultState(newResult)
+      onResultChange?.(newResult)
+    },
+    [onResultChange]
+  )
 
   // Sync birth date dropdowns when birthDate changes
   useEffect(() => {
