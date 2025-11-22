@@ -308,7 +308,13 @@ export default function UserProfileForm() {
       return
     }
 
-    if (!weightNum || !heightNum || !gender || !bmrFormula || !palSystem) {
+    if (
+      !weightNum ||
+      !heightNum ||
+      (gender !== 'male' && gender !== 'female') ||
+      !bmrFormula ||
+      !palSystem
+    ) {
       alert('Vänligen fyll i alla obligatoriska fält')
       return
     }
@@ -436,7 +442,14 @@ export default function UserProfileForm() {
     }
 
     // For other goals, need all basic fields
-    if (!birthDate || !weight || !height || !gender || !bmrFormula || !palSystem) {
+    if (
+      !birthDate ||
+      !weight ||
+      !height ||
+      (gender !== 'male' && gender !== 'female') ||
+      !bmrFormula ||
+      !palSystem
+    ) {
       return
     }
 
@@ -517,6 +530,35 @@ export default function UserProfileForm() {
       const trainingDurNum = trainingDuration ? parseFloat(trainingDuration) : undefined
       const customPALNum = customPAL ? parseFloat(customPAL) : undefined
 
+      // Calculate calorie range based on energy goal
+      let caloriesMin: number | undefined
+      let caloriesMax: number | undefined
+
+      const tdeeValue = result.tdee
+      const customTdeeValue = customTdeeNum || tdeeValue
+
+      if (energyGoal === 'Maintain weight') {
+        caloriesMin = Math.round(tdeeValue * 0.97)
+        caloriesMax = Math.round(tdeeValue * 1.03)
+      } else if (energyGoal === 'Weight gain') {
+        caloriesMin = Math.round(tdeeValue * 1.1)
+        caloriesMax = Math.round(tdeeValue * 1.2)
+      } else if (energyGoal === 'Weight loss') {
+        if (deficitLevel === '10-15%') {
+          caloriesMin = Math.round(tdeeValue * 0.85)
+          caloriesMax = Math.round(tdeeValue * 0.9)
+        } else if (deficitLevel === '20-25%') {
+          caloriesMin = Math.round(tdeeValue * 0.75)
+          caloriesMax = Math.round(tdeeValue * 0.8)
+        } else if (deficitLevel === '25-30%') {
+          caloriesMin = Math.round(tdeeValue * 0.7)
+          caloriesMax = Math.round(tdeeValue * 0.75)
+        }
+      } else if (energyGoal === 'Custom TDEE' && customTdeeValue) {
+        caloriesMin = Math.round(customTdeeValue * 0.97)
+        caloriesMax = Math.round(customTdeeValue * 1.03)
+      }
+
       const profileData = {
         profile_name: profileName,
         birth_date: birthDate,
@@ -540,6 +582,8 @@ export default function UserProfileForm() {
         custom_tdee: customTdeeNum,
         bmr: result.bmr,
         tdee: result.tdee,
+        calories_min: caloriesMin,
+        calories_max: caloriesMax,
       }
 
       // If activeProfile exists, update it. Otherwise, create new profile

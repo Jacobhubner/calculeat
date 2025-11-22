@@ -173,6 +173,8 @@ export interface Profile {
   // Calculated values
   bmr?: number
   tdee?: number
+  calories_min?: number
+  calories_max?: number
 
   // Goals
   calorie_goal?: CalorieGoal
