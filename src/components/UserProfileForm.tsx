@@ -141,7 +141,7 @@ export default function UserProfileForm() {
         setCustomTdee(activeProfile.custom_tdee.toString())
       }
     } else if (activeProfile === null && allProfiles.length > 0) {
-      // New profile mode - reset all fields except birth date and gender
+      // New profile mode - reset all fields except locked fields (birth date, gender, height)
       // Get the first profile to copy locked fields from
       const firstProfile = [...allProfiles].sort(
         (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
@@ -150,7 +150,6 @@ export default function UserProfileForm() {
       // Reset editable fields
       setProfileName('')
       setWeight('')
-      setHeight('')
       setBodyFatPercentage('')
       setBmrFormula('')
       setPalSystem('')
@@ -165,9 +164,10 @@ export default function UserProfileForm() {
       setCustomTdee('')
       setResult(null) // Clear results
 
-      // Keep locked fields from first profile
+      // Keep locked fields from first profile (birth date, gender, height)
       setBirthDate(firstProfile.birth_date || '')
       setGender(firstProfile.gender || '')
+      setHeight(firstProfile.height_cm?.toString() || '')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeProfile?.id, allProfiles.length])
@@ -617,6 +617,28 @@ export default function UserProfileForm() {
           <CardTitle>Grundläggande information</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
+          {/* Warning if creating new profile but locked fields (gender) are missing */}
+          {!activeProfile && allProfiles.length > 0 && gender !== 'male' && gender !== 'female' && (
+            <div className="mb-4 p-4 rounded-xl bg-yellow-50 border-2 border-yellow-200">
+              <div className="flex items-start gap-3">
+                <span className="text-yellow-600 text-xl">⚠️</span>
+                <div className="flex-1">
+                  <h4 className="font-semibold text-yellow-900 mb-1">
+                    Kön saknas i din första profil
+                  </h4>
+                  <p className="text-sm text-yellow-800 mb-2">
+                    För att skapa fler profiler måste din första profil ha ett kön angivet. Kön,
+                    födelsedatum och längd delas mellan alla dina profiler.
+                  </p>
+                  <p className="text-sm text-yellow-800">
+                    <strong>Åtgärd:</strong> Gå tillbaka till din första profil och ange kön innan
+                    du skapar fler profiler.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Birth Date */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-neutral-700 mb-2 flex items-center gap-2">
