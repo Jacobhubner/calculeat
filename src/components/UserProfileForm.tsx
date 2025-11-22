@@ -747,9 +747,15 @@ export default function UserProfileForm() {
                 </span>
               )}
             </label>
-            <div className="flex gap-4">
+            <div
+              className={`flex gap-4 p-3 rounded-xl ${
+                !canEditLockedFields
+                  ? 'bg-neutral-200 border-dashed border-2 border-neutral-300'
+                  : ''
+              }`}
+            >
               <label
-                className={`flex items-center ${!canEditLockedFields ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}
+                className={`flex items-center ${!canEditLockedFields ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                 title={
                   !canEditLockedFields
                     ? 'Kön kan endast ändras om du har en enda profil. Radera övriga profiler för att ändra.'
@@ -765,10 +771,12 @@ export default function UserProfileForm() {
                   disabled={!canEditLockedFields}
                   className="mr-2 h-4 w-4 text-primary-600 focus:ring-primary-500 disabled:cursor-not-allowed"
                 />
-                <span className="text-neutral-700">Man</span>
+                <span className={!canEditLockedFields ? 'text-neutral-400' : 'text-neutral-700'}>
+                  Man
+                </span>
               </label>
               <label
-                className={`flex items-center ${!canEditLockedFields ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}
+                className={`flex items-center ${!canEditLockedFields ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                 title={
                   !canEditLockedFields
                     ? 'Kön kan endast ändras om du har en enda profil. Radera övriga profiler för att ändra.'
@@ -784,7 +792,9 @@ export default function UserProfileForm() {
                   disabled={!canEditLockedFields}
                   className="mr-2 h-4 w-4 text-primary-600 focus:ring-primary-500 disabled:cursor-not-allowed"
                 />
-                <span className="text-neutral-700">Kvinna</span>
+                <span className={!canEditLockedFields ? 'text-neutral-400' : 'text-neutral-700'}>
+                  Kvinna
+                </span>
               </label>
             </div>
             {!canEditLockedFields && (
