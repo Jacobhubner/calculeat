@@ -60,8 +60,11 @@ export default function MacroModesCard({ currentBodyFat = '' }: MacroModesCardPr
   }
 
   const handleApplyMode = (mode: 'nnr' | 'offseason' | 'onseason') => {
+    // Parse currentBodyFat if available for on-season mode
+    const bodyFatOverride = currentBodyFat.trim() !== '' ? parseFloat(currentBodyFat) : undefined
+
     applyMode.mutate(
-      { mode },
+      { mode, bodyFatOverride },
       {
         onSuccess: () => {
           toast.success(`${getModeTitle(mode)} tillämpat!`, {
@@ -259,7 +262,7 @@ export default function MacroModesCard({ currentBodyFat = '' }: MacroModesCardPr
               Kräver kroppsvikt och kroppsfettprocent för att beräkna FFM (fettfri kroppsmassa)
             </div>
           )}
-          {onseasonPreview && canApplyOnSeason && profile?.weight_kg && (
+          {profile?.weight_kg && (
             <div className="text-xs space-y-1.5 pl-6 mt-3">
               <div className="font-medium text-neutral-800">
                 <span className="text-neutral-600">Energimål:</span> Viktminskning (20-25%)

@@ -13,6 +13,7 @@ import { calculateLeanMass } from '@/lib/calculations/bodyComposition'
 
 export interface ApplyMacroModeInput {
   mode: 'nnr' | 'offseason' | 'onseason'
+  bodyFatOverride?: number // Optional override from form input
 }
 
 /**
@@ -45,14 +46,17 @@ export function useApplyMacroMode() {
         throw new Error('Calorie range is required to apply macro mode')
       }
 
-      if (input.mode === 'onseason' && !profile.body_fat_percentage) {
+      // Use bodyFatOverride if provided, otherwise use saved value
+      const bodyFatPercentage = input.bodyFatOverride ?? profile.body_fat_percentage
+
+      if (input.mode === 'onseason' && !bodyFatPercentage) {
         throw new Error('Body fat percentage is required for on-season mode to calculate FFM')
       }
 
       // Calculate FFM (Fat Free Mass) if body fat percentage is available
       const ffm =
-        profile.body_fat_percentage && profile.weight_kg
-          ? calculateLeanMass(profile.weight_kg, profile.body_fat_percentage)
+        bodyFatPercentage && profile.weight_kg
+          ? calculateLeanMass(profile.weight_kg, bodyFatPercentage)
           : undefined
 
       // Calculate macro mode
