@@ -101,7 +101,7 @@ export default function ProfilePage() {
           </div>
 
           {/* Sidebar - Information Panel */}
-          <div className="space-y-4 md:sticky md:top-4 md:self-start z-10">
+          <div className="space-y-4 md:sticky md:top-20 md:self-start z-40">
             {/* Profile Switcher Section */}
             <Card>
               <div className="flex items-center justify-between mb-3">

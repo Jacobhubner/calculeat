@@ -8,6 +8,7 @@ import { supabase } from '@/lib/supabase'
 import { applyMacroMode, type MacroMode } from '@/lib/utils/macroModes'
 import { useProfileStore } from '@/stores/profileStore'
 import { useAuth } from '@/contexts/AuthContext'
+import { useProfiles } from '@/hooks'
 import { calculateLeanMass } from '@/lib/calculations/bodyComposition'
 
 export interface ApplyMacroModeInput {
@@ -21,9 +22,13 @@ export function useApplyMacroMode() {
   const queryClient = useQueryClient()
   const activeProfile = useProfileStore(state => state.activeProfile)
   const { profile: legacyProfile } = useAuth()
+  const { data: allProfiles = [] } = useProfiles()
 
-  // Use active profile from store if available, otherwise fall back to legacy profile
-  const profile = activeProfile || legacyProfile
+  // Get full profile data from allProfiles to ensure we have complete data
+  const fullProfile = activeProfile ? allProfiles.find(p => p.id === activeProfile.id) : undefined
+
+  // Use full profile if available, otherwise fall back to legacy profile
+  const profile = fullProfile || legacyProfile
 
   return useMutation({
     mutationFn: async (input: ApplyMacroModeInput) => {
@@ -108,9 +113,13 @@ export function useApplyMacroMode() {
 export function usePreviewMacroMode(mode: 'nnr' | 'offseason' | 'onseason'): MacroMode | null {
   const activeProfile = useProfileStore(state => state.activeProfile)
   const { profile: legacyProfile } = useAuth()
+  const { data: allProfiles = [] } = useProfiles()
 
-  // Use active profile from store if available, otherwise fall back to legacy profile
-  const profile = activeProfile || legacyProfile
+  // Get full profile data from allProfiles to ensure we have complete data
+  const fullProfile = activeProfile ? allProfiles.find(p => p.id === activeProfile.id) : undefined
+
+  // Use full profile if available, otherwise fall back to legacy profile
+  const profile = fullProfile || legacyProfile
 
   if (!profile?.weight_kg || !profile?.calories_min || !profile?.calories_max) {
     return null
