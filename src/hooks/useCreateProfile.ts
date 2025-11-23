@@ -41,13 +41,13 @@ export function useCreateProfile() {
 
       return newProfile as Profile
     },
-    onSuccess: profile => {
-      // Add to store
+    onSuccess: async profile => {
+      // Invalidate and wait for queries to refetch
+      await queryClient.invalidateQueries({ queryKey: queryKeys.profiles })
+
+      // Then set as active profile
       addProfile(profile)
       setActiveProfile(profile)
-
-      // Invalidate queries
-      queryClient.invalidateQueries({ queryKey: queryKeys.profiles })
 
       toast.success('Profil skapad!', {
         description: `${profile.profile_name} är nu din aktiva profil`,

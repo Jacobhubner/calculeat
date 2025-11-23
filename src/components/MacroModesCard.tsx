@@ -97,14 +97,15 @@ export default function MacroModesCard() {
   }
 
   // Wait for profiles to load before enabling buttons
-  // Also check that we have complete profile data
+  // Check body_fat_percentage from fullProfile which has the saved data
+  // This ensures the button is disabled if body_fat_percentage is not saved in database
   const canApplyOnSeason =
-    !isLoading && !!profile?.body_fat_percentage && !!profile?.weight_kg && !!fullProfile
+    !isLoading && !!fullProfile?.body_fat_percentage && !!fullProfile?.weight_kg && !!fullProfile
   const canApplyAny =
     !isLoading &&
-    !!profile?.weight_kg &&
-    !!profile?.calories_min &&
-    !!profile?.calories_max &&
+    !!fullProfile?.weight_kg &&
+    !!fullProfile?.calories_min &&
+    !!fullProfile?.calories_max &&
     !!fullProfile
 
   return (
