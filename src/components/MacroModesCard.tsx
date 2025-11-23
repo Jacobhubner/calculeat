@@ -152,6 +152,15 @@ export default function MacroModesCard() {
               <div className="font-medium text-neutral-800">
                 <span className="text-neutral-600">Energimål:</span> Behåll vikt
               </div>
+              <div className="text-neutral-700">
+                <span className="text-neutral-600">Fett:</span> 25-40%
+              </div>
+              <div className="text-neutral-700">
+                <span className="text-neutral-600">Protein:</span> 10-20%
+              </div>
+              <div className="text-neutral-700">
+                <span className="text-neutral-600">Kolhydrater:</span> 45-60%
+              </div>
             </div>
           )}
         </div>
@@ -178,7 +187,7 @@ export default function MacroModesCard() {
             </Button>
           </div>
           <p className="text-sm text-neutral-600">
-            Bodybuilding bulk - Hög protein, ökad kaloriintag för muskelökning
+            Uppbyggnadsfas &quot;bulking&quot; - Hög protein, ökad kaloriintag för muskelökning
           </p>
           {offseasonPreview && profile?.weight_kg && (
             <div className="text-xs space-y-1.5 pl-6 mt-3">
@@ -225,12 +234,22 @@ export default function MacroModesCard() {
               variant={isModeActive('onseason') ? 'default' : 'outline'}
               onClick={() => handleApplyMode('onseason')}
               disabled={!canApplyOnSeason || applyMode.isPending || isModeActive('onseason')}
+              className={
+                !canApplyOnSeason && !isModeActive('onseason')
+                  ? 'opacity-40 cursor-not-allowed'
+                  : ''
+              }
             >
-              {isModeActive('onseason') ? 'Redan aktivt' : 'Använd'}
+              {isModeActive('onseason')
+                ? 'Redan aktivt'
+                : !canApplyOnSeason
+                  ? 'Kräver kroppsfett%'
+                  : 'Använd'}
             </Button>
           </div>
           <p className="text-sm text-neutral-600">
-            Competition cut - Mycket hög protein för att bevara muskelmassa, lägre fett
+            Nedskärningsfas &quot;cutting&quot; - Mycket hög protein för att bevara muskelmassa,
+            lägre fett
           </p>
           {!canApplyOnSeason && (
             <div className="text-xs text-yellow-700 bg-yellow-50 border border-yellow-200 rounded p-2">
@@ -278,9 +297,11 @@ export default function MacroModesCard() {
           <p>
             💡 <strong>Tips:</strong>
           </p>
-          <p>• NNR för allmän hälsa och viktstabilitet</p>
-          <p>• Off-Season för att bygga muskelmassa</p>
-          <p>• On-Season för fettförbränning med muskelbevarande</p>
+          <p>• NNR-rekommendationer för allmän hälsa och viktstabilitet</p>
+          <p>• Uppbyggnadsfas &quot;bulking&quot; för att bygga muskelmassa</p>
+          <p>
+            • Nedskärningsfas &quot;cutting&quot; för muskelbevaring under tiden som fettet minskar
+          </p>
         </div>
       </CardContent>
     </Card>

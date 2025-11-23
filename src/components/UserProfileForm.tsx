@@ -233,7 +233,7 @@ export default function UserProfileForm({
       setHeight(sourceProfile.height_cm?.toString() || '')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeProfile?.id, allProfiles.length])
+  }, [activeProfile?.id, allProfiles])
 
   // Create a form data object for PAL table with current state values
   const formData = useMemo(() => {
