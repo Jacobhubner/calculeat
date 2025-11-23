@@ -31,6 +31,13 @@ interface MacroRanges {
   proteinMax: number
 }
 
+interface MealSettings {
+  meals: Array<{
+    name: string
+    percentage: number
+  }>
+}
+
 export default function ProfilePage() {
   // Load profiles to populate store
   useProfiles()
@@ -46,6 +53,9 @@ export default function ProfilePage() {
 
   // Local state for macro ranges (used when creating/editing profile)
   const [macroRanges, setMacroRanges] = useState<MacroRanges | null>(null)
+
+  // Local state for meal settings (used when creating/editing profile)
+  const [mealSettings, setMealSettings] = useState<MealSettings | null>(null)
 
   // Use local result if available (new profile mode), otherwise use saved tdee
   const tdee = localResult?.tdee || activeProfile?.tdee
@@ -69,7 +79,11 @@ export default function ProfilePage() {
           {/* Main content column */}
           <div className="space-y-4">
             {/* Main Profile Form */}
-            <UserProfileForm onResultChange={setLocalResult} macroRanges={macroRanges} />
+            <UserProfileForm
+              onResultChange={setLocalResult}
+              macroRanges={macroRanges}
+              mealSettings={mealSettings}
+            />
 
             {/* Only show macro cards if results (TDEE) exist */}
             {tdee && (
@@ -78,7 +92,7 @@ export default function ProfilePage() {
                 <MacroDistributionCard tdee={tdee} onMacroChange={setMacroRanges} />
 
                 {/* Meal Settings */}
-                <MealSettingsCard tdee={tdee} />
+                <MealSettingsCard tdee={tdee} onMealChange={setMealSettings} />
 
                 {/* Macro Modes Card */}
                 <MacroModesCard />

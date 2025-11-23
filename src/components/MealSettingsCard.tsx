@@ -17,9 +17,10 @@ interface Meal {
 
 interface MealSettingsCardProps {
   tdee?: number
+  onMealChange?: (settings: { meals: Meal[] }) => void
 }
 
-export default function MealSettingsCard({ tdee }: MealSettingsCardProps) {
+export default function MealSettingsCard({ tdee, onMealChange }: MealSettingsCardProps) {
   const activeProfile = useProfileStore(state => state.activeProfile)
 
   // Default meals
@@ -49,6 +50,13 @@ export default function MealSettingsCard({ tdee }: MealSettingsCardProps) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeProfile?.id])
+
+  // Notify parent component when meals change
+  useEffect(() => {
+    if (onMealChange) {
+      onMealChange({ meals })
+    }
+  }, [meals, onMealChange])
 
   // Calculate total percentage
   const totalPercentage = useMemo(() => {

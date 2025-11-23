@@ -36,14 +36,23 @@ interface MacroRanges {
   proteinMax: number
 }
 
+interface MealSettings {
+  meals: Array<{
+    name: string
+    percentage: number
+  }>
+}
+
 interface UserProfileFormProps {
   onResultChange?: (result: CalculatorResult | null) => void
   macroRanges?: MacroRanges | null
+  mealSettings?: MealSettings | null
 }
 
 export default function UserProfileForm({
   onResultChange,
   macroRanges,
+  mealSettings,
 }: UserProfileFormProps = {}) {
   const { profile } = useAuth() // Keep for backward compatibility during transition
   const activeProfile = useProfileStore(state => state.activeProfile)
@@ -642,6 +651,8 @@ export default function UserProfileForm({
         carb_max_percent: macroRanges?.carbMax,
         protein_min_percent: macroRanges?.proteinMin,
         protein_max_percent: macroRanges?.proteinMax,
+        // Include meal settings if they exist
+        meals_config: mealSettings || undefined,
       }
 
       // If activeProfile exists, update it. Otherwise, create new profile
