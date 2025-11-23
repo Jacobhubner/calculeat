@@ -50,7 +50,15 @@ export default function MacroDistributionCard({ tdee, onMacroChange }: MacroDist
       ])
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeProfile?.id])
+  }, [
+    activeProfile?.id,
+    activeProfile?.fat_min_percent,
+    activeProfile?.fat_max_percent,
+    activeProfile?.carb_min_percent,
+    activeProfile?.carb_max_percent,
+    activeProfile?.protein_min_percent,
+    activeProfile?.protein_max_percent,
+  ])
 
   // Notify parent component when macro ranges change
   useEffect(() => {
@@ -102,7 +110,7 @@ export default function MacroDistributionCard({ tdee, onMacroChange }: MacroDist
           <div className="flex items-center justify-between mb-3">
             <label className="text-sm font-medium text-neutral-700">Fett</label>
             <div className="text-sm font-semibold text-accent-600">
-              {fatRange[0]}% - {fatRange[1]}%
+              {fatRange[0].toFixed(0)}% - {fatRange[1].toFixed(0)}%
               {tdee && (
                 <span className="text-neutral-500 font-normal ml-2">
                   ({calculateFatGrams(fatRange[0])}g - {calculateFatGrams(fatRange[1])}g)
@@ -121,7 +129,7 @@ export default function MacroDistributionCard({ tdee, onMacroChange }: MacroDist
           <div className="flex items-center justify-between mb-3">
             <label className="text-sm font-medium text-neutral-700">Kolhydrater</label>
             <div className="text-sm font-semibold text-primary-600">
-              {carbRange[0]}% - {carbRange[1]}%
+              {carbRange[0].toFixed(0)}% - {carbRange[1].toFixed(0)}%
               {tdee && (
                 <span className="text-neutral-500 font-normal ml-2">
                   ({calculateGrams(carbRange[0])}g - {calculateGrams(carbRange[1])}g)
@@ -146,7 +154,7 @@ export default function MacroDistributionCard({ tdee, onMacroChange }: MacroDist
           <div className="flex items-center justify-between mb-3">
             <label className="text-sm font-medium text-neutral-700">Protein</label>
             <div className="text-sm font-semibold text-blue-600">
-              {proteinRange[0]}% - {proteinRange[1]}%
+              {proteinRange[0].toFixed(0)}% - {proteinRange[1].toFixed(0)}%
               {tdee && (
                 <span className="text-neutral-500 font-normal ml-2">
                   ({calculateGrams(proteinRange[0])}g - {calculateGrams(proteinRange[1])}g)

@@ -13,6 +13,7 @@ import { useProfileStore } from '@/stores/profileStore'
 import { useAuth } from '@/contexts/AuthContext'
 import { useProfiles } from '@/hooks'
 import { toast } from 'sonner'
+import { calculateLeanMass } from '@/lib/calculations/bodyComposition'
 
 export default function MacroModesCard() {
   const activeProfile = useProfileStore(state => state.activeProfile)
@@ -147,32 +148,9 @@ export default function MacroModesCard() {
             Nordic Nutrition Recommendations - Balanserad makrofördelning för allmänheten
           </p>
           {nnrPreview && (
-            <div className="text-xs text-neutral-500 space-y-1 pl-6">
-              {profile?.calories_min && profile?.calories_max && (
-                <div className="font-medium text-neutral-700">
-                  Kalorimål: {Math.round(profile.calories_min)}-{Math.round(profile.calories_max)}{' '}
-                  kcal
-                </div>
-              )}
-              <div>
-                Protein: {nnrPreview.proteinMinPercent.toFixed(0)}-
-                {nnrPreview.proteinMaxPercent.toFixed(0)}%
-                {profile?.calories_min &&
-                  profile?.calories_max &&
-                  ` (${Math.round((profile.calories_min * nnrPreview.proteinMinPercent) / 100 / 4)}-${Math.round((profile.calories_max * nnrPreview.proteinMaxPercent) / 100 / 4)} g)`}
-              </div>
-              <div>
-                Kolhydrater: {nnrPreview.carbMinPercent.toFixed(0)}-
-                {nnrPreview.carbMaxPercent.toFixed(0)}%
-                {profile?.calories_min &&
-                  profile?.calories_max &&
-                  ` (${Math.round((profile.calories_min * nnrPreview.carbMinPercent) / 100 / 4)}-${Math.round((profile.calories_max * nnrPreview.carbMaxPercent) / 100 / 4)} g)`}
-              </div>
-              <div>
-                Fett: {nnrPreview.fatMinPercent.toFixed(0)}-{nnrPreview.fatMaxPercent.toFixed(0)}%
-                {profile?.calories_min &&
-                  profile?.calories_max &&
-                  ` (${Math.round((profile.calories_min * nnrPreview.fatMinPercent) / 100 / 9)}-${Math.round((profile.calories_max * nnrPreview.fatMaxPercent) / 100 / 9)} g)`}
+            <div className="text-xs space-y-1.5 pl-6 mt-3">
+              <div className="font-medium text-neutral-800">
+                <span className="text-neutral-600">Energimål:</span> Behåll vikt
               </div>
             </div>
           )}
@@ -202,34 +180,26 @@ export default function MacroModesCard() {
           <p className="text-sm text-neutral-600">
             Bodybuilding bulk - Hög protein, ökad kaloriintag för muskelökning
           </p>
-          {offseasonPreview && (
-            <div className="text-xs text-neutral-500 space-y-1 pl-6">
-              {offseasonPreview.caloriesMin && offseasonPreview.caloriesMax && (
-                <div className="font-medium text-neutral-700">
-                  Kalorimål: {Math.round(offseasonPreview.caloriesMin)}-
-                  {Math.round(offseasonPreview.caloriesMax)} kcal
-                </div>
-              )}
-              <div>
-                Protein: {offseasonPreview.proteinMinPercent.toFixed(0)}-
-                {offseasonPreview.proteinMaxPercent.toFixed(0)}%
-                {offseasonPreview.caloriesMin &&
-                  offseasonPreview.caloriesMax &&
-                  ` (${Math.round((offseasonPreview.caloriesMin * offseasonPreview.proteinMinPercent) / 100 / 4)}-${Math.round((offseasonPreview.caloriesMax * offseasonPreview.proteinMaxPercent) / 100 / 4)} g)`}
+          {offseasonPreview && profile?.weight_kg && (
+            <div className="text-xs space-y-1.5 pl-6 mt-3">
+              <div className="font-medium text-neutral-800">
+                <span className="text-neutral-600">Energimål:</span> Viktuppgång (10-20%)
               </div>
-              <div>
-                Kolhydrater: {offseasonPreview.carbMinPercent.toFixed(0)}-
-                {offseasonPreview.carbMaxPercent.toFixed(0)}%
-                {offseasonPreview.caloriesMin &&
-                  offseasonPreview.caloriesMax &&
-                  ` (${Math.round((offseasonPreview.caloriesMin * offseasonPreview.carbMinPercent) / 100 / 4)}-${Math.round((offseasonPreview.caloriesMax * offseasonPreview.carbMaxPercent) / 100 / 4)} g)`}
+              <div className="text-neutral-700">
+                <span className="text-neutral-600">Veckovis viktuppgång:</span> ~{' '}
+                {(profile.weight_kg * 0.0025).toFixed(2)}–{(profile.weight_kg * 0.005).toFixed(2)}{' '}
+                kg/vecka
               </div>
-              <div>
-                Fett: {offseasonPreview.fatMinPercent.toFixed(0)}-
-                {offseasonPreview.fatMaxPercent.toFixed(0)}%
-                {offseasonPreview.caloriesMin &&
-                  offseasonPreview.caloriesMax &&
-                  ` (${Math.round((offseasonPreview.caloriesMin * offseasonPreview.fatMinPercent) / 100 / 9)}-${Math.round((offseasonPreview.caloriesMax * offseasonPreview.fatMaxPercent) / 100 / 9)} g)`}
+              <div className="text-neutral-700">
+                <span className="text-neutral-600">Fett:</span> 0.5–1.5 g/kg (
+                {Math.round(profile.weight_kg * 0.5)}–{Math.round(profile.weight_kg * 1.5)} g)
+              </div>
+              <div className="text-neutral-700">
+                <span className="text-neutral-600">Protein:</span> 1.6–2.2 g/kg (
+                {Math.round(profile.weight_kg * 1.6)}–{Math.round(profile.weight_kg * 2.2)} g)
+              </div>
+              <div className="text-neutral-700">
+                <span className="text-neutral-600">Kolhydrater:</span> Resterande kalorier
               </div>
             </div>
           )}
@@ -267,37 +237,39 @@ export default function MacroModesCard() {
               Kräver kroppsvikt och kroppsfettprocent för att beräkna FFM (fettfri kroppsmassa)
             </div>
           )}
-          {onseasonPreview && canApplyOnSeason && (
-            <div className="text-xs text-neutral-500 space-y-1 pl-6">
-              {onseasonPreview.caloriesMin && onseasonPreview.caloriesMax && (
-                <div className="font-medium text-neutral-700">
-                  Kalorimål: {Math.round(onseasonPreview.caloriesMin)}-
-                  {Math.round(onseasonPreview.caloriesMax)} kcal
+          {onseasonPreview &&
+            canApplyOnSeason &&
+            profile?.weight_kg &&
+            profile?.body_fat_percentage &&
+            (() => {
+              const ffm = calculateLeanMass(profile.weight_kg, profile.body_fat_percentage)
+              return (
+                <div className="text-xs space-y-1.5 pl-6 mt-3">
+                  <div className="font-medium text-neutral-800">
+                    <span className="text-neutral-600">Energimål:</span> Viktminskning (20-25%)
+                  </div>
+                  <div className="text-neutral-700">
+                    <span className="text-neutral-600">Veckovis viktminskning:</span> ~{' '}
+                    {(profile.weight_kg * 0.005).toFixed(2)}–{(profile.weight_kg * 0.01).toFixed(2)}{' '}
+                    kg/vecka
+                  </div>
+                  <div className="text-neutral-700">
+                    <span className="text-neutral-600">Fett:</span> 15-30% av total kaloriintag (
+                    {onseasonPreview.caloriesMin &&
+                      onseasonPreview.caloriesMax &&
+                      `${Math.round((onseasonPreview.caloriesMin * 0.15) / 9)}–${Math.round((onseasonPreview.caloriesMax * 0.3) / 9)} g`}
+                    )
+                  </div>
+                  <div className="text-neutral-700">
+                    <span className="text-neutral-600">Protein:</span> 2.3–3.1 g/kg FFM (
+                    {Math.round(ffm * 2.3)}–{Math.round(ffm * 3.1)} g)
+                  </div>
+                  <div className="text-neutral-700">
+                    <span className="text-neutral-600">Kolhydrater:</span> Resterande kalorier
+                  </div>
                 </div>
-              )}
-              <div>
-                Protein: {onseasonPreview.proteinMinPercent.toFixed(0)}-
-                {onseasonPreview.proteinMaxPercent.toFixed(0)}%
-                {onseasonPreview.caloriesMin &&
-                  onseasonPreview.caloriesMax &&
-                  ` (${Math.round((onseasonPreview.caloriesMin * onseasonPreview.proteinMinPercent) / 100 / 4)}-${Math.round((onseasonPreview.caloriesMax * onseasonPreview.proteinMaxPercent) / 100 / 4)} g)`}
-              </div>
-              <div>
-                Kolhydrater: {onseasonPreview.carbMinPercent.toFixed(0)}-
-                {onseasonPreview.carbMaxPercent.toFixed(0)}%
-                {onseasonPreview.caloriesMin &&
-                  onseasonPreview.caloriesMax &&
-                  ` (${Math.round((onseasonPreview.caloriesMin * onseasonPreview.carbMinPercent) / 100 / 4)}-${Math.round((onseasonPreview.caloriesMax * onseasonPreview.carbMaxPercent) / 100 / 4)} g)`}
-              </div>
-              <div>
-                Fett: {onseasonPreview.fatMinPercent.toFixed(0)}-
-                {onseasonPreview.fatMaxPercent.toFixed(0)}%
-                {onseasonPreview.caloriesMin &&
-                  onseasonPreview.caloriesMax &&
-                  ` (${Math.round((onseasonPreview.caloriesMin * onseasonPreview.fatMinPercent) / 100 / 9)}-${Math.round((onseasonPreview.caloriesMax * onseasonPreview.fatMaxPercent) / 100 / 9)} g)`}
-              </div>
-            </div>
-          )}
+              )
+            })()}
         </div>
 
         <Separator />

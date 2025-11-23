@@ -10,6 +10,7 @@ import BMRvsRMRContent from '@/components/info/BMRvsRMRContent'
 import PALvsMETContent from '@/components/info/PALvsMETContent'
 import TDEEContent from '@/components/info/TDEEContent'
 import LBMvsFFMContent from '@/components/info/LBMvsFFMContent'
+import CollapsibleSidebar from '@/components/CollapsibleSidebar'
 import { User, Users, Plus } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { useProfiles, useNewProfile } from '@/hooks'
@@ -101,7 +102,7 @@ export default function ProfilePage() {
           </div>
 
           {/* Sidebar - Information Panel */}
-          <div className="space-y-4 md:sticky md:top-20 md:self-start z-40">
+          <CollapsibleSidebar className="space-y-4 md:sticky md:top-20 md:self-start z-40">
             {/* Profile Switcher Section */}
             <Card>
               <div className="flex items-center justify-between mb-3">
@@ -149,7 +150,7 @@ export default function ProfilePage() {
               modalTitle="LBM vs FFM - Fettfri massa förklarad"
               modalContent={<LBMvsFFMContent />}
             />
-          </div>
+          </CollapsibleSidebar>
         </div>
       </div>
     </DashboardLayout>
