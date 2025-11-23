@@ -13,7 +13,6 @@ import { useProfileStore } from '@/stores/profileStore'
 import { useAuth } from '@/contexts/AuthContext'
 import { useProfiles } from '@/hooks'
 import { toast } from 'sonner'
-import { calculateLeanMass } from '@/lib/calculations/bodyComposition'
 
 export default function MacroModesCard() {
   const activeProfile = useProfileStore(state => state.activeProfile)
@@ -256,35 +255,27 @@ export default function MacroModesCard() {
               Kräver kroppsvikt och kroppsfettprocent för att beräkna FFM (fettfri kroppsmassa)
             </div>
           )}
-          {onseasonPreview &&
-            canApplyOnSeason &&
-            profile?.weight_kg &&
-            profile?.body_fat_percentage &&
-            (() => {
-              const ffm = calculateLeanMass(profile.weight_kg, profile.body_fat_percentage)
-              return (
-                <div className="text-xs space-y-1.5 pl-6 mt-3">
-                  <div className="font-medium text-neutral-800">
-                    <span className="text-neutral-600">Energimål:</span> Viktminskning (20-25%)
-                  </div>
-                  <div className="text-neutral-700">
-                    <span className="text-neutral-600">Veckovis viktminskning:</span> ~{' '}
-                    {(profile.weight_kg * 0.005).toFixed(2)}–{(profile.weight_kg * 0.01).toFixed(2)}{' '}
-                    kg/vecka
-                  </div>
-                  <div className="text-neutral-700">
-                    <span className="text-neutral-600">Fett:</span> 15-30%
-                  </div>
-                  <div className="text-neutral-700">
-                    <span className="text-neutral-600">Protein:</span> 2.3–3.1 g/kg FFM (
-                    {Math.round(ffm * 2.3)}–{Math.round(ffm * 3.1)} g)
-                  </div>
-                  <div className="text-neutral-700">
-                    <span className="text-neutral-600">Kolhydrater:</span> Resterande kalorier
-                  </div>
-                </div>
-              )
-            })()}
+          {onseasonPreview && canApplyOnSeason && profile?.weight_kg && (
+            <div className="text-xs space-y-1.5 pl-6 mt-3">
+              <div className="font-medium text-neutral-800">
+                <span className="text-neutral-600">Energimål:</span> Viktminskning (20-25%)
+              </div>
+              <div className="text-neutral-700">
+                <span className="text-neutral-600">Veckovis viktminskning:</span> ~{' '}
+                {(profile.weight_kg * 0.005).toFixed(2)}–{(profile.weight_kg * 0.01).toFixed(2)}{' '}
+                kg/vecka
+              </div>
+              <div className="text-neutral-700">
+                <span className="text-neutral-600">Fett:</span> 15-30%
+              </div>
+              <div className="text-neutral-700">
+                <span className="text-neutral-600">Protein:</span> 2.3–3.1 g/kg FFM
+              </div>
+              <div className="text-neutral-700">
+                <span className="text-neutral-600">Kolhydrater:</span> Resterande kalorier
+              </div>
+            </div>
+          )}
         </div>
 
         <Separator />
