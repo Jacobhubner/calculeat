@@ -87,7 +87,7 @@ export function onSeasonMode(fatFreeMass: number, avgCalories: number): MacroMod
 
   return {
     calorieGoal: 'Weight loss',
-    deficitLevel: 'Moderate',
+    deficitLevel: '20-25%',
     fatMinPercent,
     fatMaxPercent,
     proteinMinPercent,

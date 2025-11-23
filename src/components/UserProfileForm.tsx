@@ -192,9 +192,16 @@ export default function UserProfileForm({
       // Use previousProfile if available, otherwise use first profile
       const sourceProfile =
         previousProfile ||
-        [...allProfiles].sort(
-          (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-        )[0]
+        [...allProfiles].sort((a, b) => {
+          const dateA = a.created_at ? new Date(a.created_at).getTime() : 0
+          const dateB = b.created_at ? new Date(b.created_at).getTime() : 0
+          return dateA - dateB
+        })[0]
+
+      if (!sourceProfile) {
+        // No valid profile to copy from, just reset
+        return
+      }
 
       // Copy all editable fields from source profile
       setProfileName('')

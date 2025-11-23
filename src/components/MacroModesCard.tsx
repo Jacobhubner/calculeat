@@ -145,7 +145,7 @@ export default function MacroModesCard() {
             </Button>
           </div>
           <p className="text-sm text-neutral-600">
-            Nordic Nutrition Recommendations - Balanserad makrofördelning för allmänheten
+            Nordiska näringsrekommendationer - Balanserad makrofördelning för allmänheten
           </p>
           {nnrPreview && (
             <div className="text-xs space-y-1.5 pl-6 mt-3">
@@ -200,15 +200,14 @@ export default function MacroModesCard() {
                 kg/vecka
               </div>
               <div className="text-neutral-700">
-                <span className="text-neutral-600">Fett:</span> 0.5–1.5 g/kg (
-                {Math.round(profile.weight_kg * 0.5)}–{Math.round(profile.weight_kg * 1.5)} g)
+                <span className="text-neutral-600">Fett:</span> 0.5–1.5 g/kg
               </div>
               <div className="text-neutral-700">
-                <span className="text-neutral-600">Protein:</span> 1.6–2.2 g/kg (
-                {Math.round(profile.weight_kg * 1.6)}–{Math.round(profile.weight_kg * 2.2)} g)
+                <span className="text-neutral-600">Protein:</span> 1.6–2.2 g/kg
               </div>
               <div className="text-neutral-700">
-                <span className="text-neutral-600">Kolhydrater:</span> Resterande kalorier
+                <span className="text-neutral-600">Kolhydrater:</span> Resterande kalorier (≥ 3–5
+                g/kg)
               </div>
             </div>
           )}
@@ -273,11 +272,7 @@ export default function MacroModesCard() {
                     kg/vecka
                   </div>
                   <div className="text-neutral-700">
-                    <span className="text-neutral-600">Fett:</span> 15-30% av total kaloriintag (
-                    {onseasonPreview.caloriesMin &&
-                      onseasonPreview.caloriesMax &&
-                      `${Math.round((onseasonPreview.caloriesMin * 0.15) / 9)}–${Math.round((onseasonPreview.caloriesMax * 0.3) / 9)} g`}
-                    )
+                    <span className="text-neutral-600">Fett:</span> 15-30%
                   </div>
                   <div className="text-neutral-700">
                     <span className="text-neutral-600">Protein:</span> 2.3–3.1 g/kg FFM (
@@ -297,11 +292,9 @@ export default function MacroModesCard() {
           <p>
             💡 <strong>Tips:</strong>
           </p>
-          <p>• NNR-rekommendationer för allmän hälsa och viktstabilitet</p>
-          <p>• Uppbyggnadsfas &quot;bulking&quot; för att bygga muskelmassa</p>
-          <p>
-            • Nedskärningsfas &quot;cutting&quot; för muskelbevaring under tiden som fettet minskar
-          </p>
+          <p>• NNR Mode för allmän hälsa och viktstabilitet</p>
+          <p>• Off-Season Mode för att bygga muskelmassa</p>
+          <p>• On-Season Mode för muskelbevaring under tiden som fettet minskar</p>
         </div>
       </CardContent>
     </Card>
