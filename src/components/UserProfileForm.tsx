@@ -151,30 +151,41 @@ export default function UserProfileForm({
   // Sync form fields when activeProfile changes
   useEffect(() => {
     if (activeProfile) {
-      // Load existing profile data
-      setProfileName(activeProfile.profile_name || '')
-      setBirthDate(activeProfile.birth_date || '')
-      setWeight(activeProfile.weight_kg?.toString() || '')
-      setHeight(activeProfile.height_cm?.toString() || '')
-      setGender(activeProfile.gender || '')
-      setBodyFatPercentage(activeProfile.body_fat_percentage?.toString() || '')
-      setBmrFormula((activeProfile.bmr_formula as BMRFormula) || '')
-      setPalSystem((activeProfile.pal_system as PALSystem) || '')
-      setActivityLevel(activeProfile.activity_level || '')
-      setIntensityLevel(activeProfile.intensity_level || '')
-      setTrainingFrequency(activeProfile.training_frequency_per_week || '')
-      setTrainingDuration(activeProfile.training_duration_minutes || '')
-      setDailySteps(activeProfile.daily_steps || '')
-      setCustomPAL(activeProfile.custom_pal?.toString() || '')
+      // IMPORTANT: Wait for full profile data from Supabase before loading
+      // activeProfile from store might only have {id, profile_name} after page refresh
+      // We need to find the complete profile data from allProfiles array
+      const fullProfile = allProfiles.find(p => p.id === activeProfile.id)
 
-      if (activeProfile.calorie_goal) {
-        setEnergyGoal(activeProfile.calorie_goal as EnergyGoal)
+      // Only load if we have complete profile data
+      if (!fullProfile) {
+        // Data is still loading from Supabase, wait
+        return
       }
-      if (activeProfile.deficit_level) {
-        setDeficitLevel(activeProfile.deficit_level as DeficitLevel)
+
+      // Load existing profile data from the complete profile object
+      setProfileName(fullProfile.profile_name || '')
+      setBirthDate(fullProfile.birth_date || '')
+      setWeight(fullProfile.weight_kg?.toString() || '')
+      setHeight(fullProfile.height_cm?.toString() || '')
+      setGender(fullProfile.gender || '')
+      setBodyFatPercentage(fullProfile.body_fat_percentage?.toString() || '')
+      setBmrFormula((fullProfile.bmr_formula as BMRFormula) || '')
+      setPalSystem((fullProfile.pal_system as PALSystem) || '')
+      setActivityLevel(fullProfile.activity_level || '')
+      setIntensityLevel(fullProfile.intensity_level || '')
+      setTrainingFrequency(fullProfile.training_frequency_per_week || '')
+      setTrainingDuration(fullProfile.training_duration_minutes || '')
+      setDailySteps(fullProfile.daily_steps || '')
+      setCustomPAL(fullProfile.custom_pal?.toString() || '')
+
+      if (fullProfile.calorie_goal) {
+        setEnergyGoal(fullProfile.calorie_goal as EnergyGoal)
       }
-      if (activeProfile.custom_tdee) {
-        setCustomTdee(activeProfile.custom_tdee.toString())
+      if (fullProfile.deficit_level) {
+        setDeficitLevel(fullProfile.deficit_level as DeficitLevel)
+      }
+      if (fullProfile.custom_tdee) {
+        setCustomTdee(fullProfile.custom_tdee.toString())
       }
     } else if (activeProfile === null && allProfiles.length > 0) {
       // New profile mode - copy all fields from previously viewed profile
@@ -243,6 +254,74 @@ export default function UserProfileForm({
     trainingDuration,
     dailySteps,
     customPAL,
+  ])
+
+  // Check if there are unsaved changes compared to the saved profile
+  const hasUnsavedChanges = useMemo(() => {
+    // If no active profile, we're creating a new profile - show save card if we have results
+    if (!activeProfile) {
+      return !!result
+    }
+
+    // Get the full profile data from allProfiles
+    const fullProfile = allProfiles.find(p => p.id === activeProfile.id)
+    if (!fullProfile) {
+      // Still loading, no changes yet
+      return false
+    }
+
+    // Compare current form values with saved profile values
+    const hasProfileNameChange = profileName !== (fullProfile.profile_name || '')
+    const hasWeightChange = weight !== (fullProfile.weight_kg?.toString() || '')
+    const hasBodyFatChange =
+      bodyFatPercentage !== (fullProfile.body_fat_percentage?.toString() || '')
+    const hasBmrFormulaChange = bmrFormula !== (fullProfile.bmr_formula || '')
+    const hasPalSystemChange = palSystem !== (fullProfile.pal_system || '')
+    const hasActivityLevelChange = activityLevel !== (fullProfile.activity_level || '')
+    const hasIntensityLevelChange = intensityLevel !== (fullProfile.intensity_level || '')
+    const hasTrainingFreqChange =
+      trainingFrequency !== (fullProfile.training_frequency_per_week || '')
+    const hasTrainingDurChange = trainingDuration !== (fullProfile.training_duration_minutes || '')
+    const hasDailyStepsChange = dailySteps !== (fullProfile.daily_steps || '')
+    const hasCustomPALChange = customPAL !== (fullProfile.custom_pal?.toString() || '')
+    const hasEnergyGoalChange = energyGoal !== (fullProfile.calorie_goal || '')
+    const hasDeficitLevelChange = deficitLevel !== (fullProfile.deficit_level || '')
+    const hasCustomTdeeChange = customTdee !== (fullProfile.custom_tdee?.toString() || '')
+
+    return (
+      hasProfileNameChange ||
+      hasWeightChange ||
+      hasBodyFatChange ||
+      hasBmrFormulaChange ||
+      hasPalSystemChange ||
+      hasActivityLevelChange ||
+      hasIntensityLevelChange ||
+      hasTrainingFreqChange ||
+      hasTrainingDurChange ||
+      hasDailyStepsChange ||
+      hasCustomPALChange ||
+      hasEnergyGoalChange ||
+      hasDeficitLevelChange ||
+      hasCustomTdeeChange
+    )
+  }, [
+    activeProfile,
+    allProfiles,
+    profileName,
+    weight,
+    bodyFatPercentage,
+    bmrFormula,
+    palSystem,
+    activityLevel,
+    intensityLevel,
+    trainingFrequency,
+    trainingDuration,
+    dailySteps,
+    customPAL,
+    energyGoal,
+    deficitLevel,
+    customTdee,
+    result,
   ])
 
   // Register function for PAL table - updates state in real-time
@@ -1189,7 +1268,7 @@ export default function UserProfileForm({
         onProfileNameChange={setProfileName}
         onSave={handleSave}
         isSaving={isSaving}
-        hasChanges={!!result}
+        hasChanges={hasUnsavedChanges}
       />
     </div>
   )

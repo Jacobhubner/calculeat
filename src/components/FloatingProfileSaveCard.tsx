@@ -40,7 +40,8 @@ export default function FloatingProfileSaveCard({
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  if (!isVisible) return null
+  // Only show if scrolled down AND there are actual changes to save
+  if (!isVisible || !hasChanges) return null
 
   return (
     <Card className="fixed right-4 bottom-4 z-50 shadow-xl border-2 border-accent-200 w-64 md:w-72">

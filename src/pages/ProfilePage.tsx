@@ -101,13 +101,13 @@ export default function ProfilePage() {
           </div>
 
           {/* Sidebar - Information Panel */}
-          <div className="space-y-4 md:sticky md:top-4 md:self-start">
+          <div className="space-y-4 md:sticky md:top-4 md:self-start z-10">
             {/* Profile Switcher Section */}
             <Card>
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <Users className="h-5 w-5 text-primary-600" />
-                  <h3 className="text-lg font-semibold text-neutral-900">Mina Profiler</h3>
+                  <h3 className="text-lg font-semibold text-neutral-900">Mina Profilkort</h3>
                 </div>
 
                 {/* Green Plus Button */}

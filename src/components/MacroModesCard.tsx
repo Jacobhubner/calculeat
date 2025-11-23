@@ -11,14 +11,20 @@ import { Target, TrendingUp, TrendingDown, Minus } from 'lucide-react'
 import { useApplyMacroMode, usePreviewMacroMode } from '@/hooks/useMacroModes'
 import { useProfileStore } from '@/stores/profileStore'
 import { useAuth } from '@/contexts/AuthContext'
+import { useProfiles } from '@/hooks'
 import { toast } from 'sonner'
 
 export default function MacroModesCard() {
   const activeProfile = useProfileStore(state => state.activeProfile)
   const { profile: legacyProfile } = useAuth()
+  const { data: allProfiles = [], isLoading } = useProfiles()
 
-  // Use active profile from store if available, otherwise fall back to legacy profile
-  const profile = activeProfile || legacyProfile
+  // Get full profile data from allProfiles to ensure we have complete data
+  // activeProfile from store might only have {id, profile_name} after page refresh
+  const fullProfile = activeProfile ? allProfiles.find(p => p.id === activeProfile.id) : undefined
+
+  // Use full profile if available, otherwise fall back to legacy profile
+  const profile = fullProfile || legacyProfile
 
   const applyMode = useApplyMacroMode()
 
@@ -89,8 +95,16 @@ export default function MacroModesCard() {
     }
   }
 
-  const canApplyOnSeason = !!profile?.body_fat_percentage && !!profile?.weight_kg
-  const canApplyAny = !!profile?.weight_kg && !!profile?.calories_min && !!profile?.calories_max
+  // Wait for profiles to load before enabling buttons
+  // Also check that we have complete profile data
+  const canApplyOnSeason =
+    !isLoading && !!profile?.body_fat_percentage && !!profile?.weight_kg && !!fullProfile
+  const canApplyAny =
+    !isLoading &&
+    !!profile?.weight_kg &&
+    !!profile?.calories_min &&
+    !!profile?.calories_max &&
+    !!fullProfile
 
   return (
     <Card>
