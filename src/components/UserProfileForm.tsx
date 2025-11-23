@@ -677,11 +677,11 @@ export default function UserProfileForm({
     try {
       const weightNum = parseFloat(weight)
       const heightNum = parseFloat(height)
-      const bodyFatNum = bodyFatPercentage ? parseFloat(bodyFatPercentage) : undefined
-      const customTdeeNum = customTdee ? parseFloat(customTdee) : undefined
-      const trainingFreqNum = trainingFrequency ? parseFloat(trainingFrequency) : undefined
-      const trainingDurNum = trainingDuration ? parseFloat(trainingDuration) : undefined
-      const customPALNum = customPAL ? parseFloat(customPAL) : undefined
+      const bodyFatNum = bodyFatPercentage ? parseFloat(bodyFatPercentage) : null
+      const customTdeeNum = customTdee ? parseFloat(customTdee) : null
+      const trainingFreqNum = trainingFrequency ? parseFloat(trainingFrequency) : null
+      const trainingDurNum = trainingDuration ? parseFloat(trainingDuration) : null
+      const customPALNum = customPAL ? parseFloat(customPAL) : null
 
       // Calculate calorie range based on energy goal
       let caloriesMin: number | undefined
