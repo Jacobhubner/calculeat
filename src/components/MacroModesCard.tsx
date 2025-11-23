@@ -148,16 +148,31 @@ export default function MacroModesCard() {
           </p>
           {nnrPreview && (
             <div className="text-xs text-neutral-500 space-y-1 pl-6">
+              {profile?.calories_min && profile?.calories_max && (
+                <div className="font-medium text-neutral-700">
+                  Kalorimål: {Math.round(profile.calories_min)}-{Math.round(profile.calories_max)}{' '}
+                  kcal
+                </div>
+              )}
               <div>
                 Protein: {nnrPreview.proteinMinPercent.toFixed(0)}-
                 {nnrPreview.proteinMaxPercent.toFixed(0)}%
+                {profile?.calories_min &&
+                  profile?.calories_max &&
+                  ` (${Math.round((profile.calories_min * nnrPreview.proteinMinPercent) / 100 / 4)}-${Math.round((profile.calories_max * nnrPreview.proteinMaxPercent) / 100 / 4)} g)`}
               </div>
               <div>
                 Kolhydrater: {nnrPreview.carbMinPercent.toFixed(0)}-
                 {nnrPreview.carbMaxPercent.toFixed(0)}%
+                {profile?.calories_min &&
+                  profile?.calories_max &&
+                  ` (${Math.round((profile.calories_min * nnrPreview.carbMinPercent) / 100 / 4)}-${Math.round((profile.calories_max * nnrPreview.carbMaxPercent) / 100 / 4)} g)`}
               </div>
               <div>
                 Fett: {nnrPreview.fatMinPercent.toFixed(0)}-{nnrPreview.fatMaxPercent.toFixed(0)}%
+                {profile?.calories_min &&
+                  profile?.calories_max &&
+                  ` (${Math.round((profile.calories_min * nnrPreview.fatMinPercent) / 100 / 9)}-${Math.round((profile.calories_max * nnrPreview.fatMaxPercent) / 100 / 9)} g)`}
               </div>
             </div>
           )}
@@ -171,10 +186,7 @@ export default function MacroModesCard() {
             <div className="flex items-center gap-2">
               {getModeIcon('offseason')}
               <span className="font-semibold">Off-Season Mode</span>
-              <Badge
-                variant="outline"
-                className="bg-success-50 text-success-700 border-success-200"
-              >
+              <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">
                 Bulk
               </Badge>
             </div>
@@ -192,17 +204,32 @@ export default function MacroModesCard() {
           </p>
           {offseasonPreview && (
             <div className="text-xs text-neutral-500 space-y-1 pl-6">
+              {offseasonPreview.caloriesMin && offseasonPreview.caloriesMax && (
+                <div className="font-medium text-neutral-700">
+                  Kalorimål: {Math.round(offseasonPreview.caloriesMin)}-
+                  {Math.round(offseasonPreview.caloriesMax)} kcal
+                </div>
+              )}
               <div>
                 Protein: {offseasonPreview.proteinMinPercent.toFixed(0)}-
                 {offseasonPreview.proteinMaxPercent.toFixed(0)}%
+                {offseasonPreview.caloriesMin &&
+                  offseasonPreview.caloriesMax &&
+                  ` (${Math.round((offseasonPreview.caloriesMin * offseasonPreview.proteinMinPercent) / 100 / 4)}-${Math.round((offseasonPreview.caloriesMax * offseasonPreview.proteinMaxPercent) / 100 / 4)} g)`}
               </div>
               <div>
                 Kolhydrater: {offseasonPreview.carbMinPercent.toFixed(0)}-
                 {offseasonPreview.carbMaxPercent.toFixed(0)}%
+                {offseasonPreview.caloriesMin &&
+                  offseasonPreview.caloriesMax &&
+                  ` (${Math.round((offseasonPreview.caloriesMin * offseasonPreview.carbMinPercent) / 100 / 4)}-${Math.round((offseasonPreview.caloriesMax * offseasonPreview.carbMaxPercent) / 100 / 4)} g)`}
               </div>
               <div>
                 Fett: {offseasonPreview.fatMinPercent.toFixed(0)}-
                 {offseasonPreview.fatMaxPercent.toFixed(0)}%
+                {offseasonPreview.caloriesMin &&
+                  offseasonPreview.caloriesMax &&
+                  ` (${Math.round((offseasonPreview.caloriesMin * offseasonPreview.fatMinPercent) / 100 / 9)}-${Math.round((offseasonPreview.caloriesMax * offseasonPreview.fatMaxPercent) / 100 / 9)} g)`}
               </div>
             </div>
           )}
@@ -216,7 +243,10 @@ export default function MacroModesCard() {
             <div className="flex items-center gap-2">
               {getModeIcon('onseason')}
               <span className="font-semibold">On-Season Mode</span>
-              <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">
+              <Badge
+                variant="outline"
+                className="bg-success-50 text-success-700 border-success-200"
+              >
                 Cut
               </Badge>
             </div>
@@ -239,17 +269,32 @@ export default function MacroModesCard() {
           )}
           {onseasonPreview && canApplyOnSeason && (
             <div className="text-xs text-neutral-500 space-y-1 pl-6">
+              {onseasonPreview.caloriesMin && onseasonPreview.caloriesMax && (
+                <div className="font-medium text-neutral-700">
+                  Kalorimål: {Math.round(onseasonPreview.caloriesMin)}-
+                  {Math.round(onseasonPreview.caloriesMax)} kcal
+                </div>
+              )}
               <div>
                 Protein: {onseasonPreview.proteinMinPercent.toFixed(0)}-
                 {onseasonPreview.proteinMaxPercent.toFixed(0)}%
+                {onseasonPreview.caloriesMin &&
+                  onseasonPreview.caloriesMax &&
+                  ` (${Math.round((onseasonPreview.caloriesMin * onseasonPreview.proteinMinPercent) / 100 / 4)}-${Math.round((onseasonPreview.caloriesMax * onseasonPreview.proteinMaxPercent) / 100 / 4)} g)`}
               </div>
               <div>
                 Kolhydrater: {onseasonPreview.carbMinPercent.toFixed(0)}-
                 {onseasonPreview.carbMaxPercent.toFixed(0)}%
+                {onseasonPreview.caloriesMin &&
+                  onseasonPreview.caloriesMax &&
+                  ` (${Math.round((onseasonPreview.caloriesMin * onseasonPreview.carbMinPercent) / 100 / 4)}-${Math.round((onseasonPreview.caloriesMax * onseasonPreview.carbMaxPercent) / 100 / 4)} g)`}
               </div>
               <div>
                 Fett: {onseasonPreview.fatMinPercent.toFixed(0)}-
                 {onseasonPreview.fatMaxPercent.toFixed(0)}%
+                {onseasonPreview.caloriesMin &&
+                  onseasonPreview.caloriesMax &&
+                  ` (${Math.round((onseasonPreview.caloriesMin * onseasonPreview.fatMinPercent) / 100 / 9)}-${Math.round((onseasonPreview.caloriesMax * onseasonPreview.fatMaxPercent) / 100 / 9)} g)`}
               </div>
             </div>
           )}

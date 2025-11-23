@@ -288,6 +288,12 @@ export default function UserProfileForm({
     const hasDeficitLevelChange = deficitLevel !== (fullProfile.deficit_level || '')
     const hasCustomTdeeChange = customTdee !== (fullProfile.custom_tdee?.toString() || '')
 
+    // Also check if calculated results have changed (e.g., from PAL system activity level changes)
+    const hasResultChange =
+      result &&
+      (Math.abs((result.tdee || 0) - (fullProfile.tdee || 0)) > 1 ||
+        Math.abs((result.bmr || 0) - (fullProfile.bmr || 0)) > 1)
+
     return (
       hasProfileNameChange ||
       hasWeightChange ||
@@ -302,7 +308,8 @@ export default function UserProfileForm({
       hasCustomPALChange ||
       hasEnergyGoalChange ||
       hasDeficitLevelChange ||
-      hasCustomTdeeChange
+      hasCustomTdeeChange ||
+      hasResultChange
     )
   }, [
     activeProfile,
