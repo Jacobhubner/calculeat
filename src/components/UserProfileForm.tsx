@@ -47,12 +47,14 @@ interface UserProfileFormProps {
   onResultChange?: (result: CalculatorResult | null) => void
   macroRanges?: MacroRanges | null
   mealSettings?: MealSettings | null
+  onBodyFatChange?: (bodyFat: string) => void
 }
 
 export default function UserProfileForm({
   onResultChange,
   macroRanges,
   mealSettings,
+  onBodyFatChange,
 }: UserProfileFormProps = {}) {
   const { profile } = useAuth() // Keep for backward compatibility during transition
   const activeProfile = useProfileStore(state => state.activeProfile)
@@ -133,6 +135,11 @@ export default function UserProfileForm({
     },
     [onResultChange]
   )
+
+  // Notify parent when body fat percentage changes
+  useEffect(() => {
+    onBodyFatChange?.(bodyFatPercentage)
+  }, [bodyFatPercentage, onBodyFatChange])
 
   // Sync birth date dropdowns when birthDate changes
   useEffect(() => {

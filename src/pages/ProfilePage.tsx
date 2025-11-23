@@ -58,6 +58,9 @@ export default function ProfilePage() {
   // Local state for meal settings (used when creating/editing profile)
   const [mealSettings, setMealSettings] = useState<MealSettings | null>(null)
 
+  // Local state for body fat percentage from form
+  const [currentBodyFat, setCurrentBodyFat] = useState<string>('')
+
   // Use local result if available (new profile mode), otherwise use saved tdee
   const tdee = localResult?.tdee || activeProfile?.tdee
 
@@ -84,6 +87,7 @@ export default function ProfilePage() {
               onResultChange={setLocalResult}
               macroRanges={macroRanges}
               mealSettings={mealSettings}
+              onBodyFatChange={setCurrentBodyFat}
             />
 
             {/* Only show macro cards if results (TDEE) exist */}
@@ -96,7 +100,7 @@ export default function ProfilePage() {
                 <MealSettingsCard tdee={tdee} onMealChange={setMealSettings} />
 
                 {/* Macro Modes Card */}
-                <MacroModesCard />
+                <MacroModesCard currentBodyFat={currentBodyFat} />
               </>
             )}
           </div>

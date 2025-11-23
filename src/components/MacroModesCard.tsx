@@ -14,7 +14,11 @@ import { useAuth } from '@/contexts/AuthContext'
 import { useProfiles } from '@/hooks'
 import { toast } from 'sonner'
 
-export default function MacroModesCard() {
+interface MacroModesCardProps {
+  currentBodyFat?: string
+}
+
+export default function MacroModesCard({ currentBodyFat = '' }: MacroModesCardProps) {
   const activeProfile = useProfileStore(state => state.activeProfile)
   const { profile: legacyProfile } = useAuth()
   const { data: allProfiles = [], isLoading } = useProfiles()
@@ -96,10 +100,10 @@ export default function MacroModesCard() {
   }
 
   // Wait for profiles to load before enabling buttons
-  // Check body_fat_percentage from fullProfile which has the saved data
-  // This ensures the button is disabled if body_fat_percentage is not saved in database
-  const canApplyOnSeason =
-    !isLoading && !!fullProfile?.body_fat_percentage && !!fullProfile?.weight_kg && !!fullProfile
+  // Check currentBodyFat from form (live) OR fullProfile.body_fat_percentage (saved)
+  // This ensures the button is disabled if body fat is not entered in the form
+  const hasBodyFat = currentBodyFat.trim() !== '' || !!fullProfile?.body_fat_percentage
+  const canApplyOnSeason = !isLoading && hasBodyFat && !!fullProfile?.weight_kg && !!fullProfile
   const canApplyAny =
     !isLoading &&
     !!fullProfile?.weight_kg &&
