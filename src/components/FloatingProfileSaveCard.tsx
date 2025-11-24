@@ -1,10 +1,9 @@
 /**
  * Floating Profile Save Card
- * Compact floating card that appears after scrolling past results
+ * Compact floating card that appears when there are unsaved changes
  * Shows profile name input and save button
  */
 
-import { useState, useEffect } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -25,23 +24,8 @@ export default function FloatingProfileSaveCard({
   isSaving,
   hasChanges,
 }: FloatingProfileSaveCardProps) {
-  const [isVisible, setIsVisible] = useState(false)
-
-  useEffect(() => {
-    const handleScroll = () => {
-      // Show card after scrolling 300px down
-      const scrollThreshold = 300
-      setIsVisible(window.scrollY > scrollThreshold)
-    }
-
-    window.addEventListener('scroll', handleScroll)
-    handleScroll() // Check initial position
-
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
-  // Only show if scrolled down AND there are actual changes to save
-  if (!isVisible || !hasChanges) return null
+  // Only show if there are actual changes to save
+  if (!hasChanges) return null
 
   return (
     <Card className="fixed right-4 bottom-4 z-50 shadow-xl border-2 border-accent-200 w-64 md:w-72">
