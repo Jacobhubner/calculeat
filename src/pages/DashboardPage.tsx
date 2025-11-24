@@ -7,20 +7,29 @@ import MacroBar from '@/components/MacroBar'
 import EmptyState from '@/components/EmptyState'
 import { useAuth } from '@/contexts/AuthContext'
 import { useProfiles, useCalculations } from '@/hooks'
+import { useTodayLog } from '@/hooks/useDailyLogs'
 import { useProfileStore } from '@/stores/profileStore'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Activity, Flame, Target, TrendingUp, UtensilsCrossed, Scale } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useNavigate } from 'react-router-dom'
 
 export default function DashboardPage() {
+  const navigate = useNavigate()
   const { profile: authProfile } = useAuth()
   const activeProfile = useProfileStore(state => state.activeProfile)
   const { data: allProfiles, isLoading } = useProfiles()
+  const { data: todayLog } = useTodayLog()
 
   // Get full profile data from allProfiles array
   const profile = allProfiles?.find(p => p.id === activeProfile?.id)
 
   const calculations = useCalculations(profile)
+
+  // Get today's consumed calories and macros
+  const consumed = todayLog?.total_calories || 0
+  const target = calculations.calorieGoal?.target || 2000
+  const remaining = target - consumed
 
   if (isLoading) {
     return (
@@ -102,11 +111,7 @@ export default function DashboardPage() {
             {/* Main Content Grid */}
             <div className="grid gap-6 lg:grid-cols-2">
               {/* Calorie Ring */}
-              <CalorieRing
-                consumed={0}
-                target={calculations.calorieGoal?.target || 2000}
-                remaining={calculations.calorieGoal?.target || 2000}
-              />
+              <CalorieRing consumed={consumed} target={target} remaining={remaining} />
 
               {/* Macro Bar */}
               {calculations.macros && <MacroBar {...calculations.macros} />}
@@ -119,11 +124,24 @@ export default function DashboardPage() {
                 <CardDescription>Logga dina måltider</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid gap-4">
-                  <Button size="lg" variant="outline" className="h-20" disabled>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="h-20"
+                    onClick={() => navigate('/app/today')}
+                  >
                     <UtensilsCrossed className="h-5 w-5 mr-2" />
                     Logga måltid
-                    <span className="ml-2 text-xs text-neutral-500">(Kommer snart)</span>
+                  </Button>
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="h-20"
+                    onClick={() => navigate('/app/history')}
+                  >
+                    <Activity className="h-5 w-5 mr-2" />
+                    Se historik
                   </Button>
                 </div>
               </CardContent>
