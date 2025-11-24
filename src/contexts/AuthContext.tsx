@@ -37,10 +37,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!user) return
 
     try {
+      // Fetch active profile from profiles table instead of legacy user_profiles
       const { data, error } = await supabase
-        .from('user_profiles')
+        .from('profiles')
         .select('*')
-        .eq('id', user.id)
+        .eq('user_id', user.id)
+        .eq('is_active', true)
         .single()
 
       if (error) throw error
@@ -123,7 +125,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!user) return
 
     try {
-      const { error } = await supabase.from('user_profiles').update(data).eq('id', user.id)
+      // Update active profile in profiles table instead of legacy user_profiles
+      const { error } = await supabase
+        .from('profiles')
+        .update(data)
+        .eq('user_id', user.id)
+        .eq('is_active', true)
 
       if (error) throw error
       await refreshProfile()

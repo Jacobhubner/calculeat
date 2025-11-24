@@ -15,6 +15,7 @@ import { useProfileStore } from '@/stores/profileStore'
 import { useUpdateProfile, useCreateProfile, useProfiles } from '@/hooks'
 import { Lock } from 'lucide-react'
 import FloatingProfileSaveCard from './FloatingProfileSaveCard'
+import { ProfileFormSkeleton } from './ProfileFormSkeleton'
 
 interface CalculatorResult {
   bmr: number
@@ -814,6 +815,13 @@ export default function UserProfileForm({
     } finally {
       setIsSaving(false)
     }
+  }
+
+  // Show loading skeleton while profile data is being fetched
+  // This happens when activeProfile has only {id, profile_name} from localStorage
+  // and we're waiting for the full data from useProfiles()
+  if (activeProfile && !allProfiles.find(p => p.id === activeProfile.id)) {
+    return <ProfileFormSkeleton />
   }
 
   return (

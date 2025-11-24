@@ -9,15 +9,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { useProfiles, useCalculations } from '@/hooks'
 import { useProfileStore } from '@/stores/profileStore'
 import { Skeleton } from '@/components/ui/skeleton'
-import {
-  Activity,
-  Flame,
-  Target,
-  TrendingUp,
-  UtensilsCrossed,
-  Dumbbell as DumbbellIcon,
-  Scale,
-} from 'lucide-react'
+import { Activity, Flame, Target, TrendingUp, UtensilsCrossed, Scale } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 export default function DashboardPage() {
@@ -67,7 +59,7 @@ export default function DashboardPage() {
           <EmptyState
             icon={Scale}
             title="Komplettera din profil"
-            description="För att få personliga rekommendationer och se dina statistik behöver du fylla i din profil."
+            description="För att få personliga rekommendationer och se din statistik behöver du fylla i din profil."
             action={{
               label: 'Gå till profil',
               onClick: () => (window.location.href = '/app/profile'),
@@ -124,18 +116,13 @@ export default function DashboardPage() {
             <Card>
               <CardHeader>
                 <CardTitle>Snabbåtgärder</CardTitle>
-                <CardDescription>Logga dina måltider och träning</CardDescription>
+                <CardDescription>Logga dina måltider</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid gap-4">
                   <Button size="lg" variant="outline" className="h-20" disabled>
                     <UtensilsCrossed className="h-5 w-5 mr-2" />
                     Logga måltid
-                    <span className="ml-2 text-xs text-neutral-500">(Kommer snart)</span>
-                  </Button>
-                  <Button size="lg" variant="outline" className="h-20" disabled>
-                    <DumbbellIcon className="h-5 w-5 mr-2" />
-                    Logga träning
                     <span className="ml-2 text-xs text-neutral-500">(Kommer snart)</span>
                   </Button>
                 </div>
