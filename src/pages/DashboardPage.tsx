@@ -6,7 +6,8 @@ import CalorieRing from '@/components/CalorieRing'
 import MacroBar from '@/components/MacroBar'
 import EmptyState from '@/components/EmptyState'
 import { useAuth } from '@/contexts/AuthContext'
-import { useUserProfile, useCalculations } from '@/hooks'
+import { useProfiles, useCalculations } from '@/hooks'
+import { useProfileStore } from '@/stores/profileStore'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
   Activity,
@@ -21,7 +22,12 @@ import { Button } from '@/components/ui/button'
 
 export default function DashboardPage() {
   const { profile: authProfile } = useAuth()
-  const { data: profile, isLoading } = useUserProfile()
+  const activeProfile = useProfileStore(state => state.activeProfile)
+  const { data: allProfiles, isLoading } = useProfiles()
+
+  // Get full profile data from allProfiles array
+  const profile = allProfiles?.find(p => p.id === activeProfile?.id)
+
   const calculations = useCalculations(profile)
 
   if (isLoading) {

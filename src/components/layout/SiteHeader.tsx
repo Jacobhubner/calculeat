@@ -1,15 +1,17 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { Menu, X, LogOut } from 'lucide-react'
+import { Menu, X, LogOut, User } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '../ui/button'
 import { Avatar, AvatarFallback } from '../ui/avatar'
 import { useAuth } from '@/contexts/AuthContext'
 import { useUIStore } from '@/stores/uiStore'
+import { useProfileStore } from '@/stores/profileStore'
 import { cn } from '@/lib/utils'
 
 export default function SiteHeader() {
   const { user, signOut, profile } = useAuth()
   const { mobileMenuOpen, toggleMobileMenu, setMobileMenuOpen } = useUIStore()
+  const activeProfile = useProfileStore(state => state.activeProfile)
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -92,6 +94,18 @@ export default function SiteHeader() {
         <div className="hidden md:flex items-center gap-3">
           {user ? (
             <div className="flex items-center gap-3">
+              {activeProfile && (
+                <Link
+                  to="/app/profile"
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary-50 hover:bg-primary-100 transition-colors"
+                  title="Aktivt profilkort"
+                >
+                  <User className="h-4 w-4 text-primary-600" />
+                  <span className="text-sm font-medium text-primary-700">
+                    {activeProfile.profile_name}
+                  </span>
+                </Link>
+              )}
               <Link to="/app">
                 <Avatar className="h-9 w-9 cursor-pointer ring-2 ring-transparent hover:ring-primary-200 transition-all">
                   <AvatarFallback className="text-xs">{getInitials()}</AvatarFallback>
@@ -170,6 +184,12 @@ export default function SiteHeader() {
                         {profile?.full_name || 'Användare'}
                       </p>
                       <p className="text-xs text-neutral-500 truncate">{user.email}</p>
+                      {activeProfile && (
+                        <p className="text-xs text-primary-600 truncate flex items-center gap-1 mt-0.5">
+                          <User className="h-3 w-3" />
+                          {activeProfile.profile_name}
+                        </p>
+                      )}
                     </div>
                   </div>
                   <Button

@@ -64,6 +64,11 @@ export default function ProfilePage() {
   // Use local result if available (new profile mode), otherwise use saved tdee
   const tdee = localResult?.tdee || activeProfile?.tdee
 
+  // Get calorie range for macro calculations (based on energy goal)
+  const caloriesMin = activeProfile?.calories_min
+  const caloriesMax = activeProfile?.calories_max
+  const avgCalories = caloriesMin && caloriesMax ? (caloriesMin + caloriesMax) / 2 : tdee
+
   return (
     <DashboardLayout>
       {/* Header */}
@@ -94,10 +99,10 @@ export default function ProfilePage() {
             {tdee && (
               <>
                 {/* Macro Distribution Settings */}
-                <MacroDistributionCard tdee={tdee} onMacroChange={setMacroRanges} />
+                <MacroDistributionCard tdee={avgCalories} onMacroChange={setMacroRanges} />
 
                 {/* Meal Settings */}
-                <MealSettingsCard tdee={tdee} onMealChange={setMealSettings} />
+                <MealSettingsCard tdee={avgCalories} onMealChange={setMealSettings} />
 
                 {/* Macro Modes Card */}
                 <MacroModesCard currentBodyFat={currentBodyFat} />

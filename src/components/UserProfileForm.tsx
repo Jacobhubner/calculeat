@@ -14,7 +14,6 @@ import { translatePALSystem } from '@/lib/translations'
 import { useProfileStore } from '@/stores/profileStore'
 import { useUpdateProfile, useCreateProfile, useProfiles } from '@/hooks'
 import { Lock } from 'lucide-react'
-import { toast } from 'sonner'
 import FloatingProfileSaveCard from './FloatingProfileSaveCard'
 
 interface CalculatorResult {
@@ -180,8 +179,8 @@ export default function UserProfileForm({
       setPalSystem((fullProfile.pal_system as PALSystem) || '')
       setActivityLevel(fullProfile.activity_level || '')
       setIntensityLevel(fullProfile.intensity_level || '')
-      setTrainingFrequency(fullProfile.training_frequency_per_week || '')
-      setTrainingDuration(fullProfile.training_duration_minutes || '')
+      setTrainingFrequency(fullProfile.training_frequency_per_week?.toString() || '')
+      setTrainingDuration(fullProfile.training_duration_minutes?.toString() || '')
       setDailySteps(fullProfile.daily_steps || '')
       setCustomPAL(fullProfile.custom_pal?.toString() || '')
 
@@ -218,8 +217,8 @@ export default function UserProfileForm({
       setPalSystem((sourceProfile.pal_system as PALSystem) || '')
       setActivityLevel(sourceProfile.activity_level || '')
       setIntensityLevel(sourceProfile.intensity_level || '')
-      setTrainingFrequency(sourceProfile.training_frequency_per_week || '')
-      setTrainingDuration(sourceProfile.training_duration_minutes || '')
+      setTrainingFrequency(sourceProfile.training_frequency_per_week?.toString() || '')
+      setTrainingDuration(sourceProfile.training_duration_minutes?.toString() || '')
       setDailySteps(sourceProfile.daily_steps || '')
       setCustomPAL(sourceProfile.custom_pal?.toString() || '')
 
@@ -308,6 +307,20 @@ export default function UserProfileForm({
       (Math.abs((result.tdee || 0) - (fullProfile.tdee || 0)) > 1 ||
         Math.abs((result.bmr || 0) - (fullProfile.bmr || 0)) > 1)
 
+    // Check if macro distribution has changed
+    const hasMacroChange =
+      macroRanges &&
+      (macroRanges.fatMin !== fullProfile.fat_min_percent ||
+        macroRanges.fatMax !== fullProfile.fat_max_percent ||
+        macroRanges.carbMin !== fullProfile.carb_min_percent ||
+        macroRanges.carbMax !== fullProfile.carb_max_percent ||
+        macroRanges.proteinMin !== fullProfile.protein_min_percent ||
+        macroRanges.proteinMax !== fullProfile.protein_max_percent)
+
+    // Check if meal settings have changed
+    const hasMealSettingsChange =
+      mealSettings && JSON.stringify(mealSettings) !== JSON.stringify(fullProfile.meals_config)
+
     return (
       hasProfileNameChange ||
       hasWeightChange ||
@@ -323,7 +336,9 @@ export default function UserProfileForm({
       hasEnergyGoalChange ||
       hasDeficitLevelChange ||
       hasCustomTdeeChange ||
-      hasResultChange
+      hasResultChange ||
+      hasMacroChange ||
+      hasMealSettingsChange
     )
   }, [
     activeProfile,
@@ -343,12 +358,38 @@ export default function UserProfileForm({
     deficitLevel,
     customTdee,
     result,
+    macroRanges,
+    mealSettings,
   ])
 
   // Register function for PAL table - updates state in real-time
   const register = (name: string) => {
+    // Get current value from state
+    let currentValue = ''
+    switch (name) {
+      case 'activity_level':
+        currentValue = activityLevel
+        break
+      case 'intensity_level':
+        currentValue = intensityLevel
+        break
+      case 'training_frequency_per_week':
+        currentValue = trainingFrequency
+        break
+      case 'training_duration_minutes':
+        currentValue = trainingDuration
+        break
+      case 'daily_steps':
+        currentValue = dailySteps
+        break
+      case 'custom_pal':
+        currentValue = customPAL
+        break
+    }
+
     return {
       name,
+      value: currentValue,
       onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const value = e.target.value
 
@@ -575,6 +616,7 @@ export default function UserProfileForm({
     trainingFrequency,
     trainingDuration,
     dailySteps,
+    setResult,
   ])
 
   // Auto-calculate when all required fields are filled
@@ -761,14 +803,10 @@ export default function UserProfileForm({
           profileId: activeProfile.id,
           data: profileData,
         })
-        toast.success(`Profilen "${profileName}" har uppdaterats`, {
-          description: 'Dina ändringar har sparats',
-        })
+        // Toast is handled by useUpdateProfile hook
       } else {
         await createProfileMutation.mutateAsync(profileData)
-        toast.success(`Profilen "${profileName}" har skapats`, {
-          description: 'Din nya profil har sparats',
-        })
+        // Toast is handled by useCreateProfile hook
       }
     } catch (error) {
       console.error('Error saving profile:', error)

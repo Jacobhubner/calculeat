@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
+import { useProfileStore } from '@/stores/profileStore'
 
 export interface MealEntryItem {
   id: string
@@ -36,6 +37,7 @@ export interface MealEntry {
 export interface DailyLog {
   id: string
   user_id: string
+  profile_id: string
   log_date: string
   is_completed: boolean
 
@@ -67,16 +69,18 @@ export interface DailyLog {
 }
 
 /**
- * Get today's daily log
+ * Get today's daily log for the active profile
  */
 export function useTodayLog() {
   const { user } = useAuth()
+  const activeProfile = useProfileStore(state => state.activeProfile)
   const today = new Date().toISOString().split('T')[0]
 
   return useQuery({
-    queryKey: ['dailyLogs', 'today', user?.id, today],
+    queryKey: ['dailyLogs', 'today', user?.id, activeProfile?.id, today],
     queryFn: async () => {
       if (!user) throw new Error('User not authenticated')
+      if (!activeProfile) throw new Error('No active profile')
 
       const { data, error } = await supabase
         .from('daily_logs')
@@ -93,6 +97,7 @@ export function useTodayLog() {
         `
         )
         .eq('user_id', user.id)
+        .eq('profile_id', activeProfile.id)
         .eq('log_date', today)
         .order('meal_order', { foreignTable: 'meal_entries' })
         .order('item_order', { foreignTable: 'meal_entries.meal_entry_items' })
@@ -101,20 +106,22 @@ export function useTodayLog() {
       if (error) throw error
       return data as DailyLog | null
     },
-    enabled: !!user,
+    enabled: !!user && !!activeProfile,
   })
 }
 
 /**
- * Get daily log by date
+ * Get daily log by date for the active profile
  */
 export function useDailyLog(date: string) {
   const { user } = useAuth()
+  const activeProfile = useProfileStore(state => state.activeProfile)
 
   return useQuery({
-    queryKey: ['dailyLogs', user?.id, date],
+    queryKey: ['dailyLogs', user?.id, activeProfile?.id, date],
     queryFn: async () => {
       if (!user) throw new Error('User not authenticated')
+      if (!activeProfile) throw new Error('No active profile')
 
       const { data, error } = await supabase
         .from('daily_logs')
@@ -131,6 +138,7 @@ export function useDailyLog(date: string) {
         `
         )
         .eq('user_id', user.id)
+        .eq('profile_id', activeProfile.id)
         .eq('log_date', date)
         .order('meal_order', { foreignTable: 'meal_entries' })
         .order('item_order', { foreignTable: 'meal_entries.meal_entry_items' })
@@ -139,20 +147,22 @@ export function useDailyLog(date: string) {
       if (error) throw error
       return data as DailyLog | null
     },
-    enabled: !!user && !!date,
+    enabled: !!user && !!activeProfile && !!date,
   })
 }
 
 /**
- * Get daily logs for a date range
+ * Get daily logs for a date range for the active profile
  */
 export function useDailyLogs(startDate: string, endDate: string) {
   const { user } = useAuth()
+  const activeProfile = useProfileStore(state => state.activeProfile)
 
   return useQuery({
-    queryKey: ['dailyLogs', 'range', user?.id, startDate, endDate],
+    queryKey: ['dailyLogs', 'range', user?.id, activeProfile?.id, startDate, endDate],
     queryFn: async () => {
       if (!user) throw new Error('User not authenticated')
+      if (!activeProfile) throw new Error('No active profile')
 
       const { data, error } = await supabase
         .from('daily_logs')
@@ -169,6 +179,7 @@ export function useDailyLogs(startDate: string, endDate: string) {
         `
         )
         .eq('user_id', user.id)
+        .eq('profile_id', activeProfile.id)
         .gte('log_date', startDate)
         .lte('log_date', endDate)
         .order('log_date', { ascending: false })
@@ -177,47 +188,45 @@ export function useDailyLogs(startDate: string, endDate: string) {
       if (error) throw error
       return data as DailyLog[]
     },
-    enabled: !!user && !!startDate && !!endDate,
+    enabled: !!user && !!activeProfile && !!startDate && !!endDate,
   })
 }
 
 /**
- * Create or get today's log (ensures log exists)
+ * Create or get today's log for active profile (ensures log exists)
  */
 export function useEnsureTodayLog() {
   const { user } = useAuth()
+  const activeProfile = useProfileStore(state => state.activeProfile)
   const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: async () => {
       if (!user) throw new Error('User not authenticated')
+      if (!activeProfile) throw new Error('No active profile')
 
       const today = new Date().toISOString().split('T')[0]
 
-      // Check if log exists
+      // Check if log exists for this profile and date
       const { data: existing } = await supabase
         .from('daily_logs')
         .select('*')
         .eq('user_id', user.id)
+        .eq('profile_id', activeProfile.id)
         .eq('log_date', today)
         .maybeSingle()
 
       if (existing) return existing as DailyLog
 
-      // Create new log with goals from profile
-      const { data: profile } = await supabase
-        .from('user_profiles')
-        .select('calories_min, calories_max')
-        .eq('id', user.id)
-        .single()
-
+      // Create new log with goals from active profile
       const { data: newLog, error } = await supabase
         .from('daily_logs')
         .insert({
           user_id: user.id,
+          profile_id: activeProfile.id,
           log_date: today,
-          goal_calories_min: profile?.calories_min,
-          goal_calories_max: profile?.calories_max,
+          goal_calories_min: activeProfile.calories_min,
+          goal_calories_max: activeProfile.calories_max,
         })
         .select()
         .single()
@@ -422,15 +431,17 @@ export function useFinishDay() {
 }
 
 /**
- * Copy a previous day's meals to today
+ * Copy a previous day's meals to today for the active profile
  */
 export function useCopyDayToToday() {
   const { user } = useAuth()
+  const activeProfile = useProfileStore(state => state.activeProfile)
   const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: async (sourceDailyLogId: string) => {
       if (!user) throw new Error('User not authenticated')
+      if (!activeProfile) throw new Error('No active profile')
 
       // Get source log with all meals and items
       const { data: sourceLog, error: fetchError } = await supabase
@@ -449,12 +460,13 @@ export function useCopyDayToToday() {
 
       if (fetchError) throw fetchError
 
-      // Ensure today's log exists
+      // Ensure today's log exists for active profile
       const today = new Date().toISOString().split('T')[0]
       const { data: todayLog } = await supabase
         .from('daily_logs')
         .select('*')
         .eq('user_id', user.id)
+        .eq('profile_id', activeProfile.id)
         .eq('log_date', today)
         .maybeSingle()
 
@@ -467,6 +479,7 @@ export function useCopyDayToToday() {
           .from('daily_logs')
           .insert({
             user_id: user.id,
+            profile_id: activeProfile.id,
             log_date: today,
           })
           .select()

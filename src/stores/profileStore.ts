@@ -56,11 +56,19 @@ export const useProfileStore = create<ProfileState>()(
 
       // Set all profiles
       setProfiles: profiles =>
-        set({
+        set(state => ({
           profiles,
-          // Auto-select active profile if exists
-          activeProfile: profiles.find(p => p.is_active) || profiles[0] || null,
-        }),
+          // Only auto-select if we don't have an explicit null (new profile mode)
+          // If activeProfile is explicitly null, keep it null (user is creating new profile)
+          // If activeProfile has a value, try to update it from the new profiles list
+          // If activeProfile is undefined (initial state), auto-select
+          activeProfile:
+            state.activeProfile === null
+              ? null
+              : state.activeProfile
+                ? profiles.find(p => p.id === state.activeProfile?.id) || state.activeProfile
+                : profiles.find(p => p.is_active) || profiles[0] || null,
+        })),
 
       // Add profile
       addProfile: profile =>
