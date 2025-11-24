@@ -67,9 +67,8 @@ export function useApplyMacroMode() {
         caloriesMax: profile.calories_max,
       })
 
+      // Only update macro-related fields to preserve other unsaved changes in the form
       const macroData = {
-        calorie_goal: macroMode.calorieGoal,
-        deficit_level: macroMode.deficitLevel || null,
         fat_min_percent: macroMode.fatMinPercent,
         fat_max_percent: macroMode.fatMaxPercent,
         carb_min_percent: macroMode.carbMinPercent,
@@ -103,8 +102,14 @@ export function useApplyMacroMode() {
         return data
       }
     },
-    onSuccess: () => {
-      // Invalidate profile queries
+    onSuccess: updatedData => {
+      // Update the store immediately with the new macro values
+      const updateProfileInStore = useProfileStore.getState().updateProfile
+      if (activeProfile?.id && updatedData) {
+        updateProfileInStore(activeProfile.id, updatedData)
+      }
+
+      // Invalidate profile queries to refetch full data
       queryClient.invalidateQueries({ queryKey: ['userProfile'] })
       queryClient.invalidateQueries({ queryKey: ['profiles'] })
     },

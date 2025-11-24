@@ -45,18 +45,19 @@ export function offSeasonMode(weight: number, caloriesMin: number, caloriesMax: 
   const proteinMinGrams = weight * 1.6
   const proteinMaxGrams = weight * 2.2
 
-  // Convert to percentages (min% uses caloriesMax, max% uses caloriesMin)
-  const fatMinPercent = ((fatMinGrams * 9) / caloriesMax) * 100
-  const fatMaxPercent = ((fatMaxGrams * 9) / caloriesMin) * 100
-  const proteinMinPercent = ((proteinMinGrams * 4) / caloriesMax) * 100
-  const proteinMaxPercent = ((proteinMaxGrams * 4) / caloriesMin) * 100
+  // Convert grams to kcal
+  const fatMinKcal = fatMinGrams * 9
+  const fatMaxKcal = fatMaxGrams * 9
+  const proteinMinKcal = proteinMinGrams * 4
+  const proteinMaxKcal = proteinMaxGrams * 4
+
+  // Convert to percentages (NO inversion - match Google Sheets logic)
+  const fatMinPercent = (fatMinKcal / caloriesMin) * 100
+  const fatMaxPercent = (fatMaxKcal / caloriesMax) * 100
+  const proteinMinPercent = (proteinMinKcal / caloriesMin) * 100
+  const proteinMaxPercent = (proteinMaxKcal / caloriesMax) * 100
 
   // CARBS: remaining energy after fat and protein
-  const fatMaxKcal = fatMaxGrams * 9
-  const proteinMaxKcal = proteinMaxGrams * 4
-  const fatMinKcal = fatMinGrams * 9
-  const proteinMinKcal = proteinMinGrams * 4
-
   const carbsMinKcal = caloriesMin - (fatMaxKcal + proteinMaxKcal)
   const carbsMaxKcal = caloriesMax - (fatMinKcal + proteinMinKcal)
 
@@ -83,26 +84,27 @@ export function onSeasonMode(
   caloriesMin: number,
   caloriesMax: number
 ): MacroMode {
-  // FAT: 15-30% of calorie range
-  const fatMinGrams = (caloriesMin * 0.15) / 9
-  const fatMaxGrams = (caloriesMax * 0.3) / 9
+  // FAT: Always percentage of calories (NO inversion)
+  // Fat-min = 15% of caloriesMin
+  // Fat-max = 30% of caloriesMax
+  const fatMinKcal = caloriesMin * 0.15
+  const fatMaxKcal = caloriesMax * 0.3
 
-  // PROTEIN: 2.3-3.1 g per kg FFM
+  // PROTEIN: Based on FFM (grams)
   const proteinMinGrams = fatFreeMass * 2.3
   const proteinMaxGrams = fatFreeMass * 3.1
 
-  // Convert to percentages (min% uses caloriesMax, max% uses caloriesMin)
-  const fatMinPercent = ((fatMinGrams * 9) / caloriesMax) * 100
-  const fatMaxPercent = ((fatMaxGrams * 9) / caloriesMin) * 100
-  const proteinMinPercent = ((proteinMinGrams * 4) / caloriesMax) * 100
-  const proteinMaxPercent = ((proteinMaxGrams * 4) / caloriesMin) * 100
+  // Convert protein grams to kcal
+  const proteinMinKcal = proteinMinGrams * 4
+  const proteinMaxKcal = proteinMaxGrams * 4
+
+  // Convert to percentages (NO inversion - match Google Sheets logic)
+  const fatMinPercent = (fatMinKcal / caloriesMin) * 100
+  const fatMaxPercent = (fatMaxKcal / caloriesMax) * 100
+  const proteinMinPercent = (proteinMinKcal / caloriesMin) * 100
+  const proteinMaxPercent = (proteinMaxKcal / caloriesMax) * 100
 
   // CARBS: remaining energy after fat and protein
-  const fatMaxKcal = fatMaxGrams * 9
-  const proteinMaxKcal = proteinMaxGrams * 4
-  const fatMinKcal = fatMinGrams * 9
-  const proteinMinKcal = proteinMinGrams * 4
-
   const carbsMinKcal = caloriesMin - (fatMaxKcal + proteinMaxKcal)
   const carbsMaxKcal = caloriesMax - (fatMinKcal + proteinMinKcal)
 
