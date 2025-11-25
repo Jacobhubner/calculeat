@@ -7,10 +7,27 @@ import CalorieRing from '@/components/CalorieRing'
 import MacroBar from '@/components/MacroBar'
 import EmptyState from '@/components/EmptyState'
 import RecentFoodsCard from '@/components/RecentFoodsCard'
-import { Calendar, Plus, Check, Coffee, UtensilsCrossed, Sparkles, Copy } from 'lucide-react'
-import { useTodayLog, useEnsureTodayLog, useFinishDay } from '@/hooks/useDailyLogs'
+import {
+  Calendar,
+  Plus,
+  Check,
+  Coffee,
+  UtensilsCrossed,
+  Sparkles,
+  Copy,
+  Trash2,
+} from 'lucide-react'
+import {
+  useTodayLog,
+  useEnsureTodayLog,
+  useFinishDay,
+  useCopyDayToToday,
+  useRemoveFoodFromMeal,
+  useDailyLog,
+} from '@/hooks/useDailyLogs'
 import { useMealSettings, useCreateDefaultMealSettings } from '@/hooks/useMealSettings'
 import { Skeleton } from '@/components/ui/skeleton'
+import { toast } from 'sonner'
 
 export default function TodayPage() {
   const { data: todayLog, isLoading: logLoading } = useTodayLog()
@@ -18,6 +35,16 @@ export default function TodayPage() {
   const ensureLog = useEnsureTodayLog()
   const createDefaultSettings = useCreateDefaultMealSettings()
   const finishDay = useFinishDay()
+  const copyDayToToday = useCopyDayToToday()
+  const removeFoodFromMeal = useRemoveFoodFromMeal()
+
+  // Get yesterday's log for copy functionality
+  const yesterday = useMemo(() => {
+    const date = new Date()
+    date.setDate(date.getDate() - 1)
+    return date.toISOString().split('T')[0]
+  }, [])
+  const { data: yesterdayLog } = useDailyLog(yesterday)
 
   const dateDisplay = useMemo(() => {
     const today = new Date()
@@ -70,10 +97,42 @@ export default function TodayPage() {
     if (todayLog && !todayLog.is_completed) {
       finishDay.mutate(todayLog.id, {
         onSuccess: () => {
-          alert('Dagen är klar! 🎉')
+          toast.success('Dagen är klar! 🎉')
         },
       })
     }
+  }
+
+  const handleCopyFromYesterday = () => {
+    if (!yesterdayLog) {
+      toast.error('Ingen data från igår att kopiera')
+      return
+    }
+
+    if (!yesterdayLog.meals || yesterdayLog.meals.length === 0) {
+      toast.error('Inga måltider loggade igår')
+      return
+    }
+
+    copyDayToToday.mutate(yesterdayLog.id, {
+      onSuccess: () => {
+        toast.success('Kopierade måltider från igår!')
+      },
+      onError: () => {
+        toast.error('Kunde inte kopiera måltider')
+      },
+    })
+  }
+
+  const handleRemoveFood = (itemId: string, foodName: string) => {
+    removeFoodFromMeal.mutate(itemId, {
+      onSuccess: () => {
+        toast.success(`${foodName} har tagits bort`)
+      },
+      onError: () => {
+        toast.error('Kunde inte ta bort matvaran')
+      },
+    })
   }
 
   return (
@@ -88,13 +147,19 @@ export default function TodayPage() {
           <p className="text-neutral-600 capitalize">{dateDisplay}</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="gap-2">
+          <Button
+            variant="outline"
+            className="gap-2"
+            onClick={handleCopyFromYesterday}
+            disabled={!yesterdayLog || copyDayToToday.isPending}
+          >
             <Copy className="h-4 w-4" />
-            Kopiera från igår
+            {copyDayToToday.isPending ? 'Kopierar...' : 'Kopiera från igår'}
           </Button>
           {todayLog && !todayLog.is_completed && (
             <Button
               onClick={handleFinishDay}
+              disabled={finishDay.isPending}
               className="gap-2 bg-gradient-to-r from-success-600 to-success-500"
             >
               <Check className="h-4 w-4" />
@@ -186,34 +251,104 @@ export default function TodayPage() {
             />
           ) : (
             <div className="space-y-4">
-              {mealSettings.map((mealSetting, index) => (
-                <Card key={mealSetting.id}>
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        {index === 0 && <Coffee className="h-5 w-5 text-primary-600" />}
-                        {index > 0 && <UtensilsCrossed className="h-5 w-5 text-accent-600" />}
-                        <div>
-                          <CardTitle className="text-lg">{mealSetting.meal_name}</CardTitle>
-                          <CardDescription>
-                            {mealSetting.percentage_of_daily_calories}% av dagens kalorier
-                          </CardDescription>
+              {mealSettings.map((mealSetting, index) => {
+                // Find corresponding meal entry from today's log
+                const mealEntry = todayLog?.meals?.find(m => m.meal_name === mealSetting.meal_name)
+                const hasItems = mealEntry?.items && mealEntry.items.length > 0
+
+                return (
+                  <Card key={mealSetting.id}>
+                    <CardHeader>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          {index === 0 && <Coffee className="h-5 w-5 text-primary-600" />}
+                          {index > 0 && <UtensilsCrossed className="h-5 w-5 text-accent-600" />}
+                          <div>
+                            <CardTitle className="text-lg">{mealSetting.meal_name}</CardTitle>
+                            <CardDescription>
+                              {hasItems
+                                ? `${mealEntry.meal_calories} kcal • ${mealEntry.items.length} matvara${mealEntry.items.length > 1 ? 'r' : ''}`
+                                : `${mealSetting.percentage_of_daily_calories}% av dagens kalorier`}
+                            </CardDescription>
+                          </div>
                         </div>
+                        <Button size="sm" className="gap-2">
+                          <Plus className="h-4 w-4" />
+                          Lägg till
+                        </Button>
                       </div>
-                      <Button size="sm" className="gap-2">
-                        <Plus className="h-4 w-4" />
-                        Lägg till mat
-                      </Button>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    {/* TODO: Display meal items here */}
-                    <div className="text-center py-8 text-neutral-400">
-                      Inga matvaror tillagda ännu
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                    </CardHeader>
+                    <CardContent>
+                      {hasItems ? (
+                        <div className="space-y-2">
+                          {mealEntry.items.map(item => {
+                            const foodItem = item.food_item as {
+                              name?: string
+                              brand?: string
+                            } | null
+                            return (
+                              <div
+                                key={item.id}
+                                className="flex items-center justify-between p-3 bg-neutral-50 rounded-lg group hover:bg-neutral-100 transition-colors"
+                              >
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2">
+                                    <p className="font-medium text-neutral-900">
+                                      {foodItem?.name || 'Okänd matvara'}
+                                    </p>
+                                    {foodItem?.brand && (
+                                      <span className="text-xs text-neutral-500">
+                                        ({foodItem.brand})
+                                      </span>
+                                    )}
+                                  </div>
+                                  <div className="flex items-center gap-3 mt-1 text-xs text-neutral-600">
+                                    <span>
+                                      {item.amount} {item.unit}
+                                    </span>
+                                    <span>•</span>
+                                    <span>{item.calories} kcal</span>
+                                    <span className="hidden sm:inline">•</span>
+                                    <span className="hidden sm:inline">
+                                      P: {item.protein_g}g | K: {item.carb_g}g | F: {item.fat_g}g
+                                    </span>
+                                  </div>
+                                </div>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  className="opacity-0 group-hover:opacity-100 transition-opacity text-red-600 hover:text-red-700 hover:bg-red-50"
+                                  onClick={() =>
+                                    handleRemoveFood(item.id, foodItem?.name || 'Matvara')
+                                  }
+                                  disabled={removeFoodFromMeal.isPending}
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            )
+                          })}
+                          <div className="pt-3 border-t flex justify-between text-sm">
+                            <span className="font-medium text-neutral-700">Totalt:</span>
+                            <div className="flex gap-4 text-neutral-600">
+                              <span>{mealEntry.meal_calories} kcal</span>
+                              <span className="hidden sm:inline">
+                                P: {mealEntry.meal_protein_g}g
+                              </span>
+                              <span className="hidden sm:inline">K: {mealEntry.meal_carb_g}g</span>
+                              <span className="hidden sm:inline">F: {mealEntry.meal_fat_g}g</span>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="text-center py-8 text-neutral-400 text-sm">
+                          Inga matvaror tillagda ännu
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                )
+              })}
             </div>
           )}
         </div>
