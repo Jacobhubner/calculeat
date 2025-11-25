@@ -1,12 +1,13 @@
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import ProfileCompletionGuard from '@/components/ProfileCompletionGuard'
+import OnboardingModal from '@/components/OnboardingModal'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import StatCard from '@/components/StatCard'
 import CalorieRing from '@/components/CalorieRing'
 import MacroBar from '@/components/MacroBar'
 import EmptyState from '@/components/EmptyState'
 import { useAuth } from '@/contexts/AuthContext'
-import { useProfiles, useCalculations } from '@/hooks'
+import { useProfiles, useCalculations, useOnboarding } from '@/hooks'
 import { useTodayLog } from '@/hooks/useDailyLogs'
 import { useProfileStore } from '@/stores/profileStore'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -20,6 +21,7 @@ export default function DashboardPage() {
   const activeProfile = useProfileStore(state => state.activeProfile)
   const { data: allProfiles, isLoading } = useProfiles()
   const { data: todayLog } = useTodayLog()
+  const { showOnboarding, setShowOnboarding, completeOnboarding } = useOnboarding()
 
   // Get full profile data from allProfiles array
   const profile = allProfiles?.find(p => p.id === activeProfile?.id)
@@ -30,6 +32,13 @@ export default function DashboardPage() {
   const consumed = todayLog?.total_calories || 0
   const target = calculations.calorieGoal?.target || 2000
   const remaining = target - consumed
+
+  const handleOnboardingClose = (open: boolean) => {
+    if (!open) {
+      completeOnboarding()
+    }
+    setShowOnboarding(open)
+  }
 
   if (isLoading) {
     return (
@@ -51,6 +60,9 @@ export default function DashboardPage() {
   return (
     <ProfileCompletionGuard>
       <DashboardLayout>
+        {/* Onboarding Modal */}
+        <OnboardingModal open={showOnboarding} onOpenChange={handleOnboardingClose} />
+
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent mb-2">

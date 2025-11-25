@@ -15,6 +15,7 @@ export * from './useSavedMeals'
 export * from './useDailyLogs'
 export * from './useMealSettings'
 export * from './useMacroModes'
+export * from './useOnboarding'
 
 // Profile management hooks
 export * from './useProfiles'

@@ -96,33 +96,39 @@ export default function RecentFoodsCard({ dailyLogId, onAddFood }: RecentFoodsCa
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Clock className="h-5 w-5 text-primary-600" />
+        <CardTitle className="flex items-center gap-2 text-base md:text-lg">
+          <Clock className="h-4 w-4 md:h-5 md:w-5 text-primary-600" />
           Senaste matvaror
         </CardTitle>
-        <CardDescription>Klicka för att snabbt lägga till med standardportion</CardDescription>
+        <CardDescription className="text-xs md:text-sm">
+          Klicka för att snabbt lägga till med standardportion
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-2">
         {recentFoods.map(food => (
           <div
             key={food.id}
-            className="flex items-center justify-between p-3 bg-neutral-50 rounded-lg hover:bg-neutral-100 transition-colors"
+            className="flex items-center justify-between gap-2 p-2 md:p-3 bg-neutral-50 rounded-lg hover:bg-neutral-100 transition-colors"
           >
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <p className="font-medium text-neutral-900 truncate">{food.name}</p>
+              <div className="flex items-center gap-1 md:gap-2">
+                <p className="font-medium text-sm md:text-base text-neutral-900 truncate">
+                  {food.name}
+                </p>
                 {food.brand && (
-                  <span className="text-xs text-neutral-500 truncate">({food.brand})</span>
+                  <span className="hidden md:inline text-xs text-neutral-500 truncate">
+                    ({food.brand})
+                  </span>
                 )}
               </div>
-              <div className="flex items-center gap-3 mt-1 text-xs text-neutral-600">
+              <div className="flex flex-wrap items-center gap-1 md:gap-3 mt-1 text-xs text-neutral-600">
                 <span>
                   {food.default_amount} {food.default_unit}
                 </span>
-                <span>•</span>
+                <span className="hidden md:inline">•</span>
                 <span>{food.calories} kcal</span>
-                <span>•</span>
-                <span className="flex items-center gap-1">
+                <span className="hidden sm:flex items-center gap-1">
+                  <span className="hidden md:inline">•</span>
                   P: {food.protein_g}g | K: {food.carb_g}g | F: {food.fat_g}g
                 </span>
               </div>
@@ -130,7 +136,7 @@ export default function RecentFoodsCard({ dailyLogId, onAddFood }: RecentFoodsCa
             <Button
               size="sm"
               variant="ghost"
-              className="ml-2 shrink-0"
+              className="ml-1 md:ml-2 shrink-0 h-8 w-8 md:h-9 md:w-9 p-0"
               onClick={() =>
                 handleQuickAdd(food.id, food.name, food.default_amount, food.default_unit)
               }
