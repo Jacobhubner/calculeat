@@ -148,14 +148,73 @@ export interface MacroParams {
   calories: number
   weight: number // kg - används för proteinberäkning
   goal: CalorieGoal
+  // Optional: calorie min/max for calculating gram ranges
+  caloriesMin?: number
+  caloriesMax?: number
+  // Optional: use custom macro percentages instead of automatic calculation
+  customMacros?: {
+    proteinMinPercent?: number
+    proteinMaxPercent?: number
+    fatMinPercent?: number
+    fatMaxPercent?: number
+    carbMinPercent?: number
+    carbMaxPercent?: number
+  }
 }
 
 /**
  * Beräkna makrofördelning baserat på kalorier och mål
+ * Om customMacros anges används de procenterna istället för automatiska beräkningar
+ * Följer Google Sheets-logiken: min% * min-kcal och max% * max-kcal
  */
 export function calculateMacros(params: MacroParams): MacroSplit {
-  const { calories, weight, goal } = params
+  const { calories, weight, goal, caloriesMin, caloriesMax, customMacros } = params
 
+  // If custom macros are provided, use those percentages
+  if (customMacros && caloriesMin && caloriesMax) {
+    // Calculate using Google Sheets logic: min% with min-kcal, max% with max-kcal
+    const proteinMinGrams = Math.round((caloriesMin * customMacros.proteinMinPercent!) / 100 / 4)
+    const proteinMaxGrams = Math.round((caloriesMax * customMacros.proteinMaxPercent!) / 100 / 4)
+    const fatMinGrams = Math.round((caloriesMin * customMacros.fatMinPercent!) / 100 / 9)
+    const fatMaxGrams = Math.round((caloriesMax * customMacros.fatMaxPercent!) / 100 / 9)
+    const carbMinGrams = Math.round((caloriesMin * customMacros.carbMinPercent!) / 100 / 4)
+    const carbMaxGrams = Math.round((caloriesMax * customMacros.carbMaxPercent!) / 100 / 4)
+
+    // Use average for display (matches target calories)
+    const proteinAvgGrams = Math.round((proteinMinGrams + proteinMaxGrams) / 2)
+    const fatAvgGrams = Math.round((fatMinGrams + fatMaxGrams) / 2)
+    const carbAvgGrams = Math.round((carbMinGrams + carbMaxGrams) / 2)
+
+    const proteinAvgPercent = Math.round(
+      (customMacros.proteinMinPercent! + customMacros.proteinMaxPercent!) / 2
+    )
+    const fatAvgPercent = Math.round(
+      (customMacros.fatMinPercent! + customMacros.fatMaxPercent!) / 2
+    )
+    const carbAvgPercent = Math.round(
+      (customMacros.carbMinPercent! + customMacros.carbMaxPercent!) / 2
+    )
+
+    return {
+      protein: {
+        grams: proteinAvgGrams,
+        calories: proteinAvgGrams * 4,
+        percentage: proteinAvgPercent,
+      },
+      fat: {
+        grams: fatAvgGrams,
+        calories: fatAvgGrams * 9,
+        percentage: fatAvgPercent,
+      },
+      carbs: {
+        grams: carbAvgGrams,
+        calories: carbAvgGrams * 4,
+        percentage: carbAvgPercent,
+      },
+    }
+  }
+
+  // Fallback to automatic calculation based on goal
   // Proteinbehov: ~1.6-2.2g per kg kroppsvikt beroende på mål
   let proteinPerKg: number
 
