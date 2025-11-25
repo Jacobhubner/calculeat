@@ -22,7 +22,8 @@
       "Bash(npm run dev:*)",
       "Bash(NUL)",
       "Bash(del /F nul 2)",
-      "Bash(git restore:*)"
+      "Bash(git restore:*)",
+      "Bash(git rm:*)"
     ],
     "deny": [],
     "ask": []

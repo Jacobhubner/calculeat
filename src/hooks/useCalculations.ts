@@ -136,39 +136,10 @@ export function useCalculations(profile: UserProfile | null | undefined): Calcul
       // Beräkna makros om vi har kalorimål och vikt
       let macros: MacroSplit | null = null
       if (calorieGoal && debouncedProfile.weight_kg && debouncedProfile.calorie_goal) {
-        // Check if profile has custom macro percentages (from macro modes like NNR)
-        const hasCustomMacros =
-          debouncedProfile.protein_min_percent != null &&
-          debouncedProfile.protein_max_percent != null &&
-          debouncedProfile.fat_min_percent != null &&
-          debouncedProfile.fat_max_percent != null &&
-          debouncedProfile.carb_min_percent != null &&
-          debouncedProfile.carb_max_percent != null
-
         macros = calculateMacros({
           calories: calorieGoal.target,
           weight: debouncedProfile.weight_kg,
           goal: debouncedProfile.calorie_goal,
-          // When custom macros exist, use SAVED calories_min/max from profile
-          // (not recalculated from TDEE) to match the calorie values the macro percentages were based on
-          caloriesMin:
-            hasCustomMacros && debouncedProfile.calories_min
-              ? debouncedProfile.calories_min
-              : calorieGoal.min,
-          caloriesMax:
-            hasCustomMacros && debouncedProfile.calories_max
-              ? debouncedProfile.calories_max
-              : calorieGoal.max,
-          customMacros: hasCustomMacros
-            ? {
-                proteinMinPercent: debouncedProfile.protein_min_percent!,
-                proteinMaxPercent: debouncedProfile.protein_max_percent!,
-                fatMinPercent: debouncedProfile.fat_min_percent!,
-                fatMaxPercent: debouncedProfile.fat_max_percent!,
-                carbMinPercent: debouncedProfile.carb_min_percent!,
-                carbMaxPercent: debouncedProfile.carb_max_percent!,
-              }
-            : undefined,
         })
       }
 

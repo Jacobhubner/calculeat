@@ -67,7 +67,7 @@ export function useApplyMacroMode() {
         caloriesMax: profile.calories_max,
       })
 
-      // Update macro-related fields AND energy goal to match the macro mode
+      // Only update macro-related fields to preserve other unsaved changes in the form
       const macroData = {
         fat_min_percent: macroMode.fatMinPercent,
         fat_max_percent: macroMode.fatMaxPercent,
@@ -75,8 +75,6 @@ export function useApplyMacroMode() {
         carb_max_percent: macroMode.carbMaxPercent,
         protein_min_percent: macroMode.proteinMinPercent,
         protein_max_percent: macroMode.proteinMaxPercent,
-        calorie_goal: macroMode.calorieGoal,
-        deficit_level: macroMode.deficitLevel || null,
         updated_at: new Date().toISOString(),
       }
 

@@ -15,7 +15,6 @@ import { useProfileStore } from '@/stores/profileStore'
 import { useUpdateProfile, useCreateProfile, useProfiles } from '@/hooks'
 import { Lock } from 'lucide-react'
 import FloatingProfileSaveCard from './FloatingProfileSaveCard'
-import { ProfileFormSkeleton } from './ProfileFormSkeleton'
 
 interface CalculatorResult {
   bmr: number
@@ -303,11 +302,10 @@ export default function UserProfileForm({
     const hasCustomTdeeChange = customTdee !== (fullProfile.custom_tdee?.toString() || '')
 
     // Also check if calculated results have changed (e.g., from PAL system activity level changes)
-    // Use a larger tolerance (10 kcal) to avoid showing save card for rounding differences
     const hasResultChange =
       result &&
-      (Math.abs((result.tdee || 0) - (fullProfile.tdee || 0)) > 10 ||
-        Math.abs((result.bmr || 0) - (fullProfile.bmr || 0)) > 10)
+      (Math.abs((result.tdee || 0) - (fullProfile.tdee || 0)) > 1 ||
+        Math.abs((result.bmr || 0) - (fullProfile.bmr || 0)) > 1)
 
     // Check if macro distribution has changed
     const hasMacroChange =
@@ -810,23 +808,12 @@ export default function UserProfileForm({
         await createProfileMutation.mutateAsync(profileData)
         // Toast is handled by useCreateProfile hook
       }
-
-      // After successful save, recalculate to sync result state with saved profile
-      // This ensures hasUnsavedChanges becomes false and FloatingProfileSaveCard disappears
-      handleCalculate()
     } catch (error) {
       console.error('Error saving profile:', error)
       // Error toast is handled by the hooks
     } finally {
       setIsSaving(false)
     }
-  }
-
-  // Show loading skeleton while profile data is being fetched
-  // This happens when activeProfile has only {id, profile_name} from localStorage
-  // and we're waiting for the full data from useProfiles()
-  if (activeProfile && !allProfiles.find(p => p.id === activeProfile.id)) {
-    return <ProfileFormSkeleton />
   }
 
   return (
