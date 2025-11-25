@@ -303,10 +303,11 @@ export default function UserProfileForm({
     const hasCustomTdeeChange = customTdee !== (fullProfile.custom_tdee?.toString() || '')
 
     // Also check if calculated results have changed (e.g., from PAL system activity level changes)
+    // Use a larger tolerance (10 kcal) to avoid showing save card for rounding differences
     const hasResultChange =
       result &&
-      (Math.abs((result.tdee || 0) - (fullProfile.tdee || 0)) > 1 ||
-        Math.abs((result.bmr || 0) - (fullProfile.bmr || 0)) > 1)
+      (Math.abs((result.tdee || 0) - (fullProfile.tdee || 0)) > 10 ||
+        Math.abs((result.bmr || 0) - (fullProfile.bmr || 0)) > 10)
 
     // Check if macro distribution has changed
     const hasMacroChange =

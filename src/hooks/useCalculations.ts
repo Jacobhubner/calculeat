@@ -136,10 +136,29 @@ export function useCalculations(profile: UserProfile | null | undefined): Calcul
       // Beräkna makros om vi har kalorimål och vikt
       let macros: MacroSplit | null = null
       if (calorieGoal && debouncedProfile.weight_kg && debouncedProfile.calorie_goal) {
+        // Check if profile has custom macro percentages (from macro modes like NNR)
+        const hasCustomMacros =
+          debouncedProfile.protein_min_percent != null &&
+          debouncedProfile.protein_max_percent != null &&
+          debouncedProfile.fat_min_percent != null &&
+          debouncedProfile.fat_max_percent != null &&
+          debouncedProfile.carb_min_percent != null &&
+          debouncedProfile.carb_max_percent != null
+
         macros = calculateMacros({
           calories: calorieGoal.target,
           weight: debouncedProfile.weight_kg,
           goal: debouncedProfile.calorie_goal,
+          customMacros: hasCustomMacros
+            ? {
+                proteinMinPercent: debouncedProfile.protein_min_percent!,
+                proteinMaxPercent: debouncedProfile.protein_max_percent!,
+                fatMinPercent: debouncedProfile.fat_min_percent!,
+                fatMaxPercent: debouncedProfile.fat_max_percent!,
+                carbMinPercent: debouncedProfile.carb_min_percent!,
+                carbMaxPercent: debouncedProfile.carb_max_percent!,
+              }
+            : undefined,
         })
       }
 
