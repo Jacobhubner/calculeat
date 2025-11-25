@@ -53,12 +53,14 @@ export default function DashboardPage() {
       <DashboardLayout>
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent mb-2">
+          <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent mb-2">
             Hej {authProfile?.full_name || 'där'}! 👋
           </h1>
-          <p className="text-neutral-600">
+          <p className="text-neutral-600 text-sm md:text-base">
             {hasBasicInfo
-              ? 'Här är din översikt för idag'
+              ? consumed > 0
+                ? `Du har loggat ${consumed} av ${target} kcal idag`
+                : 'Här är din översikt för idag'
               : 'Fyll i din profil för att komma igång'}
           </p>
         </div>
@@ -111,28 +113,84 @@ export default function DashboardPage() {
             {/* Main Content Grid */}
             <div className="grid gap-6 lg:grid-cols-2">
               {/* Calorie Ring */}
-              <CalorieRing consumed={consumed} target={target} remaining={remaining} />
+              <div className="relative">
+                <CalorieRing consumed={consumed} target={target} remaining={remaining} />
+                {consumed === 0 && (
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <p className="text-sm text-neutral-500 text-center px-4">
+                      Börja logga för att se dina framsteg
+                    </p>
+                  </div>
+                )}
+              </div>
 
               {/* Macro Bar */}
               {calculations.macros && <MacroBar {...calculations.macros} />}
             </div>
 
+            {/* Today's Progress (if user has logged food) */}
+            {todayLog && todayLog.meals && todayLog.meals.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Dagens framsteg</CardTitle>
+                  <CardDescription>
+                    Du har loggat {todayLog.meals.length} måltid(er) idag
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {todayLog.meals.slice(0, 3).map(meal => (
+                      <div
+                        key={meal.id}
+                        className="flex items-center justify-between p-3 bg-neutral-50 rounded-lg"
+                      >
+                        <div>
+                          <p className="font-medium text-neutral-900">{meal.meal_name}</p>
+                          <p className="text-sm text-neutral-600">{meal.meal_calories} kcal</p>
+                        </div>
+                        <div className="text-right text-xs text-neutral-500">
+                          <p>P: {meal.meal_protein_g}g</p>
+                          <p>K: {meal.meal_carb_g}g</p>
+                          <p>F: {meal.meal_fat_g}g</p>
+                        </div>
+                      </div>
+                    ))}
+                    {todayLog.meals.length > 3 && (
+                      <p className="text-sm text-neutral-500 text-center">
+                        +{todayLog.meals.length - 3} till...
+                      </p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             {/* Quick Actions */}
             <Card>
               <CardHeader>
                 <CardTitle>Snabbåtgärder</CardTitle>
-                <CardDescription>Logga dina måltider</CardDescription>
+                <CardDescription>
+                  {todayLog && todayLog.meals && todayLog.meals.length > 0
+                    ? 'Hantera dagens måltider'
+                    : 'Logga dina måltider'}
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <Button
                     size="lg"
-                    variant="outline"
+                    variant={
+                      todayLog && todayLog.meals && todayLog.meals.length > 0
+                        ? 'default'
+                        : 'outline'
+                    }
                     className="h-20"
                     onClick={() => navigate('/app/today')}
                   >
                     <UtensilsCrossed className="h-5 w-5 mr-2" />
-                    Logga måltid
+                    {todayLog && todayLog.meals && todayLog.meals.length > 0
+                      ? 'Se dagens loggar'
+                      : 'Logga måltid'}
                   </Button>
                   <Button
                     size="lg"
