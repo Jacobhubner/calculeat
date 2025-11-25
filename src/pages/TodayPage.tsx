@@ -6,6 +6,7 @@ import { Progress } from '@/components/ui/progress'
 import CalorieRing from '@/components/CalorieRing'
 import MacroBar from '@/components/MacroBar'
 import EmptyState from '@/components/EmptyState'
+import RecentFoodsCard from '@/components/RecentFoodsCard'
 import { Calendar, Plus, Check, Coffee, UtensilsCrossed, Sparkles, Copy } from 'lucide-react'
 import { useTodayLog, useEnsureTodayLog, useFinishDay } from '@/hooks/useDailyLogs'
 import { useMealSettings, useCreateDefaultMealSettings } from '@/hooks/useMealSettings'
@@ -228,6 +229,9 @@ export default function TodayPage() {
               <CalorieRing current={totalCalories} target={goalCalories} size={200} />
             </CardContent>
           </Card>
+
+          {/* Recent Foods */}
+          <RecentFoodsCard dailyLogId={todayLog?.id} />
 
           {/* Quick Stats */}
           <Card>
