@@ -810,6 +810,10 @@ export default function UserProfileForm({
         await createProfileMutation.mutateAsync(profileData)
         // Toast is handled by useCreateProfile hook
       }
+
+      // After successful save, recalculate to sync result state with saved profile
+      // This ensures hasUnsavedChanges becomes false and FloatingProfileSaveCard disappears
+      handleCalculate()
     } catch (error) {
       console.error('Error saving profile:', error)
       // Error toast is handled by the hooks

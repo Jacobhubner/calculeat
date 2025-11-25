@@ -149,6 +149,8 @@ export function useCalculations(profile: UserProfile | null | undefined): Calcul
           calories: calorieGoal.target,
           weight: debouncedProfile.weight_kg,
           goal: debouncedProfile.calorie_goal,
+          caloriesMin: calorieGoal.min,
+          caloriesMax: calorieGoal.max,
           customMacros: hasCustomMacros
             ? {
                 proteinMinPercent: debouncedProfile.protein_min_percent!,
