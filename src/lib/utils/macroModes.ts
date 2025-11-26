@@ -14,6 +14,9 @@ export interface MacroMode {
   carbMaxPercent: number
   proteinMinPercent: number
   proteinMaxPercent: number
+  // Calorie range multipliers (applied to TDEE to get CalorieMin/Max)
+  calorieMinMultiplier: number
+  calorieMaxMultiplier: number
 }
 
 /**
@@ -21,6 +24,7 @@ export interface MacroMode {
  * Maintains weight with balanced macros
  */
 export function nnrMode(_avgCalories: number): MacroMode {
+  // NNR: Fixed percentages
   return {
     calorieGoal: 'Maintain weight',
     fatMinPercent: 25,
@@ -29,6 +33,8 @@ export function nnrMode(_avgCalories: number): MacroMode {
     proteinMaxPercent: 20,
     carbMinPercent: 45,
     carbMaxPercent: 60,
+    calorieMinMultiplier: 0.97, // TDEE * 0.97 (±3%)
+    calorieMaxMultiplier: 1.03, // TDEE * 1.03 (±3%)
   }
 }
 
@@ -51,18 +57,18 @@ export function offSeasonMode(weight: number, caloriesMin: number, caloriesMax: 
   const proteinMinKcal = proteinMinGrams * 4
   const proteinMaxKcal = proteinMaxGrams * 4
 
-  // Convert to percentages (NO inversion - match Google Sheets logic)
-  const fatMinPercent = (fatMinKcal / caloriesMin) * 100
-  const fatMaxPercent = (fatMaxKcal / caloriesMax) * 100
-  const proteinMinPercent = (proteinMinKcal / caloriesMin) * 100
-  const proteinMaxPercent = (proteinMaxKcal / caloriesMax) * 100
+  // Convert to percentages with ROUNDING (match Google Sheets ROUND())
+  const fatMinPercent = Math.round((fatMinKcal / caloriesMin) * 100)
+  const fatMaxPercent = Math.round((fatMaxKcal / caloriesMax) * 100)
+  const proteinMinPercent = Math.round((proteinMinKcal / caloriesMin) * 100)
+  const proteinMaxPercent = Math.round((proteinMaxKcal / caloriesMax) * 100)
 
-  // CARBS: remaining energy after fat and protein
-  const carbsMinKcal = caloriesMin - (fatMaxKcal + proteinMaxKcal)
-  const carbsMaxKcal = caloriesMax - (fatMinKcal + proteinMinKcal)
+  // CARBS: remaining energy after fat and protein (CORRECTED - use min with min, max with max)
+  const carbsMinKcal = caloriesMin - (fatMinKcal + proteinMinKcal)
+  const carbsMaxKcal = caloriesMax - (fatMaxKcal + proteinMaxKcal)
 
-  const carbMinPercent = (carbsMinKcal / caloriesMin) * 100
-  const carbMaxPercent = (carbsMaxKcal / caloriesMax) * 100
+  const carbMinPercent = Math.round((carbsMinKcal / caloriesMin) * 100)
+  const carbMaxPercent = Math.round((carbsMaxKcal / caloriesMax) * 100)
 
   return {
     calorieGoal: 'Weight gain',
@@ -72,6 +78,8 @@ export function offSeasonMode(weight: number, caloriesMin: number, caloriesMax: 
     proteinMaxPercent,
     carbMinPercent,
     carbMaxPercent,
+    calorieMinMultiplier: 1.1, // TDEE * 1.1
+    calorieMaxMultiplier: 1.2, // TDEE * 1.2
   }
 }
 
@@ -84,7 +92,7 @@ export function onSeasonMode(
   caloriesMin: number,
   caloriesMax: number
 ): MacroMode {
-  // FAT: Always percentage of calories (NO inversion)
+  // FAT: Always percentage of calories (fixed 15-30%)
   // Fat-min = 15% of caloriesMin
   // Fat-max = 30% of caloriesMax
   const fatMinKcal = caloriesMin * 0.15
@@ -98,28 +106,30 @@ export function onSeasonMode(
   const proteinMinKcal = proteinMinGrams * 4
   const proteinMaxKcal = proteinMaxGrams * 4
 
-  // Convert to percentages (NO inversion - match Google Sheets logic)
-  const fatMinPercent = (fatMinKcal / caloriesMin) * 100
-  const fatMaxPercent = (fatMaxKcal / caloriesMax) * 100
-  const proteinMinPercent = (proteinMinKcal / caloriesMin) * 100
-  const proteinMaxPercent = (proteinMaxKcal / caloriesMax) * 100
+  // Convert to percentages with ROUNDING (match Google Sheets ROUND())
+  const fatMinPercent = Math.round((fatMinKcal / caloriesMin) * 100)
+  const fatMaxPercent = Math.round((fatMaxKcal / caloriesMax) * 100)
+  const proteinMinPercent = Math.round((proteinMinKcal / caloriesMin) * 100)
+  const proteinMaxPercent = Math.round((proteinMaxKcal / caloriesMax) * 100)
 
-  // CARBS: remaining energy after fat and protein
-  const carbsMinKcal = caloriesMin - (fatMaxKcal + proteinMaxKcal)
-  const carbsMaxKcal = caloriesMax - (fatMinKcal + proteinMinKcal)
+  // CARBS: remaining energy after fat and protein (CORRECTED - use min with min, max with max)
+  const carbsMinKcal = caloriesMin - (fatMinKcal + proteinMinKcal)
+  const carbsMaxKcal = caloriesMax - (fatMaxKcal + proteinMaxKcal)
 
-  const carbMinPercent = (carbsMinKcal / caloriesMin) * 100
-  const carbMaxPercent = (carbsMaxKcal / caloriesMax) * 100
+  const carbMinPercent = Math.round((carbsMinKcal / caloriesMin) * 100)
+  const carbMaxPercent = Math.round((carbsMaxKcal / caloriesMax) * 100)
 
   return {
     calorieGoal: 'Weight loss',
-    deficitLevel: '20-25%',
+    deficitLevel: '20-25%', // On-season: 20-25% deficit (TDEE * 0.75-0.8)
     fatMinPercent,
     fatMaxPercent,
     proteinMinPercent,
     proteinMaxPercent,
     carbMinPercent,
     carbMaxPercent,
+    calorieMinMultiplier: 0.75, // TDEE * 0.75 (25% deficit)
+    calorieMaxMultiplier: 0.8, // TDEE * 0.8 (20% deficit)
   }
 }
 

@@ -42,8 +42,10 @@ export function useApplyMacroMode() {
         throw new Error('Weight is required to apply macro mode')
       }
 
-      if (!profile.calories_min || !profile.calories_max) {
-        throw new Error('Calorie range is required to apply macro mode')
+      if (!profile.tdee) {
+        throw new Error(
+          'TDEE is required to apply macro mode. Please calculate your profile first.'
+        )
       }
 
       // Use bodyFatOverride if provided, otherwise use saved value
@@ -59,15 +61,28 @@ export function useApplyMacroMode() {
           ? calculateLeanMass(profile.weight_kg, bodyFatPercentage)
           : undefined
 
-      // Calculate macro mode
+      // Calculate NEW calories_min/max from TDEE using macro mode multipliers
+      // This is needed to calculate macro percentages correctly
+      const tempMacroMode = applyMacroMode(input.mode, {
+        weight: profile.weight_kg,
+        fatFreeMass: ffm,
+        caloriesMin: profile.tdee, // Temporary - will be replaced
+        caloriesMax: profile.tdee, // Temporary - will be replaced
+      })
+
+      // Apply multipliers to TDEE to get actual CalorieMin/Max
+      const newCaloriesMin = Math.round(profile.tdee * tempMacroMode.calorieMinMultiplier)
+      const newCaloriesMax = Math.round(profile.tdee * tempMacroMode.calorieMaxMultiplier)
+
+      // Now calculate macro mode with CORRECT calories
       const macroMode = applyMacroMode(input.mode, {
         weight: profile.weight_kg,
         fatFreeMass: ffm,
-        caloriesMin: profile.calories_min,
-        caloriesMax: profile.calories_max,
+        caloriesMin: newCaloriesMin,
+        caloriesMax: newCaloriesMax,
       })
 
-      // Update macro-related fields AND energy goal to match the macro mode
+      // Update macro-related fields, energy goal, AND the new calories_min/max
       const macroData = {
         fat_min_percent: macroMode.fatMinPercent,
         fat_max_percent: macroMode.fatMaxPercent,
@@ -77,6 +92,8 @@ export function useApplyMacroMode() {
         protein_max_percent: macroMode.proteinMaxPercent,
         calorie_goal: macroMode.calorieGoal,
         deficit_level: macroMode.deficitLevel || null,
+        calories_min: newCaloriesMin,
+        calories_max: newCaloriesMax,
         updated_at: new Date().toISOString(),
       }
 
@@ -132,7 +149,7 @@ export function usePreviewMacroMode(mode: 'nnr' | 'offseason' | 'onseason'): Mac
   // Use full profile if available, otherwise fall back to legacy profile
   const profile = fullProfile || legacyProfile
 
-  if (!profile?.weight_kg || !profile?.calories_min || !profile?.calories_max) {
+  if (!profile?.weight_kg || !profile?.tdee) {
     return null
   }
 
@@ -147,11 +164,22 @@ export function usePreviewMacroMode(mode: 'nnr' | 'offseason' | 'onseason'): Mac
         ? calculateLeanMass(profile.weight_kg, profile.body_fat_percentage)
         : undefined
 
+    // Calculate NEW calories_min/max from TDEE using macro mode multipliers
+    const tempMacroMode = applyMacroMode(mode, {
+      weight: profile.weight_kg,
+      fatFreeMass: ffm,
+      caloriesMin: profile.tdee,
+      caloriesMax: profile.tdee,
+    })
+
+    const newCaloriesMin = Math.round(profile.tdee * tempMacroMode.calorieMinMultiplier)
+    const newCaloriesMax = Math.round(profile.tdee * tempMacroMode.calorieMaxMultiplier)
+
     return applyMacroMode(mode, {
       weight: profile.weight_kg,
       fatFreeMass: ffm,
-      caloriesMin: profile.calories_min,
-      caloriesMax: profile.calories_max,
+      caloriesMin: newCaloriesMin,
+      caloriesMax: newCaloriesMax,
     })
   } catch {
     return null
