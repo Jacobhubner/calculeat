@@ -149,16 +149,10 @@ export function useCalculations(profile: UserProfile | null | undefined): Calcul
           calories: calorieGoal.target,
           weight: debouncedProfile.weight_kg,
           goal: debouncedProfile.calorie_goal,
-          // When custom macros exist, use SAVED calories_min/max from profile
-          // (not recalculated from TDEE) to match the calorie values the macro percentages were based on
-          caloriesMin:
-            hasCustomMacros && debouncedProfile.calories_min
-              ? debouncedProfile.calories_min
-              : calorieGoal.min,
-          caloriesMax:
-            hasCustomMacros && debouncedProfile.calories_max
-              ? debouncedProfile.calories_max
-              : calorieGoal.max,
+          // ALWAYS use current CaloriesMin/Max from TDEE calculation (Google Sheets logic)
+          // NEVER use saved calories_min/max - always recalculate from current TDEE
+          caloriesMin: calorieGoal.min,
+          caloriesMax: calorieGoal.max,
           customMacros: hasCustomMacros
             ? {
                 proteinMinPercent: debouncedProfile.protein_min_percent!,

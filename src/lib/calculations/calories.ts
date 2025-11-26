@@ -165,34 +165,47 @@ export interface MacroParams {
 /**
  * Beräkna makrofördelning baserat på kalorier och mål
  * Om customMacros anges används de procenterna istället för automatiska beräkningar
- * Följer Google Sheets-logiken: min% * min-kcal och max% * max-kcal
+ *
+ * EXAKT GOOGLE SHEETS LOGIK:
+ * E24:F24 = ROUND(D21*C24/9) "g –" ROUND(D22*D24/9) "g"  (Fett)
+ * E25:F25 = ROUND(D21*C25/4) "g –" ROUND(D22*D25/4) "g"  (Kolhydrater)
+ * E26:F26 = ROUND(D21*C26/4) "g –" ROUND(D22*D26/4) "g"  (Protein)
+ *
+ * D21 = CaloriesMin, D22 = CaloriesMax
+ * C24 = FatMin%, D24 = FatMax%
+ * C25 = CarbMin%, D25 = CarbMax%
+ * C26 = ProteinMin%, D26 = ProteinMax%
  */
 export function calculateMacros(params: MacroParams): MacroSplit {
   const { calories, weight, goal, caloriesMin, caloriesMax, customMacros } = params
 
   // If custom macros are provided, use those percentages
   if (customMacros && caloriesMin && caloriesMax) {
-    // Calculate using Google Sheets logic: min% with min-kcal, max% with max-kcal
-    const proteinMinGrams = Math.round((caloriesMin * customMacros.proteinMinPercent!) / 100 / 4)
-    const proteinMaxGrams = Math.round((caloriesMax * customMacros.proteinMaxPercent!) / 100 / 4)
-    const fatMinGrams = Math.round((caloriesMin * customMacros.fatMinPercent!) / 100 / 9)
-    const fatMaxGrams = Math.round((caloriesMax * customMacros.fatMaxPercent!) / 100 / 9)
-    const carbMinGrams = Math.round((caloriesMin * customMacros.carbMinPercent!) / 100 / 4)
-    const carbMaxGrams = Math.round((caloriesMax * customMacros.carbMaxPercent!) / 100 / 4)
+    // EXACT Google Sheets formulas - NO normalization, NO averaging percent first
+    // Fat: ROUND(CaloriesMin * FatMin% / 9) to ROUND(CaloriesMax * FatMax% / 9)
+    const fatMinGrams = Math.round((caloriesMin * customMacros.fatMinPercent) / 100 / 9)
+    const fatMaxGrams = Math.round((caloriesMax * customMacros.fatMaxPercent) / 100 / 9)
 
-    // Use average for display (matches target calories)
-    const proteinAvgGrams = Math.round((proteinMinGrams + proteinMaxGrams) / 2)
+    // Carbs: ROUND(CaloriesMin * CarbMin% / 4) to ROUND(CaloriesMax * CarbMax% / 4)
+    const carbMinGrams = Math.round((caloriesMin * customMacros.carbMinPercent) / 100 / 4)
+    const carbMaxGrams = Math.round((caloriesMax * customMacros.carbMaxPercent) / 100 / 4)
+
+    // Protein: ROUND(CaloriesMin * ProteinMin% / 4) to ROUND(CaloriesMax * ProteinMax% / 4)
+    const proteinMinGrams = Math.round((caloriesMin * customMacros.proteinMinPercent) / 100 / 4)
+    const proteinMaxGrams = Math.round((caloriesMax * customMacros.proteinMaxPercent) / 100 / 4)
+
+    // Display average grams (for single value display)
     const fatAvgGrams = Math.round((fatMinGrams + fatMaxGrams) / 2)
     const carbAvgGrams = Math.round((carbMinGrams + carbMaxGrams) / 2)
+    const proteinAvgGrams = Math.round((proteinMinGrams + proteinMaxGrams) / 2)
 
-    const proteinAvgPercent = Math.round(
-      (customMacros.proteinMinPercent! + customMacros.proteinMaxPercent!) / 2
-    )
-    const fatAvgPercent = Math.round(
-      (customMacros.fatMinPercent! + customMacros.fatMaxPercent!) / 2
-    )
+    // Display average percent (for single value display)
+    const fatAvgPercent = Math.round((customMacros.fatMinPercent + customMacros.fatMaxPercent) / 2)
     const carbAvgPercent = Math.round(
-      (customMacros.carbMinPercent! + customMacros.carbMaxPercent!) / 2
+      (customMacros.carbMinPercent + customMacros.carbMaxPercent) / 2
+    )
+    const proteinAvgPercent = Math.round(
+      (customMacros.proteinMinPercent + customMacros.proteinMaxPercent) / 2
     )
 
     return {
@@ -201,15 +214,15 @@ export function calculateMacros(params: MacroParams): MacroSplit {
         calories: proteinAvgGrams * 4,
         percentage: proteinAvgPercent,
       },
-      fat: {
-        grams: fatAvgGrams,
-        calories: fatAvgGrams * 9,
-        percentage: fatAvgPercent,
-      },
       carbs: {
         grams: carbAvgGrams,
         calories: carbAvgGrams * 4,
         percentage: carbAvgPercent,
+      },
+      fat: {
+        grams: fatAvgGrams,
+        calories: fatAvgGrams * 9,
+        percentage: fatAvgPercent,
       },
     }
   }
