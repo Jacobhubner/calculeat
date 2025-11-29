@@ -35,8 +35,10 @@ export function useUpdateProfile() {
       return updated as Profile
     },
     onSuccess: async (updated, { profileId }) => {
+      console.log('[useUpdateProfile] onSuccess called, updated profile:', updated)
       // Update store
       updateProfileInStore(profileId, updated)
+      console.log('[useUpdateProfile] Zustand store updated')
 
       // Invalidate queries to mark them as stale
       queryClient.invalidateQueries({ queryKey: queryKeys.profiles })

@@ -277,14 +277,22 @@ export default function UserProfileForm({
   const hasUnsavedChanges = useMemo(() => {
     // If no active profile, we're creating a new profile - show save card if we have results
     if (!activeProfile) {
+      console.log('[hasUnsavedChanges] No activeProfile, result:', !!result)
       return !!result
     }
 
     // Get the full profile data from Zustand store (not React Query)
     // This ensures we use the most up-to-date data that's updated synchronously in onSuccess
     const fullProfile = profiles.find(p => p.id === activeProfile.id)
+    console.log(
+      '[hasUnsavedChanges] activeProfile.id:',
+      activeProfile.id,
+      'fullProfile found:',
+      !!fullProfile
+    )
     if (!fullProfile) {
       // Still loading, no changes yet
+      console.log('[hasUnsavedChanges] No fullProfile, returning false')
       return false
     }
 
@@ -327,7 +335,7 @@ export default function UserProfileForm({
     const hasMealSettingsChange =
       mealSettings && JSON.stringify(mealSettings) !== JSON.stringify(fullProfile.meals_config)
 
-    return (
+    const finalResult =
       hasProfileNameChange ||
       hasWeightChange ||
       hasBodyFatChange ||
@@ -345,7 +353,24 @@ export default function UserProfileForm({
       hasResultChange ||
       hasMacroChange ||
       hasMealSettingsChange
-    )
+
+    console.log('[hasUnsavedChanges] Comparison details:', {
+      profileName: {
+        form: profileName,
+        saved: fullProfile.profile_name || '',
+        changed: hasProfileNameChange,
+      },
+      weight: {
+        form: weight,
+        saved: fullProfile.weight_kg?.toString() || '',
+        changed: hasWeightChange,
+      },
+      result: { form: result?.tdee, saved: fullProfile.tdee, changed: hasResultChange },
+      macros: { changed: hasMacroChange },
+      finalResult,
+    })
+
+    return finalResult
   }, [
     activeProfile,
     profiles, // Use Zustand store profiles instead of allProfiles from React Query
