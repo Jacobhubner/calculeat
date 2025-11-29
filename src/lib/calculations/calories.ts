@@ -74,9 +74,9 @@ function calculateWeightLossCalories(
   const max = target + 100
 
   return {
-    min: Math.round(min),
-    max: Math.round(max),
-    target: Math.round(target),
+    min: min, // NO ROUNDING - keep exact decimals
+    max: max, // NO ROUNDING - keep exact decimals
+    target: target, // NO ROUNDING - keep exact decimals
     weeklyChange: deficit.weekly,
   }
 }
@@ -89,9 +89,9 @@ function calculateMaintenanceCalories(tdee: number): CalorieRange {
   const margin = tdee * 0.05
 
   return {
-    min: Math.round(tdee - margin),
-    max: Math.round(tdee + margin),
-    target: Math.round(tdee),
+    min: tdee - margin, // NO ROUNDING - keep exact decimals
+    max: tdee + margin, // NO ROUNDING - keep exact decimals
+    target: tdee, // NO ROUNDING - keep exact decimals
     weeklyChange: 0,
   }
 }
@@ -106,9 +106,9 @@ function calculateWeightGainCalories(tdee: number): CalorieRange {
   const max = tdee + 550
 
   return {
-    min: Math.round(min),
-    max: Math.round(max),
-    target: Math.round(target),
+    min: min, // NO ROUNDING - keep exact decimals
+    max: max, // NO ROUNDING - keep exact decimals
+    target: target, // NO ROUNDING - keep exact decimals
     weeklyChange: 0.4,
   }
 }

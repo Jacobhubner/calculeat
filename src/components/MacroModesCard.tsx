@@ -16,9 +16,18 @@ import { toast } from 'sonner'
 
 interface MacroModesCardProps {
   currentBodyFat?: string
+  liveWeight?: string
+  liveCaloriesMin?: number
+  liveCaloriesMax?: number
+  liveTdee?: number
 }
 
-export default function MacroModesCard({ currentBodyFat = '' }: MacroModesCardProps) {
+export default function MacroModesCard({
+  currentBodyFat = '',
+  liveWeight,
+  liveCaloriesMin,
+  liveCaloriesMax,
+}: MacroModesCardProps) {
   const activeProfile = useProfileStore(state => state.activeProfile)
   const { profile: legacyProfile } = useAuth()
   const { data: allProfiles = [], isLoading } = useProfiles()
@@ -103,23 +112,22 @@ export default function MacroModesCard({ currentBodyFat = '' }: MacroModesCardPr
   }
 
   // Wait for profiles to load before enabling buttons
-  // Check currentBodyFat from form (live) OR fullProfile.body_fat_percentage (saved)
-  // This ensures the button is disabled if body fat is not entered in the form
+  // Use live-data from form if available, otherwise fall back to saved profile
   const hasBodyFat = currentBodyFat.trim() !== '' || !!fullProfile?.body_fat_percentage
-  const canApplyOnSeason = !isLoading && hasBodyFat && !!fullProfile?.weight_kg && !!fullProfile
-  const canApplyAny =
-    !isLoading &&
-    !!fullProfile?.weight_kg &&
-    !!fullProfile?.calories_min &&
-    !!fullProfile?.calories_max &&
-    !!fullProfile
+  const weightKg =
+    liveWeight && liveWeight.trim() !== '' ? parseFloat(liveWeight) : fullProfile?.weight_kg
+  const hasCalories =
+    (liveCaloriesMin && liveCaloriesMax) || (fullProfile?.calories_min && fullProfile?.calories_max)
+
+  const canApplyOnSeason = !isLoading && hasBodyFat && !!weightKg && !!fullProfile
+  const canApplyAny = !isLoading && !!weightKg && !!hasCalories && !!fullProfile
 
   return (
     <Card>
       <CardHeader>
         <CardTitle className="text-lg flex items-center gap-2">
           <Target className="h-5 w-5 text-accent-600" />
-          Snabbval Makrolägen
+          Profilläge (valfritt)
         </CardTitle>
         <CardDescription>
           Tillämpa fördefinierade makrofördelningar baserat på ditt mål

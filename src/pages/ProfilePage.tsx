@@ -41,13 +41,16 @@ interface MealSettings {
 
 export default function ProfilePage() {
   // Load profiles to populate store
-  useProfiles()
+  const { data: allProfiles = [] } = useProfiles()
 
   // Hook for creating new profile
   const { startNewProfile } = useNewProfile()
 
-  // Get active profile for TDEE calculation
-  const activeProfile = useProfileStore(state => state.activeProfile)
+  // Get active profile from store (for ID only)
+  const activeProfileFromStore = useProfileStore(state => state.activeProfile)
+
+  // Get FULL active profile from React Query (this updates when queries are invalidated)
+  const activeProfile = allProfiles.find(p => p.id === activeProfileFromStore?.id)
 
   // Local state for calculation results (used when creating new profile)
   const [localResult, setLocalResult] = useState<CalculatorResult | null>(null)
@@ -61,10 +64,16 @@ export default function ProfilePage() {
   // Local state for body fat percentage from form
   const [currentBodyFat, setCurrentBodyFat] = useState<string>('')
 
+  // Local state for weight from form (live updates)
+  const [localWeight, setLocalWeight] = useState<string>('')
+
   // Use local result if available (new profile mode), otherwise use saved tdee
   const tdee = localResult?.tdee || activeProfile?.tdee
 
-  // Get calorie range for macro calculations (based on energy goal)
+  // Get calorie range for macro calculations
+  // Use live calories from localResult if available, otherwise use saved values
+  const liveCaloriesMin = localResult?.tdeeMin
+  const liveCaloriesMax = localResult?.tdeeMax
   const caloriesMin = activeProfile?.calories_min
   const caloriesMax = activeProfile?.calories_max
   const avgCalories = caloriesMin && caloriesMax ? (caloriesMin + caloriesMax) / 2 : tdee
@@ -93,19 +102,30 @@ export default function ProfilePage() {
               macroRanges={macroRanges}
               mealSettings={mealSettings}
               onBodyFatChange={setCurrentBodyFat}
+              onWeightChange={setLocalWeight}
             />
 
             {/* Only show macro cards if results (TDEE) exist */}
             {tdee && (
               <>
                 {/* Macro Distribution Settings */}
-                <MacroDistributionCard tdee={avgCalories} onMacroChange={setMacroRanges} />
+                <MacroDistributionCard
+                  caloriesMin={liveCaloriesMin || caloriesMin || tdee}
+                  caloriesMax={liveCaloriesMax || caloriesMax || tdee}
+                  onMacroChange={setMacroRanges}
+                />
 
                 {/* Meal Settings */}
                 <MealSettingsCard tdee={avgCalories} onMealChange={setMealSettings} />
 
                 {/* Macro Modes Card */}
-                <MacroModesCard currentBodyFat={currentBodyFat} />
+                <MacroModesCard
+                  currentBodyFat={currentBodyFat}
+                  liveWeight={localWeight}
+                  liveCaloriesMin={liveCaloriesMin}
+                  liveCaloriesMax={liveCaloriesMax}
+                  liveTdee={localResult?.tdee}
+                />
               </>
             )}
           </div>

@@ -264,7 +264,7 @@ export function calculateTDEE(params: TDEEParams): number {
       tdee = calculateBasicInternet(bmr, activityLevel)
   }
 
-  return Math.round(tdee)
+  return tdee // NO ROUNDING - keep exact decimals for precision
 }
 
 /**

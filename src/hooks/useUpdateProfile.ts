@@ -34,13 +34,19 @@ export function useUpdateProfile() {
 
       return updated as Profile
     },
-    onSuccess: (updated, { profileId }) => {
+    onSuccess: async (updated, { profileId }) => {
       // Update store
       updateProfileInStore(profileId, updated)
 
-      // Invalidera profil-queries så de hämtas på nytt
+      // Invalidate queries to mark them as stale
       queryClient.invalidateQueries({ queryKey: queryKeys.profiles })
       queryClient.invalidateQueries({ queryKey: queryKeys.profileById(profileId) })
+
+      // Wait for queries to actually refetch and update
+      await queryClient.refetchQueries({
+        queryKey: queryKeys.profiles,
+        type: 'active',
+      })
 
       toast.success('Profil uppdaterad', {
         description: 'Dina ändringar har sparats',

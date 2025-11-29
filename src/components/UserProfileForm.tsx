@@ -14,7 +14,6 @@ import { translatePALSystem } from '@/lib/translations'
 import { useProfileStore } from '@/stores/profileStore'
 import { useUpdateProfile, useCreateProfile, useProfiles } from '@/hooks'
 import { Lock } from 'lucide-react'
-import FloatingProfileSaveCard from './FloatingProfileSaveCard'
 import { ProfileFormSkeleton } from './ProfileFormSkeleton'
 
 interface CalculatorResult {
@@ -48,6 +47,7 @@ interface UserProfileFormProps {
   macroRanges?: MacroRanges | null
   mealSettings?: MealSettings | null
   onBodyFatChange?: (bodyFat: string) => void
+  onWeightChange?: (weight: string) => void
 }
 
 export default function UserProfileForm({
@@ -55,11 +55,13 @@ export default function UserProfileForm({
   macroRanges,
   mealSettings,
   onBodyFatChange,
+  onWeightChange,
 }: UserProfileFormProps = {}) {
   const { profile } = useAuth() // Keep for backward compatibility during transition
   const activeProfile = useProfileStore(state => state.activeProfile)
   const previousProfile = useProfileStore(state => state.previousProfile)
   const { data: allProfiles = [] } = useProfiles()
+  const profiles = useProfileStore(state => state.profiles) // Get profiles from Zustand for hasUnsavedChanges
   const updateProfileMutation = useUpdateProfile()
   const createProfileMutation = useCreateProfile()
 
@@ -125,7 +127,7 @@ export default function UserProfileForm({
   const [result, setResultState] = useState<CalculatorResult | null>(null)
   const [showBMRModal, setShowBMRModal] = useState(false)
   const [showPALModal, setShowPALModal] = useState(false)
-  const [isSaving, setIsSaving] = useState(false)
+  const [isSaving, setIsSaving] = useState(false) // eslint-disable-line @typescript-eslint/no-unused-vars
 
   // Wrapper to update both local state and notify parent
   const setResult = useCallback(
@@ -271,14 +273,16 @@ export default function UserProfileForm({
   ])
 
   // Check if there are unsaved changes compared to the saved profile
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const hasUnsavedChanges = useMemo(() => {
     // If no active profile, we're creating a new profile - show save card if we have results
     if (!activeProfile) {
       return !!result
     }
 
-    // Get the full profile data from allProfiles
-    const fullProfile = allProfiles.find(p => p.id === activeProfile.id)
+    // Get the full profile data from Zustand store (not React Query)
+    // This ensures we use the most up-to-date data that's updated synchronously in onSuccess
+    const fullProfile = profiles.find(p => p.id === activeProfile.id)
     if (!fullProfile) {
       // Still loading, no changes yet
       return false
@@ -344,7 +348,7 @@ export default function UserProfileForm({
     )
   }, [
     activeProfile,
-    allProfiles,
+    profiles, // Use Zustand store profiles instead of allProfiles from React Query
     profileName,
     weight,
     bodyFatPercentage,
@@ -484,13 +488,13 @@ export default function UserProfileForm({
         return
       }
 
-      // Calculate ±3% range
-      const tdeeMin = Math.round(customTdeeNum * 0.97)
-      const tdeeMax = Math.round(customTdeeNum * 1.03)
+      // Calculate ±3% range (NO ROUNDING - keep exact decimals)
+      const tdeeMin = customTdeeNum * 0.97
+      const tdeeMax = customTdeeNum * 1.03
 
       setResult({
         bmr: 0, // Will display as N/A
-        tdee: Math.round(customTdeeNum),
+        tdee: customTdeeNum, // NO ROUNDING - keep exact decimals
         tdeeMin,
         tdeeMax,
       })
@@ -570,33 +574,33 @@ export default function UserProfileForm({
       customPAL: customPAL ? parseFloat(customPAL) : undefined,
     })
 
-    // Calculate TDEE range based on energy goal
+    // Calculate TDEE range based on energy goal (NO ROUNDING - keep exact decimals)
     let tdeeMin = baseTdee
     let tdeeMax = baseTdee
 
     if (energyGoal === 'Maintain weight') {
       // ±3% range for maintain weight
-      tdeeMin = Math.round(baseTdee * 0.97)
-      tdeeMax = Math.round(baseTdee * 1.03)
+      tdeeMin = baseTdee * 0.97
+      tdeeMax = baseTdee * 1.03
     } else if (energyGoal === 'Weight loss') {
       if (deficitLevel === '10-15%') {
-        tdeeMin = Math.round(baseTdee * 0.85)
-        tdeeMax = Math.round(baseTdee * 0.9)
+        tdeeMin = baseTdee * 0.85
+        tdeeMax = baseTdee * 0.9
       } else if (deficitLevel === '20-25%') {
-        tdeeMin = Math.round(baseTdee * 0.75)
-        tdeeMax = Math.round(baseTdee * 0.8)
+        tdeeMin = baseTdee * 0.75
+        tdeeMax = baseTdee * 0.8
       } else if (deficitLevel === '25-30%') {
-        tdeeMin = Math.round(baseTdee * 0.7)
-        tdeeMax = Math.round(baseTdee * 0.75)
+        tdeeMin = baseTdee * 0.7
+        tdeeMax = baseTdee * 0.75
       }
     } else if (energyGoal === 'Weight gain') {
       // Weight gain 10-20%
-      tdeeMin = Math.round(baseTdee * 1.1)
-      tdeeMax = Math.round(baseTdee * 1.2)
+      tdeeMin = baseTdee * 1.1
+      tdeeMax = baseTdee * 1.2
     }
 
     setResult({
-      bmr: Math.round(bmr),
+      bmr: bmr, // NO ROUNDING - keep exact decimals
       tdee: baseTdee,
       tdeeMin,
       tdeeMax,
@@ -713,6 +717,7 @@ export default function UserProfileForm({
     customPAL,
   ])
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleSave = async () => {
     if (!result) {
       alert('Vänligen beräkna dina värden först')
@@ -734,7 +739,7 @@ export default function UserProfileForm({
       const trainingDurNum = trainingDuration ? parseFloat(trainingDuration) : null
       const customPALNum = customPAL ? parseFloat(customPAL) : null
 
-      // Calculate calorie range based on energy goal
+      // Calculate calorie range based on energy goal (NO ROUNDING - keep exact decimals)
       let caloriesMin: number | undefined
       let caloriesMax: number | undefined
 
@@ -742,25 +747,25 @@ export default function UserProfileForm({
       const customTdeeValue = customTdeeNum || tdeeValue
 
       if (energyGoal === 'Maintain weight') {
-        caloriesMin = Math.round(tdeeValue * 0.97)
-        caloriesMax = Math.round(tdeeValue * 1.03)
+        caloriesMin = tdeeValue * 0.97
+        caloriesMax = tdeeValue * 1.03
       } else if (energyGoal === 'Weight gain') {
-        caloriesMin = Math.round(tdeeValue * 1.1)
-        caloriesMax = Math.round(tdeeValue * 1.2)
+        caloriesMin = tdeeValue * 1.1
+        caloriesMax = tdeeValue * 1.2
       } else if (energyGoal === 'Weight loss') {
         if (deficitLevel === '10-15%') {
-          caloriesMin = Math.round(tdeeValue * 0.85)
-          caloriesMax = Math.round(tdeeValue * 0.9)
+          caloriesMin = tdeeValue * 0.85
+          caloriesMax = tdeeValue * 0.9
         } else if (deficitLevel === '20-25%') {
-          caloriesMin = Math.round(tdeeValue * 0.75)
-          caloriesMax = Math.round(tdeeValue * 0.8)
+          caloriesMin = tdeeValue * 0.75
+          caloriesMax = tdeeValue * 0.8
         } else if (deficitLevel === '25-30%') {
-          caloriesMin = Math.round(tdeeValue * 0.7)
-          caloriesMax = Math.round(tdeeValue * 0.75)
+          caloriesMin = tdeeValue * 0.7
+          caloriesMax = tdeeValue * 0.75
         }
       } else if (energyGoal === 'Custom TDEE' && customTdeeValue) {
-        caloriesMin = Math.round(customTdeeValue * 0.97)
-        caloriesMax = Math.round(customTdeeValue * 1.03)
+        caloriesMin = customTdeeValue * 0.97
+        caloriesMax = customTdeeValue * 1.03
       }
 
       const profileData = {
@@ -806,14 +811,12 @@ export default function UserProfileForm({
           data: profileData,
         })
         // Toast is handled by useUpdateProfile hook
+        // Queries are automatically invalidated by the mutation hook
       } else {
         await createProfileMutation.mutateAsync(profileData)
         // Toast is handled by useCreateProfile hook
+        // Queries are automatically invalidated by the mutation hook
       }
-
-      // After successful save, recalculate to sync result state with saved profile
-      // This ensures hasUnsavedChanges becomes false and FloatingProfileSaveCard disappears
-      handleCalculate()
     } catch (error) {
       console.error('Error saving profile:', error)
       // Error toast is handled by the hooks
@@ -1096,7 +1099,10 @@ export default function UserProfileForm({
             <input
               type="number"
               value={weight}
-              onChange={e => setWeight(e.target.value)}
+              onChange={e => {
+                setWeight(e.target.value)
+                onWeightChange?.(e.target.value)
+              }}
               className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
               placeholder="75"
               min="20"
@@ -1129,12 +1135,12 @@ export default function UserProfileForm({
 
           {/* SECTION 3: BMR Formula */}
           <div>
-            <h3 className="text-xl font-semibold text-neutral-900 mb-4">BMR-formel</h3>
+            <h3 className="text-xl font-semibold text-neutral-900 mb-4">BMR/RMR-formel</h3>
 
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <label className="block text-sm font-medium text-neutral-700">
-                  BMR-formel <span className="text-red-600">*</span>
+                  BMR/RMR-formel <span className="text-red-600">*</span>
                 </label>
                 {bmrFormula && (
                   <button
@@ -1151,7 +1157,7 @@ export default function UserProfileForm({
                 onChange={e => setBmrFormula(e.target.value as BMRFormula | '')}
                 className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
               >
-                <option value="">Välj BMR-formel...</option>
+                <option value="">Välj BMR/RMR-formel...</option>
                 <option value="Mifflin-St Jeor equation">Mifflin-St Jeor (Rekommenderad)</option>
                 <option value="Revised Harris-Benedict equation">Revised Harris-Benedict</option>
                 <option value="Original Harris-Benedict equation">Original Harris-Benedict</option>
@@ -1289,7 +1295,7 @@ export default function UserProfileForm({
                     BMR <span className="text-xs">(kcal/dag i vila)</span>
                   </p>
                   <p className="text-3xl font-bold text-primary-600">
-                    {result.bmr === 0 ? 'N/A' : `${result.bmr} kcal`}
+                    {result.bmr === 0 ? 'N/A' : `${Math.round(result.bmr)} kcal`}
                   </p>
                   <p className="text-xs text-neutral-500 mt-1">Basal Metabolic Rate</p>
                 </div>
@@ -1300,12 +1306,14 @@ export default function UserProfileForm({
                   </p>
                   <p className="text-3xl font-bold text-accent-600">
                     {energyGoal === 'Maintain weight' || energyGoal === 'Custom TDEE'
-                      ? `${result.tdeeMin} - ${result.tdeeMax} kcal `
+                      ? `${Math.round(result.tdeeMin)} - ${Math.round(result.tdeeMax)} kcal `
                       : result.tdeeMin === result.tdeeMax
-                        ? `${result.tdee} kcal`
-                        : `${result.tdeeMin} - ${result.tdeeMax} kcal `}
+                        ? `${Math.round(result.tdee)} kcal`
+                        : `${Math.round(result.tdeeMin)} - ${Math.round(result.tdeeMax)} kcal `}
                     {(energyGoal === 'Maintain weight' || energyGoal === 'Custom TDEE') && (
-                      <span className="text-xl text-accent-500">({result.tdee} kcal)</span>
+                      <span className="text-xl text-accent-500">
+                        ({Math.round(result.tdee)} kcal)
+                      </span>
                     )}
                   </p>
                   <p className="text-xs text-neutral-500 mt-1">Total Daily Energy Expenditure</p>
@@ -1333,15 +1341,6 @@ export default function UserProfileForm({
           onClose={() => setShowPALModal(false)}
         />
       )}
-
-      {/* Floating Profile Save Card - appears after scrolling */}
-      <FloatingProfileSaveCard
-        profileName={profileName}
-        onProfileNameChange={setProfileName}
-        onSave={handleSave}
-        isSaving={isSaving}
-        hasChanges={hasUnsavedChanges}
-      />
     </div>
   )
 }

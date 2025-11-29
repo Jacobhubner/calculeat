@@ -25,7 +25,16 @@
       "Bash(git restore:*)",
       "Bash(git rm:*)",
       "Bash(git revert:*)",
-      "Bash(git stash:*)"
+      "Bash(git stash:*)",
+      "Bash(npx tsc:*)",
+      "Bash(node test-macro-calc.js:*)",
+      "Bash(del:*)",
+      "Bash(node test-onseason.js:*)",
+      "Bash(node test-precision.js:*)",
+      "Bash(node test-total-check.js:*)",
+      "Bash(node test-no-rounding.js:*)",
+      "Bash(node test-total-100.js:*)",
+      "Bash(tasklist:*)"
     ],
     "deny": [],
     "ask": []

@@ -36,6 +36,13 @@ export function useCalculations(profile: UserProfile | null | undefined): Calcul
   const debouncedProfile = useDebounce(profile, 300)
 
   return useMemo(() => {
+    console.log('🟢 useCalculations running with profile:', {
+      hasProfile: !!debouncedProfile,
+      caloriesMin: debouncedProfile?.calories_min,
+      caloriesMax: debouncedProfile?.calories_max,
+      tdee: debouncedProfile?.tdee,
+    })
+
     if (!debouncedProfile) {
       return {
         bmr: null,
@@ -125,12 +132,25 @@ export function useCalculations(profile: UserProfile | null | undefined): Calcul
       // Beräkna kalorimål om vi har TDEE och mål
       let calorieGoal: CalorieRange | null = null
       if (tdee && debouncedProfile.calorie_goal) {
-        calorieGoal = calculateCalorieGoal({
-          tdee,
-          goal: debouncedProfile.calorie_goal,
-          bmr: bmr || undefined,
-          deficitLevel: debouncedProfile.deficit_level,
-        })
+        // If user has saved calories_min/max from a macro mode, use those
+        // Otherwise calculate from TDEE using standard formulas
+        if (debouncedProfile.calories_min && debouncedProfile.calories_max) {
+          console.log('🟢 Using SAVED calories_min/max from macro mode')
+          calorieGoal = {
+            min: debouncedProfile.calories_min,
+            max: debouncedProfile.calories_max,
+            target: Math.round((debouncedProfile.calories_min + debouncedProfile.calories_max) / 2),
+            weeklyChange: 0, // Will be recalculated if needed
+          }
+        } else {
+          console.log('🟢 Calculating calories_min/max from TDEE')
+          calorieGoal = calculateCalorieGoal({
+            tdee,
+            goal: debouncedProfile.calorie_goal,
+            bmr: bmr || undefined,
+            deficitLevel: debouncedProfile.deficit_level,
+          })
+        }
       }
 
       // Beräkna makros om vi har kalorimål och vikt
@@ -144,6 +164,21 @@ export function useCalculations(profile: UserProfile | null | undefined): Calcul
           debouncedProfile.fat_max_percent != null &&
           debouncedProfile.carb_min_percent != null &&
           debouncedProfile.carb_max_percent != null
+
+        console.log('🟢 useCalculations - calculating macros with:', {
+          hasCustomMacros,
+          caloriesMin: calorieGoal.min,
+          caloriesMax: calorieGoal.max,
+          savedCaloriesMin: debouncedProfile.calories_min,
+          savedCaloriesMax: debouncedProfile.calories_max,
+          percentages: hasCustomMacros
+            ? {
+                fat: `${debouncedProfile.fat_min_percent}-${debouncedProfile.fat_max_percent}%`,
+                carb: `${debouncedProfile.carb_min_percent}-${debouncedProfile.carb_max_percent}%`,
+                protein: `${debouncedProfile.protein_min_percent}-${debouncedProfile.protein_max_percent}%`,
+              }
+            : 'auto',
+        })
 
         macros = calculateMacros({
           calories: calorieGoal.target,
@@ -163,6 +198,12 @@ export function useCalculations(profile: UserProfile | null | undefined): Calcul
                 carbMaxPercent: debouncedProfile.carb_max_percent!,
               }
             : undefined,
+        })
+
+        console.log('🟢 useCalculations - calculated macros:', {
+          fat: macros.fat.grams + 'g',
+          carbs: macros.carbs.grams + 'g',
+          protein: macros.protein.grams + 'g',
         })
       }
 

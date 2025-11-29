@@ -3,6 +3,7 @@ import type { BMRFormula } from '../types'
 export interface BMRFormulaDescription {
   name: string
   year: string
+  type: string
   description: string
   pros: string[]
   cons: string[]
@@ -11,16 +12,17 @@ export interface BMRFormulaDescription {
 
 export const BMR_FORMULA_DESCRIPTIONS: Record<BMRFormula, BMRFormulaDescription> = {
   'Mifflin-St Jeor equation': {
-    name: 'Mifflin-St Jeor',
+    name: 'Mifflin-St Jeor-ekvationen',
     year: '1990',
+    type: 'RMR',
     description:
       'En av de mest validerade och använda formlerna för att beräkna basalmetabolism hos friska vuxna.',
     pros: [
       'Validerad över olika BMI-intervall - fungerar konsekvent bra hos normalviktiga, överviktiga och feta individer',
-      'Flera metaanalyser (t.ex. Frankenfield et al., 2005) visar att Mifflin-St Jeor är den mest noggranna BMR-prediktorn för friska, icke-feta och feta vuxna i USA och västerländska populationer',
+      'Flera metaanalyser (t.ex. Frankenfield et al., 2005) visar att Mifflin-St Jeor är den mest noggranna RMR-prediktorn för friska, icke-feta och feta vuxna i USA och västerländska populationer',
     ],
     cons: [
-      'Likt många prediktiva ekvationer tar den inte hänsyn till fettfri massa, så den kan underskatta BMR hos mycket muskulösa individer (t.ex. atleter)',
+      'Likt många prediktiva ekvationer tar den inte hänsyn till fettfri massa, så den kan underskatta RMR hos mycket muskulösa individer (t.ex. atleter)',
     ],
     references: [
       'Mifflin MD, St Jeor ST, Hill LA, Scott BJ, Daugherty SA, Koh YO. A new predictive equation for resting energy expenditure in healthy individuals. Am J Clin Nutr. 1990 Feb;51(2):241-7. doi: 10.1093/ajcn/51.2.241. PMID: 2305711.',
@@ -29,8 +31,9 @@ export const BMR_FORMULA_DESCRIPTIONS: Record<BMRFormula, BMRFormulaDescription>
   },
 
   'Cunningham equation': {
-    name: 'Cunningham (Katch och McArdle)',
+    name: 'Cunningham (Katch och McArdle)-ekvationen',
     year: '1991',
+    type: 'RMR',
     description:
       'Utvecklad av Cunningham och populariserad av Katch och McArdle i sin lärobok om träningsfysiologi.',
     pros: [
@@ -44,8 +47,9 @@ export const BMR_FORMULA_DESCRIPTIONS: Record<BMRFormula, BMRFormulaDescription>
   },
 
   'Oxford/Henry equation': {
-    name: 'Oxford/Henry',
+    name: 'Oxford/Henry-ekvationen',
     year: '2005',
+    type: 'BMR',
     description:
       'Till skillnad från de äldre Schofield-ekvationerna (som används av FAO/WHO/UNU) exkluderade Oxford-ekvationerna biased italiensk data (som hade ovanligt höga BMR-värden).',
     pros: ['Ger lägre, mer noggranna BMR-uppskattningar för många globala populationer'],
@@ -58,8 +62,9 @@ export const BMR_FORMULA_DESCRIPTIONS: Record<BMRFormula, BMRFormulaDescription>
   },
 
   'Schofield equation': {
-    name: 'Schofield (FAO/WHO/UNU)',
+    name: 'Schofield (FAO/WHO/UNU)-ekvationen',
     year: '1985',
+    type: 'BMR',
     description:
       'Utvecklad av W.N. Schofield som en del av en studie beställd av FAO och WHO för att standardisera energibehov världen över.',
     pros: [
@@ -79,8 +84,9 @@ export const BMR_FORMULA_DESCRIPTIONS: Record<BMRFormula, BMRFormulaDescription>
   },
 
   'Revised Harris-Benedict equation': {
-    name: 'Reviderad Harris-Benedict (Roza och Shizgal)',
+    name: 'Reviderad Harris-Benedict (Roza och Shizgal)-ekvationen',
     year: '1984',
+    type: 'BMR',
     description:
       '1984 reviderades de ursprungliga Harris-Benedict-ekvationerna med ny data av Roza och Shizgal.',
     pros: [
@@ -96,8 +102,9 @@ export const BMR_FORMULA_DESCRIPTIONS: Record<BMRFormula, BMRFormulaDescription>
   },
 
   'Original Harris-Benedict equation': {
-    name: 'Original Harris-Benedict',
+    name: 'Original Harris-Benedict-ekvationen',
     year: '1918, 1919',
+    type: 'BMR',
     description:
       'Harris-Benedict-formeln var banbrytande 1918 och lade grunden för metabolisk forskning. 1919-publikationen är mer omfattande och citeras ofta som det grundläggande arbetet för att uppskatta basalmetabolism (BMR).',
     pros: ['Historiskt viktigt arbete som lade grunden för BMR-beräkningar'],
@@ -112,8 +119,9 @@ export const BMR_FORMULA_DESCRIPTIONS: Record<BMRFormula, BMRFormulaDescription>
   },
 
   'MacroFactor standard equation': {
-    name: 'MacroFactor Standard',
+    name: 'MacroFactor Standard-ekvationen',
     year: '2024',
+    type: 'RMR/BMR',
     description:
       'Baserad på Oxford/Henry-ekvationen och Cunningham-ekvationen. Tar hänsyn till icke-linjär skalning av metabolism.',
     pros: [
@@ -125,8 +133,9 @@ export const BMR_FORMULA_DESCRIPTIONS: Record<BMRFormula, BMRFormulaDescription>
   },
 
   'MacroFactor FFM equation': {
-    name: 'MacroFactor FFM',
+    name: 'MacroFactor FFM-ekvationen',
     year: '2024',
+    type: 'RMR',
     description:
       'Variant av MacroFactor-ekvationen som använder fettfri massa (FFM) för mer precisa beräkningar.',
     pros: [
@@ -138,10 +147,11 @@ export const BMR_FORMULA_DESCRIPTIONS: Record<BMRFormula, BMRFormulaDescription>
   },
 
   'MacroFactor athlete equation': {
-    name: 'MacroFactor Atlet',
+    name: 'MacroFactor Atlet-ekvationen',
     year: '2024',
+    type: 'RMR',
     description:
-      'Specialanpassad för atleter som tränar intensivt minst sju timmar per vecka. Atleter har högre BMR eftersom de tenderar att vara magrare och ha mer muskelmassa än icke-atleter.',
+      'Specialanpassad för atleter som tränar intensivt minst sju timmar per vecka. Atleter har högre RMR eftersom de tenderar att vara magrare och ha mer muskelmassa än icke-atleter.',
     pros: [
       'Speciellt utformad för atleter som spenderar minst sju timmar per vecka med intensiv träning',
       'Tar hänsyn till att massan av högmetabola organ (särskilt hjärta, njurar och lever) hos atleter skalar starkare med övergripande kroppsstorlek än relationen som observeras hos icke-atleter',
@@ -154,10 +164,11 @@ export const BMR_FORMULA_DESCRIPTIONS: Record<BMRFormula, BMRFormulaDescription>
   },
 
   'Fitness Stuff Podcast equation': {
-    name: 'Fitness Stuff Podcast',
-    year: 'Nutid',
+    name: 'Fitness Stuff Podcast-ekvationen',
+    year: 'Okänt. Tidigt 2020-tal (?)',
+    type: 'RMR',
     description:
-      'Baserad på Cunningham-ekvationen och Mifflin-St Jeor-ekvationen. Denna ekvation använder Cunningham-ekvationen som bas för att uppskatta BMR, men kombinerar könsdelen av ekvationen som Mifflin-St Jeor har.',
+      'Baserad på Cunningham-ekvationen och Mifflin-St Jeor-ekvationen. Denna ekvation använder Cunningham-ekvationen som bas för att uppskatta RMR, men kombinerar könsdelen av ekvationen som Mifflin-St Jeor har.',
     pros: [
       'Kombinerar styrkor från både Cunningham (fettfri massa) och Mifflin-St Jeor (könsspecifik)',
     ],

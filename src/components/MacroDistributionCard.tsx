@@ -9,7 +9,8 @@ import { RangeSlider } from './ui/RangeSlider'
 import { useProfileStore } from '@/stores/profileStore'
 
 interface MacroDistributionCardProps {
-  tdee?: number
+  caloriesMin?: number
+  caloriesMax?: number
   onMacroChange?: (macros: {
     fatMin: number
     fatMax: number
@@ -20,7 +21,11 @@ interface MacroDistributionCardProps {
   }) => void
 }
 
-export default function MacroDistributionCard({ tdee, onMacroChange }: MacroDistributionCardProps) {
+export default function MacroDistributionCard({
+  caloriesMin,
+  caloriesMax,
+  onMacroChange,
+}: MacroDistributionCardProps) {
   const activeProfile = useProfileStore(state => state.activeProfile)
 
   // NNR 2023 defaults - Fat: 25-40%, Carb: 45-60%, Protein: 10-20%
@@ -74,19 +79,20 @@ export default function MacroDistributionCard({ tdee, onMacroChange }: MacroDist
     }
   }, [fatRange, carbRange, proteinRange, onMacroChange])
 
-  // Calculate grams from percentages
-  const calculateGrams = (percentage: number) => {
-    if (!tdee) return null
-    // Calories per gram: Fat = 9, Carb = 4, Protein = 4
-    return Math.round((tdee * (percentage / 100)) / 4) // Using 4 as default for carbs/protein
+  // Calculate grams from percentages - matching Google Sheets formula
+  // Formula: calories * percent / 100 / kcal_per_gram
+  const calculateMinGrams = (percentage: number, kcalPerGram: number) => {
+    if (!caloriesMin) return null
+    return Math.round((caloriesMin * percentage) / 100 / kcalPerGram)
   }
 
-  const calculateFatGrams = (percentage: number) => {
-    if (!tdee) return null
-    return Math.round((tdee * (percentage / 100)) / 9)
+  const calculateMaxGrams = (percentage: number, kcalPerGram: number) => {
+    if (!caloriesMax) return null
+    return Math.round((caloriesMax * percentage) / 100 / kcalPerGram)
   }
 
   // Calculate total percentage (using midpoints of ranges)
+  // ALWAYS use slider values (live) for immediate feedback
   const fatMid = (fatRange[0] + fatRange[1]) / 2
   const carbMid = (carbRange[0] + carbRange[1]) / 2
   const proteinMid = (proteinRange[0] + proteinRange[1]) / 2
@@ -111,9 +117,9 @@ export default function MacroDistributionCard({ tdee, onMacroChange }: MacroDist
             <label className="text-sm font-medium text-neutral-700">Fett</label>
             <div className="text-sm font-semibold text-accent-600">
               {fatRange[0].toFixed(0)}% - {fatRange[1].toFixed(0)}%
-              {tdee && (
+              {caloriesMin && caloriesMax && (
                 <span className="text-neutral-500 font-normal ml-2">
-                  ({calculateFatGrams(fatRange[0])}g - {calculateFatGrams(fatRange[1])}g)
+                  ({calculateMinGrams(fatRange[0], 9)}g - {calculateMaxGrams(fatRange[1], 9)}g)
                 </span>
               )}
             </div>
@@ -130,9 +136,9 @@ export default function MacroDistributionCard({ tdee, onMacroChange }: MacroDist
             <label className="text-sm font-medium text-neutral-700">Kolhydrater</label>
             <div className="text-sm font-semibold text-primary-600">
               {carbRange[0].toFixed(0)}% - {carbRange[1].toFixed(0)}%
-              {tdee && (
+              {caloriesMin && caloriesMax && (
                 <span className="text-neutral-500 font-normal ml-2">
-                  ({calculateGrams(carbRange[0])}g - {calculateGrams(carbRange[1])}g)
+                  ({calculateMinGrams(carbRange[0], 4)}g - {calculateMaxGrams(carbRange[1], 4)}g)
                 </span>
               )}
             </div>
@@ -155,9 +161,10 @@ export default function MacroDistributionCard({ tdee, onMacroChange }: MacroDist
             <label className="text-sm font-medium text-neutral-700">Protein</label>
             <div className="text-sm font-semibold text-blue-600">
               {proteinRange[0].toFixed(0)}% - {proteinRange[1].toFixed(0)}%
-              {tdee && (
+              {caloriesMin && caloriesMax && (
                 <span className="text-neutral-500 font-normal ml-2">
-                  ({calculateGrams(proteinRange[0])}g - {calculateGrams(proteinRange[1])}g)
+                  ({calculateMinGrams(proteinRange[0], 4)}g -{' '}
+                  {calculateMaxGrams(proteinRange[1], 4)}g)
                 </span>
               )}
             </div>

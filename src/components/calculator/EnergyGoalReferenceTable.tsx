@@ -22,41 +22,42 @@ export default function EnergyGoalReferenceTable({
   onGoalSelect,
   onDeficitSelect,
 }: EnergyGoalReferenceTableProps) {
-  // Calculate calorie differentials
-  const maintainMin = Math.round(tdee * 0.97)
-  const maintainMax = Math.round(tdee * 1.03)
+  // Calculate calorie differentials (NO ROUNDING - keep exact decimals for calculations)
+  const maintainMin = tdee * 0.97
+  const maintainMax = tdee * 1.03
 
-  const gain10Min = Math.round(tdee * 1.1)
-  const gain10Max = Math.round(tdee * 1.2)
+  const gain10Min = tdee * 1.1
+  const gain10Max = tdee * 1.2
   const gain10DiffMin = gain10Min - tdee
   const gain10DiffMax = gain10Max - tdee
 
-  const loss10Min = Math.round(tdee * 0.85)
-  const loss10Max = Math.round(tdee * 0.9)
+  const loss10Min = tdee * 0.85
+  const loss10Max = tdee * 0.9
   const loss10DiffMin = tdee - loss10Max
   const loss10DiffMax = tdee - loss10Min
 
-  const loss20Min = Math.round(tdee * 0.75)
-  const loss20Max = Math.round(tdee * 0.8)
+  const loss20Min = tdee * 0.75
+  const loss20Max = tdee * 0.8
   const loss20DiffMin = tdee - loss20Max
   const loss20DiffMax = tdee - loss20Min
 
-  const loss25Min = Math.round(tdee * 0.7)
-  const loss25Max = Math.round(tdee * 0.75)
+  const loss25Min = tdee * 0.7
+  const loss25Max = tdee * 0.75
   const loss25DiffMin = tdee - loss25Max
   const loss25DiffMax = tdee - loss25Min
 
   // Define all goals with their selection status (always show all options)
+  // Round values only when displaying (keep calculations precise)
   const goals: GoalRow[] = [
     {
       label: `Behåll vikt (±3%)`,
-      percentage: `${maintainMin} - ${maintainMax} kcal (${tdee} kcal)`,
+      percentage: `${Math.round(maintainMin)} - ${Math.round(maintainMax)} kcal (${Math.round(tdee)} kcal)`,
       isSelected: selectedGoal === 'Maintain weight',
       goalValue: 'Maintain weight',
     },
     {
       label: `Viktuppgång (10-20%)`,
-      percentage: `${gain10Min} - ${gain10Max} kcal (⇧ ${gain10DiffMin} - ${gain10DiffMax} kcal)`,
+      percentage: `${Math.round(gain10Min)} - ${Math.round(gain10Max)} kcal (⇧ ${Math.round(gain10DiffMin)} - ${Math.round(gain10DiffMax)} kcal)`,
       isSelected: selectedGoal === 'Weight gain',
       goalValue: 'Weight gain',
     },
@@ -68,7 +69,7 @@ export default function EnergyGoalReferenceTable({
     },
     {
       label: `Försiktigt (10-15%)`,
-      percentage: `${loss10Min} - ${loss10Max} kcal (⇩ ${loss10DiffMin} - ${loss10DiffMax} kcal)`,
+      percentage: `${Math.round(loss10Min)} - ${Math.round(loss10Max)} kcal (⇩ ${Math.round(loss10DiffMin)} - ${Math.round(loss10DiffMax)} kcal)`,
       isSelected: selectedGoal === 'Weight loss' && selectedDeficit === '10-15%',
       isSubItem: true,
       goalValue: 'Weight loss',
@@ -76,7 +77,7 @@ export default function EnergyGoalReferenceTable({
     },
     {
       label: `Normalt (20-25%)`,
-      percentage: `${loss20Min} - ${loss20Max} kcal (⇩ ${loss20DiffMin} - ${loss20DiffMax} kcal)`,
+      percentage: `${Math.round(loss20Min)} - ${Math.round(loss20Max)} kcal (⇩ ${Math.round(loss20DiffMin)} - ${Math.round(loss20DiffMax)} kcal)`,
       isSelected: selectedGoal === 'Weight loss' && selectedDeficit === '20-25%',
       isSubItem: true,
       goalValue: 'Weight loss',
@@ -84,7 +85,7 @@ export default function EnergyGoalReferenceTable({
     },
     {
       label: `Aggressivt (25-30%)`,
-      percentage: `${loss25Min} - ${loss25Max} kcal (⇩ ${loss25DiffMin} - ${loss25DiffMax} kcal)`,
+      percentage: `${Math.round(loss25Min)} - ${Math.round(loss25Max)} kcal (⇩ ${Math.round(loss25DiffMin)} - ${Math.round(loss25DiffMax)} kcal)`,
       isSelected: selectedGoal === 'Weight loss' && selectedDeficit === '25-30%',
       isSubItem: true,
       goalValue: 'Weight loss',

@@ -31,7 +31,9 @@ export default function BMRFormulaModal({ formula, isOpen, onClose }: BMRFormula
           <div className="sticky top-0 bg-gradient-to-r from-primary-500 to-accent-500 text-white p-6 rounded-t-2xl flex justify-between items-start">
             <div>
               <h2 className="text-2xl font-bold">{description.name}</h2>
-              <p className="text-primary-100 mt-1">Utvecklad {description.year}</p>
+              <p className="text-primary-100 mt-1">
+                Utvecklad {description.year} • Typ: {description.type}
+              </p>
             </div>
             <button
               onClick={onClose}

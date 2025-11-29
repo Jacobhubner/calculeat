@@ -70,9 +70,9 @@ export function useApplyMacroMode() {
         caloriesMax: profile.tdee, // Temporary - will be replaced
       })
 
-      // Apply multipliers to TDEE to get actual CalorieMin/Max
-      const newCaloriesMin = Math.round(profile.tdee * tempMacroMode.calorieMinMultiplier)
-      const newCaloriesMax = Math.round(profile.tdee * tempMacroMode.calorieMaxMultiplier)
+      // Apply multipliers to TDEE to get actual CalorieMin/Max (NO ROUNDING - keep exact decimals)
+      const newCaloriesMin = profile.tdee * tempMacroMode.calorieMinMultiplier
+      const newCaloriesMax = profile.tdee * tempMacroMode.calorieMaxMultiplier
 
       // Now calculate macro mode with CORRECT calories
       const macroMode = applyMacroMode(input.mode, {
@@ -172,8 +172,8 @@ export function usePreviewMacroMode(mode: 'nnr' | 'offseason' | 'onseason'): Mac
       caloriesMax: profile.tdee,
     })
 
-    const newCaloriesMin = Math.round(profile.tdee * tempMacroMode.calorieMinMultiplier)
-    const newCaloriesMax = Math.round(profile.tdee * tempMacroMode.calorieMaxMultiplier)
+    const newCaloriesMin = profile.tdee * tempMacroMode.calorieMinMultiplier
+    const newCaloriesMax = profile.tdee * tempMacroMode.calorieMaxMultiplier
 
     return applyMacroMode(mode, {
       weight: profile.weight_kg,

@@ -57,18 +57,16 @@ export function offSeasonMode(weight: number, caloriesMin: number, caloriesMax: 
   const proteinMinKcal = proteinMinGrams * 4
   const proteinMaxKcal = proteinMaxGrams * 4
 
-  // Convert to percentages with ROUNDING (match Google Sheets ROUND())
-  const fatMinPercent = Math.round((fatMinKcal / caloriesMin) * 100)
-  const fatMaxPercent = Math.round((fatMaxKcal / caloriesMax) * 100)
-  const proteinMinPercent = Math.round((proteinMinKcal / caloriesMin) * 100)
-  const proteinMaxPercent = Math.round((proteinMaxKcal / caloriesMax) * 100)
+  // Convert to percentages (NO ROUNDING - keep exact decimals for precision)
+  const fatMinPercent = (fatMinKcal / caloriesMin) * 100
+  const fatMaxPercent = (fatMaxKcal / caloriesMax) * 100
+  const proteinMinPercent = (proteinMinKcal / caloriesMin) * 100
+  const proteinMaxPercent = (proteinMaxKcal / caloriesMax) * 100
 
-  // CARBS: remaining energy after fat and protein (CORRECTED - use min with min, max with max)
-  const carbsMinKcal = caloriesMin - (fatMinKcal + proteinMinKcal)
-  const carbsMaxKcal = caloriesMax - (fatMaxKcal + proteinMaxKcal)
-
-  const carbMinPercent = Math.round((carbsMinKcal / caloriesMin) * 100)
-  const carbMaxPercent = Math.round((carbsMaxKcal / caloriesMax) * 100)
+  // CARBS: Calculate as remainder to ensure total = 100%
+  // This ensures fat% + protein% + carb% = 100% exactly
+  const carbMinPercent = 100 - (fatMaxPercent + proteinMaxPercent)
+  const carbMaxPercent = 100 - (fatMinPercent + proteinMinPercent)
 
   return {
     calorieGoal: 'Weight gain',
@@ -106,18 +104,16 @@ export function onSeasonMode(
   const proteinMinKcal = proteinMinGrams * 4
   const proteinMaxKcal = proteinMaxGrams * 4
 
-  // Convert to percentages with ROUNDING (match Google Sheets ROUND())
-  const fatMinPercent = Math.round((fatMinKcal / caloriesMin) * 100)
-  const fatMaxPercent = Math.round((fatMaxKcal / caloriesMax) * 100)
-  const proteinMinPercent = Math.round((proteinMinKcal / caloriesMin) * 100)
-  const proteinMaxPercent = Math.round((proteinMaxKcal / caloriesMax) * 100)
+  // Convert to percentages (NO ROUNDING - keep exact decimals for precision)
+  const fatMinPercent = (fatMinKcal / caloriesMin) * 100
+  const fatMaxPercent = (fatMaxKcal / caloriesMax) * 100
+  const proteinMinPercent = (proteinMinKcal / caloriesMin) * 100
+  const proteinMaxPercent = (proteinMaxKcal / caloriesMax) * 100
 
-  // CARBS: remaining energy after fat and protein (CORRECTED - use min with min, max with max)
-  const carbsMinKcal = caloriesMin - (fatMinKcal + proteinMinKcal)
-  const carbsMaxKcal = caloriesMax - (fatMaxKcal + proteinMaxKcal)
-
-  const carbMinPercent = Math.round((carbsMinKcal / caloriesMin) * 100)
-  const carbMaxPercent = Math.round((carbsMaxKcal / caloriesMax) * 100)
+  // CARBS: Calculate as remainder to ensure total = 100%
+  // This ensures fat% + protein% + carb% = 100% exactly
+  const carbMinPercent = 100 - (fatMaxPercent + proteinMaxPercent)
+  const carbMaxPercent = 100 - (fatMinPercent + proteinMinPercent)
 
   return {
     calorieGoal: 'Weight loss',
