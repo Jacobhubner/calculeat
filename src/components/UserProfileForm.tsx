@@ -188,15 +188,26 @@ export default function UserProfileForm({
       setDailySteps(fullProfile.daily_steps || '')
       setCustomPAL(fullProfile.custom_pal?.toString() || '')
 
+      // Load energy goal and related fields
       if (fullProfile.calorie_goal) {
         setEnergyGoal(fullProfile.calorie_goal as EnergyGoal)
+      } else {
+        setEnergyGoal('Maintain weight')
       }
       if (fullProfile.deficit_level) {
         setDeficitLevel(fullProfile.deficit_level as DeficitLevel)
+      } else {
+        setDeficitLevel('')
       }
       if (fullProfile.custom_tdee) {
         setCustomTdee(fullProfile.custom_tdee.toString())
+      } else {
+        setCustomTdee('')
       }
+
+      // Clear calculation result when loading saved profile
+      // This prevents hasUnsavedChanges from triggering due to old calculations
+      setResult(null)
     } else if (activeProfile === null && allProfiles.length > 0) {
       // New profile mode - copy all fields from previously viewed profile
       // Use previousProfile if available, otherwise use first profile
