@@ -306,8 +306,9 @@ export default function UserProfileForm({
     const hasActivityLevelChange = activityLevel !== (fullProfile.activity_level || '')
     const hasIntensityLevelChange = intensityLevel !== (fullProfile.intensity_level || '')
     const hasTrainingFreqChange =
-      trainingFrequency !== (fullProfile.training_frequency_per_week || '')
-    const hasTrainingDurChange = trainingDuration !== (fullProfile.training_duration_minutes || '')
+      trainingFrequency !== (fullProfile.training_frequency_per_week?.toString() || '')
+    const hasTrainingDurChange =
+      trainingDuration !== (fullProfile.training_duration_minutes?.toString() || '')
     const hasDailyStepsChange = dailySteps !== (fullProfile.daily_steps || '')
     const hasCustomPALChange = customPAL !== (fullProfile.custom_pal?.toString() || '')
     const hasEnergyGoalChange = energyGoal !== (fullProfile.calorie_goal || '')
