@@ -11,7 +11,7 @@ import { useProfiles, useCalculations, useOnboarding } from '@/hooks'
 import { useTodayLog } from '@/hooks/useDailyLogs'
 import { useProfileStore } from '@/stores/profileStore'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Activity, Flame, Target, TrendingUp, UtensilsCrossed, Scale } from 'lucide-react'
+import { Activity, Flame, Target, UtensilsCrossed, Scale } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
 
@@ -91,34 +91,31 @@ export default function DashboardPage() {
         ) : (
           <div className="space-y-8">
             {/* Quick Stats */}
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               <StatCard
-                title="BMR"
+                title="RMR/BMR"
                 value={profile?.bmr ? Math.round(profile.bmr) : '-'}
                 unit="kcal"
                 icon={Flame}
-                variant="primary"
+                variant="warning"
               />
               <StatCard
                 title="TDEE"
                 value={profile?.tdee ? Math.round(profile.tdee) : '-'}
                 unit="kcal"
                 icon={Activity}
-                variant="accent"
+                variant="error"
               />
               <StatCard
                 title="Kalorimål"
-                value={profile?.calories_max ? Math.round(profile.calories_max) : '-'}
+                value={
+                  profile?.calories_min && profile?.calories_max
+                    ? `${Math.round(profile.calories_min)} - ${Math.round(profile.calories_max)}`
+                    : '-'
+                }
                 unit="kcal"
                 icon={Target}
                 variant="success"
-              />
-              <StatCard
-                title="Vikt"
-                value={profile?.weight_kg || '-'}
-                unit="kg"
-                icon={TrendingUp}
-                variant="default"
               />
             </div>
 

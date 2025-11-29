@@ -11,7 +11,7 @@ interface StatCardProps {
     value: number
     label: string
   }
-  variant?: 'default' | 'primary' | 'accent' | 'success'
+  variant?: 'default' | 'primary' | 'accent' | 'success' | 'warning' | 'error'
   className?: string
 }
 
@@ -29,6 +29,8 @@ export default function StatCard({
     primary: 'bg-gradient-primary text-white',
     accent: 'bg-gradient-accent text-white',
     success: 'bg-gradient-to-br from-success-400 to-success-600 text-white',
+    warning: 'bg-gradient-to-br from-yellow-400 to-orange-500 text-white',
+    error: 'bg-gradient-to-br from-red-400 to-red-600 text-white',
   }
 
   return (
