@@ -30,7 +30,7 @@ export default function DashboardPage() {
 
   // Get today's consumed calories and macros
   const consumed = todayLog?.total_calories || 0
-  const target = calculations.calorieGoal?.target || 2000
+  const target = profile?.calories_max || 2000
   const remaining = target - consumed
 
   const handleOnboardingClose = (open: boolean) => {
@@ -94,21 +94,21 @@ export default function DashboardPage() {
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
               <StatCard
                 title="BMR"
-                value={calculations.bmr || '-'}
+                value={profile?.bmr ? Math.round(profile.bmr) : '-'}
                 unit="kcal"
                 icon={Flame}
                 variant="primary"
               />
               <StatCard
                 title="TDEE"
-                value={calculations.tdee || '-'}
+                value={profile?.tdee ? Math.round(profile.tdee) : '-'}
                 unit="kcal"
                 icon={Activity}
                 variant="accent"
               />
               <StatCard
                 title="Kalorimål"
-                value={calculations.calorieGoal?.target || '-'}
+                value={profile?.calories_max ? Math.round(profile.calories_max) : '-'}
                 unit="kcal"
                 icon={Target}
                 variant="success"

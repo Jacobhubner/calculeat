@@ -291,22 +291,14 @@ export default function UserProfileForm({
   const hasUnsavedChanges = useMemo(() => {
     // If no active profile, we're creating a new profile - show save card if we have results
     if (!activeProfile) {
-      console.log('[hasUnsavedChanges] No activeProfile, result:', !!result)
       return !!result
     }
 
     // Get the full profile data from Zustand store (not React Query)
     // This ensures we use the most up-to-date data that's updated synchronously in onSuccess
     const fullProfile = profiles.find(p => p.id === activeProfile.id)
-    console.log(
-      '[hasUnsavedChanges] activeProfile.id:',
-      activeProfile.id,
-      'fullProfile found:',
-      !!fullProfile
-    )
     if (!fullProfile) {
       // Still loading, no changes yet
-      console.log('[hasUnsavedChanges] No fullProfile, returning false')
       return false
     }
 
@@ -368,80 +360,6 @@ export default function UserProfileForm({
       hasResultChange ||
       hasMacroChange ||
       hasMealSettingsChange
-
-    console.log('[hasUnsavedChanges] Comparison details:', {
-      profileName: hasProfileNameChange,
-      weight: hasWeightChange,
-      bodyFat: hasBodyFatChange,
-      bmrFormula: hasBmrFormulaChange,
-      palSystem: hasPalSystemChange,
-      activityLevel: hasActivityLevelChange,
-      intensityLevel: hasIntensityLevelChange,
-      trainingFreq: hasTrainingFreqChange,
-      trainingDur: hasTrainingDurChange,
-      dailySteps: hasDailyStepsChange,
-      customPAL: hasCustomPALChange,
-      energyGoal: hasEnergyGoalChange,
-      deficitLevel: hasDeficitLevelChange,
-      customTdee: hasCustomTdeeChange,
-      result: hasResultChange,
-      macros: hasMacroChange,
-      mealSettings: hasMealSettingsChange,
-      finalResult,
-    })
-
-    // Log the actual value causing the issue
-    if (finalResult) {
-      const culprits = []
-      if (hasProfileNameChange)
-        culprits.push(`profileName: "${profileName}" vs "${fullProfile.profile_name || ''}"`)
-      if (hasWeightChange)
-        culprits.push(`weight: "${weight}" vs "${fullProfile.weight_kg?.toString() || ''}"`)
-      if (hasBodyFatChange)
-        culprits.push(
-          `bodyFat: "${bodyFatPercentage}" vs "${fullProfile.body_fat_percentage?.toString() || ''}"`
-        )
-      if (hasBmrFormulaChange)
-        culprits.push(`bmrFormula: "${bmrFormula}" vs "${fullProfile.bmr_formula || ''}"`)
-      if (hasPalSystemChange)
-        culprits.push(`palSystem: "${palSystem}" vs "${fullProfile.pal_system || ''}"`)
-      if (hasActivityLevelChange)
-        culprits.push(`activityLevel: "${activityLevel}" vs "${fullProfile.activity_level || ''}"`)
-      if (hasIntensityLevelChange)
-        culprits.push(
-          `intensityLevel: "${intensityLevel}" vs "${fullProfile.intensity_level || ''}"`
-        )
-      if (hasTrainingFreqChange)
-        culprits.push(
-          `trainingFreq: "${trainingFrequency}" vs "${fullProfile.training_frequency_per_week || ''}"`
-        )
-      if (hasTrainingDurChange)
-        culprits.push(
-          `trainingDur: "${trainingDuration}" vs "${fullProfile.training_duration_minutes || ''}"`
-        )
-      if (hasDailyStepsChange)
-        culprits.push(`dailySteps: "${dailySteps}" vs "${fullProfile.daily_steps || ''}"`)
-      if (hasCustomPALChange)
-        culprits.push(`customPAL: "${customPAL}" vs "${fullProfile.custom_pal?.toString() || ''}"`)
-      if (hasEnergyGoalChange)
-        culprits.push(`energyGoal: "${energyGoal}" vs "${fullProfile.calorie_goal || ''}"`)
-      if (hasDeficitLevelChange)
-        culprits.push(`deficitLevel: "${deficitLevel}" vs "${fullProfile.deficit_level || ''}"`)
-      if (hasCustomTdeeChange)
-        culprits.push(
-          `customTdee: "${customTdee}" vs "${fullProfile.custom_tdee?.toString() || ''}"`
-        )
-      if (hasResultChange)
-        culprits.push(
-          `result: tdee=${result?.tdee} vs ${fullProfile.tdee}, bmr=${result?.bmr} vs ${fullProfile.bmr}`
-        )
-      if (hasMacroChange)
-        culprits.push(
-          `macros: ${JSON.stringify(macroRanges)} vs ${JSON.stringify({ fat: [fullProfile.fat_min_percent, fullProfile.fat_max_percent], carb: [fullProfile.carb_min_percent, fullProfile.carb_max_percent], protein: [fullProfile.protein_min_percent, fullProfile.protein_max_percent] })}`
-        )
-      if (hasMealSettingsChange) culprits.push(`mealSettings: changed`)
-      console.log('[hasUnsavedChanges] 🔴 Fields causing hasChanges=true:', culprits)
-    }
 
     return finalResult
   }, [

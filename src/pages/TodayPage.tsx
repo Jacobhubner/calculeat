@@ -28,6 +28,9 @@ import {
 import { useMealSettings, useCreateDefaultMealSettings } from '@/hooks/useMealSettings'
 import { Skeleton } from '@/components/ui/skeleton'
 import { toast } from 'sonner'
+import { useProfileStore } from '@/stores/profileStore'
+import { useProfiles } from '@/hooks'
+import { useCalculations } from '@/hooks/useCalculations'
 
 export default function TodayPage() {
   const { data: todayLog, isLoading: logLoading } = useTodayLog()
@@ -37,6 +40,12 @@ export default function TodayPage() {
   const finishDay = useFinishDay()
   const copyDayToToday = useCopyDayToToday()
   const removeFoodFromMeal = useRemoveFoodFromMeal()
+
+  // Get active profile for calorie and macro targets
+  const activeProfile = useProfileStore(state => state.activeProfile)
+  const { data: allProfiles } = useProfiles()
+  const profile = allProfiles?.find(p => p.id === activeProfile?.id)
+  const calculations = useCalculations(profile)
 
   // Get yesterday's log for copy functionality
   const yesterday = useMemo(() => {
@@ -86,7 +95,9 @@ export default function TodayPage() {
   }
 
   const totalCalories = todayLog?.total_calories || 0
-  const goalCalories = todayLog?.goal_calories_max || 2000
+  // Use profile's calorie goal, fallback to dailyLog snapshot, then hardcoded
+  const goalCalories = profile?.calories_max || todayLog?.goal_calories_max || 2000
+  const goalCaloriesMin = profile?.calories_min || todayLog?.goal_calories_min || 1800
   const calorieProgress = (totalCalories / goalCalories) * 100
 
   const greenCalories = todayLog?.green_calories || 0
@@ -204,10 +215,20 @@ export default function TodayPage() {
                 <div className="flex justify-between mb-2">
                   <span className="text-sm font-medium">Kalorier</span>
                   <span className="text-sm text-neutral-600">
-                    {totalCalories} / {goalCalories} kcal
+                    {totalCalories} / {goalCaloriesMin}-{goalCalories} kcal
                   </span>
                 </div>
                 <Progress value={calorieProgress} className="h-3" />
+                {totalCalories < goalCaloriesMin && totalCalories > 0 && (
+                  <p className="text-xs text-orange-600 mt-1">
+                    Under miniminivå med {goalCaloriesMin - totalCalories} kcal
+                  </p>
+                )}
+                {totalCalories > goalCalories && (
+                  <p className="text-xs text-red-600 mt-1">
+                    Över maxnivå med {totalCalories - goalCalories} kcal
+                  </p>
+                )}
               </div>
 
               {/* Macro Distribution */}
@@ -361,7 +382,11 @@ export default function TodayPage() {
               <CardTitle className="text-lg">Kalorimål</CardTitle>
             </CardHeader>
             <CardContent className="flex justify-center">
-              <CalorieRing current={totalCalories} target={goalCalories} size={200} />
+              <CalorieRing
+                consumed={totalCalories}
+                target={goalCalories}
+                remaining={Math.max(goalCalories - totalCalories, 0)}
+              />
             </CardContent>
           </Card>
 
@@ -395,6 +420,38 @@ export default function TodayPage() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Macro Targets from Profile */}
+          {profile && calculations.macros && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Makromål</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex justify-between text-sm">
+                  <span className="text-neutral-600">Protein:</span>
+                  <span className="font-medium">
+                    {calculations.macros.protein.grams}g ({profile.protein_min_percent}-
+                    {profile.protein_max_percent}%)
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-neutral-600">Kolhydrater:</span>
+                  <span className="font-medium">
+                    {calculations.macros.carbs.grams}g ({profile.carb_min_percent}-
+                    {profile.carb_max_percent}%)
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-neutral-600">Fett:</span>
+                  <span className="font-medium">
+                    {calculations.macros.fat.grams}g ({profile.fat_min_percent}-
+                    {profile.fat_max_percent}%)
+                  </span>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Tips */}
           <Card className="bg-gradient-to-br from-primary-50 to-accent-50 border-primary-200">
