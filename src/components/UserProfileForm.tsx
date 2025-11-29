@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useCallback } from 'react'
+import { useState, useMemo, useEffect, useCallback, useRef } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
 import { calculateBMR, requiresBodyFat } from '@/lib/calculations/bmr'
 import { calculateAge } from '@/lib/calculations/helpers'
@@ -130,6 +130,9 @@ export default function UserProfileForm({
   const [showPALModal, setShowPALModal] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
 
+  // Track if we're loading profile data (to prevent resetting PAL fields on load)
+  const isLoadingProfile = useRef(false)
+
   // Wrapper to update both local state and notify parent
   const setResult = useCallback(
     (newResult: CalculatorResult | null) => {
@@ -172,6 +175,9 @@ export default function UserProfileForm({
         return
       }
 
+      // Set flag to prevent PAL reset useEffect from running
+      isLoadingProfile.current = true
+
       // Load existing profile data from the complete profile object
       setProfileName(fullProfile.profile_name || '')
       setBirthDate(fullProfile.birth_date || '')
@@ -208,6 +214,12 @@ export default function UserProfileForm({
       // Clear calculation result when loading saved profile
       // This prevents hasUnsavedChanges from triggering due to old calculations
       setResult(null)
+
+      // Reset flag after all state updates are done
+      // Use setTimeout to ensure this runs after the PAL reset useEffect
+      setTimeout(() => {
+        isLoadingProfile.current = false
+      }, 0)
     } else if (activeProfile === null && allProfiles.length > 0) {
       // New profile mode - copy all fields from previously viewed profile
       // Use previousProfile if available, otherwise use first profile
@@ -265,6 +277,11 @@ export default function UserProfileForm({
 
   // Reset PAL-system specific fields when PAL system changes
   useEffect(() => {
+    // Don't reset if we're currently loading a profile from database
+    if (isLoadingProfile.current) {
+      return
+    }
+
     // Only reset if we're changing from one PAL system to another (not on initial load)
     if (palSystem) {
       // Reset all PAL-specific fields when changing PAL system
