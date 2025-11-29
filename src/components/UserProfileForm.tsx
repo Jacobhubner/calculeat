@@ -14,6 +14,7 @@ import { translatePALSystem } from '@/lib/translations'
 import { useProfileStore } from '@/stores/profileStore'
 import { useUpdateProfile, useCreateProfile, useProfiles } from '@/hooks'
 import { Lock } from 'lucide-react'
+import FloatingProfileSaveCard from './FloatingProfileSaveCard'
 import { ProfileFormSkeleton } from './ProfileFormSkeleton'
 
 interface CalculatorResult {
@@ -127,7 +128,7 @@ export default function UserProfileForm({
   const [result, setResultState] = useState<CalculatorResult | null>(null)
   const [showBMRModal, setShowBMRModal] = useState(false)
   const [showPALModal, setShowPALModal] = useState(false)
-  const [isSaving, setIsSaving] = useState(false) // eslint-disable-line @typescript-eslint/no-unused-vars
+  const [isSaving, setIsSaving] = useState(false)
 
   // Wrapper to update both local state and notify parent
   const setResult = useCallback(
@@ -273,7 +274,6 @@ export default function UserProfileForm({
   ])
 
   // Check if there are unsaved changes compared to the saved profile
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const hasUnsavedChanges = useMemo(() => {
     // If no active profile, we're creating a new profile - show save card if we have results
     if (!activeProfile) {
@@ -717,7 +717,6 @@ export default function UserProfileForm({
     customPAL,
   ])
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleSave = async () => {
     if (!result) {
       alert('Vänligen beräkna dina värden först')
@@ -1341,6 +1340,15 @@ export default function UserProfileForm({
           onClose={() => setShowPALModal(false)}
         />
       )}
+
+      {/* Floating Profile Save Card - appears when there are unsaved changes */}
+      <FloatingProfileSaveCard
+        profileName={profileName}
+        onProfileNameChange={setProfileName}
+        onSave={handleSave}
+        isSaving={isSaving}
+        hasChanges={hasUnsavedChanges}
+      />
     </div>
   )
 }
