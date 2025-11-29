@@ -52,10 +52,10 @@ export default function ProfileList() {
 
     try {
       await deleteProfileMutation.mutateAsync(profileId)
-      toast.success('Profilen har raderats')
+      // Toast is handled by useDeleteProfile hook
     } catch (error) {
       console.error('Error deleting profile:', error)
-      toast.error('Kunde inte radera profilen')
+      // Error toast is also handled by the hook
     }
   }
 

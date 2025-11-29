@@ -119,8 +119,9 @@ export default function MacroModesCard({
   const hasCalories =
     (liveCaloriesMin && liveCaloriesMax) || (fullProfile?.calories_min && fullProfile?.calories_max)
 
-  const canApplyOnSeason = !isLoading && hasBodyFat && !!weightKg && !!fullProfile
-  const canApplyAny = !isLoading && !!weightKg && !!hasCalories && !!fullProfile
+  // Allow applying modes even for new (unsaved) profiles if they have the required data
+  const canApplyOnSeason = !isLoading && hasBodyFat && !!weightKg
+  const canApplyAny = !isLoading && !!weightKg && !!hasCalories
 
   return (
     <Card>

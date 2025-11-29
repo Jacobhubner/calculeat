@@ -252,6 +252,20 @@ export default function UserProfileForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeProfile?.id, allProfiles])
 
+  // Reset PAL-system specific fields when PAL system changes
+  useEffect(() => {
+    // Only reset if we're changing from one PAL system to another (not on initial load)
+    if (palSystem) {
+      // Reset all PAL-specific fields when changing PAL system
+      setActivityLevel('')
+      setIntensityLevel('')
+      setTrainingFrequency('')
+      setTrainingDuration('')
+      setDailySteps('')
+      setCustomPAL('')
+    }
+  }, [palSystem])
+
   // Create a form data object for PAL table with current state values
   const formData = useMemo(() => {
     return {
