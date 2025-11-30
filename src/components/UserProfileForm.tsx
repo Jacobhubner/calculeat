@@ -1347,7 +1347,14 @@ export default function UserProfileForm({
                 {/* Kalorimål Card - Green (larger, prominent) */}
                 <div className="rounded-xl bg-green-50 p-4 border border-green-200">
                   <p className="text-sm font-medium text-neutral-600 mb-1">
-                    Kalorimål <span className="text-xs">(från energimål)</span>
+                    Kalorimål{' '}
+                    <span className="text-xs">
+                      {energyGoal === 'Maintain weight' && '(Behåll vikt)'}
+                      {energyGoal === 'Weight loss' && '(Viktnedgång)'}
+                      {energyGoal === 'Weight gain' && '(Viktuppgång)'}
+                      {energyGoal === 'Custom TDEE' && '(Anpassat TDEE)'}
+                      {!energyGoal && '(från energimål)'}
+                    </span>
                   </p>
                   <p className="text-4xl font-bold text-green-600">
                     {result.tdeeMin && result.tdeeMax
