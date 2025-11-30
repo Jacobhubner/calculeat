@@ -1344,9 +1344,9 @@ export default function UserProfileForm({
                   <p className="text-xs text-neutral-500 mt-1">Basal Metabolic Rate</p>
                 </div>
 
-                {/* Energimål Card - Prominent Yellow (larger, main focus) */}
-                <div className="rounded-xl bg-amber-100 p-5 border-2 border-amber-300 shadow-md">
-                  <p className="text-sm font-semibold text-amber-900 mb-1">
+                {/* Energimål Card - Prominent Lime/Yellow-Green (larger, main focus) */}
+                <div className="rounded-xl bg-lime-100 p-5 border-2 border-lime-300 shadow-md">
+                  <p className="text-sm font-semibold text-lime-900 mb-1">
                     Energimål{' '}
                     <span className="text-xs font-medium">
                       {energyGoal === 'Maintain weight' && '(Behåll vikt)'}
@@ -1356,23 +1356,23 @@ export default function UserProfileForm({
                       {!energyGoal && '(från energimål)'}
                     </span>
                   </p>
-                  <p className="text-3xl font-extrabold text-amber-700">
+                  <p className="text-3xl font-extrabold text-lime-700">
                     {result.tdeeMin && result.tdeeMax
                       ? `${Math.round(result.tdeeMin)} - ${Math.round(result.tdeeMax)} kcal`
                       : '-'}
                   </p>
-                  <p className="text-xs text-amber-800 font-medium mt-1">Dagligt kaloriintervall</p>
+                  <p className="text-xs text-lime-800 font-medium mt-1">Dagligt kaloriintervall</p>
                 </div>
 
-                {/* TDEE Card - Dark Orange */}
-                <div className="rounded-xl bg-orange-50 p-4 border border-orange-200">
-                  <p className="text-sm font-medium text-neutral-600 mb-1">
+                {/* TDEE Card - Bright Orange */}
+                <div className="rounded-xl bg-orange-100 p-4 border border-orange-300">
+                  <p className="text-sm font-medium text-orange-900 mb-1">
                     TDEE <span className="text-xs">(kcal/dag totalt)</span>
                   </p>
-                  <p className="text-3xl font-bold text-orange-700">
+                  <p className="text-3xl font-bold text-orange-600">
                     {Math.round(result.tdee)} kcal
                   </p>
-                  <p className="text-xs text-neutral-500 mt-1">Total Daily Energy Expenditure</p>
+                  <p className="text-xs text-orange-700 mt-1">Total Daily Energy Expenditure</p>
                 </div>
               </div>
             </div>
