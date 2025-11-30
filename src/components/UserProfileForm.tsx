@@ -1344,11 +1344,11 @@ export default function UserProfileForm({
                   <p className="text-xs text-neutral-500 mt-1">Basal Metabolic Rate</p>
                 </div>
 
-                {/* Energimål Card - Light Yellow (larger, prominent) */}
-                <div className="rounded-xl bg-yellow-50 p-4 border border-yellow-200">
-                  <p className="text-sm font-medium text-neutral-600 mb-1">
+                {/* Energimål Card - Prominent Yellow (larger, main focus) */}
+                <div className="rounded-xl bg-amber-100 p-5 border-2 border-amber-300 shadow-md">
+                  <p className="text-sm font-semibold text-amber-900 mb-1">
                     Energimål{' '}
-                    <span className="text-xs">
+                    <span className="text-xs font-medium">
                       {energyGoal === 'Maintain weight' && '(Behåll vikt)'}
                       {energyGoal === 'Weight loss' && '(Viktnedgång)'}
                       {energyGoal === 'Weight gain' && '(Viktuppgång)'}
@@ -1356,12 +1356,12 @@ export default function UserProfileForm({
                       {!energyGoal && '(från energimål)'}
                     </span>
                   </p>
-                  <p className="text-4xl font-bold text-yellow-600">
+                  <p className="text-5xl font-extrabold text-amber-700">
                     {result.tdeeMin && result.tdeeMax
                       ? `${Math.round(result.tdeeMin)} - ${Math.round(result.tdeeMax)} kcal`
                       : '-'}
                   </p>
-                  <p className="text-xs text-neutral-500 mt-1">Dagligt kaloriintervall</p>
+                  <p className="text-xs text-amber-800 font-medium mt-1">Dagligt kaloriintervall</p>
                 </div>
 
                 {/* TDEE Card - Dark Orange */}
