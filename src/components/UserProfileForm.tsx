@@ -1341,7 +1341,7 @@ export default function UserProfileForm({
                   <p className="text-3xl font-bold text-green-600">
                     {result.bmr === 0 ? 'N/A' : `${Math.round(result.bmr)} kcal`}
                   </p>
-                  <p className="text-xs text-neutral-500 mt-1">Basal Metabolic Rate</p>
+                  <p className="text-xs text-neutral-500 mt-1">Resting/Basal Metabolic Rate</p>
                 </div>
 
                 {/* Energimål Card - Gradient Green to Yellow (larger, main focus) */}
