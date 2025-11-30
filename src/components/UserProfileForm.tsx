@@ -1333,21 +1333,21 @@ export default function UserProfileForm({
               <h3 className="text-xl font-semibold text-neutral-900 mb-4">Dina resultat</h3>
 
               <div className="grid gap-4 sm:grid-cols-[1fr_1.5fr_1fr]">
-                {/* RMR/BMR Card - Yellow/Orange */}
-                <div className="rounded-xl bg-yellow-50 p-4 border border-orange-200">
+                {/* RMR/BMR Card - Green */}
+                <div className="rounded-xl bg-green-50 p-4 border border-green-200">
                   <p className="text-sm font-medium text-neutral-600 mb-1">
                     RMR/BMR <span className="text-xs">(kcal/dag i vila)</span>
                   </p>
-                  <p className="text-3xl font-bold text-orange-600">
+                  <p className="text-3xl font-bold text-green-600">
                     {result.bmr === 0 ? 'N/A' : `${Math.round(result.bmr)} kcal`}
                   </p>
                   <p className="text-xs text-neutral-500 mt-1">Basal Metabolic Rate</p>
                 </div>
 
-                {/* Kalorimål Card - Green (larger, prominent) */}
-                <div className="rounded-xl bg-green-50 p-4 border border-green-200">
+                {/* Energimål Card - Yellow/Orange (larger, prominent) */}
+                <div className="rounded-xl bg-yellow-50 p-4 border border-orange-200">
                   <p className="text-sm font-medium text-neutral-600 mb-1">
-                    Kalorimål{' '}
+                    Energimål{' '}
                     <span className="text-xs">
                       {energyGoal === 'Maintain weight' && '(Behåll vikt)'}
                       {energyGoal === 'Weight loss' && '(Viktnedgång)'}
@@ -1356,7 +1356,7 @@ export default function UserProfileForm({
                       {!energyGoal && '(från energimål)'}
                     </span>
                   </p>
-                  <p className="text-4xl font-bold text-green-600">
+                  <p className="text-4xl font-bold text-orange-600">
                     {result.tdeeMin && result.tdeeMax
                       ? `${Math.round(result.tdeeMin)} - ${Math.round(result.tdeeMax)} kcal`
                       : '-'}
