@@ -1344,8 +1344,8 @@ export default function UserProfileForm({
                   <p className="text-xs text-neutral-500 mt-1">Basal Metabolic Rate</p>
                 </div>
 
-                {/* Energimål Card - Yellow/Orange (larger, prominent) */}
-                <div className="rounded-xl bg-yellow-50 p-4 border border-orange-200">
+                {/* Energimål Card - Light Yellow (larger, prominent) */}
+                <div className="rounded-xl bg-yellow-50 p-4 border border-yellow-200">
                   <p className="text-sm font-medium text-neutral-600 mb-1">
                     Energimål{' '}
                     <span className="text-xs">
@@ -1356,7 +1356,7 @@ export default function UserProfileForm({
                       {!energyGoal && '(från energimål)'}
                     </span>
                   </p>
-                  <p className="text-4xl font-bold text-orange-600">
+                  <p className="text-4xl font-bold text-yellow-600">
                     {result.tdeeMin && result.tdeeMax
                       ? `${Math.round(result.tdeeMin)} - ${Math.round(result.tdeeMax)} kcal`
                       : '-'}
@@ -1364,12 +1364,14 @@ export default function UserProfileForm({
                   <p className="text-xs text-neutral-500 mt-1">Dagligt kaloriintervall</p>
                 </div>
 
-                {/* TDEE Card - Lighter Red */}
-                <div className="rounded-xl bg-red-50 p-4 border border-red-100">
+                {/* TDEE Card - Dark Orange */}
+                <div className="rounded-xl bg-orange-50 p-4 border border-orange-200">
                   <p className="text-sm font-medium text-neutral-600 mb-1">
                     TDEE <span className="text-xs">(kcal/dag totalt)</span>
                   </p>
-                  <p className="text-3xl font-bold text-red-500">{Math.round(result.tdee)} kcal</p>
+                  <p className="text-3xl font-bold text-orange-700">
+                    {Math.round(result.tdee)} kcal
+                  </p>
                   <p className="text-xs text-neutral-500 mt-1">Total Daily Energy Expenditure</p>
                 </div>
               </div>
