@@ -30,8 +30,9 @@ export default function DashboardPage() {
 
   // Get today's consumed calories and macros
   const consumed = todayLog?.total_calories || 0
-  const target = profile?.calories_max || 2000
-  const remaining = target - consumed
+  const targetMax = profile?.calories_max || 2000
+  const target = targetMax
+  const remaining = targetMax - consumed
 
   const handleOnboardingClose = (open: boolean) => {
     if (!open) {
@@ -71,7 +72,9 @@ export default function DashboardPage() {
           <p className="text-neutral-600 text-sm md:text-base">
             {hasBasicInfo
               ? consumed > 0
-                ? `Du har loggat ${consumed} av ${target} kcal idag`
+                ? profile?.calories_min && profile?.calories_max
+                  ? `Du har loggat ${consumed} av ${Math.round(profile.calories_min)}-${Math.round(profile.calories_max)} kcal idag`
+                  : `Du har loggat ${consumed} av ${target} kcal idag`
                 : 'Här är din översikt för idag'
               : 'Fyll i din profil för att komma igång'}
           </p>
@@ -108,7 +111,11 @@ export default function DashboardPage() {
               />
               <StatCard
                 title="Kalorimål"
-                value={profile?.calories_max ? Math.round(profile.calories_max) : '-'}
+                value={
+                  profile?.calories_min && profile?.calories_max
+                    ? `${Math.round(profile.calories_min)} - ${Math.round(profile.calories_max)}`
+                    : '-'
+                }
                 unit="kcal"
                 icon={Target}
                 variant="success"
@@ -126,7 +133,13 @@ export default function DashboardPage() {
             <div className="grid gap-6 lg:grid-cols-2">
               {/* Calorie Ring */}
               <div className="relative">
-                <CalorieRing consumed={consumed} target={target} remaining={remaining} />
+                <CalorieRing
+                  consumed={consumed}
+                  target={target}
+                  min={profile?.calories_min}
+                  max={profile?.calories_max}
+                  remaining={remaining}
+                />
                 {consumed === 0 && (
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                     <p className="text-sm text-neutral-500 text-center px-4">

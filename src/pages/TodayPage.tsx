@@ -3,6 +3,7 @@ import DashboardLayout from '@/components/layout/DashboardLayout'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
+import { TriZoneProgress } from '@/components/ui/TriZoneProgress'
 import CalorieRing from '@/components/CalorieRing'
 import MacroBar from '@/components/MacroBar'
 import EmptyState from '@/components/EmptyState'
@@ -190,7 +191,16 @@ export default function TodayPage() {
               <div>
                 <p className="font-semibold text-success-900">Dagen är klar!</p>
                 <p className="text-sm text-success-700">
-                  Du loggade {totalCalories} kcal av ditt mål på {goalCalories} kcal
+                  {goalCaloriesMin && goalCalories ? (
+                    <>
+                      Du loggade {totalCalories} kcal av ditt mål på {Math.round(goalCaloriesMin)}-
+                      {Math.round(goalCalories)} kcal
+                    </>
+                  ) : (
+                    <>
+                      Du loggade {totalCalories} kcal av ditt mål på {goalCalories} kcal
+                    </>
+                  )}
                 </p>
               </div>
             </div>
@@ -218,14 +228,33 @@ export default function TodayPage() {
                     {totalCalories} / {goalCaloriesMin}-{goalCalories} kcal
                   </span>
                 </div>
-                <Progress value={calorieProgress} className="h-3" />
+                {goalCaloriesMin && goalCalories ? (
+                  <TriZoneProgress
+                    value={totalCalories}
+                    min={goalCaloriesMin}
+                    max={goalCalories}
+                    className="h-3"
+                  />
+                ) : (
+                  <Progress value={calorieProgress} className="h-3" />
+                )}
                 {totalCalories < goalCaloriesMin && totalCalories > 0 && (
-                  <p className="text-xs text-orange-600 mt-1">
+                  <p className="text-xs text-sky-600 mt-1 flex items-center gap-1">
+                    <span className="inline-block w-2 h-2 rounded-full bg-sky-400"></span>
                     Under miniminivå med {goalCaloriesMin - totalCalories} kcal
                   </p>
                 )}
+                {totalCalories >= goalCaloriesMin &&
+                  totalCalories <= goalCalories &&
+                  totalCalories > 0 && (
+                    <p className="text-xs text-success-600 mt-1 flex items-center gap-1">
+                      <span className="inline-block w-2 h-2 rounded-full bg-success-500"></span>
+                      Inom målet!
+                    </p>
+                  )}
                 {totalCalories > goalCalories && (
-                  <p className="text-xs text-red-600 mt-1">
+                  <p className="text-xs text-error-600 mt-1 flex items-center gap-1">
+                    <span className="inline-block w-2 h-2 rounded-full bg-error-500"></span>
                     Över maxnivå med {totalCalories - goalCalories} kcal
                   </p>
                 )}
@@ -385,6 +414,8 @@ export default function TodayPage() {
               <CalorieRing
                 consumed={totalCalories}
                 target={goalCalories}
+                min={goalCaloriesMin}
+                max={goalCalories}
                 remaining={Math.max(goalCalories - totalCalories, 0)}
               />
             </CardContent>
