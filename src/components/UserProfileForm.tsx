@@ -1332,34 +1332,47 @@ export default function UserProfileForm({
             <div className="mt-6 rounded-2xl border border-lime-200 bg-lime-50 p-8 shadow-lg">
               <h3 className="text-xl font-semibold text-neutral-900 mb-4">Dina resultat</h3>
 
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="rounded-xl bg-primary-50 p-4 border border-primary-200">
+              <div className="grid gap-4 sm:grid-cols-3">
+                {/* RMR/BMR Card - Yellow/Orange */}
+                <div className="rounded-xl bg-yellow-50 p-4 border border-orange-200">
                   <p className="text-sm font-medium text-neutral-600 mb-1">
-                    BMR <span className="text-xs">(kcal/dag i vila)</span>
+                    RMR/BMR <span className="text-xs">(kcal/dag i vila)</span>
                   </p>
-                  <p className="text-3xl font-bold text-primary-600">
+                  <p className="text-3xl font-bold text-orange-600">
                     {result.bmr === 0 ? 'N/A' : `${Math.round(result.bmr)} kcal`}
                   </p>
                   <p className="text-xs text-neutral-500 mt-1">Basal Metabolic Rate</p>
                 </div>
 
-                <div className="rounded-xl bg-accent-50 p-4 border border-accent-200">
+                {/* TDEE Card - Red */}
+                <div className="rounded-xl bg-red-50 p-4 border border-red-200">
                   <p className="text-sm font-medium text-neutral-600 mb-1">
                     TDEE <span className="text-xs">(kcal/dag totalt)</span>
                   </p>
-                  <p className="text-3xl font-bold text-accent-600">
+                  <p className="text-3xl font-bold text-red-600">
                     {energyGoal === 'Maintain weight' || energyGoal === 'Custom TDEE'
                       ? `${Math.round(result.tdeeMin)} - ${Math.round(result.tdeeMax)} kcal `
                       : result.tdeeMin === result.tdeeMax
                         ? `${Math.round(result.tdee)} kcal`
                         : `${Math.round(result.tdeeMin)} - ${Math.round(result.tdeeMax)} kcal `}
                     {(energyGoal === 'Maintain weight' || energyGoal === 'Custom TDEE') && (
-                      <span className="text-xl text-accent-500">
-                        ({Math.round(result.tdee)} kcal)
-                      </span>
+                      <span className="text-xl text-red-500">({Math.round(result.tdee)} kcal)</span>
                     )}
                   </p>
                   <p className="text-xs text-neutral-500 mt-1">Total Daily Energy Expenditure</p>
+                </div>
+
+                {/* Kalorimål Card - Green */}
+                <div className="rounded-xl bg-green-50 p-4 border border-green-200">
+                  <p className="text-sm font-medium text-neutral-600 mb-1">
+                    Kalorimål <span className="text-xs">(från energimål)</span>
+                  </p>
+                  <p className="text-3xl font-bold text-green-600">
+                    {result.tdeeMin && result.tdeeMax
+                      ? `${Math.round(result.tdeeMin)} - ${Math.round(result.tdeeMax)} kcal`
+                      : '-'}
+                  </p>
+                  <p className="text-xs text-neutral-500 mt-1">Dagligt kaloriintervall</p>
                 </div>
               </div>
             </div>
