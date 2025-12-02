@@ -1356,7 +1356,15 @@ export default function UserProfileForm({
                       {!energyGoal && '(från energimål)'}
                     </span>
                   </p>
-                  <p className="text-3xl font-extrabold bg-gradient-to-br from-yellow-500 via-amber-400 to-yellow-500 bg-clip-text text-transparent drop-shadow-sm">
+                  <p
+                    className="text-3xl font-extrabold"
+                    style={{
+                      color: '#d4af37',
+                      textShadow:
+                        '0 1px 2px rgba(0,0,0,0.3), 0 2px 4px rgba(212,175,55,0.5), 0 0 10px rgba(255,215,0,0.3)',
+                      WebkitTextStroke: '0.5px rgba(139,115,85,0.3)',
+                    }}
+                  >
                     {result.tdeeMin && result.tdeeMax
                       ? `${Math.round(result.tdeeMin)} - ${Math.round(result.tdeeMax)} kcal`
                       : '-'}
