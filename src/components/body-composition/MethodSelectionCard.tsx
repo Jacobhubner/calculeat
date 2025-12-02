@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
 import type { BodyCompositionMethod } from '@/lib/calculations/bodyComposition'
-import { methodCategories } from '@/lib/helpers/bodyCompositionHelpers'
+import { methodCategories, methodNameTranslations } from '@/lib/helpers/bodyCompositionHelpers'
 import { Calculator } from 'lucide-react'
 
 interface MethodSelectionCardProps {
@@ -41,7 +41,7 @@ export default function MethodSelectionCard({
             <optgroup label={methodCategories.caliper.label}>
               {methodCategories.caliper.methods.map(method => (
                 <option key={method} value={method}>
-                  {method}
+                  {methodNameTranslations[method]}
                 </option>
               ))}
             </optgroup>
@@ -50,7 +50,7 @@ export default function MethodSelectionCard({
             <optgroup label={methodCategories.tape.label}>
               {methodCategories.tape.methods.map(method => (
                 <option key={method} value={method}>
-                  {method}
+                  {methodNameTranslations[method]}
                 </option>
               ))}
             </optgroup>
@@ -59,7 +59,7 @@ export default function MethodSelectionCard({
             <optgroup label={methodCategories.profile.label}>
               {methodCategories.profile.methods.map(method => (
                 <option key={method} value={method}>
-                  {method}
+                  {methodNameTranslations[method]}
                 </option>
               ))}
             </optgroup>

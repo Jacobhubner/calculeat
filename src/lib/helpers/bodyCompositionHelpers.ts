@@ -419,3 +419,76 @@ export const methodCategories = {
     ] as BodyCompositionMethod[],
   },
 }
+
+/**
+ * Swedish translations for method names
+ */
+export const methodNameTranslations: Record<BodyCompositionMethod, string> = {
+  'Jackson/Pollock 3 Caliper Method (Male)': 'Jackson/Pollock 3-punkts kaliper (Man)',
+  'Jackson/Pollock 3 Caliper Method (Female)': 'Jackson/Pollock 3-punkts kaliper (Kvinna)',
+  'Jackson/Pollock 4 Caliper Method': 'Jackson/Pollock 4-punkts kaliper',
+  'Jackson/Pollock 7 Caliper Method': 'Jackson/Pollock 7-punkts kaliper',
+  'Durnin/Womersley Caliper Method': 'Durnin/Womersley kaliper',
+  'Parillo Caliper Method': 'Parillo kaliper (9 punkter)',
+  'Covert Bailey Measuring Tape Method': 'Covert Bailey måttbandsmetod',
+  'U.S. Navy Body Fat Formula': 'US Navy kroppsfettformel',
+  'YMCA Measuring Tape Method': 'YMCA måttbandsmetod',
+  'Modified YMCA Measuring Tape Method': 'Modifierad YMCA måttbandsmetod',
+  'Heritage BMI to Body Fat Method': 'Heritage BMI-baserad kroppsfett',
+  'Reversed Cunningham equation': 'Omvänd Cunningham-ekvation',
+}
+
+/**
+ * Format method name with variation for display (in Swedish)
+ */
+export function formatMethodName(
+  method: BodyCompositionMethod,
+  variation?: MethodVariation
+): string {
+  const translatedName = methodNameTranslations[method] || method
+  if (variation) {
+    return `${translatedName} (${variation})`
+  }
+  return translatedName
+}
+
+/**
+ * Comparison result interface for Workflow 2
+ */
+export interface MethodComparisonResult {
+  method: BodyCompositionMethod
+  variation?: MethodVariation
+  bodyFatPercentage: number
+  category: string
+  categoryColor: string
+  leanBodyMass: number
+  fatMass: number
+}
+
+/**
+ * Sort comparison results by a specific field
+ */
+export function sortComparisonResults(
+  results: MethodComparisonResult[],
+  sortBy: keyof MethodComparisonResult,
+  direction: 'asc' | 'desc'
+): MethodComparisonResult[] {
+  const sorted = [...results].sort((a, b) => {
+    const aValue = a[sortBy]
+    const bValue = b[sortBy]
+
+    // Handle numeric fields
+    if (typeof aValue === 'number' && typeof bValue === 'number') {
+      return direction === 'asc' ? aValue - bValue : bValue - aValue
+    }
+
+    // Handle string fields
+    if (typeof aValue === 'string' && typeof bValue === 'string') {
+      return direction === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue)
+    }
+
+    return 0
+  })
+
+  return sorted
+}
