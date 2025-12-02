@@ -62,6 +62,9 @@ export default function BodyCompositionPage() {
   const [selectedVariation, setSelectedVariation] = useState<MethodVariation | undefined>(undefined)
   const [conversionMethod, setConversionMethod] = useState<'siri' | 'brozek'>('siri')
 
+  // Workflow 2: Conversion method (separate state from Workflow 1)
+  const [conversionMethod2, setConversionMethod2] = useState<'siri' | 'brozek'>('siri')
+
   // Caliper measurements (mm) - for Workflow 1
   const [caliperMeasurements, setCaliperMeasurements] = useState<CaliperMeasurements>({
     chest: undefined,
@@ -239,10 +242,13 @@ export default function BodyCompositionPage() {
         const result = calculateBodyFat(method, params, variation)
 
         let bodyFatPercentage = 0
+        let bodyDensity: number | undefined = undefined
         if (result !== null) {
           // For density-based methods, convert to body fat %
           if (isDensityBasedMethod(method, variation)) {
-            bodyFatPercentage = siriEquation(result as number)
+            bodyDensity = result as number
+            bodyFatPercentage =
+              conversionMethod2 === 'siri' ? siriEquation(bodyDensity) : brozekEquation(bodyDensity)
           } else {
             bodyFatPercentage = result
           }
@@ -262,6 +268,7 @@ export default function BodyCompositionPage() {
         return {
           method,
           variation,
+          bodyDensity,
           bodyFatPercentage,
           category: category.category,
           categoryColor: category.color,
@@ -272,7 +279,7 @@ export default function BodyCompositionPage() {
 
       setComparisonResults(results)
     }
-  }, [activeWorkflow, allCaliperMeasurements, allTapeMeasurements, profile])
+  }, [activeWorkflow, allCaliperMeasurements, allTapeMeasurements, profile, conversionMethod2])
 
   const handleCaliperChange = (field: keyof CaliperMeasurements, value: number | undefined) => {
     setCaliperMeasurements(prev => ({ ...prev, [field]: value }))
@@ -296,6 +303,29 @@ export default function BodyCompositionPage() {
         data: {
           body_fat_percentage: bodyFatPercentage,
           body_composition_method: selectedMethod,
+        },
+      })
+
+      toast.success('Profil uppdaterad!')
+    } catch (error) {
+      toast.error('Kunde inte spara till profil')
+      console.error(error)
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  const handleSaveComparisonResult = async (result: MethodComparisonResult) => {
+    if (!activeProfile) return
+
+    setIsSaving(true)
+
+    try {
+      await updateProfileMutation.mutateAsync({
+        profileId: activeProfile.id,
+        data: {
+          body_fat_percentage: result.bodyFatPercentage,
+          body_composition_method: result.method,
         },
       })
 
@@ -358,6 +388,7 @@ export default function BodyCompositionPage() {
               <MethodSelectionCard
                 selectedMethod={selectedMethod}
                 onMethodChange={setSelectedMethod}
+                gender={profile?.gender}
               />
 
               {/* Variation Selection - Show when method has variations */}
@@ -500,7 +531,20 @@ export default function BodyCompositionPage() {
                 setAllTapeMeasurements(prev => ({ ...prev, [field]: value }))
               }
             />
-            <MethodComparisonTable results={comparisonResults} />
+
+            {/* Density Conversion Selector - Only show if there are density-based methods */}
+            {comparisonResults.some(r => isDensityBasedMethod(r.method, r.variation)) && (
+              <DensityConversionSelector
+                conversionMethod={conversionMethod2}
+                onMethodChange={setConversionMethod2}
+              />
+            )}
+
+            <MethodComparisonTable
+              results={comparisonResults}
+              onSaveResult={handleSaveComparisonResult}
+              isSaving={isSaving}
+            />
           </div>
         )}
       </div>

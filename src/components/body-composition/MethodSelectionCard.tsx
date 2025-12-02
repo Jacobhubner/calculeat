@@ -2,17 +2,24 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
 import type { BodyCompositionMethod } from '@/lib/calculations/bodyComposition'
-import { methodCategories, methodNameTranslations } from '@/lib/helpers/bodyCompositionHelpers'
+import {
+  methodCategories,
+  methodNameTranslations,
+  filterMethodsByGender,
+} from '@/lib/helpers/bodyCompositionHelpers'
+import type { Gender } from '@/lib/types'
 import { Calculator } from 'lucide-react'
 
 interface MethodSelectionCardProps {
   selectedMethod: BodyCompositionMethod | ''
   onMethodChange: (method: BodyCompositionMethod | '') => void
+  gender?: Gender
 }
 
 export default function MethodSelectionCard({
   selectedMethod,
   onMethodChange,
+  gender,
 }: MethodSelectionCardProps) {
   return (
     <Card className="bg-gradient-to-br from-primary-50 to-accent-50">
@@ -39,7 +46,7 @@ export default function MethodSelectionCard({
 
             {/* Caliper Methods */}
             <optgroup label={methodCategories.caliper.label}>
-              {methodCategories.caliper.methods.map(method => (
+              {filterMethodsByGender(methodCategories.caliper.methods, gender).map(method => (
                 <option key={method} value={method}>
                   {methodNameTranslations[method]}
                 </option>
@@ -48,7 +55,7 @@ export default function MethodSelectionCard({
 
             {/* Tape Methods */}
             <optgroup label={methodCategories.tape.label}>
-              {methodCategories.tape.methods.map(method => (
+              {filterMethodsByGender(methodCategories.tape.methods, gender).map(method => (
                 <option key={method} value={method}>
                   {methodNameTranslations[method]}
                 </option>
@@ -57,7 +64,7 @@ export default function MethodSelectionCard({
 
             {/* Profile Methods */}
             <optgroup label={methodCategories.profile.label}>
-              {methodCategories.profile.methods.map(method => (
+              {filterMethodsByGender(methodCategories.profile.methods, gender).map(method => (
                 <option key={method} value={method}>
                   {methodNameTranslations[method]}
                 </option>

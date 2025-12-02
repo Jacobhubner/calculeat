@@ -1,17 +1,24 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 import {
   formatMethodName,
   getCategoryGradient,
   type MethodComparisonResult,
 } from '@/lib/helpers/bodyCompositionHelpers'
-import { ArrowUpDown, Calculator } from 'lucide-react'
+import { ArrowUpDown, Calculator, Save } from 'lucide-react'
 import { useState } from 'react'
 
 interface MethodComparisonTableProps {
   results: MethodComparisonResult[]
+  onSaveResult?: (result: MethodComparisonResult) => void
+  isSaving?: boolean
 }
 
-export default function MethodComparisonTable({ results }: MethodComparisonTableProps) {
+export default function MethodComparisonTable({
+  results,
+  onSaveResult,
+  isSaving,
+}: MethodComparisonTableProps) {
   const [sortBy, setSortBy] = useState<keyof MethodComparisonResult>('bodyFatPercentage')
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
 
@@ -83,6 +90,15 @@ export default function MethodComparisonTable({ results }: MethodComparisonTable
                 </th>
                 <th className="text-right py-3 px-4">
                   <button
+                    onClick={() => handleSort('bodyDensity')}
+                    className="flex items-center justify-end gap-1 font-medium text-neutral-700 hover:text-primary-600 transition-colors w-full"
+                  >
+                    Densitet (g/cm³)
+                    <ArrowUpDown className="h-4 w-4" />
+                  </button>
+                </th>
+                <th className="text-right py-3 px-4">
+                  <button
                     onClick={() => handleSort('bodyFatPercentage')}
                     className="flex items-center justify-end gap-1 font-medium text-neutral-700 hover:text-primary-600 transition-colors w-full"
                   >
@@ -117,6 +133,11 @@ export default function MethodComparisonTable({ results }: MethodComparisonTable
                     <ArrowUpDown className="h-4 w-4" />
                   </button>
                 </th>
+                {onSaveResult && (
+                  <th className="text-center py-3 px-4">
+                    <span className="font-medium text-neutral-700">Åtgärd</span>
+                  </th>
+                )}
               </tr>
             </thead>
             <tbody>
@@ -127,6 +148,9 @@ export default function MethodComparisonTable({ results }: MethodComparisonTable
                 >
                   <td className="py-3 px-4 text-sm text-neutral-700">
                     {formatMethodName(result.method, result.variation)}
+                  </td>
+                  <td className="py-3 px-4 text-right text-sm text-neutral-700">
+                    {result.bodyDensity ? result.bodyDensity.toFixed(4) : '-'}
                   </td>
                   <td className="py-3 px-4 text-right text-sm font-medium text-neutral-900">
                     {result.bodyFatPercentage.toFixed(1)}%
@@ -144,6 +168,20 @@ export default function MethodComparisonTable({ results }: MethodComparisonTable
                   <td className="py-3 px-4 text-right text-sm text-neutral-700">
                     {result.fatMass.toFixed(1)} kg
                   </td>
+                  {onSaveResult && (
+                    <td className="py-3 px-4 text-center">
+                      <Button
+                        onClick={() => onSaveResult(result)}
+                        disabled={isSaving}
+                        size="sm"
+                        variant="outline"
+                        className="gap-1"
+                      >
+                        <Save className="h-3 w-3" />
+                        Spara
+                      </Button>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
@@ -161,6 +199,12 @@ export default function MethodComparisonTable({ results }: MethodComparisonTable
                 {formatMethodName(result.method, result.variation)}
               </div>
               <div className="grid grid-cols-2 gap-3 text-sm">
+                {result.bodyDensity && (
+                  <div>
+                    <div className="text-neutral-500 text-xs mb-1">Densitet</div>
+                    <div className="text-neutral-700">{result.bodyDensity.toFixed(4)} g/cm³</div>
+                  </div>
+                )}
                 <div>
                   <div className="text-neutral-500 text-xs mb-1">Kroppsfett %</div>
                   <div className="font-medium text-neutral-900">
@@ -184,6 +228,17 @@ export default function MethodComparisonTable({ results }: MethodComparisonTable
                   <div className="text-neutral-700">{result.fatMass.toFixed(1)} kg</div>
                 </div>
               </div>
+              {onSaveResult && (
+                <Button
+                  onClick={() => onSaveResult(result)}
+                  disabled={isSaving}
+                  size="sm"
+                  className="w-full gap-2"
+                >
+                  <Save className="h-4 w-4" />
+                  Spara till profil
+                </Button>
+              )}
             </div>
           ))}
         </div>

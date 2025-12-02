@@ -439,6 +439,34 @@ export const methodNameTranslations: Record<BodyCompositionMethod, string> = {
 }
 
 /**
+ * Filter methods based on user gender
+ * Hides gender-specific methods that don't match the user's gender
+ */
+export function filterMethodsByGender(
+  methods: BodyCompositionMethod[],
+  gender: Gender | undefined
+): BodyCompositionMethod[] {
+  if (!gender) return methods
+
+  return methods.filter(method => {
+    // JP3 Male only for males
+    if (method === 'Jackson/Pollock 3 Caliper Method (Male)') {
+      return gender === 'male'
+    }
+    // JP3 Female only for females
+    if (method === 'Jackson/Pollock 3 Caliper Method (Female)') {
+      return gender === 'female'
+    }
+    // JP4 is female-only
+    if (method === 'Jackson/Pollock 4 Caliper Method') {
+      return gender === 'female'
+    }
+    // All other methods available to everyone
+    return true
+  })
+}
+
+/**
  * Format method name with variation for display (in Swedish)
  */
 export function formatMethodName(
@@ -458,6 +486,7 @@ export function formatMethodName(
 export interface MethodComparisonResult {
   method: BodyCompositionMethod
   variation?: MethodVariation
+  bodyDensity?: number
   bodyFatPercentage: number
   category: string
   categoryColor: string
