@@ -106,7 +106,11 @@ export function getRequiredFields(
       return { type: 'tape', fields: ['waist'] }
 
     case 'Modified YMCA Measuring Tape Method':
-      return { type: 'tape', fields: ['waist', 'neck', 'hip'] }
+      if (gender === 'male') {
+        return { type: 'tape', fields: ['waist'] }
+      } else {
+        return { type: 'tape', fields: ['waist', 'hip', 'wrist', 'forearm'] }
+      }
 
     case 'Heritage BMI to Body Fat Method':
       return { type: 'profile', fields: ['bmi', 'age', 'gender'] }
@@ -320,8 +324,10 @@ export function getCalculableMethods(params: {
   }
 
   // Modified YMCA
-  if (hasFields(['waist', 'neck'], tapeMeasurements)) {
-    if (gender === 'male' || hasFields(['hip'], tapeMeasurements)) {
+  if (hasFields(['waist'], tapeMeasurements)) {
+    if (gender === 'male') {
+      results.push({ method: 'Modified YMCA Measuring Tape Method' })
+    } else if (hasFields(['hip', 'wrist', 'forearm'], tapeMeasurements)) {
       results.push({ method: 'Modified YMCA Measuring Tape Method' })
     }
   }
@@ -369,7 +375,7 @@ export const caliperLabels: Record<string, string> = {
   suprailiac: 'Suprailiac',
   midaxillary: 'Midaxillary',
   bicep: 'Biceps',
-  lowerBack: 'Nedre rygg',
+  lowerBack: 'Ländrygg',
   calf: 'Vad',
 }
 
@@ -382,9 +388,8 @@ export const tapeLabels: Record<string, string> = {
   hip: 'Höft',
   wrist: 'Handled',
   forearm: 'Underarm',
-  thighCirc: 'Lår omkrets',
-  calfCirc: 'Vad omkrets',
-  ankle: 'Fotled',
+  thighCirc: 'Lår',
+  calfCirc: 'Vad',
 }
 
 /**
@@ -424,8 +429,8 @@ export const methodCategories = {
  * Swedish translations for method names
  */
 export const methodNameTranslations: Record<BodyCompositionMethod, string> = {
-  'Jackson/Pollock 3 Caliper Method (Male)': 'Jackson/Pollock 3-punkts kaliper (Man)',
-  'Jackson/Pollock 3 Caliper Method (Female)': 'Jackson/Pollock 3-punkts kaliper (Kvinna)',
+  'Jackson/Pollock 3 Caliper Method (Male)': 'Jackson/Pollock 3-punkts kaliper',
+  'Jackson/Pollock 3 Caliper Method (Female)': 'Jackson/Pollock 3-punkts kaliper',
   'Jackson/Pollock 4 Caliper Method': 'Jackson/Pollock 4-punkts kaliper',
   'Jackson/Pollock 7 Caliper Method': 'Jackson/Pollock 7-punkts kaliper',
   'Durnin/Womersley Caliper Method': 'Durnin/Womersley kaliper',

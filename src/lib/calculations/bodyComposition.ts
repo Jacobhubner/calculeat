@@ -47,7 +47,6 @@ export interface TapeMeasurements {
   forearm?: number // cm - C59 Underarm (forearm)
   thighCirc?: number // cm - C63 Lår omkrets (thigh circumference)
   calfCirc?: number // cm - C65 Vad omkrets (calf circumference)
-  ankle?: number // cm - C67 Fotled (ankle)
 }
 
 export interface BodyCompositionParams {
@@ -104,7 +103,7 @@ export function jacksonPollock3Male(
     const { chest, abdominal, thigh } = caliperMeasurements
     const sum = chest + abdominal + thigh
     const bodyDensity = 1.10938 - 0.0008267 * sum + 0.0000016 * sum * sum - 0.0002574 * age
-    return siriEquation(bodyDensity)
+    return bodyDensity
   } else if (variation === 'S, S², ålder, C') {
     // With circumference: pectoral, abdominal, thigh + waist, forearm
     if (
@@ -128,7 +127,7 @@ export function jacksonPollock3Male(
       0.0002017 * age -
       0.005675 * waistM +
       0.018586 * forearmM
-    return siriEquation(bodyDensity)
+    return bodyDensity
   } else if (variation === 'Kläder på') {
     // Clothed variation: pectoral, triceps, subscapular
     if (
@@ -142,7 +141,7 @@ export function jacksonPollock3Male(
     const { chest, tricep, subscapular } = caliperMeasurements
     const sum = chest + tricep + subscapular
     const bodyDensity = 1.1125025 - 0.0013125 * sum + 0.0000055 * sum * sum - 0.000244 * age
-    return siriEquation(bodyDensity)
+    return bodyDensity
   }
 
   return null
@@ -176,7 +175,7 @@ export function jacksonPollock3Female(
     const { tricep, suprailiac, thigh } = caliperMeasurements
     const sum = tricep + suprailiac + thigh
     const bodyDensity = 1.0994921 - 0.0009929 * sum + 0.0000023 * sum * sum - 0.0001392 * age
-    return siriEquation(bodyDensity)
+    return bodyDensity
   } else if (variation === 'S, S², C') {
     // With circumference (no age): triceps, suprailiac, thigh + hips
     if (
@@ -192,7 +191,7 @@ export function jacksonPollock3Female(
     const sum = tricep + suprailiac + thigh
     const hipsM = tapeMeasurements.hip * 0.01 // cm to meters
     const bodyDensity = 1.1466399 - 0.00093 * sum + 0.0000028 * sum * sum - 0.0006171 * hipsM
-    return siriEquation(bodyDensity)
+    return bodyDensity
   } else if (variation === 'S, S², ålder, C') {
     // With age and circumference: triceps, suprailiac, thigh + hips
     if (
@@ -209,7 +208,7 @@ export function jacksonPollock3Female(
     const hipsM = tapeMeasurements.hip * 0.01 // cm to meters
     const bodyDensity =
       1.1470292 - 0.0009376 * sum + 0.000003 * sum * sum - 0.0001156 * age - 0.0005839 * hipsM
-    return siriEquation(bodyDensity)
+    return bodyDensity
   } else if (variation === 'Kläder på') {
     // Clothed variation: triceps, suprailiac, abdominal
     if (
@@ -223,7 +222,7 @@ export function jacksonPollock3Female(
     const { tricep, suprailiac, abdominal } = caliperMeasurements
     const sum = tricep + suprailiac + abdominal
     const bodyDensity = 1.089733 - 0.0009245 * sum + 0.0000025 * sum * sum - 0.0000979 * age
-    return siriEquation(bodyDensity)
+    return bodyDensity
   }
 
   return null
@@ -264,7 +263,7 @@ export function jacksonPollock4(
   if (variation === 'S, S², ålder') {
     // Standard variation with age
     const bodyDensity = 1.096095 - 0.0006952 * sum + 0.0000011 * sum * sum - 0.0000714 * age
-    return siriEquation(bodyDensity)
+    return bodyDensity
   } else if (variation === 'S, S², C') {
     // With circumference (no age)
     if (!tapeMeasurements?.hip) {
@@ -273,7 +272,7 @@ export function jacksonPollock4(
 
     const hipsM = tapeMeasurements.hip * 0.01 // cm to meters
     const bodyDensity = 1.1443913 - 0.0006523 * sum + 0.0000014 * sum * sum - 0.0006053 * hipsM
-    return siriEquation(bodyDensity)
+    return bodyDensity
   } else if (variation === 'S, S², ålder, C') {
     // With age and circumference
     if (!tapeMeasurements?.hip) {
@@ -283,7 +282,7 @@ export function jacksonPollock4(
     const hipsM = tapeMeasurements.hip * 0.01 // cm to meters
     const bodyDensity =
       1.1454464 - 0.0006558 * sum + 0.0000015 * sum * sum - 0.0000604 * age - 0.0005981 * hipsM
-    return siriEquation(bodyDensity)
+    return bodyDensity
   } else if (variation === 'Okänt ursprung') {
     // Unknown origin - returns %BF DIRECTLY (not density!)
     return 0.29669 * sum - 0.00043 * sum * sum + 0.02963 * age + 1.4072
@@ -332,7 +331,7 @@ export function jacksonPollock7(
     } else {
       bodyDensity = 1.097 - 0.00046971 * sum + 0.00000056 * sum * sum - 0.00012828 * age
     }
-    return siriEquation(bodyDensity)
+    return bodyDensity
   } else if (variation === 'S, S², C') {
     // With circumference (FEMALE ONLY)
     if (gender !== 'female' || !tapeMeasurements?.hip) {
@@ -341,7 +340,7 @@ export function jacksonPollock7(
 
     const hipsM = tapeMeasurements.hip * 0.01 // cm to meters
     const bodyDensity = 1.147 - 0.00042359 * sum + 0.00000061 * sum * sum - 0.000652 * hipsM
-    return siriEquation(bodyDensity)
+    return bodyDensity
   } else if (variation === 'S, S², ålder, C') {
     // With age and circumference (different for male/female)
     if (gender === 'male') {
@@ -358,7 +357,7 @@ export function jacksonPollock7(
         0.00022631 * age -
         0.0059239 * waistM +
         0.0190632 * forearmM
-      return siriEquation(bodyDensity)
+      return bodyDensity
     } else {
       if (!tapeMeasurements?.hip) {
         return null
@@ -367,7 +366,7 @@ export function jacksonPollock7(
       const hipsM = tapeMeasurements.hip * 0.01 // cm to meters
       const bodyDensity =
         1.147 - 0.0004293 * sum + 0.00000065 * sum * sum - 0.00009975 * age - 0.00062415 * hipsM
-      return siriEquation(bodyDensity)
+      return bodyDensity
     }
   }
 
@@ -426,7 +425,7 @@ export function durninWomersley(params: BodyCompositionParams): number | null {
     }
   }
 
-  return siriEquation(bodyDensity)
+  return bodyDensity
 }
 
 /**
@@ -536,14 +535,24 @@ export function usNavy(params: BodyCompositionParams): number | null {
 
   const { neck, waist, hip } = tapeMeasurements
 
+  // Convert cm to inches
+  const waistInches = waist / 2.54
+  const neckInches = neck / 2.54
+  const heightInches = height / 2.54
+
   if (gender === 'male') {
     // Male: 86.010 × log10(abdomen - neck) - 70.041 × log10(height) + 36.76
-    const bodyFat = 86.01 * Math.log10(waist - neck) - 70.041 * Math.log10(height) + 36.76
+    const bodyFat =
+      86.01 * Math.log10(waistInches - neckInches) - 70.041 * Math.log10(heightInches) + 36.76
     return bodyFat
   } else {
     // Female: 163.205 × log10(waist + hip - neck) - 97.684 × log10(height) - 78.387
     if (!hip) return null
-    const bodyFat = 163.205 * Math.log10(waist + hip - neck) - 97.684 * Math.log10(height) - 78.387
+    const hipInches = hip / 2.54
+    const bodyFat =
+      163.205 * Math.log10(waistInches + hipInches - neckInches) -
+      97.684 * Math.log10(heightInches) -
+      78.387
     return bodyFat
   }
 }
@@ -551,6 +560,9 @@ export function usNavy(params: BodyCompositionParams): number | null {
 /**
  * 9. YMCA Measuring Tape Method
  * Uses weight and waist measurement
+ * Google Sheets formulas:
+ * Male: ((4.15*(waist_inches) - 0.082*(weight_lbs) - 98.42) / weight_lbs) * 100
+ * Female: ((4.15*(waist_inches) - 0.082*(weight_lbs) - 76.76) / weight_lbs) * 100
  */
 export function ymca(params: BodyCompositionParams): number | null {
   const { gender, weight, tapeMeasurements } = params
@@ -565,38 +577,51 @@ export function ymca(params: BodyCompositionParams): number | null {
 
   if (gender === 'male') {
     // Male YMCA formula
-    return -98.42 + 4.15 * waistInches - 0.082 * weightLbs
+    return ((4.15 * waistInches - 0.082 * weightLbs - 98.42) / weightLbs) * 100
   } else {
     // Female YMCA formula
-    return -76.76 + 4.15 * waistInches - 0.082 * weightLbs
+    return ((4.15 * waistInches - 0.082 * weightLbs - 76.76) / weightLbs) * 100
   }
 }
 
 /**
  * 10. Modified YMCA Measuring Tape Method
  * Enhanced version with additional measurements
+ * Google Sheets formulas:
+ * Male: ((-0.082*(weight_lbs) + 4.15*(waist_inches) - 94.42) / weight_lbs) * 100
+ * Female: ((0.268*(weight_lbs) - 0.318*(hip_inches) + 0.157*(waist_inches) + 0.245*(wrist_inches) - 0.434*(forearm_inches) - 8.987) / weight_lbs) * 100
  */
 export function modifiedYmca(params: BodyCompositionParams): number | null {
-  const { gender, weight, height, tapeMeasurements } = params
+  const { gender, weight, tapeMeasurements } = params
 
-  if (!tapeMeasurements?.waist || !tapeMeasurements?.neck) {
+  if (!tapeMeasurements?.waist) {
     return null
   }
 
-  const { waist, neck, hip } = tapeMeasurements
+  const { waist, wrist, forearm, hip } = tapeMeasurements
   const weightLbs = weight * 2.20462
-  const heightInches = height / 2.54
   const waistInches = waist / 2.54
-  const neckInches = neck / 2.54
 
   if (gender === 'male') {
     // Modified male formula
-    return -98.42 + 4.15 * waistInches - 0.082 * weightLbs - 2.2 * neckInches + 0.5 * heightInches
+    return ((-0.082 * weightLbs + 4.15 * waistInches - 94.42) / weightLbs) * 100
   } else {
-    // Modified female formula
-    if (!hip) return null
+    // Modified female formula - requires hip, wrist, and forearm
+    if (!hip || !wrist || !forearm) return null
     const hipInches = hip / 2.54
-    return -76.76 + 4.15 * waistInches - 0.082 * weightLbs - 2.2 * neckInches + 0.3 * hipInches
+    const wristInches = wrist / 2.54
+    const forearmInches = forearm / 2.54
+
+    return (
+      ((0.268 * weightLbs -
+        0.318 * hipInches +
+        0.157 * waistInches +
+        0.245 * wristInches -
+        0.434 * forearmInches -
+        8.987) /
+        weightLbs) *
+      100
+    )
   }
 }
 
@@ -910,8 +935,12 @@ export function getAvailableMethods(params: BodyCompositionParams): BodyComposit
   }
 
   // Modified YMCA
-  if (tapeMeasurements?.waist && tapeMeasurements?.neck) {
-    if (gender === 'male' || tapeMeasurements?.hip) {
+  if (tapeMeasurements?.waist) {
+    if (gender === 'male') {
+      // Male only needs waist
+      methods.push('Modified YMCA Measuring Tape Method')
+    } else if (tapeMeasurements?.hip && tapeMeasurements?.wrist && tapeMeasurements?.forearm) {
+      // Female needs waist, hip, wrist, and forearm
       methods.push('Modified YMCA Measuring Tape Method')
     }
   }

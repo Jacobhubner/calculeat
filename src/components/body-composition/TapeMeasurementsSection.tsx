@@ -21,7 +21,6 @@ const measurementRanges: Record<string, { min: number; max: number }> = {
   forearm: { min: 15, max: 50 },
   thighCirc: { min: 30, max: 100 },
   calfCirc: { min: 20, max: 70 },
-  ankle: { min: 15, max: 40 },
 }
 
 export default function TapeMeasurementsSection({
@@ -44,7 +43,6 @@ export default function TapeMeasurementsSection({
     'forearm',
     'thighCirc',
     'calfCirc',
-    'ankle',
   ]
 
   const fieldsToShow = showAll ? allFields : (requiredFields as Array<keyof TapeMeasurements>)

@@ -120,7 +120,7 @@ export default function MethodComparisonTable({
                     onClick={() => handleSort('leanBodyMass')}
                     className="flex items-center justify-end gap-1 font-medium text-neutral-700 hover:text-primary-600 transition-colors w-full"
                   >
-                    Mager Massa (kg)
+                    Fettfri Massa (FFM) (kg)
                     <ArrowUpDown className="h-4 w-4" />
                   </button>
                 </th>
@@ -220,7 +220,7 @@ export default function MethodComparisonTable({
                   </span>
                 </div>
                 <div>
-                  <div className="text-neutral-500 text-xs mb-1">Mager Massa</div>
+                  <div className="text-neutral-500 text-xs mb-1">Fettfri Massa (FFM)</div>
                   <div className="text-neutral-700">{result.leanBodyMass.toFixed(1)} kg</div>
                 </div>
                 <div>

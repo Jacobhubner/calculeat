@@ -88,7 +88,6 @@ export default function BodyCompositionPage() {
     forearm: undefined,
     thighCirc: undefined,
     calfCirc: undefined,
-    ankle: undefined,
   })
 
   // Workflow 2: Measurements-first states
@@ -126,7 +125,6 @@ export default function BodyCompositionPage() {
       forearm: undefined,
       thighCirc: undefined,
       calfCirc: undefined,
-      ankle: undefined,
     })
     setBodyDensity(null)
     setBodyFatPercentage(null)

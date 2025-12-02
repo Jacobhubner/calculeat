@@ -333,6 +333,9 @@ export default function UserProfileForm({
     // Compare current form values with saved profile values
     const hasProfileNameChange = profileName !== (fullProfile.profile_name || '')
     const hasWeightChange = weight !== (fullProfile.weight_kg?.toString() || '')
+    const hasHeightChange = height !== (fullProfile.height_cm?.toString() || '')
+    const hasGenderChange = gender !== (fullProfile.gender || '')
+    const hasBirthDateChange = birthDate !== (fullProfile.birth_date || '')
     const hasBodyFatChange =
       bodyFatPercentage !== (fullProfile.body_fat_percentage?.toString() || '')
     const hasBmrFormulaChange = bmrFormula !== (fullProfile.bmr_formula || '')
@@ -373,6 +376,9 @@ export default function UserProfileForm({
     const finalResult =
       hasProfileNameChange ||
       hasWeightChange ||
+      hasHeightChange ||
+      hasGenderChange ||
+      hasBirthDateChange ||
       hasBodyFatChange ||
       hasBmrFormulaChange ||
       hasPalSystemChange ||
@@ -395,6 +401,9 @@ export default function UserProfileForm({
     profiles, // Use Zustand store profiles instead of allProfiles from React Query
     profileName,
     weight,
+    height,
+    gender,
+    birthDate,
     bodyFatPercentage,
     bmrFormula,
     palSystem,
@@ -1359,10 +1368,10 @@ export default function UserProfileForm({
                   <p
                     className="text-3xl font-extrabold"
                     style={{
-                      color: '#d4af37',
+                      color: '#FFB800',
                       textShadow:
-                        '0 1px 2px rgba(0,0,0,0.3), 0 2px 4px rgba(212,175,55,0.5), 0 0 10px rgba(255,215,0,0.3)',
-                      WebkitTextStroke: '0.5px rgba(139,115,85,0.3)',
+                        '0 2px 4px rgba(0,0,0,0.4), 0 0 8px rgba(255,184,0,0.6), 0 0 15px rgba(255,215,0,0.4), 2px 2px 0 rgba(218,165,32,0.5)',
+                      WebkitTextStroke: '0.5px rgba(184,134,11,0.4)',
                     }}
                   >
                     {result.tdeeMin && result.tdeeMax

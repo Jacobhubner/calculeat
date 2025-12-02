@@ -64,10 +64,10 @@ export default function BodyCompositionResults({
           <div
             className="text-4xl font-bold"
             style={{
-              color: '#d4af37',
+              color: '#FFB800',
               textShadow:
-                '0 1px 2px rgba(0,0,0,0.3), 0 2px 4px rgba(212,175,55,0.5), 0 0 10px rgba(255,215,0,0.3)',
-              WebkitTextStroke: '0.5px rgba(139,115,85,0.3)',
+                '0 2px 4px rgba(0,0,0,0.4), 0 0 8px rgba(255,184,0,0.6), 0 0 15px rgba(255,215,0,0.4), 2px 2px 0 rgba(218,165,32,0.5)',
+              WebkitTextStroke: '0.5px rgba(184,134,11,0.4)',
             }}
           >
             {bodyFatPercentage.toFixed(1)}%

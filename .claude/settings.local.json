@@ -34,7 +34,10 @@
       "Bash(node test-total-check.js:*)",
       "Bash(node test-no-rounding.js:*)",
       "Bash(node test-total-100.js:*)",
-      "Bash(tasklist:*)"
+      "Bash(tasklist:*)",
+      "Bash(timeout 5 tail:*)",
+      "Bash(timeout:*)",
+      "Bash(exit 0)"
     ],
     "deny": [],
     "ask": []
