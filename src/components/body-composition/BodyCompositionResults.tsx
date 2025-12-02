@@ -61,7 +61,9 @@ export default function BodyCompositionResults({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-4xl font-bold text-primary-700">{bodyFatPercentage.toFixed(1)}%</div>
+          <div className="text-4xl font-bold bg-gradient-to-br from-yellow-600 via-amber-500 to-yellow-600 bg-clip-text text-transparent">
+            {bodyFatPercentage.toFixed(1)}%
+          </div>
           <p className="text-sm text-neutral-600 mt-2">Metod: {selectedMethod}</p>
         </CardContent>
       </Card>
