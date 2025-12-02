@@ -1356,7 +1356,7 @@ export default function UserProfileForm({
                       {!energyGoal && '(från energimål)'}
                     </span>
                   </p>
-                  <p className="text-3xl font-extrabold bg-gradient-to-br from-yellow-600 via-amber-500 to-yellow-600 bg-clip-text text-transparent">
+                  <p className="text-3xl font-extrabold bg-gradient-to-br from-yellow-500 via-amber-400 to-yellow-500 bg-clip-text text-transparent drop-shadow-sm">
                     {result.tdeeMin && result.tdeeMax
                       ? `${Math.round(result.tdeeMin)} - ${Math.round(result.tdeeMax)} kcal`
                       : '-'}
