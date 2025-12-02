@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import MethodSelectionCard from '@/components/body-composition/MethodSelectionCard'
+import VariationSelector from '@/components/body-composition/VariationSelector'
 import CaliperMeasurementsSection from '@/components/body-composition/CaliperMeasurementsSection'
 import TapeMeasurementsSection from '@/components/body-composition/TapeMeasurementsSection'
 import DensityConversionSelector from '@/components/body-composition/DensityConversionSelector'
@@ -9,13 +10,18 @@ import EmptyState from '@/components/EmptyState'
 import { Activity, Scale } from 'lucide-react'
 import { useProfileStore } from '@/stores/profileStore'
 import { useProfiles, useUpdateProfile } from '@/hooks'
-import { getRequiredFields, isDensityBasedMethod } from '@/lib/helpers/bodyCompositionHelpers'
+import {
+  getRequiredFields,
+  isDensityBasedMethod,
+  getMethodVariations,
+} from '@/lib/helpers/bodyCompositionHelpers'
 import {
   calculateBodyFat,
   siriEquation,
   brozekEquation,
   getBodyFatCategory,
   type BodyCompositionMethod,
+  type MethodVariation,
   type CaliperMeasurements,
   type TapeMeasurements,
   type BodyCompositionParams,
@@ -43,6 +49,7 @@ export default function BodyCompositionPage() {
 
   // Method selection
   const [selectedMethod, setSelectedMethod] = useState<BodyCompositionMethod | ''>('')
+  const [selectedVariation, setSelectedVariation] = useState<MethodVariation | undefined>(undefined)
   const [conversionMethod, setConversionMethod] = useState<'siri' | 'brozek'>('siri')
 
   // Caliper measurements (mm)
@@ -55,6 +62,8 @@ export default function BodyCompositionPage() {
     suprailiac: undefined,
     midaxillary: undefined,
     bicep: undefined,
+    lowerBack: undefined,
+    calf: undefined,
   })
 
   // Tape measurements (cm)
@@ -64,6 +73,9 @@ export default function BodyCompositionPage() {
     hip: undefined,
     wrist: undefined,
     forearm: undefined,
+    thighCirc: undefined,
+    calfCirc: undefined,
+    ankle: undefined,
   })
 
   // Results
@@ -74,7 +86,7 @@ export default function BodyCompositionPage() {
   // UI state
   const [isSaving, setIsSaving] = useState(false)
 
-  // Reset measurements when method changes
+  // Reset measurements when method changes and set default variation
   useEffect(() => {
     setCaliperMeasurements({
       chest: undefined,
@@ -85,6 +97,8 @@ export default function BodyCompositionPage() {
       suprailiac: undefined,
       midaxillary: undefined,
       bicep: undefined,
+      lowerBack: undefined,
+      calf: undefined,
     })
     setTapeMeasurements({
       neck: undefined,
@@ -92,11 +106,24 @@ export default function BodyCompositionPage() {
       hip: undefined,
       wrist: undefined,
       forearm: undefined,
+      thighCirc: undefined,
+      calfCirc: undefined,
+      ankle: undefined,
     })
     setBodyDensity(null)
     setBodyFatPercentage(null)
     setCategory(null)
-  }, [selectedMethod])
+
+    // Set default variation if method has variations
+    if (selectedMethod && profile) {
+      const variations = getMethodVariations(selectedMethod, profile.gender)
+      if (variations.length > 0) {
+        setSelectedVariation(variations[0])
+      } else {
+        setSelectedVariation(undefined)
+      }
+    }
+  }, [selectedMethod, profile])
 
   // Calculate body fat whenever inputs change
   useEffect(() => {
@@ -118,8 +145,8 @@ export default function BodyCompositionPage() {
       bmr: profile.bmr,
     }
 
-    // Calculate body fat using selected method
-    const result = calculateBodyFat(selectedMethod, params)
+    // Calculate body fat using selected method and variation
+    const result = calculateBodyFat(selectedMethod, params, selectedVariation)
 
     if (result === null) {
       // Not enough measurements yet
@@ -129,7 +156,7 @@ export default function BodyCompositionPage() {
     }
 
     // For density-based methods, calculate density first
-    if (isDensityBasedMethod(selectedMethod)) {
+    if (isDensityBasedMethod(selectedMethod, selectedVariation)) {
       const density = result as number
       setBodyDensity(density)
 
@@ -141,7 +168,14 @@ export default function BodyCompositionPage() {
       setBodyDensity(null)
       setBodyFatPercentage(result)
     }
-  }, [selectedMethod, conversionMethod, caliperMeasurements, tapeMeasurements, profile])
+  }, [
+    selectedMethod,
+    selectedVariation,
+    conversionMethod,
+    caliperMeasurements,
+    tapeMeasurements,
+    profile,
+  ])
 
   // Calculate category when body fat % is available
   useEffect(() => {
@@ -205,7 +239,9 @@ export default function BodyCompositionPage() {
     )
   }
 
-  const requirements = selectedMethod ? getRequiredFields(selectedMethod) : null
+  const requirements = selectedMethod
+    ? getRequiredFields(selectedMethod, selectedVariation, profile.gender)
+    : null
   const fatFreeMass =
     bodyFatPercentage && profile.weight_kg ? profile.weight_kg * (1 - bodyFatPercentage / 100) : 0
   const fatMass =
@@ -234,15 +270,34 @@ export default function BodyCompositionPage() {
               onMethodChange={setSelectedMethod}
             />
 
+            {/* Variation Selection - Show when method has variations */}
+            {selectedMethod && profile && (
+              <VariationSelector
+                method={selectedMethod}
+                gender={profile.gender}
+                selectedVariation={selectedVariation}
+                onChange={setSelectedVariation}
+              />
+            )}
+
             {/* Measurement Input - Only show when method is selected */}
             {requirements && (
               <>
                 {requirements.type === 'caliper' && (
-                  <CaliperMeasurementsSection
-                    measurements={caliperMeasurements}
-                    requiredFields={requirements.fields}
-                    onChange={handleCaliperChange}
-                  />
+                  <>
+                    <CaliperMeasurementsSection
+                      measurements={caliperMeasurements}
+                      requiredFields={requirements.fields}
+                      onChange={handleCaliperChange}
+                    />
+                    {requirements.tapeFields && requirements.tapeFields.length > 0 && (
+                      <TapeMeasurementsSection
+                        measurements={tapeMeasurements}
+                        requiredFields={requirements.tapeFields}
+                        onChange={handleTapeChange}
+                      />
+                    )}
+                  </>
                 )}
 
                 {requirements.type === 'tape' && (

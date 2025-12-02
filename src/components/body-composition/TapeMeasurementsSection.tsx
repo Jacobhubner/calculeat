@@ -7,7 +7,8 @@ import { Ruler } from 'lucide-react'
 
 interface TapeMeasurementsSectionProps {
   measurements: TapeMeasurements
-  requiredFields: string[]
+  requiredFields?: string[]
+  showAll?: boolean // For Workflow 2: show all fields
   onChange: (field: keyof TapeMeasurements, value: number | undefined) => void
 }
 
@@ -18,17 +19,35 @@ const measurementRanges: Record<string, { min: number; max: number }> = {
   hip: { min: 50, max: 200 },
   wrist: { min: 10, max: 30 },
   forearm: { min: 15, max: 50 },
+  thighCirc: { min: 30, max: 100 },
+  calfCirc: { min: 20, max: 70 },
+  ankle: { min: 15, max: 40 },
 }
 
 export default function TapeMeasurementsSection({
   measurements,
-  requiredFields,
+  requiredFields = [],
+  showAll = false,
   onChange,
 }: TapeMeasurementsSectionProps) {
   const handleChange = (field: keyof TapeMeasurements, value: string) => {
     const numValue = value === '' ? undefined : parseFloat(value)
     onChange(field, numValue)
   }
+
+  // All possible tape fields
+  const allFields: Array<keyof TapeMeasurements> = [
+    'neck',
+    'waist',
+    'hip',
+    'wrist',
+    'forearm',
+    'thighCirc',
+    'calfCirc',
+    'ankle',
+  ]
+
+  const fieldsToShow = showAll ? allFields : (requiredFields as Array<keyof TapeMeasurements>)
 
   return (
     <Card>
@@ -44,13 +63,14 @@ export default function TapeMeasurementsSection({
       </CardHeader>
       <CardContent>
         <div className="grid gap-4 sm:grid-cols-2">
-          {requiredFields.map(field => {
-            const typedField = field as keyof TapeMeasurements
-            const range = measurementRanges[field]
+          {fieldsToShow.map(field => {
+            const range = measurementRanges[field as string]
+            const isRequired = requiredFields.includes(field as string)
             return (
               <div key={field} className="space-y-2">
                 <Label htmlFor={`tape-${field}`}>
-                  {tapeLabels[field]} <span className="text-neutral-500">(cm)</span>
+                  {tapeLabels[field as string]} <span className="text-neutral-500">(cm)</span>
+                  {isRequired && <span className="text-red-500 ml-1">*</span>}
                 </Label>
                 <Input
                   id={`tape-${field}`}
@@ -58,8 +78,8 @@ export default function TapeMeasurementsSection({
                   min={range?.min}
                   max={range?.max}
                   step="0.1"
-                  value={measurements[typedField] ?? ''}
-                  onChange={e => handleChange(typedField, e.target.value)}
+                  value={measurements[field] ?? ''}
+                  onChange={e => handleChange(field, e.target.value)}
                   placeholder="0.0"
                   className="rounded-xl"
                 />

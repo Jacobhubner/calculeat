@@ -19,23 +19,35 @@ export type BodyCompositionMethod =
   | 'Heritage BMI to Body Fat Method'
   | 'Reversed Cunningham equation'
 
+export type MethodVariation =
+  | 'S, S², ålder'
+  | 'S, S², C'
+  | 'S, S², ålder, C'
+  | 'Kläder på'
+  | 'Okänt ursprung'
+
 export interface CaliperMeasurements {
-  chest?: number // mm
-  abdominal?: number // mm
-  thigh?: number // mm
-  tricep?: number // mm
-  subscapular?: number // mm
-  suprailiac?: number // mm
-  midaxillary?: number // mm
-  bicep?: number // mm
+  chest?: number // mm - B53 Bröst (pectoral)
+  abdominal?: number // mm - B55 Midja (abdominal)
+  thigh?: number // mm - B57 Lår (thigh)
+  tricep?: number // mm - B59 Triceps
+  subscapular?: number // mm - B61 Subscapular
+  suprailiac?: number // mm - B63 Suprailiac
+  midaxillary?: number // mm - B65 Midaxillary
+  bicep?: number // mm - B67 Biceps
+  lowerBack?: number // mm - B69 Nedre rygg (lower back)
+  calf?: number // mm - B71 Vad (calf)
 }
 
 export interface TapeMeasurements {
-  neck?: number // cm
-  waist?: number // cm
-  hip?: number // cm
-  wrist?: number // cm
-  forearm?: number // cm
+  neck?: number // cm - C53 Hals (neck)
+  waist?: number // cm - C55 Midja (waist)
+  hip?: number // cm - C57 Höft (hip)
+  wrist?: number // cm - C61 Handled (wrist)
+  forearm?: number // cm - C59 Underarm (forearm)
+  thighCirc?: number // cm - C63 Lår omkrets (thigh circumference)
+  calfCirc?: number // cm - C65 Vad omkrets (calf circumference)
+  ankle?: number // cm - C67 Fotled (ankle)
 }
 
 export interface BodyCompositionParams {
@@ -67,88 +79,234 @@ export function brozekEquation(bodyDensity: number): number {
 
 /**
  * 1. Jackson/Pollock 3 Caliper Method (Male)
- * Sites: chest, abdominal, thigh
+ * Sites: pectoral(chest), abdominal, thigh
+ * Google Sheets variations:
+ * 1. "S, S², ålder": 1.10938 - 0.0008267×sum + 0.0000016×sum² - 0.0002574×age
+ * 2. "S, S², ålder, C": 1.099075 - 0.0008209×sum + 0.0000026×sum² - 0.0002017×age - 0.005675×(waist_m) + 0.018586×(forearm_m)
+ * 3. "Kläder på": 1.1125025 - 0.0013125×sum + 0.0000055×sum² - 0.000244×age (uses pectoral, triceps, subscapular)
  */
-export function jacksonPollock3Male(params: BodyCompositionParams): number | null {
-  const { age, caliperMeasurements } = params
+export function jacksonPollock3Male(
+  params: BodyCompositionParams,
+  variation: MethodVariation = 'S, S², ålder'
+): number | null {
+  const { age, caliperMeasurements, tapeMeasurements } = params
 
-  if (
-    !caliperMeasurements?.chest ||
-    !caliperMeasurements?.abdominal ||
-    !caliperMeasurements?.thigh
-  ) {
-    return null
+  if (variation === 'S, S², ålder') {
+    // Standard variation: pectoral, abdominal, thigh
+    if (
+      !caliperMeasurements?.chest ||
+      !caliperMeasurements?.abdominal ||
+      !caliperMeasurements?.thigh
+    ) {
+      return null
+    }
+
+    const { chest, abdominal, thigh } = caliperMeasurements
+    const sum = chest + abdominal + thigh
+    const bodyDensity = 1.10938 - 0.0008267 * sum + 0.0000016 * sum * sum - 0.0002574 * age
+    return siriEquation(bodyDensity)
+  } else if (variation === 'S, S², ålder, C') {
+    // With circumference: pectoral, abdominal, thigh + waist, forearm
+    if (
+      !caliperMeasurements?.chest ||
+      !caliperMeasurements?.abdominal ||
+      !caliperMeasurements?.thigh ||
+      !tapeMeasurements?.waist ||
+      !tapeMeasurements?.forearm
+    ) {
+      return null
+    }
+
+    const { chest, abdominal, thigh } = caliperMeasurements
+    const sum = chest + abdominal + thigh
+    const waistM = tapeMeasurements.waist * 0.01 // cm to meters
+    const forearmM = tapeMeasurements.forearm * 0.01 // cm to meters
+    const bodyDensity =
+      1.099075 -
+      0.0008209 * sum +
+      0.0000026 * sum * sum -
+      0.0002017 * age -
+      0.005675 * waistM +
+      0.018586 * forearmM
+    return siriEquation(bodyDensity)
+  } else if (variation === 'Kläder på') {
+    // Clothed variation: pectoral, triceps, subscapular
+    if (
+      !caliperMeasurements?.chest ||
+      !caliperMeasurements?.tricep ||
+      !caliperMeasurements?.subscapular
+    ) {
+      return null
+    }
+
+    const { chest, tricep, subscapular } = caliperMeasurements
+    const sum = chest + tricep + subscapular
+    const bodyDensity = 1.1125025 - 0.0013125 * sum + 0.0000055 * sum * sum - 0.000244 * age
+    return siriEquation(bodyDensity)
   }
 
-  const { chest, abdominal, thigh } = caliperMeasurements
-  const sum = chest + abdominal + thigh
-
-  // Body density calculation
-  const bodyDensity = 1.10938 - 0.0008267 * sum + 0.0000016 * sum * sum - 0.0002574 * age
-
-  return siriEquation(bodyDensity)
+  return null
 }
 
 /**
  * 2. Jackson/Pollock 3 Caliper Method (Female)
- * Sites: tricep, suprailiac, thigh
+ * Sites: triceps, suprailiac, thigh
+ * Google Sheets variations:
+ * 1. "S, S², ålder": 1.0994921 - 0.0009929×sum + 0.0000023×sum² - 0.0001392×age
+ * 2. "S, S², C": 1.1466399 - 0.00093×sum + 0.0000028×sum² - 0.0006171×hips_m
+ * 3. "S, S², ålder, C": 1.1470292 - 0.0009376×sum + 0.000003×sum² - 0.0001156×age - 0.0005839×hips_m
+ * 4. "Kläder på": 1.089733 - 0.0009245×sum + 0.0000025×sum² - 0.0000979×age (uses triceps, suprailiac, abdominal)
  */
-export function jacksonPollock3Female(params: BodyCompositionParams): number | null {
-  const { age, caliperMeasurements } = params
+export function jacksonPollock3Female(
+  params: BodyCompositionParams,
+  variation: MethodVariation = 'S, S², ålder'
+): number | null {
+  const { age, caliperMeasurements, tapeMeasurements } = params
 
-  if (
-    !caliperMeasurements?.tricep ||
-    !caliperMeasurements?.suprailiac ||
-    !caliperMeasurements?.thigh
-  ) {
-    return null
+  if (variation === 'S, S², ålder') {
+    // Standard variation: triceps, suprailiac, thigh
+    if (
+      !caliperMeasurements?.tricep ||
+      !caliperMeasurements?.suprailiac ||
+      !caliperMeasurements?.thigh
+    ) {
+      return null
+    }
+
+    const { tricep, suprailiac, thigh } = caliperMeasurements
+    const sum = tricep + suprailiac + thigh
+    const bodyDensity = 1.0994921 - 0.0009929 * sum + 0.0000023 * sum * sum - 0.0001392 * age
+    return siriEquation(bodyDensity)
+  } else if (variation === 'S, S², C') {
+    // With circumference (no age): triceps, suprailiac, thigh + hips
+    if (
+      !caliperMeasurements?.tricep ||
+      !caliperMeasurements?.suprailiac ||
+      !caliperMeasurements?.thigh ||
+      !tapeMeasurements?.hip
+    ) {
+      return null
+    }
+
+    const { tricep, suprailiac, thigh } = caliperMeasurements
+    const sum = tricep + suprailiac + thigh
+    const hipsM = tapeMeasurements.hip * 0.01 // cm to meters
+    const bodyDensity = 1.1466399 - 0.00093 * sum + 0.0000028 * sum * sum - 0.0006171 * hipsM
+    return siriEquation(bodyDensity)
+  } else if (variation === 'S, S², ålder, C') {
+    // With age and circumference: triceps, suprailiac, thigh + hips
+    if (
+      !caliperMeasurements?.tricep ||
+      !caliperMeasurements?.suprailiac ||
+      !caliperMeasurements?.thigh ||
+      !tapeMeasurements?.hip
+    ) {
+      return null
+    }
+
+    const { tricep, suprailiac, thigh } = caliperMeasurements
+    const sum = tricep + suprailiac + thigh
+    const hipsM = tapeMeasurements.hip * 0.01 // cm to meters
+    const bodyDensity =
+      1.1470292 - 0.0009376 * sum + 0.000003 * sum * sum - 0.0001156 * age - 0.0005839 * hipsM
+    return siriEquation(bodyDensity)
+  } else if (variation === 'Kläder på') {
+    // Clothed variation: triceps, suprailiac, abdominal
+    if (
+      !caliperMeasurements?.tricep ||
+      !caliperMeasurements?.suprailiac ||
+      !caliperMeasurements?.abdominal
+    ) {
+      return null
+    }
+
+    const { tricep, suprailiac, abdominal } = caliperMeasurements
+    const sum = tricep + suprailiac + abdominal
+    const bodyDensity = 1.089733 - 0.0009245 * sum + 0.0000025 * sum * sum - 0.0000979 * age
+    return siriEquation(bodyDensity)
   }
 
-  const { tricep, suprailiac, thigh } = caliperMeasurements
-  const sum = tricep + suprailiac + thigh
-
-  // Body density calculation
-  const bodyDensity = 1.0994921 - 0.0009929 * sum + 0.0000023 * sum * sum - 0.0001392 * age
-
-  return siriEquation(bodyDensity)
+  return null
 }
 
 /**
- * 3. Jackson/Pollock 4 Caliper Method
- * Sites: abdominal, suprailiac, tricep, thigh
+ * 3. Jackson/Pollock 4 Caliper Method (FEMALE ONLY!)
+ * Sites: triceps, suprailiac, abdominal, thigh
+ * Google Sheets variations:
+ * 1. "S, S², ålder": 1.096095 - 0.0006952×sum + 0.0000011×sum² - 0.0000714×age
+ * 2. "S, S², C": 1.1443913 - 0.0006523×sum + 0.0000014×sum² - 0.0006053×hips_m
+ * 3. "S, S², ålder, C": 1.1454464 - 0.0006558×sum + 0.0000015×sum² - 0.0000604×age - 0.0005981×hips_m
+ * 4. "Okänt ursprung": 0.29669×sum - 0.00043×sum² + 0.02963×age + 1.4072 (DIRECT %BF, NOT density!)
  */
-export function jacksonPollock4(params: BodyCompositionParams): number | null {
-  const { age, gender, caliperMeasurements } = params
+export function jacksonPollock4(
+  params: BodyCompositionParams,
+  variation: MethodVariation = 'S, S², ålder'
+): number | null {
+  const { age, gender, caliperMeasurements, tapeMeasurements } = params
+
+  // JP4 is FEMALE ONLY
+  if (gender !== 'female') {
+    return null
+  }
 
   if (
-    !caliperMeasurements?.abdominal ||
-    !caliperMeasurements?.suprailiac ||
     !caliperMeasurements?.tricep ||
+    !caliperMeasurements?.suprailiac ||
+    !caliperMeasurements?.abdominal ||
     !caliperMeasurements?.thigh
   ) {
     return null
   }
 
-  const { abdominal, suprailiac, tricep, thigh } = caliperMeasurements
-  const sum = abdominal + suprailiac + tricep + thigh
+  const { tricep, suprailiac, abdominal, thigh } = caliperMeasurements
+  const sum = tricep + suprailiac + abdominal + thigh
 
-  let bodyDensity: number
+  if (variation === 'S, S², ålder') {
+    // Standard variation with age
+    const bodyDensity = 1.096095 - 0.0006952 * sum + 0.0000011 * sum * sum - 0.0000714 * age
+    return siriEquation(bodyDensity)
+  } else if (variation === 'S, S², C') {
+    // With circumference (no age)
+    if (!tapeMeasurements?.hip) {
+      return null
+    }
 
-  if (gender === 'male') {
-    bodyDensity = 1.10726 - 0.00081 * sum + 0.00000357 * sum * sum - 0.00035 * age
-  } else {
-    bodyDensity = 1.096095 - 0.0006952 * sum + 0.0000011 * sum * sum - 0.0001 * age
+    const hipsM = tapeMeasurements.hip * 0.01 // cm to meters
+    const bodyDensity = 1.1443913 - 0.0006523 * sum + 0.0000014 * sum * sum - 0.0006053 * hipsM
+    return siriEquation(bodyDensity)
+  } else if (variation === 'S, S², ålder, C') {
+    // With age and circumference
+    if (!tapeMeasurements?.hip) {
+      return null
+    }
+
+    const hipsM = tapeMeasurements.hip * 0.01 // cm to meters
+    const bodyDensity =
+      1.1454464 - 0.0006558 * sum + 0.0000015 * sum * sum - 0.0000604 * age - 0.0005981 * hipsM
+    return siriEquation(bodyDensity)
+  } else if (variation === 'Okänt ursprung') {
+    // Unknown origin - returns %BF DIRECTLY (not density!)
+    return 0.29669 * sum - 0.00043 * sum * sum + 0.02963 * age + 1.4072
   }
 
-  return siriEquation(bodyDensity)
+  return null
 }
 
 /**
  * 4. Jackson/Pollock 7 Caliper Method
- * Sites: chest, abdominal, thigh, tricep, subscapular, suprailiac, midaxillary
+ * Sites: chest(pectoral), abdominal, thigh, triceps, subscapular, suprailiac, midaxillary
+ * Google Sheets variations:
+ * 1. "S, S², ålder": Male: 1.112 - 0.00043499×sum + 0.00000055×sum² - 0.00028826×age
+ *                    Female: 1.097 - 0.00046971×sum + 0.00000056×sum² - 0.00012828×age
+ * 2. "S, S², C" (FEMALE ONLY): 1.147 - 0.00042359×sum + 0.00000061×sum² - 0.000652×hips_m
+ * 3. "S, S², ålder, C": Male: 1.101 - 0.0004115×sum + 0.00000069×sum² - 0.00022631×age - 0.0059239×waist_m + 0.0190632×forearm_m
+ *                       Female: 1.147 - 0.0004293×sum + 0.00000065×sum² - 0.00009975×age - 0.00062415×hips_m
  */
-export function jacksonPollock7(params: BodyCompositionParams): number | null {
-  const { age, gender, caliperMeasurements } = params
+export function jacksonPollock7(
+  params: BodyCompositionParams,
+  variation: MethodVariation = 'S, S², ålder'
+): number | null {
+  const { age, gender, caliperMeasurements, tapeMeasurements } = params
 
   if (
     !caliperMeasurements?.chest ||
@@ -166,15 +324,54 @@ export function jacksonPollock7(params: BodyCompositionParams): number | null {
     caliperMeasurements
   const sum = chest + abdominal + thigh + tricep + subscapular + suprailiac + midaxillary
 
-  let bodyDensity: number
+  if (variation === 'S, S², ålder') {
+    // Standard variation with age
+    let bodyDensity: number
+    if (gender === 'male') {
+      bodyDensity = 1.112 - 0.00043499 * sum + 0.00000055 * sum * sum - 0.00028826 * age
+    } else {
+      bodyDensity = 1.097 - 0.00046971 * sum + 0.00000056 * sum * sum - 0.00012828 * age
+    }
+    return siriEquation(bodyDensity)
+  } else if (variation === 'S, S², C') {
+    // With circumference (FEMALE ONLY)
+    if (gender !== 'female' || !tapeMeasurements?.hip) {
+      return null
+    }
 
-  if (gender === 'male') {
-    bodyDensity = 1.112 - 0.00043499 * sum + 0.00000055 * sum * sum - 0.00028826 * age
-  } else {
-    bodyDensity = 1.097 - 0.00046971 * sum + 0.00000056 * sum * sum - 0.00012828 * age
+    const hipsM = tapeMeasurements.hip * 0.01 // cm to meters
+    const bodyDensity = 1.147 - 0.00042359 * sum + 0.00000061 * sum * sum - 0.000652 * hipsM
+    return siriEquation(bodyDensity)
+  } else if (variation === 'S, S², ålder, C') {
+    // With age and circumference (different for male/female)
+    if (gender === 'male') {
+      if (!tapeMeasurements?.waist || !tapeMeasurements?.forearm) {
+        return null
+      }
+
+      const waistM = tapeMeasurements.waist * 0.01 // cm to meters
+      const forearmM = tapeMeasurements.forearm * 0.01 // cm to meters
+      const bodyDensity =
+        1.101 -
+        0.0004115 * sum +
+        0.00000069 * sum * sum -
+        0.00022631 * age -
+        0.0059239 * waistM +
+        0.0190632 * forearmM
+      return siriEquation(bodyDensity)
+    } else {
+      if (!tapeMeasurements?.hip) {
+        return null
+      }
+
+      const hipsM = tapeMeasurements.hip * 0.01 // cm to meters
+      const bodyDensity =
+        1.147 - 0.0004293 * sum + 0.00000065 * sum * sum - 0.00009975 * age - 0.00062415 * hipsM
+      return siriEquation(bodyDensity)
+    }
   }
 
-  return siriEquation(bodyDensity)
+  return null
 }
 
 /**
@@ -234,59 +431,94 @@ export function durninWomersley(params: BodyCompositionParams): number | null {
 
 /**
  * 6. Parillo Caliper Method
- * Sites: chest, abdominal, thigh, bicep, tricep, subscapular, suprailiac, midaxillary, calf
- * Note: Calf measurement not in our interface, so we'll use 7-site version
+ * Sites: pectoral(chest), biceps, triceps, abdominal, lower back, thigh, calf, subscapular, suprailiac
+ * Google Sheets formula (CORRECTED): (sum × 27) / (weight_kg × 2.2046226218488)
  */
 export function parillo(params: BodyCompositionParams): number | null {
-  const { caliperMeasurements } = params
+  const { caliperMeasurements, weight } = params
 
   if (
     !caliperMeasurements?.chest ||
-    !caliperMeasurements?.abdominal ||
-    !caliperMeasurements?.thigh ||
     !caliperMeasurements?.bicep ||
     !caliperMeasurements?.tricep ||
+    !caliperMeasurements?.abdominal ||
+    !caliperMeasurements?.lowerBack ||
+    !caliperMeasurements?.thigh ||
+    !caliperMeasurements?.calf ||
     !caliperMeasurements?.subscapular ||
     !caliperMeasurements?.suprailiac
   ) {
     return null
   }
 
-  const { chest, abdominal, thigh, bicep, tricep, subscapular, suprailiac } = caliperMeasurements
-  const sum = chest + abdominal + thigh + bicep + tricep + subscapular + suprailiac
+  const { chest, bicep, tricep, abdominal, lowerBack, thigh, calf, subscapular, suprailiac } =
+    caliperMeasurements
+  const sum =
+    chest + bicep + tricep + abdominal + lowerBack + thigh + calf + subscapular + suprailiac
 
-  // Parillo method: sum of skinfolds / 27 (simplified version)
-  return sum / 27
+  // Parillo formula (CORRECTED): (sum × 27) / (weight_kg × 2.2046226218488)
+  const weightLbs = weight * 2.2046226218488
+  return (sum * 27) / weightLbs
 }
 
 /**
  * 7. Covert Bailey Measuring Tape Method
- * Uses hip, waist, wrist, forearm measurements
+ * Google Sheets formula (CORRECTED):
+ * Male: waist(C55), hips(C57), forearm(C59), wrist(C61)
+ *   - Age ≤30: waist_in + (0.5 × hips_in) - (3 × forearm_in) - wrist_in
+ *   - Age >30: waist_in + (0.5 × hips_in) - (2.7 × forearm_in) - wrist_in
+ * Female: hips(C57), thighCirc(C63), calfCirc(C65), wrist(C61)
+ *   - Age ≤30: hips_in + (0.8 × thigh_in) - (2 × calf_in) - wrist_in
+ *   - Age >30: hips_in + thigh_in - (2 × calf_in) - wrist_in
  */
 export function covertBailey(params: BodyCompositionParams): number | null {
-  const { gender, tapeMeasurements } = params
+  const { age, gender, tapeMeasurements } = params
 
-  if (
-    !tapeMeasurements?.hip ||
-    !tapeMeasurements?.waist ||
-    !tapeMeasurements?.wrist ||
-    !tapeMeasurements?.forearm
-  ) {
-    return null
-  }
-
-  const { hip, waist, wrist, forearm } = tapeMeasurements
+  // Convert cm to inches
+  const cmToInches = (cm: number) => cm / 2.54
 
   if (gender === 'male') {
-    // Male formula
-    const factor1 = waist + hip - forearm
-    const factor2 = wrist
-    return factor1 * 0.29288 - factor2 * 0.74041 - 15.0
+    // Male requires: waist, hips, forearm, wrist
+    if (
+      !tapeMeasurements?.waist ||
+      !tapeMeasurements?.hip ||
+      !tapeMeasurements?.forearm ||
+      !tapeMeasurements?.wrist
+    ) {
+      return null
+    }
+
+    const waistIn = cmToInches(tapeMeasurements.waist)
+    const hipsIn = cmToInches(tapeMeasurements.hip)
+    const forearmIn = cmToInches(tapeMeasurements.forearm)
+    const wristIn = cmToInches(tapeMeasurements.wrist)
+
+    if (age <= 30) {
+      return waistIn + 0.5 * hipsIn - 3 * forearmIn - wristIn
+    } else {
+      return waistIn + 0.5 * hipsIn - 2.7 * forearmIn - wristIn
+    }
   } else {
-    // Female formula
-    const factor1 = waist + hip - forearm
-    const factor2 = wrist
-    return factor1 * 0.268 - factor2 * 0.318 - 8.987
+    // Female requires: hips, thighCirc, calfCirc, wrist
+    if (
+      !tapeMeasurements?.hip ||
+      !tapeMeasurements?.thighCirc ||
+      !tapeMeasurements?.calfCirc ||
+      !tapeMeasurements?.wrist
+    ) {
+      return null
+    }
+
+    const hipsIn = cmToInches(tapeMeasurements.hip)
+    const thighIn = cmToInches(tapeMeasurements.thighCirc)
+    const calfIn = cmToInches(tapeMeasurements.calfCirc)
+    const wristIn = cmToInches(tapeMeasurements.wrist)
+
+    if (age <= 30) {
+      return hipsIn + 0.8 * thighIn - 2 * calfIn - wristIn
+    } else {
+      return hipsIn + thighIn - 2 * calfIn - wristIn
+    }
   }
 }
 
@@ -371,6 +603,9 @@ export function modifiedYmca(params: BodyCompositionParams): number | null {
 /**
  * 11. Heritage BMI to Body Fat Method
  * Estimates body fat from BMI, age, and gender
+ * Google Sheets formula (corrected):
+ * Male: 1.39 * BMI + 0.16 * age - 19.34
+ * Female: 1.39 * BMI + 0.16 * age - 9
  */
 export function heritageBMI(params: BodyCompositionParams): number | null {
   const { age, gender, bmi } = params
@@ -378,11 +613,11 @@ export function heritageBMI(params: BodyCompositionParams): number | null {
   if (!bmi) return null
 
   if (gender === 'male') {
-    // Male Heritage formula
-    return 1.2 * bmi + 0.23 * age - 16.2
+    // Male Heritage formula (CORRECTED)
+    return 1.39 * bmi + 0.16 * age - 19.34
   } else {
-    // Female Heritage formula
-    return 1.2 * bmi + 0.23 * age - 5.4
+    // Female Heritage formula (CORRECTED)
+    return 1.39 * bmi + 0.16 * age - 9
   }
 }
 
@@ -414,20 +649,21 @@ export function reversedCunningham(params: BodyCompositionParams): number | null
  */
 export function calculateBodyFat(
   method: BodyCompositionMethod,
-  params: BodyCompositionParams
+  params: BodyCompositionParams,
+  variation?: MethodVariation
 ): number | null {
   switch (method) {
     case 'Jackson/Pollock 3 Caliper Method (Male)':
-      return jacksonPollock3Male(params)
+      return jacksonPollock3Male(params, variation)
 
     case 'Jackson/Pollock 3 Caliper Method (Female)':
-      return jacksonPollock3Female(params)
+      return jacksonPollock3Female(params, variation)
 
     case 'Jackson/Pollock 4 Caliper Method':
-      return jacksonPollock4(params)
+      return jacksonPollock4(params, variation)
 
     case 'Jackson/Pollock 7 Caliper Method':
-      return jacksonPollock7(params)
+      return jacksonPollock7(params, variation)
 
     case 'Durnin/Womersley Caliper Method':
       return durninWomersley(params)
@@ -589,11 +825,12 @@ export function getAvailableMethods(params: BodyCompositionParams): BodyComposit
     methods.push('Jackson/Pollock 3 Caliper Method (Female)')
   }
 
-  // Jackson/Pollock 4
+  // Jackson/Pollock 4 (FEMALE ONLY)
   if (
-    caliperMeasurements?.abdominal &&
-    caliperMeasurements?.suprailiac &&
+    gender === 'female' &&
     caliperMeasurements?.tricep &&
+    caliperMeasurements?.suprailiac &&
+    caliperMeasurements?.abdominal &&
     caliperMeasurements?.thigh
   ) {
     methods.push('Jackson/Pollock 4 Caliper Method')
@@ -622,27 +859,42 @@ export function getAvailableMethods(params: BodyCompositionParams): BodyComposit
     methods.push('Durnin/Womersley Caliper Method')
   }
 
-  // Parillo
+  // Parillo (NOW REQUIRES 9 SITES including lowerBack and calf)
   if (
     caliperMeasurements?.chest &&
-    caliperMeasurements?.abdominal &&
-    caliperMeasurements?.thigh &&
     caliperMeasurements?.bicep &&
     caliperMeasurements?.tricep &&
+    caliperMeasurements?.abdominal &&
+    caliperMeasurements?.lowerBack &&
+    caliperMeasurements?.thigh &&
+    caliperMeasurements?.calf &&
     caliperMeasurements?.subscapular &&
     caliperMeasurements?.suprailiac
   ) {
     methods.push('Parillo Caliper Method')
   }
 
-  // Covert Bailey
-  if (
-    tapeMeasurements?.hip &&
-    tapeMeasurements?.waist &&
-    tapeMeasurements?.wrist &&
-    tapeMeasurements?.forearm
-  ) {
-    methods.push('Covert Bailey Measuring Tape Method')
+  // Covert Bailey (DIFFERENT REQUIREMENTS FOR MALE/FEMALE)
+  if (gender === 'male') {
+    // Male requires: waist, hips, forearm, wrist
+    if (
+      tapeMeasurements?.waist &&
+      tapeMeasurements?.hip &&
+      tapeMeasurements?.forearm &&
+      tapeMeasurements?.wrist
+    ) {
+      methods.push('Covert Bailey Measuring Tape Method')
+    }
+  } else {
+    // Female requires: hips, thighCirc, calfCirc, wrist
+    if (
+      tapeMeasurements?.hip &&
+      tapeMeasurements?.thighCirc &&
+      tapeMeasurements?.calfCirc &&
+      tapeMeasurements?.wrist
+    ) {
+      methods.push('Covert Bailey Measuring Tape Method')
+    }
   }
 
   // U.S. Navy

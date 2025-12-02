@@ -7,19 +7,37 @@ import { Ruler } from 'lucide-react'
 
 interface CaliperMeasurementsSectionProps {
   measurements: CaliperMeasurements
-  requiredFields: string[]
+  requiredFields?: string[]
+  showAll?: boolean // For Workflow 2: show all fields
   onChange: (field: keyof CaliperMeasurements, value: number | undefined) => void
 }
 
 export default function CaliperMeasurementsSection({
   measurements,
-  requiredFields,
+  requiredFields = [],
+  showAll = false,
   onChange,
 }: CaliperMeasurementsSectionProps) {
   const handleChange = (field: keyof CaliperMeasurements, value: string) => {
     const numValue = value === '' ? undefined : parseFloat(value)
     onChange(field, numValue)
   }
+
+  // All possible caliper fields
+  const allFields: Array<keyof CaliperMeasurements> = [
+    'chest',
+    'abdominal',
+    'thigh',
+    'tricep',
+    'subscapular',
+    'suprailiac',
+    'midaxillary',
+    'bicep',
+    'lowerBack',
+    'calf',
+  ]
+
+  const fieldsToShow = showAll ? allFields : (requiredFields as Array<keyof CaliperMeasurements>)
 
   return (
     <Card>
@@ -35,12 +53,13 @@ export default function CaliperMeasurementsSection({
       </CardHeader>
       <CardContent>
         <div className="grid gap-4 sm:grid-cols-2">
-          {requiredFields.map(field => {
-            const typedField = field as keyof CaliperMeasurements
+          {fieldsToShow.map(field => {
+            const isRequired = requiredFields.includes(field as string)
             return (
               <div key={field} className="space-y-2">
                 <Label htmlFor={`caliper-${field}`}>
-                  {caliperLabels[field]} <span className="text-neutral-500">(mm)</span>
+                  {caliperLabels[field as string]} <span className="text-neutral-500">(mm)</span>
+                  {isRequired && <span className="text-red-500 ml-1">*</span>}
                 </Label>
                 <Input
                   id={`caliper-${field}`}
@@ -48,8 +67,8 @@ export default function CaliperMeasurementsSection({
                   min="1"
                   max="100"
                   step="0.5"
-                  value={measurements[typedField] ?? ''}
-                  onChange={e => handleChange(typedField, e.target.value)}
+                  value={measurements[field] ?? ''}
+                  onChange={e => handleChange(field, e.target.value)}
                   placeholder="0.0"
                   className="rounded-xl"
                 />

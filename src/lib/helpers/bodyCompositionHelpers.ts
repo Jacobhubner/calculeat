@@ -1,37 +1,77 @@
-import type { BodyCompositionMethod } from '@/lib/calculations/bodyComposition'
+import type { BodyCompositionMethod, MethodVariation } from '@/lib/calculations/bodyComposition'
+import type { Gender } from '@/lib/types'
 
 export interface MethodRequirements {
   type: 'caliper' | 'tape' | 'profile'
   fields: string[]
+  tapeFields?: string[] // For methods that require both caliper and tape measurements
 }
 
 /**
- * Get required fields for a specific body composition method
+ * Get required fields for a specific body composition method with optional variation
  */
-export function getRequiredFields(method: BodyCompositionMethod): MethodRequirements {
+export function getRequiredFields(
+  method: BodyCompositionMethod,
+  variation?: MethodVariation,
+  gender?: Gender
+): MethodRequirements {
   switch (method) {
     case 'Jackson/Pollock 3 Caliper Method (Male)':
+      if (variation === 'S, S², ålder, C') {
+        return {
+          type: 'caliper',
+          fields: ['chest', 'abdominal', 'thigh'],
+          tapeFields: ['waist', 'forearm'],
+        }
+      } else if (variation === 'Kläder på') {
+        return { type: 'caliper', fields: ['chest', 'tricep', 'subscapular'] }
+      }
       return { type: 'caliper', fields: ['chest', 'abdominal', 'thigh'] }
 
     case 'Jackson/Pollock 3 Caliper Method (Female)':
+      if (variation === 'S, S², C' || variation === 'S, S², ålder, C') {
+        return {
+          type: 'caliper',
+          fields: ['tricep', 'suprailiac', 'thigh'],
+          tapeFields: ['hip'],
+        }
+      } else if (variation === 'Kläder på') {
+        return { type: 'caliper', fields: ['tricep', 'suprailiac', 'abdominal'] }
+      }
       return { type: 'caliper', fields: ['tricep', 'suprailiac', 'thigh'] }
 
     case 'Jackson/Pollock 4 Caliper Method':
-      return { type: 'caliper', fields: ['abdominal', 'suprailiac', 'tricep', 'thigh'] }
-
-    case 'Jackson/Pollock 7 Caliper Method':
-      return {
-        type: 'caliper',
-        fields: [
-          'chest',
-          'abdominal',
-          'thigh',
-          'tricep',
-          'subscapular',
-          'suprailiac',
-          'midaxillary',
-        ],
+      if (variation === 'S, S², C' || variation === 'S, S², ålder, C') {
+        return {
+          type: 'caliper',
+          fields: ['tricep', 'suprailiac', 'abdominal', 'thigh'],
+          tapeFields: ['hip'],
+        }
       }
+      return { type: 'caliper', fields: ['tricep', 'suprailiac', 'abdominal', 'thigh'] }
+
+    case 'Jackson/Pollock 7 Caliper Method': {
+      const jp7Fields = [
+        'chest',
+        'abdominal',
+        'thigh',
+        'tricep',
+        'subscapular',
+        'suprailiac',
+        'midaxillary',
+      ]
+      if (variation === 'S, S², C') {
+        // Female only
+        return { type: 'caliper', fields: jp7Fields, tapeFields: ['hip'] }
+      } else if (variation === 'S, S², ålder, C') {
+        if (gender === 'male') {
+          return { type: 'caliper', fields: jp7Fields, tapeFields: ['waist', 'forearm'] }
+        } else {
+          return { type: 'caliper', fields: jp7Fields, tapeFields: ['hip'] }
+        }
+      }
+      return { type: 'caliper', fields: jp7Fields }
+    }
 
     case 'Durnin/Womersley Caliper Method':
       return { type: 'caliper', fields: ['bicep', 'tricep', 'subscapular', 'suprailiac'] }
@@ -39,11 +79,25 @@ export function getRequiredFields(method: BodyCompositionMethod): MethodRequirem
     case 'Parillo Caliper Method':
       return {
         type: 'caliper',
-        fields: ['chest', 'abdominal', 'thigh', 'bicep', 'tricep', 'subscapular', 'suprailiac'],
+        fields: [
+          'chest',
+          'bicep',
+          'tricep',
+          'abdominal',
+          'lowerBack',
+          'thigh',
+          'calf',
+          'subscapular',
+          'suprailiac',
+        ],
       }
 
     case 'Covert Bailey Measuring Tape Method':
-      return { type: 'tape', fields: ['hip', 'waist', 'wrist', 'forearm'] }
+      if (gender === 'male') {
+        return { type: 'tape', fields: ['waist', 'hip', 'forearm', 'wrist'] }
+      } else {
+        return { type: 'tape', fields: ['hip', 'thighCirc', 'calfCirc', 'wrist'] }
+      }
 
     case 'U.S. Navy Body Fat Formula':
       return { type: 'tape', fields: ['neck', 'waist', 'hip'] }
@@ -67,8 +121,17 @@ export function getRequiredFields(method: BodyCompositionMethod): MethodRequirem
 
 /**
  * Check if a method is density-based (requires Siri/Brozek conversion)
+ * Note: JP4 "Okänt ursprung" variation returns %BF directly
  */
-export function isDensityBasedMethod(method: BodyCompositionMethod): boolean {
+export function isDensityBasedMethod(
+  method: BodyCompositionMethod,
+  variation?: MethodVariation
+): boolean {
+  // JP4 "Okänt ursprung" returns %BF directly, not density
+  if (method === 'Jackson/Pollock 4 Caliper Method' && variation === 'Okänt ursprung') {
+    return false
+  }
+
   const densityMethods = [
     'Jackson/Pollock 3 Caliper Method (Male)',
     'Jackson/Pollock 3 Caliper Method (Female)',
@@ -77,6 +140,203 @@ export function isDensityBasedMethod(method: BodyCompositionMethod): boolean {
     'Durnin/Womersley Caliper Method',
   ]
   return densityMethods.includes(method)
+}
+
+/**
+ * Get available variations for a specific method
+ */
+export function getMethodVariations(
+  method: BodyCompositionMethod,
+  gender: Gender
+): MethodVariation[] {
+  switch (method) {
+    case 'Jackson/Pollock 3 Caliper Method (Male)':
+      return ['S, S², ålder', 'S, S², ålder, C', 'Kläder på']
+
+    case 'Jackson/Pollock 3 Caliper Method (Female)':
+      return ['S, S², ålder', 'S, S², C', 'S, S², ålder, C', 'Kläder på']
+
+    case 'Jackson/Pollock 4 Caliper Method':
+      // JP4 is female only
+      if (gender === 'female') {
+        return ['S, S², ålder', 'S, S², C', 'S, S², ålder, C', 'Okänt ursprung']
+      }
+      return []
+
+    case 'Jackson/Pollock 7 Caliper Method':
+      if (gender === 'female') {
+        return ['S, S², ålder', 'S, S², C', 'S, S², ålder, C']
+      } else {
+        return ['S, S², ålder', 'S, S², ålder, C']
+      }
+
+    default:
+      return []
+  }
+}
+
+/**
+ * Get all calculable methods and variations based on available measurements
+ * Used for Workflow 2 (fill measurements first, then see all available methods)
+ */
+export function getCalculableMethods(params: {
+  gender: Gender
+  age: number
+  weight: number
+  height: number
+  bmi?: number
+  bmr?: number
+  caliperMeasurements?: Record<string, number>
+  tapeMeasurements?: Record<string, number>
+}): Array<{ method: BodyCompositionMethod; variation?: MethodVariation }> {
+  const { gender, caliperMeasurements, tapeMeasurements, bmi, bmr } = params
+  const results: Array<{ method: BodyCompositionMethod; variation?: MethodVariation }> = []
+
+  const hasFields = (fields: string[], measurements?: Record<string, number>) => {
+    if (!measurements) return false
+    return fields.every(field => measurements[field] !== undefined && measurements[field] !== null)
+  }
+
+  // Jackson/Pollock 3 Male
+  if (gender === 'male') {
+    const jp3MaleBase = hasFields(['chest', 'abdominal', 'thigh'], caliperMeasurements)
+    if (jp3MaleBase) {
+      results.push({ method: 'Jackson/Pollock 3 Caliper Method (Male)', variation: 'S, S², ålder' })
+
+      if (hasFields(['waist', 'forearm'], tapeMeasurements)) {
+        results.push({
+          method: 'Jackson/Pollock 3 Caliper Method (Male)',
+          variation: 'S, S², ålder, C',
+        })
+      }
+    }
+
+    if (hasFields(['chest', 'tricep', 'subscapular'], caliperMeasurements)) {
+      results.push({ method: 'Jackson/Pollock 3 Caliper Method (Male)', variation: 'Kläder på' })
+    }
+  }
+
+  // Jackson/Pollock 3 Female
+  if (gender === 'female') {
+    const jp3FemaleBase = hasFields(['tricep', 'suprailiac', 'thigh'], caliperMeasurements)
+    if (jp3FemaleBase) {
+      results.push({
+        method: 'Jackson/Pollock 3 Caliper Method (Female)',
+        variation: 'S, S², ålder',
+      })
+
+      if (hasFields(['hip'], tapeMeasurements)) {
+        results.push({ method: 'Jackson/Pollock 3 Caliper Method (Female)', variation: 'S, S², C' })
+        results.push({
+          method: 'Jackson/Pollock 3 Caliper Method (Female)',
+          variation: 'S, S², ålder, C',
+        })
+      }
+    }
+
+    if (hasFields(['tricep', 'suprailiac', 'abdominal'], caliperMeasurements)) {
+      results.push({ method: 'Jackson/Pollock 3 Caliper Method (Female)', variation: 'Kläder på' })
+    }
+  }
+
+  // Jackson/Pollock 4 (Female only)
+  if (gender === 'female') {
+    const jp4Base = hasFields(['tricep', 'suprailiac', 'abdominal', 'thigh'], caliperMeasurements)
+    if (jp4Base) {
+      results.push({ method: 'Jackson/Pollock 4 Caliper Method', variation: 'S, S², ålder' })
+      results.push({ method: 'Jackson/Pollock 4 Caliper Method', variation: 'Okänt ursprung' })
+
+      if (hasFields(['hip'], tapeMeasurements)) {
+        results.push({ method: 'Jackson/Pollock 4 Caliper Method', variation: 'S, S², C' })
+        results.push({ method: 'Jackson/Pollock 4 Caliper Method', variation: 'S, S², ålder, C' })
+      }
+    }
+  }
+
+  // Jackson/Pollock 7
+  const jp7Base = hasFields(
+    ['chest', 'abdominal', 'thigh', 'tricep', 'subscapular', 'suprailiac', 'midaxillary'],
+    caliperMeasurements
+  )
+  if (jp7Base) {
+    results.push({ method: 'Jackson/Pollock 7 Caliper Method', variation: 'S, S², ålder' })
+
+    if (gender === 'female' && hasFields(['hip'], tapeMeasurements)) {
+      results.push({ method: 'Jackson/Pollock 7 Caliper Method', variation: 'S, S², C' })
+      results.push({ method: 'Jackson/Pollock 7 Caliper Method', variation: 'S, S², ålder, C' })
+    }
+
+    if (gender === 'male' && hasFields(['waist', 'forearm'], tapeMeasurements)) {
+      results.push({ method: 'Jackson/Pollock 7 Caliper Method', variation: 'S, S², ålder, C' })
+    }
+  }
+
+  // Durnin/Womersley
+  if (hasFields(['bicep', 'tricep', 'subscapular', 'suprailiac'], caliperMeasurements)) {
+    results.push({ method: 'Durnin/Womersley Caliper Method' })
+  }
+
+  // Parillo (9 sites)
+  if (
+    hasFields(
+      [
+        'chest',
+        'bicep',
+        'tricep',
+        'abdominal',
+        'lowerBack',
+        'thigh',
+        'calf',
+        'subscapular',
+        'suprailiac',
+      ],
+      caliperMeasurements
+    )
+  ) {
+    results.push({ method: 'Parillo Caliper Method' })
+  }
+
+  // Covert Bailey
+  if (gender === 'male') {
+    if (hasFields(['waist', 'hip', 'forearm', 'wrist'], tapeMeasurements)) {
+      results.push({ method: 'Covert Bailey Measuring Tape Method' })
+    }
+  } else {
+    if (hasFields(['hip', 'thighCirc', 'calfCirc', 'wrist'], tapeMeasurements)) {
+      results.push({ method: 'Covert Bailey Measuring Tape Method' })
+    }
+  }
+
+  // U.S. Navy
+  if (hasFields(['neck', 'waist'], tapeMeasurements)) {
+    if (gender === 'male' || hasFields(['hip'], tapeMeasurements)) {
+      results.push({ method: 'U.S. Navy Body Fat Formula' })
+    }
+  }
+
+  // YMCA
+  if (hasFields(['waist'], tapeMeasurements)) {
+    results.push({ method: 'YMCA Measuring Tape Method' })
+  }
+
+  // Modified YMCA
+  if (hasFields(['waist', 'neck'], tapeMeasurements)) {
+    if (gender === 'male' || hasFields(['hip'], tapeMeasurements)) {
+      results.push({ method: 'Modified YMCA Measuring Tape Method' })
+    }
+  }
+
+  // Heritage BMI
+  if (bmi) {
+    results.push({ method: 'Heritage BMI to Body Fat Method' })
+  }
+
+  // Reversed Cunningham
+  if (bmr) {
+    results.push({ method: 'Reversed Cunningham equation' })
+  }
+
+  return results
 }
 
 /**
@@ -109,6 +369,8 @@ export const caliperLabels: Record<string, string> = {
   suprailiac: 'Suprailiac',
   midaxillary: 'Midaxillary',
   bicep: 'Biceps',
+  lowerBack: 'Nedre rygg',
+  calf: 'Vad',
 }
 
 /**
@@ -120,6 +382,9 @@ export const tapeLabels: Record<string, string> = {
   hip: 'Höft',
   wrist: 'Handled',
   forearm: 'Underarm',
+  thighCirc: 'Lår omkrets',
+  calfCirc: 'Vad omkrets',
+  ankle: 'Fotled',
 }
 
 /**
