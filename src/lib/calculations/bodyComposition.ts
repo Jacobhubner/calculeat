@@ -229,24 +229,21 @@ export function jacksonPollock3Female(
 }
 
 /**
- * 3. Jackson/Pollock 4 Caliper Method (FEMALE ONLY!)
+ * 3. Jackson/Pollock 4 Caliper Method
  * Sites: triceps, suprailiac, abdominal, thigh
  * Google Sheets variations:
- * 1. "S, S², ålder": 1.096095 - 0.0006952×sum + 0.0000011×sum² - 0.0000714×age
- * 2. "S, S², C": 1.1443913 - 0.0006523×sum + 0.0000014×sum² - 0.0006053×hips_m
- * 3. "S, S², ålder, C": 1.1454464 - 0.0006558×sum + 0.0000015×sum² - 0.0000604×age - 0.0005981×hips_m
- * 4. "Okänt ursprung": 0.29669×sum - 0.00043×sum² + 0.02963×age + 1.4072 (DIRECT %BF, NOT density!)
+ * 1. "S, S², ålder": 1.096095 - 0.0006952×sum + 0.0000011×sum² - 0.0000714×age (FEMALE ONLY)
+ * 2. "S, S², C": 1.1443913 - 0.0006523×sum + 0.0000014×sum² - 0.0006053×hips_m (FEMALE ONLY)
+ * 3. "S, S², ålder, C": 1.1454464 - 0.0006558×sum + 0.0000015×sum² - 0.0000604×age - 0.0005981×hips_m (FEMALE ONLY)
+ * 4. "Okänt ursprung": Returns %BF DIRECTLY (not density!) - Available for BOTH genders:
+ *    Male: 0.29288×sum - 0.0005×sum² + 0.15845×age - 5.76377
+ *    Female: 0.29669×sum - 0.00043×sum² + 0.02963×age + 1.4072
  */
 export function jacksonPollock4(
   params: BodyCompositionParams,
   variation: MethodVariation = 'S, S², ålder'
 ): number | null {
   const { age, gender, caliperMeasurements, tapeMeasurements } = params
-
-  // JP4 is FEMALE ONLY
-  if (gender !== 'female') {
-    return null
-  }
 
   if (
     !caliperMeasurements?.tricep ||
@@ -260,12 +257,17 @@ export function jacksonPollock4(
   const { tricep, suprailiac, abdominal, thigh } = caliperMeasurements
   const sum = tricep + suprailiac + abdominal + thigh
 
+  // Density-based variations are FEMALE ONLY
+  if (variation !== 'Okänt ursprung' && gender !== 'female') {
+    return null
+  }
+
   if (variation === 'S, S², ålder') {
-    // Standard variation with age
+    // Standard variation with age (FEMALE ONLY)
     const bodyDensity = 1.096095 - 0.0006952 * sum + 0.0000011 * sum * sum - 0.0000714 * age
     return bodyDensity
   } else if (variation === 'S, S², C') {
-    // With circumference (no age)
+    // With circumference (no age) (FEMALE ONLY)
     if (!tapeMeasurements?.hip) {
       return null
     }
@@ -274,7 +276,7 @@ export function jacksonPollock4(
     const bodyDensity = 1.1443913 - 0.0006523 * sum + 0.0000014 * sum * sum - 0.0006053 * hipsM
     return bodyDensity
   } else if (variation === 'S, S², ålder, C') {
-    // With age and circumference
+    // With age and circumference (FEMALE ONLY)
     if (!tapeMeasurements?.hip) {
       return null
     }
@@ -285,7 +287,12 @@ export function jacksonPollock4(
     return bodyDensity
   } else if (variation === 'Okänt ursprung') {
     // Unknown origin - returns %BF DIRECTLY (not density!)
-    return 0.29669 * sum - 0.00043 * sum * sum + 0.02963 * age + 1.4072
+    // Available for BOTH genders
+    if (gender === 'male') {
+      return 0.29288 * sum - 0.0005 * sum * sum + 0.15845 * age - 5.76377
+    } else {
+      return 0.29669 * sum - 0.00043 * sum * sum + 0.02963 * age + 1.4072
+    }
   }
 
   return null

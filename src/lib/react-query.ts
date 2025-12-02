@@ -26,4 +26,6 @@ export const queryKeys = {
   userProfileById: (id: string) => ['user-profile', id] as const,
   profiles: ['profiles'] as const,
   profileById: (id: string) => ['profiles', id] as const,
+  measurementSets: ['measurement-sets'] as const,
+  measurementSetById: (id: string) => ['measurement-sets', id] as const,
 }

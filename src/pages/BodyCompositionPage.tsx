@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import MethodSelectionCard from '@/components/body-composition/MethodSelectionCard'
 import VariationSelector from '@/components/body-composition/VariationSelector'
@@ -9,10 +9,14 @@ import BodyCompositionResults from '@/components/body-composition/BodyCompositio
 import TabNavigation from '@/components/body-composition/TabNavigation'
 import AllMeasurementsForm from '@/components/body-composition/AllMeasurementsForm'
 import MethodComparisonTable from '@/components/body-composition/MethodComparisonTable'
+import MeasurementSetSidebar from '@/components/body-composition/MeasurementSetSidebar'
+import FloatingMeasurementSaveCard from '@/components/body-composition/FloatingMeasurementSaveCard'
+import CollapsibleSidebar from '@/components/CollapsibleSidebar'
 import EmptyState from '@/components/EmptyState'
 import { Activity, Scale } from 'lucide-react'
 import { useProfileStore } from '@/stores/profileStore'
-import { useProfiles, useUpdateProfile } from '@/hooks'
+import { useMeasurementSetStore } from '@/stores/measurementSetStore'
+import { useProfiles, useUpdateProfile, useCreateMeasurementSet } from '@/hooks'
 import {
   getRequiredFields,
   isDensityBasedMethod,
@@ -51,6 +55,10 @@ export default function BodyCompositionPage() {
   const { data: allProfiles } = useProfiles()
   const profile = allProfiles?.find(p => p.id === activeProfile?.id)
   const updateProfileMutation = useUpdateProfile()
+
+  // Measurement sets
+  const activeMeasurementSet = useMeasurementSetStore(state => state.activeMeasurementSet)
+  const createMeasurementSetMutation = useCreateMeasurementSet()
 
   // Workflow state
   const [activeWorkflow, setActiveWorkflow] = useState<'method-first' | 'measurements-first'>(
@@ -279,6 +287,59 @@ export default function BodyCompositionPage() {
     }
   }, [activeWorkflow, allCaliperMeasurements, allTapeMeasurements, profile, conversionMethod2])
 
+  // Auto-fill measurements when a measurement set is selected
+  useEffect(() => {
+    if (activeMeasurementSet) {
+      // Workflow 1 - method-first
+      setCaliperMeasurements({
+        chest: activeMeasurementSet.chest,
+        abdominal: activeMeasurementSet.abdominal,
+        thigh: activeMeasurementSet.thigh,
+        tricep: activeMeasurementSet.tricep,
+        subscapular: activeMeasurementSet.subscapular,
+        suprailiac: activeMeasurementSet.suprailiac,
+        midaxillary: activeMeasurementSet.midaxillary,
+        bicep: activeMeasurementSet.bicep,
+        lowerBack: activeMeasurementSet.lower_back,
+        calf: activeMeasurementSet.calf,
+      })
+
+      setTapeMeasurements({
+        neck: activeMeasurementSet.neck,
+        waist: activeMeasurementSet.waist,
+        hip: activeMeasurementSet.hip,
+        wrist: activeMeasurementSet.wrist,
+        forearm: activeMeasurementSet.forearm,
+        thighCirc: activeMeasurementSet.thigh_circ,
+        calfCirc: activeMeasurementSet.calf_circ,
+      })
+
+      // Workflow 2 - measurements-first
+      setAllCaliperMeasurements({
+        chest: activeMeasurementSet.chest,
+        abdominal: activeMeasurementSet.abdominal,
+        thigh: activeMeasurementSet.thigh,
+        tricep: activeMeasurementSet.tricep,
+        subscapular: activeMeasurementSet.subscapular,
+        suprailiac: activeMeasurementSet.suprailiac,
+        midaxillary: activeMeasurementSet.midaxillary,
+        bicep: activeMeasurementSet.bicep,
+        lowerBack: activeMeasurementSet.lower_back,
+        calf: activeMeasurementSet.calf,
+      })
+
+      setAllTapeMeasurements({
+        neck: activeMeasurementSet.neck,
+        waist: activeMeasurementSet.waist,
+        hip: activeMeasurementSet.hip,
+        wrist: activeMeasurementSet.wrist,
+        forearm: activeMeasurementSet.forearm,
+        thighCirc: activeMeasurementSet.thigh_circ,
+        calfCirc: activeMeasurementSet.calf_circ,
+      })
+    }
+  }, [activeMeasurementSet])
+
   const handleCaliperChange = (field: keyof CaliperMeasurements, value: number | undefined) => {
     setCaliperMeasurements(prev => ({ ...prev, [field]: value }))
   }
@@ -336,6 +397,78 @@ export default function BodyCompositionPage() {
     }
   }
 
+  // Handler for saving measurement set
+  const handleSaveMeasurementSet = async () => {
+    const today = new Date().toISOString().split('T')[0]
+
+    try {
+      await createMeasurementSetMutation.mutateAsync({
+        set_date: today,
+        // Caliper measurements
+        chest: caliperMeasurements.chest ?? allCaliperMeasurements.chest,
+        abdominal: caliperMeasurements.abdominal ?? allCaliperMeasurements.abdominal,
+        thigh: caliperMeasurements.thigh ?? allCaliperMeasurements.thigh,
+        tricep: caliperMeasurements.tricep ?? allCaliperMeasurements.tricep,
+        subscapular: caliperMeasurements.subscapular ?? allCaliperMeasurements.subscapular,
+        suprailiac: caliperMeasurements.suprailiac ?? allCaliperMeasurements.suprailiac,
+        midaxillary: caliperMeasurements.midaxillary ?? allCaliperMeasurements.midaxillary,
+        bicep: caliperMeasurements.bicep ?? allCaliperMeasurements.bicep,
+        lower_back: caliperMeasurements.lowerBack ?? allCaliperMeasurements.lowerBack,
+        calf: caliperMeasurements.calf ?? allCaliperMeasurements.calf,
+        // Tape measurements
+        neck: tapeMeasurements.neck ?? allTapeMeasurements.neck,
+        waist: tapeMeasurements.waist ?? allTapeMeasurements.waist,
+        hip: tapeMeasurements.hip ?? allTapeMeasurements.hip,
+        wrist: tapeMeasurements.wrist ?? allTapeMeasurements.wrist,
+        forearm: tapeMeasurements.forearm ?? allTapeMeasurements.forearm,
+        thigh_circ: tapeMeasurements.thighCirc ?? allTapeMeasurements.thighCirc,
+        calf_circ: tapeMeasurements.calfCirc ?? allTapeMeasurements.calfCirc,
+      })
+      // Success toast is handled by the hook
+    } catch (error) {
+      // Error toast is handled by the hook
+      console.error('Error saving measurement set:', error)
+    }
+  }
+
+  // Detect unsaved measurement changes
+  const hasUnsavedMeasurements = useMemo(() => {
+    if (!activeMeasurementSet) {
+      // New measurement mode - show save if any measurements exist
+      const hasWorkflow1Measurements =
+        Object.values(caliperMeasurements).some(v => v !== undefined) ||
+        Object.values(tapeMeasurements).some(v => v !== undefined)
+      const hasWorkflow2Measurements =
+        Object.values(allCaliperMeasurements).some(v => v !== undefined) ||
+        Object.values(allTapeMeasurements).some(v => v !== undefined)
+      return hasWorkflow1Measurements || hasWorkflow2Measurements
+    }
+
+    // Compare with saved set (use either workflow 1 or workflow 2 measurements)
+    const currentCaliper =
+      activeWorkflow === 'method-first' ? caliperMeasurements : allCaliperMeasurements
+    const currentTape = activeWorkflow === 'method-first' ? tapeMeasurements : allTapeMeasurements
+
+    const caliperChanged = Object.entries(currentCaliper).some(([key, value]) => {
+      const savedKey = key === 'lowerBack' ? 'lower_back' : key
+      return value !== activeMeasurementSet[savedKey as keyof typeof activeMeasurementSet]
+    })
+
+    const tapeChanged = Object.entries(currentTape).some(([key, value]) => {
+      const savedKey = key === 'thighCirc' ? 'thigh_circ' : key === 'calfCirc' ? 'calf_circ' : key
+      return value !== activeMeasurementSet[savedKey as keyof typeof activeMeasurementSet]
+    })
+
+    return caliperChanged || tapeChanged
+  }, [
+    activeMeasurementSet,
+    caliperMeasurements,
+    tapeMeasurements,
+    allCaliperMeasurements,
+    allTapeMeasurements,
+    activeWorkflow,
+  ])
+
   if (!profile) {
     return (
       <DashboardLayout>
@@ -373,179 +506,198 @@ export default function BodyCompositionPage() {
         </p>
       </div>
 
-      <div className="max-w-6xl mx-auto">
-        {/* Tab Navigation */}
-        <TabNavigation activeTab={activeWorkflow} onTabChange={setActiveWorkflow} />
+      <div className="max-w-7xl mx-auto">
+        <div className="grid gap-6 lg:grid-cols-[1fr_300px]">
+          {/* Main content column */}
+          <div className="space-y-6">
+            {/* Tab Navigation */}
+            <TabNavigation activeTab={activeWorkflow} onTabChange={setActiveWorkflow} />
 
-        {/* Workflow 1: Method-First */}
-        {activeWorkflow === 'method-first' && (
-          <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
-            {/* Left Column - Input */}
-            <div className="space-y-6">
-              {/* Method Selection */}
-              <MethodSelectionCard
-                selectedMethod={selectedMethod}
-                onMethodChange={setSelectedMethod}
-                gender={profile?.gender}
-              />
+            {/* Workflow 1: Method-First */}
+            {activeWorkflow === 'method-first' && (
+              <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
+                {/* Left Column - Input */}
+                <div className="space-y-6">
+                  {/* Method Selection */}
+                  <MethodSelectionCard
+                    selectedMethod={selectedMethod}
+                    onMethodChange={setSelectedMethod}
+                    gender={profile?.gender}
+                  />
 
-              {/* Variation Selection - Show when method has variations */}
-              {selectedMethod && profile && (
-                <VariationSelector
-                  method={selectedMethod}
-                  gender={profile.gender}
-                  selectedVariation={selectedVariation}
-                  onChange={setSelectedVariation}
-                />
-              )}
+                  {/* Variation Selection - Show when method has variations */}
+                  {selectedMethod && profile && (
+                    <VariationSelector
+                      method={selectedMethod}
+                      gender={profile.gender}
+                      selectedVariation={selectedVariation}
+                      onChange={setSelectedVariation}
+                    />
+                  )}
 
-              {/* Measurement Input - Only show when method is selected */}
-              {requirements && (
-                <>
-                  {requirements.type === 'caliper' && (
+                  {/* Measurement Input - Only show when method is selected */}
+                  {requirements && (
                     <>
-                      <CaliperMeasurementsSection
-                        measurements={caliperMeasurements}
-                        requiredFields={requirements.fields}
-                        onChange={handleCaliperChange}
-                      />
-                      {requirements.tapeFields && requirements.tapeFields.length > 0 && (
+                      {requirements.type === 'caliper' && (
+                        <>
+                          <CaliperMeasurementsSection
+                            measurements={caliperMeasurements}
+                            requiredFields={requirements.fields}
+                            onChange={handleCaliperChange}
+                          />
+                          {requirements.tapeFields && requirements.tapeFields.length > 0 && (
+                            <TapeMeasurementsSection
+                              measurements={tapeMeasurements}
+                              requiredFields={requirements.tapeFields}
+                              onChange={handleTapeChange}
+                            />
+                          )}
+                        </>
+                      )}
+
+                      {requirements.type === 'tape' && (
                         <TapeMeasurementsSection
                           measurements={tapeMeasurements}
-                          requiredFields={requirements.tapeFields}
+                          requiredFields={requirements.fields}
                           onChange={handleTapeChange}
+                        />
+                      )}
+
+                      {requirements.type === 'profile' && (
+                        <div className="rounded-2xl border border-neutral-200 bg-white p-6">
+                          <p className="text-sm text-neutral-600 mb-4">
+                            Denna metod använder data från din profil:
+                          </p>
+                          <ul className="space-y-2 text-sm">
+                            {requirements.fields.includes('bmi') && (
+                              <li>
+                                <span className="font-medium">BMI:</span>{' '}
+                                {profile.height_cm && profile.weight_kg
+                                  ? calculateBMI(profile.weight_kg, profile.height_cm).toFixed(1)
+                                  : 'Saknas'}
+                              </li>
+                            )}
+                            {requirements.fields.includes('age') && (
+                              <li>
+                                <span className="font-medium">Ålder:</span>{' '}
+                                {calculateAge(profile.birth_date)} år
+                              </li>
+                            )}
+                            {requirements.fields.includes('gender') && (
+                              <li>
+                                <span className="font-medium">Kön:</span>{' '}
+                                {profile.gender === 'male' ? 'Man' : 'Kvinna'}
+                              </li>
+                            )}
+                            {requirements.fields.includes('bmr') && (
+                              <li>
+                                <span className="font-medium">BMR:</span>{' '}
+                                {profile.bmr ? `${Math.round(profile.bmr)} kcal` : 'Saknas'}
+                              </li>
+                            )}
+                            {requirements.fields.includes('weight') && (
+                              <li>
+                                <span className="font-medium">Vikt:</span>{' '}
+                                {profile.weight_kg ? `${profile.weight_kg} kg` : 'Saknas'}
+                              </li>
+                            )}
+                          </ul>
+                          <p className="text-xs text-neutral-500 mt-4">
+                            Uppdatera din profil om dessa värden är felaktiga.
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Density Conversion Selector - Only for density-based methods */}
+                      {isDensityBasedMethod(selectedMethod) && (
+                        <DensityConversionSelector
+                          conversionMethod={conversionMethod}
+                          onMethodChange={setConversionMethod}
                         />
                       )}
                     </>
                   )}
+                </div>
 
-                  {requirements.type === 'tape' && (
-                    <TapeMeasurementsSection
-                      measurements={tapeMeasurements}
-                      requiredFields={requirements.fields}
-                      onChange={handleTapeChange}
+                {/* Right Column - Results */}
+                <div>
+                  {bodyFatPercentage !== null && category && (
+                    <BodyCompositionResults
+                      bodyDensity={bodyDensity}
+                      bodyFatPercentage={bodyFatPercentage}
+                      category={category}
+                      fatFreeMass={fatFreeMass}
+                      fatMass={fatMass}
+                      selectedMethod={selectedMethod as BodyCompositionMethod}
+                      conversionMethod={conversionMethod}
+                      onSave={handleSaveToProfile}
+                      isSaving={isSaving}
                     />
                   )}
 
-                  {requirements.type === 'profile' && (
-                    <div className="rounded-2xl border border-neutral-200 bg-white p-6">
-                      <p className="text-sm text-neutral-600 mb-4">
-                        Denna metod använder data från din profil:
-                      </p>
-                      <ul className="space-y-2 text-sm">
-                        {requirements.fields.includes('bmi') && (
-                          <li>
-                            <span className="font-medium">BMI:</span>{' '}
-                            {profile.height_cm && profile.weight_kg
-                              ? calculateBMI(profile.weight_kg, profile.height_cm).toFixed(1)
-                              : 'Saknas'}
-                          </li>
-                        )}
-                        {requirements.fields.includes('age') && (
-                          <li>
-                            <span className="font-medium">Ålder:</span>{' '}
-                            {calculateAge(profile.birth_date)} år
-                          </li>
-                        )}
-                        {requirements.fields.includes('gender') && (
-                          <li>
-                            <span className="font-medium">Kön:</span>{' '}
-                            {profile.gender === 'male' ? 'Man' : 'Kvinna'}
-                          </li>
-                        )}
-                        {requirements.fields.includes('bmr') && (
-                          <li>
-                            <span className="font-medium">BMR:</span>{' '}
-                            {profile.bmr ? `${Math.round(profile.bmr)} kcal` : 'Saknas'}
-                          </li>
-                        )}
-                        {requirements.fields.includes('weight') && (
-                          <li>
-                            <span className="font-medium">Vikt:</span>{' '}
-                            {profile.weight_kg ? `${profile.weight_kg} kg` : 'Saknas'}
-                          </li>
-                        )}
-                      </ul>
-                      <p className="text-xs text-neutral-500 mt-4">
-                        Uppdatera din profil om dessa värden är felaktiga.
-                      </p>
+                  {!selectedMethod && (
+                    <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-8 text-center">
+                      <p className="text-neutral-600">Välj en beräkningsmetod för att börja</p>
                     </div>
                   )}
 
-                  {/* Density Conversion Selector - Only for density-based methods */}
-                  {isDensityBasedMethod(selectedMethod) && (
-                    <DensityConversionSelector
-                      conversionMethod={conversionMethod}
-                      onMethodChange={setConversionMethod}
-                    />
+                  {selectedMethod && bodyFatPercentage === null && (
+                    <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-8 text-center">
+                      <p className="text-neutral-600">
+                        Fyll i alla obligatoriska fält för att se resultat
+                      </p>
+                    </div>
                   )}
-                </>
-              )}
-            </div>
-
-            {/* Right Column - Results */}
-            <div>
-              {bodyFatPercentage !== null && category && (
-                <BodyCompositionResults
-                  bodyDensity={bodyDensity}
-                  bodyFatPercentage={bodyFatPercentage}
-                  category={category}
-                  fatFreeMass={fatFreeMass}
-                  fatMass={fatMass}
-                  selectedMethod={selectedMethod as BodyCompositionMethod}
-                  conversionMethod={conversionMethod}
-                  onSave={handleSaveToProfile}
-                  isSaving={isSaving}
-                />
-              )}
-
-              {!selectedMethod && (
-                <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-8 text-center">
-                  <p className="text-neutral-600">Välj en beräkningsmetod för att börja</p>
                 </div>
-              )}
-
-              {selectedMethod && bodyFatPercentage === null && (
-                <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-8 text-center">
-                  <p className="text-neutral-600">
-                    Fyll i alla obligatoriska fält för att se resultat
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Workflow 2: Measurements-First */}
-        {activeWorkflow === 'measurements-first' && (
-          <div className="space-y-6">
-            <AllMeasurementsForm
-              caliperMeasurements={allCaliperMeasurements}
-              tapeMeasurements={allTapeMeasurements}
-              onCaliperChange={(field, value) =>
-                setAllCaliperMeasurements(prev => ({ ...prev, [field]: value }))
-              }
-              onTapeChange={(field, value) =>
-                setAllTapeMeasurements(prev => ({ ...prev, [field]: value }))
-              }
-            />
-
-            {/* Density Conversion Selector - Only show if there are density-based methods */}
-            {comparisonResults.some(r => isDensityBasedMethod(r.method, r.variation)) && (
-              <DensityConversionSelector
-                conversionMethod={conversionMethod2}
-                onMethodChange={setConversionMethod2}
-              />
+              </div>
             )}
 
-            <MethodComparisonTable
-              results={comparisonResults}
-              onSaveResult={handleSaveComparisonResult}
-              isSaving={isSaving}
-            />
+            {/* Workflow 2: Measurements-First */}
+            {activeWorkflow === 'measurements-first' && (
+              <div className="space-y-6">
+                <AllMeasurementsForm
+                  caliperMeasurements={allCaliperMeasurements}
+                  tapeMeasurements={allTapeMeasurements}
+                  onCaliperChange={(field, value) =>
+                    setAllCaliperMeasurements(prev => ({ ...prev, [field]: value }))
+                  }
+                  onTapeChange={(field, value) =>
+                    setAllTapeMeasurements(prev => ({ ...prev, [field]: value }))
+                  }
+                />
+
+                {/* Density Conversion Selector - Only show if there are density-based methods */}
+                {comparisonResults.some(r => isDensityBasedMethod(r.method, r.variation)) && (
+                  <DensityConversionSelector
+                    conversionMethod={conversionMethod2}
+                    onMethodChange={setConversionMethod2}
+                  />
+                )}
+
+                <MethodComparisonTable
+                  results={comparisonResults}
+                  onSaveResult={handleSaveComparisonResult}
+                  isSaving={isSaving}
+                />
+              </div>
+            )}
           </div>
-        )}
+
+          {/* Right sidebar - Measurement Sets */}
+          <div>
+            <CollapsibleSidebar>
+              <MeasurementSetSidebar />
+            </CollapsibleSidebar>
+          </div>
+        </div>
       </div>
+
+      {/* Floating Save Card */}
+      <FloatingMeasurementSaveCard
+        hasChanges={hasUnsavedMeasurements}
+        onSave={handleSaveMeasurementSet}
+        isSaving={createMeasurementSetMutation.isPending}
+      />
     </DashboardLayout>
   )
 }

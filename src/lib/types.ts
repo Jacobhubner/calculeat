@@ -253,3 +253,32 @@ export interface ProfileFormData {
     }>
   }
 }
+
+// Measurement set type for body composition measurements
+export interface MeasurementSet {
+  id: string
+  user_id: string
+  set_date: string // YYYY-MM-DD format
+  created_at: string
+
+  // Caliper measurements (mm)
+  chest?: number
+  abdominal?: number
+  thigh?: number
+  tricep?: number
+  subscapular?: number
+  suprailiac?: number
+  midaxillary?: number
+  bicep?: number
+  lower_back?: number
+  calf?: number
+
+  // Tape measurements (cm)
+  neck?: number
+  waist?: number
+  hip?: number
+  wrist?: number
+  forearm?: number
+  thigh_circ?: number
+  calf_circ?: number
+}

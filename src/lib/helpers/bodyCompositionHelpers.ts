@@ -161,9 +161,11 @@ export function getMethodVariations(
       return ['S, S², ålder', 'S, S², C', 'S, S², ålder, C', 'Kläder på']
 
     case 'Jackson/Pollock 4 Caliper Method':
-      // JP4 is female only
+      // JP4 density-based variations are female only, but "Okänt ursprung" is available for both genders
       if (gender === 'female') {
         return ['S, S², ålder', 'S, S², C', 'S, S², ålder, C', 'Okänt ursprung']
+      } else if (gender === 'male') {
+        return ['Okänt ursprung']
       }
       return []
 
@@ -243,10 +245,11 @@ export function getCalculableMethods(params: {
     }
   }
 
-  // Jackson/Pollock 4 (Female only)
-  if (gender === 'female') {
-    const jp4Base = hasFields(['tricep', 'suprailiac', 'abdominal', 'thigh'], caliperMeasurements)
-    if (jp4Base) {
+  // Jackson/Pollock 4
+  const jp4Base = hasFields(['tricep', 'suprailiac', 'abdominal', 'thigh'], caliperMeasurements)
+  if (jp4Base) {
+    if (gender === 'female') {
+      // Females: all variations available
       results.push({ method: 'Jackson/Pollock 4 Caliper Method', variation: 'S, S², ålder' })
       results.push({ method: 'Jackson/Pollock 4 Caliper Method', variation: 'Okänt ursprung' })
 
@@ -254,6 +257,9 @@ export function getCalculableMethods(params: {
         results.push({ method: 'Jackson/Pollock 4 Caliper Method', variation: 'S, S², C' })
         results.push({ method: 'Jackson/Pollock 4 Caliper Method', variation: 'S, S², ålder, C' })
       }
+    } else if (gender === 'male') {
+      // Males: only "Okänt ursprung" variation available
+      results.push({ method: 'Jackson/Pollock 4 Caliper Method', variation: 'Okänt ursprung' })
     }
   }
 
@@ -462,9 +468,11 @@ export function filterMethodsByGender(
     if (method === 'Jackson/Pollock 3 Caliper Method (Female)') {
       return gender === 'female'
     }
-    // JP4 is female-only
+    // JP4 has both gender-specific variations
+    // Females: all variations (density-based + "Okänt ursprung")
+    // Males: only "Okänt ursprung" variation
     if (method === 'Jackson/Pollock 4 Caliper Method') {
-      return gender === 'female'
+      return gender === 'female' || gender === 'male'
     }
     // All other methods available to everyone
     return true
