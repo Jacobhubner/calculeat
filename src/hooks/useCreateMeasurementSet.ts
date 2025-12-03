@@ -15,7 +15,6 @@ type CreateMeasurementSetInput = Omit<MeasurementSet, 'id' | 'user_id' | 'create
 export function useCreateMeasurementSet() {
   const queryClient = useQueryClient()
   const addMeasurementSet = useMeasurementSetStore(state => state.addMeasurementSet)
-  const getMeasurementSetByDate = useMeasurementSetStore(state => state.getMeasurementSetByDate)
 
   return useMutation({
     mutationFn: async (data: CreateMeasurementSetInput) => {
@@ -25,12 +24,6 @@ export function useCreateMeasurementSet() {
 
       if (!user) {
         throw new Error('Ingen användare inloggad')
-      }
-
-      // Check if a measurement set for this date already exists
-      const existingSet = getMeasurementSetByDate(data.set_date)
-      if (existingSet) {
-        throw new Error('Ett mätset för detta datum finns redan')
       }
 
       const { data: newSet, error } = await supabase

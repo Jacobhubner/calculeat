@@ -1181,7 +1181,6 @@ export default function UserProfileForm({
               placeholder="15"
               min="0"
               max="100"
-              step="0.1"
             />
           </div>
 

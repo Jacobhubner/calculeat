@@ -33,6 +33,15 @@ export default function MeasurementSetCard({
     day: 'numeric',
   })
 
+  // Format time from created_at (e.g., "2025-01-15T09:30:00" -> "09:30")
+  const displayTime = new Date(measurementSet.created_at).toLocaleTimeString('sv-SE', {
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+
+  // Combine date and time
+  const displayName = `${displayDate} - ${displayTime}`
+
   return (
     <div
       onClick={onSelect}
@@ -43,7 +52,7 @@ export default function MeasurementSetCard({
           : 'border-neutral-200 hover:border-primary-300 hover:bg-neutral-50'
       )}
     >
-      <h4 className="font-medium text-sm pr-12">{displayDate}</h4>
+      <h4 className="font-medium text-sm pr-12">{displayName}</h4>
 
       {/* Save button - only visible when there are unsaved changes */}
       {hasUnsavedChanges && onSave && (

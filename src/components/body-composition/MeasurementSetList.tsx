@@ -41,15 +41,20 @@ export default function MeasurementSetList({
     onSelectSet(setId)
   }
 
-  const handleDelete = async (id: string, date: string) => {
+  const handleDelete = async (id: string, date: string, createdAt: string) => {
     const displayDate = new Date(date).toLocaleDateString('sv-SE', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
     })
 
+    const displayTime = new Date(createdAt).toLocaleTimeString('sv-SE', {
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+
     const confirmed = window.confirm(
-      `Är du säker på att du vill ta bort mätset från ${displayDate}? Detta går inte att ångra.`
+      `Är du säker på att du vill ta bort mätset från ${displayDate} - ${displayTime}? Detta går inte att ångra.`
     )
 
     if (!confirmed) return
@@ -63,7 +68,7 @@ export default function MeasurementSetList({
         setActiveMeasurementSet(null)
       }
       toast.success('Mätning borttagen', {
-        description: `${displayDate} har tagits bort`,
+        description: `${displayDate} - ${displayTime} har tagits bort`,
       })
       return
     }
@@ -105,7 +110,7 @@ export default function MeasurementSetList({
             measurementSet={set}
             isActive={isActive}
             onSelect={() => handleSelect(set.id)}
-            onDelete={() => handleDelete(set.id, set.set_date)}
+            onDelete={() => handleDelete(set.id, set.set_date, set.created_at)}
             hasUnsavedChanges={showSaveIcon}
             onSave={() => onSaveSet(set.id)}
             isSaving={isSaving}

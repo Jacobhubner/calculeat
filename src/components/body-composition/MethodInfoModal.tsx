@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/dialog'
 import { getMethodInfo, siriInfo, brozekInfo } from '@/lib/constants/methodInfo'
 import type { BodyCompositionMethod, MethodVariation } from '@/lib/calculations/bodyComposition'
-import { BookOpen, Calculator, AlertCircle } from 'lucide-react'
+import { BookOpen, AlertCircle } from 'lucide-react'
 
 interface MethodInfoModalProps {
   method: BodyCompositionMethod | 'siri' | 'brozek' | null
@@ -62,21 +62,6 @@ export default function MethodInfoModal({
             </h4>
             <p className="text-sm text-neutral-700 leading-relaxed">{info.description}</p>
           </div>
-
-          {/* Formel */}
-          {info.formula && (
-            <div>
-              <h4 className="font-semibold mb-2 flex items-center gap-2 text-neutral-900">
-                <Calculator className="h-4 w-4" />
-                Formel
-              </h4>
-              <div className="bg-neutral-50 border border-neutral-200 p-4 rounded-lg">
-                <code className="text-xs md:text-sm text-neutral-800 whitespace-pre-wrap font-mono leading-relaxed">
-                  {info.formula}
-                </code>
-              </div>
-            </div>
-          )}
 
           {/* Krävda mätningar */}
           {info.requiredMeasurements && info.requiredMeasurements.length > 0 && (
