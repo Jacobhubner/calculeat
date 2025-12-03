@@ -524,8 +524,11 @@ export default function BodyCompositionPage() {
 
     // Filter out null values - only send fields that have actual values
     const measurementData = Object.fromEntries(
-      Object.entries(allMeasurements).filter(([_, value]) => value !== null)
+      Object.entries(allMeasurements).filter(([_, value]) => value !== null && value !== undefined)
     )
+
+    // Debug logging
+    console.log('Saving measurement data:', measurementData)
 
     try {
       // If it's an unsaved (temp) set, create new in database
@@ -551,6 +554,7 @@ export default function BodyCompositionPage() {
     } catch (error) {
       // Error toast is handled by the hooks
       console.error('Error saving measurement set:', error)
+      console.error('Failed data:', measurementData)
     }
   }
 
