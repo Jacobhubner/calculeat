@@ -464,27 +464,33 @@ export default function BodyCompositionPage() {
 
     const today = new Date().toISOString().split('T')[0]
 
-    const measurementData = {
+    // Collect all measurements, converting undefined to null
+    const allMeasurements = {
       // Caliper measurements
-      chest: caliperMeasurements.chest ?? allCaliperMeasurements.chest,
-      abdominal: caliperMeasurements.abdominal ?? allCaliperMeasurements.abdominal,
-      thigh: caliperMeasurements.thigh ?? allCaliperMeasurements.thigh,
-      tricep: caliperMeasurements.tricep ?? allCaliperMeasurements.tricep,
-      subscapular: caliperMeasurements.subscapular ?? allCaliperMeasurements.subscapular,
-      suprailiac: caliperMeasurements.suprailiac ?? allCaliperMeasurements.suprailiac,
-      midaxillary: caliperMeasurements.midaxillary ?? allCaliperMeasurements.midaxillary,
-      bicep: caliperMeasurements.bicep ?? allCaliperMeasurements.bicep,
-      lower_back: caliperMeasurements.lowerBack ?? allCaliperMeasurements.lowerBack,
-      calf: caliperMeasurements.calf ?? allCaliperMeasurements.calf,
+      chest: caliperMeasurements.chest ?? allCaliperMeasurements.chest ?? null,
+      abdominal: caliperMeasurements.abdominal ?? allCaliperMeasurements.abdominal ?? null,
+      thigh: caliperMeasurements.thigh ?? allCaliperMeasurements.thigh ?? null,
+      tricep: caliperMeasurements.tricep ?? allCaliperMeasurements.tricep ?? null,
+      subscapular: caliperMeasurements.subscapular ?? allCaliperMeasurements.subscapular ?? null,
+      suprailiac: caliperMeasurements.suprailiac ?? allCaliperMeasurements.suprailiac ?? null,
+      midaxillary: caliperMeasurements.midaxillary ?? allCaliperMeasurements.midaxillary ?? null,
+      bicep: caliperMeasurements.bicep ?? allCaliperMeasurements.bicep ?? null,
+      lower_back: caliperMeasurements.lowerBack ?? allCaliperMeasurements.lowerBack ?? null,
+      calf: caliperMeasurements.calf ?? allCaliperMeasurements.calf ?? null,
       // Tape measurements
-      neck: tapeMeasurements.neck ?? allTapeMeasurements.neck,
-      waist: tapeMeasurements.waist ?? allTapeMeasurements.waist,
-      hip: tapeMeasurements.hip ?? allTapeMeasurements.hip,
-      wrist: tapeMeasurements.wrist ?? allTapeMeasurements.wrist,
-      forearm: tapeMeasurements.forearm ?? allTapeMeasurements.forearm,
-      thigh_circ: tapeMeasurements.thighCirc ?? allTapeMeasurements.thighCirc,
-      calf_circ: tapeMeasurements.calfCirc ?? allTapeMeasurements.calfCirc,
+      neck: tapeMeasurements.neck ?? allTapeMeasurements.neck ?? null,
+      waist: tapeMeasurements.waist ?? allTapeMeasurements.waist ?? null,
+      hip: tapeMeasurements.hip ?? allTapeMeasurements.hip ?? null,
+      wrist: tapeMeasurements.wrist ?? allTapeMeasurements.wrist ?? null,
+      forearm: tapeMeasurements.forearm ?? allTapeMeasurements.forearm ?? null,
+      thigh_circ: tapeMeasurements.thighCirc ?? allTapeMeasurements.thighCirc ?? null,
+      calf_circ: tapeMeasurements.calfCirc ?? allTapeMeasurements.calfCirc ?? null,
     }
+
+    // Filter out null values - only send fields that have actual values
+    const measurementData = Object.fromEntries(
+      Object.entries(allMeasurements).filter(([_, value]) => value !== null)
+    )
 
     try {
       // If it's an unsaved (temp) set, create new in database
