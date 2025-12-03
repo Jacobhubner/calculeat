@@ -10,13 +10,17 @@ import TabNavigation from '@/components/body-composition/TabNavigation'
 import AllMeasurementsForm from '@/components/body-composition/AllMeasurementsForm'
 import MethodComparisonTable from '@/components/body-composition/MethodComparisonTable'
 import MeasurementSetSidebar from '@/components/body-composition/MeasurementSetSidebar'
-import FloatingMeasurementSaveCard from '@/components/body-composition/FloatingMeasurementSaveCard'
 import CollapsibleSidebar from '@/components/CollapsibleSidebar'
 import EmptyState from '@/components/EmptyState'
 import { Activity, Scale } from 'lucide-react'
 import { useProfileStore } from '@/stores/profileStore'
 import { useMeasurementSetStore } from '@/stores/measurementSetStore'
-import { useProfiles, useUpdateProfile, useCreateMeasurementSet } from '@/hooks'
+import {
+  useProfiles,
+  useUpdateProfile,
+  useCreateMeasurementSet,
+  useUpdateMeasurementSet,
+} from '@/hooks'
 import {
   getRequiredFields,
   isDensityBasedMethod,
@@ -58,7 +62,17 @@ export default function BodyCompositionPage() {
 
   // Measurement sets
   const activeMeasurementSet = useMeasurementSetStore(state => state.activeMeasurementSet)
+  const setActiveMeasurementSet = useMeasurementSetStore(state => state.setActiveMeasurementSet)
+  const measurementSets = useMeasurementSetStore(state => state.measurementSets)
+  const unsavedMeasurementSets = useMeasurementSetStore(state => state.unsavedMeasurementSets)
+  const addUnsavedMeasurementSet = useMeasurementSetStore(state => state.addUnsavedMeasurementSet)
+  const removeUnsavedMeasurementSet = useMeasurementSetStore(
+    state => state.removeUnsavedMeasurementSet
+  )
+  const getMeasurementSetById = useMeasurementSetStore(state => state.getMeasurementSetById)
+
   const createMeasurementSetMutation = useCreateMeasurementSet()
+  const updateMeasurementSetMutation = useUpdateMeasurementSet()
 
   // Workflow state
   const [activeWorkflow, setActiveWorkflow] = useState<'method-first' | 'measurements-first'>(
@@ -397,51 +411,143 @@ export default function BodyCompositionPage() {
     }
   }
 
-  // Handler for saving measurement set
-  const handleSaveMeasurementSet = async () => {
+  // Handler for creating new measurement set
+  const handleCreateNewMeasurement = () => {
+    // Check for unsaved changes
+    if (hasUnsavedMeasurements) {
+      const confirmed = window.confirm(
+        'Du har osparade ändringar. Vill du fortsätta? Ändringar kommer att förloras.'
+      )
+      if (!confirmed) return
+    }
+
+    // Create new local unsaved set
+    const newSet = {
+      id: `temp-${Date.now()}`,
+      user_id: profile?.id || '',
+      set_date: new Date().toISOString().split('T')[0],
+      created_at: new Date().toISOString(),
+      chest: undefined,
+      abdominal: undefined,
+      thigh: undefined,
+      tricep: undefined,
+      subscapular: undefined,
+      suprailiac: undefined,
+      midaxillary: undefined,
+      bicep: undefined,
+      lower_back: undefined,
+      calf: undefined,
+      neck: undefined,
+      waist: undefined,
+      hip: undefined,
+      wrist: undefined,
+      forearm: undefined,
+      thigh_circ: undefined,
+      calf_circ: undefined,
+    }
+
+    addUnsavedMeasurementSet(newSet)
+  }
+
+  // Handler for selecting a measurement set
+  const handleSelectMeasurementSet = (setId: string) => {
+    const set = getMeasurementSetById(setId)
+    if (set) {
+      setActiveMeasurementSet(set)
+    }
+  }
+
+  // Handler for saving measurement set (create new or update existing)
+  const handleSaveMeasurementSet = async (setId: string) => {
+    const set = getMeasurementSetById(setId)
+    if (!set) return
+
     const today = new Date().toISOString().split('T')[0]
 
+    const measurementData = {
+      // Caliper measurements
+      chest: caliperMeasurements.chest ?? allCaliperMeasurements.chest,
+      abdominal: caliperMeasurements.abdominal ?? allCaliperMeasurements.abdominal,
+      thigh: caliperMeasurements.thigh ?? allCaliperMeasurements.thigh,
+      tricep: caliperMeasurements.tricep ?? allCaliperMeasurements.tricep,
+      subscapular: caliperMeasurements.subscapular ?? allCaliperMeasurements.subscapular,
+      suprailiac: caliperMeasurements.suprailiac ?? allCaliperMeasurements.suprailiac,
+      midaxillary: caliperMeasurements.midaxillary ?? allCaliperMeasurements.midaxillary,
+      bicep: caliperMeasurements.bicep ?? allCaliperMeasurements.bicep,
+      lower_back: caliperMeasurements.lowerBack ?? allCaliperMeasurements.lowerBack,
+      calf: caliperMeasurements.calf ?? allCaliperMeasurements.calf,
+      // Tape measurements
+      neck: tapeMeasurements.neck ?? allTapeMeasurements.neck,
+      waist: tapeMeasurements.waist ?? allTapeMeasurements.waist,
+      hip: tapeMeasurements.hip ?? allTapeMeasurements.hip,
+      wrist: tapeMeasurements.wrist ?? allTapeMeasurements.wrist,
+      forearm: tapeMeasurements.forearm ?? allTapeMeasurements.forearm,
+      thigh_circ: tapeMeasurements.thighCirc ?? allTapeMeasurements.thighCirc,
+      calf_circ: tapeMeasurements.calfCirc ?? allTapeMeasurements.calfCirc,
+    }
+
     try {
-      await createMeasurementSetMutation.mutateAsync({
-        set_date: today,
-        // Caliper measurements
-        chest: caliperMeasurements.chest ?? allCaliperMeasurements.chest,
-        abdominal: caliperMeasurements.abdominal ?? allCaliperMeasurements.abdominal,
-        thigh: caliperMeasurements.thigh ?? allCaliperMeasurements.thigh,
-        tricep: caliperMeasurements.tricep ?? allCaliperMeasurements.tricep,
-        subscapular: caliperMeasurements.subscapular ?? allCaliperMeasurements.subscapular,
-        suprailiac: caliperMeasurements.suprailiac ?? allCaliperMeasurements.suprailiac,
-        midaxillary: caliperMeasurements.midaxillary ?? allCaliperMeasurements.midaxillary,
-        bicep: caliperMeasurements.bicep ?? allCaliperMeasurements.bicep,
-        lower_back: caliperMeasurements.lowerBack ?? allCaliperMeasurements.lowerBack,
-        calf: caliperMeasurements.calf ?? allCaliperMeasurements.calf,
-        // Tape measurements
-        neck: tapeMeasurements.neck ?? allTapeMeasurements.neck,
-        waist: tapeMeasurements.waist ?? allTapeMeasurements.waist,
-        hip: tapeMeasurements.hip ?? allTapeMeasurements.hip,
-        wrist: tapeMeasurements.wrist ?? allTapeMeasurements.wrist,
-        forearm: tapeMeasurements.forearm ?? allTapeMeasurements.forearm,
-        thigh_circ: tapeMeasurements.thighCirc ?? allTapeMeasurements.thighCirc,
-        calf_circ: tapeMeasurements.calfCirc ?? allTapeMeasurements.calfCirc,
-      })
-      // Success toast is handled by the hook
+      // If it's an unsaved (temp) set, create new in database
+      if (setId.startsWith('temp-')) {
+        await createMeasurementSetMutation.mutateAsync({
+          set_date: today,
+          ...measurementData,
+        })
+        // Remove from unsaved sets
+        removeUnsavedMeasurementSet(setId)
+      }
+      // If it's an existing set, update it
+      else {
+        await updateMeasurementSetMutation.mutateAsync({
+          id: setId,
+          data: {
+            set_date: today,
+            ...measurementData,
+          },
+        })
+      }
+      // Success toast is handled by the hooks
     } catch (error) {
-      // Error toast is handled by the hook
+      // Error toast is handled by the hooks
       console.error('Error saving measurement set:', error)
     }
   }
 
+  // Auto-create first card when user fills in measurements (no cards exist)
+  useEffect(() => {
+    const hasWorkflow1Measurements =
+      Object.values(caliperMeasurements).some(v => v !== undefined) ||
+      Object.values(tapeMeasurements).some(v => v !== undefined)
+    const hasWorkflow2Measurements =
+      Object.values(allCaliperMeasurements).some(v => v !== undefined) ||
+      Object.values(allTapeMeasurements).some(v => v !== undefined)
+
+    // Only auto-create if:
+    // 1. No cards exist (saved or unsaved)
+    // 2. No active set
+    // 3. User has entered measurements
+    if (
+      measurementSets.length === 0 &&
+      unsavedMeasurementSets.length === 0 &&
+      !activeMeasurementSet &&
+      (hasWorkflow1Measurements || hasWorkflow2Measurements)
+    ) {
+      handleCreateNewMeasurement()
+    }
+  }, [
+    caliperMeasurements,
+    tapeMeasurements,
+    allCaliperMeasurements,
+    allTapeMeasurements,
+    measurementSets.length,
+    unsavedMeasurementSets.length,
+    activeMeasurementSet,
+  ])
+
   // Detect unsaved measurement changes
   const hasUnsavedMeasurements = useMemo(() => {
     if (!activeMeasurementSet) {
-      // New measurement mode - show save if any measurements exist
-      const hasWorkflow1Measurements =
-        Object.values(caliperMeasurements).some(v => v !== undefined) ||
-        Object.values(tapeMeasurements).some(v => v !== undefined)
-      const hasWorkflow2Measurements =
-        Object.values(allCaliperMeasurements).some(v => v !== undefined) ||
-        Object.values(allTapeMeasurements).some(v => v !== undefined)
-      return hasWorkflow1Measurements || hasWorkflow2Measurements
+      return false
     }
 
     // Compare with saved set (use either workflow 1 or workflow 2 measurements)
@@ -686,18 +792,19 @@ export default function BodyCompositionPage() {
           {/* Right sidebar - Measurement Sets */}
           <div>
             <CollapsibleSidebar>
-              <MeasurementSetSidebar />
+              <MeasurementSetSidebar
+                onCreateNew={handleCreateNewMeasurement}
+                hasUnsavedChanges={hasUnsavedMeasurements}
+                onSelectSet={handleSelectMeasurementSet}
+                onSaveSet={handleSaveMeasurementSet}
+                isSaving={
+                  createMeasurementSetMutation.isPending || updateMeasurementSetMutation.isPending
+                }
+              />
             </CollapsibleSidebar>
           </div>
         </div>
       </div>
-
-      {/* Floating Save Card */}
-      <FloatingMeasurementSaveCard
-        hasChanges={hasUnsavedMeasurements}
-        onSave={handleSaveMeasurementSet}
-        isSaving={createMeasurementSetMutation.isPending}
-      />
     </DashboardLayout>
   )
 }

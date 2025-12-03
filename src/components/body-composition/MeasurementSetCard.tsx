@@ -1,9 +1,9 @@
 /**
  * MeasurementSetCard - Kort för ett sparat mätset
- * Visar datum och tillåter borttagning
+ * Visar datum, sparaknapp (vid osparade ändringar), och borttagningsknapp
  */
 
-import { X } from 'lucide-react'
+import { X, Save } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { MeasurementSet } from '@/lib/types'
 
@@ -12,6 +12,9 @@ interface MeasurementSetCardProps {
   isActive: boolean
   onSelect: () => void
   onDelete: () => void
+  hasUnsavedChanges?: boolean
+  onSave?: () => void
+  isSaving?: boolean
 }
 
 export default function MeasurementSetCard({
@@ -19,6 +22,9 @@ export default function MeasurementSetCard({
   isActive,
   onSelect,
   onDelete,
+  hasUnsavedChanges = false,
+  onSave,
+  isSaving = false,
 }: MeasurementSetCardProps) {
   // Format date for display (e.g., "2025-01-15" -> "15 jan 2025")
   const displayDate = new Date(measurementSet.set_date).toLocaleDateString('sv-SE', {
@@ -37,7 +43,28 @@ export default function MeasurementSetCard({
           : 'border-neutral-200 hover:border-primary-300 hover:bg-neutral-50'
       )}
     >
-      <h4 className="font-medium text-sm pr-6">{displayDate}</h4>
+      <h4 className="font-medium text-sm pr-12">{displayDate}</h4>
+
+      {/* Save button - only visible when there are unsaved changes */}
+      {hasUnsavedChanges && onSave && (
+        <button
+          onClick={e => {
+            e.stopPropagation()
+            onSave()
+          }}
+          disabled={isSaving}
+          className={cn(
+            'absolute top-2 right-8 transition-colors',
+            isSaving
+              ? 'text-neutral-300 cursor-not-allowed'
+              : 'text-primary-600 hover:text-primary-700'
+          )}
+          aria-label="Spara mätningar"
+          title="Spara mätningar"
+        >
+          <Save className="h-4 w-4" />
+        </button>
+      )}
 
       {/* Delete button */}
       <button

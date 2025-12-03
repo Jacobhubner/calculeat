@@ -27,4 +27,5 @@ export * from './useNewProfile'
 // Measurement set hooks
 export * from './useMeasurementSets'
 export * from './useCreateMeasurementSet'
+export * from './useUpdateMeasurementSet'
 export * from './useDeleteMeasurementSet'

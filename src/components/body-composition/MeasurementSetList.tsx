@@ -1,19 +1,39 @@
 /**
- * MeasurementSetList - Lista med alla sparade mätset
+ * MeasurementSetList - Lista med alla sparade och osparade mätset
  */
 
 import { useMeasurementSetStore } from '@/stores/measurementSetStore'
 import { useMeasurementSets, useDeleteMeasurementSet } from '@/hooks'
 import MeasurementSetCard from './MeasurementSetCard'
 
-export default function MeasurementSetList() {
+interface MeasurementSetListProps {
+  hasUnsavedChanges?: boolean
+  onSelectSet: (setId: string) => void
+  onSaveSet: (setId: string) => void
+  isSaving?: boolean
+}
+
+export default function MeasurementSetList({
+  hasUnsavedChanges = false,
+  onSelectSet,
+  onSaveSet,
+  isSaving = false,
+}: MeasurementSetListProps) {
   const activeMeasurementSet = useMeasurementSetStore(state => state.activeMeasurementSet)
-  const setActiveMeasurementSet = useMeasurementSetStore(state => state.setActiveMeasurementSet)
+  const unsavedMeasurementSets = useMeasurementSetStore(state => state.unsavedMeasurementSets)
   const { data: measurementSets = [], isLoading } = useMeasurementSets()
   const deleteSetMutation = useDeleteMeasurementSet()
 
-  const handleSelect = (set: (typeof measurementSets)[0]) => {
-    setActiveMeasurementSet(set)
+  const handleSelect = (setId: string) => {
+    // Check for unsaved changes before switching
+    if (hasUnsavedChanges && activeMeasurementSet?.id !== setId) {
+      const confirmed = window.confirm(
+        'Du har osparade ändringar. Vill du fortsätta? Ändringar kommer att förloras.'
+      )
+      if (!confirmed) return
+    }
+
+    onSelectSet(setId)
   }
 
   const handleDelete = async (id: string, date: string) => {
@@ -38,11 +58,14 @@ export default function MeasurementSetList() {
     }
   }
 
+  // Combine unsaved and saved sets
+  const allSets = [...unsavedMeasurementSets, ...measurementSets]
+
   if (isLoading) {
     return <div className="text-sm text-neutral-500 text-center py-4">Laddar mätningar...</div>
   }
 
-  if (measurementSets.length === 0) {
+  if (allSets.length === 0) {
     return (
       <div className="text-sm text-neutral-500 text-center py-4">
         Inga sparade mätningar ännu. Fyll i mätningar och spara!
@@ -52,15 +75,23 @@ export default function MeasurementSetList() {
 
   return (
     <div className="space-y-1.5">
-      {measurementSets.map(set => (
-        <MeasurementSetCard
-          key={set.id}
-          measurementSet={set}
-          isActive={activeMeasurementSet?.id === set.id}
-          onSelect={() => handleSelect(set)}
-          onDelete={() => handleDelete(set.id, set.set_date)}
-        />
-      ))}
+      {allSets.map(set => {
+        const isActive = activeMeasurementSet?.id === set.id
+        const showSaveIcon = isActive && hasUnsavedChanges
+
+        return (
+          <MeasurementSetCard
+            key={set.id}
+            measurementSet={set}
+            isActive={isActive}
+            onSelect={() => handleSelect(set.id)}
+            onDelete={() => handleDelete(set.id, set.set_date)}
+            hasUnsavedChanges={showSaveIcon}
+            onSave={() => onSaveSet(set.id)}
+            isSaving={isSaving}
+          />
+        )
+      })}
     </div>
   )
 }
