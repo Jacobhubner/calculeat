@@ -5,6 +5,7 @@
 import { useMeasurementSetStore } from '@/stores/measurementSetStore'
 import { useMeasurementSets, useDeleteMeasurementSet } from '@/hooks'
 import MeasurementSetCard from './MeasurementSetCard'
+import { toast } from 'sonner'
 
 interface MeasurementSetListProps {
   hasUnsavedChanges?: boolean
@@ -20,7 +21,11 @@ export default function MeasurementSetList({
   isSaving = false,
 }: MeasurementSetListProps) {
   const activeMeasurementSet = useMeasurementSetStore(state => state.activeMeasurementSet)
+  const setActiveMeasurementSet = useMeasurementSetStore(state => state.setActiveMeasurementSet)
   const unsavedMeasurementSets = useMeasurementSetStore(state => state.unsavedMeasurementSets)
+  const removeUnsavedMeasurementSet = useMeasurementSetStore(
+    state => state.removeUnsavedMeasurementSet
+  )
   const { data: measurementSets = [], isLoading } = useMeasurementSets()
   const deleteSetMutation = useDeleteMeasurementSet()
 
@@ -49,6 +54,21 @@ export default function MeasurementSetList({
 
     if (!confirmed) return
 
+    // Check if this is an unsaved (temp) set
+    if (id.startsWith('temp-')) {
+      // Remove from local unsaved sets
+      removeUnsavedMeasurementSet(id)
+      // If it was the active set, clear active
+      if (activeMeasurementSet?.id === id) {
+        setActiveMeasurementSet(null)
+      }
+      toast.success('Mätning borttagen', {
+        description: `${displayDate} har tagits bort`,
+      })
+      return
+    }
+
+    // For saved sets, delete from database
     try {
       await deleteSetMutation.mutateAsync(id)
       // Toast is handled by useDeleteMeasurementSet hook
