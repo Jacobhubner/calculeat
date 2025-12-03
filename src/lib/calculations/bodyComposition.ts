@@ -437,7 +437,7 @@ export function durninWomersley(params: BodyCompositionParams): number | null {
 
 /**
  * 6. Parillo Caliper Method
- * Sites: pectoral(chest), biceps, triceps, abdominal, lower back, thigh, calf, subscapular, suprailiac
+ * Sites: pectoral(chest), biceps, thigh, subscapular, lower back, midaxillary, calf, triceps, suprailiac
  * Google Sheets formula (CORRECTED): (sum × 27) / (weight_kg × 2.2046226218488)
  */
 export function parillo(params: BodyCompositionParams): number | null {
@@ -446,21 +446,21 @@ export function parillo(params: BodyCompositionParams): number | null {
   if (
     !caliperMeasurements?.chest ||
     !caliperMeasurements?.bicep ||
-    !caliperMeasurements?.tricep ||
-    !caliperMeasurements?.abdominal ||
-    !caliperMeasurements?.lowerBack ||
     !caliperMeasurements?.thigh ||
-    !caliperMeasurements?.calf ||
     !caliperMeasurements?.subscapular ||
+    !caliperMeasurements?.lowerBack ||
+    !caliperMeasurements?.midaxillary ||
+    !caliperMeasurements?.calf ||
+    !caliperMeasurements?.tricep ||
     !caliperMeasurements?.suprailiac
   ) {
     return null
   }
 
-  const { chest, bicep, tricep, abdominal, lowerBack, thigh, calf, subscapular, suprailiac } =
+  const { chest, bicep, thigh, subscapular, lowerBack, midaxillary, calf, tricep, suprailiac } =
     caliperMeasurements
   const sum =
-    chest + bicep + tricep + abdominal + lowerBack + thigh + calf + subscapular + suprailiac
+    chest + bicep + thigh + subscapular + lowerBack + midaxillary + calf + tricep + suprailiac
 
   // Parillo formula (CORRECTED): (sum × 27) / (weight_kg × 2.2046226218488)
   const weightLbs = weight * 2.2046226218488
@@ -891,16 +891,16 @@ export function getAvailableMethods(params: BodyCompositionParams): BodyComposit
     methods.push('Durnin/Womersley Caliper Method')
   }
 
-  // Parillo (NOW REQUIRES 9 SITES including lowerBack and calf)
+  // Parillo (9 sites)
   if (
     caliperMeasurements?.chest &&
     caliperMeasurements?.bicep &&
-    caliperMeasurements?.tricep &&
-    caliperMeasurements?.abdominal &&
-    caliperMeasurements?.lowerBack &&
     caliperMeasurements?.thigh &&
-    caliperMeasurements?.calf &&
     caliperMeasurements?.subscapular &&
+    caliperMeasurements?.lowerBack &&
+    caliperMeasurements?.midaxillary &&
+    caliperMeasurements?.calf &&
+    caliperMeasurements?.tricep &&
     caliperMeasurements?.suprailiac
   ) {
     methods.push('Parillo Caliper Method')

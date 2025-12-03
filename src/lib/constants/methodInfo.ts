@@ -138,19 +138,19 @@ export const methodInformation: Record<string, MethodInfo> = {
     returnsDensity: true,
   },
   parillo: {
-    title: 'Parillo 9-punkts kaliper',
+    title: 'Parillo kaliper',
     description:
       'Omfattande metod som använder nio hudfålsmätningar. Populär bland bodybuilders och fitnessentusiaster.',
     requiredMeasurements: [
       'Bröst',
-      'Buk',
-      'Lår',
-      'Triceps',
-      'Subscapular',
-      'Suprailiac',
       'Biceps',
+      'Lår',
+      'Subscapular',
       'Nedre rygg',
+      'Midaxillary',
       'Vad',
+      'Triceps',
+      'Suprailiac',
     ],
     notes:
       'Returnerar kroppsfett% direkt. Formel: (summa av alla mätningar) × 27 ÷ kroppsvikt i pounds = kroppsfett%',
