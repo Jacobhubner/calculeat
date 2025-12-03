@@ -381,8 +381,11 @@ export function jacksonPollock7(
 }
 
 /**
- * 5. Durnin/Womersley Caliper Method
+ * 5. Durnin/Womersley Caliper Method (1974)
  * Sites: bicep, tricep, subscapular, suprailiac
+ * Age ranges:
+ *   Male: 17-19, 20-29, 30-39, 40-49, ≥50
+ *   Female: 16-19, 20-29, 30-39, 40-49, ≥50
  */
 export function durninWomersley(params: BodyCompositionParams): number | null {
   const { age, gender, caliperMeasurements } = params
@@ -403,9 +406,7 @@ export function durninWomersley(params: BodyCompositionParams): number | null {
   let bodyDensity: number
 
   if (gender === 'male') {
-    if (age < 17) {
-      bodyDensity = 1.1533 - 0.0643 * logSum
-    } else if (age < 20) {
+    if (age < 20) {
       bodyDensity = 1.162 - 0.063 * logSum
     } else if (age < 30) {
       bodyDensity = 1.1631 - 0.0632 * logSum
@@ -417,9 +418,7 @@ export function durninWomersley(params: BodyCompositionParams): number | null {
       bodyDensity = 1.1715 - 0.0779 * logSum
     }
   } else {
-    if (age < 17) {
-      bodyDensity = 1.1369 - 0.0598 * logSum
-    } else if (age < 20) {
+    if (age < 20) {
       bodyDensity = 1.1549 - 0.0678 * logSum
     } else if (age < 30) {
       bodyDensity = 1.1599 - 0.0717 * logSum
@@ -436,33 +435,33 @@ export function durninWomersley(params: BodyCompositionParams): number | null {
 }
 
 /**
- * 6. Parillo Caliper Method
- * Sites: pectoral(chest), biceps, thigh, subscapular, lower back, midaxillary, calf, triceps, suprailiac
- * Google Sheets formula (CORRECTED): (sum × 27) / (weight_kg × 2.2046226218488)
+ * 6. Parillo Caliper Method (1993)
+ * Sites: pectoral(chest), abdominal, thigh, biceps, triceps, subscapular, suprailiac, lower back, calf
+ * Google Sheets formula: (sum × 27) / (weight_kg × 2.2046226218488)
  */
 export function parillo(params: BodyCompositionParams): number | null {
   const { caliperMeasurements, weight } = params
 
   if (
     !caliperMeasurements?.chest ||
-    !caliperMeasurements?.bicep ||
+    !caliperMeasurements?.abdominal ||
     !caliperMeasurements?.thigh ||
-    !caliperMeasurements?.subscapular ||
-    !caliperMeasurements?.lowerBack ||
-    !caliperMeasurements?.midaxillary ||
-    !caliperMeasurements?.calf ||
+    !caliperMeasurements?.bicep ||
     !caliperMeasurements?.tricep ||
-    !caliperMeasurements?.suprailiac
+    !caliperMeasurements?.subscapular ||
+    !caliperMeasurements?.suprailiac ||
+    !caliperMeasurements?.lowerBack ||
+    !caliperMeasurements?.calf
   ) {
     return null
   }
 
-  const { chest, bicep, thigh, subscapular, lowerBack, midaxillary, calf, tricep, suprailiac } =
+  const { chest, abdominal, thigh, bicep, tricep, subscapular, suprailiac, lowerBack, calf } =
     caliperMeasurements
   const sum =
-    chest + bicep + thigh + subscapular + lowerBack + midaxillary + calf + tricep + suprailiac
+    chest + abdominal + thigh + bicep + tricep + subscapular + suprailiac + lowerBack + calf
 
-  // Parillo formula (CORRECTED): (sum × 27) / (weight_kg × 2.2046226218488)
+  // Parillo formula: (sum × 27) / (weight_kg × 2.2046226218488)
   const weightLbs = weight * 2.2046226218488
   return (sum * 27) / weightLbs
 }
@@ -891,17 +890,17 @@ export function getAvailableMethods(params: BodyCompositionParams): BodyComposit
     methods.push('Durnin/Womersley Caliper Method')
   }
 
-  // Parillo (9 sites)
+  // Parillo (9 sites: chest, abdominal, thigh, bicep, tricep, subscapular, suprailiac, lowerBack, calf)
   if (
     caliperMeasurements?.chest &&
-    caliperMeasurements?.bicep &&
+    caliperMeasurements?.abdominal &&
     caliperMeasurements?.thigh &&
-    caliperMeasurements?.subscapular &&
-    caliperMeasurements?.lowerBack &&
-    caliperMeasurements?.midaxillary &&
-    caliperMeasurements?.calf &&
+    caliperMeasurements?.bicep &&
     caliperMeasurements?.tricep &&
-    caliperMeasurements?.suprailiac
+    caliperMeasurements?.subscapular &&
+    caliperMeasurements?.suprailiac &&
+    caliperMeasurements?.lowerBack &&
+    caliperMeasurements?.calf
   ) {
     methods.push('Parillo Caliper Method')
   }

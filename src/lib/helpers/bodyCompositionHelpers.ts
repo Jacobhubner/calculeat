@@ -81,14 +81,14 @@ export function getRequiredFields(
         type: 'caliper',
         fields: [
           'chest',
-          'bicep',
+          'abdominal',
           'thigh',
-          'subscapular',
-          'lowerBack',
-          'midaxillary',
-          'calf',
+          'bicep',
           'tricep',
+          'subscapular',
           'suprailiac',
+          'lowerBack',
+          'calf',
         ],
       }
 
@@ -286,19 +286,19 @@ export function getCalculableMethods(params: {
     results.push({ method: 'Durnin/Womersley Caliper Method' })
   }
 
-  // Parillo (9 sites)
+  // Parillo (9 sites: chest, abdominal, thigh, bicep, tricep, subscapular, suprailiac, lowerBack, calf)
   if (
     hasFields(
       [
         'chest',
-        'bicep',
+        'abdominal',
         'thigh',
-        'subscapular',
-        'lowerBack',
-        'midaxillary',
-        'calf',
+        'bicep',
         'tricep',
+        'subscapular',
         'suprailiac',
+        'lowerBack',
+        'calf',
       ],
       caliperMeasurements
     )

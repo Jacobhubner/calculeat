@@ -142,15 +142,15 @@ export const methodInformation: Record<string, MethodInfo> = {
     description:
       'Omfattande metod som använder nio hudfålsmätningar. Populär bland bodybuilders och fitnessentusiaster.',
     requiredMeasurements: [
-      'Bröst',
+      'Bröst (pectoral)',
+      'Buk (abdominal)',
+      'Lår (thigh)',
       'Biceps',
-      'Lår',
-      'Subscapular',
-      'Nedre rygg',
-      'Midaxillary',
-      'Vad',
       'Triceps',
+      'Subscapular',
       'Suprailiac',
+      'Nedre rygg (lower back)',
+      'Vad (calf)',
     ],
     notes:
       'Returnerar kroppsfett% direkt. Formel: (summa av alla mätningar) × 27 ÷ kroppsvikt i pounds = kroppsfett%',
