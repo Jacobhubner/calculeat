@@ -355,11 +355,17 @@ export default function BodyCompositionPage() {
   }, [activeMeasurementSet])
 
   const handleCaliperChange = (field: keyof CaliperMeasurements, value: number | undefined) => {
+    // Update workflow 1
     setCaliperMeasurements(prev => ({ ...prev, [field]: value }))
+    // Also update workflow 2 to keep them in sync
+    setAllCaliperMeasurements(prev => ({ ...prev, [field]: value }))
   }
 
   const handleTapeChange = (field: keyof TapeMeasurements, value: number | undefined) => {
+    // Update workflow 1
     setTapeMeasurements(prev => ({ ...prev, [field]: value }))
+    // Also update workflow 2 to keep them in sync
+    setAllTapeMeasurements(prev => ({ ...prev, [field]: value }))
   }
 
   const handleSaveToProfile = async () => {
@@ -815,12 +821,18 @@ export default function BodyCompositionPage() {
                 <AllMeasurementsForm
                   caliperMeasurements={allCaliperMeasurements}
                   tapeMeasurements={allTapeMeasurements}
-                  onCaliperChange={(field, value) =>
+                  onCaliperChange={(field, value) => {
+                    // Update workflow 2
                     setAllCaliperMeasurements(prev => ({ ...prev, [field]: value }))
-                  }
-                  onTapeChange={(field, value) =>
+                    // Also update workflow 1 to keep them in sync
+                    setCaliperMeasurements(prev => ({ ...prev, [field]: value }))
+                  }}
+                  onTapeChange={(field, value) => {
+                    // Update workflow 2
                     setAllTapeMeasurements(prev => ({ ...prev, [field]: value }))
-                  }
+                    // Also update workflow 1 to keep them in sync
+                    setTapeMeasurements(prev => ({ ...prev, [field]: value }))
+                  }}
                 />
 
                 {/* Density Conversion Selector - Only show if there are density-based methods */}
