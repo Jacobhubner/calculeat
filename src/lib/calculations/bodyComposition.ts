@@ -189,8 +189,8 @@ export function jacksonPollock3Female(
 
     const { tricep, suprailiac, thigh } = caliperMeasurements
     const sum = tricep + suprailiac + thigh
-    const hipsM = tapeMeasurements.hip * 0.01 // cm to meters
-    const bodyDensity = 1.1466399 - 0.00093 * sum + 0.0000028 * sum * sum - 0.0006171 * hipsM
+    const hipsCm = tapeMeasurements.hip // Keep in cm as per formula
+    const bodyDensity = 1.1466399 - 0.00093 * sum + 0.0000028 * sum * sum - 0.0006171 * hipsCm
     return bodyDensity
   } else if (variation === 'S, S², ålder, C') {
     // With age and circumference: triceps, suprailiac, thigh + hips
@@ -205,9 +205,9 @@ export function jacksonPollock3Female(
 
     const { tricep, suprailiac, thigh } = caliperMeasurements
     const sum = tricep + suprailiac + thigh
-    const hipsM = tapeMeasurements.hip * 0.01 // cm to meters
+    const hipsCm = tapeMeasurements.hip // Keep in cm as per formula
     const bodyDensity =
-      1.1470292 - 0.0009376 * sum + 0.000003 * sum * sum - 0.0001156 * age - 0.0005839 * hipsM
+      1.1470292 - 0.0009376 * sum + 0.000003 * sum * sum - 0.0001156 * age - 0.0005839 * hipsCm
     return bodyDensity
   } else if (variation === 'Kläder på') {
     // Clothed variation: triceps, suprailiac, abdominal
@@ -272,8 +272,8 @@ export function jacksonPollock4(
       return null
     }
 
-    const hipsM = tapeMeasurements.hip * 0.01 // cm to meters
-    const bodyDensity = 1.1443913 - 0.0006523 * sum + 0.0000014 * sum * sum - 0.0006053 * hipsM
+    const hipsCm = tapeMeasurements.hip // Keep in cm as per formula
+    const bodyDensity = 1.1443913 - 0.0006523 * sum + 0.0000014 * sum * sum - 0.0006053 * hipsCm
     return bodyDensity
   } else if (variation === 'S, S², ålder, C') {
     // With age and circumference (FEMALE ONLY)
@@ -281,9 +281,9 @@ export function jacksonPollock4(
       return null
     }
 
-    const hipsM = tapeMeasurements.hip * 0.01 // cm to meters
+    const hipsCm = tapeMeasurements.hip // Keep in cm as per formula
     const bodyDensity =
-      1.1454464 - 0.0006558 * sum + 0.0000015 * sum * sum - 0.0000604 * age - 0.0005981 * hipsM
+      1.1454464 - 0.0006558 * sum + 0.0000015 * sum * sum - 0.0000604 * age - 0.0005981 * hipsCm
     return bodyDensity
   } else if (variation === 'S, S²') {
     // Direct formula - returns %BF DIRECTLY (not density!)
@@ -304,9 +304,9 @@ export function jacksonPollock4(
  * Google Sheets variations:
  * 1. "S, S², ålder": Male: 1.112 - 0.00043499×sum + 0.00000055×sum² - 0.00028826×age
  *                    Female: 1.097 - 0.00046971×sum + 0.00000056×sum² - 0.00012828×age
- * 2. "S, S², C" (FEMALE ONLY): 1.147 - 0.00042359×sum + 0.00000061×sum² - 0.000652×hips_m
+ * 2. "S, S², C" (FEMALE ONLY): 1.147 - 0.00042359×sum + 0.00000061×sum² - 0.000652×hips_cm
  * 3. "S, S², ålder, C": Male: 1.101 - 0.0004115×sum + 0.00000069×sum² - 0.00022631×age - 0.0059239×waist_m + 0.0190632×forearm_m
- *                       Female: 1.147 - 0.0004293×sum + 0.00000065×sum² - 0.00009975×age - 0.00062415×hips_m
+ *                       Female: 1.147 - 0.0004293×sum + 0.00000065×sum² - 0.00009975×age - 0.00062415×hips_cm
  */
 export function jacksonPollock7(
   params: BodyCompositionParams,
@@ -345,8 +345,8 @@ export function jacksonPollock7(
       return null
     }
 
-    const hipsM = tapeMeasurements.hip * 0.01 // cm to meters
-    const bodyDensity = 1.147 - 0.00042359 * sum + 0.00000061 * sum * sum - 0.000652 * hipsM
+    const hipsCm = tapeMeasurements.hip // Keep in cm as per formula
+    const bodyDensity = 1.147 - 0.00042359 * sum + 0.00000061 * sum * sum - 0.000652 * hipsCm
     return bodyDensity
   } else if (variation === 'S, S², ålder, C') {
     // With age and circumference (different for male/female)
@@ -370,9 +370,9 @@ export function jacksonPollock7(
         return null
       }
 
-      const hipsM = tapeMeasurements.hip * 0.01 // cm to meters
+      const hipsCm = tapeMeasurements.hip // Keep in cm as per formula
       const bodyDensity =
-        1.147 - 0.0004293 * sum + 0.00000065 * sum * sum - 0.00009975 * age - 0.00062415 * hipsM
+        1.147 - 0.0004293 * sum + 0.00000065 * sum * sum - 0.00009975 * age - 0.00062415 * hipsCm
       return bodyDensity
     }
   }
@@ -621,9 +621,9 @@ export function modifiedYmca(params: BodyCompositionParams): number | null {
 
     return (
       ((0.268 * weightLbs -
-        0.318 * hipInches +
+        0.318 * wristInches +
         0.157 * waistInches +
-        0.245 * wristInches -
+        0.245 * hipInches -
         0.434 * forearmInches -
         8.987) /
         weightLbs) *
