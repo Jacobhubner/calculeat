@@ -12,6 +12,10 @@ interface CaliperMeasurementsSectionProps {
   onChange: (field: keyof CaliperMeasurements, value: number | undefined) => void
 }
 
+// Validation range for caliper measurements (mm)
+const CALIPER_MIN = 0
+const CALIPER_MAX = 100
+
 export default function CaliperMeasurementsSection({
   measurements,
   requiredFields = [],
@@ -21,6 +25,18 @@ export default function CaliperMeasurementsSection({
   const handleChange = (field: keyof CaliperMeasurements, value: string) => {
     const numValue = value === '' ? undefined : parseFloat(value)
     onChange(field, numValue)
+  }
+
+  // Check if a value is outside the valid range
+  const isInvalid = (field: keyof CaliperMeasurements) => {
+    const value = measurements[field]
+    if (value === undefined || value === null) return false
+    return value < CALIPER_MIN || value > CALIPER_MAX
+  }
+
+  // Get validation error message
+  const getErrorMessage = () => {
+    return `Måste vara mellan ${CALIPER_MIN} och ${CALIPER_MAX} mm`
   }
 
   // All possible caliper fields
@@ -55,6 +71,7 @@ export default function CaliperMeasurementsSection({
         <div className="grid gap-4 sm:grid-cols-2">
           {fieldsToShow.map(field => {
             const isRequired = requiredFields.includes(field as string)
+            const invalid = isInvalid(field)
             return (
               <div key={field} className="space-y-2">
                 <Label htmlFor={`caliper-${field}`}>
@@ -64,14 +81,17 @@ export default function CaliperMeasurementsSection({
                 <Input
                   id={`caliper-${field}`}
                   type="number"
-                  min="1"
-                  max="100"
+                  min={CALIPER_MIN}
+                  max={CALIPER_MAX}
                   step="0.5"
                   value={measurements[field] ?? ''}
                   onChange={e => handleChange(field, e.target.value)}
                   placeholder="0.0"
-                  className="rounded-xl"
+                  className={
+                    invalid ? 'rounded-xl border-red-500 focus-visible:ring-red-500' : 'rounded-xl'
+                  }
                 />
+                {invalid && <p className="text-sm text-red-500">{getErrorMessage()}</p>}
               </div>
             )
           })}

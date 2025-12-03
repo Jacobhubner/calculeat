@@ -34,6 +34,24 @@ export default function TapeMeasurementsSection({
     onChange(field, numValue)
   }
 
+  // Check if a value is outside the valid range
+  const isInvalid = (field: keyof TapeMeasurements) => {
+    const value = measurements[field]
+    if (value === undefined || value === null) return false
+
+    const range = measurementRanges[field as string]
+    if (!range) return false
+
+    return value < range.min || value > range.max
+  }
+
+  // Get validation error message
+  const getErrorMessage = (field: keyof TapeMeasurements) => {
+    const range = measurementRanges[field as string]
+    if (!range) return ''
+    return `Måste vara mellan ${range.min} och ${range.max} cm`
+  }
+
   // All possible tape fields
   const allFields: Array<keyof TapeMeasurements> = [
     'neck',
@@ -64,6 +82,7 @@ export default function TapeMeasurementsSection({
           {fieldsToShow.map(field => {
             const range = measurementRanges[field as string]
             const isRequired = requiredFields.includes(field as string)
+            const invalid = isInvalid(field)
             return (
               <div key={field} className="space-y-2">
                 <Label htmlFor={`tape-${field}`}>
@@ -79,8 +98,11 @@ export default function TapeMeasurementsSection({
                   value={measurements[field] ?? ''}
                   onChange={e => handleChange(field, e.target.value)}
                   placeholder="0.0"
-                  className="rounded-xl"
+                  className={
+                    invalid ? 'rounded-xl border-red-500 focus-visible:ring-red-500' : 'rounded-xl'
+                  }
                 />
+                {invalid && <p className="text-sm text-red-500">{getErrorMessage(field)}</p>}
               </div>
             )
           })}
