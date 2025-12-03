@@ -1174,13 +1174,12 @@ export default function UserProfileForm({
               )}
             </label>
             <input
-              type="number"
+              type="text"
+              inputMode="decimal"
               value={bodyFatPercentage}
               onChange={e => setBodyFatPercentage(e.target.value)}
               className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
               placeholder="15"
-              min="0"
-              max="100"
             />
           </div>
 
