@@ -412,38 +412,73 @@ export default function BodyCompositionPage() {
   }
 
   // Handler for creating new measurement set
-  const handleCreateNewMeasurement = () => {
-    // Check for unsaved changes
-    if (hasUnsavedMeasurements) {
+  const handleCreateNewMeasurement = (preserveCurrentMeasurements = false) => {
+    // Check for unsaved changes (only if we're not auto-creating the first card)
+    if (hasUnsavedMeasurements && !preserveCurrentMeasurements) {
       const confirmed = window.confirm(
         'Du har osparade ändringar. Vill du fortsätta? Ändringar kommer att förloras.'
       )
       if (!confirmed) return
     }
 
-    // Create new local unsaved set
+    // If preserving measurements, use current values; otherwise use undefined
     const newSet = {
       id: `temp-${Date.now()}`,
       user_id: profile?.id || '',
       set_date: new Date().toISOString().split('T')[0],
       created_at: new Date().toISOString(),
-      chest: undefined,
-      abdominal: undefined,
-      thigh: undefined,
-      tricep: undefined,
-      subscapular: undefined,
-      suprailiac: undefined,
-      midaxillary: undefined,
-      bicep: undefined,
-      lower_back: undefined,
-      calf: undefined,
-      neck: undefined,
-      waist: undefined,
-      hip: undefined,
-      wrist: undefined,
-      forearm: undefined,
-      thigh_circ: undefined,
-      calf_circ: undefined,
+      // Copy current measurements if preserving, otherwise undefined
+      chest: preserveCurrentMeasurements
+        ? (caliperMeasurements.chest ?? allCaliperMeasurements.chest)
+        : undefined,
+      abdominal: preserveCurrentMeasurements
+        ? (caliperMeasurements.abdominal ?? allCaliperMeasurements.abdominal)
+        : undefined,
+      thigh: preserveCurrentMeasurements
+        ? (caliperMeasurements.thigh ?? allCaliperMeasurements.thigh)
+        : undefined,
+      tricep: preserveCurrentMeasurements
+        ? (caliperMeasurements.tricep ?? allCaliperMeasurements.tricep)
+        : undefined,
+      subscapular: preserveCurrentMeasurements
+        ? (caliperMeasurements.subscapular ?? allCaliperMeasurements.subscapular)
+        : undefined,
+      suprailiac: preserveCurrentMeasurements
+        ? (caliperMeasurements.suprailiac ?? allCaliperMeasurements.suprailiac)
+        : undefined,
+      midaxillary: preserveCurrentMeasurements
+        ? (caliperMeasurements.midaxillary ?? allCaliperMeasurements.midaxillary)
+        : undefined,
+      bicep: preserveCurrentMeasurements
+        ? (caliperMeasurements.bicep ?? allCaliperMeasurements.bicep)
+        : undefined,
+      lower_back: preserveCurrentMeasurements
+        ? (caliperMeasurements.lowerBack ?? allCaliperMeasurements.lowerBack)
+        : undefined,
+      calf: preserveCurrentMeasurements
+        ? (caliperMeasurements.calf ?? allCaliperMeasurements.calf)
+        : undefined,
+      neck: preserveCurrentMeasurements
+        ? (tapeMeasurements.neck ?? allTapeMeasurements.neck)
+        : undefined,
+      waist: preserveCurrentMeasurements
+        ? (tapeMeasurements.waist ?? allTapeMeasurements.waist)
+        : undefined,
+      hip: preserveCurrentMeasurements
+        ? (tapeMeasurements.hip ?? allTapeMeasurements.hip)
+        : undefined,
+      wrist: preserveCurrentMeasurements
+        ? (tapeMeasurements.wrist ?? allTapeMeasurements.wrist)
+        : undefined,
+      forearm: preserveCurrentMeasurements
+        ? (tapeMeasurements.forearm ?? allTapeMeasurements.forearm)
+        : undefined,
+      thigh_circ: preserveCurrentMeasurements
+        ? (tapeMeasurements.thighCirc ?? allTapeMeasurements.thighCirc)
+        : undefined,
+      calf_circ: preserveCurrentMeasurements
+        ? (tapeMeasurements.calfCirc ?? allTapeMeasurements.calfCirc)
+        : undefined,
     }
 
     addUnsavedMeasurementSet(newSet)
@@ -538,7 +573,8 @@ export default function BodyCompositionPage() {
       !activeMeasurementSet &&
       (hasWorkflow1Measurements || hasWorkflow2Measurements)
     ) {
-      handleCreateNewMeasurement()
+      // Pass true to preserve current measurements when auto-creating
+      handleCreateNewMeasurement(true)
     }
   }, [
     caliperMeasurements,
