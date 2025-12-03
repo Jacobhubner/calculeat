@@ -24,7 +24,7 @@ export type MethodVariation =
   | 'S, S², C'
   | 'S, S², ålder, C'
   | 'Kläder på'
-  | 'Okänt ursprung'
+  | 'S, S²'
 
 export interface CaliperMeasurements {
   chest?: number // mm - B53 Bröst (pectoral)
@@ -235,7 +235,7 @@ export function jacksonPollock3Female(
  * 1. "S, S², ålder": 1.096095 - 0.0006952×sum + 0.0000011×sum² - 0.0000714×age (FEMALE ONLY)
  * 2. "S, S², C": 1.1443913 - 0.0006523×sum + 0.0000014×sum² - 0.0006053×hips_m (FEMALE ONLY)
  * 3. "S, S², ålder, C": 1.1454464 - 0.0006558×sum + 0.0000015×sum² - 0.0000604×age - 0.0005981×hips_m (FEMALE ONLY)
- * 4. "Okänt ursprung": Returns %BF DIRECTLY (not density!) - Available for BOTH genders:
+ * 4. "S, S²": Returns %BF DIRECTLY (not density!) - Available for BOTH genders:
  *    Male: 0.29288×sum - 0.0005×sum² + 0.15845×age - 5.76377
  *    Female: 0.29669×sum - 0.00043×sum² + 0.02963×age + 1.4072
  */
@@ -258,7 +258,7 @@ export function jacksonPollock4(
   const sum = tricep + suprailiac + abdominal + thigh
 
   // Density-based variations are FEMALE ONLY
-  if (variation !== 'Okänt ursprung' && gender !== 'female') {
+  if (variation !== 'S, S²' && gender !== 'female') {
     return null
   }
 
@@ -285,8 +285,8 @@ export function jacksonPollock4(
     const bodyDensity =
       1.1454464 - 0.0006558 * sum + 0.0000015 * sum * sum - 0.0000604 * age - 0.0005981 * hipsM
     return bodyDensity
-  } else if (variation === 'Okänt ursprung') {
-    // Unknown origin - returns %BF DIRECTLY (not density!)
+  } else if (variation === 'S, S²') {
+    // Direct formula - returns %BF DIRECTLY (not density!)
     // Available for BOTH genders
     if (gender === 'male') {
       return 0.29288 * sum - 0.0005 * sum * sum + 0.15845 * age - 5.76377

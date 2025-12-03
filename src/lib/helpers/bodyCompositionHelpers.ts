@@ -125,14 +125,14 @@ export function getRequiredFields(
 
 /**
  * Check if a method is density-based (requires Siri/Brozek conversion)
- * Note: JP4 "Okänt ursprung" variation returns %BF directly
+ * Note: JP4 variation without name returns %BF directly
  */
 export function isDensityBasedMethod(
   method: BodyCompositionMethod,
   variation?: MethodVariation
 ): boolean {
-  // JP4 "Okänt ursprung" returns %BF directly, not density
-  if (method === 'Jackson/Pollock 4 Caliper Method' && variation === 'Okänt ursprung') {
+  // JP4 variation returns %BF directly, not density
+  if (method === 'Jackson/Pollock 4 Caliper Method' && variation === 'S, S²') {
     return false
   }
 
@@ -161,11 +161,11 @@ export function getMethodVariations(
       return ['S, S², ålder', 'S, S², C', 'S, S², ålder, C', 'Kläder på']
 
     case 'Jackson/Pollock 4 Caliper Method':
-      // JP4 density-based variations are female only, but "Okänt ursprung" is available for both genders
+      // JP4 density-based variations are female only, but S,S² variation is available for both genders
       if (gender === 'female') {
-        return ['S, S², ålder', 'S, S², C', 'S, S², ålder, C', 'Okänt ursprung']
+        return ['S, S², ålder', 'S, S², C', 'S, S², ålder, C', 'S, S²']
       } else if (gender === 'male') {
-        return ['Okänt ursprung']
+        return ['S, S²']
       }
       return []
 
@@ -251,15 +251,15 @@ export function getCalculableMethods(params: {
     if (gender === 'female') {
       // Females: all variations available
       results.push({ method: 'Jackson/Pollock 4 Caliper Method', variation: 'S, S², ålder' })
-      results.push({ method: 'Jackson/Pollock 4 Caliper Method', variation: 'Okänt ursprung' })
+      results.push({ method: 'Jackson/Pollock 4 Caliper Method', variation: 'S, S²' })
 
       if (hasFields(['hip'], tapeMeasurements)) {
         results.push({ method: 'Jackson/Pollock 4 Caliper Method', variation: 'S, S², C' })
         results.push({ method: 'Jackson/Pollock 4 Caliper Method', variation: 'S, S², ålder, C' })
       }
     } else if (gender === 'male') {
-      // Males: only "Okänt ursprung" variation available
-      results.push({ method: 'Jackson/Pollock 4 Caliper Method', variation: 'Okänt ursprung' })
+      // Males: only S,S² variation available
+      results.push({ method: 'Jackson/Pollock 4 Caliper Method', variation: 'S, S²' })
     }
   }
 

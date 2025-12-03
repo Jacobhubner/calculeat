@@ -75,7 +75,7 @@ export const methodInformation: Record<string, MethodInfo> = {
       'Använder fyra hudfålsmätningar. Finns både densitetsbaserade varianter (endast kvinnor) och en direktformel (båda könen).',
     requiredMeasurements: ['Triceps', 'Suprailiac', 'Buk (abdominal)', 'Lår (thigh)'],
     notes:
-      'Densitetsbaserade varianter (S,S²,ålder | S,S²,C | S,S²,ålder,C) är endast för kvinnor. "Okänt ursprung" är tillgänglig för både män och kvinnor.',
+      'Densitetsbaserade varianter (S,S²,ålder | S,S²,C | S,S²,ålder,C) är endast för kvinnor. S,S² varianten är tillgänglig för både män och kvinnor.',
     genderSpecific: 'both',
   },
   'jp4-density-female': {
@@ -96,10 +96,10 @@ export const methodInformation: Record<string, MethodInfo> = {
     genderSpecific: 'female',
     returnsDensity: true,
   },
-  'jp4-unknown': {
-    title: 'Jackson/Pollock 4-punkts - Okänt ursprung',
+  'jp4-direct': {
+    title: 'Jackson/Pollock 4-punkts kaliper',
     description:
-      'Returnerar kroppsfett% direkt (inte densitet). Tillgänglig för både män och kvinnor. Ursprung okänt.',
+      'Returnerar kroppsfett% direkt (inte densitet). Tillgänglig för både män och kvinnor.',
     formula:
       'Man: 0.29288×sum - 0.0005×sum² + 0.15845×ålder - 5.76377\n' +
       'Kvinna: 0.29669×sum - 0.00043×sum² + 0.02963×ålder + 1.4072',
@@ -236,8 +236,8 @@ export function getMethodInfo(
 
   // JP4 variations
   if (method === 'Jackson/Pollock 4 Caliper Method') {
-    if (variation === 'Okänt ursprung') {
-      return methodInformation['jp4-unknown']
+    if (variation === 'S, S²') {
+      return methodInformation['jp4-direct']
     }
     // Densitetsbaserade varianter (endast kvinnor)
     return methodInformation['jp4-density-female']
