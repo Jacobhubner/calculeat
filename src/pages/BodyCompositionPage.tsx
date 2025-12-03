@@ -550,7 +550,18 @@ export default function BodyCompositionPage() {
       return false
     }
 
-    // Compare with saved set (use either workflow 1 or workflow 2 measurements)
+    // For unsaved (temp) cards, show save icon if ANY measurements exist
+    if (activeMeasurementSet.id.startsWith('temp-')) {
+      const hasWorkflow1 =
+        Object.values(caliperMeasurements).some(v => v !== undefined) ||
+        Object.values(tapeMeasurements).some(v => v !== undefined)
+      const hasWorkflow2 =
+        Object.values(allCaliperMeasurements).some(v => v !== undefined) ||
+        Object.values(allTapeMeasurements).some(v => v !== undefined)
+      return hasWorkflow1 || hasWorkflow2
+    }
+
+    // For saved sets, compare with saved values
     const currentCaliper =
       activeWorkflow === 'method-first' ? caliperMeasurements : allCaliperMeasurements
     const currentTape = activeWorkflow === 'method-first' ? tapeMeasurements : allTapeMeasurements
