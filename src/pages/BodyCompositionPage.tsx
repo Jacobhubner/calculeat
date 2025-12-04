@@ -25,7 +25,7 @@ import {
   getRequiredFields,
   isDensityBasedMethod,
   getMethodVariations,
-  getCalculableMethods,
+  getAllMethodsWithAvailability,
   type MethodComparisonResult,
 } from '@/lib/helpers/bodyCompositionHelpers'
 import {
@@ -227,14 +227,14 @@ export default function BodyCompositionPage() {
     }
   }, [bodyFatPercentage, profile])
 
-  // Workflow 2: Calculate all available methods when measurements change
+  // Workflow 2: Calculate all methods (both available and unavailable) when measurements change
   useEffect(() => {
     if (activeWorkflow === 'measurements-first' && profile) {
       const age = calculateAge(profile.birth_date)
       const bmi = calculateBMI(profile.weight_kg, profile.height_cm)
 
-      // Get all calculable methods
-      const methods = getCalculableMethods({
+      // Get ALL methods with availability status
+      const allMethods = getAllMethodsWithAvailability({
         gender: profile.gender,
         age,
         weight: profile.weight_kg,
@@ -245,57 +245,71 @@ export default function BodyCompositionPage() {
         tapeMeasurements: allTapeMeasurements,
       })
 
-      // Calculate results for each method
-      const results: MethodComparisonResult[] = methods.map(({ method, variation }) => {
-        const params: BodyCompositionParams = {
-          age,
-          gender: profile.gender,
-          weight: profile.weight_kg,
-          height: profile.height_cm,
-          bmi,
-          caliperMeasurements: allCaliperMeasurements,
-          tapeMeasurements: allTapeMeasurements,
-          bmr: profile.bmr,
-        }
+      // Calculate results for each method (both available and unavailable)
+      const results: MethodComparisonResult[] = allMethods.map(
+        ({ method, variation, isAvailable, missingFields }) => {
+          // Default values for unavailable methods
+          let bodyFatPercentage = 0
+          let bodyDensity: number | undefined = undefined
+          let category = { category: 'N/A', color: 'neutral' }
+          let leanBodyMass = 0
+          let fatMass = 0
 
-        // Calculate body fat using the method
-        const result = calculateBodyFat(method, params, variation)
+          // Only calculate if method is available (has all required measurements)
+          if (isAvailable) {
+            const params: BodyCompositionParams = {
+              age,
+              gender: profile.gender,
+              weight: profile.weight_kg,
+              height: profile.height_cm,
+              bmi,
+              caliperMeasurements: allCaliperMeasurements,
+              tapeMeasurements: allTapeMeasurements,
+              bmr: profile.bmr,
+            }
 
-        let bodyFatPercentage = 0
-        let bodyDensity: number | undefined = undefined
-        if (result !== null) {
-          // For density-based methods, convert to body fat %
-          if (isDensityBasedMethod(method, variation)) {
-            bodyDensity = result as number
-            bodyFatPercentage =
-              conversionMethod2 === 'siri' ? siriEquation(bodyDensity) : brozekEquation(bodyDensity)
-          } else {
-            bodyFatPercentage = result
+            // Calculate body fat using the method
+            const result = calculateBodyFat(method, params, variation)
+
+            if (result !== null) {
+              // For density-based methods, convert to body fat %
+              if (isDensityBasedMethod(method, variation)) {
+                bodyDensity = result as number
+                bodyFatPercentage =
+                  conversionMethod2 === 'siri'
+                    ? siriEquation(bodyDensity)
+                    : brozekEquation(bodyDensity)
+              } else {
+                bodyFatPercentage = result
+              }
+
+              // Get category
+              category = getBodyFatCategory({
+                bodyFatPercentage,
+                age,
+                gender: profile.gender,
+              })
+
+              // Calculate lean body mass and fat mass
+              leanBodyMass = profile.weight_kg * (1 - bodyFatPercentage / 100)
+              fatMass = profile.weight_kg * (bodyFatPercentage / 100)
+            }
+          }
+
+          return {
+            method,
+            variation,
+            bodyDensity,
+            bodyFatPercentage,
+            category: category.category,
+            categoryColor: category.color,
+            leanBodyMass,
+            fatMass,
+            isAvailable, // NEW: Mark if method is available
+            missingFields, // NEW: List of missing fields
           }
         }
-
-        // Get category
-        const category = getBodyFatCategory({
-          bodyFatPercentage,
-          age,
-          gender: profile.gender,
-        })
-
-        // Calculate lean body mass and fat mass
-        const leanBodyMass = profile.weight_kg * (1 - bodyFatPercentage / 100)
-        const fatMass = profile.weight_kg * (bodyFatPercentage / 100)
-
-        return {
-          method,
-          variation,
-          bodyDensity,
-          bodyFatPercentage,
-          category: category.category,
-          categoryColor: category.color,
-          leanBodyMass,
-          fatMass,
-        }
-      })
+      )
 
       setComparisonResults(results)
     }

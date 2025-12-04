@@ -56,10 +56,9 @@ export default function MethodComparisonTable({
       <Card className="bg-neutral-50">
         <CardContent className="flex flex-col items-center justify-center py-12">
           <Calculator className="h-12 w-12 text-neutral-400 mb-4" />
-          <p className="text-lg font-medium text-neutral-700 mb-2">Inga beräkningsbara metoder</p>
+          <p className="text-lg font-medium text-neutral-700 mb-2">Laddar metoder...</p>
           <p className="text-sm text-neutral-500 text-center max-w-md">
-            Fyll i minst några mätningar för att se tillgängliga metoder. Försök börja med enkla
-            måttbandsmätningar som midja och höft.
+            Vänligen vänta medan alla beräkningsmetoder laddas.
           </p>
         </CardContent>
       </Card>
@@ -75,8 +74,10 @@ export default function MethodComparisonTable({
             Jämförelse av alla metoder
           </CardTitle>
           <CardDescription>
-            {results.length} {results.length === 1 ? 'metod' : 'metoder'} kan beräknas baserat på
-            dina mätningar. Klicka på kolumnrubriker för att sortera.
+            {results.length} {results.length === 1 ? 'metod' : 'metoder'} visas nedan.{' '}
+            {results.filter(r => r.isAvailable).length} av dessa kan beräknas baserat på dina
+            mätningar. Fyll i fler mätningar för att aktivera fler metoder. Klicka på kolumnrubriker
+            för att sortera.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -147,118 +148,177 @@ export default function MethodComparisonTable({
                 </tr>
               </thead>
               <tbody>
-                {sortedResults.map((result, index) => (
-                  <tr
-                    key={`${result.method}-${result.variation || 'default'}-${index}`}
-                    className="border-b border-neutral-100 hover:bg-neutral-50 transition-colors"
-                  >
-                    <td className="py-3 px-4 text-sm text-neutral-700">
-                      <div className="flex items-center gap-2">
-                        <span>{formatMethodName(result.method, result.variation)}</span>
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setShowInfoFor({ method: result.method, variation: result.variation })
-                          }
-                          className="text-primary-600 hover:text-primary-700 transition-colors"
-                          title="Visa information om metoden"
-                        >
-                          <Info className="h-3.5 w-3.5" />
-                        </button>
-                      </div>
-                    </td>
-                    <td className="py-3 px-4 text-right text-sm text-neutral-700">
-                      {result.bodyDensity ? result.bodyDensity.toFixed(4) : '-'}
-                    </td>
-                    <td className="py-3 px-4 text-right text-sm font-medium text-neutral-900">
-                      {result.bodyFatPercentage.toFixed(1)}%
-                    </td>
-                    <td className="py-3 px-4">
-                      <span
-                        className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${getCategoryGradient(result.categoryColor)}`}
-                      >
-                        {result.category}
-                      </span>
-                    </td>
-                    <td className="py-3 px-4 text-right text-sm text-neutral-700">
-                      {result.leanBodyMass.toFixed(1)} kg
-                    </td>
-                    <td className="py-3 px-4 text-right text-sm text-neutral-700">
-                      {result.fatMass.toFixed(1)} kg
-                    </td>
-                    {onSaveResult && (
-                      <td className="py-3 px-4 text-center">
-                        <Button
-                          onClick={() => onSaveResult(result)}
-                          disabled={isSaving}
-                          size="sm"
-                          variant="outline"
-                          className="gap-1"
-                        >
-                          <Save className="h-3 w-3" />
-                          Spara
-                        </Button>
+                {sortedResults.map((result, index) => {
+                  const isUnavailable = result.isAvailable === false
+                  const rowClass = isUnavailable
+                    ? 'border-b border-neutral-100 bg-neutral-100 opacity-60'
+                    : 'border-b border-neutral-100 hover:bg-neutral-50 transition-colors'
+                  const textClass = isUnavailable ? 'text-neutral-400' : 'text-neutral-700'
+
+                  return (
+                    <tr
+                      key={`${result.method}-${result.variation || 'default'}-${index}`}
+                      className={rowClass}
+                    >
+                      <td className="py-3 px-4 text-sm">
+                        <div className="flex items-center gap-2">
+                          <span className={textClass}>
+                            {formatMethodName(result.method, result.variation)}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setShowInfoFor({ method: result.method, variation: result.variation })
+                            }
+                            className="text-primary-600 hover:text-primary-700 transition-colors"
+                            title="Visa information om metoden"
+                          >
+                            <Info className="h-3.5 w-3.5" />
+                          </button>
+                          {isUnavailable &&
+                            result.missingFields &&
+                            result.missingFields.length > 0 && (
+                              <span
+                                className="text-xs text-neutral-500 italic"
+                                title={`Saknade fält: ${result.missingFields.join(', ')}`}
+                              >
+                                (Saknas: {result.missingFields.join(', ')})
+                              </span>
+                            )}
+                        </div>
                       </td>
-                    )}
-                  </tr>
-                ))}
+                      <td className={`py-3 px-4 text-right text-sm ${textClass}`}>
+                        {isUnavailable
+                          ? '-'
+                          : result.bodyDensity
+                            ? result.bodyDensity.toFixed(4)
+                            : '-'}
+                      </td>
+                      <td
+                        className={`py-3 px-4 text-right text-sm font-medium ${isUnavailable ? textClass : 'text-neutral-900'}`}
+                      >
+                        {isUnavailable ? '-' : `${result.bodyFatPercentage.toFixed(1)}%`}
+                      </td>
+                      <td className="py-3 px-4">
+                        {isUnavailable ? (
+                          <span className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-neutral-200 text-neutral-400">
+                            -
+                          </span>
+                        ) : (
+                          <span
+                            className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${getCategoryGradient(result.categoryColor)}`}
+                          >
+                            {result.category}
+                          </span>
+                        )}
+                      </td>
+                      <td className={`py-3 px-4 text-right text-sm ${textClass}`}>
+                        {isUnavailable ? '-' : `${result.leanBodyMass.toFixed(1)} kg`}
+                      </td>
+                      <td className={`py-3 px-4 text-right text-sm ${textClass}`}>
+                        {isUnavailable ? '-' : `${result.fatMass.toFixed(1)} kg`}
+                      </td>
+                      {onSaveResult && (
+                        <td className="py-3 px-4 text-center">
+                          <Button
+                            onClick={() => onSaveResult(result)}
+                            disabled={isSaving || isUnavailable}
+                            size="sm"
+                            variant="outline"
+                            className="gap-1"
+                          >
+                            <Save className="h-3 w-3" />
+                            Spara
+                          </Button>
+                        </td>
+                      )}
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           </div>
 
           {/* Mobile Card View */}
           <div className="lg:hidden space-y-4">
-            {sortedResults.map((result, index) => (
-              <div
-                key={`${result.method}-${result.variation || 'default'}-${index}`}
-                className="border border-neutral-200 rounded-xl p-4 space-y-3"
-              >
-                <div className="font-medium text-neutral-900 text-sm">
-                  {formatMethodName(result.method, result.variation)}
-                </div>
-                <div className="grid grid-cols-2 gap-3 text-sm">
-                  {result.bodyDensity && (
-                    <div>
-                      <div className="text-neutral-500 text-xs mb-1">Densitet</div>
-                      <div className="text-neutral-700">{result.bodyDensity.toFixed(4)} g/cm³</div>
-                    </div>
-                  )}
-                  <div>
-                    <div className="text-neutral-500 text-xs mb-1">Kroppsfett %</div>
-                    <div className="font-medium text-neutral-900">
-                      {result.bodyFatPercentage.toFixed(1)}%
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-neutral-500 text-xs mb-1">Kategori</div>
-                    <span
-                      className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getCategoryGradient(result.categoryColor)}`}
-                    >
-                      {result.category}
-                    </span>
-                  </div>
-                  <div>
-                    <div className="text-neutral-500 text-xs mb-1">Fettfri Massa (FFM)</div>
-                    <div className="text-neutral-700">{result.leanBodyMass.toFixed(1)} kg</div>
-                  </div>
-                  <div>
-                    <div className="text-neutral-500 text-xs mb-1">Fettmassa</div>
-                    <div className="text-neutral-700">{result.fatMass.toFixed(1)} kg</div>
-                  </div>
-                </div>
-                {onSaveResult && (
-                  <Button
-                    onClick={() => onSaveResult(result)}
-                    disabled={isSaving}
-                    size="sm"
-                    className="w-full gap-2"
+            {sortedResults.map((result, index) => {
+              const isUnavailable = result.isAvailable === false
+              const cardClass = isUnavailable
+                ? 'border border-neutral-200 rounded-xl p-4 space-y-3 bg-neutral-100 opacity-60'
+                : 'border border-neutral-200 rounded-xl p-4 space-y-3'
+              const textClass = isUnavailable ? 'text-neutral-400' : 'text-neutral-700'
+
+              return (
+                <div
+                  key={`${result.method}-${result.variation || 'default'}-${index}`}
+                  className={cardClass}
+                >
+                  <div
+                    className={`font-medium text-sm ${isUnavailable ? 'text-neutral-400' : 'text-neutral-900'}`}
                   >
-                    <Save className="h-4 w-4" />
-                    Spara till profil
-                  </Button>
-                )}
-              </div>
-            ))}
+                    {formatMethodName(result.method, result.variation)}
+                    {isUnavailable && result.missingFields && result.missingFields.length > 0 && (
+                      <div className="text-xs text-neutral-500 italic mt-1">
+                        Saknas: {result.missingFields.join(', ')}
+                      </div>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    {!isUnavailable && result.bodyDensity && (
+                      <div>
+                        <div className="text-neutral-500 text-xs mb-1">Densitet</div>
+                        <div className={textClass}>{result.bodyDensity.toFixed(4)} g/cm³</div>
+                      </div>
+                    )}
+                    <div>
+                      <div className="text-neutral-500 text-xs mb-1">Kroppsfett %</div>
+                      <div
+                        className={`font-medium ${isUnavailable ? textClass : 'text-neutral-900'}`}
+                      >
+                        {isUnavailable ? '-' : `${result.bodyFatPercentage.toFixed(1)}%`}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-neutral-500 text-xs mb-1">Kategori</div>
+                      {isUnavailable ? (
+                        <span className="inline-block px-2 py-1 rounded-full text-xs font-medium bg-neutral-200 text-neutral-400">
+                          -
+                        </span>
+                      ) : (
+                        <span
+                          className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getCategoryGradient(result.categoryColor)}`}
+                        >
+                          {result.category}
+                        </span>
+                      )}
+                    </div>
+                    <div>
+                      <div className="text-neutral-500 text-xs mb-1">Fettfri Massa (FFM)</div>
+                      <div className={textClass}>
+                        {isUnavailable ? '-' : `${result.leanBodyMass.toFixed(1)} kg`}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-neutral-500 text-xs mb-1">Fettmassa</div>
+                      <div className={textClass}>
+                        {isUnavailable ? '-' : `${result.fatMass.toFixed(1)} kg`}
+                      </div>
+                    </div>
+                  </div>
+                  {onSaveResult && (
+                    <Button
+                      onClick={() => onSaveResult(result)}
+                      disabled={isSaving || isUnavailable}
+                      size="sm"
+                      className="w-full gap-2"
+                    >
+                      <Save className="h-4 w-4" />
+                      Spara till profil
+                    </Button>
+                  )}
+                </div>
+              )
+            })}
           </div>
         </CardContent>
       </Card>

@@ -505,6 +505,339 @@ export interface MethodComparisonResult {
   categoryColor: string
   leanBodyMass: number
   fatMass: number
+  // NEW: Indicates if method is available (has all required measurements)
+  isAvailable?: boolean
+  // NEW: List of missing measurements (if not available)
+  missingFields?: string[]
+}
+
+/**
+ * Get ALL methods with availability status (for Workflow 2)
+ * Unlike getCalculableMethods, this returns ALL methods and marks which ones are available
+ */
+export function getAllMethodsWithAvailability(params: {
+  gender: Gender
+  age: number
+  weight: number
+  height: number
+  bmi?: number
+  bmr?: number
+  caliperMeasurements?: Record<string, number>
+  tapeMeasurements?: Record<string, number>
+}): Array<{
+  method: BodyCompositionMethod
+  variation?: MethodVariation
+  isAvailable: boolean
+  missingFields: string[]
+}> {
+  const { gender, caliperMeasurements, tapeMeasurements, bmi, bmr } = params
+  const results: Array<{
+    method: BodyCompositionMethod
+    variation?: MethodVariation
+    isAvailable: boolean
+    missingFields: string[]
+  }> = []
+
+  const getMissingFields = (
+    requiredFields: string[],
+    tapeFields: string[] | undefined,
+    measurements: Record<string, number> | undefined,
+    tapeMeasurements: Record<string, number> | undefined
+  ): string[] => {
+    const missing: string[] = []
+
+    // Check caliper/tape required fields
+    requiredFields.forEach(field => {
+      if (!measurements || measurements[field] === undefined || measurements[field] === null) {
+        missing.push(caliperLabels[field] || tapeLabels[field] || field)
+      }
+    })
+
+    // Check additional tape fields (for methods that need both caliper and tape)
+    if (tapeFields) {
+      tapeFields.forEach(field => {
+        if (
+          !tapeMeasurements ||
+          tapeMeasurements[field] === undefined ||
+          tapeMeasurements[field] === null
+        ) {
+          missing.push(tapeLabels[field] || field)
+        }
+      })
+    }
+
+    return missing
+  }
+
+  // Jackson/Pollock 3 Male
+  if (gender === 'male') {
+    const jp3MaleVariations: Array<{
+      variation: MethodVariation
+      requiredFields: string[]
+      tapeFields?: string[]
+    }> = [
+      { variation: 'S, S², ålder', requiredFields: ['chest', 'abdominal', 'thigh'] },
+      {
+        variation: 'S, S², ålder, C',
+        requiredFields: ['chest', 'abdominal', 'thigh'],
+        tapeFields: ['waist', 'forearm'],
+      },
+      { variation: 'Kläder på', requiredFields: ['chest', 'tricep', 'subscapular'] },
+    ]
+
+    jp3MaleVariations.forEach(({ variation, requiredFields, tapeFields }) => {
+      const missing = getMissingFields(
+        requiredFields,
+        tapeFields,
+        caliperMeasurements,
+        tapeMeasurements
+      )
+      results.push({
+        method: 'Jackson/Pollock 3 Caliper Method (Male)',
+        variation,
+        isAvailable: missing.length === 0,
+        missingFields: missing,
+      })
+    })
+  }
+
+  // Jackson/Pollock 3 Female
+  if (gender === 'female') {
+    const jp3FemaleVariations: Array<{
+      variation: MethodVariation
+      requiredFields: string[]
+      tapeFields?: string[]
+    }> = [
+      { variation: 'S, S², ålder', requiredFields: ['tricep', 'suprailiac', 'thigh'] },
+      {
+        variation: 'S, S², C',
+        requiredFields: ['tricep', 'suprailiac', 'thigh'],
+        tapeFields: ['hip'],
+      },
+      {
+        variation: 'S, S², ålder, C',
+        requiredFields: ['tricep', 'suprailiac', 'thigh'],
+        tapeFields: ['hip'],
+      },
+      { variation: 'Kläder på', requiredFields: ['tricep', 'suprailiac', 'abdominal'] },
+    ]
+
+    jp3FemaleVariations.forEach(({ variation, requiredFields, tapeFields }) => {
+      const missing = getMissingFields(
+        requiredFields,
+        tapeFields,
+        caliperMeasurements,
+        tapeMeasurements
+      )
+      results.push({
+        method: 'Jackson/Pollock 3 Caliper Method (Female)',
+        variation,
+        isAvailable: missing.length === 0,
+        missingFields: missing,
+      })
+    })
+  }
+
+  // Jackson/Pollock 4
+  const jp4RequiredFields = ['tricep', 'suprailiac', 'abdominal', 'thigh']
+  if (gender === 'female') {
+    const jp4FemaleVariations: Array<{
+      variation: MethodVariation
+      tapeFields?: string[]
+    }> = [
+      { variation: 'S, S², ålder' },
+      { variation: 'S, S²' },
+      { variation: 'S, S², C', tapeFields: ['hip'] },
+      { variation: 'S, S², ålder, C', tapeFields: ['hip'] },
+    ]
+
+    jp4FemaleVariations.forEach(({ variation, tapeFields }) => {
+      const missing = getMissingFields(
+        jp4RequiredFields,
+        tapeFields,
+        caliperMeasurements,
+        tapeMeasurements
+      )
+      results.push({
+        method: 'Jackson/Pollock 4 Caliper Method',
+        variation,
+        isAvailable: missing.length === 0,
+        missingFields: missing,
+      })
+    })
+  } else if (gender === 'male') {
+    const missing = getMissingFields(
+      jp4RequiredFields,
+      undefined,
+      caliperMeasurements,
+      tapeMeasurements
+    )
+    results.push({
+      method: 'Jackson/Pollock 4 Caliper Method',
+      variation: 'S, S²',
+      isAvailable: missing.length === 0,
+      missingFields: missing,
+    })
+  }
+
+  // Jackson/Pollock 7
+  const jp7RequiredFields = [
+    'chest',
+    'abdominal',
+    'thigh',
+    'tricep',
+    'subscapular',
+    'suprailiac',
+    'midaxillary',
+  ]
+  if (gender === 'female') {
+    const jp7FemaleVariations: Array<{
+      variation: MethodVariation
+      tapeFields?: string[]
+    }> = [
+      { variation: 'S, S², ålder' },
+      { variation: 'S, S², C', tapeFields: ['hip'] },
+      { variation: 'S, S², ålder, C', tapeFields: ['hip'] },
+    ]
+
+    jp7FemaleVariations.forEach(({ variation, tapeFields }) => {
+      const missing = getMissingFields(
+        jp7RequiredFields,
+        tapeFields,
+        caliperMeasurements,
+        tapeMeasurements
+      )
+      results.push({
+        method: 'Jackson/Pollock 7 Caliper Method',
+        variation,
+        isAvailable: missing.length === 0,
+        missingFields: missing,
+      })
+    })
+  } else if (gender === 'male') {
+    const jp7MaleVariations: Array<{
+      variation: MethodVariation
+      tapeFields?: string[]
+    }> = [
+      { variation: 'S, S², ålder' },
+      { variation: 'S, S², ålder, C', tapeFields: ['waist', 'forearm'] },
+    ]
+
+    jp7MaleVariations.forEach(({ variation, tapeFields }) => {
+      const missing = getMissingFields(
+        jp7RequiredFields,
+        tapeFields,
+        caliperMeasurements,
+        tapeMeasurements
+      )
+      results.push({
+        method: 'Jackson/Pollock 7 Caliper Method',
+        variation,
+        isAvailable: missing.length === 0,
+        missingFields: missing,
+      })
+    })
+  }
+
+  // Durnin/Womersley
+  const dwMissing = getMissingFields(
+    ['bicep', 'tricep', 'subscapular', 'suprailiac'],
+    undefined,
+    caliperMeasurements,
+    tapeMeasurements
+  )
+  results.push({
+    method: 'Durnin/Womersley Caliper Method',
+    isAvailable: dwMissing.length === 0,
+    missingFields: dwMissing,
+  })
+
+  // Parillo
+  const parilloMissing = getMissingFields(
+    [
+      'chest',
+      'abdominal',
+      'thigh',
+      'bicep',
+      'tricep',
+      'subscapular',
+      'suprailiac',
+      'lowerBack',
+      'calf',
+    ],
+    undefined,
+    caliperMeasurements,
+    tapeMeasurements
+  )
+  results.push({
+    method: 'Parillo Caliper Method',
+    isAvailable: parilloMissing.length === 0,
+    missingFields: parilloMissing,
+  })
+
+  // Covert Bailey
+  const covertRequiredFields =
+    gender === 'male'
+      ? ['waist', 'hip', 'forearm', 'wrist']
+      : ['hip', 'thighCirc', 'calfCirc', 'wrist']
+  const covertMissing = getMissingFields(
+    covertRequiredFields,
+    undefined,
+    tapeMeasurements,
+    undefined
+  )
+  results.push({
+    method: 'Covert Bailey Measuring Tape Method',
+    isAvailable: covertMissing.length === 0,
+    missingFields: covertMissing,
+  })
+
+  // U.S. Navy
+  const navyRequiredFields = gender === 'male' ? ['neck', 'waist'] : ['neck', 'waist', 'hip']
+  const navyMissing = getMissingFields(navyRequiredFields, undefined, tapeMeasurements, undefined)
+  results.push({
+    method: 'U.S. Navy Body Fat Formula',
+    isAvailable: navyMissing.length === 0,
+    missingFields: navyMissing,
+  })
+
+  // YMCA
+  const ymcaMissing = getMissingFields(['waist'], undefined, tapeMeasurements, undefined)
+  results.push({
+    method: 'YMCA Measuring Tape Method',
+    isAvailable: ymcaMissing.length === 0,
+    missingFields: ymcaMissing,
+  })
+
+  // Modified YMCA
+  const modYmcaRequiredFields = gender === 'male' ? ['waist'] : ['waist', 'hip', 'wrist', 'forearm']
+  const modYmcaMissing = getMissingFields(
+    modYmcaRequiredFields,
+    undefined,
+    tapeMeasurements,
+    undefined
+  )
+  results.push({
+    method: 'Modified YMCA Measuring Tape Method',
+    isAvailable: modYmcaMissing.length === 0,
+    missingFields: modYmcaMissing,
+  })
+
+  // Heritage BMI
+  results.push({
+    method: 'Heritage BMI to Body Fat Method',
+    isAvailable: !!bmi,
+    missingFields: bmi ? [] : ['BMI'],
+  })
+
+  // Reversed Cunningham
+  results.push({
+    method: 'Reversed Cunningham equation',
+    isAvailable: !!bmr,
+    missingFields: bmr ? [] : ['BMR'],
+  })
+
+  return results
 }
 
 /**

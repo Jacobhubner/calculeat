@@ -40,11 +40,13 @@ export function useMeasurementSets() {
   })
 
   // Update Zustand store when measurement sets are fetched
+  // Use dataUpdatedAt to detect actual data changes, not reference changes
   useEffect(() => {
-    if (query.data) {
+    if (query.data && query.isSuccess) {
       setMeasurementSets(query.data)
     }
-  }, [query.data, setMeasurementSets])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query.dataUpdatedAt]) // dataUpdatedAt only changes when data actually updates
 
   return query
 }
