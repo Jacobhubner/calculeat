@@ -45,13 +45,13 @@ export function useSwitchProfile() {
 
       return activeProfile as Profile
     },
-    onSuccess: profile => {
+    onSuccess: async profile => {
       // Update store
       setActiveProfile(profile)
       updateProfile(profile.id, { is_active: true })
 
-      // Invalidate queries
-      queryClient.invalidateQueries({ queryKey: queryKeys.profiles })
+      // Invalidate and refetch profiles - await to ensure Dashboard gets new data
+      await queryClient.invalidateQueries({ queryKey: queryKeys.profiles })
 
       toast.success('Profil bytt!', {
         description: `Du använder nu ${profile.profile_name}`,
