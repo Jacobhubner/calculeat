@@ -39,11 +39,14 @@ export function useProfiles() {
   })
 
   // Update Zustand store when profiles are fetched
+  // Only depend on query.data to avoid infinite loops
   useEffect(() => {
     if (query.data) {
+      console.log('📦 useProfiles updating store with', query.data.length, 'profiles')
       setProfiles(query.data)
     }
-  }, [query.data, setProfiles])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query.data])
 
   return query
 }
