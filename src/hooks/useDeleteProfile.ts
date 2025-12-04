@@ -11,15 +11,9 @@ import { useProfileStore } from '@/stores/profileStore'
 export function useDeleteProfile() {
   const queryClient = useQueryClient()
   const removeProfile = useProfileStore(state => state.removeProfile)
-  const profiles = useProfileStore(state => state.profiles)
 
   return useMutation({
     mutationFn: async (profileId: string) => {
-      // Prevent deleting the last profile
-      if (profiles.length <= 1) {
-        throw new Error('Du kan inte radera din sista profil')
-      }
-
       const { error } = await supabase.from('profiles').delete().eq('id', profileId)
 
       if (error) {

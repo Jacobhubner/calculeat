@@ -61,8 +61,7 @@ export default function UserProfileForm({
   const { profile } = useAuth() // Keep for backward compatibility during transition
   const activeProfile = useProfileStore(state => state.activeProfile)
   const previousProfile = useProfileStore(state => state.previousProfile)
-  const { data: allProfiles = [] } = useProfiles()
-  const profiles = useProfileStore(state => state.profiles) // Get profiles from Zustand for hasUnsavedChanges
+  const { data: allProfiles = [], isLoading: isLoadingProfiles } = useProfiles()
   const updateProfileMutation = useUpdateProfile()
   const createProfileMutation = useCreateProfile()
 
@@ -322,11 +321,16 @@ export default function UserProfileForm({
       return !!result
     }
 
-    // Get the full profile data from Zustand store (not React Query)
-    // This ensures we use the most up-to-date data that's updated synchronously in onSuccess
-    const fullProfile = profiles.find(p => p.id === activeProfile.id)
+    // Don't show save button while profiles are loading
+    if (isLoadingProfiles) {
+      return false
+    }
+
+    // Get the full profile data from React Query (allProfiles)
+    // This is always up-to-date and prevents false positives on page load
+    const fullProfile = allProfiles.find(p => p.id === activeProfile.id)
     if (!fullProfile) {
-      // Still loading, no changes yet
+      // Profile not found (shouldn't happen), no changes yet
       return false
     }
 
@@ -398,7 +402,8 @@ export default function UserProfileForm({
     return finalResult
   }, [
     activeProfile,
-    profiles, // Use Zustand store profiles instead of allProfiles from React Query
+    allProfiles, // Use React Query profiles for accurate comparisons
+    isLoadingProfiles, // Wait for profiles to load before checking changes
     profileName,
     weight,
     height,
