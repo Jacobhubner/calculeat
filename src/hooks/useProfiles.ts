@@ -1,21 +1,21 @@
 /**
  * Custom hook för att hämta alla profiler för inloggad användare
+ *
+ * NOTE: This hook does NOT sync with Zustand store to avoid infinite loops.
+ * Components should use activeProfile.id from Zustand and find the full profile
+ * from the profiles array returned by this hook.
  */
 
 import { useQuery } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { queryKeys } from '@/lib/react-query'
 import type { Profile } from '@/lib/types'
-import { useProfileStore } from '@/stores/profileStore'
-import { useEffect, useRef } from 'react'
 
 export function useProfiles() {
-  const setProfiles = useProfileStore(state => state.setProfiles)
-  const lastDataRef = useRef<Profile[] | null>(null)
-
   const query = useQuery({
     queryKey: queryKeys.profiles,
     queryFn: async () => {
+      console.log('🔄 useProfiles: Fetching profiles from database')
       const {
         data: { user },
       } = await supabase.auth.getUser()
@@ -34,32 +34,12 @@ export function useProfiles() {
         throw error
       }
 
+      console.log('✅ useProfiles: Got', data?.length || 0, 'profiles')
       return (data as Profile[]) || []
     },
     enabled: true, // Always enabled when user is logged in
+    staleTime: 1000 * 60 * 5, // Consider data fresh for 5 minutes
   })
-
-  // Update Zustand store when profiles actually change (not just re-render)
-  useEffect(() => {
-    if (query.data) {
-      // Only update if data has actually changed (deep comparison by IDs and updated_at)
-      const hasChanged =
-        !lastDataRef.current ||
-        lastDataRef.current.length !== query.data.length ||
-        lastDataRef.current.some(
-          (oldProfile, index) =>
-            oldProfile.id !== query.data![index].id ||
-            oldProfile.updated_at !== query.data![index].updated_at
-        )
-
-      if (hasChanged) {
-        console.log('📦 useProfiles: Data actually changed, updating store')
-        lastDataRef.current = query.data
-        setProfiles(query.data)
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query.data])
 
   return query
 }
