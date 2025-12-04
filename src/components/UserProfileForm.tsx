@@ -1181,6 +1181,9 @@ export default function UserProfileForm({
               className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
               placeholder="15"
             />
+            <p className="mt-1 text-xs text-neutral-500">
+              Du kan använda både komma (,) och punkt (.) som decimaltecken
+            </p>
           </div>
 
           {/* SECTION 3: BMR Formula */}
