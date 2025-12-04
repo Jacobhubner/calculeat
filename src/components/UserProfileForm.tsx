@@ -210,9 +210,24 @@ export default function UserProfileForm({
         setCustomTdee('')
       }
 
-      // Clear calculation result when loading saved profile
-      // This prevents hasUnsavedChanges from triggering due to old calculations
-      setResult(null)
+      // Restore saved calculations from profile if they exist
+      // This ensures results display when switching profiles
+      if (
+        fullProfile.bmr &&
+        fullProfile.tdee &&
+        fullProfile.calories_min &&
+        fullProfile.calories_max
+      ) {
+        setResult({
+          bmr: fullProfile.bmr,
+          tdee: fullProfile.tdee,
+          tdeeMin: fullProfile.calories_min,
+          tdeeMax: fullProfile.calories_max,
+        })
+      } else {
+        // Clear calculation result if profile has no saved calculations
+        setResult(null)
+      }
 
       // Reset flag after all state updates are done
       // Use setTimeout to ensure this runs after the PAL reset useEffect
