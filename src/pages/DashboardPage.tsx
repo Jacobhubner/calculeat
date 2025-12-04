@@ -7,13 +7,20 @@ import CalorieRing from '@/components/CalorieRing'
 import MacroBar from '@/components/MacroBar'
 import EmptyState from '@/components/EmptyState'
 import { useAuth } from '@/contexts/AuthContext'
-import { useProfiles, useCalculations, useOnboarding } from '@/hooks'
+import { useProfiles, useOnboarding } from '@/hooks'
 import { useTodayLog } from '@/hooks/useDailyLogs'
 import { useProfileStore } from '@/stores/profileStore'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Activity, Flame, Target, TrendingUp, UtensilsCrossed, Scale } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
+import { useMemo } from 'react'
+import {
+  calculateAge,
+  calculateBMI,
+  getBMICategory,
+  calculateIdealWeightRange,
+} from '@/lib/calculations'
 
 export default function DashboardPage() {
   const navigate = useNavigate()
@@ -26,15 +33,101 @@ export default function DashboardPage() {
   // Get full profile data from allProfiles array
   const profile = allProfiles?.find(p => p.id === activeProfile?.id)
 
-  const calculations = useCalculations(profile)
+  // Dashboard uses SAVED values from profile, not live calculations
+  // useCalculations is for live editing in profile page, not for display
+  const calculations = useMemo(() => {
+    if (!profile) {
+      return {
+        bmr: null,
+        tdee: null,
+        calorieGoal: null,
+        macros: null,
+        age: null,
+        bmi: null,
+        bmiCategory: null,
+        idealWeightRange: null,
+        timeToGoal: null,
+      }
+    }
 
-  // Log when profile changes for debugging
-  console.log('📊 Dashboard - Profile changed:', {
-    profileId: profile?.id,
-    profileName: profile?.profile_name,
-    bmr: profile?.bmr,
-    tdee: profile?.tdee,
-  })
+    // Calculate simple values that aren't stored
+    const age = profile.birth_date ? calculateAge(profile.birth_date) : null
+    const bmi =
+      profile.weight_kg && profile.height_cm
+        ? calculateBMI(profile.weight_kg, profile.height_cm)
+        : null
+    const bmiCategory = bmi ? getBMICategory(bmi) : null
+    const idealWeightRange = profile.height_cm ? calculateIdealWeightRange(profile.height_cm) : null
+
+    // Use SAVED calories and macros directly from profile
+    const calorieGoal =
+      profile.calories_min && profile.calories_max
+        ? {
+            min: profile.calories_min,
+            max: profile.calories_max,
+            target: Math.round((profile.calories_min + profile.calories_max) / 2),
+            weeklyChange: 0,
+          }
+        : null
+
+    // Build macros from saved percentages if available
+    let macros = null
+    if (
+      calorieGoal &&
+      profile.protein_min_percent != null &&
+      profile.protein_max_percent != null &&
+      profile.fat_min_percent != null &&
+      profile.fat_max_percent != null &&
+      profile.carb_min_percent != null &&
+      profile.carb_max_percent != null
+    ) {
+      const targetCalories = calorieGoal.target
+
+      // Calculate grams from percentages
+      const proteinMinG = Math.round((targetCalories * profile.protein_min_percent) / 100 / 4)
+      const proteinMaxG = Math.round((targetCalories * profile.protein_max_percent) / 100 / 4)
+      const fatMinG = Math.round((targetCalories * profile.fat_min_percent) / 100 / 9)
+      const fatMaxG = Math.round((targetCalories * profile.fat_max_percent) / 100 / 9)
+      const carbMinG = Math.round((targetCalories * profile.carb_min_percent) / 100 / 4)
+      const carbMaxG = Math.round((targetCalories * profile.carb_max_percent) / 100 / 4)
+
+      macros = {
+        protein: {
+          grams: Math.round((proteinMinG + proteinMaxG) / 2),
+          gramsMin: proteinMinG,
+          gramsMax: proteinMaxG,
+          calories: Math.round(((proteinMinG + proteinMaxG) / 2) * 4),
+          percentage: Math.round((profile.protein_min_percent + profile.protein_max_percent) / 2),
+        },
+        fat: {
+          grams: Math.round((fatMinG + fatMaxG) / 2),
+          gramsMin: fatMinG,
+          gramsMax: fatMaxG,
+          calories: Math.round(((fatMinG + fatMaxG) / 2) * 9),
+          percentage: Math.round((profile.fat_min_percent + profile.fat_max_percent) / 2),
+        },
+        carbs: {
+          grams: Math.round((carbMinG + carbMaxG) / 2),
+          gramsMin: carbMinG,
+          gramsMax: carbMaxG,
+          calories: Math.round(((carbMinG + carbMaxG) / 2) * 4),
+          percentage: Math.round((profile.carb_min_percent + profile.carb_max_percent) / 2),
+        },
+      }
+    }
+
+    return {
+      bmr: profile.bmr || null,
+      tdee: profile.tdee || null,
+      calorieGoal,
+      macros,
+      age,
+      bmi,
+      bmiCategory,
+      idealWeightRange,
+      timeToGoal: null,
+    }
+  }, [profile])
 
   // Get today's consumed calories and macros
   const consumed = todayLog?.total_calories || 0
