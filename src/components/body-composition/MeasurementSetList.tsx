@@ -11,6 +11,7 @@ interface MeasurementSetListProps {
   hasUnsavedChanges?: boolean
   onSelectSet: (setId: string) => void
   onSaveSet: (setId: string) => void
+  onDeleteSet?: (setId: string) => void
   isSaving?: boolean
 }
 
@@ -18,6 +19,7 @@ export default function MeasurementSetList({
   hasUnsavedChanges = false,
   onSelectSet,
   onSaveSet,
+  onDeleteSet,
   isSaving = false,
 }: MeasurementSetListProps) {
   const activeMeasurementSet = useMeasurementSetStore(state => state.activeMeasurementSet)
@@ -36,6 +38,11 @@ export default function MeasurementSetList({
         'Du har osparade ändringar. Vill du fortsätta? Ändringar kommer att förloras.'
       )
       if (!confirmed) return
+
+      // Rensa tidigare osparat kort om det finns
+      if (activeMeasurementSet?.id.startsWith('temp-') && onDeleteSet) {
+        onDeleteSet(activeMeasurementSet.id)
+      }
     }
 
     onSelectSet(setId)

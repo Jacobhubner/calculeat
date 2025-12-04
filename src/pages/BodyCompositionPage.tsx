@@ -492,6 +492,20 @@ export default function BodyCompositionPage() {
     }
   }
 
+  // Handler for deleting measurement set
+  const handleDeleteMeasurementSet = (setId: string) => {
+    // Check if this is an unsaved (temp) set
+    if (setId.startsWith('temp-')) {
+      // Remove from local unsaved sets
+      removeUnsavedMeasurementSet(setId)
+      // If it was the active set, clear active
+      if (activeMeasurementSet?.id === setId) {
+        setActiveMeasurementSet(null)
+      }
+    }
+    // For saved sets, the MeasurementSetList component handles deletion via useDeleteMeasurementSet
+  }
+
   // Handler for saving measurement set (create new or update existing)
   const handleSaveMeasurementSet = async (setId: string) => {
     const set = getMeasurementSetById(setId)
@@ -536,9 +550,9 @@ export default function BodyCompositionPage() {
         await createMeasurementSetMutation.mutateAsync({
           set_date: today,
           ...measurementData,
+          tempId: setId, // Skicka temp-ID för att ta bort efter lyckad sparning
         })
-        // Remove from unsaved sets
-        removeUnsavedMeasurementSet(setId)
+        // TA BORT: removeUnsavedMeasurementSet tas nu bort i onSuccess callback
       }
       // If it's an existing set, update it
       else {
@@ -588,6 +602,7 @@ export default function BodyCompositionPage() {
     measurementSets.length,
     unsavedMeasurementSets.length,
     activeMeasurementSet,
+    handleCreateNewMeasurement,
   ])
 
   // Detect unsaved measurement changes
@@ -607,29 +622,39 @@ export default function BodyCompositionPage() {
       return hasWorkflow1 || hasWorkflow2
     }
 
-    // For saved sets, compare with saved values
-    const currentCaliper =
-      activeWorkflow === 'method-first' ? caliperMeasurements : allCaliperMeasurements
-    const currentTape = activeWorkflow === 'method-first' ? tapeMeasurements : allTapeMeasurements
-
-    const caliperChanged = Object.entries(currentCaliper).some(([key, value]) => {
+    // For saved sets, compare BOTH workflows with saved values for maximum robustness
+    const workflow1CaliperChanged = Object.entries(caliperMeasurements).some(([key, value]) => {
       const savedKey = key === 'lowerBack' ? 'lower_back' : key
       return value !== activeMeasurementSet[savedKey as keyof typeof activeMeasurementSet]
     })
 
-    const tapeChanged = Object.entries(currentTape).some(([key, value]) => {
+    const workflow2CaliperChanged = Object.entries(allCaliperMeasurements).some(([key, value]) => {
+      const savedKey = key === 'lowerBack' ? 'lower_back' : key
+      return value !== activeMeasurementSet[savedKey as keyof typeof activeMeasurementSet]
+    })
+
+    const workflow1TapeChanged = Object.entries(tapeMeasurements).some(([key, value]) => {
       const savedKey = key === 'thighCirc' ? 'thigh_circ' : key === 'calfCirc' ? 'calf_circ' : key
       return value !== activeMeasurementSet[savedKey as keyof typeof activeMeasurementSet]
     })
 
-    return caliperChanged || tapeChanged
+    const workflow2TapeChanged = Object.entries(allTapeMeasurements).some(([key, value]) => {
+      const savedKey = key === 'thighCirc' ? 'thigh_circ' : key === 'calfCirc' ? 'calf_circ' : key
+      return value !== activeMeasurementSet[savedKey as keyof typeof activeMeasurementSet]
+    })
+
+    return (
+      workflow1CaliperChanged ||
+      workflow2CaliperChanged ||
+      workflow1TapeChanged ||
+      workflow2TapeChanged
+    )
   }, [
     activeMeasurementSet,
     caliperMeasurements,
     tapeMeasurements,
     allCaliperMeasurements,
     allTapeMeasurements,
-    activeWorkflow,
   ])
 
   if (!profile) {
@@ -860,6 +885,7 @@ export default function BodyCompositionPage() {
                 hasUnsavedChanges={hasUnsavedMeasurements}
                 onSelectSet={handleSelectMeasurementSet}
                 onSaveSet={handleSaveMeasurementSet}
+                onDeleteSet={handleDeleteMeasurementSet}
                 isSaving={
                   createMeasurementSetMutation.isPending || updateMeasurementSetMutation.isPending
                 }

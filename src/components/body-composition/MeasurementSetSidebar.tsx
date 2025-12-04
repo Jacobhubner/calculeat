@@ -12,6 +12,7 @@ interface MeasurementSetSidebarProps {
   hasUnsavedChanges?: boolean
   onSelectSet: (setId: string) => void
   onSaveSet: (setId: string) => void
+  onDeleteSet?: (setId: string) => void
   isSaving?: boolean
 }
 
@@ -20,6 +21,7 @@ export default function MeasurementSetSidebar({
   hasUnsavedChanges = false,
   onSelectSet,
   onSaveSet,
+  onDeleteSet,
   isSaving = false,
 }: MeasurementSetSidebarProps) {
   return (
@@ -49,6 +51,7 @@ export default function MeasurementSetSidebar({
           hasUnsavedChanges={hasUnsavedChanges}
           onSelectSet={onSelectSet}
           onSaveSet={onSaveSet}
+          onDeleteSet={onDeleteSet}
           isSaving={isSaving}
         />
       </CardContent>

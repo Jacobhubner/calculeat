@@ -10,7 +10,9 @@ import { useMeasurementSetStore } from '@/stores/measurementSetStore'
 import type { MeasurementSet } from '@/lib/types'
 
 // Input type - omit database-generated fields
-type CreateMeasurementSetInput = Omit<MeasurementSet, 'id' | 'user_id' | 'created_at'>
+type CreateMeasurementSetInput = Omit<MeasurementSet, 'id' | 'user_id' | 'created_at'> & {
+  tempId?: string // För att identifiera vilket temp-kort som ska tas bort
+}
 
 export function useCreateMeasurementSet() {
   const queryClient = useQueryClient()
@@ -18,6 +20,9 @@ export function useCreateMeasurementSet() {
 
   return useMutation({
     mutationFn: async (data: CreateMeasurementSetInput) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { tempId, ...measurementData } = data // Extrahera tempId (används i onSuccess)
+
       const {
         data: { user },
       } = await supabase.auth.getUser()
@@ -30,7 +35,7 @@ export function useCreateMeasurementSet() {
         .from('measurement_sets')
         .insert({
           user_id: user.id,
-          ...data,
+          ...measurementData, // Använd measurementData utan tempId
         })
         .select()
         .single()
@@ -41,9 +46,16 @@ export function useCreateMeasurementSet() {
 
       return newSet as MeasurementSet
     },
-    onSuccess: newSet => {
+    onSuccess: (newSet, variables) => {
       // Add to store (will auto-select it)
       addMeasurementSet(newSet)
+
+      // Ta bort temp-kort OM detta var en konvertering från temp
+      if (variables.tempId?.startsWith('temp-')) {
+        const removeUnsavedMeasurementSet =
+          useMeasurementSetStore.getState().removeUnsavedMeasurementSet
+        removeUnsavedMeasurementSet(variables.tempId)
+      }
 
       // Invalidate queries
       queryClient.invalidateQueries({ queryKey: queryKeys.measurementSets })
