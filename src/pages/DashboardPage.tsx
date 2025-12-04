@@ -28,6 +28,14 @@ export default function DashboardPage() {
 
   const calculations = useCalculations(profile)
 
+  // Log when profile changes for debugging
+  console.log('📊 Dashboard - Profile changed:', {
+    profileId: profile?.id,
+    profileName: profile?.profile_name,
+    bmr: profile?.bmr,
+    tdee: profile?.tdee,
+  })
+
   // Get today's consumed calories and macros
   const consumed = todayLog?.total_calories || 0
   const targetMax = profile?.calories_max || 2000
