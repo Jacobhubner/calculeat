@@ -55,20 +55,32 @@ export const useProfileStore = create<ProfileState>()(
         })),
 
       // Set all profiles
-      setProfiles: profiles =>
-        set(state => ({
-          profiles,
-          // Only auto-select if we don't have an explicit null (new profile mode)
-          // If activeProfile is explicitly null, keep it null (user is creating new profile)
-          // If activeProfile has a value, try to update it from the new profiles list
-          // If activeProfile is undefined (initial state), auto-select
-          activeProfile:
+      setProfiles: profiles => {
+        console.log('🏪 ProfileStore.setProfiles called with', profiles.length, 'profiles')
+
+        return set(state => {
+          const newActiveProfile =
             state.activeProfile === null
               ? null
               : state.activeProfile
                 ? profiles.find(p => p.id === state.activeProfile?.id) || state.activeProfile
-                : profiles.find(p => p.is_active) || profiles[0] || null,
-        })),
+                : profiles.find(p => p.is_active) || profiles[0] || null
+
+          console.log('🏪 ProfileStore updating activeProfile:', {
+            currentId: state.activeProfile?.id,
+            currentName: state.activeProfile?.profile_name,
+            currentBMR: state.activeProfile?.bmr,
+            newId: newActiveProfile?.id,
+            newName: newActiveProfile?.profile_name,
+            newBMR: newActiveProfile?.bmr,
+          })
+
+          return {
+            profiles,
+            activeProfile: newActiveProfile,
+          }
+        })
+      },
 
       // Add profile
       addProfile: profile =>
@@ -118,6 +130,14 @@ export const useProfileStore = create<ProfileState>()(
       switchProfile: id =>
         set(state => {
           const profile = state.profiles.find(p => p.id === id)
+
+          console.log('🔄 ProfileStore.switchProfile called:', {
+            switchingToId: id,
+            foundProfile: !!profile,
+            profileName: profile?.profile_name,
+            profileBMR: profile?.bmr,
+            profileTDEE: profile?.tdee,
+          })
 
           if (profile) {
             return { activeProfile: profile }

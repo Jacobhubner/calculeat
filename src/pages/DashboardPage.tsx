@@ -33,9 +33,28 @@ export default function DashboardPage() {
   // Get full profile data from allProfiles array
   const profile = allProfiles?.find(p => p.id === activeProfile?.id)
 
+  console.log('🔍 Dashboard render:', {
+    activeProfileId: activeProfile?.id,
+    activeProfileName: activeProfile?.profile_name,
+    allProfilesCount: allProfiles?.length,
+    allProfilesIds: allProfiles?.map(p => `${p.profile_name} (${p.id.slice(0, 8)})`),
+    foundProfile: !!profile,
+    profileBMR: profile?.bmr,
+    profileTDEE: profile?.tdee,
+    profileCaloriesMin: profile?.calories_min,
+    profileCaloriesMax: profile?.calories_max,
+  })
+
   // Dashboard uses SAVED values from profile, not live calculations
   // useCalculations is for live editing in profile page, not for display
   const calculations = useMemo(() => {
+    console.log(
+      '🧮 Calculations useMemo triggered, profile:',
+      profile?.profile_name,
+      'BMR:',
+      profile?.bmr
+    )
+
     if (!profile) {
       return {
         bmr: null,
