@@ -37,8 +37,11 @@ export default function ProfileList() {
     // Stoppa event propagation så att kortet inte klickas
     e.stopPropagation()
 
+    console.log('🗑️ Delete requested. Profiles count:', profiles.length)
+
     // Validera att det inte är sista profilen
     if (profiles.length === 1) {
+      console.log('❌ Cannot delete - only one profile remains')
       toast.error('Du måste ha minst en profil kvar')
       return
     }
@@ -50,11 +53,14 @@ export default function ProfileList() {
 
     if (!confirmed) return
 
+    console.log('✅ Attempting to delete profile:', profileId)
+
     try {
       await deleteProfileMutation.mutateAsync(profileId)
+      console.log('✅ Profile deleted successfully')
       // Toast is handled by useDeleteProfile hook
     } catch (error) {
-      console.error('Error deleting profile:', error)
+      console.error('❌ Error deleting profile:', error)
       // Error toast is also handled by the hook
     }
   }

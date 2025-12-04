@@ -1,5 +1,6 @@
 /**
  * Custom hook för att radera en profil
+ * Validation is done in ProfileList component, not here
  */
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
