@@ -874,8 +874,10 @@ export default function BodyCompositionPage() {
                   }}
                 />
 
-                {/* Density Conversion Selector - Only show if there are density-based methods */}
-                {comparisonResults.some(r => isDensityBasedMethod(r.method, r.variation)) && (
+                {/* Density Conversion Selector - Only show if there are available density-based methods */}
+                {comparisonResults.some(
+                  r => r.isAvailable && isDensityBasedMethod(r.method, r.variation)
+                ) && (
                   <DensityConversionSelector
                     conversionMethod={conversionMethod2}
                     onMethodChange={setConversionMethod2}

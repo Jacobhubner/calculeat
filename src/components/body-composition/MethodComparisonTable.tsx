@@ -37,8 +37,20 @@ export default function MethodComparisonTable({
   }
 
   const sortedResults = [...results].sort((a, b) => {
+    // Primary sort: Available methods before unavailable
+    const aAvailable = a.isAvailable !== false
+    const bAvailable = b.isAvailable !== false
+
+    if (aAvailable !== bAvailable) {
+      return aAvailable ? -1 : 1 // Available first
+    }
+
+    // Secondary sort: User's chosen sort column
     const aValue = a[sortBy]
     const bValue = b[sortBy]
+
+    if (aValue === undefined || aValue === null) return 1
+    if (bValue === undefined || bValue === null) return -1
 
     if (typeof aValue === 'number' && typeof bValue === 'number') {
       return sortDirection === 'asc' ? aValue - bValue : bValue - aValue

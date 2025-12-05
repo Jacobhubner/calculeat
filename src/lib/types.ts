@@ -104,6 +104,7 @@ export interface UserProfile {
 
   created_at?: string
   updated_at?: string
+  display_order?: number // User-controlled sort order
 }
 
 export interface UserProfileFormData {
@@ -260,6 +261,8 @@ export interface MeasurementSet {
   user_id: string
   set_date: string // YYYY-MM-DD format
   created_at: string
+  name?: string // Optional custom name (if NULL, display "date - time" as default)
+  display_order?: number // User-controlled sort order
 
   // Caliper measurements (mm)
   chest?: number

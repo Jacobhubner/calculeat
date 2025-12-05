@@ -3,8 +3,8 @@
  */
 
 import { useProfileStore } from '@/stores/profileStore'
-import { useProfiles, useSwitchProfile, useDeleteProfile } from '@/hooks'
-import { X, FileEdit } from 'lucide-react'
+import { useProfiles, useSwitchProfile, useDeleteProfile, useReorderProfiles } from '@/hooks'
+import { X, FileEdit, ChevronUp, ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -14,9 +14,15 @@ export default function ProfileList() {
   const { data: profiles = [], isLoading } = useProfiles()
   const switchProfileMutation = useSwitchProfile()
   const deleteProfileMutation = useDeleteProfile()
+  const reorderProfileMutation = useReorderProfiles()
 
   // Check if we're in "new profile" mode
   const isCreatingNewProfile = activeProfile === null && profiles.length > 0
+
+  // Sort profiles by display_order
+  const sortedProfiles = [...profiles].sort(
+    (a, b) => (a.display_order ?? 999) - (b.display_order ?? 999)
+  )
 
   const handleSwitchProfile = async (profileId: string) => {
     if (profileId !== activeProfile?.id) {
@@ -65,6 +71,24 @@ export default function ProfileList() {
     }
   }
 
+  const handleReorder = async (
+    e: React.MouseEvent,
+    profileId: string,
+    direction: 'up' | 'down'
+  ) => {
+    e.stopPropagation()
+
+    try {
+      await reorderProfileMutation.mutateAsync({
+        profileId,
+        direction,
+        allProfiles: profiles,
+      })
+    } catch {
+      // Error toast is handled by useReorderProfiles hook
+    }
+  }
+
   if (isLoading) {
     return <div className="text-sm text-neutral-500 text-center py-4">Laddar profiler...</div>
   }
@@ -102,8 +126,10 @@ export default function ProfileList() {
       )}
 
       {/* Existing saved profiles */}
-      {profiles.map(profile => {
+      {sortedProfiles.map((profile, index) => {
         const isActive = profile.id === activeProfile?.id
+        const isFirst = index === 0
+        const isLast = index === sortedProfiles.length - 1
 
         return (
           <div
@@ -121,22 +147,55 @@ export default function ProfileList() {
               {/* Profile Name */}
               <h4
                 className={cn(
-                  'text-sm font-medium truncate flex-1',
+                  'text-sm font-medium truncate flex-1 pr-16',
                   isActive ? 'text-neutral-900' : 'text-neutral-700'
                 )}
               >
                 {profile.profile_name}
               </h4>
 
-              {/* Delete X Button */}
-              <button
-                onClick={e => handleDeleteProfile(e, profile.id, profile.profile_name)}
-                className="p-1 rounded hover:bg-red-100 transition-colors z-10 opacity-60 group-hover:opacity-100"
-                title="Radera profil"
-                disabled={deleteProfileMutation.isPending}
-              >
-                <X className="h-4 w-4 text-red-500 hover:text-red-700 transition-colors" />
-              </button>
+              {/* Up/Down/Delete buttons */}
+              <div className="flex items-center gap-1">
+                {/* Up Button */}
+                <button
+                  onClick={e => handleReorder(e, profile.id, 'up')}
+                  disabled={isFirst || reorderProfileMutation.isPending}
+                  className={cn(
+                    'p-0.5 rounded transition-colors',
+                    isFirst
+                      ? 'text-neutral-300 cursor-not-allowed'
+                      : 'text-neutral-500 hover:text-primary-600 hover:bg-primary-50'
+                  )}
+                  title="Flytta upp"
+                >
+                  <ChevronUp className="h-4 w-4" />
+                </button>
+
+                {/* Down Button */}
+                <button
+                  onClick={e => handleReorder(e, profile.id, 'down')}
+                  disabled={isLast || reorderProfileMutation.isPending}
+                  className={cn(
+                    'p-0.5 rounded transition-colors',
+                    isLast
+                      ? 'text-neutral-300 cursor-not-allowed'
+                      : 'text-neutral-500 hover:text-primary-600 hover:bg-primary-50'
+                  )}
+                  title="Flytta ned"
+                >
+                  <ChevronDown className="h-4 w-4" />
+                </button>
+
+                {/* Delete X Button */}
+                <button
+                  onClick={e => handleDeleteProfile(e, profile.id, profile.profile_name)}
+                  className="p-1 rounded hover:bg-red-100 transition-colors z-10 opacity-60 group-hover:opacity-100"
+                  title="Radera profil"
+                  disabled={deleteProfileMutation.isPending}
+                >
+                  <X className="h-4 w-4 text-red-500 hover:text-red-700 transition-colors" />
+                </button>
+              </div>
             </div>
           </div>
         )

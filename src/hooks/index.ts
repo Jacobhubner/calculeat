@@ -23,9 +23,12 @@ export * from './useCreateProfile'
 export * from './useDeleteProfile'
 export * from './useSwitchProfile'
 export * from './useNewProfile'
+export * from './useReorderProfiles'
 
 // Measurement set hooks
 export * from './useMeasurementSets'
 export * from './useCreateMeasurementSet'
 export * from './useUpdateMeasurementSet'
+export * from './useUpdateMeasurementSetName'
 export * from './useDeleteMeasurementSet'
+export * from './useReorderMeasurementSets'

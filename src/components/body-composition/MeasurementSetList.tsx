@@ -3,7 +3,12 @@
  */
 
 import { useMeasurementSetStore } from '@/stores/measurementSetStore'
-import { useMeasurementSets, useDeleteMeasurementSet } from '@/hooks'
+import {
+  useMeasurementSets,
+  useDeleteMeasurementSet,
+  useUpdateMeasurementSetName,
+  useReorderMeasurementSets,
+} from '@/hooks'
 import MeasurementSetCard from './MeasurementSetCard'
 import { toast } from 'sonner'
 
@@ -30,6 +35,28 @@ export default function MeasurementSetList({
   )
   const { data: measurementSets = [], isLoading } = useMeasurementSets()
   const deleteSetMutation = useDeleteMeasurementSet()
+  const updateNameMutation = useUpdateMeasurementSetName()
+  const reorderSetMutation = useReorderMeasurementSets()
+
+  // Handler for name change
+  const handleNameChange = (id: string, newName: string | null) => {
+    updateNameMutation.mutate({ id, name: newName })
+  }
+
+  // Handler for reordering (only for saved sets, not temp)
+  const handleReorder = async (e: React.MouseEvent, setId: string, direction: 'up' | 'down') => {
+    e.stopPropagation()
+
+    try {
+      await reorderSetMutation.mutateAsync({
+        setId,
+        direction,
+        allSets: measurementSets, // Only pass saved sets, not unsaved
+      })
+    } catch {
+      // Error toast is handled by useReorderMeasurementSets hook
+    }
+  }
 
   const handleSelect = (setId: string) => {
     // Check for unsaved changes before switching
@@ -90,8 +117,13 @@ export default function MeasurementSetList({
     }
   }
 
-  // Combine unsaved and saved sets
-  const allSets = [...unsavedMeasurementSets, ...measurementSets]
+  // Sort saved sets by display_order
+  const sortedSavedSets = [...measurementSets].sort(
+    (a, b) => (a.display_order ?? 999) - (b.display_order ?? 999)
+  )
+
+  // Combine unsaved (always first) and saved sets
+  const allSets = [...unsavedMeasurementSets, ...sortedSavedSets]
 
   if (isLoading) {
     return <div className="text-sm text-neutral-500 text-center py-4">Laddar mätningar...</div>
@@ -110,6 +142,13 @@ export default function MeasurementSetList({
       {allSets.map(set => {
         const isActive = activeMeasurementSet?.id === set.id
         const showSaveIcon = isActive && hasUnsavedChanges
+        const isUnsaved = set.id.startsWith('temp-')
+
+        // For reorder buttons: only show for saved sets
+        // Calculate index within saved sets only (excluding unsaved)
+        const savedSetIndex = isUnsaved ? -1 : sortedSavedSets.findIndex(s => s.id === set.id)
+        const isFirst = savedSetIndex === 0
+        const isLast = savedSetIndex === sortedSavedSets.length - 1
 
         return (
           <MeasurementSetCard
@@ -121,6 +160,11 @@ export default function MeasurementSetList({
             hasUnsavedChanges={showSaveIcon}
             onSave={() => onSaveSet(set.id)}
             isSaving={isSaving}
+            onNameChange={handleNameChange}
+            onReorder={isUnsaved ? undefined : handleReorder}
+            isFirst={isFirst}
+            isLast={isLast}
+            reorderPending={reorderSetMutation.isPending}
           />
         )
       })}
