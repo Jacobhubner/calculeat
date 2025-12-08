@@ -623,6 +623,14 @@ export default function BodyCompositionPage() {
       Object.values(allCaliperMeasurements).some(v => v !== undefined) ||
       Object.values(allTapeMeasurements).some(v => v !== undefined)
 
+    console.log('🔄 Auto-create effect check', {
+      savedCount: measurementSets.length,
+      unsavedCount: unsavedMeasurementSets.length,
+      hasActiveSet: !!activeMeasurementSet,
+      hasWorkflow1Measurements,
+      hasWorkflow2Measurements,
+    })
+
     // Auto-create if:
     // 1. No cards exist (saved or unsaved)
     // 2. No active set
@@ -632,6 +640,7 @@ export default function BodyCompositionPage() {
       unsavedMeasurementSets.length === 0 &&
       !activeMeasurementSet
     ) {
+      console.log('  ↳ Auto-creating empty card (no cards exist)')
       // Create card with current measurements (might be empty)
       handleCreateNewMeasurement(hasWorkflow1Measurements || hasWorkflow2Measurements)
     }
