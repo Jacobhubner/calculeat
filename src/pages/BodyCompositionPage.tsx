@@ -317,7 +317,14 @@ export default function BodyCompositionPage() {
 
   // Auto-fill measurements when a measurement set is selected
   useEffect(() => {
+    console.log('🔄 Auto-fill effect triggered', {
+      activeMeasurementSet: activeMeasurementSet?.id,
+      activeWorkflow,
+      timestamp: new Date().toISOString(),
+    })
+
     if (!activeMeasurementSet) {
+      console.log('  ↳ Clearing all measurements (no active card)')
       // Clear all measurements when no active card
       setCaliperMeasurements({})
       setTapeMeasurements({})
@@ -325,6 +332,13 @@ export default function BodyCompositionPage() {
       setAllTapeMeasurements({})
       return
     }
+
+    console.log('  ↳ Filling measurements from card', {
+      chest: activeMeasurementSet.chest,
+      abdominal: activeMeasurementSet.abdominal,
+      neck: activeMeasurementSet.neck,
+      waist: activeMeasurementSet.waist,
+    })
 
     // Workflow 1 - method-first
     setCaliperMeasurements({
@@ -448,6 +462,15 @@ export default function BodyCompositionPage() {
       if (!confirmed) return
     }
 
+    // Clear component state FIRST if not preserving measurements
+    // This ensures getCurrentValue() returns undefined for all fields
+    if (!preserveCurrentMeasurements) {
+      setCaliperMeasurements({})
+      setTapeMeasurements({})
+      setAllCaliperMeasurements({})
+      setAllTapeMeasurements({})
+    }
+
     // When preserving measurements, get current values from either workflow
     const getCurrentValue = (field: keyof CaliperMeasurements | keyof TapeMeasurements) => {
       if (!preserveCurrentMeasurements) return undefined
@@ -503,14 +526,6 @@ export default function BodyCompositionPage() {
 
     console.log('Creating new measurement set:', newSet)
     addUnsavedMeasurementSet(newSet)
-
-    // Clear component state if not preserving measurements
-    if (!preserveCurrentMeasurements) {
-      setCaliperMeasurements({})
-      setTapeMeasurements({})
-      setAllCaliperMeasurements({})
-      setAllTapeMeasurements({})
-    }
   }
 
   // Handler for selecting a measurement set
