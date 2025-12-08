@@ -317,56 +317,63 @@ export default function BodyCompositionPage() {
 
   // Auto-fill measurements when a measurement set is selected
   useEffect(() => {
-    if (activeMeasurementSet) {
-      // Workflow 1 - method-first
-      setCaliperMeasurements({
-        chest: activeMeasurementSet.chest,
-        abdominal: activeMeasurementSet.abdominal,
-        thigh: activeMeasurementSet.thigh,
-        tricep: activeMeasurementSet.tricep,
-        subscapular: activeMeasurementSet.subscapular,
-        suprailiac: activeMeasurementSet.suprailiac,
-        midaxillary: activeMeasurementSet.midaxillary,
-        bicep: activeMeasurementSet.bicep,
-        lowerBack: activeMeasurementSet.lower_back,
-        calf: activeMeasurementSet.calf,
-      })
-
-      setTapeMeasurements({
-        neck: activeMeasurementSet.neck,
-        waist: activeMeasurementSet.waist,
-        hip: activeMeasurementSet.hip,
-        wrist: activeMeasurementSet.wrist,
-        forearm: activeMeasurementSet.forearm,
-        thighCirc: activeMeasurementSet.thigh_circ,
-        calfCirc: activeMeasurementSet.calf_circ,
-      })
-
-      // Workflow 2 - measurements-first
-      setAllCaliperMeasurements({
-        chest: activeMeasurementSet.chest,
-        abdominal: activeMeasurementSet.abdominal,
-        thigh: activeMeasurementSet.thigh,
-        tricep: activeMeasurementSet.tricep,
-        subscapular: activeMeasurementSet.subscapular,
-        suprailiac: activeMeasurementSet.suprailiac,
-        midaxillary: activeMeasurementSet.midaxillary,
-        bicep: activeMeasurementSet.bicep,
-        lowerBack: activeMeasurementSet.lower_back,
-        calf: activeMeasurementSet.calf,
-      })
-
-      setAllTapeMeasurements({
-        neck: activeMeasurementSet.neck,
-        waist: activeMeasurementSet.waist,
-        hip: activeMeasurementSet.hip,
-        wrist: activeMeasurementSet.wrist,
-        forearm: activeMeasurementSet.forearm,
-        thighCirc: activeMeasurementSet.thigh_circ,
-        calfCirc: activeMeasurementSet.calf_circ,
-      })
+    if (!activeMeasurementSet) {
+      // Clear all measurements when no active card
+      setCaliperMeasurements({})
+      setTapeMeasurements({})
+      setAllCaliperMeasurements({})
+      setAllTapeMeasurements({})
+      return
     }
-  }, [activeMeasurementSet])
+
+    // Workflow 1 - method-first
+    setCaliperMeasurements({
+      chest: activeMeasurementSet.chest,
+      abdominal: activeMeasurementSet.abdominal,
+      thigh: activeMeasurementSet.thigh,
+      tricep: activeMeasurementSet.tricep,
+      subscapular: activeMeasurementSet.subscapular,
+      suprailiac: activeMeasurementSet.suprailiac,
+      midaxillary: activeMeasurementSet.midaxillary,
+      bicep: activeMeasurementSet.bicep,
+      lowerBack: activeMeasurementSet.lower_back,
+      calf: activeMeasurementSet.calf,
+    })
+
+    setTapeMeasurements({
+      neck: activeMeasurementSet.neck,
+      waist: activeMeasurementSet.waist,
+      hip: activeMeasurementSet.hip,
+      wrist: activeMeasurementSet.wrist,
+      forearm: activeMeasurementSet.forearm,
+      thighCirc: activeMeasurementSet.thigh_circ,
+      calfCirc: activeMeasurementSet.calf_circ,
+    })
+
+    // Workflow 2 - measurements-first
+    setAllCaliperMeasurements({
+      chest: activeMeasurementSet.chest,
+      abdominal: activeMeasurementSet.abdominal,
+      thigh: activeMeasurementSet.thigh,
+      tricep: activeMeasurementSet.tricep,
+      subscapular: activeMeasurementSet.subscapular,
+      suprailiac: activeMeasurementSet.suprailiac,
+      midaxillary: activeMeasurementSet.midaxillary,
+      bicep: activeMeasurementSet.bicep,
+      lowerBack: activeMeasurementSet.lower_back,
+      calf: activeMeasurementSet.calf,
+    })
+
+    setAllTapeMeasurements({
+      neck: activeMeasurementSet.neck,
+      waist: activeMeasurementSet.waist,
+      hip: activeMeasurementSet.hip,
+      wrist: activeMeasurementSet.wrist,
+      forearm: activeMeasurementSet.forearm,
+      thighCirc: activeMeasurementSet.thigh_circ,
+      calfCirc: activeMeasurementSet.calf_circ,
+    })
+  }, [activeMeasurementSet, activeWorkflow])
 
   const handleCaliperChange = (field: keyof CaliperMeasurements, value: number | undefined) => {
     // Update workflow 1
@@ -496,6 +503,14 @@ export default function BodyCompositionPage() {
 
     console.log('Creating new measurement set:', newSet)
     addUnsavedMeasurementSet(newSet)
+
+    // Clear component state if not preserving measurements
+    if (!preserveCurrentMeasurements) {
+      setCaliperMeasurements({})
+      setTapeMeasurements({})
+      setAllCaliperMeasurements({})
+      setAllTapeMeasurements({})
+    }
   }
 
   // Handler for selecting a measurement set
@@ -550,10 +565,8 @@ export default function BodyCompositionPage() {
       calf_circ: tapeMeasurements.calfCirc ?? allTapeMeasurements.calfCirc ?? null,
     }
 
-    // Filter out null values - only send fields that have actual values
-    const measurementData = Object.fromEntries(
-      Object.entries(allMeasurements).filter(([_, value]) => value !== null && value !== undefined)
-    )
+    // Include all values (including nulls) to explicitly clear fields in database
+    const measurementData = allMeasurements
 
     // Debug logging
     console.log('Saving measurement data:', measurementData)
@@ -595,28 +608,27 @@ export default function BodyCompositionPage() {
       Object.values(allCaliperMeasurements).some(v => v !== undefined) ||
       Object.values(allTapeMeasurements).some(v => v !== undefined)
 
-    // Only auto-create if:
+    // Auto-create if:
     // 1. No cards exist (saved or unsaved)
     // 2. No active set
-    // 3. User has entered measurements
+    // 3. EITHER user has measurements OR we just need an empty card
     if (
       measurementSets.length === 0 &&
       unsavedMeasurementSets.length === 0 &&
-      !activeMeasurementSet &&
-      (hasWorkflow1Measurements || hasWorkflow2Measurements)
+      !activeMeasurementSet
     ) {
-      // Pass true to preserve current measurements when auto-creating
-      handleCreateNewMeasurement(true)
+      // Create card with current measurements (might be empty)
+      handleCreateNewMeasurement(hasWorkflow1Measurements || hasWorkflow2Measurements)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
+    measurementSets,
+    unsavedMeasurementSets,
+    activeMeasurementSet,
     caliperMeasurements,
     tapeMeasurements,
     allCaliperMeasurements,
     allTapeMeasurements,
-    measurementSets.length,
-    unsavedMeasurementSets.length,
-    activeMeasurementSet,
-    handleCreateNewMeasurement,
   ])
 
   // Detect unsaved measurement changes
