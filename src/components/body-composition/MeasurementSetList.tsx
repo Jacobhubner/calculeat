@@ -139,7 +139,7 @@ export default function MeasurementSetList({
 
   return (
     <div className="space-y-1.5">
-      {allSets.map((set, index) => {
+      {allSets.map(set => {
         const isActive = activeMeasurementSet?.id === set.id
         const showSaveIcon = isActive && hasUnsavedChanges
         const isUnsaved = set.id.startsWith('temp-')
@@ -151,10 +151,22 @@ export default function MeasurementSetList({
         const isLast = savedSetIndex === sortedSavedSets.length - 1
 
         // Calculate duplicate index for cards with same date
-        // Count how many cards with same set_date appear BEFORE this one
-        const duplicateIndex = allSets.filter(
-          (s, i) => i < index && s.set_date === set.set_date
-        ).length
+        // The NEWEST card (unsaved, earlier in list) gets a number
+        // The OLDEST card (saved first, later in list) has NO number
+        // Strategy:
+        // - Find total count of cards with same date
+        // - First card in list (index 0 for that date) gets highest number
+        // - Last card in list gets no number (0)
+        const cardsWithSameDate = allSets.filter(s => s.set_date === set.set_date)
+        const totalWithSameDate = cardsWithSameDate.length
+
+        let duplicateIndex = 0
+        if (totalWithSameDate > 1) {
+          // Find this card's position among cards with same date (0 = first/newest)
+          const positionInGroup = cardsWithSameDate.findIndex(s => s.id === set.id)
+          // First/newest card gets (total - 1), second gets (total - 2), last gets 0
+          duplicateIndex = totalWithSameDate - 1 - positionInGroup
+        }
 
         return (
           <MeasurementSetCard
