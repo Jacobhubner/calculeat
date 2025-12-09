@@ -125,29 +125,9 @@ export default function BodyCompositionPage() {
   // UI state
   const [isSaving, setIsSaving] = useState(false)
 
-  // Reset measurements when method changes and set default variation
+  // Set default variation when method changes
   useEffect(() => {
-    setCaliperMeasurements({
-      chest: undefined,
-      abdominal: undefined,
-      thigh: undefined,
-      tricep: undefined,
-      subscapular: undefined,
-      suprailiac: undefined,
-      midaxillary: undefined,
-      bicep: undefined,
-      lowerBack: undefined,
-      calf: undefined,
-    })
-    setTapeMeasurements({
-      neck: undefined,
-      waist: undefined,
-      hip: undefined,
-      wrist: undefined,
-      forearm: undefined,
-      thighCirc: undefined,
-      calfCirc: undefined,
-    })
+    // Clear results but NOT measurements (measurements come from activeMeasurementSet)
     setBodyDensity(null)
     setBodyFatPercentage(null)
     setCategory(null)
