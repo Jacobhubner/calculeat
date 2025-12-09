@@ -40,7 +40,42 @@ export default function MeasurementSetList({
 
   // Handler for name change
   const handleNameChange = (id: string, newName: string | null) => {
-    updateNameMutation.mutate({ id, name: newName })
+    // If newName is null, just update directly (resetting to default name)
+    if (newName === null) {
+      updateNameMutation.mutate({ id, name: newName })
+      return
+    }
+
+    // Check if this name already exists in other cards
+    const allSets = [...measurementSets, ...unsavedMeasurementSets]
+    const cardsWithSameName = allSets.filter(s => s.id !== id && s.name === newName)
+
+    // If name exists, find the next available number
+    if (cardsWithSameName.length > 0) {
+      // Find all cards with names matching pattern "newName (X)"
+      const pattern = new RegExp(`^${newName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} \\((\\d+)\\)$`)
+      const numberedCards = allSets
+        .filter(s => s.id !== id && s.name && pattern.test(s.name))
+        .map(s => {
+          const match = s.name!.match(pattern)
+          return match ? parseInt(match[1], 10) : 0
+        })
+
+      // Find next available number: start from 1, then 2, 3, etc
+      let nextNumber = 1
+      while (
+        cardsWithSameName.length > 0 || // Base name exists
+        numberedCards.includes(nextNumber) // Or this number exists
+      ) {
+        nextNumber++
+      }
+
+      const finalName = `${newName} (${nextNumber})`
+      updateNameMutation.mutate({ id, name: finalName })
+    } else {
+      // Name is unique, use it directly
+      updateNameMutation.mutate({ id, name: newName })
+    }
   }
 
   // Handler for reordering (only for saved sets, not temp)
