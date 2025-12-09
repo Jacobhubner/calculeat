@@ -485,15 +485,6 @@ export default function BodyCompositionPage() {
       if (!confirmed) return
     }
 
-    // Clear component state FIRST if not preserving measurements
-    // This ensures getCurrentValue() returns undefined for all fields
-    if (!preserveCurrentMeasurements) {
-      setCaliperMeasurements({})
-      setTapeMeasurements({})
-      setAllCaliperMeasurements({})
-      setAllTapeMeasurements({})
-    }
-
     // When preserving measurements, get current values from either workflow
     const getCurrentValue = (field: keyof CaliperMeasurements | keyof TapeMeasurements) => {
       if (!preserveCurrentMeasurements) {
@@ -567,19 +558,6 @@ export default function BodyCompositionPage() {
     // Replace all unsaved cards with this new one (atomic operation to prevent race conditions)
     replaceAllUnsavedWithNew(newSet)
     console.log('  ↳ Replaced all unsaved cards with new one')
-
-    // CRITICAL: If we're NOT preserving measurements, force clear all state again AFTER setting active
-    // This ensures the UI updates immediately, not after page refresh
-    if (!preserveCurrentMeasurements) {
-      console.log('  ↳ Force clearing state after setting active (to clear UI immediately)')
-      // Use setTimeout to ensure this runs after the Zustand update and auto-fill effect
-      setTimeout(() => {
-        setCaliperMeasurements({})
-        setTapeMeasurements({})
-        setAllCaliperMeasurements({})
-        setAllTapeMeasurements({})
-      }, 0)
-    }
   }
 
   // Handler for selecting a measurement set
