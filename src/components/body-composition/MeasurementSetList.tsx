@@ -151,19 +151,22 @@ export default function MeasurementSetList({
         const isLast = savedSetIndex === sortedSavedSets.length - 1
 
         // Calculate duplicate index for cards with same date
+        // ONLY count cards that don't have custom names (name is null/undefined)
         // The NEWEST card (unsaved, earlier in list) gets a number
         // The OLDEST card (saved first, later in list) has NO number
         // Strategy:
-        // - Find total count of cards with same date
+        // - Find total count of cards with same date AND no custom name
         // - First card in list (index 0 for that date) gets highest number
         // - Last card in list gets no number (0)
-        const cardsWithSameDate = allSets.filter(s => s.set_date === set.set_date)
-        const totalWithSameDate = cardsWithSameDate.length
+        const cardsWithSameDateAndNoCustomName = allSets.filter(
+          s => s.set_date === set.set_date && !s.name
+        )
+        const totalWithSameDate = cardsWithSameDateAndNoCustomName.length
 
         let duplicateIndex = 0
         if (totalWithSameDate > 1) {
           // Find this card's position among cards with same date (0 = first/newest)
-          const positionInGroup = cardsWithSameDate.findIndex(s => s.id === set.id)
+          const positionInGroup = cardsWithSameDateAndNoCustomName.findIndex(s => s.id === set.id)
           // First/newest card gets (total - 1), second gets (total - 2), last gets 0
           duplicateIndex = totalWithSameDate - 1 - positionInGroup
         }
