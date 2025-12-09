@@ -434,11 +434,11 @@ export default function BodyCompositionPage() {
 
   // Handler for creating new measurement set
   const handleCreateNewMeasurement = (preserveCurrentMeasurements = false) => {
-    // Check if an unsaved card already exists - only allow ONE orange card at a time
+    // If an unsaved card already exists, remove it first (only ONE orange card at a time)
     if (unsavedMeasurementSets.length > 0) {
-      // Already have an unsaved card, just select it instead of creating a new one
-      setActiveMeasurementSet(unsavedMeasurementSets[0])
-      return
+      unsavedMeasurementSets.forEach(set => {
+        removeUnsavedMeasurementSet(set.id)
+      })
     }
 
     // Check for unsaved changes (only if we're not auto-creating the first card)
@@ -519,6 +519,12 @@ export default function BodyCompositionPage() {
   const handleSelectMeasurementSet = (setId: string) => {
     const set = getMeasurementSetById(setId)
     if (set) {
+      // If switching away from an unsaved (orange) card, remove it
+      // Only keep ONE unsaved card at a time - remove old ones when selecting saved cards
+      if (activeMeasurementSet?.id.startsWith('temp-') && !setId.startsWith('temp-')) {
+        removeUnsavedMeasurementSet(activeMeasurementSet.id)
+      }
+
       setActiveMeasurementSet(set)
     }
   }
