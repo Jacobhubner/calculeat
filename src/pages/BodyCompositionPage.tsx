@@ -434,6 +434,13 @@ export default function BodyCompositionPage() {
 
   // Handler for creating new measurement set
   const handleCreateNewMeasurement = (preserveCurrentMeasurements = false) => {
+    // Check if an unsaved card already exists - only allow ONE orange card at a time
+    if (unsavedMeasurementSets.length > 0) {
+      // Already have an unsaved card, just select it instead of creating a new one
+      setActiveMeasurementSet(unsavedMeasurementSets[0])
+      return
+    }
+
     // Check for unsaved changes (only if we're not auto-creating the first card)
     if (hasUnsavedMeasurements && !preserveCurrentMeasurements) {
       const confirmed = window.confirm(

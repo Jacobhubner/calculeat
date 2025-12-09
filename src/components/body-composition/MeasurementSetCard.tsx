@@ -21,6 +21,7 @@ interface MeasurementSetCardProps {
   isFirst?: boolean
   isLast?: boolean
   reorderPending?: boolean
+  duplicateIndex?: number
 }
 
 export default function MeasurementSetCard({
@@ -36,6 +37,7 @@ export default function MeasurementSetCard({
   isFirst = false,
   isLast = false,
   reorderPending = false,
+  duplicateIndex = 0,
 }: MeasurementSetCardProps) {
   // Local state för redigeringsläge
   const [isEditingName, setIsEditingName] = useState(false)
@@ -47,14 +49,8 @@ export default function MeasurementSetCard({
     day: 'numeric',
   })
 
-  // Format time from created_at (e.g., "2025-01-15T09:30:00" -> "09:30")
-  const displayTime = new Date(measurementSet.created_at).toLocaleTimeString('sv-SE', {
-    hour: '2-digit',
-    minute: '2-digit',
-  })
-
-  // Combine date and time as default name
-  const defaultName = `${displayDate} - ${displayTime}`
+  // Create default name (date only, with optional duplicate number)
+  const defaultName = duplicateIndex > 0 ? `${displayDate} (${duplicateIndex})` : displayDate
 
   // Show custom name if set, otherwise show default name
   const displayName = measurementSet.name || defaultName

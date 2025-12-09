@@ -139,7 +139,7 @@ export default function MeasurementSetList({
 
   return (
     <div className="space-y-1.5">
-      {allSets.map(set => {
+      {allSets.map((set, index) => {
         const isActive = activeMeasurementSet?.id === set.id
         const showSaveIcon = isActive && hasUnsavedChanges
         const isUnsaved = set.id.startsWith('temp-')
@@ -149,6 +149,12 @@ export default function MeasurementSetList({
         const savedSetIndex = isUnsaved ? -1 : sortedSavedSets.findIndex(s => s.id === set.id)
         const isFirst = savedSetIndex === 0
         const isLast = savedSetIndex === sortedSavedSets.length - 1
+
+        // Calculate duplicate index for cards with same date
+        // Count how many cards with same set_date appear BEFORE this one
+        const duplicateIndex = allSets.filter(
+          (s, i) => i < index && s.set_date === set.set_date
+        ).length
 
         return (
           <MeasurementSetCard
@@ -165,6 +171,7 @@ export default function MeasurementSetList({
             isFirst={isFirst}
             isLast={isLast}
             reorderPending={reorderSetMutation.isPending}
+            duplicateIndex={duplicateIndex}
           />
         )
       })}
