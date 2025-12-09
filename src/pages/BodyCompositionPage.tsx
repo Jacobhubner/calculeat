@@ -652,35 +652,29 @@ export default function BodyCompositionPage() {
       return hasWorkflow1 || hasWorkflow2
     }
 
-    // For saved sets, compare BOTH workflows with saved values for maximum robustness
-    const workflow1CaliperChanged = Object.entries(caliperMeasurements).some(([key, value]) => {
-      const savedKey = key === 'lowerBack' ? 'lower_back' : key
-      return value !== activeMeasurementSet[savedKey as keyof typeof activeMeasurementSet]
-    })
+    // For saved sets, only compare the ACTIVE workflow to avoid false positives
+    // when switching between workflows
+    const currentWorkflowMeasurements =
+      activeWorkflow === 'method-first'
+        ? { caliper: caliperMeasurements, tape: tapeMeasurements }
+        : { caliper: allCaliperMeasurements, tape: allTapeMeasurements }
 
-    const workflow2CaliperChanged = Object.entries(allCaliperMeasurements).some(([key, value]) => {
-      const savedKey = key === 'lowerBack' ? 'lower_back' : key
-      return value !== activeMeasurementSet[savedKey as keyof typeof activeMeasurementSet]
-    })
-
-    const workflow1TapeChanged = Object.entries(tapeMeasurements).some(([key, value]) => {
-      const savedKey = key === 'thighCirc' ? 'thigh_circ' : key === 'calfCirc' ? 'calf_circ' : key
-      return value !== activeMeasurementSet[savedKey as keyof typeof activeMeasurementSet]
-    })
-
-    const workflow2TapeChanged = Object.entries(allTapeMeasurements).some(([key, value]) => {
-      const savedKey = key === 'thighCirc' ? 'thigh_circ' : key === 'calfCirc' ? 'calf_circ' : key
-      return value !== activeMeasurementSet[savedKey as keyof typeof activeMeasurementSet]
-    })
-
-    return (
-      workflow1CaliperChanged ||
-      workflow2CaliperChanged ||
-      workflow1TapeChanged ||
-      workflow2TapeChanged
+    const caliperChanged = Object.entries(currentWorkflowMeasurements.caliper).some(
+      ([key, value]) => {
+        const savedKey = key === 'lowerBack' ? 'lower_back' : key
+        return value !== activeMeasurementSet[savedKey as keyof typeof activeMeasurementSet]
+      }
     )
+
+    const tapeChanged = Object.entries(currentWorkflowMeasurements.tape).some(([key, value]) => {
+      const savedKey = key === 'thighCirc' ? 'thigh_circ' : key === 'calfCirc' ? 'calf_circ' : key
+      return value !== activeMeasurementSet[savedKey as keyof typeof activeMeasurementSet]
+    })
+
+    return caliperChanged || tapeChanged
   }, [
     activeMeasurementSet,
+    activeWorkflow,
     caliperMeasurements,
     tapeMeasurements,
     allCaliperMeasurements,
