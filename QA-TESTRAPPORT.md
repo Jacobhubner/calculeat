@@ -490,6 +490,57 @@ navigate('/app')
 
 ---
 
+### 🔴 Bug 2: Felaktig Profilnamn Visning (full_name vs profile_name)
+
+**Filer:**
+
+- `src/components/layout/DashboardNav.tsx:87, 120`
+- `src/components/layout/SiteHeader.tsx:37, 184`
+- `src/pages/DashboardPage.tsx:190`
+
+**Problem:**
+
+UI-komponenter försökte läsa `profile?.full_name` men databasen och TypeScript-typen använder `profile_name`.
+
+```typescript
+// FEL (före fix):
+{
+  profile?.full_name || 'Användare'
+}
+
+// RÄTT (efter fix):
+{
+  profile?.profile_name || 'Användare'
+}
+```
+
+**Förklaring:**
+
+- Vid registrering sparas `profile_name: "QA Test User"` i databasen
+- AuthContext hämtar profil från `profiles` tabellen som har kolumn `profile_name`
+- Men UI läste `profile?.full_name` vilket är `undefined`
+- Detta resulterade i att gamla användarnamn visades tills något triggade en re-render
+
+**Symtom:**
+
+- Efter ny inloggning visas först gammalt användarnamn (t.ex. "Jacob")
+- När användaren klickar på profilkort eller annan action som triggar re-render, uppdateras namnet till det korrekta
+- Initialerna i avatar beräknades också från `full_name` (fel)
+
+**Åtgärd:**
+
+Ändrade alla referenser från `full_name` till `profile_name` i:
+
+1. `DashboardNav.tsx` - getInitials() funktion och användarnamn-display
+2. `SiteHeader.tsx` - getInitials() funktion och mobile menu användarnamn
+3. `DashboardPage.tsx` - välkomstmeddelande "Hej {namn}!"
+
+**Påverkan:** MEDEL - Användarupplevelse påverkades, men fungerade efter interaktion
+
+**Status:** ✅ FIXAT (2025-12-09)
+
+---
+
 ### ✅ Varning 1: Email-validering - REDAN FIXAT
 
 **Fil:** `src/lib/validation.ts:89, 95`
@@ -551,22 +602,23 @@ await supabase.auth.resend({ type: 'signup', email })
 ### Prio 1: Kritiskt (Fixa Innan Release)
 
 1. ✅ **FIXAT Bug 1** - Ändrad `/dashboard` till `/app` i AuthCallbackPage.tsx
-2. ✅ **VERIFIERAT** - Svenska felmeddelanden för email-validering finns redan
-3. ⚠️ **TEST MANUELLT KRÄVS** - Kör alla tester i Del 2 för att verifiera flöden
+2. ✅ **FIXAT Bug 2** - Ändrad `full_name` till `profile_name` i alla UI-komponenter (DashboardNav, SiteHeader, DashboardPage)
+3. ✅ **VERIFIERAT** - Svenska felmeddelanden för email-validering finns redan
+4. ⚠️ **TEST MANUELLT KRÄVS** - Kör alla tester i Del 2 för att verifiera flöden
 
 ### Prio 2: Viktigt (Nästa Sprint)
 
-4. ⚠️ **Email-domän** - Konfigurera calculeat.com för email-utskick
-5. ⚠️ **Email-templates** - Anpassa Supabase templates med svenska texter och branding
-6. ⚠️ **Resend Email** - Lägg till "Skicka email igen" funktionalitet
+5. ⚠️ **Email-domän** - Konfigurera calculeat.com för email-utskick
+6. ⚠️ **Email-templates** - Anpassa Supabase templates med svenska texter och branding
+7. ⚠️ **Resend Email** - Lägg till "Skicka email igen" funktionalitet
 
 ### Prio 3: Nice-to-Have
 
-7. Password strength meter på registrering
-8. "Remember me" checkbox på login
-9. CAPTCHA för att förhindra spam-registreringar
-10. Logging av säkerhetshändelser (misslyckade inloggningar)
-11. Email-notifikation vid lösenordsändring (säkerhetsåtgärd)
+8. Password strength meter på registrering
+9. "Remember me" checkbox på login
+10. CAPTCHA för att förhindra spam-registreringar
+11. Logging av säkerhetshändelser (misslyckade inloggningar)
+12. Email-notifikation vid lösenordsändring (säkerhetsåtgärd)
 
 ---
 
@@ -585,6 +637,7 @@ await supabase.auth.resend({ type: 'signup', email })
 ### ✅ Buggar Fixade
 
 - ✅ **Bug 1:** `/dashboard` → `/app` redirect - FIXAT
+- ✅ **Bug 2:** `full_name` → `profile_name` i UI-komponenter - FIXAT
 
 ### ⚠️ Kräver Manuell Testning
 
@@ -597,7 +650,8 @@ await supabase.auth.resend({ type: 'signup', email })
 - **Totala testfall:** 25
 - **Verifierade via kod:** 22 (88%)
 - **Kräver manuell test:** 3 (12%)
-- **Buggar funna:** 1 kritisk, 1 varning
+- **Buggar funna:** 2 kritiska (båda fixade)
+- **Varningar:** 3 (konfigurationsrelaterade)
 - **Säkerhetsrisker:** 0
 
 ---

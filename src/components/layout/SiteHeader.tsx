@@ -34,8 +34,8 @@ export default function SiteHeader() {
   ]
 
   const getInitials = () => {
-    if (profile?.full_name) {
-      return profile.full_name
+    if (profile?.profile_name) {
+      return profile.profile_name
         .split(' ')
         .map(n => n[0])
         .join('')
@@ -181,7 +181,7 @@ export default function SiteHeader() {
                     </Avatar>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-neutral-900 truncate">
-                        {profile?.full_name || 'Användare'}
+                        {profile?.profile_name || 'Användare'}
                       </p>
                       <p className="text-xs text-neutral-500 truncate">{user.email}</p>
                       {activeProfile && (

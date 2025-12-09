@@ -64,8 +64,11 @@ Du bad mig agera som QA-ingenjör och granska samt validera funktionen för att 
 
 ### 🔴 Buggar Funna och Fixade
 
-1. ✅ **Kritisk Bug:** Email-bekräftelse redirectade till fel route - **FIXAT**
-2. ✅ **Verifierad:** Svenska email-validering fanns redan - Inget att fixa
+1. ✅ **Kritisk Bug 1:** Email-bekräftelse redirectade till fel route (`/dashboard` → `/app`) - **FIXAT**
+2. ✅ **Kritisk Bug 2:** Felaktigt profilnamn visades vid inloggning (`full_name` → `profile_name`) - **FIXAT**
+   - Fixat i: DashboardNav.tsx, SiteHeader.tsx, DashboardPage.tsx
+   - Symptom: Gammalt användarnamn visades tills re-render triggades
+3. ✅ **Verifierad:** Svenska email-validering fanns redan - Inget att fixa
 
 ### ⚠️ Kända Begränsningar (Dokumenterade)
 
@@ -119,6 +122,10 @@ Du bad mig agera som QA-ingenjör och granska samt validera funktionen för att 
 
 - ✅ `src/App.tsx` - Route för `/reset-password` tillagd
 - ✅ `src/pages/AuthCallbackPage.tsx` - Bug fixad: `/dashboard` → `/app`
+- ✅ `src/lib/auth-errors.ts` - Förbättrad error handling för duplicerade emails
+- ✅ `src/components/layout/DashboardNav.tsx` - Bug fixad: `full_name` → `profile_name`
+- ✅ `src/components/layout/SiteHeader.tsx` - Bug fixad: `full_name` → `profile_name`
+- ✅ `src/pages/DashboardPage.tsx` - Bug fixad: `full_name` → `profile_name`
 
 ---
 
@@ -148,8 +155,8 @@ Som AI kunde jag inte:
   - Email-bekräftelse
   - Lösenordsåterställning (ny funktionalitet)
   - Rate limiting
-- **Buggar funna:** 1 kritisk
-- **Buggar fixade:** 1 (100%)
+- **Buggar funna:** 2 kritiska
+- **Buggar fixade:** 2 (100%)
 - **Säkerhetsrisker:** 0
 
 ---
