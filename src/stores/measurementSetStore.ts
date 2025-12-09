@@ -150,13 +150,15 @@ export const useMeasurementSetStore = create<MeasurementSetState>()(
     {
       name: 'calculeat-measurement-set-storage',
       // Only persist active measurement set ID and date for quick restoration
+      // Don't persist temp (unsaved) cards - they should not survive page refresh
       partialize: state => ({
-        activeMeasurementSet: state.activeMeasurementSet
-          ? {
-              id: state.activeMeasurementSet.id,
-              set_date: state.activeMeasurementSet.set_date,
-            }
-          : null,
+        activeMeasurementSet:
+          state.activeMeasurementSet && !state.activeMeasurementSet.id.startsWith('temp-')
+            ? {
+                id: state.activeMeasurementSet.id,
+                set_date: state.activeMeasurementSet.set_date,
+              }
+            : null,
       }),
     }
   )
