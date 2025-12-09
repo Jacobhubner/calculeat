@@ -6,7 +6,11 @@
       "Bash(git push)",
       "Bash(git commit:*)",
       "Bash(npm run dev:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(find:*)",
+      "Bash(cat:*)",
+      "Bash(grep:*)",
+      "Bash(timeout /t 5)"
     ],
     "deny": [],
     "ask": []

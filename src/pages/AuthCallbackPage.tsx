@@ -40,7 +40,7 @@ export default function AuthCallbackPage() {
 
           // Redirect to dashboard after 2 seconds
           setTimeout(() => {
-            navigate('/dashboard')
+            navigate('/app')
           }, 2000)
         } else {
           // No session found, might be an expired or invalid link
