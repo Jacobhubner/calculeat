@@ -65,10 +65,10 @@ export default function BodyCompositionPage() {
   const setActiveMeasurementSet = useMeasurementSetStore(state => state.setActiveMeasurementSet)
   const measurementSets = useMeasurementSetStore(state => state.measurementSets)
   const unsavedMeasurementSets = useMeasurementSetStore(state => state.unsavedMeasurementSets)
-  const addUnsavedMeasurementSet = useMeasurementSetStore(state => state.addUnsavedMeasurementSet)
   const removeUnsavedMeasurementSet = useMeasurementSetStore(
     state => state.removeUnsavedMeasurementSet
   )
+  const replaceAllUnsavedWithNew = useMeasurementSetStore(state => state.replaceAllUnsavedWithNew)
   const getMeasurementSetById = useMeasurementSetStore(state => state.getMeasurementSetById)
 
   const createMeasurementSetMutation = useCreateMeasurementSet()
@@ -299,6 +299,7 @@ export default function BodyCompositionPage() {
   useEffect(() => {
     console.log('🔄 Auto-fill effect triggered', {
       activeMeasurementSet: activeMeasurementSet?.id,
+      isTemp: activeMeasurementSet?.id.startsWith('temp-'),
       activeWorkflow,
       timestamp: new Date().toISOString(),
     })
@@ -313,13 +314,48 @@ export default function BodyCompositionPage() {
       return
     }
 
+    const allMeasurementsUndefined = [
+      activeMeasurementSet.chest,
+      activeMeasurementSet.abdominal,
+      activeMeasurementSet.thigh,
+      activeMeasurementSet.tricep,
+      activeMeasurementSet.subscapular,
+      activeMeasurementSet.suprailiac,
+      activeMeasurementSet.midaxillary,
+      activeMeasurementSet.bicep,
+      activeMeasurementSet.lower_back,
+      activeMeasurementSet.calf,
+      activeMeasurementSet.neck,
+      activeMeasurementSet.waist,
+      activeMeasurementSet.hip,
+      activeMeasurementSet.wrist,
+      activeMeasurementSet.forearm,
+      activeMeasurementSet.thigh_circ,
+      activeMeasurementSet.calf_circ,
+    ].every(v => v === undefined)
+
     console.log('  ↳ Filling measurements from card', {
+      cardId: activeMeasurementSet.id,
+      isTemp: activeMeasurementSet.id.startsWith('temp-'),
       chest: activeMeasurementSet.chest,
       abdominal: activeMeasurementSet.abdominal,
+      thigh: activeMeasurementSet.thigh,
       neck: activeMeasurementSet.neck,
       waist: activeMeasurementSet.waist,
+      allMeasurementsUndefined,
     })
 
+    // If all measurements are undefined (new empty card), explicitly clear all state
+    if (allMeasurementsUndefined) {
+      console.log('  ↳ All measurements undefined, clearing all state')
+      setCaliperMeasurements({})
+      setTapeMeasurements({})
+      setAllCaliperMeasurements({})
+      setAllTapeMeasurements({})
+      return
+    }
+
+    // Otherwise, fill from card values
     // Workflow 1 - method-first
     setCaliperMeasurements({
       chest: activeMeasurementSet.chest,
@@ -434,12 +470,12 @@ export default function BodyCompositionPage() {
 
   // Handler for creating new measurement set
   const handleCreateNewMeasurement = (preserveCurrentMeasurements = false) => {
-    // If an unsaved card already exists, remove it first (only ONE orange card at a time)
-    if (unsavedMeasurementSets.length > 0) {
-      unsavedMeasurementSets.forEach(set => {
-        removeUnsavedMeasurementSet(set.id)
-      })
-    }
+    console.log('🆕 handleCreateNewMeasurement called', {
+      preserveCurrentMeasurements,
+      currentActive: activeMeasurementSet?.id,
+      unsavedCount: unsavedMeasurementSets.length,
+      unsavedIds: unsavedMeasurementSets.map(s => s.id),
+    })
 
     // Check for unsaved changes (only if we're not auto-creating the first card)
     if (hasUnsavedMeasurements && !preserveCurrentMeasurements) {
@@ -460,7 +496,10 @@ export default function BodyCompositionPage() {
 
     // When preserving measurements, get current values from either workflow
     const getCurrentValue = (field: keyof CaliperMeasurements | keyof TapeMeasurements) => {
-      if (!preserveCurrentMeasurements) return undefined
+      if (!preserveCurrentMeasurements) {
+        console.log(`  ↳ getCurrentValue(${field}): returning undefined (not preserving)`)
+        return undefined
+      }
 
       // Check workflow 1 measurements
       if (field in caliperMeasurements) {
@@ -485,8 +524,11 @@ export default function BodyCompositionPage() {
       return undefined
     }
 
+    const tempId = `temp-${Date.now()}`
+    console.log('  ↳ Creating newSet with tempId:', tempId)
+
     const newSet = {
-      id: `temp-${Date.now()}`,
+      id: tempId,
       user_id: profile?.id || '',
       set_date: new Date().toISOString().split('T')[0],
       created_at: new Date().toISOString(),
@@ -511,8 +553,20 @@ export default function BodyCompositionPage() {
       calf_circ: getCurrentValue('calfCirc'),
     }
 
-    console.log('Creating new measurement set:', newSet)
-    addUnsavedMeasurementSet(newSet)
+    console.log('  ↳ newSet created with measurement values:', {
+      chest: newSet.chest,
+      abdominal: newSet.abdominal,
+      thigh: newSet.thigh,
+      neck: newSet.neck,
+      waist: newSet.waist,
+      allUndefined: Object.keys(newSet)
+        .filter(k => k !== 'id' && k !== 'user_id' && k !== 'set_date' && k !== 'created_at')
+        .every(k => newSet[k as keyof typeof newSet] === undefined),
+    })
+
+    // Replace all unsaved cards with this new one (atomic operation to prevent race conditions)
+    replaceAllUnsavedWithNew(newSet)
+    console.log('  ↳ Replaced all unsaved cards with new one')
   }
 
   // Handler for selecting a measurement set

@@ -21,6 +21,7 @@ interface MeasurementSetState {
   addUnsavedMeasurementSet: (measurementSet: MeasurementSet) => void
   removeUnsavedMeasurementSet: (tempId: string) => void
   updateUnsavedMeasurementSet: (tempId: string, data: Partial<MeasurementSet>) => void
+  replaceAllUnsavedWithNew: (measurementSet: MeasurementSet) => void
 
   // Add new measurement set to the list
   addMeasurementSet: (measurementSet: MeasurementSet) => void
@@ -65,17 +66,31 @@ export const useMeasurementSetStore = create<MeasurementSetState>()(
 
       // Add unsaved measurement set (local only, not in database yet)
       addUnsavedMeasurementSet: measurementSet =>
-        set(state => ({
-          unsavedMeasurementSets: [measurementSet, ...state.unsavedMeasurementSets],
-          // Auto-select the newly added unsaved set
-          activeMeasurementSet: measurementSet,
-        })),
+        set(state => {
+          console.log('📦 Zustand: addUnsavedMeasurementSet', {
+            newSetId: measurementSet.id,
+            currentUnsavedCount: state.unsavedMeasurementSets.length,
+            currentUnsavedIds: state.unsavedMeasurementSets.map(s => s.id),
+          })
+          return {
+            unsavedMeasurementSets: [measurementSet, ...state.unsavedMeasurementSets],
+            // Auto-select the newly added unsaved set
+            activeMeasurementSet: measurementSet,
+          }
+        }),
 
       // Remove unsaved measurement set (after saving to database)
       removeUnsavedMeasurementSet: tempId =>
-        set(state => ({
-          unsavedMeasurementSets: state.unsavedMeasurementSets.filter(s => s.id !== tempId),
-        })),
+        set(state => {
+          console.log('📦 Zustand: removeUnsavedMeasurementSet', {
+            removingId: tempId,
+            currentUnsavedCount: state.unsavedMeasurementSets.length,
+            currentUnsavedIds: state.unsavedMeasurementSets.map(s => s.id),
+          })
+          return {
+            unsavedMeasurementSets: state.unsavedMeasurementSets.filter(s => s.id !== tempId),
+          }
+        }),
 
       // Update unsaved measurement set
       updateUnsavedMeasurementSet: (tempId, data) =>
@@ -89,6 +104,22 @@ export const useMeasurementSetStore = create<MeasurementSetState>()(
               ? { ...state.activeMeasurementSet, ...data }
               : state.activeMeasurementSet,
         })),
+
+      // Replace all unsaved cards with a new one (atomic operation to prevent race conditions)
+      replaceAllUnsavedWithNew: measurementSet =>
+        set(state => {
+          console.log('📦 Zustand: replaceAllUnsavedWithNew', {
+            newSetId: measurementSet.id,
+            removingCount: state.unsavedMeasurementSets.length,
+            removingIds: state.unsavedMeasurementSets.map(s => s.id),
+          })
+          return {
+            // Replace entire array with single new card
+            unsavedMeasurementSets: [measurementSet],
+            // Set as active
+            activeMeasurementSet: measurementSet,
+          }
+        }),
 
       // Add measurement set
       addMeasurementSet: measurementSet =>
