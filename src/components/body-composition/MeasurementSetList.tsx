@@ -61,12 +61,10 @@ export default function MeasurementSetList({
           return match ? parseInt(match[1], 10) : 0
         })
 
-      // Find next available number: start from 1, then 2, 3, etc
+      // Find next available number: start from 1
+      // Increment while this number already exists in numberedCards
       let nextNumber = 1
-      while (
-        cardsWithSameName.length > 0 || // Base name exists
-        numberedCards.includes(nextNumber) // Or this number exists
-      ) {
+      while (numberedCards.includes(nextNumber)) {
         nextNumber++
       }
 
