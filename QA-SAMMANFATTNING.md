@@ -68,7 +68,10 @@ Du bad mig agera som QA-ingenjör och granska samt validera funktionen för att 
 2. ✅ **Kritisk Bug 2:** Felaktigt profilnamn visades vid inloggning (`full_name` → `profile_name`) - **FIXAT**
    - Fixat i: DashboardNav.tsx, SiteHeader.tsx, DashboardPage.tsx
    - Symptom: Gammalt användarnamn visades tills re-render triggades
-3. ✅ **Verifierad:** Svenska email-validering fanns redan - Inget att fixa
+3. ✅ **Kritisk Bug 3:** Profilkort kvarstår efter utloggning - **FIXAT**
+   - Fixat i: AuthContext.tsx (lagt till `clearProfiles()` i signOut och SIGNED_OUT event)
+   - Symptom: Fel profilkort visades vid inloggning med nytt konto
+4. ✅ **Verifierad:** Svenska email-validering fanns redan - Inget att fixa
 
 ### ⚠️ Kända Begränsningar (Dokumenterade)
 
@@ -126,6 +129,7 @@ Du bad mig agera som QA-ingenjör och granska samt validera funktionen för att 
 - ✅ `src/components/layout/DashboardNav.tsx` - Bug fixad: `full_name` → `profile_name`
 - ✅ `src/components/layout/SiteHeader.tsx` - Bug fixad: `full_name` → `profile_name`
 - ✅ `src/pages/DashboardPage.tsx` - Bug fixad: `full_name` → `profile_name`
+- ✅ `src/contexts/AuthContext.tsx` - Bug fixad: Lagt till `clearProfiles()` vid signOut
 
 ---
 
@@ -155,8 +159,8 @@ Som AI kunde jag inte:
   - Email-bekräftelse
   - Lösenordsåterställning (ny funktionalitet)
   - Rate limiting
-- **Buggar funna:** 2 kritiska
-- **Buggar fixade:** 2 (100%)
+- **Buggar funna:** 3 kritiska
+- **Buggar fixade:** 3 (100%)
 - **Säkerhetsrisker:** 0
 
 ---

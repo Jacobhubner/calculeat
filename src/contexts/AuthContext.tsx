@@ -3,6 +3,7 @@ import { User, Session } from '@supabase/supabase-js'
 import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase'
 import { UserProfile } from '@/lib/types'
+import { useProfileStore } from '@/stores/profileStore'
 
 interface AuthContextType {
   user: User | null
@@ -24,6 +25,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
+  const clearProfiles = useProfileStore(state => state.clearProfiles)
 
   // Check if user has completed essential profile fields
   const isProfileComplete =
@@ -71,6 +73,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Handle session timeout
       if (event === 'SIGNED_OUT') {
         setProfile(null)
+        clearProfiles() // Clear profile store on session timeout
         // Only show toast if this was an unexpected sign out (session expired)
         // Don't show if user explicitly signed out (handled in signOut function)
         if (window.location.pathname.startsWith('/app')) {
@@ -119,6 +122,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { error } = await supabase.auth.signOut()
     if (error) throw error
     setProfile(null)
+    clearProfiles() // Clear profile store to remove cached active profile
   }
 
   const updateProfile = async (data: Partial<UserProfile>) => {

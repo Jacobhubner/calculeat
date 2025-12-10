@@ -541,6 +541,67 @@ UI-komponenter försökte läsa `profile?.full_name` men databasen och TypeScrip
 
 ---
 
+### 🔴 Bug 3: Profilkort Kvarstår Efter Utloggning
+
+**Filer:**
+
+- `src/contexts/AuthContext.tsx:28, 124, 76`
+
+**Problem:**
+
+Efter utloggning kvarstår det gamla profilkortet i localStorage och visas vid nästa inloggning med annat konto.
+
+**Symtom:**
+
+1. Användare "QA Test User" loggar in → Profilkort "QA Test User" visas ✓
+2. Användare loggar ut
+3. Användare "Jacob" loggar in → Profilkort "QA Test User" visas fortfarande ✗
+4. Först när användaren klickar på sitt profilkort "Jacob" uppdateras vyn
+
+**Root Cause:**
+
+- `profileStore` använder Zustand's `persist` middleware för att spara `activeProfile` i localStorage
+- `signOut()` i AuthContext rensar endast `profile` state men **inte** `profileStore`
+- `SIGNED_OUT` event handler rensar endast `profile` state men **inte** `profileStore`
+- Detta resulterar i att gamla profilkort-data kvarstår mellan sessioner
+
+**Åtgärd:**
+
+Lagt till `clearProfiles()` anrop i:
+
+1. `AuthContext.tsx:28` - Import av `useProfileStore`
+2. `AuthContext.tsx:124` - Anrop av `clearProfiles()` i `signOut()` funktion
+3. `AuthContext.tsx:76` - Anrop av `clearProfiles()` i `SIGNED_OUT` event handler (för session timeout)
+
+```typescript
+// Import profileStore
+import { useProfileStore } from '@/stores/profileStore'
+
+// I AuthProvider component:
+const clearProfiles = useProfileStore(state => state.clearProfiles)
+
+// I signOut() funktion:
+const signOut = async () => {
+  const { error } = await supabase.auth.signOut()
+  if (error) throw error
+  setProfile(null)
+  clearProfiles() // ← NY RAD
+}
+
+// I SIGNED_OUT event handler:
+if (event === 'SIGNED_OUT') {
+  setProfile(null)
+  clearProfiles() // ← NY RAD
+  // ...
+}
+```
+
+**Påverkan:** HÖG - Felaktigt profilkort visas för fel användare, säkerhets- och UX-problem
+
+**Status:** ✅ FIXAT (2025-12-10)
+
+---
+
 ### ✅ Varning 1: Email-validering - REDAN FIXAT
 
 **Fil:** `src/lib/validation.ts:89, 95`
@@ -603,22 +664,23 @@ await supabase.auth.resend({ type: 'signup', email })
 
 1. ✅ **FIXAT Bug 1** - Ändrad `/dashboard` till `/app` i AuthCallbackPage.tsx
 2. ✅ **FIXAT Bug 2** - Ändrad `full_name` till `profile_name` i alla UI-komponenter (DashboardNav, SiteHeader, DashboardPage)
-3. ✅ **VERIFIERAT** - Svenska felmeddelanden för email-validering finns redan
-4. ⚠️ **TEST MANUELLT KRÄVS** - Kör alla tester i Del 2 för att verifiera flöden
+3. ✅ **FIXAT Bug 3** - Lagt till `clearProfiles()` i signOut och SIGNED_OUT event handler (AuthContext.tsx)
+4. ✅ **VERIFIERAT** - Svenska felmeddelanden för email-validering finns redan
+5. ⚠️ **TEST MANUELLT KRÄVS** - Kör alla tester i Del 2 för att verifiera flöden
 
 ### Prio 2: Viktigt (Nästa Sprint)
 
-5. ⚠️ **Email-domän** - Konfigurera calculeat.com för email-utskick
-6. ⚠️ **Email-templates** - Anpassa Supabase templates med svenska texter och branding
-7. ⚠️ **Resend Email** - Lägg till "Skicka email igen" funktionalitet
+6. ⚠️ **Email-domän** - Konfigurera calculeat.com för email-utskick
+7. ⚠️ **Email-templates** - Anpassa Supabase templates med svenska texter och branding
+8. ⚠️ **Resend Email** - Lägg till "Skicka email igen" funktionalitet
 
 ### Prio 3: Nice-to-Have
 
-8. Password strength meter på registrering
-9. "Remember me" checkbox på login
-10. CAPTCHA för att förhindra spam-registreringar
-11. Logging av säkerhetshändelser (misslyckade inloggningar)
-12. Email-notifikation vid lösenordsändring (säkerhetsåtgärd)
+9. Password strength meter på registrering
+10. "Remember me" checkbox på login
+11. CAPTCHA för att förhindra spam-registreringar
+12. Logging av säkerhetshändelser (misslyckade inloggningar)
+13. Email-notifikation vid lösenordsändring (säkerhetsåtgärd)
 
 ---
 
@@ -638,6 +700,7 @@ await supabase.auth.resend({ type: 'signup', email })
 
 - ✅ **Bug 1:** `/dashboard` → `/app` redirect - FIXAT
 - ✅ **Bug 2:** `full_name` → `profile_name` i UI-komponenter - FIXAT
+- ✅ **Bug 3:** Profilkort kvarstår efter utloggning - FIXAT
 
 ### ⚠️ Kräver Manuell Testning
 
@@ -650,7 +713,7 @@ await supabase.auth.resend({ type: 'signup', email })
 - **Totala testfall:** 25
 - **Verifierade via kod:** 22 (88%)
 - **Kräver manuell test:** 3 (12%)
-- **Buggar funna:** 2 kritiska (båda fixade)
+- **Buggar funna:** 3 kritiska (alla fixade)
 - **Varningar:** 3 (konfigurationsrelaterade)
 - **Säkerhetsrisker:** 0
 
