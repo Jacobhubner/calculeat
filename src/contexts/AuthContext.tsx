@@ -4,6 +4,8 @@ import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase'
 import { UserProfile } from '@/lib/types'
 import { useProfileStore } from '@/stores/profileStore'
+import { useMeasurementSetStore } from '@/stores/measurementSetStore'
+import { queryClient } from '@/lib/react-query'
 
 interface AuthContextType {
   user: User | null
@@ -26,6 +28,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
   const clearProfiles = useProfileStore(state => state.clearProfiles)
+  const clearMeasurementSets = useMeasurementSetStore(state => state.clearMeasurementSets)
 
   // Check if user has completed essential profile fields
   const isProfileComplete =
@@ -72,8 +75,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       // Handle session timeout
       if (event === 'SIGNED_OUT') {
+        // Clear React state
         setProfile(null)
-        clearProfiles() // Clear profile store on session timeout
+
+        // Clear Zustand stores
+        clearProfiles()
+        clearMeasurementSets()
+
+        // CRITICAL: Clear React Query cache to prevent data leakage
+        queryClient.clear()
+
         // Only show toast if this was an unexpected sign out (session expired)
         // Don't show if user explicitly signed out (handled in signOut function)
         if (window.location.pathname.startsWith('/app')) {
@@ -121,8 +132,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = async () => {
     const { error } = await supabase.auth.signOut()
     if (error) throw error
+
+    // Clear React state
     setProfile(null)
-    clearProfiles() // Clear profile store to remove cached active profile
+
+    // Clear Zustand stores
+    clearProfiles()
+    clearMeasurementSets()
+
+    // CRITICAL: Clear React Query cache to prevent data leakage between users
+    queryClient.clear()
   }
 
   const updateProfile = async (data: Partial<UserProfile>) => {
