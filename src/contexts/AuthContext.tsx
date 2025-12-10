@@ -85,6 +85,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // CRITICAL: Clear React Query cache to prevent data leakage
         queryClient.clear()
 
+        // CRITICAL: Clear Zustand persist to prevent stale data
+        localStorage.removeItem('calculeat-profile-storage')
+        localStorage.removeItem('calculeat-measurement-set-storage')
+
         // Only show toast if this was an unexpected sign out (session expired)
         // Don't show if user explicitly signed out (handled in signOut function)
         if (window.location.pathname.startsWith('/app')) {
@@ -142,6 +146,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // CRITICAL: Clear React Query cache to prevent data leakage between users
     queryClient.clear()
+
+    // CRITICAL: Clear Zustand persist to prevent stale data
+    localStorage.removeItem('calculeat-profile-storage')
+    localStorage.removeItem('calculeat-measurement-set-storage')
   }
 
   const updateProfile = async (data: Partial<UserProfile>) => {

@@ -59,12 +59,27 @@ export const useProfileStore = create<ProfileState>()(
         console.log('🏪 ProfileStore.setProfiles called with', profiles.length, 'profiles')
 
         return set(state => {
-          const newActiveProfile =
-            state.activeProfile === null
-              ? null
-              : state.activeProfile
-                ? profiles.find(p => p.id === state.activeProfile?.id) || state.activeProfile
-                : profiles.find(p => p.is_active) || profiles[0] || null
+          let newActiveProfile: Profile | null = null
+
+          if (profiles.length === 0) {
+            // No profiles available
+            newActiveProfile = null
+          } else if (state.activeProfile) {
+            // Try to find persisted profile by ID
+            const matchingProfile = profiles.find(p => p.id === state.activeProfile?.id)
+
+            if (matchingProfile) {
+              // Persist ID matches a database profile → use it
+              newActiveProfile = matchingProfile
+            } else {
+              // Persist ID not found in database → auto-select is_active or first
+              console.warn('⚠️ Persisted profile not found in DB, auto-selecting active profile')
+              newActiveProfile = profiles.find(p => p.is_active) || profiles[0]
+            }
+          } else {
+            // No persist data (first login or after cache clear) → auto-select
+            newActiveProfile = profiles.find(p => p.is_active) || profiles[0]
+          }
 
           console.log('🏪 ProfileStore updating activeProfile:', {
             currentId: state.activeProfile?.id,
