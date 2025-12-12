@@ -1,18 +1,18 @@
-import { useState, useMemo } from 'react';
-import { Info } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Label } from '@/components/ui/label';
-import { Select } from '@/components/ui/select';
-import { useProfileData, useMissingProfileData } from '@/hooks/useProfileData';
-import MissingDataCard from '../common/MissingDataCard';
-import { useUpdateProfile } from '@/hooks';
-import { calculateBMR, calculateTDEE } from '@/lib/calculations/bmr';
-import { toast } from 'sonner';
-import type { Profile } from '@/lib/types';
+import { useState, useMemo } from 'react'
+import { Info } from 'lucide-react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Label } from '@/components/ui/label'
+import { Select } from '@/components/ui/select'
+import { useProfileData, useMissingProfileData } from '@/hooks/useProfileData'
+import MissingDataCard from '../common/MissingDataCard'
+import { useUpdateProfile } from '@/hooks'
+import { calculateBMR, calculateSimpleTDEE } from '@/lib/calculations/bmr'
+import { toast } from 'sonner'
+import type { Profile } from '@/lib/types'
 
-type GoalType = 'maintain' | 'loss' | 'gain';
-type DeficitLevel = 'conservative' | 'moderate' | 'aggressive';
+type GoalType = 'maintain' | 'loss' | 'gain'
+type DeficitLevel = 'conservative' | 'moderate' | 'aggressive'
 
 export default function TDEECalculatorTool() {
   const profileData = useProfileData([
@@ -22,19 +22,24 @@ export default function TDEECalculatorTool() {
     'gender',
     'pal_system',
     'activity_level',
-  ]);
+  ])
 
-  const missingFields = useMissingProfileData(['weight_kg', 'height_cm', 'age', 'gender']);
-  const updateProfileMutation = useUpdateProfile();
+  const missingFields = useMissingProfileData(['weight_kg', 'height_cm', 'age', 'gender'])
+  const updateProfileMutation = useUpdateProfile()
 
   // Local state
-  const [goal, setGoal] = useState<GoalType>('maintain');
-  const [deficitLevel, setDeficitLevel] = useState<DeficitLevel>('moderate');
+  const [goal, setGoal] = useState<GoalType>('maintain')
+  const [deficitLevel, setDeficitLevel] = useState<DeficitLevel>('moderate')
 
   // Beräkna BMR
   const bmr = useMemo(() => {
-    if (!profileData?.weight_kg || !profileData?.height_cm || !profileData?.age || !profileData?.gender) {
-      return null;
+    if (
+      !profileData?.weight_kg ||
+      !profileData?.height_cm ||
+      !profileData?.age ||
+      !profileData?.gender
+    ) {
+      return null
     }
 
     return calculateBMR(
@@ -42,73 +47,73 @@ export default function TDEECalculatorTool() {
       profileData.height_cm,
       profileData.age,
       profileData.gender
-    );
-  }, [profileData]);
+    )
+  }, [profileData])
 
   // Beräkna TDEE
   const tdee = useMemo(() => {
-    if (!bmr || !profileData?.activity_level) return null;
+    if (!bmr || !profileData?.activity_level) return null
 
-    return calculateTDEE(bmr, profileData.activity_level);
-  }, [bmr, profileData]);
+    return calculateSimpleTDEE(bmr, profileData.activity_level)
+  }, [bmr, profileData])
 
   // Beräkna kaloriintervall baserat på mål
   const calorieRange = useMemo(() => {
-    if (!tdee) return null;
+    if (!tdee) return null
 
     const deficitLevels = {
-      conservative: 0.10, // 10% deficit/surplus
+      conservative: 0.1, // 10% deficit/surplus
       moderate: 0.15, // 15% deficit/surplus
-      aggressive: 0.20, // 20% deficit/surplus
-    };
+      aggressive: 0.2, // 20% deficit/surplus
+    }
 
-    const multiplier = deficitLevels[deficitLevel];
+    const multiplier = deficitLevels[deficitLevel]
 
     if (goal === 'maintain') {
       return {
         min: Math.round(tdee * 0.95),
         max: Math.round(tdee * 1.05),
         change: 0,
-      };
+      }
     } else if (goal === 'loss') {
-      const deficit = Math.round(tdee * multiplier);
+      const deficit = Math.round(tdee * multiplier)
       return {
         min: Math.round(tdee - deficit),
         max: Math.round(tdee - deficit * 0.7),
         change: -deficit,
-      };
+      }
     } else {
       // gain
-      const surplus = Math.round(tdee * multiplier);
+      const surplus = Math.round(tdee * multiplier)
       return {
         min: Math.round(tdee + surplus * 0.7),
         max: Math.round(tdee + surplus),
         change: surplus,
-      };
+      }
     }
-  }, [tdee, goal, deficitLevel]);
+  }, [tdee, goal, deficitLevel])
 
   // Estimera veckoändring (kg per vecka)
   const weeklyChange = useMemo(() => {
-    if (!calorieRange) return null;
+    if (!calorieRange) return null
 
     // 1 kg kroppsfett ≈ 7700 kcal
-    const dailyChange = calorieRange.change;
-    const weeklyCalorieChange = dailyChange * 7;
-    const weeklyKgChange = weeklyCalorieChange / 7700;
+    const dailyChange = calorieRange.change
+    const weeklyCalorieChange = dailyChange * 7
+    const weeklyKgChange = weeklyCalorieChange / 7700
 
-    return weeklyKgChange;
-  }, [calorieRange]);
+    return weeklyKgChange
+  }, [calorieRange])
 
   const handleSaveMissingData = async (data: Partial<Profile>) => {
     try {
-      await updateProfileMutation.mutateAsync(data);
-      toast.success('Profil uppdaterad');
+      await updateProfileMutation.mutateAsync(data)
+      toast.success('Profil uppdaterad')
     } catch (error) {
-      toast.error('Kunde inte uppdatera profil');
-      throw error;
+      toast.error('Kunde inte uppdatera profil')
+      throw error
     }
-  };
+  }
 
   return (
     <div className="space-y-6">
@@ -194,8 +199,7 @@ export default function TDEECalculatorTool() {
               <CardHeader>
                 <CardTitle>Total Daglig Energiförbrukning (TDEE)</CardTitle>
                 <CardDescription>
-                  BMR + Fysisk aktivitet (Aktivitetsnivå:{' '}
-                  {profileData?.activity_level?.toFixed(2)})
+                  BMR + Fysisk aktivitet (Aktivitetsnivå: {profileData?.activity_level?.toFixed(2)})
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -333,5 +337,5 @@ export default function TDEECalculatorTool() {
         )}
       </div>
     </div>
-  );
+  )
 }

@@ -268,8 +268,9 @@ export function requiresBodyFat(formula: BMRFormula): boolean {
 
 /**
  * Calculate TDEE (Total Daily Energy Expenditure) from BMR and activity level
- * TDEE = BMR × Activity Multiplier
+ * Simple multiplication version for basic calculations
+ * @deprecated Use calculateTDEE from tdee.ts for PAL-system based calculations
  */
-export function calculateTDEE(bmr: number, activityLevel: number): number {
+export function calculateSimpleTDEE(bmr: number, activityLevel: number): number {
   return bmr * activityLevel
 }
