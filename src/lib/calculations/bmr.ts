@@ -214,7 +214,7 @@ export function fitnessStuffPodcast(params: BMRParams): number | null {
 /**
  * Calculate BMR using specified formula
  */
-export function calculateBMR(formula: BMRFormula, params: BMRParams): number | null {
+export function calculateBMRWithFormula(formula: BMRFormula, params: BMRParams): number | null {
   switch (formula) {
     case 'Mifflin-St Jeor equation':
       return mifflinStJeor(params)
@@ -241,6 +241,14 @@ export function calculateBMR(formula: BMRFormula, params: BMRParams): number | n
   }
 }
 
+/**
+ * Calculate BMR using default formula (Mifflin-St Jeor)
+ * Simplified version for quick calculations
+ */
+export function calculateBMR(weight: number, height: number, age: number, gender: Gender): number {
+  return mifflinStJeor({ weight, height, age, gender })
+}
+
 // Legacy compatibility
 export const calculateMifflinStJeor = mifflinStJeor
 export const calculateHarrisBenedict = revisedHarrisBenedict
@@ -256,4 +264,12 @@ export function requiresBodyFat(formula: BMRFormula): boolean {
     'MacroFactor athlete equation',
     'Fitness Stuff Podcast equation',
   ].includes(formula)
+}
+
+/**
+ * Calculate TDEE (Total Daily Energy Expenditure) from BMR and activity level
+ * TDEE = BMR × Activity Multiplier
+ */
+export function calculateTDEE(bmr: number, activityLevel: number): number {
+  return bmr * activityLevel
 }
