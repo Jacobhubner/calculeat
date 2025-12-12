@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useCallback, useRef } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
-import { calculateBMR, requiresBodyFat } from '@/lib/calculations/bmr'
+import { calculateBMRWithFormula, requiresBodyFat } from '@/lib/calculations/bmr'
 import { calculateAge } from '@/lib/calculations/helpers'
 import { calculateTDEE } from '@/lib/calculations/tdee'
 import type { PALSystem } from '@/lib/calculations/tdee'
@@ -621,7 +621,7 @@ export default function UserProfileForm({
     }
 
     // Calculate BMR
-    const bmr = calculateBMR(bmrFormula, {
+    const bmr = calculateBMRWithFormula(bmrFormula, {
       gender,
       age,
       weight: weightNum,
@@ -630,7 +630,14 @@ export default function UserProfileForm({
     })
 
     if (!bmr) {
-      alert('Det gick inte att beräkna BMR. Kontrollera dina värden.')
+      // Check if the formula requires body fat percentage
+      if (requiresBodyFat(bmrFormula) && !bodyFatNum) {
+        alert(
+          `Formeln "${bmrFormula}" kräver kroppsfett%. Vänligen fyll i kroppsfett% eller välj en annan BMR-formel.`
+        )
+      } else {
+        alert('Det gick inte att beräkna BMR. Kontrollera dina värden.')
+      }
       return
     }
 
