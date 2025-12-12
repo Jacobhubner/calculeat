@@ -6,12 +6,19 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   Apple,
   ChefHat,
   Bookmark,
   Calendar,
   History,
   Activity,
+  Wrench,
+  TrendingUp,
+  Flame,
+  Calculator,
+  Target,
+  PieChart,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuth } from '@/contexts/AuthContext'
@@ -19,10 +26,11 @@ import { useUIStore } from '@/stores/uiStore'
 import { cn } from '@/lib/utils'
 import { Avatar, AvatarFallback } from '../ui/avatar'
 import { Separator } from '../ui/separator'
+import { NavItem } from '@/lib/types/navigation'
 
 export default function DashboardNav() {
   const { user, profile, signOut } = useAuth()
-  const { sidebarCollapsed, toggleSidebar } = useUIStore()
+  const { sidebarCollapsed, toggleSidebar, toolsSectionExpanded, toggleToolsSection } = useUIStore()
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -39,47 +47,92 @@ export default function DashboardNav() {
     }
   }
 
-  const navItems = [
+  const navItems: NavItem[] = [
     {
+      type: 'single',
       to: '/app',
       label: 'Översikt',
       icon: LayoutDashboard,
       exact: true,
     },
     {
+      type: 'single',
       to: '/app/today',
       label: 'Dagens logg',
       icon: Calendar,
     },
     {
+      type: 'single',
       to: '/app/food-items',
       label: 'Matvaror',
       icon: Apple,
     },
     {
+      type: 'single',
       to: '/app/recipes',
       label: 'Recept',
       icon: ChefHat,
     },
     {
+      type: 'single',
       to: '/app/saved-meals',
       label: 'Sparade måltider',
       icon: Bookmark,
     },
     {
+      type: 'single',
       to: '/app/history',
       label: 'Historik',
       icon: History,
     },
     {
+      type: 'single',
       to: '/app/profile',
       label: 'Profil',
       icon: User,
     },
     {
-      to: '/app/body-composition',
-      label: 'Kroppssammansättning',
-      icon: Activity,
+      type: 'group',
+      label: 'Verktyg',
+      icon: Wrench,
+      children: [
+        {
+          to: '/app/tools/body-composition',
+          label: 'Kroppssammansättning',
+          icon: Activity,
+          category: 'Kroppsanalys',
+        },
+        {
+          to: '/app/tools/genetic-potential',
+          label: 'Genetisk Muskelpotential',
+          icon: TrendingUp,
+          category: 'Kroppsanalys',
+        },
+        {
+          to: '/app/tools/met-calculator',
+          label: 'MET Aktivitetskalkylator',
+          icon: Flame,
+          category: 'Energi & Metabol',
+        },
+        {
+          to: '/app/tools/tdee-calculator',
+          label: 'TDEE & Kaloriuträknare',
+          icon: Calculator,
+          category: 'Energi & Metabol',
+        },
+        {
+          to: '/app/tools/goal-calculator',
+          label: 'Måluträknare',
+          icon: Target,
+          category: 'Mål & Planering',
+        },
+        {
+          to: '/app/tools/macro-optimizer',
+          label: 'Makro-optimerare',
+          icon: PieChart,
+          category: 'Mål & Planering',
+        },
+      ],
     },
   ]
 
@@ -129,39 +182,97 @@ export default function DashboardNav() {
 
         {/* Navigation */}
         <nav className="flex-1 overflow-y-auto p-4 space-y-1">
-          {navItems.map(item => {
+          {navItems.map((item, index) => {
+            if (item.type === 'single') {
+              const Icon = item.icon
+              const active = item.exact ? isActive(item.to) : location.pathname.startsWith(item.to)
+
+              return (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  className={cn(
+                    'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors relative group',
+                    active
+                      ? 'bg-primary-100 text-primary-700'
+                      : 'text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900',
+                    sidebarCollapsed && 'justify-center px-2'
+                  )}
+                >
+                  <Icon className={cn('h-5 w-5 shrink-0', active && 'text-primary-600')} />
+                  {!sidebarCollapsed && <span className="flex-1">{item.label}</span>}
+                  {sidebarCollapsed && (
+                    <div className="absolute left-full ml-2 px-2 py-1 bg-neutral-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                      {item.label}
+                    </div>
+                  )}
+                </Link>
+              )
+            }
+
+            // Group item (expandable)
             const Icon = item.icon
-            const active = item.exact ? isActive(item.to) : location.pathname.startsWith(item.to)
+            const hasActiveChild = item.children.some(child =>
+              location.pathname.startsWith(child.to)
+            )
 
             return (
-              <Link
-                key={item.to}
-                to={item.to}
-                className={cn(
-                  'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors relative group',
-                  active
-                    ? 'bg-primary-100 text-primary-700'
-                    : 'text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900',
-                  sidebarCollapsed && 'justify-center px-2'
-                )}
-              >
-                <Icon className={cn('h-5 w-5 shrink-0', active && 'text-primary-600')} />
-                {!sidebarCollapsed && (
-                  <>
-                    <span className="flex-1">{item.label}</span>
-                    {item.badge && (
-                      <span className="text-xs bg-neutral-200 text-neutral-600 px-2 py-0.5 rounded-full">
-                        {item.badge}
-                      </span>
-                    )}
-                  </>
-                )}
-                {sidebarCollapsed && (
-                  <div className="absolute left-full ml-2 px-2 py-1 bg-neutral-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                    {item.label}
+              <div key={index} className="space-y-1">
+                <button
+                  onClick={toggleToolsSection}
+                  className={cn(
+                    'w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors relative group',
+                    hasActiveChild
+                      ? 'bg-primary-50 text-primary-700'
+                      : 'text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900',
+                    sidebarCollapsed && 'justify-center px-2'
+                  )}
+                >
+                  <Icon className={cn('h-5 w-5 shrink-0', hasActiveChild && 'text-primary-600')} />
+                  {!sidebarCollapsed && (
+                    <>
+                      <span className="flex-1 text-left">{item.label}</span>
+                      <ChevronDown
+                        className={cn(
+                          'h-4 w-4 transition-transform',
+                          toolsSectionExpanded && 'rotate-180'
+                        )}
+                      />
+                    </>
+                  )}
+                  {sidebarCollapsed && (
+                    <div className="absolute left-full ml-2 px-2 py-1 bg-neutral-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                      {item.label}
+                    </div>
+                  )}
+                </button>
+
+                {/* Child items */}
+                {toolsSectionExpanded && !sidebarCollapsed && (
+                  <div className="ml-4 space-y-1 border-l-2 border-neutral-200 pl-2">
+                    {item.children.map(child => {
+                      const ChildIcon = child.icon
+                      const childActive = location.pathname === child.to
+
+                      return (
+                        <Link
+                          key={child.to}
+                          to={child.to}
+                          className={cn(
+                            'flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors',
+                            childActive
+                              ? 'bg-primary-100 text-primary-700 font-medium'
+                              : 'text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900'
+                          )}
+                        >
+                          <ChildIcon className={cn('h-4 w-4 shrink-0', childActive && 'text-primary-600')} />
+                          <span className="flex-1">{child.label}</span>
+                        </Link>
+                      )
+                    })}
                   </div>
                 )}
-              </Link>
+              </div>
             )
           })}
         </nav>

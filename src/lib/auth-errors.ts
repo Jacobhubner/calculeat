@@ -24,7 +24,13 @@ export function translateAuthError(error: unknown): string {
   }
 
   // Email already registered
-  if (message.includes('user already registered') || message.includes('already registered')) {
+  if (
+    message.includes('user already registered') ||
+    message.includes('already registered') ||
+    message.includes('email address already in use') ||
+    message.includes('duplicate key value') ||
+    message.includes('already exists')
+  ) {
     return 'En användare med denna e-postadress finns redan'
   }
 

@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { AuthProvider } from './contexts/AuthContext'
 import { queryClient } from './lib/react-query'
@@ -24,6 +24,13 @@ import TodayPage from './pages/TodayPage'
 import HistoryPage from './pages/HistoryPage'
 import HistoryDayPage from './pages/HistoryDayPage'
 import AuthCallbackPage from './pages/AuthCallbackPage'
+import ToolsPage from './pages/ToolsPage'
+import BodyCompositionTool from './components/tools/body-composition/BodyCompositionTool'
+import GeneticPotentialTool from './components/tools/genetic-potential/GeneticPotentialTool'
+import METCalculatorTool from './components/tools/met-calculator/METCalculatorTool'
+import TDEECalculatorTool from './components/tools/tdee-calculator/TDEECalculatorTool'
+import GoalCalculatorTool from './components/tools/goal-calculator/GoalCalculatorTool'
+import MacroOptimizerTool from './components/tools/macro-optimizer/MacroOptimizerTool'
 
 function App() {
   return (
@@ -127,6 +134,22 @@ function App() {
                     </ProtectedRoute>
                   }
                 />
+                <Route
+                  path="/app/tools"
+                  element={
+                    <ProtectedRoute>
+                      <ToolsPage />
+                    </ProtectedRoute>
+                  }
+                >
+                  <Route index element={<Navigate to="/app/tools/body-composition" replace />} />
+                  <Route path="body-composition" element={<BodyCompositionTool />} />
+                  <Route path="genetic-potential" element={<GeneticPotentialTool />} />
+                  <Route path="met-calculator" element={<METCalculatorTool />} />
+                  <Route path="tdee-calculator" element={<TDEECalculatorTool />} />
+                  <Route path="goal-calculator" element={<GoalCalculatorTool />} />
+                  <Route path="macro-optimizer" element={<MacroOptimizerTool />} />
+                </Route>
               </Routes>
             </BrowserRouter>
             <Toaster />

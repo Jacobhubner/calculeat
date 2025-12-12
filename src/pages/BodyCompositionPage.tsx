@@ -12,6 +12,11 @@ import MethodComparisonTable from '@/components/body-composition/MethodCompariso
 import MeasurementSetSidebar from '@/components/body-composition/MeasurementSetSidebar'
 import CollapsibleSidebar from '@/components/CollapsibleSidebar'
 import EmptyState from '@/components/EmptyState'
+import { BodyFatReferenceTable } from '@/components/body-composition/BodyFatReferenceTable'
+import { FFMIMetricsCard } from '@/components/body-composition/FFMIMetricsCard'
+import { FFMIReferenceTable } from '@/components/body-composition/FFMIReferenceTable'
+import { FFMICategoryTable } from '@/components/body-composition/FFMICategoryTable'
+import { MaxFatMetabolismCard } from '@/components/body-composition/MaxFatMetabolismCard'
 import { Activity, Scale } from 'lucide-react'
 import { useProfileStore } from '@/stores/profileStore'
 import { useMeasurementSetStore } from '@/stores/measurementSetStore'
@@ -39,6 +44,12 @@ import {
   type TapeMeasurements,
   type BodyCompositionParams,
 } from '@/lib/calculations/bodyComposition'
+import {
+  calculateFFMI,
+  calculateNormalizedFFMI,
+  getFFMICategory,
+  calculateMaxFatMetabolism,
+} from '@/lib/calculations/ffmiCalculations'
 import { calculateBMI } from '@/lib/calculations/helpers'
 import { toast } from 'sonner'
 
@@ -739,6 +750,34 @@ export default function BodyCompositionPage() {
     allTapeMeasurements,
   ])
 
+  // Calculate FFMI and related metrics (before early returns)
+  const fatFreeMass =
+    bodyFatPercentage && profile?.weight_kg ? profile.weight_kg * (1 - bodyFatPercentage / 100) : 0
+  const fatMass =
+    bodyFatPercentage && profile?.weight_kg ? profile.weight_kg * (bodyFatPercentage / 100) : 0
+
+  const calculatedFFMI = useMemo(() => {
+    if (!fatFreeMass || !profile?.height_cm) return null
+    const heightInMeters = profile.height_cm / 100
+    return calculateFFMI(fatFreeMass, heightInMeters)
+  }, [fatFreeMass, profile?.height_cm])
+
+  const calculatedNormalizedFFMI = useMemo(() => {
+    if (!calculatedFFMI || !profile?.height_cm) return null
+    const heightInMeters = profile.height_cm / 100
+    return calculateNormalizedFFMI(calculatedFFMI, heightInMeters)
+  }, [calculatedFFMI, profile?.height_cm])
+
+  const ffmiCategory = useMemo(() => {
+    if (!calculatedFFMI || !profile?.gender) return ''
+    return getFFMICategory(calculatedFFMI, profile.gender)
+  }, [calculatedFFMI, profile?.gender])
+
+  const maxFatMetabolism = useMemo(() => {
+    if (!fatFreeMass || !profile?.weight_kg || !profile?.tdee) return null
+    return calculateMaxFatMetabolism(fatFreeMass, profile.weight_kg, profile.tdee)
+  }, [fatFreeMass, profile?.weight_kg, profile?.tdee])
+
   if (!profile) {
     return (
       <DashboardLayout>
@@ -758,10 +797,6 @@ export default function BodyCompositionPage() {
   const requirements = selectedMethod
     ? getRequiredFields(selectedMethod, selectedVariation, profile.gender)
     : null
-  const fatFreeMass =
-    bodyFatPercentage && profile.weight_kg ? profile.weight_kg * (1 - bodyFatPercentage / 100) : 0
-  const fatMass =
-    bodyFatPercentage && profile.weight_kg ? profile.weight_kg * (bodyFatPercentage / 100) : 0
 
   return (
     <DashboardLayout>
@@ -892,17 +927,50 @@ export default function BodyCompositionPage() {
                 {/* Right Column - Results */}
                 <div>
                   {bodyFatPercentage !== null && category && (
-                    <BodyCompositionResults
-                      bodyDensity={bodyDensity}
-                      bodyFatPercentage={bodyFatPercentage}
-                      category={category}
-                      fatFreeMass={fatFreeMass}
-                      fatMass={fatMass}
-                      selectedMethod={selectedMethod as BodyCompositionMethod}
-                      conversionMethod={conversionMethod}
-                      onSave={handleSaveToProfile}
-                      isSaving={isSaving}
-                    />
+                    <div className="space-y-6">
+                      <BodyCompositionResults
+                        bodyDensity={bodyDensity}
+                        bodyFatPercentage={bodyFatPercentage}
+                        category={category}
+                        fatFreeMass={fatFreeMass}
+                        fatMass={fatMass}
+                        selectedMethod={selectedMethod as BodyCompositionMethod}
+                        conversionMethod={conversionMethod}
+                        onSave={handleSaveToProfile}
+                        isSaving={isSaving}
+                      />
+
+                      {/* Reference Tables Section */}
+                      <div className="grid grid-cols-1 gap-6">
+                        {/* Body Fat % Reference Table */}
+                        <BodyFatReferenceTable highlightedCategory={category.category} />
+
+                        {/* FFMI Metrics and Tables */}
+                        <div className="space-y-4">
+                          <FFMIMetricsCard
+                            ffmi={calculatedFFMI}
+                            normalizedFFMI={calculatedNormalizedFFMI}
+                            leanBodyMass={fatFreeMass}
+                            category={ffmiCategory}
+                          />
+
+                          <FFMIReferenceTable
+                            userFFMI={calculatedFFMI}
+                            userBodyFat={bodyFatPercentage}
+                            gender={profile.gender}
+                          />
+
+                          <FFMICategoryTable userFFMI={calculatedFFMI} gender={profile.gender} />
+
+                          {maxFatMetabolism && (
+                            <MaxFatMetabolismCard
+                              maxFatKcal={maxFatMetabolism.kcalDeficit}
+                              percentOfTDEE={maxFatMetabolism.percentOfTDEE}
+                            />
+                          )}
+                        </div>
+                      </div>
+                    </div>
                   )}
 
                   {!selectedMethod && (

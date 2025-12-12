@@ -16,6 +16,11 @@ interface UIState {
   setMobileMenuOpen: (open: boolean) => void
   toggleMobileMenu: () => void
 
+  // Tools section state
+  toolsSectionExpanded: boolean
+  toggleToolsSection: () => void
+  setToolsSectionExpanded: (expanded: boolean) => void
+
   // Modal/Dialog state (kan utökas senare)
   activeModal: string | null
   openModal: (modalId: string) => void
@@ -35,6 +40,11 @@ export const useUIStore = create<UIState>()(
       setMobileMenuOpen: open => set({ mobileMenuOpen: open }),
       toggleMobileMenu: () => set(state => ({ mobileMenuOpen: !state.mobileMenuOpen })),
 
+      // Tools section
+      toolsSectionExpanded: true,
+      toggleToolsSection: () => set(state => ({ toolsSectionExpanded: !state.toolsSectionExpanded })),
+      setToolsSectionExpanded: expanded => set({ toolsSectionExpanded: expanded }),
+
       // Modals
       activeModal: null,
       openModal: modalId => set({ activeModal: modalId }),
@@ -43,7 +53,8 @@ export const useUIStore = create<UIState>()(
     {
       name: 'calculeat-ui-storage',
       partialize: state => ({
-        sidebarCollapsed: state.sidebarCollapsed, // Spara endast sidebar state
+        sidebarCollapsed: state.sidebarCollapsed,
+        toolsSectionExpanded: state.toolsSectionExpanded, // Spara tools section state
       }),
     }
   )
