@@ -10,6 +10,13 @@ export interface GeneticPotentialResult {
   maxWeight: number // kg vid olika kroppsfett %
   currentProgress?: number // % av genetisk potential
   remainingPotential?: number // kg muskler kvar att bygga
+  // Casey Butt specific measurements
+  maxMeasurements?: {
+    armCm: number // Max arm circumference
+    chestCm: number // Max chest circumference
+    calfCm: number // Max calf circumference
+  }
+  gainerType?: 'hard' | 'average' | 'easy' // Based on bone structure
 }
 
 export interface GeneticPotentialInput {
@@ -83,11 +90,40 @@ export function caseyButtFormula(
   const targetBodyFat = gender === 'male' ? 0.1 : 0.2
   const maxLeanMass = adjustedWeight * (1 - targetBodyFat)
 
+  // Calculate max body measurements (Casey Butt's formulas)
+  // Max Arm = Wrist × 2.5
+  // Max Chest = 1.48 × (Height^0.57 × Wrist^0.29)
+  // Max Calf = Ankle × 1.55
+  const maxArmInches = wristInches * 2.5
+  const maxChestInches = 1.48 * Math.pow(heightInches, 0.57) * Math.pow(wristInches, 0.29)
+  const maxCalfInches = ankleInches * 1.55
+
+  const maxMeasurements = {
+    armCm: maxArmInches * 2.54,
+    chestCm: maxChestInches * 2.54,
+    calfCm: maxCalfInches * 2.54,
+  }
+
+  // Determine gainer type based on wrist-to-ankle ratio
+  // Smaller wrists relative to ankles = harder gainer (ectomorph)
+  // Larger wrists relative to ankles = easier gainer (mesomorph/endomorph)
+  const wristAnkleRatio = wristInches / ankleInches
+  let gainerType: 'hard' | 'average' | 'easy'
+  if (wristAnkleRatio < 0.73) {
+    gainerType = 'hard' // Ectomorph - thinner bone structure
+  } else if (wristAnkleRatio > 0.78) {
+    gainerType = 'easy' // Mesomorph/Endomorph - thicker bone structure
+  } else {
+    gainerType = 'average'
+  }
+
   return {
     formula: 'Casey Butt',
     description: 'Tar hänsyn till skelettstruktur (handled/ankel)',
     maxLeanMass,
     maxWeight: adjustedWeight,
+    maxMeasurements,
+    gainerType,
   }
 }
 

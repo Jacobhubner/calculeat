@@ -385,6 +385,68 @@ function ResultCard({
           })}
         </div>
       </div>
+
+      {/* Casey Butt specific: Max measurements and gainer type */}
+      {result.formula === 'Casey Butt' && result.maxMeasurements && result.gainerType && (
+        <div className="space-y-4">
+          {/* Gainer Type Badge */}
+          <div className="bg-purple-50 border-2 border-purple-200 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-sm font-medium text-purple-900">Kroppstyp:</p>
+              <Badge
+                variant={
+                  result.gainerType === 'easy'
+                    ? 'default'
+                    : result.gainerType === 'hard'
+                      ? 'destructive'
+                      : 'secondary'
+                }
+              >
+                {result.gainerType === 'easy'
+                  ? 'Easy Gainer (Mesomorph/Endomorph)'
+                  : result.gainerType === 'hard'
+                    ? 'Hard Gainer (Ectomorph)'
+                    : 'Average Gainer'}
+              </Badge>
+            </div>
+            <p className="text-xs text-purple-700">
+              Baserat på handled/ankel-förhållande.{' '}
+              {result.gainerType === 'easy'
+                ? 'Lättare att bygga muskler.'
+                : result.gainerType === 'hard'
+                  ? 'Svårare att bygga muskler, kräver mer kalorier.'
+                  : 'Genomsnittlig förutsättning att bygga muskler.'}
+            </p>
+          </div>
+
+          {/* Max Measurements */}
+          <div>
+            <h4 className="font-medium text-sm text-neutral-900 mb-2">
+              Maximala kroppsmått (vid låg kroppsfett):
+            </h4>
+            <div className="grid grid-cols-3 gap-2">
+              <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 text-center">
+                <p className="text-xs text-orange-600 mb-1">Max Arm</p>
+                <p className="text-lg font-bold text-orange-900">
+                  {result.maxMeasurements.armCm.toFixed(1)} cm
+                </p>
+              </div>
+              <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 text-center">
+                <p className="text-xs text-orange-600 mb-1">Max Bröst</p>
+                <p className="text-lg font-bold text-orange-900">
+                  {result.maxMeasurements.chestCm.toFixed(1)} cm
+                </p>
+              </div>
+              <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 text-center">
+                <p className="text-xs text-orange-600 mb-1">Max Vad</p>
+                <p className="text-lg font-bold text-orange-900">
+                  {result.maxMeasurements.calfCm.toFixed(1)} cm
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
