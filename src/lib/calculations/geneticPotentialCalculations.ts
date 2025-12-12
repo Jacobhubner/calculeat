@@ -4,21 +4,21 @@
  */
 
 export interface GeneticPotentialResult {
-  formula: string;
-  description: string;
-  maxLeanMass: number; // kg
-  maxWeight: number; // kg vid olika kroppsfett %
-  currentProgress?: number; // % av genetisk potential
-  remainingPotential?: number; // kg muskler kvar att bygga
+  formula: string
+  description: string
+  maxLeanMass: number // kg
+  maxWeight: number // kg vid olika kroppsfett %
+  currentProgress?: number // % av genetisk potential
+  remainingPotential?: number // kg muskler kvar att bygga
 }
 
 export interface GeneticPotentialInput {
-  heightCm: number;
-  gender: 'male' | 'female';
-  wristCm?: number;
-  ankleCm?: number;
-  currentWeight?: number;
-  currentBodyFat?: number;
+  heightCm: number
+  gender: 'male' | 'female'
+  wristCm?: number
+  ankleCm?: number
+  currentWeight?: number
+  currentBodyFat?: number
 }
 
 /**
@@ -26,27 +26,30 @@ export interface GeneticPotentialInput {
  * Baserat på längd och kön
  * Källa: Leangains.com
  */
-export function berkhanFormula(heightCm: number, gender: 'male' | 'female'): GeneticPotentialResult {
-  const heightInches = heightCm / 2.54;
+export function berkhanFormula(
+  heightCm: number,
+  gender: 'male' | 'female'
+): GeneticPotentialResult {
+  const heightInches = heightCm / 2.54
 
   // Berkhan's formula: Stage weight (lbs) = height (inches) - 100
   // Vid cirka 5% kroppsfett för män
-  const stageWeightLbs = heightInches - 100;
-  const stageWeightKg = stageWeightLbs * 0.453592;
+  const stageWeightLbs = heightInches - 100
+  const stageWeightKg = stageWeightLbs * 0.453592
 
   // Justera för kvinnor (cirka 15% lägre muskelmassa)
-  const adjustedWeight = gender === 'female' ? stageWeightKg * 0.85 : stageWeightKg;
+  const adjustedWeight = gender === 'female' ? stageWeightKg * 0.85 : stageWeightKg
 
-  // Maximal mager massa vid 5% BF för män, 12% för kvinnor
-  const targetBodyFat = gender === 'male' ? 0.05 : 0.12;
-  const maxLeanMass = adjustedWeight * (1 - targetBodyFat);
+  // Maximal fettfri massa vid 5% BF för män, 12% för kvinnor
+  const targetBodyFat = gender === 'male' ? 0.05 : 0.12
+  const maxLeanMass = adjustedWeight * (1 - targetBodyFat)
 
   return {
     formula: 'Martin Berkhan (Leangains)',
     description: 'Baserat på tävlingsvikt vid extremt låg kroppsfett',
     maxLeanMass,
     maxWeight: adjustedWeight,
-  };
+  }
 }
 
 /**
@@ -60,35 +63,37 @@ export function caseyButtFormula(
   ankleCm: number,
   gender: 'male' | 'female'
 ): GeneticPotentialResult {
-  const heightInches = heightCm / 2.54;
-  const wristInches = wristCm / 2.54;
-  const ankleInches = ankleCm / 2.54;
+  const heightInches = heightCm / 2.54
+  const wristInches = wristCm / 2.54
+  const ankleInches = ankleCm / 2.54
 
   // Casey Butt's formula för max vikt vid 10% kroppsfett
   // Max Weight = H^1.5 × (√W × 0.45 + √A × 0.45) × 0.01 (i pounds)
-  const maxWeightLbs = Math.pow(heightInches, 1.5) *
-    (Math.sqrt(wristInches) * 0.45 + Math.sqrt(ankleInches) * 0.45) * 0.01;
+  const maxWeightLbs =
+    Math.pow(heightInches, 1.5) *
+    (Math.sqrt(wristInches) * 0.45 + Math.sqrt(ankleInches) * 0.45) *
+    0.01
 
-  const maxWeightKg = maxWeightLbs * 0.453592;
+  const maxWeightKg = maxWeightLbs * 0.453592
 
   // Justera för kvinnor
-  const adjustedWeight = gender === 'female' ? maxWeightKg * 0.85 : maxWeightKg;
+  const adjustedWeight = gender === 'female' ? maxWeightKg * 0.85 : maxWeightKg
 
   // Max lean mass vid 10% BF för män, 20% för kvinnor
-  const targetBodyFat = gender === 'male' ? 0.10 : 0.20;
-  const maxLeanMass = adjustedWeight * (1 - targetBodyFat);
+  const targetBodyFat = gender === 'male' ? 0.1 : 0.2
+  const maxLeanMass = adjustedWeight * (1 - targetBodyFat)
 
   return {
     formula: 'Casey Butt',
     description: 'Tar hänsyn till skelettstruktur (handled/ankel)',
     maxLeanMass,
     maxWeight: adjustedWeight,
-  };
+  }
 }
 
 /**
  * Alan Aragon's Model
- * Baserat på nuvarande mager massa och träningserfarenhet
+ * Baserat på nuvarande fettfri massa och träningserfarenhet
  */
 export function alanAragonModel(
   currentLeanMassKg: number,
@@ -100,23 +105,23 @@ export function alanAragonModel(
   // Intermediär: 0.5-1% av kroppsvikt per månad
   // Avancerad: 0.25-0.5% av kroppsvikt per månad
 
-  let monthlyGainPercent: number;
+  let monthlyGainPercent: number
   if (trainingYears < 1) {
-    monthlyGainPercent = 0.0125; // 1.25% avg
+    monthlyGainPercent = 0.0125 // 1.25% avg
   } else if (trainingYears < 3) {
-    monthlyGainPercent = 0.0075; // 0.75% avg
+    monthlyGainPercent = 0.0075 // 0.75% avg
   } else {
-    monthlyGainPercent = 0.00375; // 0.375% avg
+    monthlyGainPercent = 0.00375 // 0.375% avg
   }
 
   // Estimera potential baserat på 10 års träning
-  const remainingYears = Math.max(0, 10 - trainingYears);
-  const totalGain = currentLeanMassKg * monthlyGainPercent * 12 * remainingYears;
+  const remainingYears = Math.max(0, 10 - trainingYears)
+  const totalGain = currentLeanMassKg * monthlyGainPercent * 12 * remainingYears
 
-  const maxLeanMass = currentLeanMassKg + totalGain;
+  const maxLeanMass = currentLeanMassKg + totalGain
 
   // Justera för kvinnor
-  const adjustedMaxLeanMass = gender === 'female' ? maxLeanMass * 0.85 : maxLeanMass;
+  const adjustedMaxLeanMass = gender === 'female' ? maxLeanMass * 0.85 : maxLeanMass
 
   return {
     formula: 'Alan Aragon Model',
@@ -124,31 +129,32 @@ export function alanAragonModel(
     maxLeanMass: adjustedMaxLeanMass,
     maxWeight: adjustedMaxLeanMass / 0.9, // Antar 10% kroppsfett
     remainingPotential: totalGain,
-  };
+  }
 }
 
 /**
  * Lyle McDonald's Model
  * Konservativ modell baserad på biologiska gränser
  */
-export function lyleMcDonaldModel(heightCm: number, gender: 'male' | 'female'): GeneticPotentialResult {
+export function lyleMcDonaldModel(
+  heightCm: number,
+  gender: 'male' | 'female'
+): GeneticPotentialResult {
   // McDonald's formula:
   // För män: (Längd i cm - 100) = max vikt i kg vid 10% kroppsfett
   // För kvinnor: cirka 85% av män
 
-  const maxWeightKg = gender === 'male'
-    ? heightCm - 100
-    : (heightCm - 100) * 0.85;
+  const maxWeightKg = gender === 'male' ? heightCm - 100 : (heightCm - 100) * 0.85
 
-  const targetBodyFat = gender === 'male' ? 0.10 : 0.20;
-  const maxLeanMass = maxWeightKg * (1 - targetBodyFat);
+  const targetBodyFat = gender === 'male' ? 0.1 : 0.2
+  const maxLeanMass = maxWeightKg * (1 - targetBodyFat)
 
   return {
     formula: 'Lyle McDonald Model',
     description: 'Konservativ modell baserad på biologiska begränsningar',
     maxLeanMass,
     maxWeight: maxWeightKg,
-  };
+  }
 }
 
 /**
@@ -159,9 +165,9 @@ export function calculateProgress(
   currentBodyFat: number,
   maxLeanMass: number
 ): number {
-  const currentLeanMass = currentWeight * (1 - currentBodyFat / 100);
-  const progress = (currentLeanMass / maxLeanMass) * 100;
-  return Math.min(progress, 100); // Cap vid 100%
+  const currentLeanMass = currentWeight * (1 - currentBodyFat / 100)
+  const progress = (currentLeanMass / maxLeanMass) * 100
+  return Math.min(progress, 100) // Cap vid 100%
 }
 
 /**
@@ -172,26 +178,26 @@ export function calculateRemainingPotential(
   currentBodyFat: number,
   maxLeanMass: number
 ): number {
-  const currentLeanMass = currentWeight * (1 - currentBodyFat / 100);
-  const remaining = maxLeanMass - currentLeanMass;
-  return Math.max(remaining, 0);
+  const currentLeanMass = currentWeight * (1 - currentBodyFat / 100)
+  const remaining = maxLeanMass - currentLeanMass
+  return Math.max(remaining, 0)
 }
 
 /**
  * Beräkna alla modeller och returnera resultat
  */
 export function calculateAllModels(input: GeneticPotentialInput): GeneticPotentialResult[] {
-  const results: GeneticPotentialResult[] = [];
+  const results: GeneticPotentialResult[] = []
 
   // Berkhan (alltid tillgänglig)
-  results.push(berkhanFormula(input.heightCm, input.gender));
+  results.push(berkhanFormula(input.heightCm, input.gender))
 
   // McDonald (alltid tillgänglig)
-  results.push(lyleMcDonaldModel(input.heightCm, input.gender));
+  results.push(lyleMcDonaldModel(input.heightCm, input.gender))
 
   // Casey Butt (kräver handled/ankel)
   if (input.wristCm && input.ankleCm) {
-    results.push(caseyButtFormula(input.heightCm, input.wristCm, input.ankleCm, input.gender));
+    results.push(caseyButtFormula(input.heightCm, input.wristCm, input.ankleCm, input.gender))
   }
 
   // Lägg till progress om nuvarande data finns
@@ -201,26 +207,26 @@ export function calculateAllModels(input: GeneticPotentialInput): GeneticPotenti
         input.currentWeight!,
         input.currentBodyFat!,
         result.maxLeanMass
-      );
+      )
       result.remainingPotential = calculateRemainingPotential(
         input.currentWeight!,
         input.currentBodyFat!,
         result.maxLeanMass
-      );
-    });
+      )
+    })
   }
 
-  return results;
+  return results
 }
 
 /**
  * Få rekommenderad målvikt vid olika kroppsfett %
  */
 export function getTargetWeights(maxLeanMass: number): Array<{ bodyFat: number; weight: number }> {
-  const bodyFatLevels = [5, 8, 10, 12, 15, 18, 20, 25];
+  const bodyFatLevels = [5, 8, 10, 12, 15, 18, 20, 25]
 
   return bodyFatLevels.map(bf => ({
     bodyFat: bf,
     weight: maxLeanMass / (1 - bf / 100),
-  }));
+  }))
 }

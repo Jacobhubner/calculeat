@@ -1,76 +1,79 @@
-import { useState, useMemo } from 'react';
-import { Target, Info, TrendingDown, TrendingUp } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Slider } from '@/components/ui/slider';
-import { useProfileData, useMissingProfileData } from '@/hooks/useProfileData';
-import MissingDataCard from '../common/MissingDataCard';
-import { useUpdateProfile } from '@/hooks';
+import { useState, useMemo } from 'react'
+import { Info, TrendingDown, TrendingUp } from 'lucide-react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Slider } from '@/components/ui/slider'
+import { useProfileData, useMissingProfileData } from '@/hooks/useProfileData'
+import MissingDataCard from '../common/MissingDataCard'
+import { useUpdateProfile } from '@/hooks'
 import {
   calculateGoal,
   calculateTimeline,
   getBodyFatCategory,
   calculateDailyCalorieAdjustment,
   type GoalCalculationResult,
-} from '@/lib/calculations/goalCalculations';
-import { toast } from 'sonner';
+} from '@/lib/calculations/goalCalculations'
+import { toast } from 'sonner'
+import type { Profile } from '@/lib/types'
 
 export default function GoalCalculatorTool() {
-  const profileData = useProfileData(['weight_kg', 'body_fat_percentage', 'gender']);
-  const missingFields = useMissingProfileData(['weight_kg', 'body_fat_percentage', 'gender']);
-  const updateProfileMutation = useUpdateProfile();
+  const profileData = useProfileData(['weight_kg', 'body_fat_percentage', 'gender'])
+  const missingFields = useMissingProfileData(['weight_kg', 'body_fat_percentage', 'gender'])
+  const updateProfileMutation = useUpdateProfile()
 
   // Local state
-  const [targetBodyFat, setTargetBodyFat] = useState<number>(15);
-  const [weeklyWeightChange, setWeeklyWeightChange] = useState<number>(0.5);
+  const [targetBodyFat, setTargetBodyFat] = useState<number>(15)
+  const [weeklyWeightChange, setWeeklyWeightChange] = useState<number>(0.5)
 
   // Beräkna mål
+
   const goalResult = useMemo<GoalCalculationResult | null>(() => {
-    if (!profileData?.weight_kg || !profileData?.body_fat_percentage) return null;
+    if (!profileData?.weight_kg || !profileData?.body_fat_percentage) return null
 
     return calculateGoal(
       profileData.weight_kg,
       profileData.body_fat_percentage,
       targetBodyFat,
-      true // Bibehåll mager massa
-    );
-  }, [profileData?.weight_kg, profileData?.body_fat_percentage, targetBodyFat]);
+      true // Bibehåll fettfri massa
+    )
+  }, [profileData, targetBodyFat])
 
   // Beräkna tidslinje
   const timeline = useMemo(() => {
-    if (!goalResult) return null;
+    if (!goalResult) return null
 
     const dailyCalorieAdjustment = calculateDailyCalorieAdjustment(
       goalResult.weightToChange > 0 ? weeklyWeightChange : -weeklyWeightChange
-    );
+    )
 
-    const weeklyCalorieAdjustment = dailyCalorieAdjustment * 7;
+    const weeklyCalorieAdjustment = dailyCalorieAdjustment * 7
 
-    return calculateTimeline(goalResult.weightToChange, weeklyCalorieAdjustment);
-  }, [goalResult, weeklyWeightChange]);
+    return calculateTimeline(goalResult.weightToChange, weeklyCalorieAdjustment)
+  }, [goalResult, weeklyWeightChange])
 
   // Kroppsfett kategorier
+
   const currentCategory = useMemo(() => {
-    if (!profileData?.body_fat_percentage || !profileData?.gender) return null;
-    return getBodyFatCategory(profileData.body_fat_percentage, profileData.gender);
-  }, [profileData?.body_fat_percentage, profileData?.gender]);
+    if (!profileData?.body_fat_percentage || !profileData?.gender) return null
+    return getBodyFatCategory(profileData.body_fat_percentage, profileData.gender)
+  }, [profileData])
 
   const targetCategory = useMemo(() => {
-    if (!profileData?.gender) return null;
-    return getBodyFatCategory(targetBodyFat, profileData.gender);
-  }, [targetBodyFat, profileData?.gender]);
+    if (!profileData?.gender) return null
+    return getBodyFatCategory(targetBodyFat, profileData.gender)
+  }, [targetBodyFat, profileData])
 
-  const handleSaveMissingData = async (data: any) => {
+  const handleSaveMissingData = async (data: Partial<Profile>) => {
     try {
-      await updateProfileMutation.mutateAsync(data);
-      toast.success('Profil uppdaterad');
+      await updateProfileMutation.mutateAsync(data)
+      toast.success('Profil uppdaterad')
     } catch (error) {
-      toast.error('Kunde inte uppdatera profil');
-      throw error;
+      toast.error('Kunde inte uppdatera profil')
+      throw error
     }
-  };
+  }
 
   return (
     <div className="space-y-6">
@@ -114,9 +117,9 @@ export default function GoalCalculatorTool() {
             <div className="text-sm text-blue-900">
               <p className="font-medium mb-1">Om Måluträknaren</p>
               <p className="text-blue-700">
-                Denna kalkylator uppskattar din målvikt baserat på önskat kroppsfett % och bibehållen
-                mager massa. Tidslinjen är en uppskattning - faktiska resultat kan variera beroende
-                på träning, kost och individuella faktorer.
+                Denna kalkylator uppskattar din målvikt baserat på önskat kroppsfett % och
+                bibehållen fettfri massa. Tidslinjen är en uppskattning - faktiska resultat kan
+                variera beroende på träning, kost och individuella faktorer.
               </p>
             </div>
           </div>
@@ -152,7 +155,7 @@ export default function GoalCalculatorTool() {
                 {goalResult && (
                   <div className="grid grid-cols-2 gap-4 mt-4">
                     <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                      <p className="text-sm text-green-700 mb-1">Mager massa</p>
+                      <p className="text-sm text-green-700 mb-1">Fettfri massa</p>
                       <p className="text-xl font-bold text-green-900">
                         {goalResult.currentLeanMass.toFixed(1)} kg
                       </p>
@@ -344,7 +347,7 @@ export default function GoalCalculatorTool() {
 
                 <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-3 mt-4">
                   <p className="text-xs text-neutral-500">
-                    * Detta är en uppskattning baserad på bibehållen mager massa och konstant
+                    * Detta är en uppskattning baserad på bibehållen fettfri massa och konstant
                     veckovis viktförändring. Faktiska resultat kan variera.
                   </p>
                 </div>
@@ -354,5 +357,5 @@ export default function GoalCalculatorTool() {
         )}
       </div>
     </div>
-  );
+  )
 }

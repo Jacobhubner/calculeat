@@ -1,40 +1,35 @@
-import { useState, useMemo } from 'react';
-import { Info } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Progress } from '@/components/ui/progress';
-import { Button } from '@/components/ui/button';
-import { useProfileData, useMissingProfileData } from '@/hooks/useProfileData';
-import MissingDataCard from '../common/MissingDataCard';
-import { useUpdateProfile } from '@/hooks';
+import { useState, useMemo } from 'react'
+import { Info } from 'lucide-react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Progress } from '@/components/ui/progress'
+import { Button } from '@/components/ui/button'
+import { useProfileData, useMissingProfileData } from '@/hooks/useProfileData'
+import MissingDataCard from '../common/MissingDataCard'
+import { useUpdateProfile } from '@/hooks'
 import {
   calculateAllModels,
   getTargetWeights,
   type GeneticPotentialResult,
-} from '@/lib/calculations/geneticPotentialCalculations';
-import { toast } from 'sonner';
+} from '@/lib/calculations/geneticPotentialCalculations'
+import { toast } from 'sonner'
 
 export default function GeneticPotentialTool() {
-  const profileData = useProfileData([
-    'height_cm',
-    'gender',
-    'weight_kg',
-    'body_fat_percentage',
-  ]);
+  const profileData = useProfileData(['height_cm', 'gender', 'weight_kg', 'body_fat_percentage'])
 
-  const missingFields = useMissingProfileData(['height_cm', 'gender']);
-  const updateProfileMutation = useUpdateProfile();
+  const missingFields = useMissingProfileData(['height_cm', 'gender'])
+  const updateProfileMutation = useUpdateProfile()
 
   // Local state för handled/ankel mätningar (inte i profil)
-  const [wristCm, setWristCm] = useState<number | ''>('');
-  const [ankleCm, setAnkleCm] = useState<number | ''>('');
-  const [selectedFormulaIndex, setSelectedFormulaIndex] = useState(0);
+  const [wristCm, setWristCm] = useState<number | ''>('')
+  const [ankleCm, setAnkleCm] = useState<number | ''>('')
+  const [selectedFormulaIndex, setSelectedFormulaIndex] = useState(0)
 
   // Beräkna resultat
   const results = useMemo(() => {
-    if (!profileData?.height_cm || !profileData?.gender) return null;
+    if (!profileData?.height_cm || !profileData?.gender) return null
 
     return calculateAllModels({
       heightCm: profileData.height_cm,
@@ -43,18 +38,18 @@ export default function GeneticPotentialTool() {
       ankleCm: ankleCm ? Number(ankleCm) : undefined,
       currentWeight: profileData.weight_kg,
       currentBodyFat: profileData.body_fat_percentage,
-    });
-  }, [profileData, wristCm, ankleCm]);
+    })
+  }, [profileData, wristCm, ankleCm])
 
   const handleSaveMissingData = async (data: Partial<Profile>) => {
     try {
-      await updateProfileMutation.mutateAsync(data);
-      toast.success('Profil uppdaterad');
+      await updateProfileMutation.mutateAsync(data)
+      toast.success('Profil uppdaterad')
     } catch (error) {
-      toast.error('Kunde inte uppdatera profil');
-      throw error;
+      toast.error('Kunde inte uppdatera profil')
+      throw error
     }
-  };
+  }
 
   return (
     <div className="space-y-6">
@@ -98,9 +93,9 @@ export default function GeneticPotentialTool() {
             <div className="text-sm text-blue-900">
               <p className="font-medium mb-1">Om Genetisk Muskelpotential</p>
               <p className="text-blue-700">
-                Dessa modeller uppskattar din maximala naturliga muskelmassa. Resultaten varierar mellan
-                formler beroende på vilka faktorer de tar hänsyn till. Ingen formel är 100% exakt, men
-                de ger en användbar riktlinje för realistiska mål.
+                Dessa modeller uppskattar din maximala naturliga muskelmassa. Resultaten varierar
+                mellan formler beroende på vilka faktorer de tar hänsyn till. Ingen formel är 100%
+                exakt, men de ger en användbar riktlinje för realistiska mål.
               </p>
             </div>
           </div>
@@ -115,7 +110,7 @@ export default function GeneticPotentialTool() {
             <CardHeader>
               <CardTitle>Skelettmätningar (Valfritt)</CardTitle>
               <CardDescription>
-                För mer exakta beräkningar med Casey Butt's formel
+                För mer exakta beräkningar med Casey Butt&apos;s formel
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -128,7 +123,9 @@ export default function GeneticPotentialTool() {
                     step="0.1"
                     placeholder="16.5"
                     value={wristCm}
-                    onChange={e => setWristCm(e.target.value === '' ? '' : parseFloat(e.target.value))}
+                    onChange={e =>
+                      setWristCm(e.target.value === '' ? '' : parseFloat(e.target.value))
+                    }
                   />
                   <p className="text-xs text-neutral-500 mt-1">Mät på smalaste punkten</p>
                 </div>
@@ -140,7 +137,9 @@ export default function GeneticPotentialTool() {
                     step="0.1"
                     placeholder="22.0"
                     value={ankleCm}
-                    onChange={e => setAnkleCm(e.target.value === '' ? '' : parseFloat(e.target.value))}
+                    onChange={e =>
+                      setAnkleCm(e.target.value === '' ? '' : parseFloat(e.target.value))
+                    }
                   />
                   <p className="text-xs text-neutral-500 mt-1">Mät på smalaste punkten</p>
                 </div>
@@ -150,8 +149,12 @@ export default function GeneticPotentialTool() {
               <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4 text-sm">
                 <p className="font-medium text-neutral-900 mb-2">Mätinstruktioner:</p>
                 <ul className="space-y-1 text-neutral-600">
-                  <li>• <strong>Handled:</strong> Mät runt handleden på smalaste punkten</li>
-                  <li>• <strong>Ankel:</strong> Mät runt ankeln på smalaste punkten (ovanför fotleden)</li>
+                  <li>
+                    • <strong>Handled:</strong> Mät runt handleden på smalaste punkten
+                  </li>
+                  <li>
+                    • <strong>Ankel:</strong> Mät runt ankeln på smalaste punkten (ovanför fotleden)
+                  </li>
                   <li>• Använd måttband och mät utan skor</li>
                 </ul>
               </div>
@@ -181,7 +184,10 @@ export default function GeneticPotentialTool() {
                 </div>
 
                 {/* Selected formula result */}
-                <ResultCard result={results[selectedFormulaIndex]} />
+                <ResultCard
+                  result={results[selectedFormulaIndex]}
+                  currentBodyFat={profileData?.body_fat_percentage}
+                />
               </CardContent>
             </Card>
           )}
@@ -202,12 +208,18 @@ export default function GeneticPotentialTool() {
                   </div>
                   <div className="flex justify-between text-sm mb-1">
                     <span className="text-neutral-600">Kroppsfett:</span>
-                    <span className="font-medium">{profileData.body_fat_percentage.toFixed(1)}%</span>
+                    <span className="font-medium">
+                      {profileData.body_fat_percentage.toFixed(1)}%
+                    </span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-neutral-600">Mager massa:</span>
+                    <span className="text-neutral-600">Fettfri massa:</span>
                     <span className="font-medium">
-                      {(profileData.weight_kg * (1 - profileData.body_fat_percentage / 100)).toFixed(1)} kg
+                      {(
+                        profileData.weight_kg *
+                        (1 - profileData.body_fat_percentage / 100)
+                      ).toFixed(1)}{' '}
+                      kg
                     </span>
                   </div>
                 </div>
@@ -231,7 +243,7 @@ export default function GeneticPotentialTool() {
                     <p className="text-2xl font-bold text-green-600">
                       +{results[0].remainingPotential.toFixed(1)} kg
                     </p>
-                    <p className="text-xs text-neutral-500 mt-1">mager massa att bygga</p>
+                    <p className="text-xs text-neutral-500 mt-1">fettfri massa att bygga</p>
                   </div>
                 )}
               </CardContent>
@@ -240,12 +252,21 @@ export default function GeneticPotentialTool() {
         )}
       </div>
     </div>
-  );
+  )
 }
 
 // Hjälpkomponent för att visa resultat
-function ResultCard({ result }: { result: GeneticPotentialResult }) {
-  const targetWeights = getTargetWeights(result.maxLeanMass);
+function ResultCard({
+  result,
+  currentBodyFat,
+}: {
+  result: GeneticPotentialResult
+  currentBodyFat?: number
+}) {
+  const targetWeights = getTargetWeights(result.maxLeanMass)
+
+  // Calculate weight at user's current body fat %
+  const weightAtCurrentBF = currentBodyFat ? result.maxLeanMass / (1 - currentBodyFat / 100) : null
 
   return (
     <div className="space-y-4">
@@ -253,7 +274,7 @@ function ResultCard({ result }: { result: GeneticPotentialResult }) {
         <p className="text-sm text-neutral-600 mb-1">{result.description}</p>
         <div className="grid grid-cols-2 gap-4 mt-3">
           <div>
-            <p className="text-xs text-neutral-500">Maximal mager massa:</p>
+            <p className="text-xs text-neutral-500">Maximal fettfri massa:</p>
             <p className="text-2xl font-bold text-green-700">{result.maxLeanMass.toFixed(1)} kg</p>
           </div>
           <div>
@@ -261,20 +282,50 @@ function ResultCard({ result }: { result: GeneticPotentialResult }) {
             <p className="text-2xl font-bold text-blue-700">{result.maxWeight.toFixed(1)} kg</p>
           </div>
         </div>
+
+        {/* Show weight at user's current body fat % */}
+        {weightAtCurrentBF && currentBodyFat && (
+          <div className="mt-4 pt-4 border-t border-green-300">
+            <p className="text-xs text-neutral-500 mb-1">
+              Vid din kroppsfett ({currentBodyFat.toFixed(1)}%):
+            </p>
+            <p className="text-2xl font-bold text-primary-600">{weightAtCurrentBF.toFixed(1)} kg</p>
+          </div>
+        )}
       </div>
 
       {/* Målvikter vid olika kroppsfett % */}
       <div>
-        <h4 className="font-medium text-sm text-neutral-900 mb-2">Målvikt vid olika kroppsfett %:</h4>
+        <h4 className="font-medium text-sm text-neutral-900 mb-2">
+          Målvikt vid olika kroppsfett %:
+        </h4>
         <div className="grid grid-cols-4 gap-2 text-center">
-          {targetWeights.slice(0, 8).map(target => (
-            <div key={target.bodyFat} className="bg-neutral-50 rounded-lg p-2 border border-neutral-200">
-              <p className="text-xs text-neutral-500">{target.bodyFat}%</p>
-              <p className="font-semibold text-sm text-neutral-900">{target.weight.toFixed(1)}</p>
-            </div>
-          ))}
+          {targetWeights.slice(0, 8).map(target => {
+            const isCurrentBF = currentBodyFat && Math.abs(target.bodyFat - currentBodyFat) < 1
+            return (
+              <div
+                key={target.bodyFat}
+                className={`rounded-lg p-2 border ${
+                  isCurrentBF
+                    ? 'bg-primary-100 border-primary-400 ring-2 ring-primary-300'
+                    : 'bg-neutral-50 border-neutral-200'
+                }`}
+              >
+                <p
+                  className={`text-xs ${isCurrentBF ? 'text-primary-700 font-semibold' : 'text-neutral-500'}`}
+                >
+                  {target.bodyFat}%
+                </p>
+                <p
+                  className={`font-semibold text-sm ${isCurrentBF ? 'text-primary-900' : 'text-neutral-900'}`}
+                >
+                  {target.weight.toFixed(1)}
+                </p>
+              </div>
+            )
+          })}
         </div>
       </div>
     </div>
-  );
+  )
 }
