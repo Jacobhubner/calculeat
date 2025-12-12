@@ -5,13 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Select } from '@/components/ui/select';
 import { useProfileData, useMissingProfileData } from '@/hooks/useProfileData';
 import MissingDataCard from '../common/MissingDataCard';
 import { useUpdateProfile } from '@/hooks';
@@ -131,18 +125,17 @@ export default function METCalculatorTool() {
               {/* Kategoriväljare */}
               <div>
                 <Label htmlFor="category">Kategori</Label>
-                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                  <SelectTrigger id="category">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="All">Alla kategorier</SelectItem>
-                    {MET_CATEGORIES.map(cat => (
-                      <SelectItem key={cat} value={cat}>
-                        {cat}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
+                <Select
+                  id="category"
+                  value={selectedCategory}
+                  onChange={e => setSelectedCategory(e.target.value)}
+                >
+                  <option value="All">Alla kategorier</option>
+                  {MET_CATEGORIES.map(cat => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
                 </Select>
               </div>
 

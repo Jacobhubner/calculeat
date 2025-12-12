@@ -1,22 +1,16 @@
 import { useState, useMemo } from 'react';
-import { PieChart, Info } from 'lucide-react';
+import { Info } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { useProfileData, useMissingProfileData } from '@/hooks/useProfileData';
 import MissingDataCard from '../common/MissingDataCard';
 import { useUpdateProfile } from '@/hooks';
 import { toast } from 'sonner';
+import type { Profile } from '@/lib/types';
 
 type MacroMode = 'nnr' | 'offseason' | 'onseason' | 'custom';
 
@@ -117,7 +111,7 @@ export default function MacroOptimizerTool() {
   const proteinPerKg = useMemo(() => {
     if (!profileData?.weight_kg) return null;
     return macros.protein.grams / profileData.weight_kg;
-  }, [macros.protein.grams, profileData?.weight_kg]);
+  }, [macros.protein.grams, profileData]);
 
   // Validering av percentages
   const isValid = useMemo(() => {
@@ -137,7 +131,7 @@ export default function MacroOptimizerTool() {
     setFatPercentage(Math.round(fatMid));
   };
 
-  const handleSaveMissingData = async (data: any) => {
+  const handleSaveMissingData = async (data: Partial<Profile>) => {
     try {
       await updateProfileMutation.mutateAsync(data);
       toast.success('Profil uppdaterad');

@@ -3,18 +3,13 @@ import { Info } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Select } from '@/components/ui/select';
 import { useProfileData, useMissingProfileData } from '@/hooks/useProfileData';
 import MissingDataCard from '../common/MissingDataCard';
 import { useUpdateProfile } from '@/hooks';
 import { calculateBMR, calculateTDEE } from '@/lib/calculations/bmr';
 import { toast } from 'sonner';
+import type { Profile } from '@/lib/types';
 
 type GoalType = 'maintain' | 'loss' | 'gain';
 type DeficitLevel = 'conservative' | 'moderate' | 'aggressive';
@@ -48,14 +43,14 @@ export default function TDEECalculatorTool() {
       profileData.age,
       profileData.gender
     );
-  }, [profileData?.weight_kg, profileData?.height_cm, profileData?.age, profileData?.gender]);
+  }, [profileData]);
 
   // Beräkna TDEE
   const tdee = useMemo(() => {
     if (!bmr || !profileData?.activity_level) return null;
 
     return calculateTDEE(bmr, profileData.activity_level);
-  }, [bmr, profileData?.activity_level]);
+  }, [bmr, profileData]);
 
   // Beräkna kaloriintervall baserat på mål
   const calorieRange = useMemo(() => {
@@ -105,7 +100,7 @@ export default function TDEECalculatorTool() {
     return weeklyKgChange;
   }, [calorieRange]);
 
-  const handleSaveMissingData = async (data: any) => {
+  const handleSaveMissingData = async (data: Partial<Profile>) => {
     try {
       await updateProfileMutation.mutateAsync(data);
       toast.success('Profil uppdaterad');
@@ -249,15 +244,14 @@ export default function TDEECalculatorTool() {
                 {/* Målväljare */}
                 <div>
                   <Label htmlFor="goal">Välj mål</Label>
-                  <Select value={goal} onValueChange={(val) => setGoal(val as GoalType)}>
-                    <SelectTrigger id="goal">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="maintain">Bibehåll vikt</SelectItem>
-                      <SelectItem value="loss">Gå ner i vikt</SelectItem>
-                      <SelectItem value="gain">Gå upp i vikt</SelectItem>
-                    </SelectContent>
+                  <Select
+                    id="goal"
+                    value={goal}
+                    onChange={e => setGoal(e.target.value as GoalType)}
+                  >
+                    <option value="maintain">Bibehåll vikt</option>
+                    <option value="loss">Gå ner i vikt</option>
+                    <option value="gain">Gå upp i vikt</option>
                   </Select>
                 </div>
 
@@ -266,17 +260,13 @@ export default function TDEECalculatorTool() {
                   <div>
                     <Label htmlFor="deficit">Nivå</Label>
                     <Select
+                      id="deficit"
                       value={deficitLevel}
-                      onValueChange={(val) => setDeficitLevel(val as DeficitLevel)}
+                      onChange={e => setDeficitLevel(e.target.value as DeficitLevel)}
                     >
-                      <SelectTrigger id="deficit">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="conservative">Konservativ (10%)</SelectItem>
-                        <SelectItem value="moderate">Måttlig (15%)</SelectItem>
-                        <SelectItem value="aggressive">Aggressiv (20%)</SelectItem>
-                      </SelectContent>
+                      <option value="conservative">Konservativ (10%)</option>
+                      <option value="moderate">Måttlig (15%)</option>
+                      <option value="aggressive">Aggressiv (20%)</option>
                     </Select>
                   </div>
                 )}
