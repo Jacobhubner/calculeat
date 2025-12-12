@@ -549,6 +549,14 @@ export default function UserProfileForm({
     const bodyFatNum = bodyFatPercentage ? parseFloat(bodyFatPercentage) : undefined
     const customTdeeNum = customTdee ? parseFloat(customTdee) : undefined
 
+    // Debug logging
+    console.log('🔍 BMR Calculation Debug:', {
+      bmrFormula,
+      bodyFatPercentage,
+      bodyFatNum,
+      requiresBodyFat: bmrFormula ? requiresBodyFat(bmrFormula) : false,
+    })
+
     if (!energyGoal) {
       alert('Vänligen välj ett energimål')
       return
