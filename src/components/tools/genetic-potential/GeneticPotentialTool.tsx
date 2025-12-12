@@ -16,6 +16,17 @@ import {
 } from '@/lib/calculations/geneticPotentialCalculations'
 import { toast } from 'sonner'
 
+// Helper function to get short display names for formulas
+function getFormulaDisplayName(fullName: string): string {
+  const nameMap: Record<string, string> = {
+    'Martin Berkhan (Leangains)': 'Berkhan Formula',
+    'Casey Butt': 'Casey Butt Formula',
+    'Alan Aragon Model': 'Alan Aragon Model',
+    'Lyle McDonald Model': 'Lyle McDonald Model',
+  }
+  return nameMap[fullName] || fullName
+}
+
 export default function GeneticPotentialTool() {
   const profileData = useProfileData(['height_cm', 'gender', 'weight_kg', 'body_fat_percentage'])
 
@@ -178,7 +189,7 @@ export default function GeneticPotentialTool() {
                       size="sm"
                       onClick={() => setSelectedFormulaIndex(index)}
                     >
-                      {result.formula.split(' ')[0]}
+                      {getFormulaDisplayName(result.formula)}
                     </Button>
                   ))}
                 </div>
@@ -225,23 +236,28 @@ export default function GeneticPotentialTool() {
                 </div>
 
                 {/* Progress */}
-                {results[0].currentProgress !== undefined && (
+                {results[selectedFormulaIndex].currentProgress !== undefined && (
                   <div>
                     <div className="flex justify-between text-sm mb-2">
-                      <span className="text-neutral-600">Progress (Berkhan):</span>
+                      <span className="text-neutral-600">
+                        Progress ({results[selectedFormulaIndex].formula}):
+                      </span>
                       <span className="font-bold text-primary-600">
-                        {results[0].currentProgress.toFixed(0)}%
+                        {results[selectedFormulaIndex].currentProgress.toFixed(0)}%
                       </span>
                     </div>
-                    <Progress value={results[0].currentProgress} className="h-2" />
+                    <Progress
+                      value={results[selectedFormulaIndex].currentProgress}
+                      className="h-2"
+                    />
                   </div>
                 )}
 
-                {results[0].remainingPotential !== undefined && (
+                {results[selectedFormulaIndex].remainingPotential !== undefined && (
                   <div className="pt-4 border-t">
                     <p className="text-sm text-neutral-600 mb-1">Återstående potential:</p>
                     <p className="text-2xl font-bold text-green-600">
-                      +{results[0].remainingPotential.toFixed(1)} kg
+                      +{results[selectedFormulaIndex].remainingPotential.toFixed(1)} kg
                     </p>
                     <p className="text-xs text-neutral-500 mt-1">fettfri massa att bygga</p>
                   </div>
