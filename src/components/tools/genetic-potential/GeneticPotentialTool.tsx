@@ -15,6 +15,7 @@ import {
   type GeneticPotentialResult,
 } from '@/lib/calculations/geneticPotentialCalculations'
 import { toast } from 'sonner'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 // Helper function to get short display names for formulas
 function getFormulaDisplayName(fullName: string): string {
@@ -25,6 +26,21 @@ function getFormulaDisplayName(fullName: string): string {
     'Lyle McDonald Model': 'Lyle McDonald Model',
   }
   return nameMap[fullName] || fullName
+}
+
+// Helper function to get formula explanations
+function getFormulaExplanation(fullName: string): string {
+  const explanations: Record<string, string> = {
+    'Martin Berkhan (Leangains)':
+      'Berkhan-formeln baseras på tävlingsvikt vid extremt låg kroppsfett (5% för män, 12% för kvinnor). Använder enkelt längd - 100 tum = vikt i pounds. Populär för sin enkelhet och fokus på naturlig gräns vid lågfett.',
+    'Casey Butt':
+      'Casey Butts formel tar hänsyn till skelettstruktur genom handled- och ankelmått. Mer precis än andra formler eftersom den beaktar individuella ramar. Baserad på data från naturliga bodybuilders.',
+    'Alan Aragon Model':
+      'Aragon-modellen fokuserar på träningserfarenhet och realistiska gains över tid. Nybörjare: 1-1.5% av kroppsvikt/mån, Intermediär: 0.5-1%, Avancerad: 0.25-0.5%. Uppskattar potential baserat på nuvarande status.',
+    'Lyle McDonald Model':
+      'McDonalds konservativa modell baseras på biologiska gränser och långsiktig forskning. Använder längd i cm - 100 = max vikt i kg vid 10% kroppsfett. Känd för att ge realistiska, uppnåeliga mål.',
+  }
+  return explanations[fullName] || 'Information om denna formel saknas.'
 }
 
 export default function GeneticPotentialTool() {
@@ -181,18 +197,45 @@ export default function GeneticPotentialTool() {
               </CardHeader>
               <CardContent className="space-y-4">
                 {/* Formula selector buttons */}
-                <div className="flex gap-2 flex-wrap">
-                  {results.map((result, index) => (
-                    <Button
-                      key={index}
-                      variant={selectedFormulaIndex === index ? 'default' : 'outline'}
-                      size="sm"
-                      onClick={() => setSelectedFormulaIndex(index)}
-                    >
-                      {getFormulaDisplayName(result.formula)}
-                    </Button>
-                  ))}
-                </div>
+                <TooltipProvider>
+                  <div className="flex gap-2 flex-wrap">
+                    {results.map((result, index) => (
+                      <Tooltip key={index}>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant={selectedFormulaIndex === index ? 'default' : 'outline'}
+                            size="sm"
+                            onClick={() => setSelectedFormulaIndex(index)}
+                            className="gap-1.5"
+                          >
+                            {getFormulaDisplayName(result.formula)}
+                            <Info className="h-3 w-3 opacity-70" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-xs">
+                          <p className="text-xs">{getFormulaExplanation(result.formula)}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    ))}
+                  </div>
+                </TooltipProvider>
+
+                {/* Formula explanation card */}
+                <Card className="border-blue-200 bg-blue-50">
+                  <CardContent className="pt-4">
+                    <div className="flex items-start gap-3">
+                      <Info className="h-4 w-4 text-blue-600 mt-0.5 shrink-0" />
+                      <div>
+                        <p className="text-xs font-medium text-blue-900 mb-1">
+                          {getFormulaDisplayName(results[selectedFormulaIndex].formula)}
+                        </p>
+                        <p className="text-xs text-blue-700 leading-relaxed">
+                          {getFormulaExplanation(results[selectedFormulaIndex].formula)}
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
 
                 {/* Selected formula result */}
                 <ResultCard
