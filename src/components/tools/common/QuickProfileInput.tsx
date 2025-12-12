@@ -1,25 +1,19 @@
-import { useState } from 'react';
-import { Check, Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import type { Profile } from '@/lib/types';
-import { toast } from 'sonner';
+import { useState } from 'react'
+import { Check, Loader2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Select } from '@/components/ui/select'
+import type { Profile } from '@/lib/types'
+import { toast } from 'sonner'
 
 interface QuickProfileInputProps {
-  field: keyof Profile;
-  label: string;
-  type?: 'number' | 'date' | 'select' | 'text';
-  options?: Array<{ value: string; label: string }>;
-  onSave: (data: Partial<Profile>) => Promise<void>;
-  disabled?: boolean;
+  field: keyof Profile
+  label: string
+  type?: 'number' | 'date' | 'select' | 'text'
+  options?: Array<{ value: string; label: string }>
+  onSave: (data: Partial<Profile>) => Promise<void>
+  disabled?: boolean
 }
 
 export default function QuickProfileInput({
@@ -30,48 +24,48 @@ export default function QuickProfileInput({
   onSave,
   disabled = false,
 }: QuickProfileInputProps) {
-  const [value, setValue] = useState<string>('');
-  const [isSaving, setIsSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
+  const [value, setValue] = useState<string>('')
+  const [isSaving, setIsSaving] = useState(false)
+  const [saved, setSaved] = useState(false)
 
   const handleSave = async () => {
     if (!value) {
-      toast.error('Vänligen fyll i ett värde');
-      return;
+      toast.error('Vänligen fyll i ett värde')
+      return
     }
 
-    setIsSaving(true);
+    setIsSaving(true)
     try {
       // Convert value to appropriate type
-      let convertedValue: string | number | Date = value;
+      let convertedValue: string | number | Date = value
       if (type === 'number') {
-        convertedValue = parseFloat(value);
+        convertedValue = parseFloat(value)
         if (isNaN(convertedValue)) {
-          toast.error('Ogiltigt nummer');
-          return;
+          toast.error('Ogiltigt nummer')
+          return
         }
       }
 
-      await onSave({ [field]: convertedValue });
+      await onSave({ [field]: convertedValue })
 
-      setSaved(true);
-      toast.success(`${label} har sparats`);
+      setSaved(true)
+      toast.success(`${label} har sparats`)
 
       // Reset saved state after 2 seconds
-      setTimeout(() => setSaved(false), 2000);
+      setTimeout(() => setSaved(false), 2000)
     } catch (error) {
-      console.error('Error saving field:', error);
-      toast.error('Något gick fel vid sparande');
+      console.error('Error saving field:', error)
+      toast.error('Något gick fel vid sparande')
     } finally {
-      setIsSaving(false);
+      setIsSaving(false)
     }
-  };
+  }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !disabled && !isSaving) {
-      handleSave();
+      handleSave()
     }
-  };
+  }
 
   return (
     <div className="flex items-end gap-2">
@@ -80,17 +74,19 @@ export default function QuickProfileInput({
           {label}
         </Label>
         {type === 'select' && options ? (
-          <Select value={value} onValueChange={setValue} disabled={disabled || isSaving}>
-            <SelectTrigger id={`quick-${field}`} className="mt-1">
-              <SelectValue placeholder="Välj..." />
-            </SelectTrigger>
-            <SelectContent>
-              {options.map(option => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
+          <Select
+            id={`quick-${field}`}
+            value={value}
+            onChange={e => setValue(e.target.value)}
+            disabled={disabled || isSaving}
+            className="mt-1"
+          >
+            <option value="">Välj...</option>
+            {options.map(option => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
           </Select>
         ) : (
           <Input
@@ -126,5 +122,5 @@ export default function QuickProfileInput({
         )}
       </Button>
     </div>
-  );
+  )
 }
