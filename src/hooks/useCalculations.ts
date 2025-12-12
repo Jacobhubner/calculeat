@@ -5,7 +5,7 @@
 import { useMemo } from 'react'
 import type { UserProfile } from '@/lib/types'
 import {
-  calculateBMR,
+  calculateBMRWithFormula,
   calculateTDEE,
   calculateCalorieGoal,
   calculateMacros,
@@ -83,16 +83,13 @@ export function useCalculations(profile: UserProfile | null | undefined): Calcul
         debouncedProfile.gender &&
         debouncedProfile.bmr_formula
       ) {
-        bmr = calculateBMR(
-          {
-            weight: debouncedProfile.weight_kg,
-            height: debouncedProfile.height_cm,
-            age,
-            gender: debouncedProfile.gender,
-            bodyFatPercentage: debouncedProfile.body_fat_percentage || undefined,
-          },
-          debouncedProfile.bmr_formula
-        )
+        bmr = calculateBMRWithFormula(debouncedProfile.bmr_formula, {
+          weight: debouncedProfile.weight_kg,
+          height: debouncedProfile.height_cm,
+          age,
+          gender: debouncedProfile.gender,
+          bodyFatPercentage: debouncedProfile.body_fat_percentage || undefined,
+        })
       }
 
       // Beräkna TDEE om vi har BMR och PAL-system

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Calculator, Info } from 'lucide-react'
 import { Button } from './ui/button'
-import { calculateBMR } from '@/lib/calculations/bmr'
+import { calculateBMRWithFormula } from '@/lib/calculations/bmr'
 import { ACTIVITY_DESCRIPTIONS, type ActivityLevel } from '@/lib/calculations/tdee'
 import type { Gender } from '@/lib/types'
 
@@ -55,7 +55,7 @@ export default function SmartCalculator() {
     }
 
     // Calculate BMR using Mifflin-St Jeor (always in metric)
-    const bmr = calculateBMR('Mifflin-St Jeor equation', {
+    const bmr = calculateBMRWithFormula('Mifflin-St Jeor equation', {
       gender,
       age: ageNum,
       weight: weightNum,
