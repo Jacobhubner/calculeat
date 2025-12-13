@@ -298,9 +298,23 @@ export function calculateAllModels(input: GeneticPotentialInput): GeneticPotenti
   // McDonald (alltid tillgänglig)
   results.push(lyleMcDonaldModel(input.heightCm, input.gender))
 
-  // Casey Butt (kräver handled/ankel)
+  // Casey Butt (alltid synlig, men visar varning om wrist/ankle saknas)
   if (input.wristCm && input.ankleCm) {
     results.push(caseyButtFormula(input.heightCm, input.wristCm, input.ankleCm, input.gender))
+  } else {
+    // Lägg till placeholder med dummy-värden för att visa knappen
+    results.push(caseyButtFormula(input.heightCm, 17, 23, input.gender))
+  }
+
+  // Alan Aragon (kräver currentWeight och currentBodyFat för träningsnivå)
+  if (input.currentWeight && input.currentBodyFat) {
+    const currentLeanMass = input.currentWeight * (1 - input.currentBodyFat / 100)
+    // Antag 2 års träning som default om inget annat anges
+    results.push(alanAragonModel(currentLeanMass, 2, input.gender))
+  } else {
+    // Placeholder med dummy-värden
+    const estimatedLeanMass = input.heightCm - 100 // Rough estimate
+    results.push(alanAragonModel(estimatedLeanMass * 0.9, 2, input.gender))
   }
 
   // Lägg till progress om nuvarande data finns

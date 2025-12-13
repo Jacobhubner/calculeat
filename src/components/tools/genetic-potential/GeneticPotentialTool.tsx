@@ -127,6 +127,24 @@ export default function GeneticPotentialTool() {
                     </Alert>
                   )}
 
+                {/* Warning if Alan Aragon is selected and weight or body fat is missing */}
+                {results[selectedFormulaIndex]?.formula === 'Alan Aragon Model' &&
+                  (!profileData?.weight_kg || !profileData?.body_fat_percentage) && (
+                    <Alert variant="default" className="border-amber-300 bg-amber-50">
+                      <AlertCircle className="h-4 w-4 text-amber-600" />
+                      <AlertDescription className="text-amber-900">
+                        För Alan Aragon&apos;s modell behöver du ange vikt och kroppsfett i din
+                        profil för att få korrekta resultat.{' '}
+                        <Link
+                          to="/app/profile"
+                          className="underline font-medium hover:text-amber-700"
+                        >
+                          Gå till Profil
+                        </Link>
+                      </AlertDescription>
+                    </Alert>
+                  )}
+
                 {/* Formula selector buttons */}
                 <TooltipProvider>
                   <div className="flex gap-2 flex-wrap">
