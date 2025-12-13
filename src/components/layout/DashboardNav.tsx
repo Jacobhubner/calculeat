@@ -97,7 +97,7 @@ export default function DashboardNav() {
       icon: Wrench,
       children: [
         {
-          to: '/app/tools/body-composition',
+          to: '/app/body-composition',
           label: 'Kroppssammansättning',
           icon: Activity,
           category: 'Kroppsanalys',
