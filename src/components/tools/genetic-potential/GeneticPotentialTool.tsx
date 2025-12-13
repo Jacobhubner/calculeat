@@ -1,11 +1,11 @@
-import { useState, useMemo, useEffect } from 'react'
-import { Info } from 'lucide-react'
+import { useState, useMemo } from 'react'
+import { Info, AlertCircle } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Progress } from '@/components/ui/progress'
 import { Button } from '@/components/ui/button'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { useProfileData, useMissingProfileData } from '@/hooks/useProfileData'
 import MissingDataCard from '../common/MissingDataCard'
 import { useUpdateProfile, useMeasurementSets } from '@/hooks'
@@ -55,24 +55,7 @@ export default function GeneticPotentialTool() {
     return measurementSets && measurementSets.length > 0 ? measurementSets[0] : null
   }, [measurementSets])
 
-  // Local state för handled/ankel mätningar med default från measurement set
-  const [wristCm, setWristCm] = useState<number | ''>(() => latestMeasurement?.wrist || '')
-  const [ankleCm, setAnkleCm] = useState<number | ''>(() => latestMeasurement?.ankle || '')
   const [selectedFormulaIndex, setSelectedFormulaIndex] = useState(0)
-
-  // Update local state när measurement set ändras (endast om state är tomt)
-  useEffect(() => {
-    if (latestMeasurement) {
-      if (!wristCm && latestMeasurement.wrist) {
-        setWristCm(latestMeasurement.wrist)
-      }
-      if (!ankleCm && latestMeasurement.ankle) {
-        setAnkleCm(latestMeasurement.ankle)
-      }
-    }
-    // Kör endast när latestMeasurement ändras
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [latestMeasurement])
 
   // Beräkna resultat
   const results = useMemo(() => {
@@ -81,12 +64,12 @@ export default function GeneticPotentialTool() {
     return calculateAllModels({
       heightCm: profileData.height_cm,
       gender: profileData.gender,
-      wristCm: wristCm ? Number(wristCm) : undefined,
-      ankleCm: ankleCm ? Number(ankleCm) : undefined,
+      wristCm: latestMeasurement?.wrist,
+      ankleCm: latestMeasurement?.ankle,
       currentWeight: profileData.weight_kg,
       currentBodyFat: profileData.body_fat_percentage,
     })
-  }, [profileData, wristCm, ankleCm])
+  }, [profileData, latestMeasurement])
 
   const handleSaveMissingData = async (data: Partial<Profile>) => {
     try {
@@ -152,63 +135,6 @@ export default function GeneticPotentialTool() {
       <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
         {/* Vänster: Inputs */}
         <div className="space-y-6">
-          {/* Skelettmätningar */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Skelettmätningar (Valfritt)</CardTitle>
-              <CardDescription>
-                För mer exakta beräkningar med Casey Butt&apos;s formel. Värden synkas automatiskt
-                från din senaste kroppssammansättningsmätning.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="wrist">Handledsmått (cm)</Label>
-                  <Input
-                    id="wrist"
-                    type="number"
-                    step="0.1"
-                    placeholder="16.5"
-                    value={wristCm}
-                    onChange={e =>
-                      setWristCm(e.target.value === '' ? '' : parseFloat(e.target.value))
-                    }
-                  />
-                  <p className="text-xs text-neutral-500 mt-1">Mät på smalaste punkten</p>
-                </div>
-                <div>
-                  <Label htmlFor="ankle">Ankelmått (cm)</Label>
-                  <Input
-                    id="ankle"
-                    type="number"
-                    step="0.1"
-                    placeholder="22.0"
-                    value={ankleCm}
-                    onChange={e =>
-                      setAnkleCm(e.target.value === '' ? '' : parseFloat(e.target.value))
-                    }
-                  />
-                  <p className="text-xs text-neutral-500 mt-1">Mät på smalaste punkten</p>
-                </div>
-              </div>
-
-              {/* Mätguide */}
-              <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4 text-sm">
-                <p className="font-medium text-neutral-900 mb-2">Mätinstruktioner:</p>
-                <ul className="space-y-1 text-neutral-600">
-                  <li>
-                    • <strong>Handled:</strong> Mät runt handleden på smalaste punkten
-                  </li>
-                  <li>
-                    • <strong>Ankel:</strong> Mät runt ankeln på smalaste punkten (ovanför fotleden)
-                  </li>
-                  <li>• Använd måttband och mät utan skor</li>
-                </ul>
-              </div>
-            </CardContent>
-          </Card>
-
           {/* Resultat per formel */}
           {results && (
             <Card>
@@ -217,6 +143,23 @@ export default function GeneticPotentialTool() {
                 <CardDescription>Olika modeller ger olika uppskattningar</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
+                {/* Warning if wrist or ankle measurements are missing */}
+                {(!latestMeasurement?.wrist || !latestMeasurement?.ankle) && (
+                  <Alert variant="default" className="border-amber-300 bg-amber-50">
+                    <AlertCircle className="h-4 w-4 text-amber-600" />
+                    <AlertDescription className="text-amber-900">
+                      För Casey Butt&apos;s formel behöver du ange både handled och fotled i dina
+                      kroppssammansättningsmätningar.{' '}
+                      <Link
+                        to="/app/body-composition?workflow=measurements-first"
+                        className="underline font-medium hover:text-amber-700"
+                      >
+                        Gå till Kroppssammansättning (Workflow 2)
+                      </Link>
+                    </AlertDescription>
+                  </Alert>
+                )}
+
                 {/* Formula selector buttons */}
                 <TooltipProvider>
                   <div className="flex gap-2 flex-wrap">
@@ -374,49 +317,46 @@ function ResultCard({
         )}
       </div>
 
-      {/* Martin Berkhan: Show exact BF% result if available */}
-      {result.formula === 'Martin Berkhan (Leangains)' && currentBodyFat && (
-        <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-4">
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-sm font-medium text-blue-900">
-              Maxvikt vid din kroppsfett% ({currentBodyFat.toFixed(1)}%):
-            </p>
-            <p className="text-2xl font-bold text-blue-700">{result.maxWeight.toFixed(1)} kg</p>
-          </div>
-          <p className="text-xs text-blue-700">
-            Berkhan&apos;s formel justerar maxvikten baserat på din faktiska kroppsfettprocent.
-            Längre personer och högre BF% ger högre maxvikt.
-          </p>
-        </div>
-      )}
-
-      {/* Målvikter vid olika kroppsfett % */}
+      {/* Uppskattad maximal genetisk potential för kroppsvikt */}
       <div>
-        <h4 className="font-medium text-sm text-neutral-900 mb-2">
-          Målvikt vid olika kroppsfett %:
+        <h4 className="font-semibold text-base text-neutral-900 mb-3">
+          Uppskattad maximal genetisk potential för kroppsvikt
         </h4>
-        <div className="grid grid-cols-4 gap-2 text-center">
+        <p className="text-sm text-neutral-600 mb-4">
+          Maxvikt vid olika kroppsfettprocent baserat på din fettfria massa
+        </p>
+        <div className="grid grid-cols-4 gap-3 text-center">
           {targetWeights.slice(0, 8).map(target => {
             const isCurrentBF = currentBodyFat && Math.abs(target.bodyFat - currentBodyFat) < 1
+
+            // Gradient colors based on BF% (lower BF = more green/lean)
+            const getColorClasses = (bf: number) => {
+              if (bf <= 10) return 'from-green-50 to-green-100 border-green-300'
+              if (bf <= 15) return 'from-blue-50 to-blue-100 border-blue-300'
+              if (bf <= 20) return 'from-yellow-50 to-yellow-100 border-yellow-300'
+              return 'from-orange-50 to-orange-100 border-orange-300'
+            }
+
             return (
               <div
                 key={target.bodyFat}
-                className={`rounded-lg p-2 border ${
+                className={`rounded-xl p-3 border-2 ${
                   isCurrentBF
-                    ? 'bg-primary-100 border-primary-400 ring-2 ring-primary-300'
-                    : 'bg-neutral-50 border-neutral-200'
+                    ? 'bg-gradient-to-br from-primary-100 to-primary-200 border-primary-500 ring-2 ring-primary-400 shadow-md'
+                    : `bg-gradient-to-br ${getColorClasses(target.bodyFat)}`
                 }`}
               >
                 <p
-                  className={`text-xs ${isCurrentBF ? 'text-primary-700 font-semibold' : 'text-neutral-500'}`}
+                  className={`text-xs font-medium mb-1 ${isCurrentBF ? 'text-primary-700' : 'text-neutral-600'}`}
                 >
-                  {target.bodyFat}%
+                  {target.bodyFat}% KF
                 </p>
                 <p
-                  className={`font-semibold text-sm ${isCurrentBF ? 'text-primary-900' : 'text-neutral-900'}`}
+                  className={`font-bold text-lg ${isCurrentBF ? 'text-primary-900' : 'text-neutral-900'}`}
                 >
                   {target.weight.toFixed(1)}
                 </p>
+                <p className="text-xs text-neutral-500">kg</p>
               </div>
             )
           })}

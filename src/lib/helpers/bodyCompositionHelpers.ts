@@ -393,6 +393,7 @@ export const tapeLabels: Record<string, string> = {
   waist: 'Midja',
   hip: 'Höft',
   wrist: 'Handled',
+  ankle: 'Fotled',
   forearm: 'Underarm',
   thighCirc: 'Lår',
   calfCirc: 'Vad',
