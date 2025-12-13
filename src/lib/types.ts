@@ -281,6 +281,7 @@ export interface MeasurementSet {
   waist?: number
   hip?: number
   wrist?: number
+  ankle?: number
   forearm?: number
   thigh_circ?: number
   calf_circ?: number

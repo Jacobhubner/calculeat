@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Info } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -8,7 +8,7 @@ import { Progress } from '@/components/ui/progress'
 import { Button } from '@/components/ui/button'
 import { useProfileData, useMissingProfileData } from '@/hooks/useProfileData'
 import MissingDataCard from '../common/MissingDataCard'
-import { useUpdateProfile } from '@/hooks'
+import { useUpdateProfile, useMeasurementSets } from '@/hooks'
 import {
   calculateAllModels,
   getTargetWeights,
@@ -45,14 +45,34 @@ function getFormulaExplanation(fullName: string): string {
 
 export default function GeneticPotentialTool() {
   const profileData = useProfileData(['height_cm', 'gender', 'weight_kg', 'body_fat_percentage'])
+  const { data: measurementSets } = useMeasurementSets()
 
   const missingFields = useMissingProfileData(['height_cm', 'gender'])
   const updateProfileMutation = useUpdateProfile()
 
-  // Local state för handled/ankel mätningar (inte i profil)
-  const [wristCm, setWristCm] = useState<number | ''>('')
-  const [ankleCm, setAnkleCm] = useState<number | ''>('')
+  // Get wrist/ankle från senaste measurement set
+  const latestMeasurement = useMemo(() => {
+    return measurementSets && measurementSets.length > 0 ? measurementSets[0] : null
+  }, [measurementSets])
+
+  // Local state för handled/ankel mätningar med default från measurement set
+  const [wristCm, setWristCm] = useState<number | ''>(() => latestMeasurement?.wrist || '')
+  const [ankleCm, setAnkleCm] = useState<number | ''>(() => latestMeasurement?.ankle || '')
   const [selectedFormulaIndex, setSelectedFormulaIndex] = useState(0)
+
+  // Update local state när measurement set ändras (endast om state är tomt)
+  useEffect(() => {
+    if (latestMeasurement) {
+      if (!wristCm && latestMeasurement.wrist) {
+        setWristCm(latestMeasurement.wrist)
+      }
+      if (!ankleCm && latestMeasurement.ankle) {
+        setAnkleCm(latestMeasurement.ankle)
+      }
+    }
+    // Kör endast när latestMeasurement ändras
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [latestMeasurement])
 
   // Beräkna resultat
   const results = useMemo(() => {
@@ -137,7 +157,8 @@ export default function GeneticPotentialTool() {
             <CardHeader>
               <CardTitle>Skelettmätningar (Valfritt)</CardTitle>
               <CardDescription>
-                För mer exakta beräkningar med Casey Butt&apos;s formel
+                För mer exakta beräkningar med Casey Butt&apos;s formel. Värden synkas automatiskt
+                från din senaste kroppssammansättningsmätning.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
