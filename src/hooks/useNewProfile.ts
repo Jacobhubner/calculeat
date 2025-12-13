@@ -2,11 +2,11 @@ import { useProfileStore } from '@/stores/profileStore'
 import { toast } from 'sonner'
 
 export function useNewProfile() {
-  const setActiveProfile = useProfileStore(state => state.setActiveProfile)
+  const setIsCreatingNew = useProfileStore(state => state.setIsCreatingNew)
 
   const startNewProfile = () => {
-    // Clear active profile to reset form
-    setActiveProfile(null)
+    // Set isCreatingNew flag to prevent auto-selection of existing profiles
+    setIsCreatingNew(true)
 
     toast.info('Skapa ny profil', {
       description: 'Fyll i formuläret och tryck Spara',

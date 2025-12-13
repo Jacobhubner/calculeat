@@ -15,6 +15,10 @@ interface ProfileState {
   // Previously viewed profile (for copying settings to new profile)
   previousProfile: Profile | null
 
+  // Flag to indicate we're creating a new profile (prevents auto-selection)
+  isCreatingNew: boolean
+  setIsCreatingNew: (isCreating: boolean) => void
+
   // All user profiles
   profiles: Profile[]
   setProfiles: (profiles: Profile[]) => void
@@ -44,6 +48,7 @@ export const useProfileStore = create<ProfileState>()(
       // Initial state
       activeProfile: null,
       previousProfile: null,
+      isCreatingNew: false,
       profiles: [],
 
       // Set active profile
@@ -52,13 +57,32 @@ export const useProfileStore = create<ProfileState>()(
           // Store the current active profile as previous before switching
           previousProfile: state.activeProfile,
           activeProfile: profile,
+          // Clear isCreatingNew when setting a profile
+          isCreatingNew: false,
         })),
+
+      // Set isCreatingNew flag
+      setIsCreatingNew: isCreating =>
+        set({
+          isCreatingNew: isCreating,
+          // When starting to create new, clear active profile
+          ...(isCreating && { activeProfile: null }),
+        }),
 
       // Set all profiles
       setProfiles: profiles => {
         console.log('🏪 ProfileStore.setProfiles called with', profiles.length, 'profiles')
 
         return set(state => {
+          // If we're creating a new profile, don't auto-select anything
+          if (state.isCreatingNew) {
+            console.log('🏪 ProfileStore: isCreatingNew=true, keeping activeProfile=null')
+            return {
+              profiles,
+              activeProfile: null,
+            }
+          }
+
           let newActiveProfile: Profile | null = null
 
           if (profiles.length === 0) {
@@ -104,6 +128,8 @@ export const useProfileStore = create<ProfileState>()(
           // If this is the first profile or is_active, set as active
           activeProfile:
             state.profiles.length === 0 || profile.is_active ? profile : state.activeProfile,
+          // Clear isCreatingNew when adding a new profile
+          isCreatingNew: false,
         })),
 
       // Update profile
