@@ -353,6 +353,22 @@ function ResultCard({
         )}
       </div>
 
+      {/* Martin Berkhan: Show exact BF% result if available */}
+      {result.formula === 'Martin Berkhan (Leangains)' && currentBodyFat && (
+        <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-sm font-medium text-blue-900">
+              Maxvikt vid din kroppsfett% ({currentBodyFat.toFixed(1)}%):
+            </p>
+            <p className="text-2xl font-bold text-blue-700">{result.maxWeight.toFixed(1)} kg</p>
+          </div>
+          <p className="text-xs text-blue-700">
+            Berkhan&apos;s formel justerar maxvikten baserat på din faktiska kroppsfettprocent.
+            Längre personer och högre BF% ger högre maxvikt.
+          </p>
+        </div>
+      )}
+
       {/* Målvikter vid olika kroppsfett % */}
       <div>
         <h4 className="font-medium text-sm text-neutral-900 mb-2">

@@ -32,30 +32,97 @@ export interface GeneticPotentialInput {
  * Martin Berkhan's Formula (Leangains)
  * Baserat på längd och kön
  * Källa: Leangains.com
+ *
+ * Formeln justerar maxvikt baserat på längd och kroppsfettprocent:
+ * - Vid 5% BF: Längd - (98-101 beroende på längd)
+ * - Vid högre BF: Lägg till % ökning för varje 5% över 5%
  */
 export function berkhanFormula(
   heightCm: number,
-  gender: 'male' | 'female'
+  gender: 'male' | 'female',
+  targetBodyFat?: number
 ): GeneticPotentialResult {
-  const heightInches = heightCm / 2.54
+  if (gender === 'female') {
+    // För kvinnor, använd enklare formel (85% av män)
+    const heightInches = heightCm / 2.54
+    const stageWeightLbs = heightInches - 100
+    const stageWeightKg = stageWeightLbs * 0.453592
+    const adjustedWeight = stageWeightKg * 0.85
+    const targetBF = targetBodyFat ? targetBodyFat / 100 : 0.12
+    const maxLeanMass = adjustedWeight * (1 - targetBF)
 
-  // Berkhan's formula: Stage weight (lbs) = height (inches) - 100
-  // Vid cirka 5% kroppsfett för män
-  const stageWeightLbs = heightInches - 100
-  const stageWeightKg = stageWeightLbs * 0.453592
+    return {
+      formula: 'Martin Berkhan (Leangains)',
+      description: 'Baserat på tävlingsvikt vid extremt låg kroppsfett',
+      maxLeanMass,
+      maxWeight: adjustedWeight,
+    }
+  }
 
-  // Justera för kvinnor (cirka 15% lägre muskelmassa)
-  const adjustedWeight = gender === 'female' ? stageWeightKg * 0.85 : stageWeightKg
+  // För män: Använd Excel-logiken
+  // Basvikt vid 5% BF baserat på längd
+  let baseWeight5BF: number
+  if (heightCm < 170) {
+    baseWeight5BF = heightCm - 98
+  } else if (heightCm < 180) {
+    baseWeight5BF = heightCm - 99
+  } else if (heightCm < 190) {
+    baseWeight5BF = heightCm - 100
+  } else {
+    baseWeight5BF = heightCm - 101
+  }
 
-  // Maximal fettfri massa vid 5% BF för män, 12% för kvinnor
-  const targetBodyFat = gender === 'male' ? 0.05 : 0.12
-  const maxLeanMass = adjustedWeight * (1 - targetBodyFat)
+  // Använd antingen användarens faktiska BF eller 5% som default
+  const bf = targetBodyFat ?? 5
+
+  // Justera vikt baserat på kroppsfettprocent
+  // För varje 5% över 5 BF%, lägg till en procentuell ökning
+  let maxWeight: number
+  if (bf <= 5) {
+    maxWeight = baseWeight5BF
+  } else if (bf <= 10) {
+    // Vid 10% BF: Lägg till 5% av basvikten
+    maxWeight = baseWeight5BF + baseWeight5BF * 0.05
+  } else if (bf <= 15) {
+    // Vid 15% BF: Lägg till 10% av basvikten
+    maxWeight = baseWeight5BF + baseWeight5BF * 0.1
+  } else if (bf <= 20) {
+    // Vid 20% BF: Lägg till 15% av basvikten
+    maxWeight = baseWeight5BF + baseWeight5BF * 0.15
+  } else {
+    // Vid 30% BF eller högre: Lägg till 25% av basvikten
+    maxWeight = baseWeight5BF + baseWeight5BF * 0.25
+  }
+
+  // Om användaren har en exakt BF% mellan intervallen, interpolera
+  if (targetBodyFat) {
+    if (bf > 5 && bf < 10) {
+      // Interpolera mellan 0% och 5% ökning
+      const ratio = (bf - 5) / 5
+      maxWeight = baseWeight5BF + baseWeight5BF * (0.05 * ratio)
+    } else if (bf > 10 && bf < 15) {
+      // Interpolera mellan 5% och 10% ökning
+      const ratio = (bf - 10) / 5
+      maxWeight = baseWeight5BF + baseWeight5BF * (0.05 + 0.05 * ratio)
+    } else if (bf > 15 && bf < 20) {
+      // Interpolera mellan 10% och 15% ökning
+      const ratio = (bf - 15) / 5
+      maxWeight = baseWeight5BF + baseWeight5BF * (0.1 + 0.05 * ratio)
+    } else if (bf > 20 && bf < 30) {
+      // Interpolera mellan 15% och 25% ökning
+      const ratio = (bf - 20) / 10
+      maxWeight = baseWeight5BF + baseWeight5BF * (0.15 + 0.1 * ratio)
+    }
+  }
+
+  // Maximal fettfri massa
+  const maxLeanMass = maxWeight * (1 - bf / 100)
 
   return {
     formula: 'Martin Berkhan (Leangains)',
     description: 'Baserat på tävlingsvikt vid extremt låg kroppsfett',
     maxLeanMass,
-    maxWeight: adjustedWeight,
+    maxWeight,
   }
 }
 
@@ -225,8 +292,8 @@ export function calculateRemainingPotential(
 export function calculateAllModels(input: GeneticPotentialInput): GeneticPotentialResult[] {
   const results: GeneticPotentialResult[] = []
 
-  // Berkhan (alltid tillgänglig)
-  results.push(berkhanFormula(input.heightCm, input.gender))
+  // Berkhan (alltid tillgänglig, använd currentBodyFat om tillgänglig)
+  results.push(berkhanFormula(input.heightCm, input.gender, input.currentBodyFat))
 
   // McDonald (alltid tillgänglig)
   results.push(lyleMcDonaldModel(input.heightCm, input.gender))
