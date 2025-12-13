@@ -6,17 +6,23 @@
 export interface GeneticPotentialResult {
   formula: string
   description: string
-  maxLeanMass: number // kg
-  maxWeight: number // kg vid olika kroppsfett %
+  maxLeanMass: number // MLBM (Maximum fettfri massa) kg
+  maxWeight: number // MBW (Maximum kroppsvikt) kg
+  maxBulkedWeight?: number // MBBW (Maximum bulked body weight) kg
   currentProgress?: number // % av genetisk potential
   remainingPotential?: number // kg muskler kvar att bygga
   // Casey Butt specific measurements
   maxMeasurements?: {
-    armCm: number // Max arm circumference
-    chestCm: number // Max chest circumference
-    calfCm: number // Max calf circumference
+    chestCm: number // Bröst
+    bicepsCm: number // Biceps
+    forearmsCm: number // Underarmar
+    neckCm: number // Nacke
+    thighsCm: number // Lår
+    calvesCm: number // Vader
   }
-  gainerType?: 'hard' | 'average' | 'easy' // Based on bone structure
+  upperBodyType?: 'hard' | 'easy' // Handled-baserad klassificering
+  lowerBodyType?: 'hard' | 'easy' // Fotled-baserad klassificering
+  gainerType?: 'hard' | 'average' | 'easy' // DEPRECATED - use upperBodyType/lowerBodyType
 }
 
 export interface GeneticPotentialInput {
@@ -127,70 +133,102 @@ export function berkhanFormula(
 }
 
 /**
- * Casey Butt's Formula
- * Mer avancerad - tar hänsyn till handled och ankel omfång
+ * Casey Butt's Formula (2009)
+ * Mer avancerad - tar hänsyn till handled och ankel omfång samt kroppsfett
+ * Klassificerar överkropp och underkropp separat
  * Källa: WeighTrainer.net
  */
 export function caseyButtFormula(
   heightCm: number,
   wristCm: number,
   ankleCm: number,
-  gender: 'male' | 'female'
+  gender: 'male' | 'female',
+  currentBodyFat?: number
 ): GeneticPotentialResult {
+  // Convert to inches (formulas expect inches)
   const heightInches = heightCm / 2.54
   const wristInches = wristCm / 2.54
   const ankleInches = ankleCm / 2.54
 
-  // Casey Butt's formula för max vikt vid 10% kroppsfett
-  // Max Weight = H^1.5 × (√W × 0.45 + √A × 0.45) × 0.01 (i pounds)
-  const maxWeightLbs =
+  // Use user's body fat % or default (10% for men, 20% for women)
+  const bodyFatPercent = currentBodyFat ?? (gender === 'male' ? 10 : 20)
+
+  // 1. Calculate MLBM (Maximum Lean Body Mass)
+  // MLBM = Height^1.5 * (√Wrist / 22.6670 + √Ankle / 17.0104) * (% Body fat / 224 + 1)
+  const mlbmLbs =
     Math.pow(heightInches, 1.5) *
-    (Math.sqrt(wristInches) * 0.45 + Math.sqrt(ankleInches) * 0.45) *
-    0.01
+    (Math.sqrt(wristInches) / 22.667 + Math.sqrt(ankleInches) / 17.0104) *
+    (bodyFatPercent / 224 + 1)
 
-  const maxWeightKg = maxWeightLbs * 0.453592
+  const mlbmKg = mlbmLbs * 0.453592 // Convert to kg
 
-  // Justera för kvinnor
-  const adjustedWeight = gender === 'female' ? maxWeightKg * 0.85 : maxWeightKg
+  // 2. Calculate MBW (Maximum Body Weight)
+  // MBW = (MLBM / (100 - % Body fat)) * 100
+  const mbwKg = (mlbmKg / (100 - bodyFatPercent)) * 100
 
-  // Max lean mass vid 10% BF för män, 20% för kvinnor
-  const targetBodyFat = gender === 'male' ? 0.1 : 0.2
-  const maxLeanMass = adjustedWeight * (1 - targetBodyFat)
+  // 3. Calculate MBBW (Maximum Bulked Body Weight)
+  // MBBW = MBW * 1.04
+  const mbbwKg = mbwKg * 1.04
 
-  // Calculate max body measurements (Casey Butt's formulas)
-  // Max Arm = Wrist × 2.5
-  // Max Chest = 1.48 × (Height^0.57 × Wrist^0.29)
-  // Max Calf = Ankle × 1.55
-  const maxArmInches = wristInches * 2.5
-  const maxChestInches = 1.48 * Math.pow(heightInches, 0.57) * Math.pow(wristInches, 0.29)
-  const maxCalfInches = ankleInches * 1.55
+  // Adjust for women (85% of male values)
+  const adjustedMlbm = gender === 'female' ? mlbmKg * 0.85 : mlbmKg
+  const adjustedMbw = gender === 'female' ? mbwKg * 0.85 : mbwKg
+  const adjustedMbbw = gender === 'female' ? mbbwKg * 0.85 : mbbwKg
 
-  const maxMeasurements = {
-    armCm: maxArmInches * 2.54,
-    chestCm: maxChestInches * 2.54,
-    calfCm: maxCalfInches * 2.54,
+  // 4. Determine gainer types
+  // Upper body (wrist): Hardgainer if Wrist ≤ 0.1045 * Height
+  const upperBodyType: 'hard' | 'easy' = wristCm <= 0.1045 * heightCm ? 'hard' : 'easy'
+
+  // Lower body (ankle): Hardgainer if Ankle ≤ 0.1296 * Height
+  const lowerBodyType: 'hard' | 'easy' = ankleCm <= 0.1296 * heightCm ? 'hard' : 'easy'
+
+  // 5. Calculate maximum measurements
+  let chestInches: number, bicepsInches: number, forearmsInches: number, neckInches: number
+  let thighsInches: number, calvesInches: number
+
+  if (upperBodyType === 'easy') {
+    // Easygainer formulas for upper body
+    chestInches = 1.6817 * wristInches + 1.3759 * ankleInches + 0.3314 * heightInches
+    bicepsInches = 1.2033 * wristInches + 0.1236 * heightInches
+    forearmsInches = 0.9626 * wristInches + 0.0989 * heightInches
+    neckInches = 1.1424 * wristInches + 0.1236 * heightInches
+  } else {
+    // Hardgainer formulas for upper body
+    chestInches = 3.15 * wristInches + 2.54 * ankleInches
+    bicepsInches = 2.28 * wristInches
+    forearmsInches = 1.83 * wristInches
+    neckInches = 2.3 * wristInches
   }
 
-  // Determine gainer type based on wrist-to-ankle ratio
-  // Smaller wrists relative to ankles = harder gainer (ectomorph)
-  // Larger wrists relative to ankles = easier gainer (mesomorph/endomorph)
-  const wristAnkleRatio = wristInches / ankleInches
-  let gainerType: 'hard' | 'average' | 'easy'
-  if (wristAnkleRatio < 0.73) {
-    gainerType = 'hard' // Ectomorph - thinner bone structure
-  } else if (wristAnkleRatio > 0.78) {
-    gainerType = 'easy' // Mesomorph/Endomorph - thicker bone structure
+  if (lowerBodyType === 'easy') {
+    // Easygainer formulas for lower body
+    thighsInches = 1.3868 * ankleInches + 0.1805 * heightInches
+    calvesInches = 0.9298 * ankleInches + 0.121 * heightInches
   } else {
-    gainerType = 'average'
+    // Hardgainer formulas for lower body
+    thighsInches = 2.65 * ankleInches
+    calvesInches = 1.8 * ankleInches
+  }
+
+  // Convert all measurements to cm
+  const maxMeasurements = {
+    chestCm: chestInches * 2.54,
+    bicepsCm: bicepsInches * 2.54,
+    forearmsCm: forearmsInches * 2.54,
+    neckCm: neckInches * 2.54,
+    thighsCm: thighsInches * 2.54,
+    calvesCm: calvesInches * 2.54,
   }
 
   return {
     formula: 'Casey Butt',
-    description: 'Tar hänsyn till skelettstruktur (handled/ankel)',
-    maxLeanMass,
-    maxWeight: adjustedWeight,
+    description: 'Tar hänsyn till skelettstruktur (handled/ankel) och kroppsfett',
+    maxLeanMass: adjustedMlbm, // MLBM
+    maxWeight: adjustedMbw, // MBW
+    maxBulkedWeight: adjustedMbbw, // MBBW
     maxMeasurements,
-    gainerType,
+    upperBodyType,
+    lowerBodyType,
   }
 }
 
@@ -300,10 +338,18 @@ export function calculateAllModels(input: GeneticPotentialInput): GeneticPotenti
 
   // Casey Butt (alltid synlig, men visar varning om wrist/ankle saknas)
   if (input.wristCm && input.ankleCm) {
-    results.push(caseyButtFormula(input.heightCm, input.wristCm, input.ankleCm, input.gender))
+    results.push(
+      caseyButtFormula(
+        input.heightCm,
+        input.wristCm,
+        input.ankleCm,
+        input.gender,
+        input.currentBodyFat
+      )
+    )
   } else {
     // Lägg till placeholder med dummy-värden för att visa knappen
-    results.push(caseyButtFormula(input.heightCm, 17, 23, input.gender))
+    results.push(caseyButtFormula(input.heightCm, 17, 23, input.gender, input.currentBodyFat))
   }
 
   // Alan Aragon (kräver currentWeight och currentBodyFat för träningsnivå)

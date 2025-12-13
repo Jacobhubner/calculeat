@@ -32,7 +32,7 @@ function getFormulaExplanation(fullName: string): string {
     'Martin Berkhan (Leangains)':
       'Berkhan-formeln baseras på tävlingsvikt vid extremt låg kroppsfett (5% för män, 12% för kvinnor). Använder enkelt längd - 100 tum = vikt i pounds. Populär för sin enkelhet och fokus på naturlig gräns vid lågfett.',
     'Casey Butt':
-      'Casey Butts formel tar hänsyn till skelettstruktur genom handled- och ankelmått. Mer precis än andra formler eftersom den beaktar individuella ramar. Baserad på data från naturliga bodybuilders.',
+      'Casey Butts 2009 formel tar hänsyn till skelettstruktur genom handled- och ankelmått samt aktuell kroppsfett. Klassificerar överkropp och underkropp separat baserat på benstruktur. Mer precis än andra formler eftersom den beaktar individuella ramar och kroppsfett.',
     'Alan Aragon Model':
       'Aragon-modellen fokuserar på träningserfarenhet och realistiska gains över tid. Nybörjare: 1-1.5% av kroppsvikt/mån, Intermediär: 0.5-1%, Avancerad: 0.25-0.5%. Uppskattar potential baserat på nuvarande status.',
     'Lyle McDonald Model':
@@ -278,29 +278,55 @@ function ResultCard({
 
   return (
     <div className="space-y-4">
-      <div className="bg-gradient-to-br from-green-50 to-blue-50 border-2 border-green-200 rounded-lg p-3">
-        <div className="space-y-2">
-          {/* Current body fat weight - primary info */}
-          {weightAtCurrentBF && currentBodyFat && (
-            <div>
-              <p className="text-xs text-neutral-600">
-                Vid din kroppsfett ({currentBodyFat.toFixed(1)}%):
-              </p>
-              <p className="text-xl font-bold text-primary-700">
-                {weightAtCurrentBF.toFixed(1)} kg
-              </p>
+      {result.formula === 'Casey Butt' ? (
+        <div className="bg-gradient-to-br from-green-50 to-blue-50 border-2 border-green-200 rounded-lg p-3">
+          <h4 className="text-sm font-semibold text-neutral-800 mb-3">
+            Uppskattad maximal genetisk potential
+          </h4>
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <p className="text-xs text-neutral-600">Fettfri massa (MLBM):</p>
+              <p className="text-lg font-bold text-green-700">{result.maxLeanMass.toFixed(1)} kg</p>
             </div>
-          )}
-
-          {/* Lean mass - secondary info */}
-          <div className="pt-2 border-t border-green-200">
-            <p className="text-xs text-neutral-600">Maximal fettfri massa:</p>
-            <p className="text-lg font-semibold text-green-700">
-              {result.maxLeanMass.toFixed(1)} kg
-            </p>
+            <div className="flex justify-between items-center">
+              <p className="text-xs text-neutral-600">Kroppsvikt (MBW):</p>
+              <p className="text-lg font-bold text-blue-700">{result.maxWeight.toFixed(1)} kg</p>
+            </div>
+            {result.maxBulkedWeight && (
+              <div className="flex justify-between items-center">
+                <p className="text-xs text-neutral-600">Bulked vikt (MBBW):</p>
+                <p className="text-lg font-bold text-purple-700">
+                  {result.maxBulkedWeight.toFixed(1)} kg
+                </p>
+              </div>
+            )}
           </div>
         </div>
-      </div>
+      ) : (
+        <div className="bg-gradient-to-br from-green-50 to-blue-50 border-2 border-green-200 rounded-lg p-3">
+          <div className="space-y-2">
+            {/* Current body fat weight - primary info */}
+            {weightAtCurrentBF && currentBodyFat && (
+              <div>
+                <p className="text-xs text-neutral-600">
+                  Vid din kroppsfett ({currentBodyFat.toFixed(1)}%):
+                </p>
+                <p className="text-xl font-bold text-primary-700">
+                  {weightAtCurrentBF.toFixed(1)} kg
+                </p>
+              </div>
+            )}
+
+            {/* Lean mass - secondary info */}
+            <div className="pt-2 border-t border-green-200">
+              <p className="text-xs text-neutral-600">Maximal fettfri massa:</p>
+              <p className="text-lg font-semibold text-green-700">
+                {result.maxLeanMass.toFixed(1)} kg
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Uppskattad maximal genetisk potential för kroppsvikt */}
       <div>
@@ -345,67 +371,99 @@ function ResultCard({
         </div>
       </div>
 
-      {/* Casey Butt specific: Max measurements and gainer type */}
-      {result.formula === 'Casey Butt' && result.maxMeasurements && result.gainerType && (
-        <div className="space-y-4">
-          {/* Gainer Type Badge */}
-          <div className="bg-purple-50 border-2 border-purple-200 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-sm font-medium text-purple-900">Kroppstyp:</p>
-              <Badge
-                variant={
-                  result.gainerType === 'easy'
-                    ? 'default'
-                    : result.gainerType === 'hard'
-                      ? 'destructive'
-                      : 'secondary'
-                }
-              >
-                {result.gainerType === 'easy'
-                  ? 'Easy Gainer (Mesomorph/Endomorph)'
-                  : result.gainerType === 'hard'
-                    ? 'Hard Gainer (Ectomorph)'
-                    : 'Average Gainer'}
-              </Badge>
-            </div>
-            <p className="text-xs text-purple-700">
-              Baserat på handled/ankel-förhållande.{' '}
-              {result.gainerType === 'easy'
-                ? 'Lättare att bygga muskler.'
-                : result.gainerType === 'hard'
-                  ? 'Svårare att bygga muskler, kräver mer kalorier.'
-                  : 'Genomsnittlig förutsättning att bygga muskler.'}
-            </p>
-          </div>
+      {/* Casey Butt specific: Gainer type and max measurements */}
+      {result.formula === 'Casey Butt' &&
+        result.upperBodyType &&
+        result.lowerBodyType &&
+        result.maxMeasurements && (
+          <div className="space-y-3">
+            {/* Gainer Type Badges */}
+            <h4 className="font-medium text-sm text-neutral-900">Kroppstyp</h4>
 
-          {/* Max Measurements */}
-          <div>
-            <h4 className="font-medium text-sm text-neutral-900 mb-2">
-              Maximala kroppsmått (vid låg kroppsfett):
-            </h4>
-            <div className="grid grid-cols-3 gap-2">
-              <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 text-center">
-                <p className="text-xs text-orange-600 mb-1">Max Arm</p>
-                <p className="text-lg font-bold text-orange-900">
-                  {result.maxMeasurements.armCm.toFixed(1)} cm
-                </p>
+            {/* Upper body classification */}
+            <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-3">
+              <div className="flex items-center justify-between mb-1">
+                <p className="text-xs font-medium text-blue-900">Överkropp (handled):</p>
+                <Badge variant={result.upperBodyType === 'easy' ? 'default' : 'secondary'}>
+                  {result.upperBodyType === 'hard' ? 'Hardgainer' : 'Easygainer'}
+                </Badge>
               </div>
-              <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 text-center">
-                <p className="text-xs text-orange-600 mb-1">Max Bröst</p>
-                <p className="text-lg font-bold text-orange-900">
-                  {result.maxMeasurements.chestCm.toFixed(1)} cm
-                </p>
+              <p className="text-xs text-blue-700">
+                {result.upperBodyType === 'hard'
+                  ? 'Tunnare skelettstruktur - kräver mer fokus för överkroppsutveckling'
+                  : 'Tjockare skelettstruktur - lättare bygga överkroppsmuskler'}
+              </p>
+            </div>
+
+            {/* Lower body classification */}
+            <div className="bg-purple-50 border-2 border-purple-200 rounded-lg p-3">
+              <div className="flex items-center justify-between mb-1">
+                <p className="text-xs font-medium text-purple-900">Underkropp (fotled):</p>
+                <Badge variant={result.lowerBodyType === 'easy' ? 'default' : 'secondary'}>
+                  {result.lowerBodyType === 'hard' ? 'Hardgainer' : 'Easygainer'}
+                </Badge>
               </div>
-              <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 text-center">
-                <p className="text-xs text-orange-600 mb-1">Max Vad</p>
-                <p className="text-lg font-bold text-orange-900">
-                  {result.maxMeasurements.calfCm.toFixed(1)} cm
-                </p>
+              <p className="text-xs text-purple-700">
+                {result.lowerBodyType === 'hard'
+                  ? 'Tunnare skelettstruktur - kräver mer fokus för underkroppsutveckling'
+                  : 'Tjockare skelettstruktur - lättare bygga underkroppsmuskler'}
+              </p>
+            </div>
+
+            {/* Max Measurements */}
+            <h4 className="font-medium text-sm text-neutral-900 mt-4">Maximala kroppsmått</h4>
+
+            {/* Upper body measurements */}
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-lg p-3">
+              <p className="text-xs font-medium text-blue-900 mb-2">Överkropp</p>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <p className="text-xs text-blue-600">Bröst</p>
+                  <p className="text-base font-bold text-blue-900">
+                    {result.maxMeasurements.chestCm.toFixed(1)} cm
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-blue-600">Biceps</p>
+                  <p className="text-base font-bold text-blue-900">
+                    {result.maxMeasurements.bicepsCm.toFixed(1)} cm
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-blue-600">Underarmar</p>
+                  <p className="text-base font-bold text-blue-900">
+                    {result.maxMeasurements.forearmsCm.toFixed(1)} cm
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-blue-600">Nacke</p>
+                  <p className="text-base font-bold text-blue-900">
+                    {result.maxMeasurements.neckCm.toFixed(1)} cm
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Lower body measurements */}
+            <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-lg p-3">
+              <p className="text-xs font-medium text-purple-900 mb-2">Underkropp</p>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <p className="text-xs text-purple-600">Lår</p>
+                  <p className="text-base font-bold text-purple-900">
+                    {result.maxMeasurements.thighsCm.toFixed(1)} cm
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-purple-600">Vader</p>
+                  <p className="text-base font-bold text-purple-900">
+                    {result.maxMeasurements.calvesCm.toFixed(1)} cm
+                  </p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
     </div>
   )
 }
