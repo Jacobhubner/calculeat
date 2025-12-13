@@ -143,22 +143,23 @@ export default function GeneticPotentialTool() {
                 <CardDescription>Olika modeller ger olika uppskattningar</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                {/* Warning if wrist or ankle measurements are missing */}
-                {(!latestMeasurement?.wrist || !latestMeasurement?.ankle) && (
-                  <Alert variant="default" className="border-amber-300 bg-amber-50">
-                    <AlertCircle className="h-4 w-4 text-amber-600" />
-                    <AlertDescription className="text-amber-900">
-                      För Casey Butt&apos;s formel behöver du ange både handled och fotled i dina
-                      kroppssammansättningsmätningar.{' '}
-                      <Link
-                        to="/app/body-composition?workflow=measurements-first"
-                        className="underline font-medium hover:text-amber-700"
-                      >
-                        Gå till Kroppssammansättning (Workflow 2)
-                      </Link>
-                    </AlertDescription>
-                  </Alert>
-                )}
+                {/* Warning if Casey Butt is selected and wrist or ankle measurements are missing */}
+                {results[selectedFormulaIndex]?.formula === 'Casey Butt' &&
+                  (!latestMeasurement?.wrist || !latestMeasurement?.ankle) && (
+                    <Alert variant="default" className="border-amber-300 bg-amber-50">
+                      <AlertCircle className="h-4 w-4 text-amber-600" />
+                      <AlertDescription className="text-amber-900">
+                        För Casey Butt&apos;s formel behöver du ange både handled och fotled i dina
+                        kroppssammansättningsmätningar.{' '}
+                        <Link
+                          to="/app/body-composition?workflow=measurements-first"
+                          className="underline font-medium hover:text-amber-700"
+                        >
+                          Gå till Kroppssammansättning (Workflow 2)
+                        </Link>
+                      </AlertDescription>
+                    </Alert>
+                  )}
 
                 {/* Formula selector buttons */}
                 <TooltipProvider>
@@ -293,40 +294,38 @@ function ResultCard({
 
   return (
     <div className="space-y-4">
-      <div className="bg-gradient-to-br from-green-50 to-blue-50 border-2 border-green-200 rounded-lg p-4">
-        <p className="text-sm text-neutral-600 mb-1">{result.description}</p>
-        <div className="grid grid-cols-2 gap-4 mt-3">
-          <div>
-            <p className="text-xs text-neutral-500">Maximal fettfri massa:</p>
-            <p className="text-2xl font-bold text-green-700">{result.maxLeanMass.toFixed(1)} kg</p>
-          </div>
-          <div>
-            <p className="text-xs text-neutral-500">Vid låg kroppsfett:</p>
-            <p className="text-2xl font-bold text-blue-700">{result.maxWeight.toFixed(1)} kg</p>
+      <div className="bg-gradient-to-br from-green-50 to-blue-50 border-2 border-green-200 rounded-lg p-3">
+        <div className="space-y-2">
+          {/* Current body fat weight - primary info */}
+          {weightAtCurrentBF && currentBodyFat && (
+            <div>
+              <p className="text-xs text-neutral-600">
+                Vid din kroppsfett ({currentBodyFat.toFixed(1)}%):
+              </p>
+              <p className="text-xl font-bold text-primary-700">
+                {weightAtCurrentBF.toFixed(1)} kg
+              </p>
+            </div>
+          )}
+
+          {/* Lean mass - secondary info */}
+          <div className="pt-2 border-t border-green-200">
+            <p className="text-xs text-neutral-600">Maximal fettfri massa:</p>
+            <p className="text-lg font-semibold text-green-700">
+              {result.maxLeanMass.toFixed(1)} kg
+            </p>
           </div>
         </div>
-
-        {/* Show weight at user's current body fat % */}
-        {weightAtCurrentBF && currentBodyFat && (
-          <div className="mt-4 pt-4 border-t border-green-300">
-            <p className="text-xs text-neutral-500 mb-1">
-              Vid din kroppsfett ({currentBodyFat.toFixed(1)}%):
-            </p>
-            <p className="text-2xl font-bold text-primary-600">{weightAtCurrentBF.toFixed(1)} kg</p>
-          </div>
-        )}
       </div>
 
       {/* Uppskattad maximal genetisk potential för kroppsvikt */}
       <div>
-        <h4 className="font-semibold text-base text-neutral-900 mb-3">
+        <h4 className="font-medium text-sm text-neutral-900 mb-2">
           Uppskattad maximal genetisk potential för kroppsvikt
         </h4>
-        <p className="text-sm text-neutral-600 mb-4">
-          Maxvikt vid olika kroppsfettprocent baserat på din fettfria massa
-        </p>
-        <div className="grid grid-cols-4 gap-3 text-center">
-          {targetWeights.slice(0, 8).map(target => {
+        <p className="text-xs text-neutral-500 mb-3">Maxvikt vid olika kroppsfettprocent</p>
+        <div className="grid grid-cols-5 gap-2 text-center">
+          {targetWeights.slice(0, 10).map(target => {
             const isCurrentBF = currentBodyFat && Math.abs(target.bodyFat - currentBodyFat) < 1
 
             // Gradient colors based on BF% (lower BF = more green/lean)
@@ -340,23 +339,22 @@ function ResultCard({
             return (
               <div
                 key={target.bodyFat}
-                className={`rounded-xl p-3 border-2 ${
+                className={`rounded-lg p-2 border ${
                   isCurrentBF
-                    ? 'bg-gradient-to-br from-primary-100 to-primary-200 border-primary-500 ring-2 ring-primary-400 shadow-md'
+                    ? 'bg-gradient-to-br from-primary-100 to-primary-200 border-primary-500 ring-1 ring-primary-400'
                     : `bg-gradient-to-br ${getColorClasses(target.bodyFat)}`
                 }`}
               >
                 <p
-                  className={`text-xs font-medium mb-1 ${isCurrentBF ? 'text-primary-700' : 'text-neutral-600'}`}
+                  className={`text-xs font-medium ${isCurrentBF ? 'text-primary-700' : 'text-neutral-600'}`}
                 >
-                  {target.bodyFat}% KF
+                  {target.bodyFat}%
                 </p>
                 <p
-                  className={`font-bold text-lg ${isCurrentBF ? 'text-primary-900' : 'text-neutral-900'}`}
+                  className={`font-bold text-sm ${isCurrentBF ? 'text-primary-900' : 'text-neutral-900'}`}
                 >
                   {target.weight.toFixed(1)}
                 </p>
-                <p className="text-xs text-neutral-500">kg</p>
               </div>
             )
           })}
