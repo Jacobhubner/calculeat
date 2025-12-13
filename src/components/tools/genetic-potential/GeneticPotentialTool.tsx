@@ -6,15 +6,13 @@ import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { useProfileData, useMissingProfileData } from '@/hooks/useProfileData'
-import MissingDataCard from '../common/MissingDataCard'
-import { useUpdateProfile, useMeasurementSets } from '@/hooks'
+import { useProfileData } from '@/hooks/useProfileData'
+import { useMeasurementSets } from '@/hooks'
 import {
   calculateAllModels,
   getTargetWeights,
   type GeneticPotentialResult,
 } from '@/lib/calculations/geneticPotentialCalculations'
-import { toast } from 'sonner'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 // Helper function to get short display names for formulas
@@ -47,9 +45,6 @@ export default function GeneticPotentialTool() {
   const profileData = useProfileData(['height_cm', 'gender', 'weight_kg', 'body_fat_percentage'])
   const { data: measurementSets } = useMeasurementSets()
 
-  const missingFields = useMissingProfileData(['height_cm', 'gender'])
-  const updateProfileMutation = useUpdateProfile()
-
   // Get wrist/ankle från senaste measurement set
   const latestMeasurement = useMemo(() => {
     return measurementSets && measurementSets.length > 0 ? measurementSets[0] : null
@@ -71,16 +66,6 @@ export default function GeneticPotentialTool() {
     })
   }, [profileData, latestMeasurement])
 
-  const handleSaveMissingData = async (data: Partial<Profile>) => {
-    try {
-      await updateProfileMutation.mutateAsync(data)
-      toast.success('Profil uppdaterad')
-    } catch (error) {
-      toast.error('Kunde inte uppdatera profil')
-      throw error
-    }
-  }
-
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -95,25 +80,6 @@ export default function GeneticPotentialTool() {
           Kroppsanalys
         </Badge>
       </div>
-
-      {/* Saknad Data */}
-      {missingFields.length > 0 && (
-        <MissingDataCard
-          missingFields={missingFields.map(field => ({
-            key: field.key,
-            label: field.label,
-            type: field.key === 'gender' ? 'select' : 'number',
-            options:
-              field.key === 'gender'
-                ? [
-                    { value: 'male', label: 'Man' },
-                    { value: 'female', label: 'Kvinna' },
-                  ]
-                : undefined,
-          }))}
-          onSave={handleSaveMissingData}
-        />
-      )}
 
       {/* Info Alert */}
       <Card className="border-blue-200 bg-blue-50">
