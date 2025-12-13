@@ -212,9 +212,6 @@ export default function DashboardNav() {
 
             // Group item (expandable)
             const Icon = item.icon
-            const hasActiveChild = item.children.some(child =>
-              location.pathname.startsWith(child.to)
-            )
 
             return (
               <div key={index} className="space-y-1">
@@ -222,13 +219,11 @@ export default function DashboardNav() {
                   onClick={toggleToolsSection}
                   className={cn(
                     'w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors relative group',
-                    hasActiveChild
-                      ? 'bg-primary-50 text-primary-700'
-                      : 'text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900',
+                    'text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900',
                     sidebarCollapsed && 'justify-center px-2'
                   )}
                 >
-                  <Icon className={cn('h-5 w-5 shrink-0', hasActiveChild && 'text-primary-600')} />
+                  <Icon className="h-5 w-5 shrink-0" />
                   {!sidebarCollapsed && (
                     <>
                       <span className="flex-1 text-left">{item.label}</span>
@@ -265,7 +260,9 @@ export default function DashboardNav() {
                               : 'text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900'
                           )}
                         >
-                          <ChildIcon className={cn('h-4 w-4 shrink-0', childActive && 'text-primary-600')} />
+                          <ChildIcon
+                            className={cn('h-4 w-4 shrink-0', childActive && 'text-primary-600')}
+                          />
                           <span className="flex-1">{child.label}</span>
                         </Link>
                       )
