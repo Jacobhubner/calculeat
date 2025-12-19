@@ -134,20 +134,53 @@ export default function ProfilePage() {
     proteinMin: number
     proteinMax: number
   }) => {
-    setPendingChanges(prev => ({
-      ...prev,
-      fat_min_percent: macros.fatMin,
-      fat_max_percent: macros.fatMax,
-      carb_min_percent: macros.carbMin,
-      carb_max_percent: macros.carbMax,
-      protein_min_percent: macros.proteinMin,
-      protein_max_percent: macros.proteinMax,
-    }))
+    if (!activeProfile) return
+
+    // Only add to pending changes if values actually changed from saved profile
+    const hasChanged =
+      macros.fatMin !== activeProfile.fat_min_percent ||
+      macros.fatMax !== activeProfile.fat_max_percent ||
+      macros.carbMin !== activeProfile.carb_min_percent ||
+      macros.carbMax !== activeProfile.carb_max_percent ||
+      macros.proteinMin !== activeProfile.protein_min_percent ||
+      macros.proteinMax !== activeProfile.protein_max_percent
+
+    if (hasChanged) {
+      setPendingChanges(prev => ({
+        ...prev,
+        fat_min_percent: macros.fatMin,
+        fat_max_percent: macros.fatMax,
+        carb_min_percent: macros.carbMin,
+        carb_max_percent: macros.carbMax,
+        protein_min_percent: macros.proteinMin,
+        protein_max_percent: macros.proteinMax,
+      }))
+    } else {
+      // Remove macro fields from pending changes if they match saved values
+      setPendingChanges(prev => {
+        const { fat_min_percent, fat_max_percent, carb_min_percent, carb_max_percent, protein_min_percent, protein_max_percent, ...rest } = prev
+        return rest
+      })
+    }
   }
 
   // Handler for MealSettingsCard - update pending state
   const handleMealChange = (settings: { meals: { name: string; percentage: number }[] }) => {
-    setPendingChanges(prev => ({ ...prev, meals_config: settings }))
+    if (!activeProfile) return
+
+    // Only add to pending changes if meals actually changed from saved profile
+    const currentMeals = activeProfile.meals_config as { meals: { name: string; percentage: number }[] } | null
+    const hasChanged = JSON.stringify(settings.meals) !== JSON.stringify(currentMeals?.meals || [])
+
+    if (hasChanged) {
+      setPendingChanges(prev => ({ ...prev, meals_config: settings }))
+    } else {
+      // Remove meals_config from pending changes if it matches saved values
+      setPendingChanges(prev => {
+        const { meals_config, ...rest } = prev
+        return rest
+      })
+    }
   }
 
   // Handler for profile selection
