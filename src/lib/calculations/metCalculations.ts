@@ -21,13 +21,24 @@ export interface METCalculationResult {
  * @param met - MET värde för aktiviteten
  * @param weightKg - Kroppsvikt i kg
  * @param durationMinutes - Varaktighet i minuter
- * @returns Antal kalorier förbrända
+ * @returns Antal kalorier förbrända, 0 if invalid inputs
  */
 export function calculateCaloriesBurned(
   met: number,
   weightKg: number,
   durationMinutes: number
 ): number {
+  // Validate inputs to prevent invalid calculations
+  if (met < 0 || weightKg <= 0 || durationMinutes < 0) {
+    return 0;
+  }
+
+  // MET values are typically between 0.9 (sleeping) and 23 (running very fast)
+  // Warn if unrealistic but don't fail
+  if (met > 25) {
+    console.warn(`Unusually high MET value: ${met}`);
+  }
+
   const durationHours = durationMinutes / 60;
   return met * weightKg * durationHours;
 }
@@ -38,13 +49,18 @@ export function calculateCaloriesBurned(
  * @param targetCalories - Målet av kalorier att förbränna
  * @param met - MET värde för aktiviteten
  * @param weightKg - Kroppsvikt i kg
- * @returns Tid i minuter
+ * @returns Tid i minuter, 0 if invalid inputs
  */
 export function calculateTimeRequired(
   targetCalories: number,
   met: number,
   weightKg: number
 ): number {
+  // Validate inputs to prevent division by zero or invalid calculations
+  if (targetCalories <= 0 || met <= 0 || weightKg <= 0) {
+    return 0;
+  }
+
   const hoursRequired = targetCalories / (met * weightKg);
   return hoursRequired * 60;
 }
@@ -77,35 +93,46 @@ export function compareActivities(
  * Beräkna genomsnittlig MET för en serie aktiviteter
  *
  * @param activities - Array av aktiviteter med MET och varaktighet
- * @returns Genomsnittlig MET viktad efter tid
+ * @returns Genomsnittlig MET viktad efter tid, 0 if no activities or invalid data
  */
 export function calculateAverageMET(
   activities: Array<{ met: number; durationMinutes: number }>
 ): number {
+  // Validate input array
+  if (!activities || activities.length === 0) {
+    return 0;
+  }
+
   const totalMinutes = activities.reduce((sum, a) => sum + a.durationMinutes, 0);
   const weightedSum = activities.reduce((sum, a) => sum + a.met * a.durationMinutes, 0);
+
+  // Prevent division by zero
+  if (totalMinutes === 0) {
+    return 0;
+  }
 
   return weightedSum / totalMinutes;
 }
 
 /**
  * Konvertera MET till intensitetsnivå
+ * Uppdaterad för svenska intensitetsnivåer
  */
 export function getIntensityLevel(met: number): {
-  level: 'sedentary' | 'light' | 'moderate' | 'vigorous' | 'very vigorous';
+  level: 'sittande' | 'lätt' | 'måttlig' | 'hög' | 'mycket hög';
   label: string;
   color: string;
 } {
   if (met < 1.6) {
-    return { level: 'sedentary', label: 'Sittande', color: 'bg-gray-100 text-gray-700' };
+    return { level: 'sittande', label: 'Sittande', color: 'bg-gray-100 text-gray-700' };
   } else if (met < 3.0) {
-    return { level: 'light', label: 'Lätt', color: 'bg-blue-100 text-blue-700' };
+    return { level: 'lätt', label: 'Lätt', color: 'bg-blue-100 text-blue-700' };
   } else if (met < 6.0) {
-    return { level: 'moderate', label: 'Måttlig', color: 'bg-green-100 text-green-700' };
+    return { level: 'måttlig', label: 'Måttlig', color: 'bg-green-100 text-green-700' };
   } else if (met < 9.0) {
-    return { level: 'vigorous', label: 'Hård', color: 'bg-orange-100 text-orange-700' };
+    return { level: 'hög', label: 'Hög', color: 'bg-orange-100 text-orange-700' };
   } else {
-    return { level: 'very vigorous', label: 'Mycket hård', color: 'bg-red-100 text-red-700' };
+    return { level: 'mycket hög', label: 'Mycket hög', color: 'bg-red-100 text-red-700' };
   }
 }
 
@@ -126,6 +153,15 @@ export function calculateDailyEnergyExpenditure(
   totalCalories: number;
   pal: number; // Physical Activity Level
 } {
+  // Validate inputs
+  if (weightKg <= 0 || bmr <= 0) {
+    return {
+      activitiesCalories: 0,
+      totalCalories: 0,
+      pal: 1.0, // Default PAL for sedentary
+    };
+  }
+
   const activitiesCalories = activities.reduce((sum, activity) => {
     return sum + calculateCaloriesBurned(activity.met, weightKg, activity.durationMinutes);
   }, 0);

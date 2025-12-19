@@ -46,6 +46,11 @@ export interface TDEEParams {
  * 1. FAO/WHO/UNU based PAL values (most scientifically validated)
  */
 function calculateFAOWHO(bmr: number, activityLevel: ActivityLevel, gender: Gender): number {
+  // Validate BMR
+  if (bmr <= 0) {
+    return 0;
+  }
+
   const multipliers: Record<Gender, Record<ActivityLevel, number>> = {
     male: {
       Sedentary: 1.3,
@@ -74,6 +79,11 @@ function calculateDAMNRIPPED(
   activityLevel: ActivityLevel,
   intensityLevel: IntensityLevel = 'None'
 ): number {
+  // Validate BMR
+  if (bmr <= 0) {
+    return 0;
+  }
+
   const multipliers: Record<ActivityLevel, Record<IntensityLevel, number>> = {
     Sedentary: {
       None: 1.1,
@@ -125,6 +135,15 @@ function calculateProPhysique(
   trainingFrequencyPerWeek: number = 0,
   trainingDurationMinutes: number = 0
 ): number {
+  // Validate BMR
+  if (bmr <= 0) {
+    return 0;
+  }
+
+  // Validate training parameters (negative values not allowed)
+  const validFrequency = Math.max(0, trainingFrequencyPerWeek);
+  const validDuration = Math.max(0, trainingDurationMinutes);
+
   const baseMultipliers: Record<ActivityLevel, number> = {
     Sedentary: 1.15,
     'Lightly active': 1.25,
@@ -143,7 +162,7 @@ function calculateProPhysique(
 
   const baseTDEE = bmr * baseMultipliers[activityLevel]
   const trainingCalories =
-    (trainingFrequencyPerWeek / 7) * trainingDurationMinutes * intensityCalories[intensityLevel]
+    (validFrequency / 7) * validDuration * intensityCalories[intensityLevel]
 
   return baseTDEE + trainingCalories
 }
@@ -156,15 +175,23 @@ function calculateFitnessStuff(
   trainingHoursPerWeek: number,
   dailySteps?: DailySteps
 ): number {
+  // Validate BMR
+  if (bmr <= 0) {
+    return 0;
+  }
+
+  // Validate training hours (negative values not allowed)
+  const validHours = Math.max(0, trainingHoursPerWeek);
+
   // Base multiplier based on training hours
   let multiplier: number
-  if (trainingHoursPerWeek <= 1) {
+  if (validHours <= 1) {
     multiplier = 1 // 0-1h
-  } else if (trainingHoursPerWeek <= 3) {
+  } else if (validHours <= 3) {
     multiplier = 1.125 // 1-3h
-  } else if (trainingHoursPerWeek <= 5) {
+  } else if (validHours <= 5) {
     multiplier = 1.25 // 3-5h
-  } else if (trainingHoursPerWeek <= 8) {
+  } else if (validHours <= 8) {
     multiplier = 1.375 // 6-8h
   } else {
     multiplier = 1.5 // >8h
@@ -191,6 +218,11 @@ function calculateFitnessStuff(
  * 5. Basic internet PAL values (most common online calculators)
  */
 function calculateBasicInternet(bmr: number, activityLevel: ActivityLevel): number {
+  // Validate BMR
+  if (bmr <= 0) {
+    return 0;
+  }
+
   const multipliers: Record<ActivityLevel, number> = {
     Sedentary: 1.2,
     'Lightly active': 1.375,
@@ -203,10 +235,39 @@ function calculateBasicInternet(bmr: number, activityLevel: ActivityLevel): numb
 }
 
 /**
+ * Get PAL multiplier for Basic internet PAL values
+ * Exported for use in simple calculators
+ */
+export function getBasicInternetPAL(activityLevel: ActivityLevel): number {
+  const multipliers: Record<ActivityLevel, number> = {
+    Sedentary: 1.2,
+    'Lightly active': 1.375,
+    'Moderately active': 1.55,
+    'Very active': 1.725,
+    'Extremely active': 1.9,
+  }
+
+  return multipliers[activityLevel]
+}
+
+/**
  * 6. Custom PAL (user-defined multiplier)
  */
 function calculateCustomPAL(bmr: number, customPAL: number): number {
-  return bmr * customPAL
+  // Validate BMR
+  if (bmr <= 0) {
+    return 0;
+  }
+
+  // Validate custom PAL (should be between 1.0 and 3.0 for realistic values)
+  if (customPAL < 1.0 || customPAL > 3.0) {
+    console.warn(`Custom PAL value ${customPAL} is outside realistic range (1.0-3.0)`);
+    // Clamp to reasonable bounds
+    const validPAL = Math.max(1.0, Math.min(3.0, customPAL));
+    return bmr * validPAL;
+  }
+
+  return bmr * customPAL;
 }
 
 /**
@@ -224,6 +285,12 @@ export function calculateTDEE(params: TDEEParams): number {
     dailySteps,
     customPAL = 1.2,
   } = params
+
+  // Validate BMR at the entry point
+  if (bmr <= 0) {
+    console.error('Invalid BMR value:', bmr);
+    return 0;
+  }
 
   let tdee: number
 

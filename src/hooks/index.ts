@@ -19,11 +19,14 @@ export * from './useOnboarding'
 
 // Profile management hooks
 export * from './useProfiles'
+export * from './useActiveProfile'
 export * from './useCreateProfile'
 export * from './useDeleteProfile'
 export * from './useSwitchProfile'
 export * from './useNewProfile'
 export * from './useReorderProfiles'
+export * from './useTDEEStatus'
+export * from './useWeightHistory'
 
 // Measurement set hooks
 export * from './useMeasurementSets'

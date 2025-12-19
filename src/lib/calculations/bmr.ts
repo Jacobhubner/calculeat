@@ -27,9 +27,18 @@ export interface BMRParams {
 
 /**
  * Calculate lean body mass (fat-free mass)
+ * Returns null if invalid parameters
  */
-function calculateLeanMass(weight: number, bodyFatPercentage: number): number {
-  return weight * (1 - bodyFatPercentage / 100)
+function calculateLeanMass(weight: number, bodyFatPercentage: number): number | null {
+  // Validate inputs
+  if (weight <= 0 || bodyFatPercentage < 0 || bodyFatPercentage >= 100) {
+    return null
+  }
+
+  const leanMass = weight * (1 - bodyFatPercentage / 100)
+
+  // Ensure we don't return zero or negative lean mass
+  return leanMass > 0 ? leanMass : null
 }
 
 /**
@@ -37,8 +46,14 @@ function calculateLeanMass(weight: number, bodyFatPercentage: number): number {
  * Men: (9.99 × weight) + (6.25 × height) - (4.92 × age) + 5
  * Women: (9.99 × weight) + (6.25 × height) - (4.92 × age) - 161
  */
-export function mifflinStJeor(params: BMRParams): number {
+export function mifflinStJeor(params: BMRParams): number | null {
   const { weight, height, age, gender } = params
+
+  // Validate inputs to prevent invalid calculations
+  if (weight <= 0 || height <= 0 || age <= 0) {
+    return null
+  }
+
   const base = 9.99 * weight + 6.25 * height - 4.92 * age
 
   if (gender === 'male') {
@@ -60,14 +75,25 @@ export function cunningham(params: BMRParams): number | null {
   }
 
   const leanMass = calculateLeanMass(weight, bodyFatPercentage)
+
+  // Check if lean mass calculation failed
+  if (leanMass === null || leanMass <= 0) {
+    return null
+  }
+
   return 370 + 21.6 * leanMass
 }
 
 /**
  * 3. Oxford/Henry equation (age-specific)
  */
-export function oxfordHenry(params: BMRParams): number {
+export function oxfordHenry(params: BMRParams): number | null {
   const { gender, age, weight, height } = params
+
+  // Validate inputs
+  if (weight <= 0 || height <= 0 || age <= 0) {
+    return null
+  }
 
   if (gender === 'male') {
     if (age < 3) return 28.2 * weight + 859 * (height * 0.01) - 371
@@ -89,8 +115,13 @@ export function oxfordHenry(params: BMRParams): number {
 /**
  * 4. Schofield equation (WHO recommended, age-specific)
  */
-export function schofield(params: BMRParams): number {
+export function schofield(params: BMRParams): number | null {
   const { gender, age, weight } = params
+
+  // Validate inputs
+  if (weight <= 0 || age <= 0) {
+    return null
+  }
 
   if (gender === 'male') {
     if (age < 3) return 60.9 * weight - 54
@@ -114,8 +145,13 @@ export function schofield(params: BMRParams): number {
  * Men: (13.397 × weight) + (4.799 × height) - (5.677 × age) + 88.362
  * Women: (9.247 × weight) + (3.098 × height) - (4.33 × age) + 447.593
  */
-export function revisedHarrisBenedict(params: BMRParams): number {
+export function revisedHarrisBenedict(params: BMRParams): number | null {
   const { gender, age, weight, height } = params
+
+  // Validate inputs
+  if (weight <= 0 || height <= 0 || age <= 0) {
+    return null
+  }
 
   if (gender === 'male') {
     return 13.397 * weight + 4.799 * height - 5.677 * age + 88.362
@@ -129,8 +165,13 @@ export function revisedHarrisBenedict(params: BMRParams): number {
  * Men: (13.7516 × weight) + (5.0033 × height) - (6.755 × age) + 66.473
  * Women: (9.5634 × weight) + (1.8496 × height) - (4.6756 × age) + 655.0955
  */
-export function originalHarrisBenedict(params: BMRParams): number {
+export function originalHarrisBenedict(params: BMRParams): number | null {
   const { gender, age, weight, height } = params
+
+  // Validate inputs
+  if (weight <= 0 || height <= 0 || age <= 0) {
+    return null
+  }
 
   if (gender === 'male') {
     return 13.7516 * weight + 5.0033 * height - 6.755 * age + 66.473
@@ -143,8 +184,13 @@ export function originalHarrisBenedict(params: BMRParams): number {
  * 7. MacroFactor standard equation
  * 129.6 × weight^0.55 + 0.011 × height^2 - age_factor × age - 213.8 × sex_factor
  */
-export function macroFactorStandard(params: BMRParams): number {
+export function macroFactorStandard(params: BMRParams): number | null {
   const { gender, age, weight, height } = params
+
+  // Validate inputs
+  if (weight <= 0 || height <= 0 || age <= 0) {
+    return null
+  }
 
   const ageFactor = age < 61 ? 1.96 : 4.9
   const sexFactor = gender === 'male' ? 0 : 1
@@ -164,16 +210,33 @@ export function macroFactorStandard(params: BMRParams): number {
 export function macroFactorFFM(params: BMRParams): number | null {
   const { age, weight, bodyFatPercentage } = params
 
+  // Validate age
+  if (age <= 0) {
+    return null
+  }
+
   if (!bodyFatPercentage || bodyFatPercentage <= 0) {
     return null
   }
 
   const leanMass = calculateLeanMass(weight, bodyFatPercentage)
+
+  // Check if lean mass calculation failed
+  if (leanMass === null || leanMass <= 0) {
+    return null
+  }
+
+  const fatMass = weight - leanMass
+  // Ensure fat mass is non-negative
+  if (fatMass < 0) {
+    return null
+  }
+
   const ageFactor = age < 61 ? 1.1 : 2.75
 
   return (
     50.2 * Math.pow(leanMass, 0.7) +
-    40.5 * (Math.pow(leanMass, 0.7) * Math.pow(weight - leanMass, 0.066)) -
+    40.5 * (Math.pow(leanMass, 0.7) * Math.pow(fatMass, 0.066)) -
     ageFactor * age
   )
 }
@@ -190,6 +253,12 @@ export function macroFactorAthlete(params: BMRParams): number | null {
   }
 
   const leanMass = calculateLeanMass(weight, bodyFatPercentage)
+
+  // Check if lean mass calculation failed
+  if (leanMass === null || leanMass <= 0) {
+    return null
+  }
+
   return 40.4 * Math.pow(leanMass, 0.932)
 }
 
@@ -200,11 +269,22 @@ export function macroFactorAthlete(params: BMRParams): number | null {
 export function fitnessStuffPodcast(params: BMRParams): number | null {
   const { gender, age, weight, bodyFatPercentage } = params
 
+  // Validate age
+  if (age <= 0) {
+    return null
+  }
+
   if (!bodyFatPercentage || bodyFatPercentage <= 0) {
     return null
   }
 
   const leanMass = calculateLeanMass(weight, bodyFatPercentage)
+
+  // Check if lean mass calculation failed
+  if (leanMass === null || leanMass <= 0) {
+    return null
+  }
+
   const sexFactor = gender === 'male' ? 5 : -161
   const ageFactor = age <= 60 ? 1 : 0.9
 
@@ -244,9 +324,11 @@ export function calculateBMRWithFormula(formula: BMRFormula, params: BMRParams):
 /**
  * Calculate BMR using default formula (Mifflin-St Jeor)
  * Simplified version for quick calculations
+ * Returns 0 if calculation fails
  */
 export function calculateBMR(weight: number, height: number, age: number, gender: Gender): number {
-  return mifflinStJeor({ weight, height, age, gender })
+  const result = mifflinStJeor({ weight, height, age, gender })
+  return result ?? 0
 }
 
 // Legacy compatibility
@@ -266,11 +348,3 @@ export function requiresBodyFat(formula: BMRFormula): boolean {
   ].includes(formula)
 }
 
-/**
- * Calculate TDEE (Total Daily Energy Expenditure) from BMR and activity level
- * Simple multiplication version for basic calculations
- * @deprecated Use calculateTDEE from tdee.ts for PAL-system based calculations
- */
-export function calculateSimpleTDEE(bmr: number, activityLevel: number): number {
-  return bmr * activityLevel
-}

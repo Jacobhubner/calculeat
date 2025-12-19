@@ -102,6 +102,8 @@ export default function UserProfileForm({
   const [bodyFatPercentage, setBodyFatPercentage] = useState(
     currentProfile?.body_fat_percentage?.toString() || ''
   )
+  const [profileLoadError, setProfileLoadError] = useState<string | null>(null)
+  const [validationError, setValidationError] = useState<string | null>(null)
   const [bmrFormula, setBmrFormula] = useState<BMRFormula | ''>(
     (currentProfile?.bmr_formula as BMRFormula) || ''
   )
@@ -174,7 +176,7 @@ export default function UserProfileForm({
         return
       }
 
-      // Set flag to prevent PAL reset useEffect from running
+      // Set flag to prevent PAL reset useEffect from running during profile load
       isLoadingProfile.current = true
 
       // Load existing profile data from the complete profile object
@@ -229,11 +231,7 @@ export default function UserProfileForm({
         setResult(null)
       }
 
-      // Reset flag after all state updates are done
-      // Use setTimeout to ensure this runs after the PAL reset useEffect
-      setTimeout(() => {
-        isLoadingProfile.current = false
-      }, 0)
+      // Reset flag after all state updates - now handled in cleanup function below
     } else if (activeProfile === null && allProfiles.length > 0) {
       // New profile mode - copy all fields from previously viewed profile
       // Use previousProfile if available, otherwise use first profile
@@ -246,9 +244,15 @@ export default function UserProfileForm({
         })[0]
 
       if (!sourceProfile) {
-        // No valid profile to copy from, just reset
+        // No valid profile to copy from - show error
+        setProfileLoadError(
+          'Kunde inte hitta någon profil att kopiera från. Vänligen ladda om sidan eller kontakta support.'
+        )
         return
       }
+
+      // Clear any previous errors
+      setProfileLoadError(null)
 
       // Copy all editable fields from source profile
       setProfileName('')
@@ -286,25 +290,59 @@ export default function UserProfileForm({
       setGender(sourceProfile.gender || '')
       setHeight(sourceProfile.height_cm?.toString() || '')
     }
+
+    // Cleanup function to reset the loading flag
+    return () => {
+      isLoadingProfile.current = false
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeProfile?.id, allProfiles])
+
+  // Track previous PAL system to detect changes
+  const prevPalSystemRef = useRef<string>('')
 
   // Reset PAL-system specific fields when PAL system changes
   useEffect(() => {
     // Don't reset if we're currently loading a profile from database
     if (isLoadingProfile.current) {
+      prevPalSystemRef.current = palSystem
       return
     }
 
     // Only reset if we're changing from one PAL system to another (not on initial load)
-    if (palSystem) {
-      // Reset all PAL-specific fields when changing PAL system
+    // Check if we have data that would be lost
+    const hasExistingData =
+      activityLevel || intensityLevel || trainingFrequency || trainingDuration || dailySteps || customPAL
+
+    if (palSystem && prevPalSystemRef.current && prevPalSystemRef.current !== palSystem && hasExistingData) {
+      // Show confirmation before resetting
+      const confirmed = window.confirm(
+        'Att byta PAL-system raderar dina aktivitetsinställningar. Vill du fortsätta?'
+      )
+
+      if (!confirmed) {
+        // User cancelled - revert to previous PAL system
+        setPalSystem(prevPalSystemRef.current)
+        return
+      }
+
+      // User confirmed - reset all PAL-specific fields
       setActivityLevel('')
       setIntensityLevel('')
       setTrainingFrequency('')
       setTrainingDuration('')
       setDailySteps('')
       setCustomPAL('')
+    }
+
+    // Update the previous PAL system reference
+    prevPalSystemRef.current = palSystem
+  }, [activityLevel, intensityLevel, trainingFrequency, trainingDuration, dailySteps, customPAL])
+
+  // Separate effect to update ref when palSystem changes (without triggering the reset logic)
+  useEffect(() => {
+    if (palSystem && !prevPalSystemRef.current) {
+      prevPalSystemRef.current = palSystem
     }
   }, [palSystem])
 
@@ -351,25 +389,72 @@ export default function UserProfileForm({
 
     // Compare current form values with saved profile values
     const hasProfileNameChange = profileName !== (fullProfile.profile_name || '')
-    const hasWeightChange = weight !== (fullProfile.weight_kg?.toString() || '')
-    const hasHeightChange = height !== (fullProfile.height_cm?.toString() || '')
+
+    // För numeriska fält: hantera tomma strängar korrekt
+    const hasWeightChange = (() => {
+      const currentVal = weight.trim()
+      const savedVal = fullProfile.weight_kg
+      if (currentVal === '' && (savedVal === null || savedVal === undefined)) return false
+      if (currentVal === '' && savedVal !== null && savedVal !== undefined) return true
+      return parseFloat(currentVal || '0') !== (savedVal || 0)
+    })()
+
+    const hasHeightChange = (() => {
+      const currentVal = height.trim()
+      const savedVal = fullProfile.height_cm
+      if (currentVal === '' && (savedVal === null || savedVal === undefined)) return false
+      if (currentVal === '' && savedVal !== null && savedVal !== undefined) return true
+      return parseFloat(currentVal || '0') !== (savedVal || 0)
+    })()
+
     const hasGenderChange = gender !== (fullProfile.gender || '')
     const hasBirthDateChange = birthDate !== (fullProfile.birth_date || '')
-    const hasBodyFatChange =
-      bodyFatPercentage !== (fullProfile.body_fat_percentage?.toString() || '')
+
+    const hasBodyFatChange = (() => {
+      const currentVal = bodyFatPercentage.trim()
+      const savedVal = fullProfile.body_fat_percentage
+      if (currentVal === '' && (savedVal === null || savedVal === undefined)) return false
+      if (currentVal === '' && savedVal !== null && savedVal !== undefined) return true
+      return parseFloat(currentVal || '0') !== (savedVal || 0)
+    })()
     const hasBmrFormulaChange = bmrFormula !== (fullProfile.bmr_formula || '')
     const hasPalSystemChange = palSystem !== (fullProfile.pal_system || '')
     const hasActivityLevelChange = activityLevel !== (fullProfile.activity_level || '')
     const hasIntensityLevelChange = intensityLevel !== (fullProfile.intensity_level || '')
-    const hasTrainingFreqChange =
-      trainingFrequency !== (fullProfile.training_frequency_per_week?.toString() || '')
-    const hasTrainingDurChange =
-      trainingDuration !== (fullProfile.training_duration_minutes?.toString() || '')
+    const hasTrainingFreqChange = (() => {
+      const currentVal = trainingFrequency.trim()
+      const savedVal = fullProfile.training_frequency_per_week
+      if (currentVal === '' && (savedVal === null || savedVal === undefined)) return false
+      if (currentVal === '' && savedVal !== null && savedVal !== undefined) return true
+      return parseFloat(currentVal || '0') !== (savedVal || 0)
+    })()
+
+    const hasTrainingDurChange = (() => {
+      const currentVal = trainingDuration.trim()
+      const savedVal = fullProfile.training_duration_minutes
+      if (currentVal === '' && (savedVal === null || savedVal === undefined)) return false
+      if (currentVal === '' && savedVal !== null && savedVal !== undefined) return true
+      return parseFloat(currentVal || '0') !== (savedVal || 0)
+    })()
     const hasDailyStepsChange = dailySteps !== (fullProfile.daily_steps || '')
-    const hasCustomPALChange = customPAL !== (fullProfile.custom_pal?.toString() || '')
+
+    const hasCustomPALChange = (() => {
+      const currentVal = customPAL.trim()
+      const savedVal = fullProfile.custom_pal
+      if (currentVal === '' && (savedVal === null || savedVal === undefined)) return false
+      if (currentVal === '' && savedVal !== null && savedVal !== undefined) return true
+      return parseFloat(currentVal || '0') !== (savedVal || 0)
+    })()
     const hasEnergyGoalChange = energyGoal !== (fullProfile.calorie_goal || '')
     const hasDeficitLevelChange = deficitLevel !== (fullProfile.deficit_level || '')
-    const hasCustomTdeeChange = customTdee !== (fullProfile.custom_tdee?.toString() || '')
+
+    const hasCustomTdeeChange = (() => {
+      const currentVal = customTdee.trim()
+      const savedVal = fullProfile.custom_tdee
+      if (currentVal === '' && (savedVal === null || savedVal === undefined)) return false
+      if (currentVal === '' && savedVal !== null && savedVal !== undefined) return true
+      return parseFloat(currentVal || '0') !== (savedVal || 0)
+    })()
 
     // Also check if calculated results have changed (e.g., from PAL system activity level changes)
     // Use a larger tolerance (10 kcal) to avoid showing save card for rounding differences
@@ -557,15 +642,18 @@ export default function UserProfileForm({
       requiresBodyFat: bmrFormula ? requiresBodyFat(bmrFormula) : false,
     })
 
+    // Clear previous validation errors
+    setValidationError(null)
+
     if (!energyGoal) {
-      alert('Vänligen välj ett energimål')
+      setValidationError('Vänligen välj ett energimål')
       return
     }
 
     // For Custom TDEE, only validate TDEE input
     if (energyGoal === 'Custom TDEE') {
       if (!customTdeeNum || customTdeeNum < 500 || customTdeeNum > 10000) {
-        alert('Vänligen ange ett giltigt TDEE-värde (500-10000 kcal)')
+        setValidationError('Vänligen ange ett giltigt TDEE-värde (500-10000 kcal)')
         return
       }
 
@@ -584,7 +672,7 @@ export default function UserProfileForm({
 
     // For other goals, validate all fields
     if (!birthDate) {
-      alert('Vänligen ange ditt födelsedatum')
+      setValidationError('Vänligen ange ditt födelsedatum')
       return
     }
 
@@ -595,28 +683,28 @@ export default function UserProfileForm({
       !bmrFormula ||
       !palSystem
     ) {
-      alert('Vänligen fyll i alla obligatoriska fält')
+      setValidationError('Vänligen fyll i alla obligatoriska fält')
       return
     }
 
     if (energyGoal === 'Weight loss' && !deficitLevel) {
-      alert('Vänligen välj en viktnedgångstakt')
+      setValidationError('Vänligen välj en viktnedgångstakt')
       return
     }
 
     if (weightNum < 20 || weightNum > 300) {
-      alert('Vikt måste vara mellan 20 och 300 kg')
+      setValidationError('Vikt måste vara mellan 20 och 300 kg')
       return
     }
 
     if (heightNum < 100 || heightNum > 250) {
-      alert('Längd måste vara mellan 100 och 250 cm')
+      setValidationError('Längd måste vara mellan 100 och 250 cm')
       return
     }
 
     // Check if body fat is required but not provided
     if (requiresBodyFat(bmrFormula) && !bodyFatNum) {
-      alert('Denna BMR-formel kräver kroppsfettprocent. Vänligen fyll i kroppsfettprocent.')
+      setValidationError('Denna BMR-formel kräver kroppsfettprocent. Vänligen fyll i kroppsfettprocent.')
       return
     }
 
@@ -624,7 +712,7 @@ export default function UserProfileForm({
     const age = calculateAge(birthDate)
 
     if (age < 1 || age > 120) {
-      alert('Ålder måste vara mellan 1 och 120 år')
+      setValidationError('Ålder måste vara mellan 1 och 120 år')
       return
     }
 
@@ -640,11 +728,11 @@ export default function UserProfileForm({
     if (!bmr) {
       // Check if the formula requires body fat percentage
       if (requiresBodyFat(bmrFormula) && !bodyFatNum) {
-        alert(
+        setValidationError(
           `Formeln "${bmrFormula}" kräver kroppsfett%. Vänligen fyll i kroppsfett% eller välj en annan BMR-formel.`
         )
       } else {
-        alert('Det gick inte att beräkna BMR. Kontrollera dina värden.')
+        setValidationError('Det gick inte att beräkna BMR. Kontrollera dina värden.')
       }
       return
     }
@@ -661,6 +749,12 @@ export default function UserProfileForm({
       dailySteps: dailySteps || undefined,
       customPAL: customPAL ? parseFloat(customPAL) : undefined,
     })
+
+    // Validate TDEE calculation result
+    if (!baseTdee || baseTdee <= 0) {
+      setValidationError('Det gick inte att beräkna TDEE. Kontrollera dina värden och försök igen.')
+      return
+    }
 
     // Calculate TDEE range based on energy goal (NO ROUNDING - keep exact decimals)
     let tdeeMin = baseTdee
@@ -806,13 +900,15 @@ export default function UserProfileForm({
   ])
 
   const handleSave = async () => {
+    setValidationError(null)
+
     if (!result) {
-      alert('Vänligen beräkna dina värden först')
+      setValidationError('Vänligen beräkna dina värden först')
       return
     }
 
     if (!profileName) {
-      alert('Vänligen ange ett profilnamn för att spara')
+      setValidationError('Vänligen ange ett profilnamn för att spara')
       return
     }
 
@@ -855,6 +951,30 @@ export default function UserProfileForm({
         caloriesMax = customTdeeValue * 1.03
       }
 
+      // Create TDEE calculation snapshot for metadata tracking
+      const age = birthDate ? calculateAge(birthDate) : undefined
+      const tdee_calculation_snapshot = {
+        weight_kg: weightNum,
+        height_cm: heightNum,
+        age,
+        gender: gender === '' ? undefined : gender,
+        bmr_formula: bmrFormula === '' ? undefined : bmrFormula,
+        pal_system: palSystem === '' ? undefined : palSystem,
+        activity_level: activityLevel || undefined,
+        intensity_level: intensityLevel || undefined,
+        training_frequency_per_week: trainingFreqNum,
+        training_duration_minutes: trainingDurNum,
+        daily_steps: dailySteps || undefined,
+        custom_pal: customPALNum,
+        calorie_goal:
+          energyGoal === ''
+            ? undefined
+            : (energyGoal as 'Maintain weight' | 'Weight gain' | 'Weight loss' | 'Custom TDEE'),
+        deficit_level: deficitLevel || undefined,
+        calculated_bmr: result.bmr,
+        calculated_tdee: result.tdee,
+      }
+
       const profileData = {
         profile_name: profileName,
         birth_date: birthDate,
@@ -880,6 +1000,10 @@ export default function UserProfileForm({
         tdee: result.tdee,
         calories_min: caloriesMin,
         calories_max: caloriesMax,
+        // TDEE metadata
+        tdee_calculated_at: new Date().toISOString(),
+        tdee_source: 'profile_form' as const,
+        tdee_calculation_snapshot,
         // Include macro ranges if they exist
         fat_min_percent: macroRanges?.fatMin,
         fat_max_percent: macroRanges?.fatMax,
@@ -921,12 +1045,58 @@ export default function UserProfileForm({
 
   return (
     <div className="space-y-6 pb-20 md:pb-28">
+      {/* Profile Load Error Alert */}
+      {profileLoadError && (
+        <div className="p-4 rounded-xl bg-red-50 border-2 border-red-200">
+          <div className="flex items-start gap-3">
+            <span className="text-red-600 text-xl">⚠️</span>
+            <div className="flex-1">
+              <h4 className="font-semibold text-red-900 mb-1">Profilfel</h4>
+              <p className="text-sm text-red-800">{profileLoadError}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Validation Error Alert */}
+      {validationError && (
+        <div className="p-4 rounded-xl bg-orange-50 border-2 border-orange-200">
+          <div className="flex items-start gap-3">
+            <span className="text-orange-600 text-xl">⚠️</span>
+            <div className="flex-1">
+              <h4 className="font-semibold text-orange-900 mb-1">Valideringsfel</h4>
+              <p className="text-sm text-orange-800">{validationError}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Calculator Card */}
       <Card>
         <CardHeader>
           <CardTitle>Grundläggande information</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
+          {/* Info card when fields are locked */}
+          {!canEditLockedFields && activeProfile && allProfiles.length > 1 && (
+            <div className="mb-4 p-4 rounded-xl bg-blue-50 border-2 border-blue-200">
+              <div className="flex items-start gap-3">
+                <Lock className="h-5 w-5 text-blue-600 mt-0.5 shrink-0" />
+                <div className="flex-1">
+                  <h4 className="font-semibold text-blue-900 mb-1">
+                    Vissa fält är låsta
+                  </h4>
+                  <p className="text-sm text-blue-800 mb-2">
+                    Födelsedatum, kön och längd delas mellan alla dina profiler. Dessa fält kan bara redigeras när du har en enda profil.
+                  </p>
+                  <p className="text-sm text-blue-800">
+                    <strong>Tips:</strong> Om du behöver ändra dessa värden, radera tillfälligt dina övriga profiler eller skapa en ny profil med korrekta värden.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Warning if creating new profile but locked fields (gender) are missing */}
           {!activeProfile && allProfiles.length > 0 && gender !== 'male' && gender !== 'female' && (
             <div className="mb-4 p-4 rounded-xl bg-yellow-50 border-2 border-yellow-200">

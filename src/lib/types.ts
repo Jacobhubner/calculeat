@@ -58,6 +58,26 @@ export type BodyCompositionMethod =
   | 'Heritage BMI to Body Fat Method'
   | 'Reversed Cunningham equation'
 
+export interface TDEECalculationSnapshot {
+  weight_kg?: number
+  height_cm?: number
+  age?: number
+  gender?: Gender
+  bmr_formula?: BMRFormula
+  pal_system?: PALSystem
+  activity_level?: ActivityLevel
+  intensity_level?: IntensityLevel
+  training_frequency_per_week?: number
+  training_duration_minutes?: number
+  daily_steps?: DailySteps
+  custom_pal?: number
+  calorie_goal?: CalorieGoal
+  deficit_level?: DeficitLevel
+  calculated_bmr?: number
+  calculated_tdee?: number
+  note?: string
+}
+
 export interface UserProfile {
   id: string
   email: string
@@ -93,6 +113,11 @@ export interface UserProfile {
   tdee?: number
   calories_min?: number
   calories_max?: number
+
+  // TDEE metadata (tracking when and how TDEE was calculated)
+  tdee_calculated_at?: string // ISO timestamp
+  tdee_source?: 'manual' | 'tdee_calculator_tool' | 'profile_form' | 'legacy'
+  tdee_calculation_snapshot?: TDEECalculationSnapshot
 
   // Macro preferences
   fat_min_percent?: number
@@ -156,6 +181,7 @@ export interface Profile {
   gender?: Gender
   height_cm?: number
   weight_kg?: number
+  initial_weight_kg?: number // Startvikt när TDEE först beräknades/angavs
 
   // BMR & TDEE calculations
   bmr_formula?: BMRFormula
@@ -176,6 +202,11 @@ export interface Profile {
   tdee?: number
   calories_min?: number
   calories_max?: number
+
+  // TDEE metadata (tracking when and how TDEE was calculated)
+  tdee_calculated_at?: string // ISO timestamp
+  tdee_source?: 'manual' | 'tdee_calculator_tool' | 'profile_form' | 'legacy'
+  tdee_calculation_snapshot?: TDEECalculationSnapshot
 
   // Goals
   calorie_goal?: CalorieGoal
@@ -285,4 +316,14 @@ export interface MeasurementSet {
   forearm?: number
   thigh_circ?: number
   calf_circ?: number
+}
+
+// Weight history type for tracking weight changes over time
+export interface WeightHistory {
+  id: string
+  profile_id: string
+  weight_kg: number
+  recorded_at: string
+  notes?: string
+  created_at: string
 }

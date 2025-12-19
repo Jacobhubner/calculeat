@@ -3,17 +3,8 @@ import { Link } from 'react-router-dom'
 import { Calculator, Info } from 'lucide-react'
 import { Button } from './ui/button'
 import { calculateBMRWithFormula } from '@/lib/calculations/bmr'
-import { ACTIVITY_DESCRIPTIONS, type ActivityLevel } from '@/lib/calculations/tdee'
+import { ACTIVITY_DESCRIPTIONS, getBasicInternetPAL, type ActivityLevel } from '@/lib/calculations/tdee'
 import type { Gender } from '@/lib/types'
-
-// Basic internet PAL values (matches the standard you provided)
-const PAL_VALUES: Record<ActivityLevel, number> = {
-  Sedentary: 1.2,
-  'Lightly active': 1.375,
-  'Moderately active': 1.55,
-  'Very active': 1.725,
-  'Extremely active': 1.9,
-}
 
 interface CalculatorResult {
   bmr: number
@@ -68,7 +59,14 @@ export default function SmartCalculator() {
     }
 
     // Calculate TDEE using Basic internet PAL values
-    const palMultiplier = PAL_VALUES[activityLevel]
+    const palMultiplier = getBasicInternetPAL(activityLevel)
+
+    // Validate PAL multiplier
+    if (!palMultiplier || palMultiplier <= 0) {
+      alert('Det gick inte att beräkna TDEE. Kontrollera dina värden.')
+      return
+    }
+
     const tdee = Math.round(bmr * palMultiplier)
 
     setResult({

@@ -15,11 +15,19 @@
       "Bash(node --version:*)",
       "Bash(node:*)",
       "Bash(npm install:*)",
-      "Bash(npx shadcn@latest add:*)"
+      "Bash(npx shadcn@latest add:*)",
+      "Bash({ cat src/lib/constants/metActivities.new.ts)",
+      "Bash(})",
+      "Bash(echo:*)",
+      "Bash(curl:*)",
+      "Bash(npm run build:*)",
+      "Bash(npx supabase:*)"
     ],
     "deny": [],
     "ask": []
   },
   "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": ["supabase"]
+  "enabledMcpjsonServers": [
+    "supabase"
+  ]
 }

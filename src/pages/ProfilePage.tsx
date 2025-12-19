@@ -1,82 +1,240 @@
+/**
+ * ProfilePage - Omstrukturerad med profilkortssystem
+ * Conditional rendering baserat på grundläggande information och TDEE-status
+ */
+
 import { useState } from 'react'
 import DashboardLayout from '@/components/layout/DashboardLayout'
-import UserProfileForm from '@/components/UserProfileForm'
-import MacroModesCard from '@/components/MacroModesCard'
+import { User } from 'lucide-react'
+import { useProfiles, useUpdateProfile, useCreateProfile, useCreateWeightHistory } from '@/hooks'
+import { useProfileStore } from '@/stores/profileStore'
+import type { Gender } from '@/lib/types'
+import { toast } from 'sonner'
+
+// New components
+import ProfileCardSidebar from '@/components/profile/ProfileCardSidebar'
+import BasicInfoFields from '@/components/profile/BasicInfoFields'
+import TDEEOptions from '@/components/profile/TDEEOptions'
+import BasicProfileForm from '@/components/profile/BasicProfileForm'
+import WeightTracker from '@/components/profile/WeightTracker'
+
+// Existing components (keep for now)
 import MacroDistributionCard from '@/components/MacroDistributionCard'
 import MealSettingsCard from '@/components/MealSettingsCard'
-import ProfileList from '@/components/ProfileList'
-import InfoCardWithModal from '@/components/InfoCardWithModal'
-import BMRvsRMRContent from '@/components/info/BMRvsRMRContent'
-import PALvsMETContent from '@/components/info/PALvsMETContent'
-import TDEEContent from '@/components/info/TDEEContent'
-import LBMvsFFMContent from '@/components/info/LBMvsFFMContent'
-import CollapsibleSidebar from '@/components/CollapsibleSidebar'
-import { User, Users, Plus } from 'lucide-react'
-import { Card } from '@/components/ui/card'
-import { useProfiles, useNewProfile } from '@/hooks'
-import { useProfileStore } from '@/stores/profileStore'
-
-interface CalculatorResult {
-  bmr: number
-  tdee: number
-  tdeeMin: number
-  tdeeMax: number
-}
-
-interface MacroRanges {
-  fatMin: number
-  fatMax: number
-  carbMin: number
-  carbMax: number
-  proteinMin: number
-  proteinMax: number
-}
-
-interface MealSettings {
-  meals: Array<{
-    name: string
-    percentage: number
-  }>
-}
+import MacroModesCard from '@/components/MacroModesCard'
 
 export default function ProfilePage() {
-  // Load profiles to populate store
+  // Load profiles
   const { data: allProfiles = [] } = useProfiles()
 
-  // Hook for creating new profile
-  const { startNewProfile } = useNewProfile()
-
-  // Get active profile from store (for ID only)
+  // Get active profile from store
   const activeProfileFromStore = useProfileStore(state => state.activeProfile)
+  const setActiveProfile = useProfileStore(state => state.setActiveProfile)
 
-  // Get FULL active profile from React Query (this updates when queries are invalidated)
+  // Get FULL active profile from React Query
   const activeProfile = allProfiles.find(p => p.id === activeProfileFromStore?.id)
 
-  // Local state for calculation results (used when creating new profile)
-  const [localResult, setLocalResult] = useState<CalculatorResult | null>(null)
+  // Hooks for profile operations
+  const updateProfile = useUpdateProfile()
+  const createProfile = useCreateProfile()
+  const createWeightHistory = useCreateWeightHistory()
 
-  // Local state for macro ranges (used when creating/editing profile)
-  const [macroRanges, setMacroRanges] = useState<MacroRanges | null>(null)
+  // NOTE: macroRanges and mealSettings previously used for local state
+  // Now handled via pendingChanges state
 
-  // Local state for meal settings (used when creating/editing profile)
-  const [mealSettings, setMealSettings] = useState<MealSettings | null>(null)
+  // Local state for pending changes (not saved until disk icon clicked)
+  const [pendingChanges, setPendingChanges] = useState<{
+    // Basic info
+    birth_date?: string
+    gender?: Gender | ''
+    height_cm?: number
+    initial_weight_kg?: number
+    // Body composition
+    body_fat_percentage?: number
+    weight_kg?: number
+    // Energy goals
+    calorie_goal?: string
+    deficit_level?: string | null
+    // Macros
+    fat_min_percent?: number
+    fat_max_percent?: number
+    carb_min_percent?: number
+    carb_max_percent?: number
+    protein_min_percent?: number
+    protein_max_percent?: number
+    // Meals
+    meals_config?: { meals: { name: string; percentage: number }[] }
+  }>({})
 
-  // Local state for body fat percentage from form
-  const [currentBodyFat, setCurrentBodyFat] = useState<string>('')
+  // Check if there are unsaved changes
+  const hasUnsavedChanges = Object.keys(pendingChanges).length > 0
 
-  // Local state for weight from form (live updates)
-  const [localWeight, setLocalWeight] = useState<string>('')
+  // Merge active profile with pending changes for display
+  const displayProfile = activeProfile ? { ...activeProfile, ...pendingChanges } : null
 
-  // Use local result if available (new profile mode), otherwise use saved tdee
-  const tdee = localResult?.tdee || activeProfile?.tdee
+  // Create a fully merged profile for components that need complete profile data with pending changes
+  const mergedProfile = displayProfile as Profile | null
 
-  // Get calorie range for macro calculations
-  // Use live calories from localResult if available, otherwise use saved values
-  const liveCaloriesMin = localResult?.tdeeMin
-  const liveCaloriesMax = localResult?.tdeeMax
-  const caloriesMin = activeProfile?.calories_min
-  const caloriesMax = activeProfile?.calories_max
-  const avgCalories = caloriesMin && caloriesMax ? (caloriesMin + caloriesMax) / 2 : tdee
+  // Check if basic info is filled (using display profile with pending changes)
+  const hasBasicInfo = !!(
+    displayProfile?.birth_date &&
+    displayProfile?.gender &&
+    displayProfile?.height_cm &&
+    displayProfile?.initial_weight_kg
+  )
+
+  // Check if TDEE exists
+  const hasTDEE = !!activeProfile?.tdee
+
+  // Fields should be locked as soon as basic info is complete
+  // User must delete all profile cards to edit these fields again
+  const fieldsAreLocked = hasBasicInfo
+
+  // Handlers for BasicInfoFields - update pending state instead of API
+  const handleBirthDateChange = (birthDate: string) => {
+    setPendingChanges(prev => ({ ...prev, birth_date: birthDate }))
+  }
+
+  const handleGenderChange = (gender: Gender | '') => {
+    setPendingChanges(prev => ({ ...prev, gender: gender || undefined }))
+  }
+
+  const handleHeightChange = (height: number | undefined) => {
+    setPendingChanges(prev => ({ ...prev, height_cm: height }))
+  }
+
+  const handleInitialWeightChange = (weight: number | undefined) => {
+    setPendingChanges(prev => ({ ...prev, initial_weight_kg: weight }))
+  }
+
+  // Handlers for BasicProfileForm - update pending state
+  const handleBodyFatChange = (bodyFat: number | undefined) => {
+    setPendingChanges(prev => ({ ...prev, body_fat_percentage: bodyFat }))
+  }
+
+  const handleGoalChange = (goal: string) => {
+    setPendingChanges(prev => ({ ...prev, calorie_goal: goal }))
+  }
+
+  const handleDeficitChange = (deficit: string | null) => {
+    setPendingChanges(prev => ({ ...prev, deficit_level: deficit }))
+  }
+
+  // Handler for WeightTracker - update pending state
+  const handleWeightChange = (weight: number) => {
+    setPendingChanges(prev => ({ ...prev, weight_kg: weight }))
+  }
+
+  // Handlers for MacroDistributionCard - update pending state
+  const handleMacroChange = (macros: {
+    fatMin: number
+    fatMax: number
+    carbMin: number
+    carbMax: number
+    proteinMin: number
+    proteinMax: number
+  }) => {
+    setPendingChanges(prev => ({
+      ...prev,
+      fat_min_percent: macros.fatMin,
+      fat_max_percent: macros.fatMax,
+      carb_min_percent: macros.carbMin,
+      carb_max_percent: macros.carbMax,
+      protein_min_percent: macros.proteinMin,
+      protein_max_percent: macros.proteinMax,
+    }))
+  }
+
+  // Handler for MealSettingsCard - update pending state
+  const handleMealChange = (settings: { meals: { name: string; percentage: number }[] }) => {
+    setPendingChanges(prev => ({ ...prev, meals_config: settings }))
+  }
+
+  // Handler for profile selection
+  const handleSelectProfile = (profileId: string) => {
+    // Warn if there are unsaved changes
+    if (hasUnsavedChanges) {
+      const confirmed = window.confirm(
+        'Du har osparade ändringar i grundläggande information. Vill du byta profil? Osparade ändringar kommer att förloras.'
+      )
+      if (!confirmed) return
+    }
+
+    const profile = allProfiles.find(p => p.id === profileId)
+    if (profile) {
+      setActiveProfile(profile)
+      setPendingChanges({}) // Clear pending changes when switching profiles
+    }
+  }
+
+  // Handler for profile save - save pending changes
+  const handleSaveProfile = async (_profileId: string) => {
+    if (!activeProfile || Object.keys(pendingChanges).length === 0) return
+
+    // Check if basic info is complete (using display profile with pending changes)
+    const isBasicInfoComplete = !!(
+      displayProfile?.birth_date &&
+      displayProfile?.gender &&
+      displayProfile?.height_cm &&
+      displayProfile?.initial_weight_kg
+    )
+
+    if (!isBasicInfoComplete) {
+      toast.error('Fyll i all grundläggande information innan du sparar', {
+        description: 'Födelsedatum, kön, längd och startvikt krävs',
+      })
+      return
+    }
+
+    try {
+      // Save profile changes
+      await updateProfile.mutateAsync({
+        profileId: activeProfile.id,
+        data: pendingChanges,
+      })
+
+      // If weight was changed, add to weight history
+      if (pendingChanges.weight_kg !== undefined && pendingChanges.weight_kg !== activeProfile.weight_kg) {
+        await createWeightHistory.mutateAsync({
+          profile_id: activeProfile.id,
+          weight_kg: pendingChanges.weight_kg,
+        })
+      }
+
+      setPendingChanges({}) // Clear pending changes after successful save
+      toast.success('Ändringar sparade')
+    } catch (error) {
+      console.error('Error saving profile:', error)
+      toast.error('Kunde inte spara ändringar')
+    }
+  }
+
+  // Handler for profile delete (handled by ProfileCardList component)
+  const handleDeleteProfile = (_profileId: string) => {
+    // Handled by ProfileCardList
+  }
+
+  // Handler for creating new profile
+  const handleCreateNewProfile = async () => {
+    // Generate next profile name
+    const nextNumber = allProfiles.length
+    const profileName = nextNumber === 0 ? 'Profilkort' : `Profilkort ${nextNumber}`
+
+    try {
+      await createProfile.mutateAsync({
+        profile_name: profileName,
+        // New profile starts empty - user will fill in basic info
+      })
+    } catch (error) {
+      console.error('Error creating profile:', error)
+      // Error toast is handled by useCreateProfile hook
+    }
+  }
+
+  // Handler for manual TDEE success
+  const handleManualTDEESuccess = () => {
+    toast.success('TDEE har sparats! Du kan nu använda resten av appen.')
+  }
 
   return (
     <DashboardLayout>
@@ -93,93 +251,115 @@ export default function ProfilePage() {
       </div>
 
       <div className="max-w-7xl mx-auto">
-        <div className="grid gap-6 md:grid-cols-[1fr_280px]">
-          {/* Main content column */}
+        <div className="grid gap-6 md:grid-cols-[1fr_320px]">
+          {/* Main content column - Conditional rendering */}
           <div className="space-y-4">
-            {/* Main Profile Form */}
-            <UserProfileForm
-              onResultChange={setLocalResult}
-              macroRanges={macroRanges}
-              mealSettings={mealSettings}
-              onBodyFatChange={setCurrentBodyFat}
-              onWeightChange={setLocalWeight}
-            />
+            {/* SCENARIO 1: No basic info - Only show BasicInfoFields */}
+            {!hasBasicInfo && displayProfile && (
+              <BasicInfoFields
+                birthDate={displayProfile.birth_date}
+                gender={displayProfile.gender}
+                height={displayProfile.height_cm}
+                initialWeight={displayProfile.initial_weight_kg}
+                onBirthDateChange={handleBirthDateChange}
+                onGenderChange={handleGenderChange}
+                onHeightChange={handleHeightChange}
+                onInitialWeightChange={handleInitialWeightChange}
+                locked={false}
+                showLockNotice={false}
+              />
+            )}
 
-            {/* Only show macro cards if results (TDEE) exist */}
-            {tdee && (
+            {/* SCENARIO 2: Has basic info but no TDEE - Show basic info + two options */}
+            {hasBasicInfo && !hasTDEE && displayProfile && (
               <>
-                {/* Macro Distribution Settings */}
-                <MacroDistributionCard
-                  caloriesMin={liveCaloriesMin || caloriesMin || tdee}
-                  caloriesMax={liveCaloriesMax || caloriesMax || tdee}
-                  onMacroChange={setMacroRanges}
+                <BasicInfoFields
+                  birthDate={displayProfile.birth_date}
+                  gender={displayProfile.gender}
+                  height={displayProfile.height_cm}
+                  initialWeight={displayProfile.initial_weight_kg}
+                  onBirthDateChange={handleBirthDateChange}
+                  onGenderChange={handleGenderChange}
+                  onHeightChange={handleHeightChange}
+                  onInitialWeightChange={handleInitialWeightChange}
+                  locked={fieldsAreLocked}
+                  showLockNotice={fieldsAreLocked}
                 />
-
-                {/* Meal Settings */}
-                <MealSettingsCard tdee={avgCalories} onMealChange={setMealSettings} />
-
-                {/* Macro Modes Card */}
-                <MacroModesCard
-                  currentBodyFat={currentBodyFat}
-                  liveWeight={localWeight}
-                  liveCaloriesMin={liveCaloriesMin}
-                  liveCaloriesMax={liveCaloriesMax}
-                  liveTdee={localResult?.tdee}
+                <TDEEOptions
+                  profileId={displayProfile.id}
+                  initialWeight={displayProfile.initial_weight_kg}
+                  onManualTDEESuccess={handleManualTDEESuccess}
                 />
               </>
             )}
+
+            {/* SCENARIO 3: Has basic info AND TDEE - Show full profile */}
+            {hasBasicInfo && hasTDEE && displayProfile && activeProfile && mergedProfile && (
+              <>
+                <BasicInfoFields
+                  birthDate={displayProfile.birth_date}
+                  gender={displayProfile.gender}
+                  height={displayProfile.height_cm}
+                  initialWeight={displayProfile.initial_weight_kg}
+                  onBirthDateChange={handleBirthDateChange}
+                  onGenderChange={handleGenderChange}
+                  onHeightChange={handleHeightChange}
+                  onInitialWeightChange={handleInitialWeightChange}
+                  locked={fieldsAreLocked}
+                  showLockNotice={fieldsAreLocked}
+                />
+
+                <BasicProfileForm
+                  profile={activeProfile}
+                  onBodyFatChange={handleBodyFatChange}
+                  onGoalChange={handleGoalChange}
+                  onDeficitChange={handleDeficitChange}
+                />
+
+                {/* Weight Tracking - Use mergedProfile to show pending changes */}
+                <WeightTracker profile={mergedProfile} onWeightChange={handleWeightChange} />
+
+                {/* Macro Distribution Settings */}
+                <MacroDistributionCard
+                  caloriesMin={activeProfile.calories_min || activeProfile.tdee || 0}
+                  caloriesMax={activeProfile.calories_max || activeProfile.tdee || 0}
+                  onMacroChange={handleMacroChange}
+                />
+
+                {/* Meal Settings */}
+                <MealSettingsCard tdee={activeProfile.tdee || 0} onMealChange={handleMealChange} />
+
+                {/* Macro Modes Card */}
+                <MacroModesCard
+                  currentBodyFat={activeProfile.body_fat_percentage?.toString() || ''}
+                  liveWeight={activeProfile.weight_kg?.toString() || ''}
+                  liveCaloriesMin={activeProfile.calories_min}
+                  liveCaloriesMax={activeProfile.calories_max}
+                  liveTdee={activeProfile.tdee}
+                />
+              </>
+            )}
+
+            {/* No active profile selected */}
+            {!activeProfile && (
+              <div className="text-center py-12 text-neutral-500">
+                <p>Välj eller skapa en profil för att komma igång</p>
+              </div>
+            )}
           </div>
 
-          {/* Sidebar - Information Panel */}
-          <CollapsibleSidebar className="space-y-4 md:sticky md:top-20 md:self-start z-40">
-            {/* Profile Switcher Section */}
-            <Card>
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <Users className="h-5 w-5 text-primary-600" />
-                  <h3 className="text-lg font-semibold text-neutral-900">Mina Profilkort</h3>
-                </div>
-
-                {/* Green Plus Button */}
-                <button
-                  onClick={startNewProfile}
-                  className="p-1.5 rounded-lg bg-primary-500 hover:bg-primary-600 transition-all shadow-sm hover:shadow-md active:scale-95"
-                  title="Skapa ny profil"
-                >
-                  <Plus className="h-4 w-4 text-white" />
-                </button>
-              </div>
-              <p className="text-sm text-neutral-600 mb-4">
-                Växla mellan olika profiler eller skapa en ny
-              </p>
-              <ProfileList />
-            </Card>
-
-            {/* Info Cards with Modals */}
-            <InfoCardWithModal
-              title="Vad är BMR och RMR?"
-              modalTitle="BMR vs RMR - Skillnaden förklarad"
-              modalContent={<BMRvsRMRContent />}
+          {/* Sidebar - Profile Card Switcher */}
+          <div className="md:sticky md:top-20 md:self-start">
+            <ProfileCardSidebar
+              onCreateNew={handleCreateNewProfile}
+              onSelectProfile={handleSelectProfile}
+              onSaveProfile={handleSaveProfile}
+              onDeleteProfile={handleDeleteProfile}
+              hasUnsavedChanges={hasUnsavedChanges}
+              isSaving={updateProfile.isPending}
+              canSave={hasBasicInfo}
             />
-
-            <InfoCardWithModal
-              title="Vad är PAL och MET?"
-              modalTitle="PAL vs MET - Aktivitetsnivåer förklarade"
-              modalContent={<PALvsMETContent />}
-            />
-
-            <InfoCardWithModal
-              title="Vad är TDEE?"
-              modalTitle="TDEE - Total Daily Energy Expenditure"
-              modalContent={<TDEEContent />}
-            />
-
-            <InfoCardWithModal
-              title="Skillnad på LBM och FFM?"
-              modalTitle="LBM vs FFM - Fettfri massa förklarad"
-              modalContent={<LBMvsFFMContent />}
-            />
-          </CollapsibleSidebar>
+          </div>
         </div>
       </div>
     </DashboardLayout>

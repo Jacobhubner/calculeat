@@ -13,6 +13,7 @@ import { useProfileStore } from '@/stores/profileStore'
 interface UpdateProfileParams {
   profileId: string
   data: Partial<ProfileFormData>
+  silent?: boolean // Om true, visa inte toast-meddelande
 }
 
 export function useUpdateProfile() {
@@ -34,7 +35,7 @@ export function useUpdateProfile() {
 
       return updated as Profile
     },
-    onSuccess: async (updated, { profileId }) => {
+    onSuccess: async (updated, { profileId, silent }) => {
       // Update store
       updateProfileInStore(profileId, updated)
 
@@ -48,9 +49,12 @@ export function useUpdateProfile() {
         type: 'active',
       })
 
-      toast.success('Profil uppdaterad', {
-        description: 'Dina ändringar har sparats',
-      })
+      // Only show toast if not silent
+      if (!silent) {
+        toast.success('Profil uppdaterad', {
+          description: 'Dina ändringar har sparats',
+        })
+      }
     },
     onError: (error: Error) => {
       toast.error('Kunde inte uppdatera profil', {

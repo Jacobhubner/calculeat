@@ -9,6 +9,7 @@ interface EnergyGoalReferenceTableProps {
 interface GoalRow {
   label: string
   percentage: string
+  description?: string
   isSelected: boolean
   isSubItem?: boolean
   goalValue: string
@@ -22,6 +23,17 @@ export default function EnergyGoalReferenceTable({
   onGoalSelect,
   onDeficitSelect,
 }: EnergyGoalReferenceTableProps) {
+  // Validate TDEE input to prevent invalid calculations
+  if (!tdee || tdee <= 0 || !isFinite(tdee)) {
+    return (
+      <div className="rounded-lg border border-red-200 bg-red-50 p-4">
+        <p className="text-sm text-red-600">
+          Ogiltigt TDEE-värde. Vänligen beräkna ditt TDEE först.
+        </p>
+      </div>
+    )
+  }
+
   // Calculate calorie differentials (NO ROUNDING - keep exact decimals for calculations)
   const maintainMin = tdee * 0.97
   const maintainMax = tdee * 1.03
@@ -52,12 +64,14 @@ export default function EnergyGoalReferenceTable({
     {
       label: `Behåll vikt (±3%)`,
       percentage: `${Math.round(maintainMin)} - ${Math.round(maintainMax)} kcal (${Math.round(tdee)} kcal)`,
+      description: 'För viktstabilisering och underhåll av nuvarande vikt',
       isSelected: selectedGoal === 'Maintain weight',
       goalValue: 'Maintain weight',
     },
     {
       label: `Viktuppgång (10-20%)`,
       percentage: `${Math.round(gain10Min)} - ${Math.round(gain10Max)} kcal (⇧ ${Math.round(gain10DiffMin)} - ${Math.round(gain10DiffMax)} kcal)`,
+      description: 'För muskeluppbyggnad och viktökning',
       isSelected: selectedGoal === 'Weight gain',
       goalValue: 'Weight gain',
     },
@@ -70,6 +84,7 @@ export default function EnergyGoalReferenceTable({
     {
       label: `Försiktigt (10-15%)`,
       percentage: `${Math.round(loss10Min)} - ${Math.round(loss10Max)} kcal (⇩ ${Math.round(loss10DiffMin)} - ${Math.round(loss10DiffMax)} kcal)`,
+      description: 'Långsam viktnedgång, bäst för att bevara muskelmassa',
       isSelected: selectedGoal === 'Weight loss' && selectedDeficit === '10-15%',
       isSubItem: true,
       goalValue: 'Weight loss',
@@ -78,6 +93,7 @@ export default function EnergyGoalReferenceTable({
     {
       label: `Normalt (20-25%)`,
       percentage: `${Math.round(loss20Min)} - ${Math.round(loss20Max)} kcal (⇩ ${Math.round(loss20DiffMin)} - ${Math.round(loss20DiffMax)} kcal)`,
+      description: 'Balanserad viktnedgång med god energinivå',
       isSelected: selectedGoal === 'Weight loss' && selectedDeficit === '20-25%',
       isSubItem: true,
       goalValue: 'Weight loss',
@@ -86,16 +102,11 @@ export default function EnergyGoalReferenceTable({
     {
       label: `Aggressivt (25-30%)`,
       percentage: `${Math.round(loss25Min)} - ${Math.round(loss25Max)} kcal (⇩ ${Math.round(loss25DiffMin)} - ${Math.round(loss25DiffMax)} kcal)`,
+      description: 'Snabb viktnedgång, endast för kort period',
       isSelected: selectedGoal === 'Weight loss' && selectedDeficit === '25-30%',
       isSubItem: true,
       goalValue: 'Weight loss',
       deficitValue: '25-30%',
-    },
-    {
-      label: `Anpassat TDEE (±3%)`,
-      percentage: '',
-      isSelected: selectedGoal === 'Custom TDEE',
-      goalValue: 'Custom TDEE',
     },
   ]
 
@@ -135,21 +146,28 @@ export default function EnergyGoalReferenceTable({
               }`}
             >
               <div className="flex justify-between items-center">
-                <span
-                  className={`text-sm ${
-                    goal.isSelected
-                      ? 'font-semibold text-primary-900'
-                      : goal.isSubItem
-                        ? 'font-normal text-neutral-600'
-                        : 'font-medium text-neutral-700'
-                  }`}
-                >
-                  {goal.isSubItem && <span className="mr-2 text-neutral-400">•</span>}
-                  {goal.label}
-                </span>
+                <div className="flex-1">
+                  <span
+                    className={`text-sm ${
+                      goal.isSelected
+                        ? 'font-semibold text-primary-900'
+                        : goal.isSubItem
+                          ? 'font-normal text-neutral-600'
+                          : 'font-medium text-neutral-700'
+                    }`}
+                  >
+                    {goal.isSubItem && <span className="mr-2 text-neutral-400">•</span>}
+                    {goal.label}
+                  </span>
+                  {goal.description && (
+                    <p className="text-xs text-neutral-500 mt-1 ml-4">
+                      {goal.description}
+                    </p>
+                  )}
+                </div>
                 {goal.percentage && (
                   <span
-                    className={`text-sm ${goal.isSelected ? 'text-primary-700 font-semibold' : 'text-neutral-600'}`}
+                    className={`text-sm ml-4 ${goal.isSelected ? 'text-primary-700 font-semibold' : 'text-neutral-600'}`}
                   >
                     {goal.percentage}
                   </span>

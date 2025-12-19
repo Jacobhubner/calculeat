@@ -6,9 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Select } from '@/components/ui/select';
-import { useProfileData, useMissingProfileData } from '@/hooks/useProfileData';
-import MissingDataCard from '../common/MissingDataCard';
-import { useUpdateProfile } from '@/hooks';
+import { useProfileData } from '@/hooks/useProfileData';
 import {
   MET_CATEGORIES,
   MET_ACTIVITIES,
@@ -28,8 +26,10 @@ interface SelectedActivity extends METActivity {
 
 export default function METCalculatorTool() {
   const profileData = useProfileData(['weight_kg']);
-  const missingFields = useMissingProfileData(['weight_kg']);
-  const updateProfileMutation = useUpdateProfile();
+
+  // Debug: Logga vikten
+  console.log('MET Calculator - profileData:', profileData);
+  console.log('MET Calculator - weight_kg:', profileData?.weight_kg);
 
   // Search and filter state
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
@@ -56,7 +56,19 @@ export default function METCalculatorTool() {
       return;
     }
 
+    // Validate duration
+    if (duration <= 0) {
+      toast.error('Varaktighet måste vara större än 0');
+      return;
+    }
+
     const calories = calculateCaloriesBurned(activity.met, profileData.weight_kg, duration);
+
+    // Validate calculation result
+    if (calories <= 0 || !isFinite(calories)) {
+      toast.error('Det gick inte att beräkna kalorier. Kontrollera dina värden.');
+      return;
+    }
 
     setSelectedActivities(prev => [
       ...prev,
@@ -74,16 +86,6 @@ export default function METCalculatorTool() {
     setSelectedActivities(prev => prev.filter((_, i) => i !== index));
   };
 
-  const handleSaveMissingData = async (data: any) => {
-    try {
-      await updateProfileMutation.mutateAsync(data);
-      toast.success('Profil uppdaterad');
-    } catch (error) {
-      toast.error('Kunde inte uppdatera profil');
-      throw error;
-    }
-  };
-
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -91,25 +93,13 @@ export default function METCalculatorTool() {
         <div>
           <h2 className="text-2xl font-bold text-gray-900">MET Aktivitetskalkylator</h2>
           <p className="text-neutral-600 mt-1">
-            Beräkna kalorier förbrända från över 300 aktiviteter
+            Beräkna kalorier förbrända från över 1100 aktiviteter med metriska enheter
           </p>
         </div>
         <Badge variant="secondary" className="bg-orange-100 text-orange-700">
           Energi & Metabol
         </Badge>
       </div>
-
-      {/* Saknad Data */}
-      {missingFields.length > 0 && (
-        <MissingDataCard
-          missingFields={missingFields.map(field => ({
-            key: field.key,
-            label: field.label,
-            type: 'number',
-          }))}
-          onSave={handleSaveMissingData}
-        />
-      )}
 
       <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
         {/* Vänster: Aktivitetssökning */}
@@ -146,13 +136,23 @@ export default function METCalculatorTool() {
                   <Search className="absolute left-3 top-3 h-4 w-4 text-neutral-400" />
                   <Input
                     id="search"
-                    placeholder="Skriv för att söka..."
+                    placeholder="Sök på aktivitet, kod eller intensitet..."
                     value={searchTerm}
                     onChange={e => setSearchTerm(e.target.value)}
                     className="pl-9"
                   />
                 </div>
+                <p className="text-xs text-neutral-500 mt-1">
+                  Tips: Sök på "lätt", "måttlig", "hög" eller "mycket hög" för intensitetsnivå
+                </p>
               </div>
+
+              {/* Resultaträknare */}
+              {(searchTerm || selectedCategory !== 'All') && filteredActivities.length > 0 && (
+                <div className="text-sm text-neutral-600">
+                  Hittade {filteredActivities.length} aktivitet{filteredActivities.length !== 1 ? 'er' : ''}
+                </div>
+              )}
 
               {/* Aktivitetslista */}
               <div className="max-h-96 overflow-y-auto border rounded-lg">
@@ -162,7 +162,7 @@ export default function METCalculatorTool() {
                   </div>
                 ) : (
                   <div className="divide-y">
-                    {filteredActivities.slice(0, 50).map(activity => (
+                    {filteredActivities.map(activity => (
                       <ActivityRow
                         key={activity.id}
                         activity={activity}
@@ -170,11 +170,6 @@ export default function METCalculatorTool() {
                         disabled={!profileData?.weight_kg}
                       />
                     ))}
-                    {filteredActivities.length > 50 && (
-                      <div className="p-4 text-sm text-center text-neutral-500 bg-neutral-50">
-                        Visar 50 av {filteredActivities.length} aktiviteter. Förfina din sökning för fler resultat.
-                      </div>
-                    )}
                   </div>
                 )}
               </div>
