@@ -1,0 +1,48 @@
+/**
+ * MET (Metabolic Equivalent of Task) Aktiviteter
+ * Baserat på Compendium of Physical Activities 2011
+ *
+ * MET värden representerar energiförbrukning relativt till vila
+ * 1 MET = cirka 1 kcal/kg/timme
+ *
+ * Alla aktiviteter är översatta till svenska med metriska enheter
+ */
+
+export interface METActivity {
+  id: string;
+  category: string;
+  activity: string;
+  met: number;
+  intensity?: 'lätt' | 'måttlig' | 'hög' | 'mycket hög';
+}
+
+export const MET_CATEGORIES = [
+  'Arbete',
+  'Cykling',
+  'Dans',
+  'Diverse',
+  'Egenvård',
+  'Fiske & Jakt',
+  'Hemaktiviteter',
+  'Hemreparation',
+  'Inaktivitet',
+  'Konditionsträning',
+  'Löpning',
+  'Musicerande',
+  'Promenad',
+  'Religiösa aktiviteter',
+  'Sexuell aktivitet',
+  'Sport',
+  'Transport',
+  'Trädgårdsarbete',
+  'Vattenaktiviteter',
+  'Videospel',
+  'Vinteraktiviteter',
+  'Volontärarbete',
+] as const;
+
+/**
+ * Komplett lista av MET aktiviteter (1111 st)
+ * Alla aktiviteter är översatta till svenska med metriska enheter
+ */
+export const MET_ACTIVITIES: METActivity[] = [

@@ -55,6 +55,8 @@ export default function ProfilePage() {
     // Energy goals
     calorie_goal?: string
     deficit_level?: string | null
+    calories_min?: number
+    calories_max?: number
     // Macros
     fat_min_percent?: number
     fat_max_percent?: number
@@ -181,6 +183,34 @@ export default function ProfilePage() {
         return rest
       })
     }
+  }
+
+  // Handler for MacroModesCard - update pending state with all macro mode changes
+  const handleMacroModeApply = (macros: {
+    fatMin: number
+    fatMax: number
+    carbMin: number
+    carbMax: number
+    proteinMin: number
+    proteinMax: number
+    caloriesMin: number
+    caloriesMax: number
+    calorieGoal: string
+    deficitLevel: string | null
+  }) => {
+    setPendingChanges(prev => ({
+      ...prev,
+      fat_min_percent: macros.fatMin,
+      fat_max_percent: macros.fatMax,
+      carb_min_percent: macros.carbMin,
+      carb_max_percent: macros.carbMax,
+      protein_min_percent: macros.proteinMin,
+      protein_max_percent: macros.proteinMax,
+      calories_min: macros.caloriesMin,
+      calories_max: macros.caloriesMax,
+      calorie_goal: macros.calorieGoal,
+      deficit_level: macros.deficitLevel,
+    }))
   }
 
   // Handler for profile selection
@@ -343,7 +373,7 @@ export default function ProfilePage() {
                 />
 
                 <BasicProfileForm
-                  profile={activeProfile}
+                  profile={mergedProfile}
                   onBodyFatChange={handleBodyFatChange}
                   onGoalChange={handleGoalChange}
                   onDeficitChange={handleDeficitChange}
@@ -354,8 +384,8 @@ export default function ProfilePage() {
 
                 {/* Macro Distribution Settings */}
                 <MacroDistributionCard
-                  caloriesMin={activeProfile.calories_min || activeProfile.tdee || 0}
-                  caloriesMax={activeProfile.calories_max || activeProfile.tdee || 0}
+                  caloriesMin={mergedProfile.calories_min || mergedProfile.tdee || 0}
+                  caloriesMax={mergedProfile.calories_max || mergedProfile.tdee || 0}
                   onMacroChange={handleMacroChange}
                 />
 
@@ -363,13 +393,7 @@ export default function ProfilePage() {
                 <MealSettingsCard tdee={activeProfile.tdee || 0} onMealChange={handleMealChange} />
 
                 {/* Macro Modes Card */}
-                <MacroModesCard
-                  currentBodyFat={activeProfile.body_fat_percentage?.toString() || ''}
-                  liveWeight={activeProfile.weight_kg?.toString() || ''}
-                  liveCaloriesMin={activeProfile.calories_min}
-                  liveCaloriesMax={activeProfile.calories_max}
-                  liveTdee={activeProfile.tdee}
-                />
+                <MacroModesCard profile={mergedProfile} onMacroModeApply={handleMacroModeApply} />
               </>
             )}
 

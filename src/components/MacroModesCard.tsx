@@ -1,6 +1,8 @@
 /**
  * Macro Modes Card Component
  * Allows users to quickly apply predefined macro modes
+ *
+ * Uses pending changes - macros only saved when diskette clicked
  */
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -8,38 +10,28 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Target, TrendingUp, TrendingDown, Minus } from 'lucide-react'
-import { useApplyMacroMode, usePreviewMacroMode } from '@/hooks/useMacroModes'
-import { useProfileStore } from '@/stores/profileStore'
-import { useAuth } from '@/contexts/AuthContext'
-import { useProfiles } from '@/hooks'
-import { toast } from 'sonner'
+import { usePreviewMacroMode } from '@/hooks/useMacroModes'
+import { applyMacroMode } from '@/lib/utils/macroModes'
+import { calculateLeanMass } from '@/lib/calculations/bodyComposition'
+import type { Profile } from '@/lib/types'
 
 interface MacroModesCardProps {
-  currentBodyFat?: string
-  liveWeight?: string
-  liveCaloriesMin?: number
-  liveCaloriesMax?: number
-  liveTdee?: number
+  profile: Profile
+  onMacroModeApply: (macros: {
+    fatMin: number
+    fatMax: number
+    carbMin: number
+    carbMax: number
+    proteinMin: number
+    proteinMax: number
+    caloriesMin: number
+    caloriesMax: number
+    calorieGoal: string
+    deficitLevel: string | null
+  }) => void
 }
 
-export default function MacroModesCard({
-  currentBodyFat = '',
-  liveWeight,
-  liveCaloriesMin,
-  liveCaloriesMax,
-}: MacroModesCardProps) {
-  const activeProfile = useProfileStore(state => state.activeProfile)
-  const { profile: legacyProfile } = useAuth()
-  const { data: allProfiles = [], isLoading } = useProfiles()
-
-  // Get full profile data from allProfiles to ensure we have complete data
-  // activeProfile from store might only have {id, profile_name} after page refresh
-  const fullProfile = activeProfile ? allProfiles.find(p => p.id === activeProfile.id) : undefined
-
-  // Use full profile if available, otherwise fall back to legacy profile
-  const profile = fullProfile || legacyProfile
-
-  const applyMode = useApplyMacroMode()
+export default function MacroModesCard({ profile, onMacroModeApply }: MacroModesCardProps) {
 
   const nnrPreview = usePreviewMacroMode('nnr')
   const offseasonPreview = usePreviewMacroMode('offseason')
@@ -69,24 +61,63 @@ export default function MacroModesCard({
   }
 
   const handleApplyMode = (mode: 'nnr' | 'offseason' | 'onseason') => {
-    // Parse currentBodyFat if available for on-season mode
-    const bodyFatOverride = currentBodyFat.trim() !== '' ? parseFloat(currentBodyFat) : undefined
+    if (!profile) return
 
-    applyMode.mutate(
-      { mode, bodyFatOverride },
-      {
-        onSuccess: () => {
-          toast.success(`${getModeTitle(mode)} tillämpat!`, {
-            description: 'Dina makromål har uppdaterats.',
-          })
-        },
-        onError: error => {
-          toast.error('Kunde inte tillämpa makroläge', {
-            description: error.message,
-          })
-        },
-      }
-    )
+    // Validate required data
+    if (!profile.weight_kg) {
+      return
+    }
+
+    if (!profile.tdee) {
+      return
+    }
+
+    // Use body fat from profile
+    const bodyFatPercentage = profile.body_fat_percentage
+
+    if (mode === 'onseason' && !bodyFatPercentage) {
+      return
+    }
+
+    // Calculate FFM (Fat Free Mass) if body fat percentage is available
+    const ffm =
+      bodyFatPercentage && profile.weight_kg
+        ? calculateLeanMass(profile.weight_kg, bodyFatPercentage)
+        : undefined
+
+    // Calculate NEW calories_min/max from TDEE using macro mode multipliers
+    const tempMacroMode = applyMacroMode(mode, {
+      weight: profile.weight_kg,
+      fatFreeMass: ffm,
+      caloriesMin: profile.tdee,
+      caloriesMax: profile.tdee,
+    })
+
+    // Apply multipliers to TDEE to get actual CalorieMin/Max
+    const newCaloriesMin = profile.tdee * tempMacroMode.calorieMinMultiplier
+    const newCaloriesMax = profile.tdee * tempMacroMode.calorieMaxMultiplier
+
+    // Now calculate macro mode with CORRECT calories
+    const macroMode = applyMacroMode(mode, {
+      weight: profile.weight_kg,
+      fatFreeMass: ffm,
+      caloriesMin: newCaloriesMin,
+      caloriesMax: newCaloriesMax,
+    })
+
+    // Apply via callback to pending changes
+    onMacroModeApply({
+      fatMin: macroMode.fatMinPercent,
+      fatMax: macroMode.fatMaxPercent,
+      carbMin: macroMode.carbMinPercent,
+      carbMax: macroMode.carbMaxPercent,
+      proteinMin: macroMode.proteinMinPercent,
+      proteinMax: macroMode.proteinMaxPercent,
+      caloriesMin: newCaloriesMin,
+      caloriesMax: newCaloriesMax,
+      calorieGoal: macroMode.calorieGoal,
+      deficitLevel: macroMode.deficitLevel || null,
+    })
   }
 
   const getModeTitle = (mode: 'nnr' | 'offseason' | 'onseason') => {
@@ -111,17 +142,14 @@ export default function MacroModesCard({
     }
   }
 
-  // Wait for profiles to load before enabling buttons
-  // Use live-data from form if available, otherwise fall back to saved profile
-  const hasBodyFat = currentBodyFat.trim() !== '' || !!fullProfile?.body_fat_percentage
-  const weightKg =
-    liveWeight && liveWeight.trim() !== '' ? parseFloat(liveWeight) : fullProfile?.weight_kg
-  const hasCalories =
-    (liveCaloriesMin && liveCaloriesMax) || (fullProfile?.calories_min && fullProfile?.calories_max)
+  // Check if we have required data
+  const hasBodyFat = !!profile?.body_fat_percentage
+  const weightKg = profile?.weight_kg
+  const hasTdee = !!profile?.tdee
 
-  // Allow applying modes even for new (unsaved) profiles if they have the required data
-  const canApplyOnSeason = !isLoading && hasBodyFat && !!weightKg
-  const canApplyAny = !isLoading && !!weightKg && !!hasCalories
+  // Allow applying modes if we have the required data
+  const canApplyOnSeason = hasBodyFat && !!weightKg && hasTdee
+  const canApplyAny = !!weightKg && hasTdee
 
   return (
     <Card>
@@ -155,7 +183,7 @@ export default function MacroModesCard({
               size="sm"
               variant={isModeActive('nnr') ? 'default' : 'outline'}
               onClick={() => handleApplyMode('nnr')}
-              disabled={!canApplyAny || applyMode.isPending || isModeActive('nnr')}
+              disabled={!canApplyAny || isModeActive('nnr')}
             >
               {isModeActive('nnr') ? 'Redan aktivt' : 'Använd'}
             </Button>
@@ -197,7 +225,7 @@ export default function MacroModesCard({
               size="sm"
               variant={isModeActive('offseason') ? 'default' : 'outline'}
               onClick={() => handleApplyMode('offseason')}
-              disabled={!canApplyAny || applyMode.isPending || isModeActive('offseason')}
+              disabled={!canApplyAny || isModeActive('offseason')}
             >
               {isModeActive('offseason') ? 'Redan aktivt' : 'Använd'}
             </Button>
@@ -248,7 +276,7 @@ export default function MacroModesCard({
               size="sm"
               variant={isModeActive('onseason') ? 'default' : 'outline'}
               onClick={() => handleApplyMode('onseason')}
-              disabled={!canApplyOnSeason || applyMode.isPending || isModeActive('onseason')}
+              disabled={!canApplyOnSeason || isModeActive('onseason')}
               className={
                 !canApplyOnSeason && !isModeActive('onseason')
                   ? 'opacity-40 cursor-not-allowed'

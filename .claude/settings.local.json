@@ -21,7 +21,8 @@
       "Bash(echo:*)",
       "Bash(curl:*)",
       "Bash(npm run build:*)",
-      "Bash(npx supabase:*)"
+      "Bash(npx supabase:*)",
+      "Bash(git restore:*)"
     ],
     "deny": [],
     "ask": []
