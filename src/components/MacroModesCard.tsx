@@ -32,17 +32,46 @@ interface MacroModesCardProps {
 }
 
 export default function MacroModesCard({ profile, onMacroModeApply }: MacroModesCardProps) {
-
   const nnrPreview = usePreviewMacroMode('nnr')
   const offseasonPreview = usePreviewMacroMode('offseason')
-  const onseasonPreview = usePreviewMacroMode('onseason')
+
+  // Function to calculate preview based on current profile (including pending changes)
+  const calculatePreviewForProfile = (mode: 'nnr' | 'offseason' | 'onseason') => {
+    if (!profile?.weight_kg || !profile?.tdee) return null
+    if (mode === 'onseason' && !profile.body_fat_percentage) return null
+
+    try {
+      const ffm =
+        profile.body_fat_percentage && profile.weight_kg
+          ? calculateLeanMass(profile.weight_kg, profile.body_fat_percentage)
+          : undefined
+
+      const tempMacroMode = applyMacroMode(mode, {
+        weight: profile.weight_kg,
+        fatFreeMass: ffm,
+        caloriesMin: profile.tdee,
+        caloriesMax: profile.tdee,
+      })
+
+      const newCaloriesMin = profile.tdee * tempMacroMode.calorieMinMultiplier
+      const newCaloriesMax = profile.tdee * tempMacroMode.calorieMaxMultiplier
+
+      return applyMacroMode(mode, {
+        weight: profile.weight_kg,
+        fatFreeMass: ffm,
+        caloriesMin: newCaloriesMin,
+        caloriesMax: newCaloriesMax,
+      })
+    } catch {
+      return null
+    }
+  }
 
   // Function to check if a preset already matches current profile settings
   const isModeActive = (mode: 'nnr' | 'offseason' | 'onseason'): boolean => {
     if (!profile) return false
 
-    const preview =
-      mode === 'nnr' ? nnrPreview : mode === 'offseason' ? offseasonPreview : onseasonPreview
+    const preview = calculatePreviewForProfile(mode)
     if (!preview) return false
 
     // Compare with tolerance of 1% for rounding differences
@@ -118,17 +147,6 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
       calorieGoal: macroMode.calorieGoal,
       deficitLevel: macroMode.deficitLevel || null,
     })
-  }
-
-  const getModeTitle = (mode: 'nnr' | 'offseason' | 'onseason') => {
-    switch (mode) {
-      case 'nnr':
-        return 'NNR Mode'
-      case 'offseason':
-        return 'Off-Season Mode'
-      case 'onseason':
-        return 'On-Season Mode'
-    }
   }
 
   const getModeIcon = (mode: 'nnr' | 'offseason' | 'onseason') => {

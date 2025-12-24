@@ -77,7 +77,8 @@ export default function MacroDistributionCard({
         proteinMax: proteinRange[1],
       })
     }
-  }, [fatRange, carbRange, proteinRange, onMacroChange])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fatRange, carbRange, proteinRange])
 
   // Calculate grams from percentages - matching Google Sheets formula
   // Formula: calories * percent / 100 / kcal_per_gram

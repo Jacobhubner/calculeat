@@ -30,6 +30,7 @@ export default function BasicProfileForm({
 
   // Update local state when profile changes
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setBodyFat(profile.body_fat_percentage?.toString() || '')
   }, [profile.id, profile.body_fat_percentage])
 
@@ -95,16 +96,16 @@ export default function BasicProfileForm({
           <CardContent>
             <EnergyGoalReferenceTable
               tdee={profile.tdee}
-              selectedGoal={profile.calorie_goal || ''}
+              selectedGoal={profile.calorie_goal || 'Maintain weight'}
               selectedDeficit={profile.deficit_level || ''}
-              onGoalSelect={(goal) => {
+              onGoalSelect={goal => {
                 // If goal is not Weight loss, clear deficit_level
                 onGoalChange(goal)
                 if (goal !== 'Weight loss') {
                   onDeficitChange(null)
                 }
               }}
-              onDeficitSelect={(deficit) => {
+              onDeficitSelect={deficit => {
                 // Only update deficit if it's a valid deficit level (not empty)
                 if (!deficit) return
                 onDeficitChange(deficit)

@@ -13,6 +13,7 @@ import { toast } from 'sonner'
 
 // New components
 import ProfileCardSidebar from '@/components/profile/ProfileCardSidebar'
+import ProfileResultsSummary from '@/components/profile/ProfileResultsSummary'
 import BasicInfoFields from '@/components/profile/BasicInfoFields'
 import TDEEOptions from '@/components/profile/TDEEOptions'
 import BasicProfileForm from '@/components/profile/BasicProfileForm'
@@ -160,7 +161,16 @@ export default function ProfilePage() {
     } else {
       // Remove macro fields from pending changes if they match saved values
       setPendingChanges(prev => {
-        const { fat_min_percent, fat_max_percent, carb_min_percent, carb_max_percent, protein_min_percent, protein_max_percent, ...rest } = prev
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const {
+          fat_min_percent,
+          fat_max_percent,
+          carb_min_percent,
+          carb_max_percent,
+          protein_min_percent,
+          protein_max_percent,
+          ...rest
+        } = prev
         return rest
       })
     }
@@ -171,7 +181,9 @@ export default function ProfilePage() {
     if (!activeProfile) return
 
     // Only add to pending changes if meals actually changed from saved profile
-    const currentMeals = activeProfile.meals_config as { meals: { name: string; percentage: number }[] } | null
+    const currentMeals = activeProfile.meals_config as {
+      meals: { name: string; percentage: number }[]
+    } | null
     const hasChanged = JSON.stringify(settings.meals) !== JSON.stringify(currentMeals?.meals || [])
 
     if (hasChanged) {
@@ -179,6 +191,7 @@ export default function ProfilePage() {
     } else {
       // Remove meals_config from pending changes if it matches saved values
       setPendingChanges(prev => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { meals_config, ...rest } = prev
         return rest
       })
@@ -257,7 +270,10 @@ export default function ProfilePage() {
       })
 
       // If weight was changed, add to weight history
-      if (pendingChanges.weight_kg !== undefined && pendingChanges.weight_kg !== activeProfile.weight_kg) {
+      if (
+        pendingChanges.weight_kg !== undefined &&
+        pendingChanges.weight_kg !== activeProfile.weight_kg
+      ) {
         await createWeightHistory.mutateAsync({
           profile_id: activeProfile.id,
           weight_kg: pendingChanges.weight_kg,
@@ -282,6 +298,9 @@ export default function ProfilePage() {
     // Generate next profile name
     const nextNumber = allProfiles.length
     const profileName = nextNumber === 0 ? 'Profilkort' : `Profilkort ${nextNumber}`
+
+    // Clear pending changes BEFORE creating new profile to avoid race condition
+    setPendingChanges({})
 
     try {
       await createProfile.mutateAsync({
@@ -406,7 +425,7 @@ export default function ProfilePage() {
           </div>
 
           {/* Sidebar - Profile Card Switcher */}
-          <div className="md:sticky md:top-20 md:self-start">
+          <div className="md:sticky md:top-20 md:self-start space-y-4">
             <ProfileCardSidebar
               onCreateNew={handleCreateNewProfile}
               onSelectProfile={handleSelectProfile}
@@ -416,6 +435,9 @@ export default function ProfilePage() {
               isSaving={updateProfile.isPending}
               canSave={hasBasicInfo}
             />
+
+            {/* Results Summary - Show BMR, TDEE, Calorie Range */}
+            <ProfileResultsSummary profile={mergedProfile} />
           </div>
         </div>
       </div>

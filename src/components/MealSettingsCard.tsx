@@ -56,7 +56,8 @@ export default function MealSettingsCard({ tdee, onMealChange }: MealSettingsCar
     if (onMealChange) {
       onMealChange({ meals })
     }
-  }, [meals, onMealChange])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [meals])
 
   // Calculate total percentage
   const totalPercentage = useMemo(() => {

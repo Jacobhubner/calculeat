@@ -66,14 +66,16 @@ export default function BasicInfoFields({
     if (heightString !== newHeightString) {
       setHeightString(newHeightString)
     }
-  }, [height, heightString])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [height])
 
   useEffect(() => {
     const newWeightString = initialWeight?.toString() || ''
     if (initialWeightString !== newWeightString) {
       setInitialWeightString(newWeightString)
     }
-  }, [initialWeight, initialWeightString])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialWeight])
 
   // Confirmation dialog for locked field changes
   const confirmLockedFieldChange = (fieldName: string): boolean => {
@@ -81,9 +83,9 @@ export default function BasicInfoFields({
 
     return window.confirm(
       `Varning: Du försöker ändra "${fieldName}".\n\n` +
-      `Denna uppgift delas mellan alla dina profilkort och kan endast ändras när du har ett enda profilkort.\n\n` +
-      `Om du fortsätter kommer ändringen att påverka alla dina profilkort.\n\n` +
-      `Vill du fortsätta?`
+        `Denna uppgift delas mellan alla dina profilkort och kan endast ändras när du har ett enda profilkort.\n\n` +
+        `Om du fortsätter kommer ändringen att påverka alla dina profilkort.\n\n` +
+        `Vill du fortsätta?`
     )
   }
 
@@ -169,8 +171,8 @@ export default function BasicInfoFields({
     }
   }
 
-
-  const lockTitle = 'Dessa fält låses när grundläggande information är ifylld. Radera alla profilkort för att ändra.'
+  const lockTitle =
+    'Dessa fält låses när grundläggande information är ifylld. Radera alla profilkort för att ändra.'
 
   return (
     <Card>
@@ -187,14 +189,14 @@ export default function BasicInfoFields({
             <Info className="h-4 w-4" />
             <AlertDescription>
               <div className="flex-1">
-                <h4 className="font-semibold text-blue-900 mb-1">
-                  Vissa fält är låsta
-                </h4>
+                <h4 className="font-semibold text-blue-900 mb-1">Vissa fält är låsta</h4>
                 <p className="text-sm text-blue-800 mb-2">
-                  Födelsedatum, kön och längd delas mellan alla dina profilkort. Dessa fält låses när grundläggande information är ifylld.
+                  Födelsedatum, kön och längd delas mellan alla dina profilkort. Dessa fält låses
+                  när grundläggande information är ifylld.
                 </p>
                 <p className="text-sm text-blue-800">
-                  <strong>Tips:</strong> För att ändra dessa värden måste du radera alla profilkort och skapa ett nytt första profilkort med korrekta värden.
+                  <strong>Tips:</strong> För att ändra dessa värden måste du radera alla profilkort
+                  och skapa ett nytt första profilkort med korrekta värden.
                 </p>
               </div>
             </AlertDescription>
@@ -321,9 +323,7 @@ export default function BasicInfoFields({
           </label>
           <div
             className={`flex gap-4 p-3 rounded-xl ${
-              locked
-                ? 'bg-neutral-200 border-dashed border-2 border-neutral-300'
-                : ''
+              locked ? 'bg-neutral-200 border-dashed border-2 border-neutral-300' : ''
             }`}
           >
             <label
@@ -339,9 +339,7 @@ export default function BasicInfoFields({
                 disabled={locked}
                 className="mr-2 h-4 w-4 text-primary-600 focus:ring-primary-500 disabled:cursor-not-allowed"
               />
-              <span className={locked ? 'text-neutral-400' : 'text-neutral-700'}>
-                Man
-              </span>
+              <span className={locked ? 'text-neutral-400' : 'text-neutral-700'}>Man</span>
             </label>
             <label
               className={`flex items-center ${locked ? 'cursor-not-allowed' : 'cursor-pointer'}`}
@@ -356,9 +354,7 @@ export default function BasicInfoFields({
                 disabled={locked}
                 className="mr-2 h-4 w-4 text-primary-600 focus:ring-primary-500 disabled:cursor-not-allowed"
               />
-              <span className={locked ? 'text-neutral-400' : 'text-neutral-700'}>
-                Kvinna
-              </span>
+              <span className={locked ? 'text-neutral-400' : 'text-neutral-700'}>Kvinna</span>
             </label>
           </div>
           {locked && (
@@ -459,11 +455,12 @@ export default function BasicInfoFields({
             )}
           </div>
           <p className="text-xs text-neutral-500 mt-1">
-            Din vikt när du börjar använda appen. Används för att spåra viktförändring. OBS: Detta påverkar alla dina profilkort!
+            Din vikt när du börjar använda appen. Används för att spåra viktförändring. OBS: Detta
+            påverkar alla dina profilkort!
           </p>
           {locked && !isWeightUnlocked && (
             <p className="text-xs text-neutral-500 mt-1">
-              Låst - klicka på "Lås upp" för att redigera
+              Låst - klicka på &ldquo;Lås upp&rdquo; för att redigera
             </p>
           )}
         </div>
