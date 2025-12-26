@@ -74,7 +74,7 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
     const preview = calculatePreviewForProfile(mode)
     if (!preview) return false
 
-    // Compare with tolerance of 1% for rounding differences
+    // Compare macros with tolerance of 1% for rounding differences
     const tolerance = 1
     const matchesFat =
       Math.abs((profile.fat_min_percent ?? 0) - preview.fatMinPercent) <= tolerance &&
@@ -86,7 +86,23 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
       Math.abs((profile.protein_min_percent ?? 0) - preview.proteinMinPercent) <= tolerance &&
       Math.abs((profile.protein_max_percent ?? 0) - preview.proteinMaxPercent) <= tolerance
 
-    return matchesFat && matchesCarb && matchesProtein
+    // Also compare calorie goal and calorie range
+    const matchesCalorieGoal = profile.calorie_goal === preview.calorieGoal
+
+    // Calculate expected calories from preview multipliers
+    const expectedCaloriesMin = profile.tdee ? profile.tdee * preview.calorieMinMultiplier : 0
+    const expectedCaloriesMax = profile.tdee ? profile.tdee * preview.calorieMaxMultiplier : 0
+
+    const matchesCalories =
+      Math.abs((profile.calories_min ?? 0) - expectedCaloriesMin) < 1 &&
+      Math.abs((profile.calories_max ?? 0) - expectedCaloriesMax) < 1
+
+    // Also check deficit level if applicable
+    const matchesDeficitLevel = preview.deficitLevel
+      ? profile.deficit_level === preview.deficitLevel
+      : profile.deficit_level === null || profile.deficit_level === undefined
+
+    return matchesFat && matchesCarb && matchesProtein && matchesCalorieGoal && matchesCalories && matchesDeficitLevel
   }
 
   const handleApplyMode = (mode: 'nnr' | 'offseason' | 'onseason') => {

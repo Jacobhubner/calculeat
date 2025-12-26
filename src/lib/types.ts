@@ -231,6 +231,11 @@ export interface Profile {
     }>
   }
 
+  // Adaptive Thermogenesis (AT)
+  baseline_bmr?: number | null
+  accumulated_at?: number
+  last_at_calculation_date?: string | null
+
   // Timestamps
   created_at?: string
   updated_at?: string
@@ -325,5 +330,40 @@ export interface WeightHistory {
   weight_kg: number
   recorded_at: string
   notes?: string
+  created_at: string
+}
+
+// Adaptive Thermogenesis (AT) types
+export interface AdaptiveThermogenesisData {
+  baseline_bmr: number | null
+  accumulated_at: number
+  last_at_calculation_date: string | null
+}
+
+export interface ATCalculationInput {
+  baseline_bmr: number
+  current_bmr_expected: number
+  calorie_balance_7d: number // Veckobalans i kcal
+  current_accumulated_at: number
+}
+
+export interface ATCalculationResult {
+  at_weekly: number // Veckovis förändring
+  accumulated_at: number // Ny ackumulerad AT
+  bmr_effective: number // BMR_expected + accumulated_at
+  is_at_max_limit: boolean // +6% limit nådd?
+  is_at_min_limit: boolean // -12% limit nådd?
+}
+
+export interface ATHistoryEntry {
+  id: string
+  profile_id: string
+  calculation_date: string
+  baseline_bmr: number
+  bmr_expected: number
+  calorie_balance_7d: number
+  at_weekly: number
+  accumulated_at: number
+  bmr_effective: number
   created_at: string
 }

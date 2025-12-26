@@ -22,7 +22,9 @@
       "Bash(curl:*)",
       "Bash(npm run build:*)",
       "Bash(npx supabase:*)",
-      "Bash(git restore:*)"
+      "Bash(git restore:*)",
+      "Bash(npx eslint:*)",
+      "Bash(git reset:*)"
     ],
     "deny": [],
     "ask": []

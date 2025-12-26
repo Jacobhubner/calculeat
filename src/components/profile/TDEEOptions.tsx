@@ -11,13 +11,43 @@ import { Button } from '@/components/ui/button'
 import { Calculator, Edit3 } from 'lucide-react'
 import ManualTDEEEntry from './ManualTDEEEntry'
 
+import type { Gender } from '@/lib/types'
+
 interface TDEEOptionsProps {
   profileId: string
   initialWeight?: number
+  height?: number
+  birthDate?: string
+  gender?: Gender | ''
+  tdee?: number
+  bodyFatPercentage?: number
+  onTDEEChange: (data: {
+    tdee: number
+    bodyFat?: number
+    baseline_bmr?: number
+    weight_kg?: number
+    tdee_source: string
+    tdee_calculated_at: string
+    tdee_calculation_snapshot: any
+    calorie_goal: string
+    calories_min: number
+    calories_max: number
+    accumulated_at: number
+  }) => void
   onManualTDEESuccess?: () => void
 }
 
-export default function TDEEOptions({ profileId, initialWeight, onManualTDEESuccess }: TDEEOptionsProps) {
+export default function TDEEOptions({
+  profileId,
+  initialWeight,
+  height,
+  birthDate,
+  gender,
+  tdee,
+  bodyFatPercentage,
+  onTDEEChange,
+  onManualTDEESuccess,
+}: TDEEOptionsProps) {
   const navigate = useNavigate()
   const [showManualEntry, setShowManualEntry] = useState(false)
 
@@ -85,9 +115,13 @@ export default function TDEEOptions({ profileId, initialWeight, onManualTDEESucc
       {showManualEntry && (
         <div className="mt-4">
           <ManualTDEEEntry
-            profileId={profileId}
             initialWeight={initialWeight}
-            onSuccess={handleManualSuccess}
+            height={height}
+            birthDate={birthDate}
+            gender={gender}
+            tdee={tdee}
+            bodyFatPercentage={bodyFatPercentage}
+            onTDEEChange={onTDEEChange}
           />
         </div>
       )}

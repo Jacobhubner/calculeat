@@ -99,11 +99,8 @@ export default function BasicProfileForm({
               selectedGoal={profile.calorie_goal || 'Maintain weight'}
               selectedDeficit={profile.deficit_level || ''}
               onGoalSelect={goal => {
-                // If goal is not Weight loss, clear deficit_level
+                // handleGoalChange already sets deficit_level to null for non-Weight loss goals
                 onGoalChange(goal)
-                if (goal !== 'Weight loss') {
-                  onDeficitChange(null)
-                }
               }}
               onDeficitSelect={deficit => {
                 // Only update deficit if it's a valid deficit level (not empty)

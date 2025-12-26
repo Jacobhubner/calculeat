@@ -49,13 +49,29 @@ export default function WeightTracker({ profile, onWeightChange }: WeightTracker
       date: 'Start',
       weight: initialWeight,
       displayDate: 'Startvikt',
+      isPending: false,
     },
     ...weightHistory.map(entry => ({
       date: new Date(entry.recorded_at).toLocaleDateString('sv-SE', { month: 'short', day: 'numeric' }),
       weight: entry.weight_kg,
       displayDate: new Date(entry.recorded_at).toLocaleDateString('sv-SE'),
+      isPending: false,
     })),
   ]
+
+  // Add pending weight to chart if it differs from last saved weight
+  const lastSavedWeight = weightHistory.length > 0
+    ? weightHistory[weightHistory.length - 1].weight_kg
+    : initialWeight
+
+  if (weight !== lastSavedWeight) {
+    chartData.push({
+      date: 'Pending',
+      weight: weight,
+      displayDate: 'Osparad (pending)',
+      isPending: true,
+    })
+  }
 
   return (
     <Card>
@@ -177,7 +193,20 @@ export default function WeightTracker({ profile, onWeightChange }: WeightTracker
                   dataKey="weight"
                   stroke="#16a34a"
                   strokeWidth={2}
-                  dot={{ fill: '#16a34a', r: 4 }}
+                  strokeDasharray={(entry: any) => entry.isPending ? "5 5" : "0"}
+                  dot={(props: any) => {
+                    const { cx, cy, payload } = props
+                    return (
+                      <circle
+                        cx={cx}
+                        cy={cy}
+                        r={payload.isPending ? 6 : 4}
+                        fill={payload.isPending ? '#f59e0b' : '#16a34a'}
+                        stroke={payload.isPending ? '#d97706' : 'none'}
+                        strokeWidth={payload.isPending ? 2 : 0}
+                      />
+                    )
+                  }}
                   activeDot={{ r: 6 }}
                 />
               </LineChart>

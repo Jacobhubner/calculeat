@@ -59,7 +59,27 @@ export default function TDEECalculatorTool() {
   const [isSaving, setIsSaving] = useState(false)
 
   // Weight state (local override for calculator)
-  const [localWeight, setLocalWeight] = useState(profileData?.weight_kg?.toString() || '')
+  const [useInitialWeight, setUseInitialWeight] = useState(true) // Start with initial weight by default
+  const [localWeight, setLocalWeight] = useState('')
+
+  // Body fat percentage state (local override for calculator)
+  const [localBodyFat, setLocalBodyFat] = useState(profileData?.body_fat_percentage?.toString() || '')
+
+  // Set initial weight when profile data loads
+  useMemo(() => {
+    if (useInitialWeight && activeProfile?.initial_weight_kg) {
+      setLocalWeight(activeProfile.initial_weight_kg.toString())
+    } else if (!useInitialWeight && profileData?.weight_kg) {
+      setLocalWeight(profileData.weight_kg.toString())
+    }
+  }, [useInitialWeight, activeProfile?.initial_weight_kg, profileData?.weight_kg])
+
+  // Set body fat percentage when profile data loads
+  useMemo(() => {
+    if (profileData?.body_fat_percentage) {
+      setLocalBodyFat(profileData.body_fat_percentage.toString())
+    }
+  }, [profileData?.body_fat_percentage])
 
   // BMR and PAL state
   const [bmrFormula, setBmrFormula] = useState<BMRFormula | ''>('')
@@ -76,6 +96,7 @@ export default function TDEECalculatorTool() {
   // Beräkna BMR
   const bmr = useMemo(() => {
     const weight = localWeight ? parseFloat(localWeight) : null
+    const bodyFat = localBodyFat ? parseFloat(localBodyFat) : undefined
 
     if (
       !weight ||
@@ -92,7 +113,7 @@ export default function TDEECalculatorTool() {
       age,
       weight,
       height: profileData.height_cm,
-      bodyFatPercentage: profileData.body_fat_percentage,
+      bodyFatPercentage: bodyFat,
     })
 
     // Validate BMR result
@@ -101,7 +122,7 @@ export default function TDEECalculatorTool() {
     }
 
     return calculatedBMR
-  }, [profileData, age, bmrFormula, localWeight])
+  }, [profileData, age, bmrFormula, localWeight, localBodyFat])
 
   // Beräkna TDEE
   const tdee = useMemo(() => {
@@ -185,6 +206,13 @@ export default function TDEECalculatorTool() {
           tdee_calculated_at: new Date().toISOString(),
           tdee_source: 'tdee_calculator_tool',
           tdee_calculation_snapshot: snapshot,
+          // Set baseline_bmr for AT calculations (using selected BMR formula)
+          baseline_bmr: bmr,
+          accumulated_at: 0, // Initialize AT to 0
+          // Set default calorie goal and interval (maintenance ±3%)
+          calorie_goal: 'Maintain weight',
+          calories_min: tdee * 0.97,
+          calories_max: tdee * 1.03,
         },
       })
 
@@ -244,29 +272,118 @@ export default function TDEECalculatorTool() {
         />
       </div>
 
-      {/* Weight Input - Minimal Compact Design */}
-      <div className="bg-gradient-to-r from-primary-50 to-accent-50 border border-primary-200 rounded-lg p-4">
-        <div className="flex items-center gap-4">
-          <div className="w-48">
-            <label className="block text-sm font-medium text-neutral-900 mb-1.5">
-              Vikt (kg) <span className="text-red-600">*</span>
-            </label>
-            <input
-              type="number"
-              value={localWeight}
-              onChange={e => setLocalWeight(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border-primary-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 font-medium"
-              placeholder="75"
-              min="20"
-              max="300"
-              step="0.1"
-            />
+      {/* Weight Input - With Choice Between Initial Weight and Custom Weight */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Vikt för beräkning</CardTitle>
+          <CardDescription>Välj vilken vikt som ska användas för TDEE-beräkningen</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Radio buttons for weight choice */}
+          {activeProfile?.initial_weight_kg && (
+            <div className="space-y-3">
+              <label className="flex items-center gap-3 p-3 border-2 rounded-lg cursor-pointer hover:bg-primary-50 transition-colors">
+                <input
+                  type="radio"
+                  checked={useInitialWeight}
+                  onChange={() => setUseInitialWeight(true)}
+                  className="h-4 w-4 text-primary-600 focus:ring-primary-500"
+                />
+                <div className="flex-1">
+                  <p className="font-medium text-neutral-900">Använd sparad startvikt</p>
+                  <p className="text-sm text-neutral-600">
+                    {activeProfile.initial_weight_kg} kg (från din profil)
+                  </p>
+                </div>
+              </label>
+
+              <label className="flex items-center gap-3 p-3 border-2 rounded-lg cursor-pointer hover:bg-primary-50 transition-colors">
+                <input
+                  type="radio"
+                  checked={!useInitialWeight}
+                  onChange={() => setUseInitialWeight(false)}
+                  className="h-4 w-4 text-primary-600 focus:ring-primary-500"
+                />
+                <div className="flex-1">
+                  <p className="font-medium text-neutral-900">Använd annan vikt</p>
+                  <p className="text-sm text-neutral-600">Ange en egen vikt för beräkningen</p>
+                </div>
+              </label>
+            </div>
+          )}
+
+          {/* Weight input field - shown when custom weight is selected or no initial weight exists */}
+          {(!useInitialWeight || !activeProfile?.initial_weight_kg) && (
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-neutral-900 mb-2">
+                Vikt (kg) <span className="text-red-600">*</span>
+              </label>
+              <input
+                type="number"
+                value={localWeight}
+                onChange={e => setLocalWeight(e.target.value)}
+                className="w-full px-3 py-2 rounded-lg border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 font-medium"
+                placeholder="75"
+                min="20"
+                max="300"
+                step="0.1"
+              />
+              <p className="mt-2 text-xs text-neutral-600">
+                Detta värde används för att beräkna BMR och TDEE.
+              </p>
+            </div>
+          )}
+
+          {/* Display selected weight */}
+          {useInitialWeight && activeProfile?.initial_weight_kg && (
+            <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <p className="text-sm text-blue-900">
+                <strong>Vald vikt för beräkning:</strong> {activeProfile.initial_weight_kg} kg
+              </p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Body Fat Percentage Input */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Kroppsfettprocent (valfri)</CardTitle>
+          <CardDescription>
+            Vissa BMR-formler kräver kroppsfettprocent för mer exakta beräkningar
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {profileData?.body_fat_percentage && (
+              <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-sm text-blue-900">
+                  <strong>Sparad kroppsfettprocent:</strong> {profileData.body_fat_percentage}%
+                </p>
+              </div>
+            )}
+
+            <div>
+              <label className="block text-sm font-medium text-neutral-900 mb-2">
+                Kroppsfettprocent (%)
+              </label>
+              <input
+                type="number"
+                value={localBodyFat}
+                onChange={e => setLocalBodyFat(e.target.value)}
+                className="w-full px-3 py-2 rounded-lg border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 font-medium"
+                placeholder="15"
+                min="3"
+                max="60"
+                step="0.1"
+              />
+              <p className="mt-2 text-xs text-neutral-600">
+                Krävs för formler som Cunningham, MacroFactor FFM/Athlete och Fitness Stuff Podcast
+              </p>
+            </div>
           </div>
-          <div className="flex-1 text-xs text-neutral-600 leading-relaxed">
-            Detta värde används för att beräkna BMR och TDEE. När du sparar till profil kommer detta att sparas som både din nuvarande vikt och startvikt.
-          </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
       {/* BMR Formula Selection */}
       <Card>
@@ -316,11 +433,11 @@ export default function TDEECalculatorTool() {
               </select>
 
               {/* Warning if body fat required */}
-              {bmrFormula && requiresBodyFat(bmrFormula) && !profileData?.body_fat_percentage && (
+              {bmrFormula && requiresBodyFat(bmrFormula) && !localBodyFat && (
                 <div className="mt-3 flex gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl">
                   <span className="text-xl text-amber-600 flex-shrink-0">⚠</span>
                   <p className="text-sm text-amber-800 leading-relaxed">
-                    Denna formel kräver kroppsfettprocent. Vänligen fyll i kroppsfettprocent i din profil.
+                    Denna formel kräver kroppsfettprocent. Vänligen fyll i kroppsfettprocent ovan.
                   </p>
                 </div>
               )}
@@ -425,7 +542,6 @@ export default function TDEECalculatorTool() {
                   <p className="text-sm text-neutral-500">kcal/dag</p>
                   <p className="mt-3 text-xs text-neutral-500 border-t border-green-200 pt-3">
                     {translatePALSystem(palSystem as PALSystem)}
-                    {activityLevel && ` · ${activityLevel}`}
                   </p>
                 </div>
               )}

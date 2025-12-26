@@ -1,67 +1,104 @@
 /**
  * ManualTDEEEntry - Formulär för manuell TDEE-inmatning
  * Använder startvikt från grundläggande information, endast TDEE och kroppsfettprocent (valfri)
- * Sparar automatiskt när TDEE är ifyllt
+ * Använder pending changes - sparas när disketten klickas
  */
 
 import { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { useUpdateProfile } from '@/hooks'
-import { toast } from 'sonner'
+import { Button } from '@/components/ui/button'
+import { ArrowRight } from 'lucide-react'
+import { calculateBMR } from '@/lib/calculations/bmr'
+import { calculateAge } from '@/lib/calculations/helpers'
+import type { Gender } from '@/lib/types'
 
 interface ManualTDEEEntryProps {
-  profileId: string
   initialWeight?: number
-  onSuccess?: () => void
+  height?: number
+  birthDate?: string
+  gender?: Gender | ''
+  tdee?: number
+  bodyFatPercentage?: number
+  onTDEEChange: (data: {
+    tdee: number
+    bodyFat?: number
+    baseline_bmr?: number
+    weight_kg?: number
+    tdee_source: string
+    tdee_calculated_at: string
+    tdee_calculation_snapshot: any
+    calorie_goal: string
+    calories_min: number
+    calories_max: number
+    accumulated_at: number
+  }) => void
 }
 
-export default function ManualTDEEEntry({ profileId, initialWeight, onSuccess }: ManualTDEEEntryProps) {
-  const [tdee, setTdee] = useState('')
-  const [bodyFat, setBodyFat] = useState('')
-  const updateProfile = useUpdateProfile()
+export default function ManualTDEEEntry({
+  initialWeight,
+  height,
+  birthDate,
+  gender,
+  tdee: initialTdee,
+  bodyFatPercentage: initialBodyFat,
+  onTDEEChange,
+}: ManualTDEEEntryProps) {
+  const [tdee, setTdee] = useState(initialTdee?.toString() || '')
+  const [bodyFat, setBodyFat] = useState(initialBodyFat?.toString() || '')
 
-  // Auto-save when TDEE is valid
+  // Sync with props when they change (e.g., when pending changes are cleared)
   useEffect(() => {
+    setTdee(initialTdee?.toString() || '')
+    setBodyFat(initialBodyFat?.toString() || '')
+  }, [initialTdee, initialBodyFat])
+
+  // Handle continue button click
+  const handleContinue = () => {
     const tdeeNum = parseFloat(tdee)
     const bodyFatNum = bodyFat ? parseFloat(bodyFat) : undefined
 
-    // Only auto-save if TDEE is valid and we have initial weight
-    if (!isNaN(tdeeNum) && tdeeNum > 0 && initialWeight && initialWeight > 0) {
-      // Validate body fat if provided
-      if (bodyFat && (isNaN(bodyFatNum!) || bodyFatNum! < 0 || bodyFatNum! > 100)) {
-        return // Don't save if body fat is invalid
-      }
-
-      // Debounce to avoid saving on every keystroke
-      const timeoutId = setTimeout(async () => {
-        try {
-          await updateProfile.mutateAsync({
-            profileId,
-            data: {
-              tdee: tdeeNum,
-              weight_kg: initialWeight,
-              body_fat_percentage: bodyFatNum,
-              tdee_source: 'manual',
-              tdee_calculated_at: new Date().toISOString(),
-              tdee_calculation_snapshot: {
-                weight_kg: initialWeight,
-                calculated_tdee: tdeeNum,
-                note: 'Manuellt angiven TDEE',
-              },
-            },
-          })
-
-          toast.success('TDEE sparad!')
-          onSuccess?.()
-        } catch (error) {
-          console.error('Error saving manual TDEE:', error)
-          // Don't show error toast for auto-save
-        }
-      }, 1000) // Wait 1 second after user stops typing
-
-      return () => clearTimeout(timeoutId)
+    // Validate TDEE
+    if (isNaN(tdeeNum) || tdeeNum < 500 || tdeeNum > 10000) {
+      alert('Vänligen ange ett giltigt TDEE-värde mellan 500 och 10000 kcal')
+      return
     }
-  }, [tdee, bodyFat, initialWeight, profileId, updateProfile, onSuccess])
+
+    // Validate body fat if provided
+    if (bodyFat && (isNaN(bodyFatNum!) || bodyFatNum! < 0 || bodyFatNum! > 100)) {
+      alert('Vänligen ange en giltig kroppsfettprocent mellan 0 och 100%')
+      return
+    }
+
+    // Calculate baseline_bmr using Mifflin-St Jeor (for manual TDEE entry)
+    let baseline_bmr: number | undefined
+    if (initialWeight && height && birthDate && gender && gender !== '') {
+      const age = calculateAge(birthDate)
+      baseline_bmr = calculateBMR(initialWeight, height, age, gender)
+    }
+
+    // Trigger pending changes
+    onTDEEChange({
+      tdee: tdeeNum,
+      bodyFat: bodyFatNum,
+      baseline_bmr,
+      weight_kg: initialWeight,
+      tdee_source: 'manual',
+      tdee_calculated_at: new Date().toISOString(),
+      tdee_calculation_snapshot: {
+        weight_kg: initialWeight,
+        calculated_tdee: tdeeNum,
+        note: 'Manuellt angiven TDEE',
+      },
+      calorie_goal: 'Maintain weight',
+      calories_min: tdeeNum * 0.97,
+      calories_max: tdeeNum * 1.03,
+      accumulated_at: 0,
+    })
+  }
+
+  // Check if continue button should be enabled
+  const tdeeNum = parseFloat(tdee)
+  const canContinue = !isNaN(tdeeNum) && tdeeNum >= 500 && tdeeNum <= 10000
 
   return (
     <Card>
@@ -91,6 +128,11 @@ export default function ManualTDEEEntry({ profileId, initialWeight, onSuccess }:
               type="number"
               value={tdee}
               onChange={e => setTdee(e.target.value)}
+              onKeyDown={e => {
+                if (e.key === 'Enter' && canContinue) {
+                  handleContinue()
+                }
+              }}
               className="block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
               placeholder="2500"
               min="500"
@@ -107,6 +149,11 @@ export default function ManualTDEEEntry({ profileId, initialWeight, onSuccess }:
               type="number"
               value={bodyFat}
               onChange={e => setBodyFat(e.target.value)}
+              onKeyDown={e => {
+                if (e.key === 'Enter' && canContinue) {
+                  handleContinue()
+                }
+              }}
               className="block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
               placeholder="15"
               min="0"
@@ -116,6 +163,19 @@ export default function ManualTDEEEntry({ profileId, initialWeight, onSuccess }:
             <p className="text-xs text-neutral-500 mt-1">
               Krävs för vissa BMR-formler om du vill beräkna TDEE senare
             </p>
+          </div>
+
+          {/* Continue Button */}
+          <div className="pt-2">
+            <Button
+              onClick={handleContinue}
+              disabled={!canContinue}
+              className="w-full"
+              size="lg"
+            >
+              Fortsätt
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
           </div>
         </div>
       </CardContent>
