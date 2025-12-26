@@ -14,7 +14,6 @@ import ManualTDEEEntry from './ManualTDEEEntry'
 import type { Gender } from '@/lib/types'
 
 interface TDEEOptionsProps {
-  profileId: string
   initialWeight?: number
   height?: number
   birthDate?: string
@@ -28,17 +27,17 @@ interface TDEEOptionsProps {
     weight_kg?: number
     tdee_source: string
     tdee_calculated_at: string
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     tdee_calculation_snapshot: any
     calorie_goal: string
     calories_min: number
     calories_max: number
     accumulated_at: number
   }) => void
-  onManualTDEESuccess?: () => void
+  onBeforeNavigate?: () => Promise<void>
 }
 
 export default function TDEEOptions({
-  profileId,
   initialWeight,
   height,
   birthDate,
@@ -46,18 +45,17 @@ export default function TDEEOptions({
   tdee,
   bodyFatPercentage,
   onTDEEChange,
-  onManualTDEESuccess,
+  onBeforeNavigate,
 }: TDEEOptionsProps) {
   const navigate = useNavigate()
   const [showManualEntry, setShowManualEntry] = useState(false)
 
-  const handleCalculateTDEE = () => {
+  const handleCalculateTDEE = async () => {
+    // Save profile before navigating
+    if (onBeforeNavigate) {
+      await onBeforeNavigate()
+    }
     navigate('/app/tools/tdee-calculator')
-  }
-
-  const handleManualSuccess = () => {
-    setShowManualEntry(false)
-    onManualTDEESuccess?.()
   }
 
   return (
@@ -75,11 +73,7 @@ export default function TDEEOptions({
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button
-              onClick={handleCalculateTDEE}
-              className="w-full"
-              size="lg"
-            >
+            <Button onClick={handleCalculateTDEE} className="w-full" size="lg">
               <Calculator className="h-4 w-4 mr-2" />
               Gå till TDEE-kalkylator
             </Button>

@@ -24,13 +24,12 @@
       "Bash(npx supabase:*)",
       "Bash(git restore:*)",
       "Bash(npx eslint:*)",
-      "Bash(git reset:*)"
+      "Bash(git reset:*)",
+      "Bash(where:*)"
     ],
     "deny": [],
     "ask": []
   },
   "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": [
-    "supabase"
-  ]
+  "enabledMcpjsonServers": ["supabase"]
 }

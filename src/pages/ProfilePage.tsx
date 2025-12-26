@@ -16,7 +16,6 @@ import ProfileCardSidebar from '@/components/profile/ProfileCardSidebar'
 import ProfileResultsSummary from '@/components/profile/ProfileResultsSummary'
 import MetabolicInfo from '@/components/profile/MetabolicInfo'
 import ATHistoryCard from '@/components/profile/ATHistoryCard'
-import BaselineResetCard from '@/components/profile/BaselineResetCard'
 import BasicInfoFields from '@/components/profile/BasicInfoFields'
 import TDEEOptions from '@/components/profile/TDEEOptions'
 import BasicProfileForm from '@/components/profile/BasicProfileForm'
@@ -61,6 +60,7 @@ export default function ProfilePage() {
     tdee?: number
     tdee_source?: string
     tdee_calculated_at?: string
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     tdee_calculation_snapshot?: any
     baseline_bmr?: number
     accumulated_at?: number
@@ -108,6 +108,7 @@ export default function ProfilePage() {
   const handleBirthDateChange = (birthDate: string) => {
     setPendingChanges(prev => {
       if (birthDate === activeProfile?.birth_date) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { birth_date, ...rest } = prev
         return rest
       }
@@ -119,7 +120,8 @@ export default function ProfilePage() {
     setPendingChanges(prev => {
       const newGender = gender || undefined
       if (newGender === activeProfile?.gender) {
-        const { gender: _, ...rest } = prev
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { gender, ...rest } = prev
         return rest
       }
       return { ...prev, gender: newGender }
@@ -129,6 +131,7 @@ export default function ProfilePage() {
   const handleHeightChange = (height: number | undefined) => {
     setPendingChanges(prev => {
       if (height === activeProfile?.height_cm) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { height_cm, ...rest } = prev
         return rest
       }
@@ -139,6 +142,7 @@ export default function ProfilePage() {
   const handleInitialWeightChange = (weight: number | undefined) => {
     setPendingChanges(prev => {
       if (weight === activeProfile?.initial_weight_kg) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { initial_weight_kg, ...rest } = prev
         return rest
       }
@@ -150,6 +154,7 @@ export default function ProfilePage() {
   const handleBodyFatChange = (bodyFat: number | undefined) => {
     setPendingChanges(prev => {
       if (bodyFat === activeProfile?.body_fat_percentage) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { body_fat_percentage, ...rest } = prev
         return rest
       }
@@ -161,6 +166,7 @@ export default function ProfilePage() {
     if (!activeProfile?.tdee) {
       setPendingChanges(prev => {
         if (goal === activeProfile?.calorie_goal) {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { calorie_goal, ...rest } = prev
           return rest
         }
@@ -218,6 +224,7 @@ export default function ProfilePage() {
     setPendingChanges(prev => {
       if (matchesSaved) {
         // Remove these fields from pending changes
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { calorie_goal, calories_min, calories_max, deficit_level, ...rest } = prev
         return rest
       }
@@ -235,6 +242,7 @@ export default function ProfilePage() {
     if (!activeProfile?.tdee) {
       setPendingChanges(prev => {
         if (deficit === activeProfile?.deficit_level) {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { deficit_level, ...rest } = prev
           return rest
         }
@@ -274,6 +282,7 @@ export default function ProfilePage() {
       setPendingChanges(prev => {
         if (matchesSaved) {
           // Remove these fields from pending changes
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { calorie_goal, deficit_level, calories_min, calories_max, ...rest } = prev
           return rest
         }
@@ -289,6 +298,7 @@ export default function ProfilePage() {
       // Just clear deficit level if null/empty
       setPendingChanges(prev => {
         if (deficit === activeProfile.deficit_level) {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { deficit_level, ...rest } = prev
           return rest
         }
@@ -301,6 +311,7 @@ export default function ProfilePage() {
   const handleWeightChange = (weight: number) => {
     setPendingChanges(prev => {
       if (weight === activeProfile?.weight_kg) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { weight_kg, ...rest } = prev
         return rest
       }
@@ -341,7 +352,7 @@ export default function ProfilePage() {
     } else {
       // Remove macro fields from pending changes if they match saved values
       setPendingChanges(prev => {
-         
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const {
           fat_min_percent,
           fat_max_percent,
@@ -386,6 +397,7 @@ export default function ProfilePage() {
     weight_kg?: number
     tdee_source: string
     tdee_calculated_at: string
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     tdee_calculation_snapshot: any
     calorie_goal: string
     calories_min: number
@@ -603,6 +615,11 @@ export default function ProfilePage() {
                   bodyFatPercentage={displayProfile.body_fat_percentage}
                   onTDEEChange={handleTDEEChange}
                   onManualTDEESuccess={handleManualTDEESuccess}
+                  onBeforeNavigate={async () => {
+                    if (activeProfile) {
+                      await handleSaveProfile(activeProfile.id)
+                    }
+                  }}
                 />
 
                 {/* For profiles after the first, show BasicInfoFields in Advanced Settings */}
