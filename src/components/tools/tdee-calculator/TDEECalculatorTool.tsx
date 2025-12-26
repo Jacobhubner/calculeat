@@ -36,7 +36,7 @@ export default function TDEECalculatorTool() {
   ])
 
   // React Hook Form
-  const { register, watch, setValue } = useForm({
+  const { register, watch } = useForm({
     defaultValues: {
       activity_level: '',
       intensity_level: '',
@@ -63,7 +63,9 @@ export default function TDEECalculatorTool() {
   const [localWeight, setLocalWeight] = useState('')
 
   // Body fat percentage state (local override for calculator)
-  const [localBodyFat, setLocalBodyFat] = useState(profileData?.body_fat_percentage?.toString() || '')
+  const [localBodyFat, setLocalBodyFat] = useState(
+    profileData?.body_fat_percentage?.toString() || ''
+  )
 
   // Set initial weight when profile data loads
   useMemo(() => {
@@ -98,13 +100,7 @@ export default function TDEECalculatorTool() {
     const weight = localWeight ? parseFloat(localWeight) : null
     const bodyFat = localBodyFat ? parseFloat(localBodyFat) : undefined
 
-    if (
-      !weight ||
-      !profileData?.height_cm ||
-      !age ||
-      !profileData?.gender ||
-      !bmrFormula
-    ) {
+    if (!weight || !profileData?.height_cm || !age || !profileData?.gender || !bmrFormula) {
       return null
     }
 
@@ -147,7 +143,17 @@ export default function TDEECalculatorTool() {
     }
 
     return calculatedTDEE
-  }, [bmr, palSystem, activityLevel, intensityLevel, trainingFrequency, trainingDuration, dailySteps, customPAL, profileData?.gender])
+  }, [
+    bmr,
+    palSystem,
+    activityLevel,
+    intensityLevel,
+    trainingFrequency,
+    trainingDuration,
+    dailySteps,
+    customPAL,
+    profileData?.gender,
+  ])
 
   // Save TDEE to profile
   const handleSaveToProfile = async () => {
@@ -167,6 +173,9 @@ export default function TDEECalculatorTool() {
     setIsSaving(true)
 
     try {
+      // Parse body fat percentage if provided
+      const bodyFatNum = localBodyFat ? parseFloat(localBodyFat) : undefined
+
       // Create TDEE calculation snapshot
       const weightNum = localWeight ? parseFloat(localWeight) : profileData?.weight_kg
       const snapshot: TDEECalculationSnapshot = {
@@ -174,6 +183,7 @@ export default function TDEECalculatorTool() {
         height_cm: profileData?.height_cm,
         age,
         gender: profileData?.gender,
+        body_fat_percentage: bodyFatNum,
         bmr_formula: bmrFormula,
         pal_system: palSystem as PALSystem,
         activity_level: activityLevel || 'Moderately active',
@@ -202,6 +212,8 @@ export default function TDEECalculatorTool() {
           // Set weight_kg and initial_weight_kg
           weight_kg: weightNum,
           initial_weight_kg: activeProfile.initial_weight_kg || weightNum,
+          // Save body fat percentage if provided
+          body_fat_percentage: bodyFatNum,
           // TDEE metadata
           tdee_calculated_at: new Date().toISOString(),
           tdee_source: 'tdee_calculator_tool',
@@ -497,11 +509,7 @@ export default function TDEECalculatorTool() {
             {/* Show PAL table if system is selected */}
             {palSystem && (
               <div className="mt-4">
-                <PALTableContainer
-                  system={palSystem}
-                  register={register}
-                  watch={watch}
-                />
+                <PALTableContainer system={palSystem} register={register} watch={watch} />
               </div>
             )}
           </div>
@@ -536,7 +544,9 @@ export default function TDEECalculatorTool() {
               {/* TDEE Result */}
               {tdee && (
                 <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-6 text-center">
-                  <p className="text-xs font-medium text-neutral-600 mb-1">TOTAL ENERGIFÖRBRUKNING</p>
+                  <p className="text-xs font-medium text-neutral-600 mb-1">
+                    TOTAL ENERGIFÖRBRUKNING
+                  </p>
                   <p className="text-sm text-green-600 font-semibold mb-2">TDEE</p>
                   <p className="text-5xl font-bold text-green-700 mb-1">{Math.round(tdee)}</p>
                   <p className="text-sm text-neutral-500">kcal/dag</p>

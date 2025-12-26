@@ -25,7 +25,8 @@
       "Bash(git restore:*)",
       "Bash(npx eslint:*)",
       "Bash(git reset:*)",
-      "Bash(where:*)"
+      "Bash(where:*)",
+      "Bash(ls:*)"
     ],
     "deny": [],
     "ask": []
