@@ -330,14 +330,23 @@ export function calculateRemainingPotential(
 export function calculateAllModels(input: GeneticPotentialInput): GeneticPotentialResult[] {
   const results: GeneticPotentialResult[] = []
 
-  // Berkhan (alltid tillgänglig, använd currentBodyFat om tillgänglig)
-  results.push(berkhanFormula(input.heightCm, input.gender, input.currentBodyFat))
+  // These formulas are designed for men only - return empty array for women
+  if (input.gender === 'female') {
+    return results
+  }
 
-  // McDonald (alltid tillgänglig)
-  results.push(lyleMcDonaldModel(input.heightCm, input.gender))
+  // Berkhan - Kräver kroppsfett för meningsfulla resultat
+  if (input.currentBodyFat) {
+    results.push(berkhanFormula(input.heightCm, input.gender, input.currentBodyFat))
+  }
 
-  // Casey Butt (alltid synlig, men visar varning om wrist/ankle saknas)
-  if (input.wristCm && input.ankleCm) {
+  // McDonald - Kräver kroppsfett för meningsfulla resultat
+  if (input.currentBodyFat) {
+    results.push(lyleMcDonaldModel(input.heightCm, input.gender))
+  }
+
+  // Casey Butt - Kräver handled, fotled OCH kroppsfett
+  if (input.wristCm && input.ankleCm && input.currentBodyFat) {
     results.push(
       caseyButtFormula(
         input.heightCm,
@@ -347,20 +356,13 @@ export function calculateAllModels(input: GeneticPotentialInput): GeneticPotenti
         input.currentBodyFat
       )
     )
-  } else {
-    // Lägg till placeholder med dummy-värden för att visa knappen
-    results.push(caseyButtFormula(input.heightCm, 17, 23, input.gender, input.currentBodyFat))
   }
 
-  // Alan Aragon (kräver currentWeight och currentBodyFat för träningsnivå)
+  // Alan Aragon - Kräver vikt OCH kroppsfett
   if (input.currentWeight && input.currentBodyFat) {
     const currentLeanMass = input.currentWeight * (1 - input.currentBodyFat / 100)
     // Antag 2 års träning som default om inget annat anges
     results.push(alanAragonModel(currentLeanMass, 2, input.gender))
-  } else {
-    // Placeholder med dummy-värden
-    const estimatedLeanMass = input.heightCm - 100 // Rough estimate
-    results.push(alanAragonModel(estimatedLeanMass * 0.9, 2, input.gender))
   }
 
   // Lägg till progress om nuvarande data finns

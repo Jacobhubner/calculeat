@@ -81,6 +81,43 @@ export default function GeneticPotentialTool() {
         </Badge>
       </div>
 
+      {/* Warning if user is female - these formulas are designed for men only */}
+      {profileData?.gender === 'female' && (
+        <Alert variant="default" className="border-red-300 bg-red-50">
+          <AlertCircle className="h-5 w-5 text-red-600" />
+          <AlertDescription className="text-red-900">
+            <p className="font-medium mb-2">Genetisk Muskelpotential är endast för män</p>
+            <p>
+              Dessa formler (Martin Berkhan, Casey Butt, Alan Aragon och Lyle McDonald) är alla
+              utvecklade och validerade för män. De tar inte hänsyn till kvinnors fysiologi och
+              hormonella skillnader, vilket innebär att resultaten inte skulle vara korrekta eller
+              användbara för kvinnor.
+            </p>
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {/* Warning if body fat percentage is missing */}
+      {profileData?.gender === 'male' && !profileData?.body_fat_percentage && (
+        <Alert variant="default" className="border-amber-300 bg-amber-50">
+          <AlertCircle className="h-5 w-5 text-amber-600" />
+          <AlertDescription className="text-amber-900">
+            <p className="font-medium mb-2">Kroppsfettprocent saknas</p>
+            <p>
+              För att få meningsfulla resultat från Genetisk Muskelpotential behöver du ange din
+              kroppsfettprocent i din profil. Utan detta kan vi inte visa din nuvarande fettfria
+              massa och hur nära du är din genetiska potential.
+            </p>
+            <Link
+              to="/app/profile"
+              className="inline-block mt-2 underline font-medium hover:text-amber-700"
+            >
+              Gå till Profil för att ange kroppsfettprocent
+            </Link>
+          </AlertDescription>
+        </Alert>
+      )}
+
       {/* Info Alert */}
       <Card className="border-blue-200 bg-blue-50">
         <CardContent className="pt-6">
@@ -102,48 +139,13 @@ export default function GeneticPotentialTool() {
         {/* Vänster: Inputs */}
         <div className="space-y-6">
           {/* Resultat per formel */}
-          {results && (
+          {results && results.length > 0 && (
             <Card>
               <CardHeader>
                 <CardTitle>Beräknade Resultat</CardTitle>
                 <CardDescription>Olika modeller ger olika uppskattningar</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                {/* Warning if Casey Butt is selected and wrist or ankle measurements are missing */}
-                {results[selectedFormulaIndex]?.formula === 'Casey Butt' &&
-                  (!latestMeasurement?.wrist || !latestMeasurement?.ankle) && (
-                    <Alert variant="default" className="border-amber-300 bg-amber-50">
-                      <AlertCircle className="h-4 w-4 text-amber-600" />
-                      <AlertDescription className="text-amber-900">
-                        För Casey Butt&apos;s formel behöver du ange både handled och fotled i dina
-                        kroppssammansättningsmätningar.{' '}
-                        <Link
-                          to="/app/body-composition?workflow=measurements-first"
-                          className="underline font-medium hover:text-amber-700"
-                        >
-                          Gå till Kroppssammansättning (Workflow 2)
-                        </Link>
-                      </AlertDescription>
-                    </Alert>
-                  )}
-
-                {/* Warning if Alan Aragon is selected and weight or body fat is missing */}
-                {results[selectedFormulaIndex]?.formula === 'Alan Aragon Model' &&
-                  (!profileData?.weight_kg || !profileData?.body_fat_percentage) && (
-                    <Alert variant="default" className="border-amber-300 bg-amber-50">
-                      <AlertCircle className="h-4 w-4 text-amber-600" />
-                      <AlertDescription className="text-amber-900">
-                        För Alan Aragon&apos;s modell behöver du ange vikt och kroppsfett i din
-                        profil för att få korrekta resultat.{' '}
-                        <Link
-                          to="/app/profile"
-                          className="underline font-medium hover:text-amber-700"
-                        >
-                          Gå till Profil
-                        </Link>
-                      </AlertDescription>
-                    </Alert>
-                  )}
 
                 {/* Formula selector buttons */}
                 <TooltipProvider>
@@ -197,7 +199,7 @@ export default function GeneticPotentialTool() {
         </div>
 
         {/* Höger: Nuvarande Status */}
-        {results && profileData?.weight_kg && profileData?.body_fat_percentage && (
+        {results && results.length > 0 && profileData?.weight_kg && profileData?.body_fat_percentage && (
           <div className="space-y-6">
             <Card>
               <CardHeader>

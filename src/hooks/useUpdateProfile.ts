@@ -22,18 +22,30 @@ export function useUpdateProfile() {
 
   return useMutation({
     mutationFn: async ({ profileId, data }: UpdateProfileParams) => {
+      // Convert undefined values to null for Supabase (undefined is ignored by Supabase)
+      const sanitizedData = Object.entries(data).reduce(
+        (acc, [key, value]) => {
+          acc[key] = value === undefined ? null : value
+          return acc
+        },
+        {} as Record<string, unknown>,
+      )
+
       const { data: updated, error } = await supabase
         .from('profiles')
-        .update(data)
+        .update(sanitizedData)
         .eq('id', profileId)
         .select()
-        .single()
 
       if (error) {
         throw error
       }
 
-      return updated as Profile
+      if (!updated || updated.length === 0) {
+        throw new Error('No profile was updated')
+      }
+
+      return updated[0] as Profile
     },
     onSuccess: async (updated, { profileId, silent }) => {
       // Update store

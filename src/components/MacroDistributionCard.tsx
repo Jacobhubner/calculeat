@@ -6,11 +6,16 @@
 import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
 import { RangeSlider } from './ui/RangeSlider'
-import { useProfileStore } from '@/stores/profileStore'
 
 interface MacroDistributionCardProps {
   caloriesMin?: number
   caloriesMax?: number
+  fatMinPercent?: number
+  fatMaxPercent?: number
+  carbMinPercent?: number
+  carbMaxPercent?: number
+  proteinMinPercent?: number
+  proteinMaxPercent?: number
   onMacroChange?: (macros: {
     fatMin: number
     fatMax: number
@@ -24,46 +29,36 @@ interface MacroDistributionCardProps {
 export default function MacroDistributionCard({
   caloriesMin,
   caloriesMax,
+  fatMinPercent,
+  fatMaxPercent,
+  carbMinPercent,
+  carbMaxPercent,
+  proteinMinPercent,
+  proteinMaxPercent,
   onMacroChange,
 }: MacroDistributionCardProps) {
-  const activeProfile = useProfileStore(state => state.activeProfile)
-
   // NNR 2023 defaults - Fat: 25-40%, Carb: 45-60%, Protein: 10-20%
   const [fatRange, setFatRange] = useState<[number, number]>([
-    activeProfile?.fat_min_percent ?? 25,
-    activeProfile?.fat_max_percent ?? 40,
+    fatMinPercent ?? 25,
+    fatMaxPercent ?? 40,
   ])
 
   const [carbRange, setCarbRange] = useState<[number, number]>([
-    activeProfile?.carb_min_percent ?? 45,
-    activeProfile?.carb_max_percent ?? 60,
+    carbMinPercent ?? 45,
+    carbMaxPercent ?? 60,
   ])
 
   const [proteinRange, setProteinRange] = useState<[number, number]>([
-    activeProfile?.protein_min_percent ?? 10,
-    activeProfile?.protein_max_percent ?? 20,
+    proteinMinPercent ?? 10,
+    proteinMaxPercent ?? 20,
   ])
 
-  // Sync with active profile when it changes
+  // Sync with props when they change (includes pending changes)
   useEffect(() => {
-    if (activeProfile) {
-      setFatRange([activeProfile.fat_min_percent ?? 25, activeProfile.fat_max_percent ?? 40])
-      setCarbRange([activeProfile.carb_min_percent ?? 45, activeProfile.carb_max_percent ?? 60])
-      setProteinRange([
-        activeProfile.protein_min_percent ?? 10,
-        activeProfile.protein_max_percent ?? 20,
-      ])
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    activeProfile?.id,
-    activeProfile?.fat_min_percent,
-    activeProfile?.fat_max_percent,
-    activeProfile?.carb_min_percent,
-    activeProfile?.carb_max_percent,
-    activeProfile?.protein_min_percent,
-    activeProfile?.protein_max_percent,
-  ])
+    setFatRange([fatMinPercent ?? 25, fatMaxPercent ?? 40])
+    setCarbRange([carbMinPercent ?? 45, carbMaxPercent ?? 60])
+    setProteinRange([proteinMinPercent ?? 10, proteinMaxPercent ?? 20])
+  }, [fatMinPercent, fatMaxPercent, carbMinPercent, carbMaxPercent, proteinMinPercent, proteinMaxPercent])
 
   // Notify parent component when macro ranges change
   useEffect(() => {
