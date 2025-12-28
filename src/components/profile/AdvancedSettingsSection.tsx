@@ -1,14 +1,13 @@
 /**
  * AdvancedSettingsSection - Kollapsbar sektion för avancerade inställningar
- * Innehåller BasicInfoFields och BaselineResetCard
+ * Innehåller BasicInfoFields
  */
 
 import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Settings, ChevronDown } from 'lucide-react'
 import BasicInfoFields from './BasicInfoFields'
-import BaselineResetCard from './BaselineResetCard'
-import type { Gender, Profile } from '@/lib/types'
+import type { Gender } from '@/lib/types'
 
 interface AdvancedSettingsSectionProps {
   // BasicInfoFields props
@@ -22,9 +21,6 @@ interface AdvancedSettingsSectionProps {
   onInitialWeightChange: (weight: number | undefined) => void
   locked: boolean
   showLockNotice: boolean
-
-  // BaselineResetCard props
-  profile: Profile
 }
 
 export default function AdvancedSettingsSection({
@@ -38,7 +34,6 @@ export default function AdvancedSettingsSection({
   onInitialWeightChange,
   locked,
   showLockNotice,
-  profile,
 }: AdvancedSettingsSectionProps) {
   const [isOpen, setIsOpen] = useState(false) // Stängd som default
 
@@ -76,9 +71,6 @@ export default function AdvancedSettingsSection({
             locked={locked}
             showLockNotice={showLockNotice}
           />
-
-          {/* Only show BaselineResetCard if AT is enabled (baseline_bmr exists) */}
-          {profile.baseline_bmr && <BaselineResetCard profile={profile} />}
         </CardContent>
       )}
     </Card>

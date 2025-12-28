@@ -27,7 +27,6 @@ export * from './useNewProfile'
 export * from './useReorderProfiles'
 export * from './useTDEEStatus'
 export * from './useWeightHistory'
-export * from './useATHistory'
 
 // Measurement set hooks
 export * from './useMeasurementSets'

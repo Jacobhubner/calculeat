@@ -14,12 +14,11 @@ import { toast } from 'sonner'
 // New components
 import ProfileCardSidebar from '@/components/profile/ProfileCardSidebar'
 import ProfileResultsSummary from '@/components/profile/ProfileResultsSummary'
-import MetabolicInfo from '@/components/profile/MetabolicInfo'
-import ATHistoryCard from '@/components/profile/ATHistoryCard'
 import BasicInfoFields from '@/components/profile/BasicInfoFields'
 import TDEEOptions from '@/components/profile/TDEEOptions'
 import BasicProfileForm from '@/components/profile/BasicProfileForm'
 import WeightTracker from '@/components/profile/WeightTracker'
+import MetabolicCalibration from '@/components/profile/MetabolicCalibration'
 import AdvancedSettingsSection from '@/components/profile/AdvancedSettingsSection'
 
 // Existing components (keep for now)
@@ -352,17 +351,14 @@ export default function ProfilePage() {
     } else {
       // Remove macro fields from pending changes if they match saved values
       setPendingChanges(prev => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const {
-          fat_min_percent,
-          fat_max_percent,
-          carb_min_percent,
-          carb_max_percent,
-          protein_min_percent,
-          protein_max_percent,
-          ...rest
-        } = prev
-        return rest
+        const updated = { ...prev }
+        delete updated.fat_min_percent
+        delete updated.fat_max_percent
+        delete updated.carb_min_percent
+        delete updated.carb_max_percent
+        delete updated.protein_min_percent
+        delete updated.protein_max_percent
+        return updated
       })
     }
   }
@@ -635,7 +631,6 @@ export default function ProfilePage() {
                     onInitialWeightChange={handleInitialWeightChange}
                     locked={fieldsAreLocked}
                     showLockNotice={fieldsAreLocked}
-                    profile={activeProfile}
                   />
                 )}
               </>
@@ -654,12 +649,10 @@ export default function ProfilePage() {
                 {/* Weight Tracking - Use mergedProfile to show pending changes */}
                 <WeightTracker profile={mergedProfile} onWeightChange={handleWeightChange} />
 
-                {/* AT History - Show metabolic adaptation over time */}
-                <ATHistoryCard
-                  profileId={activeProfile.id}
-                  baselineBMR={mergedProfile.baseline_bmr}
-                  currentAccumulatedAT={mergedProfile.accumulated_at}
-                />
+                {/* Metabolic Calibration - Manual TDEE calibration based on weight changes */}
+                {activeProfile && activeProfile.tdee && (
+                  <MetabolicCalibration profile={mergedProfile} />
+                )}
 
                 {/* Macro Distribution Settings */}
                 <MacroDistributionCard
@@ -692,7 +685,6 @@ export default function ProfilePage() {
                   onInitialWeightChange={handleInitialWeightChange}
                   locked={fieldsAreLocked}
                   showLockNotice={fieldsAreLocked}
-                  profile={activeProfile}
                 />
               </>
             )}
@@ -719,9 +711,6 @@ export default function ProfilePage() {
 
             {/* Results Summary - Show BMR, TDEE, Calorie Range */}
             <ProfileResultsSummary profile={mergedProfile} />
-
-            {/* Metabolic Info - Show Baseline BMR, AT, Effective BMR */}
-            <MetabolicInfo profile={mergedProfile} />
           </div>
         </div>
       </div>

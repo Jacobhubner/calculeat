@@ -3,7 +3,11 @@ import { Link } from 'react-router-dom'
 import { Calculator, Info } from 'lucide-react'
 import { Button } from './ui/button'
 import { calculateBMRWithFormula } from '@/lib/calculations/bmr'
-import { ACTIVITY_DESCRIPTIONS, getBasicInternetPAL, type ActivityLevel } from '@/lib/calculations/tdee'
+import {
+  ACTIVITY_DESCRIPTIONS,
+  getBasicInternetPAL,
+  type ActivityLevel,
+} from '@/lib/calculations/tdee'
 import type { Gender } from '@/lib/types'
 
 interface CalculatorResult {
@@ -15,9 +19,10 @@ export default function SmartCalculator() {
   const [age, setAge] = useState<string>('')
   const [weight, setWeight] = useState<string>('')
   const [height, setHeight] = useState<string>('')
-  const [gender, setGender] = useState<Gender | ''>('')
+  const [gender, setGender] = useState<Gender | 'other' | ''>('')
   const [activityLevel, setActivityLevel] = useState<ActivityLevel | ''>('')
   const [result, setResult] = useState<CalculatorResult | null>(null)
+  const [genderError, setGenderError] = useState<boolean>(false)
 
   const handleCalculate = () => {
     // Validate inputs
@@ -27,6 +32,11 @@ export default function SmartCalculator() {
 
     if (!ageNum || !weightNum || !heightNum || !activityLevel || !gender) {
       alert('Vänligen fyll i alla fält')
+      return
+    }
+
+    if (gender === 'other') {
+      alert('Vänligen välj Man eller Kvinna för att kunna beräkna')
       return
     }
 
@@ -93,7 +103,10 @@ export default function SmartCalculator() {
                 name="gender"
                 value="male"
                 checked={gender === 'male'}
-                onChange={e => setGender(e.target.value as Gender | '')}
+                onChange={e => {
+                  setGender(e.target.value as Gender | 'other' | '')
+                  setGenderError(false)
+                }}
                 className="mr-2 h-4 w-4 text-primary-600 focus:ring-primary-500"
               />
               <span className="text-neutral-700">Man</span>
@@ -104,12 +117,34 @@ export default function SmartCalculator() {
                 name="gender"
                 value="female"
                 checked={gender === 'female'}
-                onChange={e => setGender(e.target.value as Gender | '')}
+                onChange={e => {
+                  setGender(e.target.value as Gender | 'other' | '')
+                  setGenderError(false)
+                }}
                 className="mr-2 h-4 w-4 text-primary-600 focus:ring-primary-500"
               />
               <span className="text-neutral-700">Kvinna</span>
             </label>
+            <label className="flex items-center cursor-pointer">
+              <input
+                type="radio"
+                name="gender"
+                value="other"
+                checked={gender === 'other'}
+                onChange={e => {
+                  setGender(e.target.value as Gender | 'other' | '')
+                  setGenderError(true)
+                }}
+                className="mr-2 h-4 w-4 text-primary-600 focus:ring-primary-500"
+              />
+              <span className="text-neutral-700">Annan</span>
+            </label>
           </div>
+          {genderError && (
+            <p className="mt-2 text-sm text-red-600 font-medium">
+              Error! Ogiltigt val. Felet försvinner när du gör det.
+            </p>
+          )}
         </div>
 
         {/* Age */}

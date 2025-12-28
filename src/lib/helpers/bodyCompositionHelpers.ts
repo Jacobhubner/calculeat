@@ -100,7 +100,11 @@ export function getRequiredFields(
       }
 
     case 'U.S. Navy Body Fat Formula':
-      return { type: 'tape', fields: ['neck', 'waist', 'hip'] }
+      if (gender === 'male') {
+        return { type: 'tape', fields: ['neck', 'waist'] }
+      } else {
+        return { type: 'tape', fields: ['neck', 'waist', 'hip'] }
+      }
 
     case 'YMCA Measuring Tape Method':
       return { type: 'tape', fields: ['waist'] }

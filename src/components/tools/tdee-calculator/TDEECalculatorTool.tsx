@@ -218,9 +218,6 @@ export default function TDEECalculatorTool() {
           tdee_calculated_at: new Date().toISOString(),
           tdee_source: 'tdee_calculator_tool',
           tdee_calculation_snapshot: snapshot,
-          // Set baseline_bmr for AT calculations (using selected BMR formula)
-          baseline_bmr: bmr,
-          accumulated_at: 0, // Initialize AT to 0
           // Set default calorie goal and interval (maintenance ±3%)
           calorie_goal: 'Maintain weight',
           calories_min: tdee * 0.97,

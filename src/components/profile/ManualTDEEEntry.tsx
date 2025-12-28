@@ -4,53 +4,37 @@
  * Använder pending changes - sparas när disketten klickas
  */
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { ArrowRight } from 'lucide-react'
-import { calculateBMR } from '@/lib/calculations/bmr'
-import { calculateAge } from '@/lib/calculations/helpers'
-import type { Gender } from '@/lib/types'
 
 interface ManualTDEEEntryProps {
   initialWeight?: number
-  height?: number
-  birthDate?: string
-  gender?: Gender | ''
   tdee?: number
   bodyFatPercentage?: number
   onTDEEChange: (data: {
     tdee: number
     bodyFat?: number
-    baseline_bmr?: number
     weight_kg?: number
     tdee_source: string
     tdee_calculated_at: string
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     tdee_calculation_snapshot: any
     calorie_goal: string
     calories_min: number
     calories_max: number
-    accumulated_at: number
   }) => void
 }
 
 export default function ManualTDEEEntry({
   initialWeight,
-  height,
-  birthDate,
-  gender,
   tdee: initialTdee,
   bodyFatPercentage: initialBodyFat,
   onTDEEChange,
 }: ManualTDEEEntryProps) {
   const [tdee, setTdee] = useState(initialTdee?.toString() || '')
   const [bodyFat, setBodyFat] = useState(initialBodyFat?.toString() || '')
-
-  // Sync with props when they change (e.g., when pending changes are cleared)
-  useEffect(() => {
-    setTdee(initialTdee?.toString() || '')
-    setBodyFat(initialBodyFat?.toString() || '')
-  }, [initialTdee, initialBodyFat])
 
   // Handle continue button click
   const handleContinue = () => {
@@ -69,18 +53,10 @@ export default function ManualTDEEEntry({
       return
     }
 
-    // Calculate baseline_bmr using Mifflin-St Jeor (for manual TDEE entry)
-    let baseline_bmr: number | undefined
-    if (initialWeight && height && birthDate && gender && gender !== '') {
-      const age = calculateAge(birthDate)
-      baseline_bmr = calculateBMR(initialWeight, height, age, gender)
-    }
-
     // Trigger pending changes
     onTDEEChange({
       tdee: tdeeNum,
       bodyFat: bodyFatNum,
-      baseline_bmr,
       weight_kg: initialWeight,
       tdee_source: 'manual',
       tdee_calculated_at: new Date().toISOString(),
@@ -92,7 +68,6 @@ export default function ManualTDEEEntry({
       calorie_goal: 'Maintain weight',
       calories_min: tdeeNum * 0.97,
       calories_max: tdeeNum * 1.03,
-      accumulated_at: 0,
     })
   }
 
@@ -167,12 +142,7 @@ export default function ManualTDEEEntry({
 
           {/* Continue Button */}
           <div className="pt-2">
-            <Button
-              onClick={handleContinue}
-              disabled={!canContinue}
-              className="w-full"
-              size="lg"
-            >
+            <Button onClick={handleContinue} disabled={!canContinue} className="w-full" size="lg">
               Fortsätt
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
