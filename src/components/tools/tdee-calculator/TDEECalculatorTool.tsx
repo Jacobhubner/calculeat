@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { Save } from 'lucide-react'
@@ -22,6 +22,8 @@ import PALvsMETContent from '@/components/info/PALvsMETContent'
 import TDEEContent from '@/components/info/TDEEContent'
 import LBMvsFFMContent from '@/components/info/LBMvsFFMContent'
 import { translatePALSystem } from '@/lib/translations'
+import ActivityLevelWizardModal from './ActivityLevelWizard/ActivityLevelWizardModal'
+import type { WizardResult } from './ActivityLevelWizard/types'
 
 export default function TDEECalculatorTool() {
   const navigate = useNavigate()
@@ -57,6 +59,11 @@ export default function TDEECalculatorTool() {
 
   // Local state
   const [isSaving, setIsSaving] = useState(false)
+
+  // Wizard state
+  const [showWizard, setShowWizard] = useState(false)
+  const [calculatedPAL, setCalculatedPAL] = useState<number | null>(null)
+  const [wizardTDEE, setWizardTDEE] = useState<number | null>(null)
 
   // Weight state (local override for calculator)
   const [useInitialWeight, setUseInitialWeight] = useState(true) // Start with initial weight by default
@@ -95,6 +102,28 @@ export default function TDEECalculatorTool() {
     return calculateAge(profileData.birth_date)
   }, [profileData?.birth_date])
 
+  // Öppna wizard när "Beräkna din aktivitetsnivå" väljs
+  useEffect(() => {
+    if (palSystem === 'Activity Level Wizard') {
+      setShowWizard(true)
+    }
+  }, [palSystem])
+
+  // Hantera wizard-resultat
+  const handleWizardComplete = (result: WizardResult) => {
+    setCalculatedPAL(result.pal)
+    setWizardTDEE(result.tdee)
+    setShowWizard(false)
+  }
+
+  // Hantera wizard-stängning
+  const handleWizardClose = () => {
+    setShowWizard(false)
+    setPalSystem('') // Återställ till ingen vald
+    setCalculatedPAL(null)
+    setWizardTDEE(null)
+  }
+
   // Beräkna BMR
   const bmr = useMemo(() => {
     const weight = localWeight ? parseFloat(localWeight) : null
@@ -123,6 +152,11 @@ export default function TDEECalculatorTool() {
   // Beräkna TDEE
   const tdee = useMemo(() => {
     if (!bmr || !palSystem || !profileData?.gender) return null
+
+    // If wizard is used, return wizard TDEE
+    if (palSystem === 'Activity Level Wizard' && wizardTDEE) {
+      return wizardTDEE
+    }
 
     // Calculate TDEE using the selected PAL system and user's activity data
     const calculatedTDEE = calculateTDEE({
@@ -153,6 +187,7 @@ export default function TDEECalculatorTool() {
     dailySteps,
     customPAL,
     profileData?.gender,
+    wizardTDEE,
   ])
 
   // Save TDEE to profile
@@ -484,6 +519,9 @@ export default function TDEECalculatorTool() {
                 className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
               >
                 <option value="">Välj PAL-system...</option>
+                <option value="Basic internet PAL values">
+                  {translatePALSystem('Basic internet PAL values')}
+                </option>
                 <option value="FAO/WHO/UNU based PAL values">
                   {translatePALSystem('FAO/WHO/UNU based PAL values')}
                 </option>
@@ -496,17 +534,23 @@ export default function TDEECalculatorTool() {
                 <option value="Fitness Stuff PAL values">
                   {translatePALSystem('Fitness Stuff PAL values')}
                 </option>
-                <option value="Basic internet PAL values">
-                  {translatePALSystem('Basic internet PAL values')}
-                </option>
+                <option value="Activity Level Wizard">Beräkna din aktivitetsnivå</option>
                 <option value="Custom PAL">{translatePALSystem('Custom PAL')}</option>
               </select>
             </div>
 
-            {/* Show PAL table if system is selected */}
-            {palSystem && (
+            {/* Show PAL table if system is selected (but not for wizard) */}
+            {palSystem && palSystem !== 'Activity Level Wizard' && (
               <div className="mt-4">
                 <PALTableContainer system={palSystem} register={register} watch={watch} />
+              </div>
+            )}
+
+            {/* Show calculated PAL from wizard */}
+            {palSystem === 'Activity Level Wizard' && calculatedPAL && (
+              <div className="mt-4 p-4 bg-primary-50 border border-primary-200 rounded-lg">
+                <p className="text-sm font-medium text-neutral-700 mb-2">Beräknat PAL-värde:</p>
+                <p className="text-3xl font-bold text-primary-600">{calculatedPAL.toFixed(2)}</p>
               </div>
             )}
           </div>
@@ -579,11 +623,21 @@ export default function TDEECalculatorTool() {
         />
       )}
 
-      {palSystem && (
+      {palSystem && palSystem !== 'Activity Level Wizard' && (
         <PALSystemModal
           system={palSystem}
           isOpen={showPALModal}
           onClose={() => setShowPALModal(false)}
+        />
+      )}
+
+      {/* Activity Level Wizard Modal */}
+      {showWizard && bmr && localWeight && (
+        <ActivityLevelWizardModal
+          bmr={bmr}
+          weightKg={parseFloat(localWeight)}
+          onComplete={handleWizardComplete}
+          onClose={handleWizardClose}
         />
       )}
     </div>
