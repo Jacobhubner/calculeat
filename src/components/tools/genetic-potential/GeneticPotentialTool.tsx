@@ -22,8 +22,8 @@ function getFormulaDisplayName(fullName: string): string {
   const nameMap: Record<string, string> = {
     'Martin Berkhan (Leangains)': 'Berkhan Formula',
     'Casey Butt': 'Casey Butt Formula',
-    'Alan Aragon Model': 'Alan Aragon Model',
-    'Lyle McDonald Model': 'Lyle McDonald Model',
+    "Alan Aragon's modell": "Alan Aragon's modell",
+    "Lyle McDonald's modell": "Lyle McDonald's modell",
   }
   return nameMap[fullName] || fullName
 }
@@ -35,9 +35,9 @@ function getFormulaExplanation(fullName: string): string {
       'Berkhan-formeln baseras på tävlingsvikt vid extremt låg kroppsfett (5% för män, 12% för kvinnor). Använder enkelt längd - 100 tum = vikt i pounds. Populär för sin enkelhet och fokus på naturlig gräns vid lågfett.',
     'Casey Butt':
       'Casey Butts 2009 formel tar hänsyn till skelettstruktur genom handled- och ankelmått samt aktuell kroppsfett. Klassificerar överkropp och underkropp separat baserat på benstruktur. Mer precis än andra formler eftersom den beaktar individuella ramar och kroppsfett.',
-    'Alan Aragon Model':
+    "Alan Aragon's modell":
       'Aragon-modellen fokuserar på träningserfarenhet och realistiska gains över tid. Nybörjare: 1-1.5% av kroppsvikt/mån, Intermediär: 0.5-1%, Avancerad: 0.25-0.5%. Uppskattar potential baserat på nuvarande status.',
-    'Lyle McDonald Model':
+    "Lyle McDonald's modell":
       'McDonalds konservativa modell baseras på biologiska gränser och långsiktig forskning. Använder längd i cm - 100 = max vikt i kg vid 10% kroppsfett. Känd för att ge realistiska, uppnåeliga mål.',
   }
   return explanations[fullName] || 'Information om denna formel saknas.'
@@ -206,8 +206,8 @@ export default function GeneticPotentialTool() {
           results.length > 0 &&
           profileData?.weight_kg &&
           profileData?.body_fat_percentage &&
-          results[selectedFormulaIndex].formula !== 'Lyle McDonald Model' &&
-          results[selectedFormulaIndex].formula !== 'Alan Aragon Model' && (
+          results[selectedFormulaIndex].formula !== "Lyle McDonald's modell" &&
+          results[selectedFormulaIndex].formula !== "Alan Aragon's modell" && (
             <div className="space-y-6">
               <Card>
                 <CardHeader>
@@ -278,7 +278,7 @@ function LyleMcDonaldTable({ referenceTable }: { referenceTable: LyleMcDonaldRef
   return (
     <div className="mt-4">
       <h4 className="text-sm font-semibold text-neutral-900 mb-2">
-        Potentiell muskeltillväxt per träningsår
+        Årlig potentiell muskeltillväxt
       </h4>
       <p className="text-xs text-neutral-600 mb-3">
         Baserat på &ldquo;korrekt&rdquo; träning med progressiv överbelastning
@@ -299,7 +299,7 @@ function LyleMcDonaldTable({ referenceTable }: { referenceTable: LyleMcDonaldRef
                 {row.gainPerYearKg.min}–{row.gainPerYearKg.max}
               </td>
               <td className="p-2 text-sm text-right text-neutral-600">
-                {row.gainPerMonthKg.toFixed(2)}
+                {row.year === 4 ? '' : row.gainPerMonthKg.toFixed(2)}
               </td>
             </tr>
           ))}
@@ -322,9 +322,7 @@ function AlanAragonTable({
 }) {
   return (
     <div className="mt-4">
-      <h4 className="text-sm font-semibold text-neutral-900 mb-2">
-        Månatlig muskeltillväxt baserat på träningsnivå
-      </h4>
+      <h4 className="text-sm font-semibold text-neutral-900 mb-2">Potentiell muskeltillväxt</h4>
       <p className="text-xs text-neutral-600 mb-3">Procent av total kroppsvikt per månad</p>
       <table className="w-full border-collapse">
         <thead>
@@ -406,7 +404,8 @@ function ResultCard({
             )}
           </div>
         </div>
-      ) : result.formula === 'Lyle McDonald Model' || result.formula === 'Alan Aragon Model' ? (
+      ) : result.formula === "Lyle McDonald's modell" ||
+        result.formula === "Alan Aragon's modell" ? (
         // Lyle McDonald och Alan Aragon visar bara referenstabeller, inga kroppsfett-värden
         <></>
       ) : (
@@ -437,7 +436,7 @@ function ResultCard({
 
       {/* Uppskattad maximal genetisk potential för kroppsvikt */}
       {/* Dölj för Lyle McDonald och Alan Aragon - dessa modeller har bara referenstabeller */}
-      {result.formula !== 'Lyle McDonald Model' && result.formula !== 'Alan Aragon Model' && (
+      {result.formula !== "Lyle McDonald's modell" && result.formula !== "Alan Aragon's modell" && (
         <div>
           <h4 className="font-medium text-sm text-neutral-900 mb-2">
             Uppskattad maximal genetisk potential för kroppsvikt
@@ -482,12 +481,12 @@ function ResultCard({
       )}
 
       {/* Lyle McDonald referenstabell */}
-      {result.formula === 'Lyle McDonald Model' && result.referenceTable && (
+      {result.formula === "Lyle McDonald's modell" && result.referenceTable && (
         <LyleMcDonaldTable referenceTable={result.referenceTable as LyleMcDonaldReference[]} />
       )}
 
       {/* Alan Aragon referenstabell */}
-      {result.formula === 'Alan Aragon Model' && result.referenceTable && (
+      {result.formula === "Alan Aragon's modell" && result.referenceTable && (
         <AlanAragonTable
           referenceTable={result.referenceTable as AlanAragonReference[]}
           currentWeight={currentWeight}

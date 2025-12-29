@@ -297,7 +297,7 @@ export function alanAragonModel(
   ]
 
   return {
-    formula: 'Alan Aragon Model',
+    formula: "Alan Aragon's modell",
     description: 'Baserat på träningserfarenhet och månatlig tillväxtpotential',
     maxLeanMass: adjustedMaxLeanMass,
     maxWeight: adjustedMaxLeanMass / 0.9, // Antar 10% kroppsfett
@@ -330,7 +330,7 @@ export function lyleMcDonaldModel(
   ]
 
   return {
-    formula: 'Lyle McDonald Model',
+    formula: "Lyle McDonald's modell",
     description: 'Baserat på träningsår och biologiska begränsningar',
     maxLeanMass,
     maxWeight: maxWeightKg,
