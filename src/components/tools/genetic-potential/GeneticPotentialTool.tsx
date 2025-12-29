@@ -201,10 +201,13 @@ export default function GeneticPotentialTool() {
         </div>
 
         {/* Höger: Nuvarande Status */}
+        {/* Dölj för Lyle McDonald och Alan Aragon - dessa modeller har bara referenstabeller */}
         {results &&
           results.length > 0 &&
           profileData?.weight_kg &&
-          profileData?.body_fat_percentage && (
+          profileData?.body_fat_percentage &&
+          results[selectedFormulaIndex].formula !== 'Lyle McDonald Model' &&
+          results[selectedFormulaIndex].formula !== 'Alan Aragon Model' && (
             <div className="space-y-6">
               <Card>
                 <CardHeader>
@@ -403,6 +406,9 @@ function ResultCard({
             )}
           </div>
         </div>
+      ) : result.formula === 'Lyle McDonald Model' || result.formula === 'Alan Aragon Model' ? (
+        // Lyle McDonald och Alan Aragon visar bara referenstabeller, inga kroppsfett-värden
+        <></>
       ) : (
         <div className="bg-gradient-to-br from-green-50 to-blue-50 border-2 border-green-200 rounded-lg p-3">
           <div className="space-y-2">
@@ -430,47 +436,50 @@ function ResultCard({
       )}
 
       {/* Uppskattad maximal genetisk potential för kroppsvikt */}
-      <div>
-        <h4 className="font-medium text-sm text-neutral-900 mb-2">
-          Uppskattad maximal genetisk potential för kroppsvikt
-        </h4>
-        <p className="text-xs text-neutral-500 mb-3">Maxvikt vid olika kroppsfettprocent</p>
-        <div className="grid grid-cols-5 gap-2 text-center">
-          {targetWeights.slice(0, 10).map(target => {
-            const isCurrentBF = currentBodyFat && Math.abs(target.bodyFat - currentBodyFat) < 1
+      {/* Dölj för Lyle McDonald och Alan Aragon - dessa modeller har bara referenstabeller */}
+      {result.formula !== 'Lyle McDonald Model' && result.formula !== 'Alan Aragon Model' && (
+        <div>
+          <h4 className="font-medium text-sm text-neutral-900 mb-2">
+            Uppskattad maximal genetisk potential för kroppsvikt
+          </h4>
+          <p className="text-xs text-neutral-500 mb-3">Maxvikt vid olika kroppsfettprocent</p>
+          <div className="grid grid-cols-5 gap-2 text-center">
+            {targetWeights.slice(0, 10).map(target => {
+              const isCurrentBF = currentBodyFat && Math.abs(target.bodyFat - currentBodyFat) < 1
 
-            // Gradient colors based on BF% (lower BF = more green/lean)
-            const getColorClasses = (bf: number) => {
-              if (bf <= 10) return 'from-green-50 to-green-100 border-green-300'
-              if (bf <= 15) return 'from-blue-50 to-blue-100 border-blue-300'
-              if (bf <= 20) return 'from-yellow-50 to-yellow-100 border-yellow-300'
-              return 'from-orange-50 to-orange-100 border-orange-300'
-            }
+              // Gradient colors based on BF% (lower BF = more green/lean)
+              const getColorClasses = (bf: number) => {
+                if (bf <= 10) return 'from-green-50 to-green-100 border-green-300'
+                if (bf <= 15) return 'from-blue-50 to-blue-100 border-blue-300'
+                if (bf <= 20) return 'from-yellow-50 to-yellow-100 border-yellow-300'
+                return 'from-orange-50 to-orange-100 border-orange-300'
+              }
 
-            return (
-              <div
-                key={target.bodyFat}
-                className={`rounded-lg p-2 border ${
-                  isCurrentBF
-                    ? 'bg-gradient-to-br from-primary-100 to-primary-200 border-primary-500 ring-1 ring-primary-400'
-                    : `bg-gradient-to-br ${getColorClasses(target.bodyFat)}`
-                }`}
-              >
-                <p
-                  className={`text-xs font-medium ${isCurrentBF ? 'text-primary-700' : 'text-neutral-600'}`}
+              return (
+                <div
+                  key={target.bodyFat}
+                  className={`rounded-lg p-2 border ${
+                    isCurrentBF
+                      ? 'bg-gradient-to-br from-primary-100 to-primary-200 border-primary-500 ring-1 ring-primary-400'
+                      : `bg-gradient-to-br ${getColorClasses(target.bodyFat)}`
+                  }`}
                 >
-                  {target.bodyFat}%
-                </p>
-                <p
-                  className={`font-bold text-sm ${isCurrentBF ? 'text-primary-900' : 'text-neutral-900'}`}
-                >
-                  {target.weight.toFixed(1)}
-                </p>
-              </div>
-            )
-          })}
+                  <p
+                    className={`text-xs font-medium ${isCurrentBF ? 'text-primary-700' : 'text-neutral-600'}`}
+                  >
+                    {target.bodyFat}%
+                  </p>
+                  <p
+                    className={`font-bold text-sm ${isCurrentBF ? 'text-primary-900' : 'text-neutral-900'}`}
+                  >
+                    {target.weight.toFixed(1)}
+                  </p>
+                </div>
+              )
+            })}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Lyle McDonald referenstabell */}
       {result.formula === 'Lyle McDonald Model' && result.referenceTable && (
