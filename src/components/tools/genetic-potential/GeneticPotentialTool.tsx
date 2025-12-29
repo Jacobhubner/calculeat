@@ -12,6 +12,8 @@ import {
   calculateAllModels,
   getTargetWeights,
   type GeneticPotentialResult,
+  type LyleMcDonaldReference,
+  type AlanAragonReference,
 } from '@/lib/calculations/geneticPotentialCalculations'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
@@ -146,7 +148,6 @@ export default function GeneticPotentialTool() {
                 <CardDescription>Olika modeller ger olika uppskattningar</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-
                 {/* Formula selector buttons */}
                 <TooltipProvider>
                   <div className="flex gap-2 flex-wrap">
@@ -192,6 +193,7 @@ export default function GeneticPotentialTool() {
                 <ResultCard
                   result={results[selectedFormulaIndex]}
                   currentBodyFat={profileData?.body_fat_percentage}
+                  currentWeight={latestMeasurement?.weight_kg}
                 />
               </CardContent>
             </Card>
@@ -199,68 +201,163 @@ export default function GeneticPotentialTool() {
         </div>
 
         {/* Höger: Nuvarande Status */}
-        {results && results.length > 0 && profileData?.weight_kg && profileData?.body_fat_percentage && (
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Din Nuvarande Status</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="text-neutral-600">Vikt:</span>
-                    <span className="font-medium">{profileData.weight_kg.toFixed(1)} kg</span>
-                  </div>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="text-neutral-600">Kroppsfett:</span>
-                    <span className="font-medium">
-                      {profileData.body_fat_percentage.toFixed(1)}%
-                    </span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-neutral-600">Fettfri massa:</span>
-                    <span className="font-medium">
-                      {(
-                        profileData.weight_kg *
-                        (1 - profileData.body_fat_percentage / 100)
-                      ).toFixed(1)}{' '}
-                      kg
-                    </span>
-                  </div>
-                </div>
-
-                {/* Progress */}
-                {results[selectedFormulaIndex].currentProgress !== undefined && (
+        {results &&
+          results.length > 0 &&
+          profileData?.weight_kg &&
+          profileData?.body_fat_percentage && (
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Din Nuvarande Status</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
                   <div>
-                    <div className="flex justify-between text-sm mb-2">
-                      <span className="text-neutral-600">
-                        Progress ({results[selectedFormulaIndex].formula}):
-                      </span>
-                      <span className="font-bold text-primary-600">
-                        {results[selectedFormulaIndex].currentProgress.toFixed(0)}%
+                    <div className="flex justify-between text-sm mb-1">
+                      <span className="text-neutral-600">Vikt:</span>
+                      <span className="font-medium">{profileData.weight_kg.toFixed(1)} kg</span>
+                    </div>
+                    <div className="flex justify-between text-sm mb-1">
+                      <span className="text-neutral-600">Kroppsfett:</span>
+                      <span className="font-medium">
+                        {profileData.body_fat_percentage.toFixed(1)}%
                       </span>
                     </div>
-                    <Progress
-                      value={results[selectedFormulaIndex].currentProgress}
-                      className="h-2"
-                    />
+                    <div className="flex justify-between text-sm">
+                      <span className="text-neutral-600">Fettfri massa:</span>
+                      <span className="font-medium">
+                        {(
+                          profileData.weight_kg *
+                          (1 - profileData.body_fat_percentage / 100)
+                        ).toFixed(1)}{' '}
+                        kg
+                      </span>
+                    </div>
                   </div>
-                )}
 
-                {results[selectedFormulaIndex].remainingPotential !== undefined && (
-                  <div className="pt-4 border-t">
-                    <p className="text-sm text-neutral-600 mb-1">Återstående potential:</p>
-                    <p className="text-2xl font-bold text-green-600">
-                      +{results[selectedFormulaIndex].remainingPotential.toFixed(1)} kg
-                    </p>
-                    <p className="text-xs text-neutral-500 mt-1">fettfri massa att bygga</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-        )}
+                  {/* Progress */}
+                  {results[selectedFormulaIndex].currentProgress !== undefined && (
+                    <div>
+                      <div className="flex justify-between text-sm mb-2">
+                        <span className="text-neutral-600">
+                          Progress ({results[selectedFormulaIndex].formula}):
+                        </span>
+                        <span className="font-bold text-primary-600">
+                          {results[selectedFormulaIndex].currentProgress.toFixed(0)}%
+                        </span>
+                      </div>
+                      <Progress
+                        value={results[selectedFormulaIndex].currentProgress}
+                        className="h-2"
+                      />
+                    </div>
+                  )}
+
+                  {results[selectedFormulaIndex].remainingPotential !== undefined && (
+                    <div className="pt-4 border-t">
+                      <p className="text-sm text-neutral-600 mb-1">Återstående potential:</p>
+                      <p className="text-2xl font-bold text-green-600">
+                        +{results[selectedFormulaIndex].remainingPotential.toFixed(1)} kg
+                      </p>
+                      <p className="text-xs text-neutral-500 mt-1">fettfri massa att bygga</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          )}
       </div>
+    </div>
+  )
+}
+
+// Tabell för Lyle McDonald referensvärden
+function LyleMcDonaldTable({ referenceTable }: { referenceTable: LyleMcDonaldReference[] }) {
+  return (
+    <div className="mt-4">
+      <h4 className="text-sm font-semibold text-neutral-900 mb-2">
+        Potentiell muskeltillväxt per träningsår
+      </h4>
+      <p className="text-xs text-neutral-600 mb-3">
+        Baserat på &ldquo;korrekt&rdquo; träning med progressiv överbelastning
+      </p>
+      <table className="w-full border-collapse">
+        <thead>
+          <tr className="bg-neutral-100 border-b-2 border-neutral-300">
+            <th className="text-left p-2 text-sm font-semibold">Träningsår</th>
+            <th className="text-right p-2 text-sm font-semibold">Tillväxt/år (kg)</th>
+            <th className="text-right p-2 text-sm font-semibold">Tillväxt/månad (kg)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {referenceTable.map((row, index) => (
+            <tr key={index} className="border-b border-neutral-200">
+              <td className="p-2 text-sm">{row.year === 4 ? '4+' : row.year}</td>
+              <td className="p-2 text-sm text-right font-medium">
+                {row.gainPerYearKg.min}–{row.gainPerYearKg.max}
+              </td>
+              <td className="p-2 text-sm text-right text-neutral-600">
+                {row.gainPerMonthKg.toFixed(2)}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p className="text-xs text-neutral-500 mt-2 italic">
+        Notera: Dessa värden förutsätter korrekt träning, näring och återhämtning
+      </p>
+    </div>
+  )
+}
+
+// Tabell för Alan Aragon referensvärden
+function AlanAragonTable({
+  referenceTable,
+  currentWeight,
+}: {
+  referenceTable: AlanAragonReference[]
+  currentWeight?: number
+}) {
+  return (
+    <div className="mt-4">
+      <h4 className="text-sm font-semibold text-neutral-900 mb-2">
+        Månatlig muskeltillväxt baserat på träningsnivå
+      </h4>
+      <p className="text-xs text-neutral-600 mb-3">Procent av total kroppsvikt per månad</p>
+      <table className="w-full border-collapse">
+        <thead>
+          <tr className="bg-neutral-100 border-b-2 border-neutral-300">
+            <th className="text-left p-2 text-sm font-semibold">Kategori</th>
+            <th className="text-right p-2 text-sm font-semibold">% av vikt/månad</th>
+            {currentWeight && (
+              <th className="text-right p-2 text-sm font-semibold">Exempel (kg/månad)</th>
+            )}
+          </tr>
+        </thead>
+        <tbody>
+          {referenceTable.map((row, index) => (
+            <tr key={index} className="border-b border-neutral-200">
+              <td className="p-2">
+                <div>
+                  <div className="text-sm font-medium">{row.category}</div>
+                  <div className="text-xs text-neutral-500">{row.description}</div>
+                </div>
+              </td>
+              <td className="p-2 text-sm text-right font-medium">
+                {row.gainPercentMin}–{row.gainPercentMax}%
+              </td>
+              {currentWeight && (
+                <td className="p-2 text-sm text-right text-neutral-600">
+                  {((currentWeight * row.gainPercentMin) / 100).toFixed(2)}–
+                  {((currentWeight * row.gainPercentMax) / 100).toFixed(2)}
+                </td>
+              )}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p className="text-xs text-neutral-500 mt-2 italic">
+        Notera: Bedöm själv var du befinner dig baserat på din faktiska träningserfarenhet
+      </p>
     </div>
   )
 }
@@ -269,9 +366,11 @@ export default function GeneticPotentialTool() {
 function ResultCard({
   result,
   currentBodyFat,
+  currentWeight,
 }: {
   result: GeneticPotentialResult
   currentBodyFat?: number
+  currentWeight?: number
 }) {
   const targetWeights = getTargetWeights(result.maxLeanMass)
 
@@ -372,6 +471,19 @@ function ResultCard({
           })}
         </div>
       </div>
+
+      {/* Lyle McDonald referenstabell */}
+      {result.formula === 'Lyle McDonald Model' && result.referenceTable && (
+        <LyleMcDonaldTable referenceTable={result.referenceTable as LyleMcDonaldReference[]} />
+      )}
+
+      {/* Alan Aragon referenstabell */}
+      {result.formula === 'Alan Aragon Model' && result.referenceTable && (
+        <AlanAragonTable
+          referenceTable={result.referenceTable as AlanAragonReference[]}
+          currentWeight={currentWeight}
+        />
+      )}
 
       {/* Casey Butt specific: Gainer type and max measurements */}
       {result.formula === 'Casey Butt' &&

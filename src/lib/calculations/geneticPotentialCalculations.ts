@@ -23,6 +23,8 @@ export interface GeneticPotentialResult {
   upperBodyType?: 'hard' | 'easy' // Handled-baserad klassificering
   lowerBodyType?: 'hard' | 'easy' // Fotled-baserad klassificering
   gainerType?: 'hard' | 'average' | 'easy' // DEPRECATED - use upperBodyType/lowerBodyType
+  // Reference tables for Lyle McDonald and Alan Aragon models
+  referenceTable?: LyleMcDonaldReference[] | AlanAragonReference[]
 }
 
 export interface GeneticPotentialInput {
@@ -32,6 +34,25 @@ export interface GeneticPotentialInput {
   ankleCm?: number
   currentWeight?: number
   currentBodyFat?: number
+}
+
+/**
+ * Lyle McDonald referenstabell för årsbaserad muskeltillväxt
+ */
+export interface LyleMcDonaldReference {
+  year: number
+  gainPerYearKg: { min: number; max: number }
+  gainPerMonthKg: number
+}
+
+/**
+ * Alan Aragon referenstabell för månadsbaserad muskeltillväxt
+ */
+export interface AlanAragonReference {
+  category: string
+  gainPercentMin: number
+  gainPercentMax: number
+  description: string
 }
 
 /**
@@ -238,44 +259,55 @@ export function caseyButtFormula(
  */
 export function alanAragonModel(
   currentLeanMassKg: number,
-  trainingYears: number,
   gender: 'male' | 'female'
 ): GeneticPotentialResult {
   // Aragon's gains per månad baserat på träningsnivå
-  // Nybörjare: 1-1.5% av kroppsvikt per månad
-  // Intermediär: 0.5-1% av kroppsvikt per månad
-  // Avancerad: 0.25-0.5% av kroppsvikt per månad
+  // Referenstabell för olika träningsnivåer
 
-  let monthlyGainPercent: number
-  if (trainingYears < 1) {
-    monthlyGainPercent = 0.0125 // 1.25% avg
-  } else if (trainingYears < 3) {
-    monthlyGainPercent = 0.0075 // 0.75% avg
-  } else {
-    monthlyGainPercent = 0.00375 // 0.375% avg
-  }
-
-  // Estimera potential baserat på 10 års träning
-  const remainingYears = Math.max(0, 10 - trainingYears)
-  const totalGain = currentLeanMassKg * monthlyGainPercent * 12 * remainingYears
-
+  // Behåll en konservativ maxLeanMass-beräkning för jämförelse
+  // (Anta intermediär nivå som genomsnitt: 0.75% per månad)
+  const avgMonthlyPercent = 0.0075
+  const projectedYears = 10
+  const totalGain = currentLeanMassKg * avgMonthlyPercent * 12 * projectedYears
   const maxLeanMass = currentLeanMassKg + totalGain
 
   // Justera för kvinnor
   const adjustedMaxLeanMass = gender === 'female' ? maxLeanMass * 0.85 : maxLeanMass
 
+  // Referenstabell som användaren kan använda för att själv bedöma sin nivå
+  const referenceTable: AlanAragonReference[] = [
+    {
+      category: 'Nybörjare',
+      gainPercentMin: 1.0,
+      gainPercentMax: 1.5,
+      description: '< 1 år av korrekt träning',
+    },
+    {
+      category: 'Intermediär',
+      gainPercentMin: 0.5,
+      gainPercentMax: 1.0,
+      description: '1-3 år av korrekt träning',
+    },
+    {
+      category: 'Avancerad',
+      gainPercentMin: 0.25,
+      gainPercentMax: 0.5,
+      description: '3+ år av korrekt träning',
+    },
+  ]
+
   return {
     formula: 'Alan Aragon Model',
-    description: 'Baserat på träningserfarenhet och nuvarande status',
+    description: 'Baserat på träningserfarenhet och månatlig tillväxtpotential',
     maxLeanMass: adjustedMaxLeanMass,
     maxWeight: adjustedMaxLeanMass / 0.9, // Antar 10% kroppsfett
-    remainingPotential: totalGain,
+    referenceTable,
   }
 }
 
 /**
  * Lyle McDonald's Model
- * Konservativ modell baserad på biologiska gränser
+ * Konservativ modell baserad på biologiska gränser och träningsår
  */
 export function lyleMcDonaldModel(
   heightCm: number,
@@ -286,15 +318,23 @@ export function lyleMcDonaldModel(
   // För kvinnor: cirka 85% av män
 
   const maxWeightKg = gender === 'male' ? heightCm - 100 : (heightCm - 100) * 0.85
+  const maxLeanMass = maxWeightKg * 0.9 // 10% kroppsfett
 
-  const targetBodyFat = gender === 'male' ? 0.1 : 0.2
-  const maxLeanMass = maxWeightKg * (1 - targetBodyFat)
+  // Referenstabell för potentiell muskeltillväxt per träningsår
+  // Konverterat från pounds till kg (1 lb = 0.453592 kg)
+  const referenceTable: LyleMcDonaldReference[] = [
+    { year: 1, gainPerYearKg: { min: 9, max: 11.3 }, gainPerMonthKg: 0.9 },
+    { year: 2, gainPerYearKg: { min: 4.5, max: 5.4 }, gainPerMonthKg: 0.45 },
+    { year: 3, gainPerYearKg: { min: 2.3, max: 2.7 }, gainPerMonthKg: 0.23 },
+    { year: 4, gainPerYearKg: { min: 0.9, max: 1.4 }, gainPerMonthKg: 0.1 },
+  ]
 
   return {
     formula: 'Lyle McDonald Model',
-    description: 'Konservativ modell baserad på biologiska begränsningar',
+    description: 'Baserat på träningsår och biologiska begränsningar',
     maxLeanMass,
     maxWeight: maxWeightKg,
+    referenceTable,
   }
 }
 
@@ -340,10 +380,8 @@ export function calculateAllModels(input: GeneticPotentialInput): GeneticPotenti
     results.push(berkhanFormula(input.heightCm, input.gender, input.currentBodyFat))
   }
 
-  // McDonald - Kräver kroppsfett för meningsfulla resultat
-  if (input.currentBodyFat) {
-    results.push(lyleMcDonaldModel(input.heightCm, input.gender))
-  }
+  // McDonald - Visar alltid referenstabell
+  results.push(lyleMcDonaldModel(input.heightCm, input.gender))
 
   // Casey Butt - Kräver handled, fotled OCH kroppsfett
   if (input.wristCm && input.ankleCm && input.currentBodyFat) {
@@ -361,8 +399,7 @@ export function calculateAllModels(input: GeneticPotentialInput): GeneticPotenti
   // Alan Aragon - Kräver vikt OCH kroppsfett
   if (input.currentWeight && input.currentBodyFat) {
     const currentLeanMass = input.currentWeight * (1 - input.currentBodyFat / 100)
-    // Antag 2 års träning som default om inget annat anges
-    results.push(alanAragonModel(currentLeanMass, 2, input.gender))
+    results.push(alanAragonModel(currentLeanMass, input.gender))
   }
 
   // Lägg till progress om nuvarande data finns
