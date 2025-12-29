@@ -16,37 +16,41 @@ export function calculatePALFromWizard(
   bmr: number,
   weightKg: number
 ): WizardResult {
-  // 1. Träningskalorier per dag (genomsnitt över veckan)
-  const trainingCaloriesPerDay =
-    (wizardData.training.daysPerWeek *
-      wizardData.training.minutesPerSession *
-      (wizardData.training.selectedActivity?.met || 1.0) *
-      weightKg) /
-    60 /
-    7
+  // NEAT komponenter (Non-Exercise Activity Thermogenesis)
 
-  // 2. Gångkalorier från steg (~0.04 kcal per steg för genomsnittsperson)
-  const walkingCaloriesFromSteps = wizardData.walking.stepsPerDay * 0.04
+  // NEAT_steps: Gångkalorier från steg (viktjusterad med MET-värde)
+  const walkingMET = wizardData.walking.selectedWalkActivity?.met || 3.5 // 3.5 MET = normal gång
+  const neatSteps = (wizardData.walking.stepsPerDay * (0.04 / 70) * weightKg * walkingMET) / 3.8
 
-  // 3. Stående-kalorier (~50 kcal/timme mer än sittande)
-  const standingCalories = wizardData.walking.hoursStandingPerDay * 50
+  // NEAT_standing: Stående-kalorier (viktjusterad formel)
+  const neatStanding = 1.3 * weightKg * wizardData.walking.hoursStandingPerDay
 
-  // 4. Hushållskalorier
-  const householdCalories =
-    (wizardData.household.hoursPerDay *
-      60 *
-      (wizardData.household.selectedHouseholdActivity?.met || 2.0) *
-      weightKg) /
-    60
+  // NEAT_household: Hushållskalorier
+  const neatHousehold =
+    (wizardData.household.selectedHouseholdActivity?.met || 2.0) *
+    weightKg *
+    wizardData.household.hoursPerDay
 
-  // 5. Total aktivitet per dag
-  const totalActivityCalories =
-    trainingCaloriesPerDay + walkingCaloriesFromSteps + standingCalories + householdCalories
+  // NEAT_total: Total NEAT multiplicerat med SPA-faktor
+  const neatTotal = (neatSteps + neatStanding + neatHousehold) * wizardData.spaFactor
 
-  // 6. TDEE = BMR + (aktivitet * SPA-faktor)
-  const tdee = bmr + totalActivityCalories * wizardData.spaFactor
+  // EAT (Exercise Activity Thermogenesis): Träningskalorier per dag
+  const eat =
+    (wizardData.training.daysPerWeek / 7) *
+    (wizardData.training.minutesPerSession / 60) *
+    (wizardData.training.selectedActivity?.met || 1.0) *
+    weightKg
 
-  // 7. PAL = TDEE / BMR
+  // TDEE beräkning med TEF (Thermic Effect of Food = 10% av TDEE)
+  // TDEE = BMR + NEAT_total + EAT + TEF
+  // TEF = 0.1 × TDEE
+  // Substituera och lös algebraiskt:
+  // TDEE = BMR + NEAT_total + EAT + 0.1×TDEE
+  // 0.9×TDEE = BMR + NEAT_total + EAT
+  // TDEE = (BMR + NEAT_total + EAT) / 0.9
+  const tdee = (bmr + neatTotal + eat) / 0.9
+
+  // PAL = TDEE / BMR
   const pal = tdee / bmr
 
   return {
@@ -80,13 +84,13 @@ export function validateWizardData(data: ActivityLevelWizardData): string | null
   }
 
   // Steg 3 - Hushållsarbete
-  if (data.household.hoursPerDay < 0 || data.household.hoursPerDay > 12) {
-    return 'Timmar hushållsarbete måste vara mellan 0 och 12'
+  if (data.household.hoursPerDay < 0 || data.household.hoursPerDay > 16) {
+    return 'Timmar hushållsarbete måste vara mellan 0 och 16'
   }
 
   // Steg 4 - SPA
-  if (data.spaFactor < 0.8 || data.spaFactor > 1.2) {
-    return 'SPA-faktor måste vara mellan 0.8 och 1.2'
+  if (data.spaFactor < 1.05 || data.spaFactor > 1.2) {
+    return 'SPA-faktor måste vara mellan 1.05 och 1.20'
   }
 
   return null // Allt är OK
