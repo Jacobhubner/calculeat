@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { calculatePALFromWizard } from '@/lib/calculations/activityLevelWizard'
+import { MET_ACTIVITIES } from '@/lib/constants/metActivities'
 import WizardProgressBar from './WizardProgressBar'
 import WizardNavigation from './WizardNavigation'
 import WizardStep1Training from './WizardStep1Training'
@@ -26,6 +27,13 @@ export default function ActivityLevelWizardModal({
   const [currentStep, setCurrentStep] = useState(1)
   const totalSteps = 4
 
+  // Hitta standardvärdet för gångtempo
+  const defaultWalkingActivity = useMemo(() => {
+    return MET_ACTIVITIES.find(
+      activity => activity.activity === 'Gång, 4,5–5,5 km/h, plan, måttlig takt, fast underlag'
+    )
+  }, [])
+
   // Initial wizard-data
   const [wizardData, setWizardData] = useState<ActivityLevelWizardData>({
     training: {
@@ -36,7 +44,7 @@ export default function ActivityLevelWizardModal({
     walking: {
       stepsPerDay: 7000, // Genomsnitt
       hoursStandingPerDay: 0,
-      selectedWalkActivity: null,
+      selectedWalkActivity: defaultWalkingActivity || null,
     },
     household: {
       hoursPerDay: 0,

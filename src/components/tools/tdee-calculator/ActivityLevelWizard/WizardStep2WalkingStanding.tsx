@@ -24,6 +24,13 @@ export default function WizardStep2WalkingStanding({ data, onUpdate }: WizardSte
     )
   }, [])
 
+  // Hitta standardvärdet för gångtempo
+  const defaultWalkingActivity = useMemo(() => {
+    return MET_ACTIVITIES.find(
+      activity => activity.activity === 'Gång, 4,5–5,5 km/h, plan, måttlig takt, fast underlag'
+    )
+  }, [])
+
   return (
     <div className="space-y-6">
       <div>
@@ -70,6 +77,32 @@ export default function WizardStep2WalkingStanding({ data, onUpdate }: WizardSte
         </p>
       </div>
 
+      {/* Gångtempo */}
+      <div>
+        <Label htmlFor="walking-tempo">Gångtempo</Label>
+        <Select
+          id="walking-tempo"
+          value={data.walking.selectedWalkActivity?.id || defaultWalkingActivity?.id || ''}
+          onChange={e => {
+            const selectedId = e.target.value
+            const selected = MET_ACTIVITIES.find(activity => activity.id === selectedId)
+            onUpdate({
+              walking: {
+                ...data.walking,
+                selectedWalkActivity: selected || null,
+              },
+            })
+          }}
+          className="mt-1"
+        >
+          {specificWalkingActivities.map(activity => (
+            <option key={activity.id} value={activity.id}>
+              {activity.activity} ({activity.met} MET)
+            </option>
+          ))}
+        </Select>
+      </div>
+
       {/* Timmar stående */}
       <div>
         <Label htmlFor="hours-standing">Antal timmar stående per dag</Label>
@@ -100,33 +133,6 @@ export default function WizardStep2WalkingStanding({ data, onUpdate }: WizardSte
             {data.walking.hoursStandingPerDay === 1 ? 'timme' : 'timmar'}
           </span>
         </div>
-      </div>
-
-      {/* Gångtempo */}
-      <div>
-        <Label htmlFor="walking-tempo">Gångtempo (om du går mycket)</Label>
-        <Select
-          id="walking-tempo"
-          value={data.walking.selectedWalkActivity?.id || ''}
-          onChange={e => {
-            const selectedId = e.target.value
-            const selected = MET_ACTIVITIES.find(activity => activity.id === selectedId)
-            onUpdate({
-              walking: {
-                ...data.walking,
-                selectedWalkActivity: selected || null,
-              },
-            })
-          }}
-          className="mt-1"
-        >
-          <option value="">Välj gångtempo...</option>
-          {specificWalkingActivities.map(activity => (
-            <option key={activity.id} value={activity.id}>
-              {activity.activity} ({activity.met} MET)
-            </option>
-          ))}
-        </Select>
       </div>
     </div>
   )
