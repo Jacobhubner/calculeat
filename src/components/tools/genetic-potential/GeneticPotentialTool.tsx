@@ -276,38 +276,70 @@ export default function GeneticPotentialTool() {
 // Tabell för Lyle McDonald referensvärden
 function LyleMcDonaldTable({ referenceTable }: { referenceTable: LyleMcDonaldReference[] }) {
   return (
-    <div className="mt-4">
-      <h4 className="text-sm font-semibold text-neutral-900 mb-2">
-        Årlig potentiell muskeltillväxt
-      </h4>
-      <p className="text-xs text-neutral-600 mb-3">
-        Baserat på &ldquo;korrekt&rdquo; träning med progressiv överbelastning
-      </p>
-      <table className="w-full border-collapse">
-        <thead>
-          <tr className="bg-neutral-100 border-b-2 border-neutral-300">
-            <th className="text-left p-2 text-sm font-semibold">Träningsår</th>
-            <th className="text-right p-2 text-sm font-semibold">Tillväxt/år (kg)</th>
-            <th className="text-right p-2 text-sm font-semibold">Tillväxt/månad (kg)</th>
-          </tr>
-        </thead>
-        <tbody>
-          {referenceTable.map((row, index) => (
-            <tr key={index} className="border-b border-neutral-200">
-              <td className="p-2 text-sm">{row.year === 4 ? '4+' : row.year}</td>
-              <td className="p-2 text-sm text-right font-medium">
-                {row.gainPerYearKg.min}–{row.gainPerYearKg.max}
-              </td>
-              <td className="p-2 text-sm text-right text-neutral-600">
-                {row.year === 4 ? '' : row.gainPerMonthKg.toFixed(2)}
-              </td>
+    <div className="mt-4 space-y-4">
+      {/* Informationsruta med bakgrund */}
+      <div className="bg-primary-50 border border-primary-200 rounded-lg p-4">
+        <h4 className="text-sm font-semibold text-primary-900 mb-2">
+          Om Lyle McDonald&rsquo;s modell
+        </h4>
+        <p className="text-xs text-primary-800 leading-relaxed mb-2">
+          Denna modell utvecklades av Lyle McDonald, en välkänd författare och forskare inom
+          näringslära och träning. Modellen baseras på decennier av forskning och observation av
+          naturliga styrkelyftare och bodybuilders.
+        </p>
+        <p className="text-xs text-primary-800 leading-relaxed mb-2">
+          McDonald analyserade data från tusentals tränade individer och identifierade tydliga
+          mönster för hur muskeltillväxt avtar över tid. Modellen publicerades ursprungligen i hans
+          böcker och artiklar under tidigt 2000-tal.
+        </p>
+        <p className="text-xs text-primary-700 italic">
+          Källa: McDonald, L. &ldquo;What&rsquo;s My Genetic Muscular Potential?&rdquo;
+          bodyrecomposition.com
+        </p>
+      </div>
+
+      <div>
+        <h4 className="text-sm font-semibold text-neutral-900 mb-2">
+          Årlig potentiell muskeltillväxt
+        </h4>
+        <p className="text-xs text-neutral-600 mb-3">
+          Baserat på &ldquo;korrekt&rdquo; träning med progressiv överbelastning
+        </p>
+        <table className="w-full border-collapse rounded-lg overflow-hidden shadow-sm">
+          <thead>
+            <tr className="bg-primary-100 border-b-2 border-primary-300">
+              <th className="text-left p-3 text-sm font-semibold text-primary-900">Träningsår</th>
+              <th className="text-right p-3 text-sm font-semibold text-primary-900">
+                Tillväxt/år (kg)
+              </th>
+              <th className="text-right p-3 text-sm font-semibold text-primary-900">
+                Tillväxt/månad (kg)
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-      <p className="text-xs text-neutral-500 mt-2 italic">
-        Notera: Dessa värden förutsätter korrekt träning, näring och återhämtning
-      </p>
+          </thead>
+          <tbody className="bg-white">
+            {referenceTable.map((row, index) => (
+              <tr
+                key={index}
+                className="border-b border-primary-100 hover:bg-primary-50 transition-colors"
+              >
+                <td className="p-3 text-sm font-medium text-neutral-900">
+                  {row.year === 4 ? '4+' : row.year}
+                </td>
+                <td className="p-3 text-sm text-right font-semibold text-primary-700">
+                  {row.gainPerYearKg.min}–{row.gainPerYearKg.max}
+                </td>
+                <td className="p-3 text-sm text-right text-neutral-600">
+                  {row.year === 4 ? '—' : row.gainPerMonthKg.toFixed(2)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <p className="text-xs text-neutral-500 mt-3 italic">
+          Notera: Dessa värden förutsätter korrekt träning, näring och återhämtning
+        </p>
+      </div>
     </div>
   )
 }
@@ -321,44 +353,76 @@ function AlanAragonTable({
   currentWeight?: number
 }) {
   return (
-    <div className="mt-4">
-      <h4 className="text-sm font-semibold text-neutral-900 mb-2">Potentiell muskeltillväxt</h4>
-      <p className="text-xs text-neutral-600 mb-3">Procent av total kroppsvikt per månad</p>
-      <table className="w-full border-collapse">
-        <thead>
-          <tr className="bg-neutral-100 border-b-2 border-neutral-300">
-            <th className="text-left p-2 text-sm font-semibold">Kategori</th>
-            <th className="text-right p-2 text-sm font-semibold">% av vikt/månad</th>
-            {currentWeight && (
-              <th className="text-right p-2 text-sm font-semibold">Exempel (kg/månad)</th>
-            )}
-          </tr>
-        </thead>
-        <tbody>
-          {referenceTable.map((row, index) => (
-            <tr key={index} className="border-b border-neutral-200">
-              <td className="p-2">
-                <div>
-                  <div className="text-sm font-medium">{row.category}</div>
-                  <div className="text-xs text-neutral-500">{row.description}</div>
-                </div>
-              </td>
-              <td className="p-2 text-sm text-right font-medium">
-                {row.gainPercentMin}–{row.gainPercentMax}%
-              </td>
+    <div className="mt-4 space-y-4">
+      {/* Informationsruta med bakgrund */}
+      <div className="bg-primary-50 border border-primary-200 rounded-lg p-4">
+        <h4 className="text-sm font-semibold text-primary-900 mb-2">
+          Om Alan Aragon&rsquo;s modell
+        </h4>
+        <p className="text-xs text-primary-800 leading-relaxed mb-2">
+          Alan Aragon är en erkänd näringsfysiolog och tränare som utvecklade denna modell baserad
+          på hans omfattande erfarenhet av att arbeta med både nybörjare och elitidrottare. Modellen
+          presenterades först i hans månatliga forskningssammanfattning &ldquo;Alan Aragon&rsquo;s
+          Research Review&rdquo; (AARR).
+        </p>
+        <p className="text-xs text-primary-800 leading-relaxed mb-2">
+          Till skillnad från andra modeller som fokuserar på absoluta gränser, betonar
+          Aragon&rsquo;s modell tidsperspektivet och realistiska förväntningar baserat på
+          träningserfarenhet. Modellen publicerades under mitten av 2000-talet och har sedan dess
+          blivit en standard inom evidensbaserad träning.
+        </p>
+        <p className="text-xs text-primary-700 italic">
+          Källa: Aragon, A. &ldquo;Girth Control: The Science of Fat Loss and Muscle Gain&rdquo;
+          (2007), AARR
+        </p>
+      </div>
+
+      <div>
+        <h4 className="text-sm font-semibold text-neutral-900 mb-2">Potentiell muskeltillväxt</h4>
+        <p className="text-xs text-neutral-600 mb-3">Procent av total kroppsvikt per månad</p>
+        <table className="w-full border-collapse rounded-lg overflow-hidden shadow-sm">
+          <thead>
+            <tr className="bg-primary-100 border-b-2 border-primary-300">
+              <th className="text-left p-3 text-sm font-semibold text-primary-900">Kategori</th>
+              <th className="text-right p-3 text-sm font-semibold text-primary-900">
+                % av vikt/månad
+              </th>
               {currentWeight && (
-                <td className="p-2 text-sm text-right text-neutral-600">
-                  {((currentWeight * row.gainPercentMin) / 100).toFixed(2)}–
-                  {((currentWeight * row.gainPercentMax) / 100).toFixed(2)}
-                </td>
+                <th className="text-right p-3 text-sm font-semibold text-primary-900">
+                  Exempel (kg/månad)
+                </th>
               )}
             </tr>
-          ))}
-        </tbody>
-      </table>
-      <p className="text-xs text-neutral-500 mt-2 italic">
-        Notera: Bedöm själv var du befinner dig baserat på din faktiska träningserfarenhet
-      </p>
+          </thead>
+          <tbody className="bg-white">
+            {referenceTable.map((row, index) => (
+              <tr
+                key={index}
+                className="border-b border-primary-100 hover:bg-primary-50 transition-colors"
+              >
+                <td className="p-3">
+                  <div>
+                    <div className="text-sm font-semibold text-neutral-900">{row.category}</div>
+                    <div className="text-xs text-neutral-500">{row.description}</div>
+                  </div>
+                </td>
+                <td className="p-3 text-sm text-right font-semibold text-primary-700">
+                  {row.gainPercentMin}–{row.gainPercentMax}%
+                </td>
+                {currentWeight && (
+                  <td className="p-3 text-sm text-right text-neutral-600">
+                    {((currentWeight * row.gainPercentMin) / 100).toFixed(2)}–
+                    {((currentWeight * row.gainPercentMax) / 100).toFixed(2)}
+                  </td>
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <p className="text-xs text-neutral-500 mt-3 italic">
+          Notera: Bedöm själv var du befinner dig baserat på din faktiska träningserfarenhet
+        </p>
+      </div>
     </div>
   )
 }

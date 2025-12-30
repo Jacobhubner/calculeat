@@ -380,9 +380,6 @@ export function calculateAllModels(input: GeneticPotentialInput): GeneticPotenti
     results.push(berkhanFormula(input.heightCm, input.gender, input.currentBodyFat))
   }
 
-  // McDonald - Visar alltid referenstabell
-  results.push(lyleMcDonaldModel(input.heightCm, input.gender))
-
   // Casey Butt - Kräver handled, fotled OCH kroppsfett
   if (input.wristCm && input.ankleCm && input.currentBodyFat) {
     results.push(
@@ -396,7 +393,10 @@ export function calculateAllModels(input: GeneticPotentialInput): GeneticPotenti
     )
   }
 
-  // Alan Aragon - Kräver vikt OCH kroppsfett
+  // Lyle McDonald - Visar alltid referenstabell (flyttad till slutet)
+  results.push(lyleMcDonaldModel(input.heightCm, input.gender))
+
+  // Alan Aragon - Kräver vikt OCH kroppsfett (flyttad till slutet)
   if (input.currentWeight && input.currentBodyFat) {
     const currentLeanMass = input.currentWeight * (1 - input.currentBodyFat / 100)
     results.push(alanAragonModel(currentLeanMass, input.gender))
