@@ -20,8 +20,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 // Helper function to get short display names for formulas
 function getFormulaDisplayName(fullName: string): string {
   const nameMap: Record<string, string> = {
-    'Martin Berkhan (Leangains)': 'Berkhan Formula',
-    'Casey Butt': 'Casey Butt Formula',
+    'Martin Berkhan (Leangains)': "Martin Berkhan's formel",
+    'Casey Butt': "Casey Butt's formel",
     "Alan Aragon's modell": "Alan Aragon's modell",
     "Lyle McDonald's modell": "Lyle McDonald's modell",
   }
@@ -277,21 +277,21 @@ function LyleMcDonaldTable({ referenceTable }: { referenceTable: LyleMcDonaldRef
   return (
     <div className="mt-4 space-y-4">
       {/* Informationsruta med bakgrund */}
-      <div className="bg-primary-50 border border-primary-200 rounded-lg p-4">
-        <h4 className="text-sm font-semibold text-primary-900 mb-2">
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <h4 className="text-sm font-semibold text-blue-900 mb-2">
           Om Lyle McDonald&rsquo;s modell
         </h4>
-        <p className="text-xs text-primary-800 leading-relaxed mb-2">
+        <p className="text-xs text-blue-800 leading-relaxed mb-2">
           Denna modell utvecklades av Lyle McDonald, en välkänd författare och forskare inom
           näringslära och träning. Modellen baseras på decennier av forskning och observation av
           naturliga styrkelyftare och bodybuilders.
         </p>
-        <p className="text-xs text-primary-800 leading-relaxed mb-2">
+        <p className="text-xs text-blue-800 leading-relaxed mb-2">
           McDonald analyserade data från tusentals tränade individer och identifierade tydliga
           mönster för hur muskeltillväxt avtar över tid. Modellen publicerades ursprungligen i hans
           böcker och artiklar under tidigt 2000-tal.
         </p>
-        <p className="text-xs text-primary-700 italic">
+        <p className="text-xs text-blue-700 italic">
           Källa: McDonald, L. &ldquo;What&rsquo;s My Genetic Muscular Potential?&rdquo;
           bodyrecomposition.com
         </p>
@@ -354,23 +354,20 @@ function AlanAragonTable({
   return (
     <div className="mt-4 space-y-4">
       {/* Informationsruta med bakgrund */}
-      <div className="bg-primary-50 border border-primary-200 rounded-lg p-4">
-        <h4 className="text-sm font-semibold text-primary-900 mb-2">
-          Om Alan Aragon&rsquo;s modell
-        </h4>
-        <p className="text-xs text-primary-800 leading-relaxed mb-2">
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <h4 className="text-sm font-semibold text-blue-900 mb-2">Om Alan Aragon&rsquo;s modell</h4>
+        <p className="text-xs text-blue-800 leading-relaxed mb-2">
           Alan Aragon är en erkänd näringsfysiolog och tränare som utvecklade denna modell baserad
           på hans omfattande erfarenhet av att arbeta med både nybörjare och elitidrottare. Modellen
           presenterades först i hans månatliga forskningssammanfattning &ldquo;Alan Aragon&rsquo;s
           Research Review&rdquo; (AARR).
         </p>
-        <p className="text-xs text-primary-800 leading-relaxed mb-2">
+        <p className="text-xs text-blue-800 leading-relaxed mb-2">
           Till skillnad från andra modeller som fokuserar på absoluta gränser, betonar
           Aragon&rsquo;s modell tidsperspektivet och realistiska förväntningar baserat på
-          träningserfarenhet. Modellen publicerades under mitten av 2000-talet och har sedan dess
-          blivit en standard inom evidensbaserad träning.
+          träningserfarenhet. Modellen publicerades under mitten av 2000-talet.
         </p>
-        <p className="text-xs text-primary-700 italic">
+        <p className="text-xs text-blue-700 italic">
           Källa: Aragon, A. &ldquo;Girth Control: The Science of Fat Loss and Muscle Gain&rdquo;
           (2007), AARR
         </p>
