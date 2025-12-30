@@ -47,7 +47,7 @@ export default function GeneticPotentialTool() {
       gender: profileData.gender,
       wristCm: latestMeasurement?.wrist,
       ankleCm: latestMeasurement?.ankle,
-      currentWeight: profileData.weight_kg,
+      currentWeight: latestMeasurement?.weight_kg || profileData.weight_kg,
       currentBodyFat: profileData.body_fat_percentage,
     })
   }, [profileData, latestMeasurement])
@@ -161,7 +161,7 @@ export default function GeneticPotentialTool() {
         {/* Dölj för Lyle McDonald och Alan Aragon - dessa modeller har bara referenstabeller */}
         {results &&
           results.length > 0 &&
-          profileData?.weight_kg &&
+          (latestMeasurement?.weight_kg || profileData?.weight_kg) &&
           profileData?.body_fat_percentage &&
           results[selectedFormulaIndex].formula !== "Lyle McDonald's modell" &&
           results[selectedFormulaIndex].formula !== "Alan Aragon's modell" && (
@@ -174,7 +174,9 @@ export default function GeneticPotentialTool() {
                   <div>
                     <div className="flex justify-between text-sm mb-1">
                       <span className="text-neutral-600">Vikt:</span>
-                      <span className="font-medium">{profileData.weight_kg.toFixed(1)} kg</span>
+                      <span className="font-medium">
+                        {(latestMeasurement?.weight_kg || profileData.weight_kg)?.toFixed(1)} kg
+                      </span>
                     </div>
                     <div className="flex justify-between text-sm mb-1">
                       <span className="text-neutral-600">Kroppsfett:</span>
@@ -186,7 +188,7 @@ export default function GeneticPotentialTool() {
                       <span className="text-neutral-600">Fettfri massa:</span>
                       <span className="font-medium">
                         {(
-                          profileData.weight_kg *
+                          (latestMeasurement?.weight_kg || profileData.weight_kg) *
                           (1 - profileData.body_fat_percentage / 100)
                         ).toFixed(1)}{' '}
                         kg
