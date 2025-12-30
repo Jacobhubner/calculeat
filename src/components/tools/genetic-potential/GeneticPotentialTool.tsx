@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { Info, AlertCircle } from 'lucide-react'
+import { AlertCircle } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -25,17 +25,6 @@ function getFormulaDisplayName(fullName: string): string {
     "Lyle McDonald's modell": "Lyle McDonald's modell",
   }
   return nameMap[fullName] || fullName
-}
-
-// Helper function to get formula explanations
-function getFormulaExplanation(fullName: string): string {
-  const explanations: Record<string, string> = {
-    'Martin Berkhan (Leangains)':
-      'Berkhan-formeln baseras på tävlingsvikt vid extremt låg kroppsfett (5% för män, 12% för kvinnor). Använder enkelt längd - 100 tum = vikt i pounds. Populär för sin enkelhet och fokus på naturlig gräns vid lågfett.',
-    'Casey Butt':
-      'Casey Butts 2009 formel tar hänsyn till skelettstruktur genom handled- och ankelmått samt aktuell kroppsfett. Klassificerar överkropp och underkropp separat baserat på benstruktur. Mer precis än andra formler eftersom den beaktar individuella ramar och kroppsfett.',
-  }
-  return explanations[fullName] || ''
 }
 
 export default function GeneticPotentialTool() {
@@ -119,7 +108,7 @@ export default function GeneticPotentialTool() {
       <Card className="border-blue-200 bg-blue-50">
         <CardContent className="pt-6">
           <div className="flex items-start gap-3">
-            <Info className="h-5 w-5 text-blue-600 mt-0.5 shrink-0" />
+            <AlertCircle className="h-5 w-5 text-blue-600 mt-0.5 shrink-0" />
             <div className="text-sm text-blue-900">
               <p className="font-medium mb-1">Om Genetisk Muskelpotential</p>
               <p className="text-blue-700">
@@ -156,26 +145,6 @@ export default function GeneticPotentialTool() {
                     </Button>
                   ))}
                 </div>
-
-                {/* Formula explanation card - dölj för Lyle McDonald och Alan Aragon */}
-                {results[selectedFormulaIndex].formula !== "Lyle McDonald's modell" &&
-                  results[selectedFormulaIndex].formula !== "Alan Aragon's modell" && (
-                    <Card className="border-blue-200 bg-blue-50">
-                      <CardContent className="pt-4">
-                        <div className="flex items-start gap-3">
-                          <Info className="h-4 w-4 text-blue-600 mt-0.5 shrink-0" />
-                          <div>
-                            <p className="text-xs font-medium text-blue-900 mb-1">
-                              {getFormulaDisplayName(results[selectedFormulaIndex].formula)}
-                            </p>
-                            <p className="text-xs text-blue-700 leading-relaxed">
-                              {getFormulaExplanation(results[selectedFormulaIndex].formula)}
-                            </p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  )}
 
                 {/* Selected formula result */}
                 <ResultCard
@@ -427,6 +396,53 @@ function ResultCard({
 
   return (
     <div className="space-y-4">
+      {/* Martin Berkhan informationsruta */}
+      {result.formula === 'Martin Berkhan (Leangains)' && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <h4 className="text-sm font-semibold text-blue-900 mb-2">
+            Om Martin Berkhan&rsquo;s formel
+          </h4>
+          <p className="text-xs text-blue-800 leading-relaxed mb-2">
+            Martin Berkhan är grundaren av Leangains-metoden och en pionjär inom intermittent
+            fasting. Hans formel för genetisk muskelpotential utvecklades baserat på observation av
+            elitbodybuilders och naturliga tävlingsatleter under 2000-talet.
+          </p>
+          <p className="text-xs text-blue-800 leading-relaxed mb-2">
+            Formeln bygger på principen att tävlingsvikt vid extremt låg kroppsfett (5% för män, 12%
+            för kvinnor) kan uppskattas genom den enkla beräkningen: längd i centimeter minus 100 =
+            maximal vikt i kilogram. Berkhan betonar att detta representerar en övre gräns för
+            naturliga atleter vid peak condition.
+          </p>
+          <p className="text-xs text-blue-700 italic">
+            Källa: Berkhan, M. &ldquo;Maximum Muscular Potential of Drug-Free Athletes&rdquo;
+            leangains.com (2008-2010)
+          </p>
+        </div>
+      )}
+
+      {/* Casey Butt informationsruta */}
+      {result.formula === 'Casey Butt' && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <h4 className="text-sm font-semibold text-blue-900 mb-2">Om Casey Butt&rsquo;s formel</h4>
+          <p className="text-xs text-blue-800 leading-relaxed mb-2">
+            Casey Butt är en forskare och styrkelyftare som publicerade sin omfattande studie om
+            genetisk muskelpotential år 2009. Hans forskning baserades på analys av tusentals
+            mätningar från naturliga bodybuilders och styrkelyftare över flera decennier.
+          </p>
+          <p className="text-xs text-blue-800 leading-relaxed mb-2">
+            Till skillnad från enklare formler tar Butt&rsquo;s modell hänsyn till individuell
+            skelettstruktur genom handled- och ankelmått. Formeln klassificerar också separat
+            överkropp och underkropp baserat på benstruktur, vilket ger en mer personaliserad
+            uppskattning. Studien inkluderade även beräkningar för maximala kroppsmått vid genetisk
+            potential.
+          </p>
+          <p className="text-xs text-blue-700 italic">
+            Källa: Butt, C. &ldquo;Your Muscular Potential: How to Predict Your Maximum Muscular
+            Bodyweight and Measurements&rdquo; weightrainer.net (2009)
+          </p>
+        </div>
+      )}
+
       {result.formula === 'Casey Butt' ? (
         <div className="bg-gradient-to-br from-green-50 to-blue-50 border-2 border-green-200 rounded-lg p-3">
           <h4 className="text-sm font-semibold text-neutral-800 mb-3">
