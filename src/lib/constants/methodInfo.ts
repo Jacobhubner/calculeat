@@ -18,20 +18,20 @@ export interface MethodInfo {
 export const siriInfo: MethodInfo = {
   title: 'Siri Ekvationen (1961)',
   description:
-    'Den mest använda ekvationen för att konvertera kroppsdensitet till kroppsfett%. Utvecklad av William Siri 1961 baserat på studier av vita män.',
+    'Utvecklad av William E. Siri (1961) inom kroppssammansättningsforskning. Baserad på fysiologiska antaganden framtagna från begränsade vuxna populationer, huvudsakligen män. Denna metod är den mest citerade och använda formeln för att omvandla kroppsdensitet → kroppsfett %.',
   formula: 'Kroppsfett% = (495 / kroppsdensitet) - 450',
   notes:
-    'Ger generellt högre värden än Brozek. Anses vara mer exakt för den allmänna befolkningen. Notera att ekvationen är baserad på en specifik population och kan ha begränsningar för vissa grupper.',
+    'Fördelar:\n- Standardformeln i mycket forskning → lätt att jämföra studier\n- Något bättre vid högre kroppsfettprocent\n\nNackdelar:\n- Tenderar att överskatta fett% hos idrottare och personer med hög benmineralisering\n- Mer känslig för små densitetsfel\n\nDenna metod är bättre för:\n- Personer med högre fett%\n- Forskningsjämförelser',
   genderSpecific: 'both',
 }
 
 export const brozekInfo: MethodInfo = {
   title: 'Brozek Ekvationen (1963)',
   description:
-    'Alternativ formel för att konvertera kroppsdensitet till kroppsfett%. Utvecklad av Josef Brozek 1963 baserat på en bredare population.',
+    'Utvecklad av Brozek m.fl. (1963). Ger ofta något lägre värden än Siri. Typiskt ~1–2 %-enheter lägre, beroende på densitet.',
   formula: 'Kroppsfett% = (457 / kroppsdensitet) - 414.2',
   notes:
-    'Ger ofta något lägre värden än Siri. Baserad på en mer varierad population. Vissa forskare föredrar Brozek för äldre individer.',
+    'Fördelar:\n- Ger ofta lägre och mer konservativa fettvärden än Siri\n- Mindre överskattning vid låg fettprocent\n- Kan ge bättre resultat hos normalviktiga vuxna män\n\nNackdelar:\n- Kan underskatta fett% hos personer med hög fettmassa\n- Mindre använd i modern litteratur → sämre jämförbarhet',
   genderSpecific: 'both',
 }
 
