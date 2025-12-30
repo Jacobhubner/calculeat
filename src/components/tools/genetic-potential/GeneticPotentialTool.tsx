@@ -15,7 +15,6 @@ import {
   type LyleMcDonaldReference,
   type AlanAragonReference,
 } from '@/lib/calculations/geneticPotentialCalculations'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 // Helper function to get short display names for formulas
 function getFormulaDisplayName(fullName: string): string {
@@ -145,28 +144,18 @@ export default function GeneticPotentialTool() {
               </CardHeader>
               <CardContent className="space-y-4">
                 {/* Formula selector buttons */}
-                <TooltipProvider>
-                  <div className="flex gap-2 flex-wrap">
-                    {results.map((result, index) => (
-                      <Tooltip key={index}>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant={selectedFormulaIndex === index ? 'default' : 'outline'}
-                            size="sm"
-                            onClick={() => setSelectedFormulaIndex(index)}
-                            className="gap-1.5"
-                          >
-                            {getFormulaDisplayName(result.formula)}
-                            <Info className="h-3 w-3 opacity-70" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent className="max-w-xs">
-                          <p className="text-xs">{getFormulaExplanation(result.formula)}</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    ))}
-                  </div>
-                </TooltipProvider>
+                <div className="flex gap-2 flex-wrap">
+                  {results.map((result, index) => (
+                    <Button
+                      key={index}
+                      variant={selectedFormulaIndex === index ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setSelectedFormulaIndex(index)}
+                    >
+                      {getFormulaDisplayName(result.formula)}
+                    </Button>
+                  ))}
+                </div>
 
                 {/* Formula explanation card - dölj för Lyle McDonald och Alan Aragon */}
                 {results[selectedFormulaIndex].formula !== "Lyle McDonald's modell" &&
@@ -240,9 +229,7 @@ export default function GeneticPotentialTool() {
                   {results[selectedFormulaIndex].currentProgress !== undefined && (
                     <div>
                       <div className="flex justify-between text-sm mb-2">
-                        <span className="text-neutral-600">
-                          Progress ({results[selectedFormulaIndex].formula}):
-                        </span>
+                        <span className="text-neutral-600">Progress:</span>
                         <span className="font-bold text-primary-600">
                           {results[selectedFormulaIndex].currentProgress.toFixed(0)}%
                         </span>
