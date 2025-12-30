@@ -17,6 +17,7 @@ interface BodyCompositionResultsProps {
   fatMass: number
   selectedMethod: BodyCompositionMethod
   conversionMethod?: 'siri' | 'brozek'
+  isEstimatedBMR?: boolean
   onSave: () => void
   isSaving: boolean
 }
@@ -29,6 +30,7 @@ export default function BodyCompositionResults({
   fatMass,
   selectedMethod,
   conversionMethod,
+  isEstimatedBMR,
   onSave,
   isSaving,
 }: BodyCompositionResultsProps) {
@@ -73,6 +75,11 @@ export default function BodyCompositionResults({
             {bodyFatPercentage.toFixed(1)}%
           </div>
           <p className="text-sm text-neutral-600 mt-2">Metod: {selectedMethod}</p>
+          {isEstimatedBMR && selectedMethod === 'Reversed Cunningham equation' && (
+            <p className="text-xs text-amber-700 mt-1 bg-amber-50 p-2 rounded border border-amber-200">
+              ℹ️ Baserat på uppskattat RMR från Mifflin-St Jeor-ekvationen
+            </p>
+          )}
         </CardContent>
       </Card>
 

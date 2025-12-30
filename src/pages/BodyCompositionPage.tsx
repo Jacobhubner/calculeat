@@ -132,6 +132,7 @@ export default function BodyCompositionPage() {
   const [bodyDensity, setBodyDensity] = useState<number | null>(null)
   const [bodyFatPercentage, setBodyFatPercentage] = useState<number | null>(null)
   const [category, setCategory] = useState<ReturnType<typeof getBodyFatCategory> | null>(null)
+  const [isEstimatedBMR, setIsEstimatedBMR] = useState<boolean>(false)
 
   // UI state
   const [isSaving, setIsSaving] = useState(false)
@@ -173,6 +174,10 @@ export default function BodyCompositionPage() {
       tapeMeasurements,
       bmr: profile.bmr,
     }
+
+    // Check if BMR is estimated for Reversed Cunningham
+    const bmrIsEstimated = selectedMethod === 'Reversed Cunningham equation' && !profile.bmr
+    setIsEstimatedBMR(bmrIsEstimated)
 
     // Calculate body fat using selected method and variation
     const result = calculateBodyFat(selectedMethod, params, selectedVariation)
@@ -940,6 +945,7 @@ export default function BodyCompositionPage() {
                         fatMass={fatMass}
                         selectedMethod={selectedMethod as BodyCompositionMethod}
                         conversionMethod={conversionMethod}
+                        isEstimatedBMR={isEstimatedBMR}
                         onSave={handleSaveToProfile}
                         isSaving={isSaving}
                       />

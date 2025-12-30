@@ -658,13 +658,26 @@ export function heritageBMI(params: BodyCompositionParams): number | null {
  * BMR = 370 + (21.6 × lean_mass)
  * Rearranged: lean_mass = (BMR - 370) / 21.6
  * Body fat % = (1 - lean_mass / weight) × 100
+ *
+ * If BMR is not provided, it will be estimated using Mifflin-St Jeor equation
  */
 export function reversedCunningham(params: BodyCompositionParams): number | null {
-  const { weight, bmr } = params
+  const { weight, bmr, age, gender, height } = params
 
-  if (!bmr) return null
+  // If BMR is not provided, estimate it using Mifflin-St Jeor
+  let bmrValue = bmr
+  if (!bmrValue) {
+    // Need age, gender, and height for Mifflin-St Jeor
+    if (!age || !gender || !height) {
+      return null
+    }
 
-  const leanMass = (bmr - 370) / 21.6
+    // Calculate BMR using Mifflin-St Jeor equation
+    const base = 9.99 * weight + 6.25 * height - 4.92 * age
+    bmrValue = gender === 'male' ? base + 5 : base - 161
+  }
+
+  const leanMass = (bmrValue - 370) / 21.6
   const bodyFatPercentage = (1 - leanMass / weight) * 100
 
   // Sanity check
@@ -834,7 +847,7 @@ export function getBodyFatCategory(params: {
  */
 export function getAvailableMethods(params: BodyCompositionParams): BodyCompositionMethod[] {
   const methods: BodyCompositionMethod[] = []
-  const { gender, caliperMeasurements, tapeMeasurements, bmi, bmr } = params
+  const { gender, caliperMeasurements, tapeMeasurements, bmi, bmr, age, height, weight } = params
 
   // Jackson/Pollock 3 (Male)
   if (
@@ -956,8 +969,8 @@ export function getAvailableMethods(params: BodyCompositionParams): BodyComposit
     methods.push('Heritage BMI to Body Fat Method')
   }
 
-  // Reversed Cunningham
-  if (bmr) {
+  // Reversed Cunningham - available if BMR is provided OR if we can calculate it
+  if (bmr || (age && gender && height && weight)) {
     methods.push('Reversed Cunningham equation')
   }
 

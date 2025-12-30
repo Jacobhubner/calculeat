@@ -32,7 +32,7 @@ export function calculateBMI(weight: number, height: number): number {
   const heightInMeters = height / 100
   const bmi = weight / (heightInMeters * heightInMeters)
 
-  return Math.round(bmi * 10) / 10 // En decimal
+  return bmi // Return exact value for accurate calculations
 }
 
 /**

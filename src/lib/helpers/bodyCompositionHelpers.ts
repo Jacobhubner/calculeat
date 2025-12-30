@@ -120,7 +120,7 @@ export function getRequiredFields(
       return { type: 'profile', fields: ['bmi', 'age', 'gender'] }
 
     case 'Reversed Cunningham equation':
-      return { type: 'profile', fields: ['bmr', 'weight'] }
+      return { type: 'profile', fields: ['weight', 'age', 'gender', 'height'] }
 
     default:
       return { type: 'profile', fields: [] }
@@ -199,7 +199,7 @@ export function getCalculableMethods(params: {
   caliperMeasurements?: Record<string, number>
   tapeMeasurements?: Record<string, number>
 }): Array<{ method: BodyCompositionMethod; variation?: MethodVariation }> {
-  const { gender, caliperMeasurements, tapeMeasurements, bmi, bmr } = params
+  const { gender, age, weight, height, caliperMeasurements, tapeMeasurements, bmi, bmr } = params
   const results: Array<{ method: BodyCompositionMethod; variation?: MethodVariation }> = []
 
   const hasFields = (fields: string[], measurements?: Record<string, number>) => {
@@ -347,8 +347,8 @@ export function getCalculableMethods(params: {
     results.push({ method: 'Heritage BMI to Body Fat Method' })
   }
 
-  // Reversed Cunningham
-  if (bmr) {
+  // Reversed Cunningham - available if BMR is provided OR if we can calculate it
+  if (bmr || (age && gender && height && weight)) {
     results.push({ method: 'Reversed Cunningham equation' })
   }
 
@@ -381,9 +381,9 @@ export const caliperLabels: Record<string, string> = {
   abdominal: 'Buk',
   thigh: 'Lår',
   tricep: 'Triceps',
-  subscapular: 'Subscapular',
-  suprailiac: 'Suprailiac',
-  midaxillary: 'Midaxillary',
+  subscapular: 'Subskapulärt',
+  suprailiac: 'Suprailiakalt',
+  midaxillary: 'Midaxillärt',
   bicep: 'Biceps',
   lowerBack: 'Ländrygg',
   calf: 'Vad',
@@ -535,7 +535,7 @@ export function getAllMethodsWithAvailability(params: {
   isAvailable: boolean
   missingFields: string[]
 }> {
-  const { gender, caliperMeasurements, tapeMeasurements, bmi, bmr } = params
+  const { gender, age, weight, height, caliperMeasurements, tapeMeasurements, bmi, bmr } = params
   const results: Array<{
     method: BodyCompositionMethod
     variation?: MethodVariation
@@ -835,11 +835,18 @@ export function getAllMethodsWithAvailability(params: {
     missingFields: bmi ? [] : ['BMI'],
   })
 
-  // Reversed Cunningham
+  // Reversed Cunningham - available if BMR is provided OR if we can calculate it
+  const canCalculateReversedCunningham = bmr || (age && gender && height && weight)
+  const reversedCunninghamMissing = bmr
+    ? []
+    : !age || !gender || !height || !weight
+      ? ['Ålder', 'Kön', 'Längd', 'Vikt (för att uppskatta BMR)']
+      : []
+
   results.push({
     method: 'Reversed Cunningham equation',
-    isAvailable: !!bmr,
-    missingFields: bmr ? [] : ['BMR'],
+    isAvailable: canCalculateReversedCunningham,
+    missingFields: reversedCunninghamMissing,
   })
 
   return results
