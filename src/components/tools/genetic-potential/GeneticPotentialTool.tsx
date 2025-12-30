@@ -35,12 +35,8 @@ function getFormulaExplanation(fullName: string): string {
       'Berkhan-formeln baseras på tävlingsvikt vid extremt låg kroppsfett (5% för män, 12% för kvinnor). Använder enkelt längd - 100 tum = vikt i pounds. Populär för sin enkelhet och fokus på naturlig gräns vid lågfett.',
     'Casey Butt':
       'Casey Butts 2009 formel tar hänsyn till skelettstruktur genom handled- och ankelmått samt aktuell kroppsfett. Klassificerar överkropp och underkropp separat baserat på benstruktur. Mer precis än andra formler eftersom den beaktar individuella ramar och kroppsfett.',
-    "Alan Aragon's modell":
-      'Aragon-modellen fokuserar på träningserfarenhet och realistiska gains över tid. Nybörjare: 1-1.5% av kroppsvikt/mån, Intermediär: 0.5-1%, Avancerad: 0.25-0.5%. Uppskattar potential baserat på nuvarande status.',
-    "Lyle McDonald's modell":
-      'McDonalds konservativa modell baseras på biologiska gränser och långsiktig forskning. Använder längd i cm - 100 = max vikt i kg vid 10% kroppsfett. Känd för att ge realistiska, uppnåeliga mål.',
   }
-  return explanations[fullName] || 'Information om denna formel saknas.'
+  return explanations[fullName] || ''
 }
 
 export default function GeneticPotentialTool() {
@@ -172,22 +168,25 @@ export default function GeneticPotentialTool() {
                   </div>
                 </TooltipProvider>
 
-                {/* Formula explanation card */}
-                <Card className="border-blue-200 bg-blue-50">
-                  <CardContent className="pt-4">
-                    <div className="flex items-start gap-3">
-                      <Info className="h-4 w-4 text-blue-600 mt-0.5 shrink-0" />
-                      <div>
-                        <p className="text-xs font-medium text-blue-900 mb-1">
-                          {getFormulaDisplayName(results[selectedFormulaIndex].formula)}
-                        </p>
-                        <p className="text-xs text-blue-700 leading-relaxed">
-                          {getFormulaExplanation(results[selectedFormulaIndex].formula)}
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                {/* Formula explanation card - dölj för Lyle McDonald och Alan Aragon */}
+                {results[selectedFormulaIndex].formula !== "Lyle McDonald's modell" &&
+                  results[selectedFormulaIndex].formula !== "Alan Aragon's modell" && (
+                    <Card className="border-blue-200 bg-blue-50">
+                      <CardContent className="pt-4">
+                        <div className="flex items-start gap-3">
+                          <Info className="h-4 w-4 text-blue-600 mt-0.5 shrink-0" />
+                          <div>
+                            <p className="text-xs font-medium text-blue-900 mb-1">
+                              {getFormulaDisplayName(results[selectedFormulaIndex].formula)}
+                            </p>
+                            <p className="text-xs text-blue-700 leading-relaxed">
+                              {getFormulaExplanation(results[selectedFormulaIndex].formula)}
+                            </p>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
 
                 {/* Selected formula result */}
                 <ResultCard
