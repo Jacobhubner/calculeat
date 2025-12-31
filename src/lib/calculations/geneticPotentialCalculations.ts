@@ -146,7 +146,7 @@ export function berkhanFormula(
   const maxLeanMass = maxWeight * (1 - bf / 100)
 
   return {
-    formula: 'Martin Berkhan (Leangains)',
+    formula: 'Martin Berkhans modell',
     description: 'Baserat på tävlingsvikt vid extremt låg kroppsfett',
     maxLeanMass,
     maxWeight,
@@ -242,7 +242,7 @@ export function caseyButtFormula(
   }
 
   return {
-    formula: 'Casey Butt',
+    formula: 'Casey Butts modell',
     description: 'Tar hänsyn till skelettstruktur (handled/ankel) och kroppsfett',
     maxLeanMass: adjustedMlbm, // MLBM
     maxWeight: adjustedMbw, // MBW
@@ -297,7 +297,7 @@ export function alanAragonModel(
   ]
 
   return {
-    formula: "Alan Aragon's modell",
+    formula: 'Alan Aragons ramverk',
     description: 'Baserat på träningserfarenhet och månatlig tillväxtpotential',
     maxLeanMass: adjustedMaxLeanMass,
     maxWeight: adjustedMaxLeanMass / 0.9, // Antar 10% kroppsfett
@@ -330,7 +330,7 @@ export function lyleMcDonaldModel(
   ]
 
   return {
-    formula: "Lyle McDonald's modell",
+    formula: 'Lyle McDonalds ramverk',
     description: 'Baserat på träningsår och biologiska begränsningar',
     maxLeanMass,
     maxWeight: maxWeightKg,

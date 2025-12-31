@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { AlertCircle } from 'lucide-react'
+import { AlertCircle, ChevronDown, ChevronUp } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -19,10 +19,10 @@ import {
 // Helper function to get short display names for formulas
 function getFormulaDisplayName(fullName: string): string {
   const nameMap: Record<string, string> = {
-    'Martin Berkhan (Leangains)': "Martin Berkhan's formel",
-    'Casey Butt': "Casey Butt's formel",
-    "Alan Aragon's modell": "Alan Aragon's modell",
-    "Lyle McDonald's modell": "Lyle McDonald's modell",
+    'Martin Berkhans modell': 'Martin Berkhans modell',
+    'Casey Butts modell': 'Casey Butts modell',
+    'Alan Aragons ramverk': 'Alan Aragons ramverk',
+    'Lyle McDonalds ramverk': 'Lyle McDonalds ramverk',
   }
   return nameMap[fullName] || fullName
 }
@@ -74,10 +74,10 @@ export default function GeneticPotentialTool() {
           <AlertDescription className="text-red-900">
             <p className="font-medium mb-2">Genetisk Muskelpotential är endast för män</p>
             <p>
-              Dessa formler (Martin Berkhan, Casey Butt, Alan Aragon och Lyle McDonald) är alla
-              utvecklade och validerade för män. De tar inte hänsyn till kvinnors fysiologi och
-              hormonella skillnader, vilket innebär att resultaten inte skulle vara korrekta eller
-              användbara för kvinnor.
+              Dessa modeller och ramverk (Martin Berkhans modell, Casey Butts modell, Alan Aragons
+              ramverk och Lyle McDonalds ramverk) är alla utvecklade och validerade för män. De tar
+              inte hänsyn till kvinnors fysiologi och hormonella skillnader, vilket innebär att
+              resultaten inte skulle vara korrekta eller användbara för kvinnor.
             </p>
           </AlertDescription>
         </Alert>
@@ -104,22 +104,24 @@ export default function GeneticPotentialTool() {
         </Alert>
       )}
 
-      {/* Info Alert */}
-      <Card className="border-blue-200 bg-blue-50">
-        <CardContent className="pt-6">
-          <div className="flex items-start gap-3">
-            <AlertCircle className="h-5 w-5 text-blue-600 mt-0.5 shrink-0" />
-            <div className="text-sm text-blue-900">
-              <p className="font-medium mb-1">Om Genetisk Muskelpotential</p>
-              <p className="text-blue-700">
-                Dessa modeller uppskattar din maximala naturliga muskelmassa. Resultaten varierar
-                mellan formler beroende på vilka faktorer de tar hänsyn till. Ingen formel är 100%
-                exakt, men de ger en användbar riktlinje för realistiska mål.
-              </p>
+      {/* Info Alert - only show for males */}
+      {profileData?.gender === 'male' && (
+        <Card className="border-blue-200 bg-blue-50">
+          <CardContent className="pt-6">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="h-5 w-5 text-blue-600 mt-0.5 shrink-0" />
+              <div className="text-sm text-blue-900">
+                <p className="font-medium mb-1">Om Genetisk Muskelpotential</p>
+                <p className="text-blue-700">
+                  Dessa modeller uppskattar din maximala naturliga muskelmassa. Resultaten varierar
+                  mellan formler beroende på vilka faktorer de tar hänsyn till. Ingen formel är 100%
+                  exakt, men de ger en användbar riktlinje för realistiska mål.
+                </p>
+              </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
 
       <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
         {/* Vänster: Inputs */}
@@ -163,8 +165,8 @@ export default function GeneticPotentialTool() {
           results.length > 0 &&
           (latestMeasurement?.weight_kg || profileData?.weight_kg) &&
           profileData?.body_fat_percentage &&
-          results[selectedFormulaIndex].formula !== "Lyle McDonald's modell" &&
-          results[selectedFormulaIndex].formula !== "Alan Aragon's modell" && (
+          results[selectedFormulaIndex].formula !== 'Lyle McDonalds ramverk' &&
+          results[selectedFormulaIndex].formula !== 'Alan Aragons ramverk' && (
             <div className="space-y-6">
               <Card>
                 <CardHeader>
@@ -232,27 +234,44 @@ export default function GeneticPotentialTool() {
 
 // Tabell för Lyle McDonald referensvärden
 function LyleMcDonaldTable({ referenceTable }: { referenceTable: LyleMcDonaldReference[] }) {
+  const [isExpanded, setIsExpanded] = useState(false)
+
   return (
     <div className="mt-4 space-y-4">
       {/* Informationsruta med bakgrund */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <h4 className="text-sm font-semibold text-blue-900 mb-2">
-          Om Lyle McDonald&rsquo;s modell
-        </h4>
-        <p className="text-xs text-blue-800 leading-relaxed mb-2">
-          Denna modell utvecklades av Lyle McDonald, en välkänd författare och forskare inom
-          näringslära och träning. Modellen baseras på decennier av forskning och observation av
-          naturliga styrkelyftare och bodybuilders.
-        </p>
-        <p className="text-xs text-blue-800 leading-relaxed mb-2">
-          McDonald analyserade data från tusentals tränade individer och identifierade tydliga
-          mönster för hur muskeltillväxt avtar över tid. Modellen publicerades ursprungligen i hans
-          böcker och artiklar under tidigt 2000-tal.
-        </p>
-        <p className="text-xs text-blue-700 italic">
-          Källa: McDonald, L. &ldquo;What&rsquo;s My Genetic Muscular Potential?&rdquo;
-          bodyrecomposition.com
-        </p>
+      <div className="bg-blue-50 border border-blue-200 rounded-lg overflow-hidden">
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="w-full p-4 flex justify-between items-center hover:bg-blue-100 transition-colors"
+        >
+          <h4 className="text-sm font-semibold text-blue-900">Om Lyle McDonalds ramverk</h4>
+          {isExpanded ? (
+            <ChevronUp className="h-5 w-5 text-blue-700" />
+          ) : (
+            <ChevronDown className="h-5 w-5 text-blue-700" />
+          )}
+        </button>
+        {isExpanded && (
+          <div className="px-4 pb-4 space-y-2">
+            <p className="text-xs text-blue-800 leading-relaxed">
+              Lyle McDonald är en författare och analytiker inom nutrition och styrketräning som
+              sedan slutet av 1990-talet publicerat omfattande material om muskeluppbyggnad,
+              energibalans och träningsanpassning. I artikeln &ldquo;What&rsquo;s My Genetic
+              Muscular Potential?&rdquo; diskuterar han hur muskeltillväxt gradvis avtar i takt med
+              ökad träningsålder och närmar sig en individuell genetisk övre gräns.
+            </p>
+            <p className="text-xs text-blue-800 leading-relaxed">
+              McDonalds resonemang bygger på en syntes av vetenskaplig litteratur, praktiska
+              observationer och jämförelser mellan nybörjare, intermediära och avancerade tränande.
+              Till skillnad från kvantitativa modeller för maximal muskelmassa presenterar han inget
+              specifikt beräkningsförfarande, utan erbjuder ett teoretiskt ramverk för att förstå
+              sannolika utvecklingsförlopp och realistiska förväntningar över tid.
+            </p>
+            <p className="text-xs text-blue-700 italic">
+              Källa: McDonald, L. What&rsquo;s My Genetic Muscular Potential? BodyRecomposition.com
+            </p>
+          </div>
+        )}
       </div>
 
       <div>
@@ -309,26 +328,45 @@ function AlanAragonTable({
   referenceTable: AlanAragonReference[]
   currentWeight?: number
 }) {
+  const [isExpanded, setIsExpanded] = useState(false)
+
   return (
     <div className="mt-4 space-y-4">
       {/* Informationsruta med bakgrund */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <h4 className="text-sm font-semibold text-blue-900 mb-2">Om Alan Aragon&rsquo;s modell</h4>
-        <p className="text-xs text-blue-800 leading-relaxed mb-2">
-          Alan Aragon är en erkänd näringsfysiolog och tränare som utvecklade denna modell baserad
-          på hans omfattande erfarenhet av att arbeta med både nybörjare och elitidrottare. Modellen
-          presenterades först i hans månatliga forskningssammanfattning &ldquo;Alan Aragon&rsquo;s
-          Research Review&rdquo; (AARR).
-        </p>
-        <p className="text-xs text-blue-800 leading-relaxed mb-2">
-          Till skillnad från andra modeller som fokuserar på absoluta gränser, betonar
-          Aragon&rsquo;s modell tidsperspektivet och realistiska förväntningar baserat på
-          träningserfarenhet. Modellen publicerades under mitten av 2000-talet.
-        </p>
-        <p className="text-xs text-blue-700 italic">
-          Källa: Aragon, A. &ldquo;Girth Control: The Science of Fat Loss and Muscle Gain&rdquo;
-          (2007), AARR
-        </p>
+      <div className="bg-blue-50 border border-blue-200 rounded-lg overflow-hidden">
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="w-full p-4 flex justify-between items-center hover:bg-blue-100 transition-colors"
+        >
+          <h4 className="text-sm font-semibold text-blue-900">Om Alan Aragons ramverk</h4>
+          {isExpanded ? (
+            <ChevronUp className="h-5 w-5 text-blue-700" />
+          ) : (
+            <ChevronDown className="h-5 w-5 text-blue-700" />
+          )}
+        </button>
+        {isExpanded && (
+          <div className="px-4 pb-4 space-y-2">
+            <p className="text-xs text-blue-800 leading-relaxed">
+              Alan Aragon är näringsfysiolog och tränare, samt grundare av Alan Aragon&rsquo;s
+              Research Review (AARR). I sina publikationer, bland annat artikeln &ldquo;Girth
+              Control: The Science of Fat Loss and Muscle Gain&rdquo; (2007), behandlar han hur
+              muskeluppbyggnad och kroppskomposition förändras i relation till träningsnivå,
+              erfarenhet och tid.
+            </p>
+            <p className="text-xs text-blue-800 leading-relaxed">
+              Aragons perspektiv fokuserar på realistiska förväntningar och adaptationshastigheter
+              snarare än på att fastställa absoluta genetiska gränser. Han beskriver hur potentialen
+              för muskelökning är som störst hos nybörjare och successivt minskar hos mer avancerade
+              tränande. Arbetet fungerar därmed som ett konceptuellt ramverk för tidsberoende
+              muskeltillväxt, inte som en numerisk modell för maximal muskelmassa.
+            </p>
+            <p className="text-xs text-blue-700 italic">
+              Källa: Aragon, A. Girth Control: The Science of Fat Loss and Muscle Gain (2007), Alan
+              Aragon&rsquo;s Research Review
+            </p>
+          </div>
+        )}
       </div>
 
       <div>
@@ -391,6 +429,7 @@ function ResultCard({
   currentBodyFat?: number
   currentWeight?: number
 }) {
+  const [isExpanded, setIsExpanded] = useState(false)
   const targetWeights = getTargetWeights(result.maxLeanMass)
 
   // Calculate weight at user's current body fat %
@@ -399,53 +438,101 @@ function ResultCard({
   return (
     <div className="space-y-4">
       {/* Martin Berkhan informationsruta */}
-      {result.formula === 'Martin Berkhan (Leangains)' && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <h4 className="text-sm font-semibold text-blue-900 mb-2">
-            Om Martin Berkhan&rsquo;s formel
-          </h4>
-          <p className="text-xs text-blue-800 leading-relaxed mb-2">
-            Martin Berkhan är grundaren av Leangains-metoden och en pionjär inom intermittent
-            fasting. Hans formel för genetisk muskelpotential utvecklades baserat på observation av
-            elitbodybuilders och naturliga tävlingsatleter under 2000-talet.
-          </p>
-          <p className="text-xs text-blue-800 leading-relaxed mb-2">
-            Formeln bygger på principen att tävlingsvikt vid extremt låg kroppsfett (5% för män, 12%
-            för kvinnor) kan uppskattas genom den enkla beräkningen: längd i centimeter minus 100 =
-            maximal vikt i kilogram. Berkhan betonar att detta representerar en övre gräns för
-            naturliga atleter vid peak condition.
-          </p>
-          <p className="text-xs text-blue-700 italic">
-            Källa: Berkhan, M. &ldquo;Maximum Muscular Potential of Drug-Free Athletes&rdquo;
-            leangains.com (2008-2010)
-          </p>
+      {result.formula === 'Martin Berkhans modell' && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg overflow-hidden">
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="w-full p-4 flex justify-between items-center hover:bg-blue-100 transition-colors"
+          >
+            <h4 className="text-sm font-semibold text-blue-900">Om Martin Berkhans modell</h4>
+            {isExpanded ? (
+              <ChevronUp className="h-5 w-5 text-blue-700" />
+            ) : (
+              <ChevronDown className="h-5 w-5 text-blue-700" />
+            )}
+          </button>
+          {isExpanded && (
+            <div className="px-4 pb-4 space-y-2">
+              <p className="text-xs text-blue-800 leading-relaxed">
+                Martin Berkhan är grundaren av Leangains-metoden och en tidig förespråkare för
+                intermittent fasta inom fitnessvärlden. I artikeln &ldquo;Maximum Muscular Potential
+                of Drug-Free Athletes&rdquo; presenterar han en enkel modell för att uppskatta
+                maximal muskelmassa hos naturliga (drug-free) atleter.
+              </p>
+              <p className="text-xs text-blue-800 leading-relaxed">
+                Modellen bygger på observationer av elitbodybuilders och tävlingsatleter i mycket
+                låg kroppsfettprocent, främst cirka 5–6 % för män. Berkhan föreslår att maximal
+                tävlingsvikt i peak condition kan uppskattas genom formeln:
+              </p>
+              <p className="text-xs text-blue-800 leading-relaxed font-semibold">
+                Längd i centimeter − 100 ≈ kroppsvikt i kilogram
+              </p>
+              <p className="text-xs text-blue-800 leading-relaxed">
+                Han betonar att detta värde representerar en övre praktisk gräns för naturliga
+                atleter i extrem tävlingsform, snarare än ett genomsnitt eller ett garanterat mål.
+                Berkhan påpekar även att individuell genetik, kroppsstruktur och längd kan motivera
+                mindre justeringar runt denna uppskattning (vanligen ±2–4 kg).
+              </p>
+              <p className="text-xs text-blue-800 leading-relaxed">
+                Modellen är empirisk och baserad på praktiska observationer, inte på formell
+                vetenskaplig validering, och bör därför ses som en grov riktlinje snarare än en
+                exakt fysiologisk lag.
+              </p>
+              <p className="text-xs text-blue-700 italic">
+                Källa: Berkhan, M. &ldquo;Maximum Muscular Potential of Drug-Free Athletes&rdquo;
+                leangains.com (2008-2010) (uppdaterad 31 dec 2010)
+              </p>
+            </div>
+          )}
         </div>
       )}
 
       {/* Casey Butt informationsruta */}
-      {result.formula === 'Casey Butt' && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <h4 className="text-sm font-semibold text-blue-900 mb-2">Om Casey Butt&rsquo;s formel</h4>
-          <p className="text-xs text-blue-800 leading-relaxed mb-2">
-            Casey Butt är en forskare och styrkelyftare som publicerade sin omfattande studie om
-            genetisk muskelpotential år 2009. Hans forskning baserades på analys av tusentals
-            mätningar från naturliga bodybuilders och styrkelyftare över flera decennier.
-          </p>
-          <p className="text-xs text-blue-800 leading-relaxed mb-2">
-            Till skillnad från enklare formler tar Butt&rsquo;s modell hänsyn till individuell
-            skelettstruktur genom handled- och ankelmått. Formeln klassificerar också separat
-            överkropp och underkropp baserat på benstruktur, vilket ger en mer personaliserad
-            uppskattning. Studien inkluderade även beräkningar för maximala kroppsmått vid genetisk
-            potential.
-          </p>
-          <p className="text-xs text-blue-700 italic">
-            Källa: Butt, C. &ldquo;Your Muscular Potential: How to Predict Your Maximum Muscular
-            Bodyweight and Measurements&rdquo; weightrainer.net (2009)
-          </p>
+      {result.formula === 'Casey Butts modell' && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg overflow-hidden">
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="w-full p-4 flex justify-between items-center hover:bg-blue-100 transition-colors"
+          >
+            <h4 className="text-sm font-semibold text-blue-900">Om Casey Butts modell</h4>
+            {isExpanded ? (
+              <ChevronUp className="h-5 w-5 text-blue-700" />
+            ) : (
+              <ChevronDown className="h-5 w-5 text-blue-700" />
+            )}
+          </button>
+          {isExpanded && (
+            <div className="px-4 pb-4 space-y-2">
+              <p className="text-xs text-blue-800 leading-relaxed">
+                Casey Butt är forskare (PhD) och styrkelyftare som under 2000-talet publicerade en
+                omfattande empirisk modell för att uppskatta genetisk muskelpotential hos naturliga
+                atleter. Modellen bygger på analys av historiska data från naturliga bodybuilders
+                och styrkelyftare över flera decennier, särskilt från perioder då prestationshöjande
+                droger var ovanliga.
+              </p>
+              <p className="text-xs text-blue-800 leading-relaxed">
+                Till skillnad från enklare längd- och viktbaserade formler tar Butts modell hänsyn
+                till individuell skelettstruktur genom mätningar av handled- och ankelomkrets. Dessa
+                används för att uppskatta ramstorlek och muskelpotential. Modellen ger även separata
+                beräkningar för maximala kroppsmått (t.ex. armar, bröst, lår) vid genetisk
+                potential.
+              </p>
+              <p className="text-xs text-blue-800 leading-relaxed">
+                Modellen är empirisk och observationsbaserad, inte en formellt vetenskapligt
+                validerad studie, men används ofta som referens för realistiska övre gränser för
+                naturlig muskelutveckling.
+              </p>
+              <p className="text-xs text-blue-700 italic">
+                Källa: Butt, C. &ldquo;Your Muscular Potential: How to Predict Your Maximum Muscular
+                Bodyweight and Measurements&rdquo; weightrainer.net (ursprungligen publicerad tidigt
+                2000-tal, uppdaterad 2009)
+              </p>
+            </div>
+          )}
         </div>
       )}
 
-      {result.formula === 'Casey Butt' ? (
+      {result.formula === 'Casey Butts modell' ? (
         <div className="bg-gradient-to-br from-green-50 to-blue-50 border-2 border-green-200 rounded-lg p-3">
           <h4 className="text-sm font-semibold text-neutral-800 mb-3">
             Uppskattad maximal genetisk potential
@@ -469,8 +556,8 @@ function ResultCard({
             )}
           </div>
         </div>
-      ) : result.formula === "Lyle McDonald's modell" ||
-        result.formula === "Alan Aragon's modell" ? (
+      ) : result.formula === 'Lyle McDonalds ramverk' ||
+        result.formula === 'Alan Aragons ramverk' ? (
         // Lyle McDonald och Alan Aragon visar bara referenstabeller, inga kroppsfett-värden
         <></>
       ) : (
@@ -501,7 +588,7 @@ function ResultCard({
 
       {/* Uppskattad maximal genetisk potential för kroppsvikt */}
       {/* Dölj för Lyle McDonald och Alan Aragon - dessa modeller har bara referenstabeller */}
-      {result.formula !== "Lyle McDonald's modell" && result.formula !== "Alan Aragon's modell" && (
+      {result.formula !== 'Lyle McDonalds ramverk' && result.formula !== 'Alan Aragons ramverk' && (
         <div>
           <h4 className="font-medium text-sm text-neutral-900 mb-2">
             Uppskattad maximal genetisk potential för kroppsvikt
@@ -546,12 +633,12 @@ function ResultCard({
       )}
 
       {/* Lyle McDonald referenstabell */}
-      {result.formula === "Lyle McDonald's modell" && result.referenceTable && (
+      {result.formula === 'Lyle McDonalds ramverk' && result.referenceTable && (
         <LyleMcDonaldTable referenceTable={result.referenceTable as LyleMcDonaldReference[]} />
       )}
 
       {/* Alan Aragon referenstabell */}
-      {result.formula === "Alan Aragon's modell" && result.referenceTable && (
+      {result.formula === 'Alan Aragons ramverk' && result.referenceTable && (
         <AlanAragonTable
           referenceTable={result.referenceTable as AlanAragonReference[]}
           currentWeight={currentWeight}
@@ -559,7 +646,7 @@ function ResultCard({
       )}
 
       {/* Casey Butt specific: Gainer type and max measurements */}
-      {result.formula === 'Casey Butt' &&
+      {result.formula === 'Casey Butts modell' &&
         result.upperBodyType &&
         result.lowerBodyType &&
         result.maxMeasurements && (
