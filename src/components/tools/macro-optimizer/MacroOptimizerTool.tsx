@@ -1,92 +1,95 @@
-import { useState, useMemo } from 'react';
-import { Info } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
-import { Slider } from '@/components/ui/slider';
-import { useProfileData, useMissingProfileData } from '@/hooks/useProfileData';
-import MissingDataCard from '../common/MissingDataCard';
-import { useUpdateProfile } from '@/hooks';
-import { toast } from 'sonner';
-import type { Profile } from '@/lib/types';
+import { useState, useMemo } from 'react'
+import { Info, User } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Button } from '@/components/ui/button'
+import { Slider } from '@/components/ui/slider'
+import { useProfileData, useMissingProfileData } from '@/hooks/useProfileData'
+import MissingDataCard from '../common/MissingDataCard'
+import { useUpdateProfile, useActiveProfile } from '@/hooks'
+import { toast } from 'sonner'
+import type { Profile } from '@/lib/types'
+import EmptyState from '@/components/EmptyState'
 
-type MacroMode = 'nnr' | 'offseason' | 'onseason' | 'custom';
+type MacroMode = 'nnr' | 'offseason' | 'onseason' | 'custom'
 
 interface MacroRange {
-  protein: { min: number; max: number };
-  fat: { min: number; max: number };
-  carbs: { min: number; max: number };
+  protein: { min: number; max: number }
+  fat: { min: number; max: number }
+  carbs: { min: number; max: number }
 }
 
 interface MacroResult {
-  protein: { grams: number; calories: number; percentage: number };
-  fat: { grams: number; calories: number; percentage: number };
-  carbs: { grams: number; calories: number; percentage: number };
+  protein: { grams: number; calories: number; percentage: number }
+  fat: { grams: number; calories: number; percentage: number }
+  carbs: { grams: number; calories: number; percentage: number }
 }
 
-const MACRO_MODES: Record<MacroMode, { label: string; description: string; ranges: MacroRange }> =
-  {
-    nnr: {
-      label: 'NNR (Nordiska Näringsrekommendationer)',
-      description: 'Balanserad kosthållning för allmän hälsa',
-      ranges: {
-        protein: { min: 10, max: 20 },
-        fat: { min: 25, max: 40 },
-        carbs: { min: 45, max: 60 },
-      },
+const MACRO_MODES: Record<MacroMode, { label: string; description: string; ranges: MacroRange }> = {
+  nnr: {
+    label: 'NNR (Nordiska Näringsrekommendationer)',
+    description: 'Balanserad kosthållning för allmän hälsa',
+    ranges: {
+      protein: { min: 10, max: 20 },
+      fat: { min: 25, max: 40 },
+      carbs: { min: 45, max: 60 },
     },
-    offseason: {
-      label: 'Off-season (Muskelbyggande)',
-      description: 'Optimerad för muskeltillväxt och återhämtning',
-      ranges: {
-        protein: { min: 15, max: 25 },
-        fat: { min: 20, max: 30 },
-        carbs: { min: 50, max: 60 },
-      },
+  },
+  offseason: {
+    label: 'Off-season (Muskelbyggande)',
+    description: 'Optimerad för muskeltillväxt och återhämtning',
+    ranges: {
+      protein: { min: 15, max: 25 },
+      fat: { min: 20, max: 30 },
+      carbs: { min: 50, max: 60 },
     },
-    onseason: {
-      label: 'On-season (Cutting/Tävling)',
-      description: 'Högt protein för att bevara muskelmassa under cutting',
-      ranges: {
-        protein: { min: 25, max: 35 },
-        fat: { min: 20, max: 30 },
-        carbs: { min: 40, max: 50 },
-      },
+  },
+  onseason: {
+    label: 'On-season (Cutting/Tävling)',
+    description: 'Högt protein för att bevara muskelmassa under cutting',
+    ranges: {
+      protein: { min: 25, max: 35 },
+      fat: { min: 20, max: 30 },
+      carbs: { min: 40, max: 50 },
     },
-    custom: {
-      label: 'Anpassat',
-      description: 'Skapa din egen makrofördelning',
-      ranges: {
-        protein: { min: 10, max: 40 },
-        fat: { min: 15, max: 45 },
-        carbs: { min: 20, max: 65 },
-      },
+  },
+  custom: {
+    label: 'Anpassat',
+    description: 'Skapa din egen makrofördelning',
+    ranges: {
+      protein: { min: 10, max: 40 },
+      fat: { min: 15, max: 45 },
+      carbs: { min: 20, max: 65 },
     },
-  };
+  },
+}
 
 export default function MacroOptimizerTool() {
-  const profileData = useProfileData(['weight_kg', 'body_fat_percentage']);
-  const missingFields = useMissingProfileData(['weight_kg']);
-  const updateProfileMutation = useUpdateProfile();
+  const navigate = useNavigate()
+  const { profile } = useActiveProfile()
+  const profileData = useProfileData(['weight_kg', 'body_fat_percentage'])
+  const missingFields = useMissingProfileData(['weight_kg'])
+  const updateProfileMutation = useUpdateProfile()
 
   // State
-  const [mode, setMode] = useState<MacroMode>('nnr');
-  const [targetCalories, setTargetCalories] = useState<number>(2000);
-  const [proteinPercentage, setProteinPercentage] = useState<number>(20);
-  const [fatPercentage, setFatPercentage] = useState<number>(30);
+  const [mode, setMode] = useState<MacroMode>('nnr')
+  const [targetCalories, setTargetCalories] = useState<number>(2000)
+  const [proteinPercentage, setProteinPercentage] = useState<number>(20)
+  const [fatPercentage, setFatPercentage] = useState<number>(30)
 
   // Beräkna kolhydrater automatiskt för att summera till 100%
   const carbsPercentage = useMemo(() => {
-    return 100 - proteinPercentage - fatPercentage;
-  }, [proteinPercentage, fatPercentage]);
+    return 100 - proteinPercentage - fatPercentage
+  }, [proteinPercentage, fatPercentage])
 
   // Beräkna makron i gram
   const macros = useMemo<MacroResult>(() => {
-    const proteinCalories = (targetCalories * proteinPercentage) / 100;
-    const fatCalories = (targetCalories * fatPercentage) / 100;
-    const carbsCalories = (targetCalories * carbsPercentage) / 100;
+    const proteinCalories = (targetCalories * proteinPercentage) / 100
+    const fatCalories = (targetCalories * fatPercentage) / 100
+    const carbsCalories = (targetCalories * carbsPercentage) / 100
 
     return {
       protein: {
@@ -104,42 +107,57 @@ export default function MacroOptimizerTool() {
         calories: Math.round(carbsCalories),
         percentage: carbsPercentage,
       },
-    };
-  }, [targetCalories, proteinPercentage, fatPercentage, carbsPercentage]);
+    }
+  }, [targetCalories, proteinPercentage, fatPercentage, carbsPercentage])
 
   // Protein per kg kroppsvikt (om tillgängligt)
   const proteinPerKg = useMemo(() => {
-    if (!profileData?.weight_kg) return null;
-    return macros.protein.grams / profileData.weight_kg;
-  }, [macros.protein.grams, profileData]);
+    if (!profileData?.weight_kg) return null
+    return macros.protein.grams / profileData.weight_kg
+  }, [macros.protein.grams, profileData])
 
   // Validering av percentages
   const isValid = useMemo(() => {
-    return carbsPercentage >= 0 && carbsPercentage <= 100;
-  }, [carbsPercentage]);
+    return carbsPercentage >= 0 && carbsPercentage <= 100
+  }, [carbsPercentage])
 
   // När läge ändras, sätt default percentages
   const handleModeChange = (newMode: MacroMode) => {
-    setMode(newMode);
-    const ranges = MACRO_MODES[newMode].ranges;
+    setMode(newMode)
+    const ranges = MACRO_MODES[newMode].ranges
 
     // Sätt till mitten av varje intervall
-    const proteinMid = (ranges.protein.min + ranges.protein.max) / 2;
-    const fatMid = (ranges.fat.min + ranges.fat.max) / 2;
+    const proteinMid = (ranges.protein.min + ranges.protein.max) / 2
+    const fatMid = (ranges.fat.min + ranges.fat.max) / 2
 
-    setProteinPercentage(Math.round(proteinMid));
-    setFatPercentage(Math.round(fatMid));
-  };
+    setProteinPercentage(Math.round(proteinMid))
+    setFatPercentage(Math.round(fatMid))
+  }
 
   const handleSaveMissingData = async (data: Partial<Profile>) => {
     try {
-      await updateProfileMutation.mutateAsync(data);
-      toast.success('Profil uppdaterad');
+      await updateProfileMutation.mutateAsync(data)
+      toast.success('Profil uppdaterad')
     } catch (error) {
-      toast.error('Kunde inte uppdatera profil');
-      throw error;
+      toast.error('Kunde inte uppdatera profil')
+      throw error
     }
-  };
+  }
+
+  // Check if profile exists - show empty state if no profile
+  if (!profile) {
+    return (
+      <EmptyState
+        icon={User}
+        title="Ingen aktiv profil"
+        description="Du måste ha en profil för att använda makrooptimeraren."
+        action={{
+          label: 'Gå till profil',
+          onClick: () => navigate('/app/profile'),
+        }}
+      />
+    )
+  }
 
   return (
     <div className="space-y-6">
@@ -147,9 +165,7 @@ export default function MacroOptimizerTool() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Makro-optimerare</h2>
-          <p className="text-neutral-600 mt-1">
-            Optimera din makrofördelning baserat på dina mål
-          </p>
+          <p className="text-neutral-600 mt-1">Optimera din makrofördelning baserat på dina mål</p>
         </div>
         <Badge variant="secondary" className="bg-purple-100 text-purple-700">
           Mål & Planering
@@ -336,9 +352,7 @@ export default function MacroOptimizerTool() {
                       type="number"
                       value={carbsPercentage}
                       disabled
-                      className={`w-16 text-center ${
-                        isValid ? '' : 'border-red-500 text-red-600'
-                      }`}
+                      className={`w-16 text-center ${isValid ? '' : 'border-red-500 text-red-600'}`}
                     />
                     <span className="text-sm text-neutral-600">%</span>
                   </div>
@@ -372,9 +386,7 @@ export default function MacroOptimizerTool() {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-neutral-600">Gram:</span>
-                    <span className="font-semibold text-neutral-900">
-                      {macros.protein.grams} g
-                    </span>
+                    <span className="font-semibold text-neutral-900">{macros.protein.grams} g</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-neutral-600">Kalorier:</span>
@@ -456,5 +468,5 @@ export default function MacroOptimizerTool() {
         )}
       </div>
     </div>
-  );
+  )
 }

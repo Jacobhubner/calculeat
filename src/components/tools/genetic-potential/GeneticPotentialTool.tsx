@@ -1,13 +1,14 @@
 import { useState, useMemo } from 'react'
-import { AlertCircle, ChevronDown, ChevronUp } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { AlertCircle, ChevronDown, ChevronUp, User } from 'lucide-react'
+import { Link, useNavigate } from 'react-router-dom'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { useProfileData } from '@/hooks/useProfileData'
-import { useMeasurementSets } from '@/hooks'
+import { useMeasurementSets, useActiveProfile } from '@/hooks'
+import EmptyState from '@/components/EmptyState'
 import {
   calculateAllModels,
   getTargetWeights,
@@ -28,6 +29,8 @@ function getFormulaDisplayName(fullName: string): string {
 }
 
 export default function GeneticPotentialTool() {
+  const navigate = useNavigate()
+  const { profile } = useActiveProfile()
   const profileData = useProfileData(['height_cm', 'gender', 'weight_kg', 'body_fat_percentage'])
   const { data: measurementSets } = useMeasurementSets()
 
@@ -51,6 +54,21 @@ export default function GeneticPotentialTool() {
       currentBodyFat: profileData.body_fat_percentage,
     })
   }, [profileData, latestMeasurement])
+
+  // Check if profile exists - show empty state if no profile
+  if (!profile) {
+    return (
+      <EmptyState
+        icon={User}
+        title="Ingen aktiv profil"
+        description="Du måste ha en profil för att använda verktyget för genetisk muskelpotential."
+        action={{
+          label: 'Gå till profil',
+          onClick: () => navigate('/app/profile'),
+        }}
+      />
+    )
+  }
 
   return (
     <div className="space-y-6">

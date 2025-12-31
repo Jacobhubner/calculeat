@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
-import { Info, TrendingDown, TrendingUp } from 'lucide-react'
+import { Info, TrendingDown, TrendingUp, User } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
@@ -7,7 +8,8 @@ import { Label } from '@/components/ui/label'
 import { Slider } from '@/components/ui/slider'
 import { useProfileData, useMissingProfileData } from '@/hooks/useProfileData'
 import MissingDataCard from '../common/MissingDataCard'
-import { useUpdateProfile } from '@/hooks'
+import { useUpdateProfile, useActiveProfile } from '@/hooks'
+import EmptyState from '@/components/EmptyState'
 import {
   calculateGoal,
   calculateTimeline,
@@ -19,6 +21,8 @@ import { toast } from 'sonner'
 import type { Profile } from '@/lib/types'
 
 export default function GoalCalculatorTool() {
+  const navigate = useNavigate()
+  const { profile } = useActiveProfile()
   const profileData = useProfileData(['weight_kg', 'body_fat_percentage', 'gender'])
   const missingFields = useMissingProfileData(['weight_kg', 'body_fat_percentage', 'gender'])
   const updateProfileMutation = useUpdateProfile()
@@ -73,6 +77,21 @@ export default function GoalCalculatorTool() {
       toast.error('Kunde inte uppdatera profil')
       throw error
     }
+  }
+
+  // Check if profile exists - show empty state if no profile
+  if (!profile) {
+    return (
+      <EmptyState
+        icon={User}
+        title="Ingen aktiv profil"
+        description="Du måste ha en profil för att använda målkalkylatorn."
+        action={{
+          label: 'Gå till profil',
+          onClick: () => navigate('/app/profile'),
+        }}
+      />
+    )
   }
 
   return (

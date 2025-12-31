@@ -1,7 +1,8 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
-import { Save } from 'lucide-react'
+import { Save, User } from 'lucide-react'
+import EmptyState from '@/components/EmptyState'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -272,6 +273,21 @@ export default function TDEECalculatorTool() {
     } finally {
       setIsSaving(false)
     }
+  }
+
+  // Check if profile exists - show empty state if no profile
+  if (!activeProfile) {
+    return (
+      <EmptyState
+        icon={User}
+        title="Ingen aktiv profil"
+        description="Du måste ha en profil för att använda TDEE-kalkylatorn."
+        action={{
+          label: 'Gå till profil',
+          onClick: () => navigate('/app/profile'),
+        }}
+      />
+    )
   }
 
   return (
