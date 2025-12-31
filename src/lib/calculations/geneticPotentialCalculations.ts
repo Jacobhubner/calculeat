@@ -56,37 +56,16 @@ export interface AlanAragonReference {
 }
 
 /**
- * Martin Berkhan's Formula (Leangains)
- * Baserat på längd och kön
+ * Martin Berkhans modell
+ * Baserat på längd och kroppsfett
  * Källa: Leangains.com
  *
  * Formeln justerar maxvikt baserat på längd och kroppsfettprocent:
  * - Vid 5% BF: Längd - (98-101 beroende på längd)
  * - Vid högre BF: Lägg till % ökning för varje 5% över 5%
  */
-export function berkhanFormula(
-  heightCm: number,
-  gender: 'male' | 'female',
-  targetBodyFat?: number
-): GeneticPotentialResult {
-  if (gender === 'female') {
-    // För kvinnor, använd enklare formel (85% av män)
-    const heightInches = heightCm / 2.54
-    const stageWeightLbs = heightInches - 100
-    const stageWeightKg = stageWeightLbs * 0.453592
-    const adjustedWeight = stageWeightKg * 0.85
-    const targetBF = targetBodyFat ? targetBodyFat / 100 : 0.12
-    const maxLeanMass = adjustedWeight * (1 - targetBF)
-
-    return {
-      formula: 'Martin Berkhan (Leangains)',
-      description: 'Baserat på tävlingsvikt vid extremt låg kroppsfett',
-      maxLeanMass,
-      maxWeight: adjustedWeight,
-    }
-  }
-
-  // För män: Använd Excel-logiken
+export function berkhanFormula(heightCm: number, targetBodyFat?: number): GeneticPotentialResult {
+  // Använd Excel-logiken
   // Basvikt vid 5% BF baserat på längd
   let baseWeight5BF: number
   if (heightCm < 170) {
@@ -154,8 +133,8 @@ export function berkhanFormula(
 }
 
 /**
- * Casey Butt's Formula (2009)
- * Mer avancerad - tar hänsyn till handled och ankel omfång samt kroppsfett
+ * Casey Butts modell (2009)
+ * Tar hänsyn till skelettstruktur (handled/ankel) och kroppsfett
  * Klassificerar överkropp och underkropp separat
  * Källa: WeighTrainer.net
  */
@@ -163,7 +142,6 @@ export function caseyButtFormula(
   heightCm: number,
   wristCm: number,
   ankleCm: number,
-  gender: 'male' | 'female',
   currentBodyFat?: number
 ): GeneticPotentialResult {
   // Convert to inches (formulas expect inches)
@@ -171,8 +149,8 @@ export function caseyButtFormula(
   const wristInches = wristCm / 2.54
   const ankleInches = ankleCm / 2.54
 
-  // Use user's body fat % or default (10% for men, 20% for women)
-  const bodyFatPercent = currentBodyFat ?? (gender === 'male' ? 10 : 20)
+  // Use user's body fat % or default 10%
+  const bodyFatPercent = currentBodyFat ?? 10
 
   // 1. Calculate MLBM (Maximum Lean Body Mass)
   // MLBM = Height^1.5 * (√Wrist / 22.6670 + √Ankle / 17.0104) * (% Body fat / 224 + 1)
@@ -190,11 +168,6 @@ export function caseyButtFormula(
   // 3. Calculate MBBW (Maximum Bulked Body Weight)
   // MBBW = MBW * 1.04
   const mbbwKg = mbwKg * 1.04
-
-  // Adjust for women (85% of male values)
-  const adjustedMlbm = gender === 'female' ? mlbmKg * 0.85 : mlbmKg
-  const adjustedMbw = gender === 'female' ? mbwKg * 0.85 : mbwKg
-  const adjustedMbbw = gender === 'female' ? mbbwKg * 0.85 : mbbwKg
 
   // 4. Determine gainer types
   // Upper body (wrist): Hardgainer if Wrist ≤ 0.1045 * Height
@@ -244,9 +217,9 @@ export function caseyButtFormula(
   return {
     formula: 'Casey Butts modell',
     description: 'Tar hänsyn till skelettstruktur (handled/ankel) och kroppsfett',
-    maxLeanMass: adjustedMlbm, // MLBM
-    maxWeight: adjustedMbw, // MBW
-    maxBulkedWeight: adjustedMbbw, // MBBW
+    maxLeanMass: mlbmKg, // MLBM
+    maxWeight: mbwKg, // MBW
+    maxBulkedWeight: mbbwKg, // MBBW
     maxMeasurements,
     upperBodyType,
     lowerBodyType,
@@ -254,25 +227,18 @@ export function caseyButtFormula(
 }
 
 /**
- * Alan Aragon's Model
+ * Alan Aragons ramverk
  * Baserat på nuvarande fettfri massa och träningserfarenhet
  */
-export function alanAragonModel(
-  currentLeanMassKg: number,
-  gender: 'male' | 'female'
-): GeneticPotentialResult {
-  // Aragon's gains per månad baserat på träningsnivå
+export function alanAragonModel(currentLeanMassKg: number): GeneticPotentialResult {
   // Referenstabell för olika träningsnivåer
 
-  // Behåll en konservativ maxLeanMass-beräkning för jämförelse
+  // Konservativ maxLeanMass-beräkning för jämförelse
   // (Anta intermediär nivå som genomsnitt: 0.75% per månad)
   const avgMonthlyPercent = 0.0075
   const projectedYears = 10
   const totalGain = currentLeanMassKg * avgMonthlyPercent * 12 * projectedYears
   const maxLeanMass = currentLeanMassKg + totalGain
-
-  // Justera för kvinnor
-  const adjustedMaxLeanMass = gender === 'female' ? maxLeanMass * 0.85 : maxLeanMass
 
   // Referenstabell som användaren kan använda för att själv bedöma sin nivå
   const referenceTable: AlanAragonReference[] = [
@@ -299,25 +265,21 @@ export function alanAragonModel(
   return {
     formula: 'Alan Aragons ramverk',
     description: 'Baserat på träningserfarenhet och månatlig tillväxtpotential',
-    maxLeanMass: adjustedMaxLeanMass,
-    maxWeight: adjustedMaxLeanMass / 0.9, // Antar 10% kroppsfett
+    maxLeanMass,
+    maxWeight: maxLeanMass / 0.9, // Antar 10% kroppsfett
     referenceTable,
   }
 }
 
 /**
- * Lyle McDonald's Model
- * Konservativ modell baserad på biologiska gränser och träningsår
+ * Lyle McDonalds ramverk
+ * Teoretiskt ramverk baserat på biologiska gränser och träningsår
  */
-export function lyleMcDonaldModel(
-  heightCm: number,
-  gender: 'male' | 'female'
-): GeneticPotentialResult {
-  // McDonald's formula:
-  // För män: (Längd i cm - 100) = max vikt i kg vid 10% kroppsfett
-  // För kvinnor: cirka 85% av män
+export function lyleMcDonaldModel(heightCm: number): GeneticPotentialResult {
+  // McDonalds formel:
+  // (Längd i cm - 100) = max vikt i kg vid 10% kroppsfett
 
-  const maxWeightKg = gender === 'male' ? heightCm - 100 : (heightCm - 100) * 0.85
+  const maxWeightKg = heightCm - 100
   const maxLeanMass = maxWeightKg * 0.9 // 10% kroppsfett
 
   // Referenstabell för potentiell muskeltillväxt per träningsår
@@ -377,29 +339,23 @@ export function calculateAllModels(input: GeneticPotentialInput): GeneticPotenti
 
   // Berkhan - Kräver kroppsfett för meningsfulla resultat
   if (input.currentBodyFat) {
-    results.push(berkhanFormula(input.heightCm, input.gender, input.currentBodyFat))
+    results.push(berkhanFormula(input.heightCm, input.currentBodyFat))
   }
 
   // Casey Butt - Kräver handled, fotled OCH kroppsfett
   if (input.wristCm && input.ankleCm && input.currentBodyFat) {
     results.push(
-      caseyButtFormula(
-        input.heightCm,
-        input.wristCm,
-        input.ankleCm,
-        input.gender,
-        input.currentBodyFat
-      )
+      caseyButtFormula(input.heightCm, input.wristCm, input.ankleCm, input.currentBodyFat)
     )
   }
 
   // Lyle McDonald - Visar alltid referenstabell (flyttad till slutet)
-  results.push(lyleMcDonaldModel(input.heightCm, input.gender))
+  results.push(lyleMcDonaldModel(input.heightCm))
 
   // Alan Aragon - Kräver vikt OCH kroppsfett (flyttad till slutet)
   if (input.currentWeight && input.currentBodyFat) {
     const currentLeanMass = input.currentWeight * (1 - input.currentBodyFat / 100)
-    results.push(alanAragonModel(currentLeanMass, input.gender))
+    results.push(alanAragonModel(currentLeanMass))
   }
 
   // Lägg till progress om nuvarande data finns
