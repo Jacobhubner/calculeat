@@ -215,10 +215,10 @@ export default function GeneticPotentialTool() {
                           </p>
                           <p className="text-xs text-blue-800 leading-relaxed">
                             Det finns en förvirring med denna modell. Casey Butt specificerar inte
-                            strikt vilken BF% man ska använda utan beskriver: &ldquo;%BF = The body
-                            fat percentage at which you want to predict your maximum lean body
-                            mass&rdquo;. Detta lämnar det öppet för tolkning och man kan därför
-                            använda denna modell på två olika sätt:
+                            strikt vilken kroppsfettprocent man ska använda utan beskriver:
+                            &ldquo;%bf = The body fat percentage at which you want to predict your
+                            maximum lean body mass&rdquo;. Detta lämnar det öppet för tolkning och
+                            man kan därför använda denna modell på två olika sätt:
                           </p>
                           <p className="text-xs text-blue-800 leading-relaxed font-medium">
                             Alternativ 1: Standardiserad genetisk referens (10 % kroppsfett)
@@ -363,16 +363,15 @@ export default function GeneticPotentialTool() {
                                 </p>
                                 <p className="mb-3">
                                   Casey Butts analys byggde på ca 300 drug-free bodybuildingmästare
-                                  och styrkeatleter från 1947–2010. När han utvecklade kalkylatorn
-                                  och vikt-/måttformlerna beskrev han dessa värden som
-                                  representativa för ett lean, stabilt tillstånd (~8–10 %
-                                  kroppsfett), vilket också återspeglas i de exempel och
-                                  referensvärden som används.
+                                  och styrkeatleter från 1947–2010. När han utvecklade modellen och
+                                  vikt-/måttformlerna beskrev han dessa värden som representativa
+                                  för ett lean, stabilt tillstånd (~8–10 % kroppsfett), vilket också
+                                  återspeglas i de exempel och referensvärden som används.
                                 </p>
                                 <p>
-                                  Därför används 10 % som en fast referens i MLBM-formeln och inte
-                                  användarens egna BF% för att fastställa ett &ldquo;genetiskt
-                                  tak&rdquo;.
+                                  I ljuset av detta används 10 % som en fast referens i MLBM-formeln
+                                  (maximum lean body mass) och inte användarens egen %BF för att
+                                  fastställa ett &ldquo;genetiskt tak&rdquo;.
                                 </p>
                               </div>
                             </div>
@@ -448,7 +447,7 @@ export default function GeneticPotentialTool() {
                           <div className="sticky top-0 bg-gradient-to-r from-primary-500 to-accent-500 text-white p-6 rounded-t-2xl flex justify-between items-start">
                             <div>
                               <h2 className="text-2xl font-bold">
-                                Tillståndsberoende fettfri kroppsvikt (vald BF%)
+                                Tillståndsberoende fettfri kroppsvikt (vald %BF)
                               </h2>
                             </div>
                             <button
@@ -474,9 +473,9 @@ export default function GeneticPotentialTool() {
                                   andra icke-permanenta komponenter.
                                 </p>
                                 <p className="mb-3">
-                                  Här använder man användarens BF% direkt i MLBM (Maximum lean body
-                                  mass). Man beräknar sedan MBW (Maximum bodyweight) och MBBW
-                                  (Maximum Bulked Body weight) från detta.
+                                  Här använder man användarens %BF direkt i MLBM (maximum lean body
+                                  mass). Man beräknar sedan MBW (maximum body weight) och MBBW
+                                  (maximum bulked body weight) från detta.
                                 </p>
                               </div>
                             </div>
@@ -507,7 +506,7 @@ export default function GeneticPotentialTool() {
                                 <li className="flex gap-3">
                                   <span className="text-red-600 font-bold mt-1">❌</span>
                                   <span className="text-neutral-700 flex-1">
-                                    MLBM blir tillståndsberoende (MLBM ökar när BF% ökar)
+                                    MLBM blir tillståndsberoende (MLBM ökar när %BF ökar)
                                   </span>
                                 </li>
                                 <li className="flex gap-3">
