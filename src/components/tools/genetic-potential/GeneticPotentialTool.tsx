@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { AlertCircle, ChevronDown, ChevronUp, User } from 'lucide-react'
+import { AlertCircle, ChevronDown, ChevronUp, User, Info, X } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -40,6 +40,10 @@ export default function GeneticPotentialTool() {
   }, [measurementSets])
 
   const [selectedFormulaIndex, setSelectedFormulaIndex] = useState(0)
+  const [caseyButtMethod, setCaseyButtMethod] = useState<'standard' | 'personalized'>('standard')
+  const [showStandardInfo, setShowStandardInfo] = useState(false)
+  const [showPersonalizedInfo, setShowPersonalizedInfo] = useState(false)
+  const [showCaseyButtInfo, setShowCaseyButtInfo] = useState(false)
 
   // Beräkna resultat
   const results = useMemo(() => {
@@ -52,8 +56,9 @@ export default function GeneticPotentialTool() {
       ankleCm: latestMeasurement?.ankle,
       currentWeight: latestMeasurement?.weight_kg || profileData.weight_kg,
       currentBodyFat: profileData.body_fat_percentage,
+      caseyButtMethod,
     })
-  }, [profileData, latestMeasurement])
+  }, [profileData, latestMeasurement, caseyButtMethod])
 
   // Check if profile exists - show empty state if no profile
   if (!profile) {
@@ -101,20 +106,21 @@ export default function GeneticPotentialTool() {
         </Alert>
       )}
 
-      {/* Warning if body fat percentage is missing */}
+      {/* Info if body fat percentage is missing - optional but recommended */}
       {profileData?.gender === 'male' && !profileData?.body_fat_percentage && (
-        <Alert variant="default" className="border-amber-300 bg-amber-50">
-          <AlertCircle className="h-5 w-5 text-amber-600" />
-          <AlertDescription className="text-amber-900">
-            <p className="font-medium mb-2">Kroppsfettprocent saknas</p>
+        <Alert variant="default" className="border-blue-300 bg-blue-50">
+          <AlertCircle className="h-5 w-5 text-blue-600" />
+          <AlertDescription className="text-blue-900">
+            <p className="font-medium mb-2">Tips: Lägg till kroppsfettprocent</p>
             <p>
-              För att få meningsfulla resultat från Genetisk Muskelpotential behöver du ange din
-              kroppsfettprocent i din profil. Utan detta kan vi inte visa din nuvarande fettfria
-              massa och hur nära du är din genetiska potential.
+              För att se din nuvarande progress mot genetisk potential och hur många kg fettfri
+              massa du har kvar att bygga, rekommenderar vi att du anger din kroppsfettprocent i din
+              profil. Beräkningarna fungerar utan detta, men du får mer insiktsfull information med
+              kroppsfettprocent.
             </p>
             <Link
               to="/app/profile"
-              className="inline-block mt-2 underline font-medium hover:text-amber-700"
+              className="inline-block mt-2 underline font-medium hover:text-blue-700"
             >
               Gå till Profil för att ange kroppsfettprocent
             </Link>
@@ -165,6 +171,375 @@ export default function GeneticPotentialTool() {
                     </Button>
                   ))}
                 </div>
+
+                {/* Casey Butt metodväljare - visa bara när Casey Butt är vald */}
+                {results[selectedFormulaIndex].formula === 'Casey Butts modell' && (
+                  <>
+                    {/* Om Casey Butts modell - informationsruta */}
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg overflow-hidden">
+                      <button
+                        onClick={() => setShowCaseyButtInfo(!showCaseyButtInfo)}
+                        className="w-full p-4 flex justify-between items-center hover:bg-blue-100 transition-colors"
+                      >
+                        <h4 className="text-sm font-semibold text-blue-900">
+                          Om Casey Butts modell
+                        </h4>
+                        {showCaseyButtInfo ? (
+                          <ChevronUp className="h-5 w-5 text-blue-700" />
+                        ) : (
+                          <ChevronDown className="h-5 w-5 text-blue-700" />
+                        )}
+                      </button>
+                      {showCaseyButtInfo && (
+                        <div className="px-4 pb-4 space-y-2">
+                          <p className="text-xs text-blue-800 leading-relaxed">
+                            Casey Butt är forskare (PhD) och styrkelyftare som under 2000-talet
+                            publicerade en omfattande empirisk modell för att uppskatta genetisk
+                            muskelpotential hos naturliga atleter. Modellen bygger på analys av
+                            historiska data från naturliga bodybuilders och styrkelyftare över flera
+                            decennier, särskilt från perioder då prestationshöjande droger var
+                            ovanliga.
+                          </p>
+                          <p className="text-xs text-blue-800 leading-relaxed">
+                            Till skillnad från enklare längd- och viktbaserade formler tar Butts
+                            modell hänsyn till individuell skelettstruktur genom mätningar av
+                            handled- och ankelomkrets. Dessa används för att uppskatta ramstorlek
+                            och muskelpotential. Modellen ger även separata beräkningar för maximala
+                            kroppsmått (t.ex. armar, bröst, lår) vid genetisk potential.
+                          </p>
+                          <p className="text-xs text-blue-800 leading-relaxed">
+                            Modellen är empirisk och observationsbaserad, inte en formellt
+                            vetenskapligt validerad studie, men används ofta som referens för
+                            realistiska övre gränser för naturlig muskelutveckling, inte som en
+                            statistisk medelvärdesmodell.
+                          </p>
+                          <p className="text-xs text-blue-800 leading-relaxed">
+                            Det finns en förvirring med denna modell. Casey Butt specificerar inte
+                            strikt vilken BF% man ska använda utan beskriver: &ldquo;%BF = The body
+                            fat percentage at which you want to predict your maximum lean body
+                            mass&rdquo;. Detta lämnar det öppet för tolkning och man kan därför
+                            använda denna modell på två olika sätt:
+                          </p>
+                          <p className="text-xs text-blue-800 leading-relaxed font-medium">
+                            Alternativ 1: Standardiserad genetisk referens (10 % kroppsfett)
+                            <br />
+                            Alternativ 2: Tillståndsberoende fettfri kroppsvikt (vald %BF)
+                          </p>
+                          <p className="text-xs text-blue-700 italic">
+                            Källa: Butt, C. &ldquo;Your Muscular Potential: How to Predict Your
+                            Maximum Muscular Bodyweight and Measurements&rdquo; weightrainer.net
+                            (ursprungligen publicerad tidigt 2000-tal, uppdaterad 2009)
+                          </p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Metodväljare */}
+                    <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                      <h4 className="text-sm font-semibold text-blue-900 mb-3">
+                        Välj beräkningsmetod för Casey Butt-modellen
+                      </h4>
+
+                      <div className="space-y-3">
+                        {/* Standard metod (10% BF) */}
+                        <label className="flex items-start gap-3 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="caseyButtMethod"
+                            value="standard"
+                            checked={caseyButtMethod === 'standard'}
+                            onChange={e =>
+                              setCaseyButtMethod(e.target.value as 'standard' | 'personalized')
+                            }
+                            className="mt-1"
+                          />
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium text-blue-900">
+                                Standardiserad genetisk referens (10 % kroppsfett)
+                              </span>
+                              <button
+                                type="button"
+                                onClick={e => {
+                                  e.preventDefault()
+                                  setShowStandardInfo(true)
+                                }}
+                                className="text-blue-600 hover:text-blue-800 transition-colors"
+                              >
+                                <Info className="h-4 w-4" />
+                              </button>
+                            </div>
+                            <div className="text-xs text-blue-700 mt-1">
+                              Visar din maximala genetiska potential i lean form (~10% BF).
+                              Jämförbart mellan individer och baserat på Casey Butts originaldata
+                              från drug-free atleter.
+                            </div>
+                          </div>
+                        </label>
+
+                        {/* Personalized metod (användarens BF%) */}
+                        <label className="flex items-start gap-3 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="caseyButtMethod"
+                            value="personalized"
+                            checked={caseyButtMethod === 'personalized'}
+                            onChange={e =>
+                              setCaseyButtMethod(e.target.value as 'standard' | 'personalized')
+                            }
+                            className="mt-1"
+                          />
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium text-blue-900">
+                                Tillståndsberoende fettfri kroppsvikt (
+                                {profileData?.body_fat_percentage
+                                  ? `${profileData.body_fat_percentage.toFixed(1)} % kroppsfett`
+                                  : 'BF% saknas'}
+                                )
+                              </span>
+                              <button
+                                type="button"
+                                onClick={e => {
+                                  e.preventDefault()
+                                  setShowPersonalizedInfo(true)
+                                }}
+                                className="text-blue-600 hover:text-blue-800 transition-colors"
+                              >
+                                <Info className="h-4 w-4" />
+                              </button>
+                            </div>
+                            <div className="text-xs text-blue-700 mt-1">
+                              Visar hur mycket fettfri kroppsvikt din kropp kan bära vid din
+                              nuvarande kroppsfettprocent, inklusive vätska och glykogen.
+                              {!profileData?.body_fat_percentage && (
+                                <span className="block mt-1 text-amber-700 font-medium">
+                                  ⚠️ Kroppsfett saknas - använder 10% som fallback
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+
+                    {/* Modal för Standardreferens info */}
+                    {showStandardInfo && (
+                      <div
+                        className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50"
+                        onClick={() => setShowStandardInfo(false)}
+                      >
+                        <div
+                          className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+                          onClick={e => e.stopPropagation()}
+                        >
+                          {/* Header */}
+                          <div className="sticky top-0 bg-gradient-to-r from-primary-500 to-accent-500 text-white p-6 rounded-t-2xl flex justify-between items-start">
+                            <div>
+                              <h2 className="text-2xl font-bold">
+                                Standardiserad genetisk referens (10 % kroppsfett)
+                              </h2>
+                            </div>
+                            <button
+                              onClick={() => setShowStandardInfo(false)}
+                              className="text-white/80 hover:text-white transition-colors p-1 rounded-full hover:bg-white/10"
+                              aria-label="Stäng"
+                            >
+                              <X className="h-6 w-6" />
+                            </button>
+                          </div>
+
+                          {/* Content */}
+                          <div className="p-6 space-y-6">
+                            {/* Beskrivning */}
+                            <div>
+                              <h3 className="text-lg font-semibold text-neutral-800 mb-2">
+                                Beskrivning
+                              </h3>
+                              <div className="text-neutral-700 leading-relaxed">
+                                <p className="mb-3">
+                                  Resultatet kommer visa din maximala genetiska potential, oberoende
+                                  av din nuvarande kroppssammansättning.
+                                </p>
+                                <p className="mb-3">
+                                  Casey Butts analys byggde på ca 300 drug-free bodybuildingmästare
+                                  och styrkeatleter från 1947–2010. När han utvecklade kalkylatorn
+                                  och vikt-/måttformlerna beskrev han dessa värden som
+                                  representativa för ett lean, stabilt tillstånd (~8–10 %
+                                  kroppsfett), vilket också återspeglas i de exempel och
+                                  referensvärden som används.
+                                </p>
+                                <p>
+                                  Därför används 10 % som en fast referens i MLBM-formeln och inte
+                                  användarens egna BF% för att fastställa ett &ldquo;genetiskt
+                                  tak&rdquo;.
+                                </p>
+                              </div>
+                            </div>
+
+                            {/* Fördelar */}
+                            <div>
+                              <h3 className="text-lg font-semibold text-green-800 mb-3">
+                                Fördelar
+                              </h3>
+                              <ul className="space-y-2">
+                                <li className="flex gap-3">
+                                  <span className="text-green-600 font-bold mt-1">✅</span>
+                                  <span className="text-neutral-700 flex-1">
+                                    Genetiskt meningsfullt och rimligt
+                                  </span>
+                                </li>
+                                <li className="flex gap-3">
+                                  <span className="text-green-600 font-bold mt-1">✅</span>
+                                  <span className="text-neutral-700 flex-1">
+                                    Jämförbart mellan personer
+                                  </span>
+                                </li>
+                                <li className="flex gap-3">
+                                  <span className="text-green-600 font-bold mt-1">✅</span>
+                                  <span className="text-neutral-700 flex-1">
+                                    Undviker att övervikt &ldquo;ökar genetisk potential&rdquo;
+                                  </span>
+                                </li>
+                              </ul>
+                            </div>
+
+                            {/* Nackdelar */}
+                            <div>
+                              <h3 className="text-lg font-semibold text-red-800 mb-3">Nackdelar</h3>
+                              <ul className="space-y-2">
+                                <li className="flex gap-3">
+                                  <span className="text-red-600 font-bold mt-1">❌</span>
+                                  <span className="text-neutral-700 flex-1">
+                                    Inte individens nuvarande tillstånd
+                                  </span>
+                                </li>
+                                <li className="flex gap-3">
+                                  <span className="text-red-600 font-bold mt-1">❌</span>
+                                  <span className="text-neutral-700 flex-1">
+                                    Mindre &ldquo;personligt&rdquo;
+                                  </span>
+                                </li>
+                              </ul>
+                            </div>
+                          </div>
+
+                          {/* Footer */}
+                          <div className="sticky bottom-0 bg-neutral-50 p-6 rounded-b-2xl border-t border-neutral-200">
+                            <Button onClick={() => setShowStandardInfo(false)} className="w-full">
+                              Stäng
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Modal för Personaliserad info */}
+                    {showPersonalizedInfo && (
+                      <div
+                        className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50"
+                        onClick={() => setShowPersonalizedInfo(false)}
+                      >
+                        <div
+                          className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+                          onClick={e => e.stopPropagation()}
+                        >
+                          {/* Header */}
+                          <div className="sticky top-0 bg-gradient-to-r from-primary-500 to-accent-500 text-white p-6 rounded-t-2xl flex justify-between items-start">
+                            <div>
+                              <h2 className="text-2xl font-bold">
+                                Tillståndsberoende fettfri kroppsvikt (vald BF%)
+                              </h2>
+                            </div>
+                            <button
+                              onClick={() => setShowPersonalizedInfo(false)}
+                              className="text-white/80 hover:text-white transition-colors p-1 rounded-full hover:bg-white/10"
+                              aria-label="Stäng"
+                            >
+                              <X className="h-6 w-6" />
+                            </button>
+                          </div>
+
+                          {/* Content */}
+                          <div className="p-6 space-y-6">
+                            {/* Beskrivning */}
+                            <div>
+                              <h3 className="text-lg font-semibold text-neutral-800 mb-2">
+                                Beskrivning
+                              </h3>
+                              <div className="text-neutral-700 leading-relaxed">
+                                <p className="mb-3">
+                                  Resultatet kommer visa hur mycket fettfri kroppsvikt din kropp kan
+                                  bära i detta tillstånd. Det inkluderar även vätska, glykogen och
+                                  andra icke-permanenta komponenter.
+                                </p>
+                                <p className="mb-3">
+                                  Här använder man användarens BF% direkt i MLBM (Maximum lean body
+                                  mass). Man beräknar sedan MBW (Maximum bodyweight) och MBBW
+                                  (Maximum Bulked Body weight) från detta.
+                                </p>
+                              </div>
+                            </div>
+
+                            {/* Fördelar */}
+                            <div>
+                              <h3 className="text-lg font-semibold text-green-800 mb-3">
+                                Fördelar
+                              </h3>
+                              <ul className="space-y-2">
+                                <li className="flex gap-3">
+                                  <span className="text-green-600 font-bold mt-1">✅</span>
+                                  <span className="text-neutral-700 flex-1">
+                                    Fullt korrekt enligt formeln
+                                  </span>
+                                </li>
+                                <li className="flex gap-3">
+                                  <span className="text-green-600 font-bold mt-1">✅</span>
+                                  <span className="text-neutral-700 flex-1">Individanpassat</span>
+                                </li>
+                              </ul>
+                            </div>
+
+                            {/* Nackdelar */}
+                            <div>
+                              <h3 className="text-lg font-semibold text-red-800 mb-3">Nackdelar</h3>
+                              <ul className="space-y-2">
+                                <li className="flex gap-3">
+                                  <span className="text-red-600 font-bold mt-1">❌</span>
+                                  <span className="text-neutral-700 flex-1">
+                                    MLBM blir tillståndsberoende (MLBM ökar när BF% ökar)
+                                  </span>
+                                </li>
+                                <li className="flex gap-3">
+                                  <span className="text-red-600 font-bold mt-1">❌</span>
+                                  <span className="text-neutral-700 flex-1">
+                                    Kan feltolkas som &ldquo;mer muskel&rdquo;
+                                  </span>
+                                </li>
+                                <li className="flex gap-3">
+                                  <span className="text-red-600 font-bold mt-1">❌</span>
+                                  <span className="text-neutral-700 flex-1">
+                                    Mindre lämpligt som genetiskt tak
+                                  </span>
+                                </li>
+                              </ul>
+                            </div>
+                          </div>
+
+                          {/* Footer */}
+                          <div className="sticky bottom-0 bg-neutral-50 p-6 rounded-b-2xl border-t border-neutral-200">
+                            <Button
+                              onClick={() => setShowPersonalizedInfo(false)}
+                              className="w-full"
+                            >
+                              Stäng
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
 
                 {/* Selected formula result */}
                 <ResultCard
@@ -505,68 +880,25 @@ function ResultCard({
         </div>
       )}
 
-      {/* Casey Butt informationsruta */}
-      {result.formula === 'Casey Butts modell' && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg overflow-hidden">
-          <button
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="w-full p-4 flex justify-between items-center hover:bg-blue-100 transition-colors"
-          >
-            <h4 className="text-sm font-semibold text-blue-900">Om Casey Butts modell</h4>
-            {isExpanded ? (
-              <ChevronUp className="h-5 w-5 text-blue-700" />
-            ) : (
-              <ChevronDown className="h-5 w-5 text-blue-700" />
-            )}
-          </button>
-          {isExpanded && (
-            <div className="px-4 pb-4 space-y-2">
-              <p className="text-xs text-blue-800 leading-relaxed">
-                Casey Butt är forskare (PhD) och styrkelyftare som under 2000-talet publicerade en
-                omfattande empirisk modell för att uppskatta genetisk muskelpotential hos naturliga
-                atleter. Modellen bygger på analys av historiska data från naturliga bodybuilders
-                och styrkelyftare över flera decennier, särskilt från perioder då prestationshöjande
-                droger var ovanliga.
-              </p>
-              <p className="text-xs text-blue-800 leading-relaxed">
-                Till skillnad från enklare längd- och viktbaserade formler tar Butts modell hänsyn
-                till individuell skelettstruktur genom mätningar av handled- och ankelomkrets. Dessa
-                används för att uppskatta ramstorlek och muskelpotential. Modellen ger även separata
-                beräkningar för maximala kroppsmått (t.ex. armar, bröst, lår) vid genetisk
-                potential.
-              </p>
-              <p className="text-xs text-blue-800 leading-relaxed">
-                Modellen är empirisk och observationsbaserad, inte en formellt vetenskapligt
-                validerad studie, men används ofta som referens för realistiska övre gränser för
-                naturlig muskelutveckling.
-              </p>
-              <p className="text-xs text-blue-700 italic">
-                Källa: Butt, C. &ldquo;Your Muscular Potential: How to Predict Your Maximum Muscular
-                Bodyweight and Measurements&rdquo; weightrainer.net (ursprungligen publicerad tidigt
-                2000-tal, uppdaterad 2009)
-              </p>
-            </div>
-          )}
-        </div>
-      )}
-
       {result.formula === 'Casey Butts modell' ? (
         <div className="bg-gradient-to-br from-green-50 to-blue-50 border-2 border-green-200 rounded-lg p-3">
           <h4 className="text-sm font-semibold text-neutral-800 mb-3">
-            Uppskattad maximal genetisk potential
+            {result.caseyButtMethod === 'personalized'
+              ? `Uppskattad maximal kapacitet vid ${result.caseyButtBodyFat?.toFixed(1)}% kroppsfett`
+              : 'Uppskattad maximal genetisk potential'}
           </h4>
           <div className="space-y-2">
             <div className="flex justify-between items-center">
-              <p className="text-xs text-neutral-600">Fettfri massa (MLBM):</p>
+              <p className="text-xs text-neutral-600">Maximal fettfri massa (MLBM):</p>
               <p className="text-lg font-bold text-green-700">{result.maxLeanMass.toFixed(1)} kg</p>
             </div>
             <div className="flex justify-between items-center">
-              <p className="text-xs text-neutral-600">Kroppsvikt (MBW):</p>
+              <p className="text-xs text-neutral-600">Maximal kroppsvikt (MBW):</p>
               <p className="text-lg font-bold text-blue-700">{result.maxWeight.toFixed(1)} kg</p>
             </div>
             {result.maxBulkedWeight && (
               <div className="flex justify-between items-center">
-                <p className="text-xs text-neutral-600">Bulked vikt (MBBW):</p>
+                <p className="text-xs text-neutral-600">Maximal bulked vikt (MBBW):</p>
                 <p className="text-lg font-bold text-purple-700">
                   {result.maxBulkedWeight.toFixed(1)} kg
                 </p>

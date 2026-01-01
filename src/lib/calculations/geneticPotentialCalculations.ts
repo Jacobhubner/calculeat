@@ -25,6 +25,9 @@ export interface GeneticPotentialResult {
   gainerType?: 'hard' | 'average' | 'easy' // DEPRECATED - use upperBodyType/lowerBodyType
   // Reference tables for Lyle McDonald and Alan Aragon models
   referenceTable?: LyleMcDonaldReference[] | AlanAragonReference[]
+  // Casey Butt method metadata
+  caseyButtMethod?: 'standard' | 'personalized' // 'standard' = 10%, 'personalized' = användarens BF%
+  caseyButtBodyFat?: number // Vilken BF% som faktiskt användes i beräkningen
 }
 
 export interface GeneticPotentialInput {
@@ -34,6 +37,7 @@ export interface GeneticPotentialInput {
   ankleCm?: number
   currentWeight?: number
   currentBodyFat?: number
+  caseyButtMethod?: 'standard' | 'personalized' // Val av metod för Casey Butt
 }
 
 /**
@@ -60,12 +64,11 @@ export interface AlanAragonReference {
  * Baserat på längd och kroppsfett
  * Källa: Leangains.com
  *
- * Formeln justerar maxvikt baserat på längd och kroppsfettprocent:
+ * Formeln beräknar maximal fettfri massa baserat på längd.
+ * Använder tävlingsvikt vid 5% kroppsfett som referens.
  * - Vid 5% BF: Längd - (98-101 beroende på längd)
- * - Vid högre BF: Lägg till % ökning för varje 5% över 5%
  */
-export function berkhanFormula(heightCm: number, targetBodyFat?: number): GeneticPotentialResult {
-  // Använd Excel-logiken
+export function berkhanFormula(heightCm: number): GeneticPotentialResult {
   // Basvikt vid 5% BF baserat på längd
   let baseWeight5BF: number
   if (heightCm < 170) {
@@ -78,51 +81,10 @@ export function berkhanFormula(heightCm: number, targetBodyFat?: number): Geneti
     baseWeight5BF = heightCm - 101
   }
 
-  // Använd antingen användarens faktiska BF eller 5% som default
-  const bf = targetBodyFat ?? 5
-
-  // Justera vikt baserat på kroppsfettprocent
-  // För varje 5% över 5 BF%, lägg till en procentuell ökning
-  let maxWeight: number
-  if (bf <= 5) {
-    maxWeight = baseWeight5BF
-  } else if (bf <= 10) {
-    // Vid 10% BF: Lägg till 5% av basvikten
-    maxWeight = baseWeight5BF + baseWeight5BF * 0.05
-  } else if (bf <= 15) {
-    // Vid 15% BF: Lägg till 10% av basvikten
-    maxWeight = baseWeight5BF + baseWeight5BF * 0.1
-  } else if (bf <= 20) {
-    // Vid 20% BF: Lägg till 15% av basvikten
-    maxWeight = baseWeight5BF + baseWeight5BF * 0.15
-  } else {
-    // Vid 30% BF eller högre: Lägg till 25% av basvikten
-    maxWeight = baseWeight5BF + baseWeight5BF * 0.25
-  }
-
-  // Om användaren har en exakt BF% mellan intervallen, interpolera
-  if (targetBodyFat) {
-    if (bf > 5 && bf < 10) {
-      // Interpolera mellan 0% och 5% ökning
-      const ratio = (bf - 5) / 5
-      maxWeight = baseWeight5BF + baseWeight5BF * (0.05 * ratio)
-    } else if (bf > 10 && bf < 15) {
-      // Interpolera mellan 5% och 10% ökning
-      const ratio = (bf - 10) / 5
-      maxWeight = baseWeight5BF + baseWeight5BF * (0.05 + 0.05 * ratio)
-    } else if (bf > 15 && bf < 20) {
-      // Interpolera mellan 10% och 15% ökning
-      const ratio = (bf - 15) / 5
-      maxWeight = baseWeight5BF + baseWeight5BF * (0.1 + 0.05 * ratio)
-    } else if (bf > 20 && bf < 30) {
-      // Interpolera mellan 15% och 25% ökning
-      const ratio = (bf - 20) / 10
-      maxWeight = baseWeight5BF + baseWeight5BF * (0.15 + 0.1 * ratio)
-    }
-  }
-
-  // Maximal fettfri massa
-  const maxLeanMass = maxWeight * (1 - bf / 100)
+  // Berkhan-modellen definierar genetisk potential vid 5% kroppsfett
+  // Detta är en biologisk maxgräns baserad på längd och skelettstruktur
+  const maxWeight = baseWeight5BF
+  const maxLeanMass = maxWeight * (1 - 5 / 100) // Fettfri massa vid 5% BF
 
   return {
     formula: 'Martin Berkhans modell',
@@ -142,6 +104,7 @@ export function caseyButtFormula(
   heightCm: number,
   wristCm: number,
   ankleCm: number,
+  method: 'standard' | 'personalized' = 'standard',
   currentBodyFat?: number
 ): GeneticPotentialResult {
   // Convert to inches (formulas expect inches)
@@ -149,8 +112,20 @@ export function caseyButtFormula(
   const wristInches = wristCm / 2.54
   const ankleInches = ankleCm / 2.54
 
-  // Use user's body fat % or default 10%
-  const bodyFatPercent = currentBodyFat ?? 10
+  // Bestäm vilken BF% som ska användas baserat på metod
+  let bodyFatPercent: number
+  let actualMethod: 'standard' | 'personalized'
+
+  if (method === 'personalized' && currentBodyFat) {
+    bodyFatPercent = currentBodyFat
+    actualMethod = 'personalized'
+  } else {
+    // Fallback till standard (10%) om:
+    // - Metod är 'standard', ELLER
+    // - Metod är 'personalized' men currentBodyFat saknas
+    bodyFatPercent = 10
+    actualMethod = 'standard'
+  }
 
   // 1. Calculate MLBM (Maximum Lean Body Mass)
   // MLBM = Height^1.5 * (√Wrist / 22.6670 + √Ankle / 17.0104) * (% Body fat / 224 + 1)
@@ -223,6 +198,8 @@ export function caseyButtFormula(
     maxMeasurements,
     upperBodyType,
     lowerBodyType,
+    caseyButtMethod: actualMethod,
+    caseyButtBodyFat: bodyFatPercent,
   }
 }
 
@@ -337,15 +314,16 @@ export function calculateAllModels(input: GeneticPotentialInput): GeneticPotenti
     return results
   }
 
-  // Berkhan - Kräver kroppsfett för meningsfulla resultat
-  if (input.currentBodyFat) {
-    results.push(berkhanFormula(input.heightCm, input.currentBodyFat))
-  }
+  // Berkhan - Endast längd krävs
+  results.push(berkhanFormula(input.heightCm))
 
-  // Casey Butt - Kräver handled, fotled OCH kroppsfett
-  if (input.wristCm && input.ankleCm && input.currentBodyFat) {
+  // Casey Butt - Kräver handled och fotled
+  if (input.wristCm && input.ankleCm) {
+    // Hämta metod från input (default: 'standard')
+    const method = input.caseyButtMethod || 'standard'
+
     results.push(
-      caseyButtFormula(input.heightCm, input.wristCm, input.ankleCm, input.currentBodyFat)
+      caseyButtFormula(input.heightCm, input.wristCm, input.ankleCm, method, input.currentBodyFat)
     )
   }
 
