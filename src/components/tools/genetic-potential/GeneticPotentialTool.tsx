@@ -270,9 +270,9 @@ export default function GeneticPotentialTool() {
                               </button>
                             </div>
                             <div className="text-xs text-blue-700 mt-1">
-                              Visar din maximala genetiska potential i lean form (~10% BF).
-                              Jämförbart mellan individer och baserat på Casey Butts originaldata
-                              från drug-free atleter.
+                              Beräknar MLBM med 10% kroppsfett som referens, sedan konverterat till
+                              din faktiska kroppsfettsprocent. Jämförbart mellan individer och
+                              baserat på Casey Butts originaldata.
                             </div>
                           </div>
                         </label>
@@ -358,20 +358,32 @@ export default function GeneticPotentialTool() {
                               </h3>
                               <div className="text-neutral-700 leading-relaxed">
                                 <p className="mb-3">
-                                  Resultatet kommer visa din maximala genetiska potential, oberoende
-                                  av din nuvarande kroppssammansättning.
+                                  Denna metod beräknar din maximala genetiska potential i två steg:
                                 </p>
+                                <ol className="list-decimal list-inside mb-3 space-y-2">
+                                  <li>
+                                    <strong>MLBM (Maximum Lean Body Mass)</strong> beräknas med 10%
+                                    kroppsfett som en standardiserad referenspunkt
+                                  </li>
+                                  <li>
+                                    Resultatet{' '}
+                                    <strong>
+                                      konverteras till din faktiska kroppsfettsprocent
+                                    </strong>{' '}
+                                    för att visa din maximala vikt vid ditt nuvarande kroppsfett
+                                  </li>
+                                </ol>
                                 <p className="mb-3">
                                   Casey Butts analys byggde på ca 300 drug-free bodybuildingmästare
-                                  och styrkeatleter från 1947–2010. När han utvecklade modellen och
-                                  vikt-/måttformlerna beskrev han dessa värden som representativa
-                                  för ett lean, stabilt tillstånd (~8–10 % kroppsfett), vilket också
-                                  återspeglas i de exempel och referensvärden som används.
+                                  och styrkeatleter från 1947–2010. Dessa atleter var i ett lean,
+                                  stabilt tillstånd (~8–10 % kroppsfett), därför används 10% som
+                                  referenspunkt för MLBM-beräkningen.
                                 </p>
                                 <p>
-                                  I ljuset av detta används 10 % som en fast referens i MLBM-formeln
-                                  (maximum lean body mass) och inte användarens egen %BF för att
-                                  fastställa ett &ldquo;genetiskt tak&rdquo;.
+                                  Genom att använda 10% som fast referens i MLBM-formeln, men sedan
+                                  konvertera till din faktiska kroppsfettsprocent, får du ett
+                                  genetiskt meningsfullt resultat som också är relevant för ditt
+                                  nuvarande tillstånd.
                                 </p>
                               </div>
                             </div>
@@ -385,19 +397,26 @@ export default function GeneticPotentialTool() {
                                 <li className="flex gap-3">
                                   <span className="text-green-600 font-bold mt-1">✅</span>
                                   <span className="text-neutral-700 flex-1">
-                                    Genetiskt meningsfullt och rimligt
+                                    Genetiskt meningsfullt - MLBM baserat på standardiserad referens
                                   </span>
                                 </li>
                                 <li className="flex gap-3">
                                   <span className="text-green-600 font-bold mt-1">✅</span>
                                   <span className="text-neutral-700 flex-1">
-                                    Jämförbart mellan personer
+                                    Jämförbart mellan personer - alla använder samma 10% referens
                                   </span>
                                 </li>
                                 <li className="flex gap-3">
                                   <span className="text-green-600 font-bold mt-1">✅</span>
                                   <span className="text-neutral-700 flex-1">
                                     Undviker att övervikt &ldquo;ökar genetisk potential&rdquo;
+                                  </span>
+                                </li>
+                                <li className="flex gap-3">
+                                  <span className="text-green-600 font-bold mt-1">✅</span>
+                                  <span className="text-neutral-700 flex-1">
+                                    Relevant för ditt nuvarande tillstånd - visar vikt vid din
+                                    faktiska kroppsfett
                                   </span>
                                 </li>
                               </ul>
@@ -410,13 +429,14 @@ export default function GeneticPotentialTool() {
                                 <li className="flex gap-3">
                                   <span className="text-red-600 font-bold mt-1">❌</span>
                                   <span className="text-neutral-700 flex-1">
-                                    Inte individens nuvarande tillstånd
+                                    Kan vara svårare att förstå (tvåstegsberäkning)
                                   </span>
                                 </li>
                                 <li className="flex gap-3">
                                   <span className="text-red-600 font-bold mt-1">❌</span>
                                   <span className="text-neutral-700 flex-1">
-                                    Mindre &ldquo;personligt&rdquo;
+                                    Kräver att du känner till din kroppsfettsprocent för bäst
+                                    resultat
                                   </span>
                                 </li>
                               </ul>
