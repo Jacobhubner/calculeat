@@ -268,6 +268,16 @@ export default function TDEECalculatorTool() {
         training_duration_minutes: trainingDuration || undefined,
         daily_steps: dailySteps || undefined,
         custom_pal: customPAL ? parseFloat(customPAL) : undefined,
+        // Activity Level Wizard fields
+        training_activity_id: trainingActivityId || undefined,
+        training_days_per_week: trainingDaysPerWeek || undefined,
+        training_minutes_per_session: trainingMinutesPerSession || undefined,
+        walking_activity_id: walkingActivityId || undefined,
+        steps_per_day: stepsPerDay || undefined,
+        hours_standing_per_day: hoursStandingPerDay || undefined,
+        household_activity_id: householdActivityId || undefined,
+        household_hours_per_day: householdHoursPerDay || undefined,
+        spa_factor: spaFactor || undefined,
         calculated_bmr: bmr,
         calculated_tdee: tdee,
       }
@@ -285,6 +295,16 @@ export default function TDEECalculatorTool() {
           training_duration_minutes: trainingDuration || undefined,
           daily_steps: dailySteps || undefined,
           custom_pal: customPAL ? parseFloat(customPAL) : undefined,
+          // Activity Level Wizard fields
+          training_activity_id: trainingActivityId || undefined,
+          training_days_per_week: trainingDaysPerWeek || undefined,
+          training_minutes_per_session: trainingMinutesPerSession || undefined,
+          walking_activity_id: walkingActivityId || undefined,
+          steps_per_day: stepsPerDay || undefined,
+          hours_standing_per_day: hoursStandingPerDay || undefined,
+          household_activity_id: householdActivityId || undefined,
+          household_hours_per_day: householdHoursPerDay || undefined,
+          spa_factor: spaFactor || undefined,
           // Set weight_kg and initial_weight_kg
           weight_kg: weightNum,
           initial_weight_kg: activeProfile.initial_weight_kg || weightNum,

@@ -63,6 +63,7 @@ export interface TDEECalculationSnapshot {
   height_cm?: number
   age?: number
   gender?: Gender
+  body_fat_percentage?: number
   bmr_formula?: BMRFormula
   pal_system?: PALSystem
   activity_level?: ActivityLevel
@@ -71,6 +72,16 @@ export interface TDEECalculationSnapshot {
   training_duration_minutes?: number
   daily_steps?: DailySteps
   custom_pal?: number
+  // Activity Level Wizard fields
+  training_activity_id?: string
+  training_days_per_week?: number
+  training_minutes_per_session?: number
+  walking_activity_id?: string
+  steps_per_day?: number
+  hours_standing_per_day?: number
+  household_activity_id?: string
+  household_hours_per_day?: number
+  spa_factor?: number
   calorie_goal?: CalorieGoal
   deficit_level?: DeficitLevel
   calculated_bmr?: number
@@ -96,6 +107,16 @@ export interface UserProfile {
   training_duration_minutes?: number
   daily_steps?: DailySteps
   custom_pal?: number
+  // Activity Level Wizard fields
+  training_activity_id?: string
+  training_days_per_week?: number
+  training_minutes_per_session?: number
+  walking_activity_id?: string
+  steps_per_day?: number
+  hours_standing_per_day?: number
+  household_activity_id?: string
+  household_hours_per_day?: number
+  spa_factor?: number
 
   // Body composition
   body_fat_percentage?: number
@@ -148,6 +169,16 @@ export interface UserProfileFormData {
   training_duration_minutes?: number
   daily_steps?: DailySteps
   custom_pal?: number
+  // Activity Level Wizard fields
+  training_activity_id?: string
+  training_days_per_week?: number
+  training_minutes_per_session?: number
+  walking_activity_id?: string
+  steps_per_day?: number
+  hours_standing_per_day?: number
+  household_activity_id?: string
+  household_hours_per_day?: number
+  spa_factor?: number
 
   // Body composition
   body_fat_percentage?: number
@@ -192,6 +223,16 @@ export interface Profile {
   training_duration_minutes?: number
   daily_steps?: DailySteps
   custom_pal?: number
+  // Activity Level Wizard fields
+  training_activity_id?: string
+  training_days_per_week?: number
+  training_minutes_per_session?: number
+  walking_activity_id?: string
+  steps_per_day?: number
+  hours_standing_per_day?: number
+  household_activity_id?: string
+  household_hours_per_day?: number
+  spa_factor?: number
 
   // Body composition
   body_fat_percentage?: number
