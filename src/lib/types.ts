@@ -72,7 +72,7 @@ export interface TDEECalculationSnapshot {
   training_duration_minutes?: number
   daily_steps?: DailySteps
   custom_pal?: number
-  // Activity Level Wizard fields
+  // Beräkna din aktivitetsnivå fields
   training_activity_id?: string
   training_days_per_week?: number
   training_minutes_per_session?: number
@@ -107,7 +107,7 @@ export interface UserProfile {
   training_duration_minutes?: number
   daily_steps?: DailySteps
   custom_pal?: number
-  // Activity Level Wizard fields
+  // Beräkna din aktivitetsnivå fields
   training_activity_id?: string
   training_days_per_week?: number
   training_minutes_per_session?: number
@@ -169,7 +169,7 @@ export interface UserProfileFormData {
   training_duration_minutes?: number
   daily_steps?: DailySteps
   custom_pal?: number
-  // Activity Level Wizard fields
+  // Beräkna din aktivitetsnivå fields
   training_activity_id?: string
   training_days_per_week?: number
   training_minutes_per_session?: number
@@ -223,7 +223,7 @@ export interface Profile {
   training_duration_minutes?: number
   daily_steps?: DailySteps
   custom_pal?: number
-  // Activity Level Wizard fields
+  // Beräkna din aktivitetsnivå fields
   training_activity_id?: string
   training_days_per_week?: number
   training_minutes_per_session?: number

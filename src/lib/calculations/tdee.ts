@@ -41,7 +41,7 @@ export interface TDEEParams {
   trainingDurationMinutes?: number
   dailySteps?: DailySteps
   customPAL?: number
-  // Activity Level Wizard fields
+  // Beräkna din aktivitetsnivå fields
   trainingActivityId?: string
   trainingDaysPerWeek?: number
   trainingMinutesPerSession?: number
@@ -262,7 +262,7 @@ export function getBasicInternetPAL(activityLevel: ActivityLevel): number {
 }
 
 /**
- * 6. Activity Level Wizard (detailed activity tracking)
+ * 6. Beräkna din aktivitetsnivå (detailed activity tracking)
  */
 function calculateActivityLevelWizard(
   bmr: number,

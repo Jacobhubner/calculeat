@@ -28,7 +28,7 @@ export default function PALTableActivityLevelWizard({
   // Watch form values if register/watch are available
   const trainingDays = watch?.('training_days_per_week') || 0
   const trainingMinutes = watch?.('training_minutes_per_session') || 0
-  const stepsPerDay = watch?.('steps_per_day') || 7000
+  const stepsPerDay = watch?.('steps_per_day') || 0
   const hoursStanding = watch?.('hours_standing_per_day') || 0
   const householdHours = watch?.('household_hours_per_day') || 0
   const spaFactor = watch?.('spa_factor') || 1.1
@@ -82,59 +82,23 @@ export default function PALTableActivityLevelWizard({
     return MET_ACTIVITIES.filter(activity => activity.category === 'Hushållsaktiviteter')
   }, [])
 
-  // Detektera om användaren har interagerat med formuläret
-  const userHasInteracted = useMemo(() => {
+  // Kontrollera om alla obligatoriska fält är ifyllda
+  const allRequiredFieldsFilled = useMemo(() => {
     const trainingActivityId = watch?.('training_activity_id')
-    const householdActivityId = watch?.('household_activity_id')
 
-    // Användaren har interagerat om något av följande är sant:
-    return (
-      trainingDays > 0 ||
-      trainingMinutes > 0 ||
-      !!trainingActivityId ||
-      stepsPerDay !== 7000 ||
-      hoursStanding > 0 ||
-      householdHours > 0 ||
-      !!householdActivityId ||
-      Math.abs(spaFactor - 1.1) > 0.001
-    )
-  }, [trainingDays, trainingMinutes, stepsPerDay, hoursStanding, householdHours, spaFactor, watch])
+    // Endast 4 fält krävs:
+    // 1. Antal dagar per vecka du tränar
+    // 2. Antal minuter per träningspass
+    // 3. Välj träningsaktivitet
+    // 4. Genomsnittligt antal steg per dag
+    return trainingDays > 0 && trainingMinutes > 0 && !!trainingActivityId && stepsPerDay > 0
+  }, [trainingDays, trainingMinutes, stepsPerDay, watch])
 
-  // Kontrollera om alla nödvändiga fält är ifyllda
-  const allFieldsFilled = useMemo(() => {
-    const trainingActivityId = watch?.('training_activity_id')
-    const walkingActivityId = watch?.('walking_activity_id')
-    const householdActivityId = watch?.('household_activity_id')
-
-    // Träning: Antingen 0 dagar OCH inga minuter OCH ingen aktivitet
-    // ELLER alla tre (dagar > 0, minuter > 0, aktivitet vald)
-    const trainingValid =
-      (trainingDays === 0 && trainingMinutes === 0 && !trainingActivityId) ||
-      (trainingDays > 0 && trainingMinutes > 0 && trainingActivityId)
-
-    // Gång: Både steg OCH tempo måste vara ifyllda (båda har defaults så detta borde alltid vara sant)
-    const walkingValid = stepsPerDay > 0 && walkingActivityId
-
-    // Stående: Antingen 0 timmar (inget stående)
-    // ELLER minst 0.5 timmar har angivits
-    const standingValid = hoursStanding >= 0
-
-    // Hushåll: Antingen 0 timmar OCH ingen aktivitet
-    // ELLER timmar > 0 OCH aktivitet vald
-    const householdValid =
-      (householdHours === 0 && !householdActivityId) || (householdHours > 0 && householdActivityId)
-
-    // SPA-faktor måste vara inom intervallet
-    const spaValid = spaFactor >= 1.05 && spaFactor <= 1.2
-
-    return trainingValid && walkingValid && standingValid && householdValid && spaValid
-  }, [trainingDays, trainingMinutes, stepsPerDay, hoursStanding, householdHours, spaFactor, watch])
-
-  // Beräkna PAL-värde endast när användaren har interagerat OCH alla fält är korrekt ifyllda
+  // Beräkna PAL-värde när alla obligatoriska fält är ifyllda
   const palValue = useMemo(() => {
-    if (!bmr || !tdee || bmr <= 0 || !allFieldsFilled || !userHasInteracted) return null
+    if (!bmr || !tdee || bmr <= 0 || !allRequiredFieldsFilled) return null
     return tdee / bmr
-  }, [bmr, tdee, allFieldsFilled, userHasInteracted])
+  }, [bmr, tdee, allRequiredFieldsFilled])
 
   if (!register) {
     return (
@@ -248,7 +212,6 @@ export default function PALTableActivityLevelWizard({
             max="30000"
             step="1"
             placeholder="7000"
-            defaultValue="7000"
             className="mt-1"
             {...register('steps_per_day', { valueAsNumber: true })}
           />

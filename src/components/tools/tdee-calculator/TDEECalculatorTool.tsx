@@ -45,12 +45,12 @@ export default function TDEECalculatorTool() {
       training_duration_minutes: '',
       daily_steps: '',
       custom_pal: '',
-      // Activity Level Wizard fields
+      // Beräkna din aktivitetsnivå fields
       training_activity_id: '',
       training_days_per_week: 0,
       training_minutes_per_session: 0,
       walking_activity_id: '17190',
-      steps_per_day: 7000,
+      steps_per_day: undefined,
       hours_standing_per_day: 0,
       household_activity_id: '',
       household_hours_per_day: 0,
@@ -65,7 +65,7 @@ export default function TDEECalculatorTool() {
   const trainingDuration = watch('training_duration_minutes')
   const dailySteps = watch('daily_steps')
   const customPAL = watch('custom_pal')
-  // Activity Level Wizard values
+  // Beräkna din aktivitetsnivå values
   const trainingActivityId = watch('training_activity_id')
   const trainingDaysPerWeek = watch('training_days_per_week')
   const trainingMinutesPerSession = watch('training_minutes_per_session')
@@ -147,32 +147,26 @@ export default function TDEECalculatorTool() {
 
     // Special validation for Beräkna din aktivitetsnivå
     if (palSystem === 'Beräkna din aktivitetsnivå') {
-      // Require that user has filled in the form properly
-      // Training: Either 0 days/minutes/no activity OR all filled
-      const trainingValid =
-        (trainingDaysPerWeek === 0 && trainingMinutesPerSession === 0 && !trainingActivityId) ||
-        (trainingDaysPerWeek > 0 && trainingMinutesPerSession > 0 && trainingActivityId)
+      // Require only 4 fields to be filled:
+      // 1. Antal dagar per vecka du tränar
+      // 2. Antal minuter per träningspass
+      // 3. Välj träningsaktivitet
+      // 4. Genomsnittligt antal steg per dag
+      const allRequiredFieldsFilled =
+        trainingDaysPerWeek > 0 &&
+        trainingMinutesPerSession > 0 &&
+        !!trainingActivityId &&
+        stepsPerDay > 0
 
-      // Walking: Must have activity selected (has default)
-      const walkingValid = walkingActivityId
+      console.log('Beräkna din aktivitetsnivå Validation:', {
+        allRequiredFieldsFilled,
+        trainingDaysPerWeek,
+        trainingMinutesPerSession,
+        trainingActivityId,
+        stepsPerDay,
+      })
 
-      // Household: Either 0 hours/no activity OR both filled
-      const householdValid =
-        (householdHoursPerDay === 0 && !householdActivityId) ||
-        (householdHoursPerDay > 0 && householdActivityId)
-
-      // User must have interacted - at least one value changed from defaults
-      const userInteracted =
-        trainingDaysPerWeek > 0 ||
-        trainingMinutesPerSession > 0 ||
-        trainingActivityId ||
-        stepsPerDay !== 7000 ||
-        hoursStandingPerDay > 0 ||
-        householdHoursPerDay > 0 ||
-        householdActivityId ||
-        Math.abs(spaFactor - 1.1) > 0.001
-
-      if (!trainingValid || !walkingValid || !householdValid || !userInteracted) {
+      if (!allRequiredFieldsFilled) {
         return null
       }
     }
@@ -190,7 +184,7 @@ export default function TDEECalculatorTool() {
       trainingDurationMinutes: trainingDuration || undefined,
       dailySteps: dailySteps || undefined,
       customPAL: customPAL ? parseFloat(customPAL) : undefined,
-      // Activity Level Wizard fields
+      // Beräkna din aktivitetsnivå fields
       weightKg: weight || undefined,
       trainingActivityId: trainingActivityId || undefined,
       trainingDaysPerWeek,
@@ -268,7 +262,7 @@ export default function TDEECalculatorTool() {
         training_duration_minutes: trainingDuration || undefined,
         daily_steps: dailySteps || undefined,
         custom_pal: customPAL ? parseFloat(customPAL) : undefined,
-        // Activity Level Wizard fields
+        // Beräkna din aktivitetsnivå fields
         training_activity_id: trainingActivityId || undefined,
         training_days_per_week: trainingDaysPerWeek || undefined,
         training_minutes_per_session: trainingMinutesPerSession || undefined,
@@ -295,7 +289,7 @@ export default function TDEECalculatorTool() {
           training_duration_minutes: trainingDuration || undefined,
           daily_steps: dailySteps || undefined,
           custom_pal: customPAL ? parseFloat(customPAL) : undefined,
-          // Activity Level Wizard fields
+          // Beräkna din aktivitetsnivå fields
           training_activity_id: trainingActivityId || undefined,
           training_days_per_week: trainingDaysPerWeek || undefined,
           training_minutes_per_session: trainingMinutesPerSession || undefined,
