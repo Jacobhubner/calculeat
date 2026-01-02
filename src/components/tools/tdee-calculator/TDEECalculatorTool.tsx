@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { Save, User } from 'lucide-react'
@@ -23,8 +23,6 @@ import PALvsMETContent from '@/components/info/PALvsMETContent'
 import TDEEContent from '@/components/info/TDEEContent'
 import LBMvsFFMContent from '@/components/info/LBMvsFFMContent'
 import { translatePALSystem } from '@/lib/translations'
-import ActivityLevelWizardModal from './ActivityLevelWizard/ActivityLevelWizardModal'
-import type { WizardResult } from './ActivityLevelWizard/types'
 
 export default function TDEECalculatorTool() {
   const navigate = useNavigate()
@@ -47,6 +45,16 @@ export default function TDEECalculatorTool() {
       training_duration_minutes: '',
       daily_steps: '',
       custom_pal: '',
+      // Activity Level Wizard fields
+      training_activity_id: '',
+      training_days_per_week: 0,
+      training_minutes_per_session: 0,
+      walking_activity_id: '17190',
+      steps_per_day: 7000,
+      hours_standing_per_day: 0,
+      household_activity_id: '',
+      household_hours_per_day: 0,
+      spa_factor: 1.1,
     },
   })
 
@@ -57,14 +65,19 @@ export default function TDEECalculatorTool() {
   const trainingDuration = watch('training_duration_minutes')
   const dailySteps = watch('daily_steps')
   const customPAL = watch('custom_pal')
+  // Activity Level Wizard values
+  const trainingActivityId = watch('training_activity_id')
+  const trainingDaysPerWeek = watch('training_days_per_week')
+  const trainingMinutesPerSession = watch('training_minutes_per_session')
+  const walkingActivityId = watch('walking_activity_id')
+  const stepsPerDay = watch('steps_per_day')
+  const hoursStandingPerDay = watch('hours_standing_per_day')
+  const householdActivityId = watch('household_activity_id')
+  const householdHoursPerDay = watch('household_hours_per_day')
+  const spaFactor = watch('spa_factor')
 
   // Local state
   const [isSaving, setIsSaving] = useState(false)
-
-  // Wizard state
-  const [showWizard, setShowWizard] = useState(false)
-  const [calculatedPAL, setCalculatedPAL] = useState<number | null>(null)
-  const [wizardTDEE, setWizardTDEE] = useState<number | null>(null)
 
   // Weight state (local override for calculator)
   const [useInitialWeight, setUseInitialWeight] = useState(true) // Start with initial weight by default
@@ -103,28 +116,6 @@ export default function TDEECalculatorTool() {
     return calculateAge(profileData.birth_date)
   }, [profileData?.birth_date])
 
-  // Öppna wizard när "Beräkna din aktivitetsnivå" väljs
-  useEffect(() => {
-    if (palSystem === 'Activity Level Wizard') {
-      setShowWizard(true)
-    }
-  }, [palSystem])
-
-  // Hantera wizard-resultat
-  const handleWizardComplete = (result: WizardResult) => {
-    setCalculatedPAL(result.pal)
-    setWizardTDEE(result.tdee)
-    setShowWizard(false)
-  }
-
-  // Hantera wizard-stängning
-  const handleWizardClose = () => {
-    setShowWizard(false)
-    setPalSystem('') // Återställ till ingen vald
-    setCalculatedPAL(null)
-    setWizardTDEE(null)
-  }
-
   // Beräkna BMR
   const bmr = useMemo(() => {
     const weight = localWeight ? parseFloat(localWeight) : null
@@ -154,10 +145,39 @@ export default function TDEECalculatorTool() {
   const tdee = useMemo(() => {
     if (!bmr || !palSystem || !profileData?.gender) return null
 
-    // If wizard is used, return wizard TDEE
-    if (palSystem === 'Activity Level Wizard' && wizardTDEE) {
-      return wizardTDEE
+    // Special validation for Beräkna din aktivitetsnivå
+    if (palSystem === 'Beräkna din aktivitetsnivå') {
+      // Require that user has filled in the form properly
+      // Training: Either 0 days/minutes/no activity OR all filled
+      const trainingValid =
+        (trainingDaysPerWeek === 0 && trainingMinutesPerSession === 0 && !trainingActivityId) ||
+        (trainingDaysPerWeek > 0 && trainingMinutesPerSession > 0 && trainingActivityId)
+
+      // Walking: Must have activity selected (has default)
+      const walkingValid = walkingActivityId
+
+      // Household: Either 0 hours/no activity OR both filled
+      const householdValid =
+        (householdHoursPerDay === 0 && !householdActivityId) ||
+        (householdHoursPerDay > 0 && householdActivityId)
+
+      // User must have interacted - at least one value changed from defaults
+      const userInteracted =
+        trainingDaysPerWeek > 0 ||
+        trainingMinutesPerSession > 0 ||
+        trainingActivityId ||
+        stepsPerDay !== 7000 ||
+        hoursStandingPerDay > 0 ||
+        householdHoursPerDay > 0 ||
+        householdActivityId ||
+        Math.abs(spaFactor - 1.1) > 0.001
+
+      if (!trainingValid || !walkingValid || !householdValid || !userInteracted) {
+        return null
+      }
     }
+
+    const weight = localWeight ? parseFloat(localWeight) : null
 
     // Calculate TDEE using the selected PAL system and user's activity data
     const calculatedTDEE = calculateTDEE({
@@ -170,6 +190,17 @@ export default function TDEECalculatorTool() {
       trainingDurationMinutes: trainingDuration || undefined,
       dailySteps: dailySteps || undefined,
       customPAL: customPAL ? parseFloat(customPAL) : undefined,
+      // Activity Level Wizard fields
+      weightKg: weight || undefined,
+      trainingActivityId: trainingActivityId || undefined,
+      trainingDaysPerWeek,
+      trainingMinutesPerSession,
+      walkingActivityId: walkingActivityId || undefined,
+      stepsPerDay,
+      hoursStandingPerDay,
+      householdActivityId: householdActivityId || undefined,
+      householdHoursPerDay,
+      spaFactor,
     })
 
     // Validate TDEE result
@@ -188,7 +219,16 @@ export default function TDEECalculatorTool() {
     dailySteps,
     customPAL,
     profileData?.gender,
-    wizardTDEE,
+    localWeight,
+    trainingActivityId,
+    trainingDaysPerWeek,
+    trainingMinutesPerSession,
+    walkingActivityId,
+    stepsPerDay,
+    hoursStandingPerDay,
+    householdActivityId,
+    householdHoursPerDay,
+    spaFactor,
   ])
 
   // Save TDEE to profile
@@ -550,23 +590,22 @@ export default function TDEECalculatorTool() {
                 <option value="Fitness Stuff PAL values">
                   {translatePALSystem('Fitness Stuff PAL values')}
                 </option>
-                <option value="Activity Level Wizard">Beräkna din aktivitetsnivå</option>
+                <option value="Beräkna din aktivitetsnivå">Beräkna din aktivitetsnivå</option>
                 <option value="Custom PAL">{translatePALSystem('Custom PAL')}</option>
               </select>
             </div>
 
-            {/* Show PAL table if system is selected (but not for wizard) */}
-            {palSystem && palSystem !== 'Activity Level Wizard' && (
+            {/* Show PAL table if system is selected */}
+            {palSystem && (
               <div className="mt-4">
-                <PALTableContainer system={palSystem} register={register} watch={watch} />
-              </div>
-            )}
-
-            {/* Show calculated PAL from wizard */}
-            {palSystem === 'Activity Level Wizard' && calculatedPAL && (
-              <div className="mt-4 p-4 bg-primary-50 border border-primary-200 rounded-lg">
-                <p className="text-sm font-medium text-neutral-700 mb-2">Beräknat PAL-värde:</p>
-                <p className="text-3xl font-bold text-primary-600">{calculatedPAL.toFixed(2)}</p>
+                <PALTableContainer
+                  system={palSystem}
+                  register={register}
+                  watch={watch}
+                  bmr={bmr}
+                  weight={localWeight ? parseFloat(localWeight) : null}
+                  tdee={tdee}
+                />
               </div>
             )}
           </div>
@@ -639,21 +678,11 @@ export default function TDEECalculatorTool() {
         />
       )}
 
-      {palSystem && palSystem !== 'Activity Level Wizard' && (
+      {palSystem && (
         <PALSystemModal
           system={palSystem}
           isOpen={showPALModal}
           onClose={() => setShowPALModal(false)}
-        />
-      )}
-
-      {/* Activity Level Wizard Modal */}
-      {showWizard && bmr && localWeight && (
-        <ActivityLevelWizardModal
-          bmr={bmr}
-          weightKg={parseFloat(localWeight)}
-          onComplete={handleWizardComplete}
-          onClose={handleWizardClose}
         />
       )}
     </div>

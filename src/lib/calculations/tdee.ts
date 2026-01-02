@@ -11,6 +11,7 @@ export type PALSystem =
   | 'Pro Physique PAL values'
   | 'Fitness Stuff PAL values'
   | 'Basic internet PAL values'
+  | 'Beräkna din aktivitetsnivå'
   | 'Custom PAL'
 
 export type ActivityLevel =
@@ -40,6 +41,17 @@ export interface TDEEParams {
   trainingDurationMinutes?: number
   dailySteps?: DailySteps
   customPAL?: number
+  // Activity Level Wizard fields
+  trainingActivityId?: string
+  trainingDaysPerWeek?: number
+  trainingMinutesPerSession?: number
+  walkingActivityId?: string
+  stepsPerDay?: number
+  hoursStandingPerDay?: number
+  householdActivityId?: string
+  householdHoursPerDay?: number
+  spaFactor?: number
+  weightKg?: number
 }
 
 /**
@@ -48,7 +60,7 @@ export interface TDEEParams {
 function calculateFAOWHO(bmr: number, activityLevel: ActivityLevel, gender: Gender): number {
   // Validate BMR
   if (bmr <= 0) {
-    return 0;
+    return 0
   }
 
   const multipliers: Record<Gender, Record<ActivityLevel, number>> = {
@@ -81,7 +93,7 @@ function calculateDAMNRIPPED(
 ): number {
   // Validate BMR
   if (bmr <= 0) {
-    return 0;
+    return 0
   }
 
   const multipliers: Record<ActivityLevel, Record<IntensityLevel, number>> = {
@@ -137,12 +149,12 @@ function calculateProPhysique(
 ): number {
   // Validate BMR
   if (bmr <= 0) {
-    return 0;
+    return 0
   }
 
   // Validate training parameters (negative values not allowed)
-  const validFrequency = Math.max(0, trainingFrequencyPerWeek);
-  const validDuration = Math.max(0, trainingDurationMinutes);
+  const validFrequency = Math.max(0, trainingFrequencyPerWeek)
+  const validDuration = Math.max(0, trainingDurationMinutes)
 
   const baseMultipliers: Record<ActivityLevel, number> = {
     Sedentary: 1.15,
@@ -161,8 +173,7 @@ function calculateProPhysique(
   }
 
   const baseTDEE = bmr * baseMultipliers[activityLevel]
-  const trainingCalories =
-    (validFrequency / 7) * validDuration * intensityCalories[intensityLevel]
+  const trainingCalories = (validFrequency / 7) * validDuration * intensityCalories[intensityLevel]
 
   return baseTDEE + trainingCalories
 }
@@ -177,11 +188,11 @@ function calculateFitnessStuff(
 ): number {
   // Validate BMR
   if (bmr <= 0) {
-    return 0;
+    return 0
   }
 
   // Validate training hours (negative values not allowed)
-  const validHours = Math.max(0, trainingHoursPerWeek);
+  const validHours = Math.max(0, trainingHoursPerWeek)
 
   // Base multiplier based on training hours
   let multiplier: number
@@ -220,7 +231,7 @@ function calculateFitnessStuff(
 function calculateBasicInternet(bmr: number, activityLevel: ActivityLevel): number {
   // Validate BMR
   if (bmr <= 0) {
-    return 0;
+    return 0
   }
 
   const multipliers: Record<ActivityLevel, number> = {
@@ -251,23 +262,72 @@ export function getBasicInternetPAL(activityLevel: ActivityLevel): number {
 }
 
 /**
- * 6. Custom PAL (user-defined multiplier)
+ * 6. Activity Level Wizard (detailed activity tracking)
+ */
+function calculateActivityLevelWizard(
+  bmr: number,
+  weightKg: number,
+  trainingActivityId: string | undefined,
+  trainingDaysPerWeek: number = 0,
+  trainingMinutesPerSession: number = 0,
+  walkingActivityId: string | undefined,
+  stepsPerDay: number = 7000,
+  hoursStandingPerDay: number = 0,
+  householdActivityId: string | undefined,
+  householdHoursPerDay: number = 0,
+  spaFactor: number = 1.1
+): number {
+  // Validate BMR and weight
+  if (bmr <= 0 || weightKg <= 0) {
+    return 0
+  }
+
+  // Import MET activities dynamically to get MET values
+  // For now, use default MET values since we can't import in this function
+  const walkingMET = 3.5 // Default walking MET
+  const householdMET = 2.0 // Default household MET
+  const trainingMET = 6.0 // Default training MET
+
+  // NEAT_steps: Gångkalorier från steg (viktjusterad med MET-värde)
+  const neatSteps = (stepsPerDay * (0.04 / 70) * weightKg * walkingMET) / 3.8
+
+  // NEAT_standing: Stående-kalorier (viktjusterad formel)
+  const neatStanding = 1.3 * weightKg * hoursStandingPerDay
+
+  // NEAT_household: Hushållskalorier
+  const neatHousehold = householdMET * weightKg * householdHoursPerDay
+
+  // NEAT_total: Total NEAT multiplicerat med SPA-faktor
+  const neatTotal = (neatSteps + neatStanding + neatHousehold) * spaFactor
+
+  // EAT (Exercise Activity Thermogenesis): Träningskalorier per dag
+  const eat = (trainingDaysPerWeek / 7) * (trainingMinutesPerSession / 60) * trainingMET * weightKg
+
+  // TDEE beräkning med TEF (Thermic Effect of Food = 10% av TDEE)
+  // TDEE = (BMR + NEAT_total + EAT) / 0.9
+  const tdee = (bmr + neatTotal + eat) / 0.9
+
+  return tdee
+}
+
+/**
+ * 7. Custom PAL (user-defined multiplier)
  */
 function calculateCustomPAL(bmr: number, customPAL: number): number {
   // Validate BMR
   if (bmr <= 0) {
-    return 0;
+    return 0
   }
 
   // Validate custom PAL (should be between 1.0 and 3.0 for realistic values)
   if (customPAL < 1.0 || customPAL > 3.0) {
-    console.warn(`Custom PAL value ${customPAL} is outside realistic range (1.0-3.0)`);
+    console.warn(`Custom PAL value ${customPAL} is outside realistic range (1.0-3.0)`)
     // Clamp to reasonable bounds
-    const validPAL = Math.max(1.0, Math.min(3.0, customPAL));
-    return bmr * validPAL;
+    const validPAL = Math.max(1.0, Math.min(3.0, customPAL))
+    return bmr * validPAL
   }
 
-  return bmr * customPAL;
+  return bmr * customPAL
 }
 
 /**
@@ -288,8 +348,8 @@ export function calculateTDEE(params: TDEEParams): number {
 
   // Validate BMR at the entry point
   if (bmr <= 0) {
-    console.error('Invalid BMR value:', bmr);
-    return 0;
+    console.error('Invalid BMR value:', bmr)
+    return 0
   }
 
   let tdee: number
@@ -321,6 +381,22 @@ export function calculateTDEE(params: TDEEParams): number {
 
     case 'Basic internet PAL values':
       tdee = calculateBasicInternet(bmr, activityLevel)
+      break
+
+    case 'Beräkna din aktivitetsnivå':
+      tdee = calculateActivityLevelWizard(
+        bmr,
+        params.weightKg || 70, // Default weight if not provided
+        params.trainingActivityId,
+        params.trainingDaysPerWeek || 0,
+        params.trainingMinutesPerSession || 0,
+        params.walkingActivityId,
+        params.stepsPerDay || 7000,
+        params.hoursStandingPerDay || 0,
+        params.householdActivityId,
+        params.householdHoursPerDay || 0,
+        params.spaFactor || 1.1
+      )
       break
 
     case 'Custom PAL':

@@ -5,7 +5,7 @@
  */
 
 import { useState, useEffect } from 'react'
-import { Lock, LockOpen, Info } from 'lucide-react'
+import { Lock, Info } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import type { Gender } from '@/lib/types'
@@ -44,7 +44,6 @@ export default function BasicInfoFields({
   const [birthYear, setBirthYear] = useState(parsedDate?.getFullYear().toString() || '')
   const [heightString, setHeightString] = useState(height?.toString() || '')
   const [initialWeightString, setInitialWeightString] = useState(initialWeight?.toString() || '')
-  const [isWeightUnlocked, setIsWeightUnlocked] = useState(false)
 
   // Sync local state when props change (avoid cascading renders by checking if actually changed)
   useEffect(() => {
@@ -152,23 +151,6 @@ export default function BasicInfoFields({
   const handleInitialWeightBlur = () => {
     const num = parseFloat(initialWeightString)
     onInitialWeightChange(isNaN(num) ? undefined : num)
-
-    // Auto-lock after blur (whether changed or not)
-    if (isWeightUnlocked) {
-      setIsWeightUnlocked(false)
-    }
-  }
-
-  const handleUnlockWeight = () => {
-    const warningMessage =
-      'Varning: Du är på väg att ändra startvikten!\n\n' +
-      'Detta kommer att påverka vikthistoriken och viktspårningen för alla dina profilkort.\n\n' +
-      'Vill du fortsätta?'
-
-    const confirmed = window.confirm(warningMessage)
-    if (confirmed) {
-      setIsWeightUnlocked(true)
-    }
   }
 
   const lockTitle =
@@ -303,11 +285,6 @@ export default function BasicInfoFields({
               </select>
             </div>
           </div>
-          {locked && (
-            <p className="text-xs text-neutral-500 mt-1">
-              Låst - radera alla profilkort för att ändra
-            </p>
-          )}
         </div>
 
         {/* Gender Selection */}
@@ -357,11 +334,6 @@ export default function BasicInfoFields({
               <span className={locked ? 'text-neutral-400' : 'text-neutral-700'}>Kvinna</span>
             </label>
           </div>
-          {locked && (
-            <p className="text-xs text-neutral-500 mt-1">
-              Låst - radera alla profilkort för att ändra
-            </p>
-          )}
         </div>
 
         {/* Height */}
@@ -395,74 +367,41 @@ export default function BasicInfoFields({
               title={locked ? lockTitle : ''}
             />
           </div>
-          {locked && (
-            <p className="text-xs text-neutral-500 mt-1">
-              Låst - radera alla profilkort för att ändra
-            </p>
-          )}
         </div>
 
         {/* Initial Weight (Startvikt) */}
         <div>
           <label className="block text-sm font-medium text-neutral-700 mb-2 flex items-center gap-2">
             Startvikt (kg) <span className="text-red-600">*</span>
-            {locked && !isWeightUnlocked && (
+            {locked && (
               <span className="flex items-center gap-1 text-xs text-neutral-500 font-normal">
                 <Lock className="h-3 w-3" />
                 Låst
               </span>
             )}
-            {locked && isWeightUnlocked && (
-              <span className="flex items-center gap-1 text-xs text-amber-600 font-normal">
-                <LockOpen className="h-3 w-3" />
-                Upplåst
-              </span>
-            )}
           </label>
-          <div className="flex gap-2">
-            <div className="relative flex-1">
-              {locked && !isWeightUnlocked && (
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400 z-10 pointer-events-none" />
-              )}
-              <input
-                type="number"
-                value={initialWeightString}
-                onChange={e => handleInitialWeightChange(e.target.value)}
-                onBlur={handleInitialWeightBlur}
-                disabled={locked && !isWeightUnlocked}
-                className={`mt-1 block w-full rounded-xl shadow-sm focus:border-primary-500 focus:ring-primary-500 ${
-                  locked && !isWeightUnlocked
-                    ? 'bg-neutral-200 cursor-not-allowed text-neutral-400 border-dashed border-2 border-neutral-300 pl-10'
-                    : 'border-neutral-300'
-                }`}
-                placeholder="75"
-                min="20"
-                max="300"
-                step="0.1"
-                title={locked && !isWeightUnlocked ? lockTitle : ''}
-              />
-            </div>
-            {locked && !isWeightUnlocked && (
-              <button
-                type="button"
-                onClick={handleUnlockWeight}
-                className="mt-1 px-3 py-2 rounded-xl border-2 border-neutral-300 bg-white text-neutral-600 hover:bg-neutral-50 transition-colors flex items-center gap-2"
-                title="Lås upp för att redigera"
-              >
-                <LockOpen className="h-4 w-4" />
-                Lås upp
-              </button>
+          <div className="relative">
+            {locked && (
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400 z-10 pointer-events-none" />
             )}
+            <input
+              type="number"
+              value={initialWeightString}
+              onChange={e => handleInitialWeightChange(e.target.value)}
+              onBlur={handleInitialWeightBlur}
+              disabled={locked}
+              className={`mt-1 block w-full rounded-xl shadow-sm focus:border-primary-500 focus:ring-primary-500 ${
+                locked
+                  ? 'bg-neutral-200 cursor-not-allowed text-neutral-400 border-dashed border-2 border-neutral-300 pl-10'
+                  : 'border-neutral-300'
+              }`}
+              placeholder="75"
+              min="20"
+              max="300"
+              step="0.1"
+              title={locked ? lockTitle : ''}
+            />
           </div>
-          <p className="text-xs text-neutral-500 mt-1">
-            Din vikt när du börjar använda appen. Används för att spåra viktförändring. OBS: Detta
-            påverkar alla dina profilkort!
-          </p>
-          {locked && !isWeightUnlocked && (
-            <p className="text-xs text-neutral-500 mt-1">
-              Låst - klicka på &ldquo;Lås upp&rdquo; för att redigera
-            </p>
-          )}
         </div>
       </CardContent>
     </Card>

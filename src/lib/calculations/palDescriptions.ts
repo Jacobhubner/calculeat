@@ -130,6 +130,37 @@ export const PAL_SYSTEM_DESCRIPTIONS: Record<PALSystem, PALSystemDescription> = 
     ],
   },
 
+  'Beräkna din aktivitetsnivå': {
+    name: 'Beräkna din aktivitetsnivå',
+    description:
+      'Det mest detaljerade och vetenskapligt grundade systemet. Beräknar ditt PAL-värde från grunden genom att summera BMR + NEAT + EAT och backgrundsinräknat för TEF. Systemet bygger på MET-värden (Metabolic Equivalent of Task) från vetenskaplig forskning och tar hänsyn till alla komponenter av daglig energiförbrukning: strukturerad träning, dagliga steg och gångtempo, stående arbete, hushållsaktiviteter samt spontan fysisk aktivitet (SPA-faktor baserad på NEAT-litteraturen från Levine, 2002-2015).',
+    pros: [
+      'Mest exakt och personlig beräkning av alla PAL-system',
+      'Baserat på vetenskapliga MET-värden och NEAT-forskning',
+      'Tar hänsyn till alla komponenter: träning (EAT), vardagsrörelse (NEAT), och spontan aktivitet (SPA)',
+      'Inkluderar TEF (Thermic Effect of Food) i backgrundsberäkningen',
+      'Perfekt för varierad livsstil med både träning och vardagsaktivitet',
+      'Ger djup förståelse för var din energiförbrukning kommer ifrån',
+      'Möjlighet att se exakt hur olika aktiviteter påverkar TDEE',
+    ],
+    cons: [
+      'Kräver mest indata av alla system – kan ta tid att fylla i',
+      'Förutsätter att användaren känner till sina aktivitetsmönster',
+      'Mer komplex beräkning som kan verka överväldigande för nybörjare',
+      'Kräver uppföljning av steg och träningstid för bäst precision',
+      'Noggrannheten beror på hur exakt användaren rapporterar sina aktiviteter',
+    ],
+    bestFor: [
+      'Erfarna användare som vill ha maximalt exakt kaloriuppskattning',
+      'Personer med tillgång till stegräknare eller smartwatch',
+      'De som har god koll på sina tränings- och aktivitetsmönster',
+      'Användare som vill förstå sin energiförbrukning i detalj',
+      'Personer med varierande veckoschema (vissa dagar aktiva, andra stillasittande)',
+      'De som är villiga att investera tid för högsta möjliga precision',
+      'Personer som följer strukturerade träningsprogram och kan rapportera MET-värden',
+    ],
+  },
+
   'Custom PAL': {
     name: 'Anpassat PAL-värde',
     description:

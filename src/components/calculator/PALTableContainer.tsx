@@ -7,6 +7,7 @@ import PALTableDAMNRIPPED from './PALTableDAMNRIPPED'
 import PALTableProPhysique from './PALTableProPhysique'
 import PALTableFitnessStuff from './PALTableFitnessStuff'
 import PALTableBasic from './PALTableBasic'
+import PALTableActivityLevelWizard from './PALTableActivityLevelWizard'
 
 interface PALTableContainerProps {
   system: PALSystem
@@ -14,9 +15,19 @@ interface PALTableContainerProps {
   register?: UseFormRegister<any>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   watch?: UseFormWatch<any>
+  bmr?: number | null
+  weight?: number | null
+  tdee?: number | null
 }
 
-export default function PALTableContainer({ system, register, watch }: PALTableContainerProps) {
+export default function PALTableContainer({
+  system,
+  register,
+  watch,
+  bmr,
+  weight,
+  tdee,
+}: PALTableContainerProps) {
   const renderTable = () => {
     switch (system) {
       case 'FAO/WHO/UNU based PAL values':
@@ -29,6 +40,16 @@ export default function PALTableContainer({ system, register, watch }: PALTableC
         return <PALTableFitnessStuff register={register} watch={watch} />
       case 'Basic internet PAL values':
         return <PALTableBasic register={register} watch={watch} />
+      case 'Beräkna din aktivitetsnivå':
+        return (
+          <PALTableActivityLevelWizard
+            register={register}
+            watch={watch}
+            bmr={bmr}
+            weight={weight}
+            tdee={tdee}
+          />
+        )
       case 'Custom PAL':
         return register ? (
           <div className="space-y-2">

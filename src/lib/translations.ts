@@ -8,6 +8,7 @@ export const palSystemTranslations: Record<string, string> = {
   'Pro Physique PAL values': 'Pro Physique PAL-värden',
   'Fitness Stuff PAL values': 'Fitness Stuff PAL-värden',
   'Basic internet PAL values': 'Grundläggande PAL-värden',
+  'Beräkna din aktivitetsnivå': 'Beräkna din aktivitetsnivå',
   'Custom PAL': 'Anpassat PAL-värde',
 }
 
@@ -114,6 +115,8 @@ export const palSystemDescriptions: Record<string, string> = {
   'Fitness Stuff PAL values':
     'Detta system tar hänsyn till träningsfrekvens, duration och dagliga steg för en detaljerad beräkning',
   'Basic internet PAL values': 'Enklaste systemet - endast en dropdown krävs',
+  'Beräkna din aktivitetsnivå':
+    'Mest detaljerade systemet som beräknar ditt PAL-värde från grunden baserat på träning (MET-värden), gång (steg + tempo), stående, hushållsarbete och spontan aktivitet (SPA-faktor). Ger en personlig och precis uppskattning av din totala dagliga energiförbrukning (TDEE) genom att summera BMR + NEAT + EAT och justera för termisk effekt av mat (TEF)',
   'Custom PAL': 'Ange ditt eget PAL-värde manuellt (1.0 - 3.0)',
 }
 
