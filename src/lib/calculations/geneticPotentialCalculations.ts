@@ -27,7 +27,8 @@ export interface GeneticPotentialResult {
   referenceTable?: LyleMcDonaldReference[] | AlanAragonReference[]
   // Casey Butt method metadata
   caseyButtMethod?: 'standard' | 'personalized' // 'standard' = 10%, 'personalized' = användarens BF%
-  caseyButtBodyFat?: number // Vilken BF% som faktiskt användes i beräkningen
+  caseyButtBodyFat?: number // Vilken BF% som användes i MLBM-beräkningen
+  caseyButtConversionBodyFat?: number // Vilken BF% som användes för viktkonvertering
 }
 
 export interface GeneticPotentialInput {
@@ -113,32 +114,38 @@ export function caseyButtFormula(
   const ankleInches = ankleCm / 2.54
 
   // Bestäm vilken BF% som ska användas baserat på metod
-  let bodyFatPercent: number
+  // bodyFatForMLBM: Används i MLBM-beräkningen (steg 1)
+  // bodyFatForConversion: Används för att konvertera MLBM till faktisk vikt (steg 2)
+  let bodyFatForMLBM: number
+  let bodyFatForConversion: number
   let actualMethod: 'standard' | 'personalized'
 
   if (method === 'personalized' && currentBodyFat) {
-    bodyFatPercent = currentBodyFat
+    // Personaliserad: använd faktisk kroppsfett i BÅDA stegen
+    bodyFatForMLBM = currentBodyFat
+    bodyFatForConversion = currentBodyFat
     actualMethod = 'personalized'
   } else {
-    // Fallback till standard (10%) om:
-    // - Metod är 'standard', ELLER
-    // - Metod är 'personalized' men currentBodyFat saknas
-    bodyFatPercent = 10
+    // Standard: använd 10% för MLBM-beräkning, men användarens faktiska kroppsfett för konvertering
+    bodyFatForMLBM = 10
+    bodyFatForConversion = currentBodyFat || 10 // Fallback till 10% om data saknas
     actualMethod = 'standard'
   }
 
   // 1. Calculate MLBM (Maximum Lean Body Mass)
   // MLBM = Height^1.5 * (√Wrist / 22.6670 + √Ankle / 17.0104) * (% Body fat / 224 + 1)
+  // För standard-metoden används alltid 10% kroppsfett här som referenspunkt
   const mlbmLbs =
     Math.pow(heightInches, 1.5) *
     (Math.sqrt(wristInches) / 22.667 + Math.sqrt(ankleInches) / 17.0104) *
-    (bodyFatPercent / 224 + 1)
+    (bodyFatForMLBM / 224 + 1)
 
   const mlbmKg = mlbmLbs * 0.453592 // Convert to kg
 
   // 2. Calculate MBW (Maximum Body Weight)
   // MBW = (MLBM / (100 - % Body fat)) * 100
-  const mbwKg = (mlbmKg / (100 - bodyFatPercent)) * 100
+  // För standard-metoden används användarens faktiska kroppsfett här
+  const mbwKg = (mlbmKg / (100 - bodyFatForConversion)) * 100
 
   // 3. Calculate MBBW (Maximum Bulked Body Weight)
   // MBBW = MBW * 1.04
@@ -199,7 +206,8 @@ export function caseyButtFormula(
     upperBodyType,
     lowerBodyType,
     caseyButtMethod: actualMethod,
-    caseyButtBodyFat: bodyFatPercent,
+    caseyButtBodyFat: bodyFatForMLBM, // Kroppsfett använt i MLBM-beräkningen
+    caseyButtConversionBodyFat: bodyFatForConversion, // Kroppsfett för viktkonvertering
   }
 }
 
