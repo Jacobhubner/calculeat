@@ -256,7 +256,7 @@ export default function GeneticPotentialTool() {
                           <div className="flex-1">
                             <div className="flex items-center gap-2">
                               <span className="font-medium text-blue-900">
-                                Standardiserad genetisk referens (10 % kroppsfett)
+                                Standardiserad genetisk referens
                               </span>
                               <button
                                 type="button"
@@ -292,11 +292,7 @@ export default function GeneticPotentialTool() {
                           <div className="flex-1">
                             <div className="flex items-center gap-2">
                               <span className="font-medium text-blue-900">
-                                Tillståndsberoende fettfri kroppsvikt (
-                                {profileData?.body_fat_percentage
-                                  ? `${profileData.body_fat_percentage.toFixed(1)} % kroppsfett`
-                                  : 'BF% saknas'}
-                                )
+                                Tillståndsberoende fettfri kroppsvikt
                               </span>
                               <button
                                 type="button"
@@ -337,7 +333,7 @@ export default function GeneticPotentialTool() {
                           <div className="sticky top-0 bg-gradient-to-r from-primary-500 to-accent-500 text-white p-6 rounded-t-2xl flex justify-between items-start">
                             <div>
                               <h2 className="text-2xl font-bold">
-                                Standardiserad genetisk referens (10 % kroppsfett)
+                                Standardiserad genetisk referens
                               </h2>
                             </div>
                             <button
@@ -467,7 +463,7 @@ export default function GeneticPotentialTool() {
                           <div className="sticky top-0 bg-gradient-to-r from-primary-500 to-accent-500 text-white p-6 rounded-t-2xl flex justify-between items-start">
                             <div>
                               <h2 className="text-2xl font-bold">
-                                Tillståndsberoende fettfri kroppsvikt (vald %BF)
+                                Tillståndsberoende fettfri kroppsvikt
                               </h2>
                             </div>
                             <button
