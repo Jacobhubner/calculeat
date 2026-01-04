@@ -221,9 +221,9 @@ export default function GeneticPotentialTool() {
                             man kan därför använda denna modell på två olika sätt:
                           </p>
                           <p className="text-xs text-blue-800 leading-relaxed font-medium">
-                            Alternativ 1: Standardiserad genetisk referens (10 % kroppsfett)
+                            Alternativ 1: Standardiserad genetisk referens
                             <br />
-                            Alternativ 2: Tillståndsberoende fettfri kroppsvikt (vald %BF)
+                            Alternativ 2: Tillståndsberoende fettfri kroppsvikt
                           </p>
                           <p className="text-xs text-blue-700 italic">
                             Källa: Butt, C. &ldquo;Your Muscular Potential: How to Predict Your
