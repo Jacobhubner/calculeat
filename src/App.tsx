@@ -17,6 +17,8 @@ import ResetPasswordPage from './pages/ResetPasswordPage'
 import DashboardPage from './pages/DashboardPage'
 import ProfilePage from './pages/ProfilePage'
 import BodyCompositionPage from './pages/BodyCompositionPage'
+import BodyCompositionHubPage from './pages/BodyCompositionHubPage'
+import BodyCompositionCalculator from './components/tools/body-composition/BodyCompositionCalculator'
 import FoodItemsPage from './pages/FoodItemsPage'
 import RecipesPage from './pages/RecipesPage'
 import SavedMealsPage from './pages/SavedMealsPage'
@@ -25,7 +27,6 @@ import HistoryPage from './pages/HistoryPage'
 import HistoryDayPage from './pages/HistoryDayPage'
 import AuthCallbackPage from './pages/AuthCallbackPage'
 import ToolsPage from './pages/ToolsPage'
-import BodyCompositionTool from './components/tools/body-composition/BodyCompositionTool'
 import GeneticPotentialTool from './components/tools/genetic-potential/GeneticPotentialTool'
 import METCalculatorTool from './components/tools/met-calculator/METCalculatorTool'
 import TDEECalculatorTool from './components/tools/tdee-calculator/TDEECalculatorTool'
@@ -85,7 +86,11 @@ function App() {
                       <BodyCompositionPage />
                     </ProtectedRoute>
                   }
-                />
+                >
+                  <Route index element={<BodyCompositionHubPage />} />
+                  <Route path="calculate" element={<BodyCompositionCalculator />} />
+                  <Route path="genetic-potential" element={<GeneticPotentialTool />} />
+                </Route>
                 <Route
                   path="/app/food-items"
                   element={
@@ -142,9 +147,7 @@ function App() {
                     </ProtectedRoute>
                   }
                 >
-                  <Route index element={<Navigate to="/app/tools/body-composition" replace />} />
-                  <Route path="body-composition" element={<BodyCompositionTool />} />
-                  <Route path="genetic-potential" element={<GeneticPotentialTool />} />
+                  <Route index element={<Navigate to="/app/tools/met-calculator" replace />} />
                   <Route path="met-calculator" element={<METCalculatorTool />} />
                   <Route path="tdee-calculator" element={<TDEECalculatorTool />} />
                   <Route path="goal-calculator" element={<GoalCalculatorTool />} />

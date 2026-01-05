@@ -57,6 +57,33 @@ export function calculateGoal(
 }
 
 /**
+ * Beräkna mål kroppsfett% baserat på målvikt
+ * (Omvänd beräkning - från vikt till BF%)
+ *
+ * @param currentWeight - Nuvarande vikt i kg
+ * @param currentBodyFat - Nuvarande kroppsfett i %
+ * @param targetWeight - Målvikt i kg
+ * @returns Beräknat mål kroppsfett%
+ */
+export function calculateTargetBodyFatFromWeight(
+  currentWeight: number,
+  currentBodyFat: number,
+  targetWeight: number
+): number {
+  // Beräkna nuvarande fettfri massa
+  const currentFatMass = currentWeight * (currentBodyFat / 100)
+  const currentLeanMass = currentWeight - currentFatMass
+
+  // Anta att fettfri massa bevaras
+  // Målvikt = Fettfri massa / (1 - Mål BF%)
+  // Omvandla: Mål BF% = 1 - (Fettfri massa / Målvikt)
+  const targetBodyFat = (1 - currentLeanMass / targetWeight) * 100
+
+  // Begränsa till rimliga värden (5-50%)
+  return Math.max(5, Math.min(50, targetBodyFat))
+}
+
+/**
  * Beräkna tidslinje för att nå mål
  *
  * @param weightToChange - Viktförändring i kg (negativt = förlora)

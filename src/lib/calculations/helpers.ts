@@ -62,8 +62,8 @@ export function calculateIdealWeightRange(height: number): {
   const maxWeight = 25 * heightInMeters * heightInMeters
 
   return {
-    min: Math.round(minWeight),
-    max: Math.round(maxWeight),
+    min: Number(minWeight.toFixed(1)),
+    max: Number(maxWeight.toFixed(1)),
   }
 }
 

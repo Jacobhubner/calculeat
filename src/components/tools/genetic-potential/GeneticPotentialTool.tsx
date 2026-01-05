@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
 import { AlertCircle, ChevronDown, ChevronUp, User, Info, X } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
+import { BackToHubButton } from '@/components/tools/common/BackToHubButton'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
@@ -77,6 +78,8 @@ export default function GeneticPotentialTool() {
 
   return (
     <div className="space-y-6">
+      <BackToHubButton hubPath="/app/body-composition" hubLabel="Kroppssammansättning" />
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

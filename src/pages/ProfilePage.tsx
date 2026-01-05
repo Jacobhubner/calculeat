@@ -14,6 +14,7 @@ import { toast } from 'sonner'
 // New components
 import ProfileCardSidebar from '@/components/profile/ProfileCardSidebar'
 import ProfileResultsSummary from '@/components/profile/ProfileResultsSummary'
+import MaxFatMetabolismCard from '@/components/profile/MaxFatMetabolismCard'
 import BasicInfoFields from '@/components/profile/BasicInfoFields'
 import TDEEOptions from '@/components/profile/TDEEOptions'
 import BasicProfileForm from '@/components/profile/BasicProfileForm'
@@ -711,6 +712,9 @@ export default function ProfilePage() {
 
             {/* Results Summary - Show BMR, TDEE, Calorie Range */}
             <ProfileResultsSummary profile={mergedProfile} />
+
+            {/* Maximal fettmetabolism - Show max fat metabolism */}
+            <MaxFatMetabolismCard profile={mergedProfile} />
           </div>
         </div>
       </div>

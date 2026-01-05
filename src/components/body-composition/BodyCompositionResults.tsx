@@ -1,20 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import type { BodyCompositionMethod } from '@/lib/calculations/bodyComposition'
-import { getCategoryGradient } from '@/lib/helpers/bodyCompositionHelpers'
-import { Droplet, Gauge, Save, Scale } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { Droplet, Gauge, Save } from 'lucide-react'
 
 interface BodyCompositionResultsProps {
   bodyDensity: number | null
   bodyFatPercentage: number
-  category: {
-    category: string
-    color: string
-    description: string
-  }
-  fatFreeMass: number
-  fatMass: number
   selectedMethod: BodyCompositionMethod
   conversionMethod?: 'siri' | 'brozek'
   isEstimatedBMR?: boolean
@@ -25,9 +16,6 @@ interface BodyCompositionResultsProps {
 export default function BodyCompositionResults({
   bodyDensity,
   bodyFatPercentage,
-  category,
-  fatFreeMass,
-  fatMass,
   selectedMethod,
   conversionMethod,
   isEstimatedBMR,
@@ -80,37 +68,6 @@ export default function BodyCompositionResults({
               ℹ️ Baserat på uppskattat RMR från Mifflin-St Jeor-ekvationen
             </p>
           )}
-        </CardContent>
-      </Card>
-
-      {/* Category Card */}
-      <Card className={cn('bg-gradient-to-br', getCategoryGradient(category.color))}>
-        <CardHeader>
-          <CardTitle>Kategori</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{category.category}</div>
-          <p className="text-sm mt-1">{category.description}</p>
-        </CardContent>
-      </Card>
-
-      {/* Additional Metrics Card */}
-      <Card className="bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-300">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Scale className="h-5 w-5 text-green-600" />
-            Ytterligare mått
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-2">
-          <div className="flex justify-between">
-            <span className="text-neutral-700">Fettfri massa (FFM):</span>
-            <span className="font-bold text-green-700">{fatFreeMass.toFixed(1)} kg</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-neutral-700">Fettmassa:</span>
-            <span className="font-bold text-green-700">{fatMass.toFixed(1)} kg</span>
-          </div>
         </CardContent>
       </Card>
 

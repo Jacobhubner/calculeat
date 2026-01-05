@@ -1,38 +1,38 @@
-import React from 'react';
-import { FFMI_DESCRIPTION_CATEGORIES } from '../../lib/constants/bodyCompositionReferenceData';
+import React from 'react'
+import { FFMI_DESCRIPTION_CATEGORIES } from '../../lib/constants/bodyCompositionReferenceData'
 
 interface FFMICategoryTableProps {
-  userFFMI?: number | null;
-  gender: string;
+  userFFMI?: number | null
+  gender: string
 }
 
 export function FFMICategoryTable({ userFFMI, gender }: FFMICategoryTableProps) {
-  const isMale = gender === 'male';
+  const isMale = gender === 'male'
 
   // Function to check if user's FFMI falls within a category
-  const isUserInCategory = (category: typeof FFMI_DESCRIPTION_CATEGORIES[0]): boolean => {
-    if (!userFFMI) return false;
+  const isUserInCategory = (category: (typeof FFMI_DESCRIPTION_CATEGORIES)[0]): boolean => {
+    if (!userFFMI) return false
 
-    const range = isMale ? category.men : category.women;
+    const range = isMale ? category.men : category.women
 
     // Handle "< X" format
     if (range.startsWith('<')) {
-      const threshold = parseFloat(range.replace('<', '').trim());
-      return userFFMI < threshold;
+      const threshold = parseFloat(range.replace('<', '').trim())
+      return userFFMI < threshold
     }
     // Handle "> X" format
     else if (range.startsWith('>')) {
-      const threshold = parseFloat(range.replace('>', '').trim());
-      return userFFMI > threshold;
+      const threshold = parseFloat(range.replace('>', '').trim())
+      return userFFMI > threshold
     }
     // Handle "X–Y" format
     else if (range.includes('–')) {
-      const [min, max] = range.split('–').map((v) => parseFloat(v.trim()));
-      return userFFMI >= min && userFFMI <= max;
+      const [min, max] = range.split('–').map(v => parseFloat(v.trim()))
+      return userFFMI >= min && userFFMI <= max
     }
 
-    return false;
-  };
+    return false
+  }
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
@@ -40,14 +40,14 @@ export function FFMICategoryTable({ userFFMI, gender }: FFMICategoryTableProps) 
         <table className="w-full text-sm">
           <thead>
             <tr className="bg-gray-50 border-b border-gray-200">
-              <th className="px-4 py-3 text-left font-semibold text-gray-900">Description</th>
-              <th className="px-4 py-3 text-left font-semibold text-gray-900">Men</th>
-              <th className="px-4 py-3 text-left font-semibold text-gray-900">Women</th>
+              <th className="px-4 py-2 text-left font-semibold text-gray-900">Beskrivning</th>
+              <th className="px-4 py-2 text-left font-semibold text-gray-900">Värde</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
             {FFMI_DESCRIPTION_CATEGORIES.map((row, index) => {
-              const isHighlighted = isUserInCategory(row);
+              const isHighlighted = isUserInCategory(row)
+              const value = isMale ? row.men : row.women
 
               return (
                 <tr
@@ -58,15 +58,14 @@ export function FFMICategoryTable({ userFFMI, gender }: FFMICategoryTableProps) 
                       : row.colorClass || 'bg-white'
                   } hover:bg-gray-50 transition-colors`}
                 >
-                  <td className="px-4 py-3 text-gray-900">{row.description}</td>
-                  <td className="px-4 py-3 text-gray-700">{row.men}</td>
-                  <td className="px-4 py-3 text-gray-700">{row.women}</td>
+                  <td className="px-4 py-2 text-gray-900">{row.description}</td>
+                  <td className="px-4 py-2 text-gray-700">{value}</td>
                 </tr>
-              );
+              )
             })}
           </tbody>
         </table>
       </div>
     </div>
-  );
+  )
 }

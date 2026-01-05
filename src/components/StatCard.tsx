@@ -6,6 +6,7 @@ interface StatCardProps {
   title: string
   value: string | number
   unit?: string
+  subtitle?: string
   icon: LucideIcon
   trend?: {
     value: number
@@ -19,6 +20,7 @@ export default function StatCard({
   title,
   value,
   unit,
+  subtitle,
   icon: Icon,
   trend,
   variant = 'default',
@@ -40,6 +42,7 @@ export default function StatCard({
             <h3 className="text-3xl font-bold text-neutral-900">{value}</h3>
             {unit && <span className="text-sm text-neutral-500">{unit}</span>}
           </div>
+          {subtitle && <p className="mt-1 text-xs text-neutral-500">{subtitle}</p>}
           {trend && (
             <p
               className={cn(
