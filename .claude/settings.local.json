@@ -26,7 +26,8 @@
       "Bash(npx eslint:*)",
       "Bash(git reset:*)",
       "Bash(where:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(npx tsc:*)"
     ],
     "deny": [],
     "ask": []

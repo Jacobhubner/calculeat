@@ -38,12 +38,12 @@ export default function GoalCalculatorTool() {
 
   // Local state
   const [targetBodyFat, setTargetBodyFat] = useState<number>(15)
-  const [weeklyWeightChange, setWeeklyWeightChange] = useState<{ min: number; max: number }>({
-    min: 0.5,
-    max: 0.6,
-  })
   const [targetWeight, setTargetWeight] = useState<number | null>(null)
   const [inputMode, setInputMode] = useState<'bodyFat' | 'weight'>('bodyFat')
+  const [manualWeightChange, setManualWeightChange] = useState<{
+    min: number
+    max: number
+  } | null>(null)
 
   // Handlers för bidirektionell synkning
   const handleBodyFatChange = (value: number) => {
@@ -94,6 +94,40 @@ export default function GoalCalculatorTool() {
       true // Bibehåll fettfri massa
     )
   }, [profileData, targetBodyFat, targetWeight, inputMode])
+
+  // Beräkna automatiskt standardvärde för weeklyWeightChange baserat på TDEE och mål
+  const defaultWeeklyWeightChange = useMemo<{ min: number; max: number }>(() => {
+    if (!goalResult || !profileData?.tdee) {
+      return { min: 0.5, max: 0.6 } // Fallback
+    }
+
+    const tdee = profileData.tdee
+    const isWeightLoss = goalResult.weightToChange < 0
+    const isWeightGain = goalResult.weightToChange > 0
+
+    // Helper: Beräkna kg/vecka från procent av TDEE
+    const calcKgPerWeek = (percentMin: number, percentMax: number) => {
+      const caloriesMin = tdee * percentMin
+      const caloriesMax = tdee * percentMax
+      const kgMin = (caloriesMin * 7) / 7700
+      const kgMax = (caloriesMax * 7) / 7700
+      return { min: kgMin, max: kgMax }
+    }
+
+    // Sätt standardvärde baserat på mål
+    if (isWeightLoss) {
+      // Viktnedgång: Normalt (20-25%) som standard
+      return calcKgPerWeek(0.2, 0.25)
+    } else if (isWeightGain) {
+      // Viktuppgång: Det enda alternativet (10-20%) som standard
+      return calcKgPerWeek(0.1, 0.2)
+    }
+
+    return { min: 0.5, max: 0.6 } // Fallback
+  }, [goalResult, profileData])
+
+  // Använd manuellt värde om satt, annars använd beräknat standardvärde
+  const weeklyWeightChange = manualWeightChange ?? defaultWeeklyWeightChange
 
   // Beräkna tidslinje (intervall baserat på min/max)
   const timeline = useMemo(() => {
@@ -609,7 +643,7 @@ export default function GoalCalculatorTool() {
                               type="button"
                               variant={isActive ? 'default' : 'outline'}
                               size="sm"
-                              onClick={() => setWeeklyWeightChange(preset.kgPerWeek)}
+                              onClick={() => setManualWeightChange(preset.kgPerWeek)}
                               className="text-xs h-auto py-2 flex flex-col items-center"
                               title={preset.tooltip}
                             >
