@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
+import { Flame, Target } from 'lucide-react'
 import type { Profile } from '@/lib/types'
 
 interface MacroConverterCardProps {
@@ -23,6 +24,14 @@ interface ConversionResult {
   kcal: number
   gPerKg: number
   gPerKgFFM?: number
+}
+
+interface EnergyGoalResult {
+  percent: number | { min: number; max: number }
+  grams: number | { min: number; max: number }
+  kcal: number | { min: number; max: number }
+  gPerKg: number | { min: number; max: number }
+  gPerKgFFM?: number | { min: number; max: number }
 }
 
 export default function MacroConverterCard({ profile }: MacroConverterCardProps) {
@@ -106,8 +115,8 @@ export default function MacroConverterCard({ profile }: MacroConverterCardProps)
     }
   }, [hasTDEE, hasWeight, profile, gramsFromInput, kcalPerGram, leanMass, macro, unit])
 
-  // Calculate Energy Goal results (användaren anger ett fast värde, visa vad det motsvarar i intervallet)
-  const energyGoalResults = useMemo<ConversionResult | null>(() => {
+  // Calculate Energy Goal results with proper interval logic
+  const energyGoalResults = useMemo<EnergyGoalResult | null>(() => {
     if (
       !hasEnergyGoal ||
       !hasWeight ||
@@ -120,35 +129,50 @@ export default function MacroConverterCard({ profile }: MacroConverterCardProps)
     )
       return null
 
-    // Användaren har angett ett specifikt värde (t.ex. 50g protein)
-    // Vi ska visa vad detta motsvarar i procent av kaloriintervallet
     const grams = gramsFromInput
     const kcal = grams * kcalPerGram
 
-    // Beräkna procent av kaloriintervallet (medelvärde)
-    const avgCalories = (profile.calories_min + profile.calories_max) / 2
-    const percent = (kcal / avgCalories) * 100
+    if (unit === 'percent') {
+      // When user enters %, calculate intervals for all other units
+      const kcalMin = profile.calories_min * (numericValue / 100)
+      const kcalMax = profile.calories_max * (numericValue / 100)
+      const gramsMin = kcalMin / kcalPerGram
+      const gramsMax = kcalMax / kcalPerGram
+      const gPerKgMin = gramsMin / profile.weight_kg
+      const gPerKgMax = gramsMax / profile.weight_kg
 
-    const gPerKg = grams / profile.weight_kg
-    const gPerKgFFM = leanMass ? grams / leanMass : undefined
+      return {
+        percent: numericValue, // Same as input
+        grams: { min: gramsMin, max: gramsMax },
+        kcal: { min: kcalMin, max: kcalMax },
+        gPerKg: { min: gPerKgMin, max: gPerKgMax },
+        gPerKgFFM: leanMass ? { min: gramsMin / leanMass, max: gramsMax / leanMass } : undefined,
+      }
+    } else {
+      // When user enters fixed value, show same value
+      // BUT % should show interval since same kcal is different % of min vs max
+      const percentMin = (kcal / profile.calories_max) * 100 // Lower % = higher calories
+      const percentMax = (kcal / profile.calories_min) * 100 // Higher % = lower calories
 
-    return {
-      percent,
-      grams,
-      kcal,
-      gPerKg,
-      gPerKgFFM,
+      return {
+        percent: { min: percentMin, max: percentMax }, // % as interval
+        grams, // Fixed value
+        kcal, // Fixed value
+        gPerKg: grams / profile.weight_kg, // Fixed value
+        gPerKgFFM: leanMass ? grams / leanMass : undefined, // Fixed value
+      }
     }
   }, [
     hasEnergyGoal,
     hasWeight,
     tdeeResults,
     profile,
+    unit,
+    numericValue,
+    gramsFromInput,
     kcalPerGram,
     leanMass,
-    gramsFromInput,
     macro,
-    unit,
   ])
 
   // Show error messages if required data is missing
@@ -237,31 +261,51 @@ export default function MacroConverterCard({ profile }: MacroConverterCardProps)
 
         {/* TDEE Results */}
         {tdeeResults && (
-          <div className="border-t pt-4">
-            <h3 className="font-semibold mb-2">
-              Resultat (TDEE {profile.tdee ? Math.round(profile.tdee) : ''})
-            </h3>
-            <div className="grid grid-cols-2 gap-2 text-sm">
-              <div>
-                <span className="text-neutral-600">%: </span>
-                <span className="font-semibold">{tdeeResults.percent.toFixed(1)}%</span>
+          <div className="border-t pt-4 space-y-3">
+            {/* Header with icon */}
+            <div className="flex items-center gap-2">
+              <Flame className="h-5 w-5 text-orange-500" />
+              <h3 className="font-semibold text-base">
+                TDEE ({profile.tdee ? Math.round(profile.tdee) : ''} kcal)
+              </h3>
+            </div>
+
+            {/* Results - horizontal list */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-neutral-600">Procent av TDEE</span>
+                <span className="text-lg font-bold text-primary-600">
+                  {tdeeResults.percent.toFixed(1)}%
+                </span>
               </div>
-              <div>
-                <span className="text-neutral-600">gram: </span>
-                <span className="font-semibold">{tdeeResults.grams.toFixed(0)}g</span>
+
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-neutral-600">Gram</span>
+                <span className="text-2xl font-bold text-neutral-900">
+                  {tdeeResults.grams.toFixed(0)}g
+                </span>
               </div>
-              <div>
-                <span className="text-neutral-600">kcal: </span>
-                <span className="font-semibold">{tdeeResults.kcal.toFixed(0)}</span>
+
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-neutral-600">Kalorier</span>
+                <span className="text-2xl font-bold text-neutral-900">
+                  {tdeeResults.kcal.toFixed(0)}
+                </span>
               </div>
-              <div>
-                <span className="text-neutral-600">g/kg kroppsvikt: </span>
-                <span className="font-semibold">{tdeeResults.gPerKg.toFixed(2)}</span>
+
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-neutral-600">Gram per kg kroppsvikt</span>
+                <span className="text-lg font-semibold text-neutral-900">
+                  {tdeeResults.gPerKg.toFixed(2)} g/kg
+                </span>
               </div>
+
               {hasBodyFat && tdeeResults.gPerKgFFM !== undefined && (
-                <div className="col-span-2">
-                  <span className="text-neutral-600">g/kg fettfri massa: </span>
-                  <span className="font-semibold">{tdeeResults.gPerKgFFM.toFixed(2)}</span>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-neutral-600">Gram per kg fettfri massa</span>
+                  <span className="text-lg font-semibold text-neutral-900">
+                    {tdeeResults.gPerKgFFM.toFixed(2)} g/kg FFM
+                  </span>
                 </div>
               )}
             </div>
@@ -270,33 +314,62 @@ export default function MacroConverterCard({ profile }: MacroConverterCardProps)
 
         {/* Energy Goal Results */}
         {energyGoalResults && hasEnergyGoal && (
-          <div className="border-t pt-4">
-            <h3 className="font-semibold mb-2">
-              Resultat (Kaloriintervall{' '}
-              {profile.calories_min ? Math.round(profile.calories_min) : ''}-
-              {profile.calories_max ? Math.round(profile.calories_max) : ''})
-            </h3>
-            <div className="grid grid-cols-2 gap-2 text-sm">
-              <div>
-                <span className="text-neutral-600">%: </span>
-                <span className="font-semibold">{energyGoalResults.percent.toFixed(1)}%</span>
+          <div className="border-t pt-4 space-y-3">
+            {/* Header with icon */}
+            <div className="flex items-center gap-2">
+              <Target className="h-5 w-5 text-accent-500" />
+              <h3 className="font-semibold text-base">
+                Kaloriintervall ({profile.calories_min ? Math.round(profile.calories_min) : ''}-
+                {profile.calories_max ? Math.round(profile.calories_max) : ''} kcal)
+              </h3>
+            </div>
+
+            {/* Results - dynamic display based on interval or fixed */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-neutral-600">Procent av kaloriintervall</span>
+                <span className="text-lg font-bold text-accent-600">
+                  {typeof energyGoalResults.percent === 'number'
+                    ? `${energyGoalResults.percent.toFixed(1)}%`
+                    : `${energyGoalResults.percent.min.toFixed(1)}-${energyGoalResults.percent.max.toFixed(1)}%`}
+                </span>
               </div>
-              <div>
-                <span className="text-neutral-600">gram: </span>
-                <span className="font-semibold">{energyGoalResults.grams.toFixed(0)}g</span>
+
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-neutral-600">Gram</span>
+                <span className="text-2xl font-bold text-neutral-900">
+                  {typeof energyGoalResults.grams === 'number'
+                    ? `${energyGoalResults.grams.toFixed(0)}g`
+                    : `${energyGoalResults.grams.min.toFixed(0)}-${energyGoalResults.grams.max.toFixed(0)}g`}
+                </span>
               </div>
-              <div>
-                <span className="text-neutral-600">kcal: </span>
-                <span className="font-semibold">{energyGoalResults.kcal.toFixed(0)}</span>
+
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-neutral-600">Kalorier</span>
+                <span className="text-2xl font-bold text-neutral-900">
+                  {typeof energyGoalResults.kcal === 'number'
+                    ? energyGoalResults.kcal.toFixed(0)
+                    : `${energyGoalResults.kcal.min.toFixed(0)}-${energyGoalResults.kcal.max.toFixed(0)}`}
+                </span>
               </div>
-              <div>
-                <span className="text-neutral-600">g/kg kroppsvikt: </span>
-                <span className="font-semibold">{energyGoalResults.gPerKg.toFixed(2)}</span>
+
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-neutral-600">Gram per kg kroppsvikt</span>
+                <span className="text-lg font-semibold text-neutral-900">
+                  {typeof energyGoalResults.gPerKg === 'number'
+                    ? `${energyGoalResults.gPerKg.toFixed(2)} g/kg`
+                    : `${energyGoalResults.gPerKg.min.toFixed(2)}-${energyGoalResults.gPerKg.max.toFixed(2)} g/kg`}
+                </span>
               </div>
+
               {hasBodyFat && energyGoalResults.gPerKgFFM !== undefined && (
-                <div className="col-span-2">
-                  <span className="text-neutral-600">g/kg fettfri massa: </span>
-                  <span className="font-semibold">{energyGoalResults.gPerKgFFM.toFixed(2)}</span>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-neutral-600">Gram per kg fettfri massa</span>
+                  <span className="text-lg font-semibold text-neutral-900">
+                    {typeof energyGoalResults.gPerKgFFM === 'number'
+                      ? `${energyGoalResults.gPerKgFFM.toFixed(2)} g/kg FFM`
+                      : `${energyGoalResults.gPerKgFFM.min.toFixed(2)}-${energyGoalResults.gPerKgFFM.max.toFixed(2)} g/kg FFM`}
+                  </span>
                 </div>
               )}
             </div>
