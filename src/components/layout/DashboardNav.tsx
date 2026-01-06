@@ -15,7 +15,6 @@ import {
   Flame,
   Calculator,
   Target,
-  PieChart,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuth } from '@/contexts/AuthContext'
@@ -111,12 +110,6 @@ export default function DashboardNav() {
       to: '/app/tools/goal-calculator',
       label: 'Måluträknare',
       icon: Target,
-    },
-    {
-      type: 'single',
-      to: '/app/tools/macro-optimizer',
-      label: 'Makro-optimerare',
-      icon: PieChart,
     },
   ]
 

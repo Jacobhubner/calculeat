@@ -26,6 +26,7 @@ import AdvancedSettingsSection from '@/components/profile/AdvancedSettingsSectio
 import MacroDistributionCard from '@/components/MacroDistributionCard'
 import MealSettingsCard from '@/components/MealSettingsCard'
 import MacroModesCard from '@/components/MacroModesCard'
+import MacroConverterCard from '@/components/profile/MacroConverterCard'
 
 export default function ProfilePage() {
   // Load profiles
@@ -673,6 +674,9 @@ export default function ProfilePage() {
 
                 {/* Macro Modes Card */}
                 <MacroModesCard profile={mergedProfile} onMacroModeApply={handleMacroModeApply} />
+
+                {/* Makro-konverterare */}
+                <MacroConverterCard profile={mergedProfile} />
 
                 {/* Advanced Settings - Collapsible section */}
                 <AdvancedSettingsSection

@@ -31,7 +31,6 @@ import GeneticPotentialTool from './components/tools/genetic-potential/GeneticPo
 import METCalculatorTool from './components/tools/met-calculator/METCalculatorTool'
 import TDEECalculatorTool from './components/tools/tdee-calculator/TDEECalculatorTool'
 import GoalCalculatorTool from './components/tools/goal-calculator/GoalCalculatorTool'
-import MacroOptimizerTool from './components/tools/macro-optimizer/MacroOptimizerTool'
 
 function App() {
   return (
@@ -151,7 +150,6 @@ function App() {
                   <Route path="met-calculator" element={<METCalculatorTool />} />
                   <Route path="tdee-calculator" element={<TDEECalculatorTool />} />
                   <Route path="goal-calculator" element={<GoalCalculatorTool />} />
-                  <Route path="macro-optimizer" element={<MacroOptimizerTool />} />
                 </Route>
               </Routes>
             </BrowserRouter>
