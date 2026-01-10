@@ -675,7 +675,7 @@ export default function ProfilePage() {
                 {/* Macro Modes Card */}
                 <MacroModesCard profile={mergedProfile} onMacroModeApply={handleMacroModeApply} />
 
-                {/* Makro-konverterare */}
+                {/* Omvandling av makrovärden */}
                 <MacroConverterCard profile={mergedProfile} />
 
                 {/* Advanced Settings - Collapsible section */}

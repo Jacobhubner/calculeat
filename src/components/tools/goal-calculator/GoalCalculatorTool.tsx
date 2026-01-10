@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { Info, TrendingDown, TrendingUp, User } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -119,12 +119,27 @@ export default function GoalCalculatorTool() {
       // Viktnedgång: Normalt (20-25%) som standard
       return calcKgPerWeek(0.2, 0.25)
     } else if (isWeightGain) {
-      // Viktuppgång: Det enda alternativet (10-20%) som standard
+      // Viktuppgång: Det enda alternativet (10-20%)
       return calcKgPerWeek(0.1, 0.2)
     }
 
     return { min: 0.5, max: 0.6 } // Fallback
   }, [goalResult, profileData])
+
+  // Reset manualWeightChange när målet ändras (viktuppgång vs viktnedgång)
+  const previousIsGainRef = useRef<boolean | null>(null)
+  useEffect(() => {
+    if (!goalResult) return
+
+    const currentIsGain = goalResult.weightToChange > 0
+
+    // Om vi byter mellan viktuppgång och viktnedgång, återställ till standard
+    if (previousIsGainRef.current !== null && currentIsGain !== previousIsGainRef.current) {
+      setManualWeightChange(null)
+    }
+
+    previousIsGainRef.current = currentIsGain
+  }, [goalResult])
 
   // Använd manuellt värde om satt, annars använd beräknat standardvärde
   const weeklyWeightChange = manualWeightChange ?? defaultWeeklyWeightChange

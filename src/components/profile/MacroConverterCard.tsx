@@ -180,7 +180,7 @@ export default function MacroConverterCard({ profile }: MacroConverterCardProps)
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Makro-konverterare</CardTitle>
+          <CardTitle>Omvandling av makrovärden</CardTitle>
           <CardDescription>Konvertera mellan olika makroenheter</CardDescription>
         </CardHeader>
         <CardContent>
@@ -196,7 +196,7 @@ export default function MacroConverterCard({ profile }: MacroConverterCardProps)
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Makro-konverterare</CardTitle>
+          <CardTitle>Omvandling av makrovärden</CardTitle>
           <CardDescription>Konvertera mellan olika makroenheter</CardDescription>
         </CardHeader>
         <CardContent>
@@ -211,7 +211,7 @@ export default function MacroConverterCard({ profile }: MacroConverterCardProps)
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Makro-konverterare</CardTitle>
+        <CardTitle>Omvandling av makrovärden</CardTitle>
         <CardDescription>Konvertera mellan olika makroenheter</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">

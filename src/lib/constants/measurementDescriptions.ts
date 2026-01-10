@@ -28,20 +28,20 @@ Kvinnor: Nyp ett diagonalt hudveck cirka en tredjedel av avståndet från den fr
 }
 
 export const tapeDescriptions: Record<string, string> = {
-  neck: `Enligt Casey Butt: Strax under adamsäpplet, vid den smalaste punkten.
+  neck: `Enligt Topend Sports: Omedelbart ovanför adamsäpplet.
+Enligt Casey Butt: Strax nedanför adamsäpplet, vid det smalaste området.
 
-Enligt Topend Sports: Omedelbart ovanför sköldbrosket (adamsäpplet).
 Personen ska hålla huvudet upprätt och titta rakt fram.`,
 
   waist: `Mäts vid den smalaste delen av midjan i slutet av en normal utandning.
 Om denna punkt inte är tydlig, mäts omfånget mitt emellan nedersta revbenet och överkanten av höftbenskammen (crista iliaca).
 
 U.S. Navy kroppsfettformel:
-• Män: Vid naveln
-• Kvinnor: Vid den smalaste punkten, vanligtvis mellan bröstbenet och naveln
+Män: Vid naveln.
+Kvinnor: Vid den smalaste punkten, vanligtvis mellan bröstbenet och naveln.
 
 Modifierad YMCA-metod:
-• Båda könen: Vid naveln`,
+Båda könen: Vid naveln.`,
 
   hip: `Mäts över minimala kläder, vid den punkt där sätesmuskulaturen sticker ut som mest, med musklerna avslappnade.`,
 
@@ -49,7 +49,7 @@ Modifierad YMCA-metod:
 
   wrist: `Mäts på handsidan av processus styloideus, där underarmen är som smalast.`,
 
-  thighCirc: `Mäts vid mittpunkten på lårets laterala sida, halvvägs mellan trochanter major och laterala tibiakondylen.`,
+  thighCirc: `Mäts vid mittpunkten på lårets utsida, halvvägs mellan trochanter major och laterala tibiakondylen.`,
 
   calfCirc: `Mäts vid största omkretsen, med musklerna avslappnade.`,
 

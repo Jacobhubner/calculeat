@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { AlertCircle, ChevronDown, ChevronUp, User, Info, X } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { BackToHubButton } from '@/components/tools/common/BackToHubButton'
@@ -7,6 +7,8 @@ import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { useProfileData } from '@/hooks/useProfileData'
 import { useMeasurementSets, useActiveProfile } from '@/hooks'
 import EmptyState from '@/components/EmptyState'
@@ -45,6 +47,24 @@ export default function GeneticPotentialTool() {
   const [showStandardInfo, setShowStandardInfo] = useState(false)
   const [showPersonalizedInfo, setShowPersonalizedInfo] = useState(false)
   const [showCaseyButtInfo, setShowCaseyButtInfo] = useState(false)
+  const [showModal, setShowModal] = useState(false)
+  const [modalContent, setModalContent] = useState<{ title: string; description: string } | null>(
+    null
+  )
+
+  // Manual wrist and ankle measurements for Casey Butt model
+  const [manualWrist, setManualWrist] = useState<number | undefined>(latestMeasurement?.wrist)
+  const [manualAnkle, setManualAnkle] = useState<number | undefined>(latestMeasurement?.ankle)
+
+  // Sync manual measurements with latest measurement when it changes
+  useEffect(() => {
+    if (latestMeasurement?.wrist !== undefined) {
+      setManualWrist(latestMeasurement.wrist)
+    }
+    if (latestMeasurement?.ankle !== undefined) {
+      setManualAnkle(latestMeasurement.ankle)
+    }
+  }, [latestMeasurement])
 
   // Beräkna resultat
   const results = useMemo(() => {
@@ -53,13 +73,13 @@ export default function GeneticPotentialTool() {
     return calculateAllModels({
       heightCm: profileData.height_cm,
       gender: profileData.gender,
-      wristCm: latestMeasurement?.wrist,
-      ankleCm: latestMeasurement?.ankle,
+      wristCm: manualWrist,
+      ankleCm: manualAnkle,
       currentWeight: latestMeasurement?.weight_kg || profileData.weight_kg,
       currentBodyFat: profileData.body_fat_percentage,
       caseyButtMethod,
     })
-  }, [profileData, latestMeasurement, caseyButtMethod])
+  }, [profileData, manualWrist, manualAnkle, latestMeasurement?.weight_kg, caseyButtMethod])
 
   // Check if profile exists - show empty state if no profile
   if (!profile) {
@@ -235,6 +255,89 @@ export default function GeneticPotentialTool() {
                           </p>
                         </div>
                       )}
+                    </div>
+
+                    {/* Input fields för wrist och ankle */}
+                    <div className="p-4 bg-neutral-50 border border-neutral-200 rounded-lg">
+                      <h4 className="text-sm font-semibold text-neutral-900 mb-3">
+                        Omkretsmått för Casey Butt-modellen
+                      </h4>
+                      <p className="text-xs text-neutral-600 mb-4">
+                        Dessa mått används för att beräkna skelettstruktur och muskelpotential.
+                        {latestMeasurement?.wrist || latestMeasurement?.ankle
+                          ? ' Värden är förifyllda från ditt senaste måttkort.'
+                          : ' Ange dina mått manuellt eller spara dem i kroppssammansättning.'}
+                      </p>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-1.5">
+                            <Label htmlFor="wrist-input">
+                              Handled <span className="text-neutral-500">(cm)</span>
+                            </Label>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setModalContent({
+                                  title: 'Handled',
+                                  description: 'Mäts på handsidan av processus styloideus, där underarmen är som smalast.',
+                                })
+                                setShowModal(true)
+                              }}
+                              className="text-neutral-400 hover:text-primary-600 transition-colors cursor-pointer"
+                              aria-label="Visa information om Handled"
+                            >
+                              <Info className="h-4 w-4" />
+                            </button>
+                          </div>
+                          <Input
+                            id="wrist-input"
+                            type="number"
+                            min="10"
+                            max="30"
+                            step="0.1"
+                            value={manualWrist ?? ''}
+                            onChange={e =>
+                              setManualWrist(e.target.value === '' ? undefined : parseFloat(e.target.value))
+                            }
+                            placeholder="0.0"
+                            className="rounded-xl"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-1.5">
+                            <Label htmlFor="ankle-input">
+                              Fotled <span className="text-neutral-500">(cm)</span>
+                            </Label>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setModalContent({
+                                  title: 'Fotled',
+                                  description: 'Mäts vid den smalaste punkten.',
+                                })
+                                setShowModal(true)
+                              }}
+                              className="text-neutral-400 hover:text-primary-600 transition-colors cursor-pointer"
+                              aria-label="Visa information om Fotled"
+                            >
+                              <Info className="h-4 w-4" />
+                            </button>
+                          </div>
+                          <Input
+                            id="ankle-input"
+                            type="number"
+                            min="15"
+                            max="40"
+                            step="0.1"
+                            value={manualAnkle ?? ''}
+                            onChange={e =>
+                              setManualAnkle(e.target.value === '' ? undefined : parseFloat(e.target.value))
+                            }
+                            placeholder="0.0"
+                            className="rounded-xl"
+                          />
+                        </div>
+                      </div>
                     </div>
 
                     {/* Metodväljare */}
@@ -564,6 +667,10 @@ export default function GeneticPotentialTool() {
                   result={results[selectedFormulaIndex]}
                   currentBodyFat={profileData?.body_fat_percentage}
                   currentWeight={latestMeasurement?.weight_kg}
+                  onShowMeasurementInfo={(title: string, description: string) => {
+                    setModalContent({ title, description })
+                    setShowModal(true)
+                  }}
                 />
               </CardContent>
             </Card>
@@ -639,6 +746,216 @@ export default function GeneticPotentialTool() {
             </div>
           )}
       </div>
+
+      {/* Modal för måttinformation */}
+      {showModal && modalContent && (
+        <div
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50"
+          onClick={() => setShowModal(false)}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-2xl max-w-md w-full"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="sticky top-0 bg-gradient-to-br from-primary-500 to-accent-500 text-white px-6 py-4 flex justify-between items-start rounded-t-2xl">
+              <div>
+                <h2 className="text-2xl font-bold">{modalContent.title}</h2>
+                <p className="text-sm text-white/90 mt-1">Mätinstruktion</p>
+              </div>
+              <button
+                onClick={() => setShowModal(false)}
+                className="text-white/90 hover:text-white transition-colors"
+                aria-label="Stäng modal"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+            <div className="p-6">
+              {(() => {
+                const description = modalContent.description
+
+                // Check if description contains special formatting (methods or gender-specific)
+                const hasMethodLabels = description.includes('Enligt ') || description.includes(':')
+                const hasMaleInstruction = description.includes('Män:')
+                const hasFemaleInstruction = description.includes('Kvinnor:')
+                const hasBulletPoints = description.includes('• ')
+
+                if (hasMethodLabels || hasMaleInstruction || hasFemaleInstruction || hasBulletPoints) {
+                  type SectionType = 'text' | 'male' | 'female' | 'method' | 'both-genders'
+                  const sections: Array<{ type: SectionType; title?: string; content: string }> = []
+                  const lines = description.split('\n')
+                  let currentSection: string[] = []
+                  let currentType: SectionType = 'text'
+                  let currentTitle: string | undefined
+
+                  const pushCurrentSection = () => {
+                    if (currentSection.length > 0) {
+                      sections.push({
+                        type: currentType,
+                        title: currentTitle,
+                        content: currentSection.join('\n').trim(),
+                      })
+                      currentSection = []
+                      currentTitle = undefined
+                    }
+                  }
+
+                  lines.forEach(line => {
+                    const trimmedLine = line.trim()
+
+                    // Check for method labels like "Enligt Casey Butt:", "U.S. Navy kroppsfettformel:", etc.
+                    if (
+                      trimmedLine.startsWith('Enligt ') ||
+                      (trimmedLine.endsWith(':') &&
+                        !trimmedLine.startsWith('•') &&
+                        !trimmedLine.startsWith('Män:') &&
+                        !trimmedLine.startsWith('Kvinnor:') &&
+                        !trimmedLine.startsWith('Båda könen:'))
+                    ) {
+                      pushCurrentSection()
+                      currentType = 'method'
+
+                      // Check if there's content after the colon on the same line
+                      const colonIndex = trimmedLine.indexOf(':')
+                      if (colonIndex !== -1) {
+                        currentTitle = trimmedLine.substring(0, colonIndex)
+                        const contentAfterColon = trimmedLine.substring(colonIndex + 1).trim()
+                        if (contentAfterColon) {
+                          currentSection.push(contentAfterColon)
+                        }
+                      } else {
+                        currentTitle = trimmedLine
+                      }
+                      return
+                    }
+
+                    // Check for gender-specific bullets
+                    if (trimmedLine.startsWith('• Män:')) {
+                      pushCurrentSection()
+                      currentType = 'male'
+                      currentSection.push(trimmedLine.replace('• Män:', '').trim())
+                      return
+                    }
+
+                    if (trimmedLine.startsWith('• Kvinnor:')) {
+                      pushCurrentSection()
+                      currentType = 'female'
+                      currentSection.push(trimmedLine.replace('• Kvinnor:', '').trim())
+                      return
+                    }
+
+                    if (trimmedLine.startsWith('• Båda könen:')) {
+                      pushCurrentSection()
+                      currentType = 'both-genders'
+                      currentSection.push(trimmedLine.replace('• Båda könen:', '').trim())
+                      return
+                    }
+
+                    // Check for gender labels without bullets - keep as part of method section
+                    if (trimmedLine.startsWith('Män:') || trimmedLine.startsWith('Kvinnor:') || trimmedLine.startsWith('Båda könen:')) {
+                      // Add to current method section instead of creating new section
+                      currentSection.push(line)
+                      return
+                    }
+
+                    // Empty line - push section and reset to text
+                    if (trimmedLine === '') {
+                      pushCurrentSection()
+                      currentType = 'text'
+                      return
+                    }
+
+                    // Regular line - add to current section
+                    currentSection.push(line)
+                  })
+
+                  pushCurrentSection()
+
+                  return (
+                    <div className="space-y-4">
+                      {sections.map((section, idx) => {
+                        if (section.type === 'male') {
+                          return (
+                            <div
+                              key={idx}
+                              className="bg-blue-50 border-blue-200 border rounded-lg p-4"
+                            >
+                              <p className="font-semibold text-blue-700 mb-2">👨 Män</p>
+                              <p className="text-blue-900 leading-relaxed">{section.content}</p>
+                            </div>
+                          )
+                        }
+
+                        if (section.type === 'female') {
+                          return (
+                            <div
+                              key={idx}
+                              className="bg-pink-50 border-pink-200 border rounded-lg p-4"
+                            >
+                              <p className="font-semibold text-pink-700 mb-2">👩 Kvinnor</p>
+                              <p className="text-pink-900 leading-relaxed">{section.content}</p>
+                            </div>
+                          )
+                        }
+
+                        if (section.type === 'both-genders') {
+                          return (
+                            <div
+                              key={idx}
+                              className="bg-purple-50 border-purple-200 border rounded-lg p-4"
+                            >
+                              <p className="font-semibold text-purple-700 mb-2">👥 Båda könen</p>
+                              <p className="text-purple-900 leading-relaxed">{section.content}</p>
+                            </div>
+                          )
+                        }
+
+                        if (section.type === 'method' && section.title) {
+                          return (
+                            <div
+                              key={idx}
+                              className="bg-amber-50 border-amber-200 border rounded-lg p-4"
+                            >
+                              <p className="font-semibold text-amber-700 mb-2">📋 {section.title}</p>
+                              {section.content && (
+                                <p className="text-amber-900 leading-relaxed whitespace-pre-line">
+                                  {section.content}
+                                </p>
+                              )}
+                            </div>
+                          )
+                        }
+
+                        // Regular text
+                        return (
+                          <p
+                            key={idx}
+                            className="text-neutral-700 leading-relaxed whitespace-pre-line"
+                          >
+                            {section.content}
+                          </p>
+                        )
+                      })}
+                    </div>
+                  )
+                }
+
+                // No special formatting, just show normal text
+                return (
+                  <p className="text-neutral-700 whitespace-pre-line leading-relaxed">
+                    {description}
+                  </p>
+                )
+              })()}
+            </div>
+            <div className="sticky bottom-0 bg-white border-t border-neutral-200 px-6 py-4 rounded-b-2xl">
+              <Button onClick={() => setShowModal(false)} className="w-full">
+                Stäng
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
@@ -835,10 +1152,12 @@ function ResultCard({
   result,
   currentBodyFat,
   currentWeight,
+  onShowMeasurementInfo,
 }: {
   result: GeneticPotentialResult
   currentBodyFat?: number
   currentWeight?: number
+  onShowMeasurementInfo?: (title: string, description: string) => void
 }) {
   const [isExpanded, setIsExpanded] = useState(false)
   const targetWeights = getTargetWeights(result.maxLeanMass)
@@ -1053,32 +1372,100 @@ function ResultCard({
             </div>
 
             {/* Max Measurements */}
-            <h4 className="font-medium text-sm text-neutral-900 mt-4">Maximala kroppsmått</h4>
+            <h4 className="font-medium text-sm text-neutral-900 mt-4 mb-3">Maximala kroppsmått</h4>
 
             {/* Upper body measurements */}
             <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-lg p-3">
               <p className="text-xs font-medium text-blue-900 mb-2">Överkropp</p>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <p className="text-xs text-blue-600">Bröst</p>
+                  <div className="flex items-center gap-1">
+                    <p className="text-xs text-blue-600">Bröst</p>
+                    {onShowMeasurementInfo && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onShowMeasurementInfo(
+                            'Bröst',
+                            'Lyft armarna och placera måttbandet runt övre delen av överkroppen, under armhålorna, innan armarna sänks längs sidorna. Bröstomkretsen mäts horisontellt vid utandning och i avslappnat tillstånd.'
+                          )
+                        }}
+                        className="text-blue-400 hover:text-blue-600 transition-colors cursor-pointer"
+                        aria-label="Visa information om Bröst"
+                      >
+                        <Info className="h-3 w-3" />
+                      </button>
+                    )}
+                  </div>
                   <p className="text-base font-bold text-blue-900">
                     {result.maxMeasurements.chestCm.toFixed(1)} cm
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs text-blue-600">Biceps</p>
+                  <div className="flex items-center gap-1">
+                    <p className="text-xs text-blue-600">Biceps</p>
+                    {onShowMeasurementInfo && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onShowMeasurementInfo(
+                            'Biceps',
+                            'Mätt i spänt läge vid den största omkretsen, med armen lyft framåt och armbågen i 45°.'
+                          )
+                        }}
+                        className="text-blue-400 hover:text-blue-600 transition-colors cursor-pointer"
+                        aria-label="Visa information om Biceps"
+                      >
+                        <Info className="h-3 w-3" />
+                      </button>
+                    )}
+                  </div>
                   <p className="text-base font-bold text-blue-900">
                     {result.maxMeasurements.bicepsCm.toFixed(1)} cm
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs text-blue-600">Underarmar</p>
+                  <div className="flex items-center gap-1">
+                    <p className="text-xs text-blue-600">Underarmar</p>
+                    {onShowMeasurementInfo && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onShowMeasurementInfo(
+                            'Underarmar',
+                            'Med knuten näve och armen rakt ut mäts omkretsen vid största punkten, oftast närmare armbågen.'
+                          )
+                        }}
+                        className="text-blue-400 hover:text-blue-600 transition-colors cursor-pointer"
+                        aria-label="Visa information om Underarmar"
+                      >
+                        <Info className="h-3 w-3" />
+                      </button>
+                    )}
+                  </div>
                   <p className="text-base font-bold text-blue-900">
                     {result.maxMeasurements.forearmsCm.toFixed(1)} cm
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs text-blue-600">Nacke</p>
+                  <div className="flex items-center gap-1">
+                    <p className="text-xs text-blue-600">Nacke</p>
+                    {onShowMeasurementInfo && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onShowMeasurementInfo(
+                            'Nacke',
+                            'Enligt Topend Sports: Omedelbart ovanför adamsäpplet.\nEnligt Casey Butt: Strax nedanför adamsäpplet, vid det smalaste området.\n\nPersonen ska hålla huvudet upprätt och titta rakt fram.'
+                          )
+                        }}
+                        className="text-blue-400 hover:text-blue-600 transition-colors cursor-pointer"
+                        aria-label="Visa information om Nacke"
+                      >
+                        <Info className="h-3 w-3" />
+                      </button>
+                    )}
+                  </div>
                   <p className="text-base font-bold text-blue-900">
                     {result.maxMeasurements.neckCm.toFixed(1)} cm
                   </p>
@@ -1091,13 +1478,47 @@ function ResultCard({
               <p className="text-xs font-medium text-purple-900 mb-2">Underkropp</p>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <p className="text-xs text-purple-600">Lår</p>
+                  <div className="flex items-center gap-1">
+                    <p className="text-xs text-purple-600">Lår</p>
+                    {onShowMeasurementInfo && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onShowMeasurementInfo(
+                            'Lår',
+                            'Mäts vid mittpunkten på lårets utsida, halvvägs mellan trochanter major och laterala tibiakondylen.'
+                          )
+                        }}
+                        className="text-purple-400 hover:text-purple-600 transition-colors cursor-pointer"
+                        aria-label="Visa information om Lår"
+                      >
+                        <Info className="h-3 w-3" />
+                      </button>
+                    )}
+                  </div>
                   <p className="text-base font-bold text-purple-900">
                     {result.maxMeasurements.thighsCm.toFixed(1)} cm
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs text-purple-600">Vader</p>
+                  <div className="flex items-center gap-1">
+                    <p className="text-xs text-purple-600">Vader</p>
+                    {onShowMeasurementInfo && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onShowMeasurementInfo(
+                            'Vader',
+                            'Mäts vid största omkretsen, med musklerna avslappnade.'
+                          )
+                        }}
+                        className="text-purple-400 hover:text-purple-600 transition-colors cursor-pointer"
+                        aria-label="Visa information om Vader"
+                      >
+                        <Info className="h-3 w-3" />
+                      </button>
+                    )}
+                  </div>
                   <p className="text-base font-bold text-purple-900">
                     {result.maxMeasurements.calvesCm.toFixed(1)} cm
                   </p>

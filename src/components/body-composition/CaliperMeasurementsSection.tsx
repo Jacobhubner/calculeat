@@ -1,11 +1,13 @@
+import { useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { Button } from '@/components/ui/button'
+import { Portal } from '@/components/ui/portal'
 import type { CaliperMeasurements } from '@/lib/calculations/bodyComposition'
 import { caliperLabels } from '@/lib/helpers/bodyCompositionHelpers'
 import { caliperDescriptions } from '@/lib/constants/measurementDescriptions'
-import { Info, Ruler } from 'lucide-react'
+import { Info, Ruler, X } from 'lucide-react'
 
 interface CaliperMeasurementsSectionProps {
   measurements: CaliperMeasurements
@@ -24,9 +26,25 @@ export default function CaliperMeasurementsSection({
   showAll = false,
   onChange,
 }: CaliperMeasurementsSectionProps) {
+  const [showModal, setShowModal] = useState(false)
+  const [modalContent, setModalContent] = useState<{ title: string; description: string } | null>(
+    null
+  )
+
   const handleChange = (field: keyof CaliperMeasurements, value: string) => {
     const numValue = value === '' ? undefined : parseFloat(value)
     onChange(field, numValue)
+  }
+
+  const handleInfoClick = (field: keyof CaliperMeasurements) => {
+    const description = caliperDescriptions[field as string]
+    if (description) {
+      setModalContent({
+        title: caliperLabels[field as string],
+        description,
+      })
+      setShowModal(true)
+    }
   }
 
   // Check if a value is outside the valid range
@@ -58,7 +76,7 @@ export default function CaliperMeasurementsSection({
   const fieldsToShow = showAll ? allFields : (requiredFields as Array<keyof CaliperMeasurements>)
 
   return (
-    <TooltipProvider>
+    <>
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -88,19 +106,14 @@ export default function CaliperMeasurementsSection({
                       {isRequired && <span className="text-red-500 ml-1">*</span>}
                     </Label>
                     {description && (
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <button
-                            type="button"
-                            className="text-neutral-400 hover:text-neutral-600 transition-colors"
-                          >
-                            <Info className="h-4 w-4" />
-                          </button>
-                        </TooltipTrigger>
-                        <TooltipContent className="max-w-xs whitespace-pre-line">
-                          {description}
-                        </TooltipContent>
-                      </Tooltip>
+                      <button
+                        type="button"
+                        onClick={() => handleInfoClick(field)}
+                        className="text-neutral-400 hover:text-primary-600 transition-colors cursor-pointer"
+                        aria-label={`Visa information om ${caliperLabels[field as string]}`}
+                      >
+                        <Info className="h-4 w-4" />
+                      </button>
                     )}
                   </div>
                   <Input
@@ -125,6 +138,100 @@ export default function CaliperMeasurementsSection({
           </div>
         </CardContent>
       </Card>
-    </TooltipProvider>
+
+      {/* Information Modal */}
+      {showModal && modalContent && (
+        <Portal>
+          <div
+            className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50"
+            onClick={() => setShowModal(false)}
+          >
+            <div
+              className="bg-white rounded-2xl shadow-2xl max-w-md w-full"
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="sticky top-0 bg-gradient-to-br from-primary-500 to-accent-500 text-white px-6 py-4 flex justify-between items-start rounded-t-2xl">
+                <div>
+                  <h2 className="text-2xl font-bold">{modalContent.title}</h2>
+                  <p className="text-sm text-white/90 mt-1">Mätinstruktion</p>
+                </div>
+                <button
+                  onClick={() => setShowModal(false)}
+                  className="text-white/90 hover:text-white transition-colors"
+                  aria-label="Stäng modal"
+                >
+                  <X className="h-6 w-6" />
+                </button>
+              </div>
+              <div className="p-6">
+                {(() => {
+                  const description = modalContent.description
+
+                  // Check if description contains gender-specific instructions
+                  const hasMaleInstruction = description.includes('Män:')
+                  const hasFemaleInstruction = description.includes('Kvinnor:')
+
+                  if (hasMaleInstruction || hasFemaleInstruction) {
+                    // Split by gender labels and format nicely
+                    const parts = description.split(/\n\n(?=Män:|Kvinnor:)/)
+
+                    return (
+                      <div className="space-y-4">
+                        {parts.map((part, idx) => {
+                          const isMale = part.trim().startsWith('Män:')
+                          const isFemale = part.trim().startsWith('Kvinnor:')
+
+                          if (isMale || isFemale) {
+                            const label = isMale ? 'Män' : 'Kvinnor'
+                            const content = part.replace(/^(Män|Kvinnor):\s*/, '').trim()
+                            const bgColor = isMale ? 'bg-blue-50' : 'bg-pink-50'
+                            const borderColor = isMale ? 'border-blue-200' : 'border-pink-200'
+                            const textColor = isMale ? 'text-blue-900' : 'text-pink-900'
+                            const labelColor = isMale ? 'text-blue-700' : 'text-pink-700'
+
+                            const emoji = isMale ? '👨' : '👩'
+                            return (
+                              <div
+                                key={idx}
+                                className={`${bgColor} ${borderColor} border rounded-lg p-4`}
+                              >
+                                <p className={`font-semibold ${labelColor} mb-2`}>
+                                  {emoji} {label}
+                                </p>
+                                <p className={`${textColor} leading-relaxed`}>
+                                  {content}
+                                </p>
+                              </div>
+                            )
+                          }
+
+                          return (
+                            <p key={idx} className="text-neutral-700 leading-relaxed">
+                              {part.trim()}
+                            </p>
+                          )
+                        })}
+                      </div>
+                    )
+                  }
+
+                  // No gender-specific instructions, just show normal text
+                  return (
+                    <p className="text-neutral-700 whitespace-pre-line leading-relaxed">
+                      {description}
+                    </p>
+                  )
+                })()}
+              </div>
+              <div className="sticky bottom-0 bg-white border-t border-neutral-200 px-6 py-4 rounded-b-2xl">
+                <Button onClick={() => setShowModal(false)} className="w-full">
+                  Stäng
+                </Button>
+              </div>
+            </div>
+          </div>
+        </Portal>
+      )}
+    </>
   )
 }
