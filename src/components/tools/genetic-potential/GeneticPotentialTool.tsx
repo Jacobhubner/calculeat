@@ -1218,31 +1218,51 @@ function ResultCard({
       )}
 
       {result.formula === 'Casey Butts modell' ? (
-        <div className="bg-gradient-to-br from-green-50 to-blue-50 border-2 border-green-200 rounded-lg p-3">
-          <h4 className="text-sm font-semibold text-neutral-800 mb-3">
-            {result.caseyButtMethod === 'personalized'
-              ? `Uppskattad maximal kapacitet vid ${result.caseyButtBodyFat?.toFixed(1)}% kroppsfett`
-              : 'Uppskattad maximal genetisk potential'}
-          </h4>
-          <div className="space-y-2">
-            <div className="flex justify-between items-center">
-              <p className="text-xs text-neutral-600">Maximal fettfri massa (MLBM):</p>
-              <p className="text-lg font-bold text-green-700">{result.maxLeanMass.toFixed(1)} kg</p>
-            </div>
-            <div className="flex justify-between items-center">
-              <p className="text-xs text-neutral-600">Maximal kroppsvikt (MBW):</p>
-              <p className="text-lg font-bold text-blue-700">{result.maxWeight.toFixed(1)} kg</p>
-            </div>
-            {result.maxBulkedWeight && (
-              <div className="flex justify-between items-center">
-                <p className="text-xs text-neutral-600">Maximal bulked vikt (MBBW):</p>
-                <p className="text-lg font-bold text-purple-700">
-                  {result.maxBulkedWeight.toFixed(1)} kg
+        result.maxLeanMass === 0 ? (
+          // Visa meddelande när mått saknas
+          <div className="bg-yellow-50 border-2 border-yellow-300 rounded-lg p-4">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5 shrink-0" />
+              <div>
+                <h4 className="text-sm font-semibold text-yellow-900 mb-2">
+                  Omkretsmått krävs för Casey Butt-modellen
+                </h4>
+                <p className="text-xs text-yellow-800 leading-relaxed">
+                  För att beräkna dina resultat med Casey Butts modell behöver du ange omkretsmått
+                  för handled och fotled i fälten ovan. Dessa mått kan antingen förifyllas från ditt
+                  senaste måttkort i Kroppssammansättning, eller så kan du ange dem manuellt.
                 </p>
               </div>
-            )}
+            </div>
           </div>
-        </div>
+        ) : (
+          // Visa resultat när mått finns
+          <div className="bg-gradient-to-br from-green-50 to-blue-50 border-2 border-green-200 rounded-lg p-3">
+            <h4 className="text-sm font-semibold text-neutral-800 mb-3">
+              {result.caseyButtMethod === 'personalized'
+                ? `Uppskattad maximal kapacitet vid ${result.caseyButtBodyFat?.toFixed(1)}% kroppsfett`
+                : 'Uppskattad maximal genetisk potential'}
+            </h4>
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <p className="text-xs text-neutral-600">Maximal fettfri massa (MLBM):</p>
+                <p className="text-lg font-bold text-green-700">{result.maxLeanMass.toFixed(1)} kg</p>
+              </div>
+              <div className="flex justify-between items-center">
+                <p className="text-xs text-neutral-600">Maximal kroppsvikt (MBW):</p>
+                <p className="text-lg font-bold text-blue-700">{result.maxWeight.toFixed(1)} kg</p>
+              </div>
+              {result.maxBulkedWeight && (
+                <div className="flex justify-between items-center">
+                  <p className="text-xs text-neutral-600">Maximal bulked vikt (MBBW):</p>
+                  <p className="text-lg font-bold text-purple-700">
+                    {result.maxBulkedWeight.toFixed(1)} kg
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        )
       ) : result.formula === 'Lyle McDonalds ramverk' ||
         result.formula === 'Alan Aragons ramverk' ? (
         // Lyle McDonald och Alan Aragon visar bara referenstabeller, inga kroppsfett-värden
@@ -1334,6 +1354,7 @@ function ResultCard({
 
       {/* Casey Butt specific: Gainer type and max measurements */}
       {result.formula === 'Casey Butts modell' &&
+        result.maxLeanMass > 0 &&
         result.upperBodyType &&
         result.lowerBodyType &&
         result.maxMeasurements && (

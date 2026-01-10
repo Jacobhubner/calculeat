@@ -325,7 +325,7 @@ export function calculateAllModels(input: GeneticPotentialInput): GeneticPotenti
   // Berkhan - Endast längd krävs
   results.push(berkhanFormula(input.heightCm))
 
-  // Casey Butt - Kräver handled och fotled
+  // Casey Butt - Visa alltid, men kräver handled och fotled för beräkning
   if (input.wristCm && input.ankleCm) {
     // Hämta metod från input (default: 'standard')
     const method = input.caseyButtMethod || 'standard'
@@ -333,6 +333,23 @@ export function calculateAllModels(input: GeneticPotentialInput): GeneticPotenti
     results.push(
       caseyButtFormula(input.heightCm, input.wristCm, input.ankleCm, method, input.currentBodyFat)
     )
+  } else {
+    // Visa Casey Butt som placeholder med nollvärden när mått saknas
+    results.push({
+      formula: 'Casey Butts modell',
+      description: 'Kräver omkretsmått för handled och fotled',
+      maxLeanMass: 0,
+      maxWeight: 0,
+      maxBulkedWeight: 0,
+      maxMeasurements: {
+        chestCm: 0,
+        bicepsCm: 0,
+        forearmsCm: 0,
+        neckCm: 0,
+        thighsCm: 0,
+        calvesCm: 0,
+      },
+    })
   }
 
   // Lyle McDonald - Visar alltid referenstabell (flyttad till slutet)
