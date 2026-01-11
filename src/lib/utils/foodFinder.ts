@@ -4,11 +4,11 @@
  */
 
 import type { FoodItem } from '@/hooks/useFoodItems'
-import type { NoomColor } from '@/lib/calculations/colorDensity'
+import type { FoodColor } from '@/lib/calculations/colorDensity'
 
 export interface FoodFinderParams {
   query?: string
-  noomColor?: NoomColor
+  energyDensityColor?: FoodColor
   maxCalories?: number
   minProtein?: number
   maxCarbs?: number
@@ -36,8 +36,8 @@ export function findFoods(foods: FoodItem[], params: FoodFinderParams): FoodItem
   }
 
   // Noom color filter
-  if (params.noomColor) {
-    results = results.filter(food => food.noom_color === params.noomColor)
+  if (params.energyDensityColor) {
+    results = results.filter(food => food.energy_density_color === params.energyDensityColor)
   }
 
   // Calorie filter (per 100g)
@@ -94,8 +94,8 @@ export function findFoods(foods: FoodItem[], params: FoodFinderParams): FoodItem
 
         case 'noom': {
           const noomOrder = { Green: 1, Yellow: 2, Orange: 3 }
-          const aOrder = noomOrder[a.noom_color || 'Yellow']
-          const bOrder = noomOrder[b.noom_color || 'Yellow']
+          const aOrder = noomOrder[a.energy_density_color || 'Yellow']
+          const bOrder = noomOrder[b.energy_density_color || 'Yellow']
           return multiplier * (aOrder - bOrder)
         }
 
@@ -202,8 +202,8 @@ export function suggestFoodsForRemainingMacros(
   // Sort by Noom color (prefer green)
   suggestions.sort((a, b) => {
     const noomOrder = { Green: 1, Yellow: 2, Orange: 3 }
-    const aOrder = noomOrder[a.noom_color || 'Yellow']
-    const bOrder = noomOrder[b.noom_color || 'Yellow']
+    const aOrder = noomOrder[a.energy_density_color || 'Yellow']
+    const bOrder = noomOrder[b.energy_density_color || 'Yellow']
     return aOrder - bOrder
   })
 
@@ -218,7 +218,7 @@ export function calculateFoodSimilarity(food1: FoodItem, food2: FoodItem): numbe
   let score = 0
 
   // Same Noom color (+20 points)
-  if (food1.noom_color === food2.noom_color) {
+  if (food1.energy_density_color === food2.energy_density_color) {
     score += 20
   }
 

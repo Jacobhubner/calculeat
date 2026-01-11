@@ -62,7 +62,7 @@ export function findBestFoodsForGoals(
 
   // Food color filter (allow multiple)
   if (foodColors.length > 0) {
-    filtered = filtered.filter(food => foodColors.includes(food.noom_color || 'Yellow'))
+    filtered = filtered.filter(food => foodColors.includes(food.energy_density_color || 'Yellow'))
   }
 
   // Calculate matches
@@ -216,7 +216,7 @@ export function findLowCalorieFoods(
 ): FoodItem[] {
   return foods
     .filter(food => food.calories <= maxCalories)
-    .filter(food => food.noom_color === 'Green') // Prefer green foods
+    .filter(food => food.energy_density_color === 'Green') // Prefer green foods
     .sort((a, b) => a.calories - b.calories)
     .slice(0, numberOfResults)
 }
@@ -225,7 +225,7 @@ export function findLowCalorieFoods(
  * Find foods by color density (multiple selection)
  */
 export function findFoodsByColors(foods: FoodItem[], colors: FoodColor[]): FoodItem[] {
-  return foods.filter(food => colors.includes(food.noom_color || 'Yellow'))
+  return foods.filter(food => colors.includes(food.energy_density_color || 'Yellow'))
 }
 
 // Legacy export for backwards compatibility

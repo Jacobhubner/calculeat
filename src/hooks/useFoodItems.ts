@@ -29,8 +29,8 @@ export interface FoodItem {
   ml_per_gram?: number
 
   // Food color density tracking
-  noom_food_type: FoodType
-  noom_color?: FoodColor
+  food_type: FoodType
+  energy_density_color?: FoodColor
 
   // Recipe flag
   is_recipe: boolean
@@ -57,7 +57,7 @@ export interface CreateFoodItemInput {
   default_amount: number
   default_unit: string
   ml_per_gram?: number
-  noom_food_type: FoodType
+  food_type: FoodType
   notes?: string
   source?: string
 }
@@ -109,7 +109,7 @@ export function useSearchFoodItems(query: string, noomFilter?: FoodColor) {
       }
 
       if (noomFilter) {
-        queryBuilder = queryBuilder.eq('noom_color', noomFilter)
+        queryBuilder = queryBuilder.eq('energy_density_color', noomFilter)
       }
 
       const { data, error } = await queryBuilder.order('name')
@@ -162,11 +162,11 @@ export function useCreateFoodItem() {
         input.default_unit === 'g' ? input.calories / input.default_amount : undefined
 
       // Calculate food color density
-      const noom_color = kcal_per_gram
+      const energy_density_color = kcal_per_gram
         ? calculateFoodColor({
             calories: input.calories,
             weightGrams: input.default_amount,
-            foodType: input.noom_food_type,
+            foodType: input.food_type,
           })
         : undefined
 
@@ -176,7 +176,7 @@ export function useCreateFoodItem() {
           user_id: user.id,
           ...input,
           kcal_per_gram,
-          noom_color,
+          energy_density_color,
           is_recipe: false,
         })
         .select()
@@ -216,22 +216,22 @@ export function useUpdateFoodItem() {
           const calories = input.calories ?? current.data.calories
           const default_amount = input.default_amount ?? current.data.default_amount
           const default_unit = input.default_unit ?? current.data.default_unit
-          const noom_food_type = input.noom_food_type ?? current.data.noom_food_type
+          const food_type = input.food_type ?? current.data.food_type
 
           const kcal_per_gram = default_unit === 'g' ? calories / default_amount : undefined
 
-          const noom_color = kcal_per_gram
+          const energy_density_color = kcal_per_gram
             ? calculateFoodColor({
                 calories,
                 weightGrams: default_amount,
-                foodType: noom_food_type,
+                foodType: food_type,
               })
             : undefined
 
           updates = {
             ...updates,
             kcal_per_gram,
-            noom_color,
+            energy_density_color,
           }
         }
       }

@@ -15,7 +15,7 @@ interface FoodItem {
   protein_g: number
   carb_g: number
   fat_g: number
-  noom_color: 'Green' | 'Yellow' | 'Orange' | null
+  energy_density_color: 'Green' | 'Yellow' | 'Orange' | null
   default_amount: number
   default_unit: string
   is_recipe: boolean
@@ -50,14 +50,14 @@ export default function FoodItemsPage() {
     fetchFoodItems()
   }, [])
 
-  // Filter food items based on search and noom color
+  // Filter food items based on search and energy density color
   const filteredFoodItems = foodItems.filter(item => {
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase())
     const matchesFilter =
       selectedFilter === 'all' ||
-      (selectedFilter === 'green' && item.noom_color === 'Green') ||
-      (selectedFilter === 'yellow' && item.noom_color === 'Yellow') ||
-      (selectedFilter === 'orange' && item.noom_color === 'Orange')
+      (selectedFilter === 'green' && item.energy_density_color === 'Green') ||
+      (selectedFilter === 'yellow' && item.energy_density_color === 'Yellow') ||
+      (selectedFilter === 'orange' && item.energy_density_color === 'Orange')
 
     return matchesSearch && matchesFilter
   })
@@ -97,7 +97,7 @@ export default function FoodItemsPage() {
               />
             </div>
 
-            {/* Noom Filter */}
+            {/* Energitäthet Filter */}
             <div className="flex gap-2">
               <Button
                 variant={selectedFilter === 'all' ? 'default' : 'outline'}
@@ -171,18 +171,18 @@ export default function FoodItemsPage() {
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between gap-2">
                   <CardTitle className="text-lg">{item.name}</CardTitle>
-                  {item.noom_color && (
+                  {item.energy_density_color && (
                     <Badge
                       variant="outline"
                       className={
-                        item.noom_color === 'Green'
+                        item.energy_density_color === 'Green'
                           ? 'bg-green-100 text-green-700 border-green-300'
-                          : item.noom_color === 'Yellow'
+                          : item.energy_density_color === 'Yellow'
                             ? 'bg-yellow-100 text-yellow-700 border-yellow-300'
                             : 'bg-orange-100 text-orange-700 border-orange-300'
                       }
                     >
-                      {item.noom_color === 'Green' ? 'Grön' : item.noom_color === 'Yellow' ? 'Gul' : 'Orange'}
+                      {item.energy_density_color === 'Green' ? 'Grön' : item.energy_density_color === 'Yellow' ? 'Gul' : 'Orange'}
                     </Badge>
                   )}
                 </div>
