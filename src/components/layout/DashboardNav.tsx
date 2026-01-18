@@ -60,7 +60,7 @@ export default function DashboardNav() {
     {
       type: 'single',
       to: '/app/food-items',
-      label: 'Matvaror',
+      label: 'Livsmedel',
       icon: Apple,
     },
     {

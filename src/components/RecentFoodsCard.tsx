@@ -62,7 +62,7 @@ export default function RecentFoodsCard({ dailyLogId, onAddFood }: RecentFoodsCa
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Clock className="h-5 w-5 text-primary-600" />
-            Senaste matvaror
+            Senaste livsmedel
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
@@ -80,13 +80,13 @@ export default function RecentFoodsCard({ dailyLogId, onAddFood }: RecentFoodsCa
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Clock className="h-5 w-5 text-primary-600" />
-            Senaste matvaror
+            Senaste livsmedel
           </CardTitle>
-          <CardDescription>Matvaror du loggat de senaste 7 dagarna visas här</CardDescription>
+          <CardDescription>Livsmedel du loggat de senaste 7 dagarna visas här</CardDescription>
         </CardHeader>
         <CardContent>
           <p className="text-center py-8 text-neutral-400 text-sm">
-            Inga matvaror loggade de senaste 7 dagarna
+            Inga livsmedel loggade de senaste 7 dagarna
           </p>
         </CardContent>
       </Card>
@@ -98,7 +98,7 @@ export default function RecentFoodsCard({ dailyLogId, onAddFood }: RecentFoodsCa
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-base md:text-lg">
           <Clock className="h-4 w-4 md:h-5 md:w-5 text-primary-600" />
-          Senaste matvaror
+          Senaste livsmedel
         </CardTitle>
         <CardDescription className="text-xs md:text-sm">
           Klicka för att snabbt lägga till med standardportion
