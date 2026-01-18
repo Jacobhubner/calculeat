@@ -3,10 +3,11 @@ import DashboardLayout from '@/components/layout/DashboardLayout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Plus, Search, UtensilsCrossed } from 'lucide-react'
+import { Plus, Search, UtensilsCrossed, Edit2, Trash2 } from 'lucide-react'
 import EmptyState from '@/components/EmptyState'
 import { supabase } from '@/lib/supabase'
 import { Badge } from '@/components/ui/badge'
+import { AddFoodItemModal } from '@/components/food/AddFoodItemModal'
 
 interface FoodItem {
   id: string
@@ -19,6 +20,145 @@ interface FoodItem {
   default_amount: number
   default_unit: string
   is_recipe: boolean
+  weight_grams?: number
+  kcal_per_gram?: number
+  food_type: 'Solid' | 'Liquid' | 'Soup'
+  ml_per_gram?: number
+  grams_per_piece?: number
+  serving_unit?: string
+  kcal_per_unit?: number
+  fat_per_unit?: number
+  carb_per_unit?: number
+  protein_per_unit?: number
+}
+
+// Display mode type
+type DisplayMode = 'serving' | 'per100g' | 'perVolume'
+
+// Helper function: Get available display modes for a food item
+function getAvailableDisplayModes(item: FoodItem): DisplayMode[] {
+  const modes: DisplayMode[] = []
+
+  // Serveringsportion (om både grams_per_piece och serving_unit finns)
+  if (item.grams_per_piece && item.serving_unit && item.kcal_per_unit) {
+    modes.push('serving')
+  }
+
+  // Per 100g (alltid tillgängligt om kcal_per_gram finns)
+  if (item.kcal_per_gram) {
+    modes.push('per100g')
+  }
+
+  // Per volym (om ml_per_gram finns)
+  if (item.ml_per_gram && item.kcal_per_gram) {
+    modes.push('perVolume')
+  }
+
+  return modes
+}
+
+// Helper function: Get display data based on mode
+function getDisplayData(
+  item: FoodItem,
+  mode: DisplayMode
+): {
+  icon: string
+  header: string
+  kcal: number
+  protein: number
+  carb: number
+  fat: number
+} | null {
+  switch (mode) {
+    case 'serving':
+      if (!item.grams_per_piece || !item.serving_unit || !item.kcal_per_unit) {
+        return null
+      }
+      return {
+        icon: '🍽️',
+        header: `1 ${item.serving_unit} (${item.grams_per_piece}g)`,
+        kcal: item.kcal_per_unit,
+        protein: item.protein_per_unit || 0,
+        carb: item.carb_per_unit || 0,
+        fat: item.fat_per_unit || 0,
+      }
+
+    case 'per100g':
+      if (!item.kcal_per_gram) {
+        return null
+      }
+      return {
+        icon: '📊',
+        header: '100g',
+        kcal: item.kcal_per_gram * 100,
+        protein: (item.protein_g / (item.weight_grams || 100)) * 100,
+        carb: (item.carb_g / (item.weight_grams || 100)) * 100,
+        fat: (item.fat_g / (item.weight_grams || 100)) * 100,
+      }
+
+    case 'perVolume': {
+      if (!item.ml_per_gram || !item.kcal_per_gram) {
+        return null
+      }
+      // 100ml = 100 / ml_per_gram gram
+      const gramsIn100ml = 100 / item.ml_per_gram
+      return {
+        icon: '💧',
+        header: '100ml',
+        kcal: item.kcal_per_gram * gramsIn100ml,
+        protein: (item.protein_g / (item.weight_grams || 100)) * gramsIn100ml,
+        carb: (item.carb_g / (item.weight_grams || 100)) * gramsIn100ml,
+        fat: (item.fat_g / (item.weight_grams || 100)) * gramsIn100ml,
+      }
+    }
+
+    default:
+      return null
+  }
+}
+
+// LocalStorage helper functions
+function getSavedDisplayMode(itemId: string): DisplayMode | null {
+  const key = `food-display-mode:${itemId}`
+  try {
+    const saved = localStorage.getItem(key)
+    if (!saved) return null
+    const parsed = JSON.parse(saved)
+    return parsed.mode as DisplayMode
+  } catch {
+    return null
+  }
+}
+
+function saveDisplayMode(itemId: string, mode: DisplayMode): void {
+  const key = `food-display-mode:${itemId}`
+  try {
+    localStorage.setItem(key, JSON.stringify({ mode }))
+  } catch (error) {
+    // LocalStorage quota exceeded or disabled - fail silently
+    console.warn('Could not save display mode to localStorage:', error)
+  }
+}
+
+// Helper function: Get default display mode for a food item
+function getDefaultDisplayMode(item: FoodItem): DisplayMode {
+  // 1. Kolla localStorage först
+  const saved = getSavedDisplayMode(item.id)
+  if (saved) {
+    const availableModes = getAvailableDisplayModes(item)
+    // Verifiera att sparat läge fortfarande är tillgängligt
+    if (availableModes.includes(saved)) {
+      return saved
+    }
+  }
+
+  // 2. Om serveringsinformation finns, visa den som default
+  if (item.grams_per_piece && item.serving_unit && item.kcal_per_unit) {
+    return 'serving'
+  }
+
+  // 3. Fallback till per 100g
+  return 'per100g'
 }
 
 export default function FoodItemsPage() {
@@ -26,29 +166,114 @@ export default function FoodItemsPage() {
   const [selectedFilter, setSelectedFilter] = useState<'all' | 'green' | 'yellow' | 'orange'>('all')
   const [foodItems, setFoodItems] = useState<FoodItem[]>([])
   const [loading, setLoading] = useState(true)
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+  const [editingItem, setEditingItem] = useState<FoodItem | null>(null)
+  const [deletingItemId, setDeletingItemId] = useState<string | null>(null)
+  const [displayModes, setDisplayModes] = useState<Record<string, DisplayMode>>({})
 
   // Fetch food items from Supabase
-  useEffect(() => {
-    async function fetchFoodItems() {
-      try {
-        setLoading(true)
-        const { data, error } = await supabase
-          .from('food_items')
-          .select('*')
-          .order('name', { ascending: true })
+  const fetchFoodItems = async () => {
+    try {
+      setLoading(true)
+      const { data, error } = await supabase
+        .from('food_items')
+        .select('*')
+        .order('name', { ascending: true })
 
-        if (error) throw error
+      if (error) throw error
 
-        setFoodItems(data || [])
-      } catch (error) {
-        console.error('Error fetching food items:', error)
-      } finally {
-        setLoading(false)
-      }
+      setFoodItems(data || [])
+    } catch (error) {
+      console.error('Error fetching food items:', error)
+    } finally {
+      setLoading(false)
     }
+  }
 
+  useEffect(() => {
     fetchFoodItems()
   }, [])
+
+  // Initialize display modes when food items are loaded
+  useEffect(() => {
+    if (foodItems && foodItems.length > 0) {
+      const initialModes: Record<string, DisplayMode> = {}
+      foodItems.forEach(item => {
+        initialModes[item.id] = getDefaultDisplayMode(item)
+      })
+      setDisplayModes(initialModes)
+    }
+  }, [foodItems])
+
+  // Get ALL available display modes (including the current one)
+  const getAllAvailableModes = (item: FoodItem): DisplayMode[] => {
+    return getAvailableDisplayModes(item)
+  }
+
+  // Get button label for a display mode
+  const getButtonLabel = (mode: DisplayMode, item: FoodItem): string => {
+    switch (mode) {
+      case 'serving':
+        // Visa serving_unit som knapptext (t.ex. "st", "glas", "burk")
+        return item.serving_unit || 'st'
+      case 'per100g':
+        return '100g'
+      case 'perVolume':
+        return 'ml'
+      default:
+        return ''
+    }
+  }
+
+  // Get tooltip text for a unit button
+  const getUnitButtonTooltip = (mode: DisplayMode, item: FoodItem): string => {
+    const labels: Record<DisplayMode, string> = {
+      serving: `Visa som ${item.serving_unit || 'serveringsportion'}`,
+      per100g: 'Visa per 100g',
+      perVolume: 'Visa per volym (ml)',
+    }
+    return labels[mode] || ''
+  }
+
+  // Switch to a specific display mode
+  const switchToDisplayMode = (itemId: string, mode: DisplayMode) => {
+    setDisplayModes(prev => ({
+      ...prev,
+      [itemId]: mode,
+    }))
+
+    saveDisplayMode(itemId, mode)
+  }
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Är du säker på att du vill ta bort detta livsmedel?')) {
+      return
+    }
+
+    try {
+      setDeletingItemId(id)
+      const { error } = await supabase.from('food_items').delete().eq('id', id)
+
+      if (error) throw error
+
+      await fetchFoodItems()
+    } catch (error) {
+      console.error('Error deleting food item:', error)
+      alert('Kunde inte ta bort livsmedel. Försök igen.')
+    } finally {
+      setDeletingItemId(null)
+    }
+  }
+
+  const handleEdit = (item: FoodItem) => {
+    setEditingItem(item)
+    setIsAddModalOpen(true)
+  }
+
+  const handleModalClose = () => {
+    setIsAddModalOpen(false)
+    setEditingItem(null)
+  }
 
   // Filter food items based on search and energy density color
   const filteredFoodItems = foodItems.filter(item => {
@@ -76,7 +301,7 @@ export default function FoodItemsPage() {
             {foodItems.length})
           </p>
         </div>
-        <Button className="gap-2">
+        <Button className="gap-2" onClick={() => setIsAddModalOpen(true)}>
           <Plus className="h-4 w-4" />
           Nytt livsmedel
         </Button>
@@ -143,7 +368,11 @@ export default function FoodItemsPage() {
       ) : filteredFoodItems.length === 0 ? (
         <EmptyState
           icon={UtensilsCrossed}
-          title={searchQuery || selectedFilter !== 'all' ? 'Inga livsmedel hittades' : 'Inga livsmedel ännu'}
+          title={
+            searchQuery || selectedFilter !== 'all'
+              ? 'Inga livsmedel hittades'
+              : 'Inga livsmedel ännu'
+          }
           description={
             searchQuery || selectedFilter !== 'all'
               ? 'Prova att ändra dina sökkriterier eller filter.'
@@ -160,71 +389,239 @@ export default function FoodItemsPage() {
                 }
               : {
                   label: 'Lägg till livsmedel',
-                  onClick: () => console.log('Add food item'),
+                  onClick: () => setIsAddModalOpen(true),
                 }
           }
         />
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {filteredFoodItems.map(item => (
-            <Card key={item.id} className="hover:shadow-lg transition-shadow">
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between gap-2">
-                  <CardTitle className="text-lg">{item.name}</CardTitle>
-                  {item.energy_density_color && (
-                    <Badge
-                      variant="outline"
-                      className={
-                        item.energy_density_color === 'Green'
-                          ? 'bg-green-100 text-green-700 border-green-300'
-                          : item.energy_density_color === 'Yellow'
-                            ? 'bg-yellow-100 text-yellow-700 border-yellow-300'
-                            : 'bg-orange-100 text-orange-700 border-orange-300'
-                      }
+        <Card>
+          <CardContent className="p-0">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-neutral-50 border-b">
+                  <tr>
+                    <th className="text-left p-4 text-sm font-semibold text-neutral-900">
+                      Livsmedel
+                    </th>
+                    <th className="text-left p-4 text-sm font-semibold text-neutral-900">
+                      Portion
+                    </th>
+                    <th className="text-right p-4 text-sm font-semibold text-neutral-900">
+                      Kalorier
+                    </th>
+                    <th className="text-right p-4 text-sm font-semibold text-neutral-900">
+                      Protein
+                    </th>
+                    <th className="text-right p-4 text-sm font-semibold text-neutral-900">Kolh.</th>
+                    <th className="text-right p-4 text-sm font-semibold text-neutral-900">Fett</th>
+                    <th className="text-center p-4 text-sm font-semibold text-neutral-900">Typ</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredFoodItems.map(item => (
+                    <tr
+                      key={item.id}
+                      className="border-b hover:bg-neutral-50 transition-colors cursor-pointer"
                     >
-                      {item.energy_density_color === 'Green' ? 'Grön' : item.energy_density_color === 'Yellow' ? 'Gul' : 'Orange'}
-                    </Badge>
-                  )}
-                </div>
-                {item.is_recipe && (
-                  <Badge variant="secondary" className="w-fit mt-2">
-                    Recept
-                  </Badge>
-                )}
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-neutral-600">Portionsstorlek:</span>
-                    <span className="font-medium">
-                      {item.default_amount} {item.default_unit}
-                    </span>
-                  </div>
-                  <div className="border-t pt-2 mt-2">
-                    <div className="grid grid-cols-2 gap-2 text-sm">
-                      <div>
-                        <p className="text-neutral-600">Kalorier</p>
-                        <p className="font-bold text-primary-600">{item.calories} kcal</p>
-                      </div>
-                      <div>
-                        <p className="text-neutral-600">Protein</p>
-                        <p className="font-semibold text-green-600">{item.protein_g}g</p>
-                      </div>
-                      <div>
-                        <p className="text-neutral-600">Kolhydrater</p>
-                        <p className="font-semibold text-blue-600">{item.carb_g}g</p>
-                      </div>
-                      <div>
-                        <p className="text-neutral-600">Fett</p>
-                        <p className="font-semibold text-yellow-600">{item.fat_g}g</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                      <td className="p-4">
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium text-neutral-900">{item.name}</span>
+                          {item.is_recipe && (
+                            <Badge variant="secondary" className="text-xs">
+                              Recept
+                            </Badge>
+                          )}
+                        </div>
+                      </td>
+                      <td className="p-4 text-neutral-600 text-sm">
+                        <div className="flex items-center gap-2">
+                          {/* Portionsinformation (utan makrovärden) */}
+                          <div className="flex-1">
+                            {(() => {
+                              const currentMode =
+                                displayModes[item.id] || getDefaultDisplayMode(item)
+                              const displayData = getDisplayData(item, currentMode)
+
+                              if (!displayData) {
+                                return (
+                                  <div>
+                                    {item.default_amount} {item.default_unit}
+                                  </div>
+                                )
+                              }
+
+                              return (
+                                <div className="font-medium text-neutral-900 flex items-center gap-1">
+                                  <span className="text-base">{displayData.icon}</span>
+                                  <span>{displayData.header}</span>
+                                </div>
+                              )
+                            })()}
+                          </div>
+
+                          {/* Enhets-pill-badges för ALLA enheter */}
+                          {(() => {
+                            const currentMode = displayModes[item.id] || getDefaultDisplayMode(item)
+                            const allModes = getAllAvailableModes(item)
+
+                            if (allModes.length <= 1) {
+                              return null
+                            }
+
+                            return (
+                              <div className="flex items-center gap-1 flex-wrap">
+                                {allModes.map(mode => {
+                                  const isActive = mode === currentMode
+                                  return (
+                                    <button
+                                      key={mode}
+                                      onClick={e => {
+                                        e.stopPropagation()
+                                        switchToDisplayMode(item.id, mode)
+                                      }}
+                                      className={`px-2 py-0.5 text-xs font-medium rounded-full transition-all max-w-20 truncate ${
+                                        isActive
+                                          ? 'bg-primary-100 text-primary-700 border-2 border-primary-500'
+                                          : 'text-neutral-600 bg-white border border-neutral-300 hover:bg-neutral-100 hover:text-neutral-800 hover:border-neutral-400'
+                                      }`}
+                                      title={getUnitButtonTooltip(mode, item)}
+                                      aria-label={getUnitButtonTooltip(mode, item)}
+                                    >
+                                      {getButtonLabel(mode, item)}
+                                    </button>
+                                  )
+                                })}
+                              </div>
+                            )
+                          })()}
+                        </div>
+                      </td>
+                      {/* Kalori-kolumn - visa dynamiskt baserat på vald enhet */}
+                      <td className="p-4 text-right">
+                        {(() => {
+                          const currentMode = displayModes[item.id] || getDefaultDisplayMode(item)
+                          const displayData = getDisplayData(item, currentMode)
+
+                          if (!displayData || !item.kcal_per_gram) {
+                            // Fallback
+                            return (
+                              <div>
+                                <span className="font-semibold text-primary-600">
+                                  {item.calories}
+                                </span>
+                                <span className="text-xs text-neutral-500 ml-1">kcal</span>
+                              </div>
+                            )
+                          }
+
+                          return (
+                            <div>
+                              <span className="font-semibold text-primary-600">
+                                {Math.round(displayData.kcal)}
+                              </span>
+                              <span className="text-xs text-neutral-500 ml-1">kcal</span>
+                            </div>
+                          )
+                        })()}
+                      </td>
+                      {/* Makrokolumner - visa dynamiska värden baserat på vald enhet */}
+                      {(() => {
+                        const currentMode = displayModes[item.id] || getDefaultDisplayMode(item)
+                        const displayData = getDisplayData(item, currentMode)
+
+                        if (!displayData) {
+                          // Fallback till databas-värden
+                          return (
+                            <>
+                              <td className="p-4 text-right">
+                                <span className="font-semibold text-green-600">
+                                  {item.protein_g}
+                                </span>
+                                <span className="text-xs text-neutral-500 ml-1">g</span>
+                              </td>
+                              <td className="p-4 text-right">
+                                <span className="font-semibold text-blue-600">{item.carb_g}</span>
+                                <span className="text-xs text-neutral-500 ml-1">g</span>
+                              </td>
+                              <td className="p-4 text-right">
+                                <span className="font-semibold text-yellow-600">{item.fat_g}</span>
+                                <span className="text-xs text-neutral-500 ml-1">g</span>
+                              </td>
+                            </>
+                          )
+                        }
+
+                        return (
+                          <>
+                            <td className="p-4 text-right">
+                              <span className="font-semibold text-green-600">
+                                {displayData.protein.toFixed(1)}
+                              </span>
+                              <span className="text-xs text-neutral-500 ml-1">g</span>
+                            </td>
+                            <td className="p-4 text-right">
+                              <span className="font-semibold text-blue-600">
+                                {displayData.carb.toFixed(1)}
+                              </span>
+                              <span className="text-xs text-neutral-500 ml-1">g</span>
+                            </td>
+                            <td className="p-4 text-right">
+                              <span className="font-semibold text-yellow-600">
+                                {displayData.fat.toFixed(1)}
+                              </span>
+                              <span className="text-xs text-neutral-500 ml-1">g</span>
+                            </td>
+                          </>
+                        )
+                      })()}
+                      <td className="p-4 text-center">
+                        {item.energy_density_color && (
+                          <Badge
+                            variant="outline"
+                            className={
+                              item.energy_density_color === 'Green'
+                                ? 'bg-green-100 text-green-700 border-green-300'
+                                : item.energy_density_color === 'Yellow'
+                                  ? 'bg-yellow-100 text-yellow-700 border-yellow-300'
+                                  : 'bg-orange-100 text-orange-700 border-orange-300'
+                            }
+                          >
+                            {item.energy_density_color === 'Green'
+                              ? 'Grön'
+                              : item.energy_density_color === 'Yellow'
+                                ? 'Gul'
+                                : 'Orange'}
+                          </Badge>
+                        )}
+                      </td>
+                      <td className="p-4 text-right">
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleEdit(item)}
+                            className="h-8 w-8 p-0"
+                          >
+                            <Edit2 className="h-4 w-4 text-blue-600" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDelete(item.id)}
+                            disabled={deletingItemId === item.id}
+                            className="h-8 w-8 p-0"
+                          >
+                            <Trash2 className="h-4 w-4 text-red-600" />
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
       )}
 
       {/* Info Cards */}
@@ -274,6 +671,14 @@ export default function FoodItemsPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Add/Edit Food Item Modal */}
+      <AddFoodItemModal
+        open={isAddModalOpen}
+        onOpenChange={handleModalClose}
+        onSuccess={fetchFoodItems}
+        editItem={editingItem}
+      />
     </DashboardLayout>
   )
 }

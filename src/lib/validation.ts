@@ -95,3 +95,54 @@ export const signInSchema = z.object({
   email: z.string().email('Ogiltig e-postadress'),
   password: z.string().min(1, 'Lösenord är obligatoriskt'),
 })
+
+export const createFoodItemSchema = z
+  .object({
+    name: z.string().min(1, 'Namn är obligatoriskt').max(200, 'Namn får max vara 200 tecken'),
+    default_amount: z
+      .number({ invalid_type_error: 'Mängd måste vara ett nummer' })
+      .positive('Mängd måste vara större än 0'),
+    default_unit: z
+      .string()
+      .min(1, 'Enhet är obligatorisk')
+      .max(50, 'Enhet får max vara 50 tecken'),
+    weight_grams: z
+      .number({ invalid_type_error: 'Vikt måste vara ett nummer' })
+      .positive('Vikt måste vara större än 0'),
+    calories: z
+      .number({ invalid_type_error: 'Kalorier måste vara ett nummer' })
+      .min(0, 'Kalorier måste vara 0 eller högre'),
+    fat_g: z
+      .number({ invalid_type_error: 'Fett måste vara ett nummer' })
+      .min(0, 'Fett måste vara 0 eller högre'),
+    carb_g: z
+      .number({ invalid_type_error: 'Kolhydrater måste vara ett nummer' })
+      .min(0, 'Kolhydrater måste vara 0 eller högre'),
+    protein_g: z
+      .number({ invalid_type_error: 'Protein måste vara ett nummer' })
+      .min(0, 'Protein måste vara 0 eller högre'),
+    food_type: z.enum(['Solid', 'Liquid', 'Soup']).default('Solid'),
+    ml_per_gram: z
+      .number({ invalid_type_error: 'ml per gram måste vara ett nummer' })
+      .positive('ml per gram måste vara större än 0')
+      .optional(),
+    grams_per_piece: z
+      .number({ invalid_type_error: 'Gram per bit måste vara ett nummer' })
+      .positive('Gram per bit måste vara större än 0')
+      .optional(),
+    serving_unit: z.string().max(50, 'Serveringsenhet får max vara 50 tecken').optional(),
+  })
+  .refine(
+    data => {
+      // Om enheten är g eller gram, ska weight_grams vara samma som default_amount
+      const unit = data.default_unit.toLowerCase().trim()
+      if (unit === 'g' || unit === 'gram') {
+        return Math.abs(data.weight_grams - data.default_amount) < 0.01 // Tillåt minimal rundning
+      }
+      return true
+    },
+    {
+      message: 'När enheten är gram ska vikt vara samma som mängd',
+      path: ['weight_grams'],
+    }
+  )

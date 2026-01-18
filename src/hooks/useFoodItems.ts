@@ -25,8 +25,18 @@ export interface FoodItem {
   default_unit: string
 
   // Conversion data
+  weight_grams?: number
   kcal_per_gram?: number
+  grams_per_unit?: number
   ml_per_gram?: number
+  grams_per_piece?: number
+  serving_unit?: string
+
+  // Per unit nutrition values
+  kcal_per_unit?: number
+  fat_per_unit?: number
+  carb_per_unit?: number
+  protein_per_unit?: number
 
   // Food color density tracking
   food_type: FoodType
@@ -56,7 +66,10 @@ export interface CreateFoodItemInput {
   salt_g?: number
   default_amount: number
   default_unit: string
+  weight_grams: number
   ml_per_gram?: number
+  grams_per_piece?: number
+  serving_unit?: string
   food_type: FoodType
   notes?: string
   source?: string
