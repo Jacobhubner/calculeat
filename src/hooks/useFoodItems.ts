@@ -170,15 +170,15 @@ export function useCreateFoodItem() {
     mutationFn: async (input: CreateFoodItemInput) => {
       if (!user) throw new Error('User not authenticated')
 
-      // Calculate kcal_per_gram
-      const kcal_per_gram =
-        input.default_unit === 'g' ? input.calories / input.default_amount : undefined
+      // Calculate kcal_per_gram based on weight_grams (always 100g base)
+      const weight_grams = input.weight_grams ?? 100
+      const kcal_per_gram = weight_grams > 0 ? input.calories / weight_grams : undefined
 
       // Calculate food color density
       const energy_density_color = kcal_per_gram
         ? calculateFoodColor({
             calories: input.calories,
-            weightGrams: input.default_amount,
+            weightGrams: weight_grams,
             foodType: input.food_type,
           })
         : undefined
@@ -221,22 +221,25 @@ export function useUpdateFoodItem() {
       if (
         input.calories !== undefined ||
         input.default_amount !== undefined ||
-        input.default_unit !== undefined
+        input.default_unit !== undefined ||
+        input.weight_grams !== undefined ||
+        input.food_type !== undefined
       ) {
         const current = await supabase.from('food_items').select('*').eq('id', id).single()
 
         if (current.data) {
           const calories = input.calories ?? current.data.calories
-          const default_amount = input.default_amount ?? current.data.default_amount
-          const default_unit = input.default_unit ?? current.data.default_unit
+          const weight_grams = input.weight_grams ?? current.data.weight_grams ?? 100
           const food_type = input.food_type ?? current.data.food_type
 
-          const kcal_per_gram = default_unit === 'g' ? calories / default_amount : undefined
+          // Calculate kcal_per_gram based on weight_grams (always 100g base)
+          const kcal_per_gram = weight_grams > 0 ? calories / weight_grams : undefined
 
+          // Calculate energy_density_color based on kcal_per_gram
           const energy_density_color = kcal_per_gram
             ? calculateFoodColor({
                 calories,
-                weightGrams: default_amount,
+                weightGrams: weight_grams,
                 foodType: food_type,
               })
             : undefined

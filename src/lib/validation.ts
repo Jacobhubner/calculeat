@@ -122,15 +122,26 @@ export const createFoodItemSchema = z
       .number({ invalid_type_error: 'Protein måste vara ett nummer' })
       .min(0, 'Protein måste vara 0 eller högre'),
     food_type: z.enum(['Solid', 'Liquid', 'Soup']).default('Solid'),
-    ml_per_gram: z
-      .number({ invalid_type_error: 'ml per gram måste vara ett nummer' })
-      .positive('ml per gram måste vara större än 0')
-      .optional(),
-    grams_per_piece: z
-      .number({ invalid_type_error: 'Gram per bit måste vara ett nummer' })
-      .positive('Gram per bit måste vara större än 0')
-      .optional(),
-    serving_unit: z.string().max(50, 'Serveringsenhet får max vara 50 tecken').optional(),
+    ml_per_gram: z.preprocess(
+      val =>
+        val === '' || val === null || val === undefined || Number.isNaN(val) ? undefined : val,
+      z
+        .number({ invalid_type_error: 'ml per gram måste vara ett nummer' })
+        .positive('ml per gram måste vara större än 0')
+        .optional()
+    ),
+    grams_per_piece: z.preprocess(
+      val =>
+        val === '' || val === null || val === undefined || Number.isNaN(val) ? undefined : val,
+      z
+        .number({ invalid_type_error: 'Gram per bit måste vara ett nummer' })
+        .positive('Gram per bit måste vara större än 0')
+        .optional()
+    ),
+    serving_unit: z.preprocess(
+      val => (val === '' || (typeof val === 'string' && val.trim() === '') ? undefined : val),
+      z.string().max(50, 'Serveringsenhet får max vara 50 tecken').optional()
+    ),
   })
   .refine(
     data => {

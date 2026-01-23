@@ -75,7 +75,7 @@ function getDisplayData(
         return null
       }
       return {
-        icon: '🍽️',
+        icon: '',
         header: `1 ${item.serving_unit} (${item.grams_per_piece}g)`,
         kcal: item.kcal_per_unit,
         protein: item.protein_per_unit || 0,
@@ -88,7 +88,7 @@ function getDisplayData(
         return null
       }
       return {
-        icon: '📊',
+        icon: '⚖️',
         header: '100g',
         kcal: item.kcal_per_gram * 100,
         protein: (item.protein_g / (item.weight_grams || 100)) * 100,
@@ -103,7 +103,7 @@ function getDisplayData(
       // 100ml = 100 / ml_per_gram gram
       const gramsIn100ml = 100 / item.ml_per_gram
       return {
-        icon: '💧',
+        icon: '🧊',
         header: '100ml',
         kcal: item.kcal_per_gram * gramsIn100ml,
         protein: (item.protein_g / (item.weight_grams || 100)) * gramsIn100ml,
@@ -634,10 +634,19 @@ export default function FoodItemsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-neutral-700">
-              Låg kaloritäthet (&lt; 1 kcal/g för fast föda). Ät mer av dessa!
-            </p>
-            <p className="text-xs text-neutral-600 mt-2">Exempel: Grönsaker, frukt, magert kött</p>
+            <p className="text-sm text-neutral-700 mb-3">Låg energitäthet - ät mer av dessa!</p>
+            <div className="space-y-1 text-xs text-neutral-600">
+              <p>
+                <span className="font-medium">🍖 Fast föda:</span> &lt; 1 kcal/g
+              </p>
+              <p>
+                <span className="font-medium">🥤 Vätska:</span> &lt; 0.4 kcal/g
+              </p>
+              <p>
+                <span className="font-medium">🍲 Soppa:</span> &lt; 0.5 kcal/g
+              </p>
+            </div>
+            <p className="text-xs text-neutral-500 mt-3">Exempel: Grönsaker, frukt, magert kött</p>
           </CardContent>
         </Card>
 
@@ -649,10 +658,21 @@ export default function FoodItemsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-neutral-700">
-              Måttlig kaloritäthet (1-2.4 kcal/g). Ät i måttliga mängder.
+            <p className="text-sm text-neutral-700 mb-3">
+              Måttlig energitäthet - ät i måttliga mängder.
             </p>
-            <p className="text-xs text-neutral-600 mt-2">Exempel: Pasta, ris, bröd, magert kött</p>
+            <div className="space-y-1 text-xs text-neutral-600">
+              <p>
+                <span className="font-medium">🍖 Fast föda:</span> 1-2.4 kcal/g
+              </p>
+              <p>
+                <span className="font-medium">🥤 Vätska:</span> 0.4-0.5 kcal/g
+              </p>
+              <p>
+                <span className="font-medium">🍲 Soppa:</span> 0.5-1 kcal/g
+              </p>
+            </div>
+            <p className="text-xs text-neutral-500 mt-3">Exempel: Pasta, ris, bröd, magert kött</p>
           </CardContent>
         </Card>
 
@@ -664,10 +684,19 @@ export default function FoodItemsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-neutral-700">
-              Hög kaloritäthet (&gt; 2.4 kcal/g). Ät mindre av dessa.
-            </p>
-            <p className="text-xs text-neutral-600 mt-2">Exempel: Nötter, olja, chips, godis</p>
+            <p className="text-sm text-neutral-700 mb-3">Hög energitäthet - ät mindre av dessa.</p>
+            <div className="space-y-1 text-xs text-neutral-600">
+              <p>
+                <span className="font-medium">🍖 Fast föda:</span> &gt; 2.4 kcal/g
+              </p>
+              <p>
+                <span className="font-medium">🥤 Vätska:</span> &gt; 0.5 kcal/g
+              </p>
+              <p>
+                <span className="font-medium">🍲 Soppa:</span> &gt; 1 kcal/g
+              </p>
+            </div>
+            <p className="text-xs text-neutral-500 mt-3">Exempel: Nötter, olja, chips, godis</p>
           </CardContent>
         </Card>
       </div>
