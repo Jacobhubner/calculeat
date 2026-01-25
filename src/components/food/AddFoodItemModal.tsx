@@ -184,14 +184,18 @@ export function AddFoodItemModal({
   }, [editItem, open, setValue, reset])
 
   // Smart default: if unit is "g" or "gram", auto-set weight_grams to match default_amount
+  // This works both when creating new items AND when editing (user changes unit to 'g')
   useEffect(() => {
-    if (!editItem && defaultUnit && defaultAmount) {
+    if (defaultUnit && defaultAmount) {
       const unit = defaultUnit.toLowerCase().trim()
       if (unit === 'g' || unit === 'gram') {
-        setValue('weight_grams', defaultAmount, { shouldValidate: true })
+        // Only auto-set if weight_grams doesn't match (avoids unnecessary updates)
+        if (Math.abs((weightGrams || 0) - defaultAmount) > 0.01) {
+          setValue('weight_grams', defaultAmount, { shouldValidate: true })
+        }
       }
     }
-  }, [editItem, defaultUnit, defaultAmount, setValue])
+  }, [defaultUnit, defaultAmount, weightGrams, setValue])
 
   // Besluta om viktfältet ska visas
   const shouldShowWeightField = useMemo(() => {
@@ -201,6 +205,14 @@ export function AddFoodItemModal({
     // Visa bara om INTE (enhet är gram OCH weight_grams matchar default_amount)
     return !(isGrams && Math.abs((weightGrams || 0) - (defaultAmount || 0)) < 0.01)
   }, [defaultUnit, defaultAmount, weightGrams])
+
+  // Kontrollera om portionsenheten är en volymenhet
+  // Om så, ska "vikt per portion" fältet döljas (använd volymkonvertering istället)
+  const isServingUnitVolume = useMemo(() => {
+    const unit = (servingUnit || '').toLowerCase().trim()
+    const volumeUnits = ['ml', 'msk', 'tsk', 'dl']
+    return volumeUnits.includes(unit)
+  }, [servingUnit])
 
   // Kontrollera om formuläret har ändrats (för redigeringsläge)
   const hasChanges = useMemo(() => {
@@ -359,8 +371,20 @@ export function AddFoodItemModal({
       // Beräkna ml_per_gram från volymkonvertering
       // Formel: ml_per_gram = ml_i_vald_enhet / gram_per_enhet
       let calculatedMlPerGram: number | null = null
+
+      // 1. Om gramsPerVolume är satt (från volymkonverteringssektionen)
       if (gramsPerVolume && gramsPerVolume > 0) {
         calculatedMlPerGram = VOLUME_TO_ML[volumeUnit] / gramsPerVolume
+      }
+      // 2. Om enheten är 'ml' och weight_grams är satt, beräkna automatiskt
+      else if (
+        data.default_unit.toLowerCase() === 'ml' &&
+        data.weight_grams &&
+        data.weight_grams > 0
+      ) {
+        // ml_per_gram = antal ml / antal gram
+        // T.ex. 100ml / 100g = 1.0 (vatten), 100ml / 92g = 1.087 (olja)
+        calculatedMlPerGram = data.default_amount / data.weight_grams
       }
 
       // Clean up NaN values from optional number fields
@@ -653,23 +677,26 @@ export function AddFoodItemModal({
                       </p>
 
                       <div className="grid grid-cols-2 gap-3">
-                        <div>
-                          <Label htmlFor="grams_per_piece">
-                            Vikt per portion
-                            <span className="text-xs text-neutral-500 ml-1 font-normal">
-                              (gram)
-                            </span>
-                          </Label>
-                          <Input
-                            id="grams_per_piece"
-                            type="number"
-                            step="0.01"
-                            {...register('grams_per_piece', { valueAsNumber: true })}
-                            placeholder="t.ex. 50"
-                          />
-                        </div>
+                        {/* Vikt per portion - dölj om portionsenheten är en volymenhet */}
+                        {!isServingUnitVolume && (
+                          <div>
+                            <Label htmlFor="grams_per_piece">
+                              Vikt per portion
+                              <span className="text-xs text-neutral-500 ml-1 font-normal">
+                                (gram)
+                              </span>
+                            </Label>
+                            <Input
+                              id="grams_per_piece"
+                              type="number"
+                              step="0.01"
+                              {...register('grams_per_piece', { valueAsNumber: true })}
+                              placeholder="t.ex. 50"
+                            />
+                          </div>
+                        )}
 
-                        <div>
+                        <div className={isServingUnitVolume ? 'col-span-2' : ''}>
                           <Label htmlFor="serving_unit">
                             Enhet
                             <span className="text-xs text-neutral-500 ml-1 font-normal">
@@ -685,10 +712,17 @@ export function AddFoodItemModal({
                         </div>
                       </div>
 
-                      <p className="text-xs text-neutral-500">
-                        T.ex. 1 ägg = 50g (enhet: &quot;st&quot;), 1 yoghurt = 150g (enhet:
-                        &quot;pkt&quot;)
-                      </p>
+                      {isServingUnitVolume ? (
+                        <p className="text-xs text-amber-600">
+                          💡 För volymenheter (dl, msk, tsk), använd Volymkonvertering ovan
+                          istället.
+                        </p>
+                      ) : (
+                        <p className="text-xs text-neutral-500">
+                          T.ex. 1 ägg = 50g (enhet: &quot;st&quot;), 1 yoghurt = 150g (enhet:
+                          &quot;pkt&quot;)
+                        </p>
+                      )}
                     </div>
                   </div>
                 )}
