@@ -11,6 +11,9 @@ export interface FindBestFoodsParams {
   desiredCalories: number
   desiredMacroType: 'protein' | 'carbs' | 'fat'
   desiredMacroAmount: number
+  // Optional secondary macro for more precise matching
+  secondaryMacroType?: 'protein' | 'carbs' | 'fat'
+  secondaryMacroAmount?: number
   numberOfResults?: number
   recipeOnly?: boolean
   nonRecipeOnly?: boolean
@@ -26,7 +29,8 @@ export interface FoodGoalMatch {
   protein: number
   carbs: number
   fat: number
-  macroAccuracy: number // How close to desired macro (0-100%)
+  macroAccuracy: number // How close to desired primary macro (0-100%)
+  secondaryMacroAccuracy?: number // How close to desired secondary macro (0-100%)
   calorieAccuracy: number // How close to desired calories (0-100%)
   overallScore: number // Combined score (0-100)
 }
@@ -43,12 +47,26 @@ export function findBestFoodsForGoals(
     desiredCalories,
     desiredMacroType,
     desiredMacroAmount,
+    secondaryMacroType,
+    secondaryMacroAmount,
     numberOfResults = 10,
     recipeOnly = false,
     nonRecipeOnly = false,
     foodColors = [],
     tolerance = 10,
   } = params
+
+  // Validate required parameters to prevent division by zero
+  if (desiredCalories <= 0 || desiredMacroAmount <= 0) {
+    return []
+  }
+
+  // Validate secondary macro (must be different from primary)
+  const useSecondaryMacro =
+    secondaryMacroType &&
+    secondaryMacroAmount &&
+    secondaryMacroAmount > 0 &&
+    secondaryMacroType !== desiredMacroType
 
   // Filter foods first
   let filtered = [...foods]
@@ -69,6 +87,9 @@ export function findBestFoodsForGoals(
   const matches: FoodGoalMatch[] = []
 
   for (const food of filtered) {
+    // Skip foods with zero calories
+    if (food.calories <= 0) continue
+
     // Calculate amount needed to reach desired calories
     const amountForCalories = desiredCalories / food.calories
 
@@ -80,14 +101,29 @@ export function findBestFoodsForGoals(
     const caloriePercent = (caloriesDiff / desiredCalories) * 100
     if (caloriePercent > tolerance) continue
 
-    // Calculate accuracy scores
+    // Calculate primary macro accuracy
     const macroDiff = Math.abs(macroAtAmount - desiredMacroAmount)
     const macroAccuracy = Math.max(0, 100 - (macroDiff / desiredMacroAmount) * 100)
 
+    // Calculate secondary macro accuracy if applicable
+    let secondaryMacroAccuracy: number | undefined
+    if (useSecondaryMacro && secondaryMacroType && secondaryMacroAmount) {
+      const secondaryMacroAtAmount = getMacroValue(food, secondaryMacroType) * amountForCalories
+      const secondaryMacroDiff = Math.abs(secondaryMacroAtAmount - secondaryMacroAmount)
+      secondaryMacroAccuracy = Math.max(0, 100 - (secondaryMacroDiff / secondaryMacroAmount) * 100)
+    }
+
     const calorieAccuracy = Math.max(0, 100 - (caloriesDiff / desiredCalories) * 100)
 
-    // Overall score (weighted: 60% macro accuracy, 40% calorie accuracy)
-    const overallScore = macroAccuracy * 0.6 + calorieAccuracy * 0.4
+    // Calculate overall score
+    // With secondary macro: 50% primary, 30% secondary, 20% calories
+    // Without secondary macro: 60% primary, 40% calories
+    let overallScore: number
+    if (useSecondaryMacro && secondaryMacroAccuracy !== undefined) {
+      overallScore = macroAccuracy * 0.5 + secondaryMacroAccuracy * 0.3 + calorieAccuracy * 0.2
+    } else {
+      overallScore = macroAccuracy * 0.6 + calorieAccuracy * 0.4
+    }
 
     matches.push({
       food,
@@ -98,6 +134,7 @@ export function findBestFoodsForGoals(
       carbs: food.carb_g * amountForCalories,
       fat: food.fat_g * amountForCalories,
       macroAccuracy,
+      secondaryMacroAccuracy,
       calorieAccuracy,
       overallScore,
     })
@@ -136,8 +173,19 @@ export function findFoodsForRemainingMacros(
     fat: number
   }
 ): FoodGoalMatch[] {
+  // Validate inputs to prevent division by zero
+  if (remaining.calories <= 0) {
+    return []
+  }
+
   // Determine which macro is most needed
   const total = remaining.protein + remaining.carbs + remaining.fat
+
+  // If no macros remaining, return empty
+  if (total <= 0) {
+    return []
+  }
+
   const proteinPercent = (remaining.protein / total) * 100
   const carbsPercent = (remaining.carbs / total) * 100
   const fatPercent = (remaining.fat / total) * 100

@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -8,6 +8,9 @@ import CalorieRing from '@/components/CalorieRing'
 import MacroBar from '@/components/MacroBar'
 import EmptyState from '@/components/EmptyState'
 import RecentFoodsCard from '@/components/RecentFoodsCard'
+import { AddFoodToMealModal } from '@/components/daily/AddFoodToMealModal'
+import { PlateCalculator } from '@/components/daily/PlateCalculator'
+import { FoodSuggestions } from '@/components/daily/FoodSuggestions'
 import {
   Calendar,
   Plus,
@@ -17,6 +20,7 @@ import {
   Sparkles,
   Copy,
   Trash2,
+  AlertTriangle,
 } from 'lucide-react'
 import {
   useTodayLog,
@@ -32,6 +36,7 @@ import { toast } from 'sonner'
 import { useProfileStore } from '@/stores/profileStore'
 import { useProfiles } from '@/hooks'
 import { useCalculations } from '@/hooks/useCalculations'
+import type { FoodItem } from '@/hooks/useFoodItems'
 
 export default function TodayPage() {
   const { data: todayLog, isLoading: logLoading } = useTodayLog()
@@ -41,6 +46,18 @@ export default function TodayPage() {
   const finishDay = useFinishDay()
   const copyDayToToday = useCopyDayToToday()
   const removeFoodFromMeal = useRemoveFoodFromMeal()
+
+  // State for AddFoodToMealModal
+  const [addFoodModalOpen, setAddFoodModalOpen] = useState(false)
+  const [selectedMealForFood, setSelectedMealForFood] = useState<{
+    mealName: string
+    mealEntryId?: string
+  } | null>(null)
+  const [preselectedFood, setPreselectedFood] = useState<{
+    food: FoodItem
+    amount: number
+    unit: string
+  } | null>(null)
 
   // Get active profile for calorie and macro targets
   const activeProfile = useProfileStore(state => state.activeProfile)
@@ -81,6 +98,21 @@ export default function TodayPage() {
     }
   }, [logLoading, todayLog, settingsLoading, mealSettings, ensureLog, createDefaultSettings])
 
+  // Detect if goals differ from active profile (profile was changed mid-day)
+  // MUST be before the early return to follow React's rules of hooks
+  const goalsFromDifferentProfile = useMemo(() => {
+    if (!todayLog || !profile) return false
+    const snapshotMin = todayLog.goal_calories_min
+    const snapshotMax = todayLog.goal_calories_max
+    const profileMin = profile.calories_min
+    const profileMax = profile.calories_max
+    // Check if there's a significant difference (more than 1 kcal)
+    return (
+      (snapshotMin && profileMin && Math.abs(snapshotMin - profileMin) > 1) ||
+      (snapshotMax && profileMax && Math.abs(snapshotMax - profileMax) > 1)
+    )
+  }, [todayLog, profile])
+
   if (logLoading || settingsLoading) {
     return (
       <DashboardLayout>
@@ -96,14 +128,29 @@ export default function TodayPage() {
   }
 
   const totalCalories = todayLog?.total_calories || 0
-  // Use profile's calorie goal, fallback to dailyLog snapshot, then hardcoded
-  const goalCalories = profile?.calories_max || todayLog?.goal_calories_max || 2000
-  const goalCaloriesMin = profile?.calories_min || todayLog?.goal_calories_min || 1800
+  // Use daily log snapshot first (what the log was created with), fallback to profile, then hardcoded
+  const goalCalories = todayLog?.goal_calories_max || profile?.calories_max || 2000
+  const goalCaloriesMin = todayLog?.goal_calories_min || profile?.calories_min || 1800
   const calorieProgress = (totalCalories / goalCalories) * 100
 
   const greenCalories = todayLog?.green_calories || 0
   const yellowCalories = todayLog?.yellow_calories || 0
   const orangeCalories = todayLog?.orange_calories || 0
+
+  // Calculate remaining values for tools
+  const remainingCalories = Math.max(goalCalories - totalCalories, 0)
+  const remainingProtein = Math.max(
+    (calculations.macros?.protein.grams || 0) - (todayLog?.total_protein_g || 0),
+    0
+  )
+  const remainingCarbs = Math.max(
+    (calculations.macros?.carbs.grams || 0) - (todayLog?.total_carb_g || 0),
+    0
+  )
+  const remainingFat = Math.max(
+    (calculations.macros?.fat.grams || 0) - (todayLog?.total_fat_g || 0),
+    0
+  )
 
   const handleFinishDay = () => {
     if (todayLog && !todayLog.is_completed) {
@@ -147,6 +194,19 @@ export default function TodayPage() {
     })
   }
 
+  const handleOpenAddFoodModal = (mealName: string, mealEntryId?: string) => {
+    setPreselectedFood(null) // Clear any preselected food
+    setSelectedMealForFood({ mealName, mealEntryId })
+    setAddFoodModalOpen(true)
+  }
+
+  // Handler for sidebar tools (PlateCalculator, FoodSuggestions)
+  const handleAddFromSidebar = (food: FoodItem, amount: number, unit: string) => {
+    setPreselectedFood({ food, amount, unit })
+    setSelectedMealForFood({ mealName: '' }) // Empty name = let user choose meal
+    setAddFoodModalOpen(true)
+  }
+
   return (
     <DashboardLayout>
       {/* Header */}
@@ -180,6 +240,26 @@ export default function TodayPage() {
           )}
         </div>
       </div>
+
+      {/* Goal mismatch warning */}
+      {goalsFromDifferentProfile && !todayLog?.is_completed && (
+        <Card className="mb-6 bg-amber-50 border-amber-200">
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-full bg-amber-100 flex items-center justify-center">
+                <AlertTriangle className="h-5 w-5 text-amber-600" />
+              </div>
+              <div>
+                <p className="font-medium text-amber-900">Mål skiljer sig från aktiv profil</p>
+                <p className="text-sm text-amber-700">
+                  Denna logg skapades med mål: {goalCaloriesMin}-{goalCalories} kcal.
+                  Aktiv profil har: {profile?.calories_min}-{profile?.calories_max} kcal.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {todayLog?.is_completed && (
         <Card className="mb-6 bg-gradient-to-br from-success-50 to-success-100 border-success-200">
@@ -322,7 +402,11 @@ export default function TodayPage() {
                             </CardDescription>
                           </div>
                         </div>
-                        <Button size="sm" className="gap-2">
+                        <Button
+                          size="sm"
+                          className="gap-2"
+                          onClick={() => handleOpenAddFoodModal(mealSetting.meal_name, mealEntry?.id)}
+                        >
                           <Plus className="h-4 w-4" />
                           Lägg till
                         </Button>
@@ -484,6 +568,21 @@ export default function TodayPage() {
             </Card>
           )}
 
+          {/* Plate Calculator */}
+          <PlateCalculator
+            defaultCalories={remainingCalories}
+            onAddToMeal={handleAddFromSidebar}
+          />
+
+          {/* Food Suggestions */}
+          <FoodSuggestions
+            remainingCalories={remainingCalories}
+            remainingProtein={remainingProtein}
+            remainingCarbs={remainingCarbs}
+            remainingFat={remainingFat}
+            onAddToMeal={handleAddFromSidebar}
+          />
+
           {/* Tips */}
           <Card className="bg-gradient-to-br from-primary-50 to-accent-50 border-primary-200">
             <CardHeader>
@@ -498,6 +597,21 @@ export default function TodayPage() {
           </Card>
         </div>
       </div>
+
+      {/* Add Food to Meal Modal */}
+      {todayLog && selectedMealForFood && (
+        <AddFoodToMealModal
+          open={addFoodModalOpen}
+          onOpenChange={open => {
+            setAddFoodModalOpen(open)
+            if (!open) setPreselectedFood(null) // Clear preselected food when closing
+          }}
+          mealName={selectedMealForFood.mealName}
+          mealEntryId={selectedMealForFood.mealEntryId}
+          dailyLogId={todayLog.id}
+          preselectedFood={preselectedFood || undefined}
+        />
+      )}
     </DashboardLayout>
   )
 }

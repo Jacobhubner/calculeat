@@ -254,6 +254,11 @@ export function useAddFoodToMeal() {
       amount: number
       unit: string
       weightGrams?: number
+      // Pre-calculated nutrition values (optional - will be calculated by trigger if not provided)
+      calories?: number
+      protein_g?: number
+      carb_g?: number
+      fat_g?: number
     }) => {
       if (!user) throw new Error('User not authenticated')
 
@@ -271,6 +276,10 @@ export function useAddFoodToMeal() {
           amount: params.amount,
           unit: params.unit,
           weight_grams: params.weightGrams,
+          calories: params.calories,
+          protein_g: params.protein_g,
+          carb_g: params.carb_g,
+          fat_g: params.fat_g,
           item_order: count || 0,
         })
         .select()
@@ -526,6 +535,47 @@ export function useCopyDayToToday() {
       }
 
       return targetLogId
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['dailyLogs'] })
+    },
+  })
+}
+
+/**
+ * Update the goal snapshot for a daily log
+ * Used when user wants to sync daily log goals with their current profile settings
+ */
+export function useUpdateDailyLogGoals() {
+  const { user } = useAuth()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (params: {
+      dailyLogId: string
+      goals: {
+        goal_calories_min?: number
+        goal_calories_max?: number
+        goal_fat_min_g?: number
+        goal_fat_max_g?: number
+        goal_carb_min_g?: number
+        goal_carb_max_g?: number
+        goal_protein_min_g?: number
+        goal_protein_max_g?: number
+      }
+    }) => {
+      if (!user) throw new Error('User not authenticated')
+
+      const { data, error } = await supabase
+        .from('daily_logs')
+        .update(params.goals)
+        .eq('id', params.dailyLogId)
+        .eq('user_id', user.id)
+        .select()
+        .single()
+
+      if (error) throw error
+      return data as DailyLog
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['dailyLogs'] })
