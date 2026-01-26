@@ -3,14 +3,18 @@ import DashboardLayout from '@/components/layout/DashboardLayout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Plus, Search, UtensilsCrossed, Edit2, Trash2 } from 'lucide-react'
+import { Plus, Search, UtensilsCrossed, Edit2, Trash2, Globe, RotateCcw } from 'lucide-react'
 import EmptyState from '@/components/EmptyState'
 import { supabase } from '@/lib/supabase'
 import { Badge } from '@/components/ui/badge'
 import { AddFoodItemModal } from '@/components/food/AddFoodItemModal'
+import { useAuth } from '@/contexts/AuthContext'
 
 interface FoodItem {
   id: string
+  user_id: string | null // NULL = global item
+  global_food_id?: string | null // Reference to original (for user copies)
+  is_hidden?: boolean
   name: string
   calories: number
   protein_g: number
@@ -162,6 +166,7 @@ function getDefaultDisplayMode(item: FoodItem): DisplayMode {
 }
 
 export default function FoodItemsPage() {
+  const { user } = useAuth()
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedFilter, setSelectedFilter] = useState<'all' | 'green' | 'yellow' | 'orange'>('all')
   const [foodItems, setFoodItems] = useState<FoodItem[]>([])
@@ -170,19 +175,54 @@ export default function FoodItemsPage() {
   const [editingItem, setEditingItem] = useState<FoodItem | null>(null)
   const [deletingItemId, setDeletingItemId] = useState<string | null>(null)
   const [displayModes, setDisplayModes] = useState<Record<string, DisplayMode>>({})
+  const [resetStep, setResetStep] = useState<0 | 1 | 2>(0) // 0 = none, 1 = first confirm, 2 = second confirm
+  const [isResetting, setIsResetting] = useState(false)
 
-  // Fetch food items from Supabase
+  // Apply shadowing logic to food items
+  const applyShadowing = (items: FoodItem[], userId: string): FoodItem[] => {
+    // Get IDs of global items that user has copied
+    const shadowedGlobalIds = new Set(
+      items
+        .filter(item => item.user_id === userId && item.global_food_id)
+        .map(item => item.global_food_id)
+    )
+
+    // Get names of user items (for name-based shadowing)
+    const userItemNames = new Set(
+      items
+        .filter(item => item.user_id === userId && !item.is_hidden)
+        .map(item => item.name.toLowerCase())
+    )
+
+    return items.filter(item => {
+      if (item.is_hidden) return false
+      if (item.user_id === userId) return true
+      if (item.user_id === null) {
+        if (shadowedGlobalIds.has(item.id)) return false
+        if (userItemNames.has(item.name.toLowerCase())) return false
+      }
+      return true
+    })
+  }
+
+  // Fetch food items from Supabase (global + user items with shadowing)
   const fetchFoodItems = async () => {
+    if (!user) return
+
     try {
       setLoading(true)
       const { data, error } = await supabase
         .from('food_items')
         .select('*')
+        .or(`user_id.is.null,user_id.eq.${user.id}`)
+        .eq('is_recipe', false)
         .order('name', { ascending: true })
 
       if (error) throw error
 
-      setFoodItems(data || [])
+      // Apply shadowing
+      const shadowedItems = applyShadowing(data || [], user.id)
+      setFoodItems(shadowedItems)
     } catch (error) {
       console.error('Error fetching food items:', error)
     } finally {
@@ -191,8 +231,10 @@ export default function FoodItemsPage() {
   }
 
   useEffect(() => {
-    fetchFoodItems()
-  }, [])
+    if (user) {
+      fetchFoodItems()
+    }
+  }, [user])
 
   // Initialize display modes when food items are loaded
   useEffect(() => {
@@ -246,15 +288,44 @@ export default function FoodItemsPage() {
   }
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Är du säker på att du vill ta bort detta livsmedel?')) {
+    const item = foodItems.find(i => i.id === id)
+    const isGlobal = item?.user_id === null
+
+    const message = isGlobal
+      ? 'Detta är ett globalt livsmedel. Det kommer att döljas från din lista men inte påverka andra användare. Vill du fortsätta?'
+      : 'Är du säker på att du vill ta bort detta livsmedel?'
+
+    if (!confirm(message)) {
       return
     }
 
     try {
       setDeletingItemId(id)
-      const { error } = await supabase.from('food_items').delete().eq('id', id)
 
-      if (error) throw error
+      if (isGlobal && user) {
+        // For global items: create a hidden marker (soft delete)
+        const { error: insertError } = await supabase.from('food_items').insert({
+          user_id: user.id,
+          global_food_id: id,
+          is_hidden: true,
+          name: `_hidden_${item?.name || id}`,
+          default_amount: 100,
+          default_unit: 'g',
+          weight_grams: 100,
+          calories: 0,
+          fat_g: 0,
+          carb_g: 0,
+          protein_g: 0,
+          food_type: 'Solid',
+          is_recipe: false,
+        })
+
+        if (insertError) throw insertError
+      } else {
+        // For user's own items: actually delete
+        const { error } = await supabase.from('food_items').delete().eq('id', id)
+        if (error) throw error
+      }
 
       await fetchFoodItems()
     } catch (error) {
@@ -266,6 +337,16 @@ export default function FoodItemsPage() {
   }
 
   const handleEdit = (item: FoodItem) => {
+    if (item.user_id === null) {
+      // Global item - inform user that a copy will be created
+      if (
+        !confirm(
+          'Detta är ett globalt livsmedel. Dina ändringar sparas som en personlig kopia och påverkar inte andra användare. Vill du fortsätta?'
+        )
+      ) {
+        return
+      }
+    }
     setEditingItem(item)
     setIsAddModalOpen(true)
   }
@@ -274,6 +355,43 @@ export default function FoodItemsPage() {
     setIsAddModalOpen(false)
     setEditingItem(null)
   }
+
+  // Reset all user customizations (delete all user-specific food items)
+  const handleResetList = async () => {
+    if (!user) return
+
+    try {
+      setIsResetting(true)
+
+      // Delete all user-specific food items (both custom items and hidden markers/copies)
+      const { error } = await supabase
+        .from('food_items')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('is_recipe', false)
+
+      if (error) throw error
+
+      // Clear localStorage display modes
+      Object.keys(localStorage).forEach(key => {
+        if (key.startsWith('food-display-mode:')) {
+          localStorage.removeItem(key)
+        }
+      })
+
+      // Refresh the list
+      await fetchFoodItems()
+      setResetStep(0)
+    } catch (error) {
+      console.error('Error resetting food list:', error)
+      alert('Kunde inte återställa listan. Försök igen.')
+    } finally {
+      setIsResetting(false)
+    }
+  }
+
+  // Count user customizations for display
+  const userCustomizationCount = foodItems.filter(item => item.user_id === user?.id).length
 
   // Filter food items based on search and energy density color
   const filteredFoodItems = foodItems.filter(item => {
@@ -430,6 +548,10 @@ export default function FoodItemsPage() {
                             <Badge variant="secondary" className="text-xs">
                               Recept
                             </Badge>
+                          )}
+                          {/* Global item indicator - only globe icon */}
+                          {item.user_id === null && (
+                            <Globe className="h-4 w-4 text-blue-500" title="Globalt livsmedel" />
                           )}
                         </div>
                       </td>
@@ -699,6 +821,95 @@ export default function FoodItemsPage() {
             <p className="text-xs text-neutral-500 mt-3">Exempel: Nötter, olja, chips, godis</p>
           </CardContent>
         </Card>
+      </div>
+
+      {/* Reset List Section */}
+      <div className="mt-8 pt-6 border-t border-neutral-200">
+        <div className="flex flex-col items-center gap-4">
+          {resetStep === 0 && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setResetStep(1)}
+              className="text-neutral-500 hover:text-neutral-700 gap-2"
+            >
+              <RotateCcw className="h-4 w-4" />
+              Återställ till standardlistan
+            </Button>
+          )}
+
+          {resetStep === 1 && (
+            <Card className="w-full max-w-md border-amber-300 bg-amber-50">
+              <CardContent className="pt-6">
+                <div className="text-center space-y-4">
+                  <div className="text-amber-600 font-semibold">
+                    Är du säker på att du vill återställa listan?
+                  </div>
+                  <p className="text-sm text-neutral-600">
+                    Detta kommer att ta bort alla dina anpassningar:
+                  </p>
+                  <ul className="text-sm text-neutral-600 list-disc list-inside text-left">
+                    <li>Alla livsmedel du har skapat själv</li>
+                    <li>Alla ändringar du gjort i globala livsmedel</li>
+                    <li>Alla livsmedel du har dolt</li>
+                  </ul>
+                  <div className="flex justify-center gap-3 pt-2">
+                    <Button variant="outline" size="sm" onClick={() => setResetStep(0)}>
+                      Avbryt
+                    </Button>
+                    <Button variant="destructive" size="sm" onClick={() => setResetStep(2)}>
+                      Ja, fortsätt
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {resetStep === 2 && (
+            <Card className="w-full max-w-md border-red-400 bg-red-50">
+              <CardContent className="pt-6">
+                <div className="text-center space-y-4">
+                  <div className="text-red-600 font-bold text-lg">⚠️ Sista varningen</div>
+                  <p className="text-sm text-neutral-700 font-medium">
+                    Denna åtgärd kan INTE ångras!
+                  </p>
+                  <p className="text-sm text-neutral-600">
+                    ALLT du har gjort i livsmedelslistan sedan du skapade kontot kommer att raderas
+                    permanent. Du får tillbaka den ursprungliga globala listan.
+                  </p>
+                  {userCustomizationCount > 0 && (
+                    <p className="text-sm text-red-600 font-medium">
+                      Du har {userCustomizationCount} anpassning
+                      {userCustomizationCount !== 1 ? 'ar' : ''} som kommer att raderas.
+                    </p>
+                  )}
+                  <div className="flex justify-center gap-3 pt-2">
+                    <Button variant="outline" size="sm" onClick={() => setResetStep(0)}>
+                      Avbryt
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={handleResetList}
+                      disabled={isResetting}
+                      className="gap-2"
+                    >
+                      {isResetting ? (
+                        <>Återställer...</>
+                      ) : (
+                        <>
+                          <RotateCcw className="h-4 w-4" />
+                          Återställ allt
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </div>
       </div>
 
       {/* Add/Edit Food Item Modal */}
