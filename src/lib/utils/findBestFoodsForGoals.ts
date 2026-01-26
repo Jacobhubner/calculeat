@@ -6,6 +6,7 @@
 
 import type { FoodItem } from '@/hooks/useFoodItems'
 import type { FoodColor } from '@/lib/calculations/colorDensity'
+import { convertWeightToUnit } from '@/lib/utils/unitConversion'
 
 export interface FindBestFoodsParams {
   desiredCalories: number
@@ -90,8 +91,17 @@ export function findBestFoodsForGoals(
     // Skip foods with zero calories
     if (food.calories <= 0) continue
 
-    // Calculate amount needed to reach desired calories
+    // Get base weight (what the nutrition info is based on)
+    const baseWeight = food.weight_grams && food.weight_grams > 0 ? food.weight_grams : 100
+
+    // Calculate amount needed to reach desired calories (in terms of base portions)
     const amountForCalories = desiredCalories / food.calories
+
+    // Calculate weight in grams needed
+    const weightGrams = amountForCalories * baseWeight
+
+    // Convert weight to appropriate unit
+    const amount = convertWeightToUnit(weightGrams, food.default_unit, food.ml_per_gram)
 
     // Calculate what macros we'd get at that amount
     const macroAtAmount = getMacroValue(food, desiredMacroType) * amountForCalories
@@ -116,18 +126,18 @@ export function findBestFoodsForGoals(
     const calorieAccuracy = Math.max(0, 100 - (caloriesDiff / desiredCalories) * 100)
 
     // Calculate overall score
-    // With secondary macro: 50% primary, 30% secondary, 20% calories
+    // With secondary macro: 40% primary, 30% secondary, 30% calories
     // Without secondary macro: 60% primary, 40% calories
     let overallScore: number
     if (useSecondaryMacro && secondaryMacroAccuracy !== undefined) {
-      overallScore = macroAccuracy * 0.5 + secondaryMacroAccuracy * 0.3 + calorieAccuracy * 0.2
+      overallScore = macroAccuracy * 0.4 + secondaryMacroAccuracy * 0.3 + calorieAccuracy * 0.3
     } else {
       overallScore = macroAccuracy * 0.6 + calorieAccuracy * 0.4
     }
 
     matches.push({
       food,
-      amount: amountForCalories * food.default_amount,
+      amount,
       unit: food.default_unit,
       calories: food.calories * amountForCalories,
       protein: food.protein_g * amountForCalories,
@@ -235,11 +245,14 @@ export function findHighProteinFoods(
   const matches: FoodGoalMatch[] = []
 
   for (const food of sorted.slice(0, numberOfResults * 2)) {
+    const baseWeight = food.weight_grams && food.weight_grams > 0 ? food.weight_grams : 100
     const amountForCalories = targetCalories / food.calories
+    const weightGrams = amountForCalories * baseWeight
+    const amount = convertWeightToUnit(weightGrams, food.default_unit, food.ml_per_gram)
 
     matches.push({
       food,
-      amount: amountForCalories * food.default_amount,
+      amount,
       unit: food.default_unit,
       calories: food.calories * amountForCalories,
       protein: food.protein_g * amountForCalories,

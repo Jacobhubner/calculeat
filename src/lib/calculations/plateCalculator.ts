@@ -5,6 +5,7 @@
  */
 
 import type { FoodItem } from '@/hooks/useFoodItems'
+import { getVolumeToGrams, isVolumeUnit } from '@/lib/utils/unitConversion'
 
 export interface PlateCalculationResult {
   unitsNeeded: number
@@ -56,11 +57,25 @@ export function calculatePlateAmount(
   } else {
     // Use default unit
     unitName = food.default_unit
-    const defaultWeight = food.weight_grams && food.weight_grams > 0 ? food.weight_grams : food.default_amount
-    gramsPerUnit = defaultWeight && defaultWeight > 0 ? defaultWeight : 100
 
-    // For default unit, kcal per unit is the food's calories for default_amount
-    kcalPerUnit = food.calories
+    // Calculate kcal per unit based on food's nutrition per weight
+    const baseWeight = food.weight_grams && food.weight_grams > 0 ? food.weight_grams : 100
+    const kcalPerGram = food.calories / baseWeight
+
+    // For volume units, convert to grams properly
+    if (isVolumeUnit(food.default_unit)) {
+      const volumeToGramsConversion = getVolumeToGrams(food.default_unit, food.ml_per_gram)
+      gramsPerUnit = food.default_amount * volumeToGramsConversion
+    } else {
+      gramsPerUnit = food.default_amount
+    }
+
+    kcalPerUnit = kcalPerGram * gramsPerUnit
+  }
+
+  // Validate against division by zero
+  if (gramsPerUnit <= 0 || kcalPerUnit <= 0) {
+    return null
   }
 
   // Calculate units needed
@@ -137,14 +152,21 @@ export function calculatePlateForMacro(
     unitsNeeded = weightGrams / food.grams_per_piece
   } else {
     unitName = food.default_unit
-    // Safe division - use weight_grams if valid, then default_amount, then 100
-    const divisor =
-      food.weight_grams && food.weight_grams > 0
-        ? food.weight_grams
-        : food.default_amount && food.default_amount > 0
-          ? food.default_amount
-          : 100
-    unitsNeeded = weightGrams / divisor
+    // For volume units, convert to grams properly
+    let gramsPerUnit: number
+    if (isVolumeUnit(food.default_unit)) {
+      const volumeToGramsConversion = getVolumeToGrams(food.default_unit, food.ml_per_gram)
+      gramsPerUnit = food.default_amount * volumeToGramsConversion
+    } else {
+      // Safe division - use weight_grams if valid, then default_amount, then 100
+      gramsPerUnit =
+        food.weight_grams && food.weight_grams > 0
+          ? food.weight_grams
+          : food.default_amount && food.default_amount > 0
+            ? food.default_amount
+            : 100
+    }
+    unitsNeeded = weightGrams / gramsPerUnit
   }
 
   return {

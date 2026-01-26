@@ -29,9 +29,7 @@ export function FoodSuggestions({
   // Form state
   const [targetCalories, setTargetCalories] = useState<number>(remainingCalories || 200)
   const [primaryMacro, setPrimaryMacro] = useState<'protein' | 'carbs' | 'fat'>('protein')
-  const [primaryMacroTarget, setPrimaryMacroTarget] = useState<number>(
-    remainingProtein || 20
-  )
+  const [primaryMacroTarget, setPrimaryMacroTarget] = useState<number>(remainingProtein || 20)
   const [secondaryMacro, setSecondaryMacro] = useState<'protein' | 'carbs' | 'fat' | ''>('')
   const [secondaryMacroTarget, setSecondaryMacroTarget] = useState<number>(0)
   const [count, setCount] = useState<number>(10)
@@ -44,6 +42,7 @@ export function FoodSuggestions({
   const [showGreen, setShowGreen] = useState(true)
   const [showYellow, setShowYellow] = useState(true)
   const [showOrange, setShowOrange] = useState(false)
+  const [sortBy, setSortBy] = useState<'score' | 'protein' | 'calories' | 'name'>('score')
 
   // Build color filter array
   const colorFilter = useMemo(() => {
@@ -56,7 +55,7 @@ export function FoodSuggestions({
   }, [filterByColor, showGreen, showYellow, showOrange])
 
   // Get suggestions
-  const { suggestions, isLoading } = useFoodSuggestions(
+  const { suggestions: rawSuggestions, isLoading } = useFoodSuggestions(
     {
       targetCalories,
       primaryMacro,
@@ -70,6 +69,23 @@ export function FoodSuggestions({
     },
     targetCalories > 0 && primaryMacroTarget > 0
   )
+
+  // Sort suggestions based on selected sort order
+  const suggestions = useMemo(() => {
+    const sorted = [...rawSuggestions]
+    switch (sortBy) {
+      case 'score':
+        return sorted.sort((a, b) => b.overallScore - a.overallScore)
+      case 'protein':
+        return sorted.sort((a, b) => b.protein - a.protein)
+      case 'calories':
+        return sorted.sort((a, b) => a.calories - b.calories)
+      case 'name':
+        return sorted.sort((a, b) => a.food.name.localeCompare(b.food.name, 'sv'))
+      default:
+        return sorted
+    }
+  }, [rawSuggestions, sortBy])
 
   // Note: Initial values from remainingCalories/remainingProtein are set in useState initializers above
   // User can manually adjust targets via the form inputs
@@ -115,9 +131,17 @@ export function FoodSuggestions({
 
   const getScoreBadge = (score: number) => {
     const color =
-      score >= 80 ? 'bg-green-100 text-green-700' : score >= 60 ? 'bg-yellow-100 text-yellow-700' : 'bg-neutral-100 text-neutral-700'
+      score >= 80
+        ? 'bg-green-100 text-green-700'
+        : score >= 60
+          ? 'bg-yellow-100 text-yellow-700'
+          : 'bg-neutral-100 text-neutral-700'
     return (
-      <Badge variant="outline" className={`${color} text-xs`}>
+      <Badge
+        variant="outline"
+        className={`${color} text-xs cursor-help`}
+        title="Matchningspoäng: Hur väl livsmedlet matchar dina mål (kalorier + makros). Högre är bättre."
+      >
         {Math.round(score)}%
       </Badge>
     )
@@ -271,29 +295,34 @@ export function FoodSuggestions({
                 Filtrera på energitäthet
               </label>
               {filterByColor && (
-                <div className="flex gap-3 ml-5">
-                  <label className="flex items-center gap-1.5 text-xs">
-                    <Checkbox
-                      checked={showGreen}
-                      onCheckedChange={v => setShowGreen(v as boolean)}
-                    />
-                    <span className="text-green-600">Grön</span>
-                  </label>
-                  <label className="flex items-center gap-1.5 text-xs">
-                    <Checkbox
-                      checked={showYellow}
-                      onCheckedChange={v => setShowYellow(v as boolean)}
-                    />
-                    <span className="text-yellow-600">Gul</span>
-                  </label>
-                  <label className="flex items-center gap-1.5 text-xs">
-                    <Checkbox
-                      checked={showOrange}
-                      onCheckedChange={v => setShowOrange(v as boolean)}
-                    />
-                    <span className="text-orange-600">Orange</span>
-                  </label>
-                </div>
+                <>
+                  <div className="flex gap-3 ml-5">
+                    <label className="flex items-center gap-1.5 text-xs">
+                      <Checkbox
+                        checked={showGreen}
+                        onCheckedChange={v => setShowGreen(v as boolean)}
+                      />
+                      <span className="text-green-600">Grön</span>
+                    </label>
+                    <label className="flex items-center gap-1.5 text-xs">
+                      <Checkbox
+                        checked={showYellow}
+                        onCheckedChange={v => setShowYellow(v as boolean)}
+                      />
+                      <span className="text-yellow-600">Gul</span>
+                    </label>
+                    <label className="flex items-center gap-1.5 text-xs">
+                      <Checkbox
+                        checked={showOrange}
+                        onCheckedChange={v => setShowOrange(v as boolean)}
+                      />
+                      <span className="text-orange-600">Orange</span>
+                    </label>
+                  </div>
+                  {!showGreen && !showYellow && !showOrange && (
+                    <p className="text-xs text-amber-600 ml-5 mt-1">⚠️ Välj minst en färg</p>
+                  )}
+                </>
               )}
             </div>
           </div>
@@ -301,14 +330,46 @@ export function FoodSuggestions({
 
         {/* Results */}
         <div className="border-t pt-3">
+          {/* Sorting and results count */}
+          {suggestions.length > 0 && (
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-xs text-neutral-500">Visar {suggestions.length} förslag</p>
+              <div className="flex items-center gap-2">
+                <Label className="text-xs text-neutral-600">Sortera:</Label>
+                <Select
+                  value={sortBy}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                    setSortBy(e.target.value as 'score' | 'protein' | 'calories' | 'name')
+                  }
+                  className="h-7 text-xs"
+                >
+                  <option value="score">Matchning (högst först)</option>
+                  <option value="protein">Protein (högst först)</option>
+                  <option value="calories">Kalorier (lägst först)</option>
+                  <option value="name">Namn (A-Ö)</option>
+                </Select>
+              </div>
+            </div>
+          )}
+
           {isLoading ? (
             <p className="text-xs text-neutral-500 text-center py-4">Söker...</p>
           ) : suggestions.length === 0 ? (
-            <p className="text-xs text-neutral-500 text-center py-4">
-              {targetCalories > 0 && primaryMacroTarget > 0
-                ? 'Inga matchande livsmedel hittades. Prova att justera filter.'
-                : 'Ange målkalorier och makro för att se förslag'}
-            </p>
+            <div className="text-center py-4">
+              <p className="text-sm text-neutral-600">
+                {targetCalories > 0 && primaryMacroTarget > 0
+                  ? 'Inga matchningar hittades'
+                  : 'Ange målkalorier och makro för att se förslag'}
+              </p>
+              {targetCalories > 0 && primaryMacroTarget > 0 && (
+                <div className="text-xs text-neutral-500 mt-2 space-y-1">
+                  <p className="font-medium">Försök:</p>
+                  <p>• Öka toleransen (justera målvärden)</p>
+                  <p>• Ta bort färgfilter</p>
+                  <p>• Sänk makromålen</p>
+                </div>
+              )}
+            </div>
           ) : (
             <div className="space-y-2 max-h-64 overflow-y-auto">
               {suggestions.map((match, index) => (
@@ -325,8 +386,41 @@ export function FoodSuggestions({
                       {match.amount.toFixed(1)} {match.unit} ({Math.round(match.calories)} kcal)
                     </p>
                     <p className="text-xs text-neutral-400">
-                      P: {match.protein.toFixed(1)}g | K: {match.carbs.toFixed(1)}g | F:{' '}
-                      {match.fat.toFixed(1)}g
+                      <span
+                        className={
+                          primaryMacro === 'protein'
+                            ? 'font-bold text-blue-600'
+                            : secondaryMacro === 'protein'
+                              ? 'font-semibold text-blue-500'
+                              : ''
+                        }
+                      >
+                        P: {match.protein.toFixed(1)}g
+                      </span>
+                      {' | '}
+                      <span
+                        className={
+                          primaryMacro === 'carbs'
+                            ? 'font-bold text-green-600'
+                            : secondaryMacro === 'carbs'
+                              ? 'font-semibold text-green-500'
+                              : ''
+                        }
+                      >
+                        K: {match.carbs.toFixed(1)}g
+                      </span>
+                      {' | '}
+                      <span
+                        className={
+                          primaryMacro === 'fat'
+                            ? 'font-bold text-amber-600'
+                            : secondaryMacro === 'fat'
+                              ? 'font-semibold text-amber-500'
+                              : ''
+                        }
+                      >
+                        F: {match.fat.toFixed(1)}g
+                      </span>
                     </p>
                   </div>
                   <div className="flex items-center gap-2 ml-2">

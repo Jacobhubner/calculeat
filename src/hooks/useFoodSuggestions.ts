@@ -59,7 +59,7 @@ export function useFoodSuggestions(
       recipeOnly: params.recipesOnly,
       nonRecipeOnly: params.nonRecipesOnly,
       foodColors: params.energyDensityColors,
-      tolerance: params.tolerance || 50, // More lenient default for suggestions
+      tolerance: params.tolerance || 25, // Reasonable default for accurate suggestions
     }
 
     return findBestFoodsForGoals(foods, findParams)

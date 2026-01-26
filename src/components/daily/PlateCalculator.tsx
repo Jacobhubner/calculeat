@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { Search, Calculator, Plus } from 'lucide-react'
+import { Search, Calculator, Plus, RotateCcw } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -52,6 +52,12 @@ export function PlateCalculator({ defaultCalories = 0, onAddToMeal }: PlateCalcu
     }
   }
 
+  const handleReset = () => {
+    setSelectedFood(null)
+    setTargetCalories(defaultCalories || 300)
+    setSearchQuery('')
+  }
+
   const getColorBadge = (color?: string) => {
     if (!color) return null
     return (
@@ -73,10 +79,23 @@ export function PlateCalculator({ defaultCalories = 0, onAddToMeal }: PlateCalcu
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-base flex items-center gap-2">
-          <Calculator className="h-4 w-4 text-primary-600" />
-          Portionsberäknare
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-base flex items-center gap-2">
+            <Calculator className="h-4 w-4 text-primary-600" />
+            Portionsberäknare
+          </CardTitle>
+          {(selectedFood || targetCalories !== (defaultCalories || 300) || searchQuery) && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleReset}
+              className="h-7 px-2 text-xs text-neutral-500 hover:text-neutral-700"
+            >
+              <RotateCcw className="h-3 w-3 mr-1" />
+              Börja om
+            </Button>
+          )}
+        </div>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Target calories input */}
@@ -94,6 +113,20 @@ export function PlateCalculator({ defaultCalories = 0, onAddToMeal }: PlateCalcu
               min={0}
             />
             <span className="self-center text-sm text-neutral-500">kcal</span>
+          </div>
+          {/* Quick-select buttons */}
+          <div className="flex gap-2 mt-2">
+            {[100, 200, 300, 500].map(cal => (
+              <Button
+                key={cal}
+                size="sm"
+                variant={targetCalories === cal ? 'default' : 'outline'}
+                onClick={() => setTargetCalories(cal)}
+                className="flex-1 h-7 text-xs"
+              >
+                {cal}
+              </Button>
+            ))}
           </div>
         </div>
 
@@ -113,7 +146,7 @@ export function PlateCalculator({ defaultCalories = 0, onAddToMeal }: PlateCalcu
 
             {/* Search results */}
             {filteredFoods.length > 0 && (
-              <div className="mt-2 border rounded-lg divide-y max-h-48 overflow-y-auto">
+              <div className="mt-2 border rounded-lg divide-y max-h-64 overflow-y-auto">
                 {filteredFoods.map(food => (
                   <button
                     key={food.id}
@@ -162,7 +195,9 @@ export function PlateCalculator({ defaultCalories = 0, onAddToMeal }: PlateCalcu
         {calculation && selectedFood && (
           <div className="border-t pt-4 space-y-3">
             <div className="text-center">
-              <p className="text-sm text-neutral-600">För att få {targetCalories} kcal behöver du:</p>
+              <p className="text-sm text-neutral-600">
+                För att få {targetCalories} kcal behöver du:
+              </p>
               <p className="text-2xl font-bold text-primary-600 mt-1">
                 {calculation.unitsNeeded} {calculation.unitName}
               </p>
