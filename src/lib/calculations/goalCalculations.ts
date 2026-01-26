@@ -3,12 +3,12 @@
  */
 
 export interface GoalCalculationResult {
-  currentLeanMass: number // kg
-  currentFatMass: number // kg
+  currentLeanMass?: number // kg - valfri
+  currentFatMass?: number // kg - valfri
   targetWeight: number // kg
   weightToChange: number // kg (negativt = förlora, positivt = öka)
-  fatToChange: number // kg
-  leanMassToGain?: number // kg (om bulk/recomp)
+  fatToChange?: number // kg - valfri
+  leanMassToGain?: number // kg (om bulk/recomp) - valfri
 }
 
 export interface TimelineEstimate {

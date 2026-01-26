@@ -234,7 +234,7 @@ export default function FoodItemsPage() {
     if (user) {
       fetchFoodItems()
     }
-  }, [user])
+  }, [user, fetchFoodItems])
 
   // Initialize display modes when food items are loaded
   useEffect(() => {
@@ -834,7 +834,7 @@ export default function FoodItemsPage() {
               className="text-neutral-500 hover:text-neutral-700 gap-2"
             >
               <RotateCcw className="h-4 w-4" />
-              Återställ till standardlistan
+              Återställ lista
             </Button>
           )}
 

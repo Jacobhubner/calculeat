@@ -33,27 +33,37 @@ export default function GoalCalculatorTool() {
     'height_cm',
     'tdee',
   ])
-  const missingFields = useMissingProfileData(['weight_kg', 'body_fat_percentage', 'gender'])
+  const missingFields = useMissingProfileData(['weight_kg', 'gender'])
   const updateProfileMutation = useUpdateProfile()
 
   // Local state
   const [targetBodyFat, setTargetBodyFat] = useState<number>(15)
-  const [targetWeight, setTargetWeight] = useState<number | null>(null)
+  const [manualTargetWeight, setManualTargetWeight] = useState<number | null>(null)
   const [inputMode, setInputMode] = useState<'bodyFat' | 'weight'>('bodyFat')
   const [manualWeightChange, setManualWeightChange] = useState<{
     min: number
     max: number
   } | null>(null)
 
+  // Beräkna targetWeight baserat på om användaren har angett ett manuellt värde
+  const targetWeight = useMemo(() => {
+    if (manualTargetWeight !== null) return manualTargetWeight
+    // Om ingen body_fat_percentage, använd current weight som default
+    if (profileData?.weight_kg && !profileData?.body_fat_percentage) {
+      return profileData.weight_kg
+    }
+    return null
+  }, [manualTargetWeight, profileData?.weight_kg, profileData?.body_fat_percentage])
+
   // Handlers för bidirektionell synkning
   const handleBodyFatChange = (value: number) => {
     setTargetBodyFat(value)
     setInputMode('bodyFat')
-    setTargetWeight(null) // Nollställ manuell målvikt
+    setManualTargetWeight(null) // Nollställ manuell målvikt
   }
 
   const handleTargetWeightChange = (value: number) => {
-    setTargetWeight(value)
+    setManualTargetWeight(value)
     setInputMode('weight')
 
     // Beräkna motsvarande kroppsfett% baserat på ny målvikt
@@ -69,30 +79,40 @@ export default function GoalCalculatorTool() {
 
   // Beräkna mål
   const goalResult = useMemo<GoalCalculationResult | null>(() => {
-    if (!profileData?.weight_kg || !profileData?.body_fat_percentage) return null
+    if (!profileData?.weight_kg) return null
 
-    // Om användaren har angett målvikt manuellt, använd den
-    if (inputMode === 'weight' && targetWeight !== null) {
-      const currentFatMass = profileData.weight_kg * (profileData.body_fat_percentage / 100)
-      const currentLeanMass = profileData.weight_kg - currentFatMass
-      const targetFatMass = targetWeight * (targetBodyFat / 100)
+    // Om vi har kroppsfettprocent - använd avancerad beräkning
+    if (profileData.body_fat_percentage) {
+      // Om användaren har angett målvikt manuellt, använd den
+      if (inputMode === 'weight' && targetWeight !== null) {
+        const currentFatMass = profileData.weight_kg * (profileData.body_fat_percentage / 100)
+        const currentLeanMass = profileData.weight_kg - currentFatMass
+        const targetFatMass = targetWeight * (targetBodyFat / 100)
 
-      return {
-        currentLeanMass,
-        currentFatMass,
-        targetWeight,
-        weightToChange: targetWeight - profileData.weight_kg,
-        fatToChange: targetFatMass - currentFatMass,
+        return {
+          currentLeanMass,
+          currentFatMass,
+          targetWeight,
+          weightToChange: targetWeight - profileData.weight_kg,
+          fatToChange: targetFatMass - currentFatMass,
+        }
       }
+
+      // Annars, beräkna från kroppsfett% (original logik)
+      return calculateGoal(
+        profileData.weight_kg,
+        profileData.body_fat_percentage,
+        targetBodyFat,
+        true // Bibehåll fettfri massa
+      )
     }
 
-    // Annars, beräkna från kroppsfett% (original logik)
-    return calculateGoal(
-      profileData.weight_kg,
-      profileData.body_fat_percentage,
-      targetBodyFat,
-      true // Bibehåll fettfri massa
-    )
+    // Ingen kroppsfettprocent - använd enkel viktbaserad beräkning
+    const simpleTarget = targetWeight ?? profileData.weight_kg
+    return {
+      targetWeight: simpleTarget,
+      weightToChange: simpleTarget - profileData.weight_kg,
+    }
   }, [profileData, targetBodyFat, targetWeight, inputMode])
 
   // Beräkna automatiskt standardvärde för weeklyWeightChange baserat på TDEE och mål
@@ -135,6 +155,7 @@ export default function GoalCalculatorTool() {
 
     // Om vi byter mellan viktuppgång och viktnedgång, återställ till standard
     if (previousIsGainRef.current !== null && currentIsGain !== previousIsGainRef.current) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setManualWeightChange(null)
     }
 
@@ -245,7 +266,9 @@ export default function GoalCalculatorTool() {
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Måluträknare</h2>
           <p className="text-neutral-600 mt-1">
-            Beräkna din målvikt och tidslinje för att nå ditt kroppsfettmål
+            {profileData?.body_fat_percentage
+              ? 'Beräkna din målvikt och tidslinje för att nå ditt kroppsfettmål'
+              : 'Beräkna din målvikt och tidslinje'}
           </p>
         </div>
         <Badge variant="secondary" className="bg-purple-100 text-purple-700">
@@ -280,9 +303,11 @@ export default function GoalCalculatorTool() {
             <div className="text-sm text-blue-900">
               <p className="font-medium mb-1">Om Måluträknaren</p>
               <p className="text-blue-700">
-                Denna kalkylator uppskattar din målvikt baserat på önskat kroppsfett % och
-                bibehållen fettfri massa. Tidslinjen är en uppskattning - faktiska resultat kan
-                variera beroende på träning, kost och individuella faktorer.
+                {profileData?.body_fat_percentage
+                  ? 'Denna kalkylator uppskattar din målvikt baserat på önskat kroppsfett % och bibehållen fettfri massa.'
+                  : 'Denna kalkylator hjälper dig sätta viktmål och beräkna tidslinje. Lägg till kroppsfett % i profilen för mer detaljerade beräkningar.'}{' '}
+                Tidslinjen är en uppskattning - faktiska resultat kan variera beroende på träning,
+                kost och individuella faktorer.
               </p>
             </div>
           </div>
@@ -293,7 +318,7 @@ export default function GoalCalculatorTool() {
         {/* Vänster: Inställningar */}
         <div className="space-y-6">
           {/* Nuvarande Status */}
-          {profileData?.weight_kg && profileData?.body_fat_percentage && (
+          {profileData?.weight_kg && (
             <Card>
               <CardHeader>
                 <CardTitle>Din Nuvarande Status</CardTitle>
@@ -307,15 +332,19 @@ export default function GoalCalculatorTool() {
                       {profileData.weight_kg.toFixed(1)} kg
                     </p>
                   </div>
-                  <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4">
-                    <p className="text-sm text-neutral-600 mb-1">Kroppsfett</p>
-                    <p className="text-2xl font-bold text-neutral-900">
-                      {profileData.body_fat_percentage.toFixed(1)}%
-                    </p>
-                  </div>
+                  {/* Visa kroppsfett bara om det finns */}
+                  {profileData.body_fat_percentage && (
+                    <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4">
+                      <p className="text-sm text-neutral-600 mb-1">Kroppsfett</p>
+                      <p className="text-2xl font-bold text-neutral-900">
+                        {profileData.body_fat_percentage.toFixed(1)}%
+                      </p>
+                    </div>
+                  )}
                 </div>
 
-                {goalResult && (
+                {/* Visa bara om vi har kroppsfettprocent OCH goalResult med massa-data */}
+                {profileData.body_fat_percentage && goalResult?.currentLeanMass !== undefined && (
                   <div className="grid grid-cols-2 gap-4 mt-4">
                     <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                       <p className="text-sm text-green-700 mb-1">Fettfri massa</p>
@@ -326,13 +355,14 @@ export default function GoalCalculatorTool() {
                     <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
                       <p className="text-sm text-orange-700 mb-1">Fettmassa</p>
                       <p className="text-xl font-bold text-orange-900">
-                        {goalResult.currentFatMass.toFixed(1)} kg
+                        {goalResult.currentFatMass!.toFixed(1)} kg
                       </p>
                     </div>
                   </div>
                 )}
 
-                {currentCategory && (
+                {/* Kategori - bara om vi har kroppsfettprocent */}
+                {profileData.body_fat_percentage && currentCategory && (
                   <div className="mt-4">
                     <p className="text-sm text-neutral-600 mb-2">Kategori:</p>
                     <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-3">
@@ -494,7 +524,11 @@ export default function GoalCalculatorTool() {
           <Card>
             <CardHeader>
               <CardTitle>Ställ in ditt mål</CardTitle>
-              <CardDescription>Välj önskad målvikt eller kroppsfett %</CardDescription>
+              <CardDescription>
+                {profileData?.body_fat_percentage
+                  ? 'Välj önskad målvikt eller kroppsfett %'
+                  : 'Välj din målvikt'}
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Mål Kroppsvikt Input - FLYTTA UPP FÖRST */}
@@ -529,45 +563,48 @@ export default function GoalCalculatorTool() {
                 </div>
               </div>
 
-              {/* Mål Kroppsfett % - FLYTTA NER EFTER */}
-              <div>
-                <div className="flex justify-between items-center mb-4">
-                  <Label>Mål Kroppsfett %</Label>
-                  <div className="flex items-center gap-2">
-                    <Input
-                      type="number"
-                      min="5"
-                      max="35"
-                      step="0.5"
-                      value={targetBodyFat}
-                      onChange={e => handleBodyFatChange(parseFloat(e.target.value) || 15)}
-                      className="w-20 text-center"
-                    />
-                    <span className="text-sm text-neutral-600">%</span>
+              {/* Mål Kroppsfett % - BARA OM VI HAR KROPPSFETTPROCENT */}
+              {profileData?.body_fat_percentage && (
+                <div>
+                  <div className="flex justify-between items-center mb-4">
+                    <Label>Mål Kroppsfett %</Label>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        type="number"
+                        min="5"
+                        max="35"
+                        step="0.5"
+                        value={targetBodyFat}
+                        onChange={e => handleBodyFatChange(parseFloat(e.target.value) || 15)}
+                        className="w-20 text-center"
+                      />
+                      <span className="text-sm text-neutral-600">%</span>
+                    </div>
                   </div>
-                </div>
-                <Slider
-                  value={[targetBodyFat]}
-                  onValueChange={([value]) => handleBodyFatChange(value)}
-                  min={5}
-                  max={35}
-                  step={0.5}
-                  className="w-full"
-                />
-                <div className="flex justify-between text-xs text-neutral-500 mt-2">
-                  <span>5%</span>
-                  <span>20%</span>
-                  <span>35%</span>
-                </div>
+                  <Slider
+                    value={[targetBodyFat]}
+                    onValueChange={([value]) => handleBodyFatChange(value)}
+                    min={5}
+                    max={35}
+                    step={0.5}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-xs text-neutral-500 mt-2">
+                    <span>5%</span>
+                    <span>20%</span>
+                    <span>35%</span>
+                  </div>
 
-                {/* Info om synkning */}
-                <p className="text-xs text-neutral-500 mt-3 italic">
-                  💡 Mål Kroppsfett% och Mål Kroppsvikt synkas automatiskt när du ändrar någon av
-                  dem
-                </p>
-              </div>
+                  {/* Info om synkning */}
+                  <p className="text-xs text-neutral-500 mt-3 italic">
+                    💡 Mål Kroppsfett% och Mål Kroppsvikt synkas automatiskt när du ändrar någon av
+                    dem
+                  </p>
+                </div>
+              )}
 
-              {targetCategory && (
+              {/* Målkategori - bara om vi har kroppsfettprocent */}
+              {profileData?.body_fat_percentage && targetCategory && (
                 <div className="pt-6 border-t border-neutral-200 bg-neutral-50 border border-neutral-200 rounded-lg p-4">
                   <p className="text-sm text-neutral-600 mb-2">Målkategori:</p>
                   <p className={`font-semibold ${targetCategory.color}`}>
