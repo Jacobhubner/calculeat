@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { Lightbulb, ChevronDown, ChevronUp, Plus, Filter } from 'lucide-react'
+import { Lightbulb, ChevronDown, ChevronUp, Plus, Filter, Heart } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Select } from '@/components/ui/select'
 import { useFoodSuggestions } from '@/hooks/useFoodSuggestions'
+import { useFavoriteFoods, useToggleFavorite } from '@/hooks/useFavoriteFoods'
 import type { FoodItem } from '@/hooks/useFoodItems'
 import type { FoodColor } from '@/lib/calculations/colorDensity'
 
@@ -44,6 +45,10 @@ export function FoodSuggestions({
   const [showOrange, setShowOrange] = useState(false)
   const [sortBy, setSortBy] = useState<'score' | 'protein' | 'calories' | 'name'>('score')
 
+  // Favorites
+  const { data: favorites } = useFavoriteFoods()
+  const { toggle: toggleFavorite, isPending: isTogglingFavorite } = useToggleFavorite()
+
   // Build color filter array
   const colorFilter = useMemo(() => {
     if (!filterByColor) return undefined
@@ -70,22 +75,39 @@ export function FoodSuggestions({
     targetCalories > 0 && primaryMacroTarget > 0
   )
 
-  // Sort suggestions based on selected sort order
+  // Sort suggestions based on selected sort order, with favorites always first
   const suggestions = useMemo(() => {
     const sorted = [...rawSuggestions]
+
+    // First, sort by the selected criteria
     switch (sortBy) {
       case 'score':
-        return sorted.sort((a, b) => b.overallScore - a.overallScore)
+        sorted.sort((a, b) => b.overallScore - a.overallScore)
+        break
       case 'protein':
-        return sorted.sort((a, b) => b.protein - a.protein)
+        sorted.sort((a, b) => b.protein - a.protein)
+        break
       case 'calories':
-        return sorted.sort((a, b) => a.calories - b.calories)
+        sorted.sort((a, b) => a.calories - b.calories)
+        break
       case 'name':
-        return sorted.sort((a, b) => a.food.name.localeCompare(b.food.name, 'sv'))
-      default:
-        return sorted
+        sorted.sort((a, b) => a.food.name.localeCompare(b.food.name, 'sv'))
+        break
     }
-  }, [rawSuggestions, sortBy])
+
+    // Then, sort favorites to the top while preserving the internal sort order
+    if (favorites) {
+      return sorted.sort((a, b) => {
+        const aIsFav = favorites.has(a.food.id)
+        const bIsFav = favorites.has(b.food.id)
+        if (aIsFav && !bIsFav) return -1
+        if (!aIsFav && bIsFav) return 1
+        return 0
+      })
+    }
+
+    return sorted
+  }, [rawSuggestions, sortBy, favorites])
 
   // Note: Initial values from remainingCalories/remainingProtein are set in useState initializers above
   // User can manually adjust targets via the form inputs
@@ -109,6 +131,11 @@ export function FoodSuggestions({
       setSecondaryMacro('')
       setSecondaryMacroTarget(0)
     }
+  }
+
+  const handleToggleFavorite = async (e: React.MouseEvent, foodId: string) => {
+    e.stopPropagation() // Prevent any parent click handlers
+    await toggleFavorite(foodId)
   }
 
   const getColorBadge = (color?: string) => {
@@ -372,73 +399,94 @@ export function FoodSuggestions({
             </div>
           ) : (
             <div className="space-y-2 max-h-64 overflow-y-auto">
-              {suggestions.map((match, index) => (
-                <div
-                  key={match.food.id}
-                  className="flex items-center justify-between p-2 rounded-lg hover:bg-neutral-50 transition-colors border border-transparent hover:border-neutral-200"
-                >
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-neutral-400">#{index + 1}</span>
-                      <p className="text-sm font-medium truncate">{match.food.name}</p>
+              {suggestions.map((match, index) => {
+                const isFavorite = favorites?.has(match.food.id) ?? false
+                return (
+                  <div
+                    key={match.food.id}
+                    className="flex items-center justify-between p-2 rounded-lg hover:bg-neutral-50 transition-colors border border-transparent hover:border-neutral-200"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-neutral-400">#{index + 1}</span>
+                        <p className="text-sm font-medium truncate flex items-center gap-1">
+                          {match.food.name}
+                          {isFavorite && <span className="text-xs text-red-500">★</span>}
+                        </p>
+                      </div>
+                      <p className="text-xs text-neutral-500">
+                        {match.amount.toFixed(1)} {match.unit} ({Math.round(match.calories)} kcal)
+                      </p>
+                      <p className="text-xs text-neutral-400">
+                        <span
+                          className={
+                            primaryMacro === 'protein'
+                              ? 'font-bold text-blue-600'
+                              : secondaryMacro === 'protein'
+                                ? 'font-semibold text-blue-500'
+                                : ''
+                          }
+                        >
+                          P: {match.protein.toFixed(1)}g
+                        </span>
+                        {' | '}
+                        <span
+                          className={
+                            primaryMacro === 'carbs'
+                              ? 'font-bold text-green-600'
+                              : secondaryMacro === 'carbs'
+                                ? 'font-semibold text-green-500'
+                                : ''
+                          }
+                        >
+                          K: {match.carbs.toFixed(1)}g
+                        </span>
+                        {' | '}
+                        <span
+                          className={
+                            primaryMacro === 'fat'
+                              ? 'font-bold text-amber-600'
+                              : secondaryMacro === 'fat'
+                                ? 'font-semibold text-amber-500'
+                                : ''
+                          }
+                        >
+                          F: {match.fat.toFixed(1)}g
+                        </span>
+                      </p>
                     </div>
-                    <p className="text-xs text-neutral-500">
-                      {match.amount.toFixed(1)} {match.unit} ({Math.round(match.calories)} kcal)
-                    </p>
-                    <p className="text-xs text-neutral-400">
-                      <span
-                        className={
-                          primaryMacro === 'protein'
-                            ? 'font-bold text-blue-600'
-                            : secondaryMacro === 'protein'
-                              ? 'font-semibold text-blue-500'
-                              : ''
-                        }
+                    <div className="flex items-center gap-2 ml-2">
+                      {/* Favorite button */}
+                      <button
+                        onClick={e => handleToggleFavorite(e, match.food.id)}
+                        disabled={isTogglingFavorite}
+                        className="h-7 w-7 p-0 flex items-center justify-center hover:bg-neutral-100 rounded transition-colors"
+                        title={isFavorite ? 'Ta bort från favoriter' : 'Lägg till i favoriter'}
                       >
-                        P: {match.protein.toFixed(1)}g
-                      </span>
-                      {' | '}
-                      <span
-                        className={
-                          primaryMacro === 'carbs'
-                            ? 'font-bold text-green-600'
-                            : secondaryMacro === 'carbs'
-                              ? 'font-semibold text-green-500'
-                              : ''
-                        }
-                      >
-                        K: {match.carbs.toFixed(1)}g
-                      </span>
-                      {' | '}
-                      <span
-                        className={
-                          primaryMacro === 'fat'
-                            ? 'font-bold text-amber-600'
-                            : secondaryMacro === 'fat'
-                              ? 'font-semibold text-amber-500'
-                              : ''
-                        }
-                      >
-                        F: {match.fat.toFixed(1)}g
-                      </span>
-                    </p>
+                        <Heart
+                          className={`h-4 w-4 ${
+                            isFavorite
+                              ? 'fill-red-500 text-red-500'
+                              : 'text-neutral-300 hover:text-red-400'
+                          }`}
+                        />
+                      </button>
+                      {getScoreBadge(match.overallScore)}
+                      {getColorBadge(match.food.energy_density_color)}
+                      {onAddToMeal && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-7 w-7 p-0"
+                          onClick={() => onAddToMeal(match.food, match.amount, match.unit)}
+                        >
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2 ml-2">
-                    {getScoreBadge(match.overallScore)}
-                    {getColorBadge(match.food.energy_density_color)}
-                    {onAddToMeal && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-7 w-7 p-0"
-                        onClick={() => onAddToMeal(match.food, match.amount, match.unit)}
-                      >
-                        <Plus className="h-4 w-4" />
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           )}
         </div>

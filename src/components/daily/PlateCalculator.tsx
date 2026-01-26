@@ -1,11 +1,12 @@
 import { useState, useMemo } from 'react'
-import { Search, Calculator, Plus, RotateCcw } from 'lucide-react'
+import { Search, Calculator, Plus, RotateCcw, Heart } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useFoodItems, type FoodItem } from '@/hooks/useFoodItems'
+import { useFavoriteFoods, useToggleFavorite } from '@/hooks/useFavoriteFoods'
 import { calculatePlateAmount } from '@/lib/calculations/plateCalculator'
 
 interface PlateCalculatorProps {
@@ -19,21 +20,42 @@ export function PlateCalculator({ defaultCalories = 0, onAddToMeal }: PlateCalcu
   const [selectedFood, setSelectedFood] = useState<FoodItem | null>(null)
 
   const { data: foods } = useFoodItems()
+  const { data: favorites } = useFavoriteFoods()
+  const { toggle: toggleFavorite, isPending: isTogglingFavorite } = useToggleFavorite()
 
-  // Filter foods based on search
+  // Filter foods based on search and sort favorites first
   const filteredFoods = useMemo(() => {
     if (!foods) return []
+
+    let filtered: FoodItem[]
+
     // Show first 10 foods when no search query
-    if (!searchQuery.trim()) return foods.slice(0, 10)
-    const query = searchQuery.toLowerCase()
-    return foods
-      .filter(
-        food =>
-          food.name.toLowerCase().includes(query) ||
-          (food.brand && food.brand.toLowerCase().includes(query))
-      )
-      .slice(0, 8)
-  }, [foods, searchQuery])
+    if (!searchQuery.trim()) {
+      filtered = foods.slice(0, 30) // Increase to 30 to show more favorites
+    } else {
+      const query = searchQuery.toLowerCase()
+      filtered = foods
+        .filter(
+          food =>
+            food.name.toLowerCase().includes(query) ||
+            (food.brand && food.brand.toLowerCase().includes(query))
+        )
+        .slice(0, 20)
+    }
+
+    // Sort favorites first
+    if (favorites) {
+      return filtered.sort((a, b) => {
+        const aIsFav = favorites.has(a.id)
+        const bIsFav = favorites.has(b.id)
+        if (aIsFav && !bIsFav) return -1
+        if (!aIsFav && bIsFav) return 1
+        return 0
+      })
+    }
+
+    return filtered
+  }, [foods, searchQuery, favorites])
 
   // Calculate plate amount
   const calculation = useMemo(() => {
@@ -56,6 +78,11 @@ export function PlateCalculator({ defaultCalories = 0, onAddToMeal }: PlateCalcu
     setSelectedFood(null)
     setTargetCalories(defaultCalories || 300)
     setSearchQuery('')
+  }
+
+  const handleToggleFavorite = async (e: React.MouseEvent, foodId: string) => {
+    e.stopPropagation() // Prevent food selection when clicking favorite button
+    await toggleFavorite(foodId)
   }
 
   const getColorBadge = (color?: string) => {
@@ -147,21 +174,48 @@ export function PlateCalculator({ defaultCalories = 0, onAddToMeal }: PlateCalcu
             {/* Search results */}
             {filteredFoods.length > 0 && (
               <div className="mt-2 border rounded-lg divide-y max-h-64 overflow-y-auto">
-                {filteredFoods.map(food => (
-                  <button
-                    key={food.id}
-                    onClick={() => handleSelectFood(food)}
-                    className="w-full p-2 text-left hover:bg-neutral-50 transition-colors flex items-center justify-between"
-                  >
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium truncate">{food.name}</p>
-                      <p className="text-xs text-neutral-500">
-                        {food.calories} kcal / {food.default_amount} {food.default_unit}
-                      </p>
+                {filteredFoods.map(food => {
+                  const isFavorite = favorites?.has(food.id) ?? false
+                  return (
+                    <div
+                      key={food.id}
+                      className="flex items-center gap-1 hover:bg-neutral-50 transition-colors"
+                    >
+                      {/* Favorite button */}
+                      <button
+                        onClick={e => handleToggleFavorite(e, food.id)}
+                        disabled={isTogglingFavorite}
+                        className="p-2 hover:bg-neutral-100 rounded-l transition-colors"
+                        title={isFavorite ? 'Ta bort från favoriter' : 'Lägg till i favoriter'}
+                      >
+                        <Heart
+                          className={`h-4 w-4 ${
+                            isFavorite
+                              ? 'fill-red-500 text-red-500'
+                              : 'text-neutral-300 hover:text-red-400'
+                          }`}
+                        />
+                      </button>
+
+                      {/* Food item */}
+                      <button
+                        onClick={() => handleSelectFood(food)}
+                        className="flex-1 p-2 text-left flex items-center justify-between"
+                      >
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-medium truncate flex items-center gap-2">
+                            {food.name}
+                            {isFavorite && <span className="text-xs text-red-500">★</span>}
+                          </p>
+                          <p className="text-xs text-neutral-500">
+                            {food.calories} kcal / {food.default_amount} {food.default_unit}
+                          </p>
+                        </div>
+                        {getColorBadge(food.energy_density_color)}
+                      </button>
                     </div>
-                    {getColorBadge(food.energy_density_color)}
-                  </button>
-                ))}
+                  )
+                })}
               </div>
             )}
           </div>
