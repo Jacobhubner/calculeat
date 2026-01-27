@@ -5,12 +5,50 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Plus, Search, ChefHat, BookOpen } from 'lucide-react'
 import EmptyState from '@/components/EmptyState'
+import { useRecipes, useDeleteRecipe, type Recipe } from '@/hooks/useRecipes'
+import { RecipeCard } from '@/components/recipe/RecipeCard'
+import { RecipeCalculatorModal } from '@/components/recipe/RecipeCalculatorModal'
 
 export default function RecipesPage() {
   const [searchQuery, setSearchQuery] = useState('')
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [editingRecipe, setEditingRecipe] = useState<Recipe | null>(null)
 
-  // TODO: Replace with actual data from Supabase
-  const recipes: unknown[] = []
+  const { data: recipes, isLoading } = useRecipes()
+  const deleteRecipe = useDeleteRecipe()
+
+  // Filter recipes based on search
+  const filteredRecipes = recipes?.filter(recipe =>
+    recipe.name.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+
+  const handleNewRecipe = () => {
+    setEditingRecipe(null)
+    setIsModalOpen(true)
+  }
+
+  const handleEditRecipe = (recipe: Recipe) => {
+    setEditingRecipe(recipe)
+    setIsModalOpen(true)
+  }
+
+  const handleDeleteRecipe = async (recipe: Recipe) => {
+    if (!confirm(`Är du säker på att du vill ta bort receptet "${recipe.name}"?`)) {
+      return
+    }
+
+    try {
+      await deleteRecipe.mutateAsync(recipe.id)
+    } catch (error) {
+      console.error('Failed to delete recipe:', error)
+      alert('Kunde inte ta bort receptet. Försök igen.')
+    }
+  }
+
+  const handleModalClose = () => {
+    setIsModalOpen(false)
+    setEditingRecipe(null)
+  }
 
   return (
     <DashboardLayout>
@@ -21,9 +59,14 @@ export default function RecipesPage() {
             <ChefHat className="h-8 w-8 text-primary-600" />
             Recept
           </h1>
-          <p className="text-neutral-600">Skapa och hantera dina egna recept</p>
+          <p className="text-neutral-600">
+            Skapa och hantera dina egna recept
+            {recipes &&
+              recipes.length > 0 &&
+              ` (${filteredRecipes?.length || 0} av ${recipes.length})`}
+          </p>
         </div>
-        <Button className="gap-2">
+        <Button className="gap-2" onClick={handleNewRecipe}>
           <Plus className="h-4 w-4" />
           Nytt recept
         </Button>
@@ -44,20 +87,44 @@ export default function RecipesPage() {
         </CardContent>
       </Card>
 
-      {/* Recipes List */}
-      {recipes.length === 0 ? (
+      {/* Loading state */}
+      {isLoading ? (
+        <div className="text-center py-12">
+          <p className="text-neutral-600">Laddar recept...</p>
+        </div>
+      ) : /* Empty state */
+      !filteredRecipes || filteredRecipes.length === 0 ? (
         <EmptyState
           icon={ChefHat}
-          title="Inga recept ännu"
-          description="Skapa ditt första recept genom att kombinera matvaror till måltider."
-          action={{
-            label: 'Skapa recept',
-            onClick: () => console.log('Create recipe'),
-          }}
+          title={searchQuery ? 'Inga recept hittades' : 'Inga recept ännu'}
+          description={
+            searchQuery
+              ? 'Prova att ändra din sökning.'
+              : 'Skapa ditt första recept genom att kombinera matvaror till måltider.'
+          }
+          action={
+            searchQuery
+              ? {
+                  label: 'Rensa sökning',
+                  onClick: () => setSearchQuery(''),
+                }
+              : {
+                  label: 'Skapa recept',
+                  onClick: handleNewRecipe,
+                }
+          }
         />
       ) : (
+        /* Recipes grid */
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {/* Recipes will be mapped here */}
+          {filteredRecipes.map(recipe => (
+            <RecipeCard
+              key={recipe.id}
+              recipe={recipe}
+              onEdit={() => handleEditRecipe(recipe)}
+              onDelete={() => handleDeleteRecipe(recipe)}
+            />
+          ))}
         </div>
       )}
 
@@ -102,12 +169,22 @@ export default function RecipesPage() {
               <div className="h-2 w-2 rounded-full bg-primary-600" />
             </div>
             <p>
-              <span className="font-semibold">Lägg till i måltider:</span> Använd recept direkt i
-              din dagliga logg.
+              <span className="font-semibold">Lägg till i måltider:</span> Sparade recept blir
+              automatiskt sökbara som livsmedel och kan enkelt loggas i dina dagliga måltider.
             </p>
           </div>
         </CardContent>
       </Card>
+
+      {/* Recipe Calculator Modal */}
+      <RecipeCalculatorModal
+        open={isModalOpen}
+        onOpenChange={handleModalClose}
+        editRecipe={editingRecipe}
+        onSuccess={() => {
+          // Modal handles closing itself
+        }}
+      />
     </DashboardLayout>
   )
 }
