@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -167,6 +168,7 @@ function getDefaultDisplayMode(item: FoodItem): DisplayMode {
 
 export default function FoodItemsPage() {
   const { user } = useAuth()
+  const queryClient = useQueryClient()
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedFilter, setSelectedFilter] = useState<'all' | 'green' | 'yellow' | 'orange'>('all')
   const [foodItems, setFoodItems] = useState<FoodItem[]>([])
@@ -211,11 +213,11 @@ export default function FoodItemsPage() {
 
     try {
       setLoading(true)
+      // Include recipes (is_recipe=true) so they appear in the food list
       const { data, error } = await supabase
         .from('food_items')
         .select('*')
         .or(`user_id.is.null,user_id.eq.${user.id}`)
-        .eq('is_recipe', false)
         .order('name', { ascending: true })
 
       if (error) throw error
@@ -234,7 +236,8 @@ export default function FoodItemsPage() {
     if (user) {
       fetchFoodItems()
     }
-  }, [user, fetchFoodItems])
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchFoodItems is stable, only re-run when user changes
+  }, [user])
 
   // Initialize display modes when food items are loaded
   useEffect(() => {
@@ -256,7 +259,8 @@ export default function FoodItemsPage() {
   const getButtonLabel = (mode: DisplayMode, item: FoodItem): string => {
     switch (mode) {
       case 'serving':
-        // Visa serving_unit som knapptext (t.ex. "st", "glas", "burk")
+        // Visa serving_unit som knapptext (t.ex. "st", "glas", "burk", "port")
+        if (item.serving_unit === 'portion') return 'port'
         return item.serving_unit || 'st'
       case 'per100g':
         return '100g'
@@ -269,8 +273,10 @@ export default function FoodItemsPage() {
 
   // Get tooltip text for a unit button
   const getUnitButtonTooltip = (mode: DisplayMode, item: FoodItem): string => {
+    const servingLabel =
+      item.serving_unit === 'portion' ? 'portion' : item.serving_unit || 'serveringsportion'
     const labels: Record<DisplayMode, string> = {
-      serving: `Visa som ${item.serving_unit || 'serveringsportion'}`,
+      serving: `Visa som ${servingLabel}`,
       per100g: 'Visa per 100g',
       perVolume: 'Visa per volym (ml)',
     }
@@ -290,10 +296,17 @@ export default function FoodItemsPage() {
   const handleDelete = async (id: string) => {
     const item = foodItems.find(i => i.id === id)
     const isGlobal = item?.user_id === null
+    const isRecipe = item?.is_recipe === true
 
-    const message = isGlobal
-      ? 'Detta är ett globalt livsmedel. Det kommer att döljas från din lista men inte påverka andra användare. Vill du fortsätta?'
-      : 'Är du säker på att du vill ta bort detta livsmedel?'
+    let message: string
+    if (isRecipe) {
+      message = `Vill du ta bort receptet "${item?.name}"?\n\nOBS: Detta kommer att radera receptet både från livsmedelslistan OCH från dina sparade recept.`
+    } else if (isGlobal) {
+      message =
+        'Detta är ett globalt livsmedel. Det kommer att döljas från din lista men inte påverka andra användare. Vill du fortsätta?'
+    } else {
+      message = 'Är du säker på att du vill ta bort detta livsmedel?'
+    }
 
     if (!confirm(message)) {
       return
@@ -321,8 +334,26 @@ export default function FoodItemsPage() {
         })
 
         if (insertError) throw insertError
+      } else if (isRecipe) {
+        // For recipes: delete both the recipe AND the food_item
+        // First, find and delete the recipe that links to this food_item
+        const { error: recipeDeleteError } = await supabase
+          .from('recipes')
+          .delete()
+          .eq('food_item_id', id)
+
+        if (recipeDeleteError) {
+          console.error('Error deleting linked recipe:', recipeDeleteError)
+        }
+
+        // Then delete the food_item
+        const { error } = await supabase.from('food_items').delete().eq('id', id)
+        if (error) throw error
+
+        // Invalidate recipes cache so RecipesPage updates
+        queryClient.invalidateQueries({ queryKey: ['recipes'] })
       } else {
-        // For user's own items: actually delete
+        // For regular user's own items: actually delete
         const { error } = await supabase.from('food_items').delete().eq('id', id)
         if (error) throw error
       }
@@ -545,9 +576,9 @@ export default function FoodItemsPage() {
                         <div className="flex items-center gap-2">
                           <span className="font-medium text-neutral-900">{item.name}</span>
                           {item.is_recipe && (
-                            <Badge variant="secondary" className="text-xs">
-                              Recept
-                            </Badge>
+                            <span title="Recept" className="text-base">
+                              👨‍🍳
+                            </span>
                           )}
                           {/* Global item indicator - only globe icon */}
                           {item.user_id === null && (

@@ -129,11 +129,11 @@ export function useFoodItems() {
       if (!user) throw new Error('User not authenticated')
 
       // Fetch both global items (user_id IS NULL) and user's own items
+      // Include recipes (is_recipe=true) so they can be logged
       const { data, error } = await supabase
         .from('food_items')
         .select('*')
         .or(`user_id.is.null,user_id.eq.${user.id}`)
-        .eq('is_recipe', false)
         .order('name')
 
       if (error) throw error
@@ -156,11 +156,11 @@ export function useSearchFoodItems(query: string, noomFilter?: FoodColor) {
     queryFn: async () => {
       if (!user) throw new Error('User not authenticated')
 
+      // Include recipes in search so they can be found and logged
       let queryBuilder = supabase
         .from('food_items')
         .select('*')
         .or(`user_id.is.null,user_id.eq.${user.id}`)
-        .eq('is_recipe', false)
 
       if (query) {
         queryBuilder = queryBuilder.or(`name.ilike.%${query}%,brand.ilike.%${query}%`)

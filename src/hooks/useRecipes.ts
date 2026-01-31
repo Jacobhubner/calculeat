@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import type { FoodColor } from '@/lib/calculations/colorDensity'
+import type { FoodItem } from '@/hooks/useFoodItems'
 
 export interface RecipeIngredient {
   id: string
@@ -20,6 +21,7 @@ export interface Recipe {
   name: string
   servings: number
   food_item_id?: string
+  food_item?: FoodItem | null // The linked food item with default_unit info
   total_weight_grams?: number
   created_at: string
   updated_at: string
@@ -41,6 +43,9 @@ export interface RecipeNutritionData {
   }
   per100g: {
     calories: number
+    protein: number
+    carbs: number
+    fat: number
   }
   energyDensityColor: FoodColor | null
 }
@@ -48,6 +53,7 @@ export interface RecipeNutritionData {
 export interface CreateRecipeInput {
   name: string
   servings: number
+  saveAs?: '100g' | 'portion' // How to save the food_item
   ingredients: Array<{
     food_item_id: string
     amount: number
@@ -74,6 +80,7 @@ export function useRecipes() {
         .select(
           `
           *,
+          food_item:food_items(*),
           ingredients:recipe_ingredients(
             *,
             food_item:food_items(*)
@@ -106,6 +113,7 @@ export function useSearchRecipes(query: string) {
         .select(
           `
           *,
+          food_item:food_items(*),
           ingredients:recipe_ingredients(
             *,
             food_item:food_items(*)
@@ -139,6 +147,7 @@ export function useRecipe(id: string) {
         .select(
           `
           *,
+          food_item:food_items(*),
           ingredients:recipe_ingredients(
             *,
             food_item:food_items(*)
@@ -172,25 +181,52 @@ export function useCreateRecipe() {
 
       // If nutrition data is provided, create a food_item for the recipe
       if (input.nutrition) {
+        const saveAs = input.saveAs || 'portion'
+        const is100gFormat = saveAs === '100g'
+
+        const foodItemData = is100gFormat
+          ? {
+              // Per 100g format - only 100g display available (no unit toggle)
+              user_id: user.id,
+              name: input.name,
+              is_recipe: true,
+              default_amount: 100,
+              default_unit: 'g',
+              calories: input.nutrition.per100g.calories,
+              protein_g: input.nutrition.per100g.protein,
+              carb_g: input.nutrition.per100g.carbs,
+              fat_g: input.nutrition.per100g.fat,
+              weight_grams: 100,
+              kcal_per_gram: input.nutrition.per100g.calories / 100,
+              energy_density_color: input.nutrition.energyDensityColor,
+              food_type: 'Solid' as const,
+            }
+          : {
+              // Per portion format - both port and 100g display available
+              user_id: user.id,
+              name: input.name,
+              is_recipe: true,
+              default_amount: 1,
+              default_unit: 'portion',
+              calories: input.nutrition.perServing.calories,
+              protein_g: input.nutrition.perServing.protein,
+              carb_g: input.nutrition.perServing.carbs,
+              fat_g: input.nutrition.perServing.fat,
+              weight_grams: input.nutrition.perServing.weight,
+              kcal_per_gram: input.nutrition.per100g.calories / 100,
+              energy_density_color: input.nutrition.energyDensityColor,
+              food_type: 'Solid' as const,
+              grams_per_piece: input.nutrition.perServing.weight,
+              serving_unit: 'portion',
+              kcal_per_unit: input.nutrition.perServing.calories,
+              fat_per_unit: input.nutrition.perServing.fat,
+              carb_per_unit: input.nutrition.perServing.carbs,
+              protein_per_unit: input.nutrition.perServing.protein,
+            }
+
         const { data: foodItem, error: foodItemError } = await supabase
           .from('food_items')
-          .insert({
-            user_id: user.id,
-            name: input.name,
-            is_recipe: true,
-            default_amount: 1,
-            default_unit: 'portion',
-            calories: input.nutrition.perServing.calories,
-            protein_g: input.nutrition.perServing.protein,
-            carb_g: input.nutrition.perServing.carbs,
-            fat_g: input.nutrition.perServing.fat,
-            weight_grams: input.nutrition.perServing.weight,
-            kcal_per_gram: input.nutrition.per100g.calories / 100,
-            energy_density_color: input.nutrition.energyDensityColor,
-            food_type: 'Solid',
-            grams_per_piece: input.nutrition.perServing.weight,
-            serving_unit: 'portion',
-          })
+          .insert(foodItemData)
           .select()
           .single()
 
@@ -262,19 +298,53 @@ export function useUpdateRecipe() {
 
       // Update food_item if it exists and nutrition data is provided
       if (existingRecipe?.food_item_id && input.nutrition && input.name) {
+        const saveAs = input.saveAs || 'portion'
+        const is100gFormat = saveAs === '100g'
+
+        const foodItemUpdate = is100gFormat
+          ? {
+              // Per 100g format - only 100g display (clear per-portion fields)
+              name: input.name,
+              default_amount: 100,
+              default_unit: 'g',
+              calories: input.nutrition.per100g.calories,
+              protein_g: input.nutrition.per100g.protein,
+              carb_g: input.nutrition.per100g.carbs,
+              fat_g: input.nutrition.per100g.fat,
+              weight_grams: 100,
+              kcal_per_gram: input.nutrition.per100g.calories / 100,
+              energy_density_color: input.nutrition.energyDensityColor,
+              // Clear per-portion fields so no unit toggle appears
+              grams_per_piece: null,
+              serving_unit: null,
+              kcal_per_unit: null,
+              fat_per_unit: null,
+              carb_per_unit: null,
+              protein_per_unit: null,
+            }
+          : {
+              // Per portion format - both port and 100g display available
+              name: input.name,
+              default_amount: 1,
+              default_unit: 'portion',
+              calories: input.nutrition.perServing.calories,
+              protein_g: input.nutrition.perServing.protein,
+              carb_g: input.nutrition.perServing.carbs,
+              fat_g: input.nutrition.perServing.fat,
+              weight_grams: input.nutrition.perServing.weight,
+              kcal_per_gram: input.nutrition.per100g.calories / 100,
+              energy_density_color: input.nutrition.energyDensityColor,
+              grams_per_piece: input.nutrition.perServing.weight,
+              serving_unit: 'portion',
+              kcal_per_unit: input.nutrition.perServing.calories,
+              fat_per_unit: input.nutrition.perServing.fat,
+              carb_per_unit: input.nutrition.perServing.carbs,
+              protein_per_unit: input.nutrition.perServing.protein,
+            }
+
         await supabase
           .from('food_items')
-          .update({
-            name: input.name,
-            calories: input.nutrition.perServing.calories,
-            protein_g: input.nutrition.perServing.protein,
-            carb_g: input.nutrition.perServing.carbs,
-            fat_g: input.nutrition.perServing.fat,
-            weight_grams: input.nutrition.perServing.weight,
-            kcal_per_gram: input.nutrition.per100g.calories / 100,
-            energy_density_color: input.nutrition.energyDensityColor,
-            grams_per_piece: input.nutrition.perServing.weight,
-          })
+          .update(foodItemUpdate)
           .eq('id', existingRecipe.food_item_id)
       }
 

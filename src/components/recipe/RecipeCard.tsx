@@ -46,10 +46,25 @@ export function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps) {
   }, [recipe.ingredients, recipe.servings])
 
   const servings = recipe.servings || 1
-  const caloriesPerServing = nutrition ? Math.round(nutrition.perServing.calories) : 0
-  const proteinPerServing = nutrition ? nutrition.perServing.protein.toFixed(1) : '0.0'
-  const carbsPerServing = nutrition ? nutrition.perServing.carbs.toFixed(1) : '0.0'
-  const fatPerServing = nutrition ? nutrition.perServing.fat.toFixed(1) : '0.0'
+
+  // Determine display format based on how the recipe was saved
+  // Check the linked food_item's default_unit to know if saved as 100g or portion
+  const savedAs100g = recipe.food_item?.default_unit === 'g'
+
+  // Get display values based on saved format
+  const displayLabel = savedAs100g ? 'Per 100g' : 'Per portion'
+  const displayCalories = nutrition
+    ? Math.round(savedAs100g ? nutrition.per100g.calories : nutrition.perServing.calories)
+    : 0
+  const displayProtein = nutrition
+    ? (savedAs100g ? nutrition.per100g.protein : nutrition.perServing.protein).toFixed(1)
+    : '0.0'
+  const displayCarbs = nutrition
+    ? (savedAs100g ? nutrition.per100g.carbs : nutrition.perServing.carbs).toFixed(1)
+    : '0.0'
+  const displayFat = nutrition
+    ? (savedAs100g ? nutrition.per100g.fat : nutrition.perServing.fat).toFixed(1)
+    : '0.0'
   const energyDensityColor = nutrition?.energyDensityColor ?? null
 
   const colorBadgeClass = {
@@ -91,24 +106,24 @@ export function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps) {
           </span>
         </div>
 
-        {/* Nutrition per serving */}
+        {/* Nutrition display */}
         <div className="bg-neutral-50 rounded-lg p-3 mb-4">
-          <div className="text-xs text-neutral-500 mb-2">Per portion</div>
+          <div className="text-xs text-neutral-500 mb-2">{displayLabel}</div>
           <div className="flex items-baseline gap-1 mb-2">
-            <span className="text-2xl font-bold text-primary-600">{caloriesPerServing}</span>
+            <span className="text-2xl font-bold text-primary-600">{displayCalories}</span>
             <span className="text-sm text-neutral-500">kcal</span>
           </div>
           <div className="grid grid-cols-3 gap-2 text-xs">
             <div>
-              <span className="font-semibold text-green-600">{proteinPerServing}g</span>
+              <span className="font-semibold text-green-600">{displayProtein}g</span>
               <span className="text-neutral-500 ml-1">P</span>
             </div>
             <div>
-              <span className="font-semibold text-blue-600">{carbsPerServing}g</span>
+              <span className="font-semibold text-blue-600">{displayCarbs}g</span>
               <span className="text-neutral-500 ml-1">K</span>
             </div>
             <div>
-              <span className="font-semibold text-amber-600">{fatPerServing}g</span>
+              <span className="font-semibold text-amber-600">{displayFat}g</span>
               <span className="text-neutral-500 ml-1">F</span>
             </div>
           </div>

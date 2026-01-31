@@ -33,7 +33,9 @@ export default function RecipesPage() {
   }
 
   const handleDeleteRecipe = async (recipe: Recipe) => {
-    if (!confirm(`Är du säker på att du vill ta bort receptet "${recipe.name}"?`)) {
+    const message = `Vill du ta bort receptet "${recipe.name}"?\n\nOBS: Detta kommer att radera receptet både härifrån OCH från livsmedelslistan där det kan användas för loggning.`
+
+    if (!confirm(message)) {
       return
     }
 

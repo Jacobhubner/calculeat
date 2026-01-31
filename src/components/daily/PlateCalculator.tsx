@@ -1,10 +1,8 @@
 import { useState, useMemo } from 'react'
-import { Search, Calculator, Plus, RotateCcw, Heart } from 'lucide-react'
+import { Search, Calculator, Plus, RotateCcw, Check, Heart } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { useFoodItems, type FoodItem } from '@/hooks/useFoodItems'
 import { useFavoriteFoods, useToggleFavorite } from '@/hooks/useFavoriteFoods'
 import { calculatePlateAmount } from '@/lib/calculations/plateCalculator'
@@ -14,8 +12,22 @@ interface PlateCalculatorProps {
   onAddToMeal?: (food: FoodItem, amount: number, unit: string) => void
 }
 
-export function PlateCalculator({ defaultCalories = 0, onAddToMeal }: PlateCalculatorProps) {
-  const [targetCalories, setTargetCalories] = useState<number>(defaultCalories || 300)
+// Färgprick komponent
+function ColorDot({ color }: { color?: string }) {
+  if (!color) return null
+  const colorClass = {
+    Green: 'bg-green-500',
+    Yellow: 'bg-yellow-500',
+    Orange: 'bg-orange-500',
+  }[color]
+  return <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${colorClass}`} />
+}
+
+export function PlateCalculator({
+  defaultCalories: _defaultCalories = 0,
+  onAddToMeal,
+}: PlateCalculatorProps) {
+  const [targetCalories, setTargetCalories] = useState<number | ''>('')
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedFood, setSelectedFood] = useState<FoodItem | null>(null)
 
@@ -23,15 +35,14 @@ export function PlateCalculator({ defaultCalories = 0, onAddToMeal }: PlateCalcu
   const { data: favorites } = useFavoriteFoods()
   const { toggle: toggleFavorite, isPending: isTogglingFavorite } = useToggleFavorite()
 
-  // Filter foods based on search and sort favorites first
+  // Filtrera och sortera livsmedel
   const filteredFoods = useMemo(() => {
     if (!foods) return []
 
     let filtered: FoodItem[]
 
-    // Show first 10 foods when no search query
     if (!searchQuery.trim()) {
-      filtered = foods.slice(0, 30) // Increase to 30 to show more favorites
+      filtered = foods.slice(0, 15)
     } else {
       const query = searchQuery.toLowerCase()
       filtered = foods
@@ -40,10 +51,10 @@ export function PlateCalculator({ defaultCalories = 0, onAddToMeal }: PlateCalcu
             food.name.toLowerCase().includes(query) ||
             (food.brand && food.brand.toLowerCase().includes(query))
         )
-        .slice(0, 20)
+        .slice(0, 12)
     }
 
-    // Sort favorites first
+    // Sortera favoriter först
     if (favorites) {
       return filtered.sort((a, b) => {
         const aIsFav = favorites.has(a.id)
@@ -57,9 +68,9 @@ export function PlateCalculator({ defaultCalories = 0, onAddToMeal }: PlateCalcu
     return filtered
   }, [foods, searchQuery, favorites])
 
-  // Calculate plate amount
+  // Beräkna portion
   const calculation = useMemo(() => {
-    if (!selectedFood || targetCalories <= 0) return null
+    if (!selectedFood || typeof targetCalories !== 'number' || targetCalories <= 0) return null
     return calculatePlateAmount(selectedFood, targetCalories)
   }, [selectedFood, targetCalories])
 
@@ -76,201 +87,203 @@ export function PlateCalculator({ defaultCalories = 0, onAddToMeal }: PlateCalcu
 
   const handleReset = () => {
     setSelectedFood(null)
-    setTargetCalories(defaultCalories || 300)
+    setTargetCalories('')
     setSearchQuery('')
   }
 
   const handleToggleFavorite = async (e: React.MouseEvent, foodId: string) => {
-    e.stopPropagation() // Prevent food selection when clicking favorite button
+    e.stopPropagation()
     await toggleFavorite(foodId)
   }
 
-  const getColorBadge = (color?: string) => {
-    if (!color) return null
-    return (
-      <Badge
-        variant="outline"
-        className={
-          color === 'Green'
-            ? 'bg-green-50 text-green-700 border-green-300 text-xs'
-            : color === 'Yellow'
-              ? 'bg-yellow-50 text-yellow-700 border-yellow-300 text-xs'
-              : 'bg-orange-50 text-orange-700 border-orange-300 text-xs'
-        }
-      >
-        {color === 'Green' ? 'Grön' : color === 'Yellow' ? 'Gul' : 'Orange'}
-      </Badge>
-    )
+  // Beräkna kcal/100g för visning
+  const getKcalPer100g = (food: FoodItem) => {
+    if (food.kcal_per_gram) return Math.round(food.kcal_per_gram * 100)
+    if (food.weight_grams && food.weight_grams > 0) {
+      return Math.round((food.calories / food.weight_grams) * 100)
+    }
+    return food.calories
   }
 
   return (
     <Card>
-      <CardHeader className="pb-3">
+      <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className="text-base flex items-center gap-2">
             <Calculator className="h-4 w-4 text-primary-600" />
             Portionsberäknare
           </CardTitle>
-          {(selectedFood || targetCalories !== (defaultCalories || 300) || searchQuery) && (
+          {(selectedFood || targetCalories !== '' || searchQuery) && (
             <Button
               variant="ghost"
               size="sm"
               onClick={handleReset}
-              className="h-7 px-2 text-xs text-neutral-500 hover:text-neutral-700"
+              className="h-6 px-2 text-xs text-neutral-500"
             >
               <RotateCcw className="h-3 w-3 mr-1" />
-              Börja om
+              Återställ
             </Button>
           )}
         </div>
       </CardHeader>
-      <CardContent className="space-y-4">
-        {/* Target calories input */}
-        <div>
-          <Label htmlFor="target-calories" className="text-sm">
-            Målkalorier
-          </Label>
-          <div className="flex gap-2 mt-1">
-            <Input
-              id="target-calories"
-              type="number"
-              value={targetCalories}
-              onChange={e => setTargetCalories(parseFloat(e.target.value) || 0)}
-              className="flex-1"
-              min={0}
-            />
-            <span className="self-center text-sm text-neutral-500">kcal</span>
-          </div>
-          {/* Quick-select buttons */}
-          <div className="flex gap-2 mt-2">
+
+      <CardContent className="space-y-3">
+        {/* Kalori-input med snabbval - kompakt */}
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-sm text-neutral-600 font-medium">Mål:</span>
+          <Input
+            type="number"
+            value={targetCalories}
+            onChange={e =>
+              setTargetCalories(e.target.value === '' ? '' : parseFloat(e.target.value) || 0)
+            }
+            className="h-8 w-20 text-center"
+            min={0}
+            placeholder="kcal"
+          />
+          <span className="text-xs text-neutral-500">kcal</span>
+          <div className="flex gap-1 ml-auto">
             {[100, 200, 300, 500].map(cal => (
-              <Button
+              <button
                 key={cal}
-                size="sm"
-                variant={targetCalories === cal ? 'default' : 'outline'}
                 onClick={() => setTargetCalories(cal)}
-                className="flex-1 h-7 text-xs"
+                className={`px-2 py-1 text-xs rounded transition-colors ${
+                  targetCalories === cal
+                    ? 'bg-primary-600 text-white'
+                    : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
+                }`}
               >
                 {cal}
-              </Button>
+              </button>
             ))}
           </div>
         </div>
 
-        {/* Food search */}
+        {/* Sök eller valt livsmedel */}
         {!selectedFood ? (
           <div>
-            <Label className="text-sm">Välj livsmedel</Label>
-            <div className="relative mt-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400" />
+            {/* Sökfält */}
+            <div className="relative">
+              <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400" />
               <Input
                 placeholder="Sök livsmedel..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="pl-9"
+                className="pl-8 h-9"
               />
             </div>
 
-            {/* Search results */}
+            {/* Söklista - KOMPAKT EN-RADS FORMAT */}
             {filteredFoods.length > 0 && (
-              <div className="mt-2 border rounded-lg divide-y max-h-64 overflow-y-auto">
+              <div className="mt-2 border rounded-lg max-h-52 overflow-y-auto">
                 {filteredFoods.map(food => {
                   const isFavorite = favorites?.has(food.id) ?? false
                   return (
-                    <div
+                    <button
                       key={food.id}
-                      className="flex items-center gap-1 hover:bg-neutral-50 transition-colors"
+                      onClick={() => handleSelectFood(food)}
+                      className="w-full text-left px-2 py-1.5 hover:bg-neutral-50 transition-colors border-b last:border-b-0 flex items-center gap-2"
                     >
-                      {/* Favorite button */}
+                      {/* Favorit */}
                       <button
                         onClick={e => handleToggleFavorite(e, food.id)}
                         disabled={isTogglingFavorite}
-                        className="p-2 hover:bg-neutral-100 rounded-l transition-colors"
-                        title={isFavorite ? 'Ta bort från favoriter' : 'Lägg till i favoriter'}
+                        className="p-0.5 rounded hover:bg-neutral-100 flex-shrink-0"
                       >
                         <Heart
-                          className={`h-4 w-4 ${
-                            isFavorite
-                              ? 'fill-red-500 text-red-500'
-                              : 'text-neutral-300 hover:text-red-400'
+                          className={`h-3.5 w-3.5 ${
+                            isFavorite ? 'fill-red-500 text-red-500' : 'text-neutral-300'
                           }`}
                         />
                       </button>
 
-                      {/* Food item */}
-                      <button
-                        onClick={() => handleSelectFood(food)}
-                        className="flex-1 p-2 text-left flex items-center justify-between"
-                      >
-                        <div className="min-w-0 flex-1">
-                          <p className="text-sm font-medium truncate flex items-center gap-2">
-                            {food.name}
-                            {isFavorite && <span className="text-xs text-red-500">★</span>}
-                          </p>
-                          <p className="text-xs text-neutral-500">
-                            {food.calories} kcal / {food.default_amount} {food.default_unit}
-                          </p>
-                        </div>
-                        {getColorBadge(food.energy_density_color)}
-                      </button>
-                    </div>
+                      {/* Namn - kan radbrytas */}
+                      <span className="text-sm text-neutral-900 flex-1 min-w-0 leading-tight">
+                        {food.name}
+                      </span>
+
+                      {/* Kalorier */}
+                      <span className="text-xs text-neutral-500 whitespace-nowrap flex-shrink-0">
+                        {getKcalPer100g(food)} kcal
+                      </span>
+
+                      {/* Färgprick */}
+                      <ColorDot color={food.energy_density_color} />
+                    </button>
                   )
                 })}
               </div>
             )}
+
+            {/* Tom text */}
+            {!searchQuery && filteredFoods.length === 0 && (
+              <p className="text-xs text-neutral-500 text-center py-3">Sök efter ett livsmedel</p>
+            )}
           </div>
         ) : (
-          <div>
-            <div className="flex items-center justify-between">
-              <Label className="text-sm">Valt livsmedel</Label>
+          <div className="border-2 border-primary-200 rounded-lg p-2.5 bg-primary-50/50">
+            <div className="flex items-center gap-2">
+              <Check className="h-4 w-4 text-primary-600 flex-shrink-0" />
+              <span className="text-sm font-medium text-neutral-900 flex-1 min-w-0">
+                {selectedFood.name}
+              </span>
+              <span className="text-xs text-neutral-500 flex-shrink-0">
+                {selectedFood.calories} kcal/{selectedFood.default_amount}
+                {selectedFood.default_unit}
+              </span>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setSelectedFood(null)}
-                className="text-xs h-6 px-2"
+                className="text-xs h-6 px-2 flex-shrink-0"
               >
                 Ändra
               </Button>
             </div>
-            <div className="mt-1 p-2 bg-neutral-50 rounded-lg flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium">{selectedFood.name}</p>
-                <p className="text-xs text-neutral-500">
-                  {selectedFood.calories} kcal / {selectedFood.default_amount}{' '}
-                  {selectedFood.default_unit}
-                </p>
-              </div>
-              {getColorBadge(selectedFood.energy_density_color)}
-            </div>
           </div>
         )}
 
-        {/* Calculation result */}
+        {/* Resultat - kompakt och snygg */}
         {calculation && selectedFood && (
-          <div className="border-t pt-4 space-y-3">
-            <div className="text-center">
-              <p className="text-sm text-neutral-600">
-                För att få {targetCalories} kcal behöver du:
-              </p>
-              <p className="text-2xl font-bold text-primary-600 mt-1">
-                {calculation.unitsNeeded} {calculation.unitName}
-              </p>
-              <p className="text-sm text-neutral-500">({calculation.weightGrams}g)</p>
+          <div className="bg-gradient-to-br from-primary-50 to-accent-50 rounded-xl p-3">
+            <p className="text-xs text-neutral-600 text-center mb-2">
+              För {typeof targetCalories === 'number' ? targetCalories : 0} kcal:
+            </p>
+
+            {/* Stor resultat-display */}
+            <div className="bg-white rounded-lg py-2 px-3 text-center shadow-sm mb-2">
+              {calculation.unitName === 'g' ? (
+                /* För gram-baserade: visa bara vikten direkt */
+                <span className="text-2xl font-bold text-primary-600">
+                  {calculation.weightGrams} g
+                </span>
+              ) : (
+                /* För andra enheter: visa enheter + vikt */
+                <>
+                  <span className="text-2xl font-bold text-primary-600">
+                    {calculation.unitsNeeded} {calculation.unitName}
+                  </span>
+                  <span className="text-sm text-neutral-500 ml-2">
+                    ({calculation.weightGrams}g)
+                  </span>
+                </>
+              )}
             </div>
 
-            <div className="grid grid-cols-3 gap-2 text-center text-sm">
-              <div className="bg-blue-50 rounded-lg p-2">
-                <p className="text-xs text-blue-600">Protein</p>
-                <p className="font-semibold text-blue-700">{calculation.protein}g</p>
-              </div>
-              <div className="bg-green-50 rounded-lg p-2">
-                <p className="text-xs text-green-600">Kolhydrater</p>
-                <p className="font-semibold text-green-700">{calculation.carbs}g</p>
-              </div>
-              <div className="bg-amber-50 rounded-lg p-2">
-                <p className="text-xs text-amber-600">Fett</p>
-                <p className="font-semibold text-amber-700">{calculation.fat}g</p>
-              </div>
+            {/* Makros i rad - kompakt */}
+            <div className="flex justify-center gap-3 text-xs mb-2">
+              <span className="flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                <span className="font-semibold text-blue-700">P:{calculation.protein}g</span>
+              </span>
+              <span className="flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                <span className="font-semibold text-green-700">K:{calculation.carbs}g</span>
+              </span>
+              <span className="flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                <span className="font-semibold text-amber-700">F:{calculation.fat}g</span>
+              </span>
             </div>
 
             {onAddToMeal && (
@@ -282,11 +295,9 @@ export function PlateCalculator({ defaultCalories = 0, onAddToMeal }: PlateCalcu
           </div>
         )}
 
-        {/* Help text when no food selected */}
-        {!selectedFood && !searchQuery && (
-          <p className="text-xs text-neutral-500 text-center">
-            Sök och välj ett livsmedel för att beräkna portionsstorlek
-          </p>
+        {/* Hjälptext */}
+        {!selectedFood && !calculation && (
+          <p className="text-xs text-neutral-400 text-center">Välj kalorimål och livsmedel</p>
         )}
       </CardContent>
     </Card>

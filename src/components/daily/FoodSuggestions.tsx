@@ -1,10 +1,8 @@
 import { useState, useMemo } from 'react'
-import { Lightbulb, ChevronDown, ChevronUp, Plus, Filter, Heart } from 'lucide-react'
+import { Lightbulb, Plus, Settings2, Heart } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Select } from '@/components/ui/select'
 import { useFoodSuggestions } from '@/hooks/useFoodSuggestions'
@@ -20,23 +18,50 @@ interface FoodSuggestionsProps {
   onAddToMeal?: (food: FoodItem, amount: number, unit: string) => void
 }
 
+// Färgprick komponent
+function ColorDot({ color }: { color?: string }) {
+  if (!color) return null
+  const colorClass = {
+    Green: 'bg-green-500',
+    Yellow: 'bg-yellow-500',
+    Orange: 'bg-orange-500',
+  }[color]
+  const title = {
+    Green: 'Grön - Låg energitäthet',
+    Yellow: 'Gul - Medium energitäthet',
+    Orange: 'Orange - Hög energitäthet',
+  }[color]
+  return <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${colorClass}`} title={title} />
+}
+
+// Score badge - kompakt
+function ScoreBadge({ score }: { score: number }) {
+  const colorClass =
+    score >= 80 ? 'text-green-600' : score >= 60 ? 'text-yellow-600' : 'text-neutral-500'
+  return (
+    <span className={`text-xs font-medium ${colorClass}`} title="Matchningspoäng">
+      {Math.round(score)}%
+    </span>
+  )
+}
+
 export function FoodSuggestions({
-  remainingCalories = 0,
-  remainingProtein = 0,
-  remainingCarbs = 0,
-  remainingFat = 0,
+  remainingCalories: _remainingCalories = 0,
+  remainingProtein: _remainingProtein = 0,
+  remainingCarbs: _remainingCarbs = 0,
+  remainingFat: _remainingFat = 0,
   onAddToMeal,
 }: FoodSuggestionsProps) {
   // Form state
-  const [targetCalories, setTargetCalories] = useState<number>(remainingCalories || 200)
+  const [targetCalories, setTargetCalories] = useState<number | ''>('')
   const [primaryMacro, setPrimaryMacro] = useState<'protein' | 'carbs' | 'fat'>('protein')
-  const [primaryMacroTarget, setPrimaryMacroTarget] = useState<number>(remainingProtein || 20)
+  const [primaryMacroTarget, setPrimaryMacroTarget] = useState<number | ''>('')
   const [secondaryMacro, setSecondaryMacro] = useState<'protein' | 'carbs' | 'fat' | ''>('')
   const [secondaryMacroTarget, setSecondaryMacroTarget] = useState<number>(0)
   const [count, setCount] = useState<number>(10)
 
   // Filter state
-  const [showFilters, setShowFilters] = useState(false)
+  const [showSettings, setShowSettings] = useState(false)
   const [recipesOnly, setRecipesOnly] = useState(false)
   const [nonRecipesOnly, setNonRecipesOnly] = useState(false)
   const [filterByColor, setFilterByColor] = useState(false)
@@ -59,12 +84,19 @@ export function FoodSuggestions({
     return colors.length > 0 ? colors : undefined
   }, [filterByColor, showGreen, showYellow, showOrange])
 
+  // Check if search is valid
+  const isSearchValid =
+    typeof targetCalories === 'number' &&
+    targetCalories > 0 &&
+    typeof primaryMacroTarget === 'number' &&
+    primaryMacroTarget > 0
+
   // Get suggestions
   const { suggestions: rawSuggestions, isLoading } = useFoodSuggestions(
     {
-      targetCalories,
+      targetCalories: typeof targetCalories === 'number' ? targetCalories : 0,
       primaryMacro,
-      primaryMacroTarget,
+      primaryMacroTarget: typeof primaryMacroTarget === 'number' ? primaryMacroTarget : 0,
       secondaryMacro: secondaryMacro || undefined,
       secondaryMacroTarget: secondaryMacro ? secondaryMacroTarget : undefined,
       count,
@@ -72,14 +104,12 @@ export function FoodSuggestions({
       nonRecipesOnly,
       energyDensityColors: colorFilter,
     },
-    targetCalories > 0 && primaryMacroTarget > 0
+    isSearchValid
   )
 
-  // Sort suggestions based on selected sort order, with favorites always first
+  // Sort suggestions
   const suggestions = useMemo(() => {
     const sorted = [...rawSuggestions]
-
-    // First, sort by the selected criteria
     switch (sortBy) {
       case 'score':
         sorted.sort((a, b) => b.overallScore - a.overallScore)
@@ -94,8 +124,7 @@ export function FoodSuggestions({
         sorted.sort((a, b) => a.food.name.localeCompare(b.food.name, 'sv'))
         break
     }
-
-    // Then, sort favorites to the top while preserving the internal sort order
+    // Favorites first
     if (favorites) {
       return sorted.sort((a, b) => {
         const aIsFav = favorites.has(a.food.id)
@@ -105,28 +134,12 @@ export function FoodSuggestions({
         return 0
       })
     }
-
     return sorted
   }, [rawSuggestions, sortBy, favorites])
 
-  // Note: Initial values from remainingCalories/remainingProtein are set in useState initializers above
-  // User can manually adjust targets via the form inputs
-
   const handlePrimaryMacroChange = (value: 'protein' | 'carbs' | 'fat') => {
     setPrimaryMacro(value)
-    // Update default target based on remaining
-    switch (value) {
-      case 'protein':
-        setPrimaryMacroTarget(remainingProtein || 20)
-        break
-      case 'carbs':
-        setPrimaryMacroTarget(remainingCarbs || 50)
-        break
-      case 'fat':
-        setPrimaryMacroTarget(remainingFat || 15)
-        break
-    }
-    // Clear secondary if same
+    setPrimaryMacroTarget('')
     if (secondaryMacro === value) {
       setSecondaryMacro('')
       setSecondaryMacroTarget(0)
@@ -134,164 +147,144 @@ export function FoodSuggestions({
   }
 
   const handleToggleFavorite = async (e: React.MouseEvent, foodId: string) => {
-    e.stopPropagation() // Prevent any parent click handlers
+    e.stopPropagation()
     await toggleFavorite(foodId)
   }
 
-  const getColorBadge = (color?: string) => {
-    if (!color) return null
-    return (
-      <Badge
-        variant="outline"
-        className={
-          color === 'Green'
-            ? 'bg-green-50 text-green-700 border-green-300 text-xs'
-            : color === 'Yellow'
-              ? 'bg-yellow-50 text-yellow-700 border-yellow-300 text-xs'
-              : 'bg-orange-50 text-orange-700 border-orange-300 text-xs'
-        }
-      >
-        {color === 'Green' ? 'Grön' : color === 'Yellow' ? 'Gul' : 'Orange'}
-      </Badge>
-    )
-  }
-
-  const getScoreBadge = (score: number) => {
-    const color =
-      score >= 80
-        ? 'bg-green-100 text-green-700'
-        : score >= 60
-          ? 'bg-yellow-100 text-yellow-700'
-          : 'bg-neutral-100 text-neutral-700'
-    return (
-      <Badge
-        variant="outline"
-        className={`${color} text-xs cursor-help`}
-        title="Matchningspoäng: Hur väl livsmedlet matchar dina mål (kalorier + makros). Högre är bättre."
-      >
-        {Math.round(score)}%
-      </Badge>
-    )
+  const macroLabel = {
+    protein: 'P',
+    carbs: 'K',
+    fat: 'F',
   }
 
   return (
     <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="text-base flex items-center gap-2">
-          <Lightbulb className="h-4 w-4 text-primary-600" />
-          Vad ska jag äta?
-        </CardTitle>
+      <CardHeader className="pb-2">
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-base flex items-center gap-2">
+            <Lightbulb className="h-4 w-4 text-primary-600" />
+            Vad ska jag äta?
+          </CardTitle>
+          <button
+            onClick={() => setShowSettings(!showSettings)}
+            className={`p-1.5 rounded-lg transition-colors ${
+              showSettings
+                ? 'bg-primary-100 text-primary-600'
+                : 'hover:bg-neutral-100 text-neutral-500'
+            }`}
+            title="Inställningar"
+          >
+            <Settings2 className="h-4 w-4" />
+          </button>
+        </div>
       </CardHeader>
-      <CardContent className="space-y-4">
-        {/* Target inputs */}
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <Label className="text-xs">Målkalorier</Label>
-            <div className="flex gap-1 mt-1">
+
+      <CardContent className="space-y-3">
+        {/* QuickTargetBar - Inline inputs */}
+        <div className="flex items-center gap-2 flex-wrap">
+          <Input
+            type="number"
+            value={targetCalories}
+            onChange={e =>
+              setTargetCalories(e.target.value === '' ? '' : parseInt(e.target.value) || 0)
+            }
+            className="h-8 w-20 text-center"
+            min={0}
+            placeholder="kcal"
+          />
+          <span className="text-xs text-neutral-500">kcal</span>
+          <span className="text-neutral-300">+</span>
+          <Input
+            type="number"
+            value={primaryMacroTarget}
+            onChange={e =>
+              setPrimaryMacroTarget(e.target.value === '' ? '' : parseInt(e.target.value) || 0)
+            }
+            className="h-8 w-16 text-center"
+            min={0}
+            placeholder="g"
+          />
+          <span className="text-xs text-neutral-500">g {macroLabel[primaryMacro]}</span>
+          {!isSearchValid && <span className="text-xs text-neutral-400 ml-auto">Ange mål</span>}
+        </div>
+
+        {/* Settings panel - collapsed by default */}
+        {showSettings && (
+          <div className="p-3 bg-neutral-50 rounded-lg space-y-3 border">
+            {/* Primary macro selector */}
+            <div className="flex items-center gap-3">
+              <Label className="text-xs w-20">Primär makro</Label>
+              <Select
+                value={primaryMacro}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                  handlePrimaryMacroChange(e.target.value as 'protein' | 'carbs' | 'fat')
+                }
+                className="h-7 text-xs min-w-[110px]"
+              >
+                <option value="protein">Protein</option>
+                <option value="carbs">Kolhydrater</option>
+                <option value="fat">Fett</option>
+              </Select>
+            </div>
+
+            {/* Secondary macro */}
+            <div className="flex items-center gap-3">
+              <Label className="text-xs w-20">Sekundär</Label>
+              <Select
+                value={secondaryMacro}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                  setSecondaryMacro(e.target.value as 'protein' | 'carbs' | 'fat' | '')
+                }
+                className="h-7 text-xs min-w-[110px]"
+              >
+                <option value="">Ingen</option>
+                {primaryMacro !== 'protein' && <option value="protein">Protein</option>}
+                {primaryMacro !== 'carbs' && <option value="carbs">Kolhydrater</option>}
+                {primaryMacro !== 'fat' && <option value="fat">Fett</option>}
+              </Select>
+              {secondaryMacro && (
+                <>
+                  <Input
+                    type="number"
+                    value={secondaryMacroTarget}
+                    onChange={e => setSecondaryMacroTarget(parseInt(e.target.value) || 0)}
+                    className="h-7 w-16 text-xs text-center"
+                    min={0}
+                  />
+                  <span className="text-xs text-neutral-500">g</span>
+                </>
+              )}
+            </div>
+
+            {/* Count and Sort */}
+            <div className="flex items-center gap-3">
+              <Label className="text-xs w-20">Antal</Label>
               <Input
                 type="number"
-                value={targetCalories}
-                onChange={e => setTargetCalories(parseInt(e.target.value) || 0)}
-                className="h-8 text-sm"
-                min={0}
+                value={count}
+                onChange={e => setCount(parseInt(e.target.value) || 10)}
+                className="h-7 w-16 text-xs text-center"
+                min={1}
+                max={50}
               />
-              <span className="self-center text-xs text-neutral-500">kcal</span>
+              <Label className="text-xs ml-2">Sortera</Label>
+              <Select
+                value={sortBy}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                  setSortBy(e.target.value as 'score' | 'protein' | 'calories' | 'name')
+                }
+                className="h-7 text-xs min-w-[100px]"
+              >
+                <option value="score">Matchning</option>
+                <option value="protein">Protein</option>
+                <option value="calories">Kalorier</option>
+                <option value="name">Namn</option>
+              </Select>
             </div>
-          </div>
-          <div>
-            <Label className="text-xs">Antal förslag</Label>
-            <Input
-              type="number"
-              value={count}
-              onChange={e => setCount(parseInt(e.target.value) || 10)}
-              className="h-8 text-sm mt-1"
-              min={1}
-              max={50}
-            />
-          </div>
-        </div>
 
-        {/* Primary macro */}
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <Label className="text-xs">Primär makro</Label>
-            <Select
-              value={primaryMacro}
-              onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                handlePrimaryMacroChange(e.target.value as 'protein' | 'carbs' | 'fat')
-              }
-              className="h-8 text-sm mt-1"
-            >
-              <option value="protein">Protein</option>
-              <option value="carbs">Kolhydrater</option>
-              <option value="fat">Fett</option>
-            </Select>
-          </div>
-          <div>
-            <Label className="text-xs">Målmängd</Label>
-            <div className="flex gap-1 mt-1">
-              <Input
-                type="number"
-                value={primaryMacroTarget}
-                onChange={e => setPrimaryMacroTarget(parseInt(e.target.value) || 0)}
-                className="h-8 text-sm"
-                min={0}
-              />
-              <span className="self-center text-xs text-neutral-500">g</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Secondary macro (optional) */}
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <Label className="text-xs">Sekundär makro (valfritt)</Label>
-            <Select
-              value={secondaryMacro}
-              onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                setSecondaryMacro(e.target.value as 'protein' | 'carbs' | 'fat' | '')
-              }
-              className="h-8 text-sm mt-1"
-            >
-              <option value="">Ingen</option>
-              {primaryMacro !== 'protein' && <option value="protein">Protein</option>}
-              {primaryMacro !== 'carbs' && <option value="carbs">Kolhydrater</option>}
-              {primaryMacro !== 'fat' && <option value="fat">Fett</option>}
-            </Select>
-          </div>
-          {secondaryMacro && (
-            <div>
-              <Label className="text-xs">Målmängd</Label>
-              <div className="flex gap-1 mt-1">
-                <Input
-                  type="number"
-                  value={secondaryMacroTarget}
-                  onChange={e => setSecondaryMacroTarget(parseInt(e.target.value) || 0)}
-                  className="h-8 text-sm"
-                  min={0}
-                />
-                <span className="self-center text-xs text-neutral-500">g</span>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Filters toggle */}
-        <button
-          type="button"
-          onClick={() => setShowFilters(!showFilters)}
-          className="flex items-center gap-2 text-xs text-neutral-600 hover:text-neutral-900"
-        >
-          <Filter className="h-3 w-3" />
-          <span>Filter</span>
-          {showFilters ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
-        </button>
-
-        {/* Filter options */}
-        {showFilters && (
-          <div className="space-y-3 pt-2 border-t">
-            <div className="flex gap-4">
-              <label className="flex items-center gap-2 text-xs">
+            {/* Filters row */}
+            <div className="flex items-center gap-4 flex-wrap">
+              <label className="flex items-center gap-1.5 text-xs">
                 <Checkbox
                   checked={recipesOnly}
                   onCheckedChange={v => {
@@ -299,9 +292,9 @@ export function FoodSuggestions({
                     if (v) setNonRecipesOnly(false)
                   }}
                 />
-                Endast recept
+                Recept
               </label>
-              <label className="flex items-center gap-2 text-xs">
+              <label className="flex items-center gap-1.5 text-xs">
                 <Checkbox
                   checked={nonRecipesOnly}
                   onCheckedChange={v => {
@@ -309,46 +302,38 @@ export function FoodSuggestions({
                     if (v) setRecipesOnly(false)
                   }}
                 />
-                Endast livsmedel
+                Livsmedel
               </label>
-            </div>
-
-            <div>
-              <label className="flex items-center gap-2 text-xs mb-2">
+              <label className="flex items-center gap-1.5 text-xs">
                 <Checkbox
                   checked={filterByColor}
                   onCheckedChange={v => setFilterByColor(v as boolean)}
                 />
-                Filtrera på energitäthet
+                Färgfilter
               </label>
               {filterByColor && (
                 <>
-                  <div className="flex gap-3 ml-5">
-                    <label className="flex items-center gap-1.5 text-xs">
-                      <Checkbox
-                        checked={showGreen}
-                        onCheckedChange={v => setShowGreen(v as boolean)}
-                      />
-                      <span className="text-green-600">Grön</span>
-                    </label>
-                    <label className="flex items-center gap-1.5 text-xs">
-                      <Checkbox
-                        checked={showYellow}
-                        onCheckedChange={v => setShowYellow(v as boolean)}
-                      />
-                      <span className="text-yellow-600">Gul</span>
-                    </label>
-                    <label className="flex items-center gap-1.5 text-xs">
-                      <Checkbox
-                        checked={showOrange}
-                        onCheckedChange={v => setShowOrange(v as boolean)}
-                      />
-                      <span className="text-orange-600">Orange</span>
-                    </label>
-                  </div>
-                  {!showGreen && !showYellow && !showOrange && (
-                    <p className="text-xs text-amber-600 ml-5 mt-1">⚠️ Välj minst en färg</p>
-                  )}
+                  <label className="flex items-center gap-1 text-xs">
+                    <Checkbox
+                      checked={showGreen}
+                      onCheckedChange={v => setShowGreen(v as boolean)}
+                    />
+                    <span className="w-2.5 h-2.5 rounded-full bg-green-500" />
+                  </label>
+                  <label className="flex items-center gap-1 text-xs">
+                    <Checkbox
+                      checked={showYellow}
+                      onCheckedChange={v => setShowYellow(v as boolean)}
+                    />
+                    <span className="w-2.5 h-2.5 rounded-full bg-yellow-500" />
+                  </label>
+                  <label className="flex items-center gap-1 text-xs">
+                    <Checkbox
+                      checked={showOrange}
+                      onCheckedChange={v => setShowOrange(v as boolean)}
+                    />
+                    <span className="w-2.5 h-2.5 rounded-full bg-orange-500" />
+                  </label>
                 </>
               )}
             </div>
@@ -356,140 +341,131 @@ export function FoodSuggestions({
         )}
 
         {/* Results */}
-        <div className="border-t pt-3">
-          {/* Sorting and results count */}
-          {suggestions.length > 0 && (
-            <div className="flex items-center justify-between mb-3">
-              <p className="text-xs text-neutral-500">Visar {suggestions.length} förslag</p>
-              <div className="flex items-center gap-2">
-                <Label className="text-xs text-neutral-600">Sortera:</Label>
-                <Select
-                  value={sortBy}
-                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                    setSortBy(e.target.value as 'score' | 'protein' | 'calories' | 'name')
-                  }
-                  className="h-7 text-xs"
-                >
-                  <option value="score">Matchning (högst först)</option>
-                  <option value="protein">Protein (högst först)</option>
-                  <option value="calories">Kalorier (lägst först)</option>
-                  <option value="name">Namn (A-Ö)</option>
-                </Select>
-              </div>
+        {isLoading ? (
+          <p className="text-xs text-neutral-500 text-center py-4">Söker...</p>
+        ) : !isSearchValid ? (
+          <p className="text-xs text-neutral-400 text-center py-3">
+            Ange kalorimål och makromål för att se förslag
+          </p>
+        ) : suggestions.length === 0 ? (
+          <div className="text-center py-4">
+            <p className="text-sm text-neutral-600">Inga matchningar</p>
+            <p className="text-xs text-neutral-400 mt-1">Prova ändra målen eller ta bort filter</p>
+          </div>
+        ) : (
+          <>
+            {/* Results header */}
+            <div className="flex items-center justify-between text-xs text-neutral-500 border-b pb-1">
+              <span>{suggestions.length} förslag</span>
+              <span>
+                Sorterat:{' '}
+                {sortBy === 'score'
+                  ? 'Matchning'
+                  : sortBy === 'protein'
+                    ? 'Protein'
+                    : sortBy === 'calories'
+                      ? 'Kalorier'
+                      : 'Namn'}
+              </span>
             </div>
-          )}
 
-          {isLoading ? (
-            <p className="text-xs text-neutral-500 text-center py-4">Söker...</p>
-          ) : suggestions.length === 0 ? (
-            <div className="text-center py-4">
-              <p className="text-sm text-neutral-600">
-                {targetCalories > 0 && primaryMacroTarget > 0
-                  ? 'Inga matchningar hittades'
-                  : 'Ange målkalorier och makro för att se förslag'}
-              </p>
-              {targetCalories > 0 && primaryMacroTarget > 0 && (
-                <div className="text-xs text-neutral-500 mt-2 space-y-1">
-                  <p className="font-medium">Försök:</p>
-                  <p>• Öka toleransen (justera målvärden)</p>
-                  <p>• Ta bort färgfilter</p>
-                  <p>• Sänk makromålen</p>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="space-y-2 max-h-64 overflow-y-auto">
+            {/* Compact table list */}
+            <div className="max-h-72 overflow-y-auto -mx-1">
               {suggestions.map((match, index) => {
                 const isFavorite = favorites?.has(match.food.id) ?? false
                 return (
                   <div
                     key={match.food.id}
-                    className="flex items-center justify-between p-2 rounded-lg hover:bg-neutral-50 transition-colors border border-transparent hover:border-neutral-200"
+                    className="px-1 py-1.5 hover:bg-neutral-50 transition-colors border-b border-neutral-100 last:border-b-0"
                   >
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs text-neutral-400">#{index + 1}</span>
-                        <p className="text-sm font-medium truncate flex items-center gap-1">
-                          {match.food.name}
-                          {isFavorite && <span className="text-xs text-red-500">★</span>}
-                        </p>
-                      </div>
-                      <p className="text-xs text-neutral-500">
-                        {match.amount.toFixed(1)} {match.unit} ({Math.round(match.calories)} kcal)
-                      </p>
-                      <p className="text-xs text-neutral-400">
-                        <span
-                          className={
-                            primaryMacro === 'protein'
-                              ? 'font-bold text-blue-600'
-                              : secondaryMacro === 'protein'
-                                ? 'font-semibold text-blue-500'
-                                : ''
-                          }
-                        >
-                          P: {match.protein.toFixed(1)}g
-                        </span>
-                        {' | '}
-                        <span
-                          className={
-                            primaryMacro === 'carbs'
-                              ? 'font-bold text-green-600'
-                              : secondaryMacro === 'carbs'
-                                ? 'font-semibold text-green-500'
-                                : ''
-                          }
-                        >
-                          K: {match.carbs.toFixed(1)}g
-                        </span>
-                        {' | '}
-                        <span
-                          className={
-                            primaryMacro === 'fat'
-                              ? 'font-bold text-amber-600'
-                              : secondaryMacro === 'fat'
-                                ? 'font-semibold text-amber-500'
-                                : ''
-                          }
-                        >
-                          F: {match.fat.toFixed(1)}g
-                        </span>
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-2 ml-2">
+                    {/* Row 1: Index, Heart, Name, Amount, Kcal, Add */}
+                    <div className="flex items-center gap-1.5">
                       {/* Favorite button */}
                       <button
                         onClick={e => handleToggleFavorite(e, match.food.id)}
                         disabled={isTogglingFavorite}
-                        className="h-7 w-7 p-0 flex items-center justify-center hover:bg-neutral-100 rounded transition-colors"
-                        title={isFavorite ? 'Ta bort från favoriter' : 'Lägg till i favoriter'}
+                        className="p-0.5 rounded hover:bg-neutral-100 flex-shrink-0"
+                        title={isFavorite ? 'Ta bort favorit' : 'Lägg till favorit'}
                       >
                         <Heart
-                          className={`h-4 w-4 ${
-                            isFavorite
-                              ? 'fill-red-500 text-red-500'
-                              : 'text-neutral-300 hover:text-red-400'
+                          className={`h-3.5 w-3.5 ${
+                            isFavorite ? 'fill-red-500 text-red-500' : 'text-neutral-300'
                           }`}
                         />
                       </button>
-                      {getScoreBadge(match.overallScore)}
-                      {getColorBadge(match.food.energy_density_color)}
+
+                      {/* Rank */}
+                      <span className="text-xs text-neutral-400 w-4 text-center flex-shrink-0">
+                        {index + 1}
+                      </span>
+
+                      {/* Food name - can wrap */}
+                      <span className="text-sm text-neutral-900 flex-1 min-w-0 leading-tight">
+                        {match.food.name}
+                      </span>
+
+                      {/* Amount */}
+                      <span className="text-xs font-medium text-primary-600 whitespace-nowrap flex-shrink-0">
+                        {match.amount.toFixed(0)}
+                        {match.unit}
+                      </span>
+
+                      {/* Calories */}
+                      <span className="text-xs text-neutral-600 whitespace-nowrap w-14 text-right flex-shrink-0">
+                        {Math.round(match.calories)} kcal
+                      </span>
+
+                      {/* Add button */}
                       {onAddToMeal && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-7 w-7 p-0"
+                        <button
                           onClick={() => onAddToMeal(match.food, match.amount, match.unit)}
+                          className="p-1 rounded bg-primary-600 text-white hover:bg-primary-700 transition-colors flex-shrink-0"
+                          title="Lägg till i måltid"
                         >
-                          <Plus className="h-4 w-4" />
-                        </Button>
+                          <Plus className="h-3.5 w-3.5" />
+                        </button>
                       )}
+                    </div>
+
+                    {/* Row 2: Score, Color dot, Macros */}
+                    <div className="flex items-center gap-2 mt-0.5 ml-9 text-xs">
+                      <ColorDot color={match.food.energy_density_color} />
+                      <ScoreBadge score={match.overallScore} />
+                      <span className="text-neutral-300">•</span>
+                      <span
+                        className={
+                          primaryMacro === 'protein'
+                            ? 'font-semibold text-blue-600'
+                            : 'text-neutral-500'
+                        }
+                      >
+                        P:{match.protein.toFixed(0)}g
+                      </span>
+                      <span
+                        className={
+                          primaryMacro === 'carbs'
+                            ? 'font-semibold text-green-600'
+                            : 'text-neutral-500'
+                        }
+                      >
+                        K:{match.carbs.toFixed(0)}g
+                      </span>
+                      <span
+                        className={
+                          primaryMacro === 'fat'
+                            ? 'font-semibold text-amber-600'
+                            : 'text-neutral-500'
+                        }
+                      >
+                        F:{match.fat.toFixed(0)}g
+                      </span>
                     </div>
                   </div>
                 )
               })}
             </div>
-          )}
-        </div>
+          </>
+        )}
       </CardContent>
     </Card>
   )
