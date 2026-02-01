@@ -264,6 +264,12 @@ export interface Profile {
   protein_min_percent?: number
   protein_max_percent?: number
 
+  // Color category targets (percentage of daily calories)
+  // Based on energy density: green (<1 kcal/g), yellow (1-2.4 kcal/g), orange (>2.4 kcal/g)
+  color_green_percent?: number // Default: 0.30 (30%)
+  color_yellow_percent?: number // Default: 0.45 (45%)
+  color_orange_percent?: number // Default: 0.25 (25%)
+
   // Meal configuration
   meals_config?: {
     meals: Array<{
@@ -318,6 +324,11 @@ export interface ProfileFormData {
   protein_min_percent?: number
   protein_max_percent?: number
 
+  // Color category targets (percentage of daily calories)
+  color_green_percent?: number
+  color_yellow_percent?: number
+  color_orange_percent?: number
+
   // Meal configuration
   meals_config?: {
     meals: Array<{
@@ -360,11 +371,80 @@ export interface MeasurementSet {
 }
 
 // Weight history type for tracking weight changes over time
+// Note: Changed from profile_id to user_id - weight history is now shared across all profile cards
 export interface WeightHistory {
   id: string
-  profile_id: string
+  user_id: string
   weight_kg: number
   recorded_at: string
   notes?: string
   created_at: string
+}
+
+// Calibration history type for tracking TDEE calibrations
+export interface CalibrationHistory {
+  id: string
+  profile_id: string
+  calibrated_at: string
+  time_period_days: 7 | 14 | 21
+  start_weight_kg: number
+  end_weight_kg: number
+  weight_change_kg: number
+  target_calories: number
+  actual_calories_avg: number | null
+  used_food_log: boolean
+  days_with_log_data: number
+  previous_tdee: number
+  calculated_tdee: number
+  applied_tdee: number
+  was_limited: boolean
+  created_at: string
+}
+
+// Weight chart data point for enhanced weight tracking
+export interface WeightChartDataPoint {
+  date: string
+  weight: number
+  rollingAverage: number | null
+  displayDate: string
+  isPending?: boolean
+  isCalibrationEvent?: boolean
+}
+
+// Weight trend data for projections and statistics
+export interface WeightTrendData {
+  sevenDayAverage: number | null
+  fourteenDayAverage: number | null
+  weeklyChangeKg: number | null
+  weeklyChangePercent: number | null
+  projectedGoalDate: Date | null
+  weeksToGoal: number | null
+  progressPercent: number | null
+  totalChangeKg: number
+  chartDataWithTrend: WeightChartDataPoint[]
+}
+
+// Calibration availability status
+export interface CalibrationAvailability {
+  isAvailable: boolean
+  isRecommended: boolean
+  reason: string
+  minDataPoints: number
+  currentDataPoints: number
+  daysSinceLastCalibration: number | null
+  weightTrend: 'stable' | 'gaining' | 'losing' | 'erratic' | 'insufficient_data'
+  suggestedTimePeriod: 7 | 14 | 21
+}
+
+// Actual calorie intake data from food logs
+export interface ActualIntakeData {
+  averageCalories: number | null
+  daysWithData: number
+  totalDays: number
+  completenessPercent: number
+  dailyCalories: Array<{
+    date: string
+    calories: number
+    isComplete: boolean
+  }>
 }

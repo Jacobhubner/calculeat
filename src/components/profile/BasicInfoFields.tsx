@@ -1,6 +1,7 @@
 /**
- * BasicInfoFields - Grundläggande profilfält (födelsedatum, kön, längd, startvikt)
- * Dessa fält låses när användaren har > 1 profil (förutom startvikt som alltid kan redigeras med varning)
+ * BasicInfoFields - Grundläggande profilfält (födelsedatum, kön, längd)
+ * Dessa fält låses när användaren har > 1 profil
+ * Startvikt hanteras nu via viktspårning (WeightTracker) istället
  * Extraherat från UserProfileForm
  */
 
@@ -14,11 +15,9 @@ interface BasicInfoFieldsProps {
   birthDate?: string
   gender?: Gender | ''
   height?: number
-  initialWeight?: number
   onBirthDateChange: (birthDate: string) => void
   onGenderChange: (gender: Gender | '') => void
   onHeightChange: (height: number | undefined) => void
-  onInitialWeightChange: (weight: number | undefined) => void
   locked?: boolean
   showLockNotice?: boolean
 }
@@ -27,11 +26,9 @@ export default function BasicInfoFields({
   birthDate,
   gender,
   height,
-  initialWeight,
   onBirthDateChange,
   onGenderChange,
   onHeightChange,
-  onInitialWeightChange,
   locked = false,
   showLockNotice = false,
 }: BasicInfoFieldsProps) {
@@ -43,7 +40,6 @@ export default function BasicInfoFields({
   )
   const [birthYear, setBirthYear] = useState(parsedDate?.getFullYear().toString() || '')
   const [heightString, setHeightString] = useState(height?.toString() || '')
-  const [initialWeightString, setInitialWeightString] = useState(initialWeight?.toString() || '')
 
   // Sync local state when props change (avoid cascading renders by checking if actually changed)
   useEffect(() => {
@@ -67,14 +63,6 @@ export default function BasicInfoFields({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [height])
-
-  useEffect(() => {
-    const newWeightString = initialWeight?.toString() || ''
-    if (initialWeightString !== newWeightString) {
-      setInitialWeightString(newWeightString)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialWeight])
 
   // Confirmation dialog for locked field changes
   const confirmLockedFieldChange = (fieldName: string): boolean => {
@@ -140,17 +128,6 @@ export default function BasicInfoFields({
     setHeightString(value)
     const num = parseFloat(value)
     onHeightChange(isNaN(num) ? undefined : num)
-  }
-
-  const handleInitialWeightChange = (value: string) => {
-    setInitialWeightString(value)
-    // Only trigger onChange when user leaves the field (onBlur) or value is valid
-    // This prevents premature updates when typing (e.g., typing "75" shouldn't trigger at "7")
-  }
-
-  const handleInitialWeightBlur = () => {
-    const num = parseFloat(initialWeightString)
-    onInitialWeightChange(isNaN(num) ? undefined : num)
   }
 
   const lockTitle =
@@ -364,41 +341,6 @@ export default function BasicInfoFields({
               placeholder="180"
               min="100"
               max="250"
-              title={locked ? lockTitle : ''}
-            />
-          </div>
-        </div>
-
-        {/* Initial Weight (Startvikt) */}
-        <div>
-          <label className="block text-sm font-medium text-neutral-700 mb-2 flex items-center gap-2">
-            Startvikt (kg) <span className="text-red-600">*</span>
-            {locked && (
-              <span className="flex items-center gap-1 text-xs text-neutral-500 font-normal">
-                <Lock className="h-3 w-3" />
-                Låst
-              </span>
-            )}
-          </label>
-          <div className="relative">
-            {locked && (
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400 z-10 pointer-events-none" />
-            )}
-            <input
-              type="number"
-              value={initialWeightString}
-              onChange={e => handleInitialWeightChange(e.target.value)}
-              onBlur={handleInitialWeightBlur}
-              disabled={locked}
-              className={`mt-1 block w-full rounded-xl shadow-sm focus:border-primary-500 focus:ring-primary-500 ${
-                locked
-                  ? 'bg-neutral-200 cursor-not-allowed text-neutral-400 border-dashed border-2 border-neutral-300 pl-10'
-                  : 'border-neutral-300'
-              }`}
-              placeholder="75"
-              min="20"
-              max="300"
-              step="0.1"
               title={locked ? lockTitle : ''}
             />
           </div>

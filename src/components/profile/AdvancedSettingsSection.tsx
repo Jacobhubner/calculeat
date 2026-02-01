@@ -14,11 +14,9 @@ interface AdvancedSettingsSectionProps {
   birthDate?: string
   gender?: Gender | ''
   height?: number
-  initialWeight?: number
   onBirthDateChange: (birthDate: string) => void
   onGenderChange: (gender: Gender | '') => void
   onHeightChange: (height: number | undefined) => void
-  onInitialWeightChange: (weight: number | undefined) => void
   locked: boolean
   showLockNotice: boolean
 }
@@ -27,11 +25,9 @@ export default function AdvancedSettingsSection({
   birthDate,
   gender,
   height,
-  initialWeight,
   onBirthDateChange,
   onGenderChange,
   onHeightChange,
-  onInitialWeightChange,
   locked,
   showLockNotice,
 }: AdvancedSettingsSectionProps) {
@@ -63,11 +59,9 @@ export default function AdvancedSettingsSection({
             birthDate={birthDate}
             gender={gender}
             height={height}
-            initialWeight={initialWeight}
             onBirthDateChange={onBirthDateChange}
             onGenderChange={onGenderChange}
             onHeightChange={onHeightChange}
-            onInitialWeightChange={onInitialWeightChange}
             locked={locked}
             showLockNotice={showLockNotice}
           />

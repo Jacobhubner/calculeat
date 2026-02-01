@@ -7,6 +7,7 @@ import { useState } from 'react'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { User } from 'lucide-react'
 import { useProfiles, useUpdateProfile, useCreateProfile, useCreateWeightHistory } from '@/hooks'
+import { useSyncMealSettings } from '@/hooks/useMealSettings'
 import { useProfileStore } from '@/stores/profileStore'
 import type { Gender } from '@/lib/types'
 import { toast } from 'sonner'
@@ -43,6 +44,7 @@ export default function ProfilePage() {
   const updateProfile = useUpdateProfile()
   const createProfile = useCreateProfile()
   const createWeightHistory = useCreateWeightHistory()
+  const syncMealSettings = useSyncMealSettings()
 
   // NOTE: macroRanges and mealSettings previously used for local state
   // Now handled via pendingChanges state
@@ -53,7 +55,6 @@ export default function ProfilePage() {
     birth_date?: string
     gender?: Gender | ''
     height_cm?: number
-    initial_weight_kg?: number
     // Body composition
     body_fat_percentage?: number
     weight_kg?: number
@@ -91,11 +92,11 @@ export default function ProfilePage() {
   const mergedProfile = displayProfile as Profile | null
 
   // Check if basic info is filled (using display profile with pending changes)
+  // Note: initial_weight_kg is no longer required - weight is tracked via WeightTracker
   const hasBasicInfo = !!(
     displayProfile?.birth_date &&
     displayProfile?.gender &&
-    displayProfile?.height_cm &&
-    displayProfile?.initial_weight_kg
+    displayProfile?.height_cm
   )
 
   // Check if TDEE exists (using display profile to include pending changes)
@@ -137,17 +138,6 @@ export default function ProfilePage() {
         return rest
       }
       return { ...prev, height_cm: height }
-    })
-  }
-
-  const handleInitialWeightChange = (weight: number | undefined) => {
-    setPendingChanges(prev => {
-      if (weight === activeProfile?.initial_weight_kg) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { initial_weight_kg, ...rest } = prev
-        return rest
-      }
-      return { ...prev, initial_weight_kg: weight }
     })
   }
 
@@ -468,16 +458,16 @@ export default function ProfilePage() {
     if (!activeProfile || Object.keys(pendingChanges).length === 0) return
 
     // Check if basic info is complete (using display profile with pending changes)
+    // Note: initial_weight_kg is no longer required - weight is tracked via WeightTracker
     const isBasicInfoComplete = !!(
       displayProfile?.birth_date &&
       displayProfile?.gender &&
-      displayProfile?.height_cm &&
-      displayProfile?.initial_weight_kg
+      displayProfile?.height_cm
     )
 
     if (!isBasicInfoComplete) {
       toast.error('Fyll i all grundläggande information innan du sparar', {
-        description: 'Födelsedatum, kön, längd och startvikt krävs',
+        description: 'Födelsedatum, kön och längd krävs',
       })
       return
     }
@@ -489,14 +479,22 @@ export default function ProfilePage() {
         data: pendingChanges,
       })
 
-      // If weight was changed, add to weight history
+      // If weight was changed, add to weight history (user-based, shared across profiles)
       if (
         pendingChanges.weight_kg !== undefined &&
         pendingChanges.weight_kg !== activeProfile.weight_kg
       ) {
         await createWeightHistory.mutateAsync({
-          profile_id: activeProfile.id,
           weight_kg: pendingChanges.weight_kg,
+        })
+      }
+
+      // If meals_config was changed, sync to user_meal_settings table
+      // This ensures TodayPage (which reads from user_meal_settings) stays in sync
+      if (pendingChanges.meals_config?.meals) {
+        await syncMealSettings.mutateAsync({
+          profileId: activeProfile.id,
+          meals: pendingChanges.meals_config.meals,
         })
       }
 
@@ -525,6 +523,7 @@ export default function ProfilePage() {
     try {
       // Copy basic info from FIRST profile if it exists (for profile cards after the first one)
       // This ensures new cards skip the basic info form if user has already filled it once
+      // Note: initial_weight_kg is no longer copied - weight is tracked via WeightTracker (user-based)
       const firstProfile = allProfiles.length > 0 ? allProfiles[0] : null
       const basicInfoData =
         firstProfile && nextNumber > 0
@@ -532,7 +531,6 @@ export default function ProfilePage() {
               birth_date: firstProfile.birth_date,
               gender: firstProfile.gender,
               height_cm: firstProfile.height_cm,
-              initial_weight_kg: firstProfile.initial_weight_kg,
             }
           : {}
 
@@ -575,11 +573,9 @@ export default function ProfilePage() {
                 birthDate={displayProfile.birth_date}
                 gender={displayProfile.gender}
                 height={displayProfile.height_cm}
-                initialWeight={displayProfile.initial_weight_kg}
                 onBirthDateChange={handleBirthDateChange}
                 onGenderChange={handleGenderChange}
                 onHeightChange={handleHeightChange}
-                onInitialWeightChange={handleInitialWeightChange}
                 locked={false}
                 showLockNotice={false}
               />
@@ -594,11 +590,9 @@ export default function ProfilePage() {
                     birthDate={displayProfile.birth_date}
                     gender={displayProfile.gender}
                     height={displayProfile.height_cm}
-                    initialWeight={displayProfile.initial_weight_kg}
                     onBirthDateChange={handleBirthDateChange}
                     onGenderChange={handleGenderChange}
                     onHeightChange={handleHeightChange}
-                    onInitialWeightChange={handleInitialWeightChange}
                     locked={fieldsAreLocked}
                     showLockNotice={fieldsAreLocked}
                   />
@@ -626,11 +620,9 @@ export default function ProfilePage() {
                     birthDate={displayProfile.birth_date}
                     gender={displayProfile.gender}
                     height={displayProfile.height_cm}
-                    initialWeight={displayProfile.initial_weight_kg}
                     onBirthDateChange={handleBirthDateChange}
                     onGenderChange={handleGenderChange}
                     onHeightChange={handleHeightChange}
-                    onInitialWeightChange={handleInitialWeightChange}
                     locked={fieldsAreLocked}
                     showLockNotice={fieldsAreLocked}
                   />
@@ -683,11 +675,9 @@ export default function ProfilePage() {
                   birthDate={displayProfile.birth_date}
                   gender={displayProfile.gender}
                   height={displayProfile.height_cm}
-                  initialWeight={displayProfile.initial_weight_kg}
                   onBirthDateChange={handleBirthDateChange}
                   onGenderChange={handleGenderChange}
                   onHeightChange={handleHeightChange}
-                  onInitialWeightChange={handleInitialWeightChange}
                   locked={fieldsAreLocked}
                   showLockNotice={fieldsAreLocked}
                 />

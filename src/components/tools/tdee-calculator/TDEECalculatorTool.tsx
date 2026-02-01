@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { useProfileData } from '@/hooks/useProfileData'
-import { useUpdateProfile, useActiveProfile } from '@/hooks'
+import { useUpdateProfile, useActiveProfile, useWeightHistory } from '@/hooks'
 import { calculateBMRWithFormula, requiresBodyFat } from '@/lib/calculations/bmr'
 import { calculateTDEE } from '@/lib/calculations/tdee'
 import type { PALSystem } from '@/lib/calculations/tdee'
@@ -79,8 +79,20 @@ export default function TDEECalculatorTool() {
   // Local state
   const [isSaving, setIsSaving] = useState(false)
 
+  // Get user's weight history (shared across all profiles)
+  const { data: weightHistory = [] } = useWeightHistory()
+
+  // Calculate latest logged weight from weight history
+  const latestLoggedWeight = useMemo(() => {
+    if (weightHistory.length === 0) return null
+    const sorted = [...weightHistory].sort(
+      (a, b) => new Date(b.recorded_at).getTime() - new Date(a.recorded_at).getTime()
+    )
+    return sorted[0].weight_kg
+  }, [weightHistory])
+
   // Weight state (local override for calculator)
-  const [useInitialWeight, setUseInitialWeight] = useState(true) // Start with initial weight by default
+  const [useLoggedWeight, setUseLoggedWeight] = useState(true) // Start with logged weight by default
   const [localWeight, setLocalWeight] = useState('')
 
   // Body fat percentage state (local override for calculator)
@@ -88,14 +100,14 @@ export default function TDEECalculatorTool() {
     profileData?.body_fat_percentage?.toString() || ''
   )
 
-  // Set initial weight when profile data loads
+  // Set weight when weight history or selection changes
   useMemo(() => {
-    if (useInitialWeight && activeProfile?.initial_weight_kg) {
-      setLocalWeight(activeProfile.initial_weight_kg.toString())
-    } else if (!useInitialWeight && profileData?.weight_kg) {
+    if (useLoggedWeight && latestLoggedWeight) {
+      setLocalWeight(latestLoggedWeight.toString())
+    } else if (!useLoggedWeight && profileData?.weight_kg) {
       setLocalWeight(profileData.weight_kg.toString())
     }
-  }, [useInitialWeight, activeProfile?.initial_weight_kg, profileData?.weight_kg])
+  }, [useLoggedWeight, latestLoggedWeight, profileData?.weight_kg])
 
   // Set body fat percentage when profile data loads
   useMemo(() => {
@@ -299,9 +311,8 @@ export default function TDEECalculatorTool() {
           household_activity_id: householdActivityId || undefined,
           household_hours_per_day: householdHoursPerDay || undefined,
           spa_factor: spaFactor || undefined,
-          // Set weight_kg and initial_weight_kg
+          // Set weight_kg (initial_weight_kg is no longer used - weight is tracked via WeightTracker)
           weight_kg: weightNum,
-          initial_weight_kg: activeProfile.initial_weight_kg || weightNum,
           // Save body fat percentage if provided
           body_fat_percentage: bodyFatNum,
           // TDEE metadata
@@ -386,27 +397,27 @@ export default function TDEECalculatorTool() {
         />
       </div>
 
-      {/* Weight Input - With Choice Between Initial Weight and Custom Weight */}
+      {/* Weight Input - With Choice Between Latest Logged Weight and Manual Entry */}
       <Card>
         <CardHeader>
           <CardTitle>Vikt för beräkning</CardTitle>
           <CardDescription>Välj vilken vikt som ska användas för TDEE-beräkningen</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* Radio buttons for weight choice */}
-          {activeProfile?.initial_weight_kg && (
+          {/* Radio buttons for weight choice - only show if weight history exists */}
+          {latestLoggedWeight && (
             <div className="space-y-3">
               <label className="flex items-center gap-3 p-3 border-2 rounded-lg cursor-pointer hover:bg-primary-50 transition-colors">
                 <input
                   type="radio"
-                  checked={useInitialWeight}
-                  onChange={() => setUseInitialWeight(true)}
+                  checked={useLoggedWeight}
+                  onChange={() => setUseLoggedWeight(true)}
                   className="h-4 w-4 text-primary-600 focus:ring-primary-500"
                 />
                 <div className="flex-1">
-                  <p className="font-medium text-neutral-900">Använd sparad startvikt</p>
+                  <p className="font-medium text-neutral-900">Använd senaste loggad vikt</p>
                   <p className="text-sm text-neutral-600">
-                    {activeProfile.initial_weight_kg} kg (från din profil)
+                    {latestLoggedWeight} kg (från viktspårning)
                   </p>
                 </div>
               </label>
@@ -414,20 +425,20 @@ export default function TDEECalculatorTool() {
               <label className="flex items-center gap-3 p-3 border-2 rounded-lg cursor-pointer hover:bg-primary-50 transition-colors">
                 <input
                   type="radio"
-                  checked={!useInitialWeight}
-                  onChange={() => setUseInitialWeight(false)}
+                  checked={!useLoggedWeight}
+                  onChange={() => setUseLoggedWeight(false)}
                   className="h-4 w-4 text-primary-600 focus:ring-primary-500"
                 />
                 <div className="flex-1">
-                  <p className="font-medium text-neutral-900">Använd annan vikt</p>
+                  <p className="font-medium text-neutral-900">Ange vikt manuellt</p>
                   <p className="text-sm text-neutral-600">Ange en egen vikt för beräkningen</p>
                 </div>
               </label>
             </div>
           )}
 
-          {/* Weight input field - shown when custom weight is selected or no initial weight exists */}
-          {(!useInitialWeight || !activeProfile?.initial_weight_kg) && (
+          {/* Weight input field - shown when manual entry is selected or no logged weight exists */}
+          {(!useLoggedWeight || !latestLoggedWeight) && (
             <div className="mt-4">
               <label className="block text-sm font-medium text-neutral-900 mb-2">
                 Vikt (kg) <span className="text-red-600">*</span>
@@ -444,15 +455,16 @@ export default function TDEECalculatorTool() {
               />
               <p className="mt-2 text-xs text-neutral-600">
                 Detta värde används för att beräkna BMR och TDEE.
+                {!latestLoggedWeight && ' Logga din vikt i Viktspårning för att använda den här.'}
               </p>
             </div>
           )}
 
           {/* Display selected weight */}
-          {useInitialWeight && activeProfile?.initial_weight_kg && (
+          {useLoggedWeight && latestLoggedWeight && (
             <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
               <p className="text-sm text-blue-900">
-                <strong>Vald vikt för beräkning:</strong> {activeProfile.initial_weight_kg} kg
+                <strong>Vald vikt för beräkning:</strong> {latestLoggedWeight} kg
               </p>
             </div>
           )}
@@ -486,7 +498,7 @@ export default function TDEECalculatorTool() {
                 value={localBodyFat}
                 onChange={e => setLocalBodyFat(e.target.value)}
                 className="w-full px-3 py-2 rounded-lg border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 font-medium"
-                placeholder="15"
+                placeholder=""
                 min="3"
                 max="60"
                 step="0.1"

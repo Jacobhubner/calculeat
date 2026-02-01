@@ -218,7 +218,17 @@ export function useEnsureTodayLog() {
 
       if (existing) return existing as DailyLog
 
-      // Create new log with goals from active profile
+      // Calculate macro goals in grams from profile percentages
+      const avgCalories =
+        ((activeProfile.calories_min || 0) + (activeProfile.calories_max || 0)) / 2
+      const fatMinG = (avgCalories * (activeProfile.fat_min_percent || 20)) / 100 / 9
+      const fatMaxG = (avgCalories * (activeProfile.fat_max_percent || 35)) / 100 / 9
+      const carbMinG = (avgCalories * (activeProfile.carb_min_percent || 45)) / 100 / 4
+      const carbMaxG = (avgCalories * (activeProfile.carb_max_percent || 55)) / 100 / 4
+      const proteinMinG = (avgCalories * (activeProfile.protein_min_percent || 15)) / 100 / 4
+      const proteinMaxG = (avgCalories * (activeProfile.protein_max_percent || 25)) / 100 / 4
+
+      // Create new log with all goals from active profile
       const { data: newLog, error } = await supabase
         .from('daily_logs')
         .insert({
@@ -227,6 +237,12 @@ export function useEnsureTodayLog() {
           log_date: today,
           goal_calories_min: activeProfile.calories_min,
           goal_calories_max: activeProfile.calories_max,
+          goal_fat_min_g: Math.round(fatMinG),
+          goal_fat_max_g: Math.round(fatMaxG),
+          goal_carb_min_g: Math.round(carbMinG),
+          goal_carb_max_g: Math.round(carbMaxG),
+          goal_protein_min_g: Math.round(proteinMinG),
+          goal_protein_max_g: Math.round(proteinMaxG),
         })
         .select()
         .single()

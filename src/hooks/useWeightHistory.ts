@@ -1,45 +1,54 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
+import { useAuth } from '@/contexts/AuthContext'
 import type { WeightHistory } from '@/lib/types'
 import { toast } from 'sonner'
 
 /**
- * Hook to fetch weight history for a profile
+ * Hook to fetch weight history for the current user
+ * Weight history is now shared across all profile cards
  */
-export function useWeightHistory(profileId: string | undefined) {
+export function useWeightHistory() {
+  const { user } = useAuth()
+
   return useQuery({
-    queryKey: ['weight-history', profileId],
+    queryKey: ['weight-history', user?.id],
     queryFn: async () => {
-      if (!profileId) return []
+      if (!user) return []
       const { data, error } = await supabase
         .from('weight_history')
         .select('*')
-        .eq('profile_id', profileId)
+        .eq('user_id', user.id)
         .order('recorded_at', { ascending: false })
       if (error) throw error
       return data as WeightHistory[]
     },
-    enabled: !!profileId,
+    enabled: !!user,
   })
 }
 
 /**
  * Hook to create a new weight history entry
+ * Automatically uses the current user's ID
  */
 export function useCreateWeightHistory() {
+  const { user } = useAuth()
   const queryClient = useQueryClient()
+
   return useMutation({
-    mutationFn: async (data: { profile_id: string; weight_kg: number; notes?: string }) => {
+    mutationFn: async (data: { weight_kg: number; notes?: string }) => {
+      if (!user) throw new Error('User not authenticated')
+
       const { data: result, error } = await supabase
         .from('weight_history')
-        .insert([data])
+        .insert([{ ...data, user_id: user.id }])
         .select()
         .single()
       if (error) throw error
       return result
     },
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['weight-history', variables.profile_id] })
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['weight-history', user?.id] })
       toast.success('Vikt sparad')
     },
     onError: () => {
@@ -52,17 +61,16 @@ export function useCreateWeightHistory() {
  * Hook to delete a weight history entry
  */
 export function useDeleteWeightHistory() {
+  const { user } = useAuth()
   const queryClient = useQueryClient()
+
   return useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase
-        .from('weight_history')
-        .delete()
-        .eq('id', id)
+      const { error } = await supabase.from('weight_history').delete().eq('id', id)
       if (error) throw error
     },
-    onSuccess: (_, id) => {
-      queryClient.invalidateQueries({ queryKey: ['weight-history'] })
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['weight-history', user?.id] })
       toast.success('Viktpost borttagen')
     },
     onError: () => {

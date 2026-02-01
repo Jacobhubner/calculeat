@@ -72,7 +72,7 @@ export default function BasicProfileForm({
               onChange={e => setBodyFat(e.target.value)}
               onBlur={handleBodyFatBlur}
               className="block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
-              placeholder="15"
+              placeholder=""
               min="0"
               max="100"
               step="0.1"

@@ -47,6 +47,7 @@ export function useMealSettings() {
 
 /**
  * Create default meal settings (if user has none)
+ * Will use meals_config from profile if available, otherwise use hardcoded defaults
  */
 export function useCreateDefaultMealSettings() {
   const activeProfile = useProfileStore(state => state.activeProfile)
@@ -58,23 +59,45 @@ export function useCreateDefaultMealSettings() {
     mutationFn: async () => {
       if (!profile) throw new Error('Profile not found')
 
-      // Default 3 meals + 2 snacks = 5 meals
-      const defaultMeals = [
-        { meal_name: 'Frukost', meal_order: 0, percentage_of_daily_calories: 25 },
-        { meal_name: 'Lunch', meal_order: 1, percentage_of_daily_calories: 30 },
-        { meal_name: 'Middag', meal_order: 2, percentage_of_daily_calories: 30 },
-        { meal_name: 'Mellanmål 1', meal_order: 3, percentage_of_daily_calories: 8 },
-        { meal_name: 'Mellanmål 2', meal_order: 4, percentage_of_daily_calories: 7 },
-      ]
+      // Check if profile has meals_config - if so, use those instead of defaults
+      const mealsConfig = profile.meals_config as {
+        meals?: Array<{ name: string; percentage: number }>
+      } | null
 
-      const mealsWithProfileId = defaultMeals.map(meal => ({
-        ...meal,
-        profile_id: profile.id,
-      }))
+      let mealsToInsert: Array<{
+        profile_id: string
+        meal_name: string
+        meal_order: number
+        percentage_of_daily_calories: number
+      }>
+
+      if (mealsConfig?.meals && mealsConfig.meals.length > 0) {
+        // Use meals from profile's meals_config
+        mealsToInsert = mealsConfig.meals.map((meal, index) => ({
+          profile_id: profile.id,
+          meal_name: meal.name,
+          meal_order: index,
+          percentage_of_daily_calories: meal.percentage,
+        }))
+      } else {
+        // Default 3 meals + 2 snacks = 5 meals
+        const defaultMeals = [
+          { meal_name: 'Frukost', meal_order: 0, percentage_of_daily_calories: 25 },
+          { meal_name: 'Lunch', meal_order: 1, percentage_of_daily_calories: 30 },
+          { meal_name: 'Middag', meal_order: 2, percentage_of_daily_calories: 30 },
+          { meal_name: 'Mellanmål 1', meal_order: 3, percentage_of_daily_calories: 8 },
+          { meal_name: 'Mellanmål 2', meal_order: 4, percentage_of_daily_calories: 7 },
+        ]
+
+        mealsToInsert = defaultMeals.map(meal => ({
+          ...meal,
+          profile_id: profile.id,
+        }))
+      }
 
       const { data, error } = await supabase
         .from('user_meal_settings')
-        .insert(mealsWithProfileId)
+        .insert(mealsToInsert)
         .select()
 
       if (error) throw error
@@ -236,6 +259,50 @@ export function useReorderMealSettings() {
       )
 
       await Promise.all(updates)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['mealSettings'] })
+    },
+  })
+}
+
+/**
+ * Sync meal settings from profile.meals_config to user_meal_settings table
+ * This ensures TodayPage (which reads from user_meal_settings) stays in sync
+ * with the meal configuration saved in the profile.
+ */
+export function useSyncMealSettings() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({
+      profileId,
+      meals,
+    }: {
+      profileId: string
+      meals: Array<{ name: string; percentage: number }>
+    }) => {
+      if (!profileId) throw new Error('Profile ID required')
+      if (!meals || meals.length === 0) throw new Error('Meals required')
+
+      // Delete all existing meal settings for this profile
+      await supabase.from('user_meal_settings').delete().eq('profile_id', profileId)
+
+      // Insert new meals from meals_config format
+      const mealsToInsert = meals.map((meal, index) => ({
+        profile_id: profileId,
+        meal_name: meal.name,
+        meal_order: index,
+        percentage_of_daily_calories: meal.percentage,
+      }))
+
+      const { data, error } = await supabase
+        .from('user_meal_settings')
+        .insert(mealsToInsert)
+        .select()
+
+      if (error) throw error
+      return data as MealSetting[]
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['mealSettings'] })
