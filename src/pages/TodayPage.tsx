@@ -2,20 +2,18 @@ import { useEffect, useMemo, useState } from 'react'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Progress } from '@/components/ui/progress'
-import { TriZoneProgress } from '@/components/ui/TriZoneProgress'
+import { RangeProgressBar, MealProgressBar } from '@/components/daily/RangeProgressBar'
 import CalorieRing from '@/components/CalorieRing'
-import MacroBar from '@/components/MacroBar'
 import EmptyState from '@/components/EmptyState'
 import RecentFoodsCard from '@/components/RecentFoodsCard'
 import { AddFoodToMealModal } from '@/components/daily/AddFoodToMealModal'
 import { PlateCalculator } from '@/components/daily/PlateCalculator'
 import { FoodSuggestions } from '@/components/daily/FoodSuggestions'
 import { DailyChecklist } from '@/components/daily/DailyChecklist'
-import { ColorBalanceCompact } from '@/components/daily/ColorBalanceCard'
+import { ColorBalanceCard } from '@/components/daily/ColorBalanceCard'
+import { MealMacroBreakdown } from '@/components/daily/MealMacroBreakdown'
 import { EnergyDensityIndicator } from '@/components/daily/EnergyDensityIndicator'
 import { NutrientStatusRow } from '@/components/daily/NutrientStatusBadge'
-import { MealProgressHeader } from '@/components/daily/MealProgressBar'
 import {
   Calendar,
   Plus,
@@ -142,11 +140,6 @@ export default function TodayPage() {
   // Use daily log snapshot first (what the log was created with), fallback to profile, then hardcoded
   const goalCalories = todayLog?.goal_calories_max || profile?.calories_max || 2000
   const goalCaloriesMin = todayLog?.goal_calories_min || profile?.calories_min || 1800
-  const calorieProgress = (totalCalories / goalCalories) * 100
-
-  const greenCalories = todayLog?.green_calories || 0
-  const yellowCalories = todayLog?.yellow_calories || 0
-  const orangeCalories = todayLog?.orange_calories || 0
 
   // Calculate remaining values for tools (use dailySummary if available)
   const remainingCalories =
@@ -358,61 +351,13 @@ export default function TodayPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* Calorie Progress */}
-              <div>
-                <div className="flex justify-between mb-2">
-                  <span className="text-sm font-medium">Kalorier</span>
-                  <span className="text-sm text-neutral-600">
-                    {totalCalories} / {goalCaloriesMin}-{goalCalories} kcal
-                  </span>
-                </div>
-                {goalCaloriesMin && goalCalories ? (
-                  <TriZoneProgress
-                    value={totalCalories}
-                    min={goalCaloriesMin}
-                    max={goalCalories}
-                    className="h-3"
-                  />
-                ) : (
-                  <Progress value={calorieProgress} className="h-3" />
-                )}
-                {totalCalories < goalCaloriesMin && totalCalories > 0 && (
-                  <p className="text-xs text-sky-600 mt-1 flex items-center gap-1">
-                    <span className="inline-block w-2 h-2 rounded-full bg-sky-400"></span>
-                    Under miniminivå med {goalCaloriesMin - totalCalories} kcal
-                  </p>
-                )}
-                {totalCalories >= goalCaloriesMin &&
-                  totalCalories <= goalCalories &&
-                  totalCalories > 0 && (
-                    <p className="text-xs text-success-600 mt-1 flex items-center gap-1">
-                      <span className="inline-block w-2 h-2 rounded-full bg-success-500"></span>
-                      Inom målet!
-                    </p>
-                  )}
-                {totalCalories > goalCalories && (
-                  <p className="text-xs text-error-600 mt-1 flex items-center gap-1">
-                    <span className="inline-block w-2 h-2 rounded-full bg-error-500"></span>
-                    Över maxnivå med {totalCalories - goalCalories} kcal
-                  </p>
-                )}
-              </div>
-
-              {/* Macro Distribution */}
-              <div>
-                <p className="text-sm font-medium mb-2">Makrofördelning</p>
-                <MacroBar
-                  protein={todayLog?.total_protein_g || 0}
-                  carbs={todayLog?.total_carb_g || 0}
-                  fat={todayLog?.total_fat_g || 0}
-                />
-              </div>
-
-              {/* Color Balance (based on energy density) */}
-              <ColorBalanceCompact
-                greenCalories={greenCalories}
-                yellowCalories={yellowCalories}
-                orangeCalories={orangeCalories}
+              {/* Calorie Progress with Range Bar */}
+              <RangeProgressBar
+                value={totalCalories}
+                min={goalCaloriesMin}
+                max={goalCalories}
+                label="Kalorier"
+                unit="kcal"
               />
 
               {/* Energy Density */}
@@ -443,10 +388,21 @@ export default function TodayPage() {
                 const mealSummary = dailySummary?.meals?.find(
                   m => m.mealName === mealSetting.meal_name
                 )
+                // Calculate meal target range (min and max based on daily goals)
+                const mealTargetMin = Math.round(
+                  (goalCaloriesMin * mealSetting.percentage_of_daily_calories) / 100
+                )
+                const mealTargetMax = Math.round(
+                  (goalCalories * mealSetting.percentage_of_daily_calories) / 100
+                )
+                const mealCurrentCalories = mealEntry?.meal_calories || 0
+                // Calculate total weight for the meal
+                const mealTotalWeight =
+                  mealEntry?.items?.reduce((sum, item) => sum + (item.weight_grams || 0), 0) || 0
 
                 return (
                   <Card key={mealSetting.id}>
-                    <CardHeader>
+                    <CardHeader className="pb-3">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           {index === 0 && <Coffee className="h-5 w-5 text-primary-600" />}
@@ -487,16 +443,12 @@ export default function TodayPage() {
                           </Button>
                         </div>
                       </div>
-                      {/* Meal progress bar */}
-                      {mealSummary && mealSummary.status && goalCaloriesMin && goalCalories && (
-                        <div className="mt-3">
-                          <MealProgressHeader
-                            mealName=""
-                            mealPercent={mealSummary.percentage}
-                            status={mealSummary.status}
-                          />
-                        </div>
-                      )}
+                      {/* Mini meal energy bar */}
+                      <MealProgressBar
+                        current={mealCurrentCalories}
+                        targetMin={mealTargetMin}
+                        targetMax={mealTargetMax}
+                      />
                     </CardHeader>
                     <CardContent>
                       {hasItems ? (
@@ -559,6 +511,16 @@ export default function TodayPage() {
                               <span className="hidden sm:inline">F: {mealEntry.meal_fat_g}g</span>
                             </div>
                           </div>
+                          {/* Meal macro breakdown */}
+                          {mealEntry.meal_calories > 0 && (
+                            <MealMacroBreakdown
+                              fat={mealEntry.meal_fat_g || 0}
+                              carbs={mealEntry.meal_carb_g || 0}
+                              protein={mealEntry.meal_protein_g || 0}
+                              totalWeight={mealTotalWeight}
+                              className="mt-2"
+                            />
+                          )}
                         </div>
                       ) : (
                         <div className="text-center py-8 text-neutral-400 text-sm">
@@ -602,32 +564,48 @@ export default function TodayPage() {
             />
           )}
 
+          {/* Kaloritäthet (Color Balance) */}
+          {dailySummary && (
+            <ColorBalanceCard
+              greenCalories={dailySummary.greenCalories}
+              yellowCalories={dailySummary.yellowCalories}
+              orangeCalories={dailySummary.orangeCalories}
+              greenStatus={dailySummary.greenStatus}
+              yellowStatus={dailySummary.yellowStatus}
+              orangeStatus={dailySummary.orangeStatus}
+              colorTargets={dailySummary.colorTargets}
+              caloriesMin={goalCaloriesMin}
+              caloriesMax={goalCalories}
+              showCard={true}
+            />
+          )}
+
           {/* Recent Foods */}
           <RecentFoodsCard dailyLogId={todayLog?.id} />
 
-          {/* Quick Stats with Status Indicators */}
+          {/* Macro Goals with Progress */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Dagens statistik</CardTitle>
+              <CardTitle className="text-lg">Makromål</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              {dailySummary ? (
+              {dailySummary && profile ? (
                 <>
                   <NutrientStatusRow
                     status={dailySummary.proteinStatus}
-                    label="Protein"
+                    label={`Protein (${profile.protein_min_percent}-${profile.protein_max_percent}%)`}
                     unit="g"
                     showProgress
                   />
                   <NutrientStatusRow
                     status={dailySummary.carbStatus}
-                    label="Kolhydrater"
+                    label={`Kolhydrater (${profile.carb_min_percent}-${profile.carb_max_percent}%)`}
                     unit="g"
                     showProgress
                   />
                   <NutrientStatusRow
                     status={dailySummary.fatStatus}
-                    label="Fett"
+                    label={`Fett (${profile.fat_min_percent}-${profile.fat_max_percent}%)`}
                     unit="g"
                     showProgress
                   />
@@ -657,38 +635,6 @@ export default function TodayPage() {
               </div>
             </CardContent>
           </Card>
-
-          {/* Macro Targets from Profile */}
-          {profile && calculations.macros && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Makromål</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex justify-between text-sm">
-                  <span className="text-neutral-600">Protein:</span>
-                  <span className="font-medium">
-                    {calculations.macros.protein.grams}g ({profile.protein_min_percent}-
-                    {profile.protein_max_percent}%)
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-neutral-600">Kolhydrater:</span>
-                  <span className="font-medium">
-                    {calculations.macros.carbs.grams}g ({profile.carb_min_percent}-
-                    {profile.carb_max_percent}%)
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-neutral-600">Fett:</span>
-                  <span className="font-medium">
-                    {calculations.macros.fat.grams}g ({profile.fat_min_percent}-
-                    {profile.fat_max_percent}%)
-                  </span>
-                </div>
-              </CardContent>
-            </Card>
-          )}
 
           {/* Plate Calculator */}
           <PlateCalculator defaultCalories={remainingCalories} onAddToMeal={handleAddFromSidebar} />

@@ -179,13 +179,17 @@ export function PlateCalculator({
                 {filteredFoods.map(food => {
                   const isFavorite = favorites?.has(food.id) ?? false
                   return (
-                    <button
+                    <div
                       key={food.id}
                       onClick={() => handleSelectFood(food)}
-                      className="w-full text-left px-2 py-1.5 hover:bg-neutral-50 transition-colors border-b last:border-b-0 flex items-center gap-2"
+                      className="w-full text-left px-2 py-1.5 hover:bg-neutral-50 transition-colors border-b last:border-b-0 flex items-center gap-2 cursor-pointer"
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={e => e.key === 'Enter' && handleSelectFood(food)}
                     >
                       {/* Favorit */}
                       <button
+                        type="button"
                         onClick={e => handleToggleFavorite(e, food.id)}
                         disabled={isTogglingFavorite}
                         className="p-0.5 rounded hover:bg-neutral-100 flex-shrink-0"
@@ -209,7 +213,7 @@ export function PlateCalculator({
 
                       {/* Färgprick */}
                       <ColorDot color={food.energy_density_color} />
-                    </button>
+                    </div>
                   )
                 })}
               </div>

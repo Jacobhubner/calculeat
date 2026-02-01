@@ -44,14 +44,14 @@ export function ColorBalanceCard({
     <div className={cn('space-y-3', className)}>
       {/* Header with info tooltip */}
       <div className="flex items-center justify-between">
-        <h3 className="font-medium text-neutral-700">Färgbalans</h3>
+        <h3 className="font-medium text-neutral-700">Kaloritäthet</h3>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
               <Info className="h-4 w-4 text-neutral-400 cursor-help" />
             </TooltipTrigger>
             <TooltipContent side="left" className="max-w-xs">
-              <p className="font-medium mb-1">Färgkategorier</p>
+              <p className="font-medium mb-1">Kaloritäthet</p>
               <p className="text-xs text-neutral-300 mb-2">
                 Livsmedel kategoriseras efter energitäthet (kalorier per gram):
               </p>
@@ -118,7 +118,7 @@ export function ColorBalanceCard({
         <CardHeader className="pb-2">
           <CardTitle className="text-lg flex items-center gap-2">
             <span className="text-lg">🎨</span>
-            Färgbalans
+            Kaloritäthet
           </CardTitle>
         </CardHeader>
         <CardContent>{content}</CardContent>
@@ -145,8 +145,8 @@ function ColorRow({
   calories,
   status,
   targetPercent,
-  caloriesMin: _caloriesMin,
-  caloriesMax: _caloriesMax,
+  caloriesMin,
+  caloriesMax,
 }: ColorRowProps) {
   const statusConfig = getStatusBadgeConfig(status)
 
@@ -191,7 +191,7 @@ function ColorRow({
       <div className="flex items-center gap-3">
         <span className={cn('text-sm font-semibold', classes.text)}>{calories} kcal</span>
         <span className={cn('text-xs', classes.lightText)}>
-          mål: {Math.round(targetPercent * 100)}%
+          {Math.round(caloriesMin * targetPercent)} - {Math.round(caloriesMax * targetPercent)} kcal
         </span>
         <span className={cn('text-sm font-medium', statusConfig.colorClass)}>
           {status.displayText}

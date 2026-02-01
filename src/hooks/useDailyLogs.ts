@@ -305,7 +305,10 @@ export function useAddFoodToMeal() {
       return data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['dailyLogs'] })
+      // Small delay to allow database triggers to complete before refetching
+      setTimeout(() => {
+        queryClient.refetchQueries({ queryKey: ['dailyLogs'] })
+      }, 100)
     },
   })
 }
@@ -326,7 +329,10 @@ export function useRemoveFoodFromMeal() {
       if (error) throw error
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['dailyLogs'] })
+      // Small delay to allow database triggers to complete before refetching
+      setTimeout(() => {
+        queryClient.refetchQueries({ queryKey: ['dailyLogs'] })
+      }, 100)
     },
   })
 }
@@ -362,7 +368,10 @@ export function useUpdateMealItem() {
       return data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['dailyLogs'] })
+      // Small delay to allow database triggers to complete before refetching
+      setTimeout(() => {
+        queryClient.refetchQueries({ queryKey: ['dailyLogs'] })
+      }, 100)
     },
   })
 }
@@ -397,7 +406,10 @@ export function useCreateMealEntry() {
       return data as MealEntry
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['dailyLogs'] })
+      // Small delay to allow database triggers to complete before refetching
+      setTimeout(() => {
+        queryClient.refetchQueries({ queryKey: ['dailyLogs'] })
+      }, 100)
     },
   })
 }
@@ -422,7 +434,10 @@ export function useDeleteMealEntry() {
       if (error) throw error
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['dailyLogs'] })
+      // Small delay to allow database triggers to complete before refetching
+      setTimeout(() => {
+        queryClient.refetchQueries({ queryKey: ['dailyLogs'] })
+      }, 100)
     },
   })
 }
