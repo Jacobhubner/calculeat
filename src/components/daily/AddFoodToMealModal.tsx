@@ -103,7 +103,7 @@ export function AddFoodToMealModal({
   }, [mealName, mealSettings, preselectedFood])
 
   // Handle modal open/close state changes
-  // eslint-disable-next-line react-hooks/set-state-in-effect -- Legitimate pattern for syncing state on open/close
+  /* eslint-disable react-hooks/set-state-in-effect -- Legitimate pattern for syncing state on open/close */
   useEffect(() => {
     if (open && !prevOpenRef.current) {
       // Modal just opened
@@ -114,6 +114,7 @@ export function AddFoodToMealModal({
     }
     prevOpenRef.current = open
   }, [open, initializeForm, resetForm])
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   // Calculate nutrition preview
   const nutritionPreview = useMemo(() => {
@@ -125,10 +126,51 @@ export function AddFoodToMealModal({
     isPreselectedRef.current = false // Reset flag for manual selection
     setSelectedFood(food)
     setSearchQuery('')
-    // Set default unit and amount for manually selected food
+
+    // Determine display mode: first check localStorage, then use same default logic as FoodItemsPage
     const availableUnits = getAvailableUnits(food)
-    setSelectedUnit(availableUnits[0])
-    setAmount(food.default_amount)
+    let displayMode: string | null = null
+
+    try {
+      const savedMode = localStorage.getItem(`food-display-mode:${food.id}`)
+      if (savedMode) {
+        displayMode = (JSON.parse(savedMode) as { mode: string }).mode
+      }
+    } catch {
+      // Ignore localStorage errors
+    }
+
+    // If no saved mode, determine default (same logic as FoodItemsPage getDefaultDisplayMode)
+    if (!displayMode) {
+      if (food.grams_per_piece && food.serving_unit && food.kcal_per_unit) {
+        displayMode = 'serving'
+      } else {
+        displayMode = 'per100g'
+      }
+    }
+
+    // Map display mode to unit and amount
+    let defaultUnit: string
+    let defaultAmount: number
+    if (displayMode === 'serving') {
+      defaultUnit = food.serving_unit || 'st'
+      defaultAmount = 1
+    } else if (displayMode === 'perVolume') {
+      defaultUnit = 'ml'
+      defaultAmount = 100
+    } else {
+      defaultUnit = 'g'
+      defaultAmount = 100
+    }
+
+    // Ensure selected unit is available, fallback to first available
+    if (!availableUnits.includes(defaultUnit)) {
+      defaultUnit = availableUnits[0]
+      defaultAmount = food.default_amount
+    }
+
+    setSelectedUnit(defaultUnit)
+    setAmount(defaultAmount)
   }
 
   const handleAddFood = async () => {

@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useProfileData } from '@/hooks/useProfileData'
 import { useMeasurementSets, useActiveProfile } from '@/hooks'
+import { useMeasurementSetStore } from '@/stores/measurementSetStore'
 import EmptyState from '@/components/EmptyState'
 import {
   calculateAllModels,
@@ -37,10 +38,20 @@ export default function GeneticPotentialTool() {
   const profileData = useProfileData(['height_cm', 'gender', 'weight_kg', 'body_fat_percentage'])
   const { data: measurementSets } = useMeasurementSets()
 
-  // Get wrist/ankle från senaste measurement set
-  const latestMeasurement = useMemo(() => {
+  // Get the actively selected measurement set from the store
+  const activeMeasurementSet = useMeasurementSetStore(state => state.activeMeasurementSet)
+
+  // Use the active measurement set if available, otherwise fall back to the first one
+  const currentMeasurement = useMemo(() => {
+    // First try to use the active measurement set
+    if (activeMeasurementSet) {
+      // Find the full measurement data in the fetched list
+      const fullData = measurementSets?.find(s => s.id === activeMeasurementSet.id)
+      if (fullData) return fullData
+    }
+    // Fallback to first measurement set if no active set
     return measurementSets && measurementSets.length > 0 ? measurementSets[0] : null
-  }, [measurementSets])
+  }, [activeMeasurementSet, measurementSets])
 
   const [selectedFormulaIndex, setSelectedFormulaIndex] = useState(0)
   const [caseyButtMethod, setCaseyButtMethod] = useState<'standard' | 'personalized'>('standard')
@@ -53,18 +64,20 @@ export default function GeneticPotentialTool() {
   )
 
   // Manual wrist and ankle measurements for Casey Butt model
-  const [manualWrist, setManualWrist] = useState<number | undefined>(latestMeasurement?.wrist)
-  const [manualAnkle, setManualAnkle] = useState<number | undefined>(latestMeasurement?.ankle)
+  const [manualWrist, setManualWrist] = useState<number | undefined>(currentMeasurement?.wrist)
+  const [manualAnkle, setManualAnkle] = useState<number | undefined>(currentMeasurement?.ankle)
 
-  // Sync manual measurements with latest measurement when it changes
+  // Sync manual measurements with active measurement set when it changes
+  /* eslint-disable react-hooks/set-state-in-effect -- Syncing external store state to local state */
   useEffect(() => {
-    if (latestMeasurement?.wrist !== undefined) {
-      setManualWrist(latestMeasurement.wrist)
+    if (currentMeasurement?.wrist !== undefined) {
+      setManualWrist(currentMeasurement.wrist)
     }
-    if (latestMeasurement?.ankle !== undefined) {
-      setManualAnkle(latestMeasurement.ankle)
+    if (currentMeasurement?.ankle !== undefined) {
+      setManualAnkle(currentMeasurement.ankle)
     }
-  }, [latestMeasurement])
+  }, [currentMeasurement])
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   // Beräkna resultat
   const results = useMemo(() => {
@@ -75,11 +88,11 @@ export default function GeneticPotentialTool() {
       gender: profileData.gender,
       wristCm: manualWrist,
       ankleCm: manualAnkle,
-      currentWeight: latestMeasurement?.weight_kg || profileData.weight_kg,
+      currentWeight: currentMeasurement?.weight_kg || profileData.weight_kg,
       currentBodyFat: profileData.body_fat_percentage,
       caseyButtMethod,
     })
-  }, [profileData, manualWrist, manualAnkle, latestMeasurement?.weight_kg, caseyButtMethod])
+  }, [profileData, manualWrist, manualAnkle, currentMeasurement?.weight_kg, caseyButtMethod])
 
   // Check if profile exists - show empty state if no profile
   if (!profile) {
@@ -264,8 +277,8 @@ export default function GeneticPotentialTool() {
                       </h4>
                       <p className="text-xs text-neutral-600 mb-4">
                         Dessa mått används för att beräkna skelettstruktur och muskelpotential.
-                        {latestMeasurement?.wrist || latestMeasurement?.ankle
-                          ? ' Värden är förifyllda från ditt senaste måttkort.'
+                        {currentMeasurement?.wrist || currentMeasurement?.ankle
+                          ? ' Värden är förifyllda från ditt aktiva måttkort.'
                           : ' Ange dina mått manuellt eller spara dem i kroppssammansättning.'}
                       </p>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -279,7 +292,8 @@ export default function GeneticPotentialTool() {
                               onClick={() => {
                                 setModalContent({
                                   title: 'Handled',
-                                  description: 'Mäts på handsidan av processus styloideus, där underarmen är som smalast.',
+                                  description:
+                                    'Mäts på handsidan av processus styloideus, där underarmen är som smalast.',
                                 })
                                 setShowModal(true)
                               }}
@@ -297,7 +311,9 @@ export default function GeneticPotentialTool() {
                             step="0.1"
                             value={manualWrist ?? ''}
                             onChange={e =>
-                              setManualWrist(e.target.value === '' ? undefined : parseFloat(e.target.value))
+                              setManualWrist(
+                                e.target.value === '' ? undefined : parseFloat(e.target.value)
+                              )
                             }
                             placeholder="0.0"
                             className="rounded-xl"
@@ -331,7 +347,9 @@ export default function GeneticPotentialTool() {
                             step="0.1"
                             value={manualAnkle ?? ''}
                             onChange={e =>
-                              setManualAnkle(e.target.value === '' ? undefined : parseFloat(e.target.value))
+                              setManualAnkle(
+                                e.target.value === '' ? undefined : parseFloat(e.target.value)
+                              )
                             }
                             placeholder="0.0"
                             className="rounded-xl"
@@ -666,11 +684,12 @@ export default function GeneticPotentialTool() {
                 <ResultCard
                   result={results[selectedFormulaIndex]}
                   currentBodyFat={profileData?.body_fat_percentage}
-                  currentWeight={latestMeasurement?.weight_kg}
+                  currentWeight={currentMeasurement?.weight_kg}
                   onShowMeasurementInfo={(title: string, description: string) => {
                     setModalContent({ title, description })
                     setShowModal(true)
                   }}
+                  currentMeasurement={currentMeasurement}
                 />
               </CardContent>
             </Card>
@@ -681,7 +700,7 @@ export default function GeneticPotentialTool() {
         {/* Dölj för Lyle McDonald och Alan Aragon - dessa modeller har bara referenstabeller */}
         {results &&
           results.length > 0 &&
-          (latestMeasurement?.weight_kg || profileData?.weight_kg) &&
+          (currentMeasurement?.weight_kg || profileData?.weight_kg) &&
           profileData?.body_fat_percentage &&
           results[selectedFormulaIndex].formula !== 'Lyle McDonalds ramverk' &&
           results[selectedFormulaIndex].formula !== 'Alan Aragons ramverk' && (
@@ -695,7 +714,7 @@ export default function GeneticPotentialTool() {
                     <div className="flex justify-between text-sm mb-1">
                       <span className="text-neutral-600">Vikt:</span>
                       <span className="font-medium">
-                        {(latestMeasurement?.weight_kg || profileData.weight_kg)?.toFixed(1)} kg
+                        {(currentMeasurement?.weight_kg || profileData.weight_kg)?.toFixed(1)} kg
                       </span>
                     </div>
                     <div className="flex justify-between text-sm mb-1">
@@ -708,7 +727,7 @@ export default function GeneticPotentialTool() {
                       <span className="text-neutral-600">Fettfri massa:</span>
                       <span className="font-medium">
                         {(
-                          (latestMeasurement?.weight_kg || profileData.weight_kg) *
+                          (currentMeasurement?.weight_kg || profileData.weight_kg) *
                           (1 - profileData.body_fat_percentage / 100)
                         ).toFixed(1)}{' '}
                         kg
@@ -780,7 +799,12 @@ export default function GeneticPotentialTool() {
                 const hasFemaleInstruction = description.includes('Kvinnor:')
                 const hasBulletPoints = description.includes('• ')
 
-                if (hasMethodLabels || hasMaleInstruction || hasFemaleInstruction || hasBulletPoints) {
+                if (
+                  hasMethodLabels ||
+                  hasMaleInstruction ||
+                  hasFemaleInstruction ||
+                  hasBulletPoints
+                ) {
                   type SectionType = 'text' | 'male' | 'female' | 'method' | 'both-genders'
                   const sections: Array<{ type: SectionType; title?: string; content: string }> = []
                   const lines = description.split('\n')
@@ -852,7 +876,11 @@ export default function GeneticPotentialTool() {
                     }
 
                     // Check for gender labels without bullets - keep as part of method section
-                    if (trimmedLine.startsWith('Män:') || trimmedLine.startsWith('Kvinnor:') || trimmedLine.startsWith('Båda könen:')) {
+                    if (
+                      trimmedLine.startsWith('Män:') ||
+                      trimmedLine.startsWith('Kvinnor:') ||
+                      trimmedLine.startsWith('Båda könen:')
+                    ) {
                       // Add to current method section instead of creating new section
                       currentSection.push(line)
                       return
@@ -916,7 +944,9 @@ export default function GeneticPotentialTool() {
                               key={idx}
                               className="bg-amber-50 border-amber-200 border rounded-lg p-4"
                             >
-                              <p className="font-semibold text-amber-700 mb-2">📋 {section.title}</p>
+                              <p className="font-semibold text-amber-700 mb-2">
+                                📋 {section.title}
+                              </p>
                               {section.content && (
                                 <p className="text-amber-900 leading-relaxed whitespace-pre-line">
                                   {section.content}
@@ -1153,11 +1183,18 @@ function ResultCard({
   currentBodyFat,
   currentWeight,
   onShowMeasurementInfo,
+  currentMeasurement,
 }: {
   result: GeneticPotentialResult
   currentBodyFat?: number
   currentWeight?: number
   onShowMeasurementInfo?: (title: string, description: string) => void
+  currentMeasurement?: {
+    neck?: number
+    forearm?: number
+    thigh_circ?: number
+    calf_circ?: number
+  } | null
 }) {
   const [isExpanded, setIsExpanded] = useState(false)
   const targetWeights = getTargetWeights(result.maxLeanMass)
@@ -1230,7 +1267,7 @@ function ResultCard({
                 <p className="text-xs text-yellow-800 leading-relaxed">
                   För att beräkna dina resultat med Casey Butts modell behöver du ange omkretsmått
                   för handled och fotled i fälten ovan. Dessa mått kan antingen förifyllas från ditt
-                  senaste måttkort i Kroppssammansättning, eller så kan du ange dem manuellt.
+                  aktiva måttkort i Kroppssammansättning, eller så kan du ange dem manuellt.
                 </p>
               </div>
             </div>
@@ -1246,7 +1283,9 @@ function ResultCard({
             <div className="space-y-2">
               <div className="flex justify-between items-center">
                 <p className="text-xs text-neutral-600">Maximal fettfri massa (MLBM):</p>
-                <p className="text-lg font-bold text-green-700">{result.maxLeanMass.toFixed(1)} kg</p>
+                <p className="text-lg font-bold text-green-700">
+                  {result.maxLeanMass.toFixed(1)} kg
+                </p>
               </div>
               <div className="flex justify-between items-center">
                 <p className="text-xs text-neutral-600">Maximal kroppsvikt (MBW):</p>
@@ -1392,160 +1431,184 @@ function ResultCard({
               </p>
             </div>
 
-            {/* Max Measurements */}
+            {/* Measurements table */}
             <h4 className="font-medium text-sm text-neutral-900 mt-4 mb-3">Maximala kroppsmått</h4>
 
-            {/* Upper body measurements */}
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-lg p-3">
-              <p className="text-xs font-medium text-blue-900 mb-2">Överkropp</p>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <div className="flex items-center gap-1">
-                    <p className="text-xs text-blue-600">Bröst</p>
-                    {onShowMeasurementInfo && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          onShowMeasurementInfo(
-                            'Bröst',
-                            'Lyft armarna och placera måttbandet runt övre delen av överkroppen, under armhålorna, innan armarna sänks längs sidorna. Bröstomkretsen mäts horisontellt vid utandning och i avslappnat tillstånd.'
-                          )
-                        }}
-                        className="text-blue-400 hover:text-blue-600 transition-colors cursor-pointer"
-                        aria-label="Visa information om Bröst"
-                      >
-                        <Info className="h-3 w-3" />
-                      </button>
-                    )}
-                  </div>
-                  <p className="text-base font-bold text-blue-900">
-                    {result.maxMeasurements.chestCm.toFixed(1)} cm
-                  </p>
-                </div>
-                <div>
-                  <div className="flex items-center gap-1">
-                    <p className="text-xs text-blue-600">Biceps</p>
-                    {onShowMeasurementInfo && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          onShowMeasurementInfo(
-                            'Biceps',
-                            'Mätt i spänt läge vid den största omkretsen, med armen lyft framåt och armbågen i 45°.'
-                          )
-                        }}
-                        className="text-blue-400 hover:text-blue-600 transition-colors cursor-pointer"
-                        aria-label="Visa information om Biceps"
-                      >
-                        <Info className="h-3 w-3" />
-                      </button>
-                    )}
-                  </div>
-                  <p className="text-base font-bold text-blue-900">
-                    {result.maxMeasurements.bicepsCm.toFixed(1)} cm
-                  </p>
-                </div>
-                <div>
-                  <div className="flex items-center gap-1">
-                    <p className="text-xs text-blue-600">Underarmar</p>
-                    {onShowMeasurementInfo && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          onShowMeasurementInfo(
-                            'Underarmar',
-                            'Med knuten näve och armen rakt ut mäts omkretsen vid största punkten, oftast närmare armbågen.'
-                          )
-                        }}
-                        className="text-blue-400 hover:text-blue-600 transition-colors cursor-pointer"
-                        aria-label="Visa information om Underarmar"
-                      >
-                        <Info className="h-3 w-3" />
-                      </button>
-                    )}
-                  </div>
-                  <p className="text-base font-bold text-blue-900">
-                    {result.maxMeasurements.forearmsCm.toFixed(1)} cm
-                  </p>
-                </div>
-                <div>
-                  <div className="flex items-center gap-1">
-                    <p className="text-xs text-blue-600">Nacke</p>
-                    {onShowMeasurementInfo && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          onShowMeasurementInfo(
-                            'Nacke',
-                            'Enligt Topend Sports: Omedelbart ovanför adamsäpplet.\nEnligt Casey Butt: Strax nedanför adamsäpplet, vid det smalaste området.\n\nPersonen ska hålla huvudet upprätt och titta rakt fram.'
-                          )
-                        }}
-                        className="text-blue-400 hover:text-blue-600 transition-colors cursor-pointer"
-                        aria-label="Visa information om Nacke"
-                      >
-                        <Info className="h-3 w-3" />
-                      </button>
-                    )}
-                  </div>
-                  <p className="text-base font-bold text-blue-900">
-                    {result.maxMeasurements.neckCm.toFixed(1)} cm
-                  </p>
-                </div>
-              </div>
-            </div>
+            {(() => {
+              const allMeasurements = [
+                {
+                  label: 'Bröst',
+                  max: result.maxMeasurements.chestCm,
+                  current: undefined,
+                  group: 'upper' as const,
+                  infoTitle: 'Bröst',
+                  infoDesc:
+                    'Lyft armarna och placera måttbandet runt övre delen av överkroppen, under armhålorna, innan armarna sänks längs sidorna. Bröstomkretsen mäts horisontellt vid utandning och i avslappnat tillstånd.',
+                },
+                {
+                  label: 'Biceps',
+                  max: result.maxMeasurements.bicepsCm,
+                  current: undefined,
+                  group: 'upper' as const,
+                  infoTitle: 'Biceps',
+                  infoDesc:
+                    'Mätt i spänt läge vid den största omkretsen, med armen lyft framåt och armbågen i 45°.',
+                },
+                {
+                  label: 'Underarmar',
+                  max: result.maxMeasurements.forearmsCm,
+                  current: currentMeasurement?.forearm,
+                  group: 'upper' as const,
+                  infoTitle: 'Underarmar',
+                  infoDesc:
+                    'Med knuten näve och armen rakt ut mäts omkretsen vid största punkten, oftast närmare armbågen.',
+                },
+                {
+                  label: 'Nacke',
+                  max: result.maxMeasurements.neckCm,
+                  current: currentMeasurement?.neck,
+                  group: 'upper' as const,
+                  infoTitle: 'Nacke',
+                  infoDesc:
+                    'Enligt Topend Sports: Omedelbart ovanför adamsäpplet.\nEnligt Casey Butt: Strax nedanför adamsäpplet, vid det smalaste området.\n\nPersonen ska hålla huvudet upprätt och titta rakt fram.',
+                },
+                {
+                  label: 'Lår',
+                  max: result.maxMeasurements.thighsCm,
+                  current: currentMeasurement?.thigh_circ,
+                  group: 'lower' as const,
+                  infoTitle: 'Lår',
+                  infoDesc:
+                    'Mäts vid mittpunkten på lårets utsida, halvvägs mellan trochanter major och laterala tibiakondylen.',
+                },
+                {
+                  label: 'Vader',
+                  max: result.maxMeasurements.calvesCm,
+                  current: currentMeasurement?.calf_circ,
+                  group: 'lower' as const,
+                  infoTitle: 'Vader',
+                  infoDesc: 'Mäts vid största omkretsen, med musklerna avslappnade.',
+                },
+              ]
 
-            {/* Lower body measurements */}
-            <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-lg p-3">
-              <p className="text-xs font-medium text-purple-900 mb-2">Underkropp</p>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <div className="flex items-center gap-1">
-                    <p className="text-xs text-purple-600">Lår</p>
-                    {onShowMeasurementInfo && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          onShowMeasurementInfo(
-                            'Lår',
-                            'Mäts vid mittpunkten på lårets utsida, halvvägs mellan trochanter major och laterala tibiakondylen.'
-                          )
-                        }}
-                        className="text-purple-400 hover:text-purple-600 transition-colors cursor-pointer"
-                        aria-label="Visa information om Lår"
-                      >
-                        <Info className="h-3 w-3" />
-                      </button>
-                    )}
-                  </div>
-                  <p className="text-base font-bold text-purple-900">
-                    {result.maxMeasurements.thighsCm.toFixed(1)} cm
-                  </p>
+              const hasAnyCurrent = allMeasurements.some(m => m.current != null)
+
+              return (
+                <div className="border border-neutral-200 rounded-lg overflow-hidden">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="bg-neutral-50 border-b border-neutral-200">
+                        <th className="text-left p-2.5 text-xs font-semibold text-neutral-600">
+                          Mått
+                        </th>
+                        {hasAnyCurrent && (
+                          <th className="text-right p-2.5 text-xs font-semibold text-neutral-600">
+                            Ditt mått
+                          </th>
+                        )}
+                        <th className="text-right p-2.5 text-xs font-semibold text-neutral-600">
+                          Max
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {/* Överkropp header */}
+                      <tr className="bg-blue-50/50">
+                        <td
+                          colSpan={hasAnyCurrent ? 3 : 2}
+                          className="px-2.5 py-1.5 text-xs font-semibold text-blue-700"
+                        >
+                          Överkropp
+                        </td>
+                      </tr>
+                      {allMeasurements
+                        .filter(m => m.group === 'upper')
+                        .map(({ label, max, current, infoTitle, infoDesc }) => (
+                          <tr key={label} className="border-b border-neutral-100 last:border-b-0">
+                            <td className="p-2.5">
+                              <div className="flex items-center gap-1">
+                                <span className="text-sm text-neutral-700">{label}</span>
+                                {onShowMeasurementInfo && (
+                                  <button
+                                    type="button"
+                                    onClick={() => onShowMeasurementInfo(infoTitle, infoDesc)}
+                                    className="text-neutral-400 hover:text-primary-600 transition-colors cursor-pointer"
+                                    aria-label={`Visa information om ${label}`}
+                                  >
+                                    <Info className="h-3 w-3" />
+                                  </button>
+                                )}
+                              </div>
+                            </td>
+                            {hasAnyCurrent && (
+                              <td className="p-2.5 text-right">
+                                {current != null ? (
+                                  <span className="text-sm font-medium text-neutral-900">
+                                    {current.toFixed(1)} cm
+                                  </span>
+                                ) : (
+                                  <span className="text-sm text-neutral-300">—</span>
+                                )}
+                              </td>
+                            )}
+                            <td className="p-2.5 text-right">
+                              <span className="text-sm font-bold text-blue-700">
+                                {max.toFixed(1)} cm
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      {/* Underkropp header */}
+                      <tr className="bg-purple-50/50 border-t border-neutral-200">
+                        <td
+                          colSpan={hasAnyCurrent ? 3 : 2}
+                          className="px-2.5 py-1.5 text-xs font-semibold text-purple-700"
+                        >
+                          Underkropp
+                        </td>
+                      </tr>
+                      {allMeasurements
+                        .filter(m => m.group === 'lower')
+                        .map(({ label, max, current, infoTitle, infoDesc }) => (
+                          <tr key={label} className="border-b border-neutral-100 last:border-b-0">
+                            <td className="p-2.5">
+                              <div className="flex items-center gap-1">
+                                <span className="text-sm text-neutral-700">{label}</span>
+                                {onShowMeasurementInfo && (
+                                  <button
+                                    type="button"
+                                    onClick={() => onShowMeasurementInfo(infoTitle, infoDesc)}
+                                    className="text-neutral-400 hover:text-primary-600 transition-colors cursor-pointer"
+                                    aria-label={`Visa information om ${label}`}
+                                  >
+                                    <Info className="h-3 w-3" />
+                                  </button>
+                                )}
+                              </div>
+                            </td>
+                            {hasAnyCurrent && (
+                              <td className="p-2.5 text-right">
+                                {current != null ? (
+                                  <span className="text-sm font-medium text-neutral-900">
+                                    {current.toFixed(1)} cm
+                                  </span>
+                                ) : (
+                                  <span className="text-sm text-neutral-300">—</span>
+                                )}
+                              </td>
+                            )}
+                            <td className="p-2.5 text-right">
+                              <span className="text-sm font-bold text-purple-700">
+                                {max.toFixed(1)} cm
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
                 </div>
-                <div>
-                  <div className="flex items-center gap-1">
-                    <p className="text-xs text-purple-600">Vader</p>
-                    {onShowMeasurementInfo && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          onShowMeasurementInfo(
-                            'Vader',
-                            'Mäts vid största omkretsen, med musklerna avslappnade.'
-                          )
-                        }}
-                        className="text-purple-400 hover:text-purple-600 transition-colors cursor-pointer"
-                        aria-label="Visa information om Vader"
-                      >
-                        <Info className="h-3 w-3" />
-                      </button>
-                    )}
-                  </div>
-                  <p className="text-base font-bold text-purple-900">
-                    {result.maxMeasurements.calvesCm.toFixed(1)} cm
-                  </p>
-                </div>
-              </div>
-            </div>
+              )
+            })()}
           </div>
         )}
     </div>

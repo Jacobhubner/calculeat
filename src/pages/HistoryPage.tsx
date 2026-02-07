@@ -10,8 +10,10 @@ import {
   Check,
   ChevronRight,
   BarChart3,
+  Trash2,
 } from 'lucide-react'
-import { useDailyLogs } from '@/hooks/useDailyLogs'
+import { useDailyLogs, useDeleteDailyLog } from '@/hooks/useDailyLogs'
+import { toast } from 'sonner'
 import EmptyState from '@/components/EmptyState'
 
 export default function HistoryPage() {
@@ -28,6 +30,26 @@ export default function HistoryPage() {
   }, [])
 
   const { data: logs, isLoading } = useDailyLogs(startDate, endDate)
+  const deleteDailyLog = useDeleteDailyLog()
+
+  const handleDeleteDay = (logId: string, logDate: string, e: React.MouseEvent) => {
+    e.stopPropagation() // Prevent navigation to day detail
+    if (
+      !confirm(
+        `Vill du radera loggen för ${new Date(logDate).toLocaleDateString('sv-SE')}? Detta kan inte ångras.`
+      )
+    ) {
+      return
+    }
+    deleteDailyLog.mutate(logId, {
+      onSuccess: () => {
+        toast.success('Dagen har raderats')
+      },
+      onError: () => {
+        toast.error('Kunde inte radera dagen')
+      },
+    })
+  }
 
   // Calculate stats
   const completedDays = logs?.filter(log => log.is_completed).length || 0
@@ -189,7 +211,7 @@ export default function HistoryPage() {
                                       </div>
                                     </div>
                                   </div>
-                                  <div className="flex items-center gap-3">
+                                  <div className="flex items-center gap-2">
                                     <div className="flex gap-1">
                                       {log.green_calories > 0 && (
                                         <div className="h-2 w-2 rounded-full bg-green-600" />
@@ -201,6 +223,14 @@ export default function HistoryPage() {
                                         <div className="h-2 w-2 rounded-full bg-orange-600" />
                                       )}
                                     </div>
+                                    <button
+                                      onClick={e => handleDeleteDay(log.id, log.log_date, e)}
+                                      className="p-1.5 rounded-md text-neutral-300 hover:text-red-500 hover:bg-red-50 transition-colors"
+                                      title="Radera dag"
+                                      disabled={deleteDailyLog.isPending}
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                    </button>
                                     <ChevronRight className="h-5 w-5 text-neutral-400" />
                                   </div>
                                 </div>

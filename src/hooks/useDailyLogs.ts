@@ -443,6 +443,31 @@ export function useDeleteMealEntry() {
 }
 
 /**
+ * Delete a daily log and all its meal entries/items
+ */
+export function useDeleteDailyLog() {
+  const { user } = useAuth()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (dailyLogId: string) => {
+      if (!user) throw new Error('User not authenticated')
+
+      const { error } = await supabase
+        .from('daily_logs')
+        .delete()
+        .eq('id', dailyLogId)
+        .eq('user_id', user.id)
+
+      if (error) throw error
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['dailyLogs'] })
+    },
+  })
+}
+
+/**
  * Mark today's log as completed
  */
 export function useFinishDay() {
