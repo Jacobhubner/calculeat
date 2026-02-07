@@ -1,7 +1,6 @@
 import { cn } from '@/lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Check, X, Sparkles } from 'lucide-react'
-import { EnergyDensityCompact } from './EnergyDensityIndicator'
 
 interface ChecklistItem {
   id: string
@@ -14,8 +13,6 @@ interface DailyChecklistProps {
   caloriesOk: boolean
   macrosOk: boolean
   colorBalanceOk: boolean
-  energyDensity?: number
-  showEnergyDensity?: boolean
   showCard?: boolean
   className?: string
 }
@@ -23,14 +20,11 @@ interface DailyChecklistProps {
 /**
  * Checklist widget showing daily nutrition goals progress
  * 3 items: Calories, Macros, Color Balance
- * Energy density shown informatively (not pass/fail)
  */
 export function DailyChecklist({
   caloriesOk,
   macrosOk,
   colorBalanceOk,
-  energyDensity,
-  showEnergyDensity = true,
   showCard = true,
   className,
 }: DailyChecklistProps) {
@@ -93,14 +87,6 @@ export function DailyChecklist({
           />
         </div>
       </div>
-
-      {/* Energy density (informative, not part of checklist) */}
-      {showEnergyDensity && energyDensity !== undefined && (
-        <div className="pt-3 mt-3 border-t">
-          <p className="text-xs font-medium text-neutral-500 mb-2">ENERGITÄTHET</p>
-          <EnergyDensityCompact density={energyDensity} />
-        </div>
-      )}
     </div>
   )
 

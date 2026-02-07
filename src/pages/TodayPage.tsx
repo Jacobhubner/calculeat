@@ -2,8 +2,8 @@ import { useEffect, useMemo, useState } from 'react'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { RangeProgressBar, MealProgressBar } from '@/components/daily/RangeProgressBar'
-import CalorieRing from '@/components/CalorieRing'
+import { MealProgressBar } from '@/components/daily/RangeProgressBar'
+import { ZonedCalorieRing } from '@/components/daily/ZonedCalorieRing'
 import EmptyState from '@/components/EmptyState'
 import RecentFoodsCard from '@/components/RecentFoodsCard'
 import { AddFoodToMealModal } from '@/components/daily/AddFoodToMealModal'
@@ -342,28 +342,102 @@ export default function TodayPage() {
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Main Content - Meals */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Progress Overview */}
+          {/* Progress Overview - Combined View */}
           <Card>
-            <CardHeader>
+            <CardHeader className="pb-2">
               <CardTitle className="flex items-center gap-2">
                 <Sparkles className="h-5 w-5 text-primary-600" />
                 Dagens framsteg
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* Calorie Progress with Range Bar */}
-              <RangeProgressBar
-                value={totalCalories}
-                min={goalCaloriesMin}
-                max={goalCalories}
-                label="Kalorier"
-                unit="kcal"
-              />
+              {/* Top row: Calorie Ring + Macros */}
+              <div className="flex flex-col lg:flex-row gap-6">
+                {/* Left: Zoned Calorie Ring */}
+                <div className="flex justify-center lg:justify-start">
+                  <ZonedCalorieRing
+                    consumed={totalCalories}
+                    min={goalCaloriesMin}
+                    max={goalCalories}
+                    size="md"
+                  />
+                </div>
 
-              {/* Energy Density */}
-              {dailySummary && dailySummary.energyDensity > 0 && (
-                <EnergyDensityIndicator density={dailySummary.energyDensity} size="sm" />
-              )}
+                {/* Right: Makromål + Energitäthet + Kaloritäthet */}
+                <div className="flex-1 space-y-2">
+                  <h4 className="text-sm font-semibold text-neutral-700">Makromål</h4>
+                  {dailySummary && profile ? (
+                    <>
+                      <NutrientStatusRow
+                        status={dailySummary.proteinStatus}
+                        label={`Protein (${profile.protein_min_percent}-${profile.protein_max_percent}%)`}
+                        unit="g"
+                        showProgress
+                      />
+                      <NutrientStatusRow
+                        status={dailySummary.carbStatus}
+                        label={`Kolhydrater (${profile.carb_min_percent}-${profile.carb_max_percent}%)`}
+                        unit="g"
+                        showProgress
+                      />
+                      <NutrientStatusRow
+                        status={dailySummary.fatStatus}
+                        label={`Fett (${profile.fat_min_percent}-${profile.fat_max_percent}%)`}
+                        unit="g"
+                        showProgress
+                      />
+                    </>
+                  ) : (
+                    <div className="space-y-2 text-sm text-neutral-500">
+                      <div className="flex justify-between">
+                        <span>Protein</span>
+                        <span className="font-medium">{todayLog?.total_protein_g || 0}g</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Kolhydrater</span>
+                        <span className="font-medium">{todayLog?.total_carb_g || 0}g</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Fett</span>
+                        <span className="font-medium">{todayLog?.total_fat_g || 0}g</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Energitäthet */}
+                  <div className="pt-4 mt-2 border-t border-neutral-200">
+                    <EnergyDensityIndicator density={dailySummary?.energyDensity || 0} size="sm" />
+                  </div>
+
+                  {/* Kaloritäthet */}
+                  {dailySummary && (
+                    <div className="pt-4 mt-2 border-t border-neutral-200">
+                      <ColorBalanceCard
+                        greenCalories={dailySummary.greenCalories}
+                        yellowCalories={dailySummary.yellowCalories}
+                        orangeCalories={dailySummary.orangeCalories}
+                        greenStatus={dailySummary.greenStatus}
+                        yellowStatus={dailySummary.yellowStatus}
+                        orangeStatus={dailySummary.orangeStatus}
+                        colorTargets={dailySummary.colorTargets}
+                        caloriesMin={goalCaloriesMin}
+                        caloriesMax={goalCalories}
+                        showCard={false}
+                        size="sm"
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Måltider loggade */}
+              <div className="flex justify-between items-center pt-4 border-t text-sm">
+                <span className="text-neutral-600">Måltider loggade</span>
+                <span className="font-semibold text-neutral-900">
+                  {todayLog?.meals?.filter(m => m.items && m.items.length > 0).length || 0} /{' '}
+                  {mealSettings?.length || 0}
+                </span>
+              </div>
             </CardContent>
           </Card>
 
@@ -537,104 +611,17 @@ export default function TodayPage() {
 
         {/* Sidebar - Summary */}
         <div className="space-y-6">
-          {/* Calorie Ring */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Kalorimål</CardTitle>
-            </CardHeader>
-            <CardContent className="flex justify-center">
-              <CalorieRing
-                consumed={totalCalories}
-                target={goalCalories}
-                min={goalCaloriesMin}
-                max={goalCalories}
-                remaining={Math.max(goalCalories - totalCalories, 0)}
-              />
-            </CardContent>
-          </Card>
-
           {/* Daily Checklist */}
           {dailySummary && (
             <DailyChecklist
               caloriesOk={dailySummary.checklist.caloriesOk}
               macrosOk={dailySummary.checklist.macrosOk}
               colorBalanceOk={dailySummary.checklist.colorBalanceOk}
-              energyDensity={dailySummary.energyDensity}
-              showEnergyDensity={dailySummary.energyDensity > 0}
-            />
-          )}
-
-          {/* Kaloritäthet (Color Balance) */}
-          {dailySummary && (
-            <ColorBalanceCard
-              greenCalories={dailySummary.greenCalories}
-              yellowCalories={dailySummary.yellowCalories}
-              orangeCalories={dailySummary.orangeCalories}
-              greenStatus={dailySummary.greenStatus}
-              yellowStatus={dailySummary.yellowStatus}
-              orangeStatus={dailySummary.orangeStatus}
-              colorTargets={dailySummary.colorTargets}
-              caloriesMin={goalCaloriesMin}
-              caloriesMax={goalCalories}
-              showCard={true}
             />
           )}
 
           {/* Recent Foods */}
           <RecentFoodsCard dailyLogId={todayLog?.id} />
-
-          {/* Macro Goals with Progress */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Makromål</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {dailySummary && profile ? (
-                <>
-                  <NutrientStatusRow
-                    status={dailySummary.proteinStatus}
-                    label={`Protein (${profile.protein_min_percent}-${profile.protein_max_percent}%)`}
-                    unit="g"
-                    showProgress
-                  />
-                  <NutrientStatusRow
-                    status={dailySummary.carbStatus}
-                    label={`Kolhydrater (${profile.carb_min_percent}-${profile.carb_max_percent}%)`}
-                    unit="g"
-                    showProgress
-                  />
-                  <NutrientStatusRow
-                    status={dailySummary.fatStatus}
-                    label={`Fett (${profile.fat_min_percent}-${profile.fat_max_percent}%)`}
-                    unit="g"
-                    showProgress
-                  />
-                </>
-              ) : (
-                <>
-                  <div className="flex justify-between">
-                    <span className="text-sm text-neutral-600">Protein</span>
-                    <span className="text-sm font-semibold">{todayLog?.total_protein_g || 0}g</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm text-neutral-600">Kolhydrater</span>
-                    <span className="text-sm font-semibold">{todayLog?.total_carb_g || 0}g</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm text-neutral-600">Fett</span>
-                    <span className="text-sm font-semibold">{todayLog?.total_fat_g || 0}g</span>
-                  </div>
-                </>
-              )}
-              <div className="flex justify-between pt-3 border-t">
-                <span className="text-sm text-neutral-600">Måltider loggade</span>
-                <span className="text-sm font-semibold">
-                  {todayLog?.meals?.filter(m => m.items && m.items.length > 0).length || 0} /{' '}
-                  {mealSettings?.length || 0}
-                </span>
-              </div>
-            </CardContent>
-          </Card>
 
           {/* Plate Calculator */}
           <PlateCalculator defaultCalories={remainingCalories} onAddToMeal={handleAddFromSidebar} />

@@ -1,7 +1,5 @@
 import { cn } from '@/lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { Info } from 'lucide-react'
 import type { NutrientStatus } from '@/lib/calculations/dailySummary'
 import { getStatusBadgeConfig } from '@/lib/calculations/dailySummary'
 
@@ -20,6 +18,7 @@ interface ColorBalanceCardProps {
   caloriesMin: number
   caloriesMax: number
   showCard?: boolean
+  size?: 'sm' | 'md' // sm = compact for embedding, md = default
   className?: string
 }
 
@@ -38,49 +37,18 @@ export function ColorBalanceCard({
   caloriesMin,
   caloriesMax,
   showCard = true,
+  size = 'md',
   className,
 }: ColorBalanceCardProps) {
+  const isCompact = size === 'sm'
+
   const content = (
-    <div className={cn('space-y-3', className)}>
-      {/* Header with info tooltip */}
-      <div className="flex items-center justify-between">
-        <h3 className="font-medium text-neutral-700">Kaloritäthet</h3>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Info className="h-4 w-4 text-neutral-400 cursor-help" />
-            </TooltipTrigger>
-            <TooltipContent side="left" className="max-w-xs">
-              <p className="font-medium mb-1">Kaloritäthet</p>
-              <p className="text-xs text-neutral-300 mb-2">
-                Livsmedel kategoriseras efter energitäthet (kalorier per gram):
-              </p>
-              <ul className="text-xs space-y-1">
-                <li className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-green-500" />
-                  <span>Grön: Låg energitäthet ({'<'}1 kcal/g)</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-yellow-500" />
-                  <span>Gul: Medel energitäthet (1-2.4 kcal/g)</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-orange-500" />
-                  <span>Orange: Hög energitäthet ({'>'}2.4 kcal/g)</span>
-                </li>
-              </ul>
-              <p className="text-xs text-neutral-400 mt-2">
-                Mål: {Math.round(colorTargets.green * 100)}% grön,{' '}
-                {Math.round(colorTargets.yellow * 100)}% gul,{' '}
-                {Math.round(colorTargets.orange * 100)}% orange
-              </p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </div>
+    <div className={cn(isCompact ? 'space-y-1' : 'space-y-3', className)}>
+      {/* Header */}
+      <h3 className="text-sm font-medium text-neutral-700">Kaloritäthet</h3>
 
       {/* Color rows */}
-      <div className="space-y-2">
+      <div className={isCompact ? 'space-y-1' : 'space-y-2'}>
         <ColorRow
           color="green"
           label="Grön"
@@ -89,6 +57,7 @@ export function ColorBalanceCard({
           targetPercent={colorTargets.green}
           caloriesMin={caloriesMin}
           caloriesMax={caloriesMax}
+          compact={isCompact}
         />
         <ColorRow
           color="yellow"
@@ -98,6 +67,7 @@ export function ColorBalanceCard({
           targetPercent={colorTargets.yellow}
           caloriesMin={caloriesMin}
           caloriesMax={caloriesMax}
+          compact={isCompact}
         />
         <ColorRow
           color="orange"
@@ -107,6 +77,7 @@ export function ColorBalanceCard({
           targetPercent={colorTargets.orange}
           caloriesMin={caloriesMin}
           caloriesMax={caloriesMax}
+          compact={isCompact}
         />
       </div>
     </div>
@@ -137,6 +108,7 @@ interface ColorRowProps {
   targetPercent: number
   caloriesMin: number
   caloriesMax: number
+  compact?: boolean
 }
 
 function ColorRow({
@@ -147,6 +119,7 @@ function ColorRow({
   targetPercent,
   caloriesMin,
   caloriesMax,
+  compact = false,
 }: ColorRowProps) {
   const statusConfig = getStatusBadgeConfig(status)
 
@@ -176,24 +149,42 @@ function ColorRow({
 
   const classes = colorClasses[color]
 
+  if (compact) {
+    // Ultra-compact single-line layout
+    return (
+      <div className="flex items-center gap-2 text-sm">
+        <span className={cn('w-2.5 h-2.5 rounded-full flex-shrink-0', classes.dot)} />
+        <span className={cn('font-medium min-w-[45px]', classes.text)}>{label}</span>
+        <span className={cn('font-semibold', classes.text)}>{calories}</span>
+        <span className="text-neutral-400">/</span>
+        <span className="text-neutral-500">
+          {Math.round(caloriesMin * targetPercent)}-{Math.round(caloriesMax * targetPercent)}
+        </span>
+        <span className={cn('ml-auto font-medium', statusConfig.colorClass)}>
+          {status.displayText}
+        </span>
+      </div>
+    )
+  }
+
   return (
     <div
       className={cn(
-        'flex items-center justify-between p-2 rounded-lg border',
+        'flex items-center justify-between rounded-lg border p-2',
         classes.bg,
         classes.border
       )}
     >
-      <div className="flex items-center gap-2">
-        <span className={cn('w-3 h-3 rounded-full', classes.dot)} />
-        <span className={cn('font-medium', classes.text)}>{label}</span>
+      <div className="flex items-center gap-1.5">
+        <span className={cn('rounded-full w-3 h-3', classes.dot)} />
+        <span className={cn('font-medium text-sm', classes.text)}>{label}</span>
       </div>
       <div className="flex items-center gap-3">
-        <span className={cn('text-sm font-semibold', classes.text)}>{calories} kcal</span>
+        <span className={cn('font-semibold text-sm', classes.text)}>{calories} kcal</span>
         <span className={cn('text-xs', classes.lightText)}>
-          {Math.round(caloriesMin * targetPercent)} - {Math.round(caloriesMax * targetPercent)} kcal
+          {Math.round(caloriesMin * targetPercent)}-{Math.round(caloriesMax * targetPercent)}
         </span>
-        <span className={cn('text-sm font-medium', statusConfig.colorClass)}>
+        <span className={cn('font-medium text-sm', statusConfig.colorClass)}>
           {status.displayText}
         </span>
       </div>

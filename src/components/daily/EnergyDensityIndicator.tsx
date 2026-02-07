@@ -2,42 +2,36 @@ import { cn } from '@/lib/utils'
 import {
   getEnergyDensityColor,
   getEnergyDensityLabel,
-  getEnergyDensityDescription,
   getEnergyDensityColorClass,
 } from '@/lib/calculations/dailySummary'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { Info } from 'lucide-react'
 
 interface EnergyDensityIndicatorProps {
   density: number
   showLabel?: boolean
   showValue?: boolean
-  showTooltip?: boolean
   size?: 'sm' | 'md' | 'lg'
   className?: string
 }
 
 /**
  * Visual indicator for energy density (kcal/gram)
- * Displays as a colored bar with optional label and tooltip
+ * Displays as a colored bar with optional label
  */
 export function EnergyDensityIndicator({
   density,
   showLabel = true,
   showValue = true,
-  showTooltip = true,
   size = 'md',
   className,
 }: EnergyDensityIndicatorProps) {
   const color = getEnergyDensityColor(density)
   const label = getEnergyDensityLabel(density)
-  const description = getEnergyDensityDescription(density)
 
   // Calculate bar width (0-3 kcal/g mapped to 0-100%)
   const barWidth = Math.min((density / 3) * 100, 100)
 
   const sizeClasses = {
-    sm: { bar: 'h-1.5', text: 'text-xs', gap: 'gap-1' },
+    sm: { bar: 'h-1.5', text: 'text-sm', gap: 'gap-2' },
     md: { bar: 'h-2', text: 'text-sm', gap: 'gap-2' },
     lg: { bar: 'h-3', text: 'text-base', gap: 'gap-2' },
   }
@@ -45,27 +39,9 @@ export function EnergyDensityIndicator({
   const content = (
     <div className={cn('space-y-1', className)}>
       <div className={cn('flex items-center justify-between', sizeClasses[size].gap)}>
-        <div className="flex items-center gap-1.5">
-          <span className={cn('font-medium text-neutral-700', sizeClasses[size].text)}>
-            Energitäthet
-          </span>
-          {showTooltip && (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info className="h-3.5 w-3.5 text-neutral-400 cursor-help" />
-                </TooltipTrigger>
-                <TooltipContent side="top" className="max-w-xs">
-                  <p className="font-medium mb-1">Energitäthet: {density.toFixed(2)} kcal/g</p>
-                  <p className="text-xs text-neutral-300">{description}</p>
-                  <p className="text-xs text-neutral-400 mt-2">
-                    Lägre energitäthet = mer mat för samma kalorier = bättre mättnad
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          )}
-        </div>
+        <span className={cn('font-medium text-neutral-700', sizeClasses[size].text)}>
+          Energitäthet
+        </span>
         <div className="flex items-center gap-2">
           {showValue && (
             <span className={cn('font-semibold text-neutral-900', sizeClasses[size].text)}>

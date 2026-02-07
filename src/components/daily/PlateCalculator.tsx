@@ -1,10 +1,9 @@
 import { useState, useMemo } from 'react'
-import { Search, Calculator, Plus, RotateCcw, Check, Heart } from 'lucide-react'
+import { Search, Calculator, Plus, RotateCcw, Check } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useFoodItems, type FoodItem } from '@/hooks/useFoodItems'
-import { useFavoriteFoods, useToggleFavorite } from '@/hooks/useFavoriteFoods'
 import { calculatePlateAmount } from '@/lib/calculations/plateCalculator'
 
 interface PlateCalculatorProps {
@@ -32,41 +31,24 @@ export function PlateCalculator({
   const [selectedFood, setSelectedFood] = useState<FoodItem | null>(null)
 
   const { data: foods } = useFoodItems()
-  const { data: favorites } = useFavoriteFoods()
-  const { toggle: toggleFavorite, isPending: isTogglingFavorite } = useToggleFavorite()
 
-  // Filtrera och sortera livsmedel
+  // Filtrera livsmedel
   const filteredFoods = useMemo(() => {
     if (!foods) return []
 
-    let filtered: FoodItem[]
-
     if (!searchQuery.trim()) {
-      filtered = foods.slice(0, 15)
-    } else {
-      const query = searchQuery.toLowerCase()
-      filtered = foods
-        .filter(
-          food =>
-            food.name.toLowerCase().includes(query) ||
-            (food.brand && food.brand.toLowerCase().includes(query))
-        )
-        .slice(0, 12)
+      return foods.slice(0, 15)
     }
 
-    // Sortera favoriter först
-    if (favorites) {
-      return filtered.sort((a, b) => {
-        const aIsFav = favorites.has(a.id)
-        const bIsFav = favorites.has(b.id)
-        if (aIsFav && !bIsFav) return -1
-        if (!aIsFav && bIsFav) return 1
-        return 0
-      })
-    }
-
-    return filtered
-  }, [foods, searchQuery, favorites])
+    const query = searchQuery.toLowerCase()
+    return foods
+      .filter(
+        food =>
+          food.name.toLowerCase().includes(query) ||
+          (food.brand && food.brand.toLowerCase().includes(query))
+      )
+      .slice(0, 12)
+  }, [foods, searchQuery])
 
   // Beräkna portion
   const calculation = useMemo(() => {
@@ -89,11 +71,6 @@ export function PlateCalculator({
     setSelectedFood(null)
     setTargetCalories('')
     setSearchQuery('')
-  }
-
-  const handleToggleFavorite = async (e: React.MouseEvent, foodId: string) => {
-    e.stopPropagation()
-    await toggleFavorite(foodId)
   }
 
   // Beräkna kcal/100g för visning
@@ -176,46 +153,29 @@ export function PlateCalculator({
             {/* Söklista - KOMPAKT EN-RADS FORMAT */}
             {filteredFoods.length > 0 && (
               <div className="mt-2 border rounded-lg max-h-52 overflow-y-auto">
-                {filteredFoods.map(food => {
-                  const isFavorite = favorites?.has(food.id) ?? false
-                  return (
-                    <div
-                      key={food.id}
-                      onClick={() => handleSelectFood(food)}
-                      className="w-full text-left px-2 py-1.5 hover:bg-neutral-50 transition-colors border-b last:border-b-0 flex items-center gap-2 cursor-pointer"
-                      role="button"
-                      tabIndex={0}
-                      onKeyDown={e => e.key === 'Enter' && handleSelectFood(food)}
-                    >
-                      {/* Favorit */}
-                      <button
-                        type="button"
-                        onClick={e => handleToggleFavorite(e, food.id)}
-                        disabled={isTogglingFavorite}
-                        className="p-0.5 rounded hover:bg-neutral-100 flex-shrink-0"
-                      >
-                        <Heart
-                          className={`h-3.5 w-3.5 ${
-                            isFavorite ? 'fill-red-500 text-red-500' : 'text-neutral-300'
-                          }`}
-                        />
-                      </button>
+                {filteredFoods.map(food => (
+                  <div
+                    key={food.id}
+                    onClick={() => handleSelectFood(food)}
+                    className="w-full text-left px-2 py-1.5 hover:bg-neutral-50 transition-colors border-b last:border-b-0 flex items-center gap-2 cursor-pointer"
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={e => e.key === 'Enter' && handleSelectFood(food)}
+                  >
+                    {/* Namn - kan radbrytas */}
+                    <span className="text-sm text-neutral-900 flex-1 min-w-0 leading-tight">
+                      {food.name}
+                    </span>
 
-                      {/* Namn - kan radbrytas */}
-                      <span className="text-sm text-neutral-900 flex-1 min-w-0 leading-tight">
-                        {food.name}
-                      </span>
+                    {/* Kalorier */}
+                    <span className="text-xs text-neutral-500 whitespace-nowrap flex-shrink-0">
+                      {getKcalPer100g(food)} kcal
+                    </span>
 
-                      {/* Kalorier */}
-                      <span className="text-xs text-neutral-500 whitespace-nowrap flex-shrink-0">
-                        {getKcalPer100g(food)} kcal
-                      </span>
-
-                      {/* Färgprick */}
-                      <ColorDot color={food.energy_density_color} />
-                    </div>
-                  )
-                })}
+                    {/* Färgprick */}
+                    <ColorDot color={food.energy_density_color} />
+                  </div>
+                ))}
               </div>
             )}
 
