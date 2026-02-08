@@ -154,17 +154,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const deleteAccount = async () => {
-    const { data, error } = await supabase.functions.invoke('delete-account', {
+    // Use fetch directly to get proper error details from edge function
+    const session = await supabase.auth.getSession()
+    const token = session.data.session?.access_token
+    if (!token) throw new Error('Ingen session hittad')
+
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+    const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+
+    const res = await fetch(`${supabaseUrl}/functions/v1/delete-account`, {
       method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        apikey: anonKey,
+        'Content-Type': 'application/json',
+      },
     })
 
-    if (error) {
-      console.error('Edge function error:', error, 'Response data:', data)
-      throw error
+    if (!res.ok) {
+      const errorText = await res.text()
+      console.error('Delete account failed:', res.status, errorText)
+      throw new Error(errorText || `HTTP ${res.status}`)
     }
 
-    // Sign out locally so the user is no longer authenticated
-    await supabase.auth.signOut()
+    // Sign out locally (ignore 403 error - user is already deleted)
+    try {
+      await supabase.auth.signOut()
+    } catch (err) {
+      console.log('Sign out error (expected after delete):', err)
+    }
 
     // Same cleanup as signOut
     setProfile(null)

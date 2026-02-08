@@ -4,7 +4,30 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useFoodItems, type FoodItem } from '@/hooks/useFoodItems'
-import { calculatePlateAmount } from '@/lib/calculations/plateCalculator'
+import { calculatePlateAmount, calculatePlateForMacro } from '@/lib/calculations/plateCalculator'
+
+type GoalType = 'kcal' | 'carbs' | 'fat' | 'protein'
+
+const PRESETS: Record<GoalType, number[]> = {
+  kcal: [100, 200, 300, 500],
+  carbs: [50, 100, 150, 200, 300],
+  fat: [20, 40, 60, 80, 100],
+  protein: [30, 60, 90, 120, 150],
+}
+
+const GOAL_LABELS: Record<GoalType, string> = {
+  kcal: 'Kalorier',
+  carbs: 'Kolhydrater',
+  fat: 'Fett',
+  protein: 'Protein',
+}
+
+const GOAL_UNITS: Record<GoalType, string> = {
+  kcal: 'kcal',
+  carbs: 'g',
+  fat: 'g',
+  protein: 'g',
+}
 
 interface PlateCalculatorProps {
   defaultCalories?: number
@@ -26,7 +49,8 @@ export function PlateCalculator({
   defaultCalories: _defaultCalories = 0,
   onAddToMeal,
 }: PlateCalculatorProps) {
-  const [targetCalories, setTargetCalories] = useState<number | ''>('')
+  const [goalType, setGoalType] = useState<GoalType>('kcal')
+  const [targetAmount, setTargetAmount] = useState<number | ''>('')
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedFood, setSelectedFood] = useState<FoodItem | null>(null)
 
@@ -52,9 +76,14 @@ export function PlateCalculator({
 
   // Beräkna portion
   const calculation = useMemo(() => {
-    if (!selectedFood || typeof targetCalories !== 'number' || targetCalories <= 0) return null
-    return calculatePlateAmount(selectedFood, targetCalories)
-  }, [selectedFood, targetCalories])
+    if (!selectedFood || typeof targetAmount !== 'number' || targetAmount <= 0) return null
+
+    if (goalType === 'kcal') {
+      return calculatePlateAmount(selectedFood, targetAmount)
+    } else {
+      return calculatePlateForMacro(selectedFood, targetAmount, goalType)
+    }
+  }, [selectedFood, targetAmount, goalType])
 
   const handleSelectFood = (food: FoodItem) => {
     setSelectedFood(food)
@@ -63,14 +92,35 @@ export function PlateCalculator({
 
   const handleAddToMeal = () => {
     if (selectedFood && calculation && onAddToMeal) {
-      onAddToMeal(selectedFood, calculation.unitsNeeded, calculation.unitName)
+      // Determine preferred unit based on display mode
+      const displayMode = localStorage.getItem(`food-display-mode:${selectedFood.id}`)
+      const preferVolume = displayMode === 'perVolume' || selectedFood.default_unit === 'ml'
+      const ml = selectedFood.ml_per_gram
+        ? Math.round(calculation.weightGrams * selectedFood.ml_per_gram * 10) / 10
+        : null
+
+      if (calculation.unitName === 'g' && ml && preferVolume) {
+        // Send as ml if volume is preferred
+        onAddToMeal(selectedFood, ml, 'ml')
+      } else if (calculation.unitName === 'g' && ml && !preferVolume) {
+        // Send as grams but ml is available
+        onAddToMeal(selectedFood, calculation.weightGrams, 'g')
+      } else {
+        // Use calculated unit
+        onAddToMeal(selectedFood, calculation.unitsNeeded, calculation.unitName)
+      }
     }
+  }
+
+  const handlePresetClick = (value: number) => {
+    setTargetAmount(value)
   }
 
   const handleReset = () => {
     setSelectedFood(null)
-    setTargetCalories('')
+    setTargetAmount('')
     setSearchQuery('')
+    setGoalType('kcal')
   }
 
   // Beräkna kcal/100g för visning
@@ -90,7 +140,7 @@ export function PlateCalculator({
             <Calculator className="h-4 w-4 text-primary-600" />
             Portionsberäknare
           </CardTitle>
-          {(selectedFood || targetCalories !== '' || searchQuery) && (
+          {(selectedFood || targetAmount !== '' || searchQuery) && (
             <Button
               variant="ghost"
               size="sm"
@@ -105,32 +155,50 @@ export function PlateCalculator({
       </CardHeader>
 
       <CardContent className="space-y-3">
-        {/* Kalori-input med snabbval - kompakt */}
+        {/* Välj måltyp */}
+        <div className="flex gap-1 p-1 bg-neutral-100 rounded-lg">
+          {(['kcal', 'protein', 'carbs', 'fat'] as GoalType[]).map(type => (
+            <button
+              key={type}
+              onClick={() => setGoalType(type)}
+              className={`flex-1 px-2 py-1.5 text-xs font-medium rounded transition-colors ${
+                goalType === type
+                  ? 'bg-white text-primary-600 shadow-sm'
+                  : 'text-neutral-600 hover:text-neutral-900'
+              }`}
+            >
+              {GOAL_LABELS[type]}
+            </button>
+          ))}
+        </div>
+
+        {/* Mål-input med snabbval */}
         <div className="flex items-center gap-2 flex-wrap">
           <span className="text-sm text-neutral-600 font-medium">Mål:</span>
           <Input
             type="number"
-            value={targetCalories}
-            onChange={e =>
-              setTargetCalories(e.target.value === '' ? '' : parseFloat(e.target.value) || 0)
-            }
+            value={targetAmount}
+            onChange={e => {
+              const val = e.target.value
+              setTargetAmount(val === '' ? '' : parseFloat(val) || '')
+            }}
             className="h-8 w-20 text-center"
             min={0}
-            placeholder="kcal"
+            placeholder={GOAL_UNITS[goalType]}
           />
-          <span className="text-xs text-neutral-500">kcal</span>
-          <div className="flex gap-1 ml-auto">
-            {[100, 200, 300, 500].map(cal => (
+          <span className="text-xs text-neutral-500">{GOAL_UNITS[goalType]}</span>
+          <div className="flex gap-1 ml-auto flex-wrap">
+            {PRESETS[goalType].map(value => (
               <button
-                key={cal}
-                onClick={() => setTargetCalories(cal)}
+                key={value}
+                onClick={() => handlePresetClick(value)}
                 className={`px-2 py-1 text-xs rounded transition-colors ${
-                  targetCalories === cal
+                  targetAmount === value
                     ? 'bg-primary-600 text-white'
                     : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
                 }`}
               >
-                {cal}
+                {value}
               </button>
             ))}
           </div>
@@ -211,27 +279,81 @@ export function PlateCalculator({
         {calculation && selectedFood && (
           <div className="bg-gradient-to-br from-primary-50 to-accent-50 rounded-xl p-3">
             <p className="text-xs text-neutral-600 text-center mb-2">
-              För {typeof targetCalories === 'number' ? targetCalories : 0} kcal:
+              För {typeof targetAmount === 'number' ? targetAmount : 0} {GOAL_UNITS[goalType]}
+              {goalType !== 'kcal' && ` (${calculation.calories} kcal)`}:
             </p>
 
             {/* Stor resultat-display */}
             <div className="bg-white rounded-lg py-2 px-3 text-center shadow-sm mb-2">
-              {calculation.unitName === 'g' ? (
-                /* För gram-baserade: visa bara vikten direkt */
-                <span className="text-2xl font-bold text-primary-600">
-                  {calculation.weightGrams} g
-                </span>
-              ) : (
-                /* För andra enheter: visa enheter + vikt */
-                <>
-                  <span className="text-2xl font-bold text-primary-600">
-                    {calculation.unitsNeeded} {calculation.unitName}
-                  </span>
-                  <span className="text-sm text-neutral-500 ml-2">
-                    ({calculation.weightGrams}g)
-                  </span>
-                </>
-              )}
+              {(() => {
+                const displayMode = localStorage.getItem(`food-display-mode:${selectedFood.id}`)
+                const preferVolume =
+                  displayMode === 'perVolume' || selectedFood.default_unit === 'ml'
+
+                // Calculate ml from weight
+                const mlFromGrams = selectedFood.ml_per_gram
+                  ? Math.round(calculation.weightGrams * selectedFood.ml_per_gram * 10) / 10
+                  : null
+
+                // Check if result is in volume unit
+                const isVolumeUnit = ['ml', 'dl', 'msk', 'tsk'].includes(calculation.unitName)
+
+                if (calculation.unitName === 'g') {
+                  // Gram-baserade: visa gram först, ml i parentes om tillgängligt
+                  return (
+                    <span className="text-2xl font-bold text-primary-600">
+                      {mlFromGrams && preferVolume ? (
+                        <>
+                          {mlFromGrams} ml{' '}
+                          <span className="text-sm text-neutral-500">
+                            ({calculation.weightGrams}g)
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          {calculation.weightGrams} g
+                          {mlFromGrams && (
+                            <span className="text-sm text-neutral-500 ml-2">
+                              ({mlFromGrams} ml)
+                            </span>
+                          )}
+                        </>
+                      )}
+                    </span>
+                  )
+                } else if (isVolumeUnit && mlFromGrams) {
+                  // Volymenheter: visa ml och gram (inte den ursprungliga enheten dl/msk/tsk)
+                  return (
+                    <span className="text-2xl font-bold text-primary-600">
+                      {preferVolume ? (
+                        <>
+                          {mlFromGrams} ml{' '}
+                          <span className="text-sm text-neutral-500">
+                            ({calculation.weightGrams}g)
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          {calculation.weightGrams} g{' '}
+                          <span className="text-sm text-neutral-500">({mlFromGrams} ml)</span>
+                        </>
+                      )}
+                    </span>
+                  )
+                } else {
+                  // St och andra enheter: visa enheter + vikt (+ ml om tillgängligt)
+                  return (
+                    <>
+                      <span className="text-2xl font-bold text-primary-600">
+                        {calculation.unitsNeeded} {calculation.unitName}
+                      </span>
+                      <span className="text-sm text-neutral-500 ml-2">
+                        ({calculation.weightGrams}g{mlFromGrams && `, ${mlFromGrams} ml`})
+                      </span>
+                    </>
+                  )
+                }
+              })()}
             </div>
 
             {/* Makros i rad - kompakt */}

@@ -62,12 +62,12 @@ export default function GoalCalculatorTool() {
     setManualTargetWeight(null) // Nollställ manuell målvikt
   }
 
-  const handleTargetWeightChange = (value: number) => {
-    setManualTargetWeight(value)
+  const handleTargetWeightChange = (value: number | '') => {
+    setManualTargetWeight(value === '' ? null : value)
     setInputMode('weight')
 
     // Beräkna motsvarande kroppsfett% baserat på ny målvikt
-    if (profileData?.weight_kg && profileData?.body_fat_percentage) {
+    if (value !== '' && profileData?.weight_kg && profileData?.body_fat_percentage) {
       const calculatedBodyFat = calculateTargetBodyFatFromWeight(
         profileData.weight_kg,
         profileData.body_fat_percentage,
@@ -542,7 +542,10 @@ export default function GoalCalculatorTool() {
                       max={profileData?.weight_kg ? Math.ceil(profileData.weight_kg * 1.3) : 150}
                       step="0.1"
                       value={targetWeight ?? goalResult?.targetWeight.toFixed(1) ?? ''}
-                      onChange={e => handleTargetWeightChange(parseFloat(e.target.value) || 0)}
+                      onChange={e => {
+                        const val = e.target.value
+                        handleTargetWeightChange(val === '' ? '' : parseFloat(val) || '')
+                      }}
                       className="w-20 text-center"
                     />
                     <span className="text-sm text-neutral-600">kg</span>

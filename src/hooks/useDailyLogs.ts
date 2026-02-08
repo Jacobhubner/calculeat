@@ -395,6 +395,22 @@ export function useCreateMealEntry() {
     mutationFn: async (params: { dailyLogId: string; mealName: string; mealOrder: number }) => {
       if (!user) throw new Error('User not authenticated')
 
+      // Check if meal entry already exists to prevent 409 Conflict
+      const { data: existing, error: checkError } = await supabase
+        .from('meal_entries')
+        .select('*')
+        .eq('daily_log_id', params.dailyLogId)
+        .eq('meal_order', params.mealOrder)
+        .maybeSingle()
+
+      if (checkError) throw checkError
+
+      // If meal entry already exists, return it instead of creating new
+      if (existing) {
+        return existing as MealEntry
+      }
+
+      // Create new meal entry
       const { data, error } = await supabase
         .from('meal_entries')
         .insert({

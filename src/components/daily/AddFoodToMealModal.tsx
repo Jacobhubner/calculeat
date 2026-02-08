@@ -55,9 +55,15 @@ export function AddFoodToMealModal({
 }: AddFoodToMealModalProps) {
   const isEditMode = !!editItem
   const [searchQuery, setSearchQuery] = useState('')
-  const [selectedFood, setSelectedFood] = useState<FoodItem | null>(editItem?.food ?? null)
-  const [amount, setAmount] = useState<number>(editItem?.amount ?? 1)
-  const [selectedUnit, setSelectedUnit] = useState<string>(editItem?.unit ?? '')
+  const [selectedFood, setSelectedFood] = useState<FoodItem | null>(
+    editItem?.food ?? preselectedFood?.food ?? null
+  )
+  const [amount, setAmount] = useState<number | ''>(
+    editItem?.amount ?? preselectedFood?.amount ?? 1
+  )
+  const [selectedUnit, setSelectedUnit] = useState<string>(
+    editItem?.unit ?? preselectedFood?.unit ?? ''
+  )
   const [selectedMealName, setSelectedMealName] = useState<string>(mealName)
 
   // Track if food was preselected to avoid overwriting amount/unit
@@ -138,7 +144,7 @@ export function AddFoodToMealModal({
 
   // Calculate nutrition preview
   const nutritionPreview = useMemo(() => {
-    if (!selectedFood || amount <= 0) return null
+    if (!selectedFood || amount === '' || amount <= 0) return null
     return calculateNutritionForUnit(selectedFood, amount, selectedUnit)
   }, [selectedFood, amount, selectedUnit])
 
@@ -191,6 +197,34 @@ export function AddFoodToMealModal({
 
     setSelectedUnit(defaultUnit)
     setAmount(defaultAmount)
+  }
+
+  const handleUnitChange = (newUnit: string) => {
+    if (!selectedFood || amount === '' || amount <= 0) {
+      setSelectedUnit(newUnit)
+      return
+    }
+
+    // Calculate current calories
+    const currentNutrition = calculateNutritionForUnit(selectedFood, amount, selectedUnit)
+    if (!currentNutrition) {
+      setSelectedUnit(newUnit)
+      return
+    }
+
+    // Find amount in new unit that gives same calories
+    const currentCalories = currentNutrition.calories
+    const caloriesPerNewUnit = calculateNutritionForUnit(selectedFood, 1, newUnit)
+
+    if (!caloriesPerNewUnit || caloriesPerNewUnit.calories <= 0) {
+      setSelectedUnit(newUnit)
+      return
+    }
+
+    const newAmount = currentCalories / caloriesPerNewUnit.calories
+
+    setSelectedUnit(newUnit)
+    setAmount(Math.round(newAmount * 100) / 100) // Round to 2 decimals
   }
 
   const handleAddFood = async () => {
@@ -384,7 +418,10 @@ export function AddFoodToMealModal({
                     step="0.1"
                     min="0.1"
                     value={amount}
-                    onChange={e => setAmount(parseFloat(e.target.value) || 0)}
+                    onChange={e => {
+                      const val = e.target.value
+                      setAmount(val === '' ? '' : parseFloat(val) || '')
+                    }}
                     className="mt-1"
                   />
                 </div>
@@ -393,7 +430,7 @@ export function AddFoodToMealModal({
                   <UnitSelector
                     food={selectedFood}
                     value={selectedUnit}
-                    onChange={setSelectedUnit}
+                    onChange={handleUnitChange}
                     className="mt-1 w-full"
                   />
                 </div>

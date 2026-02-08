@@ -418,7 +418,37 @@ export function FoodSuggestions({
                       {/* Add button */}
                       {onAddToMeal && (
                         <button
-                          onClick={() => onAddToMeal(match.food, match.amount, match.unit)}
+                          onClick={() => {
+                            // Use preferred unit based on display mode
+                            const displayMode = localStorage.getItem(
+                              `food-display-mode:${match.food.id}`
+                            )
+                            let unit = match.unit
+                            let amount = match.amount
+
+                            // If food has volume data and user prefers volume
+                            if (
+                              match.food.ml_per_gram &&
+                              (displayMode === 'perVolume' || match.food.default_unit === 'ml')
+                            ) {
+                              // Convert to ml if not already
+                              if (unit === 'g') {
+                                const ml = amount * match.food.ml_per_gram
+                                unit = 'ml'
+                                amount = Math.round(ml * 10) / 10
+                              }
+                            } else if (match.food.grams_per_piece && displayMode === 'serving') {
+                              // Convert to serving unit if user prefers it
+                              const servingUnit = match.food.serving_unit || 'st'
+                              if (unit === 'g') {
+                                const pieces = amount / match.food.grams_per_piece
+                                unit = servingUnit
+                                amount = Math.round(pieces * 100) / 100
+                              }
+                            }
+
+                            onAddToMeal(match.food, amount, unit)
+                          }}
                           className="p-1 rounded bg-primary-600 text-white hover:bg-primary-700 transition-colors flex-shrink-0"
                           title="Lägg till i måltid"
                         >
