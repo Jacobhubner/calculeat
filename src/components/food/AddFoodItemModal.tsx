@@ -421,12 +421,12 @@ export function AddFoodItemModal({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="md:max-w-2xl md:max-h-[90vh] md:overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{editItem ? 'Redigera livsmedel' : 'Nytt livsmedel'}</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 px-4 pb-4 md:px-0 md:pb-0">
           {/* Duplicate warning */}
           {duplicateWarning && (
             <div className="bg-orange-50 border-2 border-orange-300 rounded-lg p-4">

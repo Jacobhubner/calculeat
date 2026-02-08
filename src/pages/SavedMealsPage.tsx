@@ -1,16 +1,60 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Plus, Search, Bookmark } from 'lucide-react'
+import { Plus, Search, Bookmark, Loader2 } from 'lucide-react'
 import EmptyState from '@/components/EmptyState'
+import SavedMealCard from '@/components/saved-meals/SavedMealCard'
+import SelectMealSlotDialog from '@/components/daily/SelectMealSlotDialog'
+import { useSavedMeals } from '@/hooks/useSavedMeals'
 
 export default function SavedMealsPage() {
   const [searchQuery, setSearchQuery] = useState('')
+  const [selectSlotDialogOpen, setSelectSlotDialogOpen] = useState(false)
+  const [selectedMealForUse, setSelectedMealForUse] = useState<{
+    id: string
+    name: string
+  } | null>(null)
 
-  // TODO: Replace with actual data from Supabase
-  const savedMeals: unknown[] = []
+  const { data: savedMeals, isLoading } = useSavedMeals()
+
+  // Filter saved meals by search query
+  const filteredMeals = useMemo(() => {
+    if (!savedMeals) return []
+    if (!searchQuery.trim()) return savedMeals
+
+    const query = searchQuery.toLowerCase()
+    return savedMeals.filter(meal => meal.name.toLowerCase().includes(query))
+  }, [savedMeals, searchQuery])
+
+  // Sort by last used date (most recent first), then alphabetically
+  const sortedMeals = useMemo(() => {
+    return [...filteredMeals].sort((a, b) => {
+      // Sort by last_used_at (most recent first)
+      if (a.last_used_at && b.last_used_at) {
+        return new Date(b.last_used_at).getTime() - new Date(a.last_used_at).getTime()
+      }
+      if (a.last_used_at) return -1
+      if (b.last_used_at) return 1
+
+      // Then alphabetically
+      return a.name.localeCompare(b.name, 'sv-SE')
+    })
+  }, [filteredMeals])
+
+  const handleUseToday = (mealId: string) => {
+    const meal = savedMeals?.find(m => m.id === mealId)
+    if (meal) {
+      setSelectedMealForUse({ id: meal.id, name: meal.name })
+      setSelectSlotDialogOpen(true)
+    }
+  }
+
+  const handleEdit = (mealId: string) => {
+    // TODO: Implement edit functionality
+    console.log('Edit meal:', mealId)
+  }
 
   return (
     <DashboardLayout>
@@ -48,19 +92,40 @@ export default function SavedMealsPage() {
       </Card>
 
       {/* Saved Meals List */}
-      {savedMeals.length === 0 ? (
+      {isLoading ? (
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-primary-600" />
+        </div>
+      ) : sortedMeals.length === 0 ? (
         <EmptyState
-          icon={Bookmark}
-          title="Inga sparade måltider ännu"
-          description="Spara dina favoritmåltider för att snabbt logga dem i framtiden."
-          action={{
-            label: 'Skapa måltid',
-            onClick: () => console.log('Create saved meal'),
-          }}
+          icon={searchQuery ? Search : Bookmark}
+          title={
+            searchQuery ? 'Inga måltider hittades' : 'Inga sparade måltider ännu'
+          }
+          description={
+            searchQuery
+              ? 'Försök med ett annat sökord'
+              : 'Spara dina favoritmåltider för att snabbt logga dem i framtiden.'
+          }
+          action={
+            searchQuery
+              ? undefined
+              : {
+                  label: 'Gå till Dagens Logg',
+                  onClick: () => (window.location.href = '/app/today'),
+                }
+          }
         />
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {/* Saved meals will be mapped here */}
+          {sortedMeals.map(meal => (
+            <SavedMealCard
+              key={meal.id}
+              meal={meal}
+              onUseToday={handleUseToday}
+              onEdit={handleEdit}
+            />
+          ))}
         </div>
       )}
 
@@ -94,6 +159,16 @@ export default function SavedMealsPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Select Meal Slot Dialog */}
+      {selectedMealForUse && (
+        <SelectMealSlotDialog
+          open={selectSlotDialogOpen}
+          onOpenChange={setSelectSlotDialogOpen}
+          savedMealId={selectedMealForUse.id}
+          savedMealName={selectedMealForUse.name}
+        />
+      )}
     </DashboardLayout>
   )
 }

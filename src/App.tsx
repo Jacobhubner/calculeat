@@ -45,6 +45,7 @@ const TDEECalculatorTool = lazy(
 const GoalCalculatorTool = lazy(
   () => import('./components/tools/goal-calculator/GoalCalculatorTool')
 )
+const SettingsPage = lazy(() => import('./pages/SettingsPage'))
 
 // Loading fallback component
 function PageLoader() {
@@ -180,6 +181,14 @@ function App() {
                     <Route path="tdee-calculator" element={<TDEECalculatorTool />} />
                     <Route path="goal-calculator" element={<GoalCalculatorTool />} />
                   </Route>
+                  <Route
+                    path="/app/settings"
+                    element={
+                      <ProtectedRoute>
+                        <SettingsPage />
+                      </ProtectedRoute>
+                    }
+                  />
                 </Routes>
               </Suspense>
             </BrowserRouter>

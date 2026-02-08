@@ -255,3 +255,124 @@ export function useDeleteSavedMeal() {
     },
   })
 }
+
+/**
+ * Load a saved meal into a specific meal slot in today's log
+ * Pattern based on useCopyDayToToday from useDailyLogs.ts
+ */
+export function useLoadSavedMealToSlot() {
+  const { user } = useAuth()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (params: {
+      savedMealId: string
+      targetMealName: string
+      dailyLogId: string
+      targetMealEntryId?: string
+      mealOrder: number
+    }) => {
+      if (!user) throw new Error('User not authenticated')
+
+      // 1. Fetch saved meal with items and food_item data
+      const { data: savedMeal, error: fetchError } = await supabase
+        .from('saved_meals')
+        .select(
+          `
+          *,
+          items:saved_meal_items(
+            *,
+            food_item:food_items(*)
+          )
+        `
+        )
+        .eq('id', params.savedMealId)
+        .single()
+
+      if (fetchError) throw fetchError
+      if (!savedMeal.items || savedMeal.items.length === 0) {
+        throw new Error('Saved meal has no items')
+      }
+
+      // 2. Ensure meal entry exists (create if needed)
+      let mealEntryId = params.targetMealEntryId
+
+      if (!mealEntryId) {
+        const { data: newMealEntry, error: createError } = await supabase
+          .from('meal_entries')
+          .insert({
+            daily_log_id: params.dailyLogId,
+            user_id: user.id,
+            meal_name: params.targetMealName,
+            meal_order: params.mealOrder,
+            meal_calories: 0,
+            meal_fat_g: 0,
+            meal_carb_g: 0,
+            meal_protein_g: 0,
+          })
+          .select()
+          .single()
+
+        if (createError) throw createError
+        mealEntryId = newMealEntry.id
+      }
+
+      // 3. Get current item count for ordering (append to end)
+      const { count } = await supabase
+        .from('meal_entry_items')
+        .select('*', { count: 'exact', head: true })
+        .eq('meal_entry_id', mealEntryId)
+
+      // 4. Filter out missing food items and batch insert valid items
+      const validItems = savedMeal.items.filter(item => item.food_item)
+      const missingCount = savedMeal.items.length - validItems.length
+
+      if (validItems.length === 0) {
+        throw new Error('All food items in saved meal are missing or deleted')
+      }
+
+      const itemsToInsert = validItems.map((item, index) => ({
+        meal_entry_id: mealEntryId,
+        food_item_id: item.food_item_id,
+        amount: item.amount,
+        unit: item.unit,
+        weight_grams: item.weight_grams,
+        item_order: (count || 0) + index,
+      }))
+
+      const { error: insertError } = await supabase
+        .from('meal_entry_items')
+        .insert(itemsToInsert)
+
+      if (insertError) throw insertError
+
+      // 5. Update last_used_at timestamp
+      await supabase
+        .from('saved_meals')
+        .update({ last_used_at: new Date().toISOString() })
+        .eq('id', params.savedMealId)
+
+      // 6. Calculate total calories for toast message
+      const totalCalories = validItems.reduce((sum, item) => {
+        const foodItem = item.food_item
+        if (!foodItem) return sum
+        // Calculate calories based on amount and unit
+        const caloriesPer100g = foodItem.calories || 0
+        const grams = item.weight_grams || (item.amount * 100) // Fallback
+        return sum + (caloriesPer100g * grams) / 100
+      }, 0)
+
+      return {
+        insertedCount: validItems.length,
+        totalCalories: Math.round(totalCalories),
+        missingCount,
+        mealName: savedMeal.name,
+      }
+    },
+    onSuccess: () => {
+      // Invalidate both dailyLogs and savedMeals queries
+      queryClient.invalidateQueries({ queryKey: ['dailyLogs'] })
+      queryClient.invalidateQueries({ queryKey: ['savedMeals'] })
+    },
+  })
+}

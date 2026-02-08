@@ -8,6 +8,7 @@ import DashboardLayout from '@/components/layout/DashboardLayout'
 import { User } from 'lucide-react'
 import { useProfiles, useUpdateProfile, useCreateProfile, useCreateWeightHistory } from '@/hooks'
 import { useSyncMealSettings } from '@/hooks/useMealSettings'
+import { useTodayLog, useSyncTodayLogFromProfile } from '@/hooks/useDailyLogs'
 import { useProfileStore } from '@/stores/profileStore'
 import type { Gender } from '@/lib/types'
 import { toast } from 'sonner'
@@ -21,7 +22,6 @@ import TDEEOptions from '@/components/profile/TDEEOptions'
 import BasicProfileForm from '@/components/profile/BasicProfileForm'
 import WeightTracker from '@/components/profile/WeightTracker'
 import MetabolicCalibration from '@/components/profile/MetabolicCalibration'
-import AdvancedSettingsSection from '@/components/profile/AdvancedSettingsSection'
 
 // Existing components (keep for now)
 import MacroDistributionCard from '@/components/MacroDistributionCard'
@@ -45,6 +45,10 @@ export default function ProfilePage() {
   const createProfile = useCreateProfile()
   const createWeightHistory = useCreateWeightHistory()
   const syncMealSettings = useSyncMealSettings()
+
+  // Hooks for auto-syncing today's log
+  const { data: todayLog } = useTodayLog()
+  const syncFromProfile = useSyncTodayLogFromProfile()
 
   // NOTE: macroRanges and mealSettings previously used for local state
   // Now handled via pendingChanges state
@@ -504,8 +508,36 @@ export default function ProfilePage() {
         })
       }
 
-      setPendingChanges({}) // Clear pending changes after successful save
-      toast.success('Ändringar sparade')
+      // Auto-sync today's log if calorie or macro goals were changed
+      const goalsChanged =
+        pendingChanges.calories_min !== undefined ||
+        pendingChanges.calories_max !== undefined ||
+        pendingChanges.fat_min_percent !== undefined ||
+        pendingChanges.fat_max_percent !== undefined ||
+        pendingChanges.carb_min_percent !== undefined ||
+        pendingChanges.carb_max_percent !== undefined ||
+        pendingChanges.protein_min_percent !== undefined ||
+        pendingChanges.protein_max_percent !== undefined
+
+      if (goalsChanged && todayLog) {
+        try {
+          await syncFromProfile.mutateAsync(todayLog.id)
+          setPendingChanges({}) // Clear pending changes after successful save
+          toast.success('Profil sparad! Dagens mål har uppdaterats automatiskt.', {
+            duration: 4000,
+          })
+        } catch (error) {
+          console.error('Error syncing today log:', error)
+          setPendingChanges({}) // Clear pending changes even if sync fails
+          toast.success('Profil sparad', {
+            description: 'Obs: Kunde inte uppdatera dagens mål. Försök synkronisera manuellt.',
+            duration: 5000,
+          })
+        }
+      } else {
+        setPendingChanges({}) // Clear pending changes after successful save
+        toast.success('Ändringar sparade')
+      }
     } catch (error) {
       console.error('Error saving profile:', error)
       toast.error('Kunde inte spara ändringar')
@@ -623,9 +655,9 @@ export default function ProfilePage() {
                   }}
                 />
 
-                {/* For profiles after the first, show BasicInfoFields in Advanced Settings */}
+                {/* For profiles after the first, show BasicInfoFields */}
                 {allProfiles.length > 1 && activeProfile && (
-                  <AdvancedSettingsSection
+                  <BasicInfoFields
                     birthDate={displayProfile.birth_date}
                     gender={displayProfile.gender}
                     height={displayProfile.height_cm}
@@ -679,8 +711,8 @@ export default function ProfilePage() {
                 {/* Omvandling av makrovärden */}
                 <MacroConverterCard profile={mergedProfile} />
 
-                {/* Advanced Settings - Collapsible section */}
-                <AdvancedSettingsSection
+                {/* Grundläggande information - Collapsible section */}
+                <BasicInfoFields
                   birthDate={displayProfile.birth_date}
                   gender={displayProfile.gender}
                   height={displayProfile.height_cm}

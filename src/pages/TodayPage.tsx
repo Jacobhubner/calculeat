@@ -8,6 +8,8 @@ import { ZonedCalorieRing } from '@/components/daily/ZonedCalorieRing'
 import EmptyState from '@/components/EmptyState'
 import RecentFoodsCard from '@/components/RecentFoodsCard'
 import { AddFoodToMealModal } from '@/components/daily/AddFoodToMealModal'
+import SaveMealDialog from '@/components/daily/SaveMealDialog'
+import LoadMealToSlotDialog from '@/components/daily/LoadMealToSlotDialog'
 import { PlateCalculator } from '@/components/daily/PlateCalculator'
 import { FoodSuggestions } from '@/components/daily/FoodSuggestions'
 import { DailyChecklist } from '@/components/daily/DailyChecklist'
@@ -25,6 +27,8 @@ import {
   Copy,
   Trash2,
   AlertTriangle,
+  Bookmark,
+  ArrowDownToLine,
 } from 'lucide-react'
 import {
   useTodayLog,
@@ -72,6 +76,17 @@ export default function TodayPage() {
     food: FoodItem
     amount: number
     unit: string
+  } | null>(null)
+
+  // State for SaveMealDialog
+  const [saveMealDialogOpen, setSaveMealDialogOpen] = useState(false)
+  const [selectedMealToSave, setSelectedMealToSave] = useState<any | null>(null)
+
+  // State for LoadMealToSlotDialog
+  const [loadMealDialogOpen, setLoadMealDialogOpen] = useState(false)
+  const [selectedMealForLoad, setSelectedMealForLoad] = useState<{
+    mealName: string
+    mealEntryId?: string
   } | null>(null)
 
   // Get active profile for calorie and macro targets
@@ -209,6 +224,16 @@ export default function TodayPage() {
     setPreselectedFood(null) // Clear any preselected food
     setSelectedMealForFood({ mealName, mealEntryId })
     setAddFoodModalOpen(true)
+  }
+
+  const handleOpenSaveMealDialog = (mealEntry: any) => {
+    setSelectedMealToSave(mealEntry)
+    setSaveMealDialogOpen(true)
+  }
+
+  const handleOpenLoadMealDialog = (mealName: string, mealEntryId?: string) => {
+    setSelectedMealForLoad({ mealName, mealEntryId })
+    setLoadMealDialogOpen(true)
   }
 
   // Handler for sidebar tools (PlateCalculator, FoodSuggestions)
@@ -383,19 +408,19 @@ export default function TodayPage() {
                     <>
                       <NutrientStatusRow
                         status={dailySummary.proteinStatus}
-                        label={`Protein (${profile.protein_min_percent}-${profile.protein_max_percent}%)`}
+                        label={`Protein (${Math.round(profile.protein_min_percent || 0)}-${Math.round(profile.protein_max_percent || 0)}%)`}
                         unit="g"
                         showProgress
                       />
                       <NutrientStatusRow
                         status={dailySummary.carbStatus}
-                        label={`Kolhydrater (${profile.carb_min_percent}-${profile.carb_max_percent}%)`}
+                        label={`Kolhydrater (${Math.round(profile.carb_min_percent || 0)}-${Math.round(profile.carb_max_percent || 0)}%)`}
                         unit="g"
                         showProgress
                       />
                       <NutrientStatusRow
                         status={dailySummary.fatStatus}
-                        label={`Fett (${profile.fat_min_percent}-${profile.fat_max_percent}%)`}
+                        label={`Fett (${Math.round(profile.fat_min_percent || 0)}-${Math.round(profile.fat_max_percent || 0)}%)`}
                         unit="g"
                         showProgress
                       />
@@ -518,6 +543,30 @@ export default function TodayPage() {
                               {mealSummary.status.displayText}
                             </span>
                           )}
+                          {/* Save meal button - only show if meal has items */}
+                          {hasItems && mealEntry && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="gap-2"
+                              onClick={() => handleOpenSaveMealDialog(mealEntry)}
+                            >
+                              <Bookmark className="h-4 w-4" />
+                              <span className="hidden md:inline">Spara måltid</span>
+                            </Button>
+                          )}
+                          {/* Load meal button */}
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="gap-2 border-primary-300 text-primary-700"
+                            onClick={() =>
+                              handleOpenLoadMealDialog(mealSetting.meal_name, mealEntry?.id)
+                            }
+                          >
+                            <ArrowDownToLine className="h-4 w-4" />
+                            <span className="hidden md:inline">Ladda måltid</span>
+                          </Button>
                           <Button
                             size="sm"
                             className="gap-2"
@@ -549,8 +598,7 @@ export default function TodayPage() {
                                   handleRemoveFood(item.id, foodItem?.name || 'Matvara')
                                 }
                               >
-                                <button
-                                  type="button"
+                                <div
                                   className="w-full flex items-center justify-between p-3 bg-neutral-50 rounded-lg group hover:bg-neutral-100 transition-colors text-left cursor-pointer"
                                   onClick={() => {
                                     if (foodItem) {
@@ -598,7 +646,7 @@ export default function TodayPage() {
                                   >
                                     <Trash2 className="h-4 w-4" />
                                   </Button>
-                                </button>
+                                </div>
                               </SwipeableItem>
                             )
                           })}
@@ -703,6 +751,26 @@ export default function TodayPage() {
           mealName=""
           dailyLogId={todayLog.id}
           editItem={editItem}
+        />
+      )}
+
+      {/* Save Meal Dialog */}
+      {selectedMealToSave && (
+        <SaveMealDialog
+          open={saveMealDialogOpen}
+          onOpenChange={setSaveMealDialogOpen}
+          mealEntry={selectedMealToSave}
+        />
+      )}
+
+      {/* Load Meal to Slot Dialog */}
+      {todayLog && selectedMealForLoad && (
+        <LoadMealToSlotDialog
+          open={loadMealDialogOpen}
+          onOpenChange={setLoadMealDialogOpen}
+          targetMealName={selectedMealForLoad.mealName}
+          dailyLogId={todayLog.id}
+          targetMealEntryId={selectedMealForLoad.mealEntryId}
         />
       )}
     </DashboardLayout>

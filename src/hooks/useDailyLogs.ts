@@ -662,3 +662,70 @@ export function useUpdateDailyLogGoals() {
     },
   })
 }
+
+/**
+ * Sync today's log goals from current profile
+ * Calculates macro goals in grams from profile percentages and updates daily log
+ */
+export function useSyncTodayLogFromProfile() {
+  const { user } = useAuth()
+  const activeProfile = useProfileStore(state => state.activeProfile)
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (dailyLogId: string) => {
+      if (!user) throw new Error('User not authenticated')
+      if (!activeProfile) throw new Error('No active profile')
+
+      // Check if profile has required values
+      if (
+        !activeProfile.calories_min ||
+        !activeProfile.calories_max ||
+        activeProfile.fat_min_percent == null ||
+        activeProfile.fat_max_percent == null ||
+        activeProfile.carb_min_percent == null ||
+        activeProfile.carb_max_percent == null ||
+        activeProfile.protein_min_percent == null ||
+        activeProfile.protein_max_percent == null
+      ) {
+        throw new Error(
+          'Profilen saknar kalorimål eller makroprocent. Spara dina profilinställningar först.'
+        )
+      }
+
+      // Calculate macro goals in grams from profile percentages
+      const avgCalories =
+        ((activeProfile.calories_min || 0) + (activeProfile.calories_max || 0)) / 2
+      const fatMinG = (avgCalories * (activeProfile.fat_min_percent || 0)) / 100 / 9
+      const fatMaxG = (avgCalories * (activeProfile.fat_max_percent || 0)) / 100 / 9
+      const carbMinG = (avgCalories * (activeProfile.carb_min_percent || 0)) / 100 / 4
+      const carbMaxG = (avgCalories * (activeProfile.carb_max_percent || 0)) / 100 / 4
+      const proteinMinG = (avgCalories * (activeProfile.protein_min_percent || 0)) / 100 / 4
+      const proteinMaxG = (avgCalories * (activeProfile.protein_max_percent || 0)) / 100 / 4
+
+      // Update daily log with goals from profile
+      const { data, error } = await supabase
+        .from('daily_logs')
+        .update({
+          goal_calories_min: activeProfile.calories_min,
+          goal_calories_max: activeProfile.calories_max,
+          goal_fat_min_g: Math.round(fatMinG),
+          goal_fat_max_g: Math.round(fatMaxG),
+          goal_carb_min_g: Math.round(carbMinG),
+          goal_carb_max_g: Math.round(carbMaxG),
+          goal_protein_min_g: Math.round(proteinMinG),
+          goal_protein_max_g: Math.round(proteinMaxG),
+        })
+        .eq('id', dailyLogId)
+        .eq('user_id', user.id)
+        .select()
+        .single()
+
+      if (error) throw error
+      return data as DailyLog
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['dailyLogs'] })
+    },
+  })
+}

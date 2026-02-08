@@ -1,12 +1,12 @@
 /**
  * BasicInfoFields - Grundläggande profilfält (födelsedatum, kön, längd)
- * Dessa fält låses när användaren har > 1 profil
+ * Kollapsbar sektion med låslogik
+ * Dessa fält låses när grundläggande information är ifylld
  * Startvikt hanteras nu via viktspårning (WeightTracker) istället
- * Extraherat från UserProfileForm
  */
 
 import { useState, useEffect } from 'react'
-import { Lock, Info } from 'lucide-react'
+import { Lock, Info, ChevronDown } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import type { Gender } from '@/lib/types'
@@ -36,6 +36,9 @@ export default function BasicInfoFields({
   locked = false,
   showLockNotice = false,
 }: BasicInfoFieldsProps) {
+  // Collapsible state - open by default
+  const [isOpen, setIsOpen] = useState(true)
+
   // Parse birth date into day, month, year for dropdowns
   const parsedDate = birthDate ? new Date(birthDate) : null
   const [birthDay, setBirthDay] = useState(parsedDate?.getDate().toString() || '')
@@ -158,36 +161,50 @@ export default function BasicInfoFields({
   }
 
   const lockTitle =
-    'Dessa fält låses när grundläggande information är ifylld. Radera alla profilkort för att ändra.'
+    'Dessa fält är låsta. Radera alla profilkort för att kunna ändra dem.'
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Info className="h-5 w-5 text-primary-600" />
-          Grundläggande information
-        </CardTitle>
+    <Card className="border-2 border-neutral-300">
+      <CardHeader className="pb-3">
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="w-full flex items-center justify-between hover:opacity-70 transition-opacity"
+          type="button"
+        >
+          <CardTitle className="flex items-center gap-2">
+            <Info className="h-5 w-5 text-neutral-600" />
+            Grundläggande information
+          </CardTitle>
+          <ChevronDown
+            className={`h-5 w-5 text-neutral-600 transition-transform duration-200 ${
+              isOpen ? 'rotate-180' : ''
+            }`}
+          />
+        </button>
       </CardHeader>
-      <CardContent className="space-y-4">
-        {/* Lock notice - only show if fields are locked */}
-        {showLockNotice && locked && (
-          <Alert variant="info">
-            <Info className="h-4 w-4" />
-            <AlertDescription>
-              <div className="flex-1">
-                <h4 className="font-semibold text-blue-900 mb-1">Vissa fält är låsta</h4>
-                <p className="text-sm text-blue-800 mb-2">
-                  Födelsedatum, kön och längd delas mellan alla dina profilkort. Dessa fält låses
-                  när grundläggande information är ifylld.
-                </p>
-                <p className="text-sm text-blue-800">
-                  <strong>Tips:</strong> För att ändra dessa värden måste du radera alla profilkort
-                  och skapa ett nytt första profilkort med korrekta värden.
-                </p>
-              </div>
-            </AlertDescription>
-          </Alert>
-        )}
+
+      {isOpen && (
+        <CardContent className="space-y-4 pt-0">
+          {/* Lock notice - only show if fields are locked */}
+          {showLockNotice && locked && (
+            <Alert variant="info">
+              <Lock className="h-4 w-4" />
+              <AlertDescription>
+                <div className="flex-1">
+                  <h4 className="font-semibold text-blue-900 mb-1">Alla fält är låsta</h4>
+                  <p className="text-sm text-blue-800 mb-2">
+                    Födelsedatum, kön och längd delas mellan alla dina profilkort och låses när
+                    grundläggande information är ifylld. Du kan inte ändra dessa fält när du har
+                    aktiva profilkort.
+                  </p>
+                  <p className="text-sm text-blue-800">
+                    <strong>För att ändra dessa värden:</strong> Radera alla dina profilkort och
+                    skapa ett nytt första profilkort med korrekta värden.
+                  </p>
+                </div>
+              </AlertDescription>
+            </Alert>
+          )}
 
         {/* Birth Date */}
         <div>
@@ -373,6 +390,7 @@ export default function BasicInfoFields({
             />
           </div>
         </div>
+
         {/* Weight - never locked, always editable */}
         {onWeightChange && (
           <div>
@@ -393,6 +411,7 @@ export default function BasicInfoFields({
           </div>
         )}
       </CardContent>
+      )}
     </Card>
   )
 }

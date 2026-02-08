@@ -19,16 +19,35 @@ import { cn } from '@/lib/utils'
 import { Avatar, AvatarFallback } from '../ui/avatar'
 import { Separator } from '../ui/separator'
 
-// Secondary pages not in bottom nav (primary pages: Översikt, Idag, Livsmedel, Historik)
-const navItems = [
-  { to: '/app/recipes', label: 'Recept', icon: ChefHat },
-  { to: '/app/saved-meals', label: 'Sparade måltider', icon: Bookmark },
-  { to: '/app/profile', label: 'Profil', icon: User },
-  { to: '/app/body-composition', label: 'Kroppssammansättning', icon: Activity },
-  { to: '/app/tools/met-calculator', label: 'MET Aktivitetskalkylator', icon: Flame },
-  { to: '/app/tools/tdee-calculator', label: 'TDEE & Kaloriuträknare', icon: Calculator },
-  { to: '/app/tools/goal-calculator', label: 'Måluträknare', icon: Target },
-]
+// Secondary pages organized by functional groups
+// (Primary pages Översikt, Idag, Livsmedel, Historik are in bottom nav)
+const navGroups = {
+  planering: {
+    title: 'PLANERING',
+    emoji: '🍽️',
+    items: [
+      { to: '/app/recipes', label: 'Recept', icon: ChefHat },
+      { to: '/app/saved-meals', label: 'Sparade måltider', icon: Bookmark },
+    ],
+  },
+  profil: {
+    title: 'PROFIL',
+    emoji: '👤',
+    items: [
+      { to: '/app/profile', label: 'Profil', icon: User },
+      { to: '/app/body-composition', label: 'Kroppssammansättning', icon: Activity },
+    ],
+  },
+  verktyg: {
+    title: 'VERKTYG',
+    emoji: '🧮',
+    items: [
+      { to: '/app/tools/met-calculator', label: 'MET Aktivitetskalkylator', icon: Flame },
+      { to: '/app/tools/tdee-calculator', label: 'TDEE & Kaloriuträknare', icon: Calculator },
+      { to: '/app/tools/goal-calculator', label: 'Måluträknare', icon: Target },
+    ],
+  },
+}
 
 export default function MobileDrawer() {
   const { user, profile, signOut } = useAuth()
@@ -115,27 +134,40 @@ export default function MobileDrawer() {
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 overflow-y-auto p-3 space-y-0.5">
-              {navItems.map(item => {
-                const Icon = item.icon
-                const active = isActive(item.to, item.exact)
-                return (
-                  <Link
-                    key={item.to}
-                    to={item.to}
-                    onClick={close}
-                    className={cn(
-                      'flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition-colors',
-                      active
-                        ? 'bg-primary-100 text-primary-700'
-                        : 'text-neutral-600 active:bg-neutral-50'
-                    )}
-                  >
-                    <Icon className={cn('h-5 w-5 shrink-0', active && 'text-primary-600')} />
-                    <span>{item.label}</span>
-                  </Link>
-                )
-              })}
+            <nav className="flex-1 overflow-y-auto p-3">
+              {Object.entries(navGroups).map(([key, group], groupIndex) => (
+                <div key={key} className={groupIndex > 0 ? 'mt-6' : ''}>
+                  {/* Section Header */}
+                  <h3 className="px-3 py-2 text-xs font-semibold text-neutral-500 uppercase tracking-wider flex items-center gap-2">
+                    <span>{group.emoji}</span>
+                    <span>{group.title}</span>
+                  </h3>
+
+                  {/* Section Items */}
+                  <div className="space-y-0.5 mt-2">
+                    {group.items.map(item => {
+                      const Icon = item.icon
+                      const active = isActive(item.to)
+                      return (
+                        <Link
+                          key={item.to}
+                          to={item.to}
+                          onClick={close}
+                          className={cn(
+                            'flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition-colors',
+                            active
+                              ? 'bg-primary-100 text-primary-700'
+                              : 'text-neutral-600 active:bg-neutral-50'
+                          )}
+                        >
+                          <Icon className={cn('h-5 w-5 shrink-0', active && 'text-primary-600')} />
+                          <span>{item.label}</span>
+                        </Link>
+                      )
+                    })}
+                  </div>
+                </div>
+              ))}
             </nav>
 
             <Separator />

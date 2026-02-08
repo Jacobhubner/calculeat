@@ -109,12 +109,12 @@ export default function MacroDistributionCard({
       <CardContent className="space-y-6">
         {/* Fat Slider */}
         <div>
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-0 mb-2">
             <label className="text-sm font-medium text-neutral-700">Fett</label>
             <div className="text-sm font-semibold text-accent-600">
               {fatRange[0].toFixed(0)}% - {fatRange[1].toFixed(0)}%
               {caloriesMin && caloriesMax && (
-                <span className="text-neutral-500 font-normal ml-2">
+                <span className="text-neutral-500 font-normal ml-2 text-xs">
                   ({calculateMinGrams(fatRange[0], 9)}g - {calculateMaxGrams(fatRange[1], 9)}g)
                 </span>
               )}
@@ -128,12 +128,12 @@ export default function MacroDistributionCard({
 
         {/* Carb Slider */}
         <div>
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-0 mb-2">
             <label className="text-sm font-medium text-neutral-700">Kolhydrater</label>
             <div className="text-sm font-semibold text-primary-600">
               {carbRange[0].toFixed(0)}% - {carbRange[1].toFixed(0)}%
               {caloriesMin && caloriesMax && (
-                <span className="text-neutral-500 font-normal ml-2">
+                <span className="text-neutral-500 font-normal ml-2 text-xs">
                   ({calculateMinGrams(carbRange[0], 4)}g - {calculateMaxGrams(carbRange[1], 4)}g)
                 </span>
               )}
@@ -153,12 +153,12 @@ export default function MacroDistributionCard({
 
         {/* Protein Slider */}
         <div>
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-0 mb-2">
             <label className="text-sm font-medium text-neutral-700">Protein</label>
             <div className="text-sm font-semibold text-blue-600">
               {proteinRange[0].toFixed(0)}% - {proteinRange[1].toFixed(0)}%
               {caloriesMin && caloriesMax && (
-                <span className="text-neutral-500 font-normal ml-2">
+                <span className="text-neutral-500 font-normal ml-2 text-xs">
                   ({calculateMinGrams(proteinRange[0], 4)}g -{' '}
                   {calculateMaxGrams(proteinRange[1], 4)}g)
                 </span>

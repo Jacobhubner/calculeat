@@ -43,75 +43,100 @@ export default function DashboardNav() {
     }
   }
 
-  const navItems: NavItem[] = [
-    {
-      type: 'single',
-      to: '/app',
-      label: 'Översikt',
-      icon: LayoutDashboard,
-      exact: true,
+  // Organized navigation items by functional groups
+  const navGroups = {
+    oversikt: {
+      title: 'ÖVERSIKT',
+      emoji: '📍',
+      items: [
+        {
+          type: 'single' as const,
+          to: '/app',
+          label: 'Översikt',
+          icon: LayoutDashboard,
+          exact: true,
+        },
+        {
+          type: 'single' as const,
+          to: '/app/today',
+          label: 'Dagens logg',
+          icon: Calendar,
+        },
+        {
+          type: 'single' as const,
+          to: '/app/history',
+          label: 'Historik',
+          icon: History,
+        },
+      ],
     },
-    {
-      type: 'single',
-      to: '/app/today',
-      label: 'Dagens logg',
-      icon: Calendar,
+    planering: {
+      title: 'PLANERING',
+      emoji: '🍽️',
+      items: [
+        {
+          type: 'single' as const,
+          to: '/app/food-items',
+          label: 'Livsmedel',
+          icon: Apple,
+        },
+        {
+          type: 'single' as const,
+          to: '/app/recipes',
+          label: 'Recept',
+          icon: ChefHat,
+        },
+        {
+          type: 'single' as const,
+          to: '/app/saved-meals',
+          label: 'Sparade måltider',
+          icon: Bookmark,
+        },
+      ],
     },
-    {
-      type: 'single',
-      to: '/app/food-items',
-      label: 'Livsmedel',
-      icon: Apple,
+    profil: {
+      title: 'PROFIL',
+      emoji: '👤',
+      items: [
+        {
+          type: 'single' as const,
+          to: '/app/profile',
+          label: 'Profil',
+          icon: User,
+        },
+        {
+          type: 'single' as const,
+          to: '/app/body-composition',
+          label: 'Kroppssammansättning',
+          icon: Activity,
+        },
+      ],
     },
-    {
-      type: 'single',
-      to: '/app/recipes',
-      label: 'Recept',
-      icon: ChefHat,
+    verktyg: {
+      title: 'VERKTYG',
+      emoji: '🧮',
+      items: [
+        {
+          type: 'single' as const,
+          to: '/app/tools/met-calculator',
+          label: 'MET Aktivitetskalkylator',
+          icon: Flame,
+        },
+        {
+          type: 'single' as const,
+          to: '/app/tools/tdee-calculator',
+          label: 'TDEE & Kaloriuträknare',
+          icon: Calculator,
+        },
+        {
+          type: 'single' as const,
+          to: '/app/tools/goal-calculator',
+          label: 'Måluträknare',
+          icon: Target,
+        },
+      ],
     },
-    {
-      type: 'single',
-      to: '/app/saved-meals',
-      label: 'Sparade måltider',
-      icon: Bookmark,
-    },
-    {
-      type: 'single',
-      to: '/app/history',
-      label: 'Historik',
-      icon: History,
-    },
-    {
-      type: 'single',
-      to: '/app/profile',
-      label: 'Profil',
-      icon: User,
-    },
-    {
-      type: 'single',
-      to: '/app/body-composition',
-      label: 'Kroppssammansättning',
-      icon: Activity,
-    },
-    {
-      type: 'single',
-      to: '/app/tools/met-calculator',
-      label: 'MET Aktivitetskalkylator',
-      icon: Flame,
-    },
-    {
-      type: 'single',
-      to: '/app/tools/tdee-calculator',
-      label: 'TDEE & Kaloriuträknare',
-      icon: Calculator,
-    },
-    {
-      type: 'single',
-      to: '/app/tools/goal-calculator',
-      label: 'Måluträknare',
-      icon: Target,
-    },
-  ]
+  }
 
   const getInitials = () => {
     if (profile?.profile_name) {
@@ -158,33 +183,50 @@ export default function DashboardNav() {
         <Separator />
 
         {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto p-4 space-y-1">
-          {navItems.map(item => {
-            const Icon = item.icon
-            const active = item.exact ? isActive(item.to) : location.pathname.startsWith(item.to)
+        <nav className="flex-1 overflow-y-auto p-4">
+          {Object.entries(navGroups).map(([key, group], groupIndex) => (
+            <div key={key} className={groupIndex > 0 ? 'mt-6' : ''}>
+              {/* Section Header */}
+              {!sidebarCollapsed && (
+                <h3 className="px-3 py-2 text-xs font-semibold text-neutral-500 uppercase tracking-wider flex items-center gap-2">
+                  <span>{group.emoji}</span>
+                  <span>{group.title}</span>
+                </h3>
+              )}
 
-            return (
-              <Link
-                key={item.to}
-                to={item.to}
-                className={cn(
-                  'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors relative group',
-                  active
-                    ? 'bg-primary-100 text-primary-700'
-                    : 'text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900',
-                  sidebarCollapsed && 'justify-center px-2'
-                )}
-              >
-                <Icon className={cn('h-5 w-5 shrink-0', active && 'text-primary-600')} />
-                {!sidebarCollapsed && <span className="flex-1">{item.label}</span>}
-                {sidebarCollapsed && (
-                  <div className="absolute left-full ml-2 px-2 py-1 bg-neutral-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                    {item.label}
-                  </div>
-                )}
-              </Link>
-            )
-          })}
+              {/* Section Items */}
+              <div className="space-y-1 mt-2">
+                {group.items.map(item => {
+                  const Icon = item.icon
+                  const active = item.exact
+                    ? isActive(item.to)
+                    : location.pathname.startsWith(item.to)
+
+                  return (
+                    <Link
+                      key={item.to}
+                      to={item.to}
+                      className={cn(
+                        'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors relative group',
+                        active
+                          ? 'bg-primary-100 text-primary-700'
+                          : 'text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900',
+                        sidebarCollapsed && 'justify-center px-2'
+                      )}
+                    >
+                      <Icon className={cn('h-5 w-5 shrink-0', active && 'text-primary-600')} />
+                      {!sidebarCollapsed && <span className="flex-1">{item.label}</span>}
+                      {sidebarCollapsed && (
+                        <div className="absolute left-full ml-2 px-2 py-1 bg-neutral-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                          {item.label}
+                        </div>
+                      )}
+                    </Link>
+                  )
+                })}
+              </div>
+            </div>
+          ))}
         </nav>
 
         <Separator />

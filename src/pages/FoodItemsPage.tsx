@@ -1,10 +1,21 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Plus, Search, UtensilsCrossed, Edit2, Trash2, Globe, RotateCcw } from 'lucide-react'
+import {
+  Plus,
+  Search,
+  UtensilsCrossed,
+  Edit2,
+  Trash2,
+  Globe,
+  RotateCcw,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
+} from 'lucide-react'
 import EmptyState from '@/components/EmptyState'
 import { supabase } from '@/lib/supabase'
 import { Badge } from '@/components/ui/badge'
@@ -39,6 +50,10 @@ interface FoodItem {
 
 // Display mode type
 type DisplayMode = 'serving' | 'per100g' | 'perVolume'
+
+// Sort types
+type SortKey = 'name' | 'calories' | 'protein' | 'carb' | 'fat' | 'color'
+type SortDirection = 'asc' | 'desc'
 
 // Helper function: Get available display modes for a food item
 function getAvailableDisplayModes(item: FoodItem): DisplayMode[] {
@@ -170,7 +185,9 @@ export default function FoodItemsPage() {
   const { user } = useAuth()
   const queryClient = useQueryClient()
   const [searchQuery, setSearchQuery] = useState('')
-  const [selectedFilter, setSelectedFilter] = useState<'all' | 'green' | 'yellow' | 'orange'>('all')
+  const [selectedFilter, setSelectedFilter] = useState<'all' | 'green' | 'yellow' | 'orange' | 'recipe'>(
+    'all'
+  )
   const [foodItems, setFoodItems] = useState<FoodItem[]>([])
   const [loading, setLoading] = useState(true)
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
@@ -179,6 +196,8 @@ export default function FoodItemsPage() {
   const [displayModes, setDisplayModes] = useState<Record<string, DisplayMode>>({})
   const [resetStep, setResetStep] = useState<0 | 1 | 2>(0) // 0 = none, 1 = first confirm, 2 = second confirm
   const [isResetting, setIsResetting] = useState(false)
+  const [sortBy, setSortBy] = useState<SortKey>('name')
+  const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
 
   // Apply shadowing logic to food items
   const applyShadowing = (items: FoodItem[], userId: string): FoodItem[] => {
@@ -431,10 +450,86 @@ export default function FoodItemsPage() {
       selectedFilter === 'all' ||
       (selectedFilter === 'green' && item.energy_density_color === 'Green') ||
       (selectedFilter === 'yellow' && item.energy_density_color === 'Yellow') ||
-      (selectedFilter === 'orange' && item.energy_density_color === 'Orange')
+      (selectedFilter === 'orange' && item.energy_density_color === 'Orange') ||
+      (selectedFilter === 'recipe' && item.is_recipe === true)
 
     return matchesSearch && matchesFilter
   })
+
+  // Sort handler
+  const handleSort = (key: SortKey) => {
+    if (sortBy === key) {
+      // Toggle direction
+      setSortDirection(prev => (prev === 'asc' ? 'desc' : 'asc'))
+    } else {
+      // New column, default to ascending
+      setSortBy(key)
+      setSortDirection('asc')
+    }
+  }
+
+  // Sort food items
+  const sortedFoodItems = useMemo(() => {
+    const sorted = [...filteredFoodItems]
+
+    sorted.sort((a, b) => {
+      let aVal: number
+      let bVal: number
+
+      switch (sortBy) {
+        case 'name':
+          return sortDirection === 'asc'
+            ? a.name.localeCompare(b.name)
+            : b.name.localeCompare(a.name)
+
+        case 'calories': {
+          const aModeData = displayModes[a.id] ? getDisplayData(a, displayModes[a.id]) : null
+          const bModeData = displayModes[b.id] ? getDisplayData(b, displayModes[b.id]) : null
+          aVal = aModeData?.kcal ?? a.calories
+          bVal = bModeData?.kcal ?? b.calories
+          break
+        }
+
+        case 'protein': {
+          const aModeData = displayModes[a.id] ? getDisplayData(a, displayModes[a.id]) : null
+          const bModeData = displayModes[b.id] ? getDisplayData(b, displayModes[b.id]) : null
+          aVal = aModeData?.protein ?? a.protein_g
+          bVal = bModeData?.protein ?? b.protein_g
+          break
+        }
+
+        case 'carb': {
+          const aModeData = displayModes[a.id] ? getDisplayData(a, displayModes[a.id]) : null
+          const bModeData = displayModes[b.id] ? getDisplayData(b, displayModes[b.id]) : null
+          aVal = aModeData?.carb ?? a.carb_g
+          bVal = bModeData?.carb ?? b.carb_g
+          break
+        }
+
+        case 'fat': {
+          const aModeData = displayModes[a.id] ? getDisplayData(a, displayModes[a.id]) : null
+          const bModeData = displayModes[b.id] ? getDisplayData(b, displayModes[b.id]) : null
+          aVal = aModeData?.fat ?? a.fat_g
+          bVal = bModeData?.fat ?? b.fat_g
+          break
+        }
+
+        case 'color': {
+          const colorOrder: Record<string, number> = { Green: 1, Yellow: 2, Orange: 3 }
+          aVal = colorOrder[a.energy_density_color || ''] ?? 4
+          bVal = colorOrder[b.energy_density_color || ''] ?? 4
+          break
+        }
+
+        default:
+          return 0
+      }
+
+      return sortDirection === 'asc' ? aVal - bVal : bVal - aVal
+    })
+
+    return sorted
+  }, [filteredFoodItems, sortBy, sortDirection, displayModes])
 
   return (
     <DashboardLayout>
@@ -476,37 +571,67 @@ export default function FoodItemsPage() {
             </div>
 
             {/* Energitäthet Filter */}
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap">
               <Button
-                variant={selectedFilter === 'all' ? 'default' : 'outline'}
+                variant="outline"
                 size="sm"
                 onClick={() => setSelectedFilter('all')}
+                className={
+                  selectedFilter === 'all'
+                    ? 'bg-neutral-200 hover:bg-neutral-300 border-neutral-400 font-semibold'
+                    : ''
+                }
               >
                 Alla
               </Button>
               <Button
-                variant={selectedFilter === 'green' ? 'default' : 'outline'}
+                variant="outline"
                 size="sm"
                 onClick={() => setSelectedFilter('green')}
-                className={selectedFilter === 'green' ? 'bg-green-600 hover:bg-green-700' : ''}
+                className={
+                  selectedFilter === 'green'
+                    ? 'bg-green-500 hover:bg-green-600 text-white border-green-600 font-semibold'
+                    : ''
+                }
               >
                 Grön
               </Button>
               <Button
-                variant={selectedFilter === 'yellow' ? 'default' : 'outline'}
+                variant="outline"
                 size="sm"
                 onClick={() => setSelectedFilter('yellow')}
-                className={selectedFilter === 'yellow' ? 'bg-yellow-600 hover:bg-yellow-700' : ''}
+                className={
+                  selectedFilter === 'yellow'
+                    ? 'bg-yellow-400 hover:bg-yellow-500 text-neutral-900 border-yellow-500 font-semibold'
+                    : ''
+                }
               >
                 Gul
               </Button>
               <Button
-                variant={selectedFilter === 'orange' ? 'default' : 'outline'}
+                variant="outline"
                 size="sm"
                 onClick={() => setSelectedFilter('orange')}
-                className={selectedFilter === 'orange' ? 'bg-orange-600 hover:bg-orange-700' : ''}
+                className={
+                  selectedFilter === 'orange'
+                    ? 'bg-orange-500 hover:bg-orange-600 text-white border-orange-600 font-semibold'
+                    : ''
+                }
               >
                 Orange
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setSelectedFilter('recipe')}
+                className={
+                  selectedFilter === 'recipe'
+                    ? 'bg-purple-500 hover:bg-purple-600 text-white border-purple-600 font-semibold gap-1'
+                    : 'gap-1'
+                }
+              >
+                <span>👨‍🍳</span>
+                <span>Recept</span>
               </Button>
             </div>
           </div>
@@ -549,28 +674,28 @@ export default function FoodItemsPage() {
       ) : (
         <>
           {/* Mobile Card View */}
-          <div className="md:hidden space-y-2">
-            {filteredFoodItems.map(item => {
+          <div className="md:hidden space-y-1">
+            {sortedFoodItems.map(item => {
               const currentMode = displayModes[item.id] || getDefaultDisplayMode(item)
               const displayData = getDisplayData(item, currentMode)
               const allModes = getAvailableDisplayModes(item)
               return (
                 <Card key={item.id} className="overflow-hidden">
-                  <CardContent className="p-3">
+                  <CardContent className="p-2">
                     {/* Row 1: Name + color badge */}
-                    <div className="flex items-center justify-between gap-2 mb-1.5">
+                    <div className="flex items-center justify-between gap-2 mb-0.5">
                       <div className="flex items-center gap-1.5 min-w-0 flex-1">
                         <span className="font-medium text-neutral-900 text-sm truncate">
                           {item.name}
                         </span>
-                        {item.is_recipe && <span className="text-sm shrink-0">👨‍🍳</span>}
+                        {item.is_recipe && <span className="text-xs shrink-0">👨‍🍳</span>}
                         {item.user_id === null && (
-                          <Globe className="h-3.5 w-3.5 text-blue-500 shrink-0" />
+                          <Globe className="h-3 w-3 text-blue-500 shrink-0" />
                         )}
                       </div>
                       {item.energy_density_color && (
                         <div
-                          className={`h-2.5 w-2.5 rounded-full shrink-0 ${
+                          className={`h-2 w-2 rounded-full shrink-0 ${
                             item.energy_density_color === 'Green'
                               ? 'bg-green-500'
                               : item.energy_density_color === 'Yellow'
@@ -580,34 +705,37 @@ export default function FoodItemsPage() {
                         />
                       )}
                     </div>
-                    {/* Row 2: Portion info */}
-                    <div className="text-xs text-neutral-500 mb-1.5">
-                      {displayData ? (
-                        <span>
-                          {displayData.icon} {displayData.header}
-                        </span>
-                      ) : (
-                        <span>
-                          {item.default_amount} {item.default_unit}
-                        </span>
-                      )}
-                    </div>
-                    {/* Row 3: Macros */}
-                    <div className="flex items-center gap-3 text-xs mb-2">
+                    {/* Row 2: Portion + Macros combined */}
+                    <div className="flex items-center gap-1.5 text-[10px] mb-1 flex-wrap">
+                      <span className="text-neutral-500">
+                        {displayData ? (
+                          <>
+                            {displayData.icon} {displayData.header}
+                          </>
+                        ) : (
+                          <>
+                            {item.default_amount} {item.default_unit}
+                          </>
+                        )}
+                      </span>
+                      <span className="text-neutral-400">•</span>
                       <span className="font-semibold text-primary-600">
                         {displayData ? Math.round(displayData.kcal) : item.calories} kcal
                       </span>
+                      <span className="text-neutral-400">•</span>
                       <span className="text-green-600">
                         P: {displayData ? displayData.protein.toFixed(1) : item.protein_g}g
                       </span>
+                      <span className="text-neutral-400">•</span>
                       <span className="text-blue-600">
                         K: {displayData ? displayData.carb.toFixed(1) : item.carb_g}g
                       </span>
+                      <span className="text-neutral-400">•</span>
                       <span className="text-yellow-600">
                         F: {displayData ? displayData.fat.toFixed(1) : item.fat_g}g
                       </span>
                     </div>
-                    {/* Row 4: Unit pills + actions */}
+                    {/* Row 3: Unit pills + actions (previously Row 4) */}
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-1">
                         {allModes.length > 1 &&
@@ -615,7 +743,7 @@ export default function FoodItemsPage() {
                             <button
                               key={mode}
                               onClick={() => switchToDisplayMode(item.id, mode)}
-                              className={`px-2 py-0.5 text-[10px] font-medium rounded-full transition-all ${
+                              className={`px-1.5 py-0.5 text-[9px] font-medium rounded-full transition-all ${
                                 mode === currentMode
                                   ? 'bg-primary-100 text-primary-700 border-2 border-primary-500'
                                   : 'text-neutral-600 bg-white border border-neutral-300 active:bg-neutral-100'
@@ -625,23 +753,23 @@ export default function FoodItemsPage() {
                             </button>
                           ))}
                       </div>
-                      <div className="flex gap-1">
+                      <div className="flex gap-0.5">
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => handleEdit(item)}
-                          className="h-8 w-8 p-0"
+                          className="h-7 w-7 p-0"
                         >
-                          <Edit2 className="h-3.5 w-3.5 text-blue-600" />
+                          <Edit2 className="h-3 w-3 text-blue-600" />
                         </Button>
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => handleDelete(item.id)}
                           disabled={deletingItemId === item.id}
-                          className="h-8 w-8 p-0"
+                          className="h-7 w-7 p-0"
                         >
-                          <Trash2 className="h-3.5 w-3.5 text-red-600" />
+                          <Trash2 className="h-3 w-3 text-red-600" />
                         </Button>
                       </div>
                     </div>
@@ -659,30 +787,114 @@ export default function FoodItemsPage() {
                   <thead className="bg-neutral-50 border-b">
                     <tr>
                       <th className="text-left p-4 text-sm font-semibold text-neutral-900">
-                        Livsmedel
+                        <button
+                          onClick={() => handleSort('name')}
+                          className="flex items-center gap-1 hover:text-primary-600 transition-colors"
+                        >
+                          Livsmedel
+                          {sortBy === 'name' ? (
+                            sortDirection === 'asc' ? (
+                              <ArrowUp className="h-4 w-4" />
+                            ) : (
+                              <ArrowDown className="h-4 w-4" />
+                            )
+                          ) : (
+                            <ArrowUpDown className="h-4 w-4 opacity-30" />
+                          )}
+                        </button>
                       </th>
                       <th className="text-left p-4 text-sm font-semibold text-neutral-900">
                         Portion
                       </th>
                       <th className="text-right p-4 text-sm font-semibold text-neutral-900">
-                        Kalorier
+                        <button
+                          onClick={() => handleSort('calories')}
+                          className="flex items-center gap-1 ml-auto hover:text-primary-600 transition-colors"
+                        >
+                          Kalorier
+                          {sortBy === 'calories' ? (
+                            sortDirection === 'asc' ? (
+                              <ArrowUp className="h-4 w-4" />
+                            ) : (
+                              <ArrowDown className="h-4 w-4" />
+                            )
+                          ) : (
+                            <ArrowUpDown className="h-4 w-4 opacity-30" />
+                          )}
+                        </button>
                       </th>
                       <th className="text-right p-4 text-sm font-semibold text-neutral-900">
-                        Protein
+                        <button
+                          onClick={() => handleSort('protein')}
+                          className="flex items-center gap-1 ml-auto hover:text-primary-600 transition-colors"
+                        >
+                          Protein
+                          {sortBy === 'protein' ? (
+                            sortDirection === 'asc' ? (
+                              <ArrowUp className="h-4 w-4" />
+                            ) : (
+                              <ArrowDown className="h-4 w-4" />
+                            )
+                          ) : (
+                            <ArrowUpDown className="h-4 w-4 opacity-30" />
+                          )}
+                        </button>
                       </th>
                       <th className="text-right p-4 text-sm font-semibold text-neutral-900">
-                        Kolh.
+                        <button
+                          onClick={() => handleSort('carb')}
+                          className="flex items-center gap-1 ml-auto hover:text-primary-600 transition-colors"
+                        >
+                          Kolh.
+                          {sortBy === 'carb' ? (
+                            sortDirection === 'asc' ? (
+                              <ArrowUp className="h-4 w-4" />
+                            ) : (
+                              <ArrowDown className="h-4 w-4" />
+                            )
+                          ) : (
+                            <ArrowUpDown className="h-4 w-4 opacity-30" />
+                          )}
+                        </button>
                       </th>
                       <th className="text-right p-4 text-sm font-semibold text-neutral-900">
-                        Fett
+                        <button
+                          onClick={() => handleSort('fat')}
+                          className="flex items-center gap-1 ml-auto hover:text-primary-600 transition-colors"
+                        >
+                          Fett
+                          {sortBy === 'fat' ? (
+                            sortDirection === 'asc' ? (
+                              <ArrowUp className="h-4 w-4" />
+                            ) : (
+                              <ArrowDown className="h-4 w-4" />
+                            )
+                          ) : (
+                            <ArrowUpDown className="h-4 w-4 opacity-30" />
+                          )}
+                        </button>
                       </th>
                       <th className="text-center p-4 text-sm font-semibold text-neutral-900">
-                        Typ
+                        <button
+                          onClick={() => handleSort('color')}
+                          className="flex items-center gap-1 mx-auto hover:text-primary-600 transition-colors"
+                        >
+                          Typ
+                          {sortBy === 'color' ? (
+                            sortDirection === 'asc' ? (
+                              <ArrowUp className="h-4 w-4" />
+                            ) : (
+                              <ArrowDown className="h-4 w-4" />
+                            )
+                          ) : (
+                            <ArrowUpDown className="h-4 w-4 opacity-30" />
+                          )}
+                        </button>
                       </th>
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredFoodItems.map(item => (
+                    {sortedFoodItems.map(item => (
                       <tr
                         key={item.id}
                         className="border-b hover:bg-neutral-50 transition-colors cursor-pointer"
