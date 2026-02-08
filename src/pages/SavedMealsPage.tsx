@@ -6,8 +6,10 @@ import { Input } from '@/components/ui/input'
 import { Plus, Search, Bookmark, Loader2 } from 'lucide-react'
 import EmptyState from '@/components/EmptyState'
 import SavedMealCard from '@/components/saved-meals/SavedMealCard'
+import EditSavedMealDialog from '@/components/saved-meals/EditSavedMealDialog'
 import SelectMealSlotDialog from '@/components/daily/SelectMealSlotDialog'
 import { useSavedMeals } from '@/hooks/useSavedMeals'
+import type { SavedMeal } from '@/hooks/useSavedMeals'
 
 export default function SavedMealsPage() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -16,6 +18,8 @@ export default function SavedMealsPage() {
     id: string
     name: string
   } | null>(null)
+  const [editDialogOpen, setEditDialogOpen] = useState(false)
+  const [selectedMealForEdit, setSelectedMealForEdit] = useState<SavedMeal | null>(null)
 
   const { data: savedMeals, isLoading } = useSavedMeals()
 
@@ -52,8 +56,11 @@ export default function SavedMealsPage() {
   }
 
   const handleEdit = (mealId: string) => {
-    // TODO: Implement edit functionality
-    console.log('Edit meal:', mealId)
+    const meal = savedMeals?.find(m => m.id === mealId)
+    if (meal) {
+      setSelectedMealForEdit(meal)
+      setEditDialogOpen(true)
+    }
   }
 
   return (
@@ -167,6 +174,15 @@ export default function SavedMealsPage() {
           onOpenChange={setSelectSlotDialogOpen}
           savedMealId={selectedMealForUse.id}
           savedMealName={selectedMealForUse.name}
+        />
+      )}
+
+      {/* Edit Saved Meal Dialog */}
+      {selectedMealForEdit && (
+        <EditSavedMealDialog
+          open={editDialogOpen}
+          onOpenChange={setEditDialogOpen}
+          meal={selectedMealForEdit}
         />
       )}
     </DashboardLayout>
