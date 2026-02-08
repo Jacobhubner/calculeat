@@ -262,16 +262,16 @@ export default function GoalCalculatorTool() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">Måluträknare</h2>
-          <p className="text-neutral-600 mt-1">
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div className="flex-1 min-w-0">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Måluträknare</h2>
+          <p className="text-neutral-600 mt-1 text-sm md:text-base">
             {profileData?.body_fat_percentage
               ? 'Beräkna din målvikt och tidslinje för att nå ditt kroppsfettmål'
               : 'Beräkna din målvikt och tidslinje'}
           </p>
         </div>
-        <Badge variant="secondary" className="bg-purple-100 text-purple-700">
+        <Badge variant="secondary" className="bg-purple-100 text-purple-700 shrink-0">
           Mål & Planering
         </Badge>
       </div>
@@ -314,7 +314,7 @@ export default function GoalCalculatorTool() {
         </CardContent>
       </Card>
 
-      <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
+      <div className="grid gap-6 md:grid-cols-[2fr_1fr]">
         {/* Vänster: Inställningar */}
         <div className="space-y-6">
           {/* Nuvarande Status */}
@@ -325,7 +325,7 @@ export default function GoalCalculatorTool() {
                 <CardDescription>Utgångspunkt för beräkningar</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4">
                     <p className="text-sm text-neutral-600 mb-1">Vikt</p>
                     <p className="text-2xl font-bold text-neutral-900">
@@ -345,7 +345,7 @@ export default function GoalCalculatorTool() {
 
                 {/* Visa bara om vi har kroppsfettprocent OCH goalResult med massa-data */}
                 {profileData.body_fat_percentage && goalResult?.currentLeanMass !== undefined && (
-                  <div className="grid grid-cols-2 gap-4 mt-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                     <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                       <p className="text-sm text-green-700 mb-1">Fettfri massa</p>
                       <p className="text-xl font-bold text-green-900">
@@ -393,9 +393,9 @@ export default function GoalCalculatorTool() {
               </CardHeader>
               <CardContent className="space-y-3">
                 {/* Nuvarande och Mål BMI - Kompakt inline */}
-                <div className="flex items-center gap-3 text-sm">
-                  <div className="flex items-center gap-2">
-                    <span className="text-neutral-600">Nuvarande:</span>
+                <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm flex-wrap">
+                  <div className="flex items-center gap-1 sm:gap-2">
+                    <span className="text-neutral-600 shrink-0">Nuvarande:</span>
                     <span className="font-bold text-neutral-900">
                       {bmiData.current.bmi.toFixed(1)}
                     </span>
@@ -417,9 +417,9 @@ export default function GoalCalculatorTool() {
                   </div>
                   {bmiData.target && (
                     <>
-                      <span className="text-neutral-400">→</span>
-                      <div className="flex items-center gap-2">
-                        <span className="text-neutral-600">Mål:</span>
+                      <span className="text-neutral-400 hidden sm:inline">→</span>
+                      <div className="flex items-center gap-1 sm:gap-2">
+                        <span className="text-neutral-600 shrink-0">Mål:</span>
                         <span className="font-bold text-purple-900">
                           {bmiData.target.bmi.toFixed(1)}
                         </span>
@@ -444,8 +444,8 @@ export default function GoalCalculatorTool() {
                 </div>
 
                 {/* BMI-Tabell - Kompakt */}
-                <div className="border border-neutral-200 rounded-lg overflow-hidden">
-                  <table className="w-full text-xs">
+                <div className="border border-neutral-200 rounded-lg overflow-x-auto">
+                  <table className="w-full text-xs min-w-[300px]">
                     <thead className="bg-neutral-100">
                       <tr>
                         <th className="px-3 py-1.5 text-left font-semibold">Kategori</th>
@@ -533,9 +533,9 @@ export default function GoalCalculatorTool() {
             <CardContent className="space-y-6">
               {/* Mål Kroppsvikt Input - FLYTTA UPP FÖRST */}
               <div>
-                <div className="flex justify-between items-center mb-4">
-                  <Label>Mål Kroppsvikt</Label>
-                  <div className="flex items-center gap-2">
+                <div className="flex justify-between items-center mb-4 gap-2 flex-wrap">
+                  <Label className="shrink-0">Mål Kroppsvikt</Label>
+                  <div className="flex items-center gap-2 shrink-0">
                     <Input
                       type="number"
                       min={profileData?.weight_kg ? Math.floor(profileData.weight_kg * 0.7) : 40}
@@ -569,9 +569,9 @@ export default function GoalCalculatorTool() {
               {/* Mål Kroppsfett % - BARA OM VI HAR KROPPSFETTPROCENT */}
               {profileData?.body_fat_percentage && (
                 <div>
-                  <div className="flex justify-between items-center mb-4">
-                    <Label>Mål Kroppsfett %</Label>
-                    <div className="flex items-center gap-2">
+                  <div className="flex justify-between items-center mb-4 gap-2 flex-wrap">
+                    <Label className="shrink-0">Mål Kroppsfett %</Label>
+                    <div className="flex items-center gap-2 shrink-0">
                       <Input
                         type="number"
                         min="5"
@@ -686,7 +686,9 @@ export default function GoalCalculatorTool() {
                           ? 'Viktnedgång - Välj tempo enligt Energimål:'
                           : 'Viktökning - Välj tempo enligt Energimål:'}
                       </p>
-                      <div className={`grid ${isWeightLoss ? 'grid-cols-3' : 'grid-cols-1'} gap-2`}>
+                      <div
+                        className={`grid ${isWeightLoss ? 'grid-cols-1 sm:grid-cols-3' : 'grid-cols-1'} gap-2`}
+                      >
                         {presets.map((preset, idx) => {
                           const isActive =
                             weeklyWeightChange.min === preset.kgPerWeek.min &&

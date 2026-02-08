@@ -54,7 +54,7 @@ export default function MacroBar({ protein, carbs, fat, className }: MacroBarPro
       </div>
 
       {/* Macro Details */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {macros.map(macro => (
           <div key={macro.name} className="text-center">
             <div className={cn('inline-block rounded-lg px-3 py-2 mb-2', macro.lightColor)}>

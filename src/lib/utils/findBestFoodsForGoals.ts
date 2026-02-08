@@ -290,7 +290,7 @@ export function findFoodsByColors(foods: FoodItem[], colors: FoodColor[]): FoodI
 }
 
 // Legacy export for backwards compatibility
-export const findFoodsByNoomColors = findFoodsByColors
+// Alias removed - use findFoodsByColors directly
 
 /**
  * Find recipe or non-recipe foods

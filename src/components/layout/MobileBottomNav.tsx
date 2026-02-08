@@ -42,7 +42,7 @@ export default function MobileBottomNav() {
           className="flex-1 flex flex-col items-center justify-center gap-0.5 text-[10px] font-medium text-neutral-400 active:text-neutral-600 min-w-0"
         >
           <Menu className="h-5 w-5" />
-          <span>Mer</span>
+          <span>Meny</span>
         </button>
       </div>
     </nav>

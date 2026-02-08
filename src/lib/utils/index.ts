@@ -18,7 +18,7 @@ export {
   findFoodsForRemainingMacros,
   findHighProteinFoods,
   findLowCalorieFoods,
-  findFoodsByNoomColors,
+  findFoodsByColors,
   findRecipeFoods,
   type FindBestFoodsParams,
   type FoodGoalMatch,

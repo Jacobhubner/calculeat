@@ -124,8 +124,8 @@ export default function HistoryDayPage() {
                 />
               </div>
 
-              {/* Noom Colors */}
-              <div className="grid grid-cols-3 gap-3">
+              {/* Kaloritäthetsfärger */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="text-center p-3 bg-green-50 rounded-lg border border-green-200">
                   <div className="text-2xl font-bold text-green-700">{log.green_calories}</div>
                   <div className="text-xs text-green-600">Grön</div>

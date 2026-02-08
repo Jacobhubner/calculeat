@@ -106,10 +106,10 @@ export default function METCalculatorTool() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">MET Aktivitetskalkylator</h2>
-          <p className="text-neutral-600 mt-1">
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div className="flex-1 min-w-0">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900">MET Aktivitetskalkylator</h2>
+          <p className="text-neutral-600 mt-1 text-sm md:text-base">
             Beräkna kalorier förbrända från över 1100 aktiviteter med metriska enheter
           </p>
           <p className="text-xs text-neutral-500 mt-1">
@@ -117,12 +117,12 @@ export default function METCalculatorTool() {
             Health Science
           </p>
         </div>
-        <Badge variant="secondary" className="bg-orange-100 text-orange-700">
+        <Badge variant="secondary" className="bg-orange-100 text-orange-700 shrink-0">
           Energi & Metabol
         </Badge>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
+      <div className="grid gap-6 md:grid-cols-[2fr_1fr]">
         {/* Vänster: Aktivitetssökning */}
         <div className="space-y-6">
           <Card>
@@ -229,13 +229,13 @@ export default function METCalculatorTool() {
           {selectedActivities.length > 0 && (
             <Card>
               <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg">Valda Aktiviteter</CardTitle>
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <CardTitle className="text-lg shrink-0">Valda Aktiviteter</CardTitle>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => setSelectedActivities([])}
-                    className="text-error-600 hover:text-error-700"
+                    className="text-error-600 hover:text-error-700 shrink-0"
                   >
                     Rensa alla
                   </Button>

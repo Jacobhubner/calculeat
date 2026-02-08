@@ -288,10 +288,10 @@ export default function HistoryPage() {
               </CardContent>
             </Card>
 
-            {/* Noom Distribution */}
+            {/* Kaloritäthetsfördelning */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Noom-fördelning</CardTitle>
+                <CardTitle className="text-lg">Kaloritäthetsfördelning</CardTitle>
                 <CardDescription>Senaste 30 dagarna</CardDescription>
               </CardHeader>
               <CardContent className="space-y-2">

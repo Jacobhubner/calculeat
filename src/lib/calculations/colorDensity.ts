@@ -161,14 +161,5 @@ export function getColorTargets(): {
   }
 }
 
-// Legacy exports for backwards compatibility (will be removed later)
-export type NoomColor = FoodColor
-export type NoomFoodType = FoodType
-export type NoomCalculationParams = ColorDensityCalculationParams
-export type NoomDistribution = ColorDistribution
-export const calculateNoomColor = calculateFoodColor
-export const getNoomThresholds = getColorThresholds
-export const NOOM_COLOR_DESCRIPTIONS = FOOD_COLOR_DESCRIPTIONS
-export const NOOM_FOOD_TYPE_DESCRIPTIONS = FOOD_TYPE_DESCRIPTIONS
-export const calculateNoomDistribution = calculateColorDistribution
-export const getNoomTargets = getColorTargets
+// Legacy "Noom" exports removed - trademark compliance
+// Use the standard names: FoodColor, calculateFoodColor, etc.

@@ -1,15 +1,11 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  LayoutDashboard,
   User,
   Settings,
   LogOut,
-  Apple,
   ChefHat,
   Bookmark,
-  Calendar,
-  History,
   Activity,
   Flame,
   Calculator,
@@ -23,13 +19,10 @@ import { cn } from '@/lib/utils'
 import { Avatar, AvatarFallback } from '../ui/avatar'
 import { Separator } from '../ui/separator'
 
+// Secondary pages not in bottom nav (primary pages: Översikt, Idag, Livsmedel, Historik)
 const navItems = [
-  { to: '/app', label: 'Översikt', icon: LayoutDashboard, exact: true },
-  { to: '/app/today', label: 'Dagens logg', icon: Calendar },
-  { to: '/app/food-items', label: 'Livsmedel', icon: Apple },
   { to: '/app/recipes', label: 'Recept', icon: ChefHat },
   { to: '/app/saved-meals', label: 'Sparade måltider', icon: Bookmark },
-  { to: '/app/history', label: 'Historik', icon: History },
   { to: '/app/profile', label: 'Profil', icon: User },
   { to: '/app/body-composition', label: 'Kroppssammansättning', icon: Activity },
   { to: '/app/tools/met-calculator', label: 'MET Aktivitetskalkylator', icon: Flame },

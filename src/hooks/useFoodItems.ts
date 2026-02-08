@@ -148,11 +148,11 @@ export function useFoodItems() {
 /**
  * Search food items (global + user-specific with shadowing)
  */
-export function useSearchFoodItems(query: string, noomFilter?: FoodColor) {
+export function useSearchFoodItems(query: string, colorFilter?: FoodColor) {
   const { user } = useAuth()
 
   return useQuery({
-    queryKey: ['foodItems', 'search', user?.id, query, noomFilter],
+    queryKey: ['foodItems', 'search', user?.id, query, colorFilter],
     queryFn: async () => {
       if (!user) throw new Error('User not authenticated')
 
@@ -166,8 +166,8 @@ export function useSearchFoodItems(query: string, noomFilter?: FoodColor) {
         queryBuilder = queryBuilder.or(`name.ilike.%${query}%,brand.ilike.%${query}%`)
       }
 
-      if (noomFilter) {
-        queryBuilder = queryBuilder.eq('energy_density_color', noomFilter)
+      if (colorFilter) {
+        queryBuilder = queryBuilder.eq('energy_density_color', colorFilter)
       }
 
       const { data, error } = await queryBuilder.order('name')
@@ -177,7 +177,7 @@ export function useSearchFoodItems(query: string, noomFilter?: FoodColor) {
       // Apply shadowing: user items override global items
       return applyShadowing(data as FoodItem[], user.id)
     },
-    enabled: !!user && (!!query || !!noomFilter),
+    enabled: !!user && (!!query || !!colorFilter),
   })
 }
 

@@ -13,7 +13,7 @@ export interface FoodFinderParams {
   minProtein?: number
   maxCarbs?: number
   maxFat?: number
-  sortBy?: 'name' | 'calories' | 'protein' | 'noom'
+  sortBy?: 'name' | 'calories' | 'protein' | 'density'
   sortOrder?: 'asc' | 'desc'
 }
 
@@ -35,7 +35,7 @@ export function findFoods(foods: FoodItem[], params: FoodFinderParams): FoodItem
     })
   }
 
-  // Noom color filter
+  // Kaloritäthetsfärg-filter
   if (params.energyDensityColor) {
     results = results.filter(food => food.energy_density_color === params.energyDensityColor)
   }
@@ -92,10 +92,10 @@ export function findFoods(foods: FoodItem[], params: FoodFinderParams): FoodItem
         case 'protein':
           return multiplier * (a.protein_g - b.protein_g)
 
-        case 'noom': {
-          const noomOrder = { Green: 1, Yellow: 2, Orange: 3 }
-          const aOrder = noomOrder[a.energy_density_color || 'Yellow']
-          const bOrder = noomOrder[b.energy_density_color || 'Yellow']
+        case 'density': {
+          const colorOrder = { Green: 1, Yellow: 2, Orange: 3 }
+          const aOrder = colorOrder[a.energy_density_color || 'Yellow']
+          const bOrder = colorOrder[b.energy_density_color || 'Yellow']
           return multiplier * (aOrder - bOrder)
         }
 
@@ -199,11 +199,11 @@ export function suggestFoodsForRemainingMacros(
   // Filter by remaining calories
   suggestions = suggestions.filter(food => food.calories <= remaining.calories * 1.1)
 
-  // Sort by Noom color (prefer green)
+  // Sortera efter kaloritäthetsfärg (prioritera grön)
   suggestions.sort((a, b) => {
-    const noomOrder = { Green: 1, Yellow: 2, Orange: 3 }
-    const aOrder = noomOrder[a.energy_density_color || 'Yellow']
-    const bOrder = noomOrder[b.energy_density_color || 'Yellow']
+    const colorOrder = { Green: 1, Yellow: 2, Orange: 3 }
+    const aOrder = colorOrder[a.energy_density_color || 'Yellow']
+    const bOrder = colorOrder[b.energy_density_color || 'Yellow']
     return aOrder - bOrder
   })
 
@@ -217,7 +217,7 @@ export function suggestFoodsForRemainingMacros(
 export function calculateFoodSimilarity(food1: FoodItem, food2: FoodItem): number {
   let score = 0
 
-  // Same Noom color (+20 points)
+  // Samma kaloritäthetsfärg (+20 poäng)
   if (food1.energy_density_color === food2.energy_density_color) {
     score += 20
   }

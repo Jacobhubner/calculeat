@@ -48,7 +48,7 @@ export interface DailyLog {
   total_protein_g: number
   kcal_per_gram?: number
 
-  // Noom tracking
+  // Kaloritäthetsspårning
   green_calories: number
   yellow_calories: number
   orange_calories: number

@@ -31,7 +31,14 @@
       "mcp__supabase__list_migrations",
       "mcp__supabase__apply_migration",
       "mcp__supabase__execute_sql",
-      "mcp__supabase__list_tables"
+      "mcp__supabase__list_tables",
+      "mcp__supabase__get_logs",
+      "mcp__supabase__get_edge_function",
+      "mcp__supabase__deploy_edge_function",
+      "mcp__supabase__search_docs",
+      "Bash(timeout:*)",
+      "Bash(start:*)",
+      "Bash(ping:*)"
     ],
     "deny": [],
     "ask": []

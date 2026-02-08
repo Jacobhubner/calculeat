@@ -77,7 +77,7 @@ export default function CalorieRing({
       </div>
 
       {/* Stats */}
-      <div className="mt-6 grid grid-cols-2 gap-6 w-full">
+      <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-6 w-full">
         <div className="text-center">
           {min && max ? (
             <p className="text-xl font-semibold text-neutral-900">
