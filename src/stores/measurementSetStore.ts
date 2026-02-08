@@ -12,6 +12,9 @@ interface MeasurementSetState {
   activeMeasurementSet: MeasurementSet | null
   setActiveMeasurementSet: (measurementSet: MeasurementSet | null) => void
 
+  // Last active measurement set ID (persists across logout for restoration)
+  lastActiveMeasurementSetId: string | null
+
   // All user measurement sets (saved in database)
   measurementSets: MeasurementSet[]
   setMeasurementSets: (sets: MeasurementSet[]) => void
@@ -47,22 +50,78 @@ export const useMeasurementSetStore = create<MeasurementSetState>()(
     (set, get) => ({
       // Initial state
       activeMeasurementSet: null,
+      lastActiveMeasurementSetId: null,
       measurementSets: [],
       unsavedMeasurementSets: [],
 
       // Set active measurement set
-      setActiveMeasurementSet: measurementSet => set({ activeMeasurementSet: measurementSet }),
+      setActiveMeasurementSet: measurementSet =>
+        set(state => {
+          const newLastActiveId =
+            measurementSet && !measurementSet.id.startsWith('temp-')
+              ? measurementSet.id
+              : state.lastActiveMeasurementSetId
+          console.log('📦 setActiveMeasurementSet', {
+            newActiveId: measurementSet?.id,
+            isTemp: measurementSet?.id?.startsWith('temp-'),
+            lastActiveId: newLastActiveId,
+          })
+          return {
+            activeMeasurementSet: measurementSet,
+            lastActiveMeasurementSetId: newLastActiveId,
+          }
+        }),
 
       // Set all measurement sets
       setMeasurementSets: sets =>
-        set(state => ({
-          measurementSets: sets,
-          // If we have an active set, try to update it from the new list
-          // Otherwise keep it as null (new measurement mode)
-          activeMeasurementSet: state.activeMeasurementSet
-            ? sets.find(s => s.id === state.activeMeasurementSet?.id) || state.activeMeasurementSet
-            : null,
-        })),
+        set(state => {
+          console.log('📦 setMeasurementSets called', {
+            setsCount: sets.length,
+            currentActive: state.activeMeasurementSet?.id,
+            lastActiveId: state.lastActiveMeasurementSetId,
+          })
+
+          // If we have an active set, try to find it in the new list
+          if (state.activeMeasurementSet) {
+            const found = sets.find(s => s.id === state.activeMeasurementSet?.id)
+            console.log('  ↳ Has active set, found in new list:', !!found)
+            return {
+              measurementSets: sets,
+              activeMeasurementSet: found || state.activeMeasurementSet,
+            }
+          }
+          // If no active set but we have a lastActiveMeasurementSetId, try to restore it
+          if (state.lastActiveMeasurementSetId) {
+            const lastActive = sets.find(s => s.id === state.lastActiveMeasurementSetId)
+            console.log(
+              '  ↳ Trying to restore lastActive:',
+              state.lastActiveMeasurementSetId,
+              'found:',
+              !!lastActive
+            )
+            if (lastActive) {
+              return {
+                measurementSets: sets,
+                activeMeasurementSet: lastActive,
+              }
+            }
+          }
+          // If no active set and no lastActive, but we have saved sets, auto-select the first one
+          // This prevents creating a new card when logging back in
+          if (sets.length > 0) {
+            console.log('  ↳ No lastActive found, selecting first set')
+            return {
+              measurementSets: sets,
+              activeMeasurementSet: sets[0],
+            }
+          }
+          // No active set and no saved sets - keep as null
+          console.log('  ↳ No sets available, keeping null')
+          return {
+            measurementSets: sets,
+            activeMeasurementSet: null,
+          }
+        }),
 
       // Add unsaved measurement set (local only, not in database yet)
       addUnsavedMeasurementSet: measurementSet =>
@@ -155,11 +214,21 @@ export const useMeasurementSetStore = create<MeasurementSetState>()(
         }),
 
       // Clear all measurement sets (on logout)
+      // NOTE: We intentionally keep lastActiveMeasurementSetId so we can restore
+      // the previously active card when the user logs back in
       clearMeasurementSets: () =>
-        set({
-          measurementSets: [],
-          unsavedMeasurementSets: [],
-          activeMeasurementSet: null,
+        set(state => {
+          console.log(
+            '📦 clearMeasurementSets called, keeping lastActiveId:',
+            state.lastActiveMeasurementSetId
+          )
+          return {
+            measurementSets: [],
+            unsavedMeasurementSets: [],
+            activeMeasurementSet: null,
+            // Keep lastActiveMeasurementSetId for restoration after login
+            lastActiveMeasurementSetId: state.lastActiveMeasurementSetId,
+          }
         }),
 
       // Get measurement set by ID (checks both saved and unsaved)
@@ -182,6 +251,7 @@ export const useMeasurementSetStore = create<MeasurementSetState>()(
       name: 'calculeat-measurement-set-storage',
       // Only persist active measurement set ID and date for quick restoration
       // Don't persist temp (unsaved) cards - they should not survive page refresh
+      // Also persist lastActiveMeasurementSetId to restore after logout/login
       partialize: state => ({
         activeMeasurementSet:
           state.activeMeasurementSet && !state.activeMeasurementSet.id.startsWith('temp-')
@@ -190,6 +260,7 @@ export const useMeasurementSetStore = create<MeasurementSetState>()(
                 set_date: state.activeMeasurementSet.set_date,
               }
             : null,
+        lastActiveMeasurementSetId: state.lastActiveMeasurementSetId,
       }),
     }
   )

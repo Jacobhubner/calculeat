@@ -95,7 +95,9 @@ export default function BodyCompositionHubPage() {
       <div className="space-y-8">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold text-neutral-900 mb-2">Kroppssammansättning</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-neutral-900 mb-1 md:mb-2">
+            Kroppssammansättning
+          </h1>
           <p className="text-neutral-600">Välj vilket verktyg du vill använda</p>
         </div>
 
@@ -171,7 +173,9 @@ export default function BodyCompositionHubPage() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-neutral-900 mb-2">Kroppssammansättning</h1>
+        <h1 className="text-2xl md:text-3xl font-bold text-neutral-900 mb-1 md:mb-2">
+          Kroppssammansättning
+        </h1>
         <p className="text-neutral-600">Välj vilket verktyg du vill använda</p>
       </div>
 

@@ -16,6 +16,7 @@ interface AuthContextType {
   signUp: (email: string, password: string, fullName: string) => Promise<void>
   signIn: (email: string, password: string) => Promise<void>
   signOut: () => Promise<void>
+  deleteAccount: () => Promise<void>
   updateProfile: (data: Partial<UserProfile>) => Promise<void>
   refreshProfile: () => Promise<void>
 }
@@ -152,6 +153,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem('calculeat-measurement-set-storage')
   }
 
+  const deleteAccount = async () => {
+    const { data, error } = await supabase.functions.invoke('delete-account', {
+      method: 'POST',
+    })
+
+    if (error) {
+      console.error('Edge function error:', error, 'Response data:', data)
+      throw error
+    }
+
+    // Sign out locally so the user is no longer authenticated
+    await supabase.auth.signOut()
+
+    // Same cleanup as signOut
+    setProfile(null)
+    clearProfiles()
+    clearMeasurementSets()
+    queryClient.clear()
+    localStorage.removeItem('calculeat-profile-storage')
+    localStorage.removeItem('calculeat-measurement-set-storage')
+  }
+
   const updateProfile = async (data: Partial<UserProfile>) => {
     if (!user) return
 
@@ -182,6 +205,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         signUp,
         signIn,
         signOut,
+        deleteAccount,
         updateProfile,
         refreshProfile,
       }}

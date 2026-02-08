@@ -21,6 +21,11 @@ interface UIState {
   toggleToolsSection: () => void
   setToolsSectionExpanded: (expanded: boolean) => void
 
+  // Mobile drawer state
+  mobileDrawerOpen: boolean
+  setMobileDrawerOpen: (open: boolean) => void
+  toggleMobileDrawer: () => void
+
   // Modal/Dialog state (kan utökas senare)
   activeModal: string | null
   openModal: (modalId: string) => void
@@ -42,8 +47,14 @@ export const useUIStore = create<UIState>()(
 
       // Tools section
       toolsSectionExpanded: true,
-      toggleToolsSection: () => set(state => ({ toolsSectionExpanded: !state.toolsSectionExpanded })),
+      toggleToolsSection: () =>
+        set(state => ({ toolsSectionExpanded: !state.toolsSectionExpanded })),
       setToolsSectionExpanded: expanded => set({ toolsSectionExpanded: expanded }),
+
+      // Mobile drawer
+      mobileDrawerOpen: false,
+      setMobileDrawerOpen: open => set({ mobileDrawerOpen: open }),
+      toggleMobileDrawer: () => set(state => ({ mobileDrawerOpen: !state.mobileDrawerOpen })),
 
       // Modals
       activeModal: null,

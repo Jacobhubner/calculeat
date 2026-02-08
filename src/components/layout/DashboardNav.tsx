@@ -128,7 +128,7 @@ export default function DashboardNav() {
   return (
     <aside
       className={cn(
-        'fixed left-0 top-16 h-[calc(100vh-4rem)] border-r bg-white transition-all duration-300 z-40',
+        'hidden md:block fixed left-0 top-16 h-[calc(100vh-4rem)] border-r bg-white transition-all duration-300 z-40',
         sidebarCollapsed ? 'w-20' : 'w-64'
       )}
     >

@@ -79,12 +79,14 @@ export default function HistoryPage() {
   return (
     <DashboardLayout>
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent mb-2 flex items-center gap-3">
-          <HistoryIcon className="h-8 w-8 text-primary-600" />
+      <div className="mb-6 md:mb-8">
+        <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent mb-1 md:mb-2 flex items-center gap-2 md:gap-3">
+          <HistoryIcon className="h-6 w-6 md:h-8 md:w-8 text-primary-600" />
           Historik
         </h1>
-        <p className="text-neutral-600">Se dina tidigare dagars loggning och framsteg</p>
+        <p className="text-sm md:text-base text-neutral-600">
+          Se dina tidigare dagars loggning och framsteg
+        </p>
       </div>
 
       {/* View Mode Toggle */}

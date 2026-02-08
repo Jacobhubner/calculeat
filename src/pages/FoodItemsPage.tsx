@@ -439,20 +439,24 @@ export default function FoodItemsPage() {
   return (
     <DashboardLayout>
       {/* Header */}
-      <div className="mb-8 flex items-center justify-between">
+      <div className="mb-6 md:mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent mb-2 flex items-center gap-3">
-            <UtensilsCrossed className="h-8 w-8 text-primary-600" />
+          <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent mb-1 md:mb-2 flex items-center gap-2 md:gap-3">
+            <UtensilsCrossed className="h-6 w-6 md:h-8 md:w-8 text-primary-600" />
             Livsmedel
           </h1>
-          <p className="text-neutral-600">
-            Hantera dina livsmedel och livsmedelsdatabas ({filteredFoodItems.length} av{' '}
-            {foodItems.length})
+          <p className="text-sm md:text-base text-neutral-600">
+            {filteredFoodItems.length} av {foodItems.length} livsmedel
           </p>
         </div>
-        <Button className="gap-2" onClick={() => setIsAddModalOpen(true)}>
+        <Button
+          className="gap-2 self-start sm:self-auto"
+          size="sm"
+          onClick={() => setIsAddModalOpen(true)}
+        >
           <Plus className="h-4 w-4" />
-          Nytt livsmedel
+          <span className="hidden sm:inline">Nytt livsmedel</span>
+          <span className="sm:hidden">Nytt</span>
         </Button>
       </div>
 
@@ -543,238 +547,353 @@ export default function FoodItemsPage() {
           }
         />
       ) : (
-        <Card>
-          <CardContent className="p-0">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-neutral-50 border-b">
-                  <tr>
-                    <th className="text-left p-4 text-sm font-semibold text-neutral-900">
-                      Livsmedel
-                    </th>
-                    <th className="text-left p-4 text-sm font-semibold text-neutral-900">
-                      Portion
-                    </th>
-                    <th className="text-right p-4 text-sm font-semibold text-neutral-900">
-                      Kalorier
-                    </th>
-                    <th className="text-right p-4 text-sm font-semibold text-neutral-900">
-                      Protein
-                    </th>
-                    <th className="text-right p-4 text-sm font-semibold text-neutral-900">Kolh.</th>
-                    <th className="text-right p-4 text-sm font-semibold text-neutral-900">Fett</th>
-                    <th className="text-center p-4 text-sm font-semibold text-neutral-900">Typ</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredFoodItems.map(item => (
-                    <tr
-                      key={item.id}
-                      className="border-b hover:bg-neutral-50 transition-colors cursor-pointer"
-                    >
-                      <td className="p-4">
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium text-neutral-900">{item.name}</span>
-                          {item.is_recipe && (
-                            <span title="Recept" className="text-base">
-                              👨‍🍳
-                            </span>
-                          )}
-                          {/* Global item indicator - only globe icon */}
-                          {item.user_id === null && (
-                            <Globe className="h-4 w-4 text-blue-500" title="Globalt livsmedel" />
-                          )}
-                        </div>
-                      </td>
-                      <td className="p-4 text-neutral-600 text-sm">
-                        <div className="flex items-center gap-2">
-                          {/* Portionsinformation (utan makrovärden) */}
-                          <div className="flex-1">
+        <>
+          {/* Mobile Card View */}
+          <div className="md:hidden space-y-2">
+            {filteredFoodItems.map(item => {
+              const currentMode = displayModes[item.id] || getDefaultDisplayMode(item)
+              const displayData = getDisplayData(item, currentMode)
+              const allModes = getAvailableDisplayModes(item)
+              return (
+                <Card key={item.id} className="overflow-hidden">
+                  <CardContent className="p-3">
+                    {/* Row 1: Name + color badge */}
+                    <div className="flex items-center justify-between gap-2 mb-1.5">
+                      <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                        <span className="font-medium text-neutral-900 text-sm truncate">
+                          {item.name}
+                        </span>
+                        {item.is_recipe && <span className="text-sm shrink-0">👨‍🍳</span>}
+                        {item.user_id === null && (
+                          <Globe className="h-3.5 w-3.5 text-blue-500 shrink-0" />
+                        )}
+                      </div>
+                      {item.energy_density_color && (
+                        <div
+                          className={`h-2.5 w-2.5 rounded-full shrink-0 ${
+                            item.energy_density_color === 'Green'
+                              ? 'bg-green-500'
+                              : item.energy_density_color === 'Yellow'
+                                ? 'bg-yellow-500'
+                                : 'bg-orange-500'
+                          }`}
+                        />
+                      )}
+                    </div>
+                    {/* Row 2: Portion info */}
+                    <div className="text-xs text-neutral-500 mb-1.5">
+                      {displayData ? (
+                        <span>
+                          {displayData.icon} {displayData.header}
+                        </span>
+                      ) : (
+                        <span>
+                          {item.default_amount} {item.default_unit}
+                        </span>
+                      )}
+                    </div>
+                    {/* Row 3: Macros */}
+                    <div className="flex items-center gap-3 text-xs mb-2">
+                      <span className="font-semibold text-primary-600">
+                        {displayData ? Math.round(displayData.kcal) : item.calories} kcal
+                      </span>
+                      <span className="text-green-600">
+                        P: {displayData ? displayData.protein.toFixed(1) : item.protein_g}g
+                      </span>
+                      <span className="text-blue-600">
+                        K: {displayData ? displayData.carb.toFixed(1) : item.carb_g}g
+                      </span>
+                      <span className="text-yellow-600">
+                        F: {displayData ? displayData.fat.toFixed(1) : item.fat_g}g
+                      </span>
+                    </div>
+                    {/* Row 4: Unit pills + actions */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1">
+                        {allModes.length > 1 &&
+                          allModes.map(mode => (
+                            <button
+                              key={mode}
+                              onClick={() => switchToDisplayMode(item.id, mode)}
+                              className={`px-2 py-0.5 text-[10px] font-medium rounded-full transition-all ${
+                                mode === currentMode
+                                  ? 'bg-primary-100 text-primary-700 border-2 border-primary-500'
+                                  : 'text-neutral-600 bg-white border border-neutral-300 active:bg-neutral-100'
+                              }`}
+                            >
+                              {getButtonLabel(mode, item)}
+                            </button>
+                          ))}
+                      </div>
+                      <div className="flex gap-1">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleEdit(item)}
+                          className="h-8 w-8 p-0"
+                        >
+                          <Edit2 className="h-3.5 w-3.5 text-blue-600" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDelete(item.id)}
+                          disabled={deletingItemId === item.id}
+                          className="h-8 w-8 p-0"
+                        >
+                          <Trash2 className="h-3.5 w-3.5 text-red-600" />
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )
+            })}
+          </div>
+
+          {/* Desktop Table View */}
+          <Card className="hidden md:block">
+            <CardContent className="p-0">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-neutral-50 border-b">
+                    <tr>
+                      <th className="text-left p-4 text-sm font-semibold text-neutral-900">
+                        Livsmedel
+                      </th>
+                      <th className="text-left p-4 text-sm font-semibold text-neutral-900">
+                        Portion
+                      </th>
+                      <th className="text-right p-4 text-sm font-semibold text-neutral-900">
+                        Kalorier
+                      </th>
+                      <th className="text-right p-4 text-sm font-semibold text-neutral-900">
+                        Protein
+                      </th>
+                      <th className="text-right p-4 text-sm font-semibold text-neutral-900">
+                        Kolh.
+                      </th>
+                      <th className="text-right p-4 text-sm font-semibold text-neutral-900">
+                        Fett
+                      </th>
+                      <th className="text-center p-4 text-sm font-semibold text-neutral-900">
+                        Typ
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredFoodItems.map(item => (
+                      <tr
+                        key={item.id}
+                        className="border-b hover:bg-neutral-50 transition-colors cursor-pointer"
+                      >
+                        <td className="p-4">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-neutral-900">{item.name}</span>
+                            {item.is_recipe && (
+                              <span title="Recept" className="text-base">
+                                👨‍🍳
+                              </span>
+                            )}
+                            {/* Global item indicator - only globe icon */}
+                            {item.user_id === null && (
+                              <Globe className="h-4 w-4 text-blue-500" title="Globalt livsmedel" />
+                            )}
+                          </div>
+                        </td>
+                        <td className="p-4 text-neutral-600 text-sm">
+                          <div className="flex items-center gap-2">
+                            {/* Portionsinformation (utan makrovärden) */}
+                            <div className="flex-1">
+                              {(() => {
+                                const currentMode =
+                                  displayModes[item.id] || getDefaultDisplayMode(item)
+                                const displayData = getDisplayData(item, currentMode)
+
+                                if (!displayData) {
+                                  return (
+                                    <div>
+                                      {item.default_amount} {item.default_unit}
+                                    </div>
+                                  )
+                                }
+
+                                return (
+                                  <div className="font-medium text-neutral-900 flex items-center gap-1">
+                                    <span className="text-base">{displayData.icon}</span>
+                                    <span>{displayData.header}</span>
+                                  </div>
+                                )
+                              })()}
+                            </div>
+
+                            {/* Enhets-pill-badges för ALLA enheter */}
                             {(() => {
                               const currentMode =
                                 displayModes[item.id] || getDefaultDisplayMode(item)
-                              const displayData = getDisplayData(item, currentMode)
+                              const allModes = getAllAvailableModes(item)
 
-                              if (!displayData) {
-                                return (
-                                  <div>
-                                    {item.default_amount} {item.default_unit}
-                                  </div>
-                                )
+                              if (allModes.length <= 1) {
+                                return null
                               }
 
                               return (
-                                <div className="font-medium text-neutral-900 flex items-center gap-1">
-                                  <span className="text-base">{displayData.icon}</span>
-                                  <span>{displayData.header}</span>
+                                <div className="flex items-center gap-1 flex-wrap">
+                                  {allModes.map(mode => {
+                                    const isActive = mode === currentMode
+                                    return (
+                                      <button
+                                        key={mode}
+                                        onClick={e => {
+                                          e.stopPropagation()
+                                          switchToDisplayMode(item.id, mode)
+                                        }}
+                                        className={`px-2 py-0.5 text-xs font-medium rounded-full transition-all max-w-20 truncate ${
+                                          isActive
+                                            ? 'bg-primary-100 text-primary-700 border-2 border-primary-500'
+                                            : 'text-neutral-600 bg-white border border-neutral-300 hover:bg-neutral-100 hover:text-neutral-800 hover:border-neutral-400'
+                                        }`}
+                                        title={getUnitButtonTooltip(mode, item)}
+                                        aria-label={getUnitButtonTooltip(mode, item)}
+                                      >
+                                        {getButtonLabel(mode, item)}
+                                      </button>
+                                    )
+                                  })}
                                 </div>
                               )
                             })()}
                           </div>
-
-                          {/* Enhets-pill-badges för ALLA enheter */}
+                        </td>
+                        {/* Kalori-kolumn - visa dynamiskt baserat på vald enhet */}
+                        <td className="p-4 text-right">
                           {(() => {
                             const currentMode = displayModes[item.id] || getDefaultDisplayMode(item)
-                            const allModes = getAllAvailableModes(item)
+                            const displayData = getDisplayData(item, currentMode)
 
-                            if (allModes.length <= 1) {
-                              return null
+                            if (!displayData || !item.kcal_per_gram) {
+                              // Fallback
+                              return (
+                                <div>
+                                  <span className="font-semibold text-primary-600">
+                                    {item.calories}
+                                  </span>
+                                  <span className="text-xs text-neutral-500 ml-1">kcal</span>
+                                </div>
+                              )
                             }
 
                             return (
-                              <div className="flex items-center gap-1 flex-wrap">
-                                {allModes.map(mode => {
-                                  const isActive = mode === currentMode
-                                  return (
-                                    <button
-                                      key={mode}
-                                      onClick={e => {
-                                        e.stopPropagation()
-                                        switchToDisplayMode(item.id, mode)
-                                      }}
-                                      className={`px-2 py-0.5 text-xs font-medium rounded-full transition-all max-w-20 truncate ${
-                                        isActive
-                                          ? 'bg-primary-100 text-primary-700 border-2 border-primary-500'
-                                          : 'text-neutral-600 bg-white border border-neutral-300 hover:bg-neutral-100 hover:text-neutral-800 hover:border-neutral-400'
-                                      }`}
-                                      title={getUnitButtonTooltip(mode, item)}
-                                      aria-label={getUnitButtonTooltip(mode, item)}
-                                    >
-                                      {getButtonLabel(mode, item)}
-                                    </button>
-                                  )
-                                })}
-                              </div>
-                            )
-                          })()}
-                        </div>
-                      </td>
-                      {/* Kalori-kolumn - visa dynamiskt baserat på vald enhet */}
-                      <td className="p-4 text-right">
-                        {(() => {
-                          const currentMode = displayModes[item.id] || getDefaultDisplayMode(item)
-                          const displayData = getDisplayData(item, currentMode)
-
-                          if (!displayData || !item.kcal_per_gram) {
-                            // Fallback
-                            return (
                               <div>
                                 <span className="font-semibold text-primary-600">
-                                  {item.calories}
+                                  {Math.round(displayData.kcal)}
                                 </span>
                                 <span className="text-xs text-neutral-500 ml-1">kcal</span>
                               </div>
                             )
+                          })()}
+                        </td>
+                        {/* Makrokolumner - visa dynamiska värden baserat på vald enhet */}
+                        {(() => {
+                          const currentMode = displayModes[item.id] || getDefaultDisplayMode(item)
+                          const displayData = getDisplayData(item, currentMode)
+
+                          if (!displayData) {
+                            // Fallback till databas-värden
+                            return (
+                              <>
+                                <td className="p-4 text-right">
+                                  <span className="font-semibold text-green-600">
+                                    {item.protein_g}
+                                  </span>
+                                  <span className="text-xs text-neutral-500 ml-1">g</span>
+                                </td>
+                                <td className="p-4 text-right">
+                                  <span className="font-semibold text-blue-600">{item.carb_g}</span>
+                                  <span className="text-xs text-neutral-500 ml-1">g</span>
+                                </td>
+                                <td className="p-4 text-right">
+                                  <span className="font-semibold text-yellow-600">
+                                    {item.fat_g}
+                                  </span>
+                                  <span className="text-xs text-neutral-500 ml-1">g</span>
+                                </td>
+                              </>
+                            )
                           }
 
-                          return (
-                            <div>
-                              <span className="font-semibold text-primary-600">
-                                {Math.round(displayData.kcal)}
-                              </span>
-                              <span className="text-xs text-neutral-500 ml-1">kcal</span>
-                            </div>
-                          )
-                        })()}
-                      </td>
-                      {/* Makrokolumner - visa dynamiska värden baserat på vald enhet */}
-                      {(() => {
-                        const currentMode = displayModes[item.id] || getDefaultDisplayMode(item)
-                        const displayData = getDisplayData(item, currentMode)
-
-                        if (!displayData) {
-                          // Fallback till databas-värden
                           return (
                             <>
                               <td className="p-4 text-right">
                                 <span className="font-semibold text-green-600">
-                                  {item.protein_g}
+                                  {displayData.protein.toFixed(1)}
                                 </span>
                                 <span className="text-xs text-neutral-500 ml-1">g</span>
                               </td>
                               <td className="p-4 text-right">
-                                <span className="font-semibold text-blue-600">{item.carb_g}</span>
+                                <span className="font-semibold text-blue-600">
+                                  {displayData.carb.toFixed(1)}
+                                </span>
                                 <span className="text-xs text-neutral-500 ml-1">g</span>
                               </td>
                               <td className="p-4 text-right">
-                                <span className="font-semibold text-yellow-600">{item.fat_g}</span>
+                                <span className="font-semibold text-yellow-600">
+                                  {displayData.fat.toFixed(1)}
+                                </span>
                                 <span className="text-xs text-neutral-500 ml-1">g</span>
                               </td>
                             </>
                           )
-                        }
-
-                        return (
-                          <>
-                            <td className="p-4 text-right">
-                              <span className="font-semibold text-green-600">
-                                {displayData.protein.toFixed(1)}
-                              </span>
-                              <span className="text-xs text-neutral-500 ml-1">g</span>
-                            </td>
-                            <td className="p-4 text-right">
-                              <span className="font-semibold text-blue-600">
-                                {displayData.carb.toFixed(1)}
-                              </span>
-                              <span className="text-xs text-neutral-500 ml-1">g</span>
-                            </td>
-                            <td className="p-4 text-right">
-                              <span className="font-semibold text-yellow-600">
-                                {displayData.fat.toFixed(1)}
-                              </span>
-                              <span className="text-xs text-neutral-500 ml-1">g</span>
-                            </td>
-                          </>
-                        )
-                      })()}
-                      <td className="p-4 text-center">
-                        {item.energy_density_color && (
-                          <Badge
-                            variant="outline"
-                            className={
-                              item.energy_density_color === 'Green'
-                                ? 'bg-green-100 text-green-700 border-green-300'
+                        })()}
+                        <td className="p-4 text-center">
+                          {item.energy_density_color && (
+                            <Badge
+                              variant="outline"
+                              className={
+                                item.energy_density_color === 'Green'
+                                  ? 'bg-green-100 text-green-700 border-green-300'
+                                  : item.energy_density_color === 'Yellow'
+                                    ? 'bg-yellow-100 text-yellow-700 border-yellow-300'
+                                    : 'bg-orange-100 text-orange-700 border-orange-300'
+                              }
+                            >
+                              {item.energy_density_color === 'Green'
+                                ? 'Grön'
                                 : item.energy_density_color === 'Yellow'
-                                  ? 'bg-yellow-100 text-yellow-700 border-yellow-300'
-                                  : 'bg-orange-100 text-orange-700 border-orange-300'
-                            }
-                          >
-                            {item.energy_density_color === 'Green'
-                              ? 'Grön'
-                              : item.energy_density_color === 'Yellow'
-                                ? 'Gul'
-                                : 'Orange'}
-                          </Badge>
-                        )}
-                      </td>
-                      <td className="p-4 text-right">
-                        <div className="flex justify-end gap-2">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleEdit(item)}
-                            className="h-8 w-8 p-0"
-                          >
-                            <Edit2 className="h-4 w-4 text-blue-600" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDelete(item.id)}
-                            disabled={deletingItemId === item.id}
-                            className="h-8 w-8 p-0"
-                          >
-                            <Trash2 className="h-4 w-4 text-red-600" />
-                          </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </CardContent>
-        </Card>
+                                  ? 'Gul'
+                                  : 'Orange'}
+                            </Badge>
+                          )}
+                        </td>
+                        <td className="p-4 text-right">
+                          <div className="flex justify-end gap-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleEdit(item)}
+                              className="h-8 w-8 p-0"
+                            >
+                              <Edit2 className="h-4 w-4 text-blue-600" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleDelete(item.id)}
+                              disabled={deletingItemId === item.id}
+                              className="h-8 w-8 p-0"
+                            >
+                              <Trash2 className="h-4 w-4 text-red-600" />
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+        </>
       )}
 
       {/* Info Cards */}

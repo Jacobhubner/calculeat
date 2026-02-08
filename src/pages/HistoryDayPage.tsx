@@ -79,8 +79,8 @@ export default function HistoryDayPage() {
 
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent mb-2 flex items-center gap-3">
-              <Calendar className="h-8 w-8 text-primary-600" />
+            <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent mb-1 md:mb-2 flex items-center gap-2 md:gap-3">
+              <Calendar className="h-6 w-6 md:h-8 md:w-8 text-primary-600" />
               {dateDisplay}
             </h1>
             {log.is_completed && (

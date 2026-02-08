@@ -3,6 +3,7 @@ import DashboardLayout from '@/components/layout/DashboardLayout'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { MealProgressBar } from '@/components/daily/RangeProgressBar'
+import { SwipeableItem } from '@/components/ui/SwipeableItem'
 import { ZonedCalorieRing } from '@/components/daily/ZonedCalorieRing'
 import EmptyState from '@/components/EmptyState'
 import RecentFoodsCard from '@/components/RecentFoodsCard'
@@ -60,6 +61,14 @@ export default function TodayPage() {
     mealEntryId?: string
   } | null>(null)
   const [preselectedFood, setPreselectedFood] = useState<{
+    food: FoodItem
+    amount: number
+    unit: string
+  } | null>(null)
+
+  // State for editing an existing food item (reuses AddFoodToMealModal)
+  const [editItem, setEditItem] = useState<{
+    itemId: string
     food: FoodItem
     amount: number
     unit: string
@@ -212,32 +221,36 @@ export default function TodayPage() {
   return (
     <DashboardLayout>
       {/* Header */}
-      <div className="mb-8 flex items-center justify-between">
+      <div className="mb-6 md:mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent mb-2 flex items-center gap-3">
-            <Calendar className="h-8 w-8 text-primary-600" />
+          <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent mb-1 md:mb-2 flex items-center gap-2 md:gap-3">
+            <Calendar className="h-6 w-6 md:h-8 md:w-8 text-primary-600" />
             Dagens Logg
           </h1>
-          <p className="text-neutral-600 capitalize">{dateDisplay}</p>
+          <p className="text-sm md:text-base text-neutral-600 capitalize">{dateDisplay}</p>
         </div>
         <div className="flex gap-2">
           <Button
             variant="outline"
             className="gap-2"
+            size="sm"
             onClick={handleCopyFromYesterday}
             disabled={!yesterdayLog || copyDayToToday.isPending}
           >
             <Copy className="h-4 w-4" />
-            {copyDayToToday.isPending ? 'Kopierar...' : 'Kopiera från igår'}
+            <span className="hidden sm:inline">
+              {copyDayToToday.isPending ? 'Kopierar...' : 'Kopiera från igår'}
+            </span>
           </Button>
           {todayLog && !todayLog.is_completed && (
             <Button
               onClick={handleFinishDay}
               disabled={finishDay.isPending}
+              size="sm"
               className="gap-2 bg-gradient-to-r from-success-600 to-success-500"
             >
               <Check className="h-4 w-4" />
-              Avsluta dag
+              <span className="hidden sm:inline">Avsluta dag</span>
             </Button>
           )}
         </div>
@@ -528,50 +541,65 @@ export default function TodayPage() {
                       {hasItems ? (
                         <div className="space-y-2">
                           {mealEntry.items.map(item => {
-                            const foodItem = item.food_item as {
-                              name?: string
-                              brand?: string
-                            } | null
+                            const foodItem = item.food_item as FoodItem | null
                             return (
-                              <div
+                              <SwipeableItem
                                 key={item.id}
-                                className="flex items-center justify-between p-3 bg-neutral-50 rounded-lg group hover:bg-neutral-100 transition-colors"
+                                onSwipeLeft={() =>
+                                  handleRemoveFood(item.id, foodItem?.name || 'Matvara')
+                                }
                               >
-                                <div className="flex-1">
-                                  <div className="flex items-center gap-2">
-                                    <p className="font-medium text-neutral-900">
-                                      {foodItem?.name || 'Okänd matvara'}
-                                    </p>
-                                    {foodItem?.brand && (
-                                      <span className="text-xs text-neutral-500">
-                                        ({foodItem.brand})
-                                      </span>
-                                    )}
-                                  </div>
-                                  <div className="flex items-center gap-3 mt-1 text-xs text-neutral-600">
-                                    <span>
-                                      {item.amount} {item.unit}
-                                    </span>
-                                    <span>•</span>
-                                    <span>{item.calories} kcal</span>
-                                    <span className="hidden sm:inline">•</span>
-                                    <span className="hidden sm:inline">
-                                      P: {item.protein_g}g | K: {item.carb_g}g | F: {item.fat_g}g
-                                    </span>
-                                  </div>
-                                </div>
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  className="opacity-0 group-hover:opacity-100 transition-opacity text-red-600 hover:text-red-700 hover:bg-red-50"
-                                  onClick={() =>
-                                    handleRemoveFood(item.id, foodItem?.name || 'Matvara')
-                                  }
-                                  disabled={removeFoodFromMeal.isPending}
+                                <button
+                                  type="button"
+                                  className="w-full flex items-center justify-between p-3 bg-neutral-50 rounded-lg group hover:bg-neutral-100 transition-colors text-left cursor-pointer"
+                                  onClick={() => {
+                                    if (foodItem) {
+                                      setEditItem({
+                                        itemId: item.id,
+                                        food: foodItem,
+                                        amount: item.amount,
+                                        unit: item.unit,
+                                      })
+                                    }
+                                  }}
                                 >
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </div>
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-2">
+                                      <p className="font-medium text-neutral-900 text-sm md:text-base truncate">
+                                        {foodItem?.name || 'Okänd matvara'}
+                                      </p>
+                                      {foodItem?.brand && (
+                                        <span className="text-xs text-neutral-500 hidden sm:inline">
+                                          ({foodItem.brand})
+                                        </span>
+                                      )}
+                                    </div>
+                                    <div className="flex items-center gap-2 md:gap-3 mt-1 text-xs text-neutral-600">
+                                      <span>
+                                        {item.amount} {item.unit}
+                                      </span>
+                                      <span>•</span>
+                                      <span>{item.calories} kcal</span>
+                                      <span className="hidden sm:inline">•</span>
+                                      <span className="hidden sm:inline">
+                                        P: {item.protein_g}g | K: {item.carb_g}g | F: {item.fat_g}g
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    className="hidden md:flex opacity-0 group-hover:opacity-100 transition-opacity text-red-600 hover:text-red-700 hover:bg-red-50"
+                                    onClick={e => {
+                                      e.stopPropagation()
+                                      handleRemoveFood(item.id, foodItem?.name || 'Matvara')
+                                    }}
+                                    disabled={removeFoodFromMeal.isPending}
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </button>
+                              </SwipeableItem>
                             )
                           })}
                           <div className="pt-3 border-t flex justify-between text-sm">
@@ -662,6 +690,19 @@ export default function TodayPage() {
           mealEntryId={selectedMealForFood.mealEntryId}
           dailyLogId={todayLog.id}
           preselectedFood={preselectedFood || undefined}
+        />
+      )}
+
+      {/* Edit Food Item Modal (reuses AddFoodToMealModal) */}
+      {editItem && todayLog && (
+        <AddFoodToMealModal
+          open={!!editItem}
+          onOpenChange={open => {
+            if (!open) setEditItem(null)
+          }}
+          mealName=""
+          dailyLogId={todayLog.id}
+          editItem={editItem}
         />
       )}
     </DashboardLayout>

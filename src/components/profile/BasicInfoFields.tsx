@@ -15,9 +15,11 @@ interface BasicInfoFieldsProps {
   birthDate?: string
   gender?: Gender | ''
   height?: number
+  weight?: number
   onBirthDateChange: (birthDate: string) => void
   onGenderChange: (gender: Gender | '') => void
   onHeightChange: (height: number | undefined) => void
+  onWeightChange?: (weight: number | undefined) => void
   locked?: boolean
   showLockNotice?: boolean
 }
@@ -26,9 +28,11 @@ export default function BasicInfoFields({
   birthDate,
   gender,
   height,
+  weight,
   onBirthDateChange,
   onGenderChange,
   onHeightChange,
+  onWeightChange,
   locked = false,
   showLockNotice = false,
 }: BasicInfoFieldsProps) {
@@ -40,6 +44,7 @@ export default function BasicInfoFields({
   )
   const [birthYear, setBirthYear] = useState(parsedDate?.getFullYear().toString() || '')
   const [heightString, setHeightString] = useState(height?.toString() || '')
+  const [weightString, setWeightString] = useState(weight?.toString() || '')
 
   // Sync local state when props change (avoid cascading renders by checking if actually changed)
   useEffect(() => {
@@ -63,6 +68,14 @@ export default function BasicInfoFields({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [height])
+
+  useEffect(() => {
+    const newWeightString = weight?.toString() || ''
+    if (weightString !== newWeightString) {
+      setWeightString(newWeightString)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [weight])
 
   // Confirmation dialog for locked field changes
   const confirmLockedFieldChange = (fieldName: string): boolean => {
@@ -121,13 +134,27 @@ export default function BasicInfoFields({
     onGenderChange(newGender)
   }
 
-  const handleHeightChange = (value: string) => {
+  const handleHeightInput = (value: string) => {
     if (locked && heightString && !confirmLockedFieldChange('Längd')) {
       return
     }
     setHeightString(value)
-    const num = parseFloat(value)
+  }
+
+  const handleHeightBlur = () => {
+    const num = parseFloat(heightString)
     onHeightChange(isNaN(num) ? undefined : num)
+  }
+
+  const handleWeightInput = (value: string) => {
+    setWeightString(value)
+  }
+
+  const handleWeightBlur = () => {
+    if (onWeightChange) {
+      const num = parseFloat(weightString)
+      onWeightChange(isNaN(num) ? undefined : num)
+    }
   }
 
   const lockTitle =
@@ -331,7 +358,8 @@ export default function BasicInfoFields({
             <input
               type="number"
               value={heightString}
-              onChange={e => handleHeightChange(e.target.value)}
+              onChange={e => handleHeightInput(e.target.value)}
+              onBlur={handleHeightBlur}
               disabled={locked}
               className={`mt-1 block w-full rounded-xl shadow-sm focus:border-primary-500 focus:ring-primary-500 ${
                 locked
@@ -345,6 +373,25 @@ export default function BasicInfoFields({
             />
           </div>
         </div>
+        {/* Weight - never locked, always editable */}
+        {onWeightChange && (
+          <div>
+            <label className="block text-sm font-medium text-neutral-700 mb-2">
+              Vikt (kg) <span className="text-red-600">*</span>
+            </label>
+            <input
+              type="number"
+              value={weightString}
+              onChange={e => handleWeightInput(e.target.value)}
+              onBlur={handleWeightBlur}
+              className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+              placeholder="80"
+              min="30"
+              max="300"
+              step="0.1"
+            />
+          </div>
+        )}
       </CardContent>
     </Card>
   )

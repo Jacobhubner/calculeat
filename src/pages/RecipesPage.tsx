@@ -55,22 +55,23 @@ export default function RecipesPage() {
   return (
     <DashboardLayout>
       {/* Header */}
-      <div className="mb-8 flex items-center justify-between">
+      <div className="mb-6 md:mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent mb-2 flex items-center gap-3">
-            <ChefHat className="h-8 w-8 text-primary-600" />
+          <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent mb-1 md:mb-2 flex items-center gap-2 md:gap-3">
+            <ChefHat className="h-6 w-6 md:h-8 md:w-8 text-primary-600" />
             Recept
           </h1>
-          <p className="text-neutral-600">
+          <p className="text-sm md:text-base text-neutral-600">
             Skapa och hantera dina egna recept
             {recipes &&
               recipes.length > 0 &&
               ` (${filteredRecipes?.length || 0} av ${recipes.length})`}
           </p>
         </div>
-        <Button className="gap-2" onClick={handleNewRecipe}>
+        <Button className="gap-2 self-start sm:self-auto" size="sm" onClick={handleNewRecipe}>
           <Plus className="h-4 w-4" />
-          Nytt recept
+          <span className="hidden sm:inline">Nytt recept</span>
+          <span className="sm:hidden">Nytt</span>
         </Button>
       </div>
 

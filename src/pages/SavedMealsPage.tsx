@@ -15,17 +15,20 @@ export default function SavedMealsPage() {
   return (
     <DashboardLayout>
       {/* Header */}
-      <div className="mb-8 flex items-center justify-between">
+      <div className="mb-6 md:mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent mb-2 flex items-center gap-3">
-            <Bookmark className="h-8 w-8 text-primary-600" />
+          <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent mb-1 md:mb-2 flex items-center gap-2 md:gap-3">
+            <Bookmark className="h-6 w-6 md:h-8 md:w-8 text-primary-600" />
             Sparade Måltider
           </h1>
-          <p className="text-neutral-600">Dina favoritmåltider för snabb loggning</p>
+          <p className="text-sm md:text-base text-neutral-600">
+            Dina favoritmåltider för snabb loggning
+          </p>
         </div>
-        <Button className="gap-2">
+        <Button className="gap-2 self-start sm:self-auto" size="sm">
           <Plus className="h-4 w-4" />
-          Ny måltid
+          <span className="hidden sm:inline">Ny måltid</span>
+          <span className="sm:hidden">Ny</span>
         </Button>
       </div>
 

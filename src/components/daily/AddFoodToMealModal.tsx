@@ -13,13 +13,20 @@ import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Select } from '@/components/ui/select'
 import { useFoodItems, type FoodItem } from '@/hooks/useFoodItems'
-import { useAddFoodToMeal, useCreateMealEntry } from '@/hooks/useDailyLogs'
+import { useAddFoodToMeal, useCreateMealEntry, useUpdateMealItem } from '@/hooks/useDailyLogs'
 import { useMealSettings } from '@/hooks/useMealSettings'
 import { UnitSelector, getAvailableUnits, calculateNutritionForUnit } from './UnitSelector'
 import { NutritionPreview } from './NutritionPreview'
 import { toast } from 'sonner'
 
 interface PreselectedFood {
+  food: FoodItem
+  amount: number
+  unit: string
+}
+
+interface EditItemData {
+  itemId: string
   food: FoodItem
   amount: number
   unit: string
@@ -33,6 +40,7 @@ interface AddFoodToMealModalProps {
   dailyLogId: string
   onSuccess?: () => void
   preselectedFood?: PreselectedFood // Pre-fill form with food from sidebar tools
+  editItem?: EditItemData // If provided, modal is in edit mode
 }
 
 export function AddFoodToMealModal({
@@ -43,11 +51,13 @@ export function AddFoodToMealModal({
   dailyLogId,
   onSuccess,
   preselectedFood,
+  editItem,
 }: AddFoodToMealModalProps) {
+  const isEditMode = !!editItem
   const [searchQuery, setSearchQuery] = useState('')
-  const [selectedFood, setSelectedFood] = useState<FoodItem | null>(null)
-  const [amount, setAmount] = useState<number>(1)
-  const [selectedUnit, setSelectedUnit] = useState<string>('')
+  const [selectedFood, setSelectedFood] = useState<FoodItem | null>(editItem?.food ?? null)
+  const [amount, setAmount] = useState<number>(editItem?.amount ?? 1)
+  const [selectedUnit, setSelectedUnit] = useState<string>(editItem?.unit ?? '')
   const [selectedMealName, setSelectedMealName] = useState<string>(mealName)
 
   // Track if food was preselected to avoid overwriting amount/unit
@@ -58,6 +68,7 @@ export function AddFoodToMealModal({
   const { data: mealSettings } = useMealSettings()
   const addFoodToMeal = useAddFoodToMeal()
   const createMealEntry = useCreateMealEntry()
+  const updateMealItem = useUpdateMealItem()
 
   // Filter foods based on search query
   const filteredFoods = useMemo(() => {
@@ -93,6 +104,15 @@ export function AddFoodToMealModal({
       setSelectedMealName(mealSettings[0].meal_name)
     }
 
+    // Edit mode: pre-fill with existing item data
+    if (editItem) {
+      isPreselectedRef.current = true
+      setSelectedFood(editItem.food)
+      setAmount(editItem.amount)
+      setSelectedUnit(editItem.unit)
+      return
+    }
+
     // Pre-fill form with preselected food from sidebar tools
     if (preselectedFood) {
       isPreselectedRef.current = true
@@ -100,7 +120,7 @@ export function AddFoodToMealModal({
       setAmount(preselectedFood.amount)
       setSelectedUnit(preselectedFood.unit)
     }
-  }, [mealName, mealSettings, preselectedFood])
+  }, [mealName, mealSettings, preselectedFood, editItem])
 
   // Handle modal open/close state changes
   /* eslint-disable react-hooks/set-state-in-effect -- Legitimate pattern for syncing state on open/close */
@@ -174,9 +194,29 @@ export function AddFoodToMealModal({
   }
 
   const handleAddFood = async () => {
-    if (!selectedFood || !nutritionPreview || !selectedMealName) return
+    if (!selectedFood || !nutritionPreview) return
 
     try {
+      // Edit mode: update existing item
+      if (isEditMode && editItem) {
+        await updateMealItem.mutateAsync({
+          itemId: editItem.itemId,
+          amount,
+          unit: selectedUnit,
+          weightGrams: nutritionPreview.weightGrams,
+          calories: nutritionPreview.calories,
+          protein_g: nutritionPreview.protein,
+          carb_g: nutritionPreview.carbs,
+          fat_g: nutritionPreview.fat,
+        })
+        toast.success('Mängd uppdaterad')
+        onOpenChange(false)
+        onSuccess?.()
+        return
+      }
+
+      if (!selectedMealName) return
+
       let targetMealEntryId = mealEntryId
 
       // If no meal entry exists, create one
@@ -207,7 +247,7 @@ export function AddFoodToMealModal({
       onSuccess?.()
     } catch (error) {
       console.error('Failed to add food:', error)
-      toast.error('Kunde inte lägga till livsmedel')
+      toast.error(isEditMode ? 'Kunde inte uppdatera mängden' : 'Kunde inte lägga till livsmedel')
     }
   }
 
@@ -231,18 +271,20 @@ export function AddFoodToMealModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg max-h-[85vh] overflow-hidden flex flex-col">
+      <DialogContent className="max-w-lg md:max-h-[85vh] overflow-hidden flex flex-col">
         <DialogHeader>
-          <DialogTitle>Lägg till livsmedel</DialogTitle>
+          <DialogTitle>{isEditMode ? 'Redigera livsmedel' : 'Lägg till livsmedel'}</DialogTitle>
           <DialogDescription>
-            {mealName
-              ? `Lägg till livsmedel till ${mealName}`
-              : 'Välj måltid och lägg till livsmedel'}
+            {isEditMode
+              ? `Ändra mängd och enhet för ${editItem?.food.name}`
+              : mealName
+                ? `Lägg till livsmedel till ${mealName}`
+                : 'Välj måltid och lägg till livsmedel'}
           </DialogDescription>
         </DialogHeader>
 
-        {/* Meal selector - show when mealName is not provided (from sidebar tools) */}
-        {!mealName && mealSettings && mealSettings.length > 0 && (
+        {/* Meal selector - show when mealName is not provided (from sidebar tools), hide in edit mode */}
+        {!isEditMode && !mealName && mealSettings && mealSettings.length > 0 && (
           <div className="space-y-2">
             <Label>Välj måltid</Label>
             <Select
@@ -319,14 +361,16 @@ export function AddFoodToMealModal({
                 </div>
                 <div className="flex items-center gap-2">
                   {getColorBadge(selectedFood.energy_density_color)}
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setSelectedFood(null)}
-                    className="text-neutral-500 hover:text-neutral-700"
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
+                  {!isEditMode && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setSelectedFood(null)}
+                      className="text-neutral-500 hover:text-neutral-700"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  )}
                 </div>
               </div>
 
@@ -378,11 +422,20 @@ export function AddFoodToMealModal({
           {selectedFood && (
             <Button
               onClick={handleAddFood}
-              disabled={!nutritionPreview || addFoodToMeal.isPending || createMealEntry.isPending}
+              disabled={
+                !nutritionPreview ||
+                addFoodToMeal.isPending ||
+                createMealEntry.isPending ||
+                updateMealItem.isPending
+              }
             >
-              {addFoodToMeal.isPending || createMealEntry.isPending
-                ? 'Lägger till...'
-                : 'Lägg till'}
+              {isEditMode
+                ? updateMealItem.isPending
+                  ? 'Sparar...'
+                  : 'Spara'
+                : addFoodToMeal.isPending || createMealEntry.isPending
+                  ? 'Lägger till...'
+                  : 'Lägg till'}
             </Button>
           )}
         </div>

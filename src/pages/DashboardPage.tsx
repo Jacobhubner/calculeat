@@ -214,7 +214,7 @@ export default function DashboardPage() {
         ) : (
           <div className="space-y-8">
             {/* Quick Stats */}
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid grid-cols-2 gap-3 md:gap-6 lg:grid-cols-4">
               <StatCard
                 title="BMR"
                 value={profile?.bmr ? Math.round(profile.bmr) : '-'}

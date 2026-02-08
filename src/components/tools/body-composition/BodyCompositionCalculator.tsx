@@ -20,6 +20,7 @@ import {
   useUpdateProfile,
   useCreateMeasurementSet,
   useUpdateMeasurementSet,
+  useMeasurementSets,
 } from '@/hooks'
 import {
   getRequiredFields,
@@ -60,7 +61,8 @@ export default function BodyCompositionCalculator() {
   const profile = allProfiles?.find(p => p.id === activeProfile?.id)
   const updateProfileMutation = useUpdateProfile()
 
-  // Measurement sets
+  // Measurement sets - use hook to ensure data is loaded before auto-creating
+  const { isLoading: measurementSetsLoading } = useMeasurementSets()
   const activeMeasurementSet = useMeasurementSetStore(state => state.activeMeasurementSet)
   const setActiveMeasurementSet = useMeasurementSetStore(state => state.setActiveMeasurementSet)
   const measurementSets = useMeasurementSetStore(state => state.measurementSets)
@@ -663,6 +665,12 @@ export default function BodyCompositionCalculator() {
 
   // Auto-create first card when user fills in measurements (no cards exist)
   useEffect(() => {
+    // Don't auto-create while data is still loading from database
+    if (measurementSetsLoading) {
+      console.log('🔄 Auto-create effect: skipping (still loading)')
+      return
+    }
+
     const hasWorkflow1Measurements =
       Object.values(caliperMeasurements).some(v => v !== undefined) ||
       Object.values(tapeMeasurements).some(v => v !== undefined)
@@ -693,6 +701,7 @@ export default function BodyCompositionCalculator() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
+    measurementSetsLoading,
     measurementSets,
     unsavedMeasurementSets,
     activeMeasurementSet,

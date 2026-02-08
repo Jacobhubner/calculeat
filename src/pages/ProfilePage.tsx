@@ -92,11 +92,14 @@ export default function ProfilePage() {
   const mergedProfile = displayProfile as Profile | null
 
   // Check if basic info is filled (using display profile with pending changes)
-  // Note: initial_weight_kg is no longer required - weight is tracked via WeightTracker
+  // Height must be >= 100 to prevent scenario switch while user is still typing (e.g. "1" of "183")
+  // Weight must also be filled before TDEE options appear
   const hasBasicInfo = !!(
     displayProfile?.birth_date &&
     displayProfile?.gender &&
-    displayProfile?.height_cm
+    displayProfile?.height_cm &&
+    displayProfile.height_cm >= 100 &&
+    displayProfile?.weight_kg
   )
 
   // Check if TDEE exists (using display profile to include pending changes)
@@ -458,34 +461,37 @@ export default function ProfilePage() {
     if (!activeProfile || Object.keys(pendingChanges).length === 0) return
 
     // Check if basic info is complete (using display profile with pending changes)
-    // Note: initial_weight_kg is no longer required - weight is tracked via WeightTracker
     const isBasicInfoComplete = !!(
       displayProfile?.birth_date &&
       displayProfile?.gender &&
-      displayProfile?.height_cm
+      displayProfile?.height_cm &&
+      displayProfile?.weight_kg
     )
 
     if (!isBasicInfoComplete) {
       toast.error('Fyll i all grundläggande information innan du sparar', {
-        description: 'Födelsedatum, kön och längd krävs',
+        description: 'Födelsedatum, kön, längd och vikt krävs',
       })
       return
     }
 
     try {
+      // If weight is being set and initial_weight_kg is not yet set, also set it as starting weight
+      const dataToSave = { ...pendingChanges }
+      if (dataToSave.weight_kg !== undefined && !activeProfile.initial_weight_kg) {
+        dataToSave.initial_weight_kg = dataToSave.weight_kg
+      }
+
       // Save profile changes
       await updateProfile.mutateAsync({
         profileId: activeProfile.id,
-        data: pendingChanges,
+        data: dataToSave,
       })
 
       // If weight was changed, add to weight history (user-based, shared across profiles)
-      if (
-        pendingChanges.weight_kg !== undefined &&
-        pendingChanges.weight_kg !== activeProfile.weight_kg
-      ) {
+      if (dataToSave.weight_kg !== undefined && dataToSave.weight_kg !== activeProfile.weight_kg) {
         await createWeightHistory.mutateAsync({
-          weight_kg: pendingChanges.weight_kg,
+          weight_kg: dataToSave.weight_kg,
         })
       }
 
@@ -552,19 +558,18 @@ export default function ProfilePage() {
   return (
     <DashboardLayout>
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent mb-2 flex items-center gap-3">
-          <User className="h-8 w-8 text-primary-600" />
+      <div className="mb-6 md:mb-8">
+        <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent mb-1 md:mb-2 flex items-center gap-2 md:gap-3">
+          <User className="h-6 w-6 md:h-8 md:w-8 text-primary-600" />
           Min Profil
         </h1>
-        <p className="text-neutral-600">
-          Hantera din profil och personliga inställningar. Fyll i din information för att få
-          personliga beräkningar och rekommendationer.
+        <p className="text-sm md:text-base text-neutral-600">
+          Hantera din profil och personliga inställningar.
         </p>
       </div>
 
       <div className="max-w-7xl mx-auto">
-        <div className="grid gap-6 md:grid-cols-[1fr_320px]">
+        <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
           {/* Main content column - Conditional rendering */}
           <div className="space-y-4">
             {/* SCENARIO 1: No basic info - Only show BasicInfoFields */}
@@ -573,9 +578,11 @@ export default function ProfilePage() {
                 birthDate={displayProfile.birth_date}
                 gender={displayProfile.gender}
                 height={displayProfile.height_cm}
+                weight={displayProfile.weight_kg}
                 onBirthDateChange={handleBirthDateChange}
                 onGenderChange={handleGenderChange}
                 onHeightChange={handleHeightChange}
+                onWeightChange={handleWeightChange}
                 locked={false}
                 showLockNotice={false}
               />
@@ -590,9 +597,11 @@ export default function ProfilePage() {
                     birthDate={displayProfile.birth_date}
                     gender={displayProfile.gender}
                     height={displayProfile.height_cm}
+                    weight={displayProfile.weight_kg}
                     onBirthDateChange={handleBirthDateChange}
                     onGenderChange={handleGenderChange}
                     onHeightChange={handleHeightChange}
+                    onWeightChange={handleWeightChange}
                     locked={fieldsAreLocked}
                     showLockNotice={fieldsAreLocked}
                   />
@@ -693,7 +702,7 @@ export default function ProfilePage() {
           </div>
 
           {/* Sidebar - Profile Card Switcher */}
-          <div className="md:sticky md:top-20 md:self-start space-y-4">
+          <div className="order-first lg:order-none lg:sticky lg:top-20 lg:self-start space-y-4">
             <ProfileCardSidebar
               onCreateNew={handleCreateNewProfile}
               onSelectProfile={handleSelectProfile}

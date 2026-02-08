@@ -350,6 +350,10 @@ export function useUpdateMealItem() {
       amount: number
       unit?: string
       weightGrams?: number
+      calories?: number
+      protein_g?: number
+      carb_g?: number
+      fat_g?: number
     }) => {
       if (!user) throw new Error('User not authenticated')
 
@@ -359,6 +363,10 @@ export function useUpdateMealItem() {
           amount: params.amount,
           unit: params.unit,
           weight_grams: params.weightGrams,
+          calories: params.calories,
+          protein_g: params.protein_g,
+          carb_g: params.carb_g,
+          fat_g: params.fat_g,
         })
         .eq('id', params.itemId)
         .select()
