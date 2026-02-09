@@ -496,10 +496,6 @@ export default function TodayPage() {
                 // Find corresponding meal entry from today's log
                 const mealEntry = todayLog?.meals?.find(m => m.meal_name === mealSetting.meal_name)
                 const hasItems = mealEntry?.items && mealEntry.items.length > 0
-                // Get meal summary from dailySummary if available
-                const mealSummary = dailySummary?.meals?.find(
-                  m => m.mealName === mealSetting.meal_name
-                )
                 // Calculate meal target range (min and max based on daily goals)
                 const mealTargetMin = Math.round(
                   (goalCaloriesMin * mealSetting.percentage_of_daily_calories) / 100
@@ -529,20 +525,6 @@ export default function TodayPage() {
                           </div>
                         </div>
                         <div className="flex items-center gap-3">
-                          {/* Meal status indicator */}
-                          {mealSummary?.status && (
-                            <span
-                              className={`text-sm font-medium ${
-                                mealSummary.status.status === 'within'
-                                  ? 'text-green-600'
-                                  : mealSummary.status.status === 'under'
-                                    ? 'text-sky-600'
-                                    : 'text-red-600'
-                              }`}
-                            >
-                              {mealSummary.status.displayText}
-                            </span>
-                          )}
                           {/* Save meal button - only show if meal has items */}
                           {hasItems && mealEntry && (
                             <Button

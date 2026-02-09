@@ -174,16 +174,16 @@ export function MealProgressBar({
   const getStatusColor = () => {
     if (current > targetMax) return 'text-red-600'
     if (current >= targetMin) return 'text-green-600'
-    return 'text-neutral-500'
+    return 'text-blue-600'
   }
 
   return (
     <div className="mt-3">
-      <div className="flex items-center justify-between text-xs text-neutral-500 mb-1">
-        <span>
+      <div className="flex items-center justify-between text-sm mb-1">
+        <span className="text-neutral-600">
           {Math.round(current)} / {Math.round(targetMin)}-{Math.round(targetMax)} {unit}
         </span>
-        <span className={getStatusColor()}>{getStatusText()}</span>
+        <span className={cn('font-medium', getStatusColor())}>{getStatusText()}</span>
       </div>
       <div className="relative h-2 rounded-full overflow-hidden">
         {/* Zone 1: Path to goal (0 to min) - light blue */}
