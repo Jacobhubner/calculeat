@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -6,14 +7,41 @@ import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import CalorieRing from '@/components/CalorieRing'
 import MacroBar from '@/components/MacroBar'
-import { ArrowLeft, Calendar, Check, Copy, UtensilsCrossed } from 'lucide-react'
-import { useDailyLog, useCopyDayToToday } from '@/hooks/useDailyLogs'
+import {
+  ArrowLeft,
+  Calendar,
+  Check,
+  Copy,
+  UtensilsCrossed,
+  Pencil,
+  Plus,
+  X,
+} from 'lucide-react'
+import {
+  useDailyLog,
+  useCopyDayToToday,
+  useReopenDay,
+  useFinishDay,
+  useRemoveFoodFromMeal,
+} from '@/hooks/useDailyLogs'
+import { AddFoodToMealModal } from '@/components/daily/AddFoodToMealModal'
+import { toast } from 'sonner'
 
 export default function HistoryDayPage() {
   const { date } = useParams<{ date: string }>()
   const navigate = useNavigate()
   const { data: log, isLoading } = useDailyLog(date || '')
   const copyDay = useCopyDayToToday()
+  const reopenDay = useReopenDay()
+  const finishDay = useFinishDay()
+  const removeFoodFromMeal = useRemoveFoodFromMeal()
+
+  const [isEditing, setIsEditing] = useState(false)
+  const [addFoodModal, setAddFoodModal] = useState<{
+    open: boolean
+    mealName: string
+    mealEntryId: string
+  } | null>(null)
 
   if (!date) {
     navigate('/app/history')
@@ -24,11 +52,34 @@ export default function HistoryDayPage() {
     if (log) {
       copyDay.mutate(log.id, {
         onSuccess: () => {
-          alert('Kopierat till dagens logg!')
+          toast.success('Kopierat till dagens logg!')
           navigate('/app/today')
         },
       })
     }
+  }
+
+  const handleStartEditing = async () => {
+    if (!log) return
+    if (log.is_completed) {
+      await reopenDay.mutateAsync(log.id)
+    }
+    setIsEditing(true)
+  }
+
+  const handleFinishEditing = async () => {
+    if (!log) return
+    await finishDay.mutateAsync(log.id)
+    setIsEditing(false)
+    toast.success('Dagen är sparad')
+  }
+
+  const handleRemoveItem = (itemId: string) => {
+    removeFoodFromMeal.mutate(itemId, {
+      onSuccess: () => {
+        toast.success('Matvaran borttagen')
+      },
+    })
   }
 
   if (isLoading) {
@@ -83,12 +134,26 @@ export default function HistoryDayPage() {
               <Calendar className="h-6 w-6 md:h-8 md:w-8 text-primary-600" />
               {dateDisplay}
             </h1>
-            {log.is_completed && (
-              <Badge className="gap-1 bg-success-100 text-success-700 border-success-200">
-                <Check className="h-3 w-3" />
-                Dag avslutad
-              </Badge>
-            )}
+            <div className="flex items-center gap-2">
+              {log.is_completed && !isEditing && (
+                <Badge className="gap-1 bg-success-100 text-success-700 border-success-200">
+                  <Check className="h-3 w-3" />
+                  Dag avslutad
+                </Badge>
+              )}
+              {!isEditing && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleStartEditing}
+                  disabled={reopenDay.isPending}
+                  className="gap-1.5 text-neutral-500 hover:text-neutral-700 h-7 px-2 text-xs"
+                >
+                  <Pencil className="h-3.5 w-3.5" />
+                  Redigera
+                </Button>
+              )}
+            </div>
           </div>
           <Button onClick={handleCopyToToday} className="gap-2" disabled={copyDay.isPending}>
             <Copy className="h-4 w-4" />
@@ -96,6 +161,31 @@ export default function HistoryDayPage() {
           </Button>
         </div>
       </div>
+
+      {/* Editing banner */}
+      {isEditing && (
+        <Card className="mb-6 bg-amber-50 border-amber-200">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-2">
+                <Pencil className="h-4 w-4 text-amber-600" />
+                <p className="text-sm font-medium text-amber-800">
+                  Du redigerar denna dag. Lägg till eller ta bort matvaror.
+                </p>
+              </div>
+              <Button
+                size="sm"
+                onClick={handleFinishEditing}
+                disabled={finishDay.isPending}
+                className="gap-2 bg-gradient-to-r from-success-600 to-success-500 shrink-0"
+              >
+                <Check className="h-4 w-4" />
+                Klar
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Main Content - Meals */}
@@ -159,6 +249,23 @@ export default function HistoryDayPage() {
                           </CardDescription>
                         </div>
                       </div>
+                      {isEditing && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="gap-1.5"
+                          onClick={() =>
+                            setAddFoodModal({
+                              open: true,
+                              mealName: meal.meal_name,
+                              mealEntryId: meal.id,
+                            })
+                          }
+                        >
+                          <Plus className="h-4 w-4" />
+                          <span className="hidden sm:inline">Lägg till</span>
+                        </Button>
+                      )}
                     </div>
                   </CardHeader>
                   <CardContent>
@@ -179,11 +286,22 @@ export default function HistoryDayPage() {
                                 </div>
                               </div>
                             </div>
-                            <div className="text-right">
-                              <div className="font-semibold">{item.calories} kcal</div>
-                              <div className="text-xs text-neutral-600">
-                                P: {item.protein_g}g · K: {item.carb_g}g · F: {item.fat_g}g
+                            <div className="flex items-center gap-2">
+                              <div className="text-right">
+                                <div className="font-semibold">{item.calories} kcal</div>
+                                <div className="text-xs text-neutral-600">
+                                  P: {item.protein_g}g · K: {item.carb_g}g · F: {item.fat_g}g
+                                </div>
                               </div>
+                              {isEditing && (
+                                <button
+                                  onClick={() => handleRemoveItem(item.id)}
+                                  className="p-1.5 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                                  title="Ta bort"
+                                >
+                                  <X className="h-4 w-4" />
+                                </button>
+                              )}
                             </div>
                           </div>
                         ))}
@@ -276,6 +394,19 @@ export default function HistoryDayPage() {
           )}
         </div>
       </div>
+
+      {/* Add Food Modal */}
+      {addFoodModal && log && (
+        <AddFoodToMealModal
+          open={addFoodModal.open}
+          onOpenChange={open => {
+            if (!open) setAddFoodModal(null)
+          }}
+          mealName={addFoodModal.mealName}
+          mealEntryId={addFoodModal.mealEntryId}
+          dailyLogId={log.id}
+        />
+      )}
     </DashboardLayout>
   )
 }

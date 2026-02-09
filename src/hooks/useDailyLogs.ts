@@ -218,6 +218,22 @@ export function useEnsureTodayLog() {
 
       if (existing) return existing as DailyLog
 
+      // Auto-complete yesterday's log if setting is "auto"
+      const completionMode = localStorage.getItem('day-completion-mode') || 'manual'
+      if (completionMode === 'auto') {
+        const yesterday = new Date()
+        yesterday.setDate(yesterday.getDate() - 1)
+        const yesterdayStr = yesterday.toISOString().split('T')[0]
+
+        await supabase
+          .from('daily_logs')
+          .update({ is_completed: true })
+          .eq('user_id', user.id)
+          .eq('profile_id', activeProfile.id)
+          .eq('log_date', yesterdayStr)
+          .eq('is_completed', false)
+      }
+
       // Calculate macro goals in grams from profile percentages
       const avgCalories =
         ((activeProfile.calories_min || 0) + (activeProfile.calories_max || 0)) / 2
@@ -484,6 +500,34 @@ export function useDeleteDailyLog() {
         .eq('user_id', user.id)
 
       if (error) throw error
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['dailyLogs'] })
+    },
+  })
+}
+
+/**
+ * Reopen a completed day (set is_completed = false)
+ */
+export function useReopenDay() {
+  const { user } = useAuth()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (dailyLogId: string) => {
+      if (!user) throw new Error('User not authenticated')
+
+      const { data, error } = await supabase
+        .from('daily_logs')
+        .update({ is_completed: false })
+        .eq('id', dailyLogId)
+        .eq('user_id', user.id)
+        .select()
+        .single()
+
+      if (error) throw error
+      return data as DailyLog
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['dailyLogs'] })
