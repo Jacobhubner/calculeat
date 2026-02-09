@@ -344,7 +344,7 @@ export function useLoadSavedMealToSlot() {
           weight_grams: item.weight_grams,
           calories: foodItem ? (foodItem.calories || 0) * multiplier : null,
           fat_g: foodItem ? (foodItem.fat_g || 0) * multiplier : null,
-          carb_g: foodItem ? (foodItem.carbs_g || 0) * multiplier : null,
+          carb_g: foodItem ? (foodItem.carb_g || 0) * multiplier : null,
           protein_g: foodItem ? (foodItem.protein_g || 0) * multiplier : null,
           item_order: (count || 0) + index,
         }

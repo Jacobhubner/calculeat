@@ -43,7 +43,7 @@ export default function SavedMealCard({ meal, onUseToday, onEdit }: SavedMealCar
 
       const caloriesPer100g = foodItem.calories || 0
       const proteinPer100g = foodItem.protein_g || 0
-      const carbsPer100g = foodItem.carbs_g || 0
+      const carbsPer100g = foodItem.carb_g || 0
       const fatPer100g = foodItem.fat_g || 0
 
       const grams = item.weight_grams || item.amount * 100
