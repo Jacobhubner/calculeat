@@ -65,10 +65,14 @@ export const getMealOrder = (mealName: string): number => {
     'Frukost': 0,
     'Lunch': 1,
     'Middag': 2,
+    'Mellanmål': 3,
     'Mellanmål 1': 3,
     'Mellanmål 2': 4,
   }
-  return orderMap[mealName] || 0
+  if (orderMap[mealName] !== undefined) return orderMap[mealName]
+  // Fallback: if name contains "mellanmål", give it order 3+
+  if (mealName.toLowerCase().includes('mellanmål')) return 3
+  return 0
 }
 
 /**
