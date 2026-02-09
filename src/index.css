@@ -132,3 +132,70 @@
     background: linear-gradient(135deg, hsl(108 100% 37%) 0%, hsl(108 100% 27%) 100%);
   }
 }
+
+/* Range slider - hide native track on all browsers including iOS Safari */
+.range-slider-input {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  pointer-events: none;
+  position: absolute;
+  height: 0;
+  width: 100%;
+  outline: none;
+  background: transparent;
+}
+
+.range-slider-input::-webkit-slider-runnable-track {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  height: 0;
+  border: none;
+}
+
+.range-slider-input::-moz-range-track {
+  -moz-appearance: none;
+  appearance: none;
+  background: transparent;
+  height: 0;
+  border: none;
+}
+
+.range-slider-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  pointer-events: auto;
+  position: relative;
+  height: 1.25rem;
+  width: 1.25rem;
+  border-radius: 9999px;
+  border: 2px solid white;
+  background-color: var(--color-primary-600);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  margin-top: -0.625rem;
+}
+
+.range-slider-input::-moz-range-thumb {
+  -moz-appearance: none;
+  appearance: none;
+  pointer-events: auto;
+  height: 1.25rem;
+  width: 1.25rem;
+  border-radius: 9999px;
+  border: 2px solid white;
+  background-color: var(--color-primary-600);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+.range-slider-input:disabled::-webkit-slider-thumb {
+  cursor: not-allowed;
+  background-color: #a3a3a3;
+}
+
+.range-slider-input:disabled::-moz-range-thumb {
+  cursor: not-allowed;
+  background-color: #a3a3a3;
+}

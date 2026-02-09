@@ -72,41 +72,8 @@ export function RangeSlider({
           const newMin = Math.min(+e.target.value, maxVal - step)
           onValueChange?.([newMin, maxVal])
         }}
-        className={cn(
-          'pointer-events-none absolute h-0 w-full outline-none',
-          'z-[3]',
-          '[&::-webkit-slider-runnable-track]:appearance-none',
-          '[&::-webkit-slider-runnable-track]:bg-transparent',
-          '[&::-moz-range-track]:appearance-none',
-          '[&::-moz-range-track]:bg-transparent',
-          '[&::-webkit-slider-thumb]:pointer-events-auto',
-          '[&::-webkit-slider-thumb]:relative',
-          '[&::-webkit-slider-thumb]:h-5',
-          '[&::-webkit-slider-thumb]:w-5',
-          '[&::-webkit-slider-thumb]:appearance-none',
-          '[&::-webkit-slider-thumb]:rounded-full',
-          '[&::-webkit-slider-thumb]:border-2',
-          '[&::-webkit-slider-thumb]:border-white',
-          '[&::-webkit-slider-thumb]:bg-primary-600',
-          '[&::-webkit-slider-thumb]:shadow-md',
-          '[&::-webkit-slider-thumb]:cursor-pointer',
-          '[&::-webkit-slider-thumb]:hover:bg-primary-700',
-          '[&::-webkit-slider-thumb]:disabled:cursor-not-allowed',
-          '[&::-webkit-slider-thumb]:disabled:bg-neutral-400',
-          '[&::-moz-range-thumb]:pointer-events-auto',
-          '[&::-moz-range-thumb]:h-5',
-          '[&::-moz-range-thumb]:w-5',
-          '[&::-moz-range-thumb]:appearance-none',
-          '[&::-moz-range-thumb]:rounded-full',
-          '[&::-moz-range-thumb]:border-2',
-          '[&::-moz-range-thumb]:border-white',
-          '[&::-moz-range-thumb]:bg-primary-600',
-          '[&::-moz-range-thumb]:shadow-md',
-          '[&::-moz-range-thumb]:cursor-pointer',
-          '[&::-moz-range-thumb]:hover:bg-primary-700',
-          '[&::-moz-range-thumb]:disabled:cursor-not-allowed',
-          '[&::-moz-range-thumb]:disabled:bg-neutral-400'
-        )}
+        className="range-slider-input z-[3]"
+        style={{ appearance: 'none', WebkitAppearance: 'none' }}
       />
 
       {/* Max value input */}
@@ -122,41 +89,8 @@ export function RangeSlider({
           const newMax = Math.max(+e.target.value, minVal + step)
           onValueChange?.([minVal, newMax])
         }}
-        className={cn(
-          'pointer-events-none absolute h-0 w-full outline-none',
-          'z-[4]',
-          '[&::-webkit-slider-runnable-track]:appearance-none',
-          '[&::-webkit-slider-runnable-track]:bg-transparent',
-          '[&::-moz-range-track]:appearance-none',
-          '[&::-moz-range-track]:bg-transparent',
-          '[&::-webkit-slider-thumb]:pointer-events-auto',
-          '[&::-webkit-slider-thumb]:relative',
-          '[&::-webkit-slider-thumb]:h-5',
-          '[&::-webkit-slider-thumb]:w-5',
-          '[&::-webkit-slider-thumb]:appearance-none',
-          '[&::-webkit-slider-thumb]:rounded-full',
-          '[&::-webkit-slider-thumb]:border-2',
-          '[&::-webkit-slider-thumb]:border-white',
-          '[&::-webkit-slider-thumb]:bg-primary-600',
-          '[&::-webkit-slider-thumb]:shadow-md',
-          '[&::-webkit-slider-thumb]:cursor-pointer',
-          '[&::-webkit-slider-thumb]:hover:bg-primary-700',
-          '[&::-webkit-slider-thumb]:disabled:cursor-not-allowed',
-          '[&::-webkit-slider-thumb]:disabled:bg-neutral-400',
-          '[&::-moz-range-thumb]:pointer-events-auto',
-          '[&::-moz-range-thumb]:h-5',
-          '[&::-moz-range-thumb]:w-5',
-          '[&::-moz-range-thumb]:appearance-none',
-          '[&::-moz-range-thumb]:rounded-full',
-          '[&::-moz-range-thumb]:border-2',
-          '[&::-moz-range-thumb]:border-white',
-          '[&::-moz-range-thumb]:bg-primary-600',
-          '[&::-moz-range-thumb]:shadow-md',
-          '[&::-moz-range-thumb]:cursor-pointer',
-          '[&::-moz-range-thumb]:hover:bg-primary-700',
-          '[&::-moz-range-thumb]:disabled:cursor-not-allowed',
-          '[&::-moz-range-thumb]:disabled:bg-neutral-400'
-        )}
+        className="range-slider-input z-[4]"
+        style={{ appearance: 'none', WebkitAppearance: 'none' }}
       />
 
       {/* Slider track */}
