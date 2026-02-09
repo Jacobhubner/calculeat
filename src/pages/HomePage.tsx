@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
+import { useAuth } from '@/contexts/AuthContext'
 import SiteHeader from '@/components/layout/SiteHeader'
 import SiteFooter from '@/components/layout/SiteFooter'
 import FeatureCard from '@/components/FeatureCard'
@@ -10,6 +11,13 @@ import { Button } from '@/components/ui/button'
 import { Apple, Calculator, Target, TrendingUp, BookOpen, Heart, CheckCircle } from 'lucide-react'
 
 export default function HomePage() {
+  const { user } = useAuth()
+
+  // Redirect logged-in users to the app
+  if (user) {
+    return <Navigate to="/app/today" replace />
+  }
+
   const features = [
     {
       icon: Calculator,
