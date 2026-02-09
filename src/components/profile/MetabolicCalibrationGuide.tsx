@@ -41,6 +41,11 @@ export default function MetabolicCalibrationGuide() {
               att beräkna ditt faktiska TDEE. Istället för teoretiska formler justerar systemet
               baserat på vad som faktiskt händer med din kropp.
             </p>
+            <p className="text-neutral-700 leading-relaxed mt-2">
+              Systemet medelvärdesberäknar flera mätningar i början och slutet av perioden
+              (kluster-medelvärde) för att dämpa dagliga fluktuationer från vatten, glykogen och
+              tarminnehåll.
+            </p>
           </section>
 
           {/* Section 2: The Science */}
@@ -89,7 +94,7 @@ export default function MetabolicCalibrationGuide() {
               <li className="flex items-start gap-2">
                 <span className="text-success-600 mt-0.5">✓</span>
                 <span className="text-neutral-700">
-                  Du har minst <strong>2 viktmätningar</strong> under vald period
+                  Du har minst <strong>4-6 viktmätningar</strong> under vald period
                 </span>
               </li>
             </ul>
@@ -105,13 +110,13 @@ export default function MetabolicCalibrationGuide() {
               <li className="flex items-start gap-2">
                 <span className="text-orange-600 mt-0.5 font-bold">×</span>
                 <span>
-                  Du just börjat en ny diet <strong>(&lt; 1 vecka)</strong>
+                  Du just börjat en ny diet <strong>(&lt; 2 veckor)</strong>
                 </span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-orange-600 mt-0.5 font-bold">×</span>
                 <span>
-                  Vikten fluktuerar kraftigt <strong>(&gt;3% per vecka)</strong>
+                  Vikten fluktuerar kraftigt <strong>(&gt;1,5% per vecka)</strong>
                 </span>
               </li>
               <li className="flex items-start gap-2">
@@ -123,7 +128,7 @@ export default function MetabolicCalibrationGuide() {
               <li className="flex items-start gap-2">
                 <span className="text-orange-600 mt-0.5 font-bold">×</span>
                 <span>
-                  Du är <strong>sjuk/menstruerar/extremt stressad</strong>
+                  Du är <strong>sjuk, menstruerar, eller extremt stressad</strong>
                 </span>
               </li>
             </ul>
@@ -145,6 +150,7 @@ export default function MetabolicCalibrationGuide() {
                 </li>
                 <li>• Efter toalettbesök, före frukost</li>
                 <li>• Naken eller i samma kläder</li>
+                <li>• Minst 3 gånger per vecka för bäst precision</li>
               </ul>
             </div>
 
@@ -156,23 +162,40 @@ export default function MetabolicCalibrationGuide() {
               </h4>
               <ul className="space-y-1.5 text-neutral-700 ml-2">
                 <li>
-                  <span className="font-medium">7 dagar:</span> Snabb feedback, mer känslig för
-                  fluktuationer
+                  <span className="font-medium">14 dagar:</span> Snabb feedback, lägre precision
                 </li>
                 <li>
-                  <span className="font-medium">14 dagar:</span> Balanserad
+                  <span className="font-medium">21 dagar:</span> Balanserad
                   <span className="text-success-600 font-semibold ml-1">(rekommenderad)</span>
                 </li>
                 <li>
-                  <span className="font-medium">21 dagar:</span> Mest exakt, speciellt för kvinnor
-                  (hela menscykel)
+                  <span className="font-medium">28 dagar:</span> Mest exakt, bra vid menscykel
+                </li>
+              </ul>
+            </div>
+
+            {/* Sub-section: Confidence levels */}
+            <div className="mb-4 bg-neutral-50 p-3 rounded-lg">
+              <h4 className="font-medium mb-2 text-neutral-900">3. Tillförlitlighetsnivåer</h4>
+              <ul className="space-y-1.5 text-neutral-700 ml-2">
+                <li>
+                  <span className="font-medium text-green-600">Hög:</span> Många mätningar + matlogg
+                  = mest pålitligt
+                </li>
+                <li>
+                  <span className="font-medium text-yellow-600">Medel:</span> Tillräcklig data,
+                  resultat trovärdigt
+                </li>
+                <li>
+                  <span className="font-medium text-orange-600">Låg:</span> Få mätningar, systemet
+                  begränsar justeringen
                 </li>
               </ul>
             </div>
 
             {/* Sub-section: Interpret results */}
             <div className="bg-neutral-50 p-3 rounded-lg">
-              <h4 className="font-medium mb-2 text-neutral-900">3. Tolka resultatet</h4>
+              <h4 className="font-medium mb-2 text-neutral-900">4. Tolka resultatet</h4>
               <ul className="space-y-1.5 text-neutral-700 ml-2">
                 <li>
                   <span className="font-medium">Liten skillnad (&lt;5%):</span> Din TDEE-beräkning
@@ -193,8 +216,8 @@ export default function MetabolicCalibrationGuide() {
           {/* Footer tip */}
           <div className="pt-4 border-t border-neutral-200">
             <p className="text-xs text-neutral-500 italic">
-              💡 Tips: Kalibrera var 2-4:e vecka för bäst resultat. För stora förändringar (&gt;15%)
-              kan indikera att du behöver justera din matloggning.
+              Tips: Kalibrera var 2-4:e vecka för bäst resultat. Vänta minst 14 dagar mellan
+              kalibreringar. Vid menscykel kan 28 dagar ge bäst resultat.
             </p>
           </div>
         </div>

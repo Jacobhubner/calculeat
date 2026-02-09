@@ -5,14 +5,18 @@ import type {
   CalibrationAvailability,
   Profile,
 } from '@/lib/types'
-
-const MIN_DATA_POINTS_7_DAYS = 3
-const MIN_DATA_POINTS_14_DAYS = 4
-const MIN_DATA_POINTS_21_DAYS = 5
-const DAYS_BETWEEN_CALIBRATIONS = 7 // Recommend recalibration after 7 days
+import {
+  MIN_DATA_POINTS,
+  MIN_CLUSTER_SIZE,
+  MIN_DAYS_BETWEEN_CALIBRATIONS,
+  buildClusters,
+} from '@/lib/calculations/calibration'
 
 /**
- * Determine if TDEE calibration is available and recommended
+ * Determine if TDEE calibration is available and recommended.
+ *
+ * Uses the same thresholds and cluster logic as the actual calibration
+ * calculation to avoid any mismatch between gate and execution.
  */
 export function useCalibrationAvailability(
   profile: Profile | null | undefined,
@@ -24,18 +28,18 @@ export function useCalibrationAvailability(
       isAvailable: false,
       isRecommended: false,
       reason: 'Otillräckligt med data',
-      minDataPoints: MIN_DATA_POINTS_7_DAYS,
+      minDataPoints: MIN_DATA_POINTS[14],
       currentDataPoints: 0,
       daysSinceLastCalibration: null,
       weightTrend: 'insufficient_data',
-      suggestedTimePeriod: 14,
+      suggestedTimePeriod: 21,
+      confidencePreview: 'unknown',
     }
 
     if (!profile || !weightHistory) {
       return unavailable
     }
 
-    // Check if TDEE is set
     if (!profile.tdee) {
       return {
         ...unavailable,
@@ -44,45 +48,38 @@ export function useCalibrationAvailability(
     }
 
     const now = new Date()
-    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
-    const fourteenDaysAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000)
-    const twentyOneDaysAgo = new Date(now.getTime() - 21 * 24 * 60 * 60 * 1000)
+    const periods: Array<14 | 21 | 28> = [28, 21, 14]
 
-    // Filter weights by time periods
-    const weights7Days = weightHistory.filter(w => new Date(w.recorded_at) >= sevenDaysAgo)
-    const weights14Days = weightHistory.filter(w => new Date(w.recorded_at) >= fourteenDaysAgo)
-    const weights21Days = weightHistory.filter(w => new Date(w.recorded_at) >= twentyOneDaysAgo)
+    // Find the best available period (longest first)
+    let bestPeriod: 14 | 21 | 28 | null = null
+    let bestClusterResult: ReturnType<typeof buildClusters> = null
+    let bestWeightsInPeriod: WeightHistory[] = []
 
-    // Determine best available time period
-    let suggestedTimePeriod: 7 | 14 | 21 = 14
-    let minDataPoints = MIN_DATA_POINTS_14_DAYS
-    let currentDataPoints = weights14Days.length
+    for (const period of periods) {
+      const cutoff = new Date(now.getTime() - period * 24 * 60 * 60 * 1000)
+      const weightsInPeriod = weightHistory.filter(w => new Date(w.recorded_at) >= cutoff)
 
-    if (weights21Days.length >= MIN_DATA_POINTS_21_DAYS) {
-      suggestedTimePeriod = 21
-      minDataPoints = MIN_DATA_POINTS_21_DAYS
-      currentDataPoints = weights21Days.length
-    } else if (weights14Days.length >= MIN_DATA_POINTS_14_DAYS) {
-      suggestedTimePeriod = 14
-      minDataPoints = MIN_DATA_POINTS_14_DAYS
-      currentDataPoints = weights14Days.length
-    } else if (weights7Days.length >= MIN_DATA_POINTS_7_DAYS) {
-      suggestedTimePeriod = 7
-      minDataPoints = MIN_DATA_POINTS_7_DAYS
-      currentDataPoints = weights7Days.length
+      if (weightsInPeriod.length < MIN_DATA_POINTS[period]) continue
+
+      const clusters = buildClusters(weightHistory, period, now)
+      if (!clusters) continue
+
+      // Check minimum cluster sizes
+      const minCluster = MIN_CLUSTER_SIZE[period]
+      if (clusters.startCluster.count < minCluster || clusters.endCluster.count < minCluster)
+        continue
+
+      bestPeriod = period
+      bestClusterResult = clusters
+      bestWeightsInPeriod = weightsInPeriod
+      break
     }
 
-    // Check if we have enough data for any period
-    const isAvailable =
-      weights7Days.length >= MIN_DATA_POINTS_7_DAYS ||
-      weights14Days.length >= MIN_DATA_POINTS_14_DAYS ||
-      weights21Days.length >= MIN_DATA_POINTS_21_DAYS
-
-    if (!isAvailable) {
+    if (!bestPeriod || !bestClusterResult) {
       return {
         ...unavailable,
         currentDataPoints: weightHistory.length,
-        reason: `Behöver minst ${MIN_DATA_POINTS_7_DAYS} viktmätningar under 7 dagar`,
+        reason: `Behöver minst ${MIN_DATA_POINTS[14]} viktmätningar under 14 dagar`,
       }
     }
 
@@ -94,15 +91,8 @@ export function useCalibrationAvailability(
       )
     }
 
-    // Analyze weight trend
-    const relevantWeights =
-      suggestedTimePeriod === 21
-        ? weights21Days
-        : suggestedTimePeriod === 14
-          ? weights14Days
-          : weights7Days
-
-    const sortedWeights = [...relevantWeights].sort(
+    // Analyze weight trend using sorted weights in the best period
+    const sortedWeights = [...bestWeightsInPeriod].sort(
       (a, b) => new Date(a.recorded_at).getTime() - new Date(b.recorded_at).getTime()
     )
 
@@ -118,15 +108,14 @@ export function useCalibrationAvailability(
         (1000 * 60 * 60 * 24)
       const weeklyChangePercent = daysDiff > 0 ? (changePercent / daysDiff) * 7 : 0
 
-      // Check for erratic fluctuations
+      // CV-based erratic detection
       const weights = sortedWeights.map(w => w.weight_kg)
       const avgWeight = weights.reduce((sum, w) => sum + w, 0) / weights.length
       const variance =
         weights.reduce((sum, w) => sum + Math.pow(w - avgWeight, 2), 0) / weights.length
-      const stdDev = Math.sqrt(variance)
-      const coefficientOfVariation = (stdDev / avgWeight) * 100
+      const coefficientOfVariation = (Math.sqrt(variance) / avgWeight) * 100
 
-      if (coefficientOfVariation > 2) {
+      if (coefficientOfVariation > 3) {
         weightTrend = 'erratic'
       } else if (weeklyChangePercent < -0.5) {
         weightTrend = 'losing'
@@ -137,7 +126,17 @@ export function useCalibrationAvailability(
       }
     }
 
-    // Determine if calibration is recommended
+    // Confidence preview
+    let confidencePreview: CalibrationAvailability['confidencePreview'] = 'unknown'
+    if (bestClusterResult) {
+      const sc = bestClusterResult.startCluster.count
+      const ec = bestClusterResult.endCluster.count
+      if (sc >= 3 && ec >= 3) confidencePreview = 'high'
+      else if (sc >= 2 || ec >= 2) confidencePreview = 'standard'
+      else confidencePreview = 'low'
+    }
+
+    // Determine if recommended
     let isRecommended = false
     let reason = ''
 
@@ -146,35 +145,36 @@ export function useCalibrationAvailability(
       reason = 'Första kalibrering rekommenderas'
     } else if (
       daysSinceLastCalibration !== null &&
-      daysSinceLastCalibration >= DAYS_BETWEEN_CALIBRATIONS
+      daysSinceLastCalibration >= MIN_DAYS_BETWEEN_CALIBRATIONS
     ) {
       if (weightTrend === 'losing' || weightTrend === 'gaining') {
         isRecommended = true
         reason = `Vikten har ${weightTrend === 'losing' ? 'minskat' : 'ökat'} sedan senaste kalibreringen`
-      } else if (weightTrend === 'stable' && daysSinceLastCalibration >= 14) {
+      } else if (weightTrend === 'stable' && daysSinceLastCalibration >= 28) {
         isRecommended = true
         reason = 'Dags att verifiera att TDEE fortfarande stämmer'
       }
     }
 
-    if (!isRecommended && isAvailable) {
+    if (!isRecommended) {
       reason = 'Kalibrering tillgänglig vid behov'
     }
 
     if (weightTrend === 'erratic') {
-      reason = 'Oregelbunden viktdata - kalibrering kan vara opålitlig'
+      reason = 'Oregelbunden viktdata — kalibrering kan vara opålitlig'
       isRecommended = false
     }
 
     return {
-      isAvailable,
+      isAvailable: true,
       isRecommended,
       reason,
-      minDataPoints,
-      currentDataPoints,
+      minDataPoints: MIN_DATA_POINTS[bestPeriod],
+      currentDataPoints: bestWeightsInPeriod.length,
       daysSinceLastCalibration,
       weightTrend,
-      suggestedTimePeriod,
+      suggestedTimePeriod: bestPeriod,
+      confidencePreview,
     }
   }, [profile, weightHistory, lastCalibration])
 }

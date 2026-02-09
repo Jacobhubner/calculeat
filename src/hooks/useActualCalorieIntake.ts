@@ -52,11 +52,11 @@ export function useActualCalorieIntake(
         isComplete: log.is_completed || false,
       }))
 
-      // Filter to days with meaningful calorie data (>100 kcal to avoid empty days)
-      const daysWithData = dailyCalories.filter(d => d.calories > 100).length
+      // Filter to days with meaningful calorie data (>800 kcal to avoid partial logs)
+      const daysWithData = dailyCalories.filter(d => d.calories > 800).length
 
       // Calculate average from days with data
-      const daysWithCalories = dailyCalories.filter(d => d.calories > 100)
+      const daysWithCalories = dailyCalories.filter(d => d.calories > 800)
       const averageCalories =
         daysWithCalories.length > 0
           ? daysWithCalories.reduce((sum, d) => sum + d.calories, 0) / daysWithCalories.length

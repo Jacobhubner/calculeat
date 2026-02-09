@@ -381,12 +381,63 @@ export interface WeightHistory {
   created_at: string
 }
 
+// Weight cluster for calibration (averaged group of measurements)
+export interface WeightCluster {
+  weights: number[]
+  dates: Date[]
+  average: number
+  count: number
+  spanDays: number
+}
+
+// Calibration confidence level
+export interface CalibrationConfidence {
+  level: 'high' | 'standard' | 'low'
+  startClusterSize: number
+  endClusterSize: number
+  foodLogCompleteness: number
+  periodDays: number
+}
+
+// Warning from calibration validation
+export interface CalibrationWarning {
+  type:
+    | 'timing_inconsistency'
+    | 'target_calories_fallback'
+    | 'low_confidence'
+    | 'large_adjustment'
+    | 'glycogen_event'
+    | 'high_cv'
+  message: string
+}
+
+// Full calibration result from the calculation module
+export interface CalibrationResult {
+  startCluster: WeightCluster
+  endCluster: WeightCluster
+  weightChangeKg: number
+  actualDays: number
+  averageCalories: number
+  calorieSource: 'food_log' | 'target_calories'
+  foodLogCompleteness: number
+  currentTDEE: number
+  rawTDEE: number
+  clampedTDEE: number
+  adjustmentPercent: number
+  maxAllowedAdjustmentPercent: number
+  wasLimited: boolean
+  confidence: CalibrationConfidence
+  warnings: CalibrationWarning[]
+  isStableMaintenance: boolean
+  coefficientOfVariation: number
+}
+
 // Calibration history type for tracking TDEE calibrations
 export interface CalibrationHistory {
   id: string
   profile_id: string
   calibrated_at: string
-  time_period_days: 7 | 14 | 21
+  time_period_days: 14 | 21 | 28
   start_weight_kg: number
   end_weight_kg: number
   weight_change_kg: number
@@ -398,6 +449,13 @@ export interface CalibrationHistory {
   calculated_tdee: number
   applied_tdee: number
   was_limited: boolean
+  start_cluster_size: number
+  end_cluster_size: number
+  confidence_level: 'high' | 'standard' | 'low'
+  calorie_source: 'food_log' | 'target_calories'
+  max_allowed_adjustment_percent: number
+  coefficient_of_variation: number
+  warnings: string[]
   created_at: string
 }
 
@@ -433,7 +491,8 @@ export interface CalibrationAvailability {
   currentDataPoints: number
   daysSinceLastCalibration: number | null
   weightTrend: 'stable' | 'gaining' | 'losing' | 'erratic' | 'insufficient_data'
-  suggestedTimePeriod: 7 | 14 | 21
+  suggestedTimePeriod: 14 | 21 | 28
+  confidencePreview: 'high' | 'standard' | 'low' | 'unknown'
 }
 
 // Actual calorie intake data from food logs

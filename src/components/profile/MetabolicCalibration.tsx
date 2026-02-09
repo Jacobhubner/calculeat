@@ -1,7 +1,9 @@
 /**
  * MetabolicCalibration - Kalibrera TDEE baserat på viktförändringar
- * Användare kan manuellt starta kalibrering med flexibel tidsperiod (7, 14, 21 dagar)
- * Använder faktisk matloggdata när tillräckligt med data finns
+ *
+ * Använder kluster-medelvärde (tredjedelsindelning) för robust start-/slutvikt.
+ * Adaptiv säkerhetsgräns baserad på datakvalitet och konfidens.
+ * Tidsperioder: 14, 21 eller 28 dagar (7 dagar borttagen — för lågt signal/brus).
  */
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -15,6 +17,9 @@ import {
   Info,
   CheckCircle,
   Database,
+  ShieldCheck,
+  ShieldAlert,
+  Shield,
 } from 'lucide-react'
 import { useState, useMemo } from 'react'
 import {
@@ -22,8 +27,10 @@ import {
   useUpdateProfile,
   useActualCalorieIntake,
   useCreateCalibrationHistory,
+  useCalibrationHistory,
 } from '@/hooks'
-import type { Profile } from '@/lib/types'
+import { runCalibration, MIN_DATA_POINTS, buildClusters } from '@/lib/calculations/calibration'
+import type { Profile, CalibrationResult } from '@/lib/types'
 import { toast } from 'sonner'
 import MetabolicCalibrationGuide from './MetabolicCalibrationGuide'
 
@@ -38,196 +45,87 @@ export default function MetabolicCalibration({
   variant = 'full',
   onClose,
 }: MetabolicCalibrationProps) {
-  const [timePeriod, setTimePeriod] = useState<7 | 14 | 21>(14)
-  const [calibrationApplied, setCalibrationApplied] = useState<number | null>(null) // Stores the new TDEE value
+  const [timePeriod, setTimePeriod] = useState<14 | 21 | 28>(21)
+  const [calibrationApplied, setCalibrationApplied] = useState<number | null>(null)
 
-  // Use user-based weight history (shared across all profiles)
   const { data: weightHistory } = useWeightHistory()
   const updateProfile = useUpdateProfile()
   const createCalibrationHistory = useCreateCalibrationHistory()
+  const { data: calibrationHistoryList } = useCalibrationHistory(profile.id)
 
-  // Calculate date range for actual calorie intake
-  // Memoize now to prevent recalculation on every render
+  // Date range for calorie intake
   const now = useMemo(() => new Date(), [])
   const startDate = useMemo(
     () => new Date(now.getTime() - timePeriod * 24 * 60 * 60 * 1000),
     [now, timePeriod]
   )
 
-  // Fetch actual calorie intake from food logs
   const { data: actualIntake } = useActualCalorieIntake(profile.id, startDate, now)
 
-  // Determine if we should use actual food log data
   const useActualData = actualIntake && actualIntake.completenessPercent >= 70
+  const isFirstCalibration = !calibrationHistoryList || calibrationHistoryList.length === 0
 
-  // Calculate weight change and actual TDEE
-  const calibrationData = useMemo(() => {
-    // Get weights from selected time period
-    const recentWeights = (weightHistory || [])
-      .filter(w => new Date(w.recorded_at) >= startDate)
-      .sort((a, b) => new Date(a.recorded_at).getTime() - new Date(b.recorded_at).getTime())
-
-    let allWeights: Array<{ weight_kg: number; recorded_at: Date }> = []
-    let usedOldestWeight = false
-
-    // If we have 2+ weight entries within time period, use those directly
-    // Otherwise, fall back to oldest weight in history as starting point
-    if (recentWeights.length >= 2) {
-      // Enough data within time period - use only recent weights
-      recentWeights.forEach(w => {
-        allWeights.push({
-          weight_kg: w.weight_kg,
-          recorded_at: new Date(w.recorded_at),
-        })
-      })
-    } else {
-      // Not enough recent data - try to use oldest weight from history as starting point
-      const allHistorySorted = [...(weightHistory || [])].sort(
-        (a, b) => new Date(a.recorded_at).getTime() - new Date(b.recorded_at).getTime()
-      )
-
-      if (allHistorySorted.length > 0) {
-        const oldestWeight = allHistorySorted[0]
-        const oldestDate = new Date(oldestWeight.recorded_at)
-        const daysSinceOldest = Math.floor(
-          (now.getTime() - oldestDate.getTime()) / (1000 * 60 * 60 * 24)
-        )
-
-        // Only include oldest weight if it's within reasonable timeframe
-        if (daysSinceOldest <= timePeriod * 2) {
-          allWeights.push({
-            weight_kg: oldestWeight.weight_kg,
-            recorded_at: oldestDate,
-          })
-          usedOldestWeight = true
-        }
+  // Check which periods are available (for disabling dropdown options)
+  const periodAvailability = useMemo(() => {
+    const result: Record<14 | 21 | 28, boolean> = { 14: false, 21: false, 28: false }
+    if (!weightHistory) return result
+    for (const period of [14, 21, 28] as const) {
+      const cutoff = new Date(now.getTime() - period * 24 * 60 * 60 * 1000)
+      const count = weightHistory.filter(w => new Date(w.recorded_at) >= cutoff).length
+      if (count >= MIN_DATA_POINTS[period]) {
+        const clusters = buildClusters(weightHistory, period, now)
+        result[period] = clusters !== null
       }
-
-      // Add any recent weights we do have
-      recentWeights.forEach(w => {
-        allWeights.push({
-          weight_kg: w.weight_kg,
-          recorded_at: new Date(w.recorded_at),
-        })
-      })
     }
+    return result
+  }, [weightHistory, now])
 
-    // Sort by date
-    allWeights = allWeights.sort((a, b) => a.recorded_at.getTime() - b.recorded_at.getTime())
+  // Run calibration
+  const calibrationResult = useMemo((): CalibrationResult | string | null => {
+    if (!weightHistory || weightHistory.length < 2) return null
 
-    // Need at least 2 data points
-    if (allWeights.length < 2) return null
-
-    const startWeightEntry = allWeights[0]
-    const endWeightEntry = allWeights[allWeights.length - 1]
-    const startWeight = startWeightEntry.weight_kg
-    const endWeight = endWeightEntry.weight_kg
-
-    // Calculate actual days between measurements
-    const actualDays = Math.max(
-      1,
-      Math.floor(
-        (endWeightEntry.recorded_at.getTime() - startWeightEntry.recorded_at.getTime()) /
-          (1000 * 60 * 60 * 24)
-      )
-    )
-    const weightChange = endWeight - startWeight
-    const weightChangePercent = (weightChange / startWeight) * 100
-
-    // Calculate calorie balance from weight change
-    // 1 kg body weight ≈ 7700 kcal
-    const totalCalorieBalance = weightChange * 7700
-    const dailyCalorieBalance = totalCalorieBalance / actualDays
-
-    // Calculate actual TDEE
-    // If user is on "maintain weight" but gained/lost weight:
-    // actual_TDEE = average_calories - daily_balance
-    //
-    // Use actual intake if available, otherwise use target calories
     const targetCalories =
       profile.calories_min && profile.calories_max
         ? (profile.calories_min + profile.calories_max) / 2
         : profile.tdee || 2000
 
-    const averageCalories =
-      useActualData && actualIntake?.averageCalories ? actualIntake.averageCalories : targetCalories
-
-    const actualTDEE = averageCalories - dailyCalorieBalance
-
-    // Safety check: limit adjustments to ±20% of current TDEE
-    const currentTDEE = profile.tdee || 2000
-    const maxTDEE = currentTDEE * 1.2
-    const minTDEE = currentTDEE * 0.8
-    const calibratedTDEE = Math.max(minTDEE, Math.min(maxTDEE, actualTDEE))
-    const isLimited = Math.abs(calibratedTDEE - actualTDEE) > 0.5
-
-    // Check for erratic fluctuations (>3% per week)
-    const weeklyChangePercent =
-      actualDays >= 7 ? (weightChangePercent / actualDays) * 7 : weightChangePercent
-    const isErratic = Math.abs(weeklyChangePercent) > 3
-
-    // Calculate difference from current TDEE
-    const tdeeDifference = calibratedTDEE - currentTDEE
-    const tdeeDifferencePercent = (tdeeDifference / currentTDEE) * 100
-
-    return {
-      startWeight,
-      endWeight,
-      weightChange,
-      weightChangePercent,
-      dailyCalorieBalance,
+    return runCalibration({
+      weightHistory,
+      periodDays: timePeriod,
+      currentTDEE: profile.tdee || 2000,
       targetCalories,
-      averageCalories,
-      actualTDEE,
-      calibratedTDEE,
-      isLimited,
-      isErratic,
-      weeklyChangePercent,
-      tdeeDifference,
-      tdeeDifferencePercent,
-      daysOfData: actualDays,
-      numDataPoints: allWeights.length,
-      usedOldestWeight,
-    }
-  }, [weightHistory, timePeriod, profile, useActualData, actualIntake, startDate, now])
+      actualCaloriesAvg: actualIntake?.averageCalories ?? null,
+      foodLogCompleteness: actualIntake?.completenessPercent ?? 0,
+      daysWithLogData: actualIntake?.daysWithData ?? 0,
+      isFirstCalibration,
+      now,
+    })
+  }, [weightHistory, timePeriod, profile, actualIntake, isFirstCalibration, now])
 
-  // Calculate what's needed when calibration isn't available
-  const emptyStateInfo = useMemo(() => {
-    const recentWeights = (weightHistory || []).filter(w => new Date(w.recorded_at) >= startDate)
-    const recentWeightsCount = recentWeights.length
-    const totalWeightsCount = (weightHistory || []).length
+  const isError = typeof calibrationResult === 'string'
+  const data =
+    typeof calibrationResult === 'object' && calibrationResult !== null ? calibrationResult : null
 
-    // Check if oldest weight in history can be used
-    const allHistorySorted = [...(weightHistory || [])].sort(
-      (a, b) => new Date(a.recorded_at).getTime() - new Date(b.recorded_at).getTime()
-    )
-    const oldestWeight = allHistorySorted.length > 0 ? allHistorySorted[0] : null
-    const hasUsableOldestWeight =
-      oldestWeight &&
-      Math.floor(
-        (now.getTime() - new Date(oldestWeight.recorded_at).getTime()) / (1000 * 60 * 60 * 24)
-      ) <=
-        timePeriod * 2
-
-    return {
-      recentWeightsCount,
-      totalWeightsCount,
-      hasUsableOldestWeight,
-      oldestWeight: oldestWeight?.weight_kg,
-    }
-  }, [weightHistory, startDate, timePeriod, now])
+  // Convergence info from history
+  const convergenceText = useMemo(() => {
+    if (!calibrationHistoryList || calibrationHistoryList.length < 2) return null
+    const recent = calibrationHistoryList
+      .slice(0, 3)
+      .reverse()
+      .map(c => Math.round(c.applied_tdee))
+    return `Senaste kalibreringar: ${recent.join(' → ')} kcal`
+  }, [calibrationHistoryList])
 
   const handleApplyCalibration = async () => {
-    if (!calibrationData) return
+    if (!data) return
 
-    const newTDEE = calibrationData.calibratedTDEE
+    const newTDEE = data.clampedTDEE
 
-    // Recalculate calorie range based on current goal
+    // Recalculate calorie range based on goal
     let caloriesMin = newTDEE * 0.97
     let caloriesMax = newTDEE * 1.03
 
     if (profile.calorie_goal === 'Weight loss') {
-      // Apply deficit
       const deficitPercent =
         profile.deficit_level === '10-15%'
           ? 0.125
@@ -242,7 +140,6 @@ export default function MetabolicCalibration({
     }
 
     try {
-      // Update profile with new TDEE
       await updateProfile.mutateAsync({
         profileId: profile.id,
         data: {
@@ -254,38 +151,43 @@ export default function MetabolicCalibration({
           tdee_calculation_snapshot: {
             method: 'metabolic_calibration',
             time_period_days: timePeriod,
-            weight_change_kg: calibrationData.weightChange,
-            daily_calorie_balance: calibrationData.dailyCalorieBalance,
+            weight_change_kg: data.weightChangeKg,
+            daily_calorie_balance: (data.weightChangeKg * 7700) / data.actualDays,
             previous_tdee: profile.tdee,
             calibrated_tdee: newTDEE,
-            target_calories: calibrationData.targetCalories,
-            used_food_log: useActualData || false,
-            actual_calories_avg: useActualData ? actualIntake?.averageCalories : null,
+            target_calories: data.averageCalories,
+            used_food_log: data.calorieSource === 'food_log',
+            actual_calories_avg: data.calorieSource === 'food_log' ? data.averageCalories : null,
           },
         },
       })
 
-      // Save calibration history
       await createCalibrationHistory.mutateAsync({
         profile_id: profile.id,
         time_period_days: timePeriod,
-        start_weight_kg: calibrationData.startWeight,
-        end_weight_kg: calibrationData.endWeight,
-        weight_change_kg: calibrationData.weightChange,
-        target_calories: calibrationData.targetCalories,
-        actual_calories_avg: useActualData ? (actualIntake?.averageCalories ?? null) : null,
-        used_food_log: useActualData || false,
+        start_weight_kg: data.startCluster.average,
+        end_weight_kg: data.endCluster.average,
+        weight_change_kg: data.weightChangeKg,
+        target_calories: data.averageCalories,
+        actual_calories_avg: data.calorieSource === 'food_log' ? data.averageCalories : null,
+        used_food_log: data.calorieSource === 'food_log',
         days_with_log_data: actualIntake?.daysWithData || 0,
         previous_tdee: profile.tdee || 0,
-        calculated_tdee: calibrationData.actualTDEE,
+        calculated_tdee: data.rawTDEE,
         applied_tdee: newTDEE,
-        was_limited: calibrationData.isLimited,
+        was_limited: data.wasLimited,
+        start_cluster_size: data.startCluster.count,
+        end_cluster_size: data.endCluster.count,
+        confidence_level: data.confidence.level,
+        calorie_source: data.calorieSource,
+        max_allowed_adjustment_percent: data.maxAllowedAdjustmentPercent,
+        coefficient_of_variation: data.coefficientOfVariation,
+        warnings: data.warnings.map(w => w.type),
       })
 
       setCalibrationApplied(newTDEE)
       toast.success(`TDEE kalibrerat! Nytt värde: ${Math.round(newTDEE)} kcal`)
 
-      // Auto-close after a short delay if onClose is provided
       if (onClose) {
         setTimeout(() => onClose(), 1500)
       }
@@ -294,10 +196,33 @@ export default function MetabolicCalibration({
     }
   }
 
-  // Don't show if user doesn't have TDEE set
   if (!profile.tdee) return null
 
   const isCompact = variant === 'compact'
+
+  const ConfidenceIcon = data
+    ? data.confidence.level === 'high'
+      ? ShieldCheck
+      : data.confidence.level === 'standard'
+        ? Shield
+        : ShieldAlert
+    : Shield
+
+  const confidenceColor = data
+    ? data.confidence.level === 'high'
+      ? 'text-green-600'
+      : data.confidence.level === 'standard'
+        ? 'text-yellow-600'
+        : 'text-orange-600'
+    : 'text-neutral-400'
+
+  const confidenceLabel = data
+    ? data.confidence.level === 'high'
+      ? 'Hög tillförlitlighet'
+      : data.confidence.level === 'standard'
+        ? 'Medel tillförlitlighet'
+        : 'Låg tillförlitlighet'
+    : ''
 
   return (
     <Card>
@@ -323,9 +248,17 @@ export default function MetabolicCalibration({
           <div className="flex items-start gap-2 p-3 rounded-lg bg-neutral-50 text-sm text-neutral-700">
             <Info className="h-4 w-4 mt-0.5 flex-shrink-0 text-neutral-500" />
             <p>
-              Kalibrera ditt TDEE baserat på faktiska viktförändringar. Välj tidsperiod och systemet
-              beräknar ditt verkliga energibehov.
+              Kalibrera ditt TDEE baserat på faktiska viktförändringar. Systemet medelvärdesberäknar
+              start- och slutvikt för att dämpa dagliga fluktuationer.
             </p>
+          </div>
+        )}
+
+        {/* Convergence indicator */}
+        {convergenceText && !isCompact && (
+          <div className="flex items-start gap-2 p-3 rounded-lg bg-blue-50 text-sm text-blue-800">
+            <Info className="h-4 w-4 mt-0.5 flex-shrink-0" />
+            <p>{convergenceText}</p>
           </div>
         )}
 
@@ -334,11 +267,17 @@ export default function MetabolicCalibration({
           <label className="text-sm font-medium text-neutral-700">Tidsperiod</label>
           <Select
             value={timePeriod.toString()}
-            onChange={e => setTimePeriod(Number(e.target.value) as 7 | 14 | 21)}
+            onChange={e => setTimePeriod(Number(e.target.value) as 14 | 21 | 28)}
           >
-            <option value="7">7 dagar (1 vecka)</option>
-            <option value="14">14 dagar (2 veckor)</option>
-            <option value="21">21 dagar (3 veckor)</option>
+            <option value="14" disabled={!periodAvailability[14]}>
+              14 dagar (2 veckor){!periodAvailability[14] ? ' — otillräcklig data' : ''}
+            </option>
+            <option value="21" disabled={!periodAvailability[21]}>
+              21 dagar (3 veckor){!periodAvailability[21] ? ' — otillräcklig data' : ''}
+            </option>
+            <option value="28" disabled={!periodAvailability[28]}>
+              28 dagar (4 veckor){!periodAvailability[28] ? ' — otillräcklig data' : ''}
+            </option>
           </Select>
         </div>
 
@@ -367,7 +306,8 @@ export default function MetabolicCalibration({
                   <p className="font-medium">Använder målkalorier</p>
                   <p className="text-xs mt-0.5">
                     Logga mat för bättre precision ({actualIntake.daysWithData}/
-                    {actualIntake.totalDays} dagar med data)
+                    {actualIntake.totalDays} dagar med data). Om du äter mer/mindre än målet blir
+                    kalibreringen missvisande.
                   </p>
                 </div>
               </>
@@ -375,66 +315,82 @@ export default function MetabolicCalibration({
           </div>
         )}
 
-        {/* Calibration results */}
-        {calibrationData ? (
-          <div className="space-y-4 pt-2">
-            {/* Warning for erratic fluctuations */}
-            {calibrationData.isErratic && (
-              <div className="flex items-start gap-2 p-3 rounded-lg bg-orange-50 text-sm text-orange-800">
-                <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                <p>
-                  Stora viktfluktuationer ({calibrationData.weeklyChangePercent > 0 ? '+' : ''}
-                  {calibrationData.weeklyChangePercent.toFixed(1)}% per vecka) kan påverka
-                  noggrannheten. Vätskeretenering eller andra faktorer kan ge missvisande resultat.
-                </p>
-              </div>
-            )}
+        {/* Error state */}
+        {isError && (
+          <div className="text-center py-6 text-sm text-neutral-500">
+            <AlertCircle className="h-8 w-8 mx-auto mb-2 text-neutral-400" />
+            <p>{calibrationResult}</p>
+          </div>
+        )}
 
-            {/* Weight change */}
+        {/* Results */}
+        {data && (
+          <div className="space-y-4 pt-2">
+            {/* Confidence badge */}
+            <div className="flex items-center gap-2">
+              <ConfidenceIcon className={`h-4 w-4 ${confidenceColor}`} />
+              <span className={`text-sm font-medium ${confidenceColor}`}>{confidenceLabel}</span>
+            </div>
+
+            {/* Warnings */}
+            {data.warnings.map((warning, i) => (
+              <div
+                key={i}
+                className="flex items-start gap-2 p-3 rounded-lg bg-orange-50 text-sm text-orange-800"
+              >
+                <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                <p>{warning.message}</p>
+              </div>
+            ))}
+
+            {/* Cluster details */}
             <div className="grid grid-cols-2 gap-4 p-3 rounded-lg bg-neutral-50">
               <div>
-                <p className="text-xs text-neutral-500">Startvikt</p>
+                <p className="text-xs text-neutral-500">
+                  Startkluster ({data.startCluster.count} mätningar)
+                </p>
                 <p className="text-sm font-semibold text-neutral-900">
-                  {calibrationData.startWeight.toFixed(1)} kg
+                  {data.startCluster.average.toFixed(1)} kg
+                </p>
+                <p className="text-xs text-neutral-400">
+                  {data.startCluster.weights.map(w => w.toFixed(1)).join(', ')} kg
                 </p>
               </div>
               <div>
-                <p className="text-xs text-neutral-500">Slutvikt</p>
+                <p className="text-xs text-neutral-500">
+                  Slutkluster ({data.endCluster.count} mätningar)
+                </p>
                 <p className="text-sm font-semibold text-neutral-900">
-                  {calibrationData.endWeight.toFixed(1)} kg
+                  {data.endCluster.average.toFixed(1)} kg
+                </p>
+                <p className="text-xs text-neutral-400">
+                  {data.endCluster.weights.map(w => w.toFixed(1)).join(', ')} kg
                 </p>
               </div>
               <div className="col-span-2">
                 <p className="text-xs text-neutral-500">Viktförändring</p>
                 <p
                   className={`text-sm font-semibold flex items-center gap-1 ${
-                    calibrationData.weightChange > 0
+                    data.weightChangeKg > 0
                       ? 'text-orange-600'
-                      : calibrationData.weightChange < 0
+                      : data.weightChangeKg < 0
                         ? 'text-blue-600'
                         : 'text-neutral-600'
                   }`}
                 >
-                  {calibrationData.weightChange > 0 ? (
+                  {data.weightChangeKg > 0 ? (
                     <TrendingUp className="h-4 w-4" />
-                  ) : calibrationData.weightChange < 0 ? (
+                  ) : data.weightChangeKg < 0 ? (
                     <TrendingDown className="h-4 w-4" />
                   ) : null}
-                  {calibrationData.weightChange > 0 ? '+' : ''}
-                  {calibrationData.weightChange.toFixed(2)} kg (
-                  {calibrationData.weightChange > 0 ? '+' : ''}
-                  {calibrationData.weightChangePercent.toFixed(1)}%)
+                  {data.weightChangeKg > 0 ? '+' : ''}
+                  {data.weightChangeKg.toFixed(2)} kg över {Math.round(data.actualDays)} dagar
                 </p>
-              </div>
-              <div className="col-span-2">
-                <p className="text-xs text-neutral-500">Datapunkter</p>
-                <p className="text-sm font-medium text-neutral-700">
-                  {calibrationData.numDataPoints} viktmätningar under {calibrationData.daysOfData}{' '}
-                  dagar
-                  {calibrationData.usedOldestWeight && (
-                    <span className="text-xs text-neutral-500 ml-1">(inkl. äldsta vikt)</span>
-                  )}
-                </p>
+                {data.isStableMaintenance && (
+                  <p className="text-xs text-green-600 mt-1">
+                    Din vikt är stabil — ditt TDEE verkar stämma
+                  </p>
+                )}
               </div>
             </div>
 
@@ -443,19 +399,19 @@ export default function MetabolicCalibration({
               <p className="text-xs text-neutral-500">Estimerad daglig kaloribalans</p>
               <p
                 className={`text-sm font-semibold ${
-                  calibrationData.dailyCalorieBalance > 0
+                  data.weightChangeKg > 0
                     ? 'text-orange-600'
-                    : calibrationData.dailyCalorieBalance < 0
+                    : data.weightChangeKg < 0
                       ? 'text-blue-600'
                       : 'text-neutral-600'
                 }`}
               >
-                {calibrationData.dailyCalorieBalance > 0 ? '+' : ''}
-                {Math.round(calibrationData.dailyCalorieBalance)} kcal/dag
+                {data.weightChangeKg > 0 ? '+' : ''}
+                {Math.round((data.weightChangeKg * 7700) / data.actualDays)} kcal/dag
               </p>
               <p className="text-xs text-neutral-500 mt-1">
-                Baserat på {useActualData ? 'faktiskt intag' : 'målkalorier'}:{' '}
-                {Math.round(calibrationData.averageCalories)} kcal/dag
+                Baserat på {data.calorieSource === 'food_log' ? 'faktiskt intag' : 'målkalorier'}:{' '}
+                {Math.round(data.averageCalories)} kcal/dag
               </p>
             </div>
 
@@ -465,13 +421,13 @@ export default function MetabolicCalibration({
                 <div>
                   <p className="text-xs text-neutral-600">Nuvarande TDEE</p>
                   <p className="text-sm font-medium text-neutral-900">
-                    {Math.round(profile.tdee)} kcal
+                    {Math.round(data.currentTDEE)} kcal
                   </p>
                 </div>
                 <div className="text-right">
                   <p className="text-xs text-neutral-600">Kalibrerat TDEE</p>
                   <p className="text-lg font-bold text-primary-600">
-                    {Math.round(calibrationData.calibratedTDEE)} kcal
+                    {Math.round(data.clampedTDEE)} kcal
                   </p>
                 </div>
               </div>
@@ -480,27 +436,19 @@ export default function MetabolicCalibration({
                 <p className="text-xs text-neutral-600">Skillnad</p>
                 <p
                   className={`text-sm font-semibold ${
-                    calibrationData.tdeeDifference > 0
+                    data.adjustmentPercent > 0
                       ? 'text-orange-600'
-                      : calibrationData.tdeeDifference < 0
+                      : data.adjustmentPercent < 0
                         ? 'text-blue-600'
                         : 'text-neutral-600'
                   }`}
                 >
-                  {calibrationData.tdeeDifference > 0 ? '+' : ''}
-                  {Math.round(calibrationData.tdeeDifference)} kcal (
-                  {calibrationData.tdeeDifference > 0 ? '+' : ''}
-                  {calibrationData.tdeeDifferencePercent.toFixed(1)}%)
+                  {data.adjustmentPercent > 0 ? '+' : ''}
+                  {Math.round(data.clampedTDEE - data.currentTDEE)} kcal (
+                  {data.adjustmentPercent > 0 ? '+' : ''}
+                  {data.adjustmentPercent.toFixed(1)}%)
                 </p>
               </div>
-
-              {/* Warning if limited */}
-              {calibrationData.isLimited && (
-                <div className="flex items-start gap-2 p-2 rounded bg-orange-50 text-xs text-orange-800">
-                  <AlertCircle className="h-3 w-3 mt-0.5 flex-shrink-0" />
-                  <p>Justerad till max ±20% av nuvarande TDEE för säkerhet</p>
-                </div>
-              )}
             </div>
 
             {/* Apply button or success state */}
@@ -529,29 +477,16 @@ export default function MetabolicCalibration({
               </Button>
             )}
           </div>
-        ) : (
+        )}
+
+        {/* No data state (not error, just null) */}
+        {!data && !isError && (
           <div className="text-center py-6 text-sm text-neutral-500">
             <AlertCircle className="h-8 w-8 mx-auto mb-2 text-neutral-400" />
-            <p>Behöver minst 2 viktmätningar för kalibrering</p>
-            <p className="mt-1">
-              {emptyStateInfo.recentWeightsCount === 0 && emptyStateInfo.hasUsableOldestWeight ? (
-                <>
-                  Din äldsta vikt ({emptyStateInfo.oldestWeight} kg) används som första punkt.
-                  <br />
-                  Logga en ny vikt för att kalibrera.
-                </>
-              ) : emptyStateInfo.recentWeightsCount === 1 ? (
-                <>
-                  Du har 1 viktmätning inom perioden.
-                  <br />
-                  Logga ytterligare en vikt för att kalibrera.
-                </>
-              ) : emptyStateInfo.totalWeightsCount === 0 ? (
-                <>Börja logga vikt för att aktivera kalibrering</>
-              ) : (
-                <>Logga fler viktmätningar för att aktivera kalibrering</>
-              )}
+            <p>
+              Behöver minst {MIN_DATA_POINTS[timePeriod]} viktmätningar under {timePeriod} dagar
             </p>
+            <p className="mt-1">Logga fler viktmätningar för att aktivera kalibrering</p>
           </div>
         )}
       </CardContent>
