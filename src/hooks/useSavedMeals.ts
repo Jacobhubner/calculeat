@@ -331,14 +331,24 @@ export function useLoadSavedMealToSlot() {
         throw new Error('All food items in saved meal are missing or deleted')
       }
 
-      const itemsToInsert = validItems.map((item, index) => ({
-        meal_entry_id: mealEntryId,
-        food_item_id: item.food_item_id,
-        amount: item.amount,
-        unit: item.unit,
-        weight_grams: item.weight_grams,
-        item_order: (count || 0) + index,
-      }))
+      const itemsToInsert = validItems.map((item, index) => {
+        const foodItem = item.food_item
+        const grams = item.weight_grams || item.amount * 100
+        const multiplier = grams / 100
+
+        return {
+          meal_entry_id: mealEntryId,
+          food_item_id: item.food_item_id,
+          amount: item.amount,
+          unit: item.unit,
+          weight_grams: item.weight_grams,
+          calories: foodItem ? (foodItem.calories || 0) * multiplier : null,
+          fat_g: foodItem ? (foodItem.fat_g || 0) * multiplier : null,
+          carb_g: foodItem ? (foodItem.carbs_g || 0) * multiplier : null,
+          protein_g: foodItem ? (foodItem.protein_g || 0) * multiplier : null,
+          item_order: (count || 0) + index,
+        }
+      })
 
       const { error: insertError } = await supabase
         .from('meal_entry_items')
