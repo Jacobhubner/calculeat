@@ -61,7 +61,7 @@ export function PlateCalculator({
     if (!foods) return []
 
     if (!searchQuery.trim()) {
-      return foods.slice(0, 15)
+      return []
     }
 
     const query = searchQuery.toLowerCase()

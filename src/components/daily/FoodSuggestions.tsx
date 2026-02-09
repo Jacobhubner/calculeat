@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Select } from '@/components/ui/select'
 import { useFoodSuggestions } from '@/hooks/useFoodSuggestions'
 import { useFavoriteFoods, useToggleFavorite } from '@/hooks/useFavoriteFoods'
 import type { FoodItem } from '@/hooks/useFoodItems'
@@ -204,7 +203,7 @@ export function FoodSuggestions({
             min={0}
             placeholder="g"
           />
-          <span className="text-xs text-neutral-500">g {macroLabel[primaryMacro]}</span>
+          <span className="text-xs text-neutral-500">g {primaryMacro === 'protein' ? 'protein' : primaryMacro === 'carbs' ? 'kolhydrater' : 'fett'}</span>
           {!isSearchValid && <span className="text-xs text-neutral-400 ml-auto">Ange mål</span>}
         </div>
 
@@ -213,35 +212,35 @@ export function FoodSuggestions({
           <div className="p-3 bg-neutral-50 rounded-lg space-y-3 border">
             {/* Primary macro selector */}
             <div className="flex items-center gap-3">
-              <Label className="text-xs w-20">Primär makro</Label>
-              <Select
+              <Label className="text-xs shrink-0">Primär makro</Label>
+              <select
                 value={primaryMacro}
-                onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                onChange={e =>
                   handlePrimaryMacroChange(e.target.value as 'protein' | 'carbs' | 'fat')
                 }
-                className="h-7 text-xs min-w-[110px]"
+                className="h-7 text-xs px-2 rounded-lg border border-neutral-300 bg-white"
               >
                 <option value="protein">Protein</option>
                 <option value="carbs">Kolhydrater</option>
                 <option value="fat">Fett</option>
-              </Select>
+              </select>
             </div>
 
             {/* Secondary macro */}
             <div className="flex items-center gap-3">
-              <Label className="text-xs w-20">Sekundär</Label>
-              <Select
+              <Label className="text-xs shrink-0">Sekundär</Label>
+              <select
                 value={secondaryMacro}
-                onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                onChange={e =>
                   setSecondaryMacro(e.target.value as 'protein' | 'carbs' | 'fat' | '')
                 }
-                className="h-7 text-xs min-w-[110px]"
+                className="h-7 text-xs px-2 rounded-lg border border-neutral-300 bg-white"
               >
                 <option value="">Ingen</option>
                 {primaryMacro !== 'protein' && <option value="protein">Protein</option>}
                 {primaryMacro !== 'carbs' && <option value="carbs">Kolhydrater</option>}
                 {primaryMacro !== 'fat' && <option value="fat">Fett</option>}
-              </Select>
+              </select>
               {secondaryMacro && (
                 <>
                   <Input
@@ -258,7 +257,7 @@ export function FoodSuggestions({
 
             {/* Count and Sort */}
             <div className="flex items-center gap-3">
-              <Label className="text-xs w-20">Antal</Label>
+              <Label className="text-xs shrink-0">Antal</Label>
               <Input
                 type="number"
                 value={count}
@@ -267,19 +266,19 @@ export function FoodSuggestions({
                 min={1}
                 max={50}
               />
-              <Label className="text-xs ml-2">Sortera</Label>
-              <Select
+              <Label className="text-xs shrink-0">Sortera</Label>
+              <select
                 value={sortBy}
-                onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                onChange={e =>
                   setSortBy(e.target.value as 'score' | 'protein' | 'calories' | 'name')
                 }
-                className="h-7 text-xs min-w-[100px]"
+                className="h-7 text-xs px-2 rounded-lg border border-neutral-300 bg-white"
               >
                 <option value="score">Matchning</option>
                 <option value="protein">Protein</option>
                 <option value="calories">Kalorier</option>
                 <option value="name">Namn</option>
-              </Select>
+              </select>
             </div>
 
             {/* Filters row */}
