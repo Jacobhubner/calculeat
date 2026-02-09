@@ -294,11 +294,16 @@ export function useAddFoodToMeal() {
     }) => {
       if (!user) throw new Error('User not authenticated')
 
-      // Get current item count for ordering
-      const { count } = await supabase
+      // Get max item_order for this meal to avoid UNIQUE constraint conflict
+      const { data: maxOrderRow } = await supabase
         .from('meal_entry_items')
-        .select('*', { count: 'exact', head: true })
+        .select('item_order')
         .eq('meal_entry_id', params.mealEntryId)
+        .order('item_order', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+
+      const nextOrder = maxOrderRow ? maxOrderRow.item_order + 1 : 0
 
       const { data, error } = await supabase
         .from('meal_entry_items')
@@ -312,7 +317,7 @@ export function useAddFoodToMeal() {
           protein_g: params.protein_g,
           carb_g: params.carb_g,
           fat_g: params.fat_g,
-          item_order: count || 0,
+          item_order: nextOrder,
         })
         .select()
         .single()
