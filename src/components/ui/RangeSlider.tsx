@@ -75,6 +75,10 @@ export function RangeSlider({
         className={cn(
           'pointer-events-none absolute h-0 w-full outline-none',
           'z-[3]',
+          '[&::-webkit-slider-runnable-track]:appearance-none',
+          '[&::-webkit-slider-runnable-track]:bg-transparent',
+          '[&::-moz-range-track]:appearance-none',
+          '[&::-moz-range-track]:bg-transparent',
           '[&::-webkit-slider-thumb]:pointer-events-auto',
           '[&::-webkit-slider-thumb]:relative',
           '[&::-webkit-slider-thumb]:h-5',
@@ -121,6 +125,10 @@ export function RangeSlider({
         className={cn(
           'pointer-events-none absolute h-0 w-full outline-none',
           'z-[4]',
+          '[&::-webkit-slider-runnable-track]:appearance-none',
+          '[&::-webkit-slider-runnable-track]:bg-transparent',
+          '[&::-moz-range-track]:appearance-none',
+          '[&::-moz-range-track]:bg-transparent',
           '[&::-webkit-slider-thumb]:pointer-events-auto',
           '[&::-webkit-slider-thumb]:relative',
           '[&::-webkit-slider-thumb]:h-5',
