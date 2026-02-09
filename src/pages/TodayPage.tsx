@@ -523,7 +523,7 @@ export default function TodayPage() {
                             <CardTitle className="text-lg">{mealSetting.meal_name}</CardTitle>
                             <CardDescription>
                               {hasItems
-                                ? `${mealEntry.meal_calories} kcal • ${mealEntry.items.length} matvara${mealEntry.items.length > 1 ? 'r' : ''}`
+                                ? `${mealEntry.items.length} matvara${mealEntry.items.length > 1 ? 'r' : ''}`
                                 : `${mealSetting.percentage_of_daily_calories}% av dagens kalorier`}
                             </CardDescription>
                           </div>
