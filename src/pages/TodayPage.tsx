@@ -80,12 +80,14 @@ export default function TodayPage() {
 
   // State for SaveMealDialog
   const [saveMealDialogOpen, setSaveMealDialogOpen] = useState(false)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [selectedMealToSave, setSelectedMealToSave] = useState<any | null>(null)
 
   // State for LoadMealToSlotDialog
   const [loadMealDialogOpen, setLoadMealDialogOpen] = useState(false)
   const [selectedMealForLoad, setSelectedMealForLoad] = useState<{
     mealName: string
+    mealOrder: number
     mealEntryId?: string
   } | null>(null)
 
@@ -226,13 +228,14 @@ export default function TodayPage() {
     setAddFoodModalOpen(true)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleOpenSaveMealDialog = (mealEntry: any) => {
     setSelectedMealToSave(mealEntry)
     setSaveMealDialogOpen(true)
   }
 
-  const handleOpenLoadMealDialog = (mealName: string, mealEntryId?: string) => {
-    setSelectedMealForLoad({ mealName, mealEntryId })
+  const handleOpenLoadMealDialog = (mealName: string, mealOrder: number, mealEntryId?: string) => {
+    setSelectedMealForLoad({ mealName, mealOrder, mealEntryId })
     setLoadMealDialogOpen(true)
   }
 
@@ -494,7 +497,9 @@ export default function TodayPage() {
             <div className="space-y-4">
               {mealSettings.map((mealSetting, index) => {
                 // Find corresponding meal entry from today's log
-                const mealEntry = todayLog?.meals?.find(m => m.meal_name === mealSetting.meal_name)
+                const mealEntry = todayLog?.meals?.find(
+                  m => m.meal_order === mealSetting.meal_order
+                )
                 const hasItems = mealEntry?.items && mealEntry.items.length > 0
                 // Calculate meal target range (min and max based on daily goals)
                 const mealTargetMin = Math.round(
@@ -543,7 +548,11 @@ export default function TodayPage() {
                             variant="outline"
                             className="gap-2 border-primary-300 text-primary-700"
                             onClick={() =>
-                              handleOpenLoadMealDialog(mealSetting.meal_name, mealEntry?.id)
+                              handleOpenLoadMealDialog(
+                                mealSetting.meal_name,
+                                mealSetting.meal_order,
+                                mealEntry?.id
+                              )
                             }
                           >
                             <ArrowDownToLine className="h-4 w-4" />
@@ -751,6 +760,7 @@ export default function TodayPage() {
           open={loadMealDialogOpen}
           onOpenChange={setLoadMealDialogOpen}
           targetMealName={selectedMealForLoad.mealName}
+          targetMealOrder={selectedMealForLoad.mealOrder}
           dailyLogId={todayLog.id}
           targetMealEntryId={selectedMealForLoad.mealEntryId}
         />

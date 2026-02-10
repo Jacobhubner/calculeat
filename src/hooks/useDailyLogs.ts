@@ -426,9 +426,15 @@ export function useCreateMealEntry() {
 
       if (checkError) throw checkError
 
-      // If meal entry already exists, return it instead of creating new
+      // If meal entry already exists, update meal_name if it changed and return it
       if (existing) {
-        return existing as MealEntry
+        if (existing.meal_name !== params.mealName) {
+          await supabase
+            .from('meal_entries')
+            .update({ meal_name: params.mealName })
+            .eq('id', existing.id)
+        }
+        return { ...existing, meal_name: params.mealName } as MealEntry
       }
 
       // Create new meal entry

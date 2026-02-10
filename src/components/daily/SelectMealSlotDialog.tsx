@@ -12,7 +12,7 @@ import { toast } from 'sonner'
 import { useLoadSavedMealToSlot } from '@/hooks/useSavedMeals'
 import { useTodayLog } from '@/hooks/useDailyLogs'
 import { useMealSettings } from '@/hooks/useMealSettings'
-import { getMealOrder, getSuggestedMealSlot } from '@/lib/meal-utils'
+import { getSuggestedMealSlot } from '@/lib/meal-utils'
 import { useNavigate } from 'react-router-dom'
 
 interface SelectMealSlotDialogProps {
@@ -24,6 +24,7 @@ interface SelectMealSlotDialogProps {
 
 interface MealSlotOption {
   name: string
+  order: number
   icon: typeof Coffee
   calories?: number
   isSuggested?: boolean
@@ -45,16 +46,17 @@ export default function SelectMealSlotDialog({
   // Get suggested meal slot based on time
   const suggestedSlot = useMemo(() => getSuggestedMealSlot(), [])
 
-  // Build meal slot options
+  // Build meal slot options using meal_order for matching
   const mealSlots = useMemo((): MealSlotOption[] => {
     if (!mealSettings) return []
 
     return mealSettings.map(setting => {
-      const mealEntry = todayLog?.meals?.find(m => m.meal_name === setting.meal_name)
+      const mealEntry = todayLog?.meals?.find(m => m.meal_order === setting.meal_order)
       const calories = mealEntry?.meal_calories || 0
 
       return {
         name: setting.meal_name,
+        order: setting.meal_order,
         icon: getIconForMeal(setting.meal_name),
         calories,
         isSuggested: setting.meal_name === suggestedSlot,
@@ -62,23 +64,23 @@ export default function SelectMealSlotDialog({
     })
   }, [mealSettings, todayLog, suggestedSlot])
 
-  const handleSelectSlot = async (mealName: string) => {
+  const handleSelectSlot = async (slot: MealSlotOption) => {
     if (!todayLog) {
       toast.error('Kunde inte hitta dagens logg')
       return
     }
 
-    setLoadingSlot(mealName)
+    setLoadingSlot(slot.name)
 
     try {
-      const mealEntry = todayLog.meals?.find(m => m.meal_name === mealName)
+      const mealEntry = todayLog.meals?.find(m => m.meal_order === slot.order)
 
       const result = await loadMeal.mutateAsync({
         savedMealId,
-        targetMealName: mealName,
+        targetMealName: slot.name,
         dailyLogId: todayLog.id,
         targetMealEntryId: mealEntry?.id,
-        mealOrder: getMealOrder(mealName),
+        mealOrder: slot.order,
       })
 
       // Success feedback
@@ -88,7 +90,7 @@ export default function SelectMealSlotDialog({
         )
       }
 
-      toast.success(`${savedMealName} laddad till ${mealName}! (+${result.totalCalories} kcal)`)
+      toast.success(`${savedMealName} laddad till ${slot.name}! (+${result.totalCalories} kcal)`)
 
       // Close modal
       onOpenChange(false)
@@ -96,7 +98,7 @@ export default function SelectMealSlotDialog({
       // Navigate to TodayPage and scroll to meal
       navigate('/app/today')
       setTimeout(() => {
-        const mealCard = document.querySelector(`[data-meal-name="${mealName}"]`)
+        const mealCard = document.querySelector(`[data-meal-name="${slot.name}"]`)
         if (mealCard) {
           mealCard.scrollIntoView({ behavior: 'smooth', block: 'center' })
         }
@@ -114,7 +116,9 @@ export default function SelectMealSlotDialog({
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>Vilken måltid?</DialogTitle>
-          <DialogDescription>Välj var du vill lägga till &quot;{savedMealName}&quot;</DialogDescription>
+          <DialogDescription>
+            Välj var du vill lägga till &quot;{savedMealName}&quot;
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-2 mt-4">
@@ -128,7 +132,7 @@ export default function SelectMealSlotDialog({
                 className={`cursor-pointer transition-all hover:border-primary-300 hover:bg-primary-50 ${
                   isLoading ? 'opacity-50 pointer-events-none' : ''
                 } ${slot.isSuggested ? 'border-primary-300 bg-primary-50' : ''}`}
-                onClick={() => handleSelectSlot(slot.name)}
+                onClick={() => handleSelectSlot(slot)}
               >
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">

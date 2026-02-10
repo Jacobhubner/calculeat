@@ -272,6 +272,7 @@ export function useReorderMealSettings() {
  * with the meal configuration saved in the profile.
  */
 export function useSyncMealSettings() {
+  const { user } = useAuth()
   const queryClient = useQueryClient()
 
   return useMutation({
@@ -284,6 +285,7 @@ export function useSyncMealSettings() {
     }) => {
       if (!profileId) throw new Error('Profile ID required')
       if (!meals || meals.length === 0) throw new Error('Meals required')
+      if (!user) throw new Error('User not authenticated')
 
       // Delete all existing meal settings for this profile
       await supabase.from('user_meal_settings').delete().eq('profile_id', profileId)
@@ -302,10 +304,33 @@ export function useSyncMealSettings() {
         .select()
 
       if (error) throw error
+
+      // Propagate name changes to existing meal_entries
+      // This ensures historical data stays in sync with renamed meals
+      // Scope to this profile only via daily_log_id (meal_entries has no profile_id)
+      const { data: profileLogs } = await supabase
+        .from('daily_logs')
+        .select('id')
+        .eq('profile_id', profileId)
+
+      const logIds = profileLogs?.map(l => l.id) ?? []
+
+      if (logIds.length > 0) {
+        for (const meal of mealsToInsert) {
+          await supabase
+            .from('meal_entries')
+            .update({ meal_name: meal.meal_name })
+            .in('daily_log_id', logIds)
+            .eq('meal_order', meal.meal_order)
+            .neq('meal_name', meal.meal_name)
+        }
+      }
+
       return data as MealSetting[]
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['mealSettings'] })
+      queryClient.invalidateQueries({ queryKey: ['dailyLogs'] })
     },
   })
 }

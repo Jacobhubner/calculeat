@@ -25,10 +25,11 @@ export default function MealSettingsCard({ tdee, onMealChange }: MealSettingsCar
 
   // Default meals
   const defaultMeals: Meal[] = [
-    { name: 'Frukost', percentage: 30 },
+    { name: 'Frukost', percentage: 25 },
     { name: 'Lunch', percentage: 30 },
-    { name: 'Mellanmål', percentage: 10 },
     { name: 'Middag', percentage: 30 },
+    { name: 'Mellanmål 1', percentage: 8 },
+    { name: 'Mellanmål 2', percentage: 7 },
   ]
 
   const [meals, setMeals] = useState<Meal[]>(defaultMeals)

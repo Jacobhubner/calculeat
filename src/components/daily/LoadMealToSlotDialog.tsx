@@ -11,13 +11,13 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Search, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useSavedMeals, useLoadSavedMealToSlot } from '@/hooks/useSavedMeals'
-import { getMealOrder } from '@/lib/meal-utils'
 import EmptyState from '../EmptyState'
 
 interface LoadMealToSlotDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   targetMealName: string
+  targetMealOrder: number
   dailyLogId: string
   targetMealEntryId?: string
 }
@@ -26,6 +26,7 @@ export default function LoadMealToSlotDialog({
   open,
   onOpenChange,
   targetMealName,
+  targetMealOrder,
   dailyLogId,
   targetMealEntryId,
 }: LoadMealToSlotDialogProps) {
@@ -68,7 +69,7 @@ export default function LoadMealToSlotDialog({
         targetMealName,
         dailyLogId,
         targetMealEntryId,
-        mealOrder: getMealOrder(targetMealName),
+        mealOrder: targetMealOrder,
       })
 
       // Success feedback
@@ -78,9 +79,7 @@ export default function LoadMealToSlotDialog({
         )
       }
 
-      toast.success(
-        `${mealName} laddad till ${targetMealName}! (+${result.totalCalories} kcal)`
-      )
+      toast.success(`${mealName} laddad till ${targetMealName}! (+${result.totalCalories} kcal)`)
 
       // Close modal
       onOpenChange(false)
@@ -101,16 +100,18 @@ export default function LoadMealToSlotDialog({
   }
 
   // Calculate meal totals for display
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const getMealTotals = (meal: any) => {
     if (!meal.items || meal.items.length === 0) {
       return { calories: 0, itemCount: 0 }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const calories = meal.items.reduce((sum: number, item: any) => {
       const foodItem = item.food_item
       if (!foodItem) return sum
       const caloriesPer100g = foodItem.calories || 0
-      const grams = item.weight_grams || (item.amount * 100)
+      const grams = item.weight_grams || item.amount * 100
       return sum + (caloriesPer100g * grams) / 100
     }, 0)
 
@@ -149,11 +150,7 @@ export default function LoadMealToSlotDialog({
           ) : sortedMeals.length === 0 ? (
             <EmptyState
               icon={Search}
-              title={
-                searchQuery
-                  ? 'Inga måltider hittades'
-                  : 'Inga sparade måltider ännu'
-              }
+              title={searchQuery ? 'Inga måltider hittades' : 'Inga sparade måltider ännu'}
               description={
                 searchQuery
                   ? 'Försök med ett annat sökord'
@@ -177,13 +174,9 @@ export default function LoadMealToSlotDialog({
                     <CardContent className="p-4">
                       <div className="flex items-center justify-between">
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-medium text-neutral-900 truncate">
-                            {meal.name}
-                          </h3>
+                          <h3 className="font-medium text-neutral-900 truncate">{meal.name}</h3>
                           <div className="flex items-center gap-3 mt-1 text-sm text-neutral-600">
-                            <span className="font-semibold text-primary-600">
-                              {calories} kcal
-                            </span>
+                            <span className="font-semibold text-primary-600">{calories} kcal</span>
                             <span>•</span>
                             <span>
                               {itemCount} matvara{itemCount !== 1 ? 'r' : ''}

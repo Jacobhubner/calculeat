@@ -49,7 +49,11 @@ export interface DailySummaryResult extends DailySummaryData {
 export function useDailySummary(
   dailyLog: DailyLog | null | undefined,
   profile: Profile | null | undefined,
-  mealSettings?: Array<{ meal_name: string; percentage_of_daily_calories: number }>
+  mealSettings?: Array<{
+    meal_name: string
+    meal_order: number
+    percentage_of_daily_calories: number
+  }>
 ): DailySummaryResult | null {
   return useMemo(() => {
     if (!dailyLog || !profile) return null
@@ -151,7 +155,7 @@ export function useDailySummary(
     const meals: MealSummary[] = []
     if (mealSettings && dailyLog.meals) {
       for (const setting of mealSettings) {
-        const mealEntry = dailyLog.meals.find(m => m.meal_name === setting.meal_name)
+        const mealEntry = dailyLog.meals.find(m => m.meal_order === setting.meal_order)
         const mealPercent = (setting.percentage_of_daily_calories ?? 0) / 100
 
         const mealCalories = mealEntry?.meal_calories ?? 0
