@@ -108,16 +108,17 @@ export default function TodayPage() {
   }, [])
   const { data: yesterdayLog } = useDailyLog(yesterday)
 
+  const logDate = todayLog?.log_date
   const dateDisplay = useMemo(() => {
-    const today = new Date()
+    const displayDate = logDate ? new Date(logDate + 'T12:00:00') : new Date()
     const options: Intl.DateTimeFormatOptions = {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
       day: 'numeric',
     }
-    return today.toLocaleDateString('sv-SE', options)
-  }, [])
+    return displayDate.toLocaleDateString('sv-SE', options)
+  }, [logDate])
 
   // Ensure log and settings exist
   useEffect(() => {

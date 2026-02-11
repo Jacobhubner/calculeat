@@ -1,4 +1,3 @@
-import React from 'react'
 import { FFMI_WITH_BODY_FAT_RANGES } from '../../lib/constants/bodyCompositionReferenceData'
 
 interface FFMIReferenceTableProps {

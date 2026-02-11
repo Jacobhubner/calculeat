@@ -1,13 +1,11 @@
-import React from 'react';
-
 interface MaxFatMetabolismCardProps {
-  maxFatKcal: number | null;
-  percentOfTDEE: number | null;
+  maxFatKcal: number | null
+  percentOfTDEE: number | null
 }
 
 export function MaxFatMetabolismCard({ maxFatKcal, percentOfTDEE }: MaxFatMetabolismCardProps) {
   if (!maxFatKcal || !percentOfTDEE) {
-    return null; // Don't render if no data
+    return null // Don't render if no data
   }
 
   return (
@@ -32,10 +30,12 @@ export function MaxFatMetabolismCard({ maxFatKcal, percentOfTDEE }: MaxFatMetabo
 
         <div className="mt-4 text-sm text-gray-600">
           <p>
-            This represents the maximum rate at which your body can metabolize fat for energy (approximately 31 kcal/kg of fat mass per day). Exceeding this deficit may result in muscle loss.
+            This represents the maximum rate at which your body can metabolize fat for energy
+            (approximately 31 kcal/kg of fat mass per day). Exceeding this deficit may result in
+            muscle loss.
           </p>
         </div>
       </div>
     </div>
-  );
+  )
 }

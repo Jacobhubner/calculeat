@@ -19,6 +19,7 @@ export interface SavedMeal {
   name: string
   created_at: string
   updated_at: string
+  last_used_at?: string
   items?: SavedMealItem[]
 }
 
@@ -350,9 +351,7 @@ export function useLoadSavedMealToSlot() {
         }
       })
 
-      const { error: insertError } = await supabase
-        .from('meal_entry_items')
-        .insert(itemsToInsert)
+      const { error: insertError } = await supabase.from('meal_entry_items').insert(itemsToInsert)
 
       if (insertError) throw insertError
 
@@ -368,7 +367,7 @@ export function useLoadSavedMealToSlot() {
         if (!foodItem) return sum
         // Calculate calories based on amount and unit
         const caloriesPer100g = foodItem.calories || 0
-        const grams = item.weight_grams || (item.amount * 100) // Fallback
+        const grams = item.weight_grams || item.amount * 100 // Fallback
         return sum + (caloriesPer100g * grams) / 100
       }, 0)
 

@@ -75,13 +75,43 @@ export function useTodayLog() {
   const { user } = useAuth()
   const activeProfile = useProfileStore(state => state.activeProfile)
   const today = new Date().toISOString().split('T')[0]
+  const completionMode = localStorage.getItem('day-completion-mode') || 'manual'
 
   return useQuery({
-    queryKey: ['dailyLogs', 'today', user?.id, activeProfile?.id, today],
+    queryKey: ['dailyLogs', 'today', user?.id, activeProfile?.id, today, completionMode],
     queryFn: async () => {
       if (!user) throw new Error('User not authenticated')
       if (!activeProfile) throw new Error('No active profile')
 
+      // In manual mode, return the latest uncompleted log (even if from a previous day)
+      if (completionMode === 'manual') {
+        const { data: openLog } = await supabase
+          .from('daily_logs')
+          .select(
+            `
+            *,
+            meals:meal_entries(
+              *,
+              items:meal_entry_items(
+                *,
+                food_item:food_items(*)
+              )
+            )
+          `
+          )
+          .eq('user_id', user.id)
+          .eq('profile_id', activeProfile.id)
+          .eq('is_completed', false)
+          .order('log_date', { ascending: false })
+          .order('meal_order', { foreignTable: 'meal_entries' })
+          .order('item_order', { foreignTable: 'meal_entries.meal_entry_items' })
+          .limit(1)
+          .maybeSingle()
+
+        if (openLog) return openLog as DailyLog
+      }
+
+      // In auto mode (or no open log found), look up today's date
       const { data, error } = await supabase
         .from('daily_logs')
         .select(
@@ -206,8 +236,24 @@ export function useEnsureTodayLog() {
       if (!activeProfile) throw new Error('No active profile')
 
       const today = new Date().toISOString().split('T')[0]
+      const completionMode = localStorage.getItem('day-completion-mode') || 'manual'
 
-      // Check if log exists for this profile and date
+      // In manual mode, return the latest uncompleted log (don't create a new one)
+      if (completionMode === 'manual') {
+        const { data: openLog } = await supabase
+          .from('daily_logs')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('profile_id', activeProfile.id)
+          .eq('is_completed', false)
+          .order('log_date', { ascending: false })
+          .limit(1)
+          .maybeSingle()
+
+        if (openLog) return openLog as DailyLog
+      }
+
+      // Check if log exists for today
       const { data: existing } = await supabase
         .from('daily_logs')
         .select('*')
@@ -219,7 +265,6 @@ export function useEnsureTodayLog() {
       if (existing) return existing as DailyLog
 
       // Auto-complete yesterday's log if setting is "auto"
-      const completionMode = localStorage.getItem('day-completion-mode') || 'manual'
       if (completionMode === 'auto') {
         const yesterday = new Date()
         yesterday.setDate(yesterday.getDate() - 1)

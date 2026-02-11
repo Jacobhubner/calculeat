@@ -1,4 +1,3 @@
-import React from 'react'
 import { FFMI_DESCRIPTION_CATEGORIES } from '../../lib/constants/bodyCompositionReferenceData'
 
 interface FFMICategoryTableProps {

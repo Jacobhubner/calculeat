@@ -1,13 +1,16 @@
-import React from 'react';
-
 interface FFMIMetricsCardProps {
-  ffmi: number | null;
-  normalizedFFMI: number | null;
-  leanBodyMass: number;
-  category: string;
+  ffmi: number | null
+  normalizedFFMI: number | null
+  leanBodyMass: number
+  category: string
 }
 
-export function FFMIMetricsCard({ ffmi, normalizedFFMI, leanBodyMass, category }: FFMIMetricsCardProps) {
+export function FFMIMetricsCard({
+  ffmi,
+  normalizedFFMI,
+  leanBodyMass,
+  category,
+}: FFMIMetricsCardProps) {
   if (!ffmi || !normalizedFFMI) {
     return (
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -18,7 +21,7 @@ export function FFMIMetricsCard({ ffmi, normalizedFFMI, leanBodyMass, category }
           Height data required to calculate FFMI. Please ensure your profile has height information.
         </p>
       </div>
-    );
+    )
   }
 
   return (
@@ -59,5 +62,5 @@ export function FFMIMetricsCard({ ffmi, normalizedFFMI, leanBodyMass, category }
         )}
       </div>
     </div>
-  );
+  )
 }

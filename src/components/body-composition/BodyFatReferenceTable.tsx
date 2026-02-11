@@ -1,4 +1,3 @@
-import React from 'react'
 import { BODY_FAT_CATEGORIES_ACE } from '../../lib/constants/bodyCompositionReferenceData'
 import type { Gender } from '@/lib/types'
 
