@@ -42,9 +42,9 @@ export default function MetabolicCalibrationGuide() {
               baserat på vad som faktiskt händer med din kropp.
             </p>
             <p className="text-neutral-700 leading-relaxed mt-2">
-              Systemet medelvärdesberäknar flera mätningar i början och slutet av perioden
-              (kluster-medelvärde) för att dämpa dagliga fluktuationer från vatten, glykogen och
-              tarminnehåll.
+              Systemet använder trendbaserad viktberäkning med medianvärden i start- och slutkluster
+              för att dämpa dagliga fluktuationer från vatten, glykogen och tarminnehåll. Avvikande
+              mätningar filtreras bort automatiskt.
             </p>
           </section>
 
@@ -213,11 +213,42 @@ export default function MetabolicCalibrationGuide() {
             </div>
           </section>
 
+          {/* Section 6: Data Quality */}
+          <section className="bg-neutral-50 p-4 rounded-lg border border-neutral-200">
+            <h3 className="font-semibold text-base mb-2">Datakvalitetsindex (DQI)</h3>
+            <p className="text-neutral-700 mb-2">
+              Systemet beräknar ett kvalitetsindex som styr hur stor justering som tillåts:
+            </p>
+            <ul className="space-y-1.5 text-neutral-700 ml-2">
+              <li>
+                <span className="font-medium text-green-600">Utmärkt (80+):</span> Max ±200 kcal
+                justering
+              </li>
+              <li>
+                <span className="font-medium text-blue-600">Bra (60–79):</span> Max ±150 kcal
+                justering
+              </li>
+              <li>
+                <span className="font-medium text-yellow-600">Tillräcklig (40–59):</span> Max ±100
+                kcal justering
+              </li>
+              <li>
+                <span className="font-medium text-orange-600">Begränsad (&lt;40):</span> Max ±75
+                kcal justering
+              </li>
+            </ul>
+            <p className="text-neutral-600 text-xs mt-2">
+              Indexet baseras på matloggning (40%), vägningsfrekvens (30%), konsistens i tid (15%)
+              och klusterstorlek (15%).
+            </p>
+          </section>
+
           {/* Footer tip */}
           <div className="pt-4 border-t border-neutral-200">
             <p className="text-xs text-neutral-500 italic">
-              Tips: Kalibrera var 2-4:e vecka för bäst resultat. Vänta minst 14 dagar mellan
-              kalibreringar. Vid menscykel kan 28 dagar ge bäst resultat.
+              Tips: Kalibrera var 3-4:e vecka för bäst resultat. Vänta minst 14 dagar mellan
+              kalibreringar. Vid menscykel kan 28 dagar ge bäst resultat. Du kan ångra den senaste
+              kalibreringen om du är osäker.
             </p>
           </div>
         </div>

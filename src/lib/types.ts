@@ -408,6 +408,10 @@ export interface CalibrationWarning {
     | 'large_adjustment'
     | 'glycogen_event'
     | 'high_cv'
+    | 'outlier_removed'
+    | 'low_signal'
+    | 'selective_logging'
+    | 'large_deficit'
   message: string
 }
 
@@ -418,8 +422,9 @@ export interface CalibrationResult {
   weightChangeKg: number
   actualDays: number
   averageCalories: number
-  calorieSource: 'food_log' | 'target_calories'
+  calorieSource: 'food_log' | 'target_calories' | 'blended'
   foodLogCompleteness: number
+  foodLogWeight: number
   currentTDEE: number
   rawTDEE: number
   clampedTDEE: number
@@ -430,6 +435,17 @@ export interface CalibrationResult {
   warnings: CalibrationWarning[]
   isStableMaintenance: boolean
   coefficientOfVariation: number
+  dataQuality: {
+    score: number
+    label: string
+    maxAbsoluteAdjustment: number
+    factors: {
+      logScore: number
+      freqScore: number
+      timingScore: number
+      clusterScore: number
+    }
+  }
 }
 
 // Calibration history type for tracking TDEE calibrations
@@ -452,10 +468,14 @@ export interface CalibrationHistory {
   start_cluster_size: number
   end_cluster_size: number
   confidence_level: 'high' | 'standard' | 'low'
-  calorie_source: 'food_log' | 'target_calories'
+  calorie_source: 'food_log' | 'target_calories' | 'blended'
   max_allowed_adjustment_percent: number
   coefficient_of_variation: number
   warnings: string[]
+  smoothed_tdee: number | null
+  is_reverted: boolean
+  food_log_weight: number | null
+  data_quality_index: number | null
   created_at: string
 }
 

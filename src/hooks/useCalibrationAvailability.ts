@@ -136,7 +136,9 @@ export function useCalibrationAvailability(
       else confidencePreview = 'low'
     }
 
-    // Determine if recommended
+    // Determine if recommended (adaptive frequency)
+    // Standard recommendation: 21-28 days. Hard minimum: 14 days.
+    const RECOMMENDED_MIN_DAYS = 21
     let isRecommended = false
     let reason = ''
 
@@ -147,21 +149,31 @@ export function useCalibrationAvailability(
       daysSinceLastCalibration !== null &&
       daysSinceLastCalibration >= MIN_DAYS_BETWEEN_CALIBRATIONS
     ) {
-      if (weightTrend === 'losing' || weightTrend === 'gaining') {
-        isRecommended = true
-        reason = `Vikten har ${weightTrend === 'losing' ? 'minskat' : 'ökat'} sedan senaste kalibreringen`
-      } else if (weightTrend === 'stable' && daysSinceLastCalibration >= 28) {
-        isRecommended = true
-        reason = 'Dags att verifiera att TDEE fortfarande stämmer'
+      if (daysSinceLastCalibration >= RECOMMENDED_MIN_DAYS) {
+        // After 21+ days: recommend if weight is trending
+        if (weightTrend === 'losing' || weightTrend === 'gaining') {
+          isRecommended = true
+          reason = `Vikten har ${weightTrend === 'losing' ? 'minskat' : 'ökat'} sedan senaste kalibreringen`
+        } else if (weightTrend === 'stable' && daysSinceLastCalibration >= 28) {
+          isRecommended = true
+          reason = 'Dags att verifiera att TDEE fortfarande stämmer'
+        }
       }
+      // 14-20 days: available but not recommended unless significant trend
     }
 
-    if (!isRecommended) {
+    if (
+      !isRecommended &&
+      daysSinceLastCalibration !== null &&
+      daysSinceLastCalibration < MIN_DAYS_BETWEEN_CALIBRATIONS
+    ) {
+      reason = `Vänta ${MIN_DAYS_BETWEEN_CALIBRATIONS - daysSinceLastCalibration} dagar till innan nästa kalibrering`
+    } else if (!isRecommended) {
       reason = 'Kalibrering tillgänglig vid behov'
     }
 
     if (weightTrend === 'erratic') {
-      reason = 'Oregelbunden viktdata — kalibrering kan vara opålitlig'
+      reason = 'Oregelbunden viktdata — väg dig på morgonen före frukost för bäst resultat'
       isRecommended = false
     }
 
