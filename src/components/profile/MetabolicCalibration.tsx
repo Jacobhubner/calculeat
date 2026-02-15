@@ -41,7 +41,6 @@ import {
 } from '@/lib/calculations/calibration'
 import type { Profile, CalibrationResult } from '@/lib/types'
 import { toast } from 'sonner'
-import MetabolicCalibrationGuide from './MetabolicCalibrationGuide'
 
 interface MetabolicCalibrationProps {
   profile: Profile
@@ -273,7 +272,6 @@ export default function MetabolicCalibration({
             Metabolisk Kalibrering
           </CardTitle>
           <div className="flex items-center gap-2">
-            {!isCompact && <MetabolicCalibrationGuide />}
             {onClose && (
               <Button variant="ghost" size="sm" onClick={onClose}>
                 Stäng
@@ -283,22 +281,137 @@ export default function MetabolicCalibration({
         </div>
       </CardHeader>
       <CardContent className={`space-y-4 ${isCompact ? 'pt-0' : ''}`}>
-        {/* Info text */}
+        {/* Info card */}
         {!isCompact && (
           <InfoCardWithModal
             title="Om metabolisk kalibrering"
-            modalTitle="Metabolisk kalibrering"
+            modalTitle="Guide: Metabolisk Kalibrering"
             modalContent={
-              <div className="space-y-4 text-neutral-700">
-                <p>
-                  Kalibrera ditt TDEE baserat på faktiska viktförändringar. Systemet
-                  medelvärdesberäknar start- och slutvikt för att dämpa dagliga fluktuationer.
-                </p>
-                <p>
-                  Välj en tidsperiod (14, 21 eller 28 dagar) och systemet analyserar dina vägningar
-                  för att beräkna din faktiska energiförbrukning. Längre perioder ger mer
-                  tillförlitliga resultat.
-                </p>
+              <div className="space-y-6 text-sm">
+                <section>
+                  <h3 className="font-semibold text-base mb-2">Vad är metabolisk kalibrering?</h3>
+                  <p className="text-neutral-700 leading-relaxed">
+                    Metabolisk kalibrering beräknar ditt faktiska <strong>Maintenance-TDEE</strong>{' '}
+                    baserat på hur din kropp faktiskt reagerar på ditt kaloriintag över tid.
+                  </p>
+                  <p className="text-neutral-700 leading-relaxed mt-2">
+                    Istället för att enbart använda teoretiska formler analyserar systemet:
+                  </p>
+                  <ul className="list-disc list-inside space-y-1 ml-2 mt-1 text-neutral-700">
+                    <li>Trendbaserad viktutveckling (inte enskilda vägningar)</li>
+                    <li>Genomsnittligt kaloriintag under perioden</li>
+                    <li>Datakvalitet och konsekvens i loggningen</li>
+                  </ul>
+                  <p className="text-neutral-700 leading-relaxed mt-2">
+                    Dagliga fluktuationer från vätska, salt och glykogen filtreras bort genom
+                    trendberäkning och avvikelsehantering.
+                  </p>
+                </section>
+
+                <section className="bg-neutral-50 p-4 rounded-lg border border-neutral-200">
+                  <h3 className="font-semibold text-base mb-2">Hur fungerar beräkningen?</h3>
+                  <div className="space-y-2 text-neutral-700">
+                    <p>I grunden bygger modellen på energibalansprincipen:</p>
+                    <p className="font-medium text-primary-600 text-center py-1">
+                      TDEE ≈ Genomsnittliga kalorier − (trendbaserad viktförändring × 7700 / dagar)
+                    </p>
+                    <p>
+                      1 kg kroppsvikt motsvarar i genomsnitt cirka <strong>7700 kcal</strong> när
+                      man tar hänsyn till att viktförändring består av fett, vatten och viss
+                      muskelmassa.
+                    </p>
+                    <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
+                      <li>Använder trendvikt istället för råa mätningar</li>
+                      <li>Justerar gradvis istället för att ersätta värdet direkt</li>
+                      <li>Begränsar extrema justeringar</li>
+                      <li>Vägs mot tidigare uppskattning för stabilitet</li>
+                    </ul>
+                  </div>
+                </section>
+
+                <section>
+                  <h3 className="font-semibold text-base mb-2">Datakvalitet och precision</h3>
+                  <p className="text-neutral-700 leading-relaxed">
+                    Kalibreringens tillförlitlighet beror på kvaliteten i din data. Systemet tar
+                    hänsyn till hur många dagar du loggat, hur konsekvent kaloriintaget
+                    registrerats, och hur stabil vikttrenden är.
+                  </p>
+                  <p className="text-neutral-700 leading-relaxed mt-2 font-medium">
+                    Ju bättre data – desto mer exakt kalibrering.
+                  </p>
+                </section>
+
+                <section>
+                  <h3 className="font-semibold text-base mb-3">När bör du använda kalibrering?</h3>
+                  <ul className="space-y-2">
+                    <li className="flex items-start gap-2">
+                      <span className="text-success-600 mt-0.5">✓</span>
+                      <span className="text-neutral-700">
+                        Du har följt ditt kaloriintag i minst <strong>2–3 veckor</strong>
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-success-600 mt-0.5">✓</span>
+                      <span className="text-neutral-700">
+                        Du väger dig regelbundet (helst <strong>morgon före frukost</strong>)
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-success-600 mt-0.5">✓</span>
+                      <span className="text-neutral-700">
+                        Din vikt <strong>rör sig inte som förväntat</strong>
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-success-600 mt-0.5">✓</span>
+                      <span className="text-neutral-700">
+                        Du har loggat <strong>majoriteten av dagarna</strong>
+                      </span>
+                    </li>
+                  </ul>
+                </section>
+
+                <section className="bg-orange-50 p-4 rounded-lg border border-orange-200">
+                  <h3 className="font-semibold text-base mb-3">Undvik kalibrering när:</h3>
+                  <ul className="space-y-2 text-neutral-700">
+                    <li className="flex items-start gap-2">
+                      <span className="text-orange-600 mt-0.5 font-bold">×</span>
+                      <span>
+                        Du just börjat en ny diet <strong>(&lt;2 veckor)</strong>
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-orange-600 mt-0.5 font-bold">×</span>
+                      <span>
+                        Du nyligen <strong>ändrat träningsmängd kraftigt</strong>
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-orange-600 mt-0.5 font-bold">×</span>
+                      <span>
+                        Du <strong>inte loggat mat</strong> konsekvent
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-orange-600 mt-0.5 font-bold">×</span>
+                      <span>
+                        Du väger dig <strong>mycket oregelbundet</strong>
+                      </span>
+                    </li>
+                  </ul>
+                </section>
+
+                <section className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                  <h3 className="font-semibold text-base mb-2">Viktigt att förstå</h3>
+                  <p className="text-neutral-700 leading-relaxed">
+                    Kalibrering är en långsiktig finjustering — inte en snabb korrigering. Systemet
+                    är medvetet konservativt och begränsar stora justeringar för att undvika
+                    överreaktion på tillfälliga viktförändringar.
+                  </p>
+                  <p className="text-neutral-700 leading-relaxed mt-2">
+                    Kroppen förändras gradvis – och modellen speglar det.
+                  </p>
+                </section>
               </div>
             }
           />
