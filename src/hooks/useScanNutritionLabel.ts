@@ -76,28 +76,33 @@ async function scanLabel(file: File): Promise<ScanResult> {
     body: { image },
   })
 
-  if (error) {
+  // supabase.functions.invoke sets error for non-2xx but data may still contain the JSON body
+  const result = data ?? error
+
+  if (!result || typeof result !== 'object') {
     throw {
       type: 'network_error',
       message: 'Kunde inte nå servern. Kontrollera din anslutning.',
     } as ScanError
   }
 
-  if (data.error) {
+  if (result.error) {
     const messages: Record<string, string> = {
-      quota_exceeded: data.message || 'Skanning tillfälligt otillgänglig. Försök igen senare.',
-      timeout: data.message || 'Skanning tog för lång tid. Försök igen.',
+      unauthorized: 'Du är inte inloggad. Ladda om sidan och försök igen.',
+      quota_exceeded: result.message || 'Skanning tillfälligt otillgänglig. Försök igen senare.',
+      timeout: result.message || 'Skanning tog för lång tid. Försök igen.',
       no_nutrition_label: 'Bilden verkar inte innehålla en näringsetikett.',
       validation_failed: 'Kunde inte läsa etiketten. Försök med en tydligare bild.',
       image_too_large: 'Bilden är för stor. Försök med en mindre bild.',
+      server_error: result.message || 'Ett serverfel uppstod.',
     }
     throw {
-      type: data.error,
-      message: messages[data.error] || data.message || 'Ett fel uppstod vid skanning.',
+      type: result.error,
+      message: messages[result.error] || result.message || 'Ett fel uppstod vid skanning.',
     } as ScanError
   }
 
-  return data as ScanResult
+  return result as ScanResult
 }
 
 export function useScanNutritionLabel() {
