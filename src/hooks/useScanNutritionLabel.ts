@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
+import { FunctionsHttpError } from '@supabase/supabase-js'
 import type { ScanResult } from '@/lib/types'
 import { supabase } from '@/lib/supabase'
 
@@ -69,6 +70,16 @@ async function compressImage(file: File): Promise<string> {
   })
 }
 
+const ERROR_MESSAGES: Record<string, string> = {
+  unauthorized: 'Du är inte inloggad. Ladda om sidan och försök igen.',
+  quota_exceeded: 'Skanning tillfälligt otillgänglig. Försök igen senare.',
+  timeout: 'Skanning tog för lång tid. Försök igen.',
+  no_nutrition_label: 'Bilden verkar inte innehålla en näringsetikett.',
+  validation_failed: 'Kunde inte läsa etiketten. Försök med en tydligare bild.',
+  image_too_large: 'Bilden är för stor. Försök med en mindre bild.',
+  server_error: 'Ett serverfel uppstod.',
+}
+
 async function scanLabel(file: File): Promise<ScanResult> {
   const image = await compressImage(file)
 
@@ -76,33 +87,40 @@ async function scanLabel(file: File): Promise<ScanResult> {
     body: { image },
   })
 
-  // supabase.functions.invoke sets error for non-2xx but data may still contain the JSON body
-  const result = data ?? error
-
-  if (!result || typeof result !== 'object') {
+  // Handle FunctionsHttpError — extract JSON body from the response
+  if (error) {
+    if (error instanceof FunctionsHttpError) {
+      let body: Record<string, string> | null = null
+      try {
+        body = await error.context.json()
+      } catch {
+        // Could not parse error body
+      }
+      const errorType = body?.error || 'server_error'
+      throw {
+        type: errorType,
+        message: body?.message || ERROR_MESSAGES[errorType] || 'Ett fel uppstod vid skanning.',
+      } as ScanError
+    }
     throw {
       type: 'network_error',
       message: 'Kunde inte nå servern. Kontrollera din anslutning.',
     } as ScanError
   }
 
-  if (result.error) {
-    const messages: Record<string, string> = {
-      unauthorized: 'Du är inte inloggad. Ladda om sidan och försök igen.',
-      quota_exceeded: result.message || 'Skanning tillfälligt otillgänglig. Försök igen senare.',
-      timeout: result.message || 'Skanning tog för lång tid. Försök igen.',
-      no_nutrition_label: 'Bilden verkar inte innehålla en näringsetikett.',
-      validation_failed: 'Kunde inte läsa etiketten. Försök med en tydligare bild.',
-      image_too_large: 'Bilden är för stor. Försök med en mindre bild.',
-      server_error: result.message || 'Ett serverfel uppstod.',
-    }
+  if (!data || typeof data !== 'object') {
+    throw { type: 'unknown', message: 'Tomt svar från servern.' } as ScanError
+  }
+
+  // Edge function returned 200 but with an error field
+  if (data.error) {
     throw {
-      type: result.error,
-      message: messages[result.error] || result.message || 'Ett fel uppstod vid skanning.',
+      type: data.error,
+      message: data.message || ERROR_MESSAGES[data.error] || 'Ett fel uppstod vid skanning.',
     } as ScanError
   }
 
-  return result as ScanResult
+  return data as ScanResult
 }
 
 export function useScanNutritionLabel() {
