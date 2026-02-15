@@ -65,6 +65,16 @@ export default function MealSettingsCard({ tdee, onMealChange }: MealSettingsCar
     return meals.reduce((sum, meal) => sum + meal.percentage, 0)
   }, [meals])
 
+  // Detect duplicate meal names
+  const duplicateNames = useMemo(() => {
+    const nameCounts = new Map<string, number>()
+    for (const meal of meals) {
+      const lower = meal.name.trim().toLowerCase()
+      nameCounts.set(lower, (nameCounts.get(lower) || 0) + 1)
+    }
+    return new Set([...nameCounts.entries()].filter(([, count]) => count > 1).map(([name]) => name))
+  }, [meals])
+
   // Calculate calories for each meal
   const calculateCalories = (percentage: number) => {
     if (!tdee) return null
@@ -72,19 +82,23 @@ export default function MealSettingsCard({ tdee, onMealChange }: MealSettingsCar
   }
 
   const handleMealNameChange = (index: number, newName: string) => {
-    const updatedMeals = [...meals]
-    updatedMeals[index].name = newName
-    setMeals(updatedMeals)
+    setMeals(prev => prev.map((meal, i) => (i === index ? { ...meal, name: newName } : meal)))
   }
 
   const handleMealPercentageChange = (index: number, newPercentage: number) => {
-    const updatedMeals = [...meals]
-    updatedMeals[index].percentage = newPercentage
-    setMeals(updatedMeals)
+    setMeals(prev =>
+      prev.map((meal, i) => (i === index ? { ...meal, percentage: newPercentage } : meal))
+    )
   }
 
   const handleAddMeal = () => {
-    setMeals([...meals, { name: 'Ny måltid', percentage: 0 }])
+    // Generate a unique default name to avoid UNIQUE constraint violations
+    let counter = 1
+    const existingNames = new Set(meals.map(m => m.name))
+    while (existingNames.has(`Ny måltid ${counter}`)) {
+      counter++
+    }
+    setMeals([...meals, { name: `Ny måltid ${counter}`, percentage: 0 }])
   }
 
   const handleRemoveMeal = (index: number) => {
@@ -93,6 +107,7 @@ export default function MealSettingsCard({ tdee, onMealChange }: MealSettingsCar
     setMeals(updatedMeals)
   }
 
+  const hasDuplicates = duplicateNames.size > 0
   const isValidTotal = totalPercentage === 100
 
   return (
@@ -116,13 +131,22 @@ export default function MealSettingsCard({ tdee, onMealChange }: MealSettingsCar
             >
               {/* Meal Header */}
               <div className="flex items-center gap-2">
-                <input
-                  type="text"
-                  value={meal.name}
-                  onChange={e => handleMealNameChange(index, e.target.value)}
-                  className="flex-1 px-2 py-1.5 text-sm rounded-lg border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 bg-white"
-                  placeholder="Måltidsnamn"
-                />
+                {(() => {
+                  const isDuplicate = duplicateNames.has(meal.name.trim().toLowerCase())
+                  return (
+                    <input
+                      type="text"
+                      value={meal.name}
+                      onChange={e => handleMealNameChange(index, e.target.value)}
+                      className={`flex-1 px-2 py-1.5 text-sm rounded-lg shadow-sm bg-white ${
+                        isDuplicate
+                          ? 'border-red-400 focus:border-red-500 focus:ring-red-500'
+                          : 'border-neutral-300 focus:border-primary-500 focus:ring-primary-500'
+                      }`}
+                      placeholder="Måltidsnamn"
+                    />
+                  )
+                })()}
 
                 {/* Remove button (disabled if only 1 meal) */}
                 <button
@@ -193,6 +217,11 @@ export default function MealSettingsCard({ tdee, onMealChange }: MealSettingsCar
           {!isValidTotal && (
             <p className="text-[10px] text-amber-700 mt-1.5">
               Totalen måste vara exakt 100%. Justera procentsatserna ovan.
+            </p>
+          )}
+          {hasDuplicates && (
+            <p className="text-[10px] text-red-700 mt-1.5">
+              Varje måltid måste ha ett unikt namn. Byt namn på dubbletter.
             </p>
           )}
         </div>

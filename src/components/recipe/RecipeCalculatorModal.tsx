@@ -120,8 +120,8 @@ export function RecipeCalculatorModal({
         initializeForm(editRecipe, foods)
       }
     } else if (!editRecipe && !initialized) {
-      // New recipe mode - just mark as initialized
-
+      // New recipe mode - start with one empty ingredient row
+      setIngredients([{ id: generateId(), foodItem: null, amount: 0, unit: 'g' }])
       setInitialized(true)
     }
   }, [open, editRecipe, foods, initialized, resetForm, initializeForm])
@@ -226,7 +226,7 @@ export function RecipeCalculatorModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <ChefHat className="h-5 w-5 text-primary-600" />
@@ -240,9 +240,9 @@ export function RecipeCalculatorModal({
         </DialogHeader>
 
         <div className="flex-1 overflow-y-auto">
-          <div className="grid md:grid-cols-5 gap-6">
-            {/* Left column - Form */}
-            <div className="md:col-span-3 space-y-6">
+          <div className="space-y-6">
+            {/* Form */}
+            <div className="space-y-6">
               {/* Recipe name and servings */}
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -333,8 +333,8 @@ export function RecipeCalculatorModal({
               )}
             </div>
 
-            {/* Right column - Nutrition summary */}
-            <div className="md:col-span-2">
+            {/* Nutrition summary */}
+            <div>
               <NutritionSummary nutrition={nutrition} servings={servings} saveAs={saveAs} />
             </div>
           </div>

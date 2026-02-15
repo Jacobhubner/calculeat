@@ -249,17 +249,20 @@ export function AddFoodToMealModal({
         return
       }
 
-      if (!selectedMealName) return
-
       let targetMealEntryId = mealEntryId
 
       // If no meal entry exists, create one
       if (!targetMealEntryId) {
-        const mealSetting = mealSettings?.find(m => m.meal_name === selectedMealName)
+        const effectiveMealName = selectedMealName || mealName
+        if (!effectiveMealName) {
+          toast.error('Ingen måltid vald')
+          return
+        }
+        const mealSetting = mealSettings?.find(m => m.meal_name === effectiveMealName)
         const newMealEntry = await createMealEntry.mutateAsync({
           dailyLogId,
-          mealName: selectedMealName,
-          mealOrder: mealSetting?.meal_order || 0,
+          mealName: effectiveMealName,
+          mealOrder: mealSetting?.meal_order ?? 0,
         })
         targetMealEntryId = newMealEntry.id
       }
