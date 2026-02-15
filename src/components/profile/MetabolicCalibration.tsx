@@ -123,16 +123,6 @@ export default function MetabolicCalibration({
   const data =
     typeof calibrationResult === 'object' && calibrationResult !== null ? calibrationResult : null
 
-  // Convergence info from history
-  const convergenceText = useMemo(() => {
-    if (!calibrationHistoryList || calibrationHistoryList.length < 2) return null
-    const recent = calibrationHistoryList
-      .slice(0, 3)
-      .reverse()
-      .map(c => Math.round(c.applied_tdee))
-    return `Senaste kalibreringar: ${recent.join(' → ')} kcal`
-  }, [calibrationHistoryList])
-
   const handleApplyCalibration = async () => {
     if (!data) return
 
@@ -301,14 +291,6 @@ export default function MetabolicCalibration({
               Kalibrera ditt TDEE baserat på faktiska viktförändringar. Systemet medelvärdesberäknar
               start- och slutvikt för att dämpa dagliga fluktuationer.
             </p>
-          </div>
-        )}
-
-        {/* Convergence indicator */}
-        {convergenceText && !isCompact && (
-          <div className="flex items-start gap-2 p-3 rounded-lg bg-blue-50 text-sm text-blue-800">
-            <Info className="h-4 w-4 mt-0.5 flex-shrink-0" />
-            <p>{convergenceText}</p>
           </div>
         )}
 
