@@ -318,6 +318,43 @@ export function useEnsureTodayLog() {
 }
 
 /**
+ * Update the date of a daily log
+ */
+export function useUpdateLogDate() {
+  const { user } = useAuth()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({ logId, newDate }: { logId: string; newDate: string }) => {
+      if (!user) throw new Error('User not authenticated')
+
+      // Check if a log already exists for that date
+      const { data: existing } = await supabase
+        .from('daily_logs')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('log_date', newDate)
+        .neq('id', logId)
+        .maybeSingle()
+
+      if (existing) {
+        throw new Error('Det finns redan en logg för det datumet')
+      }
+
+      const { error } = await supabase
+        .from('daily_logs')
+        .update({ log_date: newDate })
+        .eq('id', logId)
+
+      if (error) throw error
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['dailyLogs'] })
+    },
+  })
+}
+
+/**
  * Add food item to a meal
  */
 export function useAddFoodToMeal() {

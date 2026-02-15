@@ -29,6 +29,8 @@ import {
   AlertTriangle,
   Bookmark,
   ArrowDownToLine,
+  Pencil,
+  X,
 } from 'lucide-react'
 import {
   useTodayLog,
@@ -38,6 +40,7 @@ import {
   useRemoveFoodFromMeal,
   useDailyLog,
   useUpdateDailyLogGoals,
+  useUpdateLogDate,
 } from '@/hooks/useDailyLogs'
 import { useMealSettings, useCreateDefaultMealSettings } from '@/hooks/useMealSettings'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -57,6 +60,11 @@ export default function TodayPage() {
   const copyDayToToday = useCopyDayToToday()
   const removeFoodFromMeal = useRemoveFoodFromMeal()
   const updateDailyLogGoals = useUpdateDailyLogGoals()
+  const updateLogDate = useUpdateLogDate()
+
+  // State for date editing
+  const [isEditingDate, setIsEditingDate] = useState(false)
+  const [pendingDate, setPendingDate] = useState<string | null>(null)
 
   // State for AddFoodToMealModal
   const [addFoodModalOpen, setAddFoodModalOpen] = useState(false)
@@ -181,6 +189,36 @@ export default function TodayPage() {
     dailySummary?.remainingFat ??
     Math.max((calculations.macros?.fat.grams || 0) - (todayLog?.total_fat_g || 0), 0)
 
+  const handleDateSelected = (newDate: string) => {
+    if (!todayLog || !newDate || newDate === todayLog.log_date) {
+      setIsEditingDate(false)
+      return
+    }
+    setPendingDate(newDate)
+    setIsEditingDate(false)
+  }
+
+  const handleConfirmDateChange = () => {
+    if (!todayLog || !pendingDate) return
+    updateLogDate.mutate(
+      { logId: todayLog.id, newDate: pendingDate },
+      {
+        onSuccess: () => {
+          toast.success('Datum uppdaterat')
+          setPendingDate(null)
+        },
+        onError: error => {
+          toast.error(error instanceof Error ? error.message : 'Kunde inte uppdatera datum')
+          setPendingDate(null)
+        },
+      }
+    )
+  }
+
+  const handleCancelDateChange = () => {
+    setPendingDate(null)
+  }
+
   const handleFinishDay = () => {
     if (todayLog && !todayLog.is_completed) {
       finishDay.mutate(todayLog.id, {
@@ -256,7 +294,34 @@ export default function TodayPage() {
             <Calendar className="h-6 w-6 md:h-8 md:w-8 text-primary-600" />
             Dagens Logg
           </h1>
-          <p className="text-sm md:text-base text-neutral-600 capitalize">{dateDisplay}</p>
+          <div className="flex items-center gap-2">
+            {isEditingDate ? (
+              <input
+                type="date"
+                defaultValue={todayLog?.log_date || ''}
+                className="text-sm md:text-base text-neutral-600 border rounded px-2 py-0.5"
+                onBlur={e => handleDateSelected(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') handleDateSelected((e.target as HTMLInputElement).value)
+                  if (e.key === 'Escape') setIsEditingDate(false)
+                }}
+                autoFocus
+              />
+            ) : (
+              <>
+                <p className="text-sm md:text-base text-neutral-600 capitalize">{dateDisplay}</p>
+                {todayLog && !todayLog.is_completed && (
+                  <button
+                    onClick={() => setIsEditingDate(true)}
+                    className="text-neutral-400 hover:text-neutral-600 transition-colors"
+                    title="Ändra datum"
+                  >
+                    <Pencil className="h-3.5 w-3.5" />
+                  </button>
+                )}
+              </>
+            )}
+          </div>
         </div>
         <div className="flex gap-2">
           <Button
@@ -284,6 +349,40 @@ export default function TodayPage() {
           )}
         </div>
       </div>
+
+      {/* Date change confirmation */}
+      {pendingDate && (
+        <Card className="mb-4 bg-blue-50 border-blue-200">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between gap-4">
+              <p className="text-sm font-medium text-blue-800">
+                Ändra datum från <span className="font-bold">{todayLog?.log_date}</span> till{' '}
+                <span className="font-bold">{pendingDate}</span>?
+              </p>
+              <div className="flex gap-2 shrink-0">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleCancelDateChange}
+                  className="gap-1"
+                >
+                  <X className="h-3.5 w-3.5" />
+                  Avbryt
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={handleConfirmDateChange}
+                  disabled={updateLogDate.isPending}
+                  className="gap-1 bg-gradient-to-r from-primary-600 to-primary-500"
+                >
+                  <Check className="h-3.5 w-3.5" />
+                  {updateLogDate.isPending ? 'Sparar...' : 'Bekräfta'}
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Goal mismatch warning */}
       {goalsFromDifferentProfile && !todayLog?.is_completed && (

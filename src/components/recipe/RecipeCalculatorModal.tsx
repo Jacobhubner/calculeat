@@ -226,7 +226,7 @@ export function RecipeCalculatorModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+      <DialogContent className="md:max-w-2xl md:max-h-[90vh] md:overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <ChefHat className="h-5 w-5 text-primary-600" />
@@ -239,7 +239,7 @@ export function RecipeCalculatorModal({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="flex-1 overflow-y-auto">
+        <div className="space-y-6 px-4 pb-4 md:px-0 md:pb-0">
           <div className="space-y-6">
             {/* Form */}
             <div className="space-y-6">

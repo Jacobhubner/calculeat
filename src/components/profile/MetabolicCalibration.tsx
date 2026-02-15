@@ -7,6 +7,7 @@
  */
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import InfoCardWithModal from '@/components/InfoCardWithModal'
 import { Button } from '@/components/ui/button'
 import { Select } from '@/components/ui/select'
 import {
@@ -14,7 +15,6 @@ import {
   TrendingDown,
   TrendingUp,
   AlertCircle,
-  Info,
   CheckCircle,
   Database,
   ShieldCheck,
@@ -285,13 +285,23 @@ export default function MetabolicCalibration({
       <CardContent className={`space-y-4 ${isCompact ? 'pt-0' : ''}`}>
         {/* Info text */}
         {!isCompact && (
-          <div className="flex items-start gap-2 p-3 rounded-lg bg-neutral-50 text-sm text-neutral-700">
-            <Info className="h-4 w-4 mt-0.5 flex-shrink-0 text-neutral-500" />
-            <p>
-              Kalibrera ditt TDEE baserat på faktiska viktförändringar. Systemet medelvärdesberäknar
-              start- och slutvikt för att dämpa dagliga fluktuationer.
-            </p>
-          </div>
+          <InfoCardWithModal
+            title="Om metabolisk kalibrering"
+            modalTitle="Metabolisk kalibrering"
+            modalContent={
+              <div className="space-y-4 text-neutral-700">
+                <p>
+                  Kalibrera ditt TDEE baserat på faktiska viktförändringar. Systemet
+                  medelvärdesberäknar start- och slutvikt för att dämpa dagliga fluktuationer.
+                </p>
+                <p>
+                  Välj en tidsperiod (14, 21 eller 28 dagar) och systemet analyserar dina vägningar
+                  för att beräkna din faktiska energiförbrukning. Längre perioder ger mer
+                  tillförlitliga resultat.
+                </p>
+              </div>
+            }
+          />
         )}
 
         {/* Time period selector */}

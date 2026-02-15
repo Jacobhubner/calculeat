@@ -7,22 +7,14 @@ import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import CalorieRing from '@/components/CalorieRing'
 import MacroBar from '@/components/MacroBar'
-import {
-  ArrowLeft,
-  Calendar,
-  Check,
-  Copy,
-  UtensilsCrossed,
-  Pencil,
-  Plus,
-  X,
-} from 'lucide-react'
+import { ArrowLeft, Calendar, Check, Copy, UtensilsCrossed, Pencil, Plus, X } from 'lucide-react'
 import {
   useDailyLog,
   useCopyDayToToday,
   useReopenDay,
   useFinishDay,
   useRemoveFoodFromMeal,
+  useUpdateLogDate,
 } from '@/hooks/useDailyLogs'
 import { AddFoodToMealModal } from '@/components/daily/AddFoodToMealModal'
 import { toast } from 'sonner'
@@ -35,8 +27,11 @@ export default function HistoryDayPage() {
   const reopenDay = useReopenDay()
   const finishDay = useFinishDay()
   const removeFoodFromMeal = useRemoveFoodFromMeal()
+  const updateLogDate = useUpdateLogDate()
 
   const [isEditing, setIsEditing] = useState(false)
+  const [isEditingDate, setIsEditingDate] = useState(false)
+  const [pendingDate, setPendingDate] = useState<string | null>(null)
   const [addFoodModal, setAddFoodModal] = useState<{
     open: boolean
     mealName: string
@@ -80,6 +75,35 @@ export default function HistoryDayPage() {
         toast.success('Matvaran borttagen')
       },
     })
+  }
+
+  const handleDateSelected = (newDate: string) => {
+    if (newDate && newDate !== log?.log_date) {
+      setPendingDate(newDate)
+    }
+    setIsEditingDate(false)
+  }
+
+  const handleConfirmDateChange = () => {
+    if (!log || !pendingDate) return
+    updateLogDate.mutate(
+      { logId: log.id, newDate: pendingDate },
+      {
+        onSuccess: () => {
+          toast.success('Datum uppdaterat')
+          setPendingDate(null)
+          navigate(`/app/history/${pendingDate}`, { replace: true })
+        },
+        onError: error => {
+          toast.error(error instanceof Error ? error.message : 'Kunde inte uppdatera datum')
+          setPendingDate(null)
+        },
+      }
+    )
+  }
+
+  const handleCancelDateChange = () => {
+    setPendingDate(null)
   }
 
   if (isLoading) {
@@ -130,10 +154,36 @@ export default function HistoryDayPage() {
 
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent mb-1 md:mb-2 flex items-center gap-2 md:gap-3">
-              <Calendar className="h-6 w-6 md:h-8 md:w-8 text-primary-600" />
-              {dateDisplay}
-            </h1>
+            <div className="flex items-center gap-2 mb-1 md:mb-2">
+              <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent flex items-center gap-2 md:gap-3">
+                <Calendar className="h-6 w-6 md:h-8 md:w-8 text-primary-600" />
+                {isEditingDate ? (
+                  <input
+                    type="date"
+                    defaultValue={log.log_date}
+                    className="text-2xl md:text-3xl font-bold text-neutral-800 border rounded px-2 py-0.5"
+                    onBlur={e => handleDateSelected(e.target.value)}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter')
+                        handleDateSelected((e.target as HTMLInputElement).value)
+                      if (e.key === 'Escape') setIsEditingDate(false)
+                    }}
+                    autoFocus
+                  />
+                ) : (
+                  dateDisplay
+                )}
+              </h1>
+              {!isEditingDate && (
+                <button
+                  onClick={() => setIsEditingDate(true)}
+                  className="text-neutral-400 hover:text-neutral-600 transition-colors"
+                  title="Ändra datum"
+                >
+                  <Pencil className="h-4 w-4" />
+                </button>
+              )}
+            </div>
             <div className="flex items-center gap-2">
               {log.is_completed && !isEditing && (
                 <Badge className="gap-1 bg-success-100 text-success-700 border-success-200">
@@ -182,6 +232,43 @@ export default function HistoryDayPage() {
                 <Check className="h-4 w-4" />
                 Klar
               </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Date change confirmation */}
+      {pendingDate && (
+        <Card className="mb-6 bg-blue-50 border-blue-200">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-2">
+                <Calendar className="h-4 w-4 text-blue-600" />
+                <p className="text-sm font-medium text-blue-800">
+                  Ändra datum från <span className="font-bold">{log?.log_date}</span> till{' '}
+                  <span className="font-bold">{pendingDate}</span>?
+                </p>
+              </div>
+              <div className="flex gap-2 shrink-0">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleCancelDateChange}
+                  className="gap-1"
+                >
+                  <X className="h-3.5 w-3.5" />
+                  Avbryt
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={handleConfirmDateChange}
+                  disabled={updateLogDate.isPending}
+                  className="gap-1 bg-gradient-to-r from-primary-600 to-primary-500"
+                >
+                  <Check className="h-3.5 w-3.5" />
+                  {updateLogDate.isPending ? 'Sparar...' : 'Bekräfta'}
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
