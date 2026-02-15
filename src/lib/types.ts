@@ -1,5 +1,16 @@
 export type Gender = 'male' | 'female'
 
+/** Result from barcode lookup or nutrition label scan */
+export interface ScanResult {
+  name: string | null
+  calories: number
+  protein_g: number | null
+  carb_g: number | null
+  fat_g: number | null
+  default_amount: number // alltid 100
+  default_unit: string // alltid 'g'
+}
+
 // All 10 BMR formulas from Excel
 export type BMRFormula =
   | 'Mifflin-St Jeor equation'

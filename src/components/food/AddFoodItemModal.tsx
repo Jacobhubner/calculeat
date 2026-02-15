@@ -1,8 +1,8 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { ChevronDown, ChevronUp, AlertCircle } from 'lucide-react'
+import { ChevronDown, ChevronUp, AlertCircle, ScanBarcode, Camera, Loader2 } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -16,6 +16,10 @@ import {
   type FoodItem,
 } from '@/hooks/useFoodItems'
 import { calculateFoodColor, calculateCalorieDensity } from '@/lib/calculations/colorDensity'
+import { FEATURES } from '@/lib/config'
+import { useBarcodeLookup } from '@/hooks/useBarcodeLookup'
+import { BarcodeScannerModal } from '@/components/food/BarcodeScannerModal'
+import type { ScanResult } from '@/lib/types'
 
 type FormData = z.infer<typeof createFoodItemSchema>
 
@@ -78,6 +82,18 @@ export function AddFoodItemModal({
     serving_unit: string | null
     gramsPerVolume: number | undefined
   } | null>(null)
+
+  // Barcode scanning state
+  const [scannerOpen, setScannerOpen] = useState(false)
+  const [scannedBarcode, setScannedBarcode] = useState<string | null>(null)
+  const [showOverwriteConfirm, setShowOverwriteConfirm] = useState(false)
+  const [pendingScanResult, setPendingScanResult] = useState<ScanResult | null>(null)
+
+  const {
+    data: barcodeResult,
+    error: barcodeError,
+    isFetching: isBarcodeFetching,
+  } = useBarcodeLookup(scannedBarcode)
 
   // Slumpmässig placeholder som ändras vid varje öppning
   const randomPlaceholder = useMemo(() => {
@@ -366,6 +382,48 @@ export function AddFoodItemModal({
     }
   }, [gramsPerPiece, servingUnit, weightGrams, calories, proteinG, carbG, fatG])
 
+  // Check if form has non-default values
+  const formHasValues = useCallback(() => {
+    return (name && name.trim().length > 0) || calories > 0 || proteinG > 0 || carbG > 0 || fatG > 0
+  }, [name, calories, proteinG, carbG, fatG])
+
+  // Apply scan result to form
+  const applyScanResult = useCallback(
+    (result: ScanResult) => {
+      if (result.name) setValue('name', result.name)
+      setValue('calories', result.calories)
+      setValue('default_amount', result.default_amount, { shouldValidate: true })
+      setValue('default_unit', result.default_unit, { shouldValidate: true })
+      setValue('weight_grams', result.default_amount, { shouldValidate: true })
+      if (result.protein_g !== null) setValue('protein_g', result.protein_g)
+      if (result.carb_g !== null) setValue('carb_g', result.carb_g)
+      if (result.fat_g !== null) setValue('fat_g', result.fat_g)
+      setPendingScanResult(null)
+    },
+    [setValue]
+  )
+
+  // Handle scan result — check for overwrite
+  const handleScanResult = useCallback(
+    (result: ScanResult) => {
+      if (formHasValues()) {
+        setPendingScanResult(result)
+        setShowOverwriteConfirm(true)
+      } else {
+        applyScanResult(result)
+      }
+    },
+    [formHasValues, applyScanResult]
+  )
+
+  // When barcode lookup completes
+  useEffect(() => {
+    if (barcodeResult) {
+      handleScanResult(barcodeResult)
+      setScannedBarcode(null)
+    }
+  }, [barcodeResult, handleScanResult])
+
   const onSubmit = async (data: FormData) => {
     try {
       // Beräkna ml_per_gram från volymkonvertering
@@ -416,524 +474,606 @@ export function AddFoodItemModal({
     setDuplicateWarning(null)
     setGramsPerVolume(undefined)
     setVolumeUnit('dl')
+    setScannedBarcode(null)
+    setPendingScanResult(null)
+    setShowOverwriteConfirm(false)
     onOpenChange(false)
   }
 
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="md:max-w-2xl md:max-h-[90vh] md:overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>{editItem ? 'Redigera livsmedel' : 'Nytt livsmedel'}</DialogTitle>
-        </DialogHeader>
+    <>
+      <Dialog open={open} onOpenChange={handleClose}>
+        <DialogContent className="md:max-w-2xl md:max-h-[90vh] md:overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{editItem ? 'Redigera livsmedel' : 'Nytt livsmedel'}</DialogTitle>
+          </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 px-4 pb-4 md:px-0 md:pb-0">
-          {/* Duplicate warning */}
-          {duplicateWarning && (
-            <div className="bg-orange-50 border-2 border-orange-300 rounded-lg p-4">
-              <div className="flex items-start gap-3">
-                <AlertCircle className="h-5 w-5 text-orange-600 mt-0.5 shrink-0" />
-                <div>
-                  <p className="text-sm font-medium text-orange-900">{duplicateWarning}</p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr,300px] gap-6">
-            {/* Main form */}
-            <div className="space-y-6">
-              {/* Basic information */}
-              <div className="space-y-4">
-                <h3 className="text-sm font-semibold text-neutral-900">
-                  Grundläggande information
-                </h3>
-
-                <div>
-                  <Label htmlFor="name">Namn *</Label>
-                  <Input
-                    id="name"
-                    {...register('name')}
-                    placeholder={randomPlaceholder}
-                    className={errors.name ? 'border-red-500' : ''}
-                  />
-                  {errors.name && (
-                    <p className="text-sm text-red-600 mt-1">{errors.name.message}</p>
-                  )}
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="default_amount">Mängd *</Label>
-                    <Input
-                      id="default_amount"
-                      type="number"
-                      step="0.01"
-                      {...register('default_amount', { valueAsNumber: true })}
-                      placeholder="100"
-                      className={errors.default_amount ? 'border-red-500' : ''}
-                    />
-                    {errors.default_amount && (
-                      <p className="text-sm text-red-600 mt-1">{errors.default_amount.message}</p>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 px-4 pb-4 md:px-0 md:pb-0">
+            {/* Scan buttons (only in create mode) */}
+            {!editItem && (
+              <div className="flex flex-wrap gap-2">
+                {FEATURES.SCAN_BARCODE && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setScannerOpen(true)}
+                    disabled={isBarcodeFetching}
+                  >
+                    {isBarcodeFetching ? (
+                      <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />
+                    ) : (
+                      <ScanBarcode className="h-4 w-4 mr-1.5" />
                     )}
-                  </div>
-
-                  <div>
-                    <Label htmlFor="default_unit">Enhet *</Label>
-                    <Input
-                      id="default_unit"
-                      {...register('default_unit')}
-                      placeholder="g, ml, st, dl..."
-                      className={errors.default_unit ? 'border-red-500' : ''}
-                    />
-                    {errors.default_unit && (
-                      <p className="text-sm text-red-600 mt-1">{errors.default_unit.message}</p>
-                    )}
-                  </div>
-                </div>
-
-                {/* Viktfält - visa bara om enheten inte är gram ELLER vikten skiljer sig från mängden */}
-                {shouldShowWeightField && (
-                  <div>
-                    <Label htmlFor="weight_grams">
-                      Vikt (gram) *
-                      <span className="text-xs text-neutral-500 ml-2 font-normal">
-                        Hur mycket väger {defaultAmount || '?'} {defaultUnit || '?'}?
-                      </span>
-                    </Label>
-                    <Input
-                      id="weight_grams"
-                      type="number"
-                      step="0.01"
-                      {...register('weight_grams', { valueAsNumber: true })}
-                      placeholder="100"
-                      className={errors.weight_grams ? 'border-red-500' : ''}
-                    />
-                    {errors.weight_grams && (
-                      <p className="text-sm text-red-600 mt-1">{errors.weight_grams.message}</p>
-                    )}
-                  </div>
+                    {isBarcodeFetching ? 'Söker produkt...' : 'Streckkod'}
+                  </Button>
                 )}
+                <Button type="button" variant="outline" size="sm" disabled title="Kommer snart">
+                  <Camera className="h-4 w-4 mr-1.5" />
+                  Skanna etikett
+                </Button>
               </div>
+            )}
 
-              {/* Nutrition */}
-              <div className="space-y-4">
-                <h3 className="text-sm font-semibold text-neutral-900">
-                  Näringsinnehåll (per {defaultAmount || '?'} {defaultUnit || '?'})
-                </h3>
+            {/* Barcode error */}
+            {barcodeError && (
+              <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
+                <p className="text-sm text-orange-800">
+                  {(barcodeError as { message?: string })?.message || 'Kunde inte hämta produkten'}
+                </p>
+              </div>
+            )}
 
-                <div className="grid grid-cols-2 gap-4">
+            {/* Overwrite confirmation */}
+            {showOverwriteConfirm && pendingScanResult && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <p className="text-sm text-blue-900 mb-3">
+                  Du har redan fyllt i värden. Vill du ersätta dem med skannade värden?
+                </p>
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={() => {
+                      applyScanResult(pendingScanResult)
+                      setShowOverwriteConfirm(false)
+                    }}
+                  >
+                    Ersätt
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setPendingScanResult(null)
+                      setShowOverwriteConfirm(false)
+                    }}
+                  >
+                    Behåll mina värden
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {/* Duplicate warning */}
+            {duplicateWarning && (
+              <div className="bg-orange-50 border-2 border-orange-300 rounded-lg p-4">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="h-5 w-5 text-orange-600 mt-0.5 shrink-0" />
                   <div>
-                    <Label htmlFor="calories">Kalorier (kcal) *</Label>
-                    <Input
-                      id="calories"
-                      type="number"
-                      step="0.1"
-                      {...register('calories', { valueAsNumber: true })}
-                      placeholder="0"
-                      className={errors.calories ? 'border-red-500' : ''}
-                    />
-                    {errors.calories && (
-                      <p className="text-sm text-red-600 mt-1">{errors.calories.message}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <Label htmlFor="protein_g">Protein (g) *</Label>
-                    <Input
-                      id="protein_g"
-                      type="number"
-                      step="0.1"
-                      {...register('protein_g', { valueAsNumber: true })}
-                      placeholder="0"
-                      className={errors.protein_g ? 'border-red-500' : ''}
-                    />
-                    {errors.protein_g && (
-                      <p className="text-sm text-red-600 mt-1">{errors.protein_g.message}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <Label htmlFor="carb_g">Kolhydrater (g) *</Label>
-                    <Input
-                      id="carb_g"
-                      type="number"
-                      step="0.1"
-                      {...register('carb_g', { valueAsNumber: true })}
-                      placeholder="0"
-                      className={errors.carb_g ? 'border-red-500' : ''}
-                    />
-                    {errors.carb_g && (
-                      <p className="text-sm text-red-600 mt-1">{errors.carb_g.message}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <Label htmlFor="fat_g">Fett (g) *</Label>
-                    <Input
-                      id="fat_g"
-                      type="number"
-                      step="0.1"
-                      {...register('fat_g', { valueAsNumber: true })}
-                      placeholder="0"
-                      className={errors.fat_g ? 'border-red-500' : ''}
-                    />
-                    {errors.fat_g && (
-                      <p className="text-sm text-red-600 mt-1">{errors.fat_g.message}</p>
-                    )}
+                    <p className="text-sm font-medium text-orange-900">{duplicateWarning}</p>
                   </div>
                 </div>
-
-                {/* Macro mismatch warning */}
-                {liveCalculations?.macroCaloriesMismatch && (
-                  <div className="bg-yellow-50 border border-yellow-300 rounded-lg p-3">
-                    <p className="text-xs text-yellow-800">
-                      ⚠️ Makronutrienterna ger {Math.round(proteinG * 4 + carbG * 4 + fatG * 9)}{' '}
-                      kcal, men du angav {Math.round(calories)} kcal (
-                      {Math.round(liveCalculations.caloriesDiffPercent)}% skillnad). Detta kan bero
-                      på fiber, alkohol eller rundning.
-                    </p>
-                  </div>
-                )}
               </div>
+            )}
 
-              {/* Advanced settings */}
-              <div className="border-t pt-4">
-                <button
-                  type="button"
-                  onClick={() => setShowAdvanced(!showAdvanced)}
-                  className="flex items-center gap-2 text-sm font-medium text-neutral-700 hover:text-neutral-900"
-                >
-                  {showAdvanced ? (
-                    <ChevronUp className="h-4 w-4" />
-                  ) : (
-                    <ChevronDown className="h-4 w-4" />
-                  )}
-                  Avancerade inställningar
-                </button>
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr,300px] gap-6">
+              {/* Main form */}
+              <div className="space-y-6">
+                {/* Basic information */}
+                <div className="space-y-4">
+                  <h3 className="text-sm font-semibold text-neutral-900">
+                    Grundläggande information
+                  </h3>
 
-                {showAdvanced && (
-                  <div className="mt-4 space-y-4">
+                  <div>
+                    <Label htmlFor="name">Namn *</Label>
+                    <Input
+                      id="name"
+                      {...register('name')}
+                      placeholder={randomPlaceholder}
+                      className={errors.name ? 'border-red-500' : ''}
+                    />
+                    {errors.name && (
+                      <p className="text-sm text-red-600 mt-1">{errors.name.message}</p>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="food_type">Livsmedeltyp</Label>
-                      <select
-                        id="food_type"
-                        {...register('food_type')}
-                        className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                      >
-                        <option value="Solid">Fast föda</option>
-                        <option value="Liquid">Vätska</option>
-                        <option value="Soup">Soppa</option>
-                      </select>
+                      <Label htmlFor="default_amount">Mängd *</Label>
+                      <Input
+                        id="default_amount"
+                        type="number"
+                        step="0.01"
+                        {...register('default_amount', { valueAsNumber: true })}
+                        placeholder="100"
+                        className={errors.default_amount ? 'border-red-500' : ''}
+                      />
+                      {errors.default_amount && (
+                        <p className="text-sm text-red-600 mt-1">{errors.default_amount.message}</p>
+                      )}
                     </div>
 
-                    {/* Volymkonvertering - tillgänglig för alla livsmedel */}
-                    <div className="space-y-3 border border-neutral-200 rounded-lg p-3 bg-neutral-50">
-                      <p className="text-sm font-medium text-neutral-900">
-                        Volymkonvertering (valfritt)
-                      </p>
-
-                      <div className="flex items-end gap-3">
-                        <div className="flex-1">
-                          <Label htmlFor="volume_grams">
-                            Hur mycket väger 1 {volumeUnit} ({VOLUME_TO_ML[volumeUnit]}ml)?
-                          </Label>
-                          <div className="flex gap-2 mt-1">
-                            <select
-                              id="volume_unit"
-                              value={volumeUnit}
-                              onChange={e => setVolumeUnit(e.target.value as VolumeUnit)}
-                              className="w-20 px-2 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
-                            >
-                              <option value="dl">dl</option>
-                              <option value="msk">msk</option>
-                              <option value="tsk">tsk</option>
-                            </select>
-                            <Input
-                              id="volume_grams"
-                              type="number"
-                              step="0.1"
-                              value={gramsPerVolume ?? ''}
-                              onChange={e => {
-                                const val = e.target.value
-                                setGramsPerVolume(val === '' ? undefined : parseFloat(val))
-                              }}
-                              placeholder="gram"
-                              className="flex-1"
-                            />
-                            <span className="self-center text-sm text-neutral-600">gram</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <p className="text-xs text-neutral-500">
-                        Mjöl ≈ 60g/dl, Socker ≈ 90g/dl, Havregryn ≈ 40g/dl, Ris ≈ 85g/dl
-                      </p>
-                    </div>
-
-                    {/* Serveringsfunktion - gram per bit/styck */}
-                    <div className="space-y-3 border border-neutral-200 rounded-lg p-3 bg-neutral-50">
-                      <p className="text-sm font-medium text-neutral-900">
-                        Serveringsinformation (valfritt)
-                      </p>
-
-                      <div className="grid grid-cols-2 gap-3">
-                        {/* Vikt per portion - dölj om portionsenheten är en volymenhet */}
-                        {!isServingUnitVolume && (
-                          <div>
-                            <Label htmlFor="grams_per_piece">
-                              Vikt per portion
-                              <span className="text-xs text-neutral-500 ml-1 font-normal">
-                                (gram)
-                              </span>
-                            </Label>
-                            <Input
-                              id="grams_per_piece"
-                              type="number"
-                              step="0.01"
-                              {...register('grams_per_piece', { valueAsNumber: true })}
-                              placeholder="t.ex. 50"
-                            />
-                          </div>
-                        )}
-
-                        <div className={isServingUnitVolume ? 'col-span-2' : ''}>
-                          <Label htmlFor="serving_unit">
-                            Enhet
-                            <span className="text-xs text-neutral-500 ml-1 font-normal">
-                              (pkt, burk, osv.)
-                            </span>
-                          </Label>
-                          <Input
-                            id="serving_unit"
-                            type="text"
-                            {...register('serving_unit')}
-                            placeholder="t.ex. pkt, burk, påse"
-                          />
-                        </div>
-                      </div>
-
-                      {isServingUnitVolume ? (
-                        <p className="text-xs text-amber-600">
-                          💡 För volymenheter (dl, msk, tsk), använd Volymkonvertering ovan
-                          istället.
-                        </p>
-                      ) : (
-                        <p className="text-xs text-neutral-500">
-                          T.ex. 1 ägg = 50g (enhet: &quot;st&quot;), 1 yoghurt = 150g (enhet:
-                          &quot;pkt&quot;)
-                        </p>
+                    <div>
+                      <Label htmlFor="default_unit">Enhet *</Label>
+                      <Input
+                        id="default_unit"
+                        {...register('default_unit')}
+                        placeholder="g, ml, st, dl..."
+                        className={errors.default_unit ? 'border-red-500' : ''}
+                      />
+                      {errors.default_unit && (
+                        <p className="text-sm text-red-600 mt-1">{errors.default_unit.message}</p>
                       )}
                     </div>
                   </div>
-                )}
-              </div>
-            </div>
 
-            {/* Live preview panel */}
-            <div className="lg:sticky lg:top-0 h-fit">
-              <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4 space-y-4">
-                <h3 className="text-sm font-semibold text-neutral-900 flex items-center gap-2">
-                  📊 Förhandsgranskning
-                </h3>
-
-                {liveCalculations ? (
-                  <>
-                    {/* Energy density */}
+                  {/* Viktfält - visa bara om enheten inte är gram ELLER vikten skiljer sig från mängden */}
+                  {shouldShowWeightField && (
                     <div>
-                      <p className="text-xs text-neutral-600 mb-1">Energitäthet</p>
-                      <p className="text-lg font-semibold text-neutral-900">
-                        {liveCalculations.kcalPerGram.toFixed(2)} kcal/g
-                      </p>
-                      <div className="flex items-center gap-2">
-                        <Badge
-                          variant="outline"
-                          className={
-                            liveCalculations.energyDensityColor === 'Green'
-                              ? 'bg-green-50 text-green-700 border-green-300'
-                              : liveCalculations.energyDensityColor === 'Yellow'
-                                ? 'bg-yellow-50 text-yellow-700 border-yellow-300'
-                                : 'bg-orange-50 text-orange-700 border-orange-300'
-                          }
-                        >
-                          {liveCalculations.energyDensityColor === 'Green'
-                            ? 'Grön'
-                            : liveCalculations.energyDensityColor === 'Yellow'
-                              ? 'Gul'
-                              : 'Orange'}
-                        </Badge>
-                        <span className="text-xs text-neutral-600">
-                          (
-                          {foodType === 'Solid'
-                            ? 'Fast föda'
-                            : foodType === 'Liquid'
-                              ? 'Vätska'
-                              : 'Soppa'}
-                          )
+                      <Label htmlFor="weight_grams">
+                        Vikt (gram) *
+                        <span className="text-xs text-neutral-500 ml-2 font-normal">
+                          Hur mycket väger {defaultAmount || '?'} {defaultUnit || '?'}?
                         </span>
-                      </div>
+                      </Label>
+                      <Input
+                        id="weight_grams"
+                        type="number"
+                        step="0.01"
+                        {...register('weight_grams', { valueAsNumber: true })}
+                        placeholder="100"
+                        className={errors.weight_grams ? 'border-red-500' : ''}
+                      />
+                      {errors.weight_grams && (
+                        <p className="text-sm text-red-600 mt-1">{errors.weight_grams.message}</p>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* Nutrition */}
+                <div className="space-y-4">
+                  <h3 className="text-sm font-semibold text-neutral-900">
+                    Näringsinnehåll (per {defaultAmount || '?'} {defaultUnit || '?'})
+                  </h3>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="calories">Kalorier (kcal) *</Label>
+                      <Input
+                        id="calories"
+                        type="number"
+                        step="0.1"
+                        {...register('calories', { valueAsNumber: true })}
+                        placeholder="0"
+                        className={errors.calories ? 'border-red-500' : ''}
+                      />
+                      {errors.calories && (
+                        <p className="text-sm text-red-600 mt-1">{errors.calories.message}</p>
+                      )}
                     </div>
 
-                    {/* Serving portion preview - NY SEKTION */}
-                    {servingPreview && (
-                      <>
-                        <div className="border-t border-neutral-200 my-3" />
-                        <div>
-                          <div className="flex items-center gap-2 mb-2">
-                            <span className="text-lg">🍽️</span>
-                            <p className="text-xs text-neutral-600 font-medium">
-                              Serveringsportion
-                            </p>
-                          </div>
+                    <div>
+                      <Label htmlFor="protein_g">Protein (g) *</Label>
+                      <Input
+                        id="protein_g"
+                        type="number"
+                        step="0.1"
+                        {...register('protein_g', { valueAsNumber: true })}
+                        placeholder="0"
+                        className={errors.protein_g ? 'border-red-500' : ''}
+                      />
+                      {errors.protein_g && (
+                        <p className="text-sm text-red-600 mt-1">{errors.protein_g.message}</p>
+                      )}
+                    </div>
 
-                          <p className="text-lg font-semibold text-neutral-900 mb-2">
-                            1 {servingPreview.unit} ({servingPreview.grams}g)
-                          </p>
+                    <div>
+                      <Label htmlFor="carb_g">Kolhydrater (g) *</Label>
+                      <Input
+                        id="carb_g"
+                        type="number"
+                        step="0.1"
+                        {...register('carb_g', { valueAsNumber: true })}
+                        placeholder="0"
+                        className={errors.carb_g ? 'border-red-500' : ''}
+                      />
+                      {errors.carb_g && (
+                        <p className="text-sm text-red-600 mt-1">{errors.carb_g.message}</p>
+                      )}
+                    </div>
 
-                          <div className="space-y-1 text-sm">
-                            <div className="flex justify-between">
-                              <span className="text-neutral-600">Energi:</span>
-                              <span className="font-semibold text-neutral-900">
-                                {Math.round(servingPreview.kcal)} kcal
-                              </span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-neutral-600">Protein:</span>
-                              <span className="font-medium text-neutral-900">
-                                {servingPreview.protein.toFixed(1)}g
-                              </span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-neutral-600">Kolhydrater:</span>
-                              <span className="font-medium text-neutral-900">
-                                {servingPreview.carb.toFixed(1)}g
-                              </span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-neutral-600">Fett:</span>
-                              <span className="font-medium text-neutral-900">
-                                {servingPreview.fat.toFixed(1)}g
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      </>
+                    <div>
+                      <Label htmlFor="fat_g">Fett (g) *</Label>
+                      <Input
+                        id="fat_g"
+                        type="number"
+                        step="0.1"
+                        {...register('fat_g', { valueAsNumber: true })}
+                        placeholder="0"
+                        className={errors.fat_g ? 'border-red-500' : ''}
+                      />
+                      {errors.fat_g && (
+                        <p className="text-sm text-red-600 mt-1">{errors.fat_g.message}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Macro mismatch warning */}
+                  {liveCalculations?.macroCaloriesMismatch && (
+                    <div className="bg-yellow-50 border border-yellow-300 rounded-lg p-3">
+                      <p className="text-xs text-yellow-800">
+                        ⚠️ Makronutrienterna ger {Math.round(proteinG * 4 + carbG * 4 + fatG * 9)}{' '}
+                        kcal, men du angav {Math.round(calories)} kcal (
+                        {Math.round(liveCalculations.caloriesDiffPercent)}% skillnad). Detta kan
+                        bero på fiber, alkohol eller rundning.
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Advanced settings */}
+                <div className="border-t pt-4">
+                  <button
+                    type="button"
+                    onClick={() => setShowAdvanced(!showAdvanced)}
+                    className="flex items-center gap-2 text-sm font-medium text-neutral-700 hover:text-neutral-900"
+                  >
+                    {showAdvanced ? (
+                      <ChevronUp className="h-4 w-4" />
+                    ) : (
+                      <ChevronDown className="h-4 w-4" />
                     )}
+                    Avancerade inställningar
+                  </button>
 
-                    {/* Energy comparison */}
-                    <div>
-                      <p className="text-xs text-neutral-600 mb-1">Energijämförelse</p>
-                      <div className="space-y-1 text-sm">
-                        <div className="flex justify-between">
-                          <span>Makronutrienter:</span>
-                          <span className="font-medium">
-                            {Math.round(proteinG * 4 + carbG * 4 + fatG * 9)} kcal
-                          </span>
+                  {showAdvanced && (
+                    <div className="mt-4 space-y-4">
+                      <div>
+                        <Label htmlFor="food_type">Livsmedeltyp</Label>
+                        <select
+                          id="food_type"
+                          {...register('food_type')}
+                          className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                        >
+                          <option value="Solid">Fast föda</option>
+                          <option value="Liquid">Vätska</option>
+                          <option value="Soup">Soppa</option>
+                        </select>
+                      </div>
+
+                      {/* Volymkonvertering - tillgänglig för alla livsmedel */}
+                      <div className="space-y-3 border border-neutral-200 rounded-lg p-3 bg-neutral-50">
+                        <p className="text-sm font-medium text-neutral-900">
+                          Volymkonvertering (valfritt)
+                        </p>
+
+                        <div className="flex items-end gap-3">
+                          <div className="flex-1">
+                            <Label htmlFor="volume_grams">
+                              Hur mycket väger 1 {volumeUnit} ({VOLUME_TO_ML[volumeUnit]}ml)?
+                            </Label>
+                            <div className="flex gap-2 mt-1">
+                              <select
+                                id="volume_unit"
+                                value={volumeUnit}
+                                onChange={e => setVolumeUnit(e.target.value as VolumeUnit)}
+                                className="w-20 px-2 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
+                              >
+                                <option value="dl">dl</option>
+                                <option value="msk">msk</option>
+                                <option value="tsk">tsk</option>
+                              </select>
+                              <Input
+                                id="volume_grams"
+                                type="number"
+                                step="0.1"
+                                value={gramsPerVolume ?? ''}
+                                onChange={e => {
+                                  const val = e.target.value
+                                  setGramsPerVolume(val === '' ? undefined : parseFloat(val))
+                                }}
+                                placeholder="gram"
+                                className="flex-1"
+                              />
+                              <span className="self-center text-sm text-neutral-600">gram</span>
+                            </div>
+                          </div>
                         </div>
-                        <div className="flex justify-between">
-                          <span>Angivet:</span>
-                          <span className="font-medium">{Math.round(calories)} kcal</span>
+
+                        <p className="text-xs text-neutral-500">
+                          Mjöl ≈ 60g/dl, Socker ≈ 90g/dl, Havregryn ≈ 40g/dl, Ris ≈ 85g/dl
+                        </p>
+                      </div>
+
+                      {/* Serveringsfunktion - gram per bit/styck */}
+                      <div className="space-y-3 border border-neutral-200 rounded-lg p-3 bg-neutral-50">
+                        <p className="text-sm font-medium text-neutral-900">
+                          Serveringsinformation (valfritt)
+                        </p>
+
+                        <div className="grid grid-cols-2 gap-3">
+                          {/* Vikt per portion - dölj om portionsenheten är en volymenhet */}
+                          {!isServingUnitVolume && (
+                            <div>
+                              <Label htmlFor="grams_per_piece">
+                                Vikt per portion
+                                <span className="text-xs text-neutral-500 ml-1 font-normal">
+                                  (gram)
+                                </span>
+                              </Label>
+                              <Input
+                                id="grams_per_piece"
+                                type="number"
+                                step="0.01"
+                                {...register('grams_per_piece', { valueAsNumber: true })}
+                                placeholder="t.ex. 50"
+                              />
+                            </div>
+                          )}
+
+                          <div className={isServingUnitVolume ? 'col-span-2' : ''}>
+                            <Label htmlFor="serving_unit">
+                              Enhet
+                              <span className="text-xs text-neutral-500 ml-1 font-normal">
+                                (pkt, burk, osv.)
+                              </span>
+                            </Label>
+                            <Input
+                              id="serving_unit"
+                              type="text"
+                              {...register('serving_unit')}
+                              placeholder="t.ex. pkt, burk, påse"
+                            />
+                          </div>
                         </div>
-                        <div className="flex justify-between">
-                          <span>Skillnad:</span>
-                          <span
-                            className={`font-semibold ${
-                              Math.abs(liveCalculations.caloriesDiffPercent) > 10
-                                ? 'text-red-600'
-                                : 'text-green-600'
-                            }`}
+
+                        {isServingUnitVolume ? (
+                          <p className="text-xs text-amber-600">
+                            💡 För volymenheter (dl, msk, tsk), använd Volymkonvertering ovan
+                            istället.
+                          </p>
+                        ) : (
+                          <p className="text-xs text-neutral-500">
+                            T.ex. 1 ägg = 50g (enhet: &quot;st&quot;), 1 yoghurt = 150g (enhet:
+                            &quot;pkt&quot;)
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Live preview panel */}
+              <div className="lg:sticky lg:top-0 h-fit">
+                <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4 space-y-4">
+                  <h3 className="text-sm font-semibold text-neutral-900 flex items-center gap-2">
+                    📊 Förhandsgranskning
+                  </h3>
+
+                  {liveCalculations ? (
+                    <>
+                      {/* Energy density */}
+                      <div>
+                        <p className="text-xs text-neutral-600 mb-1">Energitäthet</p>
+                        <p className="text-lg font-semibold text-neutral-900">
+                          {liveCalculations.kcalPerGram.toFixed(2)} kcal/g
+                        </p>
+                        <div className="flex items-center gap-2">
+                          <Badge
+                            variant="outline"
+                            className={
+                              liveCalculations.energyDensityColor === 'Green'
+                                ? 'bg-green-50 text-green-700 border-green-300'
+                                : liveCalculations.energyDensityColor === 'Yellow'
+                                  ? 'bg-yellow-50 text-yellow-700 border-yellow-300'
+                                  : 'bg-orange-50 text-orange-700 border-orange-300'
+                            }
                           >
-                            {calories - (proteinG * 4 + carbG * 4 + fatG * 9) > 0 ? '+' : ''}
-                            {Math.round(liveCalculations.caloriesDiffPercent)}%
+                            {liveCalculations.energyDensityColor === 'Green'
+                              ? 'Grön'
+                              : liveCalculations.energyDensityColor === 'Yellow'
+                                ? 'Gul'
+                                : 'Orange'}
+                          </Badge>
+                          <span className="text-xs text-neutral-600">
+                            (
+                            {foodType === 'Solid'
+                              ? 'Fast föda'
+                              : foodType === 'Liquid'
+                                ? 'Vätska'
+                                : 'Soppa'}
+                            )
                           </span>
                         </div>
                       </div>
-                      {/* Divider */}
-                      <div className="border-t border-neutral-200 mt-2 mb-2"></div>
-                    </div>
 
-                    {/* Macro distribution */}
-                    <div>
-                      <p className="text-xs text-neutral-600 mb-2">Makrofördelning</p>
-                      <div className="space-y-2">
-                        <div>
-                          <div className="flex justify-between text-xs mb-1">
-                            <span>Protein</span>
+                      {/* Serving portion preview - NY SEKTION */}
+                      {servingPreview && (
+                        <>
+                          <div className="border-t border-neutral-200 my-3" />
+                          <div>
+                            <div className="flex items-center gap-2 mb-2">
+                              <span className="text-lg">🍽️</span>
+                              <p className="text-xs text-neutral-600 font-medium">
+                                Serveringsportion
+                              </p>
+                            </div>
+
+                            <p className="text-lg font-semibold text-neutral-900 mb-2">
+                              1 {servingPreview.unit} ({servingPreview.grams}g)
+                            </p>
+
+                            <div className="space-y-1 text-sm">
+                              <div className="flex justify-between">
+                                <span className="text-neutral-600">Energi:</span>
+                                <span className="font-semibold text-neutral-900">
+                                  {Math.round(servingPreview.kcal)} kcal
+                                </span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-neutral-600">Protein:</span>
+                                <span className="font-medium text-neutral-900">
+                                  {servingPreview.protein.toFixed(1)}g
+                                </span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-neutral-600">Kolhydrater:</span>
+                                <span className="font-medium text-neutral-900">
+                                  {servingPreview.carb.toFixed(1)}g
+                                </span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-neutral-600">Fett:</span>
+                                <span className="font-medium text-neutral-900">
+                                  {servingPreview.fat.toFixed(1)}g
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </>
+                      )}
+
+                      {/* Energy comparison */}
+                      <div>
+                        <p className="text-xs text-neutral-600 mb-1">Energijämförelse</p>
+                        <div className="space-y-1 text-sm">
+                          <div className="flex justify-between">
+                            <span>Makronutrienter:</span>
                             <span className="font-medium">
-                              {Math.round(liveCalculations.proteinPercent)}%
+                              {Math.round(proteinG * 4 + carbG * 4 + fatG * 9)} kcal
                             </span>
                           </div>
-                          <div className="h-2 bg-neutral-200 rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-blue-500"
-                              style={{ width: `${liveCalculations.proteinPercent}%` }}
-                            />
+                          <div className="flex justify-between">
+                            <span>Angivet:</span>
+                            <span className="font-medium">{Math.round(calories)} kcal</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Skillnad:</span>
+                            <span
+                              className={`font-semibold ${
+                                Math.abs(liveCalculations.caloriesDiffPercent) > 10
+                                  ? 'text-red-600'
+                                  : 'text-green-600'
+                              }`}
+                            >
+                              {calories - (proteinG * 4 + carbG * 4 + fatG * 9) > 0 ? '+' : ''}
+                              {Math.round(liveCalculations.caloriesDiffPercent)}%
+                            </span>
                           </div>
                         </div>
+                        {/* Divider */}
+                        <div className="border-t border-neutral-200 mt-2 mb-2"></div>
+                      </div>
 
-                        <div>
-                          <div className="flex justify-between text-xs mb-1">
-                            <span>Kolhydrater</span>
-                            <span className="font-medium">
-                              {Math.round(liveCalculations.carbPercent)}%
-                            </span>
+                      {/* Macro distribution */}
+                      <div>
+                        <p className="text-xs text-neutral-600 mb-2">Makrofördelning</p>
+                        <div className="space-y-2">
+                          <div>
+                            <div className="flex justify-between text-xs mb-1">
+                              <span>Protein</span>
+                              <span className="font-medium">
+                                {Math.round(liveCalculations.proteinPercent)}%
+                              </span>
+                            </div>
+                            <div className="h-2 bg-neutral-200 rounded-full overflow-hidden">
+                              <div
+                                className="h-full bg-blue-500"
+                                style={{ width: `${liveCalculations.proteinPercent}%` }}
+                              />
+                            </div>
                           </div>
-                          <div className="h-2 bg-neutral-200 rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-green-500"
-                              style={{ width: `${liveCalculations.carbPercent}%` }}
-                            />
-                          </div>
-                        </div>
 
-                        <div>
-                          <div className="flex justify-between text-xs mb-1">
-                            <span>Fett</span>
-                            <span className="font-medium">
-                              {Math.round(liveCalculations.fatPercent)}%
-                            </span>
+                          <div>
+                            <div className="flex justify-between text-xs mb-1">
+                              <span>Kolhydrater</span>
+                              <span className="font-medium">
+                                {Math.round(liveCalculations.carbPercent)}%
+                              </span>
+                            </div>
+                            <div className="h-2 bg-neutral-200 rounded-full overflow-hidden">
+                              <div
+                                className="h-full bg-green-500"
+                                style={{ width: `${liveCalculations.carbPercent}%` }}
+                              />
+                            </div>
                           </div>
-                          <div className="h-2 bg-neutral-200 rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-amber-500"
-                              style={{ width: `${liveCalculations.fatPercent}%` }}
-                            />
+
+                          <div>
+                            <div className="flex justify-between text-xs mb-1">
+                              <span>Fett</span>
+                              <span className="font-medium">
+                                {Math.round(liveCalculations.fatPercent)}%
+                              </span>
+                            </div>
+                            <div className="h-2 bg-neutral-200 rounded-full overflow-hidden">
+                              <div
+                                className="h-full bg-amber-500"
+                                style={{ width: `${liveCalculations.fatPercent}%` }}
+                              />
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </>
-                ) : (
-                  <p className="text-sm text-neutral-500">
-                    Fyll i formuläret för att se förhandsgranskning
-                  </p>
-                )}
+                    </>
+                  ) : (
+                    <p className="text-sm text-neutral-500">
+                      Fyll i formuläret för att se förhandsgranskning
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Buttons */}
-          <div className="flex justify-between pt-4 border-t">
-            <Button type="button" variant="ghost" onClick={handleClose}>
-              Avbryt
-            </Button>
-            <Button
-              type="submit"
-              disabled={
-                !isValid ||
-                createMutation.isPending ||
-                updateMutation.isPending ||
-                (editItem && !hasChanges)
-              }
-            >
-              {createMutation.isPending || updateMutation.isPending
-                ? 'Sparar...'
-                : editItem
-                  ? 'Uppdatera'
-                  : 'Spara livsmedel'}
-            </Button>
-          </div>
-        </form>
-      </DialogContent>
-    </Dialog>
+            {/* Buttons */}
+            <div className="flex justify-between pt-4 border-t">
+              <Button type="button" variant="ghost" onClick={handleClose}>
+                Avbryt
+              </Button>
+              <Button
+                type="submit"
+                disabled={
+                  !isValid ||
+                  createMutation.isPending ||
+                  updateMutation.isPending ||
+                  (editItem && !hasChanges)
+                }
+              >
+                {createMutation.isPending || updateMutation.isPending
+                  ? 'Sparar...'
+                  : editItem
+                    ? 'Uppdatera'
+                    : 'Spara livsmedel'}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Barcode scanner modal */}
+      <BarcodeScannerModal
+        open={scannerOpen}
+        onOpenChange={setScannerOpen}
+        onDetected={code => {
+          setScannedBarcode(code)
+          setScannerOpen(false)
+        }}
+      />
+    </>
   )
 }
