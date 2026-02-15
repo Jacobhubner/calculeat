@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -18,6 +18,7 @@ import {
 import { calculateFoodColor, calculateCalorieDensity } from '@/lib/calculations/colorDensity'
 import { FEATURES } from '@/lib/config'
 import { useBarcodeLookup } from '@/hooks/useBarcodeLookup'
+import { useScanNutritionLabel } from '@/hooks/useScanNutritionLabel'
 import { BarcodeScannerModal } from '@/components/food/BarcodeScannerModal'
 import type { ScanResult } from '@/lib/types'
 
@@ -88,6 +89,10 @@ export function AddFoodItemModal({
   const [scannedBarcode, setScannedBarcode] = useState<string | null>(null)
   const [showOverwriteConfirm, setShowOverwriteConfirm] = useState(false)
   const [pendingScanResult, setPendingScanResult] = useState<ScanResult | null>(null)
+
+  // Nutrition label scanning
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const labelScan = useScanNutritionLabel()
 
   const {
     data: barcodeResult,
@@ -424,6 +429,24 @@ export function AddFoodItemModal({
     }
   }, [barcodeResult, handleScanResult])
 
+  // Handle nutrition label file selection
+  const handleLabelFile = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0]
+      if (!file) return
+      // Reset input so same file can be re-selected
+      e.target.value = ''
+
+      try {
+        const result = await labelScan.mutateAsync(file)
+        handleScanResult(result)
+      } catch {
+        // Error is available via labelScan.error
+      }
+    },
+    [labelScan, handleScanResult]
+  )
+
   const onSubmit = async (data: FormData) => {
     try {
       // Beräkna ml_per_gram från volymkonvertering
@@ -477,6 +500,7 @@ export function AddFoodItemModal({
     setScannedBarcode(null)
     setPendingScanResult(null)
     setShowOverwriteConfirm(false)
+    labelScan.reset()
     onOpenChange(false)
   }
 
@@ -508,10 +532,27 @@ export function AddFoodItemModal({
                     {isBarcodeFetching ? 'Söker produkt...' : 'Streckkod'}
                   </Button>
                 )}
-                <Button type="button" variant="outline" size="sm" disabled title="Kommer snart">
-                  <Camera className="h-4 w-4 mr-1.5" />
-                  Skanna etikett
-                </Button>
+                {FEATURES.SCAN_NUTRITION_LABEL ? (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={labelScan.isPending}
+                  >
+                    {labelScan.isPending ? (
+                      <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />
+                    ) : (
+                      <Camera className="h-4 w-4 mr-1.5" />
+                    )}
+                    {labelScan.isPending ? 'Analyserar...' : 'Skanna etikett'}
+                  </Button>
+                ) : (
+                  <Button type="button" variant="outline" size="sm" disabled title="Kommer snart">
+                    <Camera className="h-4 w-4 mr-1.5" />
+                    Skanna etikett
+                  </Button>
+                )}
               </div>
             )}
 
@@ -520,6 +561,15 @@ export function AddFoodItemModal({
               <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
                 <p className="text-sm text-orange-800">
                   {(barcodeError as { message?: string })?.message || 'Kunde inte hämta produkten'}
+                </p>
+              </div>
+            )}
+
+            {/* Label scan error */}
+            {labelScan.error && (
+              <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
+                <p className="text-sm text-orange-800">
+                  {labelScan.error.message || 'Kunde inte läsa etiketten'}
                 </p>
               </div>
             )}
@@ -1064,6 +1114,16 @@ export function AddFoodItemModal({
           </form>
         </DialogContent>
       </Dialog>
+
+      {/* Hidden file input for nutrition label */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        capture="environment"
+        className="hidden"
+        onChange={handleLabelFile}
+      />
 
       {/* Barcode scanner modal */}
       <BarcodeScannerModal
