@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { HelpCircle, CheckCircle, XCircle, Lightbulb, Scale, Calendar, Info } from 'lucide-react'
+import { HelpCircle, CheckCircle, XCircle, Scale, Info, AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 export default function MetabolicCalibrationGuide() {
@@ -21,7 +21,7 @@ export default function MetabolicCalibrationGuide() {
           <HelpCircle className="h-5 w-5 text-neutral-500 hover:text-neutral-700 transition-colors" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-lg">
             <Scale className="h-5 w-5 text-primary-500" />
@@ -29,7 +29,7 @@ export default function MetabolicCalibrationGuide() {
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6 text-sm">
+        <div className="space-y-6 text-sm overflow-y-auto max-h-[70vh] pr-1">
           {/* Section 1: What is it? */}
           <section>
             <h3 className="font-semibold text-base mb-2 flex items-center gap-2">
@@ -37,70 +37,110 @@ export default function MetabolicCalibrationGuide() {
               Vad är metabolisk kalibrering?
             </h3>
             <p className="text-neutral-700 leading-relaxed">
-              Metabolisk kalibrering använder dina <strong>verkliga viktförändringar</strong> för
-              att beräkna ditt faktiska TDEE. Istället för teoretiska formler justerar systemet
-              baserat på vad som faktiskt händer med din kropp.
+              Metabolisk kalibrering beräknar ditt faktiska <strong>Maintenance-TDEE</strong>{' '}
+              baserat på hur din kropp faktiskt reagerar på ditt kaloriintag över tid.
             </p>
             <p className="text-neutral-700 leading-relaxed mt-2">
-              Systemet använder trendbaserad viktberäkning med medianvärden i start- och slutkluster
-              för att dämpa dagliga fluktuationer från vatten, glykogen och tarminnehåll. Avvikande
-              mätningar filtreras bort automatiskt.
+              Istället för att enbart använda teoretiska formler analyserar systemet:
+            </p>
+            <ul className="list-disc list-inside space-y-1 ml-2 mt-1 text-neutral-700">
+              <li>Trendbaserad viktutveckling (inte enskilda vägningar)</li>
+              <li>Genomsnittligt kaloriintag under perioden</li>
+              <li>Datakvalitet och konsekvens i loggningen</li>
+            </ul>
+            <p className="text-neutral-700 leading-relaxed mt-2">
+              Dagliga fluktuationer från vätska, salt och glykogen filtreras bort genom
+              trendberäkning och avvikelsehantering.
+            </p>
+            <p className="text-neutral-700 leading-relaxed mt-2">
+              Resultatet är ett stabilt och biologiskt rimligt estimat av ditt energibehov.
             </p>
           </section>
 
-          {/* Section 2: The Science */}
+          {/* Section 2: How does it work? */}
           <section className="bg-neutral-50 p-4 rounded-lg border border-neutral-200">
-            <h3 className="font-semibold text-base mb-2">Varför 7700 kcal per kg?</h3>
+            <h3 className="font-semibold text-base mb-2">Hur fungerar beräkningen?</h3>
             <div className="space-y-2 text-neutral-700">
-              <p>1 kg kroppsfett ≈ 9000 kcal (ren fett)</p>
-              <p className="font-medium">Men viktförlust/ökning inkluderar:</p>
+              <p>I grunden bygger modellen på energibalansprincipen:</p>
+              <p className="font-medium text-primary-600 text-center py-1">
+                TDEE ≈ Genomsnittliga kalorier − (trendbaserad viktförändring × 7700 / dagar)
+              </p>
+              <p>
+                1 kg kroppsvikt motsvarar i genomsnitt cirka <strong>7700 kcal</strong> när man tar
+                hänsyn till att viktförändring består av fett, vatten och viss muskelmassa.
+              </p>
+              <p className="mt-2">Den faktiska modellen:</p>
               <ul className="list-disc list-inside space-y-1 ml-2">
-                <li>Fett (~70-80%)</li>
-                <li>Vatten (~15-20%)</li>
-                <li>Glykogen + muskelvävnad (~5-10%)</li>
+                <li>Använder trendvikt istället för råa mätningar</li>
+                <li>Justerar gradvis istället för att ersätta värdet direkt</li>
+                <li>Begränsar extrema justeringar</li>
+                <li>Vägs mot tidigare uppskattning för stabilitet</li>
               </ul>
-              <p className="font-medium mt-2 pt-2 border-t border-neutral-300">
-                Genomsnitt: <span className="text-primary-600">~7700 kcal per kg</span> är
-                vetenskapligt etablerat
+              <p className="mt-2">
+                Detta gör systemet robust mot brus och kortsiktiga svängningar.
               </p>
             </div>
           </section>
 
-          {/* Section 3: When to use */}
+          {/* Section 3: Data quality */}
+          <section>
+            <h3 className="font-semibold text-base mb-2 flex items-center gap-2">
+              <Info className="h-4 w-4 text-primary-500" />
+              Datakvalitet och precision
+            </h3>
+            <p className="text-neutral-700 leading-relaxed">
+              Kalibreringens tillförlitlighet beror på kvaliteten i din data.
+            </p>
+            <p className="text-neutral-700 leading-relaxed mt-2">Systemet tar hänsyn till:</p>
+            <ul className="list-disc list-inside space-y-1 ml-2 mt-1 text-neutral-700">
+              <li>Hur många dagar du loggat</li>
+              <li>Hur konsekvent kaloriintaget registrerats</li>
+              <li>Hur stabil vikttrenden är</li>
+            </ul>
+            <p className="text-neutral-700 leading-relaxed mt-2">
+              Vid låg signal (mycket liten viktförändring) eller ojämn loggning begränsas
+              justeringen automatiskt.
+            </p>
+            <p className="text-neutral-700 leading-relaxed mt-2 font-medium">
+              Ju bättre data – desto mer exakt kalibrering.
+            </p>
+          </section>
+
+          {/* Section 4: When to use */}
           <section>
             <h3 className="font-semibold text-base mb-3 flex items-center gap-2">
               <CheckCircle className="h-4 w-4 text-success-600" />
-              När ska du använda kalibreringen?
+              När bör du använda kalibrering?
             </h3>
             <ul className="space-y-2">
               <li className="flex items-start gap-2">
                 <span className="text-success-600 mt-0.5">✓</span>
                 <span className="text-neutral-700">
-                  Du har ätit <strong>konsekvent i 2+ veckor</strong>
+                  Du har följt ditt kaloriintag i minst <strong>2–3 veckor</strong>
                 </span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-success-600 mt-0.5">✓</span>
                 <span className="text-neutral-700">
-                  Din vikt rör sig åt <strong>fel håll</strong> (upp när du vill ned, eller tvärtom)
+                  Du väger dig regelbundet (helst <strong>morgon före frukost</strong>)
                 </span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-success-600 mt-0.5">✓</span>
                 <span className="text-neutral-700">
-                  Din vikt <strong>inte ändras</strong> trots underskott/överskott
+                  Din vikt <strong>rör sig inte som förväntat</strong>
                 </span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-success-600 mt-0.5">✓</span>
                 <span className="text-neutral-700">
-                  Du har minst <strong>4-6 viktmätningar</strong> under vald period
+                  Du har loggat <strong>majoriteten av dagarna</strong>
                 </span>
               </li>
             </ul>
           </section>
 
-          {/* Section 4: When NOT to use */}
+          {/* Section 5: When NOT to use */}
           <section className="bg-orange-50 p-4 rounded-lg border border-orange-200">
             <h3 className="font-semibold text-base mb-3 flex items-center gap-2">
               <XCircle className="h-4 w-4 text-orange-600" />
@@ -110,147 +150,47 @@ export default function MetabolicCalibrationGuide() {
               <li className="flex items-start gap-2">
                 <span className="text-orange-600 mt-0.5 font-bold">×</span>
                 <span>
-                  Du just börjat en ny diet <strong>(&lt; 2 veckor)</strong>
+                  Du just börjat en ny diet <strong>(&lt;2 veckor)</strong>
                 </span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-orange-600 mt-0.5 font-bold">×</span>
                 <span>
-                  Vikten fluktuerar kraftigt <strong>(&gt;1,5% per vecka)</strong>
+                  Du nyligen <strong>ändrat träningsmängd kraftigt</strong>
                 </span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-orange-600 mt-0.5 font-bold">×</span>
                 <span>
-                  Du <strong>inte loggar mat</strong> konsekvent
+                  Du <strong>inte loggat mat</strong> konsekvent
                 </span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-orange-600 mt-0.5 font-bold">×</span>
                 <span>
-                  Du är <strong>sjuk, menstruerar, eller extremt stressad</strong>
+                  Du väger dig <strong>mycket oregelbundet</strong>
                 </span>
               </li>
             </ul>
           </section>
 
-          {/* Section 5: Practical Tips */}
-          <section>
-            <h3 className="font-semibold text-base mb-3 flex items-center gap-2">
-              <Lightbulb className="h-4 w-4 text-amber-500" />
-              Praktiska Tips
+          {/* Section 6: Important to understand */}
+          <section className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+            <h3 className="font-semibold text-base mb-2 flex items-center gap-2">
+              <AlertTriangle className="h-4 w-4 text-blue-600" />
+              Viktigt att förstå
             </h3>
-
-            {/* Sub-section: Consistent weighing */}
-            <div className="mb-4 bg-neutral-50 p-3 rounded-lg">
-              <h4 className="font-medium mb-2 text-neutral-900">1. Väg dig konsekvent</h4>
-              <ul className="space-y-1 text-neutral-700 ml-2">
-                <li>
-                  • Samma tid på dagen (helst på <strong>morgonen</strong>)
-                </li>
-                <li>• Efter toalettbesök, före frukost</li>
-                <li>• Naken eller i samma kläder</li>
-                <li>• Minst 3 gånger per vecka för bäst precision</li>
-              </ul>
-            </div>
-
-            {/* Sub-section: Time period selection */}
-            <div className="mb-4 bg-neutral-50 p-3 rounded-lg">
-              <h4 className="font-medium mb-2 flex items-center gap-2 text-neutral-900">
-                <Calendar className="h-3.5 w-3.5" />
-                2. Välj rätt tidsperiod
-              </h4>
-              <ul className="space-y-1.5 text-neutral-700 ml-2">
-                <li>
-                  <span className="font-medium">14 dagar:</span> Snabb feedback, lägre precision
-                </li>
-                <li>
-                  <span className="font-medium">21 dagar:</span> Balanserad
-                  <span className="text-success-600 font-semibold ml-1">(rekommenderad)</span>
-                </li>
-                <li>
-                  <span className="font-medium">28 dagar:</span> Mest exakt, bra vid menscykel
-                </li>
-              </ul>
-            </div>
-
-            {/* Sub-section: Confidence levels */}
-            <div className="mb-4 bg-neutral-50 p-3 rounded-lg">
-              <h4 className="font-medium mb-2 text-neutral-900">3. Tillförlitlighetsnivåer</h4>
-              <ul className="space-y-1.5 text-neutral-700 ml-2">
-                <li>
-                  <span className="font-medium text-green-600">Hög:</span> Många mätningar + matlogg
-                  = mest pålitligt
-                </li>
-                <li>
-                  <span className="font-medium text-yellow-600">Medel:</span> Tillräcklig data,
-                  resultat trovärdigt
-                </li>
-                <li>
-                  <span className="font-medium text-orange-600">Låg:</span> Få mätningar, systemet
-                  begränsar justeringen
-                </li>
-              </ul>
-            </div>
-
-            {/* Sub-section: Interpret results */}
-            <div className="bg-neutral-50 p-3 rounded-lg">
-              <h4 className="font-medium mb-2 text-neutral-900">4. Tolka resultatet</h4>
-              <ul className="space-y-1.5 text-neutral-700 ml-2">
-                <li>
-                  <span className="font-medium">Liten skillnad (&lt;5%):</span> Din TDEE-beräkning
-                  var ganska korrekt ✓
-                </li>
-                <li>
-                  <span className="font-medium">Mellan skillnad (5-15%):</span> Vanligt, justera och
-                  fortsätt
-                </li>
-                <li>
-                  <span className="font-medium">Stor skillnad (&gt;15%):</span> Kanske du äter
-                  mer/mindre än du tror? Dubbelkolla loggning
-                </li>
-              </ul>
-            </div>
-          </section>
-
-          {/* Section 6: Data Quality */}
-          <section className="bg-neutral-50 p-4 rounded-lg border border-neutral-200">
-            <h3 className="font-semibold text-base mb-2">Datakvalitetsindex (DQI)</h3>
-            <p className="text-neutral-700 mb-2">
-              Systemet beräknar ett kvalitetsindex som styr hur stor justering som tillåts:
+            <p className="text-neutral-700 leading-relaxed">
+              Kalibrering är en långsiktig finjustering — inte en snabb korrigering.
             </p>
-            <ul className="space-y-1.5 text-neutral-700 ml-2">
-              <li>
-                <span className="font-medium text-green-600">Utmärkt (80+):</span> Max ±200 kcal
-                justering
-              </li>
-              <li>
-                <span className="font-medium text-blue-600">Bra (60–79):</span> Max ±150 kcal
-                justering
-              </li>
-              <li>
-                <span className="font-medium text-yellow-600">Tillräcklig (40–59):</span> Max ±100
-                kcal justering
-              </li>
-              <li>
-                <span className="font-medium text-orange-600">Begränsad (&lt;40):</span> Max ±75
-                kcal justering
-              </li>
-            </ul>
-            <p className="text-neutral-600 text-xs mt-2">
-              Indexet baseras på matloggning (40%), vägningsfrekvens (30%), konsistens i tid (15%)
-              och klusterstorlek (15%).
+            <p className="text-neutral-700 leading-relaxed mt-2">
+              Systemet är medvetet konservativt och begränsar stora justeringar för att undvika
+              överreaktion på tillfälliga viktförändringar.
+            </p>
+            <p className="text-neutral-700 leading-relaxed mt-2">
+              Kroppen förändras gradvis – och modellen speglar det.
             </p>
           </section>
-
-          {/* Footer tip */}
-          <div className="pt-4 border-t border-neutral-200">
-            <p className="text-xs text-neutral-500 italic">
-              Tips: Kalibrera var 3-4:e vecka för bäst resultat. Vänta minst 14 dagar mellan
-              kalibreringar. Vid menscykel kan 28 dagar ge bäst resultat. Du kan ångra den senaste
-              kalibreringen om du är osäker.
-            </p>
-          </div>
         </div>
       </DialogContent>
     </Dialog>
