@@ -85,6 +85,14 @@
 }
 
 @layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
   .bg-blur {
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);

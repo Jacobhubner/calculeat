@@ -152,15 +152,15 @@ function ColorRow({
   if (compact) {
     // Ultra-compact single-line layout
     return (
-      <div className="flex items-center gap-2 text-sm">
-        <span className={cn('w-2.5 h-2.5 rounded-full flex-shrink-0', classes.dot)} />
-        <span className={cn('font-medium min-w-[45px]', classes.text)}>{label}</span>
+      <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
+        <span className={cn('w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full flex-shrink-0', classes.dot)} />
+        <span className={cn('font-medium', classes.text)}>{label}</span>
         <span className={cn('font-semibold', classes.text)}>{calories}</span>
         <span className="text-neutral-400">/</span>
-        <span className="text-neutral-500">
+        <span className="text-neutral-500 truncate">
           {Math.round(caloriesMin * targetPercent)}-{Math.round(caloriesMax * targetPercent)}
         </span>
-        <span className={cn('ml-auto font-medium', statusConfig.colorClass)}>
+        <span className={cn('ml-auto font-medium whitespace-nowrap', statusConfig.colorClass)}>
           {status.displayText}
         </span>
       </div>

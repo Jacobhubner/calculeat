@@ -65,6 +65,7 @@ export function RecipeCalculatorModal({
     setName('')
     setServings(1)
     setIngredients([])
+    setSaveAs('portion')
     setError(null)
     setInitialized(false)
     lastInitializedRecipeId.current = null
@@ -99,6 +100,7 @@ export function RecipeCalculatorModal({
     setName(recipe.name)
     setServings(recipe.servings)
     setIngredients(mappedIngredients)
+    setSaveAs(recipe.food_item?.default_unit === 'g' ? '100g' : 'portion')
     setError(null)
     setInitialized(true)
     lastInitializedRecipeId.current = recipe.id

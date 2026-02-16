@@ -115,7 +115,7 @@ export function MealMacroBreakdown({
 
   return (
     <div className={cn('mt-3 pt-2 border-t border-neutral-100', className)}>
-      <div className="flex items-start justify-center gap-6">
+      <div className="flex items-start justify-center gap-4 sm:gap-6">
         {/* Weight pie chart (only if weight is available) */}
         {totalWeight > 0 && (
           <MiniPieChart

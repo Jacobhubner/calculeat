@@ -2,7 +2,6 @@ import { ReactNode } from 'react'
 import SiteHeader from './SiteHeader'
 import DashboardNav from './DashboardNav'
 import MobileBottomNav from './MobileBottomNav'
-import MobileDrawer from './MobileDrawer'
 import { useUIStore } from '@/stores/uiStore'
 import { cn } from '@/lib/utils'
 
@@ -28,7 +27,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         </main>
       </div>
       <MobileBottomNav />
-      <MobileDrawer />
     </div>
   )
 }

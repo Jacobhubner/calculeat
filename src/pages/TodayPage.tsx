@@ -161,7 +161,7 @@ export default function TodayPage() {
     return (
       <DashboardLayout>
         <div className="space-y-6">
-          <Skeleton className="h-12 w-96" />
+          <Skeleton className="h-12 w-full max-w-96" />
           <div className="grid gap-6 md:grid-cols-2">
             <Skeleton className="h-64" />
             <Skeleton className="h-64" />

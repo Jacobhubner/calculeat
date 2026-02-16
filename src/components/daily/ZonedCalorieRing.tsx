@@ -151,7 +151,7 @@ export function ZonedCalorieRing({
       </div>
 
       {/* Stats row */}
-      <div className="mt-4 flex items-center justify-center gap-6 text-center">
+      <div className="mt-4 flex items-center justify-center gap-4 sm:gap-6 text-center">
         <div>
           <p className="text-lg font-semibold text-neutral-900">
             {Math.round(min)}-{Math.round(max)}
@@ -170,7 +170,7 @@ export function ZonedCalorieRing({
       </div>
 
       {/* Zone legend */}
-      <div className="mt-1 flex items-center justify-center gap-4 text-[10px]">
+      <div className="mt-1 flex items-center justify-center gap-2 sm:gap-4 text-[10px]">
         <div className="flex items-center gap-1">
           <div className="w-3 h-3 rounded-full bg-blue-400" />
           <span className="text-neutral-500">&lt;{Math.round(min)}</span>
