@@ -221,9 +221,9 @@ export function FoodSuggestions({
                 }
                 className="h-7 text-xs px-2 rounded-lg border border-neutral-300 bg-white"
               >
-                <option value="protein">Protein</option>
-                <option value="carbs">Kolhydrater</option>
                 <option value="fat">Fett</option>
+                <option value="carbs">Kolhydrater</option>
+                <option value="protein">Protein</option>
               </select>
             </div>
 
@@ -238,9 +238,9 @@ export function FoodSuggestions({
                 className="h-7 text-xs px-2 rounded-lg border border-neutral-300 bg-white"
               >
                 <option value="">Ingen</option>
-                {primaryMacro !== 'protein' && <option value="protein">Protein</option>}
-                {primaryMacro !== 'carbs' && <option value="carbs">Kolhydrater</option>}
                 {primaryMacro !== 'fat' && <option value="fat">Fett</option>}
+                {primaryMacro !== 'carbs' && <option value="carbs">Kolhydrater</option>}
+                {primaryMacro !== 'protein' && <option value="protein">Protein</option>}
               </select>
               {secondaryMacro && (
                 <>

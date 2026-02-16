@@ -157,7 +157,7 @@ export function PlateCalculator({
       <CardContent className="space-y-3">
         {/* Välj måltyp */}
         <div className="flex gap-1 p-1 bg-neutral-100 rounded-lg">
-          {(['kcal', 'protein', 'carbs', 'fat'] as GoalType[]).map(type => (
+          {(['kcal', 'fat', 'carbs', 'protein'] as GoalType[]).map(type => (
             <button
               key={type}
               onClick={() => setGoalType(type)}
