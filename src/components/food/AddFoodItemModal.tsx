@@ -85,7 +85,7 @@ export function AddFoodItemModal({
   } | null>(null)
 
   // Barcode scanning state
-  const [scannerOpen, setScannerOpen] = useState(false)
+  const [cameraStream, setCameraStream] = useState<MediaStream | null>(null)
   const [scannedBarcode, setScannedBarcode] = useState<string | null>(null)
   const [showOverwriteConfirm, setShowOverwriteConfirm] = useState(false)
   const [pendingScanResult, setPendingScanResult] = useState<ScanResult | null>(null)
@@ -498,6 +498,10 @@ export function AddFoodItemModal({
     setGramsPerVolume(undefined)
     setVolumeUnit('dl')
     setScannedBarcode(null)
+    if (cameraStream) {
+      cameraStream.getTracks().forEach(t => t.stop())
+      setCameraStream(null)
+    }
     setPendingScanResult(null)
     setShowOverwriteConfirm(false)
     labelScan.reset()
@@ -521,7 +525,20 @@ export function AddFoodItemModal({
                     type="button"
                     variant="outline"
                     size="sm"
-                    onClick={() => setScannerOpen(true)}
+                    onClick={async () => {
+                      try {
+                        const stream = await navigator.mediaDevices.getUserMedia({
+                          video: {
+                            facingMode: 'environment',
+                            width: { ideal: 640 },
+                            height: { ideal: 480 },
+                          },
+                        })
+                        setCameraStream(stream)
+                      } catch {
+                        // Camera denied or not available — silently ignore
+                      }
+                    }}
                     disabled={isBarcodeFetching}
                   >
                     {isBarcodeFetching ? (
@@ -1127,11 +1144,19 @@ export function AddFoodItemModal({
 
       {/* Barcode scanner modal */}
       <BarcodeScannerModal
-        open={scannerOpen}
-        onOpenChange={setScannerOpen}
+        stream={cameraStream}
         onDetected={code => {
           setScannedBarcode(code)
-          setScannerOpen(false)
+          if (cameraStream) {
+            cameraStream.getTracks().forEach(t => t.stop())
+            setCameraStream(null)
+          }
+        }}
+        onClose={() => {
+          if (cameraStream) {
+            cameraStream.getTracks().forEach(t => t.stop())
+            setCameraStream(null)
+          }
         }}
       />
     </>
