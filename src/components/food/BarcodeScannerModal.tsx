@@ -1,4 +1,5 @@
 import { useEffect, useRef, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import Quagga from '@ericblade/quagga2'
 import { Button } from '@/components/ui/button'
 import { X, Camera } from 'lucide-react'
@@ -76,8 +77,8 @@ export function BarcodeScannerModal({ stream, onDetected, onClose }: BarcodeScan
 
   if (!stream) return null
 
-  return (
-    <div className="fixed inset-0 z-50 bg-black flex flex-col">
+  return createPortal(
+    <div className="fixed inset-0 bg-black flex flex-col" style={{ zIndex: 9999 }}>
       <div className="flex items-center justify-between p-4 text-white shrink-0">
         <div className="flex items-center gap-2">
           <Camera className="h-5 w-5" />
@@ -108,6 +109,7 @@ export function BarcodeScannerModal({ stream, onDetected, onClose }: BarcodeScan
           Avbryt
         </Button>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
