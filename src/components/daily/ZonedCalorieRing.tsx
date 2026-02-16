@@ -54,7 +54,7 @@ export function ZonedCalorieRing({
   const getConsumedColor = () => {
     if (isOver) return 'text-red-500'
     if (isWithin) return 'text-green-500'
-    return 'text-blue-500'
+    return 'text-blue-400'
   }
 
   return (

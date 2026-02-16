@@ -63,7 +63,7 @@ export function MealProgressBar({
         >
           {/* Under-minimum zone (left part - cyan when under) */}
           <div
-            className="absolute top-0 left-0 h-full bg-sky-50 rounded-l-full"
+            className="absolute top-0 left-0 h-full bg-blue-50 rounded-l-full"
             style={{ width: `${minZonePercent}%` }}
           />
 
@@ -82,7 +82,7 @@ export function MealProgressBar({
           className={cn(
             'absolute top-0 left-0 h-full rounded-full transition-all duration-300',
             heightClasses[height],
-            status.status === 'under' && 'bg-sky-400',
+            status.status === 'under' && 'bg-blue-400',
             status.status === 'within' && 'bg-green-500',
             status.status === 'over' && 'bg-red-500'
           )}

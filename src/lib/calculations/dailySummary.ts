@@ -271,9 +271,9 @@ export function getStatusBadgeConfig(status: NutrientStatus): {
       return {
         variant: 'under',
         icon: '⇧',
-        colorClass: 'text-sky-600',
-        bgClass: 'bg-sky-50 border-sky-200',
-        textClass: 'text-sky-700',
+        colorClass: 'text-blue-400',
+        bgClass: 'bg-blue-50 border-blue-200',
+        textClass: 'text-blue-500',
       }
     case 'within':
       return {

@@ -84,7 +84,7 @@ export function NutrientStatusRow({
   const getBarColor = () => {
     if (status.status === 'over') return 'bg-red-600'
     if (status.status === 'within') return 'bg-green-600'
-    return 'bg-blue-600'
+    return 'bg-blue-400'
   }
 
   return (
@@ -190,7 +190,7 @@ export function StatusIcon({ status, size = 'md', className }: StatusIconProps) 
   }
 
   const colorClasses = {
-    under: 'text-sky-600',
+    under: 'text-blue-400',
     within: 'text-green-600',
     over: 'text-red-600',
   }

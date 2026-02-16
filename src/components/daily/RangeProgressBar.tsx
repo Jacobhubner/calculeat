@@ -38,8 +38,8 @@ export function RangeProgressBar({
         status: 'under' as const,
         difference: min - value,
         text: `⇧ ${Math.round(min - value)} ${unit}`,
-        barColor: 'bg-blue-600',
-        textColor: 'text-blue-600',
+        barColor: 'bg-blue-400',
+        textColor: 'text-blue-400',
       }
     } else if (value <= max) {
       return {
@@ -162,7 +162,7 @@ export function MealProgressBar({
   const getBarColor = () => {
     if (current > targetMax) return 'bg-red-600'
     if (current >= targetMin) return 'bg-green-600'
-    return 'bg-blue-600'
+    return 'bg-blue-400'
   }
 
   const getStatusText = () => {
@@ -174,7 +174,7 @@ export function MealProgressBar({
   const getStatusColor = () => {
     if (current > targetMax) return 'text-red-600'
     if (current >= targetMin) return 'text-green-600'
-    return 'text-blue-600'
+    return 'text-blue-400'
   }
 
   return (
