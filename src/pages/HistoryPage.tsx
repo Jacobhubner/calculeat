@@ -208,8 +208,8 @@ export default function HistoryPage() {
                                         )}
                                       </div>
                                       <div className="text-sm text-neutral-600">
-                                        P: {log.total_protein_g}g · K: {log.total_carb_g}g · F:{' '}
-                                        {log.total_fat_g}g
+                                        F: {log.total_fat_g}g · K: {log.total_carb_g}g · P:{' '}
+                                        {log.total_protein_g}g
                                       </div>
                                     </div>
                                   </div>

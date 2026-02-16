@@ -150,12 +150,6 @@ export function FoodSuggestions({
     await toggleFavorite(foodId)
   }
 
-  const macroLabel = {
-    protein: 'P',
-    carbs: 'K',
-    fat: 'F',
-  }
-
   return (
     <Card>
       <CardHeader className="pb-2">
@@ -203,7 +197,14 @@ export function FoodSuggestions({
             min={0}
             placeholder="g"
           />
-          <span className="text-xs text-neutral-500">g {primaryMacro === 'protein' ? 'protein' : primaryMacro === 'carbs' ? 'kolhydrater' : 'fett'}</span>
+          <span className="text-xs text-neutral-500">
+            g{' '}
+            {primaryMacro === 'protein'
+              ? 'protein'
+              : primaryMacro === 'carbs'
+                ? 'kolhydrater'
+                : 'fett'}
+          </span>
           {!isSearchValid && <span className="text-xs text-neutral-400 ml-auto">Ange mål</span>}
         </div>
 
@@ -463,12 +464,12 @@ export function FoodSuggestions({
                       <span className="text-neutral-300">•</span>
                       <span
                         className={
-                          primaryMacro === 'protein'
-                            ? 'font-semibold text-blue-600'
+                          primaryMacro === 'fat'
+                            ? 'font-semibold text-amber-600'
                             : 'text-neutral-500'
                         }
                       >
-                        P:{match.protein.toFixed(0)}g
+                        F:{match.fat.toFixed(0)}g
                       </span>
                       <span
                         className={
@@ -481,12 +482,12 @@ export function FoodSuggestions({
                       </span>
                       <span
                         className={
-                          primaryMacro === 'fat'
-                            ? 'font-semibold text-amber-600'
+                          primaryMacro === 'protein'
+                            ? 'font-semibold text-blue-600'
                             : 'text-neutral-500'
                         }
                       >
-                        F:{match.fat.toFixed(0)}g
+                        P:{match.protein.toFixed(0)}g
                       </span>
                     </div>
                   </div>

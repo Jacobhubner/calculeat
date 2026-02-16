@@ -3,7 +3,8 @@ import type { ScanResult } from '@/lib/types'
 import { supabase } from '@/lib/supabase'
 
 const OFF_API_BASE = 'https://world.openfoodfacts.org/api/v2/product'
-const OFF_FIELDS = 'product_name,product_name_sv,product_name_en,nutriments'
+const OFF_FIELDS =
+  'product_name,product_name_sv,product_name_en,nutriments,nutrition_data_per,categories_tags'
 
 interface OFFResponse {
   status: number
@@ -12,6 +13,8 @@ interface OFFResponse {
     product_name_sv?: string
     product_name_en?: string
     nutriments?: Record<string, number | undefined>
+    nutrition_data_per?: string
+    categories_tags?: string[]
   }
 }
 
@@ -118,6 +121,30 @@ async function fetchBarcode(barcode: string): Promise<ScanResult> {
 
   const name = resolveName(data.product)
 
+  // Determine unit: check if nutrition data is per 100ml
+  const dataPer = (data.product.nutrition_data_per || '').toLowerCase()
+  const isPerMl = dataPer.includes('100ml') || dataPer.includes('100 ml')
+  const unit = isPerMl ? 'ml' : 'g'
+
+  // Determine food type from categories
+  const categories = (data.product.categories_tags || []).map(c => c.toLowerCase())
+  const isBeverage = categories.some(
+    c =>
+      c.includes('beverage') ||
+      c.includes('drink') ||
+      c.includes('juice') ||
+      c.includes('milk') ||
+      c.includes('dryck')
+  )
+  const isSoup = categories.some(
+    c => c.includes('soup') || c.includes('soppa') || c.includes('broth')
+  )
+  const foodType: 'Solid' | 'Liquid' | 'Soup' = isSoup
+    ? 'Soup'
+    : isBeverage || isPerMl
+      ? 'Liquid'
+      : 'Solid'
+
   await logScan(true)
 
   return {
@@ -127,7 +154,8 @@ async function fetchBarcode(barcode: string): Promise<ScanResult> {
     carb_g,
     fat_g,
     default_amount: 100,
-    default_unit: 'g',
+    default_unit: unit,
+    food_type: foodType,
   }
 }
 

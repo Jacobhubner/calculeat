@@ -185,9 +185,9 @@ export default function FoodItemsPage() {
   const { user } = useAuth()
   const queryClient = useQueryClient()
   const [searchQuery, setSearchQuery] = useState('')
-  const [selectedFilter, setSelectedFilter] = useState<'all' | 'green' | 'yellow' | 'orange' | 'recipe'>(
-    'all'
-  )
+  const [selectedFilter, setSelectedFilter] = useState<
+    'all' | 'green' | 'yellow' | 'orange' | 'recipe'
+  >('all')
   const [foodItems, setFoodItems] = useState<FoodItem[]>([])
   const [loading, setLoading] = useState(true)
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
@@ -723,16 +723,16 @@ export default function FoodItemsPage() {
                         {displayData ? Math.round(displayData.kcal) : item.calories} kcal
                       </span>
                       <span className="text-neutral-400">•</span>
-                      <span className="text-green-600">
-                        P: {displayData ? displayData.protein.toFixed(1) : item.protein_g}g
+                      <span className="text-yellow-600">
+                        F: {displayData ? displayData.fat.toFixed(1) : item.fat_g}g
                       </span>
                       <span className="text-neutral-400">•</span>
                       <span className="text-blue-600">
                         K: {displayData ? displayData.carb.toFixed(1) : item.carb_g}g
                       </span>
                       <span className="text-neutral-400">•</span>
-                      <span className="text-yellow-600">
-                        F: {displayData ? displayData.fat.toFixed(1) : item.fat_g}g
+                      <span className="text-green-600">
+                        P: {displayData ? displayData.protein.toFixed(1) : item.protein_g}g
                       </span>
                     </div>
                     {/* Row 3: Unit pills + actions (previously Row 4) */}
@@ -825,11 +825,11 @@ export default function FoodItemsPage() {
                       </th>
                       <th className="text-right p-4 text-sm font-semibold text-neutral-900">
                         <button
-                          onClick={() => handleSort('protein')}
+                          onClick={() => handleSort('fat')}
                           className="flex items-center gap-1 ml-auto hover:text-primary-600 transition-colors"
                         >
-                          Protein
-                          {sortBy === 'protein' ? (
+                          Fett
+                          {sortBy === 'fat' ? (
                             sortDirection === 'asc' ? (
                               <ArrowUp className="h-4 w-4" />
                             ) : (
@@ -859,11 +859,11 @@ export default function FoodItemsPage() {
                       </th>
                       <th className="text-right p-4 text-sm font-semibold text-neutral-900">
                         <button
-                          onClick={() => handleSort('fat')}
+                          onClick={() => handleSort('protein')}
                           className="flex items-center gap-1 ml-auto hover:text-primary-600 transition-colors"
                         >
-                          Fett
-                          {sortBy === 'fat' ? (
+                          Protein
+                          {sortBy === 'protein' ? (
                             sortDirection === 'asc' ? (
                               <ArrowUp className="h-4 w-4" />
                             ) : (
@@ -1015,8 +1015,8 @@ export default function FoodItemsPage() {
                             return (
                               <>
                                 <td className="p-4 text-right">
-                                  <span className="font-semibold text-green-600">
-                                    {item.protein_g}
+                                  <span className="font-semibold text-yellow-600">
+                                    {item.fat_g}
                                   </span>
                                   <span className="text-xs text-neutral-500 ml-1">g</span>
                                 </td>
@@ -1025,8 +1025,8 @@ export default function FoodItemsPage() {
                                   <span className="text-xs text-neutral-500 ml-1">g</span>
                                 </td>
                                 <td className="p-4 text-right">
-                                  <span className="font-semibold text-yellow-600">
-                                    {item.fat_g}
+                                  <span className="font-semibold text-green-600">
+                                    {item.protein_g}
                                   </span>
                                   <span className="text-xs text-neutral-500 ml-1">g</span>
                                 </td>
@@ -1037,8 +1037,8 @@ export default function FoodItemsPage() {
                           return (
                             <>
                               <td className="p-4 text-right">
-                                <span className="font-semibold text-green-600">
-                                  {displayData.protein.toFixed(1)}
+                                <span className="font-semibold text-yellow-600">
+                                  {displayData.fat.toFixed(1)}
                                 </span>
                                 <span className="text-xs text-neutral-500 ml-1">g</span>
                               </td>
@@ -1049,8 +1049,8 @@ export default function FoodItemsPage() {
                                 <span className="text-xs text-neutral-500 ml-1">g</span>
                               </td>
                               <td className="p-4 text-right">
-                                <span className="font-semibold text-yellow-600">
-                                  {displayData.fat.toFixed(1)}
+                                <span className="font-semibold text-green-600">
+                                  {displayData.protein.toFixed(1)}
                                 </span>
                                 <span className="text-xs text-neutral-500 ml-1">g</span>
                               </td>

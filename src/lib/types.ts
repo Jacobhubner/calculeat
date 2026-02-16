@@ -8,7 +8,8 @@ export interface ScanResult {
   carb_g: number | null
   fat_g: number | null
   default_amount: number // alltid 100
-  default_unit: string // alltid 'g'
+  default_unit: string // 'g' eller 'ml' beroende på etikett
+  food_type?: 'Solid' | 'Liquid' | 'Soup'
 }
 
 // All 10 BMR formulas from Excel

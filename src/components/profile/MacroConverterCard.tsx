@@ -221,9 +221,9 @@ export default function MacroConverterCard({ profile }: MacroConverterCardProps)
             <Label htmlFor="macro">Makro</Label>
             <Select id="macro" value={macro} onChange={e => setMacro(e.target.value as MacroType)}>
               <option value="">Välj makro...</option>
-              <option value="protein">Protein</option>
               <option value="fat">Fett</option>
               <option value="carbs">Kolhydrater</option>
+              <option value="protein">Protein</option>
             </Select>
           </div>
           <div>

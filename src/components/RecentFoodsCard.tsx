@@ -129,7 +129,7 @@ export default function RecentFoodsCard({ dailyLogId, onAddFood }: RecentFoodsCa
                 <span>{food.calories} kcal</span>
                 <span className="hidden sm:flex items-center gap-1">
                   <span className="hidden md:inline">•</span>
-                  P: {food.protein_g}g | K: {food.carb_g}g | F: {food.fat_g}g
+                  F: {food.fat_g}g | K: {food.carb_g}g | P: {food.protein_g}g
                 </span>
               </div>
             </div>

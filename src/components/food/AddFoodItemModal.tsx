@@ -403,6 +403,7 @@ export function AddFoodItemModal({
       if (result.protein_g !== null) setValue('protein_g', result.protein_g)
       if (result.carb_g !== null) setValue('carb_g', result.carb_g)
       if (result.fat_g !== null) setValue('fat_g', result.fat_g)
+      if (result.food_type) setValue('food_type', result.food_type)
       setPendingScanResult(null)
     },
     [setValue]
@@ -734,17 +735,17 @@ export function AddFoodItemModal({
                     </div>
 
                     <div>
-                      <Label htmlFor="protein_g">Protein (g) *</Label>
+                      <Label htmlFor="fat_g">Fett (g) *</Label>
                       <Input
-                        id="protein_g"
+                        id="fat_g"
                         type="number"
                         step="0.1"
-                        {...register('protein_g', { valueAsNumber: true })}
+                        {...register('fat_g', { valueAsNumber: true })}
                         placeholder="0"
-                        className={errors.protein_g ? 'border-red-500' : ''}
+                        className={errors.fat_g ? 'border-red-500' : ''}
                       />
-                      {errors.protein_g && (
-                        <p className="text-sm text-red-600 mt-1">{errors.protein_g.message}</p>
+                      {errors.fat_g && (
+                        <p className="text-sm text-red-600 mt-1">{errors.fat_g.message}</p>
                       )}
                     </div>
 
@@ -764,17 +765,17 @@ export function AddFoodItemModal({
                     </div>
 
                     <div>
-                      <Label htmlFor="fat_g">Fett (g) *</Label>
+                      <Label htmlFor="protein_g">Protein (g) *</Label>
                       <Input
-                        id="fat_g"
+                        id="protein_g"
                         type="number"
                         step="0.1"
-                        {...register('fat_g', { valueAsNumber: true })}
+                        {...register('protein_g', { valueAsNumber: true })}
                         placeholder="0"
-                        className={errors.fat_g ? 'border-red-500' : ''}
+                        className={errors.protein_g ? 'border-red-500' : ''}
                       />
-                      {errors.fat_g && (
-                        <p className="text-sm text-red-600 mt-1">{errors.fat_g.message}</p>
+                      {errors.protein_g && (
+                        <p className="text-sm text-red-600 mt-1">{errors.protein_g.message}</p>
                       )}
                     </div>
                   </div>
@@ -993,9 +994,9 @@ export function AddFoodItemModal({
                                 </span>
                               </div>
                               <div className="flex justify-between">
-                                <span className="text-neutral-600">Protein:</span>
+                                <span className="text-neutral-600">Fett:</span>
                                 <span className="font-medium text-neutral-900">
-                                  {servingPreview.protein.toFixed(1)}g
+                                  {servingPreview.fat.toFixed(1)}g
                                 </span>
                               </div>
                               <div className="flex justify-between">
@@ -1005,9 +1006,9 @@ export function AddFoodItemModal({
                                 </span>
                               </div>
                               <div className="flex justify-between">
-                                <span className="text-neutral-600">Fett:</span>
+                                <span className="text-neutral-600">Protein:</span>
                                 <span className="font-medium text-neutral-900">
-                                  {servingPreview.fat.toFixed(1)}g
+                                  {servingPreview.protein.toFixed(1)}g
                                 </span>
                               </div>
                             </div>
@@ -1053,15 +1054,15 @@ export function AddFoodItemModal({
                         <div className="space-y-2">
                           <div>
                             <div className="flex justify-between text-xs mb-1">
-                              <span>Protein</span>
+                              <span>Fett</span>
                               <span className="font-medium">
-                                {Math.round(liveCalculations.proteinPercent)}%
+                                {Math.round(liveCalculations.fatPercent)}%
                               </span>
                             </div>
                             <div className="h-2 bg-neutral-200 rounded-full overflow-hidden">
                               <div
-                                className="h-full bg-blue-500"
-                                style={{ width: `${liveCalculations.proteinPercent}%` }}
+                                className="h-full bg-amber-500"
+                                style={{ width: `${liveCalculations.fatPercent}%` }}
                               />
                             </div>
                           </div>
@@ -1083,15 +1084,15 @@ export function AddFoodItemModal({
 
                           <div>
                             <div className="flex justify-between text-xs mb-1">
-                              <span>Fett</span>
+                              <span>Protein</span>
                               <span className="font-medium">
-                                {Math.round(liveCalculations.fatPercent)}%
+                                {Math.round(liveCalculations.proteinPercent)}%
                               </span>
                             </div>
                             <div className="h-2 bg-neutral-200 rounded-full overflow-hidden">
                               <div
-                                className="h-full bg-amber-500"
-                                style={{ width: `${liveCalculations.fatPercent}%` }}
+                                className="h-full bg-blue-500"
+                                style={{ width: `${liveCalculations.proteinPercent}%` }}
                               />
                             </div>
                           </div>

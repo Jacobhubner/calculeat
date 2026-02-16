@@ -331,8 +331,8 @@ export default function HistoryDayPage() {
                         <div>
                           <CardTitle className="text-lg">{meal.meal_name}</CardTitle>
                           <CardDescription>
-                            {meal.meal_calories} kcal · P: {meal.meal_protein_g}g · K:{' '}
-                            {meal.meal_carb_g}g · F: {meal.meal_fat_g}g
+                            {meal.meal_calories} kcal · F: {meal.meal_fat_g}g · K:{' '}
+                            {meal.meal_carb_g}g · P: {meal.meal_protein_g}g
                           </CardDescription>
                         </div>
                       </div>
@@ -377,7 +377,7 @@ export default function HistoryDayPage() {
                               <div className="text-right">
                                 <div className="font-semibold">{item.calories} kcal</div>
                                 <div className="text-xs text-neutral-600">
-                                  P: {item.protein_g}g · K: {item.carb_g}g · F: {item.fat_g}g
+                                  F: {item.fat_g}g · K: {item.carb_g}g · P: {item.protein_g}g
                                 </div>
                               </div>
                               {isEditing && (
@@ -432,16 +432,16 @@ export default function HistoryDayPage() {
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex justify-between">
-                <span className="text-sm text-neutral-600">Protein</span>
-                <span className="text-sm font-semibold">{log.total_protein_g}g</span>
+                <span className="text-sm text-neutral-600">Fett</span>
+                <span className="text-sm font-semibold">{log.total_fat_g}g</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-neutral-600">Kolhydrater</span>
                 <span className="text-sm font-semibold">{log.total_carb_g}g</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-neutral-600">Fett</span>
-                <span className="text-sm font-semibold">{log.total_fat_g}g</span>
+                <span className="text-sm text-neutral-600">Protein</span>
+                <span className="text-sm font-semibold">{log.total_protein_g}g</span>
               </div>
               <div className="flex justify-between pt-3 border-t">
                 <span className="text-sm text-neutral-600">Måltider</span>

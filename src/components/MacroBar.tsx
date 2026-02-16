@@ -17,10 +17,10 @@ interface MacroBarProps {
 export default function MacroBar({ protein, carbs, fat, className }: MacroBarProps) {
   const macros = [
     {
-      name: 'Protein',
-      data: protein,
-      color: 'bg-primary-500',
-      lightColor: 'bg-primary-100',
+      name: 'Fett',
+      data: fat,
+      color: 'bg-success-500',
+      lightColor: 'bg-success-100',
     },
     {
       name: 'Kolhydrater',
@@ -29,10 +29,10 @@ export default function MacroBar({ protein, carbs, fat, className }: MacroBarPro
       lightColor: 'bg-accent-100',
     },
     {
-      name: 'Fett',
-      data: fat,
-      color: 'bg-success-500',
-      lightColor: 'bg-success-100',
+      name: 'Protein',
+      data: protein,
+      color: 'bg-primary-500',
+      lightColor: 'bg-primary-100',
     },
   ]
 

@@ -359,16 +359,16 @@ export function PlateCalculator({
             {/* Makros i rad - kompakt */}
             <div className="flex justify-center gap-3 text-xs mb-2">
               <span className="flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-                <span className="font-semibold text-blue-700">P:{calculation.protein}g</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                <span className="font-semibold text-amber-700">F:{calculation.fat}g</span>
               </span>
               <span className="flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
                 <span className="font-semibold text-green-700">K:{calculation.carbs}g</span>
               </span>
               <span className="flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                <span className="font-semibold text-amber-700">F:{calculation.fat}g</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                <span className="font-semibold text-blue-700">P:{calculation.protein}g</span>
               </span>
             </div>
 

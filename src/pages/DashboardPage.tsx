@@ -294,9 +294,9 @@ export default function DashboardPage() {
                           <p className="text-sm text-neutral-600">{meal.meal_calories} kcal</p>
                         </div>
                         <div className="text-right text-xs text-neutral-500">
-                          <p>P: {meal.meal_protein_g}g</p>
-                          <p>K: {meal.meal_carb_g}g</p>
                           <p>F: {meal.meal_fat_g}g</p>
+                          <p>K: {meal.meal_carb_g}g</p>
+                          <p>P: {meal.meal_protein_g}g</p>
                         </div>
                       </div>
                     ))}

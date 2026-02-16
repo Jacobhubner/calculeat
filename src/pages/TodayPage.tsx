@@ -510,8 +510,8 @@ export default function TodayPage() {
                   {dailySummary && profile ? (
                     <>
                       <NutrientStatusRow
-                        status={dailySummary.proteinStatus}
-                        label={`Protein (${Math.round(profile.protein_min_percent || 0)}-${Math.round(profile.protein_max_percent || 0)}%)`}
+                        status={dailySummary.fatStatus}
+                        label={`Fett (${Math.round(profile.fat_min_percent || 0)}-${Math.round(profile.fat_max_percent || 0)}%)`}
                         unit="g"
                         showProgress
                       />
@@ -522,8 +522,8 @@ export default function TodayPage() {
                         showProgress
                       />
                       <NutrientStatusRow
-                        status={dailySummary.fatStatus}
-                        label={`Fett (${Math.round(profile.fat_min_percent || 0)}-${Math.round(profile.fat_max_percent || 0)}%)`}
+                        status={dailySummary.proteinStatus}
+                        label={`Protein (${Math.round(profile.protein_min_percent || 0)}-${Math.round(profile.protein_max_percent || 0)}%)`}
                         unit="g"
                         showProgress
                       />
@@ -531,16 +531,16 @@ export default function TodayPage() {
                   ) : (
                     <div className="space-y-2 text-sm text-neutral-500">
                       <div className="flex justify-between">
-                        <span>Protein</span>
-                        <span className="font-medium">{todayLog?.total_protein_g || 0}g</span>
+                        <span>Fett</span>
+                        <span className="font-medium">{todayLog?.total_fat_g || 0}g</span>
                       </div>
                       <div className="flex justify-between">
                         <span>Kolhydrater</span>
                         <span className="font-medium">{todayLog?.total_carb_g || 0}g</span>
                       </div>
                       <div className="flex justify-between">
-                        <span>Fett</span>
-                        <span className="font-medium">{todayLog?.total_fat_g || 0}g</span>
+                        <span>Protein</span>
+                        <span className="font-medium">{todayLog?.total_protein_g || 0}g</span>
                       </div>
                     </div>
                   )}
@@ -721,7 +721,7 @@ export default function TodayPage() {
                                       <span>{item.calories} kcal</span>
                                       <span className="hidden sm:inline">•</span>
                                       <span className="hidden sm:inline">
-                                        P: {item.protein_g}g | K: {item.carb_g}g | F: {item.fat_g}g
+                                        F: {item.fat_g}g | K: {item.carb_g}g | P: {item.protein_g}g
                                       </span>
                                     </div>
                                   </div>
@@ -745,11 +745,11 @@ export default function TodayPage() {
                             <span className="font-medium text-neutral-700">Totalt:</span>
                             <div className="flex gap-4 text-neutral-600">
                               <span>{mealEntry.meal_calories} kcal</span>
+                              <span className="hidden sm:inline">F: {mealEntry.meal_fat_g}g</span>
+                              <span className="hidden sm:inline">K: {mealEntry.meal_carb_g}g</span>
                               <span className="hidden sm:inline">
                                 P: {mealEntry.meal_protein_g}g
                               </span>
-                              <span className="hidden sm:inline">K: {mealEntry.meal_carb_g}g</span>
-                              <span className="hidden sm:inline">F: {mealEntry.meal_fat_g}g</span>
                             </div>
                           </div>
                           {/* Meal macro breakdown */}
