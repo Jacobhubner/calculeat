@@ -1,5 +1,5 @@
-import { useState, useMemo, useEffect, useRef, useCallback } from 'react'
-import { Search, Plus, X } from 'lucide-react'
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
+import { Search, Plus, X, ChevronLeft, ChevronRight } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -12,12 +12,32 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Select } from '@/components/ui/select'
-import { useFoodItems, type FoodItem } from '@/hooks/useFoodItems'
+import {
+  usePaginatedFoodItems,
+  type FoodItem,
+  type FoodTab,
+  type FoodSource,
+} from '@/hooks/useFoodItems'
 import { useAddFoodToMeal, useCreateMealEntry, useUpdateMealItem } from '@/hooks/useDailyLogs'
 import { useMealSettings } from '@/hooks/useMealSettings'
 import { UnitSelector, getAvailableUnits, calculateNutritionForUnit } from './UnitSelector'
 import { NutritionPreview } from './NutritionPreview'
 import { toast } from 'sonner'
+
+const SOURCE_BADGES: Record<FoodSource, { label: string; className: string }> = {
+  user: { label: 'Min', className: 'bg-neutral-100 text-neutral-600 border-neutral-300' },
+  manual: { label: 'CalculEat', className: 'bg-purple-100 text-purple-700 border-purple-300' },
+  livsmedelsverket: { label: 'SLV', className: 'bg-blue-100 text-blue-700 border-blue-300' },
+  usda: { label: 'USDA', className: 'bg-emerald-100 text-emerald-700 border-emerald-300' },
+}
+
+const TABS: { key: FoodTab; label: string }[] = [
+  { key: 'mina', label: 'Mina' },
+  { key: 'slv', label: 'SLV' },
+  { key: 'usda', label: 'USDA' },
+]
+
+const PAGE_SIZE = 50
 
 interface PreselectedFood {
   food: FoodItem
@@ -36,11 +56,11 @@ interface AddFoodToMealModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   mealName: string
-  mealEntryId?: string // If provided, add to existing meal entry
+  mealEntryId?: string
   dailyLogId: string
   onSuccess?: () => void
-  preselectedFood?: PreselectedFood // Pre-fill form with food from sidebar tools
-  editItem?: EditItemData // If provided, modal is in edit mode
+  preselectedFood?: PreselectedFood
+  editItem?: EditItemData
 }
 
 export function AddFoodToMealModal({
@@ -54,7 +74,8 @@ export function AddFoodToMealModal({
   editItem,
 }: AddFoodToMealModalProps) {
   const isEditMode = !!editItem
-  const [searchQuery, setSearchQuery] = useState('')
+
+  // Food-selection state
   const [selectedFood, setSelectedFood] = useState<FoodItem | null>(
     editItem?.food ?? preselectedFood?.food ?? null
   )
@@ -66,51 +87,86 @@ export function AddFoodToMealModal({
   )
   const [selectedMealName, setSelectedMealName] = useState<string>(mealName)
 
-  // Track if food was preselected to avoid overwriting amount/unit
+  // Search state
+  const [searchQuery, setSearchQuery] = useState('')
+  const [debouncedSearch, setDebouncedSearch] = useState('')
+
+  // Tab + pagination + filter state
+  const [activeTab, setActiveTab] = useState<FoodTab>('mina')
+  const [page, setPage] = useState(0)
+  const [colorFilter, setColorFilter] = useState<'Green' | 'Yellow' | 'Orange' | null>(null)
+
+  // Refs
   const isPreselectedRef = useRef(false)
   const prevOpenRef = useRef(open)
 
-  const { data: foods, isLoading } = useFoodItems()
+  // Hooks
   const { data: mealSettings } = useMealSettings()
   const addFoodToMeal = useAddFoodToMeal()
   const createMealEntry = useCreateMealEntry()
   const updateMealItem = useUpdateMealItem()
 
-  // Filter foods based on search query
-  const filteredFoods = useMemo(() => {
-    if (!foods) return []
-    if (!searchQuery.trim()) return foods.slice(0, 20) // Show first 20 foods when no search
+  // Debounce search 300ms
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(searchQuery), 300)
+    return () => clearTimeout(timer)
+  }, [searchQuery])
 
-    const query = searchQuery.toLowerCase()
-    return foods
-      .filter(
-        food =>
-          food.name.toLowerCase().includes(query) ||
-          (food.brand && food.brand.toLowerCase().includes(query))
-      )
-      .slice(0, 20)
-  }, [foods, searchQuery])
+  // Reset page on tab/search/filter change
+  /* eslint-disable react-hooks/set-state-in-effect -- Legitimate pattern for resetting pagination state */
+  useEffect(() => {
+    setPage(0)
+  }, [activeTab, debouncedSearch, colorFilter])
 
-  // Reset form state - memoized to avoid recreation
+  // Reset colorFilter on tab change
+  useEffect(() => {
+    setColorFilter(null)
+  }, [activeTab])
+  /* eslint-enable react-hooks/set-state-in-effect */
+
+  // Paginated data via RPC
+  const { data: paginatedData, isLoading: foodsLoading } = usePaginatedFoodItems({
+    tab: activeTab,
+    page,
+    pageSize: PAGE_SIZE,
+    searchQuery: debouncedSearch || undefined,
+    colorFilter: colorFilter || undefined,
+  })
+
+  const foods = paginatedData?.items ?? []
+  const totalPages = paginatedData?.totalPages ?? 0
+
+  // Page clamping
+  /* eslint-disable react-hooks/set-state-in-effect -- Legitimate pattern for clamping page on data change */
+  useEffect(() => {
+    if (paginatedData && page >= paginatedData.totalPages && paginatedData.totalPages > 0) {
+      setPage(paginatedData.totalPages - 1)
+    }
+  }, [paginatedData, page])
+  /* eslint-enable react-hooks/set-state-in-effect */
+
+  // Reset form state
   const resetForm = useCallback(() => {
     setSearchQuery('')
+    setDebouncedSearch('')
     setSelectedFood(null)
     setAmount(1)
     setSelectedUnit('')
     setSelectedMealName('')
+    setActiveTab('mina')
+    setPage(0)
+    setColorFilter(null)
     isPreselectedRef.current = false
   }, [])
 
   // Initialize form when modal opens
   const initializeForm = useCallback(() => {
-    // Set meal name from prop or first available meal
     if (mealName) {
       setSelectedMealName(mealName)
     } else if (mealSettings && mealSettings.length > 0) {
       setSelectedMealName(mealSettings[0].meal_name)
     }
 
-    // Edit mode: pre-fill with existing item data
     if (editItem) {
       isPreselectedRef.current = true
       setSelectedFood(editItem.food)
@@ -119,7 +175,6 @@ export function AddFoodToMealModal({
       return
     }
 
-    // Pre-fill form with preselected food from sidebar tools
     if (preselectedFood) {
       isPreselectedRef.current = true
       setSelectedFood(preselectedFood.food)
@@ -128,32 +183,29 @@ export function AddFoodToMealModal({
     }
   }, [mealName, mealSettings, preselectedFood, editItem])
 
-  // Handle modal open/close state changes
+  // Handle modal open/close
   /* eslint-disable react-hooks/set-state-in-effect -- Legitimate pattern for syncing state on open/close */
   useEffect(() => {
     if (open && !prevOpenRef.current) {
-      // Modal just opened
       initializeForm()
     } else if (!open && prevOpenRef.current) {
-      // Modal just closed
       resetForm()
     }
     prevOpenRef.current = open
   }, [open, initializeForm, resetForm])
   /* eslint-enable react-hooks/set-state-in-effect */
 
-  // Calculate nutrition preview
+  // Nutrition preview
   const nutritionPreview = useMemo(() => {
     if (!selectedFood || amount === '' || amount <= 0) return null
     return calculateNutritionForUnit(selectedFood, amount, selectedUnit)
   }, [selectedFood, amount, selectedUnit])
 
   const handleSelectFood = (food: FoodItem) => {
-    isPreselectedRef.current = false // Reset flag for manual selection
+    isPreselectedRef.current = false
     setSelectedFood(food)
     setSearchQuery('')
 
-    // Determine display mode: first check localStorage, then use same default logic as FoodItemsPage
     const availableUnits = getAvailableUnits(food)
     let displayMode: string | null = null
 
@@ -166,7 +218,6 @@ export function AddFoodToMealModal({
       // Ignore localStorage errors
     }
 
-    // If no saved mode, determine default (same logic as FoodItemsPage getDefaultDisplayMode)
     if (!displayMode) {
       if (food.grams_per_piece && food.serving_unit && food.kcal_per_unit) {
         displayMode = 'serving'
@@ -175,7 +226,6 @@ export function AddFoodToMealModal({
       }
     }
 
-    // Map display mode to unit and amount
     let defaultUnit: string
     let defaultAmount: number
     if (displayMode === 'serving') {
@@ -189,7 +239,6 @@ export function AddFoodToMealModal({
       defaultAmount = 100
     }
 
-    // Ensure selected unit is available, fallback to first available
     if (!availableUnits.includes(defaultUnit)) {
       defaultUnit = availableUnits[0]
       defaultAmount = food.default_amount
@@ -205,14 +254,12 @@ export function AddFoodToMealModal({
       return
     }
 
-    // Calculate current calories
     const currentNutrition = calculateNutritionForUnit(selectedFood, amount, selectedUnit)
     if (!currentNutrition) {
       setSelectedUnit(newUnit)
       return
     }
 
-    // Find amount in new unit that gives same calories
     const currentCalories = currentNutrition.calories
     const caloriesPerNewUnit = calculateNutritionForUnit(selectedFood, 1, newUnit)
 
@@ -222,16 +269,14 @@ export function AddFoodToMealModal({
     }
 
     const newAmount = currentCalories / caloriesPerNewUnit.calories
-
     setSelectedUnit(newUnit)
-    setAmount(Math.round(newAmount * 100) / 100) // Round to 2 decimals
+    setAmount(Math.round(newAmount * 100) / 100)
   }
 
   const handleAddFood = async () => {
     if (!selectedFood || !nutritionPreview) return
 
     try {
-      // Edit mode: update existing item
       if (isEditMode && editItem) {
         await updateMealItem.mutateAsync({
           itemId: editItem.itemId,
@@ -251,7 +296,6 @@ export function AddFoodToMealModal({
 
       let targetMealEntryId = mealEntryId
 
-      // If no meal entry exists, create one
       if (!targetMealEntryId) {
         const effectiveMealName = selectedMealName || mealName
         if (!effectiveMealName) {
@@ -288,7 +332,7 @@ export function AddFoodToMealModal({
     }
   }
 
-  const getColorBadge = (color?: string) => {
+  const getColorBadge = (color?: string | null) => {
     if (!color) return null
     return (
       <Badge
@@ -308,7 +352,7 @@ export function AddFoodToMealModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg md:max-h-[85vh] overflow-hidden flex flex-col">
+      <DialogContent className="max-w-lg max-h-[85vh] overflow-hidden flex flex-col">
         <DialogHeader>
           <DialogTitle>{isEditMode ? 'Redigera livsmedel' : 'Lägg till livsmedel'}</DialogTitle>
           <DialogDescription>
@@ -320,7 +364,7 @@ export function AddFoodToMealModal({
           </DialogDescription>
         </DialogHeader>
 
-        {/* Meal selector - show when mealName is not provided (from sidebar tools), hide in edit mode */}
+        {/* Meal selector */}
         {!isEditMode && !mealName && mealSettings && mealSettings.length > 0 && (
           <div className="space-y-2">
             <Label>Välj måltid</Label>
@@ -339,9 +383,29 @@ export function AddFoodToMealModal({
           </div>
         )}
 
-        <div className="flex-1 overflow-y-auto space-y-4">
+        <div className="flex-1 overflow-y-auto space-y-3">
           {!selectedFood ? (
             <>
+              {/* Tabs */}
+              <div className="flex gap-1 border-b border-neutral-200">
+                {TABS.map(tab => (
+                  <button
+                    key={tab.key}
+                    onClick={() => {
+                      setActiveTab(tab.key)
+                      setPage(0)
+                    }}
+                    className={`px-3 py-1.5 text-sm font-medium border-b-2 transition-colors ${
+                      activeTab === tab.key
+                        ? 'border-primary-500 text-primary-600'
+                        : 'border-transparent text-neutral-500 hover:text-neutral-700'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+
               {/* Search input */}
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400" />
@@ -354,29 +418,69 @@ export function AddFoodToMealModal({
                 />
               </div>
 
+              {/* Color filter pills */}
+              <div className="flex gap-1">
+                {([null, 'Green', 'Yellow', 'Orange'] as const).map(c => (
+                  <button
+                    key={c ?? 'all'}
+                    onClick={() => {
+                      setColorFilter(c)
+                      setPage(0)
+                    }}
+                    className={`px-2 py-0.5 text-xs rounded-full border transition-colors ${
+                      colorFilter === c
+                        ? c === 'Green'
+                          ? 'bg-green-500 text-white border-green-600'
+                          : c === 'Yellow'
+                            ? 'bg-yellow-400 text-neutral-900 border-yellow-500'
+                            : c === 'Orange'
+                              ? 'bg-orange-500 text-white border-orange-600'
+                              : 'bg-neutral-200 text-neutral-700 border-neutral-400'
+                        : 'bg-white text-neutral-500 border-neutral-200 hover:border-neutral-400'
+                    }`}
+                  >
+                    {c === null
+                      ? 'Alla'
+                      : c === 'Green'
+                        ? 'Grön'
+                        : c === 'Yellow'
+                          ? 'Gul'
+                          : 'Orange'}
+                  </button>
+                ))}
+              </div>
+
               {/* Food list */}
-              <div className="space-y-1 max-h-[400px] overflow-y-auto">
-                {isLoading ? (
+              <div className="space-y-1">
+                {foodsLoading ? (
                   <p className="text-sm text-neutral-500 text-center py-4">Laddar livsmedel...</p>
-                ) : filteredFoods.length === 0 ? (
+                ) : foods.length === 0 ? (
                   <p className="text-sm text-neutral-500 text-center py-4">
                     {searchQuery ? 'Inga livsmedel hittades' : 'Inga livsmedel'}
                   </p>
                 ) : (
-                  filteredFoods.map(food => (
+                  foods.map(food => (
                     <button
                       key={food.id}
                       onClick={() => handleSelectFood(food)}
                       className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-neutral-50 transition-colors text-left border border-transparent hover:border-neutral-200"
                     >
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium text-neutral-900 truncate">{food.name}</p>
+                        <div className="flex items-center gap-1.5 min-w-0">
+                          <p className="font-medium text-neutral-900 truncate">{food.name}</p>
+                          <Badge
+                            variant="outline"
+                            className={`text-[9px] px-1 py-0 h-4 shrink-0 ${SOURCE_BADGES[food.source].className}`}
+                          >
+                            {SOURCE_BADGES[food.source].label}
+                          </Badge>
+                        </div>
                         <p className="text-xs text-neutral-500">
                           {food.calories} kcal / {food.default_amount} {food.default_unit}
                           {food.brand && ` • ${food.brand}`}
                         </p>
                       </div>
-                      <div className="flex items-center gap-2 ml-2">
+                      <div className="flex items-center gap-2 ml-2 shrink-0">
                         {getColorBadge(food.energy_density_color)}
                         <Plus className="h-4 w-4 text-neutral-400" />
                       </div>
@@ -384,6 +488,35 @@ export function AddFoodToMealModal({
                   ))
                 )}
               </div>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-between pt-2 border-t border-neutral-100">
+                  <span className="text-xs text-neutral-500">
+                    Sida {page + 1} av {totalPages}
+                  </span>
+                  <div className="flex gap-1">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setPage(p => Math.max(0, p - 1))}
+                      disabled={page === 0}
+                      className="h-7 px-2 text-xs gap-1"
+                    >
+                      <ChevronLeft className="h-3 w-3" /> Föreg
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
+                      disabled={page >= totalPages - 1}
+                      className="h-7 px-2 text-xs gap-1"
+                    >
+                      Nästa <ChevronRight className="h-3 w-3" />
+                    </Button>
+                  </div>
+                </div>
+              )}
             </>
           ) : (
             <>

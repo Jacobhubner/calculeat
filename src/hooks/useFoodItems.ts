@@ -1,20 +1,33 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
-import { calculateFoodColor, type FoodColor, type FoodType } from '@/lib/calculations/colorDensity'
+import { type FoodColor, type FoodType } from '@/lib/calculations/colorDensity'
+
+export type FoodSource = 'manual' | 'livsmedelsverket' | 'usda' | 'user'
+export type FoodTab = 'mina' | 'slv' | 'usda'
+
+export interface PaginatedResult {
+  items: FoodItem[]
+  totalCount: number
+  totalPages: number
+}
 
 export interface FoodItem {
   id: string
   user_id: string | null // NULL = global item, string = user-specific
   name: string
-  brand?: string
-  barcode?: string
+  brand?: string | null
+  barcode?: string | null
 
   // Copy-on-Write tracking
   global_food_id?: string | null // Reference to original global item (for user copies)
   is_hidden?: boolean // Soft-delete marker for user copies
 
-  // Nutrition per default amount
+  // Source tracking
+  source: FoodSource
+  external_id?: string | null
+
+  // Nutrition per reference amount
   calories: number
   fat_g: number
   saturated_fat_g?: number
@@ -28,9 +41,14 @@ export interface FoodItem {
   default_amount: number
   default_unit: string
 
+  // Reference basis for nutrition values
+  reference_amount: number // e.g. 100
+  reference_unit: 'g' | 'ml' // e.g. 'g'
+  density_g_per_ml?: number | null // required for ml → kcal_per_gram conversion
+
   // Conversion data
   weight_grams?: number
-  kcal_per_gram?: number
+  kcal_per_gram?: number | null
   grams_per_unit?: number
   ml_per_gram?: number
   grams_per_piece?: number
@@ -44,23 +62,22 @@ export interface FoodItem {
 
   // Food color density tracking
   food_type: FoodType
-  energy_density_color?: FoodColor
+  energy_density_color?: FoodColor | null
 
   // Recipe flag
   is_recipe: boolean
 
   // Metadata
-  notes?: string
-  source?: string
+  notes?: string | null
   created_at: string
   updated_at: string
 }
 
 /**
  * Apply shadowing logic to food items:
- * - User items override global items with the same global_food_id
+ * - User items override global items with the same global_food_id (ID-based only)
  * - Hidden items are excluded
- * - User items take precedence over global items with the same name
+ * - No name-based shadowing — same name can exist across multiple sources
  */
 function applyShadowing(items: FoodItem[], userId: string): FoodItem[] {
   // Get IDs of global items that user has copied (via global_food_id)
@@ -70,13 +87,6 @@ function applyShadowing(items: FoodItem[], userId: string): FoodItem[] {
       .map(item => item.global_food_id)
   )
 
-  // Get names of user items (for name-based shadowing fallback)
-  const userItemNames = new Set(
-    items
-      .filter(item => item.user_id === userId && !item.is_hidden)
-      .map(item => item.name.toLowerCase())
-  )
-
   return items.filter(item => {
     // Exclude hidden items
     if (item.is_hidden) return false
@@ -84,12 +94,10 @@ function applyShadowing(items: FoodItem[], userId: string): FoodItem[] {
     // Keep user's own non-hidden items
     if (item.user_id === userId) return true
 
-    // For global items: exclude if shadowed by ID or name
-    if (item.user_id === null) {
-      if (shadowedGlobalIds.has(item.id)) return false
-      if (userItemNames.has(item.name.toLowerCase())) return false
-    }
+    // For global items: exclude ONLY if shadowed via global_food_id
+    if (item.user_id === null && shadowedGlobalIds.has(item.id)) return false
 
+    // All other global items: show
     return true
   })
 }
@@ -109,12 +117,16 @@ export interface CreateFoodItemInput {
   default_amount: number
   default_unit: string
   weight_grams: number
+  reference_amount?: number
+  reference_unit?: 'g' | 'ml'
+  density_g_per_ml?: number | null
   ml_per_gram?: number
   grams_per_piece?: number
   serving_unit?: string
   food_type: FoodType
   notes?: string
-  source?: string
+  source?: FoodSource
+  external_id?: string
 }
 
 /**
@@ -213,26 +225,35 @@ export function useCreateFoodItem() {
     mutationFn: async (input: CreateFoodItemInput) => {
       if (!user) throw new Error('User not authenticated')
 
-      // Calculate kcal_per_gram based on weight_grams (always 100g base)
-      const weight_grams = input.weight_grams ?? 100
-      const kcal_per_gram = weight_grams > 0 ? input.calories / weight_grams : undefined
-
-      // Calculate food color density
-      const energy_density_color = kcal_per_gram
-        ? calculateFoodColor({
-            calories: input.calories,
-            weightGrams: weight_grams,
-            foodType: input.food_type,
-          })
-        : undefined
-
+      // Trigger handles kcal_per_gram and energy_density_color calculation
       const { data, error } = await supabase
         .from('food_items')
         .insert({
           user_id: user.id,
-          ...input,
-          kcal_per_gram,
-          energy_density_color,
+          source: input.source ?? 'user',
+          external_id: input.external_id,
+          name: input.name,
+          brand: input.brand,
+          barcode: input.barcode,
+          calories: input.calories,
+          fat_g: input.fat_g,
+          saturated_fat_g: input.saturated_fat_g,
+          carb_g: input.carb_g,
+          sugar_g: input.sugar_g,
+          fiber_g: input.fiber_g,
+          protein_g: input.protein_g,
+          salt_g: input.salt_g,
+          default_amount: input.default_amount,
+          default_unit: input.default_unit,
+          weight_grams: input.weight_grams,
+          reference_amount: input.reference_amount ?? input.weight_grams ?? 100,
+          reference_unit: input.reference_unit ?? 'g',
+          density_g_per_ml: input.density_g_per_ml,
+          ml_per_gram: input.ml_per_gram,
+          grams_per_piece: input.grams_per_piece,
+          serving_unit: input.serving_unit,
+          food_type: input.food_type,
+          notes: input.notes,
           is_recipe: false,
         })
         .select()
@@ -267,40 +288,41 @@ export function useUpdateFoodItem() {
 
       if (fetchError) throw fetchError
 
-      // If it's a global item (user_id is null), create a user copy instead of updating
+      // If it's a global item (user_id is null), use RPC for atomic copy
       if (existingItem.user_id === null) {
-        return await createUserCopyWithEdits(existingItem, input, user.id)
+        const { data: copyId, error: rpcError } = await supabase.rpc('copy_food_to_user', {
+          p_food_item_id: id,
+          p_user_id: user.id,
+        })
+        if (rpcError) throw rpcError
+
+        // If edits were provided, apply them to the copy
+        if (Object.keys(input).length > 0) {
+          const { data, error } = await supabase
+            .from('food_items')
+            .update(input)
+            .eq('id', copyId)
+            .eq('user_id', user.id)
+            .select()
+            .single()
+          if (error) throw error
+          return data as FoodItem
+        }
+
+        // Return the copy as-is
+        const { data, error } = await supabase
+          .from('food_items')
+          .select('*')
+          .eq('id', copyId)
+          .single()
+        if (error) throw error
+        return data as FoodItem
       }
 
-      // For user's own items, update normally
-      let updates: Record<string, unknown> = { ...input }
-
-      if (
-        input.calories !== undefined ||
-        input.default_amount !== undefined ||
-        input.default_unit !== undefined ||
-        input.weight_grams !== undefined ||
-        input.food_type !== undefined
-      ) {
-        const calories = input.calories ?? existingItem.calories
-        const weight_grams = input.weight_grams ?? existingItem.weight_grams ?? 100
-        const food_type = input.food_type ?? existingItem.food_type
-
-        const kcal_per_gram = weight_grams > 0 ? calories / weight_grams : undefined
-        const energy_density_color = kcal_per_gram
-          ? calculateFoodColor({
-              calories,
-              weightGrams: weight_grams,
-              foodType: food_type,
-            })
-          : undefined
-
-        updates = { ...updates, kcal_per_gram, energy_density_color }
-      }
-
+      // For user's own items, update normally — trigger handles derived fields
       const { data, error } = await supabase
         .from('food_items')
-        .update(updates)
+        .update(input)
         .eq('id', id)
         .eq('user_id', user.id)
         .select()
@@ -313,66 +335,6 @@ export function useUpdateFoodItem() {
       queryClient.invalidateQueries({ queryKey: ['foodItems'] })
     },
   })
-}
-
-/**
- * Helper: Create a user copy of a global item with edits applied
- */
-async function createUserCopyWithEdits(
-  globalItem: FoodItem,
-  edits: Partial<CreateFoodItemInput>,
-  userId: string
-): Promise<FoodItem> {
-  // Merge global item data with edits
-  const name = edits.name ?? globalItem.name
-  const calories = edits.calories ?? globalItem.calories
-  const weight_grams = edits.weight_grams ?? globalItem.weight_grams ?? 100
-  const food_type = edits.food_type ?? globalItem.food_type
-
-  // Calculate derived fields
-  const kcal_per_gram = weight_grams > 0 ? calories / weight_grams : undefined
-  const energy_density_color = kcal_per_gram
-    ? calculateFoodColor({
-        calories,
-        weightGrams: weight_grams,
-        foodType: food_type,
-      })
-    : undefined
-
-  const { data, error } = await supabase
-    .from('food_items')
-    .insert({
-      user_id: userId,
-      global_food_id: globalItem.id, // Track the original global item
-      name,
-      brand: edits.brand ?? globalItem.brand,
-      barcode: edits.barcode ?? globalItem.barcode,
-      default_amount: edits.default_amount ?? globalItem.default_amount,
-      default_unit: edits.default_unit ?? globalItem.default_unit,
-      weight_grams,
-      calories,
-      fat_g: edits.fat_g ?? globalItem.fat_g,
-      carb_g: edits.carb_g ?? globalItem.carb_g,
-      protein_g: edits.protein_g ?? globalItem.protein_g,
-      saturated_fat_g: edits.saturated_fat_g ?? globalItem.saturated_fat_g,
-      sugar_g: edits.sugar_g ?? globalItem.sugar_g,
-      fiber_g: edits.fiber_g ?? globalItem.fiber_g,
-      salt_g: edits.salt_g ?? globalItem.salt_g,
-      ml_per_gram: edits.ml_per_gram ?? globalItem.ml_per_gram,
-      grams_per_piece: edits.grams_per_piece ?? globalItem.grams_per_piece,
-      serving_unit: edits.serving_unit ?? globalItem.serving_unit,
-      food_type,
-      kcal_per_gram,
-      energy_density_color,
-      is_recipe: globalItem.is_recipe,
-      notes: edits.notes ?? globalItem.notes,
-      source: edits.source ?? globalItem.source,
-    })
-    .select()
-    .single()
-
-  if (error) throw error
-  return data as FoodItem
 }
 
 /**
@@ -419,10 +381,13 @@ export function useDeleteFoodItem() {
             user_id: user.id,
             global_food_id: id,
             is_hidden: true,
+            source: 'user',
             name: `_hidden_${existingItem.name}`,
             default_amount: 100,
             default_unit: 'g',
             weight_grams: 100,
+            reference_amount: 100,
+            reference_unit: 'g',
             calories: 0,
             fat_g: 0,
             carb_g: 0,
@@ -448,5 +413,59 @@ export function useDeleteFoodItem() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['foodItems'] })
     },
+  })
+}
+
+/**
+ * Paginated food items with server-side shadowing, search, and filtering.
+ * Uses the search_food_items RPC function.
+ */
+export function usePaginatedFoodItems(params: {
+  tab: FoodTab
+  page: number
+  pageSize?: number
+  searchQuery?: string
+  colorFilter?: FoodColor | null
+  isRecipeFilter?: boolean
+}) {
+  const { user } = useAuth()
+  const { tab, page, pageSize = 50, searchQuery, colorFilter, isRecipeFilter } = params
+
+  return useQuery({
+    queryKey: [
+      'foodItems',
+      'paginated',
+      tab,
+      page,
+      pageSize,
+      searchQuery,
+      colorFilter,
+      isRecipeFilter,
+      user?.id,
+    ],
+    queryFn: async () => {
+      if (!user) throw new Error('Not authenticated')
+
+      const { data, error } = await supabase.rpc('search_food_items', {
+        p_tab: tab,
+        p_user_id: user.id,
+        p_search: searchQuery || null,
+        p_color: colorFilter || null,
+        p_is_recipe: isRecipeFilter || null,
+        p_limit: pageSize,
+        p_offset: page * pageSize,
+      })
+
+      if (error) throw error
+
+      const row = (data as Array<{ items: unknown; total_count: number; total_pages: number }>)[0]
+      return {
+        items: (row.items ?? []) as FoodItem[],
+        totalCount: Number(row.total_count),
+        totalPages: Number(row.total_pages),
+      } as PaginatedResult
+    },
+    enabled: !!user,
+    keepPreviousData: true,
   })
 }

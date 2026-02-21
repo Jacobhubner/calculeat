@@ -469,6 +469,16 @@ export function AddFoodItemModal({
         calculatedMlPerGram = data.default_amount / data.weight_grams
       }
 
+      // Calculate density_g_per_ml from ml_per_gram (inverse)
+      let density_g_per_ml: number | null = null
+      if (calculatedMlPerGram && calculatedMlPerGram > 0) {
+        density_g_per_ml = 1.0 / calculatedMlPerGram
+      }
+
+      // Determine reference_unit based on default_unit
+      const isMLBased = data.default_unit.toLowerCase() === 'ml'
+      const reference_unit: 'g' | 'ml' = isMLBased ? 'ml' : 'g'
+
       // Clean up NaN values from optional number fields
       const cleanedData = {
         ...data,
@@ -476,6 +486,9 @@ export function AddFoodItemModal({
           data.grams_per_piece && !isNaN(data.grams_per_piece) ? data.grams_per_piece : null,
         ml_per_gram: calculatedMlPerGram,
         serving_unit: data.serving_unit?.trim() || null,
+        reference_amount: data.weight_grams || 100,
+        reference_unit,
+        density_g_per_ml,
       }
 
       if (editItem) {
@@ -516,6 +529,12 @@ export function AddFoodItemModal({
           <DialogHeader>
             <DialogTitle>{editItem ? 'Redigera livsmedel' : 'Nytt livsmedel'}</DialogTitle>
           </DialogHeader>
+
+          {editItem && editItem.user_id === null && (
+            <div className="bg-blue-50 border border-blue-200 rounded-md p-3 text-sm text-blue-700">
+              En personlig kopia skapas i din lista (Mina).
+            </div>
+          )}
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 px-4 pb-4 md:px-0 md:pb-0">
             {/* Scan buttons (only in create mode) */}

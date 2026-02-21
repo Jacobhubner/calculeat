@@ -24,6 +24,28 @@ export function calculateCalorieDensity(calories: number, weightGrams: number): 
 }
 
 /**
+ * Calculate kcal per gram with data quality awareness.
+ * Returns null if insufficient data (e.g. ml-based without density).
+ * Never approximates — incomplete data → null.
+ */
+export function calculateKcalPerGram(params: {
+  calories: number
+  referenceAmount: number
+  referenceUnit: 'g' | 'ml'
+  densityGPerMl?: number | null
+}): number | null {
+  if (params.referenceAmount <= 0) return null
+
+  if (params.referenceUnit === 'g') {
+    return params.calories / params.referenceAmount
+  }
+
+  // referenceUnit = 'ml'
+  if (!params.densityGPerMl || params.densityGPerMl <= 0) return null
+  return params.calories / params.referenceAmount / params.densityGPerMl
+}
+
+/**
  * Determine food color based on food type and calorie density
  *
  * Solid foods:
@@ -68,6 +90,35 @@ export function calculateFoodColor(params: ColorDensityCalculationParams): FoodC
   if (kcalPerGram < 1) return 'Green'
   if (kcalPerGram <= 2.4) return 'Yellow'
   return 'Orange'
+}
+
+/**
+ * Calculate food color from reference-based params.
+ * Returns null if kcal_per_gram cannot be determined.
+ */
+export function calculateFoodColorFromReference(params: {
+  calories: number
+  referenceAmount: number
+  referenceUnit: 'g' | 'ml'
+  densityGPerMl?: number | null
+  foodType: FoodType | null
+}): FoodColor | null {
+  if (!params.foodType) return null
+
+  const kcalPerGram = calculateKcalPerGram({
+    calories: params.calories,
+    referenceAmount: params.referenceAmount,
+    referenceUnit: params.referenceUnit,
+    densityGPerMl: params.densityGPerMl,
+  })
+
+  if (kcalPerGram === null) return null
+
+  return calculateFoodColor({
+    calories: params.calories,
+    weightGrams: params.calories / kcalPerGram, // reverse to weight for existing function
+    foodType: params.foodType,
+  })
 }
 
 /**
