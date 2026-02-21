@@ -2,17 +2,8 @@ import { useMemo } from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Badge } from '@/components/ui/badge'
 import { useFoodNutrients, useNutrientDefinitions } from '@/hooks/useFoodNutrients'
-import type { FoodItem, FoodSource } from '@/hooks/useFoodItems'
-
-const SOURCE_BADGES: Record<FoodSource, { label: string; className: string }> = {
-  user: { label: 'Min', className: 'bg-neutral-100 text-neutral-600 border-neutral-300' },
-  manual: {
-    label: 'CalculEat',
-    className: 'bg-primary-100 text-primary-700 border-primary-400 font-semibold',
-  },
-  livsmedelsverket: { label: 'SLV', className: 'bg-blue-700 text-white border-blue-800' },
-  usda: { label: 'USDA', className: 'bg-amber-100 text-amber-800 border-amber-400' },
-}
+import type { FoodItem } from '@/hooks/useFoodItems'
+import { SOURCE_BADGES } from '@/lib/constants/sourceBadges'
 
 const COLOR_INDICATORS: Record<string, { label: string; className: string }> = {
   Green: { label: 'Grön', className: 'text-green-600' },

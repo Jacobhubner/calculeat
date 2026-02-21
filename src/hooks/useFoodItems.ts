@@ -3,7 +3,7 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import { type FoodColor, type FoodType } from '@/lib/calculations/colorDensity'
 
-export type FoodSource = 'manual' | 'livsmedelsverket' | 'usda' | 'user'
+export type FoodSource = 'manual' | 'livsmedelsverket' | 'usda' | 'user' | 'shared'
 export type FoodTab = 'mina' | 'slv' | 'usda' | 'alla'
 
 export interface PaginatedResult {
@@ -71,6 +71,10 @@ export interface FoodItem {
   notes?: string | null
   created_at: string
   updated_at: string
+
+  // Sharing
+  shared_by?: string | null // avsändarens visningsnamn, sätts när source='shared'
+  data_hash?: string | null // SHA-256 nutritionshash, beräknas av DB-trigger
 }
 
 /**

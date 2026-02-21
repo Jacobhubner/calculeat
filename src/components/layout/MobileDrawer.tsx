@@ -11,6 +11,7 @@ import {
   Calculator,
   Target,
   X,
+  Users,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuth } from '@/contexts/AuthContext'
@@ -18,6 +19,7 @@ import { useUIStore } from '@/stores/uiStore'
 import { cn } from '@/lib/utils'
 import { Avatar, AvatarFallback } from '../ui/avatar'
 import { Separator } from '../ui/separator'
+import { ShareNotificationBadge } from '@/components/sharing/ShareNotificationBadge'
 
 // Secondary pages organized by functional groups
 // (Primary pages Översikt, Idag, Livsmedel, Historik are in bottom nav)
@@ -29,6 +31,11 @@ const navGroups = {
       { to: '/app/recipes', label: 'Recept', icon: ChefHat },
       { to: '/app/saved-meals', label: 'Sparade måltider', icon: Bookmark },
     ],
+  },
+  social: {
+    title: 'SOCIAL',
+    emoji: '👥',
+    items: [{ to: '/app/social', label: 'Social', icon: Users }],
   },
   profil: {
     title: 'PROFIL',
@@ -161,7 +168,12 @@ export default function MobileDrawer() {
                           )}
                         >
                           <Icon className={cn('h-5 w-5 shrink-0', active && 'text-primary-600')} />
-                          <span>{item.label}</span>
+                          <span className="flex items-center gap-2">
+                            {item.label}
+                            {item.to === '/app/social' && (
+                              <ShareNotificationBadge mode="count-only" />
+                            )}
+                          </span>
                         </Link>
                       )
                     })}

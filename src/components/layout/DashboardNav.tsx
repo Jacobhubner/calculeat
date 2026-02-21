@@ -15,6 +15,7 @@ import {
   Flame,
   Calculator,
   Target,
+  Users,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuth } from '@/contexts/AuthContext'
@@ -22,7 +23,7 @@ import { useUIStore } from '@/stores/uiStore'
 import { cn } from '@/lib/utils'
 import { Avatar, AvatarFallback } from '../ui/avatar'
 import { Separator } from '../ui/separator'
-import { NavItem } from '@/lib/types/navigation'
+import { ShareNotificationBadge } from '@/components/sharing/ShareNotificationBadge'
 
 export default function DashboardNav() {
   const { user, profile, signOut } = useAuth()
@@ -91,6 +92,19 @@ export default function DashboardNav() {
           to: '/app/saved-meals',
           label: 'Sparade måltider',
           icon: Bookmark,
+        },
+      ],
+    },
+    social: {
+      title: 'SOCIAL',
+      emoji: '👥',
+      items: [
+        {
+          type: 'single' as const,
+          to: '/app/social',
+          label: 'Social',
+          icon: Users,
+          exact: true,
         },
       ],
     },
@@ -215,7 +229,14 @@ export default function DashboardNav() {
                       )}
                     >
                       <Icon className={cn('h-5 w-5 shrink-0', active && 'text-primary-600')} />
-                      {!sidebarCollapsed && <span className="flex-1">{item.label}</span>}
+                      {!sidebarCollapsed && (
+                        <span className="flex-1 flex items-center gap-2">
+                          {item.label}
+                          {item.to === '/app/social' && (
+                            <ShareNotificationBadge mode="count-only" />
+                          )}
+                        </span>
+                      )}
                       {sidebarCollapsed && (
                         <div className="absolute left-full ml-2 px-2 py-1 bg-neutral-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
                           {item.label}

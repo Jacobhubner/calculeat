@@ -29,19 +29,10 @@ import {
   useDeleteFoodItem,
   type FoodItem,
   type FoodTab,
-  type FoodSource,
 } from '@/hooks/useFoodItems'
-
-// Source badge configuration
-const SOURCE_BADGES: Record<FoodSource, { label: string; className: string }> = {
-  user: { label: 'Min', className: 'bg-neutral-100 text-neutral-600 border-neutral-300' },
-  manual: {
-    label: 'CalculEat',
-    className: 'bg-primary-100 text-primary-700 border-primary-400 font-semibold',
-  },
-  livsmedelsverket: { label: 'SLV', className: 'bg-blue-700 text-white border-blue-800' },
-  usda: { label: 'USDA', className: 'bg-amber-100 text-amber-800 border-amber-400' },
-}
+import { SOURCE_BADGES } from '@/lib/constants/sourceBadges'
+import { useRecipeImpact, type RecipeImpact } from '@/hooks/useRecipeImpact'
+import { RecipeImpactWarningModal } from '@/components/food/RecipeImpactWarningModal'
 
 // Tab configuration
 const TABS: { key: FoodTab; label: string }[] = [
@@ -180,6 +171,7 @@ export default function FoodItemsPage() {
   const { user } = useAuth()
   const queryClient = useQueryClient()
   const deleteFood = useDeleteFoodItem()
+  const { getRecipesUsingFoodItem } = useRecipeImpact()
 
   // Tab & pagination state
   const [activeTab, setActiveTab] = useState<FoodTab>('mina')
@@ -206,6 +198,17 @@ export default function FoodItemsPage() {
   // Nutrient panel state
   const [selectedItemForDetail, setSelectedItemForDetail] = useState<FoodItem | null>(null)
   const [nutrientPanelOpen, setNutrientPanelOpen] = useState(false)
+
+  // Recipe impact modal state
+  const [impactModal, setImpactModal] = useState<{
+    open: boolean
+    mode: 'delete' | 'update'
+    foodItemId: string
+    foodItemName: string
+    affectedRecipes: RecipeImpact[]
+    pendingAction: () => Promise<void>
+  } | null>(null)
+  const [isImpactConfirming, setIsImpactConfirming] = useState(false)
 
   // Debounce search (300ms)
   useEffect(() => {
@@ -292,24 +295,9 @@ export default function FoodItemsPage() {
     saveDisplayMode(itemId, mode)
   }
 
-  const handleDelete = async (id: string) => {
+  const performDelete = async (id: string) => {
     const item = items.find(i => i.id === id)
-    const isGlobal = item?.user_id === null
     const isRecipe = item?.is_recipe === true
-
-    let message: string
-    if (isRecipe) {
-      message = `Vill du ta bort receptet "${item?.name}"?\n\nOBS: Detta kommer att radera receptet både från livsmedelslistan OCH från dina sparade recept.`
-    } else if (isGlobal) {
-      message =
-        'Detta är ett globalt livsmedel. Det kommer att döljas från din lista men inte påverka andra användare. Vill du fortsätta?'
-    } else {
-      message = 'Är du säker på att du vill ta bort detta livsmedel?'
-    }
-
-    if (!confirm(message)) {
-      return
-    }
 
     try {
       setDeletingItemId(id)
@@ -340,6 +328,45 @@ export default function FoodItemsPage() {
     } finally {
       setDeletingItemId(null)
     }
+  }
+
+  const handleDelete = async (id: string) => {
+    const item = items.find(i => i.id === id)
+    const isGlobal = item?.user_id === null
+    const isRecipe = item?.is_recipe === true
+
+    let message: string
+    if (isRecipe) {
+      message = `Vill du ta bort receptet "${item?.name}"?\n\nOBS: Detta kommer att radera receptet både från livsmedelslistan OCH från dina sparade recept.`
+    } else if (isGlobal) {
+      message =
+        'Detta är ett globalt livsmedel. Det kommer att döljas från din lista men inte påverka andra användare. Vill du fortsätta?'
+    } else {
+      // User-owned non-recipe: check recipe impact before confirming
+      try {
+        const affected = await getRecipesUsingFoodItem(id)
+        if (affected.length > 0) {
+          setImpactModal({
+            open: true,
+            mode: 'delete',
+            foodItemId: id,
+            foodItemName: item?.name ?? '',
+            affectedRecipes: affected,
+            pendingAction: () => performDelete(id),
+          })
+          return
+        }
+      } catch {
+        // If the check fails, fall through to simple confirm
+      }
+      message = 'Är du säker på att du vill ta bort detta livsmedel?'
+    }
+
+    if (!confirm(message)) {
+      return
+    }
+
+    await performDelete(id)
   }
 
   const handleEdit = (item: FoodItem) => {
@@ -1338,6 +1365,29 @@ export default function FoodItemsPage() {
         open={nutrientPanelOpen}
         onOpenChange={setNutrientPanelOpen}
       />
+
+      {/* Recipe Impact Warning Modal */}
+      {impactModal && (
+        <RecipeImpactWarningModal
+          open={impactModal.open}
+          onOpenChange={open => {
+            if (!open) setImpactModal(null)
+          }}
+          mode={impactModal.mode}
+          foodItemName={impactModal.foodItemName}
+          affectedRecipes={impactModal.affectedRecipes}
+          isConfirming={isImpactConfirming}
+          onConfirm={async () => {
+            setIsImpactConfirming(true)
+            try {
+              await impactModal.pendingAction()
+              setImpactModal(null)
+            } finally {
+              setIsImpactConfirming(false)
+            }
+          }}
+        />
+      )}
     </DashboardLayout>
   )
 }

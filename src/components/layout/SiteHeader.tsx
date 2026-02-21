@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { Menu, X, LogOut, User, Settings } from 'lucide-react'
+import { Menu, X, LogOut, User, Settings, Share2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '../ui/button'
@@ -9,6 +9,8 @@ import { useUIStore } from '@/stores/uiStore'
 import { useProfileStore } from '@/stores/profileStore'
 import { cn } from '@/lib/utils'
 import { useState, useRef, useEffect } from 'react'
+import { ShareNotificationBadge } from '@/components/sharing/ShareNotificationBadge'
+import { ShareDialog } from '@/components/sharing/ShareDialog'
 
 export default function SiteHeader() {
   const { user, signOut, profile } = useAuth()
@@ -17,6 +19,7 @@ export default function SiteHeader() {
   const location = useLocation()
   const navigate = useNavigate()
   const [mobileUserMenuOpen, setMobileUserMenuOpen] = useState(false)
+  const [shareDialogOpen, setShareDialogOpen] = useState(false)
   const userMenuRef = useRef<HTMLDivElement>(null)
 
   const isActive = (path: string) => location.pathname === path
@@ -112,6 +115,15 @@ export default function SiteHeader() {
                   </span>
                 </Link>
               )}
+              <button
+                onClick={() => setShareDialogOpen(true)}
+                className="p-2 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 rounded-lg transition-colors"
+                aria-label="Dela livsmedel eller recept"
+                title="Dela"
+              >
+                <Share2 className="h-5 w-5" />
+              </button>
+              <ShareNotificationBadge mode="icon" />
               <Link to="/app">
                 <Avatar className="h-9 w-9 cursor-pointer ring-2 ring-transparent hover:ring-primary-200 transition-all">
                   <AvatarFallback className="text-xs">{getInitials()}</AvatarFallback>
@@ -121,6 +133,7 @@ export default function SiteHeader() {
                 <LogOut className="h-4 w-4 mr-2" />
                 Logga ut
               </Button>
+              <ShareDialog open={shareDialogOpen} onOpenChange={setShareDialogOpen} />
             </div>
           ) : (
             <div className="flex items-center gap-2">

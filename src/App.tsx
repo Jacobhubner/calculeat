@@ -46,6 +46,7 @@ const GoalCalculatorTool = lazy(
   () => import('./components/tools/goal-calculator/GoalCalculatorTool')
 )
 const SettingsPage = lazy(() => import('./pages/SettingsPage'))
+const SocialPage = lazy(() => import('./pages/SocialPage'))
 
 // Loading fallback component
 function PageLoader() {
@@ -189,6 +190,16 @@ function App() {
                       </ProtectedRoute>
                     }
                   />
+                  <Route
+                    path="/app/social"
+                    element={
+                      <ProtectedRoute>
+                        <SocialPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  {/* Bakåtkompatibilitet — redirect till /app/social */}
+                  <Route path="/app/invitations" element={<Navigate to="/app/social" replace />} />
                 </Routes>
               </Suspense>
             </BrowserRouter>

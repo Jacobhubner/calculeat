@@ -12,27 +12,13 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Select } from '@/components/ui/select'
-import {
-  usePaginatedFoodItems,
-  type FoodItem,
-  type FoodTab,
-  type FoodSource,
-} from '@/hooks/useFoodItems'
+import { usePaginatedFoodItems, type FoodItem, type FoodTab } from '@/hooks/useFoodItems'
 import { useAddFoodToMeal, useCreateMealEntry, useUpdateMealItem } from '@/hooks/useDailyLogs'
 import { useMealSettings } from '@/hooks/useMealSettings'
 import { UnitSelector, getAvailableUnits, calculateNutritionForUnit } from './UnitSelector'
 import { NutritionPreview } from './NutritionPreview'
 import { toast } from 'sonner'
-
-const SOURCE_BADGES: Record<FoodSource, { label: string; className: string }> = {
-  user: { label: 'Min', className: 'bg-neutral-100 text-neutral-600 border-neutral-300' },
-  manual: {
-    label: 'CalculEat',
-    className: 'bg-primary-100 text-primary-700 border-primary-400 font-semibold',
-  },
-  livsmedelsverket: { label: 'SLV', className: 'bg-blue-700 text-white border-blue-800' },
-  usda: { label: 'USDA', className: 'bg-amber-100 text-amber-800 border-amber-400' },
-}
+import { SOURCE_BADGES } from '@/lib/constants/sourceBadges'
 
 const TABS: { key: FoodTab; label: string }[] = [
   { key: 'alla', label: 'Alla' },
