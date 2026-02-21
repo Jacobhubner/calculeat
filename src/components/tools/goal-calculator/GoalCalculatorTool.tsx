@@ -38,6 +38,7 @@ export default function GoalCalculatorTool() {
 
   // Local state
   const [targetBodyFat, setTargetBodyFat] = useState<number>(15)
+  const [bodyFatInput, setBodyFatInput] = useState<string>('15')
   const [manualTargetWeight, setManualTargetWeight] = useState<number | null>(null)
   const [inputMode, setInputMode] = useState<'bodyFat' | 'weight'>('bodyFat')
   const [manualWeightChange, setManualWeightChange] = useState<{
@@ -58,6 +59,7 @@ export default function GoalCalculatorTool() {
   // Handlers för bidirektionell synkning
   const handleBodyFatChange = (value: number) => {
     setTargetBodyFat(value)
+    setBodyFatInput(String(value))
     setInputMode('bodyFat')
     setManualTargetWeight(null) // Nollställ manuell målvikt
   }
@@ -544,7 +546,7 @@ export default function GoalCalculatorTool() {
                       value={targetWeight ?? goalResult?.targetWeight.toFixed(1) ?? ''}
                       onChange={e => {
                         const val = e.target.value
-                        handleTargetWeightChange(val === '' ? '' : parseFloat(val) || '')
+                        handleTargetWeightChange(val === '' ? '' : parseFloat(val))
                       }}
                       className="w-20 text-center"
                     />
@@ -577,8 +579,12 @@ export default function GoalCalculatorTool() {
                         min="5"
                         max="35"
                         step="0.5"
-                        value={targetBodyFat}
-                        onChange={e => handleBodyFatChange(parseFloat(e.target.value) || 15)}
+                        value={bodyFatInput}
+                        onChange={e => {
+                          setBodyFatInput(e.target.value)
+                          const val = parseFloat(e.target.value)
+                          if (!isNaN(val)) handleBodyFatChange(val)
+                        }}
                         className="w-20 text-center"
                       />
                       <span className="text-sm text-neutral-600">%</span>

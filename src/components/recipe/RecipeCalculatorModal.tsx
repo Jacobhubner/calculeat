@@ -39,7 +39,7 @@ export function RecipeCalculatorModal({
   onSuccess,
 }: RecipeCalculatorModalProps) {
   const [name, setName] = useState('')
-  const [servings, setServings] = useState(1)
+  const [servings, setServings] = useState<number | ''>(1)
   const [ingredients, setIngredients] = useState<IngredientData[]>([])
   const [saveAs, setSaveAs] = useState<'100g' | 'portion'>('portion')
   const [error, setError] = useState<string | null>(null)
@@ -139,7 +139,7 @@ export function RecipeCalculatorModal({
       }))
 
     if (validIngredients.length === 0) return null
-    return calculateRecipeNutrition(validIngredients, servings)
+    return calculateRecipeNutrition(validIngredients, typeof servings === 'number' ? servings : 1)
   }, [ingredients, servings])
 
   const handleAddIngredient = () => {
@@ -175,7 +175,8 @@ export function RecipeCalculatorModal({
       return
     }
 
-    if (servings <= 0) {
+    const servingsNum = typeof servings === 'number' ? servings : 0
+    if (servingsNum <= 0) {
       setError('Antal portioner måste vara minst 1')
       return
     }
@@ -185,7 +186,7 @@ export function RecipeCalculatorModal({
     try {
       const recipeData = {
         name: name.trim(),
-        servings,
+        servings: servingsNum,
         saveAs, // 100g or portion
         ingredients: validIngredients.map(ing => ({
           food_item_id: ing.foodItem!.id,
@@ -262,7 +263,10 @@ export function RecipeCalculatorModal({
                     id="servings"
                     type="number"
                     value={servings}
-                    onChange={e => setServings(Math.max(1, parseInt(e.target.value) || 1))}
+                    onChange={e => {
+                      const val = e.target.value
+                      setServings(val === '' ? '' : Math.max(1, parseInt(val)))
+                    }}
                     min={1}
                   />
                 </div>
@@ -337,7 +341,11 @@ export function RecipeCalculatorModal({
 
             {/* Nutrition summary */}
             <div>
-              <NutritionSummary nutrition={nutrition} servings={servings} saveAs={saveAs} />
+              <NutritionSummary
+                nutrition={nutrition}
+                servings={typeof servings === 'number' ? servings : 1}
+                saveAs={saveAs}
+              />
             </div>
           </div>
         </div>

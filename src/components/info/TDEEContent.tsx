@@ -28,8 +28,9 @@ export default function TDEEContent() {
           <div className="bg-neutral-50 border-l-4 border-primary-500 p-4">
             <p className="font-medium text-neutral-900">1. REE (RMR / BMR) (största komponenten)</p>
             <p className="text-sm text-neutral-600 mt-1">
-              <strong>Resting Energy Expenditure</strong> – energiförbrukning i vila. Vanligtvis
-              60–75 % av TDEE hos vuxna, men andelen minskar vid hög fysisk aktivitet.
+              <strong>Resting Energy Expenditure</strong> – energiförbrukning i vila. Typiskt cirka
+              60 % av TDEE hos vuxna med låg fysisk aktivitet, men andelen minskar vid hög fysisk
+              aktivitet.
             </p>
           </div>
 
@@ -53,7 +54,7 @@ export default function TDEEContent() {
             <p className="font-medium text-neutral-900">4. TEF (matens termiska effekt)</p>
             <p className="text-sm text-neutral-600 mt-1">
               <strong>Thermic Effect of Food</strong> – energi som krävs för att smälta och lagra
-              mat. Relativt konstant (8–12 %), men påverkas av kostens sammansättning.
+              mat. Relativt konstant (8–15 %), men påverkas av kostens sammansättning.
             </p>
           </div>
         </div>

@@ -12,7 +12,6 @@ import SaveMealDialog from '@/components/daily/SaveMealDialog'
 import LoadMealToSlotDialog from '@/components/daily/LoadMealToSlotDialog'
 import { PlateCalculator } from '@/components/daily/PlateCalculator'
 import { FoodSuggestions } from '@/components/daily/FoodSuggestions'
-import { DailyChecklist } from '@/components/daily/DailyChecklist'
 import { ColorBalanceCard } from '@/components/daily/ColorBalanceCard'
 import { MealMacroBreakdown } from '@/components/daily/MealMacroBreakdown'
 import { EnergyDensityIndicator } from '@/components/daily/EnergyDensityIndicator'
@@ -778,15 +777,6 @@ export default function TodayPage() {
 
         {/* Sidebar - Summary */}
         <div className="space-y-6">
-          {/* Daily Checklist */}
-          {dailySummary && (
-            <DailyChecklist
-              caloriesOk={dailySummary.checklist.caloriesOk}
-              macrosOk={dailySummary.checklist.macrosOk}
-              colorBalanceOk={dailySummary.checklist.colorBalanceOk}
-            />
-          )}
-
           {/* Recent Foods */}
           <RecentFoodsCard dailyLogId={todayLog?.id} />
 

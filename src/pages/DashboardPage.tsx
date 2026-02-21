@@ -15,6 +15,8 @@ import { Activity, Flame, Target, TrendingUp, UtensilsCrossed, Scale } from 'luc
 import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
 import { useMemo } from 'react'
+import { DailyChecklist } from '@/components/daily/DailyChecklist'
+import { useDailySummary } from '@/hooks/useDailySummary'
 import {
   calculateAge,
   calculateBMI,
@@ -32,6 +34,8 @@ export default function DashboardPage() {
 
   // Get full profile data from allProfiles array
   const profile = allProfiles?.find(p => p.id === activeProfile?.id)
+
+  const dailySummary = useDailySummary(todayLog, profile)
 
   console.log('🔍 Dashboard render:', {
     activeProfileId: activeProfile?.id,
@@ -272,6 +276,15 @@ export default function DashboardPage() {
               {/* Macro Bar */}
               {calculations.macros && <MacroBar {...calculations.macros} />}
             </div>
+
+            {/* Daily Checklist */}
+            {dailySummary && (
+              <DailyChecklist
+                caloriesOk={dailySummary.checklist.caloriesOk}
+                macrosOk={dailySummary.checklist.macrosOk}
+                colorBalanceOk={dailySummary.checklist.colorBalanceOk}
+              />
+            )}
 
             {/* Today's Progress (if user has logged food) */}
             {todayLog && todayLog.meals && todayLog.meals.length > 0 && (

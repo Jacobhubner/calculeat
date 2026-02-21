@@ -35,9 +35,12 @@ import {
 // Source badge configuration
 const SOURCE_BADGES: Record<FoodSource, { label: string; className: string }> = {
   user: { label: 'Min', className: 'bg-neutral-100 text-neutral-600 border-neutral-300' },
-  manual: { label: 'CalculEat', className: 'bg-purple-100 text-purple-700 border-purple-300' },
-  livsmedelsverket: { label: 'SLV', className: 'bg-blue-100 text-blue-700 border-blue-300' },
-  usda: { label: 'USDA', className: 'bg-emerald-100 text-emerald-700 border-emerald-300' },
+  manual: {
+    label: 'CalculEat',
+    className: 'bg-primary-100 text-primary-700 border-primary-400 font-semibold',
+  },
+  livsmedelsverket: { label: 'SLV', className: 'bg-blue-700 text-white border-blue-800' },
+  usda: { label: 'USDA', className: 'bg-amber-100 text-amber-800 border-amber-400' },
 }
 
 // Tab configuration

@@ -291,16 +291,17 @@ function ActivityRow({
   onAdd: (activity: METActivity, duration: number) => void
   disabled: boolean
 }) {
-  const [duration, setDuration] = useState<number>(30)
+  const [durationInput, setDurationInput] = useState('30')
   const [showDuration, setShowDuration] = useState(false)
 
   const intensity = getIntensityLevel(activity.met)
+  const duration = parseInt(durationInput) || 0
 
   const handleAdd = () => {
     if (duration > 0) {
       onAdd(activity, duration)
       setShowDuration(false)
-      setDuration(30)
+      setDurationInput('30')
     }
   }
 
@@ -334,8 +335,8 @@ function ActivityRow({
               <Input
                 type="number"
                 min="1"
-                value={duration}
-                onChange={e => setDuration(parseInt(e.target.value) || 0)}
+                value={durationInput}
+                onChange={e => setDurationInput(e.target.value)}
                 onKeyDown={e => {
                   if (e.key === 'Enter') {
                     handleAdd()

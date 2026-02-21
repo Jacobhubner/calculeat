@@ -99,28 +99,46 @@ export const signInSchema = z.object({
 export const createFoodItemSchema = z
   .object({
     name: z.string().min(1, 'Namn är obligatoriskt').max(200, 'Namn får max vara 200 tecken'),
-    default_amount: z
-      .number({ invalid_type_error: 'Mängd måste vara ett nummer' })
-      .positive('Mängd måste vara större än 0'),
+    default_amount: z.preprocess(
+      val => (Number.isNaN(val) ? undefined : val),
+      z
+        .number({ invalid_type_error: 'Mängd måste vara ett nummer' })
+        .positive('Mängd måste vara större än 0')
+    ),
     default_unit: z
       .string()
       .min(1, 'Enhet är obligatorisk')
       .max(50, 'Enhet får max vara 50 tecken'),
-    weight_grams: z
-      .number({ invalid_type_error: 'Vikt måste vara ett nummer' })
-      .positive('Vikt måste vara större än 0'),
-    calories: z
-      .number({ invalid_type_error: 'Kalorier måste vara ett nummer' })
-      .min(0, 'Kalorier måste vara 0 eller högre'),
-    fat_g: z
-      .number({ invalid_type_error: 'Fett måste vara ett nummer' })
-      .min(0, 'Fett måste vara 0 eller högre'),
-    carb_g: z
-      .number({ invalid_type_error: 'Kolhydrater måste vara ett nummer' })
-      .min(0, 'Kolhydrater måste vara 0 eller högre'),
-    protein_g: z
-      .number({ invalid_type_error: 'Protein måste vara ett nummer' })
-      .min(0, 'Protein måste vara 0 eller högre'),
+    weight_grams: z.preprocess(
+      val => (Number.isNaN(val) ? undefined : val),
+      z
+        .number({ invalid_type_error: 'Vikt måste vara ett nummer' })
+        .positive('Vikt måste vara större än 0')
+    ),
+    calories: z.preprocess(
+      val => (Number.isNaN(val) ? 0 : val),
+      z
+        .number({ invalid_type_error: 'Kalorier måste vara ett nummer' })
+        .min(0, 'Kalorier måste vara 0 eller högre')
+    ),
+    fat_g: z.preprocess(
+      val => (Number.isNaN(val) ? 0 : val),
+      z
+        .number({ invalid_type_error: 'Fett måste vara ett nummer' })
+        .min(0, 'Fett måste vara 0 eller högre')
+    ),
+    carb_g: z.preprocess(
+      val => (Number.isNaN(val) ? 0 : val),
+      z
+        .number({ invalid_type_error: 'Kolhydrater måste vara ett nummer' })
+        .min(0, 'Kolhydrater måste vara 0 eller högre')
+    ),
+    protein_g: z.preprocess(
+      val => (Number.isNaN(val) ? 0 : val),
+      z
+        .number({ invalid_type_error: 'Protein måste vara ett nummer' })
+        .min(0, 'Protein måste vara 0 eller högre')
+    ),
     food_type: z.enum(['Solid', 'Liquid', 'Soup']).default('Solid'),
     ml_per_gram: z.preprocess(
       val =>

@@ -275,7 +275,7 @@ function calculateActivityLevelWizard(
   hoursStandingPerDay: number = 0,
   householdActivityId: string | undefined,
   householdHoursPerDay: number = 0,
-  spaFactor: number = 1.1
+  spaFactor: number = 1.0
 ): number {
   // Validate BMR and weight
   if (bmr <= 0 || weightKg <= 0) {
@@ -297,14 +297,17 @@ function calculateActivityLevelWizard(
   // NEAT_household: Hushållskalorier
   const neatHousehold = householdMET * weightKg * householdHoursPerDay
 
-  // NEAT_total: Total NEAT multiplicerat med SPA-faktor
-  const neatTotal = (neatSteps + neatStanding + neatHousehold) * spaFactor
-
   // EAT (Exercise Activity Thermogenesis): Träningskalorier per dag
   const eat = (trainingDaysPerWeek / 7) * (trainingMinutesPerSession / 60) * trainingMET * weightKg
 
-  // TDEE beräkning med TEF (Thermic Effect of Food = 10% av TDEE)
-  // TDEE = (BMR + NEAT_total + EAT) / 0.9
+  // NEAT_total: SPA multipliceras på NEAT-komponenterna (Levine 1999, 2002, 2004)
+  // SPA representerar den spontana variationen i NEAT-beteende (fidgeting, positionsbyten etc.)
+  // spaFactor ∈ [0.95, 1.15]: 1.00 = normal, <1.00 = låg, >1.00 = hög spontan aktivitet
+  const neatTotal = (neatSteps + neatStanding + neatHousehold) * spaFactor
+
+  // TEF (Thermic Effect of Food) ≈ 10% av TDEE
+  // TDEE = BMR + NEAT×SPA + EAT + TEF
+  // TEF = 0.10 × TDEE  →  TDEE = (BMR + NEAT×SPA + EAT) / 0.9
   const tdee = (bmr + neatTotal + eat) / 0.9
 
   return tdee
@@ -395,7 +398,7 @@ export function calculateTDEE(params: TDEEParams): number {
         params.hoursStandingPerDay || 0,
         params.householdActivityId,
         params.householdHoursPerDay || 0,
-        params.spaFactor || 1.1
+        params.spaFactor ?? 1.0
       )
       break
 

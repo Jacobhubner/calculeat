@@ -26,13 +26,17 @@ import { toast } from 'sonner'
 
 const SOURCE_BADGES: Record<FoodSource, { label: string; className: string }> = {
   user: { label: 'Min', className: 'bg-neutral-100 text-neutral-600 border-neutral-300' },
-  manual: { label: 'CalculEat', className: 'bg-purple-100 text-purple-700 border-purple-300' },
-  livsmedelsverket: { label: 'SLV', className: 'bg-blue-100 text-blue-700 border-blue-300' },
-  usda: { label: 'USDA', className: 'bg-emerald-100 text-emerald-700 border-emerald-300' },
+  manual: {
+    label: 'CalculEat',
+    className: 'bg-primary-100 text-primary-700 border-primary-400 font-semibold',
+  },
+  livsmedelsverket: { label: 'SLV', className: 'bg-blue-700 text-white border-blue-800' },
+  usda: { label: 'USDA', className: 'bg-amber-100 text-amber-800 border-amber-400' },
 }
 
 const TABS: { key: FoodTab; label: string }[] = [
-  { key: 'mina', label: 'Mina' },
+  { key: 'alla', label: 'Alla' },
+  { key: 'mina', label: 'Mina & CalculEat' },
   { key: 'slv', label: 'SLV' },
   { key: 'usda', label: 'USDA' },
 ]
@@ -92,9 +96,10 @@ export function AddFoodToMealModal({
   const [debouncedSearch, setDebouncedSearch] = useState('')
 
   // Tab + pagination + filter state
-  const [activeTab, setActiveTab] = useState<FoodTab>('mina')
+  const [activeTab, setActiveTab] = useState<FoodTab>('alla')
   const [page, setPage] = useState(0)
   const [colorFilter, setColorFilter] = useState<'Green' | 'Yellow' | 'Orange' | null>(null)
+  const [recipeFilter, setRecipeFilter] = useState<boolean | null>(null)
 
   // Refs
   const isPreselectedRef = useRef(false)
@@ -116,11 +121,12 @@ export function AddFoodToMealModal({
   /* eslint-disable react-hooks/set-state-in-effect -- Legitimate pattern for resetting pagination state */
   useEffect(() => {
     setPage(0)
-  }, [activeTab, debouncedSearch, colorFilter])
+  }, [activeTab, debouncedSearch, colorFilter, recipeFilter])
 
-  // Reset colorFilter on tab change
+  // Reset colorFilter and recipeFilter on tab change
   useEffect(() => {
     setColorFilter(null)
+    setRecipeFilter(null)
   }, [activeTab])
   /* eslint-enable react-hooks/set-state-in-effect */
 
@@ -131,6 +137,7 @@ export function AddFoodToMealModal({
     pageSize: PAGE_SIZE,
     searchQuery: debouncedSearch || undefined,
     colorFilter: colorFilter || undefined,
+    isRecipeFilter: recipeFilter ?? undefined,
   })
 
   const foods = paginatedData?.items ?? []
@@ -153,9 +160,10 @@ export function AddFoodToMealModal({
     setAmount(1)
     setSelectedUnit('')
     setSelectedMealName('')
-    setActiveTab('mina')
+    setActiveTab('alla')
     setPage(0)
     setColorFilter(null)
+    setRecipeFilter(null)
     isPreselectedRef.current = false
   }, [])
 
@@ -419,7 +427,7 @@ export function AddFoodToMealModal({
               </div>
 
               {/* Color filter pills */}
-              <div className="flex gap-1">
+              <div className="flex flex-wrap gap-1">
                 {([null, 'Green', 'Yellow', 'Orange'] as const).map(c => (
                   <button
                     key={c ?? 'all'}
@@ -448,6 +456,29 @@ export function AddFoodToMealModal({
                           : 'Orange'}
                   </button>
                 ))}
+
+                {/* Recipe filter — on Mina and Alla tabs */}
+                {(activeTab === 'mina' || activeTab === 'alla') && (
+                  <>
+                    <span className="text-neutral-200 border-l border-neutral-200 mx-0.5" />
+                    {([null, true, false] as const).map(r => (
+                      <button
+                        key={r === null ? 'r-all' : r ? 'r-recept' : 'r-livsmedel'}
+                        onClick={() => {
+                          setRecipeFilter(r)
+                          setPage(0)
+                        }}
+                        className={`px-2 py-0.5 text-xs rounded-full border transition-colors ${
+                          recipeFilter === r
+                            ? 'bg-primary-500 text-white border-primary-600'
+                            : 'bg-white text-neutral-500 border-neutral-200 hover:border-neutral-400'
+                        }`}
+                      >
+                        {r === null ? 'Alla typer' : r ? 'Recept' : 'Livsmedel'}
+                      </button>
+                    ))}
+                  </>
+                )}
               </div>
 
               {/* Food list */}
@@ -556,7 +587,7 @@ export function AddFoodToMealModal({
                     value={amount}
                     onChange={e => {
                       const val = e.target.value
-                      setAmount(val === '' ? '' : parseFloat(val) || '')
+                      setAmount(val === '' ? '' : parseFloat(val))
                     }}
                     className="mt-1"
                   />

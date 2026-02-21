@@ -6,6 +6,9 @@ import {
   type FoodGoalMatch,
 } from '@/lib/utils/findBestFoodsForGoals'
 import type { FoodColor } from '@/lib/calculations/colorDensity'
+import type { FoodSource } from './useFoodItems'
+
+export type SuggestionSourceFilter = 'alla' | 'mina' | 'slv' | 'usda'
 
 export interface FoodSuggestionParams {
   targetCalories: number
@@ -18,6 +21,7 @@ export interface FoodSuggestionParams {
   nonRecipesOnly?: boolean
   energyDensityColors?: FoodColor[]
   tolerance?: number
+  sourceFilter?: SuggestionSourceFilter
 }
 
 export interface UseFoodSuggestionsResult {
@@ -49,6 +53,21 @@ export function useFoodSuggestions(
       return []
     }
 
+    // Filter by source
+    const sourcesToInclude: FoodSource[] = (() => {
+      switch (params.sourceFilter) {
+        case 'mina':
+          return ['user', 'manual']
+        case 'slv':
+          return ['livsmedelsverket']
+        case 'usda':
+          return ['usda']
+        default:
+          return ['user', 'manual', 'livsmedelsverket', 'usda']
+      }
+    })()
+    const filteredFoods = foods.filter(f => sourcesToInclude.includes(f.source))
+
     const findParams: FindBestFoodsParams = {
       desiredCalories: params.targetCalories,
       desiredMacroType: params.primaryMacro,
@@ -62,7 +81,7 @@ export function useFoodSuggestions(
       tolerance: params.tolerance || 25, // Reasonable default for accurate suggestions
     }
 
-    return findBestFoodsForGoals(foods, findParams)
+    return findBestFoodsForGoals(filteredFoods, findParams)
   }, [foods, params, enabled])
 
   return {

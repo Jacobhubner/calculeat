@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { type FoodColor, type FoodType } from '@/lib/calculations/colorDensity'
 
 export type FoodSource = 'manual' | 'livsmedelsverket' | 'usda' | 'user'
-export type FoodTab = 'mina' | 'slv' | 'usda'
+export type FoodTab = 'mina' | 'slv' | 'usda' | 'alla'
 
 export interface PaginatedResult {
   items: FoodItem[]

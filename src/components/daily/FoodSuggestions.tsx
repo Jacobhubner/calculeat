@@ -3,8 +3,7 @@ import { Lightbulb, Plus, Settings2, Heart } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Checkbox } from '@/components/ui/checkbox'
-import { useFoodSuggestions } from '@/hooks/useFoodSuggestions'
+import { useFoodSuggestions, type SuggestionSourceFilter } from '@/hooks/useFoodSuggestions'
 import { useFavoriteFoods, useToggleFavorite } from '@/hooks/useFavoriteFoods'
 import type { FoodItem } from '@/hooks/useFoodItems'
 import type { FoodColor } from '@/lib/calculations/colorDensity'
@@ -56,11 +55,12 @@ export function FoodSuggestions({
   const [primaryMacro, setPrimaryMacro] = useState<'protein' | 'carbs' | 'fat'>('protein')
   const [primaryMacroTarget, setPrimaryMacroTarget] = useState<number | ''>('')
   const [secondaryMacro, setSecondaryMacro] = useState<'protein' | 'carbs' | 'fat' | ''>('')
-  const [secondaryMacroTarget, setSecondaryMacroTarget] = useState<number>(0)
-  const [count, setCount] = useState<number>(10)
+  const [secondaryMacroTarget, setSecondaryMacroTarget] = useState<number | ''>(0)
+  const [count, setCount] = useState<number | ''>(10)
 
   // Filter state
   const [showSettings, setShowSettings] = useState(false)
+  const [sourceFilter, setSourceFilter] = useState<SuggestionSourceFilter>('alla')
   const [recipesOnly, setRecipesOnly] = useState(false)
   const [nonRecipesOnly, setNonRecipesOnly] = useState(false)
   const [filterByColor, setFilterByColor] = useState(false)
@@ -97,11 +97,16 @@ export function FoodSuggestions({
       primaryMacro,
       primaryMacroTarget: typeof primaryMacroTarget === 'number' ? primaryMacroTarget : 0,
       secondaryMacro: secondaryMacro || undefined,
-      secondaryMacroTarget: secondaryMacro ? secondaryMacroTarget : undefined,
-      count,
+      secondaryMacroTarget: secondaryMacro
+        ? typeof secondaryMacroTarget === 'number'
+          ? secondaryMacroTarget
+          : 0
+        : undefined,
+      count: typeof count === 'number' ? count : 10,
       recipesOnly,
       nonRecipesOnly,
       energyDensityColors: colorFilter,
+      sourceFilter,
     },
     isSearchValid
   )
@@ -178,9 +183,10 @@ export function FoodSuggestions({
           <Input
             type="number"
             value={targetCalories}
-            onChange={e =>
-              setTargetCalories(e.target.value === '' ? '' : parseInt(e.target.value) || 0)
-            }
+            onChange={e => {
+              const val = e.target.value
+              setTargetCalories(val === '' ? '' : parseInt(val))
+            }}
             className="h-8 w-20 text-center"
             min={0}
             placeholder="kcal"
@@ -190,9 +196,10 @@ export function FoodSuggestions({
           <Input
             type="number"
             value={primaryMacroTarget}
-            onChange={e =>
-              setPrimaryMacroTarget(e.target.value === '' ? '' : parseInt(e.target.value) || 0)
-            }
+            onChange={e => {
+              const val = e.target.value
+              setPrimaryMacroTarget(val === '' ? '' : parseInt(val))
+            }}
             className="h-8 w-16 text-center"
             min={0}
             placeholder="g"
@@ -247,7 +254,10 @@ export function FoodSuggestions({
                   <Input
                     type="number"
                     value={secondaryMacroTarget}
-                    onChange={e => setSecondaryMacroTarget(parseInt(e.target.value) || 0)}
+                    onChange={e => {
+                      const val = e.target.value
+                      setSecondaryMacroTarget(val === '' ? '' : parseInt(val))
+                    }}
                     className="h-7 w-16 text-xs text-center"
                     min={0}
                   />
@@ -262,7 +272,10 @@ export function FoodSuggestions({
               <Input
                 type="number"
                 value={count}
-                onChange={e => setCount(parseInt(e.target.value) || 10)}
+                onChange={e => {
+                  const val = e.target.value
+                  setCount(val === '' ? '' : parseInt(val))
+                }}
                 className="h-7 w-16 text-xs text-center"
                 min={1}
                 max={50}
@@ -282,60 +295,133 @@ export function FoodSuggestions({
               </select>
             </div>
 
-            {/* Filters row */}
-            <div className="flex items-center gap-4 flex-wrap">
-              <label className="flex items-center gap-1.5 text-xs">
-                <Checkbox
-                  checked={recipesOnly}
-                  onCheckedChange={v => {
-                    setRecipesOnly(v as boolean)
-                    if (v) setNonRecipesOnly(false)
-                  }}
-                />
-                Recept
-              </label>
-              <label className="flex items-center gap-1.5 text-xs">
-                <Checkbox
-                  checked={nonRecipesOnly}
-                  onCheckedChange={v => {
-                    setNonRecipesOnly(v as boolean)
-                    if (v) setRecipesOnly(false)
-                  }}
-                />
-                Livsmedel
-              </label>
-              <label className="flex items-center gap-1.5 text-xs">
-                <Checkbox
-                  checked={filterByColor}
-                  onCheckedChange={v => setFilterByColor(v as boolean)}
-                />
-                Färgfilter
-              </label>
-              {filterByColor && (
-                <>
-                  <label className="flex items-center gap-1 text-xs">
-                    <Checkbox
-                      checked={showGreen}
-                      onCheckedChange={v => setShowGreen(v as boolean)}
-                    />
-                    <span className="w-2.5 h-2.5 rounded-full bg-green-500" />
-                  </label>
-                  <label className="flex items-center gap-1 text-xs">
-                    <Checkbox
-                      checked={showYellow}
-                      onCheckedChange={v => setShowYellow(v as boolean)}
-                    />
-                    <span className="w-2.5 h-2.5 rounded-full bg-yellow-500" />
-                  </label>
-                  <label className="flex items-center gap-1 text-xs">
-                    <Checkbox
-                      checked={showOrange}
-                      onCheckedChange={v => setShowOrange(v as boolean)}
-                    />
-                    <span className="w-2.5 h-2.5 rounded-full bg-orange-500" />
-                  </label>
-                </>
-              )}
+            {/* Source filter */}
+            <div className="flex items-center gap-3">
+              <Label className="text-xs shrink-0">Källa</Label>
+              <div className="flex gap-1 flex-wrap">
+                {(
+                  [
+                    { key: 'alla', label: 'Alla' },
+                    { key: 'mina', label: 'Mina & CalculEat' },
+                    { key: 'slv', label: 'SLV' },
+                    { key: 'usda', label: 'USDA' },
+                  ] as const
+                ).map(s => (
+                  <button
+                    key={s.key}
+                    onClick={() => setSourceFilter(s.key)}
+                    className={`px-2 py-0.5 text-xs rounded-full border transition-colors ${
+                      sourceFilter === s.key
+                        ? 'bg-primary-500 text-white border-primary-600'
+                        : 'bg-white text-neutral-500 border-neutral-200 hover:border-neutral-400'
+                    }`}
+                  >
+                    {s.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Typ-filter */}
+            <div className="flex items-center gap-3">
+              <Label className="text-xs shrink-0">Typ</Label>
+              <div className="flex gap-1 flex-wrap">
+                {(
+                  [
+                    { key: 'alla', label: 'Alla typer' },
+                    { key: 'recept', label: 'Recept' },
+                    { key: 'livsmedel', label: 'Livsmedel' },
+                  ] as const
+                ).map(t => (
+                  <button
+                    key={t.key}
+                    onClick={() => {
+                      setRecipesOnly(t.key === 'recept')
+                      setNonRecipesOnly(t.key === 'livsmedel')
+                    }}
+                    className={`px-2 py-0.5 text-xs rounded-full border transition-colors ${
+                      (t.key === 'recept' && recipesOnly) ||
+                      (t.key === 'livsmedel' && nonRecipesOnly) ||
+                      (t.key === 'alla' && !recipesOnly && !nonRecipesOnly)
+                        ? 'bg-primary-500 text-white border-primary-600'
+                        : 'bg-white text-neutral-500 border-neutral-200 hover:border-neutral-400'
+                    }`}
+                  >
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Färgfilter */}
+            <div className="flex items-center gap-3">
+              <Label className="text-xs shrink-0">Färg</Label>
+              <div className="flex gap-1 flex-wrap">
+                <button
+                  onClick={() => setFilterByColor(false)}
+                  className={`px-2 py-0.5 text-xs rounded-full border transition-colors ${
+                    !filterByColor
+                      ? 'bg-primary-500 text-white border-primary-600'
+                      : 'bg-white text-neutral-500 border-neutral-200 hover:border-neutral-400'
+                  }`}
+                >
+                  Alla
+                </button>
+                {(
+                  [
+                    {
+                      key: 'green',
+                      label: 'Grön',
+                      bg: 'bg-green-500',
+                      activeBg: 'bg-green-500 border-green-600',
+                      dot: 'bg-green-500',
+                      checked: showGreen,
+                      set: setShowGreen,
+                    },
+                    {
+                      key: 'yellow',
+                      label: 'Gul',
+                      bg: 'bg-yellow-400',
+                      activeBg: 'bg-yellow-400 border-yellow-500 text-neutral-900',
+                      dot: 'bg-yellow-400',
+                      checked: showYellow,
+                      set: setShowYellow,
+                    },
+                    {
+                      key: 'orange',
+                      label: 'Orange',
+                      bg: 'bg-orange-500',
+                      activeBg: 'bg-orange-500 border-orange-600',
+                      dot: 'bg-orange-500',
+                      checked: showOrange,
+                      set: setShowOrange,
+                    },
+                  ] as const
+                ).map(c => (
+                  <button
+                    key={c.key}
+                    onClick={() => {
+                      const next = !c.checked
+                      c.set(next)
+                      setFilterByColor(
+                        c.key === 'green'
+                          ? next || showYellow || showOrange
+                          : c.key === 'yellow'
+                            ? showGreen || next || showOrange
+                            : showGreen || showYellow || next
+                      )
+                    }}
+                    className={`flex items-center gap-1 px-2 py-0.5 text-xs rounded-full border transition-colors ${
+                      filterByColor && c.checked
+                        ? `${c.key === 'yellow' ? 'bg-yellow-400 border-yellow-500 text-neutral-900' : c.key === 'green' ? 'bg-green-500 border-green-600 text-white' : 'bg-orange-500 border-orange-600 text-white'}`
+                        : 'bg-white text-neutral-500 border-neutral-200 hover:border-neutral-400'
+                    }`}
+                  >
+                    <span className={`w-2 h-2 rounded-full shrink-0 ${c.dot}`} />
+                    {c.label}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         )}

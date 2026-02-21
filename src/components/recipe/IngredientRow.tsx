@@ -3,7 +3,17 @@ import { Trash2, Search, Heart } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import type { FoodItem } from '@/hooks/useFoodItems'
+import type { FoodItem, FoodSource } from '@/hooks/useFoodItems'
+
+const SOURCE_BADGES: Record<FoodSource, { label: string; className: string }> = {
+  user: { label: 'Min', className: 'bg-neutral-100 text-neutral-600 border-neutral-300' },
+  manual: {
+    label: 'CalculEat',
+    className: 'bg-primary-100 text-primary-700 border-primary-400 font-semibold',
+  },
+  livsmedelsverket: { label: 'SLV', className: 'bg-blue-700 text-white border-blue-800' },
+  usda: { label: 'USDA', className: 'bg-amber-100 text-amber-800 border-amber-400' },
+}
 import {
   calculateIngredientNutrition,
   getAvailableUnits,
@@ -37,6 +47,9 @@ export function IngredientRow({
   const [searchQuery, setSearchQuery] = useState('')
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [highlightedIndex, setHighlightedIndex] = useState(0)
+  const [amountInput, setAmountInput] = useState(
+    ingredient.amount > 0 ? String(ingredient.amount) : ''
+  )
   const searchRef = useRef<HTMLDivElement>(null)
   const listRef = useRef<HTMLDivElement>(null)
 
@@ -153,8 +166,11 @@ export function IngredientRow({
   )
 
   const handleAmountChange = (value: string) => {
-    const numValue = parseFloat(value) || 0
-    onChange({ ...ingredient, amount: numValue })
+    setAmountInput(value)
+    const numValue = value === '' ? 0 : parseFloat(value)
+    if (!isNaN(numValue)) {
+      onChange({ ...ingredient, amount: numValue })
+    }
   }
 
   const handleUnitChange = (unit: string) => {
@@ -257,7 +273,17 @@ export function IngredientRow({
                             </button>
                           )}
                           <div className="flex-1 min-w-0">
-                            <div className="font-medium text-sm text-neutral-900">{food.name}</div>
+                            <div className="flex items-center gap-1.5 min-w-0">
+                              <span className="font-medium text-sm text-neutral-900 truncate">
+                                {food.name}
+                              </span>
+                              <Badge
+                                variant="outline"
+                                className={`text-[9px] px-1 py-0 h-4 shrink-0 ${SOURCE_BADGES[food.source].className}`}
+                              >
+                                {SOURCE_BADGES[food.source].label}
+                              </Badge>
+                            </div>
                             <div className="text-xs text-neutral-500 flex items-center gap-1.5 mt-0.5">
                               {food.brand && <span>{food.brand} •</span>}
                               <span>
@@ -301,7 +327,7 @@ export function IngredientRow({
         {/* Amount input */}
         <Input
           type="number"
-          value={ingredient.amount || ''}
+          value={amountInput}
           onChange={e => handleAmountChange(e.target.value)}
           placeholder="Mängd"
           className="w-20 text-center"

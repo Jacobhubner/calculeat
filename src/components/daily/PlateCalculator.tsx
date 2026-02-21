@@ -180,7 +180,7 @@ export function PlateCalculator({
             value={targetAmount}
             onChange={e => {
               const val = e.target.value
-              setTargetAmount(val === '' ? '' : parseFloat(val) || '')
+              setTargetAmount(val === '' ? '' : parseFloat(val))
             }}
             className="h-8 w-20 text-center"
             min={0}
