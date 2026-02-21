@@ -45,7 +45,7 @@ const SOURCE_BADGES: Record<FoodSource, { label: string; className: string }> = 
 
 // Tab configuration
 const TABS: { key: FoodTab; label: string }[] = [
-  { key: 'mina', label: 'Mina' },
+  { key: 'mina', label: 'Mina & CalculEat' },
   { key: 'slv', label: 'SLV' },
   { key: 'usda', label: 'USDA' },
 ]
