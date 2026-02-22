@@ -504,7 +504,7 @@ export default function TodayPage() {
                 </div>
 
                 {/* Right: Makromål + Energitäthet + Kaloritäthet */}
-                <div className="flex-1 space-y-2">
+                <div className="flex-1 min-w-0 space-y-2">
                   <h4 className="text-sm font-semibold text-neutral-700">Makromål</h4>
                   {dailySummary && profile ? (
                     <>

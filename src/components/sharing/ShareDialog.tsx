@@ -197,7 +197,8 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
         toast.success(`"${selectedName}" delades!`)
       }
       handleOpenChange(false)
-    } catch {
+    } catch (err) {
+      console.error('[ShareDialog] delningsfel:', err)
       toast.error('Något gick fel vid delningen.')
     }
   }
