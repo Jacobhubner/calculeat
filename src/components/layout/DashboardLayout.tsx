@@ -14,14 +14,16 @@ export default function DashboardLayout({ children, fullHeight }: DashboardLayou
   const { sidebarCollapsed } = useUIStore()
 
   return (
-    <div className="flex min-h-screen flex-col overflow-x-hidden">
+    <div
+      className={cn('flex flex-col overflow-x-hidden', fullHeight ? 'h-screen' : 'min-h-screen')}
+    >
       <SiteHeader />
-      <div className="flex flex-1 min-h-0">
+      <div className="flex flex-1 min-h-0 overflow-hidden">
         <DashboardNav />
         <main
           className={cn(
             'flex-1 min-w-0 transition-all duration-300 pt-16 pb-20 md:pb-0',
-            fullHeight && 'flex flex-col',
+            fullHeight && 'flex flex-col min-h-0 overflow-hidden',
             sidebarCollapsed ? 'md:ml-20' : 'md:ml-64'
           )}
         >
