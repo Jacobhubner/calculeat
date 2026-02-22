@@ -19,8 +19,8 @@ export default function SocialPage() {
   }
 
   return (
-    <DashboardLayout>
-      <div className="flex flex-col h-[calc(100vh-4rem)] -mx-3 -my-4 md:-mx-4 md:-my-8 lg:-mx-8">
+    <DashboardLayout fullHeight>
+      <div className="flex flex-col h-full min-h-0">
         <SocialHub onClose={() => {}} onOpenShareDialog={handleOpenShareDialog} />
       </div>
 
