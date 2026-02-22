@@ -1,1 +1,0 @@
-UPDATE food_items SET default_amount = 1, default_unit = 'tsp', calories = 130.00, fat_g = 0.00, carb_g = 32.00, protein_g = 0.00, energy_density_color = 'Yellow', weight_grams = 100, grams_per_piece = 60 WHERE name = 'Bakpulver Garant';
