@@ -90,7 +90,9 @@ export function NutrientStatusRow({
   return (
     <div className={cn('space-y-1', className)}>
       <div className="flex items-center justify-between gap-2">
-        <span className="text-sm font-medium text-neutral-700 truncate min-w-0">{label}</span>
+        <span className="text-sm font-medium text-neutral-700 truncate block min-w-0 flex-1">
+          {label}
+        </span>
         <div className="flex items-center gap-2 shrink-0">
           <span className="text-sm text-neutral-600">
             {Math.round(status.current)} / {Math.round(status.min)}-{Math.round(status.max)}

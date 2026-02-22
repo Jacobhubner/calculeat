@@ -31,6 +31,7 @@ export function useConversations() {
     },
     enabled: !!user,
     staleTime: 30_000,
+    refetchOnMount: true,
   })
 }
 

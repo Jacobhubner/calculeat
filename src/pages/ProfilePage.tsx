@@ -640,7 +640,7 @@ export default function ProfilePage() {
                 )}
                 <TDEEOptions
                   profileId={displayProfile.id}
-                  initialWeight={displayProfile.initial_weight_kg}
+                  initialWeight={displayProfile.weight_kg ?? displayProfile.initial_weight_kg}
                   height={displayProfile.height_cm}
                   birthDate={displayProfile.birth_date}
                   gender={displayProfile.gender}
