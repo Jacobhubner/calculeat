@@ -305,7 +305,6 @@ function SentFriendRequestCard({ request }: { request: SentFriendRequest }) {
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium text-neutral-900 truncate">{request.addressee_name}</p>
-          <p className="text-xs text-neutral-400 truncate">{request.addressee_email}</p>
           <p className="text-xs text-neutral-400">
             Inväntar svar &middot;{' '}
             {formatDistanceToNow(parseISO(request.created_at), { addSuffix: true, locale: sv })}
