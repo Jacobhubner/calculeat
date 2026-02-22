@@ -227,9 +227,9 @@ export default function SiteHeader() {
         {/* Mobile: Social + Avatar when logged in */}
         {user && (
           <div className="md:hidden flex items-center gap-2">
-            {/* Mobile Social Hub trigger */}
-            <button
-              onClick={() => setSocialHubOpen(prev => !prev)}
+            {/* Mobile Social — navigera direkt till /app/social */}
+            <Link
+              to="/app/social"
               className="relative p-2 text-neutral-600 rounded-lg transition-colors"
               aria-label="Social"
             >
@@ -239,7 +239,7 @@ export default function SiteHeader() {
                   {badgeCount > 99 ? '99+' : badgeCount}
                 </span>
               )}
-            </button>
+            </Link>
 
             <div className="relative" ref={userMenuRef}>
               <button
@@ -358,46 +358,6 @@ export default function SiteHeader() {
           }}
           preselectedFriend={sharePreselectedFriend}
         />
-      )}
-
-      {/* Mobile Social Hub — bottom sheet */}
-      {user && (
-        <AnimatePresence>
-          {socialHubOpen && (
-            <>
-              <motion.div
-                className="md:hidden fixed inset-0 bg-black/40 z-40"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setSocialHubOpen(false)}
-              />
-              <motion.div
-                className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-2xl max-h-[85vh] flex flex-col"
-                initial={{ y: '100%' }}
-                animate={{ y: 0 }}
-                exit={{ y: '100%' }}
-                transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-                drag="y"
-                dragConstraints={{ top: 0 }}
-                dragElastic={0.1}
-                onDragEnd={(_e, info) => {
-                  if (info.offset.y > 120) setSocialHubOpen(false)
-                }}
-              >
-                <div className="flex justify-center pt-3 pb-1 shrink-0">
-                  <div className="w-10 h-1 bg-neutral-300 rounded-full" />
-                </div>
-                <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
-                  <SocialHub
-                    onClose={() => setSocialHubOpen(false)}
-                    onOpenShareDialog={handleOpenShareDialog}
-                  />
-                </div>
-              </motion.div>
-            </>
-          )}
-        </AnimatePresence>
       )}
     </header>
   )
