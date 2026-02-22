@@ -510,19 +510,19 @@ export default function TodayPage() {
                     <>
                       <NutrientStatusRow
                         status={dailySummary.fatStatus}
-                        label={`Fett (${Math.round(profile.fat_min_percent || 0)}-${Math.round(profile.fat_max_percent || 0)}%)`}
+                        label="Fett"
                         unit="g"
                         showProgress
                       />
                       <NutrientStatusRow
                         status={dailySummary.carbStatus}
-                        label={`Kolhydrater (${Math.round(profile.carb_min_percent || 0)}-${Math.round(profile.carb_max_percent || 0)}%)`}
+                        label="Kolhydrater"
                         unit="g"
                         showProgress
                       />
                       <NutrientStatusRow
                         status={dailySummary.proteinStatus}
-                        label={`Protein (${Math.round(profile.protein_min_percent || 0)}-${Math.round(profile.protein_max_percent || 0)}%)`}
+                        label="Protein"
                         unit="g"
                         showProgress
                       />

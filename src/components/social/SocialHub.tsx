@@ -49,7 +49,9 @@ import {
   useEditMessage,
   useDeleteMessage,
   useDeleteConversation,
+  messageKeys,
 } from '@/hooks/useMessages'
+import { useQueryClient } from '@tanstack/react-query'
 import type { PendingInvitation } from '@/lib/types/sharing'
 import type { Friend, FriendRequest, SentFriendRequest } from '@/lib/types/friends'
 import type { Conversation, Message } from '@/lib/types/messages'
@@ -1115,12 +1117,13 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
   const [messagesView, setMessagesView] = useState<MessagesView>('conversations')
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null)
 
+  const queryClient = useQueryClient()
   const { data: friends = [] } = useFriends()
   const { data: friendRequests = [] } = usePendingFriendRequests()
   const { data: sentRequests = [] } = useSentFriendRequests()
   const { data: pendingInvitations = [] } = usePendingInvitations()
   const { data: pendingCount = 0 } = usePendingFriendRequestsCount()
-  const { data: conversations = [] } = useConversations()
+  const { data: conversations = [], refetch: refetchConversations } = useConversations()
   const unreadMessageCount = useUnreadMessageCount()
   const { mutateAsync: sendFriendRequest } = useSendFriendRequest()
 
@@ -1159,8 +1162,11 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
     setFriendsView('profile')
   }
 
-  const handleMessage = (friend: Friend) => {
-    const existingConv = conversations.find(c => c.friendship_id === friend.friendship_id)
+  const handleMessage = async (friend: Friend) => {
+    // Hämta färska konversationer från servern
+    const result = await refetchConversations()
+    const freshConversations = result.data ?? conversations
+    const existingConv = freshConversations.find(c => c.friendship_id === friend.friendship_id)
     const conv: Conversation = existingConv ?? {
       friendship_id: friend.friendship_id,
       friend_name: friend.friend_email,
@@ -1194,7 +1200,12 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
             <button
               key={t.id}
               type="button"
-              onClick={() => setTab(t.id)}
+              onClick={() => {
+                setTab(t.id)
+                if (t.id === 'messages') {
+                  queryClient.invalidateQueries({ queryKey: messageKeys.conversations() })
+                }
+              }}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                 tab === t.id ? 'bg-primary-600 text-white' : 'text-neutral-600 hover:bg-neutral-100'
               }`}
