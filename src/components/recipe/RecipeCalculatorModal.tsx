@@ -242,7 +242,7 @@ export function RecipeCalculatorModal({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6 px-4 pb-4 md:px-0 md:pb-0">
+        <div className="space-y-6 px-3 pb-4 md:px-0 md:pb-0 overflow-x-hidden">
           <div className="space-y-6">
             {/* Form */}
             <div className="space-y-6">
@@ -348,61 +348,61 @@ export function RecipeCalculatorModal({
               />
             </div>
           </div>
-        </div>
 
-        {/* Save format selection */}
-        {nutrition && (
-          <div className="border-t pt-4 mt-4">
-            <Label className="text-sm font-medium mb-3 block">Spara som livsmedel</Label>
-            <div className="flex gap-6">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="radio"
-                  name="saveAs"
-                  value="portion"
-                  checked={saveAs === 'portion'}
-                  onChange={() => setSaveAs('portion')}
-                  className="w-4 h-4 text-primary-600 focus:ring-primary-500"
-                />
-                <span className="text-sm">
-                  Per portion ({Math.round(nutrition.perServing.weight)}g)
-                </span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="radio"
-                  name="saveAs"
-                  value="100g"
-                  checked={saveAs === '100g'}
-                  onChange={() => setSaveAs('100g')}
-                  className="w-4 h-4 text-primary-600 focus:ring-primary-500"
-                />
-                <span className="text-sm">Per 100g</span>
-              </label>
+          {/* Save format selection */}
+          {nutrition && (
+            <div className="border-t pt-4">
+              <Label className="text-sm font-medium mb-3 block">Spara som livsmedel</Label>
+              <div className="flex gap-6">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="saveAs"
+                    value="portion"
+                    checked={saveAs === 'portion'}
+                    onChange={() => setSaveAs('portion')}
+                    className="w-4 h-4 text-primary-600 focus:ring-primary-500"
+                  />
+                  <span className="text-sm">
+                    Per portion ({Math.round(nutrition.perServing.weight)}g)
+                  </span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="saveAs"
+                    value="100g"
+                    checked={saveAs === '100g'}
+                    onChange={() => setSaveAs('100g')}
+                    className="w-4 h-4 text-primary-600 focus:ring-primary-500"
+                  />
+                  <span className="text-sm">Per 100g</span>
+                </label>
+              </div>
+              <p className="text-xs text-neutral-500 mt-2">
+                {saveAs === 'portion'
+                  ? 'Receptet sparas med portionsstorlek som standardenhet.'
+                  : 'Receptet sparas med 100g som standardenhet (likt vanliga livsmedel).'}
+              </p>
             </div>
-            <p className="text-xs text-neutral-500 mt-2">
-              {saveAs === 'portion'
-                ? 'Receptet sparas med portionsstorlek som standardenhet.'
-                : 'Receptet sparas med 100g som standardenhet (likt vanliga livsmedel).'}
-            </p>
-          </div>
-        )}
+          )}
 
-        {/* Footer */}
-        <div className="flex justify-end gap-3 pt-4 border-t">
-          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
-            Avbryt
-          </Button>
-          <Button onClick={handleSubmit} disabled={isLoading} className="gap-2">
-            {isLoading ? (
-              'Sparar...'
-            ) : (
-              <>
-                <ChefHat className="h-4 w-4" />
-                {isEditing ? 'Uppdatera recept' : 'Spara recept'}
-              </>
-            )}
-          </Button>
+          {/* Footer */}
+          <div className="flex justify-end gap-3 pt-4 border-t">
+            <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
+              Avbryt
+            </Button>
+            <Button onClick={handleSubmit} disabled={isLoading} className="gap-2">
+              {isLoading ? (
+                'Sparar...'
+              ) : (
+                <>
+                  <ChefHat className="h-4 w-4" />
+                  {isEditing ? 'Uppdatera recept' : 'Spara recept'}
+                </>
+              )}
+            </Button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

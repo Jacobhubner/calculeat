@@ -53,7 +53,7 @@ export function NutritionSummary({
         }
 
   return (
-    <div className="bg-gradient-to-br from-primary-50 to-accent-50 rounded-xl p-6 space-y-6">
+    <div className="bg-gradient-to-br from-primary-50 to-accent-50 rounded-xl p-4 md:p-6 space-y-4 md:space-y-6">
       {/* Sparas som - main highlighted section */}
       <div className="bg-white/80 rounded-xl p-4 border-2 border-primary-200">
         <h4 className="text-sm font-semibold text-primary-700 mb-3 uppercase tracking-wide flex items-center gap-2">
