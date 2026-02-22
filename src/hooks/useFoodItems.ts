@@ -144,18 +144,21 @@ export function useFoodItems() {
     queryFn: async () => {
       if (!user) throw new Error('User not authenticated')
 
-      // Fetch both global items (user_id IS NULL) and user's own items
-      // Include recipes (is_recipe=true) so they can be logged
-      const { data, error } = await supabase
-        .from('food_items')
-        .select('*')
-        .or(`user_id.is.null,user_id.eq.${user.id}`)
-        .order('name')
+      // Fetch both global items (user_id IS NULL) and user's own items.
+      // PostgREST default limit is 1000 — use two separate queries to ensure
+      // user's own items are always included regardless of total count.
+      const [globalResult, userResult] = await Promise.all([
+        supabase.from('food_items').select('*').is('user_id', null).order('name').limit(10000),
+        supabase.from('food_items').select('*').eq('user_id', user.id).order('name').limit(10000),
+      ])
 
-      if (error) throw error
+      if (globalResult.error) throw globalResult.error
+      if (userResult.error) throw userResult.error
+
+      const combined = [...(globalResult.data as FoodItem[]), ...(userResult.data as FoodItem[])]
 
       // Apply shadowing: user items override global items
-      return applyShadowing(data as FoodItem[], user.id)
+      return applyShadowing(combined, user.id)
     },
     enabled: !!user,
   })
