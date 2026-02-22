@@ -352,8 +352,8 @@ function FriendProfile({
   const { mutateAsync: setAlias, isPending: isSavingAlias } = useSetFriendAlias()
   const { mutateAsync: removeFriend, isPending: isRemoving } = useRemoveFriend()
 
-  // Primärt: alias om satt, annars email
-  const displayName = friend.alias ?? friend.friend_email
+  // Primärt: alias om satt, annars username, annars email
+  const displayName = friend.alias ?? friend.friend_name
 
   const handleSaveAlias = async () => {
     try {
@@ -400,8 +400,13 @@ function FriendProfile({
         </div>
         <div className="text-center">
           <p className="font-semibold text-neutral-900">{displayName}</p>
-          {/* Visa alltid email som subtext */}
-          <p className="text-sm text-neutral-400">{friend.friend_email}</p>
+          {/* Visa username och email som subtext */}
+          {friend.alias && (
+            <p className="text-sm text-neutral-500">
+              @{friend.friend_username ?? friend.friend_name}
+            </p>
+          )}
+          <p className="text-xs text-neutral-400">{friend.friend_email}</p>
           <p className="text-xs text-neutral-400">
             Vänner sedan {format(parseISO(friend.since), 'd MMM yyyy', { locale: sv })}
           </p>
@@ -974,7 +979,9 @@ function MessageThread({
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium text-neutral-900 truncate">{displayName}</p>
-          <p className="text-[10px] text-neutral-400 truncate">{conversation.friend_name}</p>
+          {conversation.friend_alias && (
+            <p className="text-[10px] text-neutral-400 truncate">{conversation.friend_name}</p>
+          )}
         </div>
         {/* Ta bort konversation */}
         {confirmDeleteConv ? (
@@ -1131,7 +1138,11 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
 
   const filteredFriends = friends.filter(f => {
     if (!friendSearch.trim()) return true
-    return (f.alias ?? f.friend_email).toLowerCase().includes(friendSearch.toLowerCase())
+    const q = friendSearch.toLowerCase()
+    return (
+      (f.alias ?? f.friend_name).toLowerCase().includes(q) ||
+      f.friend_email.toLowerCase().includes(q)
+    )
   })
 
   const handleAddFriend = async () => {
@@ -1169,7 +1180,8 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
     const existingConv = freshConversations.find(c => c.friendship_id === friend.friendship_id)
     const conv: Conversation = existingConv ?? {
       friendship_id: friend.friendship_id,
-      friend_name: friend.friend_email,
+      friend_name: friend.friend_name,
+      friend_username: friend.friend_username ?? null,
       friend_alias: friend.alias ?? null,
       last_message_content: null,
       last_message_at: null,
@@ -1256,11 +1268,11 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
                         className="w-full flex items-center gap-3 p-2.5 rounded-lg hover:bg-neutral-50 transition-colors text-left"
                       >
                         <div className="h-9 w-9 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 text-sm font-semibold shrink-0">
-                          {getInitials(friend.alias ?? friend.friend_email)}
+                          {getInitials(friend.alias ?? friend.friend_name)}
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-neutral-900 truncate">
-                            {friend.alias ?? friend.friend_email}
+                            {friend.alias ?? friend.friend_name}
                           </p>
                           <p className="text-xs text-neutral-400 truncate">{friend.friend_email}</p>
                         </div>
@@ -1304,10 +1316,10 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
                   Tillbaka
                 </button>
                 <div className="space-y-2">
-                  <p className="text-sm font-medium text-neutral-700">Lägg till vän via e-post</p>
+                  <p className="text-sm font-medium text-neutral-700">Lägg till vän</p>
                   <Input
-                    type="email"
-                    placeholder="vän@exempel.se"
+                    type="text"
+                    placeholder="Användarnamn eller e-postadress"
                     value={addEmail}
                     onChange={e => setAddEmail(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && handleAddFriend()}

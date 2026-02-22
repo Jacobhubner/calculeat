@@ -145,7 +145,7 @@ export default function SiteHeader() {
                 <Link
                   to="/app/profile"
                   className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary-50 hover:bg-primary-100 transition-colors"
-                  title="Aktivt profilkort"
+                  title="Min profil"
                 >
                   <User className="h-4 w-4 text-primary-600" />
                   <span className="text-sm font-medium text-primary-700">

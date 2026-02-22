@@ -88,7 +88,11 @@ export const userProfileSchema = z.object({
 export const signUpSchema = z.object({
   email: z.string().email('Ogiltig e-postadress'),
   password: z.string().min(6, 'Lösenord måste vara minst 6 tecken'),
-  profile_name: z.string().min(1, 'Profilnamn är obligatoriskt'),
+  profile_name: z
+    .string()
+    .min(2, 'Användarnamnet måste vara minst 2 tecken')
+    .max(50, 'Användarnamnet får max vara 50 tecken')
+    .regex(/^[a-zA-Z0-9_åäöÅÄÖ]+$/, 'Användarnamnet får bara innehålla bokstäver, siffror och _'),
 })
 
 export const signInSchema = z.object({

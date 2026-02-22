@@ -1,6 +1,6 @@
 /**
  * ProfileResultsSummary - Visa BMR, TDEE och kaloriintervall för aktiv profil
- * Visas under profilkortet i sidopanelen
+ * Visas i sidopanelen på profilsidan
  */
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'

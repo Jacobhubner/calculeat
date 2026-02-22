@@ -86,8 +86,7 @@ export default function BasicInfoFields({
 
     return window.confirm(
       `Varning: Du försöker ändra "${fieldName}".\n\n` +
-        `Denna uppgift delas mellan alla dina profilkort och kan endast ändras när du har ett enda profilkort.\n\n` +
-        `Om du fortsätter kommer ändringen att påverka alla dina profilkort.\n\n` +
+        `Dessa fält låses när grundläggande information är ifylld.\n\n` +
         `Vill du fortsätta?`
     )
   }
@@ -160,7 +159,7 @@ export default function BasicInfoFields({
     }
   }
 
-  const lockTitle = 'Dessa fält är låsta. Radera alla profilkort för att kunna ändra dem.'
+  const lockTitle = 'Dessa fält är låsta när grundläggande information är ifylld.'
 
   return (
     <Card className="border-2 border-neutral-300">
@@ -191,14 +190,9 @@ export default function BasicInfoFields({
               <AlertDescription>
                 <div className="flex-1">
                   <h4 className="font-semibold text-blue-900 mb-1">Alla fält är låsta</h4>
-                  <p className="text-sm text-blue-800 mb-2">
-                    Födelsedatum, kön och längd delas mellan alla dina profilkort och låses när
-                    grundläggande information är ifylld. Du kan inte ändra dessa fält när du har
-                    aktiva profilkort.
-                  </p>
                   <p className="text-sm text-blue-800">
-                    <strong>För att ändra dessa värden:</strong> Radera alla dina profilkort och
-                    skapa ett nytt första profilkort med korrekta värden.
+                    Födelsedatum, kön och längd låses när grundläggande information är ifylld.
+                    Kontakta support om du behöver ändra dessa uppgifter.
                   </p>
                 </div>
               </AlertDescription>

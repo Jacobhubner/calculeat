@@ -58,10 +58,14 @@ export default function SignUpForm() {
       )}
 
       <div>
-        <Label htmlFor="profile_name">Profilnamn</Label>
+        <Label htmlFor="profile_name">Användarnamn</Label>
         <Input id="profile_name" {...register('profile_name')} className="mt-2" />
-        {errors.profile_name && (
+        {errors.profile_name ? (
           <p className="text-red-500 text-sm mt-1">{errors.profile_name.message}</p>
+        ) : (
+          <p className="text-neutral-500 text-xs mt-1">
+            Välj ett unikt namn som dina vänner kan hitta dig på.
+          </p>
         )}
       </div>
 

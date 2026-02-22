@@ -1,20 +1,20 @@
 /**
- * ProfilePage - Omstrukturerad med profilkortssystem
+ * ProfilePage - En profil per användare
  * Conditional rendering baserat på grundläggande information och TDEE-status
  */
 
 import { useState } from 'react'
 import DashboardLayout from '@/components/layout/DashboardLayout'
-import { User } from 'lucide-react'
-import { useProfiles, useUpdateProfile, useCreateProfile, useCreateWeightHistory } from '@/hooks'
+import { User, Save } from 'lucide-react'
+import { useProfiles, useUpdateProfile, useCreateWeightHistory } from '@/hooks'
+import { Button } from '@/components/ui/button'
 import { useSyncMealSettings } from '@/hooks/useMealSettings'
 import { useTodayLog, useSyncTodayLogFromProfile } from '@/hooks/useDailyLogs'
 import { useProfileStore } from '@/stores/profileStore'
-import type { Gender } from '@/lib/types'
+import type { Gender, Profile } from '@/lib/types'
 import { toast } from 'sonner'
 
-// New components
-import ProfileCardSidebar from '@/components/profile/ProfileCardSidebar'
+// Profile components
 import ProfileResultsSummary from '@/components/profile/ProfileResultsSummary'
 import MaxFatMetabolismCard from '@/components/profile/MaxFatMetabolismCard'
 import BasicInfoFields from '@/components/profile/BasicInfoFields'
@@ -35,14 +35,12 @@ export default function ProfilePage() {
 
   // Get active profile from store
   const activeProfileFromStore = useProfileStore(state => state.activeProfile)
-  const setActiveProfile = useProfileStore(state => state.setActiveProfile)
 
   // Get FULL active profile from React Query
   const activeProfile = allProfiles.find(p => p.id === activeProfileFromStore?.id)
 
   // Hooks for profile operations
   const updateProfile = useUpdateProfile()
-  const createProfile = useCreateProfile()
   const createWeightHistory = useCreateWeightHistory()
   const syncMealSettings = useSyncMealSettings()
 
@@ -110,7 +108,7 @@ export default function ProfilePage() {
   const hasTDEE = !!displayProfile?.tdee
 
   // Fields should be locked as soon as basic info is complete
-  // User must delete all profile cards to edit these fields again
+  // Fields lock when basic info is complete
   const fieldsAreLocked = hasBasicInfo
 
   // Handlers for BasicInfoFields - update pending state instead of API
@@ -443,23 +441,6 @@ export default function ProfilePage() {
     }))
   }
 
-  // Handler for profile selection
-  const handleSelectProfile = (profileId: string) => {
-    // Warn if there are unsaved changes
-    if (hasUnsavedChanges) {
-      const confirmed = window.confirm(
-        'Du har osparade ändringar i grundläggande information. Vill du byta profil? Osparade ändringar kommer att förloras.'
-      )
-      if (!confirmed) return
-    }
-
-    const profile = allProfiles.find(p => p.id === profileId)
-    if (profile) {
-      setActiveProfile(profile)
-      setPendingChanges({}) // Clear pending changes when switching profiles
-    }
-  }
-
   // Handler for profile save - save pending changes
   const handleSaveProfile = async (_profileId: string) => {
     if (!activeProfile || Object.keys(pendingChanges).length === 0) return
@@ -544,44 +525,6 @@ export default function ProfilePage() {
     }
   }
 
-  // Handler for profile delete (handled by ProfileCardList component)
-  const handleDeleteProfile = (_profileId: string) => {
-    // Handled by ProfileCardList
-  }
-
-  // Handler for creating new profile
-  const handleCreateNewProfile = async () => {
-    // Generate next profile name
-    const nextNumber = allProfiles.length
-    const profileName = nextNumber === 0 ? 'Profilkort' : `Profilkort ${nextNumber}`
-
-    // Clear pending changes BEFORE creating new profile to avoid race condition
-    setPendingChanges({})
-
-    try {
-      // Copy basic info from FIRST profile if it exists (for profile cards after the first one)
-      // This ensures new cards skip the basic info form if user has already filled it once
-      // Note: initial_weight_kg is no longer copied - weight is tracked via WeightTracker (user-based)
-      const firstProfile = allProfiles.length > 0 ? allProfiles[0] : null
-      const basicInfoData =
-        firstProfile && nextNumber > 0
-          ? {
-              birth_date: firstProfile.birth_date,
-              gender: firstProfile.gender,
-              height_cm: firstProfile.height_cm,
-            }
-          : {}
-
-      await createProfile.mutateAsync({
-        profile_name: profileName,
-        ...basicInfoData,
-      })
-    } catch (error) {
-      console.error('Error creating profile:', error)
-      // Error toast is handled by useCreateProfile hook
-    }
-  }
-
   // Handler for manual TDEE success
   const handleManualTDEESuccess = () => {
     toast.success('TDEE har sparats! Du kan nu använda resten av appen.')
@@ -620,24 +563,21 @@ export default function ProfilePage() {
               />
             )}
 
-            {/* SCENARIO 2: Has basic info but no TDEE - Show TDEE options (and basic info ONLY for first profile) */}
+            {/* SCENARIO 2: Has basic info but no TDEE - Show BasicInfoFields + TDEE options */}
             {hasBasicInfo && !hasTDEE && displayProfile && (
               <>
-                {/* Only show BasicInfoFields at the top for the FIRST profile card */}
-                {allProfiles.length === 1 && (
-                  <BasicInfoFields
-                    birthDate={displayProfile.birth_date}
-                    gender={displayProfile.gender}
-                    height={displayProfile.height_cm}
-                    weight={displayProfile.weight_kg}
-                    onBirthDateChange={handleBirthDateChange}
-                    onGenderChange={handleGenderChange}
-                    onHeightChange={handleHeightChange}
-                    onWeightChange={handleWeightChange}
-                    locked={fieldsAreLocked}
-                    showLockNotice={fieldsAreLocked}
-                  />
-                )}
+                <BasicInfoFields
+                  birthDate={displayProfile.birth_date}
+                  gender={displayProfile.gender}
+                  height={displayProfile.height_cm}
+                  weight={displayProfile.weight_kg}
+                  onBirthDateChange={handleBirthDateChange}
+                  onGenderChange={handleGenderChange}
+                  onHeightChange={handleHeightChange}
+                  onWeightChange={handleWeightChange}
+                  locked={fieldsAreLocked}
+                  showLockNotice={fieldsAreLocked}
+                />
                 <TDEEOptions
                   profileId={displayProfile.id}
                   initialWeight={displayProfile.weight_kg ?? displayProfile.initial_weight_kg}
@@ -654,20 +594,6 @@ export default function ProfilePage() {
                     }
                   }}
                 />
-
-                {/* For profiles after the first, show BasicInfoFields */}
-                {allProfiles.length > 1 && activeProfile && (
-                  <BasicInfoFields
-                    birthDate={displayProfile.birth_date}
-                    gender={displayProfile.gender}
-                    height={displayProfile.height_cm}
-                    onBirthDateChange={handleBirthDateChange}
-                    onGenderChange={handleGenderChange}
-                    onHeightChange={handleHeightChange}
-                    locked={fieldsAreLocked}
-                    showLockNotice={fieldsAreLocked}
-                  />
-                )}
               </>
             )}
 
@@ -733,17 +659,21 @@ export default function ProfilePage() {
             )}
           </div>
 
-          {/* Sidebar - Profile Card Switcher */}
+          {/* Sidebar */}
           <div className="order-first lg:order-none lg:sticky lg:top-20 lg:self-start space-y-4">
-            <ProfileCardSidebar
-              onCreateNew={handleCreateNewProfile}
-              onSelectProfile={handleSelectProfile}
-              onSaveProfile={handleSaveProfile}
-              onDeleteProfile={handleDeleteProfile}
-              hasUnsavedChanges={hasUnsavedChanges}
-              isSaving={updateProfile.isPending}
-              canSave={hasBasicInfo}
-            />
+            {/* Save button */}
+            {hasBasicInfo && (
+              <div className="bg-white rounded-xl border border-neutral-200 p-4">
+                <Button
+                  onClick={() => activeProfile && handleSaveProfile(activeProfile.id)}
+                  disabled={!hasUnsavedChanges || updateProfile.isPending}
+                  className="w-full"
+                >
+                  <Save className="h-4 w-4 mr-2" />
+                  {updateProfile.isPending ? 'Sparar...' : 'Spara ändringar'}
+                </Button>
+              </div>
+            )}
 
             {/* Results Summary - Show BMR, TDEE, Calorie Range */}
             <ProfileResultsSummary profile={mergedProfile} />

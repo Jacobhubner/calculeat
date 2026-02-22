@@ -11,7 +11,8 @@ export interface Message {
 
 export interface Conversation {
   friendship_id: string
-  friend_name: string // alltid email
+  friend_name: string // username (COALESCE(username, email))
+  friend_username: string | null
   friend_alias: string | null
   last_message_content: string | null
   last_message_at: string | null

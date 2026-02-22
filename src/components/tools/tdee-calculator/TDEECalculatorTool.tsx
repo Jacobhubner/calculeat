@@ -729,7 +729,7 @@ export default function TDEECalculatorTool() {
                     size="lg"
                   >
                     <Save className="mr-2 h-4 w-4" />
-                    {isSaving ? 'Sparar...' : 'Lägg till i profilkort'}
+                    {isSaving ? 'Sparar...' : 'Spara till profil'}
                   </Button>
                 )}
               </CardContent>
