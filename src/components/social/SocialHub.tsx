@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import {
   Users,
   UserPlus,
@@ -17,6 +17,8 @@ import {
   ChevronLeft,
   Send,
   ArrowLeft,
+  CheckCheck,
+  MoreHorizontal,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -29,12 +31,14 @@ import {
 import {
   useFriends,
   usePendingFriendRequests,
+  useSentFriendRequests,
   useSendFriendRequest,
   useAcceptFriendRequest,
   useRejectFriendRequest,
   useRemoveFriend,
   useSetFriendAlias,
   usePendingFriendRequestsCount,
+  useCancelFriendRequest,
 } from '@/hooks/useFriends'
 import {
   useConversations,
@@ -42,9 +46,12 @@ import {
   useSendMessage,
   useMarkMessagesRead,
   useUnreadMessageCount,
+  useEditMessage,
+  useDeleteMessage,
+  useDeleteConversation,
 } from '@/hooks/useMessages'
 import type { PendingInvitation } from '@/lib/types/sharing'
-import type { Friend, FriendRequest } from '@/lib/types/friends'
+import type { Friend, FriendRequest, SentFriendRequest } from '@/lib/types/friends'
 import type { Conversation, Message } from '@/lib/types/messages'
 import { useAuth } from '@/contexts/AuthContext'
 import { toast } from 'sonner'
@@ -266,6 +273,58 @@ function MiniFriendRequestCard({ request }: { request: FriendRequest }) {
           Neka
         </Button>
       </div>
+    </div>
+  )
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// SentFriendRequestCard
+// ──────────────────────────────────────────────────────────────────────────────
+
+function SentFriendRequestCard({ request }: { request: SentFriendRequest }) {
+  const [isCancelling, setIsCancelling] = useState(false)
+  const { mutateAsync: cancel } = useCancelFriendRequest()
+
+  const handleCancel = async () => {
+    setIsCancelling(true)
+    try {
+      await cancel(request.friendship_id)
+      toast.success('Vänförfrågan tillbakadragen.')
+    } catch {
+      toast.error('Något gick fel.')
+    } finally {
+      setIsCancelling(false)
+    }
+  }
+
+  return (
+    <div className="rounded-lg border border-neutral-100 p-3 space-y-2 bg-white">
+      <div className="flex items-center gap-2">
+        <div className="h-8 w-8 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-600 text-xs font-semibold shrink-0">
+          {getInitials(request.addressee_name)}
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-medium text-neutral-900 truncate">{request.addressee_name}</p>
+          <p className="text-xs text-neutral-400">
+            Inväntar svar &middot;{' '}
+            {formatDistanceToNow(parseISO(request.created_at), { addSuffix: true, locale: sv })}
+          </p>
+        </div>
+      </div>
+      <Button
+        size="sm"
+        variant="ghost"
+        onClick={handleCancel}
+        disabled={isCancelling}
+        className="w-full h-7 text-xs text-neutral-500 hover:text-red-600 hover:bg-red-50"
+      >
+        {isCancelling ? (
+          <Loader2 className="h-3 w-3 animate-spin mr-1" />
+        ) : (
+          <X className="h-3 w-3 mr-1" />
+        )}
+        Dra tillbaka förfrågan
+      </Button>
     </div>
   )
 }
@@ -543,6 +602,264 @@ function ConversationList({ onOpenThread }: { onOpenThread: (conv: Conversation)
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
+// MessageBubble — enskilt meddelande med hover/long-press-meny
+// ──────────────────────────────────────────────────────────────────────────────
+
+function MessageBubble({
+  msg,
+  isOwn,
+  friendshipId,
+}: {
+  msg: Message
+  isOwn: boolean
+  friendshipId: string
+}) {
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
+  const [editInput, setEditInput] = useState(msg.content ?? '')
+  const [confirmDelete, setConfirmDelete] = useState(false)
+  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
+
+  const { mutateAsync: editMessage, isPending: isEditPending } = useEditMessage()
+  const { mutateAsync: deleteMessage, isPending: isDeletePending } = useDeleteMessage()
+
+  const canModify = isOwn && msg.deleted_at === null && msg.read_at === null
+
+  const openMenu = useCallback(() => {
+    if (!canModify) return
+    setMenuOpen(true)
+  }, [canModify])
+
+  // Stäng meny vid klick utanför
+  useEffect(() => {
+    if (!menuOpen) return
+    const handler = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false)
+        setConfirmDelete(false)
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [menuOpen])
+
+  const handleTouchStart = () => {
+    if (!canModify) return
+    longPressTimer.current = setTimeout(openMenu, 500)
+  }
+
+  const handleTouchEnd = () => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current)
+      longPressTimer.current = null
+    }
+  }
+
+  const handleEdit = async () => {
+    const trimmed = editInput.trim()
+    if (!trimmed) return
+    try {
+      const result = await editMessage({ messageId: msg.id, friendshipId, content: trimmed })
+      if (!result.success) {
+        if (result.error === 'already_read') {
+          toast.error('Kan inte redigeras, mottagaren har redan läst meddelandet.')
+        } else {
+          toast.error('Kunde inte redigera meddelandet.')
+        }
+        return
+      }
+      setIsEditing(false)
+      setMenuOpen(false)
+    } catch {
+      toast.error('Något gick fel.')
+    }
+  }
+
+  const handleDelete = async () => {
+    try {
+      const result = await deleteMessage({ messageId: msg.id, friendshipId })
+      if (!result.success) {
+        if (result.error === 'already_read') {
+          toast.error('Kan inte tas bort, mottagaren har redan läst meddelandet.')
+        } else {
+          toast.error('Kunde inte ta bort meddelandet.')
+        }
+        return
+      }
+      setMenuOpen(false)
+      setConfirmDelete(false)
+    } catch {
+      toast.error('Något gick fel.')
+    }
+  }
+
+  const isDeleted = msg.deleted_at !== null
+
+  return (
+    <div className={`group flex ${isOwn ? 'justify-end' : 'justify-start'} relative`}>
+      {/* Hover-meny-trigger (desktop) */}
+      {canModify && !isEditing && (
+        <div
+          ref={menuRef}
+          className={`relative ${isOwn ? 'order-first mr-1' : 'order-last ml-1'} self-center`}
+        >
+          <button
+            type="button"
+            onClick={() => {
+              setMenuOpen(v => !v)
+              setConfirmDelete(false)
+            }}
+            className="opacity-0 group-hover:opacity-100 p-1 rounded text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 transition-all"
+          >
+            <MoreHorizontal className="h-3 w-3" />
+          </button>
+
+          {menuOpen && (
+            <div
+              className={`absolute bottom-full mb-1 ${isOwn ? 'right-0' : 'left-0'} z-50 bg-white rounded-lg shadow-lg border border-neutral-100 py-1 min-w-[130px]`}
+            >
+              {!confirmDelete ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditInput(msg.content ?? '')
+                      setIsEditing(true)
+                      setMenuOpen(false)
+                    }}
+                    className="w-full flex items-center gap-2 px-3 py-1.5 text-sm text-neutral-700 hover:bg-neutral-50"
+                  >
+                    <Pencil className="h-3.5 w-3.5" />
+                    Redigera
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setConfirmDelete(true)}
+                    className="w-full flex items-center gap-2 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                    Ta bort
+                  </button>
+                </>
+              ) : (
+                <div className="px-3 py-2 space-y-2">
+                  <p className="text-xs text-neutral-600">Ta bort meddelandet?</p>
+                  <div className="flex gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => setConfirmDelete(false)}
+                      className="flex-1 text-xs text-neutral-500 hover:text-neutral-700 py-1"
+                    >
+                      Avbryt
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleDelete}
+                      disabled={isDeletePending}
+                      className="flex-1 text-xs text-white bg-red-600 hover:bg-red-700 rounded px-2 py-1"
+                    >
+                      {isDeletePending ? (
+                        <Loader2 className="h-3 w-3 animate-spin mx-auto" />
+                      ) : (
+                        'Ta bort'
+                      )}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Meddelandebubbla */}
+      <div
+        className="max-w-[75%]"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        onTouchMove={handleTouchEnd}
+      >
+        {isEditing ? (
+          <div className="space-y-1">
+            <textarea
+              value={editInput}
+              onChange={e => setEditInput(e.target.value.slice(0, 2000))}
+              onKeyDown={e => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault()
+                  handleEdit()
+                }
+                if (e.key === 'Escape') {
+                  setIsEditing(false)
+                  setEditInput(msg.content ?? '')
+                }
+              }}
+              autoFocus
+              className="w-full rounded-xl border border-primary-400 px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary-500"
+              rows={Math.min(5, Math.ceil((editInput.length || 1) / 40))}
+            />
+            <div className="flex gap-1.5 justify-end">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsEditing(false)
+                  setEditInput(msg.content ?? '')
+                }}
+                className="text-xs text-neutral-500 hover:text-neutral-700 px-2 py-1"
+              >
+                Avbryt
+              </button>
+              <button
+                type="button"
+                onClick={handleEdit}
+                disabled={isEditPending || !editInput.trim()}
+                className="text-xs text-white bg-primary-600 hover:bg-primary-700 rounded px-2 py-1 disabled:opacity-40"
+              >
+                {isEditPending ? <Loader2 className="h-3 w-3 animate-spin" /> : 'Spara'}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div>
+            <div
+              className={`rounded-2xl px-3 py-2 text-sm ${
+                isDeleted
+                  ? 'bg-neutral-50 text-neutral-400 italic border border-neutral-100'
+                  : isOwn
+                    ? 'bg-primary-600 text-white rounded-br-sm'
+                    : 'bg-neutral-100 text-neutral-900 rounded-bl-sm'
+              }`}
+            >
+              {isDeleted ? 'Meddelandet har tagits bort' : msg.content}
+            </div>
+            {/* Metadata-rad */}
+            {(msg.edited_at || (isOwn && !isDeleted)) && (
+              <div
+                className={`flex items-center gap-1 mt-0.5 ${isOwn ? 'justify-end' : 'justify-start'}`}
+              >
+                {msg.edited_at && !isDeleted && (
+                  <span className="text-[9px] text-neutral-400">(redigerat)</span>
+                )}
+                {isOwn && !isDeleted && (
+                  <span className="text-[9px] text-neutral-400">
+                    {msg.read_at ? (
+                      <CheckCheck className="h-3 w-3 inline text-primary-400" />
+                    ) : (
+                      <Check className="h-3 w-3 inline text-neutral-300" />
+                    )}
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
 // MessageThread
 // ──────────────────────────────────────────────────────────────────────────────
 
@@ -555,6 +872,7 @@ function MessageThread({
 }) {
   const { user } = useAuth()
   const [input, setInput] = useState('')
+  const [confirmDeleteConv, setConfirmDeleteConv] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const isFirstLoad = useRef(true)
@@ -564,6 +882,7 @@ function MessageThread({
   )
 
   const { mutateAsync: sendMessage, isPending: isSending } = useSendMessage()
+  const { mutateAsync: deleteConversation, isPending: isDeletingConv } = useDeleteConversation()
   useMarkMessagesRead(conversation.friendship_id)
 
   // Bygg platt meddelandelista: RPC ger nyaste-först, vi reverserar
@@ -610,7 +929,6 @@ function MessageThread({
         setInput(trimmed)
         return
       }
-      // Scrolla till botten efter eget skickat meddelande
       setTimeout(() => {
         if (scrollRef.current) {
           scrollRef.current.scrollTop = scrollRef.current.scrollHeight
@@ -626,6 +944,15 @@ function MessageThread({
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       handleSend()
+    }
+  }
+
+  const handleDeleteConversation = async () => {
+    try {
+      await deleteConversation(conversation.friendship_id)
+      onBack()
+    } catch {
+      toast.error('Något gick fel.')
     }
   }
 
@@ -648,10 +975,40 @@ function MessageThread({
         <div className="h-7 w-7 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 text-xs font-semibold shrink-0">
           {getInitials(displayName)}
         </div>
-        <div className="min-w-0">
+        <div className="flex-1 min-w-0">
           <p className="text-sm font-medium text-neutral-900 truncate">{displayName}</p>
           <p className="text-[10px] text-neutral-400 truncate">{conversation.friend_name}</p>
         </div>
+        {/* Ta bort konversation */}
+        {confirmDeleteConv ? (
+          <div className="flex items-center gap-1.5 shrink-0">
+            <span className="text-xs text-neutral-500">Ta bort?</span>
+            <button
+              type="button"
+              onClick={() => setConfirmDeleteConv(false)}
+              className="text-xs text-neutral-400 hover:text-neutral-600 px-1.5 py-0.5 rounded"
+            >
+              Nej
+            </button>
+            <button
+              type="button"
+              onClick={handleDeleteConversation}
+              disabled={isDeletingConv}
+              className="text-xs text-white bg-red-600 hover:bg-red-700 px-1.5 py-0.5 rounded"
+            >
+              {isDeletingConv ? <Loader2 className="h-3 w-3 animate-spin" /> : 'Ja'}
+            </button>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setConfirmDeleteConv(true)}
+            className="p-1 text-neutral-300 hover:text-red-400 transition-colors shrink-0"
+            title="Ta bort konversation"
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+          </button>
+        )}
       </div>
 
       {/* Meddelandelista */}
@@ -700,17 +1057,7 @@ function MessageThread({
                   </span>
                 </div>
               )}
-              <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
-                <div
-                  className={`max-w-[75%] rounded-2xl px-3 py-2 text-sm ${
-                    isOwn
-                      ? 'bg-primary-600 text-white rounded-br-sm'
-                      : 'bg-neutral-100 text-neutral-900 rounded-bl-sm'
-                  }`}
-                >
-                  {msg.content}
-                </div>
-              </div>
+              <MessageBubble msg={msg} isOwn={isOwn} friendshipId={conversation.friendship_id} />
             </div>
           )
         })}
@@ -775,13 +1122,14 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
 
   const { data: friends = [] } = useFriends()
   const { data: friendRequests = [] } = usePendingFriendRequests()
+  const { data: sentRequests = [] } = useSentFriendRequests()
   const { data: pendingInvitations = [] } = usePendingInvitations()
   const { data: pendingCount = 0 } = usePendingFriendRequestsCount()
   const { data: conversations = [] } = useConversations()
   const unreadMessageCount = useUnreadMessageCount()
   const { mutateAsync: sendFriendRequest } = useSendFriendRequest()
 
-  const activityCount = (pendingCount as number) + pendingInvitations.length
+  const activityCount = (pendingCount as number) + pendingInvitations.length + sentRequests.length
 
   const filteredFriends = friends.filter(f => {
     if (!friendSearch.trim()) return true
@@ -1016,13 +1364,27 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
               </div>
             )}
 
-            {friendRequests.length === 0 && pendingInvitations.length === 0 && (
-              <div className="text-center py-10 space-y-2">
-                <p className="text-2xl">🎉</p>
-                <p className="text-sm font-medium text-neutral-600">Allt är lugnt!</p>
-                <p className="text-xs text-neutral-400">Inga väntande åtgärder.</p>
+            {/* Skickade vänförfrågningar */}
+            {sentRequests.length > 0 && (
+              <div className="space-y-2">
+                <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wide">
+                  Skickade förfrågningar
+                </p>
+                {sentRequests.map(req => (
+                  <SentFriendRequestCard key={req.friendship_id} request={req} />
+                ))}
               </div>
             )}
+
+            {friendRequests.length === 0 &&
+              pendingInvitations.length === 0 &&
+              sentRequests.length === 0 && (
+                <div className="text-center py-10 space-y-2">
+                  <p className="text-2xl">🎉</p>
+                  <p className="text-sm font-medium text-neutral-600">Allt är lugnt!</p>
+                  <p className="text-xs text-neutral-400">Inga väntande åtgärder.</p>
+                </div>
+              )}
           </div>
         )}
 

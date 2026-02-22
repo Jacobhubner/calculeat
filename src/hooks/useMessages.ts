@@ -40,6 +40,22 @@ export function useConversations() {
 
 export function useMessages(friendshipId: string | null) {
   const { user } = useAuth()
+  const queryClient = useQueryClient()
+
+  useEffect(() => {
+    if (!user || !friendshipId) return
+
+    const channel = supabase
+      .channel(`messages-thread:${friendshipId}`)
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'messages' }, () => {
+        queryClient.invalidateQueries({ queryKey: messageKeys.thread(friendshipId) })
+      })
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [user, friendshipId, queryClient])
 
   return useInfiniteQuery({
     queryKey: messageKeys.thread(friendshipId ?? ''),
@@ -80,6 +96,85 @@ export function useSendMessage() {
     },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: messageKeys.thread(variables.friendshipId) })
+      queryClient.invalidateQueries({ queryKey: messageKeys.conversations() })
+    },
+  })
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// useEditMessage
+// ──────────────────────────────────────────────────────────────────────────────
+
+export function useEditMessage() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({
+      messageId,
+      friendshipId: _friendshipId,
+      content,
+    }: {
+      messageId: string
+      friendshipId: string
+      content: string
+    }) => {
+      const { data, error } = await supabase.rpc('edit_message', {
+        p_message_id: messageId,
+        p_new_content: content,
+      })
+      if (error) throw error
+      return data as { success: boolean; error?: string }
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: messageKeys.thread(variables.friendshipId) })
+    },
+  })
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// useDeleteMessage
+// ──────────────────────────────────────────────────────────────────────────────
+
+export function useDeleteMessage() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({
+      messageId,
+      friendshipId: _friendshipId,
+    }: {
+      messageId: string
+      friendshipId: string
+    }) => {
+      const { data, error } = await supabase.rpc('delete_message', {
+        p_message_id: messageId,
+      })
+      if (error) throw error
+      return data as { success: boolean; error?: string }
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: messageKeys.thread(variables.friendshipId) })
+      queryClient.invalidateQueries({ queryKey: messageKeys.conversations() })
+    },
+  })
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// useDeleteConversation
+// ──────────────────────────────────────────────────────────────────────────────
+
+export function useDeleteConversation() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (friendshipId: string) => {
+      const { data, error } = await supabase.rpc('delete_conversation', {
+        p_friendship_id: friendshipId,
+      })
+      if (error) throw error
+      return data as { success: boolean; error?: string }
+    },
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: messageKeys.conversations() })
     },
   })
