@@ -4,6 +4,7 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import type { PendingInvitation } from '@/lib/types/sharing'
 import { usePendingFriendRequestsCount } from './useFriends'
+import { useUnreadMessageCount } from './useMessages'
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Pending invitation count (with Realtime)
@@ -192,5 +193,6 @@ export function useRejectShareInvitation() {
 export function useSocialBadgeCount() {
   const { data: invitationCount = 0 } = usePendingInvitationsCount()
   const { data: friendCount = 0 } = usePendingFriendRequestsCount()
-  return (invitationCount as number) + (friendCount as number)
+  const unreadMessages = useUnreadMessageCount()
+  return (invitationCount as number) + (friendCount as number) + unreadMessages
 }

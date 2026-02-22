@@ -152,7 +152,7 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
       if (contentType === 'food_list') {
         if (selectedFriend) {
           const result = await sendToFriend({
-            itemId: null as unknown as string,
+            itemId: null,
             itemType: 'food_list',
             friendUserId: selectedFriend.friend_id,
           })

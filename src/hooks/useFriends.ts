@@ -288,8 +288,8 @@ export function useSendShareInvitationToFriend() {
       itemType,
       friendUserId,
     }: {
-      itemId: string
-      itemType: 'food_item' | 'recipe'
+      itemId: string | null
+      itemType: 'food_item' | 'recipe' | 'food_list'
       friendUserId: string
     }) => {
       const { data, error } = await supabase.rpc('send_share_invitation_to_friend', {
