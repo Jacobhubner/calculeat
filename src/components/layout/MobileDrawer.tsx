@@ -19,7 +19,7 @@ import { useUIStore } from '@/stores/uiStore'
 import { cn } from '@/lib/utils'
 import { Avatar, AvatarFallback } from '../ui/avatar'
 import { Separator } from '../ui/separator'
-import { ShareNotificationBadge } from '@/components/sharing/ShareNotificationBadge'
+import { useSocialBadgeCount } from '@/hooks/useShareInvitations'
 
 // Secondary pages organized by functional groups
 // (Primary pages Översikt, Idag, Livsmedel, Historik are in bottom nav)
@@ -61,6 +61,7 @@ export default function MobileDrawer() {
   const { mobileDrawerOpen, setMobileDrawerOpen } = useUIStore()
   const location = useLocation()
   const navigate = useNavigate()
+  const socialBadgeCount = useSocialBadgeCount()
 
   const close = () => setMobileDrawerOpen(false)
 
@@ -170,8 +171,10 @@ export default function MobileDrawer() {
                           <Icon className={cn('h-5 w-5 shrink-0', active && 'text-primary-600')} />
                           <span className="flex items-center gap-2">
                             {item.label}
-                            {item.to === '/app/social' && (
-                              <ShareNotificationBadge mode="count-only" />
+                            {item.to === '/app/social' && socialBadgeCount > 0 && (
+                              <span className="ml-auto text-xs bg-primary-600 text-white rounded-full px-1.5 py-0.5 min-w-[18px] text-center leading-5">
+                                {socialBadgeCount > 99 ? '99+' : socialBadgeCount}
+                              </span>
                             )}
                           </span>
                         </Link>

@@ -39,9 +39,16 @@ export interface RecipeSnapshot {
   ingredients: RecipeIngredientSnapshot[]
 }
 
+export type ItemType = 'food_item' | 'recipe' | 'food_list'
+
+export interface FoodListSnapshot {
+  items: FoodItemSnapshot[]
+  item_count: number
+}
+
 export interface PendingInvitation {
   id: string
-  item_type: 'food_item' | 'recipe'
+  item_type: ItemType
   sender_name: string
   created_at: string
   expires_at: string
@@ -54,5 +61,6 @@ export interface PendingInvitation {
     brand?: string
     servings?: string
     ingredient_count?: number
+    item_count?: number
   }
 }

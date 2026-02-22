@@ -4,6 +4,31 @@ import { useAuth } from '@/contexts/AuthContext'
 import type { FoodItem } from '@/hooks/useFoodItems'
 import type { Recipe } from '@/hooks/useRecipes'
 
+// Returnerar antal egna livsmedel som ingår i "Min lista"-delning
+export function useShareableFoodListCount() {
+  const { user } = useAuth()
+
+  const query = useQuery({
+    queryKey: ['shareableFoodListCount', user?.id],
+    queryFn: async () => {
+      if (!user) return 0
+      const { count, error } = await supabase
+        .from('food_items')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .eq('is_hidden', false)
+        .eq('is_recipe', false)
+        .in('source', ['manual', 'user'])
+      if (error) throw error
+      return count ?? 0
+    },
+    enabled: !!user,
+    staleTime: 60_000,
+  })
+
+  return { count: query.data ?? 0, isLoading: query.isLoading }
+}
+
 // Hämtar användarens delbara livsmedel: user_id=current_user.id (alla sources)
 // Används av ShareDialog för att populera urvalslistan.
 export function useShareableFoodItems() {

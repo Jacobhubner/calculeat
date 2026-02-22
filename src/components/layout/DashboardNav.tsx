@@ -23,13 +23,14 @@ import { useUIStore } from '@/stores/uiStore'
 import { cn } from '@/lib/utils'
 import { Avatar, AvatarFallback } from '../ui/avatar'
 import { Separator } from '../ui/separator'
-import { ShareNotificationBadge } from '@/components/sharing/ShareNotificationBadge'
+import { useSocialBadgeCount } from '@/hooks/useShareInvitations'
 
 export default function DashboardNav() {
   const { user, profile, signOut } = useAuth()
   const { sidebarCollapsed, toggleSidebar } = useUIStore()
   const location = useLocation()
   const navigate = useNavigate()
+  const socialBadgeCount = useSocialBadgeCount()
 
   const isActive = (path: string) => location.pathname === path
 
@@ -232,8 +233,10 @@ export default function DashboardNav() {
                       {!sidebarCollapsed && (
                         <span className="flex-1 flex items-center gap-2">
                           {item.label}
-                          {item.to === '/app/social' && (
-                            <ShareNotificationBadge mode="count-only" />
+                          {item.to === '/app/social' && socialBadgeCount > 0 && (
+                            <span className="ml-auto text-xs bg-primary-600 text-white rounded-full px-1.5 py-0.5 min-w-[18px] text-center leading-5">
+                              {socialBadgeCount > 99 ? '99+' : socialBadgeCount}
+                            </span>
                           )}
                         </span>
                       )}

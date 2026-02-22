@@ -101,8 +101,8 @@ export function useSendShareInvitation() {
       itemType,
       recipientEmail,
     }: {
-      itemId: string
-      itemType: 'food_item' | 'recipe'
+      itemId: string | null
+      itemType: 'food_item' | 'recipe' | 'food_list'
       recipientEmail: string
     }) => {
       const { data, error } = await supabase.rpc('send_share_invitation', {
@@ -112,6 +112,22 @@ export function useSendShareInvitation() {
       })
       if (error) throw error
       return data as { success: boolean; invitation_id?: string | null; error?: string }
+    },
+  })
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// Check if a user exists by email (for UI feedback, not for security enforcement)
+// ──────────────────────────────────────────────────────────────────────────────
+
+export function useCheckUserExists() {
+  return useMutation({
+    mutationFn: async (email: string) => {
+      const { data, error } = await supabase.rpc('check_user_exists_by_email', {
+        p_email: email,
+      })
+      if (error) throw error
+      return data as { exists: boolean }
     },
   })
 }
@@ -134,6 +150,8 @@ export function useAcceptShareInvitation() {
         item_type?: string
         food_item_id?: string
         recipe_id?: string
+        imported_count?: number
+        skipped_count?: number
         error?: string
         status?: string
       }
