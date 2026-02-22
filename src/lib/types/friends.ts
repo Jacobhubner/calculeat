@@ -18,6 +18,7 @@ export interface SentFriendRequest {
   friendship_id: string
   addressee_id: string
   addressee_name: string
+  addressee_email: string
   created_at: string
 }
 
