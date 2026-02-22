@@ -10,7 +10,9 @@ import { useProfileStore } from '@/stores/profileStore'
 import { cn } from '@/lib/utils'
 import { useState, useRef, useEffect } from 'react'
 import { SocialHub } from '@/components/social/SocialHub'
+import { ShareDialog } from '@/components/sharing/ShareDialog'
 import { useSocialBadgeCount } from '@/hooks/useShareInvitations'
+import type { Friend } from '@/lib/types/friends'
 
 export default function SiteHeader() {
   const { user, signOut, profile } = useAuth()
@@ -20,7 +22,17 @@ export default function SiteHeader() {
   const navigate = useNavigate()
   const [mobileUserMenuOpen, setMobileUserMenuOpen] = useState(false)
   const [socialHubOpen, setSocialHubOpen] = useState(false)
+  const [shareDialogOpen, setShareDialogOpen] = useState(false)
+  const [sharePreselectedFriend, setSharePreselectedFriend] = useState<Friend | undefined>(
+    undefined
+  )
   const userMenuRef = useRef<HTMLDivElement>(null)
+
+  const handleOpenShareDialog = (friend?: Friend) => {
+    setSharePreselectedFriend(friend)
+    setSocialHubOpen(false)
+    setShareDialogOpen(true)
+  }
 
   const badgeCount = useSocialBadgeCount()
 
@@ -169,7 +181,10 @@ export default function SiteHeader() {
                         exit={{ opacity: 0, y: -8, scale: 0.97 }}
                         transition={{ duration: 0.15 }}
                       >
-                        <SocialHub onClose={() => setSocialHubOpen(false)} />
+                        <SocialHub
+                          onClose={() => setSocialHubOpen(false)}
+                          onOpenShareDialog={handleOpenShareDialog}
+                        />
                       </motion.div>
                     </>
                   )}
@@ -333,6 +348,18 @@ export default function SiteHeader() {
         </div>
       )}
 
+      {/* ShareDialog — alltid monterad i headern */}
+      {user && (
+        <ShareDialog
+          open={shareDialogOpen}
+          onOpenChange={open => {
+            setShareDialogOpen(open)
+            if (!open) setSharePreselectedFriend(undefined)
+          }}
+          preselectedFriend={sharePreselectedFriend}
+        />
+      )}
+
       {/* Mobile Social Hub — bottom sheet */}
       {user && (
         <AnimatePresence>
@@ -362,7 +389,10 @@ export default function SiteHeader() {
                   <div className="w-10 h-1 bg-neutral-300 rounded-full" />
                 </div>
                 <div className="overflow-y-auto flex-1">
-                  <SocialHub onClose={() => setSocialHubOpen(false)} />
+                  <SocialHub
+                    onClose={() => setSocialHubOpen(false)}
+                    onOpenShareDialog={handleOpenShareDialog}
+                  />
                 </div>
               </motion.div>
             </>

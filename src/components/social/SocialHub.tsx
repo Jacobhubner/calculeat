@@ -34,7 +34,6 @@ import {
   useSetFriendAlias,
   usePendingFriendRequestsCount,
 } from '@/hooks/useFriends'
-import { ShareDialog } from '@/components/sharing/ShareDialog'
 import type { PendingInvitation } from '@/lib/types/sharing'
 import type { Friend, FriendRequest } from '@/lib/types/friends'
 import { toast } from 'sonner'
@@ -447,19 +446,16 @@ function FriendProfile({
 
 interface SocialHubProps {
   onClose: () => void
+  onOpenShareDialog: (friend?: Friend) => void
 }
 
-export function SocialHub({ onClose }: SocialHubProps) {
+export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubProps) {
   const [tab, setTab] = useState<HubTab>('friends')
   const [friendsView, setFriendsView] = useState<FriendsView>('list')
   const [selectedFriend, setSelectedFriend] = useState<Friend | null>(null)
   const [friendSearch, setFriendSearch] = useState('')
   const [addEmail, setAddEmail] = useState('')
   const [isAdding, setIsAdding] = useState(false)
-  const [shareDialogOpen, setShareDialogOpen] = useState(false)
-  const [sharePreselectedFriend, setSharePreselectedFriend] = useState<Friend | undefined>(
-    undefined
-  )
 
   const { data: friends = [] } = useFriends()
   const { data: friendRequests = [] } = usePendingFriendRequests()
@@ -494,9 +490,7 @@ export function SocialHub({ onClose }: SocialHubProps) {
   }
 
   const handleShare = (friend: Friend) => {
-    setSharePreselectedFriend(friend)
-    setShareDialogOpen(true)
-    onClose()
+    onOpenShareDialog(friend)
   }
 
   const handleOpenProfile = (friend: Friend) => {
@@ -614,11 +608,7 @@ export function SocialHub({ onClose }: SocialHubProps) {
                     variant="ghost"
                     size="sm"
                     className="w-full justify-start gap-2 text-neutral-600"
-                    onClick={() => {
-                      setSharePreselectedFriend(undefined)
-                      setShareDialogOpen(true)
-                      onClose()
-                    }}
+                    onClick={() => onOpenShareDialog(undefined)}
                   >
                     <Share2 className="h-4 w-4" />
                     Starta delning
@@ -713,16 +703,6 @@ export function SocialHub({ onClose }: SocialHubProps) {
           </div>
         )}
       </div>
-
-      {/* ShareDialog öppnas utanför hubben */}
-      <ShareDialog
-        open={shareDialogOpen}
-        onOpenChange={open => {
-          setShareDialogOpen(open)
-          if (!open) setSharePreselectedFriend(undefined)
-        }}
-        preselectedFriend={sharePreselectedFriend}
-      />
     </>
   )
 }
