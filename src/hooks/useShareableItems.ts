@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import type { FoodItem } from '@/hooks/useFoodItems'
 import type { Recipe } from '@/hooks/useRecipes'
 
-// Hämtar användarens delbara livsmedel: source='manual' och user_id=current_user.id
+// Hämtar användarens delbara livsmedel: user_id=current_user.id (alla sources)
 // Används av ShareDialog för att populera urvalslistan.
 export function useShareableFoodItems() {
   const { user } = useAuth()
@@ -17,7 +17,6 @@ export function useShareableFoodItems() {
         .from('food_items')
         .select('*')
         .eq('user_id', user.id)
-        .eq('source', 'manual')
         .eq('is_hidden', false)
         .eq('is_recipe', false)
         .order('name')
