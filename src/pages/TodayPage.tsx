@@ -615,26 +615,30 @@ export default function TodayPage() {
                 return (
                   <Card key={mealSetting.id}>
                     <CardHeader className="pb-3">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          {index === 0 && <Coffee className="h-5 w-5 text-primary-600" />}
-                          {index > 0 && <UtensilsCrossed className="h-5 w-5 text-accent-600" />}
-                          <div>
-                            <CardTitle className="text-lg">{mealSetting.meal_name}</CardTitle>
-                            <CardDescription>
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-3 min-w-0">
+                          {index === 0 && <Coffee className="h-5 w-5 text-primary-600 shrink-0" />}
+                          {index > 0 && (
+                            <UtensilsCrossed className="h-5 w-5 text-accent-600 shrink-0" />
+                          )}
+                          <div className="min-w-0">
+                            <CardTitle className="text-lg truncate">
+                              {mealSetting.meal_name}
+                            </CardTitle>
+                            <CardDescription className="truncate">
                               {hasItems
                                 ? `${mealEntry.items.length} matvara${mealEntry.items.length > 1 ? 'r' : ''}`
                                 : `${mealSetting.percentage_of_daily_calories}% av dagens kalorier`}
                             </CardDescription>
                           </div>
                         </div>
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-1.5 md:gap-3 shrink-0">
                           {/* Save meal button - only show if meal has items */}
                           {hasItems && mealEntry && (
                             <Button
                               size="sm"
                               variant="outline"
-                              className="gap-2"
+                              className="gap-1.5 px-2 md:px-3"
                               onClick={() => handleOpenSaveMealDialog(mealEntry)}
                             >
                               <Bookmark className="h-4 w-4" />
@@ -645,7 +649,7 @@ export default function TodayPage() {
                           <Button
                             size="sm"
                             variant="outline"
-                            className="gap-2 border-primary-300 text-primary-700"
+                            className="gap-1.5 px-2 md:px-3 border-primary-300 text-primary-700"
                             onClick={() =>
                               handleOpenLoadMealDialog(
                                 mealSetting.meal_name,
@@ -659,13 +663,13 @@ export default function TodayPage() {
                           </Button>
                           <Button
                             size="sm"
-                            className="gap-2"
+                            className="gap-1.5 px-2 md:px-3"
                             onClick={() =>
                               handleOpenAddFoodModal(mealSetting.meal_name, mealEntry?.id)
                             }
                           >
                             <Plus className="h-4 w-4" />
-                            Lägg till
+                            <span className="hidden sm:inline">Lägg till</span>
                           </Button>
                         </div>
                       </div>

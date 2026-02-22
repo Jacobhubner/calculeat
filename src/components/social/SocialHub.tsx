@@ -698,88 +698,83 @@ function MessageBubble({
 
   return (
     <div className={`group flex ${isOwn ? 'justify-end' : 'justify-start'} relative`}>
-      {/* Hover-meny-trigger (desktop) */}
-      {canModify && !isEditing && (
-        <div
-          ref={menuRef}
-          className={`relative ${isOwn ? 'order-first mr-1' : 'order-last ml-1'} self-center`}
-        >
+      {/* Meddelandebubbla */}
+      <div
+        ref={menuRef}
+        className="relative max-w-[75%]"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        onTouchMove={handleTouchEnd}
+      >
+        {/* Hover-meny-trigger (desktop) — absolut i övre hörnet av bubblan */}
+        {canModify && !isEditing && (
           <button
             type="button"
             onClick={() => {
               setMenuOpen(v => !v)
               setConfirmDelete(false)
             }}
-            className="opacity-0 group-hover:opacity-100 p-1 rounded text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 transition-all"
+            className={`absolute -top-2 ${isOwn ? '-left-6' : '-right-6'} opacity-0 group-hover:opacity-100 p-1 rounded-full bg-white shadow border border-neutral-100 text-neutral-400 hover:text-neutral-700 transition-all z-10`}
           >
             <MoreHorizontal className="h-3 w-3" />
           </button>
+        )}
 
-          {menuOpen && (
-            <div
-              className={`absolute bottom-full mb-1 ${isOwn ? 'right-0' : 'left-0'} z-50 bg-white rounded-lg shadow-lg border border-neutral-100 py-1 min-w-[130px]`}
-            >
-              {!confirmDelete ? (
-                <>
+        {menuOpen && (
+          <div
+            className={`absolute top-0 ${isOwn ? 'right-full mr-1' : 'left-full ml-1'} z-50 bg-white rounded-lg shadow-lg border border-neutral-100 py-1 min-w-[130px]`}
+          >
+            {!confirmDelete ? (
+              <>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditInput(msg.content ?? '')
+                    setIsEditing(true)
+                    setMenuOpen(false)
+                  }}
+                  className="w-full flex items-center gap-2 px-3 py-1.5 text-sm text-neutral-700 hover:bg-neutral-50"
+                >
+                  <Pencil className="h-3.5 w-3.5" />
+                  Redigera
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setConfirmDelete(true)}
+                  className="w-full flex items-center gap-2 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                  Ta bort
+                </button>
+              </>
+            ) : (
+              <div className="px-3 py-2 space-y-2">
+                <p className="text-xs text-neutral-600">Ta bort meddelandet?</p>
+                <div className="flex gap-1.5">
                   <button
                     type="button"
-                    onClick={() => {
-                      setEditInput(msg.content ?? '')
-                      setIsEditing(true)
-                      setMenuOpen(false)
-                    }}
-                    className="w-full flex items-center gap-2 px-3 py-1.5 text-sm text-neutral-700 hover:bg-neutral-50"
+                    onClick={() => setConfirmDelete(false)}
+                    className="flex-1 text-xs text-neutral-500 hover:text-neutral-700 py-1"
                   >
-                    <Pencil className="h-3.5 w-3.5" />
-                    Redigera
+                    Avbryt
                   </button>
                   <button
                     type="button"
-                    onClick={() => setConfirmDelete(true)}
-                    className="w-full flex items-center gap-2 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50"
+                    onClick={handleDelete}
+                    disabled={isDeletePending}
+                    className="flex-1 text-xs text-white bg-red-600 hover:bg-red-700 rounded px-2 py-1"
                   >
-                    <Trash2 className="h-3.5 w-3.5" />
-                    Ta bort
+                    {isDeletePending ? (
+                      <Loader2 className="h-3 w-3 animate-spin mx-auto" />
+                    ) : (
+                      'Ta bort'
+                    )}
                   </button>
-                </>
-              ) : (
-                <div className="px-3 py-2 space-y-2">
-                  <p className="text-xs text-neutral-600">Ta bort meddelandet?</p>
-                  <div className="flex gap-1.5">
-                    <button
-                      type="button"
-                      onClick={() => setConfirmDelete(false)}
-                      className="flex-1 text-xs text-neutral-500 hover:text-neutral-700 py-1"
-                    >
-                      Avbryt
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleDelete}
-                      disabled={isDeletePending}
-                      className="flex-1 text-xs text-white bg-red-600 hover:bg-red-700 rounded px-2 py-1"
-                    >
-                      {isDeletePending ? (
-                        <Loader2 className="h-3 w-3 animate-spin mx-auto" />
-                      ) : (
-                        'Ta bort'
-                      )}
-                    </button>
-                  </div>
                 </div>
-              )}
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Meddelandebubbla */}
-      <div
-        className="max-w-[75%]"
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-        onTouchMove={handleTouchEnd}
-      >
+              </div>
+            )}
+          </div>
+        )}
         {isEditing ? (
           <div className="space-y-1">
             <textarea

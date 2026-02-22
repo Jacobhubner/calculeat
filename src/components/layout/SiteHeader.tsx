@@ -388,7 +388,7 @@ export default function SiteHeader() {
                 <div className="flex justify-center pt-3 pb-1 shrink-0">
                   <div className="w-10 h-1 bg-neutral-300 rounded-full" />
                 </div>
-                <div className="overflow-y-auto flex-1">
+                <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
                   <SocialHub
                     onClose={() => setSocialHubOpen(false)}
                     onOpenShareDialog={handleOpenShareDialog}

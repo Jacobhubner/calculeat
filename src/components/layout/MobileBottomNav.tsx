@@ -13,8 +13,10 @@ import {
   Calculator,
   Target,
   Settings,
+  Users,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useSocialBadgeCount } from '@/hooks/useShareInvitations'
 
 const navItems = [
   { to: '/app', label: 'Översikt', icon: LayoutDashboard, exact: true },
@@ -23,6 +25,7 @@ const navItems = [
   { to: '/app/history', label: 'Historik', icon: History },
   { to: '/app/recipes', label: 'Recept', icon: ChefHat },
   { to: '/app/saved-meals', label: 'Måltider', icon: Bookmark },
+  { to: '/app/social', label: 'Social', icon: Users },
   { to: '/app/profile', label: 'Profil', icon: User },
   { to: '/app/body-composition', label: 'Kropp', icon: Activity },
   { to: '/app/tools/met-calculator', label: 'MET', icon: Flame },
@@ -39,6 +42,7 @@ export default function MobileBottomNav() {
   const scrollRef = useRef<HTMLDivElement>(null)
   const leftFadeRef = useRef<HTMLDivElement>(null)
   const rightFadeRef = useRef<HTMLDivElement>(null)
+  const socialBadgeCount = useSocialBadgeCount()
 
   const updateFades = useCallback(() => {
     const el = scrollRef.current
@@ -108,7 +112,14 @@ export default function MobileBottomNav() {
                   active ? 'text-primary-600' : 'text-neutral-400 active:text-neutral-600'
                 )}
               >
-                <Icon className={cn('h-5 w-5', active && 'text-primary-600')} />
+                <div className="relative">
+                  <Icon className={cn('h-5 w-5', active && 'text-primary-600')} />
+                  {item.to === '/app/social' && socialBadgeCount > 0 && (
+                    <span className="absolute -top-1 -right-1.5 flex items-center justify-center bg-primary-600 text-white text-[8px] font-bold rounded-full min-w-[14px] h-3.5 px-0.5 leading-none">
+                      {socialBadgeCount > 99 ? '99+' : socialBadgeCount}
+                    </span>
+                  )}
+                </div>
                 <span className="truncate">{item.label}</span>
               </Link>
             )
