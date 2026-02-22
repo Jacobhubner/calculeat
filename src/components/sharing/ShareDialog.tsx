@@ -210,7 +210,7 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md" aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Share2 className="h-4 w-4 text-primary-600" />
