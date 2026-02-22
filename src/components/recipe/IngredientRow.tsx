@@ -3,8 +3,25 @@ import { Trash2, Search, Heart } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import type { FoodItem } from '@/hooks/useFoodItems'
+import type { FoodItem, FoodSource } from '@/hooks/useFoodItems'
 import { SOURCE_BADGES } from '@/lib/constants/sourceBadges'
+
+type SourceFilter = 'alla' | 'mina' | 'slv' | 'usda'
+
+const SOURCE_FILTER_LABELS: Record<SourceFilter, string> = {
+  alla: 'Alla',
+  mina: 'Mina',
+  slv: 'SLV',
+  usda: 'USDA',
+}
+
+function matchesSourceFilter(source: FoodSource, filter: SourceFilter): boolean {
+  if (filter === 'alla') return true
+  if (filter === 'mina') return source === 'user' || source === 'manual' || source === 'shared'
+  if (filter === 'slv') return source === 'livsmedelsverket'
+  if (filter === 'usda') return source === 'usda'
+  return true
+}
 import {
   calculateIngredientNutrition,
   getAvailableUnits,
@@ -38,6 +55,7 @@ export function IngredientRow({
   const [searchQuery, setSearchQuery] = useState('')
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [highlightedIndex, setHighlightedIndex] = useState(0)
+  const [sourceFilter, setSourceFilter] = useState<SourceFilter>('alla')
   const [amountInput, setAmountInput] = useState(
     ingredient.amount > 0 ? String(ingredient.amount) : ''
   )
@@ -67,9 +85,10 @@ export function IngredientRow({
     setHighlightedIndex(0)
   }, [])
 
-  // Filter and sort foods based on search
+  // Filter and sort foods based on search + source filter
   const allFilteredFoods = availableFoods
     .filter(food => {
+      if (!matchesSourceFilter(food.source, sourceFilter)) return false
       if (!searchQuery.trim()) return true
       const query = searchQuery.toLowerCase()
       return (
@@ -208,9 +227,10 @@ export function IngredientRow({
 
           {/* Dropdown */}
           {isSearchOpen && (
-            <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-white border border-neutral-200 rounded-lg shadow-lg max-h-64 overflow-y-auto">
+            <div className="absolute z-50 top-full left-0 mt-1 bg-white border border-neutral-200 rounded-lg shadow-lg max-h-72 flex flex-col w-[320px] max-w-[90vw]">
+              {/* Sökinput (visas alltid när ett livsmedel redan är valt) */}
               {ingredient.foodItem && (
-                <div className="p-2 border-b">
+                <div className="p-2 border-b shrink-0">
                   <Input
                     placeholder="Sök livsmedel..."
                     value={searchQuery}
@@ -222,95 +242,118 @@ export function IngredientRow({
                   />
                 </div>
               )}
-              {filteredFoods.length === 0 ? (
-                <div className="p-3 text-sm text-neutral-500 text-center">
-                  Inga livsmedel hittades
-                </div>
-              ) : (
-                <>
-                  <div ref={listRef} role="listbox">
-                    {filteredFoods.map((food, index) => {
-                      const isFavorite = favorites?.has(food.id) || false
-                      const isHighlighted = index === highlightedIndex
-                      const colorBadge = food.energy_density_color
-                      return (
-                        <div
-                          key={food.id}
-                          role="option"
-                          aria-selected={isHighlighted}
-                          className={`flex items-start gap-2 px-3 py-2.5 cursor-pointer border-b border-neutral-100 last:border-b-0 ${
-                            isHighlighted ? 'bg-primary-50' : 'hover:bg-neutral-50'
-                          }`}
-                          onClick={() => handleFoodSelect(food)}
-                          onMouseEnter={() => setHighlightedIndex(index)}
-                        >
-                          {onToggleFavorite && (
-                            <button
-                              type="button"
-                              onClick={e => {
-                                e.stopPropagation()
-                                onToggleFavorite(food.id)
-                              }}
-                              className="flex-shrink-0 mt-0.5"
-                              aria-label={isFavorite ? 'Ta bort favorit' : 'Lägg till favorit'}
-                            >
-                              <Heart
-                                className={`h-4 w-4 ${
-                                  isFavorite
-                                    ? 'fill-red-500 text-red-500'
-                                    : 'text-neutral-300 hover:text-red-400'
-                                }`}
-                              />
-                            </button>
-                          )}
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-1.5 min-w-0">
-                              <span className="font-medium text-sm text-neutral-900 truncate">
-                                {food.name}
-                              </span>
+              {/* Källfilter */}
+              <div className="flex gap-1 px-2 py-1.5 border-b shrink-0">
+                {(Object.keys(SOURCE_FILTER_LABELS) as SourceFilter[]).map(f => (
+                  <button
+                    key={f}
+                    type="button"
+                    onClick={e => {
+                      e.stopPropagation()
+                      setSourceFilter(f)
+                      setHighlightedIndex(0)
+                    }}
+                    className={`px-2 py-0.5 rounded text-[10px] font-medium transition-colors ${
+                      sourceFilter === f
+                        ? 'bg-primary-600 text-white'
+                        : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
+                    }`}
+                  >
+                    {SOURCE_FILTER_LABELS[f]}
+                  </button>
+                ))}
+              </div>
+              <div className="overflow-y-auto flex-1">
+                {filteredFoods.length === 0 ? (
+                  <div className="p-3 text-sm text-neutral-500 text-center">
+                    Inga livsmedel hittades
+                  </div>
+                ) : (
+                  <>
+                    <div ref={listRef} role="listbox">
+                      {filteredFoods.map((food, index) => {
+                        const isFavorite = favorites?.has(food.id) || false
+                        const isHighlighted = index === highlightedIndex
+                        const colorBadge = food.energy_density_color
+                        return (
+                          <div
+                            key={food.id}
+                            role="option"
+                            aria-selected={isHighlighted}
+                            className={`flex items-start gap-2 px-3 py-2.5 cursor-pointer border-b border-neutral-100 last:border-b-0 ${
+                              isHighlighted ? 'bg-primary-50' : 'hover:bg-neutral-50'
+                            }`}
+                            onClick={() => handleFoodSelect(food)}
+                            onMouseEnter={() => setHighlightedIndex(index)}
+                          >
+                            {onToggleFavorite && (
+                              <button
+                                type="button"
+                                onClick={e => {
+                                  e.stopPropagation()
+                                  onToggleFavorite(food.id)
+                                }}
+                                className="flex-shrink-0 mt-0.5"
+                                aria-label={isFavorite ? 'Ta bort favorit' : 'Lägg till favorit'}
+                              >
+                                <Heart
+                                  className={`h-4 w-4 ${
+                                    isFavorite
+                                      ? 'fill-red-500 text-red-500'
+                                      : 'text-neutral-300 hover:text-red-400'
+                                  }`}
+                                />
+                              </button>
+                            )}
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-1.5 min-w-0">
+                                <span className="font-medium text-sm text-neutral-900 truncate">
+                                  {food.name}
+                                </span>
+                                <Badge
+                                  variant="outline"
+                                  className={`text-[9px] px-1 py-0 h-4 shrink-0 ${SOURCE_BADGES[food.source].className}`}
+                                >
+                                  {SOURCE_BADGES[food.source].label}
+                                </Badge>
+                              </div>
+                              <div className="text-xs text-neutral-500 flex items-center gap-1.5 mt-0.5">
+                                {food.brand && <span>{food.brand} •</span>}
+                                <span>
+                                  {food.calories} kcal/{food.weight_grams || 100}g
+                                </span>
+                              </div>
+                            </div>
+                            {colorBadge && (
                               <Badge
                                 variant="outline"
-                                className={`text-[9px] px-1 py-0 h-4 shrink-0 ${SOURCE_BADGES[food.source].className}`}
+                                className={`text-xs flex-shrink-0 ${
+                                  colorBadge === 'Green'
+                                    ? 'bg-green-50 text-green-700 border-green-300'
+                                    : colorBadge === 'Yellow'
+                                      ? 'bg-yellow-50 text-yellow-700 border-yellow-300'
+                                      : 'bg-orange-50 text-orange-700 border-orange-300'
+                                }`}
                               >
-                                {SOURCE_BADGES[food.source].label}
-                              </Badge>
-                            </div>
-                            <div className="text-xs text-neutral-500 flex items-center gap-1.5 mt-0.5">
-                              {food.brand && <span>{food.brand} •</span>}
-                              <span>
-                                {food.calories} kcal/{food.weight_grams || 100}g
-                              </span>
-                            </div>
-                          </div>
-                          {colorBadge && (
-                            <Badge
-                              variant="outline"
-                              className={`text-xs flex-shrink-0 ${
-                                colorBadge === 'Green'
-                                  ? 'bg-green-50 text-green-700 border-green-300'
+                                {colorBadge === 'Green'
+                                  ? 'Grön'
                                   : colorBadge === 'Yellow'
-                                    ? 'bg-yellow-50 text-yellow-700 border-yellow-300'
-                                    : 'bg-orange-50 text-orange-700 border-orange-300'
-                              }`}
-                            >
-                              {colorBadge === 'Green'
-                                ? 'Grön'
-                                : colorBadge === 'Yellow'
-                                  ? 'Gul'
-                                  : 'Orange'}
-                            </Badge>
-                          )}
-                        </div>
-                      )
-                    })}
-                  </div>
-                  {totalMatches > 20 && (
-                    <div className="px-3 py-2 text-xs text-neutral-500 bg-neutral-50 border-t text-center">
-                      Visar 20 av {totalMatches} träffar – sök för fler
+                                    ? 'Gul'
+                                    : 'Orange'}
+                              </Badge>
+                            )}
+                          </div>
+                        )
+                      })}
                     </div>
-                  )}
-                </>
-              )}
+                    {totalMatches > 20 && (
+                      <div className="px-3 py-2 text-xs text-neutral-500 bg-neutral-50 border-t text-center">
+                        Visar 20 av {totalMatches} träffar – sök för fler
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
             </div>
           )}
         </div>
