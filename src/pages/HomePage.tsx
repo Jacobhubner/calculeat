@@ -2,13 +2,11 @@ import { Link, Navigate } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
 import SiteHeader from '@/components/layout/SiteHeader'
 import SiteFooter from '@/components/layout/SiteFooter'
-import FeatureCard from '@/components/FeatureCard'
 import SmartCalculator from '@/components/SmartCalculator'
 import { HeroSection } from '@/components/HeroSection'
 import { HowItWorks } from '@/components/HowItWorks'
-import { SuccessStories } from '@/components/SuccessStories'
 import { Button } from '@/components/ui/button'
-import { Apple, Calculator, Target, TrendingUp, BookOpen, Heart, CheckCircle } from 'lucide-react'
+import { Apple, Calculator, Target, TrendingUp, BookOpen, Shield } from 'lucide-react'
 
 export default function HomePage() {
   const { user } = useAuth()
@@ -21,44 +19,44 @@ export default function HomePage() {
   const features = [
     {
       icon: Calculator,
-      title: 'Smart kalkyler',
+      title: 'Vet exakt hur mycket du ska äta',
       description:
-        'Beräkna BMR, TDEE och makron med vetenskapligt beprövade formler. Få personaliserade rekommendationer baserat på dina mål.',
+        'Välj bland tio BMR-formler och sex aktivitetsnivåer. Kalorimålet är ditt — inte ett befolkningsgenomsnitt.',
       accentColor: 'primary' as const,
     },
     {
       icon: Apple,
-      title: 'Kostloggning',
+      title: 'Sluta gissa portionsstorlekarna',
       description:
-        'Logga dina måltider enkelt med vår omfattande matdatabas. Spara favoritmåltider och recept för snabb återanvändning.',
+        'Sök i en bred livsmedelsdatabas och logga måltider på sekunder. Felen ackumuleras inte längre.',
       accentColor: 'accent' as const,
     },
     {
       icon: Target,
-      title: 'Målsättning',
+      title: 'Mål med en faktisk plan bakom sig',
       description:
-        'Sätt specifika mål för vikt, kalorier och makrofördelning. Få daglig feedback på din progress och justera efter behov.',
+        'Ange din ambition — CalculEat räknar ut kalorimål, makrofördelning och realistisk tidslinje.',
       accentColor: 'primary' as const,
     },
     {
       icon: TrendingUp,
-      title: 'Progress tracking',
+      title: 'Se om strategin faktiskt fungerar',
       description:
-        'Visualisera din utveckling med interaktiva grafer och detaljerad statistik. Se trender och mönster i dina matvanor över tid.',
+        'Trender vecka för vecka visar vad du faktiskt äter — inte vad du trodde du åt. Justera på data.',
       accentColor: 'accent' as const,
     },
     {
       icon: BookOpen,
-      title: 'Recepthantering',
+      title: 'Laga mat du redan gillar',
       description:
-        'Skapa och spara dina egna recept med automatisk näringsberäkning. Dela med vänner eller håll dem privata.',
+        'Skapa egna recept och få näringsvärdet automatiskt. Hållbara vanor kräver inte hälsofrikostmat.',
       accentColor: 'primary' as const,
     },
     {
-      icon: Heart,
-      title: 'Hälsoinsikter',
+      icon: Shield,
+      title: 'Ditt data är ditt',
       description:
-        'Få personliga rekommendationer baserat på dina matvanor. Upptäck näringsgap och optimera din kost för bättre hälsa.',
+        'Ingen reklam, ingen försäljning till tredje part. Exportera allt du loggat när som helst.',
       accentColor: 'accent' as const,
     },
   ]
@@ -68,46 +66,18 @@ export default function HomePage() {
       <SiteHeader />
 
       <main>
-        {/* Hero Section - New MyNetDiary-inspired design */}
+        {/* Hero Section */}
         <HeroSection />
 
-        {/* Features Grid Section */}
-        <section className="py-20 md:py-28 bg-white">
-          <div className="container mx-auto px-4">
-            <div className="text-center max-w-3xl mx-auto mb-16 md:mb-20">
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-neutral-900 mb-4">
-                Allt du behöver för att nå dina mål
-              </h2>
-              <p className="text-lg md:text-xl text-neutral-600">
-                CalculEat kombinerar kraftfulla verktyg med en enkel användarupplevelse
-              </p>
-            </div>
-
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-              {features.map((feature, index) => (
-                <FeatureCard key={index} {...feature} />
-              ))}
-            </div>
-
-            {/* Link to features page */}
-            <div className="text-center mt-12">
-              <Button size="lg" variant="outline" asChild>
-                <Link to="/features">Se alla funktioner i detalj</Link>
-              </Button>
-            </div>
-          </div>
-        </section>
-
-        {/* Calculator Section - BEHÅLLS MED SAMMA FUNKTIONALITET */}
+        {/* Calculator Section - directly after hero for product-led conversion */}
         <section id="calculator" className="py-20 md:py-28 bg-neutral-50">
           <div className="container mx-auto px-4">
             <div className="text-center max-w-3xl mx-auto mb-12">
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-neutral-900 mb-4">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold text-neutral-900 mb-4">
                 Prova vår kalkylator
               </h2>
               <p className="text-lg md:text-xl text-neutral-600">
-                Få värdet på din personliga energiomsättning snabbt och enkelt – ingen inloggning
-                krävs.
+                Få ditt personliga energibehov direkt — ingen inloggning krävs.
               </p>
             </div>
 
@@ -117,46 +87,67 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* Features Summary Section */}
+        <section id="features" className="py-16 md:py-20 bg-white">
+          <div className="container mx-auto px-4">
+            <div className="text-center max-w-2xl mx-auto mb-12">
+              <h2 className="text-3xl md:text-4xl font-semibold text-neutral-900 mb-3">
+                Allt du behöver, ingenting du inte behöver
+              </h2>
+              <p className="text-lg text-neutral-600">
+                CalculEat kombinerar kraftfulla verktyg med en enkel användarupplevelse.
+              </p>
+            </div>
+
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+              {features.map((feature, index) => (
+                <div
+                  key={index}
+                  className="flex gap-4 p-4 rounded-xl hover:bg-neutral-50 transition-colors"
+                >
+                  <div
+                    className={`flex-shrink-0 inline-flex rounded-lg p-2.5 ${
+                      feature.accentColor === 'primary'
+                        ? 'bg-primary-100 text-primary-600'
+                        : 'bg-accent-100 text-accent-600'
+                    }`}
+                  >
+                    <feature.icon className="h-6 w-6" strokeWidth={2} />
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-neutral-900 mb-0.5">{feature.title}</h3>
+                    <p className="text-sm text-neutral-600 leading-relaxed">
+                      {feature.description}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* How It Works - Process section */}
         <HowItWorks />
 
-        {/* Success Stories - Testimonials with better design */}
-        <SuccessStories />
-
         {/* CTA Footer */}
-        <section className="bg-gradient-to-br from-primary-50 via-white to-accent-50 py-20 md:py-28 relative overflow-hidden border-t border-neutral-200">
-          {/* Background pattern with gradient overlay */}
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(37,189,0,0.08),transparent_50%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_60%,rgba(255,139,0,0.06),transparent_50%)]" />
-
-          <div className="container mx-auto px-4 text-center relative z-10">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-neutral-900">
-              Redo att förändra dina matvanor?
+        <section className="bg-neutral-900 py-20 md:py-28">
+          <div className="container mx-auto px-4 text-center">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-white">
+              Precision börjar här.
             </h2>
-            <p className="text-lg md:text-xl text-neutral-700 mb-12 max-w-2xl mx-auto">
-              Gå med tusentals användare som redan har nått sina hälsomål med CalculEat
+            <p className="text-lg md:text-xl text-neutral-300 mb-10 max-w-2xl mx-auto">
+              CalculEat är byggt för dem som vill förstå sin kost på riktigt — inte för dem som
+              nöjer sig med ungefärliga estimat. Konto tar 60 sekunder att skapa.
             </p>
 
-            <div className="mb-12 flex flex-wrap justify-center gap-6 md:gap-8">
-              <div className="flex items-center space-x-2">
-                <CheckCircle className="h-6 w-6 text-primary-600" />
-                <span className="text-neutral-800 font-medium">Helt gratis att börja</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <CheckCircle className="h-6 w-6 text-primary-600" />
-                <span className="text-neutral-800 font-medium">Ingen reklam</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <CheckCircle className="h-6 w-6 text-primary-600" />
-                <span className="text-neutral-800 font-medium">
-                  Exportera dina data när som helst
-                </span>
-              </div>
-            </div>
-
-            <Button size="lg" variant="accent" className="shadow-lg hover:shadow-xl" asChild>
-              <Link to="/register">Skapa konto gratis</Link>
+            <Button size="lg" variant="accent" className="shadow-lg hover:shadow-xl mb-8" asChild>
+              <Link to="/register">Beräkna mitt kaloribehov</Link>
             </Button>
+
+            <div className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-8 text-sm text-neutral-400">
+              <span>Ingen betald version — alla funktioner är tillgängliga utan kostnad.</span>
+              <span>Dina uppgifter lagras säkert och delas aldrig med tredje part.</span>
+            </div>
           </div>
         </section>
       </main>

@@ -42,11 +42,11 @@ export function HowItWorks() {
   ]
 
   return (
-    <section className="py-20 md:py-28 bg-white">
+    <section className="py-20 md:py-28 bg-neutral-50">
       <div className="container mx-auto px-4">
         {/* Section header */}
         <div className="text-center max-w-3xl mx-auto mb-16 md:mb-20">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-neutral-900 mb-4">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold text-neutral-900 mb-4">
             Så fungerar det
           </h2>
           <p className="text-lg md:text-xl text-neutral-600">
@@ -59,13 +59,6 @@ export function HowItWorks() {
           {steps.map((stepData, index) => (
             <ProcessStep key={stepData.step} {...stepData} isLast={index === steps.length - 1} />
           ))}
-        </div>
-
-        {/* Optional CTA */}
-        <div className="text-center mt-16">
-          <p className="text-neutral-600 mb-6">
-            Börja din resa mot bättre hälsa idag – helt gratis!
-          </p>
         </div>
       </div>
     </section>

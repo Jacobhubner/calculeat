@@ -4,10 +4,9 @@ import { Button } from './ui/button'
 
 export function HeroSection() {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-primary-50 via-white to-accent-50 pt-20 pb-24 md:pt-28 md:pb-32">
-      {/* Background pattern with gradient overlay */}
+    <section className="relative overflow-hidden bg-white pt-20 pb-24 md:pt-28 md:pb-32">
+      {/* Background pattern with subtle green radial gradient */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(37,189,0,0.08),transparent_50%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_60%,rgba(255,139,0,0.06),transparent_50%)]" />
 
       <div className="container relative mx-auto px-4">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
@@ -21,8 +20,10 @@ export function HeroSection() {
                 </span>
               </h1>
               <p className="text-lg md:text-xl text-neutral-700 max-w-2xl mx-auto lg:mx-0">
-                Räkna kalorier, spåra makron och nå dina hälsomål med precision. Vetenskapligt
-                baserade kalkyler som hjälper dig förstå din kropp bättre.
+                Tio beprövade BMR-formler. En kaloristrategi som faktiskt passar din kropp.
+              </p>
+              <p className="text-sm text-neutral-500 max-w-2xl mx-auto lg:mx-0">
+                Tar mindre än en minut att komma igång.
               </p>
             </div>
 
@@ -51,28 +52,6 @@ export function HeroSection() {
                   Prova kalkylatorn
                 </a>
               </Button>
-            </div>
-
-            {/* Social proof */}
-            <div className="flex flex-wrap gap-6 justify-center lg:justify-start text-neutral-600">
-              <div className="text-center lg:text-left">
-                <div className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-accent-500 bg-clip-text text-transparent">
-                  10,000+
-                </div>
-                <div className="text-sm">Aktiva användare</div>
-              </div>
-              <div className="text-center lg:text-left">
-                <div className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-accent-500 bg-clip-text text-transparent">
-                  500K+
-                </div>
-                <div className="text-sm">Loggade måltider</div>
-              </div>
-              <div className="text-center lg:text-left">
-                <div className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-accent-500 bg-clip-text text-transparent">
-                  4.9/5
-                </div>
-                <div className="text-sm">Användarbetyg</div>
-              </div>
             </div>
           </div>
 

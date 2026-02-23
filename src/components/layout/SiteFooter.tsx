@@ -9,7 +9,6 @@ export default function SiteFooter() {
     {
       title: 'Produkt',
       links: [
-        { label: 'Funktioner', to: '/features' },
         { label: 'Dashboard', to: '/app' },
         { label: 'Priser', to: '#' },
       ],

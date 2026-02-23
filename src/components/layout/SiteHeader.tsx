@@ -6,7 +6,6 @@ import { Button } from '../ui/button'
 import { Avatar, AvatarFallback } from '../ui/avatar'
 import { useAuth } from '@/contexts/AuthContext'
 import { useUIStore } from '@/stores/uiStore'
-import { cn } from '@/lib/utils'
 import { useState, useRef, useEffect } from 'react'
 import { SocialHub } from '@/components/social/SocialHub'
 import { ShareDialog } from '@/components/sharing/ShareDialog'
@@ -35,8 +34,6 @@ export default function SiteHeader() {
 
   const badgeCount = useSocialBadgeCount()
 
-  const isActive = (path: string) => location.pathname === path
-
   const handleSignOut = async () => {
     try {
       await signOut()
@@ -48,10 +45,13 @@ export default function SiteHeader() {
     }
   }
 
-  const navLinks = [
-    { to: '/', label: 'Hem' },
-    { to: '/features', label: 'Funktioner' },
-  ]
+  const anchorLinks =
+    location.pathname === '/'
+      ? [
+          { href: '#features', label: 'Funktioner' },
+          { href: '#calculator', label: 'Kalkylator' },
+        ]
+      : []
 
   const getInitials = () => {
     if (userProfile?.username) return userProfile.username.substring(0, 2).toUpperCase()
@@ -109,22 +109,16 @@ export default function SiteHeader() {
         </Link>
 
         {/* Desktop Navigation - Only show marketing links when logged out */}
-        {!user && (
+        {!user && anchorLinks.length > 0 && (
           <nav className="hidden md:flex items-center gap-6">
-            {navLinks.map(link => (
-              <Link
-                key={link.to}
-                to={link.to}
-                className={cn(
-                  'text-sm font-medium transition-colors relative',
-                  isActive(link.to) ? 'text-primary-600' : 'text-neutral-600 hover:text-neutral-900'
-                )}
+            {anchorLinks.map(link => (
+              <a
+                key={link.href}
+                href={link.href}
+                className="text-sm font-medium transition-colors text-neutral-600 hover:text-neutral-900"
               >
                 {link.label}
-                {isActive(link.to) && (
-                  <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary-600 rounded-full" />
-                )}
-              </Link>
+              </a>
             ))}
           </nav>
         )}
@@ -306,20 +300,15 @@ export default function SiteHeader() {
       {mobileMenuOpen && !user && (
         <div className="md:hidden border-t bg-white">
           <nav className="container mx-auto px-4 py-4 flex flex-col gap-2">
-            {navLinks.map(link => (
-              <Link
-                key={link.to}
-                to={link.to}
+            {anchorLinks.map(link => (
+              <a
+                key={link.href}
+                href={link.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className={cn(
-                  'px-4 py-2 rounded-xl text-sm font-medium transition-colors',
-                  isActive(link.to)
-                    ? 'bg-primary-50 text-primary-600'
-                    : 'text-neutral-600 hover:bg-neutral-50'
-                )}
+                className="px-4 py-2 rounded-xl text-sm font-medium transition-colors text-neutral-600 hover:bg-neutral-50"
               >
                 {link.label}
-              </Link>
+              </a>
             ))}
 
             <div className="border-t mt-2 pt-2">

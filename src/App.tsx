@@ -17,7 +17,6 @@ import RegisterPage from './pages/RegisterPage'
 import AuthCallbackPage from './pages/AuthCallbackPage'
 
 // Lazy load - app pages (loaded on demand)
-const FeaturesPage = lazy(() => import('./pages/FeaturesPage'))
 const IconDemo = lazy(() => import('./pages/IconDemo'))
 const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage'))
 const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage'))
@@ -72,7 +71,7 @@ function App() {
               <Suspense fallback={<PageLoader />}>
                 <Routes>
                   <Route path="/" element={<HomePage />} />
-                  <Route path="/features" element={<FeaturesPage />} />
+                  <Route path="/features" element={<Navigate to="/" replace />} />
                   <Route path="/icon-demo" element={<IconDemo />} />
                   <Route
                     path="/login"
