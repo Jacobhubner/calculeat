@@ -12,7 +12,6 @@ import { AlertTriangle, Loader2, Settings as SettingsIcon, Pencil, X, Check } fr
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase'
 import { translateAuthError } from '@/lib/auth-errors'
-import BasicInfoFields from '@/components/profile/BasicInfoFields'
 import { useActiveProfile } from '@/hooks/useActiveProfile'
 import { useUpdateProfile } from '@/hooks/useUpdateProfile'
 import { useUserProfile, useUpdateUsername } from '@/hooks/useUserProfile'
@@ -32,7 +31,7 @@ function getPasswordStrength(password: string): { label: string; color: string; 
 
 export default function SettingsPage() {
   const navigate = useNavigate()
-  const { user, deleteAccount } = useAuth()
+  const { user, deleteAccount, refreshProfile } = useAuth()
   const { profile, isReady } = useActiveProfile()
   const updateProfile = useUpdateProfile()
   const { data: userProfile } = useUserProfile()
@@ -53,13 +52,34 @@ export default function SettingsPage() {
   const [gender, setGender] = useState<Gender | '' | undefined>(profile?.gender ?? '')
   const [height, setHeight] = useState<number | undefined>(profile?.height_cm ?? undefined)
 
+  // Birth date dropdown state
+  const parsedDate = birthDate ? new Date(birthDate) : null
+  const [birthDay, setBirthDay] = useState(parsedDate?.getDate().toString() || '')
+  const [birthMonth, setBirthMonth] = useState(
+    parsedDate ? (parsedDate.getMonth() + 1).toString() : ''
+  )
+  const [birthYear, setBirthYear] = useState(parsedDate?.getFullYear().toString() || '')
+  const [heightString, setHeightString] = useState(profile?.height_cm?.toString() || '')
+
   // Sync local state when profile loads (only if we haven't changed it yet)
   const [basicInfoInitialized, setBasicInfoInitialized] = useState(false)
   if (isReady && profile && !basicInfoInitialized) {
+    const d = profile.birth_date ? new Date(profile.birth_date) : null
     setBirthDate(profile.birth_date ?? undefined)
+    setBirthDay(d?.getDate().toString() || '')
+    setBirthMonth(d ? (d.getMonth() + 1).toString() : '')
+    setBirthYear(d?.getFullYear().toString() || '')
     setGender(profile.gender ?? '')
     setHeight(profile.height_cm ?? undefined)
+    setHeightString(profile.height_cm?.toString() || '')
     setBasicInfoInitialized(true)
+  }
+
+  const updateBirthDate = (day: string, month: string, year: string) => {
+    if (day && month && year) {
+      const dateString = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
+      setBirthDate(dateString)
+    }
   }
 
   // Inline editor state
@@ -139,6 +159,7 @@ export default function SettingsPage() {
       }
       toast.success('Användarnamn uppdaterat')
       closeEditor()
+      await refreshProfile()
     } catch (error) {
       toast.error(translateAuthError(error))
     }
@@ -236,35 +257,206 @@ export default function SettingsPage() {
           </p>
         </div>
 
+        {/* App Settings */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Appinställningar</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <p className="text-sm font-medium text-neutral-900 mb-3">Dagavslutning</p>
+              <div className="space-y-2">
+                <label
+                  className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
+                    completionMode === 'manual'
+                      ? 'border-primary-300 bg-primary-50'
+                      : 'border-neutral-200 hover:border-neutral-300'
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="completion-mode"
+                    value="manual"
+                    checked={completionMode === 'manual'}
+                    onChange={() => handleCompletionModeChange('manual')}
+                    className="mt-0.5 accent-primary-600"
+                  />
+                  <div>
+                    <span className="text-sm font-medium text-neutral-900">Manuell</span>
+                    <p className="text-xs text-neutral-500 mt-0.5">
+                      Avsluta dagen själv med knappen &quot;Avsluta dag&quot;
+                    </p>
+                  </div>
+                </label>
+                <label
+                  className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
+                    completionMode === 'auto'
+                      ? 'border-primary-300 bg-primary-50'
+                      : 'border-neutral-200 hover:border-neutral-300'
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="completion-mode"
+                    value="auto"
+                    checked={completionMode === 'auto'}
+                    onChange={() => handleCompletionModeChange('auto')}
+                    className="mt-0.5 accent-primary-600"
+                  />
+                  <div>
+                    <span className="text-sm font-medium text-neutral-900">Automatisk</span>
+                    <p className="text-xs text-neutral-500 mt-0.5">
+                      Dagen avslutas automatiskt vid midnatt
+                    </p>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Grundläggande information */}
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">Grundläggande information</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            {isReady ? (
-              <>
-                <BasicInfoFields
-                  birthDate={birthDate}
-                  gender={gender}
-                  height={height}
-                  onBirthDateChange={setBirthDate}
-                  onGenderChange={setGender}
-                  onHeightChange={setHeight}
-                  locked={false}
-                  showLockNotice={false}
-                />
-                <button
-                  onClick={handleSaveBasicInfo}
-                  disabled={updateProfile.isPending}
-                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {updateProfile.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
-                  {updateProfile.isPending ? 'Sparar...' : 'Spara grundläggande information'}
-                </button>
-              </>
-            ) : (
+          <CardContent className="divide-y divide-neutral-100">
+            {!isReady ? (
               <div className="py-4 text-sm text-neutral-500">Laddar...</div>
+            ) : (
+              <>
+                {/* Födelsedatum */}
+                <div className="py-3">
+                  <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide mb-2">
+                    Födelsedatum
+                  </p>
+                  <div className="grid grid-cols-3 gap-2">
+                    <select
+                      value={birthDay}
+                      onChange={e => {
+                        setBirthDay(e.target.value)
+                        updateBirthDate(e.target.value, birthMonth, birthYear)
+                      }}
+                      className="block w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    >
+                      <option value="">Dag</option>
+                      {Array.from({ length: 31 }, (_, i) => i + 1).map(day => (
+                        <option key={day} value={day}>
+                          {day}
+                        </option>
+                      ))}
+                    </select>
+                    <select
+                      value={birthMonth}
+                      onChange={e => {
+                        setBirthMonth(e.target.value)
+                        updateBirthDate(birthDay, e.target.value, birthYear)
+                      }}
+                      className="block w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    >
+                      <option value="">Månad</option>
+                      {[
+                        'Januari',
+                        'Februari',
+                        'Mars',
+                        'April',
+                        'Maj',
+                        'Juni',
+                        'Juli',
+                        'Augusti',
+                        'September',
+                        'Oktober',
+                        'November',
+                        'December',
+                      ].map((m, i) => (
+                        <option key={i + 1} value={i + 1}>
+                          {m}
+                        </option>
+                      ))}
+                    </select>
+                    <select
+                      value={birthYear}
+                      onChange={e => {
+                        setBirthYear(e.target.value)
+                        updateBirthDate(birthDay, birthMonth, e.target.value)
+                      }}
+                      className="block w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    >
+                      <option value="">År</option>
+                      {Array.from({ length: 105 }, (_, i) => new Date().getFullYear() - i).map(
+                        year => (
+                          <option key={year} value={year}>
+                            {year}
+                          </option>
+                        )
+                      )}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Kön */}
+                <div className="py-3">
+                  <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide mb-2">
+                    Kön
+                  </p>
+                  <div className="flex gap-6">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="settings-gender"
+                        value="male"
+                        checked={gender === 'male'}
+                        onChange={() => setGender('male')}
+                        className="h-4 w-4 accent-primary-600"
+                      />
+                      <span className="text-sm text-neutral-700">Man</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="settings-gender"
+                        value="female"
+                        checked={gender === 'female'}
+                        onChange={() => setGender('female')}
+                        className="h-4 w-4 accent-primary-600"
+                      />
+                      <span className="text-sm text-neutral-700">Kvinna</span>
+                    </label>
+                  </div>
+                </div>
+
+                {/* Längd */}
+                <div className="py-3">
+                  <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide mb-2">
+                    Längd (cm)
+                  </p>
+                  <input
+                    type="number"
+                    value={heightString}
+                    onChange={e => setHeightString(e.target.value)}
+                    onBlur={() => {
+                      const num = parseFloat(heightString)
+                      setHeight(isNaN(num) ? undefined : num)
+                    }}
+                    placeholder="180"
+                    min="100"
+                    max="250"
+                    className="w-full max-w-xs px-3 py-2 text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  />
+                </div>
+
+                {/* Spara-knapp */}
+                <div className="pt-3">
+                  <button
+                    onClick={handleSaveBasicInfo}
+                    disabled={updateProfile.isPending}
+                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {updateProfile.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+                    {updateProfile.isPending ? 'Sparar...' : 'Spara'}
+                  </button>
+                </div>
+              </>
             )}
           </CardContent>
         </Card>
@@ -499,64 +691,6 @@ export default function SettingsPage() {
                   </button>
                 </div>
               )}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* App Settings */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Appinställningar</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <p className="text-sm font-medium text-neutral-900 mb-3">Dagavslutning</p>
-              <div className="space-y-2">
-                <label
-                  className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
-                    completionMode === 'manual'
-                      ? 'border-primary-300 bg-primary-50'
-                      : 'border-neutral-200 hover:border-neutral-300'
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="completion-mode"
-                    value="manual"
-                    checked={completionMode === 'manual'}
-                    onChange={() => handleCompletionModeChange('manual')}
-                    className="mt-0.5 accent-primary-600"
-                  />
-                  <div>
-                    <span className="text-sm font-medium text-neutral-900">Manuell</span>
-                    <p className="text-xs text-neutral-500 mt-0.5">
-                      Avsluta dagen själv med knappen &quot;Avsluta dag&quot;
-                    </p>
-                  </div>
-                </label>
-                <label
-                  className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
-                    completionMode === 'auto'
-                      ? 'border-primary-300 bg-primary-50'
-                      : 'border-neutral-200 hover:border-neutral-300'
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="completion-mode"
-                    value="auto"
-                    checked={completionMode === 'auto'}
-                    onChange={() => handleCompletionModeChange('auto')}
-                    className="mt-0.5 accent-primary-600"
-                  />
-                  <div>
-                    <span className="text-sm font-medium text-neutral-900">Automatisk</span>
-                    <p className="text-xs text-neutral-500 mt-0.5">
-                      Dagen avslutas automatiskt vid midnatt
-                    </p>
-                  </div>
-                </label>
-              </div>
             </div>
           </CardContent>
         </Card>

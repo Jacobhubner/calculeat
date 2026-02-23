@@ -58,6 +58,16 @@ export default function EnergyGoalReferenceTable({
   const loss25DiffMin = tdee - loss25Max
   const loss25DiffMax = tdee - loss25Min
 
+  // kg/vecka calculations from calorie differentials
+  const gain10KgMin = ((gain10DiffMin * 7) / 7700).toFixed(2)
+  const gain10KgMax = ((gain10DiffMax * 7) / 7700).toFixed(2)
+  const loss10KgMin = ((loss10DiffMin * 7) / 7700).toFixed(2)
+  const loss10KgMax = ((loss10DiffMax * 7) / 7700).toFixed(2)
+  const loss20KgMin = ((loss20DiffMin * 7) / 7700).toFixed(2)
+  const loss20KgMax = ((loss20DiffMax * 7) / 7700).toFixed(2)
+  const loss25KgMin = ((loss25DiffMin * 7) / 7700).toFixed(2)
+  const loss25KgMax = ((loss25DiffMax * 7) / 7700).toFixed(2)
+
   // Define all goals with their selection status (always show all options)
   // Round values only when displaying (keep calculations precise)
   const goals: GoalRow[] = [
@@ -71,7 +81,7 @@ export default function EnergyGoalReferenceTable({
     {
       label: `Viktuppgång (10-20%)`,
       percentage: `${Math.round(gain10Min)} - ${Math.round(gain10Max)} kcal (⇧ ${Math.round(gain10DiffMin)} - ${Math.round(gain10DiffMax)} kcal)`,
-      description: 'För muskeluppbyggnad och viktökning',
+      description: `För muskeluppbyggnad och viktökning · ~${gain10KgMin}–${gain10KgMax} kg/vecka`,
       isSelected: selectedGoal === 'Weight gain',
       goalValue: 'Weight gain',
     },
@@ -84,7 +94,7 @@ export default function EnergyGoalReferenceTable({
     {
       label: `Försiktigt (10-15%)`,
       percentage: `${Math.round(loss10Min)} - ${Math.round(loss10Max)} kcal (⇩ ${Math.round(loss10DiffMin)} - ${Math.round(loss10DiffMax)} kcal)`,
-      description: 'Långsam viktnedgång, bäst för att bevara muskelmassa',
+      description: `Långsam viktnedgång, bäst för att bevara muskelmassa · ~${loss10KgMin}–${loss10KgMax} kg/vecka`,
       isSelected: selectedGoal === 'Weight loss' && selectedDeficit === '10-15%',
       isSubItem: true,
       goalValue: 'Weight loss',
@@ -93,7 +103,7 @@ export default function EnergyGoalReferenceTable({
     {
       label: `Normalt (20-25%)`,
       percentage: `${Math.round(loss20Min)} - ${Math.round(loss20Max)} kcal (⇩ ${Math.round(loss20DiffMin)} - ${Math.round(loss20DiffMax)} kcal)`,
-      description: 'Balanserad viktnedgång med god energinivå',
+      description: `Balanserad viktnedgång med god energinivå · ~${loss20KgMin}–${loss20KgMax} kg/vecka`,
       isSelected: selectedGoal === 'Weight loss' && selectedDeficit === '20-25%',
       isSubItem: true,
       goalValue: 'Weight loss',
@@ -102,7 +112,7 @@ export default function EnergyGoalReferenceTable({
     {
       label: `Aggressivt (25-30%)`,
       percentage: `${Math.round(loss25Min)} - ${Math.round(loss25Max)} kcal (⇩ ${Math.round(loss25DiffMin)} - ${Math.round(loss25DiffMax)} kcal)`,
-      description: 'Snabb viktnedgång, endast för kort period',
+      description: `Snabb viktnedgång, endast för kort period · ~${loss25KgMin}–${loss25KgMax} kg/vecka`,
       isSelected: selectedGoal === 'Weight loss' && selectedDeficit === '25-30%',
       isSubItem: true,
       goalValue: 'Weight loss',
@@ -160,9 +170,7 @@ export default function EnergyGoalReferenceTable({
                     {goal.label}
                   </span>
                   {goal.description && (
-                    <p className="text-xs text-neutral-500 mt-1 ml-4">
-                      {goal.description}
-                    </p>
+                    <p className="text-xs text-neutral-500 mt-1 ml-4">{goal.description}</p>
                   )}
                 </div>
                 {goal.percentage && (

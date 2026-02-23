@@ -12,6 +12,7 @@ export interface FriendRequest {
   friendship_id: string
   requester_id: string
   requester_name: string // username (COALESCE(username, email))
+  requester_username: string
   created_at: string
 }
 

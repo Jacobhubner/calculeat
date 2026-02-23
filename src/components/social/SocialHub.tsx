@@ -245,7 +245,9 @@ function MiniFriendRequestCard({ request }: { request: FriendRequest }) {
           {getInitials(request.requester_name)}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-neutral-900 truncate">{request.requester_name}</p>
+          <p className="text-sm font-medium text-neutral-900 truncate">
+            @{request.requester_username ?? request.requester_name}
+          </p>
           <p className="text-xs text-neutral-400">
             {formatDistanceToNow(parseISO(request.created_at), { addSuffix: true, locale: sv })}
           </p>
@@ -306,7 +308,9 @@ function SentFriendRequestCard({ request }: { request: SentFriendRequest }) {
           {getInitials(request.addressee_name)}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-neutral-900 truncate">{request.addressee_name}</p>
+          <p className="text-sm font-medium text-neutral-900 truncate">
+            @{request.addressee_username ?? request.addressee_name}
+          </p>
           <p className="text-xs text-neutral-400">
             Inväntar svar &middot;{' '}
             {formatDistanceToNow(parseISO(request.created_at), { addSuffix: true, locale: sv })}
@@ -400,13 +404,10 @@ function FriendProfile({
         </div>
         <div className="text-center">
           <p className="font-semibold text-neutral-900">{displayName}</p>
-          {/* Visa username och email som subtext */}
-          {friend.alias && (
-            <p className="text-sm text-neutral-500">
-              @{friend.friend_username ?? friend.friend_name}
-            </p>
-          )}
-          <p className="text-xs text-neutral-400">{friend.friend_email}</p>
+          {/* Visa alltid @username som subtext — tydligare om alias är satt */}
+          <p className="text-sm text-neutral-500">
+            @{friend.friend_username ?? friend.friend_name}
+          </p>
           <p className="text-xs text-neutral-400">
             Vänner sedan {format(parseISO(friend.since), 'd MMM yyyy', { locale: sv })}
           </p>
@@ -590,9 +591,9 @@ function ConversationList({ onOpenThread }: { onOpenThread: (conv: Conversation)
               </div>
               <div className="flex items-center justify-between gap-2">
                 <p
-                  className={`text-xs truncate ${isUnread ? 'text-neutral-700' : 'text-neutral-400'}`}
+                  className={`text-xs truncate ${conv.last_message_content === null ? 'italic text-neutral-400' : isUnread ? 'text-neutral-700' : 'text-neutral-400'}`}
                 >
-                  {conv.last_message_content ?? ''}
+                  {conv.last_message_content ?? 'Meddelandet har tagits bort'}
                 </p>
                 {isUnread && (
                   <span className="shrink-0 flex items-center justify-center bg-primary-600 text-white text-[10px] font-bold rounded-full min-w-[18px] h-4 px-1 leading-none">
@@ -980,7 +981,9 @@ function MessageThread({
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium text-neutral-900 truncate">{displayName}</p>
           {conversation.friend_alias && (
-            <p className="text-[10px] text-neutral-400 truncate">{conversation.friend_name}</p>
+            <p className="text-[10px] text-neutral-400 truncate">
+              @{conversation.friend_username ?? conversation.friend_name}
+            </p>
           )}
         </div>
         {/* Ta bort konversation */}

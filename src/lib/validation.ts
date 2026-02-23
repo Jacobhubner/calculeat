@@ -85,15 +85,21 @@ export const userProfileSchema = z.object({
   calories_max: z.number().min(0).max(10000).optional(),
 })
 
-export const signUpSchema = z.object({
-  email: z.string().email('Ogiltig e-postadress'),
-  password: z.string().min(6, 'Lösenord måste vara minst 6 tecken'),
-  profile_name: z
-    .string()
-    .min(2, 'Användarnamnet måste vara minst 2 tecken')
-    .max(50, 'Användarnamnet får max vara 50 tecken')
-    .regex(/^[a-zA-Z0-9_åäöÅÄÖ]+$/, 'Användarnamnet får bara innehålla bokstäver, siffror och _'),
-})
+export const signUpSchema = z
+  .object({
+    email: z.string().email('Ogiltig e-postadress'),
+    password: z.string().min(6, 'Lösenord måste vara minst 6 tecken'),
+    confirmPassword: z.string().min(1, 'Bekräfta lösenordet'),
+    profile_name: z
+      .string()
+      .min(2, 'Användarnamnet måste vara minst 2 tecken')
+      .max(50, 'Användarnamnet får max vara 50 tecken')
+      .regex(/^[a-zA-Z0-9_åäöÅÄÖ]+$/, 'Användarnamnet får bara innehålla bokstäver, siffror och _'),
+  })
+  .refine(data => data.password === data.confirmPassword, {
+    message: 'Lösenorden matchar inte',
+    path: ['confirmPassword'],
+  })
 
 export const signInSchema = z.object({
   email: z.string().email('Ogiltig e-postadress'),

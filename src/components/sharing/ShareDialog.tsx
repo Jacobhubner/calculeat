@@ -277,11 +277,11 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
                           </div>
                           <div className="min-w-0">
                             <p className="text-sm font-medium text-neutral-900 truncate">
-                              {friend.alias ?? friend.friend_name}
+                              {friend.alias ?? `@${friend.friend_username ?? friend.friend_name}`}
                             </p>
                             {friend.alias && (
                               <p className="text-xs text-neutral-400 truncate">
-                                {friend.friend_name}
+                                @{friend.friend_username ?? friend.friend_name}
                               </p>
                             )}
                           </div>

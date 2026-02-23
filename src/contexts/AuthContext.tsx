@@ -9,10 +9,12 @@ import { queryClient } from '@/lib/react-query'
 
 interface AuthContextType {
   user: User | null
-  profile: UserProfile | null
+  profile: UserProfile | null // profiles table (hälsa/TDEE-data)
+  userProfile: UserProfile | null // user_profiles table (social identitet, username)
   session: Session | null
   loading: boolean
   isProfileComplete: boolean
+  isEmailVerified: boolean
   signUp: (email: string, password: string, fullName: string) => Promise<void>
   signIn: (email: string, password: string) => Promise<void>
   signOut: () => Promise<void>
@@ -26,10 +28,13 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [profile, setProfile] = useState<UserProfile | null>(null)
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
   const clearProfiles = useProfileStore(state => state.clearProfiles)
   const clearMeasurementSets = useMeasurementSetStore(state => state.clearMeasurementSets)
+
+  const isEmailVerified = !!user?.email_confirmed_at
 
   // Check if user has completed essential profile fields
   const isProfileComplete =
@@ -42,28 +47,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const refreshProfile = async () => {
     if (!user) return
 
-    try {
-      // Fetch active profile from profiles table instead of legacy user_profiles
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('is_active', true)
-        .single()
+    const [profileResult, userProfileResult] = await Promise.all([
+      supabase.from('profiles').select('*').eq('user_id', user.id).eq('is_active', true).single(),
+      supabase.from('user_profiles').select('*').eq('id', user.id).single(),
+    ])
 
-      if (error) throw error
-      setProfile(data)
-    } catch (error) {
-      console.error('Error fetching profile:', error)
+    if (profileResult.error) {
+      console.error('Error fetching health profile:', profileResult.error)
+    } else {
+      setProfile(profileResult.data)
+    }
+
+    if (userProfileResult.error) {
+      console.error('Error fetching user profile:', userProfileResult.error)
+    } else {
+      setUserProfile(userProfileResult.data)
     }
   }
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session)
       setUser(session?.user ?? null)
       if (session?.user) {
-        refreshProfile()
+        await refreshProfile()
       }
       setLoading(false)
     })
@@ -78,6 +85,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (event === 'SIGNED_OUT') {
         // Clear React state
         setProfile(null)
+        setUserProfile(null)
 
         // Clear Zustand stores
         clearProfiles()
@@ -140,6 +148,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // Clear React state
     setProfile(null)
+    setUserProfile(null)
 
     // Clear Zustand stores
     clearProfiles()
@@ -186,6 +195,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // Same cleanup as signOut
     setProfile(null)
+    setUserProfile(null)
     clearProfiles()
     clearMeasurementSets()
     queryClient.clear()
@@ -217,9 +227,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       value={{
         user,
         profile,
+        userProfile,
         session,
         loading,
         isProfileComplete,
+        isEmailVerified,
         signUp,
         signIn,
         signOut,

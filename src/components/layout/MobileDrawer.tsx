@@ -57,7 +57,7 @@ const navGroups = {
 }
 
 export default function MobileDrawer() {
-  const { user, profile, signOut } = useAuth()
+  const { user, signOut, userProfile } = useAuth()
   const { mobileDrawerOpen, setMobileDrawerOpen } = useUIStore()
   const location = useLocation()
   const navigate = useNavigate()
@@ -81,15 +81,8 @@ export default function MobileDrawer() {
   }
 
   const getInitials = () => {
-    if (profile?.profile_name) {
-      return profile.profile_name
-        .split(' ')
-        .map(n => n[0])
-        .join('')
-        .toUpperCase()
-        .substring(0, 2)
-    }
-    return user?.email?.substring(0, 2).toUpperCase() || 'U'
+    if (userProfile?.username) return userProfile.username.substring(0, 2).toUpperCase()
+    return '...'
   }
 
   return (
@@ -128,7 +121,7 @@ export default function MobileDrawer() {
                 </Avatar>
                 <div className="min-w-0">
                   <p className="text-sm font-medium text-neutral-900 truncate">
-                    {profile?.profile_name || 'Användare'}
+                    {userProfile?.username ? `@${userProfile.username}` : '...'}
                   </p>
                   <p className="text-xs text-neutral-500 truncate">{user?.email}</p>
                 </div>

@@ -722,8 +722,8 @@ export default function TodayPage() {
                                       </span>
                                       <span>•</span>
                                       <span>{item.calories} kcal</span>
-                                      <span className="hidden sm:inline">•</span>
-                                      <span className="hidden sm:inline">
+                                      <span>•</span>
+                                      <span>
                                         F: {item.fat_g}g | K: {item.carb_g}g | P: {item.protein_g}g
                                       </span>
                                     </div>
@@ -748,11 +748,9 @@ export default function TodayPage() {
                             <span className="font-medium text-neutral-700">Totalt:</span>
                             <div className="flex gap-4 text-neutral-600">
                               <span>{mealEntry.meal_calories} kcal</span>
-                              <span className="hidden sm:inline">F: {mealEntry.meal_fat_g}g</span>
-                              <span className="hidden sm:inline">K: {mealEntry.meal_carb_g}g</span>
-                              <span className="hidden sm:inline">
-                                P: {mealEntry.meal_protein_g}g
-                              </span>
+                              <span>F: {mealEntry.meal_fat_g}g</span>
+                              <span>K: {mealEntry.meal_carb_g}g</span>
+                              <span>P: {mealEntry.meal_protein_g}g</span>
                             </div>
                           </div>
                           {/* Meal macro breakdown */}

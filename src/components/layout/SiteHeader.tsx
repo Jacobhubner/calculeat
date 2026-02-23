@@ -6,7 +6,6 @@ import { Button } from '../ui/button'
 import { Avatar, AvatarFallback } from '../ui/avatar'
 import { useAuth } from '@/contexts/AuthContext'
 import { useUIStore } from '@/stores/uiStore'
-import { useProfileStore } from '@/stores/profileStore'
 import { cn } from '@/lib/utils'
 import { useState, useRef, useEffect } from 'react'
 import { SocialHub } from '@/components/social/SocialHub'
@@ -15,9 +14,9 @@ import { useSocialBadgeCount } from '@/hooks/useShareInvitations'
 import type { Friend } from '@/lib/types/friends'
 
 export default function SiteHeader() {
-  const { user, signOut, profile } = useAuth()
+  const { user, signOut, userProfile } = useAuth()
   const { mobileMenuOpen, toggleMobileMenu, setMobileMenuOpen } = useUIStore()
-  const activeProfile = useProfileStore(state => state.activeProfile)
+
   const location = useLocation()
   const navigate = useNavigate()
   const [mobileUserMenuOpen, setMobileUserMenuOpen] = useState(false)
@@ -55,15 +54,8 @@ export default function SiteHeader() {
   ]
 
   const getInitials = () => {
-    if (profile?.profile_name) {
-      return profile.profile_name
-        .split(' ')
-        .map(n => n[0])
-        .join('')
-        .toUpperCase()
-        .substring(0, 2)
-    }
-    return user?.email?.substring(0, 2).toUpperCase() || 'U'
+    if (userProfile?.username) return userProfile.username.substring(0, 2).toUpperCase()
+    return '...'
   }
 
   // Close mobile user menu when clicking outside
@@ -141,7 +133,7 @@ export default function SiteHeader() {
         <div className="hidden md:flex items-center gap-3">
           {user ? (
             <div className="flex items-center gap-3">
-              {activeProfile && (
+              {userProfile?.username && (
                 <Link
                   to="/app/profile"
                   className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary-50 hover:bg-primary-100 transition-colors"
@@ -149,7 +141,7 @@ export default function SiteHeader() {
                 >
                   <User className="h-4 w-4 text-primary-600" />
                   <span className="text-sm font-medium text-primary-700">
-                    {activeProfile.profile_name}
+                    @{userProfile.username}
                   </span>
                 </Link>
               )}
@@ -264,7 +256,7 @@ export default function SiteHeader() {
                     {/* User Info */}
                     <div className="px-4 py-3 border-b border-neutral-100">
                       <p className="text-sm font-medium text-neutral-900 truncate">
-                        {profile?.profile_name || 'Användare'}
+                        {userProfile?.username ? `@${userProfile.username}` : '...'}
                       </p>
                       <p className="text-xs text-neutral-500 truncate">{user.email}</p>
                     </div>

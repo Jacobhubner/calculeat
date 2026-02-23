@@ -78,23 +78,22 @@ export default function TDEEContent() {
           <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
             <p className="font-medium text-orange-900">🔻 Viktminskning (cutting)</p>
             <p className="text-sm text-neutral-700 mt-1">
-              Ät <strong>mindre</strong> än din TDEE. Rekommenderat underskott: 10–25 %.
+              Ät <strong>mindre</strong> än din TDEE. Rekommenderat underskott: 10–30 %.
             </p>
             <ul className="text-sm text-neutral-600 mt-2 space-y-1 list-disc list-inside">
-              <li>10–15 %: Långsam, hållbar viktminskning (~0.25–0.5 kg/vecka)</li>
-              <li>20–25 %: Måttlig viktminskning (~0.5–1 kg/vecka)</li>
-              <li>25–30 %: Snabb viktminskning (&gt;1 kg/vecka) – endast kortvarigt</li>
+              <li>10–15 %: Försiktigt – långsam, hållbar viktminskning</li>
+              <li>20–25 %: Normalt – måttlig viktminskning</li>
+              <li>25–30 %: Aggressivt – snabb viktminskning, endast kortvarigt</li>
             </ul>
           </div>
 
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
             <p className="font-medium text-blue-900">🔺 Viktökning (bulking)</p>
             <p className="text-sm text-neutral-700 mt-1">
-              Ät <strong>mer</strong> än din TDEE. Rekommenderat överskott: 5–15 %.
+              Ät <strong>mer</strong> än din TDEE. Rekommenderat överskott: 10–20 %.
             </p>
             <ul className="text-sm text-neutral-600 mt-2 space-y-1 list-disc list-inside">
-              <li>5–10 %: Lean bulk – långsam viktökning (~0.25–0.5 kg/vecka)</li>
-              <li>10–15 %: Måttlig bulk – snabbare muskelökning (~0.5–0.75 kg/vecka)</li>
+              <li>10–20 %: Kontrollerad viktökning</li>
             </ul>
           </div>
         </div>

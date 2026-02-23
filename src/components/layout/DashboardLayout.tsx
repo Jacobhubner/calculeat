@@ -4,6 +4,9 @@ import DashboardNav from './DashboardNav'
 import MobileBottomNav from './MobileBottomNav'
 import { useUIStore } from '@/stores/uiStore'
 import { cn } from '@/lib/utils'
+import { useAuth } from '@/contexts/AuthContext'
+import { supabase } from '@/lib/supabase'
+import { toast } from 'sonner'
 
 interface DashboardLayoutProps {
   children: ReactNode
@@ -12,12 +15,34 @@ interface DashboardLayoutProps {
 
 export default function DashboardLayout({ children, fullHeight }: DashboardLayoutProps) {
   const { sidebarCollapsed } = useUIStore()
+  const { isEmailVerified, user } = useAuth()
+
+  const handleResend = async () => {
+    if (!user?.email) return
+    const { error } = await supabase.auth.resend({ type: 'signup', email: user.email })
+    if (error) {
+      toast.error('Kunde inte skicka mejlet. Försök igen.')
+    } else {
+      toast.success('Verifieringsmejl skickat!')
+    }
+  }
 
   return (
     <div
       className={cn('flex flex-col overflow-x-hidden', fullHeight ? 'h-screen' : 'min-h-screen')}
     >
       <SiteHeader />
+      {!isEmailVerified && user && (
+        <div className="bg-amber-50 border-b border-amber-200 px-4 py-2 text-sm text-amber-800 flex items-center justify-between gap-4">
+          <span>Verifiera din e-postadress för att säkra ditt konto.</span>
+          <button
+            onClick={handleResend}
+            className="shrink-0 text-xs font-medium underline hover:no-underline"
+          >
+            Skicka om mejl
+          </button>
+        </div>
+      )}
       <div className="flex flex-1 min-h-0 overflow-hidden">
         <DashboardNav />
         <main
