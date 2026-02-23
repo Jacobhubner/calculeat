@@ -54,6 +54,29 @@ export function translateAuthError(error: unknown): string {
     return 'För många försök. Vänligen vänta en stund och försök igen'
   }
 
+  // Same email as current
+  if (
+    message.includes('same_email') ||
+    message.includes('new email should be different from the current email')
+  ) {
+    return 'Den nya e-postadressen är samma som den nuvarande'
+  }
+
+  // Email already in use (auth update)
+  if (message.includes('email_exists') || message.includes('email address is already registered')) {
+    return 'Denna e-postadress är redan registrerad av ett annat konto'
+  }
+
+  // Username taken (from update_username RPC)
+  if (message.includes('username_taken')) {
+    return 'Användarnamnet är redan taget'
+  }
+
+  // Username invalid format (from update_username RPC)
+  if (message.includes('invalid_format')) {
+    return 'Ogiltigt användarnamnsformat. Använd bokstäver, siffror och _'
+  }
+
   // Default fallback - show original error in development, generic in production
   if (import.meta.env.DEV) {
     return `Fel: ${error.message}`

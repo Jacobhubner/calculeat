@@ -4,8 +4,9 @@
  */
 
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import DashboardLayout from '@/components/layout/DashboardLayout'
-import { User, Save } from 'lucide-react'
+import { User, Save, Settings } from 'lucide-react'
 import { useProfiles, useUpdateProfile, useCreateWeightHistory } from '@/hooks'
 import { Button } from '@/components/ui/button'
 import { useSyncMealSettings } from '@/hooks/useMealSettings'
@@ -17,7 +18,6 @@ import { toast } from 'sonner'
 // Profile components
 import ProfileResultsSummary from '@/components/profile/ProfileResultsSummary'
 import MaxFatMetabolismCard from '@/components/profile/MaxFatMetabolismCard'
-import BasicInfoFields from '@/components/profile/BasicInfoFields'
 import TDEEOptions from '@/components/profile/TDEEOptions'
 import BasicProfileForm from '@/components/profile/BasicProfileForm'
 import WeightTracker from '@/components/profile/WeightTracker'
@@ -106,45 +106,6 @@ export default function ProfilePage() {
 
   // Check if TDEE exists (using display profile to include pending changes)
   const hasTDEE = !!displayProfile?.tdee
-
-  // Fields should be locked as soon as basic info is complete
-  // Fields lock when basic info is complete
-  const fieldsAreLocked = hasBasicInfo
-
-  // Handlers for BasicInfoFields - update pending state instead of API
-  const handleBirthDateChange = (birthDate: string) => {
-    setPendingChanges(prev => {
-      if (birthDate === activeProfile?.birth_date) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { birth_date, ...rest } = prev
-        return rest
-      }
-      return { ...prev, birth_date: birthDate }
-    })
-  }
-
-  const handleGenderChange = (gender: Gender | '') => {
-    setPendingChanges(prev => {
-      const newGender = gender || undefined
-      if (newGender === activeProfile?.gender) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { gender, ...rest } = prev
-        return rest
-      }
-      return { ...prev, gender: newGender }
-    })
-  }
-
-  const handleHeightChange = (height: number | undefined) => {
-    setPendingChanges(prev => {
-      if (height === activeProfile?.height_cm) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { height_cm, ...rest } = prev
-        return rest
-      }
-      return { ...prev, height_cm: height }
-    })
-  }
 
   // Handlers for BasicProfileForm - update pending state
   const handleBodyFatChange = (bodyFat: number | undefined) => {
@@ -525,11 +486,6 @@ export default function ProfilePage() {
     }
   }
 
-  // Handler for manual TDEE success
-  const handleManualTDEESuccess = () => {
-    toast.success('TDEE har sparats! Du kan nu använda resten av appen.')
-  }
-
   return (
     <DashboardLayout>
       {/* Header */}
@@ -547,54 +503,43 @@ export default function ProfilePage() {
         <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
           {/* Main content column - Conditional rendering */}
           <div className="space-y-4">
-            {/* SCENARIO 1: No basic info - Only show BasicInfoFields */}
+            {/* SCENARIO 1: No basic info - CTA to Settings */}
             {!hasBasicInfo && displayProfile && (
-              <BasicInfoFields
-                birthDate={displayProfile.birth_date}
-                gender={displayProfile.gender}
-                height={displayProfile.height_cm}
-                weight={displayProfile.weight_kg}
-                onBirthDateChange={handleBirthDateChange}
-                onGenderChange={handleGenderChange}
-                onHeightChange={handleHeightChange}
-                onWeightChange={handleWeightChange}
-                locked={false}
-                showLockNotice={false}
-              />
+              <div className="rounded-xl border border-primary-200 bg-primary-50 p-6 text-center space-y-3">
+                <Settings className="h-8 w-8 text-primary-500 mx-auto" />
+                <p className="text-sm font-medium text-neutral-800">
+                  Fyll i grundläggande information för att komma igång
+                </p>
+                <p className="text-xs text-neutral-500">
+                  Ange födelsedatum, kön och längd i Inställningar för att kunna beräkna ditt
+                  energibehov.
+                </p>
+                <Link
+                  to="/app/settings"
+                  className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors"
+                >
+                  <Settings className="h-4 w-4" />
+                  Gå till Inställningar
+                </Link>
+              </div>
             )}
 
-            {/* SCENARIO 2: Has basic info but no TDEE - Show BasicInfoFields + TDEE options */}
+            {/* SCENARIO 2: Has basic info but no TDEE - Show TDEE options only */}
             {hasBasicInfo && !hasTDEE && displayProfile && (
-              <>
-                <BasicInfoFields
-                  birthDate={displayProfile.birth_date}
-                  gender={displayProfile.gender}
-                  height={displayProfile.height_cm}
-                  weight={displayProfile.weight_kg}
-                  onBirthDateChange={handleBirthDateChange}
-                  onGenderChange={handleGenderChange}
-                  onHeightChange={handleHeightChange}
-                  onWeightChange={handleWeightChange}
-                  locked={fieldsAreLocked}
-                  showLockNotice={fieldsAreLocked}
-                />
-                <TDEEOptions
-                  profileId={displayProfile.id}
-                  initialWeight={displayProfile.weight_kg ?? displayProfile.initial_weight_kg}
-                  height={displayProfile.height_cm}
-                  birthDate={displayProfile.birth_date}
-                  gender={displayProfile.gender}
-                  tdee={displayProfile.tdee}
-                  bodyFatPercentage={displayProfile.body_fat_percentage}
-                  onTDEEChange={handleTDEEChange}
-                  onManualTDEESuccess={handleManualTDEESuccess}
-                  onBeforeNavigate={async () => {
-                    if (activeProfile) {
-                      await handleSaveProfile(activeProfile.id)
-                    }
-                  }}
-                />
-              </>
+              <TDEEOptions
+                initialWeight={displayProfile.weight_kg ?? activeProfile?.initial_weight_kg}
+                height={displayProfile.height_cm}
+                birthDate={displayProfile.birth_date}
+                gender={displayProfile.gender}
+                tdee={displayProfile.tdee}
+                bodyFatPercentage={displayProfile.body_fat_percentage}
+                onTDEEChange={handleTDEEChange}
+                onBeforeNavigate={async () => {
+                  if (activeProfile) {
+                    await handleSaveProfile(activeProfile.id)
+                  }
+                }}
+              />
             )}
 
             {/* SCENARIO 3: Has basic info AND TDEE - Show full profile */}
@@ -636,18 +581,6 @@ export default function ProfilePage() {
 
                 {/* Omvandling av makrovärden */}
                 <MacroConverterCard profile={mergedProfile} />
-
-                {/* Grundläggande information - Collapsible section */}
-                <BasicInfoFields
-                  birthDate={displayProfile.birth_date}
-                  gender={displayProfile.gender}
-                  height={displayProfile.height_cm}
-                  onBirthDateChange={handleBirthDateChange}
-                  onGenderChange={handleGenderChange}
-                  onHeightChange={handleHeightChange}
-                  locked={fieldsAreLocked}
-                  showLockNotice={fieldsAreLocked}
-                />
               </>
             )}
 

@@ -2,7 +2,7 @@
  * Custom hook för att hämta användarprofil med React Query
  */
 
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { queryKeys } from '@/lib/react-query'
 import type { UserProfile } from '@/lib/types'
@@ -48,5 +48,21 @@ export function useUserProfile(userId?: string) {
       return data
     },
     enabled: true, // Alltid aktiverad, userId är optional
+  })
+}
+
+export function useUpdateUsername() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (newUsername: string) => {
+      const { data, error } = await supabase.rpc('update_username', {
+        p_new_username: newUsername,
+      })
+      if (error) throw error
+      return data as { success: boolean; error?: string }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.userProfile })
+    },
   })
 }

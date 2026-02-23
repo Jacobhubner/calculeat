@@ -104,6 +104,7 @@ export interface TDEECalculationSnapshot {
 export interface UserProfile {
   id: string
   email: string
+  username?: string
   profile_name?: string
   birth_date?: string
   gender?: Gender
