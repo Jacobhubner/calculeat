@@ -118,6 +118,7 @@ export default function SettingsPage() {
 
   // Save username
   const handleSaveUsername = async () => {
+    if (updateUsername.isPending) return
     const trimmed = usernameInput.trim()
     if (!trimmed) return
     if (trimmed === userProfile?.username) {
@@ -287,7 +288,8 @@ export default function SettingsPage() {
                       value={usernameInput}
                       onChange={e => setUsernameInput(e.target.value)}
                       placeholder="@användarnamn"
-                      className="flex-1 px-3 py-2 text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      disabled={updateUsername.isPending}
+                      className="flex-1 px-3 py-2 text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
                       onKeyDown={e => {
                         if (e.key === 'Enter') handleSaveUsername()
                         if (e.key === 'Escape') closeEditor()

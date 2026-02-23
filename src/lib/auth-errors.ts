@@ -6,6 +6,8 @@ export function translateAuthError(error: unknown): string {
     return 'Ett oväntat fel uppstod'
   }
 
+  // Check error.code for Postgres/Supabase error codes (e.g. AuthError has .code)
+  const code = (error as { code?: string }).code ?? ''
   const message = error.message.toLowerCase()
 
   // Invalid credentials
@@ -75,6 +77,21 @@ export function translateAuthError(error: unknown): string {
   // Username invalid format (from update_username RPC)
   if (message.includes('invalid_format')) {
     return 'Ogiltigt användarnamnsformat. Använd bokstäver, siffror och _'
+  }
+
+  // Reauthentication required (password change after long session)
+  if (message.includes('reauthentication') || message.includes('requires recent login')) {
+    return 'Av säkerhetsskäl: logga ut och in igen för att byta lösenord.'
+  }
+
+  // Same password as current
+  if (message.includes('different from the old') || message.includes('same password')) {
+    return 'Det nya lösenordet måste skilja sig från det nuvarande.'
+  }
+
+  // DB unique violation (race condition: two users grab same username simultaneously)
+  if (code === '23505' || (message.includes('unique') && message.includes('username'))) {
+    return 'Användarnamnet är redan taget'
   }
 
   // Default fallback - show original error in development, generic in production
