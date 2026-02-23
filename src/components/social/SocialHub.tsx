@@ -837,24 +837,27 @@ function MessageBubble({
               {isDeleted ? 'Meddelandet har tagits bort' : msg.content}
             </div>
             {/* Metadata-rad */}
-            {(msg.edited_at || (isOwn && !isDeleted)) && (
-              <div
-                className={`flex items-center gap-1 mt-0.5 ${isOwn ? 'justify-end' : 'justify-start'}`}
-              >
-                {msg.edited_at && !isDeleted && (
-                  <span className="text-[9px] text-neutral-400">(redigerat)</span>
-                )}
-                {isOwn && !isDeleted && (
-                  <span className="text-[9px] text-neutral-400">
-                    {msg.read_at ? (
-                      <CheckCheck className="h-3 w-3 inline text-primary-400" />
-                    ) : (
-                      <Check className="h-3 w-3 inline text-neutral-300" />
-                    )}
-                  </span>
-                )}
-              </div>
-            )}
+            <div
+              className={`flex items-center gap-1 mt-0.5 ${isOwn ? 'justify-end' : 'justify-start'}`}
+            >
+              {msg.edited_at && !isDeleted && (
+                <span className="text-[9px] text-neutral-400">(redigerat)</span>
+              )}
+              {!isDeleted && (
+                <span className="text-[9px] text-neutral-400">
+                  {format(parseISO(msg.created_at), 'HH:mm', { locale: sv })}
+                </span>
+              )}
+              {isOwn && !isDeleted && (
+                <span className="text-[9px] text-neutral-400">
+                  {msg.read_at ? (
+                    <CheckCheck className="h-3 w-3 inline text-primary-400" />
+                  ) : (
+                    <Check className="h-3 w-3 inline text-neutral-300" />
+                  )}
+                </span>
+              )}
+            </div>
           </div>
         )}
       </div>
