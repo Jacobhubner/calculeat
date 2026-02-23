@@ -44,12 +44,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     profile.gender !== undefined &&
     profile.birth_date !== undefined
 
-  const refreshProfile = async () => {
-    if (!user) return
+  const refreshProfile = async (forUserId?: string) => {
+    const uid = forUserId ?? user?.id
+    if (!uid) return
 
     const [profileResult, userProfileResult] = await Promise.all([
-      supabase.from('profiles').select('*').eq('user_id', user.id).eq('is_active', true).single(),
-      supabase.from('user_profiles').select('*').eq('id', user.id).single(),
+      supabase.from('profiles').select('*').eq('user_id', uid).eq('is_active', true).single(),
+      supabase.from('user_profiles').select('*').eq('id', uid).single(),
     ])
 
     if (profileResult.error) {
@@ -70,7 +71,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setSession(session)
       setUser(session?.user ?? null)
       if (session?.user) {
-        await refreshProfile()
+        await refreshProfile(session.user.id)
       }
       setLoading(false)
     })
@@ -109,7 +110,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       if (session?.user) {
-        refreshProfile()
+        refreshProfile(session.user.id)
       }
       setLoading(false)
     })
