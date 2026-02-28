@@ -98,6 +98,10 @@ async function fetchBarcode(barcode: string): Promise<ScanResult> {
   const carb_g =
     typeof nutriments['carbohydrates_100g'] === 'number' ? nutriments['carbohydrates_100g'] : null
   const fat_g = typeof nutriments['fat_100g'] === 'number' ? nutriments['fat_100g'] : null
+  const saturated_fat_g =
+    typeof nutriments['saturated-fat_100g'] === 'number' ? nutriments['saturated-fat_100g'] : null
+  const sugars_g = typeof nutriments['sugars_100g'] === 'number' ? nutriments['sugars_100g'] : null
+  const salt_g = typeof nutriments['salt_100g'] === 'number' ? nutriments['salt_100g'] : null
 
   // Numerisk validering — samma som Gemini-sidan
   if (!validateRange(calories, 0, 1000)) {
@@ -118,6 +122,12 @@ async function fetchBarcode(barcode: string): Promise<ScanResult> {
       message: 'Orimliga näringsvärden — produkten avvisades',
     } as LookupError
   }
+
+  // Validera valfria näringsvärden — nullifiera om utanför rimliga gränser
+  const validatedSaturatedFat =
+    saturated_fat_g !== null && validateRange(saturated_fat_g, 0, 100) ? saturated_fat_g : null
+  const validatedSugars = sugars_g !== null && validateRange(sugars_g, 0, 100) ? sugars_g : null
+  const validatedSalt = salt_g !== null && validateRange(salt_g, 0, 50) ? salt_g : null
 
   const name = resolveName(data.product)
 
@@ -153,6 +163,9 @@ async function fetchBarcode(barcode: string): Promise<ScanResult> {
     protein_g,
     carb_g,
     fat_g,
+    saturated_fat_g: validatedSaturatedFat,
+    sugars_g: validatedSugars,
+    salt_g: validatedSalt,
     default_amount: 100,
     default_unit: unit,
     food_type: foodType,

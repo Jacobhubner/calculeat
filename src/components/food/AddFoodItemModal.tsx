@@ -23,6 +23,8 @@ import { useScanNutritionLabel } from '@/hooks/useScanNutritionLabel'
 import { BarcodeScannerModal } from '@/components/food/BarcodeScannerModal'
 import type { ScanResult } from '@/lib/types'
 import { toast } from 'sonner'
+import { useFoodNutrients } from '@/hooks/useFoodNutrients'
+import { supabase } from '@/lib/supabase'
 
 // z.preprocess() causes Zod to infer output fields as `unknown` at the type level,
 // even though the runtime values are always the correct types. This explicit type
@@ -40,6 +42,9 @@ type FormData = {
   ml_per_gram?: number
   grams_per_piece?: number
   serving_unit?: string
+  saturated_fat_g?: number
+  sugars_g?: number
+  salt_g?: number
 }
 
 interface AddFoodItemModalProps {
@@ -153,6 +158,8 @@ export function AddFoodItemModal({
   const updateSharedListFoodItem = useUpdateSharedListFoodItem()
   const createSharedListFoodItem = useCreateSharedListFoodItem()
 
+  const { data: editItemNutrients } = useFoodNutrients(editItem?.id ?? null)
+
   // Watch all form values for live calculations
 
   const name = watch('name')
@@ -201,6 +208,16 @@ export function AddFoodItemModal({
         setValue('serving_unit', editItem.serving_unit)
       }
 
+      // Prefill extra nutrients if available
+      if (editItemNutrients) {
+        const satFat = editItemNutrients.find(n => n.nutrient_code === 'saturated_fat')
+        const sugars = editItemNutrients.find(n => n.nutrient_code === 'sugars')
+        const salt = editItemNutrients.find(n => n.nutrient_code === 'salt')
+        if (satFat) setValue('saturated_fat_g', satFat.amount)
+        if (sugars) setValue('sugars_g', sugars.amount)
+        if (salt) setValue('salt_g', salt.amount)
+      }
+
       // Spara initiala värden för jämförelse
       setInitialEditValues({
         name: editItem.name,
@@ -224,7 +241,7 @@ export function AddFoodItemModal({
       setGramsPerVolume(undefined)
       setInitialEditValues(null)
     }
-  }, [editItem, open, setValue, reset])
+  }, [editItem, open, editItemNutrients, setValue, reset])
 
   // Smart default: if unit is "g" or "gram", auto-set weight_grams to match default_amount
   // This works both when creating new items AND when editing (user changes unit to 'g')
@@ -426,6 +443,9 @@ export function AddFoodItemModal({
       if (result.carb_g !== null) setValue('carb_g', result.carb_g)
       if (result.fat_g !== null) setValue('fat_g', result.fat_g)
       if (result.food_type) setValue('food_type', result.food_type)
+      if (result.saturated_fat_g != null) setValue('saturated_fat_g', result.saturated_fat_g)
+      if (result.sugars_g != null) setValue('sugars_g', result.sugars_g)
+      if (result.salt_g != null) setValue('salt_g', result.salt_g)
       setPendingScanResult(null)
     },
     [setValue]
@@ -513,19 +533,92 @@ export function AddFoodItemModal({
         density_g_per_ml,
       }
 
+      let savedFoodItemId: string | null = null
+
       if (editItem?.shared_list_id) {
         await updateSharedListFoodItem.mutateAsync({
           foodItemId: editItem.id,
           listId: editItem.shared_list_id,
           fields: cleanedData,
         })
+        savedFoodItemId = editItem.id
       } else if (editItem) {
-        await updateMutation.mutateAsync({ id: editItem.id, ...cleanedData })
+        // updateMutation may return a new item ID if it was a copy-on-write of a global item
+        const updated = await updateMutation.mutateAsync({ id: editItem.id, ...cleanedData })
+        savedFoodItemId = updated?.id ?? editItem.id
       } else if (sharedListId) {
-        await createSharedListFoodItem.mutateAsync({ listId: sharedListId, ...cleanedData })
+        const created = await createSharedListFoodItem.mutateAsync({
+          listId: sharedListId,
+          ...cleanedData,
+        })
+        savedFoodItemId = created?.id ?? null
       } else {
-        await createMutation.mutateAsync(cleanedData)
+        const created = await createMutation.mutateAsync(cleanedData)
+        savedFoodItemId = created?.id ?? null
       }
+
+      // Spara valfria näringsvärden (mättat fett, sockerarter, salt) i food_nutrients
+      if (savedFoodItemId) {
+        const upsertRows: Array<{
+          food_item_id: string
+          nutrient_code: string
+          amount: number
+          unit: string
+          reference_amount: number
+          reference_unit: 'g' | 'ml'
+        }> = []
+
+        if (data.saturated_fat_g != null && !isNaN(data.saturated_fat_g))
+          upsertRows.push({
+            food_item_id: savedFoodItemId,
+            nutrient_code: 'saturated_fat',
+            amount: data.saturated_fat_g,
+            unit: 'g',
+            reference_amount: 100,
+            reference_unit: 'g' as const,
+          })
+        if (data.sugars_g != null && !isNaN(data.sugars_g))
+          upsertRows.push({
+            food_item_id: savedFoodItemId,
+            nutrient_code: 'sugars',
+            amount: data.sugars_g,
+            unit: 'g',
+            reference_amount: 100,
+            reference_unit: 'g' as const,
+          })
+        if (data.salt_g != null && !isNaN(data.salt_g))
+          upsertRows.push({
+            food_item_id: savedFoodItemId,
+            nutrient_code: 'salt',
+            amount: data.salt_g,
+            unit: 'g',
+            reference_amount: 100,
+            reference_unit: 'g' as const,
+          })
+
+        if (upsertRows.length > 0) {
+          await supabase
+            .from('food_nutrients')
+            .upsert(upsertRows, { onConflict: 'food_item_id,nutrient_code' })
+        }
+
+        // Radera rader för fält som användaren lämnat tomma
+        const toDel = (['saturated_fat', 'sugars', 'salt'] as const).filter(code => {
+          if (code === 'saturated_fat')
+            return data.saturated_fat_g == null || isNaN(data.saturated_fat_g)
+          if (code === 'sugars') return data.sugars_g == null || isNaN(data.sugars_g)
+          if (code === 'salt') return data.salt_g == null || isNaN(data.salt_g)
+          return false
+        })
+        if (toDel.length > 0) {
+          await supabase
+            .from('food_nutrients')
+            .delete()
+            .eq('food_item_id', savedFoodItemId)
+            .in('nutrient_code', toDel)
+        }
+      }
+
       reset()
       setGramsPerVolume(undefined)
       setVolumeUnit('dl')
@@ -804,6 +897,25 @@ export function AddFoodItemModal({
                       )}
                     </div>
 
+                    <div className="col-start-2">
+                      <Label htmlFor="saturated_fat_g" className="text-neutral-500">
+                        varav mättat fett (g)
+                      </Label>
+                      <Input
+                        id="saturated_fat_g"
+                        type="number"
+                        step="0.1"
+                        {...register('saturated_fat_g', { valueAsNumber: true })}
+                        placeholder="0"
+                        className={errors.saturated_fat_g ? 'border-red-500' : ''}
+                      />
+                      {errors.saturated_fat_g && (
+                        <p className="text-sm text-red-600 mt-1">
+                          {errors.saturated_fat_g.message}
+                        </p>
+                      )}
+                    </div>
+
                     <div>
                       <Label htmlFor="carb_g">Kolhydrater (g) *</Label>
                       <Input
@@ -820,6 +932,23 @@ export function AddFoodItemModal({
                     </div>
 
                     <div>
+                      <Label htmlFor="sugars_g" className="text-neutral-500">
+                        varav sockerarter (g)
+                      </Label>
+                      <Input
+                        id="sugars_g"
+                        type="number"
+                        step="0.1"
+                        {...register('sugars_g', { valueAsNumber: true })}
+                        placeholder="0"
+                        className={errors.sugars_g ? 'border-red-500' : ''}
+                      />
+                      {errors.sugars_g && (
+                        <p className="text-sm text-red-600 mt-1">{errors.sugars_g.message}</p>
+                      )}
+                    </div>
+
+                    <div>
                       <Label htmlFor="protein_g">Protein (g) *</Label>
                       <Input
                         id="protein_g"
@@ -831,6 +960,23 @@ export function AddFoodItemModal({
                       />
                       {errors.protein_g && (
                         <p className="text-sm text-red-600 mt-1">{errors.protein_g.message}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <Label htmlFor="salt_g" className="text-neutral-500">
+                        Salt (g)
+                      </Label>
+                      <Input
+                        id="salt_g"
+                        type="number"
+                        step="0.01"
+                        {...register('salt_g', { valueAsNumber: true })}
+                        placeholder="0"
+                        className={errors.salt_g ? 'border-red-500' : ''}
+                      />
+                      {errors.salt_g && (
+                        <p className="text-sm text-red-600 mt-1">{errors.salt_g.message}</p>
                       )}
                     </div>
                   </div>

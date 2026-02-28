@@ -164,6 +164,30 @@ export const createFoodItemSchema = z
       val => (val === '' || (typeof val === 'string' && val.trim() === '') ? undefined : val),
       z.string().max(50, 'Serveringsenhet får max vara 50 tecken').optional()
     ),
+    saturated_fat_g: z.preprocess(
+      val =>
+        val === '' || val === null || val === undefined || Number.isNaN(val) ? undefined : val,
+      z
+        .number({ error: 'Mättat fett måste vara ett nummer' })
+        .min(0, 'Mättat fett måste vara 0 eller högre')
+        .optional()
+    ),
+    sugars_g: z.preprocess(
+      val =>
+        val === '' || val === null || val === undefined || Number.isNaN(val) ? undefined : val,
+      z
+        .number({ error: 'Sockerarter måste vara ett nummer' })
+        .min(0, 'Sockerarter måste vara 0 eller högre')
+        .optional()
+    ),
+    salt_g: z.preprocess(
+      val =>
+        val === '' || val === null || val === undefined || Number.isNaN(val) ? undefined : val,
+      z
+        .number({ error: 'Salt måste vara ett nummer' })
+        .min(0, 'Salt måste vara 0 eller högre')
+        .optional()
+    ),
   })
   .refine(
     data => {
