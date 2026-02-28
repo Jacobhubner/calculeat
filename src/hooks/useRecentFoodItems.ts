@@ -60,7 +60,7 @@ export function useRecentFoodItems(limit = 10) {
 
         if (!existingEntry) {
           foodMap.set(foodId, {
-            ...(item.food_item as FoodItem),
+            ...(item.food_item as unknown as FoodItem),
             last_used_at: item.created_at,
             times_used: 1,
           })
@@ -131,7 +131,7 @@ export function useFrequentFoodItems(limit = 10) {
 
         if (!existingEntry) {
           foodMap.set(foodId, {
-            ...(item.food_item as FoodItem),
+            ...(item.food_item as unknown as FoodItem),
             last_used_at: item.created_at,
             times_used: 1,
           })

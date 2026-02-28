@@ -17,7 +17,9 @@ export interface RecipeIngredient {
 
 export interface Recipe {
   id: string
-  user_id: string
+  user_id: string | null // NULL för listägda recept
+  created_by?: string | null // ursprunglig skapare (oföränderlig)
+  shared_list_id?: string | null // satt för listägda recept
   name: string
   servings: number
   food_item_id?: string
@@ -88,6 +90,7 @@ export function useRecipes() {
         `
         )
         .eq('user_id', user.id)
+        .is('shared_list_id', null) // Exkludera listrecept — visas via useSharedListRecipes
         .order('name')
 
       if (error) throw error
@@ -121,6 +124,7 @@ export function useSearchRecipes(query: string) {
         `
         )
         .eq('user_id', user.id)
+        .is('shared_list_id', null) // Exkludera listrecept
         .ilike('name', `%${query}%`)
         .order('name')
 

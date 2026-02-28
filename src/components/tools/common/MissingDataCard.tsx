@@ -1,20 +1,20 @@
-import { useState } from 'react';
-import { AlertCircle, ChevronDown, ChevronUp } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import type { Profile } from '@/lib/types';
-import QuickProfileInput from './QuickProfileInput';
+import { useState } from 'react'
+import { AlertCircle, ChevronDown, ChevronUp } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import type { Profile } from '@/lib/types'
+import QuickProfileInput from './QuickProfileInput'
 
 interface MissingDataCardProps {
-  title?: string;
-  description?: string;
+  title?: string
+  description?: string
   missingFields: Array<{
-    key: keyof Profile;
-    label: string;
-    type?: 'number' | 'date' | 'select';
-    options?: Array<{ label: string; value: string | number }>;
-  }>;
-  onSave: (data: Partial<Profile>) => Promise<void>;
+    key: keyof Profile
+    label: string
+    type?: 'number' | 'date' | 'select'
+    options?: Array<{ label: string; value: string }>
+  }>
+  onSave: (data: Partial<Profile>) => Promise<void>
 }
 
 export default function MissingDataCard({
@@ -23,21 +23,21 @@ export default function MissingDataCard({
   missingFields,
   onSave,
 }: MissingDataCardProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
 
-  if (missingFields.length === 0) return null;
+  if (missingFields.length === 0) return null
 
   const handleSave = async (fieldData: Partial<Profile>) => {
-    setIsSaving(true);
+    setIsSaving(true)
     try {
-      await onSave(fieldData);
+      await onSave(fieldData)
       // Automatically collapse after successful save
-      setIsExpanded(false);
+      setIsExpanded(false)
     } finally {
-      setIsSaving(false);
+      setIsSaving(false)
     }
-  };
+  }
 
   return (
     <Card className="border-orange-200 bg-orange-50">
@@ -99,5 +99,5 @@ export default function MissingDataCard({
         </CardContent>
       )}
     </Card>
-  );
+  )
 }

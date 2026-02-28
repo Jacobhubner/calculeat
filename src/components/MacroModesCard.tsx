@@ -238,7 +238,7 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
               </div>
               <Button
                 size="sm"
-                variant={isModeActive('nnr') ? 'default' : 'outline'}
+                variant={isModeActive('nnr') ? 'primary' : 'outline'}
                 onClick={() => handleApplyMode('nnr')}
                 disabled={!canApplyAny || isModeActive('nnr')}
               >
@@ -280,7 +280,7 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
               </div>
               <Button
                 size="sm"
-                variant={isModeActive('offseason') ? 'default' : 'outline'}
+                variant={isModeActive('offseason') ? 'primary' : 'outline'}
                 onClick={() => handleApplyMode('offseason')}
                 disabled={!canApplyAny || isModeActive('offseason')}
               >
@@ -331,7 +331,7 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
               </div>
               <Button
                 size="sm"
-                variant={isModeActive('onseason') ? 'default' : 'outline'}
+                variant={isModeActive('onseason') ? 'primary' : 'outline'}
                 onClick={() => handleApplyMode('onseason')}
                 disabled={!canApplyOnSeason || isModeActive('onseason')}
                 className={

@@ -1,4 +1,9 @@
-import type { BodyCompositionMethod, MethodVariation } from '@/lib/calculations/bodyComposition'
+import type {
+  BodyCompositionMethod,
+  MethodVariation,
+  CaliperMeasurements,
+  TapeMeasurements,
+} from '@/lib/calculations/bodyComposition'
 import type { Gender } from '@/lib/types'
 
 export interface MethodRequirements {
@@ -521,14 +526,14 @@ export interface MethodComparisonResult {
  * Unlike getCalculableMethods, this returns ALL methods and marks which ones are available
  */
 export function getAllMethodsWithAvailability(params: {
-  gender: Gender
+  gender: Gender | undefined
   age: number
-  weight: number
-  height: number
+  weight: number | undefined
+  height: number | undefined
   bmi?: number
   bmr?: number
-  caliperMeasurements?: Record<string, number>
-  tapeMeasurements?: Record<string, number>
+  caliperMeasurements?: CaliperMeasurements
+  tapeMeasurements?: TapeMeasurements
 }): Array<{
   method: BodyCompositionMethod
   variation?: MethodVariation
@@ -546,14 +551,16 @@ export function getAllMethodsWithAvailability(params: {
   const getMissingFields = (
     requiredFields: string[],
     tapeFields: string[] | undefined,
-    measurements: Record<string, number> | undefined,
-    tapeMeasurements: Record<string, number> | undefined
+    measurements: CaliperMeasurements | TapeMeasurements | undefined,
+    tapeMeasurements: CaliperMeasurements | TapeMeasurements | undefined
   ): string[] => {
     const missing: string[] = []
+    const m = measurements as Record<string, number | undefined> | undefined
+    const t = tapeMeasurements as Record<string, number | undefined> | undefined
 
     // Check caliper/tape required fields
     requiredFields.forEach(field => {
-      if (!measurements || measurements[field] === undefined || measurements[field] === null) {
+      if (!m || m[field] === undefined || m[field] === null) {
         missing.push(caliperLabels[field] || tapeLabels[field] || field)
       }
     })
@@ -561,11 +568,7 @@ export function getAllMethodsWithAvailability(params: {
     // Check additional tape fields (for methods that need both caliper and tape)
     if (tapeFields) {
       tapeFields.forEach(field => {
-        if (
-          !tapeMeasurements ||
-          tapeMeasurements[field] === undefined ||
-          tapeMeasurements[field] === null
-        ) {
+        if (!t || t[field] === undefined || t[field] === null) {
           missing.push(tapeLabels[field] || field)
         }
       })
@@ -836,7 +839,7 @@ export function getAllMethodsWithAvailability(params: {
   })
 
   // Reversed Cunningham - available if BMR is provided OR if we can calculate it
-  const canCalculateReversedCunningham = bmr || (age && gender && height && weight)
+  const canCalculateReversedCunningham = !!(bmr || (age && gender && height && weight))
   const reversedCunninghamMissing = bmr
     ? []
     : !age || !gender || !height || !weight

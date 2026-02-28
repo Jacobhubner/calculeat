@@ -33,7 +33,7 @@ export default function DensityConversionSelector({
             <div className="relative">
               <Button
                 type="button"
-                variant={conversionMethod === 'siri' ? 'default' : 'outline'}
+                variant={conversionMethod === 'siri' ? 'primary' : 'outline'}
                 className={cn(
                   'h-auto py-4 w-full flex flex-col items-center gap-2',
                   conversionMethod === 'siri' && 'bg-primary-600 hover:bg-primary-700'
@@ -59,7 +59,7 @@ export default function DensityConversionSelector({
             <div className="relative">
               <Button
                 type="button"
-                variant={conversionMethod === 'brozek' ? 'default' : 'outline'}
+                variant={conversionMethod === 'brozek' ? 'primary' : 'outline'}
                 className={cn(
                   'h-auto py-4 w-full flex flex-col items-center gap-2',
                   conversionMethod === 'brozek' && 'bg-primary-600 hover:bg-primary-700'

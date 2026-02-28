@@ -2,6 +2,15 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 
+export interface SavedMealFoodItem {
+  id: string
+  name: string
+  calories: number
+  fat_g: number
+  carb_g: number
+  protein_g: number
+}
+
 export interface SavedMealItem {
   id: string
   saved_meal_id: string
@@ -11,6 +20,7 @@ export interface SavedMealItem {
   weight_grams?: number
   item_order: number
   created_at: string
+  food_item?: SavedMealFoodItem | null
 }
 
 export interface SavedMeal {
@@ -325,14 +335,14 @@ export function useLoadSavedMealToSlot() {
         .eq('meal_entry_id', mealEntryId)
 
       // 4. Filter out missing food items and batch insert valid items
-      const validItems = savedMeal.items.filter(item => item.food_item)
+      const validItems = (savedMeal.items as SavedMealItem[]).filter(item => item.food_item)
       const missingCount = savedMeal.items.length - validItems.length
 
       if (validItems.length === 0) {
         throw new Error('All food items in saved meal are missing or deleted')
       }
 
-      const itemsToInsert = validItems.map((item, index) => {
+      const itemsToInsert = validItems.map((item: SavedMealItem, index: number) => {
         const foodItem = item.food_item
         const grams = item.weight_grams || item.amount * 100
         const multiplier = grams / 100
@@ -362,7 +372,7 @@ export function useLoadSavedMealToSlot() {
         .eq('id', params.savedMealId)
 
       // 6. Calculate total calories for toast message
-      const totalCalories = validItems.reduce((sum, item) => {
+      const totalCalories = validItems.reduce((sum: number, item: SavedMealItem) => {
         const foodItem = item.food_item
         if (!foodItem) return sum
         // Calculate calories based on amount and unit

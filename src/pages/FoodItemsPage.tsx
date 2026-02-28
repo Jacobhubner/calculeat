@@ -17,6 +17,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Info,
+  Copy,
 } from 'lucide-react'
 import EmptyState from '@/components/EmptyState'
 import { supabase } from '@/lib/supabase'
@@ -33,12 +34,26 @@ import {
 import { SOURCE_BADGES } from '@/lib/constants/sourceBadges'
 import { useRecipeImpact, type RecipeImpact } from '@/hooks/useRecipeImpact'
 import { RecipeImpactWarningModal } from '@/components/food/RecipeImpactWarningModal'
+import {
+  useSharedLists,
+  useCopyToSharedList,
+  useSharedListRealtime,
+  useDeleteSharedListFoodItem,
+} from '@/hooks/useSharedLists'
+import { SharedListMembersBar } from '@/components/shared-lists/SharedListMembersBar'
+import { CreateSharedListDialog } from '@/components/shared-lists/CreateSharedListDialog'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { toast } from 'sonner'
 
-// Tab configuration
-const TABS: { key: FoodTab; label: string }[] = [
+// Static tabs (shared list tabs are added dynamically)
+const STATIC_TABS: { key: FoodTab; label: string }[] = [
   { key: 'mina', label: 'Mina & CalculEat' },
   { key: 'slv', label: 'SLV' },
-  { key: 'usda', label: 'USDA' },
 ]
 
 // Display mode type
@@ -171,10 +186,26 @@ export default function FoodItemsPage() {
   const { user } = useAuth()
   const queryClient = useQueryClient()
   const deleteFood = useDeleteFoodItem()
+  const deleteSharedListItem = useDeleteSharedListFoodItem()
   const { getRecipesUsingFoodItem } = useRecipeImpact()
+  const { data: sharedLists = [], isLoading: sharedListsLoading } = useSharedLists()
+  const { mutateAsync: copyToSharedList } = useCopyToSharedList()
+
+  // Build full tab list (static + one per shared list)
+  const allTabs = useMemo<{ key: FoodTab; label: string }[]>(
+    () => [
+      ...STATIC_TABS,
+      ...sharedLists.map(list => ({
+        key: `list:${list.id}` as FoodTab,
+        label: list.name,
+      })),
+    ],
+    [sharedLists]
+  )
 
   // Tab & pagination state
   const [activeTab, setActiveTab] = useState<FoodTab>('mina')
+  const [createListOpen, setCreateListOpen] = useState(false)
   const [page, setPage] = useState(0)
 
   // Search with debounce
@@ -222,6 +253,18 @@ export default function FoodItemsPage() {
   useEffect(() => {
     setPage(0)
   }, [activeTab, debouncedSearch, colorFilter, isRecipeFilter])
+
+  // Om activeTab pekar på en lista som inte längre finns (t.ex. efter leave),
+  // navigera automatiskt tillbaka till 'mina'-fliken.
+  useEffect(() => {
+    if (!activeTab.startsWith('list:')) return
+    // Vänta tills sharedLists är laddad — tom array under loading betyder inte "borttagen"
+    if (sharedListsLoading) return
+    const id = activeTab.slice(5)
+    if (!sharedLists.some(l => l.id === id)) {
+      setActiveTab('mina')
+    }
+  }, [sharedLists, sharedListsLoading, activeTab])
 
   // Fetch paginated data via RPC
   const { data, isLoading, isFetching } = usePaginatedFoodItems({
@@ -332,6 +375,18 @@ export default function FoodItemsPage() {
 
   const handleDelete = async (id: string) => {
     const item = items.find(i => i.id === id)
+
+    // List-items: direkt radering via RPC (ingen CoW/soft-delete)
+    if (item?.shared_list_id) {
+      if (!confirm(`Ta bort "${item.name}" från listan?`)) return
+      try {
+        await deleteSharedListItem.mutateAsync({ foodItemId: id, listId: item.shared_list_id })
+      } catch {
+        alert('Kunde inte ta bort livsmedel från listan. Försök igen.')
+      }
+      return
+    }
+
     const isGlobal = item?.user_id === null
     const isRecipe = item?.is_recipe === true
 
@@ -519,6 +574,23 @@ export default function FoodItemsPage() {
   }
 
   const isMina = activeTab === 'mina'
+  const activeListId = activeTab.startsWith('list:') ? activeTab.slice(5) : null
+  const activeList = activeListId ? (sharedLists.find(l => l.id === activeListId) ?? null) : null
+
+  // Realtime-prenumeration för aktiv lista — uppdaterar cachen vid ändringar från andra members
+  useSharedListRealtime(activeListId)
+
+  const handleCopyToList = async (foodItemId: string, sharedListId: string) => {
+    const result = await copyToSharedList({ foodItemId, sharedListId })
+    if (result?.success) {
+      const listName = sharedLists.find(l => l.id === sharedListId)?.name ?? 'listan'
+      toast.success(`Livsmedlet kopierades till "${listName}"`)
+    } else if (result?.error === 'already_exists') {
+      toast.info('Livsmedlet finns redan i listan')
+    } else {
+      toast.error('Kunde inte kopiera. Försök igen.')
+    }
+  }
 
   return (
     <DashboardLayout>
@@ -536,7 +608,7 @@ export default function FoodItemsPage() {
             )}
           </p>
         </div>
-        {isMina && (
+        {(isMina || activeListId) && (
           <Button
             className="gap-2 self-start sm:self-auto"
             size="sm"
@@ -550,12 +622,12 @@ export default function FoodItemsPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-4 border-b border-neutral-200">
-        {TABS.map(tab => (
+      <div className="flex gap-1 mb-0 border-b border-neutral-200 overflow-x-auto">
+        {allTabs.map(tab => (
           <button
             key={tab.key}
             onClick={() => handleTabChange(tab.key)}
-            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
               activeTab === tab.key
                 ? 'border-primary-500 text-primary-600'
                 : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'
@@ -564,7 +636,24 @@ export default function FoodItemsPage() {
             {tab.label}
           </button>
         ))}
+        {/* "+" knapp för att skapa ny delad lista */}
+        <button
+          onClick={() => setCreateListOpen(true)}
+          className="px-3 py-2 text-sm font-medium border-b-2 border-transparent text-neutral-400 hover:text-primary-600 hover:border-neutral-300 transition-colors"
+          title="Skapa delad lista"
+        >
+          <Plus className="h-4 w-4" />
+        </button>
       </div>
+
+      {/* SharedListMembersBar — visas under tabbraden när en delad lista är aktiv */}
+      {activeList && (
+        <div className="mb-4">
+          <SharedListMembersBar list={activeList} onLeft={() => handleTabChange('mina')} />
+        </div>
+      )}
+
+      {!activeList && <div className="mb-4" />}
 
       {/* Search & Filters */}
       <Card className="mb-6">
@@ -581,8 +670,8 @@ export default function FoodItemsPage() {
               />
             </div>
 
-            {/* Filters */}
-            <div className="flex gap-2 flex-wrap">
+            {/* Filters — döljs för delade listor */}
+            <div className={`flex gap-2 flex-wrap${activeListId ? ' hidden' : ''}`}>
               <Button
                 variant="outline"
                 size="sm"
@@ -799,6 +888,30 @@ export default function FoodItemsPage() {
                         >
                           <Info className="h-3 w-3 text-neutral-500" />
                         </Button>
+                        {isMina && sharedLists.length > 0 && (
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-7 w-7 p-0"
+                                title="Kopiera till lista"
+                              >
+                                <Copy className="h-3 w-3 text-neutral-500" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              {sharedLists.map(list => (
+                                <DropdownMenuItem
+                                  key={list.id}
+                                  onClick={() => handleCopyToList(item.id, list.id)}
+                                >
+                                  {list.name}
+                                </DropdownMenuItem>
+                              ))}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        )}
                         <Button
                           variant="ghost"
                           size="sm"
@@ -1123,6 +1236,34 @@ export default function FoodItemsPage() {
                         </td>
                         <td className="p-4 text-right">
                           <div className="flex justify-end gap-2">
+                            {isMina && sharedLists.length > 0 && (
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={e => e.stopPropagation()}
+                                    className="h-8 w-8 p-0"
+                                    title="Kopiera till lista"
+                                  >
+                                    <Copy className="h-4 w-4 text-neutral-500" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  {sharedLists.map(list => (
+                                    <DropdownMenuItem
+                                      key={list.id}
+                                      onClick={e => {
+                                        e.stopPropagation()
+                                        handleCopyToList(item.id, list.id)
+                                      }}
+                                    >
+                                      {list.name}
+                                    </DropdownMenuItem>
+                                  ))}
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            )}
                             <Button
                               variant="ghost"
                               size="sm"
@@ -1351,12 +1492,23 @@ export default function FoodItemsPage() {
         </div>
       )}
 
+      {/* Skapa delad lista */}
+      <CreateSharedListDialog
+        open={createListOpen}
+        onOpenChange={setCreateListOpen}
+        onCreated={listId => {
+          setCreateListOpen(false)
+          handleTabChange(`list:${listId}` as FoodTab)
+        }}
+      />
+
       {/* Add/Edit Food Item Modal */}
       <AddFoodItemModal
         open={isAddModalOpen}
         onOpenChange={handleModalClose}
         onSuccess={handleModalSuccess}
         editItem={editingItem}
+        sharedListId={activeListId}
       />
 
       {/* Nutrient Detail Panel */}

@@ -58,6 +58,7 @@ export default function GoalCalculatorTool() {
 
   // Handlers för bidirektionell synkning
   const handleBodyFatChange = (value: number) => {
+    if (!profileData?.weight_kg) return
     setTargetBodyFat(value)
     setBodyFatInput(String(value))
     setInputMode('bodyFat')
@@ -65,6 +66,7 @@ export default function GoalCalculatorTool() {
   }
 
   const handleTargetWeightChange = (value: number | '') => {
+    if (!profileData?.weight_kg) return
     setManualTargetWeight(value === '' ? null : value)
     setInputMode('weight')
 
@@ -76,6 +78,7 @@ export default function GoalCalculatorTool() {
         value
       )
       setTargetBodyFat(calculatedBodyFat)
+      setBodyFatInput(String(Math.round(calculatedBodyFat * 10) / 10))
     }
   }
 
@@ -185,6 +188,8 @@ export default function GoalCalculatorTool() {
     const weeklyCalorieAdjustmentMax = dailyCalorieAdjustmentMax * 7
     const timelineMax = calculateTimeline(goalResult.weightToChange, weeklyCalorieAdjustmentMax)
 
+    if (!timelineMin || !timelineMax) return null
+
     return {
       min: timelineMax, // Max hastighet ger kortaste tiden
       max: timelineMin, // Min hastighet ger längsta tiden
@@ -214,31 +219,28 @@ export default function GoalCalculatorTool() {
 
     const idealWeightRange = calculateIdealWeightRange(profileData.height_cm)
 
-    let targetBMI = null
-    let targetBMICategory = null
-    if (goalResult) {
-      targetBMI = calculateBMI(goalResult.targetWeight, profileData.height_cm)
-      targetBMICategory = getBMICategory(targetBMI)
-    }
+    const targetBMI = goalResult
+      ? calculateBMI(goalResult.targetWeight, profileData.height_cm)
+      : null
+    const targetBMICategory = targetBMI !== null ? getBMICategory(targetBMI) : null
 
     return {
       current: {
         bmi: currentBMI,
         category: currentBMICategory,
       },
-      target: goalResult
-        ? {
-            bmi: targetBMI,
-            category: targetBMICategory,
-          }
-        : null,
+      target:
+        targetBMI !== null && targetBMICategory !== null
+          ? { bmi: targetBMI, category: targetBMICategory }
+          : null,
       idealRange: idealWeightRange,
     }
   }, [profileData, goalResult])
 
   const handleSaveMissingData = async (data: Partial<Profile>) => {
+    if (!profile?.id) return
     try {
-      await updateProfileMutation.mutateAsync(data)
+      await updateProfileMutation.mutateAsync({ profileId: profile.id, data })
       toast.success('Profil uppdaterad')
     } catch (error) {
       toast.error('Kunde inte uppdatera profil')
@@ -466,7 +468,7 @@ export default function GoalCalculatorTool() {
                         <td className="px-3 py-1.5">Undervikt</td>
                         <td className="px-3 py-1.5 text-neutral-600">&lt; 18.5</td>
                         <td className="px-3 py-1.5 text-neutral-600">
-                          &lt; {Math.floor(18.5 * Math.pow(profileData.height_cm / 100, 2))}
+                          &lt; {Math.floor(18.5 * Math.pow((profileData?.height_cm ?? 0) / 100, 2))}
                         </td>
                       </tr>
                       <tr
@@ -493,7 +495,7 @@ export default function GoalCalculatorTool() {
                         <td className="px-3 py-1.5 text-neutral-600">25 - 29.9</td>
                         <td className="px-3 py-1.5 text-neutral-600">
                           {bmiData.idealRange.max + 1} -{' '}
-                          {Math.floor(30 * Math.pow(profileData.height_cm / 100, 2)) - 1}
+                          {Math.floor(30 * Math.pow((profileData?.height_cm ?? 0) / 100, 2)) - 1}
                         </td>
                       </tr>
                       <tr
@@ -506,7 +508,7 @@ export default function GoalCalculatorTool() {
                         <td className="px-3 py-1.5">Fetma</td>
                         <td className="px-3 py-1.5 text-neutral-600">&ge; 30</td>
                         <td className="px-3 py-1.5 text-neutral-600">
-                          &ge; {Math.floor(30 * Math.pow(profileData.height_cm / 100, 2))}
+                          &ge; {Math.floor(30 * Math.pow((profileData?.height_cm ?? 0) / 100, 2))}
                         </td>
                       </tr>
                     </tbody>
@@ -704,7 +706,7 @@ export default function GoalCalculatorTool() {
                             <Button
                               key={idx}
                               type="button"
-                              variant={isActive ? 'default' : 'outline'}
+                              variant={isActive ? 'primary' : 'outline'}
                               size="sm"
                               onClick={() => setManualWeightChange(preset.kgPerWeek)}
                               className="text-xs h-auto py-2 flex flex-col items-center"

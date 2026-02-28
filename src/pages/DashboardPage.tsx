@@ -186,7 +186,7 @@ export default function DashboardPage() {
     <ProfileCompletionGuard>
       <DashboardLayout>
         {/* Onboarding Modal */}
-        <OnboardingModal open={showOnboarding} onOpenChange={handleOnboardingClose} />
+        <OnboardingModal open={!!showOnboarding} onOpenChange={handleOnboardingClose} />
 
         {/* Header */}
         <div className="mb-8">
@@ -339,7 +339,7 @@ export default function DashboardPage() {
                     size="lg"
                     variant={
                       todayLog && todayLog.meals && todayLog.meals.length > 0
-                        ? 'default'
+                        ? 'primary'
                         : 'outline'
                     }
                     className="h-20"

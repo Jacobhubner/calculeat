@@ -41,38 +41,39 @@ export function findFoods(foods: FoodItem[], params: FoodFinderParams): FoodItem
   }
 
   // Calorie filter (per 100g)
-  if (params.maxCalories !== undefined) {
+  const { maxCalories, minProtein, maxCarbs, maxFat } = params
+  if (maxCalories !== undefined) {
     results = results.filter(food => {
       const caloriesPer100g =
         food.default_unit === 'g' ? (food.calories / food.default_amount) * 100 : food.calories
-      return caloriesPer100g <= params.maxCalories
+      return caloriesPer100g <= maxCalories
     })
   }
 
   // Protein filter (minimum per 100g)
-  if (params.minProtein !== undefined) {
+  if (minProtein !== undefined) {
     results = results.filter(food => {
       const proteinPer100g =
         food.default_unit === 'g' ? (food.protein_g / food.default_amount) * 100 : food.protein_g
-      return proteinPer100g >= params.minProtein
+      return proteinPer100g >= minProtein
     })
   }
 
   // Carbs filter (maximum per 100g)
-  if (params.maxCarbs !== undefined) {
+  if (maxCarbs !== undefined) {
     results = results.filter(food => {
       const carbsPer100g =
         food.default_unit === 'g' ? (food.carb_g / food.default_amount) * 100 : food.carb_g
-      return carbsPer100g <= params.maxCarbs
+      return carbsPer100g <= maxCarbs
     })
   }
 
   // Fat filter (maximum per 100g)
-  if (params.maxFat !== undefined) {
+  if (maxFat !== undefined) {
     results = results.filter(food => {
       const fatPer100g =
         food.default_unit === 'g' ? (food.fat_g / food.default_amount) * 100 : food.fat_g
-      return fatPer100g <= params.maxFat
+      return fatPer100g <= maxFat
     })
   }
 

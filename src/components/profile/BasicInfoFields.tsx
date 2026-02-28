@@ -185,7 +185,7 @@ export default function BasicInfoFields({
         <CardContent className="space-y-4 pt-0">
           {/* Lock notice - only show if fields are locked */}
           {showLockNotice && locked && (
-            <Alert variant="info">
+            <Alert variant="default">
               <Lock className="h-4 w-4" />
               <AlertDescription>
                 <div className="flex-1">

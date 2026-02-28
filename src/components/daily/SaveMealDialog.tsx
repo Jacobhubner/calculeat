@@ -33,8 +33,11 @@ export default function SaveMealDialog({ open, onOpenChange, mealEntry }: SaveMe
   // Generate default name when dialog opens
   useEffect(() => {
     if (open && mealEntry) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setMealName(generateDefaultMealName(mealEntry.meal_name))
+
       setShowDuplicateWarning(false)
+
       setDuplicateMealId(null)
     }
   }, [open, mealEntry])
@@ -113,9 +116,7 @@ export default function SaveMealDialog({ open, onOpenChange, mealEntry }: SaveMe
       <DialogContent className="max-w-lg md:max-h-[85vh] flex flex-col">
         <DialogHeader>
           <DialogTitle>Spara måltid</DialogTitle>
-          <DialogDescription>
-            Spara denna måltid för snabb loggning i framtiden
-          </DialogDescription>
+          <DialogDescription>Spara denna måltid för snabb loggning i framtiden</DialogDescription>
         </DialogHeader>
 
         <div className="flex-1 overflow-y-auto space-y-4">
@@ -161,7 +162,7 @@ export default function SaveMealDialog({ open, onOpenChange, mealEntry }: SaveMe
             <div className="border rounded-lg bg-neutral-50 max-h-60 overflow-y-auto">
               {hasItems ? (
                 <div className="divide-y">
-                  {mealEntry.items.map(item => {
+                  {(mealEntry.items ?? []).map(item => {
                     const foodItem = item.food_item
                     return (
                       <div key={item.id} className="p-3 text-sm">
@@ -196,7 +197,9 @@ export default function SaveMealDialog({ open, onOpenChange, mealEntry }: SaveMe
               <div className="flex items-center justify-between text-sm">
                 <span className="font-medium text-neutral-700">Totalt:</span>
                 <div className="flex gap-3 text-neutral-600">
-                  <span className="font-semibold text-primary-600">{Math.round(totals.calories)} kcal</span>
+                  <span className="font-semibold text-primary-600">
+                    {Math.round(totals.calories)} kcal
+                  </span>
                   <span>P: {totals.protein.toFixed(1)}g</span>
                   <span>K: {totals.carbs.toFixed(1)}g</span>
                   <span>F: {totals.fat.toFixed(1)}g</span>

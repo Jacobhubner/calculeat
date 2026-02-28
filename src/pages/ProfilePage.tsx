@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button'
 import { useSyncMealSettings } from '@/hooks/useMealSettings'
 import { useTodayLog, useSyncTodayLogFromProfile } from '@/hooks/useDailyLogs'
 import { useProfileStore } from '@/stores/profileStore'
-import type { Gender, Profile } from '@/lib/types'
+import type { Gender, Profile, ProfileFormData } from '@/lib/types'
 import { toast } from 'sonner'
 
 // Profile components
@@ -82,6 +82,8 @@ export default function ProfilePage() {
     protein_max_percent?: number
     // Meals
     meals_config?: { meals: { name: string; percentage: number }[] }
+    // Starting weight (set when weight_kg is first provided)
+    initial_weight_kg?: number
   }>({})
 
   // Check if there are unsaved changes
@@ -148,7 +150,7 @@ export default function ProfilePage() {
       deficitLevel = null // Clear deficit level for weight gain
     } else if (goal === 'Weight loss') {
       // Default to 10-15% deficit if no specific deficit is selected
-      const currentDeficit = mergedProfile.deficit_level || '10-15%'
+      const currentDeficit = mergedProfile?.deficit_level || '10-15%'
       deficitLevel = currentDeficit
 
       if (currentDeficit === '10-15%') {
@@ -356,7 +358,7 @@ export default function ProfilePage() {
     calorie_goal: string
     calories_min: number
     calories_max: number
-    accumulated_at: number
+    accumulated_at?: number
   }) => {
     setPendingChanges(prev => ({
       ...prev,
@@ -431,7 +433,7 @@ export default function ProfilePage() {
       // Save profile changes
       await updateProfile.mutateAsync({
         profileId: activeProfile.id,
-        data: dataToSave,
+        data: dataToSave as Partial<ProfileFormData>,
       })
 
       // If weight was changed, add to weight history (user-based, shared across profiles)

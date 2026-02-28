@@ -40,7 +40,7 @@ import {
   buildClusters,
   applyConvergenceSmoothing,
 } from '@/lib/calculations/calibration'
-import type { Profile, CalibrationResult } from '@/lib/types'
+import type { Profile, CalibrationResult, ProfileFormData } from '@/lib/types'
 import { toast } from 'sonner'
 
 interface MetabolicCalibrationProps {
@@ -183,7 +183,7 @@ export default function MetabolicCalibration({
             actual_calories_avg:
               data.calorieSource !== 'target_calories' ? data.averageCalories : null,
           },
-        },
+        } as Partial<ProfileFormData>,
       })
 
       await createCalibrationHistory.mutateAsync({
@@ -210,6 +210,7 @@ export default function MetabolicCalibration({
         warnings: data.warnings.map(w => w.type),
         food_log_weight: data.foodLogWeight,
         data_quality_index: data.dataQuality.score,
+        is_reverted: false,
       })
 
       setCalibrationApplied(newTDEE)

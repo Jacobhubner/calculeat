@@ -25,7 +25,7 @@ function MiniPieChart({
   const radius = (size - strokeWidth) / 2
   const circumference = radius * 2 * Math.PI
   // Pre-calculate offsets to avoid mutation during render
-  const segmentOffsets = segments.reduce<number[]>((acc, segment, i) => {
+  const segmentOffsets = segments.reduce<number[]>((acc, _segment, i) => {
     const prev = i === 0 ? 0 : acc[i - 1] + (segments[i - 1].percent / 100) * circumference
     acc.push(prev)
     return acc

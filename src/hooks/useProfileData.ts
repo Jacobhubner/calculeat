@@ -1,6 +1,6 @@
-import { useEffect, useMemo } from 'react';
-import { useProfileStore } from '@/stores/profileStore';
-import type { Profile } from '@/lib/types';
+import { useMemo } from 'react'
+import { useProfileStore } from '@/stores/profileStore'
+import type { Profile } from '@/lib/types'
 
 /**
  * Hook för att hämta specifika fält från aktiv profil
@@ -15,27 +15,15 @@ import type { Profile } from '@/lib/types';
  *   // profileData har typen { weight_kg?: number, height_cm?: number, gender?: Gender }
  * }
  */
-export function useProfileData<T extends keyof Profile>(
-  fields: T[]
-): Pick<Profile, T> | null {
-  const activeProfile = useProfileStore(state => state.activeProfile);
+export function useProfileData<T extends keyof Profile>(fields: T[]): Pick<Profile, T> | null {
+  const activeProfile = useProfileStore(state => state.activeProfile)
 
-  // Memoize resultatet baserat på profil-ID och valda fält
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const profileData = useMemo(() => {
-    if (!activeProfile) return null;
-
-    // Skapa objekt med endast valda fält
-    const result = {} as Pick<Profile, T>;
-    fields.forEach(field => {
-      result[field] = activeProfile[field];
-    });
-
-    return result;
-    // Vi vill att denna uppdateras när något av de valda fälten ändras
-  }, [activeProfile?.id, activeProfile, ...fields]);
-
-  return profileData;
+  if (!activeProfile) return null
+  const result = {} as Pick<Profile, T>
+  fields.forEach(field => {
+    result[field] = activeProfile[field]
+  })
+  return result
 }
 
 /**
@@ -53,29 +41,28 @@ export function useProfileData<T extends keyof Profile>(
 export function useMissingProfileData(
   requiredFields: Array<keyof Profile>
 ): Array<{ key: keyof Profile; label: string }> {
-  const activeProfile = useProfileStore(state => state.activeProfile);
+  const activeProfile = useProfileStore(state => state.activeProfile)
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   return useMemo(() => {
-    if (!activeProfile) return [];
+    if (!activeProfile) return []
 
-    const missing: Array<{ key: keyof Profile; label: string }> = [];
+    const missing: Array<{ key: keyof Profile; label: string }> = []
 
     requiredFields.forEach(field => {
-      const value = activeProfile[field];
+      const value = activeProfile[field]
 
       // Kolla om fältet saknas eller är tomt
       if (value === undefined || value === null || value === '') {
         missing.push({
           key: field,
           label: getFieldLabel(field),
-        });
+        })
       }
-    });
+    })
 
-    return missing;
+    return missing
     // Vi vill att denna uppdateras när activeProfile eller requiredFields ändras
-  }, [activeProfile, requiredFields]);
+  }, [activeProfile, requiredFields])
 }
 
 /**
@@ -96,7 +83,7 @@ function getFieldLabel(field: keyof Profile): string {
     target_weight_kg: 'Målvikt (kg)',
     calories_min: 'Minimum kalorier',
     calories_max: 'Maximum kalorier',
-  };
+  }
 
-  return labels[field] || field.toString();
+  return labels[field] || field.toString()
 }

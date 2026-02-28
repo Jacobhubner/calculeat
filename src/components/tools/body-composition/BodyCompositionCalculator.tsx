@@ -137,7 +137,7 @@ export default function BodyCompositionCalculator() {
 
     // Set default variation if method has variations
     if (selectedMethod && profile) {
-      const variations = getMethodVariations(selectedMethod, profile.gender)
+      const variations = getMethodVariations(selectedMethod, profile.gender ?? 'male')
       if (variations.length > 0) {
         setSelectedVariation(variations[0])
       } else {
@@ -156,11 +156,11 @@ export default function BodyCompositionCalculator() {
     }
 
     const params: BodyCompositionParams = {
-      age: calculateAge(profile.birth_date),
-      gender: profile.gender,
-      weight: profile.weight_kg,
-      height: profile.height_cm,
-      bmi: calculateBMI(profile.weight_kg, profile.height_cm),
+      age: calculateAge(profile.birth_date ?? null),
+      gender: profile.gender ?? 'male',
+      weight: profile.weight_kg ?? 0,
+      height: profile.height_cm ?? 0,
+      bmi: calculateBMI(profile.weight_kg ?? 0, profile.height_cm ?? 0),
       caliperMeasurements,
       tapeMeasurements,
       bmr: profile.bmr,
@@ -207,8 +207,8 @@ export default function BodyCompositionCalculator() {
     if (bodyFatPercentage && profile) {
       const cat = getBodyFatCategory({
         bodyFatPercentage,
-        age: calculateAge(profile.birth_date),
-        gender: profile.gender,
+        age: calculateAge(profile.birth_date ?? null),
+        gender: profile.gender ?? 'male',
       })
       setCategory(cat)
     }
@@ -217,8 +217,8 @@ export default function BodyCompositionCalculator() {
   // Workflow 2: Calculate all methods (both available and unavailable) when measurements change
   useEffect(() => {
     if (activeWorkflow === 'measurements-first' && profile) {
-      const age = calculateAge(profile.birth_date)
-      const bmi = calculateBMI(profile.weight_kg, profile.height_cm)
+      const age = calculateAge(profile.birth_date ?? null)
+      const bmi = calculateBMI(profile.weight_kg ?? 0, profile.height_cm ?? 0)
 
       // Get ALL methods with availability status
       const allMethods = getAllMethodsWithAvailability({
@@ -246,9 +246,9 @@ export default function BodyCompositionCalculator() {
           if (isAvailable) {
             const params: BodyCompositionParams = {
               age,
-              gender: profile.gender,
-              weight: profile.weight_kg,
-              height: profile.height_cm,
+              gender: profile.gender ?? 'male',
+              weight: profile.weight_kg ?? 0,
+              height: profile.height_cm ?? 0,
               bmi,
               caliperMeasurements: allCaliperMeasurements,
               tapeMeasurements: allTapeMeasurements,
@@ -274,12 +274,12 @@ export default function BodyCompositionCalculator() {
               category = getBodyFatCategory({
                 bodyFatPercentage,
                 age,
-                gender: profile.gender,
+                gender: profile.gender ?? 'male',
               })
 
               // Calculate lean body mass and fat mass
-              leanBodyMass = profile.weight_kg * (1 - bodyFatPercentage / 100)
-              fatMass = profile.weight_kg * (bodyFatPercentage / 100)
+              leanBodyMass = (profile.weight_kg ?? 0) * (1 - bodyFatPercentage / 100)
+              fatMass = (profile.weight_kg ?? 0) * (bodyFatPercentage / 100)
             }
           }
 
@@ -362,55 +362,55 @@ export default function BodyCompositionCalculator() {
       return
     }
 
-    // Otherwise, fill from card values
+    // Otherwise, fill from card values — null from DB is converted to undefined for calculation types
     // Workflow 1 - method-first
     setCaliperMeasurements({
-      chest: activeMeasurementSet.chest,
-      abdominal: activeMeasurementSet.abdominal,
-      thigh: activeMeasurementSet.thigh,
-      tricep: activeMeasurementSet.tricep,
-      subscapular: activeMeasurementSet.subscapular,
-      suprailiac: activeMeasurementSet.suprailiac,
-      midaxillary: activeMeasurementSet.midaxillary,
-      bicep: activeMeasurementSet.bicep,
-      lowerBack: activeMeasurementSet.lower_back,
-      calf: activeMeasurementSet.calf,
+      chest: activeMeasurementSet.chest ?? undefined,
+      abdominal: activeMeasurementSet.abdominal ?? undefined,
+      thigh: activeMeasurementSet.thigh ?? undefined,
+      tricep: activeMeasurementSet.tricep ?? undefined,
+      subscapular: activeMeasurementSet.subscapular ?? undefined,
+      suprailiac: activeMeasurementSet.suprailiac ?? undefined,
+      midaxillary: activeMeasurementSet.midaxillary ?? undefined,
+      bicep: activeMeasurementSet.bicep ?? undefined,
+      lowerBack: activeMeasurementSet.lower_back ?? undefined,
+      calf: activeMeasurementSet.calf ?? undefined,
     })
 
     setTapeMeasurements({
-      neck: activeMeasurementSet.neck,
-      waist: activeMeasurementSet.waist,
-      hip: activeMeasurementSet.hip,
-      wrist: activeMeasurementSet.wrist,
-      ankle: activeMeasurementSet.ankle,
-      forearm: activeMeasurementSet.forearm,
-      thighCirc: activeMeasurementSet.thigh_circ,
-      calfCirc: activeMeasurementSet.calf_circ,
+      neck: activeMeasurementSet.neck ?? undefined,
+      waist: activeMeasurementSet.waist ?? undefined,
+      hip: activeMeasurementSet.hip ?? undefined,
+      wrist: activeMeasurementSet.wrist ?? undefined,
+      ankle: activeMeasurementSet.ankle ?? undefined,
+      forearm: activeMeasurementSet.forearm ?? undefined,
+      thighCirc: activeMeasurementSet.thigh_circ ?? undefined,
+      calfCirc: activeMeasurementSet.calf_circ ?? undefined,
     })
 
     // Workflow 2 - measurements-first
     setAllCaliperMeasurements({
-      chest: activeMeasurementSet.chest,
-      abdominal: activeMeasurementSet.abdominal,
-      thigh: activeMeasurementSet.thigh,
-      tricep: activeMeasurementSet.tricep,
-      subscapular: activeMeasurementSet.subscapular,
-      suprailiac: activeMeasurementSet.suprailiac,
-      midaxillary: activeMeasurementSet.midaxillary,
-      bicep: activeMeasurementSet.bicep,
-      lowerBack: activeMeasurementSet.lower_back,
-      calf: activeMeasurementSet.calf,
+      chest: activeMeasurementSet.chest ?? undefined,
+      abdominal: activeMeasurementSet.abdominal ?? undefined,
+      thigh: activeMeasurementSet.thigh ?? undefined,
+      tricep: activeMeasurementSet.tricep ?? undefined,
+      subscapular: activeMeasurementSet.subscapular ?? undefined,
+      suprailiac: activeMeasurementSet.suprailiac ?? undefined,
+      midaxillary: activeMeasurementSet.midaxillary ?? undefined,
+      bicep: activeMeasurementSet.bicep ?? undefined,
+      lowerBack: activeMeasurementSet.lower_back ?? undefined,
+      calf: activeMeasurementSet.calf ?? undefined,
     })
 
     setAllTapeMeasurements({
-      neck: activeMeasurementSet.neck,
-      waist: activeMeasurementSet.waist,
-      hip: activeMeasurementSet.hip,
-      wrist: activeMeasurementSet.wrist,
-      ankle: activeMeasurementSet.ankle,
-      forearm: activeMeasurementSet.forearm,
-      thighCirc: activeMeasurementSet.thigh_circ,
-      calfCirc: activeMeasurementSet.calf_circ,
+      neck: activeMeasurementSet.neck ?? undefined,
+      waist: activeMeasurementSet.waist ?? undefined,
+      hip: activeMeasurementSet.hip ?? undefined,
+      wrist: activeMeasurementSet.wrist ?? undefined,
+      ankle: activeMeasurementSet.ankle ?? undefined,
+      forearm: activeMeasurementSet.forearm ?? undefined,
+      thighCirc: activeMeasurementSet.thigh_circ ?? undefined,
+      calfCirc: activeMeasurementSet.calf_circ ?? undefined,
     })
   }, [activeMeasurementSet, activeWorkflow])
 
@@ -441,7 +441,7 @@ export default function BodyCompositionCalculator() {
         profileId: activeProfile.id,
         data: {
           body_fat_percentage: bodyFatPercentage,
-          body_composition_method: selectedMethod,
+          body_composition_method: selectedMethod || undefined,
         },
       })
 
@@ -649,10 +649,7 @@ export default function BodyCompositionCalculator() {
       else {
         await updateMeasurementSetMutation.mutateAsync({
           id: setId,
-          data: {
-            set_date: today,
-            ...measurementData,
-          },
+          data: { set_date: today, ...measurementData },
         })
       }
       // Success toast is handled by the hooks
@@ -813,7 +810,7 @@ export default function BodyCompositionCalculator() {
                   {selectedMethod && profile && (
                     <VariationSelector
                       method={selectedMethod}
-                      gender={profile.gender}
+                      gender={profile.gender ?? 'male'}
                       selectedVariation={selectedVariation}
                       onChange={setSelectedVariation}
                     />
@@ -864,7 +861,7 @@ export default function BodyCompositionCalculator() {
                             {requirements.fields.includes('age') && (
                               <li>
                                 <span className="font-medium">Ålder:</span>{' '}
-                                {calculateAge(profile.birth_date)} år
+                                {calculateAge(profile.birth_date ?? null)} år
                               </li>
                             )}
                             {requirements.fields.includes('gender') && (
@@ -893,7 +890,7 @@ export default function BodyCompositionCalculator() {
                       )}
 
                       {/* Density Conversion Selector - Only for density-based methods */}
-                      {isDensityBasedMethod(selectedMethod) && (
+                      {selectedMethod && isDensityBasedMethod(selectedMethod) && (
                         <DensityConversionSelector
                           conversionMethod={conversionMethod}
                           onMethodChange={setConversionMethod}

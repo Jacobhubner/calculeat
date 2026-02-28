@@ -24,6 +24,16 @@ import { cn } from '@/lib/utils'
 import { Avatar, AvatarFallback } from '../ui/avatar'
 import { Separator } from '../ui/separator'
 import { useSocialBadgeCount } from '@/hooks/useShareInvitations'
+import type { LucideProps } from 'lucide-react'
+import type { ForwardRefExoticComponent, RefAttributes } from 'react'
+
+interface NavItem {
+  type: 'single'
+  to: string
+  label: string
+  icon: ForwardRefExoticComponent<Omit<LucideProps, 'ref'> & RefAttributes<SVGSVGElement>>
+  exact?: boolean
+}
 
 export default function DashboardNav() {
   const { user, signOut, userProfile } = useAuth()
@@ -46,7 +56,7 @@ export default function DashboardNav() {
   }
 
   // Organized navigation items by functional groups
-  const navGroups = {
+  const navGroups: Record<string, { title: string; emoji: string; items: NavItem[] }> = {
     oversikt: {
       title: 'ÖVERSIKT',
       emoji: '📍',

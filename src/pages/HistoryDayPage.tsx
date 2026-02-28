@@ -295,9 +295,30 @@ export default function HistoryDayPage() {
               <div>
                 <p className="text-sm font-medium mb-2">Makrofördelning</p>
                 <MacroBar
-                  protein={log.total_protein_g}
-                  carbs={log.total_carb_g}
-                  fat={log.total_fat_g}
+                  protein={{
+                    grams: log.total_protein_g,
+                    calories: log.total_protein_g * 4,
+                    percentage:
+                      log.total_calories > 0
+                        ? ((log.total_protein_g * 4) / log.total_calories) * 100
+                        : 0,
+                  }}
+                  carbs={{
+                    grams: log.total_carb_g,
+                    calories: log.total_carb_g * 4,
+                    percentage:
+                      log.total_calories > 0
+                        ? ((log.total_carb_g * 4) / log.total_calories) * 100
+                        : 0,
+                  }}
+                  fat={{
+                    grams: log.total_fat_g,
+                    calories: log.total_fat_g * 9,
+                    percentage:
+                      log.total_calories > 0
+                        ? ((log.total_fat_g * 9) / log.total_calories) * 100
+                        : 0,
+                  }}
                 />
               </div>
 
@@ -417,11 +438,7 @@ export default function HistoryDayPage() {
               <CardTitle className="text-lg">Kalorimål</CardTitle>
             </CardHeader>
             <CardContent className="flex justify-center">
-              <CalorieRing
-                current={log.total_calories}
-                target={log.goal_calories_max || 2000}
-                size={200}
-              />
+              <CalorieRing consumed={log.total_calories} target={log.goal_calories_max || 2000} />
             </CardContent>
           </Card>
 

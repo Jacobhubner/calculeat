@@ -32,16 +32,16 @@ interface TDEEOptionsProps {
     calorie_goal: string
     calories_min: number
     calories_max: number
-    accumulated_at: number
+    accumulated_at?: number
   }) => void
   onBeforeNavigate?: () => Promise<void>
 }
 
 export default function TDEEOptions({
   initialWeight,
-  height,
-  birthDate,
-  gender,
+  height: _height,
+  birthDate: _birthDate,
+  gender: _gender,
   tdee,
   bodyFatPercentage,
   onTDEEChange,
@@ -94,7 +94,7 @@ export default function TDEEOptions({
           <CardContent>
             <Button
               onClick={() => setShowManualEntry(!showManualEntry)}
-              variant={showManualEntry ? 'secondary' : 'default'}
+              variant={showManualEntry ? 'secondary' : 'outline'}
               className="w-full"
               size="lg"
             >
@@ -110,9 +110,6 @@ export default function TDEEOptions({
         <div className="mt-4">
           <ManualTDEEEntry
             initialWeight={initialWeight}
-            height={height}
-            birthDate={birthDate}
-            gender={gender}
             tdee={tdee}
             bodyFatPercentage={bodyFatPercentage}
             onTDEEChange={onTDEEChange}

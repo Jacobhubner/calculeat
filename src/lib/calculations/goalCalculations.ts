@@ -90,12 +90,18 @@ export function calculateTargetBodyFatFromWeight(
  * @param weeklyDeficit - Veckovis kaloriunderskott
  * @returns Tidsuppskattning
  */
-export function calculateTimeline(weightToChange: number, weeklyDeficit: number): TimelineEstimate {
+export function calculateTimeline(
+  weightToChange: number,
+  weeklyDeficit: number
+): TimelineEstimate | null {
   // 1 kg kroppsfett ≈ 7700 kcal
   const kcalPerKg = 7700
 
   // Beräkna veckovis viktförändring baserat på deficit
   const weeklyWeightChange = weeklyDeficit / kcalPerKg
+
+  // Guard: om viktförändringen är noll undviker vi division med noll
+  if (weeklyWeightChange === 0) return null
 
   // Beräkna veckor som krävs
   const weeksRequired = Math.abs(weightToChange / weeklyWeightChange)

@@ -6,20 +6,18 @@ import { Badge } from '@/components/ui/badge'
 import type { FoodItem, FoodSource } from '@/hooks/useFoodItems'
 import { SOURCE_BADGES } from '@/lib/constants/sourceBadges'
 
-type SourceFilter = 'alla' | 'mina' | 'slv' | 'usda'
+type SourceFilter = 'alla' | 'mina' | 'slv'
 
 const SOURCE_FILTER_LABELS: Record<SourceFilter, string> = {
   alla: 'Alla',
   mina: 'Mina',
   slv: 'SLV',
-  usda: 'USDA',
 }
 
 function matchesSourceFilter(source: FoodSource, filter: SourceFilter): boolean {
   if (filter === 'alla') return true
   if (filter === 'mina') return source === 'user' || source === 'manual' || source === 'shared'
   if (filter === 'slv') return source === 'livsmedelsverket'
-  if (filter === 'usda') return source === 'usda'
   return true
 }
 import {

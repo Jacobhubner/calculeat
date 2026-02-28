@@ -152,7 +152,7 @@ export function TDEEStatusCard({ profile }: TDEEStatusCardProps) {
         {/* Action Buttons */}
         <div className="flex gap-2">
           <Button
-            variant={statusInfo.shouldUpdate ? 'default' : 'outline'}
+            variant={statusInfo.shouldUpdate ? 'primary' : 'outline'}
             onClick={() => navigate('/app/tools/tdee-calculator')}
             className="flex-1"
           >

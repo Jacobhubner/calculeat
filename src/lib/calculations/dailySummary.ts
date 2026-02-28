@@ -332,6 +332,11 @@ export interface DailySummaryData {
   energyDensityColor: string
   energyDensityLabel: string
 
+  // Raw color category calories
+  greenCalories: number
+  yellowCalories: number
+  orangeCalories: number
+
   // Color category status
   greenStatus: NutrientStatus
   yellowStatus: NutrientStatus

@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
+import type { Resolver } from 'react-hook-form'
 import { ChevronDown, ChevronUp, AlertCircle, ScanBarcode, Camera, Loader2 } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
@@ -16,19 +16,38 @@ import {
   type FoodItem,
 } from '@/hooks/useFoodItems'
 import { calculateFoodColor, calculateCalorieDensity } from '@/lib/calculations/colorDensity'
+import { useUpdateSharedListFoodItem, useCreateSharedListFoodItem } from '@/hooks/useSharedLists'
 import { FEATURES } from '@/lib/config'
 import { useBarcodeLookup } from '@/hooks/useBarcodeLookup'
 import { useScanNutritionLabel } from '@/hooks/useScanNutritionLabel'
 import { BarcodeScannerModal } from '@/components/food/BarcodeScannerModal'
 import type { ScanResult } from '@/lib/types'
+import { toast } from 'sonner'
 
-type FormData = z.infer<typeof createFoodItemSchema>
+// z.preprocess() causes Zod to infer output fields as `unknown` at the type level,
+// even though the runtime values are always the correct types. This explicit type
+// matches the actual runtime output and satisfies react-hook-form's FieldValues constraint.
+type FormData = {
+  name: string
+  default_amount: number
+  default_unit: string
+  weight_grams: number
+  calories: number
+  fat_g: number
+  carb_g: number
+  protein_g: number
+  food_type: 'Solid' | 'Liquid' | 'Soup'
+  ml_per_gram?: number
+  grams_per_piece?: number
+  serving_unit?: string
+}
 
 interface AddFoodItemModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   onSuccess?: () => void
   editItem?: FoodItem | null
+  sharedListId?: string | null
 }
 
 // Slumpmässiga placeholder-exempel för namn-fältet
@@ -59,6 +78,7 @@ export function AddFoodItemModal({
   onOpenChange,
   onSuccess,
   editItem,
+  sharedListId,
 }: AddFoodItemModalProps) {
   const [showAdvanced, setShowAdvanced] = useState(false)
   const [duplicateWarning, setDuplicateWarning] = useState<string | null>(null)
@@ -78,9 +98,9 @@ export function AddFoodItemModal({
     carb_g: number
     protein_g: number
     food_type: string
-    ml_per_gram: number | null
-    grams_per_piece: number | null
-    serving_unit: string | null
+    ml_per_gram: number | undefined
+    grams_per_piece: number | undefined
+    serving_unit: string | undefined
     gramsPerVolume: number | undefined
   } | null>(null)
 
@@ -114,7 +134,7 @@ export function AddFoodItemModal({
     reset,
     formState: { errors, isValid },
   } = useForm<FormData>({
-    resolver: zodResolver(createFoodItemSchema),
+    resolver: zodResolver(createFoodItemSchema) as Resolver<FormData>,
     mode: 'onChange',
     defaultValues: {
       food_type: 'Solid',
@@ -130,6 +150,8 @@ export function AddFoodItemModal({
 
   const createMutation = useCreateFoodItem()
   const updateMutation = useUpdateFoodItem()
+  const updateSharedListFoodItem = useUpdateSharedListFoodItem()
+  const createSharedListFoodItem = useCreateSharedListFoodItem()
 
   // Watch all form values for live calculations
 
@@ -491,8 +513,16 @@ export function AddFoodItemModal({
         density_g_per_ml,
       }
 
-      if (editItem) {
+      if (editItem?.shared_list_id) {
+        await updateSharedListFoodItem.mutateAsync({
+          foodItemId: editItem.id,
+          listId: editItem.shared_list_id,
+          fields: cleanedData,
+        })
+      } else if (editItem) {
         await updateMutation.mutateAsync({ id: editItem.id, ...cleanedData })
+      } else if (sharedListId) {
+        await createSharedListFoodItem.mutateAsync({ listId: sharedListId, ...cleanedData })
       } else {
         await createMutation.mutateAsync(cleanedData)
       }
@@ -503,6 +533,7 @@ export function AddFoodItemModal({
       onSuccess?.()
     } catch (error) {
       console.error(`Failed to ${editItem ? 'update' : 'create'} food item:`, error)
+      toast.error(`Kunde inte ${editItem ? 'uppdatera' : 'spara'} livsmedlet. Försök igen.`)
     }
   }
 
@@ -530,9 +561,14 @@ export function AddFoodItemModal({
             <DialogTitle>{editItem ? 'Redigera livsmedel' : 'Nytt livsmedel'}</DialogTitle>
           </DialogHeader>
 
-          {editItem && editItem.user_id === null && (
+          {editItem && editItem.user_id === null && !editItem.shared_list_id && (
             <div className="bg-blue-50 border border-blue-200 rounded-md p-3 text-sm text-blue-700">
               En personlig kopia skapas i din lista (Mina).
+            </div>
+          )}
+          {editItem?.shared_list_id && (
+            <div className="bg-blue-50 border border-blue-200 rounded-md p-3 text-sm text-blue-700">
+              Redigerar ett delat livsmedel. Ändringarna syns hos alla listmedlemmar.
             </div>
           )}
 
@@ -1138,10 +1174,15 @@ export function AddFoodItemModal({
                   !isValid ||
                   createMutation.isPending ||
                   updateMutation.isPending ||
-                  (editItem && !hasChanges)
+                  updateSharedListFoodItem.isPending ||
+                  createSharedListFoodItem.isPending ||
+                  (!!editItem && !hasChanges)
                 }
               >
-                {createMutation.isPending || updateMutation.isPending
+                {createMutation.isPending ||
+                updateMutation.isPending ||
+                updateSharedListFoodItem.isPending ||
+                createSharedListFoodItem.isPending
                   ? 'Sparar...'
                   : editItem
                     ? 'Uppdatera'

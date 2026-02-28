@@ -17,7 +17,7 @@ interface FoodSuggestionsProps {
 }
 
 // Färgprick komponent
-function ColorDot({ color }: { color?: string }) {
+function ColorDot({ color }: { color?: string | null }) {
   if (!color) return null
   const colorClass = {
     Green: 'bg-green-500',
@@ -304,7 +304,6 @@ export function FoodSuggestions({
                     { key: 'alla', label: 'Alla' },
                     { key: 'mina', label: 'Mina & CalculEat' },
                     { key: 'slv', label: 'SLV' },
-                    { key: 'usda', label: 'USDA' },
                   ] as const
                 ).map(s => (
                   <button

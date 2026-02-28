@@ -4,7 +4,7 @@ export const userProfileSchema = z.object({
   profile_name: z.string().min(1, 'Profilnamn är obligatoriskt').max(100),
   birth_date: z.string().optional(),
   gender: z.enum(['male', 'female'], {
-    errorMap: () => ({ message: 'Kön är obligatoriskt för att beräkna resultat' }),
+    error: () => ({ message: 'Kön är obligatoriskt för att beräkna resultat' }),
   }),
   height_cm: z.number().min(100).max(250).optional(),
   weight_kg: z.number().min(20).max(300).optional(),
@@ -111,9 +111,7 @@ export const createFoodItemSchema = z
     name: z.string().min(1, 'Namn är obligatoriskt').max(200, 'Namn får max vara 200 tecken'),
     default_amount: z.preprocess(
       val => (Number.isNaN(val) ? undefined : val),
-      z
-        .number({ invalid_type_error: 'Mängd måste vara ett nummer' })
-        .positive('Mängd måste vara större än 0')
+      z.number({ error: 'Mängd måste vara ett nummer' }).positive('Mängd måste vara större än 0')
     ),
     default_unit: z
       .string()
@@ -121,32 +119,28 @@ export const createFoodItemSchema = z
       .max(50, 'Enhet får max vara 50 tecken'),
     weight_grams: z.preprocess(
       val => (Number.isNaN(val) ? undefined : val),
-      z
-        .number({ invalid_type_error: 'Vikt måste vara ett nummer' })
-        .positive('Vikt måste vara större än 0')
+      z.number({ error: 'Vikt måste vara ett nummer' }).positive('Vikt måste vara större än 0')
     ),
     calories: z.preprocess(
       val => (Number.isNaN(val) ? 0 : val),
       z
-        .number({ invalid_type_error: 'Kalorier måste vara ett nummer' })
+        .number({ error: 'Kalorier måste vara ett nummer' })
         .min(0, 'Kalorier måste vara 0 eller högre')
     ),
     fat_g: z.preprocess(
       val => (Number.isNaN(val) ? 0 : val),
-      z
-        .number({ invalid_type_error: 'Fett måste vara ett nummer' })
-        .min(0, 'Fett måste vara 0 eller högre')
+      z.number({ error: 'Fett måste vara ett nummer' }).min(0, 'Fett måste vara 0 eller högre')
     ),
     carb_g: z.preprocess(
       val => (Number.isNaN(val) ? 0 : val),
       z
-        .number({ invalid_type_error: 'Kolhydrater måste vara ett nummer' })
+        .number({ error: 'Kolhydrater måste vara ett nummer' })
         .min(0, 'Kolhydrater måste vara 0 eller högre')
     ),
     protein_g: z.preprocess(
       val => (Number.isNaN(val) ? 0 : val),
       z
-        .number({ invalid_type_error: 'Protein måste vara ett nummer' })
+        .number({ error: 'Protein måste vara ett nummer' })
         .min(0, 'Protein måste vara 0 eller högre')
     ),
     food_type: z.enum(['Solid', 'Liquid', 'Soup']).default('Solid'),
@@ -154,7 +148,7 @@ export const createFoodItemSchema = z
       val =>
         val === '' || val === null || val === undefined || Number.isNaN(val) ? undefined : val,
       z
-        .number({ invalid_type_error: 'ml per gram måste vara ett nummer' })
+        .number({ error: 'ml per gram måste vara ett nummer' })
         .positive('ml per gram måste vara större än 0')
         .optional()
     ),
@@ -162,7 +156,7 @@ export const createFoodItemSchema = z
       val =>
         val === '' || val === null || val === undefined || Number.isNaN(val) ? undefined : val,
       z
-        .number({ invalid_type_error: 'Gram per bit måste vara ett nummer' })
+        .number({ error: 'Gram per bit måste vara ett nummer' })
         .positive('Gram per bit måste vara större än 0')
         .optional()
     ),

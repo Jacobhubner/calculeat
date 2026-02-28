@@ -113,7 +113,7 @@ export default function CalibrationPrompt({
 
             <Button
               size="sm"
-              variant={availability.isRecommended ? 'default' : 'outline'}
+              variant={availability.isRecommended ? 'primary' : 'outline'}
               onClick={onCalibrate}
               className="text-xs"
             >

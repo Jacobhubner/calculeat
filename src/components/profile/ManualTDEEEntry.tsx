@@ -16,6 +16,7 @@ interface ManualTDEEEntryProps {
   onTDEEChange: (data: {
     tdee: number
     bodyFat?: number
+    baseline_bmr?: number
     weight_kg?: number
     tdee_source: string
     tdee_calculated_at: string
@@ -24,6 +25,7 @@ interface ManualTDEEEntryProps {
     calorie_goal: string
     calories_min: number
     calories_max: number
+    accumulated_at?: number
   }) => void
 }
 

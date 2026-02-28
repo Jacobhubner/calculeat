@@ -174,7 +174,7 @@ export default function WeightTracker({
           {isOpen && (
             <Button
               onClick={() => setShowAddWeight(!showAddWeight)}
-              variant={showAddWeight ? 'secondary' : 'default'}
+              variant={showAddWeight ? 'secondary' : 'outline'}
               size="sm"
             >
               <Plus className="h-4 w-4 mr-2" />
@@ -333,10 +333,13 @@ export default function WeightTracker({
                     }}
                   />
                   <Tooltip
-                    formatter={(value: number, name: string) => [
-                      `${value?.toFixed(1)} kg`,
-                      name === 'weight' ? 'Vikt' : '7-dagars snitt',
-                    ]}
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    formatter={(value: any, name: any) =>
+                      [
+                        `${(value as number | undefined)?.toFixed(1)} kg`,
+                        (name as string) === 'weight' ? 'Vikt' : '7-dagars snitt',
+                      ] as [string, string]
+                    }
                     labelFormatter={label => {
                       const entry = chartData.find(d => d.date === label)
                       return entry?.displayDate || label

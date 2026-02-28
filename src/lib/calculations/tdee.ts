@@ -267,13 +267,13 @@ export function getBasicInternetPAL(activityLevel: ActivityLevel): number {
 function calculateActivityLevelWizard(
   bmr: number,
   weightKg: number,
-  trainingActivityId: string | undefined,
+  _trainingActivityId: string | undefined,
   trainingDaysPerWeek: number = 0,
   trainingMinutesPerSession: number = 0,
-  walkingActivityId: string | undefined,
+  _walkingActivityId: string | undefined,
   stepsPerDay: number = 7000,
   hoursStandingPerDay: number = 0,
-  householdActivityId: string | undefined,
+  _householdActivityId: string | undefined,
   householdHoursPerDay: number = 0,
   spaFactor: number = 1.0
 ): number {
@@ -495,6 +495,7 @@ export const PAL_SPECIFIC_ACTIVITY_DESCRIPTIONS: Record<
       'Mycket intensiv träning eller fysiskt arbete dagligen. Exempel: professionella idrottare, dubbla träningspass dagligen.',
   },
   'Custom PAL': {},
+  'Beräkna din aktivitetsnivå': {},
 }
 
 /**
@@ -529,4 +530,5 @@ export const PAL_SPECIFIC_INTENSITY_DESCRIPTIONS: Record<
   'Fitness Stuff PAL values': {},
   'Basic internet PAL values': {},
   'Custom PAL': {},
+  'Beräkna din aktivitetsnivå': {},
 }

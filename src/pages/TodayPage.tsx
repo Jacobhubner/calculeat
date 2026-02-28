@@ -49,6 +49,7 @@ import { useProfiles } from '@/hooks'
 import { useCalculations } from '@/hooks/useCalculations'
 import { useDailySummary } from '@/hooks/useDailySummary'
 import type { FoodItem } from '@/hooks/useFoodItems'
+import type { UserProfile } from '@/lib/types'
 
 export default function TodayPage() {
   const { data: todayLog, isLoading: logLoading } = useTodayLog()
@@ -102,7 +103,7 @@ export default function TodayPage() {
   const activeProfile = useProfileStore(state => state.activeProfile)
   const { data: allProfiles } = useProfiles()
   const profile = allProfiles?.find(p => p.id === activeProfile?.id)
-  const calculations = useCalculations(profile)
+  const calculations = useCalculations(profile as UserProfile | undefined)
 
   // Calculate daily summary using the new hook
   const dailySummary = useDailySummary(todayLog, profile, mealSettings)
@@ -627,7 +628,7 @@ export default function TodayPage() {
                             </CardTitle>
                             <CardDescription className="truncate">
                               {hasItems
-                                ? `${mealEntry.items.length} matvara${mealEntry.items.length > 1 ? 'r' : ''}`
+                                ? `${mealEntry.items?.length ?? 0} matvara${(mealEntry.items?.length ?? 0) > 1 ? 'r' : ''}`
                                 : `${mealSetting.percentage_of_daily_calories}% av dagens kalorier`}
                             </CardDescription>
                           </div>
@@ -683,7 +684,7 @@ export default function TodayPage() {
                     <CardContent>
                       {hasItems ? (
                         <div className="space-y-2">
-                          {mealEntry.items.map(item => {
+                          {(mealEntry.items ?? []).map(item => {
                             const foodItem = item.food_item as FoodItem | null
                             return (
                               <SwipeableItem

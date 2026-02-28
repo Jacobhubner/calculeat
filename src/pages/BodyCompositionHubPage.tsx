@@ -152,7 +152,7 @@ export default function BodyCompositionHubPage() {
             {/* FFMI Description Categories */}
             <div>
               <h3 className="text-base font-semibold text-neutral-800 mb-2">FFMI-kategorier</h3>
-              <FFMICategoryTable userFFMI={null} gender={profile?.gender} />
+              <FFMICategoryTable userFFMI={null} gender={profile?.gender ?? 'male'} />
             </div>
 
             {/* FFMI with Body Fat Ranges */}
@@ -160,7 +160,11 @@ export default function BodyCompositionHubPage() {
               <h3 className="text-base font-semibold text-neutral-800 mb-2">
                 FFMI med kroppsfett-intervall
               </h3>
-              <FFMIReferenceTable userFFMI={null} userBodyFat={null} gender={profile?.gender} />
+              <FFMIReferenceTable
+                userFFMI={null}
+                userBodyFat={null}
+                gender={profile?.gender ?? 'male'}
+              />
             </div>
           </div>
         </div>
@@ -273,7 +277,10 @@ export default function BodyCompositionHubPage() {
               {/* FFMI Description Categories */}
               <div>
                 <h3 className="text-base font-semibold text-neutral-800 mb-2">FFMI-kategorier</h3>
-                <FFMICategoryTable userFFMI={metrics?.ffmi || null} gender={profile.gender} />
+                <FFMICategoryTable
+                  userFFMI={metrics?.ffmi || null}
+                  gender={profile.gender ?? 'male'}
+                />
               </div>
 
               {/* FFMI with Body Fat Ranges */}
@@ -284,7 +291,7 @@ export default function BodyCompositionHubPage() {
                 <FFMIReferenceTable
                   userFFMI={metrics?.ffmi || null}
                   userBodyFat={bodyFatPercentage}
-                  gender={profile.gender}
+                  gender={profile.gender ?? 'male'}
                 />
               </div>
             </div>

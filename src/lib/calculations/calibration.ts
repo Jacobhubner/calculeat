@@ -543,7 +543,7 @@ export function getMaxAdjustment(
   foodLogWeight: number,
   _dataQuality: DataQualityResult
 ): number {
-  let maxPercent = BASE_MAX_ADJUSTMENT[confidence.periodDays] ?? 0.15
+  let maxPercent = BASE_MAX_ADJUSTMENT[confidence.periodDays as 14 | 21 | 28] ?? 0.15
 
   // Boost for high confidence + good food log
   if (confidence.level === 'high' && foodLogWeight >= 0.8) {

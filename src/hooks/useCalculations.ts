@@ -145,7 +145,6 @@ export function useCalculations(profile: UserProfile | null | undefined): Calcul
             tdee,
             goal: debouncedProfile.calorie_goal,
             bmr: bmr || undefined,
-            deficitLevel: debouncedProfile.deficit_level,
           })
         }
       }

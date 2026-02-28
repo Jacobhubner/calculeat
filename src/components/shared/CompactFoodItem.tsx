@@ -14,7 +14,7 @@ interface CompactFoodItemProps {
 }
 
 // Färgprick för energitäthet
-function ColorDot({ color }: { color?: string }) {
+function ColorDot({ color }: { color?: string | null }) {
   if (!color) return null
 
   const colorClass = {

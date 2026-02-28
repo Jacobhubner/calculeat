@@ -24,7 +24,6 @@ const TABS: { key: FoodTab; label: string }[] = [
   { key: 'alla', label: 'Alla' },
   { key: 'mina', label: 'Mina & CalculEat' },
   { key: 'slv', label: 'SLV' },
-  { key: 'usda', label: 'USDA' },
 ]
 
 const PAGE_SIZE = 50
@@ -274,7 +273,7 @@ export function AddFoodToMealModal({
       if (isEditMode && editItem) {
         await updateMealItem.mutateAsync({
           itemId: editItem.itemId,
-          amount,
+          amount: Number(amount),
           unit: selectedUnit,
           weightGrams: nutritionPreview.weightGrams,
           calories: nutritionPreview.calories,
@@ -308,7 +307,7 @@ export function AddFoodToMealModal({
       await addFoodToMeal.mutateAsync({
         mealEntryId: targetMealEntryId,
         foodItemId: selectedFood.id,
-        amount,
+        amount: Number(amount),
         unit: selectedUnit,
         weightGrams: nutritionPreview.weightGrams,
         calories: nutritionPreview.calories,

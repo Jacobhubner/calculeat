@@ -33,6 +33,7 @@ export type PALSystem =
   | 'Fitness Stuff PAL values'
   | 'Basic internet PAL values'
   | 'Custom PAL'
+  | 'Beräkna din aktivitetsnivå'
 
 export type ActivityLevel =
   | 'Sedentary'
@@ -150,7 +151,12 @@ export interface UserProfile {
 
   // TDEE metadata (tracking when and how TDEE was calculated)
   tdee_calculated_at?: string // ISO timestamp
-  tdee_source?: 'manual' | 'tdee_calculator_tool' | 'profile_form' | 'legacy'
+  tdee_source?:
+    | 'manual'
+    | 'tdee_calculator_tool'
+    | 'profile_form'
+    | 'legacy'
+    | 'metabolic_calibration'
   tdee_calculation_snapshot?: TDEECalculationSnapshot
 
   // Macro preferences
@@ -160,6 +166,11 @@ export interface UserProfile {
   carb_max_percent?: number
   protein_min_percent?: number
   protein_max_percent?: number
+
+  // Meal configuration
+  meals_config?: {
+    meals?: Array<{ name: string; percentage: number }>
+  } | null
 
   created_at?: string
   updated_at?: string
@@ -259,7 +270,12 @@ export interface Profile {
 
   // TDEE metadata (tracking when and how TDEE was calculated)
   tdee_calculated_at?: string // ISO timestamp
-  tdee_source?: 'manual' | 'tdee_calculator_tool' | 'profile_form' | 'legacy'
+  tdee_source?:
+    | 'manual'
+    | 'tdee_calculator_tool'
+    | 'profile_form'
+    | 'legacy'
+    | 'metabolic_calibration'
   tdee_calculation_snapshot?: TDEECalculationSnapshot
 
   // Goals
@@ -313,6 +329,16 @@ export interface ProfileFormData {
   training_duration_minutes?: number
   daily_steps?: DailySteps
   custom_pal?: number
+  // Beräkna din aktivitetsnivå fields
+  training_activity_id?: string
+  training_days_per_week?: number
+  training_minutes_per_session?: number
+  walking_activity_id?: string
+  steps_per_day?: number
+  hours_standing_per_day?: number
+  household_activity_id?: string
+  household_hours_per_day?: number
+  spa_factor?: number
 
   // Body composition
   body_fat_percentage?: number
@@ -328,6 +354,16 @@ export interface ProfileFormData {
   // Calculated values
   bmr?: number
   tdee?: number
+  calories_min?: number
+  calories_max?: number
+  tdee_calculated_at?: string
+  tdee_source?:
+    | 'manual'
+    | 'tdee_calculator_tool'
+    | 'profile_form'
+    | 'legacy'
+    | 'metabolic_calibration'
+  tdee_calculation_snapshot?: TDEECalculationSnapshot
 
   // Macro preferences
   fat_min_percent?: number
@@ -360,27 +396,30 @@ export interface MeasurementSet {
   name?: string // Optional custom name (if NULL, display "date - time" as default)
   display_order?: number // User-controlled sort order
 
-  // Caliper measurements (mm)
-  chest?: number
-  abdominal?: number
-  thigh?: number
-  tricep?: number
-  subscapular?: number
-  suprailiac?: number
-  midaxillary?: number
-  bicep?: number
-  lower_back?: number
-  calf?: number
+  // Body weight at time of measurement
+  weight_kg?: number | null
 
-  // Tape measurements (cm)
-  neck?: number
-  waist?: number
-  hip?: number
-  wrist?: number
-  ankle?: number
-  forearm?: number
-  thigh_circ?: number
-  calf_circ?: number
+  // Caliper measurements (mm) — nullable to allow explicit DB clearing
+  chest?: number | null
+  abdominal?: number | null
+  thigh?: number | null
+  tricep?: number | null
+  subscapular?: number | null
+  suprailiac?: number | null
+  midaxillary?: number | null
+  bicep?: number | null
+  lower_back?: number | null
+  calf?: number | null
+
+  // Tape measurements (cm) — nullable to allow explicit DB clearing
+  neck?: number | null
+  waist?: number | null
+  hip?: number | null
+  wrist?: number | null
+  ankle?: number | null
+  forearm?: number | null
+  thigh_circ?: number | null
+  calf_circ?: number | null
 }
 
 // Weight history type for tracking weight changes over time

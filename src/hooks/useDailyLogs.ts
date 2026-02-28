@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import { useProfileStore } from '@/stores/profileStore'
+import type { FoodItem } from '@/hooks/useFoodItems'
 
 export interface MealEntryItem {
   id: string
@@ -16,7 +17,7 @@ export interface MealEntryItem {
   protein_g?: number
   item_order: number
   created_at: string
-  food_item?: unknown // Will include food item details
+  food_item?: FoodItem // Will include food item details when joined
 }
 
 export interface MealEntry {

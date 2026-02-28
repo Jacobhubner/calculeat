@@ -6,7 +6,7 @@ interface NutritionPreviewProps {
   carbs: number
   fat: number
   weightGrams: number
-  energyDensityColor?: 'Green' | 'Yellow' | 'Orange'
+  energyDensityColor?: 'Green' | 'Yellow' | 'Orange' | null
   showWeight?: boolean
 }
 

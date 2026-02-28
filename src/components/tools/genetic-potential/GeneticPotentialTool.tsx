@@ -64,17 +64,21 @@ export default function GeneticPotentialTool() {
   )
 
   // Manual wrist and ankle measurements for Casey Butt model
-  const [manualWrist, setManualWrist] = useState<number | undefined>(currentMeasurement?.wrist)
-  const [manualAnkle, setManualAnkle] = useState<number | undefined>(currentMeasurement?.ankle)
+  const [manualWrist, setManualWrist] = useState<number | undefined>(
+    currentMeasurement?.wrist ?? undefined
+  )
+  const [manualAnkle, setManualAnkle] = useState<number | undefined>(
+    currentMeasurement?.ankle ?? undefined
+  )
 
   // Sync manual measurements with active measurement set when it changes
   /* eslint-disable react-hooks/set-state-in-effect -- Syncing external store state to local state */
   useEffect(() => {
     if (currentMeasurement?.wrist !== undefined) {
-      setManualWrist(currentMeasurement.wrist)
+      setManualWrist(currentMeasurement.wrist ?? undefined)
     }
     if (currentMeasurement?.ankle !== undefined) {
-      setManualAnkle(currentMeasurement.ankle)
+      setManualAnkle(currentMeasurement.ankle ?? undefined)
     }
   }, [currentMeasurement])
   /* eslint-enable react-hooks/set-state-in-effect */
@@ -199,7 +203,7 @@ export default function GeneticPotentialTool() {
                   {results.map((result, index) => (
                     <Button
                       key={index}
-                      variant={selectedFormulaIndex === index ? 'default' : 'outline'}
+                      variant={selectedFormulaIndex === index ? 'primary' : 'outline'}
                       size="sm"
                       onClick={() => setSelectedFormulaIndex(index)}
                     >
@@ -684,12 +688,21 @@ export default function GeneticPotentialTool() {
                 <ResultCard
                   result={results[selectedFormulaIndex]}
                   currentBodyFat={profileData?.body_fat_percentage}
-                  currentWeight={currentMeasurement?.weight_kg}
+                  currentWeight={currentMeasurement?.weight_kg ?? undefined}
                   onShowMeasurementInfo={(title: string, description: string) => {
                     setModalContent({ title, description })
                     setShowModal(true)
                   }}
-                  currentMeasurement={currentMeasurement}
+                  currentMeasurement={
+                    currentMeasurement
+                      ? {
+                          neck: currentMeasurement.neck ?? undefined,
+                          forearm: currentMeasurement.forearm ?? undefined,
+                          thigh_circ: currentMeasurement.thigh_circ ?? undefined,
+                          calf_circ: currentMeasurement.calf_circ ?? undefined,
+                        }
+                      : null
+                  }
                 />
               </CardContent>
             </Card>
@@ -727,7 +740,7 @@ export default function GeneticPotentialTool() {
                       <span className="text-neutral-600">Fettfri massa:</span>
                       <span className="font-medium">
                         {(
-                          (currentMeasurement?.weight_kg || profileData.weight_kg) *
+                          (currentMeasurement?.weight_kg || profileData.weight_kg || 0) *
                           (1 - profileData.body_fat_percentage / 100)
                         ).toFixed(1)}{' '}
                         kg

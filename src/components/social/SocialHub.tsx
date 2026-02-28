@@ -29,6 +29,12 @@ import {
   useRejectShareInvitation,
 } from '@/hooks/useShareInvitations'
 import {
+  usePendingSharedListInvitations,
+  useAcceptSharedListInvitation,
+  useRejectSharedListInvitation,
+} from '@/hooks/useSharedLists'
+import type { SharedListInvitation } from '@/lib/types/sharedLists'
+import {
   useFriends,
   usePendingFriendRequests,
   useSentFriendRequests,
@@ -190,6 +196,93 @@ function MiniInvitationCard({ invitation }: { invitation: PendingInvitation }) {
           onClick={handleReject}
           disabled={isBusy}
           className="flex-1 h-7 text-xs text-neutral-500"
+        >
+          {isRejecting ? (
+            <Loader2 className="h-3 w-3 animate-spin" />
+          ) : (
+            <UserX className="h-3 w-3 mr-1" />
+          )}
+          Neka
+        </Button>
+      </div>
+    </div>
+  )
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// Mini SharedListInvitationCard
+// ──────────────────────────────────────────────────────────────────────────────
+
+function MiniSharedListInvitationCard({ invitation }: { invitation: SharedListInvitation }) {
+  const [isAccepting, setIsAccepting] = useState(false)
+  const [isRejecting, setIsRejecting] = useState(false)
+  const { mutateAsync: accept } = useAcceptSharedListInvitation()
+  const { mutateAsync: reject } = useRejectSharedListInvitation()
+
+  const handleAccept = async () => {
+    setIsAccepting(true)
+    try {
+      const result = await accept(invitation.id)
+      if (result?.success) {
+        toast.success(`Du är nu med i "${invitation.list_name}"!`)
+      } else {
+        toast.error('Kunde inte gå med i listan. Försök igen.')
+      }
+    } catch {
+      toast.error('Något gick fel. Försök igen.')
+    } finally {
+      setIsAccepting(false)
+    }
+  }
+
+  const handleReject = async () => {
+    setIsRejecting(true)
+    try {
+      await reject(invitation.id)
+      toast.success('Inbjudan avvisad.')
+    } catch {
+      toast.error('Något gick fel.')
+    } finally {
+      setIsRejecting(false)
+    }
+  }
+
+  const isBusy = isAccepting || isRejecting
+
+  return (
+    <div className="rounded-lg border border-neutral-100 p-3 space-y-2 bg-white">
+      <div className="flex items-start gap-2">
+        <div className="p-1.5 rounded bg-blue-50 shrink-0">
+          <ListOrdered className="h-4 w-4 text-blue-600" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-medium text-neutral-900 truncate">{invitation.list_name}</p>
+          <p className="text-xs text-neutral-500">Inbjuden av {invitation.sender_name}</p>
+        </div>
+        <Badge className="text-[9px] px-1 py-0 h-3.5 bg-blue-100 text-blue-700 border-blue-200 shrink-0">
+          Delad lista
+        </Badge>
+      </div>
+      <div className="flex gap-2">
+        <Button
+          size="sm"
+          className="h-7 text-xs flex-1 gap-1"
+          onClick={handleAccept}
+          disabled={isBusy}
+        >
+          {isAccepting ? (
+            <Loader2 className="h-3 w-3 animate-spin" />
+          ) : (
+            <UserCheck className="h-3 w-3 mr-1" />
+          )}
+          Gå med
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          className="h-7 text-xs flex-1 gap-1 text-neutral-600"
+          onClick={handleReject}
+          disabled={isBusy}
         >
           {isRejecting ? (
             <Loader2 className="h-3 w-3 animate-spin" />
@@ -1135,12 +1228,17 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
   const { data: friendRequests = [] } = usePendingFriendRequests()
   const { data: sentRequests = [] } = useSentFriendRequests()
   const { data: pendingInvitations = [] } = usePendingInvitations()
+  const { data: pendingSharedListInvitations = [] } = usePendingSharedListInvitations()
   const { data: pendingCount = 0 } = usePendingFriendRequestsCount()
   const { data: conversations = [], refetch: refetchConversations } = useConversations()
   const unreadMessageCount = useUnreadMessageCount()
   const { mutateAsync: sendFriendRequest } = useSendFriendRequest()
 
-  const activityCount = (pendingCount as number) + pendingInvitations.length + sentRequests.length
+  const activityCount =
+    (pendingCount as number) +
+    pendingInvitations.length +
+    pendingSharedListInvitations.length +
+    sentRequests.length
 
   const filteredFriends = friends.filter(f => {
     if (!friendSearch.trim()) return true
@@ -1388,6 +1486,18 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
               </div>
             )}
 
+            {/* Inbjudningar till delade listor */}
+            {pendingSharedListInvitations.length > 0 && (
+              <div className="space-y-2">
+                <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wide">
+                  Inbjudningar till listor
+                </p>
+                {pendingSharedListInvitations.map(inv => (
+                  <MiniSharedListInvitationCard key={inv.id} invitation={inv} />
+                ))}
+              </div>
+            )}
+
             {/* Skickade vänförfrågningar */}
             {sentRequests.length > 0 && (
               <div className="space-y-2">
@@ -1402,6 +1512,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
 
             {friendRequests.length === 0 &&
               pendingInvitations.length === 0 &&
+              pendingSharedListInvitations.length === 0 &&
               sentRequests.length === 0 && (
                 <div className="text-center py-10 space-y-2">
                   <p className="text-2xl">🎉</p>

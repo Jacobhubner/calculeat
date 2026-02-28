@@ -35,7 +35,7 @@ interface PlateCalculatorProps {
 }
 
 // Färgprick komponent
-function ColorDot({ color }: { color?: string }) {
+function ColorDot({ color }: { color?: string | null }) {
   if (!color) return null
   const colorClass = {
     Green: 'bg-green-500',

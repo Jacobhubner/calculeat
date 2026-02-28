@@ -10,7 +10,7 @@ import { useProfileData } from '@/hooks/useProfileData'
 import { useUpdateProfile, useActiveProfile, useWeightHistory } from '@/hooks'
 import { calculateBMRWithFormula, requiresBodyFat } from '@/lib/calculations/bmr'
 import { calculateTDEE } from '@/lib/calculations/tdee'
-import type { PALSystem } from '@/lib/calculations/tdee'
+import type { PALSystem, ActivityLevel, IntensityLevel, DailySteps } from '@/lib/calculations/tdee'
 import { calculateAge } from '@/lib/calculations/helpers'
 import { toast } from 'sonner'
 import type { TDEECalculationSnapshot, BMRFormula } from '@/lib/types'
@@ -172,7 +172,7 @@ export default function TDEECalculatorTool() {
         trainingDaysPerWeek > 0 &&
         trainingMinutesPerSession > 0 &&
         !!trainingActivityId &&
-        stepsPerDay > 0
+        (stepsPerDay ?? 0) > 0
 
       console.log('Beräkna din aktivitetsnivå Validation:', {
         allRequiredFieldsFilled,
@@ -193,12 +193,12 @@ export default function TDEECalculatorTool() {
     const calculatedTDEE = calculateTDEE({
       bmr,
       palSystem: palSystem as PALSystem,
-      activityLevel: activityLevel || 'Moderately active',
+      activityLevel: (activityLevel || 'Moderately active') as ActivityLevel,
       gender: profileData.gender,
-      intensityLevel: intensityLevel || undefined,
-      trainingFrequencyPerWeek: trainingFrequency || undefined,
-      trainingDurationMinutes: trainingDuration || undefined,
-      dailySteps: dailySteps || undefined,
+      intensityLevel: (intensityLevel || undefined) as IntensityLevel | undefined,
+      trainingFrequencyPerWeek: trainingFrequency ? parseFloat(trainingFrequency) : undefined,
+      trainingDurationMinutes: trainingDuration ? parseFloat(trainingDuration) : undefined,
+      dailySteps: (dailySteps || undefined) as DailySteps | undefined,
       customPAL: customPAL ? parseFloat(customPAL) : undefined,
       // Beräkna din aktivitetsnivå fields
       weightKg: weight || undefined,
@@ -267,16 +267,16 @@ export default function TDEECalculatorTool() {
       const snapshot: TDEECalculationSnapshot = {
         weight_kg: weightNum,
         height_cm: profileData?.height_cm,
-        age,
+        age: age ?? undefined,
         gender: profileData?.gender,
         body_fat_percentage: bodyFatNum,
-        bmr_formula: bmrFormula,
+        bmr_formula: bmrFormula || undefined,
         pal_system: palSystem as PALSystem,
-        activity_level: activityLevel || 'Moderately active',
-        intensity_level: intensityLevel || undefined,
-        training_frequency_per_week: trainingFrequency || undefined,
-        training_duration_minutes: trainingDuration || undefined,
-        daily_steps: dailySteps || undefined,
+        activity_level: (activityLevel || 'Moderately active') as ActivityLevel,
+        intensity_level: (intensityLevel || undefined) as IntensityLevel | undefined,
+        training_frequency_per_week: trainingFrequency ? parseFloat(trainingFrequency) : undefined,
+        training_duration_minutes: trainingDuration ? parseFloat(trainingDuration) : undefined,
+        daily_steps: (dailySteps || undefined) as DailySteps | undefined,
         custom_pal: customPAL ? parseFloat(customPAL) : undefined,
         // Beräkna din aktivitetsnivå fields
         training_activity_id: trainingActivityId || undefined,
@@ -297,13 +297,15 @@ export default function TDEECalculatorTool() {
         data: {
           bmr,
           tdee,
-          bmr_formula: bmrFormula,
+          bmr_formula: bmrFormula || undefined,
           pal_system: palSystem as PALSystem,
-          activity_level: activityLevel || 'Moderately active',
-          intensity_level: intensityLevel || undefined,
-          training_frequency_per_week: trainingFrequency || undefined,
-          training_duration_minutes: trainingDuration || undefined,
-          daily_steps: dailySteps || undefined,
+          activity_level: (activityLevel || 'Moderately active') as ActivityLevel,
+          intensity_level: (intensityLevel || undefined) as IntensityLevel | undefined,
+          training_frequency_per_week: trainingFrequency
+            ? parseFloat(trainingFrequency)
+            : undefined,
+          training_duration_minutes: trainingDuration ? parseFloat(trainingDuration) : undefined,
+          daily_steps: (dailySteps || undefined) as DailySteps | undefined,
           custom_pal: customPAL ? parseFloat(customPAL) : undefined,
           // Beräkna din aktivitetsnivå fields
           training_activity_id: trainingActivityId || undefined,

@@ -3,7 +3,10 @@
  * Beräknar kalorimål baserat på användarens mål (viktnedgång, bibehålla, viktuppgång)
  */
 
-import type { CalorieGoal, DeficitLevel } from '../types'
+import type { CalorieGoal } from '../types'
+
+// Local deficit level for calorie calculation (different from DB DeficitLevel)
+type CalcDeficitLevel = 'Slow' | 'Moderate' | 'Aggressive'
 
 /**
  * Kaloriöverskott/underskott för olika mål
@@ -41,7 +44,7 @@ export interface CalorieGoalParams {
   tdee: number
   goal: CalorieGoal
   bmr?: number // För att sätta minimum
-  deficitLevel?: DeficitLevel // För viktnedgång
+  deficitLevel?: CalcDeficitLevel // För viktnedgång
 }
 
 export interface CalorieRange {
@@ -57,10 +60,10 @@ export interface CalorieRange {
 function calculateWeightLossCalories(
   tdee: number,
   bmr: number = 1200,
-  deficitLevel: DeficitLevel = 'Moderate'
+  deficitLevel: CalcDeficitLevel = 'Moderate'
 ): CalorieRange {
   // Deficitlägen med olika veckoupptempo
-  const deficits: Record<DeficitLevel, { daily: number; weekly: number }> = {
+  const deficits: Record<CalcDeficitLevel, { daily: number; weekly: number }> = {
     Slow: { daily: -300, weekly: -0.3 }, // ~0.3 kg/vecka
     Moderate: { daily: -500, weekly: -0.5 }, // ~0.5 kg/vecka
     Aggressive: { daily: -750, weekly: -0.75 }, // ~0.75 kg/vecka
@@ -153,12 +156,12 @@ export interface MacroParams {
   caloriesMax?: number
   // Optional: use custom macro percentages instead of automatic calculation
   customMacros?: {
-    proteinMinPercent?: number
-    proteinMaxPercent?: number
-    fatMinPercent?: number
-    fatMaxPercent?: number
-    carbMinPercent?: number
-    carbMaxPercent?: number
+    proteinMinPercent: number
+    proteinMaxPercent: number
+    fatMinPercent: number
+    fatMaxPercent: number
+    carbMinPercent: number
+    carbMaxPercent: number
   }
 }
 

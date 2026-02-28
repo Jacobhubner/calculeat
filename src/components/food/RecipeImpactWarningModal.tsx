@@ -74,7 +74,7 @@ export function RecipeImpactWarningModal({
               Avbryt
             </Button>
             <Button
-              variant={isDelete ? 'destructive' : 'default'}
+              variant={isDelete ? 'destructive' : 'primary'}
               onClick={onConfirm}
               disabled={isConfirming}
               className="gap-2"

@@ -4,7 +4,8 @@ import { useAuth } from '@/contexts/AuthContext'
 import { type FoodColor, type FoodType } from '@/lib/calculations/colorDensity'
 
 export type FoodSource = 'manual' | 'livsmedelsverket' | 'usda' | 'user' | 'shared'
-export type FoodTab = 'mina' | 'slv' | 'usda' | 'alla'
+// 'list:{uuid}' används för gemensamma listor, t.ex. 'list:a1b2c3d4-...'
+export type FoodTab = 'mina' | 'slv' | 'alla' | `list:${string}`
 
 export interface PaginatedResult {
   items: FoodItem[]
@@ -75,6 +76,9 @@ export interface FoodItem {
   // Sharing
   shared_by?: string | null // avsändarens visningsnamn, sätts när source='shared'
   data_hash?: string | null // SHA-256 nutritionshash, beräknas av DB-trigger
+
+  // Gemensamma listor
+  shared_list_id?: string | null // satt när item ägs av en gemensam lista (user_id = NULL)
 }
 
 /**
@@ -124,13 +128,13 @@ export interface CreateFoodItemInput {
   reference_amount?: number
   reference_unit?: 'g' | 'ml'
   density_g_per_ml?: number | null
-  ml_per_gram?: number
-  grams_per_piece?: number
-  serving_unit?: string
+  ml_per_gram?: number | null
+  grams_per_piece?: number | null
+  serving_unit?: string | null
   food_type: FoodType
-  notes?: string
+  notes?: string | null
   source?: FoodSource
-  external_id?: string
+  external_id?: string | null
 }
 
 /**
@@ -473,6 +477,6 @@ export function usePaginatedFoodItems(params: {
       } as PaginatedResult
     },
     enabled: !!user,
-    keepPreviousData: true,
+    placeholderData: (prev: PaginatedResult | undefined) => prev,
   })
 }

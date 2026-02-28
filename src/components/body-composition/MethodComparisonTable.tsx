@@ -5,6 +5,7 @@ import {
   getCategoryGradient,
   type MethodComparisonResult,
 } from '@/lib/helpers/bodyCompositionHelpers'
+import type { BodyCompositionMethod, MethodVariation } from '@/lib/calculations/bodyComposition'
 import { ArrowUpDown, Calculator, Save, Info } from 'lucide-react'
 import { useState } from 'react'
 import MethodInfoModal from './MethodInfoModal'
@@ -23,8 +24,8 @@ export default function MethodComparisonTable({
   const [sortBy, setSortBy] = useState<keyof MethodComparisonResult>('bodyFatPercentage')
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
   const [showInfoFor, setShowInfoFor] = useState<{
-    method: string
-    variation?: string
+    method: BodyCompositionMethod | 'siri' | 'brozek' | null
+    variation?: MethodVariation
   } | null>(null)
 
   const handleSort = (field: keyof MethodComparisonResult) => {

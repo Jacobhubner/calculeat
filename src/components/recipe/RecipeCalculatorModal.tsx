@@ -17,6 +17,11 @@ import { useFoodItems } from '@/hooks/useFoodItems'
 import { useFavoriteFoods, useToggleFavorite } from '@/hooks/useFavoriteFoods'
 import { useCreateRecipe, useUpdateRecipe, type Recipe } from '@/hooks/useRecipes'
 import {
+  useCreateSharedListRecipe,
+  useUpdateSharedListRecipe,
+  useMergedFoodItemsForList,
+} from '@/hooks/useSharedLists'
+import {
   calculateRecipeNutrition,
   type RecipeIngredientInput,
 } from '@/lib/calculations/recipeCalculator'
@@ -26,6 +31,7 @@ interface RecipeCalculatorModalProps {
   onOpenChange: (open: boolean) => void
   editRecipe?: Recipe | null
   onSuccess?: () => void
+  sharedListId?: string
 }
 
 function generateId(): string {
@@ -37,6 +43,7 @@ export function RecipeCalculatorModal({
   onOpenChange,
   editRecipe,
   onSuccess,
+  sharedListId,
 }: RecipeCalculatorModalProps) {
   const [name, setName] = useState('')
   const [servings, setServings] = useState<number | ''>(1)
@@ -50,15 +57,22 @@ export function RecipeCalculatorModal({
   const { toggle: toggleFavorite } = useToggleFavorite()
   const createRecipe = useCreateRecipe()
   const updateRecipe = useUpdateRecipe()
+  const createSharedListRecipe = useCreateSharedListRecipe()
+  const updateSharedListRecipe = useUpdateSharedListRecipe()
+
+  // Merge list-items with own/global foods when in a list context
+  const activeListId = editRecipe?.shared_list_id ?? sharedListId ?? null
+  const mergedFoods = useMergedFoodItemsForList(foods ?? [], activeListId)
 
   // Track recipe ID for detecting changes
   const lastInitializedRecipeId = useRef<string | null>(null)
+  // Capture sharedListId at modal-open time to avoid race if parent tab changes while modal is open
+  const capturedSharedListId = useRef<string | null>(null)
 
   // Filter out recipes from available foods
   const availableFoods = useMemo(() => {
-    if (!foods) return []
-    return foods.filter(f => !f.is_recipe)
-  }, [foods])
+    return mergedFoods.filter(f => !f.is_recipe)
+  }, [mergedFoods])
 
   // Reset form function
   const resetForm = useCallback(() => {
@@ -72,11 +86,11 @@ export function RecipeCalculatorModal({
   }, [])
 
   // Initialize form function
-  const initializeForm = useCallback((recipe: Recipe, foodsList: typeof foods) => {
+  const initializeForm = useCallback((recipe: Recipe, foodsList: typeof mergedFoods) => {
     if (!foodsList) return
 
     // Map existing ingredients (filter out orphans where food has been deleted)
-    const mappedIngredients: IngredientData[] = (recipe.ingredients || [])
+    const mappedIngredients = (recipe.ingredients || [])
       .map(
         (ing: {
           id: string
@@ -84,7 +98,7 @@ export function RecipeCalculatorModal({
           amount: number
           unit: string
           food_item?: unknown
-        }) => {
+        }): IngredientData | null => {
           const foodItem = foodsList.find(f => f.id === ing.food_item_id)
           if (!foodItem) return null // Skip orphan ingredients
           return {
@@ -109,24 +123,30 @@ export function RecipeCalculatorModal({
   // Handle modal open/close and initialization
   useEffect(() => {
     if (!open) {
-      // Reset when modal closes
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- Legitimate use: resetting form state when modal closes
-      resetForm()
+      capturedSharedListId.current = null
       return
     }
 
+    // Capture sharedListId at open time so parent tab-changes don't affect submit
+    if (capturedSharedListId.current === null) {
+      capturedSharedListId.current = sharedListId ?? null
+    }
+
     // Modal is open
-    if (editRecipe && foods) {
+    if (editRecipe && mergedFoods.length > 0) {
       // Only initialize if we haven't already initialized this recipe
       if (lastInitializedRecipeId.current !== editRecipe.id) {
-        initializeForm(editRecipe, foods)
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        initializeForm(editRecipe, mergedFoods)
       }
     } else if (!editRecipe && !initialized) {
       // New recipe mode - start with one empty ingredient row
+
       setIngredients([{ id: generateId(), foodItem: null, amount: 0, unit: 'g' }])
+
       setInitialized(true)
     }
-  }, [open, editRecipe, foods, initialized, resetForm, initializeForm])
+  }, [open, editRecipe, foods, mergedFoods, initialized, resetForm, initializeForm, sharedListId])
 
   // Calculate nutrition
   const nutrition = useMemo(() => {
@@ -163,6 +183,7 @@ export function RecipeCalculatorModal({
   }
 
   const handleSubmit = async () => {
+    if (isLoading) return
     // Validate
     if (!name.trim()) {
       setError('Ange ett namn för receptet')
@@ -208,9 +229,18 @@ export function RecipeCalculatorModal({
           : undefined,
       }
 
-      if (editRecipe) {
+      if (editRecipe?.shared_list_id) {
+        await updateSharedListRecipe.mutateAsync({ recipeId: editRecipe.id, fields: recipeData })
+        toast.success(`Receptet "${name.trim()}" har uppdaterats`)
+      } else if (editRecipe) {
         await updateRecipe.mutateAsync({ id: editRecipe.id, ...recipeData })
         toast.success(`Receptet "${name.trim()}" har uppdaterats`)
+      } else if (capturedSharedListId.current) {
+        await createSharedListRecipe.mutateAsync({
+          sharedListId: capturedSharedListId.current,
+          ...recipeData,
+        })
+        toast.success(`Receptet "${name.trim()}" har skapats i listan`)
       } else {
         await createRecipe.mutateAsync(recipeData)
         toast.success(`Receptet "${name.trim()}" har skapats`)
@@ -224,8 +254,13 @@ export function RecipeCalculatorModal({
     }
   }
 
-  const isLoading = createRecipe.isPending || updateRecipe.isPending
+  const isLoading =
+    createRecipe.isPending ||
+    updateRecipe.isPending ||
+    createSharedListRecipe.isPending ||
+    updateSharedListRecipe.isPending
   const isEditing = !!editRecipe
+  const isSharedListRecipe = !!(editRecipe?.shared_list_id || sharedListId)
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -241,6 +276,14 @@ export function RecipeCalculatorModal({
               : 'Skapa ett nytt recept genom att lägga till ingredienser.'}
           </DialogDescription>
         </DialogHeader>
+
+        {isSharedListRecipe && (
+          <div className="bg-blue-50 border border-blue-200 rounded-md p-3 text-sm text-blue-700 mx-3 md:mx-0">
+            {isEditing
+              ? 'Redigerar ett delat recept. Ändringarna syns hos alla listmedlemmar.'
+              : 'Receptet sparas i den delade listan och syns hos alla listmedlemmar.'}
+          </div>
+        )}
 
         <div className="space-y-6 px-3 pb-4 md:px-0 md:pb-0 overflow-x-hidden">
           <div className="space-y-6">
@@ -265,7 +308,7 @@ export function RecipeCalculatorModal({
                     value={servings}
                     onChange={e => {
                       const val = e.target.value
-                      setServings(val === '' ? '' : Math.max(1, parseInt(val)))
+                      setServings(val === '' ? '' : Math.max(1, parseInt(val) || 1))
                     }}
                     min={1}
                   />

@@ -92,7 +92,7 @@ export default function HistoryPage() {
       {/* View Mode Toggle */}
       <div className="flex gap-2 mb-6">
         <Button
-          variant={viewMode === 'list' ? 'default' : 'outline'}
+          variant={viewMode === 'list' ? 'primary' : 'outline'}
           onClick={() => setViewMode('list')}
           className="gap-2"
         >
@@ -100,7 +100,7 @@ export default function HistoryPage() {
           Lista
         </Button>
         <Button
-          variant={viewMode === 'calendar' ? 'default' : 'outline'}
+          variant={viewMode === 'calendar' ? 'primary' : 'outline'}
           onClick={() => setViewMode('calendar')}
           className="gap-2"
         >

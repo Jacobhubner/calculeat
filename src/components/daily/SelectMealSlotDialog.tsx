@@ -147,7 +147,7 @@ export default function SelectMealSlotDialog({
                             </span>
                           )}
                         </h3>
-                        {slot.calories > 0 && (
+                        {(slot.calories ?? 0) > 0 && (
                           <p className="text-sm text-neutral-600 mt-0.5">{slot.calories} kcal</p>
                         )}
                       </div>

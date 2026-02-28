@@ -44,6 +44,10 @@ export default function QuickProfileInput({
           toast.error('Ogiltigt nummer')
           return
         }
+        if (convertedValue <= 0) {
+          toast.error('Värdet måste vara större än 0')
+          return
+        }
       }
 
       await onSave({ [field]: convertedValue })

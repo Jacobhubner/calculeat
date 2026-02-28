@@ -44,6 +44,7 @@ export interface TapeMeasurements {
   waist?: number // cm - C55 Midja (waist)
   hip?: number // cm - C57 Höft (hip)
   wrist?: number // cm - C61 Handled (wrist)
+  ankle?: number // cm - Vrist (ankle)
   forearm?: number // cm - C59 Underarm (forearm)
   thighCirc?: number // cm - C63 Lår omkrets (thigh circumference)
   calfCirc?: number // cm - C65 Vad omkrets (calf circumference)
@@ -401,6 +402,7 @@ export function durninWomersley(params: BodyCompositionParams): number | null {
 
   const { bicep, tricep, subscapular, suprailiac } = caliperMeasurements
   const sum = bicep + tricep + subscapular + suprailiac
+  if (sum <= 0) return null
   const logSum = Math.log10(sum)
 
   let bodyDensity: number
@@ -548,6 +550,7 @@ export function usNavy(params: BodyCompositionParams): number | null {
 
   if (gender === 'male') {
     // Male: 86.010 × log10(abdomen - neck) - 70.041 × log10(height) + 36.76
+    if (waistInches <= neckInches) return null
     const bodyFat =
       86.01 * Math.log10(waistInches - neckInches) - 70.041 * Math.log10(heightInches) + 36.76
     return bodyFat
@@ -555,6 +558,7 @@ export function usNavy(params: BodyCompositionParams): number | null {
     // Female: 163.205 × log10(waist + hip - neck) - 97.684 × log10(height) - 78.387
     if (!hip) return null
     const hipInches = hip / 2.54
+    if (waistInches + hipInches <= neckInches) return null
     const bodyFat =
       163.205 * Math.log10(waistInches + hipInches - neckInches) -
       97.684 * Math.log10(heightInches) -
