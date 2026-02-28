@@ -867,7 +867,7 @@ export function AddFoodItemModal({
                   </h3>
 
                   <div className="grid grid-cols-2 gap-4">
-                    <div>
+                    <div className="col-span-2">
                       <Label htmlFor="calories">Kalorier (kcal) *</Label>
                       <Input
                         id="calories"
@@ -897,7 +897,7 @@ export function AddFoodItemModal({
                       )}
                     </div>
 
-                    <div className="col-start-2">
+                    <div>
                       <Label htmlFor="saturated_fat_g" className="text-neutral-500">
                         varav mättat fett (g)
                       </Label>
