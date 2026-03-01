@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import type { FoodItem } from '@/hooks/useFoodItems'
 import { SOURCE_BADGES, getListItemBadgeConfig } from '@/lib/constants/sourceBadges'
 
-type SourceFilter = 'alla' | 'mina' | 'slv' | 'usda' | `list:${string}`
+type SourceFilter = 'alla' | 'mina' | 'slv' | `list:${string}`
 
 interface SharedListOption {
   id: string
@@ -21,7 +21,6 @@ function matchesSourceFilter(food: FoodItem, filter: SourceFilter): boolean {
       !food.shared_list_id
     )
   if (filter === 'slv') return food.source === 'livsmedelsverket'
-  if (filter === 'usda') return food.source === 'usda'
   if (filter.startsWith('list:')) {
     const listId = filter.slice(5)
     return food.shared_list_id === listId
@@ -257,7 +256,6 @@ export function IngredientRow({
                     { key: 'alla' as SourceFilter, label: 'Alla' },
                     { key: 'mina' as SourceFilter, label: 'Mina' },
                     { key: 'slv' as SourceFilter, label: 'SLV' },
-                    { key: 'usda' as SourceFilter, label: 'USDA' },
                     ...sharedLists.map(l => ({
                       key: `list:${l.id}` as SourceFilter,
                       label: l.name.length > 14 ? l.name.slice(0, 12) + '…' : l.name,
