@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
-import { Trash2, Search, Heart } from 'lucide-react'
+import { Trash2, Search } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -45,7 +45,6 @@ interface IngredientRowProps {
   sharedLists?: SharedListOption[]
   onChange: (updated: IngredientData) => void
   onRemove: () => void
-  onToggleFavorite?: (foodId: string) => void
 }
 
 export function IngredientRow({
@@ -55,7 +54,6 @@ export function IngredientRow({
   sharedLists = [],
   onChange,
   onRemove,
-  onToggleFavorite,
 }: IngredientRowProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [isSearchOpen, setIsSearchOpen] = useState(false)
@@ -288,7 +286,6 @@ export function IngredientRow({
                   <>
                     <div ref={listRef} role="listbox">
                       {filteredFoods.map((food, index) => {
-                        const isFavorite = favorites?.has(food.id) || false
                         const isHighlighted = index === highlightedIndex
                         const colorBadge = food.energy_density_color
                         const listForFood = food.shared_list_id
@@ -308,25 +305,6 @@ export function IngredientRow({
                             onClick={() => handleFoodSelect(food)}
                             onMouseEnter={() => setHighlightedIndex(index)}
                           >
-                            {onToggleFavorite && (
-                              <button
-                                type="button"
-                                onClick={e => {
-                                  e.stopPropagation()
-                                  onToggleFavorite(food.id)
-                                }}
-                                className="flex-shrink-0 mt-0.5"
-                                aria-label={isFavorite ? 'Ta bort favorit' : 'Lägg till favorit'}
-                              >
-                                <Heart
-                                  className={`h-4 w-4 ${
-                                    isFavorite
-                                      ? 'fill-red-500 text-red-500'
-                                      : 'text-neutral-300 hover:text-red-400'
-                                  }`}
-                                />
-                              </button>
-                            )}
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-1.5 min-w-0">
                                 <span className="font-medium text-sm text-neutral-900 truncate">
