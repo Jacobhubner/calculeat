@@ -55,7 +55,10 @@ export function CreateSharedListDialog({
     })
 
     if (result?.success) {
-      toast.success(`Lista "${listName.trim()}" skapad`)
+      const msg = selectedFriend
+        ? `Lista "${listName.trim()}" skapad! Inbjudan skickad till ${selectedFriend.friend_name}.`
+        : `Lista "${listName.trim()}" skapad`
+      toast.success(msg)
       onCreated?.(result.shared_list_id!)
       handleClose()
     } else {
@@ -94,7 +97,7 @@ export function CreateSharedListDialog({
           {friends.length > 0 && (
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-muted-foreground">
-                Bjud in vän direkt <span className="font-normal">(valfritt)</span>
+                Bjud in vän <span className="font-normal">(valfritt)</span>
               </label>
               <Input
                 placeholder="Sök bland vänner..."

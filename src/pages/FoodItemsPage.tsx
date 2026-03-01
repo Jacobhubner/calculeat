@@ -31,7 +31,7 @@ import {
   type FoodItem,
   type FoodTab,
 } from '@/hooks/useFoodItems'
-import { SOURCE_BADGES } from '@/lib/constants/sourceBadges'
+import { SOURCE_BADGES, getListItemBadgeConfig } from '@/lib/constants/sourceBadges'
 import { useRecipeImpact, type RecipeImpact } from '@/hooks/useRecipeImpact'
 import { RecipeImpactWarningModal } from '@/components/food/RecipeImpactWarningModal'
 import {
@@ -280,6 +280,12 @@ export default function FoodItemsPage() {
     colorFilter: colorFilter || undefined,
     isRecipeFilter: isRecipeFilter || undefined,
   })
+
+  const activeListName = useMemo(() => {
+    if (!activeTab.startsWith('list:')) return null
+    const listId = activeTab.slice(5)
+    return sharedLists.find(l => l.id === listId)?.name ?? null
+  }, [activeTab, sharedLists])
 
   const items = useMemo(() => data?.items ?? [], [data])
   const totalCount = data?.totalCount ?? 0
@@ -816,12 +822,20 @@ export default function FoodItemsPage() {
                           {item.name}
                         </span>
                         {item.is_recipe && <span className="text-xs shrink-0">👨‍🍳</span>}
-                        <Badge
-                          variant="outline"
-                          className={`text-[8px] px-1 py-0 h-4 shrink-0 ${SOURCE_BADGES[item.source].className}`}
-                        >
-                          {SOURCE_BADGES[item.source].label}
-                        </Badge>
+                        {(() => {
+                          const badge =
+                            activeListName && item.shared_list_id
+                              ? getListItemBadgeConfig(activeListName)
+                              : SOURCE_BADGES[item.source]
+                          return (
+                            <Badge
+                              variant="outline"
+                              className={`text-[8px] px-1 py-0 h-4 shrink-0 ${badge.className}`}
+                            >
+                              {badge.label}
+                            </Badge>
+                          )
+                        })()}
                       </div>
                       {item.energy_density_color && (
                         <div
@@ -1071,12 +1085,20 @@ export default function FoodItemsPage() {
                                 👨‍🍳
                               </span>
                             )}
-                            <Badge
-                              variant="outline"
-                              className={`text-[10px] px-1.5 py-0 h-5 ${SOURCE_BADGES[item.source].className}`}
-                            >
-                              {SOURCE_BADGES[item.source].label}
-                            </Badge>
+                            {(() => {
+                              const badge =
+                                activeListName && item.shared_list_id
+                                  ? getListItemBadgeConfig(activeListName)
+                                  : SOURCE_BADGES[item.source]
+                              return (
+                                <Badge
+                                  variant="outline"
+                                  className={`text-[10px] px-1.5 py-0 h-5 ${badge.className}`}
+                                >
+                                  {badge.label}
+                                </Badge>
+                              )
+                            })()}
                           </div>
                         </td>
                         <td className="p-4 text-neutral-600 text-sm">
