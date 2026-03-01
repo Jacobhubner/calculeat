@@ -8,35 +8,18 @@ import EmptyState from '@/components/EmptyState'
 import { useRecipes, useDeleteRecipe, type Recipe } from '@/hooks/useRecipes'
 import { RecipeCard } from '@/components/recipe/RecipeCard'
 import { RecipeCalculatorModal } from '@/components/recipe/RecipeCalculatorModal'
-import {
-  useSharedLists,
-  useSharedListRecipes,
-  useSharedListRealtime,
-  useDeleteSharedListRecipe,
-} from '@/hooks/useSharedLists'
-import { SharedListMembersBar } from '@/components/shared-lists/SharedListMembersBar'
 
 export default function RecipesPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingRecipe, setEditingRecipe] = useState<Recipe | null>(null)
-  const [activeListId, setActiveListId] = useState<string | null>(null)
 
   const { data: recipes, isLoading, isError } = useRecipes()
   const deleteRecipe = useDeleteRecipe()
-  const deleteSharedListRecipe = useDeleteSharedListRecipe()
-  const { data: sharedLists = [], isLoading: sharedListsLoading } = useSharedLists()
-  const activeList = activeListId ? (sharedLists.find(l => l.id === activeListId) ?? null) : null
-  const { data: listRecipes, isLoading: isListLoading } = useSharedListRecipes(activeListId)
 
-  // Realtime-prenumeration för aktiv lista
-  useSharedListRealtime(activeListId)
-
-  // Filter recipes based on search
   const filteredRecipes = useMemo(() => {
-    const source = activeListId ? (listRecipes as Recipe[] | undefined) : recipes
-    return source?.filter(recipe => recipe.name.toLowerCase().includes(searchQuery.toLowerCase()))
-  }, [activeListId, listRecipes, recipes, searchQuery])
+    return recipes?.filter(recipe => recipe.name.toLowerCase().includes(searchQuery.toLowerCase()))
+  }, [recipes, searchQuery])
 
   const handleNewRecipe = () => {
     setEditingRecipe(null)
@@ -48,38 +31,9 @@ export default function RecipesPage() {
     setIsModalOpen(true)
   }
 
-  const handleTabChange = (listId: string | null) => {
-    setActiveListId(listId)
-    setSearchQuery('')
-  }
-
-  // Om activeListId pekar på en lista som inte längre finns (t.ex. efter leave),
-  // navigera automatiskt tillbaka till 'mina recept'.
-  const listExists =
-    !activeListId || sharedListsLoading || sharedLists.some(l => l.id === activeListId)
-  if (!listExists) setActiveListId(null)
-
   const handleDeleteRecipe = async (recipe: Recipe) => {
-    // List-owned recipe: direct delete via RPC
-    if (recipe.shared_list_id) {
-      if (!confirm(`Ta bort receptet "${recipe.name}" från listan?`)) return
-      try {
-        await deleteSharedListRecipe.mutateAsync({
-          recipeId: recipe.id,
-          listId: recipe.shared_list_id!,
-        })
-      } catch (error) {
-        console.error('Failed to delete list recipe:', error)
-        alert('Kunde inte ta bort receptet från listan. Försök igen.')
-      }
-      return
-    }
-
     const message = `Vill du ta bort receptet "${recipe.name}"?\n\nOBS: Detta kommer att radera receptet både härifrån OCH från livsmedelslistan där det kan användas för loggning.`
-
-    if (!confirm(message)) {
-      return
-    }
+    if (!confirm(message)) return
 
     try {
       await deleteRecipe.mutateAsync(recipe.id)
@@ -104,9 +58,8 @@ export default function RecipesPage() {
             Recept
           </h1>
           <p className="text-sm md:text-base text-neutral-600">
-            {activeListId ? 'Listans recept' : 'Skapa och hantera dina egna recept'}
-            {!activeListId &&
-              recipes &&
+            Skapa och hantera dina egna recept
+            {recipes &&
               recipes.length > 0 &&
               ` (${filteredRecipes?.length || 0} av ${recipes.length})`}
           </p>
@@ -117,43 +70,6 @@ export default function RecipesPage() {
           <span className="sm:hidden">Nytt</span>
         </Button>
       </div>
-
-      {/* Tabs — Mina recept + en per delad lista */}
-      {sharedLists.length > 0 && (
-        <>
-          <div className="flex gap-1 mb-0 border-b border-neutral-200 overflow-x-auto">
-            <button
-              onClick={() => handleTabChange(null)}
-              className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
-                !activeListId
-                  ? 'border-primary-500 text-primary-600'
-                  : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'
-              }`}
-            >
-              Mina recept
-            </button>
-            {sharedLists.map(list => (
-              <button
-                key={list.id}
-                onClick={() => handleTabChange(list.id)}
-                className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
-                  activeListId === list.id
-                    ? 'border-primary-500 text-primary-600'
-                    : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'
-                }`}
-              >
-                {list.name}
-              </button>
-            ))}
-          </div>
-          {activeList && (
-            <div className="mb-4">
-              <SharedListMembersBar list={activeList} onLeft={() => handleTabChange(null)} />
-            </div>
-          )}
-          {!activeList && <div className="mb-4" />}
-        </>
-      )}
 
       {/* Search */}
       <Card className="mb-6">
@@ -171,43 +87,30 @@ export default function RecipesPage() {
       </Card>
 
       {/* Error state */}
-      {!activeListId && isError ? (
+      {isError ? (
         <div className="text-center py-12">
           <p className="text-red-600">Kunde inte ladda recept. Försök igen senare.</p>
         </div>
-      ) : /* Loading state */
-      (activeListId ? isListLoading : isLoading) ? (
+      ) : isLoading ? (
         <div className="text-center py-12">
           <p className="text-neutral-600">Laddar recept...</p>
         </div>
-      ) : /* Empty state */
-      !filteredRecipes || filteredRecipes.length === 0 ? (
+      ) : !filteredRecipes || filteredRecipes.length === 0 ? (
         <EmptyState
           icon={ChefHat}
           title={searchQuery ? 'Inga recept hittades' : 'Inga recept ännu'}
           description={
             searchQuery
               ? 'Prova att ändra din sökning.'
-              : activeListId
-                ? 'Inga recept i den här listan ännu.'
-                : 'Skapa ditt första recept genom att kombinera matvaror till måltider.'
+              : 'Skapa ditt första recept genom att kombinera matvaror till måltider.'
           }
           action={
             searchQuery
-              ? {
-                  label: 'Rensa sökning',
-                  onClick: () => setSearchQuery(''),
-                }
-              : !activeListId
-                ? {
-                    label: 'Skapa recept',
-                    onClick: handleNewRecipe,
-                  }
-                : undefined
+              ? { label: 'Rensa sökning', onClick: () => setSearchQuery('') }
+              : { label: 'Skapa recept', onClick: handleNewRecipe }
           }
         />
       ) : (
-        /* Recipes grid */
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {filteredRecipes.map(recipe => (
             <RecipeCard
@@ -273,10 +176,7 @@ export default function RecipesPage() {
         open={isModalOpen}
         onOpenChange={handleModalClose}
         editRecipe={editingRecipe}
-        sharedListId={activeListId ?? undefined}
-        onSuccess={() => {
-          // Modal handles closing itself
-        }}
+        onSuccess={() => {}}
       />
     </DashboardLayout>
   )
