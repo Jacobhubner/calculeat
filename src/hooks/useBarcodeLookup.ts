@@ -2,173 +2,64 @@ import { useQuery } from '@tanstack/react-query'
 import type { ScanResult } from '@/lib/types'
 import { supabase } from '@/lib/supabase'
 
-const OFF_API_BASE = 'https://world.openfoodfacts.org/api/v2/product'
-const OFF_FIELDS =
-  'product_name,product_name_sv,product_name_en,nutriments,nutrition_data_per,categories_tags'
-
-interface OFFResponse {
-  status: number
-  product?: {
-    product_name?: string
-    product_name_sv?: string
-    product_name_en?: string
-    nutriments?: Record<string, number | undefined>
-    nutrition_data_per?: string
-    categories_tags?: string[]
-  }
-}
-
 type LookupError = {
-  type: 'off_not_found' | 'off_incomplete' | 'validation_failed'
+  type: 'off_not_found' | 'off_incomplete' | 'validation_failed' | 'rate_limited' | 'fetch_failed'
   message: string
 }
 
-function resolveName(product: OFFResponse['product']): string | null {
-  if (!product) return null
-  const raw = product.product_name_sv || product.product_name || product.product_name_en || null
-  if (!raw) return null
-  const trimmed = raw.trim()
-  return trimmed.length > 0 ? trimmed : null
-}
-
-function resolveCalories(nutriments: Record<string, number | undefined>): number | null {
-  const kcal = nutriments['energy-kcal_100g']
-  if (typeof kcal === 'number') return kcal
-
-  const kj = nutriments['energy_100g']
-  if (typeof kj === 'number') return Math.round((kj / 4.184) * 10) / 10
-
-  return null
-}
-
-function validateRange(value: number | null, min: number, max: number): boolean {
-  if (value === null) return true
-  return value >= min && value <= max
-}
-
-async function logScan(success: boolean, errorType: string | null = null) {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-  if (!user) return
-
-  await supabase.from('scan_usage').insert({
-    user_id: user.id,
-    scan_type: 'barcode',
-    success,
-    error_type: errorType,
-  })
+const ERROR_MESSAGES: Record<string, string> = {
+  off_not_found: 'Produkten hittades inte',
+  off_incomplete: 'Produkten saknar näringsvärden',
+  validation_failed: 'Orimliga näringsvärden — produkten avvisades',
+  rate_limited: 'För många skanningar — försök igen om en stund',
+  fetch_failed: 'Kunde inte hämta produktdata',
+  invalid_barcode_format: 'Ogiltigt streckkods-format',
+  unauthorized: 'Du måste vara inloggad',
 }
 
 async function fetchBarcode(barcode: string): Promise<ScanResult> {
-  const response = await fetch(`${OFF_API_BASE}/${barcode}.json?fields=${OFF_FIELDS}`)
+  const { data, error } = await supabase.rpc('get_or_fetch_barcode', {
+    p_barcode: barcode,
+  })
 
-  if (!response.ok) {
-    await logScan(false, 'off_not_found')
-    throw { type: 'off_not_found', message: 'Produkten hittades inte' } as LookupError
-  }
-
-  const data: OFFResponse = await response.json()
-
-  if (data.status !== 1 || !data.product) {
-    await logScan(false, 'off_not_found')
-    throw { type: 'off_not_found', message: 'Produkten hittades inte' } as LookupError
-  }
-
-  const nutriments = data.product.nutriments
-  if (!nutriments) {
-    await logScan(false, 'off_incomplete')
+  if (error) {
     throw {
-      type: 'off_incomplete',
-      message: 'Produkten saknar näringsvärden',
+      type: 'fetch_failed',
+      message: ERROR_MESSAGES['fetch_failed'],
     } as LookupError
   }
 
-  const calories = resolveCalories(nutriments)
-  if (calories === null) {
-    await logScan(false, 'off_incomplete')
+  const result = data as { error?: string; source?: string; data?: Record<string, unknown> }
+
+  if (result?.error) {
+    const errorType = result.error as LookupError['type']
     throw {
-      type: 'off_incomplete',
-      message: 'Produkten saknar energivärde per 100g',
+      type: errorType,
+      message: ERROR_MESSAGES[errorType] ?? ERROR_MESSAGES['fetch_failed'],
     } as LookupError
   }
 
-  const protein_g =
-    typeof nutriments['proteins_100g'] === 'number' ? nutriments['proteins_100g'] : null
-  const carb_g =
-    typeof nutriments['carbohydrates_100g'] === 'number' ? nutriments['carbohydrates_100g'] : null
-  const fat_g = typeof nutriments['fat_100g'] === 'number' ? nutriments['fat_100g'] : null
-  const saturated_fat_g =
-    typeof nutriments['saturated-fat_100g'] === 'number' ? nutriments['saturated-fat_100g'] : null
-  const sugars_g = typeof nutriments['sugars_100g'] === 'number' ? nutriments['sugars_100g'] : null
-  const salt_g = typeof nutriments['salt_100g'] === 'number' ? nutriments['salt_100g'] : null
-
-  // Numerisk validering — samma som Gemini-sidan
-  if (!validateRange(calories, 0, 1000)) {
-    await logScan(false, 'validation_failed')
+  if (!result?.data) {
     throw {
-      type: 'validation_failed',
-      message: 'Orimligt energivärde — produkten avvisades',
-    } as LookupError
-  }
-  if (
-    !validateRange(protein_g, 0, 100) ||
-    !validateRange(carb_g, 0, 100) ||
-    !validateRange(fat_g, 0, 100)
-  ) {
-    await logScan(false, 'validation_failed')
-    throw {
-      type: 'validation_failed',
-      message: 'Orimliga näringsvärden — produkten avvisades',
+      type: 'fetch_failed',
+      message: ERROR_MESSAGES['fetch_failed'],
     } as LookupError
   }
 
-  // Validera valfria näringsvärden — nullifiera om utanför rimliga gränser
-  const validatedSaturatedFat =
-    saturated_fat_g !== null && validateRange(saturated_fat_g, 0, 100) ? saturated_fat_g : null
-  const validatedSugars = sugars_g !== null && validateRange(sugars_g, 0, 100) ? sugars_g : null
-  const validatedSalt = salt_g !== null && validateRange(salt_g, 0, 50) ? salt_g : null
-
-  const name = resolveName(data.product)
-
-  // Determine unit: check if nutrition data is per 100ml
-  const dataPer = (data.product.nutrition_data_per || '').toLowerCase()
-  const isPerMl = dataPer.includes('100ml') || dataPer.includes('100 ml')
-  const unit = isPerMl ? 'ml' : 'g'
-
-  // Determine food type from categories
-  const categories = (data.product.categories_tags || []).map(c => c.toLowerCase())
-  const isBeverage = categories.some(
-    c =>
-      c.includes('beverage') ||
-      c.includes('drink') ||
-      c.includes('juice') ||
-      c.includes('milk') ||
-      c.includes('dryck')
-  )
-  const isSoup = categories.some(
-    c => c.includes('soup') || c.includes('soppa') || c.includes('broth')
-  )
-  const foodType: 'Solid' | 'Liquid' | 'Soup' = isSoup
-    ? 'Soup'
-    : isBeverage || isPerMl
-      ? 'Liquid'
-      : 'Solid'
-
-  await logScan(true)
+  const d = result.data
 
   return {
-    name,
-    calories,
-    protein_g,
-    carb_g,
-    fat_g,
-    saturated_fat_g: validatedSaturatedFat,
-    sugars_g: validatedSugars,
-    salt_g: validatedSalt,
+    name: (d.name as string | null) ?? null,
+    calories: d.calories as number,
+    protein_g: (d.protein_g as number | null) ?? null,
+    carb_g: (d.carb_g as number | null) ?? null,
+    fat_g: (d.fat_g as number | null) ?? null,
+    saturated_fat_g: (d.saturated_fat_g as number | null) ?? null,
+    sugars_g: (d.sugars_g as number | null) ?? null,
+    salt_g: (d.salt_g as number | null) ?? null,
     default_amount: 100,
-    default_unit: unit,
-    food_type: foodType,
+    default_unit: (d.default_unit as 'g' | 'ml') ?? 'g',
+    food_type: (d.food_type as 'Solid' | 'Liquid' | 'Soup') ?? 'Solid',
   }
 }
 
