@@ -24,12 +24,16 @@ export interface InputProps
     VariantProps<typeof inputVariants> {}
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, variant, ...props }, ref) => {
+  ({ className, type, variant, onFocus, ...props }, ref) => {
     return (
       <input
         type={type}
         className={cn(inputVariants({ variant }), className)}
         ref={ref}
+        onFocus={e => {
+          if (type === 'number') e.target.select()
+          onFocus?.(e)
+        }}
         {...props}
       />
     )
