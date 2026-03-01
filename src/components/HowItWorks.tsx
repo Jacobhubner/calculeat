@@ -1,40 +1,40 @@
-import { Calculator, Utensils, Target, TrendingUp } from 'lucide-react'
+import { Scan, ChefHat, Share2, TrendingUp } from 'lucide-react'
 import { ProcessStep } from './ProcessStep'
 
 export function HowItWorks() {
   const steps = [
     {
       step: 1,
-      title: 'Beräkna ditt behov',
+      title: 'Scanna eller sök efter livsmedel',
       description:
-        'Använd vår smarta kalkylator för att få reda på ditt BMR (basalmetabolism) och TDEE (totalt dagligt energibehov). Baserat på vetenskapliga formler som Mifflin-St Jeor.',
-      iconName: 'Kalkylator-ikon',
-      iconFilename: 'step-1-calculator.svg',
-      Icon: Calculator,
+        'Håll kameran mot streckkoden i affären eller sök i vår databas med tusentals livsmedel. Näringsvärdet hämtas direkt — du loggar det på ett klick.',
+      iconName: 'Scan-ikon',
+      iconFilename: 'step-1-scan.svg',
+      Icon: Scan,
     },
     {
       step: 2,
-      title: 'Sätt upp dina mål',
+      title: 'Bygg recept och logga måltider',
       description:
-        'Definiera ditt viktmål och få personaliserade kalori- och makrorekommendationer. Välj mellan viktminskning, viktökning eller underhåll med flexibla makrofördelningar.',
-      iconName: 'Mål-ikon',
-      iconFilename: 'step-3-target.svg',
-      Icon: Target,
+        'Skapa egna recept och följ kalorier, protein, fett och kolhydrater i realtid medan du lägger till ingredienser. Logga hela receptet som en portion.',
+      iconName: 'Recept-ikon',
+      iconFilename: 'step-2-recipe.svg',
+      Icon: ChefHat,
     },
     {
       step: 3,
-      title: 'Logga dina måltider',
+      title: 'Dela listor och recept med andra',
       description:
-        'Registrera enkelt vad du äter med vår omfattande matdatabas. Få direkt feedback på kalorier, protein, kolhydrater och fett. Spara dina favoritmåltider för snabb loggning.',
-      iconName: 'Mat-ikon',
-      iconFilename: 'step-2-food.svg',
-      Icon: Utensils,
+        'Bjud in familj, en partner eller en träningskompis till en gemensam lista. Alla kan lägga till och använda livsmedel och recept från listan.',
+      iconName: 'Dela-ikon',
+      iconFilename: 'step-3-share.svg',
+      Icon: Share2,
     },
     {
       step: 4,
-      title: 'Följ din progress',
+      title: 'Följ din progress och justera',
       description:
-        'Se din utveckling över tid med detaljerade grafer och statistik. Få insikter om dina matvanor och justera din strategi baserat på resultat.',
+        'Grafer och statistik visar vad du faktiskt äter vecka för vecka. Jämför mot ditt kalorimål och din kroppssammansättning — och justera när det behövs.',
       iconName: 'Progress-ikon',
       iconFilename: 'step-4-progress.svg',
       Icon: TrendingUp,
@@ -50,7 +50,7 @@ export function HowItWorks() {
             Så fungerar det
           </h2>
           <p className="text-lg md:text-xl text-neutral-600">
-            Fyra enkla steg till bättre hälsa och kontroll över din kost
+            Från affärshyllan till tallriken — och allt däremellan.
           </p>
         </div>
 

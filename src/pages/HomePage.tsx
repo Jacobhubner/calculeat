@@ -6,7 +6,7 @@ import SmartCalculator from '@/components/SmartCalculator'
 import { HeroSection } from '@/components/HeroSection'
 import { HowItWorks } from '@/components/HowItWorks'
 import { Button } from '@/components/ui/button'
-import { Apple, Calculator, Target, TrendingUp, BookOpen, Shield } from 'lucide-react'
+import { Scan, Share2, ChefHat, Scale, Target } from 'lucide-react'
 
 export default function HomePage() {
   const { user } = useAuth()
@@ -16,51 +16,6 @@ export default function HomePage() {
     return <Navigate to="/app/today" replace />
   }
 
-  const features = [
-    {
-      icon: Calculator,
-      title: 'Vet exakt hur mycket du ska äta',
-      description:
-        'Välj bland tio BMR-formler och sex aktivitetsnivåer. Kalorimålet är ditt — inte ett befolkningsgenomsnitt.',
-      accentColor: 'primary' as const,
-    },
-    {
-      icon: Apple,
-      title: 'Sluta gissa portionsstorlekarna',
-      description:
-        'Sök i en bred livsmedelsdatabas och logga måltider på sekunder. Felen ackumuleras inte längre.',
-      accentColor: 'accent' as const,
-    },
-    {
-      icon: Target,
-      title: 'Mål med en faktisk plan bakom sig',
-      description:
-        'Ange din ambition — CalculEat räknar ut kalorimål, makrofördelning och realistisk tidslinje.',
-      accentColor: 'primary' as const,
-    },
-    {
-      icon: TrendingUp,
-      title: 'Se om strategin faktiskt fungerar',
-      description:
-        'Trender vecka för vecka visar vad du faktiskt äter — inte vad du trodde du åt. Justera på data.',
-      accentColor: 'accent' as const,
-    },
-    {
-      icon: BookOpen,
-      title: 'Laga mat du redan gillar',
-      description:
-        'Skapa egna recept och få näringsvärdet automatiskt. Hållbara vanor kräver inte hälsofrikostmat.',
-      accentColor: 'primary' as const,
-    },
-    {
-      icon: Shield,
-      title: 'Ditt data är ditt',
-      description:
-        'Ingen reklam, ingen försäljning till tredje part. Exportera allt du loggat när som helst.',
-      accentColor: 'accent' as const,
-    },
-  ]
-
   return (
     <div className="min-h-screen flex flex-col">
       <SiteHeader />
@@ -69,8 +24,100 @@ export default function HomePage() {
         {/* Hero Section */}
         <HeroSection />
 
-        {/* Calculator Section - directly after hero for product-led conversion */}
-        <section id="calculator" className="py-20 md:py-28 bg-neutral-50">
+        {/* Feature Showcase Section — 4 stora kort */}
+        <section id="features" className="py-16 md:py-20 bg-white border-t border-neutral-100">
+          <div className="container mx-auto px-4">
+            <div className="text-center max-w-2xl mx-auto mb-12">
+              <h2 className="text-3xl md:text-4xl font-semibold text-neutral-900 mb-3">
+                Funktioner som faktiskt används
+              </h2>
+              <p className="text-lg text-neutral-600">
+                Inte ett verktyg du öppnar en gång — ett som följer med i köket, mataffären och på
+                gymmet.
+              </p>
+            </div>
+
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+              <div className="rounded-2xl border border-neutral-200 p-6 flex gap-5 items-start hover:shadow-md transition-shadow">
+                <div className="flex-shrink-0 rounded-xl p-3 bg-primary-100 text-primary-600">
+                  <Scan className="h-7 w-7" strokeWidth={2} />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-neutral-900 text-lg mb-1">
+                    Skanna direkt i affären
+                  </h3>
+                  <p className="text-sm text-neutral-600 leading-relaxed">
+                    Håll upp kameran mot streckkoden på förpackningen. CalculEat hämtar
+                    näringsvärden och lägger till livsmedlet på sekunder.
+                  </p>
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-neutral-200 p-6 flex gap-5 items-start hover:shadow-md transition-shadow">
+                <div className="flex-shrink-0 rounded-xl p-3 bg-accent-100 text-accent-600">
+                  <ChefHat className="h-7 w-7" strokeWidth={2} />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-neutral-900 text-lg mb-1">
+                    Bygg recept och se näringsvärdet live
+                  </h3>
+                  <p className="text-sm text-neutral-600 leading-relaxed">
+                    Lägg till ingredienser ett i taget och följ kalorier, protein, fett och
+                    kolhydrater i realtid. Spara receptet och logga det direkt.
+                  </p>
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-neutral-200 p-6 flex gap-5 items-start hover:shadow-md transition-shadow">
+                <div className="flex-shrink-0 rounded-xl p-3 bg-primary-100 text-primary-600">
+                  <Share2 className="h-7 w-7" strokeWidth={2} />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-neutral-900 text-lg mb-1">
+                    Dela listor och recept med andra
+                  </h3>
+                  <p className="text-sm text-neutral-600 leading-relaxed">
+                    Skapa gemensamma livsmedelslistor med familj eller en partner. Alla i gruppen
+                    kan lägga till, se och logga från samma lista.
+                  </p>
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-neutral-200 p-6 flex gap-5 items-start hover:shadow-md transition-shadow">
+                <div className="flex-shrink-0 rounded-xl p-3 bg-accent-100 text-accent-600">
+                  <Scale className="h-7 w-7" strokeWidth={2} />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-neutral-900 text-lg mb-1">
+                    Beräkna din kroppssammansättning
+                  </h3>
+                  <p className="text-sm text-neutral-600 leading-relaxed">
+                    Få en uppskattning av muskelmassa, fettmassa och BMI baserat på flera
+                    vetenskapliga metoder. Följ förändringen över tid.
+                  </p>
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-neutral-200 p-6 flex gap-5 items-start hover:shadow-md transition-shadow sm:col-span-2 lg:col-span-1">
+                <div className="flex-shrink-0 rounded-xl p-3 bg-primary-100 text-primary-600">
+                  <Target className="h-7 w-7" strokeWidth={2} />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-neutral-900 text-lg mb-1">
+                    Sätt mål och få en konkret plan
+                  </h3>
+                  <p className="text-sm text-neutral-600 leading-relaxed">
+                    Ange ditt viktmål — CalculEat räknar ut kalorimål, makrofördelning och en
+                    realistisk tidslinje. Inte ett genomsnitt, utan din plan.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Calculator Section */}
+        <section id="calculator" className="py-20 md:py-28 bg-white">
           <div className="container mx-auto px-4">
             <div className="text-center max-w-3xl mx-auto mb-12">
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold text-neutral-900 mb-4">
@@ -83,45 +130,6 @@ export default function HomePage() {
 
             <div className="max-w-3xl mx-auto">
               <SmartCalculator />
-            </div>
-          </div>
-        </section>
-
-        {/* Features Summary Section */}
-        <section id="features" className="py-16 md:py-20 bg-white">
-          <div className="container mx-auto px-4">
-            <div className="text-center max-w-2xl mx-auto mb-12">
-              <h2 className="text-3xl md:text-4xl font-semibold text-neutral-900 mb-3">
-                Allt du behöver, ingenting du inte behöver
-              </h2>
-              <p className="text-lg text-neutral-600">
-                CalculEat kombinerar kraftfulla verktyg med en enkel användarupplevelse.
-              </p>
-            </div>
-
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-              {features.map((feature, index) => (
-                <div
-                  key={index}
-                  className="flex gap-4 p-4 rounded-xl hover:bg-neutral-50 transition-colors"
-                >
-                  <div
-                    className={`flex-shrink-0 inline-flex rounded-lg p-2.5 ${
-                      feature.accentColor === 'primary'
-                        ? 'bg-primary-100 text-primary-600'
-                        : 'bg-accent-100 text-accent-600'
-                    }`}
-                  >
-                    <feature.icon className="h-6 w-6" strokeWidth={2} />
-                  </div>
-                  <div>
-                    <h3 className="font-medium text-neutral-900 mb-0.5">{feature.title}</h3>
-                    <p className="text-sm text-neutral-600 leading-relaxed">
-                      {feature.description}
-                    </p>
-                  </div>
-                </div>
-              ))}
             </div>
           </div>
         </section>
@@ -141,7 +149,7 @@ export default function HomePage() {
             </p>
 
             <Button size="lg" variant="accent" className="shadow-lg hover:shadow-xl mb-8" asChild>
-              <Link to="/register">Beräkna mitt kaloribehov</Link>
+              <Link to="/register">Skapa mitt konto gratis</Link>
             </Button>
 
             <div className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-8 text-sm text-neutral-400">
