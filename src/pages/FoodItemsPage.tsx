@@ -28,9 +28,11 @@ import { useAuth } from '@/contexts/AuthContext'
 import {
   usePaginatedFoodItems,
   useDeleteFoodItem,
+  useAdminDeleteFoodItem,
   type FoodItem,
   type FoodTab,
 } from '@/hooks/useFoodItems'
+import { useIsAdmin } from '@/hooks/useIsAdmin'
 import { SOURCE_BADGES, getListItemBadgeConfig } from '@/lib/constants/sourceBadges'
 import { useRecipeImpact, type RecipeImpact } from '@/hooks/useRecipeImpact'
 import { RecipeImpactWarningModal } from '@/components/food/RecipeImpactWarningModal'
@@ -194,7 +196,9 @@ const PAGE_SIZE = 50
 export default function FoodItemsPage() {
   const { user } = useAuth()
   const queryClient = useQueryClient()
+  const { data: isAdmin = false } = useIsAdmin()
   const deleteFood = useDeleteFoodItem()
+  const adminDeleteFood = useAdminDeleteFoodItem()
   const deleteSharedListItem = useDeleteSharedListFoodItem()
   const { getRecipesUsingFoodItem } = useRecipeImpact()
   const { data: sharedLists = [], isLoading: sharedListsLoading } = useSharedLists()
@@ -405,6 +409,26 @@ export default function FoodItemsPage() {
       return
     }
 
+    // Admin på CalculEat-fliken: hård delete av globalt item
+    if (isAdmin && activeTab === 'calculeat' && item?.user_id === null) {
+      if (
+        !confirm(
+          `Vill du ta bort "${item.name}" permanent?\n\nOBS: Livsmedlet tas bort för ALLA användare och kan inte återställas.`
+        )
+      ) {
+        return
+      }
+      setDeletingItemId(id)
+      try {
+        await adminDeleteFood.mutateAsync(id)
+      } catch {
+        alert('Kunde inte ta bort livsmedlet. Försök igen.')
+      } finally {
+        setDeletingItemId(null)
+      }
+      return
+    }
+
     const isGlobal = item?.user_id === null
     const isRecipe = item?.is_recipe === true
 
@@ -447,6 +471,12 @@ export default function FoodItemsPage() {
     if (item.shared_list_id) {
       setListEditItem(item)
       setListEditConfirmShared(false)
+      return
+    }
+    // Admin på CalculEat-fliken: redigera globalt item direkt utan CoW-bekräftelse
+    if (isAdmin && activeTab === 'calculeat' && item.user_id === null) {
+      setEditingItem(item)
+      setIsAddModalOpen(true)
       return
     }
     if (item.user_id === null) {
@@ -503,13 +533,18 @@ export default function FoodItemsPage() {
   const handleModalSuccess = useCallback(() => {
     queryClient.invalidateQueries({ queryKey: ['foodItems'] })
     // Switch to Mina tab when: creating personal copy of list item, or CoW of global item
+    // But NOT when admin is editing/creating directly on the calculeat tab
+    const adminOnCalculeat = isAdmin && activeTab === 'calculeat'
     if (
       editCopyMode ||
-      (editingItem && editingItem.user_id === null && !editingItem.shared_list_id)
+      (editingItem &&
+        editingItem.user_id === null &&
+        !editingItem.shared_list_id &&
+        !adminOnCalculeat)
     ) {
       setActiveTab('mina')
     }
-  }, [queryClient, editingItem, editCopyMode])
+  }, [queryClient, editingItem, editCopyMode, isAdmin, activeTab])
 
   const handleShowNutrients = (item: FoodItem) => {
     setSelectedItemForDetail(item)
@@ -634,8 +669,10 @@ export default function FoodItemsPage() {
   }
 
   const isMina = activeTab === 'mina'
+  const isCalculeat = activeTab === 'calculeat'
   const activeListId = activeTab.startsWith('list:') ? activeTab.slice(5) : null
   const activeList = activeListId ? (sharedLists.find(l => l.id === activeListId) ?? null) : null
+  const isAdminCalculeatTab = isAdmin && isCalculeat
 
   // Realtime-prenumeration för aktiv lista — uppdaterar cachen vid ändringar från andra members
   useSharedListRealtime(activeListId)
@@ -668,7 +705,7 @@ export default function FoodItemsPage() {
             )}
           </p>
         </div>
-        {(isMina || activeListId) && (
+        {(isMina || activeListId || isAdminCalculeatTab) && (
           <Button
             className="gap-2 self-start sm:self-auto"
             size="sm"
@@ -1691,6 +1728,7 @@ export default function FoodItemsPage() {
         editItem={editingItem}
         sharedListId={activeListId}
         copyMode={editCopyMode}
+        adminGlobalMode={isAdminCalculeatTab}
       />
 
       {/* Nutrient Detail Panel */}

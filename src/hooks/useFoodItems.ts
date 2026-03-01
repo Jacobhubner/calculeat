@@ -431,6 +431,108 @@ export function useDeleteFoodItem() {
 }
 
 /**
+ * Admin: Skapa ett globalt CalculEat-livsmedel (user_id=NULL, source='manual').
+ * Kräver att anroparen är admin — RLS blockerar annars.
+ */
+export function useAdminCreateFoodItem() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (input: CreateFoodItemInput) => {
+      const { data, error } = await supabase
+        .from('food_items')
+        .insert({
+          user_id: null,
+          source: 'manual',
+          name: input.name,
+          brand: input.brand,
+          barcode: input.barcode,
+          calories: input.calories,
+          fat_g: input.fat_g,
+          carb_g: input.carb_g,
+          fiber_g: input.fiber_g,
+          protein_g: input.protein_g,
+          default_amount: input.default_amount,
+          default_unit: input.default_unit,
+          weight_grams: input.weight_grams,
+          reference_amount: input.reference_amount ?? input.weight_grams ?? 100,
+          reference_unit: input.reference_unit ?? 'g',
+          density_g_per_ml: input.density_g_per_ml,
+          ml_per_gram: input.ml_per_gram,
+          grams_per_piece: input.grams_per_piece,
+          serving_unit: input.serving_unit,
+          food_type: input.food_type,
+          notes: input.notes,
+          is_recipe: false,
+        })
+        .select()
+        .single()
+
+      if (error) throw error
+      return data as FoodItem
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['foodItems'] })
+    },
+  })
+}
+
+/**
+ * Admin: Uppdatera ett globalt CalculEat-livsmedel direkt (ingen CoW).
+ * Kräver att anroparen är admin — RLS blockerar annars.
+ */
+export function useAdminUpdateFoodItem() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({ id, ...input }: Partial<CreateFoodItemInput> & { id: string }) => {
+      const dbInput = Object.fromEntries(
+        Object.entries(input).filter(([k]) => !['saturated_fat_g', 'sugar_g', 'salt_g'].includes(k))
+      )
+
+      const { data, error } = await supabase
+        .from('food_items')
+        .update(dbInput)
+        .eq('id', id)
+        .is('user_id', null)
+        .eq('source', 'manual')
+        .select()
+        .single()
+
+      if (error) throw error
+      return data as FoodItem
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['foodItems'] })
+    },
+  })
+}
+
+/**
+ * Admin: Ta bort ett globalt CalculEat-livsmedel permanent (ingen soft-delete).
+ * Kräver att anroparen är admin — RLS blockerar annars.
+ */
+export function useAdminDeleteFoodItem() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('food_items')
+        .delete()
+        .eq('id', id)
+        .is('user_id', null)
+        .eq('source', 'manual')
+
+      if (error) throw error
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['foodItems'] })
+    },
+  })
+}
+
+/**
  * Paginated food items with server-side shadowing, search, and filtering.
  * Uses the search_food_items RPC function.
  */

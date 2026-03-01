@@ -12,6 +12,8 @@ import { createFoodItemSchema } from '@/lib/validation'
 import {
   useCreateFoodItem,
   useUpdateFoodItem,
+  useAdminCreateFoodItem,
+  useAdminUpdateFoodItem,
   useSearchFoodItems,
   type FoodItem,
 } from '@/hooks/useFoodItems'
@@ -54,6 +56,7 @@ interface AddFoodItemModalProps {
   editItem?: FoodItem | null
   sharedListId?: string | null
   copyMode?: boolean // prefyll från editItem men skapa nytt personligt item
+  adminGlobalMode?: boolean // admin: skapa/redigera globalt CalculEat-item direkt
 }
 
 // Slumpmässiga placeholder-exempel för namn-fältet
@@ -86,6 +89,7 @@ export function AddFoodItemModal({
   editItem,
   sharedListId,
   copyMode = false,
+  adminGlobalMode = false,
 }: AddFoodItemModalProps) {
   const [showAdvanced, setShowAdvanced] = useState(false)
   const [duplicateWarning, setDuplicateWarning] = useState<string | null>(null)
@@ -113,19 +117,23 @@ export function AddFoodItemModal({
 
   // Barcode scanning state
   const [cameraStream, setCameraStream] = useState<MediaStream | null>(null)
-  const [scannedBarcode, setScannedBarcode] = useState<string | null>(null)
+  // pendingBarcode: driver useBarcodeLookup (nollställs när lookup avslutas)
+  const [pendingBarcode, setPendingBarcode] = useState<string | null>(null)
+  // lockedBarcode: kvarstår för UI + submit tills modal stängs
+  const [lockedBarcode, setLockedBarcode] = useState<string | null>(null)
   const [showOverwriteConfirm, setShowOverwriteConfirm] = useState(false)
   const [pendingScanResult, setPendingScanResult] = useState<ScanResult | null>(null)
 
   // Nutrition label scanning
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const nameInputRef = useRef<HTMLInputElement>(null)
   const labelScan = useScanNutritionLabel()
 
   const {
     data: barcodeResult,
     error: barcodeError,
     isFetching: isBarcodeFetching,
-  } = useBarcodeLookup(scannedBarcode)
+  } = useBarcodeLookup(pendingBarcode)
 
   // Slumpmässig placeholder som ändras vid varje öppning
   const randomPlaceholder = useMemo(() => {
@@ -157,6 +165,8 @@ export function AddFoodItemModal({
 
   const createMutation = useCreateFoodItem()
   const updateMutation = useUpdateFoodItem()
+  const adminCreateMutation = useAdminCreateFoodItem()
+  const adminUpdateMutation = useAdminUpdateFoodItem()
   const updateSharedListFoodItem = useUpdateSharedListFoodItem()
   const createSharedListFoodItem = useCreateSharedListFoodItem()
 
@@ -484,13 +494,19 @@ export function AddFoodItemModal({
     [formHasValues, applyScanResult]
   )
 
-  // When barcode lookup completes
+  // When barcode lookup completes (success or error) — stop spinner
   useEffect(() => {
     if (barcodeResult) {
       handleScanResult(barcodeResult)
-      setScannedBarcode(null)
+      setPendingBarcode(null)
     }
   }, [barcodeResult, handleScanResult])
+
+  useEffect(() => {
+    if (barcodeError) {
+      setPendingBarcode(null)
+    }
+  }, [barcodeError])
 
   // Handle nutrition label file selection
   const handleLabelFile = useCallback(
@@ -544,6 +560,7 @@ export function AddFoodItemModal({
       // Clean up NaN values from optional number fields
       const cleanedData = {
         ...data,
+        barcode: lockedBarcode ?? undefined,
         grams_per_piece:
           data.grams_per_piece && !isNaN(data.grams_per_piece) ? data.grams_per_piece : null,
         ml_per_gram: calculatedMlPerGram,
@@ -562,6 +579,10 @@ export function AddFoodItemModal({
           fields: cleanedData,
         })
         savedFoodItemId = editItem.id
+      } else if (!copyMode && editItem && adminGlobalMode) {
+        // Admin: uppdatera globalt item direkt (ingen CoW)
+        const updated = await adminUpdateMutation.mutateAsync({ id: editItem.id, ...cleanedData })
+        savedFoodItemId = updated?.id ?? editItem.id
       } else if (!copyMode && editItem) {
         // updateMutation may return a new item ID if it was a copy-on-write of a global item
         const updated = await updateMutation.mutateAsync({ id: editItem.id, ...cleanedData })
@@ -571,6 +592,10 @@ export function AddFoodItemModal({
           listId: sharedListId,
           ...cleanedData,
         })
+        savedFoodItemId = created?.id ?? null
+      } else if (adminGlobalMode) {
+        // Admin: skapa globalt CalculEat-item
+        const created = await adminCreateMutation.mutateAsync(cleanedData)
         savedFoodItemId = created?.id ?? null
       } else {
         const created = await createMutation.mutateAsync(cleanedData)
@@ -639,9 +664,35 @@ export function AddFoodItemModal({
         }
       }
 
+      // Om produkten inte hittades externt men användaren fyllt i manuellt:
+      // bidra med näringsvärden till user_contributed-databasen (fire-and-forget)
+      if (lockedBarcode && barcodeError?.type === 'off_not_found') {
+        supabase
+          .rpc('contribute_barcode_data', {
+            p_barcode: lockedBarcode,
+            p_name: data.name,
+            p_calories: data.calories,
+            p_fat_g: data.fat_g,
+            p_carb_g: data.carb_g,
+            p_protein_g: data.protein_g,
+            p_saturated_fat_g: data.saturated_fat_g ?? null,
+            p_sugars_g: data.sugars_g ?? null,
+            p_salt_g: data.salt_g ?? null,
+            p_default_unit: data.default_unit === 'ml' ? 'ml' : 'g',
+            p_food_type: data.food_type,
+          })
+          .then(({ data: result }) => {
+            if (result?.action === 'created') {
+              toast.success('Du var först att lägga till denna produkt. Tack!')
+            }
+          })
+      }
+
       reset()
       setGramsPerVolume(undefined)
       setVolumeUnit('dl')
+      setPendingBarcode(null)
+      setLockedBarcode(null)
       onOpenChange(false)
       onSuccess?.()
     } catch (error) {
@@ -655,7 +706,8 @@ export function AddFoodItemModal({
     setDuplicateWarning(null)
     setGramsPerVolume(undefined)
     setVolumeUnit('dl')
-    setScannedBarcode(null)
+    setPendingBarcode(null)
+    setLockedBarcode(null)
     if (cameraStream) {
       cameraStream.getTracks().forEach(t => t.stop())
       setCameraStream(null)
@@ -674,17 +726,31 @@ export function AddFoodItemModal({
             <DialogTitle>
               {copyMode
                 ? 'Skapa personlig kopia'
-                : editItem
-                  ? 'Redigera livsmedel'
-                  : 'Nytt livsmedel'}
+                : adminGlobalMode && editItem
+                  ? 'Redigera CalculEat-livsmedel'
+                  : adminGlobalMode
+                    ? 'Nytt CalculEat-livsmedel'
+                    : editItem
+                      ? 'Redigera livsmedel'
+                      : 'Nytt livsmedel'}
             </DialogTitle>
           </DialogHeader>
 
-          {editItem && editItem.user_id === null && !editItem.shared_list_id && (
-            <div className="bg-blue-50 border border-blue-200 rounded-md p-3 text-sm text-blue-700">
-              En personlig kopia skapas i din lista (Mina).
+          {adminGlobalMode && (
+            <div className="bg-amber-50 border border-amber-200 rounded-md p-3 text-sm text-amber-700">
+              {editItem
+                ? 'Redigerar globalt livsmedel. Ändringarna syns direkt för alla användare.'
+                : 'Skapar globalt CalculEat-livsmedel. Syns för alla användare.'}
             </div>
           )}
+          {!adminGlobalMode &&
+            editItem &&
+            editItem.user_id === null &&
+            !editItem.shared_list_id && (
+              <div className="bg-blue-50 border border-blue-200 rounded-md p-3 text-sm text-blue-700">
+                En personlig kopia skapas i din lista (Mina).
+              </div>
+            )}
           {!copyMode && editItem?.shared_list_id && (
             <div className="bg-orange-50 border border-orange-200 rounded-md p-3 text-sm text-orange-700">
               Redigerar ett delat livsmedel. Ändringarna syns hos alla listmedlemmar.
@@ -749,13 +815,37 @@ export function AddFoodItemModal({
             )}
 
             {/* Barcode error */}
-            {barcodeError && (
+            {barcodeError && barcodeError.type === 'off_not_found' ? (
+              <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 space-y-3">
+                <div className="flex items-start gap-2">
+                  <AlertCircle className="h-4 w-4 text-orange-600 mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium text-orange-800">
+                      Produkten hittades inte i databasen
+                    </p>
+                    {lockedBarcode && (
+                      <p className="text-xs text-orange-600 mt-0.5">Streckkod: {lockedBarcode}</p>
+                    )}
+                  </div>
+                </div>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  className="w-full border-orange-300 text-orange-800 hover:bg-orange-100"
+                  onClick={() => nameInputRef.current?.focus()}
+                >
+                  Fyll i näringsvärden manuellt
+                  <span className="text-xs ml-1.5 opacity-70">(streckkod sparas)</span>
+                </Button>
+              </div>
+            ) : barcodeError ? (
               <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
                 <p className="text-sm text-orange-800">
-                  {(barcodeError as { message?: string })?.message || 'Kunde inte hämta produkten'}
+                  {barcodeError.message || 'Kunde inte hämta produkten'}
                 </p>
               </div>
-            )}
+            ) : null}
 
             {/* Label scan error */}
             {labelScan.error && (
@@ -824,6 +914,10 @@ export function AddFoodItemModal({
                     <Input
                       id="name"
                       {...register('name')}
+                      ref={e => {
+                        register('name').ref(e)
+                        nameInputRef.current = e
+                      }}
                       placeholder={randomPlaceholder}
                       className={errors.name ? 'border-red-500' : ''}
                     />
@@ -1439,7 +1533,8 @@ export function AddFoodItemModal({
       <BarcodeScannerModal
         stream={cameraStream}
         onDetected={code => {
-          setScannedBarcode(code)
+          setPendingBarcode(code)
+          setLockedBarcode(code)
           if (cameraStream) {
             cameraStream.getTracks().forEach(t => t.stop())
             setCameraStream(null)
