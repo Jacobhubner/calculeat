@@ -248,12 +248,9 @@ export function useCreateFoodItem() {
           barcode: input.barcode,
           calories: input.calories,
           fat_g: input.fat_g,
-          saturated_fat_g: input.saturated_fat_g,
           carb_g: input.carb_g,
-          sugar_g: input.sugar_g,
           fiber_g: input.fiber_g,
           protein_g: input.protein_g,
-          salt_g: input.salt_g,
           default_amount: input.default_amount,
           default_unit: input.default_unit,
           weight_grams: input.weight_grams,
@@ -299,6 +296,12 @@ export function useUpdateFoodItem() {
 
       if (fetchError) throw fetchError
 
+      // Strip fields that don't exist as columns in food_items
+      // (extended nutrients are stored in food_nutrients table)
+      const dbInput = Object.fromEntries(
+        Object.entries(input).filter(([k]) => !['saturated_fat_g', 'sugar_g', 'salt_g'].includes(k))
+      )
+
       // If it's a global item (user_id is null), use RPC for atomic copy
       if (existingItem.user_id === null) {
         const { data: copyId, error: rpcError } = await supabase.rpc('copy_food_to_user', {
@@ -308,10 +311,10 @@ export function useUpdateFoodItem() {
         if (rpcError) throw rpcError
 
         // If edits were provided, apply them to the copy
-        if (Object.keys(input).length > 0) {
+        if (Object.keys(dbInput).length > 0) {
           const { data, error } = await supabase
             .from('food_items')
-            .update(input)
+            .update(dbInput)
             .eq('id', copyId)
             .eq('user_id', user.id)
             .select()
@@ -333,7 +336,7 @@ export function useUpdateFoodItem() {
       // For user's own items, update normally — trigger handles derived fields
       const { data, error } = await supabase
         .from('food_items')
-        .update(input)
+        .update(dbInput)
         .eq('id', id)
         .eq('user_id', user.id)
         .select()
