@@ -240,6 +240,8 @@ export default function FoodItemsPage() {
   const [listEditConfirmShared, setListEditConfirmShared] = useState(false)
   const [editCopyMode, setEditCopyMode] = useState(false)
   const [listDeleteItem, setListDeleteItem] = useState<FoodItem | null>(null)
+  const [adminDeleteItem, setAdminDeleteItem] = useState<FoodItem | null>(null)
+  const [adminEditItem, setAdminEditItem] = useState<FoodItem | null>(null)
   const [deletingItemId, setDeletingItemId] = useState<string | null>(null)
   const [displayModes, setDisplayModes] = useState<Record<string, DisplayMode>>({})
   const [resetStep, setResetStep] = useState<0 | 1 | 2>(0)
@@ -409,23 +411,9 @@ export default function FoodItemsPage() {
       return
     }
 
-    // Admin på CalculEat-fliken: hård delete av globalt item
+    // Admin på CalculEat-fliken: hård delete av globalt item — kräver bekräftelsedialog
     if (isAdmin && activeTab === 'calculeat' && item?.user_id === null) {
-      if (
-        !confirm(
-          `Vill du ta bort "${item.name}" permanent?\n\nOBS: Livsmedlet tas bort för ALLA användare och kan inte återställas.`
-        )
-      ) {
-        return
-      }
-      setDeletingItemId(id)
-      try {
-        await adminDeleteFood.mutateAsync(id)
-      } catch {
-        alert('Kunde inte ta bort livsmedlet. Försök igen.')
-      } finally {
-        setDeletingItemId(null)
-      }
+      setAdminDeleteItem(item)
       return
     }
 
@@ -473,10 +461,9 @@ export default function FoodItemsPage() {
       setListEditConfirmShared(false)
       return
     }
-    // Admin på CalculEat-fliken: redigera globalt item direkt utan CoW-bekräftelse
+    // Admin på CalculEat-fliken: redigera globalt item — kräver bekräftelsedialog
     if (isAdmin && activeTab === 'calculeat' && item.user_id === null) {
-      setEditingItem(item)
-      setIsAddModalOpen(true)
+      setAdminEditItem(item)
       return
     }
     if (item.user_id === null) {
@@ -522,6 +509,27 @@ export default function FoodItemsPage() {
     } finally {
       setListDeleteItem(null)
     }
+  }
+
+  const handleConfirmAdminDelete = async () => {
+    if (!adminDeleteItem) return
+    const id = adminDeleteItem.id
+    setAdminDeleteItem(null)
+    setDeletingItemId(id)
+    try {
+      await adminDeleteFood.mutateAsync(id)
+    } catch {
+      alert('Kunde inte ta bort livsmedlet. Försök igen.')
+    } finally {
+      setDeletingItemId(null)
+    }
+  }
+
+  const handleConfirmAdminEdit = () => {
+    if (!adminEditItem) return
+    setEditingItem(adminEditItem)
+    setAdminEditItem(null)
+    setIsAddModalOpen(true)
   }
 
   const handleModalClose = () => {
@@ -1685,6 +1693,65 @@ export default function FoodItemsPage() {
               className="flex-1 bg-orange-600 hover:bg-orange-700 text-white"
             >
               Ja, ändra i listan
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Bekräftelse: admin redigerar globalt CalculEat-livsmedel */}
+      <Dialog
+        open={!!adminEditItem}
+        onOpenChange={open => {
+          if (!open) setAdminEditItem(null)
+        }}
+      >
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Redigera globalt livsmedel?</DialogTitle>
+            <DialogDescription>
+              Du är på väg att redigera &quot;{adminEditItem?.name}&quot;. Ändringen påverkar detta
+              livsmedel för ALLA användare i CalculEat-listan. Är du säker?
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex gap-2 pt-2">
+            <Button variant="outline" onClick={() => setAdminEditItem(null)} className="flex-1">
+              Avbryt
+            </Button>
+            <Button
+              onClick={handleConfirmAdminEdit}
+              className="flex-1 bg-orange-600 hover:bg-orange-700 text-white"
+            >
+              Ja, redigera globalt
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Bekräftelse: admin tar bort globalt CalculEat-livsmedel permanent */}
+      <Dialog
+        open={!!adminDeleteItem}
+        onOpenChange={open => {
+          if (!open) setAdminDeleteItem(null)
+        }}
+      >
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Ta bort globalt livsmedel?</DialogTitle>
+            <DialogDescription>
+              &quot;{adminDeleteItem?.name}&quot; tas bort permanent för ALLA användare och kan inte
+              återställas.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex gap-2 pt-2">
+            <Button variant="outline" onClick={() => setAdminDeleteItem(null)} className="flex-1">
+              Avbryt
+            </Button>
+            <Button
+              onClick={handleConfirmAdminDelete}
+              className="flex-1 bg-red-600 hover:bg-red-700 text-white"
+              disabled={adminDeleteFood.isPending}
+            >
+              {adminDeleteFood.isPending ? 'Tar bort...' : 'Ta bort permanent'}
             </Button>
           </div>
         </DialogContent>
