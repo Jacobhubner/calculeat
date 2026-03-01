@@ -3,21 +3,29 @@ import { Trash2, Search, Heart } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import type { FoodItem, FoodSource } from '@/hooks/useFoodItems'
-import { SOURCE_BADGES } from '@/lib/constants/sourceBadges'
+import type { FoodItem } from '@/hooks/useFoodItems'
+import { SOURCE_BADGES, getListItemBadgeConfig } from '@/lib/constants/sourceBadges'
 
-type SourceFilter = 'alla' | 'mina' | 'slv'
+type SourceFilter = 'alla' | 'mina' | 'slv' | 'usda' | `list:${string}`
 
-const SOURCE_FILTER_LABELS: Record<SourceFilter, string> = {
-  alla: 'Alla',
-  mina: 'Mina',
-  slv: 'SLV',
+interface SharedListOption {
+  id: string
+  name: string
 }
 
-function matchesSourceFilter(source: FoodSource, filter: SourceFilter): boolean {
+function matchesSourceFilter(food: FoodItem, filter: SourceFilter): boolean {
   if (filter === 'alla') return true
-  if (filter === 'mina') return source === 'user' || source === 'manual' || source === 'shared'
-  if (filter === 'slv') return source === 'livsmedelsverket'
+  if (filter === 'mina')
+    return (
+      (food.source === 'user' || food.source === 'manual' || food.source === 'shared') &&
+      !food.shared_list_id
+    )
+  if (filter === 'slv') return food.source === 'livsmedelsverket'
+  if (filter === 'usda') return food.source === 'usda'
+  if (filter.startsWith('list:')) {
+    const listId = filter.slice(5)
+    return food.shared_list_id === listId
+  }
   return true
 }
 import {
@@ -37,6 +45,7 @@ interface IngredientRowProps {
   ingredient: IngredientData
   availableFoods: FoodItem[]
   favorites?: Set<string>
+  sharedLists?: SharedListOption[]
   onChange: (updated: IngredientData) => void
   onRemove: () => void
   onToggleFavorite?: (foodId: string) => void
@@ -46,6 +55,7 @@ export function IngredientRow({
   ingredient,
   availableFoods,
   favorites,
+  sharedLists = [],
   onChange,
   onRemove,
   onToggleFavorite,
@@ -86,7 +96,7 @@ export function IngredientRow({
   // Filter and sort foods based on search + source filter
   const allFilteredFoods = availableFoods
     .filter(food => {
-      if (!matchesSourceFilter(food.source, sourceFilter)) return false
+      if (!matchesSourceFilter(food, sourceFilter)) return false
       if (!searchQuery.trim()) return true
       const query = searchQuery.toLowerCase()
       return (
@@ -241,23 +251,34 @@ export function IngredientRow({
                 </div>
               )}
               {/* Källfilter */}
-              <div className="flex gap-1 px-2 py-1.5 border-b shrink-0">
-                {(Object.keys(SOURCE_FILTER_LABELS) as SourceFilter[]).map(f => (
+              <div className="flex gap-1 px-2 py-1.5 border-b shrink-0 flex-wrap">
+                {(
+                  [
+                    { key: 'alla' as SourceFilter, label: 'Alla' },
+                    { key: 'mina' as SourceFilter, label: 'Mina' },
+                    { key: 'slv' as SourceFilter, label: 'SLV' },
+                    { key: 'usda' as SourceFilter, label: 'USDA' },
+                    ...sharedLists.map(l => ({
+                      key: `list:${l.id}` as SourceFilter,
+                      label: l.name.length > 14 ? l.name.slice(0, 12) + '…' : l.name,
+                    })),
+                  ] as { key: SourceFilter; label: string }[]
+                ).map(f => (
                   <button
-                    key={f}
+                    key={f.key}
                     type="button"
                     onClick={e => {
                       e.stopPropagation()
-                      setSourceFilter(f)
+                      setSourceFilter(f.key)
                       setHighlightedIndex(0)
                     }}
                     className={`px-2 py-0.5 rounded text-[10px] font-medium transition-colors ${
-                      sourceFilter === f
+                      sourceFilter === f.key
                         ? 'bg-primary-600 text-white'
                         : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
                     }`}
                   >
-                    {SOURCE_FILTER_LABELS[f]}
+                    {f.label}
                   </button>
                 ))}
               </div>
@@ -273,6 +294,12 @@ export function IngredientRow({
                         const isFavorite = favorites?.has(food.id) || false
                         const isHighlighted = index === highlightedIndex
                         const colorBadge = food.energy_density_color
+                        const listForFood = food.shared_list_id
+                          ? sharedLists.find(l => l.id === food.shared_list_id)
+                          : null
+                        const sourceBadge = listForFood
+                          ? getListItemBadgeConfig(listForFood.name)
+                          : SOURCE_BADGES[food.source]
                         return (
                           <div
                             key={food.id}
@@ -310,9 +337,9 @@ export function IngredientRow({
                                 </span>
                                 <Badge
                                   variant="outline"
-                                  className={`text-[9px] px-1 py-0 h-4 shrink-0 ${SOURCE_BADGES[food.source].className}`}
+                                  className={`text-[9px] px-1 py-0 h-4 shrink-0 ${sourceBadge.className}`}
                                 >
-                                  {SOURCE_BADGES[food.source].label}
+                                  {sourceBadge.label}
                                 </Badge>
                               </div>
                               <div className="text-xs text-neutral-500 flex items-center gap-1.5 mt-0.5">

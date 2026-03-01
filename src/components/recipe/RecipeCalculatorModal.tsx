@@ -21,6 +21,7 @@ import {
   useCreateSharedListRecipe,
   useUpdateSharedListRecipe,
   useMergedFoodItemsForList,
+  useSharedLists,
 } from '@/hooks/useSharedLists'
 import {
   calculateRecipeNutrition,
@@ -64,6 +65,7 @@ export function RecipeCalculatorModal({
   // Merge list-items with own/global foods when in a list context
   const activeListId = editRecipe?.shared_list_id ?? sharedListId ?? null
   const mergedFoods = useMergedFoodItemsForList(foods ?? [], activeListId)
+  const { data: sharedLists = [] } = useSharedLists()
 
   // Track recipe ID for detecting changes
   const lastInitializedRecipeId = useRef<string | null>(null)
@@ -368,6 +370,7 @@ export function RecipeCalculatorModal({
                         ingredient={ingredient}
                         availableFoods={availableFoods}
                         favorites={favorites}
+                        sharedLists={sharedLists}
                         onChange={updated => handleIngredientChange(ingredient.id, updated)}
                         onRemove={() => handleIngredientRemove(ingredient.id)}
                         onToggleFavorite={toggleFavorite}
