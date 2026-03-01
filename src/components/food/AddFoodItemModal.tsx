@@ -1259,6 +1259,42 @@ export function AddFoodItemModal({
                         </>
                       )}
 
+                      {/* Näringsvärden per referensmängd */}
+                      {(saturatedFatG != null || sugarsG != null || saltG != null) && (
+                        <div>
+                          <p className="text-xs text-neutral-600 mb-1">
+                            Per {defaultAmount || '?'} {defaultUnit || '?'}
+                          </p>
+                          <div className="space-y-1 text-sm">
+                            {saturatedFatG != null && !isNaN(saturatedFatG) && (
+                              <div className="flex justify-between">
+                                <span className="text-neutral-500">varav mättat fett:</span>
+                                <span className="font-medium text-neutral-900">
+                                  {saturatedFatG.toFixed(1)}g
+                                </span>
+                              </div>
+                            )}
+                            {sugarsG != null && !isNaN(sugarsG) && (
+                              <div className="flex justify-between">
+                                <span className="text-neutral-500">varav sockerarter:</span>
+                                <span className="font-medium text-neutral-900">
+                                  {sugarsG.toFixed(1)}g
+                                </span>
+                              </div>
+                            )}
+                            {saltG != null && !isNaN(saltG) && (
+                              <div className="flex justify-between">
+                                <span className="text-neutral-500">Salt:</span>
+                                <span className="font-medium text-neutral-900">
+                                  {saltG.toFixed(1)}g
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                          <div className="border-t border-neutral-200 mt-2 mb-2" />
+                        </div>
+                      )}
+
                       {/* Energy comparison */}
                       <div>
                         <p className="text-xs text-neutral-600 mb-1">Energijämförelse</p>
