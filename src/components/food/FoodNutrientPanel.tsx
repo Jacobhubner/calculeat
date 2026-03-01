@@ -32,34 +32,59 @@ export function FoodNutrientPanel({ foodItem, open, onOpenChange }: FoodNutrient
   const { data: definitions, isLoading: defsLoading } = useNutrientDefinitions()
 
   const grouped = useMemo(() => {
-    if (!nutrients || !definitions) return null
+    if (!definitions || !foodItem) return null
 
     const defMap = new Map(definitions.map(d => [d.nutrient_code, d]))
 
-    const enriched = nutrients
+    // Start with food_nutrients rows (authoritative — SLV, USDA, scanned)
+    const dbRows = (nutrients ?? [])
       .map(fn => {
         const def = defMap.get(fn.nutrient_code)
         if (!def) return null
-        return { ...fn, definition: def }
+        return { nutrient_code: fn.nutrient_code, amount: fn.amount, definition: def }
       })
       .filter((item): item is NonNullable<typeof item> => item !== null)
 
-    const groups: Record<string, Array<(typeof enriched)[number]>> = {}
+    const dbCodes = new Set(dbRows.map(r => r.nutrient_code))
 
-    for (const item of enriched) {
+    // Synthetic rows from food_items columns — only if NOT already in food_nutrients
+    type SyntheticRow = {
+      nutrient_code: string
+      amount: number
+      definition: (typeof definitions)[number]
+    }
+    const synthetic: SyntheticRow[] = []
+
+    const addSynthetic = (code: string, value: number | null | undefined) => {
+      if (value == null || isNaN(value) || dbCodes.has(code)) return
+      const def = defMap.get(code)
+      if (def) synthetic.push({ nutrient_code: code, amount: value, definition: def })
+    }
+
+    addSynthetic('energy_kcal', foodItem.calories)
+    addSynthetic('fat', foodItem.fat_g)
+    addSynthetic('carbohydrates', foodItem.carb_g)
+    addSynthetic('protein', foodItem.protein_g)
+
+    const all = [...dbRows, ...synthetic]
+
+    const groups: Record<string, typeof all> = {}
+    for (const item of all) {
       const cat = item.definition.category || 'other'
       if (!groups[cat]) groups[cat] = []
       groups[cat].push(item)
     }
-
     for (const cat of Object.keys(groups)) {
       groups[cat].sort((a, b) => a.definition.sort_order - b.definition.sort_order)
     }
 
     return groups
-  }, [nutrients, definitions])
+  }, [nutrients, definitions, foodItem])
 
-  const totalNutrientCount = nutrients?.length ?? 0
+  const totalNutrientCount = useMemo(() => {
+    if (!grouped) return 0
+    return Object.values(grouped).reduce((sum, arr) => sum + arr.length, 0)
+  }, [grouped])
   const isLoading = nutrientsLoading || defsLoading
   const sourceBadge = foodItem ? SOURCE_BADGES[foodItem.source] : null
   const colorInfo = foodItem?.energy_density_color
