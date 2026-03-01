@@ -43,6 +43,13 @@ import {
 import { SharedListMembersBar } from '@/components/shared-lists/SharedListMembersBar'
 import { CreateSharedListDialog } from '@/components/shared-lists/CreateSharedListDialog'
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog'
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -224,6 +231,10 @@ export default function FoodItemsPage() {
   // UI state
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [editingItem, setEditingItem] = useState<FoodItem | null>(null)
+  // Redigeringsval för list-items: null = inte öppen, FoodItem = väntar på val
+  const [listEditItem, setListEditItem] = useState<FoodItem | null>(null)
+  const [listEditConfirmShared, setListEditConfirmShared] = useState(false)
+  const [editCopyMode, setEditCopyMode] = useState(false)
   const [deletingItemId, setDeletingItemId] = useState<string | null>(null)
   const [displayModes, setDisplayModes] = useState<Record<string, DisplayMode>>({})
   const [resetStep, setResetStep] = useState<0 | 1 | 2>(0)
@@ -436,6 +447,12 @@ export default function FoodItemsPage() {
   }
 
   const handleEdit = (item: FoodItem) => {
+    // List-items: visa val — personlig kopia eller ändra i listan
+    if (item.shared_list_id) {
+      setListEditItem(item)
+      setListEditConfirmShared(false)
+      return
+    }
     if (item.user_id === null) {
       if (
         !confirm(
@@ -449,18 +466,40 @@ export default function FoodItemsPage() {
     setIsAddModalOpen(true)
   }
 
+  const handleListEditCopy = () => {
+    if (!listEditItem) return
+    setEditingItem(listEditItem)
+    setEditCopyMode(true)
+    setListEditItem(null)
+    setListEditConfirmShared(false)
+    setIsAddModalOpen(true)
+  }
+
+  const handleListEditShared = () => {
+    if (!listEditItem) return
+    setEditingItem(listEditItem)
+    setEditCopyMode(false)
+    setListEditItem(null)
+    setListEditConfirmShared(false)
+    setIsAddModalOpen(true)
+  }
+
   const handleModalClose = () => {
     setIsAddModalOpen(false)
     setEditingItem(null)
+    setEditCopyMode(false)
   }
 
   const handleModalSuccess = useCallback(() => {
     queryClient.invalidateQueries({ queryKey: ['foodItems'] })
-    // If editing a global item, switch to Mina tab to see the copy
-    if (editingItem && editingItem.user_id === null) {
+    // Switch to Mina tab when: creating personal copy of list item, or CoW of global item
+    if (
+      editCopyMode ||
+      (editingItem && editingItem.user_id === null && !editingItem.shared_list_id)
+    ) {
       setActiveTab('mina')
     }
-  }, [queryClient, editingItem])
+  }, [queryClient, editingItem, editCopyMode])
 
   const handleShowNutrients = (item: FoodItem) => {
     setSelectedItemForDetail(item)
@@ -1529,6 +1568,81 @@ export default function FoodItemsPage() {
         }}
       />
 
+      {/* Redigeringsval för list-items */}
+      <Dialog
+        open={!!listEditItem && !listEditConfirmShared}
+        onOpenChange={open => {
+          if (!open) setListEditItem(null)
+        }}
+      >
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Redigera &quot;{listEditItem?.name}&quot;</DialogTitle>
+            <DialogDescription>
+              Detta livsmedel finns i en delad lista. Välj hur du vill redigera det.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col gap-2 pt-2">
+            <Button onClick={handleListEditCopy} className="w-full justify-start h-auto py-3 px-4">
+              <div className="text-left">
+                <p className="font-medium">Skapa personlig kopia</p>
+                <p className="text-xs font-normal opacity-80 mt-0.5">
+                  Sparas under &quot;Mina&quot; — påverkar inte listan
+                </p>
+              </div>
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setListEditConfirmShared(true)}
+              className="w-full justify-start h-auto py-3 px-4"
+            >
+              <div className="text-left">
+                <p className="font-medium text-orange-700">Ändra i listan</p>
+                <p className="text-xs font-normal text-orange-600 mt-0.5">
+                  Påverkar alla som har tillgång till listan
+                </p>
+              </div>
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Bekräftelse: ändra list-item som påverkar alla */}
+      <Dialog
+        open={!!listEditItem && listEditConfirmShared}
+        onOpenChange={open => {
+          if (!open) {
+            setListEditConfirmShared(false)
+            setListEditItem(null)
+          }
+        }}
+      >
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Ändra i listan?</DialogTitle>
+            <DialogDescription>
+              Dina ändringar av &quot;{listEditItem?.name}&quot; syns för alla som delar listan. Är
+              du säker?
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex gap-2 pt-2">
+            <Button
+              variant="outline"
+              onClick={() => setListEditConfirmShared(false)}
+              className="flex-1"
+            >
+              Avbryt
+            </Button>
+            <Button
+              onClick={handleListEditShared}
+              className="flex-1 bg-orange-600 hover:bg-orange-700 text-white"
+            >
+              Ja, ändra i listan
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Add/Edit Food Item Modal */}
       <AddFoodItemModal
         open={isAddModalOpen}
@@ -1536,6 +1650,7 @@ export default function FoodItemsPage() {
         onSuccess={handleModalSuccess}
         editItem={editingItem}
         sharedListId={activeListId}
+        copyMode={editCopyMode}
       />
 
       {/* Nutrient Detail Panel */}

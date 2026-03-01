@@ -21,7 +21,7 @@ export function getSourceBadgeConfig(
   return SOURCE_BADGES[source]
 }
 
-export const LIST_BADGE_CLASS = 'bg-blue-100 text-blue-700 border-blue-300 font-medium'
+export const LIST_BADGE_CLASS = 'bg-orange-100 text-orange-700 border-orange-300 font-medium'
 
 export function getListItemBadgeConfig(listName: string): { label: string; className: string } {
   const label = listName.length > 20 ? listName.slice(0, 18) + '\u2026' : listName

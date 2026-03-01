@@ -53,6 +53,7 @@ interface AddFoodItemModalProps {
   onSuccess?: () => void
   editItem?: FoodItem | null
   sharedListId?: string | null
+  copyMode?: boolean // prefyll från editItem men skapa nytt personligt item
 }
 
 // Slumpmässiga placeholder-exempel för namn-fältet
@@ -84,6 +85,7 @@ export function AddFoodItemModal({
   onSuccess,
   editItem,
   sharedListId,
+  copyMode = false,
 }: AddFoodItemModalProps) {
   const [showAdvanced, setShowAdvanced] = useState(false)
   const [duplicateWarning, setDuplicateWarning] = useState<string | null>(null)
@@ -553,14 +555,14 @@ export function AddFoodItemModal({
 
       let savedFoodItemId: string | null = null
 
-      if (editItem?.shared_list_id) {
+      if (!copyMode && editItem?.shared_list_id) {
         await updateSharedListFoodItem.mutateAsync({
           foodItemId: editItem.id,
           listId: editItem.shared_list_id,
           fields: cleanedData,
         })
         savedFoodItemId = editItem.id
-      } else if (editItem) {
+      } else if (!copyMode && editItem) {
         // updateMutation may return a new item ID if it was a copy-on-write of a global item
         const updated = await updateMutation.mutateAsync({ id: editItem.id, ...cleanedData })
         savedFoodItemId = updated?.id ?? editItem.id
@@ -669,7 +671,13 @@ export function AddFoodItemModal({
       <Dialog open={open} onOpenChange={handleClose}>
         <DialogContent className="md:max-w-2xl md:max-h-[90vh] md:overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{editItem ? 'Redigera livsmedel' : 'Nytt livsmedel'}</DialogTitle>
+            <DialogTitle>
+              {copyMode
+                ? 'Skapa personlig kopia'
+                : editItem
+                  ? 'Redigera livsmedel'
+                  : 'Nytt livsmedel'}
+            </DialogTitle>
           </DialogHeader>
 
           {editItem && editItem.user_id === null && !editItem.shared_list_id && (
@@ -677,8 +685,8 @@ export function AddFoodItemModal({
               En personlig kopia skapas i din lista (Mina).
             </div>
           )}
-          {editItem?.shared_list_id && (
-            <div className="bg-blue-50 border border-blue-200 rounded-md p-3 text-sm text-blue-700">
+          {!copyMode && editItem?.shared_list_id && (
+            <div className="bg-orange-50 border border-orange-200 rounded-md p-3 text-sm text-orange-700">
               Redigerar ett delat livsmedel. Ändringarna syns hos alla listmedlemmar.
             </div>
           )}
