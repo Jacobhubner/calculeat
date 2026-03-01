@@ -58,6 +58,12 @@ COMMENT ON TABLE public.barcode_lookup_cache IS
 -- Kontrollerar cache (30 dagar) → anropar Edge Function vid cache miss
 -- → sparar i cache → returnerar data.
 -- Rate limiting: max 10 scans per minut per användare (via scan_usage).
+--
+-- pg_net 0.19.5 API:
+--   net.http_post(...) RETURNS bigint (request_id, asynkront)
+--   net.http_collect_response(request_id, async := false) RETURNS net.http_response_result
+--   net.http_response_result: (status request_status, message text, response net.http_response)
+--   net.http_response: (status_code int, headers jsonb, body text)
 -- ---------------------------------------------------
 CREATE OR REPLACE FUNCTION public.get_or_fetch_barcode(
   p_barcode text
@@ -71,17 +77,16 @@ DECLARE
   v_user_id    uuid;
   v_cached     public.barcode_lookup_cache%ROWTYPE;
   v_scan_count int;
+  v_request_id bigint;
+  v_response   net.http_response_result;
   v_result     jsonb;
   v_status     int;
-  v_body       text;
 BEGIN
-  -- Hämta inloggad användare
   v_user_id := auth.uid();
   IF v_user_id IS NULL THEN
     RETURN jsonb_build_object('error', 'unauthorized');
   END IF;
 
-  -- Validera barcode-format (8–14 siffror)
   IF p_barcode IS NULL
      OR length(p_barcode) < 8
      OR length(p_barcode) > 14
@@ -108,7 +113,6 @@ BEGIN
     AND fetched_at > now() - interval '30 days';
 
   IF FOUND THEN
-    -- Cache-träff: logga och returnera
     INSERT INTO public.scan_usage (user_id, scan_type, success, error_type)
     VALUES (v_user_id, 'barcode', true, null);
 
@@ -130,35 +134,45 @@ BEGIN
     );
   END IF;
 
-  -- Cache-miss: delegera till Edge Function fetch-barcode
-  SELECT
-    (net.http_post(
-      url     := current_setting('app.supabase_url', true) || '/functions/v1/fetch-barcode',
-      headers := jsonb_build_object(
-        'Content-Type',  'application/json',
-        'Authorization', 'Bearer ' || current_setting('app.service_role_key', true)
-      ),
-      body    := jsonb_build_object('barcode', p_barcode)::text
-    )).status,
-    (net.http_post(
-      url     := current_setting('app.supabase_url', true) || '/functions/v1/fetch-barcode',
-      headers := jsonb_build_object(
-        'Content-Type',  'application/json',
-        'Authorization', 'Bearer ' || current_setting('app.service_role_key', true)
-      ),
-      body    := jsonb_build_object('barcode', p_barcode)::text
-    )).body::jsonb
-  INTO v_status, v_result;
+  -- Cache-miss: anropa fetch-barcode Edge Function via pg_net
+  -- verify_jwt: false på Edge Function — ingen Authorization-header krävs
+  v_request_id := net.http_post(
+    url     := 'https://mdtrmyvwkypnivbjtgkc.supabase.co/functions/v1/fetch-barcode',
+    body    := jsonb_build_object('barcode', p_barcode),
+    headers := jsonb_build_object('Content-Type', 'application/json'),
+    timeout_milliseconds := 10000
+  );
 
-  -- Edge Function-fel eller icke-OK HTTP-status
-  IF v_status IS NULL OR v_status < 200 OR v_status >= 300 THEN
+  -- Vänta på svar (synkront)
+  v_response := net.http_collect_response(v_request_id, async := false);
+
+  -- Nätverksfel
+  IF v_response.status <> 'SUCCESS' THEN
+    INSERT INTO public.scan_usage (user_id, scan_type, success, error_type)
+    VALUES (v_user_id, 'barcode', false, 'fetch_failed');
+    RETURN jsonb_build_object('error', 'fetch_failed', 'detail', v_response.message);
+  END IF;
+
+  v_status := v_response.response.status_code;
+
+  -- Parsa body
+  BEGIN
+    v_result := v_response.response.body::jsonb;
+  EXCEPTION WHEN others THEN
+    INSERT INTO public.scan_usage (user_id, scan_type, success, error_type)
+    VALUES (v_user_id, 'barcode', false, 'parse_failed');
+    RETURN jsonb_build_object('error', 'parse_failed');
+  END;
+
+  -- HTTP-fel från Edge Function
+  IF v_status < 200 OR v_status >= 300 THEN
     INSERT INTO public.scan_usage (user_id, scan_type, success, error_type)
     VALUES (v_user_id, 'barcode', false,
             COALESCE(v_result->>'error', 'fetch_failed'));
     RETURN COALESCE(v_result, jsonb_build_object('error', 'fetch_failed'));
   END IF;
 
-  -- Kontrollera applikationsfel i svaret
+  -- Applikationsfel i svaret
   IF (v_result->>'error') IS NOT NULL THEN
     INSERT INTO public.scan_usage (user_id, scan_type, success, error_type)
     VALUES (v_user_id, 'barcode', false, v_result->>'error');
