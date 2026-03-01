@@ -22,8 +22,9 @@ import { SOURCE_BADGES } from '@/lib/constants/sourceBadges'
 
 const TABS: { key: FoodTab; label: string }[] = [
   { key: 'alla', label: 'Alla' },
-  { key: 'mina', label: 'Mina & CalculEat' },
-  { key: 'slv', label: 'SLV' },
+  { key: 'mina', label: 'Mina' },
+  { key: 'calculeat', label: 'CalculEat' },
+  { key: 'slv', label: 'Livsmedelsverket' },
 ]
 
 const PAGE_SIZE = 50

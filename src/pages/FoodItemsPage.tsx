@@ -52,8 +52,10 @@ import { toast } from 'sonner'
 
 // Static tabs (shared list tabs are added dynamically)
 const STATIC_TABS: { key: FoodTab; label: string }[] = [
-  { key: 'mina', label: 'Mina & CalculEat' },
-  { key: 'slv', label: 'SLV' },
+  { key: 'mina', label: 'Mina' },
+  { key: 'calculeat', label: 'CalculEat' },
+  { key: 'slv', label: 'Livsmedelsverket' },
+  { key: 'alla', label: 'Alla' },
 ]
 
 // Display mode type
@@ -191,14 +193,17 @@ export default function FoodItemsPage() {
   const { data: sharedLists = [], isLoading: sharedListsLoading } = useSharedLists()
   const { mutateAsync: copyToSharedList } = useCopyToSharedList()
 
-  // Build full tab list (static + one per shared list)
+  // Build full tab list: Mina | CalculEat | Livsmedelsverket | [delade listor] | Alla
   const allTabs = useMemo<{ key: FoodTab; label: string }[]>(
     () => [
-      ...STATIC_TABS,
+      STATIC_TABS[0], // Mina
+      STATIC_TABS[1], // CalculEat
+      STATIC_TABS[2], // Livsmedelsverket
       ...sharedLists.map(list => ({
         key: `list:${list.id}` as FoodTab,
         label: list.name,
       })),
+      STATIC_TABS[3], // Alla
     ],
     [sharedLists]
   )

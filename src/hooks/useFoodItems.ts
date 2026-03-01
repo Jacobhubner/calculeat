@@ -5,7 +5,7 @@ import { type FoodColor, type FoodType } from '@/lib/calculations/colorDensity'
 
 export type FoodSource = 'manual' | 'livsmedelsverket' | 'usda' | 'user' | 'shared'
 // 'list:{uuid}' används för gemensamma listor, t.ex. 'list:a1b2c3d4-...'
-export type FoodTab = 'mina' | 'slv' | 'alla' | `list:${string}`
+export type FoodTab = 'mina' | 'calculeat' | 'slv' | 'alla' | `list:${string}`
 
 export interface PaginatedResult {
   items: FoodItem[]
