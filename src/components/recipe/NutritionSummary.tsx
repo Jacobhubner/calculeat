@@ -41,6 +41,9 @@ export function NutritionSummary({
           protein: nutrition.per100g.protein,
           carbs: nutrition.per100g.carbs,
           fat: nutrition.per100g.fat,
+          saturatedFat: nutrition.per100g.saturatedFat,
+          sugars: nutrition.per100g.sugars,
+          salt: nutrition.per100g.salt,
           weight: 100,
         }
       : {
@@ -49,6 +52,9 @@ export function NutritionSummary({
           protein: nutrition.perServing.protein,
           carbs: nutrition.perServing.carbs,
           fat: nutrition.perServing.fat,
+          saturatedFat: nutrition.perServing.saturatedFat,
+          sugars: nutrition.perServing.sugars,
+          salt: nutrition.perServing.salt,
           weight: nutrition.perServing.weight,
         }
 
@@ -89,6 +95,32 @@ export function NutritionSummary({
             <div className="text-xs text-neutral-500">Fett</div>
           </div>
         </div>
+
+        {/* Optional sub-nutrients */}
+        {(displayValues.saturatedFat != null ||
+          displayValues.sugars != null ||
+          displayValues.salt != null) && (
+          <div className="space-y-1 text-sm mt-1">
+            {displayValues.saturatedFat != null && (
+              <div className="flex justify-between pl-3">
+                <span className="text-neutral-400">varav mättat fett:</span>
+                <span className="text-neutral-600">{displayValues.saturatedFat.toFixed(1)}g</span>
+              </div>
+            )}
+            {displayValues.sugars != null && (
+              <div className="flex justify-between pl-3">
+                <span className="text-neutral-400">varav sockerarter:</span>
+                <span className="text-neutral-600">{displayValues.sugars.toFixed(1)}g</span>
+              </div>
+            )}
+            {displayValues.salt != null && (
+              <div className="flex justify-between pl-3">
+                <span className="text-neutral-400">Salt:</span>
+                <span className="text-neutral-600">{displayValues.salt.toFixed(1)}g</span>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Additional info */}

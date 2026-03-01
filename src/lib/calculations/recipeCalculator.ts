@@ -8,6 +8,13 @@ import type { FoodItem } from '@/hooks/useFoodItems'
 import { getVolumeToGrams, isVolumeUnit } from '@/lib/utils/unitConversion'
 import { calculateFoodColor, type FoodColor } from '@/lib/calculations/colorDensity'
 
+export interface NutrientRow {
+  food_item_id: string
+  nutrient_code: string
+  amount: number
+  reference_amount: number
+}
+
 export interface RecipeIngredientInput {
   foodItem: FoodItem
   amount: number
@@ -28,18 +35,27 @@ export interface RecipeNutrition {
   totalProtein: number
   totalCarbs: number
   totalFat: number
+  totalSaturatedFat: number | null
+  totalSugars: number | null
+  totalSalt: number | null
   perServing: {
     weight: number
     calories: number
     protein: number
     carbs: number
     fat: number
+    saturatedFat: number | null
+    sugars: number | null
+    salt: number | null
   }
   per100g: {
     calories: number
     protein: number
     carbs: number
     fat: number
+    saturatedFat: number | null
+    sugars: number | null
+    salt: number | null
   }
   energyDensityColor: FoodColor | null
 }
@@ -125,7 +141,8 @@ export function calculateIngredientNutrition(
  */
 export function calculateRecipeNutrition(
   ingredients: RecipeIngredientInput[],
-  servings: number
+  servings: number,
+  allNutrients?: NutrientRow[]
 ): RecipeNutrition {
   // Calculate totals
   let totalWeight = 0
@@ -133,6 +150,11 @@ export function calculateRecipeNutrition(
   let totalProtein = 0
   let totalCarbs = 0
   let totalFat = 0
+
+  // Track optional nutrients — null means "no data available at all"
+  let totalSaturatedFat: number | null = null
+  let totalSugars: number | null = null
+  let totalSalt: number | null = null
 
   for (const ingredient of ingredients) {
     const nutrition = calculateIngredientNutrition(
@@ -145,32 +167,74 @@ export function calculateRecipeNutrition(
     totalProtein += nutrition.protein
     totalCarbs += nutrition.carbs
     totalFat += nutrition.fat
+
+    // Sum optional nutrients from food_nutrients if available
+    if (allNutrients && nutrition.weightGrams > 0) {
+      const baseWeight =
+        ingredient.foodItem.weight_grams && ingredient.foodItem.weight_grams > 0
+          ? ingredient.foodItem.weight_grams
+          : 100
+      const multiplier = nutrition.weightGrams / baseWeight
+
+      const itemNutrients = allNutrients.filter(n => n.food_item_id === ingredient.foodItem.id)
+
+      const satFatRow = itemNutrients.find(n => n.nutrient_code === 'saturated_fat')
+      if (satFatRow) {
+        const scaled = (satFatRow.amount / satFatRow.reference_amount) * baseWeight * multiplier
+        totalSaturatedFat = (totalSaturatedFat ?? 0) + scaled
+      }
+
+      const sugarsRow = itemNutrients.find(n => n.nutrient_code === 'sugars')
+      if (sugarsRow) {
+        const scaled = (sugarsRow.amount / sugarsRow.reference_amount) * baseWeight * multiplier
+        totalSugars = (totalSugars ?? 0) + scaled
+      }
+
+      const saltRow = itemNutrients.find(n => n.nutrient_code === 'salt')
+      if (saltRow) {
+        const scaled = (saltRow.amount / saltRow.reference_amount) * baseWeight * multiplier
+        totalSalt = (totalSalt ?? 0) + scaled
+      }
+    }
   }
 
   // Calculate per serving (safe division with NaN/Infinity protection)
   const servingCount = servings > 0 ? servings : 1
+  const r = (v: number) => Math.round(v * 10) / 10 || 0
+  const rOpt = (v: number | null) => (v !== null ? Math.round(v * 10) / 10 : null)
+
   const perServing = {
-    weight: Math.round((totalWeight / servingCount) * 10) / 10 || 0,
-    calories: Math.round((totalCalories / servingCount) * 10) / 10 || 0,
-    protein: Math.round((totalProtein / servingCount) * 10) / 10 || 0,
-    carbs: Math.round((totalCarbs / servingCount) * 10) / 10 || 0,
-    fat: Math.round((totalFat / servingCount) * 10) / 10 || 0,
+    weight: r(totalWeight / servingCount),
+    calories: r(totalCalories / servingCount),
+    protein: r(totalProtein / servingCount),
+    carbs: r(totalCarbs / servingCount),
+    fat: r(totalFat / servingCount),
+    saturatedFat: rOpt(totalSaturatedFat !== null ? totalSaturatedFat / servingCount : null),
+    sugars: rOpt(totalSugars !== null ? totalSugars / servingCount : null),
+    salt: rOpt(totalSalt !== null ? totalSalt / servingCount : null),
   }
 
   // Calculate per 100g (with NaN/Infinity protection)
   const per100g =
     totalWeight > 0
       ? {
-          calories: Math.round((totalCalories / totalWeight) * 100 * 10) / 10 || 0,
-          protein: Math.round((totalProtein / totalWeight) * 100 * 10) / 10 || 0,
-          carbs: Math.round((totalCarbs / totalWeight) * 100 * 10) / 10 || 0,
-          fat: Math.round((totalFat / totalWeight) * 100 * 10) / 10 || 0,
+          calories: r((totalCalories / totalWeight) * 100),
+          protein: r((totalProtein / totalWeight) * 100),
+          carbs: r((totalCarbs / totalWeight) * 100),
+          fat: r((totalFat / totalWeight) * 100),
+          saturatedFat:
+            totalSaturatedFat !== null ? rOpt((totalSaturatedFat / totalWeight) * 100) : null,
+          sugars: totalSugars !== null ? rOpt((totalSugars / totalWeight) * 100) : null,
+          salt: totalSalt !== null ? rOpt((totalSalt / totalWeight) * 100) : null,
         }
       : {
           calories: 0,
           protein: 0,
           carbs: 0,
           fat: 0,
+          saturatedFat: null,
+          sugars: null,
+          salt: null,
         }
 
   // Calculate energy density color (treat recipe as solid food)
@@ -189,6 +253,9 @@ export function calculateRecipeNutrition(
     totalProtein: Math.round(totalProtein * 10) / 10,
     totalCarbs: Math.round(totalCarbs * 10) / 10,
     totalFat: Math.round(totalFat * 10) / 10,
+    totalSaturatedFat: rOpt(totalSaturatedFat),
+    totalSugars: rOpt(totalSugars),
+    totalSalt: rOpt(totalSalt),
     perServing,
     per100g,
     energyDensityColor,

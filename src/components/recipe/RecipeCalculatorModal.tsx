@@ -14,6 +14,7 @@ import { Label } from '@/components/ui/label'
 import { IngredientRow, type IngredientData } from './IngredientRow'
 import { NutritionSummary } from './NutritionSummary'
 import { useFoodItems } from '@/hooks/useFoodItems'
+import { useFoodNutrientsBatch } from '@/hooks/useFoodNutrients'
 import { useFavoriteFoods, useToggleFavorite } from '@/hooks/useFavoriteFoods'
 import { useCreateRecipe, useUpdateRecipe, type Recipe } from '@/hooks/useRecipes'
 import {
@@ -148,6 +149,13 @@ export function RecipeCalculatorModal({
     }
   }, [open, editRecipe, foods, mergedFoods, initialized, resetForm, initializeForm, sharedListId])
 
+  // Fetch optional nutrients (saturated fat, sugars, salt) for all ingredient food items
+  const ingredientFoodIds = useMemo(
+    () => ingredients.filter(ing => ing.foodItem).map(ing => ing.foodItem!.id),
+    [ingredients]
+  )
+  const { data: ingredientNutrients } = useFoodNutrientsBatch(ingredientFoodIds)
+
   // Calculate nutrition
   const nutrition = useMemo(() => {
     const validIngredients: RecipeIngredientInput[] = ingredients
@@ -159,8 +167,12 @@ export function RecipeCalculatorModal({
       }))
 
     if (validIngredients.length === 0) return null
-    return calculateRecipeNutrition(validIngredients, typeof servings === 'number' ? servings : 1)
-  }, [ingredients, servings])
+    return calculateRecipeNutrition(
+      validIngredients,
+      typeof servings === 'number' ? servings : 1,
+      ingredientNutrients ?? undefined
+    )
+  }, [ingredients, servings, ingredientNutrients])
 
   const handleAddIngredient = () => {
     setIngredients(prev => [

@@ -170,6 +170,9 @@ export function AddFoodItemModal({
   const fatG = watch('fat_g')
   const carbG = watch('carb_g')
   const proteinG = watch('protein_g')
+  const saturatedFatG = watch('saturated_fat_g')
+  const sugarsG = watch('sugars_g')
+  const saltG = watch('salt_g')
   const foodType = watch('food_type')
   const gramsPerPiece = watch('grams_per_piece')
   const servingUnit = watch('serving_unit')
@@ -416,15 +419,30 @@ export function AddFoodItemModal({
 
     const kcalPerGram = calories / weightGramsValue
 
+    const scale = gramsPerPieceValue / weightGramsValue
     return {
       unit: servingUnitValue,
       grams: gramsPerPieceValue,
       kcal: kcalPerGram * gramsPerPieceValue,
-      protein: (proteinG / weightGramsValue) * gramsPerPieceValue,
-      carb: (carbG / weightGramsValue) * gramsPerPieceValue,
-      fat: (fatG / weightGramsValue) * gramsPerPieceValue,
+      protein: proteinG * scale,
+      carb: carbG * scale,
+      fat: fatG * scale,
+      saturatedFat: saturatedFatG != null && !isNaN(saturatedFatG) ? saturatedFatG * scale : null,
+      sugars: sugarsG != null && !isNaN(sugarsG) ? sugarsG * scale : null,
+      salt: saltG != null && !isNaN(saltG) ? saltG * scale : null,
     }
-  }, [gramsPerPiece, servingUnit, weightGrams, calories, proteinG, carbG, fatG])
+  }, [
+    gramsPerPiece,
+    servingUnit,
+    weightGrams,
+    calories,
+    proteinG,
+    carbG,
+    fatG,
+    saturatedFatG,
+    sugarsG,
+    saltG,
+  ])
 
   // Check if form has non-default values
   const formHasValues = useCallback(() => {
@@ -1200,18 +1218,42 @@ export function AddFoodItemModal({
                                   {servingPreview.fat.toFixed(1)}g
                                 </span>
                               </div>
+                              {servingPreview.saturatedFat != null && (
+                                <div className="flex justify-between pl-3">
+                                  <span className="text-neutral-400">varav mättat fett:</span>
+                                  <span className="text-neutral-600">
+                                    {servingPreview.saturatedFat.toFixed(1)}g
+                                  </span>
+                                </div>
+                              )}
                               <div className="flex justify-between">
                                 <span className="text-neutral-600">Kolhydrater:</span>
                                 <span className="font-medium text-neutral-900">
                                   {servingPreview.carb.toFixed(1)}g
                                 </span>
                               </div>
+                              {servingPreview.sugars != null && (
+                                <div className="flex justify-between pl-3">
+                                  <span className="text-neutral-400">varav sockerarter:</span>
+                                  <span className="text-neutral-600">
+                                    {servingPreview.sugars.toFixed(1)}g
+                                  </span>
+                                </div>
+                              )}
                               <div className="flex justify-between">
                                 <span className="text-neutral-600">Protein:</span>
                                 <span className="font-medium text-neutral-900">
                                   {servingPreview.protein.toFixed(1)}g
                                 </span>
                               </div>
+                              {servingPreview.salt != null && (
+                                <div className="flex justify-between pl-3">
+                                  <span className="text-neutral-400">Salt:</span>
+                                  <span className="text-neutral-600">
+                                    {servingPreview.salt.toFixed(1)}g
+                                  </span>
+                                </div>
+                              )}
                             </div>
                           </div>
                         </>
