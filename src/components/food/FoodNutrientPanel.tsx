@@ -19,6 +19,15 @@ const CATEGORY_LABELS: Record<string, string> = {
 
 const CATEGORY_ORDER = ['macro', 'vitamin', 'mineral']
 
+// Koder som ska visas indenterade med "varav"-prefix under sin förälder
+const SUB_NUTRIENT_CODES = new Set([
+  'saturated_fat',
+  'monounsaturated_fat',
+  'polyunsaturated_fat',
+  'sugars',
+  'fiber',
+])
+
 interface FoodNutrientPanelProps {
   foodItem: FoodItem | null
   open: boolean
@@ -145,14 +154,25 @@ export function FoodNutrientPanel({ foodItem, open, onOpenChange }: FoodNutrient
                     {CATEGORY_LABELS[cat] || cat}
                   </h3>
                   <div className="space-y-1">
-                    {items.map(item => (
-                      <div key={item.nutrient_code} className="flex justify-between text-sm">
-                        <span className="text-neutral-600">{item.definition.display_name_sv}</span>
-                        <span className="font-medium tabular-nums">
-                          {formatAmount(item.amount)} {item.definition.unit}
-                        </span>
-                      </div>
-                    ))}
+                    {items.map(item => {
+                      const isSub = SUB_NUTRIENT_CODES.has(item.nutrient_code)
+                      return (
+                        <div
+                          key={item.nutrient_code}
+                          className={`flex justify-between text-sm ${isSub ? 'pl-4' : ''}`}
+                        >
+                          <span className={isSub ? 'text-neutral-400' : 'text-neutral-600'}>
+                            {isSub ? 'varav ' : ''}
+                            {item.definition.display_name_sv}
+                          </span>
+                          <span
+                            className={`tabular-nums ${isSub ? 'text-neutral-500' : 'font-medium'}`}
+                          >
+                            {formatAmount(item.amount)} {item.definition.unit}
+                          </span>
+                        </div>
+                      )
+                    })}
                   </div>
                 </div>
               )
