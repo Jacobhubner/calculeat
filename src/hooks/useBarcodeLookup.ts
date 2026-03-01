@@ -17,37 +17,16 @@ const ERROR_MESSAGES: Record<string, string> = {
   unauthorized: 'Du måste vara inloggad',
 }
 
-async function fetchBarcode(barcode: string): Promise<ScanResult> {
-  const { data, error } = await supabase.rpc('get_or_fetch_barcode', {
-    p_barcode: barcode,
-  })
+const EDGE_FUNCTION_URL = 'https://mdtrmyvwkypnivbjtgkc.supabase.co/functions/v1/fetch-barcode'
 
-  if (error) {
-    throw {
-      type: 'fetch_failed',
-      message: ERROR_MESSAGES['fetch_failed'],
-    } as LookupError
+function makeLookupError(type: string): LookupError {
+  return {
+    type: type as LookupError['type'],
+    message: ERROR_MESSAGES[type] ?? ERROR_MESSAGES['fetch_failed'],
   }
+}
 
-  const result = data as { error?: string; source?: string; data?: Record<string, unknown> }
-
-  if (result?.error) {
-    const errorType = result.error as LookupError['type']
-    throw {
-      type: errorType,
-      message: ERROR_MESSAGES[errorType] ?? ERROR_MESSAGES['fetch_failed'],
-    } as LookupError
-  }
-
-  if (!result?.data) {
-    throw {
-      type: 'fetch_failed',
-      message: ERROR_MESSAGES['fetch_failed'],
-    } as LookupError
-  }
-
-  const d = result.data
-
+function parseData(d: Record<string, unknown>): ScanResult {
   return {
     name: (d.name as string | null) ?? null,
     calories: d.calories as number,
@@ -63,13 +42,94 @@ async function fetchBarcode(barcode: string): Promise<ScanResult> {
   }
 }
 
+async function fetchBarcode(barcode: string): Promise<ScanResult> {
+  // 1. Rate-limit-kontroll
+  const { data: rateLimited, error: rateError } = await supabase.rpc('check_barcode_rate_limit')
+  if (rateError || rateLimited) {
+    throw makeLookupError('rate_limited')
+  }
+
+  // 2. Cache-kontroll
+  const { data: cacheResult, error: cacheError } = await supabase.rpc('check_barcode_cache', {
+    p_barcode: barcode,
+  })
+  if (cacheError) throw makeLookupError('fetch_failed')
+
+  const cache = cacheResult as { hit: boolean; error?: string; data?: Record<string, unknown> }
+
+  if (cache.hit) {
+    if (cache.error) throw makeLookupError(cache.error)
+    return parseData(cache.data!)
+  }
+
+  // 3. Cache-miss: anropa Edge Function direkt från klienten
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
+  const token = session?.access_token
+
+  let response: Response
+  try {
+    response = await fetch(EDGE_FUNCTION_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({ barcode }),
+      signal: AbortSignal.timeout(15000),
+    })
+  } catch {
+    throw makeLookupError('fetch_failed')
+  }
+
+  let result: { data?: Record<string, unknown>; error?: string }
+  try {
+    result = await response.json()
+  } catch {
+    throw makeLookupError('fetch_failed')
+  }
+
+  // 4. Spara i cache (brand-and-forget — väntar inte)
+  if (result.data) {
+    supabase
+      .rpc('save_barcode_result', {
+        p_barcode: barcode,
+        p_status: 'found',
+        p_data: result.data,
+        p_error: null,
+      })
+      .then() // fire-and-forget
+  } else if (result.error && ['off_not_found', 'off_incomplete'].includes(result.error)) {
+    supabase
+      .rpc('save_barcode_result', {
+        p_barcode: barcode,
+        p_status: 'not_found',
+        p_data: null,
+        p_error: result.error,
+      })
+      .then() // fire-and-forget
+  }
+
+  // 5. Hantera fel från Edge Function
+  if (result.error) {
+    throw makeLookupError(result.error)
+  }
+
+  if (!result.data) {
+    throw makeLookupError('fetch_failed')
+  }
+
+  return parseData(result.data)
+}
+
 export function useBarcodeLookup(barcode: string | null) {
   return useQuery<ScanResult, LookupError>({
     queryKey: ['barcode', barcode],
     queryFn: () => fetchBarcode(barcode!),
     enabled: !!barcode,
-    staleTime: 24 * 60 * 60 * 1000, // 24h
-    gcTime: 60 * 60 * 1000, // 1h
+    staleTime: 24 * 60 * 60 * 1000,
+    gcTime: 60 * 60 * 1000,
     retry: false,
   })
 }
