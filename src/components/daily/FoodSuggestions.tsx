@@ -1,10 +1,9 @@
 import { useState, useMemo } from 'react'
-import { Lightbulb, Plus, Settings2, Heart } from 'lucide-react'
+import { Lightbulb, Plus, Settings2 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useFoodSuggestions, type SuggestionSourceFilter } from '@/hooks/useFoodSuggestions'
-import { useFavoriteFoods, useToggleFavorite } from '@/hooks/useFavoriteFoods'
 import type { FoodItem } from '@/hooks/useFoodItems'
 import type { FoodColor } from '@/lib/calculations/colorDensity'
 
@@ -69,10 +68,6 @@ export function FoodSuggestions({
   const [showOrange, setShowOrange] = useState(false)
   const [sortBy, setSortBy] = useState<'score' | 'protein' | 'calories' | 'name'>('score')
 
-  // Favorites
-  const { data: favorites } = useFavoriteFoods()
-  const { toggle: toggleFavorite, isPending: isTogglingFavorite } = useToggleFavorite()
-
   // Build color filter array
   const colorFilter = useMemo(() => {
     if (!filterByColor) return undefined
@@ -128,18 +123,8 @@ export function FoodSuggestions({
         sorted.sort((a, b) => a.food.name.localeCompare(b.food.name, 'sv'))
         break
     }
-    // Favorites first
-    if (favorites) {
-      return sorted.sort((a, b) => {
-        const aIsFav = favorites.has(a.food.id)
-        const bIsFav = favorites.has(b.food.id)
-        if (aIsFav && !bIsFav) return -1
-        if (!aIsFav && bIsFav) return 1
-        return 0
-      })
-    }
     return sorted
-  }, [rawSuggestions, sortBy, favorites])
+  }, [rawSuggestions, sortBy])
 
   const handlePrimaryMacroChange = (value: 'protein' | 'carbs' | 'fat') => {
     setPrimaryMacro(value)
@@ -148,11 +133,6 @@ export function FoodSuggestions({
       setSecondaryMacro('')
       setSecondaryMacroTarget(0)
     }
-  }
-
-  const handleToggleFavorite = async (e: React.MouseEvent, foodId: string) => {
-    e.stopPropagation()
-    await toggleFavorite(foodId)
   }
 
   return (
@@ -457,28 +437,13 @@ export function FoodSuggestions({
             {/* Compact table list */}
             <div className="max-h-72 overflow-y-auto -mx-1">
               {suggestions.map((match, index) => {
-                const isFavorite = favorites?.has(match.food.id) ?? false
                 return (
                   <div
                     key={match.food.id}
                     className="px-1 py-1.5 hover:bg-neutral-50 transition-colors border-b border-neutral-100 last:border-b-0"
                   >
-                    {/* Row 1: Index, Heart, Name, Amount, Kcal, Add */}
+                    {/* Row 1: Index, Name, Amount, Kcal, Add */}
                     <div className="flex items-center gap-1.5">
-                      {/* Favorite button */}
-                      <button
-                        onClick={e => handleToggleFavorite(e, match.food.id)}
-                        disabled={isTogglingFavorite}
-                        className="p-0.5 rounded hover:bg-neutral-100 flex-shrink-0"
-                        title={isFavorite ? 'Ta bort favorit' : 'Lägg till favorit'}
-                      >
-                        <Heart
-                          className={`h-3.5 w-3.5 ${
-                            isFavorite ? 'fill-red-500 text-red-500' : 'text-neutral-300'
-                          }`}
-                        />
-                      </button>
-
                       {/* Rank */}
                       <span className="text-xs text-neutral-400 w-4 text-center flex-shrink-0">
                         {index + 1}

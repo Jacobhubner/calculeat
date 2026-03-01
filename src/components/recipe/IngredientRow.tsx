@@ -41,7 +41,6 @@ export interface IngredientData {
 interface IngredientRowProps {
   ingredient: IngredientData
   availableFoods: FoodItem[]
-  favorites?: Set<string>
   sharedLists?: SharedListOption[]
   onChange: (updated: IngredientData) => void
   onRemove: () => void
@@ -50,7 +49,6 @@ interface IngredientRowProps {
 export function IngredientRow({
   ingredient,
   availableFoods,
-  favorites,
   sharedLists = [],
   onChange,
   onRemove,
@@ -99,14 +97,7 @@ export function IngredientRow({
         (food.brand && food.brand.toLowerCase().includes(query))
       )
     })
-    .sort((a, b) => {
-      // Sort favorites first
-      const aIsFav = favorites?.has(a.id) || false
-      const bIsFav = favorites?.has(b.id) || false
-      if (aIsFav && !bIsFav) return -1
-      if (!aIsFav && bIsFav) return 1
-      return a.name.localeCompare(b.name, 'sv')
-    })
+    .sort((a, b) => a.name.localeCompare(b.name, 'sv'))
 
   const totalMatches = allFilteredFoods.length
   const filteredFoods = allFilteredFoods.slice(0, 20)

@@ -15,7 +15,6 @@ import { IngredientRow, type IngredientData } from './IngredientRow'
 import { NutritionSummary } from './NutritionSummary'
 import { useFoodItems } from '@/hooks/useFoodItems'
 import { useFoodNutrientsBatch } from '@/hooks/useFoodNutrients'
-import { useFavoriteFoods } from '@/hooks/useFavoriteFoods'
 import { useCreateRecipe, useUpdateRecipe, type Recipe } from '@/hooks/useRecipes'
 import {
   useCreateSharedListRecipe,
@@ -55,7 +54,6 @@ export function RecipeCalculatorModal({
   const [initialized, setInitialized] = useState(false)
 
   const { data: foods, isError: foodsError, isLoading: foodsLoading } = useFoodItems()
-  const { data: favorites } = useFavoriteFoods()
   const createRecipe = useCreateRecipe()
   const updateRecipe = useUpdateRecipe()
   const createSharedListRecipe = useCreateSharedListRecipe()
@@ -368,7 +366,6 @@ export function RecipeCalculatorModal({
                         key={ingredient.id}
                         ingredient={ingredient}
                         availableFoods={availableFoods}
-                        favorites={favorites}
                         sharedLists={sharedLists}
                         onChange={updated => handleIngredientChange(ingredient.id, updated)}
                         onRemove={() => handleIngredientRemove(ingredient.id)}

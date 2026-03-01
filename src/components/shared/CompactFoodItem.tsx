@@ -1,10 +1,7 @@
-import { Heart } from 'lucide-react'
 import type { FoodItem } from '@/hooks/useFoodItems'
 
 interface CompactFoodItemProps {
   food: FoodItem
-  isFavorite: boolean
-  onToggleFavorite: (e: React.MouseEvent) => void
   onClick?: () => void
   rightContent?: React.ReactNode
   showDetails?: boolean
@@ -39,8 +36,6 @@ function ColorDot({ color }: { color?: string | null }) {
 
 export function CompactFoodItem({
   food,
-  isFavorite,
-  onToggleFavorite,
   onClick,
   rightContent,
   showDetails = true,
@@ -48,14 +43,12 @@ export function CompactFoodItem({
   highlighted = false,
   disabled = false,
 }: CompactFoodItemProps) {
-  // Beräkna kcal/100g för visning
   const kcalPer100g = food.kcal_per_gram
     ? Math.round(food.kcal_per_gram * 100)
     : food.weight_grams && food.weight_grams > 0
       ? Math.round((food.calories / food.weight_grams) * 100)
       : food.calories
 
-  // Bygg detaljer-text
   const detailsText =
     details || [food.brand, food.is_recipe ? '👨‍🍳 Recept' : null].filter(Boolean).join(' • ')
 
@@ -69,26 +62,11 @@ export function CompactFoodItem({
         ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
       `}
     >
-      {/* Favorit-knapp */}
-      <button
-        onClick={onToggleFavorite}
-        disabled={disabled}
-        className="mt-0.5 p-0.5 rounded hover:bg-neutral-200 transition-colors flex-shrink-0"
-        title={isFavorite ? 'Ta bort från favoriter' : 'Lägg till i favoriter'}
-      >
-        <Heart
-          className={`h-4 w-4 ${
-            isFavorite ? 'fill-red-500 text-red-500' : 'text-neutral-300 hover:text-red-400'
-          }`}
-        />
-      </button>
-
       {/* Namn och detaljer */}
       <div className="flex-1 min-w-0">
         <div className="flex items-start gap-2">
           <span className="text-sm font-medium text-neutral-900 leading-tight break-words flex-1">
             {food.name}
-            {isFavorite && <span className="text-red-500 ml-1 text-xs">★</span>}
           </span>
         </div>
         {showDetails && detailsText && (
