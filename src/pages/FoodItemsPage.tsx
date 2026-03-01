@@ -235,6 +235,7 @@ export default function FoodItemsPage() {
   const [listEditItem, setListEditItem] = useState<FoodItem | null>(null)
   const [listEditConfirmShared, setListEditConfirmShared] = useState(false)
   const [editCopyMode, setEditCopyMode] = useState(false)
+  const [listDeleteItem, setListDeleteItem] = useState<FoodItem | null>(null)
   const [deletingItemId, setDeletingItemId] = useState<string | null>(null)
   const [displayModes, setDisplayModes] = useState<Record<string, DisplayMode>>({})
   const [resetStep, setResetStep] = useState<0 | 1 | 2>(0)
@@ -398,14 +399,9 @@ export default function FoodItemsPage() {
   const handleDelete = async (id: string) => {
     const item = items.find(i => i.id === id)
 
-    // List-items: direkt radering via RPC (ingen CoW/soft-delete)
+    // List-items: visa bekräftelsedialog (påverkar alla i listan)
     if (item?.shared_list_id) {
-      if (!confirm(`Ta bort "${item.name}" från listan?`)) return
-      try {
-        await deleteSharedListItem.mutateAsync({ foodItemId: id, listId: item.shared_list_id })
-      } catch {
-        alert('Kunde inte ta bort livsmedel från listan. Försök igen.')
-      }
+      setListDeleteItem(item)
       return
     }
 
@@ -482,6 +478,20 @@ export default function FoodItemsPage() {
     setListEditItem(null)
     setListEditConfirmShared(false)
     setIsAddModalOpen(true)
+  }
+
+  const handleConfirmListDelete = async () => {
+    if (!listDeleteItem?.shared_list_id) return
+    try {
+      await deleteSharedListItem.mutateAsync({
+        foodItemId: listDeleteItem.id,
+        listId: listDeleteItem.shared_list_id,
+      })
+    } catch {
+      alert('Kunde inte ta bort livsmedel från listan. Försök igen.')
+    } finally {
+      setListDeleteItem(null)
+    }
   }
 
   const handleModalClose = () => {
@@ -1638,6 +1648,36 @@ export default function FoodItemsPage() {
               className="flex-1 bg-orange-600 hover:bg-orange-700 text-white"
             >
               Ja, ändra i listan
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Bekräftelse: ta bort list-item (påverkar alla) */}
+      <Dialog
+        open={!!listDeleteItem}
+        onOpenChange={open => {
+          if (!open) setListDeleteItem(null)
+        }}
+      >
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Ta bort från listan?</DialogTitle>
+            <DialogDescription>
+              &quot;{listDeleteItem?.name}&quot; tas bort för alla som delar listan. Åtgärden kan
+              inte ångras.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex gap-2 pt-2">
+            <Button variant="outline" onClick={() => setListDeleteItem(null)} className="flex-1">
+              Avbryt
+            </Button>
+            <Button
+              onClick={handleConfirmListDelete}
+              className="flex-1 bg-red-600 hover:bg-red-700 text-white"
+              disabled={deleteSharedListItem.isPending}
+            >
+              {deleteSharedListItem.isPending ? 'Tar bort...' : 'Ta bort'}
             </Button>
           </div>
         </DialogContent>
