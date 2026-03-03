@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import ProfileCompletionGuard from '@/components/ProfileCompletionGuard'
 import OnboardingModal from '@/components/OnboardingModal'
@@ -11,7 +12,8 @@ import { useProfiles, useOnboarding } from '@/hooks'
 import { useTodayLog } from '@/hooks/useDailyLogs'
 import { useProfileStore } from '@/stores/profileStore'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Activity, Flame, Target, TrendingUp, UtensilsCrossed, Scale } from 'lucide-react'
+import { Activity, Flame, Target, TrendingUp, UtensilsCrossed, Scale, Settings } from 'lucide-react'
+import { calculateFFMI, getFFMICategory } from '@/lib/calculations/ffmiCalculations'
 import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
 import { useMemo, useState } from 'react'
@@ -40,6 +42,26 @@ export default function DashboardPage() {
         localStorage.setItem('dashboard_mode', next ? 'advanced' : 'simple')
       } catch {
         // ignore
+      }
+      return next
+    })
+  }
+  const [visibleInsights, setVisibleInsights] = useState<string[]>(() => {
+    try {
+      const stored = localStorage.getItem('health_insights_visible')
+      return stored ? JSON.parse(stored) : ['bmi', 'ffmi', 'idealweight', 'age']
+    } catch {
+      return ['bmi', 'ffmi', 'idealweight', 'age']
+    }
+  })
+  const [insightsCustomizeOpen, setInsightsCustomizeOpen] = useState(false)
+  const toggleInsight = (id: string) => {
+    setVisibleInsights(prev => {
+      const next = prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+      try {
+        localStorage.setItem('health_insights_visible', JSON.stringify(next))
+      } catch {
+        // ignore localStorage errors
       }
       return next
     })
@@ -87,6 +109,8 @@ export default function DashboardPage() {
         bmi: null,
         bmiCategory: null,
         idealWeightRange: null,
+        ffmi: null,
+        ffmiCategory: null,
         timeToGoal: null,
       }
     }
@@ -99,6 +123,16 @@ export default function DashboardPage() {
         : null
     const bmiCategory = bmi ? getBMICategory(bmi) : null
     const idealWeightRange = profile.height_cm ? calculateIdealWeightRange(profile.height_cm) : null
+
+    const ffmi =
+      profile.body_fat_percentage != null && profile.weight_kg && profile.height_cm
+        ? calculateFFMI(
+            profile.weight_kg * (1 - profile.body_fat_percentage / 100),
+            profile.height_cm / 100
+          )
+        : null
+    const ffmiCategory =
+      ffmi && ffmi > 0 && profile.gender ? getFFMICategory(ffmi, profile.gender) : null
 
     // Use SAVED calories and macros directly from profile
     const calorieGoal =
@@ -166,6 +200,8 @@ export default function DashboardPage() {
       bmi,
       bmiCategory,
       idealWeightRange,
+      ffmi,
+      ffmiCategory,
       timeToGoal: null,
     }
   }, [profile])
@@ -411,39 +447,116 @@ export default function DashboardPage() {
             {/* Health Insights */}
             {calculations.bmi && (
               <Card>
-                <CardHeader>
-                  <CardTitle>Hälsoinsikter</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
+                <CardHeader className="pb-2">
                   <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-neutral-600">BMI</p>
-                      <p className="text-2xl font-bold text-neutral-900">{calculations.bmi}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm text-neutral-600">Kategori</p>
-                      <p className="text-sm font-medium text-neutral-900 capitalize">
-                        {calculations.bmiCategory}
-                      </p>
-                    </div>
+                    <CardTitle>Hälsoinsikter</CardTitle>
+                    <button
+                      onClick={() => setInsightsCustomizeOpen(o => !o)}
+                      className="text-neutral-400 hover:text-neutral-600 transition-colors"
+                      aria-label="Anpassa hälsoinsikter"
+                    >
+                      <Settings className="h-4 w-4" />
+                    </button>
                   </div>
-
-                  {calculations.idealWeightRange && (
-                    <div>
-                      <p className="text-sm font-medium text-neutral-600 mb-2">
-                        Idealvikt (BMI 18.5-25)
-                      </p>
-                      <p className="text-sm text-neutral-700">
-                        {calculations.idealWeightRange.min} - {calculations.idealWeightRange.max} kg
-                      </p>
+                  {insightsCustomizeOpen && (
+                    <div className="flex flex-wrap gap-2 pt-2">
+                      {[
+                        { id: 'bmi', label: 'BMI', available: !!calculations.bmi },
+                        {
+                          id: 'ffmi',
+                          label: 'FFMI',
+                          available: calculations.ffmi != null && calculations.ffmi > 0,
+                        },
+                        {
+                          id: 'idealweight',
+                          label: 'Idealvikt',
+                          available: !!calculations.idealWeightRange,
+                        },
+                        { id: 'age', label: 'Ålder', available: !!calculations.age },
+                      ].map(metric => {
+                        const isActive = visibleInsights.includes(metric.id)
+                        return (
+                          <button
+                            key={metric.id}
+                            disabled={!metric.available}
+                            onClick={() => metric.available && toggleInsight(metric.id)}
+                            className={cn(
+                              'px-2 py-0.5 rounded text-xs font-medium transition-colors border',
+                              !metric.available
+                                ? 'bg-neutral-100 text-neutral-400 border-neutral-200 cursor-not-allowed'
+                                : isActive
+                                  ? 'bg-primary-100 text-primary-700 border-primary-300'
+                                  : 'bg-neutral-100 text-neutral-500 border-neutral-200'
+                            )}
+                          >
+                            {metric.label}
+                          </button>
+                        )
+                      })}
                     </div>
                   )}
+                </CardHeader>
+                <CardContent>
+                  {/* Metric pills row */}
+                  <div className="flex gap-3">
+                    {visibleInsights.includes('bmi') && calculations.bmi && (
+                      <div className="rounded-xl border border-neutral-200 p-4 flex-1">
+                        <p className="text-xs text-neutral-500 uppercase tracking-wide mb-1">BMI</p>
+                        <p className="text-2xl font-bold text-neutral-900">
+                          {Math.round(calculations.bmi * 10) / 10}
+                        </p>
+                        <p
+                          className={cn(
+                            'text-sm font-medium capitalize',
+                            calculations.bmiCategory === 'normalvikt'
+                              ? 'text-success-600'
+                              : calculations.bmiCategory === 'övervikt'
+                                ? 'text-warning-600'
+                                : calculations.bmiCategory === 'undervikt'
+                                  ? 'text-sky-600'
+                                  : 'text-error-600'
+                          )}
+                        >
+                          {calculations.bmiCategory}
+                        </p>
+                      </div>
+                    )}
+                    {visibleInsights.includes('ffmi') &&
+                      calculations.ffmi != null &&
+                      calculations.ffmi > 0 && (
+                        <div className="rounded-xl border border-neutral-200 p-4 flex-1">
+                          <p className="text-xs text-neutral-500 uppercase tracking-wide mb-1">
+                            FFMI
+                          </p>
+                          <p className="text-2xl font-bold text-neutral-900">
+                            {Math.round(calculations.ffmi * 10) / 10}
+                          </p>
+                          {calculations.ffmiCategory && (
+                            <p className="text-sm font-medium text-neutral-600">
+                              {calculations.ffmiCategory}
+                            </p>
+                          )}
+                        </div>
+                      )}
+                  </div>
 
-                  {calculations.age && (
-                    <div>
-                      <p className="text-sm font-medium text-neutral-600">Ålder</p>
-                      <p className="text-sm text-neutral-700">{calculations.age} år</p>
-                    </div>
+                  {/* Supplementary info row */}
+                  {(visibleInsights.includes('idealweight') || visibleInsights.includes('age')) && (
+                    <p className="mt-3 text-sm text-neutral-500">
+                      {visibleInsights.includes('idealweight') && calculations.idealWeightRange && (
+                        <span>
+                          Idealvikt: {Math.round(calculations.idealWeightRange.min)}–
+                          {Math.round(calculations.idealWeightRange.max)} kg
+                        </span>
+                      )}
+                      {visibleInsights.includes('idealweight') &&
+                        calculations.idealWeightRange &&
+                        visibleInsights.includes('age') &&
+                        calculations.age && <span> · </span>}
+                      {visibleInsights.includes('age') && calculations.age && (
+                        <span>Ålder: {calculations.age} år</span>
+                      )}
+                    </p>
                   )}
                 </CardContent>
               </Card>
