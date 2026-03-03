@@ -83,7 +83,7 @@ export function AddFoodToMealModal({
   const [debouncedSearch, setDebouncedSearch] = useState('')
 
   // Tab + pagination + filter state
-  const [activeTab, setActiveTab] = useState<FoodTab>('mina')
+  const [activeTab, setActiveTab] = useState<FoodTab>('alla')
   const [page, setPage] = useState(0)
   const [colorFilter, setColorFilter] = useState<'Green' | 'Yellow' | 'Orange' | null>(null)
   const [recipeFilter, setRecipeFilter] = useState<boolean | null>(null)
@@ -125,7 +125,7 @@ export function AddFoodToMealModal({
     if (!activeTab.startsWith('list:')) return
     const listId = activeTab.slice(5)
     if (!sharedLists.some(l => l.id === listId)) {
-      setActiveTab('mina')
+      setActiveTab('alla')
     }
   }, [sharedLists, activeTab])
   /* eslint-enable react-hooks/set-state-in-effect */
@@ -173,7 +173,7 @@ export function AddFoodToMealModal({
     setAmount(1)
     setSelectedUnit('')
     setSelectedMealName('')
-    setActiveTab('mina')
+    setActiveTab('alla')
     setPage(0)
     setColorFilter(null)
     setRecipeFilter(null)
