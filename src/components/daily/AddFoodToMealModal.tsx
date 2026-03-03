@@ -15,16 +15,17 @@ import { Select } from '@/components/ui/select'
 import { usePaginatedFoodItems, type FoodItem, type FoodTab } from '@/hooks/useFoodItems'
 import { useAddFoodToMeal, useCreateMealEntry, useUpdateMealItem } from '@/hooks/useDailyLogs'
 import { useMealSettings } from '@/hooks/useMealSettings'
+import { useSharedLists } from '@/hooks/useSharedLists'
 import { UnitSelector, getAvailableUnits, calculateNutritionForUnit } from './UnitSelector'
 import { NutritionPreview } from './NutritionPreview'
 import { toast } from 'sonner'
 import { SOURCE_BADGES } from '@/lib/constants/sourceBadges'
 
-const TABS: { key: FoodTab; label: string }[] = [
-  { key: 'alla', label: 'Alla' },
+const STATIC_TABS: { key: FoodTab; label: string }[] = [
   { key: 'mina', label: 'Mina' },
   { key: 'calculeat', label: 'CalculEat' },
   { key: 'slv', label: 'Livsmedelsverket' },
+  { key: 'alla', label: 'Alla' },
 ]
 
 const PAGE_SIZE = 50
@@ -82,7 +83,7 @@ export function AddFoodToMealModal({
   const [debouncedSearch, setDebouncedSearch] = useState('')
 
   // Tab + pagination + filter state
-  const [activeTab, setActiveTab] = useState<FoodTab>('alla')
+  const [activeTab, setActiveTab] = useState<FoodTab>('mina')
   const [page, setPage] = useState(0)
   const [colorFilter, setColorFilter] = useState<'Green' | 'Yellow' | 'Orange' | null>(null)
   const [recipeFilter, setRecipeFilter] = useState<boolean | null>(null)
@@ -93,6 +94,21 @@ export function AddFoodToMealModal({
 
   // Hooks
   const { data: mealSettings } = useMealSettings()
+  const { data: sharedLists = [] } = useSharedLists()
+
+  const allTabs = useMemo<{ key: FoodTab; label: string }[]>(
+    () => [
+      STATIC_TABS[0], // Mina
+      STATIC_TABS[1], // CalculEat
+      STATIC_TABS[2], // Livsmedelsverket
+      ...sharedLists.map(list => ({
+        key: `list:${list.id}` as FoodTab,
+        label: list.name,
+      })),
+      STATIC_TABS[3], // Alla
+    ],
+    [sharedLists]
+  )
   const addFoodToMeal = useAddFoodToMeal()
   const createMealEntry = useCreateMealEntry()
   const updateMealItem = useUpdateMealItem()
@@ -102,6 +118,17 @@ export function AddFoodToMealModal({
     const timer = setTimeout(() => setDebouncedSearch(searchQuery), 300)
     return () => clearTimeout(timer)
   }, [searchQuery])
+
+  // Dead-tab guard: om aktiv lista-flik försvinner, falla tillbaka till 'mina'
+  /* eslint-disable react-hooks/set-state-in-effect -- Legitimate pattern for resetting tab state */
+  useEffect(() => {
+    if (!activeTab.startsWith('list:')) return
+    const listId = activeTab.slice(5)
+    if (!sharedLists.some(l => l.id === listId)) {
+      setActiveTab('mina')
+    }
+  }, [sharedLists, activeTab])
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   // Reset page on tab/search/filter change
   /* eslint-disable react-hooks/set-state-in-effect -- Legitimate pattern for resetting pagination state */
@@ -146,7 +173,7 @@ export function AddFoodToMealModal({
     setAmount(1)
     setSelectedUnit('')
     setSelectedMealName('')
-    setActiveTab('alla')
+    setActiveTab('mina')
     setPage(0)
     setColorFilter(null)
     setRecipeFilter(null)
@@ -381,8 +408,8 @@ export function AddFoodToMealModal({
           {!selectedFood ? (
             <>
               {/* Tabs */}
-              <div className="flex gap-1 border-b border-neutral-200">
-                {TABS.map(tab => (
+              <div className="flex gap-1 border-b border-neutral-200 overflow-x-auto">
+                {allTabs.map(tab => (
                   <button
                     key={tab.key}
                     onClick={() => {
