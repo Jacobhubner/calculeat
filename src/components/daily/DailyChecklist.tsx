@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Check, X, Sparkles } from 'lucide-react'
+import { Check, Circle, Sparkles } from 'lucide-react'
 
 interface ChecklistItem {
   id: string
@@ -119,7 +119,11 @@ function ChecklistRow({ item }: ChecklistRowProps) {
           item.isComplete ? 'bg-green-500 text-white' : 'bg-neutral-200 text-neutral-400'
         )}
       >
-        {item.isComplete ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
+        {item.isComplete ? (
+          <Check className="h-4 w-4" />
+        ) : (
+          <Circle className="h-4 w-4 text-neutral-300" strokeWidth={1.5} />
+        )}
       </div>
       <div className="flex-1">
         <span

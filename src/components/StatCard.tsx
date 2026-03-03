@@ -27,10 +27,10 @@ export default function StatCard({
   className,
 }: StatCardProps) {
   const variantStyles = {
-    default: 'bg-neutral-100 text-neutral-700',
-    primary: 'bg-gradient-primary text-white',
-    accent: 'bg-gradient-accent text-white',
-    success: 'bg-gradient-to-br from-success-400 to-success-600 text-white',
+    default: 'bg-neutral-100 text-neutral-600',
+    primary: 'bg-primary-100 text-primary-600',
+    accent: 'bg-accent-100 text-accent-600',
+    success: 'bg-success-100 text-success-600',
   }
 
   return (

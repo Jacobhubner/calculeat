@@ -70,7 +70,7 @@ export default function CalorieRing({
         {/* Center content */}
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <div className="text-center">
-            <p className="text-4xl font-bold text-neutral-900">{consumed}</p>
+            <p className="text-5xl font-bold text-neutral-900">{consumed}</p>
             <p className="text-xs text-neutral-500 uppercase tracking-wide">kcal</p>
           </div>
         </div>
@@ -102,11 +102,6 @@ export default function CalorieRing({
             {isOverTarget ? 'Över' : 'Kvar'}
           </p>
         </div>
-      </div>
-
-      {/* Percentage */}
-      <div className="mt-4">
-        <p className="text-sm text-neutral-600">{Math.round(percentage)}% av dagligt mål</p>
       </div>
     </Card>
   )
