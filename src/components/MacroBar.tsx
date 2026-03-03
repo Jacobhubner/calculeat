@@ -19,8 +19,8 @@ export default function MacroBar({ protein, carbs, fat, className }: MacroBarPro
     {
       name: 'Fett',
       data: fat,
-      color: 'bg-success-500',
-      lightColor: 'bg-success-100',
+      color: 'bg-sky-500',
+      lightColor: 'bg-sky-100',
     },
     {
       name: 'Kolhydrater',
