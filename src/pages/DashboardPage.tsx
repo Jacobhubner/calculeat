@@ -14,7 +14,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Activity, Flame, Target, TrendingUp, UtensilsCrossed, Scale } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { DailyChecklist } from '@/components/daily/DailyChecklist'
 import { useDailySummary } from '@/hooks/useDailySummary'
 import {
@@ -26,6 +26,24 @@ import {
 
 export default function DashboardPage() {
   const navigate = useNavigate()
+  const [advancedMode, setAdvancedMode] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('dashboard_mode') === 'advanced'
+    } catch {
+      return false
+    }
+  })
+  const toggleAdvancedMode = () => {
+    setAdvancedMode(prev => {
+      const next = !prev
+      try {
+        localStorage.setItem('dashboard_mode', next ? 'advanced' : 'simple')
+      } catch {
+        // ignore
+      }
+      return next
+    })
+  }
   const { profile: authProfile } = useAuth()
   const activeProfile = useProfileStore(state => state.activeProfile)
   const { data: allProfiles, isLoading } = useProfiles()
@@ -403,6 +421,17 @@ export default function DashboardPage() {
                 </CardContent>
               </Card>
             )}
+          </div>
+        )}
+        {/* Mode toggle */}
+        {hasBasicInfo && (
+          <div className="flex justify-center pt-4 pb-2">
+            <button
+              onClick={toggleAdvancedMode}
+              className="text-xs text-neutral-400 hover:text-neutral-600 transition-colors"
+            >
+              {advancedMode ? 'Visa mindre ↑' : 'Visa mer detaljer ↓'}
+            </button>
           </div>
         )}
       </DashboardLayout>
