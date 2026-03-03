@@ -172,9 +172,38 @@ export default function DashboardPage() {
 
   // Get today's consumed calories and macros
   const consumed = todayLog?.total_calories || 0
+  const targetMin = profile?.calories_min ?? 0
   const targetMax = profile?.calories_max || 2000
   const target = targetMax
   const remaining = targetMax - consumed
+
+  // Status for microcopy (Simple Mode)
+  const isWithinGoal = consumed >= targetMin && consumed <= targetMax
+  const isOverGoal = consumed > targetMax
+
+  const simpleGreeting = !consumed
+    ? 'Hur börjar din dag?'
+    : isOverGoal
+      ? 'Du har gått lite över idag.'
+      : isWithinGoal
+        ? 'Bra jobbat — du håller målet.'
+        : 'Du är på rätt spår idag.'
+
+  const simpleRingStatus = !consumed
+    ? 'Logga din första måltid idag'
+    : isOverGoal
+      ? `${consumed - targetMax} kcal över dagens mål`
+      : isWithinGoal
+        ? `${remaining} kcal kvar — bra jobbat`
+        : `${remaining} kcal kvar idag`
+
+  const mealCount = todayLog?.meals?.length ?? 0
+  const simpleCTAText =
+    mealCount === 0
+      ? 'Logga din första måltid'
+      : mealCount <= 2
+        ? 'Fortsätt logga idag'
+        : 'Se vad du ätit idag'
 
   const handleOnboardingClose = (open: boolean) => {
     if (!open) {
@@ -212,13 +241,15 @@ export default function DashboardPage() {
             Hej {authProfile?.profile_name || 'där'}! 👋
           </h1>
           <p className="text-neutral-600 text-sm md:text-base">
-            {hasBasicInfo
-              ? consumed > 0
-                ? profile?.calories_min && profile?.calories_max
-                  ? `Du har loggat ${consumed} av ${Math.round(profile.calories_min)}-${Math.round(profile.calories_max)} kcal idag`
-                  : `Du har loggat ${consumed} av ${target} kcal idag`
-                : 'Här är din översikt för idag'
-              : 'Fyll i din profil för att komma igång'}
+            {!hasBasicInfo
+              ? 'Fyll i din profil för att komma igång'
+              : advancedMode
+                ? consumed > 0
+                  ? profile?.calories_min && profile?.calories_max
+                    ? `Du har loggat ${consumed} av ${Math.round(profile.calories_min)}-${Math.round(profile.calories_max)} kcal idag`
+                    : `Du har loggat ${consumed} av ${target} kcal idag`
+                  : 'Här är din översikt för idag'
+                : simpleGreeting}
           </p>
         </div>
 
@@ -432,14 +463,10 @@ export default function DashboardPage() {
                 max={profile?.calories_max}
                 remaining={remaining}
               />
-              {consumed === 0 && (
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                  <p className="text-sm text-neutral-500 text-center px-4">
-                    Börja logga för att se dina framsteg
-                  </p>
-                </div>
-              )}
             </div>
+
+            {/* Status under ring */}
+            <p className="text-center text-sm text-neutral-500">{simpleRingStatus}</p>
 
             {/* Primary CTA */}
             <Button
@@ -448,9 +475,7 @@ export default function DashboardPage() {
               onClick={() => navigate('/app/today')}
             >
               <UtensilsCrossed className="h-5 w-5" />
-              {todayLog && todayLog.meals && todayLog.meals.length > 0
-                ? 'Se dagens loggar'
-                : 'Logga mat'}
+              {simpleCTAText}
             </Button>
 
             {/* Daily Checklist — döljs om inget är loggat */}

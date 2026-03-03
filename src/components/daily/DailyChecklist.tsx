@@ -69,10 +69,7 @@ export function DailyChecklist({
             {completedCount}/{totalCount} uppnått
           </span>
           {allComplete && (
-            <span className="flex items-center gap-1 text-sm font-medium text-green-600">
-              <Sparkles className="h-4 w-4" />
-              Perfekt dag!
-            </span>
+            <span className="text-sm font-medium text-green-600">Allt uppnått idag ✦</span>
           )}
         </div>
 
@@ -94,10 +91,7 @@ export function DailyChecklist({
     return (
       <Card className={className}>
         <CardHeader className="pb-2">
-          <CardTitle className="text-lg flex items-center gap-2">
-            <span className="text-lg">✅</span>
-            Dagens checklista
-          </CardTitle>
+          <CardTitle className="text-lg">Dagens mål</CardTitle>
         </CardHeader>
         <CardContent>{content}</CardContent>
       </Card>
