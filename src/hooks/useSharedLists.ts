@@ -482,6 +482,40 @@ export function useMergedFoodItemsForList(
   }, [baseFoods, listFoods, listId])
 }
 
+/**
+ * Mergar items från ALLA delade listor med egna/globala items för ingredienspickern.
+ * Används i RecipeCalculatorModal så att man kan välja ingredienser från vilken lista som helst.
+ */
+export function useMergedFoodItemsForAllLists(baseFoods: FoodItem[] | undefined) {
+  const { user } = useAuth()
+  const { data: sharedLists = [] } = useSharedLists()
+
+  return useQuery({
+    queryKey: ['foodItems', 'allSharedListIngredients', user?.id, sharedLists.map(l => l.id)],
+    queryFn: async () => {
+      if (!user || sharedLists.length === 0) return baseFoods ?? []
+      const listIds = sharedLists.map(l => l.id)
+      const { data, error } = await supabase
+        .from('food_items')
+        .select('*')
+        .in('shared_list_id', listIds)
+        .eq('is_recipe', false)
+        .order('name')
+      if (error) throw error
+      const listFoods = (data as FoodItem[]) ?? []
+      const combined = [...listFoods, ...(baseFoods ?? [])]
+      const seen = new Set<string>()
+      return combined.filter(f => {
+        if (seen.has(f.id)) return false
+        seen.add(f.id)
+        return true
+      })
+    },
+    enabled: !!user,
+    staleTime: 30_000,
+  })
+}
+
 // ──────────────────────────────────────────────────────────────────────────────
 // FAS 2: Create list-items (user_id=NULL, shared_list_id=X)
 // ──────────────────────────────────────────────────────────────────────────────

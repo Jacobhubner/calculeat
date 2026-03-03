@@ -19,7 +19,7 @@ import { useSharedLists } from '@/hooks/useSharedLists'
 import { UnitSelector, getAvailableUnits, calculateNutritionForUnit } from './UnitSelector'
 import { NutritionPreview } from './NutritionPreview'
 import { toast } from 'sonner'
-import { SOURCE_BADGES } from '@/lib/constants/sourceBadges'
+import { SOURCE_BADGES, getListItemBadgeConfig } from '@/lib/constants/sourceBadges'
 
 const STATIC_TABS: { key: FoodTab; label: string }[] = [
   { key: 'mina', label: 'Mina' },
@@ -514,9 +514,19 @@ export function AddFoodToMealModal({
                           <p className="font-medium text-neutral-900 truncate">{food.name}</p>
                           <Badge
                             variant="outline"
-                            className={`text-[9px] px-1 py-0 h-4 shrink-0 ${SOURCE_BADGES[food.source].className}`}
+                            className={`text-[9px] px-1 py-0 h-4 shrink-0 ${
+                              food.shared_list_id
+                                ? getListItemBadgeConfig(
+                                    sharedLists.find(l => l.id === food.shared_list_id)?.name ?? ''
+                                  ).className
+                                : SOURCE_BADGES[food.source].className
+                            }`}
                           >
-                            {SOURCE_BADGES[food.source].label}
+                            {food.shared_list_id
+                              ? getListItemBadgeConfig(
+                                  sharedLists.find(l => l.id === food.shared_list_id)?.name ?? ''
+                                ).label
+                              : SOURCE_BADGES[food.source].label}
                           </Badge>
                         </div>
                         <p className="text-xs text-neutral-500">

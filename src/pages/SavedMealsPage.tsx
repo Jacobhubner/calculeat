@@ -1,9 +1,8 @@
 import { useState, useMemo } from 'react'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Plus, Search, Bookmark, Loader2 } from 'lucide-react'
+import { Search, Bookmark, Loader2 } from 'lucide-react'
 import EmptyState from '@/components/EmptyState'
 import SavedMealCard from '@/components/saved-meals/SavedMealCard'
 import EditSavedMealDialog from '@/components/saved-meals/EditSavedMealDialog'
@@ -76,11 +75,6 @@ export default function SavedMealsPage() {
             Dina favoritmåltider för snabb loggning
           </p>
         </div>
-        <Button className="gap-2 self-start sm:self-auto" size="sm">
-          <Plus className="h-4 w-4" />
-          <span className="hidden sm:inline">Ny måltid</span>
-          <span className="sm:hidden">Ny</span>
-        </Button>
       </div>
 
       {/* Search */}
@@ -106,9 +100,7 @@ export default function SavedMealsPage() {
       ) : sortedMeals.length === 0 ? (
         <EmptyState
           icon={searchQuery ? Search : Bookmark}
-          title={
-            searchQuery ? 'Inga måltider hittades' : 'Inga sparade måltider ännu'
-          }
+          title={searchQuery ? 'Inga måltider hittades' : 'Inga sparade måltider ännu'}
           description={
             searchQuery
               ? 'Försök med ett annat sökord'
