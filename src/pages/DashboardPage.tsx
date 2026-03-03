@@ -233,49 +233,47 @@ export default function DashboardPage() {
               onClick: () => (window.location.href = '/app/profile'),
             }}
           />
-        ) : (
+        ) : advancedMode ? (
+          /* ── ADVANCED MODE ─────────────────────────────── */
           <div className="space-y-8">
-            {/* Quick Stats — döljs i Simple Mode */}
-            {advancedMode && (
-              <div className="grid grid-cols-2 gap-3 md:gap-6 lg:grid-cols-4">
-                <StatCard
-                  title="BMR"
-                  value={profile?.bmr ? Math.round(profile.bmr) : '-'}
-                  unit="kcal"
-                  icon={Flame}
-                  variant="primary"
-                />
-                <StatCard
-                  title="TDEE"
-                  value={profile?.tdee ? Math.round(profile.tdee) : '-'}
-                  unit="kcal"
-                  icon={Activity}
-                  variant="accent"
-                />
-                <StatCard
-                  title="Kalorimål"
-                  value={
-                    profile?.calories_min && profile?.calories_max
-                      ? `${Math.round(profile.calories_min)} - ${Math.round(profile.calories_max)}`
-                      : '-'
-                  }
-                  unit="kcal"
-                  icon={Target}
-                  variant="success"
-                />
-                <StatCard
-                  title="Vikt"
-                  value={profile?.weight_kg || '-'}
-                  unit="kg"
-                  icon={TrendingUp}
-                  variant="default"
-                />
-              </div>
-            )}
+            {/* Quick Stats */}
+            <div className="grid grid-cols-2 gap-3 md:gap-6 lg:grid-cols-4">
+              <StatCard
+                title="BMR"
+                value={profile?.bmr ? Math.round(profile.bmr) : '-'}
+                unit="kcal"
+                icon={Flame}
+                variant="primary"
+              />
+              <StatCard
+                title="TDEE"
+                value={profile?.tdee ? Math.round(profile.tdee) : '-'}
+                unit="kcal"
+                icon={Activity}
+                variant="accent"
+              />
+              <StatCard
+                title="Kalorimål"
+                value={
+                  profile?.calories_min && profile?.calories_max
+                    ? `${Math.round(profile.calories_min)} - ${Math.round(profile.calories_max)}`
+                    : '-'
+                }
+                unit="kcal"
+                icon={Target}
+                variant="success"
+              />
+              <StatCard
+                title="Vikt"
+                value={profile?.weight_kg || '-'}
+                unit="kg"
+                icon={TrendingUp}
+                variant="default"
+              />
+            </div>
 
-            {/* Main Content Grid */}
+            {/* Calorie Ring + Macro Bar */}
             <div className="grid gap-6 lg:grid-cols-2">
-              {/* Calorie Ring */}
               <div className="relative">
                 <CalorieRing
                   consumed={consumed}
@@ -292,9 +290,7 @@ export default function DashboardPage() {
                   </div>
                 )}
               </div>
-
-              {/* Macro Bar — döljs i Simple Mode */}
-              {advancedMode && calculations.macros && <MacroBar {...calculations.macros} />}
+              {calculations.macros && <MacroBar {...calculations.macros} />}
             </div>
 
             {/* Daily Checklist */}
@@ -306,7 +302,7 @@ export default function DashboardPage() {
               />
             )}
 
-            {/* Today's Progress (if user has logged food) */}
+            {/* Today's Progress */}
             {todayLog && todayLog.meals && todayLog.meals.length > 0 && (
               <Card>
                 <CardHeader>
@@ -383,8 +379,8 @@ export default function DashboardPage() {
               </CardContent>
             </Card>
 
-            {/* Health Insights — döljs i Simple Mode */}
-            {advancedMode && calculations.bmi && (
+            {/* Health Insights */}
+            {calculations.bmi && (
               <Card>
                 <CardHeader>
                   <CardTitle>Hälsoinsikter</CardTitle>
@@ -420,6 +416,73 @@ export default function DashboardPage() {
                       <p className="text-sm text-neutral-700">{calculations.age} år</p>
                     </div>
                   )}
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        ) : (
+          /* ── SIMPLE MODE ───────────────────────────────── */
+          <div className="space-y-6">
+            {/* Calorie Ring */}
+            <div className="relative">
+              <CalorieRing
+                consumed={consumed}
+                target={target}
+                min={profile?.calories_min}
+                max={profile?.calories_max}
+                remaining={remaining}
+              />
+              {consumed === 0 && (
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <p className="text-sm text-neutral-500 text-center px-4">
+                    Börja logga för att se dina framsteg
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Primary CTA */}
+            <Button
+              variant="primary"
+              className="w-full h-14 text-base gap-2"
+              onClick={() => navigate('/app/today')}
+            >
+              <UtensilsCrossed className="h-5 w-5" />
+              {todayLog && todayLog.meals && todayLog.meals.length > 0
+                ? 'Se dagens loggar'
+                : 'Logga mat'}
+            </Button>
+
+            {/* Daily Checklist — döljs om inget är loggat */}
+            {consumed > 0 && dailySummary && (
+              <DailyChecklist
+                caloriesOk={dailySummary.checklist.caloriesOk}
+                macrosOk={dailySummary.checklist.macrosOk}
+                colorBalanceOk={dailySummary.checklist.colorBalanceOk}
+              />
+            )}
+
+            {/* Today's meal list */}
+            {todayLog && todayLog.meals && todayLog.meals.length > 0 && (
+              <Card>
+                <CardContent className="pt-4">
+                  <div className="space-y-2">
+                    {todayLog.meals.slice(0, 3).map(meal => (
+                      <div
+                        key={meal.id}
+                        className="flex items-center justify-between py-2 border-b border-neutral-100 last:border-b-0"
+                      >
+                        <p className="font-medium text-neutral-900 text-sm">{meal.meal_name}</p>
+                        <p className="text-sm text-neutral-500">{meal.meal_calories} kcal</p>
+                      </div>
+                    ))}
+                  </div>
+                  <button
+                    className="mt-3 text-sm text-primary-600 hover:text-primary-700 font-medium"
+                    onClick={() => navigate('/app/today')}
+                  >
+                    Se alla →
+                  </button>
                 </CardContent>
               </Card>
             )}
