@@ -3,7 +3,7 @@ import ProfileCompletionGuard from '@/components/ProfileCompletionGuard'
 import OnboardingModal from '@/components/OnboardingModal'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import StatCard from '@/components/StatCard'
-import CalorieRing from '@/components/CalorieRing'
+import { ZonedCalorieRing } from '@/components/daily/ZonedCalorieRing'
 import MacroBar from '@/components/MacroBar'
 import EmptyState from '@/components/EmptyState'
 import { useAuth } from '@/contexts/AuthContext'
@@ -175,6 +175,8 @@ export default function DashboardPage() {
   const targetMax = profile?.calories_max || 2000
   const target = targetMax
   const remaining = targetMax - consumed
+  // ZonedCalorieRing requires both min and max — fallback to 85% of max if calories_min is absent
+  const ringMin = profile?.calories_min ?? Math.round(targetMax * 0.85)
 
   // Status for microcopy (Simple Mode)
   // isWithinGoal requires calories_min to be set AND consumed >= it.
@@ -314,21 +316,8 @@ export default function DashboardPage() {
 
             {/* Calorie Ring + Macro Bar */}
             <div className="grid gap-6 lg:grid-cols-2">
-              <div className="relative">
-                <CalorieRing
-                  consumed={consumed}
-                  target={target}
-                  min={profile?.calories_min}
-                  max={profile?.calories_max}
-                  remaining={remaining}
-                />
-                {consumed === 0 && (
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <p className="text-sm text-neutral-500 text-center px-4">
-                      Börja logga för att se dina framsteg
-                    </p>
-                  </div>
-                )}
+              <div className="flex items-center justify-center">
+                <ZonedCalorieRing consumed={consumed} min={ringMin} max={targetMax} size="md" />
               </div>
               {calculations.macros && <MacroBar {...calculations.macros} />}
             </div>
@@ -464,14 +453,8 @@ export default function DashboardPage() {
           /* ── SIMPLE MODE ───────────────────────────────── */
           <div className="space-y-6">
             {/* Calorie Ring */}
-            <div className="relative">
-              <CalorieRing
-                consumed={consumed}
-                target={target}
-                min={profile?.calories_min}
-                max={profile?.calories_max}
-                remaining={remaining}
-              />
+            <div className="flex items-center justify-center">
+              <ZonedCalorieRing consumed={consumed} min={ringMin} max={targetMax} size="lg" />
             </div>
 
             {/* Status under ring */}

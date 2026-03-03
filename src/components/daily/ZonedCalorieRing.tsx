@@ -52,16 +52,16 @@ export function ZonedCalorieRing({
 
   // Get status color for consumed arc
   const getConsumedColor = () => {
-    if (isOver) return 'text-red-500'
-    if (isWithin) return 'text-green-500'
-    return 'text-blue-400'
+    if (isOver) return 'text-error-500'
+    if (isWithin) return 'text-success-500'
+    return 'text-sky-400'
   }
 
   return (
     <div className={cn('flex flex-col items-center', className)}>
       <div className="relative">
         <svg width={config.size} height={config.size} className="transform -rotate-90">
-          {/* Zone 1: Blue zone (0 to min) - background */}
+          {/* Zone 1: Sky zone (0 to min) - background */}
           <circle
             cx={config.size / 2}
             cy={config.size / 2}
@@ -71,10 +71,10 @@ export function ZonedCalorieRing({
             fill="none"
             strokeDasharray={circumference}
             strokeDashoffset={minOffset}
-            className="text-blue-100"
+            className="text-sky-100"
           />
 
-          {/* Zone 2: Green zone (min to max) */}
+          {/* Zone 2: Success zone (min to max) */}
           <circle
             cx={config.size / 2}
             cy={config.size / 2}
@@ -84,10 +84,10 @@ export function ZonedCalorieRing({
             fill="none"
             strokeDasharray={`${((maxPercent - minPercent) / 100) * circumference} ${circumference}`}
             strokeDashoffset={-((minPercent / 100) * circumference)}
-            className="text-green-100"
+            className="text-success-100"
           />
 
-          {/* Zone 3: Red zone (max to visual max) */}
+          {/* Zone 3: Error zone (max to visual max) */}
           <circle
             cx={config.size / 2}
             cy={config.size / 2}
@@ -97,7 +97,7 @@ export function ZonedCalorieRing({
             fill="none"
             strokeDasharray={`${((100 - maxPercent) / 100) * circumference} ${circumference}`}
             strokeDashoffset={-((maxPercent / 100) * circumference)}
-            className="text-red-100"
+            className="text-error-100"
           />
 
           {/* Consumed progress arc */}
@@ -124,7 +124,7 @@ export function ZonedCalorieRing({
             fill="none"
             strokeDasharray={`2 ${circumference - 2}`}
             strokeDashoffset={-((minPercent / 100) * circumference) + 1}
-            className="text-green-700"
+            className="text-success-700"
           />
 
           {/* Max indicator mark */}
@@ -137,7 +137,7 @@ export function ZonedCalorieRing({
             fill="none"
             strokeDasharray={`2 ${circumference - 2}`}
             strokeDashoffset={-((maxPercent / 100) * circumference) + 1}
-            className="text-red-700"
+            className="text-error-700"
           />
         </svg>
 
@@ -160,7 +160,9 @@ export function ZonedCalorieRing({
         </div>
         <div className="h-8 w-px bg-neutral-200" />
         <div>
-          <p className={cn('text-lg font-semibold', isOver ? 'text-red-600' : 'text-neutral-700')}>
+          <p
+            className={cn('text-lg font-semibold', isOver ? 'text-error-600' : 'text-neutral-700')}
+          >
             {isOver ? `+${Math.round(consumed - max)}` : Math.round(remaining)}
           </p>
           <p className="text-[10px] text-neutral-500 uppercase tracking-wide">
@@ -172,17 +174,17 @@ export function ZonedCalorieRing({
       {/* Zone legend */}
       <div className="mt-1 flex items-center justify-center gap-2 sm:gap-4 text-[10px]">
         <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded-full bg-blue-400" />
+          <div className="w-3 h-3 rounded-full bg-sky-400" />
           <span className="text-neutral-500">&lt;{Math.round(min)}</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded-full bg-green-400" />
+          <div className="w-3 h-3 rounded-full bg-success-500" />
           <span className="text-neutral-500">
             {Math.round(min)}-{Math.round(max)}
           </span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded-full bg-red-400" />
+          <div className="w-3 h-3 rounded-full bg-error-500" />
           <span className="text-neutral-500">&gt;{Math.round(max)}</span>
         </div>
       </div>
