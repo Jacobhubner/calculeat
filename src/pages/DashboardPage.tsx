@@ -235,41 +235,43 @@ export default function DashboardPage() {
           />
         ) : (
           <div className="space-y-8">
-            {/* Quick Stats */}
-            <div className="grid grid-cols-2 gap-3 md:gap-6 lg:grid-cols-4">
-              <StatCard
-                title="BMR"
-                value={profile?.bmr ? Math.round(profile.bmr) : '-'}
-                unit="kcal"
-                icon={Flame}
-                variant="primary"
-              />
-              <StatCard
-                title="TDEE"
-                value={profile?.tdee ? Math.round(profile.tdee) : '-'}
-                unit="kcal"
-                icon={Activity}
-                variant="accent"
-              />
-              <StatCard
-                title="Kalorimål"
-                value={
-                  profile?.calories_min && profile?.calories_max
-                    ? `${Math.round(profile.calories_min)} - ${Math.round(profile.calories_max)}`
-                    : '-'
-                }
-                unit="kcal"
-                icon={Target}
-                variant="success"
-              />
-              <StatCard
-                title="Vikt"
-                value={profile?.weight_kg || '-'}
-                unit="kg"
-                icon={TrendingUp}
-                variant="default"
-              />
-            </div>
+            {/* Quick Stats — döljs i Simple Mode */}
+            {advancedMode && (
+              <div className="grid grid-cols-2 gap-3 md:gap-6 lg:grid-cols-4">
+                <StatCard
+                  title="BMR"
+                  value={profile?.bmr ? Math.round(profile.bmr) : '-'}
+                  unit="kcal"
+                  icon={Flame}
+                  variant="primary"
+                />
+                <StatCard
+                  title="TDEE"
+                  value={profile?.tdee ? Math.round(profile.tdee) : '-'}
+                  unit="kcal"
+                  icon={Activity}
+                  variant="accent"
+                />
+                <StatCard
+                  title="Kalorimål"
+                  value={
+                    profile?.calories_min && profile?.calories_max
+                      ? `${Math.round(profile.calories_min)} - ${Math.round(profile.calories_max)}`
+                      : '-'
+                  }
+                  unit="kcal"
+                  icon={Target}
+                  variant="success"
+                />
+                <StatCard
+                  title="Vikt"
+                  value={profile?.weight_kg || '-'}
+                  unit="kg"
+                  icon={TrendingUp}
+                  variant="default"
+                />
+              </div>
+            )}
 
             {/* Main Content Grid */}
             <div className="grid gap-6 lg:grid-cols-2">
@@ -291,8 +293,8 @@ export default function DashboardPage() {
                 )}
               </div>
 
-              {/* Macro Bar */}
-              {calculations.macros && <MacroBar {...calculations.macros} />}
+              {/* Macro Bar — döljs i Simple Mode */}
+              {advancedMode && calculations.macros && <MacroBar {...calculations.macros} />}
             </div>
 
             {/* Daily Checklist */}
@@ -381,8 +383,8 @@ export default function DashboardPage() {
               </CardContent>
             </Card>
 
-            {/* Health Insights */}
-            {calculations.bmi && (
+            {/* Health Insights — döljs i Simple Mode */}
+            {advancedMode && calculations.bmi && (
               <Card>
                 <CardHeader>
                   <CardTitle>Hälsoinsikter</CardTitle>
