@@ -172,30 +172,39 @@ export default function DashboardPage() {
 
   // Get today's consumed calories and macros
   const consumed = todayLog?.total_calories || 0
-  const targetMin = profile?.calories_min ?? 0
   const targetMax = profile?.calories_max || 2000
   const target = targetMax
   const remaining = targetMax - consumed
 
   // Status for microcopy (Simple Mode)
-  const isWithinGoal = consumed >= targetMin && consumed <= targetMax
+  // isWithinGoal requires calories_min to be set AND consumed >= it.
+  // If calories_min is absent, only "under max" counts — never "bra jobbat" on low intake.
+  // Also requires consumed >= 10% of targetMax to avoid premature positive feedback.
+  const earlyThreshold = targetMax * 0.1
   const isOverGoal = consumed > targetMax
+  const isWithinGoal =
+    consumed > 0 &&
+    !isOverGoal &&
+    consumed >= earlyThreshold &&
+    (profile?.calories_min != null ? consumed >= profile.calories_min : false)
 
-  const simpleGreeting = !consumed
-    ? 'Hur börjar din dag?'
-    : isOverGoal
-      ? 'Du har gått lite över idag.'
-      : isWithinGoal
-        ? 'Bra jobbat — du håller målet.'
-        : 'Du är på rätt spår idag.'
+  const simpleGreeting =
+    consumed === 0
+      ? 'Hur börjar din dag?'
+      : isOverGoal
+        ? 'Du har gått lite över idag.'
+        : isWithinGoal
+          ? 'Bra jobbat — du håller målet.'
+          : 'Du är på rätt spår idag.'
 
-  const simpleRingStatus = !consumed
-    ? 'Logga din första måltid idag'
-    : isOverGoal
-      ? `${consumed - targetMax} kcal över dagens mål`
-      : isWithinGoal
-        ? `${remaining} kcal kvar — bra jobbat`
-        : `${remaining} kcal kvar idag`
+  const simpleRingStatus =
+    consumed === 0
+      ? 'Logga din första måltid idag'
+      : isOverGoal
+        ? `${consumed - targetMax} kcal över dagens mål`
+        : isWithinGoal
+          ? `${remaining} kcal kvar — bra jobbat`
+          : `${remaining} kcal kvar idag`
 
   const mealCount = todayLog?.meals?.length ?? 0
   const simpleCTAText =
