@@ -98,6 +98,7 @@ export function AddFoodToMealModal({
 
   const allTabs = useMemo<{ key: FoodTab; label: string }[]>(
     () => [
+      STATIC_TABS[3], // Alla
       STATIC_TABS[0], // Mina
       STATIC_TABS[1], // CalculEat
       STATIC_TABS[2], // Livsmedelsverket
@@ -105,7 +106,6 @@ export function AddFoodToMealModal({
         key: `list:${list.id}` as FoodTab,
         label: list.name,
       })),
-      STATIC_TABS[3], // Alla
     ],
     [sharedLists]
   )
