@@ -49,8 +49,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!uid) return
 
     const [profileResult, userProfileResult] = await Promise.all([
-      supabase.from('profiles').select('*').eq('user_id', uid).eq('is_active', true).single(),
-      supabase.from('user_profiles').select('*').eq('id', uid).single(),
+      supabase.from('profiles').select('*').eq('user_id', uid).eq('is_active', true).maybeSingle(),
+      supabase.from('user_profiles').select('*').eq('id', uid).maybeSingle(),
     ])
 
     if (profileResult.error) {
