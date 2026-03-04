@@ -363,19 +363,19 @@ export default function DashboardPage() {
                   <CardContent className="space-y-4">
                     <NutrientStatusRow
                       status={dailySummary.fatStatus}
-                      label={`Fett${profile?.fat_min_percent != null && profile?.fat_max_percent != null ? ` · ${profile.fat_min_percent}–${profile.fat_max_percent}%` : ''}`}
+                      label={`Fett${profile?.fat_min_percent != null && profile?.fat_max_percent != null ? ` · ${Math.round(profile.fat_min_percent)}–${Math.round(profile.fat_max_percent)}%` : ''}`}
                       unit="g"
                       showProgress
                     />
                     <NutrientStatusRow
                       status={dailySummary.carbStatus}
-                      label={`Kolhydrater${profile?.carb_min_percent != null && profile?.carb_max_percent != null ? ` · ${profile.carb_min_percent}–${profile.carb_max_percent}%` : ''}`}
+                      label={`Kolhydrater${profile?.carb_min_percent != null && profile?.carb_max_percent != null ? ` · ${Math.round(profile.carb_min_percent)}–${Math.round(profile.carb_max_percent)}%` : ''}`}
                       unit="g"
                       showProgress
                     />
                     <NutrientStatusRow
                       status={dailySummary.proteinStatus}
-                      label={`Protein${profile?.protein_min_percent != null && profile?.protein_max_percent != null ? ` · ${profile.protein_min_percent}–${profile.protein_max_percent}%` : ''}`}
+                      label={`Protein${profile?.protein_min_percent != null && profile?.protein_max_percent != null ? ` · ${Math.round(profile.protein_min_percent)}–${Math.round(profile.protein_max_percent)}%` : ''}`}
                       unit="g"
                       showProgress
                     />
