@@ -6,9 +6,9 @@ import type { FoodItem } from '@/hooks/useFoodItems'
 import { SOURCE_BADGES } from '@/lib/constants/sourceBadges'
 
 const COLOR_INDICATORS: Record<string, { label: string; className: string }> = {
-  Green: { label: 'Grön', className: 'text-green-600' },
-  Yellow: { label: 'Gul', className: 'text-yellow-600' },
-  Orange: { label: 'Orange', className: 'text-orange-600' },
+  Green: { label: 'Grön', className: 'text-success-600' },
+  Yellow: { label: 'Gul', className: 'text-warning-600' },
+  Orange: { label: 'Orange', className: 'text-accent-600' },
 }
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -94,6 +94,7 @@ export function FoodNutrientPanel({ foodItem, open, onOpenChange }: FoodNutrient
     if (!grouped) return 0
     return Object.values(grouped).reduce((sum, arr) => sum + arr.length, 0)
   }, [grouped])
+
   const isLoading = nutrientsLoading || defsLoading
   const sourceBadge = foodItem ? SOURCE_BADGES[foodItem.source] : null
   const colorInfo = foodItem?.energy_density_color
@@ -102,83 +103,103 @@ export function FoodNutrientPanel({ foodItem, open, onOpenChange }: FoodNutrient
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md max-h-[85vh] overflow-y-auto">
-        <DialogHeader>
-          <div className="flex items-start justify-between gap-2">
-            <DialogTitle className="text-lg pr-2">{foodItem?.name ?? 'Näringsvärden'}</DialogTitle>
-            {sourceBadge && (
-              <Badge variant="outline" className={`shrink-0 text-xs ${sourceBadge.className}`}>
-                {sourceBadge.label}
-              </Badge>
-            )}
-          </div>
-
-          {/* Reference + density info */}
-          <div className="text-sm text-neutral-500 mt-1 space-y-0.5">
-            <p>
-              per {foodItem?.reference_amount ?? 100} {foodItem?.reference_unit ?? 'g'}
-            </p>
-            {foodItem?.kcal_per_gram != null && colorInfo && (
-              <p className={colorInfo.className}>
-                Energitäthet: {Number(foodItem.kcal_per_gram).toFixed(2)} kcal/g
-                {' · '}
-                {colorInfo.label}
+      <DialogContent className="max-w-md max-h-[85vh] overflow-y-auto p-0 gap-0 rounded-2xl overflow-hidden">
+        {/* Gradient header */}
+        <div className="bg-gradient-to-r from-primary-500 to-accent-500 px-6 py-5">
+          <DialogHeader>
+            <div className="flex items-start justify-between gap-2">
+              <DialogTitle className="text-white text-lg font-bold pr-2 leading-snug">
+                {foodItem?.name ?? 'Näringsvärden'}
+              </DialogTitle>
+              {sourceBadge && (
+                <Badge
+                  variant="outline"
+                  className="shrink-0 text-xs border-white/40 text-white bg-white/15"
+                >
+                  {sourceBadge.label}
+                </Badge>
+              )}
+            </div>
+            <div className="text-sm text-primary-100 mt-1 space-y-0.5">
+              <p>
+                per {foodItem?.reference_amount ?? 100} {foodItem?.reference_unit ?? 'g'}
               </p>
-            )}
-            {foodItem?.reference_unit === 'ml' && foodItem?.density_g_per_ml != null && (
-              <p>Densitet: {Number(foodItem.density_g_per_ml).toFixed(2)} g/ml</p>
-            )}
-          </div>
-        </DialogHeader>
+              {foodItem?.kcal_per_gram != null && colorInfo && (
+                <p className="text-primary-100">
+                  Energitäthet: {Number(foodItem.kcal_per_gram).toFixed(2)} kcal/g
+                  {' · '}
+                  {colorInfo.label}
+                </p>
+              )}
+              {foodItem?.reference_unit === 'ml' && foodItem?.density_g_per_ml != null && (
+                <p>Densitet: {Number(foodItem.density_g_per_ml).toFixed(2)} g/ml</p>
+              )}
+            </div>
+          </DialogHeader>
+        </div>
 
-        {isLoading && <p className="text-sm text-neutral-500 py-4">Laddar näringsvärden...</p>}
+        {/* Body */}
+        <div className="px-6 py-4">
+          {isLoading && <p className="text-sm text-neutral-500 py-4">Laddar näringsvärden...</p>}
 
-        {!isLoading && totalNutrientCount === 0 && (
-          <p className="text-sm text-neutral-500 py-4">
-            Inga detaljerade näringsvärden tillgängliga.
-          </p>
-        )}
+          {!isLoading && totalNutrientCount === 0 && (
+            <p className="text-sm text-neutral-500 py-4">
+              Inga detaljerade näringsvärden tillgängliga.
+            </p>
+          )}
 
-        {!isLoading && totalNutrientCount > 0 && (
-          <>
-            <p className="text-xs text-neutral-400 mb-2">{totalNutrientCount} näringsvärden</p>
+          {!isLoading && totalNutrientCount > 0 && (
+            <div className="space-y-4">
+              <p className="text-xs text-neutral-400">{totalNutrientCount} näringsvärden</p>
 
-            {CATEGORY_ORDER.map((cat, catIdx) => {
-              const items = grouped?.[cat]
-              if (!items || items.length === 0) return null
+              {CATEGORY_ORDER.map((cat, catIdx) => {
+                const items = grouped?.[cat]
+                if (!items || items.length === 0) return null
 
-              return (
-                <div key={cat}>
-                  {catIdx > 0 && <div className="border-t border-neutral-100 my-3" />}
-                  <h3 className="font-semibold text-sm text-neutral-700 mb-2">
-                    {CATEGORY_LABELS[cat] || cat}
-                  </h3>
-                  <div className="space-y-1">
-                    {items.map(item => {
-                      const isSub = SUB_NUTRIENT_CODES.has(item.nutrient_code)
-                      return (
-                        <div
-                          key={item.nutrient_code}
-                          className={`flex justify-between text-sm ${isSub ? 'pl-4' : ''}`}
-                        >
-                          <span className={isSub ? 'text-neutral-400' : 'text-neutral-600'}>
-                            {isSub ? 'varav ' : ''}
-                            {item.definition.display_name_sv}
-                          </span>
-                          <span
-                            className={`tabular-nums ${isSub ? 'text-neutral-500' : 'font-medium'}`}
-                          >
-                            {formatAmount(item.amount)} {item.definition.unit}
-                          </span>
-                        </div>
-                      )
-                    })}
+                return (
+                  <div key={cat}>
+                    {catIdx > 0 && <div className="border-t border-neutral-100 mb-4" />}
+                    <div className="rounded-xl border border-neutral-200 overflow-hidden">
+                      {/* Kategorirubriken */}
+                      <div className="bg-neutral-50 px-4 py-2 border-b border-neutral-200">
+                        <h3 className="text-xs font-semibold text-neutral-500 uppercase tracking-wide">
+                          {CATEGORY_LABELS[cat] || cat}
+                        </h3>
+                      </div>
+                      {/* Rader */}
+                      <div className="divide-y divide-neutral-100">
+                        {items.map(item => {
+                          const isSub = SUB_NUTRIENT_CODES.has(item.nutrient_code)
+                          return (
+                            <div
+                              key={item.nutrient_code}
+                              className={`flex justify-between items-center px-4 py-2.5 ${isSub ? 'pl-8 bg-neutral-50/50' : 'bg-white'}`}
+                            >
+                              <span
+                                className={`text-sm ${isSub ? 'text-neutral-400' : 'text-neutral-700'}`}
+                              >
+                                {isSub ? 'varav ' : ''}
+                                {item.definition.display_name_sv}
+                              </span>
+                              <span
+                                className={`text-sm tabular-nums ml-4 ${isSub ? 'text-neutral-400' : 'font-semibold text-neutral-900'}`}
+                              >
+                                {formatAmount(item.amount)}{' '}
+                                <span className="font-normal text-neutral-400 text-xs">
+                                  {item.definition.unit}
+                                </span>
+                              </span>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              )
-            })}
-          </>
-        )}
+                )
+              })}
+            </div>
+          )}
+        </div>
       </DialogContent>
     </Dialog>
   )
