@@ -12,7 +12,16 @@ import { useProfiles, useOnboarding } from '@/hooks'
 import { useTodayLog } from '@/hooks/useDailyLogs'
 import { useProfileStore } from '@/stores/profileStore'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Activity, Flame, Target, TrendingUp, UtensilsCrossed, Scale, Settings } from 'lucide-react'
+import {
+  Activity,
+  Check,
+  Flame,
+  Target,
+  TrendingUp,
+  UtensilsCrossed,
+  Scale,
+  Settings,
+} from 'lucide-react'
 import { calculateFFMI, getFFMICategory } from '@/lib/calculations/ffmiCalculations'
 import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
@@ -385,62 +394,89 @@ export default function DashboardPage() {
             </div>
 
             {/* Dagens logg + Checklist + Åtgärder */}
-            <Card>
-              <CardHeader className="pb-2">
-                <div className="flex items-center justify-between">
-                  <CardTitle>Idag</CardTitle>
-                  <div className="flex gap-2">
-                    <Button size="sm" variant="primary" onClick={() => navigate('/app/today')}>
-                      <UtensilsCrossed className="h-4 w-4 mr-1.5" />
-                      {todayLog?.meals?.length ? 'Öppna logg' : 'Logga måltid'}
-                    </Button>
-                    <Button size="sm" variant="outline" onClick={() => navigate('/app/history')}>
-                      <Activity className="h-4 w-4 mr-1.5" />
-                      Historik
-                    </Button>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="pt-0 space-y-4">
-                {/* Checklist */}
-                {dailySummary && (
-                  <DailyChecklist
-                    caloriesOk={dailySummary.checklist.caloriesOk}
-                    macrosOk={dailySummary.checklist.macrosOk}
-                    colorBalanceOk={dailySummary.checklist.colorBalanceOk}
-                  />
-                )}
+            <div className="bg-white border border-neutral-200 rounded-2xl shadow-sm p-5 space-y-4">
+              {/* Rubrik */}
+              <p className="text-xs uppercase tracking-widest text-neutral-400">IDAG</p>
 
-                {/* Måltidslista */}
-                {todayLog?.meals && todayLog.meals.length > 0 ? (
-                  <div className="divide-y divide-neutral-100">
-                    {todayLog.meals.slice(0, 4).map(meal => (
-                      <div key={meal.id} className="flex items-center justify-between py-2">
-                        <span className="text-sm font-medium text-neutral-800 truncate flex-1 mr-3">
-                          {meal.meal_name}
-                        </span>
-                        <span className="text-sm text-neutral-500 shrink-0">
-                          {meal.meal_calories} kcal
-                          <span className="text-neutral-300 mx-1.5">·</span>
-                          <span className="text-xs text-neutral-400">
-                            F{meal.meal_fat_g} K{meal.meal_carb_g} P{meal.meal_protein_g}
-                          </span>
+              {/* Sektion 1 — Horisontell statusrad */}
+              {dailySummary && (
+                <div className="space-y-1.5">
+                  <div className="flex gap-4">
+                    {[
+                      { label: 'Kalorier', ok: dailySummary.checklist.caloriesOk },
+                      { label: 'Makro', ok: dailySummary.checklist.macrosOk },
+                      { label: 'Variation', ok: dailySummary.checklist.colorBalanceOk },
+                    ].map(({ label, ok }) => (
+                      <div key={label} className="flex items-center gap-1.5">
+                        <div
+                          className={cn(
+                            'w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0',
+                            ok ? 'bg-success-500' : 'bg-neutral-200'
+                          )}
+                        >
+                          {ok && <Check className="h-2.5 w-2.5 text-white" />}
+                        </div>
+                        <span
+                          className={cn(
+                            'text-xs font-medium',
+                            ok ? 'text-success-700' : 'text-neutral-400'
+                          )}
+                        >
+                          {label}
                         </span>
                       </div>
                     ))}
-                    {todayLog.meals.length > 4 && (
-                      <div className="py-2 text-xs text-neutral-400 text-center">
-                        +{todayLog.meals.length - 4} till
-                      </div>
-                    )}
                   </div>
-                ) : (
-                  <p className="text-sm text-neutral-400 text-center py-2">
-                    Inga måltider loggade idag
+                  <p className="text-xs text-neutral-400">
+                    {
+                      [
+                        dailySummary.checklist.caloriesOk,
+                        dailySummary.checklist.macrosOk,
+                        dailySummary.checklist.colorBalanceOk,
+                      ].filter(Boolean).length
+                    }{' '}
+                    av 3 mål uppnått
                   </p>
-                )}
-              </CardContent>
-            </Card>
+                </div>
+              )}
+
+              {/* Sektion 2 — Kompakt måltidslista */}
+              {todayLog?.meals && todayLog.meals.length > 0 ? (
+                <div className="divide-y divide-neutral-100">
+                  {todayLog.meals.slice(0, 4).map(meal => (
+                    <div key={meal.id} className="flex items-center justify-between py-2">
+                      <span className="text-sm font-medium text-neutral-800 truncate flex-1 mr-3">
+                        {meal.meal_name}
+                      </span>
+                      <span className="text-sm text-neutral-500 shrink-0 tabular-nums">
+                        {meal.meal_calories} kcal
+                      </span>
+                    </div>
+                  ))}
+                  {todayLog.meals.length > 4 && (
+                    <div className="py-2 text-xs text-neutral-400 text-center">
+                      +{todayLog.meals.length - 4} till
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <p className="text-sm text-neutral-400 text-center py-2">
+                  Inga måltider loggade idag
+                </p>
+              )}
+
+              {/* Sektion 3 — Åtgärdszon */}
+              <div className="border-t border-neutral-200 bg-neutral-50 -mx-5 px-5 pt-4 pb-4 rounded-b-2xl flex gap-2">
+                <Button size="sm" variant="primary" onClick={() => navigate('/app/today')}>
+                  <UtensilsCrossed className="h-4 w-4 mr-1.5" />
+                  Öppna logg
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => navigate('/app/history')}>
+                  <Activity className="h-4 w-4 mr-1.5" />
+                  Historik
+                </Button>
+              </div>
+            </div>
 
             {/* Health Insights */}
             {calculations.bmi && (
