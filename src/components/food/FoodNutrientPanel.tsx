@@ -138,7 +138,7 @@ export function FoodNutrientPanel({ foodItem, open, onOpenChange }: FoodNutrient
                 )}
               </div>
             </div>
-            <DialogClose className="shrink-0 text-white/70 hover:text-white transition-colors p-1 rounded-full hover:bg-white/10 mt-0.5">
+            <DialogClose className="shrink-0 text-white/80 hover:text-white transition-colors outline-none mt-0.5">
               <X className="h-5 w-5" />
               <span className="sr-only">Stäng</span>
             </DialogClose>
