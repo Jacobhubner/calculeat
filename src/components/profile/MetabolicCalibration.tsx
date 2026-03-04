@@ -269,28 +269,21 @@ export default function MetabolicCalibration({
   return (
     <Card>
       <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="flex items-center gap-2 hover:opacity-70 transition-opacity"
-            type="button"
-          >
-            <CardTitle className={`flex items-center gap-2 ${isCompact ? 'text-base' : ''}`}>
-              <Scale className="h-5 w-5 text-primary-500" />
-              Metabolisk Kalibrering
-            </CardTitle>
-            <ChevronDown
-              className={`h-5 w-5 text-neutral-600 transition-transform duration-200 ${
-                isOpen ? 'rotate-180' : ''
-              }`}
-            />
-          </button>
-          {onClose && isOpen && (
-            <Button variant="ghost" size="sm" onClick={onClose}>
-              Stäng
-            </Button>
-          )}
-        </div>
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="w-full flex items-center justify-between hover:opacity-70 transition-opacity"
+          type="button"
+        >
+          <CardTitle className={`flex items-center gap-2 ${isCompact ? 'text-base' : ''}`}>
+            <Scale className="h-5 w-5 text-primary-500" />
+            Metabolisk Kalibrering
+          </CardTitle>
+          <ChevronDown
+            className={`h-5 w-5 text-neutral-600 transition-transform duration-200 flex-shrink-0 ${
+              isOpen ? 'rotate-180' : ''
+            }`}
+          />
+        </button>
       </CardHeader>
       {isOpen && (
         <CardContent className={`space-y-4 ${isCompact ? 'pt-0' : 'pt-0'}`}>
@@ -515,16 +508,16 @@ export default function MetabolicCalibration({
           {data && (
             <div className="space-y-4 pt-2">
               {/* Confidence + Data Quality badges */}
-              <div className="flex items-center justify-between">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
                 <div className="flex items-center gap-2">
-                  <ConfidenceIcon className={`h-4 w-4 ${confidenceColor}`} />
+                  <ConfidenceIcon className={`h-4 w-4 flex-shrink-0 ${confidenceColor}`} />
                   <span className={`text-sm font-medium ${confidenceColor}`}>
                     {confidenceLabel}
                   </span>
                 </div>
                 {data.dataQuality && (
                   <div className="flex items-center gap-1.5">
-                    <BarChart3 className="h-3.5 w-3.5 text-neutral-500" />
+                    <BarChart3 className="h-3.5 w-3.5 flex-shrink-0 text-neutral-500" />
                     <span
                       className={`text-xs font-medium ${
                         data.dataQuality.score >= 80
@@ -562,7 +555,7 @@ export default function MetabolicCalibration({
                   <p className="text-sm font-semibold text-neutral-900">
                     {data.startCluster.average.toFixed(1)} kg
                   </p>
-                  <p className="text-xs text-neutral-400">
+                  <p className="text-xs text-neutral-400 truncate">
                     {data.startCluster.weights.map(w => w.toFixed(1)).join(', ')} kg
                   </p>
                 </div>
@@ -573,7 +566,7 @@ export default function MetabolicCalibration({
                   <p className="text-sm font-semibold text-neutral-900">
                     {data.endCluster.average.toFixed(1)} kg
                   </p>
-                  <p className="text-xs text-neutral-400">
+                  <p className="text-xs text-neutral-400 truncate">
                     {data.endCluster.weights.map(w => w.toFixed(1)).join(', ')} kg
                   </p>
                 </div>
@@ -706,7 +699,7 @@ export default function MetabolicCalibration({
                       <Undo2 className="h-3.5 w-3.5 mr-1.5" />
                       {revertCalibration.isPending
                         ? 'Ångrar...'
-                        : `Ångra senaste kalibrering (→ ${Math.round(lastCalibration.previous_tdee)} kcal)`}
+                        : `Ångra kalibrering (→ ${Math.round(lastCalibration.previous_tdee)} kcal)`}
                     </Button>
                   )}
                 </div>
