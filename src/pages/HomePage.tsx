@@ -13,7 +13,7 @@ export default function HomePage() {
 
   // Redirect logged-in users to the app
   if (user) {
-    return <Navigate to="/app/today" replace />
+    return <Navigate to="/app" replace />
   }
 
   return (

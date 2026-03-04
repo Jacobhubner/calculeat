@@ -5,7 +5,7 @@ import OnboardingModal from '@/components/OnboardingModal'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import StatCard from '@/components/StatCard'
 import { ZonedCalorieRing } from '@/components/daily/ZonedCalorieRing'
-import MacroBar from '@/components/MacroBar'
+import { NutrientStatusRow } from '@/components/daily/NutrientStatusBadge'
 import EmptyState from '@/components/EmptyState'
 import { useAuth } from '@/contexts/AuthContext'
 import { useProfiles, useOnboarding } from '@/hooks'
@@ -350,12 +350,38 @@ export default function DashboardPage() {
               />
             </div>
 
-            {/* Calorie Ring + Macro Bar */}
+            {/* Calorie Ring + Makrostatus */}
             <div className="grid gap-6 lg:grid-cols-2">
               <div className="flex items-center justify-center">
                 <ZonedCalorieRing consumed={consumed} min={ringMin} max={targetMax} size="md" />
               </div>
-              {calculations.macros && <MacroBar {...calculations.macros} />}
+              {dailySummary && (
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle>Makromål idag</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <NutrientStatusRow
+                      status={dailySummary.fatStatus}
+                      label="Fett"
+                      unit="g"
+                      showProgress
+                    />
+                    <NutrientStatusRow
+                      status={dailySummary.carbStatus}
+                      label="Kolhydrater"
+                      unit="g"
+                      showProgress
+                    />
+                    <NutrientStatusRow
+                      status={dailySummary.proteinStatus}
+                      label="Protein"
+                      unit="g"
+                      showProgress
+                    />
+                  </CardContent>
+                </Card>
+              )}
             </div>
 
             {/* Daily Checklist */}

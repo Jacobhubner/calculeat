@@ -82,9 +82,9 @@ export function NutrientStatusRow({
 
   // Get bar color based on status
   const getBarColor = () => {
-    if (status.status === 'over') return 'bg-red-600'
-    if (status.status === 'within') return 'bg-green-600'
-    return 'bg-blue-400'
+    if (status.status === 'over') return 'bg-error-500'
+    if (status.status === 'within') return 'bg-success-500'
+    return 'bg-sky-400'
   }
 
   return (
@@ -103,24 +103,24 @@ export function NutrientStatusRow({
       </div>
       {showProgress && (
         <div className="relative h-2 rounded-full overflow-hidden">
-          {/* Zone 1: Path to goal (0 to min) - light blue */}
+          {/* Zone 1: Path to goal (0 to min) - sky */}
           <div
-            className="absolute h-full bg-blue-100"
+            className="absolute h-full bg-sky-100"
             style={{ left: 0, width: `${minPosition}%` }}
           />
 
-          {/* Zone 2: Goal zone (min to max) - light green */}
+          {/* Zone 2: Goal zone (min to max) - success */}
           <div
-            className="absolute h-full bg-green-200"
+            className="absolute h-full bg-success-100"
             style={{
               left: `${minPosition}%`,
               width: `${goalZoneWidth}%`,
             }}
           />
 
-          {/* Zone 3: Over zone (max to end) - light red */}
+          {/* Zone 3: Over zone (max to end) - error */}
           <div
-            className="absolute h-full bg-red-200"
+            className="absolute h-full bg-error-100"
             style={{
               left: `${maxPosition}%`,
               width: `${overZoneWidth}%`,
@@ -138,14 +138,14 @@ export function NutrientStatusRow({
 
           {/* Min indicator line */}
           <div
-            className="absolute w-0.5 h-full bg-green-700 z-10"
+            className="absolute w-0.5 h-full bg-success-700 z-10"
             style={{ left: `${minPosition}%` }}
             title={`Min: ${Math.round(status.min)} ${unit}`}
           />
 
           {/* Max indicator line */}
           <div
-            className="absolute w-0.5 h-full bg-red-700 z-10"
+            className="absolute w-0.5 h-full bg-error-700 z-10"
             style={{ left: `${maxPosition}%` }}
             title={`Max: ${Math.round(status.max)} ${unit}`}
           />
