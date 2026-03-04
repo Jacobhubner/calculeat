@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import ProfileCompletionGuard from '@/components/ProfileCompletionGuard'
 import OnboardingModal from '@/components/OnboardingModal'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import StatCard from '@/components/StatCard'
 import { ZonedCalorieRing } from '@/components/daily/ZonedCalorieRing'
 import { NutrientStatusRow } from '@/components/daily/NutrientStatusBadge'
@@ -384,30 +384,35 @@ export default function DashboardPage() {
               )}
             </div>
 
-            {/* Daily Checklist */}
-            {dailySummary && (
-              <DailyChecklist
-                caloriesOk={dailySummary.checklist.caloriesOk}
-                macrosOk={dailySummary.checklist.macrosOk}
-                colorBalanceOk={dailySummary.checklist.colorBalanceOk}
-              />
-            )}
-
-            {/* Today's Progress */}
-            {todayLog && todayLog.meals && todayLog.meals.length > 0 && (
-              <Card>
-                <CardHeader className="pb-2">
-                  <div className="flex items-center justify-between">
-                    <CardTitle>Dagens måltider</CardTitle>
-                    <button
-                      className="text-xs text-primary-600 hover:text-primary-700 font-medium"
-                      onClick={() => navigate('/app/today')}
-                    >
-                      Se alla →
-                    </button>
+            {/* Dagens logg + Checklist + Åtgärder */}
+            <Card>
+              <CardHeader className="pb-2">
+                <div className="flex items-center justify-between">
+                  <CardTitle>Idag</CardTitle>
+                  <div className="flex gap-2">
+                    <Button size="sm" variant="primary" onClick={() => navigate('/app/today')}>
+                      <UtensilsCrossed className="h-4 w-4 mr-1.5" />
+                      {todayLog?.meals?.length ? 'Öppna logg' : 'Logga måltid'}
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={() => navigate('/app/history')}>
+                      <Activity className="h-4 w-4 mr-1.5" />
+                      Historik
+                    </Button>
                   </div>
-                </CardHeader>
-                <CardContent className="pt-0">
+                </div>
+              </CardHeader>
+              <CardContent className="pt-0 space-y-4">
+                {/* Checklist */}
+                {dailySummary && (
+                  <DailyChecklist
+                    caloriesOk={dailySummary.checklist.caloriesOk}
+                    macrosOk={dailySummary.checklist.macrosOk}
+                    colorBalanceOk={dailySummary.checklist.colorBalanceOk}
+                  />
+                )}
+
+                {/* Måltidslista */}
+                {todayLog?.meals && todayLog.meals.length > 0 ? (
                   <div className="divide-y divide-neutral-100">
                     {todayLog.meals.slice(0, 4).map(meal => (
                       <div key={meal.id} className="flex items-center justify-between py-2">
@@ -416,8 +421,8 @@ export default function DashboardPage() {
                         </span>
                         <span className="text-sm text-neutral-500 shrink-0">
                           {meal.meal_calories} kcal
-                          <span className="text-neutral-300 mx-1">·</span>
-                          <span className="text-xs">
+                          <span className="text-neutral-300 mx-1.5">·</span>
+                          <span className="text-xs text-neutral-400">
                             F{meal.meal_fat_g} K{meal.meal_carb_g} P{meal.meal_protein_g}
                           </span>
                         </span>
@@ -429,47 +434,11 @@ export default function DashboardPage() {
                       </div>
                     )}
                   </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Quick Actions */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Snabbåtgärder</CardTitle>
-                <CardDescription>
-                  {todayLog && todayLog.meals && todayLog.meals.length > 0
-                    ? 'Hantera dagens måltider'
-                    : 'Logga dina måltider'}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <Button
-                    size="lg"
-                    variant={
-                      todayLog && todayLog.meals && todayLog.meals.length > 0
-                        ? 'primary'
-                        : 'outline'
-                    }
-                    className="h-20"
-                    onClick={() => navigate('/app/today')}
-                  >
-                    <UtensilsCrossed className="h-5 w-5 mr-2" />
-                    {todayLog && todayLog.meals && todayLog.meals.length > 0
-                      ? 'Se dagens loggar'
-                      : 'Logga måltid'}
-                  </Button>
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="h-20"
-                    onClick={() => navigate('/app/history')}
-                  >
-                    <Activity className="h-5 w-5 mr-2" />
-                    Se historik
-                  </Button>
-                </div>
+                ) : (
+                  <p className="text-sm text-neutral-400 text-center py-2">
+                    Inga måltider loggade idag
+                  </p>
+                )}
               </CardContent>
             </Card>
 
