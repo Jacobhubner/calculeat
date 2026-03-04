@@ -5,7 +5,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown, PieChart } from 'lucide-react'
 import { RangeSlider } from './ui/RangeSlider'
 
 interface MacroDistributionCardProps {
@@ -116,7 +116,7 @@ export default function MacroDistributionCard({
         >
           <div>
             <CardTitle className="flex items-center gap-2">
-              <span className="text-2xl">📊</span>
+              <PieChart className="h-5 w-5 text-primary-600" />
               Makrofördelning
             </CardTitle>
             <p className="text-sm text-neutral-600 mt-1 text-left">
@@ -135,9 +135,9 @@ export default function MacroDistributionCard({
         <CardContent className="space-y-6 pt-0">
           {/* Fat Slider */}
           <div>
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-0 mb-2">
+            <div className="flex items-center justify-between mb-2">
               <label className="text-sm font-medium text-neutral-700">Fett</label>
-              <div className="text-sm font-semibold text-accent-600">
+              <div className="text-sm font-semibold text-sky-600">
                 {fatRange[0].toFixed(0)}% - {fatRange[1].toFixed(0)}%
                 {caloriesMin && caloriesMax && (
                   <span className="text-neutral-500 font-normal ml-2 text-xs">
@@ -163,9 +163,9 @@ export default function MacroDistributionCard({
 
           {/* Carb Slider */}
           <div>
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-0 mb-2">
+            <div className="flex items-center justify-between mb-2">
               <label className="text-sm font-medium text-neutral-700">Kolhydrater</label>
-              <div className="text-sm font-semibold text-primary-600">
+              <div className="text-sm font-semibold text-accent-600">
                 {carbRange[0].toFixed(0)}% - {carbRange[1].toFixed(0)}%
                 {caloriesMin && caloriesMax && (
                   <span className="text-neutral-500 font-normal ml-2 text-xs">
@@ -191,9 +191,9 @@ export default function MacroDistributionCard({
 
           {/* Protein Slider */}
           <div>
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-0 mb-2">
+            <div className="flex items-center justify-between mb-2">
               <label className="text-sm font-medium text-neutral-700">Protein</label>
-              <div className="text-sm font-semibold text-blue-600">
+              <div className="text-sm font-semibold text-primary-600">
                 {proteinRange[0].toFixed(0)}% - {proteinRange[1].toFixed(0)}%
                 {caloriesMin && caloriesMax && (
                   <span className="text-neutral-500 font-normal ml-2 text-xs">
