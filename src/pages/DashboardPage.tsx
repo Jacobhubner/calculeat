@@ -5,7 +5,7 @@ import OnboardingModal from '@/components/OnboardingModal'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import StatCard from '@/components/StatCard'
 import { ZonedCalorieRing } from '@/components/daily/ZonedCalorieRing'
-import { NutrientStatusRow } from '@/components/daily/NutrientStatusBadge'
+import { MacroTargetPie } from '@/components/daily/MacroTargetPie'
 import EmptyState from '@/components/EmptyState'
 import { useAuth } from '@/contexts/AuthContext'
 import { useProfiles, useOnboarding } from '@/hooks'
@@ -355,31 +355,20 @@ export default function DashboardPage() {
                 <ZonedCalorieRing consumed={consumed} min={ringMin} max={targetMax} size="md" />
               </div>
               {dailySummary && (
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle>Makromål idag</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <NutrientStatusRow
-                      status={dailySummary.fatStatus}
-                      label={`Fett${profile?.fat_min_percent != null && profile?.fat_max_percent != null ? ` · ${Math.round(profile.fat_min_percent)}–${Math.round(profile.fat_max_percent)}%` : ''}`}
-                      unit="g"
-                      showProgress
-                    />
-                    <NutrientStatusRow
-                      status={dailySummary.carbStatus}
-                      label={`Kolhydrater${profile?.carb_min_percent != null && profile?.carb_max_percent != null ? ` · ${Math.round(profile.carb_min_percent)}–${Math.round(profile.carb_max_percent)}%` : ''}`}
-                      unit="g"
-                      showProgress
-                    />
-                    <NutrientStatusRow
-                      status={dailySummary.proteinStatus}
-                      label={`Protein${profile?.protein_min_percent != null && profile?.protein_max_percent != null ? ` · ${Math.round(profile.protein_min_percent)}–${Math.round(profile.protein_max_percent)}%` : ''}`}
-                      unit="g"
-                      showProgress
-                    />
-                  </CardContent>
-                </Card>
+                <div className="bg-white border border-neutral-200 rounded-2xl p-5">
+                  <p className="text-sm font-medium text-neutral-700 mb-4">Makromål idag</p>
+                  <MacroTargetPie
+                    fat={dailySummary.fatStatus}
+                    carbs={dailySummary.carbStatus}
+                    protein={dailySummary.proteinStatus}
+                    fatMinPercent={profile?.fat_min_percent}
+                    fatMaxPercent={profile?.fat_max_percent}
+                    carbMinPercent={profile?.carb_min_percent}
+                    carbMaxPercent={profile?.carb_max_percent}
+                    proteinMinPercent={profile?.protein_min_percent}
+                    proteinMaxPercent={profile?.protein_max_percent}
+                  />
+                </div>
               )}
             </div>
 
