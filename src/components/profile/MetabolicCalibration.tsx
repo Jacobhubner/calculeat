@@ -274,8 +274,8 @@ export default function MetabolicCalibration({
           className="w-full flex items-center justify-between hover:opacity-70 transition-opacity"
           type="button"
         >
-          <CardTitle className={`flex items-center gap-2 ${isCompact ? 'text-base' : ''}`}>
-            <Scale className="h-5 w-5 text-primary-500" />
+          <CardTitle className="flex items-center gap-2 text-lg leading-snug">
+            <Scale className="h-5 w-5 flex-shrink-0 text-primary-500" />
             Metabolisk Kalibrering
           </CardTitle>
           <ChevronDown
