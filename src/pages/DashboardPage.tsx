@@ -361,12 +361,11 @@ export default function DashboardPage() {
                     fat={dailySummary.fatStatus}
                     carbs={dailySummary.carbStatus}
                     protein={dailySummary.proteinStatus}
-                    fatMinPercent={profile?.fat_min_percent}
-                    fatMaxPercent={profile?.fat_max_percent}
-                    carbMinPercent={profile?.carb_min_percent}
-                    carbMaxPercent={profile?.carb_max_percent}
-                    proteinMinPercent={profile?.protein_min_percent}
-                    proteinMaxPercent={profile?.protein_max_percent}
+                    totalLoggedKcal={consumed}
+                    fatGoal={calculations.macros?.fat}
+                    carbGoal={calculations.macros?.carbs}
+                    proteinGoal={calculations.macros?.protein}
+                    targetKcal={calculations.calorieGoal?.target}
                   />
                 </div>
               )}

@@ -2,16 +2,25 @@ import { memo } from 'react'
 import { cn } from '@/lib/utils'
 import type { NutrientStatus } from '@/lib/calculations/dailySummary'
 
+interface MacroGoal {
+  grams: number // midpoint
+  gramsMin: number
+  gramsMax: number
+  percentage: number // midpoint %
+}
+
 interface MacroTargetPieProps {
+  // Faktiskt intag från log
   fat: NutrientStatus
   carbs: NutrientStatus
   protein: NutrientStatus
-  fatMinPercent?: number
-  fatMaxPercent?: number
-  carbMinPercent?: number
-  carbMaxPercent?: number
-  proteinMinPercent?: number
-  proteinMaxPercent?: number
+  totalLoggedKcal: number // direkt från log, ej Atwater
+
+  // Profilmål — beräknade direkt från profil, ej snapshot
+  fatGoal?: MacroGoal
+  carbGoal?: MacroGoal
+  proteinGoal?: MacroGoal
+  targetKcal?: number // profilmål midpoint (min+max)/2
 }
 
 // Inline hex required — SVG stroke can't use Tailwind classes
@@ -39,12 +48,8 @@ interface ArcSegment {
   fraction: number
 }
 
-/**
- * Build strokeDasharray/strokeDashoffset for a single arc segment.
- * startFraction and fraction are values in [0, 1].
- */
 function arcProps(startFraction: number, fraction: number, circumference: number) {
-  const dashLength = Math.max(0, fraction * circumference - 2) // 2px gap
+  const dashLength = Math.max(0, fraction * circumference - 2)
   const offset = circumference * (1 - startFraction)
   return {
     strokeDasharray: `${dashLength} ${circumference}`,
@@ -52,56 +57,75 @@ function arcProps(startFraction: number, fraction: number, circumference: number
   }
 }
 
-function buildSegments(energy: { protein: number; carbs: number; fat: number }): ArcSegment[] {
-  const total = energy.protein + energy.carbs + energy.fat
+function buildSegmentsFromGrams(protein: number, carbs: number, fat: number): ArcSegment[] {
+  // Use energy (kcal) as weights for visual proportion
+  const proteinKcal = protein * 4
+  const carbsKcal = carbs * 4
+  const fatKcal = fat * 9
+  const total = proteinKcal + carbsKcal + fatKcal
   if (total <= 0) return []
   return [
-    { color: COLORS.protein.fill, fraction: energy.protein / total },
-    { color: COLORS.carbs.fill, fraction: energy.carbs / total },
-    { color: COLORS.fat.fill, fraction: energy.fat / total },
+    { color: COLORS.protein.fill, fraction: proteinKcal / total },
+    { color: COLORS.carbs.fill, fraction: carbsKcal / total },
+    { color: COLORS.fat.fill, fraction: fatKcal / total },
   ]
+}
+
+function renderSegments(
+  segments: ArcSegment[],
+  r: number,
+  circumference: number,
+  cx: number,
+  cy: number,
+  strokeWidth: number,
+  opacity?: number
+): React.ReactNode[] {
+  return segments.reduce<{ els: React.ReactNode[]; start: number }>(
+    (acc, seg) => {
+      const props = arcProps(acc.start, seg.fraction, circumference)
+      acc.els.push(
+        <circle
+          key={acc.start}
+          cx={cx}
+          cy={cy}
+          r={r}
+          stroke={seg.color}
+          strokeWidth={strokeWidth}
+          fill="none"
+          strokeLinecap="butt"
+          opacity={opacity}
+          {...props}
+        />
+      )
+      acc.start += seg.fraction
+      return acc
+    },
+    { els: [], start: 0 }
+  ).els
 }
 
 export const MacroTargetPie = memo(function MacroTargetPie({
   fat,
   carbs,
   protein,
-  fatMinPercent,
-  fatMaxPercent,
-  carbMinPercent,
-  carbMaxPercent,
-  proteinMinPercent,
-  proteinMaxPercent,
+  totalLoggedKcal,
+  fatGoal,
+  carbGoal,
+  proteinGoal,
+  targetKcal,
 }: MacroTargetPieProps) {
-  // Energy from each macro (kcal)
-  const proteinKcal = protein.current * 4
-  const carbsKcal = carbs.current * 4
-  const fatKcal = fat.current * 9
-  const totalKcal = proteinKcal + carbsKcal + fatKcal
+  const hasGoals = fatGoal != null && carbGoal != null && proteinGoal != null
 
-  // Outer ring — actual intake (r=82, strokeWidth=20)
+  // Outer ring — faktiskt loggat intag (gram → energiandel)
   const outerR = 82
   const outerCirc = 2 * Math.PI * outerR
-  const outerSegments = buildSegments({ protein: proteinKcal, carbs: carbsKcal, fat: fatKcal })
+  const outerSegments = buildSegmentsFromGrams(protein.current, carbs.current, fat.current)
 
-  // Inner ring — target ranges (r=58, strokeWidth=10), shown only if percent props exist
+  // Inner ring — profilmål (gram midpoint → energiandel)
   const innerR = 58
   const innerCirc = 2 * Math.PI * innerR
-  const hasInner =
-    fatMinPercent != null &&
-    fatMaxPercent != null &&
-    carbMinPercent != null &&
-    carbMaxPercent != null &&
-    proteinMinPercent != null &&
-    proteinMaxPercent != null
-
-  // Build inner segments from midpoint of each range
-  const innerSegments: ArcSegment[] = hasInner
-    ? buildSegments({
-        protein: (proteinMinPercent! + proteinMaxPercent!) / 2,
-        carbs: (carbMinPercent! + carbMaxPercent!) / 2,
-        fat: (fatMinPercent! + fatMaxPercent!) / 2,
-      })
+  const innerSegments = hasGoals
+    ? buildSegmentsFromGrams(proteinGoal!.grams, carbGoal!.grams, fatGoal!.grams)
     : []
 
   const svgSize = 200
@@ -112,39 +136,27 @@ export const MacroTargetPie = memo(function MacroTargetPie({
     key: 'protein' | 'carbs' | 'fat'
     label: string
     status: NutrientStatus
-    minPercent?: number
-    maxPercent?: number
+    goal?: MacroGoal
     fillColor: string
-    lightColor: string
   }[] = [
     {
       key: 'protein',
       label: 'Protein',
       status: protein,
-      minPercent: proteinMinPercent,
-      maxPercent: proteinMaxPercent,
+      goal: proteinGoal,
       fillColor: COLORS.protein.fill,
-      lightColor: COLORS.protein.light,
     },
     {
       key: 'carbs',
       label: 'Kolhydrater',
       status: carbs,
-      minPercent: carbMinPercent,
-      maxPercent: carbMaxPercent,
+      goal: carbGoal,
       fillColor: COLORS.carbs.fill,
-      lightColor: COLORS.carbs.light,
     },
-    {
-      key: 'fat',
-      label: 'Fett',
-      status: fat,
-      minPercent: fatMinPercent,
-      maxPercent: fatMaxPercent,
-      fillColor: COLORS.fat.fill,
-      lightColor: COLORS.fat.light,
-    },
+    { key: 'fat', label: 'Fett', status: fat, goal: fatGoal, fillColor: COLORS.fat.fill },
   ]
+
+  const hasAnyIntake = totalLoggedKcal > 0
 
   return (
     <div className="space-y-4">
@@ -156,108 +168,60 @@ export const MacroTargetPie = memo(function MacroTargetPie({
           style={{ maxWidth: 200 }}
           className="transform -rotate-90"
         >
-          {totalKcal === 0 ? (
-            /* Placeholder ring when nothing logged */
-            <>
-              <circle
-                cx={cx}
-                cy={cy}
-                r={outerR}
-                stroke={COLORS.placeholder}
-                strokeWidth={20}
-                fill="none"
-              />
-              {hasInner && (
-                <circle
-                  cx={cx}
-                  cy={cy}
-                  r={innerR}
-                  stroke={COLORS.placeholder}
-                  strokeWidth={10}
-                  fill="none"
-                />
-              )}
-            </>
-          ) : (
-            <>
-              {/* Outer ring — actual intake */}
-              {
-                outerSegments.reduce<{ els: React.ReactNode[]; start: number }>(
-                  (acc, seg) => {
-                    const props = arcProps(acc.start, seg.fraction, outerCirc)
-                    acc.els.push(
-                      <circle
-                        key={acc.start}
-                        cx={cx}
-                        cy={cy}
-                        r={outerR}
-                        stroke={seg.color}
-                        strokeWidth={20}
-                        fill="none"
-                        strokeLinecap="butt"
-                        {...props}
-                      />
-                    )
-                    acc.start += seg.fraction
-                    return acc
-                  },
-                  { els: [], start: 0 }
-                ).els
-              }
+          {/* Inner ring — alltid synlig om mål finns (visar målfördelning) */}
+          {hasGoals && innerSegments.length > 0 ? (
+            renderSegments(innerSegments, innerR, innerCirc, cx, cy, 12, 0.4)
+          ) : hasGoals ? (
+            <circle
+              cx={cx}
+              cy={cy}
+              r={innerR}
+              stroke={COLORS.placeholder}
+              strokeWidth={12}
+              fill="none"
+              opacity={0.4}
+            />
+          ) : null}
 
-              {/* Inner ring — target midpoints */}
-              {hasInner &&
-                innerSegments.reduce<{ els: React.ReactNode[]; start: number }>(
-                  (acc, seg) => {
-                    const props = arcProps(acc.start, seg.fraction, innerCirc)
-                    acc.els.push(
-                      <circle
-                        key={acc.start}
-                        cx={cx}
-                        cy={cy}
-                        r={innerR}
-                        stroke={seg.color}
-                        strokeWidth={10}
-                        fill="none"
-                        strokeLinecap="butt"
-                        opacity={0.35}
-                        {...props}
-                      />
-                    )
-                    acc.start += seg.fraction
-                    return acc
-                  },
-                  { els: [], start: 0 }
-                ).els}
-            </>
+          {/* Outer ring — faktiskt intag, placeholder om inget loggat */}
+          {hasAnyIntake && outerSegments.length > 0 ? (
+            renderSegments(outerSegments, outerR, outerCirc, cx, cy, 20)
+          ) : (
+            <circle
+              cx={cx}
+              cy={cy}
+              r={outerR}
+              stroke={COLORS.placeholder}
+              strokeWidth={20}
+              fill="none"
+            />
           )}
 
-          {/* Center text — rendered unrotated via transform */}
+          {/* Center text */}
           <text
             x={cx}
-            y={cy - 6}
+            y={cy - 7}
             textAnchor="middle"
             dominantBaseline="middle"
-            fontSize="13"
+            fontSize="14"
             fontWeight="700"
             fill="#171717"
             transform={`rotate(90, ${cx}, ${cy})`}
           >
-            {totalKcal > 0 ? Math.round(totalKcal) : '–'}
+            {Math.round(totalLoggedKcal)}
           </text>
           <text
             x={cx}
-            y={cy + 10}
+            y={cy + 9}
             textAnchor="middle"
             dominantBaseline="middle"
             fontSize="9"
             fill="#737373"
             transform={`rotate(90, ${cx}, ${cy})`}
           >
-            {(() => {
-              const t = protein.min * 4 + carbs.min * 4 + fat.min * 9
-              return t > 0 ? `av ~${Math.round(t)} kcal` : 'kcal loggat'
-            })()}
+            {targetKcal != null && targetKcal > 0
+              ? `av ~${Math.round(targetKcal)} kcal`
+              : 'kcal loggat'}
           </text>
         </svg>
       </div>
@@ -266,7 +230,7 @@ export const MacroTargetPie = memo(function MacroTargetPie({
       <div className="space-y-2">
         {macroRows.map(row => (
           <div key={row.key} className="flex items-center justify-between gap-2">
-            {/* Left: color dot (makrofärg) + statusring + name + optional % range */}
+            {/* Left: färgpunkt med statusring + namn + % */}
             <div className="flex items-center gap-2 min-w-0">
               <div
                 className={cn(
@@ -277,19 +241,22 @@ export const MacroTargetPie = memo(function MacroTargetPie({
               />
               <div className="min-w-0">
                 <span className="text-sm font-medium text-neutral-700">{row.label}</span>
-                {row.minPercent != null && row.maxPercent != null && (
-                  <span className="text-[10px] text-neutral-400 ml-1">
-                    {Math.round(row.minPercent)}–{Math.round(row.maxPercent)}%
-                  </span>
+                {row.goal != null && (
+                  <span className="text-[10px] text-neutral-400 ml-1">{row.goal.percentage}%</span>
                 )}
               </div>
             </div>
 
-            {/* Right: current / min–max + displayText */}
+            {/* Right: Xg loggat / min–max g + displayText */}
             <div className="flex items-center gap-2 flex-shrink-0">
               <span className="text-xs text-neutral-500 tabular-nums">
-                {Math.round(row.status.current)}g / {Math.round(row.status.min)}–
-                {Math.round(row.status.max)}g
+                {Math.round(row.status.current)}g
+                {row.goal != null && (
+                  <>
+                    {' '}
+                    / {row.goal.gramsMin}–{row.goal.gramsMax}g
+                  </>
+                )}
               </span>
               <span className={cn('text-xs font-medium', STATUS_COLOR[row.status.status])}>
                 {row.status.displayText}
