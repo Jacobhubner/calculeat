@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { cn } from '@/lib/utils'
 import type { NutrientStatus } from '@/lib/calculations/dailySummary'
 
@@ -25,6 +26,12 @@ const STATUS_COLOR: Record<NutrientStatus['status'], string> = {
   under: 'text-sky-600',
   within: 'text-success-600',
   over: 'text-error-600',
+}
+
+const STATUS_RING: Record<NutrientStatus['status'], string> = {
+  under: 'ring-sky-400',
+  within: 'ring-success-500',
+  over: 'ring-error-500',
 }
 
 interface ArcSegment {
@@ -55,7 +62,7 @@ function buildSegments(energy: { protein: number; carbs: number; fat: number }):
   ]
 }
 
-export function MacroTargetPie({
+export const MacroTargetPie = memo(function MacroTargetPie({
   fat,
   carbs,
   protein,
@@ -247,7 +254,10 @@ export function MacroTargetPie({
             fill="#737373"
             transform={`rotate(90, ${cx}, ${cy})`}
           >
-            kcal loggat
+            {(() => {
+              const t = protein.min * 4 + carbs.min * 4 + fat.min * 9
+              return t > 0 ? `av ~${Math.round(t)} kcal` : 'kcal loggat'
+            })()}
           </text>
         </svg>
       </div>
@@ -256,10 +266,13 @@ export function MacroTargetPie({
       <div className="space-y-2">
         {macroRows.map(row => (
           <div key={row.key} className="flex items-center justify-between gap-2">
-            {/* Left: color dot + name + optional % range */}
+            {/* Left: color dot (makrofärg) + statusring + name + optional % range */}
             <div className="flex items-center gap-2 min-w-0">
               <div
-                className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                className={cn(
+                  'w-3 h-3 rounded-full flex-shrink-0 ring-2 ring-offset-1',
+                  STATUS_RING[row.status.status]
+                )}
                 style={{ backgroundColor: row.fillColor }}
               />
               <div className="min-w-0">
@@ -287,4 +300,4 @@ export function MacroTargetPie({
       </div>
     </div>
   )
-}
+})
