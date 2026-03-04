@@ -104,7 +104,7 @@ export function FoodNutrientPanel({ foodItem, open, onOpenChange }: FoodNutrient
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md max-h-[85vh] flex flex-col p-0 gap-0 rounded-2xl overflow-hidden [&>button:last-child]:hidden">
+      <DialogContent className="max-w-md max-h-[85vh] flex flex-col p-0 gap-0 rounded-2xl overflow-hidden [&>button:last-child]:hidden md:p-0 md:gap-0 md:rounded-2xl md:border-0">
         {/* Gradient header — sticky, owns the close button */}
         <div className="shrink-0 bg-gradient-to-r from-primary-500 to-accent-500 px-6 pt-5 pb-5">
           <div className="flex items-start justify-between gap-2">
