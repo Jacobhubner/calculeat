@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogClose, DialogTitle } from '@/components/ui/dialog'
+import { X } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { useFoodNutrients, useNutrientDefinitions } from '@/hooks/useFoodNutrients'
 import type { FoodItem } from '@/hooks/useFoodItems'
@@ -103,39 +104,45 @@ export function FoodNutrientPanel({ foodItem, open, onOpenChange }: FoodNutrient
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md max-h-[85vh] flex flex-col p-0 gap-0 rounded-2xl overflow-hidden">
-        {/* Gradient header — sticky */}
-        <div className="shrink-0 bg-gradient-to-r from-primary-500 to-accent-500 px-6 py-5">
-          <DialogHeader>
-            <div className="flex items-start justify-between gap-2">
-              <DialogTitle className="text-white text-lg font-bold pr-2 leading-snug">
-                {foodItem?.name ?? 'Näringsvärden'}
-              </DialogTitle>
-              {sourceBadge && (
-                <Badge
-                  variant="outline"
-                  className="shrink-0 text-xs border-white/40 text-white bg-white/15"
-                >
-                  {sourceBadge.label}
-                </Badge>
-              )}
-            </div>
-            <div className="text-sm text-primary-100 mt-1 space-y-0.5">
-              <p>
-                per {foodItem?.reference_amount ?? 100} {foodItem?.reference_unit ?? 'g'}
-              </p>
-              {foodItem?.kcal_per_gram != null && colorInfo && (
-                <p className="text-primary-100">
-                  Energitäthet: {Number(foodItem.kcal_per_gram).toFixed(2)} kcal/g
-                  {' · '}
-                  {colorInfo.label}
+      <DialogContent className="max-w-md max-h-[85vh] flex flex-col p-0 gap-0 rounded-2xl overflow-hidden [&>button:last-child]:hidden">
+        {/* Gradient header — sticky, owns the close button */}
+        <div className="shrink-0 bg-gradient-to-r from-primary-500 to-accent-500 px-6 pt-5 pb-5">
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-start gap-2 flex-wrap">
+                <DialogTitle className="text-white text-lg font-bold leading-snug">
+                  {foodItem?.name ?? 'Näringsvärden'}
+                </DialogTitle>
+                {sourceBadge && (
+                  <Badge
+                    variant="outline"
+                    className="shrink-0 text-xs border-white/40 text-white bg-white/15 mt-0.5"
+                  >
+                    {sourceBadge.label}
+                  </Badge>
+                )}
+              </div>
+              <div className="text-sm text-primary-100 mt-1 space-y-0.5">
+                <p>
+                  per {foodItem?.reference_amount ?? 100} {foodItem?.reference_unit ?? 'g'}
                 </p>
-              )}
-              {foodItem?.reference_unit === 'ml' && foodItem?.density_g_per_ml != null && (
-                <p>Densitet: {Number(foodItem.density_g_per_ml).toFixed(2)} g/ml</p>
-              )}
+                {foodItem?.kcal_per_gram != null && colorInfo && (
+                  <p>
+                    Energitäthet: {Number(foodItem.kcal_per_gram).toFixed(2)} kcal/g
+                    {' · '}
+                    {colorInfo.label}
+                  </p>
+                )}
+                {foodItem?.reference_unit === 'ml' && foodItem?.density_g_per_ml != null && (
+                  <p>Densitet: {Number(foodItem.density_g_per_ml).toFixed(2)} g/ml</p>
+                )}
+              </div>
             </div>
-          </DialogHeader>
+            <DialogClose className="shrink-0 text-white/70 hover:text-white transition-colors p-1 rounded-full hover:bg-white/10 mt-0.5">
+              <X className="h-5 w-5" />
+              <span className="sr-only">Stäng</span>
+            </DialogClose>
+          </div>
         </div>
 
         {/* Body — scrollbar */}
