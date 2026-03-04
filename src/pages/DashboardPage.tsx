@@ -396,34 +396,37 @@ export default function DashboardPage() {
             {/* Today's Progress */}
             {todayLog && todayLog.meals && todayLog.meals.length > 0 && (
               <Card>
-                <CardHeader>
-                  <CardTitle>Dagens framsteg</CardTitle>
-                  <CardDescription>
-                    Du har loggat {todayLog.meals.length} måltid(er) idag
-                  </CardDescription>
+                <CardHeader className="pb-2">
+                  <div className="flex items-center justify-between">
+                    <CardTitle>Dagens måltider</CardTitle>
+                    <button
+                      className="text-xs text-primary-600 hover:text-primary-700 font-medium"
+                      onClick={() => navigate('/app/today')}
+                    >
+                      Se alla →
+                    </button>
+                  </div>
                 </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {todayLog.meals.slice(0, 3).map(meal => (
-                      <div
-                        key={meal.id}
-                        className="flex items-center justify-between p-3 bg-neutral-50 rounded-lg"
-                      >
-                        <div>
-                          <p className="font-medium text-neutral-900">{meal.meal_name}</p>
-                          <p className="text-sm text-neutral-600">{meal.meal_calories} kcal</p>
-                        </div>
-                        <div className="text-right text-xs text-neutral-500">
-                          <p>F: {meal.meal_fat_g}g</p>
-                          <p>K: {meal.meal_carb_g}g</p>
-                          <p>P: {meal.meal_protein_g}g</p>
-                        </div>
+                <CardContent className="pt-0">
+                  <div className="divide-y divide-neutral-100">
+                    {todayLog.meals.slice(0, 4).map(meal => (
+                      <div key={meal.id} className="flex items-center justify-between py-2">
+                        <span className="text-sm font-medium text-neutral-800 truncate flex-1 mr-3">
+                          {meal.meal_name}
+                        </span>
+                        <span className="text-sm text-neutral-500 shrink-0">
+                          {meal.meal_calories} kcal
+                          <span className="text-neutral-300 mx-1">·</span>
+                          <span className="text-xs">
+                            F{meal.meal_fat_g} K{meal.meal_carb_g} P{meal.meal_protein_g}
+                          </span>
+                        </span>
                       </div>
                     ))}
-                    {todayLog.meals.length > 3 && (
-                      <p className="text-sm text-neutral-500 text-center">
-                        +{todayLog.meals.length - 3} till...
-                      </p>
+                    {todayLog.meals.length > 4 && (
+                      <div className="py-2 text-xs text-neutral-400 text-center">
+                        +{todayLog.meals.length - 4} till
+                      </div>
                     )}
                   </div>
                 </CardContent>
