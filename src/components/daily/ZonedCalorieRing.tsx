@@ -21,18 +21,22 @@ export function ZonedCalorieRing({
   className,
   size = 'md',
 }: ZonedCalorieRingProps) {
+  // Clamp inputs: max can't be negative, min can't exceed max
+  const safeMax = Math.max(0, max)
+  const safeMin = Math.min(Math.max(0, min), safeMax)
+
   // Use 120% of max as the visual max so there's room to show "over"
-  const visualMax = max * 1.2
+  const visualMax = safeMax > 0 ? safeMax * 1.2 : 1 // avoid division by zero
 
   // Calculate percentages for each zone
-  const minPercent = (min / visualMax) * 100
-  const maxPercent = (max / visualMax) * 100
+  const minPercent = (safeMin / visualMax) * 100
+  const maxPercent = (safeMax / visualMax) * 100
   const consumedPercent = Math.min((consumed / visualMax) * 100, 100)
 
   // Calculate remaining (count to min, not max)
-  const remaining = Math.max(min - consumed, 0)
-  const isWithin = consumed >= min && consumed <= max
-  const isOver = consumed > max
+  const remaining = Math.max(safeMin - consumed, 0)
+  const isWithin = consumed >= safeMin && consumed <= safeMax
+  const isOver = consumed > safeMax
 
   // Size configurations
   const sizeConfig = {
@@ -74,7 +78,7 @@ export function ZonedCalorieRing({
             className="text-sky-100"
           />
 
-          {/* Zone 2: Success zone (min to max) */}
+          {/* Zone 2: Success zone (min to max) — clamped to 0 if min > max */}
           <circle
             cx={config.size / 2}
             cy={config.size / 2}
@@ -82,12 +86,12 @@ export function ZonedCalorieRing({
             stroke="currentColor"
             strokeWidth={config.strokeWidth}
             fill="none"
-            strokeDasharray={`${((maxPercent - minPercent) / 100) * circumference} ${circumference}`}
+            strokeDasharray={`${Math.max(0, (maxPercent - minPercent) / 100) * circumference} ${circumference}`}
             strokeDashoffset={-((minPercent / 100) * circumference)}
             className="text-success-100"
           />
 
-          {/* Zone 3: Error zone (max to visual max) */}
+          {/* Zone 3: Error zone (max to visual max) — clamped to 0 */}
           <circle
             cx={config.size / 2}
             cy={config.size / 2}
@@ -95,7 +99,7 @@ export function ZonedCalorieRing({
             stroke="currentColor"
             strokeWidth={config.strokeWidth}
             fill="none"
-            strokeDasharray={`${((100 - maxPercent) / 100) * circumference} ${circumference}`}
+            strokeDasharray={`${Math.max(0, (100 - maxPercent) / 100) * circumference} ${circumference}`}
             strokeDashoffset={-((maxPercent / 100) * circumference)}
             className="text-error-100"
           />
@@ -154,7 +158,7 @@ export function ZonedCalorieRing({
       <div className="mt-4 flex items-center justify-center gap-4 sm:gap-6 text-center">
         <div>
           <p className="text-lg font-semibold text-neutral-900">
-            {Math.round(min)}-{Math.round(max)}
+            {Math.round(safeMin)}-{Math.round(safeMax)}
           </p>
           <p className="text-[10px] text-neutral-500 uppercase tracking-wide">Mål</p>
         </div>
@@ -175,17 +179,17 @@ export function ZonedCalorieRing({
       <div className="mt-1 flex items-center justify-center gap-2 sm:gap-4 text-[10px]">
         <div className="flex items-center gap-1">
           <div className="w-3 h-3 rounded-full bg-sky-400" />
-          <span className="text-neutral-500">&lt;{Math.round(min)}</span>
+          <span className="text-neutral-500">&lt;{Math.round(safeMin)}</span>
         </div>
         <div className="flex items-center gap-1">
           <div className="w-3 h-3 rounded-full bg-success-500" />
           <span className="text-neutral-500">
-            {Math.round(min)}-{Math.round(max)}
+            {Math.round(safeMin)}-{Math.round(safeMax)}
           </span>
         </div>
         <div className="flex items-center gap-1">
           <div className="w-3 h-3 rounded-full bg-error-500" />
-          <span className="text-neutral-500">&gt;{Math.round(max)}</span>
+          <span className="text-neutral-500">&gt;{Math.round(safeMax)}</span>
         </div>
       </div>
     </div>

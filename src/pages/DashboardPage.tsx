@@ -55,12 +55,21 @@ export default function DashboardPage() {
       return next
     })
   }
+  const VALID_INSIGHT_IDS = ['bmi', 'ffmi', 'idealweight', 'age'] as const
+  const DEFAULT_INSIGHTS = ['bmi', 'ffmi', 'idealweight', 'age']
   const [visibleInsights, setVisibleInsights] = useState<string[]>(() => {
     try {
       const stored = localStorage.getItem('health_insights_visible')
-      return stored ? JSON.parse(stored) : ['bmi', 'ffmi', 'idealweight', 'age']
+      if (!stored) return DEFAULT_INSIGHTS
+      const parsed = JSON.parse(stored) as unknown
+      if (!Array.isArray(parsed)) return DEFAULT_INSIGHTS
+      const filtered = parsed.filter(
+        (id): id is string =>
+          typeof id === 'string' && (VALID_INSIGHT_IDS as readonly string[]).includes(id)
+      )
+      return filtered.length > 0 ? filtered : DEFAULT_INSIGHTS
     } catch {
-      return ['bmi', 'ffmi', 'idealweight', 'age']
+      return DEFAULT_INSIGHTS
     }
   })
   const [insightsCustomizeOpen, setInsightsCustomizeOpen] = useState(false)
@@ -86,28 +95,9 @@ export default function DashboardPage() {
 
   const dailySummary = useDailySummary(todayLog, profile)
 
-  console.log('🔍 Dashboard render:', {
-    activeProfileId: activeProfile?.id,
-    activeProfileName: activeProfile?.profile_name,
-    allProfilesCount: allProfiles?.length,
-    allProfilesIds: allProfiles?.map(p => `${p.profile_name} (${p.id.slice(0, 8)})`),
-    foundProfile: !!profile,
-    profileBMR: profile?.bmr,
-    profileTDEE: profile?.tdee,
-    profileCaloriesMin: profile?.calories_min,
-    profileCaloriesMax: profile?.calories_max,
-  })
-
   // Dashboard uses SAVED values from profile, not live calculations
   // useCalculations is for live editing in profile page, not for display
   const calculations = useMemo(() => {
-    console.log(
-      '🧮 Calculations useMemo triggered, profile:',
-      profile?.profile_name,
-      'BMR:',
-      profile?.bmr
-    )
-
     if (!profile) {
       return {
         bmr: null,
