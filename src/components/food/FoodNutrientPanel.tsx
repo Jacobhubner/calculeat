@@ -103,9 +103,9 @@ export function FoodNutrientPanel({ foodItem, open, onOpenChange }: FoodNutrient
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md max-h-[85vh] overflow-y-auto p-0 gap-0 rounded-2xl overflow-hidden">
-        {/* Gradient header */}
-        <div className="bg-gradient-to-r from-primary-500 to-accent-500 px-6 py-5">
+      <DialogContent className="max-w-md max-h-[85vh] flex flex-col p-0 gap-0 rounded-2xl overflow-hidden">
+        {/* Gradient header — sticky */}
+        <div className="shrink-0 bg-gradient-to-r from-primary-500 to-accent-500 px-6 py-5">
           <DialogHeader>
             <div className="flex items-start justify-between gap-2">
               <DialogTitle className="text-white text-lg font-bold pr-2 leading-snug">
@@ -138,8 +138,8 @@ export function FoodNutrientPanel({ foodItem, open, onOpenChange }: FoodNutrient
           </DialogHeader>
         </div>
 
-        {/* Body */}
-        <div className="px-6 py-4">
+        {/* Body — scrollbar */}
+        <div className="flex-1 overflow-y-auto px-6 py-4">
           {isLoading && <p className="text-sm text-neutral-500 py-4">Laddar näringsvärden...</p>}
 
           {!isLoading && totalNutrientCount === 0 && (
