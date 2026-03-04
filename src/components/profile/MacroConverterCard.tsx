@@ -4,11 +4,11 @@
  */
 
 import { useState, useMemo } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
-import { Flame, Target } from 'lucide-react'
+import { ArrowLeftRight, Flame, Target } from 'lucide-react'
 import type { Profile } from '@/lib/types'
 
 interface MacroConverterCardProps {
@@ -180,8 +180,10 @@ export default function MacroConverterCard({ profile }: MacroConverterCardProps)
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Omvandling av makrovärden</CardTitle>
-          <CardDescription>Konvertera mellan olika makroenheter</CardDescription>
+          <CardTitle className="flex items-center gap-2 text-lg leading-snug">
+            <ArrowLeftRight className="h-5 w-5 flex-shrink-0 text-primary-500" />
+            Omvandling av makrovärden
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-neutral-500">
@@ -196,8 +198,10 @@ export default function MacroConverterCard({ profile }: MacroConverterCardProps)
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Omvandling av makrovärden</CardTitle>
-          <CardDescription>Konvertera mellan olika makroenheter</CardDescription>
+          <CardTitle className="flex items-center gap-2 text-lg leading-snug">
+            <ArrowLeftRight className="h-5 w-5 flex-shrink-0 text-primary-500" />
+            Omvandling av makrovärden
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-neutral-500">
@@ -211,8 +215,10 @@ export default function MacroConverterCard({ profile }: MacroConverterCardProps)
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Omvandling av makrovärden</CardTitle>
-        <CardDescription>Konvertera mellan olika makroenheter</CardDescription>
+        <CardTitle className="flex items-center gap-2 text-lg leading-snug">
+          <ArrowLeftRight className="h-5 w-5 flex-shrink-0 text-primary-500" />
+          Omvandling av makrovärden
+        </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Input Section - Ordning: Makro, Värde, Enhet */}

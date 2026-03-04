@@ -155,7 +155,7 @@ export default function WeightTracker({
             className="flex items-center gap-2 hover:opacity-70 transition-opacity"
             type="button"
           >
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-lg leading-snug">
               {weightTrend.totalChangeKg < -0.1 ? (
                 <TrendingDown className="h-5 w-5 text-green-600" />
               ) : weightTrend.totalChangeKg > 0.1 ? (

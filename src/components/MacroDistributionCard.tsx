@@ -115,14 +115,10 @@ export default function MacroDistributionCard({
           type="button"
         >
           <div>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-lg leading-snug">
               <PieChart className="h-5 w-5 text-primary-600" />
               Makrofördelning
             </CardTitle>
-            <p className="text-sm text-neutral-600 mt-1 text-left">
-              Ange önskat spann för varje makronutrient. Systemet kommer använda dessa värden för
-              att beräkna dina måltider.
-            </p>
           </div>
           <ChevronDown
             className={`h-5 w-5 text-neutral-600 transition-transform duration-200 flex-shrink-0 ${

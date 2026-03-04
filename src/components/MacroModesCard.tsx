@@ -6,7 +6,7 @@
  */
 
 import { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
@@ -203,13 +203,10 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
           type="button"
         >
           <div>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-lg leading-snug">
               <Target className="h-5 w-5 text-accent-600" />
               Profilläge
             </CardTitle>
-            <CardDescription className="mt-1 text-left">
-              Tillämpa fördefinierade makrofördelningar baserat på ditt mål
-            </CardDescription>
           </div>
           <ChevronDown
             className={`h-5 w-5 text-neutral-600 transition-transform duration-200 flex-shrink-0 ${

@@ -7,7 +7,7 @@ import { useState, useEffect, useMemo, useRef } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
 import { Button } from './ui/button'
 import { Slider } from './ui/slider'
-import { Plus, X, ChevronDown } from 'lucide-react'
+import { Plus, X, ChevronDown, UtensilsCrossed } from 'lucide-react'
 import { useProfileStore } from '@/stores/profileStore'
 
 interface Meal {
@@ -126,13 +126,10 @@ export default function MealSettingsCard({ tdee, onMealChange }: MealSettingsCar
           type="button"
         >
           <div>
-            <CardTitle className="flex items-center gap-2">
-              <span className="text-2xl">🍽️</span>
+            <CardTitle className="flex items-center gap-2 text-lg leading-snug">
+              <UtensilsCrossed className="h-5 w-5 flex-shrink-0 text-primary-500" />
               Måltidsinställningar
             </CardTitle>
-            <p className="text-sm text-neutral-600 mt-1 text-left">
-              Anpassa hur många måltider du vill ha och hur kalorierna ska fördelas över dagen.
-            </p>
           </div>
           <ChevronDown
             className={`h-5 w-5 text-neutral-600 transition-transform duration-200 flex-shrink-0 ${
