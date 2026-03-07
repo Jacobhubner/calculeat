@@ -20,7 +20,7 @@ const COLORS = {
   track: '#1e293b',
 }
 
-const MACROS = ['protein', 'carbs', 'fat'] as const
+const MACROS = ['fat', 'carbs', 'protein'] as const
 type MacroKey = (typeof MACROS)[number]
 
 const MACRO_LABELS: Record<MacroKey, string> = {
@@ -33,24 +33,6 @@ const MACRO_COLORS: Record<MacroKey, string> = {
   protein: COLORS.protein,
   carbs: COLORS.carbs,
   fat: COLORS.fat,
-}
-
-// ── Hjälpfunktioner ───────────────────────────────────────────────────────────
-
-function buildSegments(
-  fracs: number[],
-  r: number
-): Array<{ dasharray: string; dashoffset: number }> {
-  const circ = 2 * Math.PI * r
-  const GAP = 3
-  let cum = 0
-  return fracs.map(frac => {
-    const len = Math.max(0, frac * circ - GAP)
-    const dasharray = `${len} ${circ - len}`
-    const dashoffset = circ - cum * circ
-    cum += frac
-    return { dasharray, dashoffset }
-  })
 }
 
 // ── Mål-intervall bar — mittpunktsbaserad (0–100-skala) ──────────────────────
@@ -125,29 +107,39 @@ function GoalBarsV2({
       </div>
 
       {/* Bar */}
-      <div className="relative h-3 rounded-full overflow-hidden bg-neutral-100">
-        {intervals.map(({ key }, i) => (
-          <div
-            key={`solid-${key}`}
-            className="absolute inset-y-0"
-            style={{
-              left: `${positions[i]}%`,
-              width: `${mids[i] * scale}%`,
-              backgroundColor: MACRO_COLORS[key],
-            }}
-          />
-        ))}
-        {intervals.map(({ key, min, max }, i) => {
-          const halfSpan = ((max - min) / 2) * scale
-          const solidStart = positions[i]
-          const solidEnd = solidStart + mids[i] * scale
+      <div className="relative h-5 rounded-full overflow-hidden bg-neutral-100">
+        {intervals.map(({ key }, i) => {
+          const solidW = mids[i] * scale
+          return (
+            <div
+              key={`solid-${key}`}
+              className="absolute inset-y-0 flex items-center justify-center"
+              style={{
+                left: `${positions[i]}%`,
+                width: `${solidW}%`,
+                backgroundColor: MACRO_COLORS[key],
+              }}
+            >
+              {solidW > 8 && (
+                <span
+                  className="text-[9px] font-bold tabular-nums whitespace-nowrap"
+                  style={{ color: '#ffffff', textShadow: '0 1px 3px rgba(0,0,0,0.5)' }}
+                >
+                  {Math.round(mids[i])}%
+                </span>
+              )}
+            </div>
+          )
+        })}
+        {intervals.map(({ key }, i) => {
+          const { bLeft, bRight } = bracketRanges[i]
           return (
             <div
               key={`ext-${key}`}
               className="absolute inset-y-0"
               style={{
-                left: `${Math.max(0, solidStart - halfSpan)}%`,
-                width: `${Math.min(100, solidEnd + halfSpan) - Math.max(0, solidStart - halfSpan)}%`,
+                left: `${bLeft}%`,
+                width: `${bRight - bLeft}%`,
                 backgroundColor: MACRO_COLORS[key],
                 opacity: 0.35,
               }}
@@ -202,65 +194,60 @@ function GoalBarsV2({
   )
 }
 
-// ── Idag-paj ──────────────────────────────────────────────────────────────────
+// ── Idag-bar med inline procent ───────────────────────────────────────────────
 
-const R = 42
-const STROKE = 16
-const SIZE = 120
-const CX = SIZE / 2
-const CY = SIZE / 2
+function TodayBarInline({
+  fracs,
+  pcts,
+  isEmpty,
+}: {
+  fracs: number[]
+  pcts: Record<MacroKey, string>
+  isEmpty: boolean
+}) {
+  const positions = MACROS.map((_, i) => fracs.slice(0, i).reduce((s, f) => s + f, 0))
 
-function TodayPie({ fracs, isEmpty }: { fracs: number[]; isEmpty: boolean }) {
-  const segs = isEmpty ? [] : buildSegments(fracs, R)
   return (
-    <svg
-      viewBox={`0 0 ${SIZE} ${SIZE}`}
-      width="96"
-      height="96"
-      aria-label="Idag"
-      className="flex-shrink-0"
-    >
-      <circle cx={CX} cy={CY} r={R} fill="none" stroke={COLORS.track} strokeWidth={STROKE} />
-      {isEmpty ? (
-        <>
-          <circle
-            cx={CX}
-            cy={CY}
-            r={R}
-            fill="none"
-            stroke={COLORS.placeholder}
-            strokeWidth={STROKE}
-          />
-          <text
-            x={CX}
-            y={CY + 4}
-            textAnchor="middle"
-            fontSize="8"
-            fill="#94a3b8"
-            fontFamily="inherit"
-          >
-            Inget loggat
-          </text>
-        </>
-      ) : (
-        <g transform={`rotate(-90 ${CX} ${CY})`}>
-          {segs.map((seg, i) => (
-            <circle
-              key={i}
-              cx={CX}
-              cy={CY}
-              r={R}
-              fill="none"
-              stroke={MACRO_COLORS[MACROS[i]]}
-              strokeWidth={STROKE}
-              strokeDasharray={seg.dasharray}
-              strokeDashoffset={seg.dashoffset}
-              strokeLinecap="butt"
-            />
+    <div className="space-y-0">
+      <p className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mb-2">
+        Idag
+      </p>
+      {/* Bar med procent inuti */}
+      <div className="relative h-5 rounded-full overflow-hidden bg-neutral-100">
+        {!isEmpty &&
+          MACROS.map((key, i) => (
+            <div
+              key={`inline-seg-${key}`}
+              className="absolute inset-y-0 flex items-center justify-center"
+              style={{
+                left: `${positions[i] * 100}%`,
+                width: `${fracs[i] * 100}%`,
+                backgroundColor: MACRO_COLORS[key],
+              }}
+            >
+              {fracs[i] > 0.08 && (
+                <span className="text-[9px] font-bold text-white tabular-nums">{pcts[key]}</span>
+              )}
+            </div>
           ))}
-        </g>
-      )}
-    </svg>
+      </div>
+      {/* Namn under baren */}
+      <div className="relative mt-1" style={{ height: '12px' }}>
+        {!isEmpty &&
+          MACROS.map((key, i) => {
+            const mid = (positions[i] + fracs[i] / 2) * 100
+            return (
+              <span
+                key={`inline-label-${key}`}
+                className="absolute text-[8px] text-neutral-400 -translate-x-1/2 whitespace-nowrap"
+                style={{ left: `${mid}%` }}
+              >
+                {MACRO_LABELS[key]}
+              </span>
+            )
+          })}
+      </div>
+    </div>
   )
 }
 
@@ -286,9 +273,9 @@ export const MacroDonutChart = memo(function MacroDonutChart({
     fatMaxPct != null
 
   const intervals = [
-    { key: 'protein' as MacroKey, min: proteinMinPct ?? 0, max: proteinMaxPct ?? 0 },
-    { key: 'carbs' as MacroKey, min: carbsMinPct ?? 0, max: carbsMaxPct ?? 0 },
     { key: 'fat' as MacroKey, min: fatMinPct ?? 0, max: fatMaxPct ?? 0 },
+    { key: 'carbs' as MacroKey, min: carbsMinPct ?? 0, max: carbsMaxPct ?? 0 },
+    { key: 'protein' as MacroKey, min: proteinMinPct ?? 0, max: proteinMaxPct ?? 0 },
   ]
 
   const proteinKcal = proteinG * 4
@@ -297,7 +284,7 @@ export const MacroDonutChart = memo(function MacroDonutChart({
   const totalKcal = proteinKcal + carbsKcal + fatKcal
   const todayFracs =
     totalKcal > 0
-      ? [proteinKcal / totalKcal, carbsKcal / totalKcal, fatKcal / totalKcal]
+      ? [fatKcal / totalKcal, carbsKcal / totalKcal, proteinKcal / totalKcal]
       : [0, 0, 0]
   const todayPcts: Record<MacroKey, string> = {
     protein: totalKcal > 0 ? `${Math.round((proteinKcal / totalKcal) * 100)}%` : '–',
@@ -308,31 +295,7 @@ export const MacroDonutChart = memo(function MacroDonutChart({
   return (
     <div className="space-y-4 pb-2">
       <GoalBarsV2 intervals={intervals} isEmpty={!hasInterval} />
-      <div>
-        <p className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mb-2">
-          Idag
-        </p>
-        <div className="flex items-center gap-3">
-          <TodayPie fracs={todayFracs} isEmpty={totalKcal === 0} />
-          <div className="flex flex-col gap-2">
-            {MACROS.map(key => (
-              <div key={key} className="flex items-center gap-1.5">
-                <div
-                  className="w-2 h-2 rounded-full flex-shrink-0"
-                  style={{ backgroundColor: MACRO_COLORS[key] }}
-                />
-                <span className="text-[10px] text-neutral-500 w-9">{MACRO_LABELS[key]}</span>
-                <span
-                  className="text-[12px] font-bold tabular-nums"
-                  style={{ color: MACRO_COLORS[key] }}
-                >
-                  {todayPcts[key]}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+      <TodayBarInline fracs={todayFracs} pcts={todayPcts} isEmpty={totalKcal === 0} />
     </div>
   )
 })

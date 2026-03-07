@@ -633,7 +633,7 @@ export default function DashboardPage() {
               <Card>
                 <CardContent className="pt-4">
                   <div className="space-y-2">
-                    {todayLog.meals.slice(0, 3).map(meal => (
+                    {todayLog.meals.map(meal => (
                       <div
                         key={meal.id}
                         className="flex items-center justify-between py-2 border-b border-neutral-100 last:border-b-0"
