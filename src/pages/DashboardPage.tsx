@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import StatCard from '@/components/StatCard'
 import { ZonedCalorieRing } from '@/components/daily/ZonedCalorieRing'
 import { NutrientStatusRow } from '@/components/daily/NutrientStatusBadge'
+import { MacroDonutChart } from '@/components/daily/MacroDonutChart'
 import EmptyState from '@/components/EmptyState'
 import { useAuth } from '@/contexts/AuthContext'
 import { useProfiles, useOnboarding } from '@/hooks'
@@ -360,6 +361,17 @@ export default function DashboardPage() {
                     <CardTitle>Makromål idag</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
+                    <MacroDonutChart
+                      proteinG={dailySummary.proteinStatus.current}
+                      carbsG={dailySummary.carbStatus.current}
+                      fatG={dailySummary.fatStatus.current}
+                      proteinMinPct={profile?.protein_min_percent ?? undefined}
+                      proteinMaxPct={profile?.protein_max_percent ?? undefined}
+                      carbsMinPct={profile?.carb_min_percent ?? undefined}
+                      carbsMaxPct={profile?.carb_max_percent ?? undefined}
+                      fatMinPct={profile?.fat_min_percent ?? undefined}
+                      fatMaxPct={profile?.fat_max_percent ?? undefined}
+                    />
                     <NutrientStatusRow
                       status={dailySummary.fatStatus}
                       label={`Fett${profile?.fat_min_percent != null && profile?.fat_max_percent != null ? ` · ${Math.round(profile.fat_min_percent)}–${Math.round(profile.fat_max_percent)}%` : ''}`}
