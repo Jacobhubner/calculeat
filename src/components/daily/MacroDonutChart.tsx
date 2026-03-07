@@ -53,9 +53,8 @@ function buildSegments(
   })
 }
 
-// ── Mål-intervall bar — solid min + ljus extension till max ──────────────────
-// Varje makro: solid färg för min-andelen, ljusare för resterande (max-min)
-// Placeringen är kumulativ baserat på min-värden. Ljusa extensions överlappar.
+// ── Mål-intervall bar — mittpunktsbaserad (0–100-skala) ──────────────────────
+// Solid = mittpunkt per makro, extensions = ±halvt intervall, brackets = min→max
 
 function GoalBarsV2({
   intervals,
@@ -73,30 +72,23 @@ function GoalBarsV2({
     )
   }
 
-  // Baren skalas mot totalMin så solid-delarna fyller exakt 100%
-  const totalMin = intervals.reduce((s, { min }) => s + min, 0)
-  const scale = totalMin > 0 ? 100 / totalMin : 1
-  const positions = intervals.map((_, i) =>
-    intervals.slice(0, i).reduce((s, { min }) => s + min * scale, 0)
-  )
+  // Fasta djup: protein=10, kolh=24, fett=10
+  const DEPTHS = [10, 24, 10]
 
-  // Bracket-gränser: varje makro visar sin solid-del
-  // Protein: 0 → positions[1]
-  // Kolh:    positions[1] → positions[2]
-  // Fett:    positions[2] → 100
-  // Djupet baseras på intervallets bredd (max-min), ju bredare intervall desto djupare bracket
-  const spans = intervals.map(({ min, max }) => max - min)
-  const maxSpan = Math.max(...spans)
-  const MIN_DEPTH = 8
-  const MAX_DEPTH = 28
+  const mids = intervals.map(({ min, max }) => (min + max) / 2)
+  const totalMid = mids.reduce((s, m) => s + m, 0)
+  const scale = totalMid > 0 ? 100 / totalMid : 1
+  const positions = mids.map((_, i) => mids.slice(0, i).reduce((s, m) => s + m * scale, 0))
 
-  // Beräkna bracket-gränser en gång (används i både ovanför och under)
   const bracketRanges = intervals.map(({ min, max }, i) => {
-    const isLast = i === intervals.length - 1
-    const extW = (max - min) * scale
-    const bLeft = isLast ? positions[i] - extW : positions[i]
-    const bRight = isLast ? 100 : i === 0 ? positions[i] + max * scale : positions[i + 1]
-    return { bLeft, bRight, depth: MIN_DEPTH + (spans[i] / maxSpan) * (MAX_DEPTH - MIN_DEPTH) }
+    const halfSpan = ((max - min) / 2) * scale
+    const solidStart = positions[i]
+    const solidEnd = solidStart + mids[i] * scale
+    return {
+      bLeft: Math.max(0, solidStart - halfSpan),
+      bRight: Math.min(100, solidEnd + halfSpan),
+      depth: DEPTHS[i],
+    }
   })
 
   return (
@@ -134,27 +126,28 @@ function GoalBarsV2({
 
       {/* Bar */}
       <div className="relative h-3 rounded-full overflow-hidden bg-neutral-100">
-        {intervals.map(({ key, min }, i) => (
+        {intervals.map(({ key }, i) => (
           <div
             key={`solid-${key}`}
             className="absolute inset-y-0"
             style={{
               left: `${positions[i]}%`,
-              width: `${min * scale}%`,
+              width: `${mids[i] * scale}%`,
               backgroundColor: MACRO_COLORS[key],
             }}
           />
         ))}
         {intervals.map(({ key, min, max }, i) => {
-          const extW = (max - min) * scale
-          const isLast = i === intervals.length - 1
+          const halfSpan = ((max - min) / 2) * scale
+          const solidStart = positions[i]
+          const solidEnd = solidStart + mids[i] * scale
           return (
             <div
               key={`ext-${key}`}
               className="absolute inset-y-0"
               style={{
-                left: `${isLast ? positions[i] - extW : positions[i] + min * scale}%`,
-                width: `${extW}%`,
+                left: `${Math.max(0, solidStart - halfSpan)}%`,
+                width: `${Math.min(100, solidEnd + halfSpan) - Math.max(0, solidStart - halfSpan)}%`,
                 backgroundColor: MACRO_COLORS[key],
                 opacity: 0.35,
               }}
@@ -164,7 +157,7 @@ function GoalBarsV2({
       </div>
 
       {/* Bracket-linjer under baren */}
-      <div className="relative mt-1" style={{ height: `${MAX_DEPTH + 2}px` }}>
+      <div className="relative mt-1" style={{ height: '26px' }}>
         {intervals.map(({ key }, i) => {
           const { bLeft, bRight, depth } = bracketRanges[i]
           const color = MACRO_COLORS[key]
