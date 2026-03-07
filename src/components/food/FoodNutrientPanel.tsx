@@ -1,7 +1,8 @@
 import { useMemo } from 'react'
-import { Dialog, DialogContent, DialogClose, DialogTitle } from '@/components/ui/dialog'
 import { X } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Portal } from '@/components/ui/portal'
 import { useFoodNutrients, useNutrientDefinitions } from '@/hooks/useFoodNutrients'
 import type { FoodItem } from '@/hooks/useFoodItems'
 import { SOURCE_BADGES } from '@/lib/constants/sourceBadges'
@@ -102,21 +103,27 @@ export function FoodNutrientPanel({ foodItem, open, onOpenChange }: FoodNutrient
     ? COLOR_INDICATORS[foodItem.energy_density_color]
     : null
 
+  if (!open || !foodItem) return null
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md max-h-[85vh] flex flex-col p-0 gap-0 rounded-2xl overflow-hidden [&>button:last-child]:hidden md:p-0 md:gap-0 md:rounded-2xl md:border-0">
-        {/* Gradient header — sticky, owns the close button */}
-        <div className="shrink-0 bg-gradient-to-r from-primary-500 to-accent-500 px-6 pt-5 pb-5">
-          <div className="flex items-start justify-between gap-2">
+    <Portal>
+      <div
+        className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50"
+        onClick={() => onOpenChange(false)}
+      >
+        <div
+          className="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto"
+          onClick={e => e.stopPropagation()}
+        >
+          {/* Sticky gradient header */}
+          <div className="sticky top-0 bg-gradient-to-r from-primary-500 to-accent-500 text-white p-6 rounded-t-2xl flex justify-between items-start">
             <div className="flex-1 min-w-0">
               <div className="flex items-start gap-2 flex-wrap">
-                <DialogTitle className="text-white text-lg font-bold leading-snug">
-                  {foodItem?.name ?? 'Näringsvärden'}
-                </DialogTitle>
+                <h2 className="text-2xl font-bold leading-snug">{foodItem.name}</h2>
                 {sourceBadge && (
                   <Badge
                     variant="outline"
-                    className="shrink-0 text-xs border-white/40 text-white bg-white/15 mt-0.5"
+                    className="shrink-0 text-xs border-white/40 text-white bg-white/15 mt-1"
                   >
                     {sourceBadge.label}
                   </Badge>
@@ -124,91 +131,99 @@ export function FoodNutrientPanel({ foodItem, open, onOpenChange }: FoodNutrient
               </div>
               <div className="text-sm text-primary-100 mt-1 space-y-0.5">
                 <p>
-                  per {foodItem?.reference_amount ?? 100} {foodItem?.reference_unit ?? 'g'}
+                  per {foodItem.reference_amount ?? 100} {foodItem.reference_unit ?? 'g'}
                 </p>
-                {foodItem?.kcal_per_gram != null && colorInfo && (
+                {foodItem.kcal_per_gram != null && colorInfo && (
                   <p>
                     Energitäthet: {Number(foodItem.kcal_per_gram).toFixed(2)} kcal/g
                     {' · '}
-                    {colorInfo.label}
+                    <span className="text-white">{colorInfo.label}</span>
                   </p>
                 )}
-                {foodItem?.reference_unit === 'ml' && foodItem?.density_g_per_ml != null && (
+                {foodItem.reference_unit === 'ml' && foodItem.density_g_per_ml != null && (
                   <p>Densitet: {Number(foodItem.density_g_per_ml).toFixed(2)} g/ml</p>
                 )}
               </div>
             </div>
-            <DialogClose className="shrink-0 text-white/80 hover:text-white transition-colors outline-none mt-0.5">
-              <X className="h-5 w-5" />
-              <span className="sr-only">Stäng</span>
-            </DialogClose>
+            <button
+              onClick={() => onOpenChange(false)}
+              className="text-white/80 hover:text-white transition-colors p-1 rounded-full hover:bg-white/10 shrink-0"
+              aria-label="Stäng"
+            >
+              <X className="h-6 w-6" />
+            </button>
           </div>
-        </div>
 
-        {/* Body — scrollbar */}
-        <div className="flex-1 overflow-y-auto px-6 py-4">
-          {isLoading && <p className="text-sm text-neutral-500 py-4">Laddar näringsvärden...</p>}
+          {/* Content */}
+          <div className="p-6 space-y-4">
+            {isLoading && <p className="text-sm text-neutral-500 py-4">Laddar näringsvärden...</p>}
 
-          {!isLoading && totalNutrientCount === 0 && (
-            <p className="text-sm text-neutral-500 py-4">
-              Inga detaljerade näringsvärden tillgängliga.
-            </p>
-          )}
+            {!isLoading && totalNutrientCount === 0 && (
+              <p className="text-sm text-neutral-500 py-4">
+                Inga detaljerade näringsvärden tillgängliga.
+              </p>
+            )}
 
-          {!isLoading && totalNutrientCount > 0 && (
-            <div className="space-y-4">
-              <p className="text-xs text-neutral-400">{totalNutrientCount} näringsvärden</p>
+            {!isLoading && totalNutrientCount > 0 && (
+              <div className="space-y-4">
+                <p className="text-xs text-neutral-400">{totalNutrientCount} näringsvärden</p>
 
-              {CATEGORY_ORDER.map((cat, catIdx) => {
-                const items = grouped?.[cat]
-                if (!items || items.length === 0) return null
+                {CATEGORY_ORDER.map((cat, catIdx) => {
+                  const items = grouped?.[cat]
+                  if (!items || items.length === 0) return null
 
-                return (
-                  <div key={cat}>
-                    {catIdx > 0 && <div className="border-t border-neutral-100 mb-4" />}
-                    <div className="rounded-xl border border-neutral-200 overflow-hidden">
-                      {/* Kategorirubriken */}
-                      <div className="bg-neutral-50 px-4 py-2 border-b border-neutral-200">
-                        <h3 className="text-xs font-semibold text-neutral-500 uppercase tracking-wide">
-                          {CATEGORY_LABELS[cat] || cat}
-                        </h3>
-                      </div>
-                      {/* Rader */}
-                      <div className="divide-y divide-neutral-100">
-                        {items.map(item => {
-                          const isSub = SUB_NUTRIENT_CODES.has(item.nutrient_code)
-                          return (
-                            <div
-                              key={item.nutrient_code}
-                              className={`flex justify-between items-center px-4 py-2.5 ${isSub ? 'pl-8 bg-neutral-50/50' : 'bg-white'}`}
-                            >
-                              <span
-                                className={`text-sm ${isSub ? 'text-neutral-400' : 'text-neutral-700'}`}
+                  return (
+                    <div key={cat}>
+                      {catIdx > 0 && <div className="border-t border-neutral-100 mb-4" />}
+                      <div className="rounded-xl border border-neutral-200 overflow-hidden">
+                        <div className="bg-neutral-50 px-4 py-2 border-b border-neutral-200">
+                          <h3 className="text-xs font-semibold text-neutral-500 uppercase tracking-wide">
+                            {CATEGORY_LABELS[cat] || cat}
+                          </h3>
+                        </div>
+                        <div className="divide-y divide-neutral-100">
+                          {items.map(item => {
+                            const isSub = SUB_NUTRIENT_CODES.has(item.nutrient_code)
+                            return (
+                              <div
+                                key={item.nutrient_code}
+                                className={`flex justify-between items-center px-4 py-2.5 ${isSub ? 'pl-8 bg-neutral-50/50' : 'bg-white'}`}
                               >
-                                {isSub ? 'varav ' : ''}
-                                {item.definition.display_name_sv}
-                              </span>
-                              <span
-                                className={`text-sm tabular-nums ml-4 ${isSub ? 'text-neutral-400' : 'font-semibold text-neutral-900'}`}
-                              >
-                                {formatAmount(item.amount)}{' '}
-                                <span className="font-normal text-neutral-400 text-xs">
-                                  {item.definition.unit}
+                                <span
+                                  className={`text-sm ${isSub ? 'text-neutral-400' : 'text-neutral-700'}`}
+                                >
+                                  {isSub ? 'varav ' : ''}
+                                  {item.definition.display_name_sv}
                                 </span>
-                              </span>
-                            </div>
-                          )
-                        })}
+                                <span
+                                  className={`text-sm tabular-nums ml-4 ${isSub ? 'text-neutral-400' : 'font-semibold text-neutral-900'}`}
+                                >
+                                  {formatAmount(item.amount)}{' '}
+                                  <span className="font-normal text-neutral-400 text-xs">
+                                    {item.definition.unit}
+                                  </span>
+                                </span>
+                              </div>
+                            )
+                          })}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )
-              })}
-            </div>
-          )}
+                  )
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Sticky footer */}
+          <div className="sticky bottom-0 bg-neutral-50 p-6 rounded-b-2xl border-t border-neutral-200">
+            <Button onClick={() => onOpenChange(false)} className="w-full">
+              Stäng
+            </Button>
+          </div>
         </div>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </Portal>
   )
 }
 
