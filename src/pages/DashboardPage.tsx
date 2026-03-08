@@ -5,8 +5,7 @@ import OnboardingModal from '@/components/OnboardingModal'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import StatCard from '@/components/StatCard'
 import { ZonedCalorieRing } from '@/components/daily/ZonedCalorieRing'
-import { NutrientStatusRow } from '@/components/daily/NutrientStatusBadge'
-import { MacroDonutChart } from '@/components/daily/MacroDonutChart'
+import { MacroRangeBar } from '@/components/daily/MacroRangeBar'
 import EmptyState from '@/components/EmptyState'
 import { useAuth } from '@/contexts/AuthContext'
 import { useProfiles, useOnboarding } from '@/hooks'
@@ -355,44 +354,54 @@ export default function DashboardPage() {
               <div className="flex items-center justify-center">
                 <ZonedCalorieRing consumed={consumed} min={ringMin} max={targetMax} size="md" />
               </div>
-              {dailySummary && (
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle>Makromål idag</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <MacroDonutChart
-                      proteinG={dailySummary.proteinStatus.current}
-                      carbsG={dailySummary.carbStatus.current}
-                      fatG={dailySummary.fatStatus.current}
-                      proteinMinPct={profile?.protein_min_percent ?? undefined}
-                      proteinMaxPct={profile?.protein_max_percent ?? undefined}
-                      carbsMinPct={profile?.carb_min_percent ?? undefined}
-                      carbsMaxPct={profile?.carb_max_percent ?? undefined}
-                      fatMinPct={profile?.fat_min_percent ?? undefined}
-                      fatMaxPct={profile?.fat_max_percent ?? undefined}
-                    />
-                    <NutrientStatusRow
-                      status={dailySummary.fatStatus}
-                      label={`Fett${profile?.fat_min_percent != null && profile?.fat_max_percent != null ? ` · ${Math.round(profile.fat_min_percent)}–${Math.round(profile.fat_max_percent)}%` : ''}`}
-                      unit="g"
-                      showProgress
-                    />
-                    <NutrientStatusRow
-                      status={dailySummary.carbStatus}
-                      label={`Kolhydrater${profile?.carb_min_percent != null && profile?.carb_max_percent != null ? ` · ${Math.round(profile.carb_min_percent)}–${Math.round(profile.carb_max_percent)}%` : ''}`}
-                      unit="g"
-                      showProgress
-                    />
-                    <NutrientStatusRow
-                      status={dailySummary.proteinStatus}
-                      label={`Protein${profile?.protein_min_percent != null && profile?.protein_max_percent != null ? ` · ${Math.round(profile.protein_min_percent)}–${Math.round(profile.protein_max_percent)}%` : ''}`}
-                      unit="g"
-                      showProgress
-                    />
-                  </CardContent>
-                </Card>
-              )}
+              {dailySummary &&
+                (() => {
+                  const fatKcal = dailySummary.fatStatus.current * 9
+                  const carbsKcal = dailySummary.carbStatus.current * 4
+                  const proteinKcal = dailySummary.proteinStatus.current * 4
+                  const macroTotalKcal = fatKcal + carbsKcal + proteinKcal
+                  const fatPct =
+                    macroTotalKcal > 0 ? Math.round((fatKcal / macroTotalKcal) * 100) : 0
+                  const carbsPct =
+                    macroTotalKcal > 0 ? Math.round((carbsKcal / macroTotalKcal) * 100) : 0
+                  const proteinPct =
+                    macroTotalKcal > 0 ? Math.round((proteinKcal / macroTotalKcal) * 100) : 0
+                  return (
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle>Makromål idag</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <MacroRangeBar
+                          fat={{
+                            currentG: dailySummary.fatStatus.current,
+                            minG: calculations.macros?.fat.gramsMin ?? 0,
+                            maxG: calculations.macros?.fat.gramsMax ?? 0,
+                            currentPct: fatPct,
+                            minPct: profile?.fat_min_percent ?? 25,
+                            maxPct: profile?.fat_max_percent ?? 40,
+                          }}
+                          carbs={{
+                            currentG: dailySummary.carbStatus.current,
+                            minG: calculations.macros?.carbs.gramsMin ?? 0,
+                            maxG: calculations.macros?.carbs.gramsMax ?? 0,
+                            currentPct: carbsPct,
+                            minPct: profile?.carb_min_percent ?? 45,
+                            maxPct: profile?.carb_max_percent ?? 60,
+                          }}
+                          protein={{
+                            currentG: dailySummary.proteinStatus.current,
+                            minG: calculations.macros?.protein.gramsMin ?? 0,
+                            maxG: calculations.macros?.protein.gramsMax ?? 0,
+                            currentPct: proteinPct,
+                            minPct: profile?.protein_min_percent ?? 10,
+                            maxPct: profile?.protein_max_percent ?? 20,
+                          }}
+                        />
+                      </CardContent>
+                    </Card>
+                  )
+                })()}
             </div>
 
             {/* Dagens logg + Checklist + Åtgärder */}
