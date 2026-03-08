@@ -4,9 +4,8 @@
  */
 
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
 import DashboardLayout from '@/components/layout/DashboardLayout'
-import { User, Save, Settings } from 'lucide-react'
+import { User, Save } from 'lucide-react'
 import { useProfiles, useUpdateProfile, useCreateWeightHistory } from '@/hooks'
 import { Button } from '@/components/ui/button'
 import { useSyncMealSettings } from '@/hooks/useMealSettings'
@@ -22,6 +21,7 @@ import TDEEOptions from '@/components/profile/TDEEOptions'
 import BasicProfileForm from '@/components/profile/BasicProfileForm'
 import WeightTracker from '@/components/profile/WeightTracker'
 import MetabolicCalibration from '@/components/profile/MetabolicCalibration'
+import SetupProfileForm from '@/components/profile/SetupProfileForm'
 
 // Existing components (keep for now)
 import MacroDistributionCard from '@/components/MacroDistributionCard'
@@ -345,6 +345,33 @@ export default function ProfilePage() {
     }
   }
 
+  // Handler for SetupProfileForm — sparar direkt (inte pending) vid första inloggning
+  const handleSetupSave = async (data: {
+    birth_date: string
+    gender: Gender
+    height_cm: number
+    weight_kg: number
+  }) => {
+    if (!activeProfile) return
+    try {
+      await updateProfile.mutateAsync({
+        profileId: activeProfile.id,
+        data: {
+          birth_date: data.birth_date,
+          gender: data.gender,
+          height_cm: data.height_cm,
+          weight_kg: data.weight_kg,
+          initial_weight_kg: data.weight_kg,
+        },
+      })
+      await createWeightHistory.mutateAsync({ weight_kg: data.weight_kg })
+      toast.success('Grundläggande information sparad')
+    } catch (error) {
+      console.error('Error saving setup info:', error)
+      toast.error('Kunde inte spara information')
+    }
+  }
+
   // Handler for TDEE changes (manual TDEE entry) - update pending state
   const handleTDEEChange = (data: {
     tdee: number
@@ -505,25 +532,9 @@ export default function ProfilePage() {
         <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
           {/* Main content column - Conditional rendering */}
           <div className="space-y-4">
-            {/* SCENARIO 1: No basic info - CTA to Settings */}
+            {/* SCENARIO 1: No basic info - inline setup form */}
             {!hasBasicInfo && displayProfile && (
-              <div className="rounded-xl border border-primary-200 bg-primary-50 p-6 text-center space-y-3">
-                <Settings className="h-8 w-8 text-primary-500 mx-auto" />
-                <p className="text-sm font-medium text-neutral-800">
-                  Fyll i grundläggande information för att komma igång
-                </p>
-                <p className="text-xs text-neutral-500">
-                  Ange födelsedatum, kön och längd i Inställningar för att kunna beräkna ditt
-                  energibehov.
-                </p>
-                <Link
-                  to="/app/settings"
-                  className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors"
-                >
-                  <Settings className="h-4 w-4" />
-                  Gå till Inställningar
-                </Link>
-              </div>
+              <SetupProfileForm onSave={handleSetupSave} isSaving={updateProfile.isPending} />
             )}
 
             {/* SCENARIO 2: Has basic info but no TDEE - Show TDEE options only */}
