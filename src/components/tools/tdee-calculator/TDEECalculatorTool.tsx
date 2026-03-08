@@ -287,7 +287,6 @@ export default function TDEECalculatorTool() {
         hours_standing_per_day: hoursStandingPerDay || undefined,
         household_activity_id: householdActivityId || undefined,
         household_hours_per_day: householdHoursPerDay || undefined,
-        spa_factor: spaFactor || undefined,
         calculated_bmr: bmr,
         calculated_tdee: tdee,
       }
@@ -316,7 +315,6 @@ export default function TDEECalculatorTool() {
           hours_standing_per_day: hoursStandingPerDay || undefined,
           household_activity_id: householdActivityId || undefined,
           household_hours_per_day: householdHoursPerDay || undefined,
-          spa_factor: spaFactor || undefined,
           // Set weight_kg (initial_weight_kg is no longer used - weight is tracked via WeightTracker)
           weight_kg: weightNum,
           // Save body fat percentage if provided
