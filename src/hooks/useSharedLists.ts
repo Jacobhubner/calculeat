@@ -2,6 +2,7 @@ import { useEffect, useMemo } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
+import { deleteRecipeImageByUrl } from '@/hooks/useRecipeImageUpload'
 import type {
   SharedList,
   SharedListInvitation,
@@ -638,12 +639,25 @@ export function useDeleteSharedListRecipe() {
 
   return useMutation({
     mutationFn: async (variables: { recipeId: string; listId: string }) => {
+      // Hämta image_url innan radering så vi kan rensa Storage efteråt
+      const { data: recipeRow } = await supabase
+        .from('recipes')
+        .select('image_url')
+        .eq('id', variables.recipeId)
+        .single()
+
       const { data, error } = await supabase.rpc('delete_shared_list_recipe', {
         p_recipe_id: variables.recipeId,
       })
       if (error) throw error
       const result = data as { success: boolean; error?: string }
       if (!result.success) throw new Error(result.error ?? 'delete_failed')
+
+      // Ta bort bilden från Storage om den finns
+      if (recipeRow?.image_url) {
+        await deleteRecipeImageByUrl(recipeRow.image_url)
+      }
+
       return result
     },
     onSuccess: (_data, variables) => {
@@ -702,6 +716,12 @@ export function useCreateSharedListRecipe() {
               saveAs: input.saveAs ?? 'portion',
             }
           : null,
+        p_image_url: input.image_url ?? null,
+        p_instructions: input.instructions ?? null,
+        p_equipment: input.equipment ?? null,
+        p_equipment_settings: input.equipment_settings ?? null,
+        p_prep_time_min: input.prep_time_min ?? null,
+        p_cook_time_min: input.cook_time_min ?? null,
       })
       if (error) throw error
       const result = data as { success: boolean; recipe_id?: string; error?: string }

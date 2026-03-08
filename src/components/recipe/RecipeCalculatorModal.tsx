@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react'
 import { toast } from 'sonner'
-import { Plus, ChefHat, AlertCircle } from 'lucide-react'
+import { Plus, ChefHat, AlertCircle, ChevronDown, ChevronUp, Clock } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -13,6 +13,12 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { IngredientRow, type IngredientData } from './IngredientRow'
 import { NutritionSummary } from './NutritionSummary'
+import { RecipeImageUpload } from './RecipeImageUpload'
+import {
+  EQUIPMENT_OPTIONS,
+  EQUIPMENT_SETTINGS_FIELDS,
+  type EquipmentValue,
+} from '@/lib/constants/recipeEquipment'
 import { useFoodItems } from '@/hooks/useFoodItems'
 import { useFoodNutrientsBatch } from '@/hooks/useFoodNutrients'
 import { useCreateRecipe, useUpdateRecipe, type Recipe } from '@/hooks/useRecipes'
@@ -54,6 +60,17 @@ export function RecipeCalculatorModal({
   const [error, setError] = useState<string | null>(null)
   const [initialized, setInitialized] = useState(false)
 
+  // Detaljfält
+  const [imageUrl, setImageUrl] = useState<string | null>(null)
+  const [instructions, setInstructions] = useState('')
+  const [equipment, setEquipment] = useState<string[]>([])
+  const [equipmentSettings, setEquipmentSettings] = useState<
+    Record<string, Record<string, string | number>>
+  >({})
+  const [prepTime, setPrepTime] = useState<number | ''>('')
+  const [cookTime, setCookTime] = useState<number | ''>('')
+  const [detailsOpen, setDetailsOpen] = useState(false)
+
   const { data: foods, isError: foodsError, isLoading: foodsLoading } = useFoodItems()
   const createRecipe = useCreateRecipe()
   const updateRecipe = useUpdateRecipe()
@@ -88,6 +105,13 @@ export function RecipeCalculatorModal({
     setError(null)
     setInitialized(false)
     lastInitializedRecipeId.current = null
+    setImageUrl(null)
+    setInstructions('')
+    setEquipment([])
+    setEquipmentSettings({})
+    setPrepTime('')
+    setCookTime('')
+    setDetailsOpen(false)
   }, [])
 
   // Initialize form function
@@ -123,6 +147,23 @@ export function RecipeCalculatorModal({
     setError(null)
     setInitialized(true)
     lastInitializedRecipeId.current = recipe.id
+    setImageUrl(recipe.image_url ?? null)
+    setInstructions(recipe.instructions ?? '')
+    setEquipment(recipe.equipment ?? [])
+    setEquipmentSettings(
+      (recipe.equipment_settings as Record<string, Record<string, string | number>>) ?? {}
+    )
+    setPrepTime(recipe.prep_time_min ?? '')
+    setCookTime(recipe.cook_time_min ?? '')
+    if (
+      recipe.image_url ||
+      recipe.instructions ||
+      (recipe.equipment?.length ?? 0) > 0 ||
+      recipe.prep_time_min ||
+      recipe.cook_time_min
+    ) {
+      setDetailsOpen(true)
+    }
   }, [])
 
   // Handle modal open/close and initialization
@@ -243,6 +284,13 @@ export function RecipeCalculatorModal({
               energyDensityColor: nutrition.energyDensityColor,
             }
           : undefined,
+        // Detaljfält
+        image_url: imageUrl,
+        instructions: instructions.trim() || null,
+        equipment: equipment.length > 0 ? equipment : null,
+        equipment_settings: Object.keys(equipmentSettings).length > 0 ? equipmentSettings : null,
+        prep_time_min: typeof prepTime === 'number' ? prepTime : null,
+        cook_time_min: typeof cookTime === 'number' ? cookTime : null,
       }
 
       if (editRecipe?.shared_list_id) {
@@ -385,6 +433,183 @@ export function RecipeCalculatorModal({
                       <Plus className="h-4 w-4" />
                       Lägg till ingrediens
                     </Button>
+                  </div>
+                )}
+              </div>
+
+              {/* Hopfällbar detaljsektion */}
+              <div className="border border-neutral-200 rounded-xl overflow-hidden">
+                <button
+                  type="button"
+                  onClick={() => setDetailsOpen(prev => !prev)}
+                  className="w-full flex items-center justify-between px-4 py-3 bg-neutral-50 hover:bg-neutral-100 transition-colors text-sm font-medium text-neutral-700"
+                >
+                  <span>Detaljer (valfritt)</span>
+                  {detailsOpen ? (
+                    <ChevronUp className="h-4 w-4 text-neutral-400" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4 text-neutral-400" />
+                  )}
+                </button>
+
+                {detailsOpen && (
+                  <div className="px-4 py-4 space-y-5">
+                    {/* Bild */}
+                    <div className="space-y-2">
+                      <Label>Bild på rätten</Label>
+                      <RecipeImageUpload value={imageUrl} onChange={setImageUrl} />
+                    </div>
+
+                    {/* Instruktioner */}
+                    <div className="space-y-2">
+                      <Label htmlFor="recipe-instructions">Tillagningsinstruktioner</Label>
+                      <textarea
+                        id="recipe-instructions"
+                        value={instructions}
+                        onChange={e => setInstructions(e.target.value)}
+                        placeholder="Beskriv hur du tillagar rätten steg för steg..."
+                        rows={5}
+                        className="w-full rounded-xl border border-neutral-300 p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      />
+                    </div>
+
+                    {/* Tillagningstid */}
+                    <div className="space-y-2">
+                      <Label>Tillagningstid</Label>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="space-y-1">
+                          <span className="text-xs text-neutral-500">Förberedelse (min)</span>
+                          <Input
+                            type="number"
+                            min={0}
+                            value={prepTime}
+                            onChange={e =>
+                              setPrepTime(
+                                e.target.value === ''
+                                  ? ''
+                                  : Math.max(0, parseInt(e.target.value) || 0)
+                              )
+                            }
+                            placeholder="0"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <span className="text-xs text-neutral-500">Tillagning (min)</span>
+                          <Input
+                            type="number"
+                            min={0}
+                            value={cookTime}
+                            onChange={e =>
+                              setCookTime(
+                                e.target.value === ''
+                                  ? ''
+                                  : Math.max(0, parseInt(e.target.value) || 0)
+                              )
+                            }
+                            placeholder="0"
+                          />
+                        </div>
+                      </div>
+                      {(typeof prepTime === 'number' || typeof cookTime === 'number') &&
+                        (prepTime as number) + (cookTime as number) > 0 && (
+                          <div className="flex items-center gap-1.5 text-sm text-neutral-500">
+                            <Clock className="h-3.5 w-3.5" />
+                            <span>
+                              Total tid:{' '}
+                              {(typeof prepTime === 'number' ? prepTime : 0) +
+                                (typeof cookTime === 'number' ? cookTime : 0)}{' '}
+                              min
+                            </span>
+                          </div>
+                        )}
+                    </div>
+
+                    {/* Utrustning */}
+                    <div className="space-y-3">
+                      <Label>Utrustning som behövs</Label>
+                      <div className="flex flex-wrap gap-2">
+                        {EQUIPMENT_OPTIONS.map(opt => {
+                          const selected = equipment.includes(opt.value)
+                          return (
+                            <button
+                              key={opt.value}
+                              type="button"
+                              onClick={() => {
+                                setEquipment(prev =>
+                                  selected
+                                    ? prev.filter(v => v !== opt.value)
+                                    : [...prev, opt.value]
+                                )
+                                // Rensa inställningar om utrustningen avmarkeras
+                                if (selected) {
+                                  setEquipmentSettings(prev => {
+                                    const next = { ...prev }
+                                    delete next[opt.value]
+                                    return next
+                                  })
+                                }
+                              }}
+                              className={`
+                                px-3 py-1.5 rounded-full text-sm border transition-colors
+                                ${
+                                  selected
+                                    ? 'bg-primary-100 text-primary-700 border-primary-300'
+                                    : 'bg-white text-neutral-600 border-neutral-300 hover:border-neutral-400'
+                                }
+                              `}
+                            >
+                              {opt.label}
+                            </button>
+                          )
+                        })}
+                      </div>
+
+                      {/* Inställningsfält per vald utrustning */}
+                      {equipment
+                        .filter(eq => EQUIPMENT_SETTINGS_FIELDS[eq as EquipmentValue])
+                        .map(eq => {
+                          const fields = EQUIPMENT_SETTINGS_FIELDS[eq as EquipmentValue]!
+                          const settings = equipmentSettings[eq] ?? {}
+                          const label = EQUIPMENT_OPTIONS.find(o => o.value === eq)?.label ?? eq
+                          return (
+                            <div key={eq} className="bg-neutral-50 rounded-xl p-3 space-y-2">
+                              <p className="text-xs font-medium text-neutral-600">{label}</p>
+                              <div className="grid grid-cols-2 gap-3">
+                                {fields.map(field => (
+                                  <div key={field.key} className="space-y-1">
+                                    <span className="text-xs text-neutral-500">
+                                      {field.label}
+                                      {field.unit ? ` (${field.unit})` : ''}
+                                    </span>
+                                    <Input
+                                      type={field.type}
+                                      min={field.type === 'number' ? 0 : undefined}
+                                      placeholder={field.placeholder}
+                                      value={settings[field.key] ?? ''}
+                                      onChange={e => {
+                                        const raw = e.target.value
+                                        const val =
+                                          field.type === 'number'
+                                            ? raw === ''
+                                              ? ''
+                                              : Number(raw)
+                                            : raw
+                                        setEquipmentSettings(prev => ({
+                                          ...prev,
+                                          [eq]: {
+                                            ...prev[eq],
+                                            [field.key]: val as string | number,
+                                          },
+                                        }))
+                                      }}
+                                    />
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )
+                        })}
+                    </div>
                   </div>
                 )}
               </div>

@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import type { FoodColor } from '@/lib/calculations/colorDensity'
 import type { FoodItem } from '@/hooks/useFoodItems'
+import { deleteRecipeImageByUrl } from '@/hooks/useRecipeImageUpload'
 
 export interface RecipeIngredient {
   id: string
@@ -25,6 +26,12 @@ export interface Recipe {
   food_item_id?: string
   food_item?: FoodItem | null // The linked food item with default_unit info
   total_weight_grams?: number
+  image_url?: string | null
+  instructions?: string | null
+  equipment?: string[] | null
+  equipment_settings?: Record<string, Record<string, string | number>> | null
+  prep_time_min?: number | null
+  cook_time_min?: number | null
   created_at: string
   updated_at: string
   ingredients?: RecipeIngredient[]
@@ -64,6 +71,13 @@ export interface CreateRecipeInput {
   }>
   // Nutrition data calculated in frontend
   nutrition?: RecipeNutritionData
+  // Optional recipe details
+  image_url?: string | null
+  instructions?: string | null
+  equipment?: string[] | null
+  equipment_settings?: Record<string, Record<string, string | number>> | null
+  prep_time_min?: number | null
+  cook_time_min?: number | null
 }
 
 /**
@@ -247,6 +261,12 @@ export function useCreateRecipe() {
           servings: input.servings,
           food_item_id: foodItemId,
           total_weight_grams: input.nutrition?.totalWeight,
+          image_url: input.image_url ?? null,
+          instructions: input.instructions ?? null,
+          equipment: input.equipment ?? null,
+          equipment_settings: input.equipment_settings ?? null,
+          prep_time_min: input.prep_time_min ?? null,
+          cook_time_min: input.cook_time_min ?? null,
         })
         .select()
         .single()
@@ -359,6 +379,14 @@ export function useUpdateRecipe() {
           name: input.name,
           servings: input.servings,
           total_weight_grams: input.nutrition?.totalWeight,
+          ...(input.image_url !== undefined && { image_url: input.image_url }),
+          ...(input.instructions !== undefined && { instructions: input.instructions }),
+          ...(input.equipment !== undefined && { equipment: input.equipment }),
+          ...(input.equipment_settings !== undefined && {
+            equipment_settings: input.equipment_settings,
+          }),
+          ...(input.prep_time_min !== undefined && { prep_time_min: input.prep_time_min }),
+          ...(input.cook_time_min !== undefined && { cook_time_min: input.cook_time_min }),
         })
         .eq('id', id)
         .eq('user_id', user.id)
@@ -412,10 +440,10 @@ export function useDeleteRecipe() {
     mutationFn: async (id: string) => {
       if (!user) throw new Error('User not authenticated')
 
-      // Get the food_item_id before deleting
+      // Get the food_item_id and image_url before deleting
       const { data: recipe } = await supabase
         .from('recipes')
-        .select('food_item_id')
+        .select('food_item_id, image_url')
         .eq('id', id)
         .eq('user_id', user.id)
         .single()
@@ -428,6 +456,11 @@ export function useDeleteRecipe() {
       // Delete the corresponding food_item if it exists
       if (recipe?.food_item_id) {
         await supabase.from('food_items').delete().eq('id', recipe.food_item_id)
+      }
+
+      // Delete the recipe image from Storage if it exists
+      if (recipe?.image_url) {
+        await deleteRecipeImageByUrl(recipe.image_url)
       }
     },
     onSuccess: () => {
