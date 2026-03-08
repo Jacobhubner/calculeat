@@ -264,18 +264,21 @@ export const MacroDonutChart = memo(function MacroDonutChart({
   fatMinPct,
   fatMaxPct,
 }: MacroDonutChartProps) {
-  const hasInterval =
-    proteinMinPct != null &&
-    proteinMaxPct != null &&
-    carbsMinPct != null &&
-    carbsMaxPct != null &&
-    fatMinPct != null &&
-    fatMaxPct != null
+  // NNR 2023 defaults — matchar MacroDistributionCard
+  const fatMin = fatMinPct ?? 25
+  const fatMax = fatMaxPct ?? 40
+  const carbMin = carbsMinPct ?? 45
+  const carbMax = carbsMaxPct ?? 60
+  const proteinMin = proteinMinPct ?? 10
+  const proteinMax = proteinMaxPct ?? 20
+
+  // hasInterval = alltid true (defaults används när profilvärden saknas)
+  const hasInterval = true
 
   const intervals = [
-    { key: 'fat' as MacroKey, min: fatMinPct ?? 0, max: fatMaxPct ?? 0 },
-    { key: 'carbs' as MacroKey, min: carbsMinPct ?? 0, max: carbsMaxPct ?? 0 },
-    { key: 'protein' as MacroKey, min: proteinMinPct ?? 0, max: proteinMaxPct ?? 0 },
+    { key: 'fat' as MacroKey, min: fatMin, max: fatMax },
+    { key: 'carbs' as MacroKey, min: carbMin, max: carbMax },
+    { key: 'protein' as MacroKey, min: proteinMin, max: proteinMax },
   ]
 
   const proteinKcal = proteinG * 4
