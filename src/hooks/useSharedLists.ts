@@ -301,16 +301,31 @@ export function useLeaveSharedListConfirmed() {
 
   return useMutation({
     mutationFn: async (sharedListId: string) => {
+      // Hämta receptbilder innan radering så vi kan rensa Storage om listan tas bort
+      const { data: recipeRows } = await supabase
+        .from('recipes')
+        .select('image_url')
+        .eq('shared_list_id', sharedListId)
+        .not('image_url', 'is', null)
+
       const { data, error } = await supabase.rpc('leave_shared_list_confirmed', {
         p_shared_list_id: sharedListId,
       })
       if (error) throw error
-      return data as {
+
+      const result = data as {
         success: boolean
-        shared_list_id: string
-        list_deleted: boolean
+        action: string
         error?: string
       }
+
+      // Om listan raderades (sista medlemmen), rensa receptbilder från Storage
+      if (result.success && result.action === 'deleted' && recipeRows) {
+        const urls = recipeRows.map(r => r.image_url).filter(Boolean) as string[]
+        await Promise.allSettled(urls.map(url => deleteRecipeImageByUrl(url)))
+      }
+
+      return result
     },
     onSuccess: (_data, sharedListId) => {
       queryClient.invalidateQueries({ queryKey: sharedListKeys.lists() })
