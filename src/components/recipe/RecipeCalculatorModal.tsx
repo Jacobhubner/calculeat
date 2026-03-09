@@ -80,10 +80,8 @@ export function RecipeCalculatorModal({
   // Merge list-items with own/global foods when in a list context
   const activeListId = editRecipe?.shared_list_id ?? sharedListId ?? null
   const mergedFoodsForActive = useMergedFoodItemsForList(foods ?? [], activeListId)
-  const { data: mergedFoodsForAll = mergedFoodsForActive } = useMergedFoodItemsForAllLists(
-    foods ?? []
-  )
-  const mergedFoods = mergedFoodsForAll
+  const mergedFoodsForAll = useMergedFoodItemsForAllLists(foods ?? [])
+  const mergedFoods = mergedFoodsForAll.length > 0 ? mergedFoodsForAll : mergedFoodsForActive
   const { data: sharedLists = [] } = useSharedLists()
 
   // Track recipe ID for detecting changes

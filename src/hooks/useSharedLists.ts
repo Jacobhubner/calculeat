@@ -503,14 +503,14 @@ export function useMergedFoodItemsForList(
  * Används i RecipeCalculatorModal så att man kan välja ingredienser från vilken lista som helst.
  */
 export function useMergedFoodItemsForAllLists(baseFoods: FoodItem[] | undefined) {
-  const { user } = useAuth()
   const { data: sharedLists = [] } = useSharedLists()
+  const listIds = sharedLists.map(l => l.id)
 
-  return useQuery({
-    queryKey: ['foodItems', 'allSharedListIngredients', user?.id, sharedLists.map(l => l.id)],
+  // Hämta alla list-items från alla delade listor
+  const { data: allListFoods = [] } = useQuery({
+    queryKey: ['foodItems', 'allSharedListIngredients', listIds],
     queryFn: async () => {
-      if (!user || sharedLists.length === 0) return baseFoods ?? []
-      const listIds = sharedLists.map(l => l.id)
+      if (listIds.length === 0) return []
       const { data, error } = await supabase
         .from('food_items')
         .select('*')
@@ -518,18 +518,21 @@ export function useMergedFoodItemsForAllLists(baseFoods: FoodItem[] | undefined)
         .eq('is_recipe', false)
         .order('name')
       if (error) throw error
-      const listFoods = (data as FoodItem[]) ?? []
-      const combined = [...listFoods, ...(baseFoods ?? [])]
-      const seen = new Set<string>()
-      return combined.filter(f => {
-        if (seen.has(f.id)) return false
-        seen.add(f.id)
-        return true
-      })
+      return (data as FoodItem[]) ?? []
     },
-    enabled: !!user,
+    enabled: listIds.length > 0,
     staleTime: 30_000,
   })
+
+  return useMemo(() => {
+    const combined = [...allListFoods, ...(baseFoods ?? [])]
+    const seen = new Set<string>()
+    return combined.filter(f => {
+      if (seen.has(f.id)) return false
+      seen.add(f.id)
+      return true
+    })
+  }, [allListFoods, baseFoods])
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
