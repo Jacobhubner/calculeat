@@ -3,7 +3,7 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import { type FoodColor, type FoodType } from '@/lib/calculations/colorDensity'
 
-export type FoodSource = 'manual' | 'livsmedelsverket' | 'usda' | 'user' | 'shared'
+export type FoodSource = 'manual' | 'livsmedelsverket' | 'user' | 'shared'
 // 'list:{uuid}' används för gemensamma listor, t.ex. 'list:a1b2c3d4-...'
 export type FoodTab = 'mina' | 'calculeat' | 'slv' | 'alla' | `list:${string}`
 

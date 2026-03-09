@@ -8,7 +8,6 @@ export interface NutrientDefinition {
   display_name_en: string | null
   unit: string
   eurofir_code: string | null
-  usda_nutrient_id: number | null
   sort_order: number
   category: string | null
 }
