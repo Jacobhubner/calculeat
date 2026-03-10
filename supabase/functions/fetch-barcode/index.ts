@@ -55,13 +55,28 @@ function validateRange(value: number | null, min: number, max: number): boolean 
   return value >= min && value <= max
 }
 
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+}
+
+function jsonResponse(body: unknown, status: number): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json', ...CORS_HEADERS },
+  })
+}
+
 Deno.serve(async (req: Request) => {
+  // CORS preflight
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { status: 204, headers: CORS_HEADERS })
+  }
+
   // Validera metod
   if (req.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'method_not_allowed' }), {
-      status: 405,
-      headers: { 'Content-Type': 'application/json' },
-    })
+    return jsonResponse({ error: 'method_not_allowed' }, 405)
   }
 
   let barcode: string | undefined
@@ -69,10 +84,7 @@ Deno.serve(async (req: Request) => {
     const body = await req.json()
     barcode = body?.barcode
   } catch {
-    return new Response(JSON.stringify({ error: 'invalid_json' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    })
+    return jsonResponse({ error: 'invalid_json' }, 400)
   }
 
   if (
@@ -82,10 +94,7 @@ Deno.serve(async (req: Request) => {
     barcode.length > 14 ||
     !/^\d+$/.test(barcode)
   ) {
-    return new Response(JSON.stringify({ error: 'invalid_barcode_format' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    })
+    return jsonResponse({ error: 'invalid_barcode_format' }, 400)
   }
 
   // Hämta från OpenFoodFacts
@@ -93,52 +102,34 @@ Deno.serve(async (req: Request) => {
   try {
     offResponse = await fetch(`${OFF_API_BASE}/${barcode}.json?fields=${OFF_FIELDS}`)
   } catch {
-    return new Response(JSON.stringify({ error: 'fetch_failed' }), {
-      status: 502,
-      headers: { 'Content-Type': 'application/json' },
-    })
+    return jsonResponse({ error: 'fetch_failed' }, 502)
   }
 
   if (!offResponse.ok) {
-    return new Response(JSON.stringify({ error: 'off_not_found' }), {
-      status: 404,
-      headers: { 'Content-Type': 'application/json' },
-    })
+    return jsonResponse({ error: 'off_not_found' }, 404)
   }
 
   let data: OFFResponse
   try {
     data = await offResponse.json()
   } catch {
-    return new Response(JSON.stringify({ error: 'off_parse_error' }), {
-      status: 502,
-      headers: { 'Content-Type': 'application/json' },
-    })
+    return jsonResponse({ error: 'off_parse_error' }, 502)
   }
 
   if (data.status !== 1 || !data.product) {
-    return new Response(JSON.stringify({ error: 'off_not_found' }), {
-      status: 404,
-      headers: { 'Content-Type': 'application/json' },
-    })
+    return jsonResponse({ error: 'off_not_found' }, 404)
   }
 
   const { product } = data
   const nutriments = product.nutriments
 
   if (!nutriments) {
-    return new Response(JSON.stringify({ error: 'off_incomplete' }), {
-      status: 422,
-      headers: { 'Content-Type': 'application/json' },
-    })
+    return jsonResponse({ error: 'off_incomplete' }, 422)
   }
 
   const calories = resolveCalories(nutriments)
   if (calories === null) {
-    return new Response(JSON.stringify({ error: 'off_incomplete' }), {
-      status: 422,
-      headers: { 'Content-Type': 'application/json' },
-    })
+    return jsonResponse({ error: 'off_incomplete' }, 422)
   }
 
   const protein_g =
@@ -153,20 +144,14 @@ Deno.serve(async (req: Request) => {
 
   // Validering — avvisa vid orimliga kärnvärden
   if (!validateRange(calories, 0, 1000)) {
-    return new Response(JSON.stringify({ error: 'validation_failed' }), {
-      status: 422,
-      headers: { 'Content-Type': 'application/json' },
-    })
+    return jsonResponse({ error: 'validation_failed' }, 422)
   }
   if (
     !validateRange(protein_g, 0, 100) ||
     !validateRange(carb_g, 0, 100) ||
     !validateRange(fat_g, 0, 100)
   ) {
-    return new Response(JSON.stringify({ error: 'validation_failed' }), {
-      status: 422,
-      headers: { 'Content-Type': 'application/json' },
-    })
+    return jsonResponse({ error: 'validation_failed' }, 422)
   }
 
   // Valfria näringsvärden — nullifiera om utanför rimliga gränser
@@ -213,11 +198,5 @@ Deno.serve(async (req: Request) => {
     default_amount: 100,
   }
 
-  return new Response(JSON.stringify({ data: result }), {
-    status: 200,
-    headers: {
-      'Content-Type': 'application/json',
-      Connection: 'keep-alive',
-    },
-  })
+  return jsonResponse({ data: result }, 200)
 })
