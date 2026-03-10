@@ -27,7 +27,11 @@ Card.displayName = 'Card'
 
 const CardHeader = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn('flex flex-col space-y-1.5 p-6', className)} {...props} />
+    <div
+      ref={ref}
+      className={cn('flex flex-col space-y-1.5 p-6 w-full min-w-0', className)}
+      {...props}
+    />
   )
 )
 CardHeader.displayName = 'CardHeader'
@@ -52,7 +56,7 @@ CardDescription.displayName = 'CardDescription'
 
 const CardContent = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn('p-6 pt-0', className)} {...props} />
+    <div ref={ref} className={cn('p-6 pt-0 w-full min-w-0', className)} {...props} />
   )
 )
 CardContent.displayName = 'CardContent'
