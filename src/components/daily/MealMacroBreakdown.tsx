@@ -110,7 +110,7 @@ export function MealMacroBreakdown({
 
   // Segment colors — matches MacroRangeBar in DashboardPage
   const fatColor = '#eab308' // yellow-500 (klar gul)
-  const carbColor = '#c2410c' // orange-700 (rostbrun, tydligt skild från gul)
+  const carbColor = '#fb923c' // orange-400 (ljus varm orange)
   const proteinColor = '#f43f5e' // rose-500 (klarröd)
 
   return (
