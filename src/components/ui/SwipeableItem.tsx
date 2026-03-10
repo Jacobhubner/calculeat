@@ -25,7 +25,7 @@ export function SwipeableItem({
   const iconScale = useTransform(x, [-threshold, -threshold / 2, 0], [1, 0.7, 0.5])
 
   if (!isMobile || !onSwipeLeft) {
-    return <div className={className}>{children}</div>
+    return <div className={`min-w-0 overflow-hidden ${className || ''}`}>{children}</div>
   }
 
   const handleDragEnd = (_e: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
