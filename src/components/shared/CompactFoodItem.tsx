@@ -43,11 +43,15 @@ export function CompactFoodItem({
   highlighted = false,
   disabled = false,
 }: CompactFoodItemProps) {
-  const kcalPer100g = food.kcal_per_gram
-    ? Math.round(food.kcal_per_gram * 100)
-    : food.weight_grams && food.weight_grams > 0
-      ? Math.round((food.calories / food.weight_grams) * 100)
-      : food.calories
+  // For ml-based foods: show kcal per 100 ml (not per 100 g)
+  const kcalPer100 =
+    food.reference_unit === 'ml' && food.reference_amount > 0
+      ? Math.round((food.calories / food.reference_amount) * 100)
+      : food.kcal_per_gram
+        ? Math.round(food.kcal_per_gram * 100)
+        : food.weight_grams && food.weight_grams > 0
+          ? Math.round((food.calories / food.weight_grams) * 100)
+          : food.calories
 
   const detailsText =
     details || [food.brand, food.is_recipe ? '👨‍🍳 Recept' : null].filter(Boolean).join(' • ')
@@ -74,9 +78,9 @@ export function CompactFoodItem({
         )}
       </div>
 
-      {/* Kalorier per 100g */}
+      {/* Kalorier per 100g/100ml */}
       <div className="text-xs text-neutral-600 whitespace-nowrap flex-shrink-0 mt-0.5">
-        {kcalPer100g} kcal
+        {kcalPer100} kcal
       </div>
 
       {/* Färgprick */}
