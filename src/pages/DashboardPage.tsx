@@ -292,8 +292,8 @@ export default function DashboardPage() {
               : advancedMode
                 ? consumed > 0
                   ? profile?.calories_min && profile?.calories_max
-                    ? `Du har loggat ${consumed} av ${Math.round(profile.calories_min)}-${Math.round(profile.calories_max)} kcal idag`
-                    : `Du har loggat ${consumed} av ${target} kcal idag`
+                    ? `Du har loggat ${Math.round(consumed)} av ${Math.round(profile.calories_min)}-${Math.round(profile.calories_max)} kcal idag`
+                    : `Du har loggat ${Math.round(consumed)} av ${Math.round(target)} kcal idag`
                   : 'Här är din översikt för idag'
                 : simpleGreeting}
           </p>
