@@ -745,9 +745,9 @@ export default function TodayPage() {
                               </SwipeableItem>
                             )
                           })}
-                          <div className="pt-3 border-t flex justify-between text-sm">
-                            <span className="font-medium text-neutral-700">Totalt:</span>
-                            <div className="flex gap-4 text-neutral-600">
+                          <div className="pt-3 border-t flex flex-wrap gap-x-4 gap-y-1 justify-between text-sm min-w-0">
+                            <span className="font-medium text-neutral-700 shrink-0">Totalt:</span>
+                            <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-neutral-600 min-w-0">
                               <span>{mealEntry.meal_calories} kcal</span>
                               <span>F: {mealEntry.meal_fat_g}g</span>
                               <span>K: {mealEntry.meal_carb_g}g</span>
