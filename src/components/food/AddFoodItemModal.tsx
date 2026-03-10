@@ -970,7 +970,7 @@ export function AddFoodItemModal({
                       <Input
                         id="weight_grams"
                         type="number"
-                        step="0.01"
+                        step="any"
                         {...register('weight_grams', { valueAsNumber: true })}
                         placeholder="100"
                         className={errors.weight_grams ? 'border-red-500' : ''}
