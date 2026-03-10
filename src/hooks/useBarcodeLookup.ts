@@ -43,9 +43,15 @@ function parseData(d: Record<string, unknown>): ScanResult {
 }
 
 async function fetchBarcode(barcode: string): Promise<ScanResult> {
-  // 1. Rate-limit-kontroll
-  const { data: rateLimited, error: rateError } = await supabase.rpc('check_barcode_rate_limit')
-  if (rateError || rateLimited) {
+  // 0. Hämta session först så att auth.uid() är redo för efterföljande RPC-anrop
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
+  const token = session?.access_token
+
+  // 1. Rate-limit-kontroll — ignorera RPC-fel (låt passera vid tekniskt fel)
+  const { data: rateLimited } = await supabase.rpc('check_barcode_rate_limit')
+  if (rateLimited === true) {
     throw makeLookupError('rate_limited')
   }
 
@@ -63,10 +69,6 @@ async function fetchBarcode(barcode: string): Promise<ScanResult> {
   }
 
   // 3. Cache-miss: anropa Edge Function direkt från klienten
-  const {
-    data: { session },
-  } = await supabase.auth.getSession()
-  const token = session?.access_token
 
   let response: Response
   try {
