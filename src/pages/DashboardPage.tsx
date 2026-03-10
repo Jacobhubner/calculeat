@@ -208,7 +208,6 @@ export default function DashboardPage() {
   // Get today's consumed calories and macros
   const consumed = todayLog?.total_calories || 0
   const targetMax = profile?.calories_max || 2000
-  const target = targetMax
   const remaining = targetMax - consumed
   // ZonedCalorieRing requires both min and max — fallback to 85% of max if calories_min is absent
   const ringMin = profile?.calories_min ?? Math.round(targetMax * 0.85)
@@ -290,11 +289,7 @@ export default function DashboardPage() {
             {!hasBasicInfo
               ? 'Fyll i din profil för att komma igång'
               : advancedMode
-                ? consumed > 0
-                  ? profile?.calories_min && profile?.calories_max
-                    ? `Du har loggat ${Math.round(consumed)} av ${Math.round(profile.calories_min)}-${Math.round(profile.calories_max)} kcal idag`
-                    : `Du har loggat ${Math.round(consumed)} av ${Math.round(target)} kcal idag`
-                  : 'Här är din översikt för idag'
+                ? 'Här är din översikt för idag'
                 : simpleGreeting}
           </p>
         </div>
