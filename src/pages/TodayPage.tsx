@@ -480,9 +480,9 @@ export default function TodayPage() {
         </Card>
       )}
 
-      <div className="grid gap-6 lg:grid-cols-3 min-w-0">
+      <div className="grid gap-6 lg:grid-cols-3 min-w-0 overflow-hidden">
         {/* Main Content - Meals */}
-        <div className="lg:col-span-2 space-y-6 min-w-0">
+        <div className="lg:col-span-2 space-y-6 min-w-0 overflow-hidden">
           {/* Progress Overview - Combined View */}
           <Card>
             <CardHeader className="pb-2">
@@ -779,7 +779,7 @@ export default function TodayPage() {
         </div>
 
         {/* Sidebar - Summary */}
-        <div className="space-y-6">
+        <div className="space-y-6 min-w-0 overflow-hidden">
           {/* Recent Foods */}
           <RecentFoodsCard dailyLogId={todayLog?.id} />
 

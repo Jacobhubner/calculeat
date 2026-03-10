@@ -2,7 +2,7 @@ import { HTMLAttributes, forwardRef } from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 
-const cardVariants = cva('rounded-2xl bg-white overflow-hidden', {
+const cardVariants = cva('rounded-2xl bg-white w-full min-w-0 max-w-full', {
   variants: {
     variant: {
       default: 'border border-neutral-200 shadow-lg',
@@ -29,7 +29,7 @@ const CardHeader = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
     <div
       ref={ref}
-      className={cn('flex flex-col space-y-1.5 p-6 w-full min-w-0', className)}
+      className={cn('flex flex-col space-y-1.5 p-6 min-w-0 overflow-hidden', className)}
       {...props}
     />
   )
