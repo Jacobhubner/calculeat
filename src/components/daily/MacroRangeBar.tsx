@@ -28,7 +28,7 @@ function gramStatusText(currentG: number, minG: number, maxG: number): string {
 }
 
 const MACRO_CONFIG = [
-  { key: 'fat' as const, label: 'Fett', color: '#eab308' },
+  { key: 'fat' as const, label: 'Fett', color: '#f5c518' },
   { key: 'carbs' as const, label: 'Kolhydrater', color: '#fb923c' },
   { key: 'protein' as const, label: 'Protein', color: '#f43f5e' },
 ]
