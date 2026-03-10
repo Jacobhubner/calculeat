@@ -2,7 +2,7 @@ import { HTMLAttributes, forwardRef } from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 
-const cardVariants = cva('rounded-2xl bg-white', {
+const cardVariants = cva('rounded-2xl bg-white overflow-hidden', {
   variants: {
     variant: {
       default: 'border border-neutral-200 shadow-lg',
