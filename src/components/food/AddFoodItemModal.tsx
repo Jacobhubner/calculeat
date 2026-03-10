@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Resolver } from 'react-hook-form'
@@ -91,6 +92,7 @@ export function AddFoodItemModal({
   copyMode = false,
   adminGlobalMode = false,
 }: AddFoodItemModalProps) {
+  const queryClient = useQueryClient()
   const [showAdvanced, setShowAdvanced] = useState(false)
   const [duplicateWarning, setDuplicateWarning] = useState<string | null>(null)
 
@@ -1533,6 +1535,8 @@ export function AddFoodItemModal({
       <BarcodeScannerModal
         stream={cameraStream}
         onDetected={code => {
+          // Rensa eventuell cachad data för denna streckkod så att lookup alltid körs
+          queryClient.removeQueries({ queryKey: ['barcode', code] })
           setPendingBarcode(code)
           setLockedBarcode(code)
           if (cameraStream) {
