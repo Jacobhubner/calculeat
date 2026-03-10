@@ -480,9 +480,9 @@ export default function TodayPage() {
         </Card>
       )}
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid gap-6 lg:grid-cols-3 min-w-0">
         {/* Main Content - Meals */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-6 min-w-0">
           {/* Progress Overview - Combined View */}
           <Card>
             <CardHeader className="pb-2">
