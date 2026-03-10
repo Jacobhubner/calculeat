@@ -26,9 +26,9 @@ function gramStatusText(currentG: number, minG: number, maxG: number): string {
 }
 
 const MACRO_CONFIG = [
-  { key: 'fat' as const, label: 'Fett', color: '#f43f5e' },
-  { key: 'carbs' as const, label: 'Kolhydrater', color: '#f59e0b' },
-  { key: 'protein' as const, label: 'Protein', color: '#22d3ee' },
+  { key: 'fat' as const, label: 'Fett', color: '#f59e0b' },
+  { key: 'carbs' as const, label: 'Kolhydrater', color: '#b45309' },
+  { key: 'protein' as const, label: 'Protein', color: '#ef4444' },
 ]
 
 function StatusBadge({

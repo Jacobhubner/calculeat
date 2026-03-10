@@ -109,9 +109,9 @@ export function MealMacroBreakdown({
   const proteinMacroPercent = (protein / totalMacroGrams) * 100
 
   // Segment colors — matches MacroRangeBar in DashboardPage
-  const fatColor = '#f43f5e' // rose-500
-  const carbColor = '#f59e0b' // amber-400
-  const proteinColor = '#22d3ee' // cyan-400
+  const fatColor = '#f59e0b' // amber-400 (gul)
+  const carbColor = '#b45309' // amber-700 (brun)
+  const proteinColor = '#ef4444' // red-500
 
   return (
     <div className={cn('mt-3 pt-2 border-t border-neutral-100', className)}>
