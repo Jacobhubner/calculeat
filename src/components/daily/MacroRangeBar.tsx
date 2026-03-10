@@ -18,11 +18,13 @@ function clamp(value: number, min: number, max: number) {
 }
 
 function gramStatusText(currentG: number, minG: number, maxG: number): string {
-  if (currentG === 0) return `0 g / ${minG}–${maxG} g`
-  if (currentG < minG)
-    return `${currentG} g / ${minG}–${maxG} g · ${minG - currentG} g kvar till minimum`
-  if (currentG > maxG) return `${currentG} g / ${minG}–${maxG} g · ${currentG - maxG} g över max`
-  return `${currentG} g / ${minG}–${maxG} g · ${maxG - currentG} g kvar till max`
+  const c = Math.round(currentG)
+  const mn = Math.round(minG)
+  const mx = Math.round(maxG)
+  if (c === 0) return `0 g / ${mn}–${mx} g`
+  if (c < mn) return `${c} g / ${mn}–${mx} g · ${mn - c} g kvar till minimum`
+  if (c > mx) return `${c} g / ${mn}–${mx} g · ${c - mx} g över max`
+  return `${c} g / ${mn}–${mx} g · ${mx - c} g kvar till max`
 }
 
 const MACRO_CONFIG = [
