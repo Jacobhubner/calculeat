@@ -55,7 +55,7 @@ export default function DashboardLayout({ children, fullHeight }: DashboardLayou
           {fullHeight ? (
             <div className="flex-1 min-h-0 flex flex-col overflow-hidden">{children}</div>
           ) : (
-            <div className="mx-auto px-3 py-4 md:px-4 md:py-8 lg:px-8 max-w-[1600px]">
+            <div className="mx-auto px-3 py-4 md:px-4 md:py-8 lg:px-8 max-w-[1600px] overflow-x-hidden">
               {children}
             </div>
           )}
