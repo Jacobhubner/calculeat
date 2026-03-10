@@ -237,10 +237,10 @@ export default function DashboardPage() {
     consumed === 0
       ? 'Logga din första måltid idag'
       : isOverGoal
-        ? `${consumed - targetMax} kcal över dagens mål`
+        ? `${Math.round(consumed - targetMax)} kcal över dagens mål`
         : isWithinGoal
-          ? `${remaining} kcal kvar — bra jobbat`
-          : `${remaining} kcal kvar idag`
+          ? `${Math.round(remaining)} kcal kvar — bra jobbat`
+          : `${Math.round(remaining)} kcal kvar idag`
 
   const mealCount = todayLog?.meals?.length ?? 0
   const simpleCTAText =
@@ -338,7 +338,7 @@ export default function DashboardPage() {
               />
               <StatCard
                 title="Vikt"
-                value={profile?.weight_kg || '-'}
+                value={profile?.weight_kg ? Math.round(profile.weight_kg * 10) / 10 : '-'}
                 unit="kg"
                 icon={TrendingUp}
                 variant="default"
@@ -370,7 +370,7 @@ export default function DashboardPage() {
                       <CardContent>
                         <MacroRangeBar
                           fat={{
-                            currentG: dailySummary.fatStatus.current,
+                            currentG: Math.round(dailySummary.fatStatus.current),
                             minG: calculations.macros?.fat.gramsMin ?? 0,
                             maxG: calculations.macros?.fat.gramsMax ?? 0,
                             currentPct: fatPct,
@@ -378,7 +378,7 @@ export default function DashboardPage() {
                             maxPct: profile?.fat_max_percent ?? 40,
                           }}
                           carbs={{
-                            currentG: dailySummary.carbStatus.current,
+                            currentG: Math.round(dailySummary.carbStatus.current),
                             minG: calculations.macros?.carbs.gramsMin ?? 0,
                             maxG: calculations.macros?.carbs.gramsMax ?? 0,
                             currentPct: carbsPct,
@@ -386,7 +386,7 @@ export default function DashboardPage() {
                             maxPct: profile?.carb_max_percent ?? 60,
                           }}
                           protein={{
-                            currentG: dailySummary.proteinStatus.current,
+                            currentG: Math.round(dailySummary.proteinStatus.current),
                             minG: calculations.macros?.protein.gramsMin ?? 0,
                             maxG: calculations.macros?.protein.gramsMax ?? 0,
                             currentPct: proteinPct,
@@ -456,7 +456,7 @@ export default function DashboardPage() {
                         {meal.meal_name}
                       </span>
                       <span className="text-sm text-neutral-500 shrink-0 tabular-nums">
-                        {meal.meal_calories} kcal
+                        {Math.round(meal.meal_calories)} kcal
                       </span>
                     </div>
                   ))}
@@ -644,7 +644,9 @@ export default function DashboardPage() {
                         className="flex items-center justify-between py-2 border-b border-neutral-100 last:border-b-0"
                       >
                         <p className="font-medium text-neutral-900 text-sm">{meal.meal_name}</p>
-                        <p className="text-sm text-neutral-500">{meal.meal_calories} kcal</p>
+                        <p className="text-sm text-neutral-500">
+                          {Math.round(meal.meal_calories)} kcal
+                        </p>
                       </div>
                     ))}
                   </div>
