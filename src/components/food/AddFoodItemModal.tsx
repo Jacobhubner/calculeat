@@ -1153,8 +1153,8 @@ export function AddFoodItemModal({
                         </select>
                       </div>
 
-                      {/* Volymkonvertering - dölj för ml-livsmedel (densitet hanteras via weight_grams) */}
-                      {defaultUnit?.toLowerCase() !== 'ml' && (
+                      {/* Volymkonvertering - dölj för ml-livsmedel och när grams_per_piece redan är ifyllt */}
+                      {defaultUnit?.toLowerCase() !== 'ml' && !gramsPerPiece && (
                         <div className="space-y-3 border border-neutral-200 rounded-lg p-3 bg-neutral-50">
                           <p className="text-sm font-medium text-neutral-900">
                             Volymkonvertering (valfritt)
@@ -1206,8 +1206,8 @@ export function AddFoodItemModal({
                         </p>
 
                         <div className="grid grid-cols-2 gap-3">
-                          {/* Vikt per portion - dölj om portionsenheten är en volymenhet */}
-                          {!isServingUnitVolume && (
+                          {/* Vikt per portion - dölj om portionsenheten är en volymenhet eller volymkonvertering redan är ifylld */}
+                          {!isServingUnitVolume && !gramsPerVolume && (
                             <div>
                               <Label htmlFor="grams_per_piece">
                                 Vikt per portion
