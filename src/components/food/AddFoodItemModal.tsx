@@ -723,7 +723,10 @@ export function AddFoodItemModal({
   return (
     <>
       <Dialog open={open} onOpenChange={handleClose}>
-        <DialogContent className="md:max-w-2xl md:max-h-[90vh] md:overflow-y-auto">
+        <DialogContent
+          className="md:max-w-2xl md:max-h-[90vh] md:overflow-y-auto"
+          aria-describedby={undefined}
+        >
           <DialogHeader>
             <DialogTitle>
               {copyMode

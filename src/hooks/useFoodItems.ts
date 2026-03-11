@@ -299,7 +299,9 @@ export function useUpdateFoodItem() {
       // Strip fields that don't exist as columns in food_items
       // (extended nutrients are stored in food_nutrients table)
       const dbInput = Object.fromEntries(
-        Object.entries(input).filter(([k]) => !['saturated_fat_g', 'sugar_g', 'salt_g'].includes(k))
+        Object.entries(input).filter(
+          ([k]) => !['saturated_fat_g', 'sugar_g', 'salt_g', 'shared_list_id'].includes(k)
+        )
       )
 
       // If it's a global item (user_id is null), use RPC for atomic copy
@@ -334,6 +336,18 @@ export function useUpdateFoodItem() {
       }
 
       // For user's own items, update normally — trigger handles derived fields
+      if (Object.keys(dbInput).length === 0) {
+        // Nothing to update — just return the existing item
+        const { data, error } = await supabase
+          .from('food_items')
+          .select('*')
+          .eq('id', id)
+          .eq('user_id', user.id)
+          .single()
+        if (error) throw error
+        return data as FoodItem
+      }
+
       const { data, error } = await supabase
         .from('food_items')
         .update(dbInput)
@@ -487,7 +501,9 @@ export function useAdminUpdateFoodItem() {
   return useMutation({
     mutationFn: async ({ id, ...input }: Partial<CreateFoodItemInput> & { id: string }) => {
       const dbInput = Object.fromEntries(
-        Object.entries(input).filter(([k]) => !['saturated_fat_g', 'sugar_g', 'salt_g'].includes(k))
+        Object.entries(input).filter(
+          ([k]) => !['saturated_fat_g', 'sugar_g', 'salt_g', 'shared_list_id'].includes(k)
+        )
       )
 
       const { data, error } = await supabase
