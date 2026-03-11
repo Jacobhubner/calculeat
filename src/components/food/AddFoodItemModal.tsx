@@ -567,7 +567,7 @@ export function AddFoodItemModal({
           data.grams_per_piece && !isNaN(data.grams_per_piece) ? data.grams_per_piece : null,
         ml_per_gram: calculatedMlPerGram,
         serving_unit: data.serving_unit?.trim() || null,
-        reference_amount: data.weight_grams || 100,
+        reference_amount: isMLBased ? data.default_amount : data.weight_grams || 100,
         reference_unit,
         density_g_per_ml,
       }
