@@ -95,8 +95,14 @@ export function calculateNutritionForUnit(
     weightGrams = (amount / food.default_amount) * baseWeight
   }
 
-  // Calculate nutrition based on weight ratio
-  const baseWeight = food.weight_grams || 100
+  // Calculate nutrition based on weight ratio.
+  // For ml-based foods, food.calories is per reference_amount ml — we must use
+  // the gram equivalent of that reference amount as the base, not weight_grams
+  // directly, to avoid density-related errors.
+  const baseWeight =
+    food.reference_unit === 'ml' && food.ml_per_gram && food.reference_amount
+      ? food.reference_amount / food.ml_per_gram
+      : food.weight_grams || 100
   const multiplier = weightGrams / baseWeight
 
   return {
