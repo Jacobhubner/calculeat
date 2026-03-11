@@ -119,31 +119,40 @@ function getDisplayData(
         fat: item.fat_per_unit || 0,
       }
 
-    case 'per100g':
+    case 'per100g': {
       if (!item.kcal_per_gram) {
         return null
       }
+      // For ml-based foods, macros are stored per reference_amount ml.
+      // weight_grams = reference_amount / ml_per_gram (gram equivalent).
+      // Per 100g: scale by 100 / weight_grams.
+      const baseGrams = item.weight_grams || 100
       return {
         icon: '',
         header: '100g',
         kcal: item.kcal_per_gram * 100,
-        protein: (item.protein_g / (item.weight_grams || 100)) * 100,
-        carb: (item.carb_g / (item.weight_grams || 100)) * 100,
-        fat: (item.fat_g / (item.weight_grams || 100)) * 100,
+        protein: (item.protein_g / baseGrams) * 100,
+        carb: (item.carb_g / baseGrams) * 100,
+        fat: (item.fat_g / baseGrams) * 100,
       }
+    }
 
     case 'perVolume': {
       if (!item.ml_per_gram || !item.kcal_per_gram) {
         return null
       }
+      // Macros are stored per reference_amount (ml for ml-foods).
+      // Per 100ml: scale by 100 / reference_amount.
+      const refAmount = item.reference_amount || 100
+      const mlScale = 100 / refAmount
       const gramsIn100ml = 100 / item.ml_per_gram
       return {
         icon: '',
         header: '100ml',
         kcal: item.kcal_per_gram * gramsIn100ml,
-        protein: (item.protein_g / (item.weight_grams || 100)) * gramsIn100ml,
-        carb: (item.carb_g / (item.weight_grams || 100)) * gramsIn100ml,
-        fat: (item.fat_g / (item.weight_grams || 100)) * gramsIn100ml,
+        protein: item.protein_g * mlScale,
+        carb: item.carb_g * mlScale,
+        fat: item.fat_g * mlScale,
       }
     }
 
