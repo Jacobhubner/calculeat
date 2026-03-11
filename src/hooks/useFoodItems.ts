@@ -276,6 +276,22 @@ export function useCreateFoodItem() {
   })
 }
 
+// Fields that exist on FoodItem but are NOT columns in the food_items table
+const NON_DB_FOOD_ITEM_FIELDS = [
+  'saturated_fat_g',
+  'sugars_g',
+  'sugar_g',
+  'salt_g',
+  'shared_list_id',
+  'ml_per_gram', // computed by DB trigger from density_g_per_ml
+  'kcal_per_gram', // computed by DB trigger
+  'kcal_per_unit', // computed by DB trigger
+  'fat_per_unit', // computed by DB trigger
+  'carb_per_unit', // computed by DB trigger
+  'protein_per_unit', // computed by DB trigger
+  'energy_density_color', // computed by DB trigger
+] as const
+
 /**
  * Update a food item (with Copy-on-Write for global items)
  */
@@ -299,9 +315,7 @@ export function useUpdateFoodItem() {
       // Strip fields that don't exist as columns in food_items
       // (extended nutrients are stored in food_nutrients table)
       const dbInput = Object.fromEntries(
-        Object.entries(input).filter(
-          ([k]) => !['saturated_fat_g', 'sugar_g', 'salt_g', 'shared_list_id'].includes(k)
-        )
+        Object.entries(input).filter(([k]) => !NON_DB_FOOD_ITEM_FIELDS.includes(k as never))
       )
 
       // If it's a global item (user_id is null), use RPC for atomic copy
@@ -501,9 +515,7 @@ export function useAdminUpdateFoodItem() {
   return useMutation({
     mutationFn: async ({ id, ...input }: Partial<CreateFoodItemInput> & { id: string }) => {
       const dbInput = Object.fromEntries(
-        Object.entries(input).filter(
-          ([k]) => !['saturated_fat_g', 'sugar_g', 'salt_g', 'shared_list_id'].includes(k)
-        )
+        Object.entries(input).filter(([k]) => !NON_DB_FOOD_ITEM_FIELDS.includes(k as never))
       )
 
       const { data, error } = await supabase
