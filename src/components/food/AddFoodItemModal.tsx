@@ -207,13 +207,17 @@ export function AddFoodItemModal({
       let initialGramsPerVolume: number | undefined = undefined
       if (editItem.ml_per_gram) {
         setValue('ml_per_gram', editItem.ml_per_gram)
-        // Bakåtberäkna gramsPerVolume från ml_per_gram (visa som dl default)
-        // ml_per_gram = ml_i_enhet / gram_per_enhet
-        // gram_per_enhet = ml_i_enhet / ml_per_gram
-        const gramsPerDl = VOLUME_TO_ML.dl / editItem.ml_per_gram
         setVolumeUnit('dl')
-        initialGramsPerVolume = Math.round(gramsPerDl * 10) / 10
-        setGramsPerVolume(initialGramsPerVolume)
+        // Bakåtberäkna gramsPerVolume bara för g-livsmedel med volymkonvertering.
+        // För ml-livsmedel hanteras densiteten via weight_grams-fältet — sätt
+        // inte gramsPerVolume så att submit-logiken använder weight_grams-grenen.
+        if (editItem.default_unit?.toLowerCase() !== 'ml') {
+          const gramsPerDl = VOLUME_TO_ML.dl / editItem.ml_per_gram
+          initialGramsPerVolume = Math.round(gramsPerDl * 10) / 10
+          setGramsPerVolume(initialGramsPerVolume)
+        } else {
+          setGramsPerVolume(undefined)
+        }
       } else {
         setVolumeUnit('dl')
         setGramsPerVolume(undefined)
@@ -1149,49 +1153,51 @@ export function AddFoodItemModal({
                         </select>
                       </div>
 
-                      {/* Volymkonvertering - tillgänglig för alla livsmedel */}
-                      <div className="space-y-3 border border-neutral-200 rounded-lg p-3 bg-neutral-50">
-                        <p className="text-sm font-medium text-neutral-900">
-                          Volymkonvertering (valfritt)
-                        </p>
+                      {/* Volymkonvertering - dölj för ml-livsmedel (densitet hanteras via weight_grams) */}
+                      {defaultUnit?.toLowerCase() !== 'ml' && (
+                        <div className="space-y-3 border border-neutral-200 rounded-lg p-3 bg-neutral-50">
+                          <p className="text-sm font-medium text-neutral-900">
+                            Volymkonvertering (valfritt)
+                          </p>
 
-                        <div className="flex items-end gap-3">
-                          <div className="flex-1">
-                            <Label htmlFor="volume_grams">
-                              Hur mycket väger 1 {volumeUnit} ({VOLUME_TO_ML[volumeUnit]}ml)?
-                            </Label>
-                            <div className="flex gap-2 mt-1">
-                              <select
-                                id="volume_unit"
-                                value={volumeUnit}
-                                onChange={e => setVolumeUnit(e.target.value as VolumeUnit)}
-                                className="w-20 px-2 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
-                              >
-                                <option value="dl">dl</option>
-                                <option value="msk">msk</option>
-                                <option value="tsk">tsk</option>
-                              </select>
-                              <Input
-                                id="volume_grams"
-                                type="number"
-                                step="0.1"
-                                value={gramsPerVolume ?? ''}
-                                onChange={e => {
-                                  const val = e.target.value
-                                  setGramsPerVolume(val === '' ? undefined : parseFloat(val))
-                                }}
-                                placeholder="gram"
-                                className="flex-1"
-                              />
-                              <span className="self-center text-sm text-neutral-600">gram</span>
+                          <div className="flex items-end gap-3">
+                            <div className="flex-1">
+                              <Label htmlFor="volume_grams">
+                                Hur mycket väger 1 {volumeUnit} ({VOLUME_TO_ML[volumeUnit]}ml)?
+                              </Label>
+                              <div className="flex gap-2 mt-1">
+                                <select
+                                  id="volume_unit"
+                                  value={volumeUnit}
+                                  onChange={e => setVolumeUnit(e.target.value as VolumeUnit)}
+                                  className="w-20 px-2 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
+                                >
+                                  <option value="dl">dl</option>
+                                  <option value="msk">msk</option>
+                                  <option value="tsk">tsk</option>
+                                </select>
+                                <Input
+                                  id="volume_grams"
+                                  type="number"
+                                  step="0.1"
+                                  value={gramsPerVolume ?? ''}
+                                  onChange={e => {
+                                    const val = e.target.value
+                                    setGramsPerVolume(val === '' ? undefined : parseFloat(val))
+                                  }}
+                                  placeholder="gram"
+                                  className="flex-1"
+                                />
+                                <span className="self-center text-sm text-neutral-600">gram</span>
+                              </div>
                             </div>
                           </div>
-                        </div>
 
-                        <p className="text-xs text-neutral-500">
-                          Mjöl ≈ 60g/dl, Socker ≈ 90g/dl, Havregryn ≈ 40g/dl, Ris ≈ 85g/dl
-                        </p>
-                      </div>
+                          <p className="text-xs text-neutral-500">
+                            Mjöl ≈ 60g/dl, Socker ≈ 90g/dl, Havregryn ≈ 40g/dl, Ris ≈ 85g/dl
+                          </p>
+                        </div>
+                      )}
 
                       {/* Serveringsfunktion - gram per bit/styck */}
                       <div className="space-y-3 border border-neutral-200 rounded-lg p-3 bg-neutral-50">
