@@ -2,8 +2,6 @@ import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { AuthProvider } from './contexts/AuthContext'
-import { ThemeProvider } from './contexts/ThemeContext'
-import { useTheme } from './contexts/ThemeContext'
 import { queryClient } from './lib/react-query'
 import { Toaster } from './components/ui/toast'
 import { TooltipProvider } from './components/ui/tooltip'
@@ -52,7 +50,7 @@ const SocialPage = lazy(() => import('./pages/SocialPage'))
 // Loading fallback component
 function PageLoader() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-neutral-50 dark:bg-neutral-950">
+    <div className="min-h-screen flex items-center justify-center bg-neutral-50">
       <div className="space-y-4 w-full max-w-md p-8">
         <Skeleton className="h-8 w-48 mx-auto" />
         <Skeleton className="h-4 w-full" />
@@ -63,8 +61,7 @@ function PageLoader() {
   )
 }
 
-function AppInner() {
-  const { resolvedTheme } = useTheme()
+function App() {
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
@@ -205,19 +202,11 @@ function AppInner() {
                 </Routes>
               </Suspense>
             </BrowserRouter>
-            <Toaster theme={resolvedTheme} />
+            <Toaster />
           </AuthProvider>
         </TooltipProvider>
       </QueryClientProvider>
     </ErrorBoundary>
-  )
-}
-
-function App() {
-  return (
-    <ThemeProvider>
-      <AppInner />
-    </ThemeProvider>
   )
 }
 

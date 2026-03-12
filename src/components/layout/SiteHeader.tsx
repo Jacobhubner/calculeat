@@ -10,7 +10,6 @@ import { useState, useRef, useEffect } from 'react'
 import { SocialHub } from '@/components/social/SocialHub'
 import { ShareDialog } from '@/components/sharing/ShareDialog'
 import { useSocialBadgeCount } from '@/hooks/useShareInvitations'
-import { ThemeToggle } from '@/components/ui/ThemeToggle'
 import type { Friend } from '@/lib/types/friends'
 
 export default function SiteHeader() {
@@ -98,7 +97,7 @@ export default function SiteHeader() {
   }, [socialHubOpen])
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-white/95 dark:bg-neutral-900/95 bg-blur shadow-sm transition-colors duration-200">
+    <header className="sticky top-0 z-50 w-full border-b bg-white/95 bg-blur shadow-sm">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6 lg:px-8">
         {/* Logo */}
         <Link to={user ? '/app' : '/'} className="flex items-center group">
@@ -131,7 +130,7 @@ export default function SiteHeader() {
               {userProfile?.username && (
                 <Link
                   to="/app/profile"
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary-50 hover:bg-primary-100 dark:bg-primary-950 dark:hover:bg-primary-900 transition-colors"
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary-50 hover:bg-primary-100 transition-colors"
                   title="Min profil"
                 >
                   <User className="h-4 w-4 text-primary-600" />
@@ -162,7 +161,7 @@ export default function SiteHeader() {
                     <>
                       <div className="fixed inset-0 z-40" onClick={() => setSocialHubOpen(false)} />
                       <motion.div
-                        className="absolute right-0 top-full mt-2 w-[420px] max-h-[600px] bg-white dark:bg-neutral-900 rounded-2xl shadow-xl border border-neutral-200 dark:border-neutral-700 z-50 overflow-hidden flex flex-col"
+                        className="absolute right-0 top-full mt-2 w-[420px] max-h-[600px] bg-white rounded-2xl shadow-xl border border-neutral-200 z-50 overflow-hidden flex flex-col"
                         initial={{ opacity: 0, y: -8, scale: 0.97 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -8, scale: 0.97 }}
@@ -178,7 +177,6 @@ export default function SiteHeader() {
                 </AnimatePresence>
               </div>
 
-              <ThemeToggle />
               <Link to="/app">
                 <Avatar className="h-9 w-9 cursor-pointer ring-2 ring-transparent hover:ring-primary-200 transition-all">
                   <AvatarFallback className="text-xs">{getInitials()}</AvatarFallback>
@@ -215,7 +213,6 @@ export default function SiteHeader() {
         {/* Mobile: Social + Avatar when logged in */}
         {user && (
           <div className="md:hidden flex items-center gap-2">
-            <ThemeToggle />
             {/* Mobile Social — navigera direkt till /app/social */}
             <Link
               to="/app/social"
@@ -248,7 +245,7 @@ export default function SiteHeader() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.15 }}
-                    className="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-neutral-900 rounded-lg shadow-lg border border-neutral-200 dark:border-neutral-700 py-1 z-50"
+                    className="absolute right-0 top-full mt-2 w-56 bg-white rounded-lg shadow-lg border border-neutral-200 py-1 z-50"
                   >
                     {/* User Info */}
                     <div className="px-4 py-3 border-b border-neutral-100">
@@ -301,7 +298,7 @@ export default function SiteHeader() {
 
       {/* Mobile Navigation - Only show when logged out */}
       {mobileMenuOpen && !user && (
-        <div className="md:hidden border-t bg-white dark:bg-neutral-900">
+        <div className="md:hidden border-t bg-white">
           <nav className="container mx-auto px-4 py-4 flex flex-col gap-2">
             {anchorLinks.map(link => (
               <a

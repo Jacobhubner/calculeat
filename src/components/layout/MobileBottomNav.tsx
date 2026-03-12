@@ -85,18 +85,18 @@ export default function MobileBottomNav() {
     exact ? location.pathname === path : location.pathname.startsWith(path)
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-neutral-900 border-t border-neutral-200 dark:border-neutral-800 shadow-[0_-2px_10px_rgba(0,0,0,0.05)] transition-colors duration-200">
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-neutral-200 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
       <div className="relative">
         {/* Left fade */}
         <div
           ref={leftFadeRef}
-          className="absolute left-0 top-0 bottom-0 w-14 bg-gradient-to-r from-white via-white/60 to-transparent dark:from-neutral-900 dark:via-neutral-900/60 z-10 pointer-events-none transition-opacity duration-150"
+          className="absolute left-0 top-0 bottom-0 w-14 bg-gradient-to-r from-white via-white/60 to-transparent z-10 pointer-events-none transition-opacity duration-150"
           style={{ opacity: 0 }}
         />
         {/* Right fade */}
         <div
           ref={rightFadeRef}
-          className="absolute right-0 top-0 bottom-0 w-14 bg-gradient-to-l from-white via-white/60 to-transparent dark:from-neutral-900 dark:via-neutral-900/60 z-10 pointer-events-none transition-opacity duration-150"
+          className="absolute right-0 top-0 bottom-0 w-14 bg-gradient-to-l from-white via-white/60 to-transparent z-10 pointer-events-none transition-opacity duration-150"
           style={{ opacity: 1 }}
         />
         <div ref={scrollRef} className="flex items-stretch h-16 overflow-x-auto scrollbar-hide">
