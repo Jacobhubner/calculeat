@@ -40,17 +40,17 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        'fixed z-50 grid w-full bg-white shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+        'fixed z-50 grid w-full bg-white dark:bg-neutral-900 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
         // Mobile: fullscreen
         'inset-0 gap-0 border-0 p-0 overflow-y-auto',
         // Desktop: centered overlay
-        'md:inset-auto md:left-[50%] md:top-[50%] md:max-w-lg md:translate-x-[-50%] md:translate-y-[-50%] md:gap-4 md:border md:border-neutral-200 md:p-6 md:rounded-lg md:overflow-visible md:h-auto data-[state=closed]:md:zoom-out-95 data-[state=open]:md:zoom-in-95 data-[state=closed]:md:slide-out-to-left-1/2 data-[state=closed]:md:slide-out-to-top-[48%] data-[state=open]:md:slide-in-from-left-1/2 data-[state=open]:md:slide-in-from-top-[48%]',
+        'md:inset-auto md:left-[50%] md:top-[50%] md:max-w-lg md:translate-x-[-50%] md:translate-y-[-50%] md:gap-4 md:border md:border-neutral-200 dark:md:border-neutral-700 md:p-6 md:rounded-lg md:overflow-visible md:h-auto data-[state=closed]:md:zoom-out-95 data-[state=open]:md:zoom-in-95 data-[state=closed]:md:slide-out-to-left-1/2 data-[state=closed]:md:slide-out-to-top-[48%] data-[state=open]:md:slide-in-from-left-1/2 data-[state=open]:md:slide-in-from-top-[48%]',
         className
       )}
       {...props}
     >
       {children}
-      <DialogPrimitive.Close className="absolute right-3 top-3 md:right-4 md:top-4 p-2 md:p-0 rounded-lg md:rounded-sm opacity-70 ring-offset-white transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-neutral-950 focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-neutral-100 data-[state=open]:text-neutral-500">
+      <DialogPrimitive.Close className="absolute right-3 top-3 md:right-4 md:top-4 p-2 md:p-0 rounded-lg md:rounded-sm opacity-70 ring-offset-white dark:ring-offset-neutral-900 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-neutral-950 focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-neutral-100 dark:data-[state=open]:bg-neutral-800 data-[state=open]:text-neutral-500 dark:data-[state=open]:text-neutral-400">
         <X className="h-4 w-4" />
         <span className="sr-only">Stäng</span>
       </DialogPrimitive.Close>
@@ -99,7 +99,7 @@ const DialogDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Description
     ref={ref}
-    className={cn('text-sm text-neutral-500', className)}
+    className={cn('text-sm text-neutral-500 dark:text-neutral-400', className)}
     {...props}
   />
 ))

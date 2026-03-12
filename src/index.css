@@ -60,6 +60,21 @@
 
   body {
     @apply bg-neutral-50 text-neutral-800 antialiased;
+    transition:
+      background-color 200ms,
+      color 200ms;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
+  html.dark * {
+    @apply border-neutral-700;
+  }
+
+  html.dark body {
+    @apply bg-neutral-950 text-neutral-100;
   }
 
   h1,

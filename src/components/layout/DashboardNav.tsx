@@ -171,7 +171,7 @@ export default function DashboardNav() {
   return (
     <aside
       className={cn(
-        'hidden md:block fixed left-0 top-16 h-[calc(100vh-4rem)] border-r bg-white transition-all duration-300 z-40',
+        'hidden md:block fixed left-0 top-16 h-[calc(100vh-4rem)] border-r bg-white dark:bg-neutral-900 dark:border-neutral-800 transition-all duration-300 z-40',
         sidebarCollapsed ? 'w-20' : 'w-64'
       )}
     >
@@ -180,7 +180,7 @@ export default function DashboardNav() {
         <div className={cn('p-4', sidebarCollapsed && 'px-2')}>
           <div
             className={cn(
-              'flex items-center gap-3 rounded-2xl bg-gradient-to-br from-primary-50 to-accent-50 p-3',
+              'flex items-center gap-3 rounded-2xl bg-gradient-to-br from-primary-50 to-accent-50 dark:from-primary-950 dark:to-accent-950/50 p-3',
               sidebarCollapsed && 'justify-center p-2'
             )}
           >
@@ -227,8 +227,8 @@ export default function DashboardNav() {
                       className={cn(
                         'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors relative group',
                         active
-                          ? 'bg-primary-100 text-primary-700'
-                          : 'text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900',
+                          ? 'bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-300'
+                          : 'text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-100',
                         sidebarCollapsed && 'justify-center px-2'
                       )}
                     >
@@ -263,7 +263,7 @@ export default function DashboardNav() {
           <Link
             to="/app/settings"
             className={cn(
-              'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900 transition-colors relative group',
+              'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-100 transition-colors relative group',
               sidebarCollapsed && 'justify-center px-2'
             )}
           >
@@ -296,7 +296,7 @@ export default function DashboardNav() {
           <button
             onClick={toggleSidebar}
             className={cn(
-              'w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-neutral-600 hover:bg-neutral-50 transition-colors',
+              'w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-neutral-600 hover:bg-neutral-50 dark:text-neutral-400 dark:hover:bg-neutral-800 transition-colors',
               sidebarCollapsed && 'justify-center px-2'
             )}
           >

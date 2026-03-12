@@ -29,11 +29,14 @@ export default function DashboardLayout({ children, fullHeight }: DashboardLayou
 
   return (
     <div
-      className={cn('flex flex-col overflow-x-hidden', fullHeight ? 'h-screen' : 'min-h-screen')}
+      className={cn(
+        'flex flex-col overflow-x-hidden transition-colors duration-200',
+        fullHeight ? 'h-screen' : 'min-h-screen'
+      )}
     >
       <SiteHeader />
       {!isEmailVerified && user && (
-        <div className="bg-amber-50 border-b border-amber-200 px-4 py-2 text-sm text-amber-800 flex items-center justify-between gap-4">
+        <div className="bg-amber-50 dark:bg-amber-950/30 border-b border-amber-200 dark:border-amber-800 px-4 py-2 text-sm text-amber-800 dark:text-amber-200 flex items-center justify-between gap-4">
           <span>Verifiera din e-postadress för att säkra ditt konto.</span>
           <button
             onClick={handleResend}

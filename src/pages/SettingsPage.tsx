@@ -13,6 +13,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase'
 import { translateAuthError } from '@/lib/auth-errors'
 import { useActiveProfile } from '@/hooks/useActiveProfile'
+import { useTheme, type Theme } from '@/contexts/ThemeContext'
 import { useUpdateProfile } from '@/hooks/useUpdateProfile'
 import { useUserProfile, useUpdateUsername } from '@/hooks/useUserProfile'
 import type { Gender } from '@/lib/types'
@@ -43,6 +44,8 @@ export default function SettingsPage() {
   const [isDeleting, setIsDeleting] = useState(false)
 
   // App settings
+  const { theme, setTheme } = useTheme()
+
   const [completionMode, setCompletionMode] = useState<CompletionMode>(
     () => (localStorage.getItem('day-completion-mode') as CompletionMode) || 'manual'
   )
@@ -311,6 +314,55 @@ export default function SettingsPage() {
                   </div>
                 </label>
               </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Utseende */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Utseende</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100 mb-3">
+              Färgtema
+            </p>
+            <div className="space-y-2">
+              {(['light', 'dark', 'system'] as Theme[]).map(t => {
+                const labels: Record<Theme, string> = {
+                  light: 'Ljust',
+                  dark: 'Mörkt',
+                  system: 'Systemstandard',
+                }
+                const descs: Record<Theme, string> = {
+                  light: 'Alltid ljust läge',
+                  dark: 'Alltid mörkt läge',
+                  system: 'Följer enhetens inställning automatiskt',
+                }
+                return (
+                  <label
+                    key={t}
+                    className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${theme === t ? 'border-primary-300 bg-primary-50 dark:bg-primary-950/40 dark:border-primary-700' : 'border-neutral-200 dark:border-neutral-700 hover:border-neutral-300 dark:hover:border-neutral-600'}`}
+                  >
+                    <input
+                      type="radio"
+                      name="theme"
+                      value={t}
+                      checked={theme === t}
+                      onChange={() => setTheme(t)}
+                      className="mt-0.5 accent-primary-600"
+                    />
+                    <div>
+                      <span className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                        {labels[t]}
+                      </span>
+                      <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
+                        {descs[t]}
+                      </p>
+                    </div>
+                  </label>
+                )
+              })}
             </div>
           </CardContent>
         </Card>

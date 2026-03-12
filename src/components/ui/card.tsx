@@ -2,19 +2,22 @@ import { HTMLAttributes, forwardRef } from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 
-const cardVariants = cva('rounded-2xl bg-white w-full min-w-0 max-w-full', {
-  variants: {
-    variant: {
-      default: 'border border-neutral-200 shadow-lg',
-      elevated: 'shadow-xl',
-      outlined: 'border-2 border-neutral-300',
-      ghost: 'border-0 shadow-none',
+const cardVariants = cva(
+  'rounded-2xl bg-white dark:bg-neutral-800 w-full min-w-0 max-w-full transition-colors duration-200',
+  {
+    variants: {
+      variant: {
+        default: 'border border-neutral-200 dark:border-neutral-700 shadow-lg',
+        elevated: 'shadow-xl',
+        outlined: 'border-2 border-neutral-300 dark:border-neutral-600',
+        ghost: 'border-0 shadow-none',
+      },
     },
-  },
-  defaultVariants: {
-    variant: 'default',
-  },
-})
+    defaultVariants: {
+      variant: 'default',
+    },
+  }
+)
 
 export interface CardProps
   extends HTMLAttributes<HTMLDivElement>,
@@ -49,7 +52,11 @@ CardTitle.displayName = 'CardTitle'
 
 const CardDescription = forwardRef<HTMLParagraphElement, HTMLAttributes<HTMLParagraphElement>>(
   ({ className, ...props }, ref) => (
-    <p ref={ref} className={cn('text-sm text-neutral-600', className)} {...props} />
+    <p
+      ref={ref}
+      className={cn('text-sm text-neutral-600 dark:text-neutral-400', className)}
+      {...props}
+    />
   )
 )
 CardDescription.displayName = 'CardDescription'
