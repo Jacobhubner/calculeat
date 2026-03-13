@@ -77,19 +77,19 @@ export function NutritionSummary({
         {/* Macros grid */}
         <div className="grid grid-cols-3 gap-3">
           <div className="bg-primary-50 rounded-lg p-3 text-center">
-            <div className="text-lg font-semibold text-green-600">
+            <div className="text-lg font-semibold" style={{ color: '#f43f5e' }}>
               {displayValues.protein.toFixed(1)}g
             </div>
             <div className="text-xs text-neutral-500">Protein</div>
           </div>
           <div className="bg-primary-50 rounded-lg p-3 text-center">
-            <div className="text-lg font-semibold text-blue-600">
+            <div className="text-lg font-semibold" style={{ color: '#fb923c' }}>
               {displayValues.carbs.toFixed(1)}g
             </div>
             <div className="text-xs text-neutral-500">Kolhydrater</div>
           </div>
           <div className="bg-primary-50 rounded-lg p-3 text-center">
-            <div className="text-lg font-semibold text-amber-600">
+            <div className="text-lg font-semibold" style={{ color: '#f5c518' }}>
               {displayValues.fat.toFixed(1)}g
             </div>
             <div className="text-xs text-neutral-500">Fett</div>
@@ -179,15 +179,21 @@ export function NutritionSummary({
             <div className="text-neutral-500">kcal</div>
           </div>
           <div>
-            <div className="font-semibold text-green-600">{nutrition.totalProtein.toFixed(1)}g</div>
+            <div className="font-semibold" style={{ color: '#f43f5e' }}>
+              {nutrition.totalProtein.toFixed(1)}g
+            </div>
             <div className="text-neutral-500">P</div>
           </div>
           <div>
-            <div className="font-semibold text-blue-600">{nutrition.totalCarbs.toFixed(1)}g</div>
+            <div className="font-semibold" style={{ color: '#fb923c' }}>
+              {nutrition.totalCarbs.toFixed(1)}g
+            </div>
             <div className="text-neutral-500">K</div>
           </div>
           <div>
-            <div className="font-semibold text-amber-600">{nutrition.totalFat.toFixed(1)}g</div>
+            <div className="font-semibold" style={{ color: '#f5c518' }}>
+              {nutrition.totalFat.toFixed(1)}g
+            </div>
             <div className="text-neutral-500">F</div>
           </div>
         </div>
