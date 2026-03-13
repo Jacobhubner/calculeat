@@ -28,9 +28,8 @@ export default function MealSettingsCard({ tdee, onMealChange }: MealSettingsCar
   const defaultMeals: Meal[] = [
     { name: 'Frukost', percentage: 25 },
     { name: 'Lunch', percentage: 30 },
+    { name: 'Mellanmål', percentage: 15 },
     { name: 'Middag', percentage: 30 },
-    { name: 'Mellanmål 1', percentage: 8 },
-    { name: 'Mellanmål 2', percentage: 7 },
   ]
 
   const [meals, setMeals] = useState<Meal[]>(defaultMeals)
@@ -245,10 +244,13 @@ export default function MealSettingsCard({ tdee, onMealChange }: MealSettingsCar
           </div>
 
           {/* Info message */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+          <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-3 space-y-1.5">
             <p className="text-xs text-neutral-700 leading-relaxed">
-              💡 <strong>Tips:</strong> Fördela dina kalorier över dagen baserat på dina vanor. En
-              typisk fördelning är 30% frukost, 30% lunch, 10% mellanmål och 30% middag.
+              💡 Fördela dina kalorier över dagen baserat på dina vanor.
+            </p>
+            <p className="text-xs text-neutral-500 leading-relaxed">
+              Tryck på <strong>Spara ändringar</strong> längre ner för att uppdatera måltiderna i
+              Dagens logg.
             </p>
           </div>
         </CardContent>

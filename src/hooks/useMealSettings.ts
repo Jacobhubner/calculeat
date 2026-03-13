@@ -80,13 +80,12 @@ export function useCreateDefaultMealSettings() {
           percentage_of_daily_calories: meal.percentage,
         }))
       } else {
-        // Default 3 meals + 2 snacks = 5 meals
+        // Default 4 meals
         const defaultMeals = [
           { meal_name: 'Frukost', meal_order: 0, percentage_of_daily_calories: 25 },
           { meal_name: 'Lunch', meal_order: 1, percentage_of_daily_calories: 30 },
-          { meal_name: 'Middag', meal_order: 2, percentage_of_daily_calories: 30 },
-          { meal_name: 'Mellanmål 1', meal_order: 3, percentage_of_daily_calories: 8 },
-          { meal_name: 'Mellanmål 2', meal_order: 4, percentage_of_daily_calories: 7 },
+          { meal_name: 'Mellanmål', meal_order: 2, percentage_of_daily_calories: 15 },
+          { meal_name: 'Middag', meal_order: 3, percentage_of_daily_calories: 30 },
         ]
 
         mealsToInsert = defaultMeals.map(meal => ({
@@ -355,9 +354,8 @@ export function useResetMealSettings() {
       const defaultMeals = [
         { meal_name: 'Frukost', meal_order: 0, percentage_of_daily_calories: 25 },
         { meal_name: 'Lunch', meal_order: 1, percentage_of_daily_calories: 30 },
-        { meal_name: 'Middag', meal_order: 2, percentage_of_daily_calories: 30 },
-        { meal_name: 'Mellanmål 1', meal_order: 3, percentage_of_daily_calories: 8 },
-        { meal_name: 'Mellanmål 2', meal_order: 4, percentage_of_daily_calories: 7 },
+        { meal_name: 'Mellanmål', meal_order: 2, percentage_of_daily_calories: 15 },
+        { meal_name: 'Middag', meal_order: 3, percentage_of_daily_calories: 30 },
       ]
 
       const mealsWithProfileId = defaultMeals.map(meal => ({
