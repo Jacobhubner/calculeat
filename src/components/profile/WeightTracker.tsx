@@ -161,11 +161,11 @@ export default function WeightTracker({
           >
             <CardTitle className="flex items-center gap-2 text-lg leading-snug">
               {weightTrend.totalChangeKg < -0.1 ? (
-                <TrendingDown className="h-5 w-5 text-green-600" />
+                <TrendingDown className="h-5 w-5 text-primary-600" />
               ) : weightTrend.totalChangeKg > 0.1 ? (
-                <TrendingUp className="h-5 w-5 text-amber-600" />
+                <TrendingUp className="h-5 w-5 text-primary-600" />
               ) : (
-                <Minus className="h-5 w-5 text-neutral-600" />
+                <Minus className="h-5 w-5 text-primary-600" />
               )}
               Viktspårning
             </CardTitle>
