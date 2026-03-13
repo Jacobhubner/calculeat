@@ -56,15 +56,21 @@ export function NutritionPreview({
         )}
         <div className="flex justify-between">
           <span className="text-neutral-600">Fett:</span>
-          <span className="font-medium text-amber-600">{fat.toFixed(1)}g</span>
+          <span className="font-medium" style={{ color: '#f5c518' }}>
+            {fat.toFixed(1)}g
+          </span>
         </div>
         <div className="flex justify-between">
           <span className="text-neutral-600">Kolhydrater:</span>
-          <span className="font-medium text-green-600">{carbs.toFixed(1)}g</span>
+          <span className="font-medium" style={{ color: '#fb923c' }}>
+            {carbs.toFixed(1)}g
+          </span>
         </div>
         <div className="flex justify-between col-span-2 sm:col-span-1">
           <span className="text-neutral-600">Protein:</span>
-          <span className="font-medium text-blue-600">{protein.toFixed(1)}g</span>
+          <span className="font-medium" style={{ color: '#f43f5e' }}>
+            {protein.toFixed(1)}g
+          </span>
         </div>
       </div>
     </div>

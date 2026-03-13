@@ -200,9 +200,9 @@ export default function SaveMealDialog({ open, onOpenChange, mealEntry }: SaveMe
                   <span className="font-semibold text-primary-600">
                     {Math.round(totals.calories)} kcal
                   </span>
-                  <span>P: {totals.protein.toFixed(1)}g</span>
-                  <span>K: {totals.carbs.toFixed(1)}g</span>
-                  <span>F: {totals.fat.toFixed(1)}g</span>
+                  <span style={{ color: '#f5c518' }}>F: {totals.fat.toFixed(1)}g</span>
+                  <span style={{ color: '#fb923c' }}>K: {totals.carbs.toFixed(1)}g</span>
+                  <span style={{ color: '#f43f5e' }}>P: {totals.protein.toFixed(1)}g</span>
                 </div>
               </div>
             </div>

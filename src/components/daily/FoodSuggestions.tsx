@@ -513,29 +513,22 @@ export function FoodSuggestions({
                       <ScoreBadge score={match.overallScore} />
                       <span className="text-neutral-300">•</span>
                       <span
-                        className={
-                          primaryMacro === 'fat'
-                            ? 'font-semibold text-amber-600'
-                            : 'text-neutral-500'
-                        }
+                        className={primaryMacro === 'fat' ? 'font-semibold' : 'text-neutral-500'}
+                        style={primaryMacro === 'fat' ? { color: '#f5c518' } : undefined}
                       >
                         F:{match.fat.toFixed(0)}g
                       </span>
                       <span
-                        className={
-                          primaryMacro === 'carbs'
-                            ? 'font-semibold text-green-600'
-                            : 'text-neutral-500'
-                        }
+                        className={primaryMacro === 'carbs' ? 'font-semibold' : 'text-neutral-500'}
+                        style={primaryMacro === 'carbs' ? { color: '#fb923c' } : undefined}
                       >
                         K:{match.carbs.toFixed(0)}g
                       </span>
                       <span
                         className={
-                          primaryMacro === 'protein'
-                            ? 'font-semibold text-blue-600'
-                            : 'text-neutral-500'
+                          primaryMacro === 'protein' ? 'font-semibold' : 'text-neutral-500'
                         }
+                        style={primaryMacro === 'protein' ? { color: '#f43f5e' } : undefined}
                       >
                         P:{match.protein.toFixed(0)}g
                       </span>
