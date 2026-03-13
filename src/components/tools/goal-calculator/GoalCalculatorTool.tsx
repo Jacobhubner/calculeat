@@ -844,11 +844,11 @@ export default function GoalCalculatorTool() {
               <CardHeader>
                 <CardTitle className="text-lg">Tidslinje</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-3">
                 {/* Tempo */}
-                <div className="bg-neutral-50 border border-neutral-200 rounded-lg px-4 py-3 flex items-center justify-between">
-                  <span className="text-sm text-neutral-500">Valt tempo</span>
-                  <span className="text-sm font-semibold text-neutral-900">
+                <div className="flex items-center justify-between py-2 border-b border-neutral-100">
+                  <span className="text-sm text-neutral-500">Tempo</span>
+                  <span className="text-sm font-medium text-neutral-800">
                     {(() => {
                       if (!goalResult || !profileData?.tdee) {
                         return `${weeklyWeightChange.min.toFixed(1)}–${weeklyWeightChange.max.toFixed(1)} kg/vecka`
@@ -896,75 +896,48 @@ export default function GoalCalculatorTool() {
                   </span>
                 </div>
 
-                {/* Veckor / Månader stat grid */}
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-neutral-50 border border-neutral-200 rounded-lg px-4 py-3 text-center">
-                    <p className="text-xs text-neutral-500 mb-1">Veckor</p>
-                    <p className="text-2xl font-bold text-neutral-900 leading-none">
-                      {timeline.min.weeksRequired}–{timeline.max.weeksRequired}
-                    </p>
-                    <p className="text-xs text-neutral-400 mt-1">veckor</p>
-                  </div>
-                  <div className="bg-neutral-50 border border-neutral-200 rounded-lg px-4 py-3 text-center">
-                    <p className="text-xs text-neutral-500 mb-1">Månader</p>
-                    <p className="text-2xl font-bold text-neutral-900 leading-none">
-                      {Math.round(timeline.min.monthsRequired * 10) / 10}–
-                      {Math.round(timeline.max.monthsRequired * 10) / 10}
-                    </p>
-                    <p className="text-xs text-neutral-400 mt-1">månader</p>
-                  </div>
+                {/* Tidsintervall */}
+                <div className="flex items-center justify-between py-2 border-b border-neutral-100">
+                  <span className="text-sm text-neutral-500">Tidsintervall</span>
+                  <span className="text-sm font-medium text-neutral-800">
+                    {timeline.min.weeksRequired}–{timeline.max.weeksRequired} veckor
+                    <span className="text-neutral-400 mx-1.5">/</span>
+                    {Math.round(timeline.min.monthsRequired * 10) / 10}–
+                    {Math.round(timeline.max.monthsRequired * 10) / 10} mån
+                  </span>
                 </div>
 
                 {/* Slutdatum */}
-                <div className="border border-neutral-200 rounded-lg overflow-hidden">
-                  <div className="bg-neutral-50 px-4 py-2 border-b border-neutral-200">
-                    <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide">
-                      Uppskattat slutdatum
+                <div className="flex items-start justify-between py-2 border-b border-neutral-100">
+                  <span className="text-sm text-neutral-500">Uppskattat slutdatum</span>
+                  <div className="text-right">
+                    <p className="text-sm font-medium text-neutral-800">
+                      {timeline.min.estimatedEndDate.toLocaleDateString('sv-SE', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric',
+                      })}
                     </p>
-                  </div>
-                  <div className="grid grid-cols-2 divide-x divide-neutral-200">
-                    <div className="px-4 py-3 text-center">
-                      <p className="text-xs text-neutral-400 mb-1">Tidigast</p>
-                      <p className="text-sm font-semibold text-neutral-900">
-                        {timeline.min.estimatedEndDate.toLocaleDateString('sv-SE', {
-                          day: 'numeric',
-                          month: 'short',
-                        })}
-                      </p>
-                      <p className="text-xs text-neutral-500">
-                        {timeline.min.estimatedEndDate.toLocaleDateString('sv-SE', {
-                          year: 'numeric',
-                        })}
-                      </p>
-                    </div>
-                    <div className="px-4 py-3 text-center">
-                      <p className="text-xs text-neutral-400 mb-1">Senast</p>
-                      <p className="text-sm font-semibold text-neutral-900">
-                        {timeline.max.estimatedEndDate.toLocaleDateString('sv-SE', {
-                          day: 'numeric',
-                          month: 'short',
-                        })}
-                      </p>
-                      <p className="text-xs text-neutral-500">
-                        {timeline.max.estimatedEndDate.toLocaleDateString('sv-SE', {
-                          year: 'numeric',
-                        })}
-                      </p>
-                    </div>
+                    <p className="text-xs text-neutral-400 mt-0.5">
+                      till{' '}
+                      {timeline.max.estimatedEndDate.toLocaleDateString('sv-SE', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric',
+                      })}
+                    </p>
                   </div>
                 </div>
 
                 {appliedCalories && (
-                  <div className="border border-neutral-200 rounded-lg overflow-hidden">
-                    <div className="bg-neutral-50 px-4 py-2 border-b border-neutral-200 flex items-center justify-between">
-                      <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide">
-                        Energimål
-                      </p>
-                      <span className="text-sm font-semibold text-neutral-900">
-                        {appliedCalories.min}–{appliedCalories.max} kcal
+                  <>
+                    <div className="flex items-center justify-between py-2 border-b border-neutral-100">
+                      <span className="text-sm text-neutral-500">Energimål</span>
+                      <span className="text-sm font-medium text-neutral-800">
+                        {appliedCalories.min}–{appliedCalories.max} kcal/dag
                       </span>
                     </div>
-                    <div className="px-4 py-3">
+                    <div className="pt-1">
                       <Button
                         type="button"
                         variant={isAlreadyApplied ? 'secondary' : 'primary'}
@@ -980,7 +953,7 @@ export default function GoalCalculatorTool() {
                             : 'Tillämpa energimål på profilen'}
                       </Button>
                     </div>
-                  </div>
+                  </>
                 )}
 
                 <p className="text-xs text-neutral-400 leading-relaxed">
