@@ -268,14 +268,13 @@ export default function ProfilePage() {
 
   // Handler for WeightTracker - update pending state
   const handleWeightChange = (weight: number) => {
-    setPendingChanges(prev => {
-      if (weight === activeProfile?.weight_kg) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { weight_kg, ...rest } = prev
-        return rest
-      }
-      return { ...prev, weight_kg: weight }
-    })
+    // Spara profilvikten direkt när vikt loggas via WeightTracker
+    if (activeProfile && weight !== activeProfile.weight_kg) {
+      updateProfile.mutate({
+        profileId: activeProfile.id,
+        data: { weight_kg: weight } as Partial<ProfileFormData>,
+      })
+    }
   }
 
   // Handlers for MacroDistributionCard - update pending state
@@ -531,7 +530,7 @@ export default function ProfilePage() {
       <div className="max-w-7xl mx-auto">
         <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
           {/* Main content column - Conditional rendering */}
-          <div className="space-y-4">
+          <div className="space-y-6">
             {/* SCENARIO 1: No basic info - inline setup form */}
             {!hasBasicInfo && displayProfile && (
               <SetupProfileForm onSave={handleSetupSave} isSaving={updateProfile.isPending} />

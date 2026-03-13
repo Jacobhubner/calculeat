@@ -26,6 +26,7 @@ import {
 import type { WeightHistory } from '@/lib/types'
 import {
   useWeightHistory,
+  useCreateWeightHistory,
   useDeleteWeightHistory,
   useCalibrationAvailability,
   useLastCalibration,
@@ -64,6 +65,7 @@ export default function WeightTracker({
 
   // User-based weight history (shared across all profiles)
   const { data: weightHistory = [] } = useWeightHistory()
+  const createWeightHistory = useCreateWeightHistory()
   const deleteWeightHistory = useDeleteWeightHistory()
   const { data: lastCalibration } = useLastCalibration(profile.id)
 
@@ -89,7 +91,7 @@ export default function WeightTracker({
     lastCalibration
   )
 
-  const handleAddWeight = () => {
+  const handleAddWeight = async () => {
     const weightNum = parseFloat(currentWeight)
 
     if (isNaN(weightNum) || weightNum <= 0 || weightNum >= 500) {
@@ -98,6 +100,8 @@ export default function WeightTracker({
       return
     }
 
+    // Spara till weight_history direkt och synkronisera profilvikten
+    await createWeightHistory.mutateAsync({ weight_kg: weightNum })
     onWeightChange(weightNum)
     setShowAddWeight(false)
   }

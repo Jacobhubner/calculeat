@@ -732,16 +732,22 @@ export default function BodyCompositionCalculator() {
         ? { caliper: caliperMeasurements, tape: tapeMeasurements }
         : { caliper: allCaliperMeasurements, tape: allTapeMeasurements }
 
+    const nullish = (v: unknown) => v === undefined || v === null
+
     const caliperChanged = Object.entries(currentWorkflowMeasurements.caliper).some(
       ([key, value]) => {
         const savedKey = key === 'lowerBack' ? 'lower_back' : key
-        return value !== activeMeasurementSet[savedKey as keyof typeof activeMeasurementSet]
+        const savedValue = activeMeasurementSet[savedKey as keyof typeof activeMeasurementSet]
+        if (nullish(value) && nullish(savedValue)) return false
+        return value !== savedValue
       }
     )
 
     const tapeChanged = Object.entries(currentWorkflowMeasurements.tape).some(([key, value]) => {
       const savedKey = key === 'thighCirc' ? 'thigh_circ' : key === 'calfCirc' ? 'calf_circ' : key
-      return value !== activeMeasurementSet[savedKey as keyof typeof activeMeasurementSet]
+      const savedValue = activeMeasurementSet[savedKey as keyof typeof activeMeasurementSet]
+      if (nullish(value) && nullish(savedValue)) return false
+      return value !== savedValue
     })
 
     return caliperChanged || tapeChanged

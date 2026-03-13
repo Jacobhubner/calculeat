@@ -970,15 +970,15 @@ export default function FoodItemsPage() {
                         {displayData ? Math.round(displayData.kcal) : item.calories} kcal
                       </span>
                       <span className="text-neutral-400">•</span>
-                      <span className="text-yellow-600">
+                      <span style={{ color: '#f5c518' }}>
                         F: {displayData ? displayData.fat.toFixed(1) : item.fat_g}g
                       </span>
                       <span className="text-neutral-400">•</span>
-                      <span className="text-blue-600">
+                      <span style={{ color: '#fb923c' }}>
                         K: {displayData ? displayData.carb.toFixed(1) : item.carb_g}g
                       </span>
                       <span className="text-neutral-400">•</span>
-                      <span className="text-green-600">
+                      <span style={{ color: '#f43f5e' }}>
                         P: {displayData ? displayData.protein.toFixed(1) : item.protein_g}g
                       </span>
                     </div>
@@ -1302,17 +1302,19 @@ export default function FoodItemsPage() {
                             return (
                               <>
                                 <td className="p-4 text-right">
-                                  <span className="font-semibold text-yellow-600">
+                                  <span className="font-semibold" style={{ color: '#f5c518' }}>
                                     {item.fat_g}
                                   </span>
                                   <span className="text-xs text-neutral-500 ml-1">g</span>
                                 </td>
                                 <td className="p-4 text-right">
-                                  <span className="font-semibold text-blue-600">{item.carb_g}</span>
+                                  <span className="font-semibold" style={{ color: '#fb923c' }}>
+                                    {item.carb_g}
+                                  </span>
                                   <span className="text-xs text-neutral-500 ml-1">g</span>
                                 </td>
                                 <td className="p-4 text-right">
-                                  <span className="font-semibold text-green-600">
+                                  <span className="font-semibold" style={{ color: '#f43f5e' }}>
                                     {item.protein_g}
                                   </span>
                                   <span className="text-xs text-neutral-500 ml-1">g</span>
@@ -1324,19 +1326,19 @@ export default function FoodItemsPage() {
                           return (
                             <>
                               <td className="p-4 text-right">
-                                <span className="font-semibold text-yellow-600">
+                                <span className="font-semibold" style={{ color: '#f5c518' }}>
                                   {displayData.fat.toFixed(1)}
                                 </span>
                                 <span className="text-xs text-neutral-500 ml-1">g</span>
                               </td>
                               <td className="p-4 text-right">
-                                <span className="font-semibold text-blue-600">
+                                <span className="font-semibold" style={{ color: '#fb923c' }}>
                                   {displayData.carb.toFixed(1)}
                                 </span>
                                 <span className="text-xs text-neutral-500 ml-1">g</span>
                               </td>
                               <td className="p-4 text-right">
-                                <span className="font-semibold text-green-600">
+                                <span className="font-semibold" style={{ color: '#f43f5e' }}>
                                   {displayData.protein.toFixed(1)}
                                 </span>
                                 <span className="text-xs text-neutral-500 ml-1">g</span>
