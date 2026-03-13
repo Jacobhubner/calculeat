@@ -250,20 +250,55 @@ export default function GoalCalculatorTool() {
     return { min: Math.min(cal1, cal2), max: Math.max(cal1, cal2) }
   }, [profileData, goalResult, weeklyWeightChange])
 
+  // Härled calorie_goal + deficit_level från valt preset
+  const appliedGoalMeta = useMemo(() => {
+    if (!profileData?.tdee || !goalResult) return null
+    const tdee = profileData.tdee
+    const isWeightLoss = goalResult.weightToChange < 0
+    const isWeightGain = goalResult.weightToChange > 0
+
+    const calcKgPerWeek = (pMin: number, pMax: number) => ({
+      min: (tdee * pMin * 7) / 7700,
+      max: (tdee * pMax * 7) / 7700,
+    })
+
+    const eq = (a: number, b: number) => Math.abs(a - b) < 0.01
+
+    if (isWeightLoss) {
+      const cautious = calcKgPerWeek(0.1, 0.15)
+      const normal = calcKgPerWeek(0.2, 0.25)
+      const aggressive = calcKgPerWeek(0.25, 0.3)
+
+      if (eq(weeklyWeightChange.min, cautious.min) && eq(weeklyWeightChange.max, cautious.max))
+        return { calorie_goal: 'Weight loss' as CalorieGoal, deficit_level: '10-15%' as const }
+      if (eq(weeklyWeightChange.min, normal.min) && eq(weeklyWeightChange.max, normal.max))
+        return { calorie_goal: 'Weight loss' as CalorieGoal, deficit_level: '20-25%' as const }
+      if (eq(weeklyWeightChange.min, aggressive.min) && eq(weeklyWeightChange.max, aggressive.max))
+        return { calorie_goal: 'Weight loss' as CalorieGoal, deficit_level: '25-30%' as const }
+    } else if (isWeightGain) {
+      return { calorie_goal: 'Weight gain' as CalorieGoal, deficit_level: undefined }
+    }
+
+    return { calorie_goal: 'Custom TDEE' as CalorieGoal, deficit_level: undefined }
+  }, [profileData, goalResult, weeklyWeightChange])
+
   const isAlreadyApplied =
     appliedCalories !== null &&
     profile?.calories_min === appliedCalories.min &&
     profile?.calories_max === appliedCalories.max
 
   const handleApplyToProfile = async () => {
-    if (!profile?.id || !appliedCalories) return
+    if (!profile?.id || !appliedCalories || !appliedGoalMeta) return
     try {
       await updateProfileMutation.mutateAsync({
         profileId: profile.id,
         data: {
           calories_min: appliedCalories.min,
           calories_max: appliedCalories.max,
-          calorie_goal: 'Custom TDEE' as CalorieGoal,
+          calorie_goal: appliedGoalMeta.calorie_goal,
+          ...(appliedGoalMeta.deficit_level !== undefined && {
+            deficit_level: appliedGoalMeta.deficit_level,
+          }),
         },
       })
       toast.success('Energimål uppdaterat i profilen')
