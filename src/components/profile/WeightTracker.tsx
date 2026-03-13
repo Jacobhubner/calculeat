@@ -109,22 +109,7 @@ export default function WeightTracker({
   // Build chart data with rolling average (create a copy to avoid mutating the original)
   const chartData = [...weightTrend.chartDataWithTrend]
 
-  // Add pending weight to chart if it differs from last saved weight
-  const sortedForLastSaved = [...weightHistory].sort(
-    (a, b) => new Date(b.recorded_at).getTime() - new Date(a.recorded_at).getTime()
-  )
-  const lastSavedWeight =
-    sortedForLastSaved.length > 0 ? sortedForLastSaved[0].weight_kg : initialWeight
-
-  if (weight !== lastSavedWeight && chartData.length > 0) {
-    chartData.push({
-      date: 'Nu',
-      weight: weight,
-      rollingAverage: null,
-      displayDate: 'Osparad (pending)',
-      isPending: true,
-    })
-  }
+  // Pending-punkt borttagen — profilvikten visas inte i diagrammet om den inte är loggad
 
   // Calculate Y-axis domain
   const allWeights = chartData.map(d => d.weight).filter(Boolean)
