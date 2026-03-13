@@ -166,10 +166,10 @@ export function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps) {
             </div>
             <div className="grid grid-cols-3 gap-2 text-xs">
               <div>
-                <span className="font-semibold" style={{ color: '#f43f5e' }}>
-                  {displayProtein}g
+                <span className="font-semibold" style={{ color: '#f5c518' }}>
+                  {displayFat}g
                 </span>
-                <span className="text-neutral-500 ml-1">P</span>
+                <span className="text-neutral-500 ml-1">F</span>
               </div>
               <div>
                 <span className="font-semibold" style={{ color: '#fb923c' }}>
@@ -178,10 +178,10 @@ export function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps) {
                 <span className="text-neutral-500 ml-1">K</span>
               </div>
               <div>
-                <span className="font-semibold" style={{ color: '#f5c518' }}>
-                  {displayFat}g
+                <span className="font-semibold" style={{ color: '#f43f5e' }}>
+                  {displayProtein}g
                 </span>
-                <span className="text-neutral-500 ml-1">F</span>
+                <span className="text-neutral-500 ml-1">P</span>
               </div>
             </div>
           </div>

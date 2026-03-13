@@ -393,9 +393,9 @@ export function IngredientRow({
           <span className="font-semibold text-primary-600">
             {Math.round(nutrition.calories)} kcal
           </span>
-          <span style={{ color: '#f43f5e' }}>P: {nutrition.protein.toFixed(1)}g</span>
-          <span style={{ color: '#fb923c' }}>K: {nutrition.carbs.toFixed(1)}g</span>
           <span style={{ color: '#f5c518' }}>F: {nutrition.fat.toFixed(1)}g</span>
+          <span style={{ color: '#fb923c' }}>K: {nutrition.carbs.toFixed(1)}g</span>
+          <span style={{ color: '#f43f5e' }}>P: {nutrition.protein.toFixed(1)}g</span>
         </div>
       )}
     </div>

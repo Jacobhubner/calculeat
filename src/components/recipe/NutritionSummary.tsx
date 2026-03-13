@@ -77,10 +77,10 @@ export function NutritionSummary({
         {/* Macros grid */}
         <div className="grid grid-cols-3 gap-3">
           <div className="bg-primary-50 rounded-lg p-3 text-center">
-            <div className="text-lg font-semibold" style={{ color: '#f43f5e' }}>
-              {displayValues.protein.toFixed(1)}g
+            <div className="text-lg font-semibold" style={{ color: '#f5c518' }}>
+              {displayValues.fat.toFixed(1)}g
             </div>
-            <div className="text-xs text-neutral-500">Protein</div>
+            <div className="text-xs text-neutral-500">Fett</div>
           </div>
           <div className="bg-primary-50 rounded-lg p-3 text-center">
             <div className="text-lg font-semibold" style={{ color: '#fb923c' }}>
@@ -89,10 +89,10 @@ export function NutritionSummary({
             <div className="text-xs text-neutral-500">Kolhydrater</div>
           </div>
           <div className="bg-primary-50 rounded-lg p-3 text-center">
-            <div className="text-lg font-semibold" style={{ color: '#f5c518' }}>
-              {displayValues.fat.toFixed(1)}g
+            <div className="text-lg font-semibold" style={{ color: '#f43f5e' }}>
+              {displayValues.protein.toFixed(1)}g
             </div>
-            <div className="text-xs text-neutral-500">Fett</div>
+            <div className="text-xs text-neutral-500">Protein</div>
           </div>
         </div>
 
@@ -179,10 +179,10 @@ export function NutritionSummary({
             <div className="text-neutral-500">kcal</div>
           </div>
           <div>
-            <div className="font-semibold" style={{ color: '#f43f5e' }}>
-              {nutrition.totalProtein.toFixed(1)}g
+            <div className="font-semibold" style={{ color: '#f5c518' }}>
+              {nutrition.totalFat.toFixed(1)}g
             </div>
-            <div className="text-neutral-500">P</div>
+            <div className="text-neutral-500">F</div>
           </div>
           <div>
             <div className="font-semibold" style={{ color: '#fb923c' }}>
@@ -191,10 +191,10 @@ export function NutritionSummary({
             <div className="text-neutral-500">K</div>
           </div>
           <div>
-            <div className="font-semibold" style={{ color: '#f5c518' }}>
-              {nutrition.totalFat.toFixed(1)}g
+            <div className="font-semibold" style={{ color: '#f43f5e' }}>
+              {nutrition.totalProtein.toFixed(1)}g
             </div>
-            <div className="text-neutral-500">F</div>
+            <div className="text-neutral-500">P</div>
           </div>
         </div>
       </div>
