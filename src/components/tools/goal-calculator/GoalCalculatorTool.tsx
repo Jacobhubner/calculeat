@@ -237,6 +237,41 @@ export default function GoalCalculatorTool() {
     }
   }, [profileData, goalResult])
 
+  // Beräkna calories_min/max för valt tempo
+  const appliedCalories = useMemo(() => {
+    if (!profileData?.tdee || !goalResult) return null
+    const tdee = profileData.tdee
+    const sign = goalResult.weightToChange < 0 ? -1 : 1
+    const adjMin = calculateDailyCalorieAdjustment(sign * weeklyWeightChange.min)
+    const adjMax = calculateDailyCalorieAdjustment(sign * weeklyWeightChange.max)
+    // min-kalorier = TDEE + minsta justeringen (för viktminskning: störst deficit = lägst kalorier)
+    const cal1 = Math.round(tdee + adjMin)
+    const cal2 = Math.round(tdee + adjMax)
+    return { min: Math.min(cal1, cal2), max: Math.max(cal1, cal2) }
+  }, [profileData, goalResult, weeklyWeightChange])
+
+  const isAlreadyApplied =
+    appliedCalories !== null &&
+    profile?.calories_min === appliedCalories.min &&
+    profile?.calories_max === appliedCalories.max
+
+  const handleApplyToProfile = async () => {
+    if (!profile?.id || !appliedCalories) return
+    try {
+      await updateProfileMutation.mutateAsync({
+        profileId: profile.id,
+        data: {
+          calories_min: appliedCalories.min,
+          calories_max: appliedCalories.max,
+          calorie_goal: 'custom',
+        } as unknown as Partial<Profile>,
+      })
+      toast.success('Energimål uppdaterat i profilen')
+    } catch {
+      toast.error('Kunde inte uppdatera profilen')
+    }
+  }
+
   const handleSaveMissingData = async (data: Partial<Profile>) => {
     if (!profile?.id) return
     try {
@@ -862,6 +897,31 @@ export default function GoalCalculatorTool() {
                     })}
                   </p>
                 </div>
+
+                {appliedCalories && (
+                  <div className="pt-3 border-t">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm text-neutral-600">Energimål för detta tempo:</span>
+                      <span className="text-sm font-semibold text-neutral-900">
+                        {appliedCalories.min}–{appliedCalories.max} kcal
+                      </span>
+                    </div>
+                    <Button
+                      type="button"
+                      variant={isAlreadyApplied ? 'secondary' : 'primary'}
+                      size="sm"
+                      className="w-full"
+                      disabled={isAlreadyApplied || updateProfileMutation.isPending}
+                      onClick={handleApplyToProfile}
+                    >
+                      {isAlreadyApplied
+                        ? 'Redan aktivt i profilen'
+                        : updateProfileMutation.isPending
+                          ? 'Sparar...'
+                          : 'Tillämpa energimål på profilen'}
+                    </Button>
+                  </div>
+                )}
 
                 <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-3 mt-4">
                   <p className="text-xs text-neutral-500">
