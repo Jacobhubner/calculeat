@@ -903,14 +903,14 @@ export default function GoalCalculatorTool() {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <p className="text-xs text-neutral-400 mb-1">Veckor</p>
-                      <p className="text-3xl font-bold text-neutral-900 leading-none">
+                      <p className="text-2xl font-bold text-neutral-900 leading-none">
                         {timeline.min.weeksRequired}–{timeline.max.weeksRequired}
                       </p>
                       <p className="text-xs text-neutral-400 mt-1">veckor</p>
                     </div>
                     <div>
                       <p className="text-xs text-neutral-400 mb-1">Månader</p>
-                      <p className="text-3xl font-bold text-neutral-900 leading-none">
+                      <p className="text-2xl font-bold text-neutral-900 leading-none">
                         {Math.round(timeline.min.monthsRequired * 10) / 10}–
                         {Math.round(timeline.max.monthsRequired * 10) / 10}
                       </p>
