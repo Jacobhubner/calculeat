@@ -156,7 +156,7 @@ export default function WeightTracker({
         <div className="flex items-center justify-between">
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="flex items-center gap-2 hover:opacity-70 transition-opacity"
+            className="flex-1 flex items-center justify-between hover:opacity-70 transition-opacity"
             type="button"
           >
             <CardTitle className="flex items-center gap-2 text-lg leading-snug">
