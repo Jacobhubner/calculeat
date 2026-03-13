@@ -20,26 +20,23 @@ const MACROS = [
   {
     key: 'fat' as const,
     name: 'Fett',
-    color: 'bg-sky-500',
-    lightColor: 'bg-sky-100',
-    textColor: 'text-sky-700',
-    rangeColor: 'bg-sky-200',
+    hex: '#f5c518',
+    hexLight: '#fef9c3',
+    hexRange: '#fde68a',
   },
   {
     key: 'carbs' as const,
     name: 'Kolhydrater',
-    color: 'bg-accent-500',
-    lightColor: 'bg-accent-100',
-    textColor: 'text-accent-700',
-    rangeColor: 'bg-accent-200',
+    hex: '#fb923c',
+    hexLight: '#ffedd5',
+    hexRange: '#fed7aa',
   },
   {
     key: 'protein' as const,
     name: 'Protein',
-    color: 'bg-primary-500',
-    lightColor: 'bg-primary-100',
-    textColor: 'text-primary-700',
-    rangeColor: 'bg-primary-200',
+    hex: '#f43f5e',
+    hexLight: '#ffe4e6',
+    hexRange: '#fecdd3',
   },
 ]
 
@@ -71,11 +68,11 @@ export default function MacroBar({ protein, carbs, fat, className }: MacroBarPro
                 style={{ width: `${pct}%` }}
               >
                 {/* Base: light (range) */}
-                <div className={cn('absolute inset-0', m.rangeColor)} />
+                <div className="absolute inset-0" style={{ backgroundColor: m.hexRange }} />
                 {/* Solid: min portion */}
                 <div
-                  className={cn('absolute inset-y-0 left-0', m.color)}
-                  style={{ width: `${minPct}%` }}
+                  className="absolute inset-y-0 left-0"
+                  style={{ backgroundColor: m.hex, width: `${minPct}%` }}
                 />
               </div>
             )
@@ -108,13 +105,12 @@ export default function MacroBar({ protein, carbs, fat, className }: MacroBarPro
           return (
             <div
               key={m.key}
-              className={cn(
-                'rounded-xl border p-3 text-center',
-                m.lightColor,
-                'border-transparent'
-              )}
+              className="rounded-xl border border-transparent p-3 text-center"
+              style={{ backgroundColor: m.hexLight }}
             >
-              <p className={cn('text-xl font-bold', m.textColor)}>{data.grams}g</p>
+              <p className="text-xl font-bold" style={{ color: m.hex }}>
+                {data.grams}g
+              </p>
               {hasRange && (
                 <p className="text-[10px] text-neutral-500 leading-tight">
                   {data.gramsMin}–{data.gramsMax}g

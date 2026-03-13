@@ -133,7 +133,7 @@ export default function MacroDistributionCard({
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className="text-sm font-medium text-neutral-700">Fett</label>
-              <div className="text-sm font-semibold text-sky-600">
+              <div className="text-sm font-semibold" style={{ color: '#f5c518' }}>
                 {fatRange[0].toFixed(0)}% - {fatRange[1].toFixed(0)}%
                 {caloriesMin && caloriesMax && (
                   <span className="text-neutral-500 font-normal ml-2 text-xs">
@@ -161,7 +161,7 @@ export default function MacroDistributionCard({
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className="text-sm font-medium text-neutral-700">Kolhydrater</label>
-              <div className="text-sm font-semibold text-accent-600">
+              <div className="text-sm font-semibold" style={{ color: '#fb923c' }}>
                 {carbRange[0].toFixed(0)}% - {carbRange[1].toFixed(0)}%
                 {caloriesMin && caloriesMax && (
                   <span className="text-neutral-500 font-normal ml-2 text-xs">
@@ -189,7 +189,7 @@ export default function MacroDistributionCard({
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className="text-sm font-medium text-neutral-700">Protein</label>
-              <div className="text-sm font-semibold text-primary-600">
+              <div className="text-sm font-semibold" style={{ color: '#f43f5e' }}>
                 {proteinRange[0].toFixed(0)}% - {proteinRange[1].toFixed(0)}%
                 {caloriesMin && caloriesMax && (
                   <span className="text-neutral-500 font-normal ml-2 text-xs">
