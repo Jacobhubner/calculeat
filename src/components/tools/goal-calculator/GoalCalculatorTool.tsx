@@ -21,7 +21,7 @@ import {
 } from '@/lib/calculations/goalCalculations'
 import { calculateBMI, getBMICategory, calculateIdealWeightRange } from '@/lib/calculations/helpers'
 import { toast } from 'sonner'
-import type { Profile } from '@/lib/types'
+import type { Profile, CalorieGoal } from '@/lib/types'
 
 export default function GoalCalculatorTool() {
   const navigate = useNavigate()
@@ -263,8 +263,8 @@ export default function GoalCalculatorTool() {
         data: {
           calories_min: appliedCalories.min,
           calories_max: appliedCalories.max,
-          calorie_goal: 'custom',
-        } as unknown as Partial<Profile>,
+          calorie_goal: 'Custom TDEE' as CalorieGoal,
+        },
       })
       toast.success('Energimål uppdaterat i profilen')
     } catch {
