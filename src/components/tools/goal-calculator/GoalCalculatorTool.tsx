@@ -318,9 +318,9 @@ export default function GoalCalculatorTool() {
         </CardContent>
       </Card>
 
-      <div className="grid gap-6 md:grid-cols-[2fr_1fr]">
+      <div className="grid gap-6 md:grid-cols-[2fr_1fr] min-w-0 overflow-hidden">
         {/* Vänster: Inställningar */}
-        <div className="space-y-6">
+        <div className="space-y-6 min-w-0 overflow-hidden">
           {/* Nuvarande Status */}
           {profileData?.weight_kg && (
             <Card>
@@ -731,7 +731,7 @@ export default function GoalCalculatorTool() {
 
         {/* Höger: Resultat */}
         {goalResult && timeline && (
-          <div className="space-y-6">
+          <div className="space-y-6 min-w-0 overflow-hidden">
             {/* Målvikt */}
             <Card>
               <CardHeader>

@@ -122,9 +122,9 @@ export default function METCalculatorTool() {
         </Badge>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-[2fr_1fr]">
+      <div className="grid gap-6 md:grid-cols-[2fr_1fr] min-w-0 overflow-hidden">
         {/* Vänster: Aktivitetssökning */}
-        <div className="space-y-6">
+        <div className="space-y-6 min-w-0 overflow-hidden">
           <Card>
             <CardHeader>
               <CardTitle>Sök Aktiviteter</CardTitle>
@@ -199,7 +199,7 @@ export default function METCalculatorTool() {
         </div>
 
         {/* Höger: Valda aktiviteter och resultat */}
-        <div className="space-y-6">
+        <div className="space-y-6 min-w-0 overflow-hidden">
           {/* Sammanfattning */}
           <Card>
             <CardHeader>
