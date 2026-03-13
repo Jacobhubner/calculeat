@@ -187,9 +187,9 @@ export default function GeneticPotentialTool() {
         </Card>
       )}
 
-      <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
+      <div className="grid gap-6 lg:grid-cols-[2fr_1fr] min-w-0 overflow-hidden">
         {/* Vänster: Inputs */}
-        <div className="space-y-6">
+        <div className="space-y-6 min-w-0 overflow-hidden">
           {/* Resultat per formel */}
           {results && results.length > 0 && (
             <Card>

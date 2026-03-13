@@ -528,9 +528,9 @@ export default function ProfilePage() {
       </div>
 
       <div className="max-w-7xl mx-auto">
-        <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
+        <div className="grid gap-6 lg:grid-cols-[1fr_320px] min-w-0 overflow-hidden">
           {/* Main content column - Conditional rendering */}
-          <div className="space-y-6">
+          <div className="space-y-6 min-w-0 overflow-hidden">
             {/* SCENARIO 1: No basic info - inline setup form */}
             {!hasBasicInfo && displayProfile && (
               <SetupProfileForm onSave={handleSetupSave} isSaving={updateProfile.isPending} />
@@ -605,7 +605,7 @@ export default function ProfilePage() {
           </div>
 
           {/* Sidebar */}
-          <div className="order-first lg:order-none lg:sticky lg:top-20 lg:self-start space-y-4">
+          <div className="order-first lg:order-none lg:sticky lg:top-20 lg:self-start space-y-4 min-w-0 overflow-hidden">
             {/* Save button */}
             {hasBasicInfo && (
               <div className="bg-white rounded-xl border border-neutral-200 p-4">

@@ -794,17 +794,17 @@ export default function BodyCompositionCalculator() {
       </div>
 
       <div className="max-w-7xl mx-auto">
-        <div className="grid gap-6 lg:grid-cols-[1fr_300px]">
+        <div className="grid gap-6 lg:grid-cols-[1fr_300px] min-w-0 overflow-hidden">
           {/* Main content column */}
-          <div className="space-y-6">
+          <div className="space-y-6 min-w-0 overflow-hidden">
             {/* Tab Navigation */}
             <TabNavigation activeTab={activeWorkflow} onTabChange={setActiveWorkflow} />
 
             {/* Workflow 1: Method-First */}
             {activeWorkflow === 'method-first' && (
-              <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
+              <div className="grid gap-6 lg:grid-cols-[2fr_1fr] min-w-0 overflow-hidden">
                 {/* Left Column - Input */}
-                <div className="space-y-6">
+                <div className="space-y-6 min-w-0 overflow-hidden">
                   {/* Method Selection */}
                   <MethodSelectionCard
                     selectedMethod={selectedMethod}
