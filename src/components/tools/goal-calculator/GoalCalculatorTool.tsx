@@ -844,51 +844,43 @@ export default function GoalCalculatorTool() {
               <CardHeader>
                 <CardTitle className="text-lg">Tidslinje</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-neutral-600">Vald tempo:</span>
-                  <span className="text-lg font-semibold text-neutral-900">
+              <CardContent className="space-y-4">
+                {/* Tempo */}
+                <div className="bg-neutral-50 border border-neutral-200 rounded-lg px-4 py-3 flex items-center justify-between">
+                  <span className="text-sm text-neutral-500">Valt tempo</span>
+                  <span className="text-sm font-semibold text-neutral-900">
                     {(() => {
-                      // Determine which preset is active and display its name
                       if (!goalResult || !profileData?.tdee) {
-                        return `${weeklyWeightChange.min.toFixed(1)}-${weeklyWeightChange.max.toFixed(1)} kg/vecka`
+                        return `${weeklyWeightChange.min.toFixed(1)}–${weeklyWeightChange.max.toFixed(1)} kg/vecka`
                       }
-
                       const tdee = profileData.tdee
                       const isWeightLoss = goalResult.weightToChange < 0
                       const isWeightGain = goalResult.weightToChange > 0
-
-                      // Helper: Beräkna kg/vecka från procent av TDEE
                       const calcKgPerWeek = (percentMin: number, percentMax: number) => {
-                        const caloriesMin = tdee * percentMin
-                        const caloriesMax = tdee * percentMax
-                        const kgMin = (caloriesMin * 7) / 7700
-                        const kgMax = (caloriesMax * 7) / 7700
+                        const kgMin = (tdee * percentMin * 7) / 7700
+                        const kgMax = (tdee * percentMax * 7) / 7700
                         return { min: kgMin, max: kgMax }
                       }
-
                       let presetName = ''
-
                       if (isWeightLoss) {
                         const cautious = calcKgPerWeek(0.1, 0.15)
                         const normal = calcKgPerWeek(0.2, 0.25)
                         const aggressive = calcKgPerWeek(0.25, 0.3)
-
                         if (
                           Math.abs(weeklyWeightChange.min - cautious.min) < 0.01 &&
                           Math.abs(weeklyWeightChange.max - cautious.max) < 0.01
                         ) {
-                          presetName = 'Försiktigt '
+                          presetName = 'Försiktigt · '
                         } else if (
                           Math.abs(weeklyWeightChange.min - normal.min) < 0.01 &&
                           Math.abs(weeklyWeightChange.max - normal.max) < 0.01
                         ) {
-                          presetName = 'Normalt '
+                          presetName = 'Normalt · '
                         } else if (
                           Math.abs(weeklyWeightChange.min - aggressive.min) < 0.01 &&
                           Math.abs(weeklyWeightChange.max - aggressive.max) < 0.01
                         ) {
-                          presetName = 'Aggressivt '
+                          presetName = 'Aggressivt · '
                         }
                       } else if (isWeightGain) {
                         const gain = calcKgPerWeek(0.1, 0.2)
@@ -896,74 +888,105 @@ export default function GoalCalculatorTool() {
                           Math.abs(weeklyWeightChange.min - gain.min) < 0.01 &&
                           Math.abs(weeklyWeightChange.max - gain.max) < 0.01
                         ) {
-                          presetName = 'Viktuppgång '
+                          presetName = 'Viktuppgång · '
                         }
                       }
-
-                      return `${presetName}${weeklyWeightChange.min.toFixed(1)}-${weeklyWeightChange.max.toFixed(1)} kg/vecka`
+                      return `${presetName}${weeklyWeightChange.min.toFixed(1)}–${weeklyWeightChange.max.toFixed(1)} kg/vecka`
                     })()}
                   </span>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-neutral-600">Veckor:</span>
-                  <span className="text-xl font-bold text-neutral-900">
-                    {timeline.min.weeksRequired} - {timeline.max.weeksRequired} veckor
-                  </span>
+
+                {/* Veckor / Månader stat grid */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-neutral-50 border border-neutral-200 rounded-lg px-4 py-3 text-center">
+                    <p className="text-xs text-neutral-500 mb-1">Veckor</p>
+                    <p className="text-2xl font-bold text-neutral-900 leading-none">
+                      {timeline.min.weeksRequired}–{timeline.max.weeksRequired}
+                    </p>
+                    <p className="text-xs text-neutral-400 mt-1">veckor</p>
+                  </div>
+                  <div className="bg-neutral-50 border border-neutral-200 rounded-lg px-4 py-3 text-center">
+                    <p className="text-xs text-neutral-500 mb-1">Månader</p>
+                    <p className="text-2xl font-bold text-neutral-900 leading-none">
+                      {Math.round(timeline.min.monthsRequired * 10) / 10}–
+                      {Math.round(timeline.max.monthsRequired * 10) / 10}
+                    </p>
+                    <p className="text-xs text-neutral-400 mt-1">månader</p>
+                  </div>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-neutral-600">Månader:</span>
-                  <span className="text-xl font-bold text-neutral-900">
-                    {timeline.min.monthsRequired} - {timeline.max.monthsRequired} månader
-                  </span>
-                </div>
-                <div className="pt-3 border-t">
-                  <p className="text-sm text-neutral-600 mb-1">Uppskattat slutdatum:</p>
-                  <p className="text-lg font-bold text-neutral-900">
-                    {timeline.min.estimatedEndDate.toLocaleDateString('sv-SE', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                    })}
-                    {' - '}
-                    {timeline.max.estimatedEndDate.toLocaleDateString('sv-SE', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                    })}
-                  </p>
+
+                {/* Slutdatum */}
+                <div className="border border-neutral-200 rounded-lg overflow-hidden">
+                  <div className="bg-neutral-50 px-4 py-2 border-b border-neutral-200">
+                    <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide">
+                      Uppskattat slutdatum
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-2 divide-x divide-neutral-200">
+                    <div className="px-4 py-3 text-center">
+                      <p className="text-xs text-neutral-400 mb-1">Tidigast</p>
+                      <p className="text-sm font-semibold text-neutral-900">
+                        {timeline.min.estimatedEndDate.toLocaleDateString('sv-SE', {
+                          day: 'numeric',
+                          month: 'short',
+                        })}
+                      </p>
+                      <p className="text-xs text-neutral-500">
+                        {timeline.min.estimatedEndDate.toLocaleDateString('sv-SE', {
+                          year: 'numeric',
+                        })}
+                      </p>
+                    </div>
+                    <div className="px-4 py-3 text-center">
+                      <p className="text-xs text-neutral-400 mb-1">Senast</p>
+                      <p className="text-sm font-semibold text-neutral-900">
+                        {timeline.max.estimatedEndDate.toLocaleDateString('sv-SE', {
+                          day: 'numeric',
+                          month: 'short',
+                        })}
+                      </p>
+                      <p className="text-xs text-neutral-500">
+                        {timeline.max.estimatedEndDate.toLocaleDateString('sv-SE', {
+                          year: 'numeric',
+                        })}
+                      </p>
+                    </div>
+                  </div>
                 </div>
 
                 {appliedCalories && (
-                  <div className="pt-3 border-t">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm text-neutral-600">Energimål för detta tempo:</span>
+                  <div className="border border-neutral-200 rounded-lg overflow-hidden">
+                    <div className="bg-neutral-50 px-4 py-2 border-b border-neutral-200 flex items-center justify-between">
+                      <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide">
+                        Energimål
+                      </p>
                       <span className="text-sm font-semibold text-neutral-900">
                         {appliedCalories.min}–{appliedCalories.max} kcal
                       </span>
                     </div>
-                    <Button
-                      type="button"
-                      variant={isAlreadyApplied ? 'secondary' : 'primary'}
-                      size="sm"
-                      className="w-full"
-                      disabled={isAlreadyApplied || updateProfileMutation.isPending}
-                      onClick={handleApplyToProfile}
-                    >
-                      {isAlreadyApplied
-                        ? 'Redan aktivt i profilen'
-                        : updateProfileMutation.isPending
-                          ? 'Sparar...'
-                          : 'Tillämpa energimål på profilen'}
-                    </Button>
+                    <div className="px-4 py-3">
+                      <Button
+                        type="button"
+                        variant={isAlreadyApplied ? 'secondary' : 'primary'}
+                        size="sm"
+                        className="w-full"
+                        disabled={isAlreadyApplied || updateProfileMutation.isPending}
+                        onClick={handleApplyToProfile}
+                      >
+                        {isAlreadyApplied
+                          ? 'Redan aktivt i profilen'
+                          : updateProfileMutation.isPending
+                            ? 'Sparar...'
+                            : 'Tillämpa energimål på profilen'}
+                      </Button>
+                    </div>
                   </div>
                 )}
 
-                <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-3 mt-4">
-                  <p className="text-xs text-neutral-500">
-                    * Detta är en uppskattning baserad på bibehållen fettfri massa och valt
-                    viktförändring-intervall. Faktiska resultat kan variera.
-                  </p>
-                </div>
+                <p className="text-xs text-neutral-400 leading-relaxed">
+                  * Uppskattning baserad på bibehållen fettfri massa och valt
+                  viktförändring-intervall. Faktiska resultat kan variera.
+                </p>
               </CardContent>
             </Card>
           </div>
