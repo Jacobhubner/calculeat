@@ -595,28 +595,25 @@ export default function GoalCalculatorTool() {
           )}
 
           {/* Kroppsfett % referenstabell */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base">Kroppsfett %</CardTitle>
-              <CardDescription className="text-xs">
-                Kategorier enligt American Council on Exercise (ACE)
-                {profileData?.gender
-                  ? ` — ${profileData.gender === 'male' ? 'man' : 'kvinna'}`
-                  : ''}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <BodyFatReferenceTable
-                userBodyFat={profileData?.body_fat_percentage ?? null}
-                gender={profileData?.gender}
-              />
-              {!profileData?.body_fat_percentage && (
-                <p className="text-[10px] text-neutral-500 italic">
-                  Lägg till kroppsfett% i din profil för att se din nuvarande kategori.
-                </p>
-              )}
-            </CardContent>
-          </Card>
+          {profileData?.body_fat_percentage && (
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base">Kroppsfett %</CardTitle>
+                <CardDescription className="text-xs">
+                  Kategorier enligt American Council on Exercise (ACE)
+                  {profileData?.gender
+                    ? ` — ${profileData.gender === 'male' ? 'man' : 'kvinna'}`
+                    : ''}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <BodyFatReferenceTable
+                  userBodyFat={profileData.body_fat_percentage}
+                  gender={profileData?.gender}
+                />
+              </CardContent>
+            </Card>
+          )}
 
           {/* Målslider */}
           <Card>
