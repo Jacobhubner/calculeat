@@ -20,6 +20,7 @@ import {
   type GoalCalculationResult,
 } from '@/lib/calculations/goalCalculations'
 import { calculateBMI, getBMICategory, calculateIdealWeightRange } from '@/lib/calculations/helpers'
+import { BodyFatReferenceTable } from '@/components/body-composition/BodyFatReferenceTable'
 import { toast } from 'sonner'
 import type { Profile, CalorieGoal } from '@/lib/types'
 
@@ -592,6 +593,30 @@ export default function GoalCalculatorTool() {
               </CardContent>
             </Card>
           )}
+
+          {/* Kroppsfett % referenstabell */}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base">Kroppsfett %</CardTitle>
+              <CardDescription className="text-xs">
+                Kategorier enligt American Council on Exercise (ACE)
+                {profileData?.gender
+                  ? ` — ${profileData.gender === 'male' ? 'man' : 'kvinna'}`
+                  : ''}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <BodyFatReferenceTable
+                userBodyFat={profileData?.body_fat_percentage ?? null}
+                gender={profileData?.gender}
+              />
+              {!profileData?.body_fat_percentage && (
+                <p className="text-[10px] text-neutral-500 italic">
+                  Lägg till kroppsfett% i din profil för att se din nuvarande kategori.
+                </p>
+              )}
+            </CardContent>
+          </Card>
 
           {/* Målslider */}
           <Card>
