@@ -175,32 +175,32 @@ export function getBodyFatCategory(
   if (gender === 'male') {
     if (bodyFat < 6) {
       return {
-        category: 'Essential Fat',
-        description: 'Väsentligt fett - Hälsorisk',
+        category: 'Essentiellt fett',
+        description: '2–5% — hälsorisk vid långvarigt underskott',
         color: 'text-red-600',
       }
     } else if (bodyFat < 14) {
       return {
-        category: 'Athletes',
-        description: 'Atleter - Mycket låg kroppsfett',
+        category: 'Atlet',
+        description: '6–13% — mycket låg kroppsfett',
         color: 'text-green-600',
       }
     } else if (bodyFat < 18) {
       return {
-        category: 'Fitness',
-        description: 'Fitness - Låg kroppsfett',
+        category: 'Fitness (vältränad)',
+        description: '14–17% — låg kroppsfett',
         color: 'text-blue-600',
       }
     } else if (bodyFat < 25) {
       return {
-        category: 'Average',
-        description: 'Genomsnitt - Acceptabel',
+        category: 'Hälsosamt medel',
+        description: '18–24% — acceptabel nivå',
         color: 'text-yellow-600',
       }
     } else {
       return {
-        category: 'Obese',
-        description: 'Övervikt - Hälsorisk',
+        category: 'Överviktig',
+        description: '≥ 25% — förhöjd hälsorisk',
         color: 'text-orange-600',
       }
     }
@@ -208,32 +208,32 @@ export function getBodyFatCategory(
     // Female
     if (bodyFat < 14) {
       return {
-        category: 'Essential Fat',
-        description: 'Väsentligt fett - Hälsorisk',
+        category: 'Essentiellt fett',
+        description: '10–13% — hälsorisk vid långvarigt underskott',
         color: 'text-red-600',
       }
     } else if (bodyFat < 21) {
       return {
-        category: 'Athletes',
-        description: 'Atleter - Mycket låg kroppsfett',
+        category: 'Atlet',
+        description: '14–20% — mycket låg kroppsfett',
         color: 'text-green-600',
       }
     } else if (bodyFat < 25) {
       return {
-        category: 'Fitness',
-        description: 'Fitness - Låg kroppsfett',
+        category: 'Fitness (vältränad)',
+        description: '21–24% — låg kroppsfett',
         color: 'text-blue-600',
       }
     } else if (bodyFat < 32) {
       return {
-        category: 'Average',
-        description: 'Genomsnitt - Acceptabel',
+        category: 'Hälsosamt medel',
+        description: '25–31% — acceptabel nivå',
         color: 'text-yellow-600',
       }
     } else {
       return {
-        category: 'Obese',
-        description: 'Övervikt - Hälsorisk',
+        category: 'Överviktig',
+        description: '≥ 32% — förhöjd hälsorisk',
         color: 'text-orange-600',
       }
     }

@@ -443,7 +443,6 @@ export default function GoalCalculatorTool() {
                       <p className={`font-semibold ${currentCategory.color}`}>
                         {currentCategory.category}
                       </p>
-                      <p className="text-sm text-neutral-600">{currentCategory.description}</p>
                     </div>
                   </div>
                 )}
@@ -691,7 +690,6 @@ export default function GoalCalculatorTool() {
                   <p className={`font-semibold ${targetCategory.color}`}>
                     {targetCategory.category}
                   </p>
-                  <p className="text-sm text-neutral-600">{targetCategory.description}</p>
                 </div>
               )}
 

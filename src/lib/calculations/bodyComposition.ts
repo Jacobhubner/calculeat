@@ -782,31 +782,31 @@ export function getBodyFatCategory(params: {
   if (gender === 'male') {
     if (bodyFatPercentage < 6) {
       return {
-        category: 'Essential Fat',
-        description: 'För lågt - risk för hälsoproblem',
+        category: 'Essentiellt fett',
+        description: 'För lågt — risk för hälsoproblem',
         color: 'red',
       }
     } else if (bodyFatPercentage < 14) {
       return {
-        category: 'Athletes',
+        category: 'Atlet',
         description: 'Idrottsnivå',
         color: 'green',
       }
     } else if (bodyFatPercentage < 18) {
       return {
-        category: 'Fitness',
+        category: 'Fitness (vältränad)',
         description: 'Fitness-nivå',
         color: 'green',
       }
     } else if (bodyFatPercentage < 25) {
       return {
-        category: 'Average',
+        category: 'Hälsosamt medel',
         description: 'Genomsnitt',
         color: 'yellow',
       }
     } else {
       return {
-        category: 'Obese',
+        category: 'Överviktig',
         description: 'Övervikt',
         color: 'orange',
       }
@@ -814,31 +814,31 @@ export function getBodyFatCategory(params: {
   } else {
     if (bodyFatPercentage < 14) {
       return {
-        category: 'Essential Fat',
-        description: 'För lågt - risk för hälsoproblem',
+        category: 'Essentiellt fett',
+        description: 'För lågt — risk för hälsoproblem',
         color: 'red',
       }
     } else if (bodyFatPercentage < 21) {
       return {
-        category: 'Athletes',
+        category: 'Atlet',
         description: 'Idrottsnivå',
         color: 'green',
       }
     } else if (bodyFatPercentage < 25) {
       return {
-        category: 'Fitness',
+        category: 'Fitness (vältränad)',
         description: 'Fitness-nivå',
         color: 'green',
       }
     } else if (bodyFatPercentage < 32) {
       return {
-        category: 'Average',
+        category: 'Hälsosamt medel',
         description: 'Genomsnitt',
         color: 'yellow',
       }
     } else {
       return {
-        category: 'Obese',
+        category: 'Överviktig',
         description: 'Övervikt',
         color: 'orange',
       }
