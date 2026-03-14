@@ -841,11 +841,11 @@ export default function GoalCalculatorTool() {
             <Card className="overflow-hidden">
               <CardContent className="p-0">
                 {/* Header */}
-                <div className="bg-primary-600 px-5 py-4">
-                  <p className="text-xs font-semibold text-primary-100 uppercase tracking-widest mb-1">
+                <div className="px-5 py-4 border-b border-neutral-100">
+                  <p className="text-xs font-semibold text-neutral-400 uppercase tracking-widest mb-1">
                     Tidslinje
                   </p>
-                  <p className="text-lg font-bold text-white leading-snug">
+                  <p className="text-lg font-bold text-neutral-900 leading-snug">
                     {(() => {
                       if (!goalResult || !profileData?.tdee) {
                         return `${weeklyWeightChange.min.toFixed(1)}–${weeklyWeightChange.max.toFixed(1)} kg/vecka`
@@ -897,24 +897,22 @@ export default function GoalCalculatorTool() {
                 {/* Veckor / Månader */}
                 <div className="grid grid-cols-2 divide-x divide-neutral-100 border-b border-neutral-100">
                   <div className="px-5 py-4">
-                    <p className="text-xs text-neutral-400 uppercase tracking-wide mb-2">Veckor</p>
-                    <p className="text-xl font-bold text-neutral-900 leading-none">
-                      {timeline.min.weeksRequired}–{timeline.max.weeksRequired}
-                      <span className="text-sm font-normal text-neutral-400 ml-1">v</span>
+                    <p className="text-xs text-neutral-400 uppercase tracking-wide mb-1">Veckor</p>
+                    <p className="text-sm font-semibold text-neutral-800">
+                      {timeline.min.weeksRequired}–{timeline.max.weeksRequired} v
                     </p>
                   </div>
                   <div className="px-5 py-4">
-                    <p className="text-xs text-neutral-400 uppercase tracking-wide mb-2">Månader</p>
-                    <p className="text-xl font-bold text-neutral-900 leading-none">
+                    <p className="text-xs text-neutral-400 uppercase tracking-wide mb-1">Månader</p>
+                    <p className="text-sm font-semibold text-neutral-800">
                       {Math.round(timeline.min.monthsRequired * 10) / 10}–
-                      {Math.round(timeline.max.monthsRequired * 10) / 10}
-                      <span className="text-sm font-normal text-neutral-400 ml-1">mån</span>
+                      {Math.round(timeline.max.monthsRequired * 10) / 10} mån
                     </p>
                   </div>
                 </div>
 
                 {/* Slutdatum */}
-                <div className="grid grid-cols-2 divide-x divide-neutral-100 border-b border-neutral-100 bg-neutral-50">
+                <div className="grid grid-cols-2 divide-x divide-neutral-100 border-b border-neutral-100">
                   <div className="px-5 py-4">
                     <p className="text-xs text-neutral-400 uppercase tracking-wide mb-1">
                       Tidigast klart
@@ -946,7 +944,7 @@ export default function GoalCalculatorTool() {
                   <div className="px-5 py-4 space-y-3">
                     <div className="flex items-center justify-between">
                       <p className="text-xs text-neutral-400 uppercase tracking-wide">Energimål</p>
-                      <p className="text-sm font-bold text-neutral-900">
+                      <p className="text-sm font-semibold text-neutral-800">
                         {appliedCalories.min}–{appliedCalories.max} kcal/dag
                       </p>
                     </div>
