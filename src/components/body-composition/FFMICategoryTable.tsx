@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { FFMI_DESCRIPTION_CATEGORIES } from '../../lib/constants/bodyCompositionReferenceData'
 
 interface FFMICategoryTableProps {
@@ -6,7 +7,8 @@ interface FFMICategoryTableProps {
 }
 
 export function FFMICategoryTable({ userFFMI, gender }: FFMICategoryTableProps) {
-  const isMale = gender === 'male'
+  const [showMale, setShowMale] = useState(gender !== 'female')
+  const isMale = showMale
 
   // Function to check if user's FFMI falls within a category
   const isUserInCategory = (category: (typeof FFMI_DESCRIPTION_CATEGORIES)[0]): boolean => {
@@ -35,12 +37,23 @@ export function FFMICategoryTable({ userFFMI, gender }: FFMICategoryTableProps) 
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+      <div className="flex justify-end px-2 pt-2">
+        <button
+          type="button"
+          onClick={() => setShowMale(v => !v)}
+          className="text-[10px] text-primary-600 hover:underline"
+        >
+          Visa {showMale ? 'kvinnors' : 'mäns'} värden
+        </button>
+      </div>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="bg-gray-50 border-b border-gray-200">
               <th className="px-4 py-2 text-left font-semibold text-gray-900">Beskrivning</th>
-              <th className="px-4 py-2 text-left font-semibold text-gray-900">Värde</th>
+              <th className="px-4 py-2 text-left font-semibold text-gray-900">
+                {showMale ? 'Män' : 'Kvinnor'}
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">

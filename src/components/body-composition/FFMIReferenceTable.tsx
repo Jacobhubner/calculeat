@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { FFMI_WITH_BODY_FAT_RANGES } from '../../lib/constants/bodyCompositionReferenceData'
 
 interface FFMIReferenceTableProps {
@@ -7,7 +8,8 @@ interface FFMIReferenceTableProps {
 }
 
 export function FFMIReferenceTable({ userFFMI, userBodyFat, gender }: FFMIReferenceTableProps) {
-  const isMale = gender === 'male'
+  const [showMale, setShowMale] = useState(gender !== 'female')
+  const isMale = showMale
 
   // Function to check if user's values fall within a range
   const isUserInRange = (row: (typeof FFMI_WITH_BODY_FAT_RANGES)[0]): boolean => {
@@ -31,11 +33,22 @@ export function FFMIReferenceTable({ userFFMI, userBodyFat, gender }: FFMIRefere
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+      <div className="flex justify-end px-2 pt-2">
+        <button
+          type="button"
+          onClick={() => setShowMale(v => !v)}
+          className="text-[10px] text-primary-600 hover:underline"
+        >
+          Visa {showMale ? 'kvinnors' : 'mäns'} värden
+        </button>
+      </div>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="bg-gray-50 border-b border-gray-200">
-              <th className="px-4 py-2 text-left font-semibold text-gray-900">FFMI</th>
+              <th className="px-4 py-2 text-left font-semibold text-gray-900">
+                FFMI {showMale ? '(män)' : '(kvinnor)'}
+              </th>
               <th className="px-4 py-2 text-left font-semibold text-gray-900">Kroppsfett</th>
               <th className="px-4 py-2 text-left font-semibold text-gray-900">Beskrivning</th>
             </tr>
