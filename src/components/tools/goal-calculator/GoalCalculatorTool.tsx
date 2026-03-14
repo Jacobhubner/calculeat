@@ -839,16 +839,13 @@ export default function GoalCalculatorTool() {
 
             {/* Tidslinje */}
             <Card className="overflow-hidden">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg">Tidslinje</CardTitle>
-              </CardHeader>
               <CardContent className="p-0">
-                {/* Tempo — färgad banner */}
-                <div className="bg-primary-50 border-y border-primary-100 px-6 py-4">
-                  <p className="text-xs font-medium text-primary-600 uppercase tracking-wider mb-1">
-                    Valt tempo
+                {/* Header */}
+                <div className="bg-primary-600 px-5 py-4">
+                  <p className="text-xs font-semibold text-primary-100 uppercase tracking-widest mb-1">
+                    Tidslinje
                   </p>
-                  <p className="text-xl font-bold text-primary-700">
+                  <p className="text-lg font-bold text-white leading-snug">
                     {(() => {
                       if (!goalResult || !profileData?.tdee) {
                         return `${weeklyWeightChange.min.toFixed(1)}–${weeklyWeightChange.max.toFixed(1)} kg/vecka`
@@ -870,17 +867,17 @@ export default function GoalCalculatorTool() {
                           Math.abs(weeklyWeightChange.min - cautious.min) < 0.01 &&
                           Math.abs(weeklyWeightChange.max - cautious.max) < 0.01
                         ) {
-                          presetName = 'Försiktigt — '
+                          presetName = 'Försiktigt'
                         } else if (
                           Math.abs(weeklyWeightChange.min - normal.min) < 0.01 &&
                           Math.abs(weeklyWeightChange.max - normal.max) < 0.01
                         ) {
-                          presetName = 'Normalt — '
+                          presetName = 'Normalt'
                         } else if (
                           Math.abs(weeklyWeightChange.min - aggressive.min) < 0.01 &&
                           Math.abs(weeklyWeightChange.max - aggressive.max) < 0.01
                         ) {
-                          presetName = 'Aggressivt — '
+                          presetName = 'Aggressivt'
                         }
                       } else if (isWeightGain) {
                         const gain = calcKgPerWeek(0.1, 0.2)
@@ -888,93 +885,91 @@ export default function GoalCalculatorTool() {
                           Math.abs(weeklyWeightChange.min - gain.min) < 0.01 &&
                           Math.abs(weeklyWeightChange.max - gain.max) < 0.01
                         ) {
-                          presetName = 'Viktuppgång — '
+                          presetName = 'Viktuppgång'
                         }
                       }
-                      return `${presetName}${weeklyWeightChange.min.toFixed(1)}–${weeklyWeightChange.max.toFixed(1)} kg/vecka`
+                      const kgRange = `${weeklyWeightChange.min.toFixed(1)}–${weeklyWeightChange.max.toFixed(1)} kg/vecka`
+                      return presetName ? `${presetName} · ${kgRange}` : kgRange
                     })()}
                   </p>
                 </div>
 
-                <div className="px-6 py-5 space-y-5">
-                  {/* Veckor / Månader */}
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-xs text-neutral-400 mb-1">Veckor</p>
-                      <p className="text-2xl font-bold text-neutral-900 leading-none">
-                        {timeline.min.weeksRequired}–{timeline.max.weeksRequired}
-                      </p>
-                      <p className="text-xs text-neutral-400 mt-1">veckor</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-neutral-400 mb-1">Månader</p>
-                      <p className="text-2xl font-bold text-neutral-900 leading-none">
-                        {Math.round(timeline.min.monthsRequired * 10) / 10}–
-                        {Math.round(timeline.max.monthsRequired * 10) / 10}
-                      </p>
-                      <p className="text-xs text-neutral-400 mt-1">månader</p>
-                    </div>
+                {/* Veckor / Månader */}
+                <div className="grid grid-cols-2 divide-x divide-neutral-100 border-b border-neutral-100">
+                  <div className="px-5 py-4">
+                    <p className="text-xs text-neutral-400 uppercase tracking-wide mb-2">Veckor</p>
+                    <p className="text-xl font-bold text-neutral-900 leading-none">
+                      {timeline.min.weeksRequired}–{timeline.max.weeksRequired}
+                      <span className="text-sm font-normal text-neutral-400 ml-1">v</span>
+                    </p>
                   </div>
-
-                  {/* Slutdatum */}
-                  <div className="grid grid-cols-2 gap-4 pt-4 border-t border-neutral-100">
-                    <div>
-                      <p className="text-xs text-neutral-400 mb-1">Tidigast klart</p>
-                      <p className="text-base font-semibold text-neutral-800">
-                        {timeline.min.estimatedEndDate.toLocaleDateString('sv-SE', {
-                          day: 'numeric',
-                          month: 'long',
-                        })}
-                      </p>
-                      <p className="text-xs text-neutral-400">
-                        {timeline.min.estimatedEndDate.getFullYear()}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-neutral-400 mb-1">Senast klart</p>
-                      <p className="text-base font-semibold text-neutral-800">
-                        {timeline.max.estimatedEndDate.toLocaleDateString('sv-SE', {
-                          day: 'numeric',
-                          month: 'long',
-                        })}
-                      </p>
-                      <p className="text-xs text-neutral-400">
-                        {timeline.max.estimatedEndDate.getFullYear()}
-                      </p>
-                    </div>
+                  <div className="px-5 py-4">
+                    <p className="text-xs text-neutral-400 uppercase tracking-wide mb-2">Månader</p>
+                    <p className="text-xl font-bold text-neutral-900 leading-none">
+                      {Math.round(timeline.min.monthsRequired * 10) / 10}–
+                      {Math.round(timeline.max.monthsRequired * 10) / 10}
+                      <span className="text-sm font-normal text-neutral-400 ml-1">mån</span>
+                    </p>
                   </div>
-
-                  {/* Energimål + knapp */}
-                  {appliedCalories && (
-                    <div className="pt-4 border-t border-neutral-100 space-y-3">
-                      <div className="flex items-center justify-between">
-                        <p className="text-sm text-neutral-500">Energimål för detta tempo</p>
-                        <p className="text-sm font-semibold text-neutral-900">
-                          {appliedCalories.min}–{appliedCalories.max} kcal/dag
-                        </p>
-                      </div>
-                      <Button
-                        type="button"
-                        variant={isAlreadyApplied ? 'secondary' : 'primary'}
-                        size="sm"
-                        className="w-full"
-                        disabled={isAlreadyApplied || updateProfileMutation.isPending}
-                        onClick={handleApplyToProfile}
-                      >
-                        {isAlreadyApplied
-                          ? 'Redan aktivt i profilen'
-                          : updateProfileMutation.isPending
-                            ? 'Sparar...'
-                            : 'Tillämpa energimål på profilen'}
-                      </Button>
-                    </div>
-                  )}
-
-                  <p className="text-xs text-neutral-400 leading-relaxed">
-                    * Uppskattning baserad på bibehållen fettfri massa och valt
-                    viktförändring-intervall. Faktiska resultat kan variera.
-                  </p>
                 </div>
+
+                {/* Slutdatum */}
+                <div className="grid grid-cols-2 divide-x divide-neutral-100 border-b border-neutral-100 bg-neutral-50">
+                  <div className="px-5 py-4">
+                    <p className="text-xs text-neutral-400 uppercase tracking-wide mb-1">
+                      Tidigast klart
+                    </p>
+                    <p className="text-sm font-semibold text-neutral-800">
+                      {timeline.min.estimatedEndDate.toLocaleDateString('sv-SE', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric',
+                      })}
+                    </p>
+                  </div>
+                  <div className="px-5 py-4">
+                    <p className="text-xs text-neutral-400 uppercase tracking-wide mb-1">
+                      Senast klart
+                    </p>
+                    <p className="text-sm font-semibold text-neutral-800">
+                      {timeline.max.estimatedEndDate.toLocaleDateString('sv-SE', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric',
+                      })}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Energimål + knapp */}
+                {appliedCalories && (
+                  <div className="px-5 py-4 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs text-neutral-400 uppercase tracking-wide">Energimål</p>
+                      <p className="text-sm font-bold text-neutral-900">
+                        {appliedCalories.min}–{appliedCalories.max} kcal/dag
+                      </p>
+                    </div>
+                    <Button
+                      type="button"
+                      variant={isAlreadyApplied ? 'secondary' : 'primary'}
+                      size="sm"
+                      className="w-full"
+                      disabled={isAlreadyApplied || updateProfileMutation.isPending}
+                      onClick={handleApplyToProfile}
+                    >
+                      {isAlreadyApplied
+                        ? 'Redan aktivt i profilen'
+                        : updateProfileMutation.isPending
+                          ? 'Sparar...'
+                          : 'Tillämpa energimål på profilen'}
+                    </Button>
+                    <p className="text-xs text-neutral-400 leading-relaxed">
+                      * Uppskattning baserad på bibehållen fettfri massa och valt
+                      viktförändring-intervall.
+                    </p>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
