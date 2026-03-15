@@ -7,6 +7,7 @@
  */
 
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Weight, Target } from 'lucide-react'
 import type { Profile } from '@/lib/types'
@@ -26,6 +27,7 @@ export default function BasicProfileForm({
   onGoalChange,
   onDeficitChange,
 }: BasicProfileFormProps) {
+  const navigate = useNavigate()
   const [bodyFat, setBodyFat] = useState(profile.body_fat_percentage?.toString() || '')
 
   // Update local state when profile changes
@@ -78,7 +80,14 @@ export default function BasicProfileForm({
               step="0.1"
             />
             <p className="text-xs text-neutral-500 mt-1">
-              Krävs för vissa BMR-formler om du vill omberäkna TDEE
+              Krävs för vissa BMR-formler om du vill omberäkna TDEE.{' '}
+              <button
+                type="button"
+                onClick={() => navigate('/app/body-composition')}
+                className="text-primary-600 hover:underline"
+              >
+                Gå till kroppssammansättning
+              </button>
             </p>
           </div>
         </CardContent>
