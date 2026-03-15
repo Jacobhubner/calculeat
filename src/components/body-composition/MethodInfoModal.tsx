@@ -119,6 +119,58 @@ export default function MethodInfoModal({
               </div>
             )}
 
+            {/* Formelvariantar (strukturerade) */}
+            {info.formulaVariants &&
+              info.formulaVariants.length > 0 &&
+              (() => {
+                let maleCount = 0
+                let femaleCount = 0
+                return info.formulaVariants!.map((v, i) => {
+                  if (v.gender === 'Män') ++maleCount
+                  else if (v.gender === 'Kvinnor') ++femaleCount
+                  const isFirstOfGender =
+                    (v.gender === 'Män' && maleCount === 1) ||
+                    (v.gender === 'Kvinnor' && femaleCount === 1)
+                  return (
+                    <div key={i}>
+                      {isFirstOfGender && (
+                        <h3 className="text-lg font-semibold text-neutral-800 mb-3 mt-2">
+                          {v.gender}
+                        </h3>
+                      )}
+                      <div className="mb-4">
+                        {v.name && (
+                          <p className="text-sm font-semibold text-neutral-600 mb-1">{v.name}</p>
+                        )}
+                        <div className="bg-neutral-50 border border-neutral-200 rounded-lg px-4 py-3">
+                          <p className="font-mono text-sm text-neutral-800 whitespace-pre-line">
+                            {v.equation}
+                          </p>
+                          <p className="font-mono text-xs text-neutral-500 mt-2 whitespace-pre-line">
+                            {v.measurements}
+                          </p>
+                          {v.reference && (
+                            <p className="text-xs text-neutral-400 mt-2 italic">
+                              Källa: {v.reference}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })
+              })()}
+
+            {/* Formel (enkel, för Siri/Brozek) */}
+            {info.formula && !info.formulaVariants && (
+              <div>
+                <h3 className="text-lg font-semibold text-neutral-800 mb-2">Formel</h3>
+                <div className="bg-neutral-50 text-neutral-800 font-mono text-sm px-4 py-3 rounded-lg border border-neutral-200 whitespace-pre-line">
+                  {info.formula}
+                </div>
+              </div>
+            )}
+
             {/* Referenser */}
             {info.references && info.references.length > 0 && (
               <div>

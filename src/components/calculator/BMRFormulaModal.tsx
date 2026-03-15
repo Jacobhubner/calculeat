@@ -1,5 +1,8 @@
 import { X } from 'lucide-react'
-import { BMR_FORMULA_DESCRIPTIONS } from '@/lib/calculations/bmrDescriptions'
+import {
+  BMR_FORMULA_DESCRIPTIONS,
+  type BMRFormulaVariant,
+} from '@/lib/calculations/bmrDescriptions'
 import type { BMRFormula } from '@/lib/types'
 import { Button } from '../ui/button'
 import { Portal } from '../ui/portal'
@@ -83,6 +86,52 @@ export default function BMRFormulaModal({ formula, isOpen, onClose }: BMRFormula
                     </li>
                   ))}
                 </ul>
+              </div>
+            )}
+
+            {/* Formula variants */}
+            {description.formulaVariants && description.formulaVariants.length > 0 && (
+              <div>
+                <h3 className="text-lg font-semibold text-neutral-800 mb-3">Formel</h3>
+                <div className="space-y-4">
+                  {(() => {
+                    let maleCount = 0
+                    let femaleCount = 0
+                    return description.formulaVariants!.map((v: BMRFormulaVariant, i: number) => {
+                      if (v.gender === 'Män') ++maleCount
+                      else if (v.gender === 'Kvinnor') ++femaleCount
+                      const isFirstOfGender =
+                        (v.gender === 'Män' && maleCount === 1) ||
+                        (v.gender === 'Kvinnor' && femaleCount === 1)
+                      return (
+                        <div key={i}>
+                          {isFirstOfGender && (
+                            <h3 className="text-lg font-semibold text-neutral-800 mb-3 mt-2">
+                              {v.gender}
+                            </h3>
+                          )}
+                          <div className="mb-4">
+                            {v.name && (
+                              <p className="text-sm font-semibold text-neutral-600 mb-1">
+                                {v.name}
+                              </p>
+                            )}
+                            <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-3">
+                              <p className="text-sm font-mono text-neutral-800 whitespace-pre-line">
+                                {v.equation}
+                              </p>
+                            </div>
+                            {v.measurements && (
+                              <p className="text-xs text-neutral-500 mt-1 whitespace-pre-line">
+                                {v.measurements}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      )
+                    })
+                  })()}
+                </div>
               </div>
             )}
 

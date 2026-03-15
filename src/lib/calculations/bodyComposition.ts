@@ -25,6 +25,8 @@ export type MethodVariation =
   | 'S, S², ålder, C'
   | 'Kläder på'
   | 'S, S²'
+  | 'Deurenberg'
+  | 'Modifierad variant'
 
 export interface CaliperMeasurements {
   chest?: number // mm - B53 Bröst (pectoral)
@@ -642,16 +644,23 @@ export function modifiedYmca(params: BodyCompositionParams): number | null {
  * Male: 1.39 * BMI + 0.16 * age - 19.34
  * Female: 1.39 * BMI + 0.16 * age - 9
  */
-export function heritageBMI(params: BodyCompositionParams): number | null {
+export function heritageBMI(
+  params: BodyCompositionParams,
+  variation: MethodVariation = 'Modifierad variant'
+): number | null {
   const { age, gender, bmi } = params
 
   if (!bmi) return null
 
+  if (variation === 'Deurenberg') {
+    const sexCoeff = gender === 'male' ? 1 : 0
+    return 1.2 * bmi + 0.23 * age - 10.8 * sexCoeff - 5.4
+  }
+
+  // Appvariant (default)
   if (gender === 'male') {
-    // Male Heritage formula (CORRECTED)
     return 1.39 * bmi + 0.16 * age - 19.34
   } else {
-    // Female Heritage formula (CORRECTED)
     return 1.39 * bmi + 0.16 * age - 9
   }
 }
@@ -732,7 +741,7 @@ export function calculateBodyFat(
       return modifiedYmca(params)
 
     case 'Heritage BMI to Body Fat Method':
-      return heritageBMI(params)
+      return heritageBMI(params, variation)
 
     case 'Reversed Cunningham equation':
       return reversedCunningham(params)

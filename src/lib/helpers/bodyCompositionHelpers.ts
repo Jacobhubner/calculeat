@@ -185,6 +185,9 @@ export function getMethodVariations(
         return ['S, S², ålder', 'S, S², ålder, C']
       }
 
+    case 'Heritage BMI to Body Fat Method':
+      return ['Modifierad variant', 'Deurenberg']
+
     default:
       return []
   }
@@ -834,6 +837,13 @@ export function getAllMethodsWithAvailability(params: {
   // Heritage BMI
   results.push({
     method: 'Heritage BMI to Body Fat Method',
+    variation: 'Modifierad variant' as MethodVariation,
+    isAvailable: !!bmi,
+    missingFields: bmi ? [] : ['BMI'],
+  })
+  results.push({
+    method: 'Heritage BMI to Body Fat Method',
+    variation: 'Deurenberg' as MethodVariation,
     isAvailable: !!bmi,
     missingFields: bmi ? [] : ['BMI'],
   })
