@@ -144,7 +144,7 @@ export default function BodyCompositionHubPage() {
           {/* Body Fat % Table (full width) */}
           <div>
             <h3 className="text-base font-semibold text-neutral-800 mb-2">Kroppsfett % (ACE)</h3>
-            <BodyFatReferenceTable userBodyFat={null} gender={profile?.gender} />
+            <BodyFatReferenceTable userBodyFat={null} gender={profile?.gender} fullWidthImages />
           </div>
 
           {/* FFMI Tables side by side */}
@@ -269,7 +269,11 @@ export default function BodyCompositionHubPage() {
             {/* Left column: Kroppsfett % table - compact */}
             <div>
               <h3 className="text-sm font-semibold text-neutral-800 mb-2">Kroppsfett %</h3>
-              <BodyFatReferenceTable userBodyFat={bodyFatPercentage} gender={profile.gender} />
+              <BodyFatReferenceTable
+                userBodyFat={bodyFatPercentage}
+                gender={profile.gender}
+                fullWidthImages
+              />
             </div>
 
             {/* Right column: FFMI tables side by side */}
