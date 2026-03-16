@@ -605,7 +605,7 @@ export function AddFoodToMealModal({
                   <Input
                     id="amount"
                     type="number"
-                    step="0.1"
+                    step="any"
                     min="0.1"
                     value={amount}
                     onChange={e => {

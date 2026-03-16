@@ -941,7 +941,7 @@ export function AddFoodItemModal({
                       <Input
                         id="default_amount"
                         type="number"
-                        step="0.01"
+                        step="any"
                         {...register('default_amount', { valueAsNumber: true })}
                         placeholder="100"
                         className={errors.default_amount ? 'border-red-500' : ''}
@@ -1001,7 +1001,7 @@ export function AddFoodItemModal({
                       <Input
                         id="calories"
                         type="number"
-                        step="0.1"
+                        step="any"
                         {...register('calories', { valueAsNumber: true })}
                         placeholder="0"
                         className={errors.calories ? 'border-red-500' : ''}
@@ -1016,7 +1016,7 @@ export function AddFoodItemModal({
                       <Input
                         id="fat_g"
                         type="number"
-                        step="0.1"
+                        step="any"
                         {...register('fat_g', { valueAsNumber: true })}
                         placeholder="0"
                         className={errors.fat_g ? 'border-red-500' : ''}
@@ -1033,7 +1033,7 @@ export function AddFoodItemModal({
                       <Input
                         id="saturated_fat_g"
                         type="number"
-                        step="0.1"
+                        step="any"
                         {...register('saturated_fat_g', { valueAsNumber: true })}
                         placeholder="0"
                         className={errors.saturated_fat_g ? 'border-red-500' : ''}
@@ -1050,7 +1050,7 @@ export function AddFoodItemModal({
                       <Input
                         id="carb_g"
                         type="number"
-                        step="0.1"
+                        step="any"
                         {...register('carb_g', { valueAsNumber: true })}
                         placeholder="0"
                         className={errors.carb_g ? 'border-red-500' : ''}
@@ -1067,7 +1067,7 @@ export function AddFoodItemModal({
                       <Input
                         id="sugars_g"
                         type="number"
-                        step="0.1"
+                        step="any"
                         {...register('sugars_g', { valueAsNumber: true })}
                         placeholder="0"
                         className={errors.sugars_g ? 'border-red-500' : ''}
@@ -1082,7 +1082,7 @@ export function AddFoodItemModal({
                       <Input
                         id="protein_g"
                         type="number"
-                        step="0.1"
+                        step="any"
                         {...register('protein_g', { valueAsNumber: true })}
                         placeholder="0"
                         className={errors.protein_g ? 'border-red-500' : ''}
@@ -1099,7 +1099,7 @@ export function AddFoodItemModal({
                       <Input
                         id="salt_g"
                         type="number"
-                        step="0.01"
+                        step="any"
                         {...register('salt_g', { valueAsNumber: true })}
                         placeholder="0"
                         className={errors.salt_g ? 'border-red-500' : ''}
@@ -1179,7 +1179,7 @@ export function AddFoodItemModal({
                                 <Input
                                   id="volume_grams"
                                   type="number"
-                                  step="0.1"
+                                  step="any"
                                   value={gramsPerVolume ?? ''}
                                   onChange={e => {
                                     const val = e.target.value
@@ -1218,7 +1218,7 @@ export function AddFoodItemModal({
                               <Input
                                 id="grams_per_piece"
                                 type="number"
-                                step="0.01"
+                                step="any"
                                 {...register('grams_per_piece', { valueAsNumber: true })}
                                 placeholder="t.ex. 50"
                               />
