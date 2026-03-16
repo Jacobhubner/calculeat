@@ -171,7 +171,7 @@ export function IngredientRow({
 
   const handleAmountChange = (value: string) => {
     setAmountInput(value)
-    const numValue = value === '' ? 0 : parseFloat(value)
+    const numValue = value === '' ? 0 : parseFloat(value.replace(',', '.'))
     if (!isNaN(numValue)) {
       onChange({ ...ingredient, amount: numValue })
     }
@@ -351,13 +351,12 @@ export function IngredientRow({
 
         {/* Amount input */}
         <Input
-          type="number"
+          type="text"
+          inputMode="decimal"
           value={amountInput}
           onChange={e => handleAmountChange(e.target.value)}
           placeholder="Mängd"
           className="w-20 text-center"
-          min={0}
-          step="any"
         />
 
         {/* Unit selector */}
