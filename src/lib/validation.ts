@@ -106,6 +106,18 @@ export const signInSchema = z.object({
   password: z.string().min(1, 'Lösenord är obligatoriskt'),
 })
 
+// Parsar decimaler — accepterar både punkt och komma, samt nummer direkt
+function parseDecimal(val: unknown): number | undefined | null {
+  if (typeof val === 'number') return Number.isNaN(val) ? undefined : val
+  if (typeof val === 'string') {
+    const normalized = val.trim().replace(',', '.')
+    if (normalized === '') return undefined
+    const n = parseFloat(normalized)
+    return Number.isNaN(n) ? undefined : n
+  }
+  return val as undefined
+}
+
 export const createFoodItemSchema = z
   .object({
     name: z.string().min(1, 'Namn är obligatoriskt').max(200, 'Namn får max vara 200 tecken'),
@@ -122,23 +134,23 @@ export const createFoodItemSchema = z
       z.number({ error: 'Vikt måste vara ett nummer' }).positive('Vikt måste vara större än 0')
     ),
     calories: z.preprocess(
-      val => (Number.isNaN(val) ? 0 : val),
+      val => parseDecimal(val) ?? 0,
       z
         .number({ error: 'Kalorier måste vara ett nummer' })
         .min(0, 'Kalorier måste vara 0 eller högre')
     ),
     fat_g: z.preprocess(
-      val => (Number.isNaN(val) ? 0 : val),
+      val => parseDecimal(val) ?? 0,
       z.number({ error: 'Fett måste vara ett nummer' }).min(0, 'Fett måste vara 0 eller högre')
     ),
     carb_g: z.preprocess(
-      val => (Number.isNaN(val) ? 0 : val),
+      val => parseDecimal(val) ?? 0,
       z
         .number({ error: 'Kolhydrater måste vara ett nummer' })
         .min(0, 'Kolhydrater måste vara 0 eller högre')
     ),
     protein_g: z.preprocess(
-      val => (Number.isNaN(val) ? 0 : val),
+      val => parseDecimal(val) ?? 0,
       z
         .number({ error: 'Protein måste vara ett nummer' })
         .min(0, 'Protein måste vara 0 eller högre')
@@ -165,24 +177,21 @@ export const createFoodItemSchema = z
       z.string().max(50, 'Serveringsenhet får max vara 50 tecken').optional()
     ),
     saturated_fat_g: z.preprocess(
-      val =>
-        val === '' || val === null || val === undefined || Number.isNaN(val) ? undefined : val,
+      val => parseDecimal(val),
       z
         .number({ error: 'Mättat fett måste vara ett nummer' })
         .min(0, 'Mättat fett måste vara 0 eller högre')
         .optional()
     ),
     sugars_g: z.preprocess(
-      val =>
-        val === '' || val === null || val === undefined || Number.isNaN(val) ? undefined : val,
+      val => parseDecimal(val),
       z
         .number({ error: 'Sockerarter måste vara ett nummer' })
         .min(0, 'Sockerarter måste vara 0 eller högre')
         .optional()
     ),
     salt_g: z.preprocess(
-      val =>
-        val === '' || val === null || val === undefined || Number.isNaN(val) ? undefined : val,
+      val => parseDecimal(val),
       z
         .number({ error: 'Salt måste vara ett nummer' })
         .min(0, 'Salt måste vara 0 eller högre')

@@ -180,13 +180,14 @@ export function AddFoodItemModal({
   const defaultAmount = watch('default_amount')
   const defaultUnit = watch('default_unit')
   const weightGrams = watch('weight_grams')
-  const calories = watch('calories')
-  const fatG = watch('fat_g')
-  const carbG = watch('carb_g')
-  const proteinG = watch('protein_g')
-  const saturatedFatG = watch('saturated_fat_g')
-  const sugarsG = watch('sugars_g')
-  const saltG = watch('salt_g')
+  const parseWatchDecimal = (val: unknown) => parseFloat(String(val ?? '').replace(',', '.')) || 0
+  const calories = parseWatchDecimal(watch('calories'))
+  const fatG = parseWatchDecimal(watch('fat_g'))
+  const carbG = parseWatchDecimal(watch('carb_g'))
+  const proteinG = parseWatchDecimal(watch('protein_g'))
+  const saturatedFatG = parseWatchDecimal(watch('saturated_fat_g'))
+  const sugarsG = parseWatchDecimal(watch('sugars_g'))
+  const saltG = parseWatchDecimal(watch('salt_g'))
   const foodType = watch('food_type')
   const gramsPerPiece = watch('grams_per_piece')
   const servingUnit = watch('serving_unit')
@@ -1000,9 +1001,9 @@ export function AddFoodItemModal({
                       <Label htmlFor="calories">Kalorier (kcal) *</Label>
                       <Input
                         id="calories"
-                        type="number"
-                        step="any"
-                        {...register('calories', { valueAsNumber: true })}
+                        type="text"
+                        inputMode="decimal"
+                        {...register('calories')}
                         placeholder="0"
                         className={errors.calories ? 'border-red-500' : ''}
                       />
@@ -1015,9 +1016,9 @@ export function AddFoodItemModal({
                       <Label htmlFor="fat_g">Fett (g) *</Label>
                       <Input
                         id="fat_g"
-                        type="number"
-                        step="any"
-                        {...register('fat_g', { valueAsNumber: true })}
+                        type="text"
+                        inputMode="decimal"
+                        {...register('fat_g')}
                         placeholder="0"
                         className={errors.fat_g ? 'border-red-500' : ''}
                       />
@@ -1032,9 +1033,9 @@ export function AddFoodItemModal({
                       </Label>
                       <Input
                         id="saturated_fat_g"
-                        type="number"
-                        step="any"
-                        {...register('saturated_fat_g', { valueAsNumber: true })}
+                        type="text"
+                        inputMode="decimal"
+                        {...register('saturated_fat_g')}
                         placeholder="0"
                         className={errors.saturated_fat_g ? 'border-red-500' : ''}
                       />
@@ -1049,9 +1050,9 @@ export function AddFoodItemModal({
                       <Label htmlFor="carb_g">Kolhydrater (g) *</Label>
                       <Input
                         id="carb_g"
-                        type="number"
-                        step="any"
-                        {...register('carb_g', { valueAsNumber: true })}
+                        type="text"
+                        inputMode="decimal"
+                        {...register('carb_g')}
                         placeholder="0"
                         className={errors.carb_g ? 'border-red-500' : ''}
                       />
@@ -1066,9 +1067,9 @@ export function AddFoodItemModal({
                       </Label>
                       <Input
                         id="sugars_g"
-                        type="number"
-                        step="any"
-                        {...register('sugars_g', { valueAsNumber: true })}
+                        type="text"
+                        inputMode="decimal"
+                        {...register('sugars_g')}
                         placeholder="0"
                         className={errors.sugars_g ? 'border-red-500' : ''}
                       />
@@ -1081,9 +1082,9 @@ export function AddFoodItemModal({
                       <Label htmlFor="protein_g">Protein (g) *</Label>
                       <Input
                         id="protein_g"
-                        type="number"
-                        step="any"
-                        {...register('protein_g', { valueAsNumber: true })}
+                        type="text"
+                        inputMode="decimal"
+                        {...register('protein_g')}
                         placeholder="0"
                         className={errors.protein_g ? 'border-red-500' : ''}
                       />
@@ -1098,9 +1099,9 @@ export function AddFoodItemModal({
                       </Label>
                       <Input
                         id="salt_g"
-                        type="number"
-                        step="any"
-                        {...register('salt_g', { valueAsNumber: true })}
+                        type="text"
+                        inputMode="decimal"
+                        {...register('salt_g')}
                         placeholder="0"
                         className={errors.salt_g ? 'border-red-500' : ''}
                       />
