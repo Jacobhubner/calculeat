@@ -397,6 +397,11 @@ export default function GeneticPotentialTool() {
                               </tbody>
                             </table>
                           </div>
+                          <p className="text-xs text-blue-700 italic mt-3">
+                            Källa: Butt, C. &ldquo;Your Muscular Potential: How to Predict Your
+                            Maximum Muscular Bodyweight and Measurements&rdquo; weightrainer.net
+                            (ursprungligen publicerad tidigt 2000-tal, uppdaterad 2009)
+                          </p>
                           <p className="text-xs text-blue-800 leading-relaxed mt-3">
                             Det finns en förvirring med denna modell. Casey Butt specificerar inte
                             strikt vilken kroppsfettprocent man ska använda utan beskriver:
@@ -408,11 +413,6 @@ export default function GeneticPotentialTool() {
                             Alternativ 1: Standardiserad genetisk referens
                             <br />
                             Alternativ 2: Tillståndsberoende fettfri kroppsvikt
-                          </p>
-                          <p className="text-xs text-blue-700 italic mt-2">
-                            Källa: Butt, C. &ldquo;Your Muscular Potential: How to Predict Your
-                            Maximum Muscular Bodyweight and Measurements&rdquo; weightrainer.net
-                            (ursprungligen publicerad tidigt 2000-tal, uppdaterad 2009)
                           </p>
                         </div>
                       )}
