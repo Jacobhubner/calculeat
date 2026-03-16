@@ -294,9 +294,8 @@ export default function GeneticPotentialTool() {
                                   </td>
                                 </tr>
                                 <tr className="bg-blue-100 text-blue-600 font-medium">
-                                  <td className="px-3 py-1.5">Hardgainer-gränser</td>
-                                  <td className="px-3 py-1.5 text-right font-normal text-xs">
-                                    Handled, fotled, längd i tum
+                                  <td className="px-3 py-1.5" colSpan={2}>
+                                    Hardgainer-gränser
                                   </td>
                                 </tr>
                                 <tr className="bg-white">
