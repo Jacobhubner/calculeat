@@ -265,6 +265,150 @@ export default function GeneticPotentialTool() {
                             <br />
                             Alternativ 2: Tillståndsberoende fettfri kroppsvikt
                           </p>
+                          <p className="text-xs font-semibold text-blue-800 mt-2">Formel</p>
+                          <div className="overflow-x-auto rounded-lg border border-blue-200">
+                            <table className="w-full text-xs">
+                              <tbody>
+                                <tr className="bg-blue-100 text-blue-600 font-medium">
+                                  <td className="px-3 py-1.5" colSpan={2}>
+                                    Steg 1 — Max fettfri massa (MLBM)
+                                  </td>
+                                </tr>
+                                <tr className="bg-white">
+                                  <td className="px-3 py-1.5 text-blue-900 font-mono" colSpan={2}>
+                                    MLBM = H¹·⁵ × (√W / 22,667 + √A / 17,0104) × (BF% / 224 + 1)
+                                  </td>
+                                </tr>
+                                <tr className="bg-blue-50">
+                                  <td className="px-3 py-1.5 text-blue-700" colSpan={2}>
+                                    H = längd (tum), W = handled (tum), A = fotled (tum), BF% =
+                                    kroppsfett
+                                  </td>
+                                </tr>
+                                <tr className="bg-blue-100 text-blue-600 font-medium">
+                                  <td className="px-3 py-1.5" colSpan={2}>
+                                    Steg 2 — Max kroppsvikt (MBW)
+                                  </td>
+                                </tr>
+                                <tr className="bg-white">
+                                  <td className="px-3 py-1.5 text-blue-900 font-mono" colSpan={2}>
+                                    MBW = MLBM / (100 − BF%) × 100
+                                  </td>
+                                </tr>
+                                <tr className="bg-blue-100 text-blue-600 font-medium">
+                                  <td className="px-3 py-1.5" colSpan={2}>
+                                    Steg 3 — Max bulkad kroppsvikt (MBBW)
+                                  </td>
+                                </tr>
+                                <tr className="bg-white">
+                                  <td className="px-3 py-1.5 text-blue-900 font-mono" colSpan={2}>
+                                    MBBW = MBW × 1,04
+                                  </td>
+                                </tr>
+                                <tr className="bg-blue-100 text-blue-600 font-medium">
+                                  <td className="px-3 py-1.5" colSpan={2}>
+                                    Hardgainer-gränser
+                                  </td>
+                                </tr>
+                                <tr className="bg-white">
+                                  <td className="px-3 py-1.5 text-blue-800">Överkropp (handled)</td>
+                                  <td className="px-3 py-1.5 text-blue-900 font-mono text-right">
+                                    Handled ≤ 0,1045 × Längd
+                                  </td>
+                                </tr>
+                                <tr className="bg-blue-50">
+                                  <td className="px-3 py-1.5 text-blue-800">Underkropp (fotled)</td>
+                                  <td className="px-3 py-1.5 text-blue-900 font-mono text-right">
+                                    Fotled ≤ 0,1296 × Längd
+                                  </td>
+                                </tr>
+                                <tr className="bg-blue-100 text-blue-600 font-medium">
+                                  <td className="px-3 py-1.5">Kroppsmått — Easygainer</td>
+                                  <td className="px-3 py-1.5 text-right text-blue-500 font-normal text-xs">
+                                    W = handled, A = fotled, H = längd (tum)
+                                  </td>
+                                </tr>
+                                <tr className="bg-white">
+                                  <td className="px-3 py-1.5 text-blue-800">Bröst</td>
+                                  <td className="px-3 py-1.5 text-blue-900 font-mono text-right">
+                                    1,6817×W + 1,3759×A + 0,3314×H
+                                  </td>
+                                </tr>
+                                <tr className="bg-blue-50">
+                                  <td className="px-3 py-1.5 text-blue-800">Biceps</td>
+                                  <td className="px-3 py-1.5 text-blue-900 font-mono text-right">
+                                    1,2033×W + 0,1236×H
+                                  </td>
+                                </tr>
+                                <tr className="bg-white">
+                                  <td className="px-3 py-1.5 text-blue-800">Underarmar</td>
+                                  <td className="px-3 py-1.5 text-blue-900 font-mono text-right">
+                                    0,9626×W + 0,0989×H
+                                  </td>
+                                </tr>
+                                <tr className="bg-blue-50">
+                                  <td className="px-3 py-1.5 text-blue-800">Nacke</td>
+                                  <td className="px-3 py-1.5 text-blue-900 font-mono text-right">
+                                    1,1424×W + 0,1236×H
+                                  </td>
+                                </tr>
+                                <tr className="bg-white">
+                                  <td className="px-3 py-1.5 text-blue-800">Lår</td>
+                                  <td className="px-3 py-1.5 text-blue-900 font-mono text-right">
+                                    1,3868×A + 0,1805×H
+                                  </td>
+                                </tr>
+                                <tr className="bg-blue-50">
+                                  <td className="px-3 py-1.5 text-blue-800">Vader</td>
+                                  <td className="px-3 py-1.5 text-blue-900 font-mono text-right">
+                                    0,9298×A + 0,1210×H
+                                  </td>
+                                </tr>
+                                <tr className="bg-blue-100 text-blue-600 font-medium">
+                                  <td className="px-3 py-1.5">Kroppsmått — Hardgainer</td>
+                                  <td className="px-3 py-1.5 text-right text-blue-500 font-normal text-xs">
+                                    W = handled, A = fotled (tum)
+                                  </td>
+                                </tr>
+                                <tr className="bg-white">
+                                  <td className="px-3 py-1.5 text-blue-800">Bröst</td>
+                                  <td className="px-3 py-1.5 text-blue-900 font-mono text-right">
+                                    3,15×W + 2,54×A
+                                  </td>
+                                </tr>
+                                <tr className="bg-blue-50">
+                                  <td className="px-3 py-1.5 text-blue-800">Biceps</td>
+                                  <td className="px-3 py-1.5 text-blue-900 font-mono text-right">
+                                    2,28×W
+                                  </td>
+                                </tr>
+                                <tr className="bg-white">
+                                  <td className="px-3 py-1.5 text-blue-800">Underarmar</td>
+                                  <td className="px-3 py-1.5 text-blue-900 font-mono text-right">
+                                    1,83×W
+                                  </td>
+                                </tr>
+                                <tr className="bg-blue-50">
+                                  <td className="px-3 py-1.5 text-blue-800">Nacke</td>
+                                  <td className="px-3 py-1.5 text-blue-900 font-mono text-right">
+                                    2,30×W
+                                  </td>
+                                </tr>
+                                <tr className="bg-white">
+                                  <td className="px-3 py-1.5 text-blue-800">Lår</td>
+                                  <td className="px-3 py-1.5 text-blue-900 font-mono text-right">
+                                    2,65×A
+                                  </td>
+                                </tr>
+                                <tr className="bg-blue-50">
+                                  <td className="px-3 py-1.5 text-blue-800">Vader</td>
+                                  <td className="px-3 py-1.5 text-blue-900 font-mono text-right">
+                                    1,80×A
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
                           <p className="text-xs text-blue-700 italic">
                             Källa: Butt, C. &ldquo;Your Muscular Potential: How to Predict Your
                             Maximum Muscular Bodyweight and Measurements&rdquo; weightrainer.net
@@ -1244,9 +1388,36 @@ function ResultCard({
                 låg kroppsfettprocent, främst cirka 5–6 % för män. Berkhan föreslår att maximal
                 tävlingsvikt i peak condition kan uppskattas genom formeln:
               </p>
-              <p className="text-xs text-blue-800 leading-relaxed font-semibold">
-                Längd i centimeter − 100 ≈ kroppsvikt i kilogram
-              </p>
+              <div className="overflow-x-auto rounded-lg border border-blue-200 my-1">
+                <table className="w-full text-xs">
+                  <tbody>
+                    <tr className="bg-blue-100 text-blue-600 font-medium">
+                      <td className="px-3 py-1.5">Längd</td>
+                      <td className="px-3 py-1.5 font-mono text-right">Tävlingsvikt vid ~5% BF</td>
+                    </tr>
+                    <tr className="bg-white">
+                      <td className="px-3 py-1.5 text-blue-800">&lt; 170 cm</td>
+                      <td className="px-3 py-1.5 text-blue-900 font-mono text-right">Längd − 98</td>
+                    </tr>
+                    <tr className="bg-blue-50">
+                      <td className="px-3 py-1.5 text-blue-800">170–179 cm</td>
+                      <td className="px-3 py-1.5 text-blue-900 font-mono text-right">Längd − 99</td>
+                    </tr>
+                    <tr className="bg-white">
+                      <td className="px-3 py-1.5 text-blue-800">180–189 cm</td>
+                      <td className="px-3 py-1.5 text-blue-900 font-mono text-right">
+                        Längd − 100
+                      </td>
+                    </tr>
+                    <tr className="bg-blue-50">
+                      <td className="px-3 py-1.5 text-blue-800">≥ 190 cm</td>
+                      <td className="px-3 py-1.5 text-blue-900 font-mono text-right">
+                        Längd − 101
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
               <p className="text-xs text-blue-800 leading-relaxed">
                 Han betonar att detta värde representerar en övre praktisk gräns för naturliga
                 atleter i extrem tävlingsform, snarare än ett genomsnitt eller ett garanterat mål.
