@@ -253,18 +253,6 @@ export default function GeneticPotentialTool() {
                             realistiska övre gränser för naturlig muskelutveckling, inte som en
                             statistisk medelvärdesmodell.
                           </p>
-                          <p className="text-xs text-blue-800 leading-relaxed">
-                            Det finns en förvirring med denna modell. Casey Butt specificerar inte
-                            strikt vilken kroppsfettprocent man ska använda utan beskriver:
-                            &ldquo;%bf = The body fat percentage at which you want to predict your
-                            maximum lean body mass&rdquo;. Detta lämnar det öppet för tolkning och
-                            man kan därför använda denna modell på två olika sätt:
-                          </p>
-                          <p className="text-xs text-blue-800 leading-relaxed font-medium">
-                            Alternativ 1: Standardiserad genetisk referens
-                            <br />
-                            Alternativ 2: Tillståndsberoende fettfri kroppsvikt
-                          </p>
                           <p className="text-xs font-semibold text-blue-800 mt-2">Formel</p>
                           <div className="overflow-x-auto rounded-lg border border-blue-200">
                             <table className="w-full text-xs">
@@ -409,7 +397,19 @@ export default function GeneticPotentialTool() {
                               </tbody>
                             </table>
                           </div>
-                          <p className="text-xs text-blue-700 italic">
+                          <p className="text-xs text-blue-800 leading-relaxed mt-3">
+                            Det finns en förvirring med denna modell. Casey Butt specificerar inte
+                            strikt vilken kroppsfettprocent man ska använda utan beskriver:
+                            &ldquo;%bf = The body fat percentage at which you want to predict your
+                            maximum lean body mass&rdquo;. Detta lämnar det öppet för tolkning och
+                            man kan därför använda denna modell på två olika sätt:
+                          </p>
+                          <p className="text-xs text-blue-800 leading-relaxed font-medium">
+                            Alternativ 1: Standardiserad genetisk referens
+                            <br />
+                            Alternativ 2: Tillståndsberoende fettfri kroppsvikt
+                          </p>
+                          <p className="text-xs text-blue-700 italic mt-2">
                             Källa: Butt, C. &ldquo;Your Muscular Potential: How to Predict Your
                             Maximum Muscular Bodyweight and Measurements&rdquo; weightrainer.net
                             (ursprungligen publicerad tidigt 2000-tal, uppdaterad 2009)
