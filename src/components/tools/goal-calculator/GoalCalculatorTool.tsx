@@ -610,6 +610,7 @@ export default function GoalCalculatorTool() {
                 <BodyFatReferenceTable
                   userBodyFat={profileData.body_fat_percentage}
                   gender={profileData?.gender}
+                  fullWidthImages
                 />
               </CardContent>
             </Card>
