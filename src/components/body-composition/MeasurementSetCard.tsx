@@ -42,15 +42,15 @@ export default function MeasurementSetCard({
   // Local state för redigeringsläge
   const [isEditingName, setIsEditingName] = useState(false)
   const [editedName, setEditedName] = useState(measurementSet.name || '')
-  // Format date for display (e.g., "2025-01-15" -> "15 jan 2025")
-  const displayDate = new Date(measurementSet.set_date).toLocaleDateString('sv-SE', {
+  // Format creation date for default name — uses created_at so it never changes when set_date is edited
+  const createdDate = new Date(measurementSet.created_at).toLocaleDateString('sv-SE', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
   })
 
   // Create default name (date only, with optional duplicate number)
-  const defaultName = duplicateIndex > 0 ? `${displayDate} (${duplicateIndex})` : displayDate
+  const defaultName = duplicateIndex > 0 ? `${createdDate} (${duplicateIndex})` : createdDate
 
   // Show custom name if set, otherwise show default name
   const displayName = measurementSet.name || defaultName
