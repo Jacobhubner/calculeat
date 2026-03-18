@@ -284,8 +284,8 @@ function calculateActivityLevelWizard(
   }
 
   const trainingMET = MET_ACTIVITIES.find(a => a.id === _trainingActivityId)?.met
-  // Walking has a permanent default selection ('17190') — fall back to 3.5 if not yet registered
-  const walkingMET = MET_ACTIVITIES.find(a => a.id === _walkingActivityId)?.met ?? 3.5
+  // Walking has a permanent default selection ('17190', 3.8 MET) — fall back if not yet registered
+  const walkingMET = MET_ACTIVITIES.find(a => a.id === _walkingActivityId)?.met ?? 3.8
   const householdMET = MET_ACTIVITIES.find(a => a.id === _householdActivityId)?.met
 
   // Training activity must be explicitly selected
