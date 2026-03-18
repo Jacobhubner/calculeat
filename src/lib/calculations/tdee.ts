@@ -283,9 +283,14 @@ function calculateActivityLevelWizard(
     return 0
   }
 
-  const trainingMET = MET_ACTIVITIES.find(a => a.id === _trainingActivityId)?.met ?? 6.0
-  const walkingMET = MET_ACTIVITIES.find(a => a.id === _walkingActivityId)?.met ?? 3.5
-  const householdMET = MET_ACTIVITIES.find(a => a.id === _householdActivityId)?.met ?? 2.0
+  const trainingMET = MET_ACTIVITIES.find(a => a.id === _trainingActivityId)?.met
+  const walkingMET = MET_ACTIVITIES.find(a => a.id === _walkingActivityId)?.met
+  const householdMET = MET_ACTIVITIES.find(a => a.id === _householdActivityId)?.met
+
+  // Required: training and walking activity must be selected
+  if (!trainingMET || !walkingMET) return 0
+  // Household activity required only if household hours > 0
+  if (householdHoursPerDay > 0 && !householdMET) return 0
 
   // NEAT_steps: Gångkalorier från steg (viktjusterad med MET-värde)
   const neatSteps = (stepsPerDay * (0.04 / 70) * weightKg * walkingMET) / 3.8
@@ -294,7 +299,7 @@ function calculateActivityLevelWizard(
   const neatStanding = 1.3 * weightKg * hoursStandingPerDay
 
   // NEAT_household: Hushållskalorier
-  const neatHousehold = householdMET * weightKg * householdHoursPerDay
+  const neatHousehold = (householdMET ?? 0) * weightKg * householdHoursPerDay
 
   // EAT (Exercise Activity Thermogenesis): Träningskalorier per dag
   const eat = (trainingDaysPerWeek / 7) * (trainingMinutesPerSession / 60) * trainingMET * weightKg

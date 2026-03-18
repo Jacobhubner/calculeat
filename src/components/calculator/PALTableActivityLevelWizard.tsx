@@ -82,14 +82,19 @@ export default function PALTableActivityLevelWizard({
   // Kontrollera om alla obligatoriska fält är ifyllda
   const allRequiredFieldsFilled = useMemo(() => {
     const trainingActivityId = watch?.('training_activity_id')
+    const walkingActivityId = watch?.('walking_activity_id')
+    const householdActivityId = watch?.('household_activity_id')
 
-    // Endast 4 fält krävs:
-    // 1. Antal dagar per vecka du tränar
-    // 2. Antal minuter per träningspass
-    // 3. Välj träningsaktivitet
-    // 4. Genomsnittligt antal steg per dag
-    return trainingDays > 0 && trainingMinutes > 0 && !!trainingActivityId && stepsPerDay > 0
-  }, [trainingDays, trainingMinutes, stepsPerDay, watch])
+    const baseRequired =
+      trainingDays > 0 &&
+      trainingMinutes > 0 &&
+      !!trainingActivityId &&
+      stepsPerDay > 0 &&
+      !!walkingActivityId
+    // Hushållsaktivitet krävs bara om timmar > 0
+    const householdOk = householdHours === 0 || !!householdActivityId
+    return baseRequired && householdOk
+  }, [trainingDays, trainingMinutes, stepsPerDay, householdHours, watch])
 
   // Beräkna PAL-värde när alla obligatoriska fält är ifyllda
   const palValue = useMemo(() => {
