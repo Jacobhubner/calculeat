@@ -11,6 +11,7 @@ export interface PALSystemDescription {
   name: string
   subtitle?: string
   description: string
+  descriptionBlocks?: ({ type: 'text'; text: string } | { type: 'formula'; text: string })[]
   pros: string[]
   cons: string[]
   bestFor: string[]
@@ -241,8 +242,40 @@ export const PAL_SYSTEM_DESCRIPTIONS: Record<PALSystem, PALSystemDescription> = 
   'Beräkna din aktivitetsnivå': {
     name: 'Avancerat PAL-system',
     subtitle: 'MET-baserad energimodell • Typ: Bottom-up TDEE',
-    description:
-      'Detta system beräknar total daglig energiförbrukning (TDEE) genom att modellera kroppens huvudsakliga energikomponenter i stället för att använda en fast aktivitetsmultiplikator. Modellen bygger på den etablerade uppdelningen av energiförbrukning i basal metabolism (BMR/RMR), aktivitetsrelaterad energiförbrukning (NEAT + EAT) samt kostens termogena effekt (TEF).\n\nNEAT (Non-Exercise Activity Thermogenesis) delas här upp i flera delkomponenter för att bättre spegla verklig vardagsaktivitet: gång och steg, stående aktivitet samt hushålls- och arbetsrelaterade rörelser. Dessa uppskattas med hjälp av MET-värden (Metabolic Equivalent of Task) från Compendium of Physical Activities.\n\nMetabolic Equivalent of Task (MET) är ett mått på energiförbrukning där 1 MET motsvarar kroppens energiförbrukning i vila (≈ basalmetabolism). När fysisk aktivitet anges i MET-värden inkluderar dessa därför både viloförbrukning och den extra energi som aktiviteten kräver. Till exempel innebär 3,8 MET att kroppen förbrukar 3,8 gånger så mycket energi som i vila. I formeln TDEE = BMR + NEAT + EAT + TEF representerar BMR (basalmetabolism) redan kroppens energiförbrukning i vila. För att undvika att viloförbrukningen räknas två gånger måste energin från fysisk aktivitet därför beräknas som endast den extra energin över vila. Detta görs genom att använda MET − 1 istället för hela MET-värdet. Att använda MET − 1 säkerställer att modellen är fysiologiskt korrekt och att varje komponent i energibalansen representerar en unik del av kroppens energiförbrukning, utan överlappning.\n\nModellen inkluderar även en SPA-faktor (Spontaneous Physical Activity) som representerar biologisk variation i spontana rörelser såsom posturala justeringar, små förflyttningar och fidgeting. Forskning visar att denna typ av aktivitet kan bidra till stora individuella skillnader i energiförbrukning mellan personer med liknande kroppssammansättning.\n\nGenom att modellera varje komponent separat kan systemet ge en mer individualiserad uppskattning av energiförbrukning än traditionella PAL-multiplikatorer.',
+    description: '',
+    descriptionBlocks: [
+      {
+        type: 'text',
+        text: 'Detta system beräknar total daglig energiförbrukning (TDEE) genom att modellera kroppens huvudsakliga energikomponenter i stället för att använda en fast aktivitetsmultiplikator. Modellen bygger på den etablerade uppdelningen av energiförbrukning i basal metabolism (BMR/RMR), aktivitetsrelaterad energiförbrukning (NEAT + EAT) samt kostens termogena effekt (TEF).',
+      },
+      {
+        type: 'text',
+        text: 'NEAT (Non-Exercise Activity Thermogenesis) delas här upp i flera delkomponenter för att bättre spegla verklig vardagsaktivitet: gång och steg, stående aktivitet samt hushålls- och arbetsrelaterade rörelser. Dessa uppskattas med hjälp av MET-värden (Metabolic Equivalent of Task) från Compendium of Physical Activities.',
+      },
+      {
+        type: 'text',
+        text: 'Metabolic Equivalent of Task (MET) är ett mått på energiförbrukning där 1 MET motsvarar kroppens energiförbrukning i vila (≈ basalmetabolism). När fysisk aktivitet anges i MET-värden inkluderar dessa därför både viloförbrukning och den extra energi som aktiviteten kräver. Till exempel innebär 3,8 MET att kroppen förbrukar 3,8 gånger så mycket energi som i vila. I formeln TDEE = BMR + NEAT + EAT + TEF representerar BMR (basalmetabolism) redan kroppens energiförbrukning i vila. För att undvika att viloförbrukningen räknas två gånger måste energin från fysisk aktivitet därför beräknas som endast den extra energin över vila. Detta görs genom att använda MET − 1 istället för hela MET-värdet. Att använda MET − 1 säkerställer att modellen är fysiologiskt korrekt och att varje komponent i energibalansen representerar en unik del av kroppens energiförbrukning, utan överlappning.',
+      },
+      {
+        type: 'text',
+        text: 'Modellen inkluderar även en SPA-faktor (Spontaneous Physical Activity) som representerar biologisk variation i spontana rörelser såsom posturala justeringar, små förflyttningar och fidgeting. Forskning visar att denna typ av aktivitet kan bidra till stora individuella skillnader i energiförbrukning mellan personer med liknande kroppssammansättning.',
+      },
+      { type: 'text', text: 'Den totala energiförbrukningen beräknas enligt:' },
+      { type: 'formula', text: 'TDEE = (BMR + NEAT_total + EAT) / 0,9' },
+      {
+        type: 'text',
+        text: 'där nämnaren 0,9 representerar att kostens termogena effekt (TEF) i genomsnitt motsvarar cirka 10 % av energiintaget.',
+      },
+      {
+        type: 'text',
+        text: 'Det slutliga PAL-värdet (Physical Activity Level) beräknas därefter som:',
+      },
+      { type: 'formula', text: 'PAL = TDEE / BMR' },
+      {
+        type: 'text',
+        text: 'Genom att modellera varje komponent separat kan systemet ge en mer individualiserad uppskattning av energiförbrukning än traditionella PAL-multiplikatorer.',
+      },
+    ],
     bestFor: [
       'Användare som vill ha en mer detaljerad uppskattning av energiförbrukning',
       'Personer med stegräknare eller smartwatch',
@@ -266,46 +299,11 @@ export const PAL_SYSTEM_DESCRIPTIONS: Record<PALSystem, PALSystemDescription> = 
     ],
     sections: [
       {
-        title: 'Komponenter',
-        blocks: [
-          { type: 'formula', text: 'TDEE = BMR + NEAT_total + EAT + TEF' },
-          {
-            type: 'text',
-            text: 'TDEE — TEF (måltidernas termiska effekt) antas vara 10% av TDEE:',
-          },
-          { type: 'formula', text: 'TDEE = (BMR + NEAT_total + EAT) / 0,9' },
-          { type: 'text', text: 'EAT — träningskalorier per dag:' },
-          {
-            type: 'formula',
-            text: 'EAT = (träningsdagar/7) × (träningsminuter/60) × (träningsMET − 1) × kroppsvikt',
-          },
-          { type: 'text', text: 'NEAT_steps — gångkalorier från steg:' },
-          { type: 'formula', text: 'Tempo_factor = (gångMET − 1) / (3,8 − 1)' },
-          {
-            type: 'formula',
-            text: 'NEAT_steps ≈ steg × (0,04 / 70 × kroppsvikt) × ((gångMET − 1) / (3,8 − 1))',
-          },
-          { type: 'text', text: 'NEAT_standing — stående:' },
-          { type: 'formula', text: 'NEAT_standing = (1,3 − 1) × kroppsvikt × timmar_stående' },
-          { type: 'text', text: 'NEAT_household — hushåll (endast om timmar > 0):' },
-          {
-            type: 'formula',
-            text: 'NEAT_household = (hushållsMET − 1) × kroppsvikt × hushållstimmar',
-          },
-          { type: 'text', text: 'NEAT_total med SPA:' },
-          {
-            type: 'formula',
-            text: 'NEAT_total = (NEAT_steps + NEAT_standing + NEAT_household) × SPA-faktor',
-          },
-          { type: 'formula', text: 'PAL = TDEE / BMR' },
-        ],
-      },
-      {
         title: 'Vetenskaplig bakgrund',
         blocks: [
           {
             type: 'text',
-            text: 'Daglig energiomsättning (Total Daily Energy Expenditure, TDEE) delas vanligen upp i fyra huvudkomponenter:',
+            text: 'Komponenter i energiförbrukningen\nDaglig energiomsättning (Total Daily Energy Expenditure, TDEE) delas vanligen upp i fyra huvudkomponenter:',
           },
           {
             type: 'bullets',

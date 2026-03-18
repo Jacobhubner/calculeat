@@ -49,9 +49,28 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
             {/* Description */}
             <div>
               <h3 className="text-lg font-semibold text-neutral-800 mb-2">Beskrivning</h3>
-              <p className="text-neutral-700 leading-relaxed whitespace-pre-line">
-                {description.description}
-              </p>
+              {description.descriptionBlocks ? (
+                <div className="space-y-3">
+                  {description.descriptionBlocks.map((block, i) =>
+                    block.type === 'formula' ? (
+                      <div
+                        key={i}
+                        className="bg-neutral-100 border border-neutral-200 rounded-lg px-4 py-3"
+                      >
+                        <p className="text-sm font-mono text-neutral-800">{block.text}</p>
+                      </div>
+                    ) : (
+                      <p key={i} className="text-neutral-700 leading-relaxed text-sm">
+                        {block.text}
+                      </p>
+                    )
+                  )}
+                </div>
+              ) : (
+                <p className="text-neutral-700 leading-relaxed whitespace-pre-line">
+                  {description.description}
+                </p>
+              )}
             </div>
 
             {/* Best For */}
