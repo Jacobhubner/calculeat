@@ -172,7 +172,7 @@ export default function TDEECalculatorTool() {
         trainingDaysPerWeek > 0 &&
         trainingMinutesPerSession > 0 &&
         !!trainingActivityId &&
-        (stepsPerDay ?? 0) > 0
+        (Number(stepsPerDay) || 0) > 0
 
       console.log('Beräkna din aktivitetsnivå Validation:', {
         allRequiredFieldsFilled,
@@ -206,8 +206,8 @@ export default function TDEECalculatorTool() {
       trainingDaysPerWeek,
       trainingMinutesPerSession,
       walkingActivityId: walkingActivityId || undefined,
-      stepsPerDay,
-      hoursStandingPerDay,
+      stepsPerDay: Number(stepsPerDay) || undefined,
+      hoursStandingPerDay: Number(hoursStandingPerDay) || 0,
       householdActivityId: householdActivityId || undefined,
       householdHoursPerDay,
       spaFactor,
