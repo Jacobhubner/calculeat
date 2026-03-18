@@ -111,12 +111,37 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
               <div className="space-y-6">
                 {description.sections.map((section, index) => (
                   <div key={index}>
-                    <h3 className="text-lg font-semibold text-neutral-800 mb-2">{section.title}</h3>
-                    <p className="text-neutral-700 leading-relaxed whitespace-pre-line">
-                      {section.content}
-                    </p>
+                    <h3 className="text-lg font-semibold text-neutral-800 mb-3">{section.title}</h3>
+                    <div className="space-y-3">
+                      {section.blocks.map((block, bi) =>
+                        block.type === 'formula' ? (
+                          <div
+                            key={bi}
+                            className="bg-neutral-100 border border-neutral-200 rounded-lg px-4 py-3"
+                          >
+                            <p className="text-sm font-mono text-neutral-800">{block.text}</p>
+                          </div>
+                        ) : block.type === 'bullets' ? (
+                          <ul key={bi} className="space-y-1 pl-1">
+                            {block.items.map((item, ii) => (
+                              <li key={ii} className="flex gap-2 text-neutral-700 text-sm">
+                                <span className="text-neutral-400 mt-0.5">•</span>
+                                <span>{item}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <p
+                            key={bi}
+                            className="text-neutral-700 leading-relaxed text-sm whitespace-pre-line"
+                          >
+                            {block.text}
+                          </p>
+                        )
+                      )}
+                    </div>
                     {section.references && section.references.length > 0 && (
-                      <div className="mt-3 space-y-2">
+                      <div className="mt-4 space-y-2">
                         <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide">
                           Referenser
                         </p>
