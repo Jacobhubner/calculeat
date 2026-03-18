@@ -527,12 +527,18 @@ export const PAL_SYSTEM_DESCRIPTIONS: Record<PALSystem, PALSystemDescription> = 
           },
           {
             type: 'text',
+            text: 'EAT utgör vanligtvis en liten andel av total energiförbrukning hos stillasittande individer (≈ <5 %), men kan öka betydligt vid hög träningsvolym och uppgå till cirka 15–30 % eller mer hos mycket aktiva individer och elitidrottare (Westerterp, 2013; Levine, 2005).',
+          },
+          {
+            type: 'text',
             text: 'MET-värden är populationsbaserade och kan avvika från individens faktiska energiförbrukning. Efterförbränning (EPOC) förekommer främst efter högintensiv träning och bidrar i regel med en mindre andel av den totala träningsenergin vid typiska träningspass (LaForgia et al., 2006).',
           },
         ],
         references: [
           'Ainsworth BE et al. (2011). 2011 Compendium of Physical Activities. Med Sci Sports Exerc. 43(8):1575–1581.',
           'LaForgia J, Withers RT, Gore CJ. (2006). Effects of exercise intensity and duration on the excess post-exercise oxygen consumption. J Sports Sci. 24(12):1247–1264.',
+          'Westerterp KR. (2013). Physical activity and physical activity induced energy expenditure in humans: measurement, determinants, and effects. Front Physiol. 4:90.',
+          'Levine JA. (2005). Measurement of energy expenditure. Public Health Nutr. 8(7A):1123–1132.',
         ],
       },
       {
