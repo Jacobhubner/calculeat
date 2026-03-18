@@ -293,17 +293,19 @@ function calculateActivityLevelWizard(
   // Household activity required only if household hours > 0
   if (householdHoursPerDay > 0 && !householdMET) return 0
 
-  // NEAT_steps: Gångkalorier från steg (viktjusterad med MET-värde)
-  const neatSteps = (stepsPerDay * (0.04 / 70) * weightKg * walkingMET) / 3.8
+  // EAT (Exercise Activity Thermogenesis): netto träningskalorier per dag (MET−1 undviker dubbelräkning med BMR)
+  const eat =
+    (trainingDaysPerWeek / 7) * (trainingMinutesPerSession / 60) * (trainingMET - 1) * weightKg
 
-  // NEAT_standing: Stående-kalorier (viktjusterad formel)
-  const neatStanding = 1.3 * weightKg * hoursStandingPerDay
+  // NEAT_steps: netto gångkalorier från steg, skalade mot referensgången (3.8 MET)
+  const tempoFactor = (walkingMET - 1) / (3.8 - 1)
+  const neatSteps = stepsPerDay * (0.04 / 70) * weightKg * tempoFactor
 
-  // NEAT_household: Hushållskalorier
-  const neatHousehold = (householdMET ?? 0) * weightKg * householdHoursPerDay
+  // NEAT_standing: netto stående-kalorier (1.3 MET − 1 = 0.3 extra över vila)
+  const neatStanding = (1.3 - 1) * weightKg * hoursStandingPerDay
 
-  // EAT (Exercise Activity Thermogenesis): Träningskalorier per dag
-  const eat = (trainingDaysPerWeek / 7) * (trainingMinutesPerSession / 60) * trainingMET * weightKg
+  // NEAT_household: netto hushållskalorier (MET−1)
+  const neatHousehold = ((householdMET ?? 0) - 1) * weightKg * householdHoursPerDay
 
   // NEAT_total: SPA multipliceras på NEAT-komponenterna (Levine 1999, 2002, 2004)
   // SPA representerar den spontana variationen i NEAT-beteende (fidgeting, positionsbyten etc.)
