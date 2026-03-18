@@ -79,17 +79,24 @@ export default function PALTableActivityLevelWizard({
     return MET_ACTIVITIES.filter(activity => activity.category === 'Hushållsaktiviteter')
   }, [])
 
+  const trainingActivityId = watch?.('training_activity_id')
+  const householdActivityId = watch?.('household_activity_id')
+
   // Kontrollera om alla obligatoriska fält är ifyllda
   const allRequiredFieldsFilled = useMemo(() => {
-    const trainingActivityId = watch?.('training_activity_id')
-    const householdActivityId = watch?.('household_activity_id')
-
     const baseRequired =
       trainingDays > 0 && trainingMinutes > 0 && !!trainingActivityId && stepsPerDay > 0
     // Hushållsaktivitet krävs bara om timmar > 0
     const householdOk = householdHours === 0 || !!householdActivityId
     return baseRequired && householdOk
-  }, [trainingDays, trainingMinutes, stepsPerDay, householdHours, watch])
+  }, [
+    trainingDays,
+    trainingMinutes,
+    stepsPerDay,
+    householdHours,
+    trainingActivityId,
+    householdActivityId,
+  ])
 
   // Beräkna PAL-värde när alla obligatoriska fält är ifyllda
   const palValue = useMemo(() => {
