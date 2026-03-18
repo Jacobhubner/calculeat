@@ -22,6 +22,7 @@ export interface PALSystemDescription {
       | { type: 'text'; text: string }
       | { type: 'formula'; text: string }
       | { type: 'bullets'; items: string[] }
+      | { type: 'heading'; text: string }
     )[]
     references?: string[]
   }[]
@@ -301,9 +302,10 @@ export const PAL_SYSTEM_DESCRIPTIONS: Record<PALSystem, PALSystemDescription> = 
       {
         title: 'Vetenskaplig bakgrund',
         blocks: [
+          { type: 'heading', text: 'Komponenter i energiförbrukningen' },
           {
             type: 'text',
-            text: 'Komponenter i energiförbrukningen\nDaglig energiomsättning (Total Daily Energy Expenditure, TDEE) delas vanligen upp i fyra huvudkomponenter:',
+            text: 'Daglig energiomsättning (Total Daily Energy Expenditure, TDEE) delas vanligen upp i fyra huvudkomponenter:',
           },
           {
             type: 'bullets',

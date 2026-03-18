@@ -133,7 +133,11 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
                     <h3 className="text-lg font-semibold text-neutral-800 mb-3">{section.title}</h3>
                     <div className="space-y-3">
                       {section.blocks.map((block, bi) =>
-                        block.type === 'formula' ? (
+                        block.type === 'heading' ? (
+                          <p key={bi} className="text-sm font-semibold text-neutral-700 mt-1">
+                            {block.text}
+                          </p>
+                        ) : block.type === 'formula' ? (
                           <div
                             key={bi}
                             className="bg-neutral-100 border border-neutral-200 rounded-lg px-4 py-3"
