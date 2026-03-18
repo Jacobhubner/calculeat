@@ -168,11 +168,14 @@ export default function TDEECalculatorTool() {
       // 2. Antal minuter per träningspass
       // 3. Välj träningsaktivitet
       // 4. Genomsnittligt antal steg per dag
-      const householdOk = (Number(householdHoursPerDay) || 0) === 0 || !!householdActivityId
+      const tDays = Number(trainingDaysPerWeek) || 0
+      const tMinutes = Number(trainingMinutesPerSession) || 0
+      const hHours = Number(householdHoursPerDay) || 0
+      const householdOk = hHours === 0 || !!householdActivityId
 
       const allRequiredFieldsFilled =
-        trainingDaysPerWeek > 0 &&
-        trainingMinutesPerSession > 0 &&
+        tDays > 0 &&
+        tMinutes > 0 &&
         !!trainingActivityId &&
         (Number(stepsPerDay) || 0) > 0 &&
         householdOk
@@ -198,14 +201,14 @@ export default function TDEECalculatorTool() {
       // Beräkna din aktivitetsnivå fields
       weightKg: weight || undefined,
       trainingActivityId: trainingActivityId || undefined,
-      trainingDaysPerWeek,
-      trainingMinutesPerSession,
+      trainingDaysPerWeek: Number(trainingDaysPerWeek) || 0,
+      trainingMinutesPerSession: Number(trainingMinutesPerSession) || 0,
       walkingActivityId: walkingActivityId || undefined,
       stepsPerDay: Number(stepsPerDay) || undefined,
       hoursStandingPerDay: Number(hoursStandingPerDay) || 0,
       householdActivityId: householdActivityId || undefined,
-      householdHoursPerDay,
-      spaFactor,
+      householdHoursPerDay: Number(householdHoursPerDay) || 0,
+      spaFactor: Number(spaFactor) || 1.0,
     })
 
     // Validate TDEE result
