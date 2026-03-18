@@ -31,6 +31,9 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
           <div className="sticky top-0 bg-gradient-to-r from-primary-500 to-accent-500 text-white p-6 rounded-t-2xl flex justify-between items-start">
             <div>
               <h2 className="text-2xl font-bold">{description.name}</h2>
+              {description.subtitle && (
+                <p className="text-primary-100 mt-1">{description.subtitle}</p>
+              )}
             </div>
             <button
               onClick={onClose}
@@ -46,7 +49,9 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
             {/* Description */}
             <div>
               <h3 className="text-lg font-semibold text-neutral-800 mb-2">Beskrivning</h3>
-              <p className="text-neutral-700 leading-relaxed">{description.description}</p>
+              <p className="text-neutral-700 leading-relaxed whitespace-pre-line">
+                {description.description}
+              </p>
             </div>
 
             {/* Best For */}
