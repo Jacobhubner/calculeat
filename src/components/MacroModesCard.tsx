@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { Target, TrendingUp, TrendingDown, Minus, ChevronDown } from 'lucide-react'
+import { Target, TrendingUp, TrendingDown, Minus, ChevronDown, Info, X } from 'lucide-react'
 import { usePreviewMacroMode } from '@/hooks/useMacroModes'
 import { applyMacroMode } from '@/lib/utils/macroModes'
 import { calculateLeanMass } from '@/lib/calculations/bodyComposition'
@@ -32,8 +32,20 @@ interface MacroModesCardProps {
   }) => void
 }
 
+const REFERENCES = {
+  offseason: {
+    title: 'Off-Season Mode — Källa',
+    text: 'Iraki J, Fitschen P, Espinar S, Helms E. Nutrition Recommendations for Bodybuilders in the Off-Season: A Narrative Review. Sports (Basel). 2019 Jun 26;7(7):154. doi: 10.3390/sports7070154. PMID: 31247944; PMCID: PMC6680710.',
+  },
+  onseason: {
+    title: 'On-Season Mode — Källa',
+    text: 'Helms ER, Aragon AA, Fitschen PJ. Evidence-based recommendations for natural bodybuilding contest preparation: nutrition and supplementation. J Int Soc Sports Nutr. 2014 May 12;11:20. doi: 10.1186/1550-2783-11-20. PMID: 24864135; PMCID: PMC4033492.',
+  },
+}
+
 export default function MacroModesCard({ profile, onMacroModeApply }: MacroModesCardProps) {
   const [isOpen, setIsOpen] = useState(false)
+  const [activeRef, setActiveRef] = useState<'offseason' | 'onseason' | null>(null)
   const nnrPreview = usePreviewMacroMode('nnr')
   const offseasonPreview = usePreviewMacroMode('offseason')
 
@@ -274,6 +286,14 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
                 <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">
                   Bulk
                 </Badge>
+                <button
+                  type="button"
+                  onClick={() => setActiveRef('offseason')}
+                  className="text-neutral-400 hover:text-primary-600 transition-colors"
+                  aria-label="Visa referens för Off-Season Mode"
+                >
+                  <Info className="h-3.5 w-3.5" />
+                </button>
               </div>
               <Button
                 size="sm"
@@ -325,6 +345,14 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
                 >
                   Cut
                 </Badge>
+                <button
+                  type="button"
+                  onClick={() => setActiveRef('onseason')}
+                  className="text-neutral-400 hover:text-primary-600 transition-colors"
+                  aria-label="Visa referens för On-Season Mode"
+                >
+                  <Info className="h-3.5 w-3.5" />
+                </button>
               </div>
               <Button
                 size="sm"
@@ -387,6 +415,32 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
             <p>• On-Season Mode för muskelbevaring under tiden som fettet minskar</p>
           </div>
         </CardContent>
+      )}
+      {activeRef && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40"
+          onClick={() => setActiveRef(null)}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-5 space-y-3"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between gap-2">
+              <h3 className="text-sm font-semibold text-neutral-900">
+                {REFERENCES[activeRef].title}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setActiveRef(null)}
+                className="text-neutral-400 hover:text-neutral-600 transition-colors shrink-0"
+                aria-label="Stäng"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <p className="text-xs text-neutral-700 leading-relaxed">{REFERENCES[activeRef].text}</p>
+          </div>
+        </div>
       )}
     </Card>
   )
