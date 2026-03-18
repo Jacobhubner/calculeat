@@ -270,7 +270,7 @@ export const PAL_SYSTEM_DESCRIPTIONS: Record<PALSystem, PALSystemDescription> = 
         blocks: [
           {
             type: 'text',
-            text: 'Komponenter i energiförbrukningen\nDaglig energiomsättning (Total Daily Energy Expenditure, TDEE) delas vanligen upp i fyra huvudkomponenter:',
+            text: 'Daglig energiomsättning (Total Daily Energy Expenditure, TDEE) delas vanligen upp i fyra huvudkomponenter:',
           },
           {
             type: 'bullets',
@@ -281,10 +281,9 @@ export const PAL_SYSTEM_DESCRIPTIONS: Record<PALSystem, PALSystemDescription> = 
               'Kostens termogena effekt (TEF)',
             ],
           },
-          { type: 'text', text: 'Denna uppdelning används brett inom energimetabolismforskning.' },
           {
             type: 'text',
-            text: 'Den totala energiförbrukningen beräknas enligt (där nämnaren 0,9 representerar att TEF i genomsnitt motsvarar ~10 % av energiintaget):',
+            text: 'Denna uppdelning används brett inom energimetabolismforskning. Den totala energiförbrukningen beräknas enligt (där nämnaren 0,9 representerar att TEF i genomsnitt motsvarar ~10 % av energiintaget):',
           },
           { type: 'formula', text: 'TDEE = (BMR + NEAT_total + EAT) / 0,9' },
           { type: 'text', text: 'Det slutliga PAL-värdet (Physical Activity Level) beräknas som:' },
