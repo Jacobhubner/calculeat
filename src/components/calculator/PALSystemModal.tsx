@@ -110,6 +110,21 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
                     <p className="text-neutral-700 leading-relaxed whitespace-pre-line">
                       {section.content}
                     </p>
+                    {section.references && section.references.length > 0 && (
+                      <div className="mt-3 space-y-2">
+                        <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide">
+                          Referenser
+                        </p>
+                        {section.references.map((ref, ri) => (
+                          <div
+                            key={ri}
+                            className="text-sm text-neutral-600 bg-neutral-50 p-3 rounded-lg border border-neutral-200"
+                          >
+                            <p className="leading-relaxed">{ref}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
