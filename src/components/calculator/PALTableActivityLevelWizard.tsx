@@ -82,15 +82,10 @@ export default function PALTableActivityLevelWizard({
   // Kontrollera om alla obligatoriska fält är ifyllda
   const allRequiredFieldsFilled = useMemo(() => {
     const trainingActivityId = watch?.('training_activity_id')
-    const walkingActivityId = watch?.('walking_activity_id')
     const householdActivityId = watch?.('household_activity_id')
 
     const baseRequired =
-      trainingDays > 0 &&
-      trainingMinutes > 0 &&
-      !!trainingActivityId &&
-      stepsPerDay > 0 &&
-      !!walkingActivityId
+      trainingDays > 0 && trainingMinutes > 0 && !!trainingActivityId && stepsPerDay > 0
     // Hushållsaktivitet krävs bara om timmar > 0
     const householdOk = householdHours === 0 || !!householdActivityId
     return baseRequired && householdOk

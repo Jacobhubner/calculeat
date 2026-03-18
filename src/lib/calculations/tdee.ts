@@ -284,11 +284,12 @@ function calculateActivityLevelWizard(
   }
 
   const trainingMET = MET_ACTIVITIES.find(a => a.id === _trainingActivityId)?.met
-  const walkingMET = MET_ACTIVITIES.find(a => a.id === _walkingActivityId)?.met
+  // Walking has a permanent default selection ('17190') — fall back to 3.5 if not yet registered
+  const walkingMET = MET_ACTIVITIES.find(a => a.id === _walkingActivityId)?.met ?? 3.5
   const householdMET = MET_ACTIVITIES.find(a => a.id === _householdActivityId)?.met
 
-  // Required: training and walking activity must be selected
-  if (!trainingMET || !walkingMET) return 0
+  // Training activity must be explicitly selected
+  if (!trainingMET) return 0
   // Household activity required only if household hours > 0
   if (householdHoursPerDay > 0 && !householdMET) return 0
 
