@@ -168,19 +168,14 @@ export default function TDEECalculatorTool() {
       // 2. Antal minuter per träningspass
       // 3. Välj träningsaktivitet
       // 4. Genomsnittligt antal steg per dag
+      const householdOk = (Number(householdHoursPerDay) || 0) === 0 || !!householdActivityId
+
       const allRequiredFieldsFilled =
         trainingDaysPerWeek > 0 &&
         trainingMinutesPerSession > 0 &&
         !!trainingActivityId &&
-        (Number(stepsPerDay) || 0) > 0
-
-      console.log('Beräkna din aktivitetsnivå Validation:', {
-        allRequiredFieldsFilled,
-        trainingDaysPerWeek,
-        trainingMinutesPerSession,
-        trainingActivityId,
-        stepsPerDay,
-      })
+        (Number(stepsPerDay) || 0) > 0 &&
+        householdOk
 
       if (!allRequiredFieldsFilled) {
         return null
