@@ -4,6 +4,7 @@
  */
 
 import type { Gender } from '../types'
+import { MET_ACTIVITIES } from '../constants/metActivities'
 
 export type PALSystem =
   | 'FAO/WHO/UNU based PAL values'
@@ -282,11 +283,9 @@ function calculateActivityLevelWizard(
     return 0
   }
 
-  // Import MET activities dynamically to get MET values
-  // For now, use default MET values since we can't import in this function
-  const walkingMET = 3.5 // Default walking MET
-  const householdMET = 2.0 // Default household MET
-  const trainingMET = 6.0 // Default training MET
+  const trainingMET = MET_ACTIVITIES.find(a => a.id === _trainingActivityId)?.met ?? 6.0
+  const walkingMET = MET_ACTIVITIES.find(a => a.id === _walkingActivityId)?.met ?? 3.5
+  const householdMET = MET_ACTIVITIES.find(a => a.id === _householdActivityId)?.met ?? 2.0
 
   // NEAT_steps: Gångkalorier från steg (viktjusterad med MET-värde)
   const neatSteps = (stepsPerDay * (0.04 / 70) * weightKg * walkingMET) / 3.8
