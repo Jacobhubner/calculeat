@@ -101,6 +101,20 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
               </div>
             )}
 
+            {/* Sections */}
+            {description.sections && description.sections.length > 0 && (
+              <div className="space-y-6">
+                {description.sections.map((section, index) => (
+                  <div key={index}>
+                    <h3 className="text-lg font-semibold text-neutral-800 mb-2">{section.title}</h3>
+                    <p className="text-neutral-700 leading-relaxed whitespace-pre-line">
+                      {section.content}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+
             {/* Formula variants */}
             {description.formulaVariants && description.formulaVariants.length > 0 && (
               <div>
@@ -151,6 +165,23 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
                           {v.measurements}
                         </p>
                       )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* References */}
+            {description.references && description.references.length > 0 && (
+              <div>
+                <h3 className="text-lg font-semibold text-neutral-800 mb-3">Referenser</h3>
+                <div className="space-y-3">
+                  {description.references.map((ref, index) => (
+                    <div
+                      key={index}
+                      className="text-sm text-neutral-600 bg-neutral-50 p-3 rounded-lg border border-neutral-200"
+                    >
+                      <p className="leading-relaxed">{ref}</p>
                     </div>
                   ))}
                 </div>
