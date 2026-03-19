@@ -23,6 +23,7 @@ export interface PALSystemDescription {
       | { type: 'formula'; text: string }
       | { type: 'bullets'; items: string[] }
       | { type: 'heading'; text: string }
+      | { type: 'image'; src: string; alt: string }
     )[]
     references?: string[]
   }[]
@@ -310,16 +311,17 @@ export const PAL_SYSTEM_DESCRIPTIONS: Record<PALSystem, PALSystemDescription> = 
           {
             type: 'bullets',
             items: [
-              'Basal eller vilometabolism (BMR/RMR)',
-              'Icke-träningsrelaterad aktivitet (NEAT)',
-              'Träningsrelaterad aktivitet (EAT)',
-              'Kostens termogena effekt (TEF)',
+              'Basal eller vilometabolism (BMR/RMR) ≈ 60 %',
+              'Icke-träningsrelaterad aktivitet (NEAT) ≈ 15–30 %',
+              'Träningsrelaterad aktivitet (EAT) ≈ 5–10 %',
+              'Kostens termogena effekt (TEF) ≈ 8–15 %',
             ],
           },
           {
             type: 'text',
             text: 'Denna uppdelning används brett inom energimetabolismforskning.',
           },
+          { type: 'image', src: '/TDEE.png', alt: 'TDEE-komponenter illustration' },
         ],
       },
       {
@@ -391,7 +393,7 @@ export const PAL_SYSTEM_DESCRIPTIONS: Record<PALSystem, PALSystemDescription> = 
           { type: 'text', text: 'En förenklad modell:' },
           {
             type: 'formula',
-            text: 'NEAT_steps ≈ Steps_per_day × (0,04 / 70 × kroppsvikt) × Tempo_factor',
+            text: 'NEAT_steps = Steps_per_day × (0,04 / 70 × kroppsvikt) × Tempo_factor',
           },
           {
             type: 'text',

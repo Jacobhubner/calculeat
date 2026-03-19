@@ -38,7 +38,8 @@ export default function TDEEContent() {
             <p className="font-medium text-neutral-900">2. NEAT (mest variabel)</p>
             <p className="text-sm text-neutral-600 mt-1">
               <strong>Non-Exercise Activity Thermogenesis</strong> – vardagsrörelse som inte är
-              träning (gå, stå, städa). Kan stå för 10–50 % av TDEE beroende på livsstil och yrke.
+              träning (gå, stå, städa). Kan utgöra cirka 15–30 % av TDEE, men variationen är
+              beroende på livsstil och yrke.
             </p>
           </div>
 
@@ -58,6 +59,11 @@ export default function TDEEContent() {
             </p>
           </div>
         </div>
+        <img
+          src="/TDEE.png"
+          alt="TDEE-komponenter illustration"
+          className="w-3/5 rounded-lg mt-4"
+        />
       </section>
 
       <section>

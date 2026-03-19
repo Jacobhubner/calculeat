@@ -153,6 +153,13 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
                               </li>
                             ))}
                           </ul>
+                        ) : block.type === 'image' ? (
+                          <img
+                            key={bi}
+                            src={block.src}
+                            alt={block.alt}
+                            className="w-3/5 rounded-lg mt-2"
+                          />
                         ) : (
                           <p
                             key={bi}
