@@ -518,6 +518,12 @@ export function useAdminUpdateFoodItem() {
         Object.entries(input).filter(([k]) => !NON_DB_FOOD_ITEM_FIELDS.includes(k as never))
       )
 
+      if (Object.keys(dbInput).length === 0) {
+        const { data, error } = await supabase.from('food_items').select('*').eq('id', id).single()
+        if (error) throw error
+        return data as FoodItem
+      }
+
       const { data, error } = await supabase
         .from('food_items')
         .update(dbInput)
