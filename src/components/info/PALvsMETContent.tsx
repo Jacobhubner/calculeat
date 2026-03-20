@@ -124,26 +124,46 @@ export default function PALvsMETContent() {
       <section>
         <h3 className="text-lg font-semibold text-neutral-900 mb-2">Rätt sätt att kombinera MET</h3>
         <p>
-          MET beskriver aktivitetens intensitet. För att lägga till träning ovanpå din dagliga nivå
-          använder du rätt formel beroende på om ditt <strong>PAL</strong> redan inkluderar träning
-          eller ej.
+          MET beskriver intensiteten i en aktivitet. Hur MET ska användas beror på om ditt PAL-värde
+          redan inkluderar träning eller endast speglar vardagsaktivitet.
         </p>
         <div className="space-y-3 mt-3">
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
             <p className="font-medium text-blue-900">PAL inkluderar träning</p>
-            <p className="text-sm text-neutral-700 mt-1">RMR × PAL + RMR × (MET − 1) × tid</p>
+            <p className="font-mono text-sm text-neutral-700 mt-2">TDEE = RMR × PAL</p>
             <p className="text-xs text-neutral-600 mt-2">
-              MET − 1 lägger endast till den extra energin över vila, eftersom träningens
-              &ldquo;vilodel&rdquo; redan ingår i PAL.
+              Om PAL-värdet inkluderar både vardagsaktivitet och träning behövs ingen ytterligare
+              beräkning. Träningens energiförbrukning ingår redan i PAL.
             </p>
           </div>
           <div className="bg-green-50 border border-green-200 rounded-lg p-4">
             <p className="font-medium text-green-900">PAL baseras på vardag (ingen träning)</p>
-            <p className="text-sm text-neutral-700 mt-1">RMR × PAL + RMR × MET × tid</p>
-            <p className="text-xs text-neutral-600 mt-2">
-              Här läggs hela MET-kostnaden till, eftersom din PAL endast avser vardagsaktivitet utan
-              träningspass.
+            <p className="font-mono text-sm text-neutral-700 mt-2">
+              TDEE = RMR × PAL + RMR × (MET − 1) × tid
             </p>
+            <p className="text-xs text-neutral-600 mt-2">
+              Här representerar PAL endast vardagsaktivitet (NEAT), och träning läggs till separat.
+              MET − 1 används eftersom endast den extra energin över vila ska adderas —
+              viloförbrukningen ingår redan i RMR × PAL.
+            </p>
+          </div>
+        </div>
+        <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4 mt-3 space-y-1">
+          <p className="text-sm font-semibold text-neutral-700 mb-2">Sammanfattning</p>
+          <div className="flex gap-2 text-sm text-neutral-700">
+            <span className="text-neutral-400 mt-0.5">•</span>
+            <span>Använd endast PAL om det inkluderar träning</span>
+          </div>
+          <div className="flex gap-2 text-sm text-neutral-700">
+            <span className="text-neutral-400 mt-0.5">•</span>
+            <span>Använd PAL + (MET − 1) om träning läggs till separat</span>
+          </div>
+          <div className="flex gap-2 text-sm text-neutral-700">
+            <span className="text-neutral-400 mt-0.5">•</span>
+            <span>
+              Använd aldrig full MET tillsammans med RMR × PAL, eftersom det leder till
+              dubbelräkning av viloförbrukning
+            </span>
           </div>
         </div>
       </section>
