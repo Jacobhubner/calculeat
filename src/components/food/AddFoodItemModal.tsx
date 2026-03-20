@@ -115,6 +115,9 @@ export function AddFoodItemModal({
     grams_per_piece: number | undefined
     serving_unit: string | undefined
     gramsPerVolume: number | undefined
+    saturated_fat_g: number | undefined
+    sugars_g: number | undefined
+    salt_g: number | undefined
   } | null>(null)
 
   // Barcode scanning state
@@ -241,6 +244,11 @@ export function AddFoodItemModal({
       }
 
       // Spara initiala värden för jämförelse
+      const satFatInitial = editItemNutrients?.find(
+        n => n.nutrient_code === 'saturated_fat'
+      )?.amount
+      const sugarsInitial = editItemNutrients?.find(n => n.nutrient_code === 'sugars')?.amount
+      const saltInitial = editItemNutrients?.find(n => n.nutrient_code === 'salt')?.amount
       setInitialEditValues({
         name: editItem.name,
         default_amount: editItem.default_amount,
@@ -255,6 +263,9 @@ export function AddFoodItemModal({
         grams_per_piece: editItem.grams_per_piece,
         serving_unit: editItem.serving_unit,
         gramsPerVolume: initialGramsPerVolume,
+        saturated_fat_g: satFatInitial,
+        sugars_g: sugarsInitial,
+        salt_g: saltInitial,
       })
     } else if (!editItem && open) {
       // Reset to defaults when opening for create
@@ -314,6 +325,9 @@ export function AddFoodItemModal({
     const gramsPerVolumeChanged = gramsPerVolume !== initialEditValues.gramsPerVolume
     const gramsPerPieceChanged = (gramsPerPiece || null) !== initialEditValues.grams_per_piece
     const servingUnitChanged = (servingUnit?.trim() || null) !== initialEditValues.serving_unit
+    const saturatedFatChanged = (saturatedFatG ?? undefined) !== initialEditValues.saturated_fat_g
+    const sugarsChanged = (sugarsG ?? undefined) !== initialEditValues.sugars_g
+    const saltChanged = (saltG ?? undefined) !== initialEditValues.salt_g
 
     return (
       nameChanged ||
@@ -327,7 +341,10 @@ export function AddFoodItemModal({
       typeChanged ||
       gramsPerVolumeChanged ||
       gramsPerPieceChanged ||
-      servingUnitChanged
+      servingUnitChanged ||
+      saturatedFatChanged ||
+      sugarsChanged ||
+      saltChanged
     )
   }, [
     editItem,
@@ -344,6 +361,9 @@ export function AddFoodItemModal({
     gramsPerVolume,
     gramsPerPiece,
     servingUnit,
+    saturatedFatG,
+    sugarsG,
+    saltG,
   ])
 
   // Duplicate warning - debounced search
