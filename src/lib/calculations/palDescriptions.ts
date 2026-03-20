@@ -397,7 +397,7 @@ export const PAL_SYSTEM_DESCRIPTIONS: Record<PALSystem, PALSystemDescription> = 
           },
           {
             type: 'text',
-            text: 'Tempo_faktor representerar gånghastighet baserat på MET-värden:\nEnergiförbrukningen vid gång ökar med kroppsvikt och gångtempo, vilket kan uppskattas med MET-värden (Ainsworth et al., 2011) där – måttlig takt, 4,5–5,5 km/h, har ett MET-värde om 3,8. — aktuell MET-värde divideras med detta.',
+            text: 'Tempo_factor representerar gånghastighet baserat på MET-värden:\nEnergiförbrukningen vid gång ökar med kroppsvikt och gångtempo, vilket kan uppskattas med MET-värden (Ainsworth et al., 2011) där – måttlig takt, 4,5–5,5 km/h, har ett MET-värde om 3,8. — aktuell MET-värde divideras med detta.',
           },
           { type: 'formula', text: 'Tempo_factor = (gångMET − 1) / (3.8 − 1)' },
           { type: 'text', text: 'Då landar man vanligtvis mellan:' },
@@ -565,7 +565,7 @@ export const PAL_SYSTEM_DESCRIPTIONS: Record<PALSystem, PALSystemDescription> = 
           },
           {
             type: 'text',
-            text: 'Den högre termogena effekten av protein beror på den energikrävande metabolismen av aminosyror, inklusive proteinsyntes och ureabildning. Följaktligen ger måltider med högre proteininnehåll generellt en något högre postprandial energiförbrukning jämfört med fett- eller kolhydratrika måltider, givet samma energimängd. Interindividuell variation förekommer där bland annat kroppssammansättning,  insulinresistens och metabol hälsa kan påverka.',
+            text: 'Den högre termogena effekten av protein beror på den energikrävande metabolismen av aminosyror, inklusive proteinsyntes och ureabildning. Följaktligen ger måltider med högre proteininnehåll generellt en något högre postprandial energiförbrukning jämfört med fett- eller kolhydratrika måltider, givet samma energimängd. Interindividuell variation förekommer där bland annat kroppssammansättning,  insulinresistens och metabol hälsa påverkar.',
           },
           {
             type: 'text',
