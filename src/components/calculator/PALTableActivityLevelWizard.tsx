@@ -272,6 +272,19 @@ export default function PALTableActivityLevelWizard({
             </p>
           </div>
 
+          {/* Typ av hushållsarbete */}
+          <div>
+            <Label htmlFor="household-type">Välj hushållsaktivitet</Label>
+            <Select id="household-type" className="mt-1" {...register('household_activity_id')}>
+              <option value="">Välj hushållsaktivitet...</option>
+              {householdActivities.map(activity => (
+                <option key={activity.id} value={activity.id}>
+                  {activity.activity} ({activity.met} MET)
+                </option>
+              ))}
+            </Select>
+          </div>
+
           {/* Timmar per dag */}
           <div>
             <Label htmlFor="household-hours">
@@ -296,19 +309,6 @@ export default function PALTableActivityLevelWizard({
                 {householdHours} {householdHours === 1 ? 'timme' : 'timmar'}
               </span>
             </div>
-          </div>
-
-          {/* Typ av hushållsarbete */}
-          <div>
-            <Label htmlFor="household-type">Välj hushållsaktivitet</Label>
-            <Select id="household-type" className="mt-1" {...register('household_activity_id')}>
-              <option value="">Välj hushållsaktivitet...</option>
-              {householdActivities.map(activity => (
-                <option key={activity.id} value={activity.id}>
-                  {activity.activity} ({activity.met} MET)
-                </option>
-              ))}
-            </Select>
           </div>
         </div>
 
