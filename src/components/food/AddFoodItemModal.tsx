@@ -554,14 +554,6 @@ export function AddFoodItemModal({
   )
 
   const onSubmit = async (data: FormData) => {
-    console.log(
-      '[onSubmit] saturated_fat_g:',
-      data.saturated_fat_g,
-      'sugars_g:',
-      data.sugars_g,
-      'salt_g:',
-      data.salt_g
-    )
     try {
       // Beräkna ml_per_gram från volymkonvertering
       // Formel: ml_per_gram = ml_i_vald_enhet / gram_per_enhet
@@ -638,7 +630,6 @@ export function AddFoodItemModal({
       }
 
       // Spara valfria näringsvärden (mättat fett, sockerarter, salt) i food_nutrients
-      console.log('[onSubmit] savedFoodItemId:', savedFoodItemId)
       if (savedFoodItemId) {
         const upsertRows: Array<{
           food_item_id: string
@@ -677,12 +668,10 @@ export function AddFoodItemModal({
             reference_unit: 'g' as const,
           })
 
-        console.log('[onSubmit] upsertRows:', upsertRows)
         if (upsertRows.length > 0) {
-          const { error: upsertError } = await supabase
+          await supabase
             .from('food_nutrients')
             .upsert(upsertRows, { onConflict: 'food_item_id,nutrient_code' })
-          console.log('[onSubmit] upsert error:', upsertError)
         }
 
         // Radera rader för fält som användaren lämnat tomma
@@ -700,6 +689,9 @@ export function AddFoodItemModal({
             .eq('food_item_id', savedFoodItemId)
             .in('nutrient_code', toDel)
         }
+
+        // Invalidera nutrient-cache så panelen visar uppdaterade värden
+        queryClient.invalidateQueries({ queryKey: ['foodNutrients', savedFoodItemId] })
       }
 
       // Om produkten inte hittades externt men användaren fyllt i manuellt:
