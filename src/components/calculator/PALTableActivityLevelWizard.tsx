@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
+import { Portal } from '@/components/ui/portal'
 import { MET_ACTIVITIES, MET_CATEGORIES } from '@/lib/constants/metActivities'
 import type { UseFormRegister, UseFormWatch } from 'react-hook-form'
 
@@ -113,265 +114,291 @@ export default function PALTableActivityLevelWizard({
   }
 
   return (
-    <div className="space-y-8">
-      {/* Sektion 1: Träning & Motion */}
-      <div className="space-y-4 p-4 bg-white/50 rounded-lg border border-primary-200">
-        <div>
-          <h3 className="text-base font-semibold text-neutral-900">1. Träning & Motion</h3>
-          <p className="text-sm text-neutral-600 mt-1">
-            Berätta om din regelbundna träning (gym, löpning, sport, etc.)
-          </p>
-        </div>
-
-        {/* Antal dagar per vecka */}
-        <div>
-          <Label htmlFor="training-days">Antal dagar per vecka du tränar</Label>
-          <div className="flex items-center gap-4 mt-2">
-            <span className="text-sm text-neutral-600">0</span>
-            <input
-              id="training-days"
-              type="range"
-              min="0"
-              max="7"
-              step="1"
-              defaultValue="0"
-              className="flex-1"
-              {...register('training_days_per_week', { valueAsNumber: true })}
-            />
-            <span className="text-sm text-neutral-600">7</span>
-          </div>
-          <div className="text-center mt-2">
-            <span className="text-2xl font-bold text-primary-600">
-              {trainingDays} {trainingDays === 1 ? 'dag' : 'dagar'}
-            </span>
-          </div>
-        </div>
-
-        {/* Minuter per träningspass */}
-        <div>
-          <Label htmlFor="training-minutes">Antal minuter per träningspass</Label>
-          <Input
-            id="training-minutes"
-            type="number"
-            min="0"
-            max="300"
-            step="1"
-            placeholder="0"
-            className="mt-1"
-            {...register('training_minutes_per_session', { valueAsNumber: true })}
-          />
-        </div>
-
-        {/* Typ av träning - Sökbar lista */}
-        <div>
-          <Label htmlFor="training-search">Sök träningsaktivitet</Label>
-          <Input
-            id="training-search"
-            type="text"
-            placeholder="Sök på aktivitet, beskrivning eller kategori..."
-            value={searchTerm}
-            onChange={e => setSearchTerm(e.target.value)}
-            className="mt-1"
-          />
-          <p className="text-xs text-neutral-500 mt-1">
-            {filteredActivities.length} aktiviteter hittade
-          </p>
-        </div>
-
-        <div>
-          <Label htmlFor="training-type">Välj träningsaktivitet</Label>
-          <Select id="training-type" className="mt-1" {...register('training_activity_id')}>
-            <option value="">Välj träningsaktivitet...</option>
-            {MET_CATEGORIES.map(category => {
-              const categoryActivities = activitiesByCategory[category]
-              if (!categoryActivities || categoryActivities.length === 0) return null
-              return (
-                <optgroup key={category} label={category}>
-                  {categoryActivities.map(activity => (
-                    <option key={activity.id} value={activity.id}>
-                      {activity.activity} ({activity.met} MET)
-                    </option>
-                  ))}
-                </optgroup>
-              )
-            })}
-          </Select>
-        </div>
-      </div>
-
-      {/* Sektion 2: Gång & Stående */}
-      <div className="space-y-4 p-4 bg-white/50 rounded-lg border border-primary-200">
-        <div>
-          <h3 className="text-base font-semibold text-neutral-900">2. Gång & Stående</h3>
-          <p className="text-sm text-neutral-600 mt-1">Din vardagsaktivitet utanför träning</p>
-        </div>
-
-        {/* Steg per dag */}
-        <div>
-          <Label htmlFor="steps-per-day">Genomsnittligt antal steg per dag</Label>
-          <Input
-            id="steps-per-day"
-            type="number"
-            min="0"
-            max="30000"
-            step="1"
-            placeholder="7000"
-            className="mt-1"
-            {...register('steps_per_day', { valueAsNumber: true })}
-          />
-          <p className="text-xs text-neutral-500 mt-1">
-            Tips: Använd stegräknare i telefonen för att få genomsnitt
-          </p>
-        </div>
-
-        {/* Gångtempo */}
-        <div>
-          <Label htmlFor="walking-tempo">Gångtempo</Label>
-          <Select id="walking-tempo" className="mt-1" {...register('walking_activity_id')}>
-            {specificWalkingActivities.map(activity => (
-              <option key={activity.id} value={activity.id}>
-                {activity.activity} ({activity.met} MET)
-              </option>
-            ))}
-          </Select>
-        </div>
-
-        {/* Timmar stående */}
-        <div>
-          <Label htmlFor="hours-standing">Antal timmar stående per dag</Label>
-          <div className="flex items-center gap-4 mt-2">
-            <span className="text-sm text-neutral-600">0</span>
-            <input
-              id="hours-standing"
-              type="range"
-              min="0"
-              max="16"
-              step="0.5"
-              defaultValue="0"
-              className="flex-1"
-              {...register('hours_standing_per_day', { valueAsNumber: true })}
-            />
-            <span className="text-sm text-neutral-600">16</span>
-          </div>
-          <div className="text-center mt-2">
-            <span className="text-2xl font-bold text-primary-600">
-              {hoursStanding} {hoursStanding === 1 ? 'timme' : 'timmar'}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Sektion 3: Hushållsarbete */}
-      <div className="space-y-4 p-4 bg-white/50 rounded-lg border border-primary-200">
-        <div>
-          <h3 className="text-base font-semibold text-neutral-900">3. Hushållsarbete</h3>
-          <p className="text-sm text-neutral-600 mt-1">
-            Städning, matlagning, trädgårdsarbete, etc.
-          </p>
-        </div>
-
-        {/* Timmar per dag */}
-        <div>
-          <Label htmlFor="household-hours">
-            Genomsnittligt antal timmar hushållsarbete per dag
-          </Label>
-          <div className="flex items-center gap-4 mt-2">
-            <span className="text-sm text-neutral-600">0</span>
-            <input
-              id="household-hours"
-              type="range"
-              min="0"
-              max="16"
-              step="0.5"
-              defaultValue="0"
-              className="flex-1"
-              {...register('household_hours_per_day', { valueAsNumber: true })}
-            />
-            <span className="text-sm text-neutral-600">16</span>
-          </div>
-          <div className="text-center mt-2">
-            <span className="text-2xl font-bold text-primary-600">
-              {householdHours} {householdHours === 1 ? 'timme' : 'timmar'}
-            </span>
-          </div>
-        </div>
-
-        {/* Typ av hushållsarbete */}
-        <div>
-          <Label htmlFor="household-type">Välj hushållsaktivitet</Label>
-          <Select id="household-type" className="mt-1" {...register('household_activity_id')}>
-            <option value="">Välj hushållsaktivitet...</option>
-            {householdActivities.map(activity => (
-              <option key={activity.id} value={activity.id}>
-                {activity.activity} ({activity.met} MET)
-              </option>
-            ))}
-          </Select>
-        </div>
-      </div>
-
-      {/* Sektion 4: SPA-faktor */}
-      <div className="space-y-4 p-4 bg-white/50 rounded-lg border border-primary-200">
-        <div>
-          <h3 className="text-base font-semibold text-neutral-900">4. SPA-faktor</h3>
-          <p className="text-sm text-neutral-600 mt-1">
-            Spontaneous Physical Activity - dina omedvetna rörelser under dagen
-          </p>
-        </div>
-
-        {/* SPA Slider */}
-        <div>
-          <Label htmlFor="spa-factor">Välj din SPA-faktor</Label>
-          <div className="flex items-center gap-4 mt-2">
-            <span className="text-sm text-neutral-600 font-medium">0.95</span>
-            <input
-              id="spa-factor"
-              type="range"
-              min="0.95"
-              max="1.15"
-              step="0.01"
-              defaultValue="1.00"
-              className="flex-1 h-2 bg-neutral-200 rounded-lg appearance-none cursor-pointer accent-primary-600"
-              {...register('spa_factor', { valueAsNumber: true })}
-            />
-            <span className="text-sm text-neutral-600 font-medium">1.15</span>
-          </div>
-          <div className="text-center mt-2">
-            <span className="text-3xl font-bold text-primary-600">{spaFactor.toFixed(2)}</span>
-            <p className="text-xs text-neutral-500 mt-1">
-              {spaFactor < 1.0
-                ? 'Låg spontan aktivitet'
-                : spaFactor === 1.0
-                  ? 'Normal spontan aktivitet'
-                  : spaFactor <= 1.1
-                    ? 'Hög spontan aktivitet'
-                    : 'Mycket hög spontan aktivitet'}
+    <>
+      <div className="space-y-8">
+        {/* Sektion 1: Träning & Motion */}
+        <div className="space-y-4 p-4 bg-white/50 rounded-lg border border-primary-200">
+          <div>
+            <h3 className="text-base font-semibold text-neutral-900">1. Träning & Motion</h3>
+            <p className="text-sm text-neutral-600 mt-1">
+              Berätta om din regelbundna träning (gym, löpning, sport, etc.)
             </p>
           </div>
+
+          {/* Antal dagar per vecka */}
+          <div>
+            <Label htmlFor="training-days">Antal dagar per vecka du tränar</Label>
+            <div className="flex items-center gap-4 mt-2">
+              <span className="text-sm text-neutral-600">0</span>
+              <input
+                id="training-days"
+                type="range"
+                min="0"
+                max="7"
+                step="1"
+                defaultValue="0"
+                className="flex-1"
+                {...register('training_days_per_week', { valueAsNumber: true })}
+              />
+              <span className="text-sm text-neutral-600">7</span>
+            </div>
+            <div className="text-center mt-2">
+              <span className="text-2xl font-bold text-primary-600">
+                {trainingDays} {trainingDays === 1 ? 'dag' : 'dagar'}
+              </span>
+            </div>
+          </div>
+
+          {/* Minuter per träningspass */}
+          <div>
+            <Label htmlFor="training-minutes">Antal minuter per träningspass</Label>
+            <Input
+              id="training-minutes"
+              type="number"
+              min="0"
+              max="300"
+              step="1"
+              placeholder="0"
+              className="mt-1"
+              {...register('training_minutes_per_session', { valueAsNumber: true })}
+            />
+          </div>
+
+          {/* Typ av träning - Sökbar lista */}
+          <div>
+            <Label htmlFor="training-search">Sök träningsaktivitet</Label>
+            <Input
+              id="training-search"
+              type="text"
+              placeholder="Sök på aktivitet, beskrivning eller kategori..."
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+              className="mt-1"
+            />
+            <p className="text-xs text-neutral-500 mt-1">
+              {filteredActivities.length} aktiviteter hittade
+            </p>
+          </div>
+
+          <div>
+            <Label htmlFor="training-type">Välj träningsaktivitet</Label>
+            <Select id="training-type" className="mt-1" {...register('training_activity_id')}>
+              <option value="">Välj träningsaktivitet...</option>
+              {MET_CATEGORIES.map(category => {
+                const categoryActivities = activitiesByCategory[category]
+                if (!categoryActivities || categoryActivities.length === 0) return null
+                return (
+                  <optgroup key={category} label={category}>
+                    {categoryActivities.map(activity => (
+                      <option key={activity.id} value={activity.id}>
+                        {activity.activity} ({activity.met} MET)
+                      </option>
+                    ))}
+                  </optgroup>
+                )
+              })}
+            </Select>
+          </div>
         </div>
 
-        {/* Tips-ruta */}
-        <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-3">
-          <p className="text-sm text-neutral-700">
-            <strong>Tips:</strong> De flesta bör använda 1,00 (normalvärde). Använd lägre värden om
-            du är ovanligt stillasittande och högre om du är konstant i rörelse utan att det syns i
-            träning eller steg.
-          </p>
+        {/* Sektion 2: Gång & Stående */}
+        <div className="space-y-4 p-4 bg-white/50 rounded-lg border border-primary-200">
+          <div>
+            <h3 className="text-base font-semibold text-neutral-900">2. Gång & Stående</h3>
+            <p className="text-sm text-neutral-600 mt-1">Din vardagsaktivitet utanför träning</p>
+          </div>
+
+          {/* Steg per dag */}
+          <div>
+            <Label htmlFor="steps-per-day">Genomsnittligt antal steg per dag</Label>
+            <Input
+              id="steps-per-day"
+              type="number"
+              min="0"
+              max="30000"
+              step="1"
+              placeholder="7000"
+              className="mt-1"
+              {...register('steps_per_day', { valueAsNumber: true })}
+            />
+            <p className="text-xs text-neutral-500 mt-1">
+              Tips: Använd stegräknare i telefonen för att få genomsnitt
+            </p>
+          </div>
+
+          {/* Gångtempo */}
+          <div>
+            <Label htmlFor="walking-tempo">Gångtempo</Label>
+            <Select id="walking-tempo" className="mt-1" {...register('walking_activity_id')}>
+              {specificWalkingActivities.map(activity => (
+                <option key={activity.id} value={activity.id}>
+                  {activity.activity} ({activity.met} MET)
+                </option>
+              ))}
+            </Select>
+          </div>
+
+          {/* Timmar stående */}
+          <div>
+            <Label htmlFor="hours-standing">Antal timmar stående per dag</Label>
+            <div className="flex items-center gap-4 mt-2">
+              <span className="text-sm text-neutral-600">0</span>
+              <input
+                id="hours-standing"
+                type="range"
+                min="0"
+                max="16"
+                step="0.5"
+                defaultValue="0"
+                className="flex-1"
+                {...register('hours_standing_per_day', { valueAsNumber: true })}
+              />
+              <span className="text-sm text-neutral-600">16</span>
+            </div>
+            <div className="text-center mt-2">
+              <span className="text-2xl font-bold text-primary-600">
+                {hoursStanding} {hoursStanding === 1 ? 'timme' : 'timmar'}
+              </span>
+            </div>
+          </div>
         </div>
 
-        {/* Beräknat PAL-värde */}
-        {palValue && (
-          <div className="mt-6 p-4 bg-gradient-to-br from-primary-50 to-primary-100 border-2 border-primary-300 rounded-lg">
-            <div className="text-center">
-              <p className="text-sm font-medium text-primary-800 mb-2">Beräknat PAL-värde</p>
-              <p className="text-4xl font-bold text-primary-600">{palValue.toFixed(2)}</p>
-              <p className="text-xs text-primary-700 mt-2">
-                Detta värde baseras på din inmatade aktivitetsinformation
+        {/* Sektion 3: Hushållsarbete */}
+        <div className="space-y-4 p-4 bg-white/50 rounded-lg border border-primary-200">
+          <div>
+            <h3 className="text-base font-semibold text-neutral-900">3. Hushållsarbete</h3>
+            <p className="text-sm text-neutral-600 mt-1">
+              Städning, matlagning, trädgårdsarbete, etc.
+            </p>
+          </div>
+
+          {/* Timmar per dag */}
+          <div>
+            <Label htmlFor="household-hours">
+              Genomsnittligt antal timmar hushållsarbete per dag
+            </Label>
+            <div className="flex items-center gap-4 mt-2">
+              <span className="text-sm text-neutral-600">0</span>
+              <input
+                id="household-hours"
+                type="range"
+                min="0"
+                max="16"
+                step="0.5"
+                defaultValue="0"
+                className="flex-1"
+                {...register('household_hours_per_day', { valueAsNumber: true })}
+              />
+              <span className="text-sm text-neutral-600">16</span>
+            </div>
+            <div className="text-center mt-2">
+              <span className="text-2xl font-bold text-primary-600">
+                {householdHours} {householdHours === 1 ? 'timme' : 'timmar'}
+              </span>
+            </div>
+          </div>
+
+          {/* Typ av hushållsarbete */}
+          <div>
+            <Label htmlFor="household-type">Välj hushållsaktivitet</Label>
+            <Select id="household-type" className="mt-1" {...register('household_activity_id')}>
+              <option value="">Välj hushållsaktivitet...</option>
+              {householdActivities.map(activity => (
+                <option key={activity.id} value={activity.id}>
+                  {activity.activity} ({activity.met} MET)
+                </option>
+              ))}
+            </Select>
+          </div>
+        </div>
+
+        {/* Sektion 4: SPA-faktor */}
+        <div className="space-y-4 p-4 bg-white/50 rounded-lg border border-primary-200">
+          <div>
+            <h3 className="text-base font-semibold text-neutral-900">4. SPA-faktor</h3>
+            <p className="text-sm text-neutral-600 mt-1">
+              Spontaneous Physical Activity - dina omedvetna rörelser under dagen
+            </p>
+          </div>
+
+          {/* SPA Slider */}
+          <div>
+            <Label htmlFor="spa-factor">Välj din SPA-faktor</Label>
+            <div className="flex items-center gap-4 mt-2">
+              <span className="text-sm text-neutral-600 font-medium">0.95</span>
+              <input
+                id="spa-factor"
+                type="range"
+                min="0.95"
+                max="1.15"
+                step="0.01"
+                defaultValue="1.00"
+                className="flex-1 h-2 bg-neutral-200 rounded-lg appearance-none cursor-pointer accent-primary-600"
+                {...register('spa_factor', { valueAsNumber: true })}
+              />
+              <span className="text-sm text-neutral-600 font-medium">1.15</span>
+            </div>
+            <div className="text-center mt-2">
+              <span className="text-3xl font-bold text-primary-600">{spaFactor.toFixed(2)}</span>
+              <p className="text-xs text-neutral-500 mt-1">
+                {spaFactor < 1.0
+                  ? 'Låg spontan aktivitet'
+                  : spaFactor === 1.0
+                    ? 'Normal spontan aktivitet'
+                    : spaFactor <= 1.1
+                      ? 'Hög spontan aktivitet'
+                      : 'Mycket hög spontan aktivitet'}
               </p>
             </div>
           </div>
-        )}
+
+          {/* Tips-ruta */}
+          <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-3">
+            <p className="text-sm text-neutral-700">
+              <strong>Tips:</strong> De flesta bör använda 1,00 (normalvärde). Använd lägre värden
+              om du är ovanligt stillasittande och högre om du är konstant i rörelse utan att det
+              syns i träning eller steg.
+            </p>
+          </div>
+        </div>
       </div>
-    </div>
+
+      {/* Sticky bottom bar — visas när PAL är beräknat */}
+      {palValue && (
+        <Portal>
+          <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-primary-200 shadow-lg px-4 py-3">
+            <div className="max-w-2xl mx-auto flex items-center justify-between gap-4">
+              <div className="flex items-center gap-6">
+                <div className="text-center">
+                  <p className="text-xs text-neutral-500 leading-none mb-0.5">PAL</p>
+                  <p className="text-2xl font-bold text-primary-600 leading-none">
+                    {palValue.toFixed(2)}
+                  </p>
+                </div>
+                {bmr && (
+                  <div className="text-center">
+                    <p className="text-xs text-neutral-500 leading-none mb-0.5">BMR</p>
+                    <p className="text-lg font-semibold text-neutral-700 leading-none">
+                      {Math.round(bmr)} kcal
+                    </p>
+                  </div>
+                )}
+                {tdee && (
+                  <div className="text-center">
+                    <p className="text-xs text-neutral-500 leading-none mb-0.5">TDEE</p>
+                    <p className="text-lg font-semibold text-neutral-700 leading-none">
+                      {Math.round(tdee)} kcal
+                    </p>
+                  </div>
+                )}
+              </div>
+              <p className="text-xs text-neutral-400 text-right hidden sm:block">
+                Baserat på din aktivitetsinformation
+              </p>
+            </div>
+          </div>
+        </Portal>
+      )}
+    </>
   )
 }
