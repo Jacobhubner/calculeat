@@ -390,7 +390,15 @@ export default function TDEECalculatorTool() {
         ))}
       </div>
 
-      {activeTab === 'jämförelse' && <ComparisonTab />}
+      {activeTab === 'jämförelse' && (
+        <ComparisonTab
+          profileGender={profileData?.gender}
+          profileAge={age}
+          profileWeight={profileData?.weight_kg}
+          profileHeight={profileData?.height_cm}
+          profileBodyFat={profileData?.body_fat_percentage}
+        />
+      )}
 
       {activeTab === 'kalkylator' && (
         <>

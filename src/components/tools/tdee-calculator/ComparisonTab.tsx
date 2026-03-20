@@ -20,13 +20,38 @@ const ALL_FORMULAS: BMRFormula[] = [
   'Fitness Stuff Podcast equation',
 ]
 
-export default function ComparisonTab() {
+interface ComparisonTabProps {
+  profileGender?: Gender
+  profileAge?: number | null
+  profileWeight?: number | null
+  profileHeight?: number | null
+  profileBodyFat?: number | null
+}
+
+export default function ComparisonTab({
+  profileGender,
+  profileAge,
+  profileWeight,
+  profileHeight,
+  profileBodyFat,
+}: ComparisonTabProps) {
   const [gender, setGender] = useState<Gender>('male')
   const [age, setAge] = useState('')
   const [weight, setWeight] = useState('')
   const [height, setHeight] = useState('')
   const [bodyFat, setBodyFat] = useState('')
   const [expandedFormula, setExpandedFormula] = useState<BMRFormula | null>(null)
+
+  const hasProfileData = !!(profileAge && profileWeight && profileHeight && profileGender)
+
+  function loadProfileValues() {
+    if (!hasProfileData) return
+    setGender(profileGender!)
+    setAge(profileAge!.toString())
+    setWeight(profileWeight!.toString())
+    setHeight(profileHeight!.toString())
+    setBodyFat(profileBodyFat ? profileBodyFat.toString() : '')
+  }
 
   const params = useMemo(() => {
     const w = parseFloat(weight)
@@ -64,25 +89,36 @@ export default function ComparisonTab() {
           <CardDescription>Fyll i dina värden för att jämföra alla BMR/RMR-formler</CardDescription>
         </CardHeader>
         <CardContent className="space-y-5">
-          {/* Kön */}
-          <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-2">Kön</label>
-            <div className="flex gap-2">
-              {(['male', 'female'] as Gender[]).map(g => (
-                <button
-                  key={g}
-                  type="button"
-                  onClick={() => setGender(g)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium border transition-colors ${
-                    gender === g
-                      ? 'bg-primary-600 text-white border-primary-600'
-                      : 'bg-white text-neutral-700 border-neutral-300 hover:border-primary-400'
-                  }`}
-                >
-                  {g === 'male' ? 'Man' : 'Kvinna'}
-                </button>
-              ))}
+          {/* Kön + Använd mina värden */}
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 mb-2">Kön</label>
+              <div className="flex gap-2">
+                {(['male', 'female'] as Gender[]).map(g => (
+                  <button
+                    key={g}
+                    type="button"
+                    onClick={() => setGender(g)}
+                    className={`px-4 py-2 rounded-full text-sm font-medium border transition-colors ${
+                      gender === g
+                        ? 'bg-primary-600 text-white border-primary-600'
+                        : 'bg-white text-neutral-700 border-neutral-300 hover:border-primary-400'
+                    }`}
+                  >
+                    {g === 'male' ? 'Man' : 'Kvinna'}
+                  </button>
+                ))}
+              </div>
             </div>
+            {hasProfileData && (
+              <button
+                type="button"
+                onClick={loadProfileValues}
+                className="px-4 py-2 rounded-full text-sm font-medium border border-accent-500 text-accent-600 bg-white hover:bg-accent-50 transition-colors"
+              >
+                Använd mina värden
+              </button>
+            )}
           </div>
 
           {/* Ålder / Vikt / Längd */}
