@@ -1467,74 +1467,171 @@ export default function FoodItemsPage() {
         <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
-              <div className="h-3 w-3 rounded-full bg-green-600" />
+              <span>🟢</span>
               Grön
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <p className="text-sm text-neutral-700 mb-3">Låg energitäthet - ät mer av dessa!</p>
-            <div className="space-y-1 text-xs text-neutral-600">
-              <p>
-                <span className="font-medium">Fast föda:</span> &lt; 1 kcal/g
-              </p>
-              <p>
-                <span className="font-medium">Vätska:</span> &lt; 0.4 kcal/g
-              </p>
-              <p>
-                <span className="font-medium">Soppa:</span> &lt; 0.5 kcal/g
-              </p>
+          <CardContent className="space-y-3 text-xs text-neutral-600">
+            <p className="text-sm text-neutral-700 font-medium">
+              Låg energitäthet – ät mer av dessa
+            </p>
+            <div>
+              <p className="font-semibold text-neutral-700 mb-1">Fast föda (&lt; 1 kcal/g):</p>
+              <ul className="space-y-0.5 pl-2">
+                {[
+                  'Bladgrönsaker (spenat, sallad)',
+                  'Gurka, tomat, zucchini',
+                  'Broccoli, blomkål',
+                  'Bär (jordgubbar, hallon)',
+                  'Frukt med hög vattenhalt (melon, apelsin)',
+                  'Potatis (kokt)',
+                ].map(item => (
+                  <li key={item} className="flex gap-1.5">
+                    <span className="text-neutral-400">•</span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
             </div>
-            <p className="text-xs text-neutral-500 mt-3">Exempel: Grönsaker, frukt, magert kött</p>
+            <div>
+              <p className="font-semibold text-neutral-700 mb-1">Vätska (&lt; 0.4 kcal/g):</p>
+              <ul className="space-y-0.5 pl-2">
+                {['Vatten', 'Lightdryck', 'Kaffe/te (utan socker)'].map(item => (
+                  <li key={item} className="flex gap-1.5">
+                    <span className="text-neutral-400">•</span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <p className="font-semibold text-neutral-700 mb-1">Soppa (&lt; 0.5 kcal/g):</p>
+              <ul className="space-y-0.5 pl-2">
+                {['Klara grönsakssoppor', 'Buljongbaserade soppor'].map(item => (
+                  <li key={item} className="flex gap-1.5">
+                    <span className="text-neutral-400">•</span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <p className="text-neutral-500 pt-1">
+              👉 Poäng: Mycket vatten + fiber → hög mättnad per kcal
+            </p>
           </CardContent>
         </Card>
 
         <Card className="bg-gradient-to-br from-yellow-50 to-yellow-100 border-yellow-200">
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
-              <div className="h-3 w-3 rounded-full bg-yellow-600" />
+              <span>🟡</span>
               Gul
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <p className="text-sm text-neutral-700 mb-3">
-              Måttlig energitäthet - ät i måttliga mängder.
+          <CardContent className="space-y-3 text-xs text-neutral-600">
+            <p className="text-sm text-neutral-700 font-medium">
+              Måttlig energitäthet – ät i balanserade mängder
             </p>
-            <div className="space-y-1 text-xs text-neutral-600">
-              <p>
-                <span className="font-medium">Fast föda:</span> 1-2.4 kcal/g
-              </p>
-              <p>
-                <span className="font-medium">Vätska:</span> 0.4-0.5 kcal/g
-              </p>
-              <p>
-                <span className="font-medium">Soppa:</span> 0.5-1 kcal/g
-              </p>
+            <div>
+              <p className="font-semibold text-neutral-700 mb-1">Fast föda (1–2.4 kcal/g):</p>
+              <ul className="space-y-0.5 pl-2">
+                {[
+                  'Kycklingfilé, kalkon',
+                  'Ägg',
+                  'Pasta, ris, quinoa',
+                  'Bröd',
+                  'Baljväxter (linser, bönor)',
+                  'Lättare mejeriprodukter (kvarg, yoghurt)',
+                ].map(item => (
+                  <li key={item} className="flex gap-1.5">
+                    <span className="text-neutral-400">•</span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
             </div>
-            <p className="text-xs text-neutral-500 mt-3">Exempel: Pasta, ris, bröd, magert kött</p>
+            <div>
+              <p className="font-semibold text-neutral-700 mb-1">Vätska (0.4–0.5 kcal/g):</p>
+              <ul className="space-y-0.5 pl-2">
+                {['Mjölk', 'Juice'].map(item => (
+                  <li key={item} className="flex gap-1.5">
+                    <span className="text-neutral-400">•</span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <p className="font-semibold text-neutral-700 mb-1">Soppa (0.5–1 kcal/g):</p>
+              <ul className="space-y-0.5 pl-2">
+                {['Linssoppa', 'Kycklingsoppa', 'Lätt krämig soppa'].map(item => (
+                  <li key={item} className="flex gap-1.5">
+                    <span className="text-neutral-400">•</span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <p className="text-neutral-500 pt-1">
+              👉 Poäng: Näringstätt men mer kalorier → kräver portionskontroll
+            </p>
           </CardContent>
         </Card>
 
         <Card className="bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200">
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
-              <div className="h-3 w-3 rounded-full bg-orange-600" />
+              <span>🟠</span>
               Orange
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <p className="text-sm text-neutral-700 mb-3">Hög energitäthet - ät mindre av dessa.</p>
-            <div className="space-y-1 text-xs text-neutral-600">
-              <p>
-                <span className="font-medium">Fast föda:</span> &gt; 2.4 kcal/g
-              </p>
-              <p>
-                <span className="font-medium">Vätska:</span> &gt; 0.5 kcal/g
-              </p>
-              <p>
-                <span className="font-medium">Soppa:</span> &gt; 1 kcal/g
-              </p>
+          <CardContent className="space-y-3 text-xs text-neutral-600">
+            <p className="text-sm text-neutral-700 font-medium">
+              Hög energitäthet – ät mindre av dessa
+            </p>
+            <div>
+              <p className="font-semibold text-neutral-700 mb-1">Fast föda (&gt; 2.4 kcal/g):</p>
+              <ul className="space-y-0.5 pl-2">
+                {[
+                  'Nötter och frön',
+                  'Ost',
+                  'Fett kött (t.ex. entrecôte)',
+                  'Chips, kex',
+                  'Godis, choklad',
+                  'Bakverk',
+                ].map(item => (
+                  <li key={item} className="flex gap-1.5">
+                    <span className="text-neutral-400">•</span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
             </div>
-            <p className="text-xs text-neutral-500 mt-3">Exempel: Nötter, olja, chips, godis</p>
+            <div>
+              <p className="font-semibold text-neutral-700 mb-1">Vätska (&gt; 0.5 kcal/g):</p>
+              <ul className="space-y-0.5 pl-2">
+                {['Läsk med socker', 'Milkshakes', 'Alkohol'].map(item => (
+                  <li key={item} className="flex gap-1.5">
+                    <span className="text-neutral-400">•</span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <p className="font-semibold text-neutral-700 mb-1">Soppa (&gt; 1 kcal/g):</p>
+              <ul className="space-y-0.5 pl-2">
+                {['Gräddbaserade soppor (t.ex. potatis- & purjolök med grädde)'].map(item => (
+                  <li key={item} className="flex gap-1.5">
+                    <span className="text-neutral-400">•</span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <p className="text-neutral-500 pt-1">
+              👉 Poäng: Lite volym, mycket kalorier → lätt att överäta
+            </p>
           </CardContent>
         </Card>
       </div>
