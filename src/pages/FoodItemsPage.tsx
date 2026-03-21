@@ -735,7 +735,7 @@ export default function FoodItemsPage() {
             )}
           </p>
         </div>
-        {(isMina || activeListId || isAdminCalculeatTab) && (
+        {(isMina || activeListId) && (
           <Button
             className="gap-2 self-start sm:self-auto"
             size="sm"
