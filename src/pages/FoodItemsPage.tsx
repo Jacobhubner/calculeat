@@ -1931,7 +1931,7 @@ export default function FoodItemsPage() {
         onOpenChange={handleModalClose}
         onSuccess={handleModalSuccess}
         editItem={editingItem}
-        sharedListId={activeListId}
+        sharedListId={editingItem ? activeListId : null}
         copyMode={editCopyMode}
         adminGlobalMode={isAdminCalculeatTab}
       />
