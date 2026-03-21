@@ -735,17 +735,15 @@ export default function FoodItemsPage() {
             )}
           </p>
         </div>
-        {(isMina || activeListId) && (
-          <Button
-            className="gap-2 self-start sm:self-auto"
-            size="sm"
-            onClick={() => setIsAddModalOpen(true)}
-          >
-            <Plus className="h-4 w-4" />
-            <span className="hidden sm:inline">Nytt livsmedel</span>
-            <span className="sm:hidden">Nytt</span>
-          </Button>
-        )}
+        <Button
+          className="gap-2 self-start sm:self-auto"
+          size="sm"
+          onClick={() => setIsAddModalOpen(true)}
+        >
+          <Plus className="h-4 w-4" />
+          <span className="hidden sm:inline">Nytt livsmedel</span>
+          <span className="sm:hidden">Nytt</span>
+        </Button>
       </div>
 
       {/* Tabs */}
