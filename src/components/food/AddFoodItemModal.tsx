@@ -961,6 +961,19 @@ export function AddFoodItemModal({
                     )}
                   </div>
 
+                  <div>
+                    <Label htmlFor="food_type">Livsmedeltyp</Label>
+                    <select
+                      id="food_type"
+                      {...register('food_type')}
+                      className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    >
+                      <option value="Solid">Fast föda</option>
+                      <option value="Liquid">Vätska</option>
+                      <option value="Soup">Soppa</option>
+                    </select>
+                  </div>
+
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="default_amount">Mängd *</Label>
@@ -1166,19 +1179,6 @@ export function AddFoodItemModal({
 
                   {showAdvanced && (
                     <div className="mt-4 space-y-4">
-                      <div>
-                        <Label htmlFor="food_type">Livsmedeltyp</Label>
-                        <select
-                          id="food_type"
-                          {...register('food_type')}
-                          className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                        >
-                          <option value="Solid">Fast föda</option>
-                          <option value="Liquid">Vätska</option>
-                          <option value="Soup">Soppa</option>
-                        </select>
-                      </div>
-
                       {/* Volymkonvertering - dölj bara för ml-livsmedel (densitet hanteras via weight_grams) */}
                       {defaultUnit?.toLowerCase() !== 'ml' && (
                         <div className="space-y-3 border border-neutral-200 rounded-lg p-3 bg-neutral-50">
