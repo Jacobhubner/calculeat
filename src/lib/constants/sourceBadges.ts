@@ -6,7 +6,7 @@ export const SOURCE_BADGES: Record<FoodSource, { label: string; className: strin
     label: 'CalculEat',
     className: 'bg-primary-100 text-primary-700 border-primary-400 font-semibold',
   },
-  livsmedelsverket: { label: 'SLV', className: 'bg-yellow-400 text-yellow-900 border-yellow-500' },
+  livsmedelsverket: { label: 'SLV', className: 'bg-yellow-100 text-yellow-700 border-yellow-400' },
   shared: { label: 'Delad', className: 'bg-violet-100 text-violet-700 border-violet-400' },
 }
 
