@@ -543,6 +543,26 @@ export function useAdminUpdateFoodItem() {
 }
 
 /**
+ * Admin: Kopiera ett eget livsmedel till den globala CalculEat-listan.
+ */
+export function useCopyFoodItemToCalculeat() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (foodItemId: string) => {
+      const { data, error } = await supabase.rpc('copy_food_item_to_calculeat', {
+        p_food_item_id: foodItemId,
+      })
+      if (error) throw error
+      return data as { success: boolean; new_food_item_id?: string; error?: string }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['foodItems'] })
+    },
+  })
+}
+
+/**
  * Admin: Ta bort ett globalt CalculEat-livsmedel permanent (ingen soft-delete).
  * Kräver att anroparen är admin — RLS blockerar annars.
  */

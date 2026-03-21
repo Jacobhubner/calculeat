@@ -29,6 +29,7 @@ import {
   usePaginatedFoodItems,
   useDeleteFoodItem,
   useAdminDeleteFoodItem,
+  useCopyFoodItemToCalculeat,
   type FoodItem,
   type FoodTab,
 } from '@/hooks/useFoodItems'
@@ -212,6 +213,7 @@ export default function FoodItemsPage() {
   const { getRecipesUsingFoodItem } = useRecipeImpact()
   const { data: sharedLists = [], isLoading: sharedListsLoading } = useSharedLists()
   const { mutateAsync: copyToSharedList } = useCopyToSharedList()
+  const { mutateAsync: copyToCalculeat } = useCopyFoodItemToCalculeat()
 
   // Build full tab list: Mina | CalculEat | Livsmedelsverket | [delade listor] | Alla
   const allTabs = useMemo<{ key: FoodTab; label: string }[]>(
@@ -706,6 +708,17 @@ export default function FoodItemsPage() {
     }
   }
 
+  const handleCopyToCalculeat = async (foodItemId: string) => {
+    const result = await copyToCalculeat(foodItemId)
+    if (result?.success) {
+      toast.success('Livsmedlet kopierades till CalculEat-listan')
+    } else if (result?.error === 'already_exists') {
+      toast.info('Ett livsmedel med samma namn finns redan i CalculEat')
+    } else {
+      toast.error('Kunde inte kopiera. Försök igen.')
+    }
+  }
+
   return (
     <DashboardLayout>
       {/* Header */}
@@ -1010,7 +1023,7 @@ export default function FoodItemsPage() {
                         >
                           <Info className="h-3 w-3 text-neutral-500" />
                         </Button>
-                        {isMina && sharedLists.length > 0 && (
+                        {isMina && (sharedLists.length > 0 || isAdmin) && (
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                               <Button
@@ -1031,6 +1044,14 @@ export default function FoodItemsPage() {
                                   {list.name}
                                 </DropdownMenuItem>
                               ))}
+                              {isAdmin && (
+                                <DropdownMenuItem
+                                  onClick={() => handleCopyToCalculeat(item.id)}
+                                  className="text-amber-700 font-medium"
+                                >
+                                  CalculEat-listan
+                                </DropdownMenuItem>
+                              )}
                             </DropdownMenuContent>
                           </DropdownMenu>
                         )}
@@ -1368,7 +1389,7 @@ export default function FoodItemsPage() {
                         </td>
                         <td className="p-4 text-right">
                           <div className="flex justify-end gap-2">
-                            {isMina && sharedLists.length > 0 && (
+                            {isMina && (sharedLists.length > 0 || isAdmin) && (
                               <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                   <Button
@@ -1393,6 +1414,17 @@ export default function FoodItemsPage() {
                                       {list.name}
                                     </DropdownMenuItem>
                                   ))}
+                                  {isAdmin && (
+                                    <DropdownMenuItem
+                                      onClick={e => {
+                                        e.stopPropagation()
+                                        handleCopyToCalculeat(item.id)
+                                      }}
+                                      className="text-amber-700 font-medium"
+                                    >
+                                      CalculEat-listan
+                                    </DropdownMenuItem>
+                                  )}
                                 </DropdownMenuContent>
                               </DropdownMenu>
                             )}
