@@ -775,14 +775,16 @@ export default function SettingsPage() {
                     if (!newAdminIdentifier.trim()) return
                     const result = await addAdmin.mutateAsync(newAdminIdentifier.trim())
                     if (result?.success) {
-                      toast.success('Admin tillagd')
+                      toast.success('Inbjudan skickad')
                       setNewAdminIdentifier('')
                     } else if (result?.error === 'user_not_found') {
                       toast.error('Ingen användare hittades')
                     } else if (result?.error === 'already_admin') {
                       toast.info('Användaren är redan admin')
+                    } else if (result?.error === 'invitation_pending') {
+                      toast.info('En inbjudan är redan skickad till den användaren')
                     } else {
-                      toast.error('Kunde inte lägga till admin')
+                      toast.error('Kunde inte skicka inbjudan')
                     }
                   }}
                   disabled={addAdmin.isPending || !newAdminIdentifier.trim()}

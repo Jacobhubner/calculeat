@@ -6,6 +6,7 @@ import type { PendingInvitation } from '@/lib/types/sharing'
 import { usePendingFriendRequestsCount } from './useFriends'
 import { useUnreadMessageCount } from './useMessages'
 import { usePendingSharedListInvitationsCount } from './useSharedLists'
+import { usePendingAdminInvitationsCount } from './useAdminInvitations'
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Pending invitation count (with Realtime)
@@ -195,11 +196,13 @@ export function useSocialBadgeCount() {
   const { data: invitationCount = 0 } = usePendingInvitationsCount()
   const { data: friendCount = 0 } = usePendingFriendRequestsCount()
   const { data: sharedListInvitationCount = 0 } = usePendingSharedListInvitationsCount()
+  const { data: adminInvitationCount = 0 } = usePendingAdminInvitationsCount()
   const unreadMessages = useUnreadMessageCount()
   return (
     (invitationCount as number) +
     (friendCount as number) +
     (sharedListInvitationCount as number) +
+    (adminInvitationCount as number) +
     unreadMessages
   )
 }

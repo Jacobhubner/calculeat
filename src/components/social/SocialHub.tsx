@@ -19,6 +19,7 @@ import {
   ArrowLeft,
   CheckCheck,
   MoreHorizontal,
+  ShieldCheck,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -28,6 +29,7 @@ import {
   useAcceptShareInvitation,
   useRejectShareInvitation,
 } from '@/hooks/useShareInvitations'
+import { usePendingAdminInvitations, useRespondAdminInvitation } from '@/hooks/useAdminInvitations'
 import {
   usePendingSharedListInvitations,
   useAcceptSharedListInvitation,
@@ -1230,6 +1232,8 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
   const { data: pendingInvitations = [] } = usePendingInvitations()
   const { data: pendingSharedListInvitations = [] } = usePendingSharedListInvitations()
   const { data: pendingCount = 0 } = usePendingFriendRequestsCount()
+  const { data: pendingAdminInvitations = [] } = usePendingAdminInvitations()
+  const respondAdminInvitation = useRespondAdminInvitation()
   const { data: conversations = [], refetch: refetchConversations } = useConversations()
   const unreadMessageCount = useUnreadMessageCount()
   const { mutateAsync: sendFriendRequest } = useSendFriendRequest()
@@ -1238,6 +1242,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
     (pendingCount as number) +
     pendingInvitations.length +
     pendingSharedListInvitations.length +
+    pendingAdminInvitations.length +
     sentRequests.length
 
   const filteredFriends = friends.filter(f => {
@@ -1462,6 +1467,63 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
         {/* ── Aktivitet-tab ── */}
         {tab === 'activity' && (
           <div className="p-4 space-y-4">
+            {/* Admin-inbjudningar */}
+            {pendingAdminInvitations.length > 0 && (
+              <div className="space-y-2">
+                <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wide">
+                  Admin-inbjudningar
+                </p>
+                {pendingAdminInvitations.map(inv => (
+                  <div
+                    key={inv.id}
+                    className="rounded-xl border border-primary-200 bg-primary-50 p-3 space-y-2"
+                  >
+                    <div className="flex items-start gap-2">
+                      <ShieldCheck className="h-4 w-4 text-primary-600 mt-0.5 shrink-0" />
+                      <div>
+                        <p className="text-sm font-medium text-neutral-900">
+                          {inv.sender_name} vill göra dig till admin
+                        </p>
+                        <p className="text-xs text-neutral-500 mt-0.5">
+                          Som admin kan du redigera och lägga till livsmedel i CalculEat-listan.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={async () => {
+                          await respondAdminInvitation.mutateAsync({
+                            invitationId: inv.id,
+                            accept: true,
+                          })
+                          toast.success('Du är nu admin!')
+                        }}
+                        disabled={respondAdminInvitation.isPending}
+                        className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors disabled:opacity-50"
+                      >
+                        <Check className="h-3.5 w-3.5" />
+                        Acceptera
+                      </button>
+                      <button
+                        onClick={async () => {
+                          await respondAdminInvitation.mutateAsync({
+                            invitationId: inv.id,
+                            accept: false,
+                          })
+                          toast.success('Inbjudan nekad')
+                        }}
+                        disabled={respondAdminInvitation.isPending}
+                        className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-sm font-medium text-neutral-700 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors disabled:opacity-50"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                        Neka
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
             {/* Vänförfrågningar */}
             {friendRequests.length > 0 && (
               <div className="space-y-2">
@@ -1513,6 +1575,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
             {friendRequests.length === 0 &&
               pendingInvitations.length === 0 &&
               pendingSharedListInvitations.length === 0 &&
+              pendingAdminInvitations.length === 0 &&
               sentRequests.length === 0 && (
                 <div className="text-center py-10 space-y-2">
                   <p className="text-2xl">🎉</p>
