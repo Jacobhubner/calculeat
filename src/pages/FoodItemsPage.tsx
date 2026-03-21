@@ -1508,16 +1508,16 @@ export default function FoodItemsPage() {
               <p className="font-semibold text-neutral-700 mb-1">Fast föda (&lt; 1 kcal/g):</p>
               <ul className="space-y-0.5 pl-2">
                 {[
-                  'Bladgrönsaker (spenat, sallad)',
-                  'Gurka, tomat, zucchini',
-                  'Broccoli, blomkål',
-                  'Bär (jordgubbar, hallon)',
-                  'Frukt med hög vattenhalt (melon, apelsin)',
-                  'Potatis (kokt)',
-                ].map(item => (
-                  <li key={item} className="flex gap-1.5">
-                    <span className="text-neutral-400">•</span>
-                    {item}
+                  { label: 'Bladgrönsaker (spenat, sallad)', icon: '🥬' },
+                  { label: 'Gurka, tomat, zucchini', icon: '🥒' },
+                  { label: 'Broccoli, blomkål', icon: '🥦' },
+                  { label: 'Bär (jordgubbar, hallon)', icon: '🍓' },
+                  { label: 'Frukt med hög vattenhalt (melon, apelsin)', icon: '🍉' },
+                  { label: 'Potatis (kokt)', icon: '🥔' },
+                ].map(({ label, icon }) => (
+                  <li key={label} className="flex gap-1.5 items-center">
+                    <span className="w-4 text-center">{icon}</span>
+                    {label}
                   </li>
                 ))}
               </ul>
@@ -1525,10 +1525,14 @@ export default function FoodItemsPage() {
             <div>
               <p className="font-semibold text-neutral-700 mb-1">Vätska (&lt; 0.4 kcal/g):</p>
               <ul className="space-y-0.5 pl-2">
-                {['Vatten', 'Lightdryck', 'Kaffe/te (utan socker)'].map(item => (
-                  <li key={item} className="flex gap-1.5">
-                    <span className="text-neutral-400">•</span>
-                    {item}
+                {[
+                  { label: 'Vatten', icon: '💧' },
+                  { label: 'Lightdryck', icon: '' },
+                  { label: 'Kaffe/te (utan socker)', icon: '☕' },
+                ].map(({ label, icon }) => (
+                  <li key={label} className="flex gap-1.5 items-center">
+                    <span className="w-4 text-center">{icon}</span>
+                    {label}
                   </li>
                 ))}
               </ul>
@@ -1536,10 +1540,13 @@ export default function FoodItemsPage() {
             <div>
               <p className="font-semibold text-neutral-700 mb-1">Soppa (&lt; 0.5 kcal/g):</p>
               <ul className="space-y-0.5 pl-2">
-                {['Klara grönsakssoppor', 'Buljongbaserade soppor'].map(item => (
-                  <li key={item} className="flex gap-1.5">
-                    <span className="text-neutral-400">•</span>
-                    {item}
+                {[
+                  { label: 'Klara grönsakssoppor', icon: '🥣' },
+                  { label: 'Buljongbaserade soppor', icon: '' },
+                ].map(({ label, icon }) => (
+                  <li key={label} className="flex gap-1.5 items-center">
+                    <span className="w-4 text-center">{icon}</span>
+                    {label}
                   </li>
                 ))}
               </ul>
@@ -1565,16 +1572,16 @@ export default function FoodItemsPage() {
               <p className="font-semibold text-neutral-700 mb-1">Fast föda (1–2.4 kcal/g):</p>
               <ul className="space-y-0.5 pl-2">
                 {[
-                  'Kycklingfilé, kalkon',
-                  'Ägg',
-                  'Pasta, ris, quinoa',
-                  'Bröd',
-                  'Baljväxter (linser, bönor)',
-                  'Lättare mejeriprodukter (kvarg, yoghurt)',
-                ].map(item => (
-                  <li key={item} className="flex gap-1.5">
-                    <span className="text-neutral-400">•</span>
-                    {item}
+                  { label: 'Kycklingfilé, kalkon', icon: '🍗' },
+                  { label: 'Ägg', icon: '🥚' },
+                  { label: 'Pasta, ris, quinoa', icon: '🍝' },
+                  { label: 'Bröd', icon: '🍞' },
+                  { label: 'Baljväxter (linser, bönor)', icon: '🫘' },
+                  { label: 'Lättare mejeriprodukter (kvarg, yoghurt)', icon: '🥛' },
+                ].map(({ label, icon }) => (
+                  <li key={label} className="flex gap-1.5 items-center">
+                    <span className="w-4 text-center">{icon}</span>
+                    {label}
                   </li>
                 ))}
               </ul>
@@ -1582,10 +1589,13 @@ export default function FoodItemsPage() {
             <div>
               <p className="font-semibold text-neutral-700 mb-1">Vätska (0.4–0.5 kcal/g):</p>
               <ul className="space-y-0.5 pl-2">
-                {['Mjölk', 'Juice'].map(item => (
-                  <li key={item} className="flex gap-1.5">
-                    <span className="text-neutral-400">•</span>
-                    {item}
+                {[
+                  { label: 'Mjölk', icon: '🥛' },
+                  { label: 'Juice', icon: '🧃' },
+                ].map(({ label, icon }) => (
+                  <li key={label} className="flex gap-1.5 items-center">
+                    <span className="w-4 text-center">{icon}</span>
+                    {label}
                   </li>
                 ))}
               </ul>
@@ -1593,10 +1603,14 @@ export default function FoodItemsPage() {
             <div>
               <p className="font-semibold text-neutral-700 mb-1">Soppa (0.5–1 kcal/g):</p>
               <ul className="space-y-0.5 pl-2">
-                {['Linssoppa', 'Kycklingsoppa', 'Lätt krämig soppa'].map(item => (
-                  <li key={item} className="flex gap-1.5">
-                    <span className="text-neutral-400">•</span>
-                    {item}
+                {[
+                  { label: 'Linssoppa', icon: '🥣' },
+                  { label: 'Kycklingsoppa', icon: '🍲' },
+                  { label: 'Lätt krämig soppa', icon: '' },
+                ].map(({ label, icon }) => (
+                  <li key={label} className="flex gap-1.5 items-center">
+                    <span className="w-4 text-center">{icon}</span>
+                    {label}
                   </li>
                 ))}
               </ul>
@@ -1622,16 +1636,16 @@ export default function FoodItemsPage() {
               <p className="font-semibold text-neutral-700 mb-1">Fast föda (&gt; 2.4 kcal/g):</p>
               <ul className="space-y-0.5 pl-2">
                 {[
-                  'Nötter och frön',
-                  'Ost',
-                  'Fett kött (t.ex. entrecôte)',
-                  'Chips, kex',
-                  'Godis, choklad',
-                  'Bakverk',
-                ].map(item => (
-                  <li key={item} className="flex gap-1.5">
-                    <span className="text-neutral-400">•</span>
-                    {item}
+                  { label: 'Nötter och frön', icon: '🥜' },
+                  { label: 'Ost', icon: '🧀' },
+                  { label: 'Fett kött (t.ex. entrecôte)', icon: '🥩' },
+                  { label: 'Chips, kex', icon: '🍟' },
+                  { label: 'Godis, choklad', icon: '🍫' },
+                  { label: 'Bakverk', icon: '🥐' },
+                ].map(({ label, icon }) => (
+                  <li key={label} className="flex gap-1.5 items-center">
+                    <span className="w-4 text-center">{icon}</span>
+                    {label}
                   </li>
                 ))}
               </ul>
@@ -1639,10 +1653,14 @@ export default function FoodItemsPage() {
             <div>
               <p className="font-semibold text-neutral-700 mb-1">Vätska (&gt; 0.5 kcal/g):</p>
               <ul className="space-y-0.5 pl-2">
-                {['Läsk med socker', 'Milkshakes', 'Alkohol'].map(item => (
-                  <li key={item} className="flex gap-1.5">
-                    <span className="text-neutral-400">•</span>
-                    {item}
+                {[
+                  { label: 'Läsk med socker', icon: '🥤' },
+                  { label: 'Milkshakes', icon: '🧋' },
+                  { label: 'Alkohol', icon: '🍺' },
+                ].map(({ label, icon }) => (
+                  <li key={label} className="flex gap-1.5 items-center">
+                    <span className="w-4 text-center">{icon}</span>
+                    {label}
                   </li>
                 ))}
               </ul>
@@ -1650,10 +1668,15 @@ export default function FoodItemsPage() {
             <div>
               <p className="font-semibold text-neutral-700 mb-1">Soppa (&gt; 1 kcal/g):</p>
               <ul className="space-y-0.5 pl-2">
-                {['Gräddbaserade soppor (t.ex. potatis- & purjolök med grädde)'].map(item => (
-                  <li key={item} className="flex gap-1.5">
-                    <span className="text-neutral-400">•</span>
-                    {item}
+                {[
+                  {
+                    label: 'Gräddbaserade soppor (t.ex. potatis- & purjolök med grädde)',
+                    icon: '🍲',
+                  },
+                ].map(({ label, icon }) => (
+                  <li key={label} className="flex gap-1.5 items-center">
+                    <span className="w-4 text-center">{icon}</span>
+                    {label}
                   </li>
                 ))}
               </ul>
