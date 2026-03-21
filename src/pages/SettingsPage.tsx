@@ -57,7 +57,7 @@ export default function SettingsPage() {
   const { data: adminList = [] } = useListAdmins()
   const addAdmin = useAddAdmin()
   const removeAdmin = useRemoveAdmin()
-  const [newAdminEmail, setNewAdminEmail] = useState('')
+  const [newAdminIdentifier, setNewAdminIdentifier] = useState('')
 
   // Delete account state
   const [deleteStep, setDeleteStep] = useState<0 | 1 | 2>(0)
@@ -765,27 +765,27 @@ export default function SettingsPage() {
               <div className="flex gap-2">
                 <input
                   type="email"
-                  value={newAdminEmail}
-                  onChange={e => setNewAdminEmail(e.target.value)}
-                  placeholder="E-postadress"
+                  value={newAdminIdentifier}
+                  onChange={e => setNewAdminIdentifier(e.target.value)}
+                  placeholder="E-postadress eller användarnamn"
                   className="flex-1 px-3 py-2 text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                 />
                 <button
                   onClick={async () => {
-                    if (!newAdminEmail.trim()) return
-                    const result = await addAdmin.mutateAsync(newAdminEmail.trim())
+                    if (!newAdminIdentifier.trim()) return
+                    const result = await addAdmin.mutateAsync(newAdminIdentifier.trim())
                     if (result?.success) {
                       toast.success('Admin tillagd')
-                      setNewAdminEmail('')
+                      setNewAdminIdentifier('')
                     } else if (result?.error === 'user_not_found') {
-                      toast.error('Ingen användare hittades med den e-postadressen')
+                      toast.error('Ingen användare hittades')
                     } else if (result?.error === 'already_admin') {
                       toast.info('Användaren är redan admin')
                     } else {
                       toast.error('Kunde inte lägga till admin')
                     }
                   }}
-                  disabled={addAdmin.isPending || !newAdminEmail.trim()}
+                  disabled={addAdmin.isPending || !newAdminIdentifier.trim()}
                   className="px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 disabled:opacity-50 rounded-lg transition-colors"
                 >
                   {addAdmin.isPending ? 'Lägger till...' : 'Lägg till'}

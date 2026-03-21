@@ -42,8 +42,8 @@ export function useListAdmins() {
 export function useAddAdmin() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async (email: string) => {
-      const { data, error } = await supabase.rpc('add_admin', { p_email: email })
+    mutationFn: async (identifier: string) => {
+      const { data, error } = await supabase.rpc('add_admin', { p_identifier: identifier })
       if (error) throw error
       return data as { success: boolean; error?: string }
     },
