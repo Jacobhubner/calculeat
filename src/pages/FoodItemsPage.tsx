@@ -142,18 +142,17 @@ function getDisplayData(
       if (!item.ml_per_gram || !item.kcal_per_gram) {
         return null
       }
-      // Macros are stored per reference_amount (ml for ml-foods).
-      // Per 100ml: scale by 100 / reference_amount.
-      const refAmount = item.reference_amount || 100
-      const mlScale = 100 / refAmount
+      // Per 100ml: grams equivalent of 100ml = 100 / ml_per_gram
+      // Scale macros the same way as per100g but using gramsIn100ml as the target weight.
+      const baseGrams = item.weight_grams || 100
       const gramsIn100ml = 100 / item.ml_per_gram
       return {
         icon: '',
         header: '100ml',
         kcal: item.kcal_per_gram * gramsIn100ml,
-        protein: item.protein_g * mlScale,
-        carb: item.carb_g * mlScale,
-        fat: item.fat_g * mlScale,
+        protein: (item.protein_g / baseGrams) * gramsIn100ml,
+        carb: (item.carb_g / baseGrams) * gramsIn100ml,
+        fat: (item.fat_g / baseGrams) * gramsIn100ml,
       }
     }
 
