@@ -82,6 +82,7 @@ export function AddFoodToMealModal({
   // AddFoodItemModal (scan flow)
   const [addFoodItemModalOpen, setAddFoodItemModalOpen] = useState(false)
   const pendingScannedFoodRef = useRef<FoodItem | null>(null)
+  const skipResetRef = useRef(false)
 
   // Search state
   const [searchQuery, setSearchQuery] = useState('')
@@ -215,7 +216,10 @@ export function AddFoodToMealModal({
     if (open && !prevOpenRef.current) {
       initializeForm()
     } else if (!open && prevOpenRef.current) {
-      resetForm()
+      if (!skipResetRef.current) {
+        resetForm()
+      }
+      skipResetRef.current = false
     }
     prevOpenRef.current = open
   }, [open, initializeForm, resetForm])
@@ -451,7 +455,11 @@ export function AddFoodToMealModal({
                     size="sm"
                     className="shrink-0 px-3"
                     title="Skanna streckkod"
-                    onClick={() => setAddFoodItemModalOpen(true)}
+                    onClick={() => {
+                      skipResetRef.current = true
+                      onOpenChange(false)
+                      setTimeout(() => setAddFoodItemModalOpen(true), 100)
+                    }}
                   >
                     <ScanBarcode className="h-4 w-4" />
                   </Button>
@@ -461,7 +469,11 @@ export function AddFoodToMealModal({
                     size="sm"
                     className="shrink-0 px-3"
                     title="Skanna etikett"
-                    onClick={() => setAddFoodItemModalOpen(true)}
+                    onClick={() => {
+                      skipResetRef.current = true
+                      onOpenChange(false)
+                      setTimeout(() => setAddFoodItemModalOpen(true), 100)
+                    }}
                   >
                     <Camera className="h-4 w-4" />
                   </Button>
@@ -702,17 +714,25 @@ export function AddFoodToMealModal({
         open={addFoodItemModalOpen}
         onOpenChange={open => {
           setAddFoodItemModalOpen(open)
-          // When modal closes after save, pick up the pending food
-          if (!open && pendingScannedFoodRef.current) {
-            const food = pendingScannedFoodRef.current
-            pendingScannedFoodRef.current = null
-            // Delay to let iOS finish closing the dialog before updating state
-            setTimeout(() => handleSelectFood(food), 50)
+          // When AddFoodItemModal closes without a saved food (user cancelled), reopen AddFoodToMealModal
+          if (!open && !pendingScannedFoodRef.current) {
+            setTimeout(() => onOpenChange(true), 50)
           }
         }}
         onSuccess={newFood => {
           if (newFood) {
             pendingScannedFoodRef.current = newFood
+            // Reopen AddFoodToMealModal and select the new food after it fully opens
+            setTimeout(() => {
+              onOpenChange(true)
+              setTimeout(() => {
+                const food = pendingScannedFoodRef.current
+                if (food) {
+                  pendingScannedFoodRef.current = null
+                  handleSelectFood(food)
+                }
+              }, 150)
+            }, 50)
           }
         }}
       />

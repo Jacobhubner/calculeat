@@ -71,7 +71,7 @@ export function calculateNutritionForUnit(
 } | null {
   if (amount <= 0) return null
 
-  const unitLower = unit.toLowerCase()
+  const unitLower = (unit ?? 'g').toLowerCase()
   let weightGrams: number
 
   // Calculate weight in grams based on unit
@@ -128,7 +128,7 @@ export function UnitSelector({ food, value, onChange, className }: UnitSelectorP
     >
       {availableUnits.map(unit => (
         <option key={unit} value={unit}>
-          {UNIT_LABELS[unit.toLowerCase()] || unit}
+          {UNIT_LABELS[(unit ?? 'g').toLowerCase()] || unit}
         </option>
       ))}
     </Select>
