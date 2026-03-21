@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
-import { Search, Plus, X, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Search, Plus, X, ChevronLeft, ChevronRight, ScanBarcode, Camera } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -20,6 +20,7 @@ import { UnitSelector, getAvailableUnits, calculateNutritionForUnit } from './Un
 import { NutritionPreview } from './NutritionPreview'
 import { toast } from 'sonner'
 import { SOURCE_BADGES, getListItemBadgeConfig } from '@/lib/constants/sourceBadges'
+import { AddFoodItemModal } from '@/components/food/AddFoodItemModal'
 
 const STATIC_TABS: { key: FoodTab; label: string }[] = [
   { key: 'mina', label: 'Mina' },
@@ -77,6 +78,9 @@ export function AddFoodToMealModal({
     editItem?.unit ?? preselectedFood?.unit ?? ''
   )
   const [selectedMealName, setSelectedMealName] = useState<string>(mealName)
+
+  // AddFoodItemModal (scan flow)
+  const [addFoodItemModalOpen, setAddFoodItemModalOpen] = useState(false)
 
   // Search state
   const [searchQuery, setSearchQuery] = useState('')
@@ -372,301 +376,336 @@ export function AddFoodToMealModal({
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg max-h-[85vh] overflow-hidden flex flex-col">
-        <DialogHeader>
-          <DialogTitle>{isEditMode ? 'Redigera livsmedel' : 'Lägg till livsmedel'}</DialogTitle>
-          <DialogDescription>
-            {isEditMode
-              ? `Ändra mängd och enhet för ${editItem?.food.name}`
-              : mealName
-                ? `Lägg till livsmedel till ${mealName}`
-                : 'Välj måltid och lägg till livsmedel'}
-          </DialogDescription>
-        </DialogHeader>
+    <>
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="max-w-lg max-h-[85vh] overflow-hidden flex flex-col">
+          <DialogHeader>
+            <DialogTitle>{isEditMode ? 'Redigera livsmedel' : 'Lägg till livsmedel'}</DialogTitle>
+            <DialogDescription>
+              {isEditMode
+                ? `Ändra mängd och enhet för ${editItem?.food.name}`
+                : mealName
+                  ? `Lägg till livsmedel till ${mealName}`
+                  : 'Välj måltid och lägg till livsmedel'}
+            </DialogDescription>
+          </DialogHeader>
 
-        {/* Meal selector */}
-        {!isEditMode && !mealName && mealSettings && mealSettings.length > 0 && (
-          <div className="space-y-2">
-            <Label>Välj måltid</Label>
-            <Select
-              value={selectedMealName}
-              onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                setSelectedMealName(e.target.value)
-              }
-            >
-              {mealSettings.map(meal => (
-                <option key={meal.id} value={meal.meal_name}>
-                  {meal.meal_name}
-                </option>
-              ))}
-            </Select>
-          </div>
-        )}
-
-        <div className="flex-1 overflow-y-auto space-y-3">
-          {!selectedFood ? (
-            <>
-              {/* Tabs */}
-              <div className="flex gap-1 border-b border-neutral-200 overflow-x-auto">
-                {allTabs.map(tab => (
-                  <button
-                    key={tab.key}
-                    onClick={() => {
-                      setActiveTab(tab.key)
-                      setPage(0)
-                    }}
-                    className={`px-3 py-1.5 text-sm font-medium border-b-2 transition-colors ${
-                      activeTab === tab.key
-                        ? 'border-primary-500 text-primary-600'
-                        : 'border-transparent text-neutral-500 hover:text-neutral-700'
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
+          {/* Meal selector */}
+          {!isEditMode && !mealName && mealSettings && mealSettings.length > 0 && (
+            <div className="space-y-2">
+              <Label>Välj måltid</Label>
+              <Select
+                value={selectedMealName}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                  setSelectedMealName(e.target.value)
+                }
+              >
+                {mealSettings.map(meal => (
+                  <option key={meal.id} value={meal.meal_name}>
+                    {meal.meal_name}
+                  </option>
                 ))}
-              </div>
+              </Select>
+            </div>
+          )}
 
-              {/* Search input */}
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400" />
-                <Input
-                  placeholder="Sök livsmedel..."
-                  value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
-                  className="pl-10"
-                  autoFocus
-                />
-              </div>
-
-              {/* Color filter pills */}
-              <div className="flex flex-wrap gap-1">
-                {([null, 'Green', 'Yellow', 'Orange'] as const).map(c => (
-                  <button
-                    key={c ?? 'all'}
-                    onClick={() => {
-                      setColorFilter(c)
-                      setPage(0)
-                    }}
-                    className={`px-2 py-0.5 text-xs rounded-full border transition-colors ${
-                      colorFilter === c
-                        ? c === 'Green'
-                          ? 'bg-green-500 text-white border-green-600'
-                          : c === 'Yellow'
-                            ? 'bg-yellow-400 text-neutral-900 border-yellow-500'
-                            : c === 'Orange'
-                              ? 'bg-orange-500 text-white border-orange-600'
-                              : 'bg-neutral-200 text-neutral-700 border-neutral-400'
-                        : 'bg-white text-neutral-500 border-neutral-200 hover:border-neutral-400'
-                    }`}
-                  >
-                    {c === null
-                      ? 'Alla'
-                      : c === 'Green'
-                        ? 'Grön'
-                        : c === 'Yellow'
-                          ? 'Gul'
-                          : 'Orange'}
-                  </button>
-                ))}
-
-                {/* Recipe filter — on Mina and Alla tabs */}
-                {(activeTab === 'mina' || activeTab === 'alla') && (
-                  <>
-                    <span className="text-neutral-200 border-l border-neutral-200 mx-0.5" />
-                    {([null, true, false] as const).map(r => (
-                      <button
-                        key={r === null ? 'r-all' : r ? 'r-recept' : 'r-livsmedel'}
-                        onClick={() => {
-                          setRecipeFilter(r)
-                          setPage(0)
-                        }}
-                        className={`px-2 py-0.5 text-xs rounded-full border transition-colors ${
-                          recipeFilter === r
-                            ? 'bg-primary-500 text-white border-primary-600'
-                            : 'bg-white text-neutral-500 border-neutral-200 hover:border-neutral-400'
-                        }`}
-                      >
-                        {r === null ? 'Alla typer' : r ? 'Recept' : 'Livsmedel'}
-                      </button>
-                    ))}
-                  </>
-                )}
-              </div>
-
-              {/* Food list */}
-              <div className="space-y-1">
-                {foodsLoading ? (
-                  <p className="text-sm text-neutral-500 text-center py-4">Laddar livsmedel...</p>
-                ) : foods.length === 0 ? (
-                  <p className="text-sm text-neutral-500 text-center py-4">
-                    {searchQuery ? 'Inga livsmedel hittades' : 'Inga livsmedel'}
-                  </p>
-                ) : (
-                  foods.map(food => (
+          <div className="flex-1 overflow-y-auto space-y-3">
+            {!selectedFood ? (
+              <>
+                {/* Tabs */}
+                <div className="flex gap-1 border-b border-neutral-200 overflow-x-auto">
+                  {allTabs.map(tab => (
                     <button
-                      key={food.id}
-                      onClick={() => handleSelectFood(food)}
-                      className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-neutral-50 transition-colors text-left border border-transparent hover:border-neutral-200"
+                      key={tab.key}
+                      onClick={() => {
+                        setActiveTab(tab.key)
+                        setPage(0)
+                      }}
+                      className={`px-3 py-1.5 text-sm font-medium border-b-2 transition-colors ${
+                        activeTab === tab.key
+                          ? 'border-primary-500 text-primary-600'
+                          : 'border-transparent text-neutral-500 hover:text-neutral-700'
+                      }`}
                     >
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-1.5 min-w-0">
-                          <p className="font-medium text-neutral-900 truncate">{food.name}</p>
-                          <Badge
-                            variant="outline"
-                            className={`text-[9px] px-1 py-0 h-4 shrink-0 ${
-                              food.shared_list_id
-                                ? getListItemBadgeConfig(
-                                    sharedLists.find(l => l.id === food.shared_list_id)?.name ?? ''
-                                  ).className
-                                : SOURCE_BADGES[food.source].className
-                            }`}
-                          >
-                            {food.shared_list_id
-                              ? getListItemBadgeConfig(
-                                  sharedLists.find(l => l.id === food.shared_list_id)?.name ?? ''
-                                ).label
-                              : SOURCE_BADGES[food.source].label}
-                          </Badge>
-                        </div>
-                        <p className="text-xs text-neutral-500">
-                          {food.calories} kcal / {food.default_amount} {food.default_unit}
-                          {food.brand && ` • ${food.brand}`}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-2 ml-2 shrink-0">
-                        {getColorBadge(food.energy_density_color)}
-                        <Plus className="h-4 w-4 text-neutral-400" />
-                      </div>
+                      {tab.label}
                     </button>
-                  ))
-                )}
-              </div>
+                  ))}
+                </div>
 
-              {/* Pagination */}
-              {totalPages > 1 && (
-                <div className="flex items-center justify-between pt-2 border-t border-neutral-100">
-                  <span className="text-xs text-neutral-500">
-                    Sida {page + 1} av {totalPages}
-                  </span>
-                  <div className="flex gap-1">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setPage(p => Math.max(0, p - 1))}
-                      disabled={page === 0}
-                      className="h-7 px-2 text-xs gap-1"
-                    >
-                      <ChevronLeft className="h-3 w-3" /> Föreg
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
-                      disabled={page >= totalPages - 1}
-                      className="h-7 px-2 text-xs gap-1"
-                    >
-                      Nästa <ChevronRight className="h-3 w-3" />
-                    </Button>
+                {/* Search + scan row */}
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400" />
+                    <Input
+                      placeholder="Sök livsmedel..."
+                      value={searchQuery}
+                      onChange={e => setSearchQuery(e.target.value)}
+                      className="pl-10"
+                      autoFocus
+                    />
                   </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="shrink-0 px-3"
+                    title="Skanna streckkod"
+                    onClick={() => setAddFoodItemModalOpen(true)}
+                  >
+                    <ScanBarcode className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="shrink-0 px-3"
+                    title="Skanna etikett"
+                    onClick={() => setAddFoodItemModalOpen(true)}
+                  >
+                    <Camera className="h-4 w-4" />
+                  </Button>
                 </div>
-              )}
-            </>
-          ) : (
-            <>
-              {/* Selected food header */}
-              <div className="flex items-center justify-between p-3 bg-neutral-50 rounded-lg">
-                <div className="flex-1">
-                  <p className="font-medium text-neutral-900">{selectedFood.name}</p>
-                  <p className="text-xs text-neutral-500">
-                    {selectedFood.calories} kcal / {selectedFood.default_amount}{' '}
-                    {selectedFood.default_unit}
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  {getColorBadge(selectedFood.energy_density_color)}
-                  {!isEditMode && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setSelectedFood(null)}
-                      className="text-neutral-500 hover:text-neutral-700"
+
+                {/* Color filter pills */}
+                <div className="flex flex-wrap gap-1">
+                  {([null, 'Green', 'Yellow', 'Orange'] as const).map(c => (
+                    <button
+                      key={c ?? 'all'}
+                      onClick={() => {
+                        setColorFilter(c)
+                        setPage(0)
+                      }}
+                      className={`px-2 py-0.5 text-xs rounded-full border transition-colors ${
+                        colorFilter === c
+                          ? c === 'Green'
+                            ? 'bg-green-500 text-white border-green-600'
+                            : c === 'Yellow'
+                              ? 'bg-yellow-400 text-neutral-900 border-yellow-500'
+                              : c === 'Orange'
+                                ? 'bg-orange-500 text-white border-orange-600'
+                                : 'bg-neutral-200 text-neutral-700 border-neutral-400'
+                          : 'bg-white text-neutral-500 border-neutral-200 hover:border-neutral-400'
+                      }`}
                     >
-                      <X className="h-4 w-4" />
-                    </Button>
+                      {c === null
+                        ? 'Alla'
+                        : c === 'Green'
+                          ? 'Grön'
+                          : c === 'Yellow'
+                            ? 'Gul'
+                            : 'Orange'}
+                    </button>
+                  ))}
+
+                  {/* Recipe filter — on Mina and Alla tabs */}
+                  {(activeTab === 'mina' || activeTab === 'alla') && (
+                    <>
+                      <span className="text-neutral-200 border-l border-neutral-200 mx-0.5" />
+                      {([null, true, false] as const).map(r => (
+                        <button
+                          key={r === null ? 'r-all' : r ? 'r-recept' : 'r-livsmedel'}
+                          onClick={() => {
+                            setRecipeFilter(r)
+                            setPage(0)
+                          }}
+                          className={`px-2 py-0.5 text-xs rounded-full border transition-colors ${
+                            recipeFilter === r
+                              ? 'bg-primary-500 text-white border-primary-600'
+                              : 'bg-white text-neutral-500 border-neutral-200 hover:border-neutral-400'
+                          }`}
+                        >
+                          {r === null ? 'Alla typer' : r ? 'Recept' : 'Livsmedel'}
+                        </button>
+                      ))}
+                    </>
                   )}
                 </div>
-              </div>
 
-              {/* Amount and unit selection */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="amount">Mängd</Label>
-                  <Input
-                    id="amount"
-                    type="number"
-                    step="any"
-                    min="0.1"
-                    value={amount}
-                    onChange={e => {
-                      const val = e.target.value
-                      setAmount(val === '' ? '' : parseFloat(val))
-                    }}
-                    className="mt-1"
-                  />
+                {/* Food list */}
+                <div className="space-y-1">
+                  {foodsLoading ? (
+                    <p className="text-sm text-neutral-500 text-center py-4">Laddar livsmedel...</p>
+                  ) : foods.length === 0 ? (
+                    <p className="text-sm text-neutral-500 text-center py-4">
+                      {searchQuery ? 'Inga livsmedel hittades' : 'Inga livsmedel'}
+                    </p>
+                  ) : (
+                    foods.map(food => (
+                      <button
+                        key={food.id}
+                        onClick={() => handleSelectFood(food)}
+                        className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-neutral-50 transition-colors text-left border border-transparent hover:border-neutral-200"
+                      >
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1.5 min-w-0">
+                            <p className="font-medium text-neutral-900 truncate">{food.name}</p>
+                            <Badge
+                              variant="outline"
+                              className={`text-[9px] px-1 py-0 h-4 shrink-0 ${
+                                food.shared_list_id
+                                  ? getListItemBadgeConfig(
+                                      sharedLists.find(l => l.id === food.shared_list_id)?.name ??
+                                        ''
+                                    ).className
+                                  : SOURCE_BADGES[food.source].className
+                              }`}
+                            >
+                              {food.shared_list_id
+                                ? getListItemBadgeConfig(
+                                    sharedLists.find(l => l.id === food.shared_list_id)?.name ?? ''
+                                  ).label
+                                : SOURCE_BADGES[food.source].label}
+                            </Badge>
+                          </div>
+                          <p className="text-xs text-neutral-500">
+                            {food.calories} kcal / {food.default_amount} {food.default_unit}
+                            {food.brand && ` • ${food.brand}`}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2 ml-2 shrink-0">
+                          {getColorBadge(food.energy_density_color)}
+                          <Plus className="h-4 w-4 text-neutral-400" />
+                        </div>
+                      </button>
+                    ))
+                  )}
                 </div>
-                <div>
-                  <Label>Enhet</Label>
-                  <UnitSelector
-                    food={selectedFood}
-                    value={selectedUnit}
-                    onChange={handleUnitChange}
-                    className="mt-1 w-full"
-                  />
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <div className="flex items-center justify-between pt-2 border-t border-neutral-100">
+                    <span className="text-xs text-neutral-500">
+                      Sida {page + 1} av {totalPages}
+                    </span>
+                    <div className="flex gap-1">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setPage(p => Math.max(0, p - 1))}
+                        disabled={page === 0}
+                        className="h-7 px-2 text-xs gap-1"
+                      >
+                        <ChevronLeft className="h-3 w-3" /> Föreg
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
+                        disabled={page >= totalPages - 1}
+                        className="h-7 px-2 text-xs gap-1"
+                      >
+                        Nästa <ChevronRight className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </>
+            ) : (
+              <>
+                {/* Selected food header */}
+                <div className="flex items-center justify-between p-3 bg-neutral-50 rounded-lg">
+                  <div className="flex-1">
+                    <p className="font-medium text-neutral-900">{selectedFood.name}</p>
+                    <p className="text-xs text-neutral-500">
+                      {selectedFood.calories} kcal / {selectedFood.default_amount}{' '}
+                      {selectedFood.default_unit}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {getColorBadge(selectedFood.energy_density_color)}
+                    {!isEditMode && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setSelectedFood(null)}
+                        className="text-neutral-500 hover:text-neutral-700"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
                 </div>
-              </div>
 
-              {/* Nutrition preview */}
-              {nutritionPreview && (
-                <NutritionPreview
-                  calories={nutritionPreview.calories}
-                  protein={nutritionPreview.protein}
-                  carbs={nutritionPreview.carbs}
-                  fat={nutritionPreview.fat}
-                  weightGrams={nutritionPreview.weightGrams}
-                  energyDensityColor={selectedFood.energy_density_color}
-                />
-              )}
-            </>
-          )}
-        </div>
+                {/* Amount and unit selection */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="amount">Mängd</Label>
+                    <Input
+                      id="amount"
+                      type="number"
+                      step="any"
+                      min="0.1"
+                      value={amount}
+                      onChange={e => {
+                        const val = e.target.value
+                        setAmount(val === '' ? '' : parseFloat(val))
+                      }}
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label>Enhet</Label>
+                    <UnitSelector
+                      food={selectedFood}
+                      value={selectedUnit}
+                      onChange={handleUnitChange}
+                      className="mt-1 w-full"
+                    />
+                  </div>
+                </div>
 
-        {/* Action buttons */}
-        <div className="flex justify-between pt-4 border-t mt-4">
-          <Button variant="ghost" onClick={() => onOpenChange(false)}>
-            Avbryt
-          </Button>
-          {selectedFood && (
-            <Button
-              onClick={handleAddFood}
-              disabled={
-                !nutritionPreview ||
-                addFoodToMeal.isPending ||
-                createMealEntry.isPending ||
-                updateMealItem.isPending
-              }
-            >
-              {isEditMode
-                ? updateMealItem.isPending
-                  ? 'Sparar...'
-                  : 'Spara'
-                : addFoodToMeal.isPending || createMealEntry.isPending
-                  ? 'Lägger till...'
-                  : 'Lägg till'}
+                {/* Nutrition preview */}
+                {nutritionPreview && (
+                  <NutritionPreview
+                    calories={nutritionPreview.calories}
+                    protein={nutritionPreview.protein}
+                    carbs={nutritionPreview.carbs}
+                    fat={nutritionPreview.fat}
+                    weightGrams={nutritionPreview.weightGrams}
+                    energyDensityColor={selectedFood.energy_density_color}
+                  />
+                )}
+              </>
+            )}
+          </div>
+
+          {/* Action buttons */}
+          <div className="flex justify-between pt-4 border-t mt-4">
+            <Button variant="ghost" onClick={() => onOpenChange(false)}>
+              Avbryt
             </Button>
-          )}
-        </div>
-      </DialogContent>
-    </Dialog>
+            {selectedFood && (
+              <Button
+                onClick={handleAddFood}
+                disabled={
+                  !nutritionPreview ||
+                  addFoodToMeal.isPending ||
+                  createMealEntry.isPending ||
+                  updateMealItem.isPending
+                }
+              >
+                {isEditMode
+                  ? updateMealItem.isPending
+                    ? 'Sparar...'
+                    : 'Spara'
+                  : addFoodToMeal.isPending || createMealEntry.isPending
+                    ? 'Lägger till...'
+                    : 'Lägg till'}
+              </Button>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <AddFoodItemModal
+        open={addFoodItemModalOpen}
+        onOpenChange={setAddFoodItemModalOpen}
+        onSuccess={newFood => {
+          if (newFood) {
+            handleSelectFood(newFood)
+          }
+        }}
+      />
+    </>
   )
 }

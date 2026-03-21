@@ -53,7 +53,7 @@ type FormData = {
 interface AddFoodItemModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onSuccess?: () => void
+  onSuccess?: (newFood?: FoodItem) => void
   editItem?: FoodItem | null
   sharedListId?: string | null
   copyMode?: boolean // prefyll från editItem men skapa nytt personligt item
@@ -598,6 +598,7 @@ export function AddFoodItemModal({
       }
 
       let savedFoodItemId: string | null = null
+      let createdFoodItem: FoodItem | undefined = undefined
 
       if (!copyMode && editItem?.shared_list_id) {
         await updateSharedListFoodItem.mutateAsync({
@@ -627,6 +628,7 @@ export function AddFoodItemModal({
       } else {
         const created = await createMutation.mutateAsync(cleanedData)
         savedFoodItemId = created?.id ?? null
+        createdFoodItem = created ?? undefined
       }
 
       // Spara valfria näringsvärden (mättat fett, sockerarter, salt) i food_nutrients
@@ -724,7 +726,7 @@ export function AddFoodItemModal({
       setPendingBarcode(null)
       setLockedBarcode(null)
       onOpenChange(false)
-      onSuccess?.()
+      onSuccess?.(createdFoodItem)
     } catch (error) {
       console.error(`Failed to ${editItem ? 'update' : 'create'} food item:`, error)
       toast.error(`Kunde inte ${editItem ? 'uppdatera' : 'spara'} livsmedlet. Försök igen.`)
