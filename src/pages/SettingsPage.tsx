@@ -8,7 +8,16 @@ import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { AlertTriangle, Loader2, Settings as SettingsIcon, Pencil, X, Check } from 'lucide-react'
+import {
+  AlertTriangle,
+  Loader2,
+  Settings as SettingsIcon,
+  Pencil,
+  X,
+  Check,
+  ShieldCheck,
+  Trash2,
+} from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase'
 import { translateAuthError } from '@/lib/auth-errors'
@@ -16,6 +25,12 @@ import { useActiveProfile } from '@/hooks/useActiveProfile'
 import { useUpdateProfile } from '@/hooks/useUpdateProfile'
 import { useUserProfile, useUpdateUsername } from '@/hooks/useUserProfile'
 import type { Gender } from '@/lib/types'
+import {
+  useIsSuperAdmin,
+  useListAdmins,
+  useAddAdmin,
+  useRemoveAdmin,
+} from '@/hooks/useAdminManagement'
 
 type CompletionMode = 'manual' | 'auto'
 type OpenEditor = 'username' | 'email' | 'password' | null
@@ -36,6 +51,13 @@ export default function SettingsPage() {
   const updateProfile = useUpdateProfile()
   const { data: userProfile } = useUserProfile()
   const updateUsername = useUpdateUsername()
+
+  // Admin management
+  const { data: isSuperAdmin = false } = useIsSuperAdmin()
+  const { data: adminList = [] } = useListAdmins()
+  const addAdmin = useAddAdmin()
+  const removeAdmin = useRemoveAdmin()
+  const [newAdminEmail, setNewAdminEmail] = useState('')
 
   // Delete account state
   const [deleteStep, setDeleteStep] = useState<0 | 1 | 2>(0)
@@ -694,6 +716,84 @@ export default function SettingsPage() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Admin management — only visible to super admin */}
+        {isSuperAdmin && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <ShieldCheck className="h-5 w-5 text-primary-600" />
+                Adminhantering
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Current admins list */}
+              <div className="space-y-2">
+                {adminList.map(admin => (
+                  <div
+                    key={admin.user_id}
+                    className="flex items-center justify-between p-3 rounded-lg bg-neutral-50 border border-neutral-200"
+                  >
+                    <div>
+                      <p className="text-sm font-medium text-neutral-900">{admin.email}</p>
+                      {admin.is_super_admin && (
+                        <p className="text-xs text-primary-600 font-medium">Super admin</p>
+                      )}
+                    </div>
+                    {!admin.is_super_admin && (
+                      <button
+                        onClick={async () => {
+                          const result = await removeAdmin.mutateAsync(admin.user_id)
+                          if (result?.success) {
+                            toast.success('Admin borttagen')
+                          } else {
+                            toast.error('Kunde inte ta bort admin')
+                          }
+                        }}
+                        disabled={removeAdmin.isPending}
+                        className="p-1.5 rounded-lg text-neutral-400 hover:text-error-600 hover:bg-error-50 transition-colors"
+                        title="Ta bort admin"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {/* Add new admin */}
+              <div className="flex gap-2">
+                <input
+                  type="email"
+                  value={newAdminEmail}
+                  onChange={e => setNewAdminEmail(e.target.value)}
+                  placeholder="E-postadress"
+                  className="flex-1 px-3 py-2 text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                />
+                <button
+                  onClick={async () => {
+                    if (!newAdminEmail.trim()) return
+                    const result = await addAdmin.mutateAsync(newAdminEmail.trim())
+                    if (result?.success) {
+                      toast.success('Admin tillagd')
+                      setNewAdminEmail('')
+                    } else if (result?.error === 'user_not_found') {
+                      toast.error('Ingen användare hittades med den e-postadressen')
+                    } else if (result?.error === 'already_admin') {
+                      toast.info('Användaren är redan admin')
+                    } else {
+                      toast.error('Kunde inte lägga till admin')
+                    }
+                  }}
+                  disabled={addAdmin.isPending || !newAdminEmail.trim()}
+                  className="px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 disabled:opacity-50 rounded-lg transition-colors"
+                >
+                  {addAdmin.isPending ? 'Lägger till...' : 'Lägg till'}
+                </button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Delete Account Card — Farozon */}
         <Card className="border-2 border-error-200">
