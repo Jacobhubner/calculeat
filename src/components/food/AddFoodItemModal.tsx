@@ -499,7 +499,7 @@ export function AddFoodItemModal({
       if (result.protein_g !== null) setValue('protein_g', result.protein_g)
       if (result.carb_g !== null) setValue('carb_g', result.carb_g)
       if (result.fat_g !== null) setValue('fat_g', result.fat_g)
-      if (result.food_type) setValue('food_type', result.food_type)
+      // food_type is not set from scan — user selects manually, default Solid
       if (result.saturated_fat_g != null) setValue('saturated_fat_g', result.saturated_fat_g)
       if (result.sugars_g != null) setValue('sugars_g', result.sugars_g)
       if (result.salt_g != null) setValue('salt_g', result.salt_g)
