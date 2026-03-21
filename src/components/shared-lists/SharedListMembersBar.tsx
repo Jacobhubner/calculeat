@@ -188,10 +188,6 @@ export function SharedListMembersBar({ list, onLeft }: SharedListMembersBarProps
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Lämna &quot;{list.name}&quot;?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Du förlorar åtkomsten till listan och kan bara komma tillbaka om en annan deltagare
-              bjuder in dig igen.
-            </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Avbryt</AlertDialogCancel>
