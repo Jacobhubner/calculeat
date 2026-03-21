@@ -81,6 +81,7 @@ export function AddFoodToMealModal({
 
   // AddFoodItemModal (scan flow)
   const [addFoodItemModalOpen, setAddFoodItemModalOpen] = useState(false)
+  const pendingScannedFoodRef = useRef<FoodItem | null>(null)
 
   // Search state
   const [searchQuery, setSearchQuery] = useState('')
@@ -699,10 +700,19 @@ export function AddFoodToMealModal({
 
       <AddFoodItemModal
         open={addFoodItemModalOpen}
-        onOpenChange={setAddFoodItemModalOpen}
+        onOpenChange={open => {
+          setAddFoodItemModalOpen(open)
+          // When modal closes after save, pick up the pending food
+          if (!open && pendingScannedFoodRef.current) {
+            const food = pendingScannedFoodRef.current
+            pendingScannedFoodRef.current = null
+            // Delay to let iOS finish closing the dialog before updating state
+            setTimeout(() => handleSelectFood(food), 50)
+          }
+        }}
         onSuccess={newFood => {
           if (newFood) {
-            handleSelectFood(newFood)
+            pendingScannedFoodRef.current = newFood
           }
         }}
       />
