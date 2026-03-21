@@ -237,7 +237,7 @@ export function useCreateFoodItem() {
       if (!user) throw new Error('User not authenticated')
 
       // Trigger handles kcal_per_gram and energy_density_color calculation
-      const { data, error } = await supabase
+      const { data: inserted, error } = await supabase
         .from('food_items')
         .insert({
           user_id: user.id,
@@ -264,10 +264,19 @@ export function useCreateFoodItem() {
           notes: input.notes,
           is_recipe: false,
         })
-        .select()
+        .select('id')
         .single()
 
       if (error) throw error
+
+      // Fetch the full item including trigger-computed fields (kcal_per_unit, kcal_per_gram, energy_density_color)
+      const { data, error: fetchError } = await supabase
+        .from('food_items')
+        .select('*')
+        .eq('id', inserted.id)
+        .single()
+
+      if (fetchError) throw fetchError
       return data as FoodItem
     },
     onSuccess: () => {

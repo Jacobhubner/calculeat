@@ -31,10 +31,10 @@ interface UnitSelectorProps {
  */
 export function getAvailableUnits(food: FoodItem): string[] {
   const units: string[] = []
-  const defaultUnit = food.default_unit.toLowerCase()
+  const defaultUnit = (food.default_unit ?? 'g').toLowerCase()
 
   // Always add the default unit first
-  units.push(food.default_unit)
+  units.push(food.default_unit ?? 'g')
 
   // If default unit is gram or ml, and food has ml_per_gram, add volume units
   if ((defaultUnit === 'g' || defaultUnit === 'ml') && food.ml_per_gram) {
