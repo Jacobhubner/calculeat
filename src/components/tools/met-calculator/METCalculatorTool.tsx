@@ -18,6 +18,7 @@ import {
 } from '@/lib/constants/metActivities'
 import { calculateCaloriesBurned, getIntensityLevel } from '@/lib/calculations/metCalculations'
 import { toast } from 'sonner'
+import { useTranslation } from 'react-i18next'
 
 interface SelectedActivity extends METActivity {
   durationMinutes: number
@@ -26,6 +27,7 @@ interface SelectedActivity extends METActivity {
 
 export default function METCalculatorTool() {
   const navigate = useNavigate()
+  const { t } = useTranslation('tools')
   const { profile } = useActiveProfile()
   const profileData = useProfileData(['weight_kg'])
 
@@ -57,10 +59,10 @@ export default function METCalculatorTool() {
     return (
       <EmptyState
         icon={User}
-        title="Ingen aktiv profil"
-        description="Du måste ha en profil för att använda MET-kalkylatorn."
+        title={t('metCalc.noProfile.title')}
+        description={t('metCalc.noProfile.description')}
         action={{
-          label: 'Gå till profil',
+          label: t('metCalc.noProfile.action'),
           onClick: () => navigate('/app/profile'),
         }}
       />
@@ -69,13 +71,13 @@ export default function METCalculatorTool() {
 
   const handleAddActivity = (activity: METActivity, duration: number) => {
     if (!profileData?.weight_kg) {
-      toast.error('Vänligen fyll i din vikt först')
+      toast.error(t('metCalc.toast.missingWeight'))
       return
     }
 
     // Validate duration
     if (duration <= 0) {
-      toast.error('Varaktighet måste vara större än 0')
+      toast.error(t('metCalc.toast.invalidDuration'))
       return
     }
 
@@ -83,7 +85,7 @@ export default function METCalculatorTool() {
 
     // Validate calculation result
     if (calories <= 0 || !isFinite(calories)) {
-      toast.error('Det gick inte att beräkna kalorier. Kontrollera dina värden.')
+      toast.error(t('metCalc.toast.calcError'))
       return
     }
 
@@ -96,7 +98,7 @@ export default function METCalculatorTool() {
       },
     ])
 
-    toast.success(`${activity.activity} tillagd`)
+    toast.success(t('metCalc.toast.activityAdded', { activity: activity.activity }))
   }
 
   const handleRemoveActivity = (index: number) => {
@@ -108,17 +110,16 @@ export default function METCalculatorTool() {
       {/* Header */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div className="flex-1 min-w-0">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900">MET Aktivitetskalkylator</h2>
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900">{t('metCalc.header.title')}</h2>
           <p className="text-neutral-600 mt-1 text-sm md:text-base">
-            Beräkna kalorier förbrända från över 1100 aktiviteter med metriska enheter
+            {t('metCalc.header.description')}
           </p>
           <p className="text-xs text-neutral-500 mt-1">
-            Baserat på 2024 Compendium of Physical Activities, publicerad i Journal of Sport and
-            Health Science
+            {t('metCalc.header.source')}
           </p>
         </div>
         <Badge variant="secondary" className="bg-orange-100 text-orange-700 shrink-0">
-          Energi & Metabol
+          {t('metCalc.header.badge')}
         </Badge>
       </div>
 
@@ -127,21 +128,21 @@ export default function METCalculatorTool() {
         <div className="space-y-6 min-w-0 overflow-hidden">
           <Card>
             <CardHeader>
-              <CardTitle>Sök Aktiviteter</CardTitle>
+              <CardTitle>{t('metCalc.search.title')}</CardTitle>
               <CardDescription>
-                Hitta aktiviteter från {MET_ACTIVITIES.length} olika alternativ
+                {t('metCalc.search.description', { count: MET_ACTIVITIES.length })}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {/* Kategoriväljare */}
               <div>
-                <Label htmlFor="category">Kategori</Label>
+                <Label htmlFor="category">{t('metCalc.search.categoryLabel')}</Label>
                 <Select
                   id="category"
                   value={selectedCategory}
                   onChange={e => setSelectedCategory(e.target.value)}
                 >
-                  <option value="All">Alla kategorier</option>
+                  <option value="All">{t('metCalc.search.allCategories')}</option>
                   {MET_CATEGORIES.map(cat => (
                     <option key={cat} value={cat}>
                       {cat}
@@ -152,35 +153,33 @@ export default function METCalculatorTool() {
 
               {/* Sökfält */}
               <div>
-                <Label htmlFor="search">Sök aktivitet</Label>
+                <Label htmlFor="search">{t('metCalc.search.searchLabel')}</Label>
                 <div className="relative">
                   <Search className="absolute left-3 top-3 h-4 w-4 text-neutral-400" />
                   <Input
                     id="search"
-                    placeholder="Sök på aktivitet, kod eller intensitet..."
+                    placeholder={t('metCalc.search.searchPlaceholder')}
                     value={searchTerm}
                     onChange={e => setSearchTerm(e.target.value)}
                     className="pl-9"
                   />
                 </div>
                 <p className="text-xs text-neutral-500 mt-1">
-                  Tips: Sök på &quot;lätt&quot;, &quot;måttlig&quot;, &quot;hög&quot; eller
-                  &quot;mycket hög&quot; för intensitetsnivå
+                  {t('metCalc.search.searchTip')}
                 </p>
               </div>
 
               {/* Resultaträknare */}
               {(searchTerm || selectedCategory !== 'All') && filteredActivities.length > 0 && (
                 <div className="text-sm text-neutral-600">
-                  Hittade {filteredActivities.length} aktivitet
-                  {filteredActivities.length !== 1 ? 'er' : ''}
+                  {t(filteredActivities.length === 1 ? 'metCalc.search.resultsFound_one' : 'metCalc.search.resultsFound_other', { count: filteredActivities.length })}
                 </div>
               )}
 
               {/* Aktivitetslista */}
               <div className="max-h-96 overflow-y-auto border rounded-lg">
                 {filteredActivities.length === 0 ? (
-                  <div className="p-8 text-center text-neutral-500">Inga aktiviteter hittades</div>
+                  <div className="p-8 text-center text-neutral-500">{t('metCalc.search.noResults')}</div>
                 ) : (
                   <div className="divide-y">
                     {filteredActivities.map(activity => (
@@ -203,20 +202,20 @@ export default function METCalculatorTool() {
           {/* Sammanfattning */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Totalt</CardTitle>
+              <CardTitle className="text-lg">{t('metCalc.summary.title')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex justify-between">
-                <span className="text-neutral-600">Aktiviteter:</span>
+                <span className="text-neutral-600">{t('metCalc.summary.activities')}</span>
                 <span className="font-bold">{selectedActivities.length}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-neutral-600">Tid:</span>
-                <span className="font-bold">{totalDuration} min</span>
+                <span className="text-neutral-600">{t('metCalc.summary.time')}</span>
+                <span className="font-bold">{totalDuration} {t('metCalc.summary.minuteUnit')}</span>
               </div>
               <div className="pt-3 border-t">
                 <div className="flex justify-between items-baseline">
-                  <span className="text-neutral-600">Kalorier:</span>
+                  <span className="text-neutral-600">{t('metCalc.summary.calories')}</span>
                   <span className="text-3xl font-bold text-orange-600">
                     {totalCalories.toFixed(0)}
                   </span>
@@ -230,14 +229,14 @@ export default function METCalculatorTool() {
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between gap-2 flex-wrap">
-                  <CardTitle className="text-lg shrink-0">Valda Aktiviteter</CardTitle>
+                  <CardTitle className="text-lg shrink-0">{t('metCalc.selected.title')}</CardTitle>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => setSelectedActivities([])}
                     className="text-error-600 hover:text-error-700 shrink-0"
                   >
-                    Rensa alla
+                    {t('metCalc.selected.clearAll')}
                   </Button>
                 </div>
               </CardHeader>
@@ -253,7 +252,7 @@ export default function METCalculatorTool() {
                           {activity.activity}
                         </p>
                         <p className="text-xs text-neutral-500">
-                          {activity.durationMinutes} min · {activity.met} MET
+                          {activity.durationMinutes} {t('metCalc.selected.minuteAbbr')} · {activity.met} MET
                         </p>
                       </div>
                       <div className="flex items-center gap-3 ml-3">
@@ -291,6 +290,7 @@ function ActivityRow({
   onAdd: (activity: METActivity, duration: number) => void
   disabled: boolean
 }) {
+  const { t } = useTranslation('tools')
   const [durationInput, setDurationInput] = useState('30')
   const [showDuration, setShowDuration] = useState(false)
 
@@ -326,12 +326,12 @@ function ActivityRow({
             className="shrink-0"
           >
             <Plus className="h-4 w-4 mr-1" />
-            Välj
+            {t('metCalc.activityRow.choose')}
           </Button>
         ) : (
           <div className="flex items-center gap-2 shrink-0">
             <div className="flex flex-col">
-              <label className="text-xs text-neutral-500 mb-1">Minuter</label>
+              <label className="text-xs text-neutral-500 mb-1">{t('metCalc.activityRow.minutesLabel')}</label>
               <Input
                 type="number"
                 min="1"
@@ -348,7 +348,7 @@ function ActivityRow({
               />
             </div>
             <Button size="sm" onClick={handleAdd} className="h-8 mt-5">
-              Lägg till
+              {t('metCalc.activityRow.addButton')}
             </Button>
           </div>
         )}

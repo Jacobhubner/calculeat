@@ -1,0 +1,34 @@
+{
+  "title": "Inställningar",
+  "sections": {
+    "account": "Konto",
+    "notifications": "Notifikationer",
+    "appearance": "Utseende",
+    "language": "Språk",
+    "danger": "Farlig zon"
+  },
+  "language": {
+    "label": "Språk",
+    "sv": "Svenska",
+    "en": "Engelska"
+  },
+  "account": {
+    "changePassword": "Byt lösenord",
+    "changeEmail": "Byt e-postadress",
+    "deleteAccount": "Radera konto",
+    "deleteConfirm": "Är du säker på att du vill radera ditt konto? Åtgärden går inte att ångra.",
+    "deleteSuccess": "Kontot raderat",
+    "deleteError": "Kunde inte radera kontot"
+  },
+  "password": {
+    "current": "Nuvarande lösenord",
+    "new": "Nytt lösenord",
+    "confirm": "Bekräfta nytt lösenord",
+    "changeSuccess": "Lösenordet har bytts",
+    "changeError": "Kunde inte byta lösenord"
+  },
+  "toast": {
+    "saved": "Inställningar sparade",
+    "saveError": "Kunde inte spara inställningar"
+  }
+}

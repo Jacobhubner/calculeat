@@ -3,6 +3,7 @@
  * Visas i sidopanelen på profilsidan
  */
 
+import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Activity, Flame, Target } from 'lucide-react'
 import type { Profile } from '@/lib/types'
@@ -14,6 +15,7 @@ interface ProfileResultsSummaryProps {
 }
 
 export default function ProfileResultsSummary({ profile }: ProfileResultsSummaryProps) {
+  const { t } = useTranslation('profile')
   if (!profile) return null
 
   // Calculate BMR using stored formula (or default to Mifflin-St Jeor)
@@ -82,7 +84,7 @@ export default function ProfileResultsSummary({ profile }: ProfileResultsSummary
       <CardHeader>
         <CardTitle className="text-base flex items-center gap-2">
           <Activity className="h-5 w-5 text-success-600" />
-          Resultat
+          {t('results.title')}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -95,7 +97,7 @@ export default function ProfileResultsSummary({ profile }: ProfileResultsSummary
                 <p className="text-sm font-medium text-neutral-700">
                   {getMetabolicRateLabel(bmrFormula)}
                 </p>
-                <p className="text-xs text-neutral-500">Basalmetabolism</p>
+                <p className="text-xs text-neutral-500">{t('results.basalMetabolism')}</p>
                 <p className="text-xs text-neutral-400">{getFormulaDisplayName(bmrFormula)}</p>
               </div>
             </div>
@@ -111,7 +113,7 @@ export default function ProfileResultsSummary({ profile }: ProfileResultsSummary
             <Activity className="h-4 w-4 text-primary-500" />
             <div>
               <p className="text-sm font-medium text-neutral-700">TDEE</p>
-              <p className="text-xs text-neutral-500">Totalt energibehov</p>
+              <p className="text-xs text-neutral-500">{t('results.totalEnergyNeed')}</p>
             </div>
           </div>
           <p className="text-sm font-semibold text-neutral-900">{Math.round(tdee)} kcal</p>
@@ -123,15 +125,15 @@ export default function ProfileResultsSummary({ profile }: ProfileResultsSummary
             <div className="flex items-center gap-2">
               <Target className="h-4 w-4 text-accent-500" />
               <div>
-                <p className="text-sm font-medium text-neutral-700">Kaloriintervall</p>
+                <p className="text-sm font-medium text-neutral-700">{t('results.calorieRange')}</p>
                 {calorieGoal && (
                   <p className="text-xs text-neutral-500">
                     {calorieGoal === 'Maintain weight'
-                      ? 'Bibehåll vikt'
+                      ? t('calorieGoal.maintain')
                       : calorieGoal === 'Weight loss'
-                        ? 'Viktminskning'
+                        ? t('calorieGoal.loss')
                         : calorieGoal === 'Weight gain'
-                          ? 'Viktökning'
+                          ? t('calorieGoal.gain')
                           : calorieGoal}
                   </p>
                 )}

@@ -4,6 +4,7 @@
  */
 
 import { useState, useEffect, useMemo, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
 import { Button } from './ui/button'
 import { Slider } from './ui/slider'
@@ -21,15 +22,16 @@ interface MealSettingsCardProps {
 }
 
 export default function MealSettingsCard({ tdee, onMealChange }: MealSettingsCardProps) {
+  const { t } = useTranslation('profile')
   const [isOpen, setIsOpen] = useState(false)
   const activeProfile = useProfileStore(state => state.activeProfile)
 
   // Default meals
   const defaultMeals: Meal[] = [
-    { name: 'Frukost', percentage: 25 },
-    { name: 'Lunch', percentage: 30 },
-    { name: 'Mellanmål', percentage: 15 },
-    { name: 'Middag', percentage: 30 },
+    { name: t('mealSettings.defaultBreakfast'), percentage: 25 },
+    { name: t('mealSettings.defaultLunch'), percentage: 30 },
+    { name: t('mealSettings.defaultSnack'), percentage: 15 },
+    { name: t('mealSettings.defaultDinner'), percentage: 30 },
   ]
 
   const [meals, setMeals] = useState<Meal[]>(defaultMeals)
@@ -100,10 +102,10 @@ export default function MealSettingsCard({ tdee, onMealChange }: MealSettingsCar
     // Generate a unique default name to avoid UNIQUE constraint violations
     let counter = 1
     const existingNames = new Set(meals.map(m => m.name))
-    while (existingNames.has(`Ny måltid ${counter}`)) {
+    while (existingNames.has(t('mealSettings.newMealName', { n: counter }))) {
       counter++
     }
-    setMeals([...meals, { name: `Ny måltid ${counter}`, percentage: 0 }])
+    setMeals([...meals, { name: t('mealSettings.newMealName', { n: counter }), percentage: 0 }])
   }
 
   const handleRemoveMeal = (index: number) => {
@@ -127,7 +129,7 @@ export default function MealSettingsCard({ tdee, onMealChange }: MealSettingsCar
           <div>
             <CardTitle className="flex items-center gap-2 text-lg leading-snug">
               <UtensilsCrossed className="h-5 w-5 flex-shrink-0 text-primary-500" />
-              Måltidsinställningar
+              {t('mealSettings.title')}
             </CardTitle>
           </div>
           <ChevronDown
@@ -160,7 +162,7 @@ export default function MealSettingsCard({ tdee, onMealChange }: MealSettingsCar
                             ? 'border-red-400 focus:border-red-500 focus:ring-red-500'
                             : 'border-neutral-300 focus:border-primary-500 focus:ring-primary-500'
                         }`}
-                        placeholder="Måltidsnamn"
+                        placeholder={t('mealSettings.mealNamePlaceholder')}
                       />
                     )
                   })()}
@@ -170,7 +172,7 @@ export default function MealSettingsCard({ tdee, onMealChange }: MealSettingsCar
                     onClick={() => handleRemoveMeal(index)}
                     disabled={meals.length === 1}
                     className="p-1.5 rounded-lg bg-red-100 hover:bg-red-200 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                    title={meals.length === 1 ? 'Du måste ha minst en måltid' : 'Ta bort måltid'}
+                    title={meals.length === 1 ? t('mealSettings.removeDisabled') : t('mealSettings.remove')}
                   >
                     <X className="h-3.5 w-3.5 text-red-600" />
                   </button>
@@ -179,7 +181,7 @@ export default function MealSettingsCard({ tdee, onMealChange }: MealSettingsCar
                 {/* Percentage Slider */}
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-xs text-neutral-600">Procent</span>
+                    <span className="text-xs text-neutral-600">{t('mealSettings.percentage')}</span>
                     <div className="text-xs font-semibold text-primary-600">
                       {meal.percentage}%
                       {tdee && (
@@ -209,7 +211,7 @@ export default function MealSettingsCard({ tdee, onMealChange }: MealSettingsCar
             className="w-full border-dashed border-2 hover:bg-primary-50 hover:border-primary-400"
           >
             <Plus className="h-4 w-4 mr-2" />
-            Lägg till måltid
+            {t('mealSettings.addMeal')}
           </Button>
 
           {/* Total Summary */}
@@ -219,7 +221,7 @@ export default function MealSettingsCard({ tdee, onMealChange }: MealSettingsCar
             }`}
           >
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-neutral-700">Total fördelning:</span>
+              <span className="text-xs font-medium text-neutral-700">{t('mealSettings.totalDistribution')}</span>
               <div className="flex items-center gap-1.5">
                 <span
                   className={`text-base font-bold ${
@@ -233,12 +235,12 @@ export default function MealSettingsCard({ tdee, onMealChange }: MealSettingsCar
             </div>
             {!isValidTotal && (
               <p className="text-[10px] text-amber-700 mt-1.5">
-                Totalen måste vara exakt 100%. Justera procentsatserna ovan.
+                {t('mealSettings.totalError')}
               </p>
             )}
             {hasDuplicates && (
               <p className="text-[10px] text-red-700 mt-1.5">
-                Varje måltid måste ha ett unikt namn. Byt namn på dubbletter.
+                {t('mealSettings.duplicateError')}
               </p>
             )}
           </div>
@@ -246,11 +248,10 @@ export default function MealSettingsCard({ tdee, onMealChange }: MealSettingsCar
           {/* Info message */}
           <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-3 space-y-1.5">
             <p className="text-xs text-neutral-700 leading-relaxed">
-              💡 Fördela dina kalorier över dagen baserat på dina vanor.
+              {t('mealSettings.tip')}
             </p>
             <p className="text-xs text-neutral-500 leading-relaxed">
-              Tryck på <strong>Spara ändringar</strong> längre ner för att uppdatera måltiderna i
-              Dagens logg.
+              {t('mealSettings.saveHint')}
             </p>
           </div>
         </CardContent>

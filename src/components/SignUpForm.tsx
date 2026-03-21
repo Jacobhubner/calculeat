@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
+import { useTranslation, Trans } from 'react-i18next'
 import { signUpSchema } from '@/lib/validation'
 import { translateAuthError } from '@/lib/auth-errors'
 import { useAuth } from '@/contexts/AuthContext'
@@ -22,6 +23,7 @@ type UsernameStatus = 'idle' | 'checking' | 'available' | 'taken' | 'invalid'
 
 export default function SignUpForm() {
   const { signUp } = useAuth()
+  const { t } = useTranslation('auth')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -81,7 +83,7 @@ export default function SignUpForm() {
 
   const onSubmit = async (data: SignUpFormData) => {
     if (usernameStatus === 'taken') {
-      setError('Användarnamnet är redan taget')
+      setError(t('register.error.usernameTaken'))
       return
     }
     setIsLoading(true)
@@ -89,7 +91,7 @@ export default function SignUpForm() {
     try {
       await signUp(data.email, data.password, data.profile_name)
       setSuccess(true)
-      toast.success('Registrering lyckades! Kontrollera din e-post för att verifiera ditt konto.')
+      toast.success(t('register.success'))
 
       // Hämta faktiskt username (kan skilja sig om race condition inträffade)
       try {
@@ -111,7 +113,7 @@ export default function SignUpForm() {
       const msg = (err as Error).message ?? ''
       // Hantera race condition: username togs av någon annan precis innan registrering
       if (msg.includes('username_taken') || msg.includes('P0001')) {
-        setError('Användarnamnet togs precis av någon annan. Välj ett nytt namn.')
+        setError(t('register.error.usernameRaceCondition'))
         setUsernameStatus('taken')
       } else {
         const errorMessage = translateAuthError(err)
@@ -126,13 +128,18 @@ export default function SignUpForm() {
   if (success) {
     return (
       <div className="p-4 bg-green-50 border border-green-200 text-green-700 rounded-lg space-y-1">
-        <p className="font-semibold">Registrering lyckades!</p>
+        <p className="font-semibold">{t('register.successTitle')}</p>
         {actualUsername && (
           <p className="text-sm">
-            Ditt konto skapades som <strong>@{actualUsername}</strong>.
+            <Trans
+              i18nKey="register.successAccount"
+              ns="auth"
+              values={{ username: actualUsername }}
+              components={{ strong: <strong /> }}
+            />
           </p>
         )}
-        <p className="text-sm">Kontrollera din e-post för att verifiera ditt konto.</p>
+        <p className="text-sm">{t('register.successVerify')}</p>
       </div>
     )
   }
@@ -145,7 +152,7 @@ export default function SignUpForm() {
 
       {/* Användarnamn */}
       <div>
-        <Label htmlFor="profile_name">Användarnamn</Label>
+        <Label htmlFor="profile_name">{t('register.username')}</Label>
         <div className="relative mt-2">
           <Input
             id="profile_name"
@@ -164,19 +171,17 @@ export default function SignUpForm() {
         {errors.profile_name ? (
           <p className="text-red-500 text-sm mt-1">{errors.profile_name.message}</p>
         ) : usernameStatus === 'taken' ? (
-          <p className="text-red-500 text-sm mt-1">Användarnamnet är redan taget</p>
+          <p className="text-red-500 text-sm mt-1">{t('register.usernameTaken')}</p>
         ) : usernameStatus === 'available' ? (
-          <p className="text-green-600 text-sm mt-1">Användarnamnet är ledigt</p>
+          <p className="text-green-600 text-sm mt-1">{t('register.usernameAvailable')}</p>
         ) : (
-          <p className="text-neutral-500 text-xs mt-1">
-            Välj ett unikt namn som dina vänner kan hitta dig på.
-          </p>
+          <p className="text-neutral-500 text-xs mt-1">{t('register.usernameHint')}</p>
         )}
       </div>
 
       {/* E-postadress */}
       <div>
-        <Label htmlFor="email">E-postadress</Label>
+        <Label htmlFor="email">{t('register.email')}</Label>
         <Input
           id="email"
           type="email"
@@ -189,7 +194,7 @@ export default function SignUpForm() {
 
       {/* Lösenord */}
       <div>
-        <Label htmlFor="password">Lösenord</Label>
+        <Label htmlFor="password">{t('register.password')}</Label>
         <Input
           id="password"
           type="password"
@@ -200,13 +205,13 @@ export default function SignUpForm() {
         {errors.password ? (
           <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
         ) : (
-          <p className="text-neutral-500 text-xs mt-1">Lösenordet måste vara minst 6 tecken</p>
+          <p className="text-neutral-500 text-xs mt-1">{t('register.passwordHint')}</p>
         )}
       </div>
 
       {/* Bekräfta lösenord */}
       <div>
-        <Label htmlFor="confirmPassword">Bekräfta lösenord</Label>
+        <Label htmlFor="confirmPassword">{t('register.confirmPassword')}</Label>
         <Input
           id="confirmPassword"
           type="password"
@@ -227,10 +232,10 @@ export default function SignUpForm() {
         {isLoading ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Registrerar...
+            {t('register.submitting')}
           </>
         ) : (
-          'Skapa konto'
+          t('register.submit')
         )}
       </Button>
     </form>

@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next'
+
 interface MacroEntry {
   currentG: number
   minG: number
@@ -17,21 +19,28 @@ function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max)
 }
 
-function gramStatusText(currentG: number, minG: number, maxG: number): string {
+function gramStatusText(
+  currentG: number,
+  minG: number,
+  maxG: number,
+  t: (key: string, opts?: object) => string
+): string {
   const c = Math.round(currentG)
   const mn = Math.round(minG)
   const mx = Math.round(maxG)
-  if (c === 0) return `0 g / ${mn}–${mx} g`
-  if (c < mn) return `${c} g / ${mn}–${mx} g · ${mn - c} g kvar till minimum`
-  if (c > mx) return `${c} g / ${mn}–${mx} g · ${c - mx} g över max`
-  return `${c} g / ${mn}–${mx} g · ${mx - c} g kvar till max`
+  if (c === 0) return t('macroBar.statusZero', { mn, mx })
+  if (c < mn) return t('macroBar.statusUnder', { c, mn, mx, diff: mn - c })
+  if (c > mx) return t('macroBar.statusOver', { c, mn, mx, diff: c - mx })
+  return t('macroBar.statusWithin', { c, mn, mx, diff: mx - c })
 }
 
-const MACRO_CONFIG = [
-  { key: 'fat' as const, label: 'Fett', color: '#f5c518' },
-  { key: 'carbs' as const, label: 'Kolhydrater', color: '#fb923c' },
-  { key: 'protein' as const, label: 'Protein', color: '#f43f5e' },
-]
+function getMacroConfig(t: (key: string) => string) {
+  return [
+    { key: 'fat' as const, label: t('macroBar.fat'), color: '#f5c518' },
+    { key: 'carbs' as const, label: t('macroBar.carbs'), color: '#fb923c' },
+    { key: 'protein' as const, label: t('macroBar.protein'), color: '#f43f5e' },
+  ]
+}
 
 function StatusBadge({
   currentPct,
@@ -42,30 +51,32 @@ function StatusBadge({
   minPct: number
   maxPct: number
 }) {
+  const { t } = useTranslation('today')
   if (currentPct === 0) return null
 
   if (currentPct < minPct) {
     return (
       <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700">
-        Under mål
+        {t('macroBar.badgeUnder')}
       </span>
     )
   }
   if (currentPct > maxPct) {
     return (
       <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-red-100 text-red-600">
-        Över mål
+        {t('macroBar.badgeOver')}
       </span>
     )
   }
   return (
     <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-green-100 text-green-700">
-      Inom mål
+      {t('macroBar.badgeWithin')}
     </span>
   )
 }
 
 function MacroRow({ label, color, entry }: { label: string; color: string; entry: MacroEntry }) {
+  const { t } = useTranslation('today')
   const { currentG, minG, maxG, currentPct, minPct, maxPct } = entry
   const pct = clamp(currentPct, 0, 100)
   const safeMin = clamp(minPct, 0, 100)
@@ -109,18 +120,19 @@ function MacroRow({ label, color, entry }: { label: string; color: string; entry
 
       {/* Gram-status */}
       <p className="text-[10px] text-neutral-400 tabular-nums">
-        {gramStatusText(currentG, minG, maxG)}
+        {gramStatusText(currentG, minG, maxG, t)}
       </p>
     </div>
   )
 }
 
 export function MacroRangeBar({ fat, carbs, protein }: MacroRangeBarProps) {
+  const { t } = useTranslation('today')
   const dataMap = { fat, carbs, protein }
 
   return (
     <div className="space-y-4">
-      {MACRO_CONFIG.map(({ key, label, color }) => (
+      {getMacroConfig(t).map(({ key, label, color }) => (
         <MacroRow key={key} label={label} color={color} entry={dataMap[key]} />
       ))}
     </div>

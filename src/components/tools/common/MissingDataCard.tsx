@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import type { Profile } from '@/lib/types'
 import QuickProfileInput from './QuickProfileInput'
+import { useTranslation } from 'react-i18next'
 
 interface MissingDataCardProps {
   title?: string
@@ -18,11 +19,14 @@ interface MissingDataCardProps {
 }
 
 export default function MissingDataCard({
-  title = 'Saknade uppgifter',
-  description = 'För att använda detta verktyg behöver du fylla i följande uppgifter:',
+  title,
+  description,
   missingFields,
   onSave,
 }: MissingDataCardProps) {
+  const { t } = useTranslation('tools')
+  const resolvedTitle = title ?? t('missingData.title')
+  const resolvedDescription = description ?? t('missingData.description')
   const [isExpanded, setIsExpanded] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
 
@@ -46,8 +50,8 @@ export default function MissingDataCard({
           <div className="flex items-start gap-3">
             <AlertCircle className="h-5 w-5 text-orange-600 mt-0.5" />
             <div className="flex-1">
-              <CardTitle className="text-orange-900">{title}</CardTitle>
-              <CardDescription className="text-orange-700 mt-1">{description}</CardDescription>
+              <CardTitle className="text-orange-900">{resolvedTitle}</CardTitle>
+              <CardDescription className="text-orange-700 mt-1">{resolvedDescription}</CardDescription>
             </div>
           </div>
           <Button
@@ -59,12 +63,12 @@ export default function MissingDataCard({
             {isExpanded ? (
               <>
                 <ChevronUp className="h-4 w-4 mr-1" />
-                Dölj
+                {t('missingData.hide')}
               </>
             ) : (
               <>
                 <ChevronDown className="h-4 w-4 mr-1" />
-                Fyll i
+                {t('missingData.fill')}
               </>
             )}
           </Button>

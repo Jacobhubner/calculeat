@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -34,6 +35,7 @@ export default function TapeMeasurementsSection({
   showAll = false,
   onChange,
 }: TapeMeasurementsSectionProps) {
+  const { t } = useTranslation('body')
   const [showModal, setShowModal] = useState(false)
   const [modalContent, setModalContent] = useState<{ title: string; description: string } | null>(
     null
@@ -70,7 +72,7 @@ export default function TapeMeasurementsSection({
   const getErrorMessage = (field: keyof TapeMeasurements) => {
     const range = measurementRanges[field as string]
     if (!range) return ''
-    return `Måste vara mellan ${range.min} och ${range.max} cm`
+    return t('tape.validationError', { min: range.min, max: range.max })
   }
 
   // All possible tape fields
@@ -93,12 +95,10 @@ export default function TapeMeasurementsSection({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Ruler className="h-5 w-5 text-primary-600" />
-            Måttbandsmätningar
+            {t('tape.title')}
           </CardTitle>
           <CardDescription>
-            Mät omkrets på angivna ställen med måttband. Mät när du står avslappnad och andas
-            normalt. Se till att måttbandet inte sitter för hårt eller för löst och att det ligger
-            plant mot huden. Anges i centimeter (cm).
+            {t('tape.description')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -120,7 +120,7 @@ export default function TapeMeasurementsSection({
                         type="button"
                         onClick={() => handleInfoClick(field)}
                         className="text-neutral-400 hover:text-primary-600 transition-colors cursor-pointer"
-                        aria-label={`Visa information om ${tapeLabels[field as string]}`}
+                        aria-label={t('tape.infoAriaLabel', { field: tapeLabels[field as string] })}
                       >
                         <Info className="h-4 w-4" />
                       </button>
@@ -163,12 +163,12 @@ export default function TapeMeasurementsSection({
               <div className="sticky top-0 bg-gradient-to-br from-primary-500 to-accent-500 text-white px-6 py-4 flex justify-between items-start rounded-t-2xl">
                 <div>
                   <h2 className="text-2xl font-bold">{modalContent.title}</h2>
-                  <p className="text-sm text-white/90 mt-1">Mätinstruktion</p>
+                  <p className="text-sm text-white/90 mt-1">{t('tape.measurementInstruction')}</p>
                 </div>
                 <button
                   onClick={() => setShowModal(false)}
                   className="text-white/90 hover:text-white transition-colors"
-                  aria-label="Stäng modal"
+                  aria-label={t('tape.closeModalAriaLabel')}
                 >
                   <X className="h-6 w-6" />
                 </button>
@@ -353,7 +353,7 @@ export default function TapeMeasurementsSection({
               </div>
               <div className="sticky bottom-0 bg-white border-t border-neutral-200 px-6 py-4 rounded-b-2xl">
                 <Button onClick={() => setShowModal(false)} className="w-full">
-                  Stäng
+                  {t('tape.closeModal')}
                 </Button>
               </div>
             </div>

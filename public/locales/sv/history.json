@@ -1,0 +1,95 @@
+{
+  "page": {
+    "title": "Historik",
+    "description": "Se dina tidigare dagars loggning och framsteg"
+  },
+  "views": {
+    "list": "Lista",
+    "calendar": "Kalender",
+    "calendarTitle": "Kalenderview",
+    "calendarDescription": "Välj ett datum för att se detaljer",
+    "calendarComingSoon": "Kalendervy kommer snart"
+  },
+  "week": {
+    "days": "dagar"
+  },
+  "status": {
+    "completed": "Klar",
+    "dayCompleted": "Dag avslutad"
+  },
+  "actions": {
+    "deleteDayTitle": "Radera dag",
+    "backToHistory": "Tillbaka till historik",
+    "edit": "Redigera",
+    "copyToToday": "Kopiera till idag",
+    "copying": "Kopierar...",
+    "done": "Klar",
+    "cancel": "Avbryt",
+    "confirm": "Bekräfta",
+    "saving": "Sparar...",
+    "goToToday": "Gå till dagens logg",
+    "addFood": "Lägg till"
+  },
+  "confirm": {
+    "deleteDay": "Vill du radera loggen för {{date}}? Detta kan inte ångras."
+  },
+  "toast": {
+    "dayDeleted": "Dagen har raderats",
+    "deleteFailed": "Kunde inte radera dagen",
+    "copiedToToday": "Kopierat till dagens logg!",
+    "daySaved": "Dagen är sparad",
+    "foodRemoved": "Matvaran borttagen",
+    "dateUpdated": "Datum uppdaterat",
+    "dateUpdateFailed": "Kunde inte uppdatera datum"
+  },
+  "empty": {
+    "noHistory": "Ingen historik ännu",
+    "noHistoryDescription": "Börja logga dina måltider för att se historik och framsteg över tid.",
+    "noDataForDate": "Ingen data för detta datum",
+    "noDataDescription": "Det finns ingen loggad information för {{date}}",
+    "noMealsForDay": "Inga måltider loggade denna dag",
+    "noFoodInMeal": "Inga matvaror loggade",
+    "unknownFood": "Okänd matvara"
+  },
+  "stats": {
+    "summary30Days": "30-dagars sammanfattning",
+    "completedDays": "Avslutade dagar",
+    "avgCaloriesPerDay": "Genomsnittliga kalorier/dag",
+    "daysLogged": "Dagar loggade",
+    "streak": "Loggningsstreak",
+    "daysInARow": "dagar i rad",
+    "streakEncouragement": "Fortsätt logga dagligen för att hålla din streak!",
+    "densityDistribution": "Kaloritäthetsfördelning",
+    "last30Days": "Senaste 30 dagarna",
+    "green": "Grön",
+    "yellow": "Gul",
+    "orange": "Orange"
+  },
+  "tips": {
+    "title": "Framstegstips",
+    "tip1": "• Logga minst 5 dagar i veckan för bästa resultat",
+    "tip2": "• Jämför veckovisa genomsnitt för att se trender",
+    "tip3": "• Sikta på minst 30% gröna matvaror varje dag",
+    "tip4": "• Använd \"Kopiera från igår\" för snabbare loggning"
+  },
+  "day": {
+    "summary": "Dagens sammanfattning",
+    "calories": "Kalorier",
+    "macroDistribution": "Makrofördelning",
+    "calorieGoal": "Kalorimål",
+    "nutritionStats": "Näringsstatistik",
+    "fat": "Fett",
+    "carbs": "Kolhydrater",
+    "protein": "Protein",
+    "meals": "Måltider",
+    "totalFoods": "Totalt antal matvaror",
+    "vsGoal": "Jämfört med mål"
+  },
+  "editing": {
+    "banner": "Du redigerar denna dag. Lägg till eller ta bort matvaror.",
+    "changeDate": "Ändra datum",
+    "confirmDateChange": "Ändra datum från <bold>{{from}}</bold> till <bold>{{to}}</bold>?",
+    "confirmDateChangePlain": "Ändra datum från {{from}} till {{to}}?",
+    "removeItem": "Ta bort"
+  }
+}

@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
 import type { Profile } from '@/lib/types'
 import { toast } from 'sonner'
+import { useTranslation } from 'react-i18next'
 
 interface QuickProfileInputProps {
   field: keyof Profile
@@ -24,13 +25,14 @@ export default function QuickProfileInput({
   onSave,
   disabled = false,
 }: QuickProfileInputProps) {
+  const { t } = useTranslation('tools')
   const [value, setValue] = useState<string>('')
   const [isSaving, setIsSaving] = useState(false)
   const [saved, setSaved] = useState(false)
 
   const handleSave = async () => {
     if (!value) {
-      toast.error('Vänligen fyll i ett värde')
+      toast.error(t('quickProfile.errors.emptyValue'))
       return
     }
 
@@ -41,11 +43,11 @@ export default function QuickProfileInput({
       if (type === 'number') {
         convertedValue = parseFloat(value)
         if (isNaN(convertedValue)) {
-          toast.error('Ogiltigt nummer')
+          toast.error(t('quickProfile.errors.invalidNumber'))
           return
         }
         if (convertedValue <= 0) {
-          toast.error('Värdet måste vara större än 0')
+          toast.error(t('quickProfile.errors.mustBePositive'))
           return
         }
       }
@@ -53,13 +55,13 @@ export default function QuickProfileInput({
       await onSave({ [field]: convertedValue })
 
       setSaved(true)
-      toast.success(`${label} har sparats`)
+      toast.success(t('quickProfile.successSaved', { label }))
 
       // Reset saved state after 2 seconds
       setTimeout(() => setSaved(false), 2000)
     } catch (error) {
       console.error('Error saving field:', error)
-      toast.error('Något gick fel vid sparande')
+      toast.error(t('quickProfile.errors.saveFailed'))
     } finally {
       setIsSaving(false)
     }
@@ -85,7 +87,7 @@ export default function QuickProfileInput({
             disabled={disabled || isSaving}
             className="mt-1"
           >
-            <option value="">Välj...</option>
+            <option value="">{t('quickProfile.select')}</option>
             {options.map(option => (
               <option key={option.value} value={option.value}>
                 {option.label}
@@ -100,7 +102,7 @@ export default function QuickProfileInput({
             onChange={e => setValue(e.target.value)}
             onKeyDown={handleKeyDown}
             disabled={disabled || isSaving}
-            placeholder={`Ange ${label.toLowerCase()}`}
+            placeholder={t('quickProfile.placeholder', { label: label.toLowerCase() })}
             className="mt-1"
           />
         )}
@@ -114,15 +116,15 @@ export default function QuickProfileInput({
         {isSaving ? (
           <>
             <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-            Sparar
+            {t('quickProfile.saving')}
           </>
         ) : saved ? (
           <>
             <Check className="h-4 w-4 mr-1" />
-            Sparad
+            {t('quickProfile.saved')}
           </>
         ) : (
-          'Spara'
+          t('quickProfile.save')
         )}
       </Button>
     </div>

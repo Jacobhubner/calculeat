@@ -1,0 +1,392 @@
+{
+  "tabs": {
+    "mine": "Mine",
+    "calculeat": "CalculEat",
+    "slv": "Livsmedelsverket",
+    "all": "All"
+  },
+  "source": {
+    "user": "My",
+    "manual": "CalculEat",
+    "livsmedelsverket": "SLV",
+    "usda": "USDA",
+    "shared": "Shared"
+  },
+  "search": {
+    "placeholder": "Search food items...",
+    "noResults": "No food items found",
+    "loading": "Searching…"
+  },
+  "toast": {
+    "added": "Food item added",
+    "updated": "Food item updated",
+    "deleted": "Food item removed",
+    "addError": "Could not add food item",
+    "updateError": "Could not update food item",
+    "deleteError": "Could not remove food item",
+    "copiedToList": "Food item copied to \"{{listName}}\"",
+    "alreadyInList": "Food item already in the list",
+    "copyError": "Could not copy. Please try again.",
+    "copiedToCalculeat": "Food item copied to the CalculEat list",
+    "alreadyInCalculeat": "A food item with the same name already exists in CalculEat",
+    "firstContributor": "You were the first to add this product. Thank you!"
+  },
+  "fields": {
+    "name": "Name",
+    "calories": "Calories",
+    "protein": "Protein",
+    "carbs": "Carbohydrates",
+    "fat": "Fat",
+    "fiber": "Fiber",
+    "sugar": "Sugar",
+    "saturatedFat": "Saturated fat",
+    "salt": "Salt",
+    "servingSize": "Serving size",
+    "unit": "Unit",
+    "per100g": "Per 100 g",
+    "per100ml": "Per 100 ml"
+  },
+  "density": {
+    "solid": "Solid",
+    "liquid": "Liquid",
+    "soup": "Soup"
+  },
+  "color": {
+    "green": "Green",
+    "yellow": "Yellow",
+    "orange": "Orange",
+    "all": "All",
+    "recipe": "Recipe"
+  },
+  "modal": {
+    "addTitle": "Add food item",
+    "editTitle": "Edit food item",
+    "addToMeal": "Add to meal",
+    "amount": "Amount",
+    "meal": "Meal",
+    "unit": "Unit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saving": "Saving...",
+    "update": "Update",
+    "saveFood": "Save food item",
+    "page": "Page {{page}} of {{total}}",
+    "prev": "Prev",
+    "next": "Next"
+  },
+  "items_one": "{{count}} item",
+  "items_other": "{{count}} items",
+  "updating": "Updating...",
+  "barcode": {
+    "scan": "Scan barcode",
+    "notFound": "Product not found",
+    "found": "Product found",
+    "error": "Error during scan",
+    "searching": "Looking up product...",
+    "notFoundDetail": "Product not found in the database",
+    "barcodeLabel": "Barcode: {{barcode}}",
+    "fillManually": "Enter nutrition facts manually",
+    "fillManuallySaved": "(barcode will be saved)"
+  },
+  "header": {
+    "title": "Food items",
+    "newFood": "New food item",
+    "newFoodShort": "New"
+  },
+  "filter": {
+    "search": "Search food items...",
+    "all": "All",
+    "green": "Green",
+    "yellow": "Yellow",
+    "orange": "Orange",
+    "recipe": "Recipe",
+    "clearFilters": "Clear filters"
+  },
+  "emptyState": {
+    "noResults": "No food items found",
+    "noResultsDesc": "Try adjusting your search or filters.",
+    "noItems": "No food items yet",
+    "noItemsMine": "Get started by adding your first food item to the database.",
+    "noItemsOther": "No food items in this category."
+  },
+  "loading": "Loading food items...",
+  "table": {
+    "food": "Food item",
+    "portion": "Serving",
+    "calories": "Calories",
+    "fat": "Fat",
+    "carbs": "Carbs",
+    "protein": "Protein",
+    "type": "Type"
+  },
+  "pagination": {
+    "page": "Page {{page}} of {{total}}",
+    "prev": "Previous",
+    "next": "Next"
+  },
+  "tooltip": {
+    "viewAsServing": "View as {{serving}}",
+    "viewPer100g": "View per 100g",
+    "viewPerVolume": "View per volume (ml)",
+    "viewNutrients": "View nutrition facts",
+    "copyToList": "Copy to list",
+    "createSharedList": "Create shared list"
+  },
+  "reset": {
+    "button": "Reset list",
+    "confirmTitle": "Are you sure you want to reset the list?",
+    "confirmDesc": "This will remove all your customizations:",
+    "confirmItem1": "All food items you have created",
+    "confirmItem2": "All changes you've made to global food items",
+    "confirmItem3": "All food items you have hidden",
+    "warningTitle": "Final warning",
+    "warningIrreversible": "This action CANNOT be undone!",
+    "warningDesc": "EVERYTHING you have done in the food list since creating your account will be permanently deleted. You will get back the original global list.",
+    "cancel": "Cancel",
+    "continue": "Yes, continue",
+    "resetAll": "Reset everything",
+    "resetting": "Resetting..."
+  },
+  "listEdit": {
+    "title": "Edit \"{{name}}\"",
+    "description": "This food item is in a shared list. Choose how you want to edit it.",
+    "createCopy": "Create personal copy",
+    "createCopyDesc": "Saved under \"Mine\" — does not affect the list",
+    "editInList": "Edit in the list",
+    "editInListDesc": "Affects everyone with access to the list",
+    "confirmTitle": "Edit in the list?",
+    "confirmDesc": "Your changes to \"{{name}}\" will be visible to everyone sharing the list. Are you sure?",
+    "cancel": "Cancel",
+    "confirm": "Yes, edit in the list"
+  },
+  "listDelete": {
+    "title": "Remove from the list?",
+    "description": "\"{{name}}\" will be removed for everyone sharing the list. This cannot be undone.",
+    "cancel": "Cancel",
+    "confirm": "Remove",
+    "removing": "Removing..."
+  },
+  "adminEdit": {
+    "title": "Edit global food item?",
+    "description": "You are about to edit \"{{name}}\". This change will affect this food item for ALL users in the CalculEat list. Are you sure?",
+    "cancel": "Cancel",
+    "confirm": "Yes, edit globally"
+  },
+  "adminDelete": {
+    "title": "Delete global food item?",
+    "description": "\"{{name}}\" will be permanently deleted for ALL users and cannot be restored.",
+    "cancel": "Cancel",
+    "confirm": "Delete permanently",
+    "removing": "Deleting..."
+  },
+  "panel": {
+    "loading": "Loading nutrition facts...",
+    "noData": "No detailed nutrition facts available.",
+    "nutrientCount": "{{count}} nutrients",
+    "energyDensity": "Energy density:",
+    "density": "Density:",
+    "varav": "of which",
+    "close": "Close",
+    "categories": {
+      "macro": "Macronutrients",
+      "vitamin": "Vitamins",
+      "mineral": "Minerals"
+    }
+  },
+  "addFoodModal": {
+    "titleCopy": "Create personal copy",
+    "titleAdminEdit": "Edit CalculEat food item",
+    "titleAdminNew": "New CalculEat food item",
+    "titleEdit": "Edit food item",
+    "titleNew": "New food item",
+    "adminEditWarning": "Editing global food item. Changes will be visible to all users immediately.",
+    "adminNewWarning": "Creating global CalculEat food item. Visible to all users.",
+    "cowInfo": "A personal copy will be created in your list (Mine).",
+    "sharedEditWarning": "Editing a shared food item. Changes will be visible to all list members.",
+    "scanBarcode": "Barcode",
+    "scanLabel": "Scan label",
+    "scanning": "Analyzing...",
+    "scanComing": "Coming soon",
+    "barcodeNotFound": "Product not found in the database",
+    "barcodeCode": "Barcode: {{barcode}}",
+    "fillManually": "Enter nutrition facts manually",
+    "fillManuallySaved": "(barcode will be saved)",
+    "barcodeError": "Could not fetch the product",
+    "labelError": "Could not read the label",
+    "overwriteConfirm": "You have already entered values. Do you want to replace them with scanned values?",
+    "overwriteConfirmAction": "Replace",
+    "overwriteKeep": "Keep my values",
+    "duplicateWarning": "⚠️ A food item named \"{{name}}\" already exists. Are you sure you want to create another?",
+    "sectionBasic": "Basic information",
+    "fieldName": "Name *",
+    "fieldFoodType": "Food type",
+    "foodTypeSolid": "Solid",
+    "foodTypeLiquid": "Liquid",
+    "foodTypeSoup": "Soup",
+    "fieldAmount": "Amount *",
+    "fieldUnit": "Unit *",
+    "fieldUnitPlaceholder": "g, ml, ea, cup...",
+    "fieldWeight": "Weight (grams) *",
+    "fieldWeightHint": "How much does {{amount}} {{unit}} weigh?",
+    "sectionNutrition": "Nutrition (per {{amount}} {{unit}})",
+    "fieldCalories": "Calories (kcal) *",
+    "fieldFat": "Fat (g) *",
+    "fieldSaturatedFat": "of which saturated fat (g)",
+    "fieldCarbs": "Carbohydrates (g) *",
+    "fieldSugars": "of which sugars (g)",
+    "fieldProtein": "Protein (g) *",
+    "fieldSalt": "Salt (g)",
+    "macroMismatch": "⚠️ The macronutrients yield {{macro}} kcal, but you entered {{calories}} kcal ({{diff}}% difference). This may be due to fiber, alcohol, or rounding.",
+    "advancedSettings": "Advanced settings",
+    "volumeConversion": "Volume conversion (optional)",
+    "volumeWeightLabel": "How much does 1 {{unit}} ({{ml}}ml) weigh?",
+    "volumeGramsUnit": "grams",
+    "volumeExamples": "Flour ≈ 60g/dl, Sugar ≈ 90g/dl, Oats ≈ 40g/dl, Rice ≈ 85g/dl",
+    "servingInfo": "Serving information (optional)",
+    "servingWeightLabel": "Weight per serving",
+    "servingWeightUnit": "(grams)",
+    "servingUnitLabel": "Unit",
+    "servingUnitHint": "(bag, can, etc.)",
+    "servingUnitPlaceholder": "e.g. bag, can, pouch",
+    "servingVolumeTip": "💡 For volume units (dl, tbsp, tsp), use Volume Conversion above instead.",
+    "servingExamples": "E.g. 1 egg = 50g (unit: \"ea\"), 1 yoghurt = 150g (unit: \"pot\")",
+    "preview": "📊 Preview",
+    "previewEmpty": "Fill in the form to see a preview",
+    "previewEnergyDensity": "Energy density",
+    "previewServingPortion": "Serving portion",
+    "previewEnergy": "Energy:",
+    "previewFat": "Fat:",
+    "previewSaturatedFat": "of which saturated fat:",
+    "previewCarbs": "Carbohydrates:",
+    "previewSugars": "of which sugars:",
+    "previewProtein": "Protein:",
+    "previewSalt": "Salt:",
+    "previewEnergyComparison": "Energy comparison",
+    "previewMacroNutrients": "Macronutrients:",
+    "previewEntered": "Entered:",
+    "previewDiff": "Difference:",
+    "previewMacroDistribution": "Macro distribution",
+    "previewFatLabel": "Fat",
+    "previewCarbsLabel": "Carbohydrates",
+    "previewProteinLabel": "Protein",
+    "cancel": "Cancel",
+    "save": "Save food item",
+    "saving": "Saving...",
+    "update": "Update",
+    "saveError": "Could not {{action}} the food item. Please try again.",
+    "saveErrorCreate": "save",
+    "saveErrorUpdate": "update"
+  },
+  "addToMealModal": {
+    "title": "Add food item",
+    "titleEdit": "Edit food item",
+    "description": "Select meal and add food item",
+    "descriptionEdit": "Change amount and unit for",
+    "descriptionMeal": "Add food item to",
+    "selectMeal": "Select meal",
+    "searchPlaceholder": "Search food items...",
+    "scanBarcode": "Scan barcode",
+    "scanLabel": "Scan label",
+    "colorAll": "All",
+    "colorGreen": "Green",
+    "colorYellow": "Yellow",
+    "colorOrange": "Orange",
+    "typeAll": "All types",
+    "typeRecipe": "Recipe",
+    "typeFood": "Food item",
+    "noFoodsFound": "No food items found",
+    "noFoods": "No food items",
+    "loading": "Loading food items...",
+    "fieldAmount": "Amount",
+    "fieldUnit": "Unit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saving": "Saving...",
+    "add": "Add",
+    "adding": "Adding...",
+    "toastUpdated": "Amount updated",
+    "toastNoMeal": "No meal selected",
+    "toastAdded": "{{food}} has been added to {{meal}}",
+    "toastError": "Could not add the food item",
+    "toastMealNotFound": "Meal not found",
+    "page": "Page {{page}} of {{total}}",
+    "prev": "Prev",
+    "next": "Next"
+  },
+  "infoCards": {
+    "green": {
+      "title": "Green",
+      "subtitle": "Low energy density – eat more of these",
+      "solidLabel": "Solid (< 1 kcal/g):",
+      "liquidLabel": "Liquid (< 0.4 kcal/g):",
+      "soupLabel": "Soup (< 0.5 kcal/g):",
+      "tip": "👉 Key: High water + fiber content → high satiety per kcal",
+      "solidItems": [
+        { "label": "Leafy greens (spinach, lettuce)", "icon": "🥬" },
+        { "label": "Cucumber, tomato, zucchini", "icon": "🥒" },
+        { "label": "Broccoli, cauliflower", "icon": "🥦" },
+        { "label": "Berries (strawberries, raspberries)", "icon": "🍓" },
+        { "label": "High-water fruit (melon, orange)", "icon": "🍉" },
+        { "label": "Potato (boiled)", "icon": "🥔" }
+      ],
+      "liquidItems": [
+        { "label": "Water", "icon": "💧" },
+        { "label": "Diet soda", "icon": "" },
+        { "label": "Coffee/tea (no sugar)", "icon": "☕" }
+      ],
+      "soupItems": [
+        { "label": "Clear vegetable soups", "icon": "🥣" },
+        { "label": "Broth-based soups", "icon": "" }
+      ]
+    },
+    "yellow": {
+      "title": "Yellow",
+      "subtitle": "Moderate energy density – eat in balanced amounts",
+      "solidLabel": "Solid (1–2.4 kcal/g):",
+      "liquidLabel": "Liquid (0.4–0.5 kcal/g):",
+      "soupLabel": "Soup (0.5–1 kcal/g):",
+      "tip": "👉 Key: Nutrient-dense but higher calories → requires portion control",
+      "solidItems": [
+        { "label": "Chicken breast, turkey", "icon": "🍗" },
+        { "label": "Eggs", "icon": "🥚" },
+        { "label": "Pasta, rice, quinoa", "icon": "🍝" },
+        { "label": "Bread", "icon": "🍞" },
+        { "label": "Legumes (lentils, beans)", "icon": "🫘" },
+        { "label": "Light dairy (quark, yoghurt)", "icon": "🥛" }
+      ],
+      "liquidItems": [
+        { "label": "Milk", "icon": "🥛" },
+        { "label": "Juice", "icon": "🧃" }
+      ],
+      "soupItems": [
+        { "label": "Lentil soup", "icon": "🥣" },
+        { "label": "Chicken soup", "icon": "🍲" },
+        { "label": "Light creamy soup", "icon": "" }
+      ]
+    },
+    "orange": {
+      "title": "Orange",
+      "subtitle": "High energy density – eat less of these",
+      "solidLabel": "Solid (> 2.4 kcal/g):",
+      "liquidLabel": "Liquid (> 0.5 kcal/g):",
+      "soupLabel": "Soup (> 1 kcal/g):",
+      "tip": "👉 Key: Small volume, many calories → easy to overeat",
+      "solidItems": [
+        { "label": "Nuts and seeds", "icon": "🥜" },
+        { "label": "Cheese", "icon": "🧀" },
+        { "label": "Fatty meat (e.g. ribeye)", "icon": "🥩" },
+        { "label": "Chips, crackers", "icon": "🍟" },
+        { "label": "Candy, chocolate", "icon": "🍫" },
+        { "label": "Pastries", "icon": "🥐" }
+      ],
+      "liquidItems": [
+        { "label": "Sugary soda", "icon": "🥤" },
+        { "label": "Milkshakes", "icon": "🧋" },
+        { "label": "Alcohol", "icon": "🍺" }
+      ],
+      "soupItems": [
+        { "label": "Cream-based soups (e.g. potato & leek with cream)", "icon": "🍲" }
+      ]
+    }
+  }
+}

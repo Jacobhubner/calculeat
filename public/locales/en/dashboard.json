@@ -1,0 +1,89 @@
+{
+  "greeting": {
+    "hello": "Hi {{name}}! 👋",
+    "fillProfile": "Fill in your profile to get started"
+  },
+  "status": {
+    "question": "How is your day starting?",
+    "onTrack": "You are on track today.",
+    "withinGoal": "Great job — you are hitting your goal.",
+    "overGoal": "You went a little over today."
+  },
+  "subtitle": {
+    "logFirst": "Log your first meal today",
+    "caloriesLeft": "{{calories}} kcal left today",
+    "caloriesLeftGood": "{{calories}} kcal left — great job",
+    "caloriesOver": "{{calories}} kcal over today's goal"
+  },
+  "cta": {
+    "logFirst": "Log your first meal",
+    "continueLogging": "Keep logging today",
+    "viewLogged": "See what you've eaten today"
+  },
+  "checklist": {
+    "title": "Daily goals",
+    "allDone": "All goals achieved today ✦",
+    "allGoals": "All goals!",
+    "progress": "{{completed}}/{{total}} achieved",
+    "goalCount": "goals",
+    "calories": {
+      "label": "Calories within goal",
+      "description": "Total calorie intake within the min-max range"
+    },
+    "macros": {
+      "label": "Macros balanced",
+      "description": "Protein, carbohydrates and fat within target ranges"
+    },
+    "colors": {
+      "label": "Color balance on track",
+      "description": "Green, yellow and orange foods in the right proportions"
+    }
+  },
+  "ring": {
+    "goal": "Goal",
+    "remaining": "Left",
+    "over": "Over"
+  },
+  "statCards": {
+    "calorieGoal": "Calorie goal",
+    "weight": "Weight"
+  },
+  "macros": {
+    "title": "Today's macro goals"
+  },
+  "today": {
+    "label": "TODAY",
+    "statusRow": {
+      "calories": "Calories",
+      "macro": "Macros",
+      "variety": "Variety"
+    },
+    "goalsAchieved": "of 3 goals achieved",
+    "noMeals": "No meals logged today",
+    "moreItems": "+{{count}} more",
+    "openLog": "Open log",
+    "history": "History",
+    "viewAll": "See all →"
+  },
+  "emptyProfile": {
+    "title": "Complete your profile",
+    "description": "To get personalized recommendations and see your stats, you need to fill in your profile.",
+    "action": "Go to profile"
+  },
+  "insights": {
+    "title": "Health insights",
+    "customize": "Customize health insights",
+    "idealWeight": "Ideal weight: {{min}}–{{max}} kg",
+    "age": "Age: {{age}} years",
+    "labels": {
+      "bmi": "BMI",
+      "ffmi": "FFMI",
+      "idealweight": "Ideal weight",
+      "age": "Age"
+    }
+  },
+  "mode": {
+    "showLess": "Show less ↑",
+    "showMore": "Show more details ↓"
+  }
+}

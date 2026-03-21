@@ -28,6 +28,7 @@ import type { ScanResult } from '@/lib/types'
 import { toast } from 'sonner'
 import { useFoodNutrients } from '@/hooks/useFoodNutrients'
 import { supabase } from '@/lib/supabase'
+import { useTranslation } from 'react-i18next'
 
 // z.preprocess() causes Zod to infer output fields as `unknown` at the type level,
 // even though the runtime values are always the correct types. This explicit type
@@ -92,6 +93,8 @@ export function AddFoodItemModal({
   copyMode = false,
   adminGlobalMode = false,
 }: AddFoodItemModalProps) {
+  const { t } = useTranslation('food')
+  const tAny = t as (key: string) => string
   const queryClient = useQueryClient()
   const [showAdvanced, setShowAdvanced] = useState(false)
   const [duplicateWarning, setDuplicateWarning] = useState<string | null>(null)
@@ -394,7 +397,7 @@ export function AddFoodItemModal({
 
       if (duplicateNames) {
         setDuplicateWarning(
-          `⚠️ Ett livsmedel med namnet "${duplicateNames}" finns redan. Är du säker på att du vill skapa en till?`
+          t('addFoodModal.duplicateWarning', { name: duplicateNames })
         )
       } else {
         setDuplicateWarning(null)
@@ -715,7 +718,7 @@ export function AddFoodItemModal({
           })
           .then(({ data: result }) => {
             if (result?.action === 'created') {
-              toast.success('Du var först att lägga till denna produkt. Tack!')
+              toast.success(t('toast.firstContributor'))
             }
           })
       }
@@ -729,7 +732,7 @@ export function AddFoodItemModal({
       onSuccess?.(createdFoodItem)
     } catch (error) {
       console.error(`Failed to ${editItem ? 'update' : 'create'} food item:`, error)
-      toast.error(`Kunde inte ${editItem ? 'uppdatera' : 'spara'} livsmedlet. Försök igen.`)
+      toast.error(editItem ? t('addFoodModal.saveError', { action: t('addFoodModal.saveErrorUpdate') }) : t('addFoodModal.saveError', { action: t('addFoodModal.saveErrorCreate') }))
     }
   }
 
@@ -760,22 +763,22 @@ export function AddFoodItemModal({
           <DialogHeader>
             <DialogTitle>
               {copyMode
-                ? 'Skapa personlig kopia'
+                ? t('addFoodModal.titleCopy')
                 : adminGlobalMode && editItem
-                  ? 'Redigera CalculEat-livsmedel'
+                  ? t('addFoodModal.titleAdminEdit')
                   : adminGlobalMode
-                    ? 'Nytt CalculEat-livsmedel'
+                    ? t('addFoodModal.titleAdminNew')
                     : editItem
-                      ? 'Redigera livsmedel'
-                      : 'Nytt livsmedel'}
+                      ? t('addFoodModal.titleEdit')
+                      : t('addFoodModal.titleNew')}
             </DialogTitle>
           </DialogHeader>
 
           {adminGlobalMode && (
             <div className="bg-amber-50 border border-amber-200 rounded-md p-3 text-sm text-amber-700">
               {editItem
-                ? 'Redigerar globalt livsmedel. Ändringarna syns direkt för alla användare.'
-                : 'Skapar globalt CalculEat-livsmedel. Syns för alla användare.'}
+                ? t('addFoodModal.adminEditWarning')
+                : t('addFoodModal.adminNewWarning')}
             </div>
           )}
           {!adminGlobalMode &&
@@ -783,12 +786,12 @@ export function AddFoodItemModal({
             editItem.user_id === null &&
             !editItem.shared_list_id && (
               <div className="bg-blue-50 border border-blue-200 rounded-md p-3 text-sm text-blue-700">
-                En personlig kopia skapas i din lista (Mina).
+                {t('addFoodModal.cowInfo')}
               </div>
             )}
           {!copyMode && editItem?.shared_list_id && (
             <div className="bg-orange-50 border border-orange-200 rounded-md p-3 text-sm text-orange-700">
-              Redigerar ett delat livsmedel. Ändringarna syns hos alla listmedlemmar.
+              {t('addFoodModal.sharedEditWarning')}
             </div>
           )}
 
@@ -822,7 +825,7 @@ export function AddFoodItemModal({
                     ) : (
                       <ScanBarcode className="h-4 w-4 mr-1.5" />
                     )}
-                    {isBarcodeFetching ? 'Söker produkt...' : 'Streckkod'}
+                    {isBarcodeFetching ? t('addFoodModal.barcode.searching', { defaultValue: t('barcode.searching') }) : t('addFoodModal.scanBarcode')}
                   </Button>
                 )}
                 {FEATURES.SCAN_NUTRITION_LABEL ? (
@@ -838,12 +841,12 @@ export function AddFoodItemModal({
                     ) : (
                       <Camera className="h-4 w-4 mr-1.5" />
                     )}
-                    {labelScan.isPending ? 'Analyserar...' : 'Skanna etikett'}
+                    {labelScan.isPending ? t('addFoodModal.scanning') : t('addFoodModal.scanLabel')}
                   </Button>
                 ) : (
-                  <Button type="button" variant="outline" size="sm" disabled title="Kommer snart">
+                  <Button type="button" variant="outline" size="sm" disabled title={t('addFoodModal.scanComing')}>
                     <Camera className="h-4 w-4 mr-1.5" />
-                    Skanna etikett
+                    {t('addFoodModal.scanLabel')}
                   </Button>
                 )}
               </div>
@@ -856,10 +859,10 @@ export function AddFoodItemModal({
                   <AlertCircle className="h-4 w-4 text-orange-600 mt-0.5 shrink-0" />
                   <div>
                     <p className="text-sm font-medium text-orange-800">
-                      Produkten hittades inte i databasen
+                      {t('addFoodModal.barcodeNotFound')}
                     </p>
                     {lockedBarcode && (
-                      <p className="text-xs text-orange-600 mt-0.5">Streckkod: {lockedBarcode}</p>
+                      <p className="text-xs text-orange-600 mt-0.5">{t('addFoodModal.barcodeCode', { barcode: lockedBarcode })}</p>
                     )}
                   </div>
                 </div>
@@ -870,14 +873,14 @@ export function AddFoodItemModal({
                   className="w-full border-orange-300 text-orange-800 hover:bg-orange-100"
                   onClick={() => nameInputRef.current?.focus()}
                 >
-                  Fyll i näringsvärden manuellt
-                  <span className="text-xs ml-1.5 opacity-70">(streckkod sparas)</span>
+                  {t('addFoodModal.fillManually')}
+                  <span className="text-xs ml-1.5 opacity-70">{t('addFoodModal.fillManuallySaved')}</span>
                 </Button>
               </div>
             ) : barcodeError ? (
               <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
                 <p className="text-sm text-orange-800">
-                  {barcodeError.message || 'Kunde inte hämta produkten'}
+                  {barcodeError.message || t('addFoodModal.barcodeError')}
                 </p>
               </div>
             ) : null}
@@ -886,7 +889,7 @@ export function AddFoodItemModal({
             {labelScan.error && (
               <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
                 <p className="text-sm text-orange-800">
-                  {labelScan.error.message || 'Kunde inte läsa etiketten'}
+                  {labelScan.error.message || t('addFoodModal.labelError')}
                 </p>
               </div>
             )}
@@ -895,7 +898,7 @@ export function AddFoodItemModal({
             {showOverwriteConfirm && pendingScanResult && (
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                 <p className="text-sm text-blue-900 mb-3">
-                  Du har redan fyllt i värden. Vill du ersätta dem med skannade värden?
+                  {t('addFoodModal.overwriteConfirm')}
                 </p>
                 <div className="flex gap-2">
                   <Button
@@ -906,7 +909,7 @@ export function AddFoodItemModal({
                       setShowOverwriteConfirm(false)
                     }}
                   >
-                    Ersätt
+                    {t('addFoodModal.overwriteConfirmAction')}
                   </Button>
                   <Button
                     type="button"
@@ -917,7 +920,7 @@ export function AddFoodItemModal({
                       setShowOverwriteConfirm(false)
                     }}
                   >
-                    Behåll mina värden
+                    {t('addFoodModal.overwriteKeep')}
                   </Button>
                 </div>
               </div>
@@ -941,11 +944,11 @@ export function AddFoodItemModal({
                 {/* Basic information */}
                 <div className="space-y-4">
                   <h3 className="text-sm font-semibold text-neutral-900">
-                    Grundläggande information
+                    {t('addFoodModal.sectionBasic')}
                   </h3>
 
                   <div>
-                    <Label htmlFor="name">Namn *</Label>
+                    <Label htmlFor="name">{t('addFoodModal.fieldName')}</Label>
                     <Input
                       id="name"
                       {...register('name')}
@@ -962,21 +965,21 @@ export function AddFoodItemModal({
                   </div>
 
                   <div>
-                    <Label htmlFor="food_type">Livsmedeltyp</Label>
+                    <Label htmlFor="food_type">{t('addFoodModal.fieldFoodType')}</Label>
                     <select
                       id="food_type"
                       {...register('food_type')}
                       className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                     >
-                      <option value="Solid">Fast föda</option>
-                      <option value="Liquid">Vätska</option>
-                      <option value="Soup">Soppa</option>
+                      <option value="Solid">{t('addFoodModal.foodTypeSolid')}</option>
+                      <option value="Liquid">{t('addFoodModal.foodTypeLiquid')}</option>
+                      <option value="Soup">{t('addFoodModal.foodTypeSoup')}</option>
                     </select>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="default_amount">Mängd *</Label>
+                      <Label htmlFor="default_amount">{t('addFoodModal.fieldAmount')}</Label>
                       <Input
                         id="default_amount"
                         type="number"
@@ -991,11 +994,11 @@ export function AddFoodItemModal({
                     </div>
 
                     <div>
-                      <Label htmlFor="default_unit">Enhet *</Label>
+                      <Label htmlFor="default_unit">{t('addFoodModal.fieldUnit')}</Label>
                       <Input
                         id="default_unit"
                         {...register('default_unit')}
-                        placeholder="g, ml, st, dl..."
+                        placeholder={t('addFoodModal.fieldUnitPlaceholder')}
                         className={errors.default_unit ? 'border-red-500' : ''}
                       />
                       {errors.default_unit && (
@@ -1008,9 +1011,9 @@ export function AddFoodItemModal({
                   {shouldShowWeightField && (
                     <div>
                       <Label htmlFor="weight_grams">
-                        Vikt (gram) *
+                        {t('addFoodModal.fieldWeight')}
                         <span className="text-xs text-neutral-500 ml-2 font-normal">
-                          Hur mycket väger {defaultAmount || '?'} {defaultUnit || '?'}?
+                          {t('addFoodModal.fieldWeightHint', { amount: defaultAmount || '?', unit: defaultUnit || '?' })}
                         </span>
                       </Label>
                       <Input
@@ -1031,12 +1034,12 @@ export function AddFoodItemModal({
                 {/* Nutrition */}
                 <div className="space-y-4">
                   <h3 className="text-sm font-semibold text-neutral-900">
-                    Näringsinnehåll (per {defaultAmount || '?'} {defaultUnit || '?'})
+                    {t('addFoodModal.sectionNutrition', { amount: defaultAmount || '?', unit: defaultUnit || '?' })}
                   </h3>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="col-span-2">
-                      <Label htmlFor="calories">Kalorier (kcal) *</Label>
+                      <Label htmlFor="calories">{t('addFoodModal.fieldCalories')}</Label>
                       <Input
                         id="calories"
                         type="text"
@@ -1051,7 +1054,7 @@ export function AddFoodItemModal({
                     </div>
 
                     <div>
-                      <Label htmlFor="fat_g">Fett (g) *</Label>
+                      <Label htmlFor="fat_g">{t('addFoodModal.fieldFat')}</Label>
                       <Input
                         id="fat_g"
                         type="text"
@@ -1067,7 +1070,7 @@ export function AddFoodItemModal({
 
                     <div>
                       <Label htmlFor="saturated_fat_g" className="text-neutral-500">
-                        varav mättat fett (g)
+                        {t('addFoodModal.fieldSaturatedFat')}
                       </Label>
                       <Input
                         id="saturated_fat_g"
@@ -1085,7 +1088,7 @@ export function AddFoodItemModal({
                     </div>
 
                     <div>
-                      <Label htmlFor="carb_g">Kolhydrater (g) *</Label>
+                      <Label htmlFor="carb_g">{t('addFoodModal.fieldCarbs')}</Label>
                       <Input
                         id="carb_g"
                         type="text"
@@ -1101,7 +1104,7 @@ export function AddFoodItemModal({
 
                     <div>
                       <Label htmlFor="sugars_g" className="text-neutral-500">
-                        varav sockerarter (g)
+                        {t('addFoodModal.fieldSugars')}
                       </Label>
                       <Input
                         id="sugars_g"
@@ -1117,7 +1120,7 @@ export function AddFoodItemModal({
                     </div>
 
                     <div>
-                      <Label htmlFor="protein_g">Protein (g) *</Label>
+                      <Label htmlFor="protein_g">{t('addFoodModal.fieldProtein')}</Label>
                       <Input
                         id="protein_g"
                         type="text"
@@ -1133,7 +1136,7 @@ export function AddFoodItemModal({
 
                     <div>
                       <Label htmlFor="salt_g" className="text-neutral-500">
-                        Salt (g)
+                        {t('addFoodModal.fieldSalt')}
                       </Label>
                       <Input
                         id="salt_g"
@@ -1153,10 +1156,11 @@ export function AddFoodItemModal({
                   {liveCalculations?.macroCaloriesMismatch && (
                     <div className="bg-yellow-50 border border-yellow-300 rounded-lg p-3">
                       <p className="text-xs text-yellow-800">
-                        ⚠️ Makronutrienterna ger {Math.round(proteinG * 4 + carbG * 4 + fatG * 9)}{' '}
-                        kcal, men du angav {Math.round(calories)} kcal (
-                        {Math.round(liveCalculations.caloriesDiffPercent)}% skillnad). Detta kan
-                        bero på fiber, alkohol eller rundning.
+                        {t('addFoodModal.macroMismatch', {
+                          macro: Math.round(proteinG * 4 + carbG * 4 + fatG * 9),
+                          calories: Math.round(calories),
+                          diff: Math.round(liveCalculations.caloriesDiffPercent),
+                        })}
                       </p>
                     </div>
                   )}
@@ -1174,7 +1178,7 @@ export function AddFoodItemModal({
                     ) : (
                       <ChevronDown className="h-4 w-4" />
                     )}
-                    Avancerade inställningar
+                    {t('addFoodModal.advancedSettings')}
                   </button>
 
                   {showAdvanced && (
@@ -1183,13 +1187,13 @@ export function AddFoodItemModal({
                       {defaultUnit?.toLowerCase() !== 'ml' && (
                         <div className="space-y-3 border border-neutral-200 rounded-lg p-3 bg-neutral-50">
                           <p className="text-sm font-medium text-neutral-900">
-                            Volymkonvertering (valfritt)
+                            {t('addFoodModal.volumeConversion')}
                           </p>
 
                           <div className="flex items-end gap-3">
                             <div className="flex-1">
                               <Label htmlFor="volume_grams">
-                                Hur mycket väger 1 {volumeUnit} ({VOLUME_TO_ML[volumeUnit]}ml)?
+                                {t('addFoodModal.volumeWeightLabel', { unit: volumeUnit, ml: VOLUME_TO_ML[volumeUnit] })}
                               </Label>
                               <div className="flex gap-2 mt-1">
                                 <select
@@ -1214,13 +1218,13 @@ export function AddFoodItemModal({
                                   placeholder="gram"
                                   className="flex-1"
                                 />
-                                <span className="self-center text-sm text-neutral-600">gram</span>
+                                <span className="self-center text-sm text-neutral-600">{t('addFoodModal.volumeGramsUnit')}</span>
                               </div>
                             </div>
                           </div>
 
                           <p className="text-xs text-neutral-500">
-                            Mjöl ≈ 60g/dl, Socker ≈ 90g/dl, Havregryn ≈ 40g/dl, Ris ≈ 85g/dl
+                            {t('addFoodModal.volumeExamples')}
                           </p>
                         </div>
                       )}
@@ -1228,7 +1232,7 @@ export function AddFoodItemModal({
                       {/* Serveringsfunktion - gram per bit/styck */}
                       <div className="space-y-3 border border-neutral-200 rounded-lg p-3 bg-neutral-50">
                         <p className="text-sm font-medium text-neutral-900">
-                          Serveringsinformation (valfritt)
+                          {t('addFoodModal.servingInfo')}
                         </p>
 
                         <div className="grid grid-cols-2 gap-3">
@@ -1236,9 +1240,9 @@ export function AddFoodItemModal({
                           {!isServingUnitVolume && (
                             <div>
                               <Label htmlFor="grams_per_piece">
-                                Vikt per portion
+                                {t('addFoodModal.servingWeightLabel')}
                                 <span className="text-xs text-neutral-500 ml-1 font-normal">
-                                  (gram)
+                                  {t('addFoodModal.servingWeightUnit')}
                                 </span>
                               </Label>
                               <Input
@@ -1253,29 +1257,27 @@ export function AddFoodItemModal({
 
                           <div className={isServingUnitVolume ? 'col-span-2' : ''}>
                             <Label htmlFor="serving_unit">
-                              Enhet
+                              {t('addFoodModal.servingUnitLabel')}
                               <span className="text-xs text-neutral-500 ml-1 font-normal">
-                                (pkt, burk, osv.)
+                                {t('addFoodModal.servingUnitHint')}
                               </span>
                             </Label>
                             <Input
                               id="serving_unit"
                               type="text"
                               {...register('serving_unit')}
-                              placeholder="t.ex. pkt, burk, påse"
+                              placeholder={t('addFoodModal.servingUnitPlaceholder')}
                             />
                           </div>
                         </div>
 
                         {isServingUnitVolume ? (
                           <p className="text-xs text-amber-600">
-                            💡 För volymenheter (dl, msk, tsk), använd Volymkonvertering ovan
-                            istället.
+                            {t('addFoodModal.servingVolumeTip')}
                           </p>
                         ) : (
                           <p className="text-xs text-neutral-500">
-                            T.ex. 1 ägg = 50g (enhet: &quot;st&quot;), 1 yoghurt = 150g (enhet:
-                            &quot;pkt&quot;)
+                            {t('addFoodModal.servingExamples')}
                           </p>
                         )}
                       </div>
@@ -1288,14 +1290,14 @@ export function AddFoodItemModal({
               <div className="lg:sticky lg:top-0 h-fit">
                 <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4 space-y-4">
                   <h3 className="text-sm font-semibold text-neutral-900 flex items-center gap-2">
-                    📊 Förhandsgranskning
+                    {t('addFoodModal.preview')}
                   </h3>
 
                   {liveCalculations ? (
                     <>
                       {/* Energy density */}
                       <div>
-                        <p className="text-xs text-neutral-600 mb-1">Energitäthet</p>
+                        <p className="text-xs text-neutral-600 mb-1">{t('addFoodModal.previewEnergyDensity')}</p>
                         <p className="text-lg font-semibold text-neutral-900">
                           {liveCalculations.kcalPerGram.toFixed(2)} kcal/g
                         </p>
@@ -1310,20 +1312,14 @@ export function AddFoodItemModal({
                                   : 'bg-orange-50 text-orange-700 border-orange-300'
                             }
                           >
-                            {liveCalculations.energyDensityColor === 'Green'
-                              ? 'Grön'
-                              : liveCalculations.energyDensityColor === 'Yellow'
-                                ? 'Gul'
-                                : 'Orange'}
+                            {tAny(`color.${liveCalculations.energyDensityColor.toLowerCase()}`)}
                           </Badge>
                           <span className="text-xs text-neutral-600">
-                            (
-                            {foodType === 'Solid'
-                              ? 'Fast föda'
+                            ({foodType === 'Solid'
+                              ? t('addFoodModal.foodTypeSolid')
                               : foodType === 'Liquid'
-                                ? 'Vätska'
-                                : 'Soppa'}
-                            )
+                                ? t('addFoodModal.foodTypeLiquid')
+                                : t('addFoodModal.foodTypeSoup')})
                           </span>
                         </div>
                       </div>
@@ -1336,7 +1332,7 @@ export function AddFoodItemModal({
                             <div className="flex items-center gap-2 mb-2">
                               <span className="text-lg">🍽️</span>
                               <p className="text-xs text-neutral-600 font-medium">
-                                Serveringsportion
+                                {t('addFoodModal.previewServingPortion')}
                               </p>
                             </div>
 
@@ -1346,48 +1342,48 @@ export function AddFoodItemModal({
 
                             <div className="space-y-1 text-sm">
                               <div className="flex justify-between">
-                                <span className="text-neutral-600">Energi:</span>
+                                <span className="text-neutral-600">{t('addFoodModal.previewEnergy')}</span>
                                 <span className="font-semibold text-neutral-900">
                                   {Math.round(servingPreview.kcal)} kcal
                                 </span>
                               </div>
                               <div className="flex justify-between">
-                                <span className="text-neutral-600">Fett:</span>
+                                <span className="text-neutral-600">{t('addFoodModal.previewFat')}</span>
                                 <span className="font-medium text-neutral-900">
                                   {servingPreview.fat.toFixed(1)}g
                                 </span>
                               </div>
                               {servingPreview.saturatedFat != null && (
                                 <div className="flex justify-between pl-3">
-                                  <span className="text-neutral-400">varav mättat fett:</span>
+                                  <span className="text-neutral-400">{t('addFoodModal.previewSaturatedFat')}</span>
                                   <span className="text-neutral-600">
                                     {servingPreview.saturatedFat.toFixed(1)}g
                                   </span>
                                 </div>
                               )}
                               <div className="flex justify-between">
-                                <span className="text-neutral-600">Kolhydrater:</span>
+                                <span className="text-neutral-600">{t('addFoodModal.previewCarbs')}</span>
                                 <span className="font-medium text-neutral-900">
                                   {servingPreview.carb.toFixed(1)}g
                                 </span>
                               </div>
                               {servingPreview.sugars != null && (
                                 <div className="flex justify-between pl-3">
-                                  <span className="text-neutral-400">varav sockerarter:</span>
+                                  <span className="text-neutral-400">{t('addFoodModal.previewSugars')}</span>
                                   <span className="text-neutral-600">
                                     {servingPreview.sugars.toFixed(1)}g
                                   </span>
                                 </div>
                               )}
                               <div className="flex justify-between">
-                                <span className="text-neutral-600">Protein:</span>
+                                <span className="text-neutral-600">{t('addFoodModal.previewProtein')}</span>
                                 <span className="font-medium text-neutral-900">
                                   {servingPreview.protein.toFixed(1)}g
                                 </span>
                               </div>
                               {servingPreview.salt != null && (
                                 <div className="flex justify-between pl-3">
-                                  <span className="text-neutral-400">Salt:</span>
+                                  <span className="text-neutral-400">{t('addFoodModal.previewSalt')}</span>
                                   <span className="text-neutral-600">
                                     {servingPreview.salt.toFixed(1)}g
                                   </span>
@@ -1402,12 +1398,12 @@ export function AddFoodItemModal({
                       {(saturatedFatG != null || sugarsG != null || saltG != null) && (
                         <div>
                           <p className="text-xs text-neutral-600 mb-1">
-                            Per {defaultAmount || '?'} {defaultUnit || '?'}
+                            {t('addFoodModal.sectionNutrition', { amount: defaultAmount || '?', unit: defaultUnit || '?' })}
                           </p>
                           <div className="space-y-1 text-sm">
                             {saturatedFatG != null && !isNaN(saturatedFatG) && (
                               <div className="flex justify-between">
-                                <span className="text-neutral-500">varav mättat fett:</span>
+                                <span className="text-neutral-500">{t('addFoodModal.previewSaturatedFat')}</span>
                                 <span className="font-medium text-neutral-900">
                                   {saturatedFatG.toFixed(1)}g
                                 </span>
@@ -1415,7 +1411,7 @@ export function AddFoodItemModal({
                             )}
                             {sugarsG != null && !isNaN(sugarsG) && (
                               <div className="flex justify-between">
-                                <span className="text-neutral-500">varav sockerarter:</span>
+                                <span className="text-neutral-500">{t('addFoodModal.previewSugars')}</span>
                                 <span className="font-medium text-neutral-900">
                                   {sugarsG.toFixed(1)}g
                                 </span>
@@ -1423,7 +1419,7 @@ export function AddFoodItemModal({
                             )}
                             {saltG != null && !isNaN(saltG) && (
                               <div className="flex justify-between">
-                                <span className="text-neutral-500">Salt:</span>
+                                <span className="text-neutral-500">{t('addFoodModal.previewSalt')}</span>
                                 <span className="font-medium text-neutral-900">
                                   {saltG.toFixed(1)}g
                                 </span>
@@ -1436,20 +1432,20 @@ export function AddFoodItemModal({
 
                       {/* Energy comparison */}
                       <div>
-                        <p className="text-xs text-neutral-600 mb-1">Energijämförelse</p>
+                        <p className="text-xs text-neutral-600 mb-1">{t('addFoodModal.previewEnergyComparison')}</p>
                         <div className="space-y-1 text-sm">
                           <div className="flex justify-between">
-                            <span>Makronutrienter:</span>
+                            <span>{t('addFoodModal.previewMacroNutrients')}</span>
                             <span className="font-medium">
                               {Math.round(proteinG * 4 + carbG * 4 + fatG * 9)} kcal
                             </span>
                           </div>
                           <div className="flex justify-between">
-                            <span>Angivet:</span>
+                            <span>{t('addFoodModal.previewEntered')}</span>
                             <span className="font-medium">{Math.round(calories)} kcal</span>
                           </div>
                           <div className="flex justify-between">
-                            <span>Skillnad:</span>
+                            <span>{t('addFoodModal.previewDiff')}</span>
                             <span
                               className={`font-semibold ${
                                 Math.abs(liveCalculations.caloriesDiffPercent) > 10
@@ -1468,11 +1464,11 @@ export function AddFoodItemModal({
 
                       {/* Macro distribution */}
                       <div>
-                        <p className="text-xs text-neutral-600 mb-2">Makrofördelning</p>
+                        <p className="text-xs text-neutral-600 mb-2">{t('addFoodModal.previewMacroDistribution')}</p>
                         <div className="space-y-2">
                           <div>
                             <div className="flex justify-between text-xs mb-1">
-                              <span>Fett</span>
+                              <span>{t('addFoodModal.previewFatLabel')}</span>
                               <span className="font-medium">
                                 {Math.round(liveCalculations.fatPercent)}%
                               </span>
@@ -1487,7 +1483,7 @@ export function AddFoodItemModal({
 
                           <div>
                             <div className="flex justify-between text-xs mb-1">
-                              <span>Kolhydrater</span>
+                              <span>{t('addFoodModal.previewCarbsLabel')}</span>
                               <span className="font-medium">
                                 {Math.round(liveCalculations.carbPercent)}%
                               </span>
@@ -1502,7 +1498,7 @@ export function AddFoodItemModal({
 
                           <div>
                             <div className="flex justify-between text-xs mb-1">
-                              <span>Protein</span>
+                              <span>{t('addFoodModal.previewProteinLabel')}</span>
                               <span className="font-medium">
                                 {Math.round(liveCalculations.proteinPercent)}%
                               </span>
@@ -1519,7 +1515,7 @@ export function AddFoodItemModal({
                     </>
                   ) : (
                     <p className="text-sm text-neutral-500">
-                      Fyll i formuläret för att se förhandsgranskning
+                      {t('addFoodModal.previewEmpty')}
                     </p>
                   )}
                 </div>
@@ -1529,7 +1525,7 @@ export function AddFoodItemModal({
             {/* Buttons */}
             <div className="flex justify-between pt-4 border-t">
               <Button type="button" variant="ghost" onClick={handleClose}>
-                Avbryt
+                {t('addFoodModal.cancel')}
               </Button>
               <Button
                 type="submit"
@@ -1546,10 +1542,10 @@ export function AddFoodItemModal({
                 updateMutation.isPending ||
                 updateSharedListFoodItem.isPending ||
                 createSharedListFoodItem.isPending
-                  ? 'Sparar...'
+                  ? t('addFoodModal.saving')
                   : editItem
-                    ? 'Uppdatera'
-                    : 'Spara livsmedel'}
+                    ? t('addFoodModal.update')
+                    : t('addFoodModal.save')}
               </Button>
             </div>
           </form>

@@ -1,0 +1,133 @@
+{
+  "title": "Body composition",
+  "metrics": {
+    "bmi": "BMI",
+    "bmiLabel": "Body mass index",
+    "ffmi": "FFMI",
+    "ffmiLabel": "Fat-free mass index",
+    "bodyFat": "Body fat",
+    "leanMass": "Lean mass",
+    "muscleMass": "Muscle mass"
+  },
+  "bmiCategory": {
+    "underweight": "Underweight",
+    "normal": "Normal weight",
+    "overweight": "Overweight",
+    "obese": "Obese"
+  },
+  "measurements": {
+    "title": "Measurements",
+    "addMeasurement": "Add measurement",
+    "weight": "Weight (kg)",
+    "bodyFatPercent": "Body fat (%)",
+    "date": "Date"
+  },
+  "toast": {
+    "saved": "Measurement saved",
+    "saveError": "Could not save measurement",
+    "deleted": "Measurement removed",
+    "deleteError": "Could not remove measurement"
+  },
+  "empty": "No measurements yet",
+  "methods": {
+    "title": "Calculation method"
+  },
+  "hub": {
+    "title": "Body composition",
+    "subtitle": "Choose which tool you want to use",
+    "calculateTitle": "Calculate your body composition",
+    "calculateDesc": "Measure and calculate your body fat percentage and lean mass using various methods such as calipers and tape measure",
+    "geneticTitle": "Genetic Muscle Potential",
+    "geneticDesc": "Estimate your maximum genetic muscle potential based on skeletal structure and body measurements",
+    "missingDataAlert": "To see your personal values you need to enter body fat %, weight and height in your profile.",
+    "referenceValues": "Reference values",
+    "bodyFatTableTitle": "Body fat % (ACE)",
+    "ffmiCategories": "FFMI categories",
+    "ffmiWithBodyFat": "FFMI with body fat ranges",
+    "currentValues": "Your current values",
+    "leanMassCard": "Lean mass",
+    "bodyFatSubtitle": "{{value}}% body fat",
+    "bodyFatTableShort": "Body fat %",
+    "ffmiModalTitle": "FFMI (Fat Free Mass Index)",
+    "ffmiModalSubtitle": "Measure of muscle mass relative to height",
+    "normalizedFFMIModalTitle": "Normalized FFMI",
+    "normalizedFFMIModalSubtitle": "Height-adjusted muscle mass index",
+    "showFFMIInfo": "Show information about FFMI",
+    "showNormalizedFFMIInfo": "Show information about Normalized FFMI",
+    "closeModal": "Close",
+    "closeModalAriaLabel": "Close modal"
+  },
+  "results": {
+    "bodyDensity": "Body density",
+    "densityUnit": "g/cm³ (using the {{method}} equation)",
+    "bodyFat": "Body fat",
+    "method": "Method: {{method}}",
+    "estimatedRMR": "Based on estimated RMR from the Mifflin-St Jeor equation",
+    "saving": "Saving...",
+    "saveToProfile": "Save to profile"
+  },
+  "card": {
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "stopEditing": "Stop editing",
+    "editName": "Edit name",
+    "saveChanges": "Click to save",
+    "saveMeasurements": "Save measurements",
+    "deleteSet": "Delete measurement set"
+  },
+  "list": {
+    "unsavedWarning": "You have unsaved changes. Do you want to continue? Changes will be lost.",
+    "deleteConfirm": "Are you sure you want to delete the measurement set from {{date}} - {{time}}? This cannot be undone.",
+    "loading": "Loading measurements...",
+    "emptyList": "No saved measurements yet. Fill in measurements and save!",
+    "removedDescription": "{{date}} - {{time}} has been removed"
+  },
+  "caliper": {
+    "title": "Caliper measurements",
+    "description": "Skinfold measurements are taken on the right side of the body. Make sure the skinfold is grasped correctly with thumb and forefinger, without pulling in muscle tissue. The caliper should be placed perpendicular to the skinfold, about 1 cm from the fingers, and the reading should be taken after 1–2 seconds when the pressure has stabilized. Take each skinfold at least twice and use the average. If the difference is >1–2 mm, take a third measurement. Entered in millimeters (mm).",
+    "validationError": "Must be between {{min}} and {{max}} mm",
+    "measurementInstruction": "Measurement instruction",
+    "infoAriaLabel": "Show information about {{field}}",
+    "closeModal": "Close",
+    "closeModalAriaLabel": "Close modal"
+  },
+  "tape": {
+    "title": "Tape measurements",
+    "description": "Measure circumference at indicated points with a tape measure. Measure while standing relaxed and breathing normally. Make sure the tape measure is not too tight or too loose and that it lies flat against the skin. Entered in centimeters (cm).",
+    "validationError": "Must be between {{min}} and {{max}} cm",
+    "measurementInstruction": "Measurement instruction",
+    "infoAriaLabel": "Show information about {{field}}",
+    "closeModal": "Close",
+    "closeModalAriaLabel": "Close modal"
+  },
+  "methodModal": {
+    "description": "Description",
+    "returnsDensityLabel": "Returns body density",
+    "returnsDensityNote": "- Then converted to body fat % using the Siri or Brozek equation.",
+    "returnsFatDirectLabel": "Returns body fat % directly",
+    "returnsFatDirectNote": "- No density conversion needed.",
+    "betterFor": "This method is better for:",
+    "importantToKnow": "Important to know",
+    "formula": "Formula",
+    "references": "References",
+    "source": "Source:",
+    "close": "Close",
+    "closeAriaLabel": "Close"
+  },
+  "ffmiCard": {
+    "noHeightMessage": "Height information missing from profile to calculate FFMI.",
+    "normalized": "Normalized:",
+    "leanBodyMass": "Lean body mass:",
+    "category": "Category:"
+  },
+  "maxFat": {
+    "title": "Maximum fat metabolism",
+    "deficit": "{{value}} kcal deficit",
+    "tdeePercent": "{{value}}% of your TDEE",
+    "description": "This represents the maximum rate at which your body can metabolize fat for energy (approximately 31 kcal/kg of fat mass per day). Exceeding this deficit may result in muscle loss."
+  },
+  "sidebar": {
+    "savedMeasurements": "Saved measurements",
+    "newMeasurement": "New measurement"
+  }
+}

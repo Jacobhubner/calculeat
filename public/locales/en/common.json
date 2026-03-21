@@ -1,0 +1,80 @@
+{
+  "actions": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "close": "Close",
+    "confirm": "Confirm",
+    "back": "Back",
+    "next": "Next",
+    "done": "Done",
+    "search": "Search",
+    "clear": "Clear",
+    "copy": "Copy",
+    "share": "Share",
+    "remove": "Remove",
+    "create": "Create",
+    "update": "Update",
+    "submit": "Submit",
+    "continue": "Continue",
+    "tryAgain": "Try again"
+  },
+  "loading": "Loading…",
+  "error": {
+    "generic": "Something went wrong",
+    "tryAgain": "Try again",
+    "notFound": "Page not found",
+    "unauthorized": "You are not logged in",
+    "network": "Network error – check your connection"
+  },
+  "validation": {
+    "required": "This field is required",
+    "invalidEmail": "Invalid email address",
+    "tooShort": "Too short",
+    "tooLong": "Too long",
+    "mustBePositive": "Must be a positive number",
+    "invalidNumber": "Invalid number"
+  },
+  "units": {
+    "kcal": "kcal",
+    "g": "g",
+    "ml": "ml",
+    "kg": "kg",
+    "cm": "cm",
+    "percent": "%"
+  },
+  "nav": {
+    "dashboard": "Home",
+    "food": "Food",
+    "recipes": "Recipes",
+    "history": "History",
+    "profile": "Profile",
+    "settings": "Settings",
+    "body": "Body composition",
+    "login": "Log in",
+    "logout": "Log out",
+    "register": "Create account"
+  },
+  "auth": {
+    "loggedOut": "You have been logged out",
+    "logoutError": "Something went wrong while logging out",
+    "sessionExpired": "Your session has expired. Please log in again."
+  },
+  "status": {
+    "saving": "Saving...",
+    "loading": "Loading...",
+    "deleting": "Deleting...",
+    "reloadPage": "Reload page"
+  },
+  "errorBoundary": {
+    "title": "Something went wrong",
+    "description": "An unexpected error occurred. Try reloading the page or contact support if the problem persists.",
+    "tryAgain": "Try again"
+  },
+  "onboarding": {
+    "completeProfile": "Welcome! Please complete your profile to calculate your calorie needs.",
+    "calculateTDEE": "Calculate or enter your TDEE to continue"
+  }
+}

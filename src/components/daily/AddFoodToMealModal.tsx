@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Search, Plus, X, ChevronLeft, ChevronRight, ScanBarcode, Camera } from 'lucide-react'
 import {
   Dialog,
@@ -21,13 +22,6 @@ import { NutritionPreview } from './NutritionPreview'
 import { toast } from 'sonner'
 import { SOURCE_BADGES, getListItemBadgeConfig } from '@/lib/constants/sourceBadges'
 import { AddFoodItemModal } from '@/components/food/AddFoodItemModal'
-
-const STATIC_TABS: { key: FoodTab; label: string }[] = [
-  { key: 'mina', label: 'Mina' },
-  { key: 'calculeat', label: 'CalculEat' },
-  { key: 'slv', label: 'Livsmedelsverket' },
-  { key: 'alla', label: 'Alla' },
-]
 
 const PAGE_SIZE = 50
 
@@ -65,7 +59,16 @@ export function AddFoodToMealModal({
   preselectedFood,
   editItem,
 }: AddFoodToMealModalProps) {
+  const { t } = useTranslation('food')
+  const tAny = t as (key: string) => string
   const isEditMode = !!editItem
+
+  const STATIC_TABS: { key: FoodTab; label: string }[] = [
+    { key: 'mina', label: t('tabs.mine') },
+    { key: 'calculeat', label: t('tabs.calculeat') },
+    { key: 'slv', label: t('tabs.slv') },
+    { key: 'alla', label: t('tabs.all') },
+  ]
 
   // Food-selection state
   const [selectedFood, setSelectedFood] = useState<FoodItem | null>(
@@ -318,7 +321,7 @@ export function AddFoodToMealModal({
           carb_g: nutritionPreview.carbs,
           fat_g: nutritionPreview.fat,
         })
-        toast.success('Mängd uppdaterad')
+        toast.success(t('addToMealModal.toastUpdated'))
         onOpenChange(false)
         onSuccess?.()
         return
@@ -329,7 +332,7 @@ export function AddFoodToMealModal({
       if (!targetMealEntryId) {
         const effectiveMealName = selectedMealName || mealName
         if (!effectiveMealName) {
-          toast.error('Ingen måltid vald')
+          toast.error(t('addToMealModal.toastNoMeal'))
           return
         }
         const mealSetting = mealSettings?.find(m => m.meal_name === effectiveMealName)
@@ -353,12 +356,12 @@ export function AddFoodToMealModal({
         fat_g: nutritionPreview.fat,
       })
 
-      toast.success(`${selectedFood.name} har lagts till i ${selectedMealName}`)
+      toast.success(t('addToMealModal.toastAdded', { food: selectedFood.name, meal: selectedMealName }))
       onOpenChange(false)
       onSuccess?.()
     } catch (error) {
       console.error('Failed to add food:', error)
-      toast.error(isEditMode ? 'Kunde inte uppdatera mängden' : 'Kunde inte lägga till livsmedel')
+      toast.error(t('addToMealModal.toastError'))
     }
   }
 
@@ -375,7 +378,7 @@ export function AddFoodToMealModal({
               : 'bg-orange-50 text-orange-700 border-orange-300'
         }
       >
-        {color === 'Green' ? 'Grön' : color === 'Yellow' ? 'Gul' : 'Orange'}
+        {tAny(`color.${color.toLowerCase()}`)}
       </Badge>
     )
   }
@@ -385,20 +388,20 @@ export function AddFoodToMealModal({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="max-w-lg max-h-[85vh] overflow-hidden flex flex-col">
           <DialogHeader>
-            <DialogTitle>{isEditMode ? 'Redigera livsmedel' : 'Lägg till livsmedel'}</DialogTitle>
+            <DialogTitle>{isEditMode ? t('addToMealModal.titleEdit') : t('addToMealModal.title')}</DialogTitle>
             <DialogDescription>
               {isEditMode
-                ? `Ändra mängd och enhet för ${editItem?.food.name}`
+                ? `${t('addToMealModal.descriptionEdit')} ${editItem?.food.name}`
                 : mealName
-                  ? `Lägg till livsmedel till ${mealName}`
-                  : 'Välj måltid och lägg till livsmedel'}
+                  ? `${t('addToMealModal.descriptionMeal')} ${mealName}`
+                  : t('addToMealModal.description')}
             </DialogDescription>
           </DialogHeader>
 
           {/* Meal selector */}
           {!isEditMode && !mealName && mealSettings && mealSettings.length > 0 && (
             <div className="space-y-2">
-              <Label>Välj måltid</Label>
+              <Label>{t('addToMealModal.selectMeal')}</Label>
               <Select
                 value={selectedMealName}
                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
@@ -442,7 +445,7 @@ export function AddFoodToMealModal({
                   <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400" />
                     <Input
-                      placeholder="Sök livsmedel..."
+                      placeholder={t('addToMealModal.searchPlaceholder')}
                       value={searchQuery}
                       onChange={e => setSearchQuery(e.target.value)}
                       className="pl-10"
@@ -454,7 +457,7 @@ export function AddFoodToMealModal({
                     variant="outline"
                     size="sm"
                     className="shrink-0 px-3"
-                    title="Skanna streckkod"
+                    title={t('addToMealModal.scanBarcode')}
                     onClick={() => {
                       skipResetRef.current = true
                       onOpenChange(false)
@@ -468,7 +471,7 @@ export function AddFoodToMealModal({
                     variant="outline"
                     size="sm"
                     className="shrink-0 px-3"
-                    title="Skanna etikett"
+                    title={t('addToMealModal.scanLabel')}
                     onClick={() => {
                       skipResetRef.current = true
                       onOpenChange(false)
@@ -501,12 +504,8 @@ export function AddFoodToMealModal({
                       }`}
                     >
                       {c === null
-                        ? 'Alla'
-                        : c === 'Green'
-                          ? 'Grön'
-                          : c === 'Yellow'
-                            ? 'Gul'
-                            : 'Orange'}
+                        ? t('addToMealModal.colorAll')
+                        : tAny(`color.${c.toLowerCase()}`)}
                     </button>
                   ))}
 
@@ -527,7 +526,7 @@ export function AddFoodToMealModal({
                               : 'bg-white text-neutral-500 border-neutral-200 hover:border-neutral-400'
                           }`}
                         >
-                          {r === null ? 'Alla typer' : r ? 'Recept' : 'Livsmedel'}
+                          {r === null ? t('addToMealModal.typeAll') : r ? t('addToMealModal.typeRecipe') : t('addToMealModal.typeFood')}
                         </button>
                       ))}
                     </>
@@ -537,10 +536,10 @@ export function AddFoodToMealModal({
                 {/* Food list */}
                 <div className="space-y-1">
                   {foodsLoading ? (
-                    <p className="text-sm text-neutral-500 text-center py-4">Laddar livsmedel...</p>
+                    <p className="text-sm text-neutral-500 text-center py-4">{t('addToMealModal.loading')}</p>
                   ) : foods.length === 0 ? (
                     <p className="text-sm text-neutral-500 text-center py-4">
-                      {searchQuery ? 'Inga livsmedel hittades' : 'Inga livsmedel'}
+                      {searchQuery ? t('addToMealModal.noFoodsFound') : t('addToMealModal.noFoods')}
                     </p>
                   ) : (
                     foods.map(food => (
@@ -588,7 +587,7 @@ export function AddFoodToMealModal({
                 {totalPages > 1 && (
                   <div className="flex items-center justify-between pt-2 border-t border-neutral-100">
                     <span className="text-xs text-neutral-500">
-                      Sida {page + 1} av {totalPages}
+                      {t('addToMealModal.page', { page: page + 1, total: totalPages })}
                     </span>
                     <div className="flex gap-1">
                       <Button
@@ -598,7 +597,7 @@ export function AddFoodToMealModal({
                         disabled={page === 0}
                         className="h-7 px-2 text-xs gap-1"
                       >
-                        <ChevronLeft className="h-3 w-3" /> Föreg
+                        <ChevronLeft className="h-3 w-3" /> {t('addToMealModal.prev')}
                       </Button>
                       <Button
                         variant="outline"
@@ -607,7 +606,7 @@ export function AddFoodToMealModal({
                         disabled={page >= totalPages - 1}
                         className="h-7 px-2 text-xs gap-1"
                       >
-                        Nästa <ChevronRight className="h-3 w-3" />
+                        {t('addToMealModal.next')} <ChevronRight className="h-3 w-3" />
                       </Button>
                     </div>
                   </div>
@@ -642,7 +641,7 @@ export function AddFoodToMealModal({
                 {/* Amount and unit selection */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="amount">Mängd</Label>
+                    <Label htmlFor="amount">{t('addToMealModal.fieldAmount')}</Label>
                     <Input
                       id="amount"
                       type="number"
@@ -657,7 +656,7 @@ export function AddFoodToMealModal({
                     />
                   </div>
                   <div>
-                    <Label>Enhet</Label>
+                    <Label>{t('addToMealModal.fieldUnit')}</Label>
                     <UnitSelector
                       food={selectedFood}
                       value={selectedUnit}
@@ -685,7 +684,7 @@ export function AddFoodToMealModal({
           {/* Action buttons */}
           <div className="flex justify-between pt-4 border-t mt-4">
             <Button variant="ghost" onClick={() => onOpenChange(false)}>
-              Avbryt
+              {t('addToMealModal.cancel')}
             </Button>
             {selectedFood && (
               <Button
@@ -699,11 +698,11 @@ export function AddFoodToMealModal({
               >
                 {isEditMode
                   ? updateMealItem.isPending
-                    ? 'Sparar...'
-                    : 'Spara'
+                    ? t('addToMealModal.saving')
+                    : t('addToMealModal.save')
                   : addFoodToMeal.isPending || createMealEntry.isPending
-                    ? 'Lägger till...'
-                    : 'Lägg till'}
+                    ? t('addToMealModal.adding')
+                    : t('addToMealModal.add')}
               </Button>
             )}
           </div>

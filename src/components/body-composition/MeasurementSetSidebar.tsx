@@ -2,6 +2,7 @@
  * MeasurementSetSidebar - Sidopanel med sparade mätset
  */
 
+import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import MeasurementSetList from './MeasurementSetList'
@@ -24,13 +25,14 @@ export default function MeasurementSetSidebar({
   onDeleteSet,
   isSaving = false,
 }: MeasurementSetSidebarProps) {
+  const { t } = useTranslation('body')
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center justify-between text-base">
           <div className="flex items-center gap-2">
             <Calendar className="h-5 w-5 text-primary-600" />
-            Sparade mätningar
+            {t('sidebar.savedMeasurements')}
           </div>
           {/* New Measurement Button - Plus icon like profile system */}
           <Button
@@ -38,8 +40,8 @@ export default function MeasurementSetSidebar({
             variant="outline"
             size="sm"
             className="h-8 w-8 p-0 rounded-full bg-primary-600 hover:bg-primary-700 text-white border-0"
-            aria-label="Ny mätning"
-            title="Ny mätning"
+            aria-label={t('sidebar.newMeasurement')}
+            title={t('sidebar.newMeasurement')}
           >
             <Plus className="h-4 w-4" />
           </Button>

@@ -73,6 +73,7 @@ import {
   differenceInMinutes,
 } from 'date-fns'
 import { sv } from 'date-fns/locale'
+import { useTranslation } from 'react-i18next'
 
 type HubTab = 'friends' | 'activity' | 'messages'
 type FriendsView = 'list' | 'profile' | 'add'
@@ -93,6 +94,7 @@ function getInitials(name: string) {
 // ──────────────────────────────────────────────────────────────────────────────
 
 function MiniInvitationCard({ invitation }: { invitation: PendingInvitation }) {
+  const { t } = useTranslation('social')
   const [isAccepting, setIsAccepting] = useState(false)
   const [isRejecting, setIsRejecting] = useState(false)
   const { mutateAsync: accept } = useAcceptShareInvitation()
@@ -107,11 +109,11 @@ function MiniInvitationCard({ invitation }: { invitation: PendingInvitation }) {
       const result = await accept(invitation.id)
       if (!result.success) {
         const msgs: Record<string, string> = {
-          concurrent_accept_detected: 'Importerades redan i ett annat fönster.',
-          invitation_expired: 'Inbjudan har gått ut.',
-          invitation_already_processed: 'Inbjudan har redan hanterats.',
+          concurrent_accept_detected: t('invitations.error.concurrent_accept_detected'),
+          invitation_expired: t('invitations.error.invitation_expired'),
+          invitation_already_processed: t('invitations.error.invitation_already_processed'),
         }
-        toast.error(msgs[result.error ?? ''] ?? 'Något gick fel.')
+        toast.error(msgs[result.error ?? ''] ?? t('invitations.error.generic'))
         return
       }
       if (invitation.item_type === 'food_list') {
@@ -119,16 +121,18 @@ function MiniInvitationCard({ invitation }: { invitation: PendingInvitation }) {
         const skip = result.skipped_count ?? 0
         toast.success(
           skip > 0
-            ? `${imp} livsmedel importerade! (${skip} hoppades över)`
-            : `${imp} livsmedel importerade!`
+            ? t('social.import.food_list_with_skipped', { imp, skip })
+            : t('social.import.food_list', { imp })
         )
       } else {
         toast.success(
-          invitation.item_type === 'recipe' ? 'Receptet importerades!' : 'Livsmedlet importerades!'
+          invitation.item_type === 'recipe'
+            ? t('social.import.recipe')
+            : t('social.import.food_item')
         )
       }
     } catch {
-      toast.error('Något gick fel. Försök igen.')
+      toast.error(t('invitations.error.generic_retry'))
     } finally {
       setIsAccepting(false)
     }
@@ -138,9 +142,9 @@ function MiniInvitationCard({ invitation }: { invitation: PendingInvitation }) {
     setIsRejecting(true)
     try {
       await reject(invitation.id)
-      toast.success('Inbjudan avvisad.')
+      toast.success(t('invitations.toast.rejected'))
     } catch {
-      toast.error('Något gick fel.')
+      toast.error(t('invitations.error.generic'))
     } finally {
       setIsRejecting(false)
     }
@@ -159,10 +163,10 @@ function MiniInvitationCard({ invitation }: { invitation: PendingInvitation }) {
 
   const typeLabel =
     invitation.item_type === 'recipe'
-      ? 'Recept'
+      ? t('invitations.badge.recipe')
       : invitation.item_type === 'food_list'
-        ? 'Lista'
-        : 'Livsmedel'
+        ? t('social.badge.list')
+        : t('invitations.badge.food_item')
 
   return (
     <div className="rounded-lg border border-neutral-100 p-3 space-y-2 bg-white">
@@ -175,10 +179,12 @@ function MiniInvitationCard({ invitation }: { invitation: PendingInvitation }) {
               {typeLabel}
             </Badge>
           </div>
-          <p className="text-xs text-neutral-400">från {invitation.sender_name}</p>
+          <p className="text-xs text-neutral-400">{t('social.from')} {invitation.sender_name}</p>
           {isExpiringSoon && (
             <p className="text-xs text-amber-600">
-              Utgår om {daysLeft <= 0 ? 'snart' : `${daysLeft}d`}
+              {daysLeft <= 0
+                ? t('invitations.expiry.soon')
+                : t('social.expiry.days_short', { count: daysLeft })}
             </p>
           )}
         </div>
@@ -190,7 +196,7 @@ function MiniInvitationCard({ invitation }: { invitation: PendingInvitation }) {
           ) : (
             <UserCheck className="h-3 w-3 mr-1" />
           )}
-          {invitation.item_type === 'food_list' ? 'Importera lista' : 'Importera'}
+          {invitation.item_type === 'food_list' ? t('social.action.import_list') : t('invitations.action.import')}
         </Button>
         <Button
           size="sm"
@@ -204,7 +210,7 @@ function MiniInvitationCard({ invitation }: { invitation: PendingInvitation }) {
           ) : (
             <UserX className="h-3 w-3 mr-1" />
           )}
-          Neka
+          {t('social.action.deny')}
         </Button>
       </div>
     </div>
@@ -216,6 +222,7 @@ function MiniInvitationCard({ invitation }: { invitation: PendingInvitation }) {
 // ──────────────────────────────────────────────────────────────────────────────
 
 function MiniSharedListInvitationCard({ invitation }: { invitation: SharedListInvitation }) {
+  const { t } = useTranslation('social')
   const [isAccepting, setIsAccepting] = useState(false)
   const [isRejecting, setIsRejecting] = useState(false)
   const { mutateAsync: accept } = useAcceptSharedListInvitation()
@@ -226,12 +233,12 @@ function MiniSharedListInvitationCard({ invitation }: { invitation: SharedListIn
     try {
       const result = await accept(invitation.id)
       if (result?.success) {
-        toast.success(`Du är nu med i "${invitation.list_name}"!`)
+        toast.success(t('social.shared_list.joined', { name: invitation.list_name }))
       } else {
-        toast.error('Kunde inte gå med i listan. Försök igen.')
+        toast.error(t('social.shared_list.join_failed'))
       }
     } catch {
-      toast.error('Något gick fel. Försök igen.')
+      toast.error(t('invitations.error.generic_retry'))
     } finally {
       setIsAccepting(false)
     }
@@ -241,9 +248,9 @@ function MiniSharedListInvitationCard({ invitation }: { invitation: SharedListIn
     setIsRejecting(true)
     try {
       await reject(invitation.id)
-      toast.success('Inbjudan avvisad.')
+      toast.success(t('invitations.toast.rejected'))
     } catch {
-      toast.error('Något gick fel.')
+      toast.error(t('invitations.error.generic'))
     } finally {
       setIsRejecting(false)
     }
@@ -259,10 +266,10 @@ function MiniSharedListInvitationCard({ invitation }: { invitation: SharedListIn
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium text-neutral-900 truncate">{invitation.list_name}</p>
-          <p className="text-xs text-neutral-500">Inbjuden av {invitation.sender_name}</p>
+          <p className="text-xs text-neutral-500">{t('social.shared_list.invited_by')} {invitation.sender_name}</p>
         </div>
         <Badge className="text-[9px] px-1 py-0 h-3.5 bg-blue-100 text-blue-700 border-blue-200 shrink-0">
-          Delad lista
+          {t('social.badge.shared_list')}
         </Badge>
       </div>
       <div className="flex gap-2">
@@ -277,7 +284,7 @@ function MiniSharedListInvitationCard({ invitation }: { invitation: SharedListIn
           ) : (
             <UserCheck className="h-3 w-3 mr-1" />
           )}
-          Gå med
+          {t('social.action.join')}
         </Button>
         <Button
           variant="outline"
@@ -291,7 +298,7 @@ function MiniSharedListInvitationCard({ invitation }: { invitation: SharedListIn
           ) : (
             <UserX className="h-3 w-3 mr-1" />
           )}
-          Neka
+          {t('social.action.deny')}
         </Button>
       </div>
     </div>
@@ -303,6 +310,7 @@ function MiniSharedListInvitationCard({ invitation }: { invitation: SharedListIn
 // ──────────────────────────────────────────────────────────────────────────────
 
 function MiniFriendRequestCard({ request }: { request: FriendRequest }) {
+  const { t } = useTranslation('social')
   const [isAccepting, setIsAccepting] = useState(false)
   const [isRejecting, setIsRejecting] = useState(false)
   const { mutateAsync: accept } = useAcceptFriendRequest()
@@ -312,9 +320,9 @@ function MiniFriendRequestCard({ request }: { request: FriendRequest }) {
     setIsAccepting(true)
     try {
       await accept(request.friendship_id)
-      toast.success(`Du och ${request.requester_name} är nu vänner!`)
+      toast.success(t('social.friends.now_friends', { name: request.requester_name }))
     } catch {
-      toast.error('Något gick fel.')
+      toast.error(t('invitations.error.generic'))
     } finally {
       setIsAccepting(false)
     }
@@ -325,7 +333,7 @@ function MiniFriendRequestCard({ request }: { request: FriendRequest }) {
     try {
       await reject(request.friendship_id)
     } catch {
-      toast.error('Något gick fel.')
+      toast.error(t('invitations.error.generic'))
     } finally {
       setIsRejecting(false)
     }
@@ -355,7 +363,7 @@ function MiniFriendRequestCard({ request }: { request: FriendRequest }) {
           ) : (
             <UserCheck className="h-3 w-3 mr-1" />
           )}
-          Acceptera
+          {t('social.action.accept')}
         </Button>
         <Button
           size="sm"
@@ -369,7 +377,7 @@ function MiniFriendRequestCard({ request }: { request: FriendRequest }) {
           ) : (
             <UserX className="h-3 w-3 mr-1" />
           )}
-          Neka
+          {t('social.action.deny')}
         </Button>
       </div>
     </div>
@@ -381,6 +389,7 @@ function MiniFriendRequestCard({ request }: { request: FriendRequest }) {
 // ──────────────────────────────────────────────────────────────────────────────
 
 function SentFriendRequestCard({ request }: { request: SentFriendRequest }) {
+  const { t } = useTranslation('social')
   const [isCancelling, setIsCancelling] = useState(false)
   const { mutateAsync: cancel } = useCancelFriendRequest()
 
@@ -388,9 +397,9 @@ function SentFriendRequestCard({ request }: { request: SentFriendRequest }) {
     setIsCancelling(true)
     try {
       await cancel(request.friendship_id)
-      toast.success('Vänförfrågan tillbakadragen.')
+      toast.success(t('social.friends.request_withdrawn'))
     } catch {
-      toast.error('Något gick fel.')
+      toast.error(t('invitations.error.generic'))
     } finally {
       setIsCancelling(false)
     }
@@ -407,7 +416,7 @@ function SentFriendRequestCard({ request }: { request: SentFriendRequest }) {
             @{request.addressee_username ?? request.addressee_name}
           </p>
           <p className="text-xs text-neutral-400">
-            Inväntar svar &middot;{' '}
+            {t('social.friends.awaiting_response')} &middot;{' '}
             {formatDistanceToNow(parseISO(request.created_at), { addSuffix: true, locale: sv })}
           </p>
         </div>
@@ -424,7 +433,7 @@ function SentFriendRequestCard({ request }: { request: SentFriendRequest }) {
         ) : (
           <X className="h-3 w-3 mr-1" />
         )}
-        Dra tillbaka förfrågan
+        {t('social.friends.withdraw_request')}
       </Button>
     </div>
   )
@@ -445,6 +454,7 @@ function FriendProfile({
   onShare: (friend: Friend) => void
   onMessage: (friend: Friend) => void
 }) {
+  const { t } = useTranslation('social')
   const [isEditingAlias, setIsEditingAlias] = useState(false)
   const [aliasInput, setAliasInput] = useState(friend.alias ?? '')
   const [confirmRemove, setConfirmRemove] = useState(false)
@@ -461,23 +471,23 @@ function FriendProfile({
         alias: aliasInput.trim(),
       })
       if (!result.success) {
-        toast.error('Kunde inte spara smeknamn.')
+        toast.error(t('social.friends.alias_save_failed'))
         return
       }
       setIsEditingAlias(false)
-      toast.success('Smeknamn sparat!')
+      toast.success(t('social.friends.alias_saved'))
     } catch {
-      toast.error('Något gick fel.')
+      toast.error(t('invitations.error.generic'))
     }
   }
 
   const handleRemove = async () => {
     try {
       await removeFriend(friend.friendship_id)
-      toast.success(`${displayName} har tagits bort från din vänlista.`)
+      toast.success(t('social.friends.removed', { name: displayName }))
       onBack()
     } catch {
-      toast.error('Något gick fel.')
+      toast.error(t('invitations.error.generic'))
     }
   }
 
@@ -489,7 +499,7 @@ function FriendProfile({
         className="flex items-center gap-1 text-sm text-neutral-500 hover:text-neutral-700 transition-colors px-4 pt-2"
       >
         <ChevronLeft className="h-4 w-4" />
-        Tillbaka
+        {t('social.action.back')}
       </button>
 
       {/* Avatar + info */}
@@ -504,7 +514,7 @@ function FriendProfile({
             @{friend.friend_username ?? friend.friend_name}
           </p>
           <p className="text-xs text-neutral-400">
-            Vänner sedan {format(parseISO(friend.since), 'd MMM yyyy', { locale: sv })}
+            {t('social.friends.friends_since')} {format(parseISO(friend.since), 'd MMM yyyy', { locale: sv })}
           </p>
         </div>
       </div>
@@ -528,7 +538,7 @@ function FriendProfile({
                         setIsEditingAlias(false)
                       }
                     }}
-                    placeholder="Smeknamn (max 50)"
+                    placeholder={t('social.friends.alias_placeholder')}
                     className="h-7 text-sm"
                     autoFocus
                     maxLength={50}
@@ -559,7 +569,7 @@ function FriendProfile({
                   onClick={() => setIsEditingAlias(true)}
                   className="text-sm text-neutral-700 hover:text-primary-600 transition-colors text-left w-full"
                 >
-                  {friend.alias ? `Smeknamn: "${friend.alias}"` : 'Sätt smeknamn'}
+                  {friend.alias ? t('social.friends.alias_set', { alias: friend.alias }) : t('social.friends.set_alias')}
                 </button>
               )}
             </div>
@@ -573,7 +583,7 @@ function FriendProfile({
           className="w-full flex items-center gap-3 p-3 rounded-lg border border-neutral-200 hover:bg-primary-50 hover:border-primary-200 transition-colors text-left"
         >
           <Share2 className="h-4 w-4 text-primary-600 shrink-0" />
-          <span className="text-sm font-medium text-neutral-700">Starta delning</span>
+          <span className="text-sm font-medium text-neutral-700">{t('social.friends.start_sharing')}</span>
         </button>
 
         {/* Skicka meddelande */}
@@ -583,13 +593,13 @@ function FriendProfile({
           className="w-full flex items-center gap-3 p-3 rounded-lg border border-neutral-200 hover:bg-primary-50 hover:border-primary-200 transition-colors text-left"
         >
           <MessageCircle className="h-4 w-4 text-primary-600 shrink-0" />
-          <span className="text-sm font-medium text-neutral-700">Skicka meddelande</span>
+          <span className="text-sm font-medium text-neutral-700">{t('social.friends.send_message')}</span>
         </button>
 
         {/* Ta bort vän */}
         {confirmRemove ? (
           <div className="rounded-lg border border-red-200 bg-red-50 p-3 space-y-2">
-            <p className="text-sm text-red-700 font-medium">Ta bort {displayName} som vän?</p>
+            <p className="text-sm text-red-700 font-medium">{t('social.friends.confirm_remove', { name: displayName })}</p>
             <div className="flex gap-2">
               <Button
                 size="sm"
@@ -597,7 +607,7 @@ function FriendProfile({
                 onClick={() => setConfirmRemove(false)}
                 className="flex-1 h-7 text-xs"
               >
-                Avbryt
+                {t('social.action.cancel')}
               </Button>
               <Button
                 size="sm"
@@ -605,7 +615,7 @@ function FriendProfile({
                 disabled={isRemoving}
                 className="flex-1 h-7 text-xs bg-red-600 hover:bg-red-700 text-white"
               >
-                {isRemoving ? <Loader2 className="h-3 w-3 animate-spin" /> : 'Ja, ta bort'}
+                {isRemoving ? <Loader2 className="h-3 w-3 animate-spin" /> : t('social.friends.confirm_remove_yes')}
               </Button>
             </div>
           </div>
@@ -617,7 +627,7 @@ function FriendProfile({
           >
             <Trash2 className="h-4 w-4 text-red-400 shrink-0" />
             <span className="text-sm text-neutral-500 hover:text-red-600 transition-colors">
-              Ta bort vän
+              {t('social.friends.remove_friend')}
             </span>
           </button>
         )}
@@ -631,6 +641,7 @@ function FriendProfile({
 // ──────────────────────────────────────────────────────────────────────────────
 
 function ConversationList({ onOpenThread }: { onOpenThread: (conv: Conversation) => void }) {
+  const { t } = useTranslation('social')
   const { data: conversations = [], isLoading } = useConversations()
 
   if (isLoading) {
@@ -645,9 +656,9 @@ function ConversationList({ onOpenThread }: { onOpenThread: (conv: Conversation)
     return (
       <div className="text-center py-10 px-4 space-y-2">
         <MessageCircle className="h-10 w-10 text-neutral-200 mx-auto" />
-        <p className="text-sm font-medium text-neutral-500">Inga konversationer än</p>
+        <p className="text-sm font-medium text-neutral-500">{t('social.messages.no_conversations')}</p>
         <p className="text-xs text-neutral-400">
-          Öppna en vän och tryck &quot;Skicka meddelande&quot; för att starta.
+          {t('social.messages.no_conversations_hint')}
         </p>
       </div>
     )
@@ -688,7 +699,7 @@ function ConversationList({ onOpenThread }: { onOpenThread: (conv: Conversation)
                 <p
                   className={`text-xs truncate ${conv.last_message_content === null ? 'italic text-neutral-400' : isUnread ? 'text-neutral-700' : 'text-neutral-400'}`}
                 >
-                  {conv.last_message_content ?? 'Meddelandet har tagits bort'}
+                  {conv.last_message_content ?? t('social.messages.deleted_message')}
                 </p>
                 {isUnread && (
                   <span className="shrink-0 flex items-center justify-center bg-primary-600 text-white text-[10px] font-bold rounded-full min-w-[18px] h-4 px-1 leading-none">
@@ -717,6 +728,7 @@ function MessageBubble({
   isOwn: boolean
   friendshipId: string
 }) {
+  const { t } = useTranslation('social')
   const [menuOpen, setMenuOpen] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [editInput, setEditInput] = useState(msg.content ?? '')
@@ -766,16 +778,16 @@ function MessageBubble({
       const result = await editMessage({ messageId: msg.id, friendshipId, content: trimmed })
       if (!result.success) {
         if (result.error === 'already_read') {
-          toast.error('Kan inte redigeras, mottagaren har redan läst meddelandet.')
+          toast.error(t('social.messages.edit_already_read'))
         } else {
-          toast.error('Kunde inte redigera meddelandet.')
+          toast.error(t('social.messages.edit_failed'))
         }
         return
       }
       setIsEditing(false)
       setMenuOpen(false)
     } catch {
-      toast.error('Något gick fel.')
+      toast.error(t('invitations.error.generic'))
     }
   }
 
@@ -784,16 +796,16 @@ function MessageBubble({
       const result = await deleteMessage({ messageId: msg.id, friendshipId })
       if (!result.success) {
         if (result.error === 'already_read') {
-          toast.error('Kan inte tas bort, mottagaren har redan läst meddelandet.')
+          toast.error(t('social.messages.delete_already_read'))
         } else {
-          toast.error('Kunde inte ta bort meddelandet.')
+          toast.error(t('social.messages.delete_failed'))
         }
         return
       }
       setMenuOpen(false)
       setConfirmDelete(false)
     } catch {
-      toast.error('Något gick fel.')
+      toast.error(t('invitations.error.generic'))
     }
   }
 
@@ -839,7 +851,7 @@ function MessageBubble({
                   className="w-full flex items-center gap-2 px-3 py-1.5 text-sm text-neutral-700 hover:bg-neutral-50"
                 >
                   <Pencil className="h-3.5 w-3.5" />
-                  Redigera
+                  {t('social.messages.edit')}
                 </button>
                 <button
                   type="button"
@@ -847,19 +859,19 @@ function MessageBubble({
                   className="w-full flex items-center gap-2 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
-                  Ta bort
+                  {t('social.messages.delete')}
                 </button>
               </>
             ) : (
               <div className="px-3 py-2 space-y-2">
-                <p className="text-xs text-neutral-600">Ta bort meddelandet?</p>
+                <p className="text-xs text-neutral-600">{t('social.messages.confirm_delete')}</p>
                 <div className="flex gap-1.5">
                   <button
                     type="button"
                     onClick={() => setConfirmDelete(false)}
                     className="flex-1 text-xs text-neutral-500 hover:text-neutral-700 py-1"
                   >
-                    Avbryt
+                    {t('social.action.cancel')}
                   </button>
                   <button
                     type="button"
@@ -870,7 +882,7 @@ function MessageBubble({
                     {isDeletePending ? (
                       <Loader2 className="h-3 w-3 animate-spin mx-auto" />
                     ) : (
-                      'Ta bort'
+                      t('social.messages.delete')
                     )}
                   </button>
                 </div>
@@ -906,7 +918,7 @@ function MessageBubble({
                 }}
                 className="text-xs text-neutral-500 hover:text-neutral-700 px-2 py-1"
               >
-                Avbryt
+                {t('social.action.cancel')}
               </button>
               <button
                 type="button"
@@ -914,7 +926,7 @@ function MessageBubble({
                 disabled={isEditPending || !editInput.trim()}
                 className="text-xs text-white bg-primary-600 hover:bg-primary-700 rounded px-2 py-1 disabled:opacity-40"
               >
-                {isEditPending ? <Loader2 className="h-3 w-3 animate-spin" /> : 'Spara'}
+                {isEditPending ? <Loader2 className="h-3 w-3 animate-spin" /> : t('social.action.save')}
               </button>
             </div>
           </div>
@@ -929,14 +941,14 @@ function MessageBubble({
                     : 'bg-neutral-100 text-neutral-900 rounded-bl-sm'
               }`}
             >
-              {isDeleted ? 'Meddelandet har tagits bort' : msg.content}
+              {isDeleted ? t('social.messages.deleted_message') : msg.content}
             </div>
             {/* Metadata-rad */}
             <div
               className={`flex items-center gap-1 mt-0.5 ${isOwn ? 'justify-end' : 'justify-start'}`}
             >
               {msg.edited_at && !isDeleted && (
-                <span className="text-[9px] text-neutral-400">(redigerat)</span>
+                <span className="text-[9px] text-neutral-400">{t('social.messages.edited')}</span>
               )}
               {!isDeleted && (
                 <span className="text-[9px] text-neutral-400">
@@ -971,6 +983,7 @@ function MessageThread({
   conversation: Conversation
   onBack: () => void
 }) {
+  const { t } = useTranslation('social')
   const { user } = useAuth()
   const [input, setInput] = useState('')
   const [confirmDeleteConv, setConfirmDeleteConv] = useState(false)
@@ -1022,10 +1035,10 @@ function MessageThread({
       if (!result.success) {
         toast.error(
           result.error === 'empty_content'
-            ? 'Meddelandet är tomt.'
+            ? t('social.messages.error.empty')
             : result.error === 'content_too_long'
-              ? 'Meddelandet är för långt (max 2000 tecken).'
-              : 'Något gick fel.'
+              ? t('social.messages.error.too_long')
+              : t('invitations.error.generic')
         )
         setInput(trimmed)
         return
@@ -1036,7 +1049,7 @@ function MessageThread({
         }
       }, 50)
     } catch {
-      toast.error('Något gick fel.')
+      toast.error(t('invitations.error.generic'))
       setInput(trimmed)
     }
   }
@@ -1053,7 +1066,7 @@ function MessageThread({
       await deleteConversation(conversation.friendship_id)
       onBack()
     } catch {
-      toast.error('Något gick fel.')
+      toast.error(t('invitations.error.generic'))
     }
   }
 
@@ -1087,13 +1100,13 @@ function MessageThread({
         {/* Ta bort konversation */}
         {confirmDeleteConv ? (
           <div className="flex items-center gap-1.5 shrink-0">
-            <span className="text-xs text-neutral-500">Ta bort?</span>
+            <span className="text-xs text-neutral-500">{t('social.messages.confirm_delete_conv')}</span>
             <button
               type="button"
               onClick={() => setConfirmDeleteConv(false)}
               className="text-xs text-neutral-400 hover:text-neutral-600 px-1.5 py-0.5 rounded"
             >
-              Nej
+              {t('social.action.no')}
             </button>
             <button
               type="button"
@@ -1101,7 +1114,7 @@ function MessageThread({
               disabled={isDeletingConv}
               className="text-xs text-white bg-red-600 hover:bg-red-700 px-1.5 py-0.5 rounded"
             >
-              {isDeletingConv ? <Loader2 className="h-3 w-3 animate-spin" /> : 'Ja'}
+              {isDeletingConv ? <Loader2 className="h-3 w-3 animate-spin" /> : t('social.action.yes')}
             </button>
           </div>
         ) : (
@@ -1109,7 +1122,7 @@ function MessageThread({
             type="button"
             onClick={() => setConfirmDeleteConv(true)}
             className="p-1 text-neutral-300 hover:text-red-400 transition-colors shrink-0"
-            title="Ta bort konversation"
+            title={t('social.messages.delete_conversation')}
           >
             <Trash2 className="h-3.5 w-3.5" />
           </button>
@@ -1135,7 +1148,7 @@ function MessageThread({
               {isFetchingNextPage ? (
                 <Loader2 className="h-3 w-3 animate-spin" />
               ) : (
-                'Ladda äldre meddelanden'
+                t('social.messages.load_older')
               )}
             </button>
           </div>
@@ -1143,7 +1156,7 @@ function MessageThread({
 
         {!isLoading && messages.length === 0 && (
           <div className="text-center py-8">
-            <p className="text-xs text-neutral-400">Inga meddelanden än. Skriv något!</p>
+            <p className="text-xs text-neutral-400">{t('social.messages.no_messages')}</p>
           </div>
         )}
 
@@ -1183,7 +1196,7 @@ function MessageThread({
             value={input}
             onChange={e => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Skriv ett meddelande..."
+            placeholder={t('social.messages.input_placeholder')}
             rows={1}
             className="flex-1 resize-none rounded-xl border border-neutral-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
             style={{ maxHeight: '120px' }}
@@ -1216,6 +1229,7 @@ interface SocialHubProps {
 }
 
 export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubProps) {
+  const { t } = useTranslation('social')
   const [tab, setTab] = useState<HubTab>('friends')
   const [friendsView, setFriendsView] = useState<FriendsView>('list')
   const [selectedFriend, setSelectedFriend] = useState<Friend | null>(null)
@@ -1260,14 +1274,14 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
     try {
       const result = await sendFriendRequest(addEmail.trim())
       if (result.success) {
-        toast.success('Vänförfrågan skickad!')
+        toast.success(t('social.friends.request_sent'))
         setAddEmail('')
         setFriendsView('list')
       } else {
-        toast.error('Kunde inte skicka förfrågan.')
+        toast.error(t('social.friends.request_send_failed'))
       }
     } catch {
-      toast.error('Något gick fel.')
+      toast.error(t('invitations.error.generic'))
     } finally {
       setIsAdding(false)
     }
@@ -1308,37 +1322,37 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
       {/* Header */}
       <div className="px-4 pt-4 pb-2 border-b border-neutral-100 shrink-0">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="font-semibold text-neutral-900">Social</h2>
+          <h2 className="font-semibold text-neutral-900">{t('social.hub.title')}</h2>
         </div>
 
         {/* Tab-knappar */}
         <div className="flex gap-1">
           {[
-            { id: 'friends' as HubTab, label: 'Vänner', count: 0 },
-            { id: 'activity' as HubTab, label: 'Aktivitet', count: activityCount },
-            { id: 'messages' as HubTab, label: 'Meddelanden', count: unreadMessageCount },
-          ].map(t => (
+            { id: 'friends' as HubTab, label: t('social.hub.tab_friends'), count: 0 },
+            { id: 'activity' as HubTab, label: t('social.hub.tab_activity'), count: activityCount },
+            { id: 'messages' as HubTab, label: t('social.hub.tab_messages'), count: unreadMessageCount },
+          ].map(tabItem => (
             <button
-              key={t.id}
+              key={tabItem.id}
               type="button"
               onClick={() => {
-                setTab(t.id)
-                if (t.id === 'messages') {
+                setTab(tabItem.id)
+                if (tabItem.id === 'messages') {
                   queryClient.invalidateQueries({ queryKey: messageKeys.conversations() })
                 }
               }}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                tab === t.id ? 'bg-primary-600 text-white' : 'text-neutral-600 hover:bg-neutral-100'
+                tab === tabItem.id ? 'bg-primary-600 text-white' : 'text-neutral-600 hover:bg-neutral-100'
               }`}
             >
-              {t.label}
-              {t.count > 0 && (
+              {tabItem.label}
+              {tabItem.count > 0 && (
                 <span
                   className={`text-[10px] rounded-full px-1.5 py-0.5 min-w-[18px] text-center leading-none ${
-                    tab === t.id ? 'bg-white/30 text-white' : 'bg-primary-100 text-primary-700'
+                    tab === tabItem.id ? 'bg-white/30 text-white' : 'bg-primary-100 text-primary-700'
                   }`}
                 >
-                  {t.count > 99 ? '99+' : t.count}
+                  {tabItem.count > 99 ? '99+' : tabItem.count}
                 </span>
               )}
             </button>
@@ -1355,7 +1369,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
               <div className="p-4 space-y-3">
                 {friends.length > 4 && (
                   <Input
-                    placeholder="Sök vän..."
+                    placeholder={t('social.friends.search_placeholder')}
                     value={friendSearch}
                     onChange={e => setFriendSearch(e.target.value)}
                     className="text-sm"
@@ -1365,7 +1379,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
                 {friends.length === 0 ? (
                   <div className="text-center py-8 space-y-2">
                     <Users className="h-10 w-10 text-neutral-200 mx-auto" />
-                    <p className="text-sm text-neutral-400">Du har inga vänner ännu</p>
+                    <p className="text-sm text-neutral-400">{t('social.friends.no_friends')}</p>
                   </div>
                 ) : (
                   <div className="space-y-1">
@@ -1399,7 +1413,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
                     onClick={() => setFriendsView('add')}
                   >
                     <UserPlus className="h-4 w-4" />
-                    Lägg till vän
+                    {t('social.friends.add_friend')}
                   </Button>
                   <Button
                     variant="ghost"
@@ -1408,7 +1422,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
                     onClick={() => onOpenShareDialog(undefined)}
                   >
                     <Share2 className="h-4 w-4" />
-                    Starta delning
+                    {t('social.friends.start_sharing')}
                   </Button>
                 </div>
               </div>
@@ -1422,20 +1436,20 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
                   className="flex items-center gap-1 text-sm text-neutral-500 hover:text-neutral-700 transition-colors"
                 >
                   <ChevronLeft className="h-4 w-4" />
-                  Tillbaka
+                  {t('social.action.back')}
                 </button>
                 <div className="space-y-2">
-                  <p className="text-sm font-medium text-neutral-700">Lägg till vän</p>
+                  <p className="text-sm font-medium text-neutral-700">{t('social.friends.add_friend')}</p>
                   <Input
                     type="text"
-                    placeholder="Användarnamn eller e-postadress"
+                    placeholder={t('social.friends.add_placeholder')}
                     value={addEmail}
                     onChange={e => setAddEmail(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && handleAddFriend()}
                     autoFocus
                   />
                   <p className="text-xs text-neutral-400">
-                    Om personen finns i CalculEat får de en vänförfrågan.
+                    {t('social.friends.add_hint')}
                   </p>
                 </div>
                 <Button
@@ -1448,7 +1462,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
                   ) : (
                     <UserPlus className="h-4 w-4" />
                   )}
-                  Skicka förfrågan
+                  {t('social.friends.send_request')}
                 </Button>
               </div>
             )}
@@ -1471,7 +1485,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
             {pendingAdminInvitations.length > 0 && (
               <div className="space-y-2">
                 <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wide">
-                  Admin-inbjudningar
+                  {t('social.activity.admin_invitations')}
                 </p>
                 {pendingAdminInvitations.map(inv => (
                   <div
@@ -1482,10 +1496,10 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
                       <ShieldCheck className="h-4 w-4 text-primary-600 mt-0.5 shrink-0" />
                       <div>
                         <p className="text-sm font-medium text-neutral-900">
-                          {inv.sender_name} vill göra dig till admin
+                          {t('social.activity.admin_invite_title', { name: inv.sender_name })}
                         </p>
                         <p className="text-xs text-neutral-500 mt-0.5">
-                          Som admin kan du redigera och lägga till livsmedel i CalculEat-listan.
+                          {t('social.activity.admin_invite_desc')}
                         </p>
                       </div>
                     </div>
@@ -1496,13 +1510,13 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
                             invitationId: inv.id,
                             accept: true,
                           })
-                          toast.success('Du är nu admin!')
+                          toast.success(t('social.activity.admin_accepted'))
                         }}
                         disabled={respondAdminInvitation.isPending}
                         className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors disabled:opacity-50"
                       >
                         <Check className="h-3.5 w-3.5" />
-                        Acceptera
+                        {t('social.action.accept')}
                       </button>
                       <button
                         onClick={async () => {
@@ -1510,13 +1524,13 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
                             invitationId: inv.id,
                             accept: false,
                           })
-                          toast.success('Inbjudan nekad')
+                          toast.success(t('social.activity.admin_denied'))
                         }}
                         disabled={respondAdminInvitation.isPending}
                         className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-sm font-medium text-neutral-700 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors disabled:opacity-50"
                       >
                         <X className="h-3.5 w-3.5" />
-                        Neka
+                        {t('social.action.deny')}
                       </button>
                     </div>
                   </div>
@@ -1528,7 +1542,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
             {friendRequests.length > 0 && (
               <div className="space-y-2">
                 <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wide">
-                  Vänförfrågningar
+                  {t('social.activity.friend_requests')}
                 </p>
                 {friendRequests.map(req => (
                   <MiniFriendRequestCard key={req.friendship_id} request={req} />
@@ -1540,7 +1554,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
             {pendingInvitations.length > 0 && (
               <div className="space-y-2">
                 <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wide">
-                  Delningsförfrågningar
+                  {t('social.activity.share_invitations')}
                 </p>
                 {pendingInvitations.map(inv => (
                   <MiniInvitationCard key={inv.id} invitation={inv} />
@@ -1552,7 +1566,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
             {pendingSharedListInvitations.length > 0 && (
               <div className="space-y-2">
                 <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wide">
-                  Inbjudningar till listor
+                  {t('social.activity.list_invitations')}
                 </p>
                 {pendingSharedListInvitations.map(inv => (
                   <MiniSharedListInvitationCard key={inv.id} invitation={inv} />
@@ -1564,7 +1578,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
             {sentRequests.length > 0 && (
               <div className="space-y-2">
                 <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wide">
-                  Skickade förfrågningar
+                  {t('social.activity.sent_requests')}
                 </p>
                 {sentRequests.map(req => (
                   <SentFriendRequestCard key={req.friendship_id} request={req} />
@@ -1579,8 +1593,8 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
               sentRequests.length === 0 && (
                 <div className="text-center py-10 space-y-2">
                   <p className="text-2xl">🎉</p>
-                  <p className="text-sm font-medium text-neutral-600">Allt är lugnt!</p>
-                  <p className="text-xs text-neutral-400">Inga väntande åtgärder.</p>
+                  <p className="text-sm font-medium text-neutral-600">{t('social.activity.all_clear')}</p>
+                  <p className="text-xs text-neutral-400">{t('social.activity.all_clear_sub')}</p>
                 </div>
               )}
           </div>

@@ -8,6 +8,7 @@
 
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Weight, Target } from 'lucide-react'
 import type { Profile } from '@/lib/types'
@@ -28,6 +29,7 @@ export default function BasicProfileForm({
   onDeficitChange,
 }: BasicProfileFormProps) {
   const navigate = useNavigate()
+  const { t } = useTranslation('profile')
   const [bodyFat, setBodyFat] = useState(profile.body_fat_percentage?.toString() || '')
 
   // Update local state when profile changes
@@ -59,14 +61,14 @@ export default function BasicProfileForm({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Weight className="h-5 w-5 text-primary-600" />
-            Kroppssammansättning
+            {t('bodyComposition.title')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Body Fat Percentage */}
           <div>
             <label className="block text-sm font-medium text-neutral-700 mb-2">
-              Kroppsfettprocent (valfri)
+              {t('bodyComposition.bodyFatLabel')}
             </label>
             <input
               type="number"
@@ -80,13 +82,13 @@ export default function BasicProfileForm({
               step="0.1"
             />
             <p className="text-xs text-neutral-500 mt-1">
-              Krävs för vissa BMR-formler om du vill omberäkna TDEE.{' '}
+              {t('bodyComposition.bodyFatHint')}{' '}
               <button
                 type="button"
                 onClick={() => navigate('/app/body-composition')}
                 className="text-primary-600 hover:underline"
               >
-                Gå till kroppssammansättning
+                {t('bodyComposition.goToBodyComp')}
               </button>
             </p>
           </div>
@@ -99,7 +101,7 @@ export default function BasicProfileForm({
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Target className="h-5 w-5 text-primary-600" />
-              Energimål
+              {t('energyGoal.title')}
             </CardTitle>
           </CardHeader>
           <CardContent>

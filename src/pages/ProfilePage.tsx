@@ -4,6 +4,7 @@
  */
 
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { User, Save } from 'lucide-react'
 import { useProfiles, useUpdateProfile, useCreateWeightHistory } from '@/hooks'
@@ -30,6 +31,7 @@ import MacroModesCard from '@/components/MacroModesCard'
 import MacroConverterCard from '@/components/profile/MacroConverterCard'
 
 export default function ProfilePage() {
+  const { t } = useTranslation('profile')
   // Load profiles
   const { data: allProfiles = [] } = useProfiles()
 
@@ -364,10 +366,10 @@ export default function ProfilePage() {
         },
       })
       await createWeightHistory.mutateAsync({ weight_kg: data.weight_kg })
-      toast.success('Grundläggande information sparad')
+      toast.success(t('toast.basicInfoSaved'))
     } catch (error) {
       console.error('Error saving setup info:', error)
-      toast.error('Kunde inte spara information')
+      toast.error(t('toast.basicInfoSaveError'))
     }
   }
 
@@ -443,8 +445,8 @@ export default function ProfilePage() {
     )
 
     if (!isBasicInfoComplete) {
-      toast.error('Fyll i all grundläggande information innan du sparar', {
-        description: 'Födelsedatum, kön, längd och vikt krävs',
+      toast.error(t('toast.incompleteBasicInfo'), {
+        description: t('toast.incompleteBasicInfoDesc'),
       })
       return
     }
@@ -493,24 +495,24 @@ export default function ProfilePage() {
         try {
           await syncFromProfile.mutateAsync(todayLog.id)
           setPendingChanges({}) // Clear pending changes after successful save
-          toast.success('Profil sparad! Dagens mål har uppdaterats automatiskt.', {
+          toast.success(t('toast.profileSavedWithSync'), {
             duration: 4000,
           })
         } catch (error) {
           console.error('Error syncing today log:', error)
           setPendingChanges({}) // Clear pending changes even if sync fails
-          toast.success('Profil sparad', {
-            description: 'Obs: Kunde inte uppdatera dagens mål. Försök synkronisera manuellt.',
+          toast.success(t('toast.changesSaved'), {
+            description: t('toast.profileSavedSyncFailed'),
             duration: 5000,
           })
         }
       } else {
         setPendingChanges({}) // Clear pending changes after successful save
-        toast.success('Ändringar sparade')
+        toast.success(t('toast.changesSaved'))
       }
     } catch (error) {
       console.error('Error saving profile:', error)
-      toast.error('Kunde inte spara ändringar')
+      toast.error(t('toast.changesSaveError'))
     }
   }
 
@@ -520,10 +522,10 @@ export default function ProfilePage() {
       <div className="mb-6 md:mb-8">
         <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent mb-1 md:mb-2 flex items-center gap-2 md:gap-3">
           <User className="h-6 w-6 md:h-8 md:w-8 text-primary-600" />
-          Min Profil
+          {t('header.title')}
         </h1>
         <p className="text-sm md:text-base text-neutral-600">
-          Hantera din profil och personliga inställningar.
+          {t('header.description')}
         </p>
       </div>
 
@@ -599,7 +601,7 @@ export default function ProfilePage() {
             {/* No active profile selected */}
             {!activeProfile && (
               <div className="text-center py-12 text-neutral-500">
-                <p>Välj eller skapa en profil för att komma igång</p>
+                <p>{t('noProfile')}</p>
               </div>
             )}
           </div>
@@ -615,7 +617,7 @@ export default function ProfilePage() {
                   className="w-full"
                 >
                   <Save className="h-4 w-4 mr-2" />
-                  {updateProfile.isPending ? 'Sparar...' : 'Spara ändringar'}
+                  {updateProfile.isPending ? t('save.saving') : t('save.saveChanges')}
                 </Button>
               </div>
             )}

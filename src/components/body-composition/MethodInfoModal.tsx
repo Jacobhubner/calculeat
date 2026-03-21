@@ -2,6 +2,7 @@
  * MethodInfoModal - Modal för att visa information om beräkningsmetoder
  */
 
+import { useTranslation } from 'react-i18next'
 import { X } from 'lucide-react'
 import { getMethodInfo, siriInfo, brozekInfo } from '@/lib/constants/methodInfo'
 import type { BodyCompositionMethod, MethodVariation } from '@/lib/calculations/bodyComposition'
@@ -21,6 +22,8 @@ export default function MethodInfoModal({
   open,
   onClose,
 }: MethodInfoModalProps) {
+  const { t } = useTranslation('body')
+
   if (!open || !method) return null
 
   // Special handling for Siri and Brozek
@@ -52,7 +55,7 @@ export default function MethodInfoModal({
             <button
               onClick={onClose}
               className="text-white/80 hover:text-white transition-colors p-1 rounded-full hover:bg-white/10"
-              aria-label="Stäng"
+              aria-label={t('methodModal.closeAriaLabel')}
             >
               <X className="h-6 w-6" />
             </button>
@@ -62,7 +65,7 @@ export default function MethodInfoModal({
           <div className="p-6 space-y-6">
             {/* Beskrivning */}
             <div>
-              <h3 className="text-lg font-semibold text-neutral-800 mb-2">Beskrivning</h3>
+              <h3 className="text-lg font-semibold text-neutral-800 mb-2">{t('methodModal.description')}</h3>
               <div className="text-neutral-700 leading-relaxed whitespace-pre-line">
                 {info.description}
               </div>
@@ -74,13 +77,11 @@ export default function MethodInfoModal({
                 <p className="text-sm text-blue-900">
                   {info.returnsDensity ? (
                     <>
-                      <span className="font-semibold">Returnerar kroppsdensitet</span> - Konverteras
-                      sedan till kroppsfett% med Siri eller Brozek ekvationen.
+                      <span className="font-semibold">{t('methodModal.returnsDensityLabel')}</span> {t('methodModal.returnsDensityNote')}
                     </>
                   ) : (
                     <>
-                      <span className="font-semibold">Returnerar kroppsfett% direkt</span> - Ingen
-                      densitetskonvertering behövs.
+                      <span className="font-semibold">{t('methodModal.returnsFatDirectLabel')}</span> {t('methodModal.returnsFatDirectNote')}
                     </>
                   )}
                 </p>
@@ -91,7 +92,7 @@ export default function MethodInfoModal({
             {info.betterFor && info.betterFor.length > 0 && (
               <div>
                 <h3 className="text-lg font-semibold text-blue-800 mb-3">
-                  Denna metod är bättre för:
+                  {t('methodModal.betterFor')}
                 </h3>
                 <ul className="space-y-2">
                   {info.betterFor.map((item, index) => (
@@ -107,7 +108,7 @@ export default function MethodInfoModal({
             {/* Viktigt att veta (för Siri och Brozek) */}
             {info.pros && info.pros.length > 0 && !info.betterFor && (
               <div className="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-lg">
-                <h3 className="text-lg font-semibold text-amber-900 mb-3">Viktigt att veta</h3>
+                <h3 className="text-lg font-semibold text-amber-900 mb-3">{t('methodModal.importantToKnow')}</h3>
                 <ul className="space-y-2">
                   {info.pros.map((item, index) => (
                     <li key={index} className="flex gap-3">
@@ -151,7 +152,7 @@ export default function MethodInfoModal({
                           </p>
                           {v.reference && (
                             <p className="text-xs text-neutral-400 mt-2 italic">
-                              Källa: {v.reference}
+                              {t('methodModal.source')} {v.reference}
                             </p>
                           )}
                         </div>
@@ -164,7 +165,7 @@ export default function MethodInfoModal({
             {/* Formel (enkel, för Siri/Brozek) */}
             {info.formula && !info.formulaVariants && (
               <div>
-                <h3 className="text-lg font-semibold text-neutral-800 mb-2">Formel</h3>
+                <h3 className="text-lg font-semibold text-neutral-800 mb-2">{t('methodModal.formula')}</h3>
                 <div className="bg-neutral-50 text-neutral-800 font-mono text-sm px-4 py-3 rounded-lg border border-neutral-200 whitespace-pre-line">
                   {info.formula}
                 </div>
@@ -174,7 +175,7 @@ export default function MethodInfoModal({
             {/* Referenser */}
             {info.references && info.references.length > 0 && (
               <div>
-                <h3 className="text-lg font-semibold text-neutral-800 mb-3">Referenser</h3>
+                <h3 className="text-lg font-semibold text-neutral-800 mb-3">{t('methodModal.references')}</h3>
                 <div className="space-y-3">
                   {info.references.map((ref, index) => (
                     <div
@@ -202,7 +203,7 @@ export default function MethodInfoModal({
             {/* Anteckningar (fallback för äldre metoder som inte använder nya strukturen) */}
             {info.notes && !info.pros && !info.cons && (
               <div className="bg-amber-50 border border-amber-200 p-3 rounded-lg">
-                <h4 className="font-semibold mb-1 text-amber-900 text-sm">Viktigt att veta</h4>
+                <h4 className="font-semibold mb-1 text-amber-900 text-sm">{t('methodModal.importantToKnow')}</h4>
                 <p className="text-sm text-amber-800 leading-relaxed whitespace-pre-line">
                   {info.notes}
                 </p>
@@ -213,7 +214,7 @@ export default function MethodInfoModal({
           {/* Footer */}
           <div className="sticky bottom-0 bg-neutral-50 p-6 rounded-b-2xl border-t border-neutral-200">
             <Button onClick={onClose} className="w-full">
-              Stäng
+              {t('methodModal.close')}
             </Button>
           </div>
         </div>

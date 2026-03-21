@@ -1,0 +1,219 @@
+{
+  "title": "Profil",
+  "header": {
+    "title": "Min Profil",
+    "description": "Hantera din profil och personliga inställningar."
+  },
+  "noProfile": "Välj eller skapa en profil för att komma igång",
+  "sections": {
+    "personal": "Personlig information",
+    "goals": "Mål",
+    "activity": "Aktivitet",
+    "diet": "Kost",
+    "tdee": "Energibehov (TDEE)"
+  },
+  "fields": {
+    "name": "Namn",
+    "email": "E-postadress",
+    "age": "Ålder",
+    "gender": "Kön",
+    "height": "Längd (cm)",
+    "weight": "Vikt (kg)",
+    "goalWeight": "Målvikt (kg)",
+    "activityLevel": "Aktivitetsnivå",
+    "calorieGoal": "Kalorigräns",
+    "proteinGoal": "Proteinmål (g)",
+    "carbGoal": "Kolhydratmål (g)",
+    "fatGoal": "Fettmål (g)"
+  },
+  "gender": {
+    "male": "Man",
+    "female": "Kvinna",
+    "other": "Annat"
+  },
+  "activityLevel": {
+    "sedentary": "Stillasittande",
+    "light": "Lätt aktiv",
+    "moderate": "Måttligt aktiv",
+    "active": "Aktiv",
+    "veryActive": "Mycket aktiv"
+  },
+  "toast": {
+    "saved": "Profilen sparad",
+    "saveError": "Kunde inte spara profilen",
+    "basicInfoSaved": "Grundläggande information sparad",
+    "basicInfoSaveError": "Kunde inte spara information",
+    "profileSavedWithSync": "Profil sparad! Dagens mål har uppdaterats automatiskt.",
+    "profileSavedSyncFailed": "Obs: Kunde inte uppdatera dagens mål. Försök synkronisera manuellt.",
+    "changesSaved": "Ändringar sparade",
+    "changesSaveError": "Kunde inte spara ändringar",
+    "incompleteBasicInfo": "Fyll i all grundläggande information innan du sparar",
+    "incompleteBasicInfoDesc": "Födelsedatum, kön, längd och vikt krävs"
+  },
+  "save": {
+    "saving": "Sparar...",
+    "saveChanges": "Spara ändringar",
+    "noChanges": "Inga ändringar"
+  },
+  "setup": {
+    "title": "Fyll i din grundläggande information",
+    "description": "Vi behöver dessa uppgifter för att beräkna ditt energibehov.",
+    "saveAndContinue": "Spara och fortsätt"
+  },
+  "basicInfo": {
+    "title": "Grundläggande information",
+    "allLocked": "Alla fält är låsta",
+    "lockedDesc": "Födelsedatum, kön och längd låses när grundläggande information är ifylld. Kontakta support om du behöver ändra dessa uppgifter.",
+    "lockTitle": "Dessa fält är låsta när grundläggande information är ifylld.",
+    "locked": "Låst",
+    "confirmChange": "Varning: Du försöker ändra \"{{field}}\".\n\nDessa fält låses när grundläggande information är ifylld.\n\nVill du fortsätta?"
+  },
+  "birthDate": {
+    "label": "Födelsedatum",
+    "day": "Dag",
+    "month": "Månad",
+    "year": "År"
+  },
+  "months": {
+    "1": "Januari",
+    "2": "Februari",
+    "3": "Mars",
+    "4": "April",
+    "5": "Maj",
+    "6": "Juni",
+    "7": "Juli",
+    "8": "Augusti",
+    "9": "September",
+    "10": "Oktober",
+    "11": "November",
+    "12": "December"
+  },
+  "calorieGoal": {
+    "maintain": "Bibehåll vikt",
+    "loss": "Viktminskning",
+    "gain": "Viktökning"
+  },
+  "results": {
+    "title": "Resultat",
+    "basalMetabolism": "Basalmetabolism",
+    "totalEnergyNeed": "Totalt energibehov",
+    "calorieRange": "Kaloriintervall"
+  },
+  "bodyComposition": {
+    "title": "Kroppssammansättning",
+    "bodyFatLabel": "Kroppsfettprocent (valfri)",
+    "bodyFatHint": "Krävs för vissa BMR-formler om du vill omberäkna TDEE.",
+    "goToBodyComp": "Gå till kroppssammansättning"
+  },
+  "energyGoal": {
+    "title": "Energimål"
+  },
+  "advancedSettings": {
+    "title": "Avancerade inställningar"
+  },
+  "dangerZone": {
+    "title": "Farozon",
+    "deleteAccount": "Radera mitt konto",
+    "deleteWarning": "Alla dina data raderas permanent — livsmedel, recept, historik, profiler och måttset. Detta går inte att ångra.",
+    "deleteConfirm": "Är du helt säker? Skriv RADERA nedan för att bekräfta.",
+    "deleteConfirmPlaceholder": "Skriv RADERA",
+    "deleteConfirmButton": "Ja, jag vill radera mitt konto",
+    "deletePermanent": "Radera permanent",
+    "deleting": "Raderar...",
+    "cancel": "Avbryt",
+    "accountDeleted": "Ditt konto har raderats.",
+    "deleteError": "Något gick fel vid radering av kontot. Försök igen."
+  },
+  "mealSettings": {
+    "title": "Måltidsinställningar",
+    "mealNamePlaceholder": "Måltidsnamn",
+    "removeDisabled": "Du måste ha minst en måltid",
+    "remove": "Ta bort måltid",
+    "percentage": "Procent",
+    "addMeal": "Lägg till måltid",
+    "newMealName": "Ny måltid {{n}}",
+    "totalDistribution": "Total fördelning:",
+    "totalError": "Totalen måste vara exakt 100%. Justera procentsatserna ovan.",
+    "duplicateError": "Varje måltid måste ha ett unikt namn. Byt namn på dubbletter.",
+    "tip": "💡 Fördela dina kalorier över dagen baserat på dina vanor.",
+    "saveHint": "Tryck på Spara ändringar längre ner för att uppdatera måltiderna i Dagens logg.",
+    "defaultBreakfast": "Frukost",
+    "defaultLunch": "Lunch",
+    "defaultSnack": "Mellanmål",
+    "defaultDinner": "Middag"
+  },
+  "floatingSave": {
+    "profileNameLabel": "Profilnamn",
+    "profileNamePlaceholder": "Min profil"
+  },
+  "settings": {
+    "title": "Inställningar",
+    "description": "Hantera ditt konto och appinställningar",
+    "appSettings": "Appinställningar",
+    "dayCompletion": "Dagavslutning",
+    "manual": "Manuell",
+    "manualDesc": "Avsluta dagen själv med knappen \"Avsluta dag\"",
+    "auto": "Automatisk",
+    "autoDesc": "Dagen avslutas automatiskt vid midnatt",
+    "toastAuto": "Dagen avslutas nu automatiskt vid midnatt",
+    "toastManual": "Du avslutar nu dagen manuellt med knappen",
+    "loading": "Laddar...",
+    "account": "Konto",
+    "username": "Användarnamn",
+    "usernameHint": "Bokstäver, siffror och _ (2–50 tecken). Måste vara unikt.",
+    "usernamePlaceholder": "@användarnamn",
+    "email": "E-postadress",
+    "emailConfirmSent": "Bekräftelsemejl skickat till {{email}}",
+    "emailConfirmDesc": "Bytet aktiveras när du klickar länken i mejlet.",
+    "emailConfirmNotice": "Bekräftelsemejl skickat till",
+    "emailConfirmAction": "Klicka länken i mejlet för att aktivera bytet.",
+    "emailHint": "Ett bekräftelsemejl skickas till den nya adressen.",
+    "emailSameError": "Den nya e-postadressen är samma som den nuvarande",
+    "close": "Stäng",
+    "password": "Lösenord",
+    "newPassword": "Nytt lösenord",
+    "passwordPlaceholder": "Minst 6 tecken",
+    "confirmPassword": "Bekräfta lösenord",
+    "passwordMismatch": "Lösenorden matchar inte",
+    "savePassword": "Spara lösenord",
+    "passwordTooShort": "Lösenordet måste vara minst 6 tecken",
+    "passwordUpdated": "Lösenordet har uppdaterats",
+    "edit": "Redigera",
+    "save": "Spara",
+    "saving": "Sparar...",
+    "cancel": "Avbryt",
+    "basicInfoSaved": "Grundläggande information sparad",
+    "basicInfoSaveError": "Kunde inte spara grundläggande information",
+    "usernameTaken": "Användarnamnet är redan taget",
+    "usernameInvalidFormat": "Ogiltigt format. Använd bokstäver, siffror och _",
+    "usernameUpdateError": "Kunde inte uppdatera användarnamn",
+    "usernameUpdated": "Användarnamn uppdaterat",
+    "adminManagement": "Adminhantering",
+    "adminPlaceholder": "E-postadress eller användarnamn",
+    "addAdmin": "Lägg till",
+    "addingAdmin": "Lägger till...",
+    "adminAdded": "Inbjudan skickad",
+    "adminNotFound": "Ingen användare hittades",
+    "adminAlreadyAdmin": "Användaren är redan admin",
+    "adminInvitationPending": "En inbjudan är redan skickad till den användaren",
+    "adminAddError": "Kunde inte skicka inbjudan",
+    "adminRemoved": "Admin borttagen",
+    "adminRemoveError": "Kunde inte ta bort admin",
+    "adminRemoveTitle": "Ta bort admin",
+    "passwordStrengthTooShort": "För kort",
+    "passwordStrengthWeak": "Svagt",
+    "passwordStrengthGood": "Bra",
+    "passwordStrengthStrong": "Starkt",
+    "deleteAccountTitle": "Farozon",
+    "deleteAccountWarning": "Om du raderar ditt konto försvinner all data permanent. Denna åtgärd kan inte ångras.",
+    "deleteAccountButton": "Radera mitt konto",
+    "deleteAccountConfirm": "Är du säker? All din data kommer att raderas permanent.",
+    "deleteAccountSure": "Ja, jag är säker",
+    "deleteAccountFinal": "Skriv RADERA för att bekräfta:",
+    "deleteAccountPlaceholder": "Skriv RADERA",
+    "deleteAccountPermanent": "Radera permanent",
+    "deleting": "Raderar...",
+    "accountDeleted": "Ditt konto har raderats.",
+    "deleteError": "Något gick fel vid radering av kontot. Försök igen."
+  }
+}

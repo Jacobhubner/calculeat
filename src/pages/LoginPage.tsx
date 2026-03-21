@@ -1,10 +1,13 @@
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import SiteHeader from '@/components/layout/SiteHeader'
 import SiteFooter from '@/components/layout/SiteFooter'
 import LoginForm from '@/components/LoginForm'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 export default function LoginPage() {
+  const { t } = useTranslation('auth')
+
   return (
     <div className="min-h-screen flex flex-col">
       <SiteHeader />
@@ -14,25 +17,25 @@ export default function LoginPage() {
             <div className="flex items-center justify-center mb-4">
               <img src="/CalculEat-logo.svg" alt="CalculEat Logo" className="h-16 object-contain" />
             </div>
-            <p className="text-neutral-600">Logga in på ditt konto</p>
+            <p className="text-neutral-600">{t('login.subtitle')}</p>
           </div>
 
           <Card>
             <CardHeader>
-              <CardTitle>Välkommen tillbaka</CardTitle>
-              <CardDescription>Logga in för att fortsätta till din dashboard</CardDescription>
+              <CardTitle>{t('login.welcome')}</CardTitle>
+              <CardDescription>{t('login.description')}</CardDescription>
             </CardHeader>
             <CardContent>
               <LoginForm />
               <div className="mt-6 text-center text-sm">
                 <Link to="/forgot-password" className="text-primary-600 hover:underline">
-                  Glömt ditt lösenord?
+                  {t('login.forgotPassword')}
                 </Link>
               </div>
               <div className="mt-4 text-center text-sm text-neutral-600">
-                Har du inget konto?{' '}
+                {t('login.noAccount')}{' '}
                 <Link to="/register" className="text-primary-600 hover:underline font-medium">
-                  Skapa ett här
+                  {t('login.registerLink')}
                 </Link>
               </div>
             </CardContent>

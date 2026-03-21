@@ -4,6 +4,7 @@
  */
 
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { X, Save, Pencil, ChevronUp, ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { MeasurementSet } from '@/lib/types'
@@ -39,6 +40,7 @@ export default function MeasurementSetCard({
   reorderPending = false,
   duplicateIndex = 0,
 }: MeasurementSetCardProps) {
+  const { t } = useTranslation('body')
   // Local state för redigeringsläge
   const [isEditingName, setIsEditingName] = useState(false)
   const [editedName, setEditedName] = useState(measurementSet.name || '')
@@ -139,7 +141,7 @@ export default function MeasurementSetCard({
                   ? 'text-neutral-300 cursor-not-allowed'
                   : 'text-neutral-500 hover:text-primary-600 hover:bg-primary-50'
               )}
-              title="Flytta upp"
+              title={t('card.moveUp')}
             >
               <ChevronUp className="h-3.5 w-3.5" />
             </button>
@@ -153,7 +155,7 @@ export default function MeasurementSetCard({
                   ? 'text-neutral-300 cursor-not-allowed'
                   : 'text-neutral-500 hover:text-primary-600 hover:bg-primary-50'
               )}
-              title="Flytta ned"
+              title={t('card.moveDown')}
             >
               <ChevronDown className="h-3.5 w-3.5" />
             </button>
@@ -170,8 +172,8 @@ export default function MeasurementSetCard({
                 ? 'text-primary-600 bg-primary-100' // Pressed state
                 : 'text-neutral-500 hover:text-primary-600 hover:bg-primary-50'
             )}
-            aria-label={isEditingName ? 'Avsluta redigering' : 'Redigera namn'}
-            title={isEditingName ? 'Klicka för att spara' : 'Redigera namn'}
+            aria-label={isEditingName ? t('card.stopEditing') : t('card.editName')}
+            title={isEditingName ? t('card.saveChanges') : t('card.editName')}
           >
             <Pencil className="h-3.5 w-3.5" />
           </button>
@@ -191,8 +193,8 @@ export default function MeasurementSetCard({
                 ? 'text-neutral-300 cursor-not-allowed'
                 : 'text-primary-600 hover:text-primary-700'
             )}
-            aria-label="Spara mätningar"
-            title="Spara mätningar"
+            aria-label={t('card.saveMeasurements')}
+            title={t('card.saveMeasurements')}
           >
             <Save className="h-4 w-4" />
           </button>
@@ -205,7 +207,7 @@ export default function MeasurementSetCard({
             onDelete()
           }}
           className="text-neutral-400 hover:text-red-500 transition-colors p-0.5"
-          aria-label="Ta bort mätset"
+          aria-label={t('card.deleteSet')}
         >
           <X className="h-4 w-4" />
         </button>

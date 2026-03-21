@@ -1,0 +1,89 @@
+{
+  "greeting": {
+    "hello": "Hej {{name}}! 👋",
+    "fillProfile": "Fyll i din profil för att komma igång"
+  },
+  "status": {
+    "question": "Hur börjar din dag?",
+    "onTrack": "Du är på rätt spår idag.",
+    "withinGoal": "Bra jobbat — du håller målet.",
+    "overGoal": "Du har gått lite över idag."
+  },
+  "subtitle": {
+    "logFirst": "Logga din första måltid idag",
+    "caloriesLeft": "{{calories}} kcal kvar idag",
+    "caloriesLeftGood": "{{calories}} kcal kvar — bra jobbat",
+    "caloriesOver": "{{calories}} kcal över dagens mål"
+  },
+  "cta": {
+    "logFirst": "Logga din första måltid",
+    "continueLogging": "Fortsätt logga idag",
+    "viewLogged": "Se vad du ätit idag"
+  },
+  "checklist": {
+    "title": "Dagens mål",
+    "allDone": "Allt uppnått idag ✦",
+    "allGoals": "Alla mål!",
+    "progress": "{{completed}}/{{total}} uppnått",
+    "goalCount": "mål",
+    "calories": {
+      "label": "Kalorier inom mål",
+      "description": "Totalt kaloriintag inom min-max intervallet"
+    },
+    "macros": {
+      "label": "Makros balanserade",
+      "description": "Protein, kolhydrater och fett inom målintervallen"
+    },
+    "colors": {
+      "label": "Färgbalans i mål",
+      "description": "Grön, gul och orange mat i rätt proportioner"
+    }
+  },
+  "ring": {
+    "goal": "Mål",
+    "remaining": "Kvar",
+    "over": "Över"
+  },
+  "statCards": {
+    "calorieGoal": "Kalorimål",
+    "weight": "Vikt"
+  },
+  "macros": {
+    "title": "Makromål idag"
+  },
+  "today": {
+    "label": "IDAG",
+    "statusRow": {
+      "calories": "Kalorier",
+      "macro": "Makro",
+      "variety": "Variation"
+    },
+    "goalsAchieved": "av 3 mål uppnått",
+    "noMeals": "Inga måltider loggade idag",
+    "moreItems": "+{{count}} till",
+    "openLog": "Öppna logg",
+    "history": "Historik",
+    "viewAll": "Se alla →"
+  },
+  "emptyProfile": {
+    "title": "Komplettera din profil",
+    "description": "För att få personliga rekommendationer och se din statistik behöver du fylla i din profil.",
+    "action": "Gå till profil"
+  },
+  "insights": {
+    "title": "Hälsoinsikter",
+    "customize": "Anpassa hälsoinsikter",
+    "idealWeight": "Idealvikt: {{min}}–{{max}} kg",
+    "age": "Ålder: {{age}} år",
+    "labels": {
+      "bmi": "BMI",
+      "ffmi": "FFMI",
+      "idealweight": "Idealvikt",
+      "age": "Ålder"
+    }
+  },
+  "mode": {
+    "showLess": "Visa mindre ↑",
+    "showMore": "Visa mer detaljer ↓"
+  }
+}

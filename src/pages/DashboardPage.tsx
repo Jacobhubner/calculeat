@@ -26,6 +26,7 @@ import { calculateFFMI, getFFMICategory } from '@/lib/calculations/ffmiCalculati
 import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
 import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { DailyChecklist } from '@/components/daily/DailyChecklist'
 import { useDailySummary } from '@/hooks/useDailySummary'
 import {
@@ -37,6 +38,7 @@ import {
 
 export default function DashboardPage() {
   const navigate = useNavigate()
+  const { t } = useTranslation('dashboard')
   const [advancedMode, setAdvancedMode] = useState<boolean>(() => {
     try {
       return localStorage.getItem('dashboard_mode') === 'advanced'
@@ -214,7 +216,7 @@ export default function DashboardPage() {
 
   // Status for microcopy (Simple Mode)
   // isWithinGoal requires calories_min to be set AND consumed >= it.
-  // If calories_min is absent, only "under max" counts — never "bra jobbat" on low intake.
+  // If calories_min is absent, only "under max" counts — never "within goal" on low intake.
   // Also requires consumed >= 10% of targetMax to avoid premature positive feedback.
   const earlyThreshold = targetMax * 0.1
   const isOverGoal = consumed > targetMax
@@ -226,29 +228,29 @@ export default function DashboardPage() {
 
   const simpleGreeting =
     consumed === 0
-      ? 'Hur börjar din dag?'
+      ? t('status.question')
       : isOverGoal
-        ? 'Du har gått lite över idag.'
+        ? t('status.overGoal')
         : isWithinGoal
-          ? 'Bra jobbat — du håller målet.'
-          : 'Du är på rätt spår idag.'
+          ? t('status.withinGoal')
+          : t('status.onTrack')
 
   const simpleRingStatus =
     consumed === 0
-      ? 'Logga din första måltid idag'
+      ? t('subtitle.logFirst')
       : isOverGoal
-        ? `${Math.round(consumed - targetMax)} kcal över dagens mål`
+        ? t('subtitle.caloriesOver', { calories: Math.round(consumed - targetMax) })
         : isWithinGoal
-          ? `${Math.round(remaining)} kcal kvar — bra jobbat`
-          : `${Math.round(remaining)} kcal kvar idag`
+          ? t('subtitle.caloriesLeftGood', { calories: Math.round(remaining) })
+          : t('subtitle.caloriesLeft', { calories: Math.round(remaining) })
 
   const mealCount = todayLog?.meals?.length ?? 0
   const simpleCTAText =
     mealCount === 0
-      ? 'Logga din första måltid'
+      ? t('cta.logFirst')
       : mealCount <= 2
-        ? 'Fortsätt logga idag'
-        : 'Se vad du ätit idag'
+        ? t('cta.continueLogging')
+        : t('cta.viewLogged')
 
   const handleOnboardingClose = (open: boolean) => {
     if (!open) {
@@ -283,12 +285,10 @@ export default function DashboardPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent mb-2">
-            Hej {authProfile?.profile_name || 'där'}! 👋
+            {t('greeting.hello', { name: authProfile?.profile_name || '👋' })}
           </h1>
           {!hasBasicInfo && (
-            <p className="text-neutral-600 text-sm md:text-base">
-              Fyll i din profil för att komma igång
-            </p>
+            <p className="text-neutral-600 text-sm md:text-base">{t('greeting.fillProfile')}</p>
           )}
           {hasBasicInfo && !advancedMode && (
             <p className="text-neutral-600 text-sm md:text-base">{simpleGreeting}</p>
@@ -299,10 +299,10 @@ export default function DashboardPage() {
           /* Empty State - No Profile */
           <EmptyState
             icon={Scale}
-            title="Komplettera din profil"
-            description="För att få personliga rekommendationer och se din statistik behöver du fylla i din profil."
+            title={t('emptyProfile.title')}
+            description={t('emptyProfile.description')}
             action={{
-              label: 'Gå till profil',
+              label: t('emptyProfile.action'),
               onClick: () => (window.location.href = '/app/profile'),
             }}
           />
@@ -326,7 +326,7 @@ export default function DashboardPage() {
                 variant="accent"
               />
               <StatCard
-                title="Kalorimål"
+                title={t('statCards.calorieGoal')}
                 value={
                   profile?.calories_min && profile?.calories_max
                     ? `${Math.round(profile.calories_min)} - ${Math.round(profile.calories_max)}`
@@ -337,7 +337,7 @@ export default function DashboardPage() {
                 variant="success"
               />
               <StatCard
-                title="Vikt"
+                title={t('statCards.weight')}
                 value={profile?.weight_kg ? Math.round(profile.weight_kg * 10) / 10 : '-'}
                 unit="kg"
                 icon={TrendingUp}
@@ -365,7 +365,7 @@ export default function DashboardPage() {
                   return (
                     <Card>
                       <CardHeader className="pb-2">
-                        <CardTitle>Makromål idag</CardTitle>
+                        <CardTitle>{t('macros.title')}</CardTitle>
                       </CardHeader>
                       <CardContent>
                         <MacroRangeBar
@@ -403,16 +403,24 @@ export default function DashboardPage() {
             {/* Dagens logg + Checklist + Åtgärder */}
             <div className="bg-white border border-neutral-200 rounded-2xl shadow-sm p-5 space-y-4">
               {/* Rubrik */}
-              <p className="text-xs uppercase tracking-widest text-neutral-400">IDAG</p>
+              <p className="text-xs uppercase tracking-widest text-neutral-400">
+                {t('today.label')}
+              </p>
 
               {/* Sektion 1 — Horisontell statusrad */}
               {dailySummary && (
                 <div className="space-y-1.5">
                   <div className="flex gap-4">
                     {[
-                      { label: 'Kalorier', ok: dailySummary.checklist.caloriesOk },
-                      { label: 'Makro', ok: dailySummary.checklist.macrosOk },
-                      { label: 'Variation', ok: dailySummary.checklist.colorBalanceOk },
+                      {
+                        label: t('today.statusRow.calories'),
+                        ok: dailySummary.checklist.caloriesOk,
+                      },
+                      { label: t('today.statusRow.macro'), ok: dailySummary.checklist.macrosOk },
+                      {
+                        label: t('today.statusRow.variety'),
+                        ok: dailySummary.checklist.colorBalanceOk,
+                      },
                     ].map(({ label, ok }) => (
                       <div key={label} className="flex items-center gap-1.5">
                         <div
@@ -442,7 +450,7 @@ export default function DashboardPage() {
                         dailySummary.checklist.colorBalanceOk,
                       ].filter(Boolean).length
                     }{' '}
-                    av 3 mål uppnått
+                    {t('today.goalsAchieved')}
                   </p>
                 </div>
               )}
@@ -462,25 +470,23 @@ export default function DashboardPage() {
                   ))}
                   {todayLog.meals.length > 4 && (
                     <div className="py-2 text-xs text-neutral-400 text-center">
-                      +{todayLog.meals.length - 4} till
+                      {t('today.moreItems', { count: todayLog.meals.length - 4 })}
                     </div>
                   )}
                 </div>
               ) : (
-                <p className="text-sm text-neutral-400 text-center py-2">
-                  Inga måltider loggade idag
-                </p>
+                <p className="text-sm text-neutral-400 text-center py-2">{t('today.noMeals')}</p>
               )}
 
               {/* Sektion 3 — Åtgärdszon */}
               <div className="border-t border-neutral-200 bg-neutral-50 -mx-5 px-5 pt-4 pb-4 rounded-b-2xl flex gap-2">
                 <Button size="sm" variant="primary" onClick={() => navigate('/app/today')}>
                   <UtensilsCrossed className="h-4 w-4 mr-1.5" />
-                  Öppna logg
+                  {t('today.openLog')}
                 </Button>
                 <Button size="sm" variant="outline" onClick={() => navigate('/app/history')}>
                   <Activity className="h-4 w-4 mr-1.5" />
-                  Historik
+                  {t('today.history')}
                 </Button>
               </div>
             </div>
@@ -490,31 +496,28 @@ export default function DashboardPage() {
               <Card>
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between">
-                    <CardTitle>Hälsoinsikter</CardTitle>
+                    <CardTitle>{t('insights.title')}</CardTitle>
                     <button
                       onClick={() => setInsightsCustomizeOpen(o => !o)}
                       className="text-neutral-400 hover:text-neutral-600 transition-colors"
-                      aria-label="Anpassa hälsoinsikter"
+                      aria-label={t('insights.customize')}
                     >
                       <Settings className="h-4 w-4" />
                     </button>
                   </div>
                   {insightsCustomizeOpen && (
                     <div className="flex flex-wrap gap-2 pt-2">
-                      {[
-                        { id: 'bmi', label: 'BMI', available: !!calculations.bmi },
-                        {
-                          id: 'ffmi',
-                          label: 'FFMI',
-                          available: calculations.ffmi != null && calculations.ffmi > 0,
-                        },
-                        {
-                          id: 'idealweight',
-                          label: 'Idealvikt',
-                          available: !!calculations.idealWeightRange,
-                        },
-                        { id: 'age', label: 'Ålder', available: !!calculations.age },
-                      ].map(metric => {
+                      {(
+                        [
+                          { id: 'bmi', available: !!calculations.bmi },
+                          {
+                            id: 'ffmi',
+                            available: calculations.ffmi != null && calculations.ffmi > 0,
+                          },
+                          { id: 'idealweight', available: !!calculations.idealWeightRange },
+                          { id: 'age', available: !!calculations.age },
+                        ] as const
+                      ).map(metric => {
                         const isActive = visibleInsights.includes(metric.id)
                         return (
                           <button
@@ -530,7 +533,7 @@ export default function DashboardPage() {
                                   : 'bg-neutral-100 text-neutral-500 border-neutral-200'
                             )}
                           >
-                            {metric.label}
+                            {t(`insights.labels.${metric.id}`)}
                           </button>
                         )
                       })}
@@ -586,8 +589,10 @@ export default function DashboardPage() {
                     <p className="mt-3 text-sm text-neutral-500">
                       {visibleInsights.includes('idealweight') && calculations.idealWeightRange && (
                         <span>
-                          Idealvikt: {Math.round(calculations.idealWeightRange.min)}–
-                          {Math.round(calculations.idealWeightRange.max)} kg
+                          {t('insights.idealWeight', {
+                            min: Math.round(calculations.idealWeightRange.min),
+                            max: Math.round(calculations.idealWeightRange.max),
+                          })}
                         </span>
                       )}
                       {visibleInsights.includes('idealweight') &&
@@ -595,7 +600,7 @@ export default function DashboardPage() {
                         visibleInsights.includes('age') &&
                         calculations.age && <span> · </span>}
                       {visibleInsights.includes('age') && calculations.age && (
-                        <span>Ålder: {calculations.age} år</span>
+                        <span>{t('insights.age', { age: calculations.age })}</span>
                       )}
                     </p>
                   )}
@@ -654,7 +659,7 @@ export default function DashboardPage() {
                     className="mt-3 text-sm text-primary-600 hover:text-primary-700 font-medium"
                     onClick={() => navigate('/app/today')}
                   >
-                    Se alla →
+                    {t('today.viewAll')}
                   </button>
                 </CardContent>
               </Card>
@@ -668,7 +673,7 @@ export default function DashboardPage() {
               onClick={toggleAdvancedMode}
               className="text-xs text-neutral-400 hover:text-neutral-600 transition-colors"
             >
-              {advancedMode ? 'Visa mindre ↑' : 'Visa mer detaljer ↓'}
+              {advancedMode ? t('mode.showLess') : t('mode.showMore')}
             </button>
           </div>
         )}

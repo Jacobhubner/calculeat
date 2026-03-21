@@ -2,6 +2,7 @@ import { Component, ReactNode } from 'react'
 import { AlertTriangle, RefreshCw } from 'lucide-react'
 import { Button } from './ui/button'
 import { Card } from './ui/card'
+import i18n from '@/i18n'
 
 interface Props {
   children: ReactNode
@@ -48,10 +49,9 @@ export default class ErrorBoundary extends Component<Props, State> {
             <div className="rounded-2xl bg-error-100 p-6 mb-6 inline-block">
               <AlertTriangle className="h-12 w-12 text-error-600" />
             </div>
-            <h1 className="text-2xl font-bold text-neutral-900 mb-2">Något gick fel</h1>
+            <h1 className="text-2xl font-bold text-neutral-900 mb-2">{i18n.t('common:errorBoundary.title')}</h1>
             <p className="text-neutral-600 mb-6">
-              Ett oväntat fel inträffade. Försök ladda om sidan eller kontakta support om problemet
-              kvarstår.
+              {i18n.t('common:errorBoundary.description')}
             </p>
             {this.state.error && (
               <div className="mb-6 p-4 bg-neutral-100 rounded-xl text-left">
@@ -62,11 +62,11 @@ export default class ErrorBoundary extends Component<Props, State> {
             )}
             <div className="flex gap-3 justify-center">
               <Button variant="outline" onClick={this.handleReset}>
-                Försök igen
+                {i18n.t('common:errorBoundary.tryAgain')}
               </Button>
               <Button onClick={() => window.location.reload()}>
                 <RefreshCw className="h-4 w-4 mr-2" />
-                Ladda om sidan
+                {i18n.t('common:status.reloadPage')}
               </Button>
             </div>
           </Card>

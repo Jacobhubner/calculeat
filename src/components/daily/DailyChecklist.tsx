@@ -1,6 +1,7 @@
 import { cn } from '@/lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Check, Circle, Sparkles } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 interface ChecklistItem {
   id: string
@@ -28,24 +29,26 @@ export function DailyChecklist({
   showCard = true,
   className,
 }: DailyChecklistProps) {
+  const { t } = useTranslation('dashboard')
+
   const items: ChecklistItem[] = [
     {
       id: 'calories',
-      label: 'Kalorier inom mål',
+      label: t('checklist.calories.label'),
       isComplete: caloriesOk,
-      description: 'Totalt kaloriintag inom min-max intervallet',
+      description: t('checklist.calories.description'),
     },
     {
       id: 'macros',
-      label: 'Makros balanserade',
+      label: t('checklist.macros.label'),
       isComplete: macrosOk,
-      description: 'Protein, kolhydrater och fett inom målintervallen',
+      description: t('checklist.macros.description'),
     },
     {
       id: 'colors',
-      label: 'Färgbalans i mål',
+      label: t('checklist.colors.label'),
       isComplete: colorBalanceOk,
-      description: 'Grön, gul och orange mat i rätt proportioner',
+      description: t('checklist.colors.description'),
     },
   ]
 
@@ -66,10 +69,10 @@ export function DailyChecklist({
       <div className="pt-2 border-t">
         <div className="flex items-center justify-between">
           <span className="text-sm text-neutral-600">
-            {completedCount}/{totalCount} uppnått
+            {t('checklist.progress', { completed: completedCount, total: totalCount })}
           </span>
           {allComplete && (
-            <span className="text-sm font-medium text-green-600">Allt uppnått idag ✦</span>
+            <span className="text-sm font-medium text-green-600">{t('checklist.allDone')}</span>
           )}
         </div>
 
@@ -91,7 +94,7 @@ export function DailyChecklist({
     return (
       <Card className={className}>
         <CardHeader className="pb-2">
-          <CardTitle className="text-lg">Dagens mål</CardTitle>
+          <CardTitle className="text-lg">{t('checklist.title')}</CardTitle>
         </CardHeader>
         <CardContent>{content}</CardContent>
       </Card>
@@ -153,6 +156,7 @@ export function ChecklistSummaryBadge({
   totalCount,
   className,
 }: ChecklistSummaryBadgeProps) {
+  const { t } = useTranslation('dashboard')
   const allComplete = completedCount === totalCount
 
   return (
@@ -170,14 +174,14 @@ export function ChecklistSummaryBadge({
       {allComplete ? (
         <>
           <Sparkles className="h-3.5 w-3.5" />
-          <span>Alla mål!</span>
+          <span>{t('checklist.allGoals')}</span>
         </>
       ) : (
         <>
           <span>
             {completedCount}/{totalCount}
           </span>
-          <span className="text-xs opacity-75">mål</span>
+          <span className="text-xs opacity-75">{t('checklist.goalCount')}</span>
         </>
       )}
     </div>

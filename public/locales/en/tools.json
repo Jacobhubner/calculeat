@@ -1,0 +1,290 @@
+{
+  "quickProfile": {
+    "placeholder": "Enter {{label}}",
+    "select": "Select...",
+    "saving": "Saving",
+    "saved": "Saved",
+    "save": "Save",
+    "errors": {
+      "emptyValue": "Please fill in a value",
+      "invalidNumber": "Invalid number",
+      "mustBePositive": "Value must be greater than 0",
+      "saveFailed": "Something went wrong while saving"
+    },
+    "successSaved": "{{label}} has been saved"
+  },
+  "backToHub": {
+    "label": "Back to {{hubLabel}}"
+  },
+  "missingData": {
+    "title": "Missing information",
+    "description": "To use this tool you need to fill in the following information:",
+    "hide": "Hide",
+    "fill": "Fill in"
+  },
+  "errorBoundary": {
+    "title": "Something went wrong",
+    "description": "An unexpected error occurred while loading the tool. This may be due to missing data or a technical bug.",
+    "technicalInfo": "Technical information",
+    "reload": "Reload page",
+    "backToOverview": "Back to overview"
+  },
+  "goalCalc": {
+    "noProfile": {
+      "title": "No active profile",
+      "description": "You need a profile to use the goal calculator.",
+      "action": "Go to profile"
+    },
+    "header": {
+      "title": "Goal Calculator",
+      "descriptionWithBodyFat": "Calculate your target weight and timeline to reach your body fat goal",
+      "descriptionWithoutBodyFat": "Calculate your target weight and timeline",
+      "badge": "Goals & Planning"
+    },
+    "infoAlert": {
+      "title": "About the Goal Calculator",
+      "descriptionWithBodyFat": "This calculator estimates your target weight based on desired body fat % and preserved lean mass.",
+      "descriptionWithoutBodyFat": "This calculator helps you set weight goals and calculate timelines. Add body fat % to your profile for more detailed calculations.",
+      "disclaimer": "The timeline is an estimate - actual results may vary depending on training, diet and individual factors."
+    },
+    "currentStatus": {
+      "title": "Your Current Status",
+      "description": "Starting point for calculations",
+      "weight": "Weight",
+      "bodyFat": "Body fat",
+      "leanMass": "Lean mass",
+      "fatMass": "Fat mass",
+      "category": "Category:",
+      "bmiMissing": "⚠️ BMI section shown when you add your height to your profile"
+    },
+    "bmi": {
+      "title": "BMI (Body Mass Index)",
+      "description": "Weight index according to WHO standard",
+      "current": "Current:",
+      "target": "Target:",
+      "table": {
+        "category": "Category",
+        "bmi": "BMI",
+        "weight": "Weight (kg)",
+        "underweight": "Underweight",
+        "normalweight": "Normal weight",
+        "overweight": "Overweight",
+        "obese": "Obese"
+      },
+      "disclaimer": "NOTE: BMI does not account for muscle mass. Use together with body fat % for a better assessment."
+    },
+    "bodyFatRef": {
+      "title": "Body fat %",
+      "description": "Categories according to the American Council on Exercise (ACE)",
+      "male": "male",
+      "female": "female"
+    },
+    "goal": {
+      "title": "Set your goal",
+      "descriptionWithBodyFat": "Choose desired target weight or body fat %",
+      "descriptionWithoutBodyFat": "Choose your target weight",
+      "targetWeight": "Target Body Weight",
+      "targetBodyFat": "Target Body Fat %",
+      "syncHint": "💡 Target Body Fat% and Target Body Weight sync automatically when you change either one",
+      "targetCategory": "Target category:",
+      "minus30": "-30%",
+      "current": "Current",
+      "plus30": "+30%"
+    },
+    "weeklyChange": {
+      "title": "Weekly Weight Change",
+      "noGoalHint": "Select an energy goal to see available options",
+      "weightLossLabel": "Weight loss - Choose pace according to Energy Goal:",
+      "weightGainLabel": "Weight gain - Choose pace according to Energy Goal:",
+      "presets": {
+        "cautious": "Cautious (10-15%)",
+        "normal": "Normal (20-25%)",
+        "aggressive": "Aggressive (25-30%)",
+        "gain": "Weight gain (10-20%)",
+        "cautiousShort": "Cautious",
+        "normalShort": "Normal",
+        "aggressiveShort": "Aggressive",
+        "gainShort": "Weight gain"
+      }
+    },
+    "results": {
+      "title": "Your Goal",
+      "targetWeightLabel": "Target weight",
+      "weightUnit": "kg",
+      "toLoose": "to lose",
+      "toGain": "to gain"
+    },
+    "timeline": {
+      "title": "Timeline",
+      "weeks": "Weeks",
+      "months": "Months",
+      "weeksUnit": "w",
+      "monthsUnit": "mo",
+      "earliestDone": "Earliest done",
+      "latestDone": "Latest done",
+      "energyGoal": "Energy goal",
+      "applyToProfile": "Apply energy goal to profile",
+      "alreadyActive": "Already active in profile",
+      "saving": "Saving...",
+      "disclaimer": "* Estimate based on preserved lean mass and selected weight change interval."
+    },
+    "toast": {
+      "profileUpdated": "Energy goal updated in profile",
+      "profileUpdateFailed": "Could not update profile",
+      "profileSaved": "Profile updated",
+      "profileSaveFailed": "Could not update profile"
+    },
+    "gender": {
+      "male": "Male",
+      "female": "Female"
+    }
+  },
+  "metCalc": {
+    "noProfile": {
+      "title": "No active profile",
+      "description": "You need a profile to use the MET calculator.",
+      "action": "Go to profile"
+    },
+    "header": {
+      "title": "MET Activity Calculator",
+      "description": "Calculate calories burned from over 1100 activities with metric units",
+      "source": "Based on the 2024 Compendium of Physical Activities, published in Journal of Sport and Health Science",
+      "badge": "Energy & Metabolic"
+    },
+    "search": {
+      "title": "Search Activities",
+      "description": "Find activities from {{count}} different options",
+      "categoryLabel": "Category",
+      "allCategories": "All categories",
+      "searchLabel": "Search activity",
+      "searchPlaceholder": "Search by activity, code or intensity...",
+      "searchTip": "Tip: Search for \"light\", \"moderate\", \"high\" or \"very high\" for intensity level",
+      "resultsFound_one": "Found {{count}} activity",
+      "resultsFound_other": "Found {{count}} activities",
+      "noResults": "No activities found"
+    },
+    "summary": {
+      "title": "Total",
+      "activities": "Activities:",
+      "time": "Time:",
+      "calories": "Calories:",
+      "minuteUnit": "min"
+    },
+    "selected": {
+      "title": "Selected Activities",
+      "clearAll": "Clear all",
+      "minuteAbbr": "min"
+    },
+    "activityRow": {
+      "choose": "Select",
+      "minutesLabel": "Minutes",
+      "addButton": "Add"
+    },
+    "toast": {
+      "missingWeight": "Please fill in your weight first",
+      "invalidDuration": "Duration must be greater than 0",
+      "calcError": "Could not calculate calories. Check your values.",
+      "activityAdded": "{{activity}} added"
+    }
+  },
+  "tdeeCalc": {
+    "noProfile": {
+      "title": "No active profile",
+      "description": "You need a profile to use the TDEE calculator.",
+      "action": "Go to profile"
+    },
+    "header": {
+      "title": "TDEE & Calorie Calculator",
+      "description": "Calculate your total daily energy expenditure and calorie range for your goals",
+      "badge": "Energy & Metabolic"
+    },
+    "tabs": {
+      "calculator": "Calculator",
+      "comparison": "Comparison"
+    },
+    "infoCards": {
+      "bmrRmr": "What is BMR and RMR?",
+      "bmrRmrModal": "BMR vs RMR - The difference explained",
+      "palMet": "What is PAL and MET?",
+      "palMetModal": "PAL vs MET - Activity levels explained",
+      "tdee": "What is TDEE?",
+      "tdeeModal": "TDEE - Total Daily Energy Expenditure",
+      "lbmFfm": "Difference between LBM and FFM?",
+      "lbmFfmModal": "LBM vs FFM - Fat-free mass explained"
+    },
+    "weight": {
+      "title": "Weight for calculation",
+      "description": "Choose which weight to use for the TDEE calculation",
+      "useLogged": "Use latest logged weight",
+      "useLoggedDetail": "{{weight}} kg (from weight tracking)",
+      "useManual": "Enter weight manually",
+      "useManualDetail": "Enter a custom weight for the calculation",
+      "fieldLabel": "Weight (kg)",
+      "fieldHint": "This value is used to calculate BMR and TDEE.",
+      "logHint": " Log your weight in Weight Tracking to use it here.",
+      "selectedWeight": "Selected weight for calculation:"
+    },
+    "bodyFat": {
+      "title": "Body fat percentage (optional)",
+      "description": "Some BMR formulas require body fat percentage for more accurate calculations",
+      "savedLabel": "Saved body fat percentage:",
+      "fieldLabel": "Body fat percentage (%)",
+      "fieldHint": "Required for formulas like Cunningham, MacroFactor FFM/Athlete and Fitness Stuff Podcast"
+    },
+    "bmr": {
+      "title": "BMR/RMR formula",
+      "description": "Choose a formula to calculate your basal metabolic rate",
+      "fieldLabel": "BMR/RMR formula",
+      "factLink": "Facts about this formula",
+      "placeholder": "Select BMR/RMR formula...",
+      "bodyFatWarning": "This formula requires body fat percentage. Please fill in body fat percentage above.",
+      "formulas": {
+        "mifflin": "Mifflin-St Jeor (Recommended)",
+        "revisedHarrisBenedict": "Revised Harris-Benedict",
+        "originalHarrisBenedict": "Original Harris-Benedict",
+        "schofield": "Schofield",
+        "oxford": "Oxford/Henry",
+        "macrofactorStandard": "MacroFactor Standard",
+        "cunningham": "Cunningham (Requires body fat%)",
+        "macrofactorFFM": "MacroFactor FFM (Requires body fat%)",
+        "macrofactorAthlete": "MacroFactor Athlete (Requires body fat%)",
+        "fitnessStuff": "Fitness Stuff Podcast (Requires body fat%)"
+      }
+    },
+    "pal": {
+      "title": "PAL system (Activity level)",
+      "description": "Choose a system to calculate your physical activity level",
+      "fieldLabel": "PAL system",
+      "factLink": "Facts about this PAL system",
+      "placeholder": "Select PAL system...",
+      "calculateLevel": "Calculate your activity level"
+    },
+    "results": {
+      "title": "Your Results",
+      "description": "Basal metabolic rate and total daily energy expenditure",
+      "bmrLabel": "BASAL METABOLIC RATE",
+      "tdeeLabel": "TOTAL ENERGY EXPENDITURE",
+      "kcalPerDay": "kcal/day",
+      "saveButton": "Save to profile",
+      "saving": "Saving..."
+    },
+    "toast": {
+      "cannotSave": "Cannot save: missing data",
+      "overwriteConfirm": "You already have a saved TDEE value. Do you want to overwrite it with the new calculation?",
+      "saved": "TDEE has been saved to your profile!",
+      "saveFailed": "Could not save TDEE"
+    }
+  },
+  "palFields": {
+    "activityLevel": "Activity level *",
+    "activityLevelPlaceholder": "Select activity level...",
+    "intensityLevel": "Intensity level *",
+    "intensityLevelPlaceholder": "Select intensity...",
+    "trainingFrequency": "Training sessions per week *",
+    "trainingDuration": "Minutes per session *",
+    "dailySteps": "Daily steps *",
+    "dailyStepsPlaceholder": "Select step range...",
+    "customPAL": "Custom PAL value (1.0 - 3.0) *",
+    "customPALHint": "Enter your own PAL value if you know it"
+  }
+}

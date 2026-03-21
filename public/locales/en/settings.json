@@ -1,0 +1,34 @@
+{
+  "title": "Settings",
+  "sections": {
+    "account": "Account",
+    "notifications": "Notifications",
+    "appearance": "Appearance",
+    "language": "Language",
+    "danger": "Danger zone"
+  },
+  "language": {
+    "label": "Language",
+    "sv": "Swedish",
+    "en": "English"
+  },
+  "account": {
+    "changePassword": "Change password",
+    "changeEmail": "Change email",
+    "deleteAccount": "Delete account",
+    "deleteConfirm": "Are you sure you want to delete your account? This action cannot be undone.",
+    "deleteSuccess": "Account deleted",
+    "deleteError": "Could not delete account"
+  },
+  "password": {
+    "current": "Current password",
+    "new": "New password",
+    "confirm": "Confirm new password",
+    "changeSuccess": "Password changed",
+    "changeError": "Could not change password"
+  },
+  "toast": {
+    "saved": "Settings saved",
+    "saveError": "Could not save settings"
+  }
+}

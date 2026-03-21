@@ -1,0 +1,133 @@
+{
+  "title": "Kroppskomposition",
+  "metrics": {
+    "bmi": "BMI",
+    "bmiLabel": "Kroppsmasseindex",
+    "ffmi": "FFMI",
+    "ffmiLabel": "Fettfri massaindex",
+    "bodyFat": "Kroppsfett",
+    "leanMass": "Fettfri massa",
+    "muscleMass": "Muskelmassa"
+  },
+  "bmiCategory": {
+    "underweight": "Undervikt",
+    "normal": "Normalvikt",
+    "overweight": "Övervikt",
+    "obese": "Fetma"
+  },
+  "measurements": {
+    "title": "Mätningar",
+    "addMeasurement": "Lägg till mätning",
+    "weight": "Vikt (kg)",
+    "bodyFatPercent": "Kroppsfett (%)",
+    "date": "Datum"
+  },
+  "toast": {
+    "saved": "Mätning sparad",
+    "saveError": "Kunde inte spara mätning",
+    "deleted": "Mätning borttagen",
+    "deleteError": "Kunde inte ta bort mätning"
+  },
+  "empty": "Inga mätningar ännu",
+  "methods": {
+    "title": "Beräkningsmetod"
+  },
+  "hub": {
+    "title": "Kroppssammansättning",
+    "subtitle": "Välj vilket verktyg du vill använda",
+    "calculateTitle": "Beräkna din kroppssammansättning",
+    "calculateDesc": "Mät och beräkna din kroppsfetthalt och fettfria massa med olika metoder som calipers och måttband",
+    "geneticTitle": "Genetisk Muskelpotential",
+    "geneticDesc": "Uppskatta din maximala genetiska muskelpotential baserat på skelettstruktur och kroppsmått",
+    "missingDataAlert": "För att se dina personliga värden behöver du fylla i kroppsfett%, vikt och längd i din profil.",
+    "referenceValues": "Referensvärden",
+    "bodyFatTableTitle": "Kroppsfett % (ACE)",
+    "ffmiCategories": "FFMI-kategorier",
+    "ffmiWithBodyFat": "FFMI med kroppsfett-intervall",
+    "currentValues": "Dina nuvarande värden",
+    "leanMassCard": "Fettfri massa",
+    "bodyFatSubtitle": "{{value}}% kroppsfett",
+    "bodyFatTableShort": "Kroppsfett %",
+    "ffmiModalTitle": "FFMI (Fat Free Mass Index)",
+    "ffmiModalSubtitle": "Mått på muskelmassa i relation till längd",
+    "normalizedFFMIModalTitle": "Normaliserad FFMI",
+    "normalizedFFMIModalSubtitle": "Längdjusterat muskelmassindex",
+    "showFFMIInfo": "Visa information om FFMI",
+    "showNormalizedFFMIInfo": "Visa information om Normaliserad FFMI",
+    "closeModal": "Stäng",
+    "closeModalAriaLabel": "Stäng modal"
+  },
+  "results": {
+    "bodyDensity": "Kroppsdensitet",
+    "densityUnit": "g/cm³ (med {{method}}-ekvationen)",
+    "bodyFat": "Kroppsfett",
+    "method": "Metod: {{method}}",
+    "estimatedRMR": "Baserat på uppskattat RMR från Mifflin-St Jeor-ekvationen",
+    "saving": "Sparar...",
+    "saveToProfile": "Spara till profil"
+  },
+  "card": {
+    "moveUp": "Flytta upp",
+    "moveDown": "Flytta ned",
+    "stopEditing": "Avsluta redigering",
+    "editName": "Redigera namn",
+    "saveChanges": "Klicka för att spara",
+    "saveMeasurements": "Spara mätningar",
+    "deleteSet": "Ta bort mätset"
+  },
+  "list": {
+    "unsavedWarning": "Du har osparade ändringar. Vill du fortsätta? Ändringar kommer att förloras.",
+    "deleteConfirm": "Är du säker på att du vill ta bort mätset från {{date}} - {{time}}? Detta går inte att ångra.",
+    "loading": "Laddar mätningar...",
+    "emptyList": "Inga sparade mätningar ännu. Fyll i mätningar och spara!",
+    "removedDescription": "{{date}} - {{time}} har tagits bort"
+  },
+  "caliper": {
+    "title": "Kalipermätningar",
+    "description": "Hudvecksmätningar utförs på kroppens högra sida. Se till att hudvecket greppas korrekt med tumme och pekfinger, utan att dra med muskelvävnad. Kalipern ska placeras vinkelrätt mot hudvecket, cirka 1 cm från fingrarna, och avläsningen ska göras efter 1–2 sekunder när trycket stabiliserats. Ta varje hudveck minst två gånger och använd medelvärdet. Om skillnaden >1–2 mm, mät även en tredje gång. Anges i millimeter (mm).",
+    "validationError": "Måste vara mellan {{min}} och {{max}} mm",
+    "measurementInstruction": "Mätinstruktion",
+    "infoAriaLabel": "Visa information om {{field}}",
+    "closeModal": "Stäng",
+    "closeModalAriaLabel": "Stäng modal"
+  },
+  "tape": {
+    "title": "Måttbandsmätningar",
+    "description": "Mät omkrets på angivna ställen med måttband. Mät när du står avslappnad och andas normalt. Se till att måttbandet inte sitter för hårt eller för löst och att det ligger plant mot huden. Anges i centimeter (cm).",
+    "validationError": "Måste vara mellan {{min}} och {{max}} cm",
+    "measurementInstruction": "Mätinstruktion",
+    "infoAriaLabel": "Visa information om {{field}}",
+    "closeModal": "Stäng",
+    "closeModalAriaLabel": "Stäng modal"
+  },
+  "methodModal": {
+    "description": "Beskrivning",
+    "returnsDensityLabel": "Returnerar kroppsdensitet",
+    "returnsDensityNote": "- Konverteras sedan till kroppsfett% med Siri eller Brozek ekvationen.",
+    "returnsFatDirectLabel": "Returnerar kroppsfett% direkt",
+    "returnsFatDirectNote": "- Ingen densitetskonvertering behövs.",
+    "betterFor": "Denna metod är bättre för:",
+    "importantToKnow": "Viktigt att veta",
+    "formula": "Formel",
+    "references": "Referenser",
+    "source": "Källa:",
+    "close": "Stäng",
+    "closeAriaLabel": "Stäng"
+  },
+  "ffmiCard": {
+    "noHeightMessage": "Längdinformation saknas i profilen för att beräkna FFMI.",
+    "normalized": "Normaliserad:",
+    "leanBodyMass": "Fettfri massa:",
+    "category": "Kategori:"
+  },
+  "maxFat": {
+    "title": "Maximal fettförbränning",
+    "deficit": "{{value}} kcal underskott",
+    "tdeePercent": "{{value}}% av ditt TDEE",
+    "description": "Detta representerar den maximala hastigheten med vilken din kropp kan förbränna fett för energi (ca 31 kcal/kg kroppsfett per dag). Att överskrida detta underskott kan leda till muskelförlust."
+  },
+  "sidebar": {
+    "savedMeasurements": "Sparade mätningar",
+    "newMeasurement": "Ny mätning"
+  }
+}

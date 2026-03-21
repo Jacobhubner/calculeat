@@ -2,6 +2,7 @@
  * MeasurementSetList - Lista med alla sparade och osparade mätset
  */
 
+import { useTranslation } from 'react-i18next'
 import { useMeasurementSetStore } from '@/stores/measurementSetStore'
 import {
   useMeasurementSets,
@@ -27,6 +28,7 @@ export default function MeasurementSetList({
   onDeleteSet,
   isSaving = false,
 }: MeasurementSetListProps) {
+  const { t } = useTranslation('body')
   const activeMeasurementSet = useMeasurementSetStore(state => state.activeMeasurementSet)
   const setActiveMeasurementSet = useMeasurementSetStore(state => state.setActiveMeasurementSet)
   const unsavedMeasurementSets = useMeasurementSetStore(state => state.unsavedMeasurementSets)
@@ -94,9 +96,7 @@ export default function MeasurementSetList({
   const handleSelect = (setId: string) => {
     // Check for unsaved changes before switching
     if (hasUnsavedChanges && activeMeasurementSet?.id !== setId) {
-      const confirmed = window.confirm(
-        'Du har osparade ändringar. Vill du fortsätta? Ändringar kommer att förloras.'
-      )
+      const confirmed = window.confirm(t('list.unsavedWarning'))
       if (!confirmed) return
 
       // Rensa tidigare osparat kort om det finns
@@ -120,9 +120,7 @@ export default function MeasurementSetList({
       minute: '2-digit',
     })
 
-    const confirmed = window.confirm(
-      `Är du säker på att du vill ta bort mätset från ${displayDate} - ${displayTime}? Detta går inte att ångra.`
-    )
+    const confirmed = window.confirm(t('list.deleteConfirm', { date: displayDate, time: displayTime }))
 
     if (!confirmed) return
 
@@ -134,8 +132,8 @@ export default function MeasurementSetList({
       if (activeMeasurementSet?.id === id) {
         setActiveMeasurementSet(null)
       }
-      toast.success('Mätning borttagen', {
-        description: `${displayDate} - ${displayTime} har tagits bort`,
+      toast.success(t('toast.deleted'), {
+        description: t('list.removedDescription', { date: displayDate, time: displayTime }),
       })
       return
     }
@@ -159,13 +157,13 @@ export default function MeasurementSetList({
   const allSets = [...unsavedMeasurementSets, ...sortedSavedSets]
 
   if (isLoading) {
-    return <div className="text-sm text-neutral-500 text-center py-4">Laddar mätningar...</div>
+    return <div className="text-sm text-neutral-500 text-center py-4">{t('list.loading')}</div>
   }
 
   if (allSets.length === 0) {
     return (
       <div className="text-sm text-neutral-500 text-center py-4">
-        Inga sparade mätningar ännu. Fyll i mätningar och spara!
+        {t('list.emptyList')}
       </div>
     )
   }

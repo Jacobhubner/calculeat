@@ -1,0 +1,219 @@
+{
+  "title": "Profile",
+  "header": {
+    "title": "My Profile",
+    "description": "Manage your profile and personal settings."
+  },
+  "noProfile": "Select or create a profile to get started",
+  "sections": {
+    "personal": "Personal information",
+    "goals": "Goals",
+    "activity": "Activity",
+    "diet": "Diet",
+    "tdee": "Energy needs (TDEE)"
+  },
+  "fields": {
+    "name": "Name",
+    "email": "Email address",
+    "age": "Age",
+    "gender": "Gender",
+    "height": "Height (cm)",
+    "weight": "Weight (kg)",
+    "goalWeight": "Target weight (kg)",
+    "activityLevel": "Activity level",
+    "calorieGoal": "Calorie goal",
+    "proteinGoal": "Protein goal (g)",
+    "carbGoal": "Carbohydrate goal (g)",
+    "fatGoal": "Fat goal (g)"
+  },
+  "gender": {
+    "male": "Male",
+    "female": "Female",
+    "other": "Other"
+  },
+  "activityLevel": {
+    "sedentary": "Sedentary",
+    "light": "Lightly active",
+    "moderate": "Moderately active",
+    "active": "Active",
+    "veryActive": "Very active"
+  },
+  "toast": {
+    "saved": "Profile saved",
+    "saveError": "Could not save profile",
+    "basicInfoSaved": "Basic information saved",
+    "basicInfoSaveError": "Could not save information",
+    "profileSavedWithSync": "Profile saved! Today's goals have been updated automatically.",
+    "profileSavedSyncFailed": "Note: Could not update today's goals. Try syncing manually.",
+    "changesSaved": "Changes saved",
+    "changesSaveError": "Could not save changes",
+    "incompleteBasicInfo": "Please fill in all basic information before saving",
+    "incompleteBasicInfoDesc": "Date of birth, gender, height and weight are required"
+  },
+  "save": {
+    "saving": "Saving...",
+    "saveChanges": "Save changes",
+    "noChanges": "No changes"
+  },
+  "setup": {
+    "title": "Fill in your basic information",
+    "description": "We need this information to calculate your energy needs.",
+    "saveAndContinue": "Save and continue"
+  },
+  "basicInfo": {
+    "title": "Basic information",
+    "allLocked": "All fields are locked",
+    "lockedDesc": "Date of birth, gender and height are locked once basic information is filled in. Contact support if you need to change these.",
+    "lockTitle": "These fields are locked once basic information is filled in.",
+    "locked": "Locked",
+    "confirmChange": "Warning: You are trying to change \"{{field}}\".\n\nThese fields are locked once basic information is filled in.\n\nDo you want to continue?"
+  },
+  "birthDate": {
+    "label": "Date of birth",
+    "day": "Day",
+    "month": "Month",
+    "year": "Year"
+  },
+  "months": {
+    "1": "January",
+    "2": "February",
+    "3": "March",
+    "4": "April",
+    "5": "May",
+    "6": "June",
+    "7": "July",
+    "8": "August",
+    "9": "September",
+    "10": "October",
+    "11": "November",
+    "12": "December"
+  },
+  "calorieGoal": {
+    "maintain": "Maintain weight",
+    "loss": "Weight loss",
+    "gain": "Weight gain"
+  },
+  "results": {
+    "title": "Results",
+    "basalMetabolism": "Basal metabolism",
+    "totalEnergyNeed": "Total energy needs",
+    "calorieRange": "Calorie range"
+  },
+  "bodyComposition": {
+    "title": "Body composition",
+    "bodyFatLabel": "Body fat percentage (optional)",
+    "bodyFatHint": "Required for certain BMR formulas if you want to recalculate TDEE.",
+    "goToBodyComp": "Go to body composition"
+  },
+  "energyGoal": {
+    "title": "Energy goal"
+  },
+  "advancedSettings": {
+    "title": "Advanced settings"
+  },
+  "dangerZone": {
+    "title": "Danger zone",
+    "deleteAccount": "Delete my account",
+    "deleteWarning": "All your data will be permanently deleted — food items, recipes, history, profiles and measurement sets. This cannot be undone.",
+    "deleteConfirm": "Are you absolutely sure? Type DELETE below to confirm.",
+    "deleteConfirmPlaceholder": "Type DELETE",
+    "deleteConfirmButton": "Yes, I want to delete my account",
+    "deletePermanent": "Delete permanently",
+    "deleting": "Deleting...",
+    "cancel": "Cancel",
+    "accountDeleted": "Your account has been deleted.",
+    "deleteError": "Something went wrong deleting your account. Please try again."
+  },
+  "mealSettings": {
+    "title": "Meal settings",
+    "mealNamePlaceholder": "Meal name",
+    "removeDisabled": "You must have at least one meal",
+    "remove": "Remove meal",
+    "percentage": "Percentage",
+    "addMeal": "Add meal",
+    "newMealName": "New meal {{n}}",
+    "totalDistribution": "Total distribution:",
+    "totalError": "Total must be exactly 100%. Adjust the percentages above.",
+    "duplicateError": "Each meal must have a unique name. Rename duplicates.",
+    "tip": "💡 Distribute your calories throughout the day based on your habits.",
+    "saveHint": "Press Save changes below to update the meals in Today's log.",
+    "defaultBreakfast": "Breakfast",
+    "defaultLunch": "Lunch",
+    "defaultSnack": "Snack",
+    "defaultDinner": "Dinner"
+  },
+  "floatingSave": {
+    "profileNameLabel": "Profile name",
+    "profileNamePlaceholder": "My profile"
+  },
+  "settings": {
+    "title": "Settings",
+    "description": "Manage your account and app settings",
+    "appSettings": "App settings",
+    "dayCompletion": "Day completion",
+    "manual": "Manual",
+    "manualDesc": "End the day yourself with the \"End day\" button",
+    "auto": "Automatic",
+    "autoDesc": "The day ends automatically at midnight",
+    "toastAuto": "The day will now end automatically at midnight",
+    "toastManual": "You will now end the day manually with the button",
+    "loading": "Loading...",
+    "account": "Account",
+    "username": "Username",
+    "usernameHint": "Letters, numbers and _ (2–50 characters). Must be unique.",
+    "usernamePlaceholder": "@username",
+    "email": "Email address",
+    "emailConfirmSent": "Confirmation email sent to {{email}}",
+    "emailConfirmDesc": "The change activates when you click the link in the email.",
+    "emailConfirmNotice": "Confirmation email sent to",
+    "emailConfirmAction": "Click the link in the email to activate the change.",
+    "emailHint": "A confirmation email will be sent to the new address.",
+    "emailSameError": "The new email address is the same as the current one",
+    "close": "Close",
+    "password": "Password",
+    "newPassword": "New password",
+    "passwordPlaceholder": "At least 6 characters",
+    "confirmPassword": "Confirm password",
+    "passwordMismatch": "Passwords do not match",
+    "savePassword": "Save password",
+    "passwordTooShort": "Password must be at least 6 characters",
+    "passwordUpdated": "Password has been updated",
+    "edit": "Edit",
+    "save": "Save",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "basicInfoSaved": "Basic information saved",
+    "basicInfoSaveError": "Could not save basic information",
+    "usernameTaken": "Username is already taken",
+    "usernameInvalidFormat": "Invalid format. Use letters, numbers and _",
+    "usernameUpdateError": "Could not update username",
+    "usernameUpdated": "Username updated",
+    "adminManagement": "Admin management",
+    "adminPlaceholder": "Email address or username",
+    "addAdmin": "Add",
+    "addingAdmin": "Adding...",
+    "adminAdded": "Invitation sent",
+    "adminNotFound": "No user found",
+    "adminAlreadyAdmin": "User is already an admin",
+    "adminInvitationPending": "An invitation has already been sent to that user",
+    "adminAddError": "Could not send invitation",
+    "adminRemoved": "Admin removed",
+    "adminRemoveError": "Could not remove admin",
+    "adminRemoveTitle": "Remove admin",
+    "passwordStrengthTooShort": "Too short",
+    "passwordStrengthWeak": "Weak",
+    "passwordStrengthGood": "Good",
+    "passwordStrengthStrong": "Strong",
+    "deleteAccountTitle": "Danger zone",
+    "deleteAccountWarning": "If you delete your account, all data will be permanently lost. This action cannot be undone.",
+    "deleteAccountButton": "Delete my account",
+    "deleteAccountConfirm": "Are you sure? All your data will be permanently deleted.",
+    "deleteAccountSure": "Yes, I am sure",
+    "deleteAccountFinal": "Type DELETE to confirm:",
+    "deleteAccountPlaceholder": "Type DELETE",
+    "deleteAccountPermanent": "Delete permanently",
+    "deleting": "Deleting...",
+    "accountDeleted": "Your account has been deleted.",
+    "deleteError": "Something went wrong deleting your account. Please try again."
+  }
+}

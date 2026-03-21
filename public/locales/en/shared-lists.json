@@ -1,0 +1,39 @@
+{
+  "title": "Shared lists",
+  "create": {
+    "title": "Create list",
+    "namePlaceholder": "List name",
+    "submit": "Create list",
+    "success": "List created",
+    "error": "Could not create list"
+  },
+  "invite": {
+    "title": "Invite to list",
+    "emailPlaceholder": "Email address",
+    "submit": "Invite",
+    "success": "Invitation sent",
+    "error": "Could not send invitation"
+  },
+  "leave": {
+    "confirm": "Leave list",
+    "description": "Are you sure you want to leave this list?",
+    "success": "You have left the list",
+    "error": "Could not leave the list"
+  },
+  "members": {
+    "title": "Members",
+    "owner": "Owner"
+  },
+  "invitations": {
+    "title": "Invitations",
+    "pending": "Pending",
+    "accept": "Accept",
+    "decline": "Decline",
+    "acceptSuccess": "Invitation accepted",
+    "declineSuccess": "Invitation declined",
+    "acceptError": "Could not accept invitation",
+    "declineError": "Could not decline invitation"
+  },
+  "empty": "No shared lists yet",
+  "tab": "List: {{name}}"
+}

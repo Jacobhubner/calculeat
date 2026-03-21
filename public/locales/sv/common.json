@@ -1,0 +1,80 @@
+{
+  "actions": {
+    "save": "Spara",
+    "cancel": "Avbryt",
+    "delete": "Ta bort",
+    "edit": "Redigera",
+    "add": "Lägg till",
+    "close": "Stäng",
+    "confirm": "Bekräfta",
+    "back": "Tillbaka",
+    "next": "Nästa",
+    "done": "Klar",
+    "search": "Sök",
+    "clear": "Rensa",
+    "copy": "Kopiera",
+    "share": "Dela",
+    "remove": "Ta bort",
+    "create": "Skapa",
+    "update": "Uppdatera",
+    "submit": "Skicka",
+    "continue": "Fortsätt",
+    "tryAgain": "Försök igen"
+  },
+  "loading": "Laddar…",
+  "error": {
+    "generic": "Något gick fel",
+    "tryAgain": "Försök igen",
+    "notFound": "Sidan hittades inte",
+    "unauthorized": "Du är inte inloggad",
+    "network": "Nätverksfel – kontrollera din anslutning"
+  },
+  "validation": {
+    "required": "Fältet är obligatoriskt",
+    "invalidEmail": "Ogiltig e-postadress",
+    "tooShort": "För kort",
+    "tooLong": "För långt",
+    "mustBePositive": "Måste vara ett positivt tal",
+    "invalidNumber": "Ogiltigt tal"
+  },
+  "units": {
+    "kcal": "kcal",
+    "g": "g",
+    "ml": "ml",
+    "kg": "kg",
+    "cm": "cm",
+    "percent": "%"
+  },
+  "nav": {
+    "dashboard": "Hem",
+    "food": "Livsmedel",
+    "recipes": "Recept",
+    "history": "Historik",
+    "profile": "Profil",
+    "settings": "Inställningar",
+    "body": "Kroppskomposition",
+    "login": "Logga in",
+    "logout": "Logga ut",
+    "register": "Skapa konto"
+  },
+  "auth": {
+    "loggedOut": "Du har loggats ut",
+    "logoutError": "Något gick fel vid utloggning",
+    "sessionExpired": "Din session har löpt ut. Vänligen logga in igen."
+  },
+  "status": {
+    "saving": "Sparar...",
+    "loading": "Laddar...",
+    "deleting": "Tar bort...",
+    "reloadPage": "Ladda om sidan"
+  },
+  "errorBoundary": {
+    "title": "Något gick fel",
+    "description": "Ett oväntat fel inträffade. Försök ladda om sidan eller kontakta support om problemet kvarstår.",
+    "tryAgain": "Försök igen"
+  },
+  "onboarding": {
+    "completeProfile": "Välkommen! Vänligen slutför din profil för att beräkna dina kaloribehov.",
+    "calculateTDEE": "Beräkna eller ange ditt TDEE för att fortsätta"
+  }
+}

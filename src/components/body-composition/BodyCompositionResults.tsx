@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import type { BodyCompositionMethod } from '@/lib/calculations/bodyComposition'
@@ -22,6 +23,7 @@ export default function BodyCompositionResults({
   onSave,
   isSaving,
 }: BodyCompositionResultsProps) {
+  const { t } = useTranslation('body')
   return (
     <div className="space-y-4">
       {/* Body Density Card - Only for density-based methods */}
@@ -30,13 +32,13 @@ export default function BodyCompositionResults({
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Droplet className="h-5 w-5 text-blue-600" />
-              Kroppsdensitet
+              {t('results.bodyDensity')}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-blue-700">{bodyDensity.toFixed(4)}</div>
             <p className="text-sm text-blue-600 mt-1">
-              g/cm³ (med {conversionMethod === 'siri' ? 'Siri' : 'Brozek'}-ekvationen)
+              {t('results.densityUnit', { method: conversionMethod === 'siri' ? 'Siri' : 'Brozek' })}
             </p>
           </CardContent>
         </Card>
@@ -47,7 +49,7 @@ export default function BodyCompositionResults({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Gauge className="h-5 w-5 text-primary-600" />
-            Kroppsfett
+            {t('results.bodyFat')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -62,10 +64,10 @@ export default function BodyCompositionResults({
           >
             {bodyFatPercentage.toFixed(1)}%
           </div>
-          <p className="text-sm text-neutral-600 mt-2">Metod: {selectedMethod}</p>
+          <p className="text-sm text-neutral-600 mt-2">{t('results.method', { method: selectedMethod })}</p>
           {isEstimatedBMR && selectedMethod === 'Reversed Cunningham equation' && (
             <p className="text-xs text-amber-700 mt-1 bg-amber-50 p-2 rounded border border-amber-200">
-              ℹ️ Baserat på uppskattat RMR från Mifflin-St Jeor-ekvationen
+              ℹ️ {t('results.estimatedRMR')}
             </p>
           )}
         </CardContent>
@@ -74,7 +76,7 @@ export default function BodyCompositionResults({
       {/* Save Button */}
       <Button onClick={onSave} disabled={isSaving} className="w-full" size="lg">
         <Save className="h-4 w-4 mr-2" />
-        {isSaving ? 'Sparar...' : 'Spara till profil'}
+        {isSaving ? t('results.saving') : t('results.saveToProfile')}
       </Button>
     </div>
   )

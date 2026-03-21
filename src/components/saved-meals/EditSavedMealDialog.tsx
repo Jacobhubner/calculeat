@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   Dialog,
   DialogContent,
@@ -25,6 +26,7 @@ export default function EditSavedMealDialog({
   onOpenChange,
   meal,
 }: EditSavedMealDialogProps) {
+  const { t } = useTranslation('recipes')
   const [mealName, setMealName] = useState(meal.name)
   const updateMeal = useUpdateSavedMeal()
 
@@ -38,7 +40,7 @@ export default function EditSavedMealDialog({
   const handleSave = async () => {
     const trimmedName = mealName.trim()
     if (!trimmedName) {
-      toast.error('Måltiden måste ha ett namn')
+      toast.error(t('editMealDialog.errorEmpty'))
       return
     }
 
@@ -47,11 +49,11 @@ export default function EditSavedMealDialog({
         id: meal.id,
         name: trimmedName,
       })
-      toast.success('Måltiden har döpts om')
+      toast.success(t('editMealDialog.successRenamed'))
       onOpenChange(false)
     } catch (error) {
       console.error('Error updating meal:', error)
-      toast.error('Kunde inte uppdatera måltiden')
+      toast.error(t('editMealDialog.updateError'))
     }
   }
 
@@ -59,17 +61,17 @@ export default function EditSavedMealDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Byt namn på måltid</DialogTitle>
+          <DialogTitle>{t('editMealDialog.title')}</DialogTitle>
         </DialogHeader>
 
         <div className="py-2">
           <div className="space-y-2">
-            <Label htmlFor="meal-name">Namn</Label>
+            <Label htmlFor="meal-name">{t('editMealDialog.nameLabel')}</Label>
             <Input
               id="meal-name"
               value={mealName}
               onChange={e => setMealName(e.target.value)}
-              placeholder="T.ex. Frukost med gröt"
+              placeholder={t('editMealDialog.namePlaceholder')}
               onKeyDown={e => {
                 if (e.key === 'Enter') handleSave()
               }}
@@ -79,7 +81,7 @@ export default function EditSavedMealDialog({
 
         <DialogFooter className="gap-2 sm:gap-0">
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Avbryt
+            {t('editMealDialog.cancel')}
           </Button>
           <Button
             onClick={handleSave}
@@ -88,10 +90,10 @@ export default function EditSavedMealDialog({
             {updateMeal.isPending ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                Sparar...
+                {t('editMealDialog.saving')}
               </>
             ) : (
-              'Spara'
+              t('editMealDialog.save')
             )}
           </Button>
         </DialogFooter>

@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { User, Session } from '@supabase/supabase-js'
 import { toast } from 'sonner'
+import i18n from '@/i18n'
 import { supabase } from '@/lib/supabase'
 import { UserProfile } from '@/lib/types'
 import { useProfileStore } from '@/stores/profileStore'
@@ -102,7 +103,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Only show toast if this was an unexpected sign out (session expired)
         // Don't show if user explicitly signed out (handled in signOut function)
         if (window.location.pathname.startsWith('/app')) {
-          toast.error('Din session har löpt ut. Vänligen logga in igen.')
+          toast.error(i18n.t('common:auth.sessionExpired'))
         }
       } else if (event === 'TOKEN_REFRESHED') {
         // Session was successfully refreshed

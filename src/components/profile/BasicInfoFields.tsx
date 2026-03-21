@@ -6,6 +6,7 @@
  */
 
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Lock, Info, ChevronDown } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
@@ -37,6 +38,8 @@ export default function BasicInfoFields({
   showLockNotice = false,
 }: BasicInfoFieldsProps) {
   // Collapsible state - collapsed when locked (info already filled), open otherwise
+  const { t } = useTranslation('profile')
+  const tAny = t as (key: string) => string
   const [isOpen, setIsOpen] = useState(!locked)
 
   // Parse birth date into day, month, year for dropdowns
@@ -84,16 +87,12 @@ export default function BasicInfoFields({
   const confirmLockedFieldChange = (fieldName: string): boolean => {
     if (!locked) return true
 
-    return window.confirm(
-      `Varning: Du försöker ändra "${fieldName}".\n\n` +
-        `Dessa fält låses när grundläggande information är ifylld.\n\n` +
-        `Vill du fortsätta?`
-    )
+    return window.confirm(t('basicInfo.confirmChange', { field: fieldName }))
   }
 
   // Handle individual dropdown changes
   const handleDayChange = (day: string) => {
-    if (locked && birthDay && !confirmLockedFieldChange('Födelsedatum')) {
+    if (locked && birthDay && !confirmLockedFieldChange(t('birthDate.label'))) {
       return
     }
     setBirthDay(day)
@@ -101,7 +100,7 @@ export default function BasicInfoFields({
   }
 
   const handleMonthChange = (month: string) => {
-    if (locked && birthMonth && !confirmLockedFieldChange('Födelsedatum')) {
+    if (locked && birthMonth && !confirmLockedFieldChange(t('birthDate.label'))) {
       return
     }
     setBirthMonth(month)
@@ -109,7 +108,7 @@ export default function BasicInfoFields({
   }
 
   const handleYearChange = (year: string) => {
-    if (locked && birthYear && !confirmLockedFieldChange('Födelsedatum')) {
+    if (locked && birthYear && !confirmLockedFieldChange(t('birthDate.label'))) {
       return
     }
     setBirthYear(year)
@@ -130,14 +129,14 @@ export default function BasicInfoFields({
   }
 
   const handleGenderChange = (newGender: Gender) => {
-    if (locked && gender && !confirmLockedFieldChange('Kön')) {
+    if (locked && gender && !confirmLockedFieldChange(t('fields.gender'))) {
       return
     }
     onGenderChange(newGender)
   }
 
   const handleHeightInput = (value: string) => {
-    if (locked && heightString && !confirmLockedFieldChange('Längd')) {
+    if (locked && heightString && !confirmLockedFieldChange(t('fields.height'))) {
       return
     }
     setHeightString(value)
@@ -159,7 +158,7 @@ export default function BasicInfoFields({
     }
   }
 
-  const lockTitle = 'Dessa fält är låsta när grundläggande information är ifylld.'
+  const lockTitle = t('basicInfo.lockTitle')
 
   return (
     <Card className="border-2 border-neutral-300">
@@ -171,7 +170,7 @@ export default function BasicInfoFields({
         >
           <CardTitle className="flex items-center gap-2">
             <Info className="h-5 w-5 text-neutral-600" />
-            Grundläggande information
+            {t('basicInfo.title')}
           </CardTitle>
           <ChevronDown
             className={`h-5 w-5 text-neutral-600 transition-transform duration-200 ${
@@ -189,10 +188,9 @@ export default function BasicInfoFields({
               <Lock className="h-4 w-4" />
               <AlertDescription>
                 <div className="flex-1">
-                  <h4 className="font-semibold text-blue-900 mb-1">Alla fält är låsta</h4>
+                  <h4 className="font-semibold text-blue-900 mb-1">{t('basicInfo.allLocked')}</h4>
                   <p className="text-sm text-blue-800">
-                    Födelsedatum, kön och längd låses när grundläggande information är ifylld.
-                    Kontakta support om du behöver ändra dessa uppgifter.
+                    {t('basicInfo.lockedDesc')}
                   </p>
                 </div>
               </AlertDescription>
@@ -202,11 +200,11 @@ export default function BasicInfoFields({
           {/* Birth Date */}
           <div>
             <label className="block text-sm font-medium text-neutral-700 mb-2 flex items-center gap-2">
-              Födelsedatum <span className="text-red-600">*</span>
+              {t('birthDate.label')} <span className="text-red-600">*</span>
               {locked && (
                 <span className="flex items-center gap-1 text-xs text-neutral-500 font-normal">
                   <Lock className="h-3 w-3" />
-                  Låst
+                  {t('basicInfo.locked')}
                 </span>
               )}
             </label>
@@ -227,7 +225,7 @@ export default function BasicInfoFields({
                   }`}
                   title={locked ? lockTitle : ''}
                 >
-                  <option value="">Dag</option>
+                  <option value="">{t('birthDate.day')}</option>
                   {Array.from({ length: 31 }, (_, i) => i + 1).map(day => (
                     <option key={day} value={day}>
                       {day}
@@ -252,23 +250,10 @@ export default function BasicInfoFields({
                   }`}
                   title={locked ? lockTitle : ''}
                 >
-                  <option value="">Månad</option>
-                  {[
-                    'Januari',
-                    'Februari',
-                    'Mars',
-                    'April',
-                    'Maj',
-                    'Juni',
-                    'Juli',
-                    'Augusti',
-                    'September',
-                    'Oktober',
-                    'November',
-                    'December',
-                  ].map((month, index) => (
-                    <option key={index + 1} value={index + 1}>
-                      {month}
+                  <option value="">{t('birthDate.month')}</option>
+                  {Array.from({ length: 12 }, (_, i) => i + 1).map(i => (
+                    <option key={i} value={i}>
+                      {tAny(`months.${i}`)}
                     </option>
                   ))}
                 </select>
@@ -290,7 +275,7 @@ export default function BasicInfoFields({
                   }`}
                   title={locked ? lockTitle : ''}
                 >
-                  <option value="">År</option>
+                  <option value="">{t('birthDate.year')}</option>
                   {Array.from({ length: 105 }, (_, i) => new Date().getFullYear() - i).map(year => (
                     <option key={year} value={year}>
                       {year}
@@ -304,11 +289,11 @@ export default function BasicInfoFields({
           {/* Gender Selection */}
           <div>
             <label className="block text-sm font-medium text-neutral-700 mb-2 flex items-center gap-2">
-              Kön <span className="text-red-600">*</span>
+              {t('fields.gender')} <span className="text-red-600">*</span>
               {locked && (
                 <span className="flex items-center gap-1 text-xs text-neutral-500 font-normal">
                   <Lock className="h-3 w-3" />
-                  Låst
+                  {t('basicInfo.locked')}
                 </span>
               )}
             </label>
@@ -330,7 +315,7 @@ export default function BasicInfoFields({
                   disabled={locked}
                   className="mr-2 h-4 w-4 text-primary-600 focus:ring-primary-500 disabled:cursor-not-allowed"
                 />
-                <span className={locked ? 'text-neutral-400' : 'text-neutral-700'}>Man</span>
+                <span className={locked ? 'text-neutral-400' : 'text-neutral-700'}>{t('gender.male')}</span>
               </label>
               <label
                 className={`flex items-center ${locked ? 'cursor-not-allowed' : 'cursor-pointer'}`}
@@ -345,7 +330,7 @@ export default function BasicInfoFields({
                   disabled={locked}
                   className="mr-2 h-4 w-4 text-primary-600 focus:ring-primary-500 disabled:cursor-not-allowed"
                 />
-                <span className={locked ? 'text-neutral-400' : 'text-neutral-700'}>Kvinna</span>
+                <span className={locked ? 'text-neutral-400' : 'text-neutral-700'}>{t('gender.female')}</span>
               </label>
             </div>
           </div>
@@ -353,11 +338,11 @@ export default function BasicInfoFields({
           {/* Height */}
           <div>
             <label className="block text-sm font-medium text-neutral-700 mb-2 flex items-center gap-2">
-              Längd (cm) <span className="text-red-600">*</span>
+              {t('fields.height')} <span className="text-red-600">*</span>
               {locked && (
                 <span className="flex items-center gap-1 text-xs text-neutral-500 font-normal">
                   <Lock className="h-3 w-3" />
-                  Låst
+                  {t('basicInfo.locked')}
                 </span>
               )}
             </label>
@@ -388,7 +373,7 @@ export default function BasicInfoFields({
           {onWeightChange && (
             <div>
               <label className="block text-sm font-medium text-neutral-700 mb-2">
-                Vikt (kg) <span className="text-red-600">*</span>
+                {t('fields.weight')} <span className="text-red-600">*</span>
               </label>
               <input
                 type="number"

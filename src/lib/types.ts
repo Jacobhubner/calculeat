@@ -322,6 +322,7 @@ export interface ProfileFormData {
   gender?: Gender
   height_cm?: number
   weight_kg?: number
+  initial_weight_kg?: number
 
   // BMR & TDEE
   bmr_formula?: BMRFormula

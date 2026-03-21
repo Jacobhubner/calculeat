@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -11,6 +12,7 @@ import { useSavedMeals } from '@/hooks/useSavedMeals'
 import type { SavedMeal } from '@/hooks/useSavedMeals'
 
 export default function SavedMealsPage() {
+  const { t } = useTranslation('recipes')
   const [searchQuery, setSearchQuery] = useState('')
   const [selectSlotDialogOpen, setSelectSlotDialogOpen] = useState(false)
   const [selectedMealForUse, setSelectedMealForUse] = useState<{
@@ -69,10 +71,10 @@ export default function SavedMealsPage() {
         <div>
           <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent mb-1 md:mb-2 flex items-center gap-2 md:gap-3">
             <Bookmark className="h-6 w-6 md:h-8 md:w-8 text-primary-600" />
-            Sparade Måltider
+            {t('savedMeals.title')}
           </h1>
           <p className="text-sm md:text-base text-neutral-600">
-            Dina favoritmåltider för snabb loggning
+            {t('savedMeals.subtitle')}
           </p>
         </div>
       </div>
@@ -83,7 +85,7 @@ export default function SavedMealsPage() {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400" />
             <Input
-              placeholder="Sök efter sparade måltider..."
+              placeholder={t('savedMeals.searchPlaceholder')}
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               className="pl-10"
@@ -100,17 +102,17 @@ export default function SavedMealsPage() {
       ) : sortedMeals.length === 0 ? (
         <EmptyState
           icon={searchQuery ? Search : Bookmark}
-          title={searchQuery ? 'Inga måltider hittades' : 'Inga sparade måltider ännu'}
+          title={searchQuery ? t('savedMeals.emptyTitleSearch') : t('savedMeals.emptyTitle')}
           description={
             searchQuery
-              ? 'Försök med ett annat sökord'
-              : 'Spara dina favoritmåltider för att snabbt logga dem i framtiden.'
+              ? t('savedMeals.emptyDescriptionSearch')
+              : t('savedMeals.emptyDescription')
           }
           action={
             searchQuery
               ? undefined
               : {
-                  label: 'Gå till Dagens Logg',
+                  label: t('savedMeals.goToLog'),
                   onClick: () => (window.location.href = '/app/today'),
                 }
           }
@@ -132,28 +134,26 @@ export default function SavedMealsPage() {
       <div className="grid gap-6 md:grid-cols-2 mt-8">
         <Card className="bg-gradient-to-br from-primary-50 to-accent-50 border-primary-200">
           <CardHeader>
-            <CardTitle className="text-lg">💡 Använd Sparade Måltider</CardTitle>
+            <CardTitle className="text-lg">💡 {t('savedMeals.tipsTitle')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm text-neutral-700">
-            <p>• Skapa mallar för dina vanligaste måltider</p>
-            <p>• Lägg till snabbt i dagens logg med ett klick</p>
-            <p>• Perfekt för frukost som ofta är densamma</p>
-            <p>• Ändra mängder vid behov när du loggar</p>
+            <p>• {t('savedMeals.tip1')}</p>
+            <p>• {t('savedMeals.tip2')}</p>
+            <p>• {t('savedMeals.tip3')}</p>
+            <p>• {t('savedMeals.tip4')}</p>
           </CardContent>
         </Card>
 
         <Card className="bg-gradient-to-br from-accent-50 to-success-50 border-accent-200">
           <CardHeader>
-            <CardTitle className="text-lg">📋 Skillnad Recept vs Måltid</CardTitle>
+            <CardTitle className="text-lg">📋 {t('savedMeals.differenceTitle')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm text-neutral-700">
             <p>
-              <span className="font-semibold">Recept:</span> För mat du lagar själv. Kombinerar
-              ingredienser till ett nytt &quot;livsmedelsobjekt&quot;.
+              <span className="font-semibold">{t('savedMeals.recipeExplain')}</span> {t('savedMeals.recipeExplainText')}
             </p>
             <p>
-              <span className="font-semibold">Sparad måltid:</span> En kombination av
-              matvaror/recept som du ofta äter tillsammans.
+              <span className="font-semibold">{t('savedMeals.savedMealExplain')}</span> {t('savedMeals.savedMealExplainText')}
             </p>
           </CardContent>
         </Card>

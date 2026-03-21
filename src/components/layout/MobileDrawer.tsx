@@ -1,4 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   User,
@@ -57,6 +58,7 @@ const navGroups = {
 }
 
 export default function MobileDrawer() {
+  const { t } = useTranslation('common')
   const { user, signOut, userProfile } = useAuth()
   const { mobileDrawerOpen, setMobileDrawerOpen } = useUIStore()
   const location = useLocation()
@@ -72,10 +74,10 @@ export default function MobileDrawer() {
     close()
     try {
       await signOut()
-      toast.success('Du har loggats ut')
+      toast.success(t('auth.loggedOut'))
       navigate('/', { replace: true })
     } catch (error) {
-      toast.error('Något gick fel vid utloggning')
+      toast.error(t('auth.logoutError'))
       console.error('Sign out error:', error)
     }
   }

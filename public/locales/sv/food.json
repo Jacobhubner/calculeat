@@ -1,0 +1,392 @@
+{
+  "tabs": {
+    "mine": "Mina",
+    "calculeat": "CalculEat",
+    "slv": "Livsmedelsverket",
+    "all": "Alla"
+  },
+  "source": {
+    "user": "Min",
+    "manual": "CalculEat",
+    "livsmedelsverket": "SLV",
+    "usda": "USDA",
+    "shared": "Delad"
+  },
+  "search": {
+    "placeholder": "Sök efter matvaror...",
+    "noResults": "Inga livsmedel hittades",
+    "loading": "Söker…"
+  },
+  "toast": {
+    "added": "Livsmedel tillagt",
+    "updated": "Livsmedel uppdaterat",
+    "deleted": "Livsmedel borttaget",
+    "addError": "Kunde inte lägga till livsmedel",
+    "updateError": "Kunde inte uppdatera livsmedel",
+    "deleteError": "Kunde inte ta bort livsmedel",
+    "copiedToList": "Livsmedlet kopierades till \"{{listName}}\"",
+    "alreadyInList": "Livsmedlet finns redan i listan",
+    "copyError": "Kunde inte kopiera. Försök igen.",
+    "copiedToCalculeat": "Livsmedlet kopierades till CalculEat-listan",
+    "alreadyInCalculeat": "Ett livsmedel med samma namn finns redan i CalculEat",
+    "firstContributor": "Du var först att lägga till denna produkt. Tack!"
+  },
+  "fields": {
+    "name": "Namn",
+    "calories": "Kalorier",
+    "protein": "Protein",
+    "carbs": "Kolhydrater",
+    "fat": "Fett",
+    "fiber": "Fiber",
+    "sugar": "Socker",
+    "saturatedFat": "Mättat fett",
+    "salt": "Salt",
+    "servingSize": "Portionsstorlek",
+    "unit": "Enhet",
+    "per100g": "Per 100 g",
+    "per100ml": "Per 100 ml"
+  },
+  "density": {
+    "solid": "Fast",
+    "liquid": "Flytande",
+    "soup": "Soppa"
+  },
+  "color": {
+    "green": "Grön",
+    "yellow": "Gul",
+    "orange": "Orange",
+    "all": "Alla",
+    "recipe": "Recept"
+  },
+  "modal": {
+    "addTitle": "Lägg till livsmedel",
+    "editTitle": "Redigera livsmedel",
+    "addToMeal": "Lägg till i måltid",
+    "amount": "Mängd",
+    "meal": "Måltid",
+    "unit": "Enhet",
+    "cancel": "Avbryt",
+    "save": "Spara",
+    "saving": "Sparar...",
+    "update": "Uppdatera",
+    "saveFood": "Spara livsmedel",
+    "page": "Sida {{page}} av {{total}}",
+    "prev": "Föreg",
+    "next": "Nästa"
+  },
+  "items_one": "{{count}} livsmedel",
+  "items_other": "{{count}} livsmedel",
+  "updating": "Uppdaterar...",
+  "barcode": {
+    "scan": "Skanna streckkod",
+    "notFound": "Produkten hittades inte",
+    "found": "Produkt hittad",
+    "error": "Fel vid skanningen",
+    "searching": "Söker produkt...",
+    "notFoundDetail": "Produkten hittades inte i databasen",
+    "barcodeLabel": "Streckkod: {{barcode}}",
+    "fillManually": "Fyll i näringsvärden manuellt",
+    "fillManuallySaved": "(streckkod sparas)"
+  },
+  "header": {
+    "title": "Livsmedel",
+    "newFood": "Nytt livsmedel",
+    "newFoodShort": "Nytt"
+  },
+  "filter": {
+    "search": "Sök efter matvaror...",
+    "all": "Alla",
+    "green": "Grön",
+    "yellow": "Gul",
+    "orange": "Orange",
+    "recipe": "Recept",
+    "clearFilters": "Rensa filter"
+  },
+  "emptyState": {
+    "noResults": "Inga livsmedel hittades",
+    "noResultsDesc": "Prova att ändra dina sökkriterier eller filter.",
+    "noItems": "Inga livsmedel ännu",
+    "noItemsMine": "Kom igång genom att lägga till ditt första livsmedel i databasen.",
+    "noItemsOther": "Inga livsmedel finns i denna kategori."
+  },
+  "loading": "Laddar livsmedel...",
+  "table": {
+    "food": "Livsmedel",
+    "portion": "Portion",
+    "calories": "Kalorier",
+    "fat": "Fett",
+    "carbs": "Kolh.",
+    "protein": "Protein",
+    "type": "Typ"
+  },
+  "pagination": {
+    "page": "Sida {{page}} av {{total}}",
+    "prev": "Föregående",
+    "next": "Nästa"
+  },
+  "tooltip": {
+    "viewAsServing": "Visa som {{serving}}",
+    "viewPer100g": "Visa per 100g",
+    "viewPerVolume": "Visa per volym (ml)",
+    "viewNutrients": "Visa näringsvärden",
+    "copyToList": "Kopiera till lista",
+    "createSharedList": "Skapa delad lista"
+  },
+  "reset": {
+    "button": "Återställ lista",
+    "confirmTitle": "Är du säker på att du vill återställa listan?",
+    "confirmDesc": "Detta kommer att ta bort alla dina anpassningar:",
+    "confirmItem1": "Alla livsmedel du har skapat själv",
+    "confirmItem2": "Alla ändringar du gjort i globala livsmedel",
+    "confirmItem3": "Alla livsmedel du har dolt",
+    "warningTitle": "Sista varningen",
+    "warningIrreversible": "Denna åtgärd kan INTE ångras!",
+    "warningDesc": "ALLT du har gjort i livsmedelslistan sedan du skapade kontot kommer att raderas permanent. Du får tillbaka den ursprungliga globala listan.",
+    "cancel": "Avbryt",
+    "continue": "Ja, fortsätt",
+    "resetAll": "Återställ allt",
+    "resetting": "Återställer..."
+  },
+  "listEdit": {
+    "title": "Redigera \"{{name}}\"",
+    "description": "Detta livsmedel finns i en delad lista. Välj hur du vill redigera det.",
+    "createCopy": "Skapa personlig kopia",
+    "createCopyDesc": "Sparas under \"Mina\" — påverkar inte listan",
+    "editInList": "Ändra i listan",
+    "editInListDesc": "Påverkar alla som har tillgång till listan",
+    "confirmTitle": "Ändra i listan?",
+    "confirmDesc": "Dina ändringar av \"{{name}}\" syns för alla som delar listan. Är du säker?",
+    "cancel": "Avbryt",
+    "confirm": "Ja, ändra i listan"
+  },
+  "listDelete": {
+    "title": "Ta bort från listan?",
+    "description": "\"{{name}}\" tas bort för alla som delar listan. Åtgärden kan inte ångras.",
+    "cancel": "Avbryt",
+    "confirm": "Ta bort",
+    "removing": "Tar bort..."
+  },
+  "adminEdit": {
+    "title": "Redigera globalt livsmedel?",
+    "description": "Du är på väg att redigera \"{{name}}\". Ändringen påverkar detta livsmedel för ALLA användare i CalculEat-listan. Är du säker?",
+    "cancel": "Avbryt",
+    "confirm": "Ja, redigera globalt"
+  },
+  "adminDelete": {
+    "title": "Ta bort globalt livsmedel?",
+    "description": "\"{{name}}\" tas bort permanent för ALLA användare och kan inte återställas.",
+    "cancel": "Avbryt",
+    "confirm": "Ta bort permanent",
+    "removing": "Tar bort..."
+  },
+  "panel": {
+    "loading": "Laddar näringsvärden...",
+    "noData": "Inga detaljerade näringsvärden tillgängliga.",
+    "nutrientCount": "{{count}} näringsvärden",
+    "energyDensity": "Energitäthet:",
+    "density": "Densitet:",
+    "varav": "varav",
+    "close": "Stäng",
+    "categories": {
+      "macro": "Makronäringsämnen",
+      "vitamin": "Vitaminer",
+      "mineral": "Mineraler"
+    }
+  },
+  "addFoodModal": {
+    "titleCopy": "Skapa personlig kopia",
+    "titleAdminEdit": "Redigera CalculEat-livsmedel",
+    "titleAdminNew": "Nytt CalculEat-livsmedel",
+    "titleEdit": "Redigera livsmedel",
+    "titleNew": "Nytt livsmedel",
+    "adminEditWarning": "Redigerar globalt livsmedel. Ändringarna syns direkt för alla användare.",
+    "adminNewWarning": "Skapar globalt CalculEat-livsmedel. Syns för alla användare.",
+    "cowInfo": "En personlig kopia skapas i din lista (Mina).",
+    "sharedEditWarning": "Redigerar ett delat livsmedel. Ändringarna syns hos alla listmedlemmar.",
+    "scanBarcode": "Streckkod",
+    "scanLabel": "Skanna etikett",
+    "scanning": "Analyserar...",
+    "scanComing": "Kommer snart",
+    "barcodeNotFound": "Produkten hittades inte i databasen",
+    "barcodeCode": "Streckkod: {{barcode}}",
+    "fillManually": "Fyll i näringsvärden manuellt",
+    "fillManuallySaved": "(streckkod sparas)",
+    "barcodeError": "Kunde inte hämta produkten",
+    "labelError": "Kunde inte läsa etiketten",
+    "overwriteConfirm": "Du har redan fyllt i värden. Vill du ersätta dem med skannade värden?",
+    "overwriteConfirmAction": "Ersätt",
+    "overwriteKeep": "Behåll mina värden",
+    "duplicateWarning": "⚠️ Ett livsmedel med namnet \"{{name}}\" finns redan. Är du säker på att du vill skapa en till?",
+    "sectionBasic": "Grundläggande information",
+    "fieldName": "Namn *",
+    "fieldFoodType": "Livsmedeltyp",
+    "foodTypeSolid": "Fast föda",
+    "foodTypeLiquid": "Vätska",
+    "foodTypeSoup": "Soppa",
+    "fieldAmount": "Mängd *",
+    "fieldUnit": "Enhet *",
+    "fieldUnitPlaceholder": "g, ml, st, dl...",
+    "fieldWeight": "Vikt (gram) *",
+    "fieldWeightHint": "Hur mycket väger {{amount}} {{unit}}?",
+    "sectionNutrition": "Näringsinnehåll (per {{amount}} {{unit}})",
+    "fieldCalories": "Kalorier (kcal) *",
+    "fieldFat": "Fett (g) *",
+    "fieldSaturatedFat": "varav mättat fett (g)",
+    "fieldCarbs": "Kolhydrater (g) *",
+    "fieldSugars": "varav sockerarter (g)",
+    "fieldProtein": "Protein (g) *",
+    "fieldSalt": "Salt (g)",
+    "macroMismatch": "⚠️ Makronutrienterna ger {{macro}} kcal, men du angav {{calories}} kcal ({{diff}}% skillnad). Detta kan bero på fiber, alkohol eller rundning.",
+    "advancedSettings": "Avancerade inställningar",
+    "volumeConversion": "Volymkonvertering (valfritt)",
+    "volumeWeightLabel": "Hur mycket väger 1 {{unit}} ({{ml}}ml)?",
+    "volumeGramsUnit": "gram",
+    "volumeExamples": "Mjöl ≈ 60g/dl, Socker ≈ 90g/dl, Havregryn ≈ 40g/dl, Ris ≈ 85g/dl",
+    "servingInfo": "Serveringsinformation (valfritt)",
+    "servingWeightLabel": "Vikt per portion",
+    "servingWeightUnit": "(gram)",
+    "servingUnitLabel": "Enhet",
+    "servingUnitHint": "(pkt, burk, osv.)",
+    "servingUnitPlaceholder": "t.ex. pkt, burk, påse",
+    "servingVolumeTip": "💡 För volymenheter (dl, msk, tsk), använd Volymkonvertering ovan istället.",
+    "servingExamples": "T.ex. 1 ägg = 50g (enhet: \"st\"), 1 yoghurt = 150g (enhet: \"pkt\")",
+    "preview": "📊 Förhandsgranskning",
+    "previewEmpty": "Fyll i formuläret för att se förhandsgranskning",
+    "previewEnergyDensity": "Energitäthet",
+    "previewServingPortion": "Serveringsportion",
+    "previewEnergy": "Energi:",
+    "previewFat": "Fett:",
+    "previewSaturatedFat": "varav mättat fett:",
+    "previewCarbs": "Kolhydrater:",
+    "previewSugars": "varav sockerarter:",
+    "previewProtein": "Protein:",
+    "previewSalt": "Salt:",
+    "previewEnergyComparison": "Energijämförelse",
+    "previewMacroNutrients": "Makronutrienter:",
+    "previewEntered": "Angivet:",
+    "previewDiff": "Skillnad:",
+    "previewMacroDistribution": "Makrofördelning",
+    "previewFatLabel": "Fett",
+    "previewCarbsLabel": "Kolhydrater",
+    "previewProteinLabel": "Protein",
+    "cancel": "Avbryt",
+    "save": "Spara livsmedel",
+    "saving": "Sparar...",
+    "update": "Uppdatera",
+    "saveError": "Kunde inte {{action}} livsmedlet. Försök igen.",
+    "saveErrorCreate": "spara",
+    "saveErrorUpdate": "uppdatera"
+  },
+  "addToMealModal": {
+    "title": "Lägg till livsmedel",
+    "titleEdit": "Redigera livsmedel",
+    "description": "Välj måltid och lägg till livsmedel",
+    "descriptionEdit": "Ändra mängd och enhet för",
+    "descriptionMeal": "Lägg till livsmedel till",
+    "selectMeal": "Välj måltid",
+    "searchPlaceholder": "Sök livsmedel...",
+    "scanBarcode": "Skanna streckkod",
+    "scanLabel": "Skanna etikett",
+    "colorAll": "Alla",
+    "colorGreen": "Grön",
+    "colorYellow": "Gul",
+    "colorOrange": "Orange",
+    "typeAll": "Alla typer",
+    "typeRecipe": "Recept",
+    "typeFood": "Livsmedel",
+    "noFoodsFound": "Inga livsmedel hittades",
+    "noFoods": "Inga livsmedel",
+    "loading": "Laddar livsmedel...",
+    "fieldAmount": "Mängd",
+    "fieldUnit": "Enhet",
+    "cancel": "Avbryt",
+    "save": "Spara",
+    "saving": "Sparar...",
+    "add": "Lägg till",
+    "adding": "Lägger till...",
+    "toastUpdated": "Mängd uppdaterad",
+    "toastNoMeal": "Ingen måltid vald",
+    "toastAdded": "{{food}} har lagts till i {{meal}}",
+    "toastError": "Kunde inte lägga till livsmedlet",
+    "toastMealNotFound": "Måltiden hittades inte",
+    "page": "Sida {{page}} av {{total}}",
+    "prev": "Föreg",
+    "next": "Nästa"
+  },
+  "infoCards": {
+    "green": {
+      "title": "Grön",
+      "subtitle": "Låg energitäthet – ät mer av dessa",
+      "solidLabel": "Fast föda (< 1 kcal/g):",
+      "liquidLabel": "Vätska (< 0.4 kcal/g):",
+      "soupLabel": "Soppa (< 0.5 kcal/g):",
+      "tip": "👉 Poäng: Mycket vatten + fiber → hög mättnad per kcal",
+      "solidItems": [
+        { "label": "Bladgrönsaker (spenat, sallad)", "icon": "🥬" },
+        { "label": "Gurka, tomat, zucchini", "icon": "🥒" },
+        { "label": "Broccoli, blomkål", "icon": "🥦" },
+        { "label": "Bär (jordgubbar, hallon)", "icon": "🍓" },
+        { "label": "Frukt med hög vattenhalt (melon, apelsin)", "icon": "🍉" },
+        { "label": "Potatis (kokt)", "icon": "🥔" }
+      ],
+      "liquidItems": [
+        { "label": "Vatten", "icon": "💧" },
+        { "label": "Lightdryck", "icon": "" },
+        { "label": "Kaffe/te (utan socker)", "icon": "☕" }
+      ],
+      "soupItems": [
+        { "label": "Klara grönsakssoppor", "icon": "🥣" },
+        { "label": "Buljongbaserade soppor", "icon": "" }
+      ]
+    },
+    "yellow": {
+      "title": "Gul",
+      "subtitle": "Måttlig energitäthet – ät i balanserade mängder",
+      "solidLabel": "Fast föda (1–2.4 kcal/g):",
+      "liquidLabel": "Vätska (0.4–0.5 kcal/g):",
+      "soupLabel": "Soppa (0.5–1 kcal/g):",
+      "tip": "👉 Poäng: Näringstätt men mer kalorier → kräver portionskontroll",
+      "solidItems": [
+        { "label": "Kycklingfilé, kalkon", "icon": "🍗" },
+        { "label": "Ägg", "icon": "🥚" },
+        { "label": "Pasta, ris, quinoa", "icon": "🍝" },
+        { "label": "Bröd", "icon": "🍞" },
+        { "label": "Baljväxter (linser, bönor)", "icon": "🫘" },
+        { "label": "Lättare mejeriprodukter (kvarg, yoghurt)", "icon": "🥛" }
+      ],
+      "liquidItems": [
+        { "label": "Mjölk", "icon": "🥛" },
+        { "label": "Juice", "icon": "🧃" }
+      ],
+      "soupItems": [
+        { "label": "Linssoppa", "icon": "🥣" },
+        { "label": "Kycklingsoppa", "icon": "🍲" },
+        { "label": "Lätt krämig soppa", "icon": "" }
+      ]
+    },
+    "orange": {
+      "title": "Orange",
+      "subtitle": "Hög energitäthet – ät mindre av dessa",
+      "solidLabel": "Fast föda (> 2.4 kcal/g):",
+      "liquidLabel": "Vätska (> 0.5 kcal/g):",
+      "soupLabel": "Soppa (> 1 kcal/g):",
+      "tip": "👉 Poäng: Lite volym, mycket kalorier → lätt att överäta",
+      "solidItems": [
+        { "label": "Nötter och frön", "icon": "🥜" },
+        { "label": "Ost", "icon": "🧀" },
+        { "label": "Fett kött (t.ex. entrecôte)", "icon": "🥩" },
+        { "label": "Chips, kex", "icon": "🍟" },
+        { "label": "Godis, choklad", "icon": "🍫" },
+        { "label": "Bakverk", "icon": "🥐" }
+      ],
+      "liquidItems": [
+        { "label": "Läsk med socker", "icon": "🥤" },
+        { "label": "Milkshakes", "icon": "🧋" },
+        { "label": "Alkohol", "icon": "🍺" }
+      ],
+      "soupItems": [
+        { "label": "Gräddbaserade soppor (t.ex. potatis- & purjolök med grädde)", "icon": "🍲" }
+      ]
+    }
+  }
+}

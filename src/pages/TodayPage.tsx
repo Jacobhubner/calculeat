@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -52,6 +53,7 @@ import type { FoodItem } from '@/hooks/useFoodItems'
 import type { UserProfile } from '@/lib/types'
 
 export default function TodayPage() {
+  const { t } = useTranslation('today')
   const { data: todayLog, isLoading: logLoading } = useTodayLog()
   const { data: mealSettings, isLoading: settingsLoading } = useMealSettings()
   const ensureLog = useEnsureTodayLog()
@@ -204,11 +206,11 @@ export default function TodayPage() {
       { logId: todayLog.id, newDate: pendingDate },
       {
         onSuccess: () => {
-          toast.success('Datum uppdaterat')
+          toast.success(t('today.dateUpdated'))
           setPendingDate(null)
         },
         onError: error => {
-          toast.error(error instanceof Error ? error.message : 'Kunde inte uppdatera datum')
+          toast.error(error instanceof Error ? error.message : t('today.errorUpdateDate'))
           setPendingDate(null)
         },
       }
@@ -223,7 +225,7 @@ export default function TodayPage() {
     if (todayLog && !todayLog.is_completed) {
       finishDay.mutate(todayLog.id, {
         onSuccess: () => {
-          toast.success('Dagen är klar! 🎉')
+          toast.success(t('today.dayFinished'))
         },
       })
     }
@@ -231,21 +233,21 @@ export default function TodayPage() {
 
   const handleCopyFromYesterday = () => {
     if (!yesterdayLog) {
-      toast.error('Ingen data från igår att kopiera')
+      toast.error(t('today.errorNoYesterdayData'))
       return
     }
 
     if (!yesterdayLog.meals || yesterdayLog.meals.length === 0) {
-      toast.error('Inga måltider loggade igår')
+      toast.error(t('today.errorNoYesterdayMeals'))
       return
     }
 
     copyDayToToday.mutate(yesterdayLog.id, {
       onSuccess: () => {
-        toast.success('Kopierade måltider från igår!')
+        toast.success(t('today.copiedFromYesterday'))
       },
       onError: () => {
-        toast.error('Kunde inte kopiera måltider')
+        toast.error(t('today.errorCopyMeals'))
       },
     })
   }
@@ -253,10 +255,10 @@ export default function TodayPage() {
   const handleRemoveFood = (itemId: string, foodName: string) => {
     removeFoodFromMeal.mutate(itemId, {
       onSuccess: () => {
-        toast.success(`${foodName} har tagits bort`)
+        toast.success(t('today.foodRemoved', { name: foodName }))
       },
       onError: () => {
-        toast.error('Kunde inte ta bort matvaran')
+        toast.error(t('today.errorRemoveFood'))
       },
     })
   }
@@ -292,7 +294,7 @@ export default function TodayPage() {
         <div>
           <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent mb-1 md:mb-2 flex items-center gap-2 md:gap-3">
             <Calendar className="h-6 w-6 md:h-8 md:w-8 text-primary-600" />
-            Dagens Logg
+            {t('today.pageTitle')}
           </h1>
           <div className="flex items-center gap-2">
             {isEditingDate ? (
@@ -314,7 +316,7 @@ export default function TodayPage() {
                   <button
                     onClick={() => setIsEditingDate(true)}
                     className="text-neutral-400 hover:text-neutral-600 transition-colors"
-                    title="Ändra datum"
+                    title={t('today.changeDate')}
                   >
                     <Pencil className="h-3.5 w-3.5" />
                   </button>
@@ -333,7 +335,7 @@ export default function TodayPage() {
           >
             <Copy className="h-4 w-4" />
             <span className="hidden sm:inline">
-              {copyDayToToday.isPending ? 'Kopierar...' : 'Kopiera från igår'}
+              {copyDayToToday.isPending ? t('today.copying') : t('today.copyFromYesterday')}
             </span>
           </Button>
           {todayLog && !todayLog.is_completed && (
@@ -344,7 +346,7 @@ export default function TodayPage() {
               className="gap-2 bg-gradient-to-r from-success-600 to-success-500"
             >
               <Check className="h-4 w-4" />
-              <span className="hidden sm:inline">Avsluta dag</span>
+              <span className="hidden sm:inline">{t('today.finishDay')}</span>
             </Button>
           )}
         </div>
@@ -356,8 +358,7 @@ export default function TodayPage() {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between gap-4">
               <p className="text-sm font-medium text-blue-800">
-                Ändra datum från <span className="font-bold">{todayLog?.log_date}</span> till{' '}
-                <span className="font-bold">{pendingDate}</span>?
+                {t('today.confirmDateChange', { from: todayLog?.log_date, to: pendingDate })}
               </p>
               <div className="flex gap-2 shrink-0">
                 <Button
@@ -367,7 +368,7 @@ export default function TodayPage() {
                   className="gap-1"
                 >
                   <X className="h-3.5 w-3.5" />
-                  Avbryt
+                  {t('today.cancel')}
                 </Button>
                 <Button
                   size="sm"
@@ -376,7 +377,7 @@ export default function TodayPage() {
                   className="gap-1 bg-gradient-to-r from-primary-600 to-primary-500"
                 >
                   <Check className="h-3.5 w-3.5" />
-                  {updateLogDate.isPending ? 'Sparar...' : 'Bekräfta'}
+                  {updateLogDate.isPending ? t('today.saving') : t('today.confirm')}
                 </Button>
               </div>
             </div>
@@ -394,12 +395,14 @@ export default function TodayPage() {
                   <AlertTriangle className="h-5 w-5 text-amber-600" />
                 </div>
                 <div>
-                  <p className="font-medium text-amber-900">Mål skiljer sig från aktiv profil</p>
+                  <p className="font-medium text-amber-900">{t('today.goalMismatchTitle')}</p>
                   <p className="text-sm text-amber-700">
-                    Denna logg skapades med mål: {Math.round(goalCaloriesMin)}-
-                    {Math.round(goalCalories)} kcal. Aktiv profil har:{' '}
-                    {Math.round(profile?.calories_min || 0)}-
-                    {Math.round(profile?.calories_max || 0)} kcal.
+                    {t('today.goalMismatchText', {
+                      logMin: Math.round(goalCaloriesMin),
+                      logMax: Math.round(goalCalories),
+                      profileMin: Math.round(profile?.calories_min || 0),
+                      profileMax: Math.round(profile?.calories_max || 0),
+                    })}
                   </p>
                 </div>
               </div>
@@ -437,16 +440,16 @@ export default function TodayPage() {
                     },
                     {
                       onSuccess: () => {
-                        toast.success('Dagens mål uppdaterade till profilns värden')
+                        toast.success(t('today.goalsUpdated'))
                       },
                       onError: () => {
-                        toast.error('Kunde inte uppdatera mål')
+                        toast.error(t('today.errorUpdateGoals'))
                       },
                     }
                   )
                 }}
               >
-                {updateDailyLogGoals.isPending ? 'Uppdaterar...' : 'Uppdatera mål'}
+                {updateDailyLogGoals.isPending ? t('today.updating') : t('today.updateGoals')}
               </Button>
             </div>
           </CardContent>
@@ -461,16 +464,22 @@ export default function TodayPage() {
                 <Check className="h-6 w-6 text-white" />
               </div>
               <div>
-                <p className="font-semibold text-success-900">Dagen är klar!</p>
+                <p className="font-semibold text-success-900">{t('today.dayCompleteTitle')}</p>
                 <p className="text-sm text-success-700">
                   {goalCaloriesMin && goalCalories ? (
                     <>
-                      Du loggade {totalCalories} kcal av ditt mål på {Math.round(goalCaloriesMin)}-
-                      {Math.round(goalCalories)} kcal
+                      {t('today.dayCompleteRange', {
+                        calories: totalCalories,
+                        min: Math.round(goalCaloriesMin),
+                        max: Math.round(goalCalories),
+                      })}
                     </>
                   ) : (
                     <>
-                      Du loggade {totalCalories} kcal av ditt mål på {goalCalories} kcal
+                      {t('today.dayCompleteSingle', {
+                        calories: totalCalories,
+                        goal: goalCalories,
+                      })}
                     </>
                   )}
                 </p>
@@ -488,7 +497,7 @@ export default function TodayPage() {
             <CardHeader className="pb-2">
               <CardTitle className="flex items-center gap-2">
                 <Sparkles className="h-5 w-5 text-primary-600" />
-                Dagens framsteg
+                {t('today.dailyProgress')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -506,24 +515,24 @@ export default function TodayPage() {
 
                 {/* Right: Makromål + Energitäthet + Kaloritäthet */}
                 <div className="flex-1 min-w-0 space-y-2">
-                  <h4 className="text-sm font-semibold text-neutral-700">Makromål</h4>
+                  <h4 className="text-sm font-semibold text-neutral-700">{t('today.macroGoals')}</h4>
                   {dailySummary && profile ? (
                     <>
                       <NutrientStatusRow
                         status={dailySummary.fatStatus}
-                        label="Fett"
+                        label={t('today.fat')}
                         unit="g"
                         showProgress
                       />
                       <NutrientStatusRow
                         status={dailySummary.carbStatus}
-                        label="Kolhydrater"
+                        label={t('today.carbs')}
                         unit="g"
                         showProgress
                       />
                       <NutrientStatusRow
                         status={dailySummary.proteinStatus}
-                        label="Protein"
+                        label={t('today.protein')}
                         unit="g"
                         showProgress
                       />
@@ -531,15 +540,15 @@ export default function TodayPage() {
                   ) : (
                     <div className="space-y-2 text-sm text-neutral-500">
                       <div className="flex justify-between">
-                        <span>Fett</span>
+                        <span>{t('today.fat')}</span>
                         <span className="font-medium">{todayLog?.total_fat_g || 0}g</span>
                       </div>
                       <div className="flex justify-between">
-                        <span>Kolhydrater</span>
+                        <span>{t('today.carbs')}</span>
                         <span className="font-medium">{todayLog?.total_carb_g || 0}g</span>
                       </div>
                       <div className="flex justify-between">
-                        <span>Protein</span>
+                        <span>{t('today.protein')}</span>
                         <span className="font-medium">{todayLog?.total_protein_g || 0}g</span>
                       </div>
                     </div>
@@ -573,7 +582,7 @@ export default function TodayPage() {
 
               {/* Måltider loggade */}
               <div className="flex justify-between items-center pt-4 border-t text-sm">
-                <span className="text-neutral-600">Måltider loggade</span>
+                <span className="text-neutral-600">{t('today.mealsLogged')}</span>
                 <span className="font-semibold text-neutral-900">
                   {todayLog?.meals?.filter(m => m.items && m.items.length > 0).length || 0} /{' '}
                   {mealSettings?.length || 0}
@@ -586,10 +595,10 @@ export default function TodayPage() {
           {!mealSettings || mealSettings.length === 0 ? (
             <EmptyState
               icon={UtensilsCrossed}
-              title="Inga måltider konfigurerade"
-              description="Konfigurera dina måltider för att börja logga mat."
+              title={t('today.noMealsTitle')}
+              description={t('today.noMealsDescription')}
               action={{
-                label: 'Konfigurera måltider',
+                label: t('today.configureMeals'),
                 onClick: () => (window.location.href = '/app/settings/meals'),
               }}
             />
@@ -628,8 +637,8 @@ export default function TodayPage() {
                             </CardTitle>
                             <CardDescription className="truncate">
                               {hasItems
-                                ? `${mealEntry.items?.length ?? 0} matvara${(mealEntry.items?.length ?? 0) > 1 ? 'r' : ''}`
-                                : `${mealSetting.percentage_of_daily_calories}% av dagens kalorier`}
+                                ? t('today.mealItemCount', { count: mealEntry.items?.length ?? 0 })
+                                : t('today.mealPercentage', { pct: mealSetting.percentage_of_daily_calories })}
                             </CardDescription>
                           </div>
                         </div>
@@ -643,7 +652,7 @@ export default function TodayPage() {
                               onClick={() => handleOpenSaveMealDialog(mealEntry)}
                             >
                               <Bookmark className="h-4 w-4" />
-                              <span className="hidden md:inline">Spara måltid</span>
+                              <span className="hidden md:inline">{t('today.saveMeal')}</span>
                             </Button>
                           )}
                           {/* Load meal button */}
@@ -660,7 +669,7 @@ export default function TodayPage() {
                             }
                           >
                             <ArrowDownToLine className="h-4 w-4" />
-                            <span className="hidden md:inline">Ladda måltid</span>
+                            <span className="hidden md:inline">{t('today.loadMeal')}</span>
                           </Button>
                           <Button
                             size="sm"
@@ -670,7 +679,7 @@ export default function TodayPage() {
                             }
                           >
                             <Plus className="h-4 w-4" />
-                            <span className="hidden sm:inline">Lägg till</span>
+                            <span className="hidden sm:inline">{t('today.addFood')}</span>
                           </Button>
                         </div>
                       </div>
@@ -690,7 +699,7 @@ export default function TodayPage() {
                               <SwipeableItem
                                 key={item.id}
                                 onSwipeLeft={() =>
-                                  handleRemoveFood(item.id, foodItem?.name || 'Matvara')
+                                  handleRemoveFood(item.id, foodItem?.name || t('today.defaultFoodName'))
                                 }
                               >
                                 <div
@@ -709,7 +718,7 @@ export default function TodayPage() {
                                   <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-2 min-w-0">
                                       <p className="font-medium text-neutral-900 text-sm md:text-base truncate min-w-0">
-                                        {foodItem?.name || 'Okänd matvara'}
+                                        {foodItem?.name || t('today.unknownFood')}
                                       </p>
                                       {foodItem?.brand && (
                                         <span className="text-xs text-neutral-500 hidden sm:inline shrink-0">
@@ -735,7 +744,7 @@ export default function TodayPage() {
                                     className="hidden md:flex opacity-0 group-hover:opacity-100 transition-opacity text-red-600 hover:text-red-700 hover:bg-red-50"
                                     onClick={e => {
                                       e.stopPropagation()
-                                      handleRemoveFood(item.id, foodItem?.name || 'Matvara')
+                                      handleRemoveFood(item.id, foodItem?.name || t('today.defaultFoodName'))
                                     }}
                                     disabled={removeFoodFromMeal.isPending}
                                   >
@@ -746,7 +755,7 @@ export default function TodayPage() {
                             )
                           })}
                           <div className="pt-3 border-t flex flex-wrap gap-x-4 gap-y-1 justify-between text-sm min-w-0">
-                            <span className="font-medium text-neutral-700 shrink-0">Totalt:</span>
+                            <span className="font-medium text-neutral-700 shrink-0">{t('today.total')}</span>
                             <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-neutral-600 min-w-0">
                               <span>{mealEntry.meal_calories} kcal</span>
                               <span>F: {mealEntry.meal_fat_g}g</span>
@@ -767,7 +776,7 @@ export default function TodayPage() {
                         </div>
                       ) : (
                         <div className="text-center py-8 text-neutral-400 text-sm">
-                          Inga matvaror tillagda ännu
+                          {t('today.noFoodItemsYet')}
                         </div>
                       )}
                     </CardContent>
@@ -798,13 +807,13 @@ export default function TodayPage() {
           {/* Tips */}
           <Card className="bg-gradient-to-br from-primary-50 to-accent-50 border-primary-200">
             <CardHeader>
-              <CardTitle className="text-lg">💡 Tips</CardTitle>
+              <CardTitle className="text-lg">{t('today.tipsTitle')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2 text-sm text-neutral-700">
-              <p>• Logga mat direkt efter varje måltid för bästa resultat</p>
-              <p>• Sikta på minst 30% gröna matvaror</p>
-              <p>• Drick tillräckligt med vatten (2-3 liter/dag)</p>
-              <p>• Klicka &quot;Avsluta dag&quot; när du är klar</p>
+              <p>• {t('today.tip1')}</p>
+              <p>• {t('today.tip2')}</p>
+              <p>• {t('today.tip3')}</p>
+              <p>• {t('today.tip4')}</p>
             </CardContent>
           </Card>
         </div>

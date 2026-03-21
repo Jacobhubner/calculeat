@@ -1,0 +1,203 @@
+{
+  "invitations": {
+    "page": {
+      "title": "Inbjudningar",
+      "subtitle": "Livsmedel och recept som andra användare har delat med dig."
+    },
+    "empty": {
+      "title": "Inga inbjudningar",
+      "subtitle": "När någon delar ett livsmedel eller recept med dig syns det här."
+    },
+    "badge": {
+      "recipe": "Recept",
+      "food_item": "Livsmedel"
+    },
+    "label": {
+      "recipe": "Receptet",
+      "food_item": "Livsmedlet"
+    },
+    "shared_by": "Delad av",
+    "sent": "Skickad",
+    "preview": {
+      "servings": "{{count}} portioner",
+      "ingredients": "{{count}} ingredienser",
+      "serving": "portion"
+    },
+    "expiry": {
+      "soon": "Utgår snart",
+      "days": "Utgår om {{count}} dag",
+      "days_plural": "Utgår om {{count}} dagar"
+    },
+    "action": {
+      "import": "Importera",
+      "reject": "Avvisa"
+    },
+    "toast": {
+      "imported": "{{label}} har importerats!",
+      "rejected": "Inbjudan avvisad."
+    },
+    "error": {
+      "concurrent_accept_detected": "Importerades redan i ett annat fönster.",
+      "invitation_expired": "Inbjudan har gått ut.",
+      "invitation_already_processed": "Denna inbjudan har redan hanterats.",
+      "generic": "Något gick fel.",
+      "generic_retry": "Något gick fel. Försök igen.",
+      "reject_failed": "Kunde inte avvisa inbjudan."
+    }
+  },
+  "share": {
+    "title": {
+      "recipient": "Dela med",
+      "content": "Dela med {{recipient}}",
+      "confirm_list": "Dela Min lista",
+      "confirm_item": "Dela \"{{name}}\""
+    },
+    "recipient": {
+      "tab_friends": "Vänner",
+      "tab_email": "E-post",
+      "no_friends": "Du har inga vänner ännu. Lägg till vänner via Social.",
+      "search_placeholder": "Sök vän...",
+      "email_placeholder": "mottagare@exempel.se",
+      "checking": "Kontrollerar...",
+      "user_found": "Användare hittad",
+      "user_not_found": "Ingen CalculEat-användare med den e-posten",
+      "next": "Nästa →"
+    },
+    "content": {
+      "tab_food_item": "Livsmedel",
+      "tab_recipe": "Recept",
+      "tab_food_list": "Min lista",
+      "search_food_placeholder": "Sök livsmedel...",
+      "search_recipe_placeholder": "Sök recept...",
+      "no_food_items": "Inga livsmedel hittades",
+      "no_recipes": "Inga recept hittades",
+      "loading": "Laddar...",
+      "no_food_list": "Du har inga livsmedel att dela ännu",
+      "servings_abbr": "port."
+    },
+    "food_list": {
+      "title": "Min lista",
+      "count_label": "{{count}} livsmedel"
+    },
+    "confirm": {
+      "recipient_label": "Mottagare",
+      "food_list_name": "Min lista ({{count}} livsmedel)",
+      "type_food_item": "Livsmedel",
+      "type_recipe": "Recept",
+      "type_food_list": "Livsmedelslista",
+      "duplicate_note": "Dubbletter med liknande näringsvärden hoppas automatiskt över vid import.",
+      "back": "Tillbaka",
+      "send": "Skicka",
+      "sending": "Skickar..."
+    },
+    "error": {
+      "empty_food_list": "Du har inga livsmedel att dela.",
+      "generic": "Något gick fel.",
+      "friend_share_failed": "Kunde inte dela. Kontrollera att vänskapen fortfarande är aktiv.",
+      "send_failed": "Något gick fel vid delningen."
+    },
+    "toast": {
+      "food_list_shared": "Din lista med {{count}} livsmedel delades!",
+      "item_shared": "\"{{name}}\" delades!"
+    }
+  },
+  "social": {
+    "hub": {
+      "title": "Social",
+      "tab_friends": "Vänner",
+      "tab_activity": "Aktivitet",
+      "tab_messages": "Meddelanden"
+    },
+    "from": "från",
+    "badge": {
+      "list": "Lista",
+      "shared_list": "Delad lista"
+    },
+    "expiry": {
+      "days_short": "Utgår om {{count}}d"
+    },
+    "action": {
+      "accept": "Acceptera",
+      "deny": "Neka",
+      "join": "Gå med",
+      "cancel": "Avbryt",
+      "back": "Tillbaka",
+      "save": "Spara",
+      "yes": "Ja",
+      "no": "Nej",
+      "import_list": "Importera lista"
+    },
+    "import": {
+      "food_list": "{{imp}} livsmedel importerade!",
+      "food_list_with_skipped": "{{imp}} livsmedel importerade! ({{skip}} hoppades över)",
+      "recipe": "Receptet importerades!",
+      "food_item": "Livsmedlet importerades!"
+    },
+    "shared_list": {
+      "joined": "Du är nu med i \"{{name}}\"!",
+      "join_failed": "Kunde inte gå med i listan. Försök igen.",
+      "invited_by": "Inbjuden av"
+    },
+    "friends": {
+      "now_friends": "Du och {{name}} är nu vänner!",
+      "request_withdrawn": "Vänförfrågan tillbakadragen.",
+      "awaiting_response": "Inväntar svar",
+      "withdraw_request": "Dra tillbaka förfrågan",
+      "alias_save_failed": "Kunde inte spara smeknamn.",
+      "alias_saved": "Smeknamn sparat!",
+      "removed": "{{name}} har tagits bort från din vänlista.",
+      "friends_since": "Vänner sedan",
+      "alias_placeholder": "Smeknamn (max 50)",
+      "alias_set": "Smeknamn: \"{{alias}}\"",
+      "set_alias": "Sätt smeknamn",
+      "start_sharing": "Starta delning",
+      "send_message": "Skicka meddelande",
+      "confirm_remove": "Ta bort {{name}} som vän?",
+      "confirm_remove_yes": "Ja, ta bort",
+      "remove_friend": "Ta bort vän",
+      "search_placeholder": "Sök vän...",
+      "no_friends": "Du har inga vänner ännu",
+      "add_friend": "Lägg till vän",
+      "add_placeholder": "Användarnamn eller e-postadress",
+      "add_hint": "Om personen finns i CalculEat får de en vänförfrågan.",
+      "send_request": "Skicka förfrågan",
+      "request_sent": "Vänförfrågan skickad!",
+      "request_send_failed": "Kunde inte skicka förfrågan."
+    },
+    "messages": {
+      "no_conversations": "Inga konversationer än",
+      "no_conversations_hint": "Öppna en vän och tryck \"Skicka meddelande\" för att starta.",
+      "deleted_message": "Meddelandet har tagits bort",
+      "edit": "Redigera",
+      "delete": "Ta bort",
+      "confirm_delete": "Ta bort meddelandet?",
+      "confirm_delete_conv": "Ta bort?",
+      "delete_conversation": "Ta bort konversation",
+      "edit_already_read": "Kan inte redigeras, mottagaren har redan läst meddelandet.",
+      "edit_failed": "Kunde inte redigera meddelandet.",
+      "delete_already_read": "Kan inte tas bort, mottagaren har redan läst meddelandet.",
+      "delete_failed": "Kunde inte ta bort meddelandet.",
+      "load_older": "Ladda äldre meddelanden",
+      "no_messages": "Inga meddelanden än. Skriv något!",
+      "input_placeholder": "Skriv ett meddelande...",
+      "edited": "(redigerat)",
+      "error": {
+        "empty": "Meddelandet är tomt.",
+        "too_long": "Meddelandet är för långt (max 2000 tecken)."
+      }
+    },
+    "activity": {
+      "admin_invitations": "Admin-inbjudningar",
+      "admin_invite_title": "{{name}} vill göra dig till admin",
+      "admin_invite_desc": "Som admin kan du redigera och lägga till livsmedel i CalculEat-listan.",
+      "admin_accepted": "Du är nu admin!",
+      "admin_denied": "Inbjudan nekad",
+      "friend_requests": "Vänförfrågningar",
+      "share_invitations": "Delningsförfrågningar",
+      "list_invitations": "Inbjudningar till listor",
+      "sent_requests": "Skickade förfrågningar",
+      "all_clear": "Allt är lugnt!",
+      "all_clear_sub": "Inga väntande åtgärder."
+    }
+  }
+}

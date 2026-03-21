@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { Save, User } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import EmptyState from '@/components/EmptyState'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -27,6 +28,7 @@ import ComparisonTab from './ComparisonTab'
 
 export default function TDEECalculatorTool() {
   const navigate = useNavigate()
+  const { t } = useTranslation('tools')
   const { profile: activeProfile } = useActiveProfile()
   const updateProfile = useUpdateProfile()
   const profileData = useProfileData([
@@ -242,14 +244,14 @@ export default function TDEECalculatorTool() {
   // Save TDEE to profile
   const handleSaveToProfile = async () => {
     if (!activeProfile || !bmr || !tdee) {
-      toast.error('Kan inte spara: saknade data')
+      toast.error(t('tdeeCalc.toast.cannotSave'))
       return
     }
 
     // Check if TDEE already exists - show confirmation dialog
     if (activeProfile.tdee) {
       const confirmed = window.confirm(
-        'Du har redan ett TDEE-värde sparat. Vill du skriva över det med den nya beräkningen?'
+        t('tdeeCalc.toast.overwriteConfirm')
       )
       if (!confirmed) return
     }
@@ -328,7 +330,7 @@ export default function TDEECalculatorTool() {
         },
       })
 
-      toast.success('TDEE har sparats till din profil!')
+      toast.success(t('tdeeCalc.toast.saved'))
 
       // Navigate back to profile page
       setTimeout(() => {
@@ -336,7 +338,7 @@ export default function TDEECalculatorTool() {
       }, 1000)
     } catch (error) {
       console.error('Error saving TDEE:', error)
-      toast.error('Kunde inte spara TDEE')
+      toast.error(t('tdeeCalc.toast.saveFailed'))
     } finally {
       setIsSaving(false)
     }
@@ -347,10 +349,10 @@ export default function TDEECalculatorTool() {
     return (
       <EmptyState
         icon={User}
-        title="Ingen aktiv profil"
-        description="Du måste ha en profil för att använda TDEE-kalkylatorn."
+        title={t('tdeeCalc.noProfile.title')}
+        description={t('tdeeCalc.noProfile.description')}
         action={{
-          label: 'Gå till profil',
+          label: t('tdeeCalc.noProfile.action'),
           onClick: () => navigate('/app/profile'),
         }}
       />
@@ -362,13 +364,13 @@ export default function TDEECalculatorTool() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">TDEE & Kaloriuträknare</h2>
+          <h2 className="text-2xl font-bold text-gray-900">{t('tdeeCalc.header.title')}</h2>
           <p className="text-neutral-600 mt-1">
-            Beräkna ditt totala dagliga energibehov och kaloriintervall för dina mål
+            {t('tdeeCalc.header.description')}
           </p>
         </div>
         <Badge variant="secondary" className="bg-orange-100 text-orange-700">
-          Energi & Metabol
+          {t('tdeeCalc.header.badge')}
         </Badge>
       </div>
 
@@ -385,7 +387,7 @@ export default function TDEECalculatorTool() {
                 : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'
             }`}
           >
-            {tab === 'kalkylator' ? 'Kalkylator' : 'Jämförelse'}
+            {tab === 'kalkylator' ? t('tdeeCalc.tabs.calculator') : t('tdeeCalc.tabs.comparison')}
           </button>
         ))}
       </div>
@@ -405,26 +407,26 @@ export default function TDEECalculatorTool() {
           {/* Information Cards */}
           <div className="grid gap-4 md:grid-cols-2">
             <InfoCardWithModal
-              title="Vad är BMR och RMR?"
-              modalTitle="BMR vs RMR - Skillnaden förklarad"
+              title={t('tdeeCalc.infoCards.bmrRmr')}
+              modalTitle={t('tdeeCalc.infoCards.bmrRmrModal')}
               modalContent={<BMRvsRMRContent />}
             />
 
             <InfoCardWithModal
-              title="Vad är PAL och MET?"
-              modalTitle="PAL vs MET - Aktivitetsnivåer förklarade"
+              title={t('tdeeCalc.infoCards.palMet')}
+              modalTitle={t('tdeeCalc.infoCards.palMetModal')}
               modalContent={<PALvsMETContent />}
             />
 
             <InfoCardWithModal
-              title="Vad är TDEE?"
-              modalTitle="TDEE - Total Daily Energy Expenditure"
+              title={t('tdeeCalc.infoCards.tdee')}
+              modalTitle={t('tdeeCalc.infoCards.tdeeModal')}
               modalContent={<TDEEContent />}
             />
 
             <InfoCardWithModal
-              title="Skillnad på LBM och FFM?"
-              modalTitle="LBM vs FFM - Fettfri massa förklarad"
+              title={t('tdeeCalc.infoCards.lbmFfm')}
+              modalTitle={t('tdeeCalc.infoCards.lbmFfmModal')}
               modalContent={<LBMvsFFMContent />}
             />
           </div>
@@ -432,9 +434,9 @@ export default function TDEECalculatorTool() {
           {/* Weight Input - With Choice Between Latest Logged Weight and Manual Entry */}
           <Card>
             <CardHeader>
-              <CardTitle>Vikt för beräkning</CardTitle>
+              <CardTitle>{t('tdeeCalc.weight.title')}</CardTitle>
               <CardDescription>
-                Välj vilken vikt som ska användas för TDEE-beräkningen
+                {t('tdeeCalc.weight.description')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -449,9 +451,9 @@ export default function TDEECalculatorTool() {
                       className="h-4 w-4 text-primary-600 focus:ring-primary-500"
                     />
                     <div className="flex-1">
-                      <p className="font-medium text-neutral-900">Använd senaste loggad vikt</p>
+                      <p className="font-medium text-neutral-900">{t('tdeeCalc.weight.useLogged')}</p>
                       <p className="text-sm text-neutral-600">
-                        {latestLoggedWeight} kg (från viktspårning)
+                        {t('tdeeCalc.weight.useLoggedDetail', { weight: latestLoggedWeight })}
                       </p>
                     </div>
                   </label>
@@ -464,8 +466,8 @@ export default function TDEECalculatorTool() {
                       className="h-4 w-4 text-primary-600 focus:ring-primary-500"
                     />
                     <div className="flex-1">
-                      <p className="font-medium text-neutral-900">Ange vikt manuellt</p>
-                      <p className="text-sm text-neutral-600">Ange en egen vikt för beräkningen</p>
+                      <p className="font-medium text-neutral-900">{t('tdeeCalc.weight.useManual')}</p>
+                      <p className="text-sm text-neutral-600">{t('tdeeCalc.weight.useManualDetail')}</p>
                     </div>
                   </label>
                 </div>
@@ -475,7 +477,7 @@ export default function TDEECalculatorTool() {
               {(!useLoggedWeight || !latestLoggedWeight) && (
                 <div className="mt-4">
                   <label className="block text-sm font-medium text-neutral-900 mb-2">
-                    Vikt (kg) <span className="text-red-600">*</span>
+                    {t('tdeeCalc.weight.fieldLabel')} <span className="text-red-600">*</span>
                   </label>
                   <input
                     type="number"
@@ -488,9 +490,8 @@ export default function TDEECalculatorTool() {
                     step="0.1"
                   />
                   <p className="mt-2 text-xs text-neutral-600">
-                    Detta värde används för att beräkna BMR och TDEE.
-                    {!latestLoggedWeight &&
-                      ' Logga din vikt i Viktspårning för att använda den här.'}
+                    {t('tdeeCalc.weight.fieldHint')}
+                    {!latestLoggedWeight && t('tdeeCalc.weight.logHint')}
                   </p>
                 </div>
               )}
@@ -499,7 +500,7 @@ export default function TDEECalculatorTool() {
               {useLoggedWeight && latestLoggedWeight && (
                 <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                   <p className="text-sm text-blue-900">
-                    <strong>Vald vikt för beräkning:</strong> {latestLoggedWeight} kg
+                    <strong>{t('tdeeCalc.weight.selectedWeight')}</strong> {latestLoggedWeight} kg
                   </p>
                 </div>
               )}
@@ -509,9 +510,9 @@ export default function TDEECalculatorTool() {
           {/* Body Fat Percentage Input */}
           <Card>
             <CardHeader>
-              <CardTitle>Kroppsfettprocent (valfri)</CardTitle>
+              <CardTitle>{t('tdeeCalc.bodyFat.title')}</CardTitle>
               <CardDescription>
-                Vissa BMR-formler kräver kroppsfettprocent för mer exakta beräkningar
+                {t('tdeeCalc.bodyFat.description')}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -519,14 +520,14 @@ export default function TDEECalculatorTool() {
                 {profileData?.body_fat_percentage && (
                   <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
                     <p className="text-sm text-blue-900">
-                      <strong>Sparad kroppsfettprocent:</strong> {profileData.body_fat_percentage}%
+                      <strong>{t('tdeeCalc.bodyFat.savedLabel')}</strong> {profileData.body_fat_percentage}%
                     </p>
                   </div>
                 )}
 
                 <div>
                   <label className="block text-sm font-medium text-neutral-900 mb-2">
-                    Kroppsfettprocent (%)
+                    {t('tdeeCalc.bodyFat.fieldLabel')}
                   </label>
                   <input
                     type="number"
@@ -539,8 +540,7 @@ export default function TDEECalculatorTool() {
                     step="0.1"
                   />
                   <p className="mt-2 text-xs text-neutral-600">
-                    Krävs för formler som Cunningham, MacroFactor FFM/Athlete och Fitness Stuff
-                    Podcast
+                    {t('tdeeCalc.bodyFat.fieldHint')}
                   </p>
                 </div>
               </div>
@@ -550,15 +550,15 @@ export default function TDEECalculatorTool() {
           {/* BMR Formula Selection */}
           <Card>
             <CardHeader>
-              <CardTitle>BMR/RMR-formel</CardTitle>
-              <CardDescription>Välj formel för att beräkna din basalmetabolism</CardDescription>
+              <CardTitle>{t('tdeeCalc.bmr.title')}</CardTitle>
+              <CardDescription>{t('tdeeCalc.bmr.description')}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div>
                   <div className="flex items-center gap-2 mb-2">
                     <label className="block text-sm font-medium text-neutral-700">
-                      BMR/RMR-formel <span className="text-red-600">*</span>
+                      {t('tdeeCalc.bmr.fieldLabel')} <span className="text-red-600">*</span>
                     </label>
                     {bmrFormula && (
                       <button
@@ -566,7 +566,7 @@ export default function TDEECalculatorTool() {
                         onClick={() => setShowBMRModal(true)}
                         className="text-sm text-primary-600 hover:text-primary-700 underline transition-colors"
                       >
-                        Fakta om denna formel
+                        {t('tdeeCalc.bmr.factLink')}
                       </button>
                     )}
                   </div>
@@ -575,28 +575,28 @@ export default function TDEECalculatorTool() {
                     onChange={e => setBmrFormula(e.target.value as BMRFormula | '')}
                     className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
                   >
-                    <option value="">Välj BMR/RMR-formel...</option>
+                    <option value="">{t('tdeeCalc.bmr.placeholder')}</option>
                     <option value="Mifflin-St Jeor equation">
-                      Mifflin-St Jeor (Rekommenderad)
+                      {t('tdeeCalc.bmr.formulas.mifflin')}
                     </option>
                     <option value="Revised Harris-Benedict equation">
-                      Revised Harris-Benedict
+                      {t('tdeeCalc.bmr.formulas.revisedHarrisBenedict')}
                     </option>
                     <option value="Original Harris-Benedict equation">
-                      Original Harris-Benedict
+                      {t('tdeeCalc.bmr.formulas.originalHarrisBenedict')}
                     </option>
-                    <option value="Schofield equation">Schofield</option>
-                    <option value="Oxford/Henry equation">Oxford/Henry</option>
-                    <option value="MacroFactor standard equation">MacroFactor Standard</option>
-                    <option value="Cunningham equation">Cunningham (Kräver kroppsfett%)</option>
+                    <option value="Schofield equation">{t('tdeeCalc.bmr.formulas.schofield')}</option>
+                    <option value="Oxford/Henry equation">{t('tdeeCalc.bmr.formulas.oxford')}</option>
+                    <option value="MacroFactor standard equation">{t('tdeeCalc.bmr.formulas.macrofactorStandard')}</option>
+                    <option value="Cunningham equation">{t('tdeeCalc.bmr.formulas.cunningham')}</option>
                     <option value="MacroFactor FFM equation">
-                      MacroFactor FFM (Kräver kroppsfett%)
+                      {t('tdeeCalc.bmr.formulas.macrofactorFFM')}
                     </option>
                     <option value="MacroFactor athlete equation">
-                      MacroFactor Athlete (Kräver kroppsfett%)
+                      {t('tdeeCalc.bmr.formulas.macrofactorAthlete')}
                     </option>
                     <option value="Fitness Stuff Podcast equation">
-                      Fitness Stuff Podcast (Kräver kroppsfett%)
+                      {t('tdeeCalc.bmr.formulas.fitnessStuff')}
                     </option>
                   </select>
 
@@ -605,8 +605,7 @@ export default function TDEECalculatorTool() {
                     <div className="mt-3 flex gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl">
                       <span className="text-xl text-amber-600 flex-shrink-0">⚠</span>
                       <p className="text-sm text-amber-800 leading-relaxed">
-                        Denna formel kräver kroppsfettprocent. Vänligen fyll i kroppsfettprocent
-                        ovan.
+                        {t('tdeeCalc.bmr.bodyFatWarning')}
                       </p>
                     </div>
                   )}
@@ -618,9 +617,9 @@ export default function TDEECalculatorTool() {
           {/* PAL System Selection */}
           <Card>
             <CardHeader>
-              <CardTitle>PAL-system (Aktivitetsnivå)</CardTitle>
+              <CardTitle>{t('tdeeCalc.pal.title')}</CardTitle>
               <CardDescription>
-                Välj system för att beräkna din fysiska aktivitetsnivå
+                {t('tdeeCalc.pal.description')}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -628,7 +627,7 @@ export default function TDEECalculatorTool() {
                 <div>
                   <div className="flex items-center gap-2 mb-2">
                     <label className="block text-sm font-medium text-neutral-700">
-                      PAL-system <span className="text-red-600">*</span>
+                      {t('tdeeCalc.pal.fieldLabel')} <span className="text-red-600">*</span>
                     </label>
                     {palSystem && (
                       <button
@@ -636,7 +635,7 @@ export default function TDEECalculatorTool() {
                         onClick={() => setShowPALModal(true)}
                         className="text-sm text-primary-600 hover:text-primary-700 underline transition-colors"
                       >
-                        Fakta om detta PAL-system
+                        {t('tdeeCalc.pal.factLink')}
                       </button>
                     )}
                   </div>
@@ -645,7 +644,7 @@ export default function TDEECalculatorTool() {
                     onChange={e => setPalSystem(e.target.value as PALSystem | '')}
                     className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
                   >
-                    <option value="">Välj PAL-system...</option>
+                    <option value="">{t('tdeeCalc.pal.placeholder')}</option>
                     <option value="Basic internet PAL values">
                       {translatePALSystem('Basic internet PAL values')}
                     </option>
@@ -661,7 +660,7 @@ export default function TDEECalculatorTool() {
                     <option value="Fitness Stuff PAL values">
                       {translatePALSystem('Fitness Stuff PAL values')}
                     </option>
-                    <option value="Beräkna din aktivitetsnivå">Beräkna din aktivitetsnivå</option>
+                    <option value="Beräkna din aktivitetsnivå">{t('tdeeCalc.pal.calculateLevel')}</option>
                     <option value="Custom PAL">{translatePALSystem('Custom PAL')}</option>
                   </select>
                 </div>
@@ -688,10 +687,10 @@ export default function TDEECalculatorTool() {
             <Card className="border-2 border-primary-200">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <span className="text-2xl">📊</span> Dina Resultat
+                  <span className="text-2xl">📊</span> {t('tdeeCalc.results.title')}
                 </CardTitle>
                 <CardDescription>
-                  Basalmetabolism och total daglig energiförbrukning
+                  {t('tdeeCalc.results.description')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -700,10 +699,10 @@ export default function TDEECalculatorTool() {
                   {/* BMR Result */}
                   {bmr && (
                     <div className="bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-blue-200 rounded-xl p-6 text-center">
-                      <p className="text-xs font-medium text-neutral-600 mb-1">BASALMETABOLISM</p>
+                      <p className="text-xs font-medium text-neutral-600 mb-1">{t('tdeeCalc.results.bmrLabel')}</p>
                       <p className="text-sm text-blue-600 font-semibold mb-2">BMR</p>
                       <p className="text-5xl font-bold text-blue-700 mb-1">{Math.round(bmr)}</p>
-                      <p className="text-sm text-neutral-500">kcal/dag</p>
+                      <p className="text-sm text-neutral-500">{t('tdeeCalc.results.kcalPerDay')}</p>
                       <p className="mt-3 text-xs text-neutral-500 border-t border-blue-200 pt-3">
                         {bmrFormula}
                       </p>
@@ -714,11 +713,11 @@ export default function TDEECalculatorTool() {
                   {tdee && (
                     <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-6 text-center">
                       <p className="text-xs font-medium text-neutral-600 mb-1">
-                        TOTAL ENERGIFÖRBRUKNING
+                        {t('tdeeCalc.results.tdeeLabel')}
                       </p>
                       <p className="text-sm text-green-600 font-semibold mb-2">TDEE</p>
                       <p className="text-5xl font-bold text-green-700 mb-1">{Math.round(tdee)}</p>
-                      <p className="text-sm text-neutral-500">kcal/dag</p>
+                      <p className="text-sm text-neutral-500">{t('tdeeCalc.results.kcalPerDay')}</p>
                       <p className="mt-3 text-xs text-neutral-500 border-t border-green-200 pt-3">
                         {translatePALSystem(palSystem as PALSystem)}
                       </p>
@@ -735,7 +734,7 @@ export default function TDEECalculatorTool() {
                     size="lg"
                   >
                     <Save className="mr-2 h-4 w-4" />
-                    {isSaving ? 'Sparar...' : 'Spara till profil'}
+                    {isSaving ? t('tdeeCalc.results.saving') : t('tdeeCalc.results.saveButton')}
                   </Button>
                 )}
               </CardContent>

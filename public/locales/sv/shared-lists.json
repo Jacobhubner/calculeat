@@ -1,0 +1,39 @@
+{
+  "title": "Gemensamma listor",
+  "create": {
+    "title": "Skapa lista",
+    "namePlaceholder": "Listnamn",
+    "submit": "Skapa lista",
+    "success": "Lista skapad",
+    "error": "Kunde inte skapa lista"
+  },
+  "invite": {
+    "title": "Bjud in till lista",
+    "emailPlaceholder": "E-postadress",
+    "submit": "Bjud in",
+    "success": "Inbjudan skickad",
+    "error": "Kunde inte skicka inbjudan"
+  },
+  "leave": {
+    "confirm": "Lämna lista",
+    "description": "Är du säker på att du vill lämna listan?",
+    "success": "Du har lämnat listan",
+    "error": "Kunde inte lämna listan"
+  },
+  "members": {
+    "title": "Medlemmar",
+    "owner": "Ägare"
+  },
+  "invitations": {
+    "title": "Inbjudningar",
+    "pending": "Väntande",
+    "accept": "Acceptera",
+    "decline": "Neka",
+    "acceptSuccess": "Inbjudan accepterad",
+    "declineSuccess": "Inbjudan nekad",
+    "acceptError": "Kunde inte acceptera inbjudan",
+    "declineError": "Kunde inte neka inbjudan"
+  },
+  "empty": "Inga gemensamma listor ännu",
+  "tab": "Lista: {{name}}"
+}

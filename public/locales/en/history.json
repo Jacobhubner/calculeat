@@ -1,0 +1,95 @@
+{
+  "page": {
+    "title": "History",
+    "description": "View your previous days' logging and progress"
+  },
+  "views": {
+    "list": "List",
+    "calendar": "Calendar",
+    "calendarTitle": "Calendar view",
+    "calendarDescription": "Select a date to see details",
+    "calendarComingSoon": "Calendar view coming soon"
+  },
+  "week": {
+    "days": "days"
+  },
+  "status": {
+    "completed": "Done",
+    "dayCompleted": "Day completed"
+  },
+  "actions": {
+    "deleteDayTitle": "Delete day",
+    "backToHistory": "Back to history",
+    "edit": "Edit",
+    "copyToToday": "Copy to today",
+    "copying": "Copying...",
+    "done": "Done",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "saving": "Saving...",
+    "goToToday": "Go to today's log",
+    "addFood": "Add"
+  },
+  "confirm": {
+    "deleteDay": "Do you want to delete the log for {{date}}? This cannot be undone."
+  },
+  "toast": {
+    "dayDeleted": "Day deleted",
+    "deleteFailed": "Could not delete the day",
+    "copiedToToday": "Copied to today's log!",
+    "daySaved": "Day saved",
+    "foodRemoved": "Food item removed",
+    "dateUpdated": "Date updated",
+    "dateUpdateFailed": "Could not update date"
+  },
+  "empty": {
+    "noHistory": "No history yet",
+    "noHistoryDescription": "Start logging your meals to see history and progress over time.",
+    "noDataForDate": "No data for this date",
+    "noDataDescription": "There is no logged information for {{date}}",
+    "noMealsForDay": "No meals logged for this day",
+    "noFoodInMeal": "No food items logged",
+    "unknownFood": "Unknown food"
+  },
+  "stats": {
+    "summary30Days": "30-day summary",
+    "completedDays": "Completed days",
+    "avgCaloriesPerDay": "Average calories/day",
+    "daysLogged": "Days logged",
+    "streak": "Logging streak",
+    "daysInARow": "days in a row",
+    "streakEncouragement": "Keep logging daily to maintain your streak!",
+    "densityDistribution": "Calorie density distribution",
+    "last30Days": "Last 30 days",
+    "green": "Green",
+    "yellow": "Yellow",
+    "orange": "Orange"
+  },
+  "tips": {
+    "title": "Progress tips",
+    "tip1": "• Log at least 5 days per week for best results",
+    "tip2": "• Compare weekly averages to spot trends",
+    "tip3": "• Aim for at least 30% green foods every day",
+    "tip4": "• Use \"Copy from yesterday\" for faster logging"
+  },
+  "day": {
+    "summary": "Day summary",
+    "calories": "Calories",
+    "macroDistribution": "Macro distribution",
+    "calorieGoal": "Calorie goal",
+    "nutritionStats": "Nutrition stats",
+    "fat": "Fat",
+    "carbs": "Carbohydrates",
+    "protein": "Protein",
+    "meals": "Meals",
+    "totalFoods": "Total food items",
+    "vsGoal": "Compared to goal"
+  },
+  "editing": {
+    "banner": "You are editing this day. Add or remove food items.",
+    "changeDate": "Change date",
+    "confirmDateChange": "Change date from <bold>{{from}}</bold> to <bold>{{to}}</bold>?",
+    "confirmDateChangePlain": "Change date from {{from}} to {{to}}?",
+    "removeItem": "Remove"
+  }
+}

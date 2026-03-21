@@ -24,6 +24,7 @@ import { useFriends, useSendShareInvitationToFriend } from '@/hooks/useFriends'
 import { useAuth } from '@/contexts/AuthContext'
 import { toast } from 'sonner'
 import type { Friend } from '@/lib/types/friends'
+import { useTranslation } from 'react-i18next'
 
 type Step = 'recipient' | 'content' | 'confirm'
 type RecipientTab = 'friend' | 'email'
@@ -45,6 +46,7 @@ function getInitials(name: string) {
 }
 
 export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDialogProps) {
+  const { t } = useTranslation('social')
   const { user } = useAuth()
 
   const [step, setStep] = useState<Step>(preselectedFriend ? 'content' : 'recipient')
@@ -142,7 +144,7 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
 
   const handleFoodListSelect = () => {
     setSelectedId('')
-    setSelectedName(`${foodListCount} livsmedel`)
+    setSelectedName(t('share.food_list.count_label', { count: foodListCount }))
     setStep('confirm')
   }
 
@@ -159,8 +161,8 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
           if (!result.success) {
             toast.error(
               result.error === 'empty_food_list'
-                ? 'Du har inga livsmedel att dela.'
-                : 'Något gick fel.'
+                ? t('share.error.empty_food_list')
+                : t('share.error.generic')
             )
             return
           }
@@ -173,13 +175,13 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
           if (!result.success) {
             toast.error(
               result.error === 'empty_food_list'
-                ? 'Du har inga livsmedel att dela.'
-                : 'Något gick fel.'
+                ? t('share.error.empty_food_list')
+                : t('share.error.generic')
             )
             return
           }
         }
-        toast.success(`Din lista med ${foodListCount} livsmedel delades!`)
+        toast.success(t('share.toast.food_list_shared', { count: foodListCount }))
       } else {
         if (selectedFriend) {
           const result = await sendToFriend({
@@ -188,25 +190,25 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
             friendUserId: selectedFriend.friend_id,
           })
           if (!result.success) {
-            toast.error('Kunde inte dela. Kontrollera att vänskapen fortfarande är aktiv.')
+            toast.error(t('share.error.friend_share_failed'))
             return
           }
         } else {
           await sendByEmail({ itemId: selectedId, itemType: contentType, recipientEmail: email })
         }
-        toast.success(`"${selectedName}" delades!`)
+        toast.success(t('share.toast.item_shared', { name: selectedName }))
       }
       handleOpenChange(false)
     } catch (err) {
       console.error('[ShareDialog] delningsfel:', err)
-      toast.error('Något gick fel vid delningen.')
+      toast.error(t('share.error.send_failed'))
     }
   }
 
   const getTitle = () => {
-    if (step === 'recipient') return 'Dela med'
-    if (step === 'content') return `Dela med ${recipientLabel}`
-    return contentType === 'food_list' ? 'Dela Min lista' : `Dela "${selectedName}"`
+    if (step === 'recipient') return t('share.title.recipient')
+    if (step === 'content') return t('share.title.content', { recipient: recipientLabel })
+    return contentType === 'food_list' ? t('share.title.confirm_list') : t('share.title.confirm_item', { name: selectedName })
   }
 
   return (
@@ -233,7 +235,7 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
                 }`}
               >
                 <Users className="h-4 w-4" />
-                Vänner
+                {t('share.recipient.tab_friends')}
               </button>
               <button
                 type="button"
@@ -244,7 +246,7 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
                     : 'text-neutral-600 hover:bg-neutral-100'
                 }`}
               >
-                E-post
+                {t('share.recipient.tab_email')}
               </button>
             </div>
 
@@ -252,13 +254,13 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
               <div className="space-y-2">
                 {friends.length === 0 ? (
                   <p className="text-sm text-neutral-500 text-center py-4">
-                    Du har inga vänner ännu. Lägg till vänner via Social.
+                    {t('share.recipient.no_friends')}
                   </p>
                 ) : (
                   <>
                     {friends.length > 4 && (
                       <Input
-                        placeholder="Sök vän..."
+                        placeholder={t('share.recipient.search_placeholder')}
                         value={friendSearch}
                         onChange={e => setFriendSearch(e.target.value)}
                         className="text-sm"
@@ -298,7 +300,7 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
                 <div className="space-y-1">
                   <Input
                     type="email"
-                    placeholder="mottagare@exempel.se"
+                    placeholder={t('share.recipient.email_placeholder')}
                     value={email}
                     onChange={e => handleEmailChange(e.target.value)}
                     onKeyDown={e =>
@@ -307,16 +309,16 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
                     autoFocus
                   />
                   {email.trim() && emailStatus === 'checking' && (
-                    <p className="text-xs text-neutral-400 pl-1">Kontrollerar...</p>
+                    <p className="text-xs text-neutral-400 pl-1">{t('share.recipient.checking')}</p>
                   )}
                   {emailStatus === 'found' && (
                     <p className="text-xs text-green-600 pl-1 flex items-center gap-1">
-                      <Check className="h-3 w-3" /> Användare hittad
+                      <Check className="h-3 w-3" /> {t('share.recipient.user_found')}
                     </p>
                   )}
                   {emailStatus === 'not_found' && (
                     <p className="text-xs text-red-500 pl-1 flex items-center gap-1">
-                      <X className="h-3 w-3" /> Ingen CalculEat-användare med den e-posten
+                      <X className="h-3 w-3" /> {t('share.recipient.user_not_found')}
                     </p>
                   )}
                 </div>
@@ -325,7 +327,7 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
                   disabled={emailStatus !== 'found'}
                   className="w-full"
                 >
-                  Nästa →
+                  {t('share.recipient.next')}
                 </Button>
               </div>
             )}
@@ -366,7 +368,11 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
                   {type === 'food_item' && <Apple className="h-3.5 w-3.5" />}
                   {type === 'recipe' && <ChefHat className="h-3.5 w-3.5" />}
                   {type === 'food_list' && <ListOrdered className="h-3.5 w-3.5" />}
-                  {type === 'food_item' ? 'Livsmedel' : type === 'recipe' ? 'Recept' : 'Min lista'}
+                  {type === 'food_item'
+                    ? t('share.content.tab_food_item')
+                    : type === 'recipe'
+                      ? t('share.content.tab_recipe')
+                      : t('share.content.tab_food_list')}
                 </button>
               ))}
             </div>
@@ -376,7 +382,7 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
                   <Input
-                    placeholder="Sök livsmedel..."
+                    placeholder={t('share.content.search_food_placeholder')}
                     value={itemSearch}
                     onChange={e => setItemSearch(e.target.value)}
                     className="pl-9 text-sm"
@@ -386,7 +392,7 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
                 <div className="space-y-1 max-h-52 overflow-y-auto">
                   {filteredFoodItems.length === 0 ? (
                     <p className="text-sm text-neutral-400 text-center py-4">
-                      Inga livsmedel hittades
+                      {t('share.content.no_food_items')}
                     </p>
                   ) : (
                     filteredFoodItems.map(item => (
@@ -414,7 +420,7 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
                   <Input
-                    placeholder="Sök recept..."
+                    placeholder={t('share.content.search_recipe_placeholder')}
                     value={itemSearch}
                     onChange={e => setItemSearch(e.target.value)}
                     className="pl-9 text-sm"
@@ -424,7 +430,7 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
                 <div className="space-y-1 max-h-52 overflow-y-auto">
                   {filteredRecipes.length === 0 ? (
                     <p className="text-sm text-neutral-400 text-center py-4">
-                      Inga recept hittades
+                      {t('share.content.no_recipes')}
                     </p>
                   ) : (
                     filteredRecipes.map(recipe => (
@@ -438,7 +444,7 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
                           {recipe.name}
                         </span>
                         <span className="text-xs text-neutral-400 shrink-0 ml-2">
-                          {recipe.servings} port.
+                          {recipe.servings} {t('share.content.servings_abbr')}
                         </span>
                       </button>
                     ))
@@ -450,11 +456,11 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
             {contentType === 'food_list' && (
               <div className="space-y-3">
                 {foodListLoading ? (
-                  <p className="text-sm text-neutral-400 text-center py-4">Laddar...</p>
+                  <p className="text-sm text-neutral-400 text-center py-4">{t('share.content.loading')}</p>
                 ) : foodListCount === 0 ? (
                   <div className="text-center py-6 space-y-2">
                     <ListOrdered className="h-8 w-8 text-neutral-300 mx-auto" />
-                    <p className="text-sm text-neutral-400">Du har inga livsmedel att dela ännu</p>
+                    <p className="text-sm text-neutral-400">{t('share.content.no_food_list')}</p>
                   </div>
                 ) : (
                   <button
@@ -464,8 +470,8 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
                   >
                     <ListOrdered className="h-8 w-8 text-primary-600 shrink-0" />
                     <div>
-                      <p className="font-semibold text-neutral-900">Min lista</p>
-                      <p className="text-sm text-neutral-500">{foodListCount} livsmedel</p>
+                      <p className="font-semibold text-neutral-900">{t('share.food_list.title')}</p>
+                      <p className="text-sm text-neutral-500">{t('share.food_list.count_label', { count: foodListCount })}</p>
                     </div>
                   </button>
                 )}
@@ -486,7 +492,7 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
                   <p className="text-sm font-semibold text-neutral-900 truncate">
                     {recipientLabel}
                   </p>
-                  <p className="text-xs text-neutral-400">Mottagare</p>
+                  <p className="text-xs text-neutral-400">{t('share.confirm.recipient_label')}</p>
                 </div>
               </div>
               <div className="border-t border-neutral-100 pt-3 flex items-center gap-3">
@@ -502,15 +508,15 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
                 <div>
                   <p className="text-sm font-medium text-neutral-900">
                     {contentType === 'food_list'
-                      ? `Min lista (${foodListCount} livsmedel)`
+                      ? t('share.confirm.food_list_name', { count: foodListCount })
                       : selectedName}
                   </p>
                   <p className="text-xs text-neutral-400">
                     {contentType === 'food_item'
-                      ? 'Livsmedel'
+                      ? t('share.confirm.type_food_item')
                       : contentType === 'recipe'
-                        ? 'Recept'
-                        : 'Livsmedelslista'}
+                        ? t('share.confirm.type_recipe')
+                        : t('share.confirm.type_food_list')}
                   </p>
                 </div>
               </div>
@@ -518,7 +524,7 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
 
             {contentType === 'food_list' && (
               <p className="text-xs text-neutral-400 text-center">
-                Dubbletter med liknande näringsvärden hoppas automatiskt över vid import.
+                {t('share.confirm.duplicate_note')}
               </p>
             )}
 
@@ -530,11 +536,11 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
                 className="flex-1"
               >
                 <ChevronLeft className="h-4 w-4 mr-1" />
-                Tillbaka
+                {t('share.confirm.back')}
               </Button>
               <Button onClick={handleSend} disabled={isPending} className="flex-1 gap-2">
                 <Send className="h-4 w-4" />
-                {isPending ? 'Skickar...' : 'Skicka'}
+                {isPending ? t('share.confirm.sending') : t('share.confirm.send')}
               </Button>
             </div>
           </div>

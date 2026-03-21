@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   Dialog,
   DialogContent,
@@ -36,6 +37,7 @@ export default function SelectMealSlotDialog({
   savedMealId,
   savedMealName,
 }: SelectMealSlotDialogProps) {
+  const { t } = useTranslation('today')
   const [loadingSlot, setLoadingSlot] = useState<string | null>(null)
   const navigate = useNavigate()
 
@@ -66,7 +68,7 @@ export default function SelectMealSlotDialog({
 
   const handleSelectSlot = async (slot: MealSlotOption) => {
     if (!todayLog) {
-      toast.error('Kunde inte hitta dagens logg')
+      toast.error(t('selectSlot.errorNoLog'))
       return
     }
 
@@ -85,12 +87,10 @@ export default function SelectMealSlotDialog({
 
       // Success feedback
       if (result.missingCount > 0) {
-        toast.warning(
-          `${result.missingCount} matvara${result.missingCount > 1 ? 'r' : ''} kunde inte hittas och hoppades över`
-        )
+        toast.warning(t('loadMeal.warningMissingItems', { count: result.missingCount }))
       }
 
-      toast.success(`${savedMealName} laddad till ${slot.name}! (+${result.totalCalories} kcal)`)
+      toast.success(t('loadMeal.successLoaded', { mealName: savedMealName, slotName: slot.name, calories: result.totalCalories }))
 
       // Close modal
       onOpenChange(false)
@@ -105,7 +105,7 @@ export default function SelectMealSlotDialog({
       }, 300)
     } catch (error) {
       console.error('Error loading saved meal:', error)
-      toast.error('Kunde inte ladda måltid. Försök igen.')
+      toast.error(t('loadMeal.errorLoadFailed'))
     } finally {
       setLoadingSlot(null)
     }
@@ -115,9 +115,9 @@ export default function SelectMealSlotDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Vilken måltid?</DialogTitle>
+          <DialogTitle>{t('selectSlot.title')}</DialogTitle>
           <DialogDescription>
-            Välj var du vill lägga till &quot;{savedMealName}&quot;
+            {t('selectSlot.description', { mealName: savedMealName })}
           </DialogDescription>
         </DialogHeader>
 
@@ -143,7 +143,7 @@ export default function SelectMealSlotDialog({
                           {slot.name}
                           {slot.isSuggested && (
                             <span className="ml-2 text-xs text-primary-600 font-normal">
-                              (Rekommenderad)
+                              ({t('selectSlot.recommended')})
                             </span>
                           )}
                         </h3>

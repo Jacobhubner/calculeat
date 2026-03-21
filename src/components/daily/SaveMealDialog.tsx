@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   Dialog,
   DialogContent,
@@ -22,6 +23,7 @@ interface SaveMealDialogProps {
 }
 
 export default function SaveMealDialog({ open, onOpenChange, mealEntry }: SaveMealDialogProps) {
+  const { t } = useTranslation('today')
   const [mealName, setMealName] = useState('')
   const [showDuplicateWarning, setShowDuplicateWarning] = useState(false)
   const [duplicateMealId, setDuplicateMealId] = useState<string | null>(null)
@@ -47,13 +49,13 @@ export default function SaveMealDialog({ open, onOpenChange, mealEntry }: SaveMe
 
     // Validation: empty name
     if (!trimmedName) {
-      toast.error('Ange ett namn på måltiden')
+      toast.error(t('saveMeal.errorEmptyName'))
       return
     }
 
     // Validation: name too long
     if (trimmedName.length > 50) {
-      toast.error('Namnet får vara max 50 tecken')
+      toast.error(t('saveMeal.errorNameTooLong'))
       return
     }
 
@@ -80,11 +82,11 @@ export default function SaveMealDialog({ open, onOpenChange, mealEntry }: SaveMe
       const input = transformMealToSavedMeal(mealEntry, trimmedName)
       await createSavedMeal.mutateAsync(input)
 
-      toast.success(`${trimmedName} har sparats!`)
+      toast.success(t('saveMeal.successSaved', { name: trimmedName }))
       onOpenChange(false)
     } catch (error) {
       console.error('Error saving meal:', error)
-      toast.error('Kunde inte spara måltiden. Försök igen.')
+      toast.error(t('saveMeal.errorSaveFailed'))
     }
   }
 
@@ -115,22 +117,22 @@ export default function SaveMealDialog({ open, onOpenChange, mealEntry }: SaveMe
     <Dialog open={open} onOpenChange={handleCancel}>
       <DialogContent className="max-w-lg md:max-h-[85vh] flex flex-col">
         <DialogHeader>
-          <DialogTitle>Spara måltid</DialogTitle>
-          <DialogDescription>Spara denna måltid för snabb loggning i framtiden</DialogDescription>
+          <DialogTitle>{t('saveMeal.title')}</DialogTitle>
+          <DialogDescription>{t('saveMeal.description')}</DialogDescription>
         </DialogHeader>
 
         <div className="flex-1 overflow-y-auto space-y-4">
           {/* Name Input */}
           <div>
             <label htmlFor="meal-name" className="block text-sm font-medium text-neutral-700 mb-2">
-              Namn på måltiden
+              {t('saveMeal.nameLabel')}
             </label>
             <Input
               id="meal-name"
               type="text"
               value={mealName}
               onChange={e => setMealName(e.target.value)}
-              placeholder="T.ex. Proteinfrukost, Chipotle bowl, Smoothie"
+              placeholder={t('saveMeal.namePlaceholder')}
               maxLength={50}
               autoFocus
               disabled={isLoading}
@@ -144,10 +146,10 @@ export default function SaveMealDialog({ open, onOpenChange, mealEntry }: SaveMe
               <AlertDescription>
                 <div className="flex-1">
                   <h4 className="font-semibold text-yellow-900 mb-1">
-                    En måltid med namnet &quot;{mealName.trim()}&quot; finns redan
+                    {t('saveMeal.duplicateWarningTitle', { name: mealName.trim() })}
                   </h4>
                   <p className="text-sm text-yellow-800">
-                    Vill du ersätta den befintliga måltiden med denna?
+                    {t('saveMeal.duplicateWarningText')}
                   </p>
                 </div>
               </AlertDescription>
@@ -157,7 +159,7 @@ export default function SaveMealDialog({ open, onOpenChange, mealEntry }: SaveMe
           {/* Food Items Preview */}
           <div>
             <h3 className="text-sm font-medium text-neutral-700 mb-2">
-              Matvaror ({mealEntry?.items?.length || 0})
+              {t('saveMeal.foodItemsHeading', { count: mealEntry?.items?.length || 0 })}
             </h3>
             <div className="border rounded-lg bg-neutral-50 max-h-60 overflow-y-auto">
               {hasItems ? (
@@ -169,7 +171,7 @@ export default function SaveMealDialog({ open, onOpenChange, mealEntry }: SaveMe
                         <div className="flex items-start justify-between gap-2">
                           <div className="flex-1 min-w-0">
                             <p className="font-medium text-neutral-900 truncate">
-                              {foodItem?.name || 'Okänd matvara'}
+                              {foodItem?.name || t('saveMeal.unknownFood')}
                             </p>
                             <p className="text-xs text-neutral-500 mt-0.5">
                               {item.amount} {item.unit}
@@ -185,7 +187,7 @@ export default function SaveMealDialog({ open, onOpenChange, mealEntry }: SaveMe
                 </div>
               ) : (
                 <div className="p-8 text-center text-neutral-400 text-sm">
-                  Inga matvaror i måltiden
+                  {t('saveMeal.noFoodItems')}
                 </div>
               )}
             </div>
@@ -195,7 +197,7 @@ export default function SaveMealDialog({ open, onOpenChange, mealEntry }: SaveMe
           {hasItems && (
             <div className="border-t pt-3">
               <div className="flex items-center justify-between text-sm">
-                <span className="font-medium text-neutral-700">Totalt:</span>
+                <span className="font-medium text-neutral-700">{t('saveMeal.total')}</span>
                 <div className="flex gap-3 text-neutral-600">
                   <span className="font-semibold text-primary-600">
                     {Math.round(totals.calories)} kcal
@@ -214,22 +216,22 @@ export default function SaveMealDialog({ open, onOpenChange, mealEntry }: SaveMe
           {showDuplicateWarning ? (
             <>
               <Button variant="outline" onClick={handleCancel} disabled={isLoading}>
-                Avbryt
+                {t('saveMeal.cancel')}
               </Button>
               <Button variant="outline" onClick={handleChooseDifferentName} disabled={isLoading}>
-                Välj annat namn
+                {t('saveMeal.chooseDifferentName')}
               </Button>
               <Button onClick={handleSave} disabled={isLoading}>
-                {isLoading ? 'Ersätter...' : 'Ersätt'}
+                {isLoading ? t('saveMeal.replacing') : t('saveMeal.replace')}
               </Button>
             </>
           ) : (
             <>
               <Button variant="outline" onClick={handleCancel} disabled={isLoading}>
-                Avbryt
+                {t('saveMeal.cancel')}
               </Button>
               <Button onClick={handleSave} disabled={isLoading || !hasItems}>
-                {isLoading ? 'Sparar...' : 'Spara'}
+                {isLoading ? t('saveMeal.saving') : t('saveMeal.save')}
               </Button>
             </>
           )}

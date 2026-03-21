@@ -4,6 +4,7 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import tseslint from 'typescript-eslint'
 import prettier from 'eslint-config-prettier'
+import i18next from 'eslint-plugin-i18next'
 
 export default tseslint.config(
   { ignores: ['dist'] },
@@ -20,6 +21,7 @@ export default tseslint.config(
       react,
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
+      i18next,
     },
     rules: {
       ...react.configs.recommended.rules,
@@ -27,6 +29,37 @@ export default tseslint.config(
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       'react/react-in-jsx-scope': 'off',
+      // ── i18n: warn on hardcoded strings in JSX during migration ─────────
+      // Switch to 'error' once all namespaces have been migrated.
+      'i18next/no-literal-string': [
+        'warn',
+        {
+          mode: 'jsx-only',
+          // Components that intentionally render raw strings
+          ignoreComponent: ['Trans'],
+          // HTML attributes that are not user-visible text
+          ignoreAttribute: [
+            'key',
+            'name',
+            'id',
+            'className',
+            'style',
+            'data-testid',
+            'href',
+            'src',
+            'type',
+            'role',
+            'aria-label',
+            'tabIndex',
+            'target',
+            'rel',
+            'accept',
+            'pattern',
+            'autoComplete',
+            'inputMode',
+          ],
+        },
+      ],
     },
     settings: {
       react: {

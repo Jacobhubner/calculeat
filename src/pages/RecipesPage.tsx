@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -10,6 +11,7 @@ import { RecipeCard } from '@/components/recipe/RecipeCard'
 import { RecipeCalculatorModal } from '@/components/recipe/RecipeCalculatorModal'
 
 export default function RecipesPage() {
+  const { t } = useTranslation('recipes')
   const [searchQuery, setSearchQuery] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingRecipe, setEditingRecipe] = useState<Recipe | null>(null)
@@ -32,14 +34,14 @@ export default function RecipesPage() {
   }
 
   const handleDeleteRecipe = async (recipe: Recipe) => {
-    const message = `Vill du ta bort receptet "${recipe.name}"?\n\nOBS: Detta kommer att radera receptet både härifrån OCH från livsmedelslistan där det kan användas för loggning.`
+    const message = t('page.deleteConfirm', { name: recipe.name })
     if (!confirm(message)) return
 
     try {
       await deleteRecipe.mutateAsync(recipe.id)
     } catch (error) {
       console.error('Failed to delete recipe:', error)
-      alert('Kunde inte ta bort receptet. Försök igen.')
+      alert(t('page.deleteError'))
     }
   }
 
@@ -55,19 +57,19 @@ export default function RecipesPage() {
         <div>
           <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent mb-1 md:mb-2 flex items-center gap-2 md:gap-3">
             <ChefHat className="h-6 w-6 md:h-8 md:w-8 text-primary-600" />
-            Recept
+            {t('page.title')}
           </h1>
           <p className="text-sm md:text-base text-neutral-600">
-            Skapa och hantera dina egna recept
+            {t('page.subtitle')}
             {recipes &&
               recipes.length > 0 &&
-              ` (${filteredRecipes?.length || 0} av ${recipes.length})`}
+              ` ${t('page.subtitleWithCount', { filtered: filteredRecipes?.length || 0, total: recipes.length })}`}
           </p>
         </div>
         <Button className="gap-2 self-start sm:self-auto" size="sm" onClick={handleNewRecipe}>
           <Plus className="h-4 w-4" />
-          <span className="hidden sm:inline">Nytt recept</span>
-          <span className="sm:hidden">Nytt</span>
+          <span className="hidden sm:inline">{t('page.newRecipe')}</span>
+          <span className="sm:hidden">{t('page.newRecipeShort')}</span>
         </Button>
       </div>
 
@@ -77,7 +79,7 @@ export default function RecipesPage() {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400" />
             <Input
-              placeholder="Sök efter recept..."
+              placeholder={t('page.searchPlaceholder')}
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               className="pl-10"
@@ -89,25 +91,25 @@ export default function RecipesPage() {
       {/* Error state */}
       {isError ? (
         <div className="text-center py-12">
-          <p className="text-red-600">Kunde inte ladda recept. Försök igen senare.</p>
+          <p className="text-red-600">{t('page.errorLoading')}</p>
         </div>
       ) : isLoading ? (
         <div className="text-center py-12">
-          <p className="text-neutral-600">Laddar recept...</p>
+          <p className="text-neutral-600">{t('page.loading')}</p>
         </div>
       ) : !filteredRecipes || filteredRecipes.length === 0 ? (
         <EmptyState
           icon={ChefHat}
-          title={searchQuery ? 'Inga recept hittades' : 'Inga recept ännu'}
+          title={searchQuery ? t('page.emptyTitleSearch') : t('page.emptyTitle')}
           description={
             searchQuery
-              ? 'Prova att ändra din sökning.'
-              : 'Skapa ditt första recept genom att kombinera matvaror till måltider.'
+              ? t('page.emptyDescriptionSearch')
+              : t('page.emptyDescription')
           }
           action={
             searchQuery
-              ? { label: 'Rensa sökning', onClick: () => setSearchQuery('') }
-              : { label: 'Skapa recept', onClick: handleNewRecipe }
+              ? { label: t('page.clearSearch'), onClick: () => setSearchQuery('') }
+              : { label: t('page.createRecipe'), onClick: handleNewRecipe }
           }
         />
       ) : (
@@ -128,7 +130,7 @@ export default function RecipesPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <BookOpen className="h-5 w-5" />
-            Om Recept
+            {t('page.infoTitle')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3 text-sm text-neutral-700">
@@ -137,8 +139,7 @@ export default function RecipesPage() {
               <div className="h-2 w-2 rounded-full bg-primary-600" />
             </div>
             <p>
-              <span className="font-semibold">Kombinera matvaror:</span> Skapa recept genom att
-              lägga till flera matvaror med specifika mängder.
+              <span className="font-semibold">{t('page.infoCombine')}</span> {t('page.infoCombineText')}
             </p>
           </div>
           <div className="flex gap-2">
@@ -146,8 +147,7 @@ export default function RecipesPage() {
               <div className="h-2 w-2 rounded-full bg-primary-600" />
             </div>
             <p>
-              <span className="font-semibold">Automatisk näring:</span> Näringsvärden beräknas
-              automatiskt baserat på ingredienser.
+              <span className="font-semibold">{t('page.infoNutrition')}</span> {t('page.infoNutritionText')}
             </p>
           </div>
           <div className="flex gap-2">
@@ -155,8 +155,7 @@ export default function RecipesPage() {
               <div className="h-2 w-2 rounded-full bg-primary-600" />
             </div>
             <p>
-              <span className="font-semibold">Portionsstorlek:</span> Ange antal portioner för att
-              få näring per portion.
+              <span className="font-semibold">{t('page.infoServings')}</span> {t('page.infoServingsText')}
             </p>
           </div>
           <div className="flex gap-2">
@@ -164,8 +163,7 @@ export default function RecipesPage() {
               <div className="h-2 w-2 rounded-full bg-primary-600" />
             </div>
             <p>
-              <span className="font-semibold">Lägg till i måltider:</span> Sparade recept blir
-              automatiskt sökbara som livsmedel och kan enkelt loggas i dina dagliga måltider.
+              <span className="font-semibold">{t('page.infoAdd')}</span> {t('page.infoAddText')}
             </p>
           </div>
         </CardContent>

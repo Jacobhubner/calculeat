@@ -12,6 +12,7 @@ import {
   PAL_SPECIFIC_INTENSITY_DESCRIPTIONS,
 } from '@/lib/calculations/tdee'
 import type { PALSystem, ActivityLevel, IntensityLevel } from '@/lib/types'
+import { useTranslation } from 'react-i18next'
 
 interface ConditionalPALFieldsProps {
   palSystem: PALSystem
@@ -29,6 +30,7 @@ export default function ConditionalPALFields({
   watch,
   setValue: _setValue,
 }: ConditionalPALFieldsProps) {
+  const { t } = useTranslation('tools')
   const selectedActivityLevel = watch('activity_level') as ActivityLevel | undefined
   const selectedIntensityLevel = watch('intensity_level') as IntensityLevel | undefined
   const renderFields = () => {
@@ -37,9 +39,9 @@ export default function ConditionalPALFields({
         return (
           <div className="space-y-4">
             <div>
-              <Label htmlFor="activity_level">Aktivitetsnivå *</Label>
+              <Label htmlFor="activity_level">{t('palFields.activityLevel')}</Label>
               <Select id="activity_level" {...register('activity_level')} className="mt-2">
-                <option value="">Välj aktivitetsnivå...</option>
+                <option value="">{t('palFields.activityLevelPlaceholder')}</option>
                 <option value="Sedentary">{activityLevelTranslations['Sedentary']}</option>
                 <option value="Lightly active">
                   {activityLevelTranslations['Lightly active']}
@@ -66,9 +68,9 @@ export default function ConditionalPALFields({
         return (
           <div className="space-y-4">
             <div>
-              <Label htmlFor="activity_level">Aktivitetsnivå *</Label>
+              <Label htmlFor="activity_level">{t('palFields.activityLevel')}</Label>
               <Select id="activity_level" {...register('activity_level')} className="mt-2">
-                <option value="">Välj aktivitetsnivå...</option>
+                <option value="">{t('palFields.activityLevelPlaceholder')}</option>
                 <option value="Sedentary">{activityLevelTranslations['Sedentary']}</option>
                 <option value="Lightly active">
                   {activityLevelTranslations['Lightly active']}
@@ -89,9 +91,9 @@ export default function ConditionalPALFields({
                 )}
             </div>
             <div>
-              <Label htmlFor="intensity_level">Intensitetsnivå *</Label>
+              <Label htmlFor="intensity_level">{t('palFields.intensityLevel')}</Label>
               <Select id="intensity_level" {...register('intensity_level')} className="mt-2">
-                <option value="">Välj intensitet...</option>
+                <option value="">{t('palFields.intensityLevelPlaceholder')}</option>
                 <option value="None">{intensityLevelTranslations['None']}</option>
                 <option value="Light">{intensityLevelTranslations['Light']}</option>
                 <option value="Moderate">{intensityLevelTranslations['Moderate']}</option>
@@ -112,9 +114,9 @@ export default function ConditionalPALFields({
         return (
           <div className="space-y-4">
             <div>
-              <Label htmlFor="activity_level">Aktivitetsnivå *</Label>
+              <Label htmlFor="activity_level">{t('palFields.activityLevel')}</Label>
               <Select id="activity_level" {...register('activity_level')} className="mt-2">
-                <option value="">Välj aktivitetsnivå...</option>
+                <option value="">{t('palFields.activityLevelPlaceholder')}</option>
                 <option value="Sedentary">{activityLevelTranslations['Sedentary']}</option>
                 <option value="Lightly active">
                   {activityLevelTranslations['Lightly active']}
@@ -132,9 +134,9 @@ export default function ConditionalPALFields({
                 )}
             </div>
             <div>
-              <Label htmlFor="intensity_level">Intensitetsnivå *</Label>
+              <Label htmlFor="intensity_level">{t('palFields.intensityLevel')}</Label>
               <Select id="intensity_level" {...register('intensity_level')} className="mt-2">
-                <option value="">Välj intensitet...</option>
+                <option value="">{t('palFields.intensityLevelPlaceholder')}</option>
                 <option value="Light">{intensityLevelTranslations['Light']}</option>
                 <option value="Moderate">{intensityLevelTranslations['Moderate']}</option>
                 <option value="Difficult">{intensityLevelTranslations['Difficult']}</option>
@@ -148,7 +150,7 @@ export default function ConditionalPALFields({
                 )}
             </div>
             <div>
-              <Label htmlFor="training_frequency_per_week">Träningspass per vecka *</Label>
+              <Label htmlFor="training_frequency_per_week">{t('palFields.trainingFrequency')}</Label>
               <Input
                 id="training_frequency_per_week"
                 type="number"
@@ -159,7 +161,7 @@ export default function ConditionalPALFields({
               />
             </div>
             <div>
-              <Label htmlFor="training_duration_minutes">Minuter per pass *</Label>
+              <Label htmlFor="training_duration_minutes">{t('palFields.trainingDuration')}</Label>
               <Input
                 id="training_duration_minutes"
                 type="number"
@@ -176,7 +178,7 @@ export default function ConditionalPALFields({
         return (
           <div className="space-y-4">
             <div>
-              <Label htmlFor="training_frequency_per_week">Träningspass per vecka *</Label>
+              <Label htmlFor="training_frequency_per_week">{t('palFields.trainingFrequency')}</Label>
               <Input
                 id="training_frequency_per_week"
                 type="number"
@@ -187,7 +189,7 @@ export default function ConditionalPALFields({
               />
             </div>
             <div>
-              <Label htmlFor="training_duration_minutes">Minuter per pass *</Label>
+              <Label htmlFor="training_duration_minutes">{t('palFields.trainingDuration')}</Label>
               <Input
                 id="training_duration_minutes"
                 type="number"
@@ -198,9 +200,9 @@ export default function ConditionalPALFields({
               />
             </div>
             <div>
-              <Label htmlFor="daily_steps">Dagliga steg *</Label>
+              <Label htmlFor="daily_steps">{t('palFields.dailySteps')}</Label>
               <Select id="daily_steps" {...register('daily_steps')} className="mt-2">
-                <option value="">Välj stegintervall...</option>
+                <option value="">{t('palFields.dailyStepsPlaceholder')}</option>
                 {Object.entries(dailyStepsTranslations).map(([key, value]) => (
                   <option key={key} value={key}>
                     {value}
@@ -215,9 +217,9 @@ export default function ConditionalPALFields({
         return (
           <div className="space-y-4">
             <div>
-              <Label htmlFor="activity_level">Aktivitetsnivå *</Label>
+              <Label htmlFor="activity_level">{t('palFields.activityLevel')}</Label>
               <Select id="activity_level" {...register('activity_level')} className="mt-2">
-                <option value="">Välj aktivitetsnivå...</option>
+                <option value="">{t('palFields.activityLevelPlaceholder')}</option>
                 <option value="Sedentary">{activityLevelTranslations['Sedentary']}</option>
                 <option value="Lightly active">
                   {activityLevelTranslations['Lightly active']}
@@ -244,7 +246,7 @@ export default function ConditionalPALFields({
         return (
           <div className="space-y-4">
             <div>
-              <Label htmlFor="custom_pal">Anpassat PAL-värde (1.0 - 3.0) *</Label>
+              <Label htmlFor="custom_pal">{t('palFields.customPAL')}</Label>
               <Input
                 id="custom_pal"
                 type="number"
@@ -255,7 +257,7 @@ export default function ConditionalPALFields({
                 {...register('custom_pal', { valueAsNumber: true })}
               />
               <p className="text-xs text-neutral-500 mt-1">
-                Ange ditt eget PAL-värde om du vet det
+                {t('palFields.customPALHint')}
               </p>
             </div>
           </div>

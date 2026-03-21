@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { Badge } from '@/components/ui/badge'
 
 interface NutritionPreviewProps {
@@ -19,10 +20,11 @@ export function NutritionPreview({
   energyDensityColor,
   showWeight = true,
 }: NutritionPreviewProps) {
+  const { t } = useTranslation('today')
   return (
     <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-3 space-y-3">
       <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-neutral-700">Beräknat näringsinnehåll</span>
+        <span className="text-sm font-medium text-neutral-700">{t('nutritionPreview.heading')}</span>
         {energyDensityColor && (
           <Badge
             variant="outline"
@@ -35,39 +37,39 @@ export function NutritionPreview({
             }
           >
             {energyDensityColor === 'Green'
-              ? 'Grön'
+              ? t('nutritionPreview.colorGreen')
               : energyDensityColor === 'Yellow'
-                ? 'Gul'
-                : 'Orange'}
+                ? t('nutritionPreview.colorYellow')
+                : t('nutritionPreview.colorOrange')}
           </Badge>
         )}
       </div>
 
       <div className="grid grid-cols-2 gap-2 text-sm">
         <div className="flex justify-between">
-          <span className="text-neutral-600">Kalorier:</span>
+          <span className="text-neutral-600">{t('nutritionPreview.calories')}</span>
           <span className="font-semibold text-neutral-900">{Math.round(calories)} kcal</span>
         </div>
         {showWeight && (
           <div className="flex justify-between">
-            <span className="text-neutral-600">Vikt:</span>
+            <span className="text-neutral-600">{t('nutritionPreview.weight')}</span>
             <span className="font-medium text-neutral-900">{weightGrams}g</span>
           </div>
         )}
         <div className="flex justify-between">
-          <span className="text-neutral-600">Fett:</span>
+          <span className="text-neutral-600">{t('nutritionPreview.fat')}</span>
           <span className="font-medium" style={{ color: '#f5c518' }}>
             {fat.toFixed(1)}g
           </span>
         </div>
         <div className="flex justify-between">
-          <span className="text-neutral-600">Kolhydrater:</span>
+          <span className="text-neutral-600">{t('nutritionPreview.carbs')}</span>
           <span className="font-medium" style={{ color: '#fb923c' }}>
             {carbs.toFixed(1)}g
           </span>
         </div>
         <div className="flex justify-between col-span-2 sm:col-span-1">
-          <span className="text-neutral-600">Protein:</span>
+          <span className="text-neutral-600">{t('nutritionPreview.protein')}</span>
           <span className="font-medium" style={{ color: '#f43f5e' }}>
             {protein.toFixed(1)}g
           </span>

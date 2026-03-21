@@ -4,6 +4,7 @@
  * Shows profile name input and save button
  */
 
+import { useTranslation } from 'react-i18next'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -24,6 +25,7 @@ export default function FloatingProfileSaveCard({
   isSaving,
   hasChanges,
 }: FloatingProfileSaveCardProps) {
+  const { t } = useTranslation('profile')
   // Only show if there are actual changes to save
   if (!hasChanges) return null
 
@@ -32,12 +34,12 @@ export default function FloatingProfileSaveCard({
       <CardContent className="p-4 space-y-3">
         {/* Profile Name Input */}
         <div>
-          <label className="text-xs font-medium text-neutral-700 mb-1 block">Profilnamn</label>
+          <label className="text-xs font-medium text-neutral-700 mb-1 block">{t('floatingSave.profileNameLabel')}</label>
           <Input
             type="text"
             value={profileName}
             onChange={e => onProfileNameChange(e.target.value)}
-            placeholder="Min profil"
+            placeholder={t('floatingSave.profileNamePlaceholder')}
             className="text-sm"
           />
         </div>
@@ -45,7 +47,7 @@ export default function FloatingProfileSaveCard({
         {/* Save Button */}
         <Button onClick={onSave} disabled={isSaving || !hasChanges} className="w-full" size="sm">
           <Save className="h-4 w-4 mr-2" />
-          {isSaving ? 'Sparar...' : hasChanges ? 'Spara ändringar' : 'Inga ändringar'}
+          {isSaving ? t('save.saving') : hasChanges ? t('save.saveChanges') : t('save.noChanges')}
         </Button>
       </CardContent>
     </Card>

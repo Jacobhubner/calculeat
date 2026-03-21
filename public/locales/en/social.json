@@ -1,0 +1,203 @@
+{
+  "invitations": {
+    "page": {
+      "title": "Invitations",
+      "subtitle": "Food items and recipes that other users have shared with you."
+    },
+    "empty": {
+      "title": "No invitations",
+      "subtitle": "When someone shares a food item or recipe with you, it will appear here."
+    },
+    "badge": {
+      "recipe": "Recipe",
+      "food_item": "Food item"
+    },
+    "label": {
+      "recipe": "The recipe",
+      "food_item": "The food item"
+    },
+    "shared_by": "Shared by",
+    "sent": "Sent",
+    "preview": {
+      "servings": "{{count}} servings",
+      "ingredients": "{{count}} ingredients",
+      "serving": "serving"
+    },
+    "expiry": {
+      "soon": "Expires soon",
+      "days": "Expires in {{count}} day",
+      "days_plural": "Expires in {{count}} days"
+    },
+    "action": {
+      "import": "Import",
+      "reject": "Decline"
+    },
+    "toast": {
+      "imported": "{{label}} has been imported!",
+      "rejected": "Invitation declined."
+    },
+    "error": {
+      "concurrent_accept_detected": "Already imported in another window.",
+      "invitation_expired": "The invitation has expired.",
+      "invitation_already_processed": "This invitation has already been processed.",
+      "generic": "Something went wrong.",
+      "generic_retry": "Something went wrong. Please try again.",
+      "reject_failed": "Could not decline the invitation."
+    }
+  },
+  "share": {
+    "title": {
+      "recipient": "Share with",
+      "content": "Share with {{recipient}}",
+      "confirm_list": "Share My list",
+      "confirm_item": "Share \"{{name}}\""
+    },
+    "recipient": {
+      "tab_friends": "Friends",
+      "tab_email": "Email",
+      "no_friends": "You have no friends yet. Add friends via Social.",
+      "search_placeholder": "Search friend...",
+      "email_placeholder": "recipient@example.com",
+      "checking": "Checking...",
+      "user_found": "User found",
+      "user_not_found": "No CalculEat user with that email",
+      "next": "Next →"
+    },
+    "content": {
+      "tab_food_item": "Food item",
+      "tab_recipe": "Recipe",
+      "tab_food_list": "My list",
+      "search_food_placeholder": "Search food items...",
+      "search_recipe_placeholder": "Search recipes...",
+      "no_food_items": "No food items found",
+      "no_recipes": "No recipes found",
+      "loading": "Loading...",
+      "no_food_list": "You have no food items to share yet",
+      "servings_abbr": "srv."
+    },
+    "food_list": {
+      "title": "My list",
+      "count_label": "{{count}} food items"
+    },
+    "confirm": {
+      "recipient_label": "Recipient",
+      "food_list_name": "My list ({{count}} food items)",
+      "type_food_item": "Food item",
+      "type_recipe": "Recipe",
+      "type_food_list": "Food list",
+      "duplicate_note": "Duplicates with similar nutritional values are automatically skipped on import.",
+      "back": "Back",
+      "send": "Send",
+      "sending": "Sending..."
+    },
+    "error": {
+      "empty_food_list": "You have no food items to share.",
+      "generic": "Something went wrong.",
+      "friend_share_failed": "Could not share. Check that the friendship is still active.",
+      "send_failed": "Something went wrong while sharing."
+    },
+    "toast": {
+      "food_list_shared": "Your list of {{count}} food items was shared!",
+      "item_shared": "\"{{name}}\" was shared!"
+    }
+  },
+  "social": {
+    "hub": {
+      "title": "Social",
+      "tab_friends": "Friends",
+      "tab_activity": "Activity",
+      "tab_messages": "Messages"
+    },
+    "from": "from",
+    "badge": {
+      "list": "List",
+      "shared_list": "Shared list"
+    },
+    "expiry": {
+      "days_short": "Expires in {{count}}d"
+    },
+    "action": {
+      "accept": "Accept",
+      "deny": "Decline",
+      "join": "Join",
+      "cancel": "Cancel",
+      "back": "Back",
+      "save": "Save",
+      "yes": "Yes",
+      "no": "No",
+      "import_list": "Import list"
+    },
+    "import": {
+      "food_list": "{{imp}} food items imported!",
+      "food_list_with_skipped": "{{imp}} food items imported! ({{skip}} skipped)",
+      "recipe": "The recipe was imported!",
+      "food_item": "The food item was imported!"
+    },
+    "shared_list": {
+      "joined": "You are now a member of \"{{name}}\"!",
+      "join_failed": "Could not join the list. Please try again.",
+      "invited_by": "Invited by"
+    },
+    "friends": {
+      "now_friends": "You and {{name}} are now friends!",
+      "request_withdrawn": "Friend request withdrawn.",
+      "awaiting_response": "Awaiting response",
+      "withdraw_request": "Withdraw request",
+      "alias_save_failed": "Could not save nickname.",
+      "alias_saved": "Nickname saved!",
+      "removed": "{{name}} has been removed from your friends list.",
+      "friends_since": "Friends since",
+      "alias_placeholder": "Nickname (max 50)",
+      "alias_set": "Nickname: \"{{alias}}\"",
+      "set_alias": "Set nickname",
+      "start_sharing": "Start sharing",
+      "send_message": "Send message",
+      "confirm_remove": "Remove {{name}} as friend?",
+      "confirm_remove_yes": "Yes, remove",
+      "remove_friend": "Remove friend",
+      "search_placeholder": "Search friend...",
+      "no_friends": "You have no friends yet",
+      "add_friend": "Add friend",
+      "add_placeholder": "Username or email address",
+      "add_hint": "If the person exists in CalculEat they will receive a friend request.",
+      "send_request": "Send request",
+      "request_sent": "Friend request sent!",
+      "request_send_failed": "Could not send request."
+    },
+    "messages": {
+      "no_conversations": "No conversations yet",
+      "no_conversations_hint": "Open a friend and tap \"Send message\" to start.",
+      "deleted_message": "The message has been deleted",
+      "edit": "Edit",
+      "delete": "Delete",
+      "confirm_delete": "Delete message?",
+      "confirm_delete_conv": "Delete?",
+      "delete_conversation": "Delete conversation",
+      "edit_already_read": "Cannot edit, the recipient has already read the message.",
+      "edit_failed": "Could not edit the message.",
+      "delete_already_read": "Cannot delete, the recipient has already read the message.",
+      "delete_failed": "Could not delete the message.",
+      "load_older": "Load older messages",
+      "no_messages": "No messages yet. Write something!",
+      "input_placeholder": "Write a message...",
+      "edited": "(edited)",
+      "error": {
+        "empty": "The message is empty.",
+        "too_long": "The message is too long (max 2000 characters)."
+      }
+    },
+    "activity": {
+      "admin_invitations": "Admin invitations",
+      "admin_invite_title": "{{name}} wants to make you an admin",
+      "admin_invite_desc": "As admin you can edit and add food items to the CalculEat list.",
+      "admin_accepted": "You are now an admin!",
+      "admin_denied": "Invitation declined",
+      "friend_requests": "Friend requests",
+      "share_invitations": "Share invitations",
+      "list_invitations": "List invitations",
+      "sent_requests": "Sent requests",
+      "all_clear": "All clear!",
+      "all_clear_sub": "No pending actions."
+    }
+  }
+}

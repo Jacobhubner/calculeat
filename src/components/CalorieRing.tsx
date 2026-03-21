@@ -1,5 +1,6 @@
 import { Card } from './ui/card'
 import { cn } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
 
 interface CalorieRingProps {
   consumed: number
@@ -18,6 +19,7 @@ export default function CalorieRing({
   remaining,
   className,
 }: CalorieRingProps) {
+  const { t } = useTranslation('dashboard')
   const goalForProgress = max || target
   const percentage = Math.min((consumed / goalForProgress) * 100, 100)
   const calculatedRemaining = remaining ?? Math.max(goalForProgress - consumed, 0)
@@ -86,7 +88,7 @@ export default function CalorieRing({
           ) : (
             <p className="text-2xl font-semibold text-neutral-900">{target}</p>
           )}
-          <p className="text-xs text-neutral-500 uppercase tracking-wide">Mål</p>
+          <p className="text-xs text-neutral-500 uppercase tracking-wide">{t('ring.goal')}</p>
         </div>
         <div className="text-center">
           <p
@@ -99,7 +101,7 @@ export default function CalorieRing({
             {isOverTarget ? consumed - goalForProgress : calculatedRemaining}
           </p>
           <p className="text-xs text-neutral-500 uppercase tracking-wide">
-            {isOverTarget ? 'Över' : 'Kvar'}
+            {isOverTarget ? t('ring.over') : t('ring.remaining')}
           </p>
         </div>
       </div>

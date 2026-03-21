@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   Dialog,
   DialogContent,
@@ -30,6 +31,7 @@ export default function LoadMealToSlotDialog({
   dailyLogId,
   targetMealEntryId,
 }: LoadMealToSlotDialogProps) {
+  const { t } = useTranslation('today')
   const [searchQuery, setSearchQuery] = useState('')
   const [loadingMealId, setLoadingMealId] = useState<string | null>(null)
 
@@ -74,12 +76,10 @@ export default function LoadMealToSlotDialog({
 
       // Success feedback
       if (result.missingCount > 0) {
-        toast.warning(
-          `${result.missingCount} matvara${result.missingCount > 1 ? 'r' : ''} kunde inte hittas och hoppades över`
-        )
+        toast.warning(t('loadMeal.warningMissingItems', { count: result.missingCount }))
       }
 
-      toast.success(`${mealName} laddad till ${targetMealName}! (+${result.totalCalories} kcal)`)
+      toast.success(t('loadMeal.successLoaded', { mealName, slotName: targetMealName, calories: result.totalCalories }))
 
       // Close modal
       onOpenChange(false)
@@ -93,7 +93,7 @@ export default function LoadMealToSlotDialog({
       }, 300)
     } catch (error) {
       console.error('Error loading saved meal:', error)
-      toast.error('Kunde inte ladda måltid. Försök igen.')
+      toast.error(t('loadMeal.errorLoadFailed'))
     } finally {
       setLoadingMealId(null)
     }
@@ -125,15 +125,15 @@ export default function LoadMealToSlotDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl md:max-h-[85vh] flex flex-col">
         <DialogHeader>
-          <DialogTitle>Ladda måltid till {targetMealName}</DialogTitle>
-          <DialogDescription>Välj en sparad måltid att lägga till</DialogDescription>
+          <DialogTitle>{t('loadMealDialog.title', { mealName: targetMealName })}</DialogTitle>
+          <DialogDescription>{t('loadMealDialog.description')}</DialogDescription>
         </DialogHeader>
 
         {/* Search Bar */}
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400" />
           <Input
-            placeholder="Sök efter sparade måltider..."
+            placeholder={t('loadMealDialog.searchPlaceholder')}
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             className="pl-10"
@@ -150,11 +150,11 @@ export default function LoadMealToSlotDialog({
           ) : sortedMeals.length === 0 ? (
             <EmptyState
               icon={Search}
-              title={searchQuery ? 'Inga måltider hittades' : 'Inga sparade måltider ännu'}
+              title={searchQuery ? t('loadMealDialog.emptySearchTitle') : t('loadMealDialog.emptyTitle')}
               description={
                 searchQuery
-                  ? 'Försök med ett annat sökord'
-                  : 'Spara en måltid från Dagens logg för att komma igång'
+                  ? t('loadMealDialog.emptySearchDescription')
+                  : t('loadMealDialog.emptyDescription')
               }
             />
           ) : (
@@ -179,13 +179,13 @@ export default function LoadMealToSlotDialog({
                             <span className="font-semibold text-primary-600">{calories} kcal</span>
                             <span>•</span>
                             <span>
-                              {itemCount} matvara{itemCount !== 1 ? 'r' : ''}
+                              {t('loadMealDialog.itemCount', { count: itemCount })}
                             </span>
                             {meal.last_used_at && (
                               <>
                                 <span>•</span>
                                 <span className="text-xs text-neutral-500">
-                                  Senast använd:{' '}
+                                  {t('loadMealDialog.lastUsed')}{' '}
                                   {new Date(meal.last_used_at).toLocaleDateString('sv-SE', {
                                     day: 'numeric',
                                     month: 'short',

@@ -1,4 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import {
   LayoutDashboard,
   User,
@@ -36,6 +37,7 @@ interface NavItem {
 }
 
 export default function DashboardNav() {
+  const { t } = useTranslation('common')
   const { user, signOut, userProfile } = useAuth()
   const { sidebarCollapsed, toggleSidebar } = useUIStore()
   const location = useLocation()
@@ -47,10 +49,10 @@ export default function DashboardNav() {
   const handleSignOut = async () => {
     try {
       await signOut()
-      toast.success('Du har loggats ut')
+      toast.success(t('auth.loggedOut'))
       navigate('/', { replace: true })
     } catch (error) {
-      toast.error('Något gick fel vid utloggning')
+      toast.error(t('auth.logoutError'))
       console.error('Sign out error:', error)
     }
   }

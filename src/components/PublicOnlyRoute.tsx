@@ -1,4 +1,5 @@
 import { Navigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/contexts/AuthContext'
 
 interface PublicOnlyRouteProps {
@@ -10,12 +11,13 @@ interface PublicOnlyRouteProps {
  * (like login/register) to the dashboard.
  */
 export default function PublicOnlyRoute({ children }: PublicOnlyRouteProps) {
+  const { t } = useTranslation('common')
   const { user, loading } = useAuth()
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-neutral-600">Laddar...</div>
+        <div className="text-neutral-600">{t('status.loading')}</div>
       </div>
     )
   }

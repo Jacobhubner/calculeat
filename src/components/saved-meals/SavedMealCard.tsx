@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { CalendarPlus, Pencil, Trash2, ChevronDown, ChevronUp } from 'lucide-react'
@@ -23,6 +24,7 @@ interface SavedMealCardProps {
 }
 
 export default function SavedMealCard({ meal, onUseToday, onEdit }: SavedMealCardProps) {
+  const { t } = useTranslation('recipes')
   const [showItems, setShowItems] = useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const deleteMeal = useDeleteSavedMeal()
@@ -59,11 +61,11 @@ export default function SavedMealCard({ meal, onUseToday, onEdit }: SavedMealCar
   const handleDelete = async () => {
     try {
       await deleteMeal.mutateAsync(meal.id)
-      toast.success(`${meal.name} har tagits bort`)
+      toast.success(t('savedMealCard.deleteSuccess', { name: meal.name }))
       setShowDeleteDialog(false)
     } catch (error) {
       console.error('Error deleting meal:', error)
-      toast.error('Kunde inte ta bort måltiden. Försök igen.')
+      toast.error(t('savedMealCard.deleteError'))
     }
   }
 
@@ -101,7 +103,7 @@ export default function SavedMealCard({ meal, onUseToday, onEdit }: SavedMealCar
               {Math.round(totals.calories)} kcal
             </span>
             <span>•</span>
-            <span>{totals.itemCount} matvara{totals.itemCount !== 1 ? 'r' : ''}</span>
+            <span>{totals.itemCount} {totals.itemCount !== 1 ? t('savedMealCard.foodItems') : t('savedMealCard.foodItem')}</span>
           </div>
 
           {/* Macros */}
@@ -114,7 +116,7 @@ export default function SavedMealCard({ meal, onUseToday, onEdit }: SavedMealCar
           {/* Last Used */}
           {meal.last_used_at && (
             <p className="text-xs text-neutral-400 mt-2">
-              Senast använd:{' '}
+              {t('savedMealCard.lastUsed')}{' '}
               {new Date(meal.last_used_at).toLocaleDateString('sv-SE', {
                 day: 'numeric',
                 month: 'short',
@@ -132,7 +134,7 @@ export default function SavedMealCard({ meal, onUseToday, onEdit }: SavedMealCar
             onClick={() => onUseToday(meal.id)}
           >
             <CalendarPlus className="h-4 w-4" />
-            Använd idag
+            {t('savedMealCard.useToday')}
           </Button>
 
           {/* Toggle Items */}
@@ -146,12 +148,12 @@ export default function SavedMealCard({ meal, onUseToday, onEdit }: SavedMealCar
               {showItems ? (
                 <>
                   <ChevronUp className="h-4 w-4" />
-                  Dölj matvaror
+                  {t('savedMealCard.hideItems')}
                 </>
               ) : (
                 <>
                   <ChevronDown className="h-4 w-4" />
-                  Visa matvaror ({totals.itemCount})
+                  {t('savedMealCard.showItems', { count: totals.itemCount })}
                 </>
               )}
             </Button>
@@ -169,7 +171,7 @@ export default function SavedMealCard({ meal, onUseToday, onEdit }: SavedMealCar
                   >
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-neutral-900 truncate">
-                        {foodItem?.name || 'Okänd matvara'}
+                        {foodItem?.name || t('savedMealCard.unknownFood')}
                       </p>
                       <p className="text-xs text-neutral-500">
                         {item.amount} {item.unit}
@@ -195,19 +197,19 @@ export default function SavedMealCard({ meal, onUseToday, onEdit }: SavedMealCar
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Ta bort sparad måltid?</AlertDialogTitle>
+            <AlertDialogTitle>{t('savedMealCard.deleteTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Är du säker på att du vill ta bort &quot;{meal.name}&quot;? Detta går inte att ångra.
+              {t('savedMealCard.deleteDescription', { name: meal.name })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Avbryt</AlertDialogCancel>
+            <AlertDialogCancel>{t('savedMealCard.deleteCancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
               disabled={deleteMeal.isPending}
               className="bg-red-600 hover:bg-red-700"
             >
-              {deleteMeal.isPending ? 'Tar bort...' : 'Ta bort'}
+              {deleteMeal.isPending ? t('savedMealCard.deleting') : t('savedMealCard.deleteConfirm')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

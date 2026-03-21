@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { toast } from 'sonner'
+import { useTranslation } from 'react-i18next'
 import { signInSchema } from '@/lib/validation'
 import { translateAuthError } from '@/lib/auth-errors'
 import { useAuth } from '@/contexts/AuthContext'
@@ -15,6 +16,7 @@ export default function LoginForm() {
   const { signIn } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
+  const { t } = useTranslation('auth')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -34,7 +36,7 @@ export default function LoginForm() {
     setError(null)
     try {
       await signIn(data.email, data.password)
-      toast.success('Inloggning lyckades! Välkommen tillbaka.')
+      toast.success(t('login.success'))
       navigate(from, { replace: true })
     } catch (err: unknown) {
       const errorMessage = translateAuthError(err)
@@ -52,13 +54,13 @@ export default function LoginForm() {
       )}
 
       <div>
-        <Label htmlFor="email">E-postadress</Label>
+        <Label htmlFor="email">{t('login.email')}</Label>
         <Input id="email" type="email" {...register('email')} className="mt-2" />
         {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
       </div>
 
       <div>
-        <Label htmlFor="password">Lösenord</Label>
+        <Label htmlFor="password">{t('login.password')}</Label>
         <Input id="password" type="password" {...register('password')} className="mt-2" />
         {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
       </div>
@@ -67,10 +69,10 @@ export default function LoginForm() {
         {isLoading ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Loggar in...
+            {t('login.submitting')}
           </>
         ) : (
-          'Logga in'
+          t('login.submit')
         )}
       </Button>
     </form>

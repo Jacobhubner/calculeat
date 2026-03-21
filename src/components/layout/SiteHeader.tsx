@@ -1,4 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { Menu, X, LogOut, User, Settings, Users, ShieldCheck } from 'lucide-react'
 import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -12,8 +13,10 @@ import { ShareDialog } from '@/components/sharing/ShareDialog'
 import { useSocialBadgeCount } from '@/hooks/useShareInvitations'
 import { useIsAdmin } from '@/hooks/useIsAdmin'
 import type { Friend } from '@/lib/types/friends'
+import { LanguageSwitcher } from '../ui/LanguageSwitcher'
 
 export default function SiteHeader() {
+  const { t } = useTranslation('common')
   const { user, signOut, userProfile } = useAuth()
   const { mobileMenuOpen, toggleMobileMenu, setMobileMenuOpen } = useUIStore()
 
@@ -39,10 +42,10 @@ export default function SiteHeader() {
   const handleSignOut = async () => {
     try {
       await signOut()
-      toast.success('Du har loggats ut')
+      toast.success(t('auth.loggedOut'))
       navigate('/', { replace: true })
     } catch (error) {
-      toast.error('Något gick fel vid utloggning')
+      toast.error(t('auth.logoutError'))
       console.error('Sign out error:', error)
     }
   }
@@ -191,16 +194,18 @@ export default function SiteHeader() {
               </Link>
               <Button variant="ghost" size="sm" onClick={handleSignOut}>
                 <LogOut className="h-4 w-4 mr-2" />
-                Logga ut
+                {t('nav.logout')}
               </Button>
+              <LanguageSwitcher />
             </div>
           ) : (
             <div className="flex items-center gap-2">
+              <LanguageSwitcher />
               <Button variant="ghost" size="sm" asChild>
-                <Link to="/login">Logga in</Link>
+                <Link to="/login">{t('nav.login')}</Link>
               </Button>
               <Button size="sm" asChild>
-                <Link to="/register">Skapa konto</Link>
+                <Link to="/register">{t('nav.register')}</Link>
               </Button>
             </div>
           )}
@@ -220,6 +225,7 @@ export default function SiteHeader() {
         {/* Mobile: Social + Avatar when logged in */}
         {user && (
           <div className="md:hidden flex items-center gap-2">
+            <LanguageSwitcher />
             {/* Mobile Social — navigera direkt till /app/social */}
             <Link
               to="/app/social"
@@ -275,7 +281,7 @@ export default function SiteHeader() {
                         className="flex items-center gap-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors"
                       >
                         <User className="h-4 w-4" />
-                        <span>Profil</span>
+                        <span>{t('nav.profile')}</span>
                       </Link>
                       <Link
                         to="/app/settings"
@@ -283,7 +289,7 @@ export default function SiteHeader() {
                         className="flex items-center gap-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors"
                       >
                         <Settings className="h-4 w-4" />
-                        <span>Inställningar</span>
+                        <span>{t('nav.settings')}</span>
                       </Link>
                     </div>
 
@@ -297,7 +303,7 @@ export default function SiteHeader() {
                         className="w-full flex items-center gap-3 px-4 py-2 text-sm text-error-600 hover:bg-error-50 transition-colors"
                       >
                         <LogOut className="h-4 w-4" />
-                        <span>Logga ut</span>
+                        <span>{t('nav.logout')}</span>
                       </button>
                     </div>
                   </motion.div>

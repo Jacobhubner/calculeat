@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { Plus, ChefHat, AlertCircle, ChevronDown, ChevronUp, Clock } from 'lucide-react'
 import {
@@ -53,6 +54,7 @@ export function RecipeCalculatorModal({
   onSuccess,
   sharedListId,
 }: RecipeCalculatorModalProps) {
+  const { t } = useTranslation('recipes')
   const [name, setName] = useState('')
   const [servings, setServings] = useState<number | ''>(1)
   const [ingredients, setIngredients] = useState<IngredientData[]>([])
@@ -241,19 +243,19 @@ export function RecipeCalculatorModal({
     if (isLoading) return
     // Validate
     if (!name.trim()) {
-      setError('Ange ett namn för receptet')
+      setError(t('modal.errorName'))
       return
     }
 
     const validIngredients = ingredients.filter(ing => ing.foodItem && ing.amount > 0)
     if (validIngredients.length === 0) {
-      setError('Lägg till minst en ingrediens')
+      setError(t('modal.errorIngredients'))
       return
     }
 
     const servingsNum = typeof servings === 'number' ? servings : 0
     if (servingsNum <= 0) {
-      setError('Antal portioner måste vara minst 1')
+      setError(t('modal.errorServings'))
       return
     }
 
@@ -293,26 +295,26 @@ export function RecipeCalculatorModal({
 
       if (editRecipe?.shared_list_id) {
         await updateSharedListRecipe.mutateAsync({ recipeId: editRecipe.id, fields: recipeData })
-        toast.success(`Receptet "${name.trim()}" har uppdaterats`)
+        toast.success(t('modal.toastUpdated', { name: name.trim() }))
       } else if (editRecipe) {
         await updateRecipe.mutateAsync({ id: editRecipe.id, ...recipeData })
-        toast.success(`Receptet "${name.trim()}" har uppdaterats`)
+        toast.success(t('modal.toastUpdated', { name: name.trim() }))
       } else if (capturedSharedListId.current) {
         await createSharedListRecipe.mutateAsync({
           sharedListId: capturedSharedListId.current,
           ...recipeData,
         })
-        toast.success(`Receptet "${name.trim()}" har skapats i listan`)
+        toast.success(t('modal.toastCreatedInList', { name: name.trim() }))
       } else {
         await createRecipe.mutateAsync(recipeData)
-        toast.success(`Receptet "${name.trim()}" har skapats`)
+        toast.success(t('modal.toastCreated', { name: name.trim() }))
       }
 
       onOpenChange(false)
       onSuccess?.()
     } catch (err) {
       console.error('Failed to save recipe:', err)
-      toast.error('Kunde inte spara receptet. Försök igen.')
+      toast.error(t('modal.saveError'))
     }
   }
 
@@ -330,20 +332,20 @@ export function RecipeCalculatorModal({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <ChefHat className="h-5 w-5 text-primary-600" />
-            {isEditing ? 'Redigera recept' : 'Nytt recept'}
+            {isEditing ? t('modal.titleEdit') : t('modal.titleNew')}
           </DialogTitle>
           <DialogDescription>
             {isEditing
-              ? 'Redigera ingredienser och portioner för ditt recept.'
-              : 'Skapa ett nytt recept genom att lägga till ingredienser.'}
+              ? t('modal.descriptionEdit')
+              : t('modal.descriptionNew')}
           </DialogDescription>
         </DialogHeader>
 
         {isSharedListRecipe && (
           <div className="bg-blue-50 border border-blue-200 rounded-md p-3 text-sm text-blue-700 mx-3 md:mx-0">
             {isEditing
-              ? 'Redigerar ett delat recept. Ändringarna syns hos alla listmedlemmar.'
-              : 'Receptet sparas i den delade listan och syns hos alla listmedlemmar.'}
+              ? t('modal.sharedListEdit')
+              : t('modal.sharedListNew')}
           </div>
         )}
 
@@ -354,16 +356,16 @@ export function RecipeCalculatorModal({
               {/* Recipe name and servings */}
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="recipe-name">Receptnamn</Label>
+                  <Label htmlFor="recipe-name">{t('modal.recipeName')}</Label>
                   <Input
                     id="recipe-name"
                     value={name}
                     onChange={e => setName(e.target.value)}
-                    placeholder="T.ex. Pannkakor"
+                    placeholder={t('modal.recipeNamePlaceholder')}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="servings">Antal portioner</Label>
+                  <Label htmlFor="servings">{t('modal.servings')}</Label>
                   <Input
                     id="servings"
                     type="number"
@@ -379,12 +381,12 @@ export function RecipeCalculatorModal({
 
               {/* Ingredients */}
               <div className="space-y-3">
-                <Label>Ingredienser</Label>
+                <Label>{t('modal.ingredients')}</Label>
 
                 {/* Loading state for foods */}
                 {foodsLoading && (
                   <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-6 text-center">
-                    <p className="text-neutral-500 text-sm">Laddar livsmedel...</p>
+                    <p className="text-neutral-500 text-sm">{t('modal.loadingFoods')}</p>
                   </div>
                 )}
 
@@ -393,7 +395,7 @@ export function RecipeCalculatorModal({
                   <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3">
                     <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0" />
                     <p className="text-red-700 text-sm">
-                      Kunde inte ladda livsmedel. Stäng och öppna igen.
+                      {t('modal.foodsError')}
                     </p>
                   </div>
                 )}
@@ -401,10 +403,10 @@ export function RecipeCalculatorModal({
                 {/* Empty state - no ingredients yet */}
                 {!foodsLoading && !foodsError && ingredients.length === 0 && (
                   <div className="bg-neutral-50 border-2 border-dashed border-neutral-200 rounded-xl p-8 text-center">
-                    <p className="text-neutral-500 text-sm mb-4">Inga ingredienser tillagda ännu</p>
+                    <p className="text-neutral-500 text-sm mb-4">{t('modal.noIngredients')}</p>
                     <Button variant="outline" onClick={handleAddIngredient} className="gap-2">
                       <Plus className="h-4 w-4" />
-                      Lägg till ingrediens
+                      {t('modal.addIngredient')}
                     </Button>
                   </div>
                 )}
@@ -429,7 +431,7 @@ export function RecipeCalculatorModal({
                       className="w-full gap-2 border-dashed"
                     >
                       <Plus className="h-4 w-4" />
-                      Lägg till ingrediens
+                      {t('modal.addIngredient')}
                     </Button>
                   </div>
                 )}
@@ -442,7 +444,7 @@ export function RecipeCalculatorModal({
                   onClick={() => setDetailsOpen(prev => !prev)}
                   className="w-full flex items-center justify-between px-4 py-3 bg-neutral-50 hover:bg-neutral-100 transition-colors text-sm font-medium text-neutral-700"
                 >
-                  <span>Detaljer (valfritt)</span>
+                  <span>{t('modal.detailsSection')}</span>
                   {detailsOpen ? (
                     <ChevronUp className="h-4 w-4 text-neutral-400" />
                   ) : (
@@ -454,18 +456,18 @@ export function RecipeCalculatorModal({
                   <div className="px-4 py-4 space-y-5">
                     {/* Bild */}
                     <div className="space-y-2">
-                      <Label>Bild på rätten</Label>
+                      <Label>{t('modal.imageLabel')}</Label>
                       <RecipeImageUpload value={imageUrl} onChange={setImageUrl} />
                     </div>
 
                     {/* Instruktioner */}
                     <div className="space-y-2">
-                      <Label htmlFor="recipe-instructions">Tillagningsinstruktioner</Label>
+                      <Label htmlFor="recipe-instructions">{t('modal.instructionsLabel')}</Label>
                       <textarea
                         id="recipe-instructions"
                         value={instructions}
                         onChange={e => setInstructions(e.target.value)}
-                        placeholder="Beskriv hur du tillagar rätten steg för steg..."
+                        placeholder={t('modal.instructionsPlaceholder')}
                         rows={5}
                         className="w-full rounded-xl border border-neutral-300 p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                       />
@@ -473,10 +475,10 @@ export function RecipeCalculatorModal({
 
                     {/* Tillagningstid */}
                     <div className="space-y-2">
-                      <Label>Tillagningstid</Label>
+                      <Label>{t('modal.cookingTime')}</Label>
                       <div className="grid grid-cols-2 gap-3">
                         <div className="space-y-1">
-                          <span className="text-xs text-neutral-500">Förberedelse (min)</span>
+                          <span className="text-xs text-neutral-500">{t('modal.prepTime')}</span>
                           <Input
                             type="number"
                             min={0}
@@ -492,7 +494,7 @@ export function RecipeCalculatorModal({
                           />
                         </div>
                         <div className="space-y-1">
-                          <span className="text-xs text-neutral-500">Tillagning (min)</span>
+                          <span className="text-xs text-neutral-500">{t('modal.cookTime')}</span>
                           <Input
                             type="number"
                             min={0}
@@ -513,10 +515,11 @@ export function RecipeCalculatorModal({
                           <div className="flex items-center gap-1.5 text-sm text-neutral-500">
                             <Clock className="h-3.5 w-3.5" />
                             <span>
-                              Total tid:{' '}
-                              {(typeof prepTime === 'number' ? prepTime : 0) +
-                                (typeof cookTime === 'number' ? cookTime : 0)}{' '}
-                              min
+                              {t('modal.totalTime', {
+                                minutes:
+                                  (typeof prepTime === 'number' ? prepTime : 0) +
+                                  (typeof cookTime === 'number' ? cookTime : 0),
+                              })}
                             </span>
                           </div>
                         )}
@@ -524,7 +527,7 @@ export function RecipeCalculatorModal({
 
                     {/* Utrustning */}
                     <div className="space-y-3">
-                      <Label>Utrustning som behövs</Label>
+                      <Label>{t('modal.equipment')}</Label>
                       <div className="flex flex-wrap gap-2">
                         {EQUIPMENT_OPTIONS.map(opt => {
                           const selected = equipment.includes(opt.value)
@@ -633,7 +636,7 @@ export function RecipeCalculatorModal({
           {/* Save format selection */}
           {nutrition && (
             <div className="border-t pt-4">
-              <Label className="text-sm font-medium mb-3 block">Spara som livsmedel</Label>
+              <Label className="text-sm font-medium mb-3 block">{t('modal.saveAsLabel')}</Label>
               <div className="flex gap-6">
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
@@ -645,7 +648,7 @@ export function RecipeCalculatorModal({
                     className="w-4 h-4 text-primary-600 focus:ring-primary-500"
                   />
                   <span className="text-sm">
-                    Per portion ({Math.round(nutrition.perServing.weight)}g)
+                    {t('modal.saveAsPortion', { weight: Math.round(nutrition.perServing.weight) })}
                   </span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
@@ -657,13 +660,13 @@ export function RecipeCalculatorModal({
                     onChange={() => setSaveAs('100g')}
                     className="w-4 h-4 text-primary-600 focus:ring-primary-500"
                   />
-                  <span className="text-sm">Per 100g</span>
+                  <span className="text-sm">{t('modal.saveAs100g')}</span>
                 </label>
               </div>
               <p className="text-xs text-neutral-500 mt-2">
                 {saveAs === 'portion'
-                  ? 'Receptet sparas med portionsstorlek som standardenhet.'
-                  : 'Receptet sparas med 100g som standardenhet (likt vanliga livsmedel).'}
+                  ? t('modal.saveAsPortionHint')
+                  : t('modal.saveAs100gHint')}
               </p>
             </div>
           )}
@@ -671,15 +674,15 @@ export function RecipeCalculatorModal({
           {/* Footer */}
           <div className="flex justify-end gap-3 pt-4 border-t">
             <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
-              Avbryt
+              {t('modal.cancel')}
             </Button>
             <Button onClick={handleSubmit} disabled={isLoading} className="gap-2">
               {isLoading ? (
-                'Sparar...'
+                t('modal.saving')
               ) : (
                 <>
                   <ChefHat className="h-4 w-4" />
-                  {isEditing ? 'Uppdatera recept' : 'Spara recept'}
+                  {isEditing ? t('modal.update') : t('modal.save')}
                 </>
               )}
             </Button>

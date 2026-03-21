@@ -1,4 +1,5 @@
 import { Navigate, useLocation } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/contexts/AuthContext'
 
 interface ProtectedRouteProps {
@@ -6,13 +7,14 @@ interface ProtectedRouteProps {
 }
 
 export default function ProtectedRoute({ children }: ProtectedRouteProps) {
+  const { t } = useTranslation('common')
   const { user, loading } = useAuth()
   const location = useLocation()
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-neutral-600">Laddar...</div>
+        <div className="text-neutral-600">{t('status.loading')}</div>
       </div>
     )
   }

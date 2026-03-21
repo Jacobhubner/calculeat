@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Trash2, Search } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -53,6 +54,7 @@ export function IngredientRow({
   onChange,
   onRemove,
 }: IngredientRowProps) {
+  const { t } = useTranslation('recipes')
   const [searchQuery, setSearchQuery] = useState('')
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [highlightedIndex, setHighlightedIndex] = useState(0)
@@ -203,7 +205,7 @@ export function IngredientRow({
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
               <Input
-                placeholder="Sök livsmedel..."
+                placeholder={t('ingredient.searchPlaceholder')}
                 value={searchQuery}
                 onChange={e => {
                   handleSearchChange(e.target.value)
@@ -212,7 +214,7 @@ export function IngredientRow({
                 onFocus={handleOpenDropdown}
                 onKeyDown={handleKeyDown}
                 className="pl-9"
-                aria-label="Sök livsmedel"
+                aria-label={t('ingredient.searchLabel')}
                 aria-expanded={isSearchOpen}
                 aria-haspopup="listbox"
               />
@@ -226,13 +228,13 @@ export function IngredientRow({
               {ingredient.foodItem && (
                 <div className="p-2 border-b shrink-0">
                   <Input
-                    placeholder="Sök livsmedel..."
+                    placeholder={t('ingredient.searchPlaceholder')}
                     value={searchQuery}
                     onChange={e => handleSearchChange(e.target.value)}
                     onKeyDown={handleKeyDown}
                     autoFocus
                     className="text-sm"
-                    aria-label="Sök livsmedel"
+                    aria-label={t('ingredient.searchLabel')}
                   />
                 </div>
               )}
@@ -240,10 +242,10 @@ export function IngredientRow({
               <div className="flex gap-1 px-2 py-1.5 border-b shrink-0 flex-wrap">
                 {(
                   [
-                    { key: 'alla' as SourceFilter, label: 'Alla' },
-                    { key: 'mina' as SourceFilter, label: 'Mina' },
-                    { key: 'calculeat' as SourceFilter, label: 'CalculEat' },
-                    { key: 'slv' as SourceFilter, label: 'SLV' },
+                    { key: 'alla' as SourceFilter, label: t('ingredient.filterAll') },
+                    { key: 'mina' as SourceFilter, label: t('ingredient.filterMine') },
+                    { key: 'calculeat' as SourceFilter, label: t('ingredient.filterCalculeat') },
+                    { key: 'slv' as SourceFilter, label: t('ingredient.filterSlv') },
                     ...sharedLists.map(l => ({
                       key: `list:${l.id}` as SourceFilter,
                       label: l.name.length > 14 ? l.name.slice(0, 12) + '…' : l.name,
@@ -271,7 +273,7 @@ export function IngredientRow({
               <div className="overflow-y-auto flex-1">
                 {filteredFoods.length === 0 ? (
                   <div className="p-3 text-sm text-neutral-500 text-center">
-                    Inga livsmedel hittades
+                    {t('ingredient.noFoodsFound')}
                   </div>
                 ) : (
                   <>
@@ -327,10 +329,10 @@ export function IngredientRow({
                                 }`}
                               >
                                 {colorBadge === 'Green'
-                                  ? 'Grön'
+                                  ? t('card.colorGreen')
                                   : colorBadge === 'Yellow'
-                                    ? 'Gul'
-                                    : 'Orange'}
+                                    ? t('card.colorYellow')
+                                    : t('card.colorOrange')}
                               </Badge>
                             )}
                           </div>
@@ -339,7 +341,7 @@ export function IngredientRow({
                     </div>
                     {totalMatches > 20 && (
                       <div className="px-3 py-2 text-xs text-neutral-500 bg-neutral-50 border-t text-center">
-                        Visar 20 av {totalMatches} träffar – sök för fler
+                        {t('ingredient.showingOf', { total: totalMatches })}
                       </div>
                     )}
                   </>
@@ -355,7 +357,7 @@ export function IngredientRow({
           inputMode="decimal"
           value={amountInput}
           onChange={e => handleAmountChange(e.target.value)}
-          placeholder="Mängd"
+          placeholder={t('ingredient.amountPlaceholder')}
           className="w-20 text-center"
         />
 
@@ -364,7 +366,7 @@ export function IngredientRow({
           value={ingredient.unit}
           onChange={e => handleUnitChange(e.target.value)}
           className="h-11 px-3 bg-white border border-neutral-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-          aria-label="Välj enhet"
+          aria-label={t('ingredient.selectUnit')}
         >
           {availableUnits.map(unit => (
             <option key={unit} value={unit}>
@@ -380,7 +382,7 @@ export function IngredientRow({
           size="sm"
           onClick={onRemove}
           className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50 flex-shrink-0"
-          aria-label="Ta bort ingrediens"
+          aria-label={t('ingredient.removeIngredient')}
         >
           <Trash2 className="h-4 w-4" />
         </Button>

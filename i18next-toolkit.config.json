@@ -1,0 +1,11 @@
+{
+  "entry": ["src/**/*.{ts,tsx}"],
+  "output": "public/locales",
+  "locales": ["sv", "en"],
+  "defaultLocale": "sv",
+  "defaultNamespace": "common",
+  "namespacesSeparator": ":",
+  "keysSeparator": ".",
+  "keepRemoved": false,
+  "sort": true
+}

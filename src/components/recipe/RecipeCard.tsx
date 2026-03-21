@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Edit2, Trash2, ScrollText, Users, Clock } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -26,6 +27,7 @@ interface RecipeCardProps {
 }
 
 export function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps) {
+  const { t } = useTranslation('recipes')
   // Use centralized calculation from recipeCalculator.ts
   const nutrition = useMemo(() => {
     if (!recipe.ingredients || recipe.ingredients.length === 0) {
@@ -54,7 +56,7 @@ export function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps) {
   const savedAs100g = recipe.food_item?.default_unit === 'g'
 
   // Get display values based on saved format
-  const displayLabel = savedAs100g ? 'Per 100g' : 'Per portion'
+  const displayLabel = savedAs100g ? t('card.per100g') : t('card.perServing')
   const displayCalories = nutrition
     ? Math.round(savedAs100g ? nutrition.per100g.calories : nutrition.perServing.calories)
     : 0
@@ -76,9 +78,9 @@ export function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps) {
   }
 
   const colorLabel = {
-    Green: 'Grön',
-    Yellow: 'Gul',
-    Orange: 'Orange',
+    Green: t('card.colorGreen'),
+    Yellow: t('card.colorYellow'),
+    Orange: t('card.colorOrange'),
   }
 
   return (
@@ -118,7 +120,7 @@ export function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps) {
             <div className="flex items-center gap-1">
               <Users className="h-4 w-4" />
               <span>
-                {servings} {servings === 1 ? 'portion' : 'portioner'}
+                {servings} {servings === 1 ? t('card.portion') : t('card.portionPlural')}
               </span>
             </div>
             {totalTime > 0 && (
@@ -188,14 +190,14 @@ export function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps) {
 
           {/* Ingredients count */}
           <div className="text-xs text-neutral-500 mb-4">
-            {recipe.ingredients?.length || 0} ingredienser
+            {t('card.ingredientCount', { count: recipe.ingredients?.length || 0 })}
           </div>
 
           {/* Actions */}
           <div className="flex justify-end gap-2">
             <Button variant="ghost" size="sm" onClick={onEdit} className="h-8 px-3 gap-1">
               <Edit2 className="h-4 w-4" />
-              Redigera
+              {t('card.edit')}
             </Button>
             <Button
               variant="ghost"
@@ -204,7 +206,7 @@ export function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps) {
               className="h-8 px-3 gap-1 text-red-600 hover:text-red-700 hover:bg-red-50"
             >
               <Trash2 className="h-4 w-4" />
-              Ta bort
+              {t('card.delete')}
             </Button>
           </div>
         </div>

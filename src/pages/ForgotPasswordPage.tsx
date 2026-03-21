@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import SiteHeader from '@/components/layout/SiteHeader'
 import SiteFooter from '@/components/layout/SiteFooter'
 import { Button } from '@/components/ui/button'
@@ -10,6 +11,7 @@ import { supabase } from '@/lib/supabase'
 import { Loader2 } from 'lucide-react'
 
 export default function ForgotPasswordPage() {
+  const { t } = useTranslation('auth')
   const [email, setEmail] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
@@ -28,9 +30,9 @@ export default function ForgotPasswordPage() {
       if (error) throw error
 
       setIsSuccess(true)
-      setMessage('Kontrollera din e-post för instruktioner om att återställa lösenordet.')
-    } catch (error) {
-      setMessage(error instanceof Error ? error.message : 'Något gick fel')
+      setMessage(t('forgotPassword.success'))
+    } catch {
+      setMessage(t('forgotPassword.error.generic'))
       setIsSuccess(false)
     } finally {
       setIsLoading(false)
@@ -46,15 +48,13 @@ export default function ForgotPasswordPage() {
             <div className="flex items-center justify-center mb-4">
               <img src="/CalculEat-logo.svg" alt="CalculEat Logo" className="h-16 object-contain" />
             </div>
-            <p className="text-neutral-600">Återställ ditt lösenord</p>
+            <p className="text-neutral-600">{t('forgotPassword.subtitle')}</p>
           </div>
 
           <Card>
             <CardHeader>
-              <CardTitle>Glömt lösenord?</CardTitle>
-              <CardDescription>
-                Ange din e-postadress så skickar vi dig en länk för att återställa lösenordet
-              </CardDescription>
+              <CardTitle>{t('forgotPassword.title')}</CardTitle>
+              <CardDescription>{t('forgotPassword.description')}</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -71,7 +71,7 @@ export default function ForgotPasswordPage() {
                 )}
 
                 <div>
-                  <Label htmlFor="email">E-postadress</Label>
+                  <Label htmlFor="email">{t('forgotPassword.email')}</Label>
                   <Input
                     id="email"
                     type="email"
@@ -86,16 +86,16 @@ export default function ForgotPasswordPage() {
                   {isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Skickar...
+                      {t('forgotPassword.submitting')}
                     </>
                   ) : (
-                    'Skicka återställningslänk'
+                    t('forgotPassword.submit')
                   )}
                 </Button>
 
                 <div className="text-center text-sm">
                   <Link to="/login" className="text-primary-600 hover:underline">
-                    ← Tillbaka till inloggning
+                    {t('forgotPassword.backToLogin')}
                   </Link>
                 </div>
               </form>

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -26,6 +27,7 @@ export default function CaliperMeasurementsSection({
   showAll = false,
   onChange,
 }: CaliperMeasurementsSectionProps) {
+  const { t } = useTranslation('body')
   const [showModal, setShowModal] = useState(false)
   const [modalContent, setModalContent] = useState<{ title: string; description: string } | null>(
     null
@@ -56,7 +58,7 @@ export default function CaliperMeasurementsSection({
 
   // Get validation error message
   const getErrorMessage = () => {
-    return `Måste vara mellan ${CALIPER_MIN} och ${CALIPER_MAX} mm`
+    return t('caliper.validationError', { min: CALIPER_MIN, max: CALIPER_MAX })
   }
 
   // All possible caliper fields
@@ -81,14 +83,10 @@ export default function CaliperMeasurementsSection({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Ruler className="h-5 w-5 text-primary-600" />
-            Kalipermätningar
+            {t('caliper.title')}
           </CardTitle>
           <CardDescription>
-            Hudvecksmätningar utförs på kroppens högra sida. Se till att hudvecket greppas korrekt
-            med tumme och pekfinger, utan att dra med muskelvävnad. Kalipern ska placeras vinkelrätt
-            mot hudvecket, cirka 1 cm från fingrarna, och avläsningen ska göras efter 1–2 sekunder
-            när trycket stabiliserats. Ta varje hudveck minst två gånger och använd medelvärdet. Om
-            skillnaden &gt;1–2 mm, mät även en tredje gång. Anges i millimeter (mm).
+            {t('caliper.description')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -110,7 +108,7 @@ export default function CaliperMeasurementsSection({
                         type="button"
                         onClick={() => handleInfoClick(field)}
                         className="text-neutral-400 hover:text-primary-600 transition-colors cursor-pointer"
-                        aria-label={`Visa information om ${caliperLabels[field as string]}`}
+                        aria-label={t('caliper.infoAriaLabel', { field: caliperLabels[field as string] })}
                       >
                         <Info className="h-4 w-4" />
                       </button>
@@ -153,12 +151,12 @@ export default function CaliperMeasurementsSection({
               <div className="sticky top-0 bg-gradient-to-br from-primary-500 to-accent-500 text-white px-6 py-4 flex justify-between items-start rounded-t-2xl">
                 <div>
                   <h2 className="text-2xl font-bold">{modalContent.title}</h2>
-                  <p className="text-sm text-white/90 mt-1">Mätinstruktion</p>
+                  <p className="text-sm text-white/90 mt-1">{t('caliper.measurementInstruction')}</p>
                 </div>
                 <button
                   onClick={() => setShowModal(false)}
                   className="text-white/90 hover:text-white transition-colors"
-                  aria-label="Stäng modal"
+                  aria-label={t('caliper.closeModalAriaLabel')}
                 >
                   <X className="h-6 w-6" />
                 </button>
@@ -225,7 +223,7 @@ export default function CaliperMeasurementsSection({
               </div>
               <div className="sticky bottom-0 bg-white border-t border-neutral-200 px-6 py-4 rounded-b-2xl">
                 <Button onClick={() => setShowModal(false)} className="w-full">
-                  Stäng
+                  {t('caliper.closeModal')}
                 </Button>
               </div>
             </div>

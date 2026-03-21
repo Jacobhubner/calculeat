@@ -5,6 +5,7 @@
  */
 
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { User } from 'lucide-react'
@@ -20,22 +21,8 @@ interface SetupProfileFormProps {
   isSaving: boolean
 }
 
-const MONTHS = [
-  'Januari',
-  'Februari',
-  'Mars',
-  'April',
-  'Maj',
-  'Juni',
-  'Juli',
-  'Augusti',
-  'September',
-  'Oktober',
-  'November',
-  'December',
-]
-
 export default function SetupProfileForm({ onSave, isSaving }: SetupProfileFormProps) {
+  const { t } = useTranslation('profile')
   const [birthDay, setBirthDay] = useState('')
   const [birthMonth, setBirthMonth] = useState('')
   const [birthYear, setBirthYear] = useState('')
@@ -76,23 +63,23 @@ export default function SetupProfileForm({ onSave, isSaving }: SetupProfileFormP
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <User className="h-5 w-5 text-primary-600" />
-          Fyll i din grundläggande information
+          {t('setup.title')}
         </CardTitle>
         <p className="text-sm text-neutral-500 mt-1">
-          Vi behöver dessa uppgifter för att beräkna ditt energibehov.
+          {t('setup.description')}
         </p>
       </CardHeader>
       <CardContent className="space-y-5">
         {/* Födelsedatum */}
         <div>
-          <p className="text-sm font-medium text-neutral-700 mb-2">Födelsedatum</p>
+          <p className="text-sm font-medium text-neutral-700 mb-2">{t('birthDate.label')}</p>
           <div className="grid grid-cols-3 gap-2">
             <select
               value={birthDay}
               onChange={e => setBirthDay(e.target.value)}
               className="block w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
             >
-              <option value="">Dag</option>
+              <option value="">{t('birthDate.day')}</option>
               {Array.from({ length: 31 }, (_, i) => i + 1).map(d => (
                 <option key={d} value={d}>
                   {d}
@@ -104,10 +91,10 @@ export default function SetupProfileForm({ onSave, isSaving }: SetupProfileFormP
               onChange={e => setBirthMonth(e.target.value)}
               className="block w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
             >
-              <option value="">Månad</option>
-              {MONTHS.map((m, i) => (
-                <option key={i + 1} value={i + 1}>
-                  {m}
+              <option value="">{t('birthDate.month')}</option>
+              {Array.from({ length: 12 }, (_, i) => i + 1).map(i => (
+                <option key={i} value={i}>
+                  {t(`months.${i}` as Parameters<typeof t>[0])}
                 </option>
               ))}
             </select>
@@ -116,7 +103,7 @@ export default function SetupProfileForm({ onSave, isSaving }: SetupProfileFormP
               onChange={e => setBirthYear(e.target.value)}
               className="block w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
             >
-              <option value="">År</option>
+              <option value="">{t('birthDate.year')}</option>
               {Array.from({ length: 105 }, (_, i) => new Date().getFullYear() - i).map(y => (
                 <option key={y} value={y}>
                   {y}
@@ -128,7 +115,7 @@ export default function SetupProfileForm({ onSave, isSaving }: SetupProfileFormP
 
         {/* Kön */}
         <div>
-          <p className="text-sm font-medium text-neutral-700 mb-2">Kön</p>
+          <p className="text-sm font-medium text-neutral-700 mb-2">{t('fields.gender')}</p>
           <div className="flex gap-6">
             <label className="flex items-center gap-2 cursor-pointer">
               <input
@@ -139,7 +126,7 @@ export default function SetupProfileForm({ onSave, isSaving }: SetupProfileFormP
                 onChange={() => setGender('male')}
                 className="h-4 w-4 accent-primary-600"
               />
-              <span className="text-sm text-neutral-700">Man</span>
+              <span className="text-sm text-neutral-700">{t('gender.male')}</span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
               <input
@@ -150,14 +137,14 @@ export default function SetupProfileForm({ onSave, isSaving }: SetupProfileFormP
                 onChange={() => setGender('female')}
                 className="h-4 w-4 accent-primary-600"
               />
-              <span className="text-sm text-neutral-700">Kvinna</span>
+              <span className="text-sm text-neutral-700">{t('gender.female')}</span>
             </label>
           </div>
         </div>
 
         {/* Längd */}
         <div>
-          <label className="block text-sm font-medium text-neutral-700 mb-2">Längd (cm)</label>
+          <label className="block text-sm font-medium text-neutral-700 mb-2">{t('fields.height')}</label>
           <input
             type="number"
             value={heightString}
@@ -171,7 +158,7 @@ export default function SetupProfileForm({ onSave, isSaving }: SetupProfileFormP
 
         {/* Vikt */}
         <div>
-          <label className="block text-sm font-medium text-neutral-700 mb-2">Vikt (kg)</label>
+          <label className="block text-sm font-medium text-neutral-700 mb-2">{t('fields.weight')}</label>
           <input
             type="number"
             value={weightString}
@@ -185,7 +172,7 @@ export default function SetupProfileForm({ onSave, isSaving }: SetupProfileFormP
         </div>
 
         <Button onClick={handleSubmit} disabled={!isValid || isSaving} className="w-full sm:w-auto">
-          {isSaving ? 'Sparar...' : 'Spara och fortsätt'}
+          {isSaving ? t('save.saving') : t('setup.saveAndContinue')}
         </Button>
       </CardContent>
     </Card>

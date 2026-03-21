@@ -5,6 +5,7 @@
 
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -35,16 +36,17 @@ import {
 type CompletionMode = 'manual' | 'auto'
 type OpenEditor = 'username' | 'email' | 'password' | null
 
-// Password strength helper
-function getPasswordStrength(password: string): { label: string; color: string; width: string } {
-  if (password.length === 0) return { label: '', color: '', width: '0%' }
-  if (password.length < 6) return { label: 'För kort', color: 'bg-error-500', width: '25%' }
-  if (password.length < 10) return { label: 'Svagt', color: 'bg-warning-500', width: '50%' }
-  if (password.length < 14) return { label: 'Bra', color: 'bg-success-400', width: '75%' }
-  return { label: 'Starkt', color: 'bg-success-600', width: '100%' }
+// Password strength helper — labels injected at call site via t()
+function getPasswordStrengthMeta(password: string): { level: string; color: string; width: string } {
+  if (password.length === 0) return { level: '', color: '', width: '0%' }
+  if (password.length < 6) return { level: 'tooShort', color: 'bg-error-500', width: '25%' }
+  if (password.length < 10) return { level: 'weak', color: 'bg-warning-500', width: '50%' }
+  if (password.length < 14) return { level: 'good', color: 'bg-success-400', width: '75%' }
+  return { level: 'strong', color: 'bg-success-600', width: '100%' }
 }
 
 export default function SettingsPage() {
+  const { t } = useTranslation('profile')
   const navigate = useNavigate()
   const { user, deleteAccount, refreshProfile } = useAuth()
   const { profile, isReady } = useActiveProfile()
@@ -120,7 +122,11 @@ export default function SettingsPage() {
   const [passwordConfirm, setPasswordConfirm] = useState('')
   const [isUpdatingPassword, setIsUpdatingPassword] = useState(false)
 
-  const passwordStrength = getPasswordStrength(passwordInput)
+  const tAny = t as (key: string) => string
+  const passwordStrengthMeta = getPasswordStrengthMeta(passwordInput)
+  const passwordStrengthLabel = passwordStrengthMeta.level
+    ? t(`settings.passwordStrength${passwordStrengthMeta.level.charAt(0).toUpperCase()}${passwordStrengthMeta.level.slice(1)}` as Parameters<typeof t>[0])
+    : ''
 
   // Open an inline editor (closes all others)
   const openEditorFor = (editor: OpenEditor) => {
@@ -151,10 +157,10 @@ export default function SettingsPage() {
         },
         silent: true,
       })
-      toast.success('Grundläggande information sparad')
+      toast.success(t('settings.basicInfoSaved'))
     } catch (error) {
       console.error('Error saving basic info:', error)
-      toast.error('Kunde inte spara grundläggande information')
+      toast.error(t('settings.basicInfoSaveError'))
     }
   }
 
@@ -171,15 +177,15 @@ export default function SettingsPage() {
       const result = await updateUsername.mutateAsync(trimmed)
       if (!result.success) {
         if (result.error === 'username_taken') {
-          toast.error('Användarnamnet är redan taget')
+          toast.error(t('settings.usernameTaken'))
         } else if (result.error === 'invalid_format') {
-          toast.error('Ogiltigt format. Använd bokstäver, siffror och _')
+          toast.error(t('settings.usernameInvalidFormat'))
         } else {
-          toast.error('Kunde inte uppdatera användarnamn')
+          toast.error(t('settings.usernameUpdateError'))
         }
         return
       }
-      toast.success('Användarnamn uppdaterat')
+      toast.success(t('settings.usernameUpdated'))
       closeEditor()
       await refreshProfile()
     } catch (error) {
@@ -192,7 +198,7 @@ export default function SettingsPage() {
     const trimmed = emailInput.trim().toLowerCase()
     if (!trimmed) return
     if (trimmed === user?.email?.toLowerCase()) {
-      toast.error('Den nya e-postadressen är samma som den nuvarande')
+      toast.error(t('settings.emailSameError'))
       return
     }
     setIsUpdatingEmail(true)
@@ -200,8 +206,8 @@ export default function SettingsPage() {
       const { error } = await supabase.auth.updateUser({ email: trimmed })
       if (error) throw error
       setEmailPending(true)
-      toast.success(`Bekräftelsemejl skickat till ${trimmed}`, {
-        description: 'Bytet aktiveras när du klickar länken i mejlet.',
+      toast.success(t('settings.emailConfirmSent', { email: trimmed }), {
+        description: t('settings.emailConfirmDesc'),
         duration: 6000,
       })
     } catch (error) {
@@ -214,18 +220,18 @@ export default function SettingsPage() {
   // Save password
   const handleSavePassword = async () => {
     if (passwordInput.length < 6) {
-      toast.error('Lösenordet måste vara minst 6 tecken')
+      toast.error(t('settings.passwordTooShort'))
       return
     }
     if (passwordInput !== passwordConfirm) {
-      toast.error('Lösenorden matchar inte')
+      toast.error(t('settings.passwordMismatch'))
       return
     }
     setIsUpdatingPassword(true)
     try {
       const { error } = await supabase.auth.updateUser({ password: passwordInput })
       if (error) throw error
-      toast.success('Lösenordet har uppdaterats')
+      toast.success(t('settings.passwordUpdated'))
       closeEditor()
     } catch (error) {
       toast.error(translateAuthError(error))
@@ -240,8 +246,8 @@ export default function SettingsPage() {
     localStorage.setItem('day-completion-mode', mode)
     toast.success(
       mode === 'auto'
-        ? 'Dagen avslutas nu automatiskt vid midnatt'
-        : 'Du avslutar nu dagen manuellt med knappen'
+        ? t('settings.toastAuto')
+        : t('settings.toastManual')
     )
   }
 
@@ -250,11 +256,11 @@ export default function SettingsPage() {
     setIsDeleting(true)
     try {
       await deleteAccount()
-      toast.success('Ditt konto har raderats.')
+      toast.success(t('settings.accountDeleted'))
       navigate('/', { replace: true })
     } catch (error) {
       console.error('Delete account error:', error)
-      toast.error('Något gick fel vid radering av kontot. Försök igen.')
+      toast.error(t('settings.deleteError'))
     } finally {
       setIsDeleting(false)
     }
@@ -272,21 +278,21 @@ export default function SettingsPage() {
         <div>
           <h1 className="text-2xl md:text-3xl font-bold text-neutral-900 flex items-center gap-2 md:gap-3">
             <SettingsIcon className="h-6 w-6 md:h-8 md:w-8 text-primary-600" />
-            Inställningar
+            {t('settings.title')}
           </h1>
           <p className="text-sm md:text-base text-neutral-600 mt-1 md:mt-2">
-            Hantera ditt konto och appinställningar
+            {t('settings.description')}
           </p>
         </div>
 
         {/* App Settings */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Appinställningar</CardTitle>
+            <CardTitle className="text-lg">{t('settings.appSettings')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <p className="text-sm font-medium text-neutral-900 mb-3">Dagavslutning</p>
+              <p className="text-sm font-medium text-neutral-900 mb-3">{t('settings.dayCompletion')}</p>
               <div className="space-y-2">
                 <label
                   className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
@@ -304,9 +310,9 @@ export default function SettingsPage() {
                     className="mt-0.5 accent-primary-600"
                   />
                   <div>
-                    <span className="text-sm font-medium text-neutral-900">Manuell</span>
+                    <span className="text-sm font-medium text-neutral-900">{t('settings.manual')}</span>
                     <p className="text-xs text-neutral-500 mt-0.5">
-                      Avsluta dagen själv med knappen &quot;Avsluta dag&quot;
+                      {t('settings.manualDesc')}
                     </p>
                   </div>
                 </label>
@@ -326,9 +332,9 @@ export default function SettingsPage() {
                     className="mt-0.5 accent-primary-600"
                   />
                   <div>
-                    <span className="text-sm font-medium text-neutral-900">Automatisk</span>
+                    <span className="text-sm font-medium text-neutral-900">{t('settings.auto')}</span>
                     <p className="text-xs text-neutral-500 mt-0.5">
-                      Dagen avslutas automatiskt vid midnatt
+                      {t('settings.autoDesc')}
                     </p>
                   </div>
                 </label>
@@ -340,17 +346,17 @@ export default function SettingsPage() {
         {/* Grundläggande information */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Grundläggande information</CardTitle>
+            <CardTitle className="text-lg">{t('basicInfo.title')}</CardTitle>
           </CardHeader>
           <CardContent className="divide-y divide-neutral-100">
             {!isReady ? (
-              <div className="py-4 text-sm text-neutral-500">Laddar...</div>
+              <div className="py-4 text-sm text-neutral-500">{t('settings.loading')}</div>
             ) : (
               <>
                 {/* Födelsedatum */}
                 <div className="py-3">
                   <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide mb-2">
-                    Födelsedatum
+                    {t('birthDate.label')}
                   </p>
                   <div className="grid grid-cols-3 gap-2">
                     <select
@@ -361,7 +367,7 @@ export default function SettingsPage() {
                       }}
                       className="block w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                     >
-                      <option value="">Dag</option>
+                      <option value="">{t('birthDate.day')}</option>
                       {Array.from({ length: 31 }, (_, i) => i + 1).map(day => (
                         <option key={day} value={day}>
                           {day}
@@ -376,23 +382,10 @@ export default function SettingsPage() {
                       }}
                       className="block w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                     >
-                      <option value="">Månad</option>
-                      {[
-                        'Januari',
-                        'Februari',
-                        'Mars',
-                        'April',
-                        'Maj',
-                        'Juni',
-                        'Juli',
-                        'Augusti',
-                        'September',
-                        'Oktober',
-                        'November',
-                        'December',
-                      ].map((m, i) => (
-                        <option key={i + 1} value={i + 1}>
-                          {m}
+                      <option value="">{t('birthDate.month')}</option>
+                      {Array.from({ length: 12 }, (_, i) => i + 1).map(i => (
+                        <option key={i} value={i}>
+                          {tAny(`months.${i}`)}
                         </option>
                       ))}
                     </select>
@@ -404,7 +397,7 @@ export default function SettingsPage() {
                       }}
                       className="block w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                     >
-                      <option value="">År</option>
+                      <option value="">{t('birthDate.year')}</option>
                       {Array.from({ length: 105 }, (_, i) => new Date().getFullYear() - i).map(
                         year => (
                           <option key={year} value={year}>
@@ -419,7 +412,7 @@ export default function SettingsPage() {
                 {/* Kön */}
                 <div className="py-3">
                   <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide mb-2">
-                    Kön
+                    {t('fields.gender')}
                   </p>
                   <div className="flex gap-6">
                     <label className="flex items-center gap-2 cursor-pointer">
@@ -431,7 +424,7 @@ export default function SettingsPage() {
                         onChange={() => setGender('male')}
                         className="h-4 w-4 accent-primary-600"
                       />
-                      <span className="text-sm text-neutral-700">Man</span>
+                      <span className="text-sm text-neutral-700">{t('gender.male')}</span>
                     </label>
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input
@@ -442,7 +435,7 @@ export default function SettingsPage() {
                         onChange={() => setGender('female')}
                         className="h-4 w-4 accent-primary-600"
                       />
-                      <span className="text-sm text-neutral-700">Kvinna</span>
+                      <span className="text-sm text-neutral-700">{t('gender.female')}</span>
                     </label>
                   </div>
                 </div>
@@ -450,7 +443,7 @@ export default function SettingsPage() {
                 {/* Längd */}
                 <div className="py-3">
                   <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide mb-2">
-                    Längd (cm)
+                    {t('fields.height')}
                   </p>
                   <input
                     type="number"
@@ -475,7 +468,7 @@ export default function SettingsPage() {
                     className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {updateProfile.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
-                    {updateProfile.isPending ? 'Sparar...' : 'Spara'}
+                    {updateProfile.isPending ? t('save.saving') : t('settings.save')}
                   </button>
                 </div>
               </>
@@ -486,7 +479,7 @@ export default function SettingsPage() {
         {/* Konto */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Konto</CardTitle>
+            <CardTitle className="text-lg">{t('settings.account')}</CardTitle>
           </CardHeader>
           <CardContent className="divide-y divide-neutral-100">
             {/* Username row */}
@@ -494,14 +487,14 @@ export default function SettingsPage() {
               {openEditor === 'username' ? (
                 <div className="space-y-2">
                   <label className="text-xs font-medium text-neutral-500 uppercase tracking-wide">
-                    Användarnamn
+                    {t('settings.username')}
                   </label>
                   <div className="flex gap-2">
                     <input
                       type="text"
                       value={usernameInput}
                       onChange={e => setUsernameInput(e.target.value)}
-                      placeholder="@användarnamn"
+                      placeholder={t('settings.usernamePlaceholder')}
                       disabled={updateUsername.isPending}
                       className="flex-1 px-3 py-2 text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
                       onKeyDown={e => {
@@ -529,14 +522,14 @@ export default function SettingsPage() {
                     </button>
                   </div>
                   <p className="text-xs text-neutral-400">
-                    Bokstäver, siffror och _ (2–50 tecken). Måste vara unikt.
+                    {t('settings.usernameHint')}
                   </p>
                 </div>
               ) : (
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide mb-0.5">
-                      Användarnamn
+                      {t('settings.username')}
                     </p>
                     <p className="text-sm font-medium text-neutral-900">
                       {userProfile?.username ? `@${userProfile.username}` : '—'}
@@ -547,7 +540,7 @@ export default function SettingsPage() {
                     className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-neutral-600 hover:text-neutral-900 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors"
                   >
                     <Pencil className="h-3 w-3" />
-                    Redigera
+                    {t('settings.edit')}
                   </button>
                 </div>
               )}
@@ -558,12 +551,11 @@ export default function SettingsPage() {
               {openEditor === 'email' ? (
                 <div className="space-y-2">
                   <label className="text-xs font-medium text-neutral-500 uppercase tracking-wide">
-                    E-postadress
+                    {t('settings.email')}
                   </label>
                   {emailPending ? (
                     <div className="text-sm text-success-700 bg-success-50 border border-success-200 rounded-lg px-3 py-2">
-                      Bekräftelsemejl skickat till <strong>{emailInput}</strong>. Klicka länken i
-                      mejlet för att aktivera bytet.
+                      {t('settings.emailConfirmNotice')} <strong>{emailInput}</strong>. {t('settings.emailConfirmAction')}
                     </div>
                   ) : (
                     <div className="flex gap-2">
@@ -600,7 +592,7 @@ export default function SettingsPage() {
                   )}
                   {!emailPending && (
                     <p className="text-xs text-neutral-400">
-                      Ett bekräftelsemejl skickas till den nya adressen.
+                      {t('settings.emailHint')}
                     </p>
                   )}
                   {emailPending && (
@@ -608,7 +600,7 @@ export default function SettingsPage() {
                       onClick={closeEditor}
                       className="text-xs text-neutral-500 hover:text-neutral-700 underline"
                     >
-                      Stäng
+                      {t('settings.close')}
                     </button>
                   )}
                 </div>
@@ -616,7 +608,7 @@ export default function SettingsPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide mb-0.5">
-                      E-postadress
+                      {t('settings.email')}
                     </p>
                     <p className="text-sm font-medium text-neutral-900">{user?.email ?? '—'}</p>
                   </div>
@@ -625,7 +617,7 @@ export default function SettingsPage() {
                     className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-neutral-600 hover:text-neutral-900 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors"
                   >
                     <Pencil className="h-3 w-3" />
-                    Redigera
+                    {t('settings.edit')}
                   </button>
                 </div>
               )}
@@ -636,13 +628,13 @@ export default function SettingsPage() {
               {openEditor === 'password' ? (
                 <div className="space-y-2">
                   <label className="text-xs font-medium text-neutral-500 uppercase tracking-wide">
-                    Nytt lösenord
+                    {t('settings.newPassword')}
                   </label>
                   <input
                     type="password"
                     value={passwordInput}
                     onChange={e => setPasswordInput(e.target.value)}
-                    placeholder="Minst 6 tecken"
+                    placeholder={t('settings.passwordPlaceholder')}
                     className="w-full px-3 py-2 text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     autoFocus
                   />
@@ -650,18 +642,18 @@ export default function SettingsPage() {
                     <div className="space-y-1">
                       <div className="h-1.5 w-full bg-neutral-200 rounded-full overflow-hidden">
                         <div
-                          className={`h-full rounded-full transition-all ${passwordStrength.color}`}
-                          style={{ width: passwordStrength.width }}
+                          className={`h-full rounded-full transition-all ${passwordStrengthMeta.color}`}
+                          style={{ width: passwordStrengthMeta.width }}
                         />
                       </div>
-                      <p className="text-xs text-neutral-500">{passwordStrength.label}</p>
+                      <p className="text-xs text-neutral-500">{passwordStrengthLabel}</p>
                     </div>
                   )}
                   <input
                     type="password"
                     value={passwordConfirm}
                     onChange={e => setPasswordConfirm(e.target.value)}
-                    placeholder="Bekräfta lösenord"
+                    placeholder={t('settings.confirmPassword')}
                     className={`w-full px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 ${
                       passwordConfirm.length > 0 && passwordInput !== passwordConfirm
                         ? 'border-error-300'
@@ -673,7 +665,7 @@ export default function SettingsPage() {
                     }}
                   />
                   {passwordConfirm.length > 0 && passwordInput !== passwordConfirm && (
-                    <p className="text-xs text-error-600">Lösenorden matchar inte</p>
+                    <p className="text-xs text-error-600">{t('settings.passwordMismatch')}</p>
                   )}
                   <div className="flex gap-2 pt-1">
                     <button
@@ -686,13 +678,13 @@ export default function SettingsPage() {
                       className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
                       {isUpdatingPassword && <Loader2 className="h-4 w-4 animate-spin" />}
-                      {isUpdatingPassword ? 'Sparar...' : 'Spara lösenord'}
+                      {isUpdatingPassword ? t('save.saving') : t('settings.savePassword')}
                     </button>
                     <button
                       onClick={closeEditor}
                       className="px-4 py-2 text-sm font-medium text-neutral-600 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors"
                     >
-                      Avbryt
+                      {t('settings.cancel')}
                     </button>
                   </div>
                 </div>
@@ -700,7 +692,7 @@ export default function SettingsPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide mb-0.5">
-                      Lösenord
+                      {t('settings.passwordLabel')}
                     </p>
                     <p className="text-sm font-medium text-neutral-900 tracking-widest">••••••••</p>
                   </div>
@@ -709,7 +701,7 @@ export default function SettingsPage() {
                     className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-neutral-600 hover:text-neutral-900 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors"
                   >
                     <Pencil className="h-3 w-3" />
-                    Redigera
+                    {t('settings.edit')}
                   </button>
                 </div>
               )}
@@ -723,7 +715,7 @@ export default function SettingsPage() {
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <ShieldCheck className="h-5 w-5 text-primary-600" />
-                Adminhantering
+                {t('settings.adminManagement')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -745,14 +737,14 @@ export default function SettingsPage() {
                         onClick={async () => {
                           const result = await removeAdmin.mutateAsync(admin.user_id)
                           if (result?.success) {
-                            toast.success('Admin borttagen')
+                            toast.success(t('settings.adminRemoved'))
                           } else {
-                            toast.error('Kunde inte ta bort admin')
+                            toast.error(t('settings.adminRemoveError'))
                           }
                         }}
                         disabled={removeAdmin.isPending}
                         className="p-1.5 rounded-lg text-neutral-400 hover:text-error-600 hover:bg-error-50 transition-colors"
-                        title="Ta bort admin"
+                        title={t('settings.adminRemoveTitle')}
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
@@ -767,7 +759,7 @@ export default function SettingsPage() {
                   type="email"
                   value={newAdminIdentifier}
                   onChange={e => setNewAdminIdentifier(e.target.value)}
-                  placeholder="E-postadress eller användarnamn"
+                  placeholder={t('settings.adminPlaceholder')}
                   className="flex-1 px-3 py-2 text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                 />
                 <button
@@ -775,22 +767,22 @@ export default function SettingsPage() {
                     if (!newAdminIdentifier.trim()) return
                     const result = await addAdmin.mutateAsync(newAdminIdentifier.trim())
                     if (result?.success) {
-                      toast.success('Inbjudan skickad')
+                      toast.success(t('settings.adminAdded'))
                       setNewAdminIdentifier('')
                     } else if (result?.error === 'user_not_found') {
-                      toast.error('Ingen användare hittades')
+                      toast.error(t('settings.adminNotFound'))
                     } else if (result?.error === 'already_admin') {
-                      toast.info('Användaren är redan admin')
+                      toast.info(t('settings.adminAlreadyAdmin'))
                     } else if (result?.error === 'invitation_pending') {
-                      toast.info('En inbjudan är redan skickad till den användaren')
+                      toast.info(t('settings.adminInvitationPending'))
                     } else {
-                      toast.error('Kunde inte skicka inbjudan')
+                      toast.error(t('settings.adminAddError'))
                     }
                   }}
                   disabled={addAdmin.isPending || !newAdminIdentifier.trim()}
                   className="px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 disabled:opacity-50 rounded-lg transition-colors"
                 >
-                  {addAdmin.isPending ? 'Lägger till...' : 'Lägg till'}
+                  {addAdmin.isPending ? t('settings.addingAdmin') : t('settings.addAdmin')}
                 </button>
               </div>
             </CardContent>
@@ -802,7 +794,7 @@ export default function SettingsPage() {
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2 text-error-700">
               <AlertTriangle className="h-5 w-5" />
-              Farozon
+              {t('settings.deleteAccountTitle')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -810,34 +802,33 @@ export default function SettingsPage() {
               {deleteStep === 0 && (
                 <>
                   <p className="text-sm text-neutral-700">
-                    Om du raderar ditt konto försvinner all data permanent. Denna åtgärd kan inte
-                    ångras.
+                    {t('settings.deleteAccountWarning')}
                   </p>
                   <button
                     onClick={() => setDeleteStep(1)}
                     className="px-4 py-2 text-sm font-medium text-error-700 bg-error-100 hover:bg-error-200 rounded-lg transition-colors"
                   >
-                    Radera mitt konto
+                    {t('settings.deleteAccountButton')}
                   </button>
                 </>
               )}
               {deleteStep === 1 && (
                 <>
                   <p className="text-sm font-medium text-error-700">
-                    Är du säker? All din data kommer att raderas permanent.
+                    {t('settings.deleteAccountConfirm')}
                   </p>
                   <div className="flex gap-2">
                     <button
                       onClick={() => setDeleteStep(2)}
                       className="px-4 py-2 text-sm font-medium text-white bg-error-600 hover:bg-error-700 rounded-lg transition-colors"
                     >
-                      Ja, jag är säker
+                      {t('settings.deleteAccountSure')}
                     </button>
                     <button
                       onClick={resetDeleteFlow}
                       className="px-4 py-2 text-sm font-medium text-neutral-700 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors"
                     >
-                      Avbryt
+                      {t('settings.cancel')}
                     </button>
                   </div>
                 </>
@@ -845,13 +836,13 @@ export default function SettingsPage() {
               {deleteStep === 2 && (
                 <>
                   <p className="text-sm font-medium text-error-700">
-                    Skriv <span className="font-bold">RADERA</span> för att bekräfta:
+                    {t('settings.deleteAccountFinal')}
                   </p>
                   <input
                     type="text"
                     value={confirmText}
                     onChange={e => setConfirmText(e.target.value)}
-                    placeholder="Skriv RADERA"
+                    placeholder={t('settings.deleteAccountPlaceholder')}
                     className="w-full px-3 py-2 text-sm border border-error-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-error-500"
                   />
                   <div className="flex gap-2">
@@ -861,13 +852,13 @@ export default function SettingsPage() {
                       className="px-4 py-2 text-sm font-medium text-white bg-error-600 hover:bg-error-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                     >
                       {isDeleting && <Loader2 className="h-4 w-4 animate-spin" />}
-                      {isDeleting ? 'Raderar...' : 'Radera permanent'}
+                      {isDeleting ? t('settings.deleting') : t('settings.deleteAccountPermanent')}
                     </button>
                     <button
                       onClick={resetDeleteFlow}
                       className="px-4 py-2 text-sm font-medium text-neutral-700 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors"
                     >
-                      Avbryt
+                      {t('settings.cancel')}
                     </button>
                   </div>
                 </>

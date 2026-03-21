@@ -1,0 +1,290 @@
+{
+  "quickProfile": {
+    "placeholder": "Ange {{label}}",
+    "select": "Välj...",
+    "saving": "Sparar",
+    "saved": "Sparad",
+    "save": "Spara",
+    "errors": {
+      "emptyValue": "Vänligen fyll i ett värde",
+      "invalidNumber": "Ogiltigt nummer",
+      "mustBePositive": "Värdet måste vara större än 0",
+      "saveFailed": "Något gick fel vid sparande"
+    },
+    "successSaved": "{{label}} har sparats"
+  },
+  "backToHub": {
+    "label": "Tillbaka till {{hubLabel}}"
+  },
+  "missingData": {
+    "title": "Saknade uppgifter",
+    "description": "För att använda detta verktyg behöver du fylla i följande uppgifter:",
+    "hide": "Dölj",
+    "fill": "Fyll i"
+  },
+  "errorBoundary": {
+    "title": "Något gick fel",
+    "description": "Ett oväntat fel inträffade när verktyget laddades. Detta kan bero på saknad data eller en teknisk bugg.",
+    "technicalInfo": "Teknisk information",
+    "reload": "Ladda om sidan",
+    "backToOverview": "Tillbaka till översikt"
+  },
+  "goalCalc": {
+    "noProfile": {
+      "title": "Ingen aktiv profil",
+      "description": "Du måste ha en profil för att använda målkalkylatorn.",
+      "action": "Gå till profil"
+    },
+    "header": {
+      "title": "Måluträknare",
+      "descriptionWithBodyFat": "Beräkna din målvikt och tidslinje för att nå ditt kroppsfettmål",
+      "descriptionWithoutBodyFat": "Beräkna din målvikt och tidslinje",
+      "badge": "Mål & Planering"
+    },
+    "infoAlert": {
+      "title": "Om Måluträknaren",
+      "descriptionWithBodyFat": "Denna kalkylator uppskattar din målvikt baserat på önskat kroppsfett % och bibehållen fettfri massa.",
+      "descriptionWithoutBodyFat": "Denna kalkylator hjälper dig sätta viktmål och beräkna tidslinje. Lägg till kroppsfett % i profilen för mer detaljerade beräkningar.",
+      "disclaimer": "Tidslinjen är en uppskattning - faktiska resultat kan variera beroende på träning, kost och individuella faktorer."
+    },
+    "currentStatus": {
+      "title": "Din Nuvarande Status",
+      "description": "Utgångspunkt för beräkningar",
+      "weight": "Vikt",
+      "bodyFat": "Kroppsfett",
+      "leanMass": "Fettfri massa",
+      "fatMass": "Fettmassa",
+      "category": "Kategori:",
+      "bmiMissing": "⚠️ BMI-sektion visas när du lägger till din längd i profilen"
+    },
+    "bmi": {
+      "title": "BMI (Body Mass Index)",
+      "description": "Viktindex enligt WHO-standard",
+      "current": "Nuvarande:",
+      "target": "Mål:",
+      "table": {
+        "category": "Kategori",
+        "bmi": "BMI",
+        "weight": "Vikt (kg)",
+        "underweight": "Undervikt",
+        "normalweight": "Normalvikt",
+        "overweight": "Övervikt",
+        "obese": "Fetma"
+      },
+      "disclaimer": "OBS: BMI tar inte hänsyn till muskelmassa. Använd tillsammans med kroppsfett% för bättre bedömning."
+    },
+    "bodyFatRef": {
+      "title": "Kroppsfett %",
+      "description": "Kategorier enligt American Council on Exercise (ACE)",
+      "male": "man",
+      "female": "kvinna"
+    },
+    "goal": {
+      "title": "Ställ in ditt mål",
+      "descriptionWithBodyFat": "Välj önskad målvikt eller kroppsfett %",
+      "descriptionWithoutBodyFat": "Välj din målvikt",
+      "targetWeight": "Mål Kroppsvikt",
+      "targetBodyFat": "Mål Kroppsfett %",
+      "syncHint": "💡 Mål Kroppsfett% och Mål Kroppsvikt synkas automatiskt när du ändrar någon av dem",
+      "targetCategory": "Målkategori:",
+      "minus30": "-30%",
+      "current": "Nuvarande",
+      "plus30": "+30%"
+    },
+    "weeklyChange": {
+      "title": "Veckovis Viktförändring",
+      "noGoalHint": "Välj ett energimål för att se tillgängliga alternativ",
+      "weightLossLabel": "Viktnedgång - Välj tempo enligt Energimål:",
+      "weightGainLabel": "Viktökning - Välj tempo enligt Energimål:",
+      "presets": {
+        "cautious": "Försiktigt (10-15%)",
+        "normal": "Normalt (20-25%)",
+        "aggressive": "Aggressivt (25-30%)",
+        "gain": "Viktuppgång (10-20%)",
+        "cautiousShort": "Försiktigt",
+        "normalShort": "Normalt",
+        "aggressiveShort": "Aggressivt",
+        "gainShort": "Viktuppgång"
+      }
+    },
+    "results": {
+      "title": "Ditt Mål",
+      "targetWeightLabel": "Målvikt",
+      "weightUnit": "kg",
+      "toLoose": "att förlora",
+      "toGain": "att öka"
+    },
+    "timeline": {
+      "title": "Tidslinje",
+      "weeks": "Veckor",
+      "months": "Månader",
+      "weeksUnit": "v",
+      "monthsUnit": "mån",
+      "earliestDone": "Tidigast klart",
+      "latestDone": "Senast klart",
+      "energyGoal": "Energimål",
+      "applyToProfile": "Tillämpa energimål på profilen",
+      "alreadyActive": "Redan aktivt i profilen",
+      "saving": "Sparar...",
+      "disclaimer": "* Uppskattning baserad på bibehållen fettfri massa och valt viktförändring-intervall."
+    },
+    "toast": {
+      "profileUpdated": "Energimål uppdaterat i profilen",
+      "profileUpdateFailed": "Kunde inte uppdatera profilen",
+      "profileSaved": "Profil uppdaterad",
+      "profileSaveFailed": "Kunde inte uppdatera profil"
+    },
+    "gender": {
+      "male": "Man",
+      "female": "Kvinna"
+    }
+  },
+  "metCalc": {
+    "noProfile": {
+      "title": "Ingen aktiv profil",
+      "description": "Du måste ha en profil för att använda MET-kalkylatorn.",
+      "action": "Gå till profil"
+    },
+    "header": {
+      "title": "MET Aktivitetskalkylator",
+      "description": "Beräkna kalorier förbrända från över 1100 aktiviteter med metriska enheter",
+      "source": "Baserat på 2024 Compendium of Physical Activities, publicerad i Journal of Sport and Health Science",
+      "badge": "Energi & Metabol"
+    },
+    "search": {
+      "title": "Sök Aktiviteter",
+      "description": "Hitta aktiviteter från {{count}} olika alternativ",
+      "categoryLabel": "Kategori",
+      "allCategories": "Alla kategorier",
+      "searchLabel": "Sök aktivitet",
+      "searchPlaceholder": "Sök på aktivitet, kod eller intensitet...",
+      "searchTip": "Tips: Sök på \"lätt\", \"måttlig\", \"hög\" eller \"mycket hög\" för intensitetsnivå",
+      "resultsFound_one": "Hittade {{count}} aktivitet",
+      "resultsFound_other": "Hittade {{count}} aktiviteter",
+      "noResults": "Inga aktiviteter hittades"
+    },
+    "summary": {
+      "title": "Totalt",
+      "activities": "Aktiviteter:",
+      "time": "Tid:",
+      "calories": "Kalorier:",
+      "minuteUnit": "min"
+    },
+    "selected": {
+      "title": "Valda Aktiviteter",
+      "clearAll": "Rensa alla",
+      "minuteAbbr": "min"
+    },
+    "activityRow": {
+      "choose": "Välj",
+      "minutesLabel": "Minuter",
+      "addButton": "Lägg till"
+    },
+    "toast": {
+      "missingWeight": "Vänligen fyll i din vikt först",
+      "invalidDuration": "Varaktighet måste vara större än 0",
+      "calcError": "Det gick inte att beräkna kalorier. Kontrollera dina värden.",
+      "activityAdded": "{{activity}} tillagd"
+    }
+  },
+  "tdeeCalc": {
+    "noProfile": {
+      "title": "Ingen aktiv profil",
+      "description": "Du måste ha en profil för att använda TDEE-kalkylatorn.",
+      "action": "Gå till profil"
+    },
+    "header": {
+      "title": "TDEE & Kaloriuträknare",
+      "description": "Beräkna ditt totala dagliga energibehov och kaloriintervall för dina mål",
+      "badge": "Energi & Metabol"
+    },
+    "tabs": {
+      "calculator": "Kalkylator",
+      "comparison": "Jämförelse"
+    },
+    "infoCards": {
+      "bmrRmr": "Vad är BMR och RMR?",
+      "bmrRmrModal": "BMR vs RMR - Skillnaden förklarad",
+      "palMet": "Vad är PAL och MET?",
+      "palMetModal": "PAL vs MET - Aktivitetsnivåer förklarade",
+      "tdee": "Vad är TDEE?",
+      "tdeeModal": "TDEE - Total Daily Energy Expenditure",
+      "lbmFfm": "Skillnad på LBM och FFM?",
+      "lbmFfmModal": "LBM vs FFM - Fettfri massa förklarad"
+    },
+    "weight": {
+      "title": "Vikt för beräkning",
+      "description": "Välj vilken vikt som ska användas för TDEE-beräkningen",
+      "useLogged": "Använd senaste loggad vikt",
+      "useLoggedDetail": "{{weight}} kg (från viktspårning)",
+      "useManual": "Ange vikt manuellt",
+      "useManualDetail": "Ange en egen vikt för beräkningen",
+      "fieldLabel": "Vikt (kg)",
+      "fieldHint": "Detta värde används för att beräkna BMR och TDEE.",
+      "logHint": " Logga din vikt i Viktspårning för att använda den här.",
+      "selectedWeight": "Vald vikt för beräkning:"
+    },
+    "bodyFat": {
+      "title": "Kroppsfettprocent (valfri)",
+      "description": "Vissa BMR-formler kräver kroppsfettprocent för mer exakta beräkningar",
+      "savedLabel": "Sparad kroppsfettprocent:",
+      "fieldLabel": "Kroppsfettprocent (%)",
+      "fieldHint": "Krävs för formler som Cunningham, MacroFactor FFM/Athlete och Fitness Stuff Podcast"
+    },
+    "bmr": {
+      "title": "BMR/RMR-formel",
+      "description": "Välj formel för att beräkna din basalmetabolism",
+      "fieldLabel": "BMR/RMR-formel",
+      "factLink": "Fakta om denna formel",
+      "placeholder": "Välj BMR/RMR-formel...",
+      "bodyFatWarning": "Denna formel kräver kroppsfettprocent. Vänligen fyll i kroppsfettprocent ovan.",
+      "formulas": {
+        "mifflin": "Mifflin-St Jeor (Rekommenderad)",
+        "revisedHarrisBenedict": "Revised Harris-Benedict",
+        "originalHarrisBenedict": "Original Harris-Benedict",
+        "schofield": "Schofield",
+        "oxford": "Oxford/Henry",
+        "macrofactorStandard": "MacroFactor Standard",
+        "cunningham": "Cunningham (Kräver kroppsfett%)",
+        "macrofactorFFM": "MacroFactor FFM (Kräver kroppsfett%)",
+        "macrofactorAthlete": "MacroFactor Athlete (Kräver kroppsfett%)",
+        "fitnessStuff": "Fitness Stuff Podcast (Kräver kroppsfett%)"
+      }
+    },
+    "pal": {
+      "title": "PAL-system (Aktivitetsnivå)",
+      "description": "Välj system för att beräkna din fysiska aktivitetsnivå",
+      "fieldLabel": "PAL-system",
+      "factLink": "Fakta om detta PAL-system",
+      "placeholder": "Välj PAL-system...",
+      "calculateLevel": "Beräkna din aktivitetsnivå"
+    },
+    "results": {
+      "title": "Dina Resultat",
+      "description": "Basalmetabolism och total daglig energiförbrukning",
+      "bmrLabel": "BASALMETABOLISM",
+      "tdeeLabel": "TOTAL ENERGIFÖRBRUKNING",
+      "kcalPerDay": "kcal/dag",
+      "saveButton": "Spara till profil",
+      "saving": "Sparar..."
+    },
+    "toast": {
+      "cannotSave": "Kan inte spara: saknade data",
+      "overwriteConfirm": "Du har redan ett TDEE-värde sparat. Vill du skriva över det med den nya beräkningen?",
+      "saved": "TDEE har sparats till din profil!",
+      "saveFailed": "Kunde inte spara TDEE"
+    }
+  },
+  "palFields": {
+    "activityLevel": "Aktivitetsnivå *",
+    "activityLevelPlaceholder": "Välj aktivitetsnivå...",
+    "intensityLevel": "Intensitetsnivå *",
+    "intensityLevelPlaceholder": "Välj intensitet...",
+    "trainingFrequency": "Träningspass per vecka *",
+    "trainingDuration": "Minuter per pass *",
+    "dailySteps": "Dagliga steg *",
+    "dailyStepsPlaceholder": "Välj stegintervall...",
+    "customPAL": "Anpassat PAL-värde (1.0 - 3.0) *",
+    "customPALHint": "Ange ditt eget PAL-värde om du vet det"
+  }
+}

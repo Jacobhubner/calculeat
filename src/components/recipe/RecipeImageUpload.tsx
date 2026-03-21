@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Camera, X, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useRecipeImageUpload } from '@/hooks/useRecipeImageUpload'
@@ -9,6 +10,7 @@ interface RecipeImageUploadProps {
 }
 
 export function RecipeImageUpload({ value, onChange }: RecipeImageUploadProps) {
+  const { t } = useTranslation('recipes')
   const inputRef = useRef<HTMLInputElement>(null)
   const [isDragOver, setIsDragOver] = useState(false)
   const { uploadImage, deleteImage, isUploading } = useRecipeImageUpload()
@@ -18,7 +20,7 @@ export function RecipeImageUpload({ value, onChange }: RecipeImageUploadProps) {
     if (url) {
       onChange(url)
     } else {
-      toast.error('Bilden kunde inte laddas upp. Kontrollera att den är under 5 MB.')
+      toast.error(t('imageUpload.uploadError'))
     }
   }
 
@@ -54,12 +56,12 @@ export function RecipeImageUpload({ value, onChange }: RecipeImageUploadProps) {
 
       {value ? (
         <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-neutral-100">
-          <img src={value} alt="Receptbild" className="w-full h-full object-cover" />
+          <img src={value} alt={t('imageUpload.altImage')} className="w-full h-full object-cover" />
           <button
             type="button"
             onClick={handleRemove}
             className="absolute top-2 right-2 p-1.5 rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors"
-            aria-label="Ta bort bild"
+            aria-label={t('imageUpload.removeAlt')}
           >
             <X className="h-4 w-4" />
           </button>
@@ -90,13 +92,13 @@ export function RecipeImageUpload({ value, onChange }: RecipeImageUploadProps) {
           {isUploading ? (
             <>
               <Loader2 className="h-6 w-6 animate-spin" />
-              <span>Laddar upp...</span>
+              <span>{t('imageUpload.uploading')}</span>
             </>
           ) : (
             <>
               <Camera className="h-6 w-6" />
-              <span>Lägg till bild</span>
-              <span className="text-xs text-neutral-400">Klicka eller dra och släpp</span>
+              <span>{t('imageUpload.addImage')}</span>
+              <span className="text-xs text-neutral-400">{t('imageUpload.dragHint')}</span>
             </>
           )}
         </button>

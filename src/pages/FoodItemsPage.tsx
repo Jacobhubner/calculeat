@@ -59,14 +59,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { toast } from 'sonner'
-
-// Static tabs (shared list tabs are added dynamically)
-const STATIC_TABS: { key: FoodTab; label: string }[] = [
-  { key: 'alla', label: 'Alla' },
-  { key: 'mina', label: 'Mina' },
-  { key: 'calculeat', label: 'CalculEat' },
-  { key: 'slv', label: 'Livsmedelsverket' },
-]
+import { useTranslation } from 'react-i18next'
 
 // Display mode type
 type DisplayMode = 'serving' | 'per100g' | 'perVolume'
@@ -203,8 +196,17 @@ function getDefaultDisplayMode(item: FoodItem): DisplayMode {
 const PAGE_SIZE = 50
 
 export default function FoodItemsPage() {
+  const { t } = useTranslation('food')
   const { user } = useAuth()
   const queryClient = useQueryClient()
+
+  // Static tabs depend on t() so defined inside component
+  const STATIC_TABS: { key: FoodTab; label: string }[] = [
+    { key: 'alla', label: t('tabs.all') },
+    { key: 'mina', label: t('tabs.mine') },
+    { key: 'calculeat', label: t('tabs.calculeat') },
+    { key: 'slv', label: t('tabs.slv') },
+  ]
   const { data: isAdmin = false } = useIsAdmin()
   const deleteFood = useDeleteFoodItem()
   const adminDeleteFood = useAdminDeleteFoodItem()
@@ -358,12 +360,11 @@ export default function FoodItemsPage() {
 
   // Get tooltip text for a unit button
   const getUnitButtonTooltip = (mode: DisplayMode, item: FoodItem): string => {
-    const servingLabel =
-      item.serving_unit === 'portion' ? 'portion' : item.serving_unit || 'serveringsportion'
+    const servingLabel = item.serving_unit || 'portion'
     const labels: Record<DisplayMode, string> = {
-      serving: `Visa som ${servingLabel}`,
-      per100g: 'Visa per 100g',
-      perVolume: 'Visa per volym (ml)',
+      serving: t('tooltip.viewAsServing', { serving: servingLabel }),
+      per100g: t('tooltip.viewPer100g'),
+      perVolume: t('tooltip.viewPerVolume'),
     }
     return labels[mode] || ''
   }
@@ -406,7 +407,7 @@ export default function FoodItemsPage() {
       }
     } catch (error) {
       console.error('Error deleting food item:', error)
-      alert('Kunde inte ta bort livsmedel. Försök igen.')
+      alert(t('toast.deleteError'))
     } finally {
       setDeletingItemId(null)
     }
@@ -432,10 +433,9 @@ export default function FoodItemsPage() {
 
     let message: string
     if (isRecipe) {
-      message = `Vill du ta bort receptet "${item?.name}"?\n\nOBS: Detta kommer att radera receptet både från livsmedelslistan OCH från dina sparade recept.`
+      message = `${item?.name}`
     } else if (isGlobal) {
-      message =
-        'Detta är ett globalt livsmedel. Det kommer att döljas från din lista men inte påverka andra användare. Vill du fortsätta?'
+      message = t('adminEdit.description', { name: item?.name ?? '' })
     } else {
       // User-owned non-recipe: check recipe impact before confirming
       try {
@@ -454,7 +454,7 @@ export default function FoodItemsPage() {
       } catch {
         // If the check fails, fall through to simple confirm
       }
-      message = 'Är du säker på att du vill ta bort detta livsmedel?'
+      message = t('listDelete.description', { name: item?.name ?? '' })
     }
 
     if (!confirm(message)) {
@@ -478,9 +478,7 @@ export default function FoodItemsPage() {
     }
     if (item.user_id === null) {
       if (
-        !confirm(
-          'Detta är ett globalt livsmedel. Dina ändringar sparas som en personlig kopia och påverkar inte andra användare. Vill du fortsätta?'
-        )
+        !confirm(t('addFoodModal.cowInfo'))
       ) {
         return
       }
@@ -515,7 +513,7 @@ export default function FoodItemsPage() {
         listId: listDeleteItem.shared_list_id,
       })
     } catch {
-      alert('Kunde inte ta bort livsmedel från listan. Försök igen.')
+      alert(t('toast.deleteError'))
     } finally {
       setListDeleteItem(null)
     }
@@ -529,7 +527,7 @@ export default function FoodItemsPage() {
     try {
       await adminDeleteFood.mutateAsync(id)
     } catch {
-      alert('Kunde inte ta bort livsmedlet. Försök igen.')
+      alert(t('toast.deleteError'))
     } finally {
       setDeletingItemId(null)
     }
@@ -595,7 +593,7 @@ export default function FoodItemsPage() {
       setResetStep(0)
     } catch (error) {
       console.error('Error resetting food list:', error)
-      alert('Kunde inte återställa listan. Försök igen.')
+      alert(t('toast.updateError'))
     } finally {
       setIsResetting(false)
     }
@@ -698,23 +696,23 @@ export default function FoodItemsPage() {
   const handleCopyToList = async (foodItemId: string, sharedListId: string) => {
     const result = await copyToSharedList({ foodItemId, sharedListId })
     if (result?.success) {
-      const listName = sharedLists.find(l => l.id === sharedListId)?.name ?? 'listan'
-      toast.success(`Livsmedlet kopierades till "${listName}"`)
+      const listName = sharedLists.find(l => l.id === sharedListId)?.name ?? ''
+      toast.success(t('toast.copiedToList', { listName }))
     } else if (result?.error === 'already_exists') {
-      toast.info('Livsmedlet finns redan i listan')
+      toast.info(t('toast.alreadyInList'))
     } else {
-      toast.error('Kunde inte kopiera. Försök igen.')
+      toast.error(t('toast.copyError'))
     }
   }
 
   const handleCopyToCalculeat = async (foodItemId: string) => {
     const result = await copyToCalculeat(foodItemId)
     if (result?.success) {
-      toast.success('Livsmedlet kopierades till CalculEat-listan')
+      toast.success(t('toast.copiedToCalculeat'))
     } else if (result?.error === 'already_exists') {
-      toast.info('Ett livsmedel med samma namn finns redan i CalculEat')
+      toast.info(t('toast.alreadyInCalculeat'))
     } else {
-      toast.error('Kunde inte kopiera. Försök igen.')
+      toast.error(t('toast.copyError'))
     }
   }
 
@@ -725,12 +723,12 @@ export default function FoodItemsPage() {
         <div>
           <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent mb-1 md:mb-2 flex items-center gap-2 md:gap-3">
             <UtensilsCrossed className="h-6 w-6 md:h-8 md:w-8 text-primary-600" />
-            Livsmedel
+            {t('header.title')}
           </h1>
           <p className="text-sm md:text-base text-neutral-600">
-            {totalCount} livsmedel
+            {t('items', { count: totalCount })}
             {isFetching && !isLoading && (
-              <span className="text-neutral-400 ml-2">Uppdaterar...</span>
+              <span className="text-neutral-400 ml-2">{t('updating')}</span>
             )}
           </p>
         </div>
@@ -740,8 +738,8 @@ export default function FoodItemsPage() {
           onClick={() => setIsAddModalOpen(true)}
         >
           <Plus className="h-4 w-4" />
-          <span className="hidden sm:inline">Nytt livsmedel</span>
-          <span className="sm:hidden">Nytt</span>
+          <span className="hidden sm:inline">{t('header.newFood')}</span>
+          <span className="sm:hidden">{t('header.newFoodShort')}</span>
         </Button>
       </div>
 
@@ -764,7 +762,7 @@ export default function FoodItemsPage() {
         <button
           onClick={() => setCreateListOpen(true)}
           className="px-3 py-2 text-sm font-medium border-b-2 border-transparent text-neutral-400 hover:text-primary-600 hover:border-neutral-300 transition-colors"
-          title="Skapa delad lista"
+          title={t('tooltip.createSharedList')}
         >
           <Plus className="h-4 w-4" />
         </button>
@@ -787,7 +785,7 @@ export default function FoodItemsPage() {
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400" />
               <Input
-                placeholder="Sök efter matvaror..."
+                placeholder={t('filter.search')}
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 className="pl-10"
@@ -809,7 +807,7 @@ export default function FoodItemsPage() {
                     : ''
                 }
               >
-                Alla
+                {t('filter.all')}
               </Button>
               <Button
                 variant="outline"
@@ -824,7 +822,7 @@ export default function FoodItemsPage() {
                     : ''
                 }
               >
-                Grön
+                {t('filter.green')}
               </Button>
               <Button
                 variant="outline"
@@ -839,7 +837,7 @@ export default function FoodItemsPage() {
                     : ''
                 }
               >
-                Gul
+                {t('filter.yellow')}
               </Button>
               <Button
                 variant="outline"
@@ -854,7 +852,7 @@ export default function FoodItemsPage() {
                     : ''
                 }
               >
-                Orange
+                {t('filter.orange')}
               </Button>
               {isMina && (
                 <Button
@@ -870,7 +868,7 @@ export default function FoodItemsPage() {
                       : 'gap-1'
                   }
                 >
-                  <span>Recept</span>
+                  <span>{t('filter.recipe')}</span>
                 </Button>
               )}
             </div>
@@ -881,27 +879,27 @@ export default function FoodItemsPage() {
       {/* Food Items List */}
       {isLoading ? (
         <div className="text-center py-12">
-          <p className="text-neutral-600">Laddar livsmedel...</p>
+          <p className="text-neutral-600">{t('loading')}</p>
         </div>
       ) : items.length === 0 ? (
         <EmptyState
           icon={UtensilsCrossed}
           title={
             searchQuery || colorFilter || isRecipeFilter
-              ? 'Inga livsmedel hittades'
-              : 'Inga livsmedel ännu'
+              ? t('emptyState.noResults')
+              : t('emptyState.noItems')
           }
           description={
             searchQuery || colorFilter || isRecipeFilter
-              ? 'Prova att ändra dina sökkriterier eller filter.'
+              ? t('emptyState.noResultsDesc')
               : isMina
-                ? 'Kom igång genom att lägga till ditt första livsmedel i databasen.'
-                : 'Inga livsmedel finns i denna kategori.'
+                ? t('emptyState.noItemsMine')
+                : t('emptyState.noItemsOther')
           }
           action={
             searchQuery || colorFilter || isRecipeFilter
               ? {
-                  label: 'Rensa filter',
+                  label: t('filter.clearFilters'),
                   onClick: () => {
                     setSearchQuery('')
                     setDebouncedSearch('')
@@ -911,7 +909,7 @@ export default function FoodItemsPage() {
                 }
               : isMina
                 ? {
-                    label: 'Lägg till livsmedel',
+                    label: t('header.newFood'),
                     onClick: () => setIsAddModalOpen(true),
                   }
                 : undefined
@@ -1016,7 +1014,7 @@ export default function FoodItemsPage() {
                           size="sm"
                           onClick={() => handleShowNutrients(item)}
                           className="h-7 w-7 p-0"
-                          title="Visa näringsvärden"
+                          title={t('tooltip.viewNutrients')}
                         >
                           <Info className="h-3 w-3 text-neutral-500" />
                         </Button>
@@ -1027,7 +1025,7 @@ export default function FoodItemsPage() {
                                 variant="ghost"
                                 size="sm"
                                 className="h-7 w-7 p-0"
-                                title="Kopiera till lista"
+                                title={t('tooltip.copyToList')}
                               >
                                 <Copy className="h-3 w-3 text-neutral-500" />
                               </Button>
@@ -1089,7 +1087,7 @@ export default function FoodItemsPage() {
                           onClick={() => handleSort('name')}
                           className="flex items-center gap-1 hover:text-primary-600 transition-colors"
                         >
-                          Livsmedel
+                          {t('table.food')}
                           {sortBy === 'name' ? (
                             sortDirection === 'asc' ? (
                               <ArrowUp className="h-4 w-4" />
@@ -1102,14 +1100,14 @@ export default function FoodItemsPage() {
                         </button>
                       </th>
                       <th className="text-left p-4 text-sm font-semibold text-neutral-900">
-                        Portion
+                        {t('table.portion')}
                       </th>
                       <th className="text-right p-4 text-sm font-semibold text-neutral-900">
                         <button
                           onClick={() => handleSort('calories')}
                           className="flex items-center gap-1 ml-auto hover:text-primary-600 transition-colors"
                         >
-                          Kalorier
+                          {t('table.calories')}
                           {sortBy === 'calories' ? (
                             sortDirection === 'asc' ? (
                               <ArrowUp className="h-4 w-4" />
@@ -1126,7 +1124,7 @@ export default function FoodItemsPage() {
                           onClick={() => handleSort('fat')}
                           className="flex items-center gap-1 ml-auto hover:text-primary-600 transition-colors"
                         >
-                          Fett
+                          {t('table.fat')}
                           {sortBy === 'fat' ? (
                             sortDirection === 'asc' ? (
                               <ArrowUp className="h-4 w-4" />
@@ -1143,7 +1141,7 @@ export default function FoodItemsPage() {
                           onClick={() => handleSort('carb')}
                           className="flex items-center gap-1 ml-auto hover:text-primary-600 transition-colors"
                         >
-                          Kolh.
+                          {t('table.carbs')}
                           {sortBy === 'carb' ? (
                             sortDirection === 'asc' ? (
                               <ArrowUp className="h-4 w-4" />
@@ -1160,7 +1158,7 @@ export default function FoodItemsPage() {
                           onClick={() => handleSort('protein')}
                           className="flex items-center gap-1 ml-auto hover:text-primary-600 transition-colors"
                         >
-                          Protein
+                          {t('table.protein')}
                           {sortBy === 'protein' ? (
                             sortDirection === 'asc' ? (
                               <ArrowUp className="h-4 w-4" />
@@ -1177,7 +1175,7 @@ export default function FoodItemsPage() {
                           onClick={() => handleSort('color')}
                           className="flex items-center gap-1 mx-auto hover:text-primary-600 transition-colors"
                         >
-                          Typ
+                          {t('table.type')}
                           {sortBy === 'color' ? (
                             sortDirection === 'asc' ? (
                               <ArrowUp className="h-4 w-4" />
@@ -1202,7 +1200,7 @@ export default function FoodItemsPage() {
                           <div className="flex items-center gap-2">
                             <span className="font-medium text-neutral-900">{item.name}</span>
                             {item.is_recipe && (
-                              <span title="Recept" className="text-base">
+                              <span title={t('filter.recipe')} className="text-base">
                                 👨‍🍳
                               </span>
                             )}
@@ -1377,10 +1375,10 @@ export default function FoodItemsPage() {
                               }
                             >
                               {item.energy_density_color === 'Green'
-                                ? 'Grön'
+                                ? t('color.green')
                                 : item.energy_density_color === 'Yellow'
-                                  ? 'Gul'
-                                  : 'Orange'}
+                                  ? t('color.yellow')
+                                  : t('color.orange')}
                             </Badge>
                           )}
                         </td>
@@ -1394,7 +1392,7 @@ export default function FoodItemsPage() {
                                     size="sm"
                                     onClick={e => e.stopPropagation()}
                                     className="h-8 w-8 p-0"
-                                    title="Kopiera till lista"
+                                    title={t('tooltip.copyToList')}
                                   >
                                     <Copy className="h-4 w-4 text-neutral-500" />
                                   </Button>
@@ -1462,7 +1460,7 @@ export default function FoodItemsPage() {
           {totalPages > 1 && (
             <div className="flex items-center justify-between mt-4 px-1">
               <p className="text-sm text-neutral-500">
-                Sida {page + 1} av {totalPages}
+                {t('pagination.page', { page: page + 1, total: totalPages })}
               </p>
               <div className="flex gap-2">
                 <Button
@@ -1473,7 +1471,7 @@ export default function FoodItemsPage() {
                   className="gap-1"
                 >
                   <ChevronLeft className="h-4 w-4" />
-                  Föregående
+                  {t('pagination.prev')}
                 </Button>
                 <Button
                   variant="outline"
@@ -1482,7 +1480,7 @@ export default function FoodItemsPage() {
                   disabled={page >= totalPages - 1}
                   className="gap-1"
                 >
-                  Nästa
+                  {t('pagination.next')}
                   <ChevronRight className="h-4 w-4" />
                 </Button>
               </div>
@@ -1497,15 +1495,15 @@ export default function FoodItemsPage() {
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
               <span>🟢</span>
-              Grön
+              {t('infoCards.green.title')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 text-xs text-neutral-600">
             <p className="text-sm text-neutral-700 font-medium">
-              Låg energitäthet – ät mer av dessa
+              {t('infoCards.green.subtitle')}
             </p>
             <div>
-              <p className="font-semibold text-neutral-700 mb-1">Fast föda (&lt; 1 kcal/g):</p>
+              <p className="font-semibold text-neutral-700 mb-1">{t('infoCards.green.solidLabel')}</p>
               <ul className="space-y-0.5 pl-2">
                 {[
                   { label: 'Bladgrönsaker (spenat, sallad)', icon: '🥬' },
@@ -1523,7 +1521,7 @@ export default function FoodItemsPage() {
               </ul>
             </div>
             <div>
-              <p className="font-semibold text-neutral-700 mb-1">Vätska (&lt; 0.4 kcal/g):</p>
+              <p className="font-semibold text-neutral-700 mb-1">{t('infoCards.green.liquidLabel')}</p>
               <ul className="space-y-0.5 pl-2">
                 {[
                   { label: 'Vatten', icon: '💧' },
@@ -1538,7 +1536,7 @@ export default function FoodItemsPage() {
               </ul>
             </div>
             <div>
-              <p className="font-semibold text-neutral-700 mb-1">Soppa (&lt; 0.5 kcal/g):</p>
+              <p className="font-semibold text-neutral-700 mb-1">{t('infoCards.green.soupLabel')}</p>
               <ul className="space-y-0.5 pl-2">
                 {[
                   { label: 'Klara grönsakssoppor', icon: '🥣' },
@@ -1552,7 +1550,7 @@ export default function FoodItemsPage() {
               </ul>
             </div>
             <p className="text-neutral-500 pt-1">
-              👉 Poäng: Mycket vatten + fiber → hög mättnad per kcal
+              {t('infoCards.green.tip')}
             </p>
           </CardContent>
         </Card>
@@ -1561,15 +1559,15 @@ export default function FoodItemsPage() {
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
               <span>🟡</span>
-              Gul
+              {t('infoCards.yellow.title')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 text-xs text-neutral-600">
             <p className="text-sm text-neutral-700 font-medium">
-              Måttlig energitäthet – ät i balanserade mängder
+              {t('infoCards.yellow.subtitle')}
             </p>
             <div>
-              <p className="font-semibold text-neutral-700 mb-1">Fast föda (1–2.4 kcal/g):</p>
+              <p className="font-semibold text-neutral-700 mb-1">{t('infoCards.yellow.solidLabel')}</p>
               <ul className="space-y-0.5 pl-2">
                 {[
                   { label: 'Kycklingfilé, kalkon', icon: '🍗' },
@@ -1587,7 +1585,7 @@ export default function FoodItemsPage() {
               </ul>
             </div>
             <div>
-              <p className="font-semibold text-neutral-700 mb-1">Vätska (0.4–0.5 kcal/g):</p>
+              <p className="font-semibold text-neutral-700 mb-1">{t('infoCards.yellow.liquidLabel')}</p>
               <ul className="space-y-0.5 pl-2">
                 {[
                   { label: 'Mjölk', icon: '🥛' },
@@ -1601,7 +1599,7 @@ export default function FoodItemsPage() {
               </ul>
             </div>
             <div>
-              <p className="font-semibold text-neutral-700 mb-1">Soppa (0.5–1 kcal/g):</p>
+              <p className="font-semibold text-neutral-700 mb-1">{t('infoCards.yellow.soupLabel')}</p>
               <ul className="space-y-0.5 pl-2">
                 {[
                   { label: 'Linssoppa', icon: '🥣' },
@@ -1616,7 +1614,7 @@ export default function FoodItemsPage() {
               </ul>
             </div>
             <p className="text-neutral-500 pt-1">
-              👉 Poäng: Näringstätt men mer kalorier → kräver portionskontroll
+              {t('infoCards.yellow.tip')}
             </p>
           </CardContent>
         </Card>
@@ -1625,15 +1623,15 @@ export default function FoodItemsPage() {
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
               <span>🟠</span>
-              Orange
+              {t('infoCards.orange.title')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 text-xs text-neutral-600">
             <p className="text-sm text-neutral-700 font-medium">
-              Hög energitäthet – ät mindre av dessa
+              {t('infoCards.orange.subtitle')}
             </p>
             <div>
-              <p className="font-semibold text-neutral-700 mb-1">Fast föda (&gt; 2.4 kcal/g):</p>
+              <p className="font-semibold text-neutral-700 mb-1">{t('infoCards.orange.solidLabel')}</p>
               <ul className="space-y-0.5 pl-2">
                 {[
                   { label: 'Nötter och frön', icon: '🥜' },
@@ -1651,7 +1649,7 @@ export default function FoodItemsPage() {
               </ul>
             </div>
             <div>
-              <p className="font-semibold text-neutral-700 mb-1">Vätska (&gt; 0.5 kcal/g):</p>
+              <p className="font-semibold text-neutral-700 mb-1">{t('infoCards.orange.liquidLabel')}</p>
               <ul className="space-y-0.5 pl-2">
                 {[
                   { label: 'Läsk med socker', icon: '🥤' },
@@ -1666,7 +1664,7 @@ export default function FoodItemsPage() {
               </ul>
             </div>
             <div>
-              <p className="font-semibold text-neutral-700 mb-1">Soppa (&gt; 1 kcal/g):</p>
+              <p className="font-semibold text-neutral-700 mb-1">{t('infoCards.orange.soupLabel')}</p>
               <ul className="space-y-0.5 pl-2">
                 {[
                   {
@@ -1682,7 +1680,7 @@ export default function FoodItemsPage() {
               </ul>
             </div>
             <p className="text-neutral-500 pt-1">
-              👉 Poäng: Lite volym, mycket kalorier → lätt att överäta
+              {t('infoCards.orange.tip')}
             </p>
           </CardContent>
         </Card>
@@ -1700,7 +1698,7 @@ export default function FoodItemsPage() {
                 className="text-neutral-500 hover:text-neutral-700 gap-2"
               >
                 <RotateCcw className="h-4 w-4" />
-                Återställ lista
+                {t('reset.button')}
               </Button>
             )}
 
@@ -1709,22 +1707,22 @@ export default function FoodItemsPage() {
                 <CardContent className="pt-6">
                   <div className="text-center space-y-4">
                     <div className="text-amber-600 font-semibold">
-                      Är du säker på att du vill återställa listan?
+                      {t('reset.confirmTitle')}
                     </div>
                     <p className="text-sm text-neutral-600">
-                      Detta kommer att ta bort alla dina anpassningar:
+                      {t('reset.confirmDesc')}
                     </p>
                     <ul className="text-sm text-neutral-600 list-disc list-inside text-left">
-                      <li>Alla livsmedel du har skapat själv</li>
-                      <li>Alla ändringar du gjort i globala livsmedel</li>
-                      <li>Alla livsmedel du har dolt</li>
+                      <li>{t('reset.confirmItem1')}</li>
+                      <li>{t('reset.confirmItem2')}</li>
+                      <li>{t('reset.confirmItem3')}</li>
                     </ul>
                     <div className="flex justify-center gap-3 pt-2">
                       <Button variant="outline" size="sm" onClick={() => setResetStep(0)}>
-                        Avbryt
+                        {t('reset.cancel')}
                       </Button>
                       <Button variant="destructive" size="sm" onClick={() => setResetStep(2)}>
-                        Ja, fortsätt
+                        {t('reset.continue')}
                       </Button>
                     </div>
                   </div>
@@ -1736,17 +1734,16 @@ export default function FoodItemsPage() {
               <Card className="w-full max-w-md border-red-400 bg-red-50">
                 <CardContent className="pt-6">
                   <div className="text-center space-y-4">
-                    <div className="text-red-600 font-bold text-lg">Sista varningen</div>
+                    <div className="text-red-600 font-bold text-lg">{t('reset.warningTitle')}</div>
                     <p className="text-sm text-neutral-700 font-medium">
-                      Denna åtgärd kan INTE ångras!
+                      {t('reset.warningIrreversible')}
                     </p>
                     <p className="text-sm text-neutral-600">
-                      ALLT du har gjort i livsmedelslistan sedan du skapade kontot kommer att
-                      raderas permanent. Du får tillbaka den ursprungliga globala listan.
+                      {t('reset.warningDesc')}
                     </p>
                     <div className="flex justify-center gap-3 pt-2">
                       <Button variant="outline" size="sm" onClick={() => setResetStep(0)}>
-                        Avbryt
+                        {t('reset.cancel')}
                       </Button>
                       <Button
                         variant="destructive"
@@ -1756,11 +1753,11 @@ export default function FoodItemsPage() {
                         className="gap-2"
                       >
                         {isResetting ? (
-                          <>Återställer...</>
+                          <>{t('reset.resetting')}</>
                         ) : (
                           <>
                             <RotateCcw className="h-4 w-4" />
-                            Återställ allt
+                            {t('reset.resetAll')}
                           </>
                         )}
                       </Button>
@@ -1792,17 +1789,17 @@ export default function FoodItemsPage() {
       >
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
-            <DialogTitle>Redigera &quot;{listEditItem?.name}&quot;</DialogTitle>
+            <DialogTitle>{t('listEdit.title', { name: listEditItem?.name ?? '' })}</DialogTitle>
             <DialogDescription>
-              Detta livsmedel finns i en delad lista. Välj hur du vill redigera det.
+              {t('listEdit.description')}
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col gap-2 pt-2">
             <Button onClick={handleListEditCopy} className="w-full justify-start h-auto py-3 px-4">
               <div className="text-left">
-                <p className="font-medium">Skapa personlig kopia</p>
+                <p className="font-medium">{t('listEdit.createCopy')}</p>
                 <p className="text-xs font-normal opacity-80 mt-0.5">
-                  Sparas under &quot;Mina&quot; — påverkar inte listan
+                  {t('listEdit.createCopyDesc')}
                 </p>
               </div>
             </Button>
@@ -1812,9 +1809,9 @@ export default function FoodItemsPage() {
               className="w-full justify-start h-auto py-3 px-4"
             >
               <div className="text-left">
-                <p className="font-medium text-orange-700">Ändra i listan</p>
+                <p className="font-medium text-orange-700">{t('listEdit.editInList')}</p>
                 <p className="text-xs font-normal text-orange-600 mt-0.5">
-                  Påverkar alla som har tillgång till listan
+                  {t('listEdit.editInListDesc')}
                 </p>
               </div>
             </Button>
@@ -1834,10 +1831,9 @@ export default function FoodItemsPage() {
       >
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
-            <DialogTitle>Ändra i listan?</DialogTitle>
+            <DialogTitle>{t('listEdit.confirmTitle')}</DialogTitle>
             <DialogDescription>
-              Dina ändringar av &quot;{listEditItem?.name}&quot; syns för alla som delar listan. Är
-              du säker?
+              {t('listEdit.confirmDesc', { name: listEditItem?.name ?? '' })}
             </DialogDescription>
           </DialogHeader>
           <div className="flex gap-2 pt-2">
@@ -1846,13 +1842,13 @@ export default function FoodItemsPage() {
               onClick={() => setListEditConfirmShared(false)}
               className="flex-1"
             >
-              Avbryt
+              {t('listEdit.cancel')}
             </Button>
             <Button
               onClick={handleListEditShared}
               className="flex-1 bg-orange-600 hover:bg-orange-700 text-white"
             >
-              Ja, ändra i listan
+              {t('listEdit.confirm')}
             </Button>
           </div>
         </DialogContent>
@@ -1867,21 +1863,20 @@ export default function FoodItemsPage() {
       >
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
-            <DialogTitle>Redigera globalt livsmedel?</DialogTitle>
+            <DialogTitle>{t('adminEdit.title')}</DialogTitle>
             <DialogDescription>
-              Du är på väg att redigera &quot;{adminEditItem?.name}&quot;. Ändringen påverkar detta
-              livsmedel för ALLA användare i CalculEat-listan. Är du säker?
+              {t('adminEdit.description', { name: adminEditItem?.name ?? '' })}
             </DialogDescription>
           </DialogHeader>
           <div className="flex gap-2 pt-2">
             <Button variant="outline" onClick={() => setAdminEditItem(null)} className="flex-1">
-              Avbryt
+              {t('adminEdit.cancel')}
             </Button>
             <Button
               onClick={handleConfirmAdminEdit}
               className="flex-1 bg-orange-600 hover:bg-orange-700 text-white"
             >
-              Ja, redigera globalt
+              {t('adminEdit.confirm')}
             </Button>
           </div>
         </DialogContent>
@@ -1896,22 +1891,21 @@ export default function FoodItemsPage() {
       >
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
-            <DialogTitle>Ta bort globalt livsmedel?</DialogTitle>
+            <DialogTitle>{t('adminDelete.title')}</DialogTitle>
             <DialogDescription>
-              &quot;{adminDeleteItem?.name}&quot; tas bort permanent för ALLA användare och kan inte
-              återställas.
+              {t('adminDelete.description', { name: adminDeleteItem?.name ?? '' })}
             </DialogDescription>
           </DialogHeader>
           <div className="flex gap-2 pt-2">
             <Button variant="outline" onClick={() => setAdminDeleteItem(null)} className="flex-1">
-              Avbryt
+              {t('adminDelete.cancel')}
             </Button>
             <Button
               onClick={handleConfirmAdminDelete}
               className="flex-1 bg-red-600 hover:bg-red-700 text-white"
               disabled={adminDeleteFood.isPending}
             >
-              {adminDeleteFood.isPending ? 'Tar bort...' : 'Ta bort permanent'}
+              {adminDeleteFood.isPending ? t('adminDelete.removing') : t('adminDelete.confirm')}
             </Button>
           </div>
         </DialogContent>
@@ -1926,22 +1920,21 @@ export default function FoodItemsPage() {
       >
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
-            <DialogTitle>Ta bort från listan?</DialogTitle>
+            <DialogTitle>{t('listDelete.title')}</DialogTitle>
             <DialogDescription>
-              &quot;{listDeleteItem?.name}&quot; tas bort för alla som delar listan. Åtgärden kan
-              inte ångras.
+              {t('listDelete.description', { name: listDeleteItem?.name ?? '' })}
             </DialogDescription>
           </DialogHeader>
           <div className="flex gap-2 pt-2">
             <Button variant="outline" onClick={() => setListDeleteItem(null)} className="flex-1">
-              Avbryt
+              {t('listDelete.cancel')}
             </Button>
             <Button
               onClick={handleConfirmListDelete}
               className="flex-1 bg-red-600 hover:bg-red-700 text-white"
               disabled={deleteSharedListItem.isPending}
             >
-              {deleteSharedListItem.isPending ? 'Tar bort...' : 'Ta bort'}
+              {deleteSharedListItem.isPending ? t('listDelete.removing') : t('listDelete.confirm')}
             </Button>
           </div>
         </DialogContent>

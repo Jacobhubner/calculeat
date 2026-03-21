@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { toast } from 'sonner'
+import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/contexts/AuthContext'
 import { useActiveProfile } from '@/hooks'
 
@@ -19,6 +20,7 @@ interface ProfileCompletionGuardProps {
  * Allowed routes without TDEE: /app/profile, /app/tools/tdee-calculator
  */
 export default function ProfileCompletionGuard({ children }: ProfileCompletionGuardProps) {
+  const { t } = useTranslation('common')
   const { user, profile, loading, isProfileComplete } = useAuth()
   const { profile: activeProfile } = useActiveProfile()
   const navigate = useNavigate()
@@ -37,7 +39,7 @@ export default function ProfileCompletionGuard({ children }: ProfileCompletionGu
       // Stage 1: Check basic info completion
       if (profile && !isProfileComplete) {
         if (location.pathname !== '/app/profile') {
-          toast.info('Välkommen! Vänligen slutför din profil för att beräkna dina kaloribehov.')
+          toast.info(t('onboarding.completeProfile'))
           navigate('/app/profile', { replace: true })
         }
         return
@@ -52,7 +54,7 @@ export default function ProfileCompletionGuard({ children }: ProfileCompletionGu
       const hasTDEE = !!activeProfile?.tdee
 
       if (hasBasicInfo && !hasTDEE && !isAllowed) {
-        toast.info('Beräkna eller ange ditt TDEE för att fortsätta')
+        toast.info(t('onboarding.calculateTDEE'))
         navigate('/app/profile', { replace: true })
       }
     }, 500)

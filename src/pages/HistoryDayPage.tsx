@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useNavigate } from 'react-router-dom'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -20,6 +21,7 @@ import { AddFoodToMealModal } from '@/components/daily/AddFoodToMealModal'
 import { toast } from 'sonner'
 
 export default function HistoryDayPage() {
+  const { t } = useTranslation('history')
   const { date } = useParams<{ date: string }>()
   const navigate = useNavigate()
   const { data: log, isLoading } = useDailyLog(date || '')
@@ -47,7 +49,7 @@ export default function HistoryDayPage() {
     if (log) {
       copyDay.mutate(log.id, {
         onSuccess: () => {
-          toast.success('Kopierat till dagens logg!')
+          toast.success(t('toast.copiedToToday'))
           navigate('/app/today')
         },
       })
@@ -66,13 +68,13 @@ export default function HistoryDayPage() {
     if (!log) return
     await finishDay.mutateAsync(log.id)
     setIsEditing(false)
-    toast.success('Dagen är sparad')
+    toast.success(t('toast.daySaved'))
   }
 
   const handleRemoveItem = (itemId: string) => {
     removeFoodFromMeal.mutate(itemId, {
       onSuccess: () => {
-        toast.success('Matvaran borttagen')
+        toast.success(t('toast.foodRemoved'))
       },
     })
   }
@@ -90,12 +92,12 @@ export default function HistoryDayPage() {
       { logId: log.id, newDate: pendingDate },
       {
         onSuccess: () => {
-          toast.success('Datum uppdaterat')
+          toast.success(t('toast.dateUpdated'))
           setPendingDate(null)
           navigate(`/app/history/${pendingDate}`, { replace: true })
         },
         onError: error => {
-          toast.error(error instanceof Error ? error.message : 'Kunde inte uppdatera datum')
+          toast.error(error instanceof Error ? error.message : t('toast.dateUpdateFailed'))
           setPendingDate(null)
         },
       }
@@ -124,11 +126,11 @@ export default function HistoryDayPage() {
     return (
       <DashboardLayout>
         <div className="text-center py-12">
-          <h2 className="text-2xl font-bold text-neutral-900 mb-2">Ingen data för detta datum</h2>
-          <p className="text-neutral-600 mb-6">Det finns ingen loggad information för {date}</p>
+          <h2 className="text-2xl font-bold text-neutral-900 mb-2">{t('empty.noDataForDate')}</h2>
+          <p className="text-neutral-600 mb-6">{t('empty.noDataDescription', { date })}</p>
           <Button onClick={() => navigate('/app/history')}>
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Tillbaka till historik
+            {t('actions.backToHistory')}
           </Button>
         </div>
       </DashboardLayout>
@@ -149,7 +151,7 @@ export default function HistoryDayPage() {
       <div className="mb-8">
         <Button variant="ghost" onClick={() => navigate('/app/history')} className="mb-4 gap-2">
           <ArrowLeft className="h-4 w-4" />
-          Tillbaka till historik
+          {t('actions.backToHistory')}
         </Button>
 
         <div className="flex items-center justify-between">
@@ -178,7 +180,7 @@ export default function HistoryDayPage() {
                 <button
                   onClick={() => setIsEditingDate(true)}
                   className="text-neutral-400 hover:text-neutral-600 transition-colors"
-                  title="Ändra datum"
+                  title={t('editing.changeDate')}
                 >
                   <Pencil className="h-4 w-4" />
                 </button>
@@ -188,7 +190,7 @@ export default function HistoryDayPage() {
               {log.is_completed && !isEditing && (
                 <Badge className="gap-1 bg-success-100 text-success-700 border-success-200">
                   <Check className="h-3 w-3" />
-                  Dag avslutad
+                  {t('status.dayCompleted')}
                 </Badge>
               )}
               {!isEditing && (
@@ -200,14 +202,14 @@ export default function HistoryDayPage() {
                   className="gap-1.5 text-neutral-500 hover:text-neutral-700 h-7 px-2 text-xs"
                 >
                   <Pencil className="h-3.5 w-3.5" />
-                  Redigera
+                  {t('actions.edit')}
                 </Button>
               )}
             </div>
           </div>
           <Button onClick={handleCopyToToday} className="gap-2" disabled={copyDay.isPending}>
             <Copy className="h-4 w-4" />
-            {copyDay.isPending ? 'Kopierar...' : 'Kopiera till idag'}
+            {copyDay.isPending ? t('actions.copying') : t('actions.copyToToday')}
           </Button>
         </div>
       </div>
@@ -220,7 +222,7 @@ export default function HistoryDayPage() {
               <div className="flex items-center gap-2">
                 <Pencil className="h-4 w-4 text-amber-600" />
                 <p className="text-sm font-medium text-amber-800">
-                  Du redigerar denna dag. Lägg till eller ta bort matvaror.
+                  {t('editing.banner')}
                 </p>
               </div>
               <Button
@@ -230,7 +232,7 @@ export default function HistoryDayPage() {
                 className="gap-2 bg-gradient-to-r from-success-600 to-success-500 shrink-0"
               >
                 <Check className="h-4 w-4" />
-                Klar
+                {t('actions.done')}
               </Button>
             </div>
           </CardContent>
@@ -245,8 +247,7 @@ export default function HistoryDayPage() {
               <div className="flex items-center gap-2">
                 <Calendar className="h-4 w-4 text-blue-600" />
                 <p className="text-sm font-medium text-blue-800">
-                  Ändra datum från <span className="font-bold">{log?.log_date}</span> till{' '}
-                  <span className="font-bold">{pendingDate}</span>?
+                  {t('editing.confirmDateChangePlain', { from: log?.log_date, to: pendingDate })}
                 </p>
               </div>
               <div className="flex gap-2 shrink-0">
@@ -257,7 +258,7 @@ export default function HistoryDayPage() {
                   className="gap-1"
                 >
                   <X className="h-3.5 w-3.5" />
-                  Avbryt
+                  {t('actions.cancel')}
                 </Button>
                 <Button
                   size="sm"
@@ -266,7 +267,7 @@ export default function HistoryDayPage() {
                   className="gap-1 bg-gradient-to-r from-primary-600 to-primary-500"
                 >
                   <Check className="h-3.5 w-3.5" />
-                  {updateLogDate.isPending ? 'Sparar...' : 'Bekräfta'}
+                  {updateLogDate.isPending ? t('actions.saving') : t('actions.confirm')}
                 </Button>
               </div>
             </div>
@@ -280,12 +281,12 @@ export default function HistoryDayPage() {
           {/* Summary */}
           <Card>
             <CardHeader>
-              <CardTitle>Dagens sammanfattning</CardTitle>
+              <CardTitle>{t('day.summary')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               {/* Calorie Progress */}
               <div className="flex justify-between items-center">
-                <span className="text-sm font-medium">Kalorier</span>
+                <span className="text-sm font-medium">{t('day.calories')}</span>
                 <span className="text-2xl font-bold text-primary-700">
                   {log.total_calories} kcal
                 </span>
@@ -293,7 +294,7 @@ export default function HistoryDayPage() {
 
               {/* Macro Bar */}
               <div>
-                <p className="text-sm font-medium mb-2">Makrofördelning</p>
+                <p className="text-sm font-medium mb-2">{t('day.macroDistribution')}</p>
                 <MacroBar
                   protein={{
                     grams: log.total_protein_g,
@@ -326,15 +327,15 @@ export default function HistoryDayPage() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="text-center p-3 bg-green-50 rounded-lg border border-green-200">
                   <div className="text-2xl font-bold text-green-700">{log.green_calories}</div>
-                  <div className="text-xs text-green-600">Grön</div>
+                  <div className="text-xs text-green-600">{t('stats.green')}</div>
                 </div>
                 <div className="text-center p-3 bg-yellow-50 rounded-lg border border-yellow-200">
                   <div className="text-2xl font-bold text-yellow-700">{log.yellow_calories}</div>
-                  <div className="text-xs text-yellow-600">Gul</div>
+                  <div className="text-xs text-yellow-600">{t('stats.yellow')}</div>
                 </div>
                 <div className="text-center p-3 bg-orange-50 rounded-lg border border-orange-200">
                   <div className="text-2xl font-bold text-orange-700">{log.orange_calories}</div>
-                  <div className="text-xs text-orange-600">Orange</div>
+                  <div className="text-xs text-orange-600">{t('stats.orange')}</div>
                 </div>
               </div>
             </CardContent>
@@ -371,7 +372,7 @@ export default function HistoryDayPage() {
                           }
                         >
                           <Plus className="h-4 w-4" />
-                          <span className="hidden sm:inline">Lägg till</span>
+                          <span className="hidden sm:inline">{t('actions.addFood')}</span>
                         </Button>
                       )}
                     </div>
@@ -387,7 +388,7 @@ export default function HistoryDayPage() {
                             <div className="flex items-center gap-3">
                               <div>
                                 <div className="font-medium">
-                                  {item.food_item?.name || 'Okänd matvara'}
+                                  {item.food_item?.name || t('empty.unknownFood')}
                                 </div>
                                 <div className="text-sm text-neutral-600">
                                   {item.amount} {item.unit}
@@ -405,7 +406,7 @@ export default function HistoryDayPage() {
                                 <button
                                   onClick={() => handleRemoveItem(item.id)}
                                   className="p-1.5 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 transition-colors"
-                                  title="Ta bort"
+                                  title={t('editing.removeItem')}
                                 >
                                   <X className="h-4 w-4" />
                                 </button>
@@ -415,7 +416,7 @@ export default function HistoryDayPage() {
                         ))}
                       </div>
                     ) : (
-                      <div className="text-center py-4 text-neutral-400">Inga matvaror loggade</div>
+                      <div className="text-center py-4 text-neutral-400">{t('empty.noFoodInMeal')}</div>
                     )}
                   </CardContent>
                 </Card>
@@ -424,7 +425,7 @@ export default function HistoryDayPage() {
           ) : (
             <Card>
               <CardContent className="py-12 text-center text-neutral-400">
-                Inga måltider loggade denna dag
+                {t('empty.noMealsForDay')}
               </CardContent>
             </Card>
           )}
@@ -435,7 +436,7 @@ export default function HistoryDayPage() {
           {/* Calorie Ring */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Kalorimål</CardTitle>
+              <CardTitle className="text-lg">{t('day.calorieGoal')}</CardTitle>
             </CardHeader>
             <CardContent className="flex justify-center">
               <CalorieRing consumed={log.total_calories} target={log.goal_calories_max || 2000} />
@@ -445,29 +446,29 @@ export default function HistoryDayPage() {
           {/* Nutrition Stats */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Näringsstatistik</CardTitle>
+              <CardTitle className="text-lg">{t('day.nutritionStats')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex justify-between">
-                <span className="text-sm text-neutral-600">Fett</span>
+                <span className="text-sm text-neutral-600">{t('day.fat')}</span>
                 <span className="text-sm font-semibold">{log.total_fat_g}g</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-neutral-600">Kolhydrater</span>
+                <span className="text-sm text-neutral-600">{t('day.carbs')}</span>
                 <span className="text-sm font-semibold">{log.total_carb_g}g</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-neutral-600">Protein</span>
+                <span className="text-sm text-neutral-600">{t('day.protein')}</span>
                 <span className="text-sm font-semibold">{log.total_protein_g}g</span>
               </div>
               <div className="flex justify-between pt-3 border-t">
-                <span className="text-sm text-neutral-600">Måltider</span>
+                <span className="text-sm text-neutral-600">{t('day.meals')}</span>
                 <span className="text-sm font-semibold">
                   {log.meals?.filter(m => m.items && m.items.length > 0).length || 0}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-neutral-600">Totalt antal matvaror</span>
+                <span className="text-sm text-neutral-600">{t('day.totalFoods')}</span>
                 <span className="text-sm font-semibold">
                   {log.meals?.reduce((sum, m) => sum + (m.items?.length || 0), 0) || 0}
                 </span>
@@ -479,11 +480,11 @@ export default function HistoryDayPage() {
           {log.goal_calories_max && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Jämfört med mål</CardTitle>
+                <CardTitle className="text-lg">{t('day.vsGoal')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-neutral-600">Kalorier</span>
+                  <span className="text-sm text-neutral-600">{t('day.calories')}</span>
                   <div className="text-right">
                     <div className="text-sm font-semibold">
                       {log.total_calories} / {log.goal_calories_max}

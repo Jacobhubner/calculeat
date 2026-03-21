@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -17,6 +18,7 @@ import { toast } from 'sonner'
 import EmptyState from '@/components/EmptyState'
 
 export default function HistoryPage() {
+  const { t } = useTranslation('history')
   const [viewMode, setViewMode] = useState<'calendar' | 'list'>('list')
 
   // Get last 30 days
@@ -36,17 +38,17 @@ export default function HistoryPage() {
     e.stopPropagation() // Prevent navigation to day detail
     if (
       !confirm(
-        `Vill du radera loggen för ${new Date(logDate).toLocaleDateString('sv-SE')}? Detta kan inte ångras.`
+        t('confirm.deleteDay', { date: new Date(logDate).toLocaleDateString('sv-SE') })
       )
     ) {
       return
     }
     deleteDailyLog.mutate(logId, {
       onSuccess: () => {
-        toast.success('Dagen har raderats')
+        toast.success(t('toast.dayDeleted'))
       },
       onError: () => {
-        toast.error('Kunde inte radera dagen')
+        toast.error(t('toast.deleteFailed'))
       },
     })
   }
@@ -82,10 +84,10 @@ export default function HistoryPage() {
       <div className="mb-6 md:mb-8">
         <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent mb-1 md:mb-2 flex items-center gap-2 md:gap-3">
           <HistoryIcon className="h-6 w-6 md:h-8 md:w-8 text-primary-600" />
-          Historik
+          {t('page.title')}
         </h1>
         <p className="text-sm md:text-base text-neutral-600">
-          Se dina tidigare dagars loggning och framsteg
+          {t('page.description')}
         </p>
       </div>
 
@@ -97,7 +99,7 @@ export default function HistoryPage() {
           className="gap-2"
         >
           <HistoryIcon className="h-4 w-4" />
-          Lista
+          {t('views.list')}
         </Button>
         <Button
           variant={viewMode === 'calendar' ? 'primary' : 'outline'}
@@ -105,7 +107,7 @@ export default function HistoryPage() {
           className="gap-2"
         >
           <CalendarIcon className="h-4 w-4" />
-          Kalender
+          {t('views.calendar')}
         </Button>
       </div>
 
@@ -118,10 +120,10 @@ export default function HistoryPage() {
       ) : !logs || logs.length === 0 ? (
         <EmptyState
           icon={HistoryIcon}
-          title="Ingen historik ännu"
-          description="Börja logga dina måltider för att se historik och framsteg över tid."
+          title={t('empty.noHistory')}
+          description={t('empty.noHistoryDescription')}
           action={{
-            label: 'Gå till dagens logg',
+            label: t('actions.goToToday'),
             onClick: () => (window.location.href = '/app/today'),
           }}
         />
@@ -132,11 +134,11 @@ export default function HistoryPage() {
             {viewMode === 'calendar' ? (
               <Card>
                 <CardHeader>
-                  <CardTitle>Kalenderview</CardTitle>
-                  <CardDescription>Välj ett datum för att se detaljer</CardDescription>
+                  <CardTitle>{t('views.calendarTitle')}</CardTitle>
+                  <CardDescription>{t('views.calendarDescription')}</CardDescription>
                 </CardHeader>
                 <CardContent className="flex justify-center">
-                  <div className="text-center py-8 text-neutral-400">Kalendervy kommer snart</div>
+                  <div className="text-center py-8 text-neutral-400">{t('views.calendarComingSoon')}</div>
                 </CardContent>
               </Card>
             ) : (
@@ -165,7 +167,7 @@ export default function HistoryPage() {
                             </span>
                             <Badge variant="outline">
                               {weekLogs.filter(l => l.is_completed).length} / {weekLogs.length}{' '}
-                              dagar
+                              {t('week.days')}
                             </Badge>
                           </CardTitle>
                         </CardHeader>
@@ -203,7 +205,7 @@ export default function HistoryPage() {
                                             className="gap-1 bg-success-50 text-success-700 border-success-200"
                                           >
                                             <Check className="h-3 w-3" />
-                                            Klar
+                                            {t('status.completed')}
                                           </Badge>
                                         )}
                                       </div>
@@ -228,7 +230,7 @@ export default function HistoryPage() {
                                     <button
                                       onClick={e => handleDeleteDay(log.id, log.log_date, e)}
                                       className="p-1.5 rounded-md text-neutral-300 hover:text-red-500 hover:bg-red-50 transition-colors"
-                                      title="Radera dag"
+                                      title={t('actions.deleteDayTitle')}
                                       disabled={deleteDailyLog.isPending}
                                     >
                                       <Trash2 className="h-4 w-4" />
@@ -253,21 +255,21 @@ export default function HistoryPage() {
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <BarChart3 className="h-5 w-5" />
-                  30-dagars sammanfattning
+                  {t('stats.summary30Days')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
                   <div className="text-2xl font-bold text-neutral-900">{completedDays}</div>
-                  <div className="text-sm text-neutral-600">Avslutade dagar</div>
+                  <div className="text-sm text-neutral-600">{t('stats.completedDays')}</div>
                 </div>
                 <div>
                   <div className="text-2xl font-bold text-neutral-900">{avgCalories}</div>
-                  <div className="text-sm text-neutral-600">Genomsnittliga kalorier/dag</div>
+                  <div className="text-sm text-neutral-600">{t('stats.avgCaloriesPerDay')}</div>
                 </div>
                 <div>
                   <div className="text-2xl font-bold text-neutral-900">{totalDays}</div>
-                  <div className="text-sm text-neutral-600">Dagar loggade</div>
+                  <div className="text-sm text-neutral-600">{t('stats.daysLogged')}</div>
                 </div>
               </CardContent>
             </Card>
@@ -275,14 +277,14 @@ export default function HistoryPage() {
             {/* Streak Card */}
             <Card className="bg-gradient-to-br from-primary-50 to-accent-50 border-primary-200">
               <CardHeader>
-                <CardTitle className="text-lg">🔥 Loggningsstreak</CardTitle>
+                <CardTitle className="text-lg">🔥 {t('stats.streak')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-center">
                   <div className="text-4xl font-bold text-primary-700">{completedDays}</div>
-                  <div className="text-sm text-neutral-700">dagar i rad</div>
+                  <div className="text-sm text-neutral-700">{t('stats.daysInARow')}</div>
                   <p className="text-xs text-neutral-600 mt-3">
-                    Fortsätt logga dagligen för att hålla din streak!
+                    {t('stats.streakEncouragement')}
                   </p>
                 </div>
               </CardContent>
@@ -291,8 +293,8 @@ export default function HistoryPage() {
             {/* Kaloritäthetsfördelning */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Kaloritäthetsfördelning</CardTitle>
-                <CardDescription>Senaste 30 dagarna</CardDescription>
+                <CardTitle className="text-lg">{t('stats.densityDistribution')}</CardTitle>
+                <CardDescription>{t('stats.last30Days')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-2">
                 {(() => {
@@ -308,15 +310,15 @@ export default function HistoryPage() {
                   return (
                     <>
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-neutral-600">Grön</span>
+                        <span className="text-sm text-neutral-600">{t('stats.green')}</span>
                         <span className="text-sm font-semibold text-green-700">{greenPct}%</span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-neutral-600">Gul</span>
+                        <span className="text-sm text-neutral-600">{t('stats.yellow')}</span>
                         <span className="text-sm font-semibold text-yellow-700">{yellowPct}%</span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-neutral-600">Orange</span>
+                        <span className="text-sm text-neutral-600">{t('stats.orange')}</span>
                         <span className="text-sm font-semibold text-orange-700">{orangePct}%</span>
                       </div>
                     </>
@@ -328,13 +330,13 @@ export default function HistoryPage() {
             {/* Tips */}
             <Card className="bg-gradient-to-br from-accent-50 to-success-50 border-accent-200">
               <CardHeader>
-                <CardTitle className="text-lg">📊 Framstegstips</CardTitle>
+                <CardTitle className="text-lg">📊 {t('tips.title')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2 text-sm text-neutral-700">
-                <p>• Logga minst 5 dagar i veckan för bästa resultat</p>
-                <p>• Jämför veckovisa genomsnitt för att se trender</p>
-                <p>• Sikta på minst 30% gröna matvaror varje dag</p>
-                <p>• Använd &quot;Kopiera från igår&quot; för snabbare loggning</p>
+                <p>{t('tips.tip1')}</p>
+                <p>{t('tips.tip2')}</p>
+                <p>{t('tips.tip3')}</p>
+                <p>{t('tips.tip4')}</p>
               </CardContent>
             </Card>
           </div>

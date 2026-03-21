@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { Calculator, TrendingUp, Ruler, Weight, Info, X, AlertCircle } from 'lucide-react'
 import FeatureCard from '@/components/FeatureCard'
 import StatCard from '@/components/StatCard'
@@ -17,6 +18,7 @@ import NormalizedFFMIContent from '@/components/info/NormalizedFFMIContent'
 
 export default function BodyCompositionHubPage() {
   const navigate = useNavigate()
+  const { t } = useTranslation('body')
   const { profile } = useActiveProfile()
   const [showFFMIModal, setShowFFMIModal] = useState(false)
   const [showNormalizedFFMIModal, setShowNormalizedFFMIModal] = useState(false)
@@ -70,7 +72,7 @@ export default function BodyCompositionHubPage() {
               <button
                 onClick={onClose}
                 className="text-white/90 hover:text-white transition-colors"
-                aria-label="Stäng modal"
+                aria-label={t('hub.closeModalAriaLabel')}
               >
                 <X className="h-6 w-6" />
               </button>
@@ -80,7 +82,7 @@ export default function BodyCompositionHubPage() {
             </div>
             <div className="sticky bottom-0 bg-white border-t border-neutral-200 px-6 py-4 rounded-b-2xl">
               <Button onClick={onClose} className="w-full">
-                Stäng
+                {t('hub.closeModal')}
               </Button>
             </div>
           </div>
@@ -96,9 +98,9 @@ export default function BodyCompositionHubPage() {
         {/* Header */}
         <div>
           <h1 className="text-2xl md:text-3xl font-bold text-neutral-900 mb-1 md:mb-2">
-            Kroppssammansättning
+            {t('hub.title')}
           </h1>
-          <p className="text-neutral-600">Välj vilket verktyg du vill använda</p>
+          <p className="text-neutral-600">{t('hub.subtitle')}</p>
         </div>
 
         {/* Navigation Cards */}
@@ -109,8 +111,8 @@ export default function BodyCompositionHubPage() {
           >
             <FeatureCard
               icon={Calculator}
-              title="Beräkna din kroppssammansättning"
-              description="Mät och beräkna din kroppsfetthalt och fettfria massa med olika metoder som calipers och måttband"
+              title={t('hub.calculateTitle')}
+              description={t('hub.calculateDesc')}
               accentColor="primary"
             />
           </div>
@@ -121,8 +123,8 @@ export default function BodyCompositionHubPage() {
           >
             <FeatureCard
               icon={TrendingUp}
-              title="Genetisk Muskelpotential"
-              description="Uppskatta din maximala genetiska muskelpotential baserat på skelettstruktur och kroppsmått"
+              title={t('hub.geneticTitle')}
+              description={t('hub.geneticDesc')}
               accentColor="accent"
             />
           </div>
@@ -132,18 +134,17 @@ export default function BodyCompositionHubPage() {
         <Alert>
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            För att se dina personliga värden behöver du fylla i kroppsfett%, vikt och längd i din
-            profil.
+            {t('hub.missingDataAlert')}
           </AlertDescription>
         </Alert>
 
         {/* Visa alltid referenstabellerna även om data saknas */}
         <div className="space-y-6">
-          <h2 className="text-2xl font-bold text-neutral-900">Referensvärden</h2>
+          <h2 className="text-2xl font-bold text-neutral-900">{t('hub.referenceValues')}</h2>
 
           {/* Body Fat % Table (full width) */}
           <div>
-            <h3 className="text-base font-semibold text-neutral-800 mb-2">Kroppsfett % (ACE)</h3>
+            <h3 className="text-base font-semibold text-neutral-800 mb-2">{t('hub.bodyFatTableTitle')}</h3>
             <BodyFatReferenceTable userBodyFat={null} gender={profile?.gender} fullWidthImages />
           </div>
 
@@ -151,14 +152,14 @@ export default function BodyCompositionHubPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* FFMI Description Categories */}
             <div>
-              <h3 className="text-base font-semibold text-neutral-800 mb-2">FFMI-kategorier</h3>
+              <h3 className="text-base font-semibold text-neutral-800 mb-2">{t('hub.ffmiCategories')}</h3>
               <FFMICategoryTable userFFMI={null} gender={profile?.gender ?? 'male'} />
             </div>
 
             {/* FFMI with Body Fat Ranges */}
             <div>
               <h3 className="text-base font-semibold text-neutral-800 mb-2">
-                FFMI med kroppsfett-intervall
+                {t('hub.ffmiWithBodyFat')}
               </h3>
               <FFMIReferenceTable
                 userFFMI={null}
@@ -178,9 +179,9 @@ export default function BodyCompositionHubPage() {
       {/* Header */}
       <div>
         <h1 className="text-2xl md:text-3xl font-bold text-neutral-900 mb-1 md:mb-2">
-          Kroppssammansättning
+          {t('hub.title')}
         </h1>
-        <p className="text-neutral-600">Välj vilket verktyg du vill använda</p>
+        <p className="text-neutral-600">{t('hub.subtitle')}</p>
       </div>
 
       {/* Navigation Cards */}
@@ -188,8 +189,8 @@ export default function BodyCompositionHubPage() {
         <div onClick={() => navigate('/app/body-composition/calculate')} className="cursor-pointer">
           <FeatureCard
             icon={Calculator}
-            title="Beräkna din kroppssammansättning"
-            description="Mät och beräkna din kroppsfetthalt och fettfria massa med olika metoder som calipers och måttband"
+            title={t('hub.calculateTitle')}
+            description={t('hub.calculateDesc')}
             accentColor="primary"
           />
         </div>
@@ -200,8 +201,8 @@ export default function BodyCompositionHubPage() {
         >
           <FeatureCard
             icon={TrendingUp}
-            title="Genetisk Muskelpotential"
-            description="Uppskatta din maximala genetiska muskelpotential baserat på skelettstruktur och kroppsmått"
+            title={t('hub.geneticTitle')}
+            description={t('hub.geneticDesc')}
             accentColor="accent"
           />
         </div>
@@ -210,17 +211,17 @@ export default function BodyCompositionHubPage() {
       {/* Current Stats Section */}
       {metrics && (
         <div className="space-y-6">
-          <h2 className="text-2xl font-bold text-neutral-900">Dina nuvarande värden</h2>
+          <h2 className="text-2xl font-bold text-neutral-900">{t('hub.currentValues')}</h2>
 
           {/* Main layout: Fettfri massa column on left, other cards on right */}
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             {/* Left column: Fettfri massa card */}
             <div>
               <StatCard
-                title="Fettfri massa"
+                title={t('hub.leanMassCard')}
                 value={metrics.leanBodyMass.toFixed(1)}
                 unit="kg"
-                subtitle={`${bodyFatPercentage.toFixed(1)}% kroppsfett`}
+                subtitle={t('hub.bodyFatSubtitle', { value: bodyFatPercentage.toFixed(1) })}
                 icon={Weight}
                 variant="success"
               />
@@ -239,7 +240,7 @@ export default function BodyCompositionHubPage() {
                 <button
                   onClick={() => setShowFFMIModal(true)}
                   className="absolute top-2 right-2 p-1 hover:bg-neutral-100 rounded-full transition-colors"
-                  aria-label="Visa information om FFMI"
+                  aria-label={t('hub.showFFMIInfo')}
                 >
                   <Info className="h-4 w-4 text-neutral-600" />
                 </button>
@@ -248,7 +249,7 @@ export default function BodyCompositionHubPage() {
               {/* Card 2: Normalized FFMI with info icon */}
               <div className="relative">
                 <StatCard
-                  title="Normaliserad FFMI"
+                  title={t('hub.normalizedFFMIModalTitle')}
                   value={metrics.normalizedFFMI.toFixed(1)}
                   icon={Ruler}
                   variant="accent"
@@ -256,7 +257,7 @@ export default function BodyCompositionHubPage() {
                 <button
                   onClick={() => setShowNormalizedFFMIModal(true)}
                   className="absolute top-2 right-2 p-1 hover:bg-neutral-100 rounded-full transition-colors"
-                  aria-label="Visa information om Normaliserad FFMI"
+                  aria-label={t('hub.showNormalizedFFMIInfo')}
                 >
                   <Info className="h-4 w-4 text-neutral-600" />
                 </button>
@@ -268,7 +269,7 @@ export default function BodyCompositionHubPage() {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             {/* Left column: Kroppsfett % table - compact */}
             <div>
-              <h3 className="text-sm font-semibold text-neutral-800 mb-2">Kroppsfett %</h3>
+              <h3 className="text-sm font-semibold text-neutral-800 mb-2">{t('hub.bodyFatTableShort')}</h3>
               <BodyFatReferenceTable
                 userBodyFat={bodyFatPercentage}
                 gender={profile.gender}
@@ -280,7 +281,7 @@ export default function BodyCompositionHubPage() {
             <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* FFMI Description Categories */}
               <div>
-                <h3 className="text-base font-semibold text-neutral-800 mb-2">FFMI-kategorier</h3>
+                <h3 className="text-base font-semibold text-neutral-800 mb-2">{t('hub.ffmiCategories')}</h3>
                 <FFMICategoryTable
                   userFFMI={metrics?.ffmi || null}
                   gender={profile.gender ?? 'male'}
@@ -290,7 +291,7 @@ export default function BodyCompositionHubPage() {
               {/* FFMI with Body Fat Ranges */}
               <div>
                 <h3 className="text-base font-semibold text-neutral-800 mb-2">
-                  FFMI med kroppsfett-intervall
+                  {t('hub.ffmiWithBodyFat')}
                 </h3>
                 <FFMIReferenceTable
                   userFFMI={metrics?.ffmi || null}
@@ -307,16 +308,16 @@ export default function BodyCompositionHubPage() {
       {renderModal(
         showFFMIModal,
         () => setShowFFMIModal(false),
-        'FFMI (Fat Free Mass Index)',
-        'Mått på muskelmassa i relation till längd',
+        t('hub.ffmiModalTitle'),
+        t('hub.ffmiModalSubtitle'),
         FFMIContent
       )}
 
       {renderModal(
         showNormalizedFFMIModal,
         () => setShowNormalizedFFMIModal(false),
-        'Normaliserad FFMI',
-        'Längdjusterat muskelmassindex',
+        t('hub.normalizedFFMIModalTitle'),
+        t('hub.normalizedFFMIModalSubtitle'),
         NormalizedFFMIContent
       )}
     </div>
