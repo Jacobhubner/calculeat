@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { Menu, X, LogOut, User, Settings, Users } from 'lucide-react'
+import { Menu, X, LogOut, User, Settings, Users, ShieldCheck } from 'lucide-react'
 import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '../ui/button'
@@ -10,6 +10,7 @@ import { useState, useRef, useEffect } from 'react'
 import { SocialHub } from '@/components/social/SocialHub'
 import { ShareDialog } from '@/components/sharing/ShareDialog'
 import { useSocialBadgeCount } from '@/hooks/useShareInvitations'
+import { useIsAdmin } from '@/hooks/useIsAdmin'
 import type { Friend } from '@/lib/types/friends'
 
 export default function SiteHeader() {
@@ -33,6 +34,7 @@ export default function SiteHeader() {
   }
 
   const badgeCount = useSocialBadgeCount()
+  const { data: isAdmin = false } = useIsAdmin()
 
   const handleSignOut = async () => {
     try {
@@ -177,10 +179,15 @@ export default function SiteHeader() {
                 </AnimatePresence>
               </div>
 
-              <Link to="/app">
+              <Link to="/app" className="relative">
                 <Avatar className="h-9 w-9 cursor-pointer ring-2 ring-transparent hover:ring-primary-200 transition-all">
                   <AvatarFallback className="text-xs">{getInitials()}</AvatarFallback>
                 </Avatar>
+                {isAdmin && (
+                  <span className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5">
+                    <ShieldCheck className="h-3.5 w-3.5 text-primary-600" />
+                  </span>
+                )}
               </Link>
               <Button variant="ghost" size="sm" onClick={handleSignOut}>
                 <LogOut className="h-4 w-4 mr-2" />
@@ -230,11 +237,16 @@ export default function SiteHeader() {
             <div className="relative" ref={userMenuRef}>
               <button
                 onClick={() => setMobileUserMenuOpen(!mobileUserMenuOpen)}
-                className="focus:outline-none"
+                className="focus:outline-none relative"
               >
                 <Avatar className="h-9 w-9 cursor-pointer ring-2 ring-transparent active:ring-primary-200 transition-all">
                   <AvatarFallback className="text-xs">{getInitials()}</AvatarFallback>
                 </Avatar>
+                {isAdmin && (
+                  <span className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5">
+                    <ShieldCheck className="h-3.5 w-3.5 text-primary-600" />
+                  </span>
+                )}
               </button>
 
               {/* Mobile User Dropdown Menu */}
