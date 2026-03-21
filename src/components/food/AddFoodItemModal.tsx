@@ -388,7 +388,7 @@ export function AddFoodItemModal({
   useEffect(() => {
     if (searchResults && searchResults.length > 0 && !editItem) {
       const duplicateNames = searchResults
-        .filter(item => item.name.toLowerCase() === name.toLowerCase())
+        .filter(item => item.name.toLowerCase() === (name ?? '').toLowerCase())
         .map(item => item.name)
         .join(', ')
 
@@ -565,7 +565,7 @@ export function AddFoodItemModal({
       }
       // 2. Om enheten är 'ml' och weight_grams är satt, beräkna automatiskt
       else if (
-        data.default_unit.toLowerCase() === 'ml' &&
+        (data.default_unit ?? '').toLowerCase() === 'ml' &&
         data.weight_grams &&
         data.weight_grams > 0
       ) {
@@ -581,7 +581,7 @@ export function AddFoodItemModal({
       }
 
       // Determine reference_unit based on default_unit
-      const isMLBased = data.default_unit.toLowerCase() === 'ml'
+      const isMLBased = (data.default_unit ?? '').toLowerCase() === 'ml'
       const reference_unit: 'g' | 'ml' = isMLBased ? 'ml' : 'g'
 
       // Clean up NaN values from optional number fields

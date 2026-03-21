@@ -201,7 +201,7 @@ export const createFoodItemSchema = z
   .refine(
     data => {
       // Om enheten är g eller gram, ska weight_grams vara samma som default_amount
-      const unit = data.default_unit.toLowerCase().trim()
+      const unit = (data.default_unit ?? '').toLowerCase().trim()
       if (unit === 'g' || unit === 'gram') {
         return Math.abs(data.weight_grams - data.default_amount) < 0.01 // Tillåt minimal rundning
       }
