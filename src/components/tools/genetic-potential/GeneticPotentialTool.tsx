@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import { AlertCircle, ChevronDown, ChevronUp, User, Info, X } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { BackToHubButton } from '@/components/tools/common/BackToHubButton'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -33,6 +34,7 @@ function getFormulaDisplayName(fullName: string): string {
 }
 
 export default function GeneticPotentialTool() {
+  const { t } = useTranslation('tools')
   const navigate = useNavigate()
   const { profile } = useActiveProfile()
   const profileData = useProfileData(['height_cm', 'gender', 'weight_kg', 'body_fat_percentage'])
@@ -103,10 +105,10 @@ export default function GeneticPotentialTool() {
     return (
       <EmptyState
         icon={User}
-        title="Ingen aktiv profil"
-        description="Du måste ha en profil för att använda verktyget för genetisk muskelpotential."
+        title={t('geneticPotential.noProfile.title')}
+        description={t('geneticPotential.noProfile.description')}
         action={{
-          label: 'Gå till profil',
+          label: t('geneticPotential.noProfile.action'),
           onClick: () => navigate('/app/profile'),
         }}
       />
@@ -120,13 +122,13 @@ export default function GeneticPotentialTool() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Genetisk Muskelpotential</h2>
+          <h2 className="text-2xl font-bold text-gray-900">{t('geneticPotential.header.title')}</h2>
           <p className="text-neutral-600 mt-1">
-            Beräkna din maximala muskelmassa baserat på längd och kroppsbyggnad
+            {t('geneticPotential.header.description')}
           </p>
         </div>
         <Badge variant="secondary" className="bg-green-100 text-green-700">
-          Kroppsanalys
+          {t('geneticPotential.header.badge')}
         </Badge>
       </div>
 
@@ -135,13 +137,8 @@ export default function GeneticPotentialTool() {
         <Alert variant="default" className="border-red-300 bg-red-50">
           <AlertCircle className="h-5 w-5 text-red-600" />
           <AlertDescription className="text-red-900">
-            <p className="font-medium mb-2">Genetisk Muskelpotential är endast för män</p>
-            <p>
-              Dessa modeller och ramverk (Martin Berkhans modell, Casey Butts modell, Alan Aragons
-              ramverk och Lyle McDonalds ramverk) är alla utvecklade och validerade för män. De tar
-              inte hänsyn till kvinnors fysiologi och hormonella skillnader, vilket innebär att
-              resultaten inte skulle vara korrekta eller användbara för kvinnor.
-            </p>
+            <p className="font-medium mb-2">{t('geneticPotential.maleOnly.title')}</p>
+            <p>{t('geneticPotential.maleOnly.description')}</p>
           </AlertDescription>
         </Alert>
       )}
@@ -151,18 +148,13 @@ export default function GeneticPotentialTool() {
         <Alert variant="default" className="border-blue-300 bg-blue-50">
           <AlertCircle className="h-5 w-5 text-blue-600" />
           <AlertDescription className="text-blue-900">
-            <p className="font-medium mb-2">Tips: Lägg till kroppsfettprocent</p>
-            <p>
-              För att se din nuvarande progress mot genetisk potential och hur många kg fettfri
-              massa du har kvar att bygga, rekommenderar vi att du anger din kroppsfettprocent i din
-              profil. Beräkningarna fungerar utan detta, men du får mer insiktsfull information med
-              kroppsfettprocent.
-            </p>
+            <p className="font-medium mb-2">{t('geneticPotential.addBodyFatTip.title')}</p>
+            <p>{t('geneticPotential.addBodyFatTip.description')}</p>
             <Link
               to="/app/profile"
               className="inline-block mt-2 underline font-medium hover:text-blue-700"
             >
-              Gå till Profil för att ange kroppsfettprocent
+              {t('geneticPotential.addBodyFatTip.link')}
             </Link>
           </AlertDescription>
         </Alert>
@@ -175,12 +167,8 @@ export default function GeneticPotentialTool() {
             <div className="flex items-start gap-3">
               <AlertCircle className="h-5 w-5 text-blue-600 mt-0.5 shrink-0" />
               <div className="text-sm text-blue-900">
-                <p className="font-medium mb-1">Om Genetisk Muskelpotential</p>
-                <p className="text-blue-700">
-                  Dessa modeller uppskattar din maximala naturliga muskelmassa. Resultaten varierar
-                  mellan formler beroende på vilka faktorer de tar hänsyn till. Ingen formel är 100%
-                  exakt, men de ger en användbar riktlinje för realistiska mål.
-                </p>
+                <p className="font-medium mb-1">{t('geneticPotential.infoCard.title')}</p>
+                <p className="text-blue-700">{t('geneticPotential.infoCard.description')}</p>
               </div>
             </div>
           </CardContent>
@@ -194,8 +182,8 @@ export default function GeneticPotentialTool() {
           {results && results.length > 0 && (
             <Card>
               <CardHeader>
-                <CardTitle>Beräknade Resultat</CardTitle>
-                <CardDescription>Olika modeller ger olika uppskattningar</CardDescription>
+                <CardTitle>{t('geneticPotential.results.title')}</CardTitle>
+                <CardDescription>{t('geneticPotential.results.description')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 {/* Formula selector buttons */}
@@ -910,7 +898,7 @@ export default function GeneticPotentialTool() {
 
                   {results[selectedFormulaIndex].remainingPotential !== undefined && (
                     <div className="pt-4 border-t">
-                      <p className="text-sm text-neutral-600 mb-1">Återstående potential:</p>
+                      <p className="text-sm text-neutral-600 mb-1">{t('geneticPotential.remainingPotential')}</p>
                       <p className="text-2xl font-bold text-green-600">
                         +{results[selectedFormulaIndex].remainingPotential.toFixed(1)} kg
                       </p>

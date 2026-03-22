@@ -1,5 +1,6 @@
 import { AlertCircle } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 
@@ -23,14 +24,15 @@ interface MissingFieldAlertProps {
  * }
  */
 export function MissingFieldAlert({ fields, message, hideButton = false }: MissingFieldAlertProps) {
+  const { t } = useTranslation('tools')
   const navigate = useNavigate()
 
   if (fields.length === 0) return null
 
   const defaultMessage =
     fields.length === 1
-      ? `För att använda detta verktyg behöver du fylla i: ${fields[0]}`
-      : `För att använda detta verktyg behöver du fylla i: ${fields.join(', ')}`
+      ? t('missingFieldAlert.single', { field: fields[0] })
+      : t('missingFieldAlert.multiple', { fields: fields.join(', ') })
 
   return (
     <Alert variant="warning" className="flex items-start gap-3">
@@ -44,7 +46,7 @@ export function MissingFieldAlert({ fields, message, hideButton = false }: Missi
             onClick={() => navigate('/app/profile')}
             className="border-orange-300 hover:bg-orange-100"
           >
-            Gå till Profil
+            {t('missingFieldAlert.goToProfile')}
           </Button>
         )}
       </div>

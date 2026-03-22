@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
 import { ChevronDown, ChevronUp } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { calculateBMRWithFormula, requiresBodyFat } from '@/lib/calculations/bmr'
@@ -35,6 +36,7 @@ export default function ComparisonTab({
   profileHeight,
   profileBodyFat,
 }: ComparisonTabProps) {
+  const { t } = useTranslation('tools')
   const [gender, setGender] = useState<Gender>('male')
   const [age, setAge] = useState('')
   const [weight, setWeight] = useState('')
@@ -85,14 +87,14 @@ export default function ComparisonTab({
       {/* Inputs */}
       <Card>
         <CardHeader>
-          <CardTitle>Dina uppgifter</CardTitle>
-          <CardDescription>Fyll i dina värden för att jämföra alla BMR/RMR-formler</CardDescription>
+          <CardTitle>{t('comparison.title')}</CardTitle>
+          <CardDescription>{t('comparison.description')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-5">
           {/* Kön + Använd mina värden */}
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-2">Kön</label>
+              <label className="block text-sm font-medium text-neutral-700 mb-2">{t('comparison.gender')}</label>
               <div className="flex gap-2">
                 {(['male', 'female'] as Gender[]).map(g => (
                   <button
@@ -105,7 +107,7 @@ export default function ComparisonTab({
                         : 'bg-white text-neutral-700 border-neutral-300 hover:border-primary-400'
                     }`}
                   >
-                    {g === 'male' ? 'Man' : 'Kvinna'}
+                    {g === 'male' ? t('comparison.male') : t('comparison.female')}
                   </button>
                 ))}
               </div>
@@ -116,7 +118,7 @@ export default function ComparisonTab({
                 onClick={loadProfileValues}
                 className="px-4 py-2 rounded-full text-sm font-medium border border-accent-500 text-accent-600 bg-white hover:bg-accent-50 transition-colors"
               >
-                Använd mina värden
+                {t('comparison.useMyValues')}
               </button>
             )}
           </div>
@@ -125,7 +127,7 @@ export default function ComparisonTab({
           <div className="grid grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium text-neutral-700 mb-1">
-                Ålder (år) <span className="text-red-600">*</span>
+                {t('comparison.age')} <span className="text-red-600">*</span>
               </label>
               <input
                 type="number"
@@ -140,7 +142,7 @@ export default function ComparisonTab({
             </div>
             <div>
               <label className="block text-sm font-medium text-neutral-700 mb-1">
-                Vikt (kg) <span className="text-red-600">*</span>
+                {t('comparison.weight')} <span className="text-red-600">*</span>
               </label>
               <input
                 type="number"
@@ -155,7 +157,7 @@ export default function ComparisonTab({
             </div>
             <div>
               <label className="block text-sm font-medium text-neutral-700 mb-1">
-                Längd (cm) <span className="text-red-600">*</span>
+                {t('comparison.height')} <span className="text-red-600">*</span>
               </label>
               <input
                 type="number"
@@ -173,8 +175,8 @@ export default function ComparisonTab({
           {/* Kroppsfett% */}
           <div>
             <label className="block text-sm font-medium text-neutral-700 mb-1">
-              Kroppsfett%{' '}
-              <span className="text-neutral-500 font-normal">(valfri – krävs för 4 formler)</span>
+              {t('comparison.bodyFat')}{' '}
+              <span className="text-neutral-500 font-normal">{t('comparison.bodyFatOptional')}</span>
             </label>
             <input
               type="number"
@@ -194,11 +196,11 @@ export default function ComparisonTab({
       {params && (
         <Card>
           <CardHeader>
-            <CardTitle>BMR/RMR-jämförelse</CardTitle>
+            <CardTitle>{t('comparison.resultsTitle')}</CardTitle>
             <CardDescription>
               {validValues.length > 0
-                ? `${validValues.length} av ${ALL_FORMULAS.length} formler beräknade`
-                : 'Fyll i ålder, vikt och längd för att se resultat'}
+                ? t('comparison.resultsDescription', { count: validValues.length, total: ALL_FORMULAS.length })
+                : t('comparison.fillInValues')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -241,7 +243,7 @@ export default function ComparisonTab({
                               variant="outline"
                               className="text-[10px] px-1.5 py-0 h-4 shrink-0 bg-green-100 text-green-700 border-green-300"
                             >
-                              Lägst
+                              {t('comparison.lowest')}
                             </Badge>
                           )}
                           {isMax && (
@@ -249,7 +251,7 @@ export default function ComparisonTab({
                               variant="outline"
                               className="text-[10px] px-1.5 py-0 h-4 shrink-0 bg-orange-100 text-orange-700 border-orange-300"
                             >
-                              Högst
+                              {t('comparison.highest')}
                             </Badge>
                           )}
                         </div>
@@ -260,7 +262,7 @@ export default function ComparisonTab({
                             variant="outline"
                             className="text-xs bg-amber-50 text-amber-700 border-amber-300"
                           >
-                            Kräver kroppsfett%
+                            {t('comparison.requiresBodyFat')}
                           </Badge>
                         ) : result !== null ? (
                           <span
@@ -299,7 +301,7 @@ export default function ComparisonTab({
                         </p>
                         {desc.pros.length > 0 && (
                           <div>
-                            <p className="text-xs font-semibold text-green-700 mb-1">Fördelar</p>
+                            <p className="text-xs font-semibold text-green-700 mb-1">{t('comparison.pros')}</p>
                             <ul className="space-y-1">
                               {desc.pros.map((pro, i) => (
                                 <li key={i} className="flex gap-2 text-sm text-neutral-700">
@@ -313,7 +315,7 @@ export default function ComparisonTab({
                         {desc.cons.length > 0 && (
                           <div>
                             <p className="text-xs font-semibold text-amber-700 mb-1">
-                              Nackdelar / Begränsningar
+                              {t('comparison.cons')}
                             </p>
                             <ul className="space-y-1">
                               {desc.cons.map((con, i) => (
@@ -336,23 +338,23 @@ export default function ComparisonTab({
             {validValues.length > 0 && (
               <div className="mt-6 p-4 bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-blue-200 rounded-xl">
                 <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-3">
-                  Sammanfattning ({validValues.length} formler)
+                  {t('comparison.summary', { count: validValues.length })}
                 </p>
                 <div className="grid grid-cols-3 gap-4 text-center">
                   <div>
-                    <p className="text-xs text-neutral-500 mb-1">Lägst</p>
+                    <p className="text-xs text-neutral-500 mb-1">{t('comparison.lowest')}</p>
                     <p className="text-xl font-bold text-green-700">
                       {minBMR !== null ? Math.round(minBMR) : '—'}
                     </p>
                     <p className="text-xs text-neutral-400">kcal</p>
                   </div>
                   <div>
-                    <p className="text-xs text-neutral-500 mb-1">Medelvärde</p>
+                    <p className="text-xs text-neutral-500 mb-1">{t('comparison.average')}</p>
                     <p className="text-2xl font-bold text-blue-700">{avgBMR ?? '—'}</p>
                     <p className="text-xs text-neutral-400">kcal</p>
                   </div>
                   <div>
-                    <p className="text-xs text-neutral-500 mb-1">Högst</p>
+                    <p className="text-xs text-neutral-500 mb-1">{t('comparison.highest')}</p>
                     <p className="text-xl font-bold text-orange-700">
                       {maxBMR !== null ? Math.round(maxBMR) : '—'}
                     </p>
@@ -361,7 +363,7 @@ export default function ComparisonTab({
                 </div>
                 {minBMR !== null && maxBMR !== null && (
                   <p className="mt-3 text-xs text-neutral-500 text-center border-t border-blue-200 pt-3">
-                    Spann: {Math.round(maxBMR - minBMR)} kcal skillnad mellan lägst och högst
+                    {t('comparison.span', { diff: Math.round(maxBMR - minBMR) })}
                   </p>
                 )}
               </div>

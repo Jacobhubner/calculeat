@@ -275,6 +275,66 @@
       "saveFailed": "Could not save TDEE"
     }
   },
+  "missingFieldAlert": {
+    "single": "To use this tool you need to fill in: {{field}}",
+    "multiple": "To use this tool you need to fill in: {{fields}}",
+    "goToProfile": "Go to Profile"
+  },
+  "comparison": {
+    "title": "Your details",
+    "description": "Fill in your values to compare all BMR/RMR formulas",
+    "gender": "Gender",
+    "male": "Male",
+    "female": "Female",
+    "useMyValues": "Use my values",
+    "age": "Age (years)",
+    "weight": "Weight (kg)",
+    "height": "Height (cm)",
+    "bodyFat": "Body fat%",
+    "bodyFatOptional": "(optional – required for 4 formulas)",
+    "resultsTitle": "BMR/RMR comparison",
+    "resultsDescription_one": "{{count}} of {{total}} formulas calculated",
+    "resultsDescription_other": "{{count}} of {{total}} formulas calculated",
+    "fillInValues": "Fill in age, weight and height to see results",
+    "lowest": "Lowest",
+    "highest": "Highest",
+    "requiresBodyFat": "Requires body fat%",
+    "pros": "Advantages",
+    "cons": "Disadvantages / Limitations",
+    "summary": "Summary ({{count}} formulas)",
+    "average": "Average",
+    "span": "Range: {{diff}} kcal difference between lowest and highest"
+  },
+  "geneticPotential": {
+    "noProfile": {
+      "title": "No active profile",
+      "description": "You need a profile to use the genetic muscle potential tool.",
+      "action": "Go to profile"
+    },
+    "header": {
+      "title": "Genetic Muscle Potential",
+      "description": "Calculate your maximum muscle mass based on height and body structure",
+      "badge": "Body Analysis"
+    },
+    "maleOnly": {
+      "title": "Genetic Muscle Potential is for men only",
+      "description": "These models and frameworks (Martin Berkhan's model, Casey Butt's model, Alan Aragon's framework and Lyle McDonald's framework) are all developed and validated for men. They do not account for women's physiology and hormonal differences, meaning the results would not be accurate or useful for women."
+    },
+    "addBodyFatTip": {
+      "title": "Tip: Add body fat percentage",
+      "description": "To see your current progress towards genetic potential and how many kg of lean mass you have left to build, we recommend entering your body fat percentage in your profile. The calculations work without this, but you get more insightful information with body fat percentage.",
+      "link": "Go to Profile to enter body fat percentage"
+    },
+    "infoCard": {
+      "title": "About Genetic Muscle Potential",
+      "description": "These models estimate your maximum natural muscle mass. Results vary between formulas depending on what factors they consider. No formula is 100% accurate, but they provide a useful guideline for realistic goals."
+    },
+    "results": {
+      "title": "Calculated Results",
+      "description": "Different models give different estimates"
+    },
+    "remainingPotential": "Remaining potential:"
+  },
   "palFields": {
     "activityLevel": "Activity level *",
     "activityLevelPlaceholder": "Select activity level...",

@@ -275,6 +275,66 @@
       "saveFailed": "Kunde inte spara TDEE"
     }
   },
+  "missingFieldAlert": {
+    "single": "För att använda detta verktyg behöver du fylla i: {{field}}",
+    "multiple": "För att använda detta verktyg behöver du fylla i: {{fields}}",
+    "goToProfile": "Gå till Profil"
+  },
+  "comparison": {
+    "title": "Dina uppgifter",
+    "description": "Fyll i dina värden för att jämföra alla BMR/RMR-formler",
+    "gender": "Kön",
+    "male": "Man",
+    "female": "Kvinna",
+    "useMyValues": "Använd mina värden",
+    "age": "Ålder (år)",
+    "weight": "Vikt (kg)",
+    "height": "Längd (cm)",
+    "bodyFat": "Kroppsfett%",
+    "bodyFatOptional": "(valfri – krävs för 4 formler)",
+    "resultsTitle": "BMR/RMR-jämförelse",
+    "resultsDescription_one": "{{count}} av {{total}} formler beräknade",
+    "resultsDescription_other": "{{count}} av {{total}} formler beräknade",
+    "fillInValues": "Fyll i ålder, vikt och längd för att se resultat",
+    "lowest": "Lägst",
+    "highest": "Högst",
+    "requiresBodyFat": "Kräver kroppsfett%",
+    "pros": "Fördelar",
+    "cons": "Nackdelar / Begränsningar",
+    "summary": "Sammanfattning ({{count}} formler)",
+    "average": "Medelvärde",
+    "span": "Spann: {{diff}} kcal skillnad mellan lägst och högst"
+  },
+  "geneticPotential": {
+    "noProfile": {
+      "title": "Ingen aktiv profil",
+      "description": "Du måste ha en profil för att använda verktyget för genetisk muskelpotential.",
+      "action": "Gå till profil"
+    },
+    "header": {
+      "title": "Genetisk Muskelpotential",
+      "description": "Beräkna din maximala muskelmassa baserat på längd och kroppsbyggnad",
+      "badge": "Kroppsanalys"
+    },
+    "maleOnly": {
+      "title": "Genetisk Muskelpotential är endast för män",
+      "description": "Dessa modeller och ramverk (Martin Berkhans modell, Casey Butts modell, Alan Aragons ramverk och Lyle McDonalds ramverk) är alla utvecklade och validerade för män. De tar inte hänsyn till kvinnors fysiologi och hormonella skillnader, vilket innebär att resultaten inte skulle vara korrekta eller användbara för kvinnor."
+    },
+    "addBodyFatTip": {
+      "title": "Tips: Lägg till kroppsfettprocent",
+      "description": "För att se din nuvarande progress mot genetisk potential och hur många kg fettfri massa du har kvar att bygga, rekommenderar vi att du anger din kroppsfettprocent i din profil. Beräkningarna fungerar utan detta, men du får mer insiktsfull information med kroppsfettprocent.",
+      "link": "Gå till Profil för att ange kroppsfettprocent"
+    },
+    "infoCard": {
+      "title": "Om Genetisk Muskelpotential",
+      "description": "Dessa modeller uppskattar din maximala naturliga muskelmassa. Resultaten varierar mellan formler beroende på vilka faktorer de tar hänsyn till. Ingen formel är 100% exakt, men de ger en användbar riktlinje för realistiska mål."
+    },
+    "results": {
+      "title": "Beräknade Resultat",
+      "description": "Olika modeller ger olika uppskattningar"
+    },
+    "remainingPotential": "Återstående potential:"
+  },
   "palFields": {
     "activityLevel": "Aktivitetsnivå *",
     "activityLevelPlaceholder": "Välj aktivitetsnivå...",
