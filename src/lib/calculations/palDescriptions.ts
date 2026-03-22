@@ -248,8 +248,22 @@ export const PAL_SYSTEM_DESCRIPTIONS: Record<PALSystem, PALSystemDescription> = 
     descriptionBlocks: [
       {
         type: 'text',
-        text: 'Detta system beräknar total daglig energiförbrukning (TDEE) genom att modellera kroppens huvudsakliga energikomponenter i stället för att använda en fast aktivitetsmultiplikator. Modellen bygger på den etablerade uppdelningen av energiförbrukning i basal metabolism (BMR/RMR), aktivitetsrelaterad energiförbrukning (NEAT + EAT) samt kostens termogena effekt (TEF).',
+        text: 'Detta system beräknar total daglig energiförbrukning (TDEE) genom att modellera kroppens huvudsakliga energikomponenter i stället för att använda en fast aktivitetsmultiplikator. Modellen bygger på den etablerade uppdelningen av energiförbrukning i basal metabolism (BMR/RMR), aktivitetsrelaterad energiförbrukning (NEAT + EAT) samt kostens termogena effekt (TEF):',
       },
+      {
+        type: 'bullets',
+        items: [
+          'Basal eller vilometabolism (BMR/RMR) ≈ 60 %',
+          'Icke-träningsrelaterad aktivitet (NEAT) ≈ 15–30 %',
+          'Träningsrelaterad aktivitet (EAT) ≈ 5–10 %',
+          'Kostens termogena effekt (TEF) ≈ 8–15 %',
+        ],
+      },
+      {
+        type: 'text',
+        text: 'Denna uppdelning används brett inom energimetabolismforskning.',
+      },
+      { type: 'image', src: '/TDEE.png', alt: 'TDEE-komponenter illustration' },
       {
         type: 'text',
         text: 'NEAT (Non-Exercise Activity Thermogenesis) delas här upp i flera delkomponenter för att bättre spegla verklig vardagsaktivitet: gång och steg, stående aktivitet samt hushålls- och arbetsrelaterade rörelser. Dessa uppskattas med hjälp av MET-värden (Metabolic Equivalent of Task) från Compendium of Physical Activities.',
@@ -263,11 +277,12 @@ export const PAL_SYSTEM_DESCRIPTIONS: Record<PALSystem, PALSystemDescription> = 
         text: 'Modellen inkluderar även en SPA-faktor (Spontaneous Physical Activity) som representerar biologisk variation i spontana rörelser såsom posturala justeringar, små förflyttningar och fidgeting. Forskning visar att denna typ av aktivitet kan bidra till stora individuella skillnader i energiförbrukning mellan personer med liknande kroppssammansättning.',
       },
       { type: 'text', text: 'Den totala energiförbrukningen beräknas enligt:' },
-      { type: 'formula', text: 'TDEE = (BMR + NEAT_total + EAT) / 0,9' },
+      { type: 'formula', text: 'TDEE = BMR + NEAT_total + EAT + TEF' },
       {
         type: 'text',
-        text: 'där nämnaren 0,9 representerar att kostens termogena effekt (TEF) i genomsnitt motsvarar cirka 10 % av energiintaget.',
+        text: 'TEF utgör ungefär 10 % av TDEE. För att slippa beräkna TEF separat kan man därför lösa ut TDEE direkt genom att justera för dessa 10 %:',
       },
+      { type: 'formula', text: 'TDEE = (BMR + NEAT_total + EAT) / 0,9' },
       {
         type: 'text',
         text: 'Det slutliga PAL-värdet (Physical Activity Level) beräknas därefter som:',
@@ -301,30 +316,6 @@ export const PAL_SYSTEM_DESCRIPTIONS: Record<PALSystem, PALSystemDescription> = 
     ],
     sections: [
       {
-        title: 'Vetenskaplig bakgrund',
-        blocks: [
-          { type: 'heading', text: 'Komponenter i energiförbrukningen' },
-          {
-            type: 'text',
-            text: 'Daglig energiomsättning (Total Daily Energy Expenditure, TDEE) delas vanligen upp i fyra huvudkomponenter:',
-          },
-          {
-            type: 'bullets',
-            items: [
-              'Basal eller vilometabolism (BMR/RMR) ≈ 60 %',
-              'Icke-träningsrelaterad aktivitet (NEAT) ≈ 15–30 %',
-              'Träningsrelaterad aktivitet (EAT) ≈ 5–10 %',
-              'Kostens termogena effekt (TEF) ≈ 8–15 %',
-            ],
-          },
-          {
-            type: 'text',
-            text: 'Denna uppdelning används brett inom energimetabolismforskning.',
-          },
-          { type: 'image', src: '/TDEE.png', alt: 'TDEE-komponenter illustration' },
-        ],
-      },
-      {
         title: 'Basal metabolism (BMR / RMR)',
         blocks: [
           {
@@ -341,9 +332,10 @@ export const PAL_SYSTEM_DESCRIPTIONS: Record<PALSystem, PALSystemDescription> = 
           },
           {
             type: 'text',
-            text: 'Guldstandarden för mätning är indirekt kalorimetri, där syreupptag och koldioxidproduktion omvandlas till energiförbrukning via Weirs ekvation:',
+            text: 'Guldstandarden för mätning är indirekt kalorimetri, där syreupptag och koldioxidproduktion omvandlas till energiförbrukning via Weirs ekvation (1949):',
           },
-          { type: 'formula', text: 'REE (kcal/dag) = [(VO₂ × 3.941) + (VCO₂ × 1.11)] × 1440' },
+          { type: 'formula', text: 'REE (kcal/dag) = 1.440 × [(VO₂ × 3.941) + (VCO₂ × 1.106)]' },
+          { type: 'text', text: 'Där VO₂ och VCO₂ mäts i ml/min.' },
           {
             type: 'text',
             text: 'När indirekt kalorimetri inte är tillgänglig används prediktiva ekvationer såsom Mifflin-St Jeor, Harris-Benedict eller Cunningham, vilka har lägre precision på individnivå.',
@@ -561,7 +553,7 @@ export const PAL_SYSTEM_DESCRIPTIONS: Record<PALSystem, PALSystemDescription> = 
           { type: 'text', text: 'TEF varierar mellan makronutrienter:' },
           {
             type: 'bullets',
-            items: ['Protein: cirka 20–30 %', 'Kolhydrater: cirka 5–10 %', 'Fett: circa 0–3 %'],
+            items: ['Protein: cirka 20–30 %', 'Kolhydrater: cirka 5–10 %', 'Fett: cirka 0–3 %'],
           },
           {
             type: 'text',

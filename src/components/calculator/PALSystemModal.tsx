@@ -59,6 +59,22 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
                       >
                         <p className="text-sm font-mono text-neutral-800">{block.text}</p>
                       </div>
+                    ) : block.type === 'bullets' ? (
+                      <ul key={i} className="space-y-1 pl-1">
+                        {block.items.map((item, ii) => (
+                          <li key={ii} className="flex gap-3">
+                            <span className="text-neutral-400 font-bold mt-0.5">•</span>
+                            <span className="text-neutral-700 text-sm">{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : block.type === 'image' ? (
+                      <img
+                        key={i}
+                        src={block.src}
+                        alt={block.alt}
+                        className="w-3/4 rounded-xl border border-neutral-200"
+                      />
                     ) : (
                       <p key={i} className="text-neutral-700 leading-relaxed text-sm">
                         {block.text}
