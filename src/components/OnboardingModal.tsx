@@ -22,11 +22,11 @@ interface OnboardingModalProps {
 }
 
 export default function OnboardingModal({ open, onOpenChange }: OnboardingModalProps) {
-  const { t, ready } = useTranslation('onboarding')
+  const { t, i18n } = useTranslation('onboarding')
   const [currentStep, setCurrentStep] = useState(0)
   const navigate = useNavigate()
 
-  if (!ready) return null
+  if (!i18n.hasLoadedNamespace('onboarding')) return null
 
   const steps = [
     {
