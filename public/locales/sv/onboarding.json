@@ -1,0 +1,40 @@
+{
+  "step1": {
+    "title": "Välkommen till CalculEat! 🎉",
+    "description": "Din personliga nutrition- och kaloriräknare",
+    "intro": "CalculEat hjälper dig att enkelt hålla koll på dina kalorier, makronutrienter och nå dina hälsomål.",
+    "feature1Title": "Personliga beräkningar",
+    "feature1Description": "BMR, TDEE och kalorimål baserat på din profil",
+    "feature2Title": "Enkel matloggning",
+    "feature2Description": "Snabba genvägar och senaste matvaror för smidig loggning",
+    "feature3Title": "Detaljerad uppföljning",
+    "feature3Description": "Statistik och framstegshistorik"
+  },
+  "step2": {
+    "title": "Fyll i din profil",
+    "description": "För att beräkna ditt kaloribehov behöver vi lite information",
+    "intro": "Vi behöver följande information för att ge dig korrekta beräkningar:",
+    "item1Title": "Personuppgifter",
+    "item1Description": "Ålder, kön, längd och vikt",
+    "item2Title": "Aktivitetsnivå",
+    "item2Description": "Hur aktiv är du i vardagen?",
+    "item3Title": "Hälsomål",
+    "item3Description": "Viktminskning, bibehållande eller ökning"
+  },
+  "step3": {
+    "title": "Börja logga mat",
+    "description": "Logga dina måltider för att nå dina mål",
+    "intro": "Efter att du fyllt i din profil kan du börja logga mat:",
+    "card1Title": "📱 Dagens logg",
+    "card1Description": "Gå till \"Idag\" för att logga dina måltider och se daglig progress",
+    "card2Title": "⚡ Snabbtillägg",
+    "card2Description": "Använd \"Senaste matvaror\" för att snabbt lägga till vanliga livsmedel",
+    "card3Title": "📊 Följ framsteg",
+    "card3Description": "Se din historik och statistik under \"Historik\""
+  },
+  "actions": {
+    "skip": "Hoppa över",
+    "next": "Nästa",
+    "goToProfile": "Gå till profil"
+  }
+}

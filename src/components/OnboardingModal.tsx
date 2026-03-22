@@ -14,132 +14,119 @@ import {
 import { Button } from '@/components/ui/button'
 import { CheckCircle2, ArrowRight, Scale, Target, Sparkles } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 interface OnboardingModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
 }
 
-const steps = [
-  {
-    id: 1,
-    title: 'Välkommen till CalculEat! 🎉',
-    description: 'Din personliga nutrition- och kaloriräknare',
-    icon: Sparkles,
-    content: (
-      <div className="space-y-4">
-        <p className="text-neutral-700">
-          CalculEat hjälper dig att enkelt hålla koll på dina kalorier, makronutrienter och nå dina
-          hälsomål.
-        </p>
-        <div className="grid gap-3 mt-4">
-          <div className="flex items-start gap-3 p-3 bg-primary-50 rounded-lg">
-            <CheckCircle2 className="h-5 w-5 text-primary-600 shrink-0 mt-0.5" />
-            <div>
-              <p className="font-medium text-primary-900">Personliga beräkningar</p>
-              <p className="text-sm text-primary-700">
-                BMR, TDEE och kalorimål baserat på din profil
-              </p>
-            </div>
-          </div>
-          <div className="flex items-start gap-3 p-3 bg-accent-50 rounded-lg">
-            <CheckCircle2 className="h-5 w-5 text-accent-600 shrink-0 mt-0.5" />
-            <div>
-              <p className="font-medium text-accent-900">Enkel matloggning</p>
-              <p className="text-sm text-accent-700">
-                Snabba genvägar och senaste matvaror för smidig loggning
-              </p>
-            </div>
-          </div>
-          <div className="flex items-start gap-3 p-3 bg-success-50 rounded-lg">
-            <CheckCircle2 className="h-5 w-5 text-success-600 shrink-0 mt-0.5" />
-            <div>
-              <p className="font-medium text-success-900">Detaljerad uppföljning</p>
-              <p className="text-sm text-success-700">Statistik och framstegshistorik</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    ),
-  },
-  {
-    id: 2,
-    title: 'Fyll i din profil',
-    description: 'För att beräkna ditt kaloribehov behöver vi lite information',
-    icon: Scale,
-    content: (
-      <div className="space-y-4">
-        <p className="text-neutral-700">
-          Vi behöver följande information för att ge dig korrekta beräkningar:
-        </p>
-        <div className="space-y-3 mt-4">
-          <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-lg">
-            <div className="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center">
-              <span className="font-bold text-primary-600">1</span>
-            </div>
-            <div className="flex-1">
-              <p className="font-medium text-neutral-900">Personuppgifter</p>
-              <p className="text-sm text-neutral-600">Ålder, kön, längd och vikt</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-lg">
-            <div className="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center">
-              <span className="font-bold text-primary-600">2</span>
-            </div>
-            <div className="flex-1">
-              <p className="font-medium text-neutral-900">Aktivitetsnivå</p>
-              <p className="text-sm text-neutral-600">Hur aktiv är du i vardagen?</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-lg">
-            <div className="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center">
-              <span className="font-bold text-primary-600">3</span>
-            </div>
-            <div className="flex-1">
-              <p className="font-medium text-neutral-900">Hälsomål</p>
-              <p className="text-sm text-neutral-600">Viktminskning, bibehållande eller ökning</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    ),
-  },
-  {
-    id: 3,
-    title: 'Börja logga mat',
-    description: 'Logga dina måltider för att nå dina mål',
-    icon: Target,
-    content: (
-      <div className="space-y-4">
-        <p className="text-neutral-700">Efter att du fyllt i din profil kan du börja logga mat:</p>
-        <div className="space-y-3 mt-4">
-          <div className="p-4 bg-gradient-to-br from-primary-50 to-accent-50 rounded-lg border border-primary-200">
-            <p className="font-medium text-neutral-900 mb-2">📱 Dagens logg</p>
-            <p className="text-sm text-neutral-700">
-              Gå till &quot;Idag&quot; för att logga dina måltider och se daglig progress
-            </p>
-          </div>
-          <div className="p-4 bg-gradient-to-br from-accent-50 to-success-50 rounded-lg border border-accent-200">
-            <p className="font-medium text-neutral-900 mb-2">⚡ Snabbtillägg</p>
-            <p className="text-sm text-neutral-700">
-              Använd &quot;Senaste matvaror&quot; för att snabbt lägga till vanliga livsmedel
-            </p>
-          </div>
-          <div className="p-4 bg-gradient-to-br from-success-50 to-primary-50 rounded-lg border border-success-200">
-            <p className="font-medium text-neutral-900 mb-2">📊 Följ framsteg</p>
-            <p className="text-sm text-neutral-700">
-              Se din historik och statistik under &quot;Historik&quot;
-            </p>
-          </div>
-        </div>
-      </div>
-    ),
-  },
-]
-
 export default function OnboardingModal({ open, onOpenChange }: OnboardingModalProps) {
+  const { t, ready } = useTranslation('onboarding')
   const [currentStep, setCurrentStep] = useState(0)
   const navigate = useNavigate()
+
+  const steps = [
+    {
+      id: 1,
+      title: t('step1.title'),
+      description: t('step1.description'),
+      icon: Sparkles,
+      content: (
+        <div className="space-y-4">
+          <p className="text-neutral-700">{t('step1.intro')}</p>
+          <div className="grid gap-3 mt-4">
+            <div className="flex items-start gap-3 p-3 bg-primary-50 rounded-lg">
+              <CheckCircle2 className="h-5 w-5 text-primary-600 shrink-0 mt-0.5" />
+              <div>
+                <p className="font-medium text-primary-900">{t('step1.feature1Title')}</p>
+                <p className="text-sm text-primary-700">{t('step1.feature1Description')}</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3 p-3 bg-accent-50 rounded-lg">
+              <CheckCircle2 className="h-5 w-5 text-accent-600 shrink-0 mt-0.5" />
+              <div>
+                <p className="font-medium text-accent-900">{t('step1.feature2Title')}</p>
+                <p className="text-sm text-accent-700">{t('step1.feature2Description')}</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3 p-3 bg-success-50 rounded-lg">
+              <CheckCircle2 className="h-5 w-5 text-success-600 shrink-0 mt-0.5" />
+              <div>
+                <p className="font-medium text-success-900">{t('step1.feature3Title')}</p>
+                <p className="text-sm text-success-700">{t('step1.feature3Description')}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: 2,
+      title: t('step2.title'),
+      description: t('step2.description'),
+      icon: Scale,
+      content: (
+        <div className="space-y-4">
+          <p className="text-neutral-700">{t('step2.intro')}</p>
+          <div className="space-y-3 mt-4">
+            <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-lg">
+              <div className="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center">
+                <span className="font-bold text-primary-600">1</span>
+              </div>
+              <div className="flex-1">
+                <p className="font-medium text-neutral-900">{t('step2.item1Title')}</p>
+                <p className="text-sm text-neutral-600">{t('step2.item1Description')}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-lg">
+              <div className="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center">
+                <span className="font-bold text-primary-600">2</span>
+              </div>
+              <div className="flex-1">
+                <p className="font-medium text-neutral-900">{t('step2.item2Title')}</p>
+                <p className="text-sm text-neutral-600">{t('step2.item2Description')}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-lg">
+              <div className="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center">
+                <span className="font-bold text-primary-600">3</span>
+              </div>
+              <div className="flex-1">
+                <p className="font-medium text-neutral-900">{t('step2.item3Title')}</p>
+                <p className="text-sm text-neutral-600">{t('step2.item3Description')}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: 3,
+      title: t('step3.title'),
+      description: t('step3.description'),
+      icon: Target,
+      content: (
+        <div className="space-y-4">
+          <p className="text-neutral-700">{t('step3.intro')}</p>
+          <div className="space-y-3 mt-4">
+            <div className="p-4 bg-gradient-to-br from-primary-50 to-accent-50 rounded-lg border border-primary-200">
+              <p className="font-medium text-neutral-900 mb-2">{t('step3.card1Title')}</p>
+              <p className="text-sm text-neutral-700">{t('step3.card1Description')}</p>
+            </div>
+            <div className="p-4 bg-gradient-to-br from-accent-50 to-success-50 rounded-lg border border-accent-200">
+              <p className="font-medium text-neutral-900 mb-2">{t('step3.card2Title')}</p>
+              <p className="text-sm text-neutral-700">{t('step3.card2Description')}</p>
+            </div>
+            <div className="p-4 bg-gradient-to-br from-success-50 to-primary-50 rounded-lg border border-success-200">
+              <p className="font-medium text-neutral-900 mb-2">{t('step3.card3Title')}</p>
+              <p className="text-sm text-neutral-700">{t('step3.card3Description')}</p>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+  ]
 
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
@@ -154,6 +141,8 @@ export default function OnboardingModal({ open, onOpenChange }: OnboardingModalP
   const handleSkip = () => {
     onOpenChange(false)
   }
+
+  if (!ready) return null
 
   const step = steps[currentStep]
   const Icon = step.icon
@@ -197,17 +186,17 @@ export default function OnboardingModal({ open, onOpenChange }: OnboardingModalP
         {/* Actions */}
         <div className="flex items-center justify-between gap-3 pt-4 border-t">
           <Button variant="ghost" onClick={handleSkip} className="text-neutral-600">
-            Hoppa över
+            {t('actions.skip')}
           </Button>
           <Button onClick={handleNext} className="gap-2">
             {currentStep < steps.length - 1 ? (
               <>
-                Nästa
+                {t('actions.next')}
                 <ArrowRight className="h-4 w-4" />
               </>
             ) : (
               <>
-                Gå till profil
+                {t('actions.goToProfile')}
                 <ArrowRight className="h-4 w-4" />
               </>
             )}
