@@ -285,7 +285,9 @@ export default function DashboardPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent mb-2">
-            {t('greeting.hello', { name: authProfile?.profile_name || '👋' })}
+            {authProfile?.profile_name
+              ? t('greeting.hello', { name: authProfile.profile_name })
+              : t('greeting.helloNoName')}
           </h1>
           {!hasBasicInfo && (
             <p className="text-neutral-600 text-sm md:text-base">{t('greeting.fillProfile')}</p>

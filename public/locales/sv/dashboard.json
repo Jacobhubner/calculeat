@@ -1,6 +1,7 @@
 {
   "greeting": {
     "hello": "Hej {{name}}! 👋",
+    "helloNoName": "Hej! 👋",
     "fillProfile": "Fyll i din profil för att komma igång"
   },
   "status": {
