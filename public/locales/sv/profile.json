@@ -215,5 +215,14 @@
     "deleting": "Raderar...",
     "accountDeleted": "Ditt konto har raderats.",
     "deleteError": "Något gick fel vid radering av kontot. Försök igen."
+  },
+  "tdeeOptions": {
+    "calculateTitle": "Beräkna TDEE",
+    "calculateDesc": "Använd vår kalkylator för att beräkna ditt TDEE baserat på aktivitetsnivå och träning",
+    "calculateButton": "Gå till TDEE-kalkylator",
+    "manualTitle": "Ange TDEE manuellt",
+    "manualDesc": "Ange ditt TDEE om du redan känner till det från en annan källa",
+    "showForm": "Visa formulär",
+    "hideForm": "Dölj formulär"
   }
 }

@@ -181,5 +181,58 @@
     "mobileColFatMass": "Fat mass",
     "save": "Save",
     "saveToProfile": "Save to profile"
+  },
+  "refTable": {
+    "showWomensValues": "Show women's values",
+    "showMensValues": "Show men's values",
+    "category": "Category",
+    "men": "Men",
+    "women": "Women",
+    "source": "Source: American Council on Exercise",
+    "whatDoRangesMean": "What do the ranges mean?",
+    "description": "Description",
+    "bodyFat": "Body fat",
+    "ffmiMen": "FFMI (men)",
+    "ffmiWomen": "FFMI (women)",
+    "altMenBF1": "Body fat visual guide for men",
+    "altMenBF2": "Body fat visual guide for men 2",
+    "altWomenBF1": "Body fat visual guide for women",
+    "altWomenBF2": "Body fat visual guide for women 2",
+    "maleInsights": {
+      "range1": {
+        "range": "3–7%",
+        "text": "Extremely low (competition shape). Very visible muscle definition and veins. Difficult to maintain over time."
+      },
+      "range2": {
+        "range": "10–15%",
+        "text": "The classic \"beach body\". Abs are usually clearly visible at this level."
+      },
+      "range3": {
+        "range": "20–25%",
+        "text": "A normal and healthy level for most men. Muscle definition is less visible, but the body looks proportional."
+      },
+      "range4": {
+        "range": "30% and above",
+        "text": "Indicates overweight where fat often accumulates around the waist, which is linked to higher health risks."
+      }
+    },
+    "femaleInsights": {
+      "range1": {
+        "range": "10–12%",
+        "text": "Extremely low, usually only seen in competitive bodybuilders. Can negatively affect hormone balance and health."
+      },
+      "range2": {
+        "range": "15–22%",
+        "text": "\"Fit\" or athletic level. Muscle definition is often visible, especially in the abdominal region."
+      },
+      "range3": {
+        "range": "25–35%",
+        "text": "A healthy and normal level for most women. The body has natural curves and a healthy energy reserve."
+      },
+      "range4": {
+        "range": "40% and above",
+        "text": "Often classified as overweight or obesity, which can increase the risk of lifestyle diseases."
+      }
+    }
   }
 }

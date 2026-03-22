@@ -167,5 +167,19 @@
     "errorEmpty": "The meal must have a name",
     "successRenamed": "The meal has been renamed",
     "updateError": "Could not update the meal"
+  },
+  "recipeImpact": {
+    "titleDelete_one": "The food item is used in {{count}} recipe",
+    "titleDelete_other": "The food item is used in {{count}} recipes",
+    "titleUpdate_one": "The change affects {{count}} recipe",
+    "titleUpdate_other": "The change affects {{count}} recipes",
+    "deleteDescriptionSuffix": "is used in the recipes below. If you delete the food item these recipes will show a missing ingredient.",
+    "updateDescriptionPrefix": "The change to",
+    "updateDescriptionSuffix": "affects the calculations in the recipes below. The recipes will be updated automatically when you save.",
+    "servings": "{{count}} srv",
+    "ingredients": "{{count}} ing.",
+    "cancel": "Cancel",
+    "deleteAnyway": "Delete anyway",
+    "saveAnyway": "Save anyway"
   }
 }

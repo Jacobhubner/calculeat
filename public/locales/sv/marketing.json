@@ -146,5 +146,29 @@
       "button": "Skapa konto gratis",
       "back": "Tillbaka till startsidan"
     }
+  },
+  "successStories": {
+    "title": "Framgångshistorier",
+    "subtitle": "Riktiga resultat från riktiga användare",
+    "cta": "Vill du också få resultat?",
+    "ctaLink": "Kom igång idag",
+    "profileImageAlt": "Profilbild för {{name}}",
+    "testimonials": {
+      "anna": {
+        "name": "Anna Andersson",
+        "achievement": "Gick ner 15 kg på 6 månader",
+        "quote": "CalculEat gjorde det enkelt att förstå mitt kaloriintag och hålla koll på mina makron. Jag har äntligen hittat ett hållbart sätt att nå mina viktmål!"
+      },
+      "erik": {
+        "name": "Erik Nilsson",
+        "achievement": "Ökade 8 kg muskelmassa",
+        "quote": "Som gymmare är det avgörande att få rätt mängd protein. Med CalculEat kunde jag optimera min kost och se fantastiska resultat på bara 4 månader."
+      },
+      "maria": {
+        "name": "Maria Johansson",
+        "achievement": "Bibehållit vikten i 1 år",
+        "quote": "Efter att ha nått mitt målvikt använder jag fortfarande CalculEat dagligen. Det hjälper mig att hålla balansen och känna kontroll över min hälsa."
+      }
+    }
   }
 }

@@ -181,5 +181,58 @@
     "mobileColFatMass": "Fettmassa",
     "save": "Spara",
     "saveToProfile": "Spara till profil"
+  },
+  "refTable": {
+    "showWomensValues": "Visa kvinnors värden",
+    "showMensValues": "Visa mäns värden",
+    "category": "Kategori",
+    "men": "Män",
+    "women": "Kvinnor",
+    "source": "Källa: American Council on Exercise",
+    "whatDoRangesMean": "Vad betyder intervallen?",
+    "description": "Beskrivning",
+    "bodyFat": "Kroppsfett",
+    "ffmiMen": "FFMI (män)",
+    "ffmiWomen": "FFMI (kvinnor)",
+    "altMenBF1": "Kroppsfett visuell guide för män",
+    "altMenBF2": "Kroppsfett visuell guide för män 2",
+    "altWomenBF1": "Kroppsfett visuell guide för kvinnor",
+    "altWomenBF2": "Kroppsfett visuell guide för kvinnor 2",
+    "maleInsights": {
+      "range1": {
+        "range": "3–7%",
+        "text": "Extremt lågt (tävlingsform). Väldigt tydlig muskeldefinition och vener. Svårt att bibehålla över tid."
+      },
+      "range2": {
+        "range": "10–15%",
+        "text": "Den klassiska \"beach-kroppen\". Magrutorna syns oftast tydligt här."
+      },
+      "range3": {
+        "range": "20–25%",
+        "text": "En normal och hälsosam nivå för de flesta män. Muskeldefinitionen är mindre tydlig, men kroppen ser proportionerlig ut."
+      },
+      "range4": {
+        "range": "30% och uppåt",
+        "text": "Indikerar övervikt där fettet ofta samlas runt midjan, vilket är kopplat till högre hälsorisker."
+      }
+    },
+    "femaleInsights": {
+      "range1": {
+        "range": "10–12%",
+        "text": "Extremt lågt, ses oftast bara hos tävlande kroppsbyggare. Kan påverka hormonbalans och hälsa negativt."
+      },
+      "range2": {
+        "range": "15–22%",
+        "text": "\"Fit\" eller idrottslig nivå. Muskeldefinition är ofta tydlig, särskilt i magregionen."
+      },
+      "range3": {
+        "range": "25–35%",
+        "text": "En hälsosam och normal nivå för de flesta kvinnor. Kroppen har naturliga kurvor och en sund energireserv."
+      },
+      "range4": {
+        "range": "40% och uppåt",
+        "text": "Klassas ofta som övervikt eller fetma, vilket kan öka risken för livsstilssjukdomar."
+      }
+    }
   }
 }

@@ -167,5 +167,19 @@
     "errorEmpty": "Måltiden måste ha ett namn",
     "successRenamed": "Måltiden har döpts om",
     "updateError": "Kunde inte uppdatera måltiden"
+  },
+  "recipeImpact": {
+    "titleDelete_one": "Livsmedlet används i {{count}} recept",
+    "titleDelete_other": "Livsmedlet används i {{count}} recept",
+    "titleUpdate_one": "Ändringen påverkar {{count}} recept",
+    "titleUpdate_other": "Ändringen påverkar {{count}} recept",
+    "deleteDescriptionSuffix": "används i nedanstående recept. Om du raderar livsmedlet kommer dessa recept att visa en saknad ingrediens.",
+    "updateDescriptionPrefix": "Ändringen av",
+    "updateDescriptionSuffix": "påverkar beräkningarna i nedanstående recept. Recepten uppdateras automatiskt när du sparar.",
+    "servings": "{{count}} port",
+    "ingredients": "{{count}} ing.",
+    "cancel": "Avbryt",
+    "deleteAnyway": "Radera ändå",
+    "saveAnyway": "Spara ändå"
   }
 }

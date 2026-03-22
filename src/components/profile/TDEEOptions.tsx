@@ -5,6 +5,7 @@
  */
 
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -47,6 +48,7 @@ export default function TDEEOptions({
   onTDEEChange,
   onBeforeNavigate,
 }: TDEEOptionsProps) {
+  const { t } = useTranslation('profile')
   const navigate = useNavigate()
   const [showManualEntry, setShowManualEntry] = useState(false)
 
@@ -66,16 +68,14 @@ export default function TDEEOptions({
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
               <Calculator className="h-5 w-5 text-primary-600" />
-              Beräkna TDEE
+              {t('tdeeOptions.calculateTitle')}
             </CardTitle>
-            <CardDescription>
-              Använd vår kalkylator för att beräkna ditt TDEE baserat på aktivitetsnivå och träning
-            </CardDescription>
+            <CardDescription>{t('tdeeOptions.calculateDesc')}</CardDescription>
           </CardHeader>
           <CardContent>
             <Button onClick={handleCalculateTDEE} className="w-full" size="lg">
               <Calculator className="h-4 w-4 mr-2" />
-              Gå till TDEE-kalkylator
+              {t('tdeeOptions.calculateButton')}
             </Button>
           </CardContent>
         </Card>
@@ -85,11 +85,9 @@ export default function TDEEOptions({
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
               <Edit3 className="h-5 w-5 text-blue-600" />
-              Ange TDEE manuellt
+              {t('tdeeOptions.manualTitle')}
             </CardTitle>
-            <CardDescription>
-              Ange ditt TDEE om du redan känner till det från en annan källa
-            </CardDescription>
+            <CardDescription>{t('tdeeOptions.manualDesc')}</CardDescription>
           </CardHeader>
           <CardContent>
             <Button
@@ -99,7 +97,7 @@ export default function TDEEOptions({
               size="lg"
             >
               <Edit3 className="h-4 w-4 mr-2" />
-              {showManualEntry ? 'Dölj formulär' : 'Visa formulär'}
+              {showManualEntry ? t('tdeeOptions.hideForm') : t('tdeeOptions.showForm')}
             </Button>
           </CardContent>
         </Card>
