@@ -26,6 +26,8 @@ export default function OnboardingModal({ open, onOpenChange }: OnboardingModalP
   const [currentStep, setCurrentStep] = useState(0)
   const navigate = useNavigate()
 
+  if (!ready) return null
+
   const steps = [
     {
       id: 1,
@@ -141,8 +143,6 @@ export default function OnboardingModal({ open, onOpenChange }: OnboardingModalP
   const handleSkip = () => {
     onOpenChange(false)
   }
-
-  if (!ready) return null
 
   const step = steps[currentStep]
   const Icon = step.icon
