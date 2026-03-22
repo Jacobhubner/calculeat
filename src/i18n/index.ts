@@ -19,6 +19,9 @@ export const i18nReady = i18n
     // 'onboarding' and 'dashboard' are needed immediately on login —
     // before any lazy HTTP fetch has time to complete.
     ns: ['common', 'onboarding', 'dashboard'],
+    // Preload both languages so switching from sv→en doesn't lazy-fetch
+    // en/*.json after mount, which causes a brief flash of Swedish keys.
+    preload: ['sv', 'en'],
     // Ensure init() Promise waits for HttpBackend to finish fetching all
     // namespace JSON files before resolving. Without this, initAsync:true
     // (the default in i18next v25) makes init() resolve immediately and
