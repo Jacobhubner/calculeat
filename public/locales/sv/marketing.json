@@ -1,0 +1,150 @@
+{
+  "home": {
+    "hero": {
+      "featuresTitle": "Funktioner som faktiskt används",
+      "featuresSubtitle": "Inte ett verktyg du öppnar en gång — ett som följer med i köket, mataffären och på gymmet."
+    },
+    "features": {
+      "scan": {
+        "title": "Skanna direkt i affären",
+        "description": "Håll upp kameran mot streckkoden på förpackningen. CalculEat hämtar näringsvärden och lägger till livsmedlet på sekunder."
+      },
+      "recipes": {
+        "title": "Bygg recept och se näringsvärdet live",
+        "description": "Lägg till ingredienser ett i taget och följ kalorier, protein, fett och kolhydrater i realtid. Spara receptet och logga det direkt."
+      },
+      "share": {
+        "title": "Dela listor och recept med andra",
+        "description": "Skapa gemensamma livsmedelslistor med familj eller en partner. Alla i gruppen kan lägga till, se och logga från samma lista."
+      },
+      "body": {
+        "title": "Beräkna din kroppssammansättning",
+        "description": "Få en uppskattning av muskelmassa, fettmassa och BMI baserat på flera vetenskapliga metoder. Följ förändringen över tid."
+      },
+      "goals": {
+        "title": "Sätt mål och få en konkret plan",
+        "description": "Ange ditt viktmål — CalculEat räknar ut kalorimål, makrofördelning och en realistisk tidslinje. Inte ett genomsnitt, utan din plan."
+      }
+    },
+    "calculator": {
+      "title": "Prova vår kalkylator",
+      "subtitle": "Få ditt personliga energibehov direkt — ingen inloggning krävs."
+    },
+    "cta": {
+      "title": "Precision börjar här.",
+      "description": "CalculEat är byggt för dem som vill förstå sin kost på riktigt — inte för dem som nöjer sig med ungefärliga estimat. Konto tar 60 sekunder att skapa.",
+      "createAccount": "Skapa mitt konto gratis",
+      "noPaid": "Ingen betald version — alla funktioner är tillgängliga utan kostnad.",
+      "secure": "Dina uppgifter lagras säkert och delas aldrig med tredje part."
+    }
+  },
+  "howItWorks": {
+    "title": "Så fungerar det",
+    "subtitle": "Från affärshyllan till tallriken — och allt däremellan.",
+    "step1": {
+      "title": "Scanna eller sök efter livsmedel",
+      "description": "Håll kameran mot streckkoden i affären eller sök i vår databas med tusentals livsmedel. Näringsvärdet hämtas direkt — du loggar det på ett klick."
+    },
+    "step2": {
+      "title": "Bygg recept och logga måltider",
+      "description": "Skapa egna recept och följ kalorier, protein, fett och kolhydrater i realtid medan du lägger till ingredienser. Logga hela receptet som en portion."
+    },
+    "step3": {
+      "title": "Dela listor och recept med andra",
+      "description": "Bjud in familj, en partner eller en träningskompis till en gemensam lista. Alla kan lägga till och använda livsmedel och recept från listan."
+    },
+    "step4": {
+      "title": "Följ din progress och justera",
+      "description": "Grafer och statistik visar vad du faktiskt äter vecka för vecka. Jämför mot ditt kalorimål och din kroppssammansättning — och justera när det behövs."
+    }
+  },
+  "features": {
+    "hero": {
+      "title": "Kraftfulla funktioner för bättre hälsa",
+      "titleHighlight": "bättre hälsa",
+      "subtitle": "CalculEat kombinerar vetenskapliga kalkyler, smart kostloggning och detaljerad progress tracking i ett kraftfullt verktyg för att hjälpa dig nå dina hälsomål."
+    },
+    "overview": {
+      "smart": "Smart Kalkyler",
+      "logging": "Kostloggning",
+      "goals": "Målsättning",
+      "progress": "Progress Tracking",
+      "macros": "Makro-program",
+      "body": "Kroppskomposition",
+      "dashboard": "Dashboard",
+      "database": "Livsmedelsdatabas"
+    },
+    "detailed": {
+      "calculators": {
+        "title": "Vetenskapliga Kalkyler",
+        "description": "Välj mellan 10 olika BMR-formler och 6 PAL-system för maximalt exakta beräkningar anpassade efter din situation. Från Mifflin-St Jeor till Cunningham och Oxford/Henry - vi har alla formler du behöver.",
+        "highlight1": "10 BMR-formler för olika situationer",
+        "highlight2": "6 PAL-system för exakt TDEE",
+        "highlight3": "BMI och idealviktsberäkningar",
+        "highlight4": "Personaliserade kalorimål baserat på dina mål"
+      },
+      "logging": {
+        "title": "Enkel Kostloggning",
+        "description": "Logga dina måltider snabbt och enkelt med vår omfattande livsmedelsdatabas. Spara favoritmåltider, recept och få automatisk makroberäkning. Kaloritäthetssystemet hjälper dig göra smartare matval.",
+        "highlight1": "Omfattande livsmedelsdatabas",
+        "highlight2": "Automatisk makroberäkning",
+        "highlight3": "Spara favoritmåltider och recept",
+        "highlight4": "Kaloritäthetssystem med färgkodning"
+      },
+      "macros": {
+        "title": "Professionella Makro-program",
+        "description": "Förinställda makroprogram för olika mål - från hälsosam kost enligt NNR (Nordiska näringsrekommendationer) till bodybuilding-specifika lägen för bulk och cut. Anpassa efter dina behov.",
+        "highlight1": "NNR-läge för hälsosam kost",
+        "highlight2": "Off-Season läge för muskeltillväxt",
+        "highlight3": "On-Season läge för fettförbränning",
+        "highlight4": "Anpassade makromallar"
+      },
+      "goals": {
+        "title": "Målsättning & Tracking",
+        "description": "Sätt personliga mål för vikt, kalorier och makron. Få daglig feedback på din progress och se trender över tid. Avancerade proteinberäkningar tar hänsyn till din aktivitetsnivå och mål.",
+        "highlight1": "Viktmål med tidslinje",
+        "highlight2": "Aktivitetsbaserade proteinbehov",
+        "highlight3": "Makromål med hormonal hänsyn",
+        "highlight4": "Progress visualisering"
+      },
+      "body": {
+        "title": "Kroppskomposition",
+        "description": "Mät din kroppssammansättning med 12 professionella metoder - från caliper-mätningar till bandmätningar. Följ din fettfria massa och fettprocent över tid.",
+        "highlight1": "12 olika mätmetoder",
+        "highlight2": "Jackson/Pollock, Durnin/Womersley, U.S. Navy",
+        "highlight3": "Caliper- och bandmätningar",
+        "highlight4": "Historik över tid"
+      },
+      "dashboard": {
+        "title": "Dashboard & Insikter",
+        "description": "Få en tydlig översikt över dina näringsintag och framsteg med visuella grafer och statistik. Se daglig översikt, vecko- och månadsrapporter på ett ställe.",
+        "highlight1": "Daglig översikt med progress rings",
+        "highlight2": "Vecko- och månadsrapporter",
+        "highlight3": "Interaktiva grafer",
+        "highlight4": "Näringsstatistik och trender"
+      }
+    },
+    "more": {
+      "title": "Och mycket mer...",
+      "subtitle": "Utforska alla funktioner som gör CalculEat till det ultimata verktyget",
+      "density": {
+        "title": "Kaloritäthetssystem",
+        "description": "Smartare matval med färgkodade livsmedel baserat på kaloritäthet (volumetrics) för mer balanserade matval."
+      },
+      "recipes": {
+        "title": "Recepthantering",
+        "description": "Skapa och spara dina egna recept med automatisk näringsuträkning. Dela med vänner eller håll dem privata."
+      },
+      "security": {
+        "title": "Säkerhet & Integritet",
+        "description": "Ditt data är säkert och privat. Exportera dina data när du vill. GDPR-kompatibel utan dataförsäljning."
+      }
+    },
+    "cta": {
+      "title": "Redo att börja din resa?",
+      "subtitle": "Skapa ditt konto idag och få tillgång till alla kraftfulla funktioner - helt gratis att komma igång!",
+      "button": "Skapa konto gratis",
+      "back": "Tillbaka till startsidan"
+    }
+  }
+}

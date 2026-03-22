@@ -1,0 +1,150 @@
+{
+  "home": {
+    "hero": {
+      "featuresTitle": "Features that actually get used",
+      "featuresSubtitle": "Not a tool you open once — one that follows you in the kitchen, the grocery store, and the gym."
+    },
+    "features": {
+      "scan": {
+        "title": "Scan directly in the store",
+        "description": "Point your camera at the barcode on the packaging. CalculEat fetches nutrition data and adds the food in seconds."
+      },
+      "recipes": {
+        "title": "Build recipes and see nutrition live",
+        "description": "Add ingredients one by one and track calories, protein, fat, and carbs in real time. Save the recipe and log it directly."
+      },
+      "share": {
+        "title": "Share lists and recipes with others",
+        "description": "Create shared food lists with family or a partner. Everyone in the group can add, view, and log from the same list."
+      },
+      "body": {
+        "title": "Calculate your body composition",
+        "description": "Get an estimate of muscle mass, fat mass, and BMI based on multiple scientific methods. Track the change over time."
+      },
+      "goals": {
+        "title": "Set goals and get a concrete plan",
+        "description": "Enter your weight goal — CalculEat calculates your calorie target, macro distribution, and a realistic timeline. Not an average, your plan."
+      }
+    },
+    "calculator": {
+      "title": "Try our calculator",
+      "subtitle": "Get your personal energy needs instantly — no login required."
+    },
+    "cta": {
+      "title": "Precision starts here.",
+      "description": "CalculEat is built for those who want to truly understand their diet — not for those who settle for rough estimates. An account takes 60 seconds to create.",
+      "createAccount": "Create my account for free",
+      "noPaid": "No paid version — all features are available at no cost.",
+      "secure": "Your data is stored securely and never shared with third parties."
+    }
+  },
+  "howItWorks": {
+    "title": "How it works",
+    "subtitle": "From the grocery shelf to the dinner plate — and everything in between.",
+    "step1": {
+      "title": "Scan or search for food",
+      "description": "Point your camera at the barcode in the store or search our database with thousands of foods. Nutrition data is fetched instantly — you log it with one tap."
+    },
+    "step2": {
+      "title": "Build recipes and log meals",
+      "description": "Create your own recipes and track calories, protein, fat, and carbs in real time as you add ingredients. Log the entire recipe as one serving."
+    },
+    "step3": {
+      "title": "Share lists and recipes with others",
+      "description": "Invite family, a partner, or a training buddy to a shared list. Everyone can add and use foods and recipes from the list."
+    },
+    "step4": {
+      "title": "Track your progress and adjust",
+      "description": "Graphs and statistics show what you're actually eating week by week. Compare against your calorie goal and body composition — and adjust when needed."
+    }
+  },
+  "features": {
+    "hero": {
+      "title": "Powerful features for better health",
+      "titleHighlight": "better health",
+      "subtitle": "CalculEat combines scientific calculations, smart food logging, and detailed progress tracking in one powerful tool to help you reach your health goals."
+    },
+    "overview": {
+      "smart": "Smart Calculators",
+      "logging": "Food Logging",
+      "goals": "Goal Setting",
+      "progress": "Progress Tracking",
+      "macros": "Macro Programs",
+      "body": "Body Composition",
+      "dashboard": "Dashboard",
+      "database": "Food Database"
+    },
+    "detailed": {
+      "calculators": {
+        "title": "Scientific Calculators",
+        "description": "Choose from 10 different BMR formulas and 6 PAL systems for maximally accurate calculations tailored to your situation. From Mifflin-St Jeor to Cunningham and Oxford/Henry — we have all the formulas you need.",
+        "highlight1": "10 BMR formulas for different situations",
+        "highlight2": "6 PAL systems for accurate TDEE",
+        "highlight3": "BMI and ideal weight calculations",
+        "highlight4": "Personalized calorie goals based on your targets"
+      },
+      "logging": {
+        "title": "Simple Food Logging",
+        "description": "Log your meals quickly and easily with our comprehensive food database. Save favorite meals, recipes, and get automatic macro calculations. The calorie density system helps you make smarter food choices.",
+        "highlight1": "Comprehensive food database",
+        "highlight2": "Automatic macro calculation",
+        "highlight3": "Save favorite meals and recipes",
+        "highlight4": "Calorie density system with color coding"
+      },
+      "macros": {
+        "title": "Professional Macro Programs",
+        "description": "Preset macro programs for different goals — from healthy eating according to NNR (Nordic Nutrition Recommendations) to bodybuilding-specific modes for bulk and cut. Customize to your needs.",
+        "highlight1": "NNR mode for healthy eating",
+        "highlight2": "Off-Season mode for muscle growth",
+        "highlight3": "On-Season mode for fat loss",
+        "highlight4": "Custom macro templates"
+      },
+      "goals": {
+        "title": "Goal Setting & Tracking",
+        "description": "Set personal goals for weight, calories, and macros. Get daily feedback on your progress and see trends over time. Advanced protein calculations account for your activity level and goals.",
+        "highlight1": "Weight goals with timeline",
+        "highlight2": "Activity-based protein needs",
+        "highlight3": "Macro goals with hormonal considerations",
+        "highlight4": "Progress visualization"
+      },
+      "body": {
+        "title": "Body Composition",
+        "description": "Measure your body composition with 12 professional methods — from caliper measurements to tape measurements. Track your lean mass and body fat percentage over time.",
+        "highlight1": "12 different measurement methods",
+        "highlight2": "Jackson/Pollock, Durnin/Womersley, U.S. Navy",
+        "highlight3": "Caliper and tape measurements",
+        "highlight4": "History over time"
+      },
+      "dashboard": {
+        "title": "Dashboard & Insights",
+        "description": "Get a clear overview of your nutrient intake and progress with visual graphs and statistics. See your daily overview, weekly and monthly reports in one place.",
+        "highlight1": "Daily overview with progress rings",
+        "highlight2": "Weekly and monthly reports",
+        "highlight3": "Interactive graphs",
+        "highlight4": "Nutrition statistics and trends"
+      }
+    },
+    "more": {
+      "title": "And much more...",
+      "subtitle": "Explore all the features that make CalculEat the ultimate tool",
+      "density": {
+        "title": "Calorie Density System",
+        "description": "Smarter food choices with color-coded foods based on calorie density (volumetrics) for more balanced eating."
+      },
+      "recipes": {
+        "title": "Recipe Management",
+        "description": "Create and save your own recipes with automatic nutrition calculation. Share with friends or keep them private."
+      },
+      "security": {
+        "title": "Security & Privacy",
+        "description": "Your data is safe and private. Export your data whenever you want. GDPR-compliant with no data sales."
+      }
+    },
+    "cta": {
+      "title": "Ready to start your journey?",
+      "subtitle": "Create your account today and get access to all powerful features — completely free to get started!",
+      "button": "Create account for free",
+      "back": "Back to home"
+    }
+  }
+}

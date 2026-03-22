@@ -1,4 +1,5 @@
 import { Link, Navigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/contexts/AuthContext'
 import SiteHeader from '@/components/layout/SiteHeader'
 import SiteFooter from '@/components/layout/SiteFooter'
@@ -10,6 +11,7 @@ import { Scan, Share2, ChefHat, Scale, Target } from 'lucide-react'
 
 export default function HomePage() {
   const { user } = useAuth()
+  const { t } = useTranslation('marketing')
 
   // Redirect logged-in users to the app
   if (user) {
@@ -29,11 +31,10 @@ export default function HomePage() {
           <div className="container mx-auto px-4">
             <div className="text-center max-w-2xl mx-auto mb-12">
               <h2 className="text-3xl md:text-4xl font-semibold text-neutral-900 mb-3">
-                Funktioner som faktiskt används
+                {t('home.hero.featuresTitle')}
               </h2>
               <p className="text-lg text-neutral-600">
-                Inte ett verktyg du öppnar en gång — ett som följer med i köket, mataffären och på
-                gymmet.
+                {t('home.hero.featuresSubtitle')}
               </p>
             </div>
 
@@ -44,11 +45,10 @@ export default function HomePage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-neutral-900 text-lg mb-1">
-                    Skanna direkt i affären
+                    {t('home.features.scan.title')}
                   </h3>
                   <p className="text-sm text-neutral-600 leading-relaxed">
-                    Håll upp kameran mot streckkoden på förpackningen. CalculEat hämtar
-                    näringsvärden och lägger till livsmedlet på sekunder.
+                    {t('home.features.scan.description')}
                   </p>
                 </div>
               </div>
@@ -59,11 +59,10 @@ export default function HomePage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-neutral-900 text-lg mb-1">
-                    Bygg recept och se näringsvärdet live
+                    {t('home.features.recipes.title')}
                   </h3>
                   <p className="text-sm text-neutral-600 leading-relaxed">
-                    Lägg till ingredienser ett i taget och följ kalorier, protein, fett och
-                    kolhydrater i realtid. Spara receptet och logga det direkt.
+                    {t('home.features.recipes.description')}
                   </p>
                 </div>
               </div>
@@ -74,11 +73,10 @@ export default function HomePage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-neutral-900 text-lg mb-1">
-                    Dela listor och recept med andra
+                    {t('home.features.share.title')}
                   </h3>
                   <p className="text-sm text-neutral-600 leading-relaxed">
-                    Skapa gemensamma livsmedelslistor med familj eller en partner. Alla i gruppen
-                    kan lägga till, se och logga från samma lista.
+                    {t('home.features.share.description')}
                   </p>
                 </div>
               </div>
@@ -89,11 +87,10 @@ export default function HomePage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-neutral-900 text-lg mb-1">
-                    Beräkna din kroppssammansättning
+                    {t('home.features.body.title')}
                   </h3>
                   <p className="text-sm text-neutral-600 leading-relaxed">
-                    Få en uppskattning av muskelmassa, fettmassa och BMI baserat på flera
-                    vetenskapliga metoder. Följ förändringen över tid.
+                    {t('home.features.body.description')}
                   </p>
                 </div>
               </div>
@@ -104,11 +101,10 @@ export default function HomePage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-neutral-900 text-lg mb-1">
-                    Sätt mål och få en konkret plan
+                    {t('home.features.goals.title')}
                   </h3>
                   <p className="text-sm text-neutral-600 leading-relaxed">
-                    Ange ditt viktmål — CalculEat räknar ut kalorimål, makrofördelning och en
-                    realistisk tidslinje. Inte ett genomsnitt, utan din plan.
+                    {t('home.features.goals.description')}
                   </p>
                 </div>
               </div>
@@ -121,10 +117,10 @@ export default function HomePage() {
           <div className="container mx-auto px-4">
             <div className="text-center max-w-3xl mx-auto mb-12">
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold text-neutral-900 mb-4">
-                Prova vår kalkylator
+                {t('home.calculator.title')}
               </h2>
               <p className="text-lg md:text-xl text-neutral-600">
-                Få ditt personliga energibehov direkt — ingen inloggning krävs.
+                {t('home.calculator.subtitle')}
               </p>
             </div>
 
@@ -141,20 +137,19 @@ export default function HomePage() {
         <section className="bg-neutral-900 py-20 md:py-28">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-white">
-              Precision börjar här.
+              {t('home.cta.title')}
             </h2>
             <p className="text-lg md:text-xl text-neutral-300 mb-10 max-w-2xl mx-auto">
-              CalculEat är byggt för dem som vill förstå sin kost på riktigt — inte för dem som
-              nöjer sig med ungefärliga estimat. Konto tar 60 sekunder att skapa.
+              {t('home.cta.description')}
             </p>
 
             <Button size="lg" variant="accent" className="shadow-lg hover:shadow-xl mb-8" asChild>
-              <Link to="/register">Skapa mitt konto gratis</Link>
+              <Link to="/register">{t('home.cta.createAccount')}</Link>
             </Button>
 
             <div className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-8 text-sm text-neutral-400">
-              <span>Ingen betald version — alla funktioner är tillgängliga utan kostnad.</span>
-              <span>Dina uppgifter lagras säkert och delas aldrig med tredje part.</span>
+              <span>{t('home.cta.noPaid')}</span>
+              <span>{t('home.cta.secure')}</span>
             </div>
           </div>
         </section>
