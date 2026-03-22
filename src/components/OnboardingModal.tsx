@@ -3,7 +3,7 @@
  * Guides new users through the initial setup process
  */
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -22,9 +22,23 @@ interface OnboardingModalProps {
 }
 
 export default function OnboardingModal({ open, onOpenChange }: OnboardingModalProps) {
-  const { t } = useTranslation('onboarding')
+  const { t, i18n } = useTranslation('onboarding')
+  const [nsReady, setNsReady] = useState(() => i18n.hasLoadedNamespace('onboarding'))
+
+  useEffect(() => {
+    if (nsReady) return
+    const check = () => {
+      if (i18n.hasLoadedNamespace('onboarding')) setNsReady(true)
+    }
+    i18n.on('loaded', check)
+    return () => {
+      i18n.off('loaded', check)
+    }
+  }, [i18n, nsReady])
   const [currentStep, setCurrentStep] = useState(0)
   const navigate = useNavigate()
+
+  if (!nsReady) return null
 
   const steps = [
     {
