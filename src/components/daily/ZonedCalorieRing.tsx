@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
 
 interface ZonedCalorieRingProps {
   consumed: number
@@ -45,6 +46,7 @@ export function ZonedCalorieRing({
     lg: { size: 220, strokeWidth: 16, textSize: 'text-4xl', subTextSize: 'text-sm' },
   }
 
+  const { t } = useTranslation('dashboard')
   const config = sizeConfig[size]
   const radius = (config.size - config.strokeWidth) / 2
   const circumference = radius * 2 * Math.PI
@@ -160,7 +162,7 @@ export function ZonedCalorieRing({
           <p className="text-lg font-semibold text-neutral-900">
             {Math.round(safeMin)}-{Math.round(safeMax)}
           </p>
-          <p className="text-[10px] text-neutral-500 uppercase tracking-wide">Mål</p>
+          <p className="text-[10px] text-neutral-500 uppercase tracking-wide">{t('ring.goal')}</p>
         </div>
         <div className="h-8 w-px bg-neutral-200" />
         <div>
@@ -170,7 +172,7 @@ export function ZonedCalorieRing({
             {isOver ? `+${Math.round(consumed - max)}` : Math.round(remaining)}
           </p>
           <p className="text-[10px] text-neutral-500 uppercase tracking-wide">
-            {isOver ? 'Över' : 'Kvar'}
+            {isOver ? t('ring.over') : t('ring.remaining')}
           </p>
         </div>
       </div>
