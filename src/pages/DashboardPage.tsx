@@ -563,7 +563,9 @@ export default function DashboardPage() {
                                   : 'text-error-600'
                           )}
                         >
-                          {calculations.bmiCategory}
+                          {calculations.bmiCategory
+                            ? t(`insights.bmiCategory.${calculations.bmiCategory}`)
+                            : null}
                         </p>
                       </div>
                     )}
@@ -579,7 +581,7 @@ export default function DashboardPage() {
                           </p>
                           {calculations.ffmiCategory && (
                             <p className="text-sm font-medium text-neutral-600">
-                              {calculations.ffmiCategory}
+                              {t(`insights.ffmiCategory.${calculations.ffmiCategory}`)}
                             </p>
                           )}
                         </div>

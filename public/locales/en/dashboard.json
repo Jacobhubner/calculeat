@@ -86,6 +86,21 @@
       "ffmi": "FFMI",
       "idealweight": "Ideal weight",
       "age": "Age"
+    },
+    "bmiCategory": {
+      "undervikt": "Underweight",
+      "normalvikt": "Normal weight",
+      "övervikt": "Overweight",
+      "fetma": "Obese"
+    },
+    "ffmiCategory": {
+      "Under medel": "Below average",
+      "Medel": "Average",
+      "Över medel": "Above average",
+      "Utmärkt": "Excellent",
+      "Överlägsen": "Superior",
+      "Misstanke om steroidanvändning": "Steroid use suspected",
+      "Steroidanvändning trolig": "Steroid use likely"
     }
   },
   "mode": {
