@@ -1,75 +1,78 @@
+import { useTranslation } from 'react-i18next'
+
 export default function NormalizedFFMIContent() {
+  const { t } = useTranslation('content')
+
   return (
     <div className="space-y-6 text-neutral-700">
       <section>
-        <h3 className="text-lg font-semibold text-neutral-900 mb-3">Vad är Normaliserad FFMI?</h3>
+        <h3 className="text-lg font-semibold text-neutral-900 mb-3">
+          {t('normalizedFFMI.section1Title')}
+        </h3>
         <p>
-          <strong>Normaliserad FFMI</strong> är en justering av det vanliga FFMI-värdet för att
-          kompensera för skillnader i kroppslängd. Längre personer har naturligt högre FFMI-värden,
-          så normaliseringen gör det möjligt att jämföra muskelmassa mer rättvist mellan personer
-          med olika längd.
+          <strong>Normaliserad FFMI</strong> {t('normalizedFFMI.section1Intro')}
         </p>
       </section>
 
       <section className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <h4 className="font-semibold text-blue-900 mb-2">Hur beräknas Normaliserad FFMI?</h4>
+        <h4 className="font-semibold text-blue-900 mb-2">{t('normalizedFFMI.section2Title')}</h4>
         <div className="space-y-2 text-sm text-blue-800">
           <div className="bg-neutral-50 border border-blue-200 rounded-lg p-3">
-            <code className="text-sm">Normaliserad FFMI = FFMI + 6.1 × (1.8 - Längd (m))</code>
+            <code className="text-sm">{t('normalizedFFMI.section2Formula')}</code>
           </div>
-          <p>Formeln normaliserar alla värden till en referenslängd på 1.8 meter (180 cm).</p>
+          <p>{t('normalizedFFMI.section2Note')}</p>
         </div>
       </section>
 
       <section>
-        <h4 className="font-semibold text-neutral-900 mb-2">Varför normaliseras FFMI?</h4>
+        <h4 className="font-semibold text-neutral-900 mb-2">{t('normalizedFFMI.section3Title')}</h4>
         <ul className="space-y-2 text-sm">
           <li className="flex gap-2">
             <span className="text-blue-600">•</span>
             <span>
-              <strong>Längre personer</strong> har naturligt högre FFMI-värden på grund av ökad
-              muskelmassa i relation till kroppslängd
+              <strong>{t('normalizedFFMI.section3Item1Label')}</strong>{' '}
+              {t('normalizedFFMI.section3Item1Text')}
             </span>
           </li>
           <li className="flex gap-2">
             <span className="text-blue-600">•</span>
             <span>
-              <strong>Kortare personer</strong> har naturligt lägre FFMI-värden
+              <strong>{t('normalizedFFMI.section3Item2Label')}</strong>{' '}
+              {t('normalizedFFMI.section3Item2Text')}
             </span>
           </li>
           <li className="flex gap-2">
             <span className="text-blue-600">•</span>
             <span>
-              Normaliseringen ger en <strong>rättvisare jämförelse</strong> mellan individer
+              {t('normalizedFFMI.section3Item3Text')}{' '}
+              <strong>{t('normalizedFFMI.section3Item3Bold')}</strong>{' '}
+              {t('normalizedFFMI.section3Item3Suffix')}
             </span>
           </li>
         </ul>
       </section>
 
       <section>
-        <h4 className="font-semibold text-neutral-900 mb-2">Praktisk tillämpning</h4>
+        <h4 className="font-semibold text-neutral-900 mb-2">{t('normalizedFFMI.section4Title')}</h4>
         <ul className="space-y-2 text-sm">
           <li className="flex gap-2">
             <span className="text-green-600">•</span>
-            <span>Jämföra muskelmassa oberoende av kroppslängd</span>
+            <span>{t('normalizedFFMI.section4Item1')}</span>
           </li>
           <li className="flex gap-2">
             <span className="text-green-600">•</span>
-            <span>Bedöma om muskelmassa är inom naturliga gränser</span>
+            <span>{t('normalizedFFMI.section4Item2')}</span>
           </li>
           <li className="flex gap-2">
             <span className="text-green-600">•</span>
-            <span>Sätta realistiska mål för muskeluppbyggnad</span>
+            <span>{t('normalizedFFMI.section4Item3')}</span>
           </li>
         </ul>
       </section>
 
       <section className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-        <h4 className="font-semibold text-amber-900 mb-2">⚠ Viktigt att veta</h4>
-        <p className="text-sm text-amber-800">
-          Precis som FFMI påverkas normaliserad FFMI av noggrannheten i kroppsfettmätningen. En
-          felaktig mätning ger felaktiga värden.
-        </p>
+        <h4 className="font-semibold text-amber-900 mb-2">{t('normalizedFFMI.section5Title')}</h4>
+        <p className="text-sm text-amber-800">{t('normalizedFFMI.section5Text')}</p>
       </section>
     </div>
   )

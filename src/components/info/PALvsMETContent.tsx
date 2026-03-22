@@ -1,169 +1,161 @@
 /**
  * PAL vs MET Information Content
  */
+import { useTranslation } from 'react-i18next'
 
 export default function PALvsMETContent() {
+  const { t } = useTranslation('content')
+
   return (
     <div className="space-y-4">
-      {/* Intro */}
       <section>
-        <h3 className="text-lg font-semibold text-neutral-900 mb-2">Vad är PAL och MET?</h3>
+        <h3 className="text-lg font-semibold text-neutral-900 mb-2">
+          {t('palVsMet.section1Title')}
+        </h3>
         <p>
-          <strong>PAL och MET</strong> används för att uppskatta energiförbrukning – men på olika
-          sätt.
+          <strong>PAL och MET</strong> {t('palVsMet.section1Intro')}
         </p>
       </section>
 
-      {/* PAL */}
       <section>
         <h3 className="text-lg font-semibold text-neutral-900 mb-2">
-          PAL – Physical Activity Level
+          {t('palVsMet.section2Title')}
         </h3>
         <p>
-          <strong>PAL</strong> är en multiplikator som beskriver din totala energiförbrukning
-          relativt ditt BMR/RMR över en hel dag.
+          <strong>PAL</strong> {t('palVsMet.section2Intro')}
         </p>
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-3">
-          <p className="font-medium text-center">TDEE = RMR × PAL</p>
+          <p className="font-medium text-center">{t('palVsMet.section2Formula')}</p>
         </div>
-        <p className="mt-3">
-          PAL-värden tar hänsyn till <strong>all aktivitet</strong> under en 24-timmarsperiod.
-        </p>
+        <p className="mt-3">{t('palVsMet.section2Note')}</p>
       </section>
 
-      {/* MET */}
       <section>
         <h3 className="text-lg font-semibold text-neutral-900 mb-2">
-          MET – Metabolic Equivalent of Task
+          {t('palVsMet.section3Title')}
         </h3>
         <p>
-          <strong>MET</strong> är ett mått på energiförbrukningen för en{' '}
-          <strong>specifik aktivitet</strong> vid ett specifikt tillfälle.
+          <strong>MET</strong> {t('palVsMet.section3Intro')}
         </p>
         <div className="bg-green-50 border border-green-200 rounded-lg p-4 mt-3">
-          <p className="font-medium">1 MET = energi i vila (≈ 1 kcal/kg/timme)</p>
+          <p className="font-medium">{t('palVsMet.section3Formula')}</p>
         </div>
       </section>
 
-      {/* Skillnaden */}
       <section>
-        <h3 className="text-lg font-semibold text-neutral-900 mb-2">PAL vs MET – Skillnaden</h3>
+        <h3 className="text-lg font-semibold text-neutral-900 mb-2">
+          {t('palVsMet.section4Title')}
+        </h3>
         <div className="grid md:grid-cols-2 gap-4">
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <p className="font-medium text-blue-900 mb-2">PAL</p>
+            <p className="font-medium text-blue-900 mb-2">{t('palVsMet.palTitle')}</p>
             <ul className="text-sm space-y-1 text-neutral-700">
-              <li>✓ Helhetsbild över en hel dag</li>
-              <li>✓ Används för att beräkna TDEE</li>
-              <li>✓ Ett värde per dag (1.2–2.5)</li>
-              <li>✓ Tar hänsyn till all aktivitet</li>
+              <li>{t('palVsMet.palItem1')}</li>
+              <li>{t('palVsMet.palItem2')}</li>
+              <li>{t('palVsMet.palItem3')}</li>
+              <li>{t('palVsMet.palItem4')}</li>
             </ul>
           </div>
           <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-            <p className="font-medium text-green-900 mb-2">MET</p>
+            <p className="font-medium text-green-900 mb-2">{t('palVsMet.metTitle')}</p>
             <ul className="text-sm space-y-1 text-neutral-700">
-              <li>✓ Specifik aktivitet vid en tidpunkt</li>
-              <li>✓ Används för att beräkna kalorier för enskild aktivitet</li>
-              <li>✓ Varierar per aktivitet (1–20+ MET)</li>
-              <li>✓ Mäter intensitet av en aktivitet</li>
+              <li>{t('palVsMet.metItem1')}</li>
+              <li>{t('palVsMet.metItem2')}</li>
+              <li>{t('palVsMet.metItem3')}</li>
+              <li>{t('palVsMet.metItem4')}</li>
             </ul>
           </div>
         </div>
       </section>
 
-      {/* Tumregel för steg och PAL */}
       <section>
-        <h3 className="text-lg font-semibold text-neutral-900 mb-2">En ungefärlig tumregel</h3>
-        <p className="text-neutral-700 mb-3">
-          Sambandet mellan antal steg per dag och en rimlig uppskattning av <strong>PAL</strong>.
-        </p>
+        <h3 className="text-lg font-semibold text-neutral-900 mb-2">
+          {t('palVsMet.section5Title')}
+        </h3>
+        <p className="text-neutral-700 mb-3">{t('palVsMet.section5Intro')}</p>
 
         <div className="overflow-x-auto">
           <table className="min-w-full border border-neutral-200 rounded-lg text-sm">
             <thead className="bg-neutral-100">
               <tr>
-                <th className="px-4 py-2 text-left font-medium text-neutral-900">Steg per dag</th>
-                <th className="px-4 py-2 text-left font-medium text-neutral-900">Rimlig PAL</th>
+                <th className="px-4 py-2 text-left font-medium text-neutral-900">
+                  {t('palVsMet.tableColSteps')}
+                </th>
+                <th className="px-4 py-2 text-left font-medium text-neutral-900">
+                  {t('palVsMet.tableColPal')}
+                </th>
               </tr>
             </thead>
             <tbody>
               <tr className="border-t">
-                <td className="px-4 py-2">≤ 5 000</td>
-                <td className="px-4 py-2">~1,2–1,3 (stillasittande)</td>
+                <td className="px-4 py-2">{t('palVsMet.tableRow1Steps')}</td>
+                <td className="px-4 py-2">{t('palVsMet.tableRow1Pal')}</td>
               </tr>
               <tr className="border-t bg-neutral-50">
-                <td className="px-4 py-2">7 000–10 000</td>
-                <td className="px-4 py-2">~1,4–1,6 (måttlig aktivitet)</td>
+                <td className="px-4 py-2">{t('palVsMet.tableRow2Steps')}</td>
+                <td className="px-4 py-2">{t('palVsMet.tableRow2Pal')}</td>
               </tr>
               <tr className="border-t">
-                <td className="px-4 py-2">&gt; 10 000</td>
-                <td className="px-4 py-2">~1,6+ beroende på tempo och övrig aktivitet</td>
+                <td className="px-4 py-2">{t('palVsMet.tableRow3Steps')}</td>
+                <td className="px-4 py-2">{t('palVsMet.tableRow3Pal')}</td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        <p className="text-xs text-neutral-600 mt-2">
-          10 000 steg motsvarar ungefär 6,5–8 kilometer.
-        </p>
+        <p className="text-xs text-neutral-600 mt-2">{t('palVsMet.tableNote')}</p>
       </section>
 
-      {/* När används vad */}
       <section>
-        <h3 className="text-lg font-semibold text-neutral-900 mb-2">När används vad?</h3>
+        <h3 className="text-lg font-semibold text-neutral-900 mb-2">
+          {t('palVsMet.section6Title')}
+        </h3>
         <ul className="list-disc list-inside mt-2 space-y-1">
           <li>
-            Dagligt energibehov → <strong>RMR × PAL</strong>
+            {t('palVsMet.whenItem1')} <strong>{t('palVsMet.whenItem1Formula')}</strong>
           </li>
           <li>
-            Träningspass → <strong>MET × vikt × tid</strong>
+            {t('palVsMet.whenItem2')} <strong>{t('palVsMet.whenItem2Formula')}</strong>
           </li>
         </ul>
       </section>
 
-      {/* Rätt sätt att kombinera MET med PAL */}
       <section>
-        <h3 className="text-lg font-semibold text-neutral-900 mb-2">Rätt sätt att kombinera MET</h3>
-        <p>
-          MET beskriver intensiteten i en aktivitet. Hur MET ska användas beror på om ditt PAL-värde
-          redan inkluderar träning eller endast speglar vardagsaktivitet.
-        </p>
+        <h3 className="text-lg font-semibold text-neutral-900 mb-2">
+          {t('palVsMet.section7Title')}
+        </h3>
+        <p>{t('palVsMet.section7Intro')}</p>
         <div className="space-y-3 mt-3">
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <p className="font-medium text-blue-900">PAL inkluderar träning</p>
-            <p className="font-mono text-sm text-neutral-700 mt-2">TDEE = RMR × PAL</p>
-            <p className="text-xs text-neutral-600 mt-2">
-              Om PAL-värdet inkluderar både vardagsaktivitet och träning behövs ingen ytterligare
-              beräkning. Träningens energiförbrukning ingår redan i PAL.
+            <p className="font-medium text-blue-900">{t('palVsMet.palIncludesTitle')}</p>
+            <p className="font-mono text-sm text-neutral-700 mt-2">
+              {t('palVsMet.palIncludesFormula')}
             </p>
+            <p className="text-xs text-neutral-600 mt-2">{t('palVsMet.palIncludesNote')}</p>
           </div>
           <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-            <p className="font-medium text-green-900">PAL baseras på vardag (ingen träning)</p>
+            <p className="font-medium text-green-900">{t('palVsMet.palExcludesTitle')}</p>
             <p className="font-mono text-sm text-neutral-700 mt-2">
-              TDEE = RMR × PAL + RMR × (MET − 1) × tid
+              {t('palVsMet.palExcludesFormula')}
             </p>
-            <p className="text-xs text-neutral-600 mt-2">
-              Här representerar PAL endast vardagsaktivitet (NEAT), och träning läggs till separat.
-              MET − 1 används eftersom endast den extra energin över vila ska adderas —
-              viloförbrukningen ingår redan i RMR × PAL.
-            </p>
+            <p className="text-xs text-neutral-600 mt-2">{t('palVsMet.palExcludesNote')}</p>
           </div>
         </div>
         <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4 mt-3 space-y-1">
-          <p className="text-sm font-semibold text-neutral-700 mb-2">Sammanfattning</p>
+          <p className="text-sm font-semibold text-neutral-700 mb-2">
+            {t('palVsMet.summaryTitle')}
+          </p>
           <div className="flex gap-2 text-sm text-neutral-700">
             <span className="text-neutral-400 mt-0.5">•</span>
-            <span>Använd endast PAL om det inkluderar träning</span>
+            <span>{t('palVsMet.summaryItem1')}</span>
           </div>
           <div className="flex gap-2 text-sm text-neutral-700">
             <span className="text-neutral-400 mt-0.5">•</span>
-            <span>Använd PAL + (MET − 1) om träning läggs till separat</span>
+            <span>{t('palVsMet.summaryItem2')}</span>
           </div>
           <div className="flex gap-2 text-sm text-neutral-700">
             <span className="text-neutral-400 mt-0.5">•</span>
-            <span>
-              Använd aldrig full MET tillsammans med RMR × PAL, eftersom det leder till
-              dubbelräkning av viloförbrukning
-            </span>
+            <span>{t('palVsMet.summaryItem3')}</span>
           </div>
         </div>
       </section>
