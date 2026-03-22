@@ -1,8 +1,11 @@
 import { Link } from 'react-router'
 import { ArrowRight, Calculator, Scan, ChefHat, Users, Scale, LayoutGrid } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button } from './ui/button'
 
 export function HeroSection() {
+  const { t } = useTranslation('marketing')
+
   return (
     <section className="relative overflow-hidden bg-white pt-20 pb-24 md:pt-28 md:pb-32">
       {/* Background pattern with subtle green radial gradient */}
@@ -14,17 +17,16 @@ export function HeroSection() {
           <div className="text-center lg:text-left space-y-8">
             <div className="space-y-4">
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-neutral-900 leading-tight">
-                Ta kontroll över din kost.{' '}
+                {t('home.hero.h1')}{' '}
                 <span className="bg-gradient-to-r from-primary-600 to-accent-500 bg-clip-text text-transparent">
-                  Enkelt med CalculEat.
+                  {t('home.hero.h1Highlight')}
                 </span>
               </h1>
               <p className="text-lg md:text-xl text-neutral-700 max-w-2xl mx-auto lg:mx-0">
-                Scanna livsmedel med kameran. Bygg egna recept. Dela listor med familj och vänner.
-                Koll på kalorier, makron och kroppssammansättning — allt på ett ställe.
+                {t('home.hero.body')}
               </p>
               <p className="text-sm text-neutral-500 max-w-2xl mx-auto lg:mx-0">
-                Tar mindre än en minut att komma igång.
+                {t('home.hero.subtext')}
               </p>
             </div>
 
@@ -37,7 +39,7 @@ export function HeroSection() {
                 className="text-base font-semibold shadow-xl hover:shadow-2xl transition-all"
               >
                 <Link to="/register">
-                  Kom igång — det är gratis
+                  {t('home.hero.ctaPrimary')}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
@@ -50,7 +52,7 @@ export function HeroSection() {
               >
                 <a href="#calculator">
                   <Calculator className="mr-2 h-5 w-5" />
-                  Prova kalkylatorn
+                  {t('home.hero.ctaSecondary')}
                 </a>
               </Button>
             </div>
@@ -64,7 +66,7 @@ export function HeroSection() {
                 <div className="flex items-center gap-2 mb-5 pb-4 border-b border-neutral-100">
                   <LayoutGrid className="h-4 w-4 text-primary-600" />
                   <span className="text-sm font-semibold text-neutral-700">
-                    CalculEat — dina verktyg
+                    {t('home.hero.cardHeader')}
                   </span>
                 </div>
 
@@ -72,26 +74,24 @@ export function HeroSection() {
                 <div className="grid grid-cols-2 gap-3 mb-5">
                   <div className="rounded-xl bg-primary-50 border border-primary-200 p-4 flex flex-col gap-2">
                     <Scan className="h-5 w-5 text-primary-600" strokeWidth={2} />
-                    <p className="text-sm font-medium text-neutral-700">Skanna streckkoder</p>
+                    <p className="text-sm font-medium text-neutral-700">{t('home.hero.tile1')}</p>
                   </div>
                   <div className="rounded-xl bg-accent-50 border border-accent-200 p-4 flex flex-col gap-2">
                     <ChefHat className="h-5 w-5 text-accent-600" strokeWidth={2} />
-                    <p className="text-sm font-medium text-neutral-700">Bygg recept</p>
+                    <p className="text-sm font-medium text-neutral-700">{t('home.hero.tile2')}</p>
                   </div>
                   <div className="rounded-xl bg-primary-50 border border-primary-200 p-4 flex flex-col gap-2">
                     <Users className="h-5 w-5 text-primary-600" strokeWidth={2} />
-                    <p className="text-sm font-medium text-neutral-700">Dela listor</p>
+                    <p className="text-sm font-medium text-neutral-700">{t('home.hero.tile3')}</p>
                   </div>
                   <div className="rounded-xl bg-accent-50 border border-accent-200 p-4 flex flex-col gap-2">
                     <Scale className="h-5 w-5 text-accent-600" strokeWidth={2} />
-                    <p className="text-sm font-medium text-neutral-700">Kroppssammansättning</p>
+                    <p className="text-sm font-medium text-neutral-700">{t('home.hero.tile4')}</p>
                   </div>
                 </div>
 
                 {/* Footer line */}
-                <div className="text-xs text-neutral-400">
-                  + Kaloriräkning, mål, trender och mer.
-                </div>
+                <div className="text-xs text-neutral-400">{t('home.hero.cardFooter')}</div>
               </div>
             </div>
           </div>

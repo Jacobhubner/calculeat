@@ -1,13 +1,10 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Calculator, Info } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button } from './ui/button'
 import { calculateBMRWithFormula } from '@/lib/calculations/bmr'
-import {
-  ACTIVITY_DESCRIPTIONS,
-  getBasicInternetPAL,
-  type ActivityLevel,
-} from '@/lib/calculations/tdee'
+import { getBasicInternetPAL, type ActivityLevel } from '@/lib/calculations/tdee'
 import type { Gender } from '@/lib/types'
 
 interface CalculatorResult {
@@ -16,6 +13,7 @@ interface CalculatorResult {
 }
 
 export default function SmartCalculator() {
+  const { t } = useTranslation('marketing')
   const [age, setAge] = useState<string>('')
   const [weight, setWeight] = useState<string>('')
   const [height, setHeight] = useState<string>('')
@@ -31,27 +29,27 @@ export default function SmartCalculator() {
     const heightNum = parseFloat(height)
 
     if (!ageNum || !weightNum || !heightNum || !activityLevel || !gender) {
-      alert('Vänligen fyll i alla fält')
+      alert(t('home.smartCalc.errorAllFields'))
       return
     }
 
     if (gender === 'other') {
-      alert('Vänligen välj Man eller Kvinna för att kunna beräkna')
+      alert(t('home.smartCalc.errorGender'))
       return
     }
 
     if (ageNum < 1 || ageNum > 120) {
-      alert('Ålder måste vara mellan 1 och 120 år')
+      alert(t('home.smartCalc.errorAge'))
       return
     }
 
     if (weightNum < 20 || weightNum > 300) {
-      alert('Vikt måste vara mellan 20 och 300 kg')
+      alert(t('home.smartCalc.errorWeight'))
       return
     }
 
     if (heightNum < 100 || heightNum > 250) {
-      alert('Längd måste vara mellan 100 och 250 cm')
+      alert(t('home.smartCalc.errorHeight'))
       return
     }
 
@@ -64,7 +62,7 @@ export default function SmartCalculator() {
     })
 
     if (!bmr) {
-      alert('Det gick inte att beräkna BMR. Kontrollera dina värden.')
+      alert(t('home.smartCalc.errorBmr'))
       return
     }
 
@@ -73,7 +71,7 @@ export default function SmartCalculator() {
 
     // Validate PAL multiplier
     if (!palMultiplier || palMultiplier <= 0) {
-      alert('Det gick inte att beräkna TDEE. Kontrollera dina värden.')
+      alert(t('home.smartCalc.errorTdee'))
       return
     }
 
@@ -85,17 +83,27 @@ export default function SmartCalculator() {
     })
   }
 
+  const activityDescriptions: Record<ActivityLevel, string> = {
+    Sedentary: t('home.smartCalc.activityDescSedentary'),
+    'Lightly active': t('home.smartCalc.activityDescLightly'),
+    'Moderately active': t('home.smartCalc.activityDescModerately'),
+    'Very active': t('home.smartCalc.activityDescVery'),
+    'Extremely active': t('home.smartCalc.activityDescExtremely'),
+  }
+
   return (
     <div className="rounded-2xl border border-neutral-200 bg-white p-8 shadow-lg">
       <div className="mb-6 flex items-center space-x-3">
         <Calculator className="h-12 w-12 text-primary-600" />
-        <h2 className="text-3xl font-bold text-neutral-900">Beräkna ditt dagliga kaloribehov.</h2>
+        <h2 className="text-3xl font-bold text-neutral-900">{t('home.smartCalc.title')}</h2>
       </div>
 
       <div className="space-y-4">
         {/* Gender Selection */}
         <div>
-          <label className="block text-sm font-medium text-neutral-700 mb-2">Kön</label>
+          <label className="block text-sm font-medium text-neutral-700 mb-2">
+            {t('home.smartCalc.genderLabel')}
+          </label>
           <div className="flex gap-4">
             <label className="flex items-center cursor-pointer">
               <input
@@ -109,7 +117,7 @@ export default function SmartCalculator() {
                 }}
                 className="mr-2 h-4 w-4 text-primary-600 focus:ring-primary-500"
               />
-              <span className="text-neutral-700">Man</span>
+              <span className="text-neutral-700">{t('home.smartCalc.genderMale')}</span>
             </label>
             <label className="flex items-center cursor-pointer">
               <input
@@ -123,7 +131,7 @@ export default function SmartCalculator() {
                 }}
                 className="mr-2 h-4 w-4 text-primary-600 focus:ring-primary-500"
               />
-              <span className="text-neutral-700">Kvinna</span>
+              <span className="text-neutral-700">{t('home.smartCalc.genderFemale')}</span>
             </label>
             <label className="flex items-center cursor-pointer">
               <input
@@ -137,19 +145,21 @@ export default function SmartCalculator() {
                 }}
                 className="mr-2 h-4 w-4 text-primary-600 focus:ring-primary-500"
               />
-              <span className="text-neutral-700">Annan</span>
+              <span className="text-neutral-700">{t('home.smartCalc.genderOther')}</span>
             </label>
           </div>
           {genderError && (
             <p className="mt-2 text-sm text-red-600 font-medium">
-              Error! Ogiltigt val. Felet försvinner när du gör det.
+              {t('home.smartCalc.genderError')}
             </p>
           )}
         </div>
 
         {/* Age */}
         <div>
-          <label className="block text-sm font-medium text-neutral-700">Ålder</label>
+          <label className="block text-sm font-medium text-neutral-700">
+            {t('home.smartCalc.ageLabel')}
+          </label>
           <input
             type="number"
             value={age}
@@ -163,7 +173,9 @@ export default function SmartCalculator() {
 
         {/* Height */}
         <div>
-          <label className="block text-sm font-medium text-neutral-700">Längd (cm)</label>
+          <label className="block text-sm font-medium text-neutral-700">
+            {t('home.smartCalc.heightLabel')}
+          </label>
           <input
             type="number"
             value={height}
@@ -177,7 +189,9 @@ export default function SmartCalculator() {
 
         {/* Weight */}
         <div>
-          <label className="block text-sm font-medium text-neutral-700">Vikt (kg)</label>
+          <label className="block text-sm font-medium text-neutral-700">
+            {t('home.smartCalc.weightLabel')}
+          </label>
           <input
             type="number"
             value={weight}
@@ -192,18 +206,20 @@ export default function SmartCalculator() {
 
         {/* Activity Level */}
         <div>
-          <label className="block text-sm font-medium text-neutral-700 mb-2">Aktivitetsnivå</label>
+          <label className="block text-sm font-medium text-neutral-700 mb-2">
+            {t('home.smartCalc.activityLabel')}
+          </label>
           <select
             value={activityLevel}
             onChange={e => setActivityLevel(e.target.value as ActivityLevel | '')}
             className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
           >
-            <option value="">Välj aktivitetsnivå...</option>
-            <option value="Sedentary">Stillasittande</option>
-            <option value="Lightly active">Lätt aktiv</option>
-            <option value="Moderately active">Måttligt aktiv</option>
-            <option value="Very active">Mycket aktiv</option>
-            <option value="Extremely active">Extremt aktiv</option>
+            <option value="">{t('home.smartCalc.activityPlaceholder')}</option>
+            <option value="Sedentary">{t('home.smartCalc.activitySedentary')}</option>
+            <option value="Lightly active">{t('home.smartCalc.activityLightly')}</option>
+            <option value="Moderately active">{t('home.smartCalc.activityModerately')}</option>
+            <option value="Very active">{t('home.smartCalc.activityVery')}</option>
+            <option value="Extremely active">{t('home.smartCalc.activityExtremely')}</option>
           </select>
 
           {/* Activity Level Description - Only shown when activity level is selected */}
@@ -211,7 +227,7 @@ export default function SmartCalculator() {
             <div className="mt-3 flex gap-3 p-4 bg-blue-50 border border-blue-200 rounded-xl">
               <Info className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
               <p className="text-sm text-blue-800 leading-relaxed">
-                {ACTIVITY_DESCRIPTIONS[activityLevel]}
+                {activityDescriptions[activityLevel]}
               </p>
             </div>
           )}
@@ -219,18 +235,21 @@ export default function SmartCalculator() {
 
         {/* Calculate Button */}
         <Button onClick={handleCalculate} className="w-full">
-          Beräkna
+          {t('home.smartCalc.calculateButton')}
         </Button>
 
         {/* Results */}
         {result && (
           <div className="mt-6 space-y-4 border-t border-lime-200 bg-lime-50 rounded-xl p-6 pt-6">
-            <h3 className="text-xl font-semibold text-neutral-900">Dina resultat</h3>
+            <h3 className="text-xl font-semibold text-neutral-900">
+              {t('home.smartCalc.resultsTitle')}
+            </h3>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="rounded-xl bg-primary-50 p-4 border border-primary-200">
                 <p className="text-sm font-medium text-neutral-600 mb-1">
-                  BMR <span className="text-xs">(kcal/dag i vila)</span>
+                  {t('home.smartCalc.bmrLabel')}{' '}
+                  <span className="text-xs">({t('home.smartCalc.bmrSub')})</span>
                 </p>
                 <p className="text-3xl font-bold text-primary-600">{Math.round(result.bmr)} kcal</p>
                 <p className="text-xs text-neutral-500 mt-1">Basal Metabolic Rate</p>
@@ -238,7 +257,8 @@ export default function SmartCalculator() {
 
               <div className="rounded-xl bg-accent-50 p-4 border border-accent-200">
                 <p className="text-sm font-medium text-neutral-600 mb-1">
-                  TDEE <span className="text-xs">(kcal/dag totalt)</span>
+                  {t('home.smartCalc.tdeeLabel')}{' '}
+                  <span className="text-xs">({t('home.smartCalc.tdeeSub')})</span>
                 </p>
                 <p className="text-3xl font-bold text-accent-600">{Math.round(result.tdee)} kcal</p>
                 <p className="text-xs text-neutral-500 mt-1">Total Daily Energy Expenditure</p>
@@ -248,15 +268,14 @@ export default function SmartCalculator() {
             {/* Call to Action */}
             <div className="mt-6 rounded-xl bg-gradient-to-br from-primary-50 to-accent-50 p-6 border border-primary-200">
               <p className="text-sm text-neutral-700 mb-4">
-                Vill du använda fler formler och verktyg eller lära dig mer om dina värden?{' '}
-                <strong>Skapa ett konto eller logga in!</strong>
+                {t('home.smartCalc.ctaText')} <strong>{t('home.smartCalc.ctaBold')}</strong>
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
                 <Button asChild className="flex-1">
-                  <Link to="/register">Skapa konto</Link>
+                  <Link to="/register">{t('home.smartCalc.ctaRegister')}</Link>
                 </Button>
                 <Button variant="outline" asChild className="flex-1">
-                  <Link to="/login">Logga in</Link>
+                  <Link to="/login">{t('home.smartCalc.ctaLogin')}</Link>
                 </Button>
               </div>
             </div>
