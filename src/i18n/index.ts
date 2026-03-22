@@ -18,25 +18,7 @@ export const i18nReady = i18n
     // Namespaces that must be available before first render.
     // 'onboarding' and 'dashboard' are needed immediately on login —
     // before any lazy HTTP fetch has time to complete.
-    ns: [
-      'auth',
-      'body',
-      'common',
-      'content',
-      'dashboard',
-      'food',
-      'history',
-      'marketing',
-      'onboarding',
-      'profile',
-      'recipes',
-      'settings',
-      'shared-lists',
-      'social',
-      'today',
-      'tools',
-      'translation',
-    ],
+    ns: ['common', 'onboarding', 'dashboard'],
     // Preload both languages so switching sv↔en never lazy-fetches after mount.
     preload: ['sv', 'en'],
     backend: {
