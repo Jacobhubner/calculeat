@@ -5,7 +5,7 @@ import HttpBackend from 'i18next-http-backend'
 
 const isDev = import.meta.env.DEV
 
-export const i18nReady = i18n
+i18n
   .use(HttpBackend)
   .use(LanguageDetector)
   .use(initReactI18next)
