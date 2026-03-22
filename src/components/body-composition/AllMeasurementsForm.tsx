@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import type { CaliperMeasurements, TapeMeasurements } from '@/lib/calculations/bodyComposition'
 import { Info } from 'lucide-react'
@@ -17,19 +18,16 @@ export default function AllMeasurementsForm({
   onCaliperChange,
   onTapeChange,
 }: AllMeasurementsFormProps) {
+  const { t } = useTranslation('body')
   return (
     <div className="space-y-6">
       <Card className="bg-primary-50 border-primary-200">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Info className="h-5 w-5 text-primary-600" />
-            Hur fungerar detta?
+            {t('allMeasurements.howItWorks')}
           </CardTitle>
-          <CardDescription>
-            Fyll i alla mått du har tillgängliga nedan. Systemet kommer automatiskt att beräkna alla
-            metoder som är möjliga baserat på dina mätningar och visa resultaten i en
-            jämförelsetabell.
-          </CardDescription>
+          <CardDescription>{t('allMeasurements.description')}</CardDescription>
         </CardHeader>
       </Card>
 

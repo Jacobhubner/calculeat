@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { FlaskConical, Info } from 'lucide-react'
@@ -14,6 +15,7 @@ export default function DensityConversionSelector({
   conversionMethod,
   onMethodChange,
 }: DensityConversionSelectorProps) {
+  const { t } = useTranslation('body')
   const [showInfo, setShowInfo] = useState<'siri' | 'brozek' | null>(null)
 
   return (
@@ -22,11 +24,9 @@ export default function DensityConversionSelector({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <FlaskConical className="h-5 w-5 text-primary-600" />
-            Konverteringsmetod
+            {t('densityConversion.title')}
           </CardTitle>
-          <CardDescription>
-            Välj formel för att konvertera kroppsdensitet till fettprocent
-          </CardDescription>
+          <CardDescription>{t('densityConversion.description')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 gap-4">
@@ -41,7 +41,7 @@ export default function DensityConversionSelector({
                 onClick={() => onMethodChange('siri')}
               >
                 <span className="font-semibold">Siri</span>
-                <span className="text-xs opacity-80">(Standard)</span>
+                <span className="text-xs opacity-80">{t('densityConversion.siriStandard')}</span>
               </Button>
               <button
                 type="button"
@@ -50,7 +50,7 @@ export default function DensityConversionSelector({
                   setShowInfo('siri')
                 }}
                 className="absolute -top-2 -right-2 bg-white border border-neutral-200 rounded-full p-1 hover:bg-neutral-50 shadow-sm"
-                title="Visa information om Siri"
+                title={t('densityConversion.showInfoSiri')}
               >
                 <Info className="h-3.5 w-3.5 text-primary-600" />
               </button>
@@ -67,7 +67,7 @@ export default function DensityConversionSelector({
                 onClick={() => onMethodChange('brozek')}
               >
                 <span className="font-semibold">Brozek</span>
-                <span className="text-xs opacity-80">(Alternativ)</span>
+                <span className="text-xs opacity-80">{t('densityConversion.brozekAlternative')}</span>
               </Button>
               <button
                 type="button"
@@ -76,7 +76,7 @@ export default function DensityConversionSelector({
                   setShowInfo('brozek')
                 }}
                 className="absolute -top-2 -right-2 bg-white border border-neutral-200 rounded-full p-1 hover:bg-neutral-50 shadow-sm"
-                title="Visa information om Brozek"
+                title={t('densityConversion.showInfoBrozek')}
               >
                 <Info className="h-3.5 w-3.5 text-primary-600" />
               </button>

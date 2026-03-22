@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
@@ -24,6 +25,7 @@ export default function MethodSelectionCard({
   onMethodChange,
   gender,
 }: MethodSelectionCardProps) {
+  const { t } = useTranslation('body')
   const [showInfo, setShowInfo] = useState(false)
 
   return (
@@ -32,25 +34,22 @@ export default function MethodSelectionCard({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Calculator className="h-5 w-5 text-primary-600" />
-            Välj beräkningsmetod
+            {t('methodSelection.title')}
           </CardTitle>
-          <CardDescription>
-            Välj vilken metod du vill använda för att beräkna din kroppsfettsprocent. Olika metoder
-            kräver olika mätningar.
-          </CardDescription>
+          <CardDescription>{t('methodSelection.description')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
             <div className="flex items-end gap-2">
               <div className="flex-1 space-y-2">
-                <Label htmlFor="method-select">Beräkningsmetod</Label>
+                <Label htmlFor="method-select">{t('methodSelection.label')}</Label>
                 <Select
                   id="method-select"
                   value={selectedMethod}
                   onChange={e => onMethodChange(e.target.value as BodyCompositionMethod | '')}
                   className="w-full"
                 >
-                  <option value="">Välj en metod...</option>
+                  <option value="">{t('methodSelection.placeholder')}</option>
 
                   {/* Caliper Methods */}
                   <optgroup label={methodCategories.caliper.label}>
@@ -89,10 +88,10 @@ export default function MethodSelectionCard({
                   size="sm"
                   onClick={() => setShowInfo(true)}
                   className="flex items-center gap-1.5"
-                  title="Visa information om metoden"
+                  title={t('methodSelection.showInfo')}
                 >
                   <Info className="h-4 w-4" />
-                  Info
+                  {t('methodSelection.infoButton')}
                 </Button>
               )}
             </div>

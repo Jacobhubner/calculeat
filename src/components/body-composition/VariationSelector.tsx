@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { Label } from '@/components/ui/label'
 import type { BodyCompositionMethod, MethodVariation } from '@/lib/calculations/bodyComposition'
 import type { Gender } from '@/lib/types'
@@ -16,6 +17,7 @@ export default function VariationSelector({
   selectedVariation,
   onChange,
 }: VariationSelectorProps) {
+  const { t } = useTranslation('body')
   const variations = getMethodVariations(method, gender)
 
   // Don't show selector if method doesn't have variations
@@ -25,7 +27,7 @@ export default function VariationSelector({
 
   return (
     <div className="space-y-2">
-      <Label htmlFor="variation-select">Välj variation</Label>
+      <Label htmlFor="variation-select">{t('variationSelector.label')}</Label>
       <select
         id="variation-select"
         value={selectedVariation || variations[0]}
@@ -39,7 +41,7 @@ export default function VariationSelector({
         ))}
       </select>
       <p className="text-xs text-neutral-500">
-        Olika variationer använder olika kombinationer av mätningar och formler
+        {t('variationSelector.hint')}
       </p>
     </div>
   )
