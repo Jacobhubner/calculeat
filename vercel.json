@@ -1,7 +1,7 @@
 {
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/((?!locales/).*)",
       "destination": "/index.html"
     }
   ]
