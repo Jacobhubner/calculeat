@@ -19,6 +19,11 @@ export const i18nReady = i18n
     // 'onboarding' and 'dashboard' are needed immediately on login —
     // before any lazy HTTP fetch has time to complete.
     ns: ['common', 'onboarding', 'dashboard'],
+    // Ensure init() Promise waits for HttpBackend to finish fetching all
+    // namespace JSON files before resolving. Without this, initAsync:true
+    // (the default in i18next v25) makes init() resolve immediately and
+    // React mounts before translations are available.
+    initAsync: false,
     backend: {
       loadPath: '/locales/{{lng}}/{{ns}}.json',
       requestOptions: {
