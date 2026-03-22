@@ -23,12 +23,14 @@ interface OnboardingModalProps {
 
 export default function OnboardingModal({ open, onOpenChange }: OnboardingModalProps) {
   const { t, i18n } = useTranslation('onboarding')
-  const [nsReady, setNsReady] = useState(() => i18n.hasLoadedNamespace('onboarding'))
+  // i18n.hasLoadedNamespace() returns true too early (namespace scheduled, not fetched).
+  // i18n.exists() checks the store directly without triggering missingKeyHandler.
+  const [nsReady, setNsReady] = useState(() => i18n.exists('step1.title', { ns: 'onboarding' }))
 
   useEffect(() => {
     if (nsReady) return
     const check = () => {
-      if (i18n.hasLoadedNamespace('onboarding')) setNsReady(true)
+      if (i18n.exists('step1.title', { ns: 'onboarding' })) setNsReady(true)
     }
     i18n.on('loaded', check)
     return () => {
