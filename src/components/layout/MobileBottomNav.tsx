@@ -1,5 +1,6 @@
 import { useRef, useEffect, useLayoutEffect, useCallback } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import {
   LayoutDashboard,
   Calendar,
@@ -18,31 +19,32 @@ import {
 import { cn } from '@/lib/utils'
 import { useSocialBadgeCount } from '@/hooks/useShareInvitations'
 
-const navItems = [
-  { to: '/app', label: 'Översikt', icon: LayoutDashboard, exact: true },
-  { to: '/app/today', label: 'Idag', icon: Calendar },
-  { to: '/app/food-items', label: 'Livsmedel', icon: Apple },
-  { to: '/app/history', label: 'Historik', icon: History },
-  { to: '/app/recipes', label: 'Recept', icon: ChefHat },
-  { to: '/app/saved-meals', label: 'Måltider', icon: Bookmark },
-  { to: '/app/social', label: 'Social', icon: Users },
-  { to: '/app/profile', label: 'Profil', icon: User },
-  { to: '/app/body-composition', label: 'Kropp', icon: Activity },
-  { to: '/app/tools/met-calculator', label: 'MET', icon: Flame },
-  { to: '/app/tools/tdee-calculator', label: 'TDEE', icon: Calculator },
-  { to: '/app/tools/goal-calculator', label: 'Mål', icon: Target },
-  { to: '/app/settings', label: 'Inställningar', icon: Settings },
-] as const
-
 // Persists across unmount/remount since each page wraps its own DashboardLayout
 let persistedScrollLeft = 0
 
 export default function MobileBottomNav() {
+  const { t } = useTranslation('common')
   const location = useLocation()
   const scrollRef = useRef<HTMLDivElement>(null)
   const leftFadeRef = useRef<HTMLDivElement>(null)
   const rightFadeRef = useRef<HTMLDivElement>(null)
   const socialBadgeCount = useSocialBadgeCount()
+
+  const navItems = [
+    { to: '/app', label: t('nav.dashboard'), icon: LayoutDashboard, exact: true },
+    { to: '/app/today', label: t('nav.today'), icon: Calendar },
+    { to: '/app/food-items', label: t('nav.food'), icon: Apple },
+    { to: '/app/history', label: t('nav.history'), icon: History },
+    { to: '/app/recipes', label: t('nav.recipes'), icon: ChefHat },
+    { to: '/app/saved-meals', label: t('nav.savedMealsShort'), icon: Bookmark },
+    { to: '/app/social', label: t('nav.social'), icon: Users },
+    { to: '/app/profile', label: t('nav.profile'), icon: User },
+    { to: '/app/body-composition', label: t('nav.bodyShort'), icon: Activity },
+    { to: '/app/tools/met-calculator', label: t('nav.metShort'), icon: Flame },
+    { to: '/app/tools/tdee-calculator', label: t('nav.tdeeShort'), icon: Calculator },
+    { to: '/app/tools/goal-calculator', label: t('nav.goalCalcShort'), icon: Target },
+    { to: '/app/settings', label: t('nav.settings'), icon: Settings },
+  ] as const
 
   const updateFades = useCallback(() => {
     const el = scrollRef.current

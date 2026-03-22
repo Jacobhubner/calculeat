@@ -60,105 +60,105 @@ export default function DashboardNav() {
   // Organized navigation items by functional groups
   const navGroups: Record<string, { title: string; emoji: string; items: NavItem[] }> = {
     oversikt: {
-      title: 'ÖVERSIKT',
+      title: t('nav.sectionOverview'),
       emoji: '📍',
       items: [
         {
           type: 'single' as const,
           to: '/app',
-          label: 'Översikt',
+          label: t('nav.dashboard'),
           icon: LayoutDashboard,
           exact: true,
         },
         {
           type: 'single' as const,
           to: '/app/today',
-          label: 'Dagens logg',
+          label: t('nav.today'),
           icon: Calendar,
         },
         {
           type: 'single' as const,
           to: '/app/history',
-          label: 'Historik',
+          label: t('nav.history'),
           icon: History,
         },
       ],
     },
     planering: {
-      title: 'PLANERING',
+      title: t('nav.sectionPlanning'),
       emoji: '🍽️',
       items: [
         {
           type: 'single' as const,
           to: '/app/food-items',
-          label: 'Livsmedel',
+          label: t('nav.food'),
           icon: Apple,
         },
         {
           type: 'single' as const,
           to: '/app/recipes',
-          label: 'Recept',
+          label: t('nav.recipes'),
           icon: ChefHat,
         },
         {
           type: 'single' as const,
           to: '/app/saved-meals',
-          label: 'Sparade måltider',
+          label: t('nav.savedMeals'),
           icon: Bookmark,
         },
       ],
     },
     social: {
-      title: 'SOCIAL',
+      title: t('nav.sectionSocial'),
       emoji: '👥',
       items: [
         {
           type: 'single' as const,
           to: '/app/social',
-          label: 'Social',
+          label: t('nav.social'),
           icon: Users,
           exact: true,
         },
       ],
     },
     profil: {
-      title: 'PROFIL',
+      title: t('nav.sectionProfile'),
       emoji: '👤',
       items: [
         {
           type: 'single' as const,
           to: '/app/profile',
-          label: 'Profil',
+          label: t('nav.profile'),
           icon: User,
         },
         {
           type: 'single' as const,
           to: '/app/body-composition',
-          label: 'Kroppssammansättning',
+          label: t('nav.body'),
           icon: Activity,
         },
       ],
     },
     verktyg: {
-      title: 'VERKTYG',
+      title: t('nav.sectionTools'),
       emoji: '🧮',
       items: [
         {
           type: 'single' as const,
           to: '/app/tools/met-calculator',
-          label: 'MET Aktivitetskalkylator',
+          label: t('nav.met'),
           icon: Flame,
         },
         {
           type: 'single' as const,
           to: '/app/tools/tdee-calculator',
-          label: 'TDEE & Kaloriuträknare',
+          label: t('nav.tdee'),
           icon: Calculator,
         },
         {
           type: 'single' as const,
           to: '/app/tools/goal-calculator',
-          label: 'Måluträknare',
+          label: t('nav.goalCalc'),
           icon: Target,
         },
       ],
@@ -270,10 +270,10 @@ export default function DashboardNav() {
             )}
           >
             <Settings className="h-5 w-5 shrink-0" />
-            {!sidebarCollapsed && <span>Inställningar</span>}
+            {!sidebarCollapsed && <span>{t('nav.settings')}</span>}
             {sidebarCollapsed && (
               <div className="absolute left-full ml-2 px-2 py-1 bg-neutral-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                Inställningar
+                {t('nav.settings')}
               </div>
             )}
           </Link>
@@ -286,10 +286,10 @@ export default function DashboardNav() {
             )}
           >
             <LogOut className="h-5 w-5 shrink-0" />
-            {!sidebarCollapsed && <span>Logga ut</span>}
+            {!sidebarCollapsed && <span>{t('nav.logout')}</span>}
             {sidebarCollapsed && (
               <div className="absolute left-full ml-2 px-2 py-1 bg-neutral-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                Logga ut
+                {t('nav.logout')}
               </div>
             )}
           </button>
@@ -307,7 +307,7 @@ export default function DashboardNav() {
             ) : (
               <>
                 <ChevronLeft className="h-5 w-5 shrink-0" />
-                <span>Göm meny</span>
+                <span>{t('nav.hideMenu')}</span>
               </>
             )}
           </button>

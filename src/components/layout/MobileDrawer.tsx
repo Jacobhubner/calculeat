@@ -22,41 +22,6 @@ import { Avatar, AvatarFallback } from '../ui/avatar'
 import { Separator } from '../ui/separator'
 import { useSocialBadgeCount } from '@/hooks/useShareInvitations'
 
-// Secondary pages organized by functional groups
-// (Primary pages Översikt, Idag, Livsmedel, Historik are in bottom nav)
-const navGroups = {
-  planering: {
-    title: 'PLANERING',
-    emoji: '🍽️',
-    items: [
-      { to: '/app/recipes', label: 'Recept', icon: ChefHat },
-      { to: '/app/saved-meals', label: 'Sparade måltider', icon: Bookmark },
-    ],
-  },
-  social: {
-    title: 'SOCIAL',
-    emoji: '👥',
-    items: [{ to: '/app/social', label: 'Social', icon: Users }],
-  },
-  profil: {
-    title: 'PROFIL',
-    emoji: '👤',
-    items: [
-      { to: '/app/profile', label: 'Profil', icon: User },
-      { to: '/app/body-composition', label: 'Kroppssammansättning', icon: Activity },
-    ],
-  },
-  verktyg: {
-    title: 'VERKTYG',
-    emoji: '🧮',
-    items: [
-      { to: '/app/tools/met-calculator', label: 'MET Aktivitetskalkylator', icon: Flame },
-      { to: '/app/tools/tdee-calculator', label: 'TDEE & Kaloriuträknare', icon: Calculator },
-      { to: '/app/tools/goal-calculator', label: 'Måluträknare', icon: Target },
-    ],
-  },
-}
-
 export default function MobileDrawer() {
   const { t } = useTranslation('common')
   const { user, signOut, userProfile } = useAuth()
@@ -80,6 +45,41 @@ export default function MobileDrawer() {
       toast.error(t('auth.logoutError'))
       console.error('Sign out error:', error)
     }
+  }
+
+  // Secondary pages organized by functional groups
+  // (Primary pages Översikt, Idag, Livsmedel, Historik are in bottom nav)
+  const navGroups = {
+    planering: {
+      title: t('nav.sectionPlanning'),
+      emoji: '🍽️',
+      items: [
+        { to: '/app/recipes', label: t('nav.recipes'), icon: ChefHat },
+        { to: '/app/saved-meals', label: t('nav.savedMeals'), icon: Bookmark },
+      ],
+    },
+    social: {
+      title: t('nav.sectionSocial'),
+      emoji: '👥',
+      items: [{ to: '/app/social', label: t('nav.social'), icon: Users }],
+    },
+    profil: {
+      title: t('nav.sectionProfile'),
+      emoji: '👤',
+      items: [
+        { to: '/app/profile', label: t('nav.profile'), icon: User },
+        { to: '/app/body-composition', label: t('nav.body'), icon: Activity },
+      ],
+    },
+    verktyg: {
+      title: t('nav.sectionTools'),
+      emoji: '🧮',
+      items: [
+        { to: '/app/tools/met-calculator', label: t('nav.met'), icon: Flame },
+        { to: '/app/tools/tdee-calculator', label: t('nav.tdee'), icon: Calculator },
+        { to: '/app/tools/goal-calculator', label: t('nav.goalCalc'), icon: Target },
+      ],
+    },
   }
 
   const getInitials = () => {
@@ -190,14 +190,14 @@ export default function MobileDrawer() {
                 className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-neutral-600 active:bg-neutral-50 transition-colors"
               >
                 <Settings className="h-5 w-5 shrink-0" />
-                <span>Inställningar</span>
+                <span>{t('nav.settings')}</span>
               </Link>
               <button
                 onClick={handleSignOut}
                 className="w-full flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-error-600 active:bg-error-50 transition-colors"
               >
                 <LogOut className="h-5 w-5 shrink-0" />
-                <span>Logga ut</span>
+                <span>{t('nav.logout')}</span>
               </button>
             </div>
           </motion.aside>
