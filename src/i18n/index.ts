@@ -15,9 +15,10 @@ i18n
     // Maps en-US, en-GB → 'en'; sv-SE → 'sv'
     nonExplicitSupportedLngs: true,
     defaultNS: 'common',
-    // 'common' and 'onboarding' are loaded upfront — onboarding modal renders
-    // immediately on first login before any lazy-load has time to complete
-    ns: ['common', 'onboarding'],
+    // Namespaces that must be available before first render.
+    // 'onboarding' and 'dashboard' are needed immediately on login —
+    // before any lazy HTTP fetch has time to complete.
+    ns: ['common', 'onboarding', 'dashboard'],
     backend: {
       loadPath: '/locales/{{lng}}/{{ns}}.json',
       requestOptions: {

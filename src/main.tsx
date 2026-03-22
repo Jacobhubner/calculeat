@@ -3,14 +3,17 @@ import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 import 'flag-icons/css/flag-icons.min.css'
-// i18n must be imported before App so the instance is configured
-// before any component renders
-import './i18n'
+import i18n from './i18n'
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <React.Suspense fallback={null}>
-      <App />
-    </React.Suspense>
-  </React.StrictMode>
-)
+// Wait for i18n to finish loading all preloaded namespaces before mounting.
+// Without this, components render before HttpBackend has fetched the JSON,
+// causing Missing key warnings for namespaces like 'onboarding' and 'dashboard'.
+i18n.on('initialized', () => {
+  ReactDOM.createRoot(document.getElementById('root')!).render(
+    <React.StrictMode>
+      <React.Suspense fallback={null}>
+        <App />
+      </React.Suspense>
+    </React.StrictMode>
+  )
+})
