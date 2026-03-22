@@ -19,8 +19,6 @@ i18n
     // 'onboarding' and 'dashboard' are needed immediately on login —
     // before any lazy HTTP fetch has time to complete.
     ns: ['common', 'onboarding', 'dashboard'],
-    // Preload both languages so switching sv↔en never lazy-fetches after mount.
-    preload: ['sv', 'en'],
     backend: {
       loadPath: '/locales/{{lng}}/{{ns}}.json',
       requestOptions: {
