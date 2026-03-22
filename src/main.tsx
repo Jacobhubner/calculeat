@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
+import 'flag-icons/css/flag-icons.min.css'
 // i18n must be imported before App so the instance is configured
 // before any component renders
 import './i18n'
