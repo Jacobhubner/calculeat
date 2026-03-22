@@ -215,5 +215,14 @@
     "deleting": "Deleting...",
     "accountDeleted": "Your account has been deleted.",
     "deleteError": "Something went wrong deleting your account. Please try again."
+  },
+  "tdeeOptions": {
+    "calculateTitle": "Calculate TDEE",
+    "calculateDesc": "Use our calculator to calculate your TDEE based on activity level and training",
+    "calculateButton": "Go to TDEE calculator",
+    "manualTitle": "Enter TDEE manually",
+    "manualDesc": "Enter your TDEE if you already know it from another source",
+    "showForm": "Show form",
+    "hideForm": "Hide form"
   }
 }

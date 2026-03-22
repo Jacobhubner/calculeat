@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { FFMI_DESCRIPTION_CATEGORIES } from '../../lib/constants/bodyCompositionReferenceData'
 
 interface FFMICategoryTableProps {
@@ -7,6 +8,7 @@ interface FFMICategoryTableProps {
 }
 
 export function FFMICategoryTable({ userFFMI, gender }: FFMICategoryTableProps) {
+  const { t } = useTranslation('body')
   const [showMale, setShowMale] = useState(gender !== 'female')
   const isMale = showMale
 
@@ -43,16 +45,18 @@ export function FFMICategoryTable({ userFFMI, gender }: FFMICategoryTableProps) 
           onClick={() => setShowMale(v => !v)}
           className="text-[10px] text-primary-600 hover:underline"
         >
-          Visa {showMale ? 'kvinnors' : 'mäns'} värden
+          {showMale ? t('refTable.showWomensValues') : t('refTable.showMensValues')}
         </button>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="bg-gray-50 border-b border-gray-200">
-              <th className="px-4 py-2 text-left font-semibold text-gray-900">Beskrivning</th>
               <th className="px-4 py-2 text-left font-semibold text-gray-900">
-                {showMale ? 'Män' : 'Kvinnor'}
+                {t('refTable.description')}
+              </th>
+              <th className="px-4 py-2 text-left font-semibold text-gray-900">
+                {showMale ? t('refTable.men') : t('refTable.women')}
               </th>
             </tr>
           </thead>

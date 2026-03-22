@@ -146,5 +146,29 @@
       "button": "Create account for free",
       "back": "Back to home"
     }
+  },
+  "successStories": {
+    "title": "Success Stories",
+    "subtitle": "Real results from real users",
+    "cta": "Want to get results too?",
+    "ctaLink": "Get started today",
+    "profileImageAlt": "Profile picture for {{name}}",
+    "testimonials": {
+      "anna": {
+        "name": "Anna Andersson",
+        "achievement": "Lost 15 kg in 6 months",
+        "quote": "CalculEat made it easy to understand my calorie intake and keep track of my macros. I've finally found a sustainable way to reach my weight goals!"
+      },
+      "erik": {
+        "name": "Erik Nilsson",
+        "achievement": "Gained 8 kg of muscle mass",
+        "quote": "As a gym-goer, getting the right amount of protein is crucial. With CalculEat I was able to optimize my diet and see amazing results in just 4 months."
+      },
+      "maria": {
+        "name": "Maria Johansson",
+        "achievement": "Maintained weight for 1 year",
+        "quote": "After reaching my target weight I still use CalculEat daily. It helps me maintain balance and feel in control of my health."
+      }
+    }
   }
 }

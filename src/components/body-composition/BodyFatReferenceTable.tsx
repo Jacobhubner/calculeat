@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { BODY_FAT_CATEGORIES_ACE } from '../../lib/constants/bodyCompositionReferenceData'
 import type { Gender } from '@/lib/types'
@@ -33,6 +34,7 @@ export function BodyFatReferenceTable({
   gender,
   fullWidthImages = false,
 }: BodyFatReferenceTableProps) {
+  const { t } = useTranslation('body')
   const [showMale, setShowMale] = useState(gender !== 'female')
 
   // Determine which category the user's body fat falls into
@@ -54,36 +56,39 @@ export function BodyFatReferenceTable({
 
   const maleInsights = [
     {
-      range: '3–7%',
-      text: 'Extremt lågt (tävlingsform). Väldigt tydlig muskeldefinition och vener. Svårt att bibehålla över tid.',
-    },
-    { range: '10–15%', text: 'Den klassiska "beach-kroppen". Magrutorna syns oftast tydligt här.' },
-    {
-      range: '20–25%',
-      text: 'En normal och hälsosam nivå för de flesta män. Muskeldefinitionen är mindre tydlig, men kroppen ser proportionerlig ut.',
+      range: t('refTable.maleInsights.range1.range'),
+      text: t('refTable.maleInsights.range1.text'),
     },
     {
-      range: '30% och uppåt',
-      text: 'Indikerar övervikt där fettet ofta samlas runt midjan, vilket är kopplat till högre hälsorisker.',
+      range: t('refTable.maleInsights.range2.range'),
+      text: t('refTable.maleInsights.range2.text'),
+    },
+    {
+      range: t('refTable.maleInsights.range3.range'),
+      text: t('refTable.maleInsights.range3.text'),
+    },
+    {
+      range: t('refTable.maleInsights.range4.range'),
+      text: t('refTable.maleInsights.range4.text'),
     },
   ]
 
   const femaleInsights = [
     {
-      range: '10–12%',
-      text: 'Extremt lågt, ses oftast bara hos tävlande kroppsbyggare. Kan påverka hormonbalans och hälsa negativt.',
+      range: t('refTable.femaleInsights.range1.range'),
+      text: t('refTable.femaleInsights.range1.text'),
     },
     {
-      range: '15–22%',
-      text: '"Fit" eller idrottslig nivå. Muskeldefinition är ofta tydlig, särskilt i magregionen.',
+      range: t('refTable.femaleInsights.range2.range'),
+      text: t('refTable.femaleInsights.range2.text'),
     },
     {
-      range: '25–35%',
-      text: 'En hälsosam och normal nivå för de flesta kvinnor. Kroppen har naturliga kurvor och en sund energireserv.',
+      range: t('refTable.femaleInsights.range3.range'),
+      text: t('refTable.femaleInsights.range3.text'),
     },
     {
-      range: '40% och uppåt',
-      text: 'Klassas ofta som övervikt eller fetma, vilket kan öka risken för livsstilssjukdomar.',
+      range: t('refTable.femaleInsights.range4.range'),
+      text: t('refTable.femaleInsights.range4.text'),
     },
   ]
 
@@ -97,16 +102,18 @@ export function BodyFatReferenceTable({
           onClick={() => setShowMale(v => !v)}
           className="text-[10px] text-primary-600 hover:underline"
         >
-          Visa {showMale ? 'kvinnors' : 'mäns'} värden
+          {showMale ? t('refTable.showWomensValues') : t('refTable.showMensValues')}
         </button>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-xs">
           <thead>
             <tr className="bg-gray-50 border-b border-gray-200">
-              <th className="px-2 py-1.5 text-left font-semibold text-gray-900">Kategori</th>
               <th className="px-2 py-1.5 text-left font-semibold text-gray-900">
-                {showMale ? 'Män' : 'Kvinnor'}
+                {t('refTable.category')}
+              </th>
+              <th className="px-2 py-1.5 text-left font-semibold text-gray-900">
+                {showMale ? t('refTable.men') : t('refTable.women')}
               </th>
             </tr>
           </thead>
@@ -137,7 +144,7 @@ export function BodyFatReferenceTable({
       </div>
 
       <div className="px-2 py-1.5 bg-gray-50 border-t border-gray-200">
-        <p className="text-[10px] text-gray-600 italic">Källa: American Council on Exercise</p>
+        <p className="text-[10px] text-gray-600 italic">{t('refTable.source')}</p>
       </div>
 
       {/* Expandable section: images + insights */}
@@ -147,7 +154,7 @@ export function BodyFatReferenceTable({
           onClick={() => setExpanded(v => !v)}
           className="w-full flex items-center justify-between px-3 py-2 text-[11px] text-gray-600 hover:bg-gray-50 transition-colors"
         >
-          <span>Vad betyder intervallen?</span>
+          <span>{t('refTable.whatDoRangesMean')}</span>
           {expanded ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
         </button>
 
@@ -167,12 +174,12 @@ export function BodyFatReferenceTable({
                 <>
                   <img
                     src="/men BF.png"
-                    alt="Kroppsfett visuell guide för män"
+                    alt={t('refTable.altMenBF1')}
                     className={fullWidthImages ? 'w-full rounded' : 'w-3/4 rounded mx-auto'}
                   />
                   <img
                     src="/men BF (2).png"
-                    alt="Kroppsfett visuell guide för män 2"
+                    alt={t('refTable.altMenBF2')}
                     className={fullWidthImages ? 'w-full rounded' : 'w-3/4 rounded mx-auto'}
                   />
                 </>
@@ -180,12 +187,12 @@ export function BodyFatReferenceTable({
                 <>
                   <img
                     src="/women BF.png"
-                    alt="Kroppsfett visuell guide för kvinnor"
+                    alt={t('refTable.altWomenBF1')}
                     className={fullWidthImages ? 'w-full rounded' : 'w-3/4 rounded mx-auto'}
                   />
                   <img
                     src="/women BF (2).png"
-                    alt="Kroppsfett visuell guide för kvinnor 2"
+                    alt={t('refTable.altWomenBF2')}
                     className={fullWidthImages ? 'w-full rounded' : 'w-3/4 rounded mx-auto'}
                   />
                 </>

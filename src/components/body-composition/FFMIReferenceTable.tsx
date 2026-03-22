@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { FFMI_WITH_BODY_FAT_RANGES } from '../../lib/constants/bodyCompositionReferenceData'
 
 interface FFMIReferenceTableProps {
@@ -8,6 +9,7 @@ interface FFMIReferenceTableProps {
 }
 
 export function FFMIReferenceTable({ userFFMI, userBodyFat, gender }: FFMIReferenceTableProps) {
+  const { t } = useTranslation('body')
   const [showMale, setShowMale] = useState(gender !== 'female')
   const isMale = showMale
 
@@ -39,7 +41,7 @@ export function FFMIReferenceTable({ userFFMI, userBodyFat, gender }: FFMIRefere
           onClick={() => setShowMale(v => !v)}
           className="text-[10px] text-primary-600 hover:underline"
         >
-          Visa {showMale ? 'kvinnors' : 'mäns'} värden
+          {showMale ? t('refTable.showWomensValues') : t('refTable.showMensValues')}
         </button>
       </div>
       <div className="overflow-x-auto">
@@ -47,10 +49,14 @@ export function FFMIReferenceTable({ userFFMI, userBodyFat, gender }: FFMIRefere
           <thead>
             <tr className="bg-gray-50 border-b border-gray-200">
               <th className="px-4 py-2 text-left font-semibold text-gray-900">
-                FFMI {showMale ? '(män)' : '(kvinnor)'}
+                {showMale ? t('refTable.ffmiMen') : t('refTable.ffmiWomen')}
               </th>
-              <th className="px-4 py-2 text-left font-semibold text-gray-900">Kroppsfett</th>
-              <th className="px-4 py-2 text-left font-semibold text-gray-900">Beskrivning</th>
+              <th className="px-4 py-2 text-left font-semibold text-gray-900">
+                {t('refTable.bodyFat')}
+              </th>
+              <th className="px-4 py-2 text-left font-semibold text-gray-900">
+                {t('refTable.description')}
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">

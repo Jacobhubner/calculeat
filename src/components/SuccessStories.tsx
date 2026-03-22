@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { Quote, Star } from 'lucide-react'
 import { ImagePlaceholder } from './ImagePlaceholder'
 
@@ -10,28 +11,27 @@ interface Testimonial {
 }
 
 export function SuccessStories() {
+  const { t } = useTranslation('marketing')
+
   const testimonials: Testimonial[] = [
     {
-      name: 'Anna Andersson',
-      achievement: 'Gick ner 15 kg på 6 månader',
-      quote:
-        'CalculEat gjorde det enkelt att förstå mitt kaloriintag och hålla koll på mina makron. Jag har äntligen hittat ett hållbart sätt att nå mina viktmål!',
+      name: t('successStories.testimonials.anna.name'),
+      achievement: t('successStories.testimonials.anna.achievement'),
+      quote: t('successStories.testimonials.anna.quote'),
       rating: 5,
       avatarFilename: 'user-1-anna.jpg',
     },
     {
-      name: 'Erik Nilsson',
-      achievement: 'Ökade 8 kg muskelmassa',
-      quote:
-        'Som gymmare är det avgörande att få rätt mängd protein. Med CalculEat kunde jag optimera min kost och se fantastiska resultat på bara 4 månader.',
+      name: t('successStories.testimonials.erik.name'),
+      achievement: t('successStories.testimonials.erik.achievement'),
+      quote: t('successStories.testimonials.erik.quote'),
       rating: 5,
       avatarFilename: 'user-2-erik.jpg',
     },
     {
-      name: 'Maria Johansson',
-      achievement: 'Bibehållit vikten i 1 år',
-      quote:
-        'Efter att ha nått mitt målvikt använder jag fortfarande CalculEat dagligen. Det hjälper mig att hålla balansen och känna kontroll över min hälsa.',
+      name: t('successStories.testimonials.maria.name'),
+      achievement: t('successStories.testimonials.maria.achievement'),
+      quote: t('successStories.testimonials.maria.quote'),
       rating: 5,
       avatarFilename: 'user-3-maria.jpg',
     },
@@ -43,11 +43,9 @@ export function SuccessStories() {
         {/* Section header */}
         <div className="text-center max-w-3xl mx-auto mb-16 md:mb-20">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-neutral-900 mb-4">
-            Framgångshistorier
+            {t('successStories.title')}
           </h2>
-          <p className="text-lg md:text-xl text-neutral-600">
-            Riktiga resultat från riktiga användare
-          </p>
+          <p className="text-lg md:text-xl text-neutral-600">{t('successStories.subtitle')}</p>
         </div>
 
         {/* Testimonials grid */}
@@ -65,7 +63,7 @@ export function SuccessStories() {
               {/* Avatar */}
               <div className="mb-6">
                 <ImagePlaceholder
-                  description={`Profilbild för ${testimonial.name}`}
+                  description={t('successStories.profileImageAlt', { name: testimonial.name })}
                   filename={testimonial.avatarFilename}
                   width={100}
                   height={100}
@@ -103,12 +101,12 @@ export function SuccessStories() {
         {/* Bottom CTA */}
         <div className="text-center mt-16">
           <p className="text-lg text-neutral-700">
-            Vill du också få resultat?{' '}
+            {t('successStories.cta')}{' '}
             <a
               href="/register"
               className="font-semibold text-primary-600 hover:text-primary-700 underline decoration-2 underline-offset-4"
             >
-              Kom igång idag
+              {t('successStories.ctaLink')}
             </a>
           </p>
         </div>
