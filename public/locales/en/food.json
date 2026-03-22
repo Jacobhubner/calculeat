@@ -203,6 +203,9 @@
     "adminNewWarning": "Creating global CalculEat food item. Visible to all users.",
     "cowInfo": "A personal copy will be created in your list (Mine).",
     "sharedEditWarning": "Editing a shared food item. Changes will be visible to all list members.",
+    "barcode": {
+      "searching": "Searching for product..."
+    },
     "scanBarcode": "Barcode",
     "scanLabel": "Scan label",
     "scanning": "Analyzing...",
@@ -384,9 +387,7 @@
         { "label": "Milkshakes", "icon": "🧋" },
         { "label": "Alcohol", "icon": "🍺" }
       ],
-      "soupItems": [
-        { "label": "Cream-based soups (e.g. potato & leek with cream)", "icon": "🍲" }
-      ]
+      "soupItems": [{ "label": "Cream-based soups (e.g. potato & leek with cream)", "icon": "🍲" }]
     }
   }
 }

@@ -203,6 +203,9 @@
     "adminNewWarning": "Skapar globalt CalculEat-livsmedel. Syns för alla användare.",
     "cowInfo": "En personlig kopia skapas i din lista (Mina).",
     "sharedEditWarning": "Redigerar ett delat livsmedel. Ändringarna syns hos alla listmedlemmar.",
+    "barcode": {
+      "searching": "Söker produkt..."
+    },
     "scanBarcode": "Streckkod",
     "scanLabel": "Skanna etikett",
     "scanning": "Analyserar...",

@@ -171,6 +171,7 @@
     "emailSameError": "Den nya e-postadressen är samma som den nuvarande",
     "close": "Stäng",
     "password": "Lösenord",
+    "passwordLabel": "Lösenord",
     "newPassword": "Nytt lösenord",
     "passwordPlaceholder": "Minst 6 tecken",
     "confirmPassword": "Bekräfta lösenord",

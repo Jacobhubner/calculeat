@@ -171,6 +171,7 @@
     "emailSameError": "The new email address is the same as the current one",
     "close": "Close",
     "password": "Password",
+    "passwordLabel": "Password",
     "newPassword": "New password",
     "passwordPlaceholder": "At least 6 characters",
     "confirmPassword": "Confirm password",
