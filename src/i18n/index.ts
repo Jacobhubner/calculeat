@@ -15,8 +15,8 @@ i18n
     // Maps en-US, en-GB → 'en'; sv-SE → 'sv'
     nonExplicitSupportedLngs: true,
     defaultNS: 'common',
-    // 'common' and 'marketing' are loaded upfront (public pages use marketing on first render)
-    ns: ['common', 'marketing'],
+    // Only 'common' is loaded upfront; all other namespaces lazy-load per route
+    ns: ['common'],
     backend: {
       loadPath: '/locales/{{lng}}/{{ns}}.json',
       requestOptions: {

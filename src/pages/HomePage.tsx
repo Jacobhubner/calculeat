@@ -11,12 +11,14 @@ import { Scan, Share2, ChefHat, Scale, Target } from 'lucide-react'
 
 export default function HomePage() {
   const { user } = useAuth()
-  const { t } = useTranslation('marketing')
+  const { t, ready } = useTranslation(['marketing', 'common'])
 
   // Redirect logged-in users to the app
   if (user) {
     return <Navigate to="/app" replace />
   }
+
+  if (!ready) return null
 
   return (
     <div className="min-h-screen flex flex-col">

@@ -3,7 +3,8 @@ import { useTranslation } from 'react-i18next'
 import { ProcessStep } from './ProcessStep'
 
 export function HowItWorks() {
-  const { t } = useTranslation('marketing')
+  const { t, ready } = useTranslation(['marketing', 'common'])
+  if (!ready) return null
 
   const steps = [
     {

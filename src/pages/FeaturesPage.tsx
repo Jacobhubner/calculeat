@@ -21,7 +21,8 @@ import {
 } from 'lucide-react'
 
 export default function FeaturesPage() {
-  const { t } = useTranslation('marketing')
+  const { t, ready } = useTranslation(['marketing', 'common'])
+  if (!ready) return null
 
   // Feature overview cards for the hero grid
   const featureOverview = [
