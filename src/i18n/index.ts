@@ -18,15 +18,27 @@ export const i18nReady = i18n
     // Namespaces that must be available before first render.
     // 'onboarding' and 'dashboard' are needed immediately on login —
     // before any lazy HTTP fetch has time to complete.
-    ns: ['common', 'onboarding', 'dashboard'],
-    // Preload both languages so switching from sv→en doesn't lazy-fetch
-    // en/*.json after mount, which causes a brief flash of Swedish keys.
+    ns: [
+      'auth',
+      'body',
+      'common',
+      'content',
+      'dashboard',
+      'food',
+      'history',
+      'marketing',
+      'onboarding',
+      'profile',
+      'recipes',
+      'settings',
+      'shared-lists',
+      'social',
+      'today',
+      'tools',
+      'translation',
+    ],
+    // Preload both languages so switching sv↔en never lazy-fetches after mount.
     preload: ['sv', 'en'],
-    // Ensure init() Promise waits for HttpBackend to finish fetching all
-    // namespace JSON files before resolving. Without this, initAsync:true
-    // (the default in i18next v25) makes init() resolve immediately and
-    // React mounts before translations are available.
-    initAsync: false,
     backend: {
       loadPath: '/locales/{{lng}}/{{ns}}.json',
       requestOptions: {
