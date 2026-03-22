@@ -1,4 +1,9 @@
 {
+  "ring": {
+    "goal": "mål",
+    "remaining": "kvar",
+    "over": "över"
+  },
   "greeting": {
     "hello": "Hej {{name}}! 👋",
     "helloNoName": "Hej! 👋",
