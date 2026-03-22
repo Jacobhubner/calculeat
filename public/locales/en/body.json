@@ -129,5 +129,57 @@
   "sidebar": {
     "savedMeasurements": "Saved measurements",
     "newMeasurement": "New measurement"
+  },
+  "allMeasurements": {
+    "howItWorks": "How does this work?",
+    "description": "Fill in all measurements you have available below. The system will automatically calculate all methods that are possible based on your measurements and display the results in a comparison table."
+  },
+  "tabs": {
+    "methodFirst": "Choose Method",
+    "compareAll": "Compare All Methods"
+  },
+  "variationSelector": {
+    "label": "Select variation",
+    "hint": "Different variations use different combinations of measurements and formulas"
+  },
+  "densityConversion": {
+    "title": "Conversion method",
+    "description": "Select formula to convert body density to fat percentage",
+    "siriStandard": "(Standard)",
+    "brozekAlternative": "(Alternative)",
+    "showInfoSiri": "Show information about Siri",
+    "showInfoBrozek": "Show information about Brozek"
+  },
+  "methodSelection": {
+    "title": "Choose calculation method",
+    "description": "Select which method you want to use to calculate your body fat percentage. Different methods require different measurements.",
+    "label": "Calculation method",
+    "placeholder": "Select a method...",
+    "showInfo": "Show information about method",
+    "infoButton": "Info"
+  },
+  "comparison": {
+    "loading": "Loading methods...",
+    "loadingDescription": "Please wait while all calculation methods are loading.",
+    "title": "Comparison of all methods",
+    "description_one": "{{count}} method shown below. {{available}} of these can be calculated based on your measurements. Fill in more measurements to enable more methods. Click column headers to sort.",
+    "description_other": "{{count}} methods shown below. {{available}} of these can be calculated based on your measurements. Fill in more measurements to enable more methods. Click column headers to sort.",
+    "colMethod": "Method",
+    "colDensity": "Density (g/cm³)",
+    "colBodyFat": "Body fat %",
+    "colCategory": "Category",
+    "colLeanMass": "Lean Body Mass (LBM) (kg)",
+    "colFatMass": "Fat mass (kg)",
+    "colAction": "Action",
+    "showMethodInfo": "Show information about method",
+    "missing": "(Missing: {{fields}})",
+    "missingTitle": "Missing fields: {{fields}}",
+    "mobileColDensity": "Density",
+    "mobileColBodyFat": "Body fat %",
+    "mobileColCategory": "Category",
+    "mobileColLeanMass": "Lean Body Mass (LBM)",
+    "mobileColFatMass": "Fat mass",
+    "save": "Save",
+    "saveToProfile": "Save to profile"
   }
 }

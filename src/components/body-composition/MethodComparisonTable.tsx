@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import {
@@ -21,6 +22,7 @@ export default function MethodComparisonTable({
   onSaveResult,
   isSaving,
 }: MethodComparisonTableProps) {
+  const { t } = useTranslation('body')
   const [sortBy, setSortBy] = useState<keyof MethodComparisonResult>('bodyFatPercentage')
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
   const [showInfoFor, setShowInfoFor] = useState<{
@@ -69,9 +71,9 @@ export default function MethodComparisonTable({
       <Card className="bg-neutral-50">
         <CardContent className="flex flex-col items-center justify-center py-12">
           <Calculator className="h-12 w-12 text-neutral-400 mb-4" />
-          <p className="text-lg font-medium text-neutral-700 mb-2">Laddar metoder...</p>
+          <p className="text-lg font-medium text-neutral-700 mb-2">{t('comparison.loading')}</p>
           <p className="text-sm text-neutral-500 text-center max-w-md">
-            Vänligen vänta medan alla beräkningsmetoder laddas.
+            {t('comparison.loadingDescription')}
           </p>
         </CardContent>
       </Card>
@@ -84,13 +86,10 @@ export default function MethodComparisonTable({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Calculator className="h-5 w-5 text-primary-600" />
-            Jämförelse av alla metoder
+            {t('comparison.title')}
           </CardTitle>
           <CardDescription>
-            {results.length} {results.length === 1 ? 'metod' : 'metoder'} visas nedan.{' '}
-            {results.filter(r => r.isAvailable).length} av dessa kan beräknas baserat på dina
-            mätningar. Fyll i fler mätningar för att aktivera fler metoder. Klicka på kolumnrubriker
-            för att sortera.
+            {t('comparison.description', { count: results.length, available: results.filter(r => r.isAvailable).length })}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -104,7 +103,7 @@ export default function MethodComparisonTable({
                       onClick={() => handleSort('method')}
                       className="flex items-center gap-1 font-medium text-neutral-700 hover:text-primary-600 transition-colors"
                     >
-                      Metod
+                      {t('comparison.colMethod')}
                       <ArrowUpDown className="h-4 w-4" />
                     </button>
                   </th>
@@ -113,7 +112,7 @@ export default function MethodComparisonTable({
                       onClick={() => handleSort('bodyDensity')}
                       className="flex items-center justify-end gap-1 font-medium text-neutral-700 hover:text-primary-600 transition-colors w-full"
                     >
-                      Densitet (g/cm³)
+                      {t('comparison.colDensity')}
                       <ArrowUpDown className="h-4 w-4" />
                     </button>
                   </th>
@@ -122,7 +121,7 @@ export default function MethodComparisonTable({
                       onClick={() => handleSort('bodyFatPercentage')}
                       className="flex items-center justify-end gap-1 font-medium text-neutral-700 hover:text-primary-600 transition-colors w-full"
                     >
-                      Kroppsfett %
+                      {t('comparison.colBodyFat')}
                       <ArrowUpDown className="h-4 w-4" />
                     </button>
                   </th>
@@ -131,7 +130,7 @@ export default function MethodComparisonTable({
                       onClick={() => handleSort('category')}
                       className="flex items-center gap-1 font-medium text-neutral-700 hover:text-primary-600 transition-colors"
                     >
-                      Kategori
+                      {t('comparison.colCategory')}
                       <ArrowUpDown className="h-4 w-4" />
                     </button>
                   </th>
@@ -140,7 +139,7 @@ export default function MethodComparisonTable({
                       onClick={() => handleSort('leanBodyMass')}
                       className="flex items-center justify-end gap-1 font-medium text-neutral-700 hover:text-primary-600 transition-colors w-full"
                     >
-                      Fettfri Massa (FFM) (kg)
+                      {t('comparison.colLeanMass')}
                       <ArrowUpDown className="h-4 w-4" />
                     </button>
                   </th>
@@ -149,13 +148,13 @@ export default function MethodComparisonTable({
                       onClick={() => handleSort('fatMass')}
                       className="flex items-center justify-end gap-1 font-medium text-neutral-700 hover:text-primary-600 transition-colors w-full"
                     >
-                      Fettmassa (kg)
+                      {t('comparison.colFatMass')}
                       <ArrowUpDown className="h-4 w-4" />
                     </button>
                   </th>
                   {onSaveResult && (
                     <th className="text-center py-3 px-4">
-                      <span className="font-medium text-neutral-700">Åtgärd</span>
+                      <span className="font-medium text-neutral-700">{t('comparison.colAction')}</span>
                     </th>
                   )}
                 </tr>
@@ -184,7 +183,7 @@ export default function MethodComparisonTable({
                               setShowInfoFor({ method: result.method, variation: result.variation })
                             }
                             className="text-primary-600 hover:text-primary-700 transition-colors"
-                            title="Visa information om metoden"
+                            title={t('comparison.showMethodInfo')}
                           >
                             <Info className="h-3.5 w-3.5" />
                           </button>
@@ -193,9 +192,9 @@ export default function MethodComparisonTable({
                             result.missingFields.length > 0 && (
                               <span
                                 className="text-xs text-neutral-500 italic"
-                                title={`Saknade fält: ${result.missingFields.join(', ')}`}
+                                title={t('comparison.missingTitle', { fields: result.missingFields.join(', ') })}
                               >
-                                (Saknas: {result.missingFields.join(', ')})
+                                {t('comparison.missing', { fields: result.missingFields.join(', ') })}
                               </span>
                             )}
                         </div>
@@ -241,7 +240,7 @@ export default function MethodComparisonTable({
                             className="gap-1"
                           >
                             <Save className="h-3 w-3" />
-                            Spara
+                            {t('comparison.save')}
                           </Button>
                         </td>
                       )}
@@ -272,19 +271,19 @@ export default function MethodComparisonTable({
                     {formatMethodName(result.method, result.variation)}
                     {isUnavailable && result.missingFields && result.missingFields.length > 0 && (
                       <div className="text-xs text-neutral-500 italic mt-1">
-                        Saknas: {result.missingFields.join(', ')}
+                        {t('comparison.missing', { fields: result.missingFields.join(', ') })}
                       </div>
                     )}
                   </div>
                   <div className="grid grid-cols-2 gap-3 text-sm">
                     {!isUnavailable && result.bodyDensity && (
                       <div>
-                        <div className="text-neutral-500 text-xs mb-1">Densitet</div>
+                        <div className="text-neutral-500 text-xs mb-1">{t('comparison.mobileColDensity')}</div>
                         <div className={textClass}>{result.bodyDensity.toFixed(4)} g/cm³</div>
                       </div>
                     )}
                     <div>
-                      <div className="text-neutral-500 text-xs mb-1">Kroppsfett %</div>
+                      <div className="text-neutral-500 text-xs mb-1">{t('comparison.mobileColBodyFat')}</div>
                       <div
                         className={`font-medium ${isUnavailable ? textClass : 'text-neutral-900'}`}
                       >
@@ -292,7 +291,7 @@ export default function MethodComparisonTable({
                       </div>
                     </div>
                     <div>
-                      <div className="text-neutral-500 text-xs mb-1">Kategori</div>
+                      <div className="text-neutral-500 text-xs mb-1">{t('comparison.mobileColCategory')}</div>
                       {isUnavailable ? (
                         <span className="inline-block px-2 py-1 rounded-full text-xs font-medium bg-neutral-200 text-neutral-400">
                           -
@@ -306,13 +305,13 @@ export default function MethodComparisonTable({
                       )}
                     </div>
                     <div>
-                      <div className="text-neutral-500 text-xs mb-1">Fettfri Massa (FFM)</div>
+                      <div className="text-neutral-500 text-xs mb-1">{t('comparison.mobileColLeanMass')}</div>
                       <div className={textClass}>
                         {isUnavailable ? '-' : `${result.leanBodyMass.toFixed(1)} kg`}
                       </div>
                     </div>
                     <div>
-                      <div className="text-neutral-500 text-xs mb-1">Fettmassa</div>
+                      <div className="text-neutral-500 text-xs mb-1">{t('comparison.mobileColFatMass')}</div>
                       <div className={textClass}>
                         {isUnavailable ? '-' : `${result.fatMass.toFixed(1)} kg`}
                       </div>
@@ -326,7 +325,7 @@ export default function MethodComparisonTable({
                       className="w-full gap-2"
                     >
                       <Save className="h-4 w-4" />
-                      Spara till profil
+                      {t('comparison.saveToProfile')}
                     </Button>
                   )}
                 </div>

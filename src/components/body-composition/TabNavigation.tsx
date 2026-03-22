@@ -1,9 +1,13 @@
+import { useTranslation } from 'react-i18next'
+
 interface TabNavigationProps {
   activeTab: 'method-first' | 'measurements-first'
   onTabChange: (tab: 'method-first' | 'measurements-first') => void
 }
 
 export default function TabNavigation({ activeTab, onTabChange }: TabNavigationProps) {
+  const { t } = useTranslation('body')
+
   return (
     <div className="mb-6">
       <div className="border-b border-neutral-200">
@@ -20,7 +24,7 @@ export default function TabNavigation({ activeTab, onTabChange }: TabNavigationP
             `}
             aria-current={activeTab === 'method-first' ? 'page' : undefined}
           >
-            Välj Metod
+            {t('tabs.methodFirst')}
           </button>
           <button
             onClick={() => onTabChange('measurements-first')}
@@ -34,7 +38,7 @@ export default function TabNavigation({ activeTab, onTabChange }: TabNavigationP
             `}
             aria-current={activeTab === 'measurements-first' ? 'page' : undefined}
           >
-            Jämför Alla Metoder
+            {t('tabs.compareAll')}
           </button>
         </nav>
       </div>

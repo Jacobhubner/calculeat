@@ -129,5 +129,57 @@
   "sidebar": {
     "savedMeasurements": "Sparade mätningar",
     "newMeasurement": "Ny mätning"
+  },
+  "allMeasurements": {
+    "howItWorks": "Hur fungerar detta?",
+    "description": "Fyll i alla mått du har tillgängliga nedan. Systemet kommer automatiskt att beräkna alla metoder som är möjliga baserat på dina mätningar och visa resultaten i en jämförelsetabell."
+  },
+  "tabs": {
+    "methodFirst": "Välj Metod",
+    "compareAll": "Jämför Alla Metoder"
+  },
+  "variationSelector": {
+    "label": "Välj variation",
+    "hint": "Olika variationer använder olika kombinationer av mätningar och formler"
+  },
+  "densityConversion": {
+    "title": "Konverteringsmetod",
+    "description": "Välj formel för att konvertera kroppsdensitet till fettprocent",
+    "siriStandard": "(Standard)",
+    "brozekAlternative": "(Alternativ)",
+    "showInfoSiri": "Visa information om Siri",
+    "showInfoBrozek": "Visa information om Brozek"
+  },
+  "methodSelection": {
+    "title": "Välj beräkningsmetod",
+    "description": "Välj vilken metod du vill använda för att beräkna din kroppsfettsprocent. Olika metoder kräver olika mätningar.",
+    "label": "Beräkningsmetod",
+    "placeholder": "Välj en metod...",
+    "showInfo": "Visa information om metoden",
+    "infoButton": "Info"
+  },
+  "comparison": {
+    "loading": "Laddar metoder...",
+    "loadingDescription": "Vänligen vänta medan alla beräkningsmetoder laddas.",
+    "title": "Jämförelse av alla metoder",
+    "description_one": "{{count}} metod visas nedan. {{available}} av dessa kan beräknas baserat på dina mätningar. Fyll i fler mätningar för att aktivera fler metoder. Klicka på kolumnrubriker för att sortera.",
+    "description_other": "{{count}} metoder visas nedan. {{available}} av dessa kan beräknas baserat på dina mätningar. Fyll i fler mätningar för att aktivera fler metoder. Klicka på kolumnrubriker för att sortera.",
+    "colMethod": "Metod",
+    "colDensity": "Densitet (g/cm³)",
+    "colBodyFat": "Kroppsfett %",
+    "colCategory": "Kategori",
+    "colLeanMass": "Fettfri Massa (FFM) (kg)",
+    "colFatMass": "Fettmassa (kg)",
+    "colAction": "Åtgärd",
+    "showMethodInfo": "Visa information om metoden",
+    "missing": "(Saknas: {{fields}})",
+    "missingTitle": "Saknade fält: {{fields}}",
+    "mobileColDensity": "Densitet",
+    "mobileColBodyFat": "Kroppsfett %",
+    "mobileColCategory": "Kategori",
+    "mobileColLeanMass": "Fettfri Massa (FFM)",
+    "mobileColFatMass": "Fettmassa",
+    "save": "Spara",
+    "saveToProfile": "Spara till profil"
   }
 }
