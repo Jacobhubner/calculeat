@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 import {
   Share2,
   Apple,
@@ -63,6 +63,16 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
   const [itemSearch, setItemSearch] = useState('')
 
   const emailDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // Sync step and selectedFriend when preselectedFriend changes (e.g. different friend clicked)
+  useEffect(() => {
+    if (open) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setStep(preselectedFriend ? 'content' : 'recipient')
+
+      setSelectedFriend(preselectedFriend ?? null)
+    }
+  }, [open, preselectedFriend])
 
   const { data: foodItems = [] } = useShareableFoodItems()
   const { data: recipes = [] } = useShareableRecipes()
@@ -208,7 +218,9 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
   const getTitle = () => {
     if (step === 'recipient') return t('share.title.recipient')
     if (step === 'content') return t('share.title.content', { recipient: recipientLabel })
-    return contentType === 'food_list' ? t('share.title.confirm_list') : t('share.title.confirm_item', { name: selectedName })
+    return contentType === 'food_list'
+      ? t('share.title.confirm_list')
+      : t('share.title.confirm_item', { name: selectedName })
   }
 
   return (
@@ -456,7 +468,9 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
             {contentType === 'food_list' && (
               <div className="space-y-3">
                 {foodListLoading ? (
-                  <p className="text-sm text-neutral-400 text-center py-4">{t('share.content.loading')}</p>
+                  <p className="text-sm text-neutral-400 text-center py-4">
+                    {t('share.content.loading')}
+                  </p>
                 ) : foodListCount === 0 ? (
                   <div className="text-center py-6 space-y-2">
                     <ListOrdered className="h-8 w-8 text-neutral-300 mx-auto" />
@@ -471,7 +485,9 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
                     <ListOrdered className="h-8 w-8 text-primary-600 shrink-0" />
                     <div>
                       <p className="font-semibold text-neutral-900">{t('share.food_list.title')}</p>
-                      <p className="text-sm text-neutral-500">{t('share.food_list.count_label', { count: foodListCount })}</p>
+                      <p className="text-sm text-neutral-500">
+                        {t('share.food_list.count_label', { count: foodListCount })}
+                      </p>
                     </div>
                   </button>
                 )}

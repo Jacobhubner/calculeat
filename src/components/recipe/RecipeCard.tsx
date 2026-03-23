@@ -1,4 +1,3 @@
-import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Edit2, Trash2, ScrollText, Users, Clock } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
@@ -6,10 +5,6 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import type { Recipe, RecipeIngredient } from '@/hooks/useRecipes'
 import type { FoodItem } from '@/hooks/useFoodItems'
-import {
-  calculateRecipeNutrition,
-  type RecipeIngredientInput,
-} from '@/lib/calculations/recipeCalculator'
 import { EQUIPMENT_OPTIONS, type EquipmentValue } from '@/lib/constants/recipeEquipment'
 
 interface RecipeWithIngredients extends Recipe {
@@ -28,48 +23,28 @@ interface RecipeCardProps {
 
 export function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps) {
   const { t } = useTranslation('recipes')
-  // Use centralized calculation from recipeCalculator.ts
-  const nutrition = useMemo(() => {
-    if (!recipe.ingredients || recipe.ingredients.length === 0) {
-      return null
-    }
-
-    // Map recipe ingredients to RecipeIngredientInput format
-    const validIngredients: RecipeIngredientInput[] = recipe.ingredients
-      .filter(ing => ing.food_item)
-      .map(ing => ({
-        foodItem: ing.food_item!,
-        amount: ing.amount,
-        unit: ing.unit,
-      }))
-
-    if (validIngredients.length === 0) return null
-
-    return calculateRecipeNutrition(validIngredients, recipe.servings || 1)
-  }, [recipe.ingredients, recipe.servings])
 
   const servings = recipe.servings || 1
   const totalTime = (recipe.prep_time_min ?? 0) + (recipe.cook_time_min ?? 0)
 
-  // Determine display format based on how the recipe was saved
-  // Check the linked food_item's default_unit to know if saved as 100g or portion
+  // Read saved nutrition values from the recipe's linked food_item — never recalculate live
   const savedAs100g = recipe.food_item?.default_unit === 'g'
+  const fi = recipe.food_item
 
-  // Get display values based on saved format
   const displayLabel = savedAs100g ? t('card.per100g') : t('card.perServing')
-  const displayCalories = nutrition
-    ? Math.round(savedAs100g ? nutrition.per100g.calories : nutrition.perServing.calories)
+  const displayCalories = fi
+    ? Math.round(savedAs100g ? (fi.calories * 100) / 100 : (fi.kcal_per_unit ?? fi.calories))
     : 0
-  const displayProtein = nutrition
-    ? (savedAs100g ? nutrition.per100g.protein : nutrition.perServing.protein).toFixed(1)
+  const displayFat = fi
+    ? (savedAs100g ? fi.fat_g : (fi.fat_per_unit ?? fi.fat_g)).toFixed(1)
     : '0.0'
-  const displayCarbs = nutrition
-    ? (savedAs100g ? nutrition.per100g.carbs : nutrition.perServing.carbs).toFixed(1)
+  const displayCarbs = fi
+    ? (savedAs100g ? fi.carb_g : (fi.carb_per_unit ?? fi.carb_g)).toFixed(1)
     : '0.0'
-  const displayFat = nutrition
-    ? (savedAs100g ? nutrition.per100g.fat : nutrition.perServing.fat).toFixed(1)
+  const displayProtein = fi
+    ? (savedAs100g ? fi.protein_g : (fi.protein_per_unit ?? fi.protein_g)).toFixed(1)
     : '0.0'
-  const energyDensityColor = nutrition?.energyDensityColor ?? null
+  const energyDensityColor = fi?.energy_density_color ?? null
 
   const colorBadgeClass = {
     Green: 'bg-green-100 text-green-700 border-green-300',

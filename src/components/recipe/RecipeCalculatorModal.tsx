@@ -3,6 +3,21 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { Plus, ChefHat, AlertCircle, ChevronDown, ChevronUp, Clock } from 'lucide-react'
 import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core'
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  useSortable,
+  arrayMove,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
+import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -45,6 +60,22 @@ interface RecipeCalculatorModalProps {
 
 function generateId(): string {
   return Math.random().toString(36).substring(2, 9)
+}
+
+function SortableIngredientRow(props: React.ComponentProps<typeof IngredientRow>) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: props.ingredient.id,
+  })
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  }
+  return (
+    <div ref={setNodeRef} style={style}>
+      <IngredientRow {...props} dragHandleProps={{ ...attributes, ...listeners }} />
+    </div>
+  )
 }
 
 export function RecipeCalculatorModal({
@@ -90,21 +121,34 @@ export function RecipeCalculatorModal({
   const lastInitializedRecipeId = useRef<string | null>(null)
   // Capture sharedListId at modal-open time to avoid race if parent tab changes while modal is open
   const capturedSharedListId = useRef<string | null>(null)
+  // Snapshot of form state when edit recipe was loaded — used to detect changes
+  const [initialSnapshot, setInitialSnapshot] = useState<{
+    name: string
+    servings: number | ''
+    ingredients: IngredientData[]
+    saveAs: '100g' | 'portion'
+    imageUrl: string | null
+    instructions: string
+    equipment: string[]
+    equipmentSettings: Record<string, Record<string, string | number>>
+    prepTime: number | ''
+    cookTime: number | ''
+  } | null>(null)
 
   // Filter out recipes from available foods
   const availableFoods = useMemo(() => {
     return mergedFoods.filter(f => !f.is_recipe)
   }, [mergedFoods])
 
-  // Reset form function
+  // Reset form function (does NOT touch initialized — caller handles that)
   const resetForm = useCallback(() => {
     setName('')
     setServings(1)
     setIngredients([])
     setSaveAs('portion')
     setError(null)
-    setInitialized(false)
     lastInitializedRecipeId.current = null
+    setInitialSnapshot(null)
     setImageUrl(null)
     setInstructions('')
     setEquipment([])
@@ -127,6 +171,10 @@ export function RecipeCalculatorModal({
           amount: number
           unit: string
           food_item?: unknown
+          snapshot_calories?: number | null
+          snapshot_fat_g?: number | null
+          snapshot_carb_g?: number | null
+          snapshot_protein_g?: number | null
         }): IngredientData | null => {
           const foodItem = foodsList.find(f => f.id === ing.food_item_id)
           if (!foodItem) return null // Skip orphan ingredients
@@ -135,26 +183,49 @@ export function RecipeCalculatorModal({
             foodItem,
             amount: ing.amount,
             unit: ing.unit,
+            snapshotCalories: ing.snapshot_calories ?? null,
           }
         }
       )
       .filter((ing): ing is IngredientData => ing !== null)
 
+    const mappedSaveAs =
+      recipe.food_item?.default_unit === 'g' ? ('100g' as const) : ('portion' as const)
+    const mappedImageUrl = recipe.image_url ?? null
+    const mappedInstructions = recipe.instructions ?? ''
+    const mappedEquipment = recipe.equipment ?? []
+    const mappedEquipmentSettings =
+      (recipe.equipment_settings as Record<string, Record<string, string | number>>) ?? {}
+    const mappedPrepTime: number | '' = recipe.prep_time_min ?? ''
+    const mappedCookTime: number | '' = recipe.cook_time_min ?? ''
+
     setName(recipe.name)
     setServings(recipe.servings)
     setIngredients(mappedIngredients)
-    setSaveAs(recipe.food_item?.default_unit === 'g' ? '100g' : 'portion')
+    setSaveAs(mappedSaveAs)
     setError(null)
     setInitialized(true)
     lastInitializedRecipeId.current = recipe.id
-    setImageUrl(recipe.image_url ?? null)
-    setInstructions(recipe.instructions ?? '')
-    setEquipment(recipe.equipment ?? [])
-    setEquipmentSettings(
-      (recipe.equipment_settings as Record<string, Record<string, string | number>>) ?? {}
-    )
-    setPrepTime(recipe.prep_time_min ?? '')
-    setCookTime(recipe.cook_time_min ?? '')
+    setImageUrl(mappedImageUrl)
+    setInstructions(mappedInstructions)
+    setEquipment(mappedEquipment)
+    setEquipmentSettings(mappedEquipmentSettings)
+    setPrepTime(mappedPrepTime)
+    setCookTime(mappedCookTime)
+
+    // Save initial snapshot for dirty tracking
+    setInitialSnapshot({
+      name: recipe.name,
+      servings: recipe.servings,
+      ingredients: mappedIngredients,
+      saveAs: mappedSaveAs,
+      imageUrl: mappedImageUrl,
+      instructions: mappedInstructions,
+      equipment: mappedEquipment,
+      equipmentSettings: mappedEquipmentSettings,
+      prepTime: mappedPrepTime,
+      cookTime: mappedCookTime,
+    })
     if (
       recipe.image_url ||
       recipe.instructions ||
@@ -170,6 +241,9 @@ export function RecipeCalculatorModal({
   useEffect(() => {
     if (!open) {
       capturedSharedListId.current = null
+      lastInitializedRecipeId.current = null
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setInitialized(false)
       return
     }
 
@@ -182,14 +256,12 @@ export function RecipeCalculatorModal({
     if (editRecipe && mergedFoods.length > 0) {
       // Only initialize if we haven't already initialized this recipe
       if (lastInitializedRecipeId.current !== editRecipe.id) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         initializeForm(editRecipe, mergedFoods)
       }
     } else if (!editRecipe && !initialized) {
-      // New recipe mode - start with one empty ingredient row
-
+      // New recipe mode — reset all fields and start with one empty ingredient row
+      resetForm()
       setIngredients([{ id: generateId(), foodItem: null, amount: 0, unit: 'g' }])
-
       setInitialized(true)
     }
   }, [open, editRecipe, foods, mergedFoods, initialized, resetForm, initializeForm, sharedListId])
@@ -239,6 +311,19 @@ export function RecipeCalculatorModal({
     setIngredients(prev => prev.filter(ing => ing.id !== id))
   }
 
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }))
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event
+    if (over && active.id !== over.id) {
+      setIngredients(prev => {
+        const oldIndex = prev.findIndex(i => i.id === active.id)
+        const newIndex = prev.findIndex(i => i.id === over.id)
+        return arrayMove(prev, oldIndex, newIndex)
+      })
+    }
+  }
+
   const handleSubmit = async () => {
     if (isLoading) return
     // Validate
@@ -270,6 +355,10 @@ export function RecipeCalculatorModal({
           food_item_id: ing.foodItem!.id,
           amount: ing.amount,
           unit: ing.unit,
+          snapshot_calories: ing.foodItem!.calories,
+          snapshot_fat_g: ing.foodItem!.fat_g,
+          snapshot_carb_g: ing.foodItem!.carb_g,
+          snapshot_protein_g: ing.foodItem!.protein_g,
         })),
         // Include calculated nutrition for food_item creation
         nutrition: nutrition
@@ -326,6 +415,55 @@ export function RecipeCalculatorModal({
   const isEditing = !!editRecipe
   const isSharedListRecipe = !!(editRecipe?.shared_list_id || sharedListId)
 
+  // Detect ingredients whose nutrition has changed since recipe was last saved
+  const changedIngredients = useMemo(() => {
+    if (!isEditing) return []
+    return ingredients.filter(ing => {
+      if (!ing.foodItem || ing.snapshotCalories == null) return false
+      return Math.abs(ing.foodItem.calories - ing.snapshotCalories) > 0.5
+    })
+  }, [isEditing, ingredients])
+
+  // Compute dirty state for edit mode
+  const isDirty = useMemo(() => {
+    if (!isEditing || !initialSnapshot) return true
+    if (changedIngredients.length > 0) return true
+    const s = initialSnapshot
+    if (name !== s.name) return true
+    if (servings !== s.servings) return true
+    if (saveAs !== s.saveAs) return true
+    if (imageUrl !== s.imageUrl) return true
+    if (instructions !== s.instructions) return true
+    if (prepTime !== s.prepTime) return true
+    if (cookTime !== s.cookTime) return true
+    if (equipment.length !== s.equipment.length || equipment.some((e, i) => e !== s.equipment[i]))
+      return true
+    if (JSON.stringify(equipmentSettings) !== JSON.stringify(s.equipmentSettings)) return true
+    if (ingredients.length !== s.ingredients.length) return true
+    for (let i = 0; i < ingredients.length; i++) {
+      const a = ingredients[i]
+      const b = s.ingredients[i]
+      if (a.foodItem?.id !== b.foodItem?.id) return true
+      if (a.amount !== b.amount) return true
+      if (a.unit !== b.unit) return true
+    }
+    return false
+  }, [
+    isEditing,
+    initialSnapshot,
+    changedIngredients,
+    name,
+    servings,
+    saveAs,
+    imageUrl,
+    instructions,
+    prepTime,
+    cookTime,
+    equipment,
+    equipmentSettings,
+    ingredients,
+  ])
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="md:max-w-2xl md:max-h-[90vh] md:overflow-y-auto">
@@ -335,17 +473,29 @@ export function RecipeCalculatorModal({
             {isEditing ? t('modal.titleEdit') : t('modal.titleNew')}
           </DialogTitle>
           <DialogDescription>
-            {isEditing
-              ? t('modal.descriptionEdit')
-              : t('modal.descriptionNew')}
+            {isEditing ? t('modal.descriptionEdit') : t('modal.descriptionNew')}
           </DialogDescription>
         </DialogHeader>
 
         {isSharedListRecipe && (
           <div className="bg-blue-50 border border-blue-200 rounded-md p-3 text-sm text-blue-700 mx-3 md:mx-0">
-            {isEditing
-              ? t('modal.sharedListEdit')
-              : t('modal.sharedListNew')}
+            {isEditing ? t('modal.sharedListEdit') : t('modal.sharedListNew')}
+          </div>
+        )}
+
+        {changedIngredients.length > 0 && (
+          <div className="bg-amber-50 border border-amber-200 rounded-md p-3 text-sm text-amber-800 mx-3 md:mx-0">
+            <p className="font-medium mb-1">{t('modal.ingredientsChangedTitle')}</p>
+            <ul className="list-disc list-inside space-y-0.5">
+              {changedIngredients.map(ing => (
+                <li key={ing.id}>
+                  {ing.foodItem!.name} — {t('modal.ingredientsChangedFrom')}{' '}
+                  {Math.round(ing.snapshotCalories!)} {t('modal.ingredientsChangedTo')}{' '}
+                  {Math.round(ing.foodItem!.calories)} kcal/100g
+                </li>
+              ))}
+            </ul>
+            <p className="mt-1 text-amber-700 text-xs">{t('modal.ingredientsChangedHint')}</p>
           </div>
         )}
 
@@ -394,9 +544,7 @@ export function RecipeCalculatorModal({
                 {foodsError && (
                   <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3">
                     <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0" />
-                    <p className="text-red-700 text-sm">
-                      {t('modal.foodsError')}
-                    </p>
+                    <p className="text-red-700 text-sm">{t('modal.foodsError')}</p>
                   </div>
                 )}
 
@@ -414,16 +562,27 @@ export function RecipeCalculatorModal({
                 {/* Ingredients list */}
                 {!foodsLoading && !foodsError && ingredients.length > 0 && (
                   <div className="space-y-2">
-                    {ingredients.map(ingredient => (
-                      <IngredientRow
-                        key={ingredient.id}
-                        ingredient={ingredient}
-                        availableFoods={availableFoods}
-                        sharedLists={sharedLists}
-                        onChange={updated => handleIngredientChange(ingredient.id, updated)}
-                        onRemove={() => handleIngredientRemove(ingredient.id)}
-                      />
-                    ))}
+                    <DndContext
+                      sensors={sensors}
+                      collisionDetection={closestCenter}
+                      onDragEnd={handleDragEnd}
+                    >
+                      <SortableContext
+                        items={ingredients.map(i => i.id)}
+                        strategy={verticalListSortingStrategy}
+                      >
+                        {ingredients.map(ingredient => (
+                          <SortableIngredientRow
+                            key={ingredient.id}
+                            ingredient={ingredient}
+                            availableFoods={availableFoods}
+                            sharedLists={sharedLists}
+                            onChange={updated => handleIngredientChange(ingredient.id, updated)}
+                            onRemove={() => handleIngredientRemove(ingredient.id)}
+                          />
+                        ))}
+                      </SortableContext>
+                    </DndContext>
 
                     <Button
                       variant="outline"
@@ -664,9 +823,7 @@ export function RecipeCalculatorModal({
                 </label>
               </div>
               <p className="text-xs text-neutral-500 mt-2">
-                {saveAs === 'portion'
-                  ? t('modal.saveAsPortionHint')
-                  : t('modal.saveAs100gHint')}
+                {saveAs === 'portion' ? t('modal.saveAsPortionHint') : t('modal.saveAs100gHint')}
               </p>
             </div>
           )}
@@ -676,7 +833,11 @@ export function RecipeCalculatorModal({
             <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
               {t('modal.cancel')}
             </Button>
-            <Button onClick={handleSubmit} disabled={isLoading} className="gap-2">
+            <Button
+              onClick={handleSubmit}
+              disabled={isLoading || (isEditing && !isDirty)}
+              className="gap-2"
+            >
               {isLoading ? (
                 t('modal.saving')
               ) : (

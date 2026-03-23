@@ -61,6 +61,15 @@ export function NutritionSummary({
           weight: nutrition.perServing.weight,
         }
 
+  const totalMacroCalories =
+    displayValues.protein * 4 + displayValues.carbs * 4 + displayValues.fat * 9
+  const proteinPercent =
+    totalMacroCalories > 0 ? ((displayValues.protein * 4) / totalMacroCalories) * 100 : 0
+  const carbPercent =
+    totalMacroCalories > 0 ? ((displayValues.carbs * 4) / totalMacroCalories) * 100 : 0
+  const fatPercent =
+    totalMacroCalories > 0 ? ((displayValues.fat * 9) / totalMacroCalories) * 100 : 0
+
   return (
     <div className="bg-gradient-to-br from-primary-50 to-accent-50 rounded-xl p-4 md:p-6 space-y-4 md:space-y-6">
       {/* Sparas som - main highlighted section */}
@@ -98,6 +107,49 @@ export function NutritionSummary({
             <div className="text-xs text-neutral-500">{t('nutrition.protein')}</div>
           </div>
         </div>
+
+        {/* Macro distribution bars */}
+        {totalMacroCalories > 0 && (
+          <div className="mt-4 space-y-2">
+            <p className="text-xs text-neutral-500 mb-1">{t('nutrition.macroDistribution')}</p>
+            <div>
+              <div className="flex justify-between text-xs mb-1">
+                <span style={{ color: '#f5c518' }}>{t('nutrition.fat')}</span>
+                <span className="font-medium">{Math.round(fatPercent)}%</span>
+              </div>
+              <div className="h-2 bg-neutral-200 rounded-full overflow-hidden">
+                <div
+                  className="h-full rounded-full"
+                  style={{ width: `${fatPercent}%`, backgroundColor: '#f5c518' }}
+                />
+              </div>
+            </div>
+            <div>
+              <div className="flex justify-between text-xs mb-1">
+                <span style={{ color: '#fb923c' }}>{t('nutrition.carbs')}</span>
+                <span className="font-medium">{Math.round(carbPercent)}%</span>
+              </div>
+              <div className="h-2 bg-neutral-200 rounded-full overflow-hidden">
+                <div
+                  className="h-full rounded-full"
+                  style={{ width: `${carbPercent}%`, backgroundColor: '#fb923c' }}
+                />
+              </div>
+            </div>
+            <div>
+              <div className="flex justify-between text-xs mb-1">
+                <span style={{ color: '#f43f5e' }}>{t('nutrition.protein')}</span>
+                <span className="font-medium">{Math.round(proteinPercent)}%</span>
+              </div>
+              <div className="h-2 bg-neutral-200 rounded-full overflow-hidden">
+                <div
+                  className="h-full rounded-full"
+                  style={{ width: `${proteinPercent}%`, backgroundColor: '#f43f5e' }}
+                />
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Optional sub-nutrients */}
         {(displayValues.saturatedFat != null ||

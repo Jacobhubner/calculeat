@@ -14,6 +14,10 @@ export interface RecipeIngredient {
   weight_grams?: number
   ingredient_order: number
   created_at: string
+  snapshot_calories?: number | null
+  snapshot_fat_g?: number | null
+  snapshot_carb_g?: number | null
+  snapshot_protein_g?: number | null
 }
 
 export interface Recipe {
@@ -68,6 +72,10 @@ export interface CreateRecipeInput {
     amount: number
     unit: string
     weight_grams?: number
+    snapshot_calories?: number
+    snapshot_fat_g?: number
+    snapshot_carb_g?: number
+    snapshot_protein_g?: number
   }>
   // Nutrition data calculated in frontend
   nutrition?: RecipeNutritionData
@@ -206,6 +214,7 @@ export function useCreateRecipe() {
           ? {
               // Per 100g format - only 100g display available (no unit toggle)
               user_id: user.id,
+              source: 'user' as const,
               name: input.name,
               is_recipe: true,
               default_amount: 100,
@@ -222,6 +231,7 @@ export function useCreateRecipe() {
           : {
               // Per portion format - both port and 100g display available
               user_id: user.id,
+              source: 'user' as const,
               name: input.name,
               is_recipe: true,
               default_amount: 1,
@@ -282,6 +292,10 @@ export function useCreateRecipe() {
           unit: ing.unit,
           weight_grams: ing.weight_grams,
           ingredient_order: index,
+          snapshot_calories: ing.snapshot_calories,
+          snapshot_fat_g: ing.snapshot_fat_g,
+          snapshot_carb_g: ing.snapshot_carb_g,
+          snapshot_protein_g: ing.snapshot_protein_g,
         }))
 
         const { error: ingredientsError } = await supabase
@@ -409,6 +423,10 @@ export function useUpdateRecipe() {
             unit: ing.unit,
             weight_grams: ing.weight_grams,
             ingredient_order: index,
+            snapshot_calories: ing.snapshot_calories,
+            snapshot_fat_g: ing.snapshot_fat_g,
+            snapshot_carb_g: ing.snapshot_carb_g,
+            snapshot_protein_g: ing.snapshot_protein_g,
           }))
 
           const { error: ingredientsError } = await supabase

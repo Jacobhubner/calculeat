@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Trash2, Search } from 'lucide-react'
+import { Trash2, Search, GripVertical } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -37,6 +37,7 @@ export interface IngredientData {
   foodItem: FoodItem | null
   amount: number
   unit: string
+  snapshotCalories?: number | null
 }
 
 interface IngredientRowProps {
@@ -45,6 +46,7 @@ interface IngredientRowProps {
   sharedLists?: SharedListOption[]
   onChange: (updated: IngredientData) => void
   onRemove: () => void
+  dragHandleProps?: React.HTMLAttributes<HTMLDivElement>
 }
 
 export function IngredientRow({
@@ -53,6 +55,7 @@ export function IngredientRow({
   sharedLists = [],
   onChange,
   onRemove,
+  dragHandleProps,
 }: IngredientRowProps) {
   const { t } = useTranslation('recipes')
   const [searchQuery, setSearchQuery] = useState('')
@@ -88,21 +91,26 @@ export function IngredientRow({
     setHighlightedIndex(0)
   }, [])
 
+  // Normalize a string for fuzzy matching: lowercase, remove commas, collapse spaces
+  function normalizeForSearch(s: string) {
+    return s.toLowerCase().replace(/,/g, '').replace(/\s+/g, ' ').trim()
+  }
+
   // Filter and sort foods based on search + source filter
   const allFilteredFoods = availableFoods
     .filter(food => {
       if (!matchesSourceFilter(food, sourceFilter)) return false
       if (!searchQuery.trim()) return true
-      const query = searchQuery.toLowerCase()
+      const query = normalizeForSearch(searchQuery)
       return (
-        food.name.toLowerCase().includes(query) ||
-        (food.brand && food.brand.toLowerCase().includes(query))
+        normalizeForSearch(food.name).includes(query) ||
+        (food.brand && normalizeForSearch(food.brand).includes(query))
       )
     })
     .sort((a, b) => a.name.localeCompare(b.name, 'sv'))
 
   const totalMatches = allFilteredFoods.length
-  const filteredFoods = allFilteredFoods.slice(0, 20)
+  const filteredFoods = allFilteredFoods.slice(0, 50)
 
   // Get available units for selected food
   const availableUnits = ingredient.foodItem ? getAvailableUnits(ingredient.foodItem) : ['g']
@@ -185,8 +193,15 @@ export function IngredientRow({
 
   return (
     <div className="p-3 bg-neutral-50 rounded-lg border border-neutral-200 space-y-2">
-      {/* Row 1: Food selector + amount + unit + delete */}
+      {/* Row 1: Grip + food selector + amount + unit + delete */}
       <div className="flex items-center gap-2">
+        {/* Drag handle */}
+        <div
+          {...dragHandleProps}
+          className="flex-shrink-0 cursor-grab active:cursor-grabbing text-neutral-300 hover:text-neutral-500 touch-none"
+        >
+          <GripVertical className="h-5 w-5" />
+        </div>
         {/* Food selector */}
         <div className="flex-1 relative" ref={searchRef}>
           {ingredient.foodItem ? (
@@ -339,7 +354,7 @@ export function IngredientRow({
                         )
                       })}
                     </div>
-                    {totalMatches > 20 && (
+                    {totalMatches > 50 && (
                       <div className="px-3 py-2 text-xs text-neutral-500 bg-neutral-50 border-t text-center">
                         {t('ingredient.showingOf', { total: totalMatches })}
                       </div>
@@ -375,7 +390,6 @@ export function IngredientRow({
           ))}
         </select>
 
-        {/* Remove button */}
         <Button
           type="button"
           variant="ghost"
