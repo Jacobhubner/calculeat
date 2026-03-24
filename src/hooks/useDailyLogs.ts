@@ -745,24 +745,24 @@ export function useCopyDayToToday() {
 
         if (mealError) throw mealError
 
-        // Copy items
+        // Copy items one by one to avoid UNIQUE(meal_entry_id, item_order) conflicts
         if (meal.items && meal.items.length > 0) {
-          const items = meal.items.map((item: MealEntryItem) => ({
-            meal_entry_id: newMeal.id,
-            food_item_id: item.food_item_id,
-            amount: item.amount,
-            unit: item.unit,
-            weight_grams: item.weight_grams,
-            calories: item.calories,
-            fat_g: item.fat_g,
-            carb_g: item.carb_g,
-            protein_g: item.protein_g,
-            item_order: item.item_order,
-          }))
-
-          const { error: itemsError } = await supabase.from('meal_entry_items').insert(items)
-
-          if (itemsError) throw itemsError
+          for (let i = 0; i < meal.items.length; i++) {
+            const item = meal.items[i] as MealEntryItem
+            const { error: itemError } = await supabase.from('meal_entry_items').insert({
+              meal_entry_id: newMeal.id,
+              food_item_id: item.food_item_id,
+              amount: item.amount,
+              unit: item.unit,
+              weight_grams: item.weight_grams,
+              calories: item.calories,
+              fat_g: item.fat_g,
+              carb_g: item.carb_g,
+              protein_g: item.protein_g,
+              item_order: i, // use sequential index, not source item_order
+            })
+            if (itemError) throw itemError
+          }
         }
       }
 
