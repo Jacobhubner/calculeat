@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Bell, Apple, ChefHat, Loader2 } from 'lucide-react'
+import { Bell, Apple, ChefHat, Loader2, Send, X } from 'lucide-react'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -7,6 +7,9 @@ import {
   usePendingInvitations,
   useAcceptShareInvitation,
   useRejectShareInvitation,
+  useSentShareInvitations,
+  useCancelShareInvitation,
+  type SentShareInvitation,
 } from '@/hooks/useShareInvitations'
 import type { PendingInvitation } from '@/lib/types/sharing'
 import { toast } from 'sonner'
@@ -39,7 +42,10 @@ function InvitationCard({ invitation }: { invitation: PendingInvitation }) {
         toast.error(errorMessages[result.error ?? ''] ?? t('invitations.error.generic'))
         return
       }
-      const label = invitation.item_type === 'recipe' ? t('invitations.label.recipe') : t('invitations.label.food_item')
+      const label =
+        invitation.item_type === 'recipe'
+          ? t('invitations.label.recipe')
+          : t('invitations.label.food_item')
       toast.success(t('invitations.toast.imported', { label }))
     } catch {
       toast.error(t('invitations.error.generic_retry'))
@@ -81,11 +87,14 @@ function InvitationCard({ invitation }: { invitation: PendingInvitation }) {
           <div className="flex items-center gap-2 flex-wrap">
             <p className="font-semibold text-neutral-900 truncate">{invitation.item_name}</p>
             <Badge className="bg-violet-100 text-violet-700 border-violet-300 text-[10px] px-1.5 py-0 h-4 shrink-0">
-              {invitation.item_type === 'recipe' ? t('invitations.badge.recipe') : t('invitations.badge.food_item')}
+              {invitation.item_type === 'recipe'
+                ? t('invitations.badge.recipe')
+                : t('invitations.badge.food_item')}
             </Badge>
           </div>
           <p className="text-sm text-neutral-500 mt-0.5">
-            {t('invitations.shared_by')} <span className="font-medium text-neutral-700">{invitation.sender_name}</span>
+            {t('invitations.shared_by')}{' '}
+            <span className="font-medium text-neutral-700">{invitation.sender_name}</span>
           </p>
         </div>
       </div>
@@ -102,11 +111,17 @@ function InvitationCard({ invitation }: { invitation: PendingInvitation }) {
       )}
       {invitation.item_type === 'recipe' && (
         <div className="flex gap-4 text-xs text-neutral-500">
-          {preview.servings && <span>{t('invitations.preview.servings', { count: preview.servings })}</span>}
+          {preview.servings && (
+            <span>{t('invitations.preview.servings', { count: preview.servings })}</span>
+          )}
           {preview.ingredient_count !== undefined && (
             <span>{t('invitations.preview.ingredients', { count: preview.ingredient_count })}</span>
           )}
-          {preview.calories && <span>{preview.calories} kcal/{t('invitations.preview.serving')}</span>}
+          {preview.calories && (
+            <span>
+              {preview.calories} kcal/{t('invitations.preview.serving')}
+            </span>
+          )}
         </div>
       )}
 
@@ -146,20 +161,75 @@ function InvitationCard({ invitation }: { invitation: PendingInvitation }) {
   )
 }
 
+function SentInvitationCard({ invitation }: { invitation: SentShareInvitation }) {
+  const { t, i18n } = useTranslation('social')
+  const [isCancelling, setIsCancelling] = useState(false)
+  const { mutateAsync: cancel } = useCancelShareInvitation()
+
+  const handleCancel = async () => {
+    setIsCancelling(true)
+    try {
+      const result = await cancel(invitation.id)
+      if (!result.success) {
+        toast.error(t('invitations.error.cancel_failed'))
+        return
+      }
+      toast.success(t('invitations.toast.cancelled'))
+    } catch {
+      toast.error(t('invitations.error.cancel_failed'))
+    } finally {
+      setIsCancelling(false)
+    }
+  }
+
+  const locale = i18n.language === 'sv' ? sv : undefined
+
+  return (
+    <div className="bg-white rounded-xl border border-neutral-200 p-4 flex items-center gap-3">
+      <div className="p-2 rounded-lg bg-neutral-50 shrink-0">
+        {invitation.item_type === 'recipe' ? (
+          <ChefHat className="h-5 w-5 text-neutral-400" />
+        ) : (
+          <Apple className="h-5 w-5 text-neutral-400" />
+        )}
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="font-medium text-neutral-900 truncate">{invitation.item_name}</p>
+        <p className="text-sm text-neutral-500">
+          {t('invitations.sent.to')}{' '}
+          <span className="font-medium text-neutral-700">{invitation.recipient_name}</span>
+          {' · '}
+          {formatDistanceToNow(parseISO(invitation.created_at), { addSuffix: true, locale })}
+        </p>
+      </div>
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={handleCancel}
+        disabled={isCancelling}
+        className="shrink-0 text-red-500 hover:text-red-700 hover:bg-red-50 gap-1"
+      >
+        {isCancelling ? <Loader2 className="h-3 w-3 animate-spin" /> : <X className="h-3 w-3" />}
+        {t('invitations.action.cancel')}
+      </Button>
+    </div>
+  )
+}
+
 export default function InvitationsPage() {
   const { t } = useTranslation('social')
   const { data: invitations = [], isLoading } = usePendingInvitations()
+  const { data: sentInvitations = [], isLoading: isSentLoading } = useSentShareInvitations()
 
   return (
     <DashboardLayout>
-      <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
+      <div className="max-w-2xl mx-auto px-4 py-6 space-y-8">
         <div>
           <h1 className="text-2xl font-bold text-neutral-900">{t('invitations.page.title')}</h1>
-          <p className="text-neutral-500 mt-1">
-            {t('invitations.page.subtitle')}
-          </p>
+          <p className="text-neutral-500 mt-1">{t('invitations.page.subtitle')}</p>
         </div>
 
+        {/* Received invitations */}
         {isLoading && (
           <div className="flex items-center justify-center py-12">
             <Loader2 className="h-6 w-6 animate-spin text-neutral-400" />
@@ -167,7 +237,7 @@ export default function InvitationsPage() {
         )}
 
         {!isLoading && invitations.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-16 text-center">
+          <div className="flex flex-col items-center justify-center py-12 text-center">
             <Bell className="h-12 w-12 text-neutral-300 mb-4" />
             <p className="text-neutral-500 font-medium">{t('invitations.empty.title')}</p>
             <p className="text-sm text-neutral-400 mt-1 max-w-xs">
@@ -180,6 +250,19 @@ export default function InvitationsPage() {
           <div className="space-y-3">
             {invitations.map(invitation => (
               <InvitationCard key={invitation.id} invitation={invitation} />
+            ))}
+          </div>
+        )}
+
+        {/* Sent invitations awaiting response */}
+        {!isSentLoading && sentInvitations.length > 0 && (
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 text-sm font-medium text-neutral-500">
+              <Send className="h-4 w-4" />
+              {t('invitations.sent.section_title')}
+            </div>
+            {sentInvitations.map(inv => (
+              <SentInvitationCard key={inv.id} invitation={inv} />
             ))}
           </div>
         )}

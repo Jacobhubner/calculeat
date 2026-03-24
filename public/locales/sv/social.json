@@ -30,11 +30,13 @@
     },
     "action": {
       "import": "Importera",
-      "reject": "Avvisa"
+      "reject": "Avvisa",
+      "cancel": "Avbryt delning"
     },
     "toast": {
       "imported": "{{label}} har importerats!",
-      "rejected": "Inbjudan avvisad."
+      "rejected": "Inbjudan avvisad.",
+      "cancelled": "Delning avbruten."
     },
     "error": {
       "concurrent_accept_detected": "Importerades redan i ett annat fönster.",
@@ -42,7 +44,13 @@
       "invitation_already_processed": "Denna inbjudan har redan hanterats.",
       "generic": "Något gick fel.",
       "generic_retry": "Något gick fel. Försök igen.",
-      "reject_failed": "Kunde inte avvisa inbjudan."
+      "reject_failed": "Kunde inte avvisa inbjudan.",
+      "cancel_failed": "Kunde inte avbryta delningen."
+    },
+    "sent": {
+      "section_title": "Skickade (inväntar svar)",
+      "to": "Till",
+      "empty": "Inga pågående delningar."
     }
   },
   "share": {

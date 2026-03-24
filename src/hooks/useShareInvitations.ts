@@ -189,6 +189,55 @@ export function useRejectShareInvitation() {
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
+// Sent invitations (outgoing, still pending)
+// ──────────────────────────────────────────────────────────────────────────────
+
+export interface SentShareInvitation {
+  id: string
+  item_type: 'food_item' | 'recipe' | 'food_list'
+  item_id: string
+  item_name: string
+  recipient_id: string
+  recipient_name: string
+  recipient_email: string
+  status: string
+  created_at: string
+  expires_at: string
+}
+
+export function useSentShareInvitations() {
+  const { user } = useAuth()
+
+  return useQuery({
+    queryKey: ['shareInvitations', 'sent', user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc('get_sent_share_invitations')
+      if (error) throw error
+      return data as SentShareInvitation[]
+    },
+    enabled: !!user,
+    staleTime: 30_000,
+  })
+}
+
+export function useCancelShareInvitation() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (invitationId: string) => {
+      const { data, error } = await supabase.rpc('cancel_share_invitation', {
+        p_invitation_id: invitationId,
+      })
+      if (error) throw error
+      return data as { success: boolean; error?: string; status?: string }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['shareInvitations', 'sent'] })
+    },
+  })
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
 // Social badge count — summan av delningsinbjudningar + vänförfrågningar
 // ──────────────────────────────────────────────────────────────────────────────
 

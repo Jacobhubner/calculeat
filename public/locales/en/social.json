@@ -30,11 +30,13 @@
     },
     "action": {
       "import": "Import",
-      "reject": "Decline"
+      "reject": "Decline",
+      "cancel": "Cancel sharing"
     },
     "toast": {
       "imported": "{{label}} has been imported!",
-      "rejected": "Invitation declined."
+      "rejected": "Invitation declined.",
+      "cancelled": "Sharing cancelled."
     },
     "error": {
       "concurrent_accept_detected": "Already imported in another window.",
@@ -42,7 +44,13 @@
       "invitation_already_processed": "This invitation has already been processed.",
       "generic": "Something went wrong.",
       "generic_retry": "Something went wrong. Please try again.",
-      "reject_failed": "Could not decline the invitation."
+      "reject_failed": "Could not decline the invitation.",
+      "cancel_failed": "Could not cancel the sharing."
+    },
+    "sent": {
+      "section_title": "Sent (awaiting response)",
+      "to": "To",
+      "empty": "No pending shares."
     }
   },
   "share": {
