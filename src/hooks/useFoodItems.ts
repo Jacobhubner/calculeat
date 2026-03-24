@@ -148,18 +148,34 @@ export function useFoodItems() {
     queryFn: async () => {
       if (!user) throw new Error('User not authenticated')
 
-      // Fetch both global items (user_id IS NULL) and user's own items.
-      // PostgREST default limit is 1000 — use two separate queries to ensure
-      // user's own items are always included regardless of total count.
-      const [globalResult, userResult] = await Promise.all([
-        supabase.from('food_items').select('*').is('user_id', null).order('name').limit(10000),
-        supabase.from('food_items').select('*').eq('user_id', user.id).order('name').limit(10000),
-      ])
+      // Fetch global items in pages of 1000 (PostgREST max_rows cap).
+      // Fetch user's own items in a single query (always small).
+      const PAGE = 1000
+      const globalItems: FoodItem[] = []
+      let from = 0
+      while (true) {
+        const { data, error } = await supabase
+          .from('food_items')
+          .select('*')
+          .is('user_id', null)
+          .order('name')
+          .range(from, from + PAGE - 1)
+        if (error) throw error
+        globalItems.push(...(data as FoodItem[]))
+        if (data.length < PAGE) break
+        from += PAGE
+      }
 
-      if (globalResult.error) throw globalResult.error
+      const userResult = await supabase
+        .from('food_items')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('name')
+        .limit(10000)
+
       if (userResult.error) throw userResult.error
 
-      const combined = [...(globalResult.data as FoodItem[]), ...(userResult.data as FoodItem[])]
+      const combined = [...globalItems, ...(userResult.data as FoodItem[])]
 
       // Apply shadowing: user items override global items
       return applyShadowing(combined, user.id)

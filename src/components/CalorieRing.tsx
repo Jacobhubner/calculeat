@@ -72,7 +72,7 @@ export default function CalorieRing({
         {/* Center content */}
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <div className="text-center">
-            <p className="text-5xl font-bold text-neutral-900">{consumed}</p>
+            <p className="text-5xl font-bold text-neutral-900">{Math.round(consumed)}</p>
             <p className="text-xs text-neutral-500 uppercase tracking-wide">kcal</p>
           </div>
         </div>
@@ -86,7 +86,7 @@ export default function CalorieRing({
               {Math.round(min)} - {Math.round(max)}
             </p>
           ) : (
-            <p className="text-2xl font-semibold text-neutral-900">{target}</p>
+            <p className="text-2xl font-semibold text-neutral-900">{Math.round(target)}</p>
           )}
           <p className="text-xs text-neutral-500 uppercase tracking-wide">{t('ring.goal')}</p>
         </div>
@@ -98,7 +98,9 @@ export default function CalorieRing({
             )}
           >
             {isOverTarget ? '+' : ''}
-            {isOverTarget ? consumed - goalForProgress : calculatedRemaining}
+            {isOverTarget
+              ? Math.round(consumed - goalForProgress)
+              : Math.round(calculatedRemaining)}
           </p>
           <p className="text-xs text-neutral-500 uppercase tracking-wide">
             {isOverTarget ? t('ring.over') : t('ring.remaining')}

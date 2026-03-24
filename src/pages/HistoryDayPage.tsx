@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
-import CalorieRing from '@/components/CalorieRing'
+import { ZonedCalorieRing } from '@/components/daily/ZonedCalorieRing'
 import MacroBar from '@/components/MacroBar'
 import { ArrowLeft, Calendar, Check, Copy, UtensilsCrossed, Pencil, Plus, X } from 'lucide-react'
 import {
@@ -221,9 +221,7 @@ export default function HistoryDayPage() {
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-2">
                 <Pencil className="h-4 w-4 text-amber-600" />
-                <p className="text-sm font-medium text-amber-800">
-                  {t('editing.banner')}
-                </p>
+                <p className="text-sm font-medium text-amber-800">{t('editing.banner')}</p>
               </div>
               <Button
                 size="sm"
@@ -288,7 +286,7 @@ export default function HistoryDayPage() {
               <div className="flex justify-between items-center">
                 <span className="text-sm font-medium">{t('day.calories')}</span>
                 <span className="text-2xl font-bold text-primary-700">
-                  {log.total_calories} kcal
+                  {Math.round(log.total_calories)} kcal
                 </span>
               </div>
 
@@ -297,27 +295,27 @@ export default function HistoryDayPage() {
                 <p className="text-sm font-medium mb-2">{t('day.macroDistribution')}</p>
                 <MacroBar
                   protein={{
-                    grams: log.total_protein_g,
-                    calories: log.total_protein_g * 4,
+                    grams: Math.round(log.total_protein_g),
+                    calories: Math.round(log.total_protein_g * 4),
                     percentage:
                       log.total_calories > 0
-                        ? ((log.total_protein_g * 4) / log.total_calories) * 100
+                        ? Math.round(((log.total_protein_g * 4) / log.total_calories) * 100)
                         : 0,
                   }}
                   carbs={{
-                    grams: log.total_carb_g,
-                    calories: log.total_carb_g * 4,
+                    grams: Math.round(log.total_carb_g),
+                    calories: Math.round(log.total_carb_g * 4),
                     percentage:
                       log.total_calories > 0
-                        ? ((log.total_carb_g * 4) / log.total_calories) * 100
+                        ? Math.round(((log.total_carb_g * 4) / log.total_calories) * 100)
                         : 0,
                   }}
                   fat={{
-                    grams: log.total_fat_g,
-                    calories: log.total_fat_g * 9,
+                    grams: Math.round(log.total_fat_g),
+                    calories: Math.round(log.total_fat_g * 9),
                     percentage:
                       log.total_calories > 0
-                        ? ((log.total_fat_g * 9) / log.total_calories) * 100
+                        ? Math.round(((log.total_fat_g * 9) / log.total_calories) * 100)
                         : 0,
                   }}
                 />
@@ -326,15 +324,21 @@ export default function HistoryDayPage() {
               {/* Kaloritäthetsfärger */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="text-center p-3 bg-green-50 rounded-lg border border-green-200">
-                  <div className="text-2xl font-bold text-green-700">{log.green_calories}</div>
+                  <div className="text-2xl font-bold text-green-700">
+                    {Math.round(log.green_calories)}
+                  </div>
                   <div className="text-xs text-green-600">{t('stats.green')}</div>
                 </div>
                 <div className="text-center p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-                  <div className="text-2xl font-bold text-yellow-700">{log.yellow_calories}</div>
+                  <div className="text-2xl font-bold text-yellow-700">
+                    {Math.round(log.yellow_calories)}
+                  </div>
                   <div className="text-xs text-yellow-600">{t('stats.yellow')}</div>
                 </div>
                 <div className="text-center p-3 bg-orange-50 rounded-lg border border-orange-200">
-                  <div className="text-2xl font-bold text-orange-700">{log.orange_calories}</div>
+                  <div className="text-2xl font-bold text-orange-700">
+                    {Math.round(log.orange_calories)}
+                  </div>
                   <div className="text-xs text-orange-600">{t('stats.orange')}</div>
                 </div>
               </div>
@@ -353,8 +357,9 @@ export default function HistoryDayPage() {
                         <div>
                           <CardTitle className="text-lg">{meal.meal_name}</CardTitle>
                           <CardDescription>
-                            {meal.meal_calories} kcal · F: {meal.meal_fat_g}g · K:{' '}
-                            {meal.meal_carb_g}g · P: {meal.meal_protein_g}g
+                            {Math.round(meal.meal_calories)} kcal · F: {Math.round(meal.meal_fat_g)}
+                            g · K: {Math.round(meal.meal_carb_g)}g · P:{' '}
+                            {Math.round(meal.meal_protein_g)}g
                           </CardDescription>
                         </div>
                       </div>
@@ -397,9 +402,12 @@ export default function HistoryDayPage() {
                             </div>
                             <div className="flex items-center gap-2">
                               <div className="text-right">
-                                <div className="font-semibold">{item.calories} kcal</div>
+                                <div className="font-semibold">
+                                  {Math.round(item.calories)} kcal
+                                </div>
                                 <div className="text-xs text-neutral-600">
-                                  F: {item.fat_g}g · K: {item.carb_g}g · P: {item.protein_g}g
+                                  F: {Math.round(item.fat_g)}g · K: {Math.round(item.carb_g)}g · P:{' '}
+                                  {Math.round(item.protein_g)}g
                                 </div>
                               </div>
                               {isEditing && (
@@ -416,7 +424,9 @@ export default function HistoryDayPage() {
                         ))}
                       </div>
                     ) : (
-                      <div className="text-center py-4 text-neutral-400">{t('empty.noFoodInMeal')}</div>
+                      <div className="text-center py-4 text-neutral-400">
+                        {t('empty.noFoodInMeal')}
+                      </div>
                     )}
                   </CardContent>
                 </Card>
@@ -439,7 +449,11 @@ export default function HistoryDayPage() {
               <CardTitle className="text-lg">{t('day.calorieGoal')}</CardTitle>
             </CardHeader>
             <CardContent className="flex justify-center">
-              <CalorieRing consumed={log.total_calories} target={log.goal_calories_max || 2000} />
+              <ZonedCalorieRing
+                consumed={Math.round(log.total_calories)}
+                min={log.goal_calories_min || Math.round((log.goal_calories_max || 2000) * 0.85)}
+                max={log.goal_calories_max || 2000}
+              />
             </CardContent>
           </Card>
 
@@ -451,15 +465,15 @@ export default function HistoryDayPage() {
             <CardContent className="space-y-3">
               <div className="flex justify-between">
                 <span className="text-sm text-neutral-600">{t('day.fat')}</span>
-                <span className="text-sm font-semibold">{log.total_fat_g}g</span>
+                <span className="text-sm font-semibold">{Math.round(log.total_fat_g)}g</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-neutral-600">{t('day.carbs')}</span>
-                <span className="text-sm font-semibold">{log.total_carb_g}g</span>
+                <span className="text-sm font-semibold">{Math.round(log.total_carb_g)}g</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-neutral-600">{t('day.protein')}</span>
-                <span className="text-sm font-semibold">{log.total_protein_g}g</span>
+                <span className="text-sm font-semibold">{Math.round(log.total_protein_g)}g</span>
               </div>
               <div className="flex justify-between pt-3 border-t">
                 <span className="text-sm text-neutral-600">{t('day.meals')}</span>
@@ -487,7 +501,7 @@ export default function HistoryDayPage() {
                   <span className="text-sm text-neutral-600">{t('day.calories')}</span>
                   <div className="text-right">
                     <div className="text-sm font-semibold">
-                      {log.total_calories} / {log.goal_calories_max}
+                      {Math.round(log.total_calories)} / {Math.round(log.goal_calories_max)}
                     </div>
                     <div className="text-xs text-neutral-500">
                       {Math.round((log.total_calories / log.goal_calories_max) * 100)}%

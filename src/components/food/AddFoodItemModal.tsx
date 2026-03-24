@@ -396,9 +396,7 @@ export function AddFoodItemModal({
         .join(', ')
 
       if (duplicateNames) {
-        setDuplicateWarning(
-          t('addFoodModal.duplicateWarning', { name: duplicateNames })
-        )
+        setDuplicateWarning(t('addFoodModal.duplicateWarning', { name: duplicateNames }))
       } else {
         setDuplicateWarning(null)
       }
@@ -732,7 +730,11 @@ export function AddFoodItemModal({
       onSuccess?.(createdFoodItem)
     } catch (error) {
       console.error(`Failed to ${editItem ? 'update' : 'create'} food item:`, error)
-      toast.error(editItem ? t('addFoodModal.saveError', { action: t('addFoodModal.saveErrorUpdate') }) : t('addFoodModal.saveError', { action: t('addFoodModal.saveErrorCreate') }))
+      toast.error(
+        editItem
+          ? t('addFoodModal.saveError', { action: t('addFoodModal.saveErrorUpdate') })
+          : t('addFoodModal.saveError', { action: t('addFoodModal.saveErrorCreate') })
+      )
     }
   }
 
@@ -776,9 +778,7 @@ export function AddFoodItemModal({
 
           {adminGlobalMode && (
             <div className="bg-amber-50 border border-amber-200 rounded-md p-3 text-sm text-amber-700">
-              {editItem
-                ? t('addFoodModal.adminEditWarning')
-                : t('addFoodModal.adminNewWarning')}
+              {editItem ? t('addFoodModal.adminEditWarning') : t('addFoodModal.adminNewWarning')}
             </div>
           )}
           {!adminGlobalMode &&
@@ -825,7 +825,11 @@ export function AddFoodItemModal({
                     ) : (
                       <ScanBarcode className="h-4 w-4 mr-1.5" />
                     )}
-                    {isBarcodeFetching ? t('addFoodModal.barcode.searching', { defaultValue: t('barcode.searching') }) : t('addFoodModal.scanBarcode')}
+                    {isBarcodeFetching
+                      ? t('addFoodModal.barcode.searching', {
+                          defaultValue: t('barcode.searching'),
+                        })
+                      : t('addFoodModal.scanBarcode')}
                   </Button>
                 )}
                 {FEATURES.SCAN_NUTRITION_LABEL ? (
@@ -844,7 +848,13 @@ export function AddFoodItemModal({
                     {labelScan.isPending ? t('addFoodModal.scanning') : t('addFoodModal.scanLabel')}
                   </Button>
                 ) : (
-                  <Button type="button" variant="outline" size="sm" disabled title={t('addFoodModal.scanComing')}>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    disabled
+                    title={t('addFoodModal.scanComing')}
+                  >
                     <Camera className="h-4 w-4 mr-1.5" />
                     {t('addFoodModal.scanLabel')}
                   </Button>
@@ -862,7 +872,9 @@ export function AddFoodItemModal({
                       {t('addFoodModal.barcodeNotFound')}
                     </p>
                     {lockedBarcode && (
-                      <p className="text-xs text-orange-600 mt-0.5">{t('addFoodModal.barcodeCode', { barcode: lockedBarcode })}</p>
+                      <p className="text-xs text-orange-600 mt-0.5">
+                        {t('addFoodModal.barcodeCode', { barcode: lockedBarcode })}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -874,7 +886,9 @@ export function AddFoodItemModal({
                   onClick={() => nameInputRef.current?.focus()}
                 >
                   {t('addFoodModal.fillManually')}
-                  <span className="text-xs ml-1.5 opacity-70">{t('addFoodModal.fillManuallySaved')}</span>
+                  <span className="text-xs ml-1.5 opacity-70">
+                    {t('addFoodModal.fillManuallySaved')}
+                  </span>
                 </Button>
               </div>
             ) : barcodeError ? (
@@ -897,9 +911,7 @@ export function AddFoodItemModal({
             {/* Overwrite confirmation */}
             {showOverwriteConfirm && pendingScanResult && (
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <p className="text-sm text-blue-900 mb-3">
-                  {t('addFoodModal.overwriteConfirm')}
-                </p>
+                <p className="text-sm text-blue-900 mb-3">{t('addFoodModal.overwriteConfirm')}</p>
                 <div className="flex gap-2">
                   <Button
                     type="button"
@@ -1013,7 +1025,10 @@ export function AddFoodItemModal({
                       <Label htmlFor="weight_grams">
                         {t('addFoodModal.fieldWeight')}
                         <span className="text-xs text-neutral-500 ml-2 font-normal">
-                          {t('addFoodModal.fieldWeightHint', { amount: defaultAmount || '?', unit: defaultUnit || '?' })}
+                          {t('addFoodModal.fieldWeightHint', {
+                            amount: defaultAmount || '?',
+                            unit: defaultUnit || '?',
+                          })}
                         </span>
                       </Label>
                       <Input
@@ -1034,7 +1049,10 @@ export function AddFoodItemModal({
                 {/* Nutrition */}
                 <div className="space-y-4">
                   <h3 className="text-sm font-semibold text-neutral-900">
-                    {t('addFoodModal.sectionNutrition', { amount: defaultAmount || '?', unit: defaultUnit || '?' })}
+                    {t('addFoodModal.sectionNutrition', {
+                      amount: defaultAmount || '?',
+                      unit: defaultUnit || '?',
+                    })}
                   </h3>
 
                   <div className="grid grid-cols-2 gap-4">
@@ -1193,7 +1211,10 @@ export function AddFoodItemModal({
                           <div className="flex items-end gap-3">
                             <div className="flex-1">
                               <Label htmlFor="volume_grams">
-                                {t('addFoodModal.volumeWeightLabel', { unit: volumeUnit, ml: VOLUME_TO_ML[volumeUnit] })}
+                                {t('addFoodModal.volumeWeightLabel', {
+                                  unit: volumeUnit,
+                                  ml: VOLUME_TO_ML[volumeUnit],
+                                })}
                               </Label>
                               <div className="flex gap-2 mt-1">
                                 <select
@@ -1218,7 +1239,9 @@ export function AddFoodItemModal({
                                   placeholder="gram"
                                   className="flex-1"
                                 />
-                                <span className="self-center text-sm text-neutral-600">{t('addFoodModal.volumeGramsUnit')}</span>
+                                <span className="self-center text-sm text-neutral-600">
+                                  {t('addFoodModal.volumeGramsUnit')}
+                                </span>
                               </div>
                             </div>
                           </div>
@@ -1297,7 +1320,9 @@ export function AddFoodItemModal({
                     <>
                       {/* Energy density */}
                       <div>
-                        <p className="text-xs text-neutral-600 mb-1">{t('addFoodModal.previewEnergyDensity')}</p>
+                        <p className="text-xs text-neutral-600 mb-1">
+                          {t('addFoodModal.previewEnergyDensity')}
+                        </p>
                         <p className="text-lg font-semibold text-neutral-900">
                           {liveCalculations.kcalPerGram.toFixed(2)} kcal/g
                         </p>
@@ -1315,11 +1340,13 @@ export function AddFoodItemModal({
                             {tAny(`color.${liveCalculations.energyDensityColor.toLowerCase()}`)}
                           </Badge>
                           <span className="text-xs text-neutral-600">
-                            ({foodType === 'Solid'
+                            (
+                            {foodType === 'Solid'
                               ? t('addFoodModal.foodTypeSolid')
                               : foodType === 'Liquid'
                                 ? t('addFoodModal.foodTypeLiquid')
-                                : t('addFoodModal.foodTypeSoup')})
+                                : t('addFoodModal.foodTypeSoup')}
+                            )
                           </span>
                         </div>
                       </div>
@@ -1342,48 +1369,62 @@ export function AddFoodItemModal({
 
                             <div className="space-y-1 text-sm">
                               <div className="flex justify-between">
-                                <span className="text-neutral-600">{t('addFoodModal.previewEnergy')}</span>
+                                <span className="text-neutral-600">
+                                  {t('addFoodModal.previewEnergy')}
+                                </span>
                                 <span className="font-semibold text-neutral-900">
                                   {Math.round(servingPreview.kcal)} kcal
                                 </span>
                               </div>
                               <div className="flex justify-between">
-                                <span className="text-neutral-600">{t('addFoodModal.previewFat')}</span>
+                                <span className="text-neutral-600">
+                                  {t('addFoodModal.previewFat')}
+                                </span>
                                 <span className="font-medium text-neutral-900">
                                   {servingPreview.fat.toFixed(1)}g
                                 </span>
                               </div>
                               {servingPreview.saturatedFat != null && (
                                 <div className="flex justify-between pl-3">
-                                  <span className="text-neutral-400">{t('addFoodModal.previewSaturatedFat')}</span>
+                                  <span className="text-neutral-400">
+                                    {t('addFoodModal.previewSaturatedFat')}
+                                  </span>
                                   <span className="text-neutral-600">
                                     {servingPreview.saturatedFat.toFixed(1)}g
                                   </span>
                                 </div>
                               )}
                               <div className="flex justify-between">
-                                <span className="text-neutral-600">{t('addFoodModal.previewCarbs')}</span>
+                                <span className="text-neutral-600">
+                                  {t('addFoodModal.previewCarbs')}
+                                </span>
                                 <span className="font-medium text-neutral-900">
                                   {servingPreview.carb.toFixed(1)}g
                                 </span>
                               </div>
                               {servingPreview.sugars != null && (
                                 <div className="flex justify-between pl-3">
-                                  <span className="text-neutral-400">{t('addFoodModal.previewSugars')}</span>
+                                  <span className="text-neutral-400">
+                                    {t('addFoodModal.previewSugars')}
+                                  </span>
                                   <span className="text-neutral-600">
                                     {servingPreview.sugars.toFixed(1)}g
                                   </span>
                                 </div>
                               )}
                               <div className="flex justify-between">
-                                <span className="text-neutral-600">{t('addFoodModal.previewProtein')}</span>
+                                <span className="text-neutral-600">
+                                  {t('addFoodModal.previewProtein')}
+                                </span>
                                 <span className="font-medium text-neutral-900">
                                   {servingPreview.protein.toFixed(1)}g
                                 </span>
                               </div>
                               {servingPreview.salt != null && (
                                 <div className="flex justify-between pl-3">
-                                  <span className="text-neutral-400">{t('addFoodModal.previewSalt')}</span>
+                                  <span className="text-neutral-400">
+                                    {t('addFoodModal.previewSalt')}
+                                  </span>
                                   <span className="text-neutral-600">
                                     {servingPreview.salt.toFixed(1)}g
                                   </span>
@@ -1398,12 +1439,17 @@ export function AddFoodItemModal({
                       {(saturatedFatG != null || sugarsG != null || saltG != null) && (
                         <div>
                           <p className="text-xs text-neutral-600 mb-1">
-                            {t('addFoodModal.sectionNutrition', { amount: defaultAmount || '?', unit: defaultUnit || '?' })}
+                            {t('addFoodModal.sectionNutrition', {
+                              amount: defaultAmount || '?',
+                              unit: defaultUnit || '?',
+                            })}
                           </p>
                           <div className="space-y-1 text-sm">
                             {saturatedFatG != null && !isNaN(saturatedFatG) && (
                               <div className="flex justify-between">
-                                <span className="text-neutral-500">{t('addFoodModal.previewSaturatedFat')}</span>
+                                <span className="text-neutral-500">
+                                  {t('addFoodModal.previewSaturatedFat')}
+                                </span>
                                 <span className="font-medium text-neutral-900">
                                   {saturatedFatG.toFixed(1)}g
                                 </span>
@@ -1411,7 +1457,9 @@ export function AddFoodItemModal({
                             )}
                             {sugarsG != null && !isNaN(sugarsG) && (
                               <div className="flex justify-between">
-                                <span className="text-neutral-500">{t('addFoodModal.previewSugars')}</span>
+                                <span className="text-neutral-500">
+                                  {t('addFoodModal.previewSugars')}
+                                </span>
                                 <span className="font-medium text-neutral-900">
                                   {sugarsG.toFixed(1)}g
                                 </span>
@@ -1419,7 +1467,9 @@ export function AddFoodItemModal({
                             )}
                             {saltG != null && !isNaN(saltG) && (
                               <div className="flex justify-between">
-                                <span className="text-neutral-500">{t('addFoodModal.previewSalt')}</span>
+                                <span className="text-neutral-500">
+                                  {t('addFoodModal.previewSalt')}
+                                </span>
                                 <span className="font-medium text-neutral-900">
                                   {saltG.toFixed(1)}g
                                 </span>
@@ -1432,7 +1482,9 @@ export function AddFoodItemModal({
 
                       {/* Energy comparison */}
                       <div>
-                        <p className="text-xs text-neutral-600 mb-1">{t('addFoodModal.previewEnergyComparison')}</p>
+                        <p className="text-xs text-neutral-600 mb-1">
+                          {t('addFoodModal.previewEnergyComparison')}
+                        </p>
                         <div className="space-y-1 text-sm">
                           <div className="flex justify-between">
                             <span>{t('addFoodModal.previewMacroNutrients')}</span>
@@ -1464,49 +1516,66 @@ export function AddFoodItemModal({
 
                       {/* Macro distribution */}
                       <div>
-                        <p className="text-xs text-neutral-600 mb-2">{t('addFoodModal.previewMacroDistribution')}</p>
+                        <p className="text-xs text-neutral-600 mb-2">
+                          {t('addFoodModal.previewMacroDistribution')}
+                        </p>
                         <div className="space-y-2">
                           <div>
                             <div className="flex justify-between text-xs mb-1">
-                              <span>{t('addFoodModal.previewFatLabel')}</span>
+                              <span style={{ color: '#f5c518' }}>
+                                {t('addFoodModal.previewFatLabel')}
+                              </span>
                               <span className="font-medium">
                                 {Math.round(liveCalculations.fatPercent)}%
                               </span>
                             </div>
                             <div className="h-2 bg-neutral-200 rounded-full overflow-hidden">
                               <div
-                                className="h-full bg-amber-500"
-                                style={{ width: `${liveCalculations.fatPercent}%` }}
+                                className="h-full rounded-full"
+                                style={{
+                                  width: `${liveCalculations.fatPercent}%`,
+                                  backgroundColor: '#f5c518',
+                                }}
                               />
                             </div>
                           </div>
 
                           <div>
                             <div className="flex justify-between text-xs mb-1">
-                              <span>{t('addFoodModal.previewCarbsLabel')}</span>
+                              <span style={{ color: '#fb923c' }}>
+                                {t('addFoodModal.previewCarbsLabel')}
+                              </span>
                               <span className="font-medium">
                                 {Math.round(liveCalculations.carbPercent)}%
                               </span>
                             </div>
                             <div className="h-2 bg-neutral-200 rounded-full overflow-hidden">
                               <div
-                                className="h-full bg-green-500"
-                                style={{ width: `${liveCalculations.carbPercent}%` }}
+                                className="h-full rounded-full"
+                                style={{
+                                  width: `${liveCalculations.carbPercent}%`,
+                                  backgroundColor: '#fb923c',
+                                }}
                               />
                             </div>
                           </div>
 
                           <div>
                             <div className="flex justify-between text-xs mb-1">
-                              <span>{t('addFoodModal.previewProteinLabel')}</span>
+                              <span style={{ color: '#f43f5e' }}>
+                                {t('addFoodModal.previewProteinLabel')}
+                              </span>
                               <span className="font-medium">
                                 {Math.round(liveCalculations.proteinPercent)}%
                               </span>
                             </div>
                             <div className="h-2 bg-neutral-200 rounded-full overflow-hidden">
                               <div
-                                className="h-full bg-blue-500"
-                                style={{ width: `${liveCalculations.proteinPercent}%` }}
+                                className="h-full rounded-full"
+                                style={{
+                                  width: `${liveCalculations.proteinPercent}%`,
+                                  backgroundColor: '#f43f5e',
+                                }}
                               />
                             </div>
                           </div>
@@ -1514,9 +1583,7 @@ export function AddFoodItemModal({
                       </div>
                     </>
                   ) : (
-                    <p className="text-sm text-neutral-500">
-                      {t('addFoodModal.previewEmpty')}
-                    </p>
+                    <p className="text-sm text-neutral-500">{t('addFoodModal.previewEmpty')}</p>
                   )}
                 </div>
               </div>

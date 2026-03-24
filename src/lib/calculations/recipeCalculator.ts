@@ -273,14 +273,10 @@ export function getAvailableUnits(food: FoodItem): string[] {
     units.push('dl', 'msk', 'tsk')
   }
 
-  // Add serving unit if grams_per_piece is defined
-  if (food.grams_per_piece && food.grams_per_piece > 0) {
-    const servingUnit = food.serving_unit || 'st'
-    if (!units.includes(servingUnit)) {
-      units.push(servingUnit)
-    }
-    if (!units.includes('st') && servingUnit !== 'st') {
-      units.push('st')
+  // Add serving unit if grams_per_piece is defined and serving_unit is explicitly set
+  if (food.grams_per_piece && food.grams_per_piece > 0 && food.serving_unit) {
+    if (!units.includes(food.serving_unit)) {
+      units.push(food.serving_unit)
     }
   }
 
@@ -291,9 +287,9 @@ export function getAvailableUnits(food: FoodItem): string[] {
  * Get default unit for a food item in recipe context
  */
 export function getDefaultRecipeUnit(food: FoodItem): string {
-  // Prefer serving unit if available
-  if (food.grams_per_piece && food.grams_per_piece > 0) {
-    return food.serving_unit || 'st'
+  // Prefer serving unit if explicitly set
+  if (food.grams_per_piece && food.grams_per_piece > 0 && food.serving_unit) {
+    return food.serving_unit
   }
 
   // Otherwise use default unit or gram
