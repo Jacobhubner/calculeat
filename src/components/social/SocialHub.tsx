@@ -28,6 +28,9 @@ import {
   usePendingInvitations,
   useAcceptShareInvitation,
   useRejectShareInvitation,
+  useSentShareInvitations,
+  useCancelShareInvitation,
+  type SentShareInvitation,
 } from '@/hooks/useShareInvitations'
 import { usePendingAdminInvitations, useRespondAdminInvitation } from '@/hooks/useAdminInvitations'
 import {
@@ -179,7 +182,9 @@ function MiniInvitationCard({ invitation }: { invitation: PendingInvitation }) {
               {typeLabel}
             </Badge>
           </div>
-          <p className="text-xs text-neutral-400">{t('social.from')} {invitation.sender_name}</p>
+          <p className="text-xs text-neutral-400">
+            {t('social.from')} {invitation.sender_name}
+          </p>
           {isExpiringSoon && (
             <p className="text-xs text-amber-600">
               {daysLeft <= 0
@@ -196,7 +201,9 @@ function MiniInvitationCard({ invitation }: { invitation: PendingInvitation }) {
           ) : (
             <UserCheck className="h-3 w-3 mr-1" />
           )}
-          {invitation.item_type === 'food_list' ? t('social.action.import_list') : t('invitations.action.import')}
+          {invitation.item_type === 'food_list'
+            ? t('social.action.import_list')
+            : t('invitations.action.import')}
         </Button>
         <Button
           size="sm"
@@ -266,7 +273,9 @@ function MiniSharedListInvitationCard({ invitation }: { invitation: SharedListIn
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium text-neutral-900 truncate">{invitation.list_name}</p>
-          <p className="text-xs text-neutral-500">{t('social.shared_list.invited_by')} {invitation.sender_name}</p>
+          <p className="text-xs text-neutral-500">
+            {t('social.shared_list.invited_by')} {invitation.sender_name}
+          </p>
         </div>
         <Badge className="text-[9px] px-1 py-0 h-3.5 bg-blue-100 text-blue-700 border-blue-200 shrink-0">
           {t('social.badge.shared_list')}
@@ -380,6 +389,61 @@ function MiniFriendRequestCard({ request }: { request: FriendRequest }) {
           {t('social.action.deny')}
         </Button>
       </div>
+    </div>
+  )
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// SentShareCard
+// ──────────────────────────────────────────────────────────────────────────────
+
+function SentShareCard({ invitation }: { invitation: SentShareInvitation }) {
+  const { t } = useTranslation('social')
+  const [isCancelling, setIsCancelling] = useState(false)
+  const { mutateAsync: cancel } = useCancelShareInvitation()
+
+  const handleCancel = async () => {
+    setIsCancelling(true)
+    try {
+      const result = await cancel(invitation.id)
+      if (!result.success) {
+        toast.error(t('invitations.error.cancel_failed'))
+        return
+      }
+      toast.success(t('invitations.toast.cancelled'))
+    } catch {
+      toast.error(t('invitations.error.cancel_failed'))
+    } finally {
+      setIsCancelling(false)
+    }
+  }
+
+  const itemIcon =
+    invitation.item_type === 'recipe' ? (
+      <ChefHat className="h-4 w-4 text-neutral-400" />
+    ) : (
+      <Apple className="h-4 w-4 text-neutral-400" />
+    )
+
+  return (
+    <div className="rounded-lg border border-neutral-100 p-3 bg-white flex items-center gap-2">
+      <div className="p-1.5 rounded bg-neutral-50 shrink-0">{itemIcon}</div>
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-medium text-neutral-900 truncate">{invitation.item_name}</p>
+        <p className="text-xs text-neutral-400">
+          {t('invitations.sent.to')} {invitation.recipient_name}
+        </p>
+      </div>
+      <Button
+        size="sm"
+        variant="ghost"
+        onClick={handleCancel}
+        disabled={isCancelling}
+        className="h-7 text-xs text-red-500 hover:text-red-700 hover:bg-red-50 shrink-0 gap-1"
+      >
+        {isCancelling ? <Loader2 className="h-3 w-3 animate-spin" /> : <X className="h-3 w-3" />}
+        {t('invitations.action.cancel')}
+      </Button>
     </div>
   )
 }
@@ -514,7 +578,8 @@ function FriendProfile({
             @{friend.friend_username ?? friend.friend_name}
           </p>
           <p className="text-xs text-neutral-400">
-            {t('social.friends.friends_since')} {format(parseISO(friend.since), 'd MMM yyyy', { locale: sv })}
+            {t('social.friends.friends_since')}{' '}
+            {format(parseISO(friend.since), 'd MMM yyyy', { locale: sv })}
           </p>
         </div>
       </div>
@@ -569,7 +634,9 @@ function FriendProfile({
                   onClick={() => setIsEditingAlias(true)}
                   className="text-sm text-neutral-700 hover:text-primary-600 transition-colors text-left w-full"
                 >
-                  {friend.alias ? t('social.friends.alias_set', { alias: friend.alias }) : t('social.friends.set_alias')}
+                  {friend.alias
+                    ? t('social.friends.alias_set', { alias: friend.alias })
+                    : t('social.friends.set_alias')}
                 </button>
               )}
             </div>
@@ -583,7 +650,9 @@ function FriendProfile({
           className="w-full flex items-center gap-3 p-3 rounded-lg border border-neutral-200 hover:bg-primary-50 hover:border-primary-200 transition-colors text-left"
         >
           <Share2 className="h-4 w-4 text-primary-600 shrink-0" />
-          <span className="text-sm font-medium text-neutral-700">{t('social.friends.start_sharing')}</span>
+          <span className="text-sm font-medium text-neutral-700">
+            {t('social.friends.start_sharing')}
+          </span>
         </button>
 
         {/* Skicka meddelande */}
@@ -593,13 +662,17 @@ function FriendProfile({
           className="w-full flex items-center gap-3 p-3 rounded-lg border border-neutral-200 hover:bg-primary-50 hover:border-primary-200 transition-colors text-left"
         >
           <MessageCircle className="h-4 w-4 text-primary-600 shrink-0" />
-          <span className="text-sm font-medium text-neutral-700">{t('social.friends.send_message')}</span>
+          <span className="text-sm font-medium text-neutral-700">
+            {t('social.friends.send_message')}
+          </span>
         </button>
 
         {/* Ta bort vän */}
         {confirmRemove ? (
           <div className="rounded-lg border border-red-200 bg-red-50 p-3 space-y-2">
-            <p className="text-sm text-red-700 font-medium">{t('social.friends.confirm_remove', { name: displayName })}</p>
+            <p className="text-sm text-red-700 font-medium">
+              {t('social.friends.confirm_remove', { name: displayName })}
+            </p>
             <div className="flex gap-2">
               <Button
                 size="sm"
@@ -615,7 +688,11 @@ function FriendProfile({
                 disabled={isRemoving}
                 className="flex-1 h-7 text-xs bg-red-600 hover:bg-red-700 text-white"
               >
-                {isRemoving ? <Loader2 className="h-3 w-3 animate-spin" /> : t('social.friends.confirm_remove_yes')}
+                {isRemoving ? (
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                ) : (
+                  t('social.friends.confirm_remove_yes')
+                )}
               </Button>
             </div>
           </div>
@@ -656,10 +733,10 @@ function ConversationList({ onOpenThread }: { onOpenThread: (conv: Conversation)
     return (
       <div className="text-center py-10 px-4 space-y-2">
         <MessageCircle className="h-10 w-10 text-neutral-200 mx-auto" />
-        <p className="text-sm font-medium text-neutral-500">{t('social.messages.no_conversations')}</p>
-        <p className="text-xs text-neutral-400">
-          {t('social.messages.no_conversations_hint')}
+        <p className="text-sm font-medium text-neutral-500">
+          {t('social.messages.no_conversations')}
         </p>
+        <p className="text-xs text-neutral-400">{t('social.messages.no_conversations_hint')}</p>
       </div>
     )
   }
@@ -926,7 +1003,11 @@ function MessageBubble({
                 disabled={isEditPending || !editInput.trim()}
                 className="text-xs text-white bg-primary-600 hover:bg-primary-700 rounded px-2 py-1 disabled:opacity-40"
               >
-                {isEditPending ? <Loader2 className="h-3 w-3 animate-spin" /> : t('social.action.save')}
+                {isEditPending ? (
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                ) : (
+                  t('social.action.save')
+                )}
               </button>
             </div>
           </div>
@@ -1100,7 +1181,9 @@ function MessageThread({
         {/* Ta bort konversation */}
         {confirmDeleteConv ? (
           <div className="flex items-center gap-1.5 shrink-0">
-            <span className="text-xs text-neutral-500">{t('social.messages.confirm_delete_conv')}</span>
+            <span className="text-xs text-neutral-500">
+              {t('social.messages.confirm_delete_conv')}
+            </span>
             <button
               type="button"
               onClick={() => setConfirmDeleteConv(false)}
@@ -1114,7 +1197,11 @@ function MessageThread({
               disabled={isDeletingConv}
               className="text-xs text-white bg-red-600 hover:bg-red-700 px-1.5 py-0.5 rounded"
             >
-              {isDeletingConv ? <Loader2 className="h-3 w-3 animate-spin" /> : t('social.action.yes')}
+              {isDeletingConv ? (
+                <Loader2 className="h-3 w-3 animate-spin" />
+              ) : (
+                t('social.action.yes')
+              )}
             </button>
           </div>
         ) : (
@@ -1244,6 +1331,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
   const { data: friendRequests = [] } = usePendingFriendRequests()
   const { data: sentRequests = [] } = useSentFriendRequests()
   const { data: pendingInvitations = [] } = usePendingInvitations()
+  const { data: sentShareInvitations = [] } = useSentShareInvitations()
   const { data: pendingSharedListInvitations = [] } = usePendingSharedListInvitations()
   const { data: pendingCount = 0 } = usePendingFriendRequestsCount()
   const { data: pendingAdminInvitations = [] } = usePendingAdminInvitations()
@@ -1330,7 +1418,11 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
           {[
             { id: 'friends' as HubTab, label: t('social.hub.tab_friends'), count: 0 },
             { id: 'activity' as HubTab, label: t('social.hub.tab_activity'), count: activityCount },
-            { id: 'messages' as HubTab, label: t('social.hub.tab_messages'), count: unreadMessageCount },
+            {
+              id: 'messages' as HubTab,
+              label: t('social.hub.tab_messages'),
+              count: unreadMessageCount,
+            },
           ].map(tabItem => (
             <button
               key={tabItem.id}
@@ -1342,14 +1434,18 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
                 }
               }}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                tab === tabItem.id ? 'bg-primary-600 text-white' : 'text-neutral-600 hover:bg-neutral-100'
+                tab === tabItem.id
+                  ? 'bg-primary-600 text-white'
+                  : 'text-neutral-600 hover:bg-neutral-100'
               }`}
             >
               {tabItem.label}
               {tabItem.count > 0 && (
                 <span
                   className={`text-[10px] rounded-full px-1.5 py-0.5 min-w-[18px] text-center leading-none ${
-                    tab === tabItem.id ? 'bg-white/30 text-white' : 'bg-primary-100 text-primary-700'
+                    tab === tabItem.id
+                      ? 'bg-white/30 text-white'
+                      : 'bg-primary-100 text-primary-700'
                   }`}
                 >
                   {tabItem.count > 99 ? '99+' : tabItem.count}
@@ -1439,7 +1535,9 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
                   {t('social.action.back')}
                 </button>
                 <div className="space-y-2">
-                  <p className="text-sm font-medium text-neutral-700">{t('social.friends.add_friend')}</p>
+                  <p className="text-sm font-medium text-neutral-700">
+                    {t('social.friends.add_friend')}
+                  </p>
                   <Input
                     type="text"
                     placeholder={t('social.friends.add_placeholder')}
@@ -1448,9 +1546,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
                     onKeyDown={e => e.key === 'Enter' && handleAddFriend()}
                     autoFocus
                   />
-                  <p className="text-xs text-neutral-400">
-                    {t('social.friends.add_hint')}
-                  </p>
+                  <p className="text-xs text-neutral-400">{t('social.friends.add_hint')}</p>
                 </div>
                 <Button
                   onClick={handleAddFriend}
@@ -1586,6 +1682,18 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
               </div>
             )}
 
+            {/* Skickade delningar */}
+            {sentShareInvitations.length > 0 && (
+              <div className="space-y-2">
+                <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wide">
+                  {t('invitations.sent.section_title')}
+                </p>
+                {sentShareInvitations.map(inv => (
+                  <SentShareCard key={inv.id} invitation={inv} />
+                ))}
+              </div>
+            )}
+
             {friendRequests.length === 0 &&
               pendingInvitations.length === 0 &&
               pendingSharedListInvitations.length === 0 &&
@@ -1593,7 +1701,9 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
               sentRequests.length === 0 && (
                 <div className="text-center py-10 space-y-2">
                   <p className="text-2xl">🎉</p>
-                  <p className="text-sm font-medium text-neutral-600">{t('social.activity.all_clear')}</p>
+                  <p className="text-sm font-medium text-neutral-600">
+                    {t('social.activity.all_clear')}
+                  </p>
                   <p className="text-xs text-neutral-400">{t('social.activity.all_clear_sub')}</p>
                 </div>
               )}
