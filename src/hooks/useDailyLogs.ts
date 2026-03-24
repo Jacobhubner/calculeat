@@ -716,25 +716,20 @@ export function useCopyDayToToday() {
         targetLogId = newLog.id
       }
 
-      // Find highest existing meal_order in target log to avoid UNIQUE(daily_log_id, meal_order) conflict
-      const { data: existingMeals } = await supabase
-        .from('meal_entries')
-        .select('meal_order')
-        .eq('daily_log_id', targetLogId)
-        .order('meal_order', { ascending: false })
-        .limit(1)
-        .maybeSingle()
-      const mealOrderOffset = existingMeals ? existingMeals.meal_order + 1 : 0
+      const sourceMeals = (sourceLog.meals || [])
+        .slice()
+        .sort((a: { meal_order: number }, b: { meal_order: number }) => a.meal_order - b.meal_order)
 
-      // Copy each meal
-      for (const meal of sourceLog.meals || []) {
+      // Copy each meal using sequential index as meal_order to avoid UNIQUE conflicts
+      for (let mealIndex = 0; mealIndex < sourceMeals.length; mealIndex++) {
+        const meal = sourceMeals[mealIndex]
         const { data: newMeal, error: mealError } = await supabase
           .from('meal_entries')
           .insert({
             daily_log_id: targetLogId,
             user_id: user.id,
             meal_name: meal.meal_name,
-            meal_order: meal.meal_order + mealOrderOffset,
+            meal_order: mealIndex,
             meal_calories: 0,
             meal_fat_g: 0,
             meal_carb_g: 0,
