@@ -743,6 +743,10 @@ export function useCopyDayToToday() {
             amount: item.amount,
             unit: item.unit,
             weight_grams: item.weight_grams,
+            calories: item.calories,
+            fat_g: item.fat_g,
+            carb_g: item.carb_g,
+            protein_g: item.protein_g,
             item_order: item.item_order,
           }))
 
