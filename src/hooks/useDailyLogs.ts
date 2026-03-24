@@ -411,8 +411,8 @@ export function useAddFoodToMeal() {
     onSuccess: () => {
       // Small delay to allow database triggers to complete before refetching
       setTimeout(() => {
-        queryClient.refetchQueries({ queryKey: ['dailyLogs'] })
-      }, 100)
+        queryClient.invalidateQueries({ queryKey: ['dailyLogs'] })
+      }, 500)
     },
   })
 }
@@ -433,10 +433,10 @@ export function useRemoveFoodFromMeal() {
       if (error) throw error
     },
     onSuccess: () => {
-      // Small delay to allow database triggers to complete before refetching
+      // Delay to allow database triggers to update meal_calories + total_calories
       setTimeout(() => {
-        queryClient.refetchQueries({ queryKey: ['dailyLogs'] })
-      }, 100)
+        queryClient.invalidateQueries({ queryKey: ['dailyLogs'] })
+      }, 500)
     },
   })
 }
@@ -480,10 +480,10 @@ export function useUpdateMealItem() {
       return data
     },
     onSuccess: () => {
-      // Small delay to allow database triggers to complete before refetching
+      // Delay to allow database triggers to update meal_calories + total_calories
       setTimeout(() => {
-        queryClient.refetchQueries({ queryKey: ['dailyLogs'] })
-      }, 100)
+        queryClient.invalidateQueries({ queryKey: ['dailyLogs'] })
+      }, 500)
     },
   })
 }
@@ -542,8 +542,8 @@ export function useCreateMealEntry() {
     onSuccess: () => {
       // Small delay to allow database triggers to complete before refetching
       setTimeout(() => {
-        queryClient.refetchQueries({ queryKey: ['dailyLogs'] })
-      }, 100)
+        queryClient.invalidateQueries({ queryKey: ['dailyLogs'] })
+      }, 500)
     },
   })
 }
@@ -570,8 +570,8 @@ export function useDeleteMealEntry() {
     onSuccess: () => {
       // Small delay to allow database triggers to complete before refetching
       setTimeout(() => {
-        queryClient.refetchQueries({ queryKey: ['dailyLogs'] })
-      }, 100)
+        queryClient.invalidateQueries({ queryKey: ['dailyLogs'] })
+      }, 500)
     },
   })
 }
@@ -714,6 +714,16 @@ export function useCopyDayToToday() {
 
         if (createError) throw createError
         targetLogId = newLog.id
+      }
+
+      // Delete any existing meals in target log before copying to avoid meal_order UNIQUE conflicts
+      const { data: existingMeals } = await supabase
+        .from('meal_entries')
+        .select('id')
+        .eq('daily_log_id', targetLogId)
+      if (existingMeals && existingMeals.length > 0) {
+        const existingIds = existingMeals.map((m: { id: string }) => m.id)
+        await supabase.from('meal_entries').delete().in('id', existingIds)
       }
 
       const sourceMeals = (sourceLog.meals || [])
