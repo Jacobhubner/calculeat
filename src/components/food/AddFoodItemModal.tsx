@@ -1362,7 +1362,7 @@ export function AddFoodItemModal({
                                 <span className="text-neutral-600">
                                   {t('addFoodModal.previewFat')}
                                 </span>
-                                <span className="font-medium text-neutral-900">
+                                <span className="font-semibold text-neutral-900">
                                   {servingPreview.fat.toFixed(1)}g
                                 </span>
                               </div>
@@ -1380,7 +1380,7 @@ export function AddFoodItemModal({
                                 <span className="text-neutral-600">
                                   {t('addFoodModal.previewCarbs')}
                                 </span>
-                                <span className="font-medium text-neutral-900">
+                                <span className="font-semibold text-neutral-900">
                                   {servingPreview.carb.toFixed(1)}g
                                 </span>
                               </div>
@@ -1398,7 +1398,7 @@ export function AddFoodItemModal({
                                 <span className="text-neutral-600">
                                   {t('addFoodModal.previewProtein')}
                                 </span>
-                                <span className="font-medium text-neutral-900">
+                                <span className="font-semibold text-neutral-900">
                                   {servingPreview.protein.toFixed(1)}g
                                 </span>
                               </div>
@@ -1418,7 +1418,13 @@ export function AddFoodItemModal({
                       )}
 
                       {/* Näringsvärden per referensmängd */}
-                      {(saturatedFatG != null || sugarsG != null || saltG != null) && (
+                      {(calories > 0 ||
+                        fatG > 0 ||
+                        carbG > 0 ||
+                        proteinG > 0 ||
+                        saturatedFatG != null ||
+                        sugarsG != null ||
+                        saltG != null) && (
                         <div>
                           <p className="text-xs text-neutral-600 mb-1">
                             {t('addFoodModal.sectionNutrition', {
@@ -1427,34 +1433,62 @@ export function AddFoodItemModal({
                             })}
                           </p>
                           <div className="space-y-1 text-sm">
+                            <div className="flex justify-between">
+                              <span className="text-neutral-600">
+                                {t('addFoodModal.previewEnergy')}
+                              </span>
+                              <span className="font-semibold text-neutral-900">
+                                {Math.round(calories)} kcal
+                              </span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-neutral-600">
+                                {t('addFoodModal.previewFat')}
+                              </span>
+                              <span className="font-medium text-neutral-900">
+                                {fatG.toFixed(1)}g
+                              </span>
+                            </div>
                             {saturatedFatG != null && !isNaN(saturatedFatG) && (
-                              <div className="flex justify-between">
-                                <span className="text-neutral-500">
+                              <div className="flex justify-between pl-3">
+                                <span className="text-neutral-400">
                                   {t('addFoodModal.previewSaturatedFat')}
                                 </span>
-                                <span className="font-medium text-neutral-900">
+                                <span className="text-neutral-600">
                                   {saturatedFatG.toFixed(1)}g
                                 </span>
                               </div>
                             )}
+                            <div className="flex justify-between">
+                              <span className="text-neutral-600">
+                                {t('addFoodModal.previewCarbs')}
+                              </span>
+                              <span className="font-medium text-neutral-900">
+                                {carbG.toFixed(1)}g
+                              </span>
+                            </div>
                             {sugarsG != null && !isNaN(sugarsG) && (
-                              <div className="flex justify-between">
-                                <span className="text-neutral-500">
+                              <div className="flex justify-between pl-3">
+                                <span className="text-neutral-400">
                                   {t('addFoodModal.previewSugars')}
                                 </span>
-                                <span className="font-medium text-neutral-900">
-                                  {sugarsG.toFixed(1)}g
-                                </span>
+                                <span className="text-neutral-600">{sugarsG.toFixed(1)}g</span>
                               </div>
                             )}
+                            <div className="flex justify-between">
+                              <span className="text-neutral-600">
+                                {t('addFoodModal.previewProtein')}
+                              </span>
+                              <span className="font-medium text-neutral-900">
+                                {proteinG.toFixed(1)}g
+                              </span>
+                            </div>
                             {saltG != null && !isNaN(saltG) && (
-                              <div className="flex justify-between">
-                                <span className="text-neutral-500">
+                              <div className="flex justify-between pl-3">
+                                <span className="text-neutral-400">
                                   {t('addFoodModal.previewSalt')}
                                 </span>
-                                <span className="font-medium text-neutral-900">
-                                  {saltG.toFixed(1)}g
-                                </span>
+                                <span className="text-neutral-600">{saltG.toFixed(1)}g</span>
                               </div>
                             )}
                           </div>
