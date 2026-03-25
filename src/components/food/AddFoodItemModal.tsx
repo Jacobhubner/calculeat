@@ -1063,6 +1063,7 @@ export function AddFoodItemModal({
                         type="text"
                         inputMode="decimal"
                         {...register('calories')}
+                        onFocus={e => e.target.select()}
                         placeholder="0"
                         className={errors.calories ? 'border-red-500' : ''}
                       />
@@ -1078,6 +1079,7 @@ export function AddFoodItemModal({
                         type="text"
                         inputMode="decimal"
                         {...register('fat_g')}
+                        onFocus={e => e.target.select()}
                         placeholder="0"
                         className={errors.fat_g ? 'border-red-500' : ''}
                       />
@@ -1112,6 +1114,7 @@ export function AddFoodItemModal({
                         type="text"
                         inputMode="decimal"
                         {...register('carb_g')}
+                        onFocus={e => e.target.select()}
                         placeholder="0"
                         className={errors.carb_g ? 'border-red-500' : ''}
                       />
@@ -1144,6 +1147,7 @@ export function AddFoodItemModal({
                         type="text"
                         inputMode="decimal"
                         {...register('protein_g')}
+                        onFocus={e => e.target.select()}
                         placeholder="0"
                         className={errors.protein_g ? 'border-red-500' : ''}
                       />
