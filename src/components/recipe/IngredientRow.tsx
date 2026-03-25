@@ -193,7 +193,7 @@ export function IngredientRow({
 
   return (
     <div className="p-3 bg-neutral-50 rounded-lg border border-neutral-200 space-y-2">
-      {/* Row 1: Grip + food selector + amount + unit + delete */}
+      {/* Row 1: Grip + food selector + delete */}
       <div className="flex items-center gap-2">
         {/* Drag handle */}
         <div
@@ -238,7 +238,7 @@ export function IngredientRow({
 
           {/* Dropdown */}
           {isSearchOpen && (
-            <div className="absolute z-50 top-full left-0 mt-1 bg-white border border-neutral-200 rounded-lg shadow-lg max-h-72 flex flex-col w-[320px] max-w-[90vw]">
+            <div className="absolute z-50 top-full left-0 mt-1 bg-white border border-neutral-200 rounded-lg shadow-lg max-h-[60vh] flex flex-col w-[320px] max-w-[90vw]">
               {/* Sökinput (visas alltid när ett livsmedel redan är valt) */}
               {ingredient.foodItem && (
                 <div className="p-2 border-b shrink-0">
@@ -366,30 +366,6 @@ export function IngredientRow({
           )}
         </div>
 
-        {/* Amount input */}
-        <Input
-          type="text"
-          inputMode="decimal"
-          value={amountInput}
-          onChange={e => handleAmountChange(e.target.value)}
-          placeholder={t('ingredient.amountPlaceholder')}
-          className="w-20 text-center"
-        />
-
-        {/* Unit selector */}
-        <select
-          value={ingredient.unit}
-          onChange={e => handleUnitChange(e.target.value)}
-          className="h-11 px-3 bg-white border border-neutral-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-          aria-label={t('ingredient.selectUnit')}
-        >
-          {availableUnits.map(unit => (
-            <option key={unit} value={unit}>
-              {unit}
-            </option>
-          ))}
-        </select>
-
         <Button
           type="button"
           variant="ghost"
@@ -402,7 +378,31 @@ export function IngredientRow({
         </Button>
       </div>
 
-      {/* Row 2: Macro display - always visible when food is selected */}
+      {/* Row 2: Amount + unit */}
+      <div className="flex items-center gap-2 pl-7">
+        <Input
+          type="text"
+          inputMode="decimal"
+          value={amountInput}
+          onChange={e => handleAmountChange(e.target.value)}
+          placeholder={t('ingredient.amountPlaceholder')}
+          className="w-24 text-center"
+        />
+        <select
+          value={ingredient.unit}
+          onChange={e => handleUnitChange(e.target.value)}
+          className="flex-1 h-11 px-3 bg-white border border-neutral-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+          aria-label={t('ingredient.selectUnit')}
+        >
+          {availableUnits.map(unit => (
+            <option key={unit} value={unit}>
+              {unit}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Row 3: Macro display - always visible when food is selected */}
       {nutrition && nutrition.calories > 0 && (
         <div className="flex items-center gap-4 text-sm pt-2 border-t border-neutral-200">
           <span className="font-semibold text-primary-600">
