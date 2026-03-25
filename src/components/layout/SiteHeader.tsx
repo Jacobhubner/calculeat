@@ -333,14 +333,17 @@ export default function SiteHeader() {
               <div className="flex flex-col gap-2">
                 <Button variant="outline" size="sm" asChild>
                   <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
-                    Logga in
+                    {t('nav.login')}
                   </Link>
                 </Button>
                 <Button size="sm" asChild>
                   <Link to="/register" onClick={() => setMobileMenuOpen(false)}>
-                    Skapa konto
+                    {t('nav.register')}
                   </Link>
                 </Button>
+                <div className="flex justify-center pt-1">
+                  <LanguageSwitcher />
+                </div>
               </div>
             </div>
           </nav>
