@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import type { Recipe, RecipeIngredient } from '@/hooks/useRecipes'
 import type { FoodItem } from '@/hooks/useFoodItems'
-import { EQUIPMENT_OPTIONS, type EquipmentValue } from '@/lib/constants/recipeEquipment'
 
 interface RecipeWithIngredients extends Recipe {
   ingredients?: Array<
@@ -31,7 +30,6 @@ export function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps) {
   const savedAs100g = recipe.food_item?.default_unit === 'g'
   const fi = recipe.food_item
 
-  const displayLabel = savedAs100g ? t('card.per100g') : t('card.perServing')
   const displayCalories = fi
     ? Math.round(savedAs100g ? (fi.calories * 100) / 100 : (fi.kcal_per_unit ?? fi.calories))
     : 0
@@ -59,133 +57,59 @@ export function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps) {
   }
 
   return (
-    <Card className="hover:shadow-lg transition-shadow overflow-hidden">
-      <CardContent className="p-0">
-        {/* Receptbild */}
-        {recipe.image_url && (
-          <div className="aspect-video w-full overflow-hidden">
-            <img
-              src={recipe.image_url}
-              alt={recipe.name}
-              className="w-full h-full object-cover"
-              loading="lazy"
-            />
-          </div>
-        )}
+    <Card className="hover:shadow-md transition-shadow">
+      <CardContent className="p-3">
+        <div className="flex items-center gap-3">
+          {/* Icon */}
+          <ScrollText className="h-4 w-4 text-primary-600 flex-shrink-0" />
 
-        <div className="p-4">
-          {/* Header */}
-          <div className="flex items-start justify-between mb-3">
+          {/* Name + meta */}
+          <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 min-w-0">
-              <ScrollText className="h-5 w-5 text-primary-600 flex-shrink-0" />
-              <h3 className="font-semibold text-neutral-900 truncate">{recipe.name}</h3>
+              <h3 className="font-semibold text-neutral-900 truncate text-sm">{recipe.name}</h3>
+              {energyDensityColor && (
+                <Badge
+                  variant="outline"
+                  className={`${colorBadgeClass[energyDensityColor]} flex-shrink-0 text-xs`}
+                >
+                  {colorLabel[energyDensityColor]}
+                </Badge>
+              )}
             </div>
-            {energyDensityColor && (
-              <Badge
-                variant="outline"
-                className={`${colorBadgeClass[energyDensityColor]} flex-shrink-0`}
-              >
-                {colorLabel[energyDensityColor]}
-              </Badge>
-            )}
-          </div>
-
-          {/* Servings info + tid */}
-          <div className="flex items-center gap-2 text-sm text-neutral-500 mb-3 flex-wrap">
-            <div className="flex items-center gap-1">
-              <Users className="h-4 w-4" />
-              <span>
+            <div className="flex items-center gap-2 text-xs text-neutral-500 mt-0.5 flex-wrap">
+              <span className="flex items-center gap-1">
+                <Users className="h-3 w-3" />
                 {servings} {servings === 1 ? t('card.portion') : t('card.portionPlural')}
               </span>
-            </div>
-            {totalTime > 0 && (
-              <>
-                <span className="text-neutral-300">·</span>
-                <div className="flex items-center gap-1">
-                  <Clock className="h-4 w-4" />
-                  <span>{totalTime} min</span>
-                </div>
-              </>
-            )}
-          </div>
-
-          {/* Utrustningschips */}
-          {recipe.equipment && recipe.equipment.length > 0 && (
-            <div className="flex flex-wrap gap-1 mb-3">
-              {recipe.equipment.map(eq => {
-                const label = EQUIPMENT_OPTIONS.find(o => o.value === eq)?.label ?? eq
-                const settings = recipe.equipment_settings?.[eq as EquipmentValue]
-                const details: string[] = []
-                if (settings) {
-                  if (settings.temp_c) details.push(`${settings.temp_c}°C`)
-                  if (settings.watt) details.push(`${settings.watt}W`)
-                  if (settings.heat) details.push(String(settings.heat))
-                  if (settings.duration) details.push(`${settings.duration} min`)
-                }
-                return (
-                  <span
-                    key={eq}
-                    className="text-xs bg-neutral-100 text-neutral-600 rounded-full px-2 py-0.5"
-                  >
-                    {details.length > 0 ? `${label} · ${details.join(' · ')}` : label}
-                  </span>
-                )
-              })}
-            </div>
-          )}
-
-          {/* Nutrition display */}
-          <div className="bg-neutral-50 rounded-lg p-3 mb-4">
-            <div className="text-xs text-neutral-500 mb-2">{displayLabel}</div>
-            <div className="flex items-baseline gap-1 mb-2">
-              <span className="text-2xl font-bold text-primary-600">{displayCalories}</span>
-              <span className="text-sm text-neutral-500">kcal</span>
-            </div>
-            <div className="grid grid-cols-3 gap-2 text-xs">
-              <div>
-                <span className="font-semibold" style={{ color: '#f5c518' }}>
-                  {displayFat}g
+              {totalTime > 0 && (
+                <span className="flex items-center gap-1">
+                  <Clock className="h-3 w-3" />
+                  {totalTime} min
                 </span>
-                <span className="text-neutral-500 ml-1">F</span>
-              </div>
-              <div>
-                <span className="font-semibold" style={{ color: '#fb923c' }}>
-                  {displayCarbs}g
-                </span>
-                <span className="text-neutral-500 ml-1">K</span>
-              </div>
-              <div>
-                <span className="font-semibold" style={{ color: '#f43f5e' }}>
-                  {displayProtein}g
-                </span>
-                <span className="text-neutral-500 ml-1">P</span>
-              </div>
+              )}
+              <span className="text-neutral-400">·</span>
+              <span className="font-semibold text-primary-600">{displayCalories} kcal</span>
+              <span style={{ color: '#f5c518' }}>F:{displayFat}g</span>
+              <span style={{ color: '#fb923c' }}>K:{displayCarbs}g</span>
+              <span style={{ color: '#f43f5e' }}>P:{displayProtein}g</span>
             </div>
-          </div>
-
-          {/* Ingredients count */}
-          <div className="text-xs text-neutral-500 mb-4">
-            {t('card.ingredientCount', { count: recipe.ingredients?.length || 0 })}
           </div>
 
           {/* Actions */}
-          <div className="flex justify-end gap-2">
-            <Button variant="ghost" size="sm" onClick={onEdit} className="h-8 px-3 gap-1">
+          <div className="flex items-center gap-1 flex-shrink-0">
+            <Button variant="ghost" size="sm" onClick={onEdit} className="h-8 w-8 p-0">
               <Edit2 className="h-4 w-4" />
-              {t('card.edit')}
             </Button>
             <Button
               variant="ghost"
               size="sm"
               onClick={onDelete}
-              className="h-8 px-3 gap-1 text-red-600 hover:text-red-700 hover:bg-red-50"
+              className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
             >
               <Trash2 className="h-4 w-4" />
-              {t('card.delete')}
             </Button>
           </div>
         </div>
-        {/* /p-4 */}
       </CardContent>
     </Card>
   )

@@ -101,11 +101,7 @@ export default function RecipesPage() {
         <EmptyState
           icon={ChefHat}
           title={searchQuery ? t('page.emptyTitleSearch') : t('page.emptyTitle')}
-          description={
-            searchQuery
-              ? t('page.emptyDescriptionSearch')
-              : t('page.emptyDescription')
-          }
+          description={searchQuery ? t('page.emptyDescriptionSearch') : t('page.emptyDescription')}
           action={
             searchQuery
               ? { label: t('page.clearSearch'), onClick: () => setSearchQuery('') }
@@ -113,7 +109,7 @@ export default function RecipesPage() {
           }
         />
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="flex flex-col gap-2">
           {filteredRecipes.map(recipe => (
             <RecipeCard
               key={recipe.id}
@@ -139,7 +135,8 @@ export default function RecipesPage() {
               <div className="h-2 w-2 rounded-full bg-primary-600" />
             </div>
             <p>
-              <span className="font-semibold">{t('page.infoCombine')}</span> {t('page.infoCombineText')}
+              <span className="font-semibold">{t('page.infoCombine')}</span>{' '}
+              {t('page.infoCombineText')}
             </p>
           </div>
           <div className="flex gap-2">
@@ -147,7 +144,8 @@ export default function RecipesPage() {
               <div className="h-2 w-2 rounded-full bg-primary-600" />
             </div>
             <p>
-              <span className="font-semibold">{t('page.infoNutrition')}</span> {t('page.infoNutritionText')}
+              <span className="font-semibold">{t('page.infoNutrition')}</span>{' '}
+              {t('page.infoNutritionText')}
             </p>
           </div>
           <div className="flex gap-2">
@@ -155,7 +153,8 @@ export default function RecipesPage() {
               <div className="h-2 w-2 rounded-full bg-primary-600" />
             </div>
             <p>
-              <span className="font-semibold">{t('page.infoServings')}</span> {t('page.infoServingsText')}
+              <span className="font-semibold">{t('page.infoServings')}</span>{' '}
+              {t('page.infoServingsText')}
             </p>
           </div>
           <div className="flex gap-2">
