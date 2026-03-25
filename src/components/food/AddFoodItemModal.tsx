@@ -3,7 +3,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Resolver } from 'react-hook-form'
-import { ChevronDown, ChevronUp, AlertCircle, ScanBarcode, Camera, Loader2 } from 'lucide-react'
+import { AlertCircle, ScanBarcode, Camera, Loader2 } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -96,7 +96,6 @@ export function AddFoodItemModal({
   const { t } = useTranslation('food')
   const tAny = t as (key: string) => string
   const queryClient = useQueryClient()
-  const [showAdvanced, setShowAdvanced] = useState(false)
   const [duplicateWarning, setDuplicateWarning] = useState<string | null>(null)
 
   // Volymkonvertering state
@@ -1188,128 +1187,58 @@ export function AddFoodItemModal({
                   )}
                 </div>
 
-                {/* Advanced settings */}
-                <div className="border-t pt-4">
-                  <button
-                    type="button"
-                    onClick={() => setShowAdvanced(!showAdvanced)}
-                    className="flex items-center gap-2 text-sm font-medium text-neutral-700 hover:text-neutral-900"
-                  >
-                    {showAdvanced ? (
-                      <ChevronUp className="h-4 w-4" />
-                    ) : (
-                      <ChevronDown className="h-4 w-4" />
-                    )}
-                    {t('addFoodModal.advancedSettings')}
-                  </button>
+                {/* Serveringsinformation */}
+                <div className="border-t pt-4 space-y-4">
+                  {/* Serveringsfunktion - gram per bit/styck */}
+                  <div className="space-y-3 border border-neutral-200 rounded-lg p-3 bg-neutral-50">
+                    <p className="text-sm font-medium text-neutral-900">
+                      {t('addFoodModal.servingInfo')}
+                    </p>
 
-                  {showAdvanced && (
-                    <div className="mt-4 space-y-4">
-                      {/* Volymkonvertering - dölj bara för ml-livsmedel (densitet hanteras via weight_grams) */}
-                      {defaultUnit?.toLowerCase() !== 'ml' && (
-                        <div className="space-y-3 border border-neutral-200 rounded-lg p-3 bg-neutral-50">
-                          <p className="text-sm font-medium text-neutral-900">
-                            {t('addFoodModal.volumeConversion')}
-                          </p>
-
-                          <div className="flex items-end gap-3">
-                            <div className="flex-1">
-                              <Label htmlFor="volume_grams">
-                                {t('addFoodModal.volumeWeightLabel', {
-                                  unit: volumeUnit,
-                                  ml: VOLUME_TO_ML[volumeUnit],
-                                })}
-                              </Label>
-                              <div className="flex gap-2 mt-1">
-                                <select
-                                  id="volume_unit"
-                                  value={volumeUnit}
-                                  onChange={e => setVolumeUnit(e.target.value as VolumeUnit)}
-                                  className="w-20 px-2 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
-                                >
-                                  <option value="dl">dl</option>
-                                  <option value="msk">msk</option>
-                                  <option value="tsk">tsk</option>
-                                </select>
-                                <Input
-                                  id="volume_grams"
-                                  type="number"
-                                  step="any"
-                                  value={gramsPerVolume ?? ''}
-                                  onChange={e => {
-                                    const val = e.target.value
-                                    setGramsPerVolume(val === '' ? undefined : parseFloat(val))
-                                  }}
-                                  placeholder="gram"
-                                  className="flex-1"
-                                />
-                                <span className="self-center text-sm text-neutral-600">
-                                  {t('addFoodModal.volumeGramsUnit')}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-
-                          <p className="text-xs text-neutral-500">
-                            {t('addFoodModal.volumeExamples')}
-                          </p>
+                    <div className="grid grid-cols-2 gap-3">
+                      {/* Vikt per portion - dölj om portionsenheten är en volymenhet */}
+                      {!isServingUnitVolume && (
+                        <div>
+                          <Label htmlFor="grams_per_piece">
+                            {t('addFoodModal.servingWeightLabel')}
+                            <span className="text-xs text-neutral-500 ml-1 font-normal">
+                              {t('addFoodModal.servingWeightUnit')}
+                            </span>
+                          </Label>
+                          <Input
+                            id="grams_per_piece"
+                            type="number"
+                            step="any"
+                            {...register('grams_per_piece', { valueAsNumber: true })}
+                            placeholder="t.ex. 50"
+                          />
                         </div>
                       )}
 
-                      {/* Serveringsfunktion - gram per bit/styck */}
-                      <div className="space-y-3 border border-neutral-200 rounded-lg p-3 bg-neutral-50">
-                        <p className="text-sm font-medium text-neutral-900">
-                          {t('addFoodModal.servingInfo')}
-                        </p>
-
-                        <div className="grid grid-cols-2 gap-3">
-                          {/* Vikt per portion - dölj om portionsenheten är en volymenhet */}
-                          {!isServingUnitVolume && (
-                            <div>
-                              <Label htmlFor="grams_per_piece">
-                                {t('addFoodModal.servingWeightLabel')}
-                                <span className="text-xs text-neutral-500 ml-1 font-normal">
-                                  {t('addFoodModal.servingWeightUnit')}
-                                </span>
-                              </Label>
-                              <Input
-                                id="grams_per_piece"
-                                type="number"
-                                step="any"
-                                {...register('grams_per_piece', { valueAsNumber: true })}
-                                placeholder="t.ex. 50"
-                              />
-                            </div>
-                          )}
-
-                          <div className={isServingUnitVolume ? 'col-span-2' : ''}>
-                            <Label htmlFor="serving_unit">
-                              {t('addFoodModal.servingUnitLabel')}
-                              <span className="text-xs text-neutral-500 ml-1 font-normal">
-                                {t('addFoodModal.servingUnitHint')}
-                              </span>
-                            </Label>
-                            <Input
-                              id="serving_unit"
-                              type="text"
-                              {...register('serving_unit')}
-                              placeholder={t('addFoodModal.servingUnitPlaceholder')}
-                            />
-                          </div>
-                        </div>
-
-                        {isServingUnitVolume ? (
-                          <p className="text-xs text-amber-600">
-                            {t('addFoodModal.servingVolumeTip')}
-                          </p>
-                        ) : (
-                          <p className="text-xs text-neutral-500">
-                            {t('addFoodModal.servingExamples')}
-                          </p>
-                        )}
+                      <div className={isServingUnitVolume ? 'col-span-2' : ''}>
+                        <Label htmlFor="serving_unit">
+                          {t('addFoodModal.servingUnitLabel')}
+                          <span className="text-xs text-neutral-500 ml-1 font-normal">
+                            {t('addFoodModal.servingUnitHint')}
+                          </span>
+                        </Label>
+                        <Input
+                          id="serving_unit"
+                          type="text"
+                          {...register('serving_unit')}
+                          placeholder={t('addFoodModal.servingUnitPlaceholder')}
+                        />
                       </div>
                     </div>
-                  )}
+
+                    {isServingUnitVolume ? (
+                      <p className="text-xs text-amber-600">{t('addFoodModal.servingVolumeTip')}</p>
+                    ) : (
+                      <p className="text-xs text-neutral-500">
+                        {t('addFoodModal.servingExamples')}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
 
