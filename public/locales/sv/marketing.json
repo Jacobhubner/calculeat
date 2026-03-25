@@ -48,7 +48,7 @@
       "genderMale": "Man",
       "genderFemale": "Kvinna",
       "genderOther": "Annan",
-      "genderError": "Ogiltigt val. Felet försvinner när du gör det.",
+      "genderError": "Ogiltigt val. Finns bara två kön, dumsnut.",
       "ageLabel": "Ålder",
       "heightLabel": "Längd (cm)",
       "weightLabel": "Vikt (kg)",

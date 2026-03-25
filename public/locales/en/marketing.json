@@ -48,7 +48,7 @@
       "genderMale": "Male",
       "genderFemale": "Female",
       "genderOther": "Other",
-      "genderError": "Invalid selection. The error disappears when you make a valid choice.",
+      "genderError": "Invalid selection. There are only two genders, dumdum.",
       "ageLabel": "Age",
       "heightLabel": "Height (cm)",
       "weightLabel": "Weight (kg)",
