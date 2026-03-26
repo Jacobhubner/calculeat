@@ -130,9 +130,15 @@ export default function TodayPage() {
     return displayDate.toLocaleDateString('sv-SE', options)
   }, [logDate])
 
+  const todayDate = new Date().toISOString().split('T')[0]
+
   // Ensure log and settings exist
   useEffect(() => {
-    if (!logLoading && !todayLog && !ensureLog.isPending) {
+    const needsEnsure =
+      !logLoading &&
+      !ensureLog.isPending &&
+      (!todayLog || (todayLog && !todayLog.is_completed && todayLog.log_date < todayDate))
+    if (needsEnsure) {
       ensureLog.mutate()
     }
     if (
@@ -142,7 +148,15 @@ export default function TodayPage() {
     ) {
       createDefaultSettings.mutate()
     }
-  }, [logLoading, todayLog, settingsLoading, mealSettings, ensureLog, createDefaultSettings])
+  }, [
+    logLoading,
+    todayLog,
+    todayDate,
+    settingsLoading,
+    mealSettings,
+    ensureLog,
+    createDefaultSettings,
+  ])
 
   // Detect if goals differ from active profile (profile was changed mid-day)
   // MUST be before the early return to follow React's rules of hooks
@@ -515,7 +529,9 @@ export default function TodayPage() {
 
                 {/* Right: Makromål + Energitäthet + Kaloritäthet */}
                 <div className="flex-1 min-w-0 space-y-2">
-                  <h4 className="text-sm font-semibold text-neutral-700">{t('today.macroGoals')}</h4>
+                  <h4 className="text-sm font-semibold text-neutral-700">
+                    {t('today.macroGoals')}
+                  </h4>
                   {dailySummary && profile ? (
                     <>
                       <NutrientStatusRow
@@ -638,7 +654,9 @@ export default function TodayPage() {
                             <CardDescription className="truncate">
                               {hasItems
                                 ? t('today.mealItemCount', { count: mealEntry.items?.length ?? 0 })
-                                : t('today.mealPercentage', { pct: mealSetting.percentage_of_daily_calories })}
+                                : t('today.mealPercentage', {
+                                    pct: mealSetting.percentage_of_daily_calories,
+                                  })}
                             </CardDescription>
                           </div>
                         </div>
@@ -699,7 +717,10 @@ export default function TodayPage() {
                               <SwipeableItem
                                 key={item.id}
                                 onSwipeLeft={() =>
-                                  handleRemoveFood(item.id, foodItem?.name || t('today.defaultFoodName'))
+                                  handleRemoveFood(
+                                    item.id,
+                                    foodItem?.name || t('today.defaultFoodName')
+                                  )
                                 }
                               >
                                 <div
@@ -744,7 +765,10 @@ export default function TodayPage() {
                                     className="hidden md:flex opacity-0 group-hover:opacity-100 transition-opacity text-red-600 hover:text-red-700 hover:bg-red-50"
                                     onClick={e => {
                                       e.stopPropagation()
-                                      handleRemoveFood(item.id, foodItem?.name || t('today.defaultFoodName'))
+                                      handleRemoveFood(
+                                        item.id,
+                                        foodItem?.name || t('today.defaultFoodName')
+                                      )
                                     }}
                                     disabled={removeFoodFromMeal.isPending}
                                   >
@@ -755,7 +779,9 @@ export default function TodayPage() {
                             )
                           })}
                           <div className="pt-3 border-t flex flex-wrap gap-x-4 gap-y-1 justify-between text-sm min-w-0">
-                            <span className="font-medium text-neutral-700 shrink-0">{t('today.total')}</span>
+                            <span className="font-medium text-neutral-700 shrink-0">
+                              {t('today.total')}
+                            </span>
                             <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-neutral-600 min-w-0">
                               <span>{mealEntry.meal_calories} kcal</span>
                               <span>F: {mealEntry.meal_fat_g}g</span>

@@ -251,7 +251,31 @@ export function useEnsureTodayLog() {
           .limit(1)
           .maybeSingle()
 
-        if (openLog) return openLog as DailyLog
+        if (openLog) {
+          // If open log is from a previous day, advance it to today
+          if (openLog.log_date < today) {
+            // Only update if no log already exists for today
+            const { data: todayConflict } = await supabase
+              .from('daily_logs')
+              .select('id')
+              .eq('user_id', user.id)
+              .eq('profile_id', activeProfile.id)
+              .eq('log_date', today)
+              .maybeSingle()
+
+            if (!todayConflict) {
+              const { data: updated, error: updateError } = await supabase
+                .from('daily_logs')
+                .update({ log_date: today })
+                .eq('id', openLog.id)
+                .select()
+                .single()
+
+              if (!updateError && updated) return updated as DailyLog
+            }
+          }
+          return openLog as DailyLog
+        }
       }
 
       // Check if log exists for today

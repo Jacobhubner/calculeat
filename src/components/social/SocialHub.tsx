@@ -774,9 +774,9 @@ function ConversationList({ onOpenThread }: { onOpenThread: (conv: Conversation)
               </div>
               <div className="flex items-center justify-between gap-2">
                 <p
-                  className={`text-xs truncate ${conv.last_message_content === null ? 'italic text-neutral-400' : isUnread ? 'text-neutral-700' : 'text-neutral-400'}`}
+                  className={`text-xs truncate ${isUnread ? 'text-neutral-700' : 'text-neutral-400'}`}
                 >
-                  {conv.last_message_content ?? t('social.messages.deleted_message')}
+                  {conv.last_message_content ?? ''}
                 </p>
                 {isUnread && (
                   <span className="shrink-0 flex items-center justify-center bg-primary-600 text-white text-[10px] font-bold rounded-full min-w-[18px] h-4 px-1 leading-none">
@@ -1247,25 +1247,27 @@ function MessageThread({
           </div>
         )}
 
-        {messages.map((msg, idx) => {
-          const isOwn = msg.sender_id === user?.id
-          const prev = idx > 0 ? messages[idx - 1] : null
-          const showTimestamp =
-            !prev || differenceInMinutes(parseISO(msg.created_at), parseISO(prev.created_at)) > 10
+        {messages
+          .filter(msg => msg.deleted_at === null)
+          .map((msg, idx, arr) => {
+            const isOwn = msg.sender_id === user?.id
+            const prev = idx > 0 ? arr[idx - 1] : null
+            const showTimestamp =
+              !prev || differenceInMinutes(parseISO(msg.created_at), parseISO(prev.created_at)) > 10
 
-          return (
-            <div key={msg.id}>
-              {showTimestamp && (
-                <div className="flex justify-center py-1">
-                  <span className="text-[10px] text-neutral-400">
-                    {format(parseISO(msg.created_at), 'd MMM, HH:mm', { locale: sv })}
-                  </span>
-                </div>
-              )}
-              <MessageBubble msg={msg} isOwn={isOwn} friendshipId={conversation.friendship_id} />
-            </div>
-          )
-        })}
+            return (
+              <div key={msg.id}>
+                {showTimestamp && (
+                  <div className="flex justify-center py-1">
+                    <span className="text-[10px] text-neutral-400">
+                      {format(parseISO(msg.created_at), 'd MMM, HH:mm', { locale: sv })}
+                    </span>
+                  </div>
+                )}
+                <MessageBubble msg={msg} isOwn={isOwn} friendshipId={conversation.friendship_id} />
+              </div>
+            )
+          })}
       </div>
 
       {/* Inmatningsfält */}
