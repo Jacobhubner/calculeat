@@ -27,6 +27,7 @@
     "dayCompleteTitle": "Day complete!",
     "dayCompleteRange": "You logged {{calories}} kcal of your goal of {{min}}–{{max}} kcal",
     "dayCompleteSingle": "You logged {{calories}} kcal of your goal of {{goal}} kcal",
+    "startNewDay": "Start new day",
     "dailyProgress": "Daily progress",
     "macroGoals": "Macro goals",
     "fat": "Fat",

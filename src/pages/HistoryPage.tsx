@@ -21,10 +21,12 @@ export default function HistoryPage() {
   const { t } = useTranslation('history')
   const [viewMode, setViewMode] = useState<'calendar' | 'list'>('list')
 
-  // Get last 30 days
+  // Get last 30 days + future planned days
   const { endDate, startDate } = useMemo(() => {
     const now = new Date()
-    const end = now.toISOString().split('T')[0]
+    const future = new Date(now)
+    future.setFullYear(now.getFullYear() + 1)
+    const end = future.toISOString().split('T')[0]
     const thirtyDaysAgo = new Date(now)
     thirtyDaysAgo.setDate(now.getDate() - 30)
     const start = thirtyDaysAgo.toISOString().split('T')[0]
@@ -36,11 +38,7 @@ export default function HistoryPage() {
 
   const handleDeleteDay = (logId: string, logDate: string, e: React.MouseEvent) => {
     e.stopPropagation() // Prevent navigation to day detail
-    if (
-      !confirm(
-        t('confirm.deleteDay', { date: new Date(logDate).toLocaleDateString('sv-SE') })
-      )
-    ) {
+    if (!confirm(t('confirm.deleteDay', { date: new Date(logDate).toLocaleDateString('sv-SE') }))) {
       return
     }
     deleteDailyLog.mutate(logId, {
@@ -86,9 +84,7 @@ export default function HistoryPage() {
           <HistoryIcon className="h-6 w-6 md:h-8 md:w-8 text-primary-600" />
           {t('page.title')}
         </h1>
-        <p className="text-sm md:text-base text-neutral-600">
-          {t('page.description')}
-        </p>
+        <p className="text-sm md:text-base text-neutral-600">{t('page.description')}</p>
       </div>
 
       {/* View Mode Toggle */}
@@ -138,7 +134,9 @@ export default function HistoryPage() {
                   <CardDescription>{t('views.calendarDescription')}</CardDescription>
                 </CardHeader>
                 <CardContent className="flex justify-center">
-                  <div className="text-center py-8 text-neutral-400">{t('views.calendarComingSoon')}</div>
+                  <div className="text-center py-8 text-neutral-400">
+                    {t('views.calendarComingSoon')}
+                  </div>
                 </CardContent>
               </Card>
             ) : (
@@ -283,9 +281,7 @@ export default function HistoryPage() {
                 <div className="text-center">
                   <div className="text-4xl font-bold text-primary-700">{completedDays}</div>
                   <div className="text-sm text-neutral-700">{t('stats.daysInARow')}</div>
-                  <p className="text-xs text-neutral-600 mt-3">
-                    {t('stats.streakEncouragement')}
-                  </p>
+                  <p className="text-xs text-neutral-600 mt-3">{t('stats.streakEncouragement')}</p>
                 </div>
               </CardContent>
             </Card>

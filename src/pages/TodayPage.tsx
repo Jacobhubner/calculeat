@@ -36,6 +36,7 @@ import {
   useTodayLog,
   useEnsureTodayLog,
   useFinishDay,
+  useStartNewDay,
   useCopyDayToToday,
   useRemoveFoodFromMeal,
   useDailyLog,
@@ -59,6 +60,7 @@ export default function TodayPage() {
   const ensureLog = useEnsureTodayLog()
   const createDefaultSettings = useCreateDefaultMealSettings()
   const finishDay = useFinishDay()
+  const startNewDay = useStartNewDay()
   const copyDayToToday = useCopyDayToToday()
   const removeFoodFromMeal = useRemoveFoodFromMeal()
   const updateDailyLogGoals = useUpdateDailyLogGoals()
@@ -345,7 +347,7 @@ export default function TodayPage() {
             className="gap-2"
             size="sm"
             onClick={handleCopyFromYesterday}
-            disabled={!yesterdayLog || copyDayToToday.isPending}
+            disabled={!yesterdayLog || copyDayToToday.isPending || !!todayLog?.is_completed}
           >
             <Copy className="h-4 w-4" />
             <span className="hidden sm:inline">
@@ -473,31 +475,43 @@ export default function TodayPage() {
       {todayLog?.is_completed && (
         <Card className="mb-6 bg-gradient-to-br from-success-50 to-success-100 border-success-200">
           <CardContent className="pt-6">
-            <div className="flex items-center gap-3">
-              <div className="h-12 w-12 rounded-full bg-success-600 flex items-center justify-center">
-                <Check className="h-6 w-6 text-white" />
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="h-12 w-12 rounded-full bg-success-600 flex items-center justify-center shrink-0">
+                  <Check className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <p className="font-semibold text-success-900">{t('today.dayCompleteTitle')}</p>
+                  <p className="text-sm text-success-700">
+                    {goalCaloriesMin && goalCalories ? (
+                      <>
+                        {t('today.dayCompleteRange', {
+                          calories: totalCalories,
+                          min: Math.round(goalCaloriesMin),
+                          max: Math.round(goalCalories),
+                        })}
+                      </>
+                    ) : (
+                      <>
+                        {t('today.dayCompleteSingle', {
+                          calories: totalCalories,
+                          goal: goalCalories,
+                        })}
+                      </>
+                    )}
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="font-semibold text-success-900">{t('today.dayCompleteTitle')}</p>
-                <p className="text-sm text-success-700">
-                  {goalCaloriesMin && goalCalories ? (
-                    <>
-                      {t('today.dayCompleteRange', {
-                        calories: totalCalories,
-                        min: Math.round(goalCaloriesMin),
-                        max: Math.round(goalCalories),
-                      })}
-                    </>
-                  ) : (
-                    <>
-                      {t('today.dayCompleteSingle', {
-                        calories: totalCalories,
-                        goal: goalCalories,
-                      })}
-                    </>
-                  )}
-                </p>
-              </div>
+              <Button
+                size="sm"
+                variant="outline"
+                className="shrink-0 gap-2 border-success-400 text-success-800 hover:bg-success-200"
+                onClick={() => startNewDay.mutate(todayLog.log_date)}
+                disabled={startNewDay.isPending}
+              >
+                <Plus className="h-4 w-4" />
+                {t('today.startNewDay')}
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -674,31 +688,35 @@ export default function TodayPage() {
                             </Button>
                           )}
                           {/* Load meal button */}
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="gap-1.5 px-2 md:px-3 border-primary-300 text-primary-700"
-                            onClick={() =>
-                              handleOpenLoadMealDialog(
-                                mealSetting.meal_name,
-                                mealSetting.meal_order,
-                                mealEntry?.id
-                              )
-                            }
-                          >
-                            <ArrowDownToLine className="h-4 w-4" />
-                            <span className="hidden md:inline">{t('today.loadMeal')}</span>
-                          </Button>
-                          <Button
-                            size="sm"
-                            className="gap-1.5 px-2 md:px-3"
-                            onClick={() =>
-                              handleOpenAddFoodModal(mealSetting.meal_name, mealEntry?.id)
-                            }
-                          >
-                            <Plus className="h-4 w-4" />
-                            <span className="hidden sm:inline">{t('today.addFood')}</span>
-                          </Button>
+                          {!todayLog?.is_completed && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="gap-1.5 px-2 md:px-3 border-primary-300 text-primary-700"
+                              onClick={() =>
+                                handleOpenLoadMealDialog(
+                                  mealSetting.meal_name,
+                                  mealSetting.meal_order,
+                                  mealEntry?.id
+                                )
+                              }
+                            >
+                              <ArrowDownToLine className="h-4 w-4" />
+                              <span className="hidden md:inline">{t('today.loadMeal')}</span>
+                            </Button>
+                          )}
+                          {!todayLog?.is_completed && (
+                            <Button
+                              size="sm"
+                              className="gap-1.5 px-2 md:px-3"
+                              onClick={() =>
+                                handleOpenAddFoodModal(mealSetting.meal_name, mealEntry?.id)
+                              }
+                            >
+                              <Plus className="h-4 w-4" />
+                              <span className="hidden sm:inline">{t('today.addFood')}</span>
+                            </Button>
+                          )}
                         </div>
                       </div>
                       {/* Mini meal energy bar */}
@@ -716,17 +734,20 @@ export default function TodayPage() {
                             return (
                               <SwipeableItem
                                 key={item.id}
-                                onSwipeLeft={() =>
-                                  handleRemoveFood(
-                                    item.id,
-                                    foodItem?.name || t('today.defaultFoodName')
-                                  )
+                                onSwipeLeft={
+                                  todayLog?.is_completed
+                                    ? undefined
+                                    : () =>
+                                        handleRemoveFood(
+                                          item.id,
+                                          foodItem?.name || t('today.defaultFoodName')
+                                        )
                                 }
                               >
                                 <div
-                                  className="w-full flex items-center justify-between p-3 bg-neutral-50 rounded-lg group hover:bg-neutral-100 transition-colors text-left cursor-pointer"
+                                  className={`w-full flex items-center justify-between p-3 bg-neutral-50 rounded-lg group transition-colors text-left ${todayLog?.is_completed ? 'cursor-default' : 'hover:bg-neutral-100 cursor-pointer'}`}
                                   onClick={() => {
-                                    if (foodItem) {
+                                    if (foodItem && !todayLog?.is_completed) {
                                       setEditItem({
                                         itemId: item.id,
                                         food: foodItem,
@@ -759,21 +780,23 @@ export default function TodayPage() {
                                       </span>
                                     </div>
                                   </div>
-                                  <Button
-                                    size="sm"
-                                    variant="ghost"
-                                    className="hidden md:flex opacity-0 group-hover:opacity-100 transition-opacity text-red-600 hover:text-red-700 hover:bg-red-50"
-                                    onClick={e => {
-                                      e.stopPropagation()
-                                      handleRemoveFood(
-                                        item.id,
-                                        foodItem?.name || t('today.defaultFoodName')
-                                      )
-                                    }}
-                                    disabled={removeFoodFromMeal.isPending}
-                                  >
-                                    <Trash2 className="h-4 w-4" />
-                                  </Button>
+                                  {!todayLog?.is_completed && (
+                                    <Button
+                                      size="sm"
+                                      variant="ghost"
+                                      className="hidden md:flex opacity-0 group-hover:opacity-100 transition-opacity text-red-600 hover:text-red-700 hover:bg-red-50"
+                                      onClick={e => {
+                                        e.stopPropagation()
+                                        handleRemoveFood(
+                                          item.id,
+                                          foodItem?.name || t('today.defaultFoodName')
+                                        )
+                                      }}
+                                      disabled={removeFoodFromMeal.isPending}
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                  )}
                                 </div>
                               </SwipeableItem>
                             )
@@ -816,7 +839,7 @@ export default function TodayPage() {
         {/* Sidebar - Summary */}
         <div className="space-y-6 min-w-0 overflow-hidden">
           {/* Recent Foods */}
-          <RecentFoodsCard dailyLogId={todayLog?.id} />
+          <RecentFoodsCard dailyLogId={todayLog?.id} onFoodSelect={handleAddFromSidebar} />
 
           {/* Plate Calculator */}
           <PlateCalculator defaultCalories={remainingCalories} onAddToMeal={handleAddFromSidebar} />

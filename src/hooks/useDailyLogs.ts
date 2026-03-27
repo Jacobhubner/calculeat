@@ -682,6 +682,60 @@ export function useFinishDay() {
 }
 
 /**
+ * Start a new day after completing the current one.
+ * Creates a fresh log for today even if a completed log already exists.
+ */
+export function useStartNewDay() {
+  const { user } = useAuth()
+  const activeProfile = useProfileStore(state => state.activeProfile)
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (completedLogDate: string) => {
+      if (!user) throw new Error('User not authenticated')
+      if (!activeProfile) throw new Error('No active profile')
+
+      const base = new Date(completedLogDate + 'T12:00:00')
+      base.setDate(base.getDate() + 1)
+      const nextDay = base.toISOString().split('T')[0]
+
+      const avgCalories =
+        ((activeProfile.calories_min || 0) + (activeProfile.calories_max || 0)) / 2
+      const fatMinG = (avgCalories * (activeProfile.fat_min_percent || 20)) / 100 / 9
+      const fatMaxG = (avgCalories * (activeProfile.fat_max_percent || 35)) / 100 / 9
+      const carbMinG = (avgCalories * (activeProfile.carb_min_percent || 45)) / 100 / 4
+      const carbMaxG = (avgCalories * (activeProfile.carb_max_percent || 55)) / 100 / 4
+      const proteinMinG = (avgCalories * (activeProfile.protein_min_percent || 15)) / 100 / 4
+      const proteinMaxG = (avgCalories * (activeProfile.protein_max_percent || 25)) / 100 / 4
+
+      const { data: newLog, error } = await supabase
+        .from('daily_logs')
+        .insert({
+          user_id: user.id,
+          profile_id: activeProfile.id,
+          log_date: nextDay,
+          goal_calories_min: activeProfile.calories_min,
+          goal_calories_max: activeProfile.calories_max,
+          goal_fat_min_g: Math.round(fatMinG),
+          goal_fat_max_g: Math.round(fatMaxG),
+          goal_carb_min_g: Math.round(carbMinG),
+          goal_carb_max_g: Math.round(carbMaxG),
+          goal_protein_min_g: Math.round(proteinMinG),
+          goal_protein_max_g: Math.round(proteinMaxG),
+        })
+        .select()
+        .single()
+
+      if (error) throw error
+      return newLog as DailyLog
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['dailyLogs'] })
+    },
+  })
+}
+
+/**
  * Copy a previous day's meals to today for the active profile
  */
 export function useCopyDayToToday() {

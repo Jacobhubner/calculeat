@@ -7,54 +7,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useRecentFoodItems } from '@/hooks/useRecentFoodItems'
-import { useAddFoodToMeal, useCreateMealEntry } from '@/hooks/useDailyLogs'
 import { Clock, Plus } from 'lucide-react'
-import { toast } from 'sonner'
+import type { RecentFoodItem } from '@/hooks/useRecentFoodItems'
 
 interface RecentFoodsCardProps {
   dailyLogId?: string
-  onAddFood?: () => void
+  onFoodSelect?: (food: RecentFoodItem, amount: number, unit: string) => void
 }
 
-export default function RecentFoodsCard({ dailyLogId, onAddFood }: RecentFoodsCardProps) {
+export default function RecentFoodsCard({ dailyLogId, onFoodSelect }: RecentFoodsCardProps) {
   const { data: recentFoods, isLoading } = useRecentFoodItems(6)
-  const createMealEntry = useCreateMealEntry()
-  const addFoodToMeal = useAddFoodToMeal()
-
-  const handleQuickAdd = async (
-    foodItemId: string,
-    foodName: string,
-    defaultAmount: number,
-    defaultUnit: string
-  ) => {
-    if (!dailyLogId) {
-      toast.error('Ingen daglig logg hittades')
-      return
-    }
-
-    try {
-      // Create a quick meal entry called "Snabbtillagt"
-      const mealEntry = await createMealEntry.mutateAsync({
-        dailyLogId,
-        mealName: 'Snabbtillagt',
-        mealOrder: 999, // Put at the end
-      })
-
-      // Add the food item with default amount
-      await addFoodToMeal.mutateAsync({
-        mealEntryId: mealEntry.id,
-        foodItemId,
-        amount: defaultAmount,
-        unit: defaultUnit,
-      })
-
-      toast.success(`${foodName} har lagts till!`)
-      onAddFood?.()
-    } catch (error) {
-      console.error('Error adding food:', error)
-      toast.error('Kunde inte lägga till maten')
-    }
-  }
 
   if (isLoading) {
     return (
@@ -101,7 +63,7 @@ export default function RecentFoodsCard({ dailyLogId, onAddFood }: RecentFoodsCa
           Senaste livsmedel
         </CardTitle>
         <CardDescription className="text-xs md:text-sm">
-          Klicka för att snabbt lägga till med standardportion
+          Klicka för att välja måltid och mängd
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-2">
@@ -137,10 +99,8 @@ export default function RecentFoodsCard({ dailyLogId, onAddFood }: RecentFoodsCa
               size="sm"
               variant="ghost"
               className="ml-1 md:ml-2 shrink-0 h-8 w-8 md:h-9 md:w-9 p-0"
-              onClick={() =>
-                handleQuickAdd(food.id, food.name, food.default_amount, food.default_unit)
-              }
-              disabled={!dailyLogId || createMealEntry.isPending || addFoodToMeal.isPending}
+              onClick={() => onFoodSelect?.(food, food.default_amount, food.default_unit)}
+              disabled={!dailyLogId || !onFoodSelect}
             >
               <Plus className="h-4 w-4" />
             </Button>

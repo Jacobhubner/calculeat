@@ -27,6 +27,7 @@
     "dayCompleteTitle": "Dagen är klar!",
     "dayCompleteRange": "Du loggade {{calories}} kcal av ditt mål på {{min}}–{{max}} kcal",
     "dayCompleteSingle": "Du loggade {{calories}} kcal av ditt mål på {{goal}} kcal",
+    "startNewDay": "Starta ny dag",
     "dailyProgress": "Dagens framsteg",
     "macroGoals": "Makromål",
     "fat": "Fett",
