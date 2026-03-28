@@ -70,6 +70,7 @@ export function BarcodeScannerModal({
   const startTimeRef = useRef<number>(0)
   const currentIntervalRef = useRef<number>(300)
   const brightnessSampleCountRef = useRef(0)
+  const missedFramesRef = useRef(0)
   // Keep callbacks in refs so startDecoding never needs to re-create when props change
   const onDetectedRef = useRef(onDetected)
   const onPreliminaryDetectRef = useRef(onPreliminaryDetect)
@@ -191,7 +192,8 @@ export function BarcodeScannerModal({
               ? errors.reduce((a: number, b: number) => a + b, 0) / errors.length
               : 1
 
-          if (code && avgError < 0.25 && !detectedRef.current) {
+          if (code && avgError < 0.35 && !detectedRef.current) {
+            missedFramesRef.current = 0
             if (code === lastCodeRef.current) {
               consecutiveRef.current++
             } else {
@@ -212,10 +214,15 @@ export function BarcodeScannerModal({
               stopDecoding()
               onDetectedRef.current(code)
             }
-          } else if (!code && lastCodeRef.current) {
-            lastCodeRef.current = null
-            consecutiveRef.current = 0
-            dispatch({ type: 'LOST_CODE' })
+          } else if (!code || avgError >= 0.35) {
+            // Tolerate up to 2 missed/low-confidence frames before resetting candidate
+            missedFramesRef.current++
+            if (missedFramesRef.current > 2 && lastCodeRef.current) {
+              lastCodeRef.current = null
+              consecutiveRef.current = 0
+              missedFramesRef.current = 0
+              dispatch({ type: 'LOST_CODE' })
+            }
           }
         }
       )
@@ -231,6 +238,7 @@ export function BarcodeScannerModal({
     lastCodeRef.current = null
     consecutiveRef.current = 0
     brightnessSampleCountRef.current = 0
+    missedFramesRef.current = 0
 
     const video = videoRef.current
     if (!video) return
