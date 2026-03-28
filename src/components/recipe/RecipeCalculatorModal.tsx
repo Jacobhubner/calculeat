@@ -135,10 +135,10 @@ export function RecipeCalculatorModal({
     cookTime: number | ''
   } | null>(null)
 
-  // Filter out recipes from available foods
+  // Include recipes as ingredients, but exclude the current recipe itself (prevent circular reference)
   const availableFoods = useMemo(() => {
-    return mergedFoods.filter(f => !f.is_recipe)
-  }, [mergedFoods])
+    return mergedFoods.filter(f => !editRecipe?.food_item_id || f.id !== editRecipe.food_item_id)
+  }, [mergedFoods, editRecipe])
 
   // Reset form function (does NOT touch initialized — caller handles that)
   const resetForm = useCallback(() => {
