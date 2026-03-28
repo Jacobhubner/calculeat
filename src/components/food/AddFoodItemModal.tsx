@@ -808,8 +808,8 @@ export function AddFoodItemModal({
                         const stream = await navigator.mediaDevices.getUserMedia({
                           video: {
                             facingMode: 'environment',
-                            width: { ideal: 640 },
-                            height: { ideal: 480 },
+                            width: { ideal: 1280 },
+                            height: { ideal: 720 },
                           },
                         })
                         setCameraStream(stream)
@@ -891,10 +891,24 @@ export function AddFoodItemModal({
                 </Button>
               </div>
             ) : barcodeError ? (
-              <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
+              <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 space-y-2">
                 <p className="text-sm text-orange-800">
                   {barcodeError.message || t('addFoodModal.barcodeError')}
                 </p>
+                {barcodeError.type === 'fetch_failed' && lockedBarcode && (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    className="w-full border-orange-300 text-orange-800 hover:bg-orange-100"
+                    onClick={() => {
+                      queryClient.removeQueries({ queryKey: ['barcode', lockedBarcode] })
+                      setPendingBarcode(lockedBarcode)
+                    }}
+                  >
+                    {t('addFoodModal.retryBarcode', { defaultValue: 'Försök igen' })}
+                  </Button>
+                )}
               </div>
             ) : null}
 
@@ -1648,10 +1662,18 @@ export function AddFoodItemModal({
       {/* Barcode scanner modal */}
       <BarcodeScannerModal
         stream={cameraStream}
-        onDetected={code => {
-          // Rensa eventuell cachad data för denna streckkod så att lookup alltid körs
+        onPreliminaryDetect={code => {
+          // Start lookup immediately on first detection — result may already be ready on confirmation
           queryClient.removeQueries({ queryKey: ['barcode', code] })
           setPendingBarcode(code)
+          setLockedBarcode(code)
+        }}
+        onDetected={code => {
+          // Confirmation: lookup already in flight. Just ensure state is set.
+          if (!pendingBarcode) {
+            queryClient.removeQueries({ queryKey: ['barcode', code] })
+            setPendingBarcode(code)
+          }
           setLockedBarcode(code)
           if (cameraStream) {
             cameraStream.getTracks().forEach(t => t.stop())

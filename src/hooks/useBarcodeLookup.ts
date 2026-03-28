@@ -42,20 +42,55 @@ function parseData(d: Record<string, unknown>): ScanResult {
   }
 }
 
+const SESSION_CACHE_TTL = 24 * 60 * 60 * 1000 // 24h
+const SESSION_CACHE_MAX = 50
+
+function sessionCacheGet(barcode: string): ScanResult | null {
+  try {
+    const raw = sessionStorage.getItem(`barcode:${barcode}`)
+    if (!raw) return null
+    const { data, timestamp } = JSON.parse(raw)
+    if (Date.now() - timestamp > SESSION_CACHE_TTL) {
+      sessionStorage.removeItem(`barcode:${barcode}`)
+      return null
+    }
+    return data as ScanResult
+  } catch {
+    return null
+  }
+}
+
+function sessionCacheSet(barcode: string, data: ScanResult) {
+  try {
+    // FIFO eviction if at max capacity
+    const keys = Object.keys(sessionStorage).filter(k => k.startsWith('barcode:'))
+    if (keys.length >= SESSION_CACHE_MAX) {
+      sessionStorage.removeItem(keys[0])
+    }
+    sessionStorage.setItem(`barcode:${barcode}`, JSON.stringify({ data, timestamp: Date.now() }))
+  } catch {
+    // sessionStorage full or unavailable — ignore
+  }
+}
+
 async function fetchBarcode(barcode: string): Promise<ScanResult> {
-  // 0. Hämta session först så att auth.uid() är redo för efterföljande RPC-anrop
+  // 0. Client-side sessionStorage cache — avoids roundtrip for recently scanned barcodes
+  const cached = sessionCacheGet(barcode)
+  if (cached) return cached
+
+  // 1. Hämta session först så att auth.uid() är redo för efterföljande RPC-anrop
   const {
     data: { session },
   } = await supabase.auth.getSession()
   const token = session?.access_token
 
-  // 1. Rate-limit-kontroll — ignorera RPC-fel (låt passera vid tekniskt fel)
+  // 2. Rate-limit-kontroll — ignorera RPC-fel (låt passera vid tekniskt fel)
   const { data: rateLimited } = await supabase.rpc('check_barcode_rate_limit')
   if (rateLimited === true) {
     throw makeLookupError('rate_limited')
   }
 
-  // 2. Cache-kontroll
+  // 3. Cache-kontroll
   const { data: cacheResult, error: cacheError } = await supabase.rpc('check_barcode_cache', {
     p_barcode: barcode,
   })
@@ -65,10 +100,12 @@ async function fetchBarcode(barcode: string): Promise<ScanResult> {
 
   if (cache.hit) {
     if (cache.error) throw makeLookupError(cache.error)
-    return parseData(cache.data!)
+    const result = parseData(cache.data!)
+    sessionCacheSet(barcode, result)
+    return result
   }
 
-  // 3. Cache-miss: anropa Edge Function direkt från klienten
+  // 4. Cache-miss: anropa Edge Function direkt från klienten
 
   let response: Response
   try {
@@ -92,7 +129,7 @@ async function fetchBarcode(barcode: string): Promise<ScanResult> {
     throw makeLookupError('fetch_failed')
   }
 
-  // 4. Spara i cache (brand-and-forget — väntar inte)
+  // 5. Spara i cache (fire-and-forget — väntar inte)
   if (result.data) {
     supabase
       .rpc('save_barcode_result', {
@@ -122,7 +159,9 @@ async function fetchBarcode(barcode: string): Promise<ScanResult> {
     throw makeLookupError('fetch_failed')
   }
 
-  return parseData(result.data)
+  const parsed = parseData(result.data)
+  sessionCacheSet(barcode, parsed)
+  return parsed
 }
 
 export function useBarcodeLookup(barcode: string | null) {
