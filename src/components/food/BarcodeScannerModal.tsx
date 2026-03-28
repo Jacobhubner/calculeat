@@ -70,6 +70,15 @@ export function BarcodeScannerModal({
   const startTimeRef = useRef<number>(0)
   const currentIntervalRef = useRef<number>(300)
   const brightnessSampleCountRef = useRef(0)
+  // Keep callbacks in refs so startDecoding never needs to re-create when props change
+  const onDetectedRef = useRef(onDetected)
+  const onPreliminaryDetectRef = useRef(onPreliminaryDetect)
+  useEffect(() => {
+    onDetectedRef.current = onDetected
+  }, [onDetected])
+  useEffect(() => {
+    onPreliminaryDetectRef.current = onPreliminaryDetect
+  }, [onPreliminaryDetect])
 
   const [state, dispatch] = useReducer(scanReducer, {
     pendingCode: null,
@@ -189,7 +198,7 @@ export function BarcodeScannerModal({
               lastCodeRef.current = code
               consecutiveRef.current = 1
               dispatch({ type: 'PENDING_CODE', code })
-              onPreliminaryDetect?.(code)
+              onPreliminaryDetectRef.current?.(code)
               // Speed up to confirm quickly
               if (currentIntervalRef.current !== 150) {
                 currentIntervalRef.current = 150
@@ -201,7 +210,7 @@ export function BarcodeScannerModal({
             if (consecutiveRef.current >= 2) {
               detectedRef.current = true
               stopDecoding()
-              onDetected(code)
+              onDetectedRef.current(code)
             }
           } else if (!code && lastCodeRef.current) {
             lastCodeRef.current = null
@@ -213,7 +222,7 @@ export function BarcodeScannerModal({
     }
 
     intervalRef.current = setInterval(runTick, currentIntervalRef.current)
-  }, [onDetected, onPreliminaryDetect, stopDecoding])
+  }, [stopDecoding])
 
   useEffect(() => {
     if (!stream) return
