@@ -128,6 +128,10 @@ export function AddFoodItemModal({
   const [pendingBarcode, setPendingBarcode] = useState<string | null>(null)
   // lockedBarcode: kvarstår för UI + submit tills modal stängs
   const [lockedBarcode, setLockedBarcode] = useState<string | null>(null)
+  // Metrics refs
+  const scanStartTimeRef = useRef<number>(0)
+  const firstDetectionTimeRef = useRef<number>(0)
+  const preliminaryCodeRef = useRef<string | null>(null)
   const [showOverwriteConfirm, setShowOverwriteConfirm] = useState(false)
   const [pendingScanResult, setPendingScanResult] = useState<ScanResult | null>(null)
 
@@ -526,12 +530,29 @@ export function AddFoodItemModal({
     if (barcodeResult) {
       handleScanResult(barcodeResult)
       setPendingBarcode(null)
+      // Log time_to_product_data metric
+      if (scanStartTimeRef.current > 0) {
+        console.debug('[barcode] product data received', {
+          time_to_product_data_ms: Math.round(performance.now() - scanStartTimeRef.current),
+          has_name: !!barcodeResult.name,
+          food_type: barcodeResult.food_type,
+        })
+        scanStartTimeRef.current = 0
+      }
     }
   }, [barcodeResult, handleScanResult])
 
   useEffect(() => {
     if (barcodeError) {
       setPendingBarcode(null)
+      // Log scan failure metric
+      if (scanStartTimeRef.current > 0) {
+        console.debug('[barcode] lookup failed', {
+          error: barcodeError.type,
+          time_ms: Math.round(performance.now() - scanStartTimeRef.current),
+        })
+        scanStartTimeRef.current = 0
+      }
     }
   }, [barcodeError])
 
@@ -812,6 +833,9 @@ export function AddFoodItemModal({
                             height: { ideal: 720 },
                           },
                         })
+                        scanStartTimeRef.current = performance.now()
+                        firstDetectionTimeRef.current = 0
+                        preliminaryCodeRef.current = null
                         setCameraStream(stream)
                       } catch {
                         // Camera denied or not available — silently ignore
@@ -1664,17 +1688,41 @@ export function AddFoodItemModal({
         stream={cameraStream}
         onPreliminaryDetect={code => {
           // Start lookup immediately on first detection — result may already be ready on confirmation
+          firstDetectionTimeRef.current = performance.now()
+          preliminaryCodeRef.current = code
           queryClient.removeQueries({ queryKey: ['barcode', code] })
           setPendingBarcode(code)
           setLockedBarcode(code)
         }}
         onDetected={code => {
-          // Confirmation: lookup already in flight. Just ensure state is set.
-          if (!pendingBarcode) {
+          const confirmedAt = performance.now()
+          // If confirmed code differs from preliminary (false positive on first detection),
+          // cancel the stale lookup and start fresh for the correct code
+          if (preliminaryCodeRef.current && preliminaryCodeRef.current !== code) {
+            queryClient.cancelQueries({ queryKey: ['barcode', preliminaryCodeRef.current] })
+            queryClient.removeQueries({ queryKey: ['barcode', code] })
+            setPendingBarcode(code)
+          } else if (!pendingBarcode) {
             queryClient.removeQueries({ queryKey: ['barcode', code] })
             setPendingBarcode(code)
           }
+          preliminaryCodeRef.current = null
           setLockedBarcode(code)
+
+          // Log scan metrics (time from camera open to confirmed code)
+          if (scanStartTimeRef.current > 0) {
+            const timeToFirstDetection =
+              firstDetectionTimeRef.current > 0
+                ? Math.round(firstDetectionTimeRef.current - scanStartTimeRef.current)
+                : null
+            const timeToConfirmation = Math.round(confirmedAt - scanStartTimeRef.current)
+            console.debug('[barcode] scan metrics', {
+              barcode: code,
+              time_to_first_detection_ms: timeToFirstDetection,
+              time_to_confirmation_ms: timeToConfirmation,
+            })
+          }
+
           if (cameraStream) {
             cameraStream.getTracks().forEach(t => t.stop())
             setCameraStream(null)
