@@ -131,7 +131,7 @@ export function BarcodeScannerModal({
 
       canvas.width = v.videoWidth
       canvas.height = v.videoHeight
-      const ctx = canvas.getContext('2d')
+      const ctx = canvas.getContext('2d', { willReadFrequently: true })
       if (!ctx) return
       ctx.drawImage(v, 0, 0, canvas.width, canvas.height)
 
