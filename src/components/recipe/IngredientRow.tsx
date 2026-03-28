@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Trash2, Search, GripVertical } from 'lucide-react'
+import { Trash2, Search, GripVertical, Plus } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import type { FoodItem } from '@/hooks/useFoodItems'
 import { SOURCE_BADGES, getListItemBadgeConfig } from '@/lib/constants/sourceBadges'
+import { AddFoodItemModal } from '@/components/food/AddFoodItemModal'
 
 type SourceFilter = 'alla' | 'mina' | 'calculeat' | 'slv' | `list:${string}`
 
@@ -65,6 +66,7 @@ export function IngredientRow({
   const [amountInput, setAmountInput] = useState(
     ingredient.amount > 0 ? String(ingredient.amount) : ''
   )
+  const [addFoodItemModalOpen, setAddFoodItemModalOpen] = useState(false)
   const searchRef = useRef<HTMLDivElement>(null)
   const listRef = useRef<HTMLDivElement>(null)
 
@@ -368,6 +370,15 @@ export function IngredientRow({
 
         <Button
           type="button"
+          size="sm"
+          onClick={() => setAddFoodItemModalOpen(true)}
+          className="h-8 w-8 p-0 flex-shrink-0"
+          aria-label={t('ingredient.scanBarcode')}
+        >
+          <Plus className="h-4 w-4" />
+        </Button>
+        <Button
+          type="button"
           variant="ghost"
           size="sm"
           onClick={onRemove}
@@ -413,6 +424,16 @@ export function IngredientRow({
           <span style={{ color: '#f43f5e' }}>P: {nutrition.protein.toFixed(1)}g</span>
         </div>
       )}
+
+      <AddFoodItemModal
+        open={addFoodItemModalOpen}
+        onOpenChange={setAddFoodItemModalOpen}
+        onSuccess={newFood => {
+          if (newFood) {
+            handleFoodSelect(newFood)
+          }
+        }}
+      />
     </div>
   )
 }

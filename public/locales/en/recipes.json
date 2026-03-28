@@ -130,6 +130,7 @@
     "searchLabel": "Search food",
     "selectUnit": "Select unit",
     "removeIngredient": "Remove ingredient",
+    "scanBarcode": "Add new food item",
     "moveUp": "Move up",
     "moveDown": "Move down",
     "amountPlaceholder": "Amount",

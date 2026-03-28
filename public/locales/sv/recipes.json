@@ -130,6 +130,7 @@
     "searchLabel": "Sök livsmedel",
     "selectUnit": "Välj enhet",
     "removeIngredient": "Ta bort ingrediens",
+    "scanBarcode": "Lägg till nytt livsmedel",
     "moveUp": "Flytta upp",
     "moveDown": "Flytta ned",
     "amountPlaceholder": "Mängd",

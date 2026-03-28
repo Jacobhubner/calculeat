@@ -338,8 +338,8 @@ export function RecipeCalculatorModal({
       return
     }
 
-    const servingsNum = typeof servings === 'number' ? servings : 0
-    if (servingsNum <= 0) {
+    const servingsNum = saveAs === '100g' ? 1 : typeof servings === 'number' ? servings : 0
+    if (saveAs !== '100g' && servingsNum <= 0) {
       setError(t('modal.errorServings'))
       return
     }
@@ -504,7 +504,7 @@ export function RecipeCalculatorModal({
             {/* Form */}
             <div className="space-y-6">
               {/* Recipe name and servings */}
-              <div className="grid sm:grid-cols-2 gap-4">
+              <div className={`grid gap-4 ${saveAs === '100g' ? '' : 'sm:grid-cols-2'}`}>
                 <div className="space-y-2">
                   <Label htmlFor="recipe-name">{t('modal.recipeName')}</Label>
                   <Input
@@ -514,19 +514,21 @@ export function RecipeCalculatorModal({
                     placeholder={t('modal.recipeNamePlaceholder')}
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="servings">{t('modal.servings')}</Label>
-                  <Input
-                    id="servings"
-                    type="number"
-                    value={servings}
-                    onChange={e => {
-                      const val = e.target.value
-                      setServings(val === '' ? '' : Math.max(1, parseInt(val) || 1))
-                    }}
-                    min={1}
-                  />
-                </div>
+                {saveAs !== '100g' && (
+                  <div className="space-y-2">
+                    <Label htmlFor="servings">{t('modal.servings')}</Label>
+                    <Input
+                      id="servings"
+                      type="number"
+                      value={servings}
+                      onChange={e => {
+                        const val = e.target.value
+                        setServings(val === '' ? '' : Math.max(1, parseInt(val) || 1))
+                      }}
+                      min={1}
+                    />
+                  </div>
+                )}
               </div>
 
               {/* Ingredients */}

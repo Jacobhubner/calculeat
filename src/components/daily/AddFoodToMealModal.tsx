@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Search, Plus, X, ChevronLeft, ChevronRight, ScanBarcode, Camera } from 'lucide-react'
+import { Search, Plus, X, ChevronLeft, ChevronRight } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -356,7 +356,9 @@ export function AddFoodToMealModal({
         fat_g: nutritionPreview.fat,
       })
 
-      toast.success(t('addToMealModal.toastAdded', { food: selectedFood.name, meal: selectedMealName }))
+      toast.success(
+        t('addToMealModal.toastAdded', { food: selectedFood.name, meal: selectedMealName })
+      )
       onOpenChange(false)
       onSuccess?.()
     } catch (error) {
@@ -388,7 +390,9 @@ export function AddFoodToMealModal({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="max-w-lg max-h-[85vh] overflow-hidden flex flex-col">
           <DialogHeader>
-            <DialogTitle>{isEditMode ? t('addToMealModal.titleEdit') : t('addToMealModal.title')}</DialogTitle>
+            <DialogTitle>
+              {isEditMode ? t('addToMealModal.titleEdit') : t('addToMealModal.title')}
+            </DialogTitle>
             <DialogDescription>
               {isEditMode
                 ? `${t('addToMealModal.descriptionEdit')} ${editItem?.food.name}`
@@ -454,9 +458,8 @@ export function AddFoodToMealModal({
                   </div>
                   <Button
                     type="button"
-                    variant="outline"
                     size="sm"
-                    className="shrink-0 px-3"
+                    className="h-8 w-8 p-0 shrink-0"
                     title={t('addToMealModal.scanBarcode')}
                     onClick={() => {
                       skipResetRef.current = true
@@ -464,21 +467,7 @@ export function AddFoodToMealModal({
                       setTimeout(() => setAddFoodItemModalOpen(true), 100)
                     }}
                   >
-                    <ScanBarcode className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    className="shrink-0 px-3"
-                    title={t('addToMealModal.scanLabel')}
-                    onClick={() => {
-                      skipResetRef.current = true
-                      onOpenChange(false)
-                      setTimeout(() => setAddFoodItemModalOpen(true), 100)
-                    }}
-                  >
-                    <Camera className="h-4 w-4" />
+                    <Plus className="h-4 w-4" />
                   </Button>
                 </div>
 
@@ -503,9 +492,7 @@ export function AddFoodToMealModal({
                           : 'bg-white text-neutral-500 border-neutral-200 hover:border-neutral-400'
                       }`}
                     >
-                      {c === null
-                        ? t('addToMealModal.colorAll')
-                        : tAny(`color.${c.toLowerCase()}`)}
+                      {c === null ? t('addToMealModal.colorAll') : tAny(`color.${c.toLowerCase()}`)}
                     </button>
                   ))}
 
@@ -526,7 +513,11 @@ export function AddFoodToMealModal({
                               : 'bg-white text-neutral-500 border-neutral-200 hover:border-neutral-400'
                           }`}
                         >
-                          {r === null ? t('addToMealModal.typeAll') : r ? t('addToMealModal.typeRecipe') : t('addToMealModal.typeFood')}
+                          {r === null
+                            ? t('addToMealModal.typeAll')
+                            : r
+                              ? t('addToMealModal.typeRecipe')
+                              : t('addToMealModal.typeFood')}
                         </button>
                       ))}
                     </>
@@ -536,7 +527,9 @@ export function AddFoodToMealModal({
                 {/* Food list */}
                 <div className="space-y-1">
                   {foodsLoading ? (
-                    <p className="text-sm text-neutral-500 text-center py-4">{t('addToMealModal.loading')}</p>
+                    <p className="text-sm text-neutral-500 text-center py-4">
+                      {t('addToMealModal.loading')}
+                    </p>
                   ) : foods.length === 0 ? (
                     <p className="text-sm text-neutral-500 text-center py-4">
                       {searchQuery ? t('addToMealModal.noFoodsFound') : t('addToMealModal.noFoods')}
