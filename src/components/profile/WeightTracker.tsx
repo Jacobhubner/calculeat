@@ -59,6 +59,7 @@ export default function WeightTracker({
 }: WeightTrackerProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [currentWeight, setCurrentWeight] = useState(profile.weight_kg?.toString() || '')
+  const [recordedDate, setRecordedDate] = useState(new Date().toISOString().split('T')[0])
   const [showAddWeight, setShowAddWeight] = useState(false)
   const [showHistory, setShowHistory] = useState(false)
   const [deleteConfirm, setDeleteConfirm] = useState<WeightHistory | null>(null)
@@ -78,7 +79,16 @@ export default function WeightTracker({
     return sorted[0].weight_kg
   }, [weightHistory])
 
-  const weight = profile.weight_kg || initialWeight
+  // Current weight = entry with recorded_at closest to (and not after) today
+  const currentWeightFromHistory = useMemo(() => {
+    const now = new Date()
+    const past = weightHistory.filter(e => new Date(e.recorded_at) <= now)
+    if (past.length === 0) return null
+    past.sort((a, b) => new Date(b.recorded_at).getTime() - new Date(a.recorded_at).getTime())
+    return past[0].weight_kg
+  }, [weightHistory])
+
+  const weight = currentWeightFromHistory ?? profile.weight_kg ?? initialWeight
   const targetWeight = profile.target_weight_kg
 
   // Use the new trend hook for calculations (user-based, no profile dependency)
@@ -101,9 +111,26 @@ export default function WeightTracker({
     }
 
     // Spara till weight_history direkt och synkronisera profilvikten
-    await createWeightHistory.mutateAsync({ weight_kg: weightNum })
-    onWeightChange(weightNum)
+    const newRecordedAt = new Date(recordedDate + 'T12:00:00')
+    await createWeightHistory.mutateAsync({
+      weight_kg: weightNum,
+      recorded_at: newRecordedAt.toISOString(),
+    })
+
+    // Uppdatera profilvikten bara om den nya posten är närmast idag
+    const now = new Date()
+    const newIsClosest =
+      newRecordedAt <= now &&
+      (currentWeightFromHistory === null ||
+        !weightHistory.some(
+          e => new Date(e.recorded_at) <= now && new Date(e.recorded_at) > newRecordedAt
+        ))
+    if (newIsClosest) {
+      onWeightChange(weightNum)
+    }
+
     setShowAddWeight(false)
+    setRecordedDate(new Date().toISOString().split('T')[0])
   }
 
   // Build chart data with rolling average (create a copy to avoid mutating the original)
@@ -176,28 +203,41 @@ export default function WeightTracker({
         <CardContent className="space-y-6 pt-0">
           {/* Add Weight Form */}
           {showAddWeight && (
-            <div className="bg-primary-50 border border-primary-200 rounded-lg p-4">
-              <label className="block text-sm font-medium text-neutral-700 mb-2">
-                Ny vikt (kg)
-              </label>
-              <div className="flex gap-2">
-                <input
-                  type="number"
-                  value={currentWeight}
-                  onChange={e => setCurrentWeight(e.target.value)}
-                  onKeyDown={e => {
-                    if (e.key === 'Enter') {
-                      handleAddWeight()
-                    }
-                  }}
-                  className="flex-1 rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
-                  placeholder="75.5"
-                  min="20"
-                  max="300"
-                  step="0.1"
-                />
-                <Button onClick={handleAddWeight}>Lägg till</Button>
+            <div className="bg-primary-50 border border-primary-200 rounded-lg p-4 space-y-3">
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-2">
+                  Ny vikt (kg)
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="number"
+                    value={currentWeight}
+                    onChange={e => setCurrentWeight(e.target.value)}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter') {
+                        handleAddWeight()
+                      }
+                    }}
+                    className="flex-1 rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                    placeholder="75.5"
+                    min="20"
+                    max="300"
+                    step="0.1"
+                  />
+                </div>
               </div>
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-2">Datum</label>
+                <input
+                  type="date"
+                  value={recordedDate}
+                  onChange={e => setRecordedDate(e.target.value)}
+                  className="w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                />
+              </div>
+              <Button onClick={handleAddWeight} className="w-full">
+                Lägg till
+              </Button>
             </div>
           )}
 

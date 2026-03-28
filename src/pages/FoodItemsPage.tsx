@@ -10,7 +10,6 @@ import {
   UtensilsCrossed,
   Edit2,
   Trash2,
-  RotateCcw,
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
@@ -24,7 +23,6 @@ import { supabase } from '@/lib/supabase'
 import { Badge } from '@/components/ui/badge'
 import { AddFoodItemModal } from '@/components/food/AddFoodItemModal'
 import { FoodNutrientPanel } from '@/components/food/FoodNutrientPanel'
-import { useAuth } from '@/contexts/AuthContext'
 import {
   usePaginatedFoodItems,
   useDeleteFoodItem,
@@ -197,7 +195,6 @@ const PAGE_SIZE = 50
 
 export default function FoodItemsPage() {
   const { t } = useTranslation('food')
-  const { user } = useAuth()
   const queryClient = useQueryClient()
 
   // Static tabs depend on t() so defined inside component
@@ -256,8 +253,6 @@ export default function FoodItemsPage() {
   const [adminEditItem, setAdminEditItem] = useState<FoodItem | null>(null)
   const [deletingItemId, setDeletingItemId] = useState<string | null>(null)
   const [displayModes, setDisplayModes] = useState<Record<string, DisplayMode>>({})
-  const [resetStep, setResetStep] = useState<0 | 1 | 2>(0)
-  const [isResetting, setIsResetting] = useState(false)
   const [sortBy, setSortBy] = useState<SortKey>('name')
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
 
@@ -477,9 +472,7 @@ export default function FoodItemsPage() {
       return
     }
     if (item.user_id === null) {
-      if (
-        !confirm(t('addFoodModal.cowInfo'))
-      ) {
+      if (!confirm(t('addFoodModal.cowInfo'))) {
         return
       }
     }
@@ -565,38 +558,6 @@ export default function FoodItemsPage() {
   const handleShowNutrients = (item: FoodItem) => {
     setSelectedItemForDetail(item)
     setNutrientPanelOpen(true)
-  }
-
-  // Reset all user customizations
-  const handleResetList = async () => {
-    if (!user) return
-
-    try {
-      setIsResetting(true)
-
-      const { error } = await supabase
-        .from('food_items')
-        .delete()
-        .eq('user_id', user.id)
-        .eq('is_recipe', false)
-
-      if (error) throw error
-
-      // Clear localStorage display modes
-      Object.keys(localStorage).forEach(key => {
-        if (key.startsWith('food-display-mode:')) {
-          localStorage.removeItem(key)
-        }
-      })
-
-      queryClient.invalidateQueries({ queryKey: ['foodItems'] })
-      setResetStep(0)
-    } catch (error) {
-      console.error('Error resetting food list:', error)
-      alert(t('toast.updateError'))
-    } finally {
-      setIsResetting(false)
-    }
   }
 
   // Sort food items (client-side on current page)
@@ -1499,11 +1460,11 @@ export default function FoodItemsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 text-xs text-neutral-600">
-            <p className="text-sm text-neutral-700 font-medium">
-              {t('infoCards.green.subtitle')}
-            </p>
+            <p className="text-sm text-neutral-700 font-medium">{t('infoCards.green.subtitle')}</p>
             <div>
-              <p className="font-semibold text-neutral-700 mb-1">{t('infoCards.green.solidLabel')}</p>
+              <p className="font-semibold text-neutral-700 mb-1">
+                {t('infoCards.green.solidLabel')}
+              </p>
               <ul className="space-y-0.5 pl-2">
                 {[
                   { label: 'Bladgrönsaker (spenat, sallad)', icon: '🥬' },
@@ -1521,7 +1482,9 @@ export default function FoodItemsPage() {
               </ul>
             </div>
             <div>
-              <p className="font-semibold text-neutral-700 mb-1">{t('infoCards.green.liquidLabel')}</p>
+              <p className="font-semibold text-neutral-700 mb-1">
+                {t('infoCards.green.liquidLabel')}
+              </p>
               <ul className="space-y-0.5 pl-2">
                 {[
                   { label: 'Vatten', icon: '💧' },
@@ -1536,7 +1499,9 @@ export default function FoodItemsPage() {
               </ul>
             </div>
             <div>
-              <p className="font-semibold text-neutral-700 mb-1">{t('infoCards.green.soupLabel')}</p>
+              <p className="font-semibold text-neutral-700 mb-1">
+                {t('infoCards.green.soupLabel')}
+              </p>
               <ul className="space-y-0.5 pl-2">
                 {[
                   { label: 'Klara grönsakssoppor', icon: '🥣' },
@@ -1549,9 +1514,7 @@ export default function FoodItemsPage() {
                 ))}
               </ul>
             </div>
-            <p className="text-neutral-500 pt-1">
-              {t('infoCards.green.tip')}
-            </p>
+            <p className="text-neutral-500 pt-1">{t('infoCards.green.tip')}</p>
           </CardContent>
         </Card>
 
@@ -1563,11 +1526,11 @@ export default function FoodItemsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 text-xs text-neutral-600">
-            <p className="text-sm text-neutral-700 font-medium">
-              {t('infoCards.yellow.subtitle')}
-            </p>
+            <p className="text-sm text-neutral-700 font-medium">{t('infoCards.yellow.subtitle')}</p>
             <div>
-              <p className="font-semibold text-neutral-700 mb-1">{t('infoCards.yellow.solidLabel')}</p>
+              <p className="font-semibold text-neutral-700 mb-1">
+                {t('infoCards.yellow.solidLabel')}
+              </p>
               <ul className="space-y-0.5 pl-2">
                 {[
                   { label: 'Kycklingfilé, kalkon', icon: '🍗' },
@@ -1585,7 +1548,9 @@ export default function FoodItemsPage() {
               </ul>
             </div>
             <div>
-              <p className="font-semibold text-neutral-700 mb-1">{t('infoCards.yellow.liquidLabel')}</p>
+              <p className="font-semibold text-neutral-700 mb-1">
+                {t('infoCards.yellow.liquidLabel')}
+              </p>
               <ul className="space-y-0.5 pl-2">
                 {[
                   { label: 'Mjölk', icon: '🥛' },
@@ -1599,7 +1564,9 @@ export default function FoodItemsPage() {
               </ul>
             </div>
             <div>
-              <p className="font-semibold text-neutral-700 mb-1">{t('infoCards.yellow.soupLabel')}</p>
+              <p className="font-semibold text-neutral-700 mb-1">
+                {t('infoCards.yellow.soupLabel')}
+              </p>
               <ul className="space-y-0.5 pl-2">
                 {[
                   { label: 'Linssoppa', icon: '🥣' },
@@ -1613,9 +1580,7 @@ export default function FoodItemsPage() {
                 ))}
               </ul>
             </div>
-            <p className="text-neutral-500 pt-1">
-              {t('infoCards.yellow.tip')}
-            </p>
+            <p className="text-neutral-500 pt-1">{t('infoCards.yellow.tip')}</p>
           </CardContent>
         </Card>
 
@@ -1627,11 +1592,11 @@ export default function FoodItemsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 text-xs text-neutral-600">
-            <p className="text-sm text-neutral-700 font-medium">
-              {t('infoCards.orange.subtitle')}
-            </p>
+            <p className="text-sm text-neutral-700 font-medium">{t('infoCards.orange.subtitle')}</p>
             <div>
-              <p className="font-semibold text-neutral-700 mb-1">{t('infoCards.orange.solidLabel')}</p>
+              <p className="font-semibold text-neutral-700 mb-1">
+                {t('infoCards.orange.solidLabel')}
+              </p>
               <ul className="space-y-0.5 pl-2">
                 {[
                   { label: 'Nötter och frön', icon: '🥜' },
@@ -1649,7 +1614,9 @@ export default function FoodItemsPage() {
               </ul>
             </div>
             <div>
-              <p className="font-semibold text-neutral-700 mb-1">{t('infoCards.orange.liquidLabel')}</p>
+              <p className="font-semibold text-neutral-700 mb-1">
+                {t('infoCards.orange.liquidLabel')}
+              </p>
               <ul className="space-y-0.5 pl-2">
                 {[
                   { label: 'Läsk med socker', icon: '🥤' },
@@ -1664,7 +1631,9 @@ export default function FoodItemsPage() {
               </ul>
             </div>
             <div>
-              <p className="font-semibold text-neutral-700 mb-1">{t('infoCards.orange.soupLabel')}</p>
+              <p className="font-semibold text-neutral-700 mb-1">
+                {t('infoCards.orange.soupLabel')}
+              </p>
               <ul className="space-y-0.5 pl-2">
                 {[
                   {
@@ -1679,96 +1648,10 @@ export default function FoodItemsPage() {
                 ))}
               </ul>
             </div>
-            <p className="text-neutral-500 pt-1">
-              {t('infoCards.orange.tip')}
-            </p>
+            <p className="text-neutral-500 pt-1">{t('infoCards.orange.tip')}</p>
           </CardContent>
         </Card>
       </div>
-
-      {/* Reset List Section - only on Mina tab */}
-      {isMina && (
-        <div className="mt-8 pt-6 border-t border-neutral-200">
-          <div className="flex flex-col items-center gap-4">
-            {resetStep === 0 && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setResetStep(1)}
-                className="text-neutral-500 hover:text-neutral-700 gap-2"
-              >
-                <RotateCcw className="h-4 w-4" />
-                {t('reset.button')}
-              </Button>
-            )}
-
-            {resetStep === 1 && (
-              <Card className="w-full max-w-md border-amber-300 bg-amber-50">
-                <CardContent className="pt-6">
-                  <div className="text-center space-y-4">
-                    <div className="text-amber-600 font-semibold">
-                      {t('reset.confirmTitle')}
-                    </div>
-                    <p className="text-sm text-neutral-600">
-                      {t('reset.confirmDesc')}
-                    </p>
-                    <ul className="text-sm text-neutral-600 list-disc list-inside text-left">
-                      <li>{t('reset.confirmItem1')}</li>
-                      <li>{t('reset.confirmItem2')}</li>
-                      <li>{t('reset.confirmItem3')}</li>
-                    </ul>
-                    <div className="flex justify-center gap-3 pt-2">
-                      <Button variant="outline" size="sm" onClick={() => setResetStep(0)}>
-                        {t('reset.cancel')}
-                      </Button>
-                      <Button variant="destructive" size="sm" onClick={() => setResetStep(2)}>
-                        {t('reset.continue')}
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {resetStep === 2 && (
-              <Card className="w-full max-w-md border-red-400 bg-red-50">
-                <CardContent className="pt-6">
-                  <div className="text-center space-y-4">
-                    <div className="text-red-600 font-bold text-lg">{t('reset.warningTitle')}</div>
-                    <p className="text-sm text-neutral-700 font-medium">
-                      {t('reset.warningIrreversible')}
-                    </p>
-                    <p className="text-sm text-neutral-600">
-                      {t('reset.warningDesc')}
-                    </p>
-                    <div className="flex justify-center gap-3 pt-2">
-                      <Button variant="outline" size="sm" onClick={() => setResetStep(0)}>
-                        {t('reset.cancel')}
-                      </Button>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={handleResetList}
-                        disabled={isResetting}
-                        className="gap-2"
-                      >
-                        {isResetting ? (
-                          <>{t('reset.resetting')}</>
-                        ) : (
-                          <>
-                            <RotateCcw className="h-4 w-4" />
-                            {t('reset.resetAll')}
-                          </>
-                        )}
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-          </div>
-        </div>
-      )}
 
       {/* Skapa delad lista */}
       <CreateSharedListDialog
@@ -1790,9 +1673,7 @@ export default function FoodItemsPage() {
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
             <DialogTitle>{t('listEdit.title', { name: listEditItem?.name ?? '' })}</DialogTitle>
-            <DialogDescription>
-              {t('listEdit.description')}
-            </DialogDescription>
+            <DialogDescription>{t('listEdit.description')}</DialogDescription>
           </DialogHeader>
           <div className="flex flex-col gap-2 pt-2">
             <Button onClick={handleListEditCopy} className="w-full justify-start h-auto py-3 px-4">

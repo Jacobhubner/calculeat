@@ -36,7 +36,7 @@ export function useCreateWeightHistory() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async (data: { weight_kg: number; notes?: string }) => {
+    mutationFn: async (data: { weight_kg: number; notes?: string; recorded_at?: string }) => {
       if (!user) throw new Error('User not authenticated')
 
       const { data: result, error } = await supabase

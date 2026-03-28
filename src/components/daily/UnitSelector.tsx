@@ -31,28 +31,32 @@ interface UnitSelectorProps {
  */
 export function getAvailableUnits(food: FoodItem): string[] {
   const units: string[] = []
-  const defaultUnit = (food.default_unit ?? 'g').toLowerCase()
 
   // Always add the default unit first
   units.push(food.default_unit ?? 'g')
 
-  // If default unit is gram or ml, and food has ml_per_gram, add volume units
-  if ((defaultUnit === 'g' || defaultUnit === 'ml') && food.ml_per_gram) {
+  // Always ensure 'g' is available (for 100g reference)
+  if (!units.includes('g')) units.push('g')
+
+  // If food has ml_per_gram, add volume units
+  if (food.ml_per_gram) {
     if (!units.includes('ml')) units.push('ml')
     if (!units.includes('dl')) units.push('dl')
     if (!units.includes('msk')) units.push('msk')
     if (!units.includes('tsk')) units.push('tsk')
   }
 
-  // If food has grams_per_piece, add the serving unit
-  if (food.grams_per_piece) {
+  // If food has grams_per_piece OR a serving_unit defined, add the serving unit
+  if (food.grams_per_piece || (food.serving_unit && food.serving_unit.trim())) {
     const servingUnit = food.serving_unit || 'st'
-    if (!units.includes(servingUnit)) {
+    if (!units.includes(servingUnit) && !VOLUME_TO_ML[servingUnit.toLowerCase()]) {
       units.push(servingUnit)
     }
   }
 
-  return units
+  // Unused default_unit that isn't g/ml/volume — already added first, keep it
+  // Remove duplicates introduced by edge cases
+  return [...new Set(units.map(u => u).filter(Boolean))]
 }
 
 /**
@@ -86,9 +90,13 @@ export function calculateNutritionForUnit(
     const totalMl = amount * VOLUME_TO_ML[unitLower]
     weightGrams = totalMl / food.ml_per_gram
   } else if (unitLower === 'st' || unitLower === food.serving_unit?.toLowerCase()) {
-    // Piece/serving unit
-    if (!food.grams_per_piece) return null
-    weightGrams = amount * food.grams_per_piece
+    // Piece/serving unit — use grams_per_piece if available, else treat as default unit
+    if (food.grams_per_piece) {
+      weightGrams = amount * food.grams_per_piece
+    } else {
+      const baseWeight = food.weight_grams || food.default_amount || 100
+      weightGrams = (amount / food.default_amount) * baseWeight
+    }
   } else {
     // Unknown unit - assume it's the default unit
     const baseWeight = food.weight_grams || 100
