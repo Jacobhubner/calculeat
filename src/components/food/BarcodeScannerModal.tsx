@@ -159,7 +159,7 @@ export function BarcodeScannerModal({
           src: dataUrl,
           numOfWorkers: 0,
           decoder: {
-            readers: ['ean_reader', 'ean_8_reader', 'upc_reader', 'upc_e_reader'],
+            readers: ['ean_reader', 'upc_reader'],
             multiple: false,
           },
           locate: true,

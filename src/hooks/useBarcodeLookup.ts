@@ -106,8 +106,6 @@ async function fetchBarcode(barcode: string): Promise<ScanResult> {
   }
 
   // 4. Cache-miss: anropa Edge Function direkt från klienten
-  console.debug('[barcode] sending to edge function:', barcode)
-
   let response: Response
   try {
     response = await fetch(EDGE_FUNCTION_URL, {
