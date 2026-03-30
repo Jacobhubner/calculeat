@@ -576,10 +576,19 @@ export function AddFoodItemModal({
 
   const onSubmit = async (data: FormData) => {
     try {
-      // Normalisera näringsvärden till per 100g om portionsvikten inte är 100g
-      const referenceWeight = data.weight_grams && data.weight_grams > 0 ? data.weight_grams : 100
-      if (referenceWeight !== 100) {
-        const factor = 100 / referenceWeight
+      // Normalisera näringsvärden till per 100g/100ml
+      // För ml-livsmedel används default_amount (ml) som referens,
+      // för gram-livsmedel används weight_grams.
+      const isML = (data.default_unit ?? '').toLowerCase() === 'ml'
+      const referenceAmount = isML
+        ? data.default_amount && data.default_amount > 0
+          ? data.default_amount
+          : 100
+        : data.weight_grams && data.weight_grams > 0
+          ? data.weight_grams
+          : 100
+      if (referenceAmount !== 100) {
+        const factor = 100 / referenceAmount
         const round2 = (v: number) => Math.round(v * factor * 100) / 100
         data = {
           ...data,
@@ -594,8 +603,12 @@ export function AddFoodItemModal({
             ? { sugars_g: round2(data.sugars_g) }
             : {}),
           ...(data.salt_g != null && !isNaN(data.salt_g) ? { salt_g: round2(data.salt_g) } : {}),
-          weight_grams: 100,
           default_amount: 100,
+          // För gram: sätt weight_grams till 100.
+          // För ml: skala weight_grams proportionellt (behåller densiteten).
+          weight_grams: isML
+            ? Math.round((data.weight_grams || data.default_amount) * factor * 100) / 100
+            : 100,
         }
       }
 
