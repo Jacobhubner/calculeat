@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Trash2, Search, GripVertical, Plus } from 'lucide-react'
 import { Input } from '@/components/ui/input'
@@ -60,6 +60,7 @@ export function IngredientRow({
 }: IngredientRowProps) {
   const { t } = useTranslation('recipes')
   const [searchQuery, setSearchQuery] = useState('')
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('')
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [highlightedIndex, setHighlightedIndex] = useState(0)
   const [sourceFilter, setSourceFilter] = useState<SourceFilter>('alla')
@@ -93,23 +94,33 @@ export function IngredientRow({
     setHighlightedIndex(0)
   }, [])
 
+  // Debounce search query to avoid filtering on every keystroke
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery)
+    }, 200)
+    return () => clearTimeout(timer)
+  }, [searchQuery])
+
   // Normalize a string for fuzzy matching: lowercase, remove commas, collapse spaces
-  function normalizeForSearch(s: string) {
+  const normalizeForSearch = useCallback((s: string) => {
     return s.toLowerCase().replace(/,/g, '').replace(/\s+/g, ' ').trim()
-  }
+  }, [])
 
   // Filter and sort foods based on search + source filter
-  const allFilteredFoods = availableFoods
-    .filter(food => {
-      if (!matchesSourceFilter(food, sourceFilter)) return false
-      if (!searchQuery.trim()) return true
-      const query = normalizeForSearch(searchQuery)
-      return (
-        normalizeForSearch(food.name).includes(query) ||
-        (food.brand && normalizeForSearch(food.brand).includes(query))
-      )
-    })
-    .sort((a, b) => a.name.localeCompare(b.name, 'sv'))
+  const allFilteredFoods = useMemo(() => {
+    return availableFoods
+      .filter(food => {
+        if (!matchesSourceFilter(food, sourceFilter)) return false
+        if (!debouncedSearchQuery.trim()) return true
+        const query = normalizeForSearch(debouncedSearchQuery)
+        return (
+          normalizeForSearch(food.name).includes(query) ||
+          (food.brand && normalizeForSearch(food.brand).includes(query))
+        )
+      })
+      .sort((a, b) => a.name.localeCompare(b.name, 'sv'))
+  }, [availableFoods, sourceFilter, debouncedSearchQuery, normalizeForSearch])
 
   const totalMatches = allFilteredFoods.length
   const filteredFoods = allFilteredFoods.slice(0, 50)

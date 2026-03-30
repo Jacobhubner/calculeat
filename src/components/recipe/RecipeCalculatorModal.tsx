@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useRef, useCallback } from 'react'
+import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { Plus, ChefHat, AlertCircle, ChevronDown, ChevronUp, Clock } from 'lucide-react'
@@ -62,7 +62,9 @@ function generateId(): string {
   return Math.random().toString(36).substring(2, 9)
 }
 
-function SortableIngredientRow(props: React.ComponentProps<typeof IngredientRow>) {
+const SortableIngredientRow = React.memo(function SortableIngredientRow(
+  props: React.ComponentProps<typeof IngredientRow>
+) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: props.ingredient.id,
   })
@@ -76,7 +78,43 @@ function SortableIngredientRow(props: React.ComponentProps<typeof IngredientRow>
       <IngredientRow {...props} dragHandleProps={{ ...attributes, ...listeners }} />
     </div>
   )
+})
+
+interface MemoizedWrapperProps {
+  ingredient: IngredientData
+  availableFoods: React.ComponentProps<typeof IngredientRow>['availableFoods']
+  sharedLists: React.ComponentProps<typeof IngredientRow>['sharedLists']
+  onIngredientChange: (id: string, updated: IngredientData) => void
+  onIngredientRemove: (id: string) => void
 }
+
+const MemoizedSortableIngredientRowWrapper = React.memo(
+  function MemoizedSortableIngredientRowWrapper({
+    ingredient,
+    availableFoods,
+    sharedLists,
+    onIngredientChange,
+    onIngredientRemove,
+  }: MemoizedWrapperProps) {
+    const onChange = useCallback(
+      (updated: IngredientData) => onIngredientChange(ingredient.id, updated),
+      [ingredient.id, onIngredientChange]
+    )
+    const onRemove = useCallback(
+      () => onIngredientRemove(ingredient.id),
+      [ingredient.id, onIngredientRemove]
+    )
+    return (
+      <SortableIngredientRow
+        ingredient={ingredient}
+        availableFoods={availableFoods}
+        sharedLists={sharedLists}
+        onChange={onChange}
+        onRemove={onRemove}
+      />
+    )
+  }
+)
 
 export function RecipeCalculatorModal({
   open,
@@ -303,13 +341,13 @@ export function RecipeCalculatorModal({
     ])
   }
 
-  const handleIngredientChange = (id: string, updated: IngredientData) => {
+  const handleIngredientChange = useCallback((id: string, updated: IngredientData) => {
     setIngredients(prev => prev.map(ing => (ing.id === id ? updated : ing)))
-  }
+  }, [])
 
-  const handleIngredientRemove = (id: string) => {
+  const handleIngredientRemove = useCallback((id: string) => {
     setIngredients(prev => prev.filter(ing => ing.id !== id))
-  }
+  }, [])
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }))
 
@@ -574,13 +612,13 @@ export function RecipeCalculatorModal({
                         strategy={verticalListSortingStrategy}
                       >
                         {ingredients.map(ingredient => (
-                          <SortableIngredientRow
+                          <MemoizedSortableIngredientRowWrapper
                             key={ingredient.id}
                             ingredient={ingredient}
                             availableFoods={availableFoods}
                             sharedLists={sharedLists}
-                            onChange={updated => handleIngredientChange(ingredient.id, updated)}
-                            onRemove={() => handleIngredientRemove(ingredient.id)}
+                            onIngredientChange={handleIngredientChange}
+                            onIngredientRemove={handleIngredientRemove}
                           />
                         ))}
                       </SortableContext>

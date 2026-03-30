@@ -576,6 +576,29 @@ export function AddFoodItemModal({
 
   const onSubmit = async (data: FormData) => {
     try {
+      // Normalisera näringsvärden till per 100g om portionsvikten inte är 100g
+      const referenceWeight = data.weight_grams && data.weight_grams > 0 ? data.weight_grams : 100
+      if (referenceWeight !== 100) {
+        const factor = 100 / referenceWeight
+        const round2 = (v: number) => Math.round(v * factor * 100) / 100
+        data = {
+          ...data,
+          calories: round2(data.calories),
+          fat_g: round2(data.fat_g),
+          carb_g: round2(data.carb_g),
+          protein_g: round2(data.protein_g),
+          ...(data.saturated_fat_g != null && !isNaN(data.saturated_fat_g)
+            ? { saturated_fat_g: round2(data.saturated_fat_g) }
+            : {}),
+          ...(data.sugars_g != null && !isNaN(data.sugars_g)
+            ? { sugars_g: round2(data.sugars_g) }
+            : {}),
+          ...(data.salt_g != null && !isNaN(data.salt_g) ? { salt_g: round2(data.salt_g) } : {}),
+          weight_grams: 100,
+          default_amount: 100,
+        }
+      }
+
       // Beräkna ml_per_gram från volymkonvertering
       // Formel: ml_per_gram = ml_i_vald_enhet / gram_per_enhet
       let calculatedMlPerGram: number | null = null
