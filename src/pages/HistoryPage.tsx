@@ -54,6 +54,28 @@ export default function HistoryPage() {
   // Calculate stats
   const completedDays = logs?.filter(log => log.is_completed).length || 0
   const totalDays = logs?.length || 0
+
+  // Calculate current streak: consecutive completed days backwards from today
+  const currentStreak = useMemo(() => {
+    if (!logs || logs.length === 0) return 0
+    const completedDates = new Set(
+      logs.filter(log => log.is_completed).map(log => log.log_date.split('T')[0])
+    )
+    let streak = 0
+    const cursor = new Date()
+    // If today isn't logged yet, start checking from yesterday
+    const todayStr = cursor.toISOString().split('T')[0]
+    if (!completedDates.has(todayStr)) {
+      cursor.setDate(cursor.getDate() - 1)
+    }
+    while (true) {
+      const dateStr = cursor.toISOString().split('T')[0]
+      if (!completedDates.has(dateStr)) break
+      streak++
+      cursor.setDate(cursor.getDate() - 1)
+    }
+    return streak
+  }, [logs])
   const avgCalories =
     logs && logs.length > 0
       ? Math.round(logs.reduce((sum, log) => sum + log.total_calories, 0) / logs.length)
@@ -279,7 +301,7 @@ export default function HistoryPage() {
               </CardHeader>
               <CardContent>
                 <div className="text-center">
-                  <div className="text-4xl font-bold text-primary-700">{completedDays}</div>
+                  <div className="text-4xl font-bold text-primary-700">{currentStreak}</div>
                   <div className="text-sm text-neutral-700">{t('stats.daysInARow')}</div>
                   <p className="text-xs text-neutral-600 mt-3">{t('stats.streakEncouragement')}</p>
                 </div>
