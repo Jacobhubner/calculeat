@@ -52,15 +52,15 @@
     "unknownFood": "Unknown food"
   },
   "stats": {
-    "summary30Days": "30-day summary",
+    "summaryTitle": "{{days}}-day summary",
+    "periodDays": "{{days}} d",
     "completedDays": "Completed days",
     "avgCaloriesPerDay": "Average calories/day",
-    "daysLogged": "Days logged",
     "streak": "Logging streak",
     "daysInARow": "days in a row",
     "streakEncouragement": "Keep logging daily to maintain your streak!",
     "densityDistribution": "Calorie density distribution",
-    "last30Days": "Last 30 days",
+    "lastNDays": "Last {{days}} days",
     "green": "Green",
     "yellow": "Yellow",
     "orange": "Orange"

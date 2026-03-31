@@ -52,15 +52,15 @@
     "unknownFood": "Okänd matvara"
   },
   "stats": {
-    "summary30Days": "30-dagars sammanfattning",
+    "summaryTitle": "{{days}}-dagars sammanfattning",
+    "periodDays": "{{days}} d",
     "completedDays": "Avslutade dagar",
     "avgCaloriesPerDay": "Genomsnittliga kalorier/dag",
-    "daysLogged": "Dagar loggade",
     "streak": "Loggningsstreak",
     "daysInARow": "dagar i rad",
     "streakEncouragement": "Fortsätt logga dagligen för att hålla din streak!",
     "densityDistribution": "Kaloritäthetsfördelning",
-    "last30Days": "Senaste 30 dagarna",
+    "lastNDays": "Senaste {{days}} dagarna",
     "green": "Grön",
     "yellow": "Gul",
     "orange": "Orange"

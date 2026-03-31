@@ -20,20 +20,30 @@ import EmptyState from '@/components/EmptyState'
 export default function HistoryPage() {
   const { t } = useTranslation('history')
   const [viewMode, setViewMode] = useState<'calendar' | 'list'>('list')
+  const [statsPeriod, setStatsPeriod] = useState<7 | 30 | 90>(30)
 
-  // Get last 30 days + future planned days
+  // Fetch 90 days to cover all period options + future planned days
   const { endDate, startDate } = useMemo(() => {
     const now = new Date()
     const future = new Date(now)
     future.setFullYear(now.getFullYear() + 1)
     const end = future.toISOString().split('T')[0]
-    const thirtyDaysAgo = new Date(now)
-    thirtyDaysAgo.setDate(now.getDate() - 30)
-    const start = thirtyDaysAgo.toISOString().split('T')[0]
+    const ninetyDaysAgo = new Date(now)
+    ninetyDaysAgo.setDate(now.getDate() - 90)
+    const start = ninetyDaysAgo.toISOString().split('T')[0]
     return { endDate: end, startDate: start }
   }, [])
 
   const { data: logs, isLoading } = useDailyLogs(startDate, endDate)
+
+  // Filter logs to selected stats period
+  const statsLogs = useMemo(() => {
+    if (!logs) return []
+    const cutoff = new Date()
+    cutoff.setDate(cutoff.getDate() - statsPeriod)
+    const cutoffStr = cutoff.toISOString().split('T')[0]
+    return logs.filter(log => log.log_date.split('T')[0] >= cutoffStr)
+  }, [logs, statsPeriod])
   const deleteDailyLog = useDeleteDailyLog()
 
   const handleDeleteDay = (logId: string, logDate: string, e: React.MouseEvent) => {
@@ -51,11 +61,15 @@ export default function HistoryPage() {
     })
   }
 
-  // Calculate stats
-  const completedDays = logs?.filter(log => log.is_completed).length || 0
-  const totalDays = logs?.length || 0
+  // Calculate stats (based on selected period)
+  const completedDays = statsLogs.filter(log => log.is_completed).length
+  const avgCalories =
+    statsLogs.length > 0
+      ? Math.round(statsLogs.reduce((sum, log) => sum + log.total_calories, 0) / statsLogs.length)
+      : 0
 
   // Calculate current streak: consecutive completed days backwards from today
+  // Uses all logs (not period-filtered) so streak isn't capped by selected period
   const currentStreak = useMemo(() => {
     if (!logs || logs.length === 0) return 0
     const completedDates = new Set(
@@ -63,7 +77,6 @@ export default function HistoryPage() {
     )
     let streak = 0
     const cursor = new Date()
-    // If today isn't logged yet, start checking from yesterday
     const todayStr = cursor.toISOString().split('T')[0]
     if (!completedDates.has(todayStr)) {
       cursor.setDate(cursor.getDate() - 1)
@@ -76,10 +89,6 @@ export default function HistoryPage() {
     }
     return streak
   }, [logs])
-  const avgCalories =
-    logs && logs.length > 0
-      ? Math.round(logs.reduce((sum, log) => sum + log.total_calories, 0) / logs.length)
-      : 0
 
   // Group logs by week
   const weeklyLogs = logs?.reduce(
@@ -275,10 +284,25 @@ export default function HistoryPage() {
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <BarChart3 className="h-5 w-5" />
-                  {t('stats.summary30Days')}
+                  {t('stats.summaryTitle', { days: statsPeriod })}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
+                <div className="flex gap-1">
+                  {([7, 30, 90] as const).map(p => (
+                    <button
+                      key={p}
+                      onClick={() => setStatsPeriod(p)}
+                      className={`flex-1 py-1 text-xs rounded-md font-medium transition-colors ${
+                        statsPeriod === p
+                          ? 'bg-primary-600 text-white'
+                          : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
+                      }`}
+                    >
+                      {t('stats.periodDays', { days: p })}
+                    </button>
+                  ))}
+                </div>
                 <div>
                   <div className="text-2xl font-bold text-neutral-900">{completedDays}</div>
                   <div className="text-sm text-neutral-600">{t('stats.completedDays')}</div>
@@ -286,10 +310,6 @@ export default function HistoryPage() {
                 <div>
                   <div className="text-2xl font-bold text-neutral-900">{avgCalories}</div>
                   <div className="text-sm text-neutral-600">{t('stats.avgCaloriesPerDay')}</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-neutral-900">{totalDays}</div>
-                  <div className="text-sm text-neutral-600">{t('stats.daysLogged')}</div>
                 </div>
               </CardContent>
             </Card>
@@ -312,13 +332,13 @@ export default function HistoryPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg">{t('stats.densityDistribution')}</CardTitle>
-                <CardDescription>{t('stats.last30Days')}</CardDescription>
+                <CardDescription>{t('stats.lastNDays', { days: statsPeriod })}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-2">
                 {(() => {
-                  const totalGreen = logs?.reduce((sum, log) => sum + log.green_calories, 0) || 0
-                  const totalYellow = logs?.reduce((sum, log) => sum + log.yellow_calories, 0) || 0
-                  const totalOrange = logs?.reduce((sum, log) => sum + log.orange_calories, 0) || 0
+                  const totalGreen = statsLogs.reduce((sum, log) => sum + log.green_calories, 0)
+                  const totalYellow = statsLogs.reduce((sum, log) => sum + log.yellow_calories, 0)
+                  const totalOrange = statsLogs.reduce((sum, log) => sum + log.orange_calories, 0)
                   const total = totalGreen + totalYellow + totalOrange
 
                   const greenPct = total > 0 ? Math.round((totalGreen / total) * 100) : 0
