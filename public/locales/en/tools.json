@@ -75,7 +75,7 @@
         "obese2": "Obese class 2",
         "obese3": "Obese class 3"
       },
-      "disclaimer": "NOTE: BMI does not account for muscle mass. Use together with body fat % for a better assessment.",
+      "disclaimer": "NOTE: BMI does not take muscle mass, bone density, overall body composition or sex differences into account. Therefore it should not be a sole guiding measurement to a better health — use body fat % as a complement.",
       "category": {
         "undervikt_3": "Underweight (Severe)",
         "undervikt_2": "Underweight (Moderate)",

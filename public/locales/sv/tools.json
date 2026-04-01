@@ -75,7 +75,7 @@
         "obese2": "Fetma klass 2",
         "obese3": "Fetma klass 3"
       },
-      "disclaimer": "OBS: BMI tar inte hänsyn till muskelmassa. Använd tillsammans med kroppsfett% för bättre bedömning.",
+      "disclaimer": "OBS: BMI tar inte hänsyn till muskelmassa, bentäthet, övergripande kroppssammansättning eller könsskillnader. Det bör därför inte användas som enda måttstock för en bättre hälsa — använd gärna kroppsfett% som komplement.",
       "category": {
         "undervikt_3": "Undervikt (Svår)",
         "undervikt_2": "Undervikt (Måttlig)",
