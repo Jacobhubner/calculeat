@@ -79,7 +79,9 @@ export function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps) {
             <div className="flex items-center gap-2 text-xs text-neutral-500 mt-0.5 flex-wrap">
               <span className="flex items-center gap-1">
                 <Users className="h-3 w-3" />
-                {servings} {servings === 1 ? t('card.portion') : t('card.portionPlural')}
+                {savedAs100g
+                  ? t('card.per100g')
+                  : `${servings} ${servings === 1 ? t('card.portion') : t('card.portionPlural')}`}
               </span>
               {totalTime > 0 && (
                 <span className="flex items-center gap-1">
