@@ -69,7 +69,9 @@
         "underweight": "Undervikt",
         "normalweight": "Normalvikt",
         "overweight": "Övervikt",
-        "obese": "Fetma"
+        "obese1": "Fetma klass 1",
+        "obese2": "Fetma klass 2",
+        "obese3": "Fetma klass 3"
       },
       "disclaimer": "OBS: BMI tar inte hänsyn till muskelmassa. Använd tillsammans med kroppsfett% för bättre bedömning."
     },

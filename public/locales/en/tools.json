@@ -69,7 +69,9 @@
         "underweight": "Underweight",
         "normalweight": "Normal weight",
         "overweight": "Overweight",
-        "obese": "Obese"
+        "obese1": "Obese class 1",
+        "obese2": "Obese class 2",
+        "obese3": "Obese class 3"
       },
       "disclaimer": "NOTE: BMI does not account for muscle mass. Use together with body fat % for a better assessment."
     },

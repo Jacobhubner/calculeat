@@ -593,17 +593,43 @@ export default function GoalCalculatorTool() {
                       </tr>
                       <tr
                         className={`border-t ${
-                          bmiData.current.category === 'fetma_1' ||
-                          bmiData.current.category === 'fetma_2' ||
+                          bmiData.current.category === 'fetma_1'
+                            ? 'bg-red-50 border-l-4 border-l-red-500'
+                            : ''
+                        }`}
+                      >
+                        <td className="px-3 py-1.5">{t('goalCalc.bmi.table.obese1')}</td>
+                        <td className="px-3 py-1.5 text-neutral-600">30 - 34.9</td>
+                        <td className="px-3 py-1.5 text-neutral-600">
+                          {Math.floor(30 * Math.pow((profileData?.height_cm ?? 0) / 100, 2))} -{' '}
+                          {Math.floor(35 * Math.pow((profileData?.height_cm ?? 0) / 100, 2)) - 1}
+                        </td>
+                      </tr>
+                      <tr
+                        className={`border-t ${
+                          bmiData.current.category === 'fetma_2'
+                            ? 'bg-red-50 border-l-4 border-l-red-500'
+                            : ''
+                        }`}
+                      >
+                        <td className="px-3 py-1.5">{t('goalCalc.bmi.table.obese2')}</td>
+                        <td className="px-3 py-1.5 text-neutral-600">35 - 39.9</td>
+                        <td className="px-3 py-1.5 text-neutral-600">
+                          {Math.floor(35 * Math.pow((profileData?.height_cm ?? 0) / 100, 2))} -{' '}
+                          {Math.floor(40 * Math.pow((profileData?.height_cm ?? 0) / 100, 2)) - 1}
+                        </td>
+                      </tr>
+                      <tr
+                        className={`border-t ${
                           bmiData.current.category === 'fetma_3'
                             ? 'bg-red-50 border-l-4 border-l-red-500'
                             : ''
                         }`}
                       >
-                        <td className="px-3 py-1.5">{t('goalCalc.bmi.table.obese')}</td>
-                        <td className="px-3 py-1.5 text-neutral-600">&ge; 30</td>
+                        <td className="px-3 py-1.5">{t('goalCalc.bmi.table.obese3')}</td>
+                        <td className="px-3 py-1.5 text-neutral-600">&ge; 40</td>
                         <td className="px-3 py-1.5 text-neutral-600">
-                          &ge; {Math.floor(30 * Math.pow((profileData?.height_cm ?? 0) / 100, 2))}
+                          &ge; {Math.floor(40 * Math.pow((profileData?.height_cm ?? 0) / 100, 2))}
                         </td>
                       </tr>
                     </tbody>
