@@ -26,7 +26,16 @@ export interface CalculationResults {
   macros: MacroSplit | null
   age: number | null
   bmi: number | null
-  bmiCategory: 'undervikt' | 'normalvikt' | 'övervikt' | 'fetma_1' | 'fetma_2' | 'fetma_3' | null
+  bmiCategory:
+    | 'undervikt_3'
+    | 'undervikt_2'
+    | 'undervikt_1'
+    | 'normalvikt'
+    | 'övervikt'
+    | 'fetma_1'
+    | 'fetma_2'
+    | 'fetma_3'
+    | null
   idealWeightRange: { min: number; max: number } | null
   timeToGoal: string | null
 }

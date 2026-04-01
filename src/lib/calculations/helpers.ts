@@ -40,8 +40,18 @@ export function calculateBMI(weight: number, height: number): number {
  */
 export function getBMICategory(
   bmi: number
-): 'undervikt' | 'normalvikt' | 'övervikt' | 'fetma_1' | 'fetma_2' | 'fetma_3' {
-  if (bmi < 18.5) return 'undervikt'
+):
+  | 'undervikt_3'
+  | 'undervikt_2'
+  | 'undervikt_1'
+  | 'normalvikt'
+  | 'övervikt'
+  | 'fetma_1'
+  | 'fetma_2'
+  | 'fetma_3' {
+  if (bmi < 16.0) return 'undervikt_3'
+  if (bmi < 17.0) return 'undervikt_2'
+  if (bmi < 18.5) return 'undervikt_1'
   if (bmi < 25) return 'normalvikt'
   if (bmi < 30) return 'övervikt'
   if (bmi < 35) return 'fetma_1'

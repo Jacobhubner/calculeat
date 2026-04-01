@@ -491,7 +491,9 @@ export default function GoalCalculatorTool() {
                     <Badge
                       variant="secondary"
                       className={`text-xs ${
-                        bmiData.current.category === 'undervikt'
+                        bmiData.current.category === 'undervikt_1' ||
+                        bmiData.current.category === 'undervikt_2' ||
+                        bmiData.current.category === 'undervikt_3'
                           ? 'bg-yellow-100 text-yellow-800'
                           : bmiData.current.category === 'normalvikt'
                             ? 'bg-green-100 text-green-800'
@@ -500,8 +502,7 @@ export default function GoalCalculatorTool() {
                               : 'bg-red-100 text-red-800'
                       }`}
                     >
-                      {bmiData.current.category.charAt(0).toUpperCase() +
-                        bmiData.current.category.slice(1)}
+                      {t(`goalCalc.bmi.category.${bmiData.current.category}`)}
                     </Badge>
                   </div>
                   {bmiData.target && (
@@ -517,7 +518,9 @@ export default function GoalCalculatorTool() {
                         <Badge
                           variant="secondary"
                           className={`text-xs ${
-                            bmiData.target.category === 'undervikt'
+                            bmiData.target.category === 'undervikt_1' ||
+                            bmiData.target.category === 'undervikt_2' ||
+                            bmiData.target.category === 'undervikt_3'
                               ? 'bg-yellow-100 text-yellow-800'
                               : bmiData.target.category === 'normalvikt'
                                 ? 'bg-green-100 text-green-800'
@@ -526,8 +529,7 @@ export default function GoalCalculatorTool() {
                                   : 'bg-red-100 text-red-800'
                           }`}
                         >
-                          {bmiData.target.category.charAt(0).toUpperCase() +
-                            bmiData.target.category.slice(1)}
+                          {t(`goalCalc.bmi.category.${bmiData.target.category}`)}
                         </Badge>
                       </div>
                     </>
@@ -553,15 +555,43 @@ export default function GoalCalculatorTool() {
                     <tbody>
                       <tr
                         className={`border-t ${
-                          bmiData.current.category === 'undervikt'
+                          bmiData.current.category === 'undervikt_3'
                             ? 'bg-yellow-50 border-l-4 border-l-yellow-500'
                             : ''
                         }`}
                       >
-                        <td className="px-3 py-1.5">{t('goalCalc.bmi.table.underweight')}</td>
-                        <td className="px-3 py-1.5 text-neutral-600">&lt; 18.5</td>
+                        <td className="px-3 py-1.5">{t('goalCalc.bmi.table.underweight3')}</td>
+                        <td className="px-3 py-1.5 text-neutral-600">&lt; 16.0</td>
                         <td className="px-3 py-1.5 text-neutral-600">
-                          &lt; {Math.floor(18.5 * Math.pow((profileData?.height_cm ?? 0) / 100, 2))}
+                          &lt; {Math.floor(16.0 * Math.pow((profileData?.height_cm ?? 0) / 100, 2))}
+                        </td>
+                      </tr>
+                      <tr
+                        className={`border-t ${
+                          bmiData.current.category === 'undervikt_2'
+                            ? 'bg-yellow-50 border-l-4 border-l-yellow-500'
+                            : ''
+                        }`}
+                      >
+                        <td className="px-3 py-1.5">{t('goalCalc.bmi.table.underweight2')}</td>
+                        <td className="px-3 py-1.5 text-neutral-600">16.0 - 16.9</td>
+                        <td className="px-3 py-1.5 text-neutral-600">
+                          {Math.floor(16.0 * Math.pow((profileData?.height_cm ?? 0) / 100, 2))} -{' '}
+                          {Math.floor(17.0 * Math.pow((profileData?.height_cm ?? 0) / 100, 2)) - 1}
+                        </td>
+                      </tr>
+                      <tr
+                        className={`border-t ${
+                          bmiData.current.category === 'undervikt_1'
+                            ? 'bg-yellow-50 border-l-4 border-l-yellow-500'
+                            : ''
+                        }`}
+                      >
+                        <td className="px-3 py-1.5">{t('goalCalc.bmi.table.underweight1')}</td>
+                        <td className="px-3 py-1.5 text-neutral-600">17.0 - 18.4</td>
+                        <td className="px-3 py-1.5 text-neutral-600">
+                          {Math.floor(17.0 * Math.pow((profileData?.height_cm ?? 0) / 100, 2))} -{' '}
+                          {Math.floor(18.5 * Math.pow((profileData?.height_cm ?? 0) / 100, 2)) - 1}
                         </td>
                       </tr>
                       <tr

@@ -66,14 +66,26 @@
         "category": "Kategori",
         "bmi": "BMI",
         "weight": "Vikt (kg)",
-        "underweight": "Undervikt",
+        "underweight3": "Undervikt (Svår)",
+        "underweight2": "Undervikt (Måttlig)",
+        "underweight1": "Undervikt (Mild)",
         "normalweight": "Normalvikt",
         "overweight": "Övervikt",
         "obese1": "Fetma klass 1",
         "obese2": "Fetma klass 2",
         "obese3": "Fetma klass 3"
       },
-      "disclaimer": "OBS: BMI tar inte hänsyn till muskelmassa. Använd tillsammans med kroppsfett% för bättre bedömning."
+      "disclaimer": "OBS: BMI tar inte hänsyn till muskelmassa. Använd tillsammans med kroppsfett% för bättre bedömning.",
+      "category": {
+        "undervikt_3": "Undervikt (Svår)",
+        "undervikt_2": "Undervikt (Måttlig)",
+        "undervikt_1": "Undervikt (Mild)",
+        "normalvikt": "Normalvikt",
+        "övervikt": "Övervikt",
+        "fetma_1": "Fetma klass 1",
+        "fetma_2": "Fetma klass 2",
+        "fetma_3": "Fetma klass 3"
+      }
     },
     "bodyFatRef": {
       "title": "Kroppsfett %",

@@ -91,6 +91,9 @@
       "undervikt": "Underweight",
       "normalvikt": "Normal weight",
       "övervikt": "Overweight",
+      "undervikt_3": "Underweight (Severe)",
+      "undervikt_2": "Underweight (Moderate)",
+      "undervikt_1": "Underweight (Mild)",
       "fetma_1": "Obese class 1",
       "fetma_2": "Obese class 2",
       "fetma_3": "Obese class 3"

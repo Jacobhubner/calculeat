@@ -91,6 +91,9 @@
       "undervikt": "Undervikt",
       "normalvikt": "Normalvikt",
       "övervikt": "Övervikt",
+      "undervikt_3": "Undervikt (Svår)",
+      "undervikt_2": "Undervikt (Måttlig)",
+      "undervikt_1": "Undervikt (Mild)",
       "fetma_1": "Fetma klass 1",
       "fetma_2": "Fetma klass 2",
       "fetma_3": "Fetma klass 3"

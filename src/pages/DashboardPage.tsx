@@ -558,7 +558,9 @@ export default function DashboardPage() {
                               ? 'text-success-600'
                               : calculations.bmiCategory === 'övervikt'
                                 ? 'text-warning-600'
-                                : calculations.bmiCategory === 'undervikt'
+                                : calculations.bmiCategory === 'undervikt_1' ||
+                                    calculations.bmiCategory === 'undervikt_2' ||
+                                    calculations.bmiCategory === 'undervikt_3'
                                   ? 'text-sky-600'
                                   : 'text-error-600' // fetma_1, fetma_2, fetma_3
                           )}
