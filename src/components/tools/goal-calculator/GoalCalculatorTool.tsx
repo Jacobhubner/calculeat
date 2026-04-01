@@ -341,7 +341,9 @@ export default function GoalCalculatorTool() {
       {/* Header */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div className="flex-1 min-w-0">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900">{t('goalCalc.header.title')}</h2>
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
+            {t('goalCalc.header.title')}
+          </h2>
           <p className="text-neutral-600 mt-1 text-sm md:text-base">
             {profileData?.body_fat_percentage
               ? t('goalCalc.header.descriptionWithBodyFat')
@@ -403,7 +405,9 @@ export default function GoalCalculatorTool() {
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4">
-                    <p className="text-sm text-neutral-600 mb-1">{t('goalCalc.currentStatus.weight')}</p>
+                    <p className="text-sm text-neutral-600 mb-1">
+                      {t('goalCalc.currentStatus.weight')}
+                    </p>
                     <p className="text-2xl font-bold text-neutral-900">
                       {profileData.weight_kg.toFixed(1)} kg
                     </p>
@@ -411,7 +415,9 @@ export default function GoalCalculatorTool() {
                   {/* Visa kroppsfett bara om det finns */}
                   {profileData.body_fat_percentage && (
                     <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4">
-                      <p className="text-sm text-neutral-600 mb-1">{t('goalCalc.currentStatus.bodyFat')}</p>
+                      <p className="text-sm text-neutral-600 mb-1">
+                        {t('goalCalc.currentStatus.bodyFat')}
+                      </p>
                       <p className="text-2xl font-bold text-neutral-900">
                         {profileData.body_fat_percentage.toFixed(1)}%
                       </p>
@@ -423,13 +429,17 @@ export default function GoalCalculatorTool() {
                 {profileData.body_fat_percentage && goalResult?.currentLeanMass !== undefined && (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                     <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                      <p className="text-sm text-green-700 mb-1">{t('goalCalc.currentStatus.leanMass')}</p>
+                      <p className="text-sm text-green-700 mb-1">
+                        {t('goalCalc.currentStatus.leanMass')}
+                      </p>
                       <p className="text-xl font-bold text-green-900">
                         {goalResult.currentLeanMass.toFixed(1)} kg
                       </p>
                     </div>
                     <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
-                      <p className="text-sm text-orange-700 mb-1">{t('goalCalc.currentStatus.fatMass')}</p>
+                      <p className="text-sm text-orange-700 mb-1">
+                        {t('goalCalc.currentStatus.fatMass')}
+                      </p>
                       <p className="text-xl font-bold text-orange-900">
                         {goalResult.currentFatMass!.toFixed(1)} kg
                       </p>
@@ -440,7 +450,9 @@ export default function GoalCalculatorTool() {
                 {/* Kategori - bara om vi har kroppsfettprocent */}
                 {profileData.body_fat_percentage && currentCategory && (
                   <div className="mt-4">
-                    <p className="text-sm text-neutral-600 mb-2">{t('goalCalc.currentStatus.category')}</p>
+                    <p className="text-sm text-neutral-600 mb-2">
+                      {t('goalCalc.currentStatus.category')}
+                    </p>
                     <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-3">
                       <p className={`font-semibold ${currentCategory.color}`}>
                         {currentCategory.category}
@@ -464,7 +476,9 @@ export default function GoalCalculatorTool() {
             <Card>
               <CardHeader className="pb-3">
                 <CardTitle className="text-base">{t('goalCalc.bmi.title')}</CardTitle>
-                <CardDescription className="text-xs">{t('goalCalc.bmi.description')}</CardDescription>
+                <CardDescription className="text-xs">
+                  {t('goalCalc.bmi.description')}
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
                 {/* Nuvarande och Mål BMI - Kompakt inline */}
@@ -494,7 +508,9 @@ export default function GoalCalculatorTool() {
                     <>
                       <span className="text-neutral-400 hidden sm:inline">→</span>
                       <div className="flex items-center gap-1 sm:gap-2">
-                        <span className="text-neutral-600 shrink-0">{t('goalCalc.bmi.target')}</span>
+                        <span className="text-neutral-600 shrink-0">
+                          {t('goalCalc.bmi.target')}
+                        </span>
                         <span className="font-bold text-purple-900">
                           {bmiData.target.bmi.toFixed(1)}
                         </span>
@@ -523,9 +539,15 @@ export default function GoalCalculatorTool() {
                   <table className="w-full text-xs min-w-[300px]">
                     <thead className="bg-neutral-100">
                       <tr>
-                        <th className="px-3 py-1.5 text-left font-semibold">{t('goalCalc.bmi.table.category')}</th>
-                        <th className="px-3 py-1.5 text-left font-semibold">{t('goalCalc.bmi.table.bmi')}</th>
-                        <th className="px-3 py-1.5 text-left font-semibold">{t('goalCalc.bmi.table.weight')}</th>
+                        <th className="px-3 py-1.5 text-left font-semibold">
+                          {t('goalCalc.bmi.table.category')}
+                        </th>
+                        <th className="px-3 py-1.5 text-left font-semibold">
+                          {t('goalCalc.bmi.table.bmi')}
+                        </th>
+                        <th className="px-3 py-1.5 text-left font-semibold">
+                          {t('goalCalc.bmi.table.weight')}
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
@@ -571,7 +593,9 @@ export default function GoalCalculatorTool() {
                       </tr>
                       <tr
                         className={`border-t ${
-                          bmiData.current.category === 'fetma'
+                          bmiData.current.category === 'fetma_1' ||
+                          bmiData.current.category === 'fetma_2' ||
+                          bmiData.current.category === 'fetma_3'
                             ? 'bg-red-50 border-l-4 border-l-red-500'
                             : ''
                         }`}
@@ -708,7 +732,9 @@ export default function GoalCalculatorTool() {
               {/* Målkategori - bara om vi har kroppsfettprocent */}
               {profileData?.body_fat_percentage && targetCategory && (
                 <div className="pt-6 border-t border-neutral-200 bg-neutral-50 border border-neutral-200 rounded-lg p-4">
-                  <p className="text-sm text-neutral-600 mb-2">{t('goalCalc.goal.targetCategory')}</p>
+                  <p className="text-sm text-neutral-600 mb-2">
+                    {t('goalCalc.goal.targetCategory')}
+                  </p>
                   <p className={`font-semibold ${targetCategory.color}`}>
                     {targetCategory.category}
                   </p>
@@ -829,11 +855,15 @@ export default function GoalCalculatorTool() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="bg-gradient-to-br from-purple-50 to-blue-50 border-2 border-purple-200 rounded-lg p-6 text-center">
-                  <p className="text-sm text-neutral-600 mb-2">{t('goalCalc.results.targetWeightLabel')}</p>
+                  <p className="text-sm text-neutral-600 mb-2">
+                    {t('goalCalc.results.targetWeightLabel')}
+                  </p>
                   <p className="text-4xl font-bold text-purple-700">
                     {goalResult.targetWeight.toFixed(1)}
                   </p>
-                  <p className="text-sm text-neutral-500 mt-1">{t('goalCalc.results.weightUnit')}</p>
+                  <p className="text-sm text-neutral-500 mt-1">
+                    {t('goalCalc.results.weightUnit')}
+                  </p>
 
                   <div className="mt-4 pt-4 border-t border-purple-200">
                     <div className="flex items-center justify-center gap-2">
@@ -852,7 +882,9 @@ export default function GoalCalculatorTool() {
                       </span>
                     </div>
                     <p className="text-xs text-neutral-500 mt-1">
-                      {goalResult.weightToChange < 0 ? t('goalCalc.results.toLoose') : t('goalCalc.results.toGain')}
+                      {goalResult.weightToChange < 0
+                        ? t('goalCalc.results.toLoose')
+                        : t('goalCalc.results.toGain')}
                     </p>
                   </div>
                 </div>
@@ -919,16 +951,22 @@ export default function GoalCalculatorTool() {
                 {/* Veckor / Månader */}
                 <div className="grid grid-cols-2 divide-x divide-neutral-100 border-b border-neutral-100">
                   <div className="px-5 py-4">
-                    <p className="text-xs text-neutral-400 uppercase tracking-wide mb-1">{t('goalCalc.timeline.weeks')}</p>
+                    <p className="text-xs text-neutral-400 uppercase tracking-wide mb-1">
+                      {t('goalCalc.timeline.weeks')}
+                    </p>
                     <p className="text-sm font-semibold text-neutral-800">
-                      {timeline.min.weeksRequired}–{timeline.max.weeksRequired} {t('goalCalc.timeline.weeksUnit')}
+                      {timeline.min.weeksRequired}–{timeline.max.weeksRequired}{' '}
+                      {t('goalCalc.timeline.weeksUnit')}
                     </p>
                   </div>
                   <div className="px-5 py-4">
-                    <p className="text-xs text-neutral-400 uppercase tracking-wide mb-1">{t('goalCalc.timeline.months')}</p>
+                    <p className="text-xs text-neutral-400 uppercase tracking-wide mb-1">
+                      {t('goalCalc.timeline.months')}
+                    </p>
                     <p className="text-sm font-semibold text-neutral-800">
                       {Math.round(timeline.min.monthsRequired * 10) / 10}–
-                      {Math.round(timeline.max.monthsRequired * 10) / 10} {t('goalCalc.timeline.monthsUnit')}
+                      {Math.round(timeline.max.monthsRequired * 10) / 10}{' '}
+                      {t('goalCalc.timeline.monthsUnit')}
                     </p>
                   </div>
                 </div>
@@ -965,7 +1003,9 @@ export default function GoalCalculatorTool() {
                 {appliedCalories && (
                   <div className="px-5 py-4 space-y-3">
                     <div className="flex items-center justify-between">
-                      <p className="text-xs text-neutral-400 uppercase tracking-wide">{t('goalCalc.timeline.energyGoal')}</p>
+                      <p className="text-xs text-neutral-400 uppercase tracking-wide">
+                        {t('goalCalc.timeline.energyGoal')}
+                      </p>
                       <p className="text-sm font-semibold text-neutral-800">
                         {appliedCalories.min}–{appliedCalories.max} kcal/dag
                       </p>

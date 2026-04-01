@@ -560,7 +560,7 @@ export default function DashboardPage() {
                                 ? 'text-warning-600'
                                 : calculations.bmiCategory === 'undervikt'
                                   ? 'text-sky-600'
-                                  : 'text-error-600'
+                                  : 'text-error-600' // fetma_1, fetma_2, fetma_3
                           )}
                         >
                           {calculations.bmiCategory

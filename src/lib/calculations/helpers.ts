@@ -38,11 +38,15 @@ export function calculateBMI(weight: number, height: number): number {
 /**
  * Få BMI-kategori baserat på WHO-standarder
  */
-export function getBMICategory(bmi: number): 'undervikt' | 'normalvikt' | 'övervikt' | 'fetma' {
+export function getBMICategory(
+  bmi: number
+): 'undervikt' | 'normalvikt' | 'övervikt' | 'fetma_1' | 'fetma_2' | 'fetma_3' {
   if (bmi < 18.5) return 'undervikt'
   if (bmi < 25) return 'normalvikt'
   if (bmi < 30) return 'övervikt'
-  return 'fetma'
+  if (bmi < 35) return 'fetma_1'
+  if (bmi < 40) return 'fetma_2'
+  return 'fetma_3'
 }
 
 /**

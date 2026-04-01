@@ -91,7 +91,9 @@
       "undervikt": "Undervikt",
       "normalvikt": "Normalvikt",
       "övervikt": "Övervikt",
-      "fetma": "Fetma"
+      "fetma_1": "Fetma klass 1",
+      "fetma_2": "Fetma klass 2",
+      "fetma_3": "Fetma klass 3"
     },
     "ffmiCategory": {
       "Under medel": "Under medel",
