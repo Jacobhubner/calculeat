@@ -68,6 +68,7 @@ export default function TodayPage() {
 
   // State for date editing
   const [isEditingDate, setIsEditingDate] = useState(false)
+  const [editingDateValue, setEditingDateValue] = useState<string>('')
   const [pendingDate, setPendingDate] = useState<string | null>(null)
 
   // State for AddFoodToMealModal
@@ -136,10 +137,9 @@ export default function TodayPage() {
 
   // Ensure log and settings exist
   useEffect(() => {
-    const needsEnsure =
-      !logLoading &&
-      !ensureLog.isPending &&
-      (!todayLog || (todayLog && !todayLog.is_completed && todayLog.log_date < todayDate))
+    // Only create a new log if there is no log at all — never if the user
+    // has manually changed the log date to a different day.
+    const needsEnsure = !logLoading && !ensureLog.isPending && !todayLog
     if (needsEnsure) {
       ensureLog.mutate()
     }
@@ -207,13 +207,23 @@ export default function TodayPage() {
     dailySummary?.remainingFat ??
     Math.max((calculations.macros?.fat.grams || 0) - (todayLog?.total_fat_g || 0), 0)
 
-  const handleDateSelected = (newDate: string) => {
-    if (!todayLog || !newDate || newDate === todayLog.log_date) {
+  const handleStartEditingDate = () => {
+    setEditingDateValue(todayLog?.log_date?.split('T')[0] || '')
+    setIsEditingDate(true)
+  }
+
+  const handleConfirmEditDate = () => {
+    if (!todayLog || !editingDateValue || editingDateValue === todayLog.log_date?.split('T')[0]) {
       setIsEditingDate(false)
       return
     }
-    setPendingDate(newDate)
+    setPendingDate(editingDateValue)
     setIsEditingDate(false)
+  }
+
+  const handleCancelEditDate = () => {
+    setIsEditingDate(false)
+    setEditingDateValue('')
   }
 
   const handleConfirmDateChange = () => {
@@ -314,23 +324,37 @@ export default function TodayPage() {
           </h1>
           <div className="flex items-center gap-2">
             {isEditingDate ? (
-              <input
-                type="date"
-                defaultValue={todayLog?.log_date || ''}
-                className="text-sm md:text-base text-neutral-600 border rounded px-2 py-0.5"
-                onBlur={e => handleDateSelected(e.target.value)}
-                onKeyDown={e => {
-                  if (e.key === 'Enter') handleDateSelected((e.target as HTMLInputElement).value)
-                  if (e.key === 'Escape') setIsEditingDate(false)
-                }}
-                autoFocus
-              />
+              <div className="flex items-center gap-1">
+                <input
+                  type="date"
+                  value={editingDateValue}
+                  onChange={e => setEditingDateValue(e.target.value)}
+                  className="text-sm md:text-base text-neutral-600 border rounded px-2 py-0.5"
+                  onKeyDown={e => {
+                    if (e.key === 'Enter') handleConfirmEditDate()
+                    if (e.key === 'Escape') handleCancelEditDate()
+                  }}
+                  autoFocus
+                />
+                <button
+                  onClick={handleConfirmEditDate}
+                  className="text-success-600 hover:text-success-700 transition-colors"
+                >
+                  <Check className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={handleCancelEditDate}
+                  className="text-neutral-400 hover:text-neutral-600 transition-colors"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
             ) : (
               <>
                 <p className="text-sm md:text-base text-neutral-600 capitalize">{dateDisplay}</p>
                 {todayLog && !todayLog.is_completed && (
                   <button
-                    onClick={() => setIsEditingDate(true)}
+                    onClick={handleStartEditingDate}
                     className="text-neutral-400 hover:text-neutral-600 transition-colors"
                     title={t('today.changeDate')}
                   >
