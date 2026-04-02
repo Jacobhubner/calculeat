@@ -67,6 +67,18 @@ export default function HistoryPage() {
     statsLogs.length > 0
       ? Math.round(statsLogs.reduce((sum, log) => sum + log.total_calories, 0) / statsLogs.length)
       : 0
+  const avgFat =
+    statsLogs.length > 0
+      ? Math.round(statsLogs.reduce((sum, log) => sum + log.total_fat_g, 0) / statsLogs.length)
+      : 0
+  const avgCarbs =
+    statsLogs.length > 0
+      ? Math.round(statsLogs.reduce((sum, log) => sum + log.total_carb_g, 0) / statsLogs.length)
+      : 0
+  const avgProtein =
+    statsLogs.length > 0
+      ? Math.round(statsLogs.reduce((sum, log) => sum + log.total_protein_g, 0) / statsLogs.length)
+      : 0
 
   // Calculate current streak: consecutive completed days backwards from today
   // Uses all logs (not period-filtered) so streak isn't capped by selected period
@@ -308,8 +320,22 @@ export default function HistoryPage() {
                   <div className="text-sm text-neutral-600">{t('stats.completedDays')}</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-neutral-900">{avgCalories}</div>
+                  <div className="text-2xl font-bold text-neutral-900">{avgCalories} kcal</div>
                   <div className="text-sm text-neutral-600">{t('stats.avgCaloriesPerDay')}</div>
+                </div>
+                <div className="border-t pt-3 space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-neutral-600">{t('stats.avgFatPerDay')}</span>
+                    <span className="text-sm font-semibold text-neutral-900">{avgFat} g</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-neutral-600">{t('stats.avgCarbsPerDay')}</span>
+                    <span className="text-sm font-semibold text-neutral-900">{avgCarbs} g</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-neutral-600">{t('stats.avgProteinPerDay')}</span>
+                    <span className="text-sm font-semibold text-neutral-900">{avgProtein} g</span>
+                  </div>
                 </div>
               </CardContent>
             </Card>
