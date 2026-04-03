@@ -597,13 +597,16 @@ export default function MetabolicCalibration({
               onChange={e => setTimePeriod(Number(e.target.value) as 14 | 21 | 28)}
             >
               <option value="14" disabled={!periodAvailability[14]}>
-                14 dagar (2 veckor){!periodAvailability[14] ? ' — otillräcklig data' : ''}
+                14 dagar (2 veckor)
+                {!periodAvailability[14] ? ' — kräver 4 vägningar på 14 dagar' : ''}
               </option>
               <option value="21" disabled={!periodAvailability[21]}>
-                21 dagar (3 veckor){!periodAvailability[21] ? ' — otillräcklig data' : ''}
+                21 dagar (3 veckor)
+                {!periodAvailability[21] ? ' — kräver 5 vägningar på 21 dagar' : ''}
               </option>
               <option value="28" disabled={!periodAvailability[28]}>
-                28 dagar (4 veckor){!periodAvailability[28] ? ' — otillräcklig data' : ''}
+                28 dagar (4 veckor)
+                {!periodAvailability[28] ? ' — kräver 6 vägningar på 28 dagar' : ''}
               </option>
             </Select>
           </div>
