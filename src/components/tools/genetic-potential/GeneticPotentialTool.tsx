@@ -896,15 +896,22 @@ export default function GeneticPotentialTool() {
                     </div>
                   )}
 
-                  {results[selectedFormulaIndex].remainingPotential !== undefined && (
-                    <div className="pt-4 border-t">
-                      <p className="text-sm text-neutral-600 mb-1">{t('geneticPotential.remainingPotential')}</p>
-                      <p className="text-2xl font-bold text-green-600">
-                        +{results[selectedFormulaIndex].remainingPotential.toFixed(1)} kg
-                      </p>
-                      <p className="text-xs text-neutral-500 mt-1">fettfri massa att bygga</p>
-                    </div>
-                  )}
+                  {results[selectedFormulaIndex].remainingPotential !== undefined && (() => {
+                    const remaining = results[selectedFormulaIndex].remainingPotential!
+                    const isOver = remaining < 0
+                    return (
+                      <div className="pt-4 border-t">
+                        <p className="text-sm text-neutral-600 mb-1">
+                          {isOver
+                            ? t('geneticPotential.exceedingPotential')
+                            : t('geneticPotential.remainingPotential')}
+                        </p>
+                        <p className={`text-2xl font-bold ${isOver ? 'text-orange-500' : 'text-green-600'}`}>
+                          {isOver ? '+' : '+'}{Math.abs(remaining).toFixed(1)} kg
+                        </p>
+                      </div>
+                    )
+                  })()}
                 </CardContent>
               </Card>
             </div>
@@ -1341,6 +1348,7 @@ function ResultCard({
     calf_circ?: number
   } | null
 }) {
+  const { t } = useTranslation('tools')
   const [isExpanded, setIsExpanded] = useState(false)
   const targetWeights = getTargetWeights(result.maxLeanMass)
 
@@ -1380,8 +1388,8 @@ function ResultCard({
                 <table className="w-full text-xs">
                   <tbody>
                     <tr className="bg-blue-100 text-blue-600 font-medium">
-                      <td className="px-3 py-1.5">Längd</td>
-                      <td className="px-3 py-1.5 font-mono text-right">Tävlingsvikt vid ~5% BF</td>
+                      <td className="px-3 py-1.5">{t('geneticPotential.berkhanTableHeight')}</td>
+                      <td className="px-3 py-1.5 font-mono text-right">{t('geneticPotential.berkhanTableCompWeight')}</td>
                     </tr>
                     <tr className="bg-white">
                       <td className="px-3 py-1.5 text-blue-800">&lt; 170 cm</td>
@@ -1449,8 +1457,8 @@ function ResultCard({
           <div className="bg-gradient-to-br from-green-50 to-blue-50 border-2 border-green-200 rounded-lg p-3">
             <h4 className="text-sm font-semibold text-neutral-800 mb-3">
               {result.caseyButtMethod === 'personalized'
-                ? `Uppskattad maximal kapacitet vid ${result.caseyButtBodyFat?.toFixed(1)}% kroppsfett`
-                : 'Uppskattad maximal genetisk potential'}
+                ? t('geneticPotential.capacityAtCurrentBF', { bf: result.caseyButtBodyFat?.toFixed(1) })
+                : t('geneticPotential.estimatedMaxPotential')}
             </h4>
             <div className="space-y-2">
               <div className="flex justify-between items-center">
@@ -1460,12 +1468,20 @@ function ResultCard({
                 </p>
               </div>
               <div className="flex justify-between items-center">
-                <p className="text-xs text-neutral-600">Maximal kroppsvikt (MBW):</p>
+                <div>
+                  <p className="text-xs text-neutral-600">Maximal kroppsvikt (MBW):</p>
+                  {currentBodyFat && (
+                    <p className="text-[10px] text-neutral-400">vid {currentBodyFat.toFixed(1)}% kroppsfett</p>
+                  )}
+                </div>
                 <p className="text-lg font-bold text-blue-700">{result.maxWeight.toFixed(1)} kg</p>
               </div>
               {result.maxBulkedWeight && (
                 <div className="flex justify-between items-center">
-                  <p className="text-xs text-neutral-600">Maximal bulked vikt (MBBW):</p>
+                  <div>
+                    <p className="text-xs text-neutral-600">Maximal bulked vikt (MBBW):</p>
+                    <p className="text-[10px] text-neutral-400">+4% av MBW</p>
+                  </div>
                   <p className="text-lg font-bold text-purple-700">
                     {result.maxBulkedWeight.toFixed(1)} kg
                   </p>
@@ -1481,25 +1497,25 @@ function ResultCard({
       ) : (
         <div className="bg-gradient-to-br from-green-50 to-blue-50 border-2 border-green-200 rounded-lg p-3">
           <div className="space-y-2">
-            {/* Current body fat weight - primary info */}
+            {/* Lean mass - primary info */}
+            <div>
+              <p className="text-xs text-neutral-600">Maximal fettfri massa:</p>
+              <p className="text-xl font-bold text-green-700">
+                {result.maxLeanMass.toFixed(1)} kg
+              </p>
+            </div>
+
+            {/* Current body fat weight - secondary info */}
             {weightAtCurrentBF && currentBodyFat && (
-              <div>
+              <div className="pt-2 border-t border-green-200">
                 <p className="text-xs text-neutral-600">
                   Vid din kroppsfett ({currentBodyFat.toFixed(1)}%):
                 </p>
-                <p className="text-xl font-bold text-primary-700">
+                <p className="text-lg font-semibold text-primary-700">
                   {weightAtCurrentBF.toFixed(1)} kg
                 </p>
               </div>
             )}
-
-            {/* Lean mass - secondary info */}
-            <div className="pt-2 border-t border-green-200">
-              <p className="text-xs text-neutral-600">Maximal fettfri massa:</p>
-              <p className="text-lg font-semibold text-green-700">
-                {result.maxLeanMass.toFixed(1)} kg
-              </p>
-            </div>
           </div>
         </div>
       )}

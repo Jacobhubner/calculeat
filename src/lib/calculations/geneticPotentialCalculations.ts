@@ -307,8 +307,7 @@ export function calculateRemainingPotential(
   maxLeanMass: number
 ): number {
   const currentLeanMass = currentWeight * (1 - currentBodyFat / 100)
-  const remaining = maxLeanMass - currentLeanMass
-  return Math.max(remaining, 0)
+  return maxLeanMass - currentLeanMass
 }
 
 /**

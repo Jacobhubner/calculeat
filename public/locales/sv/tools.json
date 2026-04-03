@@ -349,7 +349,14 @@
       "title": "Beräknade Resultat",
       "description": "Olika modeller ger olika uppskattningar"
     },
-    "remainingPotential": "Återstående potential:"
+    "remainingPotential": "Återstående potential avseende fettfri massa:",
+    "exceedingPotential": "Över teoretiskt max för fettfri massa:",
+    "leanMassToBuild": "fettfri massa att bygga",
+    "aboveMaxLeanMass": "över maximal fettfri massa",
+    "capacityAtCurrentBF": "Uppskattad maximal kapacitet vid nuvarande {{bf}}% kroppsfett",
+    "estimatedMaxPotential": "Uppskattad maximal genetisk potential",
+    "berkhanTableHeight": "Längd",
+    "berkhanTableCompWeight": "Tävlingsvikt vid ~5–6% kroppsfett"
   },
   "palFields": {
     "activityLevel": "Aktivitetsnivå *",

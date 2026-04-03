@@ -349,7 +349,14 @@
       "title": "Calculated Results",
       "description": "Different models give different estimates"
     },
-    "remainingPotential": "Remaining potential:"
+    "remainingPotential": "Remaining lean mass potential:",
+    "exceedingPotential": "Above theoretical max for lean mass:",
+    "leanMassToBuild": "lean mass to build",
+    "aboveMaxLeanMass": "above maximum lean mass",
+    "capacityAtCurrentBF": "Estimated maximum capacity at current {{bf}}% body fat",
+    "estimatedMaxPotential": "Estimated maximum genetic potential",
+    "berkhanTableHeight": "Height",
+    "berkhanTableCompWeight": "Competition weight at ~5–6% body fat"
   },
   "palFields": {
     "activityLevel": "Activity level *",
