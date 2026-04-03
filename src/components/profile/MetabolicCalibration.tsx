@@ -297,34 +297,32 @@ export default function MetabolicCalibration({
           {!isCompact && (
             <InfoCardWithModal
               title="Om metabolisk kalibrering"
-              modalTitle="Guide: Metabolisk Kalibrering"
+              modalTitle="Guide: Metabolisk kalibrering"
               modalContent={
                 <div className="space-y-6 text-sm">
                   {/* Section 1 */}
                   <section>
-                    <h3 className="font-semibold text-base mb-2 flex items-center gap-2">
-                      Vad är metabolisk kalibrering?
-                    </h3>
+                    <h3 className="font-semibold text-base mb-2">Vad är metabolisk kalibrering?</h3>
                     <p className="text-neutral-700 leading-relaxed">
                       Metabolisk kalibrering uppskattar ditt faktiska{' '}
                       <strong>Maintenance-TDEE</strong> (Total Daily Energy Expenditure) genom att
-                      analysera hur din kroppsvikt förändras i relation till ditt faktiska
+                      analysera hur din kroppsvikt förändras i relation till ditt verkliga
                       kaloriintag över tid.
                     </p>
                     <p className="text-neutral-700 leading-relaxed mt-2">
                       Istället för att enbart använda uppskattningar från BMR-formler och
-                      aktivitetsnivåer använder systemet verklig data från din loggning för att
-                      justera ditt energibehov.
+                      aktivitetsnivåer använder systemet din faktiska loggdata för att finjustera
+                      ditt energibehov.
                     </p>
                     <p className="text-neutral-700 leading-relaxed mt-2">
                       Kalibreringen analyserar bland annat:
                     </p>
                     <ul className="list-disc list-inside space-y-1 ml-2 mt-1 text-neutral-700">
-                      <li>Trendbaserad viktutveckling över tid</li>
-                      <li>Genomsnittligt kaloriintag under perioden</li>
-                      <li>Hur konsekvent du loggat din mat</li>
-                      <li>Hur regelbundet du vägt dig</li>
-                      <li>Hur stabil vikttrenden är</li>
+                      <li>trendbaserad viktutveckling över tid</li>
+                      <li>genomsnittligt kaloriintag under perioden</li>
+                      <li>hur konsekvent du loggat din mat</li>
+                      <li>hur regelbundet du vägt dig</li>
+                      <li>hur stabil vikttrenden är</li>
                     </ul>
                     <p className="text-neutral-700 leading-relaxed mt-2">
                       Dagliga viktfluktuationer från exempelvis vätska, salt, glykogen eller
@@ -338,11 +336,11 @@ export default function MetabolicCalibration({
                     <div className="space-y-2 text-neutral-700">
                       <p>Kalibreringen bygger på energibalansprincipen:</p>
                       <p className="text-neutral-600 italic ml-2">
-                        Energi in − energi ut = förändring i kroppens energilager.
+                        Energi in − energi ut = förändring i kroppens energilager
                       </p>
                       <p>
-                        Om vikten förändras över tid kan vi därför uppskatta hur stort ditt faktiska
-                        energibehov är.
+                        Om kroppsvikten förändras över tid kan vi därför uppskatta hur stort ditt
+                        faktiska energibehov är.
                       </p>
                       <p>I förenklad form används sambandet:</p>
                       <p className="font-medium text-primary-600 text-center py-1">
@@ -351,10 +349,12 @@ export default function MetabolicCalibration({
                       </p>
                       <p>
                         Ett kilogram kroppsvikt motsvarar i genomsnitt ungefär{' '}
-                        <strong>6 500–7 700 kcal</strong> beroende på hur stor del av
-                        viktförändringen som består av fett, glykogen och vätska. Modellen använder
-                        ett dynamiskt värde inom detta spann beroende på hur snabbt vikten
-                        förändras.
+                        <strong>6 500–7 700 kcal</strong>, beroende på hur stor del av
+                        viktförändringen som består av fett, glykogen och vätska.
+                      </p>
+                      <p>
+                        Modellen använder ett dynamiskt värde inom detta spann beroende på hur
+                        snabbt vikten förändras.
                       </p>
                     </div>
                   </section>
@@ -385,7 +385,7 @@ export default function MetabolicCalibration({
                       tillförlitlighet.
                     </p>
                     <p className="text-neutral-700 leading-relaxed mt-2">
-                      Som extra kontroll jämförs även regressionstrenden med en glidande medeltrend.
+                      Som extra kontroll jämförs regressionstrenden även med en glidande medeltrend.
                       Om dessa två skiljer sig kraftigt kan systemet varna för att viktförändringen
                       är oregelbunden (t.ex. efter refeed, vätskeretention eller andra kortsiktiga
                       effekter).
@@ -399,10 +399,10 @@ export default function MetabolicCalibration({
                     </h3>
                     <p className="text-neutral-700 leading-relaxed">
                       Alla kalibreringar får ett <strong>Data Quality Index (DQI)</strong> som
-                      bedömer hur pålitlig datan är.
+                      uppskattar hur tillförlitlig datan är.
                     </p>
                     <p className="text-neutral-700 leading-relaxed mt-2">
-                      Detta index påverkas bland annat av:
+                      Indexet påverkas bland annat av:
                     </p>
                     <ul className="list-disc list-inside space-y-1 ml-2 mt-1 text-neutral-700">
                       <li>hur många dagar du loggat mat</li>
@@ -429,13 +429,17 @@ export default function MetabolicCalibration({
                     <h3 className="font-semibold text-base mb-2">
                       Begränsning av extrema justeringar
                     </h3>
+                    <p className="text-neutral-700 mb-3">
+                      För att undvika att modellen överreagerar på kortsiktiga förändringar används
+                      flera stabiliseringsmekanismer.
+                    </p>
                     <div className="space-y-3 text-neutral-700">
                       <div>
                         <p className="font-medium">Justeringsgränser (clamp)</p>
                         <p className="mt-1">
                           Kalibreringen begränsar hur mycket TDEE kan ändras i en enskild
                           uppdatering. Maximal justering beror på datakvaliteten och ligger normalt
-                          mellan ungefär:
+                          mellan:
                         </p>
                         <p className="font-medium text-primary-600 text-center py-1">
                           ±75 kcal till ±200 kcal
@@ -449,16 +453,21 @@ export default function MetabolicCalibration({
                         <p className="font-medium">Gradvis konvergens</p>
                         <p className="mt-1">
                           Om kalibreringen föreslår en ny TDEE-nivå närmar sig systemet denna nivå
-                          gradvis över flera kalibreringar, istället för att direkt ersätta värdet.
-                          Detta gör modellen stabilare över tid.
+                          gradvis över flera kalibreringar istället för att direkt ersätta värdet.
+                        </p>
+                        <p className="mt-1">
+                          Detta gör modellen mer stabil och minskar risken att överreagera på
+                          kortsiktig variation.
                         </p>
                       </div>
                       <div>
                         <p className="font-medium">Historikvägning</p>
                         <p className="mt-1">
-                          Tidigare kalibreringar används också som referenspunkt. Äldre
-                          kalibreringar får dock minskad vikt över tid, särskilt om datakvaliteten
-                          var låg.
+                          Tidigare kalibreringar används också som referenspunkt.
+                        </p>
+                        <p className="mt-1">
+                          Äldre kalibreringar får dock minskad vikt över tid, särskilt om
+                          datakvaliteten var låg.
                         </p>
                       </div>
                     </div>
@@ -470,10 +479,12 @@ export default function MetabolicCalibration({
                       Osäkerhet och konfidensintervall
                     </h3>
                     <p className="text-neutral-700 leading-relaxed">
-                      Eftersom verklig viktdata innehåller variation beräknar modellen även ett{' '}
-                      <strong>konfidensintervall</strong> för TDEE-uppskattningen.
+                      Eftersom verklig viktdata innehåller naturlig variation beräknar modellen även
+                      ett <strong>konfidensintervall</strong> för TDEE-uppskattningen.
                     </p>
-                    <p className="text-neutral-700 leading-relaxed mt-2">Intervallet baseras på:</p>
+                    <p className="text-neutral-700 leading-relaxed mt-2">
+                      Intervallet baseras bland annat på:
+                    </p>
                     <ul className="list-disc list-inside space-y-1 ml-2 mt-1 text-neutral-700">
                       <li>variation i viktmätningarna</li>
                       <li>antal datapunkter</li>
@@ -516,7 +527,7 @@ export default function MetabolicCalibration({
                       <li className="flex items-start gap-2">
                         <span className="text-success-600 mt-0.5">✓</span>
                         <span className="text-neutral-700">
-                          Din vikt <strong>förändras inte som förväntat</strong>
+                          Din vikt <strong>utvecklas inte som förväntat</strong>
                         </span>
                       </li>
                     </ul>
@@ -533,7 +544,7 @@ export default function MetabolicCalibration({
                       <li className="flex items-start gap-2">
                         <span className="text-orange-600 mt-0.5 font-bold">×</span>
                         <span>
-                          Du precis startat en ny diet <strong>(&lt;2 veckor)</strong>
+                          Du precis startat en ny diet <strong>(&lt; 2 veckor)</strong>
                         </span>
                       </li>
                       <li className="flex items-start gap-2">
