@@ -59,6 +59,7 @@
     },
     "bmi": {
       "title": "BMI (Body Mass Index)",
+      "bmiFormula": "Formel: BMI = vikt (kg) / längd (m)²",
       "description": "Viktindex enligt WHO-standard",
       "current": "Nuvarande:",
       "target": "Mål:",
@@ -66,6 +67,7 @@
         "category": "Kategori",
         "bmi": "BMI",
         "weight": "Vikt (kg)",
+        "weightNote": "baserat på din längd",
         "underweight3": "Undervikt (Svår)",
         "underweight2": "Undervikt (Måttlig)",
         "underweight1": "Undervikt (Mild)",

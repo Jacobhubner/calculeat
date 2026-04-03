@@ -8,7 +8,7 @@
  * - Kalibreringsprompt när tillgänglig
  */
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import {
@@ -73,23 +73,36 @@ export default function WeightTracker({
   // Calculate initial weight from oldest entry in history
   const initialWeight = useMemo(() => {
     if (weightHistory.length === 0) return 0
+    const parseDate = (s: string) => new Date(s.replace(' ', 'T').replace(/([+-]\d{2})$/, '$1:00'))
     const sorted = [...weightHistory].sort(
-      (a, b) => new Date(a.recorded_at).getTime() - new Date(b.recorded_at).getTime()
+      (a, b) => parseDate(a.recorded_at).getTime() - parseDate(b.recorded_at).getTime()
     )
     return sorted[0].weight_kg
   }, [weightHistory])
 
-  // Current weight = entry with recorded_at closest to (and not after) today
+  // Current weight = entry with recorded_at on or before today (end of day)
   const currentWeightFromHistory = useMemo(() => {
-    const now = new Date()
-    const past = weightHistory.filter(e => new Date(e.recorded_at) <= now)
+    const todayStr = new Date().toISOString().split('T')[0]
+    const endOfToday = new Date(todayStr + 'T23:59:59')
+    const parseDate = (s: string) => new Date(s.replace(' ', 'T').replace(/([+-]\d{2})$/, '$1:00'))
+    const past = weightHistory.filter(e => parseDate(e.recorded_at) <= endOfToday)
     if (past.length === 0) return null
-    past.sort((a, b) => new Date(b.recorded_at).getTime() - new Date(a.recorded_at).getTime())
+    past.sort((a, b) => parseDate(b.recorded_at).getTime() - parseDate(a.recorded_at).getTime())
     return past[0].weight_kg
   }, [weightHistory])
 
   const weight = currentWeightFromHistory ?? profile.weight_kg ?? initialWeight
   const targetWeight = profile.target_weight_kg
+
+  // Synka profilvikten om weight_history har ett nyare värde än profile.weight_kg
+  useEffect(() => {
+    if (
+      currentWeightFromHistory !== null &&
+      currentWeightFromHistory !== profile.weight_kg
+    ) {
+      onWeightChange(currentWeightFromHistory)
+    }
+  }, [currentWeightFromHistory]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Use the new trend hook for calculations (user-based, no profile dependency)
   const weightTrend = useWeightTrend(weightHistory, targetWeight, weight)
@@ -110,22 +123,16 @@ export default function WeightTracker({
       return
     }
 
-    // Spara till weight_history direkt och synkronisera profilvikten
-    const newRecordedAt = new Date(recordedDate + 'T12:00:00')
+    const newRecordedAt = new Date(recordedDate + 'T00:00:00')
+    const now = new Date()
+
     await createWeightHistory.mutateAsync({
       weight_kg: weightNum,
       recorded_at: newRecordedAt.toISOString(),
     })
 
-    // Uppdatera profilvikten bara om den nya posten är närmast idag
-    const now = new Date()
-    const newIsClosest =
-      newRecordedAt <= now &&
-      (currentWeightFromHistory === null ||
-        !weightHistory.some(
-          e => new Date(e.recorded_at) <= now && new Date(e.recorded_at) > newRecordedAt
-        ))
-    if (newIsClosest) {
+    // Uppdatera alltid profilvikten om posten är för idag eller tidigare
+    if (newRecordedAt <= now) {
       onWeightChange(weightNum)
     }
 
@@ -158,9 +165,10 @@ export default function WeightTracker({
   }
 
   // Sort weight history by date (newest first) for the list view
-  const sortedHistoryForList = [...weightHistory].sort(
-    (a, b) => new Date(b.recorded_at).getTime() - new Date(a.recorded_at).getTime()
-  )
+  const sortedHistoryForList = [...weightHistory].sort((a, b) => {
+    const parseDate = (s: string) => new Date(s.replace(' ', 'T').replace(/([+-]\d{2})$/, '$1:00'))
+    return parseDate(b.recorded_at).getTime() - parseDate(a.recorded_at).getTime()
+  })
 
   return (
     <Card>

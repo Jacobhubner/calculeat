@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { BODY_FAT_CATEGORIES_ACE } from '../../lib/constants/bodyCompositionReferenceData'
@@ -36,6 +36,10 @@ export function BodyFatReferenceTable({
 }: BodyFatReferenceTableProps) {
   const { t } = useTranslation('body')
   const [showMale, setShowMale] = useState(gender !== 'female')
+
+  useEffect(() => {
+    setShowMale(gender !== 'female')
+  }, [gender])
 
   // Determine which category the user's body fat falls into
   const getUserCategory = (): string | null => {

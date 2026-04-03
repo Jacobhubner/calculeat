@@ -59,6 +59,7 @@
     },
     "bmi": {
       "title": "BMI (Body Mass Index)",
+      "bmiFormula": "Formula: BMI = weight (kg) / height (m)²",
       "description": "Weight index according to WHO standard",
       "current": "Current:",
       "target": "Target:",
@@ -66,6 +67,7 @@
         "category": "Category",
         "bmi": "BMI",
         "weight": "Weight (kg)",
+        "weightNote": "based on your height",
         "underweight3": "Underweight (Severe)",
         "underweight2": "Underweight (Moderate)",
         "underweight1": "Underweight (Mild)",

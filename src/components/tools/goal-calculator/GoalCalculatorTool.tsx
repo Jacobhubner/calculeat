@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { Info, TrendingDown, TrendingUp, User } from 'lucide-react'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { useNavigate } from 'react-router-dom'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -48,6 +49,14 @@ export default function GoalCalculatorTool() {
     min: number
     max: number
   } | null>(null)
+  const [bmiHeightInput, setBmiHeightInput] = useState<string>(
+    () => String(profileData?.height_cm ?? '')
+  )
+  useEffect(() => {
+    if (!bmiHeightInput && profileData?.height_cm) {
+      setBmiHeightInput(String(profileData.height_cm))
+    }
+  }, [profileData?.height_cm]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Beräkna targetWeight baserat på om användaren har angett ett manuellt värde
   const targetWeight = useMemo(() => {
@@ -475,7 +484,19 @@ export default function GoalCalculatorTool() {
           {bmiData && (
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-base">{t('goalCalc.bmi.title')}</CardTitle>
+                <CardTitle className="text-base flex items-center gap-1.5">
+                  {t('goalCalc.bmi.title')}
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Info className="h-3.5 w-3.5 text-neutral-400 cursor-pointer shrink-0" />
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-72 text-xs leading-relaxed" side="right">
+                        <p>{t('goalCalc.bmi.bmiFormula')}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </CardTitle>
                 <CardDescription className="text-xs">
                   {t('goalCalc.bmi.description')}
                 </CardDescription>
@@ -537,6 +558,12 @@ export default function GoalCalculatorTool() {
                 </div>
 
                 {/* BMI-Tabell - Kompakt */}
+                {(() => {
+                  const parsedHeight = parseFloat(bmiHeightInput)
+                  const bmiHeight = parsedHeight >= 100 && parsedHeight <= 250
+                    ? parsedHeight
+                    : (profileData?.height_cm ?? 0)
+                  return (
                 <div className="border border-neutral-200 rounded-lg overflow-x-auto">
                   <table className="w-full text-xs min-w-[300px]">
                     <thead className="bg-neutral-100">
@@ -548,7 +575,27 @@ export default function GoalCalculatorTool() {
                           {t('goalCalc.bmi.table.bmi')}
                         </th>
                         <th className="px-3 py-1.5 text-left font-semibold">
-                          {t('goalCalc.bmi.table.weight')}
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span>{t('goalCalc.bmi.table.weight')}</span>
+                            <span
+                              className="font-normal text-neutral-500 cursor-pointer hover:text-primary-600 hover:underline"
+                              onClick={() => setBmiHeightInput(String(profileData?.height_cm ?? ''))}
+                            >
+                              ({t('goalCalc.bmi.table.weightNote')})
+                            </span>
+                            <div className="flex items-center gap-0.5 font-normal">
+                              <input
+                                type="number"
+                                value={bmiHeightInput}
+                                onChange={e => setBmiHeightInput(e.target.value)}
+                                placeholder="—"
+                                min={100}
+                                max={250}
+                                className="w-14 px-1.5 py-0.5 text-xs border border-neutral-300 rounded text-neutral-700 focus:outline-none focus:border-primary-400"
+                              />
+                              <span className="text-neutral-500">cm</span>
+                            </div>
+                          </div>
                         </th>
                       </tr>
                     </thead>
@@ -563,7 +610,7 @@ export default function GoalCalculatorTool() {
                         <td className="px-3 py-1.5">{t('goalCalc.bmi.table.underweight3')}</td>
                         <td className="px-3 py-1.5 text-neutral-600">&lt; 16.0</td>
                         <td className="px-3 py-1.5 text-neutral-600">
-                          &lt; {Math.floor(16.0 * Math.pow((profileData?.height_cm ?? 0) / 100, 2))}
+                          &lt; {Math.ceil(16.0 * Math.pow(bmiHeight / 100, 2))}
                         </td>
                       </tr>
                       <tr
@@ -576,8 +623,8 @@ export default function GoalCalculatorTool() {
                         <td className="px-3 py-1.5">{t('goalCalc.bmi.table.underweight2')}</td>
                         <td className="px-3 py-1.5 text-neutral-600">16.0 - 16.9</td>
                         <td className="px-3 py-1.5 text-neutral-600">
-                          {Math.floor(16.0 * Math.pow((profileData?.height_cm ?? 0) / 100, 2))} -{' '}
-                          {Math.floor(17.0 * Math.pow((profileData?.height_cm ?? 0) / 100, 2)) - 1}
+                          {Math.ceil(16.0 * Math.pow(bmiHeight / 100, 2))} -{' '}
+                          {Math.floor(17.0 * Math.pow(bmiHeight / 100, 2))}
                         </td>
                       </tr>
                       <tr
@@ -590,8 +637,8 @@ export default function GoalCalculatorTool() {
                         <td className="px-3 py-1.5">{t('goalCalc.bmi.table.underweight1')}</td>
                         <td className="px-3 py-1.5 text-neutral-600">17.0 - 18.4</td>
                         <td className="px-3 py-1.5 text-neutral-600">
-                          {Math.floor(17.0 * Math.pow((profileData?.height_cm ?? 0) / 100, 2))} -{' '}
-                          {Math.floor(18.5 * Math.pow((profileData?.height_cm ?? 0) / 100, 2)) - 1}
+                          {Math.ceil(17.0 * Math.pow(bmiHeight / 100, 2))} -{' '}
+                          {Math.floor(18.5 * Math.pow(bmiHeight / 100, 2))}
                         </td>
                       </tr>
                       <tr
@@ -604,7 +651,7 @@ export default function GoalCalculatorTool() {
                         <td className="px-3 py-1.5">{t('goalCalc.bmi.table.normalweight')}</td>
                         <td className="px-3 py-1.5 text-neutral-600">18.5 - 24.9</td>
                         <td className="px-3 py-1.5 text-green-700 font-semibold">
-                          {bmiData.idealRange.min} - {bmiData.idealRange.max}
+                          {Math.ceil(18.5 * Math.pow(bmiHeight / 100, 2))} - {Math.floor(25 * Math.pow(bmiHeight / 100, 2))}
                         </td>
                       </tr>
                       <tr
@@ -617,8 +664,8 @@ export default function GoalCalculatorTool() {
                         <td className="px-3 py-1.5">{t('goalCalc.bmi.table.overweight')}</td>
                         <td className="px-3 py-1.5 text-neutral-600">25 - 29.9</td>
                         <td className="px-3 py-1.5 text-neutral-600">
-                          {bmiData.idealRange.max + 1} -{' '}
-                          {Math.floor(30 * Math.pow((profileData?.height_cm ?? 0) / 100, 2)) - 1}
+                          {Math.ceil(25 * Math.pow(bmiHeight / 100, 2))} -{' '}
+                          {Math.floor(30 * Math.pow(bmiHeight / 100, 2))}
                         </td>
                       </tr>
                       <tr
@@ -631,8 +678,8 @@ export default function GoalCalculatorTool() {
                         <td className="px-3 py-1.5">{t('goalCalc.bmi.table.obese1')}</td>
                         <td className="px-3 py-1.5 text-neutral-600">30 - 34.9</td>
                         <td className="px-3 py-1.5 text-neutral-600">
-                          {Math.floor(30 * Math.pow((profileData?.height_cm ?? 0) / 100, 2))} -{' '}
-                          {Math.floor(35 * Math.pow((profileData?.height_cm ?? 0) / 100, 2)) - 1}
+                          {Math.ceil(30 * Math.pow(bmiHeight / 100, 2))} -{' '}
+                          {Math.floor(35 * Math.pow(bmiHeight / 100, 2))}
                         </td>
                       </tr>
                       <tr
@@ -645,8 +692,8 @@ export default function GoalCalculatorTool() {
                         <td className="px-3 py-1.5">{t('goalCalc.bmi.table.obese2')}</td>
                         <td className="px-3 py-1.5 text-neutral-600">35 - 39.9</td>
                         <td className="px-3 py-1.5 text-neutral-600">
-                          {Math.floor(35 * Math.pow((profileData?.height_cm ?? 0) / 100, 2))} -{' '}
-                          {Math.floor(40 * Math.pow((profileData?.height_cm ?? 0) / 100, 2)) - 1}
+                          {Math.ceil(35 * Math.pow(bmiHeight / 100, 2))} -{' '}
+                          {Math.floor(40 * Math.pow(bmiHeight / 100, 2))}
                         </td>
                       </tr>
                       <tr
@@ -659,14 +706,15 @@ export default function GoalCalculatorTool() {
                         <td className="px-3 py-1.5">{t('goalCalc.bmi.table.obese3')}</td>
                         <td className="px-3 py-1.5 text-neutral-600">&ge; 40</td>
                         <td className="px-3 py-1.5 text-neutral-600">
-                          &ge; {Math.floor(40 * Math.pow((profileData?.height_cm ?? 0) / 100, 2))}
+                          &ge; {Math.ceil(40 * Math.pow(bmiHeight / 100, 2))}
                         </td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
+                  )
+                })()}
 
-                {/* BMI Disclaimer - Kompakt */}
                 <p className="text-[10px] text-neutral-500 italic">
                   {t('goalCalc.bmi.disclaimer')}
                 </p>
@@ -681,9 +729,6 @@ export default function GoalCalculatorTool() {
                 <CardTitle className="text-base">{t('goalCalc.bodyFatRef.title')}</CardTitle>
                 <CardDescription className="text-xs">
                   {t('goalCalc.bodyFatRef.description')}
-                  {profileData?.gender
-                    ? ` — ${profileData.gender === 'male' ? t('goalCalc.bodyFatRef.male') : t('goalCalc.bodyFatRef.female')}`
-                    : ''}
                 </CardDescription>
               </CardHeader>
               <CardContent>
