@@ -103,6 +103,26 @@ import type {
 
 const KCAL_PER_KG = 7700
 
+/**
+ * Context-aware energy density of weight change.
+ * Base: 7700 kcal/kg (Hall 2008, mixed tissue).
+ * Rapid loss: glycogen-heavy → lower effective density (~6500).
+ * Rapid gain: glycogen refill → lower effective density (~6800).
+ * Uses smooth linear interpolation to avoid step-function discontinuities.
+ */
+function getEffectiveKcalPerKg(weeklyChangePct: number): number {
+  if (weeklyChangePct < 0) {
+    // Loss side: linear from 7700 at -0.25%/week to 6500 at -1.5%/week
+    const t = Math.max(0, Math.min(1, (weeklyChangePct + 1.5) / 1.25))
+    return Math.round(6500 + t * 1200)
+  }
+  if (weeklyChangePct > 0.5) {
+    // Gain side: glycogen refill, conservative 6800
+    return 6800
+  }
+  return KCAL_PER_KG
+}
+
 /** Minimum data points per period */
 export const MIN_DATA_POINTS: Record<14 | 21 | 28, number> = {
   14: 4,
@@ -112,7 +132,7 @@ export const MIN_DATA_POINTS: Record<14 | 21 | 28, number> = {
 
 /** Minimum cluster size per period */
 export const MIN_CLUSTER_SIZE: Record<14 | 21 | 28, number> = {
-  14: 1,
+  14: 2,
   21: 2,
   28: 2,
 }
@@ -239,6 +259,68 @@ export function calculateWeightTrend(
   }
 }
 
+// ─── OLS Weight Trend ───────────────────────────────────────────────
+
+export interface OLSTrendResult {
+  trendStart: number
+  trendEnd: number
+  slopeKgPerDay: number
+  rSquared: number
+  residualSd: number
+  ssXX: number
+  /** Last x value in days (= actual time span covered by measurements) */
+  lastX: number
+}
+
+/**
+ * OLS linear regression on time-indexed weight measurements.
+ * Replaces EMA as primary weight trend estimator.
+ *
+ * Advantages over EMA:
+ * - No initialization bias (EMA anchors to first measurement)
+ * - Global minimum-residual fit
+ * - Free byproducts: R², residualSd, ssXX needed for confidence intervals
+ *
+ * Returns null if fewer than 3 measurements or all at the same timestamp.
+ */
+export function calculateWeightTrendOLS(
+  measurements: Array<{ weight_kg: number; recorded_at: Date }>
+): OLSTrendResult | null {
+  if (measurements.length < 3) return null
+
+  const sorted = [...measurements].sort((a, b) => a.recorded_at.getTime() - b.recorded_at.getTime())
+  const t0 = sorted[0].recorded_at.getTime()
+  const xs = sorted.map(m => (m.recorded_at.getTime() - t0) / 86400000) // days since first
+  const ys = sorted.map(m => m.weight_kg)
+  const n = xs.length
+
+  const meanX = xs.reduce((s, x) => s + x, 0) / n
+  const meanY = ys.reduce((s, y) => s + y, 0) / n
+  const ssXX = xs.reduce((s, x) => s + (x - meanX) ** 2, 0)
+  const ssXY = xs.reduce((s, x, i) => s + (x - meanX) * (ys[i] - meanY), 0)
+  const ssYY = ys.reduce((s, y) => s + (y - meanY) ** 2, 0)
+
+  if (ssXX === 0) return null
+
+  const slope = ssXY / ssXX
+  const intercept = meanY - slope * meanX
+  const lastX = xs[n - 1]
+
+  const ssRes = ys.reduce((s, y, i) => s + (y - (intercept + slope * xs[i])) ** 2, 0)
+  const rSquared = ssYY > 0 ? 1 - ssRes / ssYY : 0
+  const residualSd = Math.sqrt(ssRes / Math.max(1, n - 2))
+
+  return {
+    trendStart: intercept,
+    trendEnd: intercept + slope * lastX,
+    slopeKgPerDay: slope,
+    rSquared,
+    residualSd,
+    ssXX,
+    lastX,
+  }
+}
+
 // ─── Food Log Blending ──────────────────────────────────────────────
 
 /**
@@ -319,8 +401,9 @@ export function calculateDataQualityIndex(
   const idealFreq = 0.5
   const freqScore = Math.min(100, (measurementCount / periodDays / idealFreq) * 100)
 
-  // Timing consistency (15% weight) — 0 stddev = 100, 8h+ = 0
-  const timingScore = Math.max(0, 100 - timingStddevHours * (100 / 8))
+  // Timing consistency (15% weight) — 0 stddev = 100, 4h+ = 0
+  // 4h threshold: AM vs PM weighing causes ~0.5-1.5 kg variance, practically significant
+  const timingScore = Math.max(0, 100 - timingStddevHours * 25)
 
   // Cluster adequacy (15% weight) — 6 total = 100
   const clusterScore = Math.min(100, ((startClusterSize + endClusterSize) / 6) * 100)
@@ -329,20 +412,18 @@ export function calculateDataQualityIndex(
     logScore * 0.4 + freqScore * 0.3 + timingScore * 0.15 + clusterScore * 0.15
   )
 
+  // Continuous cap: 75 kcal at DQI=0, 200 kcal at DQI=100 — no cliff effects
+  const maxAbsoluteAdjustment = Math.round(75 + (score / 100) * 125)
+
   let label: string
-  let maxAbsoluteAdjustment: number
   if (score >= 80) {
     label = 'Utmärkt data'
-    maxAbsoluteAdjustment = 200
   } else if (score >= 60) {
     label = 'Bra data'
-    maxAbsoluteAdjustment = 150
   } else if (score >= 40) {
     label = 'Tillräcklig data'
-    maxAbsoluteAdjustment = 100
   } else {
     label = 'Begränsad data'
-    maxAbsoluteAdjustment = 75
   }
 
   return {
@@ -370,15 +451,32 @@ export interface ConvergenceResult {
  */
 export function applyConvergenceSmoothing(
   rawTDEE: number,
-  calibrationHistory: Array<{ applied_tdee: number; confidence_level: string }>,
+  calibrationHistory: Array<{
+    applied_tdee: number
+    confidence_level: string
+    calibrated_at?: string
+    data_quality_index?: number | null
+  }>,
   alpha: number = 0.6
 ): ConvergenceResult {
   const maxHistory = 3
-  if (calibrationHistory.length === 0) {
+
+  // DQI-weighted staleness guard: filter out old calibrations
+  // High DQI (≥60) → 180-day window, low DQI (<60) → 90-day window
+  const now = Date.now()
+  const freshHistory = calibrationHistory.filter(c => {
+    if (!c.calibrated_at) return true // no date = keep (legacy entries)
+    const ageMs = now - new Date(c.calibrated_at).getTime()
+    const ageDays = ageMs / (1000 * 60 * 60 * 24)
+    const maxAge = (c.data_quality_index ?? 0) >= 60 ? 180 : 90
+    return ageDays <= maxAge
+  })
+
+  if (freshHistory.length === 0) {
     return { smoothedTDEE: rawTDEE, convergenceScore: 0 }
   }
 
-  const recent = calibrationHistory.slice(0, maxHistory).reverse() // oldest first
+  const recent = freshHistory.slice(0, maxHistory).reverse() // oldest first
 
   // Check for consistent trend — if all point same direction, don't dampen
   const allValues = [...recent.map(c => c.applied_tdee), rawTDEE]
@@ -522,7 +620,9 @@ export function calculateConfidence(
   startClusterSize: number,
   endClusterSize: number,
   foodLogCompleteness: number,
-  periodDays: 14 | 21 | 28
+  periodDays: 14 | 21 | 28,
+  actualSpanDays?: number,
+  rSquared?: number | null
 ): CalibrationConfidence {
   let level: CalibrationConfidence['level']
   if (startClusterSize >= 3 && endClusterSize >= 3) {
@@ -532,6 +632,17 @@ export function calculateConfidence(
   } else {
     level = 'low'
   }
+
+  // Degrade if measurements cover less than 50% of the period
+  if (actualSpanDays !== undefined && actualSpanDays / periodDays < 0.5) {
+    level = level === 'high' ? 'standard' : 'low'
+  }
+
+  // Degrade if OLS R² is low (non-monotonic or very noisy trend)
+  if (rSquared !== null && rSquared !== undefined && rSquared < 0.3) {
+    level = level === 'high' ? 'standard' : 'low'
+  }
+
   return { level, startClusterSize, endClusterSize, foodLogCompleteness, periodDays }
 }
 
@@ -673,15 +784,24 @@ export function runCalibration(input: CalibrationInput): CalibrationResult | str
     return validationError.message
   }
 
-  // Step 3: Calculate weight change using trend (more robust than raw cluster diff)
-  const trendResult = calculateWeightTrend(allMeasurements)
-  const weightChangeKg = trendResult
-    ? trendResult.trendEnd - trendResult.trendStart
-    : endCluster.average - startCluster.average
+  // Step 3: Calculate weight change via OLS (primary) + EMA (secondary for divergence detection)
+  const olsResult = calculateWeightTrendOLS(allMeasurements)
+  const emaResult = calculateWeightTrend(allMeasurements)
 
+  // OLS preferred; fall back to EMA if < 3 measurements, then to cluster diff
+  const weightChangeKg = olsResult
+    ? olsResult.trendEnd - olsResult.trendStart
+    : emaResult
+      ? emaResult.trendEnd - emaResult.trendStart
+      : endCluster.average - startCluster.average
+
+  // actualDays from OLS time span (removes centroid-compression bias)
+  // Fall back to centroid distance if OLS unavailable
   const startCentroid = meanDate(startCluster.dates)
   const endCentroid = meanDate(endCluster.dates)
-  const actualDays = Math.max(7, daysBetween(startCentroid, endCentroid))
+  const actualDays = olsResult
+    ? Math.max(7, olsResult.lastX)
+    : Math.max(7, daysBetween(startCentroid, endCentroid))
 
   // Step 4: Determine calorie source with continuous blending
   const foodLogWeight = getFoodLogWeight(input.foodLogCompleteness)
@@ -695,7 +815,9 @@ export function runCalibration(input: CalibrationInput): CalibrationResult | str
     weightChangeKg
   )
   if (selectiveLogging.isLikely) {
-    adjustedFoodLogWeight = Math.max(0, foodLogWeight * 0.7) // reduce trust by 30%
+    // Severity-tiered: strong (ratio < 0.75) → 50% reduction, mild → 25% reduction
+    const trustFactor = selectiveLogging.severity === 'strong' ? 0.5 : 0.75
+    adjustedFoodLogWeight = Math.max(0, foodLogWeight * trustFactor)
   }
 
   const calorieSource: CalibrationResult['calorieSource'] =
@@ -711,8 +833,11 @@ export function runCalibration(input: CalibrationInput): CalibrationResult | str
         input.actualCaloriesAvg * adjustedFoodLogWeight
       : input.targetCalories
 
-  // Step 5: Calculate TDEE
-  const totalCalorieBalance = weightChangeKg * KCAL_PER_KG
+  // Step 5: Calculate TDEE with context-aware energy density
+  const startWeight = olsResult ? olsResult.trendStart : startCluster.average
+  const weeklyChangePct = (weightChangeKg / startWeight) * 100 * (7 / actualDays)
+  const effectiveKcalPerKg = getEffectiveKcalPerKg(weeklyChangePct)
+  const totalCalorieBalance = weightChangeKg * effectiveKcalPerKg
   const dailyCalorieBalance = totalCalorieBalance / actualDays
   const rawTDEE = averageCalories - dailyCalorieBalance
 
@@ -721,7 +846,9 @@ export function runCalibration(input: CalibrationInput): CalibrationResult | str
     startCluster.count,
     endCluster.count,
     input.foodLogCompleteness,
-    input.periodDays
+    input.periodDays,
+    actualDays,
+    olsResult?.rSquared ?? null
   )
 
   // Calculate timing stddev for DQI
@@ -745,7 +872,7 @@ export function runCalibration(input: CalibrationInput): CalibrationResult | str
   )
 
   // Confidence floor: very small Δweight = low signal, halve max adjustment
-  const startWeight = trendResult ? trendResult.trendStart : startCluster.average
+  // startWeight already computed above for weeklyChangePct
   const deltaWeightPercent = Math.abs(weightChangeKg / startWeight) * 100
   const isLowSignal = deltaWeightPercent < LOW_SIGNAL_THRESHOLD_PERCENT
 
@@ -873,6 +1000,61 @@ export function runCalibration(input: CalibrationInput): CalibrationResult | str
     }
   }
 
+  // EMA divergence detection: flag non-monotonic trend if OLS and EMA disagree significantly
+  if (olsResult && emaResult) {
+    const emaChange = emaResult.trendEnd - emaResult.trendStart
+    const olsChange = olsResult.trendEnd - olsResult.trendStart
+    if (Math.abs(emaChange - olsChange) > 0.5) {
+      warnings.push({
+        type: 'glycogen_event', // reuse closest existing type; indicates unstable trend
+        message:
+          'Trendberäkningen visar tecken på icke-linjär viktförändring under perioden (t.ex. refeed-period). Resultatet kan vara mindre tillförlitligt.',
+      })
+    }
+  }
+
+  // Measurement distribution check: > 70% of measurements in first half = OLS extrapolation risk
+  if (allMeasurements.length >= 4) {
+    const windowStart = new Date(now.getTime() - input.periodDays * 24 * 60 * 60 * 1000)
+    const midPoint = new Date(windowStart.getTime() + (input.periodDays / 2) * 86400000)
+    const firstHalfCount = allMeasurements.filter(m => m.recorded_at < midPoint).length
+    if (firstHalfCount / allMeasurements.length > 0.7) {
+      warnings.push({
+        type: 'low_confidence',
+        message:
+          'De flesta mätningarna är från periodens början — väg dig regelbundet under hela perioden för bättre precision.',
+      })
+    }
+  }
+
+  // TDEE confidence interval via OLS uncertainty propagation
+  // calorieSE: 20% CV on logged intake, reduced by sqrt(n logged days)
+  // weightChangeSE: OLS slope SE × actualDays
+  // autocorrelation correction (~1.53 for ρ≈0.4 in daily bodyweight data), only for n≥7
+  // t-distribution critical value for small samples (df = n-2)
+  const tValues: Record<number, number> = { 1: 6.31, 2: 2.92, 3: 2.35, 4: 2.13, 5: 2.02 }
+  const df = Math.max(1, allMeasurements.length - 2)
+  const tCrit = df <= 5 ? (tValues[df] ?? 1.96) : 1.645
+
+  let tdeeSE: number
+  let tdeeLower90: number
+  let tdeeUpper90: number
+
+  if (olsResult) {
+    const weightChangeSE = (olsResult.residualSd / Math.sqrt(olsResult.ssXX)) * actualDays
+    const calorieSE = (averageCalories * 0.2) / Math.sqrt(Math.max(1, input.daysWithLogData))
+    const balanceSE = (weightChangeSE * KCAL_PER_KG) / actualDays
+    const autocorrFactor = allMeasurements.length >= 7 ? 1.53 : 1.0
+    tdeeSE = Math.sqrt(calorieSE ** 2 + balanceSE ** 2) * autocorrFactor
+    tdeeLower90 = Math.round(rawTDEE - tCrit * tdeeSE)
+    tdeeUpper90 = Math.round(rawTDEE + tCrit * tdeeSE)
+  } else {
+    // Fallback: conservative fixed SE
+    tdeeSE = 150
+    tdeeLower90 = Math.round(rawTDEE - tCrit * tdeeSE)
+    tdeeUpper90 = Math.round(rawTDEE + tCrit * tdeeSE)
+  }
+
   const adjustmentPercent = ((clampedTDEE - input.currentTDEE) / input.currentTDEE) * 100
   const isStableMaintenance = Math.abs(weightChangeKg) < 0.1
 
@@ -896,5 +1078,8 @@ export function runCalibration(input: CalibrationInput): CalibrationResult | str
     isStableMaintenance,
     coefficientOfVariation: cv,
     dataQuality,
+    tdeeSE: Math.round(tdeeSE),
+    tdeeLower90,
+    tdeeUpper90,
   }
 }

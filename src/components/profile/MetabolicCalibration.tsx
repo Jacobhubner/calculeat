@@ -127,9 +127,13 @@ export default function MetabolicCalibration({
   const handleApplyCalibration = async () => {
     if (!data) return
 
-    // Apply convergence smoothing if there's calibration history
+    // Apply convergence smoothing only if the clamp was NOT triggered.
+    // If clamp already limited the adjustment, applying smoothing on top would
+    // double-dampen the signal — use clampedTDEE directly in that case.
+    const clampWasApplied = Math.abs(data.clampedTDEE - data.rawTDEE) > 0.5
+
     const convergence =
-      calibrationHistoryList && calibrationHistoryList.length > 0
+      !clampWasApplied && calibrationHistoryList && calibrationHistoryList.length > 0
         ? applyConvergenceSmoothing(
             data.clampedTDEE,
             calibrationHistoryList
@@ -137,6 +141,8 @@ export default function MetabolicCalibration({
               .map(c => ({
                 applied_tdee: c.applied_tdee,
                 confidence_level: c.confidence_level,
+                calibrated_at: c.calibrated_at,
+                data_quality_index: c.data_quality_index,
               }))
           )
         : null

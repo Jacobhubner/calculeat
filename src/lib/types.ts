@@ -502,6 +502,12 @@ export interface CalibrationResult {
       clusterScore: number
     }
   }
+  /** Standard error of TDEE estimate (kcal), propagated from OLS weight uncertainty + calorie variance */
+  tdeeSE: number
+  /** 90% confidence interval lower bound for rawTDEE (kcal) */
+  tdeeLower90: number
+  /** 90% confidence interval upper bound for rawTDEE (kcal) */
+  tdeeUpper90: number
 }
 
 // Calibration history type for tracking TDEE calibrations
