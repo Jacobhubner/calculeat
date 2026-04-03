@@ -92,6 +92,16 @@ export default function MetabolicCalibration({
     return result
   }, [weightHistory, now])
 
+  const periodMeasurementCounts = useMemo(() => {
+    const result: Record<14 | 21 | 28, number> = { 14: 0, 21: 0, 28: 0 }
+    if (!weightHistory) return result
+    for (const period of [14, 21, 28] as const) {
+      const cutoff = new Date(now.getTime() - period * 24 * 60 * 60 * 1000)
+      result[period] = weightHistory.filter(w => new Date(w.recorded_at) >= cutoff).length
+    }
+    return result
+  }, [weightHistory, now])
+
   // Run calibration
   const calibrationResult = useMemo((): CalibrationResult | string | null => {
     if (!weightHistory || weightHistory.length < 2) return null
@@ -598,15 +608,15 @@ export default function MetabolicCalibration({
             >
               <option value="14" disabled={!periodAvailability[14]}>
                 14 dagar (2 veckor)
-                {!periodAvailability[14] ? ' — kräver 4 vägningar på 14 dagar' : ''}
+                {!periodAvailability[14] ? ` — ${periodMeasurementCounts[14]}/4 vägningar` : ''}
               </option>
               <option value="21" disabled={!periodAvailability[21]}>
                 21 dagar (3 veckor)
-                {!periodAvailability[21] ? ' — kräver 5 vägningar på 21 dagar' : ''}
+                {!periodAvailability[21] ? ` — ${periodMeasurementCounts[21]}/5 vägningar` : ''}
               </option>
               <option value="28" disabled={!periodAvailability[28]}>
                 28 dagar (4 veckor)
-                {!periodAvailability[28] ? ' — kräver 6 vägningar på 28 dagar' : ''}
+                {!periodAvailability[28] ? ` — ${periodMeasurementCounts[28]}/6 vägningar` : ''}
               </option>
             </Select>
           </div>
