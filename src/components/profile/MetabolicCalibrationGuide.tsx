@@ -44,13 +44,13 @@ export default function MetabolicCalibrationGuide() {
               Istället för att enbart använda teoretiska formler analyserar systemet:
             </p>
             <ul className="list-disc list-inside space-y-1 ml-2 mt-1 text-neutral-700">
-              <li>Trendbaserad viktutveckling (inte enskilda vägningar)</li>
+              <li>Linjär regression på viktserien (inte enskilda vägningar)</li>
               <li>Genomsnittligt kaloriintag under perioden</li>
               <li>Datakvalitet och konsekvens i loggningen</li>
             </ul>
             <p className="text-neutral-700 leading-relaxed mt-2">
               Dagliga fluktuationer från vätska, salt och glykogen filtreras bort genom
-              trendberäkning och avvikelsehantering.
+              regressionsbaserad trendberäkning och avvikelsehantering.
             </p>
             <p className="text-neutral-700 leading-relaxed mt-2">
               Resultatet är ett stabilt och biologiskt rimligt estimat av ditt energibehov.
@@ -63,18 +63,25 @@ export default function MetabolicCalibrationGuide() {
             <div className="space-y-2 text-neutral-700">
               <p>I grunden bygger modellen på energibalansprincipen:</p>
               <p className="font-medium text-primary-600 text-center py-1">
-                TDEE ≈ Genomsnittliga kalorier − (trendbaserad viktförändring × 7700 / dagar)
+                TDEE ≈ Genomsnittliga kalorier − (viktförändring × kcal/kg / dagar)
               </p>
               <p>
-                1 kg kroppsvikt motsvarar i genomsnitt cirka <strong>7700 kcal</strong> när man tar
-                hänsyn till att viktförändring består av fett, vatten och viss muskelmassa.
+                Viktförändringen beräknas via <strong>linjär regression</strong> (OLS) på hela
+                viktserien — inte från enstaka mätningar. Det ger ett stabilt trendestimat som är
+                robust mot dagliga svängningar.
+              </p>
+              <p className="mt-2">
+                Energitätheten per kg är <strong>dynamisk</strong> (6 500–7 700 kcal/kg) och
+                justeras baserat på förändringshastigheten: snabb viktminskning innebär mer
+                glykogen- och vattenförlust och därmed lägre energitäthet än långsam, stadig
+                förlust.
               </p>
               <p className="mt-2">Den faktiska modellen:</p>
               <ul className="list-disc list-inside space-y-1 ml-2">
-                <li>Använder trendvikt istället för råa mätningar</li>
+                <li>Beräknar vikttrend via linjär regression på hela perioden</li>
                 <li>Justerar gradvis istället för att ersätta värdet direkt</li>
-                <li>Begränsar extrema justeringar</li>
-                <li>Vägs mot tidigare uppskattning för stabilitet</li>
+                <li>Begränsar extrema justeringar baserat på datakvalitet</li>
+                <li>Hoppar över konvergensutjämning om justeringen redan begränsats av clampen</li>
               </ul>
               <p className="mt-2">
                 Detta gör systemet robust mot brus och kortsiktiga svängningar.
@@ -89,14 +96,24 @@ export default function MetabolicCalibrationGuide() {
               Datakvalitet och precision
             </h3>
             <p className="text-neutral-700 leading-relaxed">
-              Kalibreringens tillförlitlighet beror på kvaliteten i din data.
+              Kalibreringens tillförlitlighet beror på kvaliteten i din data. Systemet beräknar ett{' '}
+              <strong>Data Quality Index (DQI)</strong> som styr hur stor justering som tillåts.
             </p>
             <p className="text-neutral-700 leading-relaxed mt-2">Systemet tar hänsyn till:</p>
             <ul className="list-disc list-inside space-y-1 ml-2 mt-1 text-neutral-700">
-              <li>Hur många dagar du loggat</li>
-              <li>Hur konsekvent kaloriintaget registrerats</li>
-              <li>Hur stabil vikttrenden är</li>
+              <li>Hur många dagar du loggat (40 % av DQI)</li>
+              <li>Hur ofta du vägt dig under perioden (30 %)</li>
+              <li>
+                Hur konsekvent du väger dig vid samma tid på dygnet (25 %) — morgon vs kväll ger upp
+                till 1,5 kg skillnad
+              </li>
+              <li>Hur välrepresenterade start- och slutperioden är (15 %)</li>
             </ul>
+            <p className="text-neutral-700 leading-relaxed mt-2">
+              Systemet beräknar också ett <strong>konfidensintervall</strong> för TDEE-estimatet
+              baserat på hur brusig viktserien är och osäkerheten i kaloriloggningen. Hög
+              konfidensgrad innebär ett smalare intervall och möjliggör större justering.
+            </p>
             <p className="text-neutral-700 leading-relaxed mt-2">
               Vid låg signal (mycket liten viktförändring) eller ojämn loggning begränsas
               justeringen automatiskt.
