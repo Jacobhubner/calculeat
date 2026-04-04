@@ -82,25 +82,30 @@ export default function MetabolicCalibration({
   // Allow apply if: new weight entries exist after last calibration,
   // OR new calorie logs exist after last calibration,
   // OR enough days have passed (MIN_DAYS_BETWEEN_CALIBRATIONS).
-  const hasNewDataSinceCalibration = useMemo(() => {
-    if (!lastCalibration) return true // first calibration always allowed
-    if (calibrationApplied !== null) return true // just applied in this session — guard already spent
+  const newDataGuard = useMemo(() => {
+    if (!lastCalibration)
+      return { allowed: true, daysRemaining: 0, newWeightCount: 0, newLogCount: 0 }
+    if (calibrationApplied !== null)
+      return { allowed: true, daysRemaining: 0, newWeightCount: 0, newLogCount: 0 }
 
     const lastCalAt = new Date(lastCalibration.calibrated_at)
     const daysSince = (now.getTime() - lastCalAt.getTime()) / (1000 * 60 * 60 * 24)
-
-    if (daysSince >= MIN_DAYS_BETWEEN_CALIBRATIONS) return true
+    const daysRemaining = Math.max(0, Math.ceil(MIN_DAYS_BETWEEN_CALIBRATIONS - daysSince))
 
     const lastCalDateStr = lastCalAt.toISOString().split('T')[0]
 
-    const newWeights = (weightHistory ?? []).some(w => new Date(w.recorded_at) > lastCalAt)
-    if (newWeights) return true
-
-    const newLogs = (actualIntake?.dailyCalories ?? []).some(
+    const newWeightCount = (weightHistory ?? []).filter(
+      w => new Date(w.recorded_at) > lastCalAt
+    ).length
+    const newLogCount = (actualIntake?.dailyCalories ?? []).filter(
       d => d.date > lastCalDateStr && d.calories > 800
-    )
-    return newLogs
+    ).length
+
+    const allowed =
+      daysSince >= MIN_DAYS_BETWEEN_CALIBRATIONS || newWeightCount > 0 || newLogCount > 0
+    return { allowed, daysRemaining, newWeightCount, newLogCount }
   }, [lastCalibration, calibrationApplied, now, weightHistory, actualIntake])
+  const hasNewDataSinceCalibration = newDataGuard.allowed
 
   // Check which periods are available (for disabling dropdown options)
   const periodAvailability = useMemo(() => {
@@ -1088,10 +1093,44 @@ export default function MetabolicCalibration({
                       : 'Applicera kalibrerat TDEE'}
                   </Button>
                   {!hasNewDataSinceCalibration && (
-                    <p className="text-xs text-neutral-500 text-center">
-                      Ingen ny data sedan senaste kalibreringen. Lägg till fler viktmätningar eller
-                      matloggdagar för att kalibrera igen.
-                    </p>
+                    <div className="text-xs text-neutral-500 space-y-1 rounded-lg bg-neutral-50 border border-neutral-200 p-3">
+                      <p className="font-medium text-neutral-600">
+                        Ingen ny data sedan senaste kalibreringen
+                      </p>
+                      <p>
+                        Kalibreringen baseras på vikt- och matloggdata. För att undvika att samma
+                        dataset appliceras två gånger krävs minst ett av följande:
+                      </p>
+                      <ul className="mt-1 space-y-0.5 pl-3 list-disc">
+                        <li>
+                          <span
+                            className={
+                              newDataGuard.newWeightCount > 0 ? 'text-green-600 font-medium' : ''
+                            }
+                          >
+                            {newDataGuard.newWeightCount > 0
+                              ? `${newDataGuard.newWeightCount} ny viktmätning${newDataGuard.newWeightCount > 1 ? 'ar' : ''} registrerad${newDataGuard.newWeightCount > 1 ? 'e' : ''} \u2713`
+                              : 'Minst 1 ny viktmätning efter kalibreringsdatumet'}
+                          </span>
+                        </li>
+                        <li>
+                          <span
+                            className={
+                              newDataGuard.newLogCount > 0 ? 'text-green-600 font-medium' : ''
+                            }
+                          >
+                            {newDataGuard.newLogCount > 0
+                              ? `${newDataGuard.newLogCount} ny matloggdag${newDataGuard.newLogCount > 1 ? 'ar' : ''} registrerad${newDataGuard.newLogCount > 1 ? 'e' : ''} \u2713`
+                              : 'Minst 1 ny matloggdag (över 800 kcal) efter kalibreringsdatumet'}
+                          </span>
+                        </li>
+                        <li>
+                          {newDataGuard.daysRemaining > 0
+                            ? `${newDataGuard.daysRemaining} dag${newDataGuard.daysRemaining > 1 ? 'ar' : ''} kvar tills ${MIN_DAYS_BETWEEN_CALIBRATIONS}-dagarsgränsen uppnås`
+                            : `${MIN_DAYS_BETWEEN_CALIBRATIONS} dagar sedan senaste kalibrering \u2713`}
+                        </li>
+                      </ul>
+                    </div>
                   )}
                 </>
               )}
