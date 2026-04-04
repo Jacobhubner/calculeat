@@ -412,9 +412,9 @@ export default function MetabolicCalibration({
                       loggad data dominerar alltid.
                     </p>
                     <p className="text-neutral-700 leading-relaxed mt-2">
-                      Korrektionstrycket mot målet är proportionerligt mot hur stor andel av dagarna
-                      som saknar logg. Med 55 % loggade dagar är korrektionstrycket ungefär 13 % —
-                      loggat snitt väger alltså 87 %.
+                      Korrektionstrycket mot målet är proportionerligt mot andelen ologgade dagar,
+                      multiplicerat med en fast faktor på 30 %. Loggat snitt dominerar alltid med
+                      minst 70 %.
                     </p>
                     <p className="text-neutral-700 leading-relaxed mt-2">
                       Ologgade dagar påverkar i första hand{' '}
