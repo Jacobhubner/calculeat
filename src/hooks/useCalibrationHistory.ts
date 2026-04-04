@@ -90,28 +90,16 @@ export function useRevertCalibration() {
       previousCaloriesMin?: number
       previousCaloriesMax?: number
     }) => {
-      // Mark calibration as reverted
-      const { error: revertError } = await supabase
-        .from('calibration_history')
-        .update({ is_reverted: true })
-        .eq('id', calibrationId)
+      // Single atomic RPC — marks is_reverted and restores profile TDEE in one transaction
+      const { error } = await supabase.rpc('revert_calibration', {
+        p_calibration_id: calibrationId,
+        p_profile_id: profileId,
+        p_previous_tdee: previousTdee,
+        p_previous_calories_min: previousCaloriesMin ?? null,
+        p_previous_calories_max: previousCaloriesMax ?? null,
+      })
 
-      if (revertError) throw revertError
-
-      // Restore previous TDEE on profile
-      const updateData: Record<string, unknown> = {
-        tdee: previousTdee,
-        tdee_source: 'metabolic_calibration_reverted',
-      }
-      if (previousCaloriesMin !== undefined) updateData.calories_min = previousCaloriesMin
-      if (previousCaloriesMax !== undefined) updateData.calories_max = previousCaloriesMax
-
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .update(updateData)
-        .eq('id', profileId)
-
-      if (profileError) throw profileError
+      if (error) throw error
 
       return { profileId }
     },
