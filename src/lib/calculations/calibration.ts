@@ -321,16 +321,39 @@ export function calculateWeightTrendOLS(
   }
 }
 
-// ─── Food Log Blending ──────────────────────────────────────────────
+// ─── Calorie Estimation (Soft Prior Model) ──────────────────────────
 
 /**
- * Continuous food log weight (0-1) instead of binary threshold.
- * Linear interpolation from 40% (no trust) to 90% (full trust).
+ * How strongly target calories pull the estimate when days are missing.
+ * Max pull: PRIOR_STRENGTH × 100% of missing fraction.
+ * At 55% completeness: priorWeight = 0.45 × 0.3 = 0.135 → logged data
+ * dominates at 86.5%. Missing days degrade DQI, not the calorie mean.
  */
-export function getFoodLogWeight(completeness: number): number {
-  if (completeness < 40) return 0
-  if (completeness >= 90) return 1
-  return (completeness - 40) / 50
+const PRIOR_STRENGTH = 0.3
+
+/**
+ * Estimate average daily calories using a soft Bayesian prior.
+ *
+ * Logged average dominates; target calories act as a weak correction
+ * proportional to how incomplete the log is — not a substitute for data.
+ *
+ * priorWeight = (1 - daysWithData/totalDays) × PRIOR_STRENGTH
+ * averageCalories = loggedAvg × (1 - priorWeight) + target × priorWeight
+ */
+export function getCalorieEstimate(
+  loggedAvg: number | null,
+  targetCalories: number,
+  daysWithData: number,
+  totalDays: number
+): { averageCalories: number; priorWeight: number } {
+  if (loggedAvg === null || daysWithData === 0) {
+    // No observations — return target with priorWeight = 0 (no blending occurred)
+    return { averageCalories: targetCalories, priorWeight: 0 }
+  }
+  const incompletenessFraction = totalDays > 0 ? 1 - daysWithData / totalDays : 0
+  const priorWeight = incompletenessFraction * PRIOR_STRENGTH
+  const averageCalories = loggedAvg * (1 - priorWeight) + targetCalories * priorWeight
+  return { averageCalories, priorWeight }
 }
 
 // ─── Selective Logging Detection ────────────────────────────────────
@@ -816,35 +839,38 @@ export function runCalibration(input: CalibrationInput): CalibrationResult | str
     ? Math.max(7, olsResult.lastX)
     : Math.max(7, daysBetween(startCentroid, endCentroid))
 
-  // Step 4: Determine calorie source with continuous blending
-  const foodLogWeight = getFoodLogWeight(input.foodLogCompleteness)
-
-  // Detect selective logging and adjust trust
-  let adjustedFoodLogWeight = foodLogWeight
+  // Step 4: Determine calorie source with soft prior model
   const selectiveLogging = detectSelectiveLogging(
     input.actualCaloriesAvg,
     input.targetCalories,
     input.foodLogCompleteness,
     weightChangeKg
   )
+
+  let { averageCalories, priorWeight } = getCalorieEstimate(
+    input.actualCaloriesAvg,
+    input.targetCalories,
+    input.daysWithLogData,
+    input.periodDays
+  )
+
+  // Selective logging: reduce prior pull further so logged data dominates even more
   if (selectiveLogging.isLikely) {
-    // Severity-tiered: strong (ratio < 0.75) → 50% reduction, mild → 25% reduction
     const trustFactor = selectiveLogging.severity === 'strong' ? 0.5 : 0.75
-    adjustedFoodLogWeight = Math.max(0, foodLogWeight * trustFactor)
+    priorWeight = priorWeight * trustFactor
+    averageCalories =
+      input.actualCaloriesAvg! * (1 - priorWeight) + input.targetCalories * priorWeight
   }
 
+  // adjustedFoodLogWeight kept for return object / UI compatibility
+  const adjustedFoodLogWeight = input.actualCaloriesAvg !== null ? 1 - priorWeight : 0
+
   const calorieSource: CalibrationResult['calorieSource'] =
-    adjustedFoodLogWeight >= 0.95
+    priorWeight <= 0.05
       ? 'food_log'
-      : adjustedFoodLogWeight <= 0.05
+      : input.actualCaloriesAvg === null
         ? 'target_calories'
         : 'blended'
-
-  const averageCalories =
-    input.actualCaloriesAvg !== null
-      ? input.targetCalories * (1 - adjustedFoodLogWeight) +
-        input.actualCaloriesAvg * adjustedFoodLogWeight
-      : input.targetCalories
 
   // Step 5: Calculate TDEE with context-aware energy density
   const startWeight = olsResult ? olsResult.trendStart : startCluster.average
@@ -1080,6 +1106,7 @@ export function runCalibration(input: CalibrationInput): CalibrationResult | str
     weightChangeKg,
     actualDays,
     averageCalories,
+    loggedCaloriesAvg: input.actualCaloriesAvg,
     calorieSource,
     foodLogCompleteness: input.foodLogCompleteness,
     foodLogWeight: adjustedFoodLogWeight,

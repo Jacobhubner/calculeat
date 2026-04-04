@@ -480,6 +480,7 @@ export interface CalibrationResult {
   weightChangeKg: number
   actualDays: number
   averageCalories: number
+  loggedCaloriesAvg: number | null
   calorieSource: 'food_log' | 'target_calories' | 'blended'
   foodLogCompleteness: number
   foodLogWeight: number

@@ -758,13 +758,30 @@ export default function MetabolicCalibration({
                 <>
                   <Blend className="h-4 w-4 mt-0.5 flex-shrink-0" />
                   <div>
-                    <p className="font-medium">Kaloridata: matlogg + mål (blandat)</p>
+                    <p className="font-medium">Kaloridata: matlogg + svag priorkorrektion</p>
                     <p className="text-xs mt-1">
                       Du har loggat mat {actualIntake.daysWithData} av {actualIntake.totalDays}{' '}
-                      dagar ({Math.round(actualIntake.completenessPercent)}%). För dagar utan logg
-                      antar systemet att du åt enligt ditt kaloriintervall. De{' '}
-                      {actualIntake.daysWithData} loggade dagarna väger{' '}
-                      {Math.round((data.foodLogWeight ?? 0) * 100)}% i beräkningen.
+                      dagar ({Math.round(actualIntake.completenessPercent)}%).
+                    </p>
+                    {data.loggedCaloriesAvg != null && (
+                      <p className="text-xs mt-0.5">
+                        Loggat snitt:{' '}
+                        <span className="font-medium">
+                          {Math.round(data.loggedCaloriesAvg)} kcal/dag
+                        </span>{' '}
+                        ({actualIntake.daysWithData} dagar)
+                      </p>
+                    )}
+                    <p className="text-xs mt-0.5">
+                      Uppskattat snitt:{' '}
+                      <span className="font-medium">
+                        {Math.round(data.averageCalories)} kcal/dag
+                      </span>{' '}
+                      (inkl. svag korrektion för{' '}
+                      {actualIntake.totalDays - actualIntake.daysWithData} ologgade dagar)
+                    </p>
+                    <p className="text-xs text-neutral-400 mt-1">
+                      Ologgade dagar sänker tillförlitligheten — se Datakvalitet nedan.
                     </p>
                   </div>
                 </>
@@ -1012,7 +1029,7 @@ export default function MetabolicCalibration({
                     {data.calorieSource === 'food_log'
                       ? 'faktiskt intag'
                       : data.calorieSource === 'blended'
-                        ? 'blandat intag'
+                        ? 'uppskattat intag'
                         : 'målkalorier'}
                     : {Math.round(data.averageCalories)} kcal/dag
                   </span>
