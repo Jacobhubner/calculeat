@@ -37,6 +37,7 @@ import {
 import {
   runCalibration,
   MIN_DATA_POINTS,
+  MIN_DAYS_BETWEEN_CALIBRATIONS,
   buildClusters,
   applyConvergenceSmoothing,
 } from '@/lib/calculations/calibration'
@@ -76,6 +77,30 @@ export default function MetabolicCalibration({
   const isFirstCalibration = !calibrationHistoryList || calibrationHistoryList.length === 0
   const lastCalibration = calibrationHistoryList?.[0]
   const canRevert = lastCalibration && !lastCalibration.is_reverted
+
+  // Guard against applying the same dataset twice.
+  // Allow apply if: new weight entries exist after last calibration,
+  // OR new calorie logs exist after last calibration,
+  // OR enough days have passed (MIN_DAYS_BETWEEN_CALIBRATIONS).
+  const hasNewDataSinceCalibration = useMemo(() => {
+    if (!lastCalibration) return true // first calibration always allowed
+    if (calibrationApplied !== null) return true // just applied in this session — guard already spent
+
+    const lastCalAt = new Date(lastCalibration.calibrated_at)
+    const daysSince = (now.getTime() - lastCalAt.getTime()) / (1000 * 60 * 60 * 24)
+
+    if (daysSince >= MIN_DAYS_BETWEEN_CALIBRATIONS) return true
+
+    const lastCalDateStr = lastCalAt.toISOString().split('T')[0]
+
+    const newWeights = (weightHistory ?? []).some(w => new Date(w.recorded_at) > lastCalAt)
+    if (newWeights) return true
+
+    const newLogs = (actualIntake?.dailyCalories ?? []).some(
+      d => d.date > lastCalDateStr && d.calories > 800
+    )
+    return newLogs
+  }, [lastCalibration, calibrationApplied, now, weightHistory, actualIntake])
 
   // Check which periods are available (for disabling dropdown options)
   const periodAvailability = useMemo(() => {
@@ -1048,15 +1073,27 @@ export default function MetabolicCalibration({
                   )}
                 </div>
               ) : (
-                <Button
-                  onClick={handleApplyCalibration}
-                  disabled={updateProfile.isPending || createCalibrationHistory.isPending}
-                  className="w-full"
-                >
-                  {updateProfile.isPending || createCalibrationHistory.isPending
-                    ? 'Sparar...'
-                    : 'Applicera kalibrerat TDEE'}
-                </Button>
+                <>
+                  <Button
+                    onClick={handleApplyCalibration}
+                    disabled={
+                      updateProfile.isPending ||
+                      createCalibrationHistory.isPending ||
+                      !hasNewDataSinceCalibration
+                    }
+                    className="w-full"
+                  >
+                    {updateProfile.isPending || createCalibrationHistory.isPending
+                      ? 'Sparar...'
+                      : 'Applicera kalibrerat TDEE'}
+                  </Button>
+                  {!hasNewDataSinceCalibration && (
+                    <p className="text-xs text-neutral-500 text-center">
+                      Ingen ny data sedan senaste kalibreringen. Lägg till fler viktmätningar eller
+                      matloggdagar för att kalibrera igen.
+                    </p>
+                  )}
+                </>
               )}
 
               {/* Undo last calibration — always visible when available */}
