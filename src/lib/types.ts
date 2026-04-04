@@ -434,6 +434,7 @@ export interface WeightHistory {
   weight_kg: number
   recorded_at: string
   notes?: string
+  body_fat_percentage?: number
   created_at: string
 }
 
@@ -449,6 +450,7 @@ export interface WeightCluster {
 // Calibration confidence level
 export interface CalibrationConfidence {
   level: 'high' | 'standard' | 'low'
+  degradeReasons: Array<'low_cluster_size' | 'sparse_coverage' | 'nonlinear_trend'>
   startClusterSize: number
   endClusterSize: number
   foodLogCompleteness: number
@@ -508,6 +510,15 @@ export interface CalibrationResult {
   tdeeLower90: number
   /** 90% confidence interval upper bound for rawTDEE (kcal) */
   tdeeUpper90: number
+  /** Measurements filtered out as outliers (IQR method) */
+  filteredOutliers: Array<{ weight_kg: number; recorded_at: Date }>
+  /** Which factors reduced the clamp ceiling */
+  clampFactors: {
+    lowSignal: boolean
+    lowConfidence: boolean
+    largeDeficit: boolean
+    dqiWasBindingCap: boolean
+  }
 }
 
 // Calibration history type for tracking TDEE calibrations
@@ -549,6 +560,14 @@ export interface WeightChartDataPoint {
   displayDate: string
   isPending?: boolean
   isCalibrationEvent?: boolean
+}
+
+// Body fat chart data point for per-entry body fat % tracking
+export interface BodyFatChartDataPoint {
+  date: string
+  bodyFat: number
+  rollingAverage: number | null
+  displayDate: string
 }
 
 // Weight trend data for projections and statistics

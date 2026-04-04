@@ -28,8 +28,7 @@ import {
   useWeightHistory,
   useCreateWeightHistory,
   useDeleteWeightHistory,
-  useCalibrationAvailability,
-  useLastCalibration,
+  useBodyFatTrend,
 } from '@/hooks'
 import { useWeightTrend } from '@/hooks/useWeightTrend'
 import type { Profile } from '@/lib/types'
@@ -43,8 +42,8 @@ import {
   ResponsiveContainer,
   ReferenceLine,
   Legend,
+  Brush,
 } from 'recharts'
-import CalibrationPrompt from './CalibrationPrompt'
 
 interface WeightTrackerProps {
   profile: Profile
@@ -55,11 +54,12 @@ interface WeightTrackerProps {
 export default function WeightTracker({
   profile,
   onWeightChange,
-  onCalibrateClick,
+  onCalibrateClick: _onCalibrateClick,
 }: WeightTrackerProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [currentWeight, setCurrentWeight] = useState(profile.weight_kg?.toString() || '')
   const [recordedDate, setRecordedDate] = useState(new Date().toISOString().split('T')[0])
+  const [bodyFatInput, setBodyFatInput] = useState('')
   const [showAddWeight, setShowAddWeight] = useState(false)
   const [showHistory, setShowHistory] = useState(false)
   const [deleteConfirm, setDeleteConfirm] = useState<WeightHistory | null>(null)
@@ -68,7 +68,6 @@ export default function WeightTracker({
   const { data: weightHistory = [] } = useWeightHistory()
   const createWeightHistory = useCreateWeightHistory()
   const deleteWeightHistory = useDeleteWeightHistory()
-  const { data: lastCalibration } = useLastCalibration(profile.id)
 
   // Calculate initial weight from oldest entry in history
   const initialWeight = useMemo(() => {
@@ -96,23 +95,15 @@ export default function WeightTracker({
 
   // Synka profilvikten om weight_history har ett nyare värde än profile.weight_kg
   useEffect(() => {
-    if (
-      currentWeightFromHistory !== null &&
-      currentWeightFromHistory !== profile.weight_kg
-    ) {
+    if (currentWeightFromHistory !== null && currentWeightFromHistory !== profile.weight_kg) {
       onWeightChange(currentWeightFromHistory)
     }
   }, [currentWeightFromHistory]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Use the new trend hook for calculations (user-based, no profile dependency)
   const weightTrend = useWeightTrend(weightHistory, targetWeight, weight)
-
-  // Check if calibration is available
-  const calibrationAvailability = useCalibrationAvailability(
-    profile,
-    weightHistory,
-    lastCalibration
-  )
+  const bodyFatChartData = useBodyFatTrend(weightHistory)
+  const hasBodyFatData = bodyFatChartData.length > 0
 
   const handleAddWeight = async () => {
     const weightNum = parseFloat(currentWeight)
@@ -126,9 +117,13 @@ export default function WeightTracker({
     const newRecordedAt = new Date(recordedDate + 'T00:00:00')
     const now = new Date()
 
+    const bfParsed = bodyFatInput !== '' ? parseFloat(bodyFatInput) : NaN
+    const bfValue = !isNaN(bfParsed) && bfParsed >= 0 && bfParsed <= 100 ? bfParsed : undefined
+
     await createWeightHistory.mutateAsync({
       weight_kg: weightNum,
       recorded_at: newRecordedAt.toISOString(),
+      body_fat_percentage: bfValue,
     })
 
     // Uppdatera alltid profilvikten om posten är för idag eller tidigare
@@ -137,6 +132,7 @@ export default function WeightTracker({
     }
 
     setShowAddWeight(false)
+    setBodyFatInput('')
     setRecordedDate(new Date().toISOString().split('T')[0])
   }
 
@@ -151,12 +147,6 @@ export default function WeightTracker({
   if (initialWeight) allWeights.push(initialWeight)
   const minWeight = Math.min(...allWeights) - 2
   const maxWeight = Math.max(...allWeights) + 2
-
-  const handleCalibrateClick = () => {
-    if (onCalibrateClick) {
-      onCalibrateClick()
-    }
-  }
 
   const handleDeleteWeight = async () => {
     if (!deleteConfirm) return
@@ -242,6 +232,23 @@ export default function WeightTracker({
                   onChange={e => setRecordedDate(e.target.value)}
                   className="w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
                 />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-2">
+                  Kroppsfett %{' '}
+                  <span className="text-xs text-neutral-400 font-normal">(valfri)</span>
+                </label>
+                <input
+                  type="number"
+                  value={bodyFatInput}
+                  onChange={e => setBodyFatInput(e.target.value)}
+                  className="w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                  placeholder="15.0"
+                  min="0"
+                  max="100"
+                  step="0.1"
+                />
+                <p className="text-xs text-neutral-400 mt-1">Påverkar inte profilvärdet.</p>
               </div>
               <Button onClick={handleAddWeight} className="w-full">
                 Lägg till
@@ -347,9 +354,9 @@ export default function WeightTracker({
 
           {/* Chart */}
           {chartData.length > 1 && (
-            <div className="h-64">
+            <div className="h-80" style={{ minWidth: 0 }}>
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                <LineChart data={chartData} margin={{ top: 5, right: 50, left: 20, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                   <XAxis
                     dataKey="date"
@@ -461,6 +468,15 @@ export default function WeightTracker({
                     dot={false}
                     connectNulls={false}
                   />
+
+                  <Brush
+                    dataKey="date"
+                    startIndex={Math.max(0, chartData.length - 30)}
+                    height={24}
+                    stroke="#d1d5db"
+                    fill="#f9fafb"
+                    travellerWidth={8}
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -470,6 +486,90 @@ export default function WeightTracker({
             <div className="text-center py-8 text-neutral-500">
               <p>Ingen vikthistorik ännu</p>
               <p className="text-sm mt-1">Lägg till din första viktmätning för att börja spåra</p>
+            </div>
+          )}
+
+          {/* Body fat chart */}
+          {hasBodyFatData && (
+            <div>
+              <h4 className="text-sm font-medium text-neutral-700 mb-2">Kroppsfett % över tid</h4>
+              <div className="h-72" style={{ minWidth: 0 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart
+                    data={bodyFatChartData}
+                    margin={{ top: 5, right: 50, left: 20, bottom: 5 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                    <XAxis
+                      dataKey="date"
+                      tick={{ fontSize: 10, fill: '#6b7280' }}
+                      angle={-45}
+                      textAnchor="end"
+                      height={60}
+                    />
+                    <YAxis
+                      domain={['auto', 'auto']}
+                      tick={{ fontSize: 10, fill: '#6b7280' }}
+                      label={{
+                        value: '%',
+                        angle: -90,
+                        position: 'insideLeft',
+                        fontSize: 10,
+                        fill: '#6b7280',
+                      }}
+                    />
+                    <Tooltip
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                      formatter={(value: any, name: any) =>
+                        [
+                          `${(value as number).toFixed(1)}%`,
+                          (name as string) === 'bodyFat' ? 'Kroppsfett %' : '7-dagars snitt',
+                        ] as [string, string]
+                      }
+                      labelFormatter={label => {
+                        const entry = bodyFatChartData.find(d => d.date === label)
+                        return entry?.displayDate || label
+                      }}
+                      contentStyle={{
+                        backgroundColor: 'white',
+                        border: '1px solid #e5e7eb',
+                        borderRadius: '8px',
+                        fontSize: '12px',
+                      }}
+                    />
+                    <Legend
+                      wrapperStyle={{ fontSize: '11px' }}
+                      formatter={value => (value === 'bodyFat' ? 'Kroppsfett %' : '7-dagars snitt')}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="bodyFat"
+                      stroke="#f97316"
+                      strokeWidth={2}
+                      dot={{ r: 4, fill: '#f97316' }}
+                      activeDot={{ r: 6, fill: '#f97316' }}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="rollingAverage"
+                      stroke="#a855f7"
+                      strokeWidth={2}
+                      strokeDasharray="4 2"
+                      dot={false}
+                      connectNulls={false}
+                    />
+
+                    <Brush
+                      dataKey="date"
+                      startIndex={Math.max(0, bodyFatChartData.length - 30)}
+                      height={24}
+                      stroke="#d1d5db"
+                      fill="#f9fafb"
+                      travellerWidth={8}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
             </div>
           )}
 
@@ -513,6 +613,11 @@ export default function WeightTracker({
                               minute: '2-digit',
                             })}
                           </p>
+                          {entry.body_fat_percentage != null && (
+                            <p className="text-xs text-neutral-400">
+                              Kroppsfett: {entry.body_fat_percentage.toFixed(1)}%
+                            </p>
+                          )}
                         </div>
                         <Button
                           variant="ghost"
@@ -561,16 +666,6 @@ export default function WeightTracker({
                 </div>
               )}
             </div>
-          )}
-
-          {/* Calibration prompt */}
-          {calibrationAvailability.isAvailable && (
-            <CalibrationPrompt
-              availability={calibrationAvailability}
-              lastCalibration={lastCalibration || null}
-              onCalibrate={handleCalibrateClick}
-              className="mt-4"
-            />
           )}
         </CardContent>
       )}

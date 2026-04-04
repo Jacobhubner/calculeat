@@ -625,25 +625,38 @@ export function calculateConfidence(
   rSquared?: number | null
 ): CalibrationConfidence {
   let level: CalibrationConfidence['level']
+  const degradeReasons: CalibrationConfidence['degradeReasons'] = []
+
   if (startClusterSize >= 3 && endClusterSize >= 3) {
     level = 'high'
   } else if (startClusterSize >= 2 || endClusterSize >= 2) {
     level = 'standard'
+    degradeReasons.push('low_cluster_size')
   } else {
     level = 'low'
+    degradeReasons.push('low_cluster_size')
   }
 
   // Degrade if measurements cover less than 50% of the period
   if (actualSpanDays !== undefined && actualSpanDays / periodDays < 0.5) {
     level = level === 'high' ? 'standard' : 'low'
+    degradeReasons.push('sparse_coverage')
   }
 
   // Degrade if OLS R² is low (non-monotonic or very noisy trend)
   if (rSquared !== null && rSquared !== undefined && rSquared < 0.3) {
     level = level === 'high' ? 'standard' : 'low'
+    degradeReasons.push('nonlinear_trend')
   }
 
-  return { level, startClusterSize, endClusterSize, foodLogCompleteness, periodDays }
+  return {
+    level,
+    degradeReasons,
+    startClusterSize,
+    endClusterSize,
+    foodLogCompleteness,
+    periodDays,
+  }
 }
 
 // ─── Adaptive Clamp ─────────────────────────────────────────────────
@@ -875,13 +888,15 @@ export function runCalibration(input: CalibrationInput): CalibrationResult | str
   // startWeight already computed above for weeklyChangePct
   const deltaWeightPercent = Math.abs(weightChangeKg / startWeight) * 100
   const isLowSignal = deltaWeightPercent < LOW_SIGNAL_THRESHOLD_PERCENT
+  const isLowConfidenceClamp = confidence.level === 'low'
+  const isLargeDeficit = !!(input.deficitPercent && input.deficitPercent > 25)
 
   if (isLowSignal) {
     maxAdjPercent *= 0.5
   }
 
   // Safeguard: large deficit reduces max adjustment by 20%
-  if (input.deficitPercent && input.deficitPercent > 25) {
+  if (isLargeDeficit) {
     maxAdjPercent *= 0.8
   }
 
@@ -889,6 +904,7 @@ export function runCalibration(input: CalibrationInput): CalibrationResult | str
   const maxAbsFromDQI = dataQuality.maxAbsoluteAdjustment
   const maxFromPercent = input.currentTDEE * maxAdjPercent
   const effectiveMaxAbs = Math.min(maxFromPercent, maxAbsFromDQI)
+  const dqiWasBindingCap = maxAbsFromDQI < maxFromPercent
 
   const maxTDEE = Math.min(TDEE_CEILING, input.currentTDEE + effectiveMaxAbs)
   const minTDEE = Math.max(TDEE_FLOOR, input.currentTDEE - effectiveMaxAbs)
@@ -1081,5 +1097,12 @@ export function runCalibration(input: CalibrationInput): CalibrationResult | str
     tdeeSE: Math.round(tdeeSE),
     tdeeLower90,
     tdeeUpper90,
+    filteredOutliers: outliers,
+    clampFactors: {
+      lowSignal: isLowSignal,
+      lowConfidence: isLowConfidenceClamp,
+      largeDeficit: isLargeDeficit,
+      dqiWasBindingCap,
+    },
   }
 }
