@@ -22,13 +22,14 @@ export function useUpdateProfile() {
 
   return useMutation({
     mutationFn: async ({ profileId, data }: UpdateProfileParams) => {
-      // Convert undefined values to null for Supabase (undefined is ignored by Supabase)
+      // Strip undefined values — they should not overwrite existing DB values.
+      // Callers must pass null explicitly if they intend to clear a field.
       const sanitizedData = Object.entries(data).reduce(
         (acc, [key, value]) => {
-          acc[key] = value === undefined ? null : value
+          if (value !== undefined) acc[key] = value
           return acc
         },
-        {} as Record<string, unknown>,
+        {} as Record<string, unknown>
       )
 
       const { data: updated, error } = await supabase
