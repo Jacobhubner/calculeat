@@ -407,29 +407,20 @@ export default function MetabolicCalibration({
                   <section>
                     <h3 className="font-semibold text-base mb-2">Hur kaloriintaget beräknas</h3>
                     <p className="text-neutral-700 leading-relaxed">
-                      Kalibreringen använder en kombination av två datakällor:
-                    </p>
-                    <ul className="mt-2 space-y-2 text-neutral-700">
-                      <li className="flex items-start gap-2">
-                        <span className="font-medium text-neutral-800 min-w-fit">Loggad mat</span>
-                        <span>— kalorier du registrerat i matloggen</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="font-medium text-neutral-800 min-w-fit">Kalorimål</span>
-                        <span>— ditt inställda dagliga kaloriintag</span>
-                      </li>
-                    </ul>
-                    <p className="text-neutral-700 leading-relaxed mt-3">
-                      Om en dag saknar matlogg antar systemet att du åt ungefär enligt ditt
-                      kalorimål.
+                      Kalibreringen använder ditt loggade kaloriintag som primär datakälla. Om inte
+                      alla dagar är loggade appliceras en svag korrektion mot ditt kalorimål — men
+                      loggad data dominerar alltid.
                     </p>
                     <p className="text-neutral-700 leading-relaxed mt-2">
-                      När både logg och mål finns används en viktad kombination, där loggad data får
-                      högre vikt.
+                      Korrektionstrycket mot målet är proportionerligt mot hur stor andel av dagarna
+                      som saknar logg. Med 55 % loggade dagar är korrektionstrycket ungefär 13 % —
+                      loggat snitt väger alltså 87 %.
                     </p>
                     <p className="text-neutral-700 leading-relaxed mt-2">
-                      Detta gör att kalibreringen fortfarande kan fungera även om alla dagar inte är
-                      loggade.
+                      Ologgade dagar påverkar i första hand{' '}
+                      <strong>datakvalitetspoängen (DQI)</strong>, inte kalorimedelvärdet. Det
+                      innebär att ju fler dagar du loggar, desto mer exakt speglar uppskattningen
+                      ditt faktiska intag — och desto högre justering tillåts.
                     </p>
                   </section>
 
@@ -473,28 +464,19 @@ export default function MetabolicCalibration({
                       Klusterbaserad start- och slutvikt
                     </h3>
                     <p className="text-neutral-700 leading-relaxed">
-                      Som ytterligare stabilisering används kluster av mätningar istället för
-                      enskilda datapunkter.
+                      Som komplement till regressionslinjen beräknar systemet även ett medelvärde av
+                      viktmätningarna i periodens <strong>första tredjedel</strong> (startvikt) och{' '}
+                      <strong>sista tredjedel</strong> (slutvikt).
                     </p>
                     <p className="text-neutral-700 leading-relaxed mt-2">
-                      Perioden delas upp i tre delar:
-                    </p>
-                    <ul className="mt-1 space-y-1 ml-2 text-neutral-700">
-                      <li>1 — början</li>
-                      <li>2 — mitten</li>
-                      <li>3 — slut</li>
-                    </ul>
-                    <p className="text-neutral-700 leading-relaxed mt-2">
-                      Startvikten beräknas som medelvärdet av mätningarna i den{' '}
-                      <strong>första tredjedelen</strong>.
-                    </p>
-                    <p className="text-neutral-700 leading-relaxed mt-1">
-                      Slutvikten beräknas som medelvärdet av mätningarna i den{' '}
-                      <strong>sista tredjedelen</strong>.
+                      Dessa kluster används för att ge ett alternativt mått på viktförändringen och
+                      för att bedöma hur många mätningar som finns i periodens ytterkanter — vilket
+                      påverkar tillförlitlighetspoängen.
                     </p>
                     <p className="text-neutral-700 leading-relaxed mt-2">
-                      Den mellersta tredjedelen används inte och fungerar som en buffertzon för att
-                      minska risken att tillfälliga variationer påverkar resultatet.
+                      Den primära vikttrenden beräknas av en linjär regression (OLS) över alla
+                      mätpunkter i perioden. Klustren är ett stabiliserande komplement, inte den
+                      primära beräkningsmetoden.
                     </p>
                   </section>
 
