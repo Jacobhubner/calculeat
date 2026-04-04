@@ -316,8 +316,8 @@ export default function TDEECalculatorTool() {
           household_hours_per_day: householdHoursPerDay || undefined,
           // Set weight_kg (initial_weight_kg is no longer used - weight is tracked via WeightTracker)
           weight_kg: weightNum,
-          // Save body fat percentage if provided
-          body_fat_percentage: bodyFatNum,
+          // Only overwrite body_fat_percentage if the user explicitly provided a value.
+          ...(bodyFatNum !== undefined && { body_fat_percentage: bodyFatNum }),
           // TDEE metadata
           tdee_calculated_at: new Date().toISOString(),
           tdee_source: 'tdee_calculator_tool',

@@ -391,7 +391,9 @@ export default function ProfilePage() {
     setPendingChanges(prev => ({
       ...prev,
       tdee: data.tdee,
-      body_fat_percentage: data.bodyFat,
+      // Only overwrite body_fat_percentage if the user explicitly provided a value.
+      // Omitting the field preserves the existing profile value.
+      ...(data.bodyFat !== undefined && { body_fat_percentage: data.bodyFat }),
       baseline_bmr: data.baseline_bmr,
       weight_kg: data.weight_kg,
       tdee_source: data.tdee_source,
@@ -524,9 +526,7 @@ export default function ProfilePage() {
           <User className="h-6 w-6 md:h-8 md:w-8 text-primary-600" />
           {t('header.title')}
         </h1>
-        <p className="text-sm md:text-base text-neutral-600">
-          {t('header.description')}
-        </p>
+        <p className="text-sm md:text-base text-neutral-600">{t('header.description')}</p>
       </div>
 
       <div className="max-w-7xl mx-auto">
