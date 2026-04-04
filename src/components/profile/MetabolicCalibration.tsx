@@ -78,17 +78,21 @@ export default function MetabolicCalibration({
   const lastCalibration = calibrationHistoryList?.[0]
   const canRevert = lastCalibration && !lastCalibration.is_reverted
 
+  // The new-data guard should only block re-apply against the last *active* (non-reverted)
+  // calibration. If that calibration was reverted, there is no active baseline to protect.
+  const lastActiveCalibration = calibrationHistoryList?.find(c => !c.is_reverted) ?? null
+
   // Guard against applying the same dataset twice.
   // Allow apply if: new weight entries exist after last calibration,
   // OR new calorie logs exist after last calibration,
   // OR enough days have passed (MIN_DAYS_BETWEEN_CALIBRATIONS).
   const newDataGuard = useMemo(() => {
-    if (!lastCalibration)
+    if (!lastActiveCalibration)
       return { allowed: true, daysRemaining: 0, newWeightCount: 0, newLogCount: 0 }
     if (calibrationApplied !== null)
       return { allowed: true, daysRemaining: 0, newWeightCount: 0, newLogCount: 0 }
 
-    const lastCalAt = new Date(lastCalibration.calibrated_at)
+    const lastCalAt = new Date(lastActiveCalibration.calibrated_at)
     const daysSince = (now.getTime() - lastCalAt.getTime()) / (1000 * 60 * 60 * 24)
     const daysRemaining = Math.max(0, Math.ceil(MIN_DAYS_BETWEEN_CALIBRATIONS - daysSince))
 
@@ -104,7 +108,7 @@ export default function MetabolicCalibration({
     const allowed =
       daysSince >= MIN_DAYS_BETWEEN_CALIBRATIONS || newWeightCount > 0 || newLogCount > 0
     return { allowed, daysRemaining, newWeightCount, newLogCount }
-  }, [lastCalibration, calibrationApplied, now, weightHistory, actualIntake])
+  }, [lastActiveCalibration, calibrationApplied, now, weightHistory, actualIntake])
   const hasNewDataSinceCalibration = newDataGuard.allowed
 
   // Check which periods are available (for disabling dropdown options)
