@@ -18,8 +18,8 @@ export default function ProfileResultsSummary({ profile }: ProfileResultsSummary
   const { t } = useTranslation('profile')
   if (!profile) return null
 
-  // Calculate BMR using stored formula (or default to Mifflin-St Jeor)
-  const bmrFormula = profile.bmr_formula || 'Mifflin-St Jeor equation'
+  // Only calculate BMR if a formula was explicitly chosen (not for manual TDEE entries)
+  const bmrFormula = profile.bmr_formula || null
   let bmr: number | null = null
 
   // Convert formula name to Swedish short form
@@ -56,7 +56,13 @@ export default function ProfileResultsSummary({ profile }: ProfileResultsSummary
     return typeMap[formula] || 'BMR/RMR'
   }
 
-  if (profile.weight_kg && profile.height_cm && profile.birth_date && profile.gender) {
+  if (
+    bmrFormula &&
+    profile.weight_kg &&
+    profile.height_cm &&
+    profile.birth_date &&
+    profile.gender
+  ) {
     const age = calculateAge(profile.birth_date)
     const bmrParams = {
       weight: profile.weight_kg,

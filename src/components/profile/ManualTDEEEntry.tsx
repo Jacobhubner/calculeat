@@ -7,12 +7,15 @@
 import { useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Save } from 'lucide-react'
 
 interface ManualTDEEEntryProps {
   initialWeight?: number
   tdee?: number
   bodyFatPercentage?: number
+  showBodyFat?: boolean
+  standalone?: boolean
+  submitLabel?: string
   onTDEEChange: (data: {
     tdee: number
     bodyFat?: number
@@ -33,6 +36,9 @@ export default function ManualTDEEEntry({
   initialWeight,
   tdee: initialTdee,
   bodyFatPercentage: initialBodyFat,
+  showBodyFat = true,
+  standalone = true,
+  submitLabel,
   onTDEEChange,
 }: ManualTDEEEntryProps) {
   const [tdee, setTdee] = useState(initialTdee?.toString() || '')
@@ -77,6 +83,81 @@ export default function ManualTDEEEntry({
   const tdeeNum = parseFloat(tdee)
   const canContinue = !isNaN(tdeeNum) && tdeeNum >= 500 && tdeeNum <= 10000
 
+  const formContent = (
+    <div className="space-y-4">
+      {/* TDEE Input */}
+      <div>
+        <label className="block text-sm font-medium text-neutral-700 mb-2">
+          TDEE (kcal/dag) <span className="text-red-600">*</span>
+        </label>
+        <input
+          type="number"
+          value={tdee}
+          onChange={e => setTdee(e.target.value)}
+          onKeyDown={e => {
+            if (e.key === 'Enter' && canContinue) {
+              handleContinue()
+            }
+          }}
+          className="block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+          placeholder="2500"
+          min="500"
+          max="10000"
+        />
+      </div>
+
+      {/* Body Fat Percentage (Optional) */}
+      {showBodyFat && (
+        <div>
+          <label className="block text-sm font-medium text-neutral-700 mb-2">
+            Kroppsfettprocent (valfri)
+          </label>
+          <input
+            type="number"
+            value={bodyFat}
+            onChange={e => setBodyFat(e.target.value)}
+            onKeyDown={e => {
+              if (e.key === 'Enter' && canContinue) {
+                handleContinue()
+              }
+            }}
+            className="block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+            placeholder="15"
+            min="0"
+            max="100"
+            step="0.1"
+          />
+          <p className="text-xs text-neutral-500 mt-1">
+            Krävs för vissa BMR-formler om du vill beräkna TDEE senare
+          </p>
+        </div>
+      )}
+
+      {/* Submit Button */}
+      {(standalone || canContinue) && (
+        <div className="pt-2">
+          <Button
+            onClick={handleContinue}
+            disabled={!canContinue}
+            className={standalone ? 'w-full' : ''}
+            size={standalone ? 'lg' : 'sm'}
+          >
+            {submitLabel ?? 'Fortsätt'}
+            {standalone ? (
+              <ArrowRight className="ml-2 h-4 w-4" />
+            ) : (
+              <Save className="ml-2 h-4 w-4" />
+            )}
+          </Button>
+        </div>
+      )}
+    </div>
+  )
+
+  if (!standalone) {
+    return formContent
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -85,72 +166,7 @@ export default function ManualTDEEEntry({
           Ange ditt TDEE om du redan känner till det från en annan källa eller beräkning
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          {/* Show initial weight from basic info */}
-          {initialWeight && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
-              <p className="text-sm text-blue-900">
-                <strong>Startvikt:</strong> {initialWeight} kg (från Grundläggande information)
-              </p>
-            </div>
-          )}
-
-          {/* TDEE Input */}
-          <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-2">
-              TDEE (kcal/dag) <span className="text-red-600">*</span>
-            </label>
-            <input
-              type="number"
-              value={tdee}
-              onChange={e => setTdee(e.target.value)}
-              onKeyDown={e => {
-                if (e.key === 'Enter' && canContinue) {
-                  handleContinue()
-                }
-              }}
-              className="block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
-              placeholder="2500"
-              min="500"
-              max="10000"
-            />
-          </div>
-
-          {/* Body Fat Percentage (Optional) */}
-          <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-2">
-              Kroppsfettprocent (valfri)
-            </label>
-            <input
-              type="number"
-              value={bodyFat}
-              onChange={e => setBodyFat(e.target.value)}
-              onKeyDown={e => {
-                if (e.key === 'Enter' && canContinue) {
-                  handleContinue()
-                }
-              }}
-              className="block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
-              placeholder="15"
-              min="0"
-              max="100"
-              step="0.1"
-            />
-            <p className="text-xs text-neutral-500 mt-1">
-              Krävs för vissa BMR-formler om du vill beräkna TDEE senare
-            </p>
-          </div>
-
-          {/* Continue Button */}
-          <div className="pt-2">
-            <Button onClick={handleContinue} disabled={!canContinue} className="w-full" size="lg">
-              Fortsätt
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      </CardContent>
+      <CardContent>{formContent}</CardContent>
     </Card>
   )
 }

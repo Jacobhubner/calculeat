@@ -247,6 +247,11 @@
       "fieldLabel": "Body fat percentage (%)",
       "fieldHint": "Required for formulas like Cunningham, MacroFactor FFM/Athlete and Fitness Stuff Podcast"
     },
+    "manual": {
+      "title": "Enter TDEE manually",
+      "description": "Enter your TDEE directly if you already know the value",
+      "submitLabel": "Save to profile"
+    },
     "bmr": {
       "title": "BMR/RMR formula",
       "description": "Choose a formula to calculate your basal metabolic rate",

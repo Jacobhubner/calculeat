@@ -247,6 +247,11 @@
       "fieldLabel": "Kroppsfettprocent (%)",
       "fieldHint": "Krävs för formler som Cunningham, MacroFactor FFM/Athlete och Fitness Stuff Podcast"
     },
+    "manual": {
+      "title": "Ange TDEE manuellt",
+      "description": "Ange ditt TDEE direkt om du redan känner till värdet",
+      "submitLabel": "Spara till profil"
+    },
     "bmr": {
       "title": "BMR/RMR-formel",
       "description": "Välj formel för att beräkna din basalmetabolism",
