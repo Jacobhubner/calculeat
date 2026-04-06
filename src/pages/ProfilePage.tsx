@@ -394,6 +394,9 @@ export default function ProfilePage() {
       // Only overwrite body_fat_percentage if the user explicitly provided a value.
       // Omitting the field preserves the existing profile value.
       ...(data.bodyFat !== undefined && { body_fat_percentage: data.bodyFat }),
+      // Manual TDEE has no associated formula — clear bmr_formula for consistency.
+      // tdee_calculator_tool sets its own formula; calibration doesn't touch it.
+      ...(data.tdee_source === 'manual' && { bmr_formula: null }),
       baseline_bmr: data.baseline_bmr,
       weight_kg: data.weight_kg,
       tdee_source: data.tdee_source,
