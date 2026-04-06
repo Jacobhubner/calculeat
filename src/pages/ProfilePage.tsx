@@ -69,6 +69,7 @@ export default function ProfilePage() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     tdee_calculation_snapshot?: any
     baseline_bmr?: number
+    bmr_formula?: string | null
     accumulated_at?: number
     // Energy goals
     calorie_goal?: string
