@@ -329,11 +329,7 @@ export default function TDEECalculatorTool() {
       })
 
       toast.success(t('tdeeCalc.toast.saved'))
-
-      // Navigate back to profile page
-      setTimeout(() => {
-        navigate('/app/profile')
-      }, 1000)
+      navigate('/app/profile')
     } catch (error) {
       console.error('Error saving TDEE:', error)
       toast.error(t('tdeeCalc.toast.saveFailed'))
