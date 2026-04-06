@@ -155,7 +155,7 @@ export default function ProfileResultsSummary({ profile, onTDEEEdit }: ProfileRe
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-6 w-6 p-0 text-neutral-400 hover:text-neutral-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="h-6 w-6 p-0 text-neutral-400 hover:text-neutral-600 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
                   onClick={() => {
                     setEditValue(Math.round(tdee).toString())
                     setEditing(true)
