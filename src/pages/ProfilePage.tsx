@@ -389,6 +389,16 @@ export default function ProfilePage() {
     calories_max: number
     accumulated_at?: number
   }) => {
+    if (
+      data.tdee_source === 'manual' &&
+      activeProfile?.tdee &&
+      !window.confirm(
+        'Du har redan ett TDEE-värde sparat. Vill du skriva över det med det nya värdet?'
+      )
+    ) {
+      return
+    }
+
     setPendingChanges(prev => ({
       ...prev,
       tdee: data.tdee,
