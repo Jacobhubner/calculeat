@@ -26,6 +26,12 @@ import LBMvsFFMContent from '@/components/info/LBMvsFFMContent'
 import { translatePALSystem } from '@/lib/translations'
 import ComparisonTab from './ComparisonTab'
 
+// Returns a finite number, or undefined. Handles '', NaN, null, and non-numeric strings.
+function toFiniteOrUndefined(value: unknown): number | undefined {
+  const n = parseFloat(String(value ?? ''))
+  return isFinite(n) ? n : undefined
+}
+
 export default function TDEECalculatorTool() {
   const navigate = useNavigate()
   const { t } = useTranslation('tools')
@@ -298,12 +304,10 @@ export default function TDEECalculatorTool() {
           pal_system: palSystem as PALSystem,
           activity_level: (activityLevel || 'Moderately active') as ActivityLevel,
           intensity_level: (intensityLevel || undefined) as IntensityLevel | undefined,
-          training_frequency_per_week: trainingFrequency
-            ? parseFloat(trainingFrequency)
-            : undefined,
-          training_duration_minutes: trainingDuration ? parseFloat(trainingDuration) : undefined,
+          training_frequency_per_week: toFiniteOrUndefined(trainingFrequency),
+          training_duration_minutes: toFiniteOrUndefined(trainingDuration),
           daily_steps: (dailySteps || undefined) as DailySteps | undefined,
-          custom_pal: customPAL ? parseFloat(customPAL) : undefined,
+          custom_pal: toFiniteOrUndefined(customPAL),
           // Beräkna din aktivitetsnivå fields
           training_activity_id: trainingActivityId || undefined,
           training_days_per_week: Number(trainingDaysPerWeek) || undefined,
