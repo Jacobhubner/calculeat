@@ -516,24 +516,96 @@ export default function MetabolicCalibration({
                       Datakvalitet (Data Quality Index)
                     </h3>
                     <p className="text-neutral-700 leading-relaxed">
-                      Alla kalibreringar får ett <strong>Data Quality Index (DQI)</strong> som
-                      uppskattar hur tillförlitlig datan är.
+                      Alla kalibreringar får ett <strong>Data Quality Index (DQI)</strong> — ett
+                      poängvärde 0–100 som speglar hur tillförlitlig datan är. Högre poäng tillåter
+                      större TDEE-justeringar.
                     </p>
-                    <p className="text-neutral-700 leading-relaxed mt-2">
-                      Indexet påverkas bland annat av:
+
+                    <p className="text-neutral-700 leading-relaxed mt-3 font-medium">
+                      Poängen beräknas av fyra faktorer:
                     </p>
-                    <ul className="list-disc list-inside space-y-1 ml-2 mt-1 text-neutral-700">
-                      <li>hur många dagar du loggat mat</li>
-                      <li>hur konsekvent kalorier registrerats</li>
-                      <li>hur regelbundet du vägt dig</li>
-                      <li>hur jämnt mätningarna är fördelade över perioden</li>
-                    </ul>
-                    <p className="text-neutral-700 leading-relaxed mt-2">
-                      Högre datakvalitet innebär att systemet kan tillåta större TDEE-justeringar.
+                    <div className="mt-2 rounded-lg border border-neutral-200 overflow-hidden">
+                      <table className="w-full text-xs">
+                        <thead className="bg-neutral-50 text-neutral-500">
+                          <tr>
+                            <th className="text-left px-3 py-2 font-medium">Faktor</th>
+                            <th className="text-center px-3 py-2 font-medium">Vikt</th>
+                            <th className="text-left px-3 py-2 font-medium">100p uppnås vid</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-neutral-100 text-neutral-700">
+                          <tr>
+                            <td className="px-3 py-2">Matlogg</td>
+                            <td className="px-3 py-2 text-center">40%</td>
+                            <td className="px-3 py-2">≥ 90% av dagarna loggade</td>
+                          </tr>
+                          <tr>
+                            <td className="px-3 py-2">Mätningsfrekvens</td>
+                            <td className="px-3 py-2 text-center">30%</td>
+                            <td className="px-3 py-2">≥ 50% av dagarna vägd</td>
+                          </tr>
+                          <tr>
+                            <td className="px-3 py-2">Tidskonsistens</td>
+                            <td className="px-3 py-2 text-center">15%</td>
+                            <td className="px-3 py-2">
+                              Väg dig samma tid varje dag — 4h+ avvikelse ger 0p
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="px-3 py-2">Klusterstorlek</td>
+                            <td className="px-3 py-2 text-center">15%</td>
+                            <td className="px-3 py-2">Start + slut ≥ 6 mätningar totalt</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+
+                    <p className="text-neutral-700 leading-relaxed mt-3 font-medium">
+                      Nivåer och maximal justering:
                     </p>
-                    <p className="text-neutral-700 leading-relaxed mt-1">
-                      Vid låg datakvalitet begränsas justeringen automatiskt.
-                    </p>
+                    <div className="mt-2 rounded-lg border border-neutral-200 overflow-hidden">
+                      <table className="w-full text-xs">
+                        <thead className="bg-neutral-50 text-neutral-500">
+                          <tr>
+                            <th className="text-left px-3 py-2 font-medium">Nivå</th>
+                            <th className="text-center px-3 py-2 font-medium">Poäng</th>
+                            <th className="text-center px-3 py-2 font-medium">Max justering</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-neutral-100">
+                          <tr>
+                            <td className="px-3 py-2 text-green-700 font-medium">Utmärkt data</td>
+                            <td className="px-3 py-2 text-center text-neutral-700">≥ 80</td>
+                            <td className="px-3 py-2 text-center text-neutral-700">
+                              ±175–200 kcal
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="px-3 py-2 text-blue-700 font-medium">Bra data</td>
+                            <td className="px-3 py-2 text-center text-neutral-700">60–79</td>
+                            <td className="px-3 py-2 text-center text-neutral-700">
+                              ±150–174 kcal
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="px-3 py-2 text-yellow-700 font-medium">
+                              Tillräcklig data
+                            </td>
+                            <td className="px-3 py-2 text-center text-neutral-700">40–59</td>
+                            <td className="px-3 py-2 text-center text-neutral-700">
+                              ±125–149 kcal
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="px-3 py-2 text-orange-700 font-medium">
+                              Begränsad data
+                            </td>
+                            <td className="px-3 py-2 text-center text-neutral-700">0–39</td>
+                            <td className="px-3 py-2 text-center text-neutral-700">±75–124 kcal</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
                   </section>
 
                   {/* Section 8 */}
