@@ -240,26 +240,38 @@ export function BarcodeScannerModal({
     brightnessSampleCountRef.current = 0
     missedFramesRef.current = 0
 
-    const video = videoRef.current
-    if (!video) return
+    // Radix Dialog mounts the portal asynchronously — videoRef may not be
+    // populated yet when this effect fires. Poll briefly until the video
+    // element is available, then start the stream.
+    let cancelled = false
+    const setup = () => {
+      const video = videoRef.current
+      if (!video) {
+        if (!cancelled) setTimeout(setup, 30)
+        return
+      }
 
-    video.srcObject = stream
-    video.play().catch(() => {})
+      video.srcObject = stream
+      video.play().catch(() => {})
 
-    // Detect torch support and reset all visual state
-    const track = stream.getVideoTracks()[0]
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const caps = track ? (track as any).getCapabilities?.() : null
-    dispatch({ type: 'RESET', torchSupported: !!caps?.torch })
+      // Detect torch support and reset all visual state
+      const track = stream.getVideoTracks()[0]
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const caps = track ? (track as any).getCapabilities?.() : null
+      dispatch({ type: 'RESET', torchSupported: !!caps?.torch })
 
-    // Wait for autofocus to stabilize before scanning
-    stabilizeTimerRef.current = setTimeout(() => {
-      startDecoding()
-    }, 800)
+      // Wait for autofocus to stabilize before scanning
+      stabilizeTimerRef.current = setTimeout(() => {
+        startDecoding()
+      }, 800)
+    }
+
+    setup()
 
     return () => {
+      cancelled = true
       stopDecoding()
-      video.srcObject = null
+      if (videoRef.current) videoRef.current.srcObject = null
     }
   }, [stream, startDecoding, stopDecoding])
 
