@@ -66,15 +66,19 @@ export default function MetabolicCalibration({
   const revertCalibration = useRevertCalibration()
   const { data: calibrationHistoryList } = useCalibrationHistory(profile.id)
 
-  // Date range for calorie intake
-  const [now, setNow] = useState(() => new Date())
+  // Date range for calorie intake — null until user clicks "Uppdatera"
+  const [now, setNow] = useState<Date | null>(null)
   const refreshNow = useCallback(() => setNow(new Date()), [])
   const startDate = useMemo(
-    () => new Date(now.getTime() - timePeriod * 24 * 60 * 60 * 1000),
+    () => (now ? new Date(now.getTime() - timePeriod * 24 * 60 * 60 * 1000) : null),
     [now, timePeriod]
   )
 
-  const { data: actualIntake } = useActualCalorieIntake(profile.id, startDate, now)
+  const { data: actualIntake } = useActualCalorieIntake(
+    profile.id,
+    startDate ?? new Date(0),
+    now ?? new Date(0)
+  )
 
   const isFirstCalibration = !calibrationHistoryList || calibrationHistoryList.length === 0
   const lastCalibration = calibrationHistoryList?.[0]
@@ -89,7 +93,7 @@ export default function MetabolicCalibration({
   // OR new calorie logs exist after last calibration,
   // OR enough days have passed (MIN_DAYS_BETWEEN_CALIBRATIONS).
   const newDataGuard = useMemo(() => {
-    if (!lastActiveCalibration)
+    if (!lastActiveCalibration || !now)
       return { allowed: true, daysRemaining: 0, newWeightCount: 0, newLogCount: 0 }
     if (calibrationApplied !== null)
       return { allowed: true, daysRemaining: 0, newWeightCount: 0, newLogCount: 0 }
@@ -116,7 +120,7 @@ export default function MetabolicCalibration({
   // Check which periods are available (for disabling dropdown options)
   const periodAvailability = useMemo(() => {
     const result: Record<14 | 21 | 28, boolean> = { 14: false, 21: false, 28: false }
-    if (!weightHistory) return result
+    if (!weightHistory || !now) return result
     for (const period of [14, 21, 28] as const) {
       const cutoff = new Date(now.getTime() - period * 24 * 60 * 60 * 1000)
       const count = weightHistory.filter(w => new Date(w.recorded_at) >= cutoff).length
@@ -130,7 +134,7 @@ export default function MetabolicCalibration({
 
   const periodMeasurementCounts = useMemo(() => {
     const result: Record<14 | 21 | 28, number> = { 14: 0, 21: 0, 28: 0 }
-    if (!weightHistory) return result
+    if (!weightHistory || !now) return result
     for (const period of [14, 21, 28] as const) {
       const cutoff = new Date(now.getTime() - period * 24 * 60 * 60 * 1000)
       result[period] = weightHistory.filter(w => new Date(w.recorded_at) >= cutoff).length
@@ -140,7 +144,7 @@ export default function MetabolicCalibration({
 
   // Run calibration
   const calibrationResult = useMemo((): CalibrationResult | string | null => {
-    if (!weightHistory || weightHistory.length < 2) return null
+    if (!weightHistory || weightHistory.length < 2 || !now) return null
 
     const targetCalories =
       profile.calories_min && profile.calories_max
@@ -693,491 +697,522 @@ export default function MetabolicCalibration({
             />
           )}
 
-          {/* Time period selector */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <label className="text-sm font-medium text-neutral-700">Tidsperiod</label>
+          {/* If not yet refreshed, show a prompt instead of stale results */}
+          {now === null && (
+            <div className="flex flex-col items-center gap-3 py-6 text-center">
+              <p className="text-sm text-neutral-500">
+                Klicka på Uppdatera för att hämta senaste data.
+              </p>
               <button
                 type="button"
                 onClick={refreshNow}
-                className="flex items-center gap-1 text-xs text-neutral-500 hover:text-primary-600 transition-colors"
-                title="Uppdatera till senaste data"
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary-600 border border-primary-300 rounded-lg hover:bg-primary-50 transition-colors"
               >
-                <RefreshCw className="h-3 w-3" />
+                <RefreshCw className="h-4 w-4" />
                 Uppdatera
               </button>
             </div>
-            <Select
-              value={timePeriod.toString()}
-              onChange={e => setTimePeriod(Number(e.target.value) as 14 | 21 | 28)}
-            >
-              <option value="14" disabled={!periodAvailability[14]}>
-                14 dagar (2 veckor)
-                {!periodAvailability[14] ? ` — ${periodMeasurementCounts[14]}/4 vägningar` : ''}
-              </option>
-              <option value="21" disabled={!periodAvailability[21]}>
-                21 dagar (3 veckor)
-                {!periodAvailability[21] ? ` — ${periodMeasurementCounts[21]}/5 vägningar` : ''}
-              </option>
-              <option value="28" disabled={!periodAvailability[28]}>
-                28 dagar (4 veckor)
-                {!periodAvailability[28] ? ` — ${periodMeasurementCounts[28]}/6 vägningar` : ''}
-              </option>
-            </Select>
-          </div>
-
-          {/* Data source indicator (continuous blending) */}
-          {actualIntake && (
-            <div
-              className={`flex items-start gap-2 p-3 rounded-lg text-sm ${
-                data?.calorieSource === 'food_log'
-                  ? 'bg-green-50 text-green-800'
-                  : data?.calorieSource === 'blended'
-                    ? 'bg-blue-50 text-blue-800'
-                    : 'bg-amber-50 text-amber-800'
-              }`}
-            >
-              {data?.calorieSource === 'food_log' ? (
-                <>
-                  <CheckCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <p className="font-medium">Kaloridata: matlogg</p>
-                    <p className="text-xs mt-0.5">
-                      Du har loggat mat {actualIntake.daysWithData} av {actualIntake.totalDays}{' '}
-                      dagar ({Math.round(actualIntake.completenessPercent)}%). Kalibreringen
-                      använder ditt faktiska loggade intag.
-                    </p>
-                  </div>
-                </>
-              ) : data?.calorieSource === 'blended' ? (
-                <>
-                  <Blend className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <p className="font-medium">Kaloridata: matlogg + svag priorkorrektion</p>
-                    <p className="text-xs mt-1">
-                      Du har loggat mat {actualIntake.daysWithData} av {actualIntake.totalDays}{' '}
-                      dagar ({Math.round(actualIntake.completenessPercent)}%).
-                    </p>
-                    {data.loggedCaloriesAvg != null && (
-                      <p className="text-xs mt-0.5">
-                        Loggat snitt:{' '}
-                        <span className="font-medium">
-                          {Math.round(data.loggedCaloriesAvg)} kcal/dag
-                        </span>{' '}
-                        ({actualIntake.daysWithData} dagar)
-                      </p>
-                    )}
-                    <p className="text-xs mt-0.5">
-                      Uppskattat snitt:{' '}
-                      <span className="font-medium">
-                        {Math.round(data.averageCalories)} kcal/dag
-                      </span>{' '}
-                      (inkl. svag korrektion för{' '}
-                      {actualIntake.totalDays - actualIntake.daysWithData} ologgade dagar)
-                    </p>
-                    <p className="text-xs text-neutral-400 mt-1">
-                      Ologgade dagar sänker tillförlitligheten — se Datakvalitet nedan.
-                    </p>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <Database className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <p className="font-medium">Kaloridata: målkalorier</p>
-                    <p className="text-xs mt-0.5">
-                      Du har inte loggat mat tillräckligt ({actualIntake.daysWithData}/
-                      {actualIntake.totalDays} dagar). Systemet antar att du åt enligt ditt
-                      kaloriintervall — om det inte stämmer blir kalibreringen missvisande.
-                    </p>
-                  </div>
-                </>
-              )}
-            </div>
           )}
 
-          {/* Error state */}
-          {isError && (
-            <div className="text-center py-6 text-sm text-neutral-500">
-              <AlertCircle className="h-8 w-8 mx-auto mb-2 text-neutral-400" />
-              <p>{calibrationResult}</p>
-            </div>
-          )}
-
-          {/* Results */}
-          {data && (
-            <div className="space-y-4 pt-2">
-              {/* Confidence + Data Quality */}
-              <div className="rounded-lg border border-neutral-200 divide-y divide-neutral-100">
-                <div className="flex items-start gap-3 p-3">
-                  <ConfidenceIcon className={`h-4 w-4 flex-shrink-0 mt-0.5 ${confidenceColor}`} />
-                  <div>
-                    <p className={`text-sm font-medium ${confidenceColor}`}>{confidenceLabel}</p>
-                    <p className="text-xs text-neutral-500 mt-0.5">
-                      {data.confidence.level === 'high'
-                        ? `${data.confidence.startClusterSize}+${data.confidence.endClusterSize} mätningar i start/slutperiod.`
-                        : (() => {
-                            const reasons = data.confidence.degradeReasons
-                            const parts: string[] = []
-                            if (reasons.includes('low_cluster_size'))
-                              parts.push(
-                                `för få mätningar i start- eller slutperiod (${data.confidence.startClusterSize}+${data.confidence.endClusterSize})`
-                              )
-                            if (reasons.includes('sparse_coverage'))
-                              parts.push('mätningarna är inte spridda över hela perioden')
-                            if (reasons.includes('nonlinear_trend'))
-                              parts.push('vikttrenden är ojämn eller icke-linjär under perioden')
-                            return parts.length > 0
-                              ? `Begränsas av: ${parts.join(', ')}.`
-                              : `${data.confidence.startClusterSize}+${data.confidence.endClusterSize} mätningar i start/slutperiod.`
-                          })()}
-                    </p>
-                  </div>
-                </div>
-                {data.dataQuality && (
-                  <div className="flex items-start gap-3 p-3">
-                    <BarChart3 className="h-4 w-4 flex-shrink-0 mt-0.5 text-neutral-400" />
-                    <div>
-                      <p
-                        className={`text-sm font-medium ${
-                          data.dataQuality.score >= 80
-                            ? 'text-green-600'
-                            : data.dataQuality.score >= 60
-                              ? 'text-blue-600'
-                              : data.dataQuality.score >= 40
-                                ? 'text-yellow-600'
-                                : 'text-orange-600'
-                        }`}
-                      >
-                        Datakvalitet: {data.dataQuality.label} ({data.dataQuality.score}/100)
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Warnings */}
-              {data.warnings.map((warning, i) => (
-                <div
-                  key={i}
-                  className="flex items-start gap-2 p-3 rounded-lg bg-orange-50 text-sm text-orange-800"
+          {/* Time period selector */}
+          {now !== null && (
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-medium text-neutral-700">Tidsperiod</label>
+                <button
+                  type="button"
+                  onClick={refreshNow}
+                  className="flex items-center gap-1 text-xs text-neutral-500 hover:text-primary-600 transition-colors"
+                  title="Uppdatera till senaste data"
                 >
-                  <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <p>{warning.message}</p>
-                    {warning.type === 'high_cv' && (
-                      <p className="text-xs text-orange-700 mt-1">
-                        Hög variation minskar tillförlitligheten och kan begränsa hur stor justering
-                        som tillåts.
-                      </p>
+                  <RefreshCw className="h-3 w-3" />
+                  Uppdatera
+                </button>
+              </div>
+              <Select
+                value={timePeriod.toString()}
+                onChange={e => setTimePeriod(Number(e.target.value) as 14 | 21 | 28)}
+              >
+                <option value="14" disabled={!periodAvailability[14]}>
+                  14 dagar (2 veckor)
+                  {!periodAvailability[14] ? ` — ${periodMeasurementCounts[14]}/4 vägningar` : ''}
+                </option>
+                <option value="21" disabled={!periodAvailability[21]}>
+                  21 dagar (3 veckor)
+                  {!periodAvailability[21] ? ` — ${periodMeasurementCounts[21]}/5 vägningar` : ''}
+                </option>
+                <option value="28" disabled={!periodAvailability[28]}>
+                  28 dagar (4 veckor)
+                  {!periodAvailability[28] ? ` — ${periodMeasurementCounts[28]}/6 vägningar` : ''}
+                </option>
+              </Select>
+            </div>
+          )}
+
+          {now !== null && (
+            <>
+              {/* Data source indicator (continuous blending) */}
+              {actualIntake && (
+                <div
+                  className={`flex items-start gap-2 p-3 rounded-lg text-sm ${
+                    data?.calorieSource === 'food_log'
+                      ? 'bg-green-50 text-green-800'
+                      : data?.calorieSource === 'blended'
+                        ? 'bg-blue-50 text-blue-800'
+                        : 'bg-amber-50 text-amber-800'
+                  }`}
+                >
+                  {data?.calorieSource === 'food_log' ? (
+                    <>
+                      <CheckCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="font-medium">Kaloridata: matlogg</p>
+                        <p className="text-xs mt-0.5">
+                          Du har loggat mat {actualIntake.daysWithData} av {actualIntake.totalDays}{' '}
+                          dagar ({Math.round(actualIntake.completenessPercent)}%). Kalibreringen
+                          använder ditt faktiska loggade intag.
+                        </p>
+                      </div>
+                    </>
+                  ) : data?.calorieSource === 'blended' ? (
+                    <>
+                      <Blend className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="font-medium">Kaloridata: matlogg + svag priorkorrektion</p>
+                        <p className="text-xs mt-1">
+                          Du har loggat mat {actualIntake.daysWithData} av {actualIntake.totalDays}{' '}
+                          dagar ({Math.round(actualIntake.completenessPercent)}%).
+                        </p>
+                        {data.loggedCaloriesAvg != null && (
+                          <p className="text-xs mt-0.5">
+                            Loggat snitt:{' '}
+                            <span className="font-medium">
+                              {Math.round(data.loggedCaloriesAvg)} kcal/dag
+                            </span>{' '}
+                            ({actualIntake.daysWithData} dagar)
+                          </p>
+                        )}
+                        <p className="text-xs mt-0.5">
+                          Uppskattat snitt:{' '}
+                          <span className="font-medium">
+                            {Math.round(data.averageCalories)} kcal/dag
+                          </span>{' '}
+                          (inkl. svag korrektion för{' '}
+                          {actualIntake.totalDays - actualIntake.daysWithData} ologgade dagar)
+                        </p>
+                        <p className="text-xs text-neutral-400 mt-1">
+                          Ologgade dagar sänker tillförlitligheten — se Datakvalitet nedan.
+                        </p>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <Database className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="font-medium">Kaloridata: målkalorier</p>
+                        <p className="text-xs mt-0.5">
+                          Du har inte loggat mat tillräckligt ({actualIntake.daysWithData}/
+                          {actualIntake.totalDays} dagar). Systemet antar att du åt enligt ditt
+                          kaloriintervall — om det inte stämmer blir kalibreringen missvisande.
+                        </p>
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
+
+              {/* Error state */}
+              {isError && (
+                <div className="text-center py-6 text-sm text-neutral-500">
+                  <AlertCircle className="h-8 w-8 mx-auto mb-2 text-neutral-400" />
+                  <p>{calibrationResult}</p>
+                </div>
+              )}
+
+              {/* Results */}
+              {data && (
+                <div className="space-y-4 pt-2">
+                  {/* Confidence + Data Quality */}
+                  <div className="rounded-lg border border-neutral-200 divide-y divide-neutral-100">
+                    <div className="flex items-start gap-3 p-3">
+                      <ConfidenceIcon
+                        className={`h-4 w-4 flex-shrink-0 mt-0.5 ${confidenceColor}`}
+                      />
+                      <div>
+                        <p className={`text-sm font-medium ${confidenceColor}`}>
+                          {confidenceLabel}
+                        </p>
+                        <p className="text-xs text-neutral-500 mt-0.5">
+                          {data.confidence.level === 'high'
+                            ? `${data.confidence.startClusterSize}+${data.confidence.endClusterSize} mätningar i start/slutperiod.`
+                            : (() => {
+                                const reasons = data.confidence.degradeReasons
+                                const parts: string[] = []
+                                if (reasons.includes('low_cluster_size'))
+                                  parts.push(
+                                    `för få mätningar i start- eller slutperiod (${data.confidence.startClusterSize}+${data.confidence.endClusterSize})`
+                                  )
+                                if (reasons.includes('sparse_coverage'))
+                                  parts.push('mätningarna är inte spridda över hela perioden')
+                                if (reasons.includes('nonlinear_trend'))
+                                  parts.push(
+                                    'vikttrenden är ojämn eller icke-linjär under perioden'
+                                  )
+                                return parts.length > 0
+                                  ? `Begränsas av: ${parts.join(', ')}.`
+                                  : `${data.confidence.startClusterSize}+${data.confidence.endClusterSize} mätningar i start/slutperiod.`
+                              })()}
+                        </p>
+                      </div>
+                    </div>
+                    {data.dataQuality && (
+                      <div className="flex items-start gap-3 p-3">
+                        <BarChart3 className="h-4 w-4 flex-shrink-0 mt-0.5 text-neutral-400" />
+                        <div>
+                          <p
+                            className={`text-sm font-medium ${
+                              data.dataQuality.score >= 80
+                                ? 'text-green-600'
+                                : data.dataQuality.score >= 60
+                                  ? 'text-blue-600'
+                                  : data.dataQuality.score >= 40
+                                    ? 'text-yellow-600'
+                                    : 'text-orange-600'
+                            }`}
+                          >
+                            Datakvalitet: {data.dataQuality.label} ({data.dataQuality.score}/100)
+                          </p>
+                        </div>
+                      </div>
                     )}
-                    {warning.type === 'timing_inconsistency' && (
-                      <p className="text-xs text-orange-700 mt-1">
-                        Vikt varierar naturligt under dygnet med upp till 1–2 kg. Ojämna
-                        vägningsider gör det svårare att jämföra mätningar med varandra.
-                      </p>
-                    )}
-                    {warning.type === 'target_calories_fallback' && (
-                      <p className="text-xs text-orange-700 mt-1">
-                        Om du i verkligheten åt mer eller mindre än målet kan kalibreringen bli
-                        felaktig — den kan inte se avvikelser som inte loggats.
-                      </p>
-                    )}
-                    {warning.type === 'selective_logging' && (
-                      <p className="text-xs text-orange-700 mt-1">
-                        Om du bara loggar &quot;bra&quot; dagar överskattas kaloriintaget inte och
-                        kalibreringen kan föreslå ett för lågt TDEE.
-                      </p>
-                    )}
-                    {warning.type === 'glycogen_event' && (
-                      <p className="text-xs text-orange-700 mt-1">
-                        Glykogen och vätska kan orsaka viktförändringar på 1–3 kg på enstaka dagar
-                        utan att det återspeglar faktisk fettförändring. Trendberäkningen
-                        kompenserar men precision minskar.
-                      </p>
-                    )}
-                    {warning.type === 'large_deficit' && (
-                      <p className="text-xs text-orange-700 mt-1">
-                        Vid stort underskott anpassar kroppen sin ämnesomsättning nedåt, vilket gör
-                        att beräknad TDEE kan underskatta ditt verkliga underhållsbehov.
-                      </p>
-                    )}
-                    {warning.type === 'low_confidence' && (
-                      <p className="text-xs text-orange-700 mt-1">
-                        Resultatet är användbart som riktlinje men bör bekräftas med en ny
-                        kalibrering efter fler veckors data.
-                      </p>
-                    )}
-                    {warning.type === 'large_adjustment' && (
-                      <p className="text-xs text-orange-700 mt-1">
-                        Utan begränsning hade justeringen blivit{' '}
-                        {Math.round(data.rawTDEE - data.currentTDEE) >= 0 ? '+' : ''}
-                        {Math.round(data.rawTDEE - data.currentTDEE)} kcal (
-                        {Math.round(data.rawTDEE)} kcal).{' '}
-                        {(() => {
-                          const f = data.clampFactors
-                          const reasons: string[] = []
-                          if (f.dqiWasBindingCap)
-                            reasons.push('datakvalitetspoängen satte ett absolut tak')
-                          if (f.lowSignal) reasons.push('viktförändringen är för liten')
-                          if (f.lowConfidence) reasons.push('tillförlitligheten är låg')
-                          if (f.largeDeficit) reasons.push('stort kaloriunderskott')
-                          return reasons.length > 0 ? `Orsak: ${reasons.join(', ')}.` : ''
-                        })()}
-                      </p>
-                    )}
-                    {warning.type === 'low_signal' && (
-                      <p className="text-xs text-orange-700 mt-1">
-                        Förändringen ({Math.abs(data.weightChangeKg).toFixed(2)} kg) är under
-                        gränsen ~{Math.round(data.endCluster.average * 0.0025 * 10) / 10} kg (0,25%
-                        av din vikt). Antingen stämmer ditt TDEE redan, eller döljer vätska/glykogen
-                        den verkliga trenden.
-                      </p>
-                    )}
-                    {warning.type === 'outlier_removed' && data.filteredOutliers.length > 0 && (
-                      <ul className="mt-1 space-y-0.5">
-                        {data.filteredOutliers.map((o, j) => (
-                          <li key={j} className="text-xs text-orange-700">
-                            {o.recorded_at.toLocaleDateString('sv-SE', {
+                  </div>
+
+                  {/* Warnings */}
+                  {data.warnings.map((warning, i) => (
+                    <div
+                      key={i}
+                      className="flex items-start gap-2 p-3 rounded-lg bg-orange-50 text-sm text-orange-800"
+                    >
+                      <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p>{warning.message}</p>
+                        {warning.type === 'high_cv' && (
+                          <p className="text-xs text-orange-700 mt-1">
+                            Hög variation minskar tillförlitligheten och kan begränsa hur stor
+                            justering som tillåts.
+                          </p>
+                        )}
+                        {warning.type === 'timing_inconsistency' && (
+                          <p className="text-xs text-orange-700 mt-1">
+                            Vikt varierar naturligt under dygnet med upp till 1–2 kg. Ojämna
+                            vägningsider gör det svårare att jämföra mätningar med varandra.
+                          </p>
+                        )}
+                        {warning.type === 'target_calories_fallback' && (
+                          <p className="text-xs text-orange-700 mt-1">
+                            Om du i verkligheten åt mer eller mindre än målet kan kalibreringen bli
+                            felaktig — den kan inte se avvikelser som inte loggats.
+                          </p>
+                        )}
+                        {warning.type === 'selective_logging' && (
+                          <p className="text-xs text-orange-700 mt-1">
+                            Om du bara loggar &quot;bra&quot; dagar överskattas kaloriintaget inte
+                            och kalibreringen kan föreslå ett för lågt TDEE.
+                          </p>
+                        )}
+                        {warning.type === 'glycogen_event' && (
+                          <p className="text-xs text-orange-700 mt-1">
+                            Glykogen och vätska kan orsaka viktförändringar på 1–3 kg på enstaka
+                            dagar utan att det återspeglar faktisk fettförändring. Trendberäkningen
+                            kompenserar men precision minskar.
+                          </p>
+                        )}
+                        {warning.type === 'large_deficit' && (
+                          <p className="text-xs text-orange-700 mt-1">
+                            Vid stort underskott anpassar kroppen sin ämnesomsättning nedåt, vilket
+                            gör att beräknad TDEE kan underskatta ditt verkliga underhållsbehov.
+                          </p>
+                        )}
+                        {warning.type === 'low_confidence' && (
+                          <p className="text-xs text-orange-700 mt-1">
+                            Resultatet är användbart som riktlinje men bör bekräftas med en ny
+                            kalibrering efter fler veckors data.
+                          </p>
+                        )}
+                        {warning.type === 'large_adjustment' && (
+                          <p className="text-xs text-orange-700 mt-1">
+                            Utan begränsning hade justeringen blivit{' '}
+                            {Math.round(data.rawTDEE - data.currentTDEE) >= 0 ? '+' : ''}
+                            {Math.round(data.rawTDEE - data.currentTDEE)} kcal (
+                            {Math.round(data.rawTDEE)} kcal).{' '}
+                            {(() => {
+                              const f = data.clampFactors
+                              const reasons: string[] = []
+                              if (f.dqiWasBindingCap)
+                                reasons.push('datakvalitetspoängen satte ett absolut tak')
+                              if (f.lowSignal) reasons.push('viktförändringen är för liten')
+                              if (f.lowConfidence) reasons.push('tillförlitligheten är låg')
+                              if (f.largeDeficit) reasons.push('stort kaloriunderskott')
+                              return reasons.length > 0 ? `Orsak: ${reasons.join(', ')}.` : ''
+                            })()}
+                          </p>
+                        )}
+                        {warning.type === 'low_signal' && (
+                          <p className="text-xs text-orange-700 mt-1">
+                            Förändringen ({Math.abs(data.weightChangeKg).toFixed(2)} kg) är under
+                            gränsen ~{Math.round(data.endCluster.average * 0.0025 * 10) / 10} kg
+                            (0,25% av din vikt). Antingen stämmer ditt TDEE redan, eller döljer
+                            vätska/glykogen den verkliga trenden.
+                          </p>
+                        )}
+                        {warning.type === 'outlier_removed' && data.filteredOutliers.length > 0 && (
+                          <ul className="mt-1 space-y-0.5">
+                            {data.filteredOutliers.map((o, j) => (
+                              <li key={j} className="text-xs text-orange-700">
+                                {o.recorded_at.toLocaleDateString('sv-SE', {
+                                  day: 'numeric',
+                                  month: 'short',
+                                })}
+                                {' — '}
+                                {o.weight_kg.toFixed(1)} kg
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* Cluster details + weight change */}
+                  <div className="rounded-lg border border-neutral-200 overflow-hidden">
+                    <div className="grid grid-cols-2 divide-x divide-neutral-200">
+                      <div className="p-3">
+                        {data.startCluster.dates.length > 0 && (
+                          <p className="text-xs text-neutral-400 mb-0.5">
+                            {data.startCluster.dates[0].toLocaleDateString('sv-SE', {
                               day: 'numeric',
                               month: 'short',
                             })}
-                            {' — '}
-                            {o.weight_kg.toFixed(1)} kg
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                </div>
-              ))}
-
-              {/* Cluster details + weight change */}
-              <div className="rounded-lg border border-neutral-200 overflow-hidden">
-                <div className="grid grid-cols-2 divide-x divide-neutral-200">
-                  <div className="p-3">
-                    {data.startCluster.dates.length > 0 && (
-                      <p className="text-xs text-neutral-400 mb-0.5">
-                        {data.startCluster.dates[0].toLocaleDateString('sv-SE', {
-                          day: 'numeric',
-                          month: 'short',
-                        })}
-                        {' – '}
-                        {data.startCluster.dates[
-                          data.startCluster.dates.length - 1
-                        ].toLocaleDateString('sv-SE', { day: 'numeric', month: 'short' })}
-                      </p>
-                    )}
-                    <p className="text-base font-bold text-neutral-900">
-                      {data.startCluster.average.toFixed(1)} kg
-                    </p>
-                    <p className="text-xs text-neutral-400 mt-0.5">
-                      snitt av {data.startCluster.count} mätningar
-                    </p>
-                  </div>
-                  <div className="p-3">
-                    {data.endCluster.dates.length > 0 && (
-                      <p className="text-xs text-neutral-400 mb-0.5">
-                        {data.endCluster.dates[0].toLocaleDateString('sv-SE', {
-                          day: 'numeric',
-                          month: 'short',
-                        })}
-                        {' – '}
-                        {data.endCluster.dates[data.endCluster.dates.length - 1].toLocaleDateString(
-                          'sv-SE',
-                          { day: 'numeric', month: 'short' }
+                            {' – '}
+                            {data.startCluster.dates[
+                              data.startCluster.dates.length - 1
+                            ].toLocaleDateString('sv-SE', { day: 'numeric', month: 'short' })}
+                          </p>
                         )}
-                      </p>
+                        <p className="text-base font-bold text-neutral-900">
+                          {data.startCluster.average.toFixed(1)} kg
+                        </p>
+                        <p className="text-xs text-neutral-400 mt-0.5">
+                          snitt av {data.startCluster.count} mätningar
+                        </p>
+                      </div>
+                      <div className="p-3">
+                        {data.endCluster.dates.length > 0 && (
+                          <p className="text-xs text-neutral-400 mb-0.5">
+                            {data.endCluster.dates[0].toLocaleDateString('sv-SE', {
+                              day: 'numeric',
+                              month: 'short',
+                            })}
+                            {' – '}
+                            {data.endCluster.dates[
+                              data.endCluster.dates.length - 1
+                            ].toLocaleDateString('sv-SE', { day: 'numeric', month: 'short' })}
+                          </p>
+                        )}
+                        <p className="text-base font-bold text-neutral-900">
+                          {data.endCluster.average.toFixed(1)} kg
+                        </p>
+                        <p className="text-xs text-neutral-400 mt-0.5">
+                          snitt av {data.endCluster.count} mätningar
+                        </p>
+                      </div>
+                    </div>
+                    <div className="border-t border-neutral-200 p-3 flex items-center justify-between">
+                      <div className="flex items-center gap-1.5">
+                        {data.weightChangeKg > 0 ? (
+                          <TrendingUp className="h-4 w-4 text-orange-500" />
+                        ) : data.weightChangeKg < 0 ? (
+                          <TrendingDown className="h-4 w-4 text-blue-500" />
+                        ) : null}
+                        <span
+                          className={`text-sm font-semibold ${
+                            data.weightChangeKg > 0
+                              ? 'text-orange-600'
+                              : data.weightChangeKg < 0
+                                ? 'text-blue-600'
+                                : 'text-neutral-600'
+                          }`}
+                        >
+                          {data.weightChangeKg > 0 ? '+' : ''}
+                          {data.weightChangeKg.toFixed(2)} kg
+                        </span>
+                        <span className="text-xs text-neutral-400">
+                          över {Math.round(data.actualDays)} dagar
+                        </span>
+                      </div>
+                      <span className="text-xs text-neutral-500">
+                        {data.calorieSource === 'food_log'
+                          ? 'faktiskt intag'
+                          : data.calorieSource === 'blended'
+                            ? 'uppskattat intag'
+                            : 'målkalorier'}
+                        : {Math.round(data.averageCalories)} kcal/dag
+                      </span>
+                    </div>
+                    {data.isStableMaintenance && (
+                      <div className="border-t border-green-100 bg-green-50 px-3 py-2">
+                        <p className="text-xs text-green-700">
+                          Din vikt är stabil — ditt TDEE verkar stämma
+                        </p>
+                      </div>
                     )}
-                    <p className="text-base font-bold text-neutral-900">
-                      {data.endCluster.average.toFixed(1)} kg
-                    </p>
-                    <p className="text-xs text-neutral-400 mt-0.5">
-                      snitt av {data.endCluster.count} mätningar
-                    </p>
                   </div>
-                </div>
-                <div className="border-t border-neutral-200 p-3 flex items-center justify-between">
-                  <div className="flex items-center gap-1.5">
-                    {data.weightChangeKg > 0 ? (
-                      <TrendingUp className="h-4 w-4 text-orange-500" />
-                    ) : data.weightChangeKg < 0 ? (
-                      <TrendingDown className="h-4 w-4 text-blue-500" />
-                    ) : null}
-                    <span
-                      className={`text-sm font-semibold ${
-                        data.weightChangeKg > 0
-                          ? 'text-orange-600'
-                          : data.weightChangeKg < 0
-                            ? 'text-blue-600'
-                            : 'text-neutral-600'
-                      }`}
-                    >
-                      {data.weightChangeKg > 0 ? '+' : ''}
-                      {data.weightChangeKg.toFixed(2)} kg
-                    </span>
-                    <span className="text-xs text-neutral-400">
-                      över {Math.round(data.actualDays)} dagar
-                    </span>
-                  </div>
-                  <span className="text-xs text-neutral-500">
-                    {data.calorieSource === 'food_log'
-                      ? 'faktiskt intag'
-                      : data.calorieSource === 'blended'
-                        ? 'uppskattat intag'
-                        : 'målkalorier'}
-                    : {Math.round(data.averageCalories)} kcal/dag
-                  </span>
-                </div>
-                {data.isStableMaintenance && (
-                  <div className="border-t border-green-100 bg-green-50 px-3 py-2">
-                    <p className="text-xs text-green-700">
-                      Din vikt är stabil — ditt TDEE verkar stämma
-                    </p>
-                  </div>
-                )}
-              </div>
 
-              {/* TDEE comparison */}
-              <div className="rounded-lg border border-neutral-200 overflow-hidden">
-                <div className="grid grid-cols-3 divide-x divide-neutral-200">
-                  <div className="p-3">
-                    <p className="text-xs text-neutral-500 mb-1">Nuvarande</p>
-                    <p className="text-base font-bold text-neutral-700">
-                      {Math.round(data.currentTDEE)}
-                    </p>
-                    <p className="text-xs text-neutral-400">kcal</p>
+                  {/* TDEE comparison */}
+                  <div className="rounded-lg border border-neutral-200 overflow-hidden">
+                    <div className="grid grid-cols-3 divide-x divide-neutral-200">
+                      <div className="p-3">
+                        <p className="text-xs text-neutral-500 mb-1">Nuvarande</p>
+                        <p className="text-base font-bold text-neutral-700">
+                          {Math.round(data.currentTDEE)}
+                        </p>
+                        <p className="text-xs text-neutral-400">kcal</p>
+                      </div>
+                      <div className="p-3 bg-primary-50">
+                        <p className="text-xs text-neutral-500 mb-1">Kalibrerat</p>
+                        <p className="text-base font-bold text-primary-600">
+                          {Math.round(data.clampedTDEE)}
+                        </p>
+                        <p className="text-xs text-neutral-400">kcal</p>
+                      </div>
+                      <div className="p-3">
+                        <p className="text-xs text-neutral-500 mb-1">Skillnad</p>
+                        <p
+                          className={`text-base font-bold ${
+                            data.adjustmentPercent > 0
+                              ? 'text-orange-600'
+                              : data.adjustmentPercent < 0
+                                ? 'text-blue-600'
+                                : 'text-neutral-600'
+                          }`}
+                        >
+                          {data.adjustmentPercent > 0 ? '+' : ''}
+                          {Math.round(data.clampedTDEE - data.currentTDEE)}
+                        </p>
+                        <p className="text-xs text-neutral-400">
+                          {data.adjustmentPercent > 0 ? '+' : ''}
+                          {data.adjustmentPercent.toFixed(1)}%
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                  <div className="p-3 bg-primary-50">
-                    <p className="text-xs text-neutral-500 mb-1">Kalibrerat</p>
-                    <p className="text-base font-bold text-primary-600">
-                      {Math.round(data.clampedTDEE)}
-                    </p>
-                    <p className="text-xs text-neutral-400">kcal</p>
-                  </div>
-                  <div className="p-3">
-                    <p className="text-xs text-neutral-500 mb-1">Skillnad</p>
-                    <p
-                      className={`text-base font-bold ${
-                        data.adjustmentPercent > 0
-                          ? 'text-orange-600'
-                          : data.adjustmentPercent < 0
-                            ? 'text-blue-600'
-                            : 'text-neutral-600'
-                      }`}
-                    >
-                      {data.adjustmentPercent > 0 ? '+' : ''}
-                      {Math.round(data.clampedTDEE - data.currentTDEE)}
-                    </p>
-                    <p className="text-xs text-neutral-400">
-                      {data.adjustmentPercent > 0 ? '+' : ''}
-                      {data.adjustmentPercent.toFixed(1)}%
-                    </p>
-                  </div>
-                </div>
-              </div>
 
-              {/* Apply button or success state */}
-              {calibrationApplied ? (
-                <div className="p-4 rounded-lg bg-green-50 border border-green-200 text-center">
-                  <CheckCircle className="h-6 w-6 text-green-600 mx-auto mb-2" />
-                  <p className="text-sm font-medium text-green-800">
-                    TDEE kalibrerat till {Math.round(calibrationApplied)} kcal
-                  </p>
-                  <p className="text-xs text-green-600 mt-1">
-                    Ditt kaloriintervall har uppdaterats
-                  </p>
-                  {onClose && (
-                    <Button variant="outline" size="sm" onClick={onClose} className="mt-3">
-                      Stäng
+                  {/* Apply button or success state */}
+                  {calibrationApplied ? (
+                    <div className="p-4 rounded-lg bg-green-50 border border-green-200 text-center">
+                      <CheckCircle className="h-6 w-6 text-green-600 mx-auto mb-2" />
+                      <p className="text-sm font-medium text-green-800">
+                        TDEE kalibrerat till {Math.round(calibrationApplied)} kcal
+                      </p>
+                      <p className="text-xs text-green-600 mt-1">
+                        Ditt kaloriintervall har uppdaterats
+                      </p>
+                      {onClose && (
+                        <Button variant="outline" size="sm" onClick={onClose} className="mt-3">
+                          Stäng
+                        </Button>
+                      )}
+                    </div>
+                  ) : (
+                    <>
+                      <Button
+                        onClick={handleApplyCalibration}
+                        disabled={
+                          updateProfile.isPending ||
+                          createCalibrationHistory.isPending ||
+                          !hasNewDataSinceCalibration
+                        }
+                        className="w-full"
+                      >
+                        {updateProfile.isPending || createCalibrationHistory.isPending
+                          ? 'Sparar...'
+                          : 'Applicera kalibrerat TDEE'}
+                      </Button>
+                      {!hasNewDataSinceCalibration && (
+                        <div className="text-xs text-neutral-500 space-y-1 rounded-lg bg-neutral-50 border border-neutral-200 p-3">
+                          <p className="font-medium text-neutral-600">
+                            Ingen ny data sedan senaste kalibreringen
+                          </p>
+                          <p>
+                            Kalibreringen baseras på vikt- och matloggdata. För att undvika att
+                            samma dataset appliceras två gånger krävs minst ett av följande:
+                          </p>
+                          <ul className="mt-1 space-y-0.5 pl-3 list-disc">
+                            <li>
+                              <span
+                                className={
+                                  newDataGuard.newWeightCount > 0
+                                    ? 'text-green-600 font-medium'
+                                    : ''
+                                }
+                              >
+                                {newDataGuard.newWeightCount > 0
+                                  ? `${newDataGuard.newWeightCount} ny viktmätning${newDataGuard.newWeightCount > 1 ? 'ar' : ''} registrerad${newDataGuard.newWeightCount > 1 ? 'e' : ''} \u2713`
+                                  : 'Minst 1 ny viktmätning efter kalibreringsdatumet'}
+                              </span>
+                            </li>
+                            <li>
+                              <span
+                                className={
+                                  newDataGuard.newLogCount > 0 ? 'text-green-600 font-medium' : ''
+                                }
+                              >
+                                {newDataGuard.newLogCount > 0
+                                  ? `${newDataGuard.newLogCount} ny matloggdag${newDataGuard.newLogCount > 1 ? 'ar' : ''} registrerad${newDataGuard.newLogCount > 1 ? 'e' : ''} \u2713`
+                                  : 'Minst 1 ny matloggdag (över 800 kcal) efter kalibreringsdatumet'}
+                              </span>
+                            </li>
+                            <li>
+                              {newDataGuard.daysRemaining > 0
+                                ? `${newDataGuard.daysRemaining} dag${newDataGuard.daysRemaining > 1 ? 'ar' : ''} kvar tills ${MIN_DAYS_BETWEEN_CALIBRATIONS}-dagarsgränsen uppnås`
+                                : `${MIN_DAYS_BETWEEN_CALIBRATIONS} dagar sedan senaste kalibrering \u2713`}
+                            </li>
+                          </ul>
+                        </div>
+                      )}
+                    </>
+                  )}
+
+                  {/* Undo last calibration — always visible when available */}
+                  {canRevert && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleRevertCalibration}
+                      disabled={revertCalibration.isPending}
+                      className="w-full text-neutral-600"
+                    >
+                      <Undo2 className="h-3.5 w-3.5 mr-1.5" />
+                      {revertCalibration.isPending
+                        ? 'Ångrar...'
+                        : `Ångra senaste kalibrering (→ ${Math.round(lastCalibration.previous_tdee)} kcal)`}
                     </Button>
                   )}
                 </div>
-              ) : (
-                <>
-                  <Button
-                    onClick={handleApplyCalibration}
-                    disabled={
-                      updateProfile.isPending ||
-                      createCalibrationHistory.isPending ||
-                      !hasNewDataSinceCalibration
-                    }
-                    className="w-full"
-                  >
-                    {updateProfile.isPending || createCalibrationHistory.isPending
-                      ? 'Sparar...'
-                      : 'Applicera kalibrerat TDEE'}
-                  </Button>
-                  {!hasNewDataSinceCalibration && (
-                    <div className="text-xs text-neutral-500 space-y-1 rounded-lg bg-neutral-50 border border-neutral-200 p-3">
-                      <p className="font-medium text-neutral-600">
-                        Ingen ny data sedan senaste kalibreringen
-                      </p>
-                      <p>
-                        Kalibreringen baseras på vikt- och matloggdata. För att undvika att samma
-                        dataset appliceras två gånger krävs minst ett av följande:
-                      </p>
-                      <ul className="mt-1 space-y-0.5 pl-3 list-disc">
-                        <li>
-                          <span
-                            className={
-                              newDataGuard.newWeightCount > 0 ? 'text-green-600 font-medium' : ''
-                            }
-                          >
-                            {newDataGuard.newWeightCount > 0
-                              ? `${newDataGuard.newWeightCount} ny viktmätning${newDataGuard.newWeightCount > 1 ? 'ar' : ''} registrerad${newDataGuard.newWeightCount > 1 ? 'e' : ''} \u2713`
-                              : 'Minst 1 ny viktmätning efter kalibreringsdatumet'}
-                          </span>
-                        </li>
-                        <li>
-                          <span
-                            className={
-                              newDataGuard.newLogCount > 0 ? 'text-green-600 font-medium' : ''
-                            }
-                          >
-                            {newDataGuard.newLogCount > 0
-                              ? `${newDataGuard.newLogCount} ny matloggdag${newDataGuard.newLogCount > 1 ? 'ar' : ''} registrerad${newDataGuard.newLogCount > 1 ? 'e' : ''} \u2713`
-                              : 'Minst 1 ny matloggdag (över 800 kcal) efter kalibreringsdatumet'}
-                          </span>
-                        </li>
-                        <li>
-                          {newDataGuard.daysRemaining > 0
-                            ? `${newDataGuard.daysRemaining} dag${newDataGuard.daysRemaining > 1 ? 'ar' : ''} kvar tills ${MIN_DAYS_BETWEEN_CALIBRATIONS}-dagarsgränsen uppnås`
-                            : `${MIN_DAYS_BETWEEN_CALIBRATIONS} dagar sedan senaste kalibrering \u2713`}
-                        </li>
-                      </ul>
-                    </div>
-                  )}
-                </>
               )}
 
-              {/* Undo last calibration — always visible when available */}
-              {canRevert && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleRevertCalibration}
-                  disabled={revertCalibration.isPending}
-                  className="w-full text-neutral-600"
-                >
-                  <Undo2 className="h-3.5 w-3.5 mr-1.5" />
-                  {revertCalibration.isPending
-                    ? 'Ångrar...'
-                    : `Ångra senaste kalibrering (→ ${Math.round(lastCalibration.previous_tdee)} kcal)`}
-                </Button>
+              {/* No data state (not error, just null) */}
+              {!data && !isError && (
+                <div className="text-center py-6 text-sm text-neutral-500">
+                  <AlertCircle className="h-8 w-8 mx-auto mb-2 text-neutral-400" />
+                  <p>
+                    Behöver minst {MIN_DATA_POINTS[timePeriod]} viktmätningar under {timePeriod}{' '}
+                    dagar
+                  </p>
+                  <p className="mt-1">Logga fler viktmätningar för att aktivera kalibrering</p>
+                </div>
               )}
-            </div>
-          )}
-
-          {/* No data state (not error, just null) */}
-          {!data && !isError && (
-            <div className="text-center py-6 text-sm text-neutral-500">
-              <AlertCircle className="h-8 w-8 mx-auto mb-2 text-neutral-400" />
-              <p>
-                Behöver minst {MIN_DATA_POINTS[timePeriod]} viktmätningar under {timePeriod} dagar
-              </p>
-              <p className="mt-1">Logga fler viktmätningar för att aktivera kalibrering</p>
-            </div>
+            </>
           )}
         </CardContent>
       )}
