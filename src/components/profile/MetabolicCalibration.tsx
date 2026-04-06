@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import InfoCardWithModal from '@/components/InfoCardWithModal'
 import { Button } from '@/components/ui/button'
 import { Select } from '@/components/ui/select'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import {
   Scale,
   TrendingDown,
@@ -25,6 +26,7 @@ import {
   Blend,
   ChevronDown,
   RefreshCw,
+  Info,
 } from 'lucide-react'
 import { useState, useMemo, useCallback } from 'react'
 import {
@@ -868,7 +870,7 @@ export default function MetabolicCalibration({
                     {data.dataQuality && (
                       <div className="flex items-start gap-3 p-3">
                         <BarChart3 className="h-4 w-4 flex-shrink-0 mt-0.5 text-neutral-400" />
-                        <div>
+                        <div className="flex items-center gap-1.5">
                           <p
                             className={`text-sm font-medium ${
                               data.dataQuality.score >= 80
@@ -882,6 +884,45 @@ export default function MetabolicCalibration({
                           >
                             Datakvalitet: {data.dataQuality.label} ({data.dataQuality.score}/100)
                           </p>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <button
+                                type="button"
+                                className="text-neutral-400 hover:text-neutral-600"
+                              >
+                                <Info className="h-3.5 w-3.5" />
+                              </button>
+                            </TooltipTrigger>
+                            <TooltipContent
+                              side="bottom"
+                              className="max-w-xs text-xs space-y-2 p-3"
+                            >
+                              <p className="font-medium">Hur poängen beräknas</p>
+                              <table className="w-full text-xs">
+                                <tbody>
+                                  <tr>
+                                    <td className="pr-2 text-neutral-400">Matlogg (40%)</td>
+                                    <td>{Math.round(data.dataQuality.factors.logScore)}/100</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="pr-2 text-neutral-400">Mätfrekvens (30%)</td>
+                                    <td>{Math.round(data.dataQuality.factors.freqScore)}/100</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="pr-2 text-neutral-400">Tidskonsistens (15%)</td>
+                                    <td>{Math.round(data.dataQuality.factors.timingScore)}/100</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="pr-2 text-neutral-400">Klusterstorlek (15%)</td>
+                                    <td>{Math.round(data.dataQuality.factors.clusterScore)}/100</td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                              <p className="text-neutral-400 pt-1 border-t border-neutral-200">
+                                ≥80 Utmärkt · ≥60 Bra · ≥40 Tillräcklig · &lt;40 Begränsad
+                              </p>
+                            </TooltipContent>
+                          </Tooltip>
                         </div>
                       </div>
                     )}
