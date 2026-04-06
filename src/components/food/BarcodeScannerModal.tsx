@@ -60,8 +60,10 @@ export function BarcodeScannerModal({
   onPreliminaryDetect,
   onClose,
 }: BarcodeScannerModalProps) {
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const videoRef = useRef<HTMLVideoElement | null>(null)
+  const canvasRef = useRef<HTMLCanvasElement | null>(null)
+  // Ref to the active stream so the callback ref can access it without stale closure
+  const streamRef = useRef<MediaStream | null>(null)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const stabilizeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const detectedRef = useRef(false)
@@ -231,8 +233,46 @@ export function BarcodeScannerModal({
     intervalRef.current = setInterval(runTick, currentIntervalRef.current)
   }, [stopDecoding])
 
+  const attachStream = useCallback(
+    (s: MediaStream, video: HTMLVideoElement) => {
+      video.srcObject = s
+      video.play().catch(() => {})
+
+      const track = s.getVideoTracks()[0]
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const caps = track ? (track as any).getCapabilities?.() : null
+      dispatch({ type: 'RESET', torchSupported: !!caps?.torch })
+
+      stabilizeTimerRef.current = setTimeout(() => {
+        startDecoding()
+      }, 800)
+    },
+    [startDecoding]
+  )
+
+  // Callback ref for <video> — fires when the element mounts into the Radix portal
+  const videoCallbackRef = useCallback(
+    (node: HTMLVideoElement | null) => {
+      videoRef.current = node
+      if (node && streamRef.current) {
+        attachStream(streamRef.current, node)
+      }
+    },
+    [attachStream]
+  )
+
+  // Keep streamRef in sync so the video callback ref can access it
   useEffect(() => {
-    if (!stream) return
+    streamRef.current = stream
+  }, [stream])
+
+  // Called when stream changes (new stream or null)
+  useEffect(() => {
+    if (!stream) {
+      stopDecoding()
+      if (videoRef.current) videoRef.current.srcObject = null
+      return
+    }
 
     detectedRef.current = false
     lastCodeRef.current = null
@@ -240,40 +280,16 @@ export function BarcodeScannerModal({
     brightnessSampleCountRef.current = 0
     missedFramesRef.current = 0
 
-    // Radix Dialog mounts the portal asynchronously — videoRef may not be
-    // populated yet when this effect fires. Poll briefly until the video
-    // element is available, then start the stream.
-    let cancelled = false
-    const setup = () => {
-      const video = videoRef.current
-      if (!video) {
-        if (!cancelled) setTimeout(setup, 30)
-        return
-      }
-
-      video.srcObject = stream
-      video.play().catch(() => {})
-
-      // Detect torch support and reset all visual state
-      const track = stream.getVideoTracks()[0]
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const caps = track ? (track as any).getCapabilities?.() : null
-      dispatch({ type: 'RESET', torchSupported: !!caps?.torch })
-
-      // Wait for autofocus to stabilize before scanning
-      stabilizeTimerRef.current = setTimeout(() => {
-        startDecoding()
-      }, 800)
+    // If video element already mounted (e.g. stream changed while open), start immediately
+    if (videoRef.current) {
+      attachStream(stream, videoRef.current)
     }
-
-    setup()
+    // Otherwise videoCallbackRef will fire when the video element mounts
 
     return () => {
-      cancelled = true
       stopDecoding()
-      if (videoRef.current) videoRef.current.srcObject = null
     }
-  }, [stream, startDecoding, stopDecoding])
+  }, [stream, stopDecoding, attachStream])
 
   const { pendingCode, isStabilizing, isTooKark, torchOn, torchSupported } = state
 
@@ -315,7 +331,12 @@ export function BarcodeScannerModal({
           {/* Camera view */}
           <div className="flex-1 flex flex-col items-center justify-center px-4 gap-4">
             <div className="relative w-full max-w-md aspect-[3/4] rounded-lg overflow-hidden">
-              <video ref={videoRef} className="w-full h-full object-cover" playsInline muted />
+              <video
+                ref={videoCallbackRef}
+                className="w-full h-full object-cover"
+                playsInline
+                muted
+              />
               <canvas ref={canvasRef} className="hidden" />
 
               {/* Stabilizing overlay */}
