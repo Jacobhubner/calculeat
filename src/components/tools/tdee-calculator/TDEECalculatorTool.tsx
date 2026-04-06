@@ -770,6 +770,7 @@ export default function TDEECalculatorTool() {
                       data: {
                         tdee: data.tdee,
                         ...(data.bodyFat !== undefined && { body_fat_percentage: data.bodyFat }),
+                        bmr_formula: null,
                         tdee_source: data.tdee_source,
                         tdee_calculated_at: data.tdee_calculated_at,
                         tdee_calculation_snapshot: data.tdee_calculation_snapshot,
