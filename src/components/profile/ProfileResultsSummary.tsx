@@ -15,14 +15,9 @@ import { calculateAge } from '@/lib/calculations/helpers'
 interface ProfileResultsSummaryProps {
   profile: Profile | null
   onTDEEEdit?: (newTdee: number) => void
-  onTDEEEditCancel?: () => void
 }
 
-export default function ProfileResultsSummary({
-  profile,
-  onTDEEEdit,
-  onTDEEEditCancel,
-}: ProfileResultsSummaryProps) {
+export default function ProfileResultsSummary({ profile, onTDEEEdit }: ProfileResultsSummaryProps) {
   const { t } = useTranslation('profile')
   const [editing, setEditing] = useState(false)
   const [editValue, setEditValue] = useState('')
@@ -145,10 +140,7 @@ export default function ProfileResultsSummary({
                     onTDEEEdit?.(val)
                   }
                 }}
-                onBlur={() => {
-                  setEditing(false)
-                  onTDEEEditCancel?.()
-                }}
+                onBlur={() => setEditing(false)}
                 className="w-20 text-right text-sm font-semibold border border-neutral-300 rounded px-1 py-0.5"
                 autoFocus
                 min={500}
