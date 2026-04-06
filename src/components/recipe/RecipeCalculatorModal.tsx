@@ -62,6 +62,37 @@ function generateId(): string {
   return Math.random().toString(36).substring(2, 9)
 }
 
+// Uncontrolled textarea to prevent re-rendering the entire modal on every keystroke.
+// Syncs value to parent only on blur so the heavy ingredient list is not touched during typing.
+const InstructionsTextarea = React.memo(function InstructionsTextarea({
+  value,
+  onChange,
+  placeholder,
+}: {
+  value: string
+  onChange: (v: string) => void
+  placeholder: string
+}) {
+  const ref = useRef<HTMLTextAreaElement>(null)
+  // Keep internal value in sync when parent resets (e.g. modal close/open)
+  useEffect(() => {
+    if (ref.current && ref.current.value !== value) {
+      ref.current.value = value
+    }
+  }, [value])
+  return (
+    <textarea
+      ref={ref}
+      id="recipe-instructions"
+      defaultValue={value}
+      onBlur={e => onChange(e.target.value)}
+      placeholder={placeholder}
+      rows={5}
+      className="w-full rounded-xl border border-neutral-300 p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+    />
+  )
+})
+
 const SortableIngredientRow = React.memo(function SortableIngredientRow(
   props: React.ComponentProps<typeof IngredientRow>
 ) {
@@ -662,13 +693,10 @@ export function RecipeCalculatorModal({
                     {/* Instruktioner */}
                     <div className="space-y-2">
                       <Label htmlFor="recipe-instructions">{t('modal.instructionsLabel')}</Label>
-                      <textarea
-                        id="recipe-instructions"
+                      <InstructionsTextarea
                         value={instructions}
-                        onChange={e => setInstructions(e.target.value)}
+                        onChange={setInstructions}
                         placeholder={t('modal.instructionsPlaceholder')}
-                        rows={5}
-                        className="w-full rounded-xl border border-neutral-300 p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                       />
                     </div>
 

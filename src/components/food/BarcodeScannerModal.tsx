@@ -1,5 +1,5 @@
 import { useEffect, useRef, useCallback, useReducer } from 'react'
-import { createPortal } from 'react-dom'
+import * as DialogPrimitive from '@radix-ui/react-dialog'
 import Quagga from '@ericblade/quagga2'
 import { Button } from '@/components/ui/button'
 import { X, Camera, Flashlight } from 'lucide-react'
@@ -263,88 +263,98 @@ export function BarcodeScannerModal({
     }
   }, [stream, startDecoding, stopDecoding])
 
-  if (!stream) return null
-
   const { pendingCode, isStabilizing, isTooKark, torchOn, torchSupported } = state
 
-  return createPortal(
-    <div className="fixed inset-0 bg-black flex flex-col" style={{ zIndex: 9999 }}>
-      {/* Header */}
-      <div className="flex items-center justify-between p-4 text-white shrink-0">
-        <div className="flex items-center gap-2">
-          <Camera className="h-5 w-5" />
-          <span className="font-semibold">Skanna streckkod</span>
-        </div>
-        <div className="flex items-center gap-2">
-          {torchSupported && (
-            <button
-              onClick={handleTorchToggle}
-              className={`p-2 rounded-full transition-colors ${torchOn ? 'bg-yellow-400/30 text-yellow-300' : 'hover:bg-white/20 text-white/70'}`}
-              aria-label={torchOn ? 'Stäng av ficklampa' : 'Slå på ficklampa'}
-            >
-              <Flashlight className="h-5 w-5" />
-            </button>
-          )}
-          <button onClick={onClose} className="p-2 rounded-full hover:bg-white/20">
-            <X className="h-5 w-5 text-white" />
-          </button>
-        </div>
-      </div>
-
-      {/* Camera view */}
-      <div className="flex-1 flex flex-col items-center justify-center px-4 gap-4">
-        <div className="relative w-full max-w-md aspect-[3/4] rounded-lg overflow-hidden">
-          <video ref={videoRef} className="w-full h-full object-cover" playsInline muted />
-          <canvas ref={canvasRef} className="hidden" />
-
-          {/* Stabilizing overlay */}
-          {isStabilizing && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-              <p className="text-white text-sm font-medium">Fokuserar kameran...</p>
-            </div>
-          )}
-
-          {/* Scan guide */}
-          {!isStabilizing && (
-            <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
-              <div
-                className={`relative w-4/5 h-1/5 rounded-lg transition-colors duration-200 ${
-                  pendingCode ? 'border-4 border-yellow-400' : 'border-2 border-white/70'
-                }`}
-              >
-                <div className="absolute -top-0.5 -left-0.5 w-5 h-5 border-t-4 border-l-4 border-white rounded-tl" />
-                <div className="absolute -top-0.5 -right-0.5 w-5 h-5 border-t-4 border-r-4 border-white rounded-tr" />
-                <div className="absolute -bottom-0.5 -left-0.5 w-5 h-5 border-b-4 border-l-4 border-white rounded-bl" />
-                <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 border-b-4 border-r-4 border-white rounded-br" />
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Status text */}
-        <p className="text-white/70 text-sm text-center">
-          {isStabilizing
-            ? '\u00a0'
-            : isTooKark
-              ? '⚠️ För mörkt — slå på ficklampan eller gå till bättre ljus'
-              : pendingCode
-                ? '✓ Bekräftar...'
-                : 'Håll streckkoden inom ramen'}
-        </p>
-      </div>
-
-      {/* Footer */}
-      <div className="p-4 flex justify-center shrink-0">
-        <Button
-          variant="outline"
-          className="bg-white/10 text-white border-white/30 hover:bg-white/20"
-          onClick={onClose}
+  // Use a real Radix Dialog so focus management and aria-hidden are handled correctly.
+  // createPortal(…, document.body) caused Radix's aria-hidden to block touch events
+  // on the AddFoodItemModal fields after the scanner closed on mobile.
+  return (
+    <DialogPrimitive.Root open={!!stream}>
+      <DialogPrimitive.Portal>
+        <DialogPrimitive.Overlay className="fixed inset-0 z-[9998] bg-black" />
+        <DialogPrimitive.Content
+          className="fixed inset-0 z-[9999] bg-black flex flex-col focus:outline-none"
+          aria-label="Skanna streckkod"
+          onOpenAutoFocus={e => e.preventDefault()}
+          onCloseAutoFocus={e => e.preventDefault()}
         >
-          <X className="h-4 w-4 mr-1.5" />
-          Avbryt
-        </Button>
-      </div>
-    </div>,
-    document.body
+          {/* Header */}
+          <div className="flex items-center justify-between p-4 text-white shrink-0">
+            <div className="flex items-center gap-2">
+              <Camera className="h-5 w-5" />
+              <span className="font-semibold">Skanna streckkod</span>
+            </div>
+            <div className="flex items-center gap-2">
+              {torchSupported && (
+                <button
+                  onClick={handleTorchToggle}
+                  className={`p-2 rounded-full transition-colors ${torchOn ? 'bg-yellow-400/30 text-yellow-300' : 'hover:bg-white/20 text-white/70'}`}
+                  aria-label={torchOn ? 'Stäng av ficklampa' : 'Slå på ficklampa'}
+                >
+                  <Flashlight className="h-5 w-5" />
+                </button>
+              )}
+              <button onClick={onClose} className="p-2 rounded-full hover:bg-white/20">
+                <X className="h-5 w-5 text-white" />
+              </button>
+            </div>
+          </div>
+
+          {/* Camera view */}
+          <div className="flex-1 flex flex-col items-center justify-center px-4 gap-4">
+            <div className="relative w-full max-w-md aspect-[3/4] rounded-lg overflow-hidden">
+              <video ref={videoRef} className="w-full h-full object-cover" playsInline muted />
+              <canvas ref={canvasRef} className="hidden" />
+
+              {/* Stabilizing overlay */}
+              {isStabilizing && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                  <p className="text-white text-sm font-medium">Fokuserar kameran...</p>
+                </div>
+              )}
+
+              {/* Scan guide */}
+              {!isStabilizing && (
+                <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+                  <div
+                    className={`relative w-4/5 h-1/5 rounded-lg transition-colors duration-200 ${
+                      pendingCode ? 'border-4 border-yellow-400' : 'border-2 border-white/70'
+                    }`}
+                  >
+                    <div className="absolute -top-0.5 -left-0.5 w-5 h-5 border-t-4 border-l-4 border-white rounded-tl" />
+                    <div className="absolute -top-0.5 -right-0.5 w-5 h-5 border-t-4 border-r-4 border-white rounded-tr" />
+                    <div className="absolute -bottom-0.5 -left-0.5 w-5 h-5 border-b-4 border-l-4 border-white rounded-bl" />
+                    <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 border-b-4 border-r-4 border-white rounded-br" />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Status text */}
+            <p className="text-white/70 text-sm text-center">
+              {isStabilizing
+                ? '\u00a0'
+                : isTooKark
+                  ? '⚠️ För mörkt — slå på ficklampan eller gå till bättre ljus'
+                  : pendingCode
+                    ? '✓ Bekräftar...'
+                    : 'Håll streckkoden inom ramen'}
+            </p>
+          </div>
+
+          {/* Footer */}
+          <div className="p-4 flex justify-center shrink-0">
+            <Button
+              variant="outline"
+              className="bg-white/10 text-white border-white/30 hover:bg-white/20"
+              onClick={onClose}
+            >
+              <X className="h-4 w-4 mr-1.5" />
+              Avbryt
+            </Button>
+          </div>
+        </DialogPrimitive.Content>
+      </DialogPrimitive.Portal>
+    </DialogPrimitive.Root>
   )
 }
