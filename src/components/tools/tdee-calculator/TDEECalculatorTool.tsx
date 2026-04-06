@@ -760,13 +760,16 @@ export default function TDEECalculatorTool() {
                 submitLabel={t('tdeeCalc.manual.submitLabel')}
                 onTDEEChange={async data => {
                   if (!activeProfile) return
+                  if (activeProfile.tdee && !window.confirm(t('tdeeCalc.toast.overwriteConfirm'))) {
+                    return
+                  }
                   setIsSaving(true)
                   try {
                     await updateProfile.mutateAsync({
                       profileId: activeProfile.id,
                       data: {
                         tdee: data.tdee,
-                        body_fat_percentage: data.bodyFat,
+                        ...(data.bodyFat !== undefined && { body_fat_percentage: data.bodyFat }),
                         tdee_source: data.tdee_source,
                         tdee_calculated_at: data.tdee_calculated_at,
                         tdee_calculation_snapshot: data.tdee_calculation_snapshot,
