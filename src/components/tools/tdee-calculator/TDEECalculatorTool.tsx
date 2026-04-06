@@ -306,13 +306,13 @@ export default function TDEECalculatorTool() {
           custom_pal: customPAL ? parseFloat(customPAL) : undefined,
           // Beräkna din aktivitetsnivå fields
           training_activity_id: trainingActivityId || undefined,
-          training_days_per_week: trainingDaysPerWeek || undefined,
-          training_minutes_per_session: trainingMinutesPerSession || undefined,
+          training_days_per_week: Number(trainingDaysPerWeek) || undefined,
+          training_minutes_per_session: Number(trainingMinutesPerSession) || undefined,
           walking_activity_id: walkingActivityId || undefined,
-          steps_per_day: stepsPerDay || undefined,
-          hours_standing_per_day: hoursStandingPerDay || undefined,
+          steps_per_day: Number(stepsPerDay) || undefined,
+          hours_standing_per_day: Number(hoursStandingPerDay) || undefined,
           household_activity_id: householdActivityId || undefined,
-          household_hours_per_day: householdHoursPerDay || undefined,
+          household_hours_per_day: Number(householdHoursPerDay) || undefined,
           // Set weight_kg (initial_weight_kg is no longer used - weight is tracked via WeightTracker)
           weight_kg: weightNum,
           // Only overwrite body_fat_percentage if the user explicitly provided a value.
