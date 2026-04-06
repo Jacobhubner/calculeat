@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import type { TFunction } from 'i18next'
 
 interface MacroEntry {
   currentG: number
@@ -23,7 +24,7 @@ function gramStatusText(
   currentG: number,
   minG: number,
   maxG: number,
-  t: (key: string, opts?: object) => string
+  t: TFunction<'today'>
 ): string {
   const c = Math.round(currentG)
   const mn = Math.round(minG)
@@ -34,7 +35,7 @@ function gramStatusText(
   return t('macroBar.statusWithin', { c, mn, mx, diff: mx - c })
 }
 
-function getMacroConfig(t: (key: string) => string) {
+function getMacroConfig(t: TFunction<'today'>) {
   return [
     { key: 'fat' as const, label: t('macroBar.fat'), color: '#f5c518' },
     { key: 'carbs' as const, label: t('macroBar.carbs'), color: '#fb923c' },

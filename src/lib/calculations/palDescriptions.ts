@@ -11,7 +11,12 @@ export interface PALSystemDescription {
   name: string
   subtitle?: string
   description: string
-  descriptionBlocks?: ({ type: 'text'; text: string } | { type: 'formula'; text: string })[]
+  descriptionBlocks?: (
+    | { type: 'text'; text: string }
+    | { type: 'formula'; text: string }
+    | { type: 'bullets'; items: string[] }
+    | { type: 'image'; src: string; alt: string }
+  )[]
   pros: string[]
   cons: string[]
   bestFor: string[]

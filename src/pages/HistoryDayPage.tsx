@@ -403,11 +403,12 @@ export default function HistoryDayPage() {
                             <div className="flex items-center gap-2">
                               <div className="text-right">
                                 <div className="font-semibold">
-                                  {Math.round(item.calories)} kcal
+                                  {Math.round(item.calories ?? 0)} kcal
                                 </div>
                                 <div className="text-xs text-neutral-600">
-                                  F: {Math.round(item.fat_g)}g · K: {Math.round(item.carb_g)}g · P:{' '}
-                                  {Math.round(item.protein_g)}g
+                                  F: {Math.round(item.fat_g ?? 0)}g · K:{' '}
+                                  {Math.round(item.carb_g ?? 0)}g · P:{' '}
+                                  {Math.round(item.protein_g ?? 0)}g
                                 </div>
                               </div>
                               {isEditing && (

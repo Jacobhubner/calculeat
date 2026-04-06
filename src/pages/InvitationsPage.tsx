@@ -135,7 +135,7 @@ function InvitationCard({ invitation }: { invitation: PendingInvitation }) {
       )}
       {!isExpiringSoon && (
         <p className="text-xs text-neutral-400">
-          {t('invitations.sent')}{' '}
+          {(t as (key: string) => string)('invitations.sent')}{' '}
           {formatDistanceToNow(parseISO(invitation.created_at), { addSuffix: true, locale: sv })}
         </p>
       )}

@@ -642,7 +642,6 @@ export default function FoodItemsPage() {
     setDebouncedSearch('')
     setSortBy('name')
     setSortDirection('asc')
-    setResetStep(0)
   }
 
   const isMina = activeTab === 'mina'

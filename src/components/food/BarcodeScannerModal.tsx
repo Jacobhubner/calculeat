@@ -186,7 +186,7 @@ export function BarcodeScannerModal({
           const errors: number[] = (result?.codeResult?.decodedCodes ?? [])
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             .map((c: any) => c.error as number | undefined)
-            .filter((e): e is number => e != null)
+            .filter((e: number | undefined): e is number => e != null)
           const avgError =
             errors.length > 0
               ? errors.reduce((a: number, b: number) => a + b, 0) / errors.length

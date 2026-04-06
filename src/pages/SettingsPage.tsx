@@ -37,7 +37,11 @@ type CompletionMode = 'manual' | 'auto'
 type OpenEditor = 'username' | 'email' | 'password' | null
 
 // Password strength helper — labels injected at call site via t()
-function getPasswordStrengthMeta(password: string): { level: string; color: string; width: string } {
+function getPasswordStrengthMeta(password: string): {
+  level: string
+  color: string
+  width: string
+} {
   if (password.length === 0) return { level: '', color: '', width: '0%' }
   if (password.length < 6) return { level: 'tooShort', color: 'bg-error-500', width: '25%' }
   if (password.length < 10) return { level: 'weak', color: 'bg-warning-500', width: '50%' }
@@ -124,8 +128,10 @@ export default function SettingsPage() {
 
   const tAny = t as (key: string) => string
   const passwordStrengthMeta = getPasswordStrengthMeta(passwordInput)
-  const passwordStrengthLabel = passwordStrengthMeta.level
-    ? t(`settings.passwordStrength${passwordStrengthMeta.level.charAt(0).toUpperCase()}${passwordStrengthMeta.level.slice(1)}` as Parameters<typeof t>[0])
+  const passwordStrengthLabel: string = passwordStrengthMeta.level
+    ? tAny(
+        `settings.passwordStrength${passwordStrengthMeta.level.charAt(0).toUpperCase()}${passwordStrengthMeta.level.slice(1)}`
+      )
     : ''
 
   // Open an inline editor (closes all others)
@@ -244,11 +250,7 @@ export default function SettingsPage() {
   const handleCompletionModeChange = (mode: CompletionMode) => {
     setCompletionMode(mode)
     localStorage.setItem('day-completion-mode', mode)
-    toast.success(
-      mode === 'auto'
-        ? t('settings.toastAuto')
-        : t('settings.toastManual')
-    )
+    toast.success(mode === 'auto' ? t('settings.toastAuto') : t('settings.toastManual'))
   }
 
   // Delete account
@@ -292,7 +294,9 @@ export default function SettingsPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <p className="text-sm font-medium text-neutral-900 mb-3">{t('settings.dayCompletion')}</p>
+              <p className="text-sm font-medium text-neutral-900 mb-3">
+                {t('settings.dayCompletion')}
+              </p>
               <div className="space-y-2">
                 <label
                   className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
@@ -310,10 +314,10 @@ export default function SettingsPage() {
                     className="mt-0.5 accent-primary-600"
                   />
                   <div>
-                    <span className="text-sm font-medium text-neutral-900">{t('settings.manual')}</span>
-                    <p className="text-xs text-neutral-500 mt-0.5">
-                      {t('settings.manualDesc')}
-                    </p>
+                    <span className="text-sm font-medium text-neutral-900">
+                      {t('settings.manual')}
+                    </span>
+                    <p className="text-xs text-neutral-500 mt-0.5">{t('settings.manualDesc')}</p>
                   </div>
                 </label>
                 <label
@@ -332,10 +336,10 @@ export default function SettingsPage() {
                     className="mt-0.5 accent-primary-600"
                   />
                   <div>
-                    <span className="text-sm font-medium text-neutral-900">{t('settings.auto')}</span>
-                    <p className="text-xs text-neutral-500 mt-0.5">
-                      {t('settings.autoDesc')}
-                    </p>
+                    <span className="text-sm font-medium text-neutral-900">
+                      {t('settings.auto')}
+                    </span>
+                    <p className="text-xs text-neutral-500 mt-0.5">{t('settings.autoDesc')}</p>
                   </div>
                 </label>
               </div>
@@ -521,9 +525,7 @@ export default function SettingsPage() {
                       <X className="h-4 w-4" />
                     </button>
                   </div>
-                  <p className="text-xs text-neutral-400">
-                    {t('settings.usernameHint')}
-                  </p>
+                  <p className="text-xs text-neutral-400">{t('settings.usernameHint')}</p>
                 </div>
               ) : (
                 <div className="flex items-center justify-between">
@@ -555,7 +557,8 @@ export default function SettingsPage() {
                   </label>
                   {emailPending ? (
                     <div className="text-sm text-success-700 bg-success-50 border border-success-200 rounded-lg px-3 py-2">
-                      {t('settings.emailConfirmNotice')} <strong>{emailInput}</strong>. {t('settings.emailConfirmAction')}
+                      {t('settings.emailConfirmNotice')} <strong>{emailInput}</strong>.{' '}
+                      {t('settings.emailConfirmAction')}
                     </div>
                   ) : (
                     <div className="flex gap-2">
@@ -591,9 +594,7 @@ export default function SettingsPage() {
                     </div>
                   )}
                   {!emailPending && (
-                    <p className="text-xs text-neutral-400">
-                      {t('settings.emailHint')}
-                    </p>
+                    <p className="text-xs text-neutral-400">{t('settings.emailHint')}</p>
                   )}
                   {emailPending && (
                     <button
@@ -801,9 +802,7 @@ export default function SettingsPage() {
             <div className="rounded-lg border-2 border-error-200 bg-error-50/50 p-4 space-y-3">
               {deleteStep === 0 && (
                 <>
-                  <p className="text-sm text-neutral-700">
-                    {t('settings.deleteAccountWarning')}
-                  </p>
+                  <p className="text-sm text-neutral-700">{t('settings.deleteAccountWarning')}</p>
                   <button
                     onClick={() => setDeleteStep(1)}
                     className="px-4 py-2 text-sm font-medium text-error-700 bg-error-100 hover:bg-error-200 rounded-lg transition-colors"

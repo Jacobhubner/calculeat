@@ -107,10 +107,10 @@ export default function ProfileResultsSummary({ profile, onTDEEEdit }: ProfileRe
               <Flame className="h-4 w-4 text-orange-500" />
               <div>
                 <p className="text-sm font-medium text-neutral-700">
-                  {getMetabolicRateLabel(bmrFormula)}
+                  {getMetabolicRateLabel(bmrFormula!)}
                 </p>
                 <p className="text-xs text-neutral-500">{t('results.basalMetabolism')}</p>
-                <p className="text-xs text-neutral-400">{getFormulaDisplayName(bmrFormula)}</p>
+                <p className="text-xs text-neutral-400">{getFormulaDisplayName(bmrFormula!)}</p>
               </div>
             </div>
             <p className="text-sm font-semibold text-neutral-900 whitespace-nowrap">

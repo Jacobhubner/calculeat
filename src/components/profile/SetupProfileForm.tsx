@@ -65,9 +65,7 @@ export default function SetupProfileForm({ onSave, isSaving }: SetupProfileFormP
           <User className="h-5 w-5 text-primary-600" />
           {t('setup.title')}
         </CardTitle>
-        <p className="text-sm text-neutral-500 mt-1">
-          {t('setup.description')}
-        </p>
+        <p className="text-sm text-neutral-500 mt-1">{t('setup.description')}</p>
       </CardHeader>
       <CardContent className="space-y-5">
         {/* Födelsedatum */}
@@ -94,7 +92,7 @@ export default function SetupProfileForm({ onSave, isSaving }: SetupProfileFormP
               <option value="">{t('birthDate.month')}</option>
               {Array.from({ length: 12 }, (_, i) => i + 1).map(i => (
                 <option key={i} value={i}>
-                  {t(`months.${i}` as Parameters<typeof t>[0])}
+                  {(t as (key: string) => string)(`months.${i}`)}
                 </option>
               ))}
             </select>
@@ -144,7 +142,9 @@ export default function SetupProfileForm({ onSave, isSaving }: SetupProfileFormP
 
         {/* Längd */}
         <div>
-          <label className="block text-sm font-medium text-neutral-700 mb-2">{t('fields.height')}</label>
+          <label className="block text-sm font-medium text-neutral-700 mb-2">
+            {t('fields.height')}
+          </label>
           <input
             type="number"
             value={heightString}
@@ -158,7 +158,9 @@ export default function SetupProfileForm({ onSave, isSaving }: SetupProfileFormP
 
         {/* Vikt */}
         <div>
-          <label className="block text-sm font-medium text-neutral-700 mb-2">{t('fields.weight')}</label>
+          <label className="block text-sm font-medium text-neutral-700 mb-2">
+            {t('fields.weight')}
+          </label>
           <input
             type="number"
             value={weightString}

@@ -583,7 +583,9 @@ export default function DashboardPage() {
                           </p>
                           {calculations.ffmiCategory && (
                             <p className="text-sm font-medium text-neutral-600">
-                              {t(`insights.ffmiCategory.${calculations.ffmiCategory}`)}
+                              {(t as (key: string) => string)(
+                                `insights.ffmiCategory.${calculations.ffmiCategory}`
+                              )}
                             </p>
                           )}
                         </div>
