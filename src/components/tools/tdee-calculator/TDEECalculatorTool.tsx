@@ -25,7 +25,6 @@ import TDEEContent from '@/components/info/TDEEContent'
 import LBMvsFFMContent from '@/components/info/LBMvsFFMContent'
 import { translatePALSystem } from '@/lib/translations'
 import ComparisonTab from './ComparisonTab'
-import ManualTDEEEntry from '@/components/profile/ManualTDEEEntry'
 
 export default function TDEECalculatorTool() {
   const navigate = useNavigate()
@@ -746,50 +745,6 @@ export default function TDEECalculatorTool() {
               </CardContent>
             </Card>
           )}
-
-          {/* Manual TDEE Entry */}
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('tdeeCalc.manual.title')}</CardTitle>
-              <CardDescription>{t('tdeeCalc.manual.description')}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ManualTDEEEntry
-                showBodyFat={false}
-                standalone={false}
-                submitLabel={t('tdeeCalc.manual.submitLabel')}
-                onTDEEChange={async data => {
-                  if (!activeProfile) return
-                  if (activeProfile.tdee && !window.confirm(t('tdeeCalc.toast.overwriteConfirm'))) {
-                    return
-                  }
-                  setIsSaving(true)
-                  try {
-                    await updateProfile.mutateAsync({
-                      profileId: activeProfile.id,
-                      data: {
-                        tdee: data.tdee,
-                        ...(data.bodyFat !== undefined && { body_fat_percentage: data.bodyFat }),
-                        bmr_formula: null,
-                        tdee_source: data.tdee_source,
-                        tdee_calculated_at: data.tdee_calculated_at,
-                        tdee_calculation_snapshot: data.tdee_calculation_snapshot,
-                        calorie_goal: data.calorie_goal,
-                        calories_min: data.calories_min,
-                        calories_max: data.calories_max,
-                      },
-                    })
-                    toast.success(t('tdeeCalc.toast.saved'))
-                    setTimeout(() => navigate('/app/profile'), 1000)
-                  } catch {
-                    toast.error(t('tdeeCalc.toast.saveFailed'))
-                  } finally {
-                    setIsSaving(false)
-                  }
-                }}
-              />
-            </CardContent>
-          </Card>
 
           {/* Modals */}
           {bmrFormula && (

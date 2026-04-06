@@ -637,7 +637,33 @@ export default function ProfilePage() {
             )}
 
             {/* Results Summary - Show BMR, TDEE, Calorie Range */}
-            <ProfileResultsSummary profile={mergedProfile} />
+            <ProfileResultsSummary
+              profile={mergedProfile}
+              onTDEEEdit={newTdee => {
+                if (
+                  activeProfile?.tdee &&
+                  !window.confirm(
+                    'Du har redan ett TDEE-värde sparat. Vill du skriva över det med det nya värdet?'
+                  )
+                ) {
+                  return
+                }
+                setPendingChanges(prev => ({
+                  ...prev,
+                  tdee: newTdee,
+                  bmr_formula: null,
+                  tdee_source: 'manual',
+                  tdee_calculated_at: new Date().toISOString(),
+                  tdee_calculation_snapshot: {
+                    calculated_tdee: newTdee,
+                    note: 'Manuellt angiven TDEE',
+                  },
+                  calorie_goal: activeProfile?.calorie_goal ?? 'Maintain weight',
+                  calories_min: newTdee * 0.97,
+                  calories_max: newTdee * 1.03,
+                }))
+              }}
+            />
 
             {/* Maximal fettmetabolism - Show max fat metabolism */}
             <MaxFatMetabolismCard profile={mergedProfile} />

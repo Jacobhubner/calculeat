@@ -3,19 +3,25 @@
  * Visas i sidopanelen på profilsidan
  */
 
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Activity, Flame, Target } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Activity, Check, Flame, Pencil, Target, X } from 'lucide-react'
 import type { Profile } from '@/lib/types'
 import { calculateBMRWithFormula } from '@/lib/calculations/bmr'
 import { calculateAge } from '@/lib/calculations/helpers'
 
 interface ProfileResultsSummaryProps {
   profile: Profile | null
+  onTDEEEdit?: (newTdee: number) => void
 }
 
-export default function ProfileResultsSummary({ profile }: ProfileResultsSummaryProps) {
+export default function ProfileResultsSummary({ profile, onTDEEEdit }: ProfileResultsSummaryProps) {
   const { t } = useTranslation('profile')
+  const [editing, setEditing] = useState(false)
+  const [editValue, setEditValue] = useState('')
+
   if (!profile) return null
 
   // Only calculate BMR if a formula was explicitly chosen (not for manual TDEE entries)
@@ -114,15 +120,77 @@ export default function ProfileResultsSummary({ profile }: ProfileResultsSummary
         )}
 
         {/* TDEE */}
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-2">
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex items-center gap-2 shrink-0">
             <Activity className="h-4 w-4 text-primary-500" />
             <div>
               <p className="text-sm font-medium text-neutral-700">TDEE</p>
               <p className="text-xs text-neutral-500">{t('results.totalEnergyNeed')}</p>
             </div>
           </div>
-          <p className="text-sm font-semibold text-neutral-900">{Math.round(tdee)} kcal</p>
+          {editing ? (
+            <div className="flex items-center gap-1">
+              <input
+                type="number"
+                value={editValue}
+                onChange={e => setEditValue(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') {
+                    const val = parseFloat(editValue)
+                    if (!isNaN(val) && val >= 500 && val <= 10000) {
+                      onTDEEEdit?.(val)
+                      setEditing(false)
+                    }
+                  }
+                  if (e.key === 'Escape') setEditing(false)
+                }}
+                className="w-20 text-right text-sm font-semibold border border-neutral-300 rounded px-1 py-0.5"
+                autoFocus
+                min={500}
+                max={10000}
+              />
+              <span className="text-xs text-neutral-500">kcal</span>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-6 w-6 p-0"
+                onClick={() => {
+                  const val = parseFloat(editValue)
+                  if (!isNaN(val) && val >= 500 && val <= 10000) {
+                    onTDEEEdit?.(val)
+                  }
+                  setEditing(false)
+                }}
+              >
+                <Check className="h-3.5 w-3.5 text-green-600" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-6 w-6 p-0"
+                onClick={() => setEditing(false)}
+              >
+                <X className="h-3.5 w-3.5 text-neutral-400" />
+              </Button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-1">
+              <p className="text-sm font-semibold text-neutral-900">{Math.round(tdee)} kcal</p>
+              {onTDEEEdit && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-6 w-6 p-0 text-neutral-400 hover:text-neutral-600"
+                  onClick={() => {
+                    setEditValue(Math.round(tdee).toString())
+                    setEditing(true)
+                  }}
+                >
+                  <Pencil className="h-3 w-3" />
+                </Button>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Calorie Range */}
