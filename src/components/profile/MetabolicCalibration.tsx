@@ -25,9 +25,13 @@ import {
   BarChart3,
   Blend,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   RefreshCw,
   Info,
 } from 'lucide-react'
+import { startOfDay, endOfDay, subDays, addDays, isBefore, format } from 'date-fns'
+import { sv } from 'date-fns/locale'
 import { useState, useMemo, useCallback } from 'react'
 import {
   useWeightHistory,
@@ -69,12 +73,33 @@ export default function MetabolicCalibration({
   const { data: calibrationHistoryList } = useCalibrationHistory(profile.id)
 
   // Date range for calorie intake — null until user clicks "Uppdatera"
-  const [now, setNow] = useState<Date | null>(null)
-  const refreshNow = useCallback(() => setNow(new Date()), [])
+  const [periodEndDate, setPeriodEndDate] = useState<Date | null>(null)
+  const refreshNow = useCallback(() => setPeriodEndDate(endOfDay(new Date())), [])
+
+  // Stable "today" reference for disable logic — tied to periodEndDate so it
+  // recalculates when the user navigates, but stays fixed within a render.
+  const today = useMemo(() => startOfDay(new Date()), [periodEndDate])
+
   const startDate = useMemo(
-    () => (now ? new Date(now.getTime() - timePeriod * 24 * 60 * 60 * 1000) : null),
-    [now, timePeriod]
+    () => (periodEndDate ? startOfDay(subDays(periodEndDate, timePeriod)) : null),
+    [periodEndDate, timePeriod]
   )
+  // Alias kept for backward compatibility with useMemos below
+  const now = periodEndDate
+
+  const goBack = useCallback(() => {
+    setPeriodEndDate(d => (d ? endOfDay(subDays(d, timePeriod)) : null))
+  }, [timePeriod])
+
+  const goForward = useCallback(() => {
+    setPeriodEndDate(d => {
+      if (!d) return null
+      const next = endOfDay(addDays(d, timePeriod))
+      return next > endOfDay(new Date()) ? endOfDay(new Date()) : next
+    })
+  }, [timePeriod])
+
+  const isAtToday = periodEndDate ? !isBefore(startOfDay(periodEndDate), today) : true
 
   const { data: actualIntake } = useActualCalorieIntake(
     profile.id,
@@ -378,7 +403,8 @@ export default function MetabolicCalibration({
                     </ul>
                     <p className="text-neutral-700 leading-relaxed mt-2">
                       Dagliga viktfluktuationer från exempelvis vätska, salt, glykogen eller
-                      maginnehåll filtreras bort genom trendanalys och avvikelsehantering.
+                      maginnehåll reduceras statistiskt genom trendanalys och filtrering av
+                      avvikande mätningar.
                     </p>
                   </section>
 
@@ -401,7 +427,7 @@ export default function MetabolicCalibration({
                       </p>
                       <p>
                         Ett kilogram kroppsvikt motsvarar i genomsnitt ungefär{' '}
-                        <strong>6 500–7 700 kcal</strong>, beroende på hur stor del av
+                        <strong>7 000–7 700 kcal</strong>, beroende på hur stor del av
                         viktförändringen som består av fett, glykogen och vätska.
                       </p>
                       <p>
@@ -436,33 +462,28 @@ export default function MetabolicCalibration({
                   <section>
                     <h3 className="font-semibold text-base mb-2">Hur vikttrenden beräknas</h3>
                     <p className="text-neutral-700 leading-relaxed">
+                      Daglig kroppsvikt varierar naturligt på grund av vätska, glykogen och
+                      maginnehåll — ofta 0,5–2 kg från dag till dag, även när fettmassan är
+                      oförändrad. För att identifiera den underliggande trenden använder modellen
+                      statistiska metoder som minskar påverkan från detta kortsiktiga brus.
+                    </p>
+                    <p className="text-neutral-700 leading-relaxed mt-2">
                       Istället för att jämföra två enskilda vägningar beräknar systemet en
-                      trendlinje genom alla viktmätningar i perioden.
+                      trendlinje (linjär regression) genom <em>alla</em> viktmätningar i perioden.
+                      Det ger ett stabilt estimat av den verkliga viktförändringen oavsett naturliga
+                      dagsvariationer.
                     </p>
                     <p className="text-neutral-700 leading-relaxed mt-2">
-                      Detta görs med en statistisk metod (linjär regression) som:
-                    </p>
-                    <ul className="list-disc list-inside space-y-1 ml-2 mt-1 text-neutral-700">
-                      <li>använder alla mätpunkter</li>
-                      <li>minskar påverkan från enstaka extrema värden</li>
-                      <li>ger ett stabilare estimat av den verkliga viktförändringen</li>
-                    </ul>
-                    <p className="text-neutral-700 leading-relaxed mt-2">
-                      Systemet analyserar även:
-                    </p>
-                    <ul className="list-disc list-inside space-y-1 ml-2 mt-1 text-neutral-700">
-                      <li>hur stark vikttrenden är</li>
-                      <li>hur mycket vikten varierar runt trenden</li>
-                      <li>hur konsekvent datapunkterna följer en riktning</li>
-                    </ul>
-                    <p className="text-neutral-700 leading-relaxed mt-2">
-                      Om viktdata är mycket brusig eller inkonsekvent reduceras kalibreringens
-                      tillförlitlighet.
+                      Modellen analyserar även hur stark signalen är i relation till bruset — det
+                      vill säga om vikttrendens lutning är tillräckligt stor i förhållande till sitt
+                      statistiska standardfel. Om lutningen är liten i förhållande till sitt
+                      standardfel dominerar bruset och tillförlitligheten reduceras, eftersom
+                      resultatet då inte med säkerhet speglar en verklig trend.
                     </p>
                     <p className="text-neutral-700 leading-relaxed mt-2">
-                      Som extra kontroll jämförs regressionstrenden även med en glidande medeltrend.
-                      Om dessa två skiljer sig kraftigt kan systemet varna för att viktförändringen
-                      är oregelbunden.
+                      Som extra kontroll jämförs regressionstrenden även med en exponentiellt
+                      utjämnad trend (EMA). Om dessa två skiljer sig kraftigt kan systemet varna för
+                      att viktförändringen är oregelbunden under perioden.
                     </p>
                   </section>
 
@@ -536,25 +557,20 @@ export default function MetabolicCalibration({
                         <tbody className="divide-y divide-neutral-100 text-neutral-700">
                           <tr>
                             <td className="px-3 py-2">Matlogg</td>
-                            <td className="px-3 py-2 text-center">40%</td>
+                            <td className="px-3 py-2 text-center">45%</td>
                             <td className="px-3 py-2">≥ 90% av dagarna loggade</td>
                           </tr>
                           <tr>
                             <td className="px-3 py-2">Mätningsfrekvens</td>
-                            <td className="px-3 py-2 text-center">30%</td>
+                            <td className="px-3 py-2 text-center">35%</td>
                             <td className="px-3 py-2">≥ 50% av dagarna vägd</td>
                           </tr>
                           <tr>
-                            <td className="px-3 py-2">Tidskonsistens</td>
-                            <td className="px-3 py-2 text-center">15%</td>
-                            <td className="px-3 py-2">
-                              Väg dig samma tid varje dag — 4h+ avvikelse ger 0p
-                            </td>
-                          </tr>
-                          <tr>
                             <td className="px-3 py-2">Klusterstorlek</td>
-                            <td className="px-3 py-2 text-center">15%</td>
-                            <td className="px-3 py-2">Start + slut ≥ 6 mätningar totalt</td>
+                            <td className="px-3 py-2 text-center">20%</td>
+                            <td className="px-3 py-2">
+                              Start + slut ≥ 6 mätningar totalt (minst 3 i varje kluster)
+                            </td>
                           </tr>
                         </tbody>
                       </table>
@@ -622,14 +638,21 @@ export default function MetabolicCalibration({
                         <p className="font-medium">Justeringsgränser (clamp)</p>
                         <p className="mt-1">
                           Kalibreringen begränsar hur mycket TDEE kan ändras i en enskild
-                          uppdatering. Maximal justering beror på datakvaliteten och ligger normalt
-                          mellan:
+                          uppdatering. Det strängaste av två parallella tak gäller:
                         </p>
-                        <p className="font-medium text-primary-600 text-center py-1">
-                          ±75 kcal och ±200 kcal
-                        </p>
-                        <p className="mt-1">
-                          Det är viktigt att förstå att denna gräns beräknas utifrån ditt{' '}
+                        <ul className="list-disc list-inside space-y-1 ml-2 mt-1 text-neutral-700 text-sm">
+                          <li>
+                            <strong>Absolut tak (DQI):</strong> ±75–200 kcal beroende på
+                            datakvalitetspoäng
+                          </li>
+                          <li>
+                            <strong>Procentuellt tak (tillförlitlighet):</strong> ca 12–20% av
+                            nuvarande TDEE beroende på periodens längd och datans tillförlitlighet;
+                            reduceras med 40% vid låg tillförlitlighet
+                          </li>
+                        </ul>
+                        <p className="mt-2">
+                          Det är viktigt att förstå att dessa gränser beräknas utifrån ditt{' '}
                           <strong>nuvarande TDEE-värde</strong>, inte från det nyberäknade värdet.
                           Om startvärdet ligger långt från verkligheten kan det därför krävas flera
                           kalibreringar för att gradvis nå rätt nivå.
@@ -639,8 +662,9 @@ export default function MetabolicCalibration({
                         <p className="font-medium">Låg signal (mycket liten viktförändring)</p>
                         <p className="mt-1">
                           Om viktförändringen under perioden är mindre än cirka 0,25 % av
-                          kroppsvikten betraktas signalen som mycket svag. I detta fall halveras den
-                          maximala tillåtna justeringen.
+                          kroppsvikten (t.ex. ~0,25 kg för en person som väger 100 kg) betraktas
+                          signalen som mycket svag. I detta fall halveras den maximala tillåtna
+                          justeringen.
                         </p>
                         <p className="mt-1">
                           Detta beror på att systemet inte kan avgöra om ditt TDEE redan är korrekt,
@@ -668,12 +692,15 @@ export default function MetabolicCalibration({
                       Tillförlitligheten påverkas bland annat av:
                     </p>
                     <ul className="list-disc list-inside space-y-1 ml-2 mt-1 text-neutral-700">
-                      <li>hur många viktmätningar som finns</li>
-                      <li>hur jämnt de är fördelade över perioden</li>
-                      <li>hur konsekvent vikten följer en trend</li>
+                      <li>hur många viktmätningar som finns i periodens start och slut</li>
+                      <li>hur jämnt de är fördelade över hela perioden</li>
+                      <li>
+                        om trendlutningen är tillräckligt stor relativt sin statistiska osäkerhet
+                      </li>
                     </ul>
                     <p className="text-neutral-700 leading-relaxed mt-2">
-                      Om viktutvecklingen är mycket ojämn kan resultatet få lägre konfidens.
+                      Om bruset dominerar över trenden — vilket kan hända vid liten viktförändring
+                      eller få mätpunkter — reduceras tillförlitligheten ett steg.
                     </p>
                   </section>
 
@@ -820,6 +847,41 @@ export default function MetabolicCalibration({
                   {!periodAvailability[28] ? ` — ${periodMeasurementCounts[28]}/6 vägningar` : ''}
                 </option>
               </Select>
+
+              {/* Period navigation */}
+              <div className="flex items-center gap-1 mt-1">
+                <button
+                  type="button"
+                  onClick={goBack}
+                  className="p-1 rounded hover:bg-neutral-100 text-neutral-500 hover:text-neutral-700 transition-colors"
+                  title="Föregående period"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </button>
+                <span className="flex-1 text-center text-xs text-neutral-500">
+                  {startDate && periodEndDate
+                    ? `${format(startDate, 'd MMM', { locale: sv })} – ${format(periodEndDate, 'd MMM', { locale: sv })}`
+                    : ''}
+                </span>
+                <button
+                  type="button"
+                  onClick={goForward}
+                  disabled={isAtToday}
+                  className="p-1 rounded hover:bg-neutral-100 text-neutral-500 hover:text-neutral-700 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                  title="Nästa period"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+                {!isAtToday && (
+                  <button
+                    type="button"
+                    onClick={refreshNow}
+                    className="ml-1 text-xs text-primary-600 hover:underline"
+                  >
+                    Idag
+                  </button>
+                )}
+              </div>
             </div>
           )}
 
@@ -900,6 +962,9 @@ export default function MetabolicCalibration({
                 <div className="text-center py-6 text-sm text-neutral-500">
                   <AlertCircle className="h-8 w-8 mx-auto mb-2 text-neutral-400" />
                   <p>{calibrationResult}</p>
+                  <p className="text-xs text-neutral-400 mt-2">
+                    Prova att navigera bakåt för att hitta en period med data.
+                  </p>
                 </div>
               )}
 
@@ -930,7 +995,7 @@ export default function MetabolicCalibration({
                                   parts.push('mätningarna är inte spridda över hela perioden')
                                 if (reasons.includes('nonlinear_trend'))
                                   parts.push(
-                                    'vikttrenden är ojämn eller icke-linjär under perioden'
+                                    'viktsignalen är svag i förhållande till daglig variation — längre period eller mer viktförändring behövs'
                                   )
                                 return parts.length > 0
                                   ? `Begränsas av: ${parts.join(', ')}.`
@@ -973,19 +1038,15 @@ export default function MetabolicCalibration({
                               <table className="w-full text-xs">
                                 <tbody>
                                   <tr>
-                                    <td className="pr-2 text-neutral-400">Matlogg (40%)</td>
+                                    <td className="pr-2 text-neutral-400">Matlogg (45%)</td>
                                     <td>{Math.round(data.dataQuality.factors.logScore)}/100</td>
                                   </tr>
                                   <tr>
-                                    <td className="pr-2 text-neutral-400">Mätfrekvens (30%)</td>
+                                    <td className="pr-2 text-neutral-400">Mätfrekvens (35%)</td>
                                     <td>{Math.round(data.dataQuality.factors.freqScore)}/100</td>
                                   </tr>
                                   <tr>
-                                    <td className="pr-2 text-neutral-400">Tidskonsistens (15%)</td>
-                                    <td>{Math.round(data.dataQuality.factors.timingScore)}/100</td>
-                                  </tr>
-                                  <tr>
-                                    <td className="pr-2 text-neutral-400">Klusterstorlek (15%)</td>
+                                    <td className="pr-2 text-neutral-400">Klusterstorlek (20%)</td>
                                     <td>{Math.round(data.dataQuality.factors.clusterScore)}/100</td>
                                   </tr>
                                 </tbody>
@@ -1013,12 +1074,6 @@ export default function MetabolicCalibration({
                           <p className="text-xs text-orange-700 mt-1">
                             Hög variation minskar tillförlitligheten och kan begränsa hur stor
                             justering som tillåts.
-                          </p>
-                        )}
-                        {warning.type === 'timing_inconsistency' && (
-                          <p className="text-xs text-orange-700 mt-1">
-                            Vikt varierar naturligt under dygnet med upp till 1–2 kg. Ojämna
-                            vägningsider gör det svårare att jämföra mätningar med varandra.
                           </p>
                         )}
                         {warning.type === 'target_calories_fallback' && (

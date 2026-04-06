@@ -501,7 +501,6 @@ export interface CalibrationResult {
     factors: {
       logScore: number
       freqScore: number
-      timingScore: number
       clusterScore: number
     }
   }

@@ -83,7 +83,8 @@
  * └──────────────────────────────┴─────────┴────────────────────────────┘
  *
  * Clamp chain (in order of application):
- *   1. BASE_MAX_ADJUSTMENT[period] × confidence × foodLogWeight
+ *   1. BASE_MAX_ADJUSTMENT[period] × confidence_penalty × foodLogWeight
+ *      (no high-confidence bonus — DQI cap makes it redundant and unsafe)
  *   2. ×0.5 if low signal (Δweight < 0.25% body weight)
  *   3. ×0.8 if deficit > 25%
  *   4. min(percentage_clamp, DQI_absolute_cap)  ← DQI always final
@@ -270,6 +271,16 @@ export interface OLSTrendResult {
   ssXX: number
   /** Last x value in days (= actual time span covered by measurements) */
   lastX: number
+  /**
+   * Signal-to-noise ratio as OLS t-statistic of the slope: |slope| / (residualSd / √n).
+   * Period-invariant: unlike |slope×lastX|/residualSd, this does not grow with window
+   * length when the underlying signal/noise ratio is constant.
+   * Equivalent to asking "is the slope larger than its own standard error?"
+   * SNR < 1.0 → slope smaller than its SE, noise dominates → degrade confidence.
+   * More robust than R² for daily weigh-ins where natural fluctuations (0.5–2 kg)
+   * suppress R² even when the underlying trend is real.
+   */
+  snr: number
 }
 
 /**
@@ -309,6 +320,11 @@ export function calculateWeightTrendOLS(
   const ssRes = ys.reduce((s, y, i) => s + (y - (intercept + slope * xs[i])) ** 2, 0)
   const rSquared = ssYY > 0 ? 1 - ssRes / ssYY : 0
   const residualSd = Math.sqrt(ssRes / Math.max(1, n - 2))
+  // SNR as t-statistic of the slope: slope / (residualSd / √n).
+  // Period-invariant: a 28-day and 14-day window with identical daily signal/noise
+  // produce the same SNR (unlike |slope×lastX|/residualSd which grows with period).
+  // Threshold 1.0: t ≥ 1 means the slope is at least as large as its standard error.
+  const snr = residualSd > 0 ? Math.abs(slope) / (residualSd / Math.sqrt(n)) : 0
 
   return {
     trendStart: intercept,
@@ -318,6 +334,7 @@ export function calculateWeightTrendOLS(
     residualSd,
     ssXX,
     lastX,
+    snr,
   }
 }
 
@@ -400,40 +417,37 @@ export interface DataQualityResult {
   factors: {
     logScore: number
     freqScore: number
-    timingScore: number
     clusterScore: number
   }
 }
 
 /**
  * Composite data quality score (0-100).
- * Drives adaptive max-adjustment (±100/150/200 kcal based on quality).
+ * Drives adaptive max-adjustment (±75–200 kcal based on quality).
+ *
+ * Timing consistency is intentionally excluded: recorded_at is always
+ * normalised to midnight (date-only input), so stddev would always be 0
+ * and the factor would carry no information.
  */
 export function calculateDataQualityIndex(
   foodLogCompleteness: number,
   measurementCount: number,
   periodDays: number,
-  timingStddevHours: number,
   startClusterSize: number,
   endClusterSize: number
 ): DataQualityResult {
-  // Food log quality (40% weight) — 90% completeness = 100 score
+  // Food log quality (45% weight) — 90% completeness = 100 score
   const logScore = Math.min(100, foodLogCompleteness * (100 / 90))
 
-  // Measurement frequency (30% weight) — 50% of days measured = 100
+  // Measurement frequency (35% weight) — 50% of days measured = 100
   const idealFreq = 0.5
   const freqScore = Math.min(100, (measurementCount / periodDays / idealFreq) * 100)
 
-  // Timing consistency (15% weight) — 0 stddev = 100, 4h+ = 0
-  // 4h threshold: AM vs PM weighing causes ~0.5-1.5 kg variance, practically significant
-  const timingScore = Math.max(0, 100 - timingStddevHours * 25)
+  // Cluster adequacy (20% weight) — 100p requires ≥3 in each cluster (min of both sides × 2 / 6).
+  // Using min(start, end) × 2 instead of sum prevents 5+1 from scoring the same as 3+3.
+  const clusterScore = Math.min(100, ((Math.min(startClusterSize, endClusterSize) * 2) / 6) * 100)
 
-  // Cluster adequacy (15% weight) — 6 total = 100
-  const clusterScore = Math.min(100, ((startClusterSize + endClusterSize) / 6) * 100)
-
-  const score = Math.round(
-    logScore * 0.4 + freqScore * 0.3 + timingScore * 0.15 + clusterScore * 0.15
-  )
+  const score = Math.round(logScore * 0.45 + freqScore * 0.35 + clusterScore * 0.2)
 
   // Continuous cap: 75 kcal at DQI=0, 200 kcal at DQI=100 — no cliff effects
   const maxAbsoluteAdjustment = Math.round(75 + (score / 100) * 125)
@@ -453,7 +467,7 @@ export function calculateDataQualityIndex(
     score,
     label,
     maxAbsoluteAdjustment,
-    factors: { logScore, freqScore, timingScore, clusterScore },
+    factors: { logScore, freqScore, clusterScore },
   }
 }
 
@@ -645,7 +659,7 @@ export function calculateConfidence(
   foodLogCompleteness: number,
   periodDays: 14 | 21 | 28,
   actualSpanDays?: number,
-  rSquared?: number | null
+  snr?: number
 ): CalibrationConfidence {
   let level: CalibrationConfidence['level']
   const degradeReasons: CalibrationConfidence['degradeReasons'] = []
@@ -666,8 +680,13 @@ export function calculateConfidence(
     degradeReasons.push('sparse_coverage')
   }
 
-  // Degrade if OLS R² is low (non-monotonic or very noisy trend)
-  if (rSquared !== null && rSquared !== undefined && rSquared < 0.3) {
+  // Degrade if signal-to-noise ratio is very low (t-statistic of slope < 1.0).
+  // SNR here is slope / (residualSd / √n): period-invariant, equivalent to the
+  // OLS t-statistic. t < 1 means the slope estimate is smaller than its own
+  // standard error — noise clearly dominates.
+  // Raw R² is intentionally NOT used — it is suppressed by normal daily fluctuations
+  // (0.5–2 kg) even when a real trend exists, making it unreliable for daily weigh-ins.
+  if (snr !== undefined && snr < 1.0) {
     level = level === 'high' ? 'standard' : 'low'
     degradeReasons.push('nonlinear_trend')
   }
@@ -691,11 +710,6 @@ export function getMaxAdjustment(
   _dataQuality: DataQualityResult
 ): number {
   let maxPercent = BASE_MAX_ADJUSTMENT[confidence.periodDays as 14 | 21 | 28] ?? 0.15
-
-  // Boost for high confidence + good food log
-  if (confidence.level === 'high' && foodLogWeight >= 0.8) {
-    maxPercent *= 1.25
-  }
 
   // Reduce for low confidence
   if (confidence.level === 'low') {
@@ -887,18 +901,13 @@ export function runCalibration(input: CalibrationInput): CalibrationResult | str
     input.foodLogCompleteness,
     input.periodDays,
     actualDays,
-    olsResult?.rSquared ?? null
+    olsResult?.snr
   )
-
-  // Calculate timing stddev for DQI
-  const hours = allMeasurements.map(m => m.recorded_at.getHours() + m.recorded_at.getMinutes() / 60)
-  const timingStddev = hours.length >= 3 ? stddev(hours) : 0
 
   const dataQuality = calculateDataQualityIndex(
     input.foodLogCompleteness,
     allMeasurements.length,
     input.periodDays,
-    timingStddev,
     startCluster.count,
     endCluster.count
   )
@@ -955,14 +964,6 @@ export function runCalibration(input: CalibrationInput): CalibrationResult | str
       type: 'high_cv',
       message:
         'Vikten varierar mer än vanligt. Väg dig på morgonen före frukost för mer stabila mätningar.',
-    })
-  }
-
-  if (hours.length >= 3 && timingStddev > 4) {
-    warnings.push({
-      type: 'timing_inconsistency',
-      message:
-        'Mätningarna varierar i tid på dygnet. Väg dig vid samma tid varje dag för bäst resultat.',
     })
   }
 
