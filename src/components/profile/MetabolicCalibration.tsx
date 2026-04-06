@@ -24,8 +24,9 @@ import {
   BarChart3,
   Blend,
   ChevronDown,
+  RefreshCw,
 } from 'lucide-react'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import {
   useWeightHistory,
   useUpdateProfile,
@@ -66,7 +67,8 @@ export default function MetabolicCalibration({
   const { data: calibrationHistoryList } = useCalibrationHistory(profile.id)
 
   // Date range for calorie intake
-  const now = useMemo(() => new Date(), [])
+  const [now, setNow] = useState(() => new Date())
+  const refreshNow = useCallback(() => setNow(new Date()), [])
   const startDate = useMemo(
     () => new Date(now.getTime() - timePeriod * 24 * 60 * 60 * 1000),
     [now, timePeriod]
@@ -693,7 +695,18 @@ export default function MetabolicCalibration({
 
           {/* Time period selector */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-neutral-700">Tidsperiod</label>
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium text-neutral-700">Tidsperiod</label>
+              <button
+                type="button"
+                onClick={refreshNow}
+                className="flex items-center gap-1 text-xs text-neutral-500 hover:text-primary-600 transition-colors"
+                title="Uppdatera till senaste data"
+              >
+                <RefreshCw className="h-3 w-3" />
+                Uppdatera
+              </button>
+            </div>
             <Select
               value={timePeriod.toString()}
               onChange={e => setTimePeriod(Number(e.target.value) as 14 | 21 | 28)}
