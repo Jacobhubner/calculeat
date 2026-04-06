@@ -467,6 +467,17 @@ export default function ProfilePage() {
       return
     }
 
+    // Overwrite confirmation when manually setting TDEE over an existing value
+    if (
+      pendingChanges.tdee_source === 'manual' &&
+      activeProfile.tdee &&
+      !window.confirm(
+        'Du har redan ett TDEE-värde sparat. Vill du skriva över det med det nya värdet?'
+      )
+    ) {
+      return
+    }
+
     try {
       // If weight is being set and initial_weight_kg is not yet set, also set it as starting weight
       const dataToSave = { ...pendingChanges }
@@ -640,14 +651,6 @@ export default function ProfilePage() {
             <ProfileResultsSummary
               profile={mergedProfile}
               onTDEEEdit={newTdee => {
-                if (
-                  activeProfile?.tdee &&
-                  !window.confirm(
-                    'Du har redan ett TDEE-värde sparat. Vill du skriva över det med det nya värdet?'
-                  )
-                ) {
-                  return
-                }
                 setPendingChanges(prev => ({
                   ...prev,
                   tdee: newTdee,

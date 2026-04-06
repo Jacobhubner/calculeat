@@ -7,7 +7,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Activity, Check, Flame, Pencil, Target, X } from 'lucide-react'
+import { Activity, Flame, Pencil, Target } from 'lucide-react'
 import type { Profile } from '@/lib/types'
 import { calculateBMRWithFormula } from '@/lib/calculations/bmr'
 import { calculateAge } from '@/lib/calculations/helpers'
@@ -133,16 +133,12 @@ export default function ProfileResultsSummary({ profile, onTDEEEdit }: ProfileRe
               <input
                 type="number"
                 value={editValue}
-                onChange={e => setEditValue(e.target.value)}
-                onKeyDown={e => {
-                  if (e.key === 'Enter') {
-                    const val = parseFloat(editValue)
-                    if (!isNaN(val) && val >= 500 && val <= 10000) {
-                      onTDEEEdit?.(val)
-                      setEditing(false)
-                    }
+                onChange={e => {
+                  setEditValue(e.target.value)
+                  const val = parseFloat(e.target.value)
+                  if (!isNaN(val) && val >= 500 && val <= 10000) {
+                    onTDEEEdit?.(val)
                   }
-                  if (e.key === 'Escape') setEditing(false)
                 }}
                 className="w-20 text-right text-sm font-semibold border border-neutral-300 rounded px-1 py-0.5"
                 autoFocus
@@ -150,28 +146,6 @@ export default function ProfileResultsSummary({ profile, onTDEEEdit }: ProfileRe
                 max={10000}
               />
               <span className="text-xs text-neutral-500">kcal</span>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-6 w-6 p-0"
-                onClick={() => {
-                  const val = parseFloat(editValue)
-                  if (!isNaN(val) && val >= 500 && val <= 10000) {
-                    onTDEEEdit?.(val)
-                  }
-                  setEditing(false)
-                }}
-              >
-                <Check className="h-3.5 w-3.5 text-green-600" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-6 w-6 p-0"
-                onClick={() => setEditing(false)}
-              >
-                <X className="h-3.5 w-3.5 text-neutral-400" />
-              </Button>
             </div>
           ) : (
             <div className="flex items-center gap-1">
