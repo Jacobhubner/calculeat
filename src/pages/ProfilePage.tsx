@@ -666,6 +666,23 @@ export default function ProfilePage() {
                   calories_max: newTdee * 1.03,
                 }))
               }}
+              onTDEEEditCancel={() => {
+                setPendingChanges(prev => {
+                  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                  const {
+                    tdee,
+                    bmr_formula,
+                    tdee_source,
+                    tdee_calculated_at,
+                    tdee_calculation_snapshot,
+                    calories_min,
+                    calories_max,
+                    calorie_goal,
+                    ...rest
+                  } = prev
+                  return rest
+                })
+              }}
             />
 
             {/* Maximal fettmetabolism - Show max fat metabolism */}

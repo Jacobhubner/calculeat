@@ -15,9 +15,14 @@ import { calculateAge } from '@/lib/calculations/helpers'
 interface ProfileResultsSummaryProps {
   profile: Profile | null
   onTDEEEdit?: (newTdee: number) => void
+  onTDEEEditCancel?: () => void
 }
 
-export default function ProfileResultsSummary({ profile, onTDEEEdit }: ProfileResultsSummaryProps) {
+export default function ProfileResultsSummary({
+  profile,
+  onTDEEEdit,
+  onTDEEEditCancel,
+}: ProfileResultsSummaryProps) {
   const { t } = useTranslation('profile')
   const [editing, setEditing] = useState(false)
   const [editValue, setEditValue] = useState('')
@@ -92,7 +97,7 @@ export default function ProfileResultsSummary({ profile, onTDEEEdit }: ProfileRe
   if (!tdee) return null
 
   return (
-    <Card>
+    <Card className="group">
       <CardHeader>
         <CardTitle className="text-base flex items-center gap-2">
           <Activity className="h-5 w-5 text-success-600" />
@@ -140,6 +145,10 @@ export default function ProfileResultsSummary({ profile, onTDEEEdit }: ProfileRe
                     onTDEEEdit?.(val)
                   }
                 }}
+                onBlur={() => {
+                  setEditing(false)
+                  onTDEEEditCancel?.()
+                }}
                 className="w-20 text-right text-sm font-semibold border border-neutral-300 rounded px-1 py-0.5"
                 autoFocus
                 min={500}
@@ -154,7 +163,7 @@ export default function ProfileResultsSummary({ profile, onTDEEEdit }: ProfileRe
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-6 w-6 p-0 text-neutral-400 hover:text-neutral-600"
+                  className="h-6 w-6 p-0 text-neutral-400 hover:text-neutral-600 opacity-0 group-hover:opacity-100 transition-opacity"
                   onClick={() => {
                     setEditValue(Math.round(tdee).toString())
                     setEditing(true)
