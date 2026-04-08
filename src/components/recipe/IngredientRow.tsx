@@ -29,9 +29,11 @@ function matchesSourceFilter(food: FoodItem, filter: SourceFilter): boolean {
 }
 import {
   calculateIngredientNutrition,
+  calculateIngredientWeight,
   getAvailableUnits,
   getDefaultRecipeUnit,
 } from '@/lib/calculations/recipeCalculator'
+import { convertWeightToUnit } from '@/lib/utils/unitConversion'
 
 export interface IngredientData {
   id: string
@@ -200,8 +202,33 @@ export function IngredientRow({
     }
   }
 
-  const handleUnitChange = (unit: string) => {
-    onChange({ ...ingredient, unit })
+  const handleUnitChange = (newUnit: string) => {
+    if (!ingredient.foodItem || ingredient.amount <= 0) {
+      onChange({ ...ingredient, unit: newUnit })
+      return
+    }
+    // Convert current amount to grams using the old unit, then to the new unit
+    const weightGrams = calculateIngredientWeight(
+      ingredient.foodItem,
+      ingredient.amount,
+      ingredient.unit
+    )
+    const convertedAmount = convertWeightToUnit(
+      weightGrams,
+      newUnit,
+      ingredient.foodItem.ml_per_gram ?? undefined
+    )
+    // For piece/serving units (st, portion, custom) there's no round-trip formula — keep amount as-is
+    const isConvertible =
+      newUnit === 'g' ||
+      newUnit === 'kg' ||
+      newUnit === 'dl' ||
+      newUnit === 'msk' ||
+      newUnit === 'tsk'
+    const newAmount = isConvertible ? Math.round(convertedAmount * 100) / 100 : ingredient.amount
+    const newAmountStr = String(newAmount)
+    setAmountInput(newAmountStr)
+    onChange({ ...ingredient, unit: newUnit, amount: newAmount })
   }
 
   return (
