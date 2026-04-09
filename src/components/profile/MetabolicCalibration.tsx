@@ -823,7 +823,7 @@ export default function MetabolicCalibration({
                 <button
                   type="button"
                   onClick={refreshNow}
-                  className="flex items-center gap-1 text-xs text-neutral-500 hover:text-primary-600 transition-colors"
+                  className="flex items-center gap-1 text-xs font-medium text-primary-600 border border-primary-300 rounded-lg px-2.5 py-1 hover:bg-primary-50 transition-colors"
                   title="Uppdatera till senaste data"
                 >
                   <RefreshCw className="h-3 w-3" />
