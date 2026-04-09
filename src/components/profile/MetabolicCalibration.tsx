@@ -482,8 +482,9 @@ export default function MetabolicCalibration({
                     </p>
                     <p className="text-neutral-700 leading-relaxed mt-2">
                       Som extra kontroll jämförs regressionstrenden även med en exponentiellt
-                      utjämnad trend (EMA). Om dessa två skiljer sig kraftigt kan systemet varna för
-                      att viktförändringen är oregelbunden under perioden.
+                      utjämnad trend (EMA). Om dessa två metoder visar tydligt olika total
+                      viktförändring kan systemet varna för att viktutvecklingen inte varit linjär
+                      under perioden.
                     </p>
                   </section>
 
@@ -818,18 +819,7 @@ export default function MetabolicCalibration({
           {/* Time period selector */}
           {now !== null && (
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <label className="text-sm font-medium text-neutral-700">Tidsperiod</label>
-                <button
-                  type="button"
-                  onClick={refreshNow}
-                  className="flex items-center gap-1 text-xs font-medium text-primary-600 border border-primary-300 rounded-lg px-2.5 py-1 hover:bg-primary-50 transition-colors"
-                  title="Uppdatera till senaste data"
-                >
-                  <RefreshCw className="h-3 w-3" />
-                  Uppdatera
-                </button>
-              </div>
+              <label className="text-sm font-medium text-neutral-700">Tidsperiod</label>
               <Select
                 value={timePeriod.toString()}
                 onChange={e => setTimePeriod(Number(e.target.value) as 14 | 21 | 28)}
@@ -1083,17 +1073,50 @@ export default function MetabolicCalibration({
                           </p>
                         )}
                         {warning.type === 'selective_logging' && (
-                          <p className="text-xs text-orange-700 mt-1">
-                            Om du bara loggar &quot;bra&quot; dagar överskattas kaloriintaget inte
-                            och kalibreringen kan föreslå ett för lågt TDEE.
-                          </p>
+                          <div className="text-xs text-orange-700 mt-1 space-y-1">
+                            <p>
+                              Om du bara loggar &quot;bra&quot; dagar överskattas kaloriintaget inte
+                              och kalibreringen kan föreslå ett för lågt TDEE. Just nu är:
+                            </p>
+                            <ul className="list-disc list-inside space-y-0.5">
+                              <li>Loggat snitt &lt; 85 % av målkalorier</li>
+                              <li>Matsloggskomplettering &lt; 80 %</li>
+                              <li>Vikten minskat under perioden</li>
+                            </ul>
+                          </div>
                         )}
                         {warning.type === 'glycogen_event' && (
-                          <p className="text-xs text-orange-700 mt-1">
-                            Glykogen och vätska kan orsaka viktförändringar på 1–3 kg på enstaka
-                            dagar utan att det återspeglar faktisk fettförändring. Trendberäkningen
-                            kompenserar men precision minskar.
-                          </p>
+                          <div className="text-xs text-orange-700 mt-1 space-y-1">
+                            <p>
+                              Glykogen och vätska kan orsaka viktförändringar på 1–3 kg på enstaka
+                              dagar utan att det återspeglar faktisk fettförändring.
+                              Trendberäkningen kompenserar men precision minskar. Varningen
+                              aktiveras när:
+                            </p>
+                            <ul className="list-disc list-inside space-y-0.5">
+                              <li>
+                                En enskild daglig viktförändring överstiger 1,5 % av kroppsvikten
+                              </li>
+                            </ul>
+                          </div>
+                        )}
+                        {warning.type === 'nonlinear_trend' && (
+                          <div className="text-xs text-orange-700 mt-1 space-y-1">
+                            <p>
+                              Vikten har inte rört sig i en jämn riktning under perioden — troligen
+                              en refeed-period, diet break eller annan övergång. Varningen aktiveras
+                              när något av följande stämmer:
+                            </p>
+                            <ul className="list-disc list-inside space-y-0.5">
+                              <li>
+                                Regressionstrenden och EMA visar tydligt olika total viktförändring
+                              </li>
+                              <li>
+                                Vikten gick i motsatta riktningar under periodens två halvor med
+                                minst 1 kg total svängning
+                              </li>
+                            </ul>
+                          </div>
                         )}
                         {warning.type === 'large_deficit' && (
                           <p className="text-xs text-orange-700 mt-1">

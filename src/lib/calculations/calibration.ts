@@ -1043,13 +1043,44 @@ export function runCalibration(input: CalibrationInput): CalibrationResult | str
     }
   }
 
-  // EMA divergence detection: flag non-monotonic trend if OLS and EMA disagree significantly
-  if (olsResult && emaResult) {
-    const emaChange = emaResult.trendEnd - emaResult.trendStart
-    const olsChange = olsResult.trendEnd - olsResult.trendStart
-    if (Math.abs(emaChange - olsChange) > 0.5) {
+  // Non-linearity detection: hybrid rule + curvature check
+  {
+    // --- Hybrid EMA/OLS divergence rule ---
+    let divergenceFlag = false
+    if (olsResult && emaResult) {
+      const emaChange = emaResult.trendEnd - emaResult.trendStart
+      const olsChange = olsResult.trendEnd - olsResult.trendStart
+      const diff = Math.abs(emaChange - olsChange)
+      // Trigger only when the difference is both absolutely noticeable AND
+      // large relative to the trend magnitude (avoids false positives in short periods)
+      if (diff > 0.5 && diff / Math.max(Math.abs(olsChange), 0.5) > 0.4) {
+        divergenceFlag = true
+      }
+    }
+
+    // --- Curvature check: compare OLS slope of first half vs second half ---
+    let curvatureFlag = false
+    if (allMeasurements.length >= 6) {
+      const mid = Math.floor(allMeasurements.length / 2)
+      const firstHalf = allMeasurements.slice(0, mid)
+      const secondHalf = allMeasurements.slice(mid)
+      const firstOls = calculateWeightTrendOLS(firstHalf)
+      const secondOls = calculateWeightTrendOLS(secondHalf)
+      if (firstOls && secondOls) {
+        const firstChange = firstOls.trendEnd - firstOls.trendStart
+        const secondChange = secondOls.trendEnd - secondOls.trendStart
+        const curvature = Math.abs(secondChange - firstChange)
+        // Flag if the two halves move in opposite directions with at least 0.6 kg swing each
+        const oppositeDirections = firstChange * secondChange < 0
+        if (oppositeDirections && curvature > 1.0) {
+          curvatureFlag = true
+        }
+      }
+    }
+
+    if (divergenceFlag || curvatureFlag) {
       warnings.push({
-        type: 'glycogen_event', // reuse closest existing type; indicates unstable trend
+        type: 'nonlinear_trend',
         message:
           'Trendberäkningen visar tecken på icke-linjär viktförändring under perioden (t.ex. refeed-period). Resultatet kan vara mindre tillförlitligt.',
       })

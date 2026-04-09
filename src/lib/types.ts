@@ -465,6 +465,7 @@ export interface CalibrationWarning {
     | 'low_confidence'
     | 'large_adjustment'
     | 'glycogen_event'
+    | 'nonlinear_trend'
     | 'high_cv'
     | 'outlier_removed'
     | 'low_signal'
