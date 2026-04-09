@@ -1061,16 +1061,27 @@ export default function MetabolicCalibration({
                       <div>
                         <p>{warning.message}</p>
                         {warning.type === 'high_cv' && (
-                          <p className="text-xs text-orange-700 mt-1">
-                            Hög variation minskar tillförlitligheten och kan begränsa hur stor
-                            justering som tillåts.
-                          </p>
+                          <div className="text-xs text-orange-700 mt-1 space-y-1">
+                            <p>
+                              Hög variation minskar tillförlitligheten och kan begränsa hur stor
+                              justering som tillåts. Varningen aktiveras när:
+                            </p>
+                            <ul className="list-disc list-inside space-y-0.5">
+                              <li>Variationskoefficienten (CV) för vikten överstiger 2 %</li>
+                            </ul>
+                          </div>
                         )}
                         {warning.type === 'target_calories_fallback' && (
-                          <p className="text-xs text-orange-700 mt-1">
-                            Om du i verkligheten åt mer eller mindre än målet kan kalibreringen bli
-                            felaktig — den kan inte se avvikelser som inte loggats.
-                          </p>
+                          <div className="text-xs text-orange-700 mt-1 space-y-1">
+                            <p>
+                              Om du i verkligheten åt mer eller mindre än målet kan kalibreringen
+                              bli felaktig — den kan inte se avvikelser som inte loggats. Varningen
+                              aktiveras när:
+                            </p>
+                            <ul className="list-disc list-inside space-y-0.5">
+                              <li>Inga måltider är loggade under perioden</li>
+                            </ul>
+                          </div>
                         )}
                         {warning.type === 'selective_logging' && (
                           <div className="text-xs text-orange-700 mt-1 space-y-1">
@@ -1119,16 +1130,29 @@ export default function MetabolicCalibration({
                           </div>
                         )}
                         {warning.type === 'large_deficit' && (
-                          <p className="text-xs text-orange-700 mt-1">
-                            Vid stort underskott anpassar kroppen sin ämnesomsättning nedåt, vilket
-                            gör att beräknad TDEE kan underskatta ditt verkliga underhållsbehov.
-                          </p>
+                          <div className="text-xs text-orange-700 mt-1 space-y-1">
+                            <p>
+                              Vid stort underskott anpassar kroppen sin ämnesomsättning nedåt,
+                              vilket gör att beräknad TDEE kan underskatta ditt verkliga
+                              underhållsbehov. Varningen aktiveras när:
+                            </p>
+                            <ul className="list-disc list-inside space-y-0.5">
+                              <li>Beräknat kaloriunderskott överstiger 25 % av TDEE</li>
+                            </ul>
+                          </div>
                         )}
                         {warning.type === 'low_confidence' && (
-                          <p className="text-xs text-orange-700 mt-1">
-                            Resultatet är användbart som riktlinje men bör bekräftas med en ny
-                            kalibrering efter fler veckors data.
-                          </p>
+                          <div className="text-xs text-orange-700 mt-1 space-y-1">
+                            <p>
+                              Resultatet är användbart som riktlinje men bör bekräftas med en ny
+                              kalibrering efter fler veckors data. Varningen aktiveras när något av
+                              följande stämmer:
+                            </p>
+                            <ul className="list-disc list-inside space-y-0.5">
+                              <li>Färre än 3 vägningar per vecka i snitt</li>
+                              <li>Mer än 70 % av mätningarna är från periodens första hälft</li>
+                            </ul>
+                          </div>
                         )}
                         {warning.type === 'large_adjustment' && (
                           <p className="text-xs text-orange-700 mt-1">
