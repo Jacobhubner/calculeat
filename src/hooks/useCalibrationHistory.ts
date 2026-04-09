@@ -106,7 +106,7 @@ export function useRevertCalibration() {
     onSuccess: ({ profileId }) => {
       queryClient.invalidateQueries({ queryKey: ['calibration-history', profileId] })
       queryClient.invalidateQueries({ queryKey: ['last-calibration', profileId] })
-      queryClient.invalidateQueries({ queryKey: ['profiles'] })
+      queryClient.refetchQueries({ queryKey: ['profiles'] })
       toast.success('Kalibrering ångrad — TDEE återställt')
     },
     onError: () => {

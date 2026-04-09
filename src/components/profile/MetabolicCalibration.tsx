@@ -63,6 +63,7 @@ export default function MetabolicCalibration({
   onClose,
 }: MetabolicCalibrationProps) {
   const [isOpen, setIsOpen] = useState(false)
+  const [warningsExpanded, setWarningsExpanded] = useState(false)
   const [timePeriod, setTimePeriod] = useState<14 | 21 | 28>(21)
   const [calibrationApplied, setCalibrationApplied] = useState<number | null>(null)
 
@@ -1052,151 +1053,175 @@ export default function MetabolicCalibration({
                   </div>
 
                   {/* Warnings */}
-                  {data.warnings.map((warning, i) => (
-                    <div
-                      key={i}
-                      className="flex items-start gap-2 p-3 rounded-lg bg-orange-50 text-sm text-orange-800"
-                    >
-                      <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                      <div>
-                        <p>{warning.message}</p>
-                        {warning.type === 'high_cv' && (
-                          <div className="text-xs text-orange-700 mt-1 space-y-1">
-                            <p>
-                              Hög variation minskar tillförlitligheten och kan begränsa hur stor
-                              justering som tillåts. Varningen aktiveras när:
-                            </p>
-                            <ul className="list-disc list-inside space-y-0.5">
-                              <li>Variationskoefficienten (CV) för vikten överstiger 2 %</li>
-                            </ul>
-                          </div>
-                        )}
-                        {warning.type === 'target_calories_fallback' && (
-                          <div className="text-xs text-orange-700 mt-1 space-y-1">
-                            <p>
-                              Om du i verkligheten åt mer eller mindre än målet kan kalibreringen
-                              bli felaktig — den kan inte se avvikelser som inte loggats. Varningen
-                              aktiveras när:
-                            </p>
-                            <ul className="list-disc list-inside space-y-0.5">
-                              <li>Inga måltider är loggade under perioden</li>
-                            </ul>
-                          </div>
-                        )}
-                        {warning.type === 'selective_logging' && (
-                          <div className="text-xs text-orange-700 mt-1 space-y-1">
-                            <p>
-                              Om du bara loggar &quot;bra&quot; dagar överskattas kaloriintaget inte
-                              och kalibreringen kan föreslå ett för lågt TDEE. Just nu är:
-                            </p>
-                            <ul className="list-disc list-inside space-y-0.5">
-                              <li>Loggat snitt &lt; 85 % av målkalorier</li>
-                              <li>Matsloggskomplettering &lt; 80 %</li>
-                              <li>Vikten minskat under perioden</li>
-                            </ul>
-                          </div>
-                        )}
-                        {warning.type === 'glycogen_event' && (
-                          <div className="text-xs text-orange-700 mt-1 space-y-1">
-                            <p>
-                              Glykogen och vätska kan orsaka viktförändringar på 1–3 kg på enstaka
-                              dagar utan att det återspeglar faktisk fettförändring.
-                              Trendberäkningen kompenserar men precision minskar. Varningen
-                              aktiveras när:
-                            </p>
-                            <ul className="list-disc list-inside space-y-0.5">
-                              <li>
-                                En enskild daglig viktförändring överstiger 1,5 % av kroppsvikten
-                              </li>
-                            </ul>
-                          </div>
-                        )}
-                        {warning.type === 'nonlinear_trend' && (
-                          <div className="text-xs text-orange-700 mt-1 space-y-1">
-                            <p>
-                              Vikten har inte rört sig i en jämn riktning under perioden — troligen
-                              en refeed-period, diet break eller annan övergång. Varningen aktiveras
-                              när något av följande stämmer:
-                            </p>
-                            <ul className="list-disc list-inside space-y-0.5">
-                              <li>
-                                Regressionstrenden och EMA visar tydligt olika total viktförändring
-                              </li>
-                              <li>
-                                Vikten gick i motsatta riktningar under periodens två halvor med
-                                minst 1 kg total svängning
-                              </li>
-                            </ul>
-                          </div>
-                        )}
-                        {warning.type === 'large_deficit' && (
-                          <div className="text-xs text-orange-700 mt-1 space-y-1">
-                            <p>
-                              Vid stort underskott anpassar kroppen sin ämnesomsättning nedåt,
-                              vilket gör att beräknad TDEE kan underskatta ditt verkliga
-                              underhållsbehov. Varningen aktiveras när:
-                            </p>
-                            <ul className="list-disc list-inside space-y-0.5">
-                              <li>Beräknat kaloriunderskott överstiger 25 % av TDEE</li>
-                            </ul>
-                          </div>
-                        )}
-                        {warning.type === 'low_confidence' && (
-                          <div className="text-xs text-orange-700 mt-1 space-y-1">
-                            <p>
-                              Resultatet är användbart som riktlinje men bör bekräftas med en ny
-                              kalibrering efter fler veckors data. Varningen aktiveras när något av
-                              följande stämmer:
-                            </p>
-                            <ul className="list-disc list-inside space-y-0.5">
-                              <li>Färre än 3 vägningar per vecka i snitt</li>
-                              <li>Mer än 70 % av mätningarna är från periodens första hälft</li>
-                            </ul>
-                          </div>
-                        )}
-                        {warning.type === 'large_adjustment' && (
-                          <p className="text-xs text-orange-700 mt-1">
-                            Utan begränsning hade justeringen blivit{' '}
-                            {Math.round(data.rawTDEE - data.currentTDEE) >= 0 ? '+' : ''}
-                            {Math.round(data.rawTDEE - data.currentTDEE)} kcal (
-                            {Math.round(data.rawTDEE)} kcal).{' '}
-                            {(() => {
-                              const f = data.clampFactors
-                              const reasons: string[] = []
-                              if (f.dqiWasBindingCap)
-                                reasons.push('datakvalitetspoängen satte ett absolut tak')
-                              if (f.lowSignal) reasons.push('viktförändringen är för liten')
-                              if (f.lowConfidence) reasons.push('tillförlitligheten är låg')
-                              if (f.largeDeficit) reasons.push('stort kaloriunderskott')
-                              return reasons.length > 0 ? `Orsak: ${reasons.join(', ')}.` : ''
-                            })()}
-                          </p>
-                        )}
-                        {warning.type === 'low_signal' && (
-                          <p className="text-xs text-orange-700 mt-1">
-                            Förändringen ({Math.abs(data.weightChangeKg).toFixed(2)} kg) är under
-                            gränsen ~{Math.round(data.endCluster.average * 0.0025 * 10) / 10} kg
-                            (0,25% av din vikt). Antingen stämmer ditt TDEE redan, eller döljer
-                            vätska/glykogen den verkliga trenden.
-                          </p>
-                        )}
-                        {warning.type === 'outlier_removed' && data.filteredOutliers.length > 0 && (
-                          <ul className="mt-1 space-y-0.5">
-                            {data.filteredOutliers.map((o, j) => (
-                              <li key={j} className="text-xs text-orange-700">
-                                {o.recorded_at.toLocaleDateString('sv-SE', {
-                                  day: 'numeric',
-                                  month: 'short',
-                                })}
-                                {' — '}
-                                {o.weight_kg.toFixed(1)} kg
-                              </li>
-                            ))}
-                          </ul>
-                        )}
-                      </div>
+                  {data.warnings.length > 0 && (
+                    <div className="rounded-lg bg-orange-50 overflow-hidden">
+                      <button
+                        type="button"
+                        onClick={() => setWarningsExpanded(e => !e)}
+                        className="w-full flex items-center gap-2 px-3 py-2.5 text-sm text-orange-800 hover:bg-orange-100 transition-colors"
+                      >
+                        <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                        <span className="flex-1 text-left font-medium">
+                          {data.warnings.length === 1
+                            ? '1 varning'
+                            : `${data.warnings.length} varningar`}
+                        </span>
+                        <ChevronDown
+                          className={`h-4 w-4 flex-shrink-0 transition-transform duration-200 ${warningsExpanded ? 'rotate-180' : ''}`}
+                        />
+                      </button>
+                      {warningsExpanded && (
+                        <div className="border-t border-orange-200 divide-y divide-orange-200">
+                          {data.warnings.map((warning, i) => (
+                            <div key={i} className="px-3 py-2.5 text-sm text-orange-800">
+                              <p>{warning.message}</p>
+                              {warning.type === 'high_cv' && (
+                                <div className="text-xs text-orange-700 mt-1 space-y-1">
+                                  <p>
+                                    Hög variation minskar tillförlitligheten och kan begränsa hur
+                                    stor justering som tillåts. Varningen aktiveras när:
+                                  </p>
+                                  <ul className="list-disc list-inside space-y-0.5">
+                                    <li>Variationskoefficienten (CV) för vikten överstiger 2 %</li>
+                                  </ul>
+                                </div>
+                              )}
+                              {warning.type === 'target_calories_fallback' && (
+                                <div className="text-xs text-orange-700 mt-1 space-y-1">
+                                  <p>
+                                    Om du i verkligheten åt mer eller mindre än målet kan
+                                    kalibreringen bli felaktig — den kan inte se avvikelser som inte
+                                    loggats. Varningen aktiveras när:
+                                  </p>
+                                  <ul className="list-disc list-inside space-y-0.5">
+                                    <li>Inga måltider är loggade under perioden</li>
+                                  </ul>
+                                </div>
+                              )}
+                              {warning.type === 'selective_logging' && (
+                                <div className="text-xs text-orange-700 mt-1 space-y-1">
+                                  <p>
+                                    Om du bara loggar &quot;bra&quot; dagar överskattas
+                                    kaloriintaget inte och kalibreringen kan föreslå ett för lågt
+                                    TDEE. Just nu är:
+                                  </p>
+                                  <ul className="list-disc list-inside space-y-0.5">
+                                    <li>Loggat snitt &lt; 85 % av målkalorier</li>
+                                    <li>Matsloggskomplettering &lt; 80 %</li>
+                                    <li>Vikten minskat under perioden</li>
+                                  </ul>
+                                </div>
+                              )}
+                              {warning.type === 'glycogen_event' && (
+                                <div className="text-xs text-orange-700 mt-1 space-y-1">
+                                  <p>
+                                    Glykogen och vätska kan orsaka viktförändringar på 1–3 kg på
+                                    enstaka dagar utan att det återspeglar faktisk fettförändring.
+                                    Trendberäkningen kompenserar men precision minskar. Varningen
+                                    aktiveras när:
+                                  </p>
+                                  <ul className="list-disc list-inside space-y-0.5">
+                                    <li>
+                                      En enskild daglig viktförändring överstiger 1,5 % av
+                                      kroppsvikten
+                                    </li>
+                                  </ul>
+                                </div>
+                              )}
+                              {warning.type === 'nonlinear_trend' && (
+                                <div className="text-xs text-orange-700 mt-1 space-y-1">
+                                  <p>
+                                    Vikten har inte rört sig i en jämn riktning under perioden —
+                                    troligen en refeed-period, diet break eller annan övergång.
+                                    Varningen aktiveras när något av följande stämmer:
+                                  </p>
+                                  <ul className="list-disc list-inside space-y-0.5">
+                                    <li>
+                                      Regressionstrenden och EMA visar tydligt olika total
+                                      viktförändring
+                                    </li>
+                                    <li>
+                                      Vikten gick i motsatta riktningar under periodens två halvor
+                                      med minst 1 kg total svängning
+                                    </li>
+                                  </ul>
+                                </div>
+                              )}
+                              {warning.type === 'large_deficit' && (
+                                <div className="text-xs text-orange-700 mt-1 space-y-1">
+                                  <p>
+                                    Vid stort underskott anpassar kroppen sin ämnesomsättning nedåt,
+                                    vilket gör att beräknad TDEE kan underskatta ditt verkliga
+                                    underhållsbehov. Varningen aktiveras när:
+                                  </p>
+                                  <ul className="list-disc list-inside space-y-0.5">
+                                    <li>Beräknat kaloriunderskott överstiger 25 % av TDEE</li>
+                                  </ul>
+                                </div>
+                              )}
+                              {warning.type === 'low_confidence' && (
+                                <div className="text-xs text-orange-700 mt-1 space-y-1">
+                                  <p>
+                                    Resultatet är användbart som riktlinje men bör bekräftas med en
+                                    ny kalibrering efter fler veckors data. Varningen aktiveras när
+                                    något av följande stämmer:
+                                  </p>
+                                  <ul className="list-disc list-inside space-y-0.5">
+                                    <li>Färre än 3 vägningar per vecka i snitt</li>
+                                    <li>
+                                      Mer än 70 % av mätningarna är från periodens första hälft
+                                    </li>
+                                  </ul>
+                                </div>
+                              )}
+                              {warning.type === 'large_adjustment' && (
+                                <p className="text-xs text-orange-700 mt-1">
+                                  Utan begränsning hade justeringen blivit{' '}
+                                  {Math.round(data.rawTDEE - data.currentTDEE) >= 0 ? '+' : ''}
+                                  {Math.round(data.rawTDEE - data.currentTDEE)} kcal (
+                                  {Math.round(data.rawTDEE)} kcal).{' '}
+                                  {(() => {
+                                    const f = data.clampFactors
+                                    const reasons: string[] = []
+                                    if (f.dqiWasBindingCap)
+                                      reasons.push('datakvalitetspoängen satte ett absolut tak')
+                                    if (f.lowSignal) reasons.push('viktförändringen är för liten')
+                                    if (f.lowConfidence) reasons.push('tillförlitligheten är låg')
+                                    if (f.largeDeficit) reasons.push('stort kaloriunderskott')
+                                    return reasons.length > 0 ? `Orsak: ${reasons.join(', ')}.` : ''
+                                  })()}
+                                </p>
+                              )}
+                              {warning.type === 'low_signal' && (
+                                <p className="text-xs text-orange-700 mt-1">
+                                  Förändringen ({Math.abs(data.weightChangeKg).toFixed(2)} kg) är
+                                  under gränsen ~
+                                  {Math.round(data.endCluster.average * 0.0025 * 10) / 10} kg (0,25%
+                                  av din vikt). Antingen stämmer ditt TDEE redan, eller döljer
+                                  vätska/glykogen den verkliga trenden.
+                                </p>
+                              )}
+                              {warning.type === 'outlier_removed' &&
+                                data.filteredOutliers.length > 0 && (
+                                  <ul className="mt-1 space-y-0.5">
+                                    {data.filteredOutliers.map((o, j) => (
+                                      <li key={j} className="text-xs text-orange-700">
+                                        {o.recorded_at.toLocaleDateString('sv-SE', {
+                                          day: 'numeric',
+                                          month: 'short',
+                                        })}
+                                        {' — '}
+                                        {o.weight_kg.toFixed(1)} kg
+                                      </li>
+                                    ))}
+                                  </ul>
+                                )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                  ))}
+                  )}
 
                   {/* Cluster details + weight change */}
                   <div className="rounded-lg border border-neutral-200 overflow-hidden">
