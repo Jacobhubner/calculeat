@@ -18,7 +18,11 @@ import {
 } from './calibration-constants'
 import { mean, stddev, daysBetween, meanDate, getEffectiveKcalPerKg } from './calibration-helpers'
 import { detectWeightOutliers } from './calibration-outliers'
-import { calculateWeightTrendOLS, calculateWeightTrend } from './calibration-trend'
+import {
+  calculateWeightTrendOLS,
+  calculateWeightTrend,
+  calculateWeightTrendTheilSen,
+} from './calibration-trend'
 import { buildClusters } from './calibration-clustering'
 import {
   getCalorieEstimate,
@@ -133,15 +137,20 @@ export function runCalibration(input: CalibrationInput): CalibrationResult | str
   }
 
   // Step 3: Calculate weight change via OLS (primary) + EMA (secondary for divergence detection)
+  // Theil-Sen runs in parallel as a robust cross-check — not used as primary estimator.
   const olsResult = calculateWeightTrendOLS(allMeasurements)
   const emaResult = calculateWeightTrend(allMeasurements)
+  const theilSenResult = calculateWeightTrendTheilSen(allMeasurements)
 
-  // OLS preferred; fall back to EMA if < 3 measurements, then to cluster diff
+  // OLS preferred; fall back to Theil-Sen if OLS unavailable, then EMA, then cluster diff
   const weightChangeKg = olsResult
     ? olsResult.trendEnd - olsResult.trendStart
-    : emaResult
-      ? emaResult.trendEnd - emaResult.trendStart
-      : endCluster.average - startCluster.average
+    : theilSenResult
+      ? theilSenResult.medianSlope *
+        daysBetween(startCluster.dates[0], endCluster.dates[endCluster.dates.length - 1])
+      : emaResult
+        ? emaResult.trendEnd - emaResult.trendStart
+        : endCluster.average - startCluster.average
 
   // actualDays from OLS time span (removes centroid-compression bias)
   // Fall back to centroid distance if OLS unavailable
@@ -376,7 +385,23 @@ export function runCalibration(input: CalibrationInput): CalibrationResult | str
       }
     }
 
-    if (divergenceFlag || curvatureFlag) {
+    // --- Theil-Sen cross-check ---
+    // If OLS and Theil-Sen slopes diverge by >30% and the trend is large enough
+    // to matter (|OLS| > 0.01 kg/day), the data contains outliers or a structural
+    // break that OLS is not fully capturing.
+    let theilSenFlag = false
+    if (
+      olsResult &&
+      theilSenResult &&
+      Math.abs(olsResult.slopeKgPerDay) > 0.01 &&
+      Math.abs(theilSenResult.medianSlope - olsResult.slopeKgPerDay) /
+        Math.abs(olsResult.slopeKgPerDay) >
+        0.3
+    ) {
+      theilSenFlag = true
+    }
+
+    if (divergenceFlag || curvatureFlag || theilSenFlag) {
       warnings.push({
         type: 'nonlinear_trend',
         message:

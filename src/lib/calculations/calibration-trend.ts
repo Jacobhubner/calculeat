@@ -81,6 +81,51 @@ export function calculateWeightTrendOLS(
   }
 }
 
+// ─── Theil-Sen Robust Slope Estimator ───────────────────────────────────────
+
+export interface TheilSenResult {
+  /** Median of all pairwise slopes (kg/day) — robust to outliers */
+  medianSlope: number
+}
+
+/**
+ * Theil-Sen estimator: median of all pairwise slopes between measurement pairs.
+ *
+ * Used as a robust cross-check against OLS. Because it uses the median rather
+ * than the mean of pairwise slopes, a single extreme data point cannot skew
+ * the result — unlike OLS which minimises squared residuals.
+ *
+ * Complexity: O(n²) pairs. With n ≤ 28 this gives ≤ 378 pairs — negligible cost.
+ * Returns null if fewer than 3 measurements (need at least 3 for a meaningful median).
+ */
+export function calculateWeightTrendTheilSen(
+  measurements: Array<{ weight_kg: number; recorded_at: Date }>
+): TheilSenResult | null {
+  if (measurements.length < 3) return null
+
+  const sorted = [...measurements].sort((a, b) => a.recorded_at.getTime() - b.recorded_at.getTime())
+  const slopes: number[] = []
+
+  for (let i = 0; i < sorted.length; i++) {
+    for (let j = i + 1; j < sorted.length; j++) {
+      const deltaDays =
+        (sorted[j].recorded_at.getTime() - sorted[i].recorded_at.getTime()) / 86400000
+      if (deltaDays === 0) continue // skip same-day measurements
+      slopes.push((sorted[j].weight_kg - sorted[i].weight_kg) / deltaDays)
+    }
+  }
+
+  if (slopes.length === 0) return null
+
+  slopes.sort((a, b) => a - b)
+  const mid = Math.floor(slopes.length / 2)
+  const medianSlope = slopes.length % 2 !== 0 ? slopes[mid] : (slopes[mid - 1] + slopes[mid]) / 2
+
+  return { medianSlope }
+}
+
+// ─── EMA Trend ───────────────────────────────────────────────────────────────
+
 /**
  * Calculate weight change using exponential smoothing trend.
  * More robust than raw cluster means against water/glycogen noise.

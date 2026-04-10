@@ -102,8 +102,12 @@ export {
 export type { OutlierResult } from './calibration-outliers'
 export { detectWeightOutliers } from './calibration-outliers'
 
-export type { OLSTrendResult } from './calibration-trend'
-export { calculateWeightTrendOLS, calculateWeightTrend } from './calibration-trend'
+export type { OLSTrendResult, TheilSenResult } from './calibration-trend'
+export {
+  calculateWeightTrendOLS,
+  calculateWeightTrend,
+  calculateWeightTrendTheilSen,
+} from './calibration-trend'
 
 export type { ClusterBuildResult } from './calibration-clustering'
 export { buildClusters } from './calibration-clustering'
