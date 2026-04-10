@@ -63,7 +63,18 @@ export default function MetabolicCalibration({
   onClose,
 }: MetabolicCalibrationProps) {
   const [isOpen, setIsOpen] = useState(false)
-  const [warningsExpanded, setWarningsExpanded] = useState(false)
+  const [warningSectionOpen, setWarningSectionOpen] = useState(false)
+  const [expandedWarnings, setExpandedWarnings] = useState<Set<number>>(new Set())
+  const toggleWarning = (i: number) =>
+    setExpandedWarnings(prev => {
+      const next = new Set(prev)
+      if (next.has(i)) {
+        next.delete(i)
+      } else {
+        next.add(i)
+      }
+      return next
+    })
   const [timePeriod, setTimePeriod] = useState<14 | 21 | 28>(21)
   const [calibrationApplied, setCalibrationApplied] = useState<number | null>(null)
 
@@ -1064,7 +1075,7 @@ export default function MetabolicCalibration({
                     <div className="rounded-lg bg-orange-50 overflow-hidden">
                       <button
                         type="button"
-                        onClick={() => setWarningsExpanded(e => !e)}
+                        onClick={() => setWarningSectionOpen(e => !e)}
                         className="w-full flex items-center gap-2 px-3 py-2.5 text-sm text-orange-800 hover:bg-orange-100 transition-colors"
                       >
                         <AlertCircle className="h-4 w-4 flex-shrink-0" />
@@ -1074,15 +1085,24 @@ export default function MetabolicCalibration({
                             : `${data.warnings.length} varningar`}
                         </span>
                         <ChevronDown
-                          className={`h-4 w-4 flex-shrink-0 transition-transform duration-200 ${warningsExpanded ? 'rotate-180' : ''}`}
+                          className={`h-4 w-4 flex-shrink-0 transition-transform duration-200 ${warningSectionOpen ? 'rotate-180' : ''}`}
                         />
                       </button>
-                      {warningsExpanded && (
+                      {warningSectionOpen && (
                         <div className="border-t border-orange-200 divide-y divide-orange-200">
                           {data.warnings.map((warning, i) => (
                             <div key={i} className="px-3 py-2.5 text-sm text-orange-800">
-                              <p>{warning.message}</p>
-                              {warning.type === 'high_cv' && (
+                              <div className="flex items-start justify-between gap-2">
+                                <p className="flex-1">{warning.message}</p>
+                                <button
+                                  type="button"
+                                  onClick={() => toggleWarning(i)}
+                                  className="flex-shrink-0 text-xs text-orange-600 hover:text-orange-800 underline underline-offset-2 mt-0.5"
+                                >
+                                  {expandedWarnings.has(i) ? 'Dölj' : 'Varför?'}
+                                </button>
+                              </div>
+                              {expandedWarnings.has(i) && warning.type === 'high_cv' && (
                                 <div className="text-xs text-orange-700 mt-1 space-y-1">
                                   <p>
                                     Hög variation minskar tillförlitligheten och kan begränsa hur
@@ -1091,21 +1111,30 @@ export default function MetabolicCalibration({
                                   <ul className="list-disc list-inside space-y-0.5">
                                     <li>Variationskoefficienten (CV) för vikten överstiger 2 %</li>
                                   </ul>
-                                </div>
-                              )}
-                              {warning.type === 'target_calories_fallback' && (
-                                <div className="text-xs text-orange-700 mt-1 space-y-1">
-                                  <p>
-                                    Om du i verkligheten åt mer eller mindre än målet kan
-                                    kalibreringen bli felaktig — den kan inte se avvikelser som inte
-                                    loggats. Varningen aktiveras när:
+                                  <p className="text-orange-600 font-medium">
+                                    Tips: Väg dig på morgonen före frukost och toalett för att
+                                    minska dagliga svängningar.
                                   </p>
-                                  <ul className="list-disc list-inside space-y-0.5">
-                                    <li>Inga måltider är loggade under perioden</li>
-                                  </ul>
                                 </div>
                               )}
-                              {warning.type === 'selective_logging' && (
+                              {expandedWarnings.has(i) &&
+                                warning.type === 'target_calories_fallback' && (
+                                  <div className="text-xs text-orange-700 mt-1 space-y-1">
+                                    <p>
+                                      Om du i verkligheten åt mer eller mindre än målet kan
+                                      kalibreringen bli felaktig — den kan inte se avvikelser som
+                                      inte loggats. Varningen aktiveras när:
+                                    </p>
+                                    <ul className="list-disc list-inside space-y-0.5">
+                                      <li>Inga måltider är loggade under perioden</li>
+                                    </ul>
+                                    <p className="text-orange-600 font-medium">
+                                      Tips: Logga dina måltider under nästa period för ett mer
+                                      tillförlitligt resultat.
+                                    </p>
+                                  </div>
+                                )}
+                              {expandedWarnings.has(i) && warning.type === 'selective_logging' && (
                                 <div className="text-xs text-orange-700 mt-1 space-y-1">
                                   <p>
                                     Om du bara loggar &quot;bra&quot; dagar överskattas
@@ -1117,9 +1146,13 @@ export default function MetabolicCalibration({
                                     <li>Matsloggskomplettering &lt; 80 %</li>
                                     <li>Vikten minskat under perioden</li>
                                   </ul>
+                                  <p className="text-orange-600 font-medium">
+                                    Tips: Försök logga även de dagar du äter mer — precision kräver
+                                    fullständig data.
+                                  </p>
                                 </div>
                               )}
-                              {warning.type === 'glycogen_event' && (
+                              {expandedWarnings.has(i) && warning.type === 'glycogen_event' && (
                                 <div className="text-xs text-orange-700 mt-1 space-y-1">
                                   <p>
                                     Glykogen och vätska kan orsaka viktförändringar på 1–3 kg på
@@ -1133,9 +1166,13 @@ export default function MetabolicCalibration({
                                       kroppsvikten
                                     </li>
                                   </ul>
+                                  <p className="text-orange-600 font-medium">
+                                    Tips: Kalibrering med längre period (21–28 dagar) jämnar ut
+                                    tillfälliga svängningar bättre.
+                                  </p>
                                 </div>
                               )}
-                              {warning.type === 'nonlinear_trend' && (
+                              {expandedWarnings.has(i) && warning.type === 'nonlinear_trend' && (
                                 <div className="text-xs text-orange-700 mt-1 space-y-1">
                                   <p>
                                     Vikten har inte rört sig i en jämn riktning under perioden —
@@ -1152,9 +1189,13 @@ export default function MetabolicCalibration({
                                       med minst 1 kg total svängning
                                     </li>
                                   </ul>
+                                  <p className="text-orange-600 font-medium">
+                                    Tips: Vänta tills vikten rört sig jämnt i en riktning i minst
+                                    2–3 veckor innan du kalibrerar.
+                                  </p>
                                 </div>
                               )}
-                              {warning.type === 'large_deficit' && (
+                              {expandedWarnings.has(i) && warning.type === 'large_deficit' && (
                                 <div className="text-xs text-orange-700 mt-1 space-y-1">
                                   <p>
                                     Vid stort underskott anpassar kroppen sin ämnesomsättning nedåt,
@@ -1164,9 +1205,13 @@ export default function MetabolicCalibration({
                                   <ul className="list-disc list-inside space-y-0.5">
                                     <li>Beräknat kaloriunderskott överstiger 25 % av TDEE</li>
                                   </ul>
+                                  <p className="text-orange-600 font-medium">
+                                    Tips: Resultatet är troligen en underskattning av ditt verkliga
+                                    TDEE — ta det som ett golv snarare än ett exakt värde.
+                                  </p>
                                 </div>
                               )}
-                              {warning.type === 'low_confidence' && (
+                              {expandedWarnings.has(i) && warning.type === 'low_confidence' && (
                                 <div className="text-xs text-orange-700 mt-1 space-y-1">
                                   <p>
                                     Resultatet är användbart som riktlinje men bör bekräftas med en
@@ -1179,49 +1224,74 @@ export default function MetabolicCalibration({
                                       Mer än 70 % av mätningarna är från periodens första hälft
                                     </li>
                                   </ul>
+                                  <p className="text-orange-600 font-medium">
+                                    Tips: Väg dig minst varannan dag och sprid mätningarna jämnt
+                                    över perioden.
+                                  </p>
                                 </div>
                               )}
-                              {warning.type === 'large_adjustment' && (
-                                <p className="text-xs text-orange-700 mt-1">
-                                  Utan begränsning hade justeringen blivit{' '}
-                                  {Math.round(data.rawTDEE - data.currentTDEE) >= 0 ? '+' : ''}
-                                  {Math.round(data.rawTDEE - data.currentTDEE)} kcal (
-                                  {Math.round(data.rawTDEE)} kcal).{' '}
-                                  {(() => {
-                                    const f = data.clampFactors
-                                    const reasons: string[] = []
-                                    if (f.dqiWasBindingCap)
-                                      reasons.push('datakvalitetspoängen satte ett absolut tak')
-                                    if (f.lowSignal) reasons.push('viktförändringen är för liten')
-                                    if (f.lowConfidence) reasons.push('tillförlitligheten är låg')
-                                    if (f.largeDeficit) reasons.push('stort kaloriunderskott')
-                                    return reasons.length > 0 ? `Orsak: ${reasons.join(', ')}.` : ''
-                                  })()}
-                                </p>
+                              {expandedWarnings.has(i) && warning.type === 'large_adjustment' && (
+                                <div className="text-xs text-orange-700 mt-1 space-y-1">
+                                  <p>
+                                    Utan begränsning hade justeringen blivit{' '}
+                                    {Math.round(data.rawTDEE - data.currentTDEE) >= 0 ? '+' : ''}
+                                    {Math.round(data.rawTDEE - data.currentTDEE)} kcal (
+                                    {Math.round(data.rawTDEE)} kcal).{' '}
+                                    {(() => {
+                                      const f = data.clampFactors
+                                      const reasons: string[] = []
+                                      if (f.dqiWasBindingCap)
+                                        reasons.push('datakvalitetspoängen satte ett absolut tak')
+                                      if (f.lowSignal) reasons.push('viktförändringen är för liten')
+                                      if (f.lowConfidence) reasons.push('tillförlitligheten är låg')
+                                      if (f.largeDeficit) reasons.push('stort kaloriunderskott')
+                                      return reasons.length > 0
+                                        ? `Orsak: ${reasons.join(', ')}.`
+                                        : ''
+                                    })()}
+                                  </p>
+                                  <p className="text-orange-600 font-medium">
+                                    Tips: Förbättra datakvaliteten (fler vägningar, fullständig
+                                    loggning) för att tillåta större justeringar framöver.
+                                  </p>
+                                </div>
                               )}
-                              {warning.type === 'low_signal' && (
-                                <p className="text-xs text-orange-700 mt-1">
-                                  Förändringen ({Math.abs(data.weightChangeKg).toFixed(2)} kg) är
-                                  under gränsen ~
-                                  {Math.round(data.endCluster.average * 0.0025 * 10) / 10} kg (0,25%
-                                  av din vikt). Antingen stämmer ditt TDEE redan, eller döljer
-                                  vätska/glykogen den verkliga trenden.
-                                </p>
+                              {expandedWarnings.has(i) && warning.type === 'low_signal' && (
+                                <div className="text-xs text-orange-700 mt-1 space-y-1">
+                                  <p>
+                                    Förändringen ({Math.abs(data.weightChangeKg).toFixed(2)} kg) är
+                                    under gränsen ~
+                                    {Math.round(data.endCluster.average * 0.0025 * 10) / 10} kg
+                                    (0,25 % av din vikt). Antingen stämmer ditt TDEE redan, eller
+                                    döljer vätska/glykogen den verkliga trenden.
+                                  </p>
+                                  <p className="text-orange-600 font-medium">
+                                    Tips: Om du aktivt försöker gå ner eller upp i vikt — vänta
+                                    ytterligare 1–2 veckor tills trenden är tydligare.
+                                  </p>
+                                </div>
                               )}
-                              {warning.type === 'outlier_removed' &&
+                              {expandedWarnings.has(i) &&
+                                warning.type === 'outlier_removed' &&
                                 data.filteredOutliers.length > 0 && (
-                                  <ul className="mt-1 space-y-0.5">
-                                    {data.filteredOutliers.map((o, j) => (
-                                      <li key={j} className="text-xs text-orange-700">
-                                        {o.recorded_at.toLocaleDateString('sv-SE', {
-                                          day: 'numeric',
-                                          month: 'short',
-                                        })}
-                                        {' — '}
-                                        {o.weight_kg.toFixed(1)} kg
-                                      </li>
-                                    ))}
-                                  </ul>
+                                  <div className="text-xs text-orange-700 mt-1 space-y-1">
+                                    <ul className="space-y-0.5">
+                                      {data.filteredOutliers.map((o, j) => (
+                                        <li key={j}>
+                                          {o.recorded_at.toLocaleDateString('sv-SE', {
+                                            day: 'numeric',
+                                            month: 'short',
+                                          })}
+                                          {' — '}
+                                          {o.weight_kg.toFixed(1)} kg
+                                        </li>
+                                      ))}
+                                    </ul>
+                                    <p className="text-orange-600 font-medium">
+                                      Tips: Extremvärden kan bero på felmätning eller ovanliga
+                                      omständigheter — de påverkar inte beräkningen.
+                                    </p>
+                                  </div>
                                 )}
                             </div>
                           ))}
