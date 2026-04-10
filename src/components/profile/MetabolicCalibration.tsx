@@ -36,7 +36,7 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
-  Tooltip,
+  Tooltip as RechartsTooltip,
   ResponsiveContainer,
   ReferenceLine,
 } from 'recharts'
@@ -1567,7 +1567,7 @@ export default function MetabolicCalibration({
                             axisLine={false}
                             width={36}
                           />
-                          <Tooltip
+                          <RechartsTooltip
                             formatter={(value: number) =>
                               [`${Math.round(value)} kcal`, 'TDEE'] as [string, string]
                             }
