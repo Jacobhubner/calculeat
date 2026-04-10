@@ -30,16 +30,7 @@ import {
   RefreshCw,
   Info,
 } from 'lucide-react'
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip as RechartsTooltip,
-  ResponsiveContainer,
-  ReferenceLine,
-} from 'recharts'
+
 import { startOfDay, endOfDay, subDays, addDays, isBefore, format } from 'date-fns'
 import { sv } from 'date-fns/locale'
 import { useState, useMemo, useCallback } from 'react'
@@ -143,22 +134,6 @@ export default function MetabolicCalibration({
     // calibrationApplied was just set — next recommended is 21 days from now
     return 21
   }, [calibrationApplied])
-
-  // TDEE history chart data — non-reverted calibrations in chronological order
-  const historyChartData = useMemo(
-    () =>
-      (calibrationHistoryList ?? [])
-        .filter(c => !c.is_reverted)
-        .sort((a, b) => new Date(a.calibrated_at).getTime() - new Date(b.calibrated_at).getTime())
-        .map(c => ({
-          tdee: c.applied_tdee,
-          displayDate: new Date(c.calibrated_at).toLocaleDateString('sv-SE', {
-            day: 'numeric',
-            month: 'short',
-          }),
-        })),
-    [calibrationHistoryList]
-  )
 
   // Guard against applying the same dataset twice.
   // Allow apply if: new weight entries exist after last calibration,
@@ -1540,64 +1515,6 @@ export default function MetabolicCalibration({
                         </div>
                       )}
                     </>
-                  )}
-
-                  {/* TDEE history chart */}
-                  {historyChartData.length >= 2 && (
-                    <div className="rounded-lg border border-neutral-200 overflow-hidden">
-                      <p className="text-xs text-neutral-500 px-3 pt-2.5 pb-1 font-medium">
-                        TDEE-historik
-                      </p>
-                      <ResponsiveContainer width="100%" height={120}>
-                        <LineChart
-                          data={historyChartData}
-                          margin={{ top: 4, right: 12, bottom: 4, left: 0 }}
-                        >
-                          <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                          <XAxis
-                            dataKey="displayDate"
-                            tick={{ fontSize: 10, fill: '#a3a3a3' }}
-                            tickLine={false}
-                            axisLine={false}
-                          />
-                          <YAxis
-                            domain={['auto', 'auto']}
-                            tick={{ fontSize: 10, fill: '#a3a3a3' }}
-                            tickLine={false}
-                            axisLine={false}
-                            width={36}
-                          />
-                          <RechartsTooltip
-                            formatter={(value: number) =>
-                              [`${Math.round(value)} kcal`, 'TDEE'] as [string, string]
-                            }
-                            labelFormatter={(label: string) => label}
-                            contentStyle={{
-                              fontSize: 12,
-                              padding: '4px 8px',
-                              borderRadius: 6,
-                              border: '1px solid #e5e5e5',
-                            }}
-                          />
-                          {profile.tdee && (
-                            <ReferenceLine
-                              y={profile.tdee}
-                              stroke="#a3a3a3"
-                              strokeDasharray="4 4"
-                              strokeWidth={1}
-                            />
-                          )}
-                          <Line
-                            type="monotone"
-                            dataKey="tdee"
-                            stroke="#7c3aed"
-                            strokeWidth={2}
-                            dot={{ r: 3, fill: '#7c3aed', strokeWidth: 0 }}
-                            activeDot={{ r: 4 }}
-                          />
-                        </LineChart>
-                      </ResponsiveContainer>
-                    </div>
                   )}
 
                   {/* Undo last calibration — always visible when available */}
