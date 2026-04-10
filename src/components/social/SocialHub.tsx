@@ -475,13 +475,18 @@ function RespondedShareCard({ invitation }: { invitation: RespondedShareInvitati
           {t('invitations.sent.to')} {invitation.recipient_name}
         </p>
       </div>
-      <span
-        className={`shrink-0 text-xs font-medium px-2 py-0.5 rounded-full ${
-          isAccepted ? 'bg-green-100 text-green-700' : 'bg-neutral-100 text-neutral-500'
-        }`}
-      >
-        {isAccepted ? t('invitations.history.accepted') : t('invitations.history.rejected')}
-      </span>
+      <div className="shrink-0 flex flex-col items-end gap-0.5">
+        <span
+          className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+            isAccepted ? 'bg-green-100 text-green-700' : 'bg-neutral-100 text-neutral-500'
+          }`}
+        >
+          {isAccepted ? t('invitations.history.accepted') : t('invitations.history.rejected')}
+        </span>
+        <span className="text-[10px] text-neutral-400">
+          {formatDistanceToNow(parseISO(invitation.responded_at), { addSuffix: true, locale: sv })}
+        </span>
+      </div>
     </div>
   )
 }
