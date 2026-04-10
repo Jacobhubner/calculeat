@@ -31,6 +31,7 @@ export function useCalibrationAvailability(
       minDataPoints: MIN_DATA_POINTS[14],
       currentDataPoints: 0,
       daysSinceLastCalibration: null,
+      daysUntilNextRecommended: null,
       weightTrend: 'insufficient_data',
       suggestedTimePeriod: 21,
       confidencePreview: 'unknown',
@@ -177,6 +178,12 @@ export function useCalibrationAvailability(
       isRecommended = false
     }
 
+    const daysUntilNextRecommended = isRecommended
+      ? 0
+      : daysSinceLastCalibration !== null
+        ? Math.max(0, RECOMMENDED_MIN_DAYS - daysSinceLastCalibration)
+        : null
+
     return {
       isAvailable: true,
       isRecommended,
@@ -184,6 +191,7 @@ export function useCalibrationAvailability(
       minDataPoints: MIN_DATA_POINTS[bestPeriod],
       currentDataPoints: bestWeightsInPeriod.length,
       daysSinceLastCalibration,
+      daysUntilNextRecommended,
       weightTrend,
       suggestedTimePeriod: bestPeriod,
       confidencePreview,

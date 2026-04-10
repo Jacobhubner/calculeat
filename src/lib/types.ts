@@ -592,6 +592,8 @@ export interface CalibrationAvailability {
   minDataPoints: number
   currentDataPoints: number
   daysSinceLastCalibration: number | null
+  /** Days until calibration is next recommended. 0 = already recommended. null = never calibrated. */
+  daysUntilNextRecommended: number | null
   weightTrend: 'stable' | 'gaining' | 'losing' | 'erratic' | 'insufficient_data'
   suggestedTimePeriod: 14 | 21 | 28
   confidencePreview: 'high' | 'standard' | 'low' | 'unknown'
