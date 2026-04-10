@@ -300,6 +300,8 @@ export default function MetabolicCalibration({
         used_food_log: data.calorieSource !== 'target_calories',
         days_with_log_data: actualIntake?.daysWithData || 0,
         previous_tdee: profile.tdee || 0,
+        previous_calories_min: profile.calories_min ?? null,
+        previous_calories_max: profile.calories_max ?? null,
         calculated_tdee: data.rawTDEE,
         smoothed_tdee: smoothedTdee,
         applied_tdee: newTDEE,
@@ -335,6 +337,8 @@ export default function MetabolicCalibration({
         calibrationId: lastCalibration.id,
         profileId: profile.id,
         previousTdee: lastCalibration.previous_tdee,
+        previousCaloriesMin: lastCalibration.previous_calories_min ?? undefined,
+        previousCaloriesMax: lastCalibration.previous_calories_max ?? undefined,
       })
     } catch {
       // Error handled in hook
