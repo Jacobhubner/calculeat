@@ -116,6 +116,13 @@ export default function MetabolicCalibration({
   // calibration. If that calibration was reverted, there is no active baseline to protect.
   const lastActiveCalibration = calibrationHistoryList?.find(c => !c.is_reverted) ?? null
 
+  // Days until the next recommended calibration (21 days after last applied)
+  const daysUntilNextCalibration = useMemo(() => {
+    if (!calibrationApplied) return null
+    // calibrationApplied was just set — next recommended is 21 days from now
+    return 21
+  }, [calibrationApplied])
+
   // Guard against applying the same dataset twice.
   // Allow apply if: new weight entries exist after last calibration,
   // OR new calorie logs exist after last calibration,
@@ -1357,6 +1364,11 @@ export default function MetabolicCalibration({
                       <p className="text-xs text-green-600 mt-1">
                         Ditt kaloriintervall har uppdaterats
                       </p>
+                      {daysUntilNextCalibration !== null && (
+                        <p className="text-xs text-neutral-500 mt-1">
+                          Nästa rekommenderade kalibrering om {daysUntilNextCalibration} dagar
+                        </p>
+                      )}
                       {onClose && (
                         <Button variant="outline" size="sm" onClick={onClose} className="mt-3">
                           Stäng

@@ -109,6 +109,13 @@ export default function CalibrationPrompt({
               {availability.daysSinceLastCalibration !== null && (
                 <span className="ml-1">({availability.daysSinceLastCalibration} dagar sedan)</span>
               )}
+              {availability.daysUntilNextRecommended !== null &&
+                availability.daysUntilNextRecommended > 0 && (
+                  <span className="ml-1 text-neutral-400">
+                    · nästa om {availability.daysUntilNextRecommended} dag
+                    {availability.daysUntilNextRecommended !== 1 ? 'ar' : ''}
+                  </span>
+                )}
             </div>
 
             <Button
