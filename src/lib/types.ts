@@ -536,8 +536,6 @@ export interface CalibrationHistory {
   used_food_log: boolean
   days_with_log_data: number
   previous_tdee: number
-  previous_calories_min: number | null
-  previous_calories_max: number | null
   calculated_tdee: number
   applied_tdee: number
   was_limited: boolean
