@@ -1352,6 +1352,17 @@ export default function MetabolicCalibration({
                         </p>
                       </div>
                     </div>
+                    {data.tdeeLower90 && data.tdeeUpper90 && (
+                      <div className="flex items-center justify-between px-3 py-2 border-t border-neutral-100">
+                        <span className="flex items-center gap-1.5 text-xs text-neutral-500">
+                          <Info className="h-3.5 w-3.5 flex-shrink-0" />
+                          90% konfidensintervall
+                        </span>
+                        <span className="text-xs font-medium text-neutral-700">
+                          {Math.round(data.tdeeLower90)}–{Math.round(data.tdeeUpper90)} kcal
+                        </span>
+                      </div>
+                    )}
                   </div>
 
                   {/* Apply button or success state */}
