@@ -596,7 +596,16 @@ export default function ProfilePage() {
 
                 {/* Metabolic Calibration - Manual TDEE calibration based on weight changes */}
                 {activeProfile && activeProfile.tdee && (
-                  <MetabolicCalibration profile={mergedProfile} />
+                  <MetabolicCalibration
+                    profile={mergedProfile}
+                    onRevert={() =>
+                      setPendingChanges(prev => {
+                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                        const { tdee, calories_min, calories_max, ...rest } = prev
+                        return rest
+                      })
+                    }
+                  />
                 )}
 
                 {/* Macro Distribution Settings */}

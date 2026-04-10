@@ -56,12 +56,14 @@ interface MetabolicCalibrationProps {
   profile: Profile
   variant?: 'full' | 'compact'
   onClose?: () => void
+  onRevert?: () => void
 }
 
 export default function MetabolicCalibration({
   profile,
   variant = 'full',
   onClose,
+  onRevert,
 }: MetabolicCalibrationProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [warningSectionOpen, setWarningSectionOpen] = useState(false)
@@ -336,6 +338,7 @@ export default function MetabolicCalibration({
         profileId: profile.id,
         previousTdee: lastCalibration.previous_tdee,
       })
+      onRevert?.()
     } catch {
       // Error handled in hook
     }
