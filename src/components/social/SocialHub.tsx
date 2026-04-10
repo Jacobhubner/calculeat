@@ -30,7 +30,9 @@ import {
   useRejectShareInvitation,
   useSentShareInvitations,
   useCancelShareInvitation,
+  useSentShareInvitationHistory,
   type SentShareInvitation,
+  type RespondedShareInvitation,
 } from '@/hooks/useShareInvitations'
 import { usePendingAdminInvitations, useRespondAdminInvitation } from '@/hooks/useAdminInvitations'
 import {
@@ -444,6 +446,42 @@ function SentShareCard({ invitation }: { invitation: SentShareInvitation }) {
         {isCancelling ? <Loader2 className="h-3 w-3 animate-spin" /> : <X className="h-3 w-3" />}
         {t('invitations.action.cancel')}
       </Button>
+    </div>
+  )
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// RespondedShareCard — visar accepted/rejected för avsändaren
+// ──────────────────────────────────────────────────────────────────────────────
+
+function RespondedShareCard({ invitation }: { invitation: RespondedShareInvitation }) {
+  const { t } = useTranslation('social')
+
+  const itemIcon =
+    invitation.item_type === 'recipe' ? (
+      <ChefHat className="h-4 w-4 text-neutral-400" />
+    ) : (
+      <Apple className="h-4 w-4 text-neutral-400" />
+    )
+
+  const isAccepted = invitation.status === 'accepted'
+
+  return (
+    <div className="rounded-lg border border-neutral-100 p-3 bg-white flex items-center gap-2">
+      <div className="p-1.5 rounded bg-neutral-50 shrink-0">{itemIcon}</div>
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-medium text-neutral-900 truncate">{invitation.item_name}</p>
+        <p className="text-xs text-neutral-400">
+          {t('invitations.sent.to')} {invitation.recipient_name}
+        </p>
+      </div>
+      <span
+        className={`shrink-0 text-xs font-medium px-2 py-0.5 rounded-full ${
+          isAccepted ? 'bg-green-100 text-green-700' : 'bg-neutral-100 text-neutral-500'
+        }`}
+      >
+        {isAccepted ? t('invitations.history.accepted') : t('invitations.history.rejected')}
+      </span>
     </div>
   )
 }
@@ -1334,6 +1372,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
   const { data: sentRequests = [] } = useSentFriendRequests()
   const { data: pendingInvitations = [] } = usePendingInvitations()
   const { data: sentShareInvitations = [] } = useSentShareInvitations()
+  const { data: shareInvitationHistory = [] } = useSentShareInvitationHistory()
   const { data: pendingSharedListInvitations = [] } = usePendingSharedListInvitations()
   const { data: pendingCount = 0 } = usePendingFriendRequestsCount()
   const { data: pendingAdminInvitations = [] } = usePendingAdminInvitations()
@@ -1696,11 +1735,24 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
               </div>
             )}
 
+            {/* Besvarade delningar (historik) */}
+            {shareInvitationHistory.length > 0 && (
+              <div className="space-y-2">
+                <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wide">
+                  {t('invitations.history.section_title')}
+                </p>
+                {shareInvitationHistory.map(inv => (
+                  <RespondedShareCard key={inv.id} invitation={inv} />
+                ))}
+              </div>
+            )}
+
             {friendRequests.length === 0 &&
               pendingInvitations.length === 0 &&
               pendingSharedListInvitations.length === 0 &&
               pendingAdminInvitations.length === 0 &&
-              sentRequests.length === 0 && (
+              sentRequests.length === 0 &&
+              shareInvitationHistory.length === 0 && (
                 <div className="text-center py-10 space-y-2">
                   <p className="text-2xl">🎉</p>
                   <p className="text-sm font-medium text-neutral-600">

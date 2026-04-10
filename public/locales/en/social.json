@@ -51,6 +51,11 @@
       "section_title": "Sent (awaiting response)",
       "to": "To",
       "empty": "No pending shares."
+    },
+    "history": {
+      "section_title": "Responded shares",
+      "accepted": "Accepted",
+      "rejected": "Declined"
     }
   },
   "share": {

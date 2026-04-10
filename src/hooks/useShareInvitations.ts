@@ -238,6 +238,38 @@ export function useCancelShareInvitation() {
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
+// Sent invitations history (accepted/rejected, last 14 days)
+// ──────────────────────────────────────────────────────────────────────────────
+
+export interface RespondedShareInvitation {
+  id: string
+  item_type: 'food_item' | 'recipe' | 'food_list'
+  item_id: string
+  item_name: string
+  recipient_id: string
+  recipient_name: string
+  recipient_email: string
+  status: 'accepted' | 'rejected'
+  created_at: string
+  responded_at: string
+}
+
+export function useSentShareInvitationHistory() {
+  const { user } = useAuth()
+
+  return useQuery({
+    queryKey: ['shareInvitations', 'history', user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc('get_sent_share_invitation_history')
+      if (error) throw error
+      return data as RespondedShareInvitation[]
+    },
+    enabled: !!user,
+    staleTime: 60_000,
+  })
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
 // Social badge count — summan av delningsinbjudningar + vänförfrågningar
 // ──────────────────────────────────────────────────────────────────────────────
 

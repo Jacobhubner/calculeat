@@ -51,6 +51,11 @@
       "section_title": "Skickade (inväntar svar)",
       "to": "Till",
       "empty": "Inga pågående delningar."
+    },
+    "history": {
+      "section_title": "Besvarade delningar",
+      "accepted": "Accepterad",
+      "rejected": "Nekad"
     }
   },
   "share": {
