@@ -196,9 +196,15 @@ export function IngredientRow({
 
   const handleAmountChange = (value: string) => {
     setAmountInput(value)
-    const numValue = value === '' ? 0 : parseFloat(value.replace(',', '.'))
+  }
+
+  const handleAmountBlur = () => {
+    const numValue = amountInput === '' ? 0 : parseFloat(amountInput.replace(',', '.'))
     if (!isNaN(numValue)) {
       onChange({ ...ingredient, amount: numValue })
+    } else {
+      // Revert to current value if input is invalid
+      setAmountInput(ingredient.amount > 0 ? String(ingredient.amount) : '')
     }
   }
 
@@ -434,6 +440,7 @@ export function IngredientRow({
           inputMode="decimal"
           value={amountInput}
           onChange={e => handleAmountChange(e.target.value)}
+          onBlur={handleAmountBlur}
           placeholder={t('ingredient.amountPlaceholder')}
           className="w-24 text-center"
         />
