@@ -84,6 +84,14 @@ export default function MetabolicCalibrationGuide() {
                 består av fett, glykogen och vätska. Modellen använder ett dynamiskt värde inom
                 detta spann beroende på hur snabbt vikten förändras.
               </p>
+              <p className="font-medium mt-3">Hur kaloriintaget uppskattas</p>
+              <p className="mt-1">
+                Kalibreringen använder ditt loggade kaloriintag som primär datakälla. Om inte alla
+                dagar är loggade används en svag statistisk korrektion mot ditt kalorimål — ju fler
+                dagar som saknar loggdata, desto något större vikt får kalorimålet i beräkningen. I
+                praktiken dominerar loggad data nästan alltid uppskattningen, medan kalorimålet
+                endast fungerar som en försiktig stabilisering när loggningen är ofullständig.
+              </p>
             </div>
           </section>
 
@@ -94,31 +102,31 @@ export default function MetabolicCalibrationGuide() {
               Hur vikttrenden beräknas
             </h3>
             <p className="text-neutral-700 leading-relaxed">
-              Istället för att jämföra två enskilda vägningar beräknar systemet en trendlinje genom
-              alla viktmätningar i perioden.
+              Istället för att jämföra två enskilda vägningar beräknar systemet en trendlinje
+              (linjär regression) genom alla viktmätningar i perioden. Metoden använder alla
+              mätpunkter och ger ett stabilare estimat av den verkliga viktförändringen än att
+              enbart titta på start- och slutvikt.
             </p>
             <p className="text-neutral-700 leading-relaxed mt-2">
-              Detta görs med en statistisk metod (linjär regression) som:
-            </p>
-            <ul className="list-disc list-inside space-y-1 ml-2 mt-1 text-neutral-700">
-              <li>använder alla mätpunkter</li>
-              <li>minskar påverkan från enstaka extrema värden</li>
-              <li>ger ett stabilare estimat av den verkliga viktförändringen</li>
-            </ul>
-            <p className="text-neutral-700 leading-relaxed mt-2">Metoden beräknar även:</p>
-            <ul className="list-disc list-inside space-y-1 ml-2 mt-1 text-neutral-700">
-              <li>hur stark vikttrenden är</li>
-              <li>hur mycket vikten varierar runt trenden</li>
-              <li>hur väl datapunkterna följer en konsekvent riktning</li>
-            </ul>
-            <p className="text-neutral-700 leading-relaxed mt-2">
-              Om viktdata är mycket brusig eller inkonsekvent reduceras kalibreringens
-              tillförlitlighet.
+              Som robusthetskontroll beräknas även en alternativ trend med en metod kallad{' '}
+              <strong>Theil–Sen-estimator</strong>, som är mindre känslig för enstaka extrema
+              mätningar. Om dessa två metoder visar tydligt olika resultat kan systemet varna för
+              att viktutvecklingen varit oregelbunden under perioden.
             </p>
             <p className="text-neutral-700 leading-relaxed mt-2">
-              Som extra kontroll jämförs även regressionstrenden med en glidande medeltrend. Om
-              dessa två skiljer sig kraftigt kan systemet varna för att viktförändringen är
-              oregelbunden (t.ex. efter refeed, vätskeretention eller andra kortsiktiga effekter).
+              Metoden beräknar även hur stark vikttrenden är, hur mycket vikten varierar runt
+              trenden och hur väl datapunkterna följer en konsekvent riktning. Om viktdata är mycket
+              brusig eller inkonsekvent reduceras kalibreringens tillförlitlighet.
+            </p>
+            <p className="text-neutral-700 leading-relaxed mt-2">
+              Som ytterligare diagnostik beräknas en exponentiellt utjämnad vikttrend (EMA). Den
+              används inte som primär beräkningsmetod, utan endast som en jämförelse för att
+              upptäcka om viktutvecklingen varit kraftigt icke-linjär under perioden.
+            </p>
+            <p className="text-neutral-700 leading-relaxed mt-2">
+              Viktmätningar som avviker kraftigt från resten av datan kan filtreras bort
+              automatiskt. Detta görs för att minska påverkan från enstaka extrema mätningar som
+              annars kan snedvrida trendanalysen.
             </p>
           </section>
 
@@ -205,6 +213,13 @@ export default function MetabolicCalibrationGuide() {
             </ul>
             <p className="text-neutral-700 leading-relaxed mt-2">
               Detta ger en uppskattning av hur stor osäkerheten i beräkningen är.
+            </p>
+            <p className="text-neutral-700 leading-relaxed mt-2">
+              Om kroppsvikten är mycket stabil under perioden kan konfidensintervallet bli relativt
+              brett. Detta beror på att dagliga viktvariationer (vätska, salt, glykogen) då kan vara
+              lika stora som den faktiska fettförändringen, vilket gör det statistiskt svårt att
+              uppskatta energibalansen exakt. Det är ett ärligt svar på datan — inte ett tecken på
+              att kalibreringen är fel.
             </p>
           </section>
 
