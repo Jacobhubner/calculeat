@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
+import { useState, useRef, useEffect, useCallback, useMemo, memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Trash2, Search, GripVertical, Plus } from 'lucide-react'
 import { Input } from '@/components/ui/input'
@@ -35,6 +35,39 @@ import {
 } from '@/lib/calculations/recipeCalculator'
 import { convertWeightToUnit } from '@/lib/utils/unitConversion'
 
+// Isolated amount input — local state never causes IngredientRow to re-render.
+// Re-mount via key when parent value changes (e.g. unit conversion) to sync initialValue.
+const AmountInput = memo(function AmountInput({
+  initialValue,
+  placeholder,
+  onCommit,
+}: {
+  initialValue: number
+  placeholder: string
+  onCommit: (value: number) => void
+}) {
+  const [raw, setRaw] = useState(initialValue > 0 ? String(initialValue) : '')
+
+  return (
+    <Input
+      type="text"
+      inputMode="decimal"
+      value={raw}
+      onChange={e => setRaw(e.target.value)}
+      onBlur={() => {
+        const num = raw === '' ? 0 : parseFloat(raw.replace(',', '.'))
+        if (!isNaN(num)) {
+          onCommit(num)
+        } else {
+          setRaw(initialValue > 0 ? String(initialValue) : '')
+        }
+      }}
+      placeholder={placeholder}
+      className="w-24 text-center"
+    />
+  )
+})
+
 export interface IngredientData {
   id: string
   foodItem: FoodItem | null
@@ -66,9 +99,6 @@ export function IngredientRow({
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [highlightedIndex, setHighlightedIndex] = useState(0)
   const [sourceFilter, setSourceFilter] = useState<SourceFilter>('alla')
-  const [amountInput, setAmountInput] = useState(
-    ingredient.amount > 0 ? String(ingredient.amount) : ''
-  )
   const [addFoodItemModalOpen, setAddFoodItemModalOpen] = useState(false)
   const searchRef = useRef<HTMLDivElement>(null)
   const listRef = useRef<HTMLDivElement>(null)
@@ -128,13 +158,19 @@ export function IngredientRow({
   const filteredFoods = allFilteredFoods.slice(0, 50)
 
   // Get available units for selected food
-  const availableUnits = ingredient.foodItem ? getAvailableUnits(ingredient.foodItem) : ['g']
+  const availableUnits = useMemo(
+    () => (ingredient.foodItem ? getAvailableUnits(ingredient.foodItem) : ['g']),
+    [ingredient.foodItem]
+  )
 
-  // Calculate nutrition for current ingredient
-  const nutrition =
-    ingredient.foodItem && ingredient.amount > 0
-      ? calculateIngredientNutrition(ingredient.foodItem, ingredient.amount, ingredient.unit)
-      : null
+  // Calculate nutrition for current ingredient — only when ingredient prop changes, not on local amountInput changes
+  const nutrition = useMemo(
+    () =>
+      ingredient.foodItem && ingredient.amount > 0
+        ? calculateIngredientNutrition(ingredient.foodItem, ingredient.amount, ingredient.unit)
+        : null,
+    [ingredient.foodItem, ingredient.amount, ingredient.unit]
+  )
 
   const handleFoodSelect = useCallback(
     (food: FoodItem) => {
@@ -194,19 +230,12 @@ export function IngredientRow({
     [isSearchOpen, filteredFoods, highlightedIndex, handleFoodSelect]
   )
 
-  const handleAmountChange = (value: string) => {
-    setAmountInput(value)
-  }
-
-  const handleAmountBlur = () => {
-    const numValue = amountInput === '' ? 0 : parseFloat(amountInput.replace(',', '.'))
-    if (!isNaN(numValue)) {
+  const handleAmountCommit = useCallback(
+    (numValue: number) => {
       onChange({ ...ingredient, amount: numValue })
-    } else {
-      // Revert to current value if input is invalid
-      setAmountInput(ingredient.amount > 0 ? String(ingredient.amount) : '')
-    }
-  }
+    },
+    [ingredient, onChange]
+  )
 
   const handleUnitChange = (newUnit: string) => {
     if (!ingredient.foodItem || ingredient.amount <= 0) {
@@ -435,14 +464,11 @@ export function IngredientRow({
 
       {/* Row 2: Amount + unit */}
       <div className="flex items-center gap-2 pl-7">
-        <Input
-          type="text"
-          inputMode="decimal"
-          value={amountInput}
-          onChange={e => handleAmountChange(e.target.value)}
-          onBlur={handleAmountBlur}
+        <AmountInput
+          key={ingredient.amount}
+          initialValue={ingredient.amount}
           placeholder={t('ingredient.amountPlaceholder')}
-          className="w-24 text-center"
+          onCommit={handleAmountCommit}
         />
         <select
           value={ingredient.unit}
