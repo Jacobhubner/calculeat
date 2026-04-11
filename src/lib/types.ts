@@ -556,6 +556,7 @@ export interface CalibrationHistory {
 // Weight chart data point for enhanced weight tracking
 export interface WeightChartDataPoint {
   date: string
+  timestamp: number
   weight: number
   rollingAverage: number | null
   displayDate: string
@@ -566,6 +567,7 @@ export interface WeightChartDataPoint {
 // Body fat chart data point for per-entry body fat % tracking
 export interface BodyFatChartDataPoint {
   date: string
+  timestamp: number
   bodyFat: number
   rollingAverage: number | null
   displayDate: string

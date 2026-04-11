@@ -65,6 +65,7 @@ export function useWeightTrend(
       const entryDate = new Date(entry.recorded_at)
       chartDataWithTrend.push({
         date: entryDate.toLocaleDateString('sv-SE', { month: 'short', day: 'numeric' }),
+        timestamp: entryDate.getTime(),
         weight: entry.weight_kg,
         rollingAverage: calculateRollingAverage(sortedHistory, index, 7),
         displayDate: entryDate.toLocaleDateString('sv-SE'),

@@ -359,11 +359,20 @@ export default function WeightTracker({
                 <LineChart data={chartData} margin={{ top: 5, right: 50, left: 20, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                   <XAxis
-                    dataKey="date"
+                    dataKey="timestamp"
+                    type="number"
+                    scale="time"
+                    domain={['dataMin', 'dataMax']}
                     tick={{ fontSize: 10, fill: '#6b7280' }}
                     angle={-45}
                     textAnchor="end"
                     height={60}
+                    tickFormatter={ts =>
+                      new Date(ts as number).toLocaleDateString('sv-SE', {
+                        month: 'short',
+                        day: 'numeric',
+                      })
+                    }
                   />
                   <YAxis
                     domain={[minWeight, maxWeight]}
@@ -384,9 +393,11 @@ export default function WeightTracker({
                         (name as string) === 'weight' ? 'Vikt' : '7-dagars snitt',
                       ] as [string, string]
                     }
-                    labelFormatter={label => {
-                      const entry = chartData.find(d => d.date === label)
-                      return entry?.displayDate || label
+                    labelFormatter={ts => {
+                      const entry = chartData.find(d => d.timestamp === (ts as number))
+                      return (
+                        entry?.displayDate || new Date(ts as number).toLocaleDateString('sv-SE')
+                      )
                     }}
                     contentStyle={{
                       backgroundColor: 'white',
@@ -436,25 +447,7 @@ export default function WeightTracker({
                     dataKey="weight"
                     stroke="#16a34a"
                     strokeWidth={2}
-                    dot={(props: unknown) => {
-                      const typedProps = props as {
-                        cx: number
-                        cy: number
-                        payload: { isPending?: boolean }
-                      }
-                      const { cx, cy, payload } = typedProps
-                      return (
-                        <circle
-                          key={`dot-${cx}-${cy}`}
-                          cx={cx}
-                          cy={cy}
-                          r={payload.isPending ? 6 : 4}
-                          fill={payload.isPending ? '#f59e0b' : '#16a34a'}
-                          stroke={payload.isPending ? '#d97706' : 'none'}
-                          strokeWidth={payload.isPending ? 2 : 0}
-                        />
-                      )
-                    }}
+                    dot={{ r: 4, fill: '#16a34a', strokeWidth: 0 }}
                     activeDot={{ r: 6, fill: '#16a34a' }}
                   />
 
@@ -470,12 +463,18 @@ export default function WeightTracker({
                   />
 
                   <Brush
-                    dataKey="date"
+                    dataKey="timestamp"
                     startIndex={Math.max(0, chartData.length - 30)}
                     height={24}
                     stroke="#d1d5db"
                     fill="#f9fafb"
                     travellerWidth={8}
+                    tickFormatter={ts =>
+                      new Date(ts as number).toLocaleDateString('sv-SE', {
+                        month: 'short',
+                        day: 'numeric',
+                      })
+                    }
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -501,11 +500,20 @@ export default function WeightTracker({
                   >
                     <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                     <XAxis
-                      dataKey="date"
+                      dataKey="timestamp"
+                      type="number"
+                      scale="time"
+                      domain={['dataMin', 'dataMax']}
                       tick={{ fontSize: 10, fill: '#6b7280' }}
                       angle={-45}
                       textAnchor="end"
                       height={60}
+                      tickFormatter={ts =>
+                        new Date(ts as number).toLocaleDateString('sv-SE', {
+                          month: 'short',
+                          day: 'numeric',
+                        })
+                      }
                     />
                     <YAxis
                       domain={['auto', 'auto']}
@@ -526,9 +534,11 @@ export default function WeightTracker({
                           (name as string) === 'bodyFat' ? 'Kroppsfett %' : '7-dagars snitt',
                         ] as [string, string]
                       }
-                      labelFormatter={label => {
-                        const entry = bodyFatChartData.find(d => d.date === label)
-                        return entry?.displayDate || label
+                      labelFormatter={ts => {
+                        const entry = bodyFatChartData.find(d => d.timestamp === (ts as number))
+                        return (
+                          entry?.displayDate || new Date(ts as number).toLocaleDateString('sv-SE')
+                        )
                       }}
                       contentStyle={{
                         backgroundColor: 'white',
@@ -546,7 +556,7 @@ export default function WeightTracker({
                       dataKey="bodyFat"
                       stroke="#f97316"
                       strokeWidth={2}
-                      dot={{ r: 4, fill: '#f97316' }}
+                      dot={{ r: 4, fill: '#f97316', strokeWidth: 0 }}
                       activeDot={{ r: 6, fill: '#f97316' }}
                     />
                     <Line
@@ -560,12 +570,18 @@ export default function WeightTracker({
                     />
 
                     <Brush
-                      dataKey="date"
+                      dataKey="timestamp"
                       startIndex={Math.max(0, bodyFatChartData.length - 30)}
                       height={24}
                       stroke="#d1d5db"
                       fill="#f9fafb"
                       travellerWidth={8}
+                      tickFormatter={ts =>
+                        new Date(ts as number).toLocaleDateString('sv-SE', {
+                          month: 'short',
+                          day: 'numeric',
+                        })
+                      }
                     />
                   </LineChart>
                 </ResponsiveContainer>

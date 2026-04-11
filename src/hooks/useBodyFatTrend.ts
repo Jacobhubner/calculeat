@@ -33,6 +33,7 @@ export function useBodyFatTrend(
 
       return {
         date: entryDate.toLocaleDateString('sv-SE', { month: 'short', day: 'numeric' }),
+        timestamp: entryDate.getTime(),
         bodyFat: entry.body_fat_percentage as number,
         rollingAverage,
         displayDate: entryDate.toLocaleDateString('sv-SE'),
