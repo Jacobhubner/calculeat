@@ -37,61 +37,72 @@ export default function MetabolicCalibrationGuide() {
               Vad är metabolisk kalibrering?
             </h3>
             <p className="text-neutral-700 leading-relaxed">
-              Metabolisk kalibrering uppskattar ditt faktiska <strong>Maintenance-TDEE</strong>{' '}
-              (Total Daily Energy Expenditure) genom att analysera hur din kroppsvikt förändras i
-              relation till ditt faktiska kaloriintag över tid.
+              Metabolisk kalibrering uppskattar ditt faktiska <strong>underhålls-TDEE</strong> — hur
+              många kalorier din kropp förbrukar för att hålla vikten stabil — genom att analysera
+              hur din kroppsvikt förändras i relation till ditt faktiska kaloriintag över tid.
+            </p>
+            <p className="text-neutral-700 leading-relaxed mt-2">
+              <strong>Viktigt att förstå:</strong> Kalibreringen estimerar din faktiska
+              energiförbrukning, inte ditt kalorimål. Ditt kaloriintervall räknas sedan om
+              automatiskt utifrån ditt valda energimål (bibehåll vikt, gå ner, gå upp). Det är
+              alltså två separata steg.
             </p>
             <p className="text-neutral-700 leading-relaxed mt-2">
               Istället för att enbart använda uppskattningar från BMR-formler och aktivitetsnivåer
-              använder systemet verklig data från din loggning för att justera ditt energibehov.
-            </p>
-            <p className="text-neutral-700 leading-relaxed mt-2">
-              Kalibreringen analyserar bland annat:
-            </p>
-            <ul className="list-disc list-inside space-y-1 ml-2 mt-1 text-neutral-700">
-              <li>Trendbaserad viktutveckling över tid</li>
-              <li>Genomsnittligt kaloriintag under perioden</li>
-              <li>Hur konsekvent du loggat din mat</li>
-              <li>Hur regelbundet du vägt dig</li>
-              <li>Hur stabil vikttrenden är</li>
-            </ul>
-            <p className="text-neutral-700 leading-relaxed mt-2">
-              Dagliga viktfluktuationer från exempelvis vätska, salt, glykogen eller maginnehåll
-              filtreras bort genom trendanalys och avvikelsehantering.
+              använder systemet verklig data från din loggning. Det gör att kalibreringen kan fånga
+              upp individuella skillnader som standardformler missar — som NEAT-variation,
+              termogenes och metabol adaptation.
             </p>
           </section>
 
           {/* Section 2: How does it work? */}
           <section className="bg-neutral-50 p-4 rounded-lg border border-neutral-200">
             <h3 className="font-semibold text-base mb-2">Hur beräkningen fungerar</h3>
-            <div className="space-y-2 text-neutral-700">
-              <p>Kalibreringen bygger på energibalansprincipen:</p>
-              <p className="text-neutral-600 italic ml-2">
-                Energi in − energi ut = förändring i kroppens energilager.
-              </p>
+            <div className="space-y-3 text-neutral-700">
+              <div>
+                <p>Kalibreringen bygger på energibalansprincipen:</p>
+                <p className="text-neutral-600 italic ml-2 mt-1">
+                  Energi in − energi ut = förändring i kroppens energilager.
+                </p>
+              </div>
               <p>
-                Om vikten förändras över tid kan vi därför uppskatta hur stort ditt faktiska
-                energibehov är.
+                Om vikten förändras över tid kan vi uppskatta hur stort ditt faktiska energibehov
+                är. I förenklad form:
               </p>
-              <p>I förenklad form används sambandet:</p>
               <p className="font-medium text-primary-600 text-center py-1">
-                TDEE ≈ Genomsnittliga kalorier − (trendbaserad viktförändring × kcal per kg / antal
-                dagar)
+                TDEE ≈ Genomsnittliga kalorier − (viktförändring × kcal per kg / antal dagar)
               </p>
               <p>
-                Ett kilogram kroppsvikt motsvarar i genomsnitt ungefär{' '}
-                <strong>6 500–7 700 kcal</strong> beroende på hur stor del av viktförändringen som
-                består av fett, glykogen och vätska. Modellen använder ett dynamiskt värde inom
-                detta spann beroende på hur snabbt vikten förändras.
+                Ett kilogram kroppsvikt motsvarar ungefär <strong>6 500–7 700 kcal</strong> beroende
+                på om förändringen består av fett, glykogen eller vätska. Modellen använder ett
+                dynamiskt värde inom detta spann beroende på hur snabbt vikten förändras.
               </p>
-              <p className="font-medium mt-3">Hur kaloriintaget uppskattas</p>
-              <p className="mt-1">
-                Kalibreringen använder ditt loggade kaloriintag som primär datakälla. Om inte alla
-                dagar är loggade används en svag statistisk korrektion mot ditt kalorimål — ju fler
-                dagar som saknar loggdata, desto något större vikt får kalorimålet i beräkningen. I
-                praktiken dominerar loggad data nästan alltid uppskattningen, medan kalorimålet
-                endast fungerar som en försiktig stabilisering när loggningen är ofullständig.
-              </p>
+              <div>
+                <p className="font-medium">Hur start- och slutvikt bestäms</p>
+                <p className="mt-1">
+                  Systemet jämför inte en enskild startvägning med en slutvägning. Istället delas
+                  perioden in i en första och en sista tredjedel, och{' '}
+                  <strong>medianen av alla mätningar</strong> i varje del används som start-
+                  respektive slutvikt. Det innebär att enstaka extrema vägningar — t.ex. efter ett
+                  stort middagsmål eller en träningsdag med hög vattenretention — inte kan snedvrida
+                  resultatet på samma sätt som om bara en mätning per ände hade använts.
+                </p>
+              </div>
+              <div>
+                <p className="font-medium">Hur kaloriintaget uppskattas</p>
+                <p className="mt-1">
+                  Kalibreringen använder ditt loggade kaloriintag som primär datakälla. Om inte alla
+                  dagar är loggade används en svag statistisk korrektion mot ditt kalorimål — ju
+                  fler dagar som saknar logg, desto något större vikt får kalorimålet i beräkningen.
+                  I praktiken dominerar loggad data nästan alltid.
+                </p>
+                <p className="mt-1">
+                  Systemet detekterar också om loggningen verkar selektiv — det vill säga om du
+                  tenderar att bara logga dagar med lägre intag. Om det mönstret identifieras
+                  minskas tilliten till loggdatan och korrektionen mot kalorimålet anpassas. Det
+                  skyddar mot att kalibreringen föreslår ett för lågt TDEE baserat på biased data.
+                </p>
+              </div>
             </div>
           </section>
 
@@ -103,30 +114,25 @@ export default function MetabolicCalibrationGuide() {
             </h3>
             <p className="text-neutral-700 leading-relaxed">
               Istället för att jämföra två enskilda vägningar beräknar systemet en trendlinje
-              (linjär regression) genom alla viktmätningar i perioden. Metoden använder alla
-              mätpunkter och ger ett stabilare estimat av den verkliga viktförändringen än att
-              enbart titta på start- och slutvikt.
+              (linjär regression) genom alla viktmätningar i perioden. Det ger ett stabilare estimat
+              av den verkliga viktförändringen och mäter dessutom hur stark och konsekvent trenden
+              är.
             </p>
             <p className="text-neutral-700 leading-relaxed mt-2">
-              Som robusthetskontroll beräknas även en alternativ trend med en metod kallad{' '}
-              <strong>Theil–Sen-estimator</strong>, som är mindre känslig för enstaka extrema
-              mätningar. Om dessa två metoder visar tydligt olika resultat kan systemet varna för
-              att viktutvecklingen varit oregelbunden under perioden.
+              Som robusthetskontroll beräknas även en alternativ trend med{' '}
+              <strong>Theil–Sen-estimatorn</strong>, som tar medianen av alla möjliga parvisa slopes
+              mellan mätpunkterna. Den är mer okänslig för enstaka extremvärden än linjär
+              regression. Om de två metoderna visar tydligt olika resultat kan systemet varna för
+              att viktutvecklingen var oregelbunden under perioden.
             </p>
             <p className="text-neutral-700 leading-relaxed mt-2">
-              Metoden beräknar även hur stark vikttrenden är, hur mycket vikten varierar runt
-              trenden och hur väl datapunkterna följer en konsekvent riktning. Om viktdata är mycket
-              brusig eller inkonsekvent reduceras kalibreringens tillförlitlighet.
+              Som ytterligare diagnostik beräknas en exponentiellt utjämnad trend (EMA). Den används
+              inte som primär beräkningsmetod utan enbart för att detektera kraftigt icke-linjär
+              viktutveckling — t.ex. en refeed-period mitt i perioden.
             </p>
             <p className="text-neutral-700 leading-relaxed mt-2">
-              Som ytterligare diagnostik beräknas en exponentiellt utjämnad vikttrend (EMA). Den
-              används inte som primär beräkningsmetod, utan endast som en jämförelse för att
-              upptäcka om viktutvecklingen varit kraftigt icke-linjär under perioden.
-            </p>
-            <p className="text-neutral-700 leading-relaxed mt-2">
-              Viktmätningar som avviker kraftigt från resten av datan kan filtreras bort
-              automatiskt. Detta görs för att minska påverkan från enstaka extrema mätningar som
-              annars kan snedvrida trendanalysen.
+              Viktmätningar som avviker kraftigt från resten av datan filtreras automatiskt bort
+              innan trendberäkningen, för att minska påverkan från enstaka extrema mätningar.
             </p>
           </section>
 
@@ -138,26 +144,36 @@ export default function MetabolicCalibrationGuide() {
             </h3>
             <p className="text-neutral-700 leading-relaxed">
               Alla kalibreringar får ett <strong>Data Quality Index (DQI)</strong> som bedömer hur
-              pålitlig datan är.
+              pålitlig datan är. Det beräknas från tre faktorer:
             </p>
-            <p className="text-neutral-700 leading-relaxed mt-2">
-              Detta index påverkas bland annat av:
-            </p>
-            <ul className="list-disc list-inside space-y-1 ml-2 mt-1 text-neutral-700">
-              <li>hur många dagar du loggat mat</li>
-              <li>hur konsekvent kalorier registrerats</li>
-              <li>hur regelbundet du vägt dig</li>
-              <li>hur jämnt mätningarna är fördelade över perioden</li>
+            <ul className="list-disc list-inside space-y-1 ml-2 mt-2 text-neutral-700">
+              <li>
+                <strong>Matloggskvalitet (45%)</strong> — andelen loggade dagar och hur konsekvent
+                kalorier registrerats
+              </li>
+              <li>
+                <strong>Vägningsfrekvens (35%)</strong> — hur regelbundet du vägt dig; 50% av
+                dagarna ger fullt utslag
+              </li>
+              <li>
+                <strong>Klusterstorlek (20%)</strong> — hur många mätningar som finns i periodens
+                start- och slutkluster
+              </li>
             </ul>
-            <p className="text-neutral-700 leading-relaxed mt-2">Högre datakvalitet innebär:</p>
-            <ul className="list-disc list-inside space-y-1 ml-2 mt-1 text-neutral-700">
-              <li>större justeringar kan tillåtas</li>
-              <li>snävare konfidensintervall</li>
-              <li>högre tillförlitlighet i resultatet</li>
-            </ul>
             <p className="text-neutral-700 leading-relaxed mt-2">
-              Vid låg datakvalitet begränsar systemet automatiskt hur mycket TDEE får justeras.
+              DQI styr direkt hur stor justering som tillåts: från ±75 kcal vid låg kvalitet till
+              ±200 kcal vid hög. Det innebär att bättre data inte bara ger ett mer tillförlitligt
+              resultat — det ger också möjlighet till snabbare konvergens mot ditt faktiska TDEE.
             </p>
+            <div className="mt-3 p-3 bg-neutral-100 rounded text-neutral-600 text-xs">
+              <p className="font-medium mb-1">Val av tidsperiod</p>
+              <p>
+                Du kan välja mellan 14, 21 och 28 dagar. Längre perioder ger mer data och tillåter
+                något större justeringar. Kortare perioder än 14 dagar används inte — signal/brus-
+                förhållandet blir då för svagt för att ge tillförlitliga estimat, eftersom dagliga
+                viktsvängningar kan vara lika stora som den faktiska vikttrendförändringen.
+              </p>
+            </div>
           </section>
 
           {/* Section 5: Clamping and convergence */}
@@ -168,28 +184,34 @@ export default function MetabolicCalibrationGuide() {
                 <p className="font-medium">Justeringsgränser (clamp)</p>
                 <p className="mt-1">
                   Kalibreringen begränsar hur mycket TDEE kan ändras i en enskild uppdatering.
-                  Maximal justering beror på datakvaliteten och ligger normalt mellan ungefär:
+                  Maximal justering beror på datakvaliteten och ligger normalt mellan:
                 </p>
                 <p className="font-medium text-primary-600 text-center py-1">
                   ±75 kcal till ±200 kcal
                 </p>
                 <p>
-                  Detta förhindrar att tillfälliga viktförändringar ger orimliga TDEE-förändringar.
+                  TDEE sätts aldrig under 1 200 eller över 5 000 kcal oavsett vad beräkningen visar
+                  — dessa är absoluta fysiologiska gränser. Clampen förhindrar att tillfälliga
+                  viktförändringar ger orimliga TDEE-hopp.
                 </p>
               </div>
               <div>
                 <p className="font-medium">Gradvis konvergens</p>
                 <p className="mt-1">
-                  Om kalibreringen föreslår en ny TDEE-nivå närmar sig systemet denna nivå gradvis
-                  över flera kalibreringar, istället för att direkt ersätta värdet. Detta gör
-                  modellen stabilare över tid.
+                  Om kalibreringen föreslår en ny TDEE-nivå och clampen <em>inte</em> triggas,
+                  utjämnas resultatet mjukt mot de senaste 1–3 tidigare kalibreringarna. Om alla
+                  tidigare kalibreringar pekar i samma riktning följer systemet den trenden med
+                  minimal dämpning istället för att bromsa. Triggas clampen används det begränsade
+                  värdet direkt utan ytterligare utjämning.
                 </p>
               </div>
               <div>
                 <p className="font-medium">Historikvägning</p>
                 <p className="mt-1">
-                  Tidigare kalibreringar används också som referenspunkt. Äldre kalibreringar får
-                  dock minskad vikt över tid, särskilt om datakvaliteten var låg.
+                  Tidigare kalibreringar används som referenspunkt men inte hur gamla som helst.
+                  Kalibreringar äldre än 90 dagar exkluderas om datakvaliteten var låg, och äldre än
+                  180 dagar om kvaliteten var hög. Det innebär att om du inte kalibrerat på länge
+                  startar systemet i praktiken om med minimal historikpåverkan.
                 </p>
               </div>
             </div>
@@ -202,24 +224,35 @@ export default function MetabolicCalibrationGuide() {
               Osäkerhet och konfidensintervall
             </h3>
             <p className="text-neutral-700 leading-relaxed">
-              Eftersom verklig viktdata innehåller variation beräknar modellen även ett{' '}
-              <strong>konfidensintervall</strong> för TDEE-uppskattningen.
+              Eftersom verklig viktdata innehåller variation beräknar modellen ett{' '}
+              <strong>90%-konfidensintervall</strong> för TDEE-uppskattningen. Det innebär att om du
+              upprepade samma kalibrering med liknande data, skulle det sanna underhålls-TDEE hamna
+              inom intervallet i 90% av fallen.
             </p>
-            <p className="text-neutral-700 leading-relaxed mt-2">Intervallet baseras på:</p>
+            <p className="text-neutral-700 leading-relaxed mt-2">
+              Intervallets bredd bestäms av tre konkreta osäkerhetskällor:
+            </p>
             <ul className="list-disc list-inside space-y-1 ml-2 mt-1 text-neutral-700">
-              <li>variation i viktmätningarna</li>
-              <li>antal datapunkter</li>
-              <li>hur väl vikttrenden passar modellen</li>
+              <li>
+                <strong>Viktvariation</strong> — hur mycket vikten svänger runt trendlinjen
+                (residualvarians från regressionen); hög dag-till-dag-variation ger brett intervall
+              </li>
+              <li>
+                <strong>Kalorilogg-osäkerhet</strong> — uppskattad till ±20% av snittkalorier,
+                viktat mot antal loggade dagar; färre loggade dagar ger bredare intervall
+              </li>
+              <li>
+                <strong>Autokorrelation</strong> — dagliga vikter är inte oberoende av varandra (en
+                hög mätning idag påverkar troligtvis morgondagens), vilket vidgar intervallet med en
+                korrigeringsfaktor
+              </li>
             </ul>
             <p className="text-neutral-700 leading-relaxed mt-2">
-              Detta ger en uppskattning av hur stor osäkerheten i beräkningen är.
-            </p>
-            <p className="text-neutral-700 leading-relaxed mt-2">
               Om kroppsvikten är mycket stabil under perioden kan konfidensintervallet bli relativt
-              brett. Detta beror på att dagliga viktvariationer (vätska, salt, glykogen) då kan vara
-              lika stora som den faktiska fettförändringen, vilket gör det statistiskt svårt att
-              uppskatta energibalansen exakt. Det är ett ärligt svar på datan — inte ett tecken på
-              att kalibreringen är fel.
+              brett. Det beror på att dagliga viktvariationer från vätska, salt och glykogen då kan
+              vara lika stora som den faktiska trendförändringen — systemet har helt enkelt svårt
+              att skilja signal från brus. Det är ett ärligt svar på datan, inte ett tecken på att
+              kalibreringen är fel.
             </p>
           </section>
 
@@ -310,7 +343,10 @@ export default function MetabolicCalibrationGuide() {
             </p>
             <p className="text-neutral-700 leading-relaxed mt-2">
               Kroppsvikt påverkas dagligen av många faktorer som inte är kopplade till
-              fettförändring. Därför är modellen medvetet konservativ och trendbaserad.
+              fettförändring. Därför är modellen medvetet konservativ och trendbaserad — den
+              kombinerar klustrad viktförändring, regressionstrend och datakvalitetsvägning, vilket
+              gör den mer robust än appar som enbart jämför start- och slutvikt eller använder enkla
+              rullande medelvärden.
             </p>
             <p className="text-neutral-700 leading-relaxed mt-2">
               Ju mer konsekvent du loggar mat och vikt över tid, desto mer exakt kan systemet
