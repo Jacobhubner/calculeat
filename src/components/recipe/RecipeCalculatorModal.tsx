@@ -62,8 +62,62 @@ function generateId(): string {
   return Math.random().toString(36).substring(2, 9)
 }
 
-// Uncontrolled textarea to prevent re-rendering the entire modal on every keystroke.
-// Syncs value to parent only on blur so the heavy ingredient list is not touched during typing.
+// Uncontrolled inputs — local state never causes the modal to re-render during typing.
+// Syncs to parent only on blur so the heavy ingredient list is not touched during typing.
+
+const RecipeNameInput = React.memo(function RecipeNameInput({
+  value,
+  onChange,
+  placeholder,
+  label,
+}: {
+  value: string
+  onChange: (v: string) => void
+  placeholder: string
+  label: string
+}) {
+  const ref = useRef<HTMLInputElement>(null)
+  useEffect(() => {
+    if (ref.current && ref.current.value !== value) ref.current.value = value
+  }, [value])
+  return (
+    <Input
+      ref={ref}
+      id="recipe-name"
+      defaultValue={value}
+      onBlur={e => onChange(e.target.value)}
+      placeholder={placeholder}
+      aria-label={label}
+    />
+  )
+})
+
+const ServingsInput = React.memo(function ServingsInput({
+  value,
+  onChange,
+}: {
+  value: number | ''
+  onChange: (v: number | '') => void
+}) {
+  const ref = useRef<HTMLInputElement>(null)
+  useEffect(() => {
+    if (ref.current && ref.current.value !== String(value)) ref.current.value = String(value)
+  }, [value])
+  return (
+    <Input
+      ref={ref}
+      id="servings"
+      type="number"
+      defaultValue={value === '' ? '' : value}
+      onBlur={e => {
+        const val = e.target.value
+        onChange(val === '' ? '' : Math.max(1, parseInt(val) || 1))
+      }}
+      min={1}
+    />
+  )
+})
+
 const InstructionsTextarea = React.memo(function InstructionsTextarea({
   value,
   onChange,
@@ -576,26 +630,17 @@ export function RecipeCalculatorModal({
               <div className={`grid gap-4 ${saveAs === '100g' ? '' : 'sm:grid-cols-2'}`}>
                 <div className="space-y-2">
                   <Label htmlFor="recipe-name">{t('modal.recipeName')}</Label>
-                  <Input
-                    id="recipe-name"
+                  <RecipeNameInput
                     value={name}
-                    onChange={e => setName(e.target.value)}
+                    onChange={setName}
                     placeholder={t('modal.recipeNamePlaceholder')}
+                    label={t('modal.recipeName')}
                   />
                 </div>
                 {saveAs !== '100g' && (
                   <div className="space-y-2">
                     <Label htmlFor="servings">{t('modal.servings')}</Label>
-                    <Input
-                      id="servings"
-                      type="number"
-                      value={servings}
-                      onChange={e => {
-                        const val = e.target.value
-                        setServings(val === '' ? '' : Math.max(1, parseInt(val) || 1))
-                      }}
-                      min={1}
-                    />
+                    <ServingsInput value={servings} onChange={setServings} />
                   </div>
                 )}
               </div>
