@@ -444,21 +444,23 @@ export default function MetabolicCalibration({
                         dagar)
                       </p>
                       <p>
-                        Ett kilogram kroppsvikt motsvarar ungefär <strong>6 500–7 700 kcal</strong>{' '}
-                        beroende på om förändringen består av fett, glykogen eller vätska. Modellen
-                        använder ett dynamiskt värde inom detta spann beroende på hur snabbt vikten
-                        förändras.
+                        Ett kilogram kroppsvikt approximeras till ungefär{' '}
+                        <strong>6 500–7 700 kcal</strong>. Modellen använder ett dynamiskt värde
+                        inom detta spann baserat på förändringstakt — snabba förändringar innehåller
+                        typiskt mer glykogen och vätska, långsamma mer fett — men det är en
+                        modellbaserad approximation, inte en exakt vävnadsanalys.
                       </p>
                       <div>
                         <p className="font-medium">Hur start- och slutvikt bestäms</p>
                         <p className="mt-1">
-                          Systemet jämför inte en enskild startvägning med en slutvägning. Istället
-                          delas perioden in i en första och en sista tredjedel, och{' '}
-                          <strong>medianen av alla mätningar</strong> i varje del används som start-
-                          respektive slutvikt. Det innebär att enstaka extrema vägningar — t.ex.
-                          efter ett stort middagsmål eller en träningsdag med hög vattenretention —
-                          inte kan snedvrida resultatet på samma sätt som om bara en mätning per
-                          ände hade använts.
+                          Perioden delas in i en första och en sista tredjedel, och{' '}
+                          <strong>medianen av alla mätningar</strong> i varje del används som robust
+                          ankare för start- respektive slutvikt. Det är dessa klustermedianerna som
+                          bestämmer viktnivåerna i beräkningen. Regressionen används sedan för
+                          trendanalys, signal/brus-bedömning och diagnostik — men ändrar inte
+                          start/slutnivåerna. Det innebär att enstaka extrema vägningar inte kan
+                          snedvrida resultatet på samma sätt som om bara en mätning per ände hade
+                          använts.
                         </p>
                       </div>
                       <div>
@@ -609,23 +611,24 @@ export default function MetabolicCalibration({
                       underhålls-TDEE hamna inom intervallet i 90% av fallen.
                     </p>
                     <p className="text-neutral-700 leading-relaxed mt-2">
-                      Intervallets bredd bestäms av tre konkreta osäkerhetskällor:
+                      Intervallets bredd beräknas i tre lager:
                     </p>
                     <ul className="list-disc list-inside space-y-1 ml-2 mt-1 text-neutral-700">
                       <li>
-                        <strong>Viktvariation</strong> — hur mycket vikten svänger runt trendlinjen
-                        (residualvarians från regressionen); hög dag-till-dag-variation ger brett
-                        intervall
+                        <strong>Residualvarians (primär källa)</strong> — hur mycket vikten svänger
+                        runt trendlinjen från regressionen; detta är grundosäkerheten som allt annat
+                        byggs på
                       </li>
                       <li>
-                        <strong>Kalorilogg-osäkerhet</strong> — uppskattad till ±20% av
-                        snittkalorier, viktat mot antal loggade dagar; färre loggade dagar ger
-                        bredare intervall
+                        <strong>Kalorilogg-osäkerhet (breddningsfaktor)</strong> — uppskattad till
+                        ±20% av snittkalorier, viktat mot antal loggade dagar; läggs till ovanpå
+                        residualvariansen
                       </li>
                       <li>
-                        <strong>Autokorrelation</strong> — dagliga vikter är inte oberoende av
-                        varandra (en hög mätning idag påverkar troligtvis morgondagens), vilket
-                        vidgar intervallet med en korrigeringsfaktor
+                        <strong>Autokorrelation (breddningsfaktor)</strong> — dagliga vikter är inte
+                        oberoende av varandra (en hög mätning idag påverkar troligtvis
+                        morgondagens), vilket vidgar intervallet ytterligare med en
+                        korrigeringsfaktor
                       </li>
                     </ul>
                     <p className="text-neutral-700 leading-relaxed mt-2">
@@ -719,10 +722,27 @@ export default function MetabolicCalibration({
                     </p>
                     <p className="text-neutral-700 leading-relaxed mt-2">
                       Kroppsvikt påverkas dagligen av många faktorer som inte är kopplade till
-                      fettförändring. Därför är modellen medvetet konservativ och trendbaserad — den
-                      kombinerar klustrad viktförändring, regressionstrend och datakvalitetsvägning,
-                      vilket gör den mer robust än appar som enbart jämför start- och slutvikt eller
-                      använder enkla rullande medelvärden.
+                      fettförändring. Därför är modellen medvetet konservativ och trendbaserad. Den
+                      kombinerar tre separata robusthetsmekanismer:
+                    </p>
+                    <ul className="list-disc list-inside space-y-1 ml-2 mt-1 text-neutral-700">
+                      <li>
+                        <strong>Klustrad start/slut-vikt</strong> — medianankare i periodens
+                        ytterkanter skyddar mot enstaka extrema vägningar
+                      </li>
+                      <li>
+                        <strong>Trendestimering över alla datapunkter</strong> — regression och
+                        Theil–Sen-korscheck mäter trenden utan att förlita sig på två enskilda
+                        mätningar
+                      </li>
+                      <li>
+                        <strong>Datakvalitetsvägd justeringsbegränsning</strong> — DQI styr hur stor
+                        justering som tillåts, vilket förhindrar överreaktion vid osäker data
+                      </li>
+                    </ul>
+                    <p className="text-neutral-700 leading-relaxed mt-2">
+                      Det är just denna kombination som gör modellen mer stabil än system som enbart
+                      jämför start- och slutvikt eller använder enkla rullande medelvärden.
                     </p>
                     <p className="text-neutral-700 leading-relaxed mt-2">
                       Ju mer konsekvent du loggar mat och vikt över tid, desto mer exakt kan
