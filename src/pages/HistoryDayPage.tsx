@@ -393,7 +393,9 @@ export default function HistoryDayPage() {
                             <div className="flex items-center gap-3">
                               <div>
                                 <div className="font-medium">
-                                  {item.food_item?.name || t('empty.unknownFood')}
+                                  {item.snapshot_name ||
+                                    item.food_item?.name ||
+                                    t('empty.unknownFood')}
                                 </div>
                                 <div className="text-sm text-neutral-600">
                                   {item.amount} {item.unit}

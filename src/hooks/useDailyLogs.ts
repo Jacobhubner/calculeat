@@ -15,6 +15,7 @@ export interface MealEntryItem {
   fat_g?: number
   carb_g?: number
   protein_g?: number
+  snapshot_name?: string // Food item name at log time — never changes after edit
   item_order: number
   created_at: string
   food_item?: FoodItem // Will include food item details when joined
