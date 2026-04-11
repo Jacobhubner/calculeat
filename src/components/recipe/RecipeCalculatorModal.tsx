@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react'
+import React, { useState, useMemo, useEffect, useRef, useCallback, useTransition } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { Plus, ChefHat, AlertCircle, ChevronDown, ChevronUp, Clock } from 'lucide-react'
@@ -209,6 +209,7 @@ export function RecipeCalculatorModal({
   sharedListId,
 }: RecipeCalculatorModalProps) {
   const { t } = useTranslation('recipes')
+  const [, startTransition] = useTransition()
   const [name, setName] = useState('')
   const [servings, setServings] = useState<number | ''>(1)
   const [ingredients, setIngredients] = useState<IngredientData[]>([])
@@ -415,24 +416,36 @@ export function RecipeCalculatorModal({
   }, [ingredients, servings, ingredientNutrients])
 
   const handleAddIngredient = () => {
-    setIngredients(prev => [
-      ...prev,
-      {
-        id: generateId(),
-        foodItem: null,
-        amount: 0,
-        unit: 'g',
-      },
-    ])
+    startTransition(() => {
+      setIngredients(prev => [
+        ...prev,
+        {
+          id: generateId(),
+          foodItem: null,
+          amount: 0,
+          unit: 'g',
+        },
+      ])
+    })
   }
 
-  const handleIngredientChange = useCallback((id: string, updated: IngredientData) => {
-    setIngredients(prev => prev.map(ing => (ing.id === id ? updated : ing)))
-  }, [])
+  const handleIngredientChange = useCallback(
+    (id: string, updated: IngredientData) => {
+      startTransition(() => {
+        setIngredients(prev => prev.map(ing => (ing.id === id ? updated : ing)))
+      })
+    },
+    [startTransition]
+  )
 
-  const handleIngredientRemove = useCallback((id: string) => {
-    setIngredients(prev => prev.filter(ing => ing.id !== id))
-  }, [])
+  const handleIngredientRemove = useCallback(
+    (id: string) => {
+      startTransition(() => {
+        setIngredients(prev => prev.filter(ing => ing.id !== id))
+      })
+    },
+    [startTransition]
+  )
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }))
 
