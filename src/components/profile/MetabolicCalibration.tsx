@@ -1109,15 +1109,19 @@ export default function MetabolicCalibration({
                               {expandedWarnings.has(i) && warning.type === 'high_cv' && (
                                 <div className="text-xs text-orange-700 mt-1 space-y-1">
                                   <p>
-                                    Hög variation minskar tillförlitligheten och kan begränsa hur
-                                    stor justering som tillåts. Varningen aktiveras när:
+                                    Hög dag-till-dag-variation i vikt beror vanligtvis på
+                                    vätskefluktuationer (salt, kolhydrater, träning) snarare än
+                                    faktisk fettvävnad. Det ökar residualvariansen i
+                                    trendberäkningen, vilket direkt breddar konfidensintervallet för
+                                    TDEE-estimatet. Varningen aktiveras när:
                                   </p>
                                   <ul className="list-disc list-inside space-y-0.5">
                                     <li>Variationskoefficienten (CV) för vikten överstiger 2 %</li>
                                   </ul>
                                   <p className="text-orange-600 font-medium">
-                                    Tips: Väg dig på morgonen före frukost och toalett för att
-                                    minska dagliga svängningar.
+                                    Tips: Väg dig varje morgon före frukost under samma förhållanden
+                                    — det är det enskilt effektivaste sättet att minska brus och få
+                                    ett smalare konfidensintervall.
                                   </p>
                                 </div>
                               )}
@@ -1267,7 +1271,11 @@ export default function MetabolicCalibration({
                                     under gränsen ~
                                     {Math.round(data.endCluster.average * 0.0025 * 10) / 10} kg
                                     (0,25 % av din vikt). Antingen stämmer ditt TDEE redan, eller
-                                    döljer vätska/glykogen den verkliga trenden.
+                                    döljer vätska/glykogen den verkliga trenden. När
+                                    viktförändringen är liten i förhållande till den dagliga
+                                    variationen dominerar bruset över signalen — det breddar
+                                    konfidensintervallet och gör TDEE-estimatet mindre
+                                    tillförlitligt oavsett hur länge perioden är.
                                   </p>
                                   <p className="text-orange-600 font-medium">
                                     Tips: Om du aktivt försöker gå ner eller upp i vikt — vänta
