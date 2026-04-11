@@ -7,7 +7,7 @@ import type { FoodItem } from '@/hooks/useFoodItems'
 export interface MealEntryItem {
   id: string
   meal_entry_id: string
-  food_item_id: string
+  food_item_id: string | null
   amount: number
   unit: string
   weight_grams?: number

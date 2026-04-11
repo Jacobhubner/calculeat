@@ -45,12 +45,19 @@ export const transformMealToSavedMeal = (
 ): CreateSavedMealInput => {
   return {
     name: customName || generateDefaultMealName(mealEntry.meal_name),
-    items: mealEntry.items?.map(item => ({
-      food_item_id: item.food_item_id,
-      amount: item.amount,
-      unit: item.unit,
-      weight_grams: item.weight_grams,
-    })) || []
+    items:
+      mealEntry.items?.flatMap(item =>
+        item.food_item_id
+          ? [
+              {
+                food_item_id: item.food_item_id,
+                amount: item.amount,
+                unit: item.unit,
+                weight_grams: item.weight_grams,
+              },
+            ]
+          : []
+      ) || [],
   }
 }
 
@@ -62,10 +69,10 @@ export const transformMealToSavedMeal = (
  */
 export const getMealOrder = (mealName: string): number => {
   const orderMap: Record<string, number> = {
-    'Frukost': 0,
-    'Lunch': 1,
-    'Middag': 2,
-    'Mellanmål': 3,
+    Frukost: 0,
+    Lunch: 1,
+    Middag: 2,
+    Mellanmål: 3,
     'Mellanmål 1': 3,
     'Mellanmål 2': 4,
   }
