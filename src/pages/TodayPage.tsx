@@ -69,7 +69,6 @@ export default function TodayPage() {
   // State for date editing
   const [isEditingDate, setIsEditingDate] = useState(false)
   const [editingDateValue, setEditingDateValue] = useState<string>('')
-  const [pendingDate, setPendingDate] = useState<string | null>(null)
 
   // State for AddFoodToMealModal
   const [addFoodModalOpen, setAddFoodModalOpen] = useState(false)
@@ -217,34 +216,24 @@ export default function TodayPage() {
       setIsEditingDate(false)
       return
     }
-    setPendingDate(editingDateValue)
-    setIsEditingDate(false)
-  }
-
-  const handleCancelEditDate = () => {
-    setIsEditingDate(false)
-    setEditingDateValue('')
-  }
-
-  const handleConfirmDateChange = () => {
-    if (!todayLog || !pendingDate) return
     updateLogDate.mutate(
-      { logId: todayLog.id, newDate: pendingDate },
+      { logId: todayLog.id, newDate: editingDateValue },
       {
         onSuccess: () => {
           toast.success(t('today.dateUpdated'))
-          setPendingDate(null)
+          setIsEditingDate(false)
         },
         onError: error => {
           toast.error(error instanceof Error ? error.message : t('today.errorUpdateDate'))
-          setPendingDate(null)
+          setIsEditingDate(false)
         },
       }
     )
   }
 
-  const handleCancelDateChange = () => {
-    setPendingDate(null)
+  const handleCancelEditDate = () => {
+    setIsEditingDate(false)
+    setEditingDateValue('')
   }
 
   const handleFinishDay = () => {
@@ -391,39 +380,6 @@ export default function TodayPage() {
           )}
         </div>
       </div>
-
-      {/* Date change confirmation */}
-      {pendingDate && (
-        <Card className="mb-4 bg-blue-50 border-blue-200">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between gap-4">
-              <p className="text-sm font-medium text-blue-800">
-                {t('today.confirmDateChange', { from: todayLog?.log_date, to: pendingDate })}
-              </p>
-              <div className="flex gap-2 shrink-0">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={handleCancelDateChange}
-                  className="gap-1"
-                >
-                  <X className="h-3.5 w-3.5" />
-                  {t('today.cancel')}
-                </Button>
-                <Button
-                  size="sm"
-                  onClick={handleConfirmDateChange}
-                  disabled={updateLogDate.isPending}
-                  className="gap-1 bg-gradient-to-r from-primary-600 to-primary-500"
-                >
-                  <Check className="h-3.5 w-3.5" />
-                  {updateLogDate.isPending ? t('today.saving') : t('today.confirm')}
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
 
       {/* Goal mismatch warning */}
       {goalsFromDifferentProfile && !todayLog?.is_completed && (

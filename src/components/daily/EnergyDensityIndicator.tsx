@@ -1,7 +1,8 @@
 import { cn } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
 import {
   getEnergyDensityColor,
-  getEnergyDensityLabel,
+  getEnergyDensityLabelKey,
   getEnergyDensityColorClass,
 } from '@/lib/calculations/dailySummary'
 
@@ -24,8 +25,9 @@ export function EnergyDensityIndicator({
   size = 'md',
   className,
 }: EnergyDensityIndicatorProps) {
+  const { t } = useTranslation('today')
   const color = getEnergyDensityColor(density)
-  const label = getEnergyDensityLabel(density)
+  const labelKey = getEnergyDensityLabelKey(density)
 
   // Calculate bar width (0-3 kcal/g mapped to 0-100%)
   const barWidth = Math.min((density / 3) * 100, 100)
@@ -40,12 +42,12 @@ export function EnergyDensityIndicator({
     <div className={cn('space-y-1', className)}>
       <div className={cn('flex items-center justify-between', sizeClasses[size].gap)}>
         <span className={cn('font-medium text-neutral-700', sizeClasses[size].text)}>
-          Energitäthet
+          {t('energyDensity.label')}
         </span>
         <div className="flex items-center gap-2">
           {showValue && (
             <span className={cn('font-semibold text-neutral-900', sizeClasses[size].text)}>
-              {density.toFixed(1)} kcal/g
+              {density.toFixed(1)} {t('energyDensity.unit')}
             </span>
           )}
           {showLabel && (
@@ -61,7 +63,7 @@ export function EnergyDensityIndicator({
                 color === 'neutral' && 'text-neutral-400'
               )}
             >
-              {label}
+              {t(labelKey)}
             </span>
           )}
         </div>
@@ -115,8 +117,9 @@ interface EnergyDensityCompactProps {
  * Compact energy density display for sidebar/cards
  */
 export function EnergyDensityCompact({ density, className }: EnergyDensityCompactProps) {
+  const { t } = useTranslation('today')
   const color = getEnergyDensityColor(density)
-  const label = getEnergyDensityLabel(density)
+  const labelKey = getEnergyDensityLabelKey(density)
 
   return (
     <div className={cn('flex items-center gap-2', className)}>
@@ -132,7 +135,9 @@ export function EnergyDensityCompact({ density, className }: EnergyDensityCompac
         )}
       />
       <span className="text-sm text-neutral-600">
-        {density > 0 ? `${density.toFixed(1)} kcal/g` : 'Ingen data'}
+        {density > 0
+          ? `${density.toFixed(1)} ${t('energyDensity.unit')}`
+          : t('energyDensity.noData')}
       </span>
       <span
         className={cn(
@@ -145,7 +150,7 @@ export function EnergyDensityCompact({ density, className }: EnergyDensityCompac
           color === 'neutral' && 'text-neutral-400'
         )}
       >
-        ({label})
+        ({t(labelKey)})
       </span>
     </div>
   )
@@ -159,18 +164,20 @@ interface EnergyDensityLegendProps {
  * Legend showing energy density color scale
  */
 export function EnergyDensityLegend({ className }: EnergyDensityLegendProps) {
+  const { t } = useTranslation('today')
+
   const zones = [
-    { color: 'bg-cyan-400', label: '< 0.5', desc: 'Mycket låg' },
-    { color: 'bg-green-400', label: '0.5-1.0', desc: 'Låg (optimalt)' },
-    { color: 'bg-yellow-400', label: '1.0-2.0', desc: 'Medel' },
-    { color: 'bg-orange-400', label: '2.0-2.5', desc: 'Hög' },
-    { color: 'bg-red-400', label: '> 2.5', desc: 'Mycket hög' },
+    { color: 'bg-cyan-400', label: '< 0.5', desc: t('energyDensity.veryLow') },
+    { color: 'bg-green-400', label: '0.5-1.0', desc: t('energyDensity.low') },
+    { color: 'bg-yellow-400', label: '1.0-2.0', desc: t('energyDensity.medium') },
+    { color: 'bg-orange-400', label: '2.0-2.5', desc: t('energyDensity.high') },
+    { color: 'bg-red-400', label: '> 2.5', desc: t('energyDensity.veryHigh') },
   ]
 
   return (
     <div className={cn('space-y-2', className)}>
       <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide">
-        Energitäthet (kcal/g)
+        {t('energyDensity.legendTitle')}
       </p>
       <div className="grid grid-cols-5 gap-1">
         {zones.map(zone => (

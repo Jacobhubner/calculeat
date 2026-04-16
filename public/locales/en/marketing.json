@@ -199,6 +199,39 @@
       "back": "Back to home"
     }
   },
+  "footer": {
+    "tagline": "Your complete platform for calorie tracking, meal planning, and fitness tracking. Eat smart. Train right. Track everything.",
+    "sections": {
+      "product": "Product",
+      "resources": "Resources",
+      "company": "Company",
+      "legal": "Legal"
+    },
+    "links": {
+      "dashboard": "Dashboard",
+      "pricing": "Pricing",
+      "guides": "Guides",
+      "faq": "FAQ",
+      "support": "Support",
+      "apiDocs": "API Documentation",
+      "about": "About us",
+      "blog": "Blog",
+      "careers": "Careers",
+      "contact": "Contact",
+      "privacy": "Privacy policy",
+      "terms": "Terms of service",
+      "cookies": "Cookies"
+    },
+    "newsletter": {
+      "title": "Stay updated",
+      "description": "Get the latest tips on nutrition, training, and health directly in your inbox.",
+      "placeholder": "Your email address",
+      "button": "Subscribe"
+    },
+    "copyright": "© {{year}} CalculEat. All rights reserved.",
+    "madeWith": "Made with",
+    "madeIn": "in Sweden"
+  },
   "successStories": {
     "title": "Success Stories",
     "subtitle": "Real results from real users",

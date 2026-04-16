@@ -189,5 +189,20 @@
     "cancel": "Cancel",
     "deleteAnyway": "Delete anyway",
     "saveAnyway": "Save anyway"
+  },
+  "equipmentOptions": {
+    "oven": "Oven",
+    "airfryer": "Air fryer",
+    "stovetop": "Stovetop",
+    "microwave": "Microwave",
+    "blender": "Blender",
+    "no-cook": "No cooking"
+  },
+  "equipmentFields": {
+    "temp_c": "Temperature",
+    "duration": "Time",
+    "heat": "Heat level",
+    "watt": "Power",
+    "heatPlaceholder": "Medium heat"
   }
 }

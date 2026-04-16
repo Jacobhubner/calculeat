@@ -213,13 +213,16 @@ export default function SiteHeader() {
 
         {/* Mobile Menu Button - Only show when logged out */}
         {!user && (
-          <button
-            onClick={toggleMobileMenu}
-            className="md:hidden p-2 text-neutral-600 hover:text-neutral-900 transition-colors"
-            aria-label="Toggle menu"
-          >
-            {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </button>
+          <div className="md:hidden flex items-center gap-1">
+            <LanguageSwitcher />
+            <button
+              onClick={toggleMobileMenu}
+              className="p-2 text-neutral-600 hover:text-neutral-900 transition-colors"
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
+          </div>
         )}
 
         {/* Mobile: Social + Avatar when logged in */}

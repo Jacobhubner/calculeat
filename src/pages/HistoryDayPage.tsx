@@ -159,7 +159,7 @@ export default function HistoryDayPage() {
             <div className="flex items-center gap-2 mb-1 md:mb-2">
               <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent flex items-center gap-2 md:gap-3">
                 <Calendar className="h-6 w-6 md:h-8 md:w-8 text-primary-600" />
-                {isEditingDate ? (
+                {isEditing && isEditingDate ? (
                   <input
                     type="date"
                     defaultValue={log.log_date}
@@ -173,18 +173,17 @@ export default function HistoryDayPage() {
                     autoFocus
                   />
                 ) : (
-                  dateDisplay
+                  <span
+                    className={
+                      isEditing ? 'cursor-pointer hover:text-primary-400 transition-colors' : ''
+                    }
+                    onClick={() => isEditing && setIsEditingDate(true)}
+                    title={isEditing ? t('editing.changeDate') : undefined}
+                  >
+                    {dateDisplay}
+                  </span>
                 )}
               </h1>
-              {!isEditingDate && (
-                <button
-                  onClick={() => setIsEditingDate(true)}
-                  className="text-neutral-400 hover:text-neutral-600 transition-colors"
-                  title={t('editing.changeDate')}
-                >
-                  <Pencil className="h-4 w-4" />
-                </button>
-              )}
             </div>
             <div className="flex items-center gap-2">
               {log.is_completed && !isEditing && (
@@ -221,7 +220,16 @@ export default function HistoryDayPage() {
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-2">
                 <Pencil className="h-4 w-4 text-amber-600" />
-                <p className="text-sm font-medium text-amber-800">{t('editing.banner')}</p>
+                <p className="text-sm font-medium text-amber-800">
+                  {t('editing.banner')}
+                  {' · '}
+                  <button
+                    className="underline hover:text-amber-900 transition-colors"
+                    onClick={() => setIsEditingDate(true)}
+                  >
+                    {t('editing.changeDate')}
+                  </button>
+                </p>
               </div>
               <Button
                 size="sm"

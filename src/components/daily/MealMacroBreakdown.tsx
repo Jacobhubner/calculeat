@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
 
 interface MealMacroBreakdownProps {
   fat: number
@@ -92,6 +93,7 @@ export function MealMacroBreakdown({
   totalWeight,
   className,
 }: MealMacroBreakdownProps) {
+  const { t } = useTranslation('today')
   // Total macro grams
   const totalMacroGrams = fat + carbs + protein
 
@@ -126,7 +128,7 @@ export function MealMacroBreakdown({
             ]}
             size={44}
             strokeWidth={6}
-            label="Vikt"
+            label={t('mealChart.weight')}
           />
         )}
 
@@ -139,7 +141,7 @@ export function MealMacroBreakdown({
           ]}
           size={44}
           strokeWidth={6}
-          label="Makro"
+          label={t('mealChart.macro')}
         />
       </div>
     </div>

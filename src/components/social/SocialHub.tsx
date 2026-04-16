@@ -77,8 +77,13 @@ import {
   format,
   differenceInMinutes,
 } from 'date-fns'
-import { sv } from 'date-fns/locale'
+import { sv, enUS } from 'date-fns/locale'
 import { useTranslation } from 'react-i18next'
+import i18n from '@/i18n'
+
+function getDateLocale() {
+  return i18n.language === 'sv' ? sv : enUS
+}
 
 type HubTab = 'friends' | 'activity' | 'messages'
 type FriendsView = 'list' | 'profile' | 'add'
@@ -363,7 +368,10 @@ function MiniFriendRequestCard({ request }: { request: FriendRequest }) {
             @{request.requester_username ?? request.requester_name}
           </p>
           <p className="text-xs text-neutral-400">
-            {formatDistanceToNow(parseISO(request.created_at), { addSuffix: true, locale: sv })}
+            {formatDistanceToNow(parseISO(request.created_at), {
+              addSuffix: true,
+              locale: getDateLocale(),
+            })}
           </p>
         </div>
       </div>
@@ -484,7 +492,10 @@ function RespondedShareCard({ invitation }: { invitation: RespondedShareInvitati
           {isAccepted ? t('invitations.history.accepted') : t('invitations.history.rejected')}
         </span>
         <span className="text-[10px] text-neutral-400">
-          {formatDistanceToNow(parseISO(invitation.responded_at), { addSuffix: true, locale: sv })}
+          {formatDistanceToNow(parseISO(invitation.responded_at), {
+            addSuffix: true,
+            locale: getDateLocale(),
+          })}
         </span>
       </div>
     </div>
@@ -524,7 +535,10 @@ function SentFriendRequestCard({ request }: { request: SentFriendRequest }) {
           </p>
           <p className="text-xs text-neutral-400">
             {t('social.friends.awaiting_response')} &middot;{' '}
-            {formatDistanceToNow(parseISO(request.created_at), { addSuffix: true, locale: sv })}
+            {formatDistanceToNow(parseISO(request.created_at), {
+              addSuffix: true,
+              locale: getDateLocale(),
+            })}
           </p>
         </div>
       </div>
@@ -622,7 +636,7 @@ function FriendProfile({
           </p>
           <p className="text-xs text-neutral-400">
             {t('social.friends.friends_since')}{' '}
-            {format(parseISO(friend.since), 'd MMM yyyy', { locale: sv })}
+            {format(parseISO(friend.since), 'd MMM yyyy', { locale: getDateLocale() })}
           </p>
         </div>
       </div>
@@ -810,7 +824,7 @@ function ConversationList({ onOpenThread }: { onOpenThread: (conv: Conversation)
                   <p className="text-[10px] text-neutral-400 shrink-0">
                     {formatDistanceToNow(parseISO(conv.last_message_at), {
                       addSuffix: false,
-                      locale: sv,
+                      locale: getDateLocale(),
                     })}
                   </p>
                 )}
@@ -1076,7 +1090,7 @@ function MessageBubble({
               )}
               {!isDeleted && (
                 <span className="text-[9px] text-neutral-400">
-                  {format(parseISO(msg.created_at), 'HH:mm', { locale: sv })}
+                  {format(parseISO(msg.created_at), 'HH:mm', { locale: getDateLocale() })}
                 </span>
               )}
               {isOwn && !isDeleted && (
@@ -1303,7 +1317,9 @@ function MessageThread({
                 {showTimestamp && (
                   <div className="flex justify-center py-1">
                     <span className="text-[10px] text-neutral-400">
-                      {format(parseISO(msg.created_at), 'd MMM, HH:mm', { locale: sv })}
+                      {format(parseISO(msg.created_at), 'd MMM, HH:mm', {
+                        locale: getDateLocale(),
+                      })}
                     </span>
                   </div>
                 )}

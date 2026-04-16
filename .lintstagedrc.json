@@ -1,5 +1,5 @@
 {
-  "*.{ts,tsx,js,jsx}": ["eslint --fix", "prettier --write"],
+  "*.{ts,tsx,js,jsx}": ["eslint --fix --max-warnings=9999", "prettier --write"],
   "!(package-lock).json": ["prettier --write"],
   "*.{css,scss,md}": ["prettier --write"]
 }

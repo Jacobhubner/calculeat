@@ -1,42 +1,44 @@
 import { Link } from 'react-router-dom'
 import { Github, Mail, Twitter, Heart } from 'lucide-react'
 import { Separator } from '../ui/separator'
+import { useTranslation } from 'react-i18next'
 
 export default function SiteFooter() {
+  const { t } = useTranslation('marketing')
   const currentYear = new Date().getFullYear()
 
   const footerSections = [
     {
-      title: 'Produkt',
+      title: t('footer.sections.product'),
       links: [
-        { label: 'Dashboard', to: '/app' },
-        { label: 'Priser', to: '#' },
+        { label: t('footer.links.dashboard'), to: '/app' },
+        { label: t('footer.links.pricing'), to: '#' },
       ],
     },
     {
-      title: 'Resurser',
+      title: t('footer.sections.resources'),
       links: [
-        { label: 'Guider', to: '#' },
-        { label: 'FAQ', to: '#' },
-        { label: 'Support', to: '#' },
-        { label: 'API Dokumentation', to: '#' },
+        { label: t('footer.links.guides'), to: '#' },
+        { label: t('footer.links.faq'), to: '#' },
+        { label: t('footer.links.support'), to: '#' },
+        { label: t('footer.links.apiDocs'), to: '#' },
       ],
     },
     {
-      title: 'Företag',
+      title: t('footer.sections.company'),
       links: [
-        { label: 'Om oss', to: '#' },
-        { label: 'Blogg', to: '#' },
-        { label: 'Karriär', to: '#' },
-        { label: 'Kontakt', to: '#' },
+        { label: t('footer.links.about'), to: '#' },
+        { label: t('footer.links.blog'), to: '#' },
+        { label: t('footer.links.careers'), to: '#' },
+        { label: t('footer.links.contact'), to: '#' },
       ],
     },
     {
-      title: 'Legalt',
+      title: t('footer.sections.legal'),
       links: [
-        { label: 'Integritetspolicy', to: '#' },
-        { label: 'Användarvillkor', to: '#' },
-        { label: 'Cookies', to: '#' },
+        { label: t('footer.links.privacy'), to: '#' },
+        { label: t('footer.links.terms'), to: '#' },
+        { label: t('footer.links.cookies'), to: '#' },
       ],
     },
   ]
@@ -55,10 +57,7 @@ export default function SiteFooter() {
                 className="h-10 object-contain transition-transform group-hover:scale-105"
               />
             </Link>
-            <p className="text-sm text-neutral-600 max-w-xs">
-              Din kompletta plattform för kaloriräkning, måltidsplanering och träningsspårning. Ät
-              smart. Träna rätt. Följ allt.
-            </p>
+            <p className="text-sm text-neutral-600 max-w-xs">{t('footer.tagline')}</p>
             <div className="flex items-center gap-3">
               <a
                 href="#"
@@ -106,21 +105,21 @@ export default function SiteFooter() {
           ))}
         </div>
 
-        {/* Newsletter Section (Optional - UI only) */}
+        {/* Newsletter Section */}
         <div className="mt-12 rounded-2xl bg-gradient-to-br from-primary-50 to-accent-50 p-8">
           <div className="max-w-xl">
-            <h3 className="text-lg font-semibold text-neutral-900 mb-2">Håll dig uppdaterad</h3>
-            <p className="text-sm text-neutral-600 mb-4">
-              Få de senaste tipsen om näring, träning och hälsa direkt i din inkorg.
-            </p>
+            <h3 className="text-lg font-semibold text-neutral-900 mb-2">
+              {t('footer.newsletter.title')}
+            </h3>
+            <p className="text-sm text-neutral-600 mb-4">{t('footer.newsletter.description')}</p>
             <div className="flex gap-2">
               <input
                 type="email"
-                placeholder="Din e-postadress"
+                placeholder={t('footer.newsletter.placeholder')}
                 className="flex-1 h-11 rounded-xl border border-neutral-300 bg-white px-4 text-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
               />
               <button className="h-11 px-6 rounded-xl bg-primary-600 text-white text-sm font-medium hover:bg-primary-700 transition-colors">
-                Prenumerera
+                {t('footer.newsletter.button')}
               </button>
             </div>
           </div>
@@ -130,9 +129,10 @@ export default function SiteFooter() {
 
         {/* Bottom Bar */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-neutral-600">
-          <p>&copy; {currentYear} CalculEat. Alla rättigheter förbehållna.</p>
+          <p>{t('footer.copyright', { year: currentYear })}</p>
           <p className="flex items-center gap-1">
-            Gjord med <Heart className="h-4 w-4 text-error-500 fill-error-500" /> i Sverige
+            {t('footer.madeWith')} <Heart className="h-4 w-4 text-error-500 fill-error-500" />{' '}
+            {t('footer.madeIn')}
           </p>
         </div>
       </div>

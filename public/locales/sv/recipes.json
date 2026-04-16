@@ -189,5 +189,20 @@
     "cancel": "Avbryt",
     "deleteAnyway": "Radera ändå",
     "saveAnyway": "Spara ändå"
+  },
+  "equipmentOptions": {
+    "oven": "Ugn",
+    "airfryer": "Airfryer",
+    "stovetop": "Spis",
+    "microwave": "Mikrovågsugn",
+    "blender": "Blender",
+    "no-cook": "Ingen tillagning"
+  },
+  "equipmentFields": {
+    "temp_c": "Temperatur",
+    "duration": "Tid",
+    "heat": "Värmenivå",
+    "watt": "Effekt",
+    "heatPlaceholder": "Medelhög värme"
   }
 }

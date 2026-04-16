@@ -5,11 +5,7 @@
     "copyFromYesterday": "Kopiera från igår",
     "copying": "Kopierar...",
     "finishDay": "Avsluta dag",
-    "cancel": "Avbryt",
-    "confirm": "Bekräfta",
-    "saving": "Sparar...",
     "updating": "Uppdaterar...",
-    "confirmDateChange": "Ändra datum från {{from}} till {{to}}?",
     "dateUpdated": "Datum uppdaterat",
     "errorUpdateDate": "Kunde inte uppdatera datum",
     "dayFinished": "Dagen är klar! 🎉",
@@ -124,5 +120,27 @@
     "fat": "Fett:",
     "carbs": "Kolhydrater:",
     "protein": "Protein:"
+  },
+  "mealChart": {
+    "weight": "Vikt",
+    "macro": "Makro"
+  },
+  "energyDensity": {
+    "label": "Energitäthet",
+    "noData": "Ingen data",
+    "veryLow": "Mycket låg",
+    "low": "Låg (optimalt)",
+    "medium": "Medel",
+    "high": "Hög",
+    "veryHigh": "Mycket hög",
+    "unit": "kcal/g",
+    "legendTitle": "Energitäthet (kcal/g)"
+  },
+  "colorDensity": {
+    "title": "Kaloritäthet",
+    "green": "Grön",
+    "yellow": "Gul",
+    "orange": "Orange",
+    "noData": "Ingen data"
   }
 }

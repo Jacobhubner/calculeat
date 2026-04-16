@@ -95,5 +95,11 @@
     "confirmDateChange": "Ändra datum från <bold>{{from}}</bold> till <bold>{{to}}</bold>?",
     "confirmDateChangePlain": "Ändra datum från {{from}} till {{to}}?",
     "removeItem": "Ta bort"
+  },
+  "macros": {
+    "distribution": "Makrofördelning",
+    "fat": "Fett",
+    "carbs": "Kolhydrater",
+    "protein": "Protein"
   }
 }

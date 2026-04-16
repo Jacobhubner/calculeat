@@ -199,6 +199,39 @@
       "back": "Tillbaka till startsidan"
     }
   },
+  "footer": {
+    "tagline": "Din kompletta plattform för kaloriräkning, måltidsplanering och träningsspårning. Ät smart. Träna rätt. Följ allt.",
+    "sections": {
+      "product": "Produkt",
+      "resources": "Resurser",
+      "company": "Företag",
+      "legal": "Legalt"
+    },
+    "links": {
+      "dashboard": "Dashboard",
+      "pricing": "Priser",
+      "guides": "Guider",
+      "faq": "FAQ",
+      "support": "Support",
+      "apiDocs": "API Dokumentation",
+      "about": "Om oss",
+      "blog": "Blogg",
+      "careers": "Karriär",
+      "contact": "Kontakt",
+      "privacy": "Integritetspolicy",
+      "terms": "Användarvillkor",
+      "cookies": "Cookies"
+    },
+    "newsletter": {
+      "title": "Håll dig uppdaterad",
+      "description": "Få de senaste tipsen om näring, träning och hälsa direkt i din inkorg.",
+      "placeholder": "Din e-postadress",
+      "button": "Prenumerera"
+    },
+    "copyright": "© {{year}} CalculEat. Alla rättigheter förbehållna.",
+    "madeWith": "Gjord med",
+    "madeIn": "i Sverige"
+  },
   "successStories": {
     "title": "Framgångshistorier",
     "subtitle": "Riktiga resultat från riktiga användare",

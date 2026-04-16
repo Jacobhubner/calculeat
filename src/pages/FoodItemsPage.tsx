@@ -1465,14 +1465,12 @@ export default function FoodItemsPage() {
                 {t('infoCards.green.solidLabel')}
               </p>
               <ul className="space-y-0.5 pl-2">
-                {[
-                  { label: 'Bladgrönsaker (spenat, sallad)', icon: '🥬' },
-                  { label: 'Gurka, tomat, zucchini', icon: '🥒' },
-                  { label: 'Broccoli, blomkål', icon: '🥦' },
-                  { label: 'Bär (jordgubbar, hallon)', icon: '🍓' },
-                  { label: 'Frukt med hög vattenhalt (melon, apelsin)', icon: '🍉' },
-                  { label: 'Potatis (kokt)', icon: '🥔' },
-                ].map(({ label, icon }) => (
+                {(
+                  t('infoCards.green.solidItems', { returnObjects: true }) as {
+                    label: string
+                    icon: string
+                  }[]
+                ).map(({ label, icon }) => (
                   <li key={label} className="flex gap-1.5 items-center">
                     <span className="w-4 text-center">{icon}</span>
                     {label}
@@ -1485,11 +1483,12 @@ export default function FoodItemsPage() {
                 {t('infoCards.green.liquidLabel')}
               </p>
               <ul className="space-y-0.5 pl-2">
-                {[
-                  { label: 'Vatten', icon: '💧' },
-                  { label: 'Lightdryck', icon: '' },
-                  { label: 'Kaffe/te (utan socker)', icon: '☕' },
-                ].map(({ label, icon }) => (
+                {(
+                  t('infoCards.green.liquidItems', { returnObjects: true }) as {
+                    label: string
+                    icon: string
+                  }[]
+                ).map(({ label, icon }) => (
                   <li key={label} className="flex gap-1.5 items-center">
                     <span className="w-4 text-center">{icon}</span>
                     {label}
@@ -1502,10 +1501,12 @@ export default function FoodItemsPage() {
                 {t('infoCards.green.soupLabel')}
               </p>
               <ul className="space-y-0.5 pl-2">
-                {[
-                  { label: 'Klara grönsakssoppor', icon: '🥣' },
-                  { label: 'Buljongbaserade soppor', icon: '' },
-                ].map(({ label, icon }) => (
+                {(
+                  t('infoCards.green.soupItems', { returnObjects: true }) as {
+                    label: string
+                    icon: string
+                  }[]
+                ).map(({ label, icon }) => (
                   <li key={label} className="flex gap-1.5 items-center">
                     <span className="w-4 text-center">{icon}</span>
                     {label}
@@ -1531,14 +1532,12 @@ export default function FoodItemsPage() {
                 {t('infoCards.yellow.solidLabel')}
               </p>
               <ul className="space-y-0.5 pl-2">
-                {[
-                  { label: 'Kycklingfilé, kalkon', icon: '🍗' },
-                  { label: 'Ägg', icon: '🥚' },
-                  { label: 'Pasta, ris, quinoa', icon: '🍝' },
-                  { label: 'Bröd', icon: '🍞' },
-                  { label: 'Baljväxter (linser, bönor)', icon: '🫘' },
-                  { label: 'Lättare mejeriprodukter (kvarg, yoghurt)', icon: '🥛' },
-                ].map(({ label, icon }) => (
+                {(
+                  t('infoCards.yellow.solidItems', { returnObjects: true }) as {
+                    label: string
+                    icon: string
+                  }[]
+                ).map(({ label, icon }) => (
                   <li key={label} className="flex gap-1.5 items-center">
                     <span className="w-4 text-center">{icon}</span>
                     {label}
@@ -1551,10 +1550,12 @@ export default function FoodItemsPage() {
                 {t('infoCards.yellow.liquidLabel')}
               </p>
               <ul className="space-y-0.5 pl-2">
-                {[
-                  { label: 'Mjölk', icon: '🥛' },
-                  { label: 'Juice', icon: '🧃' },
-                ].map(({ label, icon }) => (
+                {(
+                  t('infoCards.yellow.liquidItems', { returnObjects: true }) as {
+                    label: string
+                    icon: string
+                  }[]
+                ).map(({ label, icon }) => (
                   <li key={label} className="flex gap-1.5 items-center">
                     <span className="w-4 text-center">{icon}</span>
                     {label}
@@ -1567,11 +1568,12 @@ export default function FoodItemsPage() {
                 {t('infoCards.yellow.soupLabel')}
               </p>
               <ul className="space-y-0.5 pl-2">
-                {[
-                  { label: 'Linssoppa', icon: '🥣' },
-                  { label: 'Kycklingsoppa', icon: '🍲' },
-                  { label: 'Lätt krämig soppa', icon: '' },
-                ].map(({ label, icon }) => (
+                {(
+                  t('infoCards.yellow.soupItems', { returnObjects: true }) as {
+                    label: string
+                    icon: string
+                  }[]
+                ).map(({ label, icon }) => (
                   <li key={label} className="flex gap-1.5 items-center">
                     <span className="w-4 text-center">{icon}</span>
                     {label}
@@ -1597,14 +1599,12 @@ export default function FoodItemsPage() {
                 {t('infoCards.orange.solidLabel')}
               </p>
               <ul className="space-y-0.5 pl-2">
-                {[
-                  { label: 'Nötter och frön', icon: '🥜' },
-                  { label: 'Ost', icon: '🧀' },
-                  { label: 'Fett kött (t.ex. entrecôte)', icon: '🥩' },
-                  { label: 'Chips, kex', icon: '🍟' },
-                  { label: 'Godis, choklad', icon: '🍫' },
-                  { label: 'Bakverk', icon: '🥐' },
-                ].map(({ label, icon }) => (
+                {(
+                  t('infoCards.orange.solidItems', { returnObjects: true }) as {
+                    label: string
+                    icon: string
+                  }[]
+                ).map(({ label, icon }) => (
                   <li key={label} className="flex gap-1.5 items-center">
                     <span className="w-4 text-center">{icon}</span>
                     {label}
@@ -1617,11 +1617,12 @@ export default function FoodItemsPage() {
                 {t('infoCards.orange.liquidLabel')}
               </p>
               <ul className="space-y-0.5 pl-2">
-                {[
-                  { label: 'Läsk med socker', icon: '🥤' },
-                  { label: 'Milkshakes', icon: '🧋' },
-                  { label: 'Alkohol', icon: '🍺' },
-                ].map(({ label, icon }) => (
+                {(
+                  t('infoCards.orange.liquidItems', { returnObjects: true }) as {
+                    label: string
+                    icon: string
+                  }[]
+                ).map(({ label, icon }) => (
                   <li key={label} className="flex gap-1.5 items-center">
                     <span className="w-4 text-center">{icon}</span>
                     {label}
@@ -1634,12 +1635,12 @@ export default function FoodItemsPage() {
                 {t('infoCards.orange.soupLabel')}
               </p>
               <ul className="space-y-0.5 pl-2">
-                {[
-                  {
-                    label: 'Gräddbaserade soppor (t.ex. potatis- & purjolök med grädde)',
-                    icon: '🍲',
-                  },
-                ].map(({ label, icon }) => (
+                {(
+                  t('infoCards.orange.soupItems', { returnObjects: true }) as {
+                    label: string
+                    icon: string
+                  }[]
+                ).map(({ label, icon }) => (
                   <li key={label} className="flex gap-1.5 items-center">
                     <span className="w-4 text-center">{icon}</span>
                     {label}

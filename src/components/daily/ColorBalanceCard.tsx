@@ -2,6 +2,7 @@ import { cn } from '@/lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import type { NutrientStatus } from '@/lib/calculations/dailySummary'
 import { getStatusBadgeConfig } from '@/lib/calculations/dailySummary'
+import { useTranslation } from 'react-i18next'
 
 interface ColorBalanceCardProps {
   greenCalories: number
@@ -40,18 +41,19 @@ export function ColorBalanceCard({
   size = 'md',
   className,
 }: ColorBalanceCardProps) {
+  const { t } = useTranslation('today')
   const isCompact = size === 'sm'
 
   const content = (
     <div className={cn(isCompact ? 'space-y-1' : 'space-y-3', className)}>
       {/* Header */}
-      <h3 className="text-sm font-medium text-neutral-700">Kaloritäthet</h3>
+      <h3 className="text-sm font-medium text-neutral-700">{t('colorDensity.title')}</h3>
 
       {/* Color rows */}
       <div className={isCompact ? 'space-y-1' : 'space-y-2'}>
         <ColorRow
           color="green"
-          label="Grön"
+          label={t('colorDensity.green')}
           calories={greenCalories}
           status={greenStatus}
           targetPercent={colorTargets.green}
@@ -61,7 +63,7 @@ export function ColorBalanceCard({
         />
         <ColorRow
           color="yellow"
-          label="Gul"
+          label={t('colorDensity.yellow')}
           calories={yellowCalories}
           status={yellowStatus}
           targetPercent={colorTargets.yellow}
@@ -71,7 +73,7 @@ export function ColorBalanceCard({
         />
         <ColorRow
           color="orange"
-          label="Orange"
+          label={t('colorDensity.orange')}
           calories={orangeCalories}
           status={orangeStatus}
           targetPercent={colorTargets.orange}
@@ -89,7 +91,7 @@ export function ColorBalanceCard({
         <CardHeader className="pb-2">
           <CardTitle className="text-lg flex items-center gap-2">
             <span className="text-lg">🎨</span>
-            Kaloritäthet
+            {t('colorDensity.title')}
           </CardTitle>
         </CardHeader>
         <CardContent>{content}</CardContent>
@@ -150,7 +152,6 @@ function ColorRow({
   const classes = colorClasses[color]
 
   if (compact) {
-    // Ultra-compact single-line layout
     return (
       <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
         <span className={cn('w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full flex-shrink-0', classes.dot)} />
@@ -208,19 +209,21 @@ export function ColorBalanceCompact({
   orangeCalories,
   className,
 }: ColorBalanceCompactProps) {
+  const { t } = useTranslation('today')
+
   return (
     <div className={cn('flex gap-3', className)}>
       <div className="flex-1 text-center p-3 bg-green-50 rounded-lg border border-green-200">
         <div className="text-2xl font-bold text-green-700">{greenCalories}</div>
-        <div className="text-xs text-green-600">Grön</div>
+        <div className="text-xs text-green-600">{t('colorDensity.green')}</div>
       </div>
       <div className="flex-1 text-center p-3 bg-yellow-50 rounded-lg border border-yellow-200">
         <div className="text-2xl font-bold text-yellow-700">{yellowCalories}</div>
-        <div className="text-xs text-yellow-600">Gul</div>
+        <div className="text-xs text-yellow-600">{t('colorDensity.yellow')}</div>
       </div>
       <div className="flex-1 text-center p-3 bg-orange-50 rounded-lg border border-orange-200">
         <div className="text-2xl font-bold text-orange-700">{orangeCalories}</div>
-        <div className="text-xs text-orange-600">Orange</div>
+        <div className="text-xs text-orange-600">{t('colorDensity.orange')}</div>
       </div>
     </div>
   )
@@ -242,13 +245,14 @@ export function ColorBalanceBar({
   orangeCalories,
   className,
 }: ColorBalanceBarProps) {
+  const { t } = useTranslation('today')
   const total = greenCalories + yellowCalories + orangeCalories
 
   if (total === 0) {
     return (
       <div className={cn('h-4 bg-neutral-100 rounded-full', className)}>
         <div className="h-full flex items-center justify-center text-xs text-neutral-400">
-          Ingen data
+          {t('colorDensity.noData')}
         </div>
       </div>
     )
@@ -264,21 +268,21 @@ export function ColorBalanceBar({
         <div
           className="bg-green-500 transition-all duration-300"
           style={{ width: `${greenPercent}%` }}
-          title={`Grön: ${greenCalories} kcal (${Math.round(greenPercent)}%)`}
+          title={`${t('colorDensity.green')}: ${greenCalories} kcal (${Math.round(greenPercent)}%)`}
         />
       )}
       {yellowPercent > 0 && (
         <div
           className="bg-yellow-500 transition-all duration-300"
           style={{ width: `${yellowPercent}%` }}
-          title={`Gul: ${yellowCalories} kcal (${Math.round(yellowPercent)}%)`}
+          title={`${t('colorDensity.yellow')}: ${yellowCalories} kcal (${Math.round(yellowPercent)}%)`}
         />
       )}
       {orangePercent > 0 && (
         <div
           className="bg-orange-500 transition-all duration-300"
           style={{ width: `${orangePercent}%` }}
-          title={`Orange: ${orangeCalories} kcal (${Math.round(orangePercent)}%)`}
+          title={`${t('colorDensity.orange')}: ${orangeCalories} kcal (${Math.round(orangePercent)}%)`}
         />
       )}
     </div>

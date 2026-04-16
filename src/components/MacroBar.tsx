@@ -1,5 +1,6 @@
 import { Card } from './ui/card'
 import { cn } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
 
 interface MacroData {
   grams: number
@@ -16,39 +17,40 @@ interface MacroBarProps {
   className?: string
 }
 
-const MACROS = [
-  {
-    key: 'fat' as const,
-    name: 'Fett',
-    hex: '#f5c518',
-    hexLight: '#fef9c3',
-    hexRange: '#fde68a',
-  },
-  {
-    key: 'carbs' as const,
-    name: 'Kolhydrater',
-    hex: '#fb923c',
-    hexLight: '#ffedd5',
-    hexRange: '#fed7aa',
-  },
-  {
-    key: 'protein' as const,
-    name: 'Protein',
-    hex: '#f43f5e',
-    hexLight: '#ffe4e6',
-    hexRange: '#fecdd3',
-  },
-]
-
 export default function MacroBar({ protein, carbs, fat, className }: MacroBarProps) {
+  const { t } = useTranslation('history')
   const dataMap = { fat, carbs, protein }
+
+  const MACROS = [
+    {
+      key: 'fat' as const,
+      name: t('macros.fat'),
+      hex: '#f5c518',
+      hexLight: '#fef9c3',
+      hexRange: '#fde68a',
+    },
+    {
+      key: 'carbs' as const,
+      name: t('macros.carbs'),
+      hex: '#fb923c',
+      hexLight: '#ffedd5',
+      hexRange: '#fed7aa',
+    },
+    {
+      key: 'protein' as const,
+      name: t('macros.protein'),
+      hex: '#f43f5e',
+      hexLight: '#ffe4e6',
+      hexRange: '#fecdd3',
+    },
+  ]
 
   // Total percentage for the stacked bar (use sum of percentages)
   const totalPct = MACROS.reduce((sum, m) => sum + dataMap[m.key].percentage, 0) || 100
 
   return (
     <Card className={cn('p-6', className)}>
-      <h3 className="text-lg font-semibold text-neutral-900 mb-4">Makrofördelning</h3>
+      <h3 className="text-lg font-semibold text-neutral-900 mb-4">{t('macros.distribution')}</h3>
 
       {/* Stacked bar: two layers per macro — min (solid) + extra-to-max (light) */}
       <div className="mb-6">

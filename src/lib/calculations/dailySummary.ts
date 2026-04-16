@@ -162,8 +162,18 @@ export function getEnergyDensityColorClass(density: number): string {
 }
 
 /**
- * Get Swedish label for energy density value
+ * Get i18n key for energy density value
  */
+export function getEnergyDensityLabelKey(density: number): string {
+  if (density <= 0) return 'energyDensity.noData'
+  if (density < 0.5) return 'energyDensity.veryLow'
+  if (density < 1.0) return 'energyDensity.low'
+  if (density < 2.0) return 'energyDensity.medium'
+  if (density < 2.5) return 'energyDensity.high'
+  return 'energyDensity.veryHigh'
+}
+
+/** @deprecated Use getEnergyDensityLabelKey + t() instead */
 export function getEnergyDensityLabel(density: number): string {
   if (density <= 0) return 'Ingen data'
   if (density < 0.5) return 'Mycket låg'

@@ -95,5 +95,11 @@
     "confirmDateChange": "Change date from <bold>{{from}}</bold> to <bold>{{to}}</bold>?",
     "confirmDateChangePlain": "Change date from {{from}} to {{to}}?",
     "removeItem": "Remove"
+  },
+  "macros": {
+    "distribution": "Macro distribution",
+    "fat": "Fat",
+    "carbs": "Carbs",
+    "protein": "Protein"
   }
 }

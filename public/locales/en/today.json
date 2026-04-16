@@ -5,11 +5,7 @@
     "copyFromYesterday": "Copy from yesterday",
     "copying": "Copying...",
     "finishDay": "Finish day",
-    "cancel": "Cancel",
-    "confirm": "Confirm",
-    "saving": "Saving...",
     "updating": "Updating...",
-    "confirmDateChange": "Change date from {{from}} to {{to}}?",
     "dateUpdated": "Date updated",
     "errorUpdateDate": "Could not update date",
     "dayFinished": "Day complete! 🎉",
@@ -124,5 +120,27 @@
     "fat": "Fat:",
     "carbs": "Carbs:",
     "protein": "Protein:"
+  },
+  "mealChart": {
+    "weight": "Weight",
+    "macro": "Macro"
+  },
+  "energyDensity": {
+    "label": "Energy density",
+    "noData": "No data",
+    "veryLow": "Very low",
+    "low": "Low (optimal)",
+    "medium": "Medium",
+    "high": "High",
+    "veryHigh": "Very high",
+    "unit": "kcal/g",
+    "legendTitle": "Energy density (kcal/g)"
+  },
+  "colorDensity": {
+    "title": "Calorie density",
+    "green": "Green",
+    "yellow": "Yellow",
+    "orange": "Orange",
+    "noData": "No data"
   }
 }

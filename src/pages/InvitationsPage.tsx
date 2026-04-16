@@ -14,8 +14,13 @@ import {
 import type { PendingInvitation } from '@/lib/types/sharing'
 import { toast } from 'sonner'
 import { formatDistanceToNow, parseISO, differenceInDays } from 'date-fns'
-import { sv } from 'date-fns/locale'
+import { sv, enUS } from 'date-fns/locale'
 import { useTranslation } from 'react-i18next'
+import i18n from '@/i18n'
+
+function getDateLocale() {
+  return i18n.language === 'sv' ? sv : enUS
+}
 
 function InvitationCard({ invitation }: { invitation: PendingInvitation }) {
   const { t } = useTranslation('social')
@@ -136,7 +141,10 @@ function InvitationCard({ invitation }: { invitation: PendingInvitation }) {
       {!isExpiringSoon && (
         <p className="text-xs text-neutral-400">
           {(t as (key: string) => string)('invitations.sent')}{' '}
-          {formatDistanceToNow(parseISO(invitation.created_at), { addSuffix: true, locale: sv })}
+          {formatDistanceToNow(parseISO(invitation.created_at), {
+            addSuffix: true,
+            locale: getDateLocale(),
+          })}
         </p>
       )}
 
@@ -162,7 +170,7 @@ function InvitationCard({ invitation }: { invitation: PendingInvitation }) {
 }
 
 function SentInvitationCard({ invitation }: { invitation: SentShareInvitation }) {
-  const { t, i18n } = useTranslation('social')
+  const { t } = useTranslation('social')
   const [isCancelling, setIsCancelling] = useState(false)
   const { mutateAsync: cancel } = useCancelShareInvitation()
 
@@ -182,7 +190,7 @@ function SentInvitationCard({ invitation }: { invitation: SentShareInvitation })
     }
   }
 
-  const locale = i18n.language === 'sv' ? sv : undefined
+  const locale = getDateLocale()
 
   return (
     <div className="bg-white rounded-xl border border-neutral-200 p-4 flex items-center gap-3">
