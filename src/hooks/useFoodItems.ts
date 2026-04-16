@@ -308,7 +308,6 @@ const NON_DB_FOOD_ITEM_FIELDS = [
   'sugar_g',
   'salt_g',
   'shared_list_id',
-  'ml_per_gram', // computed by DB trigger from density_g_per_ml
   'kcal_per_gram', // computed by DB trigger
   'kcal_per_unit', // computed by DB trigger
   'fat_per_unit', // computed by DB trigger
