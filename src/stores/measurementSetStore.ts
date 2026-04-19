@@ -61,11 +61,6 @@ export const useMeasurementSetStore = create<MeasurementSetState>()(
             measurementSet && !measurementSet.id.startsWith('temp-')
               ? measurementSet.id
               : state.lastActiveMeasurementSetId
-          console.log('📦 setActiveMeasurementSet', {
-            newActiveId: measurementSet?.id,
-            isTemp: measurementSet?.id?.startsWith('temp-'),
-            lastActiveId: newLastActiveId,
-          })
           return {
             activeMeasurementSet: measurementSet,
             lastActiveMeasurementSetId: newLastActiveId,
@@ -75,16 +70,9 @@ export const useMeasurementSetStore = create<MeasurementSetState>()(
       // Set all measurement sets
       setMeasurementSets: sets =>
         set(state => {
-          console.log('📦 setMeasurementSets called', {
-            setsCount: sets.length,
-            currentActive: state.activeMeasurementSet?.id,
-            lastActiveId: state.lastActiveMeasurementSetId,
-          })
-
           // If we have an active set, try to find it in the new list
           if (state.activeMeasurementSet) {
             const found = sets.find(s => s.id === state.activeMeasurementSet?.id)
-            console.log('  ↳ Has active set, found in new list:', !!found)
             return {
               measurementSets: sets,
               activeMeasurementSet: found || state.activeMeasurementSet,
@@ -93,12 +81,6 @@ export const useMeasurementSetStore = create<MeasurementSetState>()(
           // If no active set but we have a lastActiveMeasurementSetId, try to restore it
           if (state.lastActiveMeasurementSetId) {
             const lastActive = sets.find(s => s.id === state.lastActiveMeasurementSetId)
-            console.log(
-              '  ↳ Trying to restore lastActive:',
-              state.lastActiveMeasurementSetId,
-              'found:',
-              !!lastActive
-            )
             if (lastActive) {
               return {
                 measurementSets: sets,
@@ -109,14 +91,12 @@ export const useMeasurementSetStore = create<MeasurementSetState>()(
           // If no active set and no lastActive, but we have saved sets, auto-select the first one
           // This prevents creating a new card when logging back in
           if (sets.length > 0) {
-            console.log('  ↳ No lastActive found, selecting first set')
             return {
               measurementSets: sets,
               activeMeasurementSet: sets[0],
             }
           }
           // No active set and no saved sets - keep as null
-          console.log('  ↳ No sets available, keeping null')
           return {
             measurementSets: sets,
             activeMeasurementSet: null,
@@ -126,11 +106,6 @@ export const useMeasurementSetStore = create<MeasurementSetState>()(
       // Add unsaved measurement set (local only, not in database yet)
       addUnsavedMeasurementSet: measurementSet =>
         set(state => {
-          console.log('📦 Zustand: addUnsavedMeasurementSet', {
-            newSetId: measurementSet.id,
-            currentUnsavedCount: state.unsavedMeasurementSets.length,
-            currentUnsavedIds: state.unsavedMeasurementSets.map(s => s.id),
-          })
           return {
             unsavedMeasurementSets: [measurementSet, ...state.unsavedMeasurementSets],
             // Auto-select the newly added unsaved set
@@ -141,11 +116,6 @@ export const useMeasurementSetStore = create<MeasurementSetState>()(
       // Remove unsaved measurement set (after saving to database)
       removeUnsavedMeasurementSet: tempId =>
         set(state => {
-          console.log('📦 Zustand: removeUnsavedMeasurementSet', {
-            removingId: tempId,
-            currentUnsavedCount: state.unsavedMeasurementSets.length,
-            currentUnsavedIds: state.unsavedMeasurementSets.map(s => s.id),
-          })
           return {
             unsavedMeasurementSets: state.unsavedMeasurementSets.filter(s => s.id !== tempId),
           }
@@ -167,11 +137,6 @@ export const useMeasurementSetStore = create<MeasurementSetState>()(
       // Replace all unsaved cards with a new one (atomic operation to prevent race conditions)
       replaceAllUnsavedWithNew: measurementSet =>
         set(state => {
-          console.log('📦 Zustand: replaceAllUnsavedWithNew', {
-            newSetId: measurementSet.id,
-            removingCount: state.unsavedMeasurementSets.length,
-            removingIds: state.unsavedMeasurementSets.map(s => s.id),
-          })
           return {
             // Replace entire array with single new card
             unsavedMeasurementSets: [measurementSet],
@@ -218,10 +183,6 @@ export const useMeasurementSetStore = create<MeasurementSetState>()(
       // the previously active card when the user logs back in
       clearMeasurementSets: () =>
         set(state => {
-          console.log(
-            '📦 clearMeasurementSets called, keeping lastActiveId:',
-            state.lastActiveMeasurementSetId
-          )
           return {
             measurementSets: [],
             unsavedMeasurementSets: [],

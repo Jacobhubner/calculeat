@@ -30,7 +30,6 @@ const GOAL_UNITS: Record<GoalType, string> = {
 }
 
 interface PlateCalculatorProps {
-  defaultCalories?: number
   onAddToMeal?: (food: FoodItem, amount: number, unit: string) => void
 }
 
@@ -45,10 +44,7 @@ function ColorDot({ color }: { color?: string | null }) {
   return <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${colorClass}`} />
 }
 
-export function PlateCalculator({
-  defaultCalories: _defaultCalories = 0,
-  onAddToMeal,
-}: PlateCalculatorProps) {
+export function PlateCalculator({ onAddToMeal }: PlateCalculatorProps) {
   const [goalType, setGoalType] = useState<GoalType>('kcal')
   const [targetAmount, setTargetAmount] = useState<number | ''>('')
   const [searchQuery, setSearchQuery] = useState('')

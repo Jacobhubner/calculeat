@@ -193,19 +193,6 @@ export default function TodayPage() {
   const goalCalories = todayLog?.goal_calories_max || profile?.calories_max || 2000
   const goalCaloriesMin = todayLog?.goal_calories_min || profile?.calories_min || 1800
 
-  // Calculate remaining values for tools (use dailySummary if available)
-  const remainingCalories =
-    dailySummary?.remainingCalories ?? Math.max(goalCalories - totalCalories, 0)
-  const remainingProtein =
-    dailySummary?.remainingProtein ??
-    Math.max((calculations.macros?.protein.grams || 0) - (todayLog?.total_protein_g || 0), 0)
-  const remainingCarbs =
-    dailySummary?.remainingCarbs ??
-    Math.max((calculations.macros?.carbs.grams || 0) - (todayLog?.total_carb_g || 0), 0)
-  const remainingFat =
-    dailySummary?.remainingFat ??
-    Math.max((calculations.macros?.fat.grams || 0) - (todayLog?.total_fat_g || 0), 0)
-
   const handleStartEditingDate = () => {
     setEditingDateValue(todayLog?.log_date?.split('T')[0] || '')
     setIsEditingDate(true)
@@ -822,16 +809,10 @@ export default function TodayPage() {
           <RecentFoodsCard dailyLogId={todayLog?.id} onFoodSelect={handleAddFromSidebar} />
 
           {/* Plate Calculator */}
-          <PlateCalculator defaultCalories={remainingCalories} onAddToMeal={handleAddFromSidebar} />
+          <PlateCalculator onAddToMeal={handleAddFromSidebar} />
 
           {/* Food Suggestions */}
-          <FoodSuggestions
-            remainingCalories={remainingCalories}
-            remainingProtein={remainingProtein}
-            remainingCarbs={remainingCarbs}
-            remainingFat={remainingFat}
-            onAddToMeal={handleAddFromSidebar}
-          />
+          <FoodSuggestions onAddToMeal={handleAddFromSidebar} />
 
           {/* Tips */}
           <Card className="bg-gradient-to-br from-primary-50 to-accent-50 border-primary-200">

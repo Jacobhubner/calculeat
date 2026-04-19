@@ -304,15 +304,7 @@ export default function BodyCompositionCalculator() {
 
   // Auto-fill measurements when a measurement set is selected
   useEffect(() => {
-    console.log('🔄 Auto-fill effect triggered', {
-      activeMeasurementSet: activeMeasurementSet?.id,
-      isTemp: activeMeasurementSet?.id.startsWith('temp-'),
-      activeWorkflow,
-      timestamp: new Date().toISOString(),
-    })
-
     if (!activeMeasurementSet) {
-      console.log('  ↳ Clearing all measurements (no active card)')
       // Clear all measurements when no active card
       setCaliperMeasurements({})
       setTapeMeasurements({})
@@ -341,20 +333,8 @@ export default function BodyCompositionCalculator() {
       activeMeasurementSet.calf_circ,
     ].every(v => v === undefined)
 
-    console.log('  ↳ Filling measurements from card', {
-      cardId: activeMeasurementSet.id,
-      isTemp: activeMeasurementSet.id.startsWith('temp-'),
-      chest: activeMeasurementSet.chest,
-      abdominal: activeMeasurementSet.abdominal,
-      thigh: activeMeasurementSet.thigh,
-      neck: activeMeasurementSet.neck,
-      waist: activeMeasurementSet.waist,
-      allMeasurementsUndefined,
-    })
-
     // If all measurements are undefined (new empty card), explicitly clear all state
     if (allMeasurementsUndefined) {
-      console.log('  ↳ All measurements undefined, clearing all state')
       setCaliperMeasurements({})
       setTapeMeasurements({})
       setAllCaliperMeasurements({})
@@ -479,13 +459,6 @@ export default function BodyCompositionCalculator() {
 
   // Handler for creating new measurement set
   const handleCreateNewMeasurement = (preserveCurrentMeasurements = false) => {
-    console.log('🆕 handleCreateNewMeasurement called', {
-      preserveCurrentMeasurements,
-      currentActive: activeMeasurementSet?.id,
-      unsavedCount: unsavedMeasurementSets.length,
-      unsavedIds: unsavedMeasurementSets.map(s => s.id),
-    })
-
     // Check for unsaved changes (only if we're not auto-creating the first card)
     if (hasUnsavedMeasurements && !preserveCurrentMeasurements) {
       const confirmed = window.confirm(
@@ -497,7 +470,6 @@ export default function BodyCompositionCalculator() {
     // When preserving measurements, get current values from either workflow
     const getCurrentValue = (field: keyof CaliperMeasurements | keyof TapeMeasurements) => {
       if (!preserveCurrentMeasurements) {
-        console.log(`  ↳ getCurrentValue(${field}): returning undefined (not preserving)`)
         return undefined
       }
 
@@ -525,7 +497,6 @@ export default function BodyCompositionCalculator() {
     }
 
     const tempId = `temp-${Date.now()}`
-    console.log('  ↳ Creating newSet with tempId:', tempId)
 
     const newSet = {
       id: tempId,
@@ -554,20 +525,8 @@ export default function BodyCompositionCalculator() {
       calf_circ: getCurrentValue('calfCirc'),
     }
 
-    console.log('  ↳ newSet created with measurement values:', {
-      chest: newSet.chest,
-      abdominal: newSet.abdominal,
-      thigh: newSet.thigh,
-      neck: newSet.neck,
-      waist: newSet.waist,
-      allUndefined: Object.keys(newSet)
-        .filter(k => k !== 'id' && k !== 'user_id' && k !== 'set_date' && k !== 'created_at')
-        .every(k => newSet[k as keyof typeof newSet] === undefined),
-    })
-
     // Replace all unsaved cards with this new one (atomic operation to prevent race conditions)
     replaceAllUnsavedWithNew(newSet)
-    console.log('  ↳ Replaced all unsaved cards with new one')
   }
 
   // Handler for selecting a measurement set
@@ -633,7 +592,6 @@ export default function BodyCompositionCalculator() {
     const measurementData = allMeasurements
 
     // Debug logging
-    console.log('Saving measurement data:', measurementData)
 
     try {
       // If it's an unsaved (temp) set, create new in database
@@ -664,7 +622,6 @@ export default function BodyCompositionCalculator() {
   useEffect(() => {
     // Don't auto-create while data is still loading from database
     if (measurementSetsLoading) {
-      console.log('🔄 Auto-create effect: skipping (still loading)')
       return
     }
 
@@ -675,14 +632,6 @@ export default function BodyCompositionCalculator() {
       Object.values(allCaliperMeasurements).some(v => v !== undefined) ||
       Object.values(allTapeMeasurements).some(v => v !== undefined)
 
-    console.log('🔄 Auto-create effect check', {
-      savedCount: measurementSets.length,
-      unsavedCount: unsavedMeasurementSets.length,
-      hasActiveSet: !!activeMeasurementSet,
-      hasWorkflow1Measurements,
-      hasWorkflow2Measurements,
-    })
-
     // Auto-create if:
     // 1. No cards exist (saved or unsaved)
     // 2. No active set
@@ -692,7 +641,6 @@ export default function BodyCompositionCalculator() {
       unsavedMeasurementSets.length === 0 &&
       !activeMeasurementSet
     ) {
-      console.log('  ↳ Auto-creating empty card (no cards exist)')
       // Create card with current measurements (might be empty)
       handleCreateNewMeasurement(hasWorkflow1Measurements || hasWorkflow2Measurements)
     }

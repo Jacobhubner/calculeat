@@ -8,10 +8,6 @@ import type { FoodItem } from '@/hooks/useFoodItems'
 import type { FoodColor } from '@/lib/calculations/colorDensity'
 
 interface FoodSuggestionsProps {
-  remainingCalories?: number
-  remainingProtein?: number
-  remainingCarbs?: number
-  remainingFat?: number
   onAddToMeal?: (food: FoodItem, amount: number, unit: string) => void
 }
 
@@ -42,13 +38,7 @@ function ScoreBadge({ score }: { score: number }) {
   )
 }
 
-export function FoodSuggestions({
-  remainingCalories: _remainingCalories = 0,
-  remainingProtein: _remainingProtein = 0,
-  remainingCarbs: _remainingCarbs = 0,
-  remainingFat: _remainingFat = 0,
-  onAddToMeal,
-}: FoodSuggestionsProps) {
+export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
   // Form state
   const [targetCalories, setTargetCalories] = useState<number | ''>('')
   const [primaryMacro, setPrimaryMacro] = useState<'protein' | 'carbs' | 'fat'>('protein')

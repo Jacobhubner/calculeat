@@ -15,7 +15,6 @@ export function useProfiles() {
   const query = useQuery({
     queryKey: queryKeys.profiles,
     queryFn: async () => {
-      console.log('🔄 useProfiles: Fetching profiles from database')
       const {
         data: { user },
       } = await supabase.auth.getUser()
@@ -34,7 +33,6 @@ export function useProfiles() {
         throw error
       }
 
-      console.log('✅ useProfiles: Got', data?.length || 0, 'profiles')
       return (data as Profile[]) || []
     },
     enabled: true, // Always enabled when user is logged in
@@ -45,7 +43,6 @@ export function useProfiles() {
   // Use dataUpdatedAt to detect actual data changes, not reference changes
   useEffect(() => {
     if (query.data && query.isSuccess) {
-      console.log('📦 useProfiles: Syncing', query.data.length, 'profiles to Zustand store')
       setProfiles(query.data)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

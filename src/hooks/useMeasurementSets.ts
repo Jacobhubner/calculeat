@@ -16,13 +16,11 @@ export function useMeasurementSets() {
   const query = useQuery({
     queryKey: queryKeys.measurementSets,
     queryFn: async () => {
-      console.log('📏 useMeasurementSets: Fetching from database')
       const {
         data: { user },
       } = await supabase.auth.getUser()
 
       if (!user) {
-        console.log('📏 useMeasurementSets: No user logged in')
         throw new Error('Ingen användare inloggad')
       }
 
@@ -38,7 +36,6 @@ export function useMeasurementSets() {
         throw error
       }
 
-      console.log('📏 useMeasurementSets: Got', data?.length || 0, 'sets')
       return (data as MeasurementSet[]) || []
     },
     enabled: true, // Always enabled when user is logged in
@@ -47,14 +44,7 @@ export function useMeasurementSets() {
   // Update Zustand store when measurement sets are fetched
   // Use data directly to ensure we always sync when data is available
   useEffect(() => {
-    console.log('📏 useMeasurementSets effect:', {
-      hasData: !!query.data,
-      isSuccess: query.isSuccess,
-      isLoading: query.isLoading,
-      dataLength: query.data?.length,
-    })
     if (query.data && query.isSuccess) {
-      console.log('📏 useMeasurementSets: Syncing to store')
       setMeasurementSets(query.data)
       // Mark as synced AFTER store is updated
       setIsSynced(true)

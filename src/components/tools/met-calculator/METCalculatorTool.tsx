@@ -31,10 +31,6 @@ export default function METCalculatorTool() {
   const { profile } = useActiveProfile()
   const profileData = useProfileData(['weight_kg'])
 
-  // Debug: Logga vikten
-  console.log('MET Calculator - profileData:', profileData)
-  console.log('MET Calculator - weight_kg:', profileData?.weight_kg)
-
   // Search and filter state
   const [selectedCategory, setSelectedCategory] = useState<string>('All')
   const [searchTerm, setSearchTerm] = useState('')

@@ -71,12 +71,9 @@ export const useProfileStore = create<ProfileState>()(
 
       // Set all profiles
       setProfiles: profiles => {
-        console.log('🏪 ProfileStore.setProfiles called with', profiles.length, 'profiles')
-
         return set(state => {
           // If we're creating a new profile, don't auto-select anything
           if (state.isCreatingNew) {
-            console.log('🏪 ProfileStore: isCreatingNew=true, keeping activeProfile=null')
             return {
               profiles,
               activeProfile: null,
@@ -104,15 +101,6 @@ export const useProfileStore = create<ProfileState>()(
             // No persist data (first login or after cache clear) → auto-select
             newActiveProfile = profiles.find(p => p.is_active) || profiles[0]
           }
-
-          console.log('🏪 ProfileStore updating activeProfile:', {
-            currentId: state.activeProfile?.id,
-            currentName: state.activeProfile?.profile_name,
-            currentBMR: state.activeProfile?.bmr,
-            newId: newActiveProfile?.id,
-            newName: newActiveProfile?.profile_name,
-            newBMR: newActiveProfile?.bmr,
-          })
 
           return {
             profiles,
@@ -171,14 +159,6 @@ export const useProfileStore = create<ProfileState>()(
       switchProfile: id =>
         set(state => {
           const profile = state.profiles.find(p => p.id === id)
-
-          console.log('🔄 ProfileStore.switchProfile called:', {
-            switchingToId: id,
-            foundProfile: !!profile,
-            profileName: profile?.profile_name,
-            profileBMR: profile?.bmr,
-            profileTDEE: profile?.tdee,
-          })
 
           if (profile) {
             return { activeProfile: profile }

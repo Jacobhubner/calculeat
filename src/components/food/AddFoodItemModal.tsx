@@ -532,11 +532,6 @@ export function AddFoodItemModal({
       setPendingBarcode(null)
       // Log time_to_product_data metric
       if (scanStartTimeRef.current > 0) {
-        console.debug('[barcode] product data received', {
-          time_to_product_data_ms: Math.round(performance.now() - scanStartTimeRef.current),
-          has_name: !!barcodeResult.name,
-          food_type: barcodeResult.food_type,
-        })
         scanStartTimeRef.current = 0
       }
     }
@@ -547,10 +542,6 @@ export function AddFoodItemModal({
       setPendingBarcode(null)
       // Log scan failure metric
       if (scanStartTimeRef.current > 0) {
-        console.debug('[barcode] lookup failed', {
-          error: barcodeError.type,
-          time_ms: Math.round(performance.now() - scanStartTimeRef.current),
-        })
         scanStartTimeRef.current = 0
       }
     }
@@ -1752,11 +1743,6 @@ export function AddFoodItemModal({
                 ? Math.round(firstDetectionTimeRef.current - scanStartTimeRef.current)
                 : null
             const timeToConfirmation = Math.round(confirmedAt - scanStartTimeRef.current)
-            console.debug('[barcode] scan metrics', {
-              barcode: code,
-              time_to_first_detection_ms: timeToFirstDetection,
-              time_to_confirmation_ms: timeToConfirmation,
-            })
           }
 
           if (cameraStream) {
