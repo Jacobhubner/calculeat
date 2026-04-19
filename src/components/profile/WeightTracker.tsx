@@ -464,7 +464,7 @@ export default function WeightTracker({
 
                   <Brush
                     dataKey="timestamp"
-                    startIndex={Math.max(0, chartData.length - 30)}
+                    startIndex={Math.max(0, chartData.length - 14)}
                     height={24}
                     stroke="#d1d5db"
                     fill="#f9fafb"
@@ -571,7 +571,7 @@ export default function WeightTracker({
 
                     <Brush
                       dataKey="timestamp"
-                      startIndex={Math.max(0, bodyFatChartData.length - 30)}
+                      startIndex={Math.max(0, bodyFatChartData.length - 14)}
                       height={24}
                       stroke="#d1d5db"
                       fill="#f9fafb"
