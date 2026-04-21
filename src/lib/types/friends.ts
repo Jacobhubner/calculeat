@@ -6,6 +6,7 @@ export interface Friend {
   friend_username: string
   alias: string | null
   since: string
+  last_seen_at?: string
 }
 
 export interface FriendRequest {

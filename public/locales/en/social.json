@@ -175,7 +175,9 @@
       "add_hint": "If the person exists in CalculEat they will receive a friend request.",
       "send_request": "Send request",
       "request_sent": "Friend request sent!",
-      "request_send_failed": "Could not send request."
+      "request_send_failed": "Could not send request.",
+      "active_now": "Active now",
+      "last_seen": "Last seen {{time}}"
     },
     "messages": {
       "no_conversations": "No conversations yet",

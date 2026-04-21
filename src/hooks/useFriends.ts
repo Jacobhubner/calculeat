@@ -20,7 +20,8 @@ export function useFriends() {
       return data as Friend[]
     },
     enabled: !!user,
-    staleTime: 60_000,
+    staleTime: 30_000,
+    refetchInterval: 60_000,
   })
 }
 

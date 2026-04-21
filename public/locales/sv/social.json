@@ -175,7 +175,9 @@
       "add_hint": "Om personen finns i CalculEat får de en vänförfrågan.",
       "send_request": "Skicka förfrågan",
       "request_sent": "Vänförfrågan skickad!",
-      "request_send_failed": "Kunde inte skicka förfrågan."
+      "request_send_failed": "Kunde inte skicka förfrågan.",
+      "active_now": "Aktiv nu",
+      "last_seen": "Senast sedd {{time}}"
     },
     "messages": {
       "no_conversations": "Inga konversationer än",

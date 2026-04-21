@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useRef, useState } from 'react'
 import { User, Session } from '@supabase/supabase-js'
 import { toast } from 'sonner'
 import i18n from '@/i18n'
@@ -26,8 +26,19 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
+const LAST_SEEN_THROTTLE_MS = 15 * 60 * 1000
+
+function updateLastSeen(uid: string) {
+  supabase
+    .from('user_profiles')
+    .update({ last_seen_at: new Date().toISOString() })
+    .eq('id', uid)
+    .then()
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
+  const lastSeenRef = useRef<number>(0)
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
   const [session, setSession] = useState<Session | null>(null)
@@ -73,6 +84,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(session?.user ?? null)
       if (session?.user) {
         await refreshProfile(session.user.id)
+        lastSeenRef.current = Date.now()
+        updateLastSeen(session.user.id)
       }
       setLoading(false)
     })
@@ -112,6 +125,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (session?.user) {
         refreshProfile(session.user.id)
+        if (event === 'SIGNED_IN') {
+          lastSeenRef.current = Date.now()
+          updateLastSeen(session.user.id)
+        }
       }
       setLoading(false)
     })
@@ -119,6 +136,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // Update last_seen_at on visibility restore and page unload (throttled to 15 min)
+  useEffect(() => {
+    if (!user) return
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        const now = Date.now()
+        if (now - lastSeenRef.current >= LAST_SEEN_THROTTLE_MS) {
+          lastSeenRef.current = now
+          updateLastSeen(user.id)
+        }
+      }
+    }
+
+    const handleBeforeUnload = () => {
+      updateLastSeen(user.id)
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+    }
+  }, [user])
 
   const signUp = async (email: string, password: string, profileName: string) => {
     const { error } = await supabase.auth.signUp({

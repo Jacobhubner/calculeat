@@ -80,6 +80,7 @@ import {
 import { sv, enUS } from 'date-fns/locale'
 import { useTranslation } from 'react-i18next'
 import i18n from '@/i18n'
+import { useFriendPresence } from '@/hooks/useFriendPresence'
 
 function getDateLocale() {
   return i18n.language === 'sv' ? sv : enUS
@@ -97,6 +98,18 @@ function getInitials(name: string) {
     .join('')
     .toUpperCase()
     .substring(0, 2)
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function getPresenceLabel(friend: Friend, onlineIds: Set<string>, t: any): string {
+  if (onlineIds.has(friend.friend_id)) return t('social.friends.active_now')
+  if (!friend.last_seen_at) return ''
+  return t('social.friends.last_seen', {
+    time: formatDistanceToNow(parseISO(friend.last_seen_at), {
+      addSuffix: true,
+      locale: getDateLocale(),
+    }),
+  })
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -569,11 +582,13 @@ function FriendProfile({
   onBack,
   onShare,
   onMessage,
+  onlineFriendIds,
 }: {
   friend: Friend
   onBack: () => void
   onShare: (friend: Friend) => void
   onMessage: (friend: Friend) => void
+  onlineFriendIds: Set<string>
 }) {
   const { t } = useTranslation('social')
   const [isEditingAlias, setIsEditingAlias] = useState(false)
@@ -625,8 +640,13 @@ function FriendProfile({
 
       {/* Avatar + info */}
       <div className="flex flex-col items-center py-4 gap-2">
-        <div className="h-16 w-16 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 text-2xl font-semibold">
-          {getInitials(displayName)}
+        <div className="relative">
+          <div className="h-16 w-16 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 text-2xl font-semibold">
+            {getInitials(displayName)}
+          </div>
+          {onlineFriendIds.has(friend.friend_id) && (
+            <span className="absolute bottom-0.5 right-0.5 h-3.5 w-3.5 rounded-full bg-green-400 border-2 border-white" />
+          )}
         </div>
         <div className="text-center">
           <p className="font-semibold text-neutral-900">{displayName}</p>
@@ -634,6 +654,13 @@ function FriendProfile({
           <p className="text-sm text-neutral-500">
             @{friend.friend_username ?? friend.friend_name}
           </p>
+          {getPresenceLabel(friend, onlineFriendIds, t) && (
+            <p
+              className={`text-xs font-medium ${onlineFriendIds.has(friend.friend_id) ? 'text-green-500' : 'text-neutral-400'}`}
+            >
+              {getPresenceLabel(friend, onlineFriendIds, t)}
+            </p>
+          )}
           <p className="text-xs text-neutral-400">
             {t('social.friends.friends_since')}{' '}
             {format(parseISO(friend.since), 'd MMM yyyy', { locale: getDateLocale() })}
@@ -1389,6 +1416,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
 
   const queryClient = useQueryClient()
   const { data: friends = [] } = useFriends()
+  const onlineFriendIds = useFriendPresence(friends.map(f => f.friend_id))
   const { data: friendRequests = [] } = usePendingFriendRequests()
   const { data: sentRequests = [] } = useSentFriendRequests()
   const { data: pendingInvitations = [] } = usePendingInvitations()
@@ -1548,14 +1576,23 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
                         onClick={() => handleOpenProfile(friend)}
                         className="w-full flex items-center gap-3 p-2.5 rounded-lg hover:bg-neutral-50 transition-colors text-left"
                       >
-                        <div className="h-9 w-9 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 text-sm font-semibold shrink-0">
-                          {getInitials(friend.alias ?? friend.friend_name)}
+                        <div className="relative shrink-0">
+                          <div className="h-9 w-9 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 text-sm font-semibold">
+                            {getInitials(friend.alias ?? friend.friend_name)}
+                          </div>
+                          {onlineFriendIds.has(friend.friend_id) && (
+                            <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-green-400 border-2 border-white" />
+                          )}
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-neutral-900 truncate">
                             {friend.alias ?? friend.friend_name}
                           </p>
-                          <p className="text-xs text-neutral-400 truncate">{friend.friend_email}</p>
+                          <p
+                            className={`text-xs truncate ${onlineFriendIds.has(friend.friend_id) ? 'text-green-500 font-medium' : 'text-neutral-400'}`}
+                          >
+                            {getPresenceLabel(friend, onlineFriendIds, t)}
+                          </p>
                         </div>
                       </button>
                     ))}
@@ -1631,6 +1668,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
                 onBack={() => setFriendsView('list')}
                 onShare={handleShare}
                 onMessage={handleMessage}
+                onlineFriendIds={onlineFriendIds}
               />
             )}
           </div>

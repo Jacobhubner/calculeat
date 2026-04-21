@@ -261,8 +261,6 @@ export function IngredientRow({
       newUnit === 'msk' ||
       newUnit === 'tsk'
     const newAmount = isConvertible ? Math.round(convertedAmount * 100) / 100 : ingredient.amount
-    const newAmountStr = String(newAmount)
-    setAmountInput(newAmountStr)
     onChange({ ...ingredient, unit: newUnit, amount: newAmount })
   }
 
