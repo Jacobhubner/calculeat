@@ -43,10 +43,11 @@ interface AddFoodToMealModalProps {
   onOpenChange: (open: boolean) => void
   mealName: string
   mealEntryId?: string
-  dailyLogId: string
+  dailyLogId?: string
   onSuccess?: () => void
   preselectedFood?: PreselectedFood
   editItem?: EditItemData
+  onFoodSelect?: (food: FoodItem) => void
 }
 
 export function AddFoodToMealModal({
@@ -58,6 +59,7 @@ export function AddFoodToMealModal({
   onSuccess,
   preselectedFood,
   editItem,
+  onFoodSelect,
 }: AddFoodToMealModalProps) {
   const { t } = useTranslation('food')
   const tAny = t as (key: string) => string
@@ -235,6 +237,11 @@ export function AddFoodToMealModal({
   }, [selectedFood, amount, selectedUnit])
 
   const handleSelectFood = (food: FoodItem) => {
+    if (onFoodSelect) {
+      onFoodSelect(food)
+      onOpenChange(false)
+      return
+    }
     isPreselectedRef.current = false
     setSelectedFood(food)
     setSearchQuery('')

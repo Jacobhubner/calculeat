@@ -1,32 +1,12 @@
-import { useState, useRef, useEffect, useCallback, useMemo, memo } from 'react'
+import { useState, useCallback, useMemo, memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Trash2, Search, GripVertical, Plus } from 'lucide-react'
-import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+import { Input } from '@/components/ui/input'
 import type { FoodItem } from '@/hooks/useFoodItems'
-import { SOURCE_BADGES, getListItemBadgeConfig } from '@/lib/constants/sourceBadges'
 import { AddFoodItemModal } from '@/components/food/AddFoodItemModal'
+import { AddFoodToMealModal } from '@/components/daily/AddFoodToMealModal'
 
-type SourceFilter = 'alla' | 'mina' | 'calculeat' | 'slv' | `list:${string}`
-
-interface SharedListOption {
-  id: string
-  name: string
-}
-
-function matchesSourceFilter(food: FoodItem, filter: SourceFilter): boolean {
-  if (filter === 'alla') return true
-  if (filter === 'mina')
-    return (food.source === 'user' || food.source === 'shared') && !food.shared_list_id
-  if (filter === 'calculeat') return food.source === 'manual' && !food.shared_list_id
-  if (filter === 'slv') return food.source === 'livsmedelsverket'
-  if (filter.startsWith('list:')) {
-    const listId = filter.slice(5)
-    return food.shared_list_id === listId
-  }
-  return true
-}
 import {
   calculateIngredientNutrition,
   calculateIngredientWeight,
@@ -78,8 +58,8 @@ export interface IngredientData {
 
 interface IngredientRowProps {
   ingredient: IngredientData
-  availableFoods: FoodItem[]
-  sharedLists?: SharedListOption[]
+  availableFoods?: FoodItem[]
+  sharedLists?: { id: string; name: string }[]
   onChange: (updated: IngredientData) => void
   onRemove: () => void
   dragHandleProps?: React.HTMLAttributes<HTMLDivElement>
@@ -87,75 +67,13 @@ interface IngredientRowProps {
 
 export function IngredientRow({
   ingredient,
-  availableFoods,
-  sharedLists = [],
   onChange,
   onRemove,
   dragHandleProps,
 }: IngredientRowProps) {
   const { t } = useTranslation('recipes')
-  const [searchQuery, setSearchQuery] = useState('')
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('')
-  const [isSearchOpen, setIsSearchOpen] = useState(false)
-  const [highlightedIndex, setHighlightedIndex] = useState(0)
-  const [sourceFilter, setSourceFilter] = useState<SourceFilter>('alla')
   const [addFoodItemModalOpen, setAddFoodItemModalOpen] = useState(false)
-  const searchRef = useRef<HTMLDivElement>(null)
-  const listRef = useRef<HTMLDivElement>(null)
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
-        setIsSearchOpen(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
-
-  // Handler to update search and reset highlighted index
-  const handleSearchChange = useCallback((value: string) => {
-    setSearchQuery(value)
-    setHighlightedIndex(0)
-  }, [])
-
-  // Handler to open dropdown and reset highlighted index
-  const handleOpenDropdown = useCallback(() => {
-    setIsSearchOpen(true)
-    setHighlightedIndex(0)
-  }, [])
-
-  // Debounce search query to avoid filtering on every keystroke
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchQuery(searchQuery)
-    }, 200)
-    return () => clearTimeout(timer)
-  }, [searchQuery])
-
-  // Normalize a string for fuzzy matching: lowercase, remove commas, collapse spaces
-  const normalizeForSearch = useCallback((s: string) => {
-    return s.toLowerCase().replace(/,/g, '').replace(/\s+/g, ' ').trim()
-  }, [])
-
-  // Filter and sort foods based on search + source filter
-  const allFilteredFoods = useMemo(() => {
-    return availableFoods
-      .filter(food => {
-        if (!matchesSourceFilter(food, sourceFilter)) return false
-        if (!debouncedSearchQuery.trim()) return true
-        const query = normalizeForSearch(debouncedSearchQuery)
-        return (
-          normalizeForSearch(food.name).includes(query) ||
-          (food.brand && normalizeForSearch(food.brand).includes(query))
-        )
-      })
-      .sort((a, b) => a.name.localeCompare(b.name, 'sv'))
-  }, [availableFoods, sourceFilter, debouncedSearchQuery, normalizeForSearch])
-
-  const totalMatches = allFilteredFoods.length
-  const filteredFoods = allFilteredFoods.slice(0, 50)
+  const [pickerOpen, setPickerOpen] = useState(false)
 
   // Get available units for selected food
   const availableUnits = useMemo(
@@ -181,53 +99,8 @@ export function IngredientRow({
         unit: defaultUnit,
         amount: ingredient.amount || 1,
       })
-      setSearchQuery('')
-      setIsSearchOpen(false)
     },
     [ingredient, onChange]
-  )
-
-  // Keyboard navigation handler
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (!isSearchOpen) return
-
-      switch (e.key) {
-        case 'Escape': {
-          e.preventDefault()
-          setIsSearchOpen(false)
-          break
-        }
-        case 'ArrowDown': {
-          e.preventDefault()
-          setHighlightedIndex(prev => {
-            const newIndex = Math.min(prev + 1, filteredFoods.length - 1)
-            const nextItem = listRef.current?.children[newIndex] as HTMLElement
-            nextItem?.scrollIntoView({ block: 'nearest' })
-            return newIndex
-          })
-          break
-        }
-        case 'ArrowUp': {
-          e.preventDefault()
-          setHighlightedIndex(prev => {
-            const newIndex = Math.max(prev - 1, 0)
-            const prevItem = listRef.current?.children[newIndex] as HTMLElement
-            prevItem?.scrollIntoView({ block: 'nearest' })
-            return newIndex
-          })
-          break
-        }
-        case 'Enter': {
-          e.preventDefault()
-          if (filteredFoods[highlightedIndex]) {
-            handleFoodSelect(filteredFoods[highlightedIndex])
-          }
-          break
-        }
-      }
-    },
-    [isSearchOpen, filteredFoods, highlightedIndex, handleFoodSelect]
   )
 
   const handleAmountCommit = useCallback(
@@ -275,168 +148,30 @@ export function IngredientRow({
         >
           <GripVertical className="h-5 w-5" />
         </div>
-        {/* Food selector */}
-        <div className="flex-1 relative" ref={searchRef}>
-          {ingredient.foodItem ? (
-            <div
-              className="flex items-center gap-2 px-3 py-2 bg-white border border-neutral-200 rounded-lg cursor-pointer hover:border-primary-300"
-              onClick={handleOpenDropdown}
-            >
-              <span className="font-medium text-neutral-900 truncate">
-                {ingredient.foodItem.name}
-              </span>
-              {ingredient.foodItem.brand && (
-                <span className="text-xs text-neutral-500">({ingredient.foodItem.brand})</span>
-              )}
-            </div>
-          ) : (
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
-              <Input
-                placeholder={t('ingredient.searchPlaceholder')}
-                value={searchQuery}
-                onChange={e => {
-                  handleSearchChange(e.target.value)
-                  setIsSearchOpen(true)
-                }}
-                onFocus={handleOpenDropdown}
-                onKeyDown={handleKeyDown}
-                className="pl-9"
-                aria-label={t('ingredient.searchLabel')}
-                aria-expanded={isSearchOpen}
-                aria-haspopup="listbox"
-              />
-            </div>
-          )}
-
-          {/* Dropdown */}
-          {isSearchOpen && (
-            <div className="absolute z-50 top-full left-0 mt-1 bg-white border border-neutral-200 rounded-lg shadow-lg max-h-[60vh] flex flex-col w-[320px] max-w-[90vw]">
-              {/* Sökinput (visas alltid när ett livsmedel redan är valt) */}
-              {ingredient.foodItem && (
-                <div className="p-2 border-b shrink-0">
-                  <Input
-                    placeholder={t('ingredient.searchPlaceholder')}
-                    value={searchQuery}
-                    onChange={e => handleSearchChange(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    autoFocus
-                    className="text-sm"
-                    aria-label={t('ingredient.searchLabel')}
-                  />
-                </div>
-              )}
-              {/* Källfilter */}
-              <div className="flex gap-1 px-2 py-1.5 border-b shrink-0 flex-wrap">
-                {(
-                  [
-                    { key: 'alla' as SourceFilter, label: t('ingredient.filterAll') },
-                    { key: 'mina' as SourceFilter, label: t('ingredient.filterMine') },
-                    { key: 'calculeat' as SourceFilter, label: t('ingredient.filterCalculeat') },
-                    { key: 'slv' as SourceFilter, label: t('ingredient.filterSlv') },
-                    ...sharedLists.map(l => ({
-                      key: `list:${l.id}` as SourceFilter,
-                      label: l.name.length > 14 ? l.name.slice(0, 12) + '…' : l.name,
-                    })),
-                  ] as { key: SourceFilter; label: string }[]
-                ).map(f => (
-                  <button
-                    key={f.key}
-                    type="button"
-                    onClick={e => {
-                      e.stopPropagation()
-                      setSourceFilter(f.key)
-                      setHighlightedIndex(0)
-                    }}
-                    className={`px-2 py-0.5 rounded text-[10px] font-medium transition-colors ${
-                      sourceFilter === f.key
-                        ? 'bg-primary-600 text-white'
-                        : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
-                    }`}
-                  >
-                    {f.label}
-                  </button>
-                ))}
-              </div>
-              <div className="overflow-y-auto flex-1">
-                {filteredFoods.length === 0 ? (
-                  <div className="p-3 text-sm text-neutral-500 text-center">
-                    {t('ingredient.noFoodsFound')}
-                  </div>
-                ) : (
-                  <>
-                    <div ref={listRef} role="listbox">
-                      {filteredFoods.map((food, index) => {
-                        const isHighlighted = index === highlightedIndex
-                        const colorBadge = food.energy_density_color
-                        const listForFood = food.shared_list_id
-                          ? sharedLists.find(l => l.id === food.shared_list_id)
-                          : null
-                        const sourceBadge = listForFood
-                          ? getListItemBadgeConfig(listForFood.name)
-                          : SOURCE_BADGES[food.source]
-                        return (
-                          <div
-                            key={food.id}
-                            role="option"
-                            aria-selected={isHighlighted}
-                            className={`flex items-start gap-2 px-3 py-2.5 cursor-pointer border-b border-neutral-100 last:border-b-0 ${
-                              isHighlighted ? 'bg-primary-50' : 'hover:bg-neutral-50'
-                            }`}
-                            onClick={() => handleFoodSelect(food)}
-                            onMouseEnter={() => setHighlightedIndex(index)}
-                          >
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-1.5 min-w-0">
-                                <span className="font-medium text-sm text-neutral-900 truncate">
-                                  {food.name}
-                                </span>
-                                <Badge
-                                  variant="outline"
-                                  className={`text-[9px] px-1 py-0 h-4 shrink-0 ${sourceBadge.className}`}
-                                >
-                                  {sourceBadge.label}
-                                </Badge>
-                              </div>
-                              <div className="text-xs text-neutral-500 flex items-center gap-1.5 mt-0.5">
-                                {food.brand && <span>{food.brand} •</span>}
-                                <span>
-                                  {food.calories} kcal/{food.weight_grams || 100}g
-                                </span>
-                              </div>
-                            </div>
-                            {colorBadge && (
-                              <Badge
-                                variant="outline"
-                                className={`text-xs flex-shrink-0 ${
-                                  colorBadge === 'Green'
-                                    ? 'bg-green-50 text-green-700 border-green-300'
-                                    : colorBadge === 'Yellow'
-                                      ? 'bg-yellow-50 text-yellow-700 border-yellow-300'
-                                      : 'bg-orange-50 text-orange-700 border-orange-300'
-                                }`}
-                              >
-                                {colorBadge === 'Green'
-                                  ? t('card.colorGreen')
-                                  : colorBadge === 'Yellow'
-                                    ? t('card.colorYellow')
-                                    : t('card.colorOrange')}
-                              </Badge>
-                            )}
-                          </div>
-                        )
-                      })}
-                    </div>
-                    {totalMatches > 50 && (
-                      <div className="px-3 py-2 text-xs text-neutral-500 bg-neutral-50 border-t text-center">
-                        {t('ingredient.showingOf', { total: totalMatches })}
-                      </div>
-                    )}
-                  </>
+        {/* Food selector — opens full food picker modal */}
+        <div className="flex-1">
+          <div
+            className="flex items-center gap-2 px-3 py-2 bg-white border border-neutral-200 rounded-lg cursor-pointer hover:border-primary-300"
+            onClick={() => setPickerOpen(true)}
+          >
+            {ingredient.foodItem ? (
+              <>
+                <span className="font-medium text-neutral-900 truncate">
+                  {ingredient.foodItem.name}
+                </span>
+                {ingredient.foodItem.brand && (
+                  <span className="text-xs text-neutral-500">({ingredient.foodItem.brand})</span>
                 )}
-              </div>
-            </div>
-          )}
+              </>
+            ) : (
+              <>
+                <Search className="h-4 w-4 text-neutral-400 flex-shrink-0" />
+                <span className="text-neutral-400 text-sm">
+                  {t('ingredient.searchPlaceholder')}
+                </span>
+              </>
+            )}
+          </div>
         </div>
 
         <Button
@@ -502,6 +237,14 @@ export function IngredientRow({
             handleFoodSelect(newFood)
           }
         }}
+      />
+
+      <AddFoodToMealModal
+        open={pickerOpen}
+        onOpenChange={setPickerOpen}
+        mealName=""
+        dailyLogId=""
+        onFoodSelect={food => handleFoodSelect(food)}
       />
     </div>
   )
