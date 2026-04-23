@@ -17,37 +17,23 @@ import { useDailyLogs, useDeleteDailyLog } from '@/hooks/useDailyLogs'
 import { toast } from 'sonner'
 import EmptyState from '@/components/EmptyState'
 
-const LIST_PRESETS = [14, 21, 30, 90] as const
-
 export default function HistoryPage() {
   const { t } = useTranslation('history')
   const [viewMode, setViewMode] = useState<'calendar' | 'list'>('list')
   const [statsPeriod, setStatsPeriod] = useState<number>(30)
-  const [listDays, setListDays] = useState<number>(14)
 
-  // Fetch enough days to cover the max list period
-  const MAX_DAYS = 365
   const { endDate, startDate } = useMemo(() => {
     const now = new Date()
     const future = new Date(now)
     future.setFullYear(now.getFullYear() + 1)
     const end = future.toISOString().split('T')[0]
-    const far = new Date(now)
-    far.setDate(now.getDate() - MAX_DAYS)
-    const start = far.toISOString().split('T')[0]
+    const ninetyDaysAgo = new Date(now)
+    ninetyDaysAgo.setDate(now.getDate() - 365)
+    const start = ninetyDaysAgo.toISOString().split('T')[0]
     return { endDate: end, startDate: start }
   }, [])
 
   const { data: logs, isLoading } = useDailyLogs(startDate, endDate)
-
-  // Filter logs to selected list period
-  const listLogs = useMemo(() => {
-    if (!logs) return []
-    const cutoff = new Date()
-    cutoff.setDate(cutoff.getDate() - listDays)
-    const cutoffStr = cutoff.toISOString().split('T')[0]
-    return logs.filter(log => log.log_date.split('T')[0] >= cutoffStr)
-  }, [logs, listDays])
 
   // Filter logs to selected stats period
   const statsLogs = useMemo(() => {
@@ -115,8 +101,8 @@ export default function HistoryPage() {
     return streak
   }, [logs])
 
-  // Group filtered logs by week
-  const weeklyLogs = listLogs.reduce(
+  // Group logs by week
+  const weeklyLogs = (logs ?? []).reduce(
     (acc, log) => {
       const date = new Date(log.log_date)
       const weekStart = new Date(date)
@@ -194,43 +180,6 @@ export default function HistoryPage() {
               </Card>
             ) : (
               <div className="space-y-4">
-                {/* Period selector */}
-                <Card>
-                  <CardContent className="pt-4 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-neutral-700">
-                        Visar {listDays} dagar
-                      </span>
-                      <div className="flex gap-1">
-                        {LIST_PRESETS.map(p => (
-                          <button
-                            key={p}
-                            onClick={() => setListDays(p)}
-                            className={`px-2 py-1 text-xs rounded-md font-medium transition-colors ${
-                              listDays === p
-                                ? 'bg-primary-600 text-white'
-                                : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
-                            }`}
-                          >
-                            {p === 14 ? '2v' : p === 21 ? '3v' : `${p}d`}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                    <input
-                      type="range"
-                      min={1}
-                      max={MAX_DAYS}
-                      value={listDays}
-                      onChange={e => setListDays(Number(e.target.value))}
-                      className="w-full accent-primary-600"
-                    />
-                    <div className="flex justify-between text-xs text-neutral-400">
-                      <span>1 dag</span>
-                      <span>{MAX_DAYS} dagar</span>
-                    </div>
-                  </CardContent>
-                </Card>
                 {Object.entries(weeklyLogs || {})
                   .sort(([a], [b]) => b.localeCompare(a))
                   .map(([weekStart, weekLogs]) => {
