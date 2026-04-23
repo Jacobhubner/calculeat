@@ -10,7 +10,7 @@ import { ZonedCalorieRing } from '@/components/daily/ZonedCalorieRing'
 import { EnergyDensityIndicator } from '@/components/daily/EnergyDensityIndicator'
 import { ColorBalanceCard } from '@/components/daily/ColorBalanceCard'
 import { NutrientStatusRow } from '@/components/daily/NutrientStatusBadge'
-import MacroBar from '@/components/MacroBar'
+import { calculateNutrientStatus } from '@/lib/calculations/dailySummary'
 import { ArrowLeft, Calendar, Check, Copy, UtensilsCrossed, Pencil, Plus, X } from 'lucide-react'
 import {
   useDailyLog,
@@ -300,43 +300,45 @@ export default function HistoryDayPage() {
               <CardTitle>{t('day.summary')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* Macro Bar */}
-              <MacroBar
-                protein={{
-                  grams: Math.round(log.total_protein_g),
-                  gramsMin: log.goal_protein_min_g ? Math.round(log.goal_protein_min_g) : undefined,
-                  gramsMax: log.goal_protein_max_g ? Math.round(log.goal_protein_max_g) : undefined,
-                  calories: Math.round(log.total_protein_g * 4),
-                  percentage:
-                    log.total_calories > 0
-                      ? Math.round(((log.total_protein_g * 4) / log.total_calories) * 100)
-                      : 0,
-                }}
-                carbs={{
-                  grams: Math.round(log.total_carb_g),
-                  gramsMin: log.goal_carb_min_g ? Math.round(log.goal_carb_min_g) : undefined,
-                  gramsMax: log.goal_carb_max_g ? Math.round(log.goal_carb_max_g) : undefined,
-                  calories: Math.round(log.total_carb_g * 4),
-                  percentage:
-                    log.total_calories > 0
-                      ? Math.round(((log.total_carb_g * 4) / log.total_calories) * 100)
-                      : 0,
-                }}
-                fat={{
-                  grams: Math.round(log.total_fat_g),
-                  gramsMin: log.goal_fat_min_g ? Math.round(log.goal_fat_min_g) : undefined,
-                  gramsMax: log.goal_fat_max_g ? Math.round(log.goal_fat_max_g) : undefined,
-                  calories: Math.round(log.total_fat_g * 9),
-                  percentage:
-                    log.total_calories > 0
-                      ? Math.round(((log.total_fat_g * 9) / log.total_calories) * 100)
-                      : 0,
-                }}
-              />
-
-              {/* Makromål */}
-              {dailySummary ? (
-                <div className="space-y-2 pt-2">
+              {/* Makromål — snapshot från den aktuella dagen */}
+              {log.goal_fat_min_g ? (
+                <div className="space-y-2">
+                  <NutrientStatusRow
+                    status={calculateNutrientStatus(
+                      log.total_fat_g,
+                      log.goal_fat_min_g,
+                      log.goal_fat_max_g ?? 0,
+                      'g'
+                    )}
+                    label={t('day.fat')}
+                    unit="g"
+                    showProgress
+                  />
+                  <NutrientStatusRow
+                    status={calculateNutrientStatus(
+                      log.total_carb_g,
+                      log.goal_carb_min_g ?? 0,
+                      log.goal_carb_max_g ?? 0,
+                      'g'
+                    )}
+                    label={t('day.carbs')}
+                    unit="g"
+                    showProgress
+                  />
+                  <NutrientStatusRow
+                    status={calculateNutrientStatus(
+                      log.total_protein_g,
+                      log.goal_protein_min_g ?? 0,
+                      log.goal_protein_max_g ?? 0,
+                      'g'
+                    )}
+                    label={t('day.protein')}
+                    unit="g"
+                    showProgress
+                  />
+                </div>
+              ) : dailySummary ? (
+                <div className="space-y-2">
                   <NutrientStatusRow
                     status={dailySummary.fatStatus}
                     label={t('day.fat')}
