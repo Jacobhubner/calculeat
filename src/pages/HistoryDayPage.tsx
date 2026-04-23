@@ -531,10 +531,21 @@ export default function HistoryDayPage() {
                   <span className="text-sm text-neutral-600">{t('day.calories')}</span>
                   <div className="text-right">
                     <div className="text-sm font-semibold">
-                      {Math.round(log.total_calories)} / {Math.round(log.goal_calories_max)}
+                      {Math.round(log.total_calories)} /{' '}
+                      {Math.round(
+                        ((log.goal_calories_min ?? log.goal_calories_max) + log.goal_calories_max) /
+                          2
+                      )}
                     </div>
                     <div className="text-xs text-neutral-500">
-                      {Math.round((log.total_calories / log.goal_calories_max) * 100)}%
+                      {Math.round(
+                        (log.total_calories /
+                          (((log.goal_calories_min ?? log.goal_calories_max) +
+                            log.goal_calories_max) /
+                            2)) *
+                          100
+                      )}
+                      %
                     </div>
                   </div>
                 </div>
