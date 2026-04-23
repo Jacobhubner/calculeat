@@ -304,14 +304,14 @@ export default function HistoryPage() {
                   <input
                     type="range"
                     min={1}
-                    max={365}
+                    max={90}
                     value={statsPeriod}
                     onChange={e => setStatsPeriod(Number(e.target.value))}
                     className="w-full accent-primary-600"
                   />
                   <div className="flex justify-between text-xs text-neutral-400">
                     <span>1d</span>
-                    <span>365d</span>
+                    <span>90d</span>
                   </div>
                 </div>
                 <div>
