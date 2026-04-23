@@ -304,6 +304,8 @@ export default function HistoryDayPage() {
               <MacroBar
                 protein={{
                   grams: Math.round(log.total_protein_g),
+                  gramsMin: log.goal_protein_min_g ? Math.round(log.goal_protein_min_g) : undefined,
+                  gramsMax: log.goal_protein_max_g ? Math.round(log.goal_protein_max_g) : undefined,
                   calories: Math.round(log.total_protein_g * 4),
                   percentage:
                     log.total_calories > 0
@@ -312,6 +314,8 @@ export default function HistoryDayPage() {
                 }}
                 carbs={{
                   grams: Math.round(log.total_carb_g),
+                  gramsMin: log.goal_carb_min_g ? Math.round(log.goal_carb_min_g) : undefined,
+                  gramsMax: log.goal_carb_max_g ? Math.round(log.goal_carb_max_g) : undefined,
                   calories: Math.round(log.total_carb_g * 4),
                   percentage:
                     log.total_calories > 0
@@ -320,6 +324,8 @@ export default function HistoryDayPage() {
                 }}
                 fat={{
                   grams: Math.round(log.total_fat_g),
+                  gramsMin: log.goal_fat_min_g ? Math.round(log.goal_fat_min_g) : undefined,
+                  gramsMax: log.goal_fat_max_g ? Math.round(log.goal_fat_max_g) : undefined,
                   calories: Math.round(log.total_fat_g * 9),
                   percentage:
                     log.total_calories > 0
