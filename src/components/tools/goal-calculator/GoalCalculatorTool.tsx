@@ -49,14 +49,27 @@ export default function GoalCalculatorTool() {
     min: number
     max: number
   } | null>(null)
-  const [bmiHeightInput, setBmiHeightInput] = useState<string>(
-    () => String(profileData?.height_cm ?? '')
+  const [bmiHeightInput, setBmiHeightInput] = useState<string>(() =>
+    String(profileData?.height_cm ?? '')
   )
+  const initializedRef = useRef(false)
+  /* eslint-disable react-hooks/set-state-in-effect -- one-time initialization from async profile data */
+  useEffect(() => {
+    if (initializedRef.current) return
+    if (!profileData?.weight_kg) return
+    initializedRef.current = true
+    if (profileData.body_fat_percentage) {
+      setTargetBodyFat(profileData.body_fat_percentage)
+      setBodyFatInput(String(profileData.body_fat_percentage))
+    }
+    setManualTargetWeight(profileData.weight_kg)
+  }, [profileData])
   useEffect(() => {
     if (!bmiHeightInput && profileData?.height_cm) {
       setBmiHeightInput(String(profileData.height_cm))
     }
   }, [profileData?.height_cm]) // eslint-disable-line react-hooks/exhaustive-deps
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   // Beräkna targetWeight baserat på om användaren har angett ett manuellt värde
   const targetWeight = useMemo(() => {
@@ -560,158 +573,162 @@ export default function GoalCalculatorTool() {
                 {/* BMI-Tabell - Kompakt */}
                 {(() => {
                   const parsedHeight = parseFloat(bmiHeightInput)
-                  const bmiHeight = parsedHeight >= 100 && parsedHeight <= 250
-                    ? parsedHeight
-                    : (profileData?.height_cm ?? 0)
+                  const bmiHeight =
+                    parsedHeight >= 100 && parsedHeight <= 250
+                      ? parsedHeight
+                      : (profileData?.height_cm ?? 0)
                   return (
-                <div className="border border-neutral-200 rounded-lg overflow-x-auto">
-                  <table className="w-full text-xs min-w-[300px]">
-                    <thead className="bg-neutral-100">
-                      <tr>
-                        <th className="px-3 py-1.5 text-left font-semibold">
-                          {t('goalCalc.bmi.table.category')}
-                        </th>
-                        <th className="px-3 py-1.5 text-left font-semibold">
-                          {t('goalCalc.bmi.table.bmi')}
-                        </th>
-                        <th className="px-3 py-1.5 text-left font-semibold">
-                          <div className="flex items-center gap-1.5 flex-wrap">
-                            <span>{t('goalCalc.bmi.table.weight')}</span>
-                            <span
-                              className="font-normal text-neutral-500 cursor-pointer hover:text-primary-600 hover:underline"
-                              onClick={() => setBmiHeightInput(String(profileData?.height_cm ?? ''))}
-                            >
-                              ({t('goalCalc.bmi.table.weightNote')})
-                            </span>
-                            <div className="flex items-center gap-0.5 font-normal">
-                              <input
-                                type="number"
-                                value={bmiHeightInput}
-                                onChange={e => setBmiHeightInput(e.target.value)}
-                                placeholder="—"
-                                min={100}
-                                max={250}
-                                className="w-14 px-1.5 py-0.5 text-xs border border-neutral-300 rounded text-neutral-700 focus:outline-none focus:border-primary-400"
-                              />
-                              <span className="text-neutral-500">cm</span>
-                            </div>
-                          </div>
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr
-                        className={`border-t ${
-                          bmiData.current.category === 'undervikt_3'
-                            ? 'bg-yellow-50 border-l-4 border-l-yellow-500'
-                            : ''
-                        }`}
-                      >
-                        <td className="px-3 py-1.5">{t('goalCalc.bmi.table.underweight3')}</td>
-                        <td className="px-3 py-1.5 text-neutral-600">&lt; 16.0</td>
-                        <td className="px-3 py-1.5 text-neutral-600">
-                          &lt; {Math.ceil(16.0 * Math.pow(bmiHeight / 100, 2))}
-                        </td>
-                      </tr>
-                      <tr
-                        className={`border-t ${
-                          bmiData.current.category === 'undervikt_2'
-                            ? 'bg-yellow-50 border-l-4 border-l-yellow-500'
-                            : ''
-                        }`}
-                      >
-                        <td className="px-3 py-1.5">{t('goalCalc.bmi.table.underweight2')}</td>
-                        <td className="px-3 py-1.5 text-neutral-600">16.0 - 16.9</td>
-                        <td className="px-3 py-1.5 text-neutral-600">
-                          {Math.ceil(16.0 * Math.pow(bmiHeight / 100, 2))} -{' '}
-                          {Math.floor(17.0 * Math.pow(bmiHeight / 100, 2))}
-                        </td>
-                      </tr>
-                      <tr
-                        className={`border-t ${
-                          bmiData.current.category === 'undervikt_1'
-                            ? 'bg-yellow-50 border-l-4 border-l-yellow-500'
-                            : ''
-                        }`}
-                      >
-                        <td className="px-3 py-1.5">{t('goalCalc.bmi.table.underweight1')}</td>
-                        <td className="px-3 py-1.5 text-neutral-600">17.0 - 18.4</td>
-                        <td className="px-3 py-1.5 text-neutral-600">
-                          {Math.ceil(17.0 * Math.pow(bmiHeight / 100, 2))} -{' '}
-                          {Math.floor(18.5 * Math.pow(bmiHeight / 100, 2))}
-                        </td>
-                      </tr>
-                      <tr
-                        className={`border-t ${
-                          bmiData.current.category === 'normalvikt'
-                            ? 'bg-green-50 border-l-4 border-l-green-500'
-                            : ''
-                        }`}
-                      >
-                        <td className="px-3 py-1.5">{t('goalCalc.bmi.table.normalweight')}</td>
-                        <td className="px-3 py-1.5 text-neutral-600">18.5 - 24.9</td>
-                        <td className="px-3 py-1.5 text-green-700 font-semibold">
-                          {Math.ceil(18.5 * Math.pow(bmiHeight / 100, 2))} - {Math.floor(25 * Math.pow(bmiHeight / 100, 2))}
-                        </td>
-                      </tr>
-                      <tr
-                        className={`border-t ${
-                          bmiData.current.category === 'övervikt'
-                            ? 'bg-orange-50 border-l-4 border-l-orange-500'
-                            : ''
-                        }`}
-                      >
-                        <td className="px-3 py-1.5">{t('goalCalc.bmi.table.overweight')}</td>
-                        <td className="px-3 py-1.5 text-neutral-600">25 - 29.9</td>
-                        <td className="px-3 py-1.5 text-neutral-600">
-                          {Math.ceil(25 * Math.pow(bmiHeight / 100, 2))} -{' '}
-                          {Math.floor(30 * Math.pow(bmiHeight / 100, 2))}
-                        </td>
-                      </tr>
-                      <tr
-                        className={`border-t ${
-                          bmiData.current.category === 'fetma_1'
-                            ? 'bg-red-50 border-l-4 border-l-red-500'
-                            : ''
-                        }`}
-                      >
-                        <td className="px-3 py-1.5">{t('goalCalc.bmi.table.obese1')}</td>
-                        <td className="px-3 py-1.5 text-neutral-600">30 - 34.9</td>
-                        <td className="px-3 py-1.5 text-neutral-600">
-                          {Math.ceil(30 * Math.pow(bmiHeight / 100, 2))} -{' '}
-                          {Math.floor(35 * Math.pow(bmiHeight / 100, 2))}
-                        </td>
-                      </tr>
-                      <tr
-                        className={`border-t ${
-                          bmiData.current.category === 'fetma_2'
-                            ? 'bg-red-50 border-l-4 border-l-red-500'
-                            : ''
-                        }`}
-                      >
-                        <td className="px-3 py-1.5">{t('goalCalc.bmi.table.obese2')}</td>
-                        <td className="px-3 py-1.5 text-neutral-600">35 - 39.9</td>
-                        <td className="px-3 py-1.5 text-neutral-600">
-                          {Math.ceil(35 * Math.pow(bmiHeight / 100, 2))} -{' '}
-                          {Math.floor(40 * Math.pow(bmiHeight / 100, 2))}
-                        </td>
-                      </tr>
-                      <tr
-                        className={`border-t ${
-                          bmiData.current.category === 'fetma_3'
-                            ? 'bg-red-50 border-l-4 border-l-red-500'
-                            : ''
-                        }`}
-                      >
-                        <td className="px-3 py-1.5">{t('goalCalc.bmi.table.obese3')}</td>
-                        <td className="px-3 py-1.5 text-neutral-600">&ge; 40</td>
-                        <td className="px-3 py-1.5 text-neutral-600">
-                          &ge; {Math.ceil(40 * Math.pow(bmiHeight / 100, 2))}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
+                    <div className="border border-neutral-200 rounded-lg overflow-x-auto">
+                      <table className="w-full text-xs min-w-[300px]">
+                        <thead className="bg-neutral-100">
+                          <tr>
+                            <th className="px-3 py-1.5 text-left font-semibold">
+                              {t('goalCalc.bmi.table.category')}
+                            </th>
+                            <th className="px-3 py-1.5 text-left font-semibold">
+                              {t('goalCalc.bmi.table.bmi')}
+                            </th>
+                            <th className="px-3 py-1.5 text-left font-semibold">
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                <span>{t('goalCalc.bmi.table.weight')}</span>
+                                <span
+                                  className="font-normal text-neutral-500 cursor-pointer hover:text-primary-600 hover:underline"
+                                  onClick={() =>
+                                    setBmiHeightInput(String(profileData?.height_cm ?? ''))
+                                  }
+                                >
+                                  ({t('goalCalc.bmi.table.weightNote')})
+                                </span>
+                                <div className="flex items-center gap-0.5 font-normal">
+                                  <input
+                                    type="number"
+                                    value={bmiHeightInput}
+                                    onChange={e => setBmiHeightInput(e.target.value)}
+                                    placeholder="—"
+                                    min={100}
+                                    max={250}
+                                    className="w-14 px-1.5 py-0.5 text-xs border border-neutral-300 rounded text-neutral-700 focus:outline-none focus:border-primary-400"
+                                  />
+                                  <span className="text-neutral-500">cm</span>
+                                </div>
+                              </div>
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr
+                            className={`border-t ${
+                              bmiData.current.category === 'undervikt_3'
+                                ? 'bg-yellow-50 border-l-4 border-l-yellow-500'
+                                : ''
+                            }`}
+                          >
+                            <td className="px-3 py-1.5">{t('goalCalc.bmi.table.underweight3')}</td>
+                            <td className="px-3 py-1.5 text-neutral-600">&lt; 16.0</td>
+                            <td className="px-3 py-1.5 text-neutral-600">
+                              &lt; {Math.ceil(16.0 * Math.pow(bmiHeight / 100, 2))}
+                            </td>
+                          </tr>
+                          <tr
+                            className={`border-t ${
+                              bmiData.current.category === 'undervikt_2'
+                                ? 'bg-yellow-50 border-l-4 border-l-yellow-500'
+                                : ''
+                            }`}
+                          >
+                            <td className="px-3 py-1.5">{t('goalCalc.bmi.table.underweight2')}</td>
+                            <td className="px-3 py-1.5 text-neutral-600">16.0 - 16.9</td>
+                            <td className="px-3 py-1.5 text-neutral-600">
+                              {Math.ceil(16.0 * Math.pow(bmiHeight / 100, 2))} -{' '}
+                              {Math.floor(17.0 * Math.pow(bmiHeight / 100, 2))}
+                            </td>
+                          </tr>
+                          <tr
+                            className={`border-t ${
+                              bmiData.current.category === 'undervikt_1'
+                                ? 'bg-yellow-50 border-l-4 border-l-yellow-500'
+                                : ''
+                            }`}
+                          >
+                            <td className="px-3 py-1.5">{t('goalCalc.bmi.table.underweight1')}</td>
+                            <td className="px-3 py-1.5 text-neutral-600">17.0 - 18.4</td>
+                            <td className="px-3 py-1.5 text-neutral-600">
+                              {Math.ceil(17.0 * Math.pow(bmiHeight / 100, 2))} -{' '}
+                              {Math.floor(18.5 * Math.pow(bmiHeight / 100, 2))}
+                            </td>
+                          </tr>
+                          <tr
+                            className={`border-t ${
+                              bmiData.current.category === 'normalvikt'
+                                ? 'bg-green-50 border-l-4 border-l-green-500'
+                                : ''
+                            }`}
+                          >
+                            <td className="px-3 py-1.5">{t('goalCalc.bmi.table.normalweight')}</td>
+                            <td className="px-3 py-1.5 text-neutral-600">18.5 - 24.9</td>
+                            <td className="px-3 py-1.5 text-green-700 font-semibold">
+                              {Math.ceil(18.5 * Math.pow(bmiHeight / 100, 2))} -{' '}
+                              {Math.floor(25 * Math.pow(bmiHeight / 100, 2))}
+                            </td>
+                          </tr>
+                          <tr
+                            className={`border-t ${
+                              bmiData.current.category === 'övervikt'
+                                ? 'bg-orange-50 border-l-4 border-l-orange-500'
+                                : ''
+                            }`}
+                          >
+                            <td className="px-3 py-1.5">{t('goalCalc.bmi.table.overweight')}</td>
+                            <td className="px-3 py-1.5 text-neutral-600">25 - 29.9</td>
+                            <td className="px-3 py-1.5 text-neutral-600">
+                              {Math.ceil(25 * Math.pow(bmiHeight / 100, 2))} -{' '}
+                              {Math.floor(30 * Math.pow(bmiHeight / 100, 2))}
+                            </td>
+                          </tr>
+                          <tr
+                            className={`border-t ${
+                              bmiData.current.category === 'fetma_1'
+                                ? 'bg-red-50 border-l-4 border-l-red-500'
+                                : ''
+                            }`}
+                          >
+                            <td className="px-3 py-1.5">{t('goalCalc.bmi.table.obese1')}</td>
+                            <td className="px-3 py-1.5 text-neutral-600">30 - 34.9</td>
+                            <td className="px-3 py-1.5 text-neutral-600">
+                              {Math.ceil(30 * Math.pow(bmiHeight / 100, 2))} -{' '}
+                              {Math.floor(35 * Math.pow(bmiHeight / 100, 2))}
+                            </td>
+                          </tr>
+                          <tr
+                            className={`border-t ${
+                              bmiData.current.category === 'fetma_2'
+                                ? 'bg-red-50 border-l-4 border-l-red-500'
+                                : ''
+                            }`}
+                          >
+                            <td className="px-3 py-1.5">{t('goalCalc.bmi.table.obese2')}</td>
+                            <td className="px-3 py-1.5 text-neutral-600">35 - 39.9</td>
+                            <td className="px-3 py-1.5 text-neutral-600">
+                              {Math.ceil(35 * Math.pow(bmiHeight / 100, 2))} -{' '}
+                              {Math.floor(40 * Math.pow(bmiHeight / 100, 2))}
+                            </td>
+                          </tr>
+                          <tr
+                            className={`border-t ${
+                              bmiData.current.category === 'fetma_3'
+                                ? 'bg-red-50 border-l-4 border-l-red-500'
+                                : ''
+                            }`}
+                          >
+                            <td className="px-3 py-1.5">{t('goalCalc.bmi.table.obese3')}</td>
+                            <td className="px-3 py-1.5 text-neutral-600">&ge; 40</td>
+                            <td className="px-3 py-1.5 text-neutral-600">
+                              &ge; {Math.ceil(40 * Math.pow(bmiHeight / 100, 2))}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
                   )
                 })()}
 
