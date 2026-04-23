@@ -93,7 +93,12 @@ function MacroRow({ label, color, entry }: { label: string; color: string; entry
           <span className="text-xs font-semibold text-neutral-800">{label}</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="text-[11px] tabular-nums text-neutral-500" style={{ color }}>
+          {currentPct > 0 && (
+            <span className="text-[11px] tabular-nums font-semibold" style={{ color }}>
+              {currentPct}%
+            </span>
+          )}
+          <span className="text-[11px] tabular-nums text-neutral-400">
             {Math.round(minPct)}–{Math.round(maxPct)}%
           </span>
           <StatusBadge currentPct={currentPct} minPct={minPct} maxPct={maxPct} />
