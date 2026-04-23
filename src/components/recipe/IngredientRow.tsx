@@ -152,7 +152,10 @@ export function IngredientRow({
         <div className="flex-1">
           <div
             className="flex items-center gap-2 px-3 py-2 bg-white border border-neutral-200 rounded-lg cursor-pointer hover:border-primary-300"
-            onClick={() => setPickerOpen(true)}
+            onClick={e => {
+              e.stopPropagation()
+              setPickerOpen(true)
+            }}
           >
             {ingredient.foodItem ? (
               <>
