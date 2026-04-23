@@ -3,8 +3,9 @@ import { Search, Calculator, Plus, RotateCcw, Check } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { useFoodItems, type FoodItem } from '@/hooks/useFoodItems'
+import type { FoodItem } from '@/hooks/useFoodItems'
 import { calculatePlateAmount, calculatePlateForMacro } from '@/lib/calculations/plateCalculator'
+import { AddFoodToMealModal } from '@/components/daily/AddFoodToMealModal'
 
 type GoalType = 'kcal' | 'carbs' | 'fat' | 'protein'
 
@@ -33,42 +34,11 @@ interface PlateCalculatorProps {
   onAddToMeal?: (food: FoodItem, amount: number, unit: string) => void
 }
 
-// Färgprick komponent
-function ColorDot({ color }: { color?: string | null }) {
-  if (!color) return null
-  const colorClass = {
-    Green: 'bg-green-500',
-    Yellow: 'bg-yellow-500',
-    Orange: 'bg-orange-500',
-  }[color]
-  return <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${colorClass}`} />
-}
-
 export function PlateCalculator({ onAddToMeal }: PlateCalculatorProps) {
   const [goalType, setGoalType] = useState<GoalType>('kcal')
   const [targetAmount, setTargetAmount] = useState<number | ''>('')
-  const [searchQuery, setSearchQuery] = useState('')
   const [selectedFood, setSelectedFood] = useState<FoodItem | null>(null)
-
-  const { data: foods } = useFoodItems()
-
-  // Filtrera livsmedel
-  const filteredFoods = useMemo(() => {
-    if (!foods) return []
-
-    if (!searchQuery.trim()) {
-      return []
-    }
-
-    const query = searchQuery.toLowerCase()
-    return foods
-      .filter(
-        food =>
-          food.name.toLowerCase().includes(query) ||
-          (food.brand && food.brand.toLowerCase().includes(query))
-      )
-      .slice(0, 12)
-  }, [foods, searchQuery])
+  const [pickerOpen, setPickerOpen] = useState(false)
 
   // Beräkna portion
   const calculation = useMemo(() => {
@@ -83,7 +53,6 @@ export function PlateCalculator({ onAddToMeal }: PlateCalculatorProps) {
 
   const handleSelectFood = (food: FoodItem) => {
     setSelectedFood(food)
-    setSearchQuery('')
   }
 
   const handleAddToMeal = () => {
@@ -115,17 +84,7 @@ export function PlateCalculator({ onAddToMeal }: PlateCalculatorProps) {
   const handleReset = () => {
     setSelectedFood(null)
     setTargetAmount('')
-    setSearchQuery('')
     setGoalType('kcal')
-  }
-
-  // Beräkna kcal/100g för visning
-  const getKcalPer100g = (food: FoodItem) => {
-    if (food.kcal_per_gram) return Math.round(food.kcal_per_gram * 100)
-    if (food.weight_grams && food.weight_grams > 0) {
-      return Math.round((food.calories / food.weight_grams) * 100)
-    }
-    return food.calories
   }
 
   return (
@@ -136,7 +95,7 @@ export function PlateCalculator({ onAddToMeal }: PlateCalculatorProps) {
             <Calculator className="h-4 w-4 text-primary-600" />
             Portionsberäknare
           </CardTitle>
-          {(selectedFood || targetAmount !== '' || searchQuery) && (
+          {(selectedFood || targetAmount !== '') && (
             <Button
               variant="ghost"
               size="sm"
@@ -202,51 +161,12 @@ export function PlateCalculator({ onAddToMeal }: PlateCalculatorProps) {
 
         {/* Sök eller valt livsmedel */}
         {!selectedFood ? (
-          <div>
-            {/* Sökfält */}
-            <div className="relative">
-              <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400" />
-              <Input
-                placeholder="Sök livsmedel..."
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                className="pl-8 h-9"
-              />
-            </div>
-
-            {/* Söklista - KOMPAKT EN-RADS FORMAT */}
-            {filteredFoods.length > 0 && (
-              <div className="mt-2 border rounded-lg max-h-52 overflow-y-auto">
-                {filteredFoods.map(food => (
-                  <div
-                    key={food.id}
-                    onClick={() => handleSelectFood(food)}
-                    className="w-full text-left px-2 py-1.5 hover:bg-neutral-50 transition-colors border-b last:border-b-0 flex items-center gap-2 cursor-pointer"
-                    role="button"
-                    tabIndex={0}
-                    onKeyDown={e => e.key === 'Enter' && handleSelectFood(food)}
-                  >
-                    {/* Namn - kan radbrytas */}
-                    <span className="text-sm text-neutral-900 flex-1 min-w-0 leading-tight">
-                      {food.name}
-                    </span>
-
-                    {/* Kalorier */}
-                    <span className="text-xs text-neutral-500 whitespace-nowrap flex-shrink-0">
-                      {getKcalPer100g(food)} kcal
-                    </span>
-
-                    {/* Färgprick */}
-                    <ColorDot color={food.energy_density_color} />
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* Tom text */}
-            {!searchQuery && filteredFoods.length === 0 && (
-              <p className="text-xs text-neutral-500 text-center py-3">Sök efter ett livsmedel</p>
-            )}
+          <div
+            className="flex items-center gap-2 px-3 py-2 bg-white border border-neutral-200 rounded-lg cursor-pointer hover:border-primary-300"
+            onClick={() => setPickerOpen(true)}
+          >
+            <Search className="h-4 w-4 text-neutral-400 flex-shrink-0" />
+            <span className="text-neutral-400 text-sm">Sök livsmedel...</span>
           </div>
         ) : (
           <div className="border-2 border-primary-200 rounded-lg p-2.5 bg-primary-50/50">
@@ -388,6 +308,14 @@ export function PlateCalculator({ onAddToMeal }: PlateCalculatorProps) {
           <p className="text-xs text-neutral-400 text-center">Välj kalorimål och livsmedel</p>
         )}
       </CardContent>
+
+      <AddFoodToMealModal
+        open={pickerOpen}
+        onOpenChange={setPickerOpen}
+        mealName=""
+        dailyLogId=""
+        onFoodSelect={handleSelectFood}
+      />
     </Card>
   )
 }
