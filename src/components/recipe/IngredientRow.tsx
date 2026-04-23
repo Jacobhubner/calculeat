@@ -126,14 +126,29 @@ export function IngredientRow({
       newUnit,
       ingredient.foodItem.ml_per_gram ?? undefined
     )
-    // For piece/serving units (st, portion, custom) there's no round-trip formula — keep amount as-is
-    const isConvertible =
-      newUnit === 'g' ||
-      newUnit === 'kg' ||
-      newUnit === 'dl' ||
-      newUnit === 'msk' ||
-      newUnit === 'tsk'
-    const newAmount = isConvertible ? Math.round(convertedAmount * 100) / 100 : ingredient.amount
+    const WEIGHT_VOLUME_UNITS = new Set(['g', 'kg', 'dl', 'ml', 'msk', 'tsk'])
+    const PIECE_UNITS = new Set(['st', 'portion'])
+    const oldIsPiece = PIECE_UNITS.has(ingredient.unit) || !WEIGHT_VOLUME_UNITS.has(ingredient.unit)
+    const newIsPiece = PIECE_UNITS.has(newUnit) || !WEIGHT_VOLUME_UNITS.has(newUnit)
+
+    // grams per piece — always prefer grams_per_piece if set
+    const food = ingredient.foodItem
+    const gramsPerPiece =
+      food.grams_per_piece && food.grams_per_piece > 0 ? food.grams_per_piece : null
+
+    let newAmount: number
+    if (oldIsPiece && newIsPiece) {
+      newAmount = ingredient.amount
+    } else if (newIsPiece && gramsPerPiece) {
+      // weight/volume → piece: divide grams by grams per piece
+      newAmount = Math.round((weightGrams / gramsPerPiece) * 100) / 100
+    } else if (oldIsPiece) {
+      // piece → weight/volume
+      newAmount = Math.round(convertedAmount * 100) / 100
+    } else {
+      // weight/volume → weight/volume
+      newAmount = Math.round(convertedAmount * 100) / 100
+    }
     onChange({ ...ingredient, unit: newUnit, amount: newAmount })
   }
 

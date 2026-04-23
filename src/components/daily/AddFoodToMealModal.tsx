@@ -18,6 +18,8 @@ import { useAddFoodToMeal, useCreateMealEntry, useUpdateMealItem } from '@/hooks
 import { useMealSettings } from '@/hooks/useMealSettings'
 import { useSharedLists } from '@/hooks/useSharedLists'
 import { UnitSelector, getAvailableUnits, calculateNutritionForUnit } from './UnitSelector'
+import { calculateIngredientWeight } from '@/lib/calculations/recipeCalculator'
+import { convertWeightToUnit } from '@/lib/utils/unitConversion'
 import { NutritionPreview } from './NutritionPreview'
 import { toast } from 'sonner'
 import { SOURCE_BADGES, getListItemBadgeConfig } from '@/lib/constants/sourceBadges'
@@ -294,23 +296,39 @@ export function AddFoodToMealModal({
       return
     }
 
-    const currentNutrition = calculateNutritionForUnit(selectedFood, amount, selectedUnit)
-    if (!currentNutrition) {
+    const WEIGHT_VOLUME_UNITS = new Set(['g', 'kg', 'dl', 'ml', 'msk', 'tsk'])
+    const PIECE_UNITS = new Set(['st', 'portion'])
+    const oldIsPiece = PIECE_UNITS.has(selectedUnit) || !WEIGHT_VOLUME_UNITS.has(selectedUnit)
+    const newIsPiece = PIECE_UNITS.has(newUnit) || !WEIGHT_VOLUME_UNITS.has(newUnit)
+
+    const gramsPerPiece =
+      selectedFood.grams_per_piece && selectedFood.grams_per_piece > 0
+        ? selectedFood.grams_per_piece
+        : null
+
+    if (oldIsPiece && newIsPiece) {
       setSelectedUnit(newUnit)
       return
     }
 
-    const currentCalories = currentNutrition.calories
-    const caloriesPerNewUnit = calculateNutritionForUnit(selectedFood, 1, newUnit)
+    const weightGrams = calculateIngredientWeight(selectedFood, Number(amount), selectedUnit)
 
-    if (!caloriesPerNewUnit || caloriesPerNewUnit.calories <= 0) {
+    let newAmount: number
+    if (newIsPiece && gramsPerPiece) {
+      newAmount = Math.round((weightGrams / gramsPerPiece) * 100) / 100
+    } else if (newIsPiece) {
+      // no grams_per_piece — keep amount
       setSelectedUnit(newUnit)
       return
+    } else {
+      newAmount =
+        Math.round(
+          convertWeightToUnit(weightGrams, newUnit, selectedFood.ml_per_gram ?? undefined) * 100
+        ) / 100
     }
 
-    const newAmount = currentCalories / caloriesPerNewUnit.calories
     setSelectedUnit(newUnit)
-    setAmount(Math.round(newAmount * 100) / 100)
+    setAmount(newAmount)
   }
 
   const handleAddFood = async () => {
@@ -410,7 +428,7 @@ export function AddFoodToMealModal({
           </DialogHeader>
 
           {/* Meal selector */}
-          {!isEditMode && !mealName && mealSettings && mealSettings.length > 0 && (
+          {!isEditMode && !mealName && !onFoodSelect && mealSettings && mealSettings.length > 0 && (
             <div className="space-y-2">
               <Label>{t('addToMealModal.selectMeal')}</Label>
               <Select
