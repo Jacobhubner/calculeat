@@ -22,7 +22,7 @@ const LIST_PRESETS = [14, 21, 30, 90] as const
 export default function HistoryPage() {
   const { t } = useTranslation('history')
   const [viewMode, setViewMode] = useState<'calendar' | 'list'>('list')
-  const [statsPeriod, setStatsPeriod] = useState<7 | 30 | 90>(30)
+  const [statsPeriod, setStatsPeriod] = useState<number>(30)
   const [listDays, setListDays] = useState<number>(14)
 
   // Fetch enough days to cover the max list period
@@ -336,20 +336,34 @@ export default function HistoryPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex gap-1">
-                  {([7, 30, 90] as const).map(p => (
-                    <button
-                      key={p}
-                      onClick={() => setStatsPeriod(p)}
-                      className={`flex-1 py-1 text-xs rounded-md font-medium transition-colors ${
-                        statsPeriod === p
-                          ? 'bg-primary-600 text-white'
-                          : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
-                      }`}
-                    >
-                      {t('stats.periodDays', { days: p })}
-                    </button>
-                  ))}
+                <div className="space-y-2">
+                  <div className="flex gap-1">
+                    {([14, 21, 30, 90] as const).map(p => (
+                      <button
+                        key={p}
+                        onClick={() => setStatsPeriod(p)}
+                        className={`flex-1 py-1 text-xs rounded-md font-medium transition-colors ${
+                          statsPeriod === p
+                            ? 'bg-primary-600 text-white'
+                            : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
+                        }`}
+                      >
+                        {p === 14 ? '2v' : p === 21 ? '3v' : `${p}d`}
+                      </button>
+                    ))}
+                  </div>
+                  <input
+                    type="range"
+                    min={1}
+                    max={365}
+                    value={statsPeriod}
+                    onChange={e => setStatsPeriod(Number(e.target.value))}
+                    className="w-full accent-primary-600"
+                  />
+                  <div className="flex justify-between text-xs text-neutral-400">
+                    <span>1d</span>
+                    <span>365d</span>
+                  </div>
                 </div>
                 <div>
                   <div className="text-2xl font-bold text-neutral-900">{completedDays}</div>
