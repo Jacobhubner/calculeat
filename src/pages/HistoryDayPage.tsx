@@ -7,6 +7,9 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ZonedCalorieRing } from '@/components/daily/ZonedCalorieRing'
+import { EnergyDensityIndicator } from '@/components/daily/EnergyDensityIndicator'
+import { ColorBalanceCard } from '@/components/daily/ColorBalanceCard'
+import { NutrientStatusRow } from '@/components/daily/NutrientStatusBadge'
 import MacroBar from '@/components/MacroBar'
 import { ArrowLeft, Calendar, Check, Copy, UtensilsCrossed, Pencil, Plus, X } from 'lucide-react'
 import {
@@ -17,6 +20,9 @@ import {
   useRemoveFoodFromMeal,
   useUpdateLogDate,
 } from '@/hooks/useDailyLogs'
+import { useDailySummary } from '@/hooks/useDailySummary'
+import { useProfiles } from '@/hooks'
+import { useProfileStore } from '@/stores/profileStore'
 import { AddFoodToMealModal } from '@/components/daily/AddFoodToMealModal'
 import { toast } from 'sonner'
 
@@ -30,6 +36,10 @@ export default function HistoryDayPage() {
   const finishDay = useFinishDay()
   const removeFoodFromMeal = useRemoveFoodFromMeal()
   const updateLogDate = useUpdateLogDate()
+  const activeProfile = useProfileStore(state => state.activeProfile)
+  const { data: allProfiles } = useProfiles()
+  const profile = allProfiles?.find(p => p.id === activeProfile?.id)
+  const dailySummary = useDailySummary(log, profile)
 
   const [isEditing, setIsEditing] = useState(false)
   const [isEditingDate, setIsEditingDate] = useState(false)
@@ -286,70 +296,102 @@ export default function HistoryDayPage() {
         <div className="lg:col-span-2 space-y-6">
           {/* Summary */}
           <Card>
-            <CardHeader>
+            <CardHeader className="pb-2">
               <CardTitle>{t('day.summary')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* Calorie Progress */}
-              <div className="flex justify-between items-center">
-                <span className="text-sm font-medium">{t('day.calories')}</span>
-                <span className="text-2xl font-bold text-primary-700">
-                  {Math.round(log.total_calories)} kcal
-                </span>
-              </div>
-
               {/* Macro Bar */}
-              <div>
-                <p className="text-sm font-medium mb-2">{t('day.macroDistribution')}</p>
-                <MacroBar
-                  protein={{
-                    grams: Math.round(log.total_protein_g),
-                    calories: Math.round(log.total_protein_g * 4),
-                    percentage:
-                      log.total_calories > 0
-                        ? Math.round(((log.total_protein_g * 4) / log.total_calories) * 100)
-                        : 0,
-                  }}
-                  carbs={{
-                    grams: Math.round(log.total_carb_g),
-                    calories: Math.round(log.total_carb_g * 4),
-                    percentage:
-                      log.total_calories > 0
-                        ? Math.round(((log.total_carb_g * 4) / log.total_calories) * 100)
-                        : 0,
-                  }}
-                  fat={{
-                    grams: Math.round(log.total_fat_g),
-                    calories: Math.round(log.total_fat_g * 9),
-                    percentage:
-                      log.total_calories > 0
-                        ? Math.round(((log.total_fat_g * 9) / log.total_calories) * 100)
-                        : 0,
-                  }}
-                />
-              </div>
+              <MacroBar
+                protein={{
+                  grams: Math.round(log.total_protein_g),
+                  calories: Math.round(log.total_protein_g * 4),
+                  percentage:
+                    log.total_calories > 0
+                      ? Math.round(((log.total_protein_g * 4) / log.total_calories) * 100)
+                      : 0,
+                }}
+                carbs={{
+                  grams: Math.round(log.total_carb_g),
+                  calories: Math.round(log.total_carb_g * 4),
+                  percentage:
+                    log.total_calories > 0
+                      ? Math.round(((log.total_carb_g * 4) / log.total_calories) * 100)
+                      : 0,
+                }}
+                fat={{
+                  grams: Math.round(log.total_fat_g),
+                  calories: Math.round(log.total_fat_g * 9),
+                  percentage:
+                    log.total_calories > 0
+                      ? Math.round(((log.total_fat_g * 9) / log.total_calories) * 100)
+                      : 0,
+                }}
+              />
 
-              {/* Kaloritäthetsfärger */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="text-center p-3 bg-green-50 rounded-lg border border-green-200">
-                  <div className="text-2xl font-bold text-green-700">
-                    {Math.round(log.green_calories)}
-                  </div>
-                  <div className="text-xs text-green-600">{t('stats.green')}</div>
+              {/* Makromål */}
+              {dailySummary ? (
+                <div className="space-y-2 pt-2">
+                  <NutrientStatusRow
+                    status={dailySummary.fatStatus}
+                    label={t('day.fat')}
+                    unit="g"
+                    showProgress
+                  />
+                  <NutrientStatusRow
+                    status={dailySummary.carbStatus}
+                    label={t('day.carbs')}
+                    unit="g"
+                    showProgress
+                  />
+                  <NutrientStatusRow
+                    status={dailySummary.proteinStatus}
+                    label={t('day.protein')}
+                    unit="g"
+                    showProgress
+                  />
                 </div>
-                <div className="text-center p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-                  <div className="text-2xl font-bold text-yellow-700">
-                    {Math.round(log.yellow_calories)}
+              ) : (
+                <div className="space-y-2 pt-2 text-sm text-neutral-500">
+                  <div className="flex justify-between">
+                    <span>{t('day.fat')}</span>
+                    <span className="font-medium">{Math.round(log.total_fat_g)}g</span>
                   </div>
-                  <div className="text-xs text-yellow-600">{t('stats.yellow')}</div>
-                </div>
-                <div className="text-center p-3 bg-orange-50 rounded-lg border border-orange-200">
-                  <div className="text-2xl font-bold text-orange-700">
-                    {Math.round(log.orange_calories)}
+                  <div className="flex justify-between">
+                    <span>{t('day.carbs')}</span>
+                    <span className="font-medium">{Math.round(log.total_carb_g)}g</span>
                   </div>
-                  <div className="text-xs text-orange-600">{t('stats.orange')}</div>
+                  <div className="flex justify-between">
+                    <span>{t('day.protein')}</span>
+                    <span className="font-medium">{Math.round(log.total_protein_g)}g</span>
+                  </div>
                 </div>
-              </div>
+              )}
+
+              {/* Energitäthet */}
+              {dailySummary && (
+                <div className="pt-3 border-t border-neutral-200">
+                  <EnergyDensityIndicator density={dailySummary.energyDensity} size="sm" />
+                </div>
+              )}
+
+              {/* Kaloritäthet */}
+              {dailySummary && (
+                <div className="pt-3 border-t border-neutral-200">
+                  <ColorBalanceCard
+                    greenCalories={dailySummary.greenCalories}
+                    yellowCalories={dailySummary.yellowCalories}
+                    orangeCalories={dailySummary.orangeCalories}
+                    greenStatus={dailySummary.greenStatus}
+                    yellowStatus={dailySummary.yellowStatus}
+                    orangeStatus={dailySummary.orangeStatus}
+                    colorTargets={dailySummary.colorTargets}
+                    caloriesMin={log.goal_calories_min ?? 0}
+                    caloriesMax={log.goal_calories_max ?? 0}
+                    showCard={false}
+                    size="sm"
+                  />
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -465,39 +507,6 @@ export default function HistoryDayPage() {
                 min={log.goal_calories_min || Math.round((log.goal_calories_max || 2000) * 0.85)}
                 max={log.goal_calories_max || 2000}
               />
-            </CardContent>
-          </Card>
-
-          {/* Nutrition Stats */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">{t('day.nutritionStats')}</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex justify-between">
-                <span className="text-sm text-neutral-600">{t('day.fat')}</span>
-                <span className="text-sm font-semibold">{Math.round(log.total_fat_g)}g</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-neutral-600">{t('day.carbs')}</span>
-                <span className="text-sm font-semibold">{Math.round(log.total_carb_g)}g</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-neutral-600">{t('day.protein')}</span>
-                <span className="text-sm font-semibold">{Math.round(log.total_protein_g)}g</span>
-              </div>
-              <div className="flex justify-between pt-3 border-t">
-                <span className="text-sm text-neutral-600">{t('day.meals')}</span>
-                <span className="text-sm font-semibold">
-                  {log.meals?.filter(m => m.items && m.items.length > 0).length || 0}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-neutral-600">{t('day.totalFoods')}</span>
-                <span className="text-sm font-semibold">
-                  {log.meals?.reduce((sum, m) => sum + (m.items?.length || 0), 0) || 0}
-                </span>
-              </div>
             </CardContent>
           </Card>
 

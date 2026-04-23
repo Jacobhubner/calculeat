@@ -257,17 +257,6 @@ export default function HistoryPage() {
                                     </div>
                                   </div>
                                   <div className="flex items-center gap-2">
-                                    <div className="flex gap-1">
-                                      {log.green_calories > 0 && (
-                                        <div className="h-2 w-2 rounded-full bg-green-600" />
-                                      )}
-                                      {log.yellow_calories > 0 && (
-                                        <div className="h-2 w-2 rounded-full bg-yellow-600" />
-                                      )}
-                                      {log.orange_calories > 0 && (
-                                        <div className="h-2 w-2 rounded-full bg-orange-600" />
-                                      )}
-                                    </div>
                                     <button
                                       onClick={e => handleDeleteDay(log.id, log.log_date, e)}
                                       className="p-1.5 rounded-md text-neutral-300 hover:text-red-500 hover:bg-red-50 transition-colors"
