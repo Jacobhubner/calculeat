@@ -9,8 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { ZonedCalorieRing } from '@/components/daily/ZonedCalorieRing'
 import { EnergyDensityIndicator } from '@/components/daily/EnergyDensityIndicator'
 import { ColorBalanceCard } from '@/components/daily/ColorBalanceCard'
-import { NutrientStatusRow } from '@/components/daily/NutrientStatusBadge'
-import { calculateNutrientStatus } from '@/lib/calculations/dailySummary'
+import { MacroRangeBar } from '@/components/daily/MacroRangeBar'
 import { ArrowLeft, Calendar, Check, Copy, UtensilsCrossed, Pencil, Plus, X } from 'lucide-react'
 import {
   useDailyLog,
@@ -301,79 +300,82 @@ export default function HistoryDayPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               {/* Makromål — snapshot från den aktuella dagen */}
-              {log.goal_fat_min_g ? (
-                <div className="space-y-2">
-                  <NutrientStatusRow
-                    status={calculateNutrientStatus(
-                      log.total_fat_g,
-                      log.goal_fat_min_g,
-                      log.goal_fat_max_g ?? 0,
-                      'g'
-                    )}
-                    label={t('day.fat')}
-                    unit="g"
-                    showProgress
+              {(() => {
+                const fatKcal = log.total_fat_g * 9
+                const carbKcal = log.total_carb_g * 4
+                const proteinKcal = log.total_protein_g * 4
+                const totalMacroKcal = fatKcal + carbKcal + proteinKcal
+                const fatPct = totalMacroKcal > 0 ? Math.round((fatKcal / totalMacroKcal) * 100) : 0
+                const carbPct =
+                  totalMacroKcal > 0 ? Math.round((carbKcal / totalMacroKcal) * 100) : 0
+                const proteinPct =
+                  totalMacroKcal > 0 ? Math.round((proteinKcal / totalMacroKcal) * 100) : 0
+
+                const fatMinG = log.goal_fat_min_g ?? dailySummary?.fatStatus.min ?? 0
+                const fatMaxG = log.goal_fat_max_g ?? dailySummary?.fatStatus.max ?? 0
+                const carbMinG = log.goal_carb_min_g ?? dailySummary?.carbStatus.min ?? 0
+                const carbMaxG = log.goal_carb_max_g ?? dailySummary?.carbStatus.max ?? 0
+                const proteinMinG = log.goal_protein_min_g ?? dailySummary?.proteinStatus.min ?? 0
+                const proteinMaxG = log.goal_protein_max_g ?? dailySummary?.proteinStatus.max ?? 0
+
+                const avgCalories =
+                  ((log.goal_calories_min ?? 0) + (log.goal_calories_max ?? 0)) / 2 ||
+                  ((profile?.calories_min ?? 0) + (profile?.calories_max ?? 0)) / 2
+
+                const fatMinPct =
+                  avgCalories > 0 && fatMinG > 0
+                    ? Math.round(((fatMinG * 9) / avgCalories) * 100)
+                    : (profile?.fat_min_percent ?? 25)
+                const fatMaxPct =
+                  avgCalories > 0 && fatMaxG > 0
+                    ? Math.round(((fatMaxG * 9) / avgCalories) * 100)
+                    : (profile?.fat_max_percent ?? 40)
+                const carbMinPct =
+                  avgCalories > 0 && carbMinG > 0
+                    ? Math.round(((carbMinG * 4) / avgCalories) * 100)
+                    : (profile?.carb_min_percent ?? 45)
+                const carbMaxPct =
+                  avgCalories > 0 && carbMaxG > 0
+                    ? Math.round(((carbMaxG * 4) / avgCalories) * 100)
+                    : (profile?.carb_max_percent ?? 60)
+                const proteinMinPct =
+                  avgCalories > 0 && proteinMinG > 0
+                    ? Math.round(((proteinMinG * 4) / avgCalories) * 100)
+                    : (profile?.protein_min_percent ?? 10)
+                const proteinMaxPct =
+                  avgCalories > 0 && proteinMaxG > 0
+                    ? Math.round(((proteinMaxG * 4) / avgCalories) * 100)
+                    : (profile?.protein_max_percent ?? 20)
+
+                return (
+                  <MacroRangeBar
+                    fat={{
+                      currentG: Math.round(log.total_fat_g),
+                      minG: fatMinG,
+                      maxG: fatMaxG,
+                      currentPct: fatPct,
+                      minPct: fatMinPct,
+                      maxPct: fatMaxPct,
+                    }}
+                    carbs={{
+                      currentG: Math.round(log.total_carb_g),
+                      minG: carbMinG,
+                      maxG: carbMaxG,
+                      currentPct: carbPct,
+                      minPct: carbMinPct,
+                      maxPct: carbMaxPct,
+                    }}
+                    protein={{
+                      currentG: Math.round(log.total_protein_g),
+                      minG: proteinMinG,
+                      maxG: proteinMaxG,
+                      currentPct: proteinPct,
+                      minPct: proteinMinPct,
+                      maxPct: proteinMaxPct,
+                    }}
                   />
-                  <NutrientStatusRow
-                    status={calculateNutrientStatus(
-                      log.total_carb_g,
-                      log.goal_carb_min_g ?? 0,
-                      log.goal_carb_max_g ?? 0,
-                      'g'
-                    )}
-                    label={t('day.carbs')}
-                    unit="g"
-                    showProgress
-                  />
-                  <NutrientStatusRow
-                    status={calculateNutrientStatus(
-                      log.total_protein_g,
-                      log.goal_protein_min_g ?? 0,
-                      log.goal_protein_max_g ?? 0,
-                      'g'
-                    )}
-                    label={t('day.protein')}
-                    unit="g"
-                    showProgress
-                  />
-                </div>
-              ) : dailySummary ? (
-                <div className="space-y-2">
-                  <NutrientStatusRow
-                    status={dailySummary.fatStatus}
-                    label={t('day.fat')}
-                    unit="g"
-                    showProgress
-                  />
-                  <NutrientStatusRow
-                    status={dailySummary.carbStatus}
-                    label={t('day.carbs')}
-                    unit="g"
-                    showProgress
-                  />
-                  <NutrientStatusRow
-                    status={dailySummary.proteinStatus}
-                    label={t('day.protein')}
-                    unit="g"
-                    showProgress
-                  />
-                </div>
-              ) : (
-                <div className="space-y-2 pt-2 text-sm text-neutral-500">
-                  <div className="flex justify-between">
-                    <span>{t('day.fat')}</span>
-                    <span className="font-medium">{Math.round(log.total_fat_g)}g</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>{t('day.carbs')}</span>
-                    <span className="font-medium">{Math.round(log.total_carb_g)}g</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>{t('day.protein')}</span>
-                    <span className="font-medium">{Math.round(log.total_protein_g)}g</span>
-                  </div>
-                </div>
-              )}
+                )
+              })()}
 
               {/* Energitäthet */}
               {dailySummary && (
