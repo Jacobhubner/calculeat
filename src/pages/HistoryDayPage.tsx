@@ -527,17 +527,26 @@ export default function HistoryDayPage() {
                 <CardTitle className="text-lg">{t('day.vsGoal')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-neutral-600">{t('day.calories')}</span>
+                <div className="flex justify-between items-start">
+                  <div>
+                    <span className="text-sm text-neutral-600">{t('day.calories')}</span>
+                    {log.goal_calories_min && (
+                      <p className="text-xs text-neutral-400 mt-0.5">
+                        Mål {Math.round(log.goal_calories_min)}–{Math.round(log.goal_calories_max)}{' '}
+                        kcal
+                      </p>
+                    )}
+                  </div>
                   <div className="text-right">
                     <div className="text-sm font-semibold">
                       {Math.round(log.total_calories)} /{' '}
                       {Math.round(
                         ((log.goal_calories_min ?? log.goal_calories_max) + log.goal_calories_max) /
                           2
-                      )}
+                      )}{' '}
+                      kcal
                     </div>
-                    <div className="text-xs text-neutral-500">
+                    <div className="text-xs text-neutral-400 mt-0.5">
                       {Math.round(
                         (log.total_calories /
                           (((log.goal_calories_min ?? log.goal_calories_max) +
@@ -545,7 +554,7 @@ export default function HistoryDayPage() {
                             2)) *
                           100
                       )}
-                      %
+                      % av snittmålet
                     </div>
                   </div>
                 </div>
