@@ -155,6 +155,7 @@ export default function MetabolicCalibration({
     })
   const [timePeriod, setTimePeriod] = useState<14 | 21 | 28>(21)
   const [calibrationApplied, setCalibrationApplied] = useState<number | null>(null)
+  const [confirmRevert, setConfirmRevert] = useState(false)
 
   const { data: weightHistory } = useWeightHistory()
   const updateProfile = useUpdateProfile()
@@ -1521,20 +1522,47 @@ export default function MetabolicCalibration({
                   )}
 
                   {/* Undo last calibration — only within 14-day window */}
-                  {canRevert && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={handleRevertCalibration}
-                      disabled={revertCalibration.isPending}
-                      className="w-full text-neutral-600"
-                    >
-                      <Undo2 className="h-3.5 w-3.5 mr-1.5" />
-                      {revertCalibration.isPending
-                        ? 'Ångrar...'
-                        : `Ångra senaste kalibrering (→ ${Math.round(lastCalibration.previous_tdee)} kcal)`}
-                    </Button>
-                  )}
+                  {canRevert &&
+                    (confirmRevert ? (
+                      <div className="border border-neutral-200 rounded-lg p-3 space-y-2">
+                        <p className="text-xs text-neutral-700">
+                          Återställer TDEE till {Math.round(lastCalibration.previous_tdee)} kcal. Är
+                          du säker?
+                        </p>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              handleRevertCalibration()
+                              setConfirmRevert(false)
+                            }}
+                            disabled={revertCalibration.isPending}
+                            className="flex-1 text-red-600 border-red-200 hover:bg-red-50"
+                          >
+                            {revertCalibration.isPending ? 'Ångrar...' : 'Ja, ångra'}
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setConfirmRevert(false)}
+                            className="flex-1"
+                          >
+                            Avbryt
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setConfirmRevert(true)}
+                        className="w-full text-neutral-600"
+                      >
+                        <Undo2 className="h-3.5 w-3.5 mr-1.5" />
+                        {`Ångra senaste kalibrering (→ ${Math.round(lastCalibration.previous_tdee)} kcal)`}
+                      </Button>
+                    ))}
 
                   {/* Calibration history */}
                   {calibrationHistoryList && calibrationHistoryList.length > 0 && (
