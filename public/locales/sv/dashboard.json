@@ -106,5 +106,11 @@
   "mode": {
     "showLess": "Visa mindre ↑",
     "showMore": "Visa mer detaljer ↓"
+  },
+  "quickLinks": {
+    "logFood": "Börja logga din mat",
+    "recipes": "Skapa recept",
+    "profile": "Gå till din profil",
+    "goalCalc": "Sätt ditt mål"
   }
 }

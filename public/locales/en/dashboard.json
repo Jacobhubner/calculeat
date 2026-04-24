@@ -106,5 +106,11 @@
   "mode": {
     "showLess": "Show less ↑",
     "showMore": "Show more details ↓"
+  },
+  "quickLinks": {
+    "logFood": "Start logging your food",
+    "recipes": "Create a recipe",
+    "profile": "Go to your profile",
+    "goalCalc": "Set your goal"
   }
 }
