@@ -161,7 +161,8 @@ export default function MetabolicCalibration({
   const updateProfile = useUpdateProfile()
   const createCalibrationHistory = useCreateCalibrationHistory()
   const revertCalibration = useRevertCalibration()
-  const { data: calibrationHistoryList } = useCalibrationHistory(profile.id)
+  const { data: calibrationHistoryList, isLoading: calibrationHistoryLoading } =
+    useCalibrationHistory(profile.id)
 
   // Date range for calorie intake — null until user clicks "Uppdatera"
   const [periodEndDate, setPeriodEndDate] = useState<Date | null>(null)
@@ -223,6 +224,8 @@ export default function MetabolicCalibration({
   // OR new calorie logs exist after last calibration,
   // OR enough days have passed (MIN_DAYS_BETWEEN_CALIBRATIONS).
   const newDataGuard = useMemo(() => {
+    if (calibrationHistoryLoading)
+      return { allowed: false, daysRemaining: 0, newWeightCount: 0, newLogCount: 0 }
     if (!lastActiveCalibration)
       return { allowed: true, daysRemaining: 0, newWeightCount: 0, newLogCount: 0 }
     if (calibrationApplied !== null)
@@ -245,7 +248,14 @@ export default function MetabolicCalibration({
     const allowed =
       daysSince >= MIN_DAYS_BETWEEN_CALIBRATIONS || newWeightCount > 0 || newLogCount > 0
     return { allowed, daysRemaining, newWeightCount, newLogCount }
-  }, [lastActiveCalibration, calibrationApplied, now, weightHistory, actualIntake])
+  }, [
+    calibrationHistoryLoading,
+    lastActiveCalibration,
+    calibrationApplied,
+    now,
+    weightHistory,
+    actualIntake,
+  ])
   const hasNewDataSinceCalibration = newDataGuard.allowed
 
   // Check which periods are available (for disabling dropdown options)
