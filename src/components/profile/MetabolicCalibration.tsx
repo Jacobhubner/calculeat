@@ -47,7 +47,6 @@ import {
   MIN_DATA_POINTS,
   MIN_DAYS_BETWEEN_CALIBRATIONS,
   buildClusters,
-  applyConvergenceSmoothing,
 } from '@/lib/calculations/calibration'
 import type { Profile, CalibrationResult, ProfileFormData } from '@/lib/types'
 import { toast } from 'sonner'
@@ -226,28 +225,8 @@ export default function MetabolicCalibration({
   const handleApplyCalibration = async () => {
     if (!data) return
 
-    // Apply convergence smoothing only if the clamp was NOT triggered.
-    // If clamp already limited the adjustment, applying smoothing on top would
-    // double-dampen the signal — use clampedTDEE directly in that case.
-    const clampWasApplied = Math.abs(data.clampedTDEE - data.rawTDEE) > 0.5
-
-    const convergence =
-      !clampWasApplied && calibrationHistoryList && calibrationHistoryList.length > 0
-        ? applyConvergenceSmoothing(
-            data.clampedTDEE,
-            calibrationHistoryList
-              .filter(c => !c.is_reverted)
-              .map(c => ({
-                applied_tdee: c.applied_tdee,
-                confidence_level: c.confidence_level,
-                calibrated_at: c.calibrated_at,
-                data_quality_index: c.data_quality_index,
-              }))
-          )
-        : null
-
-    const newTDEE = convergence ? convergence.smoothedTDEE : data.clampedTDEE
-    const smoothedTdee = convergence ? convergence.smoothedTDEE : null
+    const newTDEE = data.clampedTDEE
+    const smoothedTdee = null
 
     // Recalculate calorie range based on goal
     let caloriesMin = newTDEE * 0.97
