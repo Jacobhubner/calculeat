@@ -58,6 +58,44 @@ interface MetabolicCalibrationProps {
   onRevert?: () => void
 }
 
+function CalibrationHistoryList({
+  history,
+}: {
+  history: import('@/lib/types').CalibrationHistory[]
+}) {
+  const [open, setOpen] = useState(false)
+  const active = history.filter(c => !c.is_reverted)
+  if (active.length === 0) return null
+  return (
+    <div className="border-t border-neutral-100 pt-3">
+      <button
+        onClick={() => setOpen(o => !o)}
+        className="flex items-center gap-1.5 text-xs text-neutral-500 hover:text-neutral-700 w-full"
+      >
+        <ChevronDown className={`h-3.5 w-3.5 transition-transform ${open ? 'rotate-180' : ''}`} />
+        Kalibrerings­historik ({active.length})
+      </button>
+      {open && (
+        <div className="mt-2 space-y-1.5">
+          {active.map((c, i) => (
+            <div key={c.id} className="flex justify-between items-center text-xs text-neutral-600">
+              <span className="text-neutral-400">
+                {new Date(c.calibrated_at).toLocaleDateString('sv-SE', {
+                  day: 'numeric',
+                  month: 'short',
+                  year: 'numeric',
+                })}
+                {i === 0 && <span className="ml-1 text-primary-600 font-medium">(senaste)</span>}
+              </span>
+              <span className="font-semibold tabular-nums">{Math.round(c.applied_tdee)} kcal</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function MetabolicCalibration({
   profile,
   variant = 'full',
@@ -123,7 +161,12 @@ export default function MetabolicCalibration({
 
   const isFirstCalibration = !calibrationHistoryList || calibrationHistoryList.length === 0
   const lastCalibration = calibrationHistoryList?.[0]
-  const canRevert = lastCalibration && !lastCalibration.is_reverted
+  const canRevert = useMemo(() => {
+    if (!lastCalibration || lastCalibration.is_reverted) return false
+    const calibratedAt = new Date(lastCalibration.calibrated_at)
+    const daysSince = (new Date().getTime() - calibratedAt.getTime()) / (1000 * 60 * 60 * 24)
+    return daysSince < MIN_DAYS_BETWEEN_CALIBRATIONS
+  }, [lastCalibration])
 
   // The new-data guard should only block re-apply against the last *active* (non-reverted)
   // calibration. If that calibration was reverted, there is no active baseline to protect.
@@ -1439,7 +1482,7 @@ export default function MetabolicCalibration({
                     </>
                   )}
 
-                  {/* Undo last calibration — always visible when available */}
+                  {/* Undo last calibration — only within 14-day window */}
                   {canRevert && (
                     <Button
                       variant="outline"
@@ -1453,6 +1496,11 @@ export default function MetabolicCalibration({
                         ? 'Ångrar...'
                         : `Ångra senaste kalibrering (→ ${Math.round(lastCalibration.previous_tdee)} kcal)`}
                     </Button>
+                  )}
+
+                  {/* Calibration history */}
+                  {calibrationHistoryList && calibrationHistoryList.length > 0 && (
+                    <CalibrationHistoryList history={calibrationHistoryList} />
                   )}
                 </div>
               )}
