@@ -139,6 +139,17 @@ export default function WeightTracker({
   // Build chart data with rolling average (create a copy to avoid mutating the original)
   const chartData = [...weightTrend.chartDataWithTrend]
 
+  const weightBrushStart = useMemo(() => {
+    const cutoff = new Date().getTime() - 14 * 24 * 60 * 60 * 1000
+    const idx = chartData.findIndex(d => d.timestamp >= cutoff)
+    return idx >= 0 ? idx : Math.max(0, chartData.length - 14)
+  }, [chartData])
+  const bodyFatBrushStart = useMemo(() => {
+    const cutoff = new Date().getTime() - 14 * 24 * 60 * 60 * 1000
+    const idx = bodyFatChartData.findIndex(d => d.timestamp >= cutoff)
+    return idx >= 0 ? idx : Math.max(0, bodyFatChartData.length - 14)
+  }, [bodyFatChartData])
+
   // Pending-punkt borttagen — profilvikten visas inte i diagrammet om den inte är loggad
 
   // Calculate Y-axis domain
@@ -464,7 +475,7 @@ export default function WeightTracker({
 
                   <Brush
                     dataKey="timestamp"
-                    startIndex={Math.max(0, chartData.length - 14)}
+                    startIndex={weightBrushStart}
                     height={24}
                     stroke="#d1d5db"
                     fill="#f9fafb"
@@ -571,7 +582,7 @@ export default function WeightTracker({
 
                     <Brush
                       dataKey="timestamp"
-                      startIndex={Math.max(0, bodyFatChartData.length - 14)}
+                      startIndex={bodyFatBrushStart}
                       height={24}
                       stroke="#d1d5db"
                       fill="#f9fafb"
