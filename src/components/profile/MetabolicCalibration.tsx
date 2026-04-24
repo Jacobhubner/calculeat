@@ -223,13 +223,14 @@ export default function MetabolicCalibration({
   // OR new calorie logs exist after last calibration,
   // OR enough days have passed (MIN_DAYS_BETWEEN_CALIBRATIONS).
   const newDataGuard = useMemo(() => {
-    if (!lastActiveCalibration || !now)
+    if (!lastActiveCalibration)
       return { allowed: true, daysRemaining: 0, newWeightCount: 0, newLogCount: 0 }
     if (calibrationApplied !== null)
       return { allowed: true, daysRemaining: 0, newWeightCount: 0, newLogCount: 0 }
 
     const lastCalAt = new Date(lastActiveCalibration.calibrated_at)
-    const daysSince = (now.getTime() - lastCalAt.getTime()) / (1000 * 60 * 60 * 24)
+    const referenceNow = now ?? new Date()
+    const daysSince = (referenceNow.getTime() - lastCalAt.getTime()) / (1000 * 60 * 60 * 24)
     const daysRemaining = Math.max(0, Math.ceil(MIN_DAYS_BETWEEN_CALIBRATIONS - daysSince))
 
     const lastCalDateStr = lastCalAt.toISOString().split('T')[0]
