@@ -95,7 +95,7 @@ function CalibrationHistoryList({
               </span>
               <div className="flex items-center gap-2">
                 <span className="font-semibold tabular-nums">
-                  {Math.round(c.applied_tdee)} kcal
+                  {Math.round(c.previous_tdee)} → {Math.round(c.applied_tdee)} kcal
                 </span>
                 {confirmId === c.id ? (
                   <div className="flex items-center gap-1">
