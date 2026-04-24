@@ -29,6 +29,7 @@ import {
   ChevronRight,
   RefreshCw,
   Info,
+  Trash2,
 } from 'lucide-react'
 
 import { startOfDay, endOfDay, subDays, addDays, isBefore, format } from 'date-fns'
@@ -41,6 +42,7 @@ import {
   useCreateCalibrationHistory,
   useCalibrationHistory,
   useRevertCalibration,
+  useDeleteCalibrationHistory,
 } from '@/hooks'
 import {
   runCalibration,
@@ -60,10 +62,14 @@ interface MetabolicCalibrationProps {
 
 function CalibrationHistoryList({
   history,
+  profileId,
 }: {
   history: import('@/lib/types').CalibrationHistory[]
+  profileId: string
 }) {
   const [open, setOpen] = useState(false)
+  const [confirmId, setConfirmId] = useState<string | null>(null)
+  const deleteCalibration = useDeleteCalibrationHistory()
   const active = history.filter(c => !c.is_reverted)
   if (active.length === 0) return null
   return (
@@ -87,7 +93,39 @@ function CalibrationHistoryList({
                 })}
                 {i === 0 && <span className="ml-1 text-primary-600 font-medium">(senaste)</span>}
               </span>
-              <span className="font-semibold tabular-nums">{Math.round(c.applied_tdee)} kcal</span>
+              <div className="flex items-center gap-2">
+                <span className="font-semibold tabular-nums">
+                  {Math.round(c.applied_tdee)} kcal
+                </span>
+                {confirmId === c.id ? (
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => {
+                        deleteCalibration.mutate({ id: c.id, profileId })
+                        setConfirmId(null)
+                      }}
+                      className="text-red-600 hover:text-red-800 font-medium"
+                    >
+                      Ta bort
+                    </button>
+                    <span className="text-neutral-300">|</span>
+                    <button
+                      onClick={() => setConfirmId(null)}
+                      className="text-neutral-500 hover:text-neutral-700"
+                    >
+                      Avbryt
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setConfirmId(c.id)}
+                    className="text-neutral-300 hover:text-red-500 transition-colors"
+                    aria-label="Ta bort"
+                  >
+                    <Trash2 className="h-3 w-3" />
+                  </button>
+                )}
+              </div>
             </div>
           ))}
         </div>
@@ -1500,7 +1538,10 @@ export default function MetabolicCalibration({
 
                   {/* Calibration history */}
                   {calibrationHistoryList && calibrationHistoryList.length > 0 && (
-                    <CalibrationHistoryList history={calibrationHistoryList} />
+                    <CalibrationHistoryList
+                      history={calibrationHistoryList}
+                      profileId={profile.id}
+                    />
                   )}
                 </div>
               )}
