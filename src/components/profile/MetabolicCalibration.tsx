@@ -203,9 +203,7 @@ export default function MetabolicCalibration({
   const lastCalibration = calibrationHistoryList?.[0]
   const canRevert = useMemo(() => {
     if (!lastCalibration || lastCalibration.is_reverted) return false
-    const calibratedAt = new Date(lastCalibration.calibrated_at)
-    const daysSince = (new Date().getTime() - calibratedAt.getTime()) / (1000 * 60 * 60 * 24)
-    return daysSince < 14 // revert window: 14 days from apply
+    return true
   }, [lastCalibration])
 
   // The new-data guard should only block re-apply against the last *active* (non-reverted)
