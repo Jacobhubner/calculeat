@@ -228,8 +228,6 @@ export default function MetabolicCalibration({
       return { allowed: false, daysRemaining: 0, newWeightCount: 0, newLogCount: 0 }
     if (!lastActiveCalibration)
       return { allowed: true, daysRemaining: 0, newWeightCount: 0, newLogCount: 0 }
-    if (calibrationApplied !== null)
-      return { allowed: true, daysRemaining: 0, newWeightCount: 0, newLogCount: 0 }
 
     const lastCalAt = new Date(lastActiveCalibration.calibrated_at)
     const referenceNow = now ?? new Date()
@@ -248,14 +246,7 @@ export default function MetabolicCalibration({
     const allowed =
       daysSince >= MIN_DAYS_BETWEEN_CALIBRATIONS || newWeightCount > 0 || newLogCount > 0
     return { allowed, daysRemaining, newWeightCount, newLogCount }
-  }, [
-    calibrationHistoryLoading,
-    lastActiveCalibration,
-    calibrationApplied,
-    now,
-    weightHistory,
-    actualIntake,
-  ])
+  }, [calibrationHistoryLoading, lastActiveCalibration, now, weightHistory, actualIntake])
   const hasNewDataSinceCalibration = newDataGuard.allowed
 
   // Check which periods are available (for disabling dropdown options)
