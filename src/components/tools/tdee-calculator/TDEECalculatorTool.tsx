@@ -165,6 +165,18 @@ export default function TDEECalculatorTool() {
   const tdee = useMemo(() => {
     if (!bmr || !palSystem || !profileData?.gender) return null
 
+    // Require activity level for PAL systems that use it (all except Beräkna and Custom PAL)
+    const palSystemsRequiringActivityLevel: PALSystem[] = [
+      'FAO/WHO/UNU based PAL values',
+      'DAMNRIPPED PAL values',
+      'Pro Physique PAL values',
+      'Fitness Stuff PAL values',
+      'Basic internet PAL values',
+    ]
+    if (palSystemsRequiringActivityLevel.includes(palSystem as PALSystem) && !activityLevel) {
+      return null
+    }
+
     // Special validation for Beräkna din aktivitetsnivå
     if (palSystem === 'Beräkna din aktivitetsnivå') {
       // Require only 4 fields to be filled:
