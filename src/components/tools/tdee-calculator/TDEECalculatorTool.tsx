@@ -564,80 +564,69 @@ export default function TDEECalculatorTool() {
                     </option>
                   </select>
 
-                  {/* Warning if body fat required */}
-                  {bmrFormula && requiresBodyFat(bmrFormula) && !localBodyFat && (
-                    <div className="mt-3 flex gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl">
-                      <span className="text-xl text-amber-600 flex-shrink-0">⚠</span>
-                      <p className="text-sm text-amber-800 leading-relaxed">
-                        {t('tdeeCalc.bmr.bodyFatWarning')}
+                  {/* Body fat — shown inline when formula requires it */}
+                  {bmrFormula && requiresBodyFat(bmrFormula) && (
+                    <div className="mt-4 pt-4 border-t border-neutral-100 space-y-3">
+                      <p className="text-sm font-medium text-neutral-700">
+                        {t('tdeeCalc.bodyFat.title')}
                       </p>
+                      {profileData?.body_fat_percentage && (
+                        <div className="flex gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setUseSavedBodyFat(true)}
+                            className={`flex-1 px-3 py-2 rounded-lg border text-sm font-medium transition-colors ${
+                              useSavedBodyFat
+                                ? 'border-primary-500 bg-primary-50 text-primary-700'
+                                : 'border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300'
+                            }`}
+                          >
+                            {t('tdeeCalc.bodyFat.savedLabel')} {profileData.body_fat_percentage}%
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setUseSavedBodyFat(false)}
+                            className={`flex-1 px-3 py-2 rounded-lg border text-sm font-medium transition-colors ${
+                              !useSavedBodyFat
+                                ? 'border-primary-500 bg-primary-50 text-primary-700'
+                                : 'border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300'
+                            }`}
+                          >
+                            {(t as (k: string) => string)('tdeeCalc.bodyFat.otherValue')}
+                          </button>
+                        </div>
+                      )}
+                      {(!profileData?.body_fat_percentage || !useSavedBodyFat) && (
+                        <div>
+                          <input
+                            type="number"
+                            value={manualBodyFat}
+                            onChange={e => setManualBodyFat(e.target.value)}
+                            className="w-full px-3 py-2 rounded-lg border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 font-medium"
+                            placeholder={t('tdeeCalc.bodyFat.fieldLabel')}
+                            min="3"
+                            max="60"
+                            step="0.1"
+                          />
+                          <p className="mt-1.5 text-xs text-neutral-500">
+                            {t('tdeeCalc.bodyFat.fieldHint')}
+                          </p>
+                        </div>
+                      )}
+                      {!localBodyFat && (
+                        <div className="flex gap-3 p-3 bg-amber-50 border border-amber-200 rounded-xl">
+                          <span className="text-amber-600 flex-shrink-0">⚠</span>
+                          <p className="text-sm text-amber-800">
+                            {t('tdeeCalc.bmr.bodyFatWarning')}
+                          </p>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
               </div>
             </CardContent>
           </Card>
-
-          {/* Body Fat Percentage — only shown when selected BMR formula requires it */}
-          {bmrFormula && requiresBodyFat(bmrFormula) && (
-            <Card>
-              <CardHeader>
-                <CardTitle>{t('tdeeCalc.bodyFat.title')}</CardTitle>
-                <CardDescription>{t('tdeeCalc.bodyFat.description')}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {profileData?.body_fat_percentage && (
-                    <div className="flex gap-3">
-                      <button
-                        type="button"
-                        onClick={() => setUseSavedBodyFat(true)}
-                        className={`flex-1 px-4 py-3 rounded-xl border text-sm font-medium transition-colors ${
-                          useSavedBodyFat
-                            ? 'border-primary-500 bg-primary-50 text-primary-700'
-                            : 'border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300'
-                        }`}
-                      >
-                        {t('tdeeCalc.bodyFat.savedLabel')} {profileData.body_fat_percentage}%
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setUseSavedBodyFat(false)}
-                        className={`flex-1 px-4 py-3 rounded-xl border text-sm font-medium transition-colors ${
-                          !useSavedBodyFat
-                            ? 'border-primary-500 bg-primary-50 text-primary-700'
-                            : 'border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300'
-                        }`}
-                      >
-                        {(t as (k: string) => string)('tdeeCalc.bodyFat.otherValue')}
-                      </button>
-                    </div>
-                  )}
-
-                  {(!profileData?.body_fat_percentage || !useSavedBodyFat) && (
-                    <div>
-                      <label className="block text-sm font-medium text-neutral-900 mb-2">
-                        {t('tdeeCalc.bodyFat.fieldLabel')}
-                      </label>
-                      <input
-                        type="number"
-                        value={manualBodyFat}
-                        onChange={e => setManualBodyFat(e.target.value)}
-                        className="w-full px-3 py-2 rounded-lg border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 font-medium"
-                        placeholder=""
-                        min="3"
-                        max="60"
-                        step="0.1"
-                      />
-                      <p className="mt-2 text-xs text-neutral-600">
-                        {t('tdeeCalc.bodyFat.fieldHint')}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          )}
 
           {/* PAL System Selection */}
           <Card>
