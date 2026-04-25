@@ -235,20 +235,20 @@ export default function DashboardPage() {
             </div>
 
             {/* Quick links */}
-            <div className="space-y-3">
+            <div className="grid grid-cols-2 gap-3">
               {quickLinks.map(({ icon: Icon, label, to }) => (
                 <button
                   key={to}
                   onClick={() => navigate(to)}
-                  className="w-full flex items-center gap-4 bg-white border border-neutral-200 rounded-2xl px-5 py-4 hover:border-primary-300 hover:bg-primary-50 transition-colors shadow-sm"
+                  className="flex flex-col items-start gap-3 bg-white border border-neutral-200 rounded-2xl px-5 py-4 hover:border-primary-300 hover:bg-primary-50 transition-colors shadow-sm"
                 >
-                  <div className="flex-shrink-0 h-10 w-10 rounded-xl bg-primary-100 flex items-center justify-center">
+                  <div className="h-10 w-10 rounded-xl bg-primary-100 flex items-center justify-center">
                     <Icon className="h-5 w-5 text-primary-600" />
                   </div>
-                  <span className="flex-1 text-left text-base font-medium text-neutral-800">
-                    {label}
-                  </span>
-                  <ChevronRight className="h-5 w-5 text-neutral-400 flex-shrink-0" />
+                  <div className="flex items-center justify-between w-full">
+                    <span className="text-sm font-medium text-neutral-800 text-left">{label}</span>
+                    <ChevronRight className="h-4 w-4 text-neutral-400 flex-shrink-0" />
+                  </div>
                 </button>
               ))}
             </div>
