@@ -165,6 +165,9 @@ export default function TDEECalculatorTool() {
   const tdee = useMemo(() => {
     if (!bmr || !palSystem || !profileData?.gender) return null
 
+    // Require custom PAL value when Custom PAL system is selected
+    if (palSystem === 'Custom PAL' && !customPAL) return null
+
     // Require activity level for PAL systems that use it (all except Beräkna and Custom PAL)
     const palSystemsRequiringActivityLevel: PALSystem[] = [
       'FAO/WHO/UNU based PAL values',
