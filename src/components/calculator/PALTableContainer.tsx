@@ -67,7 +67,7 @@ export default function PALTableContainer({
             />
             <p className="text-xs text-neutral-500">
               Ange ditt eget PAL-värde om du vet det. Vanliga värden ligger mellan 1.2
-              (stillasittande) och 2.5 (mycket aktiv).
+              (stillasittande) och 2.2 (mycket aktiv).
             </p>
             {customPALOutOfRange && (
               <div className="flex gap-2 p-3 bg-amber-50 border border-amber-200 rounded-xl">
