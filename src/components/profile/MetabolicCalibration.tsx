@@ -200,15 +200,15 @@ export default function MetabolicCalibration({
   )
 
   const isFirstCalibration = !calibrationHistoryList || calibrationHistoryList.length === 0
-  const lastCalibration = calibrationHistoryList?.[0]
-  const canRevert = useMemo(() => {
-    if (!lastCalibration || lastCalibration.is_reverted) return false
-    return profile.tdee_source === 'metabolic_calibration'
-  }, [lastCalibration, profile.tdee_source])
 
   // The new-data guard should only block re-apply against the last *active* (non-reverted)
   // calibration. If that calibration was reverted, there is no active baseline to protect.
   const lastActiveCalibration = calibrationHistoryList?.find(c => !c.is_reverted) ?? null
+
+  const canRevert = useMemo(() => {
+    if (!lastActiveCalibration) return false
+    return profile.tdee_source === 'metabolic_calibration'
+  }, [lastActiveCalibration, profile.tdee_source])
 
   // B+ availability guard:
   // 1. Selected period must not overlap last calibration's period (selectedStart > lastEndDate)
@@ -390,13 +390,13 @@ export default function MetabolicCalibration({
   }
 
   const handleRevertCalibration = async () => {
-    if (!lastCalibration) return
+    if (!lastActiveCalibration) return
 
     try {
       await revertCalibration.mutateAsync({
-        calibrationId: lastCalibration.id,
+        calibrationId: lastActiveCalibration.id,
         profileId: profile.id,
-        previousTdee: lastCalibration.previous_tdee,
+        previousTdee: lastActiveCalibration.previous_tdee,
       })
       onRevert?.()
     } catch {
@@ -1533,8 +1533,8 @@ export default function MetabolicCalibration({
                     (confirmRevert ? (
                       <div className="border border-neutral-200 rounded-lg p-3 space-y-2">
                         <p className="text-xs text-neutral-700">
-                          Återställer TDEE till {Math.round(lastCalibration.previous_tdee)} kcal. Är
-                          du säker?
+                          Återställer TDEE till {Math.round(lastActiveCalibration!.previous_tdee)}{' '}
+                          kcal. Är du säker?
                         </p>
                         <div className="flex gap-2">
                           <Button
@@ -1567,7 +1567,7 @@ export default function MetabolicCalibration({
                         className="w-full text-neutral-600"
                       >
                         <Undo2 className="h-3.5 w-3.5 mr-1.5" />
-                        {`Ångra senaste kalibrering (→ ${Math.round(lastCalibration.previous_tdee)} kcal)`}
+                        {`Ångra senaste kalibrering (→ ${Math.round(lastActiveCalibration!.previous_tdee)} kcal)`}
                       </Button>
                     ))}
 
