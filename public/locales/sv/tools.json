@@ -375,6 +375,6 @@
     "dailyStepsPlaceholder": "Välj stegintervall...",
     "customPAL": "Anpassat PAL-värde *",
     "customPALHint": "Ange ditt eget PAL-värde om du vet det",
-    "customPALWarning": "PAL-värdet bör vara mellan 1.0 och 3.0"
+    "customPALWarning": "Ovanligt PAL-värde — normalt intervall är 1.0–2.5"
   }
 }

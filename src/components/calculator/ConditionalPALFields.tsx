@@ -247,9 +247,8 @@ export default function ConditionalPALFields({
         )
 
       case 'Custom PAL': {
-        const customPALValue = Number(watch('custom_pal'))
-        const customPALOutOfRange =
-          customPALValue > 0 && (customPALValue < 1.0 || customPALValue > 3.0)
+        const rawPAL = parseFloat(watch('custom_pal'))
+        const customPALOutOfRange = !isNaN(rawPAL) && (rawPAL < 1.0 || rawPAL > 2.5)
         return (
           <div className="space-y-4">
             <div>
@@ -257,9 +256,7 @@ export default function ConditionalPALFields({
               <Input
                 id="custom_pal"
                 type="number"
-                min={1.0}
-                max={3.0}
-                step={0.1}
+                step={0.01}
                 className="mt-2"
                 {...register('custom_pal', { valueAsNumber: true })}
               />

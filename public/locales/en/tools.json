@@ -375,6 +375,6 @@
     "dailyStepsPlaceholder": "Select step range...",
     "customPAL": "Custom PAL value *",
     "customPALHint": "Enter your own PAL value if you know it",
-    "customPALWarning": "PAL value should be between 1.0 and 3.0"
+    "customPALWarning": "Unusual PAL value — normal range is 1.0–2.5"
   }
 }
