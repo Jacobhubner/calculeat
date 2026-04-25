@@ -373,7 +373,8 @@
     "trainingDuration": "Minuter per pass *",
     "dailySteps": "Dagliga steg *",
     "dailyStepsPlaceholder": "Välj stegintervall...",
-    "customPAL": "Anpassat PAL-värde (1.0 - 3.0) *",
-    "customPALHint": "Ange ditt eget PAL-värde om du vet det"
+    "customPAL": "Anpassat PAL-värde *",
+    "customPALHint": "Ange ditt eget PAL-värde om du vet det",
+    "customPALWarning": "PAL-värdet bör vara mellan 1.0 och 3.0"
   }
 }

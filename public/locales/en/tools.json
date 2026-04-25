@@ -373,7 +373,8 @@
     "trainingDuration": "Minutes per session *",
     "dailySteps": "Daily steps *",
     "dailyStepsPlaceholder": "Select step range...",
-    "customPAL": "Custom PAL value (1.0 - 3.0) *",
-    "customPALHint": "Enter your own PAL value if you know it"
+    "customPAL": "Custom PAL value *",
+    "customPALHint": "Enter your own PAL value if you know it",
+    "customPALWarning": "PAL value should be between 1.0 and 3.0"
   }
 }

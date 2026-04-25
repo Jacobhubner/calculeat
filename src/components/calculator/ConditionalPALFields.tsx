@@ -150,7 +150,9 @@ export default function ConditionalPALFields({
                 )}
             </div>
             <div>
-              <Label htmlFor="training_frequency_per_week">{t('palFields.trainingFrequency')}</Label>
+              <Label htmlFor="training_frequency_per_week">
+                {t('palFields.trainingFrequency')}
+              </Label>
               <Input
                 id="training_frequency_per_week"
                 type="number"
@@ -178,7 +180,9 @@ export default function ConditionalPALFields({
         return (
           <div className="space-y-4">
             <div>
-              <Label htmlFor="training_frequency_per_week">{t('palFields.trainingFrequency')}</Label>
+              <Label htmlFor="training_frequency_per_week">
+                {t('palFields.trainingFrequency')}
+              </Label>
               <Input
                 id="training_frequency_per_week"
                 type="number"
@@ -242,7 +246,10 @@ export default function ConditionalPALFields({
           </div>
         )
 
-      case 'Custom PAL':
+      case 'Custom PAL': {
+        const customPALValue = Number(watch('custom_pal'))
+        const customPALOutOfRange =
+          customPALValue > 0 && (customPALValue < 1.0 || customPALValue > 3.0)
         return (
           <div className="space-y-4">
             <div>
@@ -256,12 +263,17 @@ export default function ConditionalPALFields({
                 className="mt-2"
                 {...register('custom_pal', { valueAsNumber: true })}
               />
-              <p className="text-xs text-neutral-500 mt-1">
-                {t('palFields.customPALHint')}
-              </p>
+              <p className="text-xs text-neutral-500 mt-1">{t('palFields.customPALHint')}</p>
+              {customPALOutOfRange && (
+                <div className="mt-2 flex gap-2 p-3 bg-amber-50 border border-amber-200 rounded-xl">
+                  <span className="text-amber-600 flex-shrink-0">⚠</span>
+                  <p className="text-sm text-amber-800">{t('palFields.customPALWarning')}</p>
+                </div>
+              )}
             </div>
           </div>
         )
+      }
 
       default:
         return null
