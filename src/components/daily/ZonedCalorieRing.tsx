@@ -162,7 +162,9 @@ export function ZonedCalorieRing({
           <p className="text-lg font-semibold text-neutral-900">
             {Math.round(safeMin)}-{Math.round(safeMax)}
           </p>
-          <p className="text-[10px] text-neutral-500 uppercase tracking-wide">{t('ring.goal')}</p>
+          <p className="text-[10px] text-neutral-500 uppercase tracking-wide">
+            {t('ring.goal')} kcal
+          </p>
         </div>
         <div className="h-8 w-px bg-neutral-200" />
         <div>
@@ -172,7 +174,7 @@ export function ZonedCalorieRing({
             {isOver ? `+${Math.round(consumed - max)}` : Math.round(remaining)}
           </p>
           <p className="text-[10px] text-neutral-500 uppercase tracking-wide">
-            {isOver ? t('ring.over') : t('ring.remaining')}
+            {isOver ? t('ring.over') : t('ring.remaining')} kcal
           </p>
         </div>
       </div>
