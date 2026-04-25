@@ -107,7 +107,7 @@ export default function TodayPage() {
   const activeProfile = useProfileStore(state => state.activeProfile)
   const { data: allProfiles } = useProfiles()
   const profile = allProfiles?.find(p => p.id === activeProfile?.id)
-  const calculations = useCalculations(profile as UserProfile | undefined)
+  useCalculations(profile as UserProfile | undefined)
 
   // Calculate daily summary using the new hook
   const dailySummary = useDailySummary(todayLog, profile, mealSettings)
@@ -805,14 +805,14 @@ export default function TodayPage() {
 
         {/* Sidebar - Summary */}
         <div className="space-y-6 min-w-0 overflow-hidden">
-          {/* Recent Foods */}
-          <RecentFoodsCard dailyLogId={todayLog?.id} onFoodSelect={handleAddFromSidebar} />
-
           {/* Plate Calculator */}
           <PlateCalculator onAddToMeal={handleAddFromSidebar} />
 
           {/* Food Suggestions */}
           <FoodSuggestions onAddToMeal={handleAddFromSidebar} />
+
+          {/* Recent Foods */}
+          <RecentFoodsCard dailyLogId={todayLog?.id} onFoodSelect={handleAddFromSidebar} />
 
           {/* Tips */}
           <Card className="bg-gradient-to-br from-primary-50 to-accent-50 border-primary-200">
