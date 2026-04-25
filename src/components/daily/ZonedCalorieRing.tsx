@@ -160,21 +160,21 @@ export function ZonedCalorieRing({
       <div className="mt-4 flex items-center justify-center gap-4 sm:gap-6 text-center">
         <div>
           <p className="text-lg font-semibold text-neutral-900">
-            {Math.round(safeMin)}-{Math.round(safeMax)}
+            {Math.round(safeMin)}-{Math.round(safeMax)}{' '}
+            <span className="text-sm font-normal text-neutral-400">kcal</span>
           </p>
-          <p className="text-[10px] text-neutral-500 uppercase tracking-wide">
-            {t('ring.goal')} kcal
-          </p>
+          <p className="text-[10px] text-neutral-500 uppercase tracking-wide">{t('ring.goal')}</p>
         </div>
         <div className="h-8 w-px bg-neutral-200" />
         <div>
           <p
             className={cn('text-lg font-semibold', isOver ? 'text-error-600' : 'text-neutral-700')}
           >
-            {isOver ? `+${Math.round(consumed - max)}` : Math.round(remaining)}
+            {isOver ? `+${Math.round(consumed - max)}` : Math.round(remaining)}{' '}
+            <span className="text-sm font-normal text-neutral-400">kcal</span>
           </p>
           <p className="text-[10px] text-neutral-500 uppercase tracking-wide">
-            {isOver ? t('ring.over') : t('ring.remaining')} kcal
+            {isOver ? t('ring.over') : t('ring.remaining')}
           </p>
         </div>
       </div>
