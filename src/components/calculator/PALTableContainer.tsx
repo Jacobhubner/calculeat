@@ -52,7 +52,7 @@ export default function PALTableContainer({
         )
       case 'Custom PAL': {
         const rawPAL = watch ? parseFloat(watch('custom_pal')) : NaN
-        const customPALOutOfRange = !isNaN(rawPAL) && (rawPAL < 1.0 || rawPAL > 2.5)
+        const customPALOutOfRange = !isNaN(rawPAL) && (rawPAL < 1.2 || rawPAL > 2.2)
         return register ? (
           <div className="space-y-2">
             <label htmlFor="custom_pal" className="block text-sm font-medium text-neutral-700">
@@ -73,7 +73,7 @@ export default function PALTableContainer({
               <div className="flex gap-2 p-3 bg-amber-50 border border-amber-200 rounded-xl">
                 <span className="text-amber-600 flex-shrink-0">⚠</span>
                 <p className="text-sm text-amber-800">
-                  Ovanligt PAL-värde — normalt intervall är 1.0–2.5
+                  Ovanligt PAL-värde — normalt intervall är 1.2–2.2
                 </p>
               </div>
             )}
