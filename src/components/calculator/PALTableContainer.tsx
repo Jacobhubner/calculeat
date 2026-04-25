@@ -50,18 +50,18 @@ export default function PALTableContainer({
             tdee={tdee}
           />
         )
-      case 'Custom PAL':
+      case 'Custom PAL': {
+        const rawPAL = watch ? parseFloat(watch('custom_pal')) : NaN
+        const customPALOutOfRange = !isNaN(rawPAL) && (rawPAL < 1.0 || rawPAL > 2.5)
         return register ? (
           <div className="space-y-2">
             <label htmlFor="custom_pal" className="block text-sm font-medium text-neutral-700">
-              Anpassat PAL-värde (1.0 - 3.0) <span className="text-red-600">*</span>
+              Anpassat PAL-värde <span className="text-red-600">*</span>
             </label>
             <input
               id="custom_pal"
               type="number"
-              min={1.0}
-              max={3.0}
-              step={0.1}
+              step={0.01}
               className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
               {...register('custom_pal', { valueAsNumber: true })}
             />
@@ -69,12 +69,17 @@ export default function PALTableContainer({
               Ange ditt eget PAL-värde om du vet det. Vanliga värden ligger mellan 1.2
               (stillasittande) och 2.5 (mycket aktiv).
             </p>
+            {customPALOutOfRange && (
+              <div className="flex gap-2 p-3 bg-amber-50 border border-amber-200 rounded-xl">
+                <span className="text-amber-600 flex-shrink-0">⚠</span>
+                <p className="text-sm text-amber-800">
+                  Ovanligt PAL-värde — normalt intervall är 1.0–2.5
+                </p>
+              </div>
+            )}
           </div>
-        ) : (
-          <div className="p-4 text-center text-sm text-neutral-600">
-            <p>Ange ditt eget PAL-värde i fältet nedan (1.0 - 3.0)</p>
-          </div>
-        )
+        ) : null
+      }
       default:
         return null
     }
