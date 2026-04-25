@@ -25,6 +25,7 @@ import TDEEContent from '@/components/info/TDEEContent'
 import LBMvsFFMContent from '@/components/info/LBMvsFFMContent'
 import { translatePALSystem } from '@/lib/translations'
 import ComparisonTab from './ComparisonTab'
+import MetabolicCalibration from '@/components/profile/MetabolicCalibration'
 
 // Returns a finite number, or undefined. Handles '', NaN, null, and non-numeric strings.
 function toFiniteOrUndefined(value: unknown): number | undefined {
@@ -745,6 +746,9 @@ export default function TDEECalculatorTool() {
               </CardContent>
             </Card>
           )}
+
+          {/* Metabolic Calibration */}
+          {activeProfile && activeProfile.tdee && <MetabolicCalibration profile={activeProfile} />}
 
           {/* Modals */}
           {bmrFormula && (

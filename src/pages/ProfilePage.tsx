@@ -21,7 +21,6 @@ import MaxFatMetabolismCard from '@/components/profile/MaxFatMetabolismCard'
 import TDEEOptions from '@/components/profile/TDEEOptions'
 import BasicProfileForm from '@/components/profile/BasicProfileForm'
 import WeightTracker from '@/components/profile/WeightTracker'
-import MetabolicCalibration from '@/components/profile/MetabolicCalibration'
 import SetupProfileForm from '@/components/profile/SetupProfileForm'
 
 // Existing components (keep for now)
@@ -593,20 +592,6 @@ export default function ProfilePage() {
 
                 {/* Weight Tracking - Use mergedProfile to show pending changes */}
                 <WeightTracker profile={mergedProfile} onWeightChange={handleWeightChange} />
-
-                {/* Metabolic Calibration - Manual TDEE calibration based on weight changes */}
-                {activeProfile && activeProfile.tdee && (
-                  <MetabolicCalibration
-                    profile={mergedProfile}
-                    onRevert={() =>
-                      setPendingChanges(prev => {
-                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                        const { tdee, calories_min, calories_max, ...rest } = prev
-                        return rest
-                      })
-                    }
-                  />
-                )}
 
                 {/* Macro Distribution Settings */}
                 <MacroDistributionCard
