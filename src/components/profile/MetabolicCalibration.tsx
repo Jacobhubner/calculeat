@@ -203,8 +203,8 @@ export default function MetabolicCalibration({
   const lastCalibration = calibrationHistoryList?.[0]
   const canRevert = useMemo(() => {
     if (!lastCalibration || lastCalibration.is_reverted) return false
-    return true
-  }, [lastCalibration])
+    return profile.tdee_source === 'metabolic_calibration'
+  }, [lastCalibration, profile.tdee_source])
 
   // The new-data guard should only block re-apply against the last *active* (non-reverted)
   // calibration. If that calibration was reverted, there is no active baseline to protect.
