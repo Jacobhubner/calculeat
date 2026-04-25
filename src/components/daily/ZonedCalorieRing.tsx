@@ -176,24 +176,6 @@ export function ZonedCalorieRing({
           </p>
         </div>
       </div>
-
-      {/* Zone legend */}
-      <div className="mt-1 flex items-center justify-center gap-2 sm:gap-4 text-[10px]">
-        <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded-full bg-sky-400" />
-          <span className="text-neutral-500">&lt;{Math.round(safeMin)}</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded-full bg-success-500" />
-          <span className="text-neutral-500">
-            {Math.round(safeMin)}-{Math.round(safeMax)}
-          </span>
-        </div>
-        <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded-full bg-error-500" />
-          <span className="text-neutral-500">&gt;{Math.round(safeMax)}</span>
-        </div>
-      </div>
     </div>
   )
 }
