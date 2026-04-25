@@ -108,10 +108,12 @@ export default function TDEECalculatorTool() {
   const [useLoggedWeight, setUseLoggedWeight] = useState(true) // Start with logged weight by default
   const [localWeight, setLocalWeight] = useState('')
 
-  // Body fat percentage state (local override for calculator)
-  const [localBodyFat, setLocalBodyFat] = useState(
-    profileData?.body_fat_percentage?.toString() || ''
-  )
+  // Body fat percentage state
+  const [useSavedBodyFat, setUseSavedBodyFat] = useState(true)
+  const [manualBodyFat, setManualBodyFat] = useState('')
+  const localBodyFat = useSavedBodyFat
+    ? (profileData?.body_fat_percentage?.toString() ?? '')
+    : manualBodyFat
 
   // Set weight when weight history or selection changes
   useMemo(() => {
@@ -121,13 +123,6 @@ export default function TDEECalculatorTool() {
       setLocalWeight(profileData.weight_kg.toString())
     }
   }, [useLoggedWeight, latestLoggedWeight, profileData?.weight_kg])
-
-  // Set body fat percentage when profile data loads
-  useMemo(() => {
-    if (profileData?.body_fat_percentage) {
-      setLocalBodyFat(profileData.body_fat_percentage.toString())
-    }
-  }, [profileData?.body_fat_percentage])
 
   // BMR and PAL state
   const [bmrFormula, setBmrFormula] = useState<BMRFormula | ''>('')
@@ -508,43 +503,6 @@ export default function TDEECalculatorTool() {
             </CardContent>
           </Card>
 
-          {/* Body Fat Percentage Input */}
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('tdeeCalc.bodyFat.title')}</CardTitle>
-              <CardDescription>{t('tdeeCalc.bodyFat.description')}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {profileData?.body_fat_percentage && (
-                  <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                    <p className="text-sm text-blue-900">
-                      <strong>{t('tdeeCalc.bodyFat.savedLabel')}</strong>{' '}
-                      {profileData.body_fat_percentage}%
-                    </p>
-                  </div>
-                )}
-
-                <div>
-                  <label className="block text-sm font-medium text-neutral-900 mb-2">
-                    {t('tdeeCalc.bodyFat.fieldLabel')}
-                  </label>
-                  <input
-                    type="number"
-                    value={localBodyFat}
-                    onChange={e => setLocalBodyFat(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 font-medium"
-                    placeholder=""
-                    min="3"
-                    max="60"
-                    step="0.1"
-                  />
-                  <p className="mt-2 text-xs text-neutral-600">{t('tdeeCalc.bodyFat.fieldHint')}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
           {/* BMR Formula Selection */}
           <Card>
             <CardHeader>
@@ -619,6 +577,67 @@ export default function TDEECalculatorTool() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Body Fat Percentage — only shown when selected BMR formula requires it */}
+          {bmrFormula && requiresBodyFat(bmrFormula) && (
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('tdeeCalc.bodyFat.title')}</CardTitle>
+                <CardDescription>{t('tdeeCalc.bodyFat.description')}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {profileData?.body_fat_percentage && (
+                    <div className="flex gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setUseSavedBodyFat(true)}
+                        className={`flex-1 px-4 py-3 rounded-xl border text-sm font-medium transition-colors ${
+                          useSavedBodyFat
+                            ? 'border-primary-500 bg-primary-50 text-primary-700'
+                            : 'border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300'
+                        }`}
+                      >
+                        {t('tdeeCalc.bodyFat.savedLabel')} {profileData.body_fat_percentage}%
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setUseSavedBodyFat(false)}
+                        className={`flex-1 px-4 py-3 rounded-xl border text-sm font-medium transition-colors ${
+                          !useSavedBodyFat
+                            ? 'border-primary-500 bg-primary-50 text-primary-700'
+                            : 'border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300'
+                        }`}
+                      >
+                        {(t as (k: string) => string)('tdeeCalc.bodyFat.otherValue')}
+                      </button>
+                    </div>
+                  )}
+
+                  {(!profileData?.body_fat_percentage || !useSavedBodyFat) && (
+                    <div>
+                      <label className="block text-sm font-medium text-neutral-900 mb-2">
+                        {t('tdeeCalc.bodyFat.fieldLabel')}
+                      </label>
+                      <input
+                        type="number"
+                        value={manualBodyFat}
+                        onChange={e => setManualBodyFat(e.target.value)}
+                        className="w-full px-3 py-2 rounded-lg border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 font-medium"
+                        placeholder=""
+                        min="3"
+                        max="60"
+                        step="0.1"
+                      />
+                      <p className="mt-2 text-xs text-neutral-600">
+                        {t('tdeeCalc.bodyFat.fieldHint')}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* PAL System Selection */}
           <Card>

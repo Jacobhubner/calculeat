@@ -241,11 +241,12 @@
       "selectedWeight": "Selected weight for calculation:"
     },
     "bodyFat": {
-      "title": "Body fat percentage (optional)",
-      "description": "Some BMR formulas require body fat percentage for more accurate calculations",
-      "savedLabel": "Saved body fat percentage:",
+      "title": "Body fat percentage",
+      "description": "This formula requires body fat percentage to calculate",
+      "savedLabel": "Saved value:",
+      "otherValue": "Enter a different value",
       "fieldLabel": "Body fat percentage (%)",
-      "fieldHint": "Required for formulas like Cunningham, MacroFactor FFM/Athlete and Fitness Stuff Podcast"
+      "fieldHint": "Does not affect the saved value in your profile"
     },
     "manual": {
       "title": "Enter TDEE manually",

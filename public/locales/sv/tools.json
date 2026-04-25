@@ -241,11 +241,12 @@
       "selectedWeight": "Vald vikt för beräkning:"
     },
     "bodyFat": {
-      "title": "Kroppsfettprocent (valfri)",
-      "description": "Vissa BMR-formler kräver kroppsfettprocent för mer exakta beräkningar",
-      "savedLabel": "Sparad kroppsfettprocent:",
+      "title": "Kroppsfettprocent",
+      "description": "Denna formel kräver kroppsfettprocent för att kunna beräknas",
+      "savedLabel": "Sparat värde:",
+      "otherValue": "Ange annat värde",
       "fieldLabel": "Kroppsfettprocent (%)",
-      "fieldHint": "Krävs för formler som Cunningham, MacroFactor FFM/Athlete och Fitness Stuff Podcast"
+      "fieldHint": "Påverkar inte det sparade värdet i din profil"
     },
     "manual": {
       "title": "Ange TDEE manuellt",
