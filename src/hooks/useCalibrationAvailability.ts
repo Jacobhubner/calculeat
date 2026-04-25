@@ -8,7 +8,7 @@ import type {
 import {
   MIN_DATA_POINTS,
   MIN_CLUSTER_SIZE,
-  MIN_DAYS_BETWEEN_CALIBRATIONS,
+  MIN_NEW_WEIGHTS_AFTER_CALIBRATION,
   buildClusters,
 } from '@/lib/calculations/calibration'
 
@@ -137,8 +137,7 @@ export function useCalibrationAvailability(
       else confidencePreview = 'low'
     }
 
-    // Determine if recommended (adaptive frequency)
-    // Standard recommendation: 21-28 days. Hard minimum: 14 days.
+    // B+ availability: no period overlap + at least MIN_NEW_WEIGHTS_AFTER_CALIBRATION new weights
     const RECOMMENDED_MIN_DAYS = 21
     let isRecommended = false
     let reason = ''
@@ -146,31 +145,33 @@ export function useCalibrationAvailability(
     if (!lastCalibration) {
       isRecommended = true
       reason = 'Första kalibrering rekommenderas'
-    } else if (
-      daysSinceLastCalibration !== null &&
-      daysSinceLastCalibration >= MIN_DAYS_BETWEEN_CALIBRATIONS
-    ) {
-      if (daysSinceLastCalibration >= RECOMMENDED_MIN_DAYS) {
-        // After 21+ days: recommend if weight is trending
+    } else {
+      const lastEndDate = new Date(lastCalibration.calibrated_at)
+      lastEndDate.setHours(0, 0, 0, 0)
+
+      const newWeightsAfterLast = (weightHistory ?? []).filter(
+        w => new Date(w.recorded_at) > lastEndDate
+      ).length
+      const hasEnoughNewWeights = newWeightsAfterLast >= MIN_NEW_WEIGHTS_AFTER_CALIBRATION
+
+      if (!hasEnoughNewWeights) {
+        reason = `${newWeightsAfterLast} av ${MIN_NEW_WEIGHTS_AFTER_CALIBRATION} nya viktmätningar sedan senaste kalibreringen`
+      } else if (
+        daysSinceLastCalibration !== null &&
+        daysSinceLastCalibration >= RECOMMENDED_MIN_DAYS
+      ) {
         if (weightTrend === 'losing' || weightTrend === 'gaining') {
           isRecommended = true
           reason = `Vikten har ${weightTrend === 'losing' ? 'minskat' : 'ökat'} sedan senaste kalibreringen`
         } else if (weightTrend === 'stable' && daysSinceLastCalibration >= 28) {
           isRecommended = true
           reason = 'Dags att verifiera att TDEE fortfarande stämmer'
+        } else {
+          reason = 'Kalibrering tillgänglig vid behov'
         }
+      } else {
+        reason = 'Kalibrering tillgänglig vid behov'
       }
-      // 14-20 days: available but not recommended unless significant trend
-    }
-
-    if (
-      !isRecommended &&
-      daysSinceLastCalibration !== null &&
-      daysSinceLastCalibration < MIN_DAYS_BETWEEN_CALIBRATIONS
-    ) {
-      reason = `Vänta ${MIN_DAYS_BETWEEN_CALIBRATIONS - daysSinceLastCalibration} dagar till innan nästa kalibrering`
-    } else if (!isRecommended) {
-      reason = 'Kalibrering tillgänglig vid behov'
     }
 
     if (weightTrend === 'erratic') {
