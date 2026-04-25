@@ -1,10 +1,9 @@
 import { useState, useMemo } from 'react'
-import { Lightbulb, Plus, Settings2, Clock } from 'lucide-react'
+import { Lightbulb, Plus, Settings2 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useFoodSuggestions, type SuggestionSourceFilter } from '@/hooks/useFoodSuggestions'
-import { useRecentFoodItems } from '@/hooks/useRecentFoodItems'
 import type { FoodItem } from '@/hooks/useFoodItems'
 import type { FoodColor } from '@/lib/calculations/colorDensity'
 
@@ -40,8 +39,6 @@ function ScoreBadge({ score }: { score: number }) {
 }
 
 export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
-  const { data: recentFoods = [], isLoading: recentLoading } = useRecentFoodItems(8)
-
   // Form state
   const [targetCalories, setTargetCalories] = useState<number | ''>('')
   const [primaryMacro, setPrimaryMacro] = useState<'protein' | 'carbs' | 'fat'>('protein')
@@ -151,45 +148,6 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
       </CardHeader>
 
       <CardContent className="space-y-3">
-        {/* Senaste livsmedel */}
-        {(recentLoading || recentFoods.length > 0) && (
-          <div>
-            <div className="flex items-center gap-1.5 mb-2">
-              <Clock className="h-3.5 w-3.5 text-neutral-400" />
-              <span className="text-xs font-medium text-neutral-500">Senaste livsmedel</span>
-            </div>
-            {recentLoading ? (
-              <p className="text-xs text-neutral-400 py-1">Laddar...</p>
-            ) : (
-              <div className="space-y-0.5">
-                {recentFoods.map(food => (
-                  <div
-                    key={food.id}
-                    className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-neutral-50 transition-colors"
-                  >
-                    <span className="text-sm text-neutral-800 flex-1 min-w-0 truncate">
-                      {food.name}
-                    </span>
-                    <span className="text-xs text-neutral-400 flex-shrink-0">
-                      {Math.round(food.calories ?? 0)} kcal/100g
-                    </span>
-                    {onAddToMeal && (
-                      <button
-                        onClick={() => onAddToMeal(food, 100, 'g')}
-                        className="p-1 rounded bg-primary-600 text-white hover:bg-primary-700 transition-colors flex-shrink-0"
-                        title="Lägg till i måltid"
-                      >
-                        <Plus className="h-3.5 w-3.5" />
-                      </button>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-            <div className="border-t border-neutral-100 mt-3" />
-          </div>
-        )}
-
         {/* QuickTargetBar - Inline inputs */}
         <div className="flex items-center gap-2 flex-wrap">
           <Input
