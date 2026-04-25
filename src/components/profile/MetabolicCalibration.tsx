@@ -1480,9 +1480,9 @@ export default function MetabolicCalibration({
                         <div className="text-xs space-y-2 rounded-lg bg-neutral-50 border border-neutral-200 p-3">
                           {availabilityGuard.overlaps && (
                             <div>
-                              <p className="font-medium text-amber-700">
-                                Den valda perioden överlappar din senaste kalibrering — välj ett
-                                senare slutdatum
+                              <p className="font-medium text-neutral-600">
+                                Det valda periodfönstret överlappar din senaste kalibrering — samma
+                                dagar skulle räknas igen
                               </p>
                               <p className="mt-1 text-neutral-500">
                                 Nästa rekommenderade kalibrering:{' '}
