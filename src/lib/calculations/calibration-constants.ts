@@ -28,8 +28,8 @@ export const BASE_MAX_ADJUSTMENT: Record<14 | 21 | 28, number> = {
   28: 0.2,
 }
 
-/** Minimum days between calibrations */
-export const MIN_DAYS_BETWEEN_CALIBRATIONS = 14
+/** Minimum new weight measurements after last calibration end date before re-applying */
+export const MIN_NEW_WEIGHTS_AFTER_CALIBRATION = 3
 
 /** Absolute TDEE floor/ceiling */
 export const TDEE_FLOOR = 1200

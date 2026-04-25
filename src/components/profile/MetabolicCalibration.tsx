@@ -1,4 +1,4 @@
-/**
+﻿/**
  * MetabolicCalibration - Kalibrera TDEE baserat på viktförändringar
  *
  * Använder kluster-medelvärde (tredjedelsindelning) för robust start-/slutvikt.
@@ -47,7 +47,7 @@ import {
 import {
   runCalibration,
   MIN_DATA_POINTS,
-  MIN_DAYS_BETWEEN_CALIBRATIONS,
+  MIN_NEW_WEIGHTS_AFTER_CALIBRATION,
   buildClusters,
 } from '@/lib/calculations/calibration'
 import type { Profile, CalibrationResult, ProfileFormData } from '@/lib/types'
@@ -205,49 +205,48 @@ export default function MetabolicCalibration({
     if (!lastCalibration || lastCalibration.is_reverted) return false
     const calibratedAt = new Date(lastCalibration.calibrated_at)
     const daysSince = (new Date().getTime() - calibratedAt.getTime()) / (1000 * 60 * 60 * 24)
-    return daysSince < MIN_DAYS_BETWEEN_CALIBRATIONS
+    return daysSince < 14 // revert window: 14 days from apply
   }, [lastCalibration])
 
   // The new-data guard should only block re-apply against the last *active* (non-reverted)
   // calibration. If that calibration was reverted, there is no active baseline to protect.
   const lastActiveCalibration = calibrationHistoryList?.find(c => !c.is_reverted) ?? null
 
-  // Days until the next recommended calibration (21 days after last applied)
-  const daysUntilNextCalibration = useMemo(() => {
-    if (!calibrationApplied) return null
-    // calibrationApplied was just set — next recommended is 21 days from now
-    return 21
-  }, [calibrationApplied])
-
-  // Guard against applying the same dataset twice.
-  // Allow apply if: new weight entries exist after last calibration,
-  // OR new calorie logs exist after last calibration,
-  // OR enough days have passed (MIN_DAYS_BETWEEN_CALIBRATIONS).
-  const newDataGuard = useMemo(() => {
+  // B+ availability guard:
+  // 1. Selected period must not overlap last calibration's period (selectedStart > lastEndDate)
+  // 2. At least MIN_NEW_WEIGHTS_AFTER_CALIBRATION new weight entries after lastEndDate
+  const availabilityGuard = useMemo(() => {
     if (calibrationHistoryLoading)
-      return { allowed: false, daysRemaining: 0, newWeightCount: 0, newLogCount: 0 }
+      return { allowed: false, overlaps: false, newWeightCount: 0, nextAvailableDate: null }
     if (!lastActiveCalibration)
-      return { allowed: true, daysRemaining: 0, newWeightCount: 0, newLogCount: 0 }
+      return { allowed: true, overlaps: false, newWeightCount: 0, nextAvailableDate: null }
 
-    const lastCalAt = new Date(lastActiveCalibration.calibrated_at)
-    const referenceNow = now ?? new Date()
-    const daysSince = (referenceNow.getTime() - lastCalAt.getTime()) / (1000 * 60 * 60 * 24)
-    const daysRemaining = Math.max(0, Math.ceil(MIN_DAYS_BETWEEN_CALIBRATIONS - daysSince))
+    // Last calibration's end date = calibrated_at date (period ends when calibration is applied)
+    const lastEndDate = startOfDay(new Date(lastActiveCalibration.calibrated_at))
+    // Last calibration's start date = end - time_period_days
+    const lastStartDate = subDays(lastEndDate, lastActiveCalibration.time_period_days)
 
-    const lastCalDateStr = lastCalAt.toISOString().split('T')[0]
+    // Selected period: startDate is calculated from periodEndDate and timePeriod
+    const selectedStart = startDate ? startOfDay(startDate) : null
 
+    // Overlap check: selected period overlaps if selectedStart <= lastEndDate
+    const overlaps = selectedStart ? !isBefore(lastEndDate, selectedStart) : false
+
+    // New weight measurements strictly after the last calibration's end date
     const newWeightCount = (weightHistory ?? []).filter(
-      w => new Date(w.recorded_at) > lastCalAt
+      w => startOfDay(new Date(w.recorded_at)) > lastEndDate
     ).length
-    const newLogCount = (actualIntake?.dailyCalories ?? []).filter(
-      d => d.date > lastCalDateStr && d.calories > 800
-    ).length
+    const hasEnoughNewWeights = newWeightCount >= MIN_NEW_WEIGHTS_AFTER_CALIBRATION
 
-    const allowed =
-      daysSince >= MIN_DAYS_BETWEEN_CALIBRATIONS || newWeightCount > 0 || newLogCount > 0
-    return { allowed, daysRemaining, newWeightCount, newLogCount }
-  }, [calibrationHistoryLoading, lastActiveCalibration, now, weightHistory, actualIntake])
-  const hasNewDataSinceCalibration = newDataGuard.allowed
+    const allowed = !overlaps && hasEnoughNewWeights
+
+    // Next available date: the later of (lastEndDate + 1 day) as period start requirement
+    // and the date when we expect the 3rd new weight (unknown, so just show lastEndDate + 1)
+    const nextAvailableDate = addDays(lastEndDate, 1)
+
+    return { allowed, overlaps, newWeightCount, nextAvailableDate, lastStartDate, lastEndDate }
+  }, [calibrationHistoryLoading, lastActiveCalibration, startDate, weightHistory])
+  const hasNewDataSinceCalibration = availabilityGuard.allowed
 
   // Check which periods are available (for disabling dropdown options)
   const periodAvailability = useMemo(() => {
@@ -1452,11 +1451,10 @@ export default function MetabolicCalibration({
                       <p className="text-xs text-green-600 mt-1">
                         Ditt kaloriintervall har uppdaterats
                       </p>
-                      {daysUntilNextCalibration !== null && (
-                        <p className="text-xs text-neutral-500 mt-1">
-                          Nästa rekommenderade kalibrering om {daysUntilNextCalibration} dagar
-                        </p>
-                      )}
+                      <p className="text-xs text-neutral-500 mt-1">
+                        Nästa rekommenderade kalibrering:{' '}
+                        {format(addDays(new Date(), timePeriod), 'd MMM yyyy', { locale: sv })}
+                      </p>
                       {onClose && (
                         <Button variant="outline" size="sm" onClick={onClose} className="mt-3">
                           Stäng
@@ -1478,46 +1476,55 @@ export default function MetabolicCalibration({
                           ? 'Sparar...'
                           : 'Applicera kalibrerat TDEE'}
                       </Button>
-                      {!hasNewDataSinceCalibration && (
-                        <div className="text-xs text-neutral-500 space-y-1 rounded-lg bg-neutral-50 border border-neutral-200 p-3">
-                          <p className="font-medium text-neutral-600">
-                            Ingen ny data sedan senaste kalibreringen
-                          </p>
-                          <p>
-                            Kalibreringen baseras på vikt- och matloggdata. För att undvika att
-                            samma dataset appliceras två gånger krävs minst ett av följande:
-                          </p>
-                          <ul className="mt-1 space-y-0.5 pl-3 list-disc">
-                            <li>
-                              <span
-                                className={
-                                  newDataGuard.newWeightCount > 0
-                                    ? 'text-green-600 font-medium'
-                                    : ''
-                                }
-                              >
-                                {newDataGuard.newWeightCount > 0
-                                  ? `${newDataGuard.newWeightCount} ny viktmätning${newDataGuard.newWeightCount > 1 ? 'ar' : ''} registrerad${newDataGuard.newWeightCount > 1 ? 'e' : ''} \u2713`
-                                  : 'Minst 1 ny viktmätning efter kalibreringsdatumet'}
-                              </span>
-                            </li>
-                            <li>
-                              <span
-                                className={
-                                  newDataGuard.newLogCount > 0 ? 'text-green-600 font-medium' : ''
-                                }
-                              >
-                                {newDataGuard.newLogCount > 0
-                                  ? `${newDataGuard.newLogCount} ny matloggdag${newDataGuard.newLogCount > 1 ? 'ar' : ''} registrerad${newDataGuard.newLogCount > 1 ? 'e' : ''} \u2713`
-                                  : 'Minst 1 ny matloggdag (över 800 kcal) efter kalibreringsdatumet'}
-                              </span>
-                            </li>
-                            <li>
-                              {newDataGuard.daysRemaining > 0
-                                ? `${newDataGuard.daysRemaining} dag${newDataGuard.daysRemaining > 1 ? 'ar' : ''} kvar tills ${MIN_DAYS_BETWEEN_CALIBRATIONS}-dagarsgränsen uppnås`
-                                : `${MIN_DAYS_BETWEEN_CALIBRATIONS} dagar sedan senaste kalibrering \u2713`}
-                            </li>
-                          </ul>
+                      {!hasNewDataSinceCalibration && lastActiveCalibration && (
+                        <div className="text-xs space-y-2 rounded-lg bg-neutral-50 border border-neutral-200 p-3">
+                          {availabilityGuard.overlaps && (
+                            <div>
+                              <p className="font-medium text-amber-700">
+                                Den valda perioden överlappar din senaste kalibrering — välj ett
+                                senare slutdatum
+                              </p>
+                              <p className="mt-1 text-neutral-500">
+                                Nästa rekommenderade kalibrering:{' '}
+                                <span className="font-medium text-neutral-700">
+                                  {availabilityGuard.nextAvailableDate
+                                    ? format(
+                                        addDays(
+                                          availabilityGuard.nextAvailableDate,
+                                          timePeriod - 1
+                                        ),
+                                        'd MMM yyyy',
+                                        { locale: sv }
+                                      )
+                                    : '—'}
+                                </span>
+                              </p>
+                            </div>
+                          )}
+                          {!availabilityGuard.overlaps && (
+                            <div>
+                              <p className="font-medium text-neutral-600">
+                                {availabilityGuard.newWeightCount} av{' '}
+                                {MIN_NEW_WEIGHTS_AFTER_CALIBRATION} nya viktmätningar registrerade
+                                sedan senaste kalibreringens slutdatum
+                              </p>
+                              <p className="mt-1 text-neutral-500">
+                                Nästa rekommenderade kalibrering:{' '}
+                                <span className="font-medium text-neutral-700">
+                                  {availabilityGuard.nextAvailableDate
+                                    ? format(
+                                        addDays(
+                                          availabilityGuard.nextAvailableDate,
+                                          timePeriod - 1
+                                        ),
+                                        'd MMM yyyy',
+                                        { locale: sv }
+                                      )
+                                    : '—'}
+                                </span>
+                              </p>
+                            </div>
+                          )}
                         </div>
                       )}
                     </>
