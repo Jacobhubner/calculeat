@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { AuthProvider } from './contexts/AuthContext'
+import { PresenceProvider } from './contexts/PresenceContext'
 import { queryClient } from './lib/react-query'
 import { Toaster } from './components/ui/toast'
 import { TooltipProvider } from './components/ui/tooltip'
@@ -75,142 +76,147 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
           <AuthProvider>
-            <BrowserRouter>
-              <ScrollToTop />
-              <Suspense fallback={<PageLoader />}>
-                <Routes>
-                  <Route path="/" element={<HomePage />} />
-                  <Route path="/features" element={<Navigate to="/" replace />} />
-                  <Route path="/icon-demo" element={<IconDemo />} />
-                  <Route
-                    path="/login"
-                    element={
-                      <PublicOnlyRoute>
-                        <LoginPage />
-                      </PublicOnlyRoute>
-                    }
-                  />
-                  <Route
-                    path="/register"
-                    element={
-                      <PublicOnlyRoute>
-                        <RegisterPage />
-                      </PublicOnlyRoute>
-                    }
-                  />
-                  <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-                  <Route path="/reset-password" element={<ResetPasswordPage />} />
-                  <Route path="/auth/callback" element={<AuthCallbackPage />} />
-                  <Route
-                    path="/app"
-                    element={
-                      <ProtectedRoute>
-                        <DashboardPage />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/app/profile"
-                    element={
-                      <ProtectedRoute>
-                        <ProfilePage />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/app/body-composition"
-                    element={
-                      <ProtectedRoute>
-                        <BodyCompositionPage />
-                      </ProtectedRoute>
-                    }
-                  >
-                    <Route index element={<BodyCompositionHubPage />} />
-                    <Route path="calculate" element={<BodyCompositionCalculator />} />
-                    <Route path="genetic-potential" element={<GeneticPotentialTool />} />
-                  </Route>
-                  <Route
-                    path="/app/food-items"
-                    element={
-                      <ProtectedRoute>
-                        <FoodItemsPage />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/app/recipes"
-                    element={
-                      <ProtectedRoute>
-                        <RecipesPage />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/app/saved-meals"
-                    element={
-                      <ProtectedRoute>
-                        <SavedMealsPage />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/app/today"
-                    element={
-                      <ProtectedRoute>
-                        <TodayPage />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/app/history"
-                    element={
-                      <ProtectedRoute>
-                        <HistoryPage />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/app/history/:date"
-                    element={
-                      <ProtectedRoute>
-                        <HistoryDayPage />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/app/tools"
-                    element={
-                      <ProtectedRoute>
-                        <ToolsPage />
-                      </ProtectedRoute>
-                    }
-                  >
-                    <Route index element={<Navigate to="/app/tools/met-calculator" replace />} />
-                    <Route path="met-calculator" element={<METCalculatorTool />} />
-                    <Route path="tdee-calculator" element={<TDEECalculatorTool />} />
-                    <Route path="goal-calculator" element={<GoalCalculatorTool />} />
-                  </Route>
-                  <Route
-                    path="/app/settings"
-                    element={
-                      <ProtectedRoute>
-                        <SettingsPage />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/app/social"
-                    element={
-                      <ProtectedRoute>
-                        <SocialPage />
-                      </ProtectedRoute>
-                    }
-                  />
-                  {/* Bakåtkompatibilitet — redirect till /app/social */}
-                  <Route path="/app/invitations" element={<Navigate to="/app/social" replace />} />
-                </Routes>
-              </Suspense>
-            </BrowserRouter>
+            <PresenceProvider>
+              <BrowserRouter>
+                <ScrollToTop />
+                <Suspense fallback={<PageLoader />}>
+                  <Routes>
+                    <Route path="/" element={<HomePage />} />
+                    <Route path="/features" element={<Navigate to="/" replace />} />
+                    <Route path="/icon-demo" element={<IconDemo />} />
+                    <Route
+                      path="/login"
+                      element={
+                        <PublicOnlyRoute>
+                          <LoginPage />
+                        </PublicOnlyRoute>
+                      }
+                    />
+                    <Route
+                      path="/register"
+                      element={
+                        <PublicOnlyRoute>
+                          <RegisterPage />
+                        </PublicOnlyRoute>
+                      }
+                    />
+                    <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                    <Route path="/reset-password" element={<ResetPasswordPage />} />
+                    <Route path="/auth/callback" element={<AuthCallbackPage />} />
+                    <Route
+                      path="/app"
+                      element={
+                        <ProtectedRoute>
+                          <DashboardPage />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/app/profile"
+                      element={
+                        <ProtectedRoute>
+                          <ProfilePage />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/app/body-composition"
+                      element={
+                        <ProtectedRoute>
+                          <BodyCompositionPage />
+                        </ProtectedRoute>
+                      }
+                    >
+                      <Route index element={<BodyCompositionHubPage />} />
+                      <Route path="calculate" element={<BodyCompositionCalculator />} />
+                      <Route path="genetic-potential" element={<GeneticPotentialTool />} />
+                    </Route>
+                    <Route
+                      path="/app/food-items"
+                      element={
+                        <ProtectedRoute>
+                          <FoodItemsPage />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/app/recipes"
+                      element={
+                        <ProtectedRoute>
+                          <RecipesPage />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/app/saved-meals"
+                      element={
+                        <ProtectedRoute>
+                          <SavedMealsPage />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/app/today"
+                      element={
+                        <ProtectedRoute>
+                          <TodayPage />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/app/history"
+                      element={
+                        <ProtectedRoute>
+                          <HistoryPage />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/app/history/:date"
+                      element={
+                        <ProtectedRoute>
+                          <HistoryDayPage />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/app/tools"
+                      element={
+                        <ProtectedRoute>
+                          <ToolsPage />
+                        </ProtectedRoute>
+                      }
+                    >
+                      <Route index element={<Navigate to="/app/tools/met-calculator" replace />} />
+                      <Route path="met-calculator" element={<METCalculatorTool />} />
+                      <Route path="tdee-calculator" element={<TDEECalculatorTool />} />
+                      <Route path="goal-calculator" element={<GoalCalculatorTool />} />
+                    </Route>
+                    <Route
+                      path="/app/settings"
+                      element={
+                        <ProtectedRoute>
+                          <SettingsPage />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/app/social"
+                      element={
+                        <ProtectedRoute>
+                          <SocialPage />
+                        </ProtectedRoute>
+                      }
+                    />
+                    {/* Bakåtkompatibilitet — redirect till /app/social */}
+                    <Route
+                      path="/app/invitations"
+                      element={<Navigate to="/app/social" replace />}
+                    />
+                  </Routes>
+                </Suspense>
+              </BrowserRouter>
+            </PresenceProvider>
             <Toaster />
           </AuthProvider>
         </TooltipProvider>

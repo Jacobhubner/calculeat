@@ -3,8 +3,8 @@ export interface SharedList {
   name: string
   created_at: string
   member_count: number
-  // Visningsnamn för varje medlem — för avatar-stack i UI
   member_names: string[]
+  member_ids: string[]
   food_item_count: number
   recipe_count: number
 }

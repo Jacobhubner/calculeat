@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { usePresence } from '@/contexts/PresenceContext'
 import { UserPlus, MoreHorizontal, LogOut, Pencil } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -70,8 +71,10 @@ export function SharedListMembersBar({ list, onLeft }: SharedListMembersBarProps
     useLeaveSharedListConfirmed()
   const { mutateAsync: renameList, isPending: isRenaming } = useRenameSharedList()
 
-  const visibleMembers = list.member_names.slice(0, MAX_VISIBLE_AVATARS)
-  const overflowCount = list.member_names.length - MAX_VISIBLE_AVATARS
+  const { onlineUserIds } = usePresence()
+  const members = list.member_names.map((name, i) => ({ name, id: list.member_ids?.[i] ?? '' }))
+  const visibleMembers = members.slice(0, MAX_VISIBLE_AVATARS)
+  const overflowCount = members.length - MAX_VISIBLE_AVATARS
 
   async function handleLeave() {
     const result = await leaveList(list.id)
@@ -120,13 +123,16 @@ export function SharedListMembersBar({ list, onLeft }: SharedListMembersBarProps
       <div className="flex items-center gap-3 px-1 py-2 border-b">
         {/* Avatar-stack */}
         <div className="flex -space-x-2">
-          {visibleMembers.map(name => (
-            <div
-              key={name}
-              title={name}
-              className={`flex h-7 w-7 items-center justify-center rounded-full border-2 border-background text-xs font-semibold ${getAvatarColor(name)}`}
-            >
-              {getInitials(name)}
+          {visibleMembers.map(({ name, id }) => (
+            <div key={name} className="relative" title={name}>
+              <div
+                className={`flex h-7 w-7 items-center justify-center rounded-full border-2 border-background text-xs font-semibold ${getAvatarColor(name)}`}
+              >
+                {getInitials(name)}
+              </div>
+              {id && onlineUserIds.has(id) && (
+                <span className="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-green-400 border border-white" />
+              )}
             </div>
           ))}
           {overflowCount > 0 && (
