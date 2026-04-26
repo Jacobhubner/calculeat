@@ -1,6 +1,4 @@
-import { useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import type { Friend, FriendRequest, SentFriendRequest } from '@/lib/types/friends'
@@ -69,9 +67,8 @@ export function useSentFriendRequests() {
 
 export function usePendingFriendRequestsCount() {
   const { user } = useAuth()
-  const queryClient = useQueryClient()
 
-  const query = useQuery({
+  return useQuery({
     queryKey: ['friends', 'count', user?.id],
     queryFn: async () => {
       if (!user) return 0
@@ -83,100 +80,6 @@ export function usePendingFriendRequestsCount() {
     staleTime: 30_000,
     refetchOnWindowFocus: true,
   })
-
-  useEffect(() => {
-    if (!user) return
-
-    // Kanal 1: Ny inkommande vänförfrågan eller statusändring
-    const friendshipsChannel = supabase
-      .channel(`friendships-count:${user.id}`)
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'friendships',
-          filter: `addressee_id=eq.${user.id}`,
-        },
-        payload => {
-          if ((payload.new as Record<string, unknown>)?.status === 'pending') {
-            queryClient.invalidateQueries({ queryKey: ['friends', 'count'] })
-            queryClient.invalidateQueries({ queryKey: ['friends', 'requests'] })
-          }
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'friendships',
-          filter: `addressee_id=eq.${user.id}`,
-        },
-        payload => {
-          if ((payload.old as Record<string, unknown>)?.status === 'pending') {
-            queryClient.invalidateQueries({ queryKey: ['friends', 'count'] })
-            queryClient.invalidateQueries({ queryKey: ['friends', 'requests'] })
-          }
-        }
-      )
-      // Social feedback: min förfrågan accepterades
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'friendships',
-          filter: `requester_id=eq.${user.id}`,
-        },
-        payload => {
-          const newStatus = (payload.new as Record<string, unknown>)?.status
-          const oldStatus = (payload.old as Record<string, unknown>)?.status
-          if (oldStatus === 'pending' && newStatus === 'accepted') {
-            queryClient.invalidateQueries({ queryKey: ['friends', 'list'] })
-            queryClient.invalidateQueries({ queryKey: ['friends', 'sent'] })
-            // Toast: vän accepterade
-            const addresseeName = (payload.new as Record<string, unknown>)?.addressee_alias
-            toast.success(
-              addresseeName ? `Du och ${addresseeName} är nu vänner!` : 'Vänförfrågan accepterad!'
-            )
-          }
-        }
-      )
-      .subscribe()
-
-    // Kanal 2: Social feedback — min delning accepterades/nekades
-    const shareChannel = supabase
-      .channel(`share-feedback:${user.id}`)
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'share_invitations',
-          filter: `sender_id=eq.${user.id}`,
-        },
-        payload => {
-          const newStatus = (payload.new as Record<string, unknown>)?.status
-          const oldStatus = (payload.old as Record<string, unknown>)?.status
-          if (oldStatus !== 'pending') return
-
-          if (newStatus === 'accepted') {
-            toast.success('Din delning importerades!')
-          } else if (newStatus === 'rejected') {
-            toast('Delningen tackades nej', { description: 'Mottagaren valde att inte importera.' })
-          }
-        }
-      )
-      .subscribe()
-
-    return () => {
-      supabase.removeChannel(friendshipsChannel)
-      supabase.removeChannel(shareChannel)
-    }
-  }, [user, queryClient])
-
-  return query
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
