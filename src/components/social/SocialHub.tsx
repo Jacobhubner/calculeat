@@ -81,6 +81,7 @@ import { sv, enUS } from 'date-fns/locale'
 import { useTranslation } from 'react-i18next'
 import i18n from '@/i18n'
 import { useFriendPresence } from '@/hooks/useFriendPresence'
+import { usePresence } from '@/contexts/PresenceContext'
 
 function getDateLocale() {
   return i18n.language === 'sv' ? sv : enUS
@@ -1415,6 +1416,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null)
 
   const queryClient = useQueryClient()
+  const { recentNewFriends, dismissNewFriend } = usePresence()
   const { data: friends = [] } = useFriends()
   const onlineFriendIds = useFriendPresence(friends.map(f => f.friend_id))
   const { data: friendRequests = [] } = usePendingFriendRequests()
@@ -1435,7 +1437,8 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
     pendingInvitations.length +
     pendingSharedListInvitations.length +
     pendingAdminInvitations.length +
-    sentRequests.length
+    sentRequests.length +
+    recentNewFriends.length
 
   const filteredFriends = friends.filter(f => {
     if (!friendSearch.trim()) return true
@@ -1677,6 +1680,33 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
         {/* ── Aktivitet-tab ── */}
         {tab === 'activity' && (
           <div className="p-4 space-y-4">
+            {/* Nya vänner */}
+            {recentNewFriends.length > 0 && (
+              <div className="space-y-2">
+                <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wide">
+                  Nya vänner
+                </p>
+                {recentNewFriends.map(({ id, name }) => (
+                  <div
+                    key={id}
+                    className="flex items-center gap-3 rounded-xl border border-green-200 bg-green-50 px-3 py-2.5"
+                  >
+                    <UserCheck className="h-4 w-4 text-green-600 shrink-0" />
+                    <p className="flex-1 text-sm font-medium text-neutral-900">
+                      Du och <span className="text-green-700">{name}</span> är nu vänner!
+                    </p>
+                    <button
+                      onClick={() => dismissNewFriend(id)}
+                      className="text-neutral-400 hover:text-neutral-600 transition-colors"
+                      aria-label="Stäng"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
             {/* Admin-inbjudningar */}
             {pendingAdminInvitations.length > 0 && (
               <div className="space-y-2">
@@ -1811,6 +1841,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
               pendingSharedListInvitations.length === 0 &&
               pendingAdminInvitations.length === 0 &&
               sentRequests.length === 0 &&
+              recentNewFriends.length === 0 &&
               shareInvitationHistory.length === 0 && (
                 <div className="text-center py-10 space-y-2">
                   <p className="text-2xl">🎉</p>
