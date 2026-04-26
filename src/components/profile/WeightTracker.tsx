@@ -137,7 +137,10 @@ export default function WeightTracker({
   }
 
   // Build chart data with rolling average (create a copy to avoid mutating the original)
-  const chartData = [...weightTrend.chartDataWithTrend]
+  const chartData = useMemo(
+    () => [...weightTrend.chartDataWithTrend],
+    [weightTrend.chartDataWithTrend]
+  )
 
   const weightBrushDefault = useMemo(() => {
     const cutoff = new Date().getTime() - 14 * 24 * 60 * 60 * 1000
@@ -147,6 +150,7 @@ export default function WeightTracker({
       endIndex: chartData.length - 1,
     }
   }, [chartData])
+
   const bodyFatBrushDefault = useMemo(() => {
     const cutoff = new Date().getTime() - 14 * 24 * 60 * 60 * 1000
     const idx = bodyFatChartData.findIndex(d => d.timestamp >= cutoff)
@@ -480,7 +484,7 @@ export default function WeightTracker({
                   />
 
                   <Brush
-                    key={chartData.length}
+                    key={`${weightBrushDefault.startIndex}-${weightBrushDefault.endIndex}`}
                     dataKey="timestamp"
                     startIndex={weightBrushDefault.startIndex}
                     endIndex={weightBrushDefault.endIndex}
@@ -589,7 +593,7 @@ export default function WeightTracker({
                     />
 
                     <Brush
-                      key={bodyFatChartData.length}
+                      key={`${bodyFatBrushDefault.startIndex}-${bodyFatBrushDefault.endIndex}`}
                       dataKey="timestamp"
                       startIndex={bodyFatBrushDefault.startIndex}
                       endIndex={bodyFatBrushDefault.endIndex}
