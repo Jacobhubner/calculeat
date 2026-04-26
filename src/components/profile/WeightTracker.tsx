@@ -139,15 +139,21 @@ export default function WeightTracker({
   // Build chart data with rolling average (create a copy to avoid mutating the original)
   const chartData = [...weightTrend.chartDataWithTrend]
 
-  const weightBrushStart = useMemo(() => {
+  const weightBrushDefault = useMemo(() => {
     const cutoff = new Date().getTime() - 14 * 24 * 60 * 60 * 1000
     const idx = chartData.findIndex(d => d.timestamp >= cutoff)
-    return idx >= 0 ? idx : Math.max(0, chartData.length - 14)
+    return {
+      startIndex: idx >= 0 ? idx : Math.max(0, chartData.length - 1),
+      endIndex: chartData.length - 1,
+    }
   }, [chartData])
-  const bodyFatBrushStart = useMemo(() => {
+  const bodyFatBrushDefault = useMemo(() => {
     const cutoff = new Date().getTime() - 14 * 24 * 60 * 60 * 1000
     const idx = bodyFatChartData.findIndex(d => d.timestamp >= cutoff)
-    return idx >= 0 ? idx : Math.max(0, bodyFatChartData.length - 14)
+    return {
+      startIndex: idx >= 0 ? idx : Math.max(0, bodyFatChartData.length - 1),
+      endIndex: bodyFatChartData.length - 1,
+    }
   }, [bodyFatChartData])
 
   // Pending-punkt borttagen — profilvikten visas inte i diagrammet om den inte är loggad
@@ -474,8 +480,10 @@ export default function WeightTracker({
                   />
 
                   <Brush
+                    key={chartData.length}
                     dataKey="timestamp"
-                    startIndex={weightBrushStart}
+                    startIndex={weightBrushDefault.startIndex}
+                    endIndex={weightBrushDefault.endIndex}
                     height={24}
                     stroke="#d1d5db"
                     fill="#f9fafb"
@@ -581,8 +589,10 @@ export default function WeightTracker({
                     />
 
                     <Brush
+                      key={bodyFatChartData.length}
                       dataKey="timestamp"
-                      startIndex={bodyFatBrushStart}
+                      startIndex={bodyFatBrushDefault.startIndex}
+                      endIndex={bodyFatBrushDefault.endIndex}
                       height={24}
                       stroke="#d1d5db"
                       fill="#f9fafb"
