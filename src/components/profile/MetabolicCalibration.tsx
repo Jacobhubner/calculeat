@@ -27,7 +27,6 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
-  RefreshCw,
   Info,
   Trash2,
 } from 'lucide-react'
@@ -164,40 +163,33 @@ export default function MetabolicCalibration({
   const { data: calibrationHistoryList, isLoading: calibrationHistoryLoading } =
     useCalibrationHistory(profile.id)
 
-  // Date range for calorie intake — null until user clicks "Uppdatera"
-  const [periodEndDate, setPeriodEndDate] = useState<Date | null>(null)
+  const [periodEndDate, setPeriodEndDate] = useState<Date>(() => endOfDay(new Date()))
   const refreshNow = useCallback(() => setPeriodEndDate(endOfDay(new Date())), [])
 
-  // Stable "today" reference for disable logic — tied to periodEndDate so it
-  // recalculates when the user navigates, but stays fixed within a render.
+  // Stable "today" reference — recalculates when the user navigates periods.
   const today = useMemo(() => startOfDay(new Date()), [periodEndDate])
 
   const startDate = useMemo(
-    () => (periodEndDate ? startOfDay(subDays(periodEndDate, timePeriod)) : null),
+    () => startOfDay(subDays(periodEndDate, timePeriod)),
     [periodEndDate, timePeriod]
   )
   // Alias kept for backward compatibility with useMemos below
   const now = periodEndDate
 
   const goBack = useCallback(() => {
-    setPeriodEndDate(d => (d ? endOfDay(subDays(d, timePeriod)) : null))
+    setPeriodEndDate(d => endOfDay(subDays(d, timePeriod)))
   }, [timePeriod])
 
   const goForward = useCallback(() => {
     setPeriodEndDate(d => {
-      if (!d) return null
       const next = endOfDay(addDays(d, timePeriod))
       return next > endOfDay(new Date()) ? endOfDay(new Date()) : next
     })
   }, [timePeriod])
 
-  const isAtToday = periodEndDate ? !isBefore(startOfDay(periodEndDate), today) : true
+  const isAtToday = !isBefore(startOfDay(periodEndDate), today)
 
-  const { data: actualIntake } = useActualCalorieIntake(
-    profile.id,
-    startDate ?? new Date(0),
-    now ?? new Date(0)
-  )
+  const { data: actualIntake } = useActualCalorieIntake(profile.id, startDate, now)
 
   const isFirstCalibration = !calibrationHistoryList || calibrationHistoryList.length === 0
 
@@ -812,23 +804,6 @@ export default function MetabolicCalibration({
                 </div>
               }
             />
-          )}
-
-          {/* If not yet refreshed, show a prompt instead of stale results */}
-          {now === null && (
-            <div className="flex flex-col items-center gap-3 py-6 text-center">
-              <p className="text-sm text-neutral-500">
-                Klicka på Uppdatera för att hämta senaste data.
-              </p>
-              <button
-                type="button"
-                onClick={refreshNow}
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary-600 border border-primary-300 rounded-lg hover:bg-primary-50 transition-colors"
-              >
-                <RefreshCw className="h-4 w-4" />
-                Uppdatera
-              </button>
-            </div>
           )}
 
           {/* Time period selector */}
