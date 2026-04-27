@@ -7,6 +7,7 @@ import { usePendingFriendRequestsCount } from './useFriends'
 import { useUnreadMessageCount } from './useMessages'
 import { usePendingSharedListInvitationsCount } from './useSharedLists'
 import { usePendingAdminInvitationsCount } from './useAdminInvitations'
+import { useNotifications } from './useNotifications'
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Pending invitation count (with Realtime)
@@ -279,11 +280,19 @@ export function useSocialBadgeCount() {
   const { data: sharedListInvitationCount = 0 } = usePendingSharedListInvitationsCount()
   const { data: adminInvitationCount = 0 } = usePendingAdminInvitationsCount()
   const unreadMessages = useUnreadMessageCount()
+  const { data: notifications = [] } = useNotifications()
+  const unreadHistoryCount = notifications.filter(
+    n =>
+      n.read_at === null &&
+      n.type !== 'friend_request_received' &&
+      n.type !== 'shared_list_invitation_received'
+  ).length
   return (
     (invitationCount as number) +
     (friendCount as number) +
     (sharedListInvitationCount as number) +
     (adminInvitationCount as number) +
-    unreadMessages
+    unreadMessages +
+    unreadHistoryCount
   )
 }
