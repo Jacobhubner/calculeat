@@ -212,7 +212,9 @@
       "list_invitations": "Inbjudningar till listor",
       "sent_requests": "Skickade förfrågningar",
       "all_clear": "Allt är lugnt!",
-      "all_clear_sub": "Inga väntande åtgärder."
+      "all_clear_sub": "Inga väntande åtgärder.",
+      "history": "Händelser",
+      "mark_all_read": "Markera alla lästa"
     }
   }
 }

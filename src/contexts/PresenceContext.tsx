@@ -1,24 +1,16 @@
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react'
+import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
-import { toast } from 'sonner'
-
-export interface NewFriendNotification {
-  id: string // friendship_id used as stable key
-  name: string
-}
+import { useNotificationRealtime } from '@/hooks/useNotificationRealtime'
 
 interface PresenceContextValue {
   onlineUserIds: Set<string>
-  recentNewFriends: NewFriendNotification[]
-  dismissNewFriend: (id: string) => void
 }
 
 const PresenceContext = createContext<PresenceContextValue>({
   onlineUserIds: new Set(),
-  recentNewFriends: [],
-  dismissNewFriend: () => {},
 })
 
 export function usePresence() {
@@ -29,11 +21,9 @@ export function PresenceProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth()
   const queryClient = useQueryClient()
   const [onlineUserIds, setOnlineUserIds] = useState<Set<string>>(new Set())
-  const [recentNewFriends, setRecentNewFriends] = useState<NewFriendNotification[]>([])
 
-  const dismissNewFriend = useCallback((id: string) => {
-    setRecentNewFriends(prev => prev.filter(n => n.id !== id))
-  }, [])
+  // Global notification Realtime — invalidates cache + shows toasts
+  useNotificationRealtime(user?.id)
 
   // Global presence tracking
   useEffect(() => {
@@ -65,7 +55,7 @@ export function PresenceProvider({ children }: { children: ReactNode }) {
     }
   }, [user])
 
-  // Global social Realtime — friend requests + share feedback
+  // Global social Realtime — friend requests + share feedback cache invalidation
   useEffect(() => {
     if (!user) return
 
@@ -115,14 +105,6 @@ export function PresenceProvider({ children }: { children: ReactNode }) {
           if (oldStatus === 'pending' && newStatus === 'accepted') {
             queryClient.invalidateQueries({ queryKey: ['friends', 'list'] })
             queryClient.invalidateQueries({ queryKey: ['friends', 'sent'] })
-            const row = payload.new as Record<string, unknown>
-            const name = (row.addressee_alias as string | undefined) ?? 'Din vän'
-            const friendshipId = (row.id as string | undefined) ?? String(Date.now())
-            toast.success(name ? `Du och ${name} är nu vänner!` : 'Vänförfrågan accepterad!')
-            setRecentNewFriends(prev => {
-              if (prev.some(n => n.id === friendshipId)) return prev
-              return [{ id: friendshipId, name }, ...prev]
-            })
           }
         }
       )
@@ -157,9 +139,5 @@ export function PresenceProvider({ children }: { children: ReactNode }) {
     }
   }, [user, queryClient])
 
-  return (
-    <PresenceContext.Provider value={{ onlineUserIds, recentNewFriends, dismissNewFriend }}>
-      {children}
-    </PresenceContext.Provider>
-  )
+  return <PresenceContext.Provider value={{ onlineUserIds }}>{children}</PresenceContext.Provider>
 }

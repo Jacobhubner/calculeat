@@ -212,7 +212,9 @@
       "list_invitations": "List invitations",
       "sent_requests": "Sent requests",
       "all_clear": "All clear!",
-      "all_clear_sub": "No pending actions."
+      "all_clear_sub": "No pending actions.",
+      "history": "Events",
+      "mark_all_read": "Mark all as read"
     }
   }
 }
