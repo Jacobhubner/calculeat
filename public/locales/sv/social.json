@@ -214,7 +214,8 @@
       "all_clear": "Allt är lugnt!",
       "all_clear_sub": "Inga väntande åtgärder.",
       "history": "Händelser",
-      "mark_all_read": "Markera alla lästa"
+      "mark_all_read": "Markera alla lästa",
+      "clear_read": "Rensa lästa"
     }
   }
 }

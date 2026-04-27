@@ -58,6 +58,7 @@ import {
   useUnreadNotificationCount,
   useMarkNotificationRead,
   useMarkAllNotificationsRead,
+  useDeleteReadNotifications,
 } from '@/hooks/useNotifications'
 import type { Notification } from '@/lib/types/notifications'
 import {
@@ -1495,9 +1496,16 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
   const unreadMessageCount = useUnreadMessageCount()
   const { mutateAsync: sendFriendRequest } = useSendFriendRequest()
   const { data: notifications = [] } = useNotifications()
-  const { data: unreadNotificationCount = 0 } = useUnreadNotificationCount()
+  useUnreadNotificationCount()
   const { mutate: markRead } = useMarkNotificationRead()
   const { mutate: markAllRead } = useMarkAllNotificationsRead()
+  const { mutate: deleteRead, isPending: isDeletingRead } = useDeleteReadNotifications()
+
+  // Filtrera bort typer som redan visas som åtgärdskort
+  const historyNotifications = notifications.filter(
+    n => n.type !== 'friend_request_received' && n.type !== 'shared_list_invitation_received'
+  )
+  const unreadHistoryCount = historyNotifications.filter(n => n.read_at === null).length
 
   const activityCount =
     (pendingCount as number) +
@@ -1505,7 +1513,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
     pendingSharedListInvitations.length +
     pendingAdminInvitations.length +
     sentRequests.length +
-    unreadNotificationCount
+    unreadHistoryCount
 
   const filteredFriends = friends.filter(f => {
     if (!friendSearch.trim()) return true
@@ -1876,23 +1884,34 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
               </div>
             )}
 
-            {/* Händelsehistorik (DB-notiser) */}
-            {notifications.length > 0 && (
+            {/* Händelsehistorik (DB-notiser) — exkl. typer som redan visas som åtgärdskort */}
+            {historyNotifications.length > 0 && (
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wide">
                     {t('social.activity.history')}
                   </p>
-                  {unreadNotificationCount > 0 && (
+                  <div className="flex items-center gap-3">
+                    {unreadHistoryCount > 0 && (
+                      <button
+                        onClick={() => markAllRead()}
+                        className="text-xs text-primary-600 hover:text-primary-800 transition-colors"
+                      >
+                        {t('social.activity.mark_all_read')}
+                      </button>
+                    )}
                     <button
-                      onClick={() => markAllRead()}
-                      className="text-xs text-primary-600 hover:text-primary-800 transition-colors"
+                      onClick={() => deleteRead()}
+                      disabled={
+                        isDeletingRead || historyNotifications.every(n => n.read_at === null)
+                      }
+                      className="text-xs text-neutral-400 hover:text-red-500 transition-colors disabled:opacity-30"
                     >
-                      {t('social.activity.mark_all_read')}
+                      {t('social.activity.clear_read')}
                     </button>
-                  )}
+                  </div>
                 </div>
-                {notifications.map(n => (
+                {historyNotifications.map(n => (
                   <NotificationCard key={n.id} notification={n} onMarkRead={markRead} />
                 ))}
               </div>

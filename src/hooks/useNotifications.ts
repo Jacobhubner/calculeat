@@ -70,3 +70,18 @@ export function useMarkAllNotificationsRead() {
     },
   })
 }
+
+export function useDeleteReadNotifications() {
+  const queryClient = useQueryClient()
+  const { user } = useAuth()
+
+  return useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase.rpc('delete_read_notifications')
+      if (error) throw error
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notifications', 'list', user?.id] })
+    },
+  })
+}

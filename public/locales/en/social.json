@@ -214,7 +214,8 @@
       "all_clear": "All clear!",
       "all_clear_sub": "No pending actions.",
       "history": "Events",
-      "mark_all_read": "Mark all as read"
+      "mark_all_read": "Mark all as read",
+      "clear_read": "Clear read"
     }
   }
 }
