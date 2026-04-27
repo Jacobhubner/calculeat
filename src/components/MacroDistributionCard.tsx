@@ -7,6 +7,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
 import { ChevronDown, PieChart } from 'lucide-react'
 import { RangeSlider } from './ui/RangeSlider'
+import { useTranslation } from 'react-i18next'
 
 interface MacroDistributionCardProps {
   caloriesMin?: number
@@ -38,6 +39,7 @@ export default function MacroDistributionCard({
   proteinMaxPercent,
   onMacroChange,
 }: MacroDistributionCardProps) {
+  const { t } = useTranslation('profile')
   const [isOpen, setIsOpen] = useState(false)
   // NNR 2023 defaults - Fat: 25-40%, Carb: 45-60%, Protein: 10-20%
   const [fatRange, setFatRange] = useState<[number, number]>([
@@ -117,7 +119,7 @@ export default function MacroDistributionCard({
           <div>
             <CardTitle className="flex items-center gap-2 text-lg leading-snug">
               <PieChart className="h-5 w-5 text-primary-600" />
-              Makrofördelning
+              {t('macroDistribution.title')}
             </CardTitle>
           </div>
           <ChevronDown
@@ -132,7 +134,9 @@ export default function MacroDistributionCard({
           {/* Fat Slider */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-sm font-medium text-neutral-700">Fett</label>
+              <label className="text-sm font-medium text-neutral-700">
+                {t('macroDistribution.fat')}
+              </label>
               <div className="text-sm font-semibold" style={{ color: '#f5c518' }}>
                 {fatRange[0].toFixed(0)}% - {fatRange[1].toFixed(0)}%
                 {caloriesMin && caloriesMax && (
@@ -160,7 +164,9 @@ export default function MacroDistributionCard({
           {/* Carb Slider */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-sm font-medium text-neutral-700">Kolhydrater</label>
+              <label className="text-sm font-medium text-neutral-700">
+                {t('macroDistribution.carbs')}
+              </label>
               <div className="text-sm font-semibold" style={{ color: '#fb923c' }}>
                 {carbRange[0].toFixed(0)}% - {carbRange[1].toFixed(0)}%
                 {caloriesMin && caloriesMax && (
@@ -188,7 +194,9 @@ export default function MacroDistributionCard({
           {/* Protein Slider */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-sm font-medium text-neutral-700">Protein</label>
+              <label className="text-sm font-medium text-neutral-700">
+                {t('macroDistribution.protein')}
+              </label>
               <div className="text-sm font-semibold" style={{ color: '#f43f5e' }}>
                 {proteinRange[0].toFixed(0)}% - {proteinRange[1].toFixed(0)}%
                 {caloriesMin && caloriesMax && (
@@ -226,7 +234,7 @@ export default function MacroDistributionCard({
           >
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium text-neutral-700">
-                Total (genomsnitt av intervaller):
+                {t('macroDistribution.total')}
               </span>
               <div className="flex items-center gap-2">
                 <span
@@ -252,8 +260,8 @@ export default function MacroDistributionCard({
             {totalPercentage !== 100 && (
               <p className="text-xs mt-2 text-neutral-600">
                 {totalPercentage < 95 || totalPercentage > 105
-                  ? 'Rekommenderat: Justera intervallen så genomsnittet närmar sig 100%.'
-                  : 'Nära 100% - justera gärna för optimal fördelning.'}
+                  ? t('macroDistribution.tooLow')
+                  : t('macroDistribution.nearHundred')}
               </p>
             )}
           </div>
@@ -261,9 +269,7 @@ export default function MacroDistributionCard({
           {/* Info message */}
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
             <p className="text-xs text-neutral-700 leading-relaxed">
-              💡 <strong>Tips:</strong> Standardvärdena följer NNR 2023-rekommendationerna (Fett:
-              25-40%, Kolhydrater: 45-60%, Protein: 10-20%). Du kan justera dessa fritt mellan
-              0-100% för varje makronutrient.
+              💡 <strong>Tips:</strong> {t('macroDistribution.tip')}
             </p>
           </div>
         </CardContent>

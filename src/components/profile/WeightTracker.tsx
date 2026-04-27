@@ -44,6 +44,12 @@ import {
   Legend,
   Brush,
 } from 'recharts'
+import { useTranslation } from 'react-i18next'
+import i18n from '@/i18n'
+
+function getDateLocale() {
+  return i18n.language === 'sv' ? 'sv-SE' : 'en-GB'
+}
 
 interface WeightTrackerProps {
   profile: Profile
@@ -56,6 +62,7 @@ export default function WeightTracker({
   onWeightChange,
   onCalibrateClick: _onCalibrateClick,
 }: WeightTrackerProps) {
+  const { t } = useTranslation('profile')
   const [isOpen, setIsOpen] = useState(false)
   const [currentWeight, setCurrentWeight] = useState(profile.weight_kg?.toString() || '')
   const [recordedDate, setRecordedDate] = useState(new Date().toISOString().split('T')[0])
@@ -198,7 +205,7 @@ export default function WeightTracker({
               ) : (
                 <Minus className="h-5 w-5 text-primary-600" />
               )}
-              Viktspårning
+              {t('weightTracker.title')}
             </CardTitle>
             <ChevronDown
               className={`h-5 w-5 text-neutral-600 transition-transform duration-200 ${
@@ -213,7 +220,7 @@ export default function WeightTracker({
               size="sm"
             >
               <Plus className="h-4 w-4 mr-2" />
-              {showAddWeight ? 'Dölj' : 'Lägg till vikt'}
+              {showAddWeight ? t('weightTracker.hideForm') : t('weightTracker.addWeight')}
             </Button>
           )}
         </div>
@@ -225,7 +232,7 @@ export default function WeightTracker({
             <div className="bg-primary-50 border border-primary-200 rounded-lg p-4 space-y-3">
               <div>
                 <label className="block text-sm font-medium text-neutral-700 mb-2">
-                  Ny vikt (kg)
+                  {t('weightTracker.newWeight')}
                 </label>
                 <div className="flex gap-2">
                   <input
@@ -246,7 +253,9 @@ export default function WeightTracker({
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-2">Datum</label>
+                <label className="block text-sm font-medium text-neutral-700 mb-2">
+                  {t('weightTracker.date')}
+                </label>
                 <input
                   type="date"
                   value={recordedDate}
@@ -256,8 +265,10 @@ export default function WeightTracker({
               </div>
               <div>
                 <label className="block text-sm font-medium text-neutral-700 mb-2">
-                  Kroppsfett %{' '}
-                  <span className="text-xs text-neutral-400 font-normal">(valfri)</span>
+                  {t('weightTracker.bodyFat')}{' '}
+                  <span className="text-xs text-neutral-400 font-normal">
+                    {t('weightTracker.bodyFatOptional')}
+                  </span>
                 </label>
                 <input
                   type="number"
@@ -269,10 +280,10 @@ export default function WeightTracker({
                   max="100"
                   step="0.1"
                 />
-                <p className="text-xs text-neutral-400 mt-1">Påverkar inte profilvärdet.</p>
+                <p className="text-xs text-neutral-400 mt-1">{t('weightTracker.bodyFatNote')}</p>
               </div>
               <Button onClick={handleAddWeight} className="w-full">
-                Lägg till
+                {t('weightTracker.addButton')}
               </Button>
             </div>
           )}
@@ -280,19 +291,19 @@ export default function WeightTracker({
           {/* Current Stats - 4 columns */}
           <div className="grid grid-cols-4 gap-4">
             <div className="text-center">
-              <p className="text-xs text-neutral-500 mb-1">Startvikt</p>
+              <p className="text-xs text-neutral-500 mb-1">{t('weightTracker.statStart')}</p>
               <p className="text-lg font-bold text-neutral-900">
                 {initialWeight > 0 ? `${initialWeight.toFixed(1)}` : '-'}
               </p>
               <p className="text-xs text-neutral-400">kg</p>
             </div>
             <div className="text-center">
-              <p className="text-xs text-neutral-500 mb-1">Aktuell</p>
+              <p className="text-xs text-neutral-500 mb-1">{t('weightTracker.statCurrent')}</p>
               <p className="text-lg font-bold text-primary-600">{weight.toFixed(1)}</p>
               <p className="text-xs text-neutral-400">kg</p>
             </div>
             <div className="text-center">
-              <p className="text-xs text-neutral-500 mb-1">Förändring</p>
+              <p className="text-xs text-neutral-500 mb-1">{t('weightTracker.statChange')}</p>
               <p
                 className={`text-lg font-bold ${
                   weightTrend.totalChangeKg < -0.1
@@ -305,10 +316,10 @@ export default function WeightTracker({
                 {weightTrend.totalChangeKg >= 0 ? '+' : ''}
                 {weightTrend.totalChangeKg.toFixed(1)}
               </p>
-              <p className="text-xs text-neutral-400">kg totalt</p>
+              <p className="text-xs text-neutral-400">{t('weightTracker.statKgTotal')}</p>
             </div>
             <div className="text-center">
-              <p className="text-xs text-neutral-500 mb-1">Tempo</p>
+              <p className="text-xs text-neutral-500 mb-1">{t('weightTracker.statTempo')}</p>
               <p
                 className={`text-lg font-bold ${
                   weightTrend.weeklyChangeKg !== null
@@ -324,7 +335,7 @@ export default function WeightTracker({
                   ? `${weightTrend.weeklyChangeKg >= 0 ? '+' : ''}${weightTrend.weeklyChangeKg.toFixed(2)}`
                   : '-'}
               </p>
-              <p className="text-xs text-neutral-400">kg/vecka</p>
+              <p className="text-xs text-neutral-400">{t('weightTracker.statKgWeek')}</p>
             </div>
           </div>
 
@@ -335,7 +346,7 @@ export default function WeightTracker({
                 <div className="flex items-center gap-2">
                   <Target className="h-4 w-4 text-primary-500" />
                   <span className="text-sm font-medium text-neutral-700">
-                    Framsteg mot mål: {targetWeight} kg
+                    {t('weightTracker.goalProgress', { target: targetWeight })}
                   </span>
                 </div>
                 {weightTrend.progressPercent !== null && (
@@ -358,15 +369,17 @@ export default function WeightTracker({
                 <div className="flex items-center gap-2 text-xs text-neutral-600">
                   <Calendar className="h-3 w-3" />
                   <span>
-                    Beräknat måldatum:{' '}
+                    {t('weightTracker.projectedDate')}{' '}
                     <strong>
-                      {weightTrend.projectedGoalDate.toLocaleDateString('sv-SE', {
+                      {weightTrend.projectedGoalDate.toLocaleDateString(getDateLocale(), {
                         day: 'numeric',
                         month: 'long',
                         year: 'numeric',
                       })}
                     </strong>{' '}
-                    ({Math.round(weightTrend.weeksToGoal)} veckor)
+                    {t('weightTracker.projectedWeeks', {
+                      weeks: Math.round(weightTrend.weeksToGoal),
+                    })}
                   </span>
                 </div>
               )}
@@ -389,7 +402,7 @@ export default function WeightTracker({
                     textAnchor="end"
                     height={60}
                     tickFormatter={ts =>
-                      new Date(ts as number).toLocaleDateString('sv-SE', {
+                      new Date(ts as number).toLocaleDateString(getDateLocale(), {
                         month: 'short',
                         day: 'numeric',
                       })
@@ -411,13 +424,16 @@ export default function WeightTracker({
                     formatter={(value: any, name: any) =>
                       [
                         `${(value as number | undefined)?.toFixed(1)} kg`,
-                        (name as string) === 'weight' ? 'Vikt' : '7-dagars snitt',
+                        (name as string) === 'weight'
+                          ? t('weightTracker.chartWeightLabel')
+                          : t('weightTracker.chartRollingLabel'),
                       ] as [string, string]
                     }
                     labelFormatter={ts => {
                       const entry = chartData.find(d => d.timestamp === (ts as number))
                       return (
-                        entry?.displayDate || new Date(ts as number).toLocaleDateString('sv-SE')
+                        entry?.displayDate ||
+                        new Date(ts as number).toLocaleDateString(getDateLocale())
                       )
                     }}
                     contentStyle={{
@@ -429,7 +445,11 @@ export default function WeightTracker({
                   />
                   <Legend
                     wrapperStyle={{ fontSize: '11px' }}
-                    formatter={value => (value === 'weight' ? 'Vikt' : '7-dagars snitt')}
+                    formatter={value =>
+                      value === 'weight'
+                        ? t('weightTracker.chartWeightLabel')
+                        : t('weightTracker.chartRollingLabel')
+                    }
                   />
 
                   {/* Initial weight reference line */}
@@ -439,7 +459,7 @@ export default function WeightTracker({
                       stroke="#94a3b8"
                       strokeDasharray="5 5"
                       label={{
-                        value: 'Start',
+                        value: t('weightTracker.chartRefStart'),
                         position: 'right',
                         fill: '#64748b',
                         fontSize: 10,
@@ -454,7 +474,7 @@ export default function WeightTracker({
                       stroke="#10b981"
                       strokeDasharray="8 4"
                       label={{
-                        value: `Mål: ${targetWeight} kg`,
+                        value: t('weightTracker.chartRefGoal', { target: targetWeight }),
                         position: 'right',
                         fill: '#059669',
                         fontSize: 10,
@@ -493,7 +513,7 @@ export default function WeightTracker({
                     fill="#f9fafb"
                     travellerWidth={8}
                     tickFormatter={ts =>
-                      new Date(ts as number).toLocaleDateString('sv-SE', {
+                      new Date(ts as number).toLocaleDateString(getDateLocale(), {
                         month: 'short',
                         day: 'numeric',
                       })
@@ -506,15 +526,17 @@ export default function WeightTracker({
 
           {chartData.length <= 1 && (
             <div className="text-center py-8 text-neutral-500">
-              <p>Ingen vikthistorik ännu</p>
-              <p className="text-sm mt-1">Lägg till din första viktmätning för att börja spåra</p>
+              <p>{t('weightTracker.noHistory')}</p>
+              <p className="text-sm mt-1">{t('weightTracker.noHistoryHint')}</p>
             </div>
           )}
 
           {/* Body fat chart */}
           {hasBodyFatData && (
             <div>
-              <h4 className="text-sm font-medium text-neutral-700 mb-2">Kroppsfett % över tid</h4>
+              <h4 className="text-sm font-medium text-neutral-700 mb-2">
+                {t('weightTracker.bodyFatChartTitle')}
+              </h4>
               <div className="h-72" style={{ minWidth: 0 }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart
@@ -532,7 +554,7 @@ export default function WeightTracker({
                       textAnchor="end"
                       height={60}
                       tickFormatter={ts =>
-                        new Date(ts as number).toLocaleDateString('sv-SE', {
+                        new Date(ts as number).toLocaleDateString(getDateLocale(), {
                           month: 'short',
                           day: 'numeric',
                         })
@@ -554,13 +576,16 @@ export default function WeightTracker({
                       formatter={(value: any, name: any) =>
                         [
                           `${(value as number).toFixed(1)}%`,
-                          (name as string) === 'bodyFat' ? 'Kroppsfett %' : '7-dagars snitt',
+                          (name as string) === 'bodyFat'
+                            ? t('weightTracker.chartBodyFatLabel')
+                            : t('weightTracker.chartRollingLabel'),
                         ] as [string, string]
                       }
                       labelFormatter={ts => {
                         const entry = bodyFatChartData.find(d => d.timestamp === (ts as number))
                         return (
-                          entry?.displayDate || new Date(ts as number).toLocaleDateString('sv-SE')
+                          entry?.displayDate ||
+                          new Date(ts as number).toLocaleDateString(getDateLocale())
                         )
                       }}
                       contentStyle={{
@@ -572,7 +597,11 @@ export default function WeightTracker({
                     />
                     <Legend
                       wrapperStyle={{ fontSize: '11px' }}
-                      formatter={value => (value === 'bodyFat' ? 'Kroppsfett %' : '7-dagars snitt')}
+                      formatter={value =>
+                        value === 'bodyFat'
+                          ? t('weightTracker.chartBodyFatLabel')
+                          : t('weightTracker.chartRollingLabel')
+                      }
                     />
                     <Line
                       type="monotone"
@@ -602,7 +631,7 @@ export default function WeightTracker({
                       fill="#f9fafb"
                       travellerWidth={8}
                       tickFormatter={ts =>
-                        new Date(ts as number).toLocaleDateString('sv-SE', {
+                        new Date(ts as number).toLocaleDateString(getDateLocale(), {
                           month: 'short',
                           day: 'numeric',
                         })
@@ -625,14 +654,16 @@ export default function WeightTracker({
               >
                 <List className="h-4 w-4 mr-2" />
                 {showHistory
-                  ? 'Dölj historik'
-                  : `Visa historik (${weightHistory.length} mätningar)`}
+                  ? t('weightTracker.historyHide')
+                  : t('weightTracker.historyShow', { count: weightHistory.length })}
               </Button>
 
               {showHistory && (
                 <div className="border border-neutral-200 rounded-lg overflow-hidden">
                   <div className="bg-neutral-50 px-4 py-2 border-b border-neutral-200">
-                    <p className="text-sm font-medium text-neutral-700">Vikthistorik</p>
+                    <p className="text-sm font-medium text-neutral-700">
+                      {t('weightTracker.historyTitle')}
+                    </p>
                   </div>
                   <div className="max-h-64 overflow-y-auto divide-y divide-neutral-100">
                     {sortedHistoryForList.map(entry => (
@@ -645,7 +676,7 @@ export default function WeightTracker({
                             {entry.weight_kg.toFixed(1)} kg
                           </p>
                           <p className="text-xs text-neutral-500">
-                            {new Date(entry.recorded_at).toLocaleDateString('sv-SE', {
+                            {new Date(entry.recorded_at).toLocaleDateString(getDateLocale(), {
                               weekday: 'short',
                               day: 'numeric',
                               month: 'short',
@@ -656,7 +687,9 @@ export default function WeightTracker({
                           </p>
                           {entry.body_fat_percentage != null && (
                             <p className="text-xs text-neutral-400">
-                              Kroppsfett: {entry.body_fat_percentage.toFixed(1)}%
+                              {t('weightTracker.historyBodyFat', {
+                                value: entry.body_fat_percentage.toFixed(1),
+                              })}
                             </p>
                           )}
                         </div>
@@ -680,18 +713,25 @@ export default function WeightTracker({
                   <div className="flex items-start gap-3">
                     <AlertTriangle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-red-900">Radera viktmätning?</p>
+                      <p className="text-sm font-medium text-red-900">
+                        {t('weightTracker.deleteTitle')}
+                      </p>
                       <p className="text-sm text-red-700 mt-1">
-                        {deleteConfirm.weight_kg.toFixed(1)} kg från{' '}
-                        {new Date(deleteConfirm.recorded_at).toLocaleDateString('sv-SE', {
-                          day: 'numeric',
-                          month: 'short',
-                          year: 'numeric',
+                        {t('weightTracker.deleteDesc', {
+                          weight: deleteConfirm.weight_kg.toFixed(1),
+                          date: new Date(deleteConfirm.recorded_at).toLocaleDateString(
+                            getDateLocale(),
+                            {
+                              day: 'numeric',
+                              month: 'short',
+                              year: 'numeric',
+                            }
+                          ),
                         })}
                       </p>
                       <div className="flex gap-2 mt-3">
                         <Button size="sm" variant="outline" onClick={() => setDeleteConfirm(null)}>
-                          Avbryt
+                          {t('weightTracker.deleteCancel')}
                         </Button>
                         <Button
                           size="sm"
@@ -699,7 +739,9 @@ export default function WeightTracker({
                           onClick={handleDeleteWeight}
                           disabled={deleteWeightHistory.isPending}
                         >
-                          {deleteWeightHistory.isPending ? 'Raderar...' : 'Radera'}
+                          {deleteWeightHistory.isPending
+                            ? t('weightTracker.deleting')
+                            : t('weightTracker.deleteConfirm')}
                         </Button>
                       </div>
                     </div>
