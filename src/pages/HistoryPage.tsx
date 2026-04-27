@@ -204,8 +204,7 @@ export default function HistoryPage() {
                               })}
                             </span>
                             <Badge variant="outline">
-                              {weekLogs.filter(l => l.is_completed).length} / {weekLogs.length}{' '}
-                              {t('week.days')}
+                              {weekLogs.filter(l => l.is_completed).length} / 7 {t('week.days')}
                             </Badge>
                           </CardTitle>
                         </CardHeader>
