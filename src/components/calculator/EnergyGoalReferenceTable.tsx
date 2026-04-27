@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next'
+
 interface EnergyGoalReferenceTableProps {
   tdee: number
   selectedGoal: string
@@ -23,18 +25,16 @@ export default function EnergyGoalReferenceTable({
   onGoalSelect,
   onDeficitSelect,
 }: EnergyGoalReferenceTableProps) {
-  // Validate TDEE input to prevent invalid calculations
+  const { t } = useTranslation('tools')
+
   if (!tdee || tdee <= 0 || !isFinite(tdee)) {
     return (
       <div className="rounded-lg border border-red-200 bg-red-50 p-4">
-        <p className="text-sm text-red-600">
-          Ogiltigt TDEE-värde. Vänligen beräkna ditt TDEE först.
-        </p>
+        <p className="text-sm text-red-600">{t('energyGoalTable.invalidTdee')}</p>
       </div>
     )
   }
 
-  // Calculate calorie differentials (NO ROUNDING - keep exact decimals for calculations)
   const maintainMin = tdee * 0.97
   const maintainMax = tdee * 1.03
 
@@ -58,7 +58,6 @@ export default function EnergyGoalReferenceTable({
   const loss25DiffMin = tdee - loss25Max
   const loss25DiffMax = tdee - loss25Min
 
-  // kg/vecka calculations from calorie differentials
   const gain10KgMin = ((gain10DiffMin * 7) / 7700).toFixed(2)
   const gain10KgMax = ((gain10DiffMax * 7) / 7700).toFixed(2)
   const loss10KgMin = ((loss10DiffMin * 7) / 7700).toFixed(2)
@@ -68,51 +67,55 @@ export default function EnergyGoalReferenceTable({
   const loss25KgMin = ((loss25DiffMin * 7) / 7700).toFixed(2)
   const loss25KgMax = ((loss25DiffMax * 7) / 7700).toFixed(2)
 
-  // Define all goals with their selection status (always show all options)
-  // Round values only when displaying (keep calculations precise)
   const goals: GoalRow[] = [
     {
-      label: `Behåll vikt (±3%)`,
+      label: t('energyGoalTable.maintainLabel'),
       percentage: `${Math.round(maintainMin)} - ${Math.round(maintainMax)} kcal (${Math.round(tdee)} kcal)`,
-      description: 'För viktstabilisering och underhåll av nuvarande vikt',
+      description: t('energyGoalTable.maintainDesc'),
       isSelected: selectedGoal === 'Maintain weight',
       goalValue: 'Maintain weight',
     },
     {
-      label: `Viktuppgång (10-20%)`,
+      label: t('energyGoalTable.gainLabel'),
       percentage: `${Math.round(gain10Min)} - ${Math.round(gain10Max)} kcal (⇧ ${Math.round(gain10DiffMin)} - ${Math.round(gain10DiffMax)} kcal)`,
-      description: `För muskeluppbyggnad och viktökning · ~${gain10KgMin}–${gain10KgMax} kg/vecka`,
+      description: t('energyGoalTable.gainDesc', { kgMin: gain10KgMin, kgMax: gain10KgMax }),
       isSelected: selectedGoal === 'Weight gain',
       goalValue: 'Weight gain',
     },
     {
-      label: `Viktnedgång`,
+      label: t('energyGoalTable.lossHeader'),
       percentage: '',
       isSelected: false,
       goalValue: '',
     },
     {
-      label: `Försiktigt (10-15%)`,
+      label: t('energyGoalTable.lossCautiousLabel'),
       percentage: `${Math.round(loss10Min)} - ${Math.round(loss10Max)} kcal (⇩ ${Math.round(loss10DiffMin)} - ${Math.round(loss10DiffMax)} kcal)`,
-      description: `Långsam viktnedgång, bäst för att bevara muskelmassa · ~${loss10KgMin}–${loss10KgMax} kg/vecka`,
+      description: t('energyGoalTable.lossCautiousDesc', {
+        kgMin: loss10KgMin,
+        kgMax: loss10KgMax,
+      }),
       isSelected: selectedGoal === 'Weight loss' && selectedDeficit === '10-15%',
       isSubItem: true,
       goalValue: 'Weight loss',
       deficitValue: '10-15%',
     },
     {
-      label: `Normalt (20-25%)`,
+      label: t('energyGoalTable.lossNormalLabel'),
       percentage: `${Math.round(loss20Min)} - ${Math.round(loss20Max)} kcal (⇩ ${Math.round(loss20DiffMin)} - ${Math.round(loss20DiffMax)} kcal)`,
-      description: `Balanserad viktnedgång med god energinivå · ~${loss20KgMin}–${loss20KgMax} kg/vecka`,
+      description: t('energyGoalTable.lossNormalDesc', { kgMin: loss20KgMin, kgMax: loss20KgMax }),
       isSelected: selectedGoal === 'Weight loss' && selectedDeficit === '20-25%',
       isSubItem: true,
       goalValue: 'Weight loss',
       deficitValue: '20-25%',
     },
     {
-      label: `Aggressivt (25-30%)`,
+      label: t('energyGoalTable.lossAggressiveLabel'),
       percentage: `${Math.round(loss25Min)} - ${Math.round(loss25Max)} kcal (⇩ ${Math.round(loss25DiffMin)} - ${Math.round(loss25DiffMax)} kcal)`,
-      description: `Snabb viktnedgång, endast för kort period · ~${loss25KgMin}–${loss25KgMax} kg/vecka`,
+      description: t('energyGoalTable.lossAggressiveDesc', {
+        kgMin: loss25KgMin,
+        kgMax: loss25KgMax,
+      }),
       isSelected: selectedGoal === 'Weight loss' && selectedDeficit === '25-30%',
       isSubItem: true,
       goalValue: 'Weight loss',
@@ -123,22 +126,20 @@ export default function EnergyGoalReferenceTable({
   return (
     <div className="mt-4 rounded-xl border border-neutral-200 bg-white overflow-hidden shadow-sm">
       <div className="bg-gradient-to-r from-primary-500 to-accent-500 px-4 py-3">
-        <h4 className="text-sm font-semibold text-white">Energimål - Översikt</h4>
+        <h4 className="text-sm font-semibold text-white">{t('energyGoalTable.title')}</h4>
       </div>
       <div className="divide-y divide-neutral-200">
         {goals.map((goal, index) => {
           const handleClick = () => {
-            if (!goal.goalValue) return // Skip "Viktnedgång" header
+            if (!goal.goalValue) return
 
             if (goal.isSubItem && goal.deficitValue) {
-              // Clicking a weight loss sub-item
               onGoalSelect('Weight loss')
               onDeficitSelect(goal.deficitValue)
             } else {
-              // Clicking a main goal
               onGoalSelect(goal.goalValue)
               if (goal.goalValue !== 'Weight loss') {
-                onDeficitSelect('') // Clear deficit if not weight loss
+                onDeficitSelect('')
               }
             }
           }

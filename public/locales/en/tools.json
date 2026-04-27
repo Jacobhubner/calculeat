@@ -376,5 +376,20 @@
     "customPAL": "Custom PAL value *",
     "customPALHint": "Enter your own PAL value if you know it",
     "customPALWarning": "Unusual PAL value — normal range is 1.0–2.5"
+  },
+  "energyGoalTable": {
+    "title": "Energy goal - Overview",
+    "invalidTdee": "Invalid TDEE value. Please calculate your TDEE first.",
+    "maintainLabel": "Maintain weight (±3%)",
+    "maintainDesc": "For weight stabilisation and maintenance of current weight",
+    "gainLabel": "Weight gain (10-20%)",
+    "gainDesc": "For muscle building and weight gain · ~{{kgMin}}–{{kgMax}} kg/week",
+    "lossHeader": "Weight loss",
+    "lossCautiousLabel": "Cautious (10-15%)",
+    "lossCautiousDesc": "Slow weight loss, best for preserving muscle mass · ~{{kgMin}}–{{kgMax}} kg/week",
+    "lossNormalLabel": "Normal (20-25%)",
+    "lossNormalDesc": "Balanced weight loss with good energy levels · ~{{kgMin}}–{{kgMax}} kg/week",
+    "lossAggressiveLabel": "Aggressive (25-30%)",
+    "lossAggressiveDesc": "Rapid weight loss, short periods only · ~{{kgMin}}–{{kgMax}} kg/week"
   }
 }

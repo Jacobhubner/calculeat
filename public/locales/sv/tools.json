@@ -376,5 +376,20 @@
     "customPAL": "Anpassat PAL-värde *",
     "customPALHint": "Ange ditt eget PAL-värde om du vet det",
     "customPALWarning": "Ovanligt PAL-värde — normalt intervall är 1.0–2.5"
+  },
+  "energyGoalTable": {
+    "title": "Energimål - Översikt",
+    "invalidTdee": "Ogiltigt TDEE-värde. Vänligen beräkna ditt TDEE först.",
+    "maintainLabel": "Behåll vikt (±3%)",
+    "maintainDesc": "För viktstabilisering och underhåll av nuvarande vikt",
+    "gainLabel": "Viktuppgång (10-20%)",
+    "gainDesc": "För muskeluppbyggnad och viktökning · ~{{kgMin}}–{{kgMax}} kg/vecka",
+    "lossHeader": "Viktnedgång",
+    "lossCautiousLabel": "Försiktigt (10-15%)",
+    "lossCautiousDesc": "Långsam viktnedgång, bäst för att bevara muskelmassa · ~{{kgMin}}–{{kgMax}} kg/vecka",
+    "lossNormalLabel": "Normalt (20-25%)",
+    "lossNormalDesc": "Balanserad viktnedgång med god energinivå · ~{{kgMin}}–{{kgMax}} kg/vecka",
+    "lossAggressiveLabel": "Aggressivt (25-30%)",
+    "lossAggressiveDesc": "Snabb viktnedgång, endast för kort period · ~{{kgMin}}–{{kgMax}} kg/vecka"
   }
 }
