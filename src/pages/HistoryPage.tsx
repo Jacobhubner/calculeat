@@ -106,7 +106,8 @@ export default function HistoryPage() {
     (acc, log) => {
       const date = new Date(log.log_date)
       const weekStart = new Date(date)
-      weekStart.setDate(date.getDate() - date.getDay()) // Sunday
+      const day = date.getDay()
+      weekStart.setDate(date.getDate() - (day === 0 ? 6 : day - 1)) // Monday
       const weekKey = weekStart.toISOString().split('T')[0]
       if (!acc[weekKey]) acc[weekKey] = []
       acc[weekKey].push(log)
