@@ -142,5 +142,70 @@
     "yellow": "Gul",
     "orange": "Orange",
     "noData": "Ingen data"
+  },
+  "plateCalculator": {
+    "title": "Portionsberäknare",
+    "reset": "Återställ",
+    "goalLabel": "Mål:",
+    "goalType": {
+      "kcal": "Kalorier",
+      "carbs": "Kolhydrater",
+      "fat": "Fett",
+      "protein": "Protein"
+    },
+    "searchPlaceholder": "Sök livsmedel...",
+    "change": "Ändra",
+    "forAmount": "För {{amount}} {{unit}}",
+    "addToMeal": "Lägg till i måltid",
+    "helpText": "Välj kalorimål och livsmedel"
+  },
+  "foodSuggestions": {
+    "title": "Vad ska jag äta?",
+    "settingsTitle": "Inställningar",
+    "macroUnit": "g {{macro}}",
+    "macro": {
+      "protein": "protein",
+      "carbs": "kolhydrater",
+      "fat": "fett"
+    },
+    "enterGoal": "Ange mål",
+    "searching": "Söker...",
+    "enterGoalHint": "Ange kalorimål och makromål för att se förslag",
+    "noMatches": "Inga matchningar",
+    "noMatchesHint": "Prova ändra målen eller ta bort filter",
+    "resultsCount": "{{count}} förslag",
+    "sortedBy": "Sorterat:",
+    "sort": {
+      "score": "Matchning",
+      "protein": "Protein",
+      "calories": "Kalorier",
+      "name": "Namn"
+    },
+    "settings": {
+      "primaryMacro": "Primär makro",
+      "secondaryMacro": "Sekundär",
+      "secondaryNone": "Ingen",
+      "count": "Antal",
+      "sort": "Sortera",
+      "source": "Källa",
+      "sourceAll": "Alla",
+      "sourceMine": "Mina & CalculEat",
+      "sourceSlv": "SLV",
+      "type": "Typ",
+      "typeAll": "Alla typer",
+      "typeRecipes": "Recept",
+      "typeFoods": "Livsmedel",
+      "color": "Färg",
+      "colorAll": "Alla",
+      "colorGreen": "Grön",
+      "colorYellow": "Gul",
+      "colorOrange": "Orange"
+    }
+  },
+  "recentFoods": {
+    "title": "Senaste livsmedel",
+    "subtitle": "Klicka för att välja måltid och mängd",
+    "description": "Livsmedel du loggat de senaste 7 dagarna visas här",
+    "empty": "Inga livsmedel loggade de senaste 7 dagarna"
   }
 }

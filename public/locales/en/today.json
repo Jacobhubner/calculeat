@@ -142,5 +142,70 @@
     "yellow": "Yellow",
     "orange": "Orange",
     "noData": "No data"
+  },
+  "plateCalculator": {
+    "title": "Portion calculator",
+    "reset": "Reset",
+    "goalLabel": "Goal:",
+    "goalType": {
+      "kcal": "Calories",
+      "carbs": "Carbs",
+      "fat": "Fat",
+      "protein": "Protein"
+    },
+    "searchPlaceholder": "Search food...",
+    "change": "Change",
+    "forAmount": "For {{amount}} {{unit}}",
+    "addToMeal": "Add to meal",
+    "helpText": "Choose a calorie goal and food item"
+  },
+  "foodSuggestions": {
+    "title": "What should I eat?",
+    "settingsTitle": "Settings",
+    "macroUnit": "g {{macro}}",
+    "macro": {
+      "protein": "protein",
+      "carbs": "carbs",
+      "fat": "fat"
+    },
+    "enterGoal": "Enter goal",
+    "searching": "Searching...",
+    "enterGoalHint": "Enter a calorie goal and macro goal to see suggestions",
+    "noMatches": "No matches",
+    "noMatchesHint": "Try adjusting the goals or removing filters",
+    "resultsCount": "{{count}} suggestions",
+    "sortedBy": "Sorted by:",
+    "sort": {
+      "score": "Match",
+      "protein": "Protein",
+      "calories": "Calories",
+      "name": "Name"
+    },
+    "settings": {
+      "primaryMacro": "Primary macro",
+      "secondaryMacro": "Secondary",
+      "secondaryNone": "None",
+      "count": "Count",
+      "sort": "Sort",
+      "source": "Source",
+      "sourceAll": "All",
+      "sourceMine": "Mine & CalculEat",
+      "sourceSlv": "SLV",
+      "type": "Type",
+      "typeAll": "All types",
+      "typeRecipes": "Recipes",
+      "typeFoods": "Foods",
+      "color": "Color",
+      "colorAll": "All",
+      "colorGreen": "Green",
+      "colorYellow": "Yellow",
+      "colorOrange": "Orange"
+    }
+  },
+  "recentFoods": {
+    "title": "Recent foods",
+    "subtitle": "Click to select meal and amount",
+    "description": "Foods you've logged in the last 7 days appear here",
+    "empty": "No foods logged in the last 7 days"
   }
 }

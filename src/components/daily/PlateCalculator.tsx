@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import type { FoodItem } from '@/hooks/useFoodItems'
 import { calculatePlateAmount, calculatePlateForMacro } from '@/lib/calculations/plateCalculator'
 import { AddFoodToMealModal } from '@/components/daily/AddFoodToMealModal'
+import { useTranslation } from 'react-i18next'
 
 type GoalType = 'kcal' | 'carbs' | 'fat' | 'protein'
 
@@ -14,13 +15,6 @@ const PRESETS: Record<GoalType, number[]> = {
   carbs: [50, 100, 150, 200, 300],
   fat: [20, 40, 60, 80, 100],
   protein: [30, 60, 90, 120, 150],
-}
-
-const GOAL_LABELS: Record<GoalType, string> = {
-  kcal: 'Kalorier',
-  carbs: 'Kolhydrater',
-  fat: 'Fett',
-  protein: 'Protein',
 }
 
 const GOAL_UNITS: Record<GoalType, string> = {
@@ -35,12 +29,12 @@ interface PlateCalculatorProps {
 }
 
 export function PlateCalculator({ onAddToMeal }: PlateCalculatorProps) {
+  const { t } = useTranslation('today')
   const [goalType, setGoalType] = useState<GoalType>('kcal')
   const [targetAmount, setTargetAmount] = useState<number | ''>('')
   const [selectedFood, setSelectedFood] = useState<FoodItem | null>(null)
   const [pickerOpen, setPickerOpen] = useState(false)
 
-  // Beräkna portion
   const calculation = useMemo(() => {
     if (!selectedFood || typeof targetAmount !== 'number' || targetAmount <= 0) return null
 
@@ -57,7 +51,6 @@ export function PlateCalculator({ onAddToMeal }: PlateCalculatorProps) {
 
   const handleAddToMeal = () => {
     if (selectedFood && calculation && onAddToMeal) {
-      // Determine preferred unit based on display mode
       const displayMode = localStorage.getItem(`food-display-mode:${selectedFood.id}`)
       const preferVolume = displayMode === 'perVolume' || selectedFood.default_unit === 'ml'
       const ml = selectedFood.ml_per_gram
@@ -65,13 +58,10 @@ export function PlateCalculator({ onAddToMeal }: PlateCalculatorProps) {
         : null
 
       if (calculation.unitName === 'g' && ml && preferVolume) {
-        // Send as ml if volume is preferred
         onAddToMeal(selectedFood, ml, 'ml')
       } else if (calculation.unitName === 'g' && ml && !preferVolume) {
-        // Send as grams but ml is available
         onAddToMeal(selectedFood, calculation.weightGrams, 'g')
       } else {
-        // Use calculated unit
         onAddToMeal(selectedFood, calculation.unitsNeeded, calculation.unitName)
       }
     }
@@ -93,7 +83,7 @@ export function PlateCalculator({ onAddToMeal }: PlateCalculatorProps) {
         <div className="flex items-center justify-between">
           <CardTitle className="text-base flex items-center gap-2">
             <Calculator className="h-4 w-4 text-primary-600" />
-            Portionsberäknare
+            {t('plateCalculator.title')}
           </CardTitle>
           {(selectedFood || targetAmount !== '') && (
             <Button
@@ -103,14 +93,13 @@ export function PlateCalculator({ onAddToMeal }: PlateCalculatorProps) {
               className="h-6 px-2 text-xs text-neutral-500"
             >
               <RotateCcw className="h-3 w-3 mr-1" />
-              Återställ
+              {t('plateCalculator.reset')}
             </Button>
           )}
         </div>
       </CardHeader>
 
       <CardContent className="space-y-3">
-        {/* Välj måltyp */}
         <div className="flex gap-1 p-1 bg-neutral-100 rounded-lg">
           {(['kcal', 'fat', 'carbs', 'protein'] as GoalType[]).map(type => (
             <button
@@ -122,14 +111,15 @@ export function PlateCalculator({ onAddToMeal }: PlateCalculatorProps) {
                   : 'text-neutral-600 hover:text-neutral-900'
               }`}
             >
-              {GOAL_LABELS[type]}
+              {t(`plateCalculator.goalType.${type}`)}
             </button>
           ))}
         </div>
 
-        {/* Mål-input med snabbval */}
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-sm text-neutral-600 font-medium">Mål:</span>
+          <span className="text-sm text-neutral-600 font-medium">
+            {t('plateCalculator.goalLabel')}
+          </span>
           <Input
             type="number"
             value={targetAmount}
@@ -159,14 +149,15 @@ export function PlateCalculator({ onAddToMeal }: PlateCalculatorProps) {
           </div>
         </div>
 
-        {/* Sök eller valt livsmedel */}
         {!selectedFood ? (
           <div
             className="flex items-center gap-2 px-3 py-2 bg-white border border-neutral-200 rounded-lg cursor-pointer hover:border-primary-300"
             onClick={() => setPickerOpen(true)}
           >
             <Search className="h-4 w-4 text-neutral-400 flex-shrink-0" />
-            <span className="text-neutral-400 text-sm">Sök livsmedel...</span>
+            <span className="text-neutral-400 text-sm">
+              {t('plateCalculator.searchPlaceholder')}
+            </span>
           </div>
         ) : (
           <div className="border-2 border-primary-200 rounded-lg p-2.5 bg-primary-50/50">
@@ -185,37 +176,35 @@ export function PlateCalculator({ onAddToMeal }: PlateCalculatorProps) {
                 onClick={() => setSelectedFood(null)}
                 className="text-xs h-6 px-2 flex-shrink-0"
               >
-                Ändra
+                {t('plateCalculator.change')}
               </Button>
             </div>
           </div>
         )}
 
-        {/* Resultat - kompakt och snygg */}
         {calculation && selectedFood && (
           <div className="bg-gradient-to-br from-primary-50 to-accent-50 rounded-xl p-3">
             <p className="text-xs text-neutral-600 text-center mb-2">
-              För {typeof targetAmount === 'number' ? targetAmount : 0} {GOAL_UNITS[goalType]}
+              {t('plateCalculator.forAmount', {
+                amount: typeof targetAmount === 'number' ? targetAmount : 0,
+                unit: GOAL_UNITS[goalType],
+              })}
               {goalType !== 'kcal' && ` (${calculation.calories} kcal)`}:
             </p>
 
-            {/* Stor resultat-display */}
             <div className="bg-white rounded-lg py-2 px-3 text-center shadow-sm mb-2">
               {(() => {
                 const displayMode = localStorage.getItem(`food-display-mode:${selectedFood.id}`)
                 const preferVolume =
                   displayMode === 'perVolume' || selectedFood.default_unit === 'ml'
 
-                // Calculate ml from weight
                 const mlFromGrams = selectedFood.ml_per_gram
                   ? Math.round(calculation.weightGrams * selectedFood.ml_per_gram * 10) / 10
                   : null
 
-                // Check if result is in volume unit
                 const isVolumeUnit = ['ml', 'dl', 'msk', 'tsk'].includes(calculation.unitName)
 
                 if (calculation.unitName === 'g') {
-                  // Gram-baserade: visa gram först, ml i parentes om tillgängligt
                   return (
                     <span className="text-2xl font-bold text-primary-600">
                       {mlFromGrams && preferVolume ? (
@@ -238,7 +227,6 @@ export function PlateCalculator({ onAddToMeal }: PlateCalculatorProps) {
                     </span>
                   )
                 } else if (isVolumeUnit && mlFromGrams) {
-                  // Volymenheter: visa ml och gram (inte den ursprungliga enheten dl/msk/tsk)
                   return (
                     <span className="text-2xl font-bold text-primary-600">
                       {preferVolume ? (
@@ -257,7 +245,6 @@ export function PlateCalculator({ onAddToMeal }: PlateCalculatorProps) {
                     </span>
                   )
                 } else {
-                  // St och andra enheter: visa enheter + vikt (+ ml om tillgängligt)
                   return (
                     <>
                       <span className="text-2xl font-bold text-primary-600">
@@ -272,7 +259,6 @@ export function PlateCalculator({ onAddToMeal }: PlateCalculatorProps) {
               })()}
             </div>
 
-            {/* Makros i rad - kompakt */}
             <div className="flex justify-center gap-3 text-xs mb-2">
               <span className="flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: '#f5c518' }} />
@@ -297,15 +283,14 @@ export function PlateCalculator({ onAddToMeal }: PlateCalculatorProps) {
             {onAddToMeal && (
               <Button onClick={handleAddToMeal} className="w-full gap-2" size="sm">
                 <Plus className="h-4 w-4" />
-                Lägg till i måltid
+                {t('plateCalculator.addToMeal')}
               </Button>
             )}
           </div>
         )}
 
-        {/* Hjälptext */}
         {!selectedFood && !calculation && (
-          <p className="text-xs text-neutral-400 text-center">Välj kalorimål och livsmedel</p>
+          <p className="text-xs text-neutral-400 text-center">{t('plateCalculator.helpText')}</p>
         )}
       </CardContent>
 

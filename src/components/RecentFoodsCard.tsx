@@ -1,14 +1,10 @@
-/**
- * Recent Foods Card Component
- * Displays recently logged food items with quick-add functionality
- */
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useRecentFoodItems } from '@/hooks/useRecentFoodItems'
 import { Clock, Plus } from 'lucide-react'
 import type { RecentFoodItem } from '@/hooks/useRecentFoodItems'
+import { useTranslation } from 'react-i18next'
 
 interface RecentFoodsCardProps {
   dailyLogId?: string
@@ -16,6 +12,7 @@ interface RecentFoodsCardProps {
 }
 
 export default function RecentFoodsCard({ dailyLogId, onFoodSelect }: RecentFoodsCardProps) {
+  const { t } = useTranslation('today')
   const { data: recentFoods, isLoading } = useRecentFoodItems(6)
 
   if (isLoading) {
@@ -24,7 +21,7 @@ export default function RecentFoodsCard({ dailyLogId, onFoodSelect }: RecentFood
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Clock className="h-5 w-5 text-primary-600" />
-            Senaste livsmedel
+            {t('recentFoods.title')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
@@ -42,14 +39,12 @@ export default function RecentFoodsCard({ dailyLogId, onFoodSelect }: RecentFood
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Clock className="h-5 w-5 text-primary-600" />
-            Senaste livsmedel
+            {t('recentFoods.title')}
           </CardTitle>
-          <CardDescription>Livsmedel du loggat de senaste 7 dagarna visas här</CardDescription>
+          <CardDescription>{t('recentFoods.description')}</CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-center py-8 text-neutral-400 text-sm">
-            Inga livsmedel loggade de senaste 7 dagarna
-          </p>
+          <p className="text-center py-8 text-neutral-400 text-sm">{t('recentFoods.empty')}</p>
         </CardContent>
       </Card>
     )
@@ -60,10 +55,10 @@ export default function RecentFoodsCard({ dailyLogId, onFoodSelect }: RecentFood
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-base md:text-lg">
           <Clock className="h-4 w-4 md:h-5 md:w-5 text-primary-600" />
-          Senaste livsmedel
+          {t('recentFoods.title')}
         </CardTitle>
         <CardDescription className="text-xs md:text-sm">
-          Klicka för att välja måltid och mängd
+          {t('recentFoods.subtitle')}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-2">

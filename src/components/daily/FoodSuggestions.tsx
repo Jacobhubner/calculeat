@@ -6,12 +6,12 @@ import { Label } from '@/components/ui/label'
 import { useFoodSuggestions, type SuggestionSourceFilter } from '@/hooks/useFoodSuggestions'
 import type { FoodItem } from '@/hooks/useFoodItems'
 import type { FoodColor } from '@/lib/calculations/colorDensity'
+import { useTranslation } from 'react-i18next'
 
 interface FoodSuggestionsProps {
   onAddToMeal?: (food: FoodItem, amount: number, unit: string) => void
 }
 
-// Färgprick komponent
 function ColorDot({ color }: { color?: string | null }) {
   if (!color) return null
   const colorClass = {
@@ -19,27 +19,18 @@ function ColorDot({ color }: { color?: string | null }) {
     Yellow: 'bg-yellow-500',
     Orange: 'bg-orange-500',
   }[color]
-  const title = {
-    Green: 'Grön - Låg energitäthet',
-    Yellow: 'Gul - Medium energitäthet',
-    Orange: 'Orange - Hög energitäthet',
-  }[color]
-  return <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${colorClass}`} title={title} />
+  return <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${colorClass}`} />
 }
 
-// Score badge - kompakt
 function ScoreBadge({ score }: { score: number }) {
   const colorClass =
     score >= 80 ? 'text-green-600' : score >= 60 ? 'text-yellow-600' : 'text-neutral-500'
-  return (
-    <span className={`text-xs font-medium ${colorClass}`} title="Matchningspoäng">
-      {Math.round(score)}%
-    </span>
-  )
+  return <span className={`text-xs font-medium ${colorClass}`}>{Math.round(score)}%</span>
 }
 
 export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
-  // Form state
+  const { t } = useTranslation('today')
+
   const [targetCalories, setTargetCalories] = useState<number | ''>('')
   const [primaryMacro, setPrimaryMacro] = useState<'protein' | 'carbs' | 'fat'>('protein')
   const [primaryMacroTarget, setPrimaryMacroTarget] = useState<number | ''>('')
@@ -47,7 +38,6 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
   const [secondaryMacroTarget, setSecondaryMacroTarget] = useState<number | ''>(0)
   const [count, setCount] = useState<number | ''>(10)
 
-  // Filter state
   const [showSettings, setShowSettings] = useState(false)
   const [sourceFilter, setSourceFilter] = useState<SuggestionSourceFilter>('alla')
   const [recipesOnly, setRecipesOnly] = useState(false)
@@ -58,7 +48,6 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
   const [showOrange, setShowOrange] = useState(false)
   const [sortBy, setSortBy] = useState<'score' | 'protein' | 'calories' | 'name'>('score')
 
-  // Build color filter array
   const colorFilter = useMemo(() => {
     if (!filterByColor) return undefined
     const colors: FoodColor[] = []
@@ -68,14 +57,12 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
     return colors.length > 0 ? colors : undefined
   }, [filterByColor, showGreen, showYellow, showOrange])
 
-  // Check if search is valid
   const isSearchValid =
     typeof targetCalories === 'number' &&
     targetCalories > 0 &&
     typeof primaryMacroTarget === 'number' &&
     primaryMacroTarget > 0
 
-  // Get suggestions
   const { suggestions: rawSuggestions, isLoading } = useFoodSuggestions(
     {
       targetCalories: typeof targetCalories === 'number' ? targetCalories : 0,
@@ -96,7 +83,6 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
     isSearchValid
   )
 
-  // Sort suggestions
   const suggestions = useMemo(() => {
     const sorted = [...rawSuggestions]
     switch (sortBy) {
@@ -131,7 +117,7 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
         <div className="flex items-center justify-between">
           <CardTitle className="text-base flex items-center gap-2">
             <Lightbulb className="h-4 w-4 text-primary-600" />
-            Vad ska jag äta?
+            {t('foodSuggestions.title')}
           </CardTitle>
           <button
             onClick={() => setShowSettings(!showSettings)}
@@ -140,7 +126,7 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
                 ? 'bg-primary-100 text-primary-600'
                 : 'hover:bg-neutral-100 text-neutral-500'
             }`}
-            title="Inställningar"
+            title={t('foodSuggestions.settingsTitle')}
           >
             <Settings2 className="h-4 w-4" />
           </button>
@@ -148,7 +134,6 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
       </CardHeader>
 
       <CardContent className="space-y-3">
-        {/* QuickTargetBar - Inline inputs */}
         <div className="flex items-center gap-2 flex-wrap">
           <Input
             type="number"
@@ -175,22 +160,21 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
             placeholder="g"
           />
           <span className="text-xs text-neutral-500">
-            g{' '}
-            {primaryMacro === 'protein'
-              ? 'protein'
-              : primaryMacro === 'carbs'
-                ? 'kolhydrater'
-                : 'fett'}
+            {t('foodSuggestions.macroUnit', { macro: t(`foodSuggestions.macro.${primaryMacro}`) })}
           </span>
-          {!isSearchValid && <span className="text-xs text-neutral-400 ml-auto">Ange mål</span>}
+          {!isSearchValid && (
+            <span className="text-xs text-neutral-400 ml-auto">
+              {t('foodSuggestions.enterGoal')}
+            </span>
+          )}
         </div>
 
-        {/* Settings panel - collapsed by default */}
         {showSettings && (
           <div className="p-3 bg-neutral-50 rounded-lg space-y-3 border">
-            {/* Primary macro selector */}
             <div className="flex items-center gap-3">
-              <Label className="text-xs shrink-0">Primär makro</Label>
+              <Label className="text-xs shrink-0">
+                {t('foodSuggestions.settings.primaryMacro')}
+              </Label>
               <select
                 value={primaryMacro}
                 onChange={e =>
@@ -198,15 +182,16 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
                 }
                 className="h-7 text-xs px-2 rounded-lg border border-neutral-300 bg-white"
               >
-                <option value="fat">Fett</option>
-                <option value="carbs">Kolhydrater</option>
-                <option value="protein">Protein</option>
+                <option value="fat">{t('foodSuggestions.macro.fat')}</option>
+                <option value="carbs">{t('foodSuggestions.macro.carbs')}</option>
+                <option value="protein">{t('foodSuggestions.macro.protein')}</option>
               </select>
             </div>
 
-            {/* Secondary macro */}
             <div className="flex items-center gap-3">
-              <Label className="text-xs shrink-0">Sekundär</Label>
+              <Label className="text-xs shrink-0">
+                {t('foodSuggestions.settings.secondaryMacro')}
+              </Label>
               <select
                 value={secondaryMacro}
                 onChange={e =>
@@ -214,10 +199,16 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
                 }
                 className="h-7 text-xs px-2 rounded-lg border border-neutral-300 bg-white"
               >
-                <option value="">Ingen</option>
-                {primaryMacro !== 'fat' && <option value="fat">Fett</option>}
-                {primaryMacro !== 'carbs' && <option value="carbs">Kolhydrater</option>}
-                {primaryMacro !== 'protein' && <option value="protein">Protein</option>}
+                <option value="">{t('foodSuggestions.settings.secondaryNone')}</option>
+                {primaryMacro !== 'fat' && (
+                  <option value="fat">{t('foodSuggestions.macro.fat')}</option>
+                )}
+                {primaryMacro !== 'carbs' && (
+                  <option value="carbs">{t('foodSuggestions.macro.carbs')}</option>
+                )}
+                {primaryMacro !== 'protein' && (
+                  <option value="protein">{t('foodSuggestions.macro.protein')}</option>
+                )}
               </select>
               {secondaryMacro && (
                 <>
@@ -236,9 +227,8 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
               )}
             </div>
 
-            {/* Count and Sort */}
             <div className="flex items-center gap-3">
-              <Label className="text-xs shrink-0">Antal</Label>
+              <Label className="text-xs shrink-0">{t('foodSuggestions.settings.count')}</Label>
               <Input
                 type="number"
                 value={count}
@@ -250,7 +240,7 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
                 min={1}
                 max={50}
               />
-              <Label className="text-xs shrink-0">Sortera</Label>
+              <Label className="text-xs shrink-0">{t('foodSuggestions.settings.sort')}</Label>
               <select
                 value={sortBy}
                 onChange={e =>
@@ -258,22 +248,21 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
                 }
                 className="h-7 text-xs px-2 rounded-lg border border-neutral-300 bg-white"
               >
-                <option value="score">Matchning</option>
-                <option value="protein">Protein</option>
-                <option value="calories">Kalorier</option>
-                <option value="name">Namn</option>
+                <option value="score">{t('foodSuggestions.sort.score')}</option>
+                <option value="protein">{t('foodSuggestions.sort.protein')}</option>
+                <option value="calories">{t('foodSuggestions.sort.calories')}</option>
+                <option value="name">{t('foodSuggestions.sort.name')}</option>
               </select>
             </div>
 
-            {/* Source filter */}
             <div className="flex items-center gap-3">
-              <Label className="text-xs shrink-0">Källa</Label>
+              <Label className="text-xs shrink-0">{t('foodSuggestions.settings.source')}</Label>
               <div className="flex gap-1 flex-wrap">
                 {(
                   [
-                    { key: 'alla', label: 'Alla' },
-                    { key: 'mina', label: 'Mina & CalculEat' },
-                    { key: 'slv', label: 'SLV' },
+                    { key: 'alla', labelKey: 'settings.sourceAll' },
+                    { key: 'mina', labelKey: 'settings.sourceMine' },
+                    { key: 'slv', labelKey: 'settings.sourceSlv' },
                   ] as const
                 ).map(s => (
                   <button
@@ -285,46 +274,44 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
                         : 'bg-white text-neutral-500 border-neutral-200 hover:border-neutral-400'
                     }`}
                   >
-                    {s.label}
+                    {t(`foodSuggestions.${s.labelKey}`)}
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Typ-filter */}
             <div className="flex items-center gap-3">
-              <Label className="text-xs shrink-0">Typ</Label>
+              <Label className="text-xs shrink-0">{t('foodSuggestions.settings.type')}</Label>
               <div className="flex gap-1 flex-wrap">
                 {(
                   [
-                    { key: 'alla', label: 'Alla typer' },
-                    { key: 'recept', label: 'Recept' },
-                    { key: 'livsmedel', label: 'Livsmedel' },
+                    { key: 'alla', labelKey: 'settings.typeAll' },
+                    { key: 'recept', labelKey: 'settings.typeRecipes' },
+                    { key: 'livsmedel', labelKey: 'settings.typeFoods' },
                   ] as const
-                ).map(t => (
+                ).map(item => (
                   <button
-                    key={t.key}
+                    key={item.key}
                     onClick={() => {
-                      setRecipesOnly(t.key === 'recept')
-                      setNonRecipesOnly(t.key === 'livsmedel')
+                      setRecipesOnly(item.key === 'recept')
+                      setNonRecipesOnly(item.key === 'livsmedel')
                     }}
                     className={`px-2 py-0.5 text-xs rounded-full border transition-colors ${
-                      (t.key === 'recept' && recipesOnly) ||
-                      (t.key === 'livsmedel' && nonRecipesOnly) ||
-                      (t.key === 'alla' && !recipesOnly && !nonRecipesOnly)
+                      (item.key === 'recept' && recipesOnly) ||
+                      (item.key === 'livsmedel' && nonRecipesOnly) ||
+                      (item.key === 'alla' && !recipesOnly && !nonRecipesOnly)
                         ? 'bg-primary-500 text-white border-primary-600'
                         : 'bg-white text-neutral-500 border-neutral-200 hover:border-neutral-400'
                     }`}
                   >
-                    {t.label}
+                    {t(`foodSuggestions.${item.labelKey}`)}
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Färgfilter */}
             <div className="flex items-center gap-3">
-              <Label className="text-xs shrink-0">Färg</Label>
+              <Label className="text-xs shrink-0">{t('foodSuggestions.settings.color')}</Label>
               <div className="flex gap-1 flex-wrap">
                 <button
                   onClick={() => setFilterByColor(false)}
@@ -334,33 +321,27 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
                       : 'bg-white text-neutral-500 border-neutral-200 hover:border-neutral-400'
                   }`}
                 >
-                  Alla
+                  {t('foodSuggestions.settings.colorAll')}
                 </button>
                 {(
                   [
                     {
                       key: 'green',
-                      label: 'Grön',
-                      bg: 'bg-green-500',
-                      activeBg: 'bg-green-500 border-green-600',
+                      labelKey: 'settings.colorGreen',
                       dot: 'bg-green-500',
                       checked: showGreen,
                       set: setShowGreen,
                     },
                     {
                       key: 'yellow',
-                      label: 'Gul',
-                      bg: 'bg-yellow-400',
-                      activeBg: 'bg-yellow-400 border-yellow-500 text-neutral-900',
+                      labelKey: 'settings.colorYellow',
                       dot: 'bg-yellow-400',
                       checked: showYellow,
                       set: setShowYellow,
                     },
                     {
                       key: 'orange',
-                      label: 'Orange',
-                      bg: 'bg-orange-500',
-                      activeBg: 'bg-orange-500 border-orange-600',
+                      labelKey: 'settings.colorOrange',
                       dot: 'bg-orange-500',
                       checked: showOrange,
                       set: setShowOrange,
@@ -387,7 +368,7 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
                     }`}
                   >
                     <span className={`w-2 h-2 rounded-full shrink-0 ${c.dot}`} />
-                    {c.label}
+                    {t(`foodSuggestions.${c.labelKey}`)}
                   </button>
                 ))}
               </div>
@@ -395,36 +376,28 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
           </div>
         )}
 
-        {/* Results */}
         {isLoading ? (
-          <p className="text-xs text-neutral-500 text-center py-4">Söker...</p>
+          <p className="text-xs text-neutral-500 text-center py-4">
+            {t('foodSuggestions.searching')}
+          </p>
         ) : !isSearchValid ? (
           <p className="text-xs text-neutral-400 text-center py-3">
-            Ange kalorimål och makromål för att se förslag
+            {t('foodSuggestions.enterGoalHint')}
           </p>
         ) : suggestions.length === 0 ? (
           <div className="text-center py-4">
-            <p className="text-sm text-neutral-600">Inga matchningar</p>
-            <p className="text-xs text-neutral-400 mt-1">Prova ändra målen eller ta bort filter</p>
+            <p className="text-sm text-neutral-600">{t('foodSuggestions.noMatches')}</p>
+            <p className="text-xs text-neutral-400 mt-1">{t('foodSuggestions.noMatchesHint')}</p>
           </div>
         ) : (
           <>
-            {/* Results header */}
             <div className="flex items-center justify-between text-xs text-neutral-500 border-b pb-1">
-              <span>{suggestions.length} förslag</span>
+              <span>{t('foodSuggestions.resultsCount', { count: suggestions.length })}</span>
               <span>
-                Sorterat:{' '}
-                {sortBy === 'score'
-                  ? 'Matchning'
-                  : sortBy === 'protein'
-                    ? 'Protein'
-                    : sortBy === 'calories'
-                      ? 'Kalorier'
-                      : 'Namn'}
+                {t('foodSuggestions.sortedBy')} {t(`foodSuggestions.sort.${sortBy}`)}
               </span>
             </div>
 
-            {/* Compact table list */}
             <div className="max-h-72 overflow-y-auto -mx-1">
               {suggestions.map((match, index) => {
                 return (
@@ -432,52 +405,42 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
                     key={match.food.id}
                     className="px-1 py-1.5 hover:bg-neutral-50 transition-colors border-b border-neutral-100 last:border-b-0"
                   >
-                    {/* Row 1: Index, Name, Amount, Kcal, Add */}
                     <div className="flex items-center gap-1.5">
-                      {/* Rank */}
                       <span className="text-xs text-neutral-400 w-4 text-center flex-shrink-0">
                         {index + 1}
                       </span>
 
-                      {/* Food name - can wrap */}
                       <span className="text-sm text-neutral-900 flex-1 min-w-0 leading-tight">
                         {match.food.name}
                       </span>
 
-                      {/* Amount */}
                       <span className="text-xs font-medium text-primary-600 whitespace-nowrap flex-shrink-0">
                         {match.amount.toFixed(1).replace(/\.0$/, '')} {match.unit}
                       </span>
 
-                      {/* Calories */}
                       <span className="text-xs text-neutral-600 whitespace-nowrap w-14 text-right flex-shrink-0">
                         {Math.round(match.calories)} kcal
                       </span>
 
-                      {/* Add button */}
                       {onAddToMeal && (
                         <button
                           onClick={() => {
-                            // Use preferred unit based on display mode
                             const displayMode = localStorage.getItem(
                               `food-display-mode:${match.food.id}`
                             )
                             let unit = match.unit
                             let amount = match.amount
 
-                            // If food has volume data and user prefers volume
                             if (
                               match.food.ml_per_gram &&
                               (displayMode === 'perVolume' || match.food.default_unit === 'ml')
                             ) {
-                              // Convert to ml if not already
                               if (unit === 'g') {
                                 const ml = amount * match.food.ml_per_gram
                                 unit = 'ml'
                                 amount = Math.round(ml * 10) / 10
                               }
                             } else if (match.food.grams_per_piece && displayMode === 'serving') {
-                              // Convert to serving unit if user prefers it
                               const servingUnit = match.food.serving_unit || 'st'
                               if (unit === 'g') {
                                 const pieces = amount / match.food.grams_per_piece
@@ -489,14 +452,12 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
                             onAddToMeal(match.food, amount, unit)
                           }}
                           className="p-1 rounded bg-primary-600 text-white hover:bg-primary-700 transition-colors flex-shrink-0"
-                          title="Lägg till i måltid"
                         >
                           <Plus className="h-3.5 w-3.5" />
                         </button>
                       )}
                     </div>
 
-                    {/* Row 2: Score, Color dot, Macros */}
                     <div className="flex items-center gap-2 mt-0.5 ml-9 text-xs">
                       <ColorDot color={match.food.energy_density_color} />
                       <ScoreBadge score={match.overallScore} />
