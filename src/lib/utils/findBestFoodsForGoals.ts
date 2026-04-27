@@ -91,17 +91,33 @@ export function findBestFoodsForGoals(
     // Skip foods with zero calories
     if (food.calories <= 0) continue
 
-    // Get base weight (what the nutrition info is based on)
-    const baseWeight = food.weight_grams && food.weight_grams > 0 ? food.weight_grams : 100
+    // For piece/portion units with a known piece weight, work directly in pieces
+    const isPieceUnit =
+      food.default_unit === 'portion' || food.default_unit === 'st' || food.default_unit === 'pkt'
+    const gramsPerPiece =
+      food.grams_per_piece && food.grams_per_piece > 0 ? food.grams_per_piece : null
 
-    // Calculate amount needed to reach desired calories (in terms of base portions)
-    const amountForCalories = desiredCalories / food.calories
+    let amount: number
+    let amountForCalories: number
 
-    // Calculate weight in grams needed
-    const weightGrams = amountForCalories * baseWeight
+    if (isPieceUnit && gramsPerPiece) {
+      // calories on food_item = kalorier per 1 piece/portion
+      // amountForCalories = how many pieces give desiredCalories
+      amountForCalories = desiredCalories / food.calories
+      amount = amountForCalories
+    } else {
+      // Get base weight (what the nutrition info is based on)
+      const baseWeight = food.weight_grams && food.weight_grams > 0 ? food.weight_grams : 100
 
-    // Convert weight to appropriate unit
-    const amount = convertWeightToUnit(weightGrams, food.default_unit, food.ml_per_gram)
+      // Calculate amount needed to reach desired calories (in terms of base portions)
+      amountForCalories = desiredCalories / food.calories
+
+      // Calculate weight in grams needed
+      const weightGrams = amountForCalories * baseWeight
+
+      // Convert weight to appropriate unit
+      amount = convertWeightToUnit(weightGrams, food.default_unit, food.ml_per_gram)
+    }
 
     // Calculate what macros we'd get at that amount
     const macroAtAmount = getMacroValue(food, desiredMacroType) * amountForCalories
@@ -245,10 +261,19 @@ export function findHighProteinFoods(
   const matches: FoodGoalMatch[] = []
 
   for (const food of sorted.slice(0, numberOfResults * 2)) {
-    const baseWeight = food.weight_grams && food.weight_grams > 0 ? food.weight_grams : 100
     const amountForCalories = targetCalories / food.calories
-    const weightGrams = amountForCalories * baseWeight
-    const amount = convertWeightToUnit(weightGrams, food.default_unit, food.ml_per_gram)
+    const isPieceUnit =
+      food.default_unit === 'portion' || food.default_unit === 'st' || food.default_unit === 'pkt'
+    const gramsPerPiece =
+      food.grams_per_piece && food.grams_per_piece > 0 ? food.grams_per_piece : null
+    let amount: number
+    if (isPieceUnit && gramsPerPiece) {
+      amount = amountForCalories
+    } else {
+      const baseWeight = food.weight_grams && food.weight_grams > 0 ? food.weight_grams : 100
+      const weightGrams = amountForCalories * baseWeight
+      amount = convertWeightToUnit(weightGrams, food.default_unit, food.ml_per_gram)
+    }
 
     matches.push({
       food,

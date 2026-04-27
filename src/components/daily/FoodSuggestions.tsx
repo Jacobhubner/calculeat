@@ -446,8 +446,7 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
 
                       {/* Amount */}
                       <span className="text-xs font-medium text-primary-600 whitespace-nowrap flex-shrink-0">
-                        {match.amount.toFixed(0)}
-                        {match.unit}
+                        {match.amount.toFixed(1).replace(/\.0$/, '')} {match.unit}
                       </span>
 
                       {/* Calories */}
