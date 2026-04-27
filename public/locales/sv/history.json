@@ -87,7 +87,9 @@
     "protein": "Protein",
     "meals": "Måltider",
     "totalFoods": "Totalt antal matvaror",
-    "vsGoal": "Jämfört med mål"
+    "vsGoal": "Jämfört med mål",
+    "goalRange": "Mål {{min}}–{{max}} kcal",
+    "avgGoalPercent": "{{pct}}% av snittmålet"
   },
   "editing": {
     "banner": "Du redigerar denna dag. Lägg till eller ta bort matvaror.",

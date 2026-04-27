@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams, useNavigate } from 'react-router-dom'
+import i18n from '@/i18n'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -147,7 +148,7 @@ export default function HistoryDayPage() {
   }
 
   const logDate = new Date(log.log_date)
-  const dateDisplay = logDate.toLocaleDateString('sv-SE', {
+  const dateDisplay = logDate.toLocaleDateString(i18n.language === 'sv' ? 'sv-SE' : 'en-GB', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
@@ -532,8 +533,10 @@ export default function HistoryDayPage() {
                     <span className="text-sm text-neutral-600">{t('day.calories')}</span>
                     {log.goal_calories_min && (
                       <p className="text-xs text-neutral-400 mt-0.5">
-                        Mål {Math.round(log.goal_calories_min)}–{Math.round(log.goal_calories_max)}{' '}
-                        kcal
+                        {t('day.goalRange', {
+                          min: Math.round(log.goal_calories_min),
+                          max: Math.round(log.goal_calories_max),
+                        })}
                       </p>
                     )}
                   </div>
@@ -547,14 +550,15 @@ export default function HistoryDayPage() {
                       kcal
                     </div>
                     <div className="text-xs text-neutral-400 mt-0.5">
-                      {Math.round(
-                        (log.total_calories /
-                          (((log.goal_calories_min ?? log.goal_calories_max) +
-                            log.goal_calories_max) /
-                            2)) *
-                          100
-                      )}
-                      % av snittmålet
+                      {t('day.avgGoalPercent', {
+                        pct: Math.round(
+                          (log.total_calories /
+                            (((log.goal_calories_min ?? log.goal_calories_max) +
+                              log.goal_calories_max) /
+                              2)) *
+                            100
+                        ),
+                      })}
                     </div>
                   </div>
                 </div>

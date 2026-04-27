@@ -87,7 +87,9 @@
     "protein": "Protein",
     "meals": "Meals",
     "totalFoods": "Total food items",
-    "vsGoal": "Compared to goal"
+    "vsGoal": "Compared to goal",
+    "goalRange": "Goal {{min}}–{{max}} kcal",
+    "avgGoalPercent": "{{pct}}% of average goal"
   },
   "editing": {
     "banner": "You are editing this day. Add or remove food items.",
