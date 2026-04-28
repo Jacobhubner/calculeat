@@ -22,15 +22,12 @@ import {
   type AlanAragonReference,
 } from '@/lib/calculations/geneticPotentialCalculations'
 
-// Helper function to get short display names for formulas
-function getFormulaDisplayName(fullName: string): string {
-  const nameMap: Record<string, string> = {
-    'Martin Berkhans modell': 'Martin Berkhans modell',
-    'Casey Butts modell': 'Casey Butts modell',
-    'Alan Aragons ramverk': 'Alan Aragons ramverk',
-    'Lyle McDonalds ramverk': 'Lyle McDonalds ramverk',
-  }
-  return nameMap[fullName] || fullName
+// Map internal formula names (Swedish, used as data keys) to locale keys
+const formulaLocaleKeyMap: Record<string, string> = {
+  'Martin Berkhans modell': 'martinBerkhan',
+  'Casey Butts modell': 'caseyButt',
+  'Alan Aragons ramverk': 'alanAragon',
+  'Lyle McDonalds ramverk': 'lyleMcDonald',
 }
 
 export default function GeneticPotentialTool() {
@@ -117,15 +114,13 @@ export default function GeneticPotentialTool() {
 
   return (
     <div className="space-y-6">
-      <BackToHubButton hubPath="/app/body-composition" hubLabel="Kroppssammansättning" />
+      <BackToHubButton hubPath="/app/body-composition" hubLabel={t('geneticPotential.hubLabel')} />
 
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">{t('geneticPotential.header.title')}</h2>
-          <p className="text-neutral-600 mt-1">
-            {t('geneticPotential.header.description')}
-          </p>
+          <p className="text-neutral-600 mt-1">{t('geneticPotential.header.description')}</p>
         </div>
         <Badge variant="secondary" className="bg-green-100 text-green-700">
           {t('geneticPotential.header.badge')}
@@ -188,16 +183,19 @@ export default function GeneticPotentialTool() {
               <CardContent className="space-y-4">
                 {/* Formula selector buttons */}
                 <div className="flex gap-2 flex-wrap">
-                  {results.map((result, index) => (
-                    <Button
-                      key={index}
-                      variant={selectedFormulaIndex === index ? 'primary' : 'outline'}
-                      size="sm"
-                      onClick={() => setSelectedFormulaIndex(index)}
-                    >
-                      {getFormulaDisplayName(result.formula)}
-                    </Button>
-                  ))}
+                  {results.map((result, index) => {
+                    const key = formulaLocaleKeyMap[result.formula]
+                    return (
+                      <Button
+                        key={index}
+                        variant={selectedFormulaIndex === index ? 'primary' : 'outline'}
+                        size="sm"
+                        onClick={() => setSelectedFormulaIndex(index)}
+                      >
+                        {key ? t(`geneticPotential.formulaNames.${key}`) : result.formula}
+                      </Button>
+                    )
+                  })}
                 </div>
 
                 {/* Casey Butt metodväljare - visa bara när Casey Butt är vald */}
@@ -210,7 +208,7 @@ export default function GeneticPotentialTool() {
                         className="w-full p-4 flex justify-between items-center hover:bg-blue-100 transition-colors"
                       >
                         <h4 className="text-sm font-semibold text-blue-900">
-                          Om Casey Butts modell
+                          {t('geneticPotential.caseyButtInfo.toggleTitle')}
                         </h4>
                         {showCaseyButtInfo ? (
                           <ChevronUp className="h-5 w-5 text-blue-700" />
@@ -221,163 +219,184 @@ export default function GeneticPotentialTool() {
                       {showCaseyButtInfo && (
                         <div className="px-4 pb-4 space-y-2">
                           <p className="text-xs text-blue-800 leading-relaxed">
-                            Casey Butt är forskare (PhD) och styrkelyftare som under 2000-talet
-                            publicerade en omfattande empirisk modell för att uppskatta genetisk
-                            muskelpotential hos naturliga atleter. Modellen bygger på analys av
-                            historiska data från naturliga bodybuilders och styrkelyftare över flera
-                            decennier, särskilt från perioder då prestationshöjande droger var
-                            ovanliga.
+                            {t('geneticPotential.caseyButtInfo.para1')}
                           </p>
                           <p className="text-xs text-blue-800 leading-relaxed">
-                            Till skillnad från enklare längd- och viktbaserade formler tar Butts
-                            modell hänsyn till individuell skelettstruktur genom mätningar av
-                            handled- och ankelomkrets. Dessa används för att uppskatta ramstorlek
-                            och muskelpotential. Modellen ger även separata beräkningar för maximala
-                            kroppsmått (t.ex. armar, bröst, lår) vid genetisk potential.
+                            {t('geneticPotential.caseyButtInfo.para2')}
                           </p>
                           <p className="text-xs text-blue-800 leading-relaxed">
-                            Modellen är empirisk och observationsbaserad, inte en formellt
-                            vetenskapligt validerad studie, men används ofta som referens för
-                            realistiska övre gränser för naturlig muskelutveckling, inte som en
-                            statistisk medelvärdesmodell.
+                            {t('geneticPotential.caseyButtInfo.para3')}
                           </p>
-                          <p className="text-xs font-semibold text-blue-800 mt-2">Formel</p>
+                          <p className="text-xs font-semibold text-blue-800 mt-2">
+                            {t('geneticPotential.caseyButtInfo.formulaLabel')}
+                          </p>
                           <div className="overflow-x-auto rounded-lg border border-blue-200">
                             <table className="w-full text-xs">
                               <tbody>
                                 <tr className="bg-blue-100 text-blue-600 font-medium">
                                   <td className="px-3 py-1.5" colSpan={2}>
-                                    Steg 1 — Max fettfri massa (MLBM)
+                                    {t('geneticPotential.caseyButtInfo.step1Header')}
                                   </td>
                                 </tr>
                                 <tr className="bg-white">
                                   <td className="px-3 py-1.5 text-blue-900 font-mono" colSpan={2}>
-                                    MLBM = H¹·⁵ × (√W / 22,667 + √A / 17,0104) × (BF% / 224 + 1)
+                                    {t('geneticPotential.caseyButtInfo.step1Formula')}
                                   </td>
                                 </tr>
                                 <tr className="bg-blue-50">
                                   <td className="px-3 py-1.5 text-blue-700" colSpan={2}>
-                                    H = längd (tum), W = handled (tum), A = fotled (tum), BF% =
-                                    kroppsfett
+                                    {t('geneticPotential.caseyButtInfo.step1Vars')}
                                   </td>
                                 </tr>
                                 <tr className="bg-blue-100 text-blue-600 font-medium">
                                   <td className="px-3 py-1.5" colSpan={2}>
-                                    Steg 2 — Max kroppsvikt (MBW)
+                                    {t('geneticPotential.caseyButtInfo.step2Header')}
                                   </td>
                                 </tr>
                                 <tr className="bg-white">
                                   <td className="px-3 py-1.5 text-blue-900 font-mono" colSpan={2}>
-                                    MBW = MLBM / (100 − BF%) × 100
+                                    {t('geneticPotential.caseyButtInfo.step2Formula')}
                                   </td>
                                 </tr>
                                 <tr className="bg-blue-100 text-blue-600 font-medium">
                                   <td className="px-3 py-1.5" colSpan={2}>
-                                    Steg 3 — Max bulkad kroppsvikt (MBBW)
+                                    {t('geneticPotential.caseyButtInfo.step3Header')}
                                   </td>
                                 </tr>
                                 <tr className="bg-white">
                                   <td className="px-3 py-1.5 text-blue-900 font-mono" colSpan={2}>
-                                    MBBW = MBW × 1,04
+                                    {t('geneticPotential.caseyButtInfo.step3Formula')}
                                   </td>
                                 </tr>
                                 <tr className="bg-blue-100 text-blue-600 font-medium">
                                   <td className="px-3 py-1.5" colSpan={2}>
-                                    Hardgainer-gränser
+                                    {t('geneticPotential.caseyButtInfo.hardgainerHeader')}
                                   </td>
                                 </tr>
                                 <tr className="bg-white">
-                                  <td className="px-3 py-1.5 text-blue-800">Överkropp (handled)</td>
+                                  <td className="px-3 py-1.5 text-blue-800">
+                                    {t('geneticPotential.caseyButtInfo.upperBodyLabel')}
+                                  </td>
                                   <td className="px-3 py-1.5 text-blue-900 font-mono text-right">
-                                    Handled ≤ 0,1045 × Längd
+                                    {t('geneticPotential.caseyButtInfo.upperBodyFormula')}
                                   </td>
                                 </tr>
                                 <tr className="bg-blue-50">
-                                  <td className="px-3 py-1.5 text-blue-800">Underkropp (fotled)</td>
+                                  <td className="px-3 py-1.5 text-blue-800">
+                                    {t('geneticPotential.caseyButtInfo.lowerBodyLabel')}
+                                  </td>
                                   <td className="px-3 py-1.5 text-blue-900 font-mono text-right">
-                                    Fotled ≤ 0,1296 × Längd
+                                    {t('geneticPotential.caseyButtInfo.lowerBodyFormula')}
                                   </td>
                                 </tr>
                                 <tr className="bg-blue-100 text-blue-600 font-medium">
-                                  <td className="px-3 py-1.5">Kroppsmått — Easygainer</td>
+                                  <td className="px-3 py-1.5">
+                                    {t('geneticPotential.caseyButtInfo.easygainerHeader')}
+                                  </td>
                                   <td className="px-3 py-1.5 text-right text-blue-500 font-normal text-xs">
-                                    W = handled, A = fotled, H = längd (tum)
+                                    {t('geneticPotential.caseyButtInfo.easygainerVars')}
                                   </td>
                                 </tr>
                                 <tr className="bg-white">
-                                  <td className="px-3 py-1.5 text-blue-800">Bröst</td>
+                                  <td className="px-3 py-1.5 text-blue-800">
+                                    {t('geneticPotential.caseyButtInfo.chest')}
+                                  </td>
                                   <td className="px-3 py-1.5 text-blue-900 font-mono text-right">
                                     1,6817×W + 1,3759×A + 0,3314×H
                                   </td>
                                 </tr>
                                 <tr className="bg-blue-50">
-                                  <td className="px-3 py-1.5 text-blue-800">Biceps</td>
+                                  <td className="px-3 py-1.5 text-blue-800">
+                                    {t('geneticPotential.caseyButtInfo.biceps')}
+                                  </td>
                                   <td className="px-3 py-1.5 text-blue-900 font-mono text-right">
                                     1,2033×W + 0,1236×H
                                   </td>
                                 </tr>
                                 <tr className="bg-white">
-                                  <td className="px-3 py-1.5 text-blue-800">Underarmar</td>
+                                  <td className="px-3 py-1.5 text-blue-800">
+                                    {t('geneticPotential.caseyButtInfo.forearms')}
+                                  </td>
                                   <td className="px-3 py-1.5 text-blue-900 font-mono text-right">
                                     0,9626×W + 0,0989×H
                                   </td>
                                 </tr>
                                 <tr className="bg-blue-50">
-                                  <td className="px-3 py-1.5 text-blue-800">Nacke</td>
+                                  <td className="px-3 py-1.5 text-blue-800">
+                                    {t('geneticPotential.caseyButtInfo.neck')}
+                                  </td>
                                   <td className="px-3 py-1.5 text-blue-900 font-mono text-right">
                                     1,1424×W + 0,1236×H
                                   </td>
                                 </tr>
                                 <tr className="bg-white">
-                                  <td className="px-3 py-1.5 text-blue-800">Lår</td>
+                                  <td className="px-3 py-1.5 text-blue-800">
+                                    {t('geneticPotential.caseyButtInfo.thighs')}
+                                  </td>
                                   <td className="px-3 py-1.5 text-blue-900 font-mono text-right">
                                     1,3868×A + 0,1805×H
                                   </td>
                                 </tr>
                                 <tr className="bg-blue-50">
-                                  <td className="px-3 py-1.5 text-blue-800">Vader</td>
+                                  <td className="px-3 py-1.5 text-blue-800">
+                                    {t('geneticPotential.caseyButtInfo.calves')}
+                                  </td>
                                   <td className="px-3 py-1.5 text-blue-900 font-mono text-right">
                                     0,9298×A + 0,1210×H
                                   </td>
                                 </tr>
                                 <tr className="bg-blue-100 text-blue-600 font-medium">
-                                  <td className="px-3 py-1.5">Kroppsmått — Hardgainer</td>
+                                  <td className="px-3 py-1.5">
+                                    {t('geneticPotential.caseyButtInfo.hardgainerHeader2')}
+                                  </td>
                                   <td className="px-3 py-1.5 text-right text-blue-500 font-normal text-xs">
-                                    W = handled, A = fotled (tum)
+                                    {t('geneticPotential.caseyButtInfo.hardgainerVars')}
                                   </td>
                                 </tr>
                                 <tr className="bg-white">
-                                  <td className="px-3 py-1.5 text-blue-800">Bröst</td>
+                                  <td className="px-3 py-1.5 text-blue-800">
+                                    {t('geneticPotential.caseyButtInfo.chest')}
+                                  </td>
                                   <td className="px-3 py-1.5 text-blue-900 font-mono text-right">
                                     3,15×W + 2,54×A
                                   </td>
                                 </tr>
                                 <tr className="bg-blue-50">
-                                  <td className="px-3 py-1.5 text-blue-800">Biceps</td>
+                                  <td className="px-3 py-1.5 text-blue-800">
+                                    {t('geneticPotential.caseyButtInfo.biceps')}
+                                  </td>
                                   <td className="px-3 py-1.5 text-blue-900 font-mono text-right">
                                     2,28×W
                                   </td>
                                 </tr>
                                 <tr className="bg-white">
-                                  <td className="px-3 py-1.5 text-blue-800">Underarmar</td>
+                                  <td className="px-3 py-1.5 text-blue-800">
+                                    {t('geneticPotential.caseyButtInfo.forearms')}
+                                  </td>
                                   <td className="px-3 py-1.5 text-blue-900 font-mono text-right">
                                     1,83×W
                                   </td>
                                 </tr>
                                 <tr className="bg-blue-50">
-                                  <td className="px-3 py-1.5 text-blue-800">Nacke</td>
+                                  <td className="px-3 py-1.5 text-blue-800">
+                                    {t('geneticPotential.caseyButtInfo.neck')}
+                                  </td>
                                   <td className="px-3 py-1.5 text-blue-900 font-mono text-right">
                                     2,30×W
                                   </td>
                                 </tr>
                                 <tr className="bg-white">
-                                  <td className="px-3 py-1.5 text-blue-800">Lår</td>
+                                  <td className="px-3 py-1.5 text-blue-800">
+                                    {t('geneticPotential.caseyButtInfo.thighs')}
+                                  </td>
                                   <td className="px-3 py-1.5 text-blue-900 font-mono text-right">
                                     2,65×A
                                   </td>
                                 </tr>
                                 <tr className="bg-blue-50">
-                                  <td className="px-3 py-1.5 text-blue-800">Vader</td>
+                                  <td className="px-3 py-1.5 text-blue-800">
+                                    {t('geneticPotential.caseyButtInfo.calves')}
+                                  </td>
                                   <td className="px-3 py-1.5 text-blue-900 font-mono text-right">
                                     1,80×A
                                   </td>
@@ -386,21 +405,13 @@ export default function GeneticPotentialTool() {
                             </table>
                           </div>
                           <p className="text-xs text-blue-700 italic mt-3">
-                            Källa: Butt, C. &ldquo;Your Muscular Potential: How to Predict Your
-                            Maximum Muscular Bodyweight and Measurements&rdquo; weightrainer.net
-                            (ursprungligen publicerad tidigt 2000-tal, uppdaterad 2009)
+                            {t('geneticPotential.caseyButtInfo.source')}
                           </p>
                           <p className="text-xs text-blue-800 leading-relaxed mt-3">
-                            Det finns en förvirring med denna modell. Casey Butt specificerar inte
-                            strikt vilken kroppsfettprocent man ska använda utan beskriver:
-                            &ldquo;%bf = The body fat percentage at which you want to predict your
-                            maximum lean body mass&rdquo;. Detta lämnar det öppet för tolkning och
-                            man kan därför använda denna modell på två olika sätt:
+                            {t('geneticPotential.caseyButtInfo.ambiguityNote')}
                           </p>
-                          <p className="text-xs text-blue-800 leading-relaxed font-medium">
-                            Alternativ 1: Standardiserad genetisk referens
-                            <br />
-                            Alternativ 2: Tillståndsberoende fettfri kroppsvikt
+                          <p className="text-xs text-blue-800 leading-relaxed font-medium whitespace-pre-line">
+                            {t('geneticPotential.caseyButtInfo.alternativesLabel')}
                           </p>
                         </div>
                       )}
@@ -409,32 +420,31 @@ export default function GeneticPotentialTool() {
                     {/* Input fields för wrist och ankle */}
                     <div className="p-4 bg-neutral-50 border border-neutral-200 rounded-lg">
                       <h4 className="text-sm font-semibold text-neutral-900 mb-3">
-                        Omkretsmått för Casey Butt-modellen
+                        {t('geneticPotential.caseyButtInputs.sectionTitle')}
                       </h4>
                       <p className="text-xs text-neutral-600 mb-4">
-                        Dessa mått används för att beräkna skelettstruktur och muskelpotential.
                         {currentMeasurement?.wrist || currentMeasurement?.ankle
-                          ? ' Värden är förifyllda från ditt aktiva måttkort.'
-                          : ' Ange dina mått manuellt eller spara dem i kroppssammansättning.'}
+                          ? t('geneticPotential.caseyButtInputs.descWithData')
+                          : t('geneticPotential.caseyButtInputs.descWithoutData')}
                       </p>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <div className="flex items-center gap-1.5">
                             <Label htmlFor="wrist-input">
-                              Handled <span className="text-neutral-500">(cm)</span>
+                              {t('geneticPotential.caseyButtInputs.wristLabel')}{' '}
+                              <span className="text-neutral-500">(cm)</span>
                             </Label>
                             <button
                               type="button"
                               onClick={() => {
                                 setModalContent({
-                                  title: 'Handled',
-                                  description:
-                                    'Mäts på handsidan av processus styloideus, där underarmen är som smalast.',
+                                  title: t('geneticPotential.caseyButtInputs.wristInfoTitle'),
+                                  description: t('geneticPotential.caseyButtInputs.wristInfoDesc'),
                                 })
                                 setShowModal(true)
                               }}
                               className="text-neutral-400 hover:text-primary-600 transition-colors cursor-pointer"
-                              aria-label="Visa information om Handled"
+                              aria-label={t('geneticPotential.caseyButtInputs.wristAriaLabel')}
                             >
                               <Info className="h-4 w-4" />
                             </button>
@@ -458,19 +468,20 @@ export default function GeneticPotentialTool() {
                         <div className="space-y-2">
                           <div className="flex items-center gap-1.5">
                             <Label htmlFor="ankle-input">
-                              Fotled <span className="text-neutral-500">(cm)</span>
+                              {t('geneticPotential.caseyButtInputs.ankleLabel')}{' '}
+                              <span className="text-neutral-500">(cm)</span>
                             </Label>
                             <button
                               type="button"
                               onClick={() => {
                                 setModalContent({
-                                  title: 'Fotled',
-                                  description: 'Mäts vid den smalaste punkten.',
+                                  title: t('geneticPotential.caseyButtInputs.ankleInfoTitle'),
+                                  description: t('geneticPotential.caseyButtInputs.ankleInfoDesc'),
                                 })
                                 setShowModal(true)
                               }}
                               className="text-neutral-400 hover:text-primary-600 transition-colors cursor-pointer"
-                              aria-label="Visa information om Fotled"
+                              aria-label={t('geneticPotential.caseyButtInputs.ankleAriaLabel')}
                             >
                               <Info className="h-4 w-4" />
                             </button>
@@ -497,7 +508,7 @@ export default function GeneticPotentialTool() {
                     {/* Metodväljare */}
                     <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                       <h4 className="text-sm font-semibold text-blue-900 mb-3">
-                        Välj beräkningsmetod för Casey Butt-modellen
+                        {t('geneticPotential.caseyButtMethod.sectionTitle')}
                       </h4>
 
                       <div className="space-y-3">
@@ -516,7 +527,7 @@ export default function GeneticPotentialTool() {
                           <div className="flex-1">
                             <div className="flex items-center gap-2">
                               <span className="font-medium text-blue-900">
-                                Standardiserad genetisk referens
+                                {t('geneticPotential.caseyButtMethod.standardLabel')}
                               </span>
                               <button
                                 type="button"
@@ -530,9 +541,7 @@ export default function GeneticPotentialTool() {
                               </button>
                             </div>
                             <div className="text-xs text-blue-700 mt-1">
-                              Beräknar MLBM med 10% kroppsfett som referens, sedan konverterat till
-                              din faktiska kroppsfettsprocent. Jämförbart mellan individer och
-                              baserat på Casey Butts originaldata.
+                              {t('geneticPotential.caseyButtMethod.standardDesc')}
                             </div>
                           </div>
                         </label>
@@ -552,7 +561,7 @@ export default function GeneticPotentialTool() {
                           <div className="flex-1">
                             <div className="flex items-center gap-2">
                               <span className="font-medium text-blue-900">
-                                Tillståndsberoende fettfri kroppsvikt
+                                {t('geneticPotential.caseyButtMethod.personalizedLabel')}
                               </span>
                               <button
                                 type="button"
@@ -566,11 +575,10 @@ export default function GeneticPotentialTool() {
                               </button>
                             </div>
                             <div className="text-xs text-blue-700 mt-1">
-                              Visar hur mycket fettfri kroppsvikt din kropp kan bära vid din
-                              nuvarande kroppsfettprocent, inklusive vätska och glykogen.
+                              {t('geneticPotential.caseyButtMethod.personalizedDesc')}
                               {!profileData?.body_fat_percentage && (
                                 <span className="block mt-1 text-amber-700 font-medium">
-                                  ⚠️ Kroppsfett saknas - använder 10% som fallback
+                                  {t('geneticPotential.caseyButtMethod.missingBodyFat')}
                                 </span>
                               )}
                             </div>
@@ -589,120 +597,78 @@ export default function GeneticPotentialTool() {
                           className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
                           onClick={e => e.stopPropagation()}
                         >
-                          {/* Header */}
                           <div className="sticky top-0 bg-gradient-to-r from-primary-500 to-accent-500 text-white p-6 rounded-t-2xl flex justify-between items-start">
-                            <div>
-                              <h2 className="text-2xl font-bold">
-                                Standardiserad genetisk referens
-                              </h2>
-                            </div>
+                            <h2 className="text-2xl font-bold">
+                              {t('geneticPotential.standardModal.title')}
+                            </h2>
                             <button
                               onClick={() => setShowStandardInfo(false)}
                               className="text-white/80 hover:text-white transition-colors p-1 rounded-full hover:bg-white/10"
-                              aria-label="Stäng"
+                              aria-label={t('geneticPotential.measurementModal.closeAriaLabel')}
                             >
                               <X className="h-6 w-6" />
                             </button>
                           </div>
-
-                          {/* Content */}
                           <div className="p-6 space-y-6">
-                            {/* Beskrivning */}
                             <div>
                               <h3 className="text-lg font-semibold text-neutral-800 mb-2">
-                                Beskrivning
+                                {t('geneticPotential.standardModal.descriptionTitle')}
                               </h3>
                               <div className="text-neutral-700 leading-relaxed">
                                 <p className="mb-3">
-                                  Denna metod beräknar din maximala genetiska potential i två steg:
+                                  {t('geneticPotential.standardModal.description')}
                                 </p>
                                 <ol className="list-decimal list-inside mb-3 space-y-2">
                                   <li>
-                                    <strong>MLBM (Maximum Lean Body Mass)</strong> beräknas med 10%
-                                    kroppsfett som en standardiserad referenspunkt
+                                    <strong>MLBM (Maximum Lean Body Mass)</strong>{' '}
+                                    {t('geneticPotential.standardModal.step1')}
                                   </li>
                                   <li>
-                                    Resultatet{' '}
+                                    {t('geneticPotential.standardModal.step2Pre')}{' '}
                                     <strong>
-                                      konverteras till din faktiska kroppsfettsprocent
+                                      {t('geneticPotential.standardModal.step2Label')}
                                     </strong>{' '}
-                                    för att visa din maximala vikt vid ditt nuvarande kroppsfett
+                                    {t('geneticPotential.standardModal.step2Post')}
                                   </li>
                                 </ol>
-                                <p className="mb-3">
-                                  Casey Butts analys byggde på ca 300 drug-free bodybuildingmästare
-                                  och styrkeatleter från 1947–2010. Dessa atleter var i ett lean,
-                                  stabilt tillstånd (~8–10 % kroppsfett), därför används 10% som
-                                  referenspunkt för MLBM-beräkningen.
-                                </p>
-                                <p>
-                                  Genom att använda 10% som fast referens i MLBM-formeln, men sedan
-                                  konvertera till din faktiska kroppsfettsprocent, får du ett
-                                  genetiskt meningsfullt resultat som också är relevant för ditt
-                                  nuvarande tillstånd.
-                                </p>
+                                <p className="mb-3">{t('geneticPotential.standardModal.step3')}</p>
+                                <p>{t('geneticPotential.standardModal.step4')}</p>
                               </div>
                             </div>
-
-                            {/* Fördelar */}
                             <div>
                               <h3 className="text-lg font-semibold text-green-800 mb-3">
-                                Fördelar
+                                {t('geneticPotential.standardModal.prosTitle')}
                               </h3>
                               <ul className="space-y-2">
-                                <li className="flex gap-3">
-                                  <span className="text-green-600 font-bold mt-1">✅</span>
-                                  <span className="text-neutral-700 flex-1">
-                                    Genetiskt meningsfullt - MLBM baserat på standardiserad referens
-                                  </span>
-                                </li>
-                                <li className="flex gap-3">
-                                  <span className="text-green-600 font-bold mt-1">✅</span>
-                                  <span className="text-neutral-700 flex-1">
-                                    Jämförbart mellan personer - alla använder samma 10% referens
-                                  </span>
-                                </li>
-                                <li className="flex gap-3">
-                                  <span className="text-green-600 font-bold mt-1">✅</span>
-                                  <span className="text-neutral-700 flex-1">
-                                    Undviker att övervikt &ldquo;ökar genetisk potential&rdquo;
-                                  </span>
-                                </li>
-                                <li className="flex gap-3">
-                                  <span className="text-green-600 font-bold mt-1">✅</span>
-                                  <span className="text-neutral-700 flex-1">
-                                    Relevant för ditt nuvarande tillstånd - visar vikt vid din
-                                    faktiska kroppsfett
-                                  </span>
-                                </li>
+                                {(['pro1', 'pro2', 'pro3', 'pro4'] as const).map(k => (
+                                  <li key={k} className="flex gap-3">
+                                    <span className="text-green-600 font-bold mt-1">✅</span>
+                                    <span className="text-neutral-700 flex-1">
+                                      {t(`geneticPotential.standardModal.${k}`)}
+                                    </span>
+                                  </li>
+                                ))}
                               </ul>
                             </div>
-
-                            {/* Nackdelar */}
                             <div>
-                              <h3 className="text-lg font-semibold text-red-800 mb-3">Nackdelar</h3>
+                              <h3 className="text-lg font-semibold text-red-800 mb-3">
+                                {t('geneticPotential.standardModal.consTitle')}
+                              </h3>
                               <ul className="space-y-2">
-                                <li className="flex gap-3">
-                                  <span className="text-red-600 font-bold mt-1">❌</span>
-                                  <span className="text-neutral-700 flex-1">
-                                    Kan vara svårare att förstå (tvåstegsberäkning)
-                                  </span>
-                                </li>
-                                <li className="flex gap-3">
-                                  <span className="text-red-600 font-bold mt-1">❌</span>
-                                  <span className="text-neutral-700 flex-1">
-                                    Kräver att du känner till din kroppsfettsprocent för bäst
-                                    resultat
-                                  </span>
-                                </li>
+                                {(['con1', 'con2'] as const).map(k => (
+                                  <li key={k} className="flex gap-3">
+                                    <span className="text-red-600 font-bold mt-1">❌</span>
+                                    <span className="text-neutral-700 flex-1">
+                                      {t(`geneticPotential.standardModal.${k}`)}
+                                    </span>
+                                  </li>
+                                ))}
                               </ul>
                             </div>
                           </div>
-
-                          {/* Footer */}
                           <div className="sticky bottom-0 bg-neutral-50 p-6 rounded-b-2xl border-t border-neutral-200">
                             <Button onClick={() => setShowStandardInfo(false)} className="w-full">
-                              Stäng
+                              {t('geneticPotential.standardModal.close')}
                             </Button>
                           </div>
                         </div>
@@ -719,95 +685,69 @@ export default function GeneticPotentialTool() {
                           className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
                           onClick={e => e.stopPropagation()}
                         >
-                          {/* Header */}
                           <div className="sticky top-0 bg-gradient-to-r from-primary-500 to-accent-500 text-white p-6 rounded-t-2xl flex justify-between items-start">
-                            <div>
-                              <h2 className="text-2xl font-bold">
-                                Tillståndsberoende fettfri kroppsvikt
-                              </h2>
-                            </div>
+                            <h2 className="text-2xl font-bold">
+                              {t('geneticPotential.personalizedModal.title')}
+                            </h2>
                             <button
                               onClick={() => setShowPersonalizedInfo(false)}
                               className="text-white/80 hover:text-white transition-colors p-1 rounded-full hover:bg-white/10"
-                              aria-label="Stäng"
+                              aria-label={t('geneticPotential.measurementModal.closeAriaLabel')}
                             >
                               <X className="h-6 w-6" />
                             </button>
                           </div>
-
-                          {/* Content */}
                           <div className="p-6 space-y-6">
-                            {/* Beskrivning */}
                             <div>
                               <h3 className="text-lg font-semibold text-neutral-800 mb-2">
-                                Beskrivning
+                                {t('geneticPotential.personalizedModal.descriptionTitle')}
                               </h3>
                               <div className="text-neutral-700 leading-relaxed">
                                 <p className="mb-3">
-                                  Resultatet kommer visa hur mycket fettfri kroppsvikt din kropp kan
-                                  bära i detta tillstånd. Det inkluderar även vätska, glykogen och
-                                  andra icke-permanenta komponenter.
+                                  {t('geneticPotential.personalizedModal.para1')}
                                 </p>
                                 <p className="mb-3">
-                                  Här använder man användarens %BF direkt i MLBM (maximum lean body
-                                  mass). Man beräknar sedan MBW (maximum body weight) och MBBW
-                                  (maximum bulked body weight) från detta.
+                                  {t('geneticPotential.personalizedModal.para2')}
                                 </p>
                               </div>
                             </div>
-
-                            {/* Fördelar */}
                             <div>
                               <h3 className="text-lg font-semibold text-green-800 mb-3">
-                                Fördelar
+                                {t('geneticPotential.personalizedModal.prosTitle')}
                               </h3>
                               <ul className="space-y-2">
-                                <li className="flex gap-3">
-                                  <span className="text-green-600 font-bold mt-1">✅</span>
-                                  <span className="text-neutral-700 flex-1">
-                                    Fullt korrekt enligt formeln
-                                  </span>
-                                </li>
-                                <li className="flex gap-3">
-                                  <span className="text-green-600 font-bold mt-1">✅</span>
-                                  <span className="text-neutral-700 flex-1">Individanpassat</span>
-                                </li>
+                                {(['pro1', 'pro2'] as const).map(k => (
+                                  <li key={k} className="flex gap-3">
+                                    <span className="text-green-600 font-bold mt-1">✅</span>
+                                    <span className="text-neutral-700 flex-1">
+                                      {t(`geneticPotential.personalizedModal.${k}`)}
+                                    </span>
+                                  </li>
+                                ))}
                               </ul>
                             </div>
-
-                            {/* Nackdelar */}
                             <div>
-                              <h3 className="text-lg font-semibold text-red-800 mb-3">Nackdelar</h3>
+                              <h3 className="text-lg font-semibold text-red-800 mb-3">
+                                {t('geneticPotential.personalizedModal.consTitle')}
+                              </h3>
                               <ul className="space-y-2">
-                                <li className="flex gap-3">
-                                  <span className="text-red-600 font-bold mt-1">❌</span>
-                                  <span className="text-neutral-700 flex-1">
-                                    MLBM blir tillståndsberoende (MLBM ökar när %BF ökar)
-                                  </span>
-                                </li>
-                                <li className="flex gap-3">
-                                  <span className="text-red-600 font-bold mt-1">❌</span>
-                                  <span className="text-neutral-700 flex-1">
-                                    Kan feltolkas som &ldquo;mer muskel&rdquo;
-                                  </span>
-                                </li>
-                                <li className="flex gap-3">
-                                  <span className="text-red-600 font-bold mt-1">❌</span>
-                                  <span className="text-neutral-700 flex-1">
-                                    Mindre lämpligt som genetiskt tak
-                                  </span>
-                                </li>
+                                {(['con1', 'con2', 'con3'] as const).map(k => (
+                                  <li key={k} className="flex gap-3">
+                                    <span className="text-red-600 font-bold mt-1">❌</span>
+                                    <span className="text-neutral-700 flex-1">
+                                      {t(`geneticPotential.personalizedModal.${k}`)}
+                                    </span>
+                                  </li>
+                                ))}
                               </ul>
                             </div>
                           </div>
-
-                          {/* Footer */}
                           <div className="sticky bottom-0 bg-neutral-50 p-6 rounded-b-2xl border-t border-neutral-200">
                             <Button
                               onClick={() => setShowPersonalizedInfo(false)}
                               className="w-full"
                             >
-                              Stäng
+                              {t('geneticPotential.personalizedModal.close')}
                             </Button>
                           </div>
                         </div>
@@ -852,24 +792,32 @@ export default function GeneticPotentialTool() {
             <div className="space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">Din Nuvarande Status</CardTitle>
+                  <CardTitle className="text-lg">
+                    {t('geneticPotential.currentStatus.title')}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
                     <div className="flex justify-between text-sm mb-1">
-                      <span className="text-neutral-600">Vikt:</span>
+                      <span className="text-neutral-600">
+                        {t('geneticPotential.currentStatus.weight')}
+                      </span>
                       <span className="font-medium">
                         {(currentMeasurement?.weight_kg || profileData.weight_kg)?.toFixed(1)} kg
                       </span>
                     </div>
                     <div className="flex justify-between text-sm mb-1">
-                      <span className="text-neutral-600">Kroppsfett:</span>
+                      <span className="text-neutral-600">
+                        {t('geneticPotential.currentStatus.bodyFat')}
+                      </span>
                       <span className="font-medium">
                         {profileData.body_fat_percentage.toFixed(1)}%
                       </span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-neutral-600">Fettfri massa:</span>
+                      <span className="text-neutral-600">
+                        {t('geneticPotential.currentStatus.leanMass')}
+                      </span>
                       <span className="font-medium">
                         {(
                           (currentMeasurement?.weight_kg || profileData.weight_kg || 0) *
@@ -884,7 +832,9 @@ export default function GeneticPotentialTool() {
                   {results[selectedFormulaIndex].currentProgress !== undefined && (
                     <div>
                       <div className="flex justify-between text-sm mb-2">
-                        <span className="text-neutral-600">Progress:</span>
+                        <span className="text-neutral-600">
+                          {t('geneticPotential.currentStatus.progress')}
+                        </span>
                         <span className="font-bold text-primary-600">
                           {results[selectedFormulaIndex].currentProgress.toFixed(0)}%
                         </span>
@@ -896,22 +846,26 @@ export default function GeneticPotentialTool() {
                     </div>
                   )}
 
-                  {results[selectedFormulaIndex].remainingPotential !== undefined && (() => {
-                    const remaining = results[selectedFormulaIndex].remainingPotential!
-                    const isOver = remaining < 0
-                    return (
-                      <div className="pt-4 border-t">
-                        <p className="text-sm text-neutral-600 mb-1">
-                          {isOver
-                            ? t('geneticPotential.exceedingPotential')
-                            : t('geneticPotential.remainingPotential')}
-                        </p>
-                        <p className={`text-2xl font-bold ${isOver ? 'text-orange-500' : 'text-green-600'}`}>
-                          {isOver ? '+' : '+'}{Math.abs(remaining).toFixed(1)} kg
-                        </p>
-                      </div>
-                    )
-                  })()}
+                  {results[selectedFormulaIndex].remainingPotential !== undefined &&
+                    (() => {
+                      const remaining = results[selectedFormulaIndex].remainingPotential!
+                      const isOver = remaining < 0
+                      return (
+                        <div className="pt-4 border-t">
+                          <p className="text-sm text-neutral-600 mb-1">
+                            {isOver
+                              ? t('geneticPotential.exceedingPotential')
+                              : t('geneticPotential.remainingPotential')}
+                          </p>
+                          <p
+                            className={`text-2xl font-bold ${isOver ? 'text-orange-500' : 'text-green-600'}`}
+                          >
+                            {isOver ? '+' : '+'}
+                            {Math.abs(remaining).toFixed(1)} kg
+                          </p>
+                        </div>
+                      )
+                    })()}
                 </CardContent>
               </Card>
             </div>
@@ -931,208 +885,26 @@ export default function GeneticPotentialTool() {
             <div className="sticky top-0 bg-gradient-to-br from-primary-500 to-accent-500 text-white px-6 py-4 flex justify-between items-start rounded-t-2xl">
               <div>
                 <h2 className="text-2xl font-bold">{modalContent.title}</h2>
-                <p className="text-sm text-white/90 mt-1">Mätinstruktion</p>
+                <p className="text-sm text-white/90 mt-1">
+                  {t('geneticPotential.measurementModal.instruction')}
+                </p>
               </div>
               <button
                 onClick={() => setShowModal(false)}
                 className="text-white/90 hover:text-white transition-colors"
-                aria-label="Stäng modal"
+                aria-label={t('geneticPotential.measurementModal.closeAriaLabel')}
               >
                 <X className="h-6 w-6" />
               </button>
             </div>
             <div className="p-6">
-              {(() => {
-                const description = modalContent.description
-
-                // Check if description contains special formatting (methods or gender-specific)
-                const hasMethodLabels = description.includes('Enligt ') || description.includes(':')
-                const hasMaleInstruction = description.includes('Män:')
-                const hasFemaleInstruction = description.includes('Kvinnor:')
-                const hasBulletPoints = description.includes('• ')
-
-                if (
-                  hasMethodLabels ||
-                  hasMaleInstruction ||
-                  hasFemaleInstruction ||
-                  hasBulletPoints
-                ) {
-                  type SectionType = 'text' | 'male' | 'female' | 'method' | 'both-genders'
-                  const sections: Array<{ type: SectionType; title?: string; content: string }> = []
-                  const lines = description.split('\n')
-                  let currentSection: string[] = []
-                  let currentType: SectionType = 'text'
-                  let currentTitle: string | undefined
-
-                  const pushCurrentSection = () => {
-                    if (currentSection.length > 0) {
-                      sections.push({
-                        type: currentType,
-                        title: currentTitle,
-                        content: currentSection.join('\n').trim(),
-                      })
-                      currentSection = []
-                      currentTitle = undefined
-                    }
-                  }
-
-                  lines.forEach(line => {
-                    const trimmedLine = line.trim()
-
-                    // Check for method labels like "Enligt Casey Butt:", "U.S. Navy kroppsfettformel:", etc.
-                    if (
-                      trimmedLine.startsWith('Enligt ') ||
-                      (trimmedLine.endsWith(':') &&
-                        !trimmedLine.startsWith('•') &&
-                        !trimmedLine.startsWith('Män:') &&
-                        !trimmedLine.startsWith('Kvinnor:') &&
-                        !trimmedLine.startsWith('Båda könen:'))
-                    ) {
-                      pushCurrentSection()
-                      currentType = 'method'
-
-                      // Check if there's content after the colon on the same line
-                      const colonIndex = trimmedLine.indexOf(':')
-                      if (colonIndex !== -1) {
-                        currentTitle = trimmedLine.substring(0, colonIndex)
-                        const contentAfterColon = trimmedLine.substring(colonIndex + 1).trim()
-                        if (contentAfterColon) {
-                          currentSection.push(contentAfterColon)
-                        }
-                      } else {
-                        currentTitle = trimmedLine
-                      }
-                      return
-                    }
-
-                    // Check for gender-specific bullets
-                    if (trimmedLine.startsWith('• Män:')) {
-                      pushCurrentSection()
-                      currentType = 'male'
-                      currentSection.push(trimmedLine.replace('• Män:', '').trim())
-                      return
-                    }
-
-                    if (trimmedLine.startsWith('• Kvinnor:')) {
-                      pushCurrentSection()
-                      currentType = 'female'
-                      currentSection.push(trimmedLine.replace('• Kvinnor:', '').trim())
-                      return
-                    }
-
-                    if (trimmedLine.startsWith('• Båda könen:')) {
-                      pushCurrentSection()
-                      currentType = 'both-genders'
-                      currentSection.push(trimmedLine.replace('• Båda könen:', '').trim())
-                      return
-                    }
-
-                    // Check for gender labels without bullets - keep as part of method section
-                    if (
-                      trimmedLine.startsWith('Män:') ||
-                      trimmedLine.startsWith('Kvinnor:') ||
-                      trimmedLine.startsWith('Båda könen:')
-                    ) {
-                      // Add to current method section instead of creating new section
-                      currentSection.push(line)
-                      return
-                    }
-
-                    // Empty line - push section and reset to text
-                    if (trimmedLine === '') {
-                      pushCurrentSection()
-                      currentType = 'text'
-                      return
-                    }
-
-                    // Regular line - add to current section
-                    currentSection.push(line)
-                  })
-
-                  pushCurrentSection()
-
-                  return (
-                    <div className="space-y-4">
-                      {sections.map((section, idx) => {
-                        if (section.type === 'male') {
-                          return (
-                            <div
-                              key={idx}
-                              className="bg-blue-50 border-blue-200 border rounded-lg p-4"
-                            >
-                              <p className="font-semibold text-blue-700 mb-2">👨 Män</p>
-                              <p className="text-blue-900 leading-relaxed">{section.content}</p>
-                            </div>
-                          )
-                        }
-
-                        if (section.type === 'female') {
-                          return (
-                            <div
-                              key={idx}
-                              className="bg-pink-50 border-pink-200 border rounded-lg p-4"
-                            >
-                              <p className="font-semibold text-pink-700 mb-2">👩 Kvinnor</p>
-                              <p className="text-pink-900 leading-relaxed">{section.content}</p>
-                            </div>
-                          )
-                        }
-
-                        if (section.type === 'both-genders') {
-                          return (
-                            <div
-                              key={idx}
-                              className="bg-purple-50 border-purple-200 border rounded-lg p-4"
-                            >
-                              <p className="font-semibold text-purple-700 mb-2">👥 Båda könen</p>
-                              <p className="text-purple-900 leading-relaxed">{section.content}</p>
-                            </div>
-                          )
-                        }
-
-                        if (section.type === 'method' && section.title) {
-                          return (
-                            <div
-                              key={idx}
-                              className="bg-amber-50 border-amber-200 border rounded-lg p-4"
-                            >
-                              <p className="font-semibold text-amber-700 mb-2">
-                                📋 {section.title}
-                              </p>
-                              {section.content && (
-                                <p className="text-amber-900 leading-relaxed whitespace-pre-line">
-                                  {section.content}
-                                </p>
-                              )}
-                            </div>
-                          )
-                        }
-
-                        // Regular text
-                        return (
-                          <p
-                            key={idx}
-                            className="text-neutral-700 leading-relaxed whitespace-pre-line"
-                          >
-                            {section.content}
-                          </p>
-                        )
-                      })}
-                    </div>
-                  )
-                }
-
-                // No special formatting, just show normal text
-                return (
-                  <p className="text-neutral-700 whitespace-pre-line leading-relaxed">
-                    {description}
-                  </p>
-                )
-              })()}
+              <p className="text-neutral-700 whitespace-pre-line leading-relaxed">
+                {modalContent.description}
+              </p>
             </div>
             <div className="sticky bottom-0 bg-white border-t border-neutral-200 px-6 py-4 rounded-b-2xl">
               <Button onClick={() => setShowModal(false)} className="w-full">
-                Stäng
+                {t('geneticPotential.measurementModal.close')}
               </Button>
             </div>
           </div>
@@ -1144,17 +916,19 @@ export default function GeneticPotentialTool() {
 
 // Tabell för Lyle McDonald referensvärden
 function LyleMcDonaldTable({ referenceTable }: { referenceTable: LyleMcDonaldReference[] }) {
+  const { t } = useTranslation('tools')
   const [isExpanded, setIsExpanded] = useState(false)
 
   return (
     <div className="mt-4 space-y-4">
-      {/* Informationsruta med bakgrund */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg overflow-hidden">
         <button
           onClick={() => setIsExpanded(!isExpanded)}
           className="w-full p-4 flex justify-between items-center hover:bg-blue-100 transition-colors"
         >
-          <h4 className="text-sm font-semibold text-blue-900">Om Lyle McDonalds ramverk</h4>
+          <h4 className="text-sm font-semibold text-blue-900">
+            {t('geneticPotential.lyleMcDonald.toggleTitle')}
+          </h4>
           {isExpanded ? (
             <ChevronUp className="h-5 w-5 text-blue-700" />
           ) : (
@@ -1164,21 +938,13 @@ function LyleMcDonaldTable({ referenceTable }: { referenceTable: LyleMcDonaldRef
         {isExpanded && (
           <div className="px-4 pb-4 space-y-2">
             <p className="text-xs text-blue-800 leading-relaxed">
-              Lyle McDonald är en författare och analytiker inom nutrition och styrketräning som
-              sedan slutet av 1990-talet publicerat omfattande material om muskeluppbyggnad,
-              energibalans och träningsanpassning. I artikeln &ldquo;What&rsquo;s My Genetic
-              Muscular Potential?&rdquo; diskuterar han hur muskeltillväxt gradvis avtar i takt med
-              ökad träningsålder och närmar sig en individuell genetisk övre gräns.
+              {t('geneticPotential.lyleMcDonald.para1')}
             </p>
             <p className="text-xs text-blue-800 leading-relaxed">
-              McDonalds resonemang bygger på en syntes av vetenskaplig litteratur, praktiska
-              observationer och jämförelser mellan nybörjare, intermediära och avancerade tränande.
-              Till skillnad från kvantitativa modeller för maximal muskelmassa presenterar han inget
-              specifikt beräkningsförfarande, utan erbjuder ett teoretiskt ramverk för att förstå
-              sannolika utvecklingsförlopp och realistiska förväntningar över tid.
+              {t('geneticPotential.lyleMcDonald.para2')}
             </p>
             <p className="text-xs text-blue-700 italic">
-              Källa: McDonald, L. What&rsquo;s My Genetic Muscular Potential? BodyRecomposition.com
+              {t('geneticPotential.lyleMcDonald.source')}
             </p>
           </div>
         )}
@@ -1186,20 +952,22 @@ function LyleMcDonaldTable({ referenceTable }: { referenceTable: LyleMcDonaldRef
 
       <div>
         <h4 className="text-sm font-semibold text-neutral-900 mb-2">
-          Årlig potentiell muskeltillväxt
+          {t('geneticPotential.lyleMcDonald.tableTitle')}
         </h4>
         <p className="text-xs text-neutral-600 mb-3">
-          Baserat på &ldquo;korrekt&rdquo; träning med progressiv överbelastning
+          {t('geneticPotential.lyleMcDonald.tableSubtitle')}
         </p>
         <table className="w-full border-collapse rounded-lg overflow-hidden shadow-sm">
           <thead>
             <tr className="bg-primary-100 border-b-2 border-primary-300">
-              <th className="text-left p-3 text-sm font-semibold text-primary-900">Träningsår</th>
-              <th className="text-right p-3 text-sm font-semibold text-primary-900">
-                Tillväxt/år (kg)
+              <th className="text-left p-3 text-sm font-semibold text-primary-900">
+                {t('geneticPotential.lyleMcDonald.colYear')}
               </th>
               <th className="text-right p-3 text-sm font-semibold text-primary-900">
-                Tillväxt/månad (kg)
+                {t('geneticPotential.lyleMcDonald.colGainYear')}
+              </th>
+              <th className="text-right p-3 text-sm font-semibold text-primary-900">
+                {t('geneticPotential.lyleMcDonald.colGainMonth')}
               </th>
             </tr>
           </thead>
@@ -1210,7 +978,7 @@ function LyleMcDonaldTable({ referenceTable }: { referenceTable: LyleMcDonaldRef
                 className="border-b border-primary-100 hover:bg-primary-50 transition-colors"
               >
                 <td className="p-3 text-sm font-medium text-neutral-900">
-                  {row.year === 4 ? '4+' : row.year}
+                  {row.year === 4 ? t('geneticPotential.lyleMcDonald.yearPlus') : row.year}
                 </td>
                 <td className="p-3 text-sm text-right font-semibold text-primary-700">
                   {row.gainPerYearKg.min}–{row.gainPerYearKg.max}
@@ -1223,7 +991,7 @@ function LyleMcDonaldTable({ referenceTable }: { referenceTable: LyleMcDonaldRef
           </tbody>
         </table>
         <p className="text-xs text-neutral-500 mt-3 italic">
-          Notera: Dessa värden förutsätter korrekt träning, näring och återhämtning
+          {t('geneticPotential.lyleMcDonald.footNote')}
         </p>
       </div>
     </div>
@@ -1238,6 +1006,7 @@ function AlanAragonTable({
   referenceTable: AlanAragonReference[]
   currentWeight?: number
 }) {
+  const { t } = useTranslation('tools')
   const [isExpanded, setIsExpanded] = useState(false)
 
   return (
@@ -1248,7 +1017,9 @@ function AlanAragonTable({
           onClick={() => setIsExpanded(!isExpanded)}
           className="w-full p-4 flex justify-between items-center hover:bg-blue-100 transition-colors"
         >
-          <h4 className="text-sm font-semibold text-blue-900">Om Alan Aragons ramverk</h4>
+          <h4 className="text-sm font-semibold text-blue-900">
+            {t('geneticPotential.alanAragon.toggleTitle')}
+          </h4>
           {isExpanded ? (
             <ChevronUp className="h-5 w-5 text-blue-700" />
           ) : (
@@ -1258,40 +1029,37 @@ function AlanAragonTable({
         {isExpanded && (
           <div className="px-4 pb-4 space-y-2">
             <p className="text-xs text-blue-800 leading-relaxed">
-              Alan Aragon är näringsfysiolog och tränare, samt grundare av Alan Aragon&rsquo;s
-              Research Review (AARR). I sina publikationer, bland annat artikeln &ldquo;Girth
-              Control: The Science of Fat Loss and Muscle Gain&rdquo; (2007), behandlar han hur
-              muskeluppbyggnad och kroppskomposition förändras i relation till träningsnivå,
-              erfarenhet och tid.
+              {t('geneticPotential.alanAragon.para1')}
             </p>
             <p className="text-xs text-blue-800 leading-relaxed">
-              Aragons perspektiv fokuserar på realistiska förväntningar och adaptationshastigheter
-              snarare än på att fastställa absoluta genetiska gränser. Han beskriver hur potentialen
-              för muskelökning är som störst hos nybörjare och successivt minskar hos mer avancerade
-              tränande. Arbetet fungerar därmed som ett konceptuellt ramverk för tidsberoende
-              muskeltillväxt, inte som en numerisk modell för maximal muskelmassa.
+              {t('geneticPotential.alanAragon.para2')}
             </p>
             <p className="text-xs text-blue-700 italic">
-              Källa: Aragon, A. Girth Control: The Science of Fat Loss and Muscle Gain (2007), Alan
-              Aragon&rsquo;s Research Review
+              {t('geneticPotential.alanAragon.source')}
             </p>
           </div>
         )}
       </div>
 
       <div>
-        <h4 className="text-sm font-semibold text-neutral-900 mb-2">Potentiell muskeltillväxt</h4>
-        <p className="text-xs text-neutral-600 mb-3">Procent av total kroppsvikt per månad</p>
+        <h4 className="text-sm font-semibold text-neutral-900 mb-2">
+          {t('geneticPotential.alanAragon.tableTitle')}
+        </h4>
+        <p className="text-xs text-neutral-600 mb-3">
+          {t('geneticPotential.alanAragon.tableSubtitle')}
+        </p>
         <table className="w-full border-collapse rounded-lg overflow-hidden shadow-sm">
           <thead>
             <tr className="bg-primary-100 border-b-2 border-primary-300">
-              <th className="text-left p-3 text-sm font-semibold text-primary-900">Kategori</th>
+              <th className="text-left p-3 text-sm font-semibold text-primary-900">
+                {t('geneticPotential.alanAragon.colCategory')}
+              </th>
               <th className="text-right p-3 text-sm font-semibold text-primary-900">
-                % av vikt/månad
+                {t('geneticPotential.alanAragon.colGainPercent')}
               </th>
               {currentWeight && (
                 <th className="text-right p-3 text-sm font-semibold text-primary-900">
-                  Exempel (kg/månad)
+                  {t('geneticPotential.alanAragon.colExample')}
                 </th>
               )}
             </tr>
@@ -1322,7 +1090,7 @@ function AlanAragonTable({
           </tbody>
         </table>
         <p className="text-xs text-neutral-500 mt-3 italic">
-          Notera: Bedöm själv var du befinner dig baserat på din faktiska träningserfarenhet
+          {t('geneticPotential.alanAragon.footNote')}
         </p>
       </div>
     </div>
@@ -1364,7 +1132,9 @@ function ResultCard({
             onClick={() => setIsExpanded(!isExpanded)}
             className="w-full p-4 flex justify-between items-center hover:bg-blue-100 transition-colors"
           >
-            <h4 className="text-sm font-semibold text-blue-900">Om Martin Berkhans modell</h4>
+            <h4 className="text-sm font-semibold text-blue-900">
+              {t('geneticPotential.berkhanInfo.toggleTitle')}
+            </h4>
             {isExpanded ? (
               <ChevronUp className="h-5 w-5 text-blue-700" />
             ) : (
@@ -1374,60 +1144,55 @@ function ResultCard({
           {isExpanded && (
             <div className="px-4 pb-4 space-y-2">
               <p className="text-xs text-blue-800 leading-relaxed">
-                Martin Berkhan är grundaren av Leangains-metoden och en tidig förespråkare för
-                intermittent fasta inom fitnessvärlden. I artikeln &ldquo;Maximum Muscular Potential
-                of Drug-Free Athletes&rdquo; presenterar han en enkel modell för att uppskatta
-                maximal muskelmassa hos naturliga (drug-free) atleter.
+                {t('geneticPotential.berkhanInfo.para1')}
               </p>
               <p className="text-xs text-blue-800 leading-relaxed">
-                Modellen bygger på observationer av elitbodybuilders och tävlingsatleter i mycket
-                låg kroppsfettprocent, främst cirka 5–6 % för män. Berkhan föreslår att maximal
-                tävlingsvikt i peak condition kan uppskattas genom formeln:
+                {t('geneticPotential.berkhanInfo.para2')}
               </p>
               <div className="overflow-x-auto rounded-lg border border-blue-200 my-1">
                 <table className="w-full text-xs">
                   <tbody>
                     <tr className="bg-blue-100 text-blue-600 font-medium">
                       <td className="px-3 py-1.5">{t('geneticPotential.berkhanTableHeight')}</td>
-                      <td className="px-3 py-1.5 font-mono text-right">{t('geneticPotential.berkhanTableCompWeight')}</td>
+                      <td className="px-3 py-1.5 font-mono text-right">
+                        {t('geneticPotential.berkhanTableCompWeight')}
+                      </td>
                     </tr>
                     <tr className="bg-white">
                       <td className="px-3 py-1.5 text-blue-800">&lt; 170 cm</td>
-                      <td className="px-3 py-1.5 text-blue-900 font-mono text-right">Längd − 98</td>
+                      <td className="px-3 py-1.5 text-blue-900 font-mono text-right">
+                        {t('geneticPotential.berkhanTableRow1')}
+                      </td>
                     </tr>
                     <tr className="bg-blue-50">
                       <td className="px-3 py-1.5 text-blue-800">170–179 cm</td>
-                      <td className="px-3 py-1.5 text-blue-900 font-mono text-right">Längd − 99</td>
+                      <td className="px-3 py-1.5 text-blue-900 font-mono text-right">
+                        {t('geneticPotential.berkhanTableRow2')}
+                      </td>
                     </tr>
                     <tr className="bg-white">
                       <td className="px-3 py-1.5 text-blue-800">180–189 cm</td>
                       <td className="px-3 py-1.5 text-blue-900 font-mono text-right">
-                        Längd − 100
+                        {t('geneticPotential.berkhanTableRow3')}
                       </td>
                     </tr>
                     <tr className="bg-blue-50">
                       <td className="px-3 py-1.5 text-blue-800">≥ 190 cm</td>
                       <td className="px-3 py-1.5 text-blue-900 font-mono text-right">
-                        Längd − 101
+                        {t('geneticPotential.berkhanTableRow4')}
                       </td>
                     </tr>
                   </tbody>
                 </table>
               </div>
               <p className="text-xs text-blue-800 leading-relaxed">
-                Han betonar att detta värde representerar en övre praktisk gräns för naturliga
-                atleter i extrem tävlingsform, snarare än ett genomsnitt eller ett garanterat mål.
-                Berkhan påpekar även att individuell genetik, kroppsstruktur och längd kan motivera
-                mindre justeringar runt denna uppskattning (vanligen ±2–4 kg).
+                {t('geneticPotential.berkhanInfo.para3')}
               </p>
               <p className="text-xs text-blue-800 leading-relaxed">
-                Modellen är empirisk och baserad på praktiska observationer, inte på formell
-                vetenskaplig validering, och bör därför ses som en grov riktlinje snarare än en
-                exakt fysiologisk lag.
+                {t('geneticPotential.berkhanInfo.para4')}
               </p>
               <p className="text-xs text-blue-700 italic">
-                Källa: Berkhan, M. &ldquo;Maximum Muscular Potential of Drug-Free Athletes&rdquo;
-                leangains.com (2008-2010) (uppdaterad 31 dec 2010)
+                {t('geneticPotential.berkhanInfo.source')}
               </p>
             </div>
           )}
@@ -1442,12 +1207,10 @@ function ResultCard({
               <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5 shrink-0" />
               <div>
                 <h4 className="text-sm font-semibold text-yellow-900 mb-2">
-                  Omkretsmått krävs för Casey Butt-modellen
+                  {t('geneticPotential.caseyButtMissing.title')}
                 </h4>
                 <p className="text-xs text-yellow-800 leading-relaxed">
-                  För att beräkna dina resultat med Casey Butts modell behöver du ange omkretsmått
-                  för handled och fotled i fälten ovan. Dessa mått kan antingen förifyllas från ditt
-                  aktiva måttkort i Kroppssammansättning, eller så kan du ange dem manuellt.
+                  {t('geneticPotential.caseyButtMissing.description')}
                 </p>
               </div>
             </div>
@@ -1457,21 +1220,31 @@ function ResultCard({
           <div className="bg-gradient-to-br from-green-50 to-blue-50 border-2 border-green-200 rounded-lg p-3">
             <h4 className="text-sm font-semibold text-neutral-800 mb-3">
               {result.caseyButtMethod === 'personalized'
-                ? t('geneticPotential.capacityAtCurrentBF', { bf: result.caseyButtBodyFat?.toFixed(1) })
+                ? t('geneticPotential.capacityAtCurrentBF', {
+                    bf: result.caseyButtBodyFat?.toFixed(1),
+                  })
                 : t('geneticPotential.estimatedMaxPotential')}
             </h4>
             <div className="space-y-2">
               <div className="flex justify-between items-center">
-                <p className="text-xs text-neutral-600">Maximal fettfri massa (MLBM):</p>
+                <p className="text-xs text-neutral-600">
+                  {t('geneticPotential.caseyButtResults.mlbmLabel')}
+                </p>
                 <p className="text-lg font-bold text-green-700">
                   {result.maxLeanMass.toFixed(1)} kg
                 </p>
               </div>
               <div className="flex justify-between items-center">
                 <div>
-                  <p className="text-xs text-neutral-600">Maximal kroppsvikt (MBW):</p>
+                  <p className="text-xs text-neutral-600">
+                    {t('geneticPotential.caseyButtResults.mbwLabel')}
+                  </p>
                   {currentBodyFat && (
-                    <p className="text-[10px] text-neutral-400">vid {currentBodyFat.toFixed(1)}% kroppsfett</p>
+                    <p className="text-[10px] text-neutral-400">
+                      {t('geneticPotential.caseyButtResults.mbwAtBF', {
+                        bf: currentBodyFat.toFixed(1),
+                      })}
+                    </p>
                   )}
                 </div>
                 <p className="text-lg font-bold text-blue-700">{result.maxWeight.toFixed(1)} kg</p>
@@ -1479,8 +1252,12 @@ function ResultCard({
               {result.maxBulkedWeight && (
                 <div className="flex justify-between items-center">
                   <div>
-                    <p className="text-xs text-neutral-600">Maximal bulked vikt (MBBW):</p>
-                    <p className="text-[10px] text-neutral-400">+4% av MBW</p>
+                    <p className="text-xs text-neutral-600">
+                      {t('geneticPotential.caseyButtResults.mbbwLabel')}
+                    </p>
+                    <p className="text-[10px] text-neutral-400">
+                      {t('geneticPotential.caseyButtResults.mbbwNote')}
+                    </p>
                   </div>
                   <p className="text-lg font-bold text-purple-700">
                     {result.maxBulkedWeight.toFixed(1)} kg
@@ -1499,17 +1276,17 @@ function ResultCard({
           <div className="space-y-2">
             {/* Lean mass - primary info */}
             <div>
-              <p className="text-xs text-neutral-600">Maximal fettfri massa:</p>
-              <p className="text-xl font-bold text-green-700">
-                {result.maxLeanMass.toFixed(1)} kg
+              <p className="text-xs text-neutral-600">
+                {t('geneticPotential.resultCard.maxLeanMassLabel')}
               </p>
+              <p className="text-xl font-bold text-green-700">{result.maxLeanMass.toFixed(1)} kg</p>
             </div>
 
             {/* Current body fat weight - secondary info */}
             {weightAtCurrentBF && currentBodyFat && (
               <div className="pt-2 border-t border-green-200">
                 <p className="text-xs text-neutral-600">
-                  Vid din kroppsfett ({currentBodyFat.toFixed(1)}%):
+                  {t('geneticPotential.resultCard.atCurrentBF', { bf: currentBodyFat.toFixed(1) })}
                 </p>
                 <p className="text-lg font-semibold text-primary-700">
                   {weightAtCurrentBF.toFixed(1)} kg
@@ -1525,9 +1302,11 @@ function ResultCard({
       {result.formula !== 'Lyle McDonalds ramverk' && result.formula !== 'Alan Aragons ramverk' && (
         <div>
           <h4 className="font-medium text-sm text-neutral-900 mb-2">
-            Uppskattad maximal genetisk potential för kroppsvikt
+            {t('geneticPotential.resultCard.targetWeightsTitle')}
           </h4>
-          <p className="text-xs text-neutral-500 mb-3">Maxvikt vid olika kroppsfettprocent</p>
+          <p className="text-xs text-neutral-500 mb-3">
+            {t('geneticPotential.resultCard.targetWeightsSubtitle')}
+          </p>
           <div className="grid grid-cols-5 gap-2 text-center">
             {targetWeights.slice(0, 10).map(target => {
               const isCurrentBF = currentBodyFat && Math.abs(target.bodyFat - currentBodyFat) < 1
@@ -1587,95 +1366,102 @@ function ResultCard({
         result.maxMeasurements && (
           <div className="space-y-3">
             {/* Gainer Type Badges */}
-            <h4 className="font-medium text-sm text-neutral-900">Kroppstyp</h4>
+            <h4 className="font-medium text-sm text-neutral-900">
+              {t('geneticPotential.bodyType.sectionTitle')}
+            </h4>
 
             {/* Upper body classification */}
             <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-3">
               <div className="flex items-center justify-between mb-1">
-                <p className="text-xs font-medium text-blue-900">Överkropp (handled):</p>
+                <p className="text-xs font-medium text-blue-900">
+                  {t('geneticPotential.bodyType.upperBodyLabel')}
+                </p>
                 <Badge variant={result.upperBodyType === 'easy' ? 'default' : 'secondary'}>
-                  {result.upperBodyType === 'hard' ? 'Hardgainer' : 'Easygainer'}
+                  {result.upperBodyType === 'hard'
+                    ? t('geneticPotential.bodyType.hardgainer')
+                    : t('geneticPotential.bodyType.easygainer')}
                 </Badge>
               </div>
               <p className="text-xs text-blue-700">
                 {result.upperBodyType === 'hard'
-                  ? 'Tunnare skelettstruktur - kräver mer fokus för överkroppsutveckling'
-                  : 'Tjockare skelettstruktur - lättare bygga överkroppsmuskler'}
+                  ? t('geneticPotential.bodyType.upperHardDesc')
+                  : t('geneticPotential.bodyType.upperEasyDesc')}
               </p>
             </div>
 
             {/* Lower body classification */}
             <div className="bg-purple-50 border-2 border-purple-200 rounded-lg p-3">
               <div className="flex items-center justify-between mb-1">
-                <p className="text-xs font-medium text-purple-900">Underkropp (fotled):</p>
+                <p className="text-xs font-medium text-purple-900">
+                  {t('geneticPotential.bodyType.lowerBodyLabel')}
+                </p>
                 <Badge variant={result.lowerBodyType === 'easy' ? 'default' : 'secondary'}>
-                  {result.lowerBodyType === 'hard' ? 'Hardgainer' : 'Easygainer'}
+                  {result.lowerBodyType === 'hard'
+                    ? t('geneticPotential.bodyType.hardgainer')
+                    : t('geneticPotential.bodyType.easygainer')}
                 </Badge>
               </div>
               <p className="text-xs text-purple-700">
                 {result.lowerBodyType === 'hard'
-                  ? 'Tunnare skelettstruktur - kräver mer fokus för underkroppsutveckling'
-                  : 'Tjockare skelettstruktur - lättare bygga underkroppsmuskler'}
+                  ? t('geneticPotential.bodyType.lowerHardDesc')
+                  : t('geneticPotential.bodyType.lowerEasyDesc')}
               </p>
             </div>
 
             {/* Measurements table */}
-            <h4 className="font-medium text-sm text-neutral-900 mt-4 mb-3">Maximala kroppsmått</h4>
+            <h4 className="font-medium text-sm text-neutral-900 mt-4 mb-3">
+              {t('geneticPotential.maxMeasurements.sectionTitle')}
+            </h4>
 
             {(() => {
               const allMeasurements = [
                 {
-                  label: 'Bröst',
+                  label: t('geneticPotential.maxMeasurements.chest'),
                   max: result.maxMeasurements.chestCm,
                   current: undefined,
                   group: 'upper' as const,
-                  infoTitle: 'Bröst',
-                  infoDesc:
-                    'Lyft armarna och placera måttbandet runt övre delen av överkroppen, under armhålorna, innan armarna sänks längs sidorna. Bröstomkretsen mäts horisontellt vid utandning och i avslappnat tillstånd.',
+                  infoTitle: t('geneticPotential.maxMeasurements.chestInfoTitle'),
+                  infoDesc: t('geneticPotential.maxMeasurements.chestInfoDesc'),
                 },
                 {
-                  label: 'Biceps',
+                  label: t('geneticPotential.maxMeasurements.biceps'),
                   max: result.maxMeasurements.bicepsCm,
                   current: undefined,
                   group: 'upper' as const,
-                  infoTitle: 'Biceps',
-                  infoDesc:
-                    'Mätt i spänt läge vid den största omkretsen, med armen lyft framåt och armbågen i 45°.',
+                  infoTitle: t('geneticPotential.maxMeasurements.bicepsInfoTitle'),
+                  infoDesc: t('geneticPotential.maxMeasurements.bicepsInfoDesc'),
                 },
                 {
-                  label: 'Underarmar',
+                  label: t('geneticPotential.maxMeasurements.forearms'),
                   max: result.maxMeasurements.forearmsCm,
                   current: currentMeasurement?.forearm,
                   group: 'upper' as const,
-                  infoTitle: 'Underarmar',
-                  infoDesc:
-                    'Med knuten näve och armen rakt ut mäts omkretsen vid största punkten, oftast närmare armbågen.',
+                  infoTitle: t('geneticPotential.maxMeasurements.forearmsInfoTitle'),
+                  infoDesc: t('geneticPotential.maxMeasurements.forearmsInfoDesc'),
                 },
                 {
-                  label: 'Nacke',
+                  label: t('geneticPotential.maxMeasurements.neck'),
                   max: result.maxMeasurements.neckCm,
                   current: currentMeasurement?.neck,
                   group: 'upper' as const,
-                  infoTitle: 'Nacke',
-                  infoDesc:
-                    'Enligt Topend Sports: Omedelbart ovanför adamsäpplet.\nEnligt Casey Butt: Strax nedanför adamsäpplet, vid det smalaste området.\n\nPersonen ska hålla huvudet upprätt och titta rakt fram.',
+                  infoTitle: t('geneticPotential.maxMeasurements.neckInfoTitle'),
+                  infoDesc: t('geneticPotential.maxMeasurements.neckInfoDesc'),
                 },
                 {
-                  label: 'Lår',
+                  label: t('geneticPotential.maxMeasurements.thighs'),
                   max: result.maxMeasurements.thighsCm,
                   current: currentMeasurement?.thigh_circ,
                   group: 'lower' as const,
-                  infoTitle: 'Lår',
-                  infoDesc:
-                    'Mäts vid mittpunkten på lårets utsida, halvvägs mellan trochanter major och laterala tibiakondylen.',
+                  infoTitle: t('geneticPotential.maxMeasurements.thighsInfoTitle'),
+                  infoDesc: t('geneticPotential.maxMeasurements.thighsInfoDesc'),
                 },
                 {
-                  label: 'Vader',
+                  label: t('geneticPotential.maxMeasurements.calves'),
                   max: result.maxMeasurements.calvesCm,
                   current: currentMeasurement?.calf_circ,
                   group: 'lower' as const,
-                  infoTitle: 'Vader',
-                  infoDesc: 'Mäts vid största omkretsen, med musklerna avslappnade.',
+                  infoTitle: t('geneticPotential.maxMeasurements.calvesInfoTitle'),
+                  infoDesc: t('geneticPotential.maxMeasurements.calvesInfoDesc'),
                 },
               ]
 
@@ -1687,15 +1473,15 @@ function ResultCard({
                     <thead>
                       <tr className="bg-neutral-50 border-b border-neutral-200">
                         <th className="text-left p-2.5 text-xs font-semibold text-neutral-600">
-                          Mått
+                          {t('geneticPotential.maxMeasurements.colMeasurement')}
                         </th>
                         {hasAnyCurrent && (
                           <th className="text-right p-2.5 text-xs font-semibold text-neutral-600">
-                            Ditt mått
+                            {t('geneticPotential.maxMeasurements.colYours')}
                           </th>
                         )}
                         <th className="text-right p-2.5 text-xs font-semibold text-neutral-600">
-                          Max
+                          {t('geneticPotential.maxMeasurements.colMax')}
                         </th>
                       </tr>
                     </thead>
@@ -1706,7 +1492,7 @@ function ResultCard({
                           colSpan={hasAnyCurrent ? 3 : 2}
                           className="px-2.5 py-1.5 text-xs font-semibold text-blue-700"
                         >
-                          Överkropp
+                          {t('geneticPotential.maxMeasurements.upperBody')}
                         </td>
                       </tr>
                       {allMeasurements
@@ -1721,7 +1507,9 @@ function ResultCard({
                                     type="button"
                                     onClick={() => onShowMeasurementInfo(infoTitle, infoDesc)}
                                     className="text-neutral-400 hover:text-primary-600 transition-colors cursor-pointer"
-                                    aria-label={`Visa information om ${label}`}
+                                    aria-label={t('geneticPotential.maxMeasurements.ariaLabel', {
+                                      label,
+                                    })}
                                   >
                                     <Info className="h-3 w-3" />
                                   </button>
@@ -1752,7 +1540,7 @@ function ResultCard({
                           colSpan={hasAnyCurrent ? 3 : 2}
                           className="px-2.5 py-1.5 text-xs font-semibold text-purple-700"
                         >
-                          Underkropp
+                          {t('geneticPotential.maxMeasurements.lowerBody')}
                         </td>
                       </tr>
                       {allMeasurements
@@ -1767,7 +1555,9 @@ function ResultCard({
                                     type="button"
                                     onClick={() => onShowMeasurementInfo(infoTitle, infoDesc)}
                                     className="text-neutral-400 hover:text-primary-600 transition-colors cursor-pointer"
-                                    aria-label={`Visa information om ${label}`}
+                                    aria-label={t('geneticPotential.maxMeasurements.ariaLabel', {
+                                      label,
+                                    })}
                                   >
                                     <Info className="h-3 w-3" />
                                   </button>
