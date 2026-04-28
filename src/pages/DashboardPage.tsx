@@ -2,7 +2,6 @@ import DashboardLayout from '@/components/layout/DashboardLayout'
 import ProfileCompletionGuard from '@/components/ProfileCompletionGuard'
 import OnboardingModal from '@/components/OnboardingModal'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import StatCard from '@/components/StatCard'
 import { ZonedCalorieRing } from '@/components/daily/ZonedCalorieRing'
 import { MacroRangeBar } from '@/components/daily/MacroRangeBar'
 import EmptyState from '@/components/EmptyState'
@@ -11,17 +10,7 @@ import { useProfiles, useOnboarding } from '@/hooks'
 import { useTodayLog } from '@/hooks/useDailyLogs'
 import { useProfileStore } from '@/stores/profileStore'
 import { Skeleton } from '@/components/ui/skeleton'
-import {
-  Activity,
-  Flame,
-  Target,
-  TrendingUp,
-  Scale,
-  UtensilsCrossed,
-  BookOpen,
-  User,
-  ChevronRight,
-} from 'lucide-react'
+import { Scale, UtensilsCrossed, BookOpen, User, Target, ChevronRight } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -143,42 +132,6 @@ export default function DashboardPage() {
           />
         ) : (
           <div className="space-y-8">
-            {/* Stat cards */}
-            <div className="grid grid-cols-2 gap-3 md:gap-6 lg:grid-cols-4">
-              <StatCard
-                title="BMR"
-                value={profile?.bmr ? Math.round(profile.bmr) : '-'}
-                unit="kcal"
-                icon={Flame}
-                variant="primary"
-              />
-              <StatCard
-                title="TDEE"
-                value={profile?.tdee ? Math.round(profile.tdee) : '-'}
-                unit="kcal"
-                icon={Activity}
-                variant="accent"
-              />
-              <StatCard
-                title={t('statCards.calorieGoal')}
-                value={
-                  profile?.calories_min && profile?.calories_max
-                    ? `${Math.round(profile.calories_min)} - ${Math.round(profile.calories_max)}`
-                    : '-'
-                }
-                unit="kcal"
-                icon={Target}
-                variant="success"
-              />
-              <StatCard
-                title={t('statCards.weight')}
-                value={profile?.weight_kg ? Math.round(profile.weight_kg * 10) / 10 : '-'}
-                unit="kg"
-                icon={TrendingUp}
-                variant="default"
-              />
-            </div>
-
             {/* Calorie Ring + Macro status */}
             <div className="grid gap-6 lg:grid-cols-2">
               <div className="flex items-center justify-center">
