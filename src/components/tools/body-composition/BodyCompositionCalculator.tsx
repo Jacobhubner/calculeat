@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { BackToHubButton } from '@/components/tools/common/BackToHubButton'
 import MethodSelectionCard from '@/components/body-composition/MethodSelectionCard'
 import VariationSelector from '@/components/body-composition/VariationSelector'
@@ -56,6 +57,7 @@ function calculateAge(birthDate: string | null): number {
 }
 
 export default function BodyCompositionCalculator() {
+  const { t } = useTranslation('body')
   const activeProfile = useProfileStore(state => state.activeProfile)
   const { data: allProfiles } = useProfiles()
   const profile = allProfiles?.find(p => p.id === activeProfile?.id)
@@ -410,7 +412,7 @@ export default function BodyCompositionCalculator() {
 
   const handleSaveToProfile = async () => {
     if (!activeProfile || bodyFatPercentage === null) {
-      toast.error('Ingen aktiv profil eller resultat att spara')
+      toast.error(t('calculator.toastNoProfile'))
       return
     }
 
@@ -425,9 +427,9 @@ export default function BodyCompositionCalculator() {
         },
       })
 
-      toast.success('Profil uppdaterad!')
+      toast.success(t('calculator.toastProfileUpdated'))
     } catch (error) {
-      toast.error('Kunde inte spara till profil')
+      toast.error(t('calculator.toastSaveError'))
       console.error(error)
     } finally {
       setIsSaving(false)
@@ -448,9 +450,9 @@ export default function BodyCompositionCalculator() {
         },
       })
 
-      toast.success('Profil uppdaterad!')
+      toast.success(t('calculator.toastProfileUpdated'))
     } catch (error) {
-      toast.error('Kunde inte spara till profil')
+      toast.error(t('calculator.toastSaveError'))
       console.error(error)
     } finally {
       setIsSaving(false)
@@ -461,9 +463,7 @@ export default function BodyCompositionCalculator() {
   const handleCreateNewMeasurement = (preserveCurrentMeasurements = false) => {
     // Check for unsaved changes (only if we're not auto-creating the first card)
     if (hasUnsavedMeasurements && !preserveCurrentMeasurements) {
-      const confirmed = window.confirm(
-        'Du har osparade ändringar. Vill du fortsätta? Ändringar kommer att förloras.'
-      )
+      const confirmed = window.confirm(t('calculator.unsavedChangesConfirm'))
       if (!confirmed) return
     }
 
@@ -712,10 +712,10 @@ export default function BodyCompositionCalculator() {
     return (
       <EmptyState
         icon={Scale}
-        title="Ingen aktiv profil"
-        description="Du måste ha en profil för att använda kroppssammansättningskalkylatorn."
+        title={t('calculator.noProfileTitle')}
+        description={t('calculator.noProfileDesc')}
         action={{
-          label: 'Gå till profil',
+          label: t('calculator.goToProfile'),
           onClick: () => (window.location.href = '/app/profile'),
         }}
       />
@@ -728,17 +728,15 @@ export default function BodyCompositionCalculator() {
 
   return (
     <>
-      <BackToHubButton hubPath="/app/body-composition" hubLabel="Kroppssammansättning" />
+      <BackToHubButton hubPath="/app/body-composition" hubLabel={t('calculator.hubLabel')} />
 
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent mb-2 flex items-center gap-3">
           <Activity className="h-8 w-8 text-primary-600" />
-          Beräkna din kroppssammansättning
+          {t('calculator.title')}
         </h1>
-        <p className="text-neutral-600">
-          Beräkna din kroppsfettsprocent med 12 olika metoder. Välj metod och fyll i dina mätningar.
-        </p>
+        <p className="text-neutral-600">{t('calculator.subtitle')}</p>
       </div>
 
       <div className="max-w-7xl mx-auto">
@@ -801,44 +799,66 @@ export default function BodyCompositionCalculator() {
                       {requirements.type === 'profile' && (
                         <div className="rounded-2xl border border-neutral-200 bg-white p-6">
                           <p className="text-sm text-neutral-600 mb-4">
-                            Denna metod använder data från din profil:
+                            {t('calculator.profileDataTitle')}
                           </p>
                           <ul className="space-y-2 text-sm">
                             {requirements.fields.includes('bmi') && (
                               <li>
-                                <span className="font-medium">BMI:</span>{' '}
+                                <span className="font-medium">
+                                  {t('calculator.profileFieldBMI')}
+                                </span>{' '}
                                 {profile.height_cm && profile.weight_kg
                                   ? calculateBMI(profile.weight_kg, profile.height_cm).toFixed(1)
-                                  : 'Saknas'}
+                                  : t('calculator.profileFieldMissing')}
                               </li>
                             )}
                             {requirements.fields.includes('age') && (
                               <li>
-                                <span className="font-medium">Ålder:</span>{' '}
-                                {calculateAge(profile.birth_date ?? null)} år
+                                <span className="font-medium">
+                                  {t('calculator.profileFieldAge')}
+                                </span>{' '}
+                                {t('calculator.profileFieldAgeUnit', {
+                                  age: calculateAge(profile.birth_date ?? null),
+                                })}
                               </li>
                             )}
                             {requirements.fields.includes('gender') && (
                               <li>
-                                <span className="font-medium">Kön:</span>{' '}
-                                {profile.gender === 'male' ? 'Man' : 'Kvinna'}
+                                <span className="font-medium">
+                                  {t('calculator.profileFieldGender')}
+                                </span>{' '}
+                                {profile.gender === 'male'
+                                  ? t('calculator.profileFieldGenderMale')
+                                  : t('calculator.profileFieldGenderFemale')}
                               </li>
                             )}
                             {requirements.fields.includes('bmr') && (
                               <li>
-                                <span className="font-medium">BMR:</span>{' '}
-                                {profile.bmr ? `${Math.round(profile.bmr)} kcal` : 'Saknas'}
+                                <span className="font-medium">
+                                  {t('calculator.profileFieldBMR')}
+                                </span>{' '}
+                                {profile.bmr
+                                  ? t('calculator.profileFieldBMRValue', {
+                                      value: Math.round(profile.bmr),
+                                    })
+                                  : t('calculator.profileFieldMissing')}
                               </li>
                             )}
                             {requirements.fields.includes('weight') && (
                               <li>
-                                <span className="font-medium">Vikt:</span>{' '}
-                                {profile.weight_kg ? `${profile.weight_kg} kg` : 'Saknas'}
+                                <span className="font-medium">
+                                  {t('calculator.profileFieldWeight')}
+                                </span>{' '}
+                                {profile.weight_kg
+                                  ? t('calculator.profileFieldWeightValue', {
+                                      value: profile.weight_kg,
+                                    })
+                                  : t('calculator.profileFieldMissing')}
                               </li>
                             )}
                           </ul>
                           <p className="text-xs text-neutral-500 mt-4">
-                            Uppdatera din profil om dessa värden är felaktiga.
+                            {t('calculator.profileDataUpdate')}
                           </p>
                         </div>
                       )}
@@ -872,15 +892,13 @@ export default function BodyCompositionCalculator() {
 
                   {!selectedMethod && (
                     <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-8 text-center">
-                      <p className="text-neutral-600">Välj en beräkningsmetod för att börja</p>
+                      <p className="text-neutral-600">{t('calculator.noMethodSelected')}</p>
                     </div>
                   )}
 
                   {selectedMethod && bodyFatPercentage === null && (
                     <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-8 text-center">
-                      <p className="text-neutral-600">
-                        Fyll i alla obligatoriska fält för att se resultat
-                      </p>
+                      <p className="text-neutral-600">{t('calculator.missingFields')}</p>
                     </div>
                   )}
                 </div>
