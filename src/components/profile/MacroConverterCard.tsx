@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
 import { ArrowLeftRight, Flame, Target } from 'lucide-react'
 import type { Profile } from '@/lib/types'
+import { useTranslation } from 'react-i18next'
 
 interface MacroConverterCardProps {
   profile: Profile | null
@@ -35,6 +36,7 @@ interface EnergyGoalResult {
 }
 
 export default function MacroConverterCard({ profile }: MacroConverterCardProps) {
+  const { t } = useTranslation('profile')
   const [value, setValue] = useState<string>('')
   const [macro, setMacro] = useState<MacroType>('')
   const [unit, setUnit] = useState<UnitType>('')
@@ -182,13 +184,11 @@ export default function MacroConverterCard({ profile }: MacroConverterCardProps)
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg leading-snug">
             <ArrowLeftRight className="h-5 w-5 flex-shrink-0 text-primary-500" />
-            Omvandling av makrovärden
+            {t('macroConverter.title')}
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-neutral-500">
-            Du måste ange TDEE i din profil först för att använda denna kalkylator.
-          </p>
+          <p className="text-sm text-neutral-500">{t('macroConverter.noTdee')}</p>
         </CardContent>
       </Card>
     )
@@ -200,13 +200,11 @@ export default function MacroConverterCard({ profile }: MacroConverterCardProps)
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg leading-snug">
             <ArrowLeftRight className="h-5 w-5 flex-shrink-0 text-primary-500" />
-            Omvandling av makrovärden
+            {t('macroConverter.title')}
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-neutral-500">
-            Du måste ange kroppsvikt i din profil först för att använda denna kalkylator.
-          </p>
+          <p className="text-sm text-neutral-500">{t('macroConverter.noWeight')}</p>
         </CardContent>
       </Card>
     )
@@ -217,42 +215,44 @@ export default function MacroConverterCard({ profile }: MacroConverterCardProps)
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg leading-snug">
           <ArrowLeftRight className="h-5 w-5 flex-shrink-0 text-primary-500" />
-          Omvandling av makrovärden
+          {t('macroConverter.title')}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Input Section - Ordning: Makro, Värde, Enhet */}
         <div className="grid grid-cols-3 gap-4">
           <div>
-            <Label htmlFor="macro">Makro</Label>
+            <Label htmlFor="macro">{t('macroConverter.macroLabel')}</Label>
             <Select id="macro" value={macro} onChange={e => setMacro(e.target.value as MacroType)}>
-              <option value="">Välj makro...</option>
-              <option value="fat">Fett</option>
-              <option value="carbs">Kolhydrater</option>
-              <option value="protein">Protein</option>
+              <option value="">{t('macroConverter.macroPlaceholder')}</option>
+              <option value="fat">{t('macroConverter.macroFat')}</option>
+              <option value="carbs">{t('macroConverter.macroCarbs')}</option>
+              <option value="protein">{t('macroConverter.macroProtein')}</option>
             </Select>
           </div>
           <div>
-            <Label htmlFor="value">Värde</Label>
+            <Label htmlFor="value">{t('macroConverter.valueLabel')}</Label>
             <Input
               id="value"
               type="number"
               value={value}
               onChange={e => setValue(e.target.value)}
-              placeholder="Ange värde..."
+              placeholder={t('macroConverter.valuePlaceholder')}
               min={0}
               step="any"
             />
           </div>
           <div>
-            <Label htmlFor="unit">Enhet</Label>
+            <Label htmlFor="unit">{t('macroConverter.unitLabel')}</Label>
             <Select id="unit" value={unit} onChange={e => setUnit(e.target.value as UnitType)}>
-              <option value="">Välj enhet...</option>
-              <option value="percent">%</option>
-              <option value="grams">gram</option>
-              <option value="kcal">kcal</option>
-              <option value="g_per_kg">g/kg kroppsvikt</option>
-              {hasBodyFat && <option value="g_per_kg_ffm">g/kg fettfri massa</option>}
+              <option value="">{t('macroConverter.unitPlaceholder')}</option>
+              <option value="percent">{t('macroConverter.unitPercent')}</option>
+              <option value="grams">{t('macroConverter.unitGrams')}</option>
+              <option value="kcal">{t('macroConverter.unitKcal')}</option>
+              <option value="g_per_kg">{t('macroConverter.unitGPerKg')}</option>
+              {hasBodyFat && (
+                <option value="g_per_kg_ffm">{t('macroConverter.unitGPerKgFFM')}</option>
+              )}
             </Select>
           </div>
         </div>
@@ -261,7 +261,7 @@ export default function MacroConverterCard({ profile }: MacroConverterCardProps)
         {unit === 'percent' && numericValue > 100 && (
           <div className="text-xs text-amber-600 flex items-start gap-1">
             <span>ℹ️</span>
-            <span>OBS: Summan av alla makron ska vara 100%</span>
+            <span>{t('macroConverter.warningOver100')}</span>
           </div>
         )}
 
@@ -271,7 +271,9 @@ export default function MacroConverterCard({ profile }: MacroConverterCardProps)
             <div className="flex items-center gap-2">
               <Flame className="h-5 w-5 text-orange-500" />
               <h3 className="text-sm font-semibold text-neutral-800">
-                TDEE ({profile.tdee ? Math.round(profile.tdee) : ''} kcal)
+                {t('macroConverter.tdeeHeader', {
+                  kcal: profile.tdee ? Math.round(profile.tdee) : '',
+                })}
               </h3>
             </div>
 
@@ -279,29 +281,31 @@ export default function MacroConverterCard({ profile }: MacroConverterCardProps)
               className={`grid gap-3 ${hasBodyFat && tdeeResults.gPerKgFFM !== undefined ? 'grid-cols-3 sm:grid-cols-5' : 'grid-cols-2 sm:grid-cols-4'}`}
             >
               <div className="text-center p-3 bg-orange-50 rounded-lg border border-orange-200">
-                <p className="text-xs text-neutral-600 mb-1">Procent</p>
+                <p className="text-xs text-neutral-600 mb-1">{t('macroConverter.labelPercent')}</p>
                 <p className="text-lg font-bold text-orange-700">
                   {tdeeResults.percent.toFixed(1)}%
                 </p>
               </div>
               <div className="text-center p-3 bg-orange-50 rounded-lg border border-orange-200">
-                <p className="text-xs text-neutral-600 mb-1">Gram</p>
+                <p className="text-xs text-neutral-600 mb-1">{t('macroConverter.labelGrams')}</p>
                 <p className="text-lg font-bold text-orange-700">{tdeeResults.grams.toFixed(0)}g</p>
               </div>
               <div className="text-center p-3 bg-orange-50 rounded-lg border border-orange-200">
-                <p className="text-xs text-neutral-600 mb-1">Kalorier</p>
+                <p className="text-xs text-neutral-600 mb-1">{t('macroConverter.labelKcal')}</p>
                 <p className="text-lg font-bold text-orange-700">
                   {tdeeResults.kcal.toFixed(0)} kcal
                 </p>
               </div>
               <div className="text-center p-3 bg-orange-50 rounded-lg border border-orange-200">
-                <p className="text-xs text-neutral-600 mb-1">Per kg</p>
+                <p className="text-xs text-neutral-600 mb-1">{t('macroConverter.labelPerKg')}</p>
                 <p className="text-lg font-bold text-orange-700">{tdeeResults.gPerKg.toFixed(2)}</p>
                 <p className="text-xs text-neutral-500">g/kg</p>
               </div>
               {hasBodyFat && tdeeResults.gPerKgFFM !== undefined && (
                 <div className="text-center p-3 bg-orange-50 rounded-lg border border-orange-200">
-                  <p className="text-xs text-neutral-600 mb-1">Per kg FFM</p>
+                  <p className="text-xs text-neutral-600 mb-1">
+                    {t('macroConverter.labelPerKgFFM')}
+                  </p>
                   <p className="text-lg font-bold text-orange-700">
                     {tdeeResults.gPerKgFFM.toFixed(2)}
                   </p>
@@ -318,8 +322,10 @@ export default function MacroConverterCard({ profile }: MacroConverterCardProps)
             <div className="flex items-center gap-2">
               <Target className="h-5 w-5 text-accent-500" />
               <h3 className="text-sm font-semibold text-neutral-800">
-                Kaloriintervall ({profile.calories_min ? Math.round(profile.calories_min) : ''}-
-                {profile.calories_max ? Math.round(profile.calories_max) : ''} kcal)
+                {t('macroConverter.energyGoalHeader', {
+                  min: profile.calories_min ? Math.round(profile.calories_min) : '',
+                  max: profile.calories_max ? Math.round(profile.calories_max) : '',
+                })}
               </h3>
             </div>
 
@@ -327,7 +333,7 @@ export default function MacroConverterCard({ profile }: MacroConverterCardProps)
               className={`grid gap-3 ${hasBodyFat && energyGoalResults.gPerKgFFM !== undefined ? 'grid-cols-3 sm:grid-cols-5' : 'grid-cols-2 sm:grid-cols-4'}`}
             >
               <div className="text-center p-3 bg-primary-50 rounded-lg border border-primary-200">
-                <p className="text-xs text-neutral-600 mb-1">Procent</p>
+                <p className="text-xs text-neutral-600 mb-1">{t('macroConverter.labelPercent')}</p>
                 <p className="text-lg font-bold text-primary-700">
                   {typeof energyGoalResults.percent === 'number'
                     ? `${energyGoalResults.percent.toFixed(1)}%`
@@ -335,7 +341,7 @@ export default function MacroConverterCard({ profile }: MacroConverterCardProps)
                 </p>
               </div>
               <div className="text-center p-3 bg-primary-50 rounded-lg border border-primary-200">
-                <p className="text-xs text-neutral-600 mb-1">Gram</p>
+                <p className="text-xs text-neutral-600 mb-1">{t('macroConverter.labelGrams')}</p>
                 <p className="text-lg font-bold text-primary-700">
                   {typeof energyGoalResults.grams === 'number'
                     ? `${energyGoalResults.grams.toFixed(0)}g`
@@ -343,7 +349,7 @@ export default function MacroConverterCard({ profile }: MacroConverterCardProps)
                 </p>
               </div>
               <div className="text-center p-3 bg-primary-50 rounded-lg border border-primary-200">
-                <p className="text-xs text-neutral-600 mb-1">Kalorier</p>
+                <p className="text-xs text-neutral-600 mb-1">{t('macroConverter.labelKcal')}</p>
                 <p className="text-lg font-bold text-primary-700">
                   {typeof energyGoalResults.kcal === 'number'
                     ? `${energyGoalResults.kcal.toFixed(0)} kcal`
@@ -351,7 +357,7 @@ export default function MacroConverterCard({ profile }: MacroConverterCardProps)
                 </p>
               </div>
               <div className="text-center p-3 bg-primary-50 rounded-lg border border-primary-200">
-                <p className="text-xs text-neutral-600 mb-1">Per kg</p>
+                <p className="text-xs text-neutral-600 mb-1">{t('macroConverter.labelPerKg')}</p>
                 <p className="text-lg font-bold text-primary-700">
                   {typeof energyGoalResults.gPerKg === 'number'
                     ? energyGoalResults.gPerKg.toFixed(2)
@@ -361,7 +367,9 @@ export default function MacroConverterCard({ profile }: MacroConverterCardProps)
               </div>
               {hasBodyFat && energyGoalResults.gPerKgFFM !== undefined && (
                 <div className="text-center p-3 bg-primary-50 rounded-lg border border-primary-200">
-                  <p className="text-xs text-neutral-600 mb-1">Per kg FFM</p>
+                  <p className="text-xs text-neutral-600 mb-1">
+                    {t('macroConverter.labelPerKgFFM')}
+                  </p>
                   <p className="text-lg font-bold text-primary-700">
                     {typeof energyGoalResults.gPerKgFFM === 'number'
                       ? energyGoalResults.gPerKgFFM.toFixed(2)

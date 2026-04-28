@@ -15,6 +15,7 @@ import { usePreviewMacroMode } from '@/hooks/useMacroModes'
 import { applyMacroMode } from '@/lib/utils/macroModes'
 import { calculateLeanMass } from '@/lib/calculations/bodyComposition'
 import type { Profile } from '@/lib/types'
+import { useTranslation } from 'react-i18next'
 
 interface MacroModesCardProps {
   profile: Profile
@@ -32,18 +33,8 @@ interface MacroModesCardProps {
   }) => void
 }
 
-const REFERENCES = {
-  offseason: {
-    title: 'Off-Season Mode — Källa',
-    text: 'Iraki J, Fitschen P, Espinar S, Helms E. Nutrition Recommendations for Bodybuilders in the Off-Season: A Narrative Review. Sports (Basel). 2019 Jun 26;7(7):154. doi: 10.3390/sports7070154. PMID: 31247944; PMCID: PMC6680710.',
-  },
-  onseason: {
-    title: 'On-Season Mode — Källa',
-    text: 'Helms ER, Aragon AA, Fitschen PJ. Evidence-based recommendations for natural bodybuilding contest preparation: nutrition and supplementation. J Int Soc Sports Nutr. 2014 May 12;11:20. doi: 10.1186/1550-2783-11-20. PMID: 24864135; PMCID: PMC4033492.',
-  },
-}
-
 export default function MacroModesCard({ profile, onMacroModeApply }: MacroModesCardProps) {
+  const { t } = useTranslation('profile')
   const [isOpen, setIsOpen] = useState(false)
   const [activeRef, setActiveRef] = useState<'offseason' | 'onseason' | null>(null)
   const nnrPreview = usePreviewMacroMode('nnr')
@@ -217,7 +208,7 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
           <div>
             <CardTitle className="flex items-center gap-2 text-lg leading-snug">
               <Target className="h-5 w-5 text-accent-600" />
-              Profilläge
+              {t('macroModes.title')}
             </CardTitle>
           </div>
           <ChevronDown
@@ -231,9 +222,7 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
         <CardContent className="space-y-4 pt-0">
           {!canApplyAny && (
             <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <p className="text-sm text-yellow-800">
-                Fyll i vikt och kalorimål för att använda makrolägen.
-              </p>
+              <p className="text-sm text-yellow-800">{t('macroModes.missingData')}</p>
             </div>
           )}
 
@@ -243,7 +232,7 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
               <div className="flex items-center gap-2">
                 {getModeIcon('nnr')}
                 <span className="font-semibold">NNR Mode</span>
-                <Badge variant="outline">Bibehåll vikt</Badge>
+                <Badge variant="outline">{t('macroModes.nnrBadge')}</Badge>
               </div>
               <Button
                 size="sm"
@@ -251,25 +240,27 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
                 onClick={() => handleApplyMode('nnr')}
                 disabled={!canApplyAny || isModeActive('nnr')}
               >
-                {isModeActive('nnr') ? 'Redan aktivt' : 'Använd'}
+                {isModeActive('nnr') ? t('macroModes.active') : t('macroModes.apply')}
               </Button>
             </div>
-            <p className="text-sm text-neutral-600">
-              Nordiska näringsrekommendationer - Balanserad makrofördelning för allmänheten
-            </p>
+            <p className="text-sm text-neutral-600">{t('macroModes.nnrDesc')}</p>
             {nnrPreview && (
               <div className="text-xs space-y-1.5 pl-6 mt-3">
                 <div className="font-medium text-neutral-800">
-                  <span className="text-neutral-600">Energimål:</span> Behåll vikt
+                  <span className="text-neutral-600">{t('macroModes.energyGoalLabel')}</span>{' '}
+                  {t('macroModes.maintainWeight')}
                 </div>
                 <div className="text-neutral-700">
-                  <span className="text-neutral-600">Fett:</span> 25-40%
+                  <span className="text-neutral-600">{t('macroModes.fatLabel')}</span>{' '}
+                  {t('macroModes.nnrFat')}
                 </div>
                 <div className="text-neutral-700">
-                  <span className="text-neutral-600">Protein:</span> 10-20%
+                  <span className="text-neutral-600">{t('macroModes.proteinLabel')}</span>{' '}
+                  {t('macroModes.nnrProtein')}
                 </div>
                 <div className="text-neutral-700">
-                  <span className="text-neutral-600">Kolhydrater:</span> 45-60%
+                  <span className="text-neutral-600">{t('macroModes.carbsLabel')}</span>{' '}
+                  {t('macroModes.nnrCarbs')}
                 </div>
               </div>
             )}
@@ -284,13 +275,13 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
                 {getModeIcon('offseason')}
                 <span className="font-semibold">Off-Season Mode</span>
                 <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">
-                  Bulk
+                  {t('macroModes.offseasonBadge')}
                 </Badge>
                 <button
                   type="button"
                   onClick={() => setActiveRef('offseason')}
                   className="text-neutral-400 hover:text-primary-600 transition-colors"
-                  aria-label="Visa referens för Off-Season Mode"
+                  aria-label={t('macroModes.showRefOffseason')}
                 >
                   <Info className="h-3.5 w-3.5" />
                 </button>
@@ -301,31 +292,34 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
                 onClick={() => handleApplyMode('offseason')}
                 disabled={!canApplyAny || isModeActive('offseason')}
               >
-                {isModeActive('offseason') ? 'Redan aktivt' : 'Använd'}
+                {isModeActive('offseason') ? t('macroModes.active') : t('macroModes.apply')}
               </Button>
             </div>
-            <p className="text-sm text-neutral-600">
-              Uppbyggnadsfas &quot;bulking&quot; - Hög protein, ökad kaloriintag för muskelökning
-            </p>
+            <p className="text-sm text-neutral-600">{t('macroModes.offseasonDesc')}</p>
             {offseasonPreview && profile?.weight_kg && (
               <div className="text-xs space-y-1.5 pl-6 mt-3">
                 <div className="font-medium text-neutral-800">
-                  <span className="text-neutral-600">Energimål:</span> Viktuppgång (10-20%)
+                  <span className="text-neutral-600">{t('macroModes.energyGoalLabel')}</span>{' '}
+                  {t('macroModes.weightGain')}
                 </div>
                 <div className="text-neutral-700">
-                  <span className="text-neutral-600">Veckovis viktuppgång:</span> ~{' '}
-                  {(profile.weight_kg * 0.0025).toFixed(2)}–{(profile.weight_kg * 0.005).toFixed(2)}{' '}
-                  kg/vecka
+                  <span className="text-neutral-600">{t('macroModes.weeklyGain')}</span>{' '}
+                  {t('macroModes.weeklyGainValue', {
+                    min: (profile.weight_kg * 0.0025).toFixed(2),
+                    max: (profile.weight_kg * 0.005).toFixed(2),
+                  })}
                 </div>
                 <div className="text-neutral-700">
-                  <span className="text-neutral-600">Fett:</span> 0.5–1.5 g/kg
+                  <span className="text-neutral-600">{t('macroModes.fatLabel')}</span>{' '}
+                  {t('macroModes.offseasonFat')}
                 </div>
                 <div className="text-neutral-700">
-                  <span className="text-neutral-600">Protein:</span> 1.6–2.2 g/kg
+                  <span className="text-neutral-600">{t('macroModes.proteinLabel')}</span>{' '}
+                  {t('macroModes.offseasonProtein')}
                 </div>
                 <div className="text-neutral-700">
-                  <span className="text-neutral-600">Kolhydrater:</span> Resterande kalorier (≥ 3–5
-                  g/kg)
+                  <span className="text-neutral-600">{t('macroModes.carbsLabel')}</span>{' '}
+                  {t('macroModes.offseasonCarbs')}
                 </div>
               </div>
             )}
@@ -343,13 +337,13 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
                   variant="outline"
                   className="bg-success-50 text-success-700 border-success-200"
                 >
-                  Cut
+                  {t('macroModes.onseasonBadge')}
                 </Badge>
                 <button
                   type="button"
                   onClick={() => setActiveRef('onseason')}
                   className="text-neutral-400 hover:text-primary-600 transition-colors"
-                  aria-label="Visa referens för On-Season Mode"
+                  aria-label={t('macroModes.showRefOnseason')}
                 >
                   <Info className="h-3.5 w-3.5" />
                 </button>
@@ -366,39 +360,42 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
                 }
               >
                 {isModeActive('onseason')
-                  ? 'Redan aktivt'
+                  ? t('macroModes.active')
                   : !canApplyOnSeason
-                    ? 'Kräver kroppsfett%'
-                    : 'Använd'}
+                    ? t('macroModes.requiresBodyFat')
+                    : t('macroModes.apply')}
               </Button>
             </div>
-            <p className="text-sm text-neutral-600">
-              Nedskärningsfas &quot;cutting&quot; - Mycket hög protein för att bevara muskelmassa,
-              lägre fett
-            </p>
+            <p className="text-sm text-neutral-600">{t('macroModes.onseasonDesc')}</p>
             {!canApplyOnSeason && (
               <div className="text-xs text-yellow-700 bg-yellow-50 border border-yellow-200 rounded p-2">
-                Kräver kroppsvikt och kroppsfettprocent för att beräkna FFM (fettfri kroppsmassa)
+                {t('macroModes.requiresBodyFatDesc')}
               </div>
             )}
             {profile?.weight_kg && (
               <div className="text-xs space-y-1.5 pl-6 mt-3">
                 <div className="font-medium text-neutral-800">
-                  <span className="text-neutral-600">Energimål:</span> Viktminskning (20-25%)
+                  <span className="text-neutral-600">{t('macroModes.energyGoalLabel')}</span>{' '}
+                  {t('macroModes.weightLoss')}
                 </div>
                 <div className="text-neutral-700">
-                  <span className="text-neutral-600">Veckovis viktminskning:</span> ~{' '}
-                  {(profile.weight_kg * 0.005).toFixed(2)}–{(profile.weight_kg * 0.01).toFixed(2)}{' '}
-                  kg/vecka
+                  <span className="text-neutral-600">{t('macroModes.weeklyLoss')}</span>{' '}
+                  {t('macroModes.weeklyLossValue', {
+                    min: (profile.weight_kg * 0.005).toFixed(2),
+                    max: (profile.weight_kg * 0.01).toFixed(2),
+                  })}
                 </div>
                 <div className="text-neutral-700">
-                  <span className="text-neutral-600">Fett:</span> 15-30%
+                  <span className="text-neutral-600">{t('macroModes.fatLabel')}</span>{' '}
+                  {t('macroModes.onseasonFat')}
                 </div>
                 <div className="text-neutral-700">
-                  <span className="text-neutral-600">Protein:</span> 2.3–3.1 g/kg FFM
+                  <span className="text-neutral-600">{t('macroModes.proteinLabel')}</span>{' '}
+                  {t('macroModes.onseasonProtein')}
                 </div>
                 <div className="text-neutral-700">
-                  <span className="text-neutral-600">Kolhydrater:</span> Resterande kalorier
+                  <span className="text-neutral-600">{t('macroModes.carbsLabel')}</span>{' '}
+                  {t('macroModes.onseasonCarbs')}
                 </div>
               </div>
             )}
@@ -408,11 +405,11 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
 
           <div className="text-xs text-neutral-500 space-y-1">
             <p>
-              💡 <strong>Tips:</strong>
+              💡 <strong>{t('macroModes.tipTitle')}</strong>
             </p>
-            <p>• NNR Mode för allmän hälsa och viktstabilitet</p>
-            <p>• Off-Season Mode för att bygga muskelmassa</p>
-            <p>• On-Season Mode för muskelbevaring under tiden som fettet minskar</p>
+            <p>• {t('macroModes.tipNnr')}</p>
+            <p>• {t('macroModes.tipOffseason')}</p>
+            <p>• {t('macroModes.tipOnseason')}</p>
           </div>
         </CardContent>
       )}
@@ -427,18 +424,24 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
           >
             <div className="flex items-start justify-between gap-2">
               <h3 className="text-sm font-semibold text-neutral-900">
-                {REFERENCES[activeRef].title}
+                {activeRef === 'offseason'
+                  ? t('macroModes.refOffseasonTitle')
+                  : t('macroModes.refOnseasonTitle')}
               </h3>
               <button
                 type="button"
                 onClick={() => setActiveRef(null)}
                 className="text-neutral-400 hover:text-neutral-600 transition-colors shrink-0"
-                aria-label="Stäng"
+                aria-label={t('macroModes.closeRef')}
               >
                 <X className="h-4 w-4" />
               </button>
             </div>
-            <p className="text-xs text-neutral-700 leading-relaxed">{REFERENCES[activeRef].text}</p>
+            <p className="text-xs text-neutral-700 leading-relaxed">
+              {activeRef === 'offseason'
+                ? t('macroModes.refOffseasonText')
+                : t('macroModes.refOnseasonText')}
+            </p>
           </div>
         </div>
       )}
