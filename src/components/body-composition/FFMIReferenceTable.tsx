@@ -76,7 +76,11 @@ export function FFMIReferenceTable({ userFFMI, userBodyFat, gender }: FFMIRefere
                 >
                   <td className="px-4 py-2 text-gray-900">{ffmiValue}</td>
                   <td className="px-4 py-2 text-gray-700">{bfValue}</td>
-                  <td className="px-4 py-2 text-gray-900">{row.description}</td>
+                  <td className="px-4 py-2 text-gray-900">
+                    {t(`refTable.ffmiRangeDescriptions.${row.description}`, {
+                      defaultValue: row.description,
+                    })}
+                  </td>
                 </tr>
               )
             })}

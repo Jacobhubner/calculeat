@@ -194,6 +194,30 @@
     "bodyFat": "Body fat",
     "ffmiMen": "FFMI (men)",
     "ffmiWomen": "FFMI (women)",
+    "bodyFatCategories": {
+      "Essentiellt fett": "Essential fat",
+      "Atlet": "Athlete",
+      "Fitness (vältränad)": "Fitness (fit)",
+      "Hälsosamt medel": "Acceptable average",
+      "Överviktig": "Obese"
+    },
+    "ffmiDescriptions": {
+      "Under medel": "Below average",
+      "Medel": "Average",
+      "Över medel": "Above average",
+      "Utmärkt": "Excellent",
+      "Överlägsen": "Superior",
+      "Misstanke om steroidanvändning": "Suspicion of steroid use",
+      "Steroidanvändning trolig": "Steroid use likely"
+    },
+    "ffmiRangeDescriptions": {
+      "Smal": "Slim",
+      "Medel": "Average",
+      "Överviktig": "Overweight",
+      "Atlet / Medel gymmare": "Athlete / Average gym-goer",
+      "Avancerad gymmare": "Advanced gym-goer",
+      "Bodybuilder / Styrkelyftare / Tyngdlyftare": "Bodybuilder / Powerlifter / Weightlifter"
+    },
     "altMenBF1": "Body fat visual guide for men",
     "altMenBF2": "Body fat visual guide for men 2",
     "altWomenBF1": "Body fat visual guide for women",

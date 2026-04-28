@@ -138,7 +138,11 @@ export function BodyFatReferenceTable({
                       : 'bg-white'
                   } hover:bg-gray-50 transition-colors`}
                 >
-                  <td className="px-2 py-1.5 text-gray-900 font-medium">{row.category}</td>
+                  <td className="px-2 py-1.5 text-gray-900 font-medium">
+                    {t(`refTable.bodyFatCategories.${row.category}`, {
+                      defaultValue: row.category,
+                    })}
+                  </td>
                   <td className="px-2 py-1.5 text-gray-700">{value}</td>
                 </tr>
               )

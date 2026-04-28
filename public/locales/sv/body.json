@@ -194,6 +194,30 @@
     "bodyFat": "Kroppsfett",
     "ffmiMen": "FFMI (män)",
     "ffmiWomen": "FFMI (kvinnor)",
+    "bodyFatCategories": {
+      "Essentiellt fett": "Essentiellt fett",
+      "Atlet": "Atlet",
+      "Fitness (vältränad)": "Fitness (vältränad)",
+      "Hälsosamt medel": "Hälsosamt medel",
+      "Överviktig": "Överviktig"
+    },
+    "ffmiDescriptions": {
+      "Under medel": "Under medel",
+      "Medel": "Medel",
+      "Över medel": "Över medel",
+      "Utmärkt": "Utmärkt",
+      "Överlägsen": "Överlägsen",
+      "Misstanke om steroidanvändning": "Misstanke om steroidanvändning",
+      "Steroidanvändning trolig": "Steroidanvändning trolig"
+    },
+    "ffmiRangeDescriptions": {
+      "Smal": "Smal",
+      "Medel": "Medel",
+      "Överviktig": "Överviktig",
+      "Atlet / Medel gymmare": "Atlet / Medel gymmare",
+      "Avancerad gymmare": "Avancerad gymmare",
+      "Bodybuilder / Styrkelyftare / Tyngdlyftare": "Bodybuilder / Styrkelyftare / Tyngdlyftare"
+    },
     "altMenBF1": "Kroppsfett visuell guide för män",
     "altMenBF2": "Kroppsfett visuell guide för män 2",
     "altWomenBF1": "Kroppsfett visuell guide för kvinnor",

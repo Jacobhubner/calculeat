@@ -74,7 +74,11 @@ export function FFMICategoryTable({ userFFMI, gender }: FFMICategoryTableProps) 
                       : row.colorClass || 'bg-white'
                   } hover:bg-gray-50 transition-colors`}
                 >
-                  <td className="px-4 py-2 text-gray-900">{row.description}</td>
+                  <td className="px-4 py-2 text-gray-900">
+                    {t(`refTable.ffmiDescriptions.${row.description}`, {
+                      defaultValue: row.description,
+                    })}
+                  </td>
                   <td className="px-4 py-2 text-gray-700">{value}</td>
                 </tr>
               )
