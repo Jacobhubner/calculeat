@@ -28,6 +28,21 @@ export default function MethodSelectionCard({
   const { t } = useTranslation('body')
   const [showInfo, setShowInfo] = useState(false)
 
+  const methodNameKeyMap: Record<string, string> = {
+    'Jackson/Pollock 3 Caliper Method (Male)': 'jp3male',
+    'Jackson/Pollock 3 Caliper Method (Female)': 'jp3female',
+    'Jackson/Pollock 4 Caliper Method': 'jp4',
+    'Jackson/Pollock 7 Caliper Method': 'jp7',
+    'Durnin/Womersley Caliper Method': 'durnin',
+    'Parillo Caliper Method': 'parillo',
+    'Covert Bailey Measuring Tape Method': 'covertBailey',
+    'U.S. Navy Body Fat Formula': 'usNavy',
+    'YMCA Measuring Tape Method': 'ymca',
+    'Modified YMCA Measuring Tape Method': 'ymcaModified',
+    'Heritage BMI to Body Fat Method': 'heritage',
+    'Reversed Cunningham equation': 'cunningham',
+  }
+
   return (
     <>
       <Card className="bg-gradient-to-br from-primary-50 to-accent-50">
@@ -52,28 +67,46 @@ export default function MethodSelectionCard({
                   <option value="">{t('methodSelection.placeholder')}</option>
 
                   {/* Caliper Methods */}
-                  <optgroup label={methodCategories.caliper.label}>
+                  <optgroup
+                    label={t('methodCategories.caliper', {
+                      defaultValue: methodCategories.caliper.label,
+                    })}
+                  >
                     {filterMethodsByGender(methodCategories.caliper.methods, gender).map(method => (
                       <option key={method} value={method}>
-                        {methodNameTranslations[method]}
+                        {t(`methodNames.${methodNameKeyMap[method]}`, {
+                          defaultValue: methodNameTranslations[method],
+                        })}
                       </option>
                     ))}
                   </optgroup>
 
                   {/* Tape Methods */}
-                  <optgroup label={methodCategories.tape.label}>
+                  <optgroup
+                    label={t('methodCategories.tape', {
+                      defaultValue: methodCategories.tape.label,
+                    })}
+                  >
                     {filterMethodsByGender(methodCategories.tape.methods, gender).map(method => (
                       <option key={method} value={method}>
-                        {methodNameTranslations[method]}
+                        {t(`methodNames.${methodNameKeyMap[method]}`, {
+                          defaultValue: methodNameTranslations[method],
+                        })}
                       </option>
                     ))}
                   </optgroup>
 
                   {/* Profile Methods */}
-                  <optgroup label={methodCategories.profile.label}>
+                  <optgroup
+                    label={t('methodCategories.profile', {
+                      defaultValue: methodCategories.profile.label,
+                    })}
+                  >
                     {filterMethodsByGender(methodCategories.profile.methods, gender).map(method => (
                       <option key={method} value={method}>
-                        {methodNameTranslations[method]}
+                        {t(`methodNames.${methodNameKeyMap[method]}`, {
+                          defaultValue: methodNameTranslations[method],
+                        })}
                       </option>
                     ))}
                   </optgroup>

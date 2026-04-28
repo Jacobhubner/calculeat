@@ -285,5 +285,345 @@
         "text": "Klassas ofta som övervikt eller fetma, vilket kan öka risken för livsstilssjukdomar."
       }
     }
+  },
+  "methodCategories": {
+    "caliper": "Kalipermetoder (Hudveck)",
+    "tape": "Måttbandsmetoder (Omkrets)",
+    "profile": "Profilbaserade metoder"
+  },
+  "methodNames": {
+    "jp3male": "Jackson/Pollock 3-punkts kaliper",
+    "jp3female": "Jackson/Pollock 3-punkts kaliper",
+    "jp4": "Jackson/Pollock 4-punkts kaliper",
+    "jp7": "Jackson/Pollock 7-punkts kaliper",
+    "durnin": "Durnin/Womersley kaliper",
+    "parillo": "Parillo kaliper",
+    "covertBailey": "Covert Bailey måttbandsmetod",
+    "usNavy": "US Navy kroppsfettformel",
+    "ymca": "YMCA måttbandsmetod",
+    "ymcaModified": "Modifierad YMCA måttbandsmetod",
+    "heritage": "Heritage BMI-baserad kroppsfett",
+    "cunningham": "Omvänd Cunningham-ekvation"
+  },
+  "variations": {
+    "S_S2_age": "S, S², ålder",
+    "S_S2_C": "S, S², C",
+    "S_S2_age_C": "S, S², ålder, C",
+    "clothesOn": "Kläder på",
+    "S_S2": "S, S²",
+    "deurenberg": "Deurenberg",
+    "modifiedVariant": "Modifierad variant",
+    "allAgeGroups": "Alla åldersgrupper",
+    "sameForBoth": "Samma formel för båda kön",
+    "unknownSource": "S, S² (okänd källa)",
+    "step1Cunningham": "Steg 1 — Cunningham",
+    "step2BodyFat": "Steg 2 — Kroppsfett%",
+    "deurenbergOriginal": "Deurenberg originalformel (1991)",
+    "modifiedUnknown": "Modifierad variant (okänd källa)"
+  },
+  "genderLabel": {
+    "male": "Män",
+    "female": "Kvinnor",
+    "both": "Båda"
+  },
+  "caliperLabels": {
+    "chest": "Bröst",
+    "abdominal": "Buk",
+    "thigh": "Lår",
+    "tricep": "Triceps",
+    "subscapular": "Subskapulärt",
+    "suprailiac": "Suprailiakalt",
+    "midaxillary": "Midaxillärt",
+    "bicep": "Biceps",
+    "lowerBack": "Ländrygg",
+    "calf": "Vad"
+  },
+  "tapeLabels": {
+    "neck": "Hals",
+    "waist": "Midja",
+    "hip": "Höft",
+    "wrist": "Handled",
+    "ankle": "Fotled",
+    "forearm": "Underarm",
+    "thighCirc": "Lår",
+    "calfCirc": "Vad"
+  },
+  "caliperDescriptions": {
+    "chest": "Män: Nyp ett diagonalt hudveck halvvägs mellan den främre kanten av armhålan och höger bröstvårta.\n\nKvinnor: Nyp ett diagonalt hudveck cirka en tredjedel av avståndet från den främre axilllinjen till höger bröstvårta.",
+    "midaxillary": "Nyp huden vertikalt rakt under armhålan, i samma höjd som nedre delen av bröstbenet (xiphoidutskottet).",
+    "tricep": "Nyp huden vertikalt mitt emellan armbåge och axel (olecranon- och akromionutskotten) på baksidan av armen, med armen utsträckt och avslappnad.",
+    "subscapular": "Ta ett diagonalt hudveck längs en linje från kotkanten till 1–2 cm från den nedre vinkeln av skulderbladet.",
+    "abdominal": "Ett vertikalt hudveck taget cirka 2 cm lateralt om naveln.",
+    "suprailiac": "Nyp huden diagonalt direkt ovanför crista iliaca (höftbenskammen).",
+    "thigh": "Nyp huden vertikalt halvvägs mellan övre kanten av knäskålen och övre delen av lårets framsida.",
+    "bicep": "Nyp huden vertikalt halvvägs mellan armbåge och axel på armens framsida.",
+    "lowerBack": "Nyp huden horisontellt cirka 15 cm ovanför midjan och 5 cm till höger om ryggraden.",
+    "calf": "Nyp huden vertikalt på insidan av den största delen av höger vad."
+  },
+  "tapeDescriptions": {
+    "neck": "Enligt Topend Sports: Omedelbart ovanför adamsäpplet.\nEnligt Casey Butt: Strax nedanför adamsäpplet, vid det smalaste området.\n\nPersonen ska hålla huvudet upprätt och titta rakt fram.",
+    "waist": "Mäts vid den smalaste delen av midjan i slutet av en normal utandning.\nOm denna punkt inte är tydlig, mäts omfånget mitt emellan nedersta revbenet och överkanten av höftbenskammen (crista iliaca).\n\nU.S. Navy kroppsfettformel:\nMän: Vid naveln.\nKvinnor: Vid den smalaste punkten, vanligtvis mellan bröstbenet och naveln.\n\nModifierad YMCA-metod:\nBåda könen: Vid naveln.",
+    "hip": "Mäts över minimala kläder, vid den punkt där sätesmuskulaturen sticker ut som mest, med musklerna avslappnade.",
+    "forearm": "Med knuten näve och armen rakt ut mäts omkretsen vid största punkten, oftast närmare armbågen.",
+    "wrist": "Mäts på handsidan av processus styloideus, där underarmen är som smalast.",
+    "thighCirc": "Mäts vid mittpunkten på lårets utsida, halvvägs mellan trochanter major och laterala tibiakondylen.",
+    "calfCirc": "Mäts vid största omkretsen, med musklerna avslappnade.",
+    "ankle": "Mäts vid den smalaste punkten."
+  },
+  "methodInfo": {
+    "siri": {
+      "title": "Siri-ekvationen",
+      "description": "Siri-ekvationen används för att omvandla kroppsdensitet till kroppsfettprocent enligt tvåkompartment-modellen (fettmassa + fettfri massa). Den är den mest etablerade och citerade formeln inom forskning och klinisk praxis.",
+      "pros": [
+        "Tenderar att ge något högre fettprocent än Brozek",
+        "Lämplig för individer med normal till låg kroppsfettprocent",
+        "Kan överskatta fettprocent hos magra, muskulösa individer eller äldre med låg bentäthet",
+        "Standardval i de flesta forsknings- och kliniska sammanhang"
+      ]
+    },
+    "brozek": {
+      "title": "Brozek-ekvationen",
+      "description": "Brozek-ekvationen är en alternativ formel som också omvandlar kroppsdensitet till kroppsfettprocent med tvåkompartment-modellen. Den har något annorlunda antaganden om den fettfria massans densitet.",
+      "pros": [
+        "Ger ofta något lägre fettprocent än Siri",
+        "Lämplig för magra och muskulösa individer eftersom den bättre tar hänsyn till högre andel fettfri massa",
+        "Mindre känslig för överskattning hos låg fettprocent, men fortfarande begränsad för äldre eller personer med extrem kroppssammansättning",
+        "Kan användas som alternativ till Siri beroende på individens kroppstyp"
+      ]
+    },
+    "jp3": {
+      "title": "Jackson-Pollock 3-punkts kalipermetod",
+      "year": "män: 1978, kvinnor: 1980, kläder på: 1985",
+      "description": "Jackson–Pollocks 3-punkts hudvecksekvation är en av de mest använda metoderna för att uppskatta kroppsfettprocent, eftersom den är enkel, snabb och relativt tillförlitlig.\n\nMetoden tenderar dock att underskatta kroppsfettprocenten hos relativt smala personer (män under ca 15 % kroppsfett och kvinnor under ca 25 %). Den är därför mer träffsäker för personer med högre kroppsfettprocent.\n\nEkvationerna är baserade på ett urval med åldrarna 18–61 år för män och 18–55 år för kvinnor.",
+      "betterFor": ["Män med högre kroppsfett (>15%)", "Kvinnor med högre kroppsfett (>25%)"],
+      "requiredMale": ["Bröst (pectoral)", "Buk (abdominal)", "Lår (thigh)"],
+      "requiredFemale": ["Triceps", "Suprailiac (ovanför höftbenet)", "Lår (thigh)"],
+      "variants": {
+        "maleS2Age": { "name": "S, S², ålder", "measurements": "ΣS = bröst + buk + lår" },
+        "maleS2AgeC": {
+          "name": "S, S², ålder, C",
+          "measurements": "ΣS = bröst + buk + lår\nCw = omkrets midja (m)\nCf = omkrets underarm (m)"
+        },
+        "maleClothes": {
+          "name": "Kläder på",
+          "measurements": "ΣS = bröst + triceps + subskapulärt"
+        },
+        "femaleS2Age": {
+          "name": "S, S², ålder",
+          "measurements": "ΣS = triceps + suprailiakalt + lår"
+        },
+        "femaleS2C": {
+          "name": "S, S², C",
+          "measurements": "ΣS = triceps + suprailiakalt + lår\nC = omkrets höft (cm)"
+        },
+        "femaleS2AgeC": {
+          "name": "S, S², ålder, C",
+          "measurements": "ΣS = triceps + suprailiakalt + lår\nC = omkrets höft (cm)"
+        },
+        "femaleClothes": {
+          "name": "Kläder på",
+          "measurements": "ΣS = triceps + suprailiakalt + buk"
+        }
+      }
+    },
+    "jp3Clothes": {
+      "title": "Jackson-Pollock 3-punkts kalipermetod (kläder på)",
+      "year": "1985",
+      "description": "En variant av 3-punktsmetoden som är lämplig om individen vill behålla kläderna på vid mätning. Metoden bygger på samma principer som den traditionella 3-punktsmetoden.",
+      "betterFor": ["Personer som föredrar mätningar med kläder på"],
+      "required": ["Triceps", "Suprailiac (ovanför höftbenet)", "Buk (abdominal)"]
+    },
+    "jp4": {
+      "title": "Jackson-Pollock 4-punkts kalipermetod",
+      "year": "densitetsbaserad kvinnor: 1980, direktformel: okänt",
+      "description": "Jackson–Pollocks 4-punkts hudvecksekvation är marginellt mer exakt än 3-punktsmetoden, men tenderar även den att något underskatta kroppsfettprocenten hos relativt smala personer.\n\nMetoden fungerar därför bättre för individer med måttlig till högre kroppsfettprocent.",
+      "betterFor": ["Personer med högre kroppsfett som vill ha något mer precision"],
+      "required": ["Triceps", "Suprailiac", "Buk (abdominal)", "Lår (thigh)"],
+      "requiredDensity": [
+        "Triceps",
+        "Suprailiac",
+        "Buk (abdominal)",
+        "Lår (thigh)",
+        "Höft (C-varianter)"
+      ],
+      "variants": {
+        "maleUnknown": {
+          "name": "S, S² (okänd källa)",
+          "measurements": "ΣS = triceps + suprailiakalt + buk + lår"
+        },
+        "femaleS2Age": {
+          "name": "S, S², ålder",
+          "measurements": "ΣS = triceps + suprailiakalt + buk + lår"
+        },
+        "femaleS2C": {
+          "name": "S, S², C",
+          "measurements": "ΣS = triceps + suprailiakalt + buk + lår\nC = omkrets höft (cm)"
+        },
+        "femaleS2AgeC": {
+          "name": "S, S², ålder, C",
+          "measurements": "ΣS = triceps + suprailiakalt + buk + lår\nC = omkrets höft (cm)"
+        },
+        "femaleUnknown": {
+          "name": "S, S² (okänd källa)",
+          "measurements": "ΣS = triceps + suprailiakalt + buk + lår"
+        }
+      }
+    },
+    "jp4Direct": {
+      "description": "Jackson–Pollocks 4-punkts hudvecksekvation är marginellt mer exakt än 3-punktsmetoden, men tenderar även den att något underskatta kroppsfettprocenten hos relativt smala personer.\n\nMetoden fungerar därför bättre för individer med måttlig till högre kroppsfettprocent.\n\nDenna variant (direktformel S,S²) har ett okänt ursprung men används som en vedertagen metod inom kroppssammansättningsmätning."
+    },
+    "jp7": {
+      "title": "Jackson-Pollock 7-punkts kalipermetod",
+      "year": "män: 1978, kvinnor: 1980",
+      "description": "Jackson–Pollocks 7-punkts hudvecksekvation är inte nämnvärt mer exakt än 3-punktsmetoden, men kräver betydligt mer tid och fler mätningar. Den tenderar också att underskatta kroppsfettprocenten hos relativt smala personer.\n\nDärför är det i de flesta fall mer praktiskt att använda 3-punktsmetoden.",
+      "betterFor": ["Personer som vill ha mest möjliga datapunkter trots längre mättid"],
+      "required": [
+        "Bröst (pectoral)",
+        "Buk (abdominal)",
+        "Lår (thigh)",
+        "Triceps",
+        "Subscapular (under skulderblad)",
+        "Suprailiac",
+        "Midaxillary (mittaxel)"
+      ],
+      "variants": {
+        "maleS2Age": {
+          "name": "S, S², ålder",
+          "measurements": "ΣS = bröst + buk + lår + triceps + subskapulärt + suprailiakalt + midaxillärt"
+        },
+        "maleS2AgeC": {
+          "name": "S, S², ålder, C",
+          "measurements": "ΣS = bröst + buk + lår + triceps + subskapulärt + suprailiakalt + midaxillärt\nCw = omkrets midja (m)\nCf = omkrets underarm (m)"
+        },
+        "femaleS2Age": {
+          "name": "S, S², ålder",
+          "measurements": "ΣS = bröst + buk + lår + triceps + subskapulärt + suprailiakalt + midaxillärt"
+        },
+        "femaleS2C": {
+          "name": "S, S², C",
+          "measurements": "ΣS = bröst + buk + lår + triceps + subskapulärt + suprailiakalt + midaxillärt\nC = omkrets höft (cm)"
+        },
+        "femaleS2AgeC": {
+          "name": "S, S², ålder, C",
+          "measurements": "ΣS = bröst + buk + lår + triceps + subskapulärt + suprailiakalt + midaxillärt\nC = omkrets höft (cm)"
+        }
+      }
+    },
+    "durninWomersley": {
+      "title": "Durnin-Womersley kalipermetod",
+      "year": "1974",
+      "description": "Durnin–Womersleys 4-punkts hudvecksekvation kan ge korrekta resultat för vissa individer, men upplevs av många som att den överskattar kroppsfettprocenten.\n\nEkvationerna är baserade på ett urval med åldrarna 17–72 år för män och 16–68 år för kvinnor.\n\nAv den anledningen rekommenderas ofta mer tillförlitliga metoder, såsom Jackson–Pollock 3-punkts kalipermetod eller U.S. Navy-metoden.",
+      "betterFor": ["Personer som vill testa en äldre europeisk metod"],
+      "required": ["Biceps", "Triceps", "Subscapular", "Suprailiac"],
+      "variants": {
+        "maleAllAges": {
+          "name": "Alla åldersgrupper",
+          "measurements": "ΣS = biceps + triceps + subskapulärt + suprailiakalt"
+        },
+        "femaleAllAges": {
+          "name": "Alla åldersgrupper",
+          "measurements": "ΣS = biceps + triceps + subskapulärt + suprailiakalt"
+        }
+      }
+    },
+    "parillo": {
+      "title": "Parrillo kalipermetod",
+      "year": "1993",
+      "description": "Parrillos 9-punkts hudvecksekvation är bristfälligt studerad, vilket gör det svårt att bedöma dess noggrannhet i jämförelse med andra metoder.\n\nDärför rekommenderas i regel mer etablerade metoder, såsom Jackson–Pollock 3-punkts kalipermetod eller U.S. Navy-metoden.",
+      "betterFor": ["Bodybuilders som vill följa tradition i sin subkultur"],
+      "required": [
+        "Bröst (pectoral)",
+        "Buk (abdominal)",
+        "Lår (thigh)",
+        "Biceps",
+        "Triceps",
+        "Subscapular",
+        "Suprailiac",
+        "Nedre rygg (lower back)",
+        "Vad (calf)"
+      ],
+      "variants": {
+        "both": {
+          "name": "Samma formel för båda kön",
+          "measurements": "ΣS = bröst + buk + lår + biceps + triceps + subskapulärt + suprailiakalt + ländrygg + vad"
+        }
+      }
+    },
+    "covertBailey": {
+      "title": "Covert Bailey-metoden",
+      "year": "okänt ursprung (efter 1978)",
+      "description": "Alla mätningar ska utföras vid respektive kroppsdelars bredaste punkt.\n\nFormeln populariserades av fitnessförfattaren Covert Bailey i Fit or Fat? (1978). Resonemangen om hemestimering av kroppsfett utvecklades vidare i Smart Exercise (1994) och sammanställdes i senare upplagor av The Ultimate Fit or Fat (1999). Metoden publicerades i populär träningslitteratur och saknar en dokumenterad första publicering i vetenskapliga tidskrifter eller formell valideringsstudie.",
+      "betterFor": ["Personer som inte har tillgång till kaliper"],
+      "required": ["Midja", "Handled (män)", "Höft (kvinnor)", "Underarm (kvinnor)"],
+      "variants": {
+        "maleAllAges": { "name": "Alla åldersgrupper", "measurements": "Alla mått i tum (inches)" },
+        "femaleAllAges": {
+          "name": "Alla åldersgrupper",
+          "measurements": "Alla mått i tum (inches)"
+        }
+      }
+    },
+    "usNavy": {
+      "title": "U.S. Navy kroppsfettformel",
+      "year": "1984",
+      "description": "Denna metod är relativt noggrann, men tenderar att överskatta kroppsfettprocenten hos relativt smala personer. Den lämpar sig därför bäst för män över ca 15 % kroppsfett och kvinnor över ca 25 %.\n\nInom den amerikanska militären används kroppsfettprocent – snarare än kroppsvikt – som huvudkriterium vid antagning. Formlerna används för att avgöra om en individ uppfyller kraven.",
+      "betterFor": ["Personer med normal till hög kroppsfett som vill ha en snabb måttbandsmetod"],
+      "required": ["Hals", "Midja", "Höft (endast kvinnor)", "Längd"],
+      "variants": {
+        "male": { "name": "", "measurements": "Alla mått i tum (inches)" },
+        "female": { "name": "", "measurements": "Alla mått i tum (inches)" }
+      }
+    },
+    "ymca": {
+      "title": "YMCA-metoden",
+      "description": "Denna metod utvecklades av YMCA som ett enkelt sätt att uppskatta kroppsfettprocent med hjälp av endast kroppsvikt och midjemått.",
+      "betterFor": ["Personer som vill ha en mycket snabb övergripande uppskattning"],
+      "required": ["Midja", "Kroppsvikt"],
+      "variants": {
+        "both": {
+          "name": "",
+          "measurements": "Midja i tum (inches), vikt i lbs\nkön = 98,42 för män, 76,76 för kvinnor"
+        }
+      }
+    },
+    "ymcaModified": {
+      "title": "Modifierad YMCA-metoden",
+      "description": "En förbättrad version av YMCA-metoden med ytterligare mätningar för högre precision. Använder fler mätpunkter än standard YMCA.",
+      "betterFor": ["Personer som vill ha bättre precision än YMCA men behålla enkelheten"],
+      "required": ["Hals", "Midja", "Höft", "Kroppsvikt"],
+      "variants": {
+        "male": { "name": "", "measurements": "Midja i tum (inches), vikt i lbs" },
+        "female": { "name": "", "measurements": "Alla omkretssmått i tum (inches), vikt i lbs" }
+      }
+    },
+    "heritage": {
+      "title": "Heritage BMI till kroppsfett",
+      "year": "1991",
+      "description": "Uppskattar kroppsfett% baserat på BMI, ålder och kön.\n\nOriginalformeln publicerades av Deurenberg et al. (1991) och använder ett könskoefficient-system. Utöver originalformeln finns en senare empirisk variant som cirkulerar i fitness- och kalkylatorappar som är kalibrerad mot andra dataset och ger något bättre passform i vissa populationer, men saknar ett tydligt originalpaper.",
+      "required": ["BMI (beräknas från längd och vikt)", "Ålder", "Kön"],
+      "variants": {
+        "deurenberg": {
+          "name": "Deurenberg originalformel (1991)",
+          "measurements": "kön = 1 för män, 0 för kvinnor\nBMI beräknas automatiskt från längd och vikt"
+        },
+        "modified": {
+          "name": "Modifierad variant (okänd källa)",
+          "measurements": "kön = 19,34 för män, 9 för kvinnor\nBMI beräknas automatiskt från längd och vikt"
+        }
+      }
+    },
+    "cunningham": {
+      "title": "Omvänd Cunningham ekvation",
+      "year": "1980",
+      "description": "Bakåträknar kroppsfett% från RMR/BMR (Resting/Basal Metabolic Rate) med antagandet att metabolismen följer Cunningham-ekvationen.\n\nOm inget BMR/RMR-värde finns tillgängligt används Mifflin-St Jeor-ekvationen för att uppskatta RMR baserat på längd, vikt, ålder och kön.",
+      "required": ["BMR eller längd/vikt/ålder/kön", "Kroppsvikt"],
+      "variants": {
+        "step1": {
+          "name": "Steg 1 — Cunningham",
+          "measurements": "Omvänd: fettfri massa = (BMR − 370) / 21,6"
+        },
+        "step2": { "name": "Steg 2 — Kroppsfett%", "measurements": "Samma formel för båda kön" }
+      }
+    }
   }
 }

@@ -34,15 +34,27 @@ export default function VariationSelector({
         onChange={e => onChange(e.target.value as MethodVariation)}
         className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-2.5 text-sm transition-colors hover:border-neutral-400 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
       >
-        {variations.map(variation => (
-          <option key={variation} value={variation}>
-            {variation}
-          </option>
-        ))}
+        {variations.map(variation => {
+          // Map MethodVariation string values to locale keys
+          const variationKeyMap: Record<string, string> = {
+            'S, S², ålder': 'S_S2_age',
+            'S, S², C': 'S_S2_C',
+            'S, S², ålder, C': 'S_S2_age_C',
+            'Kläder på': 'clothesOn',
+            'S, S²': 'S_S2',
+            Deurenberg: 'deurenberg',
+            'Modifierad variant': 'modifiedVariant',
+          }
+          const key = variationKeyMap[variation]
+          const label = key ? t(`variations.${key}`, { defaultValue: variation }) : variation
+          return (
+            <option key={variation} value={variation}>
+              {label}
+            </option>
+          )
+        })}
       </select>
-      <p className="text-xs text-neutral-500">
-        {t('variationSelector.hint')}
-      </p>
+      <p className="text-xs text-neutral-500">{t('variationSelector.hint')}</p>
     </div>
   )
 }

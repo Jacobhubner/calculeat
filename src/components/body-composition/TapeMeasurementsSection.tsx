@@ -47,10 +47,12 @@ export default function TapeMeasurementsSection({
   }
 
   const handleInfoClick = (field: keyof TapeMeasurements) => {
-    const description = tapeDescriptions[field as string]
+    const description = t(`tapeDescriptions.${field as string}`, {
+      defaultValue: tapeDescriptions[field as string],
+    })
     if (description) {
       setModalContent({
-        title: tapeLabels[field as string],
+        title: t(`tapeLabels.${field as string}`, { defaultValue: tapeLabels[field as string] }),
         description,
       })
       setShowModal(true)
@@ -97,9 +99,7 @@ export default function TapeMeasurementsSection({
             <Ruler className="h-5 w-5 text-primary-600" />
             {t('tape.title')}
           </CardTitle>
-          <CardDescription>
-            {t('tape.description')}
-          </CardDescription>
+          <CardDescription>{t('tape.description')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -112,7 +112,10 @@ export default function TapeMeasurementsSection({
                 <div key={field} className="space-y-2">
                   <div className="flex items-center gap-1.5">
                     <Label htmlFor={`tape-${field}`}>
-                      {tapeLabels[field as string]} <span className="text-neutral-500">(cm)</span>
+                      {t(`tapeLabels.${field as string}`, {
+                        defaultValue: tapeLabels[field as string],
+                      })}{' '}
+                      <span className="text-neutral-500">(cm)</span>
                       {isRequired && <span className="text-red-500 ml-1">*</span>}
                     </Label>
                     {description && (
@@ -120,7 +123,11 @@ export default function TapeMeasurementsSection({
                         type="button"
                         onClick={() => handleInfoClick(field)}
                         className="text-neutral-400 hover:text-primary-600 transition-colors cursor-pointer"
-                        aria-label={t('tape.infoAriaLabel', { field: tapeLabels[field as string] })}
+                        aria-label={t('tape.infoAriaLabel', {
+                          field: t(`tapeLabels.${field as string}`, {
+                            defaultValue: tapeLabels[field as string],
+                          }),
+                        })}
                       >
                         <Info className="h-4 w-4" />
                       </button>
@@ -177,15 +184,25 @@ export default function TapeMeasurementsSection({
                 {(() => {
                   const description = modalContent.description
 
-                  // Check if description contains special formatting (methods or gender-specific)
-                  const hasMethodLabels = description.includes('Enligt ') || description.includes(':')
-                  const hasMaleInstruction = description.includes('Män:')
-                  const hasFemaleInstruction = description.includes('Kvinnor:')
+                  const maleLabel = t('genderLabel.male')
+                  const femaleLabel = t('genderLabel.female')
+                  const bothLabel = t('genderLabel.both')
+
+                  // Detect special formatting patterns in the (translated) description
+                  const hasMethodLabels = description.includes(':')
+                  const hasMaleInstruction = description.includes(`${maleLabel}:`)
+                  const hasFemaleInstruction = description.includes(`${femaleLabel}:`)
                   const hasBulletPoints = description.includes('• ')
 
-                  if (hasMethodLabels || hasMaleInstruction || hasFemaleInstruction || hasBulletPoints) {
+                  if (
+                    hasMethodLabels ||
+                    hasMaleInstruction ||
+                    hasFemaleInstruction ||
+                    hasBulletPoints
+                  ) {
                     type SectionType = 'text' | 'male' | 'female' | 'method' | 'both-genders'
-                    const sections: Array<{ type: SectionType; title?: string; content: string }> = []
+                    const sections: Array<{ type: SectionType; title?: string; content: string }> =
+                      []
                     const lines = description.split('\n')
                     let currentSection: string[] = []
                     let currentType: SectionType = 'text'
@@ -206,26 +223,27 @@ export default function TapeMeasurementsSection({
                     lines.forEach(line => {
                       const trimmedLine = line.trim()
 
-                      // Check for method labels like "Enligt Casey Butt:", "U.S. Navy kroppsfettformel:", etc.
+                      // Check for method labels (lines ending with colon that aren't gender labels)
+                      const isGenderLine =
+                        trimmedLine.startsWith(`${maleLabel}:`) ||
+                        trimmedLine.startsWith(`${femaleLabel}:`) ||
+                        trimmedLine.startsWith(`${bothLabel}:`) ||
+                        trimmedLine.startsWith(`• ${maleLabel}:`) ||
+                        trimmedLine.startsWith(`• ${femaleLabel}:`) ||
+                        trimmedLine.startsWith(`• ${bothLabel}:`)
+
                       if (
-                        trimmedLine.startsWith('Enligt ') ||
-                        (trimmedLine.endsWith(':') &&
-                          !trimmedLine.startsWith('•') &&
-                          !trimmedLine.startsWith('Män:') &&
-                          !trimmedLine.startsWith('Kvinnor:') &&
-                          !trimmedLine.startsWith('Båda könen:'))
+                        !isGenderLine &&
+                        trimmedLine.endsWith(':') &&
+                        !trimmedLine.startsWith('•')
                       ) {
                         pushCurrentSection()
                         currentType = 'method'
-
-                        // Check if there's content after the colon on the same line
                         const colonIndex = trimmedLine.indexOf(':')
                         if (colonIndex !== -1) {
                           currentTitle = trimmedLine.substring(0, colonIndex)
                           const contentAfterColon = trimmedLine.substring(colonIndex + 1).trim()
-                          if (contentAfterColon) {
-                            currentSection.push(contentAfterColon)
-                          }
+                          if (contentAfterColon) currentSection.push(contentAfterColon)
                         } else {
                           currentTitle = trimmedLine
                         }
@@ -233,30 +251,29 @@ export default function TapeMeasurementsSection({
                       }
 
                       // Check for gender-specific bullets
-                      if (trimmedLine.startsWith('• Män:')) {
+                      if (trimmedLine.startsWith(`• ${maleLabel}:`)) {
                         pushCurrentSection()
                         currentType = 'male'
-                        currentSection.push(trimmedLine.replace('• Män:', '').trim())
+                        currentSection.push(trimmedLine.replace(`• ${maleLabel}:`, '').trim())
                         return
                       }
 
-                      if (trimmedLine.startsWith('• Kvinnor:')) {
+                      if (trimmedLine.startsWith(`• ${femaleLabel}:`)) {
                         pushCurrentSection()
                         currentType = 'female'
-                        currentSection.push(trimmedLine.replace('• Kvinnor:', '').trim())
+                        currentSection.push(trimmedLine.replace(`• ${femaleLabel}:`, '').trim())
                         return
                       }
 
-                      if (trimmedLine.startsWith('• Båda könen:')) {
+                      if (trimmedLine.startsWith(`• ${bothLabel}:`)) {
                         pushCurrentSection()
                         currentType = 'both-genders'
-                        currentSection.push(trimmedLine.replace('• Båda könen:', '').trim())
+                        currentSection.push(trimmedLine.replace(`• ${bothLabel}:`, '').trim())
                         return
                       }
 
-                      // Check for gender labels without bullets - keep as part of method section
-                      if (trimmedLine.startsWith('Män:') || trimmedLine.startsWith('Kvinnor:') || trimmedLine.startsWith('Båda könen:')) {
-                        // Add to current method section instead of creating new section
+                      // Gender labels without bullets - keep as part of current method section
+                      if (isGenderLine) {
                         currentSection.push(line)
                         return
                       }
@@ -268,7 +285,6 @@ export default function TapeMeasurementsSection({
                         return
                       }
 
-                      // Regular line - add to current section
                       currentSection.push(line)
                     })
 
@@ -283,7 +299,7 @@ export default function TapeMeasurementsSection({
                                 key={idx}
                                 className="bg-blue-50 border-blue-200 border rounded-lg p-4"
                               >
-                                <p className="font-semibold text-blue-700 mb-2">👨 Män</p>
+                                <p className="font-semibold text-blue-700 mb-2">👨 {maleLabel}</p>
                                 <p className="text-blue-900 leading-relaxed">{section.content}</p>
                               </div>
                             )
@@ -295,7 +311,7 @@ export default function TapeMeasurementsSection({
                                 key={idx}
                                 className="bg-pink-50 border-pink-200 border rounded-lg p-4"
                               >
-                                <p className="font-semibold text-pink-700 mb-2">👩 Kvinnor</p>
+                                <p className="font-semibold text-pink-700 mb-2">👩 {femaleLabel}</p>
                                 <p className="text-pink-900 leading-relaxed">{section.content}</p>
                               </div>
                             )
@@ -307,7 +323,7 @@ export default function TapeMeasurementsSection({
                                 key={idx}
                                 className="bg-purple-50 border-purple-200 border rounded-lg p-4"
                               >
-                                <p className="font-semibold text-purple-700 mb-2">👥 Båda könen</p>
+                                <p className="font-semibold text-purple-700 mb-2">👥 {bothLabel}</p>
                                 <p className="text-purple-900 leading-relaxed">{section.content}</p>
                               </div>
                             )
@@ -319,7 +335,9 @@ export default function TapeMeasurementsSection({
                                 key={idx}
                                 className="bg-amber-50 border-amber-200 border rounded-lg p-4"
                               >
-                                <p className="font-semibold text-amber-700 mb-2">📋 {section.title}</p>
+                                <p className="font-semibold text-amber-700 mb-2">
+                                  📋 {section.title}
+                                </p>
                                 {section.content && (
                                   <p className="text-amber-900 leading-relaxed whitespace-pre-line">
                                     {section.content}

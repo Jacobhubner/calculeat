@@ -16,6 +16,29 @@ interface MethodInfoModalProps {
   onClose: () => void
 }
 
+const methodLocaleKeyMap: Record<string, string> = {
+  siri: 'siri',
+  brozek: 'brozek',
+  'Jackson/Pollock 3 Caliper Method (Male)': 'jp3',
+  'Jackson/Pollock 3 Caliper Method (Female)': 'jp3',
+  'Jackson/Pollock 4 Caliper Method': 'jp4',
+  'Jackson/Pollock 7 Caliper Method': 'jp7',
+  'Durnin/Womersley Caliper Method': 'durninWomersley',
+  'Parillo Caliper Method': 'parillo',
+  'Covert Bailey Measuring Tape Method': 'covertBailey',
+  'U.S. Navy Body Fat Formula': 'usNavy',
+  'YMCA Measuring Tape Method': 'ymca',
+  'Modified YMCA Measuring Tape Method': 'ymcaModified',
+  'Heritage BMI to Body Fat Method': 'heritage',
+  'Reversed Cunningham equation': 'cunningham',
+}
+
+const genderLocaleKeyMap: Record<string, string> = {
+  Män: 'male',
+  Kvinnor: 'female',
+  Båda: 'both',
+}
+
 export default function MethodInfoModal({
   method,
   variation,
@@ -36,6 +59,8 @@ export default function MethodInfoModal({
 
   if (!info) return null
 
+  const localeKey = methodLocaleKeyMap[method] ?? null
+
   return (
     <Portal>
       <div
@@ -49,7 +74,11 @@ export default function MethodInfoModal({
           {/* Header */}
           <div className="sticky top-0 bg-gradient-to-r from-primary-500 to-accent-500 text-white p-6 rounded-t-2xl flex justify-between items-start">
             <div>
-              <h2 className="text-2xl font-bold">{info.title}</h2>
+              <h2 className="text-2xl font-bold">
+                {localeKey
+                  ? t(`methodInfo.${localeKey}.title`, { defaultValue: info.title })
+                  : info.title}
+              </h2>
               {info.year && <p className="text-primary-100 mt-1 text-sm">{info.year}</p>}
             </div>
             <button
@@ -65,9 +94,13 @@ export default function MethodInfoModal({
           <div className="p-6 space-y-6">
             {/* Beskrivning */}
             <div>
-              <h3 className="text-lg font-semibold text-neutral-800 mb-2">{t('methodModal.description')}</h3>
+              <h3 className="text-lg font-semibold text-neutral-800 mb-2">
+                {t('methodModal.description')}
+              </h3>
               <div className="text-neutral-700 leading-relaxed whitespace-pre-line">
-                {info.description}
+                {localeKey
+                  ? t(`methodInfo.${localeKey}.description`, { defaultValue: info.description })
+                  : info.description}
               </div>
             </div>
 
@@ -77,11 +110,15 @@ export default function MethodInfoModal({
                 <p className="text-sm text-blue-900">
                   {info.returnsDensity ? (
                     <>
-                      <span className="font-semibold">{t('methodModal.returnsDensityLabel')}</span> {t('methodModal.returnsDensityNote')}
+                      <span className="font-semibold">{t('methodModal.returnsDensityLabel')}</span>{' '}
+                      {t('methodModal.returnsDensityNote')}
                     </>
                   ) : (
                     <>
-                      <span className="font-semibold">{t('methodModal.returnsFatDirectLabel')}</span> {t('methodModal.returnsFatDirectNote')}
+                      <span className="font-semibold">
+                        {t('methodModal.returnsFatDirectLabel')}
+                      </span>{' '}
+                      {t('methodModal.returnsFatDirectNote')}
                     </>
                   )}
                 </p>
@@ -95,12 +132,17 @@ export default function MethodInfoModal({
                   {t('methodModal.betterFor')}
                 </h3>
                 <ul className="space-y-2">
-                  {info.betterFor.map((item, index) => (
-                    <li key={index} className="flex gap-3">
-                      <span className="text-blue-600 font-bold mt-1">•</span>
-                      <span className="text-neutral-700 flex-1">{item}</span>
-                    </li>
-                  ))}
+                  {info.betterFor.map((item, index) => {
+                    const translated = localeKey
+                      ? t(`methodInfo.${localeKey}.betterFor.${index}`, { defaultValue: item })
+                      : item
+                    return (
+                      <li key={index} className="flex gap-3">
+                        <span className="text-blue-600 font-bold mt-1">•</span>
+                        <span className="text-neutral-700 flex-1">{translated}</span>
+                      </li>
+                    )
+                  })}
                 </ul>
               </div>
             )}
@@ -108,14 +150,21 @@ export default function MethodInfoModal({
             {/* Viktigt att veta (för Siri och Brozek) */}
             {info.pros && info.pros.length > 0 && !info.betterFor && (
               <div className="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-lg">
-                <h3 className="text-lg font-semibold text-amber-900 mb-3">{t('methodModal.importantToKnow')}</h3>
+                <h3 className="text-lg font-semibold text-amber-900 mb-3">
+                  {t('methodModal.importantToKnow')}
+                </h3>
                 <ul className="space-y-2">
-                  {info.pros.map((item, index) => (
-                    <li key={index} className="flex gap-3">
-                      <span className="text-amber-600 font-bold mt-1">•</span>
-                      <span className="text-amber-900 flex-1">{item}</span>
-                    </li>
-                  ))}
+                  {info.pros.map((item, index) => {
+                    const translated = localeKey
+                      ? t(`methodInfo.${localeKey}.pros.${index}`, { defaultValue: item })
+                      : item
+                    return (
+                      <li key={index} className="flex gap-3">
+                        <span className="text-amber-600 font-bold mt-1">•</span>
+                        <span className="text-amber-900 flex-1">{translated}</span>
+                      </li>
+                    )
+                  })}
                 </ul>
               </div>
             )}
@@ -136,7 +185,9 @@ export default function MethodInfoModal({
                     <div key={i}>
                       {isFirstOfGender && (
                         <h3 className="text-lg font-semibold text-neutral-800 mb-3 mt-2">
-                          {v.gender}
+                          {t(`genderLabel.${genderLocaleKeyMap[v.gender] ?? 'both'}`, {
+                            defaultValue: v.gender,
+                          })}
                         </h3>
                       )}
                       <div className="mb-4">
@@ -165,7 +216,9 @@ export default function MethodInfoModal({
             {/* Formel (enkel, för Siri/Brozek) */}
             {info.formula && !info.formulaVariants && (
               <div>
-                <h3 className="text-lg font-semibold text-neutral-800 mb-2">{t('methodModal.formula')}</h3>
+                <h3 className="text-lg font-semibold text-neutral-800 mb-2">
+                  {t('methodModal.formula')}
+                </h3>
                 <div className="bg-neutral-50 text-neutral-800 font-mono text-sm px-4 py-3 rounded-lg border border-neutral-200 whitespace-pre-line">
                   {info.formula}
                 </div>
@@ -175,7 +228,9 @@ export default function MethodInfoModal({
             {/* Referenser */}
             {info.references && info.references.length > 0 && (
               <div>
-                <h3 className="text-lg font-semibold text-neutral-800 mb-3">{t('methodModal.references')}</h3>
+                <h3 className="text-lg font-semibold text-neutral-800 mb-3">
+                  {t('methodModal.references')}
+                </h3>
                 <div className="space-y-3">
                   {info.references.map((ref, index) => (
                     <div
@@ -203,7 +258,9 @@ export default function MethodInfoModal({
             {/* Anteckningar (fallback för äldre metoder som inte använder nya strukturen) */}
             {info.notes && !info.pros && !info.cons && (
               <div className="bg-amber-50 border border-amber-200 p-3 rounded-lg">
-                <h4 className="font-semibold mb-1 text-amber-900 text-sm">{t('methodModal.importantToKnow')}</h4>
+                <h4 className="font-semibold mb-1 text-amber-900 text-sm">
+                  {t('methodModal.importantToKnow')}
+                </h4>
                 <p className="text-sm text-amber-800 leading-relaxed whitespace-pre-line">
                   {info.notes}
                 </p>

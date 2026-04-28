@@ -285,5 +285,336 @@
         "text": "Often classified as overweight or obesity, which can increase the risk of lifestyle diseases."
       }
     }
+  },
+  "methodCategories": {
+    "caliper": "Caliper methods (Skinfold)",
+    "tape": "Tape measure methods (Circumference)",
+    "profile": "Profile-based methods"
+  },
+  "methodNames": {
+    "jp3male": "Jackson/Pollock 3-site caliper",
+    "jp3female": "Jackson/Pollock 3-site caliper",
+    "jp4": "Jackson/Pollock 4-site caliper",
+    "jp7": "Jackson/Pollock 7-site caliper",
+    "durnin": "Durnin/Womersley caliper",
+    "parillo": "Parillo caliper",
+    "covertBailey": "Covert Bailey tape method",
+    "usNavy": "US Navy body fat formula",
+    "ymca": "YMCA tape method",
+    "ymcaModified": "Modified YMCA tape method",
+    "heritage": "Heritage BMI-based body fat",
+    "cunningham": "Reverse Cunningham equation"
+  },
+  "variations": {
+    "S_S2_age": "S, S², age",
+    "S_S2_C": "S, S², C",
+    "S_S2_age_C": "S, S², age, C",
+    "clothesOn": "Clothes on",
+    "S_S2": "S, S²",
+    "deurenberg": "Deurenberg",
+    "modifiedVariant": "Modified variant",
+    "allAgeGroups": "All age groups",
+    "sameForBoth": "Same formula for both sexes",
+    "unknownSource": "S, S² (unknown source)",
+    "step1Cunningham": "Step 1 — Cunningham",
+    "step2BodyFat": "Step 2 — Body fat %",
+    "deurenbergOriginal": "Deurenberg original formula (1991)",
+    "modifiedUnknown": "Modified variant (unknown source)"
+  },
+  "genderLabel": {
+    "male": "Men",
+    "female": "Women",
+    "both": "Both"
+  },
+  "caliperLabels": {
+    "chest": "Chest",
+    "abdominal": "Abdominal",
+    "thigh": "Thigh",
+    "tricep": "Tricep",
+    "subscapular": "Subscapular",
+    "suprailiac": "Suprailiac",
+    "midaxillary": "Midaxillary",
+    "bicep": "Bicep",
+    "lowerBack": "Lower back",
+    "calf": "Calf"
+  },
+  "tapeLabels": {
+    "neck": "Neck",
+    "waist": "Waist",
+    "hip": "Hip",
+    "wrist": "Wrist",
+    "ankle": "Ankle",
+    "forearm": "Forearm",
+    "thighCirc": "Thigh",
+    "calfCirc": "Calf"
+  },
+  "caliperDescriptions": {
+    "chest": "Men: Grasp a diagonal skinfold halfway between the anterior axillary line and the right nipple.\n\nWomen: Grasp a diagonal skinfold approximately one-third of the distance from the anterior axillary line to the right nipple.",
+    "midaxillary": "Grasp the skin vertically directly below the armpit, at the same level as the lower sternum (xiphoid process).",
+    "tricep": "Grasp the skin vertically midway between the elbow and shoulder (olecranon and acromion processes) on the back of the arm, with the arm extended and relaxed.",
+    "subscapular": "Take a diagonal skinfold along a line from the spinal border to 1–2 cm from the inferior angle of the scapula.",
+    "abdominal": "A vertical skinfold taken approximately 2 cm lateral to the navel.",
+    "suprailiac": "Grasp the skin diagonally directly above the iliac crest (hip bone).",
+    "thigh": "Grasp the skin vertically halfway between the upper edge of the kneecap and the upper front of the thigh.",
+    "bicep": "Grasp the skin vertically halfway between the elbow and shoulder on the front of the arm.",
+    "lowerBack": "Grasp the skin horizontally approximately 15 cm above the waist and 5 cm to the right of the spine.",
+    "calf": "Grasp the skin vertically on the inside of the largest part of the right calf."
+  },
+  "tapeDescriptions": {
+    "neck": "According to Topend Sports: Immediately above the Adam's apple.\nAccording to Casey Butt: Just below the Adam's apple, at the narrowest point.\n\nThe person should keep their head upright and look straight ahead.",
+    "waist": "Measured at the narrowest part of the waist at the end of a normal exhalation.\nIf this point is not clearly defined, measure midway between the bottom rib and the top of the iliac crest.\n\nU.S. Navy body fat formula:\nMen: At the navel.\nWomen: At the narrowest point, usually between the sternum and the navel.\n\nModified YMCA method:\nBoth sexes: At the navel.",
+    "hip": "Measured over minimal clothing, at the point where the gluteal muscles protrude the most, with muscles relaxed.",
+    "forearm": "With a clenched fist and arm extended, measure the circumference at the largest point, usually closer to the elbow.",
+    "wrist": "Measured on the palm side of the styloid processes, where the forearm is narrowest.",
+    "thighCirc": "Measured at the midpoint of the outer thigh, halfway between the greater trochanter and the lateral tibial condyle.",
+    "calfCirc": "Measured at the largest circumference, with muscles relaxed.",
+    "ankle": "Measured at the narrowest point."
+  },
+  "methodInfo": {
+    "siri": {
+      "title": "The Siri equation",
+      "description": "The Siri equation is used to convert body density to body fat percentage using the two-compartment model (fat mass + fat-free mass). It is the most established and cited formula in research and clinical practice.",
+      "pros": [
+        "Tends to give slightly higher body fat % than Brozek",
+        "Suitable for individuals with normal to low body fat",
+        "May overestimate body fat in lean, muscular individuals or older adults with low bone density",
+        "Standard choice in most research and clinical settings"
+      ]
+    },
+    "brozek": {
+      "title": "The Brozek equation",
+      "description": "The Brozek equation is an alternative formula that also converts body density to body fat percentage using the two-compartment model. It has slightly different assumptions about fat-free mass density.",
+      "pros": [
+        "Often gives slightly lower body fat % than Siri",
+        "Suitable for lean and muscular individuals as it better accounts for a higher proportion of fat-free mass",
+        "Less prone to overestimation at low body fat, but still limited for older adults or those with extreme body composition",
+        "Can be used as an alternative to Siri depending on the individual's body type"
+      ]
+    },
+    "jp3": {
+      "title": "Jackson-Pollock 3-site caliper method",
+      "year": "men: 1978, women: 1980, clothes on: 1985",
+      "description": "The Jackson–Pollock 3-site skinfold equation is one of the most widely used methods for estimating body fat percentage, as it is simple, fast, and reasonably reliable.\n\nHowever, the method tends to underestimate body fat in relatively lean individuals (men below approximately 15% and women below approximately 25% body fat). It is therefore more accurate for individuals with higher body fat.\n\nThe equations are based on a sample aged 18–61 years for men and 18–55 years for women.",
+      "betterFor": ["Men with higher body fat (>15%)", "Women with higher body fat (>25%)"],
+      "requiredMale": ["Chest (pectoral)", "Abdominal", "Thigh"],
+      "requiredFemale": ["Tricep", "Suprailiac (above the hip bone)", "Thigh"],
+      "variants": {
+        "maleS2Age": { "name": "S, S², age", "measurements": "ΣS = chest + abdominal + thigh" },
+        "maleS2AgeC": {
+          "name": "S, S², age, C",
+          "measurements": "ΣS = chest + abdominal + thigh\nCw = waist circumference (m)\nCf = forearm circumference (m)"
+        },
+        "maleClothes": {
+          "name": "Clothes on",
+          "measurements": "ΣS = chest + tricep + subscapular"
+        },
+        "femaleS2Age": { "name": "S, S², age", "measurements": "ΣS = tricep + suprailiac + thigh" },
+        "femaleS2C": {
+          "name": "S, S², C",
+          "measurements": "ΣS = tricep + suprailiac + thigh\nC = hip circumference (cm)"
+        },
+        "femaleS2AgeC": {
+          "name": "S, S², age, C",
+          "measurements": "ΣS = tricep + suprailiac + thigh\nC = hip circumference (cm)"
+        },
+        "femaleClothes": {
+          "name": "Clothes on",
+          "measurements": "ΣS = tricep + suprailiac + abdominal"
+        }
+      }
+    },
+    "jp3Clothes": {
+      "title": "Jackson-Pollock 3-site caliper method (clothes on)",
+      "year": "1985",
+      "description": "A variant of the 3-site method suitable for individuals who wish to keep their clothes on during measurement. The method is based on the same principles as the traditional 3-site method.",
+      "betterFor": ["People who prefer measurements with clothes on"],
+      "required": ["Tricep", "Suprailiac (above the hip bone)", "Abdominal"]
+    },
+    "jp4": {
+      "title": "Jackson-Pollock 4-site caliper method",
+      "year": "density-based women: 1980, direct formula: unknown",
+      "description": "The Jackson–Pollock 4-site skinfold equation is marginally more accurate than the 3-site method, but also tends to slightly underestimate body fat in relatively lean individuals.\n\nThe method therefore works better for individuals with moderate to higher body fat.",
+      "betterFor": ["People with higher body fat who want slightly more precision"],
+      "required": ["Tricep", "Suprailiac", "Abdominal", "Thigh"],
+      "requiredDensity": ["Tricep", "Suprailiac", "Abdominal", "Thigh", "Hip (C variants)"],
+      "variants": {
+        "maleUnknown": {
+          "name": "S, S² (unknown source)",
+          "measurements": "ΣS = tricep + suprailiac + abdominal + thigh"
+        },
+        "femaleS2Age": {
+          "name": "S, S², age",
+          "measurements": "ΣS = tricep + suprailiac + abdominal + thigh"
+        },
+        "femaleS2C": {
+          "name": "S, S², C",
+          "measurements": "ΣS = tricep + suprailiac + abdominal + thigh\nC = hip circumference (cm)"
+        },
+        "femaleS2AgeC": {
+          "name": "S, S², age, C",
+          "measurements": "ΣS = tricep + suprailiac + abdominal + thigh\nC = hip circumference (cm)"
+        },
+        "femaleUnknown": {
+          "name": "S, S² (unknown source)",
+          "measurements": "ΣS = tricep + suprailiac + abdominal + thigh"
+        }
+      }
+    },
+    "jp4Direct": {
+      "description": "The Jackson–Pollock 4-site skinfold equation is marginally more accurate than the 3-site method, but also tends to slightly underestimate body fat in relatively lean individuals.\n\nThe method therefore works better for individuals with moderate to higher body fat.\n\nThis variant (direct formula S, S²) has an unknown origin but is used as an accepted method in body composition measurement."
+    },
+    "jp7": {
+      "title": "Jackson-Pollock 7-site caliper method",
+      "year": "men: 1978, women: 1980",
+      "description": "The Jackson–Pollock 7-site skinfold equation is not appreciably more accurate than the 3-site method, but requires considerably more time and additional measurements. It also tends to underestimate body fat in relatively lean individuals.\n\nFor most purposes it is therefore more practical to use the 3-site method.",
+      "betterFor": ["People who want the most data points despite the longer measurement time"],
+      "required": [
+        "Chest (pectoral)",
+        "Abdominal",
+        "Thigh",
+        "Tricep",
+        "Subscapular (below the shoulder blade)",
+        "Suprailiac",
+        "Midaxillary"
+      ],
+      "variants": {
+        "maleS2Age": {
+          "name": "S, S², age",
+          "measurements": "ΣS = chest + abdominal + thigh + tricep + subscapular + suprailiac + midaxillary"
+        },
+        "maleS2AgeC": {
+          "name": "S, S², age, C",
+          "measurements": "ΣS = chest + abdominal + thigh + tricep + subscapular + suprailiac + midaxillary\nCw = waist circumference (m)\nCf = forearm circumference (m)"
+        },
+        "femaleS2Age": {
+          "name": "S, S², age",
+          "measurements": "ΣS = chest + abdominal + thigh + tricep + subscapular + suprailiac + midaxillary"
+        },
+        "femaleS2C": {
+          "name": "S, S², C",
+          "measurements": "ΣS = chest + abdominal + thigh + tricep + subscapular + suprailiac + midaxillary\nC = hip circumference (cm)"
+        },
+        "femaleS2AgeC": {
+          "name": "S, S², age, C",
+          "measurements": "ΣS = chest + abdominal + thigh + tricep + subscapular + suprailiac + midaxillary\nC = hip circumference (cm)"
+        }
+      }
+    },
+    "durninWomersley": {
+      "title": "Durnin-Womersley caliper method",
+      "year": "1974",
+      "description": "The Durnin–Womersley 4-site skinfold equation can give accurate results for some individuals, but many find that it overestimates body fat.\n\nThe equations are based on a sample aged 17–72 years for men and 16–68 years for women.\n\nFor this reason, more reliable methods such as the Jackson–Pollock 3-site caliper or the U.S. Navy method are often recommended instead.",
+      "betterFor": ["People who want to try an older European method"],
+      "required": ["Bicep", "Tricep", "Subscapular", "Suprailiac"],
+      "variants": {
+        "maleAllAges": {
+          "name": "All age groups",
+          "measurements": "ΣS = bicep + tricep + subscapular + suprailiac"
+        },
+        "femaleAllAges": {
+          "name": "All age groups",
+          "measurements": "ΣS = bicep + tricep + subscapular + suprailiac"
+        }
+      }
+    },
+    "parillo": {
+      "title": "Parillo caliper method",
+      "year": "1993",
+      "description": "Parillo's 9-site skinfold equation is poorly studied, making it difficult to assess its accuracy compared to other methods.\n\nMore established methods such as the Jackson–Pollock 3-site caliper or the U.S. Navy method are therefore generally recommended instead.",
+      "betterFor": ["Bodybuilders who want to follow tradition in their subculture"],
+      "required": [
+        "Chest (pectoral)",
+        "Abdominal",
+        "Thigh",
+        "Bicep",
+        "Tricep",
+        "Subscapular",
+        "Suprailiac",
+        "Lower back",
+        "Calf"
+      ],
+      "variants": {
+        "both": {
+          "name": "Same formula for both sexes",
+          "measurements": "ΣS = chest + abdominal + thigh + bicep + tricep + subscapular + suprailiac + lower back + calf"
+        }
+      }
+    },
+    "covertBailey": {
+      "title": "The Covert Bailey method",
+      "year": "unknown origin (after 1978)",
+      "description": "All measurements should be taken at the widest point of the respective body parts.\n\nThe formula was popularised by fitness author Covert Bailey in Fit or Fat? (1978). The reasoning about home estimation of body fat was further developed in Smart Exercise (1994) and compiled in later editions of The Ultimate Fit or Fat (1999). The method was published in popular fitness literature and lacks a documented first publication in scientific journals or a formal validation study.",
+      "betterFor": ["People who do not have access to calipers"],
+      "required": ["Waist", "Wrist (men)", "Hip (women)", "Forearm (women)"],
+      "variants": {
+        "maleAllAges": { "name": "All age groups", "measurements": "All measurements in inches" },
+        "femaleAllAges": { "name": "All age groups", "measurements": "All measurements in inches" }
+      }
+    },
+    "usNavy": {
+      "title": "U.S. Navy body fat formula",
+      "year": "1984",
+      "description": "This method is relatively accurate but tends to overestimate body fat in relatively lean individuals. It is therefore best suited for men above approximately 15% body fat and women above approximately 25%.\n\nIn the U.S. military, body fat percentage — rather than body weight — is used as the primary criterion for enlistment. The formulas are used to determine whether an individual meets the requirements.",
+      "betterFor": ["People with normal to high body fat who want a quick tape measure method"],
+      "required": ["Neck", "Waist", "Hip (women only)", "Height"],
+      "variants": {
+        "male": { "name": "", "measurements": "All measurements in inches" },
+        "female": { "name": "", "measurements": "All measurements in inches" }
+      }
+    },
+    "ymca": {
+      "title": "The YMCA method",
+      "description": "This method was developed by the YMCA as a simple way to estimate body fat percentage using only body weight and waist circumference.",
+      "betterFor": ["People who want a very quick overall estimate"],
+      "required": ["Waist", "Body weight"],
+      "variants": {
+        "both": {
+          "name": "",
+          "measurements": "Waist in inches, weight in lbs\nsex = 98.42 for men, 76.76 for women"
+        }
+      }
+    },
+    "ymcaModified": {
+      "title": "Modified YMCA method",
+      "description": "An improved version of the YMCA method with additional measurements for higher precision. Uses more measurement sites than standard YMCA.",
+      "betterFor": ["People who want better precision than YMCA while keeping it simple"],
+      "required": ["Neck", "Waist", "Hip", "Body weight"],
+      "variants": {
+        "male": { "name": "", "measurements": "Waist in inches, weight in lbs" },
+        "female": {
+          "name": "",
+          "measurements": "All circumference measurements in inches, weight in lbs"
+        }
+      }
+    },
+    "heritage": {
+      "title": "Heritage BMI to body fat",
+      "year": "1991",
+      "description": "Estimates body fat % based on BMI, age and sex.\n\nThe original formula was published by Deurenberg et al. (1991) and uses a sex coefficient system. In addition to the original formula there is a later empirical variant that circulates in fitness and calculator apps, calibrated against other datasets and giving a somewhat better fit in certain populations, but lacking a clear original paper.",
+      "required": ["BMI (calculated from height and weight)", "Age", "Sex"],
+      "variants": {
+        "deurenberg": {
+          "name": "Deurenberg original formula (1991)",
+          "measurements": "sex = 1 for men, 0 for women\nBMI is calculated automatically from height and weight"
+        },
+        "modified": {
+          "name": "Modified variant (unknown source)",
+          "measurements": "sex = 19.34 for men, 9 for women\nBMI is calculated automatically from height and weight"
+        }
+      }
+    },
+    "cunningham": {
+      "title": "Reverse Cunningham equation",
+      "year": "1980",
+      "description": "Back-calculates body fat % from RMR/BMR (Resting/Basal Metabolic Rate) under the assumption that metabolism follows the Cunningham equation.\n\nIf no BMR/RMR value is available, the Mifflin-St Jeor equation is used to estimate RMR based on height, weight, age and sex.",
+      "required": ["BMR or height/weight/age/sex", "Body weight"],
+      "variants": {
+        "step1": {
+          "name": "Step 1 — Cunningham",
+          "measurements": "Reverse: fat-free mass = (BMR − 370) / 21.6"
+        },
+        "step2": { "name": "Step 2 — Body fat %", "measurements": "Same formula for both sexes" }
+      }
+    }
   }
 }

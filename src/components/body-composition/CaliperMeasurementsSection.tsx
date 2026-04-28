@@ -39,10 +39,14 @@ export default function CaliperMeasurementsSection({
   }
 
   const handleInfoClick = (field: keyof CaliperMeasurements) => {
-    const description = caliperDescriptions[field as string]
+    const description = t(`caliperDescriptions.${field as string}`, {
+      defaultValue: caliperDescriptions[field as string],
+    })
     if (description) {
       setModalContent({
-        title: caliperLabels[field as string],
+        title: t(`caliperLabels.${field as string}`, {
+          defaultValue: caliperLabels[field as string],
+        }),
         description,
       })
       setShowModal(true)
@@ -85,9 +89,7 @@ export default function CaliperMeasurementsSection({
             <Ruler className="h-5 w-5 text-primary-600" />
             {t('caliper.title')}
           </CardTitle>
-          <CardDescription>
-            {t('caliper.description')}
-          </CardDescription>
+          <CardDescription>{t('caliper.description')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -99,7 +101,9 @@ export default function CaliperMeasurementsSection({
                 <div key={field} className="space-y-2">
                   <div className="flex items-center gap-1.5">
                     <Label htmlFor={`caliper-${field}`}>
-                      {caliperLabels[field as string]}{' '}
+                      {t(`caliperLabels.${field as string}`, {
+                        defaultValue: caliperLabels[field as string],
+                      })}{' '}
                       <span className="text-neutral-500">(mm)</span>
                       {isRequired && <span className="text-red-500 ml-1">*</span>}
                     </Label>
@@ -108,7 +112,11 @@ export default function CaliperMeasurementsSection({
                         type="button"
                         onClick={() => handleInfoClick(field)}
                         className="text-neutral-400 hover:text-primary-600 transition-colors cursor-pointer"
-                        aria-label={t('caliper.infoAriaLabel', { field: caliperLabels[field as string] })}
+                        aria-label={t('caliper.infoAriaLabel', {
+                          field: t(`caliperLabels.${field as string}`, {
+                            defaultValue: caliperLabels[field as string],
+                          }),
+                        })}
                       >
                         <Info className="h-4 w-4" />
                       </button>
@@ -151,7 +159,9 @@ export default function CaliperMeasurementsSection({
               <div className="sticky top-0 bg-gradient-to-br from-primary-500 to-accent-500 text-white px-6 py-4 flex justify-between items-start rounded-t-2xl">
                 <div>
                   <h2 className="text-2xl font-bold">{modalContent.title}</h2>
-                  <p className="text-sm text-white/90 mt-1">{t('caliper.measurementInstruction')}</p>
+                  <p className="text-sm text-white/90 mt-1">
+                    {t('caliper.measurementInstruction')}
+                  </p>
                 </div>
                 <button
                   onClick={() => setShowModal(false)}
@@ -165,28 +175,34 @@ export default function CaliperMeasurementsSection({
                 {(() => {
                   const description = modalContent.description
 
-                  // Check if description contains gender-specific instructions
-                  const hasMaleInstruction = description.includes('Män:')
-                  const hasFemaleInstruction = description.includes('Kvinnor:')
+                  // Use translated gender labels to detect and split gender-specific blocks
+                  const maleLabel = t('genderLabel.male')
+                  const femaleLabel = t('genderLabel.female')
+                  const malePrefixRegex = new RegExp(`^${maleLabel}:`)
+                  const femalePrefixRegex = new RegExp(`^${femaleLabel}:`)
+                  const splitRegex = new RegExp(`\\n\\n(?=${maleLabel}:|${femaleLabel}:)`)
+
+                  const hasMaleInstruction = description.includes(`${maleLabel}:`)
+                  const hasFemaleInstruction = description.includes(`${femaleLabel}:`)
 
                   if (hasMaleInstruction || hasFemaleInstruction) {
-                    // Split by gender labels and format nicely
-                    const parts = description.split(/\n\n(?=Män:|Kvinnor:)/)
+                    const parts = description.split(splitRegex)
 
                     return (
                       <div className="space-y-4">
                         {parts.map((part, idx) => {
-                          const isMale = part.trim().startsWith('Män:')
-                          const isFemale = part.trim().startsWith('Kvinnor:')
+                          const isMale = malePrefixRegex.test(part.trim())
+                          const isFemale = femalePrefixRegex.test(part.trim())
 
                           if (isMale || isFemale) {
-                            const label = isMale ? 'Män' : 'Kvinnor'
-                            const content = part.replace(/^(Män|Kvinnor):\s*/, '').trim()
+                            const label = isMale ? maleLabel : femaleLabel
+                            const content = part
+                              .replace(new RegExp(`^(${maleLabel}|${femaleLabel}):\\s*`), '')
+                              .trim()
                             const bgColor = isMale ? 'bg-blue-50' : 'bg-pink-50'
                             const borderColor = isMale ? 'border-blue-200' : 'border-pink-200'
                             const textColor = isMale ? 'text-blue-900' : 'text-pink-900'
                             const labelColor = isMale ? 'text-blue-700' : 'text-pink-700'
-
                             const emoji = isMale ? '👨' : '👩'
                             return (
                               <div
@@ -196,9 +212,7 @@ export default function CaliperMeasurementsSection({
                                 <p className={`font-semibold ${labelColor} mb-2`}>
                                   {emoji} {label}
                                 </p>
-                                <p className={`${textColor} leading-relaxed`}>
-                                  {content}
-                                </p>
+                                <p className={`${textColor} leading-relaxed`}>{content}</p>
                               </div>
                             )
                           }
