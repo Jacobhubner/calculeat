@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { translatePALSystem } from '@/lib/translations'
 import type { PALSystem } from '@/lib/types'
@@ -28,6 +29,7 @@ export default function PALTableContainer({
   weight,
   tdee,
 }: PALTableContainerProps) {
+  const { t } = useTranslation('tools')
   const renderTable = () => {
     switch (system) {
       case 'FAO/WHO/UNU based PAL values':
@@ -56,7 +58,7 @@ export default function PALTableContainer({
         return register ? (
           <div className="space-y-2">
             <label htmlFor="custom_pal" className="block text-sm font-medium text-neutral-700">
-              Anpassat PAL-värde <span className="text-red-600">*</span>
+              {t('tdeeCalc.palTable.customPALLabel')} <span className="text-red-600">*</span>
             </label>
             <input
               id="custom_pal"
@@ -65,16 +67,11 @@ export default function PALTableContainer({
               className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
               {...register('custom_pal', { valueAsNumber: true })}
             />
-            <p className="text-xs text-neutral-500">
-              Ange ditt eget PAL-värde om du vet det. Vanliga värden ligger mellan 1.2
-              (stillasittande) och 2.2 (mycket aktiv).
-            </p>
+            <p className="text-xs text-neutral-500">{t('tdeeCalc.palTable.customPALHint')}</p>
             {customPALOutOfRange && (
               <div className="flex gap-2 p-3 bg-amber-50 border border-amber-200 rounded-xl">
                 <span className="text-amber-600 flex-shrink-0">⚠</span>
-                <p className="text-sm text-amber-800">
-                  Ovanligt PAL-värde — normalt intervall är 1.2–2.2
-                </p>
+                <p className="text-sm text-amber-800">{t('tdeeCalc.palTable.customPALWarning')}</p>
               </div>
             )}
           </div>

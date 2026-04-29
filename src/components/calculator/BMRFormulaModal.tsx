@@ -1,4 +1,5 @@
 import { X } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import {
   BMR_FORMULA_DESCRIPTIONS,
   type BMRFormulaVariant,
@@ -14,6 +15,7 @@ interface BMRFormulaModalProps {
 }
 
 export default function BMRFormulaModal({ formula, isOpen, onClose }: BMRFormulaModalProps) {
+  const { t } = useTranslation('tools')
   if (!isOpen) return null
 
   const description = BMR_FORMULA_DESCRIPTIONS[formula]
@@ -35,13 +37,13 @@ export default function BMRFormulaModal({ formula, isOpen, onClose }: BMRFormula
             <div>
               <h2 className="text-2xl font-bold">{description.name}</h2>
               <p className="text-primary-100 mt-1">
-                Utvecklad {description.year} • Typ: {description.type}
+                {t('tdeeCalc.modal.developed', { year: description.year, type: description.type })}
               </p>
             </div>
             <button
               onClick={onClose}
               className="text-white/80 hover:text-white transition-colors p-1 rounded-full hover:bg-white/10"
-              aria-label="Stäng"
+              aria-label={t('tdeeCalc.modal.closeAriaLabel')}
             >
               <X className="h-6 w-6" />
             </button>
@@ -51,7 +53,9 @@ export default function BMRFormulaModal({ formula, isOpen, onClose }: BMRFormula
           <div className="p-6 space-y-6">
             {/* Description */}
             <div>
-              <h3 className="text-lg font-semibold text-neutral-800 mb-2">Beskrivning</h3>
+              <h3 className="text-lg font-semibold text-neutral-800 mb-2">
+                {t('tdeeCalc.modal.description')}
+              </h3>
               <p className="text-neutral-700 leading-relaxed">{description.description}</p>
             </div>
 
@@ -59,7 +63,7 @@ export default function BMRFormulaModal({ formula, isOpen, onClose }: BMRFormula
             <div>
               <h3 className="text-lg font-semibold text-green-800 mb-3 flex items-center gap-2">
                 <span className="text-xl">✓</span>
-                Fördelar
+                {t('tdeeCalc.modal.pros')}
               </h3>
               <ul className="space-y-2">
                 {description.pros.map((pro, index) => (
@@ -76,7 +80,7 @@ export default function BMRFormulaModal({ formula, isOpen, onClose }: BMRFormula
               <div>
                 <h3 className="text-lg font-semibold text-amber-800 mb-3 flex items-center gap-2">
                   <span className="text-xl">⚠</span>
-                  Nackdelar / Begränsningar
+                  {t('tdeeCalc.modal.cons')}
                 </h3>
                 <ul className="space-y-2">
                   {description.cons.map((con, index) => (
@@ -92,7 +96,9 @@ export default function BMRFormulaModal({ formula, isOpen, onClose }: BMRFormula
             {/* Formula variants */}
             {description.formulaVariants && description.formulaVariants.length > 0 && (
               <div>
-                <h3 className="text-lg font-semibold text-neutral-800 mb-3">Formel</h3>
+                <h3 className="text-lg font-semibold text-neutral-800 mb-3">
+                  {t('tdeeCalc.modal.formula')}
+                </h3>
                 <div className="space-y-4">
                   {(() => {
                     let maleCount = 0
@@ -138,7 +144,9 @@ export default function BMRFormulaModal({ formula, isOpen, onClose }: BMRFormula
             {/* References */}
             {description.references.length > 0 && (
               <div>
-                <h3 className="text-lg font-semibold text-neutral-800 mb-3">Referenser</h3>
+                <h3 className="text-lg font-semibold text-neutral-800 mb-3">
+                  {t('tdeeCalc.modal.references')}
+                </h3>
                 <div className="space-y-3">
                   {description.references.map((ref, index) => (
                     <div
@@ -167,7 +175,7 @@ export default function BMRFormulaModal({ formula, isOpen, onClose }: BMRFormula
           {/* Footer */}
           <div className="sticky bottom-0 bg-neutral-50 p-6 rounded-b-2xl border-t border-neutral-200">
             <Button onClick={onClose} className="w-full">
-              Stäng
+              {t('tdeeCalc.modal.close')}
             </Button>
           </div>
         </div>

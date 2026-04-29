@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
@@ -22,6 +23,7 @@ export default function PALTableActivityLevelWizard({
   bmr,
   tdee,
 }: PALTableActivityLevelWizardProps) {
+  const { t } = useTranslation('tools')
   const [searchTerm, setSearchTerm] = useState('')
   // Watch form values if register/watch are available
   const trainingDays = watch?.('training_days_per_week') || 0
@@ -108,7 +110,7 @@ export default function PALTableActivityLevelWizard({
   if (!register) {
     return (
       <div className="p-4 text-center text-sm text-neutral-600">
-        <p>Laddar aktivitetsnivåformulär...</p>
+        <p>{t('tdeeCalc.wizard.loading')}</p>
       </div>
     )
   }
@@ -119,15 +121,15 @@ export default function PALTableActivityLevelWizard({
         {/* Sektion 1: Träning & Motion */}
         <div className="space-y-4 p-4 bg-white/50 rounded-lg border border-primary-200">
           <div>
-            <h3 className="text-base font-semibold text-neutral-900">1. Träning & Motion</h3>
-            <p className="text-sm text-neutral-600 mt-1">
-              Berätta om din regelbundna träning (gym, löpning, sport, etc.)
-            </p>
+            <h3 className="text-base font-semibold text-neutral-900">
+              {t('tdeeCalc.wizard.section1Title')}
+            </h3>
+            <p className="text-sm text-neutral-600 mt-1">{t('tdeeCalc.wizard.section1Desc')}</p>
           </div>
 
           {/* Antal dagar per vecka */}
           <div>
-            <Label htmlFor="training-days">Antal dagar per vecka du tränar</Label>
+            <Label htmlFor="training-days">{t('tdeeCalc.wizard.trainingDaysLabel')}</Label>
             <div className="flex items-center gap-4 mt-2">
               <span className="text-sm text-neutral-600">0</span>
               <input
@@ -144,14 +146,17 @@ export default function PALTableActivityLevelWizard({
             </div>
             <div className="text-center mt-2">
               <span className="text-2xl font-bold text-primary-600">
-                {trainingDays} {trainingDays === 1 ? 'dag' : 'dagar'}
+                {trainingDays}{' '}
+                {trainingDays === 1
+                  ? t('tdeeCalc.wizard.trainingDaysSingular')
+                  : t('tdeeCalc.wizard.trainingDaysPlural')}
               </span>
             </div>
           </div>
 
           {/* Minuter per träningspass */}
           <div>
-            <Label htmlFor="training-minutes">Antal minuter per träningspass</Label>
+            <Label htmlFor="training-minutes">{t('tdeeCalc.wizard.trainingMinsLabel')}</Label>
             <Input
               id="training-minutes"
               type="number"
@@ -166,24 +171,24 @@ export default function PALTableActivityLevelWizard({
 
           {/* Typ av träning - Sökbar lista */}
           <div>
-            <Label htmlFor="training-search">Sök träningsaktivitet</Label>
+            <Label htmlFor="training-search">{t('tdeeCalc.wizard.searchLabel')}</Label>
             <Input
               id="training-search"
               type="text"
-              placeholder="Sök på aktivitet, beskrivning eller kategori..."
+              placeholder={t('tdeeCalc.wizard.searchPlaceholder')}
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
               className="mt-1"
             />
             <p className="text-xs text-neutral-500 mt-1">
-              {filteredActivities.length} aktiviteter hittade
+              {t('tdeeCalc.wizard.activitiesFound', { count: filteredActivities.length })}
             </p>
           </div>
 
           <div>
-            <Label htmlFor="training-type">Välj träningsaktivitet</Label>
+            <Label htmlFor="training-type">{t('tdeeCalc.wizard.activitySelectLabel')}</Label>
             <Select id="training-type" className="mt-1" {...register('training_activity_id')}>
-              <option value="">Välj träningsaktivitet...</option>
+              <option value="">{t('tdeeCalc.wizard.activitySelectPlaceholder')}</option>
               {MET_CATEGORIES.map(category => {
                 const categoryActivities = activitiesByCategory[category]
                 if (!categoryActivities || categoryActivities.length === 0) return null
@@ -204,13 +209,15 @@ export default function PALTableActivityLevelWizard({
         {/* Sektion 2: Gång & Stående */}
         <div className="space-y-4 p-4 bg-white/50 rounded-lg border border-primary-200">
           <div>
-            <h3 className="text-base font-semibold text-neutral-900">2. Gång & Stående</h3>
-            <p className="text-sm text-neutral-600 mt-1">Din vardagsaktivitet utanför träning</p>
+            <h3 className="text-base font-semibold text-neutral-900">
+              {t('tdeeCalc.wizard.section2Title')}
+            </h3>
+            <p className="text-sm text-neutral-600 mt-1">{t('tdeeCalc.wizard.section2Desc')}</p>
           </div>
 
           {/* Steg per dag */}
           <div>
-            <Label htmlFor="steps-per-day">Genomsnittligt antal steg per dag</Label>
+            <Label htmlFor="steps-per-day">{t('tdeeCalc.wizard.stepsLabel')}</Label>
             <Input
               id="steps-per-day"
               type="number"
@@ -221,14 +228,12 @@ export default function PALTableActivityLevelWizard({
               className="mt-1"
               {...register('steps_per_day', { valueAsNumber: true })}
             />
-            <p className="text-xs text-neutral-500 mt-1">
-              Tips: Använd stegräknare i telefonen för att få genomsnitt
-            </p>
+            <p className="text-xs text-neutral-500 mt-1">{t('tdeeCalc.wizard.stepsTip')}</p>
           </div>
 
           {/* Gångtempo */}
           <div>
-            <Label htmlFor="walking-tempo">Gångtempo</Label>
+            <Label htmlFor="walking-tempo">{t('tdeeCalc.wizard.walkingTempoLabel')}</Label>
             <Select id="walking-tempo" className="mt-1" {...register('walking_activity_id')}>
               {specificWalkingActivities.map(activity => (
                 <option key={activity.id} value={activity.id}>
@@ -240,7 +245,7 @@ export default function PALTableActivityLevelWizard({
 
           {/* Timmar stående */}
           <div>
-            <Label htmlFor="hours-standing">Antal timmar stående per dag</Label>
+            <Label htmlFor="hours-standing">{t('tdeeCalc.wizard.standingHoursLabel')}</Label>
             <div className="flex items-center gap-4 mt-2">
               <span className="text-sm text-neutral-600">0</span>
               <input
@@ -257,7 +262,10 @@ export default function PALTableActivityLevelWizard({
             </div>
             <div className="text-center mt-2">
               <span className="text-2xl font-bold text-primary-600">
-                {hoursStanding} {hoursStanding === 1 ? 'timme' : 'timmar'}
+                {hoursStanding}{' '}
+                {hoursStanding === 1
+                  ? t('tdeeCalc.wizard.standingHoursSingular')
+                  : t('tdeeCalc.wizard.standingHoursPlural')}
               </span>
             </div>
           </div>
@@ -266,17 +274,17 @@ export default function PALTableActivityLevelWizard({
         {/* Sektion 3: Hushållsarbete */}
         <div className="space-y-4 p-4 bg-white/50 rounded-lg border border-primary-200">
           <div>
-            <h3 className="text-base font-semibold text-neutral-900">3. Hushållsarbete</h3>
-            <p className="text-sm text-neutral-600 mt-1">
-              Städning, matlagning, trädgårdsarbete, etc.
-            </p>
+            <h3 className="text-base font-semibold text-neutral-900">
+              {t('tdeeCalc.wizard.section3Title')}
+            </h3>
+            <p className="text-sm text-neutral-600 mt-1">{t('tdeeCalc.wizard.section3Desc')}</p>
           </div>
 
           {/* Typ av hushållsarbete */}
           <div>
-            <Label htmlFor="household-type">Välj hushållsaktivitet</Label>
+            <Label htmlFor="household-type">{t('tdeeCalc.wizard.householdSelectLabel')}</Label>
             <Select id="household-type" className="mt-1" {...register('household_activity_id')}>
-              <option value="">Välj hushållsaktivitet...</option>
+              <option value="">{t('tdeeCalc.wizard.householdSelectPlaceholder')}</option>
               {householdActivities.map(activity => (
                 <option key={activity.id} value={activity.id}>
                   {activity.activity} ({activity.met} MET)
@@ -287,9 +295,7 @@ export default function PALTableActivityLevelWizard({
 
           {/* Timmar per dag */}
           <div>
-            <Label htmlFor="household-hours">
-              Genomsnittligt antal timmar hushållsarbete per dag
-            </Label>
+            <Label htmlFor="household-hours">{t('tdeeCalc.wizard.householdHoursLabel')}</Label>
             <div className="flex items-center gap-4 mt-2">
               <span className="text-sm text-neutral-600">0</span>
               <input
@@ -306,7 +312,10 @@ export default function PALTableActivityLevelWizard({
             </div>
             <div className="text-center mt-2">
               <span className="text-2xl font-bold text-primary-600">
-                {householdHours} {householdHours === 1 ? 'timme' : 'timmar'}
+                {householdHours}{' '}
+                {householdHours === 1
+                  ? t('tdeeCalc.wizard.householdHoursSingular')
+                  : t('tdeeCalc.wizard.householdHoursPlural')}
               </span>
             </div>
           </div>
@@ -315,15 +324,15 @@ export default function PALTableActivityLevelWizard({
         {/* Sektion 4: SPA-faktor */}
         <div className="space-y-4 p-4 bg-white/50 rounded-lg border border-primary-200">
           <div>
-            <h3 className="text-base font-semibold text-neutral-900">4. SPA-faktor</h3>
-            <p className="text-sm text-neutral-600 mt-1">
-              Spontaneous Physical Activity - dina omedvetna rörelser under dagen
-            </p>
+            <h3 className="text-base font-semibold text-neutral-900">
+              {t('tdeeCalc.wizard.section4Title')}
+            </h3>
+            <p className="text-sm text-neutral-600 mt-1">{t('tdeeCalc.wizard.section4Desc')}</p>
           </div>
 
           {/* SPA Slider */}
           <div>
-            <Label htmlFor="spa-factor">Välj din SPA-faktor</Label>
+            <Label htmlFor="spa-factor">{t('tdeeCalc.wizard.spaLabel')}</Label>
             <div className="flex items-center gap-4 mt-2">
               <span className="text-sm text-neutral-600 font-medium">0.95</span>
               <input
@@ -342,23 +351,19 @@ export default function PALTableActivityLevelWizard({
               <span className="text-3xl font-bold text-primary-600">{spaFactor.toFixed(2)}</span>
               <p className="text-xs text-neutral-500 mt-1">
                 {spaFactor < 1.0
-                  ? 'Låg spontan aktivitet'
+                  ? t('tdeeCalc.wizard.spaLow')
                   : spaFactor === 1.0
-                    ? 'Normal spontan aktivitet'
+                    ? t('tdeeCalc.wizard.spaNormal')
                     : spaFactor <= 1.1
-                      ? 'Hög spontan aktivitet'
-                      : 'Mycket hög spontan aktivitet'}
+                      ? t('tdeeCalc.wizard.spaHigh')
+                      : t('tdeeCalc.wizard.spaVeryHigh')}
               </p>
             </div>
           </div>
 
           {/* Tips-ruta */}
           <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-3">
-            <p className="text-sm text-neutral-700">
-              <strong>Tips:</strong> De flesta bör använda 1,00 (normalvärde). Använd lägre värden
-              om du är ovanligt stillasittande och högre om du är konstant i rörelse utan att det
-              syns i träning eller steg.
-            </p>
+            <p className="text-sm text-neutral-700">{t('tdeeCalc.wizard.spaTip')}</p>
           </div>
         </div>
       </div>
@@ -393,7 +398,7 @@ export default function PALTableActivityLevelWizard({
                 )}
               </div>
               <p className="text-xs text-neutral-400 text-right hidden sm:block">
-                Baserat på din aktivitetsinformation
+                {t('tdeeCalc.wizard.basedOn')}
               </p>
             </div>
           </div>

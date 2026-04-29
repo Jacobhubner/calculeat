@@ -1,4 +1,5 @@
 import { X } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { PAL_SYSTEM_DESCRIPTIONS, type PALFormulaVariant } from '@/lib/calculations/palDescriptions'
 import type { PALSystem } from '@/lib/types'
 import { Button } from '../ui/button'
@@ -11,6 +12,7 @@ interface PALSystemModalProps {
 }
 
 export default function PALSystemModal({ system, isOpen, onClose }: PALSystemModalProps) {
+  const { t } = useTranslation('tools')
   if (!isOpen) return null
 
   const description = PAL_SYSTEM_DESCRIPTIONS[system]
@@ -38,7 +40,7 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
             <button
               onClick={onClose}
               className="text-white/80 hover:text-white transition-colors p-1 rounded-full hover:bg-white/10"
-              aria-label="Stäng"
+              aria-label={t('tdeeCalc.modal.closeAriaLabel')}
             >
               <X className="h-6 w-6" />
             </button>
@@ -48,7 +50,9 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
           <div className="p-6 space-y-6">
             {/* Description */}
             <div>
-              <h3 className="text-lg font-semibold text-neutral-800 mb-2">Beskrivning</h3>
+              <h3 className="text-lg font-semibold text-neutral-800 mb-2">
+                {t('tdeeCalc.modal.description')}
+              </h3>
               {description.descriptionBlocks ? (
                 <div className="space-y-3">
                   {description.descriptionBlocks.map((block, i) =>
@@ -94,7 +98,7 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
               <div>
                 <h3 className="text-lg font-semibold text-blue-800 mb-3 flex items-center gap-2">
                   <span className="text-xl">👥</span>
-                  Passar bäst för
+                  {t('tdeeCalc.modal.bestFor')}
                 </h3>
                 <ul className="space-y-2">
                   {description.bestFor.map((item, index) => (
@@ -111,7 +115,7 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
             <div>
               <h3 className="text-lg font-semibold text-green-800 mb-3 flex items-center gap-2">
                 <span className="text-xl">✓</span>
-                Fördelar
+                {t('tdeeCalc.modal.pros')}
               </h3>
               <ul className="space-y-2">
                 {description.pros.map((pro, index) => (
@@ -128,7 +132,7 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
               <div>
                 <h3 className="text-lg font-semibold text-amber-800 mb-3 flex items-center gap-2">
                   <span className="text-xl">⚠</span>
-                  Nackdelar / Begränsningar
+                  {t('tdeeCalc.modal.cons')}
                 </h3>
                 <ul className="space-y-2">
                   {description.cons.map((con, index) => (
@@ -189,7 +193,7 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
                     {section.references && section.references.length > 0 && (
                       <div className="mt-4 space-y-2">
                         <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide">
-                          Referenser
+                          {t('tdeeCalc.modal.references')}
                         </p>
                         {section.references.map((ref, ri) => (
                           <div
@@ -209,7 +213,9 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
             {/* Formula variants */}
             {description.formulaVariants && description.formulaVariants.length > 0 && (
               <div>
-                <h3 className="text-lg font-semibold text-neutral-800 mb-3">PAL-värden</h3>
+                <h3 className="text-lg font-semibold text-neutral-800 mb-3">
+                  {t('tdeeCalc.modal.palValues')}
+                </h3>
                 <div className="space-y-4">
                   {description.formulaVariants.map((v: PALFormulaVariant, i: number) => (
                     <div key={i}>
@@ -265,7 +271,9 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
             {/* References */}
             {description.references && description.references.length > 0 && (
               <div>
-                <h3 className="text-lg font-semibold text-neutral-800 mb-3">Referenser</h3>
+                <h3 className="text-lg font-semibold text-neutral-800 mb-3">
+                  {t('tdeeCalc.modal.references')}
+                </h3>
                 <div className="space-y-3">
                   {description.references.map((ref, index) => (
                     <div
@@ -283,7 +291,7 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
           {/* Footer */}
           <div className="sticky bottom-0 bg-neutral-50 p-6 rounded-b-2xl border-t border-neutral-200">
             <Button onClick={onClose} className="w-full">
-              Stäng
+              {t('tdeeCalc.modal.close')}
             </Button>
           </div>
         </div>

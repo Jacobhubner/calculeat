@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { activityLevelTranslations } from '@/lib/translations'
 import { Select } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
@@ -13,6 +14,7 @@ interface PALTableFAOProps {
 }
 
 export default function PALTableFAO({ register, watch }: PALTableFAOProps) {
+  const { t } = useTranslation('tools')
   const selectedActivityLevel = watch?.('activity_level') as ActivityLevel | undefined
 
   return (
@@ -21,10 +23,10 @@ export default function PALTableFAO({ register, watch }: PALTableFAOProps) {
       {register && (
         <div>
           <Label htmlFor="activity_level">
-            Välj din aktivitetsnivå <span className="text-red-600">*</span>
+            {t('tdeeCalc.palTable.activityLabel')} <span className="text-red-600">*</span>
           </Label>
           <Select id="activity_level" {...register('activity_level')} className="mt-2">
-            <option value="">Välj aktivitetsnivå...</option>
+            <option value="">{t('tdeeCalc.palTable.activityPlaceholder')}</option>
             <option value="Sedentary">{activityLevelTranslations['Sedentary']}</option>
             <option value="Lightly active">{activityLevelTranslations['Lightly active']}</option>
             <option value="Moderately active">

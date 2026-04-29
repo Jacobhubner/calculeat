@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { Select } from '@/components/ui/select'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -11,8 +12,7 @@ interface PALTableFitnessStuffProps {
 }
 
 export default function PALTableFitnessStuff({ register }: PALTableFitnessStuffProps) {
-  // Training frequency and duration are captured by the form inputs
-  // PAL calculation happens in the backend based on these values
+  const { t } = useTranslation('tools')
 
   return (
     <div className="w-full space-y-4">
@@ -21,7 +21,7 @@ export default function PALTableFitnessStuff({ register }: PALTableFitnessStuffP
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <Label htmlFor="training_frequency_per_week">
-              Träningsfrekvens per vecka <span className="text-red-600">*</span>
+              {t('tdeeCalc.palTable.trainingFreqLabel')} <span className="text-red-600">*</span>
             </Label>
             <Input
               id="training_frequency_per_week"
@@ -35,7 +35,7 @@ export default function PALTableFitnessStuff({ register }: PALTableFitnessStuffP
           </div>
           <div>
             <Label htmlFor="training_duration_minutes">
-              Minuter per träningspass <span className="text-red-600">*</span>
+              {t('tdeeCalc.palTable.trainingDurLabel')} <span className="text-red-600">*</span>
             </Label>
             <Input
               id="training_duration_minutes"
@@ -54,16 +54,26 @@ export default function PALTableFitnessStuff({ register }: PALTableFitnessStuffP
       {register && (
         <div>
           <Label htmlFor="daily_steps">
-            Dagliga steg <span className="text-red-600">*</span>
+            {t('tdeeCalc.palTable.dailyStepsLabel')} <span className="text-red-600">*</span>
           </Label>
           <Select id="daily_steps" {...register('daily_steps')} className="mt-2">
-            <option value="">Välj dagliga steg...</option>
-            <option value="3 000 – 4 999 steps/day">3 000 – 4 999 steg/dag</option>
-            <option value="5 000 – 6 999 steps/day">5 000 – 6 999 steg/dag</option>
-            <option value="7 000 – 8 999 steps/day">7 000 – 8 999 steg/dag</option>
-            <option value="9 000 – 10 999 steps/day">9 000 – 10 999 steg/dag</option>
-            <option value="11 000 – 12 999 steps/day">11 000 – 12 999 steg/dag</option>
-            <option value="≥ 13 000 steps/day">≥ 13 000 steg/dag</option>
+            <option value="">{t('tdeeCalc.palTable.dailyStepsPlaceholder')}</option>
+            <option value="3 000 – 4 999 steps/day">
+              {t('tdeeCalc.palTable.stepsOptions.3000')}
+            </option>
+            <option value="5 000 – 6 999 steps/day">
+              {t('tdeeCalc.palTable.stepsOptions.5000')}
+            </option>
+            <option value="7 000 – 8 999 steps/day">
+              {t('tdeeCalc.palTable.stepsOptions.7000')}
+            </option>
+            <option value="9 000 – 10 999 steps/day">
+              {t('tdeeCalc.palTable.stepsOptions.9000')}
+            </option>
+            <option value="11 000 – 12 999 steps/day">
+              {t('tdeeCalc.palTable.stepsOptions.11000')}
+            </option>
+            <option value="≥ 13 000 steps/day">{t('tdeeCalc.palTable.stepsOptions.13000')}</option>
           </Select>
         </div>
       )}

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { activityLevelTranslations, intensityLevelTranslations } from '@/lib/translations'
 import { Select } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
@@ -16,6 +17,7 @@ interface PALTableDAMNRIPPEDProps {
 }
 
 export default function PALTableDAMNRIPPED({ register, watch }: PALTableDAMNRIPPEDProps) {
+  const { t } = useTranslation('tools')
   const selectedActivityLevel = watch?.('activity_level') as ActivityLevel | undefined
   const selectedIntensityLevel = watch?.('intensity_level') as IntensityLevel | undefined
 
@@ -26,10 +28,10 @@ export default function PALTableDAMNRIPPED({ register, watch }: PALTableDAMNRIPP
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <Label htmlFor="activity_level">
-              Välj din aktivitetsnivå <span className="text-red-600">*</span>
+              {t('tdeeCalc.palTable.activityLabel')} <span className="text-red-600">*</span>
             </Label>
             <Select id="activity_level" {...register('activity_level')} className="mt-2">
-              <option value="">Välj aktivitetsnivå...</option>
+              <option value="">{t('tdeeCalc.palTable.activityPlaceholder')}</option>
               <option value="Sedentary">{activityLevelTranslations['Sedentary']}</option>
               <option value="Lightly active">{activityLevelTranslations['Lightly active']}</option>
               <option value="Moderately active">
@@ -55,10 +57,10 @@ export default function PALTableDAMNRIPPED({ register, watch }: PALTableDAMNRIPP
           </div>
           <div>
             <Label htmlFor="intensity_level">
-              Välj din intensitetsnivå <span className="text-red-600">*</span>
+              {t('tdeeCalc.palTable.intensityLabel')} <span className="text-red-600">*</span>
             </Label>
             <Select id="intensity_level" {...register('intensity_level')} className="mt-2">
-              <option value="">Välj intensitet...</option>
+              <option value="">{t('tdeeCalc.palTable.intensityPlaceholder')}</option>
               <option value="None">{intensityLevelTranslations['None']}</option>
               <option value="Light">{intensityLevelTranslations['Light']}</option>
               <option value="Moderate">{intensityLevelTranslations['Moderate']}</option>
