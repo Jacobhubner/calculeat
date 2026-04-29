@@ -190,6 +190,11 @@
     "deleteAnyway": "Delete anyway",
     "saveAnyway": "Save anyway"
   },
+  "preview": {
+    "prepTime": "Prep time: {{minutes}} min",
+    "cookTime": "Cook time: {{minutes}} min",
+    "unknownIngredient": "Unknown ingredient"
+  },
   "equipmentOptions": {
     "oven": "Oven",
     "airfryer": "Air fryer",

@@ -9,12 +9,14 @@ import EmptyState from '@/components/EmptyState'
 import { useRecipes, useDeleteRecipe, type Recipe } from '@/hooks/useRecipes'
 import { RecipeCard } from '@/components/recipe/RecipeCard'
 import { RecipeCalculatorModal } from '@/components/recipe/RecipeCalculatorModal'
+import { RecipePreviewModal } from '@/components/recipe/RecipePreviewModal'
 
 export default function RecipesPage() {
   const { t } = useTranslation('recipes')
   const [searchQuery, setSearchQuery] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingRecipe, setEditingRecipe] = useState<Recipe | null>(null)
+  const [previewRecipe, setPreviewRecipe] = useState<Recipe | null>(null)
 
   const { data: recipes, isLoading, isError } = useRecipes()
   const deleteRecipe = useDeleteRecipe()
@@ -26,6 +28,10 @@ export default function RecipesPage() {
   const handleNewRecipe = () => {
     setEditingRecipe(null)
     setIsModalOpen(true)
+  }
+
+  const handlePreviewRecipe = (recipe: Recipe) => {
+    setPreviewRecipe(recipe)
   }
 
   const handleEditRecipe = (recipe: Recipe) => {
@@ -114,6 +120,7 @@ export default function RecipesPage() {
             <RecipeCard
               key={recipe.id}
               recipe={recipe}
+              onPreview={() => handlePreviewRecipe(recipe)}
               onEdit={() => handleEditRecipe(recipe)}
               onDelete={() => handleDeleteRecipe(recipe)}
             />
@@ -167,6 +174,13 @@ export default function RecipesPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Recipe Preview Modal */}
+      <RecipePreviewModal
+        recipe={previewRecipe}
+        open={!!previewRecipe}
+        onOpenChange={open => !open && setPreviewRecipe(null)}
+      />
 
       {/* Recipe Calculator Modal */}
       <RecipeCalculatorModal

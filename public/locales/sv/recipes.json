@@ -190,6 +190,11 @@
     "deleteAnyway": "Radera ändå",
     "saveAnyway": "Spara ändå"
   },
+  "preview": {
+    "prepTime": "Förberedelsetid: {{minutes}} min",
+    "cookTime": "Tillagningstid: {{minutes}} min",
+    "unknownIngredient": "Okänd ingrediens"
+  },
   "equipmentOptions": {
     "oven": "Ugn",
     "airfryer": "Airfryer",

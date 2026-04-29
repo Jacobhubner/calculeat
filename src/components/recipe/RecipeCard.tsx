@@ -16,11 +16,12 @@ interface RecipeWithIngredients extends Recipe {
 
 interface RecipeCardProps {
   recipe: RecipeWithIngredients
+  onPreview: () => void
   onEdit: () => void
   onDelete: () => void
 }
 
-export function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps) {
+export function RecipeCard({ recipe, onPreview, onEdit, onDelete }: RecipeCardProps) {
   const { t } = useTranslation('recipes')
 
   const servings = recipe.servings || 1
@@ -57,7 +58,7 @@ export function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps) {
   }
 
   return (
-    <Card className="hover:shadow-md transition-shadow">
+    <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={onPreview}>
       <CardContent className="p-3">
         <div className="flex items-center gap-3">
           {/* Icon */}
@@ -98,7 +99,7 @@ export function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps) {
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-1 flex-shrink-0">
+          <div className="flex items-center gap-1 flex-shrink-0" onClick={e => e.stopPropagation()}>
             <Button variant="ghost" size="sm" onClick={onEdit} className="h-8 w-8 p-0">
               <Edit2 className="h-4 w-4" />
             </Button>

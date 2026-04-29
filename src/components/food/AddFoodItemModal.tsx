@@ -1127,7 +1127,6 @@ export function AddFoodItemModal({
                         type="text"
                         inputMode="decimal"
                         {...register('calories')}
-                        onFocus={e => e.target.select()}
                         placeholder="0"
                         className={errors.calories ? 'border-red-500' : ''}
                       />
@@ -1143,7 +1142,6 @@ export function AddFoodItemModal({
                         type="text"
                         inputMode="decimal"
                         {...register('fat_g')}
-                        onFocus={e => e.target.select()}
                         placeholder="0"
                         className={errors.fat_g ? 'border-red-500' : ''}
                       />
@@ -1178,7 +1176,6 @@ export function AddFoodItemModal({
                         type="text"
                         inputMode="decimal"
                         {...register('carb_g')}
-                        onFocus={e => e.target.select()}
                         placeholder="0"
                         className={errors.carb_g ? 'border-red-500' : ''}
                       />
@@ -1211,7 +1208,6 @@ export function AddFoodItemModal({
                         type="text"
                         inputMode="decimal"
                         {...register('protein_g')}
-                        onFocus={e => e.target.select()}
                         placeholder="0"
                         className={errors.protein_g ? 'border-red-500' : ''}
                       />
@@ -1722,7 +1718,6 @@ export function AddFoodItemModal({
           setLockedBarcode(code)
         }}
         onDetected={code => {
-          const confirmedAt = performance.now()
           // If confirmed code differs from preliminary (false positive on first detection),
           // cancel the stale lookup and start fresh for the correct code
           if (preliminaryCodeRef.current && preliminaryCodeRef.current !== code) {
@@ -1735,15 +1730,6 @@ export function AddFoodItemModal({
           }
           preliminaryCodeRef.current = null
           setLockedBarcode(code)
-
-          // Log scan metrics (time from camera open to confirmed code)
-          if (scanStartTimeRef.current > 0) {
-            const timeToFirstDetection =
-              firstDetectionTimeRef.current > 0
-                ? Math.round(firstDetectionTimeRef.current - scanStartTimeRef.current)
-                : null
-            const timeToConfirmation = Math.round(confirmedAt - scanStartTimeRef.current)
-          }
 
           if (cameraStream) {
             cameraStream.getTracks().forEach(t => t.stop())
