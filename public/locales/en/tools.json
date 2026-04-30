@@ -685,5 +685,697 @@
     "lossNormalDesc": "Balanced weight loss with good energy levels · ~{{kgMin}}–{{kgMax}} kg/week",
     "lossAggressiveLabel": "Aggressive (25-30%)",
     "lossAggressiveDesc": "Rapid weight loss, short periods only · ~{{kgMin}}–{{kgMax}} kg/week"
+  },
+  "bmrFormulas": {
+    "mifflinStJeor": {
+      "name": "Mifflin-St Jeor equation",
+      "description": "One of the most validated and widely used formulas for calculating resting metabolic rate in healthy adults.",
+      "pros": [
+        "Validated across different BMI ranges — consistently performs well in normal-weight, overweight, and obese individuals",
+        "Multiple meta-analyses (e.g. Frankenfield et al., 2005) show that Mifflin-St Jeor is the most accurate RMR predictor for healthy non-obese and obese adults in the US and Western populations"
+      ],
+      "cons": [
+        "Like many predictive equations, it does not account for lean body mass, so it may underestimate RMR in highly muscular individuals (e.g. athletes)"
+      ],
+      "measurements": "Weight in kg, height in cm, age in years\nsex = +5 for men, −161 for women"
+    },
+    "cunningham": {
+      "name": "Cunningham (Katch and McArdle) equation",
+      "description": "Developed by Cunningham and popularised by Katch and McArdle in their textbook on exercise physiology.",
+      "pros": [
+        "Considered more accurate for individuals with low body fat percentage or high muscle mass, such as athletes",
+        "Accounts for the fact that muscle tissue requires more energy to maintain compared to fat cells"
+      ],
+      "cons": ["Requires knowledge of your body fat percentage to be used"],
+      "measurements": "FFM = fat-free mass (kg)"
+    },
+    "oxfordHenry": {
+      "name": "Oxford/Henry equation",
+      "description": "Unlike the older Schofield equations (used by FAO/WHO/UNU), the Oxford equations excluded biased Italian data that had unusually high BMR values.",
+      "pros": ["Provides lower, more accurate BMR estimates for many global populations"],
+      "cons": [
+        "May underestimate needs in populations where physical activity level or muscle mass is high"
+      ],
+      "measurements_male": "Weight in kg, height in m",
+      "measurements_female": "Weight in kg, height in m"
+    },
+    "schofield": {
+      "name": "Schofield (FAO/WHO/UNU) equation",
+      "description": "Developed by W.N. Schofield as part of a study commissioned by the FAO and WHO to standardise energy requirements worldwide.",
+      "pros": [
+        "Based on 7,173 subjects from 114 studies — one of the most comprehensive BMR datasets available in the 1980s",
+        "Remains one of the most widely used equations for estimating energy requirements, particularly in clinical and public health settings"
+      ],
+      "cons": [
+        "Overestimation of BMR in women over 18, adults with lower body weight, and people from tropical regions",
+        "Overrepresentation of Italian subjects (47% of the data), who had higher BMR than average",
+        "Underrepresentation of tropical populations (e.g. India, Philippines, Brazil), leading to systematic overestimation of BMR in many groups"
+      ],
+      "measurements_male": "Weight in kg",
+      "measurements_female": "Weight in kg"
+    },
+    "revisedHarrisBenedict": {
+      "name": "Revised Harris-Benedict (Roza and Shizgal) equation",
+      "description": "In 1984, the original Harris-Benedict equations were revised with new data by Roza and Shizgal.",
+      "pros": [
+        "Comparisons with actual energy expenditure showed the revised equations to be more accurate than the original"
+      ],
+      "cons": [
+        "Less accurate for individuals with atypical body composition (e.g. very lean or very obese)",
+        "In several validation studies, the Mifflin-St Jeor equation has outperformed Roza and Shizgal in predicting BMR, particularly in modern populations with a higher prevalence of overweight and obesity"
+      ],
+      "measurements_male": "Weight in kg, height in cm, age in years",
+      "measurements_female": "Weight in kg, height in cm, age in years"
+    },
+    "originalHarrisBenedict": {
+      "name": "Original Harris-Benedict equation",
+      "description": "The Harris-Benedict formula was groundbreaking in 1918 and laid the foundation for metabolic research. The 1919 publication is more comprehensive and is often cited as the foundational work for estimating basal metabolic rate (BMR).",
+      "pros": ["Historically important work that laid the foundation for BMR calculations"],
+      "cons": [
+        "Tends to overestimate BMR, especially in women and those with lower lean body mass — often overestimates by 4–21% depending on the individual",
+        "Compared to newer formulas such as Mifflin-St Jeor (1990), Harris-Benedict performs worse"
+      ],
+      "measurements_male": "Weight in kg, height in cm, age in years",
+      "measurements_female": "Weight in kg, height in cm, age in years"
+    },
+    "macroFactorStandard": {
+      "name": "MacroFactor Standard equation",
+      "description": "Based on the Oxford/Henry equation and the Cunningham equation. Accounts for non-linear scaling of metabolism.",
+      "pros": [
+        "Accounts for the fact that metabolism does not scale linearly with body weight — someone weighing twice as much does not necessarily burn twice as many calories",
+        "Modern formula developed with consideration of current research data"
+      ],
+      "cons": ["Relatively new formula with limited long-term validation"],
+      "measurements": "Weight in kg, height in cm, age in years\nage factor = 1.96 (≤60 years), 4.9 (>60 years)\nsex factor = 0 for men, 1 for women"
+    },
+    "macroFactorFFM": {
+      "name": "MacroFactor FFM equation",
+      "description": "Variant of the MacroFactor equation that uses fat-free mass (FFM) for more precise calculations.",
+      "pros": [
+        "Better than \"Standard\" if you know your body fat percentage",
+        "Accounts for non-linear scaling of metabolism"
+      ],
+      "cons": ["Requires knowledge of your body fat percentage"],
+      "measurements": "FFM = fat-free mass (kg)\nFM = fat mass (kg)\nage factor = 1.1 (≤60 years), 2.75 (>60 years)"
+    },
+    "macroFactorAthlete": {
+      "name": "MacroFactor Athlete equation",
+      "description": "Specially adapted for athletes who train intensively for at least seven hours per week. Athletes have a higher RMR because they tend to be leaner and have more muscle mass than non-athletes.",
+      "pros": [
+        "Specifically designed for athletes who spend at least seven hours per week in intensive training",
+        "Accounts for the fact that the mass of highly metabolic organs (particularly the heart, kidneys, and liver) in athletes scales more strongly with overall body size than the relationship observed in non-athletes"
+      ],
+      "cons": [
+        "Requires knowledge of your body fat percentage",
+        "Only suitable for individuals with very high training volume (7+ hours of intensive training per week)"
+      ],
+      "measurements": "FFM = fat-free mass (kg)"
+    },
+    "fitnessStuffPodcast": {
+      "name": "Fitness Stuff Podcast equation",
+      "description": "Based on the Cunningham equation and the Mifflin-St Jeor equation. This equation uses the Cunningham equation as a base to estimate RMR, but combines the sex component from Mifflin-St Jeor.",
+      "pros": [
+        "Combines strengths from both Cunningham (fat-free mass) and Mifflin-St Jeor (sex-specific)"
+      ],
+      "cons": ["Requires knowledge of your body fat percentage"],
+      "measurements": "FFM = fat-free mass (kg)\nsex factor = +5 for men, −161 for women\nage factor = 1.0 (≤60 years), 0.9 (>60 years)"
+    },
+    "genderMale": "Men",
+    "genderFemale": "Women",
+    "genderBoth": "Both"
+  },
+  "palSystems": {
+    "faoWhoUnu": {
+      "name": "FAO/WHO/UNU-based PAL values",
+      "description": "This system is best suited to the Schofield formula as they were developed within the same project. The system is based on international research and measurements of actual energy expenditure.",
+      "pros": [
+        "Based on international research and measurements of actual energy expenditure",
+        "Stable, conservative, and reliable for most people",
+        "Consistent with dietitian and official health authority recommendations",
+        "Well established in scientific research"
+      ],
+      "cons": [
+        "Less flexible for training volume and intensity",
+        "Does not account for individual variations in exercise",
+        "May underestimate requirements for very active individuals"
+      ],
+      "bestFor": [
+        "Those who want a conservative, research-based estimate",
+        "Beginners looking for a reliable baseline",
+        "People following official dietary recommendations",
+        "Those using the Schofield formula for BMR"
+      ],
+      "tableHeader": "PAL values",
+      "rows": {
+        "sedentary": "Sedentary",
+        "lightlyActive": "Lightly active",
+        "moderatelyActive": "Moderately active",
+        "veryActive": "Very active",
+        "extremelyActive": "Extremely active"
+      }
+    },
+    "damnripped": {
+      "name": "DAMNRIPPED PAL values",
+      "description": "A detailed system that combines daily activity and training intensity for a more precise calculation. More based on fitness practice than research standardisation.",
+      "pros": [
+        "Very detailed — combines daily activity + training intensity",
+        "Works well for people who exercise regularly",
+        "Accounts for training intensity, not just frequency",
+        "Flexible adaptation to individual training level"
+      ],
+      "cons": [
+        "Not research-standardised; more based on fitness practice",
+        "Risk of overestimating activity level",
+        "Requires good self-awareness about training intensity",
+        "Can give values that are too high if not realistic"
+      ],
+      "bestFor": [
+        "Active exercisers who know their intensity level",
+        "People who want more detailed control over the calculation",
+        "Those who train regularly with varying intensity",
+        "Experienced users who can assess their training realistically"
+      ],
+      "tableHeader": "PAL values (Activity level × Training intensity)"
+    },
+    "proPhysique": {
+      "name": "Pro Physique PAL values",
+      "description": "A coaching-based system that clearly separates daily activity (base PAL) from training energy. Provides flexible fine-tuning based on training volume.",
+      "pros": [
+        "Clearly separates daily activity (base PAL) from training energy",
+        "Very useful for people who strength train and follow programmes",
+        "Provides flexible fine-tuning based on training volume",
+        "Accounts for both frequency and duration of training"
+      ],
+      "cons": [
+        "Base PAL is intentionally low and may seem confusing",
+        "Requires the user to know how intensive their training sessions are",
+        "Not a classic PAL system — more of a coaching model",
+        "Can be complex for beginners"
+      ],
+      "bestFor": [
+        "Strength training enthusiasts who follow structured programmes",
+        "People who want to separate base activity from training",
+        "Those who have a good grasp of training volume and intensity",
+        "Experienced trainees seeking precision in their calculations"
+      ],
+      "formulaTDEE": "TDEE formula",
+      "formulaPAL": "PAL — Daily activity",
+      "formulaIntensity": "Intensity factor — kcal per minute"
+    },
+    "fitnessStuff": {
+      "name": "Fitness Stuff PAL values",
+      "description": "A unique model that accounts for both exercise (EAT) and daily movement (NEAT). The system weighs in both weekly training hours and average step count, where NEAT has a greater impact on calorie expenditure than structured exercise.",
+      "pros": [
+        "Very practical and personalised — includes both training and daily steps",
+        "Better for active people with varying lifestyles",
+        "Gives higher precision if the user knows their steps and training hours",
+        "Accounts for NEAT which has a large impact on TDEE",
+        "Structured exercise and daily movement are weighted separately"
+      ],
+      "cons": [
+        "Requires more input from the user",
+        "The calculation is more complex",
+        "May overestimate TDEE if step data is not accurate",
+        "Requires careful tracking of step count"
+      ],
+      "bestFor": [
+        "Active people who track their daily steps",
+        "Those with varying activity patterns",
+        "People with access to a step counter or smartwatch",
+        "Those who want the most detailed calorie estimate",
+        "Users who understand the difference between NEAT and EAT"
+      ],
+      "formulaTDEE": "TDEE formula",
+      "formulaX": "X — Training hours per week",
+      "formulaY": "Y — Steps per day"
+    },
+    "basicInternet": {
+      "name": "Basic internet PAL values",
+      "description": "Based on old Harris-Benedict multipliers that have been simplified and spread online. A quick and simple system used in many online TDEE calculators.",
+      "pros": [
+        "Quick and easy to understand",
+        "Used in many online TDEE calculators (especially those using Revised Harris-Benedict)",
+        "Good for beginners who want a quick estimate",
+        "Low learning curve"
+      ],
+      "cons": [
+        "Does not originate from modern scientific PAL measurements",
+        "Can both over- and underestimate TDEE significantly depending on the person",
+        "Less accurate than modern research-based systems",
+        "Does not account for individual variations"
+      ],
+      "bestFor": [
+        "Beginners who want a quick and simple estimate",
+        "Those using Revised Harris-Benedict for BMR",
+        "People looking for a basic starting point",
+        "Those who want a simple system with few choices"
+      ],
+      "tableHeader": "PAL values"
+    },
+    "advanced": {
+      "name": "Advanced PAL system",
+      "subtitle": "MET-based energy model • Type: Bottom-up TDEE",
+      "descriptionBlocks": [
+        "This system calculates total daily energy expenditure (TDEE) by modelling the body's main energy components rather than using a fixed activity multiplier. The model is based on the established breakdown of energy expenditure into basal metabolism (BMR/RMR), activity-related energy expenditure (NEAT + EAT), and the thermic effect of food (TEF):",
+        "This breakdown is widely used in energy metabolism research.",
+        "NEAT (Non-Exercise Activity Thermogenesis) is here divided into several sub-components to better reflect actual daily activity: walking and steps, standing activity, and household and work-related movements. These are estimated using MET values (Metabolic Equivalent of Task) from the Compendium of Physical Activities.",
+        "Metabolic Equivalent of Task (MET) is a measure of energy expenditure where 1 MET corresponds to the body's energy expenditure at rest (≈ basal metabolism). When physical activity is expressed in MET values, these therefore include both resting expenditure and the additional energy the activity requires. For example, 3.8 MET means the body expends 3.8 times as much energy as at rest. In the formula TDEE = BMR + NEAT + EAT + TEF, BMR (basal metabolism) already represents the body's energy expenditure at rest. To avoid counting resting expenditure twice, the energy from physical activity must therefore be calculated as only the extra energy above rest. This is done by using MET − 1 instead of the full MET value. Using MET − 1 ensures the model is physiologically correct and that each component of the energy balance represents a unique part of the body's energy expenditure, without overlap.",
+        "The model also includes a SPA factor (Spontaneous Physical Activity) representing biological variation in spontaneous movements such as postural adjustments, small shifts and fidgeting. Research shows that this type of activity can contribute to large individual differences in energy expenditure between people with similar body composition.",
+        "Total energy expenditure is calculated as:",
+        "TEF constitutes approximately 10% of TDEE. To avoid calculating TEF separately, TDEE can be solved directly by adjusting for these 10%:",
+        "The final PAL value (Physical Activity Level) is then calculated as:",
+        "By modelling each component separately, the system can provide a more individualised estimate of energy expenditure than traditional PAL multipliers."
+      ],
+      "descriptionBullets": [
+        "Basal or resting metabolism (BMR/RMR) ≈ 60%",
+        "Non-exercise activity (NEAT) ≈ 15–30%",
+        "Exercise activity (EAT) ≈ 5–10%",
+        "Thermic effect of food (TEF) ≈ 8–15%"
+      ],
+      "descriptionImageAlt": "TDEE components illustration",
+      "pros": [
+        "More individualised estimate than traditional PAL factors",
+        "Based on established energy physiology (BMR + NEAT + EAT + TEF)",
+        "Uses MET values from scientific activity compendiums",
+        "Accounts for both training and daily movement",
+        "Enables estimation of energy expenditure from multiple activity sources"
+      ],
+      "cons": [
+        "Requires more input than simpler PAL systems",
+        "Self-reported activity can introduce uncertainty",
+        "MET values represent population averages and may differ from the individual's actual energy expenditure",
+        "NEAT shows large individual variation that is difficult to measure exactly",
+        "The result should therefore be seen as an estimate rather than an exact measurement"
+      ],
+      "bestFor": [
+        "Users who want a more detailed estimate of energy expenditure",
+        "People with a step counter or smartwatch",
+        "Those who exercise regularly and can estimate training intensity",
+        "People with varying activity levels between different days",
+        "Users who want to understand how different activities affect their energy requirements"
+      ],
+      "sections": {
+        "bmr": {
+          "title": "Basal metabolism (BMR / RMR)",
+          "blocks": [
+            "Basal metabolic rate (BMR) is the energy the body requires to maintain basic physiological functions such as breathing, blood circulation, and cellular processes. The most important determinant of BMR is fat-free mass, which is estimated to explain around 80% of the variation in basal metabolism.",
+            "In people with low physical activity, BMR typically constitutes approximately 60% of total energy expenditure, and even more in individuals with very low movement activity such as sedated and mechanically ventilated patients in intensive care units.",
+            "BMR is measured under strictly controlled laboratory conditions: after sleep, in a fasted state, at rest, and in a thermoneutral environment. In practical settings, resting metabolic rate (RMR) is more commonly used, which unlike BMR represents energy expenditure at rest measured at any time of day and can differ from BMR by up to 10%.",
+            "The gold standard for measurement is indirect calorimetry, where oxygen uptake and carbon dioxide production are converted to energy expenditure via Weir's equation (1949):",
+            "Where VO₂ and VCO₂ are measured in ml/min.",
+            "When indirect calorimetry is not available, predictive equations such as Mifflin-St Jeor, Harris-Benedict, or Cunningham are used, which have lower precision at the individual level."
+          ],
+          "refs": [
+            "von Loeffelholz, C., & Birkenfeld, A. L. (2022). Non-Exercise Activity Thermogenesis in Human Energy Homeostasis. In: Endotext [Internet]. South Dartmouth (MA): MDText.com.",
+            "Weir, J. B. de V. (1949). New methods for calculating metabolic rate with special reference to protein metabolism. Journal of Physiology, 109(1–2), 1–9."
+          ]
+        },
+        "neat": {
+          "title": "NEAT (Non-Exercise Activity Thermogenesis)",
+          "blocks": [
+            "NEAT encompasses all energy expenditure from body movements that are not planned exercise or resting metabolism.",
+            "In normally active individuals, NEAT can constitute approximately 15–30% of TDEE, but variation is large. In very inactive individuals, NEAT can be as low as 6–10%, while in very active individuals it can exceed 50% of total energy expenditure.",
+            "NEAT is also the most variable component of energy expenditure between individuals with similar body weight and BMI. Therefore, NEAT is of particular interest for weight regulation and fat mass — small differences in spontaneous activity can over years produce considerable energy differences.",
+            "In the model, NEAT is divided into three sub-components: locomotion, posture, and other spontaneous movements, including fidgeting (small, often unconscious movements)."
+          ],
+          "formula": "NEAT_total = (NEAT_steps + NEAT_standing + NEAT_household) × SPA_factor",
+          "refs": [
+            "Tzeravini E, Tentolouris A, Kokkinos A, Tentolouris N, Katsilambros N. Diet induced thermogenesis, older and newer data with emphasis on obesity and diabetes mellitus - A narrative review. Metabol Open. 2024 Jun 5;22:100291.",
+            "von Loeffelholz C, Birkenfeld AL. Non-Exercise Activity Thermogenesis in Human Energy Homeostasis. In: Feingold KR, et al., editors. Endotext [Internet]. MDText.com, Inc.; 2000-."
+          ]
+        },
+        "neatSteps": {
+          "title": "NEAT_steps (walking and steps)",
+          "blocks": [
+            "Practical estimates show that a person of approximately 70 kg burns around 40 kcal per 1,000 steps (≈0.04 kcal/step). Energy expenditure per step is roughly proportional to body weight and is also affected by walking pace.",
+            "A simplified model:",
+            "Tempo_factor represents walking speed based on MET values:\nEnergy expenditure during walking increases with body weight and walking pace, which can be estimated using MET values (Ainsworth et al., 2011) where — moderate pace, 4.5–5.5 km/h, has a MET value of 3.8. — the current MET value is divided by this.",
+            "This typically lands between:",
+            "The model is a practical estimate that gives a rough picture of energy expenditure during daily movement. There is no standardised peer-reviewed formula that uses exactly this calculation — it is based on established relationships between body weight, walking speed, and energy expenditure described in MET compendiums and research on step-based energy metabolism."
+          ],
+          "stepsBullets": ["~0.8 slow walking", "~1.0 normal walking", "~1.2 fast walking"],
+          "refs": [
+            "Bassett, D. R., Jr., et al. (2016). Step counting: a review… Sports Medicine, 47(7), 1303–1315.",
+            "Ainsworth, B. E., et al. (2011). 2011 Compendium of Physical Activities.",
+            "Verywell Fit – Steps to Calories Converter",
+            "Omni Calculator – Steps to Calories"
+          ]
+        },
+        "neatStanding": {
+          "title": "NEAT_standing (standing activity)",
+          "blocks": [
+            "Standing increases energy expenditure compared to sitting because muscle tone and blood circulation are higher and postural stabilisation requires more energy.",
+            "A meta-analysis (Saeidifard et al., 2018) shows that standing on average increases energy expenditure by approximately 0.15 kcal/minute (~9 kcal/hour) compared to sitting. However, the analysis does not account for body weight. A lighter person and a heavier person get the same NEAT_standing in kcal, which is not physiologically correct.",
+            "For a weight-adjusted estimate, MET values from the Compendium of Physical Activities can be used, where standing gives a MET value 1.3 times higher than the value for sitting. To include body weight, a MET-based model is proposed:",
+            "The meta-analysis value (≈9 kcal/hour) is a simple average suitable for popular science estimates, while the MET-based method accounts for the individual's body weight and can be integrated with other NEAT components such as steps, household work, and small movements. This method is therefore more useful in practical NEAT calculations, while the meta-analysis value serves as a rule of thumb for average individuals."
+          ],
+          "refs": [
+            "Saeidifard F, et al. Differences of energy expenditure while sitting versus standing: A systematic review and meta-analysis. Eur J Prev Cardiol. 2018;25(5):522–538.",
+            "Ainsworth BE, et al. 2011 Compendium of Physical Activities: A second update of codes and MET values.",
+            "Levine JA. Non‑exercise activity thermogenesis (NEAT): environment and biology. Am J Physiol Endocrinol Metab. 2004;286(5):E675‑E685."
+          ]
+        },
+        "neatHousehold": {
+          "title": "NEAT_household (household and work)",
+          "blocks": [
+            "NEAT_household covers everyday activities such as cleaning, cooking, and other manual chores.",
+            "Energy expenditure is estimated using MET values:",
+            "MET values represent population averages and do not fully account for individual differences in work pace, technique, load, or efficiency.",
+            "Self-reporting of daily activity is a significant source of error. Activities are often forgotten or underestimated, time estimates are uncertain, errors in reported body weight affect the result linearly. In practical use, the total uncertainty in NEAT_household can be estimated at ±20–30% with self-assessment."
+          ],
+          "refs": [
+            "Ainsworth, B. E., et al. (2011; 2024). Compendium of Physical Activities.",
+            "Levine, J. A. (2004). Non-exercise activity thermogenesis (NEAT): environment and biology. Am J Physiol Endocrinol Metab."
+          ]
+        },
+        "spa": {
+          "title": "Spontaneous physical activity (SPA)",
+          "blocks": [
+            "Spontaneous Physical Activity (SPA) encompasses small, low-intensity, often unconscious movements such as postural adjustments, fidgeting, and small shifts.",
+            "Experimental studies using indirect calorimetry show that NEAT exhibits large inter-individual variation. In a controlled overfeeding study, the change in NEAT varied between −98 and +692 kcal/day between individuals with similar body composition (Levine et al., 1999). Reviews report that total differences in NEAT between individuals can amount to several hundred kilocalories per day, and in some cases over 1,000 kcal/day (Levine, 2002; 2004).",
+            "These differences include variation in spontaneous movement and postural activity, although SPA is not always separated from other NEAT components.",
+            "Since SPA is difficult to measure directly, it can be represented in energy models as an adjustment factor:",
+            "A conservative range:",
+            "The range 0.95–1.15 is based on empirically observed variation in NEAT and is not a standardised parameter in the literature, but a simplified representation of biological variation."
+          ],
+          "spaBullets": [
+            "0.95–0.99 low spontaneous activity",
+            "1.00 average activity",
+            "1.01–1.10 high spontaneous activity",
+            "1.11–1.15 very high spontaneous activity"
+          ],
+          "refs": [
+            "Levine JA, Eberhardt NL, Jensen MD. Role of nonexercise activity thermogenesis in resistance to fat gain in humans. Science. 1999;283(5399):212–214.",
+            "Levine JA. Nonexercise activity thermogenesis. Proc Nutr Soc. 2002;61(3):371–378.",
+            "Levine JA. Non-exercise activity thermogenesis (NEAT): environment and biology. Am J Physiol Endocrinol Metab. 2004;286(5):E675–E685."
+          ]
+        },
+        "eat": {
+          "title": "EAT (Exercise Activity Thermogenesis)",
+          "blocks": [
+            "EAT represents energy expenditure from planned physical exercise.",
+            "It can be estimated using MET values:",
+            "Weekly training volume can be divided by 7 to obtain a daily average.",
+            "EAT typically constitutes a small proportion of total energy expenditure in sedentary individuals (≈ <5%), but can increase significantly with high training volume and amount to approximately 15–30% or more in very active individuals and elite athletes (Westerterp, 2013; Levine, 2005).",
+            "MET values are population-based and may differ from the individual's actual energy expenditure. Post-exercise oxygen consumption (EPOC) occurs mainly after high-intensity exercise and generally contributes a smaller share of total exercise energy at typical training sessions (LaForgia et al., 2006)."
+          ],
+          "refs": [
+            "Ainsworth BE et al. (2011). 2011 Compendium of Physical Activities. Med Sci Sports Exerc. 43(8):1575–1581.",
+            "LaForgia J, Withers RT, Gore CJ. (2006). Effects of exercise intensity and duration on the excess post-exercise oxygen consumption. J Sports Sci. 24(12):1247–1264.",
+            "Westerterp KR. (2013). Physical activity and physical activity induced energy expenditure in humans: measurement, determinants, and effects. Front Physiol. 4:90.",
+            "Levine JA. (2005). Measurement of energy expenditure. Public Health Nutr. 8(7A):1123–1132."
+          ]
+        },
+        "tef": {
+          "title": "TEF (Thermic Effect of Food)",
+          "blocks": [
+            "TEF is the energy required for digestion, absorption, and metabolism of nutrients.",
+            "During energy balance, TEF averages approximately 10% of energy intake, with a typical range of 8–15% depending on meal composition.",
+            "It is more correct to express TEF as a proportion of energy intake rather than of TEE, since TEF depends directly on the amount and type of energy consumed.",
+            "TEF varies between macronutrients:",
+            "The higher thermic effect of protein is due to the energy-demanding metabolism of amino acids, including protein synthesis and urea formation. Consequently, meals with higher protein content generally produce a somewhat higher postprandial energy expenditure compared to fat- or carbohydrate-rich meals, given the same amount of energy. Inter-individual variation occurs where body composition, insulin resistance, and metabolic health, among others, play a role.",
+            "These ranges are based on indirect calorimetry and compilations of controlled meal studies (Westerterp, 2004; Halton & Hu, 2004). This model assumes an average TEF of 10%, which is integrated into the TDEE equation."
+          ],
+          "tefBullets": [
+            "Protein: approximately 20–30%",
+            "Carbohydrates: approximately 5–10%",
+            "Fat: approximately 0–3%"
+          ],
+          "refs": [
+            "Kinabo JL, Durnin JV. Thermic effect of food in man: effect of meal composition, and energy content. Br J Nutr. 1990;64:37–44.",
+            "Westerterp KR. (2004). Diet induced thermogenesis. Nutr Metab (Lond). 1:5.",
+            "von Loeffelholz C, Birkenfeld AL. (2022). Non-Exercise Activity Thermogenesis in Human Energy Homeostasis. In: Endotext [Internet]. MDText.com."
+          ]
+        }
+      }
+    },
+    "customPAL": {
+      "name": "Custom PAL value",
+      "description": "Lets you enter your own PAL value based on your own measurements, experience, or recommendations from a nutritionist/trainer. Provides maximum flexibility but requires knowledge of what constitutes a realistic PAL value.",
+      "pros": [
+        "Maximum flexibility and personalisation",
+        "Perfect if you have tracked data over time",
+        "Useful if you follow recommendations from a nutritionist",
+        "Can be based on actual calorie expenditure and weight change"
+      ],
+      "cons": [
+        "Requires knowledge of what constitutes realistic PAL values",
+        "Risk of incorrect estimates without experience",
+        "No guidance from the system",
+        "Easy to over- or underestimate"
+      ],
+      "bestFor": [
+        "Experienced users who know their actual PAL value",
+        "People following a nutritionist's recommendations",
+        "Those who have tracked calorie intake and weight changes over time",
+        "Advanced users who thoroughly understand PAL concepts"
+      ]
+    }
+  },
+  "metabolicCalibration": {
+    "title": "Metabolic Calibration",
+    "infoCardTitle": "About metabolic calibration",
+    "infoModalTitle": "Guide: Metabolic calibration",
+    "timePeriodLabel": "Time period",
+    "periodOptions": {
+      "14": "14 days (2 weeks)",
+      "21": "21 days (3 weeks)",
+      "28": "28 days (4 weeks)"
+    },
+    "periodOptionInsufficient_14": "14 days (2 weeks) — {{count}}/4 weigh-ins",
+    "periodOptionInsufficient_21": "21 days (3 weeks) — {{count}}/5 weigh-ins",
+    "periodOptionInsufficient_28": "28 days (4 weeks) — {{count}}/6 weigh-ins",
+    "today": "Today",
+    "calorieSource": {
+      "foodLog": {
+        "label": "Calorie data: food log",
+        "desc": "You have logged food {{logged}} of {{total}} days ({{pct}}%). The calibration uses your actual logged intake."
+      },
+      "blended": {
+        "label": "Calorie data: food log + weak prior correction",
+        "loggedAvg": "Logged average: {{kcal}} kcal/day ({{days}} days)",
+        "estimatedAvg": "Estimated average: {{kcal}} kcal/day (incl. weak correction for {{unlogged}} unlogged days)",
+        "tip": "Unlogged days reduce reliability — see Data quality below."
+      },
+      "targetCalories": {
+        "label": "Calorie data: target calories",
+        "desc": "You have not logged food sufficiently ({{logged}}/{{total}} days). The system assumes you ate according to your calorie range — if that is not the case, the calibration will be misleading."
+      }
+    },
+    "errorFallback": "Try navigating backwards to find a period with data.",
+    "confidence": {
+      "high": "High reliability",
+      "standard": "Medium reliability",
+      "low": "Low reliability",
+      "highDesc": "{{start}}+{{end}} measurements in the start/end period.",
+      "degradedPrefix": "Limited by: ",
+      "reasons": {
+        "low_cluster_size": "too few measurements in the start or end period ({{start}}+{{end}})",
+        "sparse_coverage": "measurements are not spread across the full period",
+        "nonlinear_trend": "weight signal is weak relative to daily variation — a longer period or more weight change is needed"
+      }
+    },
+    "dataQuality": {
+      "label": "Data quality",
+      "tooltipTitle": "How the score is calculated",
+      "foodLog": "Food log (45%)",
+      "measFreq": "Measurement frequency (35%)",
+      "clusterSize": "Cluster size (20%)",
+      "legend": "≥80 Excellent · ≥60 Good · ≥40 Sufficient · <40 Limited"
+    },
+    "warnings": {
+      "singular": "1 warning",
+      "plural": "{{count}} warnings",
+      "showWhy": "Why?",
+      "hide": "Hide",
+      "types": {
+        "high_cv": {
+          "desc": "High day-to-day weight variation is usually due to fluid fluctuations (salt, carbohydrates, exercise) rather than actual adipose tissue. It increases the residual variance in the trend calculation, which directly widens the confidence interval for the TDEE estimate. The warning is activated when:",
+          "bullets": ["The coefficient of variation (CV) for weight exceeds 2%"],
+          "tip": "Tip: Weigh yourself every morning before breakfast under the same conditions — this is the single most effective way to reduce noise and get a narrower confidence interval."
+        },
+        "target_calories_fallback": {
+          "desc": "If you actually ate more or less than the target, the calibration may be incorrect — it cannot see deviations that have not been logged. The warning is activated when:",
+          "bullets": ["No meals are logged during the period"],
+          "tip": "Tip: Log your meals during the next period for a more reliable result."
+        },
+        "selective_logging": {
+          "desc": "If you only log \"good\" days, calorie intake is underestimated and the calibration may suggest a TDEE that is too low. Currently:",
+          "bullets": [
+            "Logged average < 85% of target calories",
+            "Food log completeness < 80%",
+            "Weight decreased during the period"
+          ],
+          "tip": "Tip: Try to log even the days you eat more — precision requires complete data."
+        },
+        "glycogen_event": {
+          "desc": "Glycogen and fluid can cause weight changes of 1–3 kg on individual days without reflecting actual fat change. The trend calculation compensates but precision decreases. The warning is activated when:",
+          "bullets": ["A single daily weight change exceeds 1.5% of body weight"],
+          "tip": "Tip: Calibration with a longer period (21–28 days) evens out temporary fluctuations better."
+        },
+        "nonlinear_trend": {
+          "desc": "Weight has not moved in a steady direction during the period — likely a refeed period, diet break, or other transition. The warning is activated when any of the following apply:",
+          "bullets": [
+            "The regression trend and EMA show clearly different total weight change",
+            "Weight moved in opposite directions during the two halves of the period with at least 1 kg total swing"
+          ],
+          "tip": "Tip: Wait until weight has moved steadily in one direction for at least 2–3 weeks before calibrating."
+        },
+        "large_deficit": {
+          "desc": "With a large deficit, the body adapts its metabolism downward, which means the calculated TDEE may underestimate your true maintenance requirement. The warning is activated when:",
+          "bullets": ["Calculated calorie deficit exceeds 25% of TDEE"],
+          "tip": "Tip: The result is likely an underestimate of your true TDEE — treat it as a floor rather than an exact value."
+        },
+        "low_confidence": {
+          "desc": "The result is useful as a guideline but should be confirmed with a new calibration after more weeks of data. The warning is activated when any of the following apply:",
+          "bullets": [
+            "Fewer than 3 weigh-ins per week on average",
+            "More than 70% of measurements are from the first half of the period"
+          ],
+          "tip": "Tip: Weigh yourself at least every other day and spread measurements evenly across the period."
+        },
+        "large_adjustment": {
+          "desc": "Without the limit, the adjustment would have been {{diff}} kcal ({{raw}} kcal). Reason: {{reasons}}",
+          "reasons": {
+            "dqiWasBindingCap": "data quality score set an absolute cap",
+            "lowSignal": "weight change is too small",
+            "lowConfidence": "reliability is low",
+            "largeDeficit": "large calorie deficit"
+          },
+          "tip": "Tip: Improve data quality (more weigh-ins, complete logging) to allow larger adjustments in the future."
+        },
+        "low_signal": {
+          "desc": "The change ({{change}} kg) is below the threshold ~{{threshold}} kg (0.25% of your weight). Either your TDEE is already correct, or fluid/glycogen is masking the true trend. When weight change is small relative to daily variation, noise dominates the signal — this widens the confidence interval and makes the TDEE estimate less reliable regardless of how long the period is.",
+          "tip": "Tip: If you are actively trying to lose or gain weight — wait another 1–2 weeks until the trend is clearer."
+        },
+        "outlier_removed": {
+          "tip": "Tip: Outliers may be due to measurement error or unusual circumstances — they do not affect the calculation."
+        }
+      }
+    },
+    "clusterStart": "avg of {{count}} measurements",
+    "clusterEnd": "avg of {{count}} measurements",
+    "weightChange": "over {{days}} days",
+    "calorieSourceLabel": {
+      "food_log": "actual intake",
+      "blended": "estimated intake",
+      "target_calories": "target calories"
+    },
+    "clusterAvg": "avg of {{count}} measurements",
+    "overDays": "over {{days}} days",
+    "stableMaintenance": "Your weight is stable — your TDEE seems correct",
+    "tdeeComparison": {
+      "current": "Current",
+      "calibrated": "Calibrated",
+      "difference": "Difference",
+      "confidenceInterval": "90% confidence interval"
+    },
+    "applyButton": "Apply calibrated TDEE",
+    "saving": "Saving...",
+    "successTitle": "TDEE calibrated to {{kcal}} kcal",
+    "successDesc": "Your calorie range has been updated",
+    "nextCalibration": "Next recommended calibration: {{date}}",
+    "closeButton": "Close",
+    "revertButton": "Undo last calibration (→ {{kcal}} kcal)",
+    "revertConfirm": "Restores TDEE to {{kcal}} kcal. Are you sure?",
+    "revertYes": "Yes, undo",
+    "revertCancel": "Cancel",
+    "revertingLabel": "Undoing...",
+    "guardOverlap": {
+      "title": "The selected period window overlaps your last calibration — the same days would be counted again",
+      "nextDate": "Next recommended calibration: {{date}}"
+    },
+    "guardNewWeights": {
+      "title": "{{count}} of {{required}} new weight measurements recorded since the last calibration end date",
+      "nextDate": "Next recommended calibration: {{date}}"
+    },
+    "noDataState": {
+      "line1": "Needs at least {{min}} weight measurements over {{days}} days",
+      "line2": "Log more weight measurements to enable calibration"
+    },
+    "historyTitle": "Calibration history ({{count}})",
+    "historyLatest": "(latest)",
+    "historyDelete": "Delete",
+    "historyCancel": "Cancel",
+    "toastSuccess": "TDEE calibrated! New value: {{kcal}} kcal",
+    "toastError": "Could not save calibration",
+    "infoModal": {
+      "section1Title": "What is metabolic calibration?",
+      "section1p1": "Metabolic calibration estimates your actual <strong>maintenance TDEE</strong> — how many calories your body burns to keep weight stable — by analysing how your body weight changes relative to your actual calorie intake over time.",
+      "section1p2": "<strong>Important to understand:</strong> The calibration estimates your actual energy expenditure, not your calorie goal. Your calorie range is then automatically recalculated based on your chosen energy goal (maintain weight, lose, gain). These are two separate steps.",
+      "section1p3": "Instead of relying solely on estimates from BMR formulas and activity levels, the system uses real data from your logging. This allows the calibration to capture individual differences that standard formulas miss — such as NEAT variation, thermogenesis, and metabolic adaptation.",
+      "section2Title": "How the calculation works",
+      "section2intro": "The calibration is based on the energy balance principle:",
+      "section2principle": "Energy in − energy out = change in the body's energy stores.",
+      "section2detail": "If weight changes over time, we can estimate how large your actual energy requirement is. In simplified form:",
+      "section2formula": "TDEE ≈ Average calories − (weight change × kcal per kg / number of days)",
+      "section2kcal": "One kilogram of body weight is approximated to approximately <strong>6,500–7,700 kcal</strong>. The model uses a dynamic value within this range based on rate of change — rapid changes typically contain more glycogen and fluid, slow changes more fat — but this is a model-based approximation, not an exact tissue analysis.",
+      "section2clusterTitle": "How start and end weight are determined",
+      "section2cluster": "The period is divided into a first and a last third, and the <strong>median of all measurements</strong> in each part is used as a robust anchor for the start and end weight respectively. It is these cluster medians that determine the weight levels in the calculation. Regression is then used for trend analysis, signal/noise assessment, and diagnostics — but does not change the start/end levels. This means that individual extreme weigh-ins cannot skew the result in the same way as if only a single measurement at each end had been used.",
+      "section2calorieTitle": "How calorie intake is estimated",
+      "section2calorie": "The calibration uses your logged calorie intake as the primary data source. If not all days are logged, a weak statistical correction towards your calorie goal is applied — the more days without a log, the slightly greater the weight given to the calorie goal in the calculation. In practice, logged data almost always dominates.",
+      "section2selective": "The system also detects whether logging seems selective — that is, if you tend to only log days with lower intake. If that pattern is identified, the trust in logged data is reduced and the correction towards the calorie goal is adjusted. This protects against the calibration suggesting a TDEE that is too low based on biased data.",
+      "section3Title": "How the weight trend is calculated",
+      "section3p1": "Instead of comparing two individual weigh-ins, the system calculates a trendline (linear regression) through all weight measurements in the period. This gives a more stable estimate of the actual weight change and also measures how strong and consistent the trend is.",
+      "section3p2": "As a robustness check, an alternative trend is also calculated using the <strong>Theil–Sen estimator</strong>, which takes the median of all possible pairwise slopes between measurement points. It is more robust against individual outliers than linear regression. If the two methods show clearly different results, the system may warn that weight development was irregular during the period.",
+      "section3p3": "As an additional diagnostic, an exponentially smoothed trend (EMA) is calculated. It is not used as the primary calculation method but only to detect strongly non-linear weight development — e.g. a refeed period in the middle of the period.",
+      "section3p4": "Weight measurements that deviate greatly from the rest of the data are automatically filtered out before the trend calculation, to reduce the impact of individual extreme measurements.",
+      "section4Title": "How data quality affects the result",
+      "section4p1": "All calibrations receive a <strong>Data Quality Index (DQI)</strong> that assesses how reliable the data is. It is calculated from three factors:",
+      "section4bullets": [
+        "<strong>Food log quality (45%)</strong> — the proportion of logged days and how consistently calories have been recorded",
+        "<strong>Weigh-in frequency (35%)</strong> — how regularly you have weighed yourself; 50% of days gives full score",
+        "<strong>Cluster size (20%)</strong> — how many measurements are in the start and end clusters of the period"
+      ],
+      "section4p2": "DQI directly controls how large an adjustment is permitted: from ±75 kcal at low quality to ±200 kcal at high quality. This means better data not only gives a more reliable result — it also allows faster convergence towards your actual TDEE.",
+      "section4tip": "You can choose between 14, 21, and 28 days. Longer periods provide more data and allow slightly larger adjustments. Periods shorter than 14 days are not used — the signal-to-noise ratio becomes too weak to give reliable estimates, as daily weight fluctuations can be as large as the actual weight trend change.",
+      "section4tipTitle": "Choice of time period",
+      "section5Title": "Limiting extreme adjustments",
+      "section5clampTitle": "Adjustment limits (clamp)",
+      "section5p1": "The calibration limits how much TDEE can change in a single update. The maximum adjustment depends on data quality and normally lies between:",
+      "section5range": "±75 kcal to ±200 kcal",
+      "section5p2": "TDEE is never set below 1,200 or above 5,000 kcal regardless of what the calculation shows — these are absolute physiological limits. The clamp prevents temporary weight changes from causing unreasonable TDEE jumps.",
+      "section5smoothTitle": "Gradual convergence",
+      "section5p3": "If the calibration proposes a new TDEE level and the clamp is <em>not</em> triggered, the result is smoothly blended towards the last 1–3 previous calibrations. If all previous calibrations point in the same direction, the system follows that trend with minimal dampening instead of braking. If the clamp is triggered, the limited value is used directly without further smoothing.",
+      "section5historyTitle": "History weighting",
+      "section5p4": "Previous calibrations are used as a reference point but not indefinitely. Calibrations older than 90 days are excluded if data quality was low, and older than 180 days if quality was high. This means that if you have not calibrated for a long time, the system effectively restarts with minimal history influence.",
+      "section6Title": "Uncertainty and confidence intervals",
+      "section6p1": "Because real weight data contains variation, the model calculates a <strong>90% confidence interval</strong> for the TDEE estimate. This means that if you repeated the same calibration with similar data, the true maintenance TDEE would fall within the interval in 90% of cases.",
+      "section6p2": "The width of the interval is calculated in three layers:",
+      "section6bullets": [
+        "<strong>Residual variance (primary source)</strong> — how much weight fluctuates around the trendline from regression; this is the base uncertainty on which everything else is built",
+        "<strong>Calorie log uncertainty (widening factor)</strong> — estimated at ±20% of average calories, weighted against the number of logged days; added on top of the residual variance",
+        "<strong>Autocorrelation (widening factor)</strong> — daily weights are not independent of each other (a high measurement today likely affects tomorrow's), which further widens the interval with a correction factor"
+      ],
+      "section6p3": "If body weight is very stable during the period, the confidence interval may be relatively wide. This is because daily weight variations from fluid, salt, and glycogen can then be as large as the actual trend change — the system simply has difficulty separating signal from noise. This is an honest answer to the data, not a sign that the calibration is wrong.",
+      "section7Title": "When should you use metabolic calibration?",
+      "section7p1": "Calibration works best when you have collected sufficient consistent data.",
+      "section7goodTitle": "Good conditions:",
+      "section7good": [
+        "You have logged your calorie intake for at least <strong>2–3 weeks</strong>",
+        "You weigh yourself regularly (ideally <strong>morning before breakfast</strong>)",
+        "You have logged <strong>the majority of days</strong>",
+        "Your weight <strong>is not developing as expected</strong>"
+      ],
+      "section8Title": "When should calibration be avoided?",
+      "section8p1": "Calibration can be misleading if the data does not represent a stable period.",
+      "section8badTitle": "Avoid calibrating when:",
+      "section8bad": [
+        "You have just started a new diet <strong>(&lt;2 weeks)</strong>",
+        "You have recently <strong>significantly changed training volume</strong>",
+        "You have logged food <strong>very irregularly</strong>",
+        "Weight measurements are missing for <strong>large parts of the period</strong>"
+      ],
+      "section9Title": "Important to understand",
+      "section9p1": "Metabolic calibration is a long-term fine-tuning, not a quick fix.",
+      "section9p2": "Body weight is influenced daily by many factors not related to fat change. Therefore, the model is deliberately conservative and trend-based. It combines three separate robustness mechanisms:",
+      "section9bullets": [
+        "<strong>Clustered start/end weight</strong> — median anchors at the period's extremes protect against individual extreme weigh-ins",
+        "<strong>Trend estimation over all data points</strong> — regression and Theil–Sen cross-check measure the trend without relying on two individual measurements",
+        "<strong>Data quality-weighted adjustment limit</strong> — DQI controls how large an adjustment is permitted, which prevents overreaction with uncertain data"
+      ],
+      "section9p3": "It is precisely this combination that makes the model more stable than systems that only compare start and end weight or use simple rolling averages.",
+      "section9p4": "The more consistently you log food and weight over time, the more accurately the system can estimate your true energy requirements."
+    }
   }
 }

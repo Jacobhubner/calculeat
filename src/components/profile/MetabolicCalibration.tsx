@@ -34,6 +34,7 @@ import {
 import { startOfDay, endOfDay, subDays, addDays, isBefore, format } from 'date-fns'
 import { sv } from 'date-fns/locale'
 import { useState, useMemo, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   useWeightHistory,
   useUpdateProfile,
@@ -66,6 +67,7 @@ function CalibrationHistoryList({
   history: import('@/lib/types').CalibrationHistory[]
   profileId: string
 }) {
+  const { t } = useTranslation('tools')
   const [open, setOpen] = useState(false)
   const [confirmId, setConfirmId] = useState<string | null>(null)
   const deleteCalibration = useDeleteCalibrationHistory()
@@ -78,7 +80,7 @@ function CalibrationHistoryList({
         className="flex items-center gap-1.5 text-xs text-neutral-500 hover:text-neutral-700 w-full"
       >
         <ChevronDown className={`h-3.5 w-3.5 transition-transform ${open ? 'rotate-180' : ''}`} />
-        Kalibrerings­historik ({active.length})
+        {t('metabolicCalibration.historyTitle', { count: active.length })}
       </button>
       {open && (
         <div className="mt-2 space-y-1.5">
@@ -90,7 +92,11 @@ function CalibrationHistoryList({
                   month: 'short',
                   year: 'numeric',
                 })}
-                {i === 0 && <span className="ml-1 text-primary-600 font-medium">(senaste)</span>}
+                {i === 0 && (
+                  <span className="ml-1 text-primary-600 font-medium">
+                    {t('metabolicCalibration.historyLatest')}
+                  </span>
+                )}
               </span>
               <div className="flex items-center gap-2">
                 <span className="font-semibold tabular-nums">
@@ -105,21 +111,21 @@ function CalibrationHistoryList({
                       }}
                       className="text-red-600 hover:text-red-800 font-medium"
                     >
-                      Ta bort
+                      {t('metabolicCalibration.historyDelete')}
                     </button>
                     <span className="text-neutral-300">|</span>
                     <button
                       onClick={() => setConfirmId(null)}
                       className="text-neutral-500 hover:text-neutral-700"
                     >
-                      Avbryt
+                      {t('metabolicCalibration.historyCancel')}
                     </button>
                   </div>
                 ) : (
                   <button
                     onClick={() => setConfirmId(c.id)}
                     className="text-neutral-300 hover:text-red-500 transition-colors"
-                    aria-label="Ta bort"
+                    aria-label={t('metabolicCalibration.historyDelete')}
                   >
                     <Trash2 className="h-3 w-3" />
                   </button>
@@ -139,6 +145,7 @@ export default function MetabolicCalibration({
   onClose,
   onRevert,
 }: MetabolicCalibrationProps) {
+  const { t } = useTranslation('tools')
   const [isOpen, setIsOpen] = useState(false)
   const [warningSectionOpen, setWarningSectionOpen] = useState(false)
   const [expandedWarnings, setExpandedWarnings] = useState<Set<number>>(new Set())
@@ -371,13 +378,13 @@ export default function MetabolicCalibration({
       })
 
       setCalibrationApplied(newTDEE)
-      toast.success(`TDEE kalibrerat! Nytt värde: ${Math.round(newTDEE)} kcal`)
+      toast.success(t('metabolicCalibration.toastSuccess', { kcal: Math.round(newTDEE) }))
 
       if (onClose) {
         setTimeout(() => onClose(), 1500)
       }
     } catch {
-      toast.error('Kunde inte spara kalibrering')
+      toast.error(t('metabolicCalibration.toastError'))
     }
   }
 
@@ -418,10 +425,10 @@ export default function MetabolicCalibration({
 
   const confidenceLabel = data
     ? data.confidence.level === 'high'
-      ? 'Hög tillförlitlighet'
+      ? t('metabolicCalibration.confidence.high')
       : data.confidence.level === 'standard'
-        ? 'Medel tillförlitlighet'
-        : 'Låg tillförlitlighet'
+        ? t('metabolicCalibration.confidence.standard')
+        : t('metabolicCalibration.confidence.low')
     : ''
 
   return (
@@ -434,7 +441,7 @@ export default function MetabolicCalibration({
         >
           <CardTitle className="flex items-center gap-2 text-lg leading-snug">
             <Scale className="h-5 w-5 flex-shrink-0 text-primary-500" />
-            Metabolisk Kalibrering
+            {t('metabolicCalibration.title')}
           </CardTitle>
           <ChevronDown
             className={`h-5 w-5 text-neutral-600 transition-transform duration-200 flex-shrink-0 ${
@@ -448,88 +455,73 @@ export default function MetabolicCalibration({
           {/* Info card */}
           {!isCompact && (
             <InfoCardWithModal
-              title="Om metabolisk kalibrering"
-              modalTitle="Guide: Metabolisk kalibrering"
+              title={t('metabolicCalibration.infoCardTitle')}
+              modalTitle={t('metabolicCalibration.infoModalTitle')}
               modalContent={
                 <div className="space-y-6 text-sm">
                   {/* Section 1 */}
                   <section>
                     <h3 className="font-semibold text-base mb-2 flex items-center gap-2">
-                      Vad är metabolisk kalibrering?
+                      {t('metabolicCalibration.infoModal.section1Title')}
                     </h3>
-                    <p className="text-neutral-700 leading-relaxed">
-                      Metabolisk kalibrering uppskattar ditt faktiska{' '}
-                      <strong>underhålls-TDEE</strong> — hur många kalorier din kropp förbrukar för
-                      att hålla vikten stabil — genom att analysera hur din kroppsvikt förändras i
-                      relation till ditt faktiska kaloriintag över tid.
-                    </p>
+                    <p
+                      className="text-neutral-700 leading-relaxed"
+                      dangerouslySetInnerHTML={{
+                        __html: t('metabolicCalibration.infoModal.section1p1'),
+                      }}
+                    />
+                    <p
+                      className="text-neutral-700 leading-relaxed mt-2"
+                      dangerouslySetInnerHTML={{
+                        __html: t('metabolicCalibration.infoModal.section1p2'),
+                      }}
+                    />
                     <p className="text-neutral-700 leading-relaxed mt-2">
-                      <strong>Viktigt att förstå:</strong> Kalibreringen estimerar din faktiska
-                      energiförbrukning, inte ditt kalorimål. Ditt kaloriintervall räknas sedan om
-                      automatiskt utifrån ditt valda energimål (bibehåll vikt, gå ner, gå upp). Det
-                      är alltså två separata steg.
-                    </p>
-                    <p className="text-neutral-700 leading-relaxed mt-2">
-                      Istället för att enbart använda uppskattningar från BMR-formler och
-                      aktivitetsnivåer använder systemet verklig data från din loggning. Det gör att
-                      kalibreringen kan fånga upp individuella skillnader som standardformler missar
-                      — som NEAT-variation, termogenes och metabol adaptation.
+                      {t('metabolicCalibration.infoModal.section1p3')}
                     </p>
                   </section>
 
                   {/* Section 2 */}
                   <section className="bg-neutral-50 p-4 rounded-lg border border-neutral-200">
-                    <h3 className="font-semibold text-base mb-2">Hur beräkningen fungerar</h3>
+                    <h3 className="font-semibold text-base mb-2">
+                      {t('metabolicCalibration.infoModal.section2Title')}
+                    </h3>
                     <div className="space-y-3 text-neutral-700">
                       <div>
-                        <p>Kalibreringen bygger på energibalansprincipen:</p>
+                        <p>{t('metabolicCalibration.infoModal.section2intro')}</p>
                         <p className="text-neutral-600 italic ml-2 mt-1">
-                          Energi in − energi ut = förändring i kroppens energilager.
+                          {t('metabolicCalibration.infoModal.section2principle')}
                         </p>
                       </div>
-                      <p>
-                        Om vikten förändras över tid kan vi uppskatta hur stort ditt faktiska
-                        energibehov är. I förenklad form:
-                      </p>
+                      <p>{t('metabolicCalibration.infoModal.section2detail')}</p>
                       <p className="font-medium text-primary-600 text-center py-1">
-                        TDEE ≈ Genomsnittliga kalorier − (viktförändring × kcal per kg / antal
-                        dagar)
+                        {t('metabolicCalibration.infoModal.section2formula')}
                       </p>
-                      <p>
-                        Ett kilogram kroppsvikt approximeras till ungefär{' '}
-                        <strong>6 500–7 700 kcal</strong>. Modellen använder ett dynamiskt värde
-                        inom detta spann baserat på förändringstakt — snabba förändringar innehåller
-                        typiskt mer glykogen och vätska, långsamma mer fett — men det är en
-                        modellbaserad approximation, inte en exakt vävnadsanalys.
-                      </p>
+                      <p
+                        dangerouslySetInnerHTML={{
+                          __html: t('metabolicCalibration.infoModal.section2kcal'),
+                        }}
+                      />
                       <div>
-                        <p className="font-medium">Hur start- och slutvikt bestäms</p>
-                        <p className="mt-1">
-                          Perioden delas in i en första och en sista tredjedel, och{' '}
-                          <strong>medianen av alla mätningar</strong> i varje del används som robust
-                          ankare för start- respektive slutvikt. Det är dessa klustermedianerna som
-                          bestämmer viktnivåerna i beräkningen. Regressionen används sedan för
-                          trendanalys, signal/brus-bedömning och diagnostik — men ändrar inte
-                          start/slutnivåerna. Det innebär att enstaka extrema vägningar inte kan
-                          snedvrida resultatet på samma sätt som om bara en mätning per ände hade
-                          använts.
+                        <p className="font-medium">
+                          {t('metabolicCalibration.infoModal.section2clusterTitle')}
                         </p>
+                        <p
+                          className="mt-1"
+                          dangerouslySetInnerHTML={{
+                            __html: t('metabolicCalibration.infoModal.section2cluster'),
+                          }}
+                        />
                       </div>
                       <div>
-                        <p className="font-medium">Hur kaloriintaget uppskattas</p>
-                        <p className="mt-1">
-                          Kalibreringen använder ditt loggade kaloriintag som primär datakälla. Om
-                          inte alla dagar är loggade används en svag statistisk korrektion mot ditt
-                          kalorimål — ju fler dagar som saknar logg, desto något större vikt får
-                          kalorimålet i beräkningen. I praktiken dominerar loggad data nästan
-                          alltid.
+                        <p className="font-medium">
+                          {t('metabolicCalibration.infoModal.section2calorieTitle')}
                         </p>
                         <p className="mt-1">
-                          Systemet detekterar också om loggningen verkar selektiv — det vill säga om
-                          du tenderar att bara logga dagar med lägre intag. Om det mönstret
-                          identifieras minskas tilliten till loggdatan och korrektionen mot
-                          kalorimålet anpassas. Det skyddar mot att kalibreringen föreslår ett för
-                          lågt TDEE baserat på biased data.
+                          {t('metabolicCalibration.infoModal.section2calorie')}
+                        </p>
+                        <p className="mt-1">
+                          {t('metabolicCalibration.infoModal.section2selective')}
                         </p>
                       </div>
                     </div>
@@ -537,116 +529,89 @@ export default function MetabolicCalibration({
 
                   {/* Section 3 */}
                   <section>
-                    <h3 className="font-semibold text-base mb-2">Hur vikttrenden beräknas</h3>
+                    <h3 className="font-semibold text-base mb-2">
+                      {t('metabolicCalibration.infoModal.section3Title')}
+                    </h3>
                     <p className="text-neutral-700 leading-relaxed">
-                      Istället för att jämföra två enskilda vägningar beräknar systemet en
-                      trendlinje (linjär regression) genom alla viktmätningar i perioden. Det ger
-                      ett stabilare estimat av den verkliga viktförändringen och mäter dessutom hur
-                      stark och konsekvent trenden är.
+                      {t('metabolicCalibration.infoModal.section3p1')}
+                    </p>
+                    <p
+                      className="text-neutral-700 leading-relaxed mt-2"
+                      dangerouslySetInnerHTML={{
+                        __html: t('metabolicCalibration.infoModal.section3p2'),
+                      }}
+                    />
+                    <p className="text-neutral-700 leading-relaxed mt-2">
+                      {t('metabolicCalibration.infoModal.section3p3')}
                     </p>
                     <p className="text-neutral-700 leading-relaxed mt-2">
-                      Som robusthetskontroll beräknas även en alternativ trend med{' '}
-                      <strong>Theil–Sen-estimatorn</strong>, som tar medianen av alla möjliga
-                      parvisa slopes mellan mätpunkterna. Den är mer okänslig för enstaka
-                      extremvärden än linjär regression. Om de två metoderna visar tydligt olika
-                      resultat kan systemet varna för att viktutvecklingen var oregelbunden under
-                      perioden.
-                    </p>
-                    <p className="text-neutral-700 leading-relaxed mt-2">
-                      Som ytterligare diagnostik beräknas en exponentiellt utjämnad trend (EMA). Den
-                      används inte som primär beräkningsmetod utan enbart för att detektera kraftigt
-                      icke-linjär viktutveckling — t.ex. en refeed-period mitt i perioden.
-                    </p>
-                    <p className="text-neutral-700 leading-relaxed mt-2">
-                      Viktmätningar som avviker kraftigt från resten av datan filtreras automatiskt
-                      bort innan trendberäkningen, för att minska påverkan från enstaka extrema
-                      mätningar.
+                      {t('metabolicCalibration.infoModal.section3p4')}
                     </p>
                   </section>
 
                   {/* Section 4 */}
                   <section>
                     <h3 className="font-semibold text-base mb-2">
-                      Hur datakvalitet påverkar resultatet
+                      {t('metabolicCalibration.infoModal.section4Title')}
                     </h3>
-                    <p className="text-neutral-700 leading-relaxed">
-                      Alla kalibreringar får ett <strong>Data Quality Index (DQI)</strong> som
-                      bedömer hur pålitlig datan är. Det beräknas från tre faktorer:
-                    </p>
+                    <p
+                      className="text-neutral-700 leading-relaxed"
+                      dangerouslySetInnerHTML={{
+                        __html: t('metabolicCalibration.infoModal.section4p1'),
+                      }}
+                    />
                     <ul className="list-disc list-inside space-y-1 ml-2 mt-2 text-neutral-700">
-                      <li>
-                        <strong>Matloggskvalitet (45%)</strong> — andelen loggade dagar och hur
-                        konsekvent kalorier registrerats
-                      </li>
-                      <li>
-                        <strong>Vägningsfrekvens (35%)</strong> — hur regelbundet du vägt dig; 50%
-                        av dagarna ger fullt utslag
-                      </li>
-                      <li>
-                        <strong>Klusterstorlek (20%)</strong> — hur många mätningar som finns i
-                        periodens start- och slutkluster
-                      </li>
+                      {(
+                        t('metabolicCalibration.infoModal.section4bullets', {
+                          returnObjects: true,
+                        }) as string[]
+                      ).map((item, i) => (
+                        <li key={i} dangerouslySetInnerHTML={{ __html: item }} />
+                      ))}
                     </ul>
                     <p className="text-neutral-700 leading-relaxed mt-2">
-                      DQI styr direkt hur stor justering som tillåts: från ±75 kcal vid låg kvalitet
-                      till ±200 kcal vid hög. Det innebär att bättre data inte bara ger ett mer
-                      tillförlitligt resultat — det ger också möjlighet till snabbare konvergens mot
-                      ditt faktiska TDEE.
+                      {t('metabolicCalibration.infoModal.section4p2')}
                     </p>
                     <div className="mt-3 p-3 bg-neutral-100 rounded text-neutral-600 text-xs">
-                      <p className="font-medium mb-1">Val av tidsperiod</p>
-                      <p>
-                        Du kan välja mellan 14, 21 och 28 dagar. Längre perioder ger mer data och
-                        tillåter något större justeringar. Kortare perioder än 14 dagar används inte
-                        — signal/brus-förhållandet blir då för svagt för att ge tillförlitliga
-                        estimat, eftersom dagliga viktsvängningar kan vara lika stora som den
-                        faktiska vikttrendförändringen.
+                      <p className="font-medium mb-1">
+                        {t('metabolicCalibration.infoModal.section4tipTitle')}
                       </p>
+                      <p>{t('metabolicCalibration.infoModal.section4tip')}</p>
                     </div>
                   </section>
 
                   {/* Section 5 */}
                   <section className="bg-neutral-50 p-4 rounded-lg border border-neutral-200">
                     <h3 className="font-semibold text-base mb-2">
-                      Begränsning av extrema justeringar
+                      {t('metabolicCalibration.infoModal.section5Title')}
                     </h3>
                     <div className="space-y-3 text-neutral-700">
                       <div>
-                        <p className="font-medium">Justeringsgränser (clamp)</p>
-                        <p className="mt-1">
-                          Kalibreringen begränsar hur mycket TDEE kan ändras i en enskild
-                          uppdatering. Maximal justering beror på datakvaliteten och ligger normalt
-                          mellan:
+                        <p className="font-medium">
+                          {t('metabolicCalibration.infoModal.section5clampTitle')}
                         </p>
+                        <p className="mt-1">{t('metabolicCalibration.infoModal.section5p1')}</p>
                         <p className="font-medium text-primary-600 text-center py-1">
-                          ±75 kcal till ±200 kcal
+                          {t('metabolicCalibration.infoModal.section5range')}
                         </p>
-                        <p>
-                          TDEE sätts aldrig under 1 200 eller över 5 000 kcal oavsett vad
-                          beräkningen visar — dessa är absoluta fysiologiska gränser. Clampen
-                          förhindrar att tillfälliga viktförändringar ger orimliga TDEE-hopp.
-                        </p>
+                        <p>{t('metabolicCalibration.infoModal.section5p2')}</p>
                       </div>
                       <div>
-                        <p className="font-medium">Gradvis konvergens</p>
-                        <p className="mt-1">
-                          Om kalibreringen föreslår en ny TDEE-nivå och clampen <em>inte</em>{' '}
-                          triggas, utjämnas resultatet mjukt mot de senaste 1–3 tidigare
-                          kalibreringarna. Om alla tidigare kalibreringar pekar i samma riktning
-                          följer systemet den trenden med minimal dämpning istället för att bromsa.
-                          Triggas clampen används det begränsade värdet direkt utan ytterligare
-                          utjämning.
+                        <p className="font-medium">
+                          {t('metabolicCalibration.infoModal.section5smoothTitle')}
                         </p>
+                        <p
+                          className="mt-1"
+                          dangerouslySetInnerHTML={{
+                            __html: t('metabolicCalibration.infoModal.section5p3'),
+                          }}
+                        />
                       </div>
                       <div>
-                        <p className="font-medium">Historikvägning</p>
-                        <p className="mt-1">
-                          Tidigare kalibreringar används som referenspunkt men inte hur gamla som
-                          helst. Kalibreringar äldre än 90 dagar exkluderas om datakvaliteten var
-                          låg, och äldre än 180 dagar om kvaliteten var hög. Det innebär att om du
-                          inte kalibrerat på länge startar systemet i praktiken om med minimal
-                          historikpåverkan.
+                        <p className="font-medium">
+                          {t('metabolicCalibration.infoModal.section5historyTitle')}
                         </p>
+                        <p className="mt-1">{t('metabolicCalibration.infoModal.section5p4')}</p>
                       </div>
                     </div>
                   </section>
@@ -654,151 +619,109 @@ export default function MetabolicCalibration({
                   {/* Section 6 */}
                   <section>
                     <h3 className="font-semibold text-base mb-2">
-                      Osäkerhet och konfidensintervall
+                      {t('metabolicCalibration.infoModal.section6Title')}
                     </h3>
-                    <p className="text-neutral-700 leading-relaxed">
-                      Eftersom verklig viktdata innehåller variation beräknar modellen ett{' '}
-                      <strong>90%-konfidensintervall</strong> för TDEE-uppskattningen. Det innebär
-                      att om du upprepade samma kalibrering med liknande data, skulle det sanna
-                      underhålls-TDEE hamna inom intervallet i 90% av fallen.
-                    </p>
+                    <p
+                      className="text-neutral-700 leading-relaxed"
+                      dangerouslySetInnerHTML={{
+                        __html: t('metabolicCalibration.infoModal.section6p1'),
+                      }}
+                    />
                     <p className="text-neutral-700 leading-relaxed mt-2">
-                      Intervallets bredd beräknas i tre lager:
+                      {t('metabolicCalibration.infoModal.section6p2')}
                     </p>
                     <ul className="list-disc list-inside space-y-1 ml-2 mt-1 text-neutral-700">
-                      <li>
-                        <strong>Residualvarians (primär källa)</strong> — hur mycket vikten svänger
-                        runt trendlinjen från regressionen; detta är grundosäkerheten som allt annat
-                        byggs på
-                      </li>
-                      <li>
-                        <strong>Kalorilogg-osäkerhet (breddningsfaktor)</strong> — uppskattad till
-                        ±20% av snittkalorier, viktat mot antal loggade dagar; läggs till ovanpå
-                        residualvariansen
-                      </li>
-                      <li>
-                        <strong>Autokorrelation (breddningsfaktor)</strong> — dagliga vikter är inte
-                        oberoende av varandra (en hög mätning idag påverkar troligtvis
-                        morgondagens), vilket vidgar intervallet ytterligare med en
-                        korrigeringsfaktor
-                      </li>
+                      {(
+                        t('metabolicCalibration.infoModal.section6bullets', {
+                          returnObjects: true,
+                        }) as string[]
+                      ).map((item, i) => (
+                        <li key={i} dangerouslySetInnerHTML={{ __html: item }} />
+                      ))}
                     </ul>
                     <p className="text-neutral-700 leading-relaxed mt-2">
-                      Om kroppsvikten är mycket stabil under perioden kan konfidensintervallet bli
-                      relativt brett. Det beror på att dagliga viktvariationer från vätska, salt och
-                      glykogen då kan vara lika stora som den faktiska trendförändringen — systemet
-                      har helt enkelt svårt att skilja signal från brus. Det är ett ärligt svar på
-                      datan, inte ett tecken på att kalibreringen är fel.
+                      {t('metabolicCalibration.infoModal.section6p3')}
                     </p>
                   </section>
 
                   {/* Section 7 */}
                   <section>
                     <h3 className="font-semibold text-base mb-3">
-                      När bör du använda metabolisk kalibrering?
+                      {t('metabolicCalibration.infoModal.section7Title')}
                     </h3>
                     <p className="text-neutral-700 mb-2">
-                      Kalibreringen fungerar bäst när du har samlat in tillräckligt med konsekvent
-                      data.
+                      {t('metabolicCalibration.infoModal.section7p1')}
                     </p>
-                    <p className="text-neutral-700 font-medium mb-1">Bra förutsättningar:</p>
+                    <p className="text-neutral-700 font-medium mb-1">
+                      {t('metabolicCalibration.infoModal.section7goodTitle')}
+                    </p>
                     <ul className="space-y-2">
-                      <li className="flex items-start gap-2">
-                        <span className="text-green-600 mt-0.5">✓</span>
-                        <span className="text-neutral-700">
-                          Du har loggat ditt kaloriintag i minst <strong>2–3 veckor</strong>
-                        </span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-green-600 mt-0.5">✓</span>
-                        <span className="text-neutral-700">
-                          Du väger dig regelbundet (helst <strong>morgon före frukost</strong>)
-                        </span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-green-600 mt-0.5">✓</span>
-                        <span className="text-neutral-700">
-                          Du har loggat <strong>majoriteten av dagarna</strong>
-                        </span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-green-600 mt-0.5">✓</span>
-                        <span className="text-neutral-700">
-                          Din vikt <strong>utvecklas inte som förväntat</strong>
-                        </span>
-                      </li>
+                      {(
+                        t('metabolicCalibration.infoModal.section7good', {
+                          returnObjects: true,
+                        }) as string[]
+                      ).map((item, i) => (
+                        <li key={i} className="flex items-start gap-2">
+                          <span className="text-green-600 mt-0.5">✓</span>
+                          <span
+                            className="text-neutral-700"
+                            dangerouslySetInnerHTML={{ __html: item }}
+                          />
+                        </li>
+                      ))}
                     </ul>
                   </section>
 
                   {/* Section 8 */}
                   <section className="bg-orange-50 p-4 rounded-lg border border-orange-200">
-                    <h3 className="font-semibold text-base mb-2">När bör kalibrering undvikas?</h3>
+                    <h3 className="font-semibold text-base mb-2">
+                      {t('metabolicCalibration.infoModal.section8Title')}
+                    </h3>
                     <p className="text-neutral-700 mb-2">
-                      Kalibrering kan bli missvisande om datan inte representerar en stabil period.
+                      {t('metabolicCalibration.infoModal.section8p1')}
                     </p>
-                    <p className="text-neutral-700 font-medium mb-1">Undvik att kalibrera när:</p>
+                    <p className="text-neutral-700 font-medium mb-1">
+                      {t('metabolicCalibration.infoModal.section8badTitle')}
+                    </p>
                     <ul className="space-y-2 text-neutral-700">
-                      <li className="flex items-start gap-2">
-                        <span className="text-orange-600 mt-0.5 font-bold">×</span>
-                        <span>
-                          Du precis startat en ny diet <strong>(&lt; 2 veckor)</strong>
-                        </span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-orange-600 mt-0.5 font-bold">×</span>
-                        <span>
-                          Du nyligen <strong>ändrat träningsvolym kraftigt</strong>
-                        </span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-orange-600 mt-0.5 font-bold">×</span>
-                        <span>
-                          Du har loggat mat <strong>mycket oregelbundet</strong>
-                        </span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-orange-600 mt-0.5 font-bold">×</span>
-                        <span>
-                          Viktmätningar saknas under <strong>stora delar av perioden</strong>
-                        </span>
-                      </li>
+                      {(
+                        t('metabolicCalibration.infoModal.section8bad', {
+                          returnObjects: true,
+                        }) as string[]
+                      ).map((item, i) => (
+                        <li key={i} className="flex items-start gap-2">
+                          <span className="text-orange-600 mt-0.5 font-bold">×</span>
+                          <span dangerouslySetInnerHTML={{ __html: item }} />
+                        </li>
+                      ))}
                     </ul>
                   </section>
 
                   {/* Section 9 */}
                   <section className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                    <h3 className="font-semibold text-base mb-2">Viktigt att förstå</h3>
+                    <h3 className="font-semibold text-base mb-2">
+                      {t('metabolicCalibration.infoModal.section9Title')}
+                    </h3>
                     <p className="text-neutral-700 leading-relaxed">
-                      Metabolisk kalibrering är en långsiktig finjustering, inte en snabb
-                      korrigering.
+                      {t('metabolicCalibration.infoModal.section9p1')}
                     </p>
                     <p className="text-neutral-700 leading-relaxed mt-2">
-                      Kroppsvikt påverkas dagligen av många faktorer som inte är kopplade till
-                      fettförändring. Därför är modellen medvetet konservativ och trendbaserad. Den
-                      kombinerar tre separata robusthetsmekanismer:
+                      {t('metabolicCalibration.infoModal.section9p2')}
                     </p>
                     <ul className="list-disc list-inside space-y-1 ml-2 mt-1 text-neutral-700">
-                      <li>
-                        <strong>Klustrad start/slut-vikt</strong> — medianankare i periodens
-                        ytterkanter skyddar mot enstaka extrema vägningar
-                      </li>
-                      <li>
-                        <strong>Trendestimering över alla datapunkter</strong> — regression och
-                        Theil–Sen-korscheck mäter trenden utan att förlita sig på två enskilda
-                        mätningar
-                      </li>
-                      <li>
-                        <strong>Datakvalitetsvägd justeringsbegränsning</strong> — DQI styr hur stor
-                        justering som tillåts, vilket förhindrar överreaktion vid osäker data
-                      </li>
+                      {(
+                        t('metabolicCalibration.infoModal.section9bullets', {
+                          returnObjects: true,
+                        }) as string[]
+                      ).map((item, i) => (
+                        <li key={i} dangerouslySetInnerHTML={{ __html: item }} />
+                      ))}
                     </ul>
                     <p className="text-neutral-700 leading-relaxed mt-2">
-                      Det är just denna kombination som gör modellen mer stabil än system som enbart
-                      jämför start- och slutvikt eller använder enkla rullande medelvärden.
+                      {t('metabolicCalibration.infoModal.section9p3')}
                     </p>
                     <p className="text-neutral-700 leading-relaxed mt-2">
-                      Ju mer konsekvent du loggar mat och vikt över tid, desto mer exakt kan
-                      systemet uppskatta ditt verkliga energibehov.
+                      {t('metabolicCalibration.infoModal.section9p4')}
                     </p>
                   </section>
                 </div>
@@ -809,22 +732,33 @@ export default function MetabolicCalibration({
           {/* Time period selector */}
           {now !== null && (
             <div className="space-y-2">
-              <label className="text-sm font-medium text-neutral-700">Tidsperiod</label>
+              <label className="text-sm font-medium text-neutral-700">
+                {t('metabolicCalibration.timePeriodLabel')}
+              </label>
               <Select
                 value={timePeriod.toString()}
                 onChange={e => setTimePeriod(Number(e.target.value) as 14 | 21 | 28)}
               >
                 <option value="14" disabled={!periodAvailability[14]}>
-                  14 dagar (2 veckor)
-                  {!periodAvailability[14] ? ` — ${periodMeasurementCounts[14]}/4 vägningar` : ''}
+                  {!periodAvailability[14]
+                    ? t('metabolicCalibration.periodOptionInsufficient_14', {
+                        count: periodMeasurementCounts[14],
+                      })
+                    : t('metabolicCalibration.periodOptions.14')}
                 </option>
                 <option value="21" disabled={!periodAvailability[21]}>
-                  21 dagar (3 veckor)
-                  {!periodAvailability[21] ? ` — ${periodMeasurementCounts[21]}/5 vägningar` : ''}
+                  {!periodAvailability[21]
+                    ? t('metabolicCalibration.periodOptionInsufficient_21', {
+                        count: periodMeasurementCounts[21],
+                      })
+                    : t('metabolicCalibration.periodOptions.21')}
                 </option>
                 <option value="28" disabled={!periodAvailability[28]}>
-                  28 dagar (4 veckor)
-                  {!periodAvailability[28] ? ` — ${periodMeasurementCounts[28]}/6 vägningar` : ''}
+                  {!periodAvailability[28]
+                    ? t('metabolicCalibration.periodOptionInsufficient_28', {
+                        count: periodMeasurementCounts[28],
+                      })
+                    : t('metabolicCalibration.periodOptions.28')}
                 </option>
               </Select>
 
@@ -834,7 +768,6 @@ export default function MetabolicCalibration({
                   type="button"
                   onClick={goBack}
                   className="p-1 rounded hover:bg-neutral-100 text-neutral-500 hover:text-neutral-700 transition-colors"
-                  title="Föregående period"
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </button>
@@ -848,7 +781,6 @@ export default function MetabolicCalibration({
                   onClick={goForward}
                   disabled={isAtToday}
                   className="p-1 rounded hover:bg-neutral-100 text-neutral-500 hover:text-neutral-700 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                  title="Nästa period"
                 >
                   <ChevronRight className="h-4 w-4" />
                 </button>
@@ -858,7 +790,7 @@ export default function MetabolicCalibration({
                     onClick={refreshNow}
                     className="ml-1 text-xs text-primary-600 hover:underline"
                   >
-                    Idag
+                    {t('metabolicCalibration.today')}
                   </button>
                 )}
               </div>
@@ -882,11 +814,15 @@ export default function MetabolicCalibration({
                     <>
                       <CheckCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
                       <div>
-                        <p className="font-medium">Kaloridata: matlogg</p>
+                        <p className="font-medium">
+                          {t('metabolicCalibration.calorieSource.foodLog.label')}
+                        </p>
                         <p className="text-xs mt-0.5">
-                          Du har loggat mat {actualIntake.daysWithData} av {actualIntake.totalDays}{' '}
-                          dagar ({Math.round(actualIntake.completenessPercent)}%). Kalibreringen
-                          använder ditt faktiska loggade intag.
+                          {t('metabolicCalibration.calorieSource.foodLog.desc', {
+                            logged: actualIntake.daysWithData,
+                            total: actualIntake.totalDays,
+                            pct: Math.round(actualIntake.completenessPercent),
+                          })}
                         </p>
                       </div>
                     </>
@@ -894,30 +830,32 @@ export default function MetabolicCalibration({
                     <>
                       <Blend className="h-4 w-4 mt-0.5 flex-shrink-0" />
                       <div>
-                        <p className="font-medium">Kaloridata: matlogg + svag priorkorrektion</p>
+                        <p className="font-medium">
+                          {t('metabolicCalibration.calorieSource.blended.label')}
+                        </p>
                         <p className="text-xs mt-1">
-                          Du har loggat mat {actualIntake.daysWithData} av {actualIntake.totalDays}{' '}
-                          dagar ({Math.round(actualIntake.completenessPercent)}%).
+                          {t('metabolicCalibration.calorieSource.foodLog.desc', {
+                            logged: actualIntake.daysWithData,
+                            total: actualIntake.totalDays,
+                            pct: Math.round(actualIntake.completenessPercent),
+                          })}
                         </p>
                         {data.loggedCaloriesAvg != null && (
                           <p className="text-xs mt-0.5">
-                            Loggat snitt:{' '}
-                            <span className="font-medium">
-                              {Math.round(data.loggedCaloriesAvg)} kcal/dag
-                            </span>{' '}
-                            ({actualIntake.daysWithData} dagar)
+                            {t('metabolicCalibration.calorieSource.blended.loggedAvg', {
+                              kcal: Math.round(data.loggedCaloriesAvg),
+                              days: actualIntake.daysWithData,
+                            })}
                           </p>
                         )}
                         <p className="text-xs mt-0.5">
-                          Uppskattat snitt:{' '}
-                          <span className="font-medium">
-                            {Math.round(data.averageCalories)} kcal/dag
-                          </span>{' '}
-                          (inkl. svag korrektion för{' '}
-                          {actualIntake.totalDays - actualIntake.daysWithData} ologgade dagar)
+                          {t('metabolicCalibration.calorieSource.blended.estimatedAvg', {
+                            kcal: Math.round(data.averageCalories),
+                            unlogged: actualIntake.totalDays - actualIntake.daysWithData,
+                          })}
                         </p>
                         <p className="text-xs text-neutral-400 mt-1">
-                          Ologgade dagar sänker tillförlitligheten — se Datakvalitet nedan.
+                          {t('metabolicCalibration.calorieSource.blended.tip')}
                         </p>
                       </div>
                     </>
@@ -925,11 +863,14 @@ export default function MetabolicCalibration({
                     <>
                       <Database className="h-4 w-4 mt-0.5 flex-shrink-0" />
                       <div>
-                        <p className="font-medium">Kaloridata: målkalorier</p>
+                        <p className="font-medium">
+                          {t('metabolicCalibration.calorieSource.targetCalories.label')}
+                        </p>
                         <p className="text-xs mt-0.5">
-                          Du har inte loggat mat tillräckligt ({actualIntake.daysWithData}/
-                          {actualIntake.totalDays} dagar). Systemet antar att du åt enligt ditt
-                          kaloriintervall — om det inte stämmer blir kalibreringen missvisande.
+                          {t('metabolicCalibration.calorieSource.targetCalories.desc', {
+                            logged: actualIntake.daysWithData,
+                            total: actualIntake.totalDays,
+                          })}
                         </p>
                       </div>
                     </>
@@ -943,7 +884,7 @@ export default function MetabolicCalibration({
                   <AlertCircle className="h-8 w-8 mx-auto mb-2 text-neutral-400" />
                   <p>{calibrationResult}</p>
                   <p className="text-xs text-neutral-400 mt-2">
-                    Prova att navigera bakåt för att hitta en period med data.
+                    {t('metabolicCalibration.errorFallback')}
                   </p>
                 </div>
               )}
@@ -963,23 +904,34 @@ export default function MetabolicCalibration({
                         </p>
                         <p className="text-xs text-neutral-500 mt-0.5">
                           {data.confidence.level === 'high'
-                            ? `${data.confidence.startClusterSize}+${data.confidence.endClusterSize} mätningar i start/slutperiod.`
+                            ? t('metabolicCalibration.confidence.highDesc', {
+                                start: data.confidence.startClusterSize,
+                                end: data.confidence.endClusterSize,
+                              })
                             : (() => {
                                 const reasons = data.confidence.degradeReasons
                                 const parts: string[] = []
                                 if (reasons.includes('low_cluster_size'))
                                   parts.push(
-                                    `för få mätningar i start- eller slutperiod (${data.confidence.startClusterSize}+${data.confidence.endClusterSize})`
+                                    t('metabolicCalibration.confidence.reasons.low_cluster_size', {
+                                      start: data.confidence.startClusterSize,
+                                      end: data.confidence.endClusterSize,
+                                    })
                                   )
                                 if (reasons.includes('sparse_coverage'))
-                                  parts.push('mätningarna är inte spridda över hela perioden')
+                                  parts.push(
+                                    t('metabolicCalibration.confidence.reasons.sparse_coverage')
+                                  )
                                 if (reasons.includes('nonlinear_trend'))
                                   parts.push(
-                                    'viktsignalen är svag i förhållande till daglig variation — längre period eller mer viktförändring behövs'
+                                    t('metabolicCalibration.confidence.reasons.nonlinear_trend')
                                   )
                                 return parts.length > 0
-                                  ? `Begränsas av: ${parts.join(', ')}.`
-                                  : `${data.confidence.startClusterSize}+${data.confidence.endClusterSize} mätningar i start/slutperiod.`
+                                  ? `${t('metabolicCalibration.confidence.degradedPrefix')}${parts.join(', ')}.`
+                                  : t('metabolicCalibration.confidence.highDesc', {
+                                      start: data.confidence.startClusterSize,
+                                      end: data.confidence.endClusterSize,
+                                    })
                               })()}
                         </p>
                       </div>
@@ -999,7 +951,8 @@ export default function MetabolicCalibration({
                                     : 'text-orange-600'
                             }`}
                           >
-                            Datakvalitet: {data.dataQuality.label} ({data.dataQuality.score}/100)
+                            {t('metabolicCalibration.dataQuality.label')}: {data.dataQuality.label}{' '}
+                            ({data.dataQuality.score}/100)
                           </p>
                           <Tooltip>
                             <TooltipTrigger asChild>
@@ -1014,25 +967,33 @@ export default function MetabolicCalibration({
                               side="bottom"
                               className="max-w-xs text-xs space-y-2 p-3"
                             >
-                              <p className="font-medium">Hur poängen beräknas</p>
+                              <p className="font-medium">
+                                {t('metabolicCalibration.dataQuality.tooltipTitle')}
+                              </p>
                               <table className="w-full text-xs">
                                 <tbody>
                                   <tr>
-                                    <td className="pr-2 text-neutral-400">Matlogg (45%)</td>
+                                    <td className="pr-2 text-neutral-400">
+                                      {t('metabolicCalibration.dataQuality.foodLog')}
+                                    </td>
                                     <td>{Math.round(data.dataQuality.factors.logScore)}/100</td>
                                   </tr>
                                   <tr>
-                                    <td className="pr-2 text-neutral-400">Mätfrekvens (35%)</td>
+                                    <td className="pr-2 text-neutral-400">
+                                      {t('metabolicCalibration.dataQuality.measFreq')}
+                                    </td>
                                     <td>{Math.round(data.dataQuality.factors.freqScore)}/100</td>
                                   </tr>
                                   <tr>
-                                    <td className="pr-2 text-neutral-400">Klusterstorlek (20%)</td>
+                                    <td className="pr-2 text-neutral-400">
+                                      {t('metabolicCalibration.dataQuality.clusterSize')}
+                                    </td>
                                     <td>{Math.round(data.dataQuality.factors.clusterScore)}/100</td>
                                   </tr>
                                 </tbody>
                               </table>
                               <p className="text-neutral-400 pt-1 border-t border-neutral-200">
-                                ≥80 Utmärkt · ≥60 Bra · ≥40 Tillräcklig · &lt;40 Begränsad
+                                {t('metabolicCalibration.dataQuality.legend')}
                               </p>
                             </TooltipContent>
                           </Tooltip>
@@ -1052,8 +1013,10 @@ export default function MetabolicCalibration({
                         <AlertCircle className="h-4 w-4 flex-shrink-0" />
                         <span className="flex-1 text-left font-medium">
                           {data.warnings.length === 1
-                            ? '1 varning'
-                            : `${data.warnings.length} varningar`}
+                            ? t('metabolicCalibration.warnings.singular')
+                            : t('metabolicCalibration.warnings.plural', {
+                                count: data.warnings.length,
+                              })}
                         </span>
                         <ChevronDown
                           className={`h-4 w-4 flex-shrink-0 transition-transform duration-200 ${warningSectionOpen ? 'rotate-180' : ''}`}
@@ -1070,25 +1033,25 @@ export default function MetabolicCalibration({
                                   onClick={() => toggleWarning(i)}
                                   className="flex-shrink-0 text-xs text-orange-600 hover:text-orange-800 underline underline-offset-2 mt-0.5"
                                 >
-                                  {expandedWarnings.has(i) ? 'Dölj' : 'Varför?'}
+                                  {expandedWarnings.has(i)
+                                    ? t('metabolicCalibration.warnings.hide')
+                                    : t('metabolicCalibration.warnings.showWhy')}
                                 </button>
                               </div>
                               {expandedWarnings.has(i) && warning.type === 'high_cv' && (
                                 <div className="text-xs text-orange-700 mt-1 space-y-1">
-                                  <p>
-                                    Hög dag-till-dag-variation i vikt beror vanligtvis på
-                                    vätskefluktuationer (salt, kolhydrater, träning) snarare än
-                                    faktisk fettvävnad. Det ökar residualvariansen i
-                                    trendberäkningen, vilket direkt breddar konfidensintervallet för
-                                    TDEE-estimatet. Varningen aktiveras när:
-                                  </p>
+                                  <p>{t('metabolicCalibration.warnings.types.high_cv.desc')}</p>
                                   <ul className="list-disc list-inside space-y-0.5">
-                                    <li>Variationskoefficienten (CV) för vikten överstiger 2 %</li>
+                                    {(
+                                      t('metabolicCalibration.warnings.types.high_cv.bullets', {
+                                        returnObjects: true,
+                                      }) as string[]
+                                    ).map((b, j) => (
+                                      <li key={j}>{b}</li>
+                                    ))}
                                   </ul>
                                   <p className="text-orange-600 font-medium">
-                                    Tips: Väg dig varje morgon före frukost under samma förhållanden
-                                    — det är det enskilt effektivaste sättet att minska brus och få
-                                    ett smalare konfidensintervall.
+                                    {t('metabolicCalibration.warnings.types.high_cv.tip')}
                                   </p>
                                 </div>
                               )}
@@ -1096,157 +1059,187 @@ export default function MetabolicCalibration({
                                 warning.type === 'target_calories_fallback' && (
                                   <div className="text-xs text-orange-700 mt-1 space-y-1">
                                     <p>
-                                      Om du i verkligheten åt mer eller mindre än målet kan
-                                      kalibreringen bli felaktig — den kan inte se avvikelser som
-                                      inte loggats. Varningen aktiveras när:
+                                      {t(
+                                        'metabolicCalibration.warnings.types.target_calories_fallback.desc'
+                                      )}
                                     </p>
                                     <ul className="list-disc list-inside space-y-0.5">
-                                      <li>Inga måltider är loggade under perioden</li>
+                                      {(
+                                        t(
+                                          'metabolicCalibration.warnings.types.target_calories_fallback.bullets',
+                                          { returnObjects: true }
+                                        ) as string[]
+                                      ).map((b, j) => (
+                                        <li key={j}>{b}</li>
+                                      ))}
                                     </ul>
                                     <p className="text-orange-600 font-medium">
-                                      Tips: Logga dina måltider under nästa period för ett mer
-                                      tillförlitligt resultat.
+                                      {t(
+                                        'metabolicCalibration.warnings.types.target_calories_fallback.tip'
+                                      )}
                                     </p>
                                   </div>
                                 )}
                               {expandedWarnings.has(i) && warning.type === 'selective_logging' && (
                                 <div className="text-xs text-orange-700 mt-1 space-y-1">
                                   <p>
-                                    Om du bara loggar &quot;bra&quot; dagar överskattas
-                                    kaloriintaget inte och kalibreringen kan föreslå ett för lågt
-                                    TDEE. Just nu är:
+                                    {t(
+                                      'metabolicCalibration.warnings.types.selective_logging.desc'
+                                    )}
                                   </p>
                                   <ul className="list-disc list-inside space-y-0.5">
-                                    <li>Loggat snitt &lt; 85 % av målkalorier</li>
-                                    <li>Matsloggskomplettering &lt; 80 %</li>
-                                    <li>Vikten minskat under perioden</li>
+                                    {(
+                                      t(
+                                        'metabolicCalibration.warnings.types.selective_logging.bullets',
+                                        { returnObjects: true }
+                                      ) as string[]
+                                    ).map((b, j) => (
+                                      <li key={j}>{b}</li>
+                                    ))}
                                   </ul>
                                   <p className="text-orange-600 font-medium">
-                                    Tips: Försök logga även de dagar du äter mer — precision kräver
-                                    fullständig data.
+                                    {t('metabolicCalibration.warnings.types.selective_logging.tip')}
                                   </p>
                                 </div>
                               )}
                               {expandedWarnings.has(i) && warning.type === 'glycogen_event' && (
                                 <div className="text-xs text-orange-700 mt-1 space-y-1">
                                   <p>
-                                    Glykogen och vätska kan orsaka viktförändringar på 1–3 kg på
-                                    enstaka dagar utan att det återspeglar faktisk fettförändring.
-                                    Trendberäkningen kompenserar men precision minskar. Varningen
-                                    aktiveras när:
+                                    {t('metabolicCalibration.warnings.types.glycogen_event.desc')}
                                   </p>
                                   <ul className="list-disc list-inside space-y-0.5">
-                                    <li>
-                                      En enskild daglig viktförändring överstiger 1,5 % av
-                                      kroppsvikten
-                                    </li>
+                                    {(
+                                      t(
+                                        'metabolicCalibration.warnings.types.glycogen_event.bullets',
+                                        { returnObjects: true }
+                                      ) as string[]
+                                    ).map((b, j) => (
+                                      <li key={j}>{b}</li>
+                                    ))}
                                   </ul>
                                   <p className="text-orange-600 font-medium">
-                                    Tips: Kalibrering med längre period (21–28 dagar) jämnar ut
-                                    tillfälliga svängningar bättre.
+                                    {t('metabolicCalibration.warnings.types.glycogen_event.tip')}
                                   </p>
                                 </div>
                               )}
                               {expandedWarnings.has(i) && warning.type === 'nonlinear_trend' && (
                                 <div className="text-xs text-orange-700 mt-1 space-y-1">
                                   <p>
-                                    Vikten har inte rört sig i en jämn riktning under perioden —
-                                    troligen en refeed-period, diet break eller annan övergång.
-                                    Varningen aktiveras när något av följande stämmer:
+                                    {t('metabolicCalibration.warnings.types.nonlinear_trend.desc')}
                                   </p>
                                   <ul className="list-disc list-inside space-y-0.5">
-                                    <li>
-                                      Regressionstrenden och EMA visar tydligt olika total
-                                      viktförändring
-                                    </li>
-                                    <li>
-                                      Vikten gick i motsatta riktningar under periodens två halvor
-                                      med minst 1 kg total svängning
-                                    </li>
+                                    {(
+                                      t(
+                                        'metabolicCalibration.warnings.types.nonlinear_trend.bullets',
+                                        { returnObjects: true }
+                                      ) as string[]
+                                    ).map((b, j) => (
+                                      <li key={j}>{b}</li>
+                                    ))}
                                   </ul>
                                   <p className="text-orange-600 font-medium">
-                                    Tips: Vänta tills vikten rört sig jämnt i en riktning i minst
-                                    2–3 veckor innan du kalibrerar.
+                                    {t('metabolicCalibration.warnings.types.nonlinear_trend.tip')}
                                   </p>
                                 </div>
                               )}
                               {expandedWarnings.has(i) && warning.type === 'large_deficit' && (
                                 <div className="text-xs text-orange-700 mt-1 space-y-1">
                                   <p>
-                                    Vid stort underskott anpassar kroppen sin ämnesomsättning nedåt,
-                                    vilket gör att beräknad TDEE kan underskatta ditt verkliga
-                                    underhållsbehov. Varningen aktiveras när:
+                                    {t('metabolicCalibration.warnings.types.large_deficit.desc')}
                                   </p>
                                   <ul className="list-disc list-inside space-y-0.5">
-                                    <li>Beräknat kaloriunderskott överstiger 25 % av TDEE</li>
+                                    {(
+                                      t(
+                                        'metabolicCalibration.warnings.types.large_deficit.bullets',
+                                        { returnObjects: true }
+                                      ) as string[]
+                                    ).map((b, j) => (
+                                      <li key={j}>{b}</li>
+                                    ))}
                                   </ul>
                                   <p className="text-orange-600 font-medium">
-                                    Tips: Resultatet är troligen en underskattning av ditt verkliga
-                                    TDEE — ta det som ett golv snarare än ett exakt värde.
+                                    {t('metabolicCalibration.warnings.types.large_deficit.tip')}
                                   </p>
                                 </div>
                               )}
                               {expandedWarnings.has(i) && warning.type === 'low_confidence' && (
                                 <div className="text-xs text-orange-700 mt-1 space-y-1">
                                   <p>
-                                    Resultatet är användbart som riktlinje men bör bekräftas med en
-                                    ny kalibrering efter fler veckors data. Varningen aktiveras när
-                                    något av följande stämmer:
+                                    {t('metabolicCalibration.warnings.types.low_confidence.desc')}
                                   </p>
                                   <ul className="list-disc list-inside space-y-0.5">
-                                    <li>Färre än 3 vägningar per vecka i snitt</li>
-                                    <li>
-                                      Mer än 70 % av mätningarna är från periodens första hälft
-                                    </li>
+                                    {(
+                                      t(
+                                        'metabolicCalibration.warnings.types.low_confidence.bullets',
+                                        { returnObjects: true }
+                                      ) as string[]
+                                    ).map((b, j) => (
+                                      <li key={j}>{b}</li>
+                                    ))}
                                   </ul>
                                   <p className="text-orange-600 font-medium">
-                                    Tips: Väg dig minst varannan dag och sprid mätningarna jämnt
-                                    över perioden.
+                                    {t('metabolicCalibration.warnings.types.low_confidence.tip')}
                                   </p>
                                 </div>
                               )}
                               {expandedWarnings.has(i) && warning.type === 'large_adjustment' && (
                                 <div className="text-xs text-orange-700 mt-1 space-y-1">
                                   <p>
-                                    Utan begränsning hade justeringen blivit{' '}
-                                    {Math.round(data.rawTDEE - data.currentTDEE) >= 0 ? '+' : ''}
-                                    {Math.round(data.rawTDEE - data.currentTDEE)} kcal (
-                                    {Math.round(data.rawTDEE)} kcal).{' '}
                                     {(() => {
+                                      const diff = Math.round(data.rawTDEE - data.currentTDEE)
+                                      const diffStr = `${diff >= 0 ? '+' : ''}${diff}`
                                       const f = data.clampFactors
-                                      const reasons: string[] = []
+                                      const reasonParts: string[] = []
                                       if (f.dqiWasBindingCap)
-                                        reasons.push('datakvalitetspoängen satte ett absolut tak')
-                                      if (f.lowSignal) reasons.push('viktförändringen är för liten')
-                                      if (f.lowConfidence) reasons.push('tillförlitligheten är låg')
-                                      if (f.largeDeficit) reasons.push('stort kaloriunderskott')
-                                      return reasons.length > 0
-                                        ? `Orsak: ${reasons.join(', ')}.`
-                                        : ''
+                                        reasonParts.push(
+                                          t(
+                                            'metabolicCalibration.warnings.types.large_adjustment.reasons.dqiWasBindingCap'
+                                          )
+                                        )
+                                      if (f.lowSignal)
+                                        reasonParts.push(
+                                          t(
+                                            'metabolicCalibration.warnings.types.large_adjustment.reasons.lowSignal'
+                                          )
+                                        )
+                                      if (f.lowConfidence)
+                                        reasonParts.push(
+                                          t(
+                                            'metabolicCalibration.warnings.types.large_adjustment.reasons.lowConfidence'
+                                          )
+                                        )
+                                      if (f.largeDeficit)
+                                        reasonParts.push(
+                                          t(
+                                            'metabolicCalibration.warnings.types.large_adjustment.reasons.largeDeficit'
+                                          )
+                                        )
+                                      return t(
+                                        'metabolicCalibration.warnings.types.large_adjustment.desc',
+                                        {
+                                          diff: diffStr,
+                                          raw: Math.round(data.rawTDEE),
+                                          reasons: reasonParts.join(', '),
+                                        }
+                                      )
                                     })()}
                                   </p>
                                   <p className="text-orange-600 font-medium">
-                                    Tips: Förbättra datakvaliteten (fler vägningar, fullständig
-                                    loggning) för att tillåta större justeringar framöver.
+                                    {t('metabolicCalibration.warnings.types.large_adjustment.tip')}
                                   </p>
                                 </div>
                               )}
                               {expandedWarnings.has(i) && warning.type === 'low_signal' && (
                                 <div className="text-xs text-orange-700 mt-1 space-y-1">
                                   <p>
-                                    Förändringen ({Math.abs(data.weightChangeKg).toFixed(2)} kg) är
-                                    under gränsen ~
-                                    {Math.round(data.endCluster.average * 0.0025 * 10) / 10} kg
-                                    (0,25 % av din vikt). Antingen stämmer ditt TDEE redan, eller
-                                    döljer vätska/glykogen den verkliga trenden. När
-                                    viktförändringen är liten i förhållande till den dagliga
-                                    variationen dominerar bruset över signalen — det breddar
-                                    konfidensintervallet och gör TDEE-estimatet mindre
-                                    tillförlitligt oavsett hur länge perioden är.
+                                    {t('metabolicCalibration.warnings.types.low_signal.desc', {
+                                      change: Math.abs(data.weightChangeKg).toFixed(2),
+                                      threshold:
+                                        Math.round(data.endCluster.average * 0.0025 * 10) / 10,
+                                    })}
                                   </p>
                                   <p className="text-orange-600 font-medium">
-                                    Tips: Om du aktivt försöker gå ner eller upp i vikt — vänta
-                                    ytterligare 1–2 veckor tills trenden är tydligare.
+                                    {t('metabolicCalibration.warnings.types.low_signal.tip')}
                                   </p>
                                 </div>
                               )}
@@ -1267,8 +1260,7 @@ export default function MetabolicCalibration({
                                       ))}
                                     </ul>
                                     <p className="text-orange-600 font-medium">
-                                      Tips: Extremvärden kan bero på felmätning eller ovanliga
-                                      omständigheter — de påverkar inte beräkningen.
+                                      {t('metabolicCalibration.warnings.types.outlier_removed.tip')}
                                     </p>
                                   </div>
                                 )}
@@ -1299,7 +1291,7 @@ export default function MetabolicCalibration({
                           {data.startCluster.average.toFixed(1)} kg
                         </p>
                         <p className="text-xs text-neutral-400 mt-0.5">
-                          snitt av {data.startCluster.count} mätningar
+                          {t('metabolicCalibration.clusterAvg', { count: data.startCluster.count })}
                         </p>
                       </div>
                       <div className="p-3">
@@ -1319,7 +1311,7 @@ export default function MetabolicCalibration({
                           {data.endCluster.average.toFixed(1)} kg
                         </p>
                         <p className="text-xs text-neutral-400 mt-0.5">
-                          snitt av {data.endCluster.count} mätningar
+                          {t('metabolicCalibration.clusterAvg', { count: data.endCluster.count })}
                         </p>
                       </div>
                     </div>
@@ -1343,22 +1335,24 @@ export default function MetabolicCalibration({
                           {data.weightChangeKg.toFixed(2)} kg
                         </span>
                         <span className="text-xs text-neutral-400">
-                          över {Math.round(data.actualDays)} dagar
+                          {t('metabolicCalibration.overDays', {
+                            days: Math.round(data.actualDays),
+                          })}
                         </span>
                       </div>
                       <span className="text-xs text-neutral-500">
                         {data.calorieSource === 'food_log'
-                          ? 'faktiskt intag'
+                          ? t('metabolicCalibration.calorieSourceLabel.food_log')
                           : data.calorieSource === 'blended'
-                            ? 'uppskattat intag'
-                            : 'målkalorier'}
+                            ? t('metabolicCalibration.calorieSourceLabel.blended')
+                            : t('metabolicCalibration.calorieSourceLabel.target_calories')}
                         : {Math.round(data.averageCalories)} kcal/dag
                       </span>
                     </div>
                     {data.isStableMaintenance && (
                       <div className="border-t border-green-100 bg-green-50 px-3 py-2">
                         <p className="text-xs text-green-700">
-                          Din vikt är stabil — ditt TDEE verkar stämma
+                          {t('metabolicCalibration.stableMaintenance')}
                         </p>
                       </div>
                     )}
@@ -1368,21 +1362,27 @@ export default function MetabolicCalibration({
                   <div className="rounded-lg border border-neutral-200 overflow-hidden">
                     <div className="grid grid-cols-3 divide-x divide-neutral-200">
                       <div className="p-3">
-                        <p className="text-xs text-neutral-500 mb-1">Nuvarande</p>
+                        <p className="text-xs text-neutral-500 mb-1">
+                          {t('metabolicCalibration.tdeeComparison.current')}
+                        </p>
                         <p className="text-base font-bold text-neutral-700">
                           {Math.round(data.currentTDEE)}
                         </p>
                         <p className="text-xs text-neutral-400">kcal</p>
                       </div>
                       <div className="p-3 bg-primary-50">
-                        <p className="text-xs text-neutral-500 mb-1">Kalibrerat</p>
+                        <p className="text-xs text-neutral-500 mb-1">
+                          {t('metabolicCalibration.tdeeComparison.calibrated')}
+                        </p>
                         <p className="text-base font-bold text-primary-600">
                           {Math.round(data.clampedTDEE)}
                         </p>
                         <p className="text-xs text-neutral-400">kcal</p>
                       </div>
                       <div className="p-3">
-                        <p className="text-xs text-neutral-500 mb-1">Skillnad</p>
+                        <p className="text-xs text-neutral-500 mb-1">
+                          {t('metabolicCalibration.tdeeComparison.difference')}
+                        </p>
                         <p
                           className={`text-base font-bold ${
                             data.adjustmentPercent > 0
@@ -1405,7 +1405,7 @@ export default function MetabolicCalibration({
                       <div className="flex items-center justify-between px-3 py-2 border-t border-neutral-100">
                         <span className="flex items-center gap-1.5 text-xs text-neutral-500">
                           <Info className="h-3.5 w-3.5 flex-shrink-0" />
-                          90% konfidensintervall
+                          {t('metabolicCalibration.tdeeComparison.confidenceInterval')}
                         </span>
                         <span className="text-xs font-medium text-neutral-700">
                           {Math.round(data.tdeeLower90)}–{Math.round(data.tdeeUpper90)} kcal
@@ -1419,18 +1419,23 @@ export default function MetabolicCalibration({
                     <div className="p-4 rounded-lg bg-green-50 border border-green-200 text-center">
                       <CheckCircle className="h-6 w-6 text-green-600 mx-auto mb-2" />
                       <p className="text-sm font-medium text-green-800">
-                        TDEE kalibrerat till {Math.round(calibrationApplied)} kcal
+                        {t('metabolicCalibration.successTitle', {
+                          kcal: Math.round(calibrationApplied),
+                        })}
                       </p>
                       <p className="text-xs text-green-600 mt-1">
-                        Ditt kaloriintervall har uppdaterats
+                        {t('metabolicCalibration.successDesc')}
                       </p>
                       <p className="text-xs text-neutral-500 mt-1">
-                        Nästa rekommenderade kalibrering:{' '}
-                        {format(addDays(new Date(), timePeriod), 'd MMM yyyy', { locale: sv })}
+                        {t('metabolicCalibration.nextCalibration', {
+                          date: format(addDays(new Date(), timePeriod), 'd MMM yyyy', {
+                            locale: sv,
+                          }),
+                        })}
                       </p>
                       {onClose && (
                         <Button variant="outline" size="sm" onClick={onClose} className="mt-3">
-                          Stäng
+                          {t('metabolicCalibration.closeButton')}
                         </Button>
                       )}
                     </div>
@@ -1446,29 +1451,29 @@ export default function MetabolicCalibration({
                         className="w-full"
                       >
                         {updateProfile.isPending || createCalibrationHistory.isPending
-                          ? 'Sparar...'
-                          : 'Applicera kalibrerat TDEE'}
+                          ? t('metabolicCalibration.saving')
+                          : t('metabolicCalibration.applyButton')}
                       </Button>
                       {!hasNewDataSinceCalibration && lastActiveCalibration && (
                         <div className="text-xs space-y-2 rounded-lg bg-neutral-50 border border-neutral-200 p-3">
                           {availabilityGuard.overlaps && (
                             <div>
                               <p className="font-medium text-neutral-600">
-                                Det valda periodfönstret överlappar din senaste kalibrering — samma
-                                dagar skulle räknas igen
+                                {t('metabolicCalibration.guardOverlap.title')}
                               </p>
                               <p className="mt-1 text-neutral-500">
-                                Nästa rekommenderade kalibrering:{' '}
                                 <span className="font-medium text-neutral-700">
                                   {availabilityGuard.nextAvailableDate
-                                    ? format(
-                                        addDays(
-                                          availabilityGuard.nextAvailableDate,
-                                          timePeriod - 1
+                                    ? t('metabolicCalibration.guardOverlap.nextDate', {
+                                        date: format(
+                                          addDays(
+                                            availabilityGuard.nextAvailableDate,
+                                            timePeriod - 1
+                                          ),
+                                          'd MMM yyyy',
+                                          { locale: sv }
                                         ),
-                                        'd MMM yyyy',
-                                        { locale: sv }
-                                      )
+                                      })
                                     : '—'}
                                 </span>
                               </p>
@@ -1477,22 +1482,24 @@ export default function MetabolicCalibration({
                           {!availabilityGuard.overlaps && (
                             <div>
                               <p className="font-medium text-neutral-600">
-                                {availabilityGuard.newWeightCount} av{' '}
-                                {MIN_NEW_WEIGHTS_AFTER_CALIBRATION} nya viktmätningar registrerade
-                                sedan senaste kalibreringens slutdatum
+                                {t('metabolicCalibration.guardNewWeights.title', {
+                                  count: availabilityGuard.newWeightCount,
+                                  required: MIN_NEW_WEIGHTS_AFTER_CALIBRATION,
+                                })}
                               </p>
                               <p className="mt-1 text-neutral-500">
-                                Nästa rekommenderade kalibrering:{' '}
                                 <span className="font-medium text-neutral-700">
                                   {availabilityGuard.nextAvailableDate
-                                    ? format(
-                                        addDays(
-                                          availabilityGuard.nextAvailableDate,
-                                          timePeriod - 1
+                                    ? t('metabolicCalibration.guardNewWeights.nextDate', {
+                                        date: format(
+                                          addDays(
+                                            availabilityGuard.nextAvailableDate,
+                                            timePeriod - 1
+                                          ),
+                                          'd MMM yyyy',
+                                          { locale: sv }
                                         ),
-                                        'd MMM yyyy',
-                                        { locale: sv }
-                                      )
+                                      })
                                     : '—'}
                                 </span>
                               </p>
@@ -1508,8 +1515,9 @@ export default function MetabolicCalibration({
                     (confirmRevert ? (
                       <div className="border border-neutral-200 rounded-lg p-3 space-y-2">
                         <p className="text-xs text-neutral-700">
-                          Återställer TDEE till {Math.round(lastActiveCalibration!.previous_tdee)}{' '}
-                          kcal. Är du säker?
+                          {t('metabolicCalibration.revertConfirm', {
+                            kcal: Math.round(lastActiveCalibration!.previous_tdee),
+                          })}
                         </p>
                         <div className="flex gap-2">
                           <Button
@@ -1522,7 +1530,9 @@ export default function MetabolicCalibration({
                             disabled={revertCalibration.isPending}
                             className="flex-1 text-red-600 border-red-200 hover:bg-red-50"
                           >
-                            {revertCalibration.isPending ? 'Ångrar...' : 'Ja, ångra'}
+                            {revertCalibration.isPending
+                              ? t('metabolicCalibration.revertingLabel')
+                              : t('metabolicCalibration.revertYes')}
                           </Button>
                           <Button
                             variant="outline"
@@ -1530,7 +1540,7 @@ export default function MetabolicCalibration({
                             onClick={() => setConfirmRevert(false)}
                             className="flex-1"
                           >
-                            Avbryt
+                            {t('metabolicCalibration.revertCancel')}
                           </Button>
                         </div>
                       </div>
@@ -1542,7 +1552,9 @@ export default function MetabolicCalibration({
                         className="w-full text-neutral-600"
                       >
                         <Undo2 className="h-3.5 w-3.5 mr-1.5" />
-                        {`Ångra senaste kalibrering (→ ${Math.round(lastActiveCalibration!.previous_tdee)} kcal)`}
+                        {t('metabolicCalibration.revertButton', {
+                          kcal: Math.round(lastActiveCalibration!.previous_tdee),
+                        })}
                       </Button>
                     ))}
 
@@ -1561,10 +1573,12 @@ export default function MetabolicCalibration({
                 <div className="text-center py-6 text-sm text-neutral-500">
                   <AlertCircle className="h-8 w-8 mx-auto mb-2 text-neutral-400" />
                   <p>
-                    Behöver minst {MIN_DATA_POINTS[timePeriod]} viktmätningar under {timePeriod}{' '}
-                    dagar
+                    {t('metabolicCalibration.noDataState.line1', {
+                      min: MIN_DATA_POINTS[timePeriod],
+                      days: timePeriod,
+                    })}
                   </p>
-                  <p className="mt-1">Logga fler viktmätningar för att aktivera kalibrering</p>
+                  <p className="mt-1">{t('metabolicCalibration.noDataState.line2')}</p>
                 </div>
               )}
             </>

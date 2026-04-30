@@ -5,6 +5,16 @@ import type { PALSystem } from '@/lib/types'
 import { Button } from '../ui/button'
 import { Portal } from '../ui/portal'
 
+const PAL_KEY_MAP: Record<PALSystem, string> = {
+  'FAO/WHO/UNU based PAL values': 'faoWhoUnu',
+  'DAMNRIPPED PAL values': 'damnripped',
+  'Pro Physique PAL values': 'proPhysique',
+  'Fitness Stuff PAL values': 'fitnessStuff',
+  'Basic internet PAL values': 'basicInternet',
+  'Beräkna din aktivitetsnivå': 'advanced',
+  'Custom PAL': 'customPAL',
+}
+
 interface PALSystemModalProps {
   system: PALSystem
   isOpen: boolean
@@ -19,6 +29,25 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
 
   if (!description) return null
 
+  const sk = PAL_KEY_MAP[system]
+  const tName = t(`palSystems.${sk}.name`, { defaultValue: description.name })
+  const tSubtitle = description.subtitle
+    ? t(`palSystems.${sk}.subtitle`, { defaultValue: description.subtitle })
+    : undefined
+  const tDyn = t as unknown as (key: string, opts: object) => unknown
+  const tPros = tDyn(`palSystems.${sk}.pros`, {
+    returnObjects: true,
+    defaultValue: description.pros,
+  }) as string[]
+  const tCons = tDyn(`palSystems.${sk}.cons`, {
+    returnObjects: true,
+    defaultValue: description.cons,
+  }) as string[]
+  const tBestFor = tDyn(`palSystems.${sk}.bestFor`, {
+    returnObjects: true,
+    defaultValue: description.bestFor,
+  }) as string[]
+
   return (
     <Portal>
       <div
@@ -32,10 +61,8 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
           {/* Header */}
           <div className="sticky top-0 bg-gradient-to-r from-primary-500 to-accent-500 text-white p-6 rounded-t-2xl flex justify-between items-start">
             <div>
-              <h2 className="text-2xl font-bold">{description.name}</h2>
-              {description.subtitle && (
-                <p className="text-primary-100 mt-1">{description.subtitle}</p>
-              )}
+              <h2 className="text-2xl font-bold">{tName}</h2>
+              {tSubtitle && <p className="text-primary-100 mt-1">{tSubtitle}</p>}
             </div>
             <button
               onClick={onClose}
@@ -55,53 +82,73 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
               </h3>
               {description.descriptionBlocks ? (
                 <div className="space-y-3">
-                  {description.descriptionBlocks.map((block, i) =>
-                    block.type === 'formula' ? (
-                      <div
-                        key={i}
-                        className="bg-neutral-100 border border-neutral-200 rounded-lg px-4 py-3"
-                      >
-                        <p className="text-sm font-mono text-neutral-800">{block.text}</p>
-                      </div>
-                    ) : block.type === 'bullets' ? (
-                      <ul key={i} className="space-y-1 pl-1">
-                        {block.items.map((item, ii) => (
-                          <li key={ii} className="flex gap-3">
-                            <span className="text-neutral-400 font-bold mt-0.5">•</span>
-                            <span className="text-neutral-700 text-sm">{item}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    ) : block.type === 'image' ? (
-                      <img
-                        key={i}
-                        src={block.src}
-                        alt={block.alt}
-                        className="w-3/4 rounded-xl border border-neutral-200"
-                      />
-                    ) : (
-                      <p key={i} className="text-neutral-700 leading-relaxed text-sm">
-                        {block.text}
-                      </p>
+                  {(() => {
+                    const tBlocks = tDyn(`palSystems.${sk}.descriptionBlocks`, {
+                      returnObjects: true,
+                      defaultValue: [],
+                    }) as string[]
+                    const tBullets = tDyn(`palSystems.${sk}.descriptionBullets`, {
+                      returnObjects: true,
+                      defaultValue: [],
+                    }) as string[]
+                    const tImageAlt = tDyn(`palSystems.${sk}.descriptionImageAlt`, {
+                      defaultValue: '',
+                    }) as string
+                    let textIdx = 0
+                    let bulletsUsed = false
+                    return description.descriptionBlocks!.map((block, i) =>
+                      block.type === 'formula' ? (
+                        <div
+                          key={i}
+                          className="bg-neutral-100 border border-neutral-200 rounded-lg px-4 py-3"
+                        >
+                          <p className="text-sm font-mono text-neutral-800">{block.text}</p>
+                        </div>
+                      ) : block.type === 'bullets' ? (
+                        <ul key={i} className="space-y-1 pl-1">
+                          {(bulletsUsed
+                            ? block.items
+                            : tBullets.length > 0
+                              ? ((bulletsUsed = true), tBullets)
+                              : ((bulletsUsed = true), block.items)
+                          ).map((item, ii) => (
+                            <li key={ii} className="flex gap-3">
+                              <span className="text-neutral-400 font-bold mt-0.5">•</span>
+                              <span className="text-neutral-700 text-sm">{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : block.type === 'image' ? (
+                        <img
+                          key={i}
+                          src={block.src}
+                          alt={tImageAlt || block.alt}
+                          className="w-3/4 rounded-xl border border-neutral-200"
+                        />
+                      ) : (
+                        <p key={i} className="text-neutral-700 leading-relaxed text-sm">
+                          {tBlocks[textIdx++] ?? block.text}
+                        </p>
+                      )
                     )
-                  )}
+                  })()}
                 </div>
               ) : (
                 <p className="text-neutral-700 leading-relaxed whitespace-pre-line">
-                  {description.description}
+                  {t(`palSystems.${sk}.description`, { defaultValue: description.description })}
                 </p>
               )}
             </div>
 
             {/* Best For */}
-            {description.bestFor && description.bestFor.length > 0 && (
+            {tBestFor && tBestFor.length > 0 && (
               <div>
                 <h3 className="text-lg font-semibold text-blue-800 mb-3 flex items-center gap-2">
                   <span className="text-xl">👥</span>
                   {t('tdeeCalc.modal.bestFor')}
                 </h3>
                 <ul className="space-y-2">
-                  {description.bestFor.map((item, index) => (
+                  {tBestFor.map((item, index) => (
                     <li key={index} className="flex gap-3">
                       <span className="text-blue-600 font-bold mt-1">•</span>
                       <span className="text-neutral-700 flex-1">{item}</span>
@@ -118,7 +165,7 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
                 {t('tdeeCalc.modal.pros')}
               </h3>
               <ul className="space-y-2">
-                {description.pros.map((pro, index) => (
+                {tPros.map((pro, index) => (
                   <li key={index} className="flex gap-3">
                     <span className="text-green-600 font-bold mt-1">•</span>
                     <span className="text-neutral-700 flex-1">{pro}</span>
@@ -128,14 +175,14 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
             </div>
 
             {/* Cons */}
-            {description.cons.length > 0 && (
+            {tCons.length > 0 && (
               <div>
                 <h3 className="text-lg font-semibold text-amber-800 mb-3 flex items-center gap-2">
                   <span className="text-xl">⚠</span>
                   {t('tdeeCalc.modal.cons')}
                 </h3>
                 <ul className="space-y-2">
-                  {description.cons.map((con, index) => (
+                  {tCons.map((con, index) => (
                     <li key={index} className="flex gap-3">
                       <span className="text-amber-600 font-bold mt-1">•</span>
                       <span className="text-neutral-700 flex-1">{con}</span>
@@ -148,65 +195,140 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
             {/* Sections */}
             {description.sections && description.sections.length > 0 && (
               <div className="space-y-6">
-                {description.sections.map((section, index) => (
-                  <div key={index}>
-                    <h3 className="text-lg font-semibold text-neutral-800 mb-3">{section.title}</h3>
-                    <div className="space-y-3">
-                      {section.blocks.map((block, bi) =>
-                        block.type === 'heading' ? (
-                          <p key={bi} className="text-sm font-semibold text-neutral-700 mt-1">
-                            {block.text}
-                          </p>
-                        ) : block.type === 'formula' ? (
-                          <div
-                            key={bi}
-                            className="bg-neutral-100 border border-neutral-200 rounded-lg px-4 py-3"
-                          >
-                            <p className="text-sm font-mono text-neutral-800">{block.text}</p>
-                          </div>
-                        ) : block.type === 'bullets' ? (
-                          <ul key={bi} className="space-y-1 pl-1">
-                            {block.items.map((item, ii) => (
-                              <li key={ii} className="flex gap-2 text-neutral-700 text-sm">
-                                <span className="text-neutral-400 mt-0.5">•</span>
-                                <span>{item}</span>
-                              </li>
+                {(() => {
+                  const sectionKeys = [
+                    'bmr',
+                    'neat',
+                    'neatSteps',
+                    'neatStanding',
+                    'neatHousehold',
+                    'spa',
+                    'eat',
+                    'tef',
+                  ]
+                  return description.sections!.map((section, index) => {
+                    const secKey = sectionKeys[index] ?? null
+                    const tSecTitle = secKey
+                      ? (tDyn(`palSystems.${sk}.sections.${secKey}.title`, {
+                          defaultValue: section.title,
+                        }) as string)
+                      : section.title
+                    const tSecBlocks = secKey
+                      ? (tDyn(`palSystems.${sk}.sections.${secKey}.blocks`, {
+                          returnObjects: true,
+                          defaultValue: [],
+                        }) as string[])
+                      : []
+                    const tSecFormula = secKey
+                      ? (tDyn(`palSystems.${sk}.sections.${secKey}.formula`, {
+                          defaultValue: '',
+                        }) as string)
+                      : ''
+                    const tSecStepsBullets =
+                      secKey === 'neatSteps'
+                        ? (tDyn(`palSystems.${sk}.sections.${secKey}.stepsBullets`, {
+                            returnObjects: true,
+                            defaultValue: [],
+                          }) as string[])
+                        : []
+                    const tSecSpaBullets =
+                      secKey === 'spa'
+                        ? (tDyn(`palSystems.${sk}.sections.${secKey}.spaBullets`, {
+                            returnObjects: true,
+                            defaultValue: [],
+                          }) as string[])
+                        : []
+                    const tSecTefBullets =
+                      secKey === 'tef'
+                        ? (tDyn(`palSystems.${sk}.sections.${secKey}.tefBullets`, {
+                            returnObjects: true,
+                            defaultValue: [],
+                          }) as string[])
+                        : []
+                    const tSecRefs = secKey
+                      ? (tDyn(`palSystems.${sk}.sections.${secKey}.refs`, {
+                          returnObjects: true,
+                          defaultValue: section.references ?? [],
+                        }) as string[])
+                      : (section.references ?? [])
+
+                    let textIdx = 0
+                    let bulletsUsed = false
+
+                    return (
+                      <div key={index}>
+                        <h3 className="text-lg font-semibold text-neutral-800 mb-3">{tSecTitle}</h3>
+                        <div className="space-y-3">
+                          {section.blocks.map((block, bi) =>
+                            block.type === 'heading' ? (
+                              <p key={bi} className="text-sm font-semibold text-neutral-700 mt-1">
+                                {block.text}
+                              </p>
+                            ) : block.type === 'formula' ? (
+                              <div
+                                key={bi}
+                                className="bg-neutral-100 border border-neutral-200 rounded-lg px-4 py-3"
+                              >
+                                <p className="text-sm font-mono text-neutral-800">
+                                  {tSecFormula || block.text}
+                                </p>
+                              </div>
+                            ) : block.type === 'bullets' ? (
+                              <ul key={bi} className="space-y-1 pl-1">
+                                {(() => {
+                                  const bulletItems = bulletsUsed
+                                    ? block.items
+                                    : (() => {
+                                        bulletsUsed = true
+                                        if (tSecStepsBullets.length > 0) return tSecStepsBullets
+                                        if (tSecSpaBullets.length > 0) return tSecSpaBullets
+                                        if (tSecTefBullets.length > 0) return tSecTefBullets
+                                        return block.items
+                                      })()
+                                  return bulletItems.map((item, ii) => (
+                                    <li key={ii} className="flex gap-2 text-neutral-700 text-sm">
+                                      <span className="text-neutral-400 mt-0.5">•</span>
+                                      <span>{item}</span>
+                                    </li>
+                                  ))
+                                })()}
+                              </ul>
+                            ) : block.type === 'image' ? (
+                              <img
+                                key={bi}
+                                src={block.src}
+                                alt={block.alt}
+                                className="w-3/5 rounded-lg mt-2"
+                              />
+                            ) : (
+                              <p
+                                key={bi}
+                                className="text-neutral-700 leading-relaxed text-sm whitespace-pre-line"
+                              >
+                                {tSecBlocks[textIdx++] ?? block.text}
+                              </p>
+                            )
+                          )}
+                        </div>
+                        {tSecRefs.length > 0 && (
+                          <div className="mt-4 space-y-2">
+                            <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide">
+                              {t('tdeeCalc.modal.references')}
+                            </p>
+                            {tSecRefs.map((ref, ri) => (
+                              <div
+                                key={ri}
+                                className="text-sm text-neutral-600 bg-neutral-50 p-3 rounded-lg border border-neutral-200"
+                              >
+                                <p className="leading-relaxed">{ref}</p>
+                              </div>
                             ))}
-                          </ul>
-                        ) : block.type === 'image' ? (
-                          <img
-                            key={bi}
-                            src={block.src}
-                            alt={block.alt}
-                            className="w-3/5 rounded-lg mt-2"
-                          />
-                        ) : (
-                          <p
-                            key={bi}
-                            className="text-neutral-700 leading-relaxed text-sm whitespace-pre-line"
-                          >
-                            {block.text}
-                          </p>
-                        )
-                      )}
-                    </div>
-                    {section.references && section.references.length > 0 && (
-                      <div className="mt-4 space-y-2">
-                        <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide">
-                          {t('tdeeCalc.modal.references')}
-                        </p>
-                        {section.references.map((ref, ri) => (
-                          <div
-                            key={ri}
-                            className="text-sm text-neutral-600 bg-neutral-50 p-3 rounded-lg border border-neutral-200"
-                          >
-                            <p className="leading-relaxed">{ref}</p>
                           </div>
-                        ))}
+                        )}
                       </div>
-                    )}
-                  </div>
-                ))}
+                    )
+                  })
+                })()}
               </div>
             )}
 

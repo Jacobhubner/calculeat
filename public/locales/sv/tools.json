@@ -691,5 +691,697 @@
     "lossNormalDesc": "Balanserad viktnedgång med god energinivå · ~{{kgMin}}–{{kgMax}} kg/vecka",
     "lossAggressiveLabel": "Aggressivt (25-30%)",
     "lossAggressiveDesc": "Snabb viktnedgång, endast för kort period · ~{{kgMin}}–{{kgMax}} kg/vecka"
+  },
+  "bmrFormulas": {
+    "mifflinStJeor": {
+      "name": "Mifflin-St Jeor-ekvationen",
+      "description": "En av de mest validerade och använda formlerna för att beräkna basalmetabolism hos friska vuxna.",
+      "pros": [
+        "Validerad över olika BMI-intervall - fungerar konsekvent bra hos normalviktiga, överviktiga och feta individer",
+        "Flera metaanalyser (t.ex. Frankenfield et al., 2005) visar att Mifflin-St Jeor är den mest noggranna RMR-prediktorn för friska, icke-feta och feta vuxna i USA och västerländska populationer"
+      ],
+      "cons": [
+        "Likt många prediktiva ekvationer tar den inte hänsyn till fettfri massa, så den kan underskatta RMR hos mycket muskulösa individer (t.ex. atleter)"
+      ],
+      "measurements": "Vikt i kg, längd i cm, ålder i år\nkön = +5 för män, −161 för kvinnor"
+    },
+    "cunningham": {
+      "name": "Cunningham (Katch och McArdle)-ekvationen",
+      "description": "Utvecklad av Cunningham och populariserad av Katch och McArdle i sin lärobok om träningsfysiologi.",
+      "pros": [
+        "Anses vara mer noggrann för individer med låg kroppsfettsprocent eller hög muskelmassa, såsom atleter",
+        "Tar hänsyn till att muskler kräver mer energi att underhålla jämfört med fettceller"
+      ],
+      "cons": ["Kräver att du känner till din kroppsfettprocent för att kunna användas"],
+      "measurements": "FFM = fettfri massa (kg)"
+    },
+    "oxfordHenry": {
+      "name": "Oxford/Henry-ekvationen",
+      "description": "Till skillnad från de äldre Schofield-ekvationerna (som används av FAO/WHO/UNU) exkluderade Oxford-ekvationerna biased italiensk data (som hade ovanligt höga BMR-värden).",
+      "pros": ["Ger lägre, mer noggranna BMR-uppskattningar för många globala populationer"],
+      "cons": [
+        "Kan underskatta behov i populationer där fysisk aktivitetsnivå eller muskelmassa är hög"
+      ],
+      "measurements_male": "Vikt i kg, längd i m",
+      "measurements_female": "Vikt i kg, längd i m"
+    },
+    "schofield": {
+      "name": "Schofield (FAO/WHO/UNU)-ekvationen",
+      "description": "Utvecklad av W.N. Schofield som en del av en studie beställd av FAO och WHO för att standardisera energibehov världen över.",
+      "pros": [
+        "Baserad på 7 173 försökspersoner från 114 studier - en av de mest omfattande BMR-datamängderna tillgängliga på 1980-talet",
+        "Förblir en av de mest använda ekvationerna för att uppskatta energibehov, särskilt i kliniska och folkhälsomiljöer"
+      ],
+      "cons": [
+        "Överestimering av BMR hos kvinnor över 18 år, vuxna med lägre kroppsvikt och personer från tropiska regioner",
+        "Överrepresentation av italienska försökspersoner (47% av datan), som hade högre BMR än genomsnittet",
+        "Underrepresentation av tropiska populationer (t.ex. Indien, Filippinerna, Brasilien), vilket leder till systematisk överestimering av BMR hos många grupper"
+      ],
+      "measurements_male": "Vikt i kg",
+      "measurements_female": "Vikt i kg"
+    },
+    "revisedHarrisBenedict": {
+      "name": "Reviderad Harris-Benedict (Roza och Shizgal)-ekvationen",
+      "description": "1984 reviderades de ursprungliga Harris-Benedict-ekvationerna med ny data av Roza och Shizgal.",
+      "pros": [
+        "I jämförelser med faktisk energiförbrukning visade sig de reviderade ekvationerna vara mer noggranna än originalet"
+      ],
+      "cons": [
+        "Mindre noggrann för individer med atypisk kroppssammansättning (t.ex. mycket magra eller feta)",
+        "I flera valideringsstudier har Mifflin-St Jeor-ekvationen överträffat Roza och Shizgal när det gäller att förutsäga BMR, särskilt i moderna populationer med högre andel övervikt och fetma"
+      ],
+      "measurements_male": "Vikt i kg, längd i cm, ålder i år",
+      "measurements_female": "Vikt i kg, längd i cm, ålder i år"
+    },
+    "originalHarrisBenedict": {
+      "name": "Original Harris-Benedict-ekvationen",
+      "description": "Harris-Benedict-formeln var banbrytande 1918 och lade grunden för metabolisk forskning. 1919-publikationen är mer omfattande och citeras ofta som det grundläggande arbetet för att uppskatta basalmetabolism (BMR).",
+      "pros": ["Historiskt viktigt arbete som lade grunden för BMR-beräkningar"],
+      "cons": [
+        "Tenderar att överskatta BMR, särskilt hos kvinnor och de med lägre fettfri massa - ofta överestimerar med 4% till 21% beroende på individ",
+        "Jämfört med nyare formler som Mifflin-St Jeor (1990) presterar Harris-Benedict sämre"
+      ],
+      "measurements_male": "Vikt i kg, längd i cm, ålder i år",
+      "measurements_female": "Vikt i kg, längd i cm, ålder i år"
+    },
+    "macroFactorStandard": {
+      "name": "MacroFactor Standard-ekvationen",
+      "description": "Baserad på Oxford/Henry-ekvationen och Cunningham-ekvationen. Tar hänsyn till icke-linjär skalning av metabolism.",
+      "pros": [
+        "Tar hänsyn till att metabolismen inte skalar linjärt med kroppsvikt - om någon väger dubbelt så mycket bränner de inte nödvändigtvis dubbelt så många kalorier",
+        "Modern formel utvecklad med hänsyn till aktuell forskningsdata"
+      ],
+      "cons": ["Relativt ny formel med begränsad långsiktig validering"],
+      "measurements": "Vikt i kg, längd i cm, ålder i år\nålderfaktor = 1,96 (≤ 60 år), 4,9 (> 60 år)\nkönsfaktor = 0 för män, 1 för kvinnor"
+    },
+    "macroFactorFFM": {
+      "name": "MacroFactor FFM-ekvationen",
+      "description": "Variant av MacroFactor-ekvationen som använder fettfri massa (FFM) för mer precisa beräkningar.",
+      "pros": [
+        "Bättre än \"Standard\" om du känner till din kroppsfettsprocent",
+        "Tar hänsyn till icke-linjär skalning av metabolism"
+      ],
+      "cons": ["Kräver att du känner till din kroppsfettprocent"],
+      "measurements": "FFM = fettfri massa (kg)\nFM = fettmassa (kg)\nålderfaktor = 1,1 (≤ 60 år), 2,75 (> 60 år)"
+    },
+    "macroFactorAthlete": {
+      "name": "MacroFactor Atlet-ekvationen",
+      "description": "Specialanpassad för atleter som tränar intensivt minst sju timmar per vecka. Atleter har högre RMR eftersom de tenderar att vara magrare och ha mer muskelmassa än icke-atleter.",
+      "pros": [
+        "Speciellt utformad för atleter som spenderar minst sju timmar per vecka med intensiv träning",
+        "Tar hänsyn till att massan av högmetabola organ (särskilt hjärta, njurar och lever) hos atleter skalar starkare med övergripande kroppsstorlek än relationen som observeras hos icke-atleter"
+      ],
+      "cons": [
+        "Kräver att du känner till din kroppsfettprocent",
+        "Endast lämplig för individer med mycket hög träningsvolym (7+ timmar intensiv träning per vecka)"
+      ],
+      "measurements": "FFM = fettfri massa (kg)"
+    },
+    "fitnessStuffPodcast": {
+      "name": "Fitness Stuff Podcast-ekvationen",
+      "description": "Baserad på Cunningham-ekvationen och Mifflin-St Jeor-ekvationen. Denna ekvation använder Cunningham-ekvationen som bas för att uppskatta RMR, men kombinerar könsdelen av ekvationen som Mifflin-St Jeor har.",
+      "pros": [
+        "Kombinerar styrkor från både Cunningham (fettfri massa) och Mifflin-St Jeor (könsspecifik)"
+      ],
+      "cons": ["Kräver att du känner till din kroppsfettprocent"],
+      "measurements": "FFM = fettfri massa (kg)\nkönsfaktor = +5 för män, −161 för kvinnor\nålderfaktor = 1,0 (≤ 60 år), 0,9 (> 60 år)"
+    },
+    "genderMale": "Män",
+    "genderFemale": "Kvinnor",
+    "genderBoth": "Båda"
+  },
+  "palSystems": {
+    "faoWhoUnu": {
+      "name": "FAO/WHO/UNU-baserade PAL-värden",
+      "description": "Detta system är mest lämpat för Schofield-formeln då de utvecklades i samma projekt. Systemet bygger på internationell forskning och mätningar av verklig energiförbrukning.",
+      "pros": [
+        "Baserat på internationell forskning och mätningar av verklig energiförbrukning",
+        "Stabilt, konservativt och tillförlitligt för de flesta",
+        "Överensstämmer med dietist- och myndighetsrekommendationer",
+        "Väl etablerat inom vetenskaplig forskning"
+      ],
+      "cons": [
+        "Mindre flexibelt för träningsmängd och intensitet",
+        "Tar inte hänsyn till individuella variationer i träning",
+        "Kan underskatta behovet för mycket aktiva personer"
+      ],
+      "bestFor": [
+        "Dig som vill ha ett konservativt och forskningsbaserat estimat",
+        "Nybörjare som söker en pålitlig grundnivå",
+        "Personer som följer officiella näringsrekommendationer",
+        "De som använder Schofield-formeln för BMR"
+      ],
+      "tableHeader": "PAL-värden",
+      "rows": {
+        "sedentary": "Stillasittande",
+        "lightlyActive": "Lätt aktiv",
+        "moderatelyActive": "Måttligt aktiv",
+        "veryActive": "Mycket aktiv",
+        "extremelyActive": "Extremt aktiv"
+      }
+    },
+    "damnripped": {
+      "name": "DAMNRIPPED PAL-värden",
+      "description": "Ett detaljerat system som kombinerar vardagsaktivitet och träningsintensitet för mer exakt beräkning. Bygger mer på fitnesspraxis än forskningsstandardisering.",
+      "pros": [
+        "Mycket detaljerat – kombinerar vardagsaktivitet + träningsintensitet",
+        "Passar bra för personer som tränar regelbundet",
+        "Tar hänsyn till träningens intensitet, inte bara frekvens",
+        "Flexibel anpassning efter individuell träningsnivå"
+      ],
+      "cons": [
+        "Inte forskningsstandardiserat; bygger mer på fitnesspraxis",
+        "Risk att användaren överskattar sin aktivitetsnivå",
+        "Kräver god självinsikt om träningsintensitet",
+        "Kan ge för höga värden om man inte är realistisk"
+      ],
+      "bestFor": [
+        "Aktiva träningsutövare som vet sin intensitetsnivå",
+        "Personer som vill ha mer detaljerad kontroll över beräkningen",
+        "De som tränar regelbundet med varierande intensitet",
+        "Erfarna användare som kan bedöma sin träning realistiskt"
+      ],
+      "tableHeader": "PAL-värden (Aktivitetsnivå × Träningsintensitet)"
+    },
+    "proPhysique": {
+      "name": "Pro Physique PAL-värden",
+      "description": "Ett coachingbaserat system som tydligt skiljer på vardagsaktivitet (bas-PAL) och träningsenergi. Ger flexibel finjustering baserat på träningsvolym.",
+      "pros": [
+        "Skiljer tydligt på vardagsaktivitet (bas-PAL) och träningsenergi",
+        "Mycket användbart för folk som styrketränar och följer program",
+        "Ger flexibel finjustering baserat på träningsvolym",
+        "Tar hänsyn till både frekvens och duration av träning"
+      ],
+      "cons": [
+        "Bas-PAL är medvetet lågt och kan verka förvirrande",
+        "Kräver att användaren vet hur intensiva träningspassen är",
+        "Inte ett klassiskt PAL-system – mer en coachingmodell",
+        "Kan vara komplext för nybörjare"
+      ],
+      "bestFor": [
+        "Styrketräningsutövare som följer strukturerade program",
+        "Personer som vill separera basaktivitet från träning",
+        "De som har god koll på träningsvolym och intensitet",
+        "Erfarna tränande som söker precision i sina beräkningar"
+      ],
+      "formulaTDEE": "TDEE-formel",
+      "formulaPAL": "PAL — Vardagsaktivitet",
+      "formulaIntensity": "Intensitetsfaktor — kcal per minut"
+    },
+    "fitnessStuff": {
+      "name": "Fitness Stuff PAL-värden",
+      "description": "En unik modell som tar hänsyn till både träning (EAT) och vardagsrörelse (NEAT). Systemet väger in både veckans träningstimmar och genomsnittligt steglantal, där NEAT har större betydelse för kaloriförbrukningen än strukturerad träning.",
+      "pros": [
+        "Mycket praktisk och personlig – inkluderar både träning och vardagssteg",
+        "Bättre för aktiva personer med varierande livsstil",
+        "Ger högre precision om användaren vet sina steg och träningstimmar",
+        "Tar hänsyn till NEAT som har stor påverkan på TDEE",
+        "Strukturerad träning och vardagsrörelse vägs in separat"
+      ],
+      "cons": [
+        "Kräver mer indata från användaren",
+        "Beräkningen är mer komplex",
+        "Kan överskatta TDEE om stegdata inte är korrekt",
+        "Kräver noggrann uppföljning av steglantal"
+      ],
+      "bestFor": [
+        "Aktiva personer som spårar sina dagliga steg",
+        "De som har varierande aktivitetsmönster",
+        "Personer med tillgång till stegräknare eller smartwatch",
+        "De som vill ha den mest detaljerade kaloriuppskattningen",
+        "Användare som förstår skillnaden mellan NEAT och EAT"
+      ],
+      "formulaTDEE": "TDEE-formel",
+      "formulaX": "X — Träningstimmar per vecka",
+      "formulaY": "Y — Steg per dag"
+    },
+    "basicInternet": {
+      "name": "Grundläggande internet PAL-värden",
+      "description": "Bygger på gamla Harris-Benedict-multipliers som förenklats och spridits. Ett snabbt och enkelt system som används i många online TDEE-räknare.",
+      "pros": [
+        "Snabba och enkla att förstå",
+        "Används i många TDEE-räknare online (framförallt i de som använder Revised Harris–Benedict)",
+        "Bra för nybörjare som vill ha en snabb uppskattning",
+        "Låg inlärningskurva"
+      ],
+      "cons": [
+        "Härstammar inte från moderna vetenskapliga PAL-mätningar",
+        "Kan både över- och underskatta TDEE kraftigt beroende på person",
+        "Mindre exakt än moderna forskningsbaserade system",
+        "Tar inte hänsyn till individuella variationer"
+      ],
+      "bestFor": [
+        "Nybörjare som vill ha en snabb och enkel uppskattning",
+        "De som använder Revised Harris-Benedict för BMR",
+        "Personer som söker en grundläggande startpunkt",
+        "De som vill ha ett enkelt system utan många val"
+      ],
+      "tableHeader": "PAL-värden"
+    },
+    "advanced": {
+      "name": "Avancerat PAL-system",
+      "subtitle": "MET-baserad energimodell • Typ: Bottom-up TDEE",
+      "descriptionBlocks": [
+        "Detta system beräknar total daglig energiförbrukning (TDEE) genom att modellera kroppens huvudsakliga energikomponenter i stället för att använda en fast aktivitetsmultiplikator. Modellen bygger på den etablerade uppdelningen av energiförbrukning i basal metabolism (BMR/RMR), aktivitetsrelaterad energiförbrukning (NEAT + EAT) samt kostens termogena effekt (TEF):",
+        "Denna uppdelning används brett inom energimetabolismforskning.",
+        "NEAT (Non-Exercise Activity Thermogenesis) delas här upp i flera delkomponenter för att bättre spegla verklig vardagsaktivitet: gång och steg, stående aktivitet samt hushålls- och arbetsrelaterade rörelser. Dessa uppskattas med hjälp av MET-värden (Metabolic Equivalent of Task) från Compendium of Physical Activities.",
+        "Metabolic Equivalent of Task (MET) är ett mått på energiförbrukning där 1 MET motsvarar kroppens energiförbrukning i vila (≈ basalmetabolism). När fysisk aktivitet anges i MET-värden inkluderar dessa därför både viloförbrukning och den extra energi som aktiviteten kräver. Till exempel innebär 3,8 MET att kroppen förbrukar 3,8 gånger så mycket energi som i vila. I formeln TDEE = BMR + NEAT + EAT + TEF representerar BMR (basalmetabolism) redan kroppens energiförbrukning i vila. För att undvika att viloförbrukningen räknas två gånger måste energin från fysisk aktivitet därför beräknas som endast den extra energin över vila. Detta görs genom att använda MET − 1 istället för hela MET-värdet. Att använda MET − 1 säkerställer att modellen är fysiologiskt korrekt och att varje komponent i energibalansen representerar en unik del av kroppens energiförbrukning, utan överlappning.",
+        "Modellen inkluderar även en SPA-faktor (Spontaneous Physical Activity) som representerar biologisk variation i spontana rörelser såsom posturala justeringar, små förflyttningar och fidgeting. Forskning visar att denna typ av aktivitet kan bidra till stora individuella skillnader i energiförbrukning mellan personer med liknande kroppssammansättning.",
+        "Den totala energiförbrukningen beräknas enligt:",
+        "TEF utgör ungefär 10 % av TDEE. För att slippa beräkna TEF separat kan man därför lösa ut TDEE direkt genom att justera för dessa 10 %:",
+        "Det slutliga PAL-värdet (Physical Activity Level) beräknas därefter som:",
+        "Genom att modellera varje komponent separat kan systemet ge en mer individualiserad uppskattning av energiförbrukning än traditionella PAL-multiplikatorer."
+      ],
+      "descriptionBullets": [
+        "Basal eller vilometabolism (BMR/RMR) ≈ 60 %",
+        "Icke-träningsrelaterad aktivitet (NEAT) ≈ 15–30 %",
+        "Träningsrelaterad aktivitet (EAT) ≈ 5–10 %",
+        "Kostens termogena effekt (TEF) ≈ 8–15 %"
+      ],
+      "descriptionImageAlt": "TDEE-komponenter illustration",
+      "pros": [
+        "Mer individualiserad uppskattning än traditionella PAL-faktorer",
+        "Baserad på etablerad energifysiologi (BMR + NEAT + EAT + TEF)",
+        "Använder MET-värden från vetenskapliga aktivitetskompendier",
+        "Tar hänsyn till både träning och vardagsrörelse",
+        "Möjliggör uppskattning av energiförbrukning från flera aktivitetskällor"
+      ],
+      "cons": [
+        "Kräver mer indata än enklare PAL-system",
+        "Självrapporterad aktivitet kan innebära osäkerhet",
+        "MET-värden representerar populationsmedelvärden och kan avvika från individens faktiska energiförbrukning",
+        "NEAT uppvisar stor individuell variation som är svår att mäta exakt",
+        "Resultatet bör därför ses som en uppskattning snarare än en exakt mätning"
+      ],
+      "bestFor": [
+        "Användare som vill ha en mer detaljerad uppskattning av energiförbrukning",
+        "Personer med stegräknare eller smartwatch",
+        "De som tränar regelbundet och kan uppskatta träningsintensitet",
+        "Personer med varierande aktivitetsnivå mellan olika dagar",
+        "Användare som vill förstå hur olika aktiviteter påverkar deras energibehov"
+      ],
+      "sections": {
+        "bmr": {
+          "title": "Basal metabolism (BMR / RMR)",
+          "blocks": [
+            "Basal metabolic rate (BMR) är den energi kroppen kräver för att upprätthålla grundläggande fysiologiska funktioner såsom andning, blodcirkulation och cellulära processer. Den viktigaste determinanten för BMR är fettfri massa, som uppskattas förklara omkring 80 % av variationen i basal metabolism.",
+            "Hos personer med låg fysisk aktivitet utgör BMR vanligtvis cirka 60 % av total energiförbrukning, och ännu mer hos individer med mycket låg rörelseaktivitet såsom sederade och mekaniskt ventilerade patienter på intensivvårdsavdelningar.",
+            "BMR mäts under strikt kontrollerade laboratorieförhållanden: efter sömn, i fastande tillstånd, i vila och i termoneutral miljö. I praktiska sammanhang används oftare resting metabolic rate (RMR) som till skillnad från BMR representerar energiförbrukning i vila uppmätt när som helst under dagen och kan skilja sig från BMR med upp till 10 %.",
+            "Guldstandarden för mätning är indirekt kalorimetri, där syreupptag och koldioxidproduktion omvandlas till energiförbrukning via Weirs ekvation (1949):",
+            "Där VO₂ och VCO₂ mäts i ml/min.",
+            "När indirekt kalorimetri inte är tillgänglig används prediktiva ekvationer såsom Mifflin-St Jeor, Harris-Benedict eller Cunningham, vilka har lägre precision på individnivå."
+          ],
+          "refs": [
+            "von Loeffelholz, C., & Birkenfeld, A. L. (2022). Non-Exercise Activity Thermogenesis in Human Energy Homeostasis. In: Endotext [Internet]. South Dartmouth (MA): MDText.com.",
+            "Weir, J. B. de V. (1949). New methods for calculating metabolic rate with special reference to protein metabolism. Journal of Physiology, 109(1–2), 1–9."
+          ]
+        },
+        "neat": {
+          "title": "NEAT (Non-Exercise Activity Thermogenesis)",
+          "blocks": [
+            "NEAT omfattar all energiförbrukning från kroppsrörelser som inte är planerad träning eller vilande metabolism.",
+            "Hos normalt aktiva individer kan NEAT utgöra cirka 15–30 % av TDEE, men variationen är stor. Hos mycket inaktiva individer kan NEAT vara så lågt som 6–10 %, medan det hos mycket aktiva individer kan överstiga 50 % av den totala energiförbrukningen.",
+            "NEAT är också den mest variabla komponenten av energiförbrukning mellan individer med liknande kroppsvikt och BMI. Därför är NEAT av särskilt intresse för viktreglering och fettmassa – små skillnader i spontan aktivitet kan under år ge avsevärda energiskillnader.",
+            "I modellen delas NEAT upp i tre delkomponenter: förflyttning, kroppshållning och övriga spontana rörelser, inklusive fidgeting (små, ofta omedvetna rörelser)."
+          ],
+          "formula": "NEAT_total = (NEAT_steps + NEAT_standing + NEAT_household) × SPA_factor",
+          "refs": [
+            "Tzeravini E, et al. Diet induced thermogenesis, older and newer data with emphasis on obesity and diabetes mellitus. Metabol Open. 2024 Jun 5;22:100291.",
+            "von Loeffelholz C, Birkenfeld AL. Non-Exercise Activity Thermogenesis in Human Energy Homeostasis. In: Feingold KR, et al., editors. Endotext [Internet]. MDText.com, Inc.; 2000-."
+          ]
+        },
+        "neatSteps": {
+          "title": "NEAT_steps (gång och steg)",
+          "blocks": [
+            "Praktiska uppskattningar visar att en person på cirka 70 kg förbrukar omkring 40 kcal per 1000 steg (≈0,04 kcal/steg). Energiförbrukningen per steg är ungefär proportionell mot kroppsvikt och påverkas även av gångtempo.",
+            "En förenklad modell:",
+            "Tempo_factor representerar gånghastighet baserat på MET-värden:\nEnergiförbrukningen vid gång ökar med kroppsvikt och gångtempo, vilket kan uppskattas med MET-värden (Ainsworth et al., 2011) där – måttlig takt, 4,5–5,5 km/h, har ett MET-värde om 3,8. — aktuell MET-värde divideras med detta.",
+            "Då landar man vanligtvis mellan:",
+            "Modellen är en praktisk uppskattning som ger en grov bild av energiförbrukning vid vardagsrörelse. Det finns ingen standardiserad peer-review-publicerad formel som exakt använder denna beräkning utan den bygger på etablerade samband mellan kroppsvikt, gånghastighet och energiförbrukning som beskrivs i MET-kompendier och forskning om stegbaserad energimetabolism."
+          ],
+          "stepsBullets": ["~0,8 långsam gång", "~1,0 normal gång", "~1,2 snabb gång"],
+          "refs": [
+            "Bassett, D. R., Jr., et al. (2016). Step counting: a review… Sports Medicine, 47(7), 1303–1315.",
+            "Ainsworth, B. E., et al. (2011). 2011 Compendium of Physical Activities.",
+            "Verywell Fit – Steps to Calories Converter",
+            "Omni Calculator – Steps to Calories"
+          ]
+        },
+        "neatStanding": {
+          "title": "NEAT_standing (stående aktivitet)",
+          "blocks": [
+            "Att stå upp ökar energiförbrukningen jämfört med sittande eftersom muskeltonus och blodcirkulation är högre samt att postural stabilisering kräver mer energi.",
+            "En metaanalys (Saeidifard et al., 2018) visar att stående i genomsnitt ökar energiförbrukningen med cirka 0,15 kcal/minut (~9 kcal/timme) jämfört med sittande. Dock tar inte analysen hänsyn till kroppsvikt. En lätt person och en tung person får samma NEAT_standing i kcal, vilket inte är fysiologiskt korrekt.",
+            "För en viktjusterad uppskattning kan man använda MET-värden från Compendium of Physical Activities där stående ger ett MET-värde som är 1,3 gånger högre än värdet för stillasittande. För att inkludera kroppsvikt föreslås en MET-baserad modell:",
+            "Meta-analysvärdet (≈9 kcal/timme) är ett enkelt genomsnitt som passar för populärvetenskapliga uppskattningar medan den MET-baserade metoden tar hänsyn till individens kroppsvikt och kan integreras med andra NEAT-komponenter som steg, hushållsarbete och små rörelser. Denna metod är därför mer användbar i praktiska NEAT-kalkyler, medan metaanalysvärdet fungerar som tumregel för genomsnittspersoner."
+          ],
+          "refs": [
+            "Saeidifard F, et al. Differences of energy expenditure while sitting versus standing: A systematic review and meta-analysis. Eur J Prev Cardiol. 2018;25(5):522–538.",
+            "Ainsworth BE, et al. 2011 Compendium of Physical Activities: A second update of codes and MET values.",
+            "Levine JA. Non‑exercise activity thermogenesis (NEAT): environment and biology. Am J Physiol Endocrinol Metab. 2004;286(5):E675‑E685."
+          ]
+        },
+        "neatHousehold": {
+          "title": "NEAT_household (hushåll och arbete)",
+          "blocks": [
+            "NEAT_household omfattar vardagliga aktiviteter såsom städning, matlagning och andra manuella sysslor.",
+            "Energiförbrukningen uppskattas via MET-värden:",
+            "MET-värdena representerar populationsmedelvärden och tar inte fullt hänsyn till individuella skillnader i arbetstempo, teknik, belastning eller effektivitet.",
+            "Självrapportering av vardagsaktivitet är en betydande felkälla. Aktiviteter glöms ofta bort eller underskattas, tidsangivelser är osäkra, fel i rapporterad kroppsvikt påverkar resultatet linjärt. Vid praktisk användning kan den totala osäkerheten i NEAT_household uppskattas till ±20–30 % vid självskattning."
+          ],
+          "refs": [
+            "Ainsworth, B. E., et al. (2011; 2024). Compendium of Physical Activities.",
+            "Levine, J. A. (2004). Non-exercise activity thermogenesis (NEAT): environment and biology. Am J Physiol Endocrinol Metab."
+          ]
+        },
+        "spa": {
+          "title": "Spontan fysisk aktivitet (SPA)",
+          "blocks": [
+            "Spontaneous Physical Activity (SPA) omfattar små, lågintensiva, ofta omedvetna rörelser såsom posturala justeringar, fidgeting och små förflyttningar.",
+            "Experimentella studier med indirekt kalorimetri visar att NEAT uppvisar stor interindividuell variation. I en kontrollerad övermatningsstudie varierade förändringen i NEAT mellan −98 och +692 kcal/dag mellan individer med liknande kroppssammansättning (Levine et al., 1999). Översikter rapporterar att totala skillnader i NEAT mellan individer kan uppgå till flera hundra kilokalorier per dag och i vissa fall över 1000 kcal/dag (Levine, 2002; 2004).",
+            "Dessa skillnader inkluderar variation i spontan rörelse och postural aktivitet, även om SPA inte alltid separeras från övriga NEAT-komponenter.",
+            "Eftersom SPA är svår att mäta direkt kan den i energimodeller representeras som en justeringsfaktor:",
+            "Ett konservativt intervall:",
+            "Intervallet 0,95–1,15 är baserat på empiriskt observerad variation i NEAT och är inte en standardiserad parameter i litteraturen, utan en förenklad representation av biologisk variation."
+          ],
+          "spaBullets": [
+            "0,95–0,99 låg spontan aktivitet",
+            "1,00 genomsnittlig aktivitet",
+            "1,01–1,10 hög spontan aktivitet",
+            "1,11–1,15 mycket hög spontan aktivitet"
+          ],
+          "refs": [
+            "Levine JA, Eberhardt NL, Jensen MD. Role of nonexercise activity thermogenesis in resistance to fat gain in humans. Science. 1999;283(5399):212–214.",
+            "Levine JA. Nonexercise activity thermogenesis. Proc Nutr Soc. 2002;61(3):371–378.",
+            "Levine JA. Non-exercise activity thermogenesis (NEAT): environment and biology. Am J Physiol Endocrinol Metab. 2004;286(5):E675–E685."
+          ]
+        },
+        "eat": {
+          "title": "EAT (Exercise Activity Thermogenesis)",
+          "blocks": [
+            "EAT representerar energiförbrukning från planerad fysisk träning.",
+            "Den kan uppskattas via MET-värden:",
+            "Veckovis träningsvolym kan divideras med 7 för att erhålla ett dagligt genomsnitt.",
+            "EAT utgör vanligtvis en liten andel av total energiförbrukning hos stillasittande individer (≈ <5 %), men kan öka betydligt vid hög träningsvolym och uppgå till cirka 15–30 % eller mer hos mycket aktiva individer och elitidrottare (Westerterp, 2013; Levine, 2005).",
+            "MET-värden är populationsbaserade och kan avvika från individens faktiska energiförbrukning. Efterförbränning (EPOC) förekommer främst efter högintensiv träning och bidrar i regel med en mindre andel av den totala träningsenergin vid typiska träningspass (LaForgia et al., 2006)."
+          ],
+          "refs": [
+            "Ainsworth BE et al. (2011). 2011 Compendium of Physical Activities. Med Sci Sports Exerc. 43(8):1575–1581.",
+            "LaForgia J, Withers RT, Gore CJ. (2006). Effects of exercise intensity and duration on the excess post-exercise oxygen consumption. J Sports Sci. 24(12):1247–1264.",
+            "Westerterp KR. (2013). Physical activity and physical activity induced energy expenditure in humans. Front Physiol. 4:90.",
+            "Levine JA. (2005). Measurement of energy expenditure. Public Health Nutr. 8(7A):1123–1132."
+          ]
+        },
+        "tef": {
+          "title": "TEF (Thermic Effect of Food)",
+          "blocks": [
+            "TEF är den energi som krävs för digestion, absorption och metabolism av näringsämnen.",
+            "Under energibalans motsvarar TEF i genomsnitt cirka 10 % av energiintaget, med ett typiskt intervall på 8–15 % beroende på måltidens sammansättning.",
+            "Det är mer korrekt att uttrycka TEF som en andel av energiintag snarare än av TEE, eftersom TEF beror direkt på mängden och typen av konsumerad energi.",
+            "TEF varierar mellan makronutrienter:",
+            "Den högre termogena effekten av protein beror på den energikrävande metabolismen av aminosyror, inklusive proteinsyntes och ureabildning. Följaktligen ger måltider med högre proteininnehåll generellt en något högre postprandial energiförbrukning jämfört med fett- eller kolhydratrika måltider, givet samma energimängd. Interindividuell variation förekommer där bland annat kroppssammansättning, insulinresistens och metabol hälsa påverkar.",
+            "Dessa intervall är baserade på indirekt kalorimetri och sammanställningar av kontrollerade måltidsstudier (Westerterp, 2004; Halton & Hu, 2004). I denna modell antas en genomsnittlig TEF på 10 %, vilket integreras i TDEE-ekvationen."
+          ],
+          "tefBullets": [
+            "Protein: cirka 20–30 %",
+            "Kolhydrater: cirka 5–10 %",
+            "Fett: cirka 0–3 %"
+          ],
+          "refs": [
+            "Kinabo JL, Durnin JV. Thermic effect of food in man: effect of meal composition, and energy content. Br J Nutr. 1990;64:37–44.",
+            "Westerterp KR. (2004). Diet induced thermogenesis. Nutr Metab (Lond). 1:5.",
+            "von Loeffelholz C, Birkenfeld AL. (2022). Non-Exercise Activity Thermogenesis in Human Energy Homeostasis. In: Endotext [Internet]. MDText.com."
+          ]
+        }
+      }
+    },
+    "customPAL": {
+      "name": "Anpassat PAL-värde",
+      "description": "Låter dig ange ditt eget PAL-värde baserat på egna mätningar, erfarenhet eller rekommendationer från nutritionist/tränare. Ger maximal flexibilitet men kräver kunskap om vad som är ett realistiskt PAL-värde.",
+      "pros": [
+        "Maximal flexibilitet och personlig anpassning",
+        "Perfekt om du har trackad data över tid",
+        "Användbart om du följer rekommendationer från nutritionist",
+        "Kan baseras på verklig kaloriförbrukning och viktförändring"
+      ],
+      "cons": [
+        "Kräver kunskap om vad som är realistiska PAL-värden",
+        "Risk för felaktiga estimat utan erfarenhet",
+        "Ingen vägledning från systemet",
+        "Lätt att över- eller underskatta"
+      ],
+      "bestFor": [
+        "Erfarna användare som vet sitt faktiska PAL-värde",
+        "Personer som följer en nutritionists rekommendationer",
+        "De som har trackad kaloriintag och viktförändringar över tid",
+        "Avancerade användare som förstår PAL-koncept grundligt"
+      ]
+    }
+  },
+  "metabolicCalibration": {
+    "title": "Metabolisk Kalibrering",
+    "infoCardTitle": "Om metabolisk kalibrering",
+    "infoModalTitle": "Guide: Metabolisk kalibrering",
+    "timePeriodLabel": "Tidsperiod",
+    "periodOptions": {
+      "14": "14 dagar (2 veckor)",
+      "21": "21 dagar (3 veckor)",
+      "28": "28 dagar (4 veckor)"
+    },
+    "periodOptionInsufficient_14": "14 dagar (2 veckor) — {{count}}/4 vägningar",
+    "periodOptionInsufficient_21": "21 dagar (3 veckor) — {{count}}/5 vägningar",
+    "periodOptionInsufficient_28": "28 dagar (4 veckor) — {{count}}/6 vägningar",
+    "today": "Idag",
+    "calorieSource": {
+      "foodLog": {
+        "label": "Kaloridata: matlogg",
+        "desc": "Du har loggat mat {{logged}} av {{total}} dagar ({{pct}}%). Kalibreringen använder ditt faktiska loggade intag."
+      },
+      "blended": {
+        "label": "Kaloridata: matlogg + svag priorkorrektion",
+        "loggedAvg": "Loggat snitt: {{kcal}} kcal/dag ({{days}} dagar)",
+        "estimatedAvg": "Uppskattat snitt: {{kcal}} kcal/dag (inkl. svag korrektion för {{unlogged}} ologgade dagar)",
+        "tip": "Ologgade dagar sänker tillförlitligheten — se Datakvalitet nedan."
+      },
+      "targetCalories": {
+        "label": "Kaloridata: målkalorier",
+        "desc": "Du har inte loggat mat tillräckligt ({{logged}}/{{total}} dagar). Systemet antar att du åt enligt ditt kaloriintervall — om det inte stämmer blir kalibreringen missvisande."
+      }
+    },
+    "errorFallback": "Prova att navigera bakåt för att hitta en period med data.",
+    "confidence": {
+      "high": "Hög tillförlitlighet",
+      "standard": "Medel tillförlitlighet",
+      "low": "Låg tillförlitlighet",
+      "highDesc": "{{start}}+{{end}} mätningar i start/slutperiod.",
+      "degradedPrefix": "Begränsas av: ",
+      "reasons": {
+        "low_cluster_size": "för få mätningar i start- eller slutperiod ({{start}}+{{end}})",
+        "sparse_coverage": "mätningarna är inte spridda över hela perioden",
+        "nonlinear_trend": "viktsignalen är svag i förhållande till daglig variation — längre period eller mer viktförändring behövs"
+      }
+    },
+    "dataQuality": {
+      "label": "Datakvalitet",
+      "tooltipTitle": "Hur poängen beräknas",
+      "foodLog": "Matlogg (45%)",
+      "measFreq": "Mätfrekvens (35%)",
+      "clusterSize": "Klusterstorlek (20%)",
+      "legend": "≥80 Utmärkt · ≥60 Bra · ≥40 Tillräcklig · <40 Begränsad"
+    },
+    "warnings": {
+      "singular": "1 varning",
+      "plural": "{{count}} varningar",
+      "showWhy": "Varför?",
+      "hide": "Dölj",
+      "types": {
+        "high_cv": {
+          "desc": "Hög dag-till-dag-variation i vikt beror vanligtvis på vätskefluktuationer (salt, kolhydrater, träning) snarare än faktisk fettvävnad. Det ökar residualvariansen i trendberäkningen, vilket direkt breddar konfidensintervallet för TDEE-estimatet. Varningen aktiveras när:",
+          "bullets": ["Variationskoefficienten (CV) för vikten överstiger 2 %"],
+          "tip": "Tips: Väg dig varje morgon före frukost under samma förhållanden — det är det enskilt effektivaste sättet att minska brus och få ett smalare konfidensintervall."
+        },
+        "target_calories_fallback": {
+          "desc": "Om du i verkligheten åt mer eller mindre än målet kan kalibreringen bli felaktig — den kan inte se avvikelser som inte loggats. Varningen aktiveras när:",
+          "bullets": ["Inga måltider är loggade under perioden"],
+          "tip": "Tips: Logga dina måltider under nästa period för ett mer tillförlitligt resultat."
+        },
+        "selective_logging": {
+          "desc": "Om du bara loggar \"bra\" dagar överskattas kaloriintaget inte och kalibreringen kan föreslå ett för lågt TDEE. Just nu är:",
+          "bullets": [
+            "Loggat snitt < 85 % av målkalorier",
+            "Matsloggskomplettering < 80 %",
+            "Vikten minskat under perioden"
+          ],
+          "tip": "Tips: Försök logga även de dagar du äter mer — precision kräver fullständig data."
+        },
+        "glycogen_event": {
+          "desc": "Glykogen och vätska kan orsaka viktförändringar på 1–3 kg på enstaka dagar utan att det återspeglar faktisk fettförändring. Trendberäkningen kompenserar men precision minskar. Varningen aktiveras när:",
+          "bullets": ["En enskild daglig viktförändring överstiger 1,5 % av kroppsvikten"],
+          "tip": "Tips: Kalibrering med längre period (21–28 dagar) jämnar ut tillfälliga svängningar bättre."
+        },
+        "nonlinear_trend": {
+          "desc": "Vikten har inte rört sig i en jämn riktning under perioden — troligen en refeed-period, diet break eller annan övergång. Varningen aktiveras när något av följande stämmer:",
+          "bullets": [
+            "Regressionstrenden och EMA visar tydligt olika total viktförändring",
+            "Vikten gick i motsatta riktningar under periodens två halvor med minst 1 kg total svängning"
+          ],
+          "tip": "Tips: Vänta tills vikten rört sig jämnt i en riktning i minst 2–3 veckor innan du kalibrerar."
+        },
+        "large_deficit": {
+          "desc": "Vid stort underskott anpassar kroppen sin ämnesomsättning nedåt, vilket gör att beräknad TDEE kan underskatta ditt verkliga underhållsbehov. Varningen aktiveras när:",
+          "bullets": ["Beräknat kaloriunderskott överstiger 25 % av TDEE"],
+          "tip": "Tips: Resultatet är troligen en underskattning av ditt verkliga TDEE — ta det som ett golv snarare än ett exakt värde."
+        },
+        "low_confidence": {
+          "desc": "Resultatet är användbart som riktlinje men bör bekräftas med en ny kalibrering efter fler veckors data. Varningen aktiveras när något av följande stämmer:",
+          "bullets": [
+            "Färre än 3 vägningar per vecka i snitt",
+            "Mer än 70 % av mätningarna är från periodens första hälft"
+          ],
+          "tip": "Tips: Väg dig minst varannan dag och sprid mätningarna jämnt över perioden."
+        },
+        "large_adjustment": {
+          "desc": "Utan begränsning hade justeringen blivit {{diff}} kcal ({{raw}} kcal). Orsak: {{reasons}}",
+          "reasons": {
+            "dqiWasBindingCap": "datakvalitetspoängen satte ett absolut tak",
+            "lowSignal": "viktförändringen är för liten",
+            "lowConfidence": "tillförlitligheten är låg",
+            "largeDeficit": "stort kaloriunderskott"
+          },
+          "tip": "Tips: Förbättra datakvaliteten (fler vägningar, fullständig loggning) för att tillåta större justeringar framöver."
+        },
+        "low_signal": {
+          "desc": "Förändringen ({{change}} kg) är under gränsen ~{{threshold}} kg (0,25 % av din vikt). Antingen stämmer ditt TDEE redan, eller döljer vätska/glykogen den verkliga trenden. När viktförändringen är liten i förhållande till den dagliga variationen dominerar bruset över signalen — det breddar konfidensintervallet och gör TDEE-estimatet mindre tillförlitligt oavsett hur länge perioden är.",
+          "tip": "Tips: Om du aktivt försöker gå ner eller upp i vikt — vänta ytterligare 1–2 veckor tills trenden är tydligare."
+        },
+        "outlier_removed": {
+          "tip": "Tips: Extremvärden kan bero på felmätning eller ovanliga omständigheter — de påverkar inte beräkningen."
+        }
+      }
+    },
+    "clusterStart": "snitt av {{count}} mätningar",
+    "clusterEnd": "snitt av {{count}} mätningar",
+    "clusterAvg": "snitt av {{count}} mätningar",
+    "weightChange": "över {{days}} dagar",
+    "overDays": "över {{days}} dagar",
+    "calorieSourceLabel": {
+      "food_log": "faktiskt intag",
+      "blended": "uppskattat intag",
+      "target_calories": "målkalorier"
+    },
+    "stableMaintenance": "Din vikt är stabil — ditt TDEE verkar stämma",
+    "tdeeComparison": {
+      "current": "Nuvarande",
+      "calibrated": "Kalibrerat",
+      "difference": "Skillnad",
+      "confidenceInterval": "90% konfidensintervall"
+    },
+    "applyButton": "Applicera kalibrerat TDEE",
+    "saving": "Sparar...",
+    "successTitle": "TDEE kalibrerat till {{kcal}} kcal",
+    "successDesc": "Ditt kaloriintervall har uppdaterats",
+    "nextCalibration": "Nästa rekommenderade kalibrering: {{date}}",
+    "closeButton": "Stäng",
+    "revertButton": "Ångra senaste kalibrering (→ {{kcal}} kcal)",
+    "revertConfirm": "Återställer TDEE till {{kcal}} kcal. Är du säker?",
+    "revertYes": "Ja, ångra",
+    "revertCancel": "Avbryt",
+    "revertingLabel": "Ångrar...",
+    "guardOverlap": {
+      "title": "Det valda periodfönstret överlappar din senaste kalibrering — samma dagar skulle räknas igen",
+      "nextDate": "Nästa rekommenderade kalibrering: {{date}}"
+    },
+    "guardNewWeights": {
+      "title": "{{count}} av {{required}} nya viktmätningar registrerade sedan senaste kalibreringens slutdatum",
+      "nextDate": "Nästa rekommenderade kalibrering: {{date}}"
+    },
+    "noDataState": {
+      "line1": "Behöver minst {{min}} viktmätningar under {{days}} dagar",
+      "line2": "Logga fler viktmätningar för att aktivera kalibrering"
+    },
+    "historyTitle": "Kalibrerings­historik ({{count}})",
+    "historyLatest": "(senaste)",
+    "historyDelete": "Ta bort",
+    "historyCancel": "Avbryt",
+    "toastSuccess": "TDEE kalibrerat! Nytt värde: {{kcal}} kcal",
+    "toastError": "Kunde inte spara kalibrering",
+    "infoModal": {
+      "section1Title": "Vad är metabolisk kalibrering?",
+      "section1p1": "Metabolisk kalibrering uppskattar ditt faktiska <strong>underhålls-TDEE</strong> — hur många kalorier din kropp förbrukar för att hålla vikten stabil — genom att analysera hur din kroppsvikt förändras i relation till ditt faktiska kaloriintag över tid.",
+      "section1p2": "<strong>Viktigt att förstå:</strong> Kalibreringen estimerar din faktiska energiförbrukning, inte ditt kalorimål. Ditt kaloriintervall räknas sedan om automatiskt utifrån ditt valda energimål (bibehåll vikt, gå ner, gå upp). Det är alltså två separata steg.",
+      "section1p3": "Istället för att enbart använda uppskattningar från BMR-formler och aktivitetsnivåer använder systemet verklig data från din loggning. Det gör att kalibreringen kan fånga upp individuella skillnader som standardformler missar — som NEAT-variation, termogenes och metabol adaptation.",
+      "section2Title": "Hur beräkningen fungerar",
+      "section2intro": "Kalibreringen bygger på energibalansprincipen:",
+      "section2principle": "Energi in − energi ut = förändring i kroppens energilager.",
+      "section2detail": "Om vikten förändras över tid kan vi uppskatta hur stort ditt faktiska energibehov är. I förenklad form:",
+      "section2formula": "TDEE ≈ Genomsnittliga kalorier − (viktförändring × kcal per kg / antal dagar)",
+      "section2kcal": "Ett kilogram kroppsvikt approximeras till ungefär <strong>6 500–7 700 kcal</strong>. Modellen använder ett dynamiskt värde inom detta spann baserat på förändringstakt — snabba förändringar innehåller typiskt mer glykogen och vätska, långsamma mer fett — men det är en modellbaserad approximation, inte en exakt vävnadsanalys.",
+      "section2clusterTitle": "Hur start- och slutvikt bestäms",
+      "section2cluster": "Perioden delas in i en första och en sista tredjedel, och <strong>medianen av alla mätningar</strong> i varje del används som robust ankare för start- respektive slutvikt. Det är dessa klustermedianerna som bestämmer viktnivåerna i beräkningen. Regressionen används sedan för trendanalys, signal/brus-bedömning och diagnostik — men ändrar inte start/slutnivåerna. Det innebär att enstaka extrema vägningar inte kan snedvrida resultatet på samma sätt som om bara en mätning per ände hade använts.",
+      "section2calorieTitle": "Hur kaloriintaget uppskattas",
+      "section2calorie": "Kalibreringen använder ditt loggade kaloriintag som primär datakälla. Om inte alla dagar är loggade används en svag statistisk korrektion mot ditt kalorimål — ju fler dagar som saknar logg, desto något större vikt får kalorimålet i beräkningen. I praktiken dominerar loggad data nästan alltid.",
+      "section2selective": "Systemet detekterar också om loggningen verkar selektiv — det vill säga om du tenderar att bara logga dagar med lägre intag. Om det mönstret identifieras minskas tilliten till loggdatan och korrektionen mot kalorimålet anpassas. Det skyddar mot att kalibreringen föreslår ett för lågt TDEE baserat på biased data.",
+      "section3Title": "Hur vikttrenden beräknas",
+      "section3p1": "Istället för att jämföra två enskilda vägningar beräknar systemet en trendlinje (linjär regression) genom alla viktmätningar i perioden. Det ger ett stabilare estimat av den verkliga viktförändringen och mäter dessutom hur stark och konsekvent trenden är.",
+      "section3p2": "Som robusthetskontroll beräknas även en alternativ trend med <strong>Theil–Sen-estimatorn</strong>, som tar medianen av alla möjliga parvisa slopes mellan mätpunkterna. Den är mer okänslig för enstaka extremvärden än linjär regression. Om de två metoderna visar tydligt olika resultat kan systemet varna för att viktutvecklingen var oregelbunden under perioden.",
+      "section3p3": "Som ytterligare diagnostik beräknas en exponentiellt utjämnad trend (EMA). Den används inte som primär beräkningsmetod utan enbart för att detektera kraftigt icke-linjär viktutveckling — t.ex. en refeed-period mitt i perioden.",
+      "section3p4": "Viktmätningar som avviker kraftigt från resten av datan filtreras automatiskt bort innan trendberäkningen, för att minska påverkan från enstaka extrema mätningar.",
+      "section4Title": "Hur datakvalitet påverkar resultatet",
+      "section4p1": "Alla kalibreringar får ett <strong>Data Quality Index (DQI)</strong> som bedömer hur pålitlig datan är. Det beräknas från tre faktorer:",
+      "section4bullets": [
+        "<strong>Matloggskvalitet (45%)</strong> — andelen loggade dagar och hur konsekvent kalorier registrerats",
+        "<strong>Vägningsfrekvens (35%)</strong> — hur regelbundet du vägt dig; 50% av dagarna ger fullt utslag",
+        "<strong>Klusterstorlek (20%)</strong> — hur många mätningar som finns i periodens start- och slutkluster"
+      ],
+      "section4p2": "DQI styr direkt hur stor justering som tillåts: från ±75 kcal vid låg kvalitet till ±200 kcal vid hög. Det innebär att bättre data inte bara ger ett mer tillförlitligt resultat — det ger också möjlighet till snabbare konvergens mot ditt faktiska TDEE.",
+      "section4tip": "Du kan välja mellan 14, 21 och 28 dagar. Längre perioder ger mer data och tillåter något större justeringar. Kortare perioder än 14 dagar används inte — signal/brus-förhållandet blir då för svagt för att ge tillförlitliga estimat, eftersom dagliga viktsvängningar kan vara lika stora som den faktiska vikttrendförändringen.",
+      "section4tipTitle": "Val av tidsperiod",
+      "section5Title": "Begränsning av extrema justeringar",
+      "section5clampTitle": "Justeringsgränser (clamp)",
+      "section5p1": "Kalibreringen begränsar hur mycket TDEE kan ändras i en enskild uppdatering. Maximal justering beror på datakvaliteten och ligger normalt mellan:",
+      "section5range": "±75 kcal till ±200 kcal",
+      "section5p2": "TDEE sätts aldrig under 1 200 eller över 5 000 kcal oavsett vad beräkningen visar — dessa är absoluta fysiologiska gränser. Clampen förhindrar att tillfälliga viktförändringar ger orimliga TDEE-hopp.",
+      "section5smoothTitle": "Gradvis konvergens",
+      "section5p3": "Om kalibreringen föreslår en ny TDEE-nivå och clampen <em>inte</em> triggas, utjämnas resultatet mjukt mot de senaste 1–3 tidigare kalibreringarna. Om alla tidigare kalibreringar pekar i samma riktning följer systemet den trenden med minimal dämpning istället för att bromsa. Triggas clampen används det begränsade värdet direkt utan ytterligare utjämning.",
+      "section5historyTitle": "Historikvägning",
+      "section5p4": "Tidigare kalibreringar används som referenspunkt men inte hur gamla som helst. Kalibreringar äldre än 90 dagar exkluderas om datakvaliteten var låg, och äldre än 180 dagar om kvaliteten var hög. Det innebär att om du inte kalibrerat på länge startar systemet i praktiken om med minimal historikpåverkan.",
+      "section6Title": "Osäkerhet och konfidensintervall",
+      "section6p1": "Eftersom verklig viktdata innehåller variation beräknar modellen ett <strong>90%-konfidensintervall</strong> för TDEE-uppskattningen. Det innebär att om du upprepade samma kalibrering med liknande data, skulle det sanna underhålls-TDEE hamna inom intervallet i 90% av fallen.",
+      "section6p2": "Intervallets bredd beräknas i tre lager:",
+      "section6bullets": [
+        "<strong>Residualvarians (primär källa)</strong> — hur mycket vikten svänger runt trendlinjen från regressionen; detta är grundosäkerheten som allt annat byggs på",
+        "<strong>Kalorilogg-osäkerhet (breddningsfaktor)</strong> — uppskattad till ±20% av snittkalorier, viktat mot antal loggade dagar; läggs till ovanpå residualvariansen",
+        "<strong>Autokorrelation (breddningsfaktor)</strong> — dagliga vikter är inte oberoende av varandra (en hög mätning idag påverkar troligtvis morgondagens), vilket vidgar intervallet ytterligare med en korrigeringsfaktor"
+      ],
+      "section6p3": "Om kroppsvikten är mycket stabil under perioden kan konfidensintervallet bli relativt brett. Det beror på att dagliga viktvariationer från vätska, salt och glykogen då kan vara lika stora som den faktiska trendförändringen — systemet har helt enkelt svårt att skilja signal från brus. Det är ett ärligt svar på datan, inte ett tecken på att kalibreringen är fel.",
+      "section7Title": "När bör du använda metabolisk kalibrering?",
+      "section7p1": "Kalibreringen fungerar bäst när du har samlat in tillräckligt med konsekvent data.",
+      "section7goodTitle": "Bra förutsättningar:",
+      "section7good": [
+        "Du har loggat ditt kaloriintag i minst <strong>2–3 veckor</strong>",
+        "Du väger dig regelbundet (helst <strong>morgon före frukost</strong>)",
+        "Du har loggat <strong>majoriteten av dagarna</strong>",
+        "Din vikt <strong>utvecklas inte som förväntat</strong>"
+      ],
+      "section8Title": "När bör kalibrering undvikas?",
+      "section8p1": "Kalibrering kan bli missvisande om datan inte representerar en stabil period.",
+      "section8badTitle": "Undvik att kalibrera när:",
+      "section8bad": [
+        "Du precis startat en ny diet <strong>(&lt; 2 veckor)</strong>",
+        "Du nyligen <strong>ändrat träningsvolym kraftigt</strong>",
+        "Du har loggat mat <strong>mycket oregelbundet</strong>",
+        "Viktmätningar saknas under <strong>stora delar av perioden</strong>"
+      ],
+      "section9Title": "Viktigt att förstå",
+      "section9p1": "Metabolisk kalibrering är en långsiktig finjustering, inte en snabb korrigering.",
+      "section9p2": "Kroppsvikt påverkas dagligen av många faktorer som inte är kopplade till fettförändring. Därför är modellen medvetet konservativ och trendbaserad. Den kombinerar tre separata robusthetsmekanismer:",
+      "section9bullets": [
+        "<strong>Klustrad start/slut-vikt</strong> — medianankare i periodens ytterkanter skyddar mot enstaka extrema vägningar",
+        "<strong>Trendestimering över alla datapunkter</strong> — regression och Theil–Sen-korscheck mäter trenden utan att förlita sig på två enskilda mätningar",
+        "<strong>Datakvalitetsvägd justeringsbegränsning</strong> — DQI styr hur stor justering som tillåts, vilket förhindrar överreaktion vid osäker data"
+      ],
+      "section9p3": "Det är just denna kombination som gör modellen mer stabil än system som enbart jämför start- och slutvikt eller använder enkla rullande medelvärden.",
+      "section9p4": "Ju mer konsekvent du loggar mat och vikt över tid, desto mer exakt kan systemet uppskatta ditt verkliga energibehov."
+    }
   }
 }
