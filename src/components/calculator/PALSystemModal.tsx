@@ -338,55 +338,75 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
                 <h3 className="text-lg font-semibold text-neutral-800 mb-3">
                   {t('tdeeCalc.modal.palValues')}
                 </h3>
-                <div className="space-y-4">
-                  {description.formulaVariants.map((v: PALFormulaVariant, i: number) => (
-                    <div key={i}>
-                      {v.name && (
-                        <p className="text-sm font-semibold text-neutral-600 mb-1">{v.name}</p>
-                      )}
-                      {v.rows ? (
-                        <div className="overflow-x-auto rounded-lg border border-neutral-200">
-                          <table className="w-full text-sm">
-                            <tbody>
-                              {v.rows.map((row, ri) => (
-                                <tr
-                                  key={ri}
-                                  className={
-                                    ri === 0 && row[0] === ''
-                                      ? 'bg-neutral-100 text-neutral-500 font-medium'
-                                      : ri % 2 === 0
-                                        ? 'bg-white'
-                                        : 'bg-neutral-50'
-                                  }
-                                >
-                                  {row.map((cell, ci) => (
-                                    <td
-                                      key={ci}
-                                      className={`px-3 py-1.5 ${ci === 0 ? 'text-neutral-700' : 'text-neutral-800 font-mono text-right'}`}
-                                    >
-                                      {cell}
-                                    </td>
-                                  ))}
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
-                      ) : v.equation ? (
-                        <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-3">
-                          <p className="text-sm font-mono text-neutral-800 whitespace-pre-line">
-                            {v.equation}
-                          </p>
-                        </div>
-                      ) : null}
-                      {v.measurements && (
-                        <p className="text-xs text-neutral-500 mt-1 whitespace-pre-line">
-                          {v.measurements}
-                        </p>
-                      )}
+                {(() => {
+                  const tVariants = tDyn(`palSystems.${sk}.formulaVariants`, {
+                    returnObjects: true,
+                    defaultValue: [],
+                  }) as Array<{
+                    name?: string
+                    rows?: string[][]
+                    equation?: string
+                    measurements?: string
+                  }>
+                  return (
+                    <div className="space-y-4">
+                      {description.formulaVariants.map((v: PALFormulaVariant, i: number) => {
+                        const tv = tVariants[i] ?? {}
+                        const tName = tv.name ?? v.name
+                        const tRows = tv.rows ?? v.rows
+                        const tEquation = tv.equation ?? v.equation
+                        const tMeasurements = tv.measurements ?? v.measurements
+                        return (
+                          <div key={i}>
+                            {tName && (
+                              <p className="text-sm font-semibold text-neutral-600 mb-1">{tName}</p>
+                            )}
+                            {tRows ? (
+                              <div className="overflow-x-auto rounded-lg border border-neutral-200">
+                                <table className="w-full text-sm">
+                                  <tbody>
+                                    {tRows.map((row, ri) => (
+                                      <tr
+                                        key={ri}
+                                        className={
+                                          ri === 0 && row[0] === ''
+                                            ? 'bg-neutral-100 text-neutral-500 font-medium'
+                                            : ri % 2 === 0
+                                              ? 'bg-white'
+                                              : 'bg-neutral-50'
+                                        }
+                                      >
+                                        {row.map((cell, ci) => (
+                                          <td
+                                            key={ci}
+                                            className={`px-3 py-1.5 ${ci === 0 ? 'text-neutral-700' : 'text-neutral-800 font-mono text-right'}`}
+                                          >
+                                            {cell}
+                                          </td>
+                                        ))}
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </div>
+                            ) : tEquation ? (
+                              <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-3">
+                                <p className="text-sm font-mono text-neutral-800 whitespace-pre-line">
+                                  {tEquation}
+                                </p>
+                              </div>
+                            ) : null}
+                            {tMeasurements && (
+                              <p className="text-xs text-neutral-500 mt-1 whitespace-pre-line">
+                                {tMeasurements}
+                              </p>
+                            )}
+                          </div>
+                        )
+                      })}
                     </div>
-                  ))}
-                </div>
+                  )
+                })()}
               </div>
             )}
 

@@ -831,14 +831,19 @@
         "Personer som följer officiella näringsrekommendationer",
         "De som använder Schofield-formeln för BMR"
       ],
-      "tableHeader": "PAL-värden",
-      "rows": {
-        "sedentary": "Stillasittande",
-        "lightlyActive": "Lätt aktiv",
-        "moderatelyActive": "Måttligt aktiv",
-        "veryActive": "Mycket aktiv",
-        "extremelyActive": "Extremt aktiv"
-      }
+      "formulaVariants": [
+        {
+          "name": "PAL-värden",
+          "rows": [
+            ["", "Män", "Kvinnor"],
+            ["Stillasittande", "1,3", "1,3"],
+            ["Lätt aktiv", "1,6", "1,5"],
+            ["Måttligt aktiv", "1,7", "1,6"],
+            ["Mycket aktiv", "2,1", "1,9"],
+            ["Extremt aktiv", "2,4", "2,2"]
+          ]
+        }
+      ]
     },
     "damnripped": {
       "name": "DAMNRIPPED PAL-värden",
@@ -861,7 +866,19 @@
         "De som tränar regelbundet med varierande intensitet",
         "Erfarna användare som kan bedöma sin träning realistiskt"
       ],
-      "tableHeader": "PAL-värden (Aktivitetsnivå × Träningsintensitet)"
+      "formulaVariants": [
+        {
+          "name": "PAL-värden (Aktivitetsnivå × Träningsintensitet)",
+          "rows": [
+            ["", "Ingen", "Lätt", "Måttlig", "Kräv.", "Intens"],
+            ["Stillasittande", "1,1", "1,2", "1,35", "1,45", "1,55"],
+            ["Lätt aktiv", "1,2", "1,4", "1,45", "1,55", "1,6"],
+            ["Måttligt aktiv", "1,4", "1,45", "1,6", "1,65", "1,7"],
+            ["Mycket aktiv", "1,6", "1,7", "1,75", "1,8", "1,9"],
+            ["Extremt aktiv", "1,8", "1,9", "2,0", "2,1", "2,2"]
+          ]
+        }
+      ]
     },
     "proPhysique": {
       "name": "Pro Physique PAL-värden",
@@ -884,9 +901,30 @@
         "De som har god koll på träningsvolym och intensitet",
         "Erfarna tränande som söker precision i sina beräkningar"
       ],
-      "formulaTDEE": "TDEE-formel",
-      "formulaPAL": "PAL — Vardagsaktivitet",
-      "formulaIntensity": "Intensitetsfaktor — kcal per minut"
+      "formulaVariants": [
+        {
+          "name": "TDEE-formel",
+          "equation": "TDEE = (BMR × PAL) + (dagar/vecka × min/dag ÷ 7 × Intensitetsfaktor)"
+        },
+        {
+          "name": "PAL — Vardagsaktivitet",
+          "rows": [
+            ["Stillasittande", "1,15"],
+            ["Lätt aktiv", "1,25"],
+            ["Måttligt aktiv", "1,35"],
+            ["Mycket aktiv", "1,40"]
+          ]
+        },
+        {
+          "name": "Intensitetsfaktor — kcal per minut",
+          "rows": [
+            ["Lätt", "5,0"],
+            ["Måttlig", "7,5"],
+            ["Krävande", "10,0"],
+            ["Intensiv", "12,0"]
+          ]
+        }
+      ]
     },
     "fitnessStuff": {
       "name": "Fitness Stuff PAL-värden",
@@ -911,9 +949,33 @@
         "De som vill ha den mest detaljerade kaloriuppskattningen",
         "Användare som förstår skillnaden mellan NEAT och EAT"
       ],
-      "formulaTDEE": "TDEE-formel",
-      "formulaX": "X — Träningstimmar per vecka",
-      "formulaY": "Y — Steg per dag"
+      "formulaVariants": [
+        {
+          "name": "TDEE-formel",
+          "equation": "TDEE = (BMR × X) + Y"
+        },
+        {
+          "name": "X — Träningstimmar per vecka",
+          "rows": [
+            ["0–1 tim/vecka", "1,0"],
+            ["1–3 tim/vecka", "1,125"],
+            ["3–5 tim/vecka", "1,25"],
+            ["6–8 tim/vecka", "1,375"],
+            ["> 8 tim/vecka", "1,5"]
+          ]
+        },
+        {
+          "name": "Y — Steg per dag",
+          "rows": [
+            ["3 000–5 000", "150"],
+            ["5 000–7 000", "240"],
+            ["7 000–9 000", "330"],
+            ["9 000–11 000", "420"],
+            ["11 000–13 000", "510"],
+            ["> 13 000", "600"]
+          ]
+        }
+      ]
     },
     "basicInternet": {
       "name": "Grundläggande internet PAL-värden",
@@ -936,7 +998,18 @@
         "Personer som söker en grundläggande startpunkt",
         "De som vill ha ett enkelt system utan många val"
       ],
-      "tableHeader": "PAL-värden"
+      "formulaVariants": [
+        {
+          "name": "PAL-värden",
+          "rows": [
+            ["Stillasittande", "1,2"],
+            ["Lätt aktiv", "1,375"],
+            ["Måttligt aktiv", "1,55"],
+            ["Mycket aktiv", "1,725"],
+            ["Extremt aktiv", "1,9"]
+          ]
+        }
+      ]
     },
     "advanced": {
       "name": "Avancerat PAL-system",

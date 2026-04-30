@@ -825,14 +825,19 @@
         "People following official dietary recommendations",
         "Those using the Schofield formula for BMR"
       ],
-      "tableHeader": "PAL values",
-      "rows": {
-        "sedentary": "Sedentary",
-        "lightlyActive": "Lightly active",
-        "moderatelyActive": "Moderately active",
-        "veryActive": "Very active",
-        "extremelyActive": "Extremely active"
-      }
+      "formulaVariants": [
+        {
+          "name": "PAL values",
+          "rows": [
+            ["", "Men", "Women"],
+            ["Sedentary", "1.3", "1.3"],
+            ["Lightly active", "1.6", "1.5"],
+            ["Moderately active", "1.7", "1.6"],
+            ["Very active", "2.1", "1.9"],
+            ["Extremely active", "2.4", "2.2"]
+          ]
+        }
+      ]
     },
     "damnripped": {
       "name": "DAMNRIPPED PAL values",
@@ -855,7 +860,19 @@
         "Those who train regularly with varying intensity",
         "Experienced users who can assess their training realistically"
       ],
-      "tableHeader": "PAL values (Activity level × Training intensity)"
+      "formulaVariants": [
+        {
+          "name": "PAL values (Activity level × Training intensity)",
+          "rows": [
+            ["", "None", "Light", "Moderate", "Demand.", "Intense"],
+            ["Sedentary", "1.1", "1.2", "1.35", "1.45", "1.55"],
+            ["Lightly active", "1.2", "1.4", "1.45", "1.55", "1.6"],
+            ["Moderately active", "1.4", "1.45", "1.6", "1.65", "1.7"],
+            ["Very active", "1.6", "1.7", "1.75", "1.8", "1.9"],
+            ["Extremely active", "1.8", "1.9", "2.0", "2.1", "2.2"]
+          ]
+        }
+      ]
     },
     "proPhysique": {
       "name": "Pro Physique PAL values",
@@ -878,9 +895,30 @@
         "Those who have a good grasp of training volume and intensity",
         "Experienced trainees seeking precision in their calculations"
       ],
-      "formulaTDEE": "TDEE formula",
-      "formulaPAL": "PAL — Daily activity",
-      "formulaIntensity": "Intensity factor — kcal per minute"
+      "formulaVariants": [
+        {
+          "name": "TDEE formula",
+          "equation": "TDEE = (BMR × PAL) + (days/week × min/day ÷ 7 × Intensity factor)"
+        },
+        {
+          "name": "PAL — Daily activity",
+          "rows": [
+            ["Sedentary", "1.15"],
+            ["Lightly active", "1.25"],
+            ["Moderately active", "1.35"],
+            ["Very active", "1.40"]
+          ]
+        },
+        {
+          "name": "Intensity factor — kcal per minute",
+          "rows": [
+            ["Light", "5.0"],
+            ["Moderate", "7.5"],
+            ["Demanding", "10.0"],
+            ["Intense", "12.0"]
+          ]
+        }
+      ]
     },
     "fitnessStuff": {
       "name": "Fitness Stuff PAL values",
@@ -905,9 +943,33 @@
         "Those who want the most detailed calorie estimate",
         "Users who understand the difference between NEAT and EAT"
       ],
-      "formulaTDEE": "TDEE formula",
-      "formulaX": "X — Training hours per week",
-      "formulaY": "Y — Steps per day"
+      "formulaVariants": [
+        {
+          "name": "TDEE formula",
+          "equation": "TDEE = (BMR × X) + Y"
+        },
+        {
+          "name": "X — Training hours per week",
+          "rows": [
+            ["0–1 hrs/week", "1.0"],
+            ["1–3 hrs/week", "1.125"],
+            ["3–5 hrs/week", "1.25"],
+            ["6–8 hrs/week", "1.375"],
+            ["> 8 hrs/week", "1.5"]
+          ]
+        },
+        {
+          "name": "Y — Steps per day",
+          "rows": [
+            ["3,000–5,000", "150"],
+            ["5,000–7,000", "240"],
+            ["7,000–9,000", "330"],
+            ["9,000–11,000", "420"],
+            ["11,000–13,000", "510"],
+            ["> 13,000", "600"]
+          ]
+        }
+      ]
     },
     "basicInternet": {
       "name": "Basic internet PAL values",
@@ -930,7 +992,18 @@
         "People looking for a basic starting point",
         "Those who want a simple system with few choices"
       ],
-      "tableHeader": "PAL values"
+      "formulaVariants": [
+        {
+          "name": "PAL values",
+          "rows": [
+            ["Sedentary", "1.2"],
+            ["Lightly active", "1.375"],
+            ["Moderately active", "1.55"],
+            ["Very active", "1.725"],
+            ["Extremely active", "1.9"]
+          ]
+        }
+      ]
     },
     "advanced": {
       "name": "Advanced PAL system",
