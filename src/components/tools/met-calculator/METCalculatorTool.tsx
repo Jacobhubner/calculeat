@@ -17,6 +17,7 @@ import {
   type METActivity,
 } from '@/lib/constants/metActivities'
 import { calculateCaloriesBurned, getIntensityLevel } from '@/lib/calculations/metCalculations'
+import { useMETTranslation } from '@/lib/constants/metTranslations'
 import { toast } from 'sonner'
 import { useTranslation } from 'react-i18next'
 
@@ -28,6 +29,7 @@ interface SelectedActivity extends METActivity {
 export default function METCalculatorTool() {
   const navigate = useNavigate()
   const { t } = useTranslation('tools')
+  const { getActivityName, getCategoryName } = useMETTranslation()
   const { profile } = useActiveProfile()
   const profileData = useProfileData(['weight_kg'])
 
@@ -94,7 +96,7 @@ export default function METCalculatorTool() {
       },
     ])
 
-    toast.success(t('metCalc.toast.activityAdded', { activity: activity.activity }))
+    toast.success(t('metCalc.toast.activityAdded', { activity: getActivityName(activity) }))
   }
 
   const handleRemoveActivity = (index: number) => {
@@ -106,13 +108,13 @@ export default function METCalculatorTool() {
       {/* Header */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div className="flex-1 min-w-0">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900">{t('metCalc.header.title')}</h2>
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
+            {t('metCalc.header.title')}
+          </h2>
           <p className="text-neutral-600 mt-1 text-sm md:text-base">
             {t('metCalc.header.description')}
           </p>
-          <p className="text-xs text-neutral-500 mt-1">
-            {t('metCalc.header.source')}
-          </p>
+          <p className="text-xs text-neutral-500 mt-1">{t('metCalc.header.source')}</p>
         </div>
         <Badge variant="secondary" className="bg-orange-100 text-orange-700 shrink-0">
           {t('metCalc.header.badge')}
@@ -141,7 +143,7 @@ export default function METCalculatorTool() {
                   <option value="All">{t('metCalc.search.allCategories')}</option>
                   {MET_CATEGORIES.map(cat => (
                     <option key={cat} value={cat}>
-                      {cat}
+                      {getCategoryName(cat)}
                     </option>
                   ))}
                 </Select>
@@ -160,22 +162,27 @@ export default function METCalculatorTool() {
                     className="pl-9"
                   />
                 </div>
-                <p className="text-xs text-neutral-500 mt-1">
-                  {t('metCalc.search.searchTip')}
-                </p>
+                <p className="text-xs text-neutral-500 mt-1">{t('metCalc.search.searchTip')}</p>
               </div>
 
               {/* Resultaträknare */}
               {(searchTerm || selectedCategory !== 'All') && filteredActivities.length > 0 && (
                 <div className="text-sm text-neutral-600">
-                  {t(filteredActivities.length === 1 ? 'metCalc.search.resultsFound_one' : 'metCalc.search.resultsFound_other', { count: filteredActivities.length })}
+                  {t(
+                    filteredActivities.length === 1
+                      ? 'metCalc.search.resultsFound_one'
+                      : 'metCalc.search.resultsFound_other',
+                    { count: filteredActivities.length }
+                  )}
                 </div>
               )}
 
               {/* Aktivitetslista */}
               <div className="max-h-96 overflow-y-auto border rounded-lg">
                 {filteredActivities.length === 0 ? (
-                  <div className="p-8 text-center text-neutral-500">{t('metCalc.search.noResults')}</div>
+                  <div className="p-8 text-center text-neutral-500">
+                    {t('metCalc.search.noResults')}
+                  </div>
                 ) : (
                   <div className="divide-y">
                     {filteredActivities.map(activity => (
@@ -207,7 +214,9 @@ export default function METCalculatorTool() {
               </div>
               <div className="flex justify-between">
                 <span className="text-neutral-600">{t('metCalc.summary.time')}</span>
-                <span className="font-bold">{totalDuration} {t('metCalc.summary.minuteUnit')}</span>
+                <span className="font-bold">
+                  {totalDuration} {t('metCalc.summary.minuteUnit')}
+                </span>
               </div>
               <div className="pt-3 border-t">
                 <div className="flex justify-between items-baseline">
@@ -245,10 +254,11 @@ export default function METCalculatorTool() {
                     >
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-neutral-900 truncate">
-                          {activity.activity}
+                          {getActivityName(activity)}
                         </p>
                         <p className="text-xs text-neutral-500">
-                          {activity.durationMinutes} {t('metCalc.selected.minuteAbbr')} · {activity.met} MET
+                          {activity.durationMinutes} {t('metCalc.selected.minuteAbbr')} ·{' '}
+                          {activity.met} MET
                         </p>
                       </div>
                       <div className="flex items-center gap-3 ml-3">
@@ -287,6 +297,7 @@ function ActivityRow({
   disabled: boolean
 }) {
   const { t } = useTranslation('tools')
+  const { getActivityName, getCategoryName } = useMETTranslation()
   const [durationInput, setDurationInput] = useState('30')
   const [showDuration, setShowDuration] = useState(false)
 
@@ -305,9 +316,9 @@ function ActivityRow({
     <div className="p-3 hover:bg-neutral-50 transition-colors">
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-neutral-900">{activity.activity}</p>
+          <p className="text-sm font-medium text-neutral-900">{getActivityName(activity)}</p>
           <div className="flex items-center gap-2 mt-1">
-            <span className="text-xs text-neutral-500">{activity.category}</span>
+            <span className="text-xs text-neutral-500">{getCategoryName(activity.category)}</span>
             <Badge variant="secondary" className={`text-xs ${intensity.color}`}>
               {activity.met} MET
             </Badge>
@@ -327,7 +338,9 @@ function ActivityRow({
         ) : (
           <div className="flex items-center gap-2 shrink-0">
             <div className="flex flex-col">
-              <label className="text-xs text-neutral-500 mb-1">{t('metCalc.activityRow.minutesLabel')}</label>
+              <label className="text-xs text-neutral-500 mb-1">
+                {t('metCalc.activityRow.minutesLabel')}
+              </label>
               <Input
                 type="number"
                 min="1"

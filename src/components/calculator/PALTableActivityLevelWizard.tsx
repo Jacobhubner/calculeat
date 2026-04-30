@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
 import { Portal } from '@/components/ui/portal'
 import { MET_ACTIVITIES, MET_CATEGORIES } from '@/lib/constants/metActivities'
+import { useMETTranslation } from '@/lib/constants/metTranslations'
 import type { UseFormRegister, UseFormWatch } from 'react-hook-form'
 
 interface PALTableActivityLevelWizardProps {
@@ -24,6 +25,7 @@ export default function PALTableActivityLevelWizard({
   tdee,
 }: PALTableActivityLevelWizardProps) {
   const { t } = useTranslation('tools')
+  const { getActivityName, getCategoryName } = useMETTranslation()
   const [searchTerm, setSearchTerm] = useState('')
   // Watch form values if register/watch are available
   const trainingDays = watch?.('training_days_per_week') || 0
@@ -193,10 +195,10 @@ export default function PALTableActivityLevelWizard({
                 const categoryActivities = activitiesByCategory[category]
                 if (!categoryActivities || categoryActivities.length === 0) return null
                 return (
-                  <optgroup key={category} label={category}>
+                  <optgroup key={category} label={getCategoryName(category)}>
                     {categoryActivities.map(activity => (
                       <option key={activity.id} value={activity.id}>
-                        {activity.activity} ({activity.met} MET)
+                        {getActivityName(activity)} ({activity.met} MET)
                       </option>
                     ))}
                   </optgroup>
@@ -237,7 +239,7 @@ export default function PALTableActivityLevelWizard({
             <Select id="walking-tempo" className="mt-1" {...register('walking_activity_id')}>
               {specificWalkingActivities.map(activity => (
                 <option key={activity.id} value={activity.id}>
-                  {activity.activity} ({activity.met} MET)
+                  {getActivityName(activity)} ({activity.met} MET)
                 </option>
               ))}
             </Select>
@@ -287,7 +289,7 @@ export default function PALTableActivityLevelWizard({
               <option value="">{t('tdeeCalc.wizard.householdSelectPlaceholder')}</option>
               {householdActivities.map(activity => (
                 <option key={activity.id} value={activity.id}>
-                  {activity.activity} ({activity.met} MET)
+                  {getActivityName(activity)} ({activity.met} MET)
                 </option>
               ))}
             </Select>
