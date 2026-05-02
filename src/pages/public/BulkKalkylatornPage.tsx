@@ -526,6 +526,7 @@ export default function BulkKalkylatornPage() {
               <ul className="space-y-2">
                 {[
                   { href: '/kalkylatorer/cut-kalkylator', label: 'Cut Kalkylator' },
+                  { href: '/kalkylatorer/proteinbehov', label: 'Proteinbehov Kalkylator' },
                   { href: '/kalkylatorer/tdee-kalkylator', label: 'TDEE Kalkylator' },
                   { href: '/kalkylatorer/kaloriunderskott', label: 'Kaloribrist Kalkylator' },
                 ].map(l => (

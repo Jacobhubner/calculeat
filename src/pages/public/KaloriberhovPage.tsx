@@ -75,6 +75,7 @@ export default function KaloriberhovPage() {
           { href: '/kalkylatorer/kaloriunderskott', label: 'Kaloribrist Kalkylator' },
           { href: '/kalkylatorer/bulk-kalkylator', label: 'Bulk Kalkylator' },
           { href: '/kalkylatorer/cut-kalkylator', label: 'Cut Kalkylator' },
+          { href: '/kalkylatorer/proteinbehov', label: 'Proteinbehov Kalkylator' },
           { href: '/kalkylatorer/bmi-kalkylator', label: 'BMI Kalkylator' },
         ]}
         relatedArticles={[

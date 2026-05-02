@@ -31,6 +31,11 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://calculeat.se/kalkylatorer/proteinbehov</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://calculeat.se/artiklar/kaloribehov</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>

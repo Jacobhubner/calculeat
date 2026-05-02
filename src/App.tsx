@@ -30,6 +30,7 @@ const KaloriunderskottKalkylatornPage = lazy(
 )
 const BulkKalkylatornPage = lazy(() => import('./pages/public/BulkKalkylatornPage'))
 const CutKalkylatornPage = lazy(() => import('./pages/public/CutKalkylatornPage'))
+const ProteinbehovKalkylatornPage = lazy(() => import('./pages/public/ProteinbehovKalkylatornPage'))
 
 // Lazy load - app pages (loaded on demand)
 const IconDemo = lazy(() => import('./pages/IconDemo'))
@@ -127,6 +128,10 @@ function App() {
                     />
                     <Route path="/kalkylatorer/bulk-kalkylator" element={<BulkKalkylatornPage />} />
                     <Route path="/kalkylatorer/cut-kalkylator" element={<CutKalkylatornPage />} />
+                    <Route
+                      path="/kalkylatorer/proteinbehov"
+                      element={<ProteinbehovKalkylatornPage />}
+                    />
                     <Route path="/artiklar/kaloribehov" element={<KaloriberhovPage />} />
                     <Route path="/artiklar/vad-ar-tdee" element={<VadArTdeePage />} />
                     <Route path="/artiklar/kaloribrist" element={<KaloriBristPage />} />
