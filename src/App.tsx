@@ -17,6 +17,15 @@ import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import AuthCallbackPage from './pages/AuthCallbackPage'
 
+// Lazy load - public SEO pages
+const TdeeKalkylatornPage = lazy(() => import('./pages/public/TdeeKalkylatornPage'))
+const BmiKalkylatornPage = lazy(() => import('./pages/public/BmiKalkylatornPage'))
+const KaloriberhovPage = lazy(() => import('./pages/public/KaloriberhovPage'))
+const VadArTdeePage = lazy(() => import('./pages/public/VadArTdeePage'))
+const KaloriBristPage = lazy(() => import('./pages/public/KaloriBristPage'))
+const BulkOchCutPage = lazy(() => import('./pages/public/BulkOchCutPage'))
+const OmOssPage = lazy(() => import('./pages/public/OmOssPage'))
+
 // Lazy load - app pages (loaded on demand)
 const IconDemo = lazy(() => import('./pages/IconDemo'))
 const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage'))
@@ -103,6 +112,16 @@ function App() {
                     <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                     <Route path="/reset-password" element={<ResetPasswordPage />} />
                     <Route path="/auth/callback" element={<AuthCallbackPage />} />
+
+                    {/* Public SEO pages */}
+                    <Route path="/kalkylatorer/tdee-kalkylator" element={<TdeeKalkylatornPage />} />
+                    <Route path="/kalkylatorer/bmi-kalkylator" element={<BmiKalkylatornPage />} />
+                    <Route path="/artiklar/kaloribehov" element={<KaloriberhovPage />} />
+                    <Route path="/artiklar/vad-ar-tdee" element={<VadArTdeePage />} />
+                    <Route path="/artiklar/kaloribrist" element={<KaloriBristPage />} />
+                    <Route path="/artiklar/bulk-och-cut" element={<BulkOchCutPage />} />
+                    <Route path="/om-oss" element={<OmOssPage />} />
+
                     <Route
                       path="/app"
                       element={
