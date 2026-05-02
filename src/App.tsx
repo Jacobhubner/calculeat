@@ -35,6 +35,7 @@ const ReverseDietPage = lazy(() => import('./pages/public/ReverseDietPage'))
 const MyFitnessPalVsCalculEatPage = lazy(() => import('./pages/public/MyFitnessPalVsCalculEatPage'))
 const BastaKaloriappenPage = lazy(() => import('./pages/public/BastaKaloriappenPage'))
 const BastaTdeeKalkylatornPage = lazy(() => import('./pages/public/BastaTdeeKalkylatornPage'))
+const IdealviktKalkylatornPage = lazy(() => import('./pages/public/IdealviktKalkylatornPage'))
 
 // Lazy load - app pages (loaded on demand)
 const IconDemo = lazy(() => import('./pages/IconDemo'))
@@ -136,6 +137,7 @@ function App() {
                       path="/kalkylatorer/proteinbehov"
                       element={<ProteinbehovKalkylatornPage />}
                     />
+                    <Route path="/kalkylatorer/idealvikt" element={<IdealviktKalkylatornPage />} />
                     <Route path="/artiklar/kaloribehov" element={<KaloriberhovPage />} />
                     <Route path="/artiklar/vad-ar-tdee" element={<VadArTdeePage />} />
                     <Route path="/artiklar/kaloribrist" element={<KaloriBristPage />} />
