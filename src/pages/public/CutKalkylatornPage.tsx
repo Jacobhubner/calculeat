@@ -561,6 +561,7 @@ export default function CutKalkylatornPage() {
               </h3>
               <ul className="space-y-2">
                 {[
+                  { href: '/artiklar/reverse-diet', label: 'Reverse Diet — efter cutten' },
                   { href: '/artiklar/bulk-och-cut', label: 'Bulk och Cut — komplett guide' },
                   { href: '/artiklar/kaloribrist', label: 'Hur stor kaloribrist ska man ha?' },
                   { href: '/artiklar/kaloribehov', label: 'Kaloribehov — komplett guide' },

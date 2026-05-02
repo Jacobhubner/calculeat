@@ -56,6 +56,11 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://calculeat.se/artiklar/reverse-diet</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://calculeat.se/om-oss</loc>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>

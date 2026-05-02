@@ -73,6 +73,7 @@ export default function KaloriBristPage() {
           { href: '/kalkylatorer/tdee-kalkylator', label: 'TDEE Kalkylator' },
         ]}
         relatedArticles={[
+          { href: '/artiklar/reverse-diet', label: 'Reverse Diet — efter cutten' },
           { href: '/artiklar/kaloribehov', label: 'Kaloribehov — komplett guide' },
           { href: '/artiklar/vad-ar-tdee', label: 'Vad är TDEE?' },
           { href: '/artiklar/bulk-och-cut', label: 'Bulk och cut' },
