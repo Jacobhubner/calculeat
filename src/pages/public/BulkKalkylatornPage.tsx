@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, Calculator, AlertTriangle } from 'lucide-react'
+import { ArrowRight, Calculator, TrendingUp } from 'lucide-react'
 import SiteHeader from '@/components/layout/SiteHeader'
 import SiteFooter from '@/components/layout/SiteFooter'
 import { Seo } from '@/components/seo/Seo'
@@ -16,7 +16,7 @@ type ActivityLevel =
   | 'Very active'
   | 'Extremely active'
 
-type Goal = 'mild' | 'moderate' | 'aggressive'
+type BulkMode = 'lean' | 'standard' | 'aggressive'
 
 const ACTIVITY_LEVELS: { value: ActivityLevel; label: string; description: string }[] = [
   { value: 'Sedentary', label: 'Stillasittande', description: 'Kontorsjobb, liten rörelse' },
@@ -47,40 +47,42 @@ const PAL_MULTIPLIERS: Record<Gender, Record<ActivityLevel, number>> = {
   },
 }
 
-const GOALS: {
-  value: Goal
+const BULK_MODES: {
+  value: BulkMode
   label: string
-  deficit: number
-  weeklyLoss: string
+  surplus: number
+  weeklyGain: string
   description: string
   color: string
   ring: string
 }[] = [
   {
-    value: 'mild',
-    label: 'Mild',
-    deficit: 250,
-    weeklyLoss: '~0,2–0,3 kg/vecka',
-    description: 'Lämplig nybörjare, nära tävling eller lite fett att tappa. Minimal muskelrisk.',
+    value: 'lean',
+    label: 'Lean Bulk',
+    surplus: 200,
+    weeklyGain: '~0,1–0,2 kg/vecka',
+    description:
+      'Minimalt fettupplagrande. Tar längre tid men du behåller din definition. Bäst för avancerade lyftare.',
     color: 'border-green-500 bg-green-50',
     ring: 'border-green-500 bg-green-500',
   },
   {
-    value: 'moderate',
-    label: 'Måttlig',
-    deficit: 400,
-    weeklyLoss: '~0,3–0,5 kg/vecka',
+    value: 'standard',
+    label: 'Standard Bulk',
+    surplus: 350,
+    weeklyGain: '~0,2–0,4 kg/vecka',
     description:
-      'Den vetenskapliga standarden. Balans mellan tempo och muskelbevarande. Funkar för de flesta.',
+      'Den vetenskapliga standarden. Bra balans mellan muskeluppbyggnad och fettupplagrande. Funkar för de flesta.',
     color: 'border-primary-500 bg-primary-50',
     ring: 'border-primary-500 bg-primary-500',
   },
   {
     value: 'aggressive',
-    label: 'Aggressiv',
-    deficit: 700,
-    weeklyLoss: '~0,5–0,8 kg/vecka',
-    description: 'Acceptabelt vid hög fettprocent. Kräver högt proteinintag och styrketräning.',
+    label: 'Aggressiv Bulk',
+    surplus: 600,
+    weeklyGain: '~0,4–0,7 kg/vecka',
+    description:
+      'Snabbare massa men mer fett. Lämplig för nybörjare och hardgainers som kämpat med att gå upp.',
     color: 'border-orange-500 bg-orange-50',
     ring: 'border-orange-500 bg-orange-500',
   },
@@ -88,44 +90,44 @@ const GOALS: {
 
 const FAQ_ITEMS = [
   {
-    question: 'Hur stor kaloribrist ger 1 kg viktnedgång per vecka?',
+    question: 'Hur mycket kalorier ska man äta på bulk?',
     answer:
-      '1 kg kroppsfett innehåller ca 7 700 kcal. För att tappa 1 kg/vecka behövs ett underskott på ca 1 100 kcal/dag — vilket är aggressivt och innebär hög risk för muskelmassaförlust. 0,5 kg/vecka (ca 550 kcal/dag underskott) är ett mer hållbart tempo för de flesta.',
+      'Du ska äta mer än ditt TDEE (underhållsbehov). Hur mycket beror på ditt mål: lean bulk = +150–250 kcal/dag, standard bulk = +300–500 kcal/dag, aggressiv bulk = +500+ kcal/dag. Det vanligaste misstaget är att äta för mycket och lagra onödigt fett, eller för lite och inte bygga muskler.',
   },
   {
-    question: 'Vad är skillnaden mellan kaloribrist och kaloriunderskott?',
+    question: 'Vad är skillnaden mellan lean bulk och dirty bulk?',
     answer:
-      'Begreppen används synonymt på svenska. Kaloribrist och kaloriunderskott betyder att du äter färre kalorier än du förbränner (under ditt TDEE), vilket tvingar kroppen att använda lagrad energi — i första hand fett, men även viss muskelmassa om bristen är för stor.',
+      'En lean bulk är ett kontrollerat kalorioverskott (+150–350 kcal/dag) som maximerar muskeltillväxt med minimalt fettupplagrande. En dirty bulk innebär att man äter utan kontroll — snabb viktuppgång men stor andel av det är fett, som sedan kräver en längre och tuffare cut. Lean bulk är alltid det bättre valet om du inte är ett hårdgainer-fall.',
   },
   {
-    question: 'Kan man äta för lite och ändå inte gå ner i vikt?',
+    question: 'Hur snabbt ska man gå upp i vikt under bulk?',
     answer:
-      'Ja — adaptiv termogenes kan bromsa viktnedgången vid lång kaloribrist. Kroppen sänker sin NEAT (oplanerad rörelse) och BMR sjunker något som försvar mot svält. Lösning: ta en diet break på 1–2 veckor på underhållsintag (ditt TDEE) för att återställa ämnesomsättningen.',
+      'Nybörjare: 0,5–1% av kroppsvikten per månad. Avancerade: 0,25–0,5% per månad. Går du upp snabbare lagrar du troligtvis mer fett än muskler. Muskelproteinsyntes är begränsad — kroppen kan bara bygga en viss mängd muskler per tidsenhet oavsett hur mycket du äter.',
   },
   {
-    question: 'Hur mycket protein behöver man under kaloribrist?',
+    question: 'Hur mycket protein behövs under bulk?',
     answer:
-      '1,6–2,2 g protein per kg kroppsvikt per dag rekommenderas för att bevara muskelmassa under kaloribrist. Vid aggressivare underskott eller intensiv träning, sikta på övre delen av intervallet (2,0–2,2 g/kg). Protein ger också hög mättnadseffekt.',
+      '1,6–2,2 g protein per kg kroppsvikt per dag är det vetenskapligt stödda intervallet för muskeluppbyggnad. Under bulk är du inte i kaloribrist, men protein är fortfarande det viktigaste makronutrientet — det är byggstenen för muskler. Prioritera protein, fördela resterande kalorier på kolhydrater och fett efter preferens.',
   },
   {
-    question: 'Är det farligt med kaloribrist?',
+    question: 'Hur länge ska man bulka?',
     answer:
-      'En måttlig kaloribrist (300–500 kcal/dag) är inte farlig för friska vuxna. En mycket stor brist (>1000 kcal/dag) ökar risken för muskelmassaförlust, näringsbrist, trötthet och hormonella störningar. Rådfråga sjukvård vid extrem restriktion eller om du har underliggande sjukdomar.',
+      'En typisk bulk-fas pågår 3–6 månader. När du nått din önskade kroppsvikt eller fettprocenten kommit upp till 18–20% (man) / 28–30% (kvinna) är det dags att gå in i en cut-fas för att reducera fett och avslöja musklerna du byggt.',
   },
 ]
 
-const CANONICAL = 'https://calculeat.se/kalkylatorer/kaloriunderskott'
+const CANONICAL = 'https://calculeat.se/kalkylatorer/bulk-kalkylator'
 
 const PAGE_SCHEMA = [
   {
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
-    name: 'Kaloribrist Kalkylator',
+    name: 'Bulk Kalkylator',
     url: CANONICAL,
     applicationCategory: 'HealthApplication',
     operatingSystem: 'Web',
     description:
-      'Gratis kaloribrist-kalkylator. Räkna ut ditt TDEE och ditt optimala kaloriintag för viktnedgång baserat på hur snabbt du vill gå ner.',
+      'Gratis bulk-kalkylator. Räkna ut exakt hur många kalorier du behöver för lean bulk, standard bulk eller aggressiv bulk baserat på ditt TDEE.',
     offers: { '@type': 'Offer', price: '0', priceCurrency: 'SEK' },
   },
   {
@@ -139,18 +141,18 @@ const PAGE_SCHEMA = [
         name: 'Kalkylatorer',
         item: 'https://calculeat.se/kalkylatorer',
       },
-      { '@type': 'ListItem', position: 3, name: 'Kaloribrist Kalkylator', item: CANONICAL },
+      { '@type': 'ListItem', position: 3, name: 'Bulk Kalkylator', item: CANONICAL },
     ],
   },
 ]
 
-export default function KaloriunderskottKalkylatornPage() {
+export default function BulkKalkylatornPage() {
   const [weight, setWeight] = useState('')
   const [height, setHeight] = useState('')
   const [age, setAge] = useState('')
   const [gender, setGender] = useState<Gender>('male')
   const [activityLevel, setActivityLevel] = useState<ActivityLevel>('Moderately active')
-  const [goal, setGoal] = useState<Goal>('moderate')
+  const [bulkMode, setBulkMode] = useState<BulkMode>('standard')
   const [hasResult, setHasResult] = useState(false)
 
   const bmr = useMemo(() => {
@@ -166,8 +168,8 @@ export default function KaloriunderskottKalkylatornPage() {
     return Math.round(bmr * PAL_MULTIPLIERS[gender][activityLevel])
   }, [bmr, gender, activityLevel])
 
-  const selectedGoal = GOALS.find(g => g.value === goal)!
-  const targetCalories = tdee ? Math.round(tdee - selectedGoal.deficit) : null
+  const selectedMode = BULK_MODES.find(m => m.value === bulkMode)!
+  const targetCalories = tdee ? Math.round(tdee + selectedMode.surplus) : null
   const proteinMin = weight ? Math.round(parseFloat(weight) * 1.6) : null
   const proteinMax = weight ? Math.round(parseFloat(weight) * 2.2) : null
 
@@ -178,8 +180,8 @@ export default function KaloriunderskottKalkylatornPage() {
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Seo
-        title="Kaloribrist Kalkylator — Räkna ut ditt kaloriunderskott (2026)"
-        description="Gratis kaloribrist-kalkylator. Räkna ut ditt TDEE och exakt hur många kalorier du ska äta för att gå ner i vikt i ditt önskade tempo. Resultat direkt."
+        title="Bulk Kalkylator — Räkna ut kalorier för lean bulk (2026)"
+        description="Gratis bulk-kalkylator. Räkna ut hur många kalorier du behöver för lean bulk, standard bulk eller aggressiv bulk. Baserat på ditt TDEE. Resultat direkt."
         canonical={CANONICAL}
       />
       <JsonLd schema={PAGE_SCHEMA} />
@@ -201,23 +203,23 @@ export default function KaloriunderskottKalkylatornPage() {
               Kalkylatorer
             </Link>
             <span>/</span>
-            <span className="text-neutral-700">Kaloribrist Kalkylator</span>
+            <span className="text-neutral-700">Bulk Kalkylator</span>
           </nav>
 
           <h1 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-3 leading-tight">
-            Kaloribrist Kalkylator
+            Bulk Kalkylator
           </h1>
           <p className="text-lg text-neutral-600 leading-relaxed mb-8 border-l-4 border-primary-400 pl-4 bg-primary-50 py-3 rounded-r-lg">
-            Räkna ut ditt TDEE och ditt optimala dagliga kaloriintag för viktnedgång — baserat på
-            ditt valda tempo. En kaloribrist på 300–500 kcal/dag är det vetenskapligt rekommenderade
-            intervallet för att tappa fett utan att förlora muskelmassa.
+            Räkna ut exakt hur många kalorier du behöver för att bygga muskler effektivt — utan att
+            lagra onödigt fett. En lean bulk på +150–250 kcal/dag ger maximal muskeltillväxt med
+            minimalt fettupplagrande.
           </p>
 
           {/* Calculator card */}
           <div className="rounded-2xl border border-neutral-200 shadow-sm overflow-hidden mb-8">
             <div className="bg-primary-50 px-6 py-4 border-b border-primary-100 flex items-center gap-2">
               <Calculator className="h-5 w-5 text-primary-600" />
-              <span className="font-semibold text-primary-900">Beräkna ditt kaloriunderskott</span>
+              <span className="font-semibold text-primary-900">Beräkna dina bulk-kalorier</span>
             </div>
 
             <div className="p-6 space-y-5">
@@ -244,7 +246,7 @@ export default function KaloriunderskottKalkylatornPage() {
               {/* Age, Weight, Height */}
               <div className="grid grid-cols-3 gap-4">
                 {[
-                  { label: 'Ålder', unit: 'år', value: age, setter: setAge, placeholder: '30' },
+                  { label: 'Ålder', unit: 'år', value: age, setter: setAge, placeholder: '25' },
                   {
                     label: 'Vikt',
                     unit: 'kg',
@@ -257,7 +259,7 @@ export default function KaloriunderskottKalkylatornPage() {
                     unit: 'cm',
                     value: height,
                     setter: setHeight,
-                    placeholder: '175',
+                    placeholder: '178',
                   },
                 ].map(({ label, unit, value, setter, placeholder }) => (
                   <div key={label}>
@@ -318,38 +320,40 @@ export default function KaloriunderskottKalkylatornPage() {
                 </div>
               </div>
 
-              {/* Goal / Tempo */}
+              {/* Bulk Mode */}
               <div>
                 <label className="block text-sm font-medium text-neutral-700 mb-2">
-                  Önskat tempo
+                  Bulk-strategi
                 </label>
                 <div className="space-y-2">
-                  {GOALS.map(({ value, label, deficit, weeklyLoss, description, color, ring }) => (
-                    <button
-                      key={value}
-                      onClick={() => setGoal(value)}
-                      className={`w-full flex items-start gap-3 py-2.5 px-4 rounded-lg border text-left transition-colors ${
-                        goal === value
-                          ? color
-                          : 'border-neutral-200 bg-white hover:border-neutral-300'
-                      }`}
-                    >
-                      <div
-                        className={`mt-0.5 h-4 w-4 rounded-full border-2 flex-shrink-0 ${
-                          goal === value ? ring : 'border-neutral-300 bg-white'
+                  {BULK_MODES.map(
+                    ({ value, label, surplus, weeklyGain, description, color, ring }) => (
+                      <button
+                        key={value}
+                        onClick={() => setBulkMode(value)}
+                        className={`w-full flex items-start gap-3 py-2.5 px-4 rounded-lg border text-left transition-colors ${
+                          bulkMode === value
+                            ? color
+                            : 'border-neutral-200 bg-white hover:border-neutral-300'
                         }`}
-                      />
-                      <div>
-                        <div className="text-sm font-medium text-neutral-800">
-                          {label} — {deficit} kcal/dag underskott
-                          <span className="ml-2 text-xs font-normal text-neutral-500">
-                            {weeklyLoss}
-                          </span>
+                      >
+                        <div
+                          className={`mt-0.5 h-4 w-4 rounded-full border-2 flex-shrink-0 ${
+                            bulkMode === value ? ring : 'border-neutral-300 bg-white'
+                          }`}
+                        />
+                        <div>
+                          <div className="text-sm font-medium text-neutral-800">
+                            {label} — +{surplus} kcal/dag
+                            <span className="ml-2 text-xs font-normal text-neutral-500">
+                              {weeklyGain}
+                            </span>
+                          </div>
+                          <div className="text-xs text-neutral-500 mt-0.5">{description}</div>
                         </div>
-                        <div className="text-xs text-neutral-500 mt-0.5">{description}</div>
-                      </div>
-                    </button>
-                  ))}
+                      </button>
+                    )
+                  )}
                 </div>
               </div>
 
@@ -358,7 +362,7 @@ export default function KaloriunderskottKalkylatornPage() {
                 disabled={!bmr || !tdee}
                 className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-neutral-200 disabled:text-neutral-400 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm"
               >
-                Beräkna mitt kaloriunderskott
+                Beräkna mina bulk-kalorier
               </button>
             </div>
 
@@ -367,47 +371,47 @@ export default function KaloriunderskottKalkylatornPage() {
               <div className="border-t border-neutral-100 bg-neutral-50 px-6 py-6 space-y-4">
                 <h2 className="font-semibold text-neutral-800">Dina resultat</h2>
 
-                {/* TDEE + target */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="rounded-xl bg-white border border-neutral-200 p-4 text-center">
                     <div className="text-2xl font-bold text-neutral-700">{tdee}</div>
                     <div className="text-xs text-neutral-500 mt-0.5">TDEE (kcal/dag)</div>
                     <div className="text-xs text-neutral-400">Ditt underhållsbehov</div>
                   </div>
-                  <div className="rounded-xl bg-primary-600 p-4 text-center">
+                  <div className="rounded-xl bg-green-600 p-4 text-center">
                     <div className="text-2xl font-bold text-white">{targetCalories}</div>
-                    <div className="text-xs text-primary-200 mt-0.5">Mål (kcal/dag)</div>
-                    <div className="text-xs text-primary-300">−{selectedGoal.deficit} kcal/dag</div>
+                    <div className="text-xs text-green-200 mt-0.5">Bulk-mål (kcal/dag)</div>
+                    <div className="text-xs text-green-300">+{selectedMode.surplus} kcal/dag</div>
                   </div>
                 </div>
 
-                {/* Summary row */}
+                {/* Plan summary */}
                 <div className="rounded-xl bg-white border border-neutral-200 p-4">
-                  <div className="text-sm font-medium text-neutral-800 mb-3">Din plan</div>
+                  <div className="flex items-center gap-2 mb-3">
+                    <TrendingUp className="h-4 w-4 text-green-600" />
+                    <span className="text-sm font-medium text-neutral-800">Din bulk-plan</span>
+                  </div>
                   <div className="space-y-2 text-sm text-neutral-700">
                     <div className="flex justify-between">
                       <span className="text-neutral-500">Underhållskalorier (TDEE)</span>
                       <span className="font-medium">{tdee} kcal</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-neutral-500">Dagligt underskott</span>
-                      <span className="font-medium text-orange-600">
-                        −{selectedGoal.deficit} kcal
+                      <span className="text-neutral-500">Dagligt överskott</span>
+                      <span className="font-medium text-green-600">
+                        +{selectedMode.surplus} kcal
                       </span>
                     </div>
                     <div className="flex justify-between border-t border-neutral-100 pt-2 mt-2">
                       <span className="font-medium">Dagligt kaloriintag</span>
-                      <span className="font-bold text-primary-600">{targetCalories} kcal</span>
+                      <span className="font-bold text-green-700">{targetCalories} kcal</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-neutral-500">Förväntat tempo</span>
-                      <span className="font-medium">{selectedGoal.weeklyLoss}</span>
+                      <span className="text-neutral-500">Förväntad viktuppgång</span>
+                      <span className="font-medium">{selectedMode.weeklyGain}</span>
                     </div>
                     {proteinMin && proteinMax && (
                       <div className="flex justify-between border-t border-neutral-100 pt-2 mt-2">
-                        <span className="text-neutral-500">
-                          Proteinmål (för att bevara muskler)
-                        </span>
+                        <span className="text-neutral-500">Proteinmål</span>
                         <span className="font-medium">
                           {proteinMin}–{proteinMax} g/dag
                         </span>
@@ -416,30 +420,33 @@ export default function KaloriunderskottKalkylatornPage() {
                   </div>
                 </div>
 
-                {/* Warning for aggressive */}
-                {goal === 'aggressive' && (
-                  <div className="rounded-xl bg-amber-50 border border-amber-200 p-4 flex gap-3">
-                    <AlertTriangle className="h-4 w-4 text-amber-600 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <p className="text-sm font-medium text-amber-900 mb-1">
-                        Aggressivt underskott
-                      </p>
-                      <p className="text-xs text-amber-700">
-                        Vid 700 kcal/dag underskott ökar risken för muskelmassaförlust markant. Se
-                        till att äta {proteinMax}+ g protein per dag och styrketräna regelbundet.
-                      </p>
-                    </div>
+                {/* Cross-link to cut */}
+                <div className="rounded-xl bg-neutral-100 border border-neutral-200 p-4 flex items-center justify-between gap-4">
+                  <div>
+                    <p className="text-xs font-medium text-neutral-700">
+                      Planerar du en cut-fas efter bulken?
+                    </p>
+                    <p className="text-xs text-neutral-500 mt-0.5">
+                      Räkna ut dina cut-kalorier redan nu.
+                    </p>
                   </div>
-                )}
+                  <Link
+                    to="/kalkylatorer/cut-kalkylator"
+                    className="flex-shrink-0 inline-flex items-center gap-1.5 text-xs font-medium text-primary-600 hover:underline"
+                  >
+                    Cut Kalkylator
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
 
                 {/* Gated CTA */}
                 <div className="rounded-xl bg-white border border-primary-200 p-4">
                   <p className="text-sm font-medium text-neutral-800 mb-1">
-                    Spara din plan och logga mot ditt mål
+                    Spara din bulk-plan och logga mat
                   </p>
                   <p className="text-xs text-neutral-500 mb-3">
-                    Skapa ett gratis konto för att spara ditt kaloriintag, sätta mål och följa din
-                    progress dag för dag.
+                    Skapa ett gratis konto för att spara ditt kaloriintag, följa din progress och
+                    planera makron.
                   </p>
                   <Link
                     to="/register"
@@ -456,47 +463,55 @@ export default function KaloriunderskottKalkylatornPage() {
           {/* Explanation */}
           <section className="space-y-5 text-neutral-700 text-sm leading-relaxed mb-8">
             <h2 className="text-xl font-semibold text-neutral-900">
-              Hur stort kaloriunderskott är optimalt?
+              Lean bulk vs dirty bulk — vad är skillnaden?
             </h2>
             <p>
-              Det optimala underskottet beror på hur mycket fett du har att tappa och hur snabbt du
-              vill nå målet. Generella riktlinjer:
+              Lean bulk innebär ett kontrollerat överskott på +150–350 kcal/dag. Du bygger muskler
+              med minimalt fettupplagrande och behåller din definition under hela fasen. Det tar
+              längre tid men kräver en kortare (eller ingen) efterföljande cut.
+            </p>
+            <p>
+              Dirty bulk innebär att äta utan tak — snabb viktuppgång men stor andel är fett som
+              sedan kräver en lång, tuff cut-fas. Nettoresultatet är ofta sämre än en välplanerad
+              lean bulk.
+            </p>
+            <p>
+              <strong>Undantag:</strong> Hardgainers och nybörjare kan ha svårt att äta tillräckligt
+              på lean bulk. I sådana fall är ett aggressivare överskott (+400–600 kcal/dag)
+              acceptabelt — muskeltillväxten är snabbare relativt fettupplagrandet för dem.
+            </p>
+
+            <h2 className="text-xl font-semibold text-neutral-900 pt-4">
+              Hur snabbt kan man bygga muskler?
+            </h2>
+            <p>
+              Muskelproteinsyntes är biologiskt begränsad. Forskning visar att naturliga lyftare kan
+              förvänta sig:
             </p>
             <ul className="space-y-2 pl-4 list-disc">
               <li>
-                <strong>200–300 kcal/dag (mild):</strong> Lämplig om du är nära målvikt, ny på
-                viktnedgång eller vill minimera muskelförlust. Långsamt men hållbart.
+                <strong>Nybörjare (0–1 år):</strong> 1–1,5 kg muskelmassa per månad vid optimal kost
+                och träning
               </li>
               <li>
-                <strong>300–500 kcal/dag (måttlig):</strong> Den vetenskapliga standarden. Ger
-                0,3–0,5 kg/vecka — tillräckligt snabbt för att se resultat utan att kompromissa med
-                muskelmassa.
+                <strong>Intermediär (1–3 år):</strong> 0,5–1 kg per månad
               </li>
               <li>
-                <strong>500–1000 kcal/dag (aggressiv):</strong> Acceptabelt vid hög fettprocent.
-                Kräver högt proteinintag (2,0–2,2 g/kg) och styrketräning för att skydda muskler.
+                <strong>Avancerad (3+ år):</strong> 0,25–0,5 kg per månad
               </li>
             </ul>
+            <p>
+              Det innebär att du inte kan bygga mer muskler genom att äta mer — du lagrar bara mer
+              fett. Härav vikten av ett kontrollerat överskott.
+            </p>
 
             <h2 className="text-xl font-semibold text-neutral-900 pt-4">
-              Varför planar vikten ut?
+              Hur länge ska man bulka?
             </h2>
             <p>
-              Vid lång kaloribrist sänker kroppen sin ämnesomsättning som försvar — adaptiv
-              termogenes. NEAT (oplanerad rörelse) minskar instinktivt och BMR sjunker något.
-            </p>
-            <p>
-              <strong>Lösning:</strong> Ta en <em>diet break</em> på 1–2 veckor på underhållsintag
-              (ditt TDEE) var 8–12:e vecka. Det återställer hormonbalansen och gör nästa dietfas
-              effektivare. Det är inte ett misslyckande — det är strategi.
-            </p>
-
-            <h2 className="text-xl font-semibold text-neutral-900 pt-4">Proteinets roll</h2>
-            <p>
-              Det viktigaste du kan göra för att bevara muskelmassa under kaloribrist är
-              tillräckligt proteinintag. Forskning stöder 1,6–2,2 g protein per kg kroppsvikt.
-              Protein har dessutom hög mättnadseffekt och hög TEF (ca 25–30% av proteinkalorierna
-              används till att smälta proteinet) — vilket gör det extra värdefullt under en kur.
+              En typisk bulk-fas pågår 3–6 månader. Avbryt och gå in i en cut-fas när fettprocenten
+              stigit till 18–20% (man) eller 28–30% (kvinna), eller när du nått önskad kroppsvikt.
+              Alternativt: planera in bulk/cut-cykler på 3 månader vardera.
             </p>
           </section>
 
@@ -510,9 +525,9 @@ export default function KaloriunderskottKalkylatornPage() {
               </h3>
               <ul className="space-y-2">
                 {[
-                  { href: '/kalkylatorer/tdee-kalkylator', label: 'TDEE Kalkylator' },
                   { href: '/kalkylatorer/cut-kalkylator', label: 'Cut Kalkylator' },
-                  { href: '/kalkylatorer/bmi-kalkylator', label: 'BMI Kalkylator' },
+                  { href: '/kalkylatorer/tdee-kalkylator', label: 'TDEE Kalkylator' },
+                  { href: '/kalkylatorer/kaloriunderskott', label: 'Kaloribrist Kalkylator' },
                 ].map(l => (
                   <li key={l.href}>
                     <Link
@@ -532,9 +547,9 @@ export default function KaloriunderskottKalkylatornPage() {
               </h3>
               <ul className="space-y-2">
                 {[
-                  { href: '/artiklar/kaloribrist', label: 'Hur stor kaloribrist ska man ha?' },
-                  { href: '/artiklar/vad-ar-tdee', label: 'Vad är TDEE?' },
+                  { href: '/artiklar/bulk-och-cut', label: 'Bulk och Cut — komplett guide' },
                   { href: '/artiklar/kaloribehov', label: 'Kaloribehov — komplett guide' },
+                  { href: '/artiklar/vad-ar-tdee', label: 'Vad är TDEE?' },
                 ].map(l => (
                   <li key={l.href}>
                     <Link

@@ -66,11 +66,15 @@ export default function BulkOchCutPage() {
       <ArticleLayout
         title="Bulk och Cut — Kalorier för muskeluppbyggnad och fettförbränning"
         intro="Bulk och cut är de två faserna i en klassisk träningscykel. Under bulk äter du i kalorioverskott för att maximera muskeluppbyggnad. Under cut äter du i kaloribrist för att tappa fett och bevara den muskelmassa du byggt. Nyckeln är att veta exakt hur stora överskott och underskott du ska sikta på."
-        moneyPageHref="/kalkylatorer/tdee-kalkylator"
-        moneyPageLabel="Räkna ut ditt TDEE — startpunkten för både bulk och cut"
+        moneyPageHref="/kalkylatorer/bulk-kalkylator"
+        moneyPageLabel="Räkna ut dina bulk-kalorier direkt"
         faqItems={FAQ_ITEMS}
         sources={SOURCES}
-        relatedCalculators={[{ href: '/kalkylatorer/tdee-kalkylator', label: 'TDEE Kalkylator' }]}
+        relatedCalculators={[
+          { href: '/kalkylatorer/bulk-kalkylator', label: 'Bulk Kalkylator' },
+          { href: '/kalkylatorer/cut-kalkylator', label: 'Cut Kalkylator' },
+          { href: '/kalkylatorer/tdee-kalkylator', label: 'TDEE Kalkylator' },
+        ]}
         relatedArticles={[
           { href: '/artiklar/kaloribehov', label: 'Kaloribehov — komplett guide' },
           { href: '/artiklar/vad-ar-tdee', label: 'Vad är TDEE?' },

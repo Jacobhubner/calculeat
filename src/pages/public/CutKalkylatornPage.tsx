@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, Calculator, AlertTriangle } from 'lucide-react'
+import { ArrowRight, Calculator, AlertTriangle, TrendingDown } from 'lucide-react'
 import SiteHeader from '@/components/layout/SiteHeader'
 import SiteFooter from '@/components/layout/SiteFooter'
 import { Seo } from '@/components/seo/Seo'
@@ -16,7 +16,7 @@ type ActivityLevel =
   | 'Very active'
   | 'Extremely active'
 
-type Goal = 'mild' | 'moderate' | 'aggressive'
+type CutMode = 'mild' | 'moderate' | 'aggressive'
 
 const ACTIVITY_LEVELS: { value: ActivityLevel; label: string; description: string }[] = [
   { value: 'Sedentary', label: 'Stillasittande', description: 'Kontorsjobb, liten rörelse' },
@@ -47,8 +47,8 @@ const PAL_MULTIPLIERS: Record<Gender, Record<ActivityLevel, number>> = {
   },
 }
 
-const GOALS: {
-  value: Goal
+const CUT_MODES: {
+  value: CutMode
   label: string
   deficit: number
   weeklyLoss: string
@@ -58,29 +58,31 @@ const GOALS: {
 }[] = [
   {
     value: 'mild',
-    label: 'Mild',
+    label: 'Mild Cut',
     deficit: 250,
     weeklyLoss: '~0,2–0,3 kg/vecka',
-    description: 'Lämplig nybörjare, nära tävling eller lite fett att tappa. Minimal muskelrisk.',
-    color: 'border-green-500 bg-green-50',
-    ring: 'border-green-500 bg-green-500',
+    description:
+      'Minimal muskelrisk. Lämplig nära tävling, sista veckornas finjustering eller låg fettprocent att tappa.',
+    color: 'border-blue-500 bg-blue-50',
+    ring: 'border-blue-500 bg-blue-500',
   },
   {
     value: 'moderate',
-    label: 'Måttlig',
+    label: 'Standard Cut',
     deficit: 400,
     weeklyLoss: '~0,3–0,5 kg/vecka',
     description:
-      'Den vetenskapliga standarden. Balans mellan tempo och muskelbevarande. Funkar för de flesta.',
+      'Den vetenskapliga standarden. Balans mellan fettförbränning och muskelbevarande. Funkar för de flesta.',
     color: 'border-primary-500 bg-primary-50',
     ring: 'border-primary-500 bg-primary-500',
   },
   {
     value: 'aggressive',
-    label: 'Aggressiv',
+    label: 'Aggressiv Cut',
     deficit: 700,
     weeklyLoss: '~0,5–0,8 kg/vecka',
-    description: 'Acceptabelt vid hög fettprocent. Kräver högt proteinintag och styrketräning.',
+    description:
+      'Lämplig vid hög fettprocent. Kräver högt proteinintag (2,2+ g/kg) och styrketräning för att skydda muskler.',
     color: 'border-orange-500 bg-orange-50',
     ring: 'border-orange-500 bg-orange-500',
   },
@@ -88,44 +90,44 @@ const GOALS: {
 
 const FAQ_ITEMS = [
   {
-    question: 'Hur stor kaloribrist ger 1 kg viktnedgång per vecka?',
+    question: 'Hur många kalorier ska man äta på cut?',
     answer:
-      '1 kg kroppsfett innehåller ca 7 700 kcal. För att tappa 1 kg/vecka behövs ett underskott på ca 1 100 kcal/dag — vilket är aggressivt och innebär hög risk för muskelmassaförlust. 0,5 kg/vecka (ca 550 kcal/dag underskott) är ett mer hållbart tempo för de flesta.',
+      'Du ska äta under ditt TDEE (underhållsbehov). Hur mycket beror på tempo: mild cut = −200–300 kcal/dag, standard cut = −300–500 kcal/dag, aggressiv cut = −500–800 kcal/dag. Tumregel: tappa inte mer än 0,5–1% av kroppsvikten per vecka för att minimera muskelmassaförlust.',
   },
   {
-    question: 'Vad är skillnaden mellan kaloribrist och kaloriunderskott?',
+    question: 'Hur snabbt ska man gå ner i vikt på cut?',
     answer:
-      'Begreppen används synonymt på svenska. Kaloribrist och kaloriunderskott betyder att du äter färre kalorier än du förbränner (under ditt TDEE), vilket tvingar kroppen att använda lagrad energi — i första hand fett, men även viss muskelmassa om bristen är för stor.',
+      'Det rekommenderade tempot är 0,5–1% av kroppsvikten per vecka. För en person på 80 kg innebär det ca 0,4–0,8 kg/vecka. Snabbare än så innebär ökad risk för muskelmassaförlust och hormonstörningar. Går du upp i vikt trots kaloribrist — mäts det oftast fel eller du underskattar intaget.',
   },
   {
-    question: 'Kan man äta för lite och ändå inte gå ner i vikt?',
+    question: 'Hur mycket protein behövs under cut?',
     answer:
-      'Ja — adaptiv termogenes kan bromsa viktnedgången vid lång kaloribrist. Kroppen sänker sin NEAT (oplanerad rörelse) och BMR sjunker något som försvar mot svält. Lösning: ta en diet break på 1–2 veckor på underhållsintag (ditt TDEE) för att återställa ämnesomsättningen.',
+      'Under cut rekommenderas 1,8–2,4 g protein per kg kroppsvikt — högre än under bulk. Anledningen: i kaloribrist ökar risken för muskelkatabolism. Högt proteinintag ger mättnadseffekt, hög TEF (ca 25–30% av proteinkalorierna går till matsmältning) och skyddar muskelmassa.',
   },
   {
-    question: 'Hur mycket protein behöver man under kaloribrist?',
+    question: 'Hur undviker man muskelförlust under cut?',
     answer:
-      '1,6–2,2 g protein per kg kroppsvikt per dag rekommenderas för att bevara muskelmassa under kaloribrist. Vid aggressivare underskott eller intensiv träning, sikta på övre delen av intervallet (2,0–2,2 g/kg). Protein ger också hög mättnadseffekt.',
+      'Tre saker avgör: 1) Tillräckligt proteinintag (1,8–2,4 g/kg). 2) Fortsätta styrketräna med progressiv belastning — signalen till kroppen att muskelmassa behövs. 3) Inte för aggressivt kaloriunderskott. Kombinerar du dessa tre kan du förlora nästan enbart fett.',
   },
   {
-    question: 'Är det farligt med kaloribrist?',
+    question: 'Vad är en mini cut och när passar den?',
     answer:
-      'En måttlig kaloribrist (300–500 kcal/dag) är inte farlig för friska vuxna. En mycket stor brist (>1000 kcal/dag) ökar risken för muskelmassaförlust, näringsbrist, trötthet och hormonella störningar. Rådfråga sjukvård vid extrem restriktion eller om du har underliggande sjukdomar.',
+      'En mini cut är en kort, intensiv cut-fas (4–8 veckor) med ett något aggressivare underskott (−500–700 kcal/dag). Den passar när du just avslutat en bulk och vill snabbt reducera fettprocenten innan nästa bulk-fas — utan att gå igenom en full, lång cut-cykel.',
   },
 ]
 
-const CANONICAL = 'https://calculeat.se/kalkylatorer/kaloriunderskott'
+const CANONICAL = 'https://calculeat.se/kalkylatorer/cut-kalkylator'
 
 const PAGE_SCHEMA = [
   {
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
-    name: 'Kaloribrist Kalkylator',
+    name: 'Cut Kalkylator',
     url: CANONICAL,
     applicationCategory: 'HealthApplication',
     operatingSystem: 'Web',
     description:
-      'Gratis kaloribrist-kalkylator. Räkna ut ditt TDEE och ditt optimala kaloriintag för viktnedgång baserat på hur snabbt du vill gå ner.',
+      'Gratis cut-kalkylator. Räkna ut hur många kalorier du ska äta för att bränna fett och bevara muskelmassa. Baserat på ditt TDEE och önskat tempo.',
     offers: { '@type': 'Offer', price: '0', priceCurrency: 'SEK' },
   },
   {
@@ -139,18 +141,18 @@ const PAGE_SCHEMA = [
         name: 'Kalkylatorer',
         item: 'https://calculeat.se/kalkylatorer',
       },
-      { '@type': 'ListItem', position: 3, name: 'Kaloribrist Kalkylator', item: CANONICAL },
+      { '@type': 'ListItem', position: 3, name: 'Cut Kalkylator', item: CANONICAL },
     ],
   },
 ]
 
-export default function KaloriunderskottKalkylatornPage() {
+export default function CutKalkylatornPage() {
   const [weight, setWeight] = useState('')
   const [height, setHeight] = useState('')
   const [age, setAge] = useState('')
   const [gender, setGender] = useState<Gender>('male')
   const [activityLevel, setActivityLevel] = useState<ActivityLevel>('Moderately active')
-  const [goal, setGoal] = useState<Goal>('moderate')
+  const [cutMode, setCutMode] = useState<CutMode>('moderate')
   const [hasResult, setHasResult] = useState(false)
 
   const bmr = useMemo(() => {
@@ -166,10 +168,12 @@ export default function KaloriunderskottKalkylatornPage() {
     return Math.round(bmr * PAL_MULTIPLIERS[gender][activityLevel])
   }, [bmr, gender, activityLevel])
 
-  const selectedGoal = GOALS.find(g => g.value === goal)!
-  const targetCalories = tdee ? Math.round(tdee - selectedGoal.deficit) : null
-  const proteinMin = weight ? Math.round(parseFloat(weight) * 1.6) : null
-  const proteinMax = weight ? Math.round(parseFloat(weight) * 2.2) : null
+  const selectedMode = CUT_MODES.find(m => m.value === cutMode)!
+  const targetCalories = tdee ? Math.round(tdee - selectedMode.deficit) : null
+
+  const w = parseFloat(weight)
+  const proteinMin = w > 0 ? Math.round(w * 1.8) : null
+  const proteinMax = w > 0 ? Math.round(w * 2.4) : null
 
   const handleCalculate = () => {
     if (bmr && tdee) setHasResult(true)
@@ -178,8 +182,8 @@ export default function KaloriunderskottKalkylatornPage() {
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Seo
-        title="Kaloribrist Kalkylator — Räkna ut ditt kaloriunderskott (2026)"
-        description="Gratis kaloribrist-kalkylator. Räkna ut ditt TDEE och exakt hur många kalorier du ska äta för att gå ner i vikt i ditt önskade tempo. Resultat direkt."
+        title="Cut Kalkylator — Räkna ut kalorier för smart cut (2026)"
+        description="Gratis cut-kalkylator. Räkna ut hur många kalorier du ska äta för att bränna fett och bevara muskelmassa. Baserat på ditt TDEE. Resultat direkt."
         canonical={CANONICAL}
       />
       <JsonLd schema={PAGE_SCHEMA} />
@@ -201,23 +205,23 @@ export default function KaloriunderskottKalkylatornPage() {
               Kalkylatorer
             </Link>
             <span>/</span>
-            <span className="text-neutral-700">Kaloribrist Kalkylator</span>
+            <span className="text-neutral-700">Cut Kalkylator</span>
           </nav>
 
           <h1 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-3 leading-tight">
-            Kaloribrist Kalkylator
+            Cut Kalkylator
           </h1>
           <p className="text-lg text-neutral-600 leading-relaxed mb-8 border-l-4 border-primary-400 pl-4 bg-primary-50 py-3 rounded-r-lg">
-            Räkna ut ditt TDEE och ditt optimala dagliga kaloriintag för viktnedgång — baserat på
-            ditt valda tempo. En kaloribrist på 300–500 kcal/dag är det vetenskapligt rekommenderade
-            intervallet för att tappa fett utan att förlora muskelmassa.
+            En smart cut handlar inte om att äta så lite som möjligt — det handlar om att välja rätt
+            underskott för att bränna fett utan att förlora muskelmassa. Räkna ut ditt optimala
+            kaloriintag baserat på ditt TDEE och önskat tempo.
           </p>
 
           {/* Calculator card */}
           <div className="rounded-2xl border border-neutral-200 shadow-sm overflow-hidden mb-8">
             <div className="bg-primary-50 px-6 py-4 border-b border-primary-100 flex items-center gap-2">
               <Calculator className="h-5 w-5 text-primary-600" />
-              <span className="font-semibold text-primary-900">Beräkna ditt kaloriunderskott</span>
+              <span className="font-semibold text-primary-900">Beräkna dina cut-kalorier</span>
             </div>
 
             <div className="p-6 space-y-5">
@@ -244,20 +248,20 @@ export default function KaloriunderskottKalkylatornPage() {
               {/* Age, Weight, Height */}
               <div className="grid grid-cols-3 gap-4">
                 {[
-                  { label: 'Ålder', unit: 'år', value: age, setter: setAge, placeholder: '30' },
+                  { label: 'Ålder', unit: 'år', value: age, setter: setAge, placeholder: '28' },
                   {
                     label: 'Vikt',
                     unit: 'kg',
                     value: weight,
                     setter: setWeight,
-                    placeholder: '75',
+                    placeholder: '80',
                   },
                   {
                     label: 'Längd',
                     unit: 'cm',
                     value: height,
                     setter: setHeight,
-                    placeholder: '175',
+                    placeholder: '178',
                   },
                 ].map(({ label, unit, value, setter, placeholder }) => (
                   <div key={label}>
@@ -318,38 +322,40 @@ export default function KaloriunderskottKalkylatornPage() {
                 </div>
               </div>
 
-              {/* Goal / Tempo */}
+              {/* Cut Mode */}
               <div>
                 <label className="block text-sm font-medium text-neutral-700 mb-2">
-                  Önskat tempo
+                  Cut-strategi
                 </label>
                 <div className="space-y-2">
-                  {GOALS.map(({ value, label, deficit, weeklyLoss, description, color, ring }) => (
-                    <button
-                      key={value}
-                      onClick={() => setGoal(value)}
-                      className={`w-full flex items-start gap-3 py-2.5 px-4 rounded-lg border text-left transition-colors ${
-                        goal === value
-                          ? color
-                          : 'border-neutral-200 bg-white hover:border-neutral-300'
-                      }`}
-                    >
-                      <div
-                        className={`mt-0.5 h-4 w-4 rounded-full border-2 flex-shrink-0 ${
-                          goal === value ? ring : 'border-neutral-300 bg-white'
+                  {CUT_MODES.map(
+                    ({ value, label, deficit, weeklyLoss, description, color, ring }) => (
+                      <button
+                        key={value}
+                        onClick={() => setCutMode(value)}
+                        className={`w-full flex items-start gap-3 py-2.5 px-4 rounded-lg border text-left transition-colors ${
+                          cutMode === value
+                            ? color
+                            : 'border-neutral-200 bg-white hover:border-neutral-300'
                         }`}
-                      />
-                      <div>
-                        <div className="text-sm font-medium text-neutral-800">
-                          {label} — {deficit} kcal/dag underskott
-                          <span className="ml-2 text-xs font-normal text-neutral-500">
-                            {weeklyLoss}
-                          </span>
+                      >
+                        <div
+                          className={`mt-0.5 h-4 w-4 rounded-full border-2 flex-shrink-0 ${
+                            cutMode === value ? ring : 'border-neutral-300 bg-white'
+                          }`}
+                        />
+                        <div>
+                          <div className="text-sm font-medium text-neutral-800">
+                            {label} — −{deficit} kcal/dag
+                            <span className="ml-2 text-xs font-normal text-neutral-500">
+                              {weeklyLoss}
+                            </span>
+                          </div>
+                          <div className="text-xs text-neutral-500 mt-0.5">{description}</div>
                         </div>
-                        <div className="text-xs text-neutral-500 mt-0.5">{description}</div>
-                      </div>
-                    </button>
-                  ))}
+                      </button>
+                    )
+                  )}
                 </div>
               </div>
 
@@ -358,7 +364,7 @@ export default function KaloriunderskottKalkylatornPage() {
                 disabled={!bmr || !tdee}
                 className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-neutral-200 disabled:text-neutral-400 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm"
               >
-                Beräkna mitt kaloriunderskott
+                Beräkna mina cut-kalorier
               </button>
             </div>
 
@@ -367,7 +373,6 @@ export default function KaloriunderskottKalkylatornPage() {
               <div className="border-t border-neutral-100 bg-neutral-50 px-6 py-6 space-y-4">
                 <h2 className="font-semibold text-neutral-800">Dina resultat</h2>
 
-                {/* TDEE + target */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="rounded-xl bg-white border border-neutral-200 p-4 text-center">
                     <div className="text-2xl font-bold text-neutral-700">{tdee}</div>
@@ -376,14 +381,17 @@ export default function KaloriunderskottKalkylatornPage() {
                   </div>
                   <div className="rounded-xl bg-primary-600 p-4 text-center">
                     <div className="text-2xl font-bold text-white">{targetCalories}</div>
-                    <div className="text-xs text-primary-200 mt-0.5">Mål (kcal/dag)</div>
-                    <div className="text-xs text-primary-300">−{selectedGoal.deficit} kcal/dag</div>
+                    <div className="text-xs text-primary-200 mt-0.5">Cut-mål (kcal/dag)</div>
+                    <div className="text-xs text-primary-300">−{selectedMode.deficit} kcal/dag</div>
                   </div>
                 </div>
 
-                {/* Summary row */}
+                {/* Plan summary */}
                 <div className="rounded-xl bg-white border border-neutral-200 p-4">
-                  <div className="text-sm font-medium text-neutral-800 mb-3">Din plan</div>
+                  <div className="flex items-center gap-2 mb-3">
+                    <TrendingDown className="h-4 w-4 text-primary-600" />
+                    <span className="text-sm font-medium text-neutral-800">Din cut-plan</span>
+                  </div>
                   <div className="space-y-2 text-sm text-neutral-700">
                     <div className="flex justify-between">
                       <span className="text-neutral-500">Underhållskalorier (TDEE)</span>
@@ -392,7 +400,7 @@ export default function KaloriunderskottKalkylatornPage() {
                     <div className="flex justify-between">
                       <span className="text-neutral-500">Dagligt underskott</span>
                       <span className="font-medium text-orange-600">
-                        −{selectedGoal.deficit} kcal
+                        −{selectedMode.deficit} kcal
                       </span>
                     </div>
                     <div className="flex justify-between border-t border-neutral-100 pt-2 mt-2">
@@ -400,14 +408,12 @@ export default function KaloriunderskottKalkylatornPage() {
                       <span className="font-bold text-primary-600">{targetCalories} kcal</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-neutral-500">Förväntat tempo</span>
-                      <span className="font-medium">{selectedGoal.weeklyLoss}</span>
+                      <span className="text-neutral-500">Förväntad viktnedgång</span>
+                      <span className="font-medium">{selectedMode.weeklyLoss}</span>
                     </div>
                     {proteinMin && proteinMax && (
                       <div className="flex justify-between border-t border-neutral-100 pt-2 mt-2">
-                        <span className="text-neutral-500">
-                          Proteinmål (för att bevara muskler)
-                        </span>
+                        <span className="text-neutral-500">Proteinmål (muskelskydd)</span>
                         <span className="font-medium">
                           {proteinMin}–{proteinMax} g/dag
                         </span>
@@ -417,29 +423,47 @@ export default function KaloriunderskottKalkylatornPage() {
                 </div>
 
                 {/* Warning for aggressive */}
-                {goal === 'aggressive' && (
+                {cutMode === 'aggressive' && (
                   <div className="rounded-xl bg-amber-50 border border-amber-200 p-4 flex gap-3">
                     <AlertTriangle className="h-4 w-4 text-amber-600 flex-shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-sm font-medium text-amber-900 mb-1">
-                        Aggressivt underskott
-                      </p>
+                      <p className="text-sm font-medium text-amber-900 mb-1">Aggressiv cut</p>
                       <p className="text-xs text-amber-700">
-                        Vid 700 kcal/dag underskott ökar risken för muskelmassaförlust markant. Se
-                        till att äta {proteinMax}+ g protein per dag och styrketräna regelbundet.
+                        Vid −700 kcal/dag ökar risken för muskelmassaförlust markant. Säkerställ
+                        {proteinMax ? ` ${proteinMax}+` : ' högt'} g protein per dag och fortsätt
+                        styrketräna med progressiv belastning.
                       </p>
                     </div>
                   </div>
                 )}
 
+                {/* Cross-link to bulk */}
+                <div className="rounded-xl bg-neutral-100 border border-neutral-200 p-4 flex items-center justify-between gap-4">
+                  <div>
+                    <p className="text-xs font-medium text-neutral-700">
+                      Ska du bulka efter cutten?
+                    </p>
+                    <p className="text-xs text-neutral-500 mt-0.5">
+                      Planera nästa fas med bulk-kalkylatorn.
+                    </p>
+                  </div>
+                  <Link
+                    to="/kalkylatorer/bulk-kalkylator"
+                    className="flex-shrink-0 inline-flex items-center gap-1.5 text-xs font-medium text-primary-600 hover:underline"
+                  >
+                    Bulk Kalkylator
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
+
                 {/* Gated CTA */}
                 <div className="rounded-xl bg-white border border-primary-200 p-4">
                   <p className="text-sm font-medium text-neutral-800 mb-1">
-                    Spara din plan och logga mot ditt mål
+                    Spara din cut-plan och logga mat
                   </p>
                   <p className="text-xs text-neutral-500 mb-3">
-                    Skapa ett gratis konto för att spara ditt kaloriintag, sätta mål och följa din
-                    progress dag för dag.
+                    Skapa ett gratis konto för att spara ditt kaloriintag, följa din progress och
+                    hålla koll på proteinet.
                   </p>
                   <Link
                     to="/register"
@@ -456,47 +480,51 @@ export default function KaloriunderskottKalkylatornPage() {
           {/* Explanation */}
           <section className="space-y-5 text-neutral-700 text-sm leading-relaxed mb-8">
             <h2 className="text-xl font-semibold text-neutral-900">
-              Hur stort kaloriunderskott är optimalt?
+              Vad är skillnaden på cut och kaloribrist?
             </h2>
             <p>
-              Det optimala underskottet beror på hur mycket fett du har att tappa och hur snabbt du
-              vill nå målet. Generella riktlinjer:
+              Kaloribrist är ett generellt begrepp för att äta under TDEE. En cut är en aktiv fas
+              med syfte att minska fettprocenten samtidigt som muskelmassa bevaras — det kräver inte
+              bara rätt kaloriintag utan också rätt proteinintag och träning. En bra cut är
+              metodisk, inte desperat.
+            </p>
+
+            <h2 className="text-xl font-semibold text-neutral-900 pt-4">
+              Varför är protein viktigare under cut än bulk?
+            </h2>
+            <p>
+              Under kaloribrist saknar kroppen energi och riskerar att bryta ned muskelvävnad för
+              bränsle (muskelkatabolism). Högt proteinintag ger tre fördelar under cut:
             </p>
             <ul className="space-y-2 pl-4 list-disc">
               <li>
-                <strong>200–300 kcal/dag (mild):</strong> Lämplig om du är nära målvikt, ny på
-                viktnedgång eller vill minimera muskelförlust. Långsamt men hållbart.
+                <strong>Muskelskydd:</strong> Tillräckligt protein minimerar muskelkatabolism
               </li>
               <li>
-                <strong>300–500 kcal/dag (måttlig):</strong> Den vetenskapliga standarden. Ger
-                0,3–0,5 kg/vecka — tillräckligt snabbt för att se resultat utan att kompromissa med
-                muskelmassa.
+                <strong>Mättnadseffekt:</strong> Protein är det mest mättande makronutrientet per
+                kcal
               </li>
               <li>
-                <strong>500–1000 kcal/dag (aggressiv):</strong> Acceptabelt vid hög fettprocent.
-                Kräver högt proteinintag (2,0–2,2 g/kg) och styrketräning för att skydda muskler.
+                <strong>Hög TEF:</strong> ca 25–30% av proteinkalorierna går till att smälta
+                proteinet — det hjälper kaloribalansen
               </li>
             </ul>
+            <p>
+              Rekommendation under cut: 1,8–2,4 g/kg kroppsvikt, jämfört med 1,6–2,2 g/kg under
+              underhåll eller bulk.
+            </p>
 
             <h2 className="text-xl font-semibold text-neutral-900 pt-4">
-              Varför planar vikten ut?
+              Varför planar vikten ut trots kaloriunderskott?
             </h2>
             <p>
-              Vid lång kaloribrist sänker kroppen sin ämnesomsättning som försvar — adaptiv
-              termogenes. NEAT (oplanerad rörelse) minskar instinktivt och BMR sjunker något.
+              Adaptiv termogenes: kroppen sänker sin ämnesomsättning och NEAT (oplanerad rörelse)
+              som försvar mot lång kaloribrist. Det är normalt och inte ett misslyckande.
             </p>
             <p>
-              <strong>Lösning:</strong> Ta en <em>diet break</em> på 1–2 veckor på underhållsintag
-              (ditt TDEE) var 8–12:e vecka. Det återställer hormonbalansen och gör nästa dietfas
-              effektivare. Det är inte ett misslyckande — det är strategi.
-            </p>
-
-            <h2 className="text-xl font-semibold text-neutral-900 pt-4">Proteinets roll</h2>
-            <p>
-              Det viktigaste du kan göra för att bevara muskelmassa under kaloribrist är
-              tillräckligt proteinintag. Forskning stöder 1,6–2,2 g protein per kg kroppsvikt.
-              Protein har dessutom hög mättnadseffekt och hög TEF (ca 25–30% av proteinkalorierna
-              används till att smälta proteinet) — vilket gör det extra värdefullt under en kur.
+              Lösning: ta en <em>diet break</em> på 1–2 veckor på underhållsintag var 8–12:e vecka.
+              Det återställer hormonbalansen (leptin, kortisol, sköldkörtelhormon) och gör nästa
+              cut-fas effektivare.
             </p>
           </section>
 
@@ -510,9 +538,9 @@ export default function KaloriunderskottKalkylatornPage() {
               </h3>
               <ul className="space-y-2">
                 {[
+                  { href: '/kalkylatorer/bulk-kalkylator', label: 'Bulk Kalkylator' },
+                  { href: '/kalkylatorer/kaloriunderskott', label: 'Kaloribrist Kalkylator' },
                   { href: '/kalkylatorer/tdee-kalkylator', label: 'TDEE Kalkylator' },
-                  { href: '/kalkylatorer/cut-kalkylator', label: 'Cut Kalkylator' },
-                  { href: '/kalkylatorer/bmi-kalkylator', label: 'BMI Kalkylator' },
                 ].map(l => (
                   <li key={l.href}>
                     <Link
@@ -532,8 +560,8 @@ export default function KaloriunderskottKalkylatornPage() {
               </h3>
               <ul className="space-y-2">
                 {[
+                  { href: '/artiklar/bulk-och-cut', label: 'Bulk och Cut — komplett guide' },
                   { href: '/artiklar/kaloribrist', label: 'Hur stor kaloribrist ska man ha?' },
-                  { href: '/artiklar/vad-ar-tdee', label: 'Vad är TDEE?' },
                   { href: '/artiklar/kaloribehov', label: 'Kaloribehov — komplett guide' },
                 ].map(l => (
                   <li key={l.href}>
