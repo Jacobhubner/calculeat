@@ -32,6 +32,7 @@ const BulkKalkylatornPage = lazy(() => import('./pages/public/BulkKalkylatornPag
 const CutKalkylatornPage = lazy(() => import('./pages/public/CutKalkylatornPage'))
 const ProteinbehovKalkylatornPage = lazy(() => import('./pages/public/ProteinbehovKalkylatornPage'))
 const ReverseDietPage = lazy(() => import('./pages/public/ReverseDietPage'))
+const MyFitnessPalVsCalculEatPage = lazy(() => import('./pages/public/MyFitnessPalVsCalculEatPage'))
 
 // Lazy load - app pages (loaded on demand)
 const IconDemo = lazy(() => import('./pages/IconDemo'))
@@ -138,6 +139,10 @@ function App() {
                     <Route path="/artiklar/kaloribrist" element={<KaloriBristPage />} />
                     <Route path="/artiklar/bulk-och-cut" element={<BulkOchCutPage />} />
                     <Route path="/artiklar/reverse-diet" element={<ReverseDietPage />} />
+                    <Route
+                      path="/jamfor/myfitnesspal-vs-calculeat"
+                      element={<MyFitnessPalVsCalculEatPage />}
+                    />
                     <Route path="/om-oss" element={<OmOssPage />} />
 
                     <Route
