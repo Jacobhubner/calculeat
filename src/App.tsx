@@ -25,6 +25,9 @@ const VadArTdeePage = lazy(() => import('./pages/public/VadArTdeePage'))
 const KaloriBristPage = lazy(() => import('./pages/public/KaloriBristPage'))
 const BulkOchCutPage = lazy(() => import('./pages/public/BulkOchCutPage'))
 const OmOssPage = lazy(() => import('./pages/public/OmOssPage'))
+const KaloriunderskottKalkylatornPage = lazy(
+  () => import('./pages/public/KaloriunderskottKalkylatornPage')
+)
 
 // Lazy load - app pages (loaded on demand)
 const IconDemo = lazy(() => import('./pages/IconDemo'))
@@ -116,6 +119,10 @@ function App() {
                     {/* Public SEO pages */}
                     <Route path="/kalkylatorer/tdee-kalkylator" element={<TdeeKalkylatornPage />} />
                     <Route path="/kalkylatorer/bmi-kalkylator" element={<BmiKalkylatornPage />} />
+                    <Route
+                      path="/kalkylatorer/kaloriunderskott"
+                      element={<KaloriunderskottKalkylatornPage />}
+                    />
                     <Route path="/artiklar/kaloribehov" element={<KaloriberhovPage />} />
                     <Route path="/artiklar/vad-ar-tdee" element={<VadArTdeePage />} />
                     <Route path="/artiklar/kaloribrist" element={<KaloriBristPage />} />

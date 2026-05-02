@@ -64,11 +64,14 @@ export default function KaloriBristPage() {
       <ArticleLayout
         title="Hur stor kaloribrist ska man ha för viktnedgång?"
         intro="En kaloribrist på 300–500 kcal per dag under ditt TDEE är det vetenskapligt rekommenderade tempot för hållbar viktnedgång utan att tappa muskler. Det ger ca 0,3–0,5 kg viktnedgång per vecka — tillräckligt snabbt för att se resultat, tillräckligt långsamt för att kroppen ska anpassa sig hälsosamt."
-        moneyPageHref="/kalkylatorer/tdee-kalkylator"
-        moneyPageLabel="Räkna ut ditt TDEE för att veta din startpunkt"
+        moneyPageHref="/kalkylatorer/kaloriunderskott"
+        moneyPageLabel="Räkna ut ditt exakta kaloriintag med kaloribrist-kalkylatorn"
         faqItems={FAQ_ITEMS}
         sources={SOURCES}
-        relatedCalculators={[{ href: '/kalkylatorer/tdee-kalkylator', label: 'TDEE Kalkylator' }]}
+        relatedCalculators={[
+          { href: '/kalkylatorer/kaloriunderskott', label: 'Kaloribrist Kalkylator' },
+          { href: '/kalkylatorer/tdee-kalkylator', label: 'TDEE Kalkylator' },
+        ]}
         relatedArticles={[
           { href: '/artiklar/kaloribehov', label: 'Kaloribehov — komplett guide' },
           { href: '/artiklar/vad-ar-tdee', label: 'Vad är TDEE?' },

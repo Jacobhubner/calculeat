@@ -386,7 +386,10 @@ export default function TdeeKalkylatornPage() {
                 Relaterade kalkylatorer
               </h3>
               <ul className="space-y-2">
-                {[{ href: '/kalkylatorer/bmi-kalkylator', label: 'BMI Kalkylator' }].map(l => (
+                {[
+                  { href: '/kalkylatorer/kaloriunderskott', label: 'Kaloribrist Kalkylator' },
+                  { href: '/kalkylatorer/bmi-kalkylator', label: 'BMI Kalkylator' },
+                ].map(l => (
                   <li key={l.href}>
                     <Link
                       to={l.href}

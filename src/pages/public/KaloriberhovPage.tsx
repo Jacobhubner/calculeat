@@ -72,6 +72,7 @@ export default function KaloriberhovPage() {
         sources={SOURCES}
         relatedCalculators={[
           { href: '/kalkylatorer/tdee-kalkylator', label: 'TDEE Kalkylator' },
+          { href: '/kalkylatorer/kaloriunderskott', label: 'Kaloribrist Kalkylator' },
           { href: '/kalkylatorer/bmi-kalkylator', label: 'BMI Kalkylator' },
         ]}
         relatedArticles={[
