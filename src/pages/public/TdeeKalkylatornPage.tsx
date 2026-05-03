@@ -329,7 +329,18 @@ export default function TdeeKalkylatornPage() {
                     Skapa gratis konto
                     <ArrowRight className="h-4 w-4" />
                   </Link>
-                  <p className="text-xs text-primary-300 mt-2">Inget kreditkort · Alltid gratis</p>
+                  <p className="text-xs text-primary-300 mt-2">Inget kreditkort krävs</p>
+                  <div className="mt-3 text-left text-xs space-y-0.5 border-t border-primary-500 pt-3">
+                    <p className="text-primary-100 font-medium mb-1">Vad ingår:</p>
+                    <p className="text-primary-200">✓ Beräkna TDEE — alltid gratis</p>
+                    <p className="text-primary-200">✓ Spara plan och logga mat — med konto</p>
+                    <p className="text-primary-200">
+                      ✓ Följ vikttrend och kalibrera mål — med konto
+                    </p>
+                    <p className="text-primary-300 mt-1.5 italic">
+                      Fler funktioner i premiumversionen framöver.
+                    </p>
+                  </div>
                 </div>
               </div>
             )}
@@ -393,7 +404,7 @@ export default function TdeeKalkylatornPage() {
             </h2>
             <p className="text-primary-200 text-sm mb-6 max-w-md mx-auto">
               Du har ditt TDEE. Nästa steg är att logga mat mot rätt mål, följa din vikttrend och
-              kalibrera ditt kalorimål när kroppen svarar. CalculEat gör allt det — gratis.
+              kalibrera ditt kalorimål när kroppen svarar. Skapa ett gratis konto och kom igång.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link

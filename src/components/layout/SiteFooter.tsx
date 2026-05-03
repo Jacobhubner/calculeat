@@ -9,36 +9,43 @@ export default function SiteFooter() {
 
   const footerSections = [
     {
+      title: 'Kalkylatorer',
+      links: [
+        { label: 'TDEE-kalkylator', to: '/kalkylatorer/tdee-kalkylator' },
+        { label: 'Kaloriunderskott', to: '/kalkylatorer/kaloriunderskott' },
+        { label: 'BMI-kalkylator', to: '/kalkylatorer/bmi-kalkylator' },
+        { label: 'Proteinbehov', to: '/kalkylatorer/proteinbehov' },
+        { label: 'Idealvikt', to: '/kalkylatorer/idealvikt' },
+        { label: 'Kroppsfett', to: '/kalkylatorer/kroppsfett' },
+        { label: 'Alla kalkylatorer', to: '/kalkylatorer' },
+      ],
+    },
+    {
+      title: 'Artiklar',
+      links: [
+        { label: 'Kaloribehov', to: '/artiklar/kaloribehov' },
+        { label: 'Vad är TDEE?', to: '/artiklar/vad-ar-tdee' },
+        { label: 'Kaloribrist', to: '/artiklar/kaloribrist' },
+        { label: 'Bulk och cut', to: '/artiklar/bulk-och-cut' },
+        { label: 'Alla artiklar', to: '/artiklar' },
+      ],
+    },
+    {
+      title: 'Jämför appar',
+      links: [
+        { label: 'Bästa kaloriappen', to: '/basta-kaloriappen' },
+        { label: 'Bästa TDEE-kalkylatorn', to: '/basta-tdee-kalkylatorn' },
+        { label: 'MyFitnessPal vs CalculEat', to: '/jamfor/myfitnesspal-vs-calculeat' },
+        { label: 'Lifesum vs CalculEat', to: '/jamfor/lifesum-vs-calculeat' },
+        { label: 'Yazio vs CalculEat', to: '/jamfor/yazio-vs-calculeat' },
+        { label: 'MacroFactor vs CalculEat', to: '/jamfor/macrofactor-vs-calculeat' },
+      ],
+    },
+    {
       title: t('footer.sections.product'),
       links: [
         { label: t('footer.links.dashboard'), to: '/app' },
-        { label: t('footer.links.pricing'), to: '#' },
-      ],
-    },
-    {
-      title: t('footer.sections.resources'),
-      links: [
-        { label: t('footer.links.guides'), to: '#' },
-        { label: t('footer.links.faq'), to: '#' },
-        { label: t('footer.links.support'), to: '#' },
-        { label: t('footer.links.apiDocs'), to: '#' },
-      ],
-    },
-    {
-      title: t('footer.sections.company'),
-      links: [
-        { label: t('footer.links.about'), to: '#' },
-        { label: t('footer.links.blog'), to: '#' },
-        { label: t('footer.links.careers'), to: '#' },
-        { label: t('footer.links.contact'), to: '#' },
-      ],
-    },
-    {
-      title: t('footer.sections.legal'),
-      links: [
-        { label: t('footer.links.privacy'), to: '#' },
-        { label: t('footer.links.terms'), to: '#' },
-        { label: t('footer.links.cookies'), to: '#' },
+        { label: 'Om oss', to: '/om-oss' },
       ],
     },
   ]

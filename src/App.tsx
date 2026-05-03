@@ -47,6 +47,8 @@ const VadArPalOchMetPage = lazy(() => import('./pages/public/VadArPalOchMetPage'
 const LifesumVsCalculEatPage = lazy(() => import('./pages/public/LifesumVsCalculEatPage'))
 const YazioVsCalculEatPage = lazy(() => import('./pages/public/YazioVsCalculEatPage'))
 const MacroFactorVsCalculEatPage = lazy(() => import('./pages/public/MacroFactorVsCalculEatPage'))
+const KalkylatornHubPage = lazy(() => import('./pages/public/KalkylatornHubPage'))
+const ArtikelnHubPage = lazy(() => import('./pages/public/ArtikelnHubPage'))
 
 // Lazy load - app pages (loaded on demand)
 const IconDemo = lazy(() => import('./pages/IconDemo'))
@@ -180,6 +182,8 @@ function App() {
                     />
                     <Route path="/basta-kaloriappen" element={<BastaKaloriappenPage />} />
                     <Route path="/basta-tdee-kalkylatorn" element={<BastaTdeeKalkylatornPage />} />
+                    <Route path="/kalkylatorer" element={<KalkylatornHubPage />} />
+                    <Route path="/artiklar" element={<ArtikelnHubPage />} />
                     <Route path="/om-oss" element={<OmOssPage />} />
 
                     <Route

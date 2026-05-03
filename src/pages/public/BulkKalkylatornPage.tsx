@@ -455,6 +455,15 @@ export default function BulkKalkylatornPage() {
                     Spara din plan gratis
                     <ArrowRight className="h-4 w-4" />
                   </Link>
+                  <div className="mt-3 pt-3 border-t border-neutral-100 text-xs text-neutral-500 space-y-0.5">
+                    <p className="font-medium text-neutral-700 mb-1">Vad ingår:</p>
+                    <p>✓ Beräkna bulk-kalorier — alltid gratis</p>
+                    <p>✓ Spara plan och logga mat — med konto</p>
+                    <p>✓ Följ makron och vikt — med konto</p>
+                    <p className="text-neutral-400 mt-1.5 italic">
+                      Fler funktioner i premiumversionen framöver.
+                    </p>
+                  </div>
                 </div>
               </div>
             )}

@@ -58,6 +58,11 @@ export default function SiteHeader() {
         ]
       : []
 
+  const navLinks = [
+    { to: '/kalkylatorer', label: 'Kalkylatorer' },
+    { to: '/artiklar', label: 'Artiklar' },
+  ]
+
   const getInitials = () => {
     if (userProfile?.username) return userProfile.username.substring(0, 2).toUpperCase()
     return '...'
@@ -114,7 +119,7 @@ export default function SiteHeader() {
         </Link>
 
         {/* Desktop Navigation - Only show marketing links when logged out */}
-        {!user && anchorLinks.length > 0 && (
+        {!user && (
           <nav className="hidden md:flex items-center gap-6">
             {anchorLinks.map(link => (
               <a
@@ -124,6 +129,15 @@ export default function SiteHeader() {
               >
                 {link.label}
               </a>
+            ))}
+            {navLinks.map(link => (
+              <Link
+                key={link.to}
+                to={link.to}
+                className="text-sm font-medium transition-colors text-neutral-600 hover:text-neutral-900"
+              >
+                {link.label}
+              </Link>
             ))}
           </nav>
         )}
@@ -330,6 +344,16 @@ export default function SiteHeader() {
               >
                 {link.label}
               </a>
+            ))}
+            {navLinks.map(link => (
+              <Link
+                key={link.to}
+                to={link.to}
+                onClick={() => setMobileMenuOpen(false)}
+                className="px-4 py-2 rounded-xl text-sm font-medium transition-colors text-neutral-600 hover:bg-neutral-50"
+              >
+                {link.label}
+              </Link>
             ))}
 
             <div className="border-t mt-2 pt-2">

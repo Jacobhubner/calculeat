@@ -7,7 +7,7 @@ import SmartCalculator from '@/components/SmartCalculator'
 import { HeroSection } from '@/components/HeroSection'
 import { HowItWorks } from '@/components/HowItWorks'
 import { Button } from '@/components/ui/button'
-import { Scan, Share2, ChefHat, Scale, Target } from 'lucide-react'
+import { Scan, Share2, ChefHat, Scale, Target, ArrowRight } from 'lucide-react'
 
 export default function HomePage() {
   const { user } = useAuth()
@@ -35,9 +35,7 @@ export default function HomePage() {
               <h2 className="text-3xl md:text-4xl font-semibold text-neutral-900 mb-3">
                 {t('home.hero.featuresTitle')}
               </h2>
-              <p className="text-lg text-neutral-600">
-                {t('home.hero.featuresSubtitle')}
-              </p>
+              <p className="text-lg text-neutral-600">{t('home.hero.featuresSubtitle')}</p>
             </div>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
@@ -114,6 +112,93 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* Popular Tools Section */}
+        <section className="py-14 md:py-20 bg-neutral-50 border-t border-neutral-100">
+          <div className="container mx-auto px-4">
+            <div className="max-w-5xl mx-auto">
+              <div className="flex items-end justify-between mb-8">
+                <div>
+                  <h2 className="text-2xl md:text-3xl font-bold text-neutral-900 mb-1">
+                    Populära verktyg
+                  </h2>
+                  <p className="text-neutral-600 text-sm">Gratis kalkylatorer och guider</p>
+                </div>
+                <Link
+                  to="/kalkylatorer"
+                  className="hidden sm:flex items-center gap-1 text-sm text-primary-600 font-medium hover:text-primary-700 transition-colors"
+                >
+                  Alla kalkylatorer
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
+
+              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                <Link
+                  to="/kalkylatorer/tdee-kalkylator"
+                  className="group bg-white rounded-2xl border border-neutral-200 p-5 hover:shadow-md hover:border-primary-200 transition-all"
+                >
+                  <p className="text-xs text-primary-600 font-medium mb-1">Kalkylator</p>
+                  <h3 className="font-semibold text-neutral-900 group-hover:text-primary-700 transition-colors mb-1.5">
+                    TDEE-kalkylator
+                  </h3>
+                  <p className="text-xs text-neutral-500 leading-relaxed">
+                    Beräkna ditt totala dagliga energibehov
+                  </p>
+                </Link>
+
+                <Link
+                  to="/kalkylatorer/kaloriunderskott"
+                  className="group bg-white rounded-2xl border border-neutral-200 p-5 hover:shadow-md hover:border-primary-200 transition-all"
+                >
+                  <p className="text-xs text-primary-600 font-medium mb-1">Kalkylator</p>
+                  <h3 className="font-semibold text-neutral-900 group-hover:text-primary-700 transition-colors mb-1.5">
+                    Kaloriunderskott
+                  </h3>
+                  <p className="text-xs text-neutral-500 leading-relaxed">
+                    Hur stort underskott behöver du?
+                  </p>
+                </Link>
+
+                <Link
+                  to="/kalkylatorer/bmi-kalkylator"
+                  className="group bg-white rounded-2xl border border-neutral-200 p-5 hover:shadow-md hover:border-primary-200 transition-all"
+                >
+                  <p className="text-xs text-primary-600 font-medium mb-1">Kalkylator</p>
+                  <h3 className="font-semibold text-neutral-900 group-hover:text-primary-700 transition-colors mb-1.5">
+                    BMI-kalkylator
+                  </h3>
+                  <p className="text-xs text-neutral-500 leading-relaxed">
+                    Räkna ut ditt body mass index
+                  </p>
+                </Link>
+
+                <Link
+                  to="/artiklar/kaloribehov"
+                  className="group bg-white rounded-2xl border border-neutral-200 p-5 hover:shadow-md hover:border-primary-200 transition-all"
+                >
+                  <p className="text-xs text-accent-600 font-medium mb-1">Artikel</p>
+                  <h3 className="font-semibold text-neutral-900 group-hover:text-primary-700 transition-colors mb-1.5">
+                    Kaloribehov
+                  </h3>
+                  <p className="text-xs text-neutral-500 leading-relaxed">
+                    Hur mycket ska du äta egentligen?
+                  </p>
+                </Link>
+              </div>
+
+              <div className="flex sm:hidden justify-center">
+                <Link
+                  to="/kalkylatorer"
+                  className="flex items-center gap-1 text-sm text-primary-600 font-medium hover:text-primary-700 transition-colors"
+                >
+                  Alla kalkylatorer
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Calculator Section */}
         <section id="calculator" className="py-20 md:py-28 bg-white">
           <div className="container mx-auto px-4">
@@ -121,9 +206,7 @@ export default function HomePage() {
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold text-neutral-900 mb-4">
                 {t('home.calculator.title')}
               </h2>
-              <p className="text-lg md:text-xl text-neutral-600">
-                {t('home.calculator.subtitle')}
-              </p>
+              <p className="text-lg md:text-xl text-neutral-600">{t('home.calculator.subtitle')}</p>
             </div>
 
             <div className="max-w-3xl mx-auto">
