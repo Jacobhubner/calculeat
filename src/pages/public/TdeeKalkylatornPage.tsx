@@ -294,7 +294,7 @@ export default function TdeeKalkylatornPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3 mb-5">
+                <div className="grid grid-cols-2 gap-3 mb-4">
                   <div className="rounded-lg bg-blue-50 border border-blue-100 p-3 text-center">
                     <div className="text-lg font-semibold text-blue-700">{cutTarget}</div>
                     <div className="text-xs text-blue-600">Mål för viktnedgång</div>
@@ -307,22 +307,29 @@ export default function TdeeKalkylatornPage() {
                   </div>
                 </div>
 
+                {/* Trust signal */}
+                <p className="text-xs text-neutral-400 text-center mb-4">
+                  Baserat på Mifflin-St Jeor-formeln (2002) + FAO/WHO/UNU aktivitetsfaktorer — samma
+                  metodik som används av dietister och klinisk forskning.
+                </p>
+
                 {/* Gated CTA */}
-                <div className="rounded-xl bg-white border border-primary-200 p-4">
-                  <p className="text-sm font-medium text-neutral-800 mb-1">
-                    Spara din plan och börja logga mat
+                <div className="rounded-xl bg-primary-600 p-5 text-center">
+                  <p className="text-sm font-bold text-white mb-1">
+                    Få en personlig plan + följ din utveckling
                   </p>
-                  <p className="text-xs text-neutral-500 mb-3">
-                    Skapa ett gratis konto för att spara ditt TDEE, sätta mål, planera makron och
-                    logga mat.
+                  <p className="text-xs text-primary-200 mb-4">
+                    Spara ditt TDEE, sätt kalorimål för din fas (cut/bulk/maintenance), logga mat
+                    och se hur din vikt rör sig mot målet.
                   </p>
                   <Link
                     to="/register"
-                    className="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+                    className="inline-flex items-center justify-center gap-2 bg-white text-primary-700 font-semibold px-5 py-2.5 rounded-lg hover:bg-primary-50 transition-colors text-sm w-full sm:w-auto"
                   >
-                    Spara din plan gratis
+                    Skapa gratis konto
                     <ArrowRight className="h-4 w-4" />
                   </Link>
+                  <p className="text-xs text-primary-300 mt-2">Inget kreditkort · Alltid gratis</p>
                 </div>
               </div>
             )}
@@ -378,6 +385,32 @@ export default function TdeeKalkylatornPage() {
 
           {/* FAQ */}
           <FaqBlock items={FAQ_ITEMS} />
+
+          {/* Bottom CTA */}
+          <section className="mt-10 rounded-2xl bg-primary-600 p-8 text-center">
+            <h2 className="text-xl font-bold text-white mb-2">
+              Redo att gå från siffror till resultat?
+            </h2>
+            <p className="text-primary-200 text-sm mb-6 max-w-md mx-auto">
+              Du har ditt TDEE. Nästa steg är att logga mat mot rätt mål, följa din vikttrend och
+              kalibrera ditt kalorimål när kroppen svarar. CalculEat gör allt det — gratis.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Link
+                to="/register"
+                className="inline-flex items-center justify-center gap-2 bg-white text-primary-700 font-semibold px-6 py-3 rounded-xl hover:bg-primary-50 transition-colors text-sm"
+              >
+                Skapa gratis konto
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                to="/kalkylatorer/kaloriunderskott"
+                className="inline-flex items-center justify-center gap-2 border border-primary-400 text-white font-medium px-6 py-3 rounded-xl hover:bg-primary-700 transition-colors text-sm"
+              >
+                Räkna ut ditt kaloriunderskott
+              </Link>
+            </div>
+          </section>
 
           {/* Related */}
           <section className="mt-10 pt-8 border-t border-neutral-200 grid sm:grid-cols-2 gap-6">
