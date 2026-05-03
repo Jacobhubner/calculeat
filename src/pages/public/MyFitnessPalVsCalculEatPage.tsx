@@ -164,7 +164,47 @@ export default function MyFitnessPalVsCalculEatPage() {
           <h1 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-3 leading-tight">
             MyFitnessPal vs CalculEat — Vilken kaloriräknare passar dig bäst?
           </h1>
-          <p className="text-lg text-neutral-600 leading-relaxed mb-8 border-l-4 border-primary-400 pl-4 bg-primary-50 py-3 rounded-r-lg">
+
+          {/* Winner summary box */}
+          <div className="rounded-xl border border-primary-200 bg-primary-50 p-5 mb-6">
+            <p className="text-xs font-semibold text-primary-500 uppercase tracking-wider mb-2">
+              Snabbsvar
+            </p>
+            <p className="text-sm font-semibold text-primary-900 mb-3">
+              CalculEat vinner för den som vill ha precision — inte bara loggning.
+            </p>
+            <ul className="space-y-1.5 text-sm text-primary-800">
+              <li className="flex items-start gap-2">
+                <Check className="h-4 w-4 text-primary-600 mt-0.5 shrink-0" /> Individuellt TDEE —
+                inte en populationsformel
+              </li>
+              <li className="flex items-start gap-2">
+                <Check className="h-4 w-4 text-primary-600 mt-0.5 shrink-0" /> Stöd för
+                cut/bulk-cykler och reverse diet inbyggt
+              </li>
+              <li className="flex items-start gap-2">
+                <Check className="h-4 w-4 text-primary-600 mt-0.5 shrink-0" /> Gratis — MFPs
+                kärn-features kräver premium
+              </li>
+            </ul>
+            <div className="mt-4 flex flex-col sm:flex-row gap-2">
+              <Link
+                to="/kalkylatorer/tdee-kalkylator"
+                className="inline-flex items-center justify-center gap-2 bg-primary-600 text-white font-semibold px-4 py-2.5 rounded-lg hover:bg-primary-700 transition-colors text-sm"
+              >
+                Räkna ut ditt TDEE gratis
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                to="/register"
+                className="inline-flex items-center justify-center gap-2 border border-primary-300 text-primary-700 font-medium px-4 py-2.5 rounded-lg hover:bg-primary-100 transition-colors text-sm"
+              >
+                Skapa konto
+              </Link>
+            </div>
+          </div>
+
+          <p className="text-base text-neutral-600 leading-relaxed mb-8">
             Båda apparna låter dig logga kalorier. Skillnaden är vad de gör med den informationen.
             MyFitnessPal är ett loggningsverktyg. CalculEat är designat för att kaloriloggningen
             faktiskt ska driva beslut — rätt kalorimål för ditt mål, anpassat till din kropp.
@@ -264,10 +304,21 @@ export default function MyFitnessPalVsCalculEatPage() {
                 populationsformel
               </li>
               <li>
-                Arbetar med <strong>cut/bulk-cykler</strong> och behöver separata mål per fas
+                Arbetar med{' '}
+                <Link to="/kalkylatorer/cut-kalkylator" className="text-primary-600 underline">
+                  cut
+                </Link>
+                {'/'}
+                <Link to="/kalkylatorer/bulk-kalkylator" className="text-primary-600 underline">
+                  bulk-cykler
+                </Link>{' '}
+                och behöver separata mål per fas
               </li>
               <li>
-                Planerar eller håller på med en <strong>reverse diet</strong> efter en längre cut
+                Planerar eller håller på med en <strong>reverse diet</strong> efter en längre{' '}
+                <Link to="/kalkylatorer/kaloriunderskott" className="text-primary-600 underline">
+                  kaloriunderskott
+                </Link>
               </li>
               <li>
                 Vill ha <strong>proteinmål anpassat till fasen</strong> (högre under cut, lägre
@@ -334,6 +385,24 @@ export default function MyFitnessPalVsCalculEatPage() {
               viktdata, och kalorimålet uppdateras automatiskt när du byter fas.
             </p>
           </section>
+
+          {/* Mid-page CTA */}
+          <div className="rounded-xl border border-primary-200 bg-primary-50 p-5 mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-primary-900 mb-0.5">
+                Redo att testa ett mer precist alternativ?
+              </p>
+              <p className="text-xs text-primary-700">
+                Räkna ut ditt TDEE, sätt rätt kalorimål och logga mot siffror som faktiskt stämmer.
+              </p>
+            </div>
+            <Link
+              to="/kalkylatorer/tdee-kalkylator"
+              className="shrink-0 inline-flex items-center gap-2 bg-primary-600 text-white font-semibold px-4 py-2.5 rounded-lg hover:bg-primary-700 transition-colors text-sm"
+            >
+              Testa gratis →
+            </Link>
+          </div>
 
           <FaqBlock items={FAQ_ITEMS} />
 

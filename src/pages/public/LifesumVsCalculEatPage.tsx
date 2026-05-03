@@ -159,7 +159,47 @@ export default function LifesumVsCalculEatPage() {
           <h1 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-3 leading-tight">
             Lifesum vs CalculEat — Vilken app passar dig bäst?
           </h1>
-          <p className="text-lg text-neutral-600 leading-relaxed mb-8 border-l-4 border-primary-400 pl-4 bg-primary-50 py-3 rounded-r-lg">
+
+          {/* Winner summary box */}
+          <div className="rounded-xl border border-primary-200 bg-primary-50 p-5 mb-6">
+            <p className="text-xs font-semibold text-primary-500 uppercase tracking-wider mb-2">
+              Snabbsvar
+            </p>
+            <p className="text-sm font-semibold text-primary-900 mb-3">
+              CalculEat vinner för den som vill ha precision — inte kostprogram.
+            </p>
+            <ul className="space-y-1.5 text-sm text-primary-800">
+              <li className="flex items-start gap-2">
+                <Check className="h-4 w-4 text-primary-600 mt-0.5 shrink-0" /> Individuellt TDEE
+                kalibrerat mot din faktiska viktdata
+              </li>
+              <li className="flex items-start gap-2">
+                <Check className="h-4 w-4 text-primary-600 mt-0.5 shrink-0" /> Inbyggt stöd för
+                cut/bulk-faser och reverse diet
+              </li>
+              <li className="flex items-start gap-2">
+                <Check className="h-4 w-4 text-primary-600 mt-0.5 shrink-0" /> Gratis — Lifesums
+                kärn-features kräver premium
+              </li>
+            </ul>
+            <div className="mt-4 flex flex-col sm:flex-row gap-2">
+              <Link
+                to="/kalkylatorer/tdee-kalkylator"
+                className="inline-flex items-center justify-center gap-2 bg-primary-600 text-white font-semibold px-4 py-2.5 rounded-lg hover:bg-primary-700 transition-colors text-sm"
+              >
+                Räkna ut ditt TDEE gratis
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                to="/register"
+                className="inline-flex items-center justify-center gap-2 border border-primary-300 text-primary-700 font-medium px-4 py-2.5 rounded-lg hover:bg-primary-100 transition-colors text-sm"
+              >
+                Skapa konto
+              </Link>
+            </div>
+          </div>
+
+          <p className="text-base text-neutral-600 leading-relaxed mb-6">
             Lifesum är ett kostprogram-verktyg med dieter, recept och livsstilsguider. CalculEat är
             ett precisionsverktyg för kroppskomposition — individuellt TDEE, rätt kalorimål per fas
             och kalibrering baserat på din faktiska viktdata.
@@ -273,11 +313,22 @@ export default function LifesumVsCalculEatPage() {
                 Vill ha ett <strong>individuellt TDEE</strong> — inte ett populationsgenomsnitt
               </li>
               <li>
-                Arbetar med <strong>cut/bulk-cykler</strong> och behöver rätt kalorimål per fas
+                Arbetar med{' '}
+                <Link to="/kalkylatorer/cut-kalkylator" className="text-primary-600 underline">
+                  cut
+                </Link>
+                {'/'}
+                <Link to="/kalkylatorer/bulk-kalkylator" className="text-primary-600 underline">
+                  bulk-cykler
+                </Link>{' '}
+                och behöver rätt kalorimål per fas
               </li>
               <li>
                 Märker att loggningen inte ger förväntat resultat och vill ha{' '}
-                <strong>metabolisk kalibrering</strong>
+                <strong>metabolisk kalibrering</strong> — börja med att räkna ut ditt{' '}
+                <Link to="/kalkylatorer/kaloriunderskott" className="text-primary-600 underline">
+                  exakta kaloriunderskott
+                </Link>
               </li>
               <li>
                 Planerar eller håller på med en <strong>reverse diet</strong>
@@ -327,6 +378,25 @@ export default function LifesumVsCalculEatPage() {
               ))}
             </div>
           </section>
+
+          {/* Mid-page CTA */}
+          <div className="rounded-xl border border-primary-200 bg-primary-50 p-5 mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-primary-900 mb-0.5">
+                Vill du ha precision istället för program?
+              </p>
+              <p className="text-xs text-primary-700">
+                Räkna ut ditt TDEE, välj din fas — cut, bulk eller maintenance — och logga mot rätt
+                siffra.
+              </p>
+            </div>
+            <Link
+              to="/kalkylatorer/tdee-kalkylator"
+              className="shrink-0 inline-flex items-center gap-2 bg-primary-600 text-white font-semibold px-4 py-2.5 rounded-lg hover:bg-primary-700 transition-colors text-sm"
+            >
+              Testa gratis →
+            </Link>
+          </div>
 
           <FaqBlock items={FAQ_ITEMS} />
 

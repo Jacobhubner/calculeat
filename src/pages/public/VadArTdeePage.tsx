@@ -82,23 +82,22 @@ export default function VadArTdeePage() {
         <p>TDEE består av fyra delar:</p>
         <ul className="space-y-3 pl-4 list-disc">
           <li>
-            <strong>BMR — Basalmetabolism (60–75% av TDEE):</strong> De kalorier kroppen förbränner
-            i absolut vila för att hålla organ, hjärna och hjärta igång. Styrs av ålder, kön, vikt
-            och muskelmassa.
+            <strong>BMR — Basalmetabolism (ca 60–75% av TDEE):</strong> De kalorier kroppen
+            förbränner i absolut vila för att hålla organ, hjärna och hjärta igång. Styrs av ålder,
+            kön, vikt och muskelmassa.
           </li>
           <li>
-            <strong>EAT — Exercise Activity Thermogenesis (15–30%):</strong> Kalorier från planerad
-            träning och motion. Varierar enormt — en stillasittande dag vs. ett långt löppass
-            skiljer hundratals kcal.
-          </li>
-          <li>
-            <strong>NEAT — Non-Exercise Activity Thermogenesis (5–15%):</strong> Oplanerad rörelse:
+            <strong>NEAT — Non-Exercise Activity Thermogenesis (15–30%):</strong> Oplanerad rörelse:
             att gå, stå, fidgeta, handla. Mycket underskattat — skillnaden mellan en
             &ldquo;aktiv&rdquo; och &ldquo;stillasittande&rdquo; person utanför gymmet kan vara
             500–1000 kcal/dag.
           </li>
           <li>
-            <strong>TEF — Thermic Effect of Food (ca 10%):</strong> Energi det kostar att smälta och
+            <strong>EAT — Exercise Activity Thermogenesis (5–10%):</strong> Kalorier från planerad
+            träning och motion. Varierar beroende på träningsfrekvens och intensitet.
+          </li>
+          <li>
+            <strong>TEF — Thermic Effect of Food (8–15%):</strong> Energi det kostar att smälta och
             metabolisera maten. Protein har högst TEF (20–30% av kalorierna i proteinet), fett lägst
             (0–3%).
           </li>

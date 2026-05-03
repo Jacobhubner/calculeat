@@ -363,14 +363,14 @@ export default function TdeeKalkylatornPage() {
                 förbränner i vila för att hålla organ igång.
               </li>
               <li>
-                <strong>EAT (ca 15–30%):</strong> Planerad träning och motion.
-              </li>
-              <li>
-                <strong>NEAT (ca 5–15%):</strong> Oplanerad rörelse — gå, stå, fidgeta, handla. Ofta
+                <strong>NEAT (15–30%):</strong> Oplanerad rörelse — gå, stå, fidgeta, handla. Ofta
                 underskattat men kan variera med hundratals kcal.
               </li>
               <li>
-                <strong>TEF (ca 10%):</strong> Matens termiska effekt — kalorierna det kostar att
+                <strong>EAT (5–10%):</strong> Planerad träning och motion.
+              </li>
+              <li>
+                <strong>TEF (8–15%):</strong> Matens termiska effekt — kalorierna det kostar att
                 smälta maten du äter.
               </li>
             </ul>
