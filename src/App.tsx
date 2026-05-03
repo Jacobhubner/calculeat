@@ -44,6 +44,9 @@ const BmrVsTdeePage = lazy(() => import('./pages/public/BmrVsTdeePage'))
 const BmiVsKroppsfettPage = lazy(() => import('./pages/public/BmiVsKroppsfettPage'))
 const VadArFfmiPage = lazy(() => import('./pages/public/VadArFfmiPage'))
 const VadArPalOchMetPage = lazy(() => import('./pages/public/VadArPalOchMetPage'))
+const LifesumVsCalculEatPage = lazy(() => import('./pages/public/LifesumVsCalculEatPage'))
+const YazioVsCalculEatPage = lazy(() => import('./pages/public/YazioVsCalculEatPage'))
+const MacroFactorVsCalculEatPage = lazy(() => import('./pages/public/MacroFactorVsCalculEatPage'))
 
 // Lazy load - app pages (loaded on demand)
 const IconDemo = lazy(() => import('./pages/IconDemo'))
@@ -165,6 +168,15 @@ function App() {
                     <Route
                       path="/jamfor/myfitnesspal-vs-calculeat"
                       element={<MyFitnessPalVsCalculEatPage />}
+                    />
+                    <Route
+                      path="/jamfor/lifesum-vs-calculeat"
+                      element={<LifesumVsCalculEatPage />}
+                    />
+                    <Route path="/jamfor/yazio-vs-calculeat" element={<YazioVsCalculEatPage />} />
+                    <Route
+                      path="/jamfor/macrofactor-vs-calculeat"
+                      element={<MacroFactorVsCalculEatPage />}
                     />
                     <Route path="/basta-kaloriappen" element={<BastaKaloriappenPage />} />
                     <Route path="/basta-tdee-kalkylatorn" element={<BastaTdeeKalkylatornPage />} />
