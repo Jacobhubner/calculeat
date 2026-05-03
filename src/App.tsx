@@ -39,6 +39,11 @@ const IdealviktKalkylatornPage = lazy(() => import('./pages/public/IdealviktKalk
 const KroppsfettKalkylatornPage = lazy(() => import('./pages/public/KroppsfettKalkylatornPage'))
 const FfmiKalkylatornPage = lazy(() => import('./pages/public/FfmiKalkylatornPage'))
 const BmrKalkylatornPage = lazy(() => import('./pages/public/BmrKalkylatornPage'))
+const VadArBmrPage = lazy(() => import('./pages/public/VadArBmrPage'))
+const BmrVsTdeePage = lazy(() => import('./pages/public/BmrVsTdeePage'))
+const BmiVsKroppsfettPage = lazy(() => import('./pages/public/BmiVsKroppsfettPage'))
+const VadArFfmiPage = lazy(() => import('./pages/public/VadArFfmiPage'))
+const VadArPalOchMetPage = lazy(() => import('./pages/public/VadArPalOchMetPage'))
 
 // Lazy load - app pages (loaded on demand)
 const IconDemo = lazy(() => import('./pages/IconDemo'))
@@ -152,6 +157,11 @@ function App() {
                     <Route path="/artiklar/kaloribrist" element={<KaloriBristPage />} />
                     <Route path="/artiklar/bulk-och-cut" element={<BulkOchCutPage />} />
                     <Route path="/artiklar/reverse-diet" element={<ReverseDietPage />} />
+                    <Route path="/artiklar/vad-ar-bmr" element={<VadArBmrPage />} />
+                    <Route path="/artiklar/bmr-vs-tdee" element={<BmrVsTdeePage />} />
+                    <Route path="/artiklar/bmi-vs-kroppsfett" element={<BmiVsKroppsfettPage />} />
+                    <Route path="/artiklar/vad-ar-ffmi" element={<VadArFfmiPage />} />
+                    <Route path="/artiklar/vad-ar-pal-och-met" element={<VadArPalOchMetPage />} />
                     <Route
                       path="/jamfor/myfitnesspal-vs-calculeat"
                       element={<MyFitnessPalVsCalculEatPage />}

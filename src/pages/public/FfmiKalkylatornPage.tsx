@@ -574,6 +574,7 @@ export default function FfmiKalkylatornPage() {
               </h3>
               <ul className="space-y-2">
                 {[
+                  { href: '/artiklar/vad-ar-ffmi', label: 'Vad är FFMI?' },
                   { href: '/artiklar/bulk-och-cut', label: 'Bulk och Cut — komplett guide' },
                   { href: '/artiklar/kaloribehov', label: 'Kaloribehov — komplett guide' },
                   { href: '/artiklar/reverse-diet', label: 'Reverse Diet' },

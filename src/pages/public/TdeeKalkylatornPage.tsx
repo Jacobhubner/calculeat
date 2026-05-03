@@ -392,6 +392,7 @@ export default function TdeeKalkylatornPage() {
                   { href: '/kalkylatorer/cut-kalkylator', label: 'Cut Kalkylator' },
                   { href: '/kalkylatorer/proteinbehov', label: 'Proteinbehov Kalkylator' },
                   { href: '/kalkylatorer/bmi-kalkylator', label: 'BMI Kalkylator' },
+                  { href: '/kalkylatorer/bmr-kalkylator', label: 'BMR Kalkylator' },
                 ].map(l => (
                   <li key={l.href}>
                     <Link

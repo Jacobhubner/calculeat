@@ -77,6 +77,7 @@ export default function KaloriberhovPage() {
           { href: '/kalkylatorer/cut-kalkylator', label: 'Cut Kalkylator' },
           { href: '/kalkylatorer/proteinbehov', label: 'Proteinbehov Kalkylator' },
           { href: '/kalkylatorer/bmi-kalkylator', label: 'BMI Kalkylator' },
+          { href: '/kalkylatorer/bmr-kalkylator', label: 'BMR Kalkylator' },
         ]}
         relatedArticles={[
           { href: '/artiklar/vad-ar-tdee', label: 'Vad är TDEE?' },

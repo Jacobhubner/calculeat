@@ -505,6 +505,8 @@ export default function BmrKalkylatornPage() {
               </h3>
               <ul className="space-y-2">
                 {[
+                  { href: '/artiklar/vad-ar-bmr', label: 'Vad är BMR?' },
+                  { href: '/artiklar/bmr-vs-tdee', label: 'BMR vs TDEE' },
                   { href: '/artiklar/vad-ar-tdee', label: 'Vad är TDEE?' },
                   { href: '/artiklar/kaloribehov', label: 'Kaloribehov — komplett guide' },
                   { href: '/artiklar/kaloribrist', label: 'Hur stor kaloribrist ska man ha?' },

@@ -63,6 +63,7 @@ export default function VadArTdeePage() {
         sources={SOURCES}
         relatedCalculators={[
           { href: '/kalkylatorer/tdee-kalkylator', label: 'TDEE Kalkylator' },
+          { href: '/kalkylatorer/bmr-kalkylator', label: 'BMR Kalkylator' },
           { href: '/kalkylatorer/bmi-kalkylator', label: 'BMI Kalkylator' },
         ]}
         relatedArticles={[

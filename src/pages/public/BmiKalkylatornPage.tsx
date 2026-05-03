@@ -330,6 +330,7 @@ export default function BmiKalkylatornPage() {
                 {[
                   { href: '/artiklar/kaloribehov', label: 'Kaloribehov — komplett guide' },
                   { href: '/artiklar/vad-ar-tdee', label: 'Vad är TDEE?' },
+                  { href: '/artiklar/bmi-vs-kroppsfett', label: 'BMI vs Kroppsfett' },
                 ].map(l => (
                   <li key={l.href}>
                     <Link

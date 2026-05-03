@@ -603,6 +603,7 @@ export default function KroppsfettKalkylatornPage() {
                   { href: '/artiklar/vad-ar-tdee', label: 'Vad är TDEE?' },
                   { href: '/artiklar/bulk-och-cut', label: 'Bulk och Cut' },
                   { href: '/artiklar/kaloribrist', label: 'Hur stor kaloribrist ska man ha?' },
+                  { href: '/artiklar/bmi-vs-kroppsfett', label: 'BMI vs Kroppsfett' },
                 ].map(l => (
                   <li key={l.href}>
                     <Link

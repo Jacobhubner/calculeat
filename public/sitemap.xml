@@ -81,6 +81,31 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://calculeat.se/artiklar/vad-ar-bmr</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://calculeat.se/artiklar/bmr-vs-tdee</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://calculeat.se/artiklar/bmi-vs-kroppsfett</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://calculeat.se/artiklar/vad-ar-ffmi</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://calculeat.se/artiklar/vad-ar-pal-och-met</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://calculeat.se/jamfor/myfitnesspal-vs-calculeat</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
