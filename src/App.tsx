@@ -38,6 +38,7 @@ const BastaTdeeKalkylatornPage = lazy(() => import('./pages/public/BastaTdeeKalk
 const IdealviktKalkylatornPage = lazy(() => import('./pages/public/IdealviktKalkylatornPage'))
 const KroppsfettKalkylatornPage = lazy(() => import('./pages/public/KroppsfettKalkylatornPage'))
 const FfmiKalkylatornPage = lazy(() => import('./pages/public/FfmiKalkylatornPage'))
+const BmrKalkylatornPage = lazy(() => import('./pages/public/BmrKalkylatornPage'))
 
 // Lazy load - app pages (loaded on demand)
 const IconDemo = lazy(() => import('./pages/IconDemo'))
@@ -145,6 +146,7 @@ function App() {
                       element={<KroppsfettKalkylatornPage />}
                     />
                     <Route path="/kalkylatorer/ffmi-kalkylator" element={<FfmiKalkylatornPage />} />
+                    <Route path="/kalkylatorer/bmr-kalkylator" element={<BmrKalkylatornPage />} />
                     <Route path="/artiklar/kaloribehov" element={<KaloriberhovPage />} />
                     <Route path="/artiklar/vad-ar-tdee" element={<VadArTdeePage />} />
                     <Route path="/artiklar/kaloribrist" element={<KaloriBristPage />} />
