@@ -1335,12 +1335,24 @@
     "clusterStart": "snitt av {{count}} mätningar",
     "clusterEnd": "snitt av {{count}} mätningar",
     "clusterAvg": "snitt av {{count}} mätningar",
+    "clusterLabelStart": "Startnivå",
+    "clusterLabelEnd": "Slutnivå",
+    "clusterTooltip": "Visar stabiliserat medelvärde från periodens start resp. slut — inte enskilda mätpunkter. Trendlinjen nedan beräknas över hela perioden.",
     "weightChange": "över {{days}} dagar",
     "overDays": "över {{days}} dagar",
+    "overPeriod": "över perioden",
+    "olsLabel": "trendlinje (OLS)",
+    "olsTooltip": "Viktförändringen beräknas med linjär regression över alla mätpunkter i perioden — inte skillnaden mellan klustervärdena ovan.",
+    "olsTooltipNonlinear": "Viktförändringen beräknas med linjär regression, men trenden var oregelbunden under perioden. Siffran är systemets bästa uppskattning — se varningen ovan för detaljer.",
     "calorieSourceLabel": {
       "food_log": "faktiskt intag",
       "blended": "uppskattat intag",
       "target_calories": "målkalorier"
+    },
+    "calorieSourceTooltip": {
+      "food_log": "Genomsnitt av dagar med loggat intag (>800 kcal). Odloggade dagar ingår inte i snittet men påverkar tillförlitlighetsbedömningen.",
+      "blended": "Vägt snitt av loggat intag och målkalorier — loggdatan dominerar. Ju fler loggade dagar, desto lägre vikt på målkalorierna.",
+      "target_calories": "Matlogg saknas — målkalorier används som uppskattning. Logga mat oftare för mer exakt kalibrering."
     },
     "stableMaintenance": "Din vikt är stabil — ditt TDEE verkar stämma",
     "tdeeComparison": {

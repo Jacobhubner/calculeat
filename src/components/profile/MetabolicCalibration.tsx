@@ -1275,6 +1275,19 @@ export default function MetabolicCalibration({
                   <div className="rounded-lg border border-neutral-200 overflow-hidden">
                     <div className="grid grid-cols-2 divide-x divide-neutral-200">
                       <div className="p-3">
+                        <div className="flex items-center gap-1 mb-0.5">
+                          <p className="text-xs font-medium text-neutral-500">
+                            {t('metabolicCalibration.clusterLabelStart')}
+                          </p>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Info className="h-3 w-3 text-neutral-400 cursor-help" />
+                            </TooltipTrigger>
+                            <TooltipContent className="max-w-[220px] text-xs">
+                              {t('metabolicCalibration.clusterTooltip')}
+                            </TooltipContent>
+                          </Tooltip>
+                        </div>
                         {data.startCluster.dates.length > 0 && (
                           <p className="text-xs text-neutral-400 mb-0.5">
                             {data.startCluster.dates[0].toLocaleDateString('sv-SE', {
@@ -1295,6 +1308,19 @@ export default function MetabolicCalibration({
                         </p>
                       </div>
                       <div className="p-3">
+                        <div className="flex items-center gap-1 mb-0.5">
+                          <p className="text-xs font-medium text-neutral-500">
+                            {t('metabolicCalibration.clusterLabelEnd')}
+                          </p>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Info className="h-3 w-3 text-neutral-400 cursor-help" />
+                            </TooltipTrigger>
+                            <TooltipContent className="max-w-[220px] text-xs">
+                              {t('metabolicCalibration.clusterTooltip')}
+                            </TooltipContent>
+                          </Tooltip>
+                        </div>
                         {data.endCluster.dates.length > 0 && (
                           <p className="text-xs text-neutral-400 mb-0.5">
                             {data.endCluster.dates[0].toLocaleDateString('sv-SE', {
@@ -1335,19 +1361,44 @@ export default function MetabolicCalibration({
                           {data.weightChangeKg.toFixed(2)} kg
                         </span>
                         <span className="text-xs text-neutral-400">
-                          {t('metabolicCalibration.overDays', {
-                            days: Math.round(data.actualDays),
-                          })}
+                          {t('metabolicCalibration.overPeriod')}
                         </span>
+                        <span className="text-xs text-neutral-400">·</span>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span className="text-xs text-neutral-400 underline decoration-dotted cursor-help">
+                              {t('metabolicCalibration.olsLabel')}
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent className="max-w-[240px] text-xs">
+                            {data.warnings.some(w => w.type === 'nonlinear_trend')
+                              ? t('metabolicCalibration.olsTooltipNonlinear')
+                              : t('metabolicCalibration.olsTooltip')}
+                          </TooltipContent>
+                        </Tooltip>
                       </div>
-                      <span className="text-xs text-neutral-500">
-                        {data.calorieSource === 'food_log'
-                          ? t('metabolicCalibration.calorieSourceLabel.food_log')
-                          : data.calorieSource === 'blended'
-                            ? t('metabolicCalibration.calorieSourceLabel.blended')
-                            : t('metabolicCalibration.calorieSourceLabel.target_calories')}
-                        : {Math.round(data.averageCalories)} kcal/dag
-                      </span>
+                      <div className="flex items-center gap-1">
+                        <span className="text-xs text-neutral-500">
+                          {data.calorieSource === 'food_log'
+                            ? t('metabolicCalibration.calorieSourceLabel.food_log')
+                            : data.calorieSource === 'blended'
+                              ? t('metabolicCalibration.calorieSourceLabel.blended')
+                              : t('metabolicCalibration.calorieSourceLabel.target_calories')}
+                          : {Math.round(data.averageCalories)} kcal/dag
+                        </span>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Info className="h-3 w-3 text-neutral-400 cursor-help" />
+                          </TooltipTrigger>
+                          <TooltipContent className="max-w-[240px] text-xs">
+                            {data.calorieSource === 'food_log'
+                              ? t('metabolicCalibration.calorieSourceTooltip.food_log')
+                              : data.calorieSource === 'blended'
+                                ? t('metabolicCalibration.calorieSourceTooltip.blended')
+                                : t('metabolicCalibration.calorieSourceTooltip.target_calories')}
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
                     </div>
                     {data.isStableMaintenance && (
                       <div className="border-t border-green-100 bg-green-50 px-3 py-2">

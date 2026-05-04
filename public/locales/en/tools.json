@@ -1328,14 +1328,26 @@
     },
     "clusterStart": "avg of {{count}} measurements",
     "clusterEnd": "avg of {{count}} measurements",
+    "clusterAvg": "avg of {{count}} measurements",
+    "clusterLabelStart": "Start level",
+    "clusterLabelEnd": "End level",
+    "clusterTooltip": "Shows a stabilised average from the start and end of the period — not individual data points. The trend line below is calculated across the full period.",
     "weightChange": "over {{days}} days",
+    "overDays": "over {{days}} days",
+    "overPeriod": "over the period",
+    "olsLabel": "trend line (OLS)",
+    "olsTooltip": "Weight change is calculated using linear regression across all data points in the period — not the difference between the cluster values above.",
+    "olsTooltipNonlinear": "Weight change is calculated using linear regression, but the trend was irregular during this period. The figure is the system's best estimate — see the warning above for details.",
     "calorieSourceLabel": {
       "food_log": "actual intake",
       "blended": "estimated intake",
       "target_calories": "target calories"
     },
-    "clusterAvg": "avg of {{count}} measurements",
-    "overDays": "over {{days}} days",
+    "calorieSourceTooltip": {
+      "food_log": "Average of days with logged intake (>800 kcal). Days without a log are excluded from the average but affect the reliability assessment.",
+      "blended": "Weighted average of logged intake and target calories — logged data dominates. The more days logged, the lower the weight on target calories.",
+      "target_calories": "No food log available — target calories are used as an estimate. Log more often for a more accurate calibration."
+    },
     "stableMaintenance": "Your weight is stable — your TDEE seems correct",
     "tdeeComparison": {
       "current": "Current",
