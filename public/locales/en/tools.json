@@ -279,7 +279,10 @@
       "fieldLabel": "PAL system",
       "factLink": "Facts about this PAL system",
       "placeholder": "Select PAL system...",
-      "calculateLevel": "Calculate your activity level"
+      "calculateLevel": "Calculate your activity level",
+      "systems": {
+        "basicInternet": "Basic PAL values (Recommended)"
+      }
     },
     "results": {
       "title": "Your Results",

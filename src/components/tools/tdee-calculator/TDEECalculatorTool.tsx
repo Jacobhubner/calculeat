@@ -673,7 +673,7 @@ export default function TDEECalculatorTool() {
                   >
                     <option value="">{t('tdeeCalc.pal.placeholder')}</option>
                     <option value="Basic internet PAL values">
-                      {translatePALSystem('Basic internet PAL values')}
+                      {t('tdeeCalc.pal.systems.basicInternet')}
                     </option>
                     <option value="FAO/WHO/UNU based PAL values">
                       {translatePALSystem('FAO/WHO/UNU based PAL values')}

@@ -279,7 +279,10 @@
       "fieldLabel": "PAL-system",
       "factLink": "Fakta om detta PAL-system",
       "placeholder": "Välj PAL-system...",
-      "calculateLevel": "Beräkna din aktivitetsnivå"
+      "calculateLevel": "Beräkna din aktivitetsnivå",
+      "systems": {
+        "basicInternet": "Grundläggande PAL-värden (Rekommenderad)"
+      }
     },
     "results": {
       "title": "Dina Resultat",
