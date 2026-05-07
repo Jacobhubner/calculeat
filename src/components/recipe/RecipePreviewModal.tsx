@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Clock, Users, ScrollText, ChefHat } from 'lucide-react'
 import {
@@ -11,6 +12,8 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import type { Recipe, RecipeIngredient } from '@/hooks/useRecipes'
 import type { FoodItem } from '@/hooks/useFoodItems'
+import { useFoodNutrientsBatch } from '@/hooks/useFoodNutrients'
+import { calculateIngredientWeight } from '@/lib/calculations/recipeCalculator'
 
 interface RecipeIngredientWithFood extends RecipeIngredient {
   food_item?: FoodItem
@@ -35,12 +38,82 @@ const colorBadgeClass = {
 export function RecipePreviewModal({ recipe, open, onOpenChange }: RecipePreviewModalProps) {
   const { t } = useTranslation('recipes')
 
+  const servings = recipe?.servings || 1
+  const fi = recipe?.food_item
+  const savedAs100g = fi?.default_unit === 'g'
+
+  const ingredients = recipe?.ingredients ?? []
+
+  const sortedIngredients = useMemo(
+    () => [...ingredients].sort((a, b) => a.ingredient_order - b.ingredient_order),
+    [ingredients]
+  )
+
+  const ingredientFoodIds = useMemo(
+    () =>
+      ingredients
+        .filter(ing => (ing as RecipeIngredientWithFood).food_item?.id)
+        .map(ing => (ing as RecipeIngredientWithFood).food_item!.id),
+    [ingredients]
+  )
+
+  const { data: allNutrients } = useFoodNutrientsBatch(ingredientFoodIds)
+
+  const subNutrients = useMemo(() => {
+    if (!allNutrients || allNutrients.length === 0 || sortedIngredients.length === 0)
+      return { saturatedFat: null, sugars: null, salt: null }
+
+    let totalSaturatedFat: number | null = null
+    let totalSugars: number | null = null
+    let totalSalt: number | null = null
+
+    const servingCount = servings > 0 ? servings : 1
+
+    for (const ing of sortedIngredients) {
+      const ingWithFood = ing as RecipeIngredientWithFood
+      const food = ingWithFood.food_item
+      if (!food) continue
+
+      const weightGrams =
+        ing.weight_grams && ing.weight_grams > 0
+          ? ing.weight_grams
+          : calculateIngredientWeight(food, ing.amount, ing.unit)
+
+      if (weightGrams <= 0) continue
+
+      const baseWeight = food.weight_grams && food.weight_grams > 0 ? food.weight_grams : 100
+      const multiplier = weightGrams / baseWeight
+      const itemNutrients = allNutrients.filter(n => n.food_item_id === food.id)
+
+      const satFatRow = itemNutrients.find(n => n.nutrient_code === 'saturated_fat')
+      if (satFatRow) {
+        const scaled = (satFatRow.amount / satFatRow.reference_amount) * baseWeight * multiplier
+        totalSaturatedFat = (totalSaturatedFat ?? 0) + scaled
+      }
+
+      const sugarsRow = itemNutrients.find(n => n.nutrient_code === 'sugars')
+      if (sugarsRow) {
+        const scaled = (sugarsRow.amount / sugarsRow.reference_amount) * baseWeight * multiplier
+        totalSugars = (totalSugars ?? 0) + scaled
+      }
+
+      const saltRow = itemNutrients.find(n => n.nutrient_code === 'salt')
+      if (saltRow) {
+        const scaled = (saltRow.amount / saltRow.reference_amount) * baseWeight * multiplier
+        totalSalt = (totalSalt ?? 0) + scaled
+      }
+    }
+
+    return {
+      saturatedFat: totalSaturatedFat !== null ? totalSaturatedFat / servingCount : null,
+      sugars: totalSugars !== null ? totalSugars / servingCount : null,
+      salt: totalSalt !== null ? totalSalt / servingCount : null,
+    }
+  }, [allNutrients, sortedIngredients, servings])
+
   if (!recipe) return null
 
-  const servings = recipe.servings || 1
   const totalTime = (recipe.prep_time_min ?? 0) + (recipe.cook_time_min ?? 0)
-  const fi = recipe.food_item
-  const savedAs100g = fi?.default_unit === 'g'
 
   const displayCalories = fi
     ? Math.round(savedAs100g ? fi.calories : (fi.kcal_per_unit ?? fi.calories))
@@ -54,10 +127,6 @@ export function RecipePreviewModal({ recipe, open, onOpenChange }: RecipePreview
     : null
 
   const energyDensityColor = fi?.energy_density_color ?? null
-
-  const sortedIngredients = recipe.ingredients
-    ? [...recipe.ingredients].sort((a, b) => a.ingredient_order - b.ingredient_order)
-    : []
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -127,6 +196,30 @@ export function RecipePreviewModal({ recipe, open, onOpenChange }: RecipePreview
                   <p className="text-xs text-neutral-500">{t('nutrition.protein')}</p>
                 </div>
               </div>
+              {(subNutrients.saturatedFat != null ||
+                subNutrients.sugars != null ||
+                subNutrients.salt != null) && (
+                <div className="mt-2 pt-2 border-t border-neutral-200 space-y-1 text-xs text-neutral-600">
+                  {subNutrients.saturatedFat != null && (
+                    <div className="flex justify-between">
+                      <span>{t('nutrition.saturatedFat')}</span>
+                      <span className="font-medium">{subNutrients.saturatedFat.toFixed(1)}g</span>
+                    </div>
+                  )}
+                  {subNutrients.sugars != null && (
+                    <div className="flex justify-between">
+                      <span>{t('nutrition.sugars')}</span>
+                      <span className="font-medium">{subNutrients.sugars.toFixed(1)}g</span>
+                    </div>
+                  )}
+                  {subNutrients.salt != null && (
+                    <div className="flex justify-between">
+                      <span>{t('nutrition.salt')}</span>
+                      <span className="font-medium">{subNutrients.salt.toFixed(1)}g</span>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           )}
 

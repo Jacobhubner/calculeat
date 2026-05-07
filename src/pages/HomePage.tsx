@@ -1,5 +1,6 @@
-import { Link } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { useAuth } from '@/contexts/AuthContext'
 import SiteHeader from '@/components/layout/SiteHeader'
 import SiteFooter from '@/components/layout/SiteFooter'
 import SmartCalculator from '@/components/SmartCalculator'
@@ -10,6 +11,9 @@ import { Scan, Share2, ChefHat, Scale, Target, ArrowRight } from 'lucide-react'
 
 export default function HomePage() {
   const { t, ready } = useTranslation(['marketing', 'common'])
+  const { user } = useAuth()
+
+  if (user) return <Navigate to="/app" replace />
 
   if (!ready) return null
 
