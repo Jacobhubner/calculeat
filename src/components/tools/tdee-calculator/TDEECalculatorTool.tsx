@@ -111,9 +111,10 @@ export default function TDEECalculatorTool() {
   // Body fat percentage state
   const [useSavedBodyFat, setUseSavedBodyFat] = useState(true)
   const [manualBodyFat, setManualBodyFat] = useState('')
-  const localBodyFat = useSavedBodyFat
-    ? (profileData?.body_fat_percentage?.toString() ?? '')
-    : manualBodyFat
+  const localBodyFat =
+    useSavedBodyFat && profileData?.body_fat_percentage
+      ? profileData.body_fat_percentage.toString()
+      : manualBodyFat
 
   // Set weight when weight history or selection changes
   useMemo(() => {
@@ -330,8 +331,7 @@ export default function TDEECalculatorTool() {
           household_hours_per_day: Number(householdHoursPerDay) || undefined,
           // Set weight_kg (initial_weight_kg is no longer used - weight is tracked via WeightTracker)
           weight_kg: weightNum,
-          // Only overwrite body_fat_percentage if the user explicitly provided a value.
-          ...(bodyFatNum !== undefined && { body_fat_percentage: bodyFatNum }),
+
           // TDEE metadata
           tdee_calculated_at: new Date().toISOString(),
           tdee_source: 'tdee_calculator_tool',
