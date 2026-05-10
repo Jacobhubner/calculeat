@@ -3,6 +3,9 @@ export type NotificationType =
   | 'friend_request_accepted'
   | 'shared_list_invitation_received'
   | 'shared_list_member_left'
+  | 'shared_list_member_joined'
+  | 'share_invitation_accepted'
+  | 'share_invitation_rejected'
   | 'new_message'
 
 export interface Notification {
