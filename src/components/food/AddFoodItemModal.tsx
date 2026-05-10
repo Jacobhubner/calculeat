@@ -1224,6 +1224,23 @@ export function AddFoodItemModal({
                     </div>
 
                     <div>
+                      <Label htmlFor="fiber_g" className="text-neutral-500">
+                        {t('addFoodModal.fieldFiber')}
+                      </Label>
+                      <Input
+                        id="fiber_g"
+                        type="text"
+                        inputMode="decimal"
+                        {...register('fiber_g')}
+                        placeholder="0"
+                        className={errors.fiber_g ? 'border-red-500' : ''}
+                      />
+                      {errors.fiber_g && (
+                        <p className="text-sm text-red-600 mt-1">{errors.fiber_g.message}</p>
+                      )}
+                    </div>
+
+                    <div>
                       <Label htmlFor="protein_g">{t('addFoodModal.fieldProtein')}</Label>
                       <Input
                         id="protein_g"
@@ -1252,23 +1269,6 @@ export function AddFoodItemModal({
                       />
                       {errors.salt_g && (
                         <p className="text-sm text-red-600 mt-1">{errors.salt_g.message}</p>
-                      )}
-                    </div>
-
-                    <div>
-                      <Label htmlFor="fiber_g" className="text-neutral-500">
-                        {t('addFoodModal.fieldFiber')}
-                      </Label>
-                      <Input
-                        id="fiber_g"
-                        type="text"
-                        inputMode="decimal"
-                        {...register('fiber_g')}
-                        placeholder="0"
-                        className={errors.fiber_g ? 'border-red-500' : ''}
-                      />
-                      {errors.fiber_g && (
-                        <p className="text-sm text-red-600 mt-1">{errors.fiber_g.message}</p>
                       )}
                     </div>
                   </div>
