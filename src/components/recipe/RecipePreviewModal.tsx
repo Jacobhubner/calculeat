@@ -222,9 +222,9 @@ export function RecipePreviewModal({ recipe, open, onOpenChange }: RecipePreview
                     </div>
                   )}
                   {subNutrients.fiber != null && (
-                    <div className="flex justify-between">
+                    <div className="flex justify-between font-semibold text-neutral-700">
                       <span>{t('nutrition.fiber')}</span>
-                      <span className="font-medium">{subNutrients.fiber.toFixed(1)}g</span>
+                      <span>{subNutrients.fiber.toFixed(1)}g</span>
                     </div>
                   )}
                   {subNutrients.salt != null && (

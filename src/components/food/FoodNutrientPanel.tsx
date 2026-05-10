@@ -8,7 +8,6 @@ import type { FoodItem } from '@/hooks/useFoodItems'
 import { SOURCE_BADGES } from '@/lib/constants/sourceBadges'
 import { useTranslation } from 'react-i18next'
 
-
 const CATEGORY_ORDER = ['macro', 'vitamin', 'mineral']
 
 // Koder som ska visas indenterade med "varav"-prefix under sin förälder
@@ -17,7 +16,6 @@ const SUB_NUTRIENT_CODES = new Set([
   'monounsaturated_fat',
   'polyunsaturated_fat',
   'sugars',
-  'fiber',
 ])
 
 interface FoodNutrientPanelProps {
@@ -133,7 +131,9 @@ export function FoodNutrientPanel({ foodItem, open, onOpenChange }: FoodNutrient
                   </p>
                 )}
                 {foodItem.reference_unit === 'ml' && foodItem.density_g_per_ml != null && (
-                  <p>{t('panel.density')} {Number(foodItem.density_g_per_ml).toFixed(2)} g/ml</p>
+                  <p>
+                    {t('panel.density')} {Number(foodItem.density_g_per_ml).toFixed(2)} g/ml
+                  </p>
                 )}
               </div>
             </div>
@@ -151,14 +151,14 @@ export function FoodNutrientPanel({ foodItem, open, onOpenChange }: FoodNutrient
             {isLoading && <p className="text-sm text-neutral-500 py-4">{t('panel.loading')}</p>}
 
             {!isLoading && totalNutrientCount === 0 && (
-              <p className="text-sm text-neutral-500 py-4">
-                {t('panel.noData')}
-              </p>
+              <p className="text-sm text-neutral-500 py-4">{t('panel.noData')}</p>
             )}
 
             {!isLoading && totalNutrientCount > 0 && (
               <div className="space-y-4">
-                <p className="text-xs text-neutral-400">{t('panel.nutrientCount', { count: totalNutrientCount })}</p>
+                <p className="text-xs text-neutral-400">
+                  {t('panel.nutrientCount', { count: totalNutrientCount })}
+                </p>
 
                 {CATEGORY_ORDER.map((cat, catIdx) => {
                   const items = grouped?.[cat]
