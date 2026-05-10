@@ -192,8 +192,8 @@ export default function TDEECalculatorTool() {
 
     // Require training fields for Pro Physique
     if (palSystem === 'Pro Physique PAL values') {
-      const tDays = Number(trainingDaysPerWeek) || 0
-      const tMinutes = Number(trainingMinutesPerSession) || 0
+      const tDays = Number(trainingFrequency) || 0
+      const tMinutes = Number(trainingDuration) || 0
       if (tDays <= 0 || tMinutes <= 0) return null
     }
 
