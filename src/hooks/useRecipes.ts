@@ -53,12 +53,18 @@ export interface RecipeNutritionData {
     protein: number
     carbs: number
     fat: number
+    saturatedFat: number | null
+    sugars: number | null
+    salt: number | null
   }
   per100g: {
     calories: number
     protein: number
     carbs: number
     fat: number
+    saturatedFat: number | null
+    sugars: number | null
+    salt: number | null
   }
   energyDensityColor: FoodColor | null
 }
@@ -260,6 +266,51 @@ export function useCreateRecipe() {
 
         if (foodItemError) throw foodItemError
         foodItemId = foodItem.id
+
+        // Spara utökade näringsvärden (mättat fett, sockerarter, salt) per 100g
+        const nutrientRows: Array<{
+          food_item_id: string
+          nutrient_code: string
+          amount: number
+          unit: string
+          reference_amount: number
+          reference_unit: string
+        }> = []
+        const satFat = input.nutrition.per100g.saturatedFat
+        const sugars = input.nutrition.per100g.sugars
+        const salt = input.nutrition.per100g.salt
+        if (satFat != null)
+          nutrientRows.push({
+            food_item_id: foodItemId!,
+            nutrient_code: 'saturated_fat',
+            amount: satFat,
+            unit: 'g',
+            reference_amount: 100,
+            reference_unit: 'g',
+          })
+        if (sugars != null)
+          nutrientRows.push({
+            food_item_id: foodItemId!,
+            nutrient_code: 'sugars',
+            amount: sugars,
+            unit: 'g',
+            reference_amount: 100,
+            reference_unit: 'g',
+          })
+        if (salt != null)
+          nutrientRows.push({
+            food_item_id: foodItemId!,
+            nutrient_code: 'salt',
+            amount: salt,
+            unit: 'g',
+            reference_amount: 100,
+            reference_unit: 'g',
+          })
+        if (nutrientRows.length > 0) {
+          await supabase
+            .from('food_nutrients')
+            .upsert(nutrientRows, { onConflict: 'food_item_id,nutrient_code' })
+        }
       }
 
       // Create recipe
@@ -384,6 +435,65 @@ export function useUpdateRecipe() {
           .from('food_items')
           .update(foodItemUpdate)
           .eq('id', existingRecipe.food_item_id)
+
+        // Uppdatera utökade näringsvärden per 100g
+        const nutrientRows: Array<{
+          food_item_id: string
+          nutrient_code: string
+          amount: number
+          unit: string
+          reference_amount: number
+          reference_unit: string
+        }> = []
+        const satFat = input.nutrition.per100g.saturatedFat
+        const sugars = input.nutrition.per100g.sugars
+        const salt = input.nutrition.per100g.salt
+        if (satFat != null)
+          nutrientRows.push({
+            food_item_id: existingRecipe.food_item_id,
+            nutrient_code: 'saturated_fat',
+            amount: satFat,
+            unit: 'g',
+            reference_amount: 100,
+            reference_unit: 'g',
+          })
+        if (sugars != null)
+          nutrientRows.push({
+            food_item_id: existingRecipe.food_item_id,
+            nutrient_code: 'sugars',
+            amount: sugars,
+            unit: 'g',
+            reference_amount: 100,
+            reference_unit: 'g',
+          })
+        if (salt != null)
+          nutrientRows.push({
+            food_item_id: existingRecipe.food_item_id,
+            nutrient_code: 'salt',
+            amount: salt,
+            unit: 'g',
+            reference_amount: 100,
+            reference_unit: 'g',
+          })
+        if (nutrientRows.length > 0) {
+          await supabase
+            .from('food_nutrients')
+            .upsert(nutrientRows, { onConflict: 'food_item_id,nutrient_code' })
+        }
+        // Radera nutrients som nu är null (ingredienser ändrade)
+        const toDel = (['saturated_fat', 'sugars', 'salt'] as const).filter(code => {
+          if (code === 'saturated_fat') return satFat == null
+          if (code === 'sugars') return sugars == null
+          if (code === 'salt') return salt == null
+          return false
+        })
+        if (toDel.length > 0) {
+          await supabase
+            .from('food_nutrients')
+            .delete()
+            .eq('food_item_id', existingRecipe.food_item_id)
+            .in('nutrient_code', toDel)
+        }
       }
 
       // Update recipe
