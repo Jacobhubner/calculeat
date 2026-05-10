@@ -36,6 +36,7 @@ function parseData(d: Record<string, unknown>): ScanResult {
     saturated_fat_g: (d.saturated_fat_g as number | null) ?? null,
     sugars_g: (d.sugars_g as number | null) ?? null,
     salt_g: (d.salt_g as number | null) ?? null,
+    fiber_g: (d.fiber_g as number | null) ?? null,
     default_amount: 100,
     default_unit: (d.default_unit as 'g' | 'ml') ?? 'g',
     food_type: (d.food_type as 'Solid' | 'Liquid' | 'Soup') ?? 'Solid',

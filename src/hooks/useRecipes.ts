@@ -56,6 +56,7 @@ export interface RecipeNutritionData {
     saturatedFat: number | null
     sugars: number | null
     salt: number | null
+    fiber: number | null
   }
   per100g: {
     calories: number
@@ -65,6 +66,7 @@ export interface RecipeNutritionData {
     saturatedFat: number | null
     sugars: number | null
     salt: number | null
+    fiber: number | null
   }
   energyDensityColor: FoodColor | null
 }
@@ -279,6 +281,7 @@ export function useCreateRecipe() {
         const satFat = input.nutrition.per100g.saturatedFat
         const sugars = input.nutrition.per100g.sugars
         const salt = input.nutrition.per100g.salt
+        const fiber = input.nutrition.per100g.fiber
         if (satFat != null)
           nutrientRows.push({
             food_item_id: foodItemId!,
@@ -302,6 +305,15 @@ export function useCreateRecipe() {
             food_item_id: foodItemId!,
             nutrient_code: 'salt',
             amount: salt,
+            unit: 'g',
+            reference_amount: 100,
+            reference_unit: 'g',
+          })
+        if (fiber != null)
+          nutrientRows.push({
+            food_item_id: foodItemId!,
+            nutrient_code: 'fiber',
+            amount: fiber,
             unit: 'g',
             reference_amount: 100,
             reference_unit: 'g',
@@ -448,6 +460,7 @@ export function useUpdateRecipe() {
         const satFat = input.nutrition.per100g.saturatedFat
         const sugars = input.nutrition.per100g.sugars
         const salt = input.nutrition.per100g.salt
+        const fiber = input.nutrition.per100g.fiber
         if (satFat != null)
           nutrientRows.push({
             food_item_id: existingRecipe.food_item_id,
@@ -475,16 +488,26 @@ export function useUpdateRecipe() {
             reference_amount: 100,
             reference_unit: 'g',
           })
+        if (fiber != null)
+          nutrientRows.push({
+            food_item_id: existingRecipe.food_item_id,
+            nutrient_code: 'fiber',
+            amount: fiber,
+            unit: 'g',
+            reference_amount: 100,
+            reference_unit: 'g',
+          })
         if (nutrientRows.length > 0) {
           await supabase
             .from('food_nutrients')
             .upsert(nutrientRows, { onConflict: 'food_item_id,nutrient_code' })
         }
         // Radera nutrients som nu är null (ingredienser ändrade)
-        const toDel = (['saturated_fat', 'sugars', 'salt'] as const).filter(code => {
+        const toDel = (['saturated_fat', 'sugars', 'salt', 'fiber'] as const).filter(code => {
           if (code === 'saturated_fat') return satFat == null
           if (code === 'sugars') return sugars == null
           if (code === 'salt') return salt == null
+          if (code === 'fiber') return fiber == null
           return false
         })
         if (toDel.length > 0) {

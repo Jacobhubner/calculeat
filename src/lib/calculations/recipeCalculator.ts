@@ -38,6 +38,7 @@ export interface RecipeNutrition {
   totalSaturatedFat: number | null
   totalSugars: number | null
   totalSalt: number | null
+  totalFiber: number | null
   perServing: {
     weight: number
     calories: number
@@ -47,6 +48,7 @@ export interface RecipeNutrition {
     saturatedFat: number | null
     sugars: number | null
     salt: number | null
+    fiber: number | null
   }
   per100g: {
     calories: number
@@ -56,6 +58,7 @@ export interface RecipeNutrition {
     saturatedFat: number | null
     sugars: number | null
     salt: number | null
+    fiber: number | null
   }
   energyDensityColor: FoodColor | null
 }
@@ -155,6 +158,7 @@ export function calculateRecipeNutrition(
   let totalSaturatedFat: number | null = null
   let totalSugars: number | null = null
   let totalSalt: number | null = null
+  let totalFiber: number | null = null
 
   for (const ingredient of ingredients) {
     const nutrition = calculateIngredientNutrition(
@@ -195,6 +199,12 @@ export function calculateRecipeNutrition(
         const scaled = (saltRow.amount / saltRow.reference_amount) * baseWeight * multiplier
         totalSalt = (totalSalt ?? 0) + scaled
       }
+
+      const fiberRow = itemNutrients.find(n => n.nutrient_code === 'fiber')
+      if (fiberRow) {
+        const scaled = (fiberRow.amount / fiberRow.reference_amount) * baseWeight * multiplier
+        totalFiber = (totalFiber ?? 0) + scaled
+      }
     }
   }
 
@@ -212,6 +222,7 @@ export function calculateRecipeNutrition(
     saturatedFat: rOpt(totalSaturatedFat !== null ? totalSaturatedFat / servingCount : null),
     sugars: rOpt(totalSugars !== null ? totalSugars / servingCount : null),
     salt: rOpt(totalSalt !== null ? totalSalt / servingCount : null),
+    fiber: rOpt(totalFiber !== null ? totalFiber / servingCount : null),
   }
 
   // Calculate per 100g (with NaN/Infinity protection)
@@ -226,6 +237,7 @@ export function calculateRecipeNutrition(
             totalSaturatedFat !== null ? rOpt((totalSaturatedFat / totalWeight) * 100) : null,
           sugars: totalSugars !== null ? rOpt((totalSugars / totalWeight) * 100) : null,
           salt: totalSalt !== null ? rOpt((totalSalt / totalWeight) * 100) : null,
+          fiber: totalFiber !== null ? rOpt((totalFiber / totalWeight) * 100) : null,
         }
       : {
           calories: 0,
@@ -235,6 +247,7 @@ export function calculateRecipeNutrition(
           saturatedFat: null,
           sugars: null,
           salt: null,
+          fiber: null,
         }
 
   // Calculate energy density color (treat recipe as solid food)
@@ -256,6 +269,7 @@ export function calculateRecipeNutrition(
     totalSaturatedFat: rOpt(totalSaturatedFat),
     totalSugars: rOpt(totalSugars),
     totalSalt: rOpt(totalSalt),
+    totalFiber: rOpt(totalFiber),
     perServing,
     per100g,
     energyDensityColor,

@@ -10,6 +10,7 @@ export interface ScanResult {
   saturated_fat_g?: number | null
   sugars_g?: number | null
   salt_g?: number | null
+  fiber_g?: number | null
   default_amount: number // alltid 100
   default_unit: string // 'g' eller 'ml' beroende på etikett
   food_type?: 'Solid' | 'Liquid' | 'Soup'

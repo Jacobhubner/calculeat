@@ -61,11 +61,12 @@ export function RecipePreviewModal({ recipe, open, onOpenChange }: RecipePreview
 
   const subNutrients = useMemo(() => {
     if (!allNutrients || allNutrients.length === 0 || sortedIngredients.length === 0)
-      return { saturatedFat: null, sugars: null, salt: null }
+      return { saturatedFat: null, sugars: null, salt: null, fiber: null }
 
     let totalSaturatedFat: number | null = null
     let totalSugars: number | null = null
     let totalSalt: number | null = null
+    let totalFiber: number | null = null
 
     const servingCount = servings > 0 ? servings : 1
 
@@ -102,12 +103,19 @@ export function RecipePreviewModal({ recipe, open, onOpenChange }: RecipePreview
         const scaled = (saltRow.amount / saltRow.reference_amount) * baseWeight * multiplier
         totalSalt = (totalSalt ?? 0) + scaled
       }
+
+      const fiberRow = itemNutrients.find(n => n.nutrient_code === 'fiber')
+      if (fiberRow) {
+        const scaled = (fiberRow.amount / fiberRow.reference_amount) * baseWeight * multiplier
+        totalFiber = (totalFiber ?? 0) + scaled
+      }
     }
 
     return {
       saturatedFat: totalSaturatedFat !== null ? totalSaturatedFat / servingCount : null,
       sugars: totalSugars !== null ? totalSugars / servingCount : null,
       salt: totalSalt !== null ? totalSalt / servingCount : null,
+      fiber: totalFiber !== null ? totalFiber / servingCount : null,
     }
   }, [allNutrients, sortedIngredients, servings])
 
@@ -198,7 +206,8 @@ export function RecipePreviewModal({ recipe, open, onOpenChange }: RecipePreview
               </div>
               {(subNutrients.saturatedFat != null ||
                 subNutrients.sugars != null ||
-                subNutrients.salt != null) && (
+                subNutrients.salt != null ||
+                subNutrients.fiber != null) && (
                 <div className="mt-2 pt-2 border-t border-neutral-200 space-y-1 text-xs text-neutral-600">
                   {subNutrients.saturatedFat != null && (
                     <div className="flex justify-between">
@@ -216,6 +225,12 @@ export function RecipePreviewModal({ recipe, open, onOpenChange }: RecipePreview
                     <div className="flex justify-between">
                       <span>{t('nutrition.salt')}</span>
                       <span className="font-medium">{subNutrients.salt.toFixed(1)}g</span>
+                    </div>
+                  )}
+                  {subNutrients.fiber != null && (
+                    <div className="flex justify-between">
+                      <span>{t('nutrition.fiber')}</span>
+                      <span className="font-medium">{subNutrients.fiber.toFixed(1)}g</span>
                     </div>
                   )}
                 </div>

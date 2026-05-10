@@ -49,6 +49,7 @@ type FormData = {
   saturated_fat_g?: number
   sugars_g?: number
   salt_g?: number
+  fiber_g?: number
 }
 
 interface AddFoodItemModalProps {
@@ -120,6 +121,7 @@ export function AddFoodItemModal({
     saturated_fat_g: number | undefined
     sugars_g: number | undefined
     salt_g: number | undefined
+    fiber_g: number | undefined
   } | null>(null)
 
   // Barcode scanning state
@@ -197,6 +199,7 @@ export function AddFoodItemModal({
   const saturatedFatG = parseWatchDecimal(watch('saturated_fat_g'))
   const sugarsG = parseWatchDecimal(watch('sugars_g'))
   const saltG = parseWatchDecimal(watch('salt_g'))
+  const fiberG = parseWatchDecimal(watch('fiber_g'))
   const foodType = watch('food_type')
   const gramsPerPiece = watch('grams_per_piece')
   const servingUnit = watch('serving_unit')
@@ -244,9 +247,11 @@ export function AddFoodItemModal({
         const satFat = editItemNutrients.find(n => n.nutrient_code === 'saturated_fat')
         const sugars = editItemNutrients.find(n => n.nutrient_code === 'sugars')
         const salt = editItemNutrients.find(n => n.nutrient_code === 'salt')
+        const fiber = editItemNutrients.find(n => n.nutrient_code === 'fiber')
         if (satFat) setValue('saturated_fat_g', satFat.amount)
         if (sugars) setValue('sugars_g', sugars.amount)
         if (salt) setValue('salt_g', salt.amount)
+        if (fiber) setValue('fiber_g', fiber.amount)
       }
 
       // Spara initiala värden för jämförelse
@@ -255,6 +260,7 @@ export function AddFoodItemModal({
       )?.amount
       const sugarsInitial = editItemNutrients?.find(n => n.nutrient_code === 'sugars')?.amount
       const saltInitial = editItemNutrients?.find(n => n.nutrient_code === 'salt')?.amount
+      const fiberInitial = editItemNutrients?.find(n => n.nutrient_code === 'fiber')?.amount
       setInitialEditValues({
         name: editItem.name,
         default_amount: editItem.default_amount,
@@ -272,6 +278,7 @@ export function AddFoodItemModal({
         saturated_fat_g: satFatInitial,
         sugars_g: sugarsInitial,
         salt_g: saltInitial,
+        fiber_g: fiberInitial,
       })
     } else if (!editItem && open) {
       // Reset to defaults when opening for create
@@ -334,6 +341,7 @@ export function AddFoodItemModal({
     const saturatedFatChanged = (saturatedFatG ?? undefined) !== initialEditValues.saturated_fat_g
     const sugarsChanged = (sugarsG ?? undefined) !== initialEditValues.sugars_g
     const saltChanged = (saltG ?? undefined) !== initialEditValues.salt_g
+    const fiberChanged = (fiberG ?? undefined) !== initialEditValues.fiber_g
 
     return (
       nameChanged ||
@@ -350,7 +358,8 @@ export function AddFoodItemModal({
       servingUnitChanged ||
       saturatedFatChanged ||
       sugarsChanged ||
-      saltChanged
+      saltChanged ||
+      fiberChanged
     )
   }, [
     editItem,
@@ -473,6 +482,7 @@ export function AddFoodItemModal({
       saturatedFat: saturatedFatG != null && !isNaN(saturatedFatG) ? saturatedFatG * scale : null,
       sugars: sugarsG != null && !isNaN(sugarsG) ? sugarsG * scale : null,
       salt: saltG != null && !isNaN(saltG) ? saltG * scale : null,
+      fiber: fiberG != null && !isNaN(fiberG) ? fiberG * scale : null,
     }
   }, [
     gramsPerPiece,
@@ -485,6 +495,7 @@ export function AddFoodItemModal({
     saturatedFatG,
     sugarsG,
     saltG,
+    fiberG,
   ])
 
   // Check if form has non-default values
@@ -507,6 +518,7 @@ export function AddFoodItemModal({
       if (result.saturated_fat_g != null) setValue('saturated_fat_g', result.saturated_fat_g)
       if (result.sugars_g != null) setValue('sugars_g', result.sugars_g)
       if (result.salt_g != null) setValue('salt_g', result.salt_g)
+      if (result.fiber_g != null) setValue('fiber_g', result.fiber_g)
       setPendingScanResult(null)
     },
     [setValue]
@@ -717,6 +729,15 @@ export function AddFoodItemModal({
             reference_amount: 100,
             reference_unit: 'g' as const,
           })
+        if (data.fiber_g != null && !isNaN(data.fiber_g))
+          upsertRows.push({
+            food_item_id: savedFoodItemId,
+            nutrient_code: 'fiber',
+            amount: data.fiber_g,
+            unit: 'g',
+            reference_amount: 100,
+            reference_unit: 'g' as const,
+          })
 
         if (upsertRows.length > 0) {
           await supabase
@@ -725,11 +746,12 @@ export function AddFoodItemModal({
         }
 
         // Radera rader för fält som användaren lämnat tomma
-        const toDel = (['saturated_fat', 'sugars', 'salt'] as const).filter(code => {
+        const toDel = (['saturated_fat', 'sugars', 'salt', 'fiber'] as const).filter(code => {
           if (code === 'saturated_fat')
             return data.saturated_fat_g == null || isNaN(data.saturated_fat_g)
           if (code === 'sugars') return data.sugars_g == null || isNaN(data.sugars_g)
           if (code === 'salt') return data.salt_g == null || isNaN(data.salt_g)
+          if (code === 'fiber') return data.fiber_g == null || isNaN(data.fiber_g)
           return false
         })
         if (toDel.length > 0) {
@@ -1232,6 +1254,23 @@ export function AddFoodItemModal({
                         <p className="text-sm text-red-600 mt-1">{errors.salt_g.message}</p>
                       )}
                     </div>
+
+                    <div>
+                      <Label htmlFor="fiber_g" className="text-neutral-500">
+                        {t('addFoodModal.fieldFiber')}
+                      </Label>
+                      <Input
+                        id="fiber_g"
+                        type="text"
+                        inputMode="decimal"
+                        {...register('fiber_g')}
+                        placeholder="0"
+                        className={errors.fiber_g ? 'border-red-500' : ''}
+                      />
+                      {errors.fiber_g && (
+                        <p className="text-sm text-red-600 mt-1">{errors.fiber_g.message}</p>
+                      )}
+                    </div>
                   </div>
 
                   {/* Macro mismatch warning */}
@@ -1470,6 +1509,16 @@ export function AddFoodItemModal({
                                   </span>
                                   <span className="text-neutral-600">
                                     {servingPreview.salt.toFixed(1)}g
+                                  </span>
+                                </div>
+                              )}
+                              {servingPreview.fiber != null && (
+                                <div className="flex justify-between pl-3">
+                                  <span className="text-neutral-400">
+                                    {t('addFoodModal.previewFiber')}
+                                  </span>
+                                  <span className="text-neutral-600">
+                                    {servingPreview.fiber.toFixed(1)}g
                                   </span>
                                 </div>
                               )}

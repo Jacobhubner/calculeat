@@ -47,6 +47,7 @@ export function NutritionSummary({
           saturatedFat: nutrition.per100g.saturatedFat,
           sugars: nutrition.per100g.sugars,
           salt: nutrition.per100g.salt,
+          fiber: nutrition.per100g.fiber,
           weight: 100,
         }
       : {
@@ -58,6 +59,7 @@ export function NutritionSummary({
           saturatedFat: nutrition.perServing.saturatedFat,
           sugars: nutrition.perServing.sugars,
           salt: nutrition.perServing.salt,
+          fiber: nutrition.perServing.fiber,
           weight: nutrition.perServing.weight,
         }
 
@@ -154,7 +156,8 @@ export function NutritionSummary({
         {/* Optional sub-nutrients */}
         {(displayValues.saturatedFat != null ||
           displayValues.sugars != null ||
-          displayValues.salt != null) && (
+          displayValues.salt != null ||
+          displayValues.fiber != null) && (
           <div className="space-y-1 text-sm mt-1">
             {displayValues.saturatedFat != null && (
               <div className="flex justify-between pl-3">
@@ -172,6 +175,12 @@ export function NutritionSummary({
               <div className="flex justify-between pl-3">
                 <span className="text-neutral-400">{t('nutrition.salt')}</span>
                 <span className="text-neutral-600">{displayValues.salt.toFixed(1)}g</span>
+              </div>
+            )}
+            {displayValues.fiber != null && (
+              <div className="flex justify-between pl-3">
+                <span className="text-neutral-400">{t('nutrition.fiber')}</span>
+                <span className="text-neutral-600">{displayValues.fiber.toFixed(1)}g</span>
               </div>
             )}
           </div>

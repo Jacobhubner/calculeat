@@ -197,6 +197,13 @@ export const createFoodItemSchema = z
         .min(0, 'Salt måste vara 0 eller högre')
         .optional()
     ),
+    fiber_g: z.preprocess(
+      val => parseDecimal(val),
+      z
+        .number({ error: 'Fibrer måste vara ett nummer' })
+        .min(0, 'Fibrer måste vara 0 eller högre')
+        .optional()
+    ),
   })
   .refine(
     data => {
