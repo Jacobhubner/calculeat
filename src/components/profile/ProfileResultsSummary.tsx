@@ -131,14 +131,6 @@ export default function ProfileResultsSummary({ profile, onTDEEEdit }: ProfileRe
             <div>
               <p className="text-sm font-medium text-neutral-700">TDEE</p>
               <p className="text-xs text-neutral-500">{t('results.totalEnergyNeed')}</p>
-              {profile.tdee_calculation_snapshot?.pal_system && (
-                <p className="text-xs text-neutral-400">
-                  {profile.tdee_calculation_snapshot.pal_system
-                    .replace(' PAL values', '')
-                    .replace(' based PAL values', '')
-                    .replace('Beräkna din aktivitetsnivå', t('results.palCalculated'))}
-                </p>
-              )}
             </div>
           </div>
           {editing ? (
