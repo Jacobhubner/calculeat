@@ -221,16 +221,16 @@ export function RecipePreviewModal({ recipe, open, onOpenChange }: RecipePreview
                       <span className="font-medium">{subNutrients.sugars.toFixed(1)}g</span>
                     </div>
                   )}
-                  {subNutrients.salt != null && (
-                    <div className="flex justify-between">
-                      <span>{t('nutrition.salt')}</span>
-                      <span className="font-medium">{subNutrients.salt.toFixed(1)}g</span>
-                    </div>
-                  )}
                   {subNutrients.fiber != null && (
                     <div className="flex justify-between">
                       <span>{t('nutrition.fiber')}</span>
                       <span className="font-medium">{subNutrients.fiber.toFixed(1)}g</span>
+                    </div>
+                  )}
+                  {subNutrients.salt != null && (
+                    <div className="flex justify-between">
+                      <span>{t('nutrition.salt')}</span>
+                      <span className="font-medium">{subNutrients.salt.toFixed(1)}g</span>
                     </div>
                   )}
                 </div>

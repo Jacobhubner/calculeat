@@ -171,16 +171,16 @@ export function NutritionSummary({
                 <span className="text-neutral-600">{displayValues.sugars.toFixed(1)}g</span>
               </div>
             )}
-            {displayValues.salt != null && (
-              <div className="flex justify-between pl-3">
-                <span className="text-neutral-400">{t('nutrition.salt')}</span>
-                <span className="text-neutral-600">{displayValues.salt.toFixed(1)}g</span>
-              </div>
-            )}
             {displayValues.fiber != null && (
               <div className="flex justify-between pl-3">
                 <span className="text-neutral-400">{t('nutrition.fiber')}</span>
                 <span className="text-neutral-600">{displayValues.fiber.toFixed(1)}g</span>
+              </div>
+            )}
+            {displayValues.salt != null && (
+              <div className="flex justify-between pl-3">
+                <span className="text-neutral-400">{t('nutrition.salt')}</span>
+                <span className="text-neutral-600">{displayValues.salt.toFixed(1)}g</span>
               </div>
             )}
           </div>
