@@ -197,6 +197,13 @@ export default function TDEECalculatorTool() {
       if (tDays <= 0 || tMinutes <= 0) return null
     }
 
+    // Require training fields and daily steps for Fitness Stuff
+    if (palSystem === 'Fitness Stuff PAL values') {
+      const tDays = Number(trainingFrequency) || 0
+      const tMinutes = Number(trainingDuration) || 0
+      if (tDays <= 0 || tMinutes <= 0 || !dailySteps) return null
+    }
+
     // Special validation for Beräkna din aktivitetsnivå
     if (palSystem === 'Beräkna din aktivitetsnivå') {
       // Require only 4 fields to be filled:
