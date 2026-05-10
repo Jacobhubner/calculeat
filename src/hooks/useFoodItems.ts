@@ -307,6 +307,7 @@ const NON_DB_FOOD_ITEM_FIELDS = [
   'sugars_g',
   'sugar_g',
   'salt_g',
+  'fiber_g',
   'shared_list_id',
   'kcal_per_gram', // computed by DB trigger
   'kcal_per_unit', // computed by DB trigger
