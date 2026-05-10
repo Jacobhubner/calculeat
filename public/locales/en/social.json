@@ -119,7 +119,8 @@
       "title": "Social",
       "tab_friends": "Friends",
       "tab_activity": "Activity",
-      "tab_messages": "Messages"
+      "tab_messages": "Messages",
+      "tab_sharing": "Share"
     },
     "from": "from",
     "badge": {

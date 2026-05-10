@@ -87,6 +87,8 @@ export function usePendingFriendRequestsCount() {
 // ──────────────────────────────────────────────────────────────────────────────
 
 export function useSendFriendRequest() {
+  const queryClient = useQueryClient()
+
   return useMutation({
     mutationFn: async (recipientEmail: string) => {
       const { data, error } = await supabase.rpc('send_friend_request', {
@@ -94,6 +96,9 @@ export function useSendFriendRequest() {
       })
       if (error) throw error
       return data as { success: boolean; friendship_id?: string; error?: string }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['friends', 'sent'] })
     },
   })
 }

@@ -1542,7 +1542,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
         </div>
 
         {/* Tab-knappar */}
-        <div className="flex gap-1">
+        <div className="flex items-center gap-1">
           {[
             { id: 'friends' as HubTab, label: t('social.hub.tab_friends'), count: 0 },
             { id: 'activity' as HubTab, label: t('social.hub.tab_activity'), count: activityCount },
@@ -1581,6 +1581,15 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
               )}
             </button>
           ))}
+          <button
+            type="button"
+            onClick={() => onOpenShareDialog(undefined)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors text-neutral-600 hover:bg-neutral-100 ml-auto"
+            title={t('social.friends.start_sharing')}
+          >
+            <Share2 className="h-4 w-4" />
+            {t('social.hub.tab_sharing')}
+          </button>
         </div>
       </div>
 
@@ -1591,6 +1600,16 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
           <div>
             {friendsView === 'list' && (
               <div className="p-4 space-y-3">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full justify-center gap-2 border-dashed text-neutral-600 hover:text-primary-700 hover:border-primary-400"
+                  onClick={() => setFriendsView('add')}
+                >
+                  <UserPlus className="h-4 w-4" />
+                  {t('social.friends.add_friend')}
+                </Button>
+
                 {friends.length > 4 && (
                   <Input
                     placeholder={t('social.friends.search_placeholder')}
@@ -1636,28 +1655,6 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
                     ))}
                   </div>
                 )}
-
-                {/* Åtgärdsknappar */}
-                <div className="pt-2 space-y-2 border-t border-neutral-100">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="w-full justify-start gap-2 text-neutral-600"
-                    onClick={() => setFriendsView('add')}
-                  >
-                    <UserPlus className="h-4 w-4" />
-                    {t('social.friends.add_friend')}
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="w-full justify-start gap-2 text-neutral-600"
-                    onClick={() => onOpenShareDialog(undefined)}
-                  >
-                    <Share2 className="h-4 w-4" />
-                    {t('social.friends.start_sharing')}
-                  </Button>
-                </div>
               </div>
             )}
 

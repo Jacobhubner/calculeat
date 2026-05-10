@@ -119,7 +119,8 @@
       "title": "Social",
       "tab_friends": "Vänner",
       "tab_activity": "Aktivitet",
-      "tab_messages": "Meddelanden"
+      "tab_messages": "Meddelanden",
+      "tab_sharing": "Dela"
     },
     "from": "från",
     "badge": {

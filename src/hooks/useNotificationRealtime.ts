@@ -43,6 +43,14 @@ export function useNotificationRealtime(userId: string | undefined) {
           const notification = payload.new as Notification
           queryClient.invalidateQueries({ queryKey: ['notifications', 'list', userId] })
           queryClient.invalidateQueries({ queryKey: ['notifications', 'count', userId] })
+          if (notification.type === 'friend_request_accepted') {
+            queryClient.invalidateQueries({ queryKey: ['friends', 'sent'] })
+            queryClient.invalidateQueries({ queryKey: ['friends', 'list'] })
+          }
+          if (notification.type === 'friend_request_received') {
+            queryClient.invalidateQueries({ queryKey: ['friends', 'count'] })
+            queryClient.invalidateQueries({ queryKey: ['friends', 'requests'] })
+          }
           toastForNotification(notification)
         }
       )

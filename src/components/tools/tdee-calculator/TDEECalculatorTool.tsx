@@ -181,6 +181,15 @@ export default function TDEECalculatorTool() {
       return null
     }
 
+    // Require intensity level for systems that use it
+    const palSystemsRequiringIntensityLevel: PALSystem[] = [
+      'DAMNRIPPED PAL values',
+      'Pro Physique PAL values',
+    ]
+    if (palSystemsRequiringIntensityLevel.includes(palSystem as PALSystem) && !intensityLevel) {
+      return null
+    }
+
     // Special validation for Beräkna din aktivitetsnivå
     if (palSystem === 'Beräkna din aktivitetsnivå') {
       // Require only 4 fields to be filled:
