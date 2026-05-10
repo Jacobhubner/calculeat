@@ -97,7 +97,8 @@
     "title": "Results",
     "basalMetabolism": "Basal metabolism",
     "totalEnergyNeed": "Total energy needs",
-    "calorieRange": "Calorie range"
+    "calorieRange": "Calorie range",
+    "palCalculated": "Calculated activity level"
   },
   "bodyComposition": {
     "title": "Body composition",

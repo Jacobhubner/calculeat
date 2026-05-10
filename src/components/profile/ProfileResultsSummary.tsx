@@ -25,7 +25,7 @@ export default function ProfileResultsSummary({ profile, onTDEEEdit }: ProfileRe
   if (!profile) return null
 
   // Only calculate BMR if a formula was explicitly chosen (not for manual TDEE entries)
-  const bmrFormula = profile.bmr_formula || null
+  const bmrFormula = profile.bmr_formula || profile.tdee_calculation_snapshot?.bmr_formula || null
   let bmr: number | null = null
 
   // Convert formula name to Swedish short form
@@ -80,6 +80,11 @@ export default function ProfileResultsSummary({ profile, onTDEEEdit }: ProfileRe
     bmr = calculateBMRWithFormula(bmrFormula, bmrParams)
   }
 
+  // Fall back to the saved BMR value if live calculation isn't possible
+  if (!bmr && profile.bmr) {
+    bmr = profile.bmr
+  }
+
   const tdee = profile.tdee
   const calorieGoal = profile.calorie_goal
 
@@ -126,6 +131,14 @@ export default function ProfileResultsSummary({ profile, onTDEEEdit }: ProfileRe
             <div>
               <p className="text-sm font-medium text-neutral-700">TDEE</p>
               <p className="text-xs text-neutral-500">{t('results.totalEnergyNeed')}</p>
+              {profile.tdee_calculation_snapshot?.pal_system && (
+                <p className="text-xs text-neutral-400">
+                  {profile.tdee_calculation_snapshot.pal_system
+                    .replace(' PAL values', '')
+                    .replace(' based PAL values', '')
+                    .replace('Beräkna din aktivitetsnivå', t('results.palCalculated'))}
+                </p>
+              )}
             </div>
           </div>
           {editing ? (

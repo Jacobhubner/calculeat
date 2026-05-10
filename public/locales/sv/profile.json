@@ -97,7 +97,8 @@
     "title": "Resultat",
     "basalMetabolism": "Basalmetabolism",
     "totalEnergyNeed": "Totalt energibehov",
-    "calorieRange": "Kaloriintervall"
+    "calorieRange": "Kaloriintervall",
+    "palCalculated": "Beräknad aktivitetsnivå"
   },
   "bodyComposition": {
     "title": "Kroppssammansättning",
