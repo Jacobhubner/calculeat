@@ -174,7 +174,6 @@ export default function TDEECalculatorTool() {
       'FAO/WHO/UNU based PAL values',
       'DAMNRIPPED PAL values',
       'Pro Physique PAL values',
-      'Fitness Stuff PAL values',
       'Basic internet PAL values',
     ]
     if (palSystemsRequiringActivityLevel.includes(palSystem as PALSystem) && !activityLevel) {
