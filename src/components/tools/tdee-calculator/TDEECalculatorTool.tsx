@@ -190,6 +190,13 @@ export default function TDEECalculatorTool() {
       return null
     }
 
+    // Require training fields for Pro Physique
+    if (palSystem === 'Pro Physique PAL values') {
+      const tDays = Number(trainingDaysPerWeek) || 0
+      const tMinutes = Number(trainingMinutesPerSession) || 0
+      if (tDays <= 0 || tMinutes <= 0) return null
+    }
+
     // Special validation for Beräkna din aktivitetsnivå
     if (palSystem === 'Beräkna din aktivitetsnivå') {
       // Require only 4 fields to be filled:
