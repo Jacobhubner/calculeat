@@ -336,12 +336,12 @@
       ],
       "liquidItems": [
         { "label": "Vatten", "icon": "💧" },
-        { "label": "Lightdryck", "icon": "" },
+        { "label": "Lightdryck", "icon": "🥤" },
         { "label": "Kaffe/te (utan socker)", "icon": "☕" }
       ],
       "soupItems": [
         { "label": "Klara grönsakssoppor", "icon": "🥣" },
-        { "label": "Buljongbaserade soppor", "icon": "" }
+        { "label": "Buljongbaserade soppor", "icon": "🥣" }
       ]
     },
     "yellow": {
@@ -366,7 +366,7 @@
       "soupItems": [
         { "label": "Linssoppa", "icon": "🥣" },
         { "label": "Kycklingsoppa", "icon": "🍲" },
-        { "label": "Lätt krämig soppa", "icon": "" }
+        { "label": "Lätt krämig soppa", "icon": "🍲" }
       ]
     },
     "orange": {

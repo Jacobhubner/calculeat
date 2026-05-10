@@ -336,12 +336,12 @@
       ],
       "liquidItems": [
         { "label": "Water", "icon": "💧" },
-        { "label": "Diet soda", "icon": "" },
+        { "label": "Diet soda", "icon": "🥤" },
         { "label": "Coffee/tea (no sugar)", "icon": "☕" }
       ],
       "soupItems": [
         { "label": "Clear vegetable soups", "icon": "🥣" },
-        { "label": "Broth-based soups", "icon": "" }
+        { "label": "Broth-based soups", "icon": "🥣" }
       ]
     },
     "yellow": {
@@ -366,7 +366,7 @@
       "soupItems": [
         { "label": "Lentil soup", "icon": "🥣" },
         { "label": "Chicken soup", "icon": "🍲" },
-        { "label": "Light creamy soup", "icon": "" }
+        { "label": "Light creamy soup", "icon": "🍲" }
       ]
     },
     "orange": {
