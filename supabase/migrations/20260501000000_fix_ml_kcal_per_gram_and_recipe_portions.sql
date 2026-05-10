@@ -25,7 +25,11 @@ BEGIN
     END IF;
   END IF;
 
-  -- For recipe portions, client sets kcal_per_gram/kcal_per_unit correctly — skip further calc
+  -- For recipe portions, client sets kcal_per_gram/kcal_per_unit correctly — skip further calc.
+  -- TODO (fragilt kontrakt): om default_unit='portion' inte sätts korrekt av client, eller om
+  -- triggern ändras, riskerar vi att kcal_per_unit skrivs över med fel värde.
+  -- Client-sidan: useRecipes.ts sätter kcal_per_gram=per100g.calories/100 och
+  -- kcal_per_unit=perServing.calories direkt. Se recipeCalculator.ts för beräkningslogik.
   IF NEW.default_unit = 'portion' THEN
     RETURN NEW;
   END IF;
