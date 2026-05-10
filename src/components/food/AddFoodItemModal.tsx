@@ -379,6 +379,7 @@ export function AddFoodItemModal({
     saturatedFatG,
     sugarsG,
     saltG,
+    fiberG,
   ])
 
   // Duplicate warning - debounced search
