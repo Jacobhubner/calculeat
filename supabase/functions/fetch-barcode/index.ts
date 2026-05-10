@@ -30,6 +30,7 @@ interface BarcodeResult {
   saturated_fat_g: number | null
   sugars_g: number | null
   salt_g: number | null
+  fiber_g: number | null
   default_unit: 'g' | 'ml'
   food_type: 'Solid' | 'Liquid' | 'Soup'
   default_amount: 100
@@ -177,6 +178,7 @@ Deno.serve(async (req: Request) => {
   const saturated_fat_g = getNutrient('saturated-fat_100g', 'saturated-fat_serving')
   const sugars_g = getNutrient('sugars_100g', 'sugars_serving')
   const salt_g = getNutrient('salt_100g', 'salt_serving')
+  const fiber_g = getNutrient('fiber_100g', 'fiber_serving')
 
   // Validering — avvisa vid orimliga kärnvärden
   // Allow up to 105 to handle rounding in OFFs data (e.g. butter = ~99.9g fat)
@@ -196,6 +198,7 @@ Deno.serve(async (req: Request) => {
     saturated_fat_g !== null && validateRange(saturated_fat_g, 0, 105) ? saturated_fat_g : null
   const validatedSugars = sugars_g !== null && validateRange(sugars_g, 0, 105) ? sugars_g : null
   const validatedSalt = salt_g !== null && validateRange(salt_g, 0, 50) ? salt_g : null
+  const validatedFiber = fiber_g !== null && validateRange(fiber_g, 0, 105) ? fiber_g : null
 
   // Enhetsdetektering: ml → ml (per 100ml data or liquid category)
   const isPerMl = dataPer.includes('100ml') || dataPer.includes('100 ml')
@@ -229,6 +232,7 @@ Deno.serve(async (req: Request) => {
     saturated_fat_g: validatedSaturatedFat,
     sugars_g: validatedSugars,
     salt_g: validatedSalt,
+    fiber_g: validatedFiber,
     default_unit,
     food_type,
     default_amount: 100,
