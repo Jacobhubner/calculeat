@@ -51,6 +51,10 @@ export function useNotificationRealtime(userId: string | undefined) {
             queryClient.invalidateQueries({ queryKey: ['friends', 'count'] })
             queryClient.invalidateQueries({ queryKey: ['friends', 'requests'] })
           }
+          if (notification.type === 'share_invitation_received') {
+            queryClient.invalidateQueries({ queryKey: ['shareInvitations', 'pending'] })
+            queryClient.invalidateQueries({ queryKey: ['shareInvitations', 'count'] })
+          }
           toastForNotification(notification)
         }
       )
