@@ -1157,6 +1157,7 @@ export function AddFoodItemModal({
                       )}
                     </div>
 
+                    {/* Fett + varav mättat fett */}
                     <div>
                       <Label htmlFor="fat_g">{t('addFoodModal.fieldFat')}</Label>
                       <Input
@@ -1191,6 +1192,7 @@ export function AddFoodItemModal({
                       )}
                     </div>
 
+                    {/* Kolhydrater + varav sockerarter + varav fibrer */}
                     <div>
                       <Label htmlFor="carb_g">{t('addFoodModal.fieldCarbs')}</Label>
                       <Input
@@ -1223,7 +1225,7 @@ export function AddFoodItemModal({
                       )}
                     </div>
 
-                    <div>
+                    <div className="col-start-2">
                       <Label htmlFor="fiber_g" className="text-neutral-500">
                         {t('addFoodModal.fieldFiber')}
                       </Label>
@@ -1240,6 +1242,7 @@ export function AddFoodItemModal({
                       )}
                     </div>
 
+                    {/* Protein + Salt */}
                     <div>
                       <Label htmlFor="protein_g">{t('addFoodModal.fieldProtein')}</Label>
                       <Input
