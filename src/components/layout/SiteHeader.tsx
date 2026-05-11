@@ -52,18 +52,14 @@ export default function SiteHeader() {
     }
   }
 
-  const anchorLinks =
-    location.pathname === '/'
-      ? [
-          { href: '#features', label: 'Funktioner' },
-          { href: '#calculator', label: 'Kalkylator' },
-        ]
-      : []
+  const anchorLinks = location.pathname === '/' ? [{ href: '#features', label: 'Funktioner' }] : []
 
   const navLinks = [
     { to: '/kalkylatorer', label: 'Kalkylatorer' },
     { to: '/artiklar', label: 'Artiklar' },
   ]
+
+  const isOnHomePage = location.pathname === '/'
 
   const getInitials = () => {
     if (userProfile?.username) return userProfile.username.substring(0, 2).toUpperCase()
@@ -123,6 +119,14 @@ export default function SiteHeader() {
         {/* Desktop Navigation - Only show marketing links when logged out */}
         {!user && (
           <nav className="hidden md:flex items-center gap-6">
+            {!isOnHomePage && (
+              <Link
+                to="/"
+                className="text-sm font-medium transition-colors text-neutral-600 hover:text-neutral-900"
+              >
+                Hem
+              </Link>
+            )}
             {anchorLinks.map(link => (
               <a
                 key={link.href}
@@ -431,6 +435,15 @@ export default function SiteHeader() {
       {mobileMenuOpen && !user && (
         <div className="md:hidden border-t bg-white">
           <nav className="container mx-auto px-4 py-4 flex flex-col gap-2">
+            {!isOnHomePage && (
+              <Link
+                to="/"
+                onClick={() => setMobileMenuOpen(false)}
+                className="px-4 py-2 rounded-xl text-sm font-medium transition-colors text-neutral-600 hover:bg-neutral-50"
+              >
+                Hem
+              </Link>
+            )}
             {anchorLinks.map(link => (
               <a
                 key={link.href}

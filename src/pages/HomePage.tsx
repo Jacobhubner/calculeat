@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/contexts/AuthContext'
 import SiteHeader from '@/components/layout/SiteHeader'
 import SiteFooter from '@/components/layout/SiteFooter'
-import SmartCalculator from '@/components/SmartCalculator'
 import { HeroSection } from '@/components/HeroSection'
 import { HowItWorks } from '@/components/HowItWorks'
 import { Button } from '@/components/ui/button'
@@ -192,22 +191,6 @@ export default function HomePage() {
                   <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
               </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Calculator Section */}
-        <section id="calculator" className="py-20 md:py-28 bg-white">
-          <div className="container mx-auto px-4">
-            <div className="text-center max-w-3xl mx-auto mb-12">
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold text-neutral-900 mb-4">
-                {t('home.calculator.title')}
-              </h2>
-              <p className="text-lg md:text-xl text-neutral-600">{t('home.calculator.subtitle')}</p>
-            </div>
-
-            <div className="max-w-3xl mx-auto">
-              <SmartCalculator />
             </div>
           </div>
         </section>

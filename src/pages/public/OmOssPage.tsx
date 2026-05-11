@@ -72,7 +72,7 @@ export default function OmOssPage() {
                 <p>
                   <strong>Kalkylatorer:</strong> Alla kalkylatorer bygger på publicerad forskning.
                   TDEE-kalkylatorn använder Mifflin-St Jeor för BMR (validerad i oberoende studier
-                  som den mest korrekta för normalpopulationen) och FAO/WHO/UNU:s PAL-system för
+                  som den mest korrekta för normalpopulationen) och fem PAL-nivåer (1.2–1.9) för
                   aktivitetsfaktor. Vi erbjuder även 9 alternativa BMR-formler för olika
                   populationer.
                 </p>

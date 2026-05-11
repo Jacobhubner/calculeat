@@ -217,7 +217,7 @@ export default function FfmiKalkylatornPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="min-h-screen flex flex-col">
       <Seo
         title="FFMI Kalkylator — Räkna ut ditt Fat-Free Mass Index (2026) | CalculEat"
         description="Gratis FFMI-kalkylator. Räkna ut ditt Fat-Free Mass Index och normaliserat FFMI. Bedöm din muskelmassa, kategori och natural limit i kontext."
@@ -228,372 +228,428 @@ export default function FfmiKalkylatornPage() {
       <SiteHeader />
 
       <main className="flex-1">
-        <div className="container mx-auto px-4 py-10 max-w-2xl">
-          {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-sm text-neutral-500 mb-6">
-            <Link to="/" className="hover:text-neutral-700 transition-colors">
-              CalculEat
-            </Link>
-            <span>/</span>
-            <Link
-              to="/kalkylatorer/tdee-kalkylator"
-              className="hover:text-neutral-700 transition-colors"
-            >
-              Kalkylatorer
-            </Link>
-            <span>/</span>
-            <span className="text-neutral-700">FFMI Kalkylator</span>
-          </nav>
+        {/* Hero section */}
+        <section className="relative overflow-hidden bg-white border-b border-neutral-100">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(37,189,0,0.07),transparent_60%)]" />
+          <div className="relative container mx-auto px-4 pt-16 pb-14 max-w-3xl">
+            {/* Breadcrumb */}
+            <nav className="flex items-center gap-2 text-sm text-neutral-500 mb-6">
+              <Link to="/" className="hover:text-neutral-700 transition-colors">
+                CalculEat
+              </Link>
+              <span>/</span>
+              <Link
+                to="/kalkylatorer/tdee-kalkylator"
+                className="hover:text-neutral-700 transition-colors"
+              >
+                Kalkylatorer
+              </Link>
+              <span>/</span>
+              <span className="text-neutral-700">FFMI Kalkylator</span>
+            </nav>
 
-          <h1 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-3 leading-tight">
-            FFMI Kalkylator — Räkna ut ditt Fat-Free Mass Index
-          </h1>
-          <p className="text-lg text-neutral-600 leading-relaxed mb-8 border-l-4 border-primary-400 pl-4 bg-primary-50 py-3 rounded-r-lg">
-            FFMI (Fat-Free Mass Index) visar hur mycket muskelmassa du har i förhållande till din
-            längd. Det används för att bedöma fysik, mäta progression och ge kontext kring vad som
-            är möjligt att uppnå naturligt.
-          </p>
+            <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-5 leading-tight">
+              <span className="bg-gradient-to-r from-primary-600 to-accent-500 bg-clip-text text-transparent">
+                FFMI
+              </span>{' '}
+              Kalkylator
+            </h1>
+            <p className="text-lg md:text-xl text-neutral-600 leading-relaxed max-w-2xl">
+              FFMI (Fat-Free Mass Index) visar hur mycket muskelmassa du har i förhållande till din
+              längd. Det används för att bedöma fysik, mäta progression och ge kontext kring vad som
+              är möjligt att uppnå naturligt.
+            </p>
+          </div>
+        </section>
 
-          {/* Calculator */}
-          <div className="rounded-2xl border border-neutral-200 shadow-sm overflow-hidden mb-8">
-            <div className="bg-primary-50 px-6 py-4 border-b border-primary-100 flex items-center gap-2">
-              <Calculator className="h-5 w-5 text-primary-600" />
-              <span className="font-semibold text-primary-900">Beräkna ditt FFMI</span>
-            </div>
-
-            <div className="p-6 space-y-5">
-              {/* Gender */}
-              <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-2">Kön</label>
-                <div className="grid grid-cols-2 gap-2">
-                  {(
-                    [
-                      { value: 'male', label: 'Man' },
-                      { value: 'female', label: 'Kvinna' },
-                    ] as { value: Gender; label: string }[]
-                  ).map(opt => (
-                    <button
-                      key={opt.value}
-                      type="button"
-                      onClick={() => {
-                        setGender(opt.value)
-                        resetResult()
-                      }}
-                      className={`py-2.5 rounded-xl text-sm font-medium border transition-colors ${
-                        gender === opt.value
-                          ? 'bg-primary-600 text-white border-primary-600'
-                          : 'bg-white text-neutral-700 border-neutral-200 hover:border-primary-300'
-                      }`}
-                    >
-                      {opt.label}
-                    </button>
-                  ))}
-                </div>
+        {/* Calculator section */}
+        <section className="bg-neutral-50 py-14 border-b border-neutral-100">
+          <div className="container mx-auto px-4 max-w-2xl">
+            <div className="rounded-2xl border border-neutral-200 shadow-sm overflow-hidden">
+              <div className="bg-primary-50 px-6 py-4 border-b border-primary-100 flex items-center gap-2">
+                <Calculator className="h-5 w-5 text-primary-600" />
+                <span className="font-semibold text-primary-900">Beräkna ditt FFMI</span>
               </div>
 
-              {/* Inputs */}
-              <div className="grid grid-cols-2 gap-4">
-                {[
-                  {
-                    label: 'Längd',
-                    unit: 'cm',
-                    value: height,
-                    setter: setHeight,
-                    placeholder: '175',
-                  },
-                  {
-                    label: 'Vikt',
-                    unit: 'kg',
-                    value: weight,
-                    setter: setWeight,
-                    placeholder: '80',
-                  },
-                ].map(({ label, unit, value, setter, placeholder }) => (
-                  <div key={label}>
-                    <label className="block text-sm font-medium text-neutral-700 mb-1">
-                      {label}
-                    </label>
-                    <div className="flex items-center border border-neutral-200 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-primary-300 focus-within:border-primary-400">
-                      <input
-                        type="number"
-                        inputMode="decimal"
-                        value={value}
-                        onChange={e => {
-                          setter(e.target.value)
+              <div className="p-6 space-y-5">
+                {/* Gender */}
+                <div>
+                  <label className="block text-sm font-medium text-neutral-700 mb-2">Kön</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {(
+                      [
+                        { value: 'male', label: 'Man' },
+                        { value: 'female', label: 'Kvinna' },
+                      ] as { value: Gender; label: string }[]
+                    ).map(opt => (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        onClick={() => {
+                          setGender(opt.value)
                           resetResult()
                         }}
-                        onFocus={e => e.target.select()}
-                        placeholder={placeholder}
-                        className="flex-1 px-3 py-2.5 text-sm text-neutral-900 bg-white outline-none min-w-0"
-                      />
-                      <span className="px-2 text-xs text-neutral-400 bg-neutral-50 border-l border-neutral-200 py-2.5">
-                        {unit}
+                        className={`py-2.5 rounded-xl text-sm font-medium border transition-colors ${
+                          gender === opt.value
+                            ? 'bg-primary-600 text-white border-primary-600'
+                            : 'bg-white text-neutral-700 border-neutral-200 hover:border-primary-300'
+                        }`}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Inputs */}
+                <div className="grid grid-cols-2 gap-4">
+                  {[
+                    {
+                      label: 'Längd',
+                      unit: 'cm',
+                      value: height,
+                      setter: setHeight,
+                      placeholder: '175',
+                    },
+                    {
+                      label: 'Vikt',
+                      unit: 'kg',
+                      value: weight,
+                      setter: setWeight,
+                      placeholder: '80',
+                    },
+                  ].map(({ label, unit, value, setter, placeholder }) => (
+                    <div key={label}>
+                      <label className="block text-sm font-medium text-neutral-700 mb-1">
+                        {label}
+                      </label>
+                      <div className="flex items-center border border-neutral-200 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-primary-300 focus-within:border-primary-400">
+                        <input
+                          type="number"
+                          inputMode="decimal"
+                          value={value}
+                          onChange={e => {
+                            setter(e.target.value)
+                            resetResult()
+                          }}
+                          onFocus={e => e.target.select()}
+                          placeholder={placeholder}
+                          className="flex-1 px-3 py-2.5 text-sm text-neutral-900 bg-white outline-none min-w-0"
+                        />
+                        <span className="px-2 text-xs text-neutral-400 bg-neutral-50 border-l border-neutral-200 py-2.5">
+                          {unit}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Body fat */}
+                <div>
+                  <label className="block text-sm font-medium text-neutral-700 mb-1">
+                    Kroppsfettprocent
+                  </label>
+                  <div className="text-xs text-neutral-400 mb-1">
+                    Vet du inte din fettprocent?{' '}
+                    <Link
+                      to="/kalkylatorer/kroppsfett"
+                      className="text-primary-600 hover:underline"
+                    >
+                      Räkna ut den här
+                    </Link>
+                  </div>
+                  <div className="flex items-center border border-neutral-200 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-primary-300 focus-within:border-primary-400 max-w-40">
+                    <input
+                      type="number"
+                      inputMode="decimal"
+                      value={bodyFat}
+                      onChange={e => {
+                        setBodyFat(e.target.value)
+                        resetResult()
+                      }}
+                      onFocus={e => e.target.select()}
+                      placeholder="15"
+                      className="flex-1 px-3 py-2.5 text-sm text-neutral-900 bg-white outline-none min-w-0"
+                    />
+                    <span className="px-2 text-xs text-neutral-400 bg-neutral-50 border-l border-neutral-200 py-2.5">
+                      %
+                    </span>
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleCalculate}
+                  disabled={!result}
+                  className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-neutral-200 disabled:text-neutral-400 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm"
+                >
+                  Beräkna mitt FFMI
+                </button>
+              </div>
+
+              {/* Results */}
+              {hasResult && result && (
+                <div className="border-t border-neutral-100 bg-neutral-50 px-6 py-6 space-y-4">
+                  <h2 className="font-semibold text-neutral-800">Ditt resultat</h2>
+
+                  {/* Category card */}
+                  <div className={`rounded-xl border p-5 ${result.category.bg}`}>
+                    <div className="flex items-end gap-3 mb-2">
+                      <span className={`text-4xl font-bold ${result.category.color}`}>
+                        {result.ffmi}
+                      </span>
+                      <span className={`text-lg font-semibold mb-0.5 ${result.category.color}`}>
+                        {result.category.label}
                       </span>
                     </div>
+                    <p className="text-sm text-neutral-700 mb-2">{result.category.description}</p>
+                    <p className="text-xs text-neutral-500 italic">{result.category.context}</p>
                   </div>
-                ))}
-              </div>
 
-              {/* Body fat */}
-              <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-1">
-                  Kroppsfettprocent
-                </label>
-                <div className="text-xs text-neutral-400 mb-1">
-                  Vet du inte din fettprocent?{' '}
-                  <Link to="/kalkylatorer/kroppsfett" className="text-primary-600 hover:underline">
-                    Räkna ut den här
-                  </Link>
-                </div>
-                <div className="flex items-center border border-neutral-200 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-primary-300 focus-within:border-primary-400 max-w-40">
-                  <input
-                    type="number"
-                    inputMode="decimal"
-                    value={bodyFat}
-                    onChange={e => {
-                      setBodyFat(e.target.value)
-                      resetResult()
-                    }}
-                    onFocus={e => e.target.select()}
-                    placeholder="15"
-                    className="flex-1 px-3 py-2.5 text-sm text-neutral-900 bg-white outline-none min-w-0"
-                  />
-                  <span className="px-2 text-xs text-neutral-400 bg-neutral-50 border-l border-neutral-200 py-2.5">
-                    %
-                  </span>
-                </div>
-              </div>
-
-              <button
-                onClick={handleCalculate}
-                disabled={!result}
-                className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-neutral-200 disabled:text-neutral-400 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm"
-              >
-                Beräkna mitt FFMI
-              </button>
-            </div>
-
-            {/* Results */}
-            {hasResult && result && (
-              <div className="border-t border-neutral-100 bg-neutral-50 px-6 py-6 space-y-4">
-                <h2 className="font-semibold text-neutral-800">Ditt resultat</h2>
-
-                {/* Category card */}
-                <div className={`rounded-xl border p-5 ${result.category.bg}`}>
-                  <div className="flex items-end gap-3 mb-2">
-                    <span className={`text-4xl font-bold ${result.category.color}`}>
-                      {result.ffmi}
-                    </span>
-                    <span className={`text-lg font-semibold mb-0.5 ${result.category.color}`}>
-                      {result.category.label}
-                    </span>
+                  {/* Stats grid */}
+                  <div className="grid grid-cols-3 gap-3">
+                    {[
+                      { label: 'FFMI', value: result.ffmi, desc: 'Fat-Free Mass Index' },
+                      {
+                        label: 'Normaliserat',
+                        value: result.normalizedFfmi,
+                        desc: 'Justerat till 180 cm',
+                      },
+                      { label: 'Lean body mass', value: `${result.lbm} kg`, desc: 'Fettfri massa' },
+                    ].map(stat => (
+                      <div
+                        key={stat.label}
+                        className="rounded-xl border border-neutral-200 bg-white p-4"
+                      >
+                        <div className="text-xs text-neutral-500 mb-1">{stat.label}</div>
+                        <div className="text-xl font-bold text-neutral-900">{stat.value}</div>
+                        <div className="text-xs text-neutral-400 mt-0.5">{stat.desc}</div>
+                      </div>
+                    ))}
                   </div>
-                  <p className="text-sm text-neutral-700 mb-2">{result.category.description}</p>
-                  <p className="text-xs text-neutral-500 italic">{result.category.context}</p>
-                </div>
 
-                {/* Stats grid */}
-                <div className="grid grid-cols-3 gap-3">
-                  {[
-                    { label: 'FFMI', value: result.ffmi, desc: 'Fat-Free Mass Index' },
-                    {
-                      label: 'Normaliserat',
-                      value: result.normalizedFfmi,
-                      desc: 'Justerat till 180 cm',
-                    },
-                    { label: 'Lean body mass', value: `${result.lbm} kg`, desc: 'Fettfri massa' },
-                  ].map(stat => (
-                    <div
-                      key={stat.label}
-                      className="rounded-xl border border-neutral-200 bg-white p-4"
-                    >
-                      <div className="text-xs text-neutral-500 mb-1">{stat.label}</div>
-                      <div className="text-xl font-bold text-neutral-900">{stat.value}</div>
-                      <div className="text-xs text-neutral-400 mt-0.5">{stat.desc}</div>
+                  {/* Natural limit context */}
+                  <div className="rounded-xl bg-amber-50 border border-amber-200 p-4 flex gap-3">
+                    <AlertTriangle className="h-4 w-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium text-amber-900 mb-1">FFMI är ett estimat</p>
+                      <p className="text-xs text-amber-700">
+                        FFMI beror direkt på fettprocent-uppskattningen — om den är +3% fel blir
+                        FFMI också fel. Normaliserat FFMI ≥ 25 (män) är statistiskt sällsynt
+                        naturligt men inte omöjligt. Tolka ditt FFMI som ett relativt mått, inte ett
+                        absolut värde.
+                      </p>
                     </div>
-                  ))}
-                </div>
+                  </div>
 
-                {/* Natural limit context */}
-                <div className="rounded-xl bg-amber-50 border border-amber-200 p-4 flex gap-3">
-                  <AlertTriangle className="h-4 w-4 text-amber-600 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-medium text-amber-900 mb-1">FFMI är ett estimat</p>
-                    <p className="text-xs text-amber-700">
-                      FFMI beror direkt på fettprocent-uppskattningen — om den är +3% fel blir FFMI
-                      också fel. Normaliserat FFMI ≥ 25 (män) är statistiskt sällsynt naturligt men
-                      inte omöjligt. Tolka ditt FFMI som ett relativt mått, inte ett absolut värde.
+                  {/* CTA */}
+                  <div className="rounded-xl bg-white border border-primary-200 p-4">
+                    <p className="text-sm font-medium text-neutral-800 mb-1">
+                      Matcha din muskelmassa med rätt kalorimål
                     </p>
+                    <p className="text-xs text-neutral-500 mb-3">
+                      Lean body mass är den starkaste prediktorn för ditt BMR. Räkna ut ditt exakta
+                      TDEE och sätt ett kalorimål som matchar din kroppssammansättning.
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <Link
+                        to="/kalkylatorer/tdee-kalkylator"
+                        className="inline-flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+                      >
+                        Räkna ut ditt TDEE
+                        <ArrowRight className="h-4 w-4" />
+                      </Link>
+                      <Link
+                        to="/register"
+                        className="inline-flex items-center justify-center gap-2 border border-neutral-200 text-neutral-700 text-sm font-medium px-4 py-2 rounded-lg hover:bg-neutral-50 transition-colors"
+                      >
+                        Skapa gratis konto
+                      </Link>
+                    </div>
                   </div>
                 </div>
-
-                {/* CTA */}
-                <div className="rounded-xl bg-white border border-primary-200 p-4">
-                  <p className="text-sm font-medium text-neutral-800 mb-1">
-                    Matcha din muskelmassa med rätt kalorimål
-                  </p>
-                  <p className="text-xs text-neutral-500 mb-3">
-                    Lean body mass är den starkaste prediktorn för ditt BMR. Räkna ut ditt exakta
-                    TDEE och sätt ett kalorimål som matchar din kroppssammansättning.
-                  </p>
-                  <div className="flex flex-col sm:flex-row gap-2">
-                    <Link
-                      to="/kalkylatorer/tdee-kalkylator"
-                      className="inline-flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
-                    >
-                      Räkna ut ditt TDEE
-                      <ArrowRight className="h-4 w-4" />
-                    </Link>
-                    <Link
-                      to="/register"
-                      className="inline-flex items-center justify-center gap-2 border border-neutral-200 text-neutral-700 text-sm font-medium px-4 py-2 rounded-lg hover:bg-neutral-50 transition-colors"
-                    >
-                      Skapa gratis konto
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
+        </section>
 
-          {/* Context section */}
-          <section className="space-y-4 text-neutral-700 text-sm leading-relaxed mb-8">
-            <h2 className="text-xl font-semibold text-neutral-900">
+        {/* Context/explanation section */}
+        <section className="bg-white py-14 border-b border-neutral-100">
+          <div className="container mx-auto px-4 max-w-3xl">
+            <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900 mb-5">
               Vad FFMI mäter — och vad det inte mäter
             </h2>
-            <p>
-              FFMI mäter muskelmassa i förhållande till längd. Det är ett bättre mått än BMI för den
-              som tränar eftersom det isolerar fettfri massa och inte straffar muskelvolym.
-            </p>
-            <p>
-              Men det är <strong>inte ett hälsomått</strong> och inte ett styrke- eller
-              prestationsmått. Det är ett fysikmått som ger kontext kring var du befinner dig i
-              muskelutvecklingen — och vad som är ett realistiskt mål.
-            </p>
+            <div className="space-y-4 text-neutral-700 text-base leading-relaxed">
+              <p>
+                FFMI mäter muskelmassa i förhållande till längd. Det är ett bättre mått än BMI för
+                den som tränar eftersom det isolerar fettfri massa och inte straffar muskelvolym.
+              </p>
+              <p>
+                Men det är <strong>inte ett hälsomått</strong> och inte ett styrke- eller
+                prestationsmått. Det är ett fysikmått som ger kontext kring var du befinner dig i
+                muskelutvecklingen — och vad som är ett realistiskt mål.
+              </p>
 
-            <div className="space-y-3 mt-2">
-              {[
-                {
-                  title: 'FFMI vs BMI',
-                  desc: 'En vältränad man, 80 kg och 175 cm (BMI 26,1 — övervikt) med 12% kroppsfett har FFMI 22,2. BMI klassificerar honom som överviktig. FFMI visar att han är i avancerad kategori. För den som tränar är FFMI nästan alltid mer informativt.',
-                  color: 'bg-blue-50 border-blue-200',
-                },
-                {
-                  title: 'Naturliga gränser i kontext',
-                  desc: 'Kouri et al. (1995) analyserade naturliga idrottare och fann ett normaliserat FFMI-tak runt 25 för män. Det är en statistisk observation — inte en hård biologisk gräns. Genetiska outliers kan nå 25–26 naturligt. Men det är sällsynt nog att vara ett signifikant avvikande resultat.',
-                  color: 'bg-primary-50 border-primary-200',
-                },
-                {
-                  title: 'Hur du förbättrar ditt FFMI',
-                  desc: 'FFMI ökar genom att bygga muskelmassa (bulk med kaloriöverskott + styrketräning) eller behålla muskelmassa medan fettprocent minskar (cut eller recomp). Rätt kalorimål per fas, högt proteinintag (1,6–2,2 g/kg) och progressiv träning är de tre faktorerna som driver FFMI uppåt.',
-                  color: 'bg-green-50 border-green-200',
-                },
-              ].map(({ title, desc, color }) => (
-                <div key={title} className={`rounded-xl border p-4 ${color}`}>
-                  <div className="font-semibold text-neutral-800 mb-1">{title}</div>
-                  <div className="text-neutral-700">{desc}</div>
-                </div>
-              ))}
-            </div>
+              <div className="space-y-3 mt-2">
+                {[
+                  {
+                    title: 'FFMI vs BMI',
+                    desc: 'En vältränad man, 80 kg och 175 cm (BMI 26,1 — övervikt) med 12% kroppsfett har FFMI 22,2. BMI klassificerar honom som överviktig. FFMI visar att han är i avancerad kategori. För den som tränar är FFMI nästan alltid mer informativt.',
+                    color: 'bg-blue-50 border-blue-200',
+                  },
+                  {
+                    title: 'Naturliga gränser i kontext',
+                    desc: 'Kouri et al. (1995) analyserade naturliga idrottare och fann ett normaliserat FFMI-tak runt 25 för män. Det är en statistisk observation — inte en hård biologisk gräns. Genetiska outliers kan nå 25–26 naturligt. Men det är sällsynt nog att vara ett signifikant avvikande resultat.',
+                    color: 'bg-primary-50 border-primary-200',
+                  },
+                  {
+                    title: 'Hur du förbättrar ditt FFMI',
+                    desc: 'FFMI ökar genom att bygga muskelmassa (bulk med kaloriöverskott + styrketräning) eller behålla muskelmassa medan fettprocent minskar (cut eller recomp). Rätt kalorimål per fas, högt proteinintag (1,6–2,2 g/kg) och progressiv träning är de tre faktorerna som driver FFMI uppåt.',
+                    color: 'bg-green-50 border-green-200',
+                  },
+                ].map(({ title, desc, color }) => (
+                  <div key={title} className={`rounded-xl border p-4 ${color}`}>
+                    <div className="font-semibold text-neutral-800 mb-1">{title}</div>
+                    <div className="text-neutral-700">{desc}</div>
+                  </div>
+                ))}
+              </div>
 
-            <h3 className="font-semibold text-neutral-800 mt-4">
-              FFMI-referensvärden (normaliserat, män)
-            </h3>
-            <div className="rounded-xl border border-neutral-200 overflow-hidden">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="bg-neutral-50 border-b border-neutral-200">
-                    <th className="text-left px-4 py-2 text-xs font-semibold text-neutral-500 uppercase tracking-wider">
-                      Kategori
-                    </th>
-                    <th className="text-left px-4 py-2 text-xs font-semibold text-neutral-500 uppercase tracking-wider">
-                      FFMI (normaliserat)
-                    </th>
-                    <th className="text-left px-4 py-2 text-xs font-semibold text-neutral-500 uppercase tracking-wider">
-                      Träningsbakgrund
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {[
-                    { cat: 'Nybörjare', range: '< 18', bg: 'Lite eller ingen styrketräning' },
-                    { cat: 'Tränad', range: '18–19,9', bg: '1–3 år konsekvent träning' },
-                    { cat: 'Avancerad', range: '20–21,9', bg: '3+ år, strukturerad kost' },
-                    { cat: 'Exceptionell', range: '22–24,9', bg: 'Lång karriär, bra genetik' },
-                    { cat: 'Elit / sällsynt', range: '≥ 25', bg: 'Statistiskt ovanligt naturligt' },
-                  ].map((row, i) => (
-                    <tr
-                      key={row.cat}
-                      className={`border-b border-neutral-100 last:border-0 ${i % 2 === 0 ? 'bg-white' : 'bg-neutral-50/50'}`}
-                    >
-                      <td className="px-4 py-2.5 font-medium text-neutral-800">{row.cat}</td>
-                      <td className="px-4 py-2.5 text-neutral-700">{row.range}</td>
-                      <td className="px-4 py-2.5 text-neutral-500">{row.bg}</td>
+              <h3 className="text-lg font-semibold text-neutral-800 mt-4">
+                FFMI-referensvärden (normaliserat, män)
+              </h3>
+              <div className="rounded-xl border border-neutral-200 overflow-hidden">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="bg-neutral-50 border-b border-neutral-200">
+                      <th className="text-left px-4 py-2 text-xs font-semibold text-neutral-500 uppercase tracking-wider">
+                        Kategori
+                      </th>
+                      <th className="text-left px-4 py-2 text-xs font-semibold text-neutral-500 uppercase tracking-wider">
+                        FFMI (normaliserat)
+                      </th>
+                      <th className="text-left px-4 py-2 text-xs font-semibold text-neutral-500 uppercase tracking-wider">
+                        Träningsbakgrund
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {[
+                      { cat: 'Nybörjare', range: '< 18', bg: 'Lite eller ingen styrketräning' },
+                      { cat: 'Tränad', range: '18–19,9', bg: '1–3 år konsekvent träning' },
+                      { cat: 'Avancerad', range: '20–21,9', bg: '3+ år, strukturerad kost' },
+                      { cat: 'Exceptionell', range: '22–24,9', bg: 'Lång karriär, bra genetik' },
+                      {
+                        cat: 'Elit / sällsynt',
+                        range: '≥ 25',
+                        bg: 'Statistiskt ovanligt naturligt',
+                      },
+                    ].map((row, i) => (
+                      <tr
+                        key={row.cat}
+                        className={`border-b border-neutral-100 last:border-0 ${i % 2 === 0 ? 'bg-white' : 'bg-neutral-50/50'}`}
+                      >
+                        <td className="px-4 py-2.5 font-medium text-neutral-800">{row.cat}</td>
+                        <td className="px-4 py-2.5 text-neutral-700">{row.range}</td>
+                        <td className="px-4 py-2.5 text-neutral-500">{row.bg}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <p className="text-xs text-neutral-400 mt-1">
+                Källa: Kouri EM et al. (1995). Fat-free mass index in users and nonusers of
+                anabolic-androgenic steroids. Clin J Sport Med.
+              </p>
             </div>
-            <p className="text-xs text-neutral-400 mt-1">
-              Källa: Kouri EM et al. (1995). Fat-free mass index in users and nonusers of
-              anabolic-androgenic steroids. Clin J Sport Med.
+          </div>
+        </section>
+
+        {/* FAQ section */}
+        <section className="bg-neutral-50 py-14 border-b border-neutral-100">
+          <div className="container mx-auto px-4 max-w-3xl">
+            <FaqBlock items={FAQ_ITEMS} />
+          </div>
+        </section>
+
+        {/* Bottom CTA */}
+        <section className="bg-neutral-900 py-16 md:py-20">
+          <div className="container mx-auto px-4 max-w-2xl text-center">
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
+              Matcha din muskelmassa med rätt kalorimål
+            </h2>
+            <p className="text-neutral-400 text-base mb-8 max-w-md mx-auto">
+              FFMI visar var du är. TDEE och makroplanering visar hur du tar dig dit du vill.
             </p>
-          </section>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Link
+                to="/register"
+                className="inline-flex items-center justify-center gap-2 bg-accent-500 hover:bg-accent-600 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm"
+              >
+                Skapa gratis konto <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                to="/kalkylatorer/bulk-kalkylator"
+                className="inline-flex items-center justify-center gap-2 border border-neutral-600 text-neutral-300 hover:bg-neutral-800 font-medium px-6 py-3 rounded-xl transition-colors text-sm"
+              >
+                Räkna ut dina bulk-kalorier
+              </Link>
+            </div>
+          </div>
+        </section>
 
-          <FaqBlock items={FAQ_ITEMS} />
-
-          {/* Related */}
-          <section className="mt-10 pt-8 border-t border-neutral-200 grid sm:grid-cols-2 gap-6">
-            <div>
-              <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3">
-                Relaterade kalkylatorer
-              </h3>
-              <ul className="space-y-2">
-                {[
-                  { href: '/kalkylatorer/kroppsfett', label: 'Kroppsfett Kalkylator' },
-                  { href: '/kalkylatorer/tdee-kalkylator', label: 'TDEE Kalkylator' },
-                  { href: '/kalkylatorer/bmi-kalkylator', label: 'BMI Kalkylator' },
-                  { href: '/kalkylatorer/proteinbehov', label: 'Proteinbehov Kalkylator' },
-                  { href: '/kalkylatorer/bulk-kalkylator', label: 'Bulk Kalkylator' },
-                ].map(l => (
-                  <li key={l.href}>
+        {/* Related links section */}
+        <section className="bg-white py-14">
+          <div className="container mx-auto px-4 max-w-5xl">
+            <div className="grid sm:grid-cols-2 gap-10">
+              <div>
+                <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3">
+                  Relaterade kalkylatorer
+                </h3>
+                <div className="grid gap-3">
+                  {[
+                    { href: '/kalkylatorer/kroppsfett', label: 'Kroppsfett Kalkylator' },
+                    { href: '/kalkylatorer/tdee-kalkylator', label: 'TDEE Kalkylator' },
+                    { href: '/kalkylatorer/bmi-kalkylator', label: 'BMI Kalkylator' },
+                    { href: '/kalkylatorer/proteinbehov', label: 'Proteinbehov Kalkylator' },
+                    { href: '/kalkylatorer/bulk-kalkylator', label: 'Bulk Kalkylator' },
+                  ].map(l => (
                     <Link
+                      key={l.href}
                       to={l.href}
-                      className="flex items-center gap-2 text-sm text-primary-600 hover:underline"
+                      className="flex items-center gap-3 rounded-xl border border-neutral-200 p-4 text-sm text-neutral-700 hover:shadow-md hover:border-primary-200 transition-all"
                     >
-                      <ArrowRight className="h-3.5 w-3.5" />
+                      <ArrowRight className="h-4 w-4 text-primary-500 flex-shrink-0" />
                       {l.label}
                     </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3">
-                Relaterade artiklar
-              </h3>
-              <ul className="space-y-2">
-                {[
-                  { href: '/artiklar/vad-ar-ffmi', label: 'Vad är FFMI?' },
-                  { href: '/artiklar/bulk-och-cut', label: 'Bulk och Cut — komplett guide' },
-                  { href: '/artiklar/kaloribehov', label: 'Kaloribehov — komplett guide' },
-                  { href: '/artiklar/reverse-diet', label: 'Reverse Diet' },
-                  { href: '/artiklar/kaloribrist', label: 'Hur stor kaloribrist ska man ha?' },
-                ].map(l => (
-                  <li key={l.href}>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3">
+                  Relaterade artiklar
+                </h3>
+                <div className="grid gap-3">
+                  {[
+                    { href: '/artiklar/vad-ar-ffmi', label: 'Vad är FFMI?' },
+                    { href: '/artiklar/bulk-och-cut', label: 'Bulk och Cut — komplett guide' },
+                    { href: '/artiklar/kaloribehov', label: 'Kaloribehov — komplett guide' },
+                    { href: '/artiklar/reverse-diet', label: 'Reverse Diet' },
+                    { href: '/artiklar/kaloribrist', label: 'Hur stor kaloribrist ska man ha?' },
+                  ].map(l => (
                     <Link
+                      key={l.href}
                       to={l.href}
-                      className="flex items-center gap-2 text-sm text-primary-600 hover:underline"
+                      className="flex items-center gap-3 rounded-xl border border-neutral-200 p-4 text-sm text-neutral-700 hover:shadow-md hover:border-primary-200 transition-all"
                     >
-                      <ArrowRight className="h-3.5 w-3.5" />
+                      <ArrowRight className="h-4 w-4 text-primary-500 flex-shrink-0" />
                       {l.label}
                     </Link>
-                  </li>
-                ))}
-              </ul>
+                  ))}
+                </div>
+              </div>
             </div>
-          </section>
-        </div>
+          </div>
+        </section>
       </main>
 
       <SiteFooter />

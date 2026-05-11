@@ -160,7 +160,7 @@ export default function IdealviktKalkylatornPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="min-h-screen flex flex-col">
       <Seo
         title="Idealvikt Kalkylator — Räkna ut din hälsosamma målvikt (2026) | CalculEat"
         description="Gratis idealvikt-kalkylator. Räkna ut ditt hälsosamma viktspann baserat på längd och kön. Se var du är nu och vad som är nästa steg mot ditt mål."
@@ -171,323 +171,373 @@ export default function IdealviktKalkylatornPage() {
       <SiteHeader />
 
       <main className="flex-1">
-        <div className="container mx-auto px-4 py-10 max-w-2xl">
-          {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-sm text-neutral-500 mb-6">
-            <Link to="/" className="hover:text-neutral-700 transition-colors">
-              CalculEat
-            </Link>
-            <span>/</span>
-            <Link
-              to="/kalkylatorer/tdee-kalkylator"
-              className="hover:text-neutral-700 transition-colors"
-            >
-              Kalkylatorer
-            </Link>
-            <span>/</span>
-            <span className="text-neutral-700">Idealvikt</span>
-          </nav>
+        {/* Hero section */}
+        <section className="relative overflow-hidden bg-white border-b border-neutral-100">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(37,189,0,0.07),transparent_60%)]" />
+          <div className="relative container mx-auto px-4 pt-16 pb-14 max-w-3xl">
+            {/* Breadcrumb */}
+            <nav className="flex items-center gap-2 text-sm text-neutral-500 mb-6">
+              <Link to="/" className="hover:text-neutral-700 transition-colors">
+                CalculEat
+              </Link>
+              <span>/</span>
+              <Link
+                to="/kalkylatorer/tdee-kalkylator"
+                className="hover:text-neutral-700 transition-colors"
+              >
+                Kalkylatorer
+              </Link>
+              <span>/</span>
+              <span className="text-neutral-700">Idealvikt</span>
+            </nav>
 
-          <h1 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-3 leading-tight">
-            Idealvikt Kalkylator — Räkna ut din hälsosamma målvikt
-          </h1>
-          <p className="text-lg text-neutral-600 leading-relaxed mb-8 border-l-4 border-primary-400 pl-4 bg-primary-50 py-3 rounded-r-lg">
-            Idealvikt är ett uppskattat hälsosamt viktspann baserat på längd och kön. Det är ett
-            riktmärke — inte ett exakt mål. Räkna ut ditt spann nedan och se vad som faktiskt driver
-            resultaten vidare.
-          </p>
+            <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-5 leading-tight">
+              <span className="bg-gradient-to-r from-primary-600 to-accent-500 bg-clip-text text-transparent">
+                Idealvikt
+              </span>{' '}
+              Kalkylator
+            </h1>
+            <p className="text-lg md:text-xl text-neutral-600 leading-relaxed max-w-2xl">
+              Idealvikt är ett uppskattat hälsosamt viktspann baserat på längd och kön. Det är ett
+              riktmärke — inte ett exakt mål. Räkna ut ditt spann nedan och se vad som faktiskt
+              driver resultaten vidare.
+            </p>
+          </div>
+        </section>
 
-          {/* Calculator */}
-          <div className="rounded-2xl border border-neutral-200 shadow-sm overflow-hidden mb-8">
-            <div className="bg-primary-50 px-6 py-4 border-b border-primary-100 flex items-center gap-2">
-              <Calculator className="h-5 w-5 text-primary-600" />
-              <span className="font-semibold text-primary-900">Beräkna din idealvikt</span>
-            </div>
+        {/* Calculator section */}
+        <section className="bg-neutral-50 py-14 border-b border-neutral-100">
+          <div className="container mx-auto px-4 max-w-2xl">
+            <div className="rounded-2xl border border-neutral-200 shadow-sm overflow-hidden">
+              <div className="bg-primary-50 px-6 py-4 border-b border-primary-100 flex items-center gap-2">
+                <Calculator className="h-5 w-5 text-primary-600" />
+                <span className="font-semibold text-primary-900">Beräkna din idealvikt</span>
+              </div>
 
-            <div className="p-6 space-y-5">
-              {/* Gender */}
-              <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-2">Kön</label>
-                <div className="grid grid-cols-2 gap-2">
-                  {(
-                    [
-                      { value: 'male', label: 'Man' },
-                      { value: 'female', label: 'Kvinna' },
-                    ] as { value: Gender; label: string }[]
-                  ).map(opt => (
-                    <button
-                      key={opt.value}
-                      type="button"
-                      onClick={() => {
-                        setGender(opt.value)
+              <div className="p-6 space-y-5">
+                {/* Gender */}
+                <div>
+                  <label className="block text-sm font-medium text-neutral-700 mb-2">Kön</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {(
+                      [
+                        { value: 'male', label: 'Man' },
+                        { value: 'female', label: 'Kvinna' },
+                      ] as { value: Gender; label: string }[]
+                    ).map(opt => (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        onClick={() => {
+                          setGender(opt.value)
+                          setHasResult(false)
+                        }}
+                        className={`py-2.5 rounded-xl text-sm font-medium border transition-colors ${
+                          gender === opt.value
+                            ? 'bg-primary-600 text-white border-primary-600'
+                            : 'bg-white text-neutral-700 border-neutral-200 hover:border-primary-300'
+                        }`}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Height + Weight */}
+                <div className="grid grid-cols-2 gap-4">
+                  {[
+                    {
+                      label: 'Längd',
+                      unit: 'cm',
+                      value: height,
+                      setter: (v: string) => {
+                        setHeight(v)
                         setHasResult(false)
-                      }}
-                      className={`py-2.5 rounded-xl text-sm font-medium border transition-colors ${
-                        gender === opt.value
-                          ? 'bg-primary-600 text-white border-primary-600'
-                          : 'bg-white text-neutral-700 border-neutral-200 hover:border-primary-300'
-                      }`}
+                      },
+                      placeholder: '175',
+                      min: 100,
+                      max: 250,
+                    },
+                    {
+                      label: 'Nuvarande vikt',
+                      unit: 'kg',
+                      value: weight,
+                      setter: (v: string) => {
+                        setWeight(v)
+                        setHasResult(false)
+                      },
+                      placeholder: '75',
+                      min: 30,
+                      max: 400,
+                    },
+                  ].map(({ label, unit, value, setter, placeholder }) => (
+                    <div key={label}>
+                      <label className="block text-sm font-medium text-neutral-700 mb-1">
+                        {label}
+                      </label>
+                      <div className="flex items-center border border-neutral-200 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-primary-300 focus-within:border-primary-400">
+                        <input
+                          type="number"
+                          inputMode="decimal"
+                          value={value}
+                          onChange={e => setter(e.target.value)}
+                          onFocus={e => e.target.select()}
+                          placeholder={placeholder}
+                          className="flex-1 px-3 py-2.5 text-sm text-neutral-900 bg-white outline-none min-w-0"
+                        />
+                        <span className="px-2 text-xs text-neutral-400 bg-neutral-50 border-l border-neutral-200 py-2.5">
+                          {unit}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  onClick={handleCalculate}
+                  disabled={!canCalculate}
+                  className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-neutral-200 disabled:text-neutral-400 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm"
+                >
+                  Beräkna min idealvikt
+                </button>
+              </div>
+
+              {/* Results */}
+              {hasResult && result && (
+                <div className="border-t border-neutral-100 bg-neutral-50 px-6 py-6 space-y-4">
+                  <h2 className="font-semibold text-neutral-800">Ditt resultat</h2>
+
+                  {/* Main range card */}
+                  <div className="rounded-xl border bg-white border-neutral-200 p-5">
+                    <div className="text-xs text-neutral-500 font-medium uppercase tracking-wider mb-3">
+                      Hälsosamt viktspann (BMI 18.5–24.9)
+                    </div>
+                    <div className="flex items-end gap-2">
+                      <span className="text-4xl font-bold text-neutral-900">
+                        {result.range.min}–{result.range.max}
+                      </span>
+                      <span className="text-neutral-500 mb-1">kg</span>
+                    </div>
+                    <div className="text-sm text-neutral-500 mt-1">
+                      Formel-idealvikt (Robinson):{' '}
+                      <strong className="text-neutral-700">{result.ideal} kg</strong>
+                    </div>
+                  </div>
+
+                  {/* Position card — only when current weight provided */}
+                  {result.position && result.currentWeight && (
+                    <div className={`rounded-xl border p-4 ${POSITION_CONFIG[result.position].bg}`}>
+                      <div
+                        className={`font-semibold mb-1 ${POSITION_CONFIG[result.position].color}`}
+                      >
+                        {POSITION_CONFIG[result.position].label}
+                      </div>
+                      <p className="text-sm text-neutral-700">
+                        {POSITION_CONFIG[result.position].desc}
+                      </p>
+                      {result.diff !== null && result.diff !== 0 && (
+                        <div className="mt-2 text-sm font-medium text-neutral-600">
+                          {result.diff > 0
+                            ? `${result.diff} kg över formelvärdet`
+                            : `${Math.abs(result.diff)} kg under formelvärdet`}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Key insight box */}
+                  <div className="rounded-xl bg-amber-50 border border-amber-200 p-4 flex gap-3">
+                    <AlertTriangle className="h-4 w-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium text-amber-900 mb-1">
+                        Idealvikt är inte detsamma som rätt kaloriplan
+                      </p>
+                      <p className="text-xs text-amber-700">
+                        Att veta din idealvikt säger dig inte hur du når den. Ditt TDEE — totalt
+                        dagligt kaloribehov — är nyckeln. Det avgör hur mycket du ska äta för att gå
+                        ner, hålla vikten eller bygga muskler.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* CTA to money page */}
+                  <div className="rounded-xl bg-white border border-primary-200 p-4">
+                    <p className="text-sm font-medium text-neutral-800 mb-1">
+                      Nästa steg: räkna ut ditt kaloribehov
+                    </p>
+                    <p className="text-xs text-neutral-500 mb-3">
+                      TDEE-kalkylatorn tar din idealvikt och aktivitetsnivå och ger dig ett exakt
+                      kalorimål att logga mot.
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <Link
+                        to="/kalkylatorer/tdee-kalkylator"
+                        className="inline-flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+                      >
+                        Räkna ut ditt TDEE
+                        <ArrowRight className="h-4 w-4" />
+                      </Link>
+                      <Link
+                        to="/register"
+                        className="inline-flex items-center justify-center gap-2 border border-neutral-200 text-neutral-700 text-sm font-medium px-4 py-2 rounded-lg hover:bg-neutral-50 transition-colors"
+                      >
+                        Skapa gratis konto
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/* Explanation section */}
+        <section className="bg-white py-14 border-b border-neutral-100">
+          <div className="container mx-auto px-4 max-w-3xl">
+            <div className="space-y-4 text-neutral-700 text-base leading-relaxed">
+              <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900">
+                Idealvikt är ett riktmärke — inte en kaloriplan
+              </h2>
+              <p>
+                Idealvikt säger dig ett slutmål på vågen. Det säger dig inte hur du tar dig dit, hur
+                snabbt det är rimligt, eller vad du ska äta för att hålla dig där. Det är tre helt
+                olika frågor.
+              </p>
+              <p>
+                De flesta som fokuserar enbart på en målvikt missar den viktigaste variabeln: deras
+                faktiska kaloribehov (TDEE). Utan det loggat mot ett korrekt mål rör sig kroppen
+                inte i rätt riktning — oavsett hur rätt idealvikten är.
+              </p>
+
+              <h3 className="text-lg font-semibold text-neutral-800 mt-4">
+                Vad idealvikt inte tar hänsyn till
+              </h3>
+              <ul className="space-y-1.5 pl-4 list-disc">
+                <li>
+                  <strong>Muskelmassa</strong> — en vältränad person kan väga 5–10 kg mer än
+                  idealviktsformeln och ha utmärkt hälsa
+                </li>
+                <li>
+                  <strong>Fettprocent</strong> — samma vikt kan innebära 15% eller 30% kroppsfett
+                  beroende på träningsnivå
+                </li>
+                <li>
+                  <strong>Aktivitetsnivå</strong> — kaloribehov varierar kraftigt med träning, och
+                  formeln justerar inte för det
+                </li>
+                <li>
+                  <strong>Metabolism</strong> — adaptiv termogenes vid lång kaloribrist gör att en
+                  statisk idealviktssiffra inte hjälper dig att planera en realistisk tidslinje
+                </li>
+              </ul>
+
+              <div className="rounded-xl bg-primary-50 border border-primary-200 p-5 mt-4">
+                <div className="font-semibold text-neutral-800 mb-2">
+                  Hur du faktiskt når din målvikt
+                </div>
+                <ol className="space-y-1.5 pl-4 list-decimal text-base text-neutral-700">
+                  <li>Räkna ut ditt TDEE (totalt kaloribehov per dag)</li>
+                  <li>Sätt ett kalorimål med lagom underskott — 300–500 kcal/dag</li>
+                  <li>Ät 1,6–2,2 g protein per kg kroppsvikt för att skydda muskelmassa</li>
+                  <li>Justera kalorimålet var 2–3 vecka baserat på faktisk vikttrend</li>
+                </ol>
+                <Link
+                  to="/kalkylatorer/tdee-kalkylator"
+                  className="inline-flex items-center gap-2 mt-4 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors"
+                >
+                  Starta med TDEE-kalkylatorn
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* FAQ section */}
+        <section className="bg-neutral-50 py-14 border-b border-neutral-100">
+          <div className="container mx-auto px-4 max-w-3xl">
+            <FaqBlock items={FAQ_ITEMS} />
+          </div>
+        </section>
+
+        {/* Bottom CTA */}
+        <section className="bg-neutral-900 py-16 md:py-20">
+          <div className="container mx-auto px-4 max-w-2xl text-center">
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
+              Från idealvikt till handlingsplan
+            </h2>
+            <p className="text-neutral-400 text-base mb-8 max-w-md mx-auto">
+              Du vet målvikten. Nästa steg är att räkna ut ditt kalorimål och börja logga mot det.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Link
+                to="/register"
+                className="inline-flex items-center justify-center gap-2 bg-accent-500 hover:bg-accent-600 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm"
+              >
+                Skapa gratis konto <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                to="/kalkylatorer/tdee-kalkylator"
+                className="inline-flex items-center justify-center gap-2 border border-neutral-600 text-neutral-300 hover:bg-neutral-800 font-medium px-6 py-3 rounded-xl transition-colors text-sm"
+              >
+                Räkna ut ditt TDEE
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* Related links section */}
+        <section className="bg-white py-14">
+          <div className="container mx-auto px-4 max-w-5xl">
+            <div className="grid sm:grid-cols-2 gap-10">
+              <div>
+                <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3">
+                  Relaterade kalkylatorer
+                </h3>
+                <div className="grid gap-3">
+                  {[
+                    { href: '/kalkylatorer/tdee-kalkylator', label: 'TDEE Kalkylator' },
+                    { href: '/kalkylatorer/bmi-kalkylator', label: 'BMI Kalkylator' },
+                    { href: '/kalkylatorer/kaloriunderskott', label: 'Kaloribrist Kalkylator' },
+                    { href: '/kalkylatorer/proteinbehov', label: 'Proteinbehov Kalkylator' },
+                  ].map(l => (
+                    <Link
+                      key={l.href}
+                      to={l.href}
+                      className="flex items-center gap-3 rounded-xl border border-neutral-200 p-4 text-sm text-neutral-700 hover:shadow-md hover:border-primary-200 transition-all"
                     >
-                      {opt.label}
-                    </button>
+                      <ArrowRight className="h-4 w-4 text-primary-500 flex-shrink-0" />
+                      {l.label}
+                    </Link>
                   ))}
                 </div>
               </div>
-
-              {/* Height + Weight */}
-              <div className="grid grid-cols-2 gap-4">
-                {[
-                  {
-                    label: 'Längd',
-                    unit: 'cm',
-                    value: height,
-                    setter: (v: string) => {
-                      setHeight(v)
-                      setHasResult(false)
-                    },
-                    placeholder: '175',
-                    min: 100,
-                    max: 250,
-                  },
-                  {
-                    label: 'Nuvarande vikt',
-                    unit: 'kg',
-                    value: weight,
-                    setter: (v: string) => {
-                      setWeight(v)
-                      setHasResult(false)
-                    },
-                    placeholder: '75',
-                    min: 30,
-                    max: 400,
-                  },
-                ].map(({ label, unit, value, setter, placeholder }) => (
-                  <div key={label}>
-                    <label className="block text-sm font-medium text-neutral-700 mb-1">
-                      {label}
-                    </label>
-                    <div className="flex items-center border border-neutral-200 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-primary-300 focus-within:border-primary-400">
-                      <input
-                        type="number"
-                        inputMode="decimal"
-                        value={value}
-                        onChange={e => setter(e.target.value)}
-                        onFocus={e => e.target.select()}
-                        placeholder={placeholder}
-                        className="flex-1 px-3 py-2.5 text-sm text-neutral-900 bg-white outline-none min-w-0"
-                      />
-                      <span className="px-2 text-xs text-neutral-400 bg-neutral-50 border-l border-neutral-200 py-2.5">
-                        {unit}
-                      </span>
-                    </div>
-                  </div>
-                ))}
+              <div>
+                <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3">
+                  Relaterade artiklar
+                </h3>
+                <div className="grid gap-3">
+                  {[
+                    { href: '/artiklar/kaloribehov', label: 'Kaloribehov — komplett guide' },
+                    { href: '/artiklar/vad-ar-tdee', label: 'Vad är TDEE?' },
+                    { href: '/artiklar/kaloribrist', label: 'Hur stor kaloribrist ska man ha?' },
+                    { href: '/artiklar/bulk-och-cut', label: 'Bulk och Cut' },
+                  ].map(l => (
+                    <Link
+                      key={l.href}
+                      to={l.href}
+                      className="flex items-center gap-3 rounded-xl border border-neutral-200 p-4 text-sm text-neutral-700 hover:shadow-md hover:border-primary-200 transition-all"
+                    >
+                      <ArrowRight className="h-4 w-4 text-primary-500 flex-shrink-0" />
+                      {l.label}
+                    </Link>
+                  ))}
+                </div>
               </div>
-
-              <button
-                onClick={handleCalculate}
-                disabled={!canCalculate}
-                className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-neutral-200 disabled:text-neutral-400 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm"
-              >
-                Beräkna min idealvikt
-              </button>
             </div>
-
-            {/* Results */}
-            {hasResult && result && (
-              <div className="border-t border-neutral-100 bg-neutral-50 px-6 py-6 space-y-4">
-                <h2 className="font-semibold text-neutral-800">Ditt resultat</h2>
-
-                {/* Main range card */}
-                <div className="rounded-xl border bg-white border-neutral-200 p-5">
-                  <div className="text-xs text-neutral-500 font-medium uppercase tracking-wider mb-3">
-                    Hälsosamt viktspann (BMI 18.5–24.9)
-                  </div>
-                  <div className="flex items-end gap-2">
-                    <span className="text-4xl font-bold text-neutral-900">
-                      {result.range.min}–{result.range.max}
-                    </span>
-                    <span className="text-neutral-500 mb-1">kg</span>
-                  </div>
-                  <div className="text-sm text-neutral-500 mt-1">
-                    Formel-idealvikt (Robinson):{' '}
-                    <strong className="text-neutral-700">{result.ideal} kg</strong>
-                  </div>
-                </div>
-
-                {/* Position card — only when current weight provided */}
-                {result.position && result.currentWeight && (
-                  <div className={`rounded-xl border p-4 ${POSITION_CONFIG[result.position].bg}`}>
-                    <div className={`font-semibold mb-1 ${POSITION_CONFIG[result.position].color}`}>
-                      {POSITION_CONFIG[result.position].label}
-                    </div>
-                    <p className="text-sm text-neutral-700">
-                      {POSITION_CONFIG[result.position].desc}
-                    </p>
-                    {result.diff !== null && result.diff !== 0 && (
-                      <div className="mt-2 text-sm font-medium text-neutral-600">
-                        {result.diff > 0
-                          ? `${result.diff} kg över formelvärdet`
-                          : `${Math.abs(result.diff)} kg under formelvärdet`}
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* Key insight box */}
-                <div className="rounded-xl bg-amber-50 border border-amber-200 p-4 flex gap-3">
-                  <AlertTriangle className="h-4 w-4 text-amber-600 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-medium text-amber-900 mb-1">
-                      Idealvikt är inte detsamma som rätt kaloriplan
-                    </p>
-                    <p className="text-xs text-amber-700">
-                      Att veta din idealvikt säger dig inte hur du når den. Ditt TDEE — totalt
-                      dagligt kaloribehov — är nyckeln. Det avgör hur mycket du ska äta för att gå
-                      ner, hålla vikten eller bygga muskler.
-                    </p>
-                  </div>
-                </div>
-
-                {/* CTA to money page */}
-                <div className="rounded-xl bg-white border border-primary-200 p-4">
-                  <p className="text-sm font-medium text-neutral-800 mb-1">
-                    Nästa steg: räkna ut ditt kaloribehov
-                  </p>
-                  <p className="text-xs text-neutral-500 mb-3">
-                    TDEE-kalkylatorn tar din idealvikt och aktivitetsnivå och ger dig ett exakt
-                    kalorimål att logga mot.
-                  </p>
-                  <div className="flex flex-col sm:flex-row gap-2">
-                    <Link
-                      to="/kalkylatorer/tdee-kalkylator"
-                      className="inline-flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
-                    >
-                      Räkna ut ditt TDEE
-                      <ArrowRight className="h-4 w-4" />
-                    </Link>
-                    <Link
-                      to="/register"
-                      className="inline-flex items-center justify-center gap-2 border border-neutral-200 text-neutral-700 text-sm font-medium px-4 py-2 rounded-lg hover:bg-neutral-50 transition-colors"
-                    >
-                      Skapa gratis konto
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
-
-          {/* Why ideal weight isn't enough */}
-          <section className="space-y-4 text-neutral-700 text-sm leading-relaxed mb-8">
-            <h2 className="text-xl font-semibold text-neutral-900">
-              Idealvikt är ett riktmärke — inte en kaloriplan
-            </h2>
-            <p>
-              Idealvikt säger dig ett slutmål på vågen. Det säger dig inte hur du tar dig dit, hur
-              snabbt det är rimligt, eller vad du ska äta för att hålla dig där. Det är tre helt
-              olika frågor.
-            </p>
-            <p>
-              De flesta som fokuserar enbart på en målvikt missar den viktigaste variabeln: deras
-              faktiska kaloribehov (TDEE). Utan det loggat mot ett korrekt mål rör sig kroppen inte
-              i rätt riktning — oavsett hur rätt idealvikten är.
-            </p>
-
-            <h3 className="font-semibold text-neutral-800 mt-4">
-              Vad idealvikt inte tar hänsyn till
-            </h3>
-            <ul className="space-y-1.5 pl-4 list-disc">
-              <li>
-                <strong>Muskelmassa</strong> — en vältränad person kan väga 5–10 kg mer än
-                idealviktsformeln och ha utmärkt hälsa
-              </li>
-              <li>
-                <strong>Fettprocent</strong> — samma vikt kan innebära 15% eller 30% kroppsfett
-                beroende på träningsnivå
-              </li>
-              <li>
-                <strong>Aktivitetsnivå</strong> — kaloribehov varierar kraftigt med träning, och
-                formeln justerar inte för det
-              </li>
-              <li>
-                <strong>Metabolism</strong> — adaptiv termogenes vid lång kaloribrist gör att en
-                statisk idealviktssiffra inte hjälper dig att planera en realistisk tidslinje
-              </li>
-            </ul>
-
-            <div className="rounded-xl bg-primary-50 border border-primary-200 p-5 mt-4">
-              <div className="font-semibold text-neutral-800 mb-2">
-                Hur du faktiskt når din målvikt
-              </div>
-              <ol className="space-y-1.5 pl-4 list-decimal text-sm text-neutral-700">
-                <li>Räkna ut ditt TDEE (totalt kaloribehov per dag)</li>
-                <li>Sätt ett kalorimål med lagom underskott — 300–500 kcal/dag</li>
-                <li>Ät 1,6–2,2 g protein per kg kroppsvikt för att skydda muskelmassa</li>
-                <li>Justera kalorimålet var 2–3 vecka baserat på faktisk vikttrend</li>
-              </ol>
-              <Link
-                to="/kalkylatorer/tdee-kalkylator"
-                className="inline-flex items-center gap-2 mt-4 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors"
-              >
-                Starta med TDEE-kalkylatorn
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
-          </section>
-
-          <FaqBlock items={FAQ_ITEMS} />
-
-          {/* Related */}
-          <section className="mt-10 pt-8 border-t border-neutral-200 grid sm:grid-cols-2 gap-6">
-            <div>
-              <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3">
-                Relaterade kalkylatorer
-              </h3>
-              <ul className="space-y-2">
-                {[
-                  { href: '/kalkylatorer/tdee-kalkylator', label: 'TDEE Kalkylator' },
-                  { href: '/kalkylatorer/bmi-kalkylator', label: 'BMI Kalkylator' },
-                  { href: '/kalkylatorer/kaloriunderskott', label: 'Kaloribrist Kalkylator' },
-                  { href: '/kalkylatorer/proteinbehov', label: 'Proteinbehov Kalkylator' },
-                ].map(l => (
-                  <li key={l.href}>
-                    <Link
-                      to={l.href}
-                      className="flex items-center gap-2 text-sm text-primary-600 hover:underline"
-                    >
-                      <ArrowRight className="h-3.5 w-3.5" />
-                      {l.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3">
-                Relaterade artiklar
-              </h3>
-              <ul className="space-y-2">
-                {[
-                  { href: '/artiklar/kaloribehov', label: 'Kaloribehov — komplett guide' },
-                  { href: '/artiklar/vad-ar-tdee', label: 'Vad är TDEE?' },
-                  { href: '/artiklar/kaloribrist', label: 'Hur stor kaloribrist ska man ha?' },
-                  { href: '/artiklar/bulk-och-cut', label: 'Bulk och Cut' },
-                ].map(l => (
-                  <li key={l.href}>
-                    <Link
-                      to={l.href}
-                      className="flex items-center gap-2 text-sm text-primary-600 hover:underline"
-                    >
-                      <ArrowRight className="h-3.5 w-3.5" />
-                      {l.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </section>
-        </div>
+        </section>
       </main>
 
       <SiteFooter />

@@ -112,9 +112,9 @@ export default function VadArTdeePage() {
           Exempel: BMR 1 800 kcal × PAL 1.6 (lätt aktiv) = <strong>2 880 kcal TDEE</strong>.
         </p>
         <p>
-          Det finns flera PAL-system med olika granularitet — från enkla faktorer (1.2–1.9) till
-          detaljerade beräkningar baserade på träningsdagar, intensitet och antal steg. Vår
-          TDEE-kalkylator använder FAO/WHO/UNU-systemet som är vetenskapligt validerat.
+          CalculEat använder Mifflin-St Jeor som BMR-formel kombinerat med fem PAL-nivåer (1.2–1.9)
+          — från Stillasittande (×1.2) till Extremt aktiv (×1.9) — den formel och det system som
+          konsekvent visar lägst felmarginal i oberoende studier.
         </p>
 
         <h2 className="text-xl font-semibold text-neutral-900 mt-8 mb-3">

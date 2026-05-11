@@ -275,7 +275,7 @@ export default function KroppsfettKalkylatornPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="min-h-screen flex flex-col">
       <Seo
         title="Kroppsfett Kalkylator — Räkna ut din kroppsfettprocent (2026) | CalculEat"
         description="Gratis kroppsfett-kalkylator (US Navy Method). Räkna ut din kroppsfettprocent, lean body mass och se din kategori. Resultat direkt — inget konto krävs."
@@ -286,240 +286,257 @@ export default function KroppsfettKalkylatornPage() {
       <SiteHeader />
 
       <main className="flex-1">
-        <div className="container mx-auto px-4 py-10 max-w-2xl">
-          {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-sm text-neutral-500 mb-6">
-            <Link to="/" className="hover:text-neutral-700 transition-colors">
-              CalculEat
-            </Link>
-            <span>/</span>
-            <Link
-              to="/kalkylatorer/tdee-kalkylator"
-              className="hover:text-neutral-700 transition-colors"
-            >
-              Kalkylatorer
-            </Link>
-            <span>/</span>
-            <span className="text-neutral-700">Kroppsfett Kalkylator</span>
-          </nav>
-
-          <h1 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-3 leading-tight">
-            Kroppsfett Kalkylator — Uppskatta din kroppsfettprocent
-          </h1>
-          <p className="text-lg text-neutral-600 leading-relaxed mb-8 border-l-4 border-primary-400 pl-4 bg-primary-50 py-3 rounded-r-lg">
-            Kroppsfettprocent visar hur stor del av din kroppsvikt som består av fettmassa. Det ger
-            en mer användbar bild än BMI när du vill bedöma form, hälsa och planera viktnedgång
-            eller muskeluppbyggnad.
-          </p>
-
-          {/* Calculator */}
-          <div className="rounded-2xl border border-neutral-200 shadow-sm overflow-hidden mb-8">
-            <div className="bg-primary-50 px-6 py-4 border-b border-primary-100 flex items-center gap-2">
-              <Calculator className="h-5 w-5 text-primary-600" />
-              <span className="font-semibold text-primary-900">Beräkna din kroppsfett%</span>
-              <span className="ml-auto text-xs text-neutral-400">US Navy Method</span>
-            </div>
-
-            <div className="p-6 space-y-5">
-              {/* Gender */}
-              <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-2">Kön</label>
-                <div className="grid grid-cols-2 gap-2">
-                  {(
-                    [
-                      { value: 'male', label: 'Man' },
-                      { value: 'female', label: 'Kvinna' },
-                    ] as { value: Gender; label: string }[]
-                  ).map(opt => (
-                    <button
-                      key={opt.value}
-                      type="button"
-                      onClick={() => {
-                        setGender(opt.value)
-                        resetResult()
-                      }}
-                      className={`py-2.5 rounded-xl text-sm font-medium border transition-colors ${
-                        gender === opt.value
-                          ? 'bg-primary-600 text-white border-primary-600'
-                          : 'bg-white text-neutral-700 border-neutral-200 hover:border-primary-300'
-                      }`}
-                    >
-                      {opt.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Height + Weight */}
-              <div className="grid grid-cols-2 gap-4">
-                <InputField
-                  label="Längd"
-                  unit="cm"
-                  value={height}
-                  onChange={v => {
-                    setHeight(v)
-                    resetResult()
-                  }}
-                  placeholder="175"
-                />
-                <InputField
-                  label="Vikt"
-                  unit="kg"
-                  value={weight}
-                  onChange={v => {
-                    setWeight(v)
-                    resetResult()
-                  }}
-                  placeholder="75"
-                />
-              </div>
-
-              {/* Circumferences */}
-              <div className="grid grid-cols-2 gap-4">
-                <InputField
-                  label="Midjemått"
-                  unit="cm"
-                  value={waist}
-                  onChange={v => {
-                    setWaist(v)
-                    resetResult()
-                  }}
-                  placeholder="85"
-                  hint="Mät vid naveln"
-                />
-                <InputField
-                  label="Halsmått"
-                  unit="cm"
-                  value={neck}
-                  onChange={v => {
-                    setNeck(v)
-                    resetResult()
-                  }}
-                  placeholder="38"
-                  hint="Mät under adamsäpplet"
-                />
-              </div>
-
-              {gender === 'female' && (
-                <InputField
-                  label="Höftmått"
-                  unit="cm"
-                  value={hip}
-                  onChange={v => {
-                    setHip(v)
-                    resetResult()
-                  }}
-                  placeholder="95"
-                  hint="Mät vid det bredaste stället"
-                />
-              )}
-
-              <button
-                onClick={handleCalculate}
-                disabled={!canCalculate}
-                className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-neutral-200 disabled:text-neutral-400 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm"
+        {/* Hero section */}
+        <section className="relative overflow-hidden bg-white border-b border-neutral-100">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(37,189,0,0.07),transparent_60%)]" />
+          <div className="relative container mx-auto px-4 pt-16 pb-14 max-w-3xl">
+            {/* Breadcrumb */}
+            <nav className="flex items-center gap-2 text-sm text-neutral-500 mb-6">
+              <Link to="/" className="hover:text-neutral-700 transition-colors">
+                CalculEat
+              </Link>
+              <span>/</span>
+              <Link
+                to="/kalkylatorer/tdee-kalkylator"
+                className="hover:text-neutral-700 transition-colors"
               >
-                Beräkna min kroppsfett%
-              </button>
-            </div>
+                Kalkylatorer
+              </Link>
+              <span>/</span>
+              <span className="text-neutral-700">Kroppsfett Kalkylator</span>
+            </nav>
 
-            {/* Results */}
-            {hasResult && result && (
-              <div className="border-t border-neutral-100 bg-neutral-50 px-6 py-6 space-y-4">
-                <h2 className="font-semibold text-neutral-800">Ditt resultat</h2>
-
-                {/* Category card */}
-                <div className={`rounded-xl border p-5 ${result.category.bg}`}>
-                  <div className="flex items-end gap-3 mb-2">
-                    <span className={`text-4xl font-bold ${result.category.color}`}>
-                      {result.bf}%
-                    </span>
-                    <span className={`text-lg font-semibold mb-0.5 ${result.category.color}`}>
-                      {result.category.label}
-                    </span>
-                  </div>
-                  <p className="text-sm text-neutral-700">{result.category.description}</p>
-                </div>
-
-                {/* Stats grid */}
-                <div className="grid grid-cols-2 gap-3">
-                  {[
-                    {
-                      label: 'Lean body mass',
-                      value: `${result.lbm} kg`,
-                      desc: 'Muskler, organ, ben',
-                    },
-                    { label: 'Fettmassa', value: `${result.fatMass} kg`, desc: 'Total fettmassa' },
-                  ].map(stat => (
-                    <div
-                      key={stat.label}
-                      className="rounded-xl border border-neutral-200 bg-white p-4"
-                    >
-                      <div className="text-xs text-neutral-500 mb-1">{stat.label}</div>
-                      <div className="text-2xl font-bold text-neutral-900">{stat.value}</div>
-                      <div className="text-xs text-neutral-400 mt-0.5">{stat.desc}</div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Next step */}
-                <div className="rounded-xl bg-white border border-neutral-200 p-4">
-                  <div className="text-sm font-medium text-neutral-800 mb-1">
-                    Rekommenderat nästa steg
-                  </div>
-                  <p className="text-xs text-neutral-600 mb-3">{result.category.nextStep}</p>
-                </div>
-
-                {/* Disclaimer */}
-                <div className="rounded-xl bg-amber-50 border border-amber-200 p-4 flex gap-3">
-                  <AlertTriangle className="h-4 w-4 text-amber-600 flex-shrink-0 mt-0.5" />
-                  <p className="text-xs text-amber-700">
-                    US Navy-metoden ger en uppskattning med ±3–4% felmarginal. Resultatet speglar
-                    trend — inte ett exakt värde. DEXA-scanning är guldstandarden om du behöver
-                    precision.
-                  </p>
-                </div>
-
-                {/* CTA */}
-                <div className="rounded-xl bg-white border border-primary-200 p-4">
-                  <p className="text-sm font-medium text-neutral-800 mb-1">
-                    Nu vet du din kroppssammansättning — räkna ut rätt kaloriplan
-                  </p>
-                  <p className="text-xs text-neutral-500 mb-3">
-                    TDEE-kalkylatorn tar din kroppsvikt och aktivitetsnivå och ger dig det kalorimål
-                    du faktiskt ska logga mot.
-                  </p>
-                  <div className="flex flex-col sm:flex-row gap-2">
-                    <Link
-                      to="/kalkylatorer/tdee-kalkylator"
-                      className="inline-flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
-                    >
-                      Räkna ut ditt TDEE
-                      <ArrowRight className="h-4 w-4" />
-                    </Link>
-                    <Link
-                      to="/kalkylatorer/ffmi-kalkylator"
-                      className="inline-flex items-center justify-center gap-2 border border-neutral-200 text-neutral-700 text-sm font-medium px-4 py-2 rounded-lg hover:bg-neutral-50 transition-colors"
-                    >
-                      Beräkna ditt FFMI
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            )}
+            <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-5 leading-tight">
+              <span className="bg-gradient-to-r from-primary-600 to-accent-500 bg-clip-text text-transparent">
+                Kroppsfett
+              </span>{' '}
+              Kalkylator
+            </h1>
+            <p className="text-lg md:text-xl text-neutral-600 leading-relaxed max-w-2xl">
+              Kroppsfettprocent visar hur stor del av din kroppsvikt som består av fettmassa. Det
+              ger en mer användbar bild än BMI när du vill bedöma form, hälsa och planera
+              viktnedgång eller muskeluppbyggnad.
+            </p>
           </div>
+        </section>
 
-          {/* Context section */}
-          <section className="space-y-4 text-neutral-700 text-sm leading-relaxed mb-8">
-            <h2 className="text-xl font-semibold text-neutral-900">
+        {/* Calculator section */}
+        <section className="bg-neutral-50 py-14 border-b border-neutral-100">
+          <div className="container mx-auto px-4 max-w-2xl">
+            <div className="rounded-2xl border border-neutral-200 shadow-sm overflow-hidden">
+              <div className="bg-primary-50 px-6 py-4 border-b border-primary-100 flex items-center gap-2">
+                <Calculator className="h-5 w-5 text-primary-600" />
+                <span className="font-semibold text-primary-900">Beräkna din kroppsfett%</span>
+                <span className="ml-auto text-xs text-neutral-400">US Navy Method</span>
+              </div>
+
+              <div className="p-6 space-y-5">
+                {/* Gender */}
+                <div>
+                  <label className="block text-sm font-medium text-neutral-700 mb-2">Kön</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {(
+                      [
+                        { value: 'male', label: 'Man' },
+                        { value: 'female', label: 'Kvinna' },
+                      ] as { value: Gender; label: string }[]
+                    ).map(opt => (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        onClick={() => {
+                          setGender(opt.value)
+                          resetResult()
+                        }}
+                        className={`py-2.5 rounded-xl text-sm font-medium border transition-colors ${
+                          gender === opt.value
+                            ? 'bg-primary-600 text-white border-primary-600'
+                            : 'bg-white text-neutral-700 border-neutral-200 hover:border-primary-300'
+                        }`}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Height + Weight */}
+                <div className="grid grid-cols-2 gap-4">
+                  <InputField
+                    label="Längd"
+                    unit="cm"
+                    value={height}
+                    onChange={v => {
+                      setHeight(v)
+                      resetResult()
+                    }}
+                    placeholder="175"
+                  />
+                  <InputField
+                    label="Vikt"
+                    unit="kg"
+                    value={weight}
+                    onChange={v => {
+                      setWeight(v)
+                      resetResult()
+                    }}
+                    placeholder="75"
+                  />
+                </div>
+
+                {/* Circumferences */}
+                <div className="grid grid-cols-2 gap-4">
+                  <InputField
+                    label="Midjemått"
+                    unit="cm"
+                    value={waist}
+                    onChange={v => {
+                      setWaist(v)
+                      resetResult()
+                    }}
+                    placeholder="85"
+                    hint="Mät vid naveln"
+                  />
+                  <InputField
+                    label="Halsmått"
+                    unit="cm"
+                    value={neck}
+                    onChange={v => {
+                      setNeck(v)
+                      resetResult()
+                    }}
+                    placeholder="38"
+                    hint="Mät under adamsäpplet"
+                  />
+                </div>
+
+                {gender === 'female' && (
+                  <InputField
+                    label="Höftmått"
+                    unit="cm"
+                    value={hip}
+                    onChange={v => {
+                      setHip(v)
+                      resetResult()
+                    }}
+                    placeholder="95"
+                    hint="Mät vid det bredaste stället"
+                  />
+                )}
+
+                <button
+                  onClick={handleCalculate}
+                  disabled={!canCalculate}
+                  className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-neutral-200 disabled:text-neutral-400 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm"
+                >
+                  Beräkna min kroppsfett%
+                </button>
+              </div>
+
+              {/* Results */}
+              {hasResult && result && (
+                <div className="border-t border-neutral-100 bg-neutral-50 px-6 py-6 space-y-4">
+                  <h2 className="font-semibold text-neutral-800">Ditt resultat</h2>
+
+                  {/* Category card */}
+                  <div className={`rounded-xl border p-5 ${result.category.bg}`}>
+                    <div className="flex items-end gap-3 mb-2">
+                      <span className={`text-4xl font-bold ${result.category.color}`}>
+                        {result.bf}%
+                      </span>
+                      <span className={`text-lg font-semibold mb-0.5 ${result.category.color}`}>
+                        {result.category.label}
+                      </span>
+                    </div>
+                    <p className="text-sm text-neutral-700">{result.category.description}</p>
+                  </div>
+
+                  {/* Stats grid */}
+                  <div className="grid grid-cols-2 gap-3">
+                    {[
+                      {
+                        label: 'Lean body mass',
+                        value: `${result.lbm} kg`,
+                        desc: 'Muskler, organ, ben',
+                      },
+                      {
+                        label: 'Fettmassa',
+                        value: `${result.fatMass} kg`,
+                        desc: 'Total fettmassa',
+                      },
+                    ].map(stat => (
+                      <div
+                        key={stat.label}
+                        className="rounded-xl border border-neutral-200 bg-white p-4"
+                      >
+                        <div className="text-xs text-neutral-500 mb-1">{stat.label}</div>
+                        <div className="text-2xl font-bold text-neutral-900">{stat.value}</div>
+                        <div className="text-xs text-neutral-400 mt-0.5">{stat.desc}</div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Next step */}
+                  <div className="rounded-xl bg-white border border-neutral-200 p-4">
+                    <div className="text-sm font-medium text-neutral-800 mb-1">
+                      Rekommenderat nästa steg
+                    </div>
+                    <p className="text-xs text-neutral-600 mb-3">{result.category.nextStep}</p>
+                  </div>
+
+                  {/* Disclaimer */}
+                  <div className="rounded-xl bg-amber-50 border border-amber-200 p-4 flex gap-3">
+                    <AlertTriangle className="h-4 w-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                    <p className="text-xs text-amber-700">
+                      US Navy-metoden ger en uppskattning med ±3–4% felmarginal. Resultatet speglar
+                      trend — inte ett exakt värde. DEXA-scanning är guldstandarden om du behöver
+                      precision.
+                    </p>
+                  </div>
+
+                  {/* CTA */}
+                  <div className="rounded-xl bg-white border border-primary-200 p-4">
+                    <p className="text-sm font-medium text-neutral-800 mb-1">
+                      Nu vet du din kroppssammansättning — räkna ut rätt kaloriplan
+                    </p>
+                    <p className="text-xs text-neutral-500 mb-3">
+                      TDEE-kalkylatorn tar din kroppsvikt och aktivitetsnivå och ger dig det
+                      kalorimål du faktiskt ska logga mot.
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <Link
+                        to="/kalkylatorer/tdee-kalkylator"
+                        className="inline-flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+                      >
+                        Räkna ut ditt TDEE
+                        <ArrowRight className="h-4 w-4" />
+                      </Link>
+                      <Link
+                        to="/kalkylatorer/ffmi-kalkylator"
+                        className="inline-flex items-center justify-center gap-2 border border-neutral-200 text-neutral-700 text-sm font-medium px-4 py-2 rounded-lg hover:bg-neutral-50 transition-colors"
+                      >
+                        Beräkna ditt FFMI
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/* Context/explanation section */}
+        <section className="bg-white py-14 border-b border-neutral-100">
+          <div className="container mx-auto px-4 max-w-3xl">
+            <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900 mb-5">
               Varför kroppsfett är mer användbart än BMI
             </h2>
-            <p>
+            <p className="text-base text-neutral-700 leading-relaxed mb-6">
               BMI berättar bara om förhållandet mellan din vikt och längd. Det skiljer inte på
               muskler och fett — vilket är det enda som faktiskt spelar roll för hälsa och
               kroppskomposition.
             </p>
-            <div className="space-y-3">
+            <div className="space-y-3 mb-8">
               {[
                 {
                   title: 'Samma BMI — helt olika kroppssammansättning',
@@ -539,15 +556,15 @@ export default function KroppsfettKalkylatornPage() {
               ].map(({ title, desc, color }) => (
                 <div key={title} className={`rounded-xl border p-4 ${color}`}>
                   <div className="font-semibold text-neutral-800 mb-1">{title}</div>
-                  <div className="text-neutral-700">{desc}</div>
+                  <div className="text-base text-neutral-700">{desc}</div>
                 </div>
               ))}
             </div>
 
-            <h3 className="font-semibold text-neutral-800 mt-4">
+            <h3 className="text-lg font-semibold text-neutral-800 mb-3">
               Hur du mäter rätt (US Navy Method)
             </h3>
-            <ul className="space-y-1.5 pl-4 list-disc">
+            <ul className="space-y-1.5 pl-4 list-disc text-base text-neutral-700 leading-relaxed">
               <li>
                 <strong>Midjemått:</strong> Mät horisontellt vid naveln — inte vid det smalaste
                 stället. Håll bandet snug men utan att trycka in huden.
@@ -563,62 +580,96 @@ export default function KroppsfettKalkylatornPage() {
                 Mät alltid på morgonen, fastande, och på samma dag i veckan för jämförbara resultat.
               </li>
             </ul>
-          </section>
+          </div>
+        </section>
 
-          <FaqBlock items={FAQ_ITEMS} />
+        {/* FAQ section */}
+        <section className="bg-neutral-50 py-14 border-b border-neutral-100">
+          <div className="container mx-auto px-4 max-w-3xl">
+            <FaqBlock items={FAQ_ITEMS} />
+          </div>
+        </section>
 
-          {/* Related */}
-          <section className="mt-10 pt-8 border-t border-neutral-200 grid sm:grid-cols-2 gap-6">
-            <div>
-              <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3">
-                Relaterade kalkylatorer
-              </h3>
-              <ul className="space-y-2">
-                {[
-                  { href: '/kalkylatorer/tdee-kalkylator', label: 'TDEE Kalkylator' },
-                  { href: '/kalkylatorer/bmi-kalkylator', label: 'BMI Kalkylator' },
-                  { href: '/kalkylatorer/idealvikt', label: 'Idealvikt Kalkylator' },
-                  { href: '/kalkylatorer/ffmi-kalkylator', label: 'FFMI Kalkylator' },
-                  { href: '/kalkylatorer/proteinbehov', label: 'Proteinbehov Kalkylator' },
-                ].map(l => (
-                  <li key={l.href}>
+        {/* Bottom CTA */}
+        <section className="bg-neutral-900 py-16 md:py-20">
+          <div className="container mx-auto px-4 max-w-2xl text-center">
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
+              Sätt ett kalorimål som matchar din kropp
+            </h2>
+            <p className="text-neutral-400 text-base mb-8 max-w-md mx-auto">
+              Nu vet du din fettprocent. Räkna ut TDEE och börja logga mot ett mål som faktiskt
+              stämmer.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Link
+                to="/register"
+                className="inline-flex items-center justify-center gap-2 bg-accent-500 hover:bg-accent-600 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm"
+              >
+                Skapa gratis konto <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                to="/kalkylatorer/tdee-kalkylator"
+                className="inline-flex items-center justify-center gap-2 border border-neutral-600 text-neutral-300 hover:bg-neutral-800 font-medium px-6 py-3 rounded-xl transition-colors text-sm"
+              >
+                Räkna ut ditt TDEE
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* Related links section */}
+        <section className="bg-white py-14">
+          <div className="container mx-auto px-4 max-w-5xl">
+            <div className="grid sm:grid-cols-2 gap-10">
+              <div>
+                <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3">
+                  Relaterade kalkylatorer
+                </h3>
+                <div className="grid gap-3">
+                  {[
+                    { href: '/kalkylatorer/tdee-kalkylator', label: 'TDEE Kalkylator' },
+                    { href: '/kalkylatorer/bmi-kalkylator', label: 'BMI Kalkylator' },
+                    { href: '/kalkylatorer/idealvikt', label: 'Idealvikt Kalkylator' },
+                    { href: '/kalkylatorer/ffmi-kalkylator', label: 'FFMI Kalkylator' },
+                    { href: '/kalkylatorer/proteinbehov', label: 'Proteinbehov Kalkylator' },
+                  ].map(l => (
                     <Link
+                      key={l.href}
                       to={l.href}
-                      className="flex items-center gap-2 text-sm text-primary-600 hover:underline"
+                      className="flex items-center gap-3 rounded-xl border border-neutral-200 p-4 text-sm text-neutral-700 hover:shadow-md hover:border-primary-200 transition-all"
                     >
-                      <ArrowRight className="h-3.5 w-3.5" />
+                      <ArrowRight className="h-4 w-4 text-primary-500 flex-shrink-0" />
                       {l.label}
                     </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3">
-                Relaterade artiklar
-              </h3>
-              <ul className="space-y-2">
-                {[
-                  { href: '/artiklar/kaloribehov', label: 'Kaloribehov — komplett guide' },
-                  { href: '/artiklar/vad-ar-tdee', label: 'Vad är TDEE?' },
-                  { href: '/artiklar/bulk-och-cut', label: 'Bulk och Cut' },
-                  { href: '/artiklar/kaloribrist', label: 'Hur stor kaloribrist ska man ha?' },
-                  { href: '/artiklar/bmi-vs-kroppsfett', label: 'BMI vs Kroppsfett' },
-                ].map(l => (
-                  <li key={l.href}>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3">
+                  Relaterade artiklar
+                </h3>
+                <div className="grid gap-3">
+                  {[
+                    { href: '/artiklar/kaloribehov', label: 'Kaloribehov — komplett guide' },
+                    { href: '/artiklar/vad-ar-tdee', label: 'Vad är TDEE?' },
+                    { href: '/artiklar/bulk-och-cut', label: 'Bulk och Cut' },
+                    { href: '/artiklar/kaloribrist', label: 'Hur stor kaloribrist ska man ha?' },
+                    { href: '/artiklar/bmi-vs-kroppsfett', label: 'BMI vs Kroppsfett' },
+                  ].map(l => (
                     <Link
+                      key={l.href}
                       to={l.href}
-                      className="flex items-center gap-2 text-sm text-primary-600 hover:underline"
+                      className="flex items-center gap-3 rounded-xl border border-neutral-200 p-4 text-sm text-neutral-700 hover:shadow-md hover:border-primary-200 transition-all"
                     >
-                      <ArrowRight className="h-3.5 w-3.5" />
+                      <ArrowRight className="h-4 w-4 text-primary-500 flex-shrink-0" />
                       {l.label}
                     </Link>
-                  </li>
-                ))}
-              </ul>
+                  ))}
+                </div>
+              </div>
             </div>
-          </section>
-        </div>
+          </div>
+        </section>
       </main>
 
       <SiteFooter />

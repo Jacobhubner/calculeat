@@ -50,10 +50,10 @@ export function HeroSection() {
                 variant="outline"
                 className="text-base font-semibold bg-white border-neutral-300 hover:bg-neutral-50 text-neutral-900"
               >
-                <a href="#calculator">
+                <Link to="/kalkylatorer/tdee-kalkylator">
                   <Calculator className="mr-2 h-5 w-5" />
                   {t('home.hero.ctaSecondary')}
-                </a>
+                </Link>
               </Button>
             </div>
           </div>
