@@ -1463,7 +1463,10 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
 
   // Filtrera bort typer som redan visas som åtgärdskort
   const historyNotifications = notifications.filter(
-    n => n.type !== 'friend_request_received' && n.type !== 'shared_list_invitation_received'
+    n =>
+      n.type !== 'friend_request_received' &&
+      n.type !== 'shared_list_invitation_received' &&
+      n.type !== 'share_invitation_received'
   )
   const unreadHistoryCount = historyNotifications.filter(n => n.read_at === null).length
 
