@@ -17,6 +17,7 @@ DECLARE
   v_recipient_id    uuid;
   v_item_snapshot   jsonb;
   v_invitation_id   uuid;
+  v_is_new          boolean;
   v_food_item       record;
   v_recipe          record;
   v_ingredient      record;
@@ -275,9 +276,11 @@ BEGIN
   )
   ON CONFLICT ON CONSTRAINT idx_share_invitations_unique_pending
   DO UPDATE SET snapshot = EXCLUDED.snapshot, sender_name = EXCLUDED.sender_name
-  RETURNING id INTO v_invitation_id;
+  RETURNING id, (xmax = 0) AS is_new
+  INTO v_invitation_id, v_is_new;
 
-  IF v_invitation_id IS NOT NULL AND v_recipient_id IS NOT NULL THEN
+  -- Skicka notis bara vid ny invitation, inte vid omsändning (snapshot-uppdatering)
+  IF v_is_new AND v_invitation_id IS NOT NULL AND v_recipient_id IS NOT NULL THEN
     PERFORM internal_create_notification(
       v_recipient_id,
       v_sender_id,
