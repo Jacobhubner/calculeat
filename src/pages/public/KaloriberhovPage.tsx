@@ -122,33 +122,45 @@ export default function KaloriberhovPage() {
           <table className="min-w-full text-sm">
             <thead className="bg-neutral-50 border-b border-neutral-200">
               <tr>
-                <th className="px-4 py-3 text-left font-medium text-neutral-700">Aktivitetsnivå</th>
+                <th className="px-4 py-3 text-left font-medium text-neutral-700">Nivå</th>
+                <th className="px-4 py-3 text-left font-medium text-neutral-700">Beskrivning</th>
                 <th className="px-4 py-3 text-left font-medium text-neutral-700">PAL-faktor</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-neutral-100">
               {[
-                ['Kontorsjobb eller hemarbete, liten vardagsrörelse, inga träningspass', '1.2'],
                 [
+                  'Stillasittande',
+                  'Kontorsjobb eller hemarbete, liten vardagsrörelse, inga träningspass',
+                  '1.2',
+                ],
+                [
+                  'Lätt aktiv',
                   'Lätt träning 1–3 dagar/vecka, t.ex. promenader, yoga eller gym på fritiden',
                   '1.375',
                 ],
                 [
+                  'Måttligt aktiv',
                   'Regelbunden träning 3–5 dagar/vecka med måttlig intensitet, t.ex. löpning eller styrketräning',
                   '1.55',
                 ],
                 [
+                  'Mycket aktiv',
                   'Hård träning nästan varje dag (6–7 dagar/vecka) eller fysiskt aktivt arbete',
                   '1.725',
                 ],
                 [
+                  'Extremt aktiv',
                   'Tungt fysiskt arbete kombinerat med daglig intensiv träning, t.ex. elitidrottare eller byggnadsarbetare som dessutom tränar',
                   '1.9',
                 ],
-              ].map(([level, pal]) => (
-                <tr key={level}>
-                  <td className="px-4 py-3 text-neutral-700">{level}</td>
-                  <td className="px-4 py-3 text-neutral-600">{pal}</td>
+              ].map(([name, desc, pal]) => (
+                <tr key={name}>
+                  <td className="px-4 py-3 font-medium text-neutral-800 whitespace-nowrap">
+                    {name}
+                  </td>
+                  <td className="px-4 py-3 text-neutral-600">{desc}</td>
+                  <td className="px-4 py-3 text-neutral-600 whitespace-nowrap">{pal}</td>
                 </tr>
               ))}
             </tbody>
