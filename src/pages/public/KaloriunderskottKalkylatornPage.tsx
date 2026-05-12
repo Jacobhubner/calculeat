@@ -19,14 +19,32 @@ type ActivityLevel =
 type Goal = 'mild' | 'moderate' | 'aggressive'
 
 const ACTIVITY_LEVELS: { value: ActivityLevel; label: string; description: string }[] = [
-  { value: 'Sedentary', label: 'Stillasittande', description: 'Kontorsjobb, liten rörelse' },
-  { value: 'Lightly active', label: 'Lätt aktiv', description: 'Lätt träning 1–3 dagar/vecka' },
-  { value: 'Moderately active', label: 'Måttligt aktiv', description: 'Träning 3–5 dagar/vecka' },
-  { value: 'Very active', label: 'Mycket aktiv', description: 'Hård träning 6–7 dagar/vecka' },
+  {
+    value: 'Sedentary',
+    label: 'Stillasittande',
+    description: 'Kontorsjobb eller hemarbete, liten vardagsrörelse, inga träningspass',
+  },
+  {
+    value: 'Lightly active',
+    label: 'Lätt aktiv',
+    description: 'Lätt träning 1–3 dagar/vecka, t.ex. promenader, yoga eller gym på fritiden',
+  },
+  {
+    value: 'Moderately active',
+    label: 'Måttligt aktiv',
+    description:
+      'Regelbunden träning 3–5 dagar/vecka med måttlig intensitet, t.ex. löpning eller styrketräning',
+  },
+  {
+    value: 'Very active',
+    label: 'Mycket aktiv',
+    description: 'Hård träning nästan varje dag (6–7 dagar/vecka) eller fysiskt aktivt arbete',
+  },
   {
     value: 'Extremely active',
     label: 'Extremt aktiv',
-    description: 'Fysiskt jobb + daglig intensiv träning',
+    description:
+      'Tungt fysiskt arbete kombinerat med daglig intensiv träning, t.ex. elitidrottare eller byggnadsarbetare som dessutom tränar',
   },
 ]
 
