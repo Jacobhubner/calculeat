@@ -123,37 +123,31 @@ export default function KaloriberhovPage() {
             <thead className="bg-neutral-50 border-b border-neutral-200">
               <tr>
                 <th className="px-4 py-3 text-left font-medium text-neutral-700">Aktivitetsnivå</th>
-                <th className="px-4 py-3 text-left font-medium text-neutral-700">
-                  Multiplier (män)
-                </th>
-                <th className="px-4 py-3 text-left font-medium text-neutral-700">
-                  Multiplier (kvinnor)
-                </th>
+                <th className="px-4 py-3 text-left font-medium text-neutral-700">PAL-faktor</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-neutral-100">
               {[
-                ['Stillasittande (kontorsjobb)', '1.3', '1.3'],
-                ['Lätt aktiv (1–3 pass/vecka)', '1.6', '1.5'],
-                ['Måttligt aktiv (3–5 pass/vecka)', '1.7', '1.6'],
-                ['Mycket aktiv (6–7 pass/vecka)', '2.1', '1.9'],
-                ['Extremt aktiv (hårt fysiskt jobb + träning)', '2.4', '2.2'],
-              ].map(([level, m, f]) => (
+                ['Stillasittande (kontorsjobb, liten rörelse)', '1.2'],
+                ['Lätt aktiv (1–3 pass/vecka)', '1.375'],
+                ['Måttligt aktiv (3–5 pass/vecka)', '1.55'],
+                ['Mycket aktiv (6–7 pass/vecka)', '1.725'],
+                ['Extremt aktiv (hårt fysiskt jobb + daglig träning)', '1.9'],
+              ].map(([level, pal]) => (
                 <tr key={level}>
                   <td className="px-4 py-3 text-neutral-700">{level}</td>
-                  <td className="px-4 py-3 text-neutral-600">{m}</td>
-                  <td className="px-4 py-3 text-neutral-600">{f}</td>
+                  <td className="px-4 py-3 text-neutral-600">{pal}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
         <p>
-          Exempel: En man, 30 år, 80 kg, 180 cm, tränar 4 gånger/vecka.
+          Exempel: En person, 30 år, 80 kg, 180 cm, tränar 3–5 gånger/vecka (måttligt aktiv).
           <br />
           BMR = (9,99 × 80) + (6,25 × 180) − (4,92 × 30) + 5 = 1 895 kcal
           <br />
-          TDEE = 1 895 × 1,7 = <strong>3 222 kcal/dag</strong>
+          TDEE = 1 895 × 1,55 = <strong>2 937 kcal/dag</strong>
         </p>
 
         <h2 className="text-xl font-semibold text-neutral-900 mt-8 mb-3">

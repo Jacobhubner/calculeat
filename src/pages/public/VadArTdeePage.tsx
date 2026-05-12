@@ -109,7 +109,7 @@ export default function VadArTdeePage() {
           med en PAL-faktor (Physical Activity Level) som speglar din aktivitetsnivå.
         </p>
         <p>
-          Exempel: BMR 1 800 kcal × PAL 1.6 (lätt aktiv) = <strong>2 880 kcal TDEE</strong>.
+          Exempel: BMR 1 800 kcal × PAL 1.55 (måttligt aktiv) = <strong>2 790 kcal TDEE</strong>.
         </p>
         <p>
           CalculEat använder Mifflin-St Jeor som BMR-formel kombinerat med fem PAL-nivåer (1.2–1.9)
