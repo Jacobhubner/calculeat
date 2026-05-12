@@ -30,21 +30,12 @@ const ACTIVITY_LEVELS: { value: ActivityLevel; label: string; description: strin
   },
 ]
 
-const PAL_MULTIPLIERS: Record<Gender, Record<ActivityLevel, number>> = {
-  male: {
-    Sedentary: 1.3,
-    'Lightly active': 1.6,
-    'Moderately active': 1.7,
-    'Very active': 2.1,
-    'Extremely active': 2.4,
-  },
-  female: {
-    Sedentary: 1.3,
-    'Lightly active': 1.5,
-    'Moderately active': 1.6,
-    'Very active': 1.9,
-    'Extremely active': 2.2,
-  },
+const PAL_MULTIPLIERS: Record<ActivityLevel, number> = {
+  Sedentary: 1.2,
+  'Lightly active': 1.375,
+  'Moderately active': 1.55,
+  'Very active': 1.725,
+  'Extremely active': 1.9,
 }
 
 const GOALS: {
@@ -163,7 +154,7 @@ export default function KaloriunderskottKalkylatornPage() {
 
   const tdee = useMemo(() => {
     if (!bmr) return null
-    return Math.round(bmr * PAL_MULTIPLIERS[gender][activityLevel])
+    return Math.round(bmr * PAL_MULTIPLIERS[activityLevel])
   }, [bmr, gender, activityLevel])
 
   const selectedGoal = GOALS.find(g => g.value === goal)!
