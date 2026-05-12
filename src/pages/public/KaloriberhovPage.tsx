@@ -128,11 +128,23 @@ export default function KaloriberhovPage() {
             </thead>
             <tbody className="divide-y divide-neutral-100">
               {[
-                ['Stillasittande (kontorsjobb, liten rörelse)', '1.2'],
-                ['Lätt aktiv (1–3 pass/vecka)', '1.375'],
-                ['Måttligt aktiv (3–5 pass/vecka)', '1.55'],
-                ['Mycket aktiv (6–7 pass/vecka)', '1.725'],
-                ['Extremt aktiv (hårt fysiskt jobb + daglig träning)', '1.9'],
+                ['Kontorsjobb eller hemarbete, liten vardagsrörelse, inga träningspass', '1.2'],
+                [
+                  'Lätt träning 1–3 dagar/vecka, t.ex. promenader, yoga eller gym på fritiden',
+                  '1.375',
+                ],
+                [
+                  'Regelbunden träning 3–5 dagar/vecka med måttlig intensitet, t.ex. löpning eller styrketräning',
+                  '1.55',
+                ],
+                [
+                  'Hård träning nästan varje dag (6–7 dagar/vecka) eller fysiskt aktivt arbete',
+                  '1.725',
+                ],
+                [
+                  'Tungt fysiskt arbete kombinerat med daglig intensiv träning, t.ex. elitidrottare eller byggnadsarbetare som dessutom tränar',
+                  '1.9',
+                ],
               ].map(([level, pal]) => (
                 <tr key={level}>
                   <td className="px-4 py-3 text-neutral-700">{level}</td>
