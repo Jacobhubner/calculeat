@@ -172,11 +172,9 @@ export function NutritionSummary({
               </div>
             )}
             {displayValues.fiber != null && (
-              <div className="flex justify-between">
-                <span className="text-neutral-700">{t('nutrition.fiber')}</span>
-                <span className="text-neutral-900 font-semibold">
-                  {displayValues.fiber.toFixed(1)}g
-                </span>
+              <div className="flex justify-between pl-3">
+                <span className="text-neutral-400">{t('nutrition.fiber')}</span>
+                <span className="text-neutral-600">{displayValues.fiber.toFixed(1)}g</span>
               </div>
             )}
             {displayValues.salt != null && (

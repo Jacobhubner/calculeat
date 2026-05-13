@@ -1499,11 +1499,11 @@ export function AddFoodItemModal({
                                 </div>
                               )}
                               {servingPreview.fiber != null && (
-                                <div className="flex justify-between">
-                                  <span className="text-neutral-600">
+                                <div className="flex justify-between pl-3">
+                                  <span className="text-neutral-400">
                                     {t('addFoodModal.previewFiber')}
                                   </span>
-                                  <span className="font-semibold text-neutral-900">
+                                  <span className="text-neutral-600">
                                     {servingPreview.fiber.toFixed(1)}g
                                   </span>
                                 </div>
@@ -1590,13 +1590,11 @@ export function AddFoodItemModal({
                               </div>
                             )}
                             {fiberG != null && !isNaN(fiberG) && (
-                              <div className="flex justify-between">
-                                <span className="text-neutral-600">
+                              <div className="flex justify-between pl-3">
+                                <span className="text-neutral-400">
                                   {t('addFoodModal.previewFiber')}
                                 </span>
-                                <span className="font-medium text-neutral-900">
-                                  {fiberG.toFixed(1)}g
-                                </span>
+                                <span className="text-neutral-600">{fiberG.toFixed(1)}g</span>
                               </div>
                             )}
                             <div className="flex justify-between">
