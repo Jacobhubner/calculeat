@@ -43,6 +43,12 @@ const articles = [
       'Basal metabolic rate förklarad — hur kroppen förbränner kalorier i vila och vad det betyder för dig.',
   },
   {
+    to: '/artiklar/bmr-vs-rmr',
+    title: 'BMR vs RMR — vad är skillnaden?',
+    description:
+      'BMR och RMR mäter båda energiförbrukning i vila men skiljer sig i mätvillkor. Vilka formler beräknar vad — och spelar det roll?',
+  },
+  {
     to: '/artiklar/bmr-vs-tdee',
     title: 'BMR vs TDEE — vad är skillnaden?',
     description:

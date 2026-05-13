@@ -26,7 +26,7 @@ export default function SiteFooter() {
         { label: 'Kaloribehov', to: '/artiklar/kaloribehov' },
         { label: 'Vad är TDEE?', to: '/artiklar/vad-ar-tdee' },
         { label: 'Kaloribrist', to: '/artiklar/kaloribrist' },
-        { label: 'Bulk och cut', to: '/artiklar/bulk-och-cut' },
+        { label: 'BMR vs RMR', to: '/artiklar/bmr-vs-rmr' },
         { label: 'Alla artiklar', to: '/artiklar' },
       ],
     },
