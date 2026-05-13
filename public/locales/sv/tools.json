@@ -1080,7 +1080,6 @@
             "NEAT är också den mest variabla komponenten av energiförbrukning mellan individer med liknande kroppsvikt och BMI. Därför är NEAT av särskilt intresse för viktreglering och fettmassa – små skillnader i spontan aktivitet kan under år ge avsevärda energiskillnader.",
             "I modellen delas NEAT upp i tre delkomponenter: förflyttning, kroppshållning och övriga spontana rörelser, inklusive fidgeting (små, ofta omedvetna rörelser)."
           ],
-          "formula": "NEAT_total = (NEAT_steps + NEAT_standing + NEAT_household) × SPA_factor",
           "refs": [
             "Tzeravini E, et al. Diet induced thermogenesis, older and newer data with emphasis on obesity and diabetes mellitus. Metabol Open. 2024 Jun 5;22:100291.",
             "von Loeffelholz C, Birkenfeld AL. Non-Exercise Activity Thermogenesis in Human Energy Homeostasis. In: Feingold KR, et al., editors. Endotext [Internet]. MDText.com, Inc.; 2000-."

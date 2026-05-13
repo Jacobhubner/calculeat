@@ -219,11 +219,7 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
                           defaultValue: [],
                         }) as string[])
                       : []
-                    const tSecFormula = secKey
-                      ? (tDyn(`palSystems.${sk}.sections.${secKey}.formula`, {
-                          defaultValue: '',
-                        }) as string)
-                      : ''
+                    // Formulas are mathematical expressions — always use block.text directly
                     const tSecStepsBullets =
                       secKey === 'neatSteps'
                         ? (tDyn(`palSystems.${sk}.sections.${secKey}.stepsBullets`, {
@@ -269,9 +265,7 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
                                 key={bi}
                                 className="bg-neutral-100 border border-neutral-200 rounded-lg px-4 py-3"
                               >
-                                <p className="text-sm font-mono text-neutral-800">
-                                  {tSecFormula || block.text}
-                                </p>
+                                <p className="text-sm font-mono text-neutral-800">{block.text}</p>
                               </div>
                             ) : block.type === 'bullets' ? (
                               <ul key={bi} className="space-y-1 pl-1">
