@@ -20,7 +20,7 @@ const FAQ_ITEMS = [
   {
     question: 'Vad är PAL och hur väljer jag rätt värde?',
     answer:
-      'PAL (Physical Activity Level) är en multiplikator som omvandlar ditt BMR till TDEE. Välj baserat på din totala vardagsaktivitet — inte bara träning. Stillasittande (kontorsarbete, lite promenad): PAL 1,3. Lätt aktiv (träning 1–3 ggr/vecka): 1,5–1,6. Måttligt aktiv (träning 3–5 ggr/vecka): 1,6–1,7. Mycket aktiv (daglig intensiv träning eller fysiskt arbete): 1,9–2,1.',
+      'PAL (Physical Activity Level) är en multiplikator som omvandlar ditt BMR till TDEE. Välj baserat på din totala vardagsaktivitet — inte bara träning. Stillasittande (kontorsarbete, lite promenad): PAL 1,2. Lätt aktiv (träning 1–3 ggr/vecka): PAL 1,375. Måttligt aktiv (träning 3–5 ggr/vecka): PAL 1,55. Mycket aktiv (daglig intensiv träning eller fysiskt arbete): PAL 1,725. Extremt aktiv (hårt fysiskt jobb + daglig intensiv träning): PAL 1,9.',
   },
   {
     question: 'Vad är MET och hur används det?',
@@ -93,7 +93,7 @@ export default function VadArPalOchMetPage() {
         <p>
           Det vanligaste misstaget vid TDEE-beräkning är att överskatta sin aktivitetsnivå. Om du
           tränar 3 dagar i veckan men sitter stilla resten av dagen är du sannolikt &ldquo;lätt
-          aktiv&rdquo; (PAL 1,5–1,6) — inte &ldquo;måttligt aktiv&rdquo;.
+          aktiv&rdquo; (PAL 1,375) — inte &ldquo;måttligt aktiv&rdquo; (PAL 1,55).
         </p>
         <p className="mt-3">
           En praktisk metod: börja med ett konservativt PAL-värde och öka om din vikt sjunker
