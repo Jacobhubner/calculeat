@@ -33,8 +33,10 @@ import {
 } from '@/hooks/useFoodItems'
 import { useIsAdmin } from '@/hooks/useIsAdmin'
 import { SOURCE_BADGES, getListItemBadgeConfig } from '@/lib/constants/sourceBadges'
+import { useRecipes, type Recipe } from '@/hooks/useRecipes'
 import { useRecipeImpact, type RecipeImpact } from '@/hooks/useRecipeImpact'
 import { RecipeImpactWarningModal } from '@/components/food/RecipeImpactWarningModal'
+import { RecipePreviewModal } from '@/components/recipe/RecipePreviewModal'
 import {
   useSharedLists,
   useCopyToSharedList,
@@ -205,6 +207,7 @@ export default function FoodItemsPage() {
     { key: 'slv', label: t('tabs.slv') },
   ]
   const { data: isAdmin = false } = useIsAdmin()
+  const { data: recipes = [] } = useRecipes()
   const deleteFood = useDeleteFoodItem()
   const adminDeleteFood = useAdminDeleteFoodItem()
   const deleteSharedListItem = useDeleteSharedListFoodItem()
@@ -259,6 +262,9 @@ export default function FoodItemsPage() {
   // Nutrient panel state
   const [selectedItemForDetail, setSelectedItemForDetail] = useState<FoodItem | null>(null)
   const [nutrientPanelOpen, setNutrientPanelOpen] = useState(false)
+
+  // Recipe preview modal state
+  const [previewRecipe, setPreviewRecipe] = useState<Recipe | null>(null)
 
   // Recipe impact modal state
   const [impactModal, setImpactModal] = useState<{
@@ -556,6 +562,13 @@ export default function FoodItemsPage() {
   }, [queryClient, editingItem, editCopyMode, isAdmin, activeTab])
 
   const handleShowNutrients = (item: FoodItem) => {
+    if (item.is_recipe) {
+      const recipe = recipes.find(r => r.food_item_id === item.id)
+      if (recipe) {
+        setPreviewRecipe(recipe)
+        return
+      }
+    }
     setSelectedItemForDetail(item)
     setNutrientPanelOpen(true)
   }
@@ -1837,6 +1850,13 @@ export default function FoodItemsPage() {
         foodItem={selectedItemForDetail}
         open={nutrientPanelOpen}
         onOpenChange={setNutrientPanelOpen}
+      />
+
+      {/* Recipe Preview Modal */}
+      <RecipePreviewModal
+        recipe={previewRecipe}
+        open={!!previewRecipe}
+        onOpenChange={open => !open && setPreviewRecipe(null)}
       />
 
       {/* Recipe Impact Warning Modal */}
