@@ -9,7 +9,12 @@ import { FaqBlock } from '@/components/article/FaqBlock'
 import { GuestOnly } from '@/components/GuestOnly'
 
 type Goal = 'cut' | 'maintenance' | 'bulk'
-type ActivityLevel = 'low' | 'moderate' | 'high'
+type ActivityLevel =
+  | 'Sedentary'
+  | 'Lightly active'
+  | 'Moderately active'
+  | 'Very active'
+  | 'Extremely active'
 
 const GOALS: {
   value: Goal
@@ -58,22 +63,36 @@ const ACTIVITY_LEVELS: {
   bonus: number
 }[] = [
   {
-    value: 'low',
-    label: 'Låg aktivitet',
-    description: 'Stillasittande jobb, promenader, lätt träning 0–2 dagar/vecka',
+    value: 'Sedentary',
+    label: 'Stillasittande',
+    description: 'Kontorsjobb eller hemarbete, liten vardagsrörelse, inga träningspass',
     bonus: 0,
   },
   {
-    value: 'moderate',
-    label: 'Måttlig aktivitet',
-    description: 'Styrketräning eller kondition 3–5 dagar/vecka',
+    value: 'Lightly active',
+    label: 'Lätt aktiv',
+    description: 'Lätt träning 1–3 dagar/vecka, t.ex. promenader, yoga eller gym på fritiden',
     bonus: 0.1,
   },
   {
-    value: 'high',
-    label: 'Hög aktivitet',
-    description: 'Hård träning dagligen eller fysiskt krävande yrke',
+    value: 'Moderately active',
+    label: 'Måttligt aktiv',
+    description:
+      'Regelbunden träning 3–5 dagar/vecka med måttlig intensitet, t.ex. löpning eller styrketräning',
     bonus: 0.2,
+  },
+  {
+    value: 'Very active',
+    label: 'Mycket aktiv',
+    description: 'Hård träning nästan varje dag (6–7 dagar/vecka) eller fysiskt aktivt arbete',
+    bonus: 0.3,
+  },
+  {
+    value: 'Extremely active',
+    label: 'Extremt aktiv',
+    description:
+      'Tungt fysiskt arbete kombinerat med daglig intensiv träning, t.ex. elitidrottare eller byggnadsarbetare som dessutom tränar',
+    bonus: 0.4,
   },
 ]
 
@@ -140,7 +159,7 @@ const PAGE_SCHEMA = [
 export default function ProteinbehovKalkylatornPage() {
   const [weight, setWeight] = useState('')
   const [goal, setGoal] = useState<Goal>('maintenance')
-  const [activityLevel, setActivityLevel] = useState<ActivityLevel>('moderate')
+  const [activityLevel, setActivityLevel] = useState<ActivityLevel>('Moderately active')
   const [mealsPerDay, setMealsPerDay] = useState(4)
   const [hasResult, setHasResult] = useState(false)
 
