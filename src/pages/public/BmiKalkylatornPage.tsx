@@ -138,6 +138,10 @@ export default function BmiKalkylatornPage() {
                 CalculEat
               </Link>
               <span>/</span>
+              <Link to="/kalkylatorer" className="hover:text-neutral-700 transition-colors">
+                Kalkylatorer
+              </Link>
+              <span>/</span>
               <span className="text-neutral-700">BMI Kalkylator</span>
             </nav>
 
