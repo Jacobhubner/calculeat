@@ -555,6 +555,56 @@ export default function ProteinbehovKalkylatornPage() {
                 </li>
               </ul>
 
+              {/* Reference table */}
+              <div className="overflow-x-auto rounded-xl border border-neutral-200 mt-6">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="bg-neutral-100 text-left">
+                      <th className="px-4 py-3 font-semibold text-neutral-700 border-b border-neutral-200" />
+                      <th className="px-4 py-3 font-semibold text-neutral-700 border-b border-neutral-200">
+                        Inaktiv
+                      </th>
+                      <th className="px-4 py-3 font-semibold text-neutral-700 border-b border-neutral-200">
+                        Tränar regelbundet
+                      </th>
+                      <th className="px-4 py-3 font-semibold text-neutral-700 border-b border-neutral-200">
+                        Elit
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="border-b border-neutral-100">
+                      <td className="px-4 py-3 font-medium text-neutral-700 bg-neutral-50">
+                        Viktnedgång
+                      </td>
+                      <td className="px-4 py-3 text-neutral-600">1,2–1,6 g/kg</td>
+                      <td className="px-4 py-3 text-neutral-600">1,8–2,4 g/kg</td>
+                      <td className="px-4 py-3 text-neutral-600">2,2–2,6 g/kg</td>
+                    </tr>
+                    <tr className="border-b border-neutral-100">
+                      <td className="px-4 py-3 font-medium text-neutral-700 bg-neutral-50">
+                        Viktstabilisering
+                      </td>
+                      <td className="px-4 py-3 text-neutral-600">0,8–1,2 g/kg</td>
+                      <td className="px-4 py-3 text-neutral-600">1,4–1,8 g/kg</td>
+                      <td className="px-4 py-3 text-neutral-600">1,6–2,0 g/kg</td>
+                    </tr>
+                    <tr>
+                      <td className="px-4 py-3 font-medium text-neutral-700 bg-neutral-50">
+                        Muskeluppbyggnad
+                      </td>
+                      <td className="px-4 py-3 text-neutral-600">1,2–1,6 g/kg</td>
+                      <td className="px-4 py-3 text-neutral-600">1,6–2,2 g/kg</td>
+                      <td className="px-4 py-3 text-neutral-600">1,8–2,4 g/kg</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <p className="text-xs text-neutral-400 mt-2">
+                Intervallen baseras på Phillips &amp; Van Loon (2011), Morton et al. (2018) och ISSN
+                Position Stand (2017). Värden anges per kg total kroppsvikt.
+              </p>
+
               <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900 pt-4">
                 Varför frågar kalkylatorn om träningsstatus och inte aktivitetsnivå?
               </h2>
