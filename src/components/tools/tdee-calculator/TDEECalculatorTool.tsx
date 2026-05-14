@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { Save, User } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -18,11 +18,6 @@ import type { TDEECalculationSnapshot, BMRFormula } from '@/lib/types'
 import BMRFormulaModal from '@/components/calculator/BMRFormulaModal'
 import PALSystemModal from '@/components/calculator/PALSystemModal'
 import PALTableContainer from '@/components/calculator/PALTableContainer'
-import InfoCardWithModal from '@/components/InfoCardWithModal'
-import BMRvsRMRContent from '@/components/info/BMRvsRMRContent'
-import PALvsMETContent from '@/components/info/PALvsMETContent'
-import TDEEContent from '@/components/info/TDEEContent'
-import LBMvsFFMContent from '@/components/info/LBMvsFFMContent'
 import { translatePALSystem } from '@/lib/translations'
 import ComparisonTab from './ComparisonTab'
 import MetabolicCalibration from '@/components/profile/MetabolicCalibration'
@@ -433,31 +428,25 @@ export default function TDEECalculatorTool() {
 
       {activeTab === 'kalkylator' && (
         <>
-          {/* Information Cards */}
-          <div className="grid gap-4 md:grid-cols-2">
-            <InfoCardWithModal
-              title={t('tdeeCalc.infoCards.bmrRmr')}
-              modalTitle={t('tdeeCalc.infoCards.bmrRmrModal')}
-              modalContent={<BMRvsRMRContent />}
-            />
-
-            <InfoCardWithModal
-              title={t('tdeeCalc.infoCards.palMet')}
-              modalTitle={t('tdeeCalc.infoCards.palMetModal')}
-              modalContent={<PALvsMETContent />}
-            />
-
-            <InfoCardWithModal
-              title={t('tdeeCalc.infoCards.tdee')}
-              modalTitle={t('tdeeCalc.infoCards.tdeeModal')}
-              modalContent={<TDEEContent />}
-            />
-
-            <InfoCardWithModal
-              title={t('tdeeCalc.infoCards.lbmFfm')}
-              modalTitle={t('tdeeCalc.infoCards.lbmFfmModal')}
-              modalContent={<LBMvsFFMContent />}
-            />
+          {/* Article links */}
+          <div className="grid gap-3 md:grid-cols-2">
+            {[
+              { to: '/artiklar/bmr-vs-rmr', label: 'Vad är BMR och RMR?' },
+              { to: '/artiklar/vad-ar-pal-och-met', label: 'Vad är PAL och MET?' },
+              { to: '/artiklar/vad-ar-tdee', label: 'Vad är TDEE?' },
+              { to: '/artiklar/lbm-vs-ffm', label: 'Skillnad på LBM och FFM?' },
+            ].map(({ to, label }) => (
+              <Link
+                key={to}
+                to={to}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between gap-2 rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm font-medium text-neutral-700 hover:border-primary-300 hover:text-primary-700 transition-colors"
+              >
+                {label}
+                <span className="text-xs text-primary-600 whitespace-nowrap">Läs mer →</span>
+              </Link>
+            ))}
           </div>
 
           {/* Weight Input - With Choice Between Latest Logged Weight and Manual Entry */}

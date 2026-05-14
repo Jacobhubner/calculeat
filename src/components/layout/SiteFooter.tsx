@@ -27,6 +27,8 @@ export default function SiteFooter() {
         { label: 'Vad är TDEE?', to: '/artiklar/vad-ar-tdee' },
         { label: 'Kaloribrist', to: '/artiklar/kaloribrist' },
         { label: 'BMR vs RMR', to: '/artiklar/bmr-vs-rmr' },
+        { label: 'LBM vs FFM', to: '/artiklar/lbm-vs-ffm' },
+        { label: 'Mäta kroppsfett', to: '/artiklar/hur-mater-man-kroppsfett' },
         { label: 'Alla artiklar', to: '/artiklar' },
       ],
     },

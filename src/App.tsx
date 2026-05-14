@@ -50,6 +50,8 @@ const YazioVsCalculEatPage = lazy(() => import('./pages/public/YazioVsCalculEatP
 const MacroFactorVsCalculEatPage = lazy(() => import('./pages/public/MacroFactorVsCalculEatPage'))
 const KalkylatornHubPage = lazy(() => import('./pages/public/KalkylatornHubPage'))
 const ArtikelnHubPage = lazy(() => import('./pages/public/ArtikelnHubPage'))
+const LbmVsFfmPage = lazy(() => import('./pages/public/LbmVsFfmPage'))
+const HurMatarManKroppsfettPage = lazy(() => import('./pages/public/HurMatarManKroppsfettPage'))
 
 // Lazy load - app pages (loaded on demand)
 const IconDemo = lazy(() => import('./pages/IconDemo'))
@@ -169,6 +171,11 @@ function App() {
                     <Route path="/artiklar/bmi-vs-kroppsfett" element={<BmiVsKroppsfettPage />} />
                     <Route path="/artiklar/vad-ar-ffmi" element={<VadArFfmiPage />} />
                     <Route path="/artiklar/vad-ar-pal-och-met" element={<VadArPalOchMetPage />} />
+                    <Route path="/artiklar/lbm-vs-ffm" element={<LbmVsFfmPage />} />
+                    <Route
+                      path="/artiklar/hur-mater-man-kroppsfett"
+                      element={<HurMatarManKroppsfettPage />}
+                    />
                     <Route
                       path="/jamfor/myfitnesspal-vs-calculeat"
                       element={<MyFitnessPalVsCalculEatPage />}

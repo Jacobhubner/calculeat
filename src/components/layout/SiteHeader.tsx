@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Menu, X, LogOut, User, Settings, Users, ShieldCheck, ChevronDown } from 'lucide-react'
+import { Menu, X, LogOut, User, Settings, Users, ShieldCheck } from 'lucide-react'
 import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '../ui/button'
@@ -24,8 +24,6 @@ export default function SiteHeader() {
   const navigate = useNavigate()
   const [mobileUserMenuOpen, setMobileUserMenuOpen] = useState(false)
   const [socialHubOpen, setSocialHubOpen] = useState(false)
-  const [toolsMenuOpen, setToolsMenuOpen] = useState(false)
-  const toolsMenuRef = useRef<HTMLDivElement>(null)
   const [shareDialogOpen, setShareDialogOpen] = useState(false)
   const [sharePreselectedFriend, setSharePreselectedFriend] = useState<Friend | undefined>(
     undefined
@@ -152,92 +150,6 @@ export default function SiteHeader() {
         <div className="hidden md:flex items-center gap-3">
           {user ? (
             <div className="flex items-center gap-3">
-              {userProfile?.username && (
-                <Link
-                  to="/app/profile"
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary-50 hover:bg-primary-100 transition-colors"
-                  title="Min profil"
-                >
-                  <User className="h-4 w-4 text-primary-600" />
-                  <span className="text-sm font-medium text-primary-700">
-                    @{userProfile.username}
-                  </span>
-                </Link>
-              )}
-
-              {/* Verktyg dropdown */}
-              <div className="relative" ref={toolsMenuRef}>
-                <button
-                  onClick={() => setToolsMenuOpen(prev => !prev)}
-                  className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 transition-colors"
-                >
-                  Verktyg
-                  <ChevronDown
-                    className={`h-3.5 w-3.5 transition-transform ${toolsMenuOpen ? 'rotate-180' : ''}`}
-                  />
-                </button>
-
-                <AnimatePresence>
-                  {toolsMenuOpen && (
-                    <>
-                      <div className="fixed inset-0 z-40" onClick={() => setToolsMenuOpen(false)} />
-                      <motion.div
-                        className="absolute left-0 top-full mt-2 w-56 bg-white rounded-xl shadow-lg border border-neutral-200 z-50 py-2 overflow-hidden"
-                        initial={{ opacity: 0, y: -6, scale: 0.97 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: -6, scale: 0.97 }}
-                        transition={{ duration: 0.12 }}
-                      >
-                        <p className="px-3 pt-1 pb-1.5 text-xs font-semibold text-neutral-400 uppercase tracking-wider">
-                          Kalkylatorer
-                        </p>
-                        <Link
-                          to="/kalkylatorer/tdee-kalkylator"
-                          onClick={() => setToolsMenuOpen(false)}
-                          className="flex items-center px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors"
-                        >
-                          TDEE-kalkylator
-                        </Link>
-                        <Link
-                          to="/kalkylatorer/kaloriunderskott"
-                          onClick={() => setToolsMenuOpen(false)}
-                          className="flex items-center px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors"
-                        >
-                          Kaloriunderskott
-                        </Link>
-                        <Link
-                          to="/kalkylatorer"
-                          onClick={() => setToolsMenuOpen(false)}
-                          className="flex items-center px-3 py-2 text-sm text-primary-600 font-medium hover:bg-neutral-50 transition-colors"
-                        >
-                          Alla kalkylatorer →
-                        </Link>
-
-                        <div className="my-1.5 border-t border-neutral-100" />
-
-                        <p className="px-3 pt-1 pb-1.5 text-xs font-semibold text-neutral-400 uppercase tracking-wider">
-                          Artiklar
-                        </p>
-                        <Link
-                          to="/artiklar/kaloribehov"
-                          onClick={() => setToolsMenuOpen(false)}
-                          className="flex items-center px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors"
-                        >
-                          Kaloribehov
-                        </Link>
-                        <Link
-                          to="/artiklar"
-                          onClick={() => setToolsMenuOpen(false)}
-                          className="flex items-center px-3 py-2 text-sm text-primary-600 font-medium hover:bg-neutral-50 transition-colors"
-                        >
-                          Alla artiklar →
-                        </Link>
-                      </motion.div>
-                    </>
-                  )}
-                </AnimatePresence>
-              </div>
-
               {/* Desktop Social Hub trigger */}
               <div className="relative">
                 <button
@@ -389,11 +301,8 @@ export default function SiteHeader() {
                       </Link>
                     </div>
 
-                    {/* Verktyg */}
+                    {/* Kalkylatorer & Artiklar */}
                     <div className="border-t border-neutral-100 py-1">
-                      <p className="px-4 pt-2 pb-1 text-xs font-semibold text-neutral-400 uppercase tracking-wider">
-                        Verktyg
-                      </p>
                       <Link
                         to="/kalkylatorer"
                         onClick={() => setMobileUserMenuOpen(false)}

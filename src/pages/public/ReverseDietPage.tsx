@@ -76,7 +76,7 @@ export default function ReverseDietPage() {
         relatedCalculators={[
           { href: '/kalkylatorer/tdee-kalkylator', label: 'TDEE Kalkylator' },
           { href: '/kalkylatorer/proteinbehov', label: 'Proteinbehov Kalkylator' },
-          { href: '/kalkylatorer/cut-kalkylator', label: 'Cut Kalkylator' },
+          { href: '/kalkylatorer/cut-kalkylator', label: 'Cut & Deff Kalkylator' },
         ]}
         relatedArticles={[
           { href: '/artiklar/kaloribrist', label: 'Hur stor kaloribrist ska man ha?' },

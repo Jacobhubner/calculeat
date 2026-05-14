@@ -10,9 +10,11 @@ import {
   Activity,
   Flame,
   Calculator,
-  Target,
   X,
   Users,
+  BookOpen,
+  Crosshair,
+  Gauge,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuth } from '@/contexts/AuthContext'
@@ -47,8 +49,6 @@ export default function MobileDrawer() {
     }
   }
 
-  // Secondary pages organized by functional groups
-  // (Primary pages Översikt, Idag, Livsmedel, Historik are in bottom nav)
   const navGroups = {
     planering: {
       title: t('nav.sectionPlanning'),
@@ -63,24 +63,23 @@ export default function MobileDrawer() {
       emoji: '👥',
       items: [{ to: '/app/social', label: t('nav.social'), icon: Users }],
     },
-    profil: {
-      title: t('nav.sectionProfile'),
-      emoji: '👤',
+    minPlan: {
+      title: t('nav.sectionMyPlan'),
+      emoji: '🎯',
       items: [
         { to: '/app/profile', label: t('nav.profile'), icon: User },
+        { to: '/app/tools/tdee-calculator', label: t('nav.calorieNeed'), icon: Gauge },
+        { to: '/app/tools/goal-calculator', label: t('nav.goalSetting'), icon: Crosshair },
         { to: '/app/body-composition', label: t('nav.body'), icon: Activity },
       ],
     },
-    verktyg: {
-      title: t('nav.sectionTools'),
-      emoji: '🧮',
-      items: [
-        { to: '/app/tools/met-calculator', label: t('nav.met'), icon: Flame },
-        { to: '/app/tools/tdee-calculator', label: t('nav.tdee'), icon: Calculator },
-        { to: '/app/tools/goal-calculator', label: t('nav.goalCalc'), icon: Target },
-      ],
-    },
   }
+
+  const discreteLinks = [
+    { to: '/app/tools/met-calculator', label: t('nav.met'), icon: Flame },
+    { to: '/kalkylatorer', label: t('nav.freeTools'), icon: Calculator },
+    { to: '/artiklar', label: t('nav.articlesHub'), icon: BookOpen },
+  ]
 
   const getInitials = () => {
     if (userProfile?.username) return userProfile.username.substring(0, 2).toUpperCase()
@@ -178,6 +177,21 @@ export default function MobileDrawer() {
                   </div>
                 </div>
               ))}
+
+              {/* Diskreta resurslänkar */}
+              <div className="mt-6 pt-4 border-t border-neutral-100 space-y-0.5">
+                {discreteLinks.map(({ to, label, icon: Icon }) => (
+                  <Link
+                    key={to}
+                    to={to}
+                    onClick={close}
+                    className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-neutral-400 hover:text-neutral-600 active:bg-neutral-50 transition-colors"
+                  >
+                    <Icon className="h-4 w-4 shrink-0" />
+                    <span>{label}</span>
+                  </Link>
+                ))}
+              </div>
             </nav>
 
             <Separator />

@@ -5,6 +5,7 @@ import SiteFooter from '@/components/layout/SiteFooter'
 import { Seo } from '@/components/seo/Seo'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { FaqBlock } from '@/components/article/FaqBlock'
+import { GuestOnly } from '@/components/GuestOnly'
 
 const CANONICAL = 'https://calculeat.se/jamfor/myfitnesspal-vs-calculeat'
 
@@ -189,18 +190,20 @@ export default function MyFitnessPalVsCalculEatPage() {
             </ul>
             <div className="mt-4 flex flex-col sm:flex-row gap-2">
               <Link
-                to="/kalkylatorer/tdee-kalkylator"
+                to="/kalkylatorer"
                 className="inline-flex items-center justify-center gap-2 bg-primary-600 text-white font-semibold px-4 py-2.5 rounded-lg hover:bg-primary-700 transition-colors text-sm"
               >
                 Räkna ut ditt TDEE gratis
                 <ArrowRight className="h-4 w-4" />
               </Link>
-              <Link
-                to="/register"
-                className="inline-flex items-center justify-center gap-2 border border-primary-300 text-primary-700 font-medium px-4 py-2.5 rounded-lg hover:bg-primary-100 transition-colors text-sm"
-              >
-                Skapa konto
-              </Link>
+              <GuestOnly>
+                <Link
+                  to="/register"
+                  className="inline-flex items-center justify-center gap-2 border border-primary-300 text-primary-700 font-medium px-4 py-2.5 rounded-lg hover:bg-primary-100 transition-colors text-sm"
+                >
+                  Skapa konto
+                </Link>
+              </GuestOnly>
             </div>
           </div>
 
@@ -397,7 +400,7 @@ export default function MyFitnessPalVsCalculEatPage() {
               </p>
             </div>
             <Link
-              to="/kalkylatorer/tdee-kalkylator"
+              to="/kalkylatorer"
               className="shrink-0 inline-flex items-center gap-2 bg-primary-600 text-white font-semibold px-4 py-2.5 rounded-lg hover:bg-primary-700 transition-colors text-sm"
             >
               Testa gratis →
@@ -407,30 +410,32 @@ export default function MyFitnessPalVsCalculEatPage() {
           <FaqBlock items={FAQ_ITEMS} />
 
           {/* CTA */}
-          <section className="mt-10 rounded-2xl bg-primary-600 p-8 text-center">
-            <h2 className="text-xl font-bold text-white mb-2">
-              Prova ett mer precist alternativ — gratis
-            </h2>
-            <p className="text-primary-200 text-sm mb-6 max-w-md mx-auto">
-              Räkna ut ditt faktiska TDEE, välj din fas och låt CalculEat sätta rätt kalorimål
-              direkt. Inget kreditkort, inga dolda kostnader.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Link
-                to="/register"
-                className="inline-flex items-center justify-center gap-2 bg-white text-primary-700 font-semibold px-6 py-3 rounded-xl hover:bg-primary-50 transition-colors text-sm"
-              >
-                Skapa gratis konto
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link
-                to="/kalkylatorer/tdee-kalkylator"
-                className="inline-flex items-center justify-center gap-2 border border-primary-400 text-white font-medium px-6 py-3 rounded-xl hover:bg-primary-700 transition-colors text-sm"
-              >
-                Räkna ut ditt TDEE först
-              </Link>
-            </div>
-          </section>
+          <GuestOnly>
+            <section className="mt-10 rounded-2xl bg-primary-600 p-8 text-center">
+              <h2 className="text-xl font-bold text-white mb-2">
+                Prova ett mer precist alternativ — gratis
+              </h2>
+              <p className="text-primary-200 text-sm mb-6 max-w-md mx-auto">
+                Räkna ut ditt faktiska TDEE, välj din fas och låt CalculEat sätta rätt kalorimål
+                direkt. Inget kreditkort, inga dolda kostnader.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Link
+                  to="/register"
+                  className="inline-flex items-center justify-center gap-2 bg-white text-primary-700 font-semibold px-6 py-3 rounded-xl hover:bg-primary-50 transition-colors text-sm"
+                >
+                  Skapa gratis konto
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+                <Link
+                  to="/kalkylatorer"
+                  className="inline-flex items-center justify-center gap-2 border border-primary-400 text-white font-medium px-6 py-3 rounded-xl hover:bg-primary-700 transition-colors text-sm"
+                >
+                  Räkna ut ditt TDEE först
+                </Link>
+              </div>
+            </section>
+          </GuestOnly>
 
           {/* Related */}
           <section className="mt-10 pt-8 border-t border-neutral-200 grid sm:grid-cols-2 gap-6">
@@ -442,7 +447,7 @@ export default function MyFitnessPalVsCalculEatPage() {
                 {[
                   { href: '/kalkylatorer/tdee-kalkylator', label: 'TDEE Kalkylator' },
                   { href: '/kalkylatorer/proteinbehov', label: 'Proteinbehov Kalkylator' },
-                  { href: '/kalkylatorer/cut-kalkylator', label: 'Cut Kalkylator' },
+                  { href: '/kalkylatorer/cut-kalkylator', label: 'Cut & Deff Kalkylator' },
                   { href: '/kalkylatorer/bulk-kalkylator', label: 'Bulk Kalkylator' },
                 ].map(l => (
                   <li key={l.href}>

@@ -109,6 +109,11 @@ export default function VadArTdeePage() {
         <div className="bg-neutral-100 border border-neutral-200 rounded-lg px-4 py-3 my-4">
           <p className="text-sm font-mono text-neutral-800">TDEE = BMR + NEAT + EAT + TEF</p>
         </div>
+        <img
+          src="/TDEE.png"
+          alt="TDEE-komponenter illustration"
+          className="w-full max-w-md rounded-lg my-4"
+        />
 
         <h3 className="text-base font-semibold text-neutral-900 mt-6 mb-2">
           BMR — Basalmetabolism (ca 60–75% av TDEE)
@@ -118,6 +123,11 @@ export default function VadArTdeePage() {
           fysiologiska funktioner i absolut vila — andning, blodcirkulation, temperaturreglering och
           cellulära processer. Den viktigaste determinanten för BMR är fettfri massa, som uppskattas
           förklara omkring 80% av variationen.
+        </p>
+        <p className="mt-3">
+          Hos personer med låg fysisk aktivitet utgör BMR vanligtvis cirka 60% av total
+          energiförbrukning, och ännu mer hos individer med mycket låg rörelseaktivitet såsom
+          sederade och mekaniskt ventilerade patienter på intensivvårdsavdelningar.
         </p>
         <p className="mt-3">
           BMR mäts under strikt kontrollerade laboratorieförhållanden: efter sömn, i fastande
@@ -161,14 +171,6 @@ export default function VadArTdeePage() {
           förvånansvärt liten andel av TDEE — under 5% hos stillasittande individer. Vid hög
           träningsvolym kan EAT öka till 15–30% eller mer hos elitidrottare (Westerterp, 2013).
         </p>
-        <p className="mt-3">
-          EAT uppskattas via MET-värden (Metabolic Equivalent of Task) från Compendium of Physical
-          Activities. Viktigt: MET-värden inkluderar viloförbrukning. Eftersom BMR redan ingår i
-          TDEE-formeln räknas enbart den <em>extra</em> energin över vila — det vill säga (MET − 1),
-          inte hela MET-värdet. Att använda hela MET-värdet skulle innebära att viloförbrukningen
-          räknas dubbelt.
-        </p>
-
         <h3 className="text-base font-semibold text-neutral-900 mt-6 mb-2">
           TEF — Thermic Effect of Food (8–15%)
         </h3>
@@ -208,9 +210,12 @@ export default function VadArTdeePage() {
           Exempel: BMR 1 800 kcal × PAL 1,55 (måttligt aktiv) = <strong>2 790 kcal TDEE</strong>.
         </p>
         <p className="mt-3">
-          CalculEat använder Mifflin-St Jeor + fem PAL-nivåer (1,2–1,9). Ett mer detaljerat
-          alternativ är att modellera varje komponent separat: BMR + NEAT (steg, stående, hushåll) +
-          EAT + TEF — det ger en mer individualiserad uppskattning men kräver mer indata.
+          CalculEat TDEE-kalkylatorn använder Mifflin-St Jeor och fem PAL-nivåer (1,2–1,9) som
+          utgångspunkt. Med ett personligt konto låses fler formler upp — däribland Harris-Benedict
+          och Cunningham — samt ett avancerat läge där varje komponent modelleras separat: BMR
+          kombineras med NEAT (steg, stående, hushållsarbete), EAT (planerad träning via MET-värden)
+          och TEF. Det ger en mer individualiserad uppskattning och passar dig som vill förstå exakt
+          vad som driver ditt kaloribehov.
         </p>
 
         <h2 className="text-xl font-semibold text-neutral-900 mt-8 mb-3">

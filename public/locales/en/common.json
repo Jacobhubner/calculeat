@@ -72,7 +72,21 @@
     "sectionPlanning": "PLANNING",
     "sectionSocial": "SOCIAL",
     "sectionProfile": "PROFILE",
-    "sectionTools": "TOOLS"
+    "sectionMyPlan": "MY PLAN",
+    "calorieNeed": "Calorie needs",
+    "goalSetting": "Goals",
+    "freeTools": "Free tools & guides",
+    "calcTdee": "TDEE Calculator",
+    "calcKaloribrist": "Calorie Deficit Calculator",
+    "calcBulk": "Bulk Calculator",
+    "calcCutDeff": "Cut & Deff Calculator",
+    "calcProtein": "Protein Calculator",
+    "calcBmi": "BMI Calculator",
+    "calcBmr": "BMR Calculator",
+    "calcFfmi": "FFMI Calculator",
+    "calcKroppsfett": "Body Fat Calculator",
+    "calcIdealvikt": "Ideal Weight Calculator",
+    "articlesHub": "All articles"
   },
   "auth": {
     "loggedOut": "You have been logged out",

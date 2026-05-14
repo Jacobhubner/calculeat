@@ -72,7 +72,7 @@ export default function BulkOchCutPage() {
         sources={SOURCES}
         relatedCalculators={[
           { href: '/kalkylatorer/bulk-kalkylator', label: 'Bulk Kalkylator' },
-          { href: '/kalkylatorer/cut-kalkylator', label: 'Cut Kalkylator' },
+          { href: '/kalkylatorer/cut-kalkylator', label: 'Cut & Deff Kalkylator' },
           { href: '/kalkylatorer/tdee-kalkylator', label: 'TDEE Kalkylator' },
         ]}
         relatedArticles={[

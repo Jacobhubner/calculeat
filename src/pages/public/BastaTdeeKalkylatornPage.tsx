@@ -5,6 +5,7 @@ import SiteFooter from '@/components/layout/SiteFooter'
 import { Seo } from '@/components/seo/Seo'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { FaqBlock } from '@/components/article/FaqBlock'
+import { GuestOnly } from '@/components/GuestOnly'
 
 const CANONICAL = 'https://calculeat.se/basta-tdee-kalkylatorn'
 
@@ -269,7 +270,7 @@ export default function BastaTdeeKalkylatornPage() {
               </div>
             </div>
             <Link
-              to="/kalkylatorer/tdee-kalkylator"
+              to="/kalkylatorer"
               className="inline-flex items-center justify-center gap-2 bg-primary-600 text-white font-semibold px-5 py-3 rounded-xl hover:bg-primary-700 transition-colors text-sm whitespace-nowrap"
             >
               Öppna TDEE Kalkylatorn
@@ -474,28 +475,30 @@ export default function BastaTdeeKalkylatornPage() {
           <FaqBlock items={FAQ_ITEMS} />
 
           {/* CTA */}
-          <section className="mt-10 rounded-2xl bg-primary-600 p-8 text-center">
-            <h2 className="text-xl font-bold text-white mb-2">Räkna ut ditt TDEE gratis</h2>
-            <p className="text-primary-200 text-sm mb-6 max-w-md mx-auto">
-              Fyll i dina uppgifter och få ditt kaloribehov direkt — ingen registrering krävs för
-              att använda kalkylatorn. Spara ditt resultat och börja logga mot rätt mål.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Link
-                to="/kalkylatorer/tdee-kalkylator"
-                className="inline-flex items-center justify-center gap-2 bg-white text-primary-700 font-semibold px-6 py-3 rounded-xl hover:bg-primary-50 transition-colors text-sm"
-              >
-                Öppna TDEE Kalkylatorn
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link
-                to="/register"
-                className="inline-flex items-center justify-center gap-2 border border-primary-400 text-white font-medium px-6 py-3 rounded-xl hover:bg-primary-700 transition-colors text-sm"
-              >
-                Skapa gratis konto
-              </Link>
-            </div>
-          </section>
+          <GuestOnly>
+            <section className="mt-10 rounded-2xl bg-primary-600 p-8 text-center">
+              <h2 className="text-xl font-bold text-white mb-2">Räkna ut ditt TDEE gratis</h2>
+              <p className="text-primary-200 text-sm mb-6 max-w-md mx-auto">
+                Fyll i dina uppgifter och få ditt kaloribehov direkt — ingen registrering krävs för
+                att använda kalkylatorn. Spara ditt resultat och börja logga mot rätt mål.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Link
+                  to="/kalkylatorer"
+                  className="inline-flex items-center justify-center gap-2 bg-white text-primary-700 font-semibold px-6 py-3 rounded-xl hover:bg-primary-50 transition-colors text-sm"
+                >
+                  Öppna TDEE Kalkylatorn
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+                <Link
+                  to="/register"
+                  className="inline-flex items-center justify-center gap-2 border border-primary-400 text-white font-medium px-6 py-3 rounded-xl hover:bg-primary-700 transition-colors text-sm"
+                >
+                  Skapa gratis konto
+                </Link>
+              </div>
+            </section>
+          </GuestOnly>
 
           {/* Related */}
           <section className="mt-10 pt-8 border-t border-neutral-200 grid sm:grid-cols-2 gap-6">
@@ -509,7 +512,7 @@ export default function BastaTdeeKalkylatornPage() {
                   { href: '/kalkylatorer/kaloriunderskott', label: 'Kaloribrist Kalkylator' },
                   { href: '/kalkylatorer/proteinbehov', label: 'Proteinbehov Kalkylator' },
                   { href: '/kalkylatorer/bulk-kalkylator', label: 'Bulk Kalkylator' },
-                  { href: '/kalkylatorer/cut-kalkylator', label: 'Cut Kalkylator' },
+                  { href: '/kalkylatorer/cut-kalkylator', label: 'Cut & Deff Kalkylator' },
                 ].map(l => (
                   <li key={l.href}>
                     <Link

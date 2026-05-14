@@ -89,6 +89,36 @@ export default function BmrVsRmrPage() {
         ]}
       >
         <BMRvsRMRContent />
+
+        <h2 className="text-xl font-semibold text-neutral-900 mt-8 mb-3">
+          Varför är skillnaden 5–10%?
+        </h2>
+        <p>
+          BMR mäts under extremt kontrollerade villkor: efter minst 8 timmars sömn, 12 timmars fasta
+          och i termoneutral miljö (~22°C). Under dessa förhållanden är kroppen bokstavligen på sin
+          lägsta möjliga energinivå.
+        </p>
+        <p className="mt-3">
+          RMR mäts i realistisk vila — du är avslappnad och stilla, men inte nödvändigtvis fastande
+          eller precis uppvaknad. Kroppen håller fortfarande viss muskelspänning, bearbetar kanske
+          en måltid och anpassar sig till rumstemperaturen. Det ger en marginellt högre
+          energiförbrukning — typiskt 5–10% över BMR.
+        </p>
+
+        <h2 className="text-xl font-semibold text-neutral-900 mt-8 mb-3">
+          Spelar skillnaden roll i praktiken?
+        </h2>
+        <p>
+          Sällan. Alla prediktiva formler har en felmarginal på ±10–15% på individnivå — det är
+          redan större än skillnaden mellan BMR och RMR. Distinktionen är relevant i klinisk
+          forskning och vid indirekt kalorimetri, men för vardaglig kaloriplanering är det
+          ointressant vilket begrepp en formel tekniskt sett beräknar.
+        </p>
+        <p className="mt-3">
+          Det som faktiskt spelar roll: välj en formel, multiplicera med rätt PAL-faktor för att få
+          ditt TDEE, och följ din vikttrend under 2–3 veckor. Verklig viktförändring är alltid mer
+          tillförlitlig än formelbaserade estimat.
+        </p>
       </ArticleLayout>
     </>
   )

@@ -8,6 +8,7 @@ import { JsonLd } from '@/components/seo/JsonLd'
 import { FaqBlock } from '@/components/article/FaqBlock'
 import { mifflinStJeor } from '@/lib/calculations/bmr'
 import type { Gender } from '@/lib/types'
+import { GuestOnly } from '@/components/GuestOnly'
 
 type ActivityLevel =
   | 'Sedentary'
@@ -208,10 +209,7 @@ export default function BulkKalkylatornPage() {
                 CalculEat
               </Link>
               <span>/</span>
-              <Link
-                to="/kalkylatorer/tdee-kalkylator"
-                className="hover:text-neutral-700 transition-colors"
-              >
+              <Link to="/kalkylatorer" className="hover:text-neutral-700 transition-colors">
                 Kalkylatorer
               </Link>
               <span>/</span>
@@ -454,37 +452,47 @@ export default function BulkKalkylatornPage() {
                       to="/kalkylatorer/cut-kalkylator"
                       className="flex-shrink-0 inline-flex items-center gap-1.5 text-xs font-medium text-primary-600 hover:underline"
                     >
-                      Cut Kalkylator
+                      Cut & Deff Kalkylator
                       <ArrowRight className="h-3.5 w-3.5" />
                     </Link>
                   </div>
 
-                  {/* Gated CTA */}
-                  <div className="rounded-xl bg-white border border-primary-200 p-4">
-                    <p className="text-sm font-medium text-neutral-800 mb-1">
-                      Spara din bulk-plan och logga mat
-                    </p>
-                    <p className="text-xs text-neutral-500 mb-3">
-                      Skapa ett gratis konto för att spara ditt kaloriintag, följa din progress och
-                      planera makron.
-                    </p>
-                    <Link
-                      to="/register"
-                      className="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
-                    >
-                      Spara din plan gratis
-                      <ArrowRight className="h-4 w-4" />
-                    </Link>
-                    <div className="mt-3 pt-3 border-t border-neutral-100 text-xs text-neutral-500 space-y-0.5">
-                      <p className="font-medium text-neutral-700 mb-1">Vad ingår:</p>
-                      <p>✓ Beräkna bulk-kalorier — alltid gratis</p>
-                      <p>✓ Spara plan och logga mat — med konto</p>
-                      <p>✓ Följ makron och vikt — med konto</p>
-                      <p className="text-neutral-400 mt-1.5 italic">
-                        Fler funktioner i premiumversionen framöver.
+                  <p className="text-xs text-neutral-400 text-center mb-4">
+                    {selectedMode.value === 'lean'
+                      ? `+${selectedMode.surplus} kcal är ett försiktigt riktvärde — men hur stort överskott det faktiskt innebär beror på din storlek. För en liten person kan det ändå ge märkbar viktuppgång. Med ett konto anpassas målet till ditt faktiska kaloribehov.`
+                      : selectedMode.value === 'standard'
+                        ? `+${selectedMode.surplus} kcal är ett rimligt riktvärde för de flesta. Men hur stort överskott det faktiskt innebär beror på din storlek — för en liten person kan det ge snabbare viktuppgång än önskat, för en stor person knappt märkbart. Med ett konto anpassas målet till ditt faktiska kaloribehov.`
+                        : `+${selectedMode.surplus} kcal är ett aggressivt riktvärde. För en liten person kan det innebära ett mycket stort överskott med ökad risk för fettupplagrande. Med ett konto anpassas målet till ditt faktiska kaloribehov.`}
+                  </p>
+
+                  <GuestOnly>
+                    {/* Gated CTA */}
+                    <div className="rounded-xl bg-white border border-primary-200 p-4">
+                      <p className="text-sm font-medium text-neutral-800 mb-1">
+                        Spara din bulk-plan och logga mat
                       </p>
+                      <p className="text-xs text-neutral-500 mb-3">
+                        Skapa ett gratis konto för att spara ditt kaloriintag, följa din progress
+                        och planera makron.
+                      </p>
+                      <Link
+                        to="/register"
+                        className="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+                      >
+                        Spara din plan gratis
+                        <ArrowRight className="h-4 w-4" />
+                      </Link>
+                      <div className="mt-3 pt-3 border-t border-neutral-100 text-xs text-neutral-500 space-y-0.5">
+                        <p className="font-medium text-neutral-700 mb-1">Vad ingår:</p>
+                        <p>✓ Beräkna bulk-kalorier — alltid gratis</p>
+                        <p>✓ Spara plan och logga mat — med konto</p>
+                        <p>✓ Följ makron och vikt — med konto</p>
+                        <p className="text-neutral-400 mt-1.5 italic">
+                          Fler funktioner i premiumversionen framöver.
+                        </p>
+                      </div>
                     </div>
-                  </div>
+                  </GuestOnly>
                 </div>
               )}
             </div>
@@ -559,31 +567,33 @@ export default function BulkKalkylatornPage() {
         </section>
 
         {/* Bottom CTA */}
-        <section className="bg-neutral-900 py-16 md:py-20">
-          <div className="container mx-auto px-4 max-w-2xl text-center">
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
-              Redo att bygga muskler smart?
-            </h2>
-            <p className="text-neutral-400 text-base mb-8 max-w-md mx-auto">
-              Du har kaloriöverskottet. Logga mat mot ditt mål och följ din viktuppgång vecka för
-              vecka.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Link
-                to="/register"
-                className="inline-flex items-center justify-center gap-2 bg-accent-500 hover:bg-accent-600 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm"
-              >
-                Skapa gratis konto <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link
-                to="/kalkylatorer/cut-kalkylator"
-                className="inline-flex items-center justify-center gap-2 border border-neutral-600 text-neutral-300 hover:bg-neutral-800 font-medium px-6 py-3 rounded-xl transition-colors text-sm"
-              >
-                Planera din cut-fas
-              </Link>
+        <GuestOnly>
+          <section className="bg-neutral-900 py-16 md:py-20">
+            <div className="container mx-auto px-4 max-w-2xl text-center">
+              <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
+                Redo att bygga muskler smart?
+              </h2>
+              <p className="text-neutral-400 text-base mb-8 max-w-md mx-auto">
+                Du har kaloriöverskottet. Logga mat mot ditt mål och följ din viktuppgång vecka för
+                vecka.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Link
+                  to="/register"
+                  className="inline-flex items-center justify-center gap-2 bg-accent-500 hover:bg-accent-600 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm"
+                >
+                  Skapa gratis konto <ArrowRight className="h-4 w-4" />
+                </Link>
+                <Link
+                  to="/kalkylatorer/cut-kalkylator"
+                  className="inline-flex items-center justify-center gap-2 border border-neutral-600 text-neutral-300 hover:bg-neutral-800 font-medium px-6 py-3 rounded-xl transition-colors text-sm"
+                >
+                  Planera din cut-fas
+                </Link>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </GuestOnly>
 
         {/* Related links section */}
         <section className="bg-white py-14">
@@ -595,7 +605,7 @@ export default function BulkKalkylatornPage() {
                 </h3>
                 <div className="grid gap-3">
                   {[
-                    { href: '/kalkylatorer/cut-kalkylator', label: 'Cut Kalkylator' },
+                    { href: '/kalkylatorer/cut-kalkylator', label: 'Cut & Deff Kalkylator' },
                     { href: '/kalkylatorer/proteinbehov', label: 'Proteinbehov Kalkylator' },
                     { href: '/kalkylatorer/tdee-kalkylator', label: 'TDEE Kalkylator' },
                     { href: '/kalkylatorer/kaloriunderskott', label: 'Kaloribrist Kalkylator' },

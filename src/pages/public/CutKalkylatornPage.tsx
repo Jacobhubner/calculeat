@@ -8,6 +8,7 @@ import { JsonLd } from '@/components/seo/JsonLd'
 import { FaqBlock } from '@/components/article/FaqBlock'
 import { mifflinStJeor } from '@/lib/calculations/bmr'
 import type { Gender } from '@/lib/types'
+import { GuestOnly } from '@/components/GuestOnly'
 
 type ActivityLevel =
   | 'Sedentary'
@@ -99,27 +100,27 @@ const CUT_MODES: {
 
 const FAQ_ITEMS = [
   {
-    question: 'Hur många kalorier ska man äta på cut?',
+    question: 'Vad är skillnaden på cut och deff?',
     answer:
-      'Du ska äta under ditt TDEE (underhållsbehov). Hur mycket beror på tempo: mild cut = −200–300 kcal/dag, standard cut = −300–500 kcal/dag, aggressiv cut = −500–800 kcal/dag. Tumregel: tappa inte mer än 0,5–1% av kroppsvikten per vecka för att minimera muskelmassaförlust.',
+      'Ingenting — det är två ord för samma sak. "Deff" är gymslang (troligtvis från engelskans "definition") och används framför allt i svenska träningskretsar. "Cut" är den internationellt vanligare termen. Båda syftar på en fas där du äter under ditt underhållsbehov för att minska fettprocenten med bibehållen muskelmassa.',
   },
   {
-    question: 'Hur snabbt ska man gå ner i vikt på cut?',
+    question: 'Hur många kalorier ska man äta på cut/deff?',
     answer:
-      'Det rekommenderade tempot är 0,5–1% av kroppsvikten per vecka. För en person på 80 kg innebär det ca 0,4–0,8 kg/vecka. Snabbare än så innebär ökad risk för muskelmassaförlust och hormonstörningar. Går du upp i vikt trots kaloribrist — mäts det oftast fel eller du underskattar intaget.',
+      'Du ska äta under ditt TDEE (underhållsbehov). Hur mycket beror på tempo: mild = −250 kcal/dag, standard = −400 kcal/dag, aggressiv = −700 kcal/dag. Tumregel: tappa inte mer än 0,5–1% av kroppsvikten per vecka för att minimera muskelmassaförlust.',
   },
   {
-    question: 'Hur mycket protein behövs under cut?',
+    question: 'Hur mycket protein behövs under deff?',
     answer:
-      'Under cut rekommenderas 1,8–2,4 g protein per kg kroppsvikt — högre än under bulk. Anledningen: i kaloribrist ökar risken för muskelkatabolism. Högt proteinintag ger mättnadseffekt, hög TEF (ca 25–30% av proteinkalorierna går till matsmältning) och skyddar muskelmassa.',
+      'Under cut/deff rekommenderas 1,8–2,4 g protein per kg kroppsvikt — högre än under bulk. Anledningen: i kaloribrist ökar risken för muskelkatabolism. Högt proteinintag ger mättnadseffekt, hög TEF (ca 25–30% av proteinkalorierna går till matsmältning) och skyddar muskelmassa.',
   },
   {
-    question: 'Hur undviker man muskelförlust under cut?',
+    question: 'Hur undviker man muskelförlust under deff?',
     answer:
       'Tre saker avgör: 1) Tillräckligt proteinintag (1,8–2,4 g/kg). 2) Fortsätta styrketräna med progressiv belastning — signalen till kroppen att muskelmassa behövs. 3) Inte för aggressivt kaloriunderskott. Kombinerar du dessa tre kan du förlora nästan enbart fett.',
   },
   {
-    question: 'Vad är en mini cut och när passar den?',
+    question: 'Vad är en mini cut/deff och när passar den?',
     answer:
       'En mini cut är en kort, intensiv cut-fas (4–8 veckor) med ett något aggressivare underskott (−500–700 kcal/dag). Den passar när du just avslutat en bulk och vill snabbt reducera fettprocenten innan nästa bulk-fas — utan att gå igenom en full, lång cut-cykel.',
   },
@@ -131,12 +132,12 @@ const PAGE_SCHEMA = [
   {
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
-    name: 'Cut Kalkylator',
+    name: 'Cut & Deff Kalkylator',
     url: CANONICAL,
     applicationCategory: 'HealthApplication',
     operatingSystem: 'Web',
     description:
-      'Gratis cut-kalkylator. Räkna ut hur många kalorier du ska äta för att bränna fett och bevara muskelmassa. Baserat på ditt TDEE och önskat tempo.',
+      'Gratis cut- och deff-kalkylator för dig som tränar. Räkna ut hur många kalorier du ska äta för att bränna fett utan att tappa muskelmassa. Baserat på ditt TDEE och önskat tempo.',
     offers: { '@type': 'Offer', price: '0', priceCurrency: 'SEK' },
   },
   {
@@ -150,7 +151,7 @@ const PAGE_SCHEMA = [
         name: 'Kalkylatorer',
         item: 'https://calculeat.se/kalkylatorer',
       },
-      { '@type': 'ListItem', position: 3, name: 'Cut Kalkylator', item: CANONICAL },
+      { '@type': 'ListItem', position: 3, name: 'Cut & Deff Kalkylator', item: CANONICAL },
     ],
   },
 ]
@@ -191,8 +192,8 @@ export default function CutKalkylatornPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <Seo
-        title="Cut Kalkylator — Räkna ut kalorier för smart cut (2026)"
-        description="Gratis cut-kalkylator. Räkna ut hur många kalorier du ska äta för att bränna fett och bevara muskelmassa. Baserat på ditt TDEE. Resultat direkt."
+        title="Cut & Deff Kalkylator — Räkna ut kalorier för din deff (2026)"
+        description="Gratis cut- och deff-kalkylator för dig som tränar. Räkna ut hur många kalorier du ska äta för att bränna fett utan att tappa muskelmassa. Baserat på ditt TDEE."
         canonical={CANONICAL}
       />
       <JsonLd schema={PAGE_SCHEMA} />
@@ -210,26 +211,23 @@ export default function CutKalkylatornPage() {
                 CalculEat
               </Link>
               <span>/</span>
-              <Link
-                to="/kalkylatorer/tdee-kalkylator"
-                className="hover:text-neutral-700 transition-colors"
-              >
+              <Link to="/kalkylatorer" className="hover:text-neutral-700 transition-colors">
                 Kalkylatorer
               </Link>
               <span>/</span>
-              <span className="text-neutral-700">Cut Kalkylator</span>
+              <span className="text-neutral-700">Cut & Deff Kalkylator</span>
             </nav>
 
             <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-5 leading-tight">
               <span className="bg-gradient-to-r from-primary-600 to-accent-500 bg-clip-text text-transparent">
-                Cut
+                Cut & Deff
               </span>{' '}
               Kalkylator
             </h1>
             <p className="text-lg md:text-xl text-neutral-600 leading-relaxed max-w-2xl">
-              En smart cut handlar inte om att äta så lite som möjligt — det handlar om att välja
-              rätt underskott för att bränna fett utan att förlora muskelmassa. Räkna ut ditt
-              optimala kaloriintag baserat på ditt TDEE och önskat tempo.
+              Oavsett om du kallar det cut eller deff — målet är detsamma: bränna fett utan att
+              tappa muskelmassa. Räkna ut ditt optimala kaloriintag baserat på ditt TDEE, välj tempo
+              och få ett proteinmål anpassat för att skydda musklerna under fasen.
             </p>
           </div>
         </section>
@@ -240,7 +238,9 @@ export default function CutKalkylatornPage() {
             <div className="rounded-2xl border border-neutral-200 shadow-sm overflow-hidden">
               <div className="bg-primary-50 px-6 py-4 border-b border-primary-100 flex items-center gap-2">
                 <Calculator className="h-5 w-5 text-primary-600" />
-                <span className="font-semibold text-primary-900">Beräkna dina cut-kalorier</span>
+                <span className="font-semibold text-primary-900">
+                  Beräkna dina cut/deff-kalorier
+                </span>
               </div>
 
               <div className="p-6 space-y-5">
@@ -344,7 +344,7 @@ export default function CutKalkylatornPage() {
                 {/* Cut Mode */}
                 <div>
                   <label className="block text-sm font-medium text-neutral-700 mb-2">
-                    Cut-strategi
+                    Cut/deff-strategi
                   </label>
                   <div className="space-y-2">
                     {CUT_MODES.map(
@@ -383,7 +383,7 @@ export default function CutKalkylatornPage() {
                   disabled={!bmr || !tdee}
                   className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-neutral-200 disabled:text-neutral-400 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm"
                 >
-                  Beräkna mina cut-kalorier
+                  Beräkna mina cut/deff-kalorier
                 </button>
               </div>
 
@@ -400,7 +400,7 @@ export default function CutKalkylatornPage() {
                     </div>
                     <div className="rounded-xl bg-primary-600 p-4 text-center">
                       <div className="text-2xl font-bold text-white">{targetCalories}</div>
-                      <div className="text-xs text-primary-200 mt-0.5">Cut-mål (kcal/dag)</div>
+                      <div className="text-xs text-primary-200 mt-0.5">Cut/deff-mål (kcal/dag)</div>
                       <div className="text-xs text-primary-300">
                         −{selectedMode.deficit} kcal/dag
                       </div>
@@ -411,7 +411,9 @@ export default function CutKalkylatornPage() {
                   <div className="rounded-xl bg-white border border-neutral-200 p-4">
                     <div className="flex items-center gap-2 mb-3">
                       <TrendingDown className="h-4 w-4 text-primary-600" />
-                      <span className="text-sm font-medium text-neutral-800">Din cut-plan</span>
+                      <span className="text-sm font-medium text-neutral-800">
+                        Din cut/deff-plan
+                      </span>
                     </div>
                     <div className="space-y-2 text-sm text-neutral-700">
                       <div className="flex justify-between">
@@ -477,32 +479,42 @@ export default function CutKalkylatornPage() {
                     </Link>
                   </div>
 
-                  {/* Gated CTA */}
-                  <div className="rounded-xl bg-white border border-primary-200 p-4">
-                    <p className="text-sm font-medium text-neutral-800 mb-1">
-                      Spara din cut-plan och logga mat
-                    </p>
-                    <p className="text-xs text-neutral-500 mb-3">
-                      Skapa ett gratis konto för att spara ditt kaloriintag, följa din progress och
-                      hålla koll på proteinet.
-                    </p>
-                    <Link
-                      to="/register"
-                      className="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
-                    >
-                      Spara din plan gratis
-                      <ArrowRight className="h-4 w-4" />
-                    </Link>
-                    <div className="mt-3 pt-3 border-t border-neutral-100 text-xs text-neutral-500 space-y-0.5">
-                      <p className="font-medium text-neutral-700 mb-1">Vad ingår:</p>
-                      <p>✓ Beräkna cut-kalorier — alltid gratis</p>
-                      <p>✓ Spara plan och logga mat — med konto</p>
-                      <p>✓ Följ protein och vikt under cut — med konto</p>
-                      <p className="text-neutral-400 mt-1.5 italic">
-                        Fler funktioner i premiumversionen framöver.
+                  <p className="text-xs text-neutral-400 text-center mb-4">
+                    {selectedMode.value === 'mild'
+                      ? `−${selectedMode.deficit} kcal är ett försiktigt riktvärde — men hur stort underskott det faktiskt innebär beror på din storlek. För en liten person kan det ändå märkas tydligt. Med ett konto anpassas målet till ditt faktiska kaloribehov.`
+                      : selectedMode.value === 'moderate'
+                        ? `−${selectedMode.deficit} kcal är ett rimligt riktvärde för de flesta. Men hur stort underskott det faktiskt innebär beror på din storlek — för en liten person kan det vara ganska aggressivt, för en stor person knappt märkbart. Med ett konto anpassas målet till ditt faktiska kaloribehov.`
+                        : `−${selectedMode.deficit} kcal är ett aggressivt riktvärde. För en liten person kan det innebära ett mycket stort underskott med ökad risk för muskelmassaförlust. Med ett konto anpassas målet till ditt faktiska kaloribehov.`}
+                  </p>
+
+                  <GuestOnly>
+                    {/* Gated CTA */}
+                    <div className="rounded-xl bg-white border border-primary-200 p-4">
+                      <p className="text-sm font-medium text-neutral-800 mb-1">
+                        Spara din cut/deff-plan och logga mat
                       </p>
+                      <p className="text-xs text-neutral-500 mb-3">
+                        Skapa ett gratis konto för att spara ditt kaloriintag, följa din progress
+                        och hålla koll på proteinet under deffa-fasen.
+                      </p>
+                      <Link
+                        to="/register"
+                        className="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+                      >
+                        Spara din plan gratis
+                        <ArrowRight className="h-4 w-4" />
+                      </Link>
+                      <div className="mt-3 pt-3 border-t border-neutral-100 text-xs text-neutral-500 space-y-0.5">
+                        <p className="font-medium text-neutral-700 mb-1">Vad ingår:</p>
+                        <p>✓ Beräkna cut/deff-kalorier — alltid gratis</p>
+                        <p>✓ Spara plan och logga mat — med konto</p>
+                        <p>✓ Följ protein och vikt under deffa-fasen — med konto</p>
+                        <p className="text-neutral-400 mt-1.5 italic">
+                          Fler funktioner i premiumversionen framöver.
+                        </p>
+                      </div>
                     </div>
-                  </div>
+                  </GuestOnly>
                 </div>
               )}
             </div>
@@ -514,13 +526,14 @@ export default function CutKalkylatornPage() {
           <div className="container mx-auto px-4 max-w-3xl">
             <div className="space-y-5 text-neutral-700 text-base leading-relaxed">
               <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900">
-                Vad är skillnaden på cut och kaloribrist?
+                Cut, deff och kaloribrist — vad är skillnaden?
               </h2>
               <p>
-                Kaloribrist är ett generellt begrepp för att äta under TDEE. En cut är en aktiv fas
-                med syfte att minska fettprocenten samtidigt som muskelmassa bevaras — det kräver
-                inte bara rätt kaloriintag utan också rätt proteinintag och träning. En bra cut är
-                metodisk, inte desperat.
+                Kaloribrist är ett generellt begrepp för att äta under TDEE — används av alla,
+                oavsett mål eller träningsbakgrund. <em>Cut</em> och <em>deff</em> är gymkulturens
+                termer för samma sak, men med ett tydligare fokus: minska fettprocenten utan att
+                tappa muskelmassa. Det kräver inte bara rätt kaloriintag utan också rätt
+                proteinintag och fortsatt styrketräning. En bra cut/deff är metodisk, inte desperat.
               </p>
 
               <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900 pt-4">
@@ -572,30 +585,33 @@ export default function CutKalkylatornPage() {
         </section>
 
         {/* Bottom CTA */}
-        <section className="bg-neutral-900 py-16 md:py-20">
-          <div className="container mx-auto px-4 max-w-2xl text-center">
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
-              Redo att bränna fett — utan att tappa muskler?
-            </h2>
-            <p className="text-neutral-400 text-base mb-8 max-w-md mx-auto">
-              Du har cut-kalorimålet. Nästa steg är att logga mat mot det och se hur kroppen svarar.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Link
-                to="/register"
-                className="inline-flex items-center justify-center gap-2 bg-accent-500 hover:bg-accent-600 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm"
-              >
-                Skapa gratis konto <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link
-                to="/kalkylatorer/proteinbehov"
-                className="inline-flex items-center justify-center gap-2 border border-neutral-600 text-neutral-300 hover:bg-neutral-800 font-medium px-6 py-3 rounded-xl transition-colors text-sm"
-              >
-                Räkna ut ditt proteinbehov
-              </Link>
+        <GuestOnly>
+          <section className="bg-neutral-900 py-16 md:py-20">
+            <div className="container mx-auto px-4 max-w-2xl text-center">
+              <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
+                Redo att deffa — utan att tappa muskler?
+              </h2>
+              <p className="text-neutral-400 text-base mb-8 max-w-md mx-auto">
+                Du har cut/deff-kalorimålet. Nästa steg är att logga mat mot det och se hur kroppen
+                svarar.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Link
+                  to="/register"
+                  className="inline-flex items-center justify-center gap-2 bg-accent-500 hover:bg-accent-600 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm"
+                >
+                  Skapa gratis konto <ArrowRight className="h-4 w-4" />
+                </Link>
+                <Link
+                  to="/kalkylatorer/proteinbehov"
+                  className="inline-flex items-center justify-center gap-2 border border-neutral-600 text-neutral-300 hover:bg-neutral-800 font-medium px-6 py-3 rounded-xl transition-colors text-sm"
+                >
+                  Räkna ut ditt proteinbehov
+                </Link>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </GuestOnly>
 
         {/* Related links section */}
         <section className="bg-white py-14">

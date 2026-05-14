@@ -6,6 +6,7 @@ import SiteFooter from '@/components/layout/SiteFooter'
 import { Seo } from '@/components/seo/Seo'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { FaqBlock } from '@/components/article/FaqBlock'
+import { GuestOnly } from '@/components/GuestOnly'
 
 const CANONICAL = 'https://calculeat.se/kalkylatorer/kroppsfett'
 
@@ -296,10 +297,7 @@ export default function KroppsfettKalkylatornPage() {
                 CalculEat
               </Link>
               <span>/</span>
-              <Link
-                to="/kalkylatorer/tdee-kalkylator"
-                className="hover:text-neutral-700 transition-colors"
-              >
+              <Link to="/kalkylatorer" className="hover:text-neutral-700 transition-colors">
                 Kalkylatorer
               </Link>
               <span>/</span>
@@ -505,7 +503,7 @@ export default function KroppsfettKalkylatornPage() {
                     </p>
                     <div className="flex flex-col sm:flex-row gap-2">
                       <Link
-                        to="/kalkylatorer/tdee-kalkylator"
+                        to="/kalkylatorer"
                         className="inline-flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
                       >
                         Räkna ut ditt TDEE
@@ -591,31 +589,33 @@ export default function KroppsfettKalkylatornPage() {
         </section>
 
         {/* Bottom CTA */}
-        <section className="bg-neutral-900 py-16 md:py-20">
-          <div className="container mx-auto px-4 max-w-2xl text-center">
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
-              Sätt ett kalorimål som matchar din kropp
-            </h2>
-            <p className="text-neutral-400 text-base mb-8 max-w-md mx-auto">
-              Nu vet du din fettprocent. Räkna ut TDEE och börja logga mot ett mål som faktiskt
-              stämmer.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Link
-                to="/register"
-                className="inline-flex items-center justify-center gap-2 bg-accent-500 hover:bg-accent-600 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm"
-              >
-                Skapa gratis konto <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link
-                to="/kalkylatorer/tdee-kalkylator"
-                className="inline-flex items-center justify-center gap-2 border border-neutral-600 text-neutral-300 hover:bg-neutral-800 font-medium px-6 py-3 rounded-xl transition-colors text-sm"
-              >
-                Räkna ut ditt TDEE
-              </Link>
+        <GuestOnly>
+          <section className="bg-neutral-900 py-16 md:py-20">
+            <div className="container mx-auto px-4 max-w-2xl text-center">
+              <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
+                Sätt ett kalorimål som matchar din kropp
+              </h2>
+              <p className="text-neutral-400 text-base mb-8 max-w-md mx-auto">
+                Nu vet du din fettprocent. Räkna ut TDEE och börja logga mot ett mål som faktiskt
+                stämmer.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Link
+                  to="/register"
+                  className="inline-flex items-center justify-center gap-2 bg-accent-500 hover:bg-accent-600 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm"
+                >
+                  Skapa gratis konto <ArrowRight className="h-4 w-4" />
+                </Link>
+                <Link
+                  to="/kalkylatorer"
+                  className="inline-flex items-center justify-center gap-2 border border-neutral-600 text-neutral-300 hover:bg-neutral-800 font-medium px-6 py-3 rounded-xl transition-colors text-sm"
+                >
+                  Räkna ut ditt TDEE
+                </Link>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </GuestOnly>
 
         {/* Related links section */}
         <section className="bg-white py-14">

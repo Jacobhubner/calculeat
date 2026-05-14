@@ -1,7 +1,6 @@
 import { Seo } from '@/components/seo/Seo'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { ArticleLayout } from '@/components/article/ArticleLayout'
-import BMRvsRMRContent from '@/components/info/BMRvsRMRContent'
 
 const CANONICAL = 'https://calculeat.se/artiklar/vad-ar-bmr'
 
@@ -54,6 +53,15 @@ const SOURCES = [
   {
     text: 'Roza AM & Shizgal HM (1984). The Harris Benedict equation reevaluated: resting energy requirements and the body cell mass. Am J Clin Nutr.',
   },
+  {
+    text: 'Weir JB de V. (1949). New methods for calculating metabolic rate with special reference to protein metabolism. Journal of Physiology. 109(1–2):1–9.',
+  },
+  {
+    text: 'FAO/WHO/UNU (2001). Human energy requirements. Report of a Joint Expert Consultation.',
+  },
+  {
+    text: 'Cunningham JJ. (1991). Body composition as a determinant of energy expenditure. Am J Clin Nutr. 54(6):963–969.',
+  },
 ]
 
 export default function VadArBmrPage() {
@@ -89,7 +97,62 @@ export default function VadArBmrPage() {
           { label: 'Vad är BMR?', href: CANONICAL },
         ]}
       >
-        <BMRvsRMRContent />
+        <h2 className="text-xl font-semibold text-neutral-900 mt-6 mb-3">
+          Vad bestämmer ditt BMR?
+        </h2>
+        <p>
+          Den viktigaste determinanten för BMR är fettfri massa (FFM) — muskler, organ och skelett.
+          Fettfri massa uppskattas förklara omkring 80% av variationen i BMR mellan individer. Det
+          förklarar varför vältränade personer med hög muskelmassa har ett högre BMR än personer med
+          samma totalvikt men mer kroppsfett.
+        </p>
+        <p className="mt-3">
+          Hos personer med låg fysisk aktivitet utgör BMR vanligtvis cirka 60% av total
+          energiförbrukning, och ännu mer hos individer med mycket låg rörelseaktivitet såsom
+          sederade och mekaniskt ventilerade patienter på intensivvårdsavdelningar.
+        </p>
+        <p className="mt-3">
+          Övriga faktorer som påverkar BMR: ålder (BMR sjunker ca 1–2% per decennium från
+          30-årsåldern pga. minskad muskelmassa), kön (män har i genomsnitt högre BMR per kg
+          kroppsvikt tack vare högre andel muskelmassa) samt hormonbalans (framför allt
+          sköldkörtelhormoner).
+        </p>
+
+        <h2 className="text-xl font-semibold text-neutral-900 mt-8 mb-3">
+          Hur mäts och beräknas BMR?
+        </h2>
+        <p>
+          BMR mäts under strikt kontrollerade laboratorieförhållanden: efter sömn, i fastande
+          tillstånd och i termoneutral miljö. Guldstandarden är indirekt kalorimetri via Weirs
+          ekvation (1949), som beräknar energiförbrukning från syreförbrukning och
+          koldioxidproduktion.
+        </p>
+        <p className="mt-3">
+          I praktiska sammanhang används oftare RMR (Resting Metabolic Rate), uppmätt när som helst
+          under dagen, vilket kan skilja sig från BMR med upp till 10%. De flesta
+          online-kalkylatorer — inklusive CalculEat — beräknar tekniskt sett RMR, men använder
+          termen BMR i vardagligt bruk.
+        </p>
+        <p className="mt-3">
+          När direkt mätning inte är tillgängligt används prediktiva ekvationer. De vanligaste är:
+        </p>
+        <ul className="space-y-1 pl-4 list-disc mt-2">
+          <li>
+            <strong>Mifflin-St Jeor (1990)</strong> — rekommenderas för friska vuxna, ger bäst
+            träffsäkerhet i moderna populationer
+          </li>
+          <li>
+            <strong>Harris-Benedict (reviderad 1984)</strong> — äldre men fortfarande vanlig
+          </li>
+          <li>
+            <strong>Cunningham (1991)</strong> — beräknar RMR baserat på fettfri massa, bättre för
+            vältränade individer
+          </li>
+        </ul>
+        <p className="mt-3">
+          Alla prediktiva formler har en felmarginal på ±10–15% på individnivå. Verklig vikttrend
+          under 2–3 veckor är alltid ett mer tillförlitligt mått än formelbaserade estimat.
+        </p>
 
         <h2 className="text-xl font-semibold text-neutral-900 mt-8 mb-3">
           Varför ska du inte äta på ditt BMR?
@@ -118,8 +181,8 @@ export default function VadArBmrPage() {
             längd).
           </li>
           <li>
-            Multiplicera med din <strong>aktivitetsfaktor (PAL)</strong> — stillasittande (×1,3)
-            till mycket aktiv (×2,1 eller mer).
+            Multiplicera med din <strong>aktivitetsfaktor (PAL)</strong> — stillasittande (×1,2)
+            till extremt aktiv (×1,9).
           </li>
           <li>
             Resultatet är ditt <strong>TDEE</strong> — ditt underhållsbehov.

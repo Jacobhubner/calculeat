@@ -15,8 +15,10 @@ import {
   Activity,
   Flame,
   Calculator,
-  Target,
   Users,
+  BookOpen,
+  Crosshair,
+  Gauge,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuth } from '@/contexts/AuthContext'
@@ -57,7 +59,6 @@ export default function DashboardNav() {
     }
   }
 
-  // Organized navigation items by functional groups
   const navGroups: Record<string, { title: string; emoji: string; items: NavItem[] }> = {
     oversikt: {
       title: t('nav.sectionOverview'),
@@ -70,41 +71,46 @@ export default function DashboardNav() {
           icon: LayoutDashboard,
           exact: true,
         },
-        {
-          type: 'single' as const,
-          to: '/app/today',
-          label: t('nav.today'),
-          icon: Calendar,
-        },
-        {
-          type: 'single' as const,
-          to: '/app/history',
-          label: t('nav.history'),
-          icon: History,
-        },
+        { type: 'single' as const, to: '/app/today', label: t('nav.today'), icon: Calendar },
+        { type: 'single' as const, to: '/app/history', label: t('nav.history'), icon: History },
       ],
     },
     planering: {
       title: t('nav.sectionPlanning'),
       emoji: '🍽️',
       items: [
-        {
-          type: 'single' as const,
-          to: '/app/food-items',
-          label: t('nav.food'),
-          icon: Apple,
-        },
-        {
-          type: 'single' as const,
-          to: '/app/recipes',
-          label: t('nav.recipes'),
-          icon: ChefHat,
-        },
+        { type: 'single' as const, to: '/app/food-items', label: t('nav.food'), icon: Apple },
+        { type: 'single' as const, to: '/app/recipes', label: t('nav.recipes'), icon: ChefHat },
         {
           type: 'single' as const,
           to: '/app/saved-meals',
           label: t('nav.savedMeals'),
           icon: Bookmark,
+        },
+      ],
+    },
+    minPlan: {
+      title: t('nav.sectionMyPlan'),
+      emoji: '🎯',
+      items: [
+        { type: 'single' as const, to: '/app/profile', label: t('nav.profile'), icon: User },
+        {
+          type: 'single' as const,
+          to: '/app/tools/tdee-calculator',
+          label: t('nav.calorieNeed'),
+          icon: Gauge,
+        },
+        {
+          type: 'single' as const,
+          to: '/app/tools/goal-calculator',
+          label: t('nav.goalSetting'),
+          icon: Crosshair,
+        },
+        {
+          type: 'single' as const,
+          to: '/app/body-composition',
+          label: t('nav.body'),
+          icon: Activity,
         },
       ],
     },
@@ -121,49 +127,13 @@ export default function DashboardNav() {
         },
       ],
     },
-    profil: {
-      title: t('nav.sectionProfile'),
-      emoji: '👤',
-      items: [
-        {
-          type: 'single' as const,
-          to: '/app/profile',
-          label: t('nav.profile'),
-          icon: User,
-        },
-        {
-          type: 'single' as const,
-          to: '/app/body-composition',
-          label: t('nav.body'),
-          icon: Activity,
-        },
-      ],
-    },
-    verktyg: {
-      title: t('nav.sectionTools'),
-      emoji: '🧮',
-      items: [
-        {
-          type: 'single' as const,
-          to: '/app/tools/met-calculator',
-          label: t('nav.met'),
-          icon: Flame,
-        },
-        {
-          type: 'single' as const,
-          to: '/app/tools/tdee-calculator',
-          label: t('nav.tdee'),
-          icon: Calculator,
-        },
-        {
-          type: 'single' as const,
-          to: '/app/tools/goal-calculator',
-          label: t('nav.goalCalc'),
-          icon: Target,
-        },
-      ],
-    },
   }
+
+  const discreteLinks = [
+    { to: '/app/tools/met-calculator', label: t('nav.met'), icon: Flame },
+    { to: '/kalkylatorer', label: t('nav.freeTools'), icon: Calculator },
+    { to: '/artiklar', label: t('nav.articlesHub'), icon: BookOpen },
+  ]
 
   const getInitials = () => {
     if (userProfile?.username) return userProfile.username.substring(0, 2).toUpperCase()
@@ -206,15 +176,12 @@ export default function DashboardNav() {
         <nav className="flex-1 overflow-y-auto p-4">
           {Object.entries(navGroups).map(([key, group], groupIndex) => (
             <div key={key} className={groupIndex > 0 ? 'mt-6' : ''}>
-              {/* Section Header */}
               {!sidebarCollapsed && (
                 <h3 className="px-3 py-2 text-xs font-semibold text-neutral-500 uppercase tracking-wider flex items-center gap-2">
                   <span>{group.emoji}</span>
                   <span>{group.title}</span>
                 </h3>
               )}
-
-              {/* Section Items */}
               <div className="space-y-1 mt-2">
                 {group.items.map(item => {
                   const Icon = item.icon
@@ -256,6 +223,28 @@ export default function DashboardNav() {
               </div>
             </div>
           ))}
+
+          {/* Diskreta resurslänkar — tonade, utanför kärnnavigationen */}
+          <div className="mt-6 pt-4 border-t border-neutral-100 space-y-1">
+            {discreteLinks.map(({ to, label, icon: Icon }) => (
+              <Link
+                key={to}
+                to={to}
+                className={cn(
+                  'flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-neutral-400 hover:text-neutral-600 hover:bg-neutral-50 transition-colors relative group',
+                  sidebarCollapsed && 'justify-center px-2'
+                )}
+              >
+                <Icon className="h-4 w-4 shrink-0" />
+                {!sidebarCollapsed && <span>{label}</span>}
+                {sidebarCollapsed && (
+                  <div className="absolute left-full ml-2 px-2 py-1 bg-neutral-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                    {label}
+                  </div>
+                )}
+              </Link>
+            ))}
+          </div>
         </nav>
 
         <Separator />

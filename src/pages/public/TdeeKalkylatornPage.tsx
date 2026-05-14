@@ -8,6 +8,7 @@ import { JsonLd } from '@/components/seo/JsonLd'
 import { FaqBlock } from '@/components/article/FaqBlock'
 import { mifflinStJeor } from '@/lib/calculations/bmr'
 import type { Gender } from '@/lib/types'
+import { GuestOnly } from '@/components/GuestOnly'
 
 type ActivityLevel =
   | 'Sedentary'
@@ -159,6 +160,10 @@ export default function TdeeKalkylatornPage() {
             <nav className="flex items-center gap-2 text-sm text-neutral-500 mb-8">
               <Link to="/" className="hover:text-neutral-700 transition-colors">
                 CalculEat
+              </Link>
+              <span>/</span>
+              <Link to="/kalkylatorer" className="hover:text-neutral-700 transition-colors">
+                Kalkylatorer
               </Link>
               <span>/</span>
               <span className="text-neutral-700">TDEE Kalkylator</span>
@@ -343,40 +348,48 @@ export default function TdeeKalkylatornPage() {
                     </div>
                   </div>
 
-                  <p className="text-xs text-neutral-400 text-center mb-4">
+                  <p className="text-xs text-neutral-400 text-center mb-2">
                     Baserat på Mifflin-St Jeor-formeln + PAL-faktorer (1.2–1.9) — ett etablerat
                     system för att uppskatta dagligt kaloribehov.
                   </p>
+                  <p className="text-xs text-neutral-400 text-center mb-4">
+                    Målen ovan är fasta riktvärden. Hur stort underskott eller överskott de faktiskt
+                    innebär beror på din storlek — för en liten person kan −400 kcal vara ganska
+                    aggressivt, för en stor person knappt märkbart. Med ett konto anpassas målen
+                    till ditt faktiska kaloribehov.
+                  </p>
 
-                  {/* Gated CTA */}
-                  <div className="rounded-xl border border-neutral-200 bg-white p-5 text-center shadow-sm">
-                    <p className="text-sm font-bold text-neutral-900 mb-1">
-                      Få en personlig plan + följ din utveckling
-                    </p>
-                    <p className="text-xs text-neutral-600 mb-4">
-                      Spara ditt TDEE, sätt kalorimål för din fas (cut/bulk/maintenance), logga mat
-                      och se hur din vikt rör sig mot målet.
-                    </p>
-                    <Link
-                      to="/register"
-                      className="inline-flex items-center justify-center gap-2 bg-primary-600 text-white font-semibold px-5 py-2.5 rounded-lg hover:bg-primary-700 transition-colors text-sm w-full sm:w-auto"
-                    >
-                      Skapa gratis konto
-                      <ArrowRight className="h-4 w-4" />
-                    </Link>
-                    <p className="text-xs text-neutral-400 mt-2">Inget kreditkort krävs</p>
-                    <div className="mt-3 text-left text-xs space-y-0.5 border-t border-neutral-100 pt-3">
-                      <p className="text-neutral-500 font-medium mb-1">Vad ingår:</p>
-                      <p className="text-neutral-500">✓ Beräkna TDEE — alltid gratis</p>
-                      <p className="text-neutral-500">✓ Spara plan och logga mat — med konto</p>
-                      <p className="text-neutral-500">
-                        ✓ Följ vikttrend och kalibrera mål — med konto
+                  <GuestOnly>
+                    {/* Gated CTA */}
+                    <div className="rounded-xl border border-neutral-200 bg-white p-5 text-center shadow-sm">
+                      <p className="text-sm font-bold text-neutral-900 mb-1">
+                        Få en personlig plan + följ din utveckling
                       </p>
-                      <p className="text-neutral-400 mt-1.5 italic">
-                        Fler funktioner i premiumversionen framöver.
+                      <p className="text-xs text-neutral-600 mb-4">
+                        Spara ditt TDEE, sätt kalorimål för din fas (cut/bulk/maintenance), logga
+                        mat och se hur din vikt rör sig mot målet.
                       </p>
+                      <Link
+                        to="/register"
+                        className="inline-flex items-center justify-center gap-2 bg-primary-600 text-white font-semibold px-5 py-2.5 rounded-lg hover:bg-primary-700 transition-colors text-sm w-full sm:w-auto"
+                      >
+                        Skapa gratis konto
+                        <ArrowRight className="h-4 w-4" />
+                      </Link>
+                      <p className="text-xs text-neutral-400 mt-2">Inget kreditkort krävs</p>
+                      <div className="mt-3 text-left text-xs space-y-0.5 border-t border-neutral-100 pt-3">
+                        <p className="text-neutral-500 font-medium mb-1">Vad ingår:</p>
+                        <p className="text-neutral-500">✓ Beräkna TDEE — alltid gratis</p>
+                        <p className="text-neutral-500">✓ Spara plan och logga mat — med konto</p>
+                        <p className="text-neutral-500">
+                          ✓ Följ vikttrend och kalibrera mål — med konto
+                        </p>
+                        <p className="text-neutral-400 mt-1.5 italic">
+                          Fler funktioner i premiumversionen framöver.
+                        </p>
+                      </div>
                     </div>
-                  </div>
+                  </GuestOnly>
                 </div>
               )}
             </div>
@@ -448,32 +461,34 @@ export default function TdeeKalkylatornPage() {
         </section>
 
         {/* Bottom CTA */}
-        <section className="bg-neutral-900 py-16 md:py-20">
-          <div className="container mx-auto px-4 max-w-2xl text-center">
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
-              Redo att gå från siffror till resultat?
-            </h2>
-            <p className="text-neutral-400 text-base mb-8 max-w-md mx-auto">
-              Du har ditt TDEE. Nästa steg är att logga mat mot rätt mål, följa din vikttrend och
-              kalibrera ditt kalorimål när kroppen svarar.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Link
-                to="/register"
-                className="inline-flex items-center justify-center gap-2 bg-accent-500 hover:bg-accent-600 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm"
-              >
-                Skapa gratis konto
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link
-                to="/kalkylatorer/kaloriunderskott"
-                className="inline-flex items-center justify-center gap-2 border border-neutral-600 text-neutral-300 hover:bg-neutral-800 font-medium px-6 py-3 rounded-xl transition-colors text-sm"
-              >
-                Räkna ut ditt kaloriunderskott
-              </Link>
+        <GuestOnly>
+          <section className="bg-neutral-900 py-16 md:py-20">
+            <div className="container mx-auto px-4 max-w-2xl text-center">
+              <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
+                Redo att gå från siffror till resultat?
+              </h2>
+              <p className="text-neutral-400 text-base mb-8 max-w-md mx-auto">
+                Du har ditt TDEE. Nästa steg är att logga mat mot rätt mål, följa din vikttrend och
+                kalibrera ditt kalorimål när kroppen svarar.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Link
+                  to="/register"
+                  className="inline-flex items-center justify-center gap-2 bg-accent-500 hover:bg-accent-600 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm"
+                >
+                  Skapa gratis konto
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+                <Link
+                  to="/kalkylatorer/kaloriunderskott"
+                  className="inline-flex items-center justify-center gap-2 border border-neutral-600 text-neutral-300 hover:bg-neutral-800 font-medium px-6 py-3 rounded-xl transition-colors text-sm"
+                >
+                  Räkna ut ditt kaloriunderskott
+                </Link>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </GuestOnly>
 
         {/* Related */}
         <section className="bg-white py-14">
@@ -487,7 +502,7 @@ export default function TdeeKalkylatornPage() {
                   {[
                     { href: '/kalkylatorer/kaloriunderskott', label: 'Kaloribrist Kalkylator' },
                     { href: '/kalkylatorer/bulk-kalkylator', label: 'Bulk Kalkylator' },
-                    { href: '/kalkylatorer/cut-kalkylator', label: 'Cut Kalkylator' },
+                    { href: '/kalkylatorer/cut-kalkylator', label: 'Cut & Deff Kalkylator' },
                     { href: '/kalkylatorer/proteinbehov', label: 'Proteinbehov Kalkylator' },
                     { href: '/kalkylatorer/bmi-kalkylator', label: 'BMI Kalkylator' },
                     { href: '/kalkylatorer/bmr-kalkylator', label: 'BMR Kalkylator' },

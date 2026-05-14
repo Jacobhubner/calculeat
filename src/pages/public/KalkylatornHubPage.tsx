@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet-async'
 import { Calculator, ArrowRight } from 'lucide-react'
 import SiteHeader from '@/components/layout/SiteHeader'
 import SiteFooter from '@/components/layout/SiteFooter'
+import { GuestOnly } from '@/components/GuestOnly'
 
 const calculators = [
   {
@@ -46,8 +47,8 @@ const calculators = [
   },
   {
     to: '/kalkylatorer/cut-kalkylator',
-    title: 'Cut-kalkylator',
-    description: 'Beräkna ditt kaloriintag för en effektiv cut som bevarar muskelmassa.',
+    title: 'Cut & Deff-kalkylator',
+    description: 'Beräkna ditt kaloriintag för en effektiv cut/deff som bevarar muskelmassa.',
   },
   {
     to: '/kalkylatorer/ffmi-kalkylator',
@@ -92,7 +93,7 @@ export default function KalkylatornHubPage() {
                 utveckling — helt gratis.
               </p>
               <Link
-                to="/kalkylatorer/tdee-kalkylator"
+                to="/kalkylatorer"
                 className="inline-flex items-center gap-2 bg-primary-600 text-white font-medium px-6 py-3 rounded-xl hover:bg-primary-700 transition-colors"
               >
                 Börja med TDEE-kalkylatorn
@@ -144,13 +145,15 @@ export default function KalkylatornHubPage() {
                 Skapa ett gratis konto och låt CalculEat räkna ut ditt dagliga mål, spåra måltider
                 och visa hur du ligger till — dag för dag.
               </p>
-              <Link
-                to="/register"
-                className="inline-flex items-center gap-2 bg-primary-600 text-white font-medium px-6 py-3 rounded-xl hover:bg-primary-700 transition-colors"
-              >
-                Skapa gratis konto
-                <ArrowRight className="h-4 w-4" />
-              </Link>
+              <GuestOnly>
+                <Link
+                  to="/register"
+                  className="inline-flex items-center gap-2 bg-primary-600 text-white font-medium px-6 py-3 rounded-xl hover:bg-primary-700 transition-colors"
+                >
+                  Skapa gratis konto
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </GuestOnly>
             </div>
           </section>
         </main>

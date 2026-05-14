@@ -6,6 +6,7 @@ import SiteFooter from '@/components/layout/SiteFooter'
 import { Seo } from '@/components/seo/Seo'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { FaqBlock } from '@/components/article/FaqBlock'
+import { GuestOnly } from '@/components/GuestOnly'
 
 type Goal = 'cut' | 'maintenance' | 'bulk'
 type ActivityLevel = 'low' | 'moderate' | 'high'
@@ -199,10 +200,7 @@ export default function ProteinbehovKalkylatornPage() {
                 CalculEat
               </Link>
               <span>/</span>
-              <Link
-                to="/kalkylatorer/tdee-kalkylator"
-                className="hover:text-neutral-700 transition-colors"
-              >
+              <Link to="/kalkylatorer" className="hover:text-neutral-700 transition-colors">
                 Kalkylatorer
               </Link>
               <span>/</span>
@@ -443,7 +441,7 @@ export default function ProteinbehovKalkylatornPage() {
                             to="/kalkylatorer/cut-kalkylator"
                             className="inline-flex items-center gap-1.5 text-xs font-medium text-white bg-primary-600 hover:bg-primary-700 px-3 py-1.5 rounded-lg transition-colors"
                           >
-                            Cut Kalkylator
+                            Cut & Deff Kalkylator
                             <ArrowRight className="h-3 w-3" />
                           </Link>
                           <Link
@@ -465,7 +463,7 @@ export default function ProteinbehovKalkylatornPage() {
                         </Link>
                       )}
                       <Link
-                        to="/kalkylatorer/tdee-kalkylator"
+                        to="/kalkylatorer"
                         className="inline-flex items-center gap-1.5 text-xs font-medium text-primary-600 hover:underline"
                       >
                         TDEE Kalkylator
@@ -474,32 +472,34 @@ export default function ProteinbehovKalkylatornPage() {
                     </div>
                   </div>
 
-                  {/* Gated CTA */}
-                  <div className="rounded-xl bg-white border border-primary-200 p-4">
-                    <p className="text-sm font-medium text-neutral-800 mb-1">
-                      Spara din kostplan och följ ditt proteinintag
-                    </p>
-                    <p className="text-xs text-neutral-500 mb-3">
-                      Skapa ett gratis konto för att logga mat, följa protein per dag och spara dina
-                      mål.
-                    </p>
-                    <Link
-                      to="/register"
-                      className="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
-                    >
-                      Spara din plan gratis
-                      <ArrowRight className="h-4 w-4" />
-                    </Link>
-                    <div className="mt-3 pt-3 border-t border-neutral-100 text-xs text-neutral-500 space-y-0.5">
-                      <p className="font-medium text-neutral-700 mb-1">Vad ingår:</p>
-                      <p>✓ Beräkna proteinbehov — alltid gratis</p>
-                      <p>✓ Spara plan och logga mat — med konto</p>
-                      <p>✓ Följ proteinintag dag för dag — med konto</p>
-                      <p className="text-neutral-400 mt-1.5 italic">
-                        Fler funktioner i premiumversionen framöver.
+                  <GuestOnly>
+                    {/* Gated CTA */}
+                    <div className="rounded-xl bg-white border border-primary-200 p-4">
+                      <p className="text-sm font-medium text-neutral-800 mb-1">
+                        Spara din kostplan och följ ditt proteinintag
                       </p>
+                      <p className="text-xs text-neutral-500 mb-3">
+                        Skapa ett gratis konto för att logga mat, följa protein per dag och spara
+                        dina mål.
+                      </p>
+                      <Link
+                        to="/register"
+                        className="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+                      >
+                        Spara din plan gratis
+                        <ArrowRight className="h-4 w-4" />
+                      </Link>
+                      <div className="mt-3 pt-3 border-t border-neutral-100 text-xs text-neutral-500 space-y-0.5">
+                        <p className="font-medium text-neutral-700 mb-1">Vad ingår:</p>
+                        <p>✓ Beräkna proteinbehov — alltid gratis</p>
+                        <p>✓ Spara plan och logga mat — med konto</p>
+                        <p>✓ Följ proteinintag dag för dag — med konto</p>
+                        <p className="text-neutral-400 mt-1.5 italic">
+                          Fler funktioner i premiumversionen framöver.
+                        </p>
+                      </div>
                     </div>
-                  </div>
+                  </GuestOnly>
                 </div>
               )}
             </div>
@@ -580,31 +580,33 @@ export default function ProteinbehovKalkylatornPage() {
         </section>
 
         {/* Bottom CTA */}
-        <section className="bg-neutral-900 py-16 md:py-20">
-          <div className="container mx-auto px-4 max-w-2xl text-center">
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
-              Följ ditt proteinintag dag för dag
-            </h2>
-            <p className="text-neutral-400 text-base mb-8 max-w-md mx-auto">
-              Skapa ett gratis konto och logga mat mot ditt proteinmål — automatiskt beräknat för
-              ditt mål.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Link
-                to="/register"
-                className="inline-flex items-center justify-center gap-2 bg-accent-500 hover:bg-accent-600 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm"
-              >
-                Skapa gratis konto <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link
-                to="/kalkylatorer/tdee-kalkylator"
-                className="inline-flex items-center justify-center gap-2 border border-neutral-600 text-neutral-300 hover:bg-neutral-800 font-medium px-6 py-3 rounded-xl transition-colors text-sm"
-              >
-                Räkna ut ditt TDEE
-              </Link>
+        <GuestOnly>
+          <section className="bg-neutral-900 py-16 md:py-20">
+            <div className="container mx-auto px-4 max-w-2xl text-center">
+              <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
+                Följ ditt proteinintag dag för dag
+              </h2>
+              <p className="text-neutral-400 text-base mb-8 max-w-md mx-auto">
+                Skapa ett gratis konto och logga mat mot ditt proteinmål — automatiskt beräknat för
+                ditt mål.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Link
+                  to="/register"
+                  className="inline-flex items-center justify-center gap-2 bg-accent-500 hover:bg-accent-600 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm"
+                >
+                  Skapa gratis konto <ArrowRight className="h-4 w-4" />
+                </Link>
+                <Link
+                  to="/kalkylatorer"
+                  className="inline-flex items-center justify-center gap-2 border border-neutral-600 text-neutral-300 hover:bg-neutral-800 font-medium px-6 py-3 rounded-xl transition-colors text-sm"
+                >
+                  Räkna ut ditt TDEE
+                </Link>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </GuestOnly>
 
         {/* Related links section */}
         <section className="bg-white py-14">
@@ -617,7 +619,7 @@ export default function ProteinbehovKalkylatornPage() {
                 <div className="grid gap-3">
                   {[
                     { href: '/kalkylatorer/tdee-kalkylator', label: 'TDEE Kalkylator' },
-                    { href: '/kalkylatorer/cut-kalkylator', label: 'Cut Kalkylator' },
+                    { href: '/kalkylatorer/cut-kalkylator', label: 'Cut & Deff Kalkylator' },
                     { href: '/kalkylatorer/bulk-kalkylator', label: 'Bulk Kalkylator' },
                     { href: '/kalkylatorer/kaloriunderskott', label: 'Kaloribrist Kalkylator' },
                   ].map(l => (

@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet-async'
 import { BookOpen, ArrowRight } from 'lucide-react'
 import SiteHeader from '@/components/layout/SiteHeader'
 import SiteFooter from '@/components/layout/SiteFooter'
+import { GuestOnly } from '@/components/GuestOnly'
 
 const articles = [
   {
@@ -71,6 +72,18 @@ const articles = [
     title: 'Vad är PAL och MET?',
     description:
       'Physical activity level och metabolic equivalent — hur aktivitetsnivå mäts och används i TDEE-beräkningar.',
+  },
+  {
+    to: '/artiklar/lbm-vs-ffm',
+    title: 'LBM vs FFM — vad är skillnaden?',
+    description:
+      'Lean Body Mass och Fat Free Mass används ofta som synonymer men mäter inte samma sak. Lär dig skillnaden och vilket mått du ska använda.',
+  },
+  {
+    to: '/artiklar/hur-mater-man-kroppsfett',
+    title: 'Hur mäter man kroppsfett?',
+    description:
+      'DEXA, bioimpedans, kaliper eller Navy-metoden? Lär dig skillnaderna i noggrannhet och välj rätt metod för din situation.',
   },
 ]
 
@@ -159,18 +172,20 @@ export default function ArtikelnHubPage() {
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Link
-                  to="/kalkylatorer/tdee-kalkylator"
+                  to="/kalkylatorer"
                   className="inline-flex items-center justify-center gap-2 bg-primary-600 text-white font-medium px-6 py-3 rounded-xl hover:bg-primary-700 transition-colors"
                 >
                   Prova TDEE-kalkylatorn
                   <ArrowRight className="h-4 w-4" />
                 </Link>
-                <Link
-                  to="/register"
-                  className="inline-flex items-center justify-center gap-2 border border-neutral-300 text-neutral-700 font-medium px-6 py-3 rounded-xl hover:bg-neutral-50 transition-colors"
-                >
-                  Skapa gratis konto
-                </Link>
+                <GuestOnly>
+                  <Link
+                    to="/register"
+                    className="inline-flex items-center justify-center gap-2 border border-neutral-300 text-neutral-700 font-medium px-6 py-3 rounded-xl hover:bg-neutral-50 transition-colors"
+                  >
+                    Skapa gratis konto
+                  </Link>
+                </GuestOnly>
               </div>
             </div>
           </section>
