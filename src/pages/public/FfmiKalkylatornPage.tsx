@@ -295,6 +295,7 @@ const FFMI_MATRIX: {
 
 function getFfmiCategory(ffmi: number, bodyFatPct: number, gender: Gender): FfmiCategory {
   const rows = FFMI_MATRIX.filter(r => r.gender === gender)
+  // First pass: full match (FFMI + body fat)
   for (const row of rows) {
     const ffmiOk = ffmi >= row.ffmiMin && (row.ffmiMax === null || ffmi < row.ffmiMax)
     const bfOk =
@@ -302,7 +303,11 @@ function getFfmiCategory(ffmi: number, bodyFatPct: number, gender: Gender): Ffmi
       (bodyFatPct >= row.bfMin && (row.bfMax === null || bodyFatPct < row.bfMax))
     if (ffmiOk && bfOk) return row
   }
-  // Fallback — should not be reached for valid input
+  // Second pass: FFMI-only match (body fat outside all defined ranges for this FFMI level)
+  for (const row of rows) {
+    const ffmiOk = ffmi >= row.ffmiMin && (row.ffmiMax === null || ffmi < row.ffmiMax)
+    if (ffmiOk) return row
+  }
   return rows[rows.length - 1]
 }
 
