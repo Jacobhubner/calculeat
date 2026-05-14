@@ -288,11 +288,6 @@ export default function BmrKalkylatornPage() {
                       <span className="text-4xl font-bold text-primary-600">{result.bmr}</span>
                       <span className="text-neutral-500 mb-1">kcal/dag</span>
                     </div>
-                    {result.bmrHarris && (
-                      <div className="text-xs text-neutral-400 mt-1">
-                        Harris-Benedict: {result.bmrHarris} kcal/dag
-                      </div>
-                    )}
                   </div>
 
                   {/* Key warning */}
