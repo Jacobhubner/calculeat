@@ -1,13 +1,13 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Menu, X, LogOut, Users, ShieldCheck } from 'lucide-react'
+import { Menu, X, LogOut, User, Settings, Users, ShieldCheck } from 'lucide-react'
 import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '../ui/button'
 import { Avatar, AvatarFallback } from '../ui/avatar'
 import { useAuth } from '@/contexts/AuthContext'
 import { useUIStore } from '@/stores/uiStore'
-import { useState, useEffect } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { SocialHub } from '@/components/social/SocialHub'
 import { ShareDialog } from '@/components/sharing/ShareDialog'
 import { useSocialBadgeCount } from '@/hooks/useShareInvitations'
@@ -22,7 +22,9 @@ export default function SiteHeader() {
 
   const location = useLocation()
   const navigate = useNavigate()
+  const [mobileUserMenuOpen, setMobileUserMenuOpen] = useState(false)
   const [socialHubOpen, setSocialHubOpen] = useState(false)
+  const userMenuRef = useRef<HTMLDivElement>(null)
   const [shareDialogOpen, setShareDialogOpen] = useState(false)
   const [sharePreselectedFriend, setSharePreselectedFriend] = useState<Friend | undefined>(
     undefined
@@ -60,6 +62,19 @@ export default function SiteHeader() {
     if (userProfile?.username) return userProfile.username.substring(0, 2).toUpperCase()
     return '...'
   }
+
+  // Close mobile user menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setMobileUserMenuOpen(false)
+      }
+    }
+    if (mobileUserMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+      return () => document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [mobileUserMenuOpen])
 
   // Scroll-lock + back navigation for social hub
   useEffect(() => {
@@ -231,16 +246,89 @@ export default function SiteHeader() {
               )}
             </Link>
 
-            <Link to="/app" className="relative">
-              <Avatar className="h-9 w-9 cursor-pointer ring-2 ring-transparent active:ring-primary-200 transition-all">
-                <AvatarFallback className="text-xs">{getInitials()}</AvatarFallback>
-              </Avatar>
-              {isAdmin && (
-                <span className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5">
-                  <ShieldCheck className="h-3.5 w-3.5 text-primary-600" />
-                </span>
-              )}
-            </Link>
+            <div className="relative" ref={userMenuRef}>
+              <button
+                onClick={() => setMobileUserMenuOpen(!mobileUserMenuOpen)}
+                className="focus:outline-none relative"
+              >
+                <Avatar className="h-9 w-9 cursor-pointer ring-2 ring-transparent active:ring-primary-200 transition-all">
+                  <AvatarFallback className="text-xs">{getInitials()}</AvatarFallback>
+                </Avatar>
+                {isAdmin && (
+                  <span className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5">
+                    <ShieldCheck className="h-3.5 w-3.5 text-primary-600" />
+                  </span>
+                )}
+              </button>
+
+              <AnimatePresence>
+                {mobileUserMenuOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute right-0 top-full mt-2 w-56 bg-white rounded-lg shadow-lg border border-neutral-200 py-1 z-50"
+                  >
+                    <div className="px-4 py-3 border-b border-neutral-100">
+                      <p className="text-sm font-medium text-neutral-900 truncate">
+                        {userProfile?.username ? `@${userProfile.username}` : '...'}
+                      </p>
+                      <p className="text-xs text-neutral-500 truncate">{user.email}</p>
+                    </div>
+
+                    <div className="py-1">
+                      <Link
+                        to="/app/profile"
+                        onClick={() => setMobileUserMenuOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors"
+                      >
+                        <User className="h-4 w-4" />
+                        <span>{t('nav.profile')}</span>
+                      </Link>
+                      <Link
+                        to="/app/settings"
+                        onClick={() => setMobileUserMenuOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors"
+                      >
+                        <Settings className="h-4 w-4" />
+                        <span>{t('nav.settings')}</span>
+                      </Link>
+                    </div>
+
+                    <div className="border-t border-neutral-100 py-1">
+                      <Link
+                        to="/kalkylatorer"
+                        onClick={() => setMobileUserMenuOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2 text-sm text-neutral-500 hover:bg-neutral-50 transition-colors"
+                      >
+                        <span>{t('nav.freeTools')}</span>
+                      </Link>
+                      <Link
+                        to="/artiklar"
+                        onClick={() => setMobileUserMenuOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2 text-sm text-neutral-500 hover:bg-neutral-50 transition-colors"
+                      >
+                        <span>{t('nav.articlesHub')}</span>
+                      </Link>
+                    </div>
+
+                    <div className="border-t border-neutral-100 py-1">
+                      <button
+                        onClick={() => {
+                          setMobileUserMenuOpen(false)
+                          handleSignOut()
+                        }}
+                        className="w-full flex items-center gap-3 px-4 py-2 text-sm text-error-600 hover:bg-error-50 transition-colors"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        <span>{t('nav.logout')}</span>
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
         )}
       </div>

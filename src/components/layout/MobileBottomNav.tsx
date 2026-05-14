@@ -38,13 +38,13 @@ export default function MobileBottomNav() {
     { to: '/app/food-items', label: t('nav.food'), icon: Apple },
     { to: '/app/recipes', label: t('nav.recipes'), icon: ChefHat },
     { to: '/app/saved-meals', label: t('nav.savedMealsShort'), icon: Bookmark },
-    // SOCIAL
-    { to: '/app/social', label: t('nav.social'), icon: Users },
-    // MIN PLAN
+    // MIN PLAN (speglar desktopsidebaren: Profil → Kaloribehov → Målsättning → Kropp)
+    { to: '/app/profile', label: t('nav.profile'), icon: User },
     { to: '/app/tools/tdee-calculator', label: t('nav.tdeeShort'), icon: Calculator },
     { to: '/app/tools/goal-calculator', label: t('nav.goalCalcShort'), icon: Target },
     { to: '/app/body-composition', label: t('nav.bodyShort'), icon: Activity },
-    { to: '/app/profile', label: t('nav.profile'), icon: User },
+    // SOCIAL
+    { to: '/app/social', label: t('nav.social'), icon: Users },
     // ÖVRIGT
     { to: '/app/settings', label: t('nav.settings'), icon: Settings },
   ] as const
