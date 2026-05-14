@@ -11,8 +11,7 @@ import { useActiveProfile } from '@/hooks/useActiveProfile'
 import { calculateFFMI, calculateNormalizedFFMI } from '@/lib/calculations/ffmiCalculations'
 import { calculateFatFreeMass } from '@/lib/calculations/bodyComposition'
 import { BodyFatReferenceTable } from '@/components/body-composition/BodyFatReferenceTable'
-import { FFMIReferenceTable } from '@/components/body-composition/FFMIReferenceTable'
-import { FFMICategoryTable } from '@/components/body-composition/FFMICategoryTable'
+import { FFMIInterpretationTable } from '@/components/body-composition/FFMIInterpretationTable'
 import FFMIContent from '@/components/info/FFMIContent'
 import NormalizedFFMIContent from '@/components/info/NormalizedFFMIContent'
 
@@ -133,9 +132,7 @@ export default function BodyCompositionHubPage() {
         {/* Informationsmeddelande */}
         <Alert>
           <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            {t('hub.missingDataAlert')}
-          </AlertDescription>
+          <AlertDescription>{t('hub.missingDataAlert')}</AlertDescription>
         </Alert>
 
         {/* Visa alltid referenstabellerna även om data saknas */}
@@ -144,29 +141,18 @@ export default function BodyCompositionHubPage() {
 
           {/* Body Fat % Table (full width) */}
           <div>
-            <h3 className="text-base font-semibold text-neutral-800 mb-2">{t('hub.bodyFatTableTitle')}</h3>
+            <h3 className="text-base font-semibold text-neutral-800 mb-2">
+              {t('hub.bodyFatTableTitle')}
+            </h3>
             <BodyFatReferenceTable userBodyFat={null} gender={profile?.gender} fullWidthImages />
           </div>
 
-          {/* FFMI Tables side by side */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* FFMI Description Categories */}
-            <div>
-              <h3 className="text-base font-semibold text-neutral-800 mb-2">{t('hub.ffmiCategories')}</h3>
-              <FFMICategoryTable userFFMI={null} gender={profile?.gender ?? 'male'} />
-            </div>
-
-            {/* FFMI with Body Fat Ranges */}
-            <div>
-              <h3 className="text-base font-semibold text-neutral-800 mb-2">
-                {t('hub.ffmiWithBodyFat')}
-              </h3>
-              <FFMIReferenceTable
-                userFFMI={null}
-                userBodyFat={null}
-                gender={profile?.gender ?? 'male'}
-              />
-            </div>
+          {/* FFMI Interpretation Table */}
+          <div>
+            <h3 className="text-base font-semibold text-neutral-800 mb-2">
+              {t('hub.ffmiCategories')}
+            </h3>
+            <FFMIInterpretationTable gender={profile?.gender ?? 'male'} />
           </div>
         </div>
       </div>
@@ -269,7 +255,9 @@ export default function BodyCompositionHubPage() {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             {/* Left column: Kroppsfett % table - compact */}
             <div>
-              <h3 className="text-sm font-semibold text-neutral-800 mb-2">{t('hub.bodyFatTableShort')}</h3>
+              <h3 className="text-sm font-semibold text-neutral-800 mb-2">
+                {t('hub.bodyFatTableShort')}
+              </h3>
               <BodyFatReferenceTable
                 userBodyFat={bodyFatPercentage}
                 gender={profile.gender}
@@ -277,28 +265,16 @@ export default function BodyCompositionHubPage() {
               />
             </div>
 
-            {/* Right column: FFMI tables side by side */}
-            <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* FFMI Description Categories */}
-              <div>
-                <h3 className="text-base font-semibold text-neutral-800 mb-2">{t('hub.ffmiCategories')}</h3>
-                <FFMICategoryTable
-                  userFFMI={metrics?.ffmi || null}
-                  gender={profile.gender ?? 'male'}
-                />
-              </div>
-
-              {/* FFMI with Body Fat Ranges */}
-              <div>
-                <h3 className="text-base font-semibold text-neutral-800 mb-2">
-                  {t('hub.ffmiWithBodyFat')}
-                </h3>
-                <FFMIReferenceTable
-                  userFFMI={metrics?.ffmi || null}
-                  userBodyFat={bodyFatPercentage}
-                  gender={profile.gender ?? 'male'}
-                />
-              </div>
+            {/* Right column: FFMI Interpretation Table */}
+            <div className="lg:col-span-3">
+              <h3 className="text-base font-semibold text-neutral-800 mb-2">
+                {t('hub.ffmiCategories')}
+              </h3>
+              <FFMIInterpretationTable
+                gender={profile.gender ?? 'male'}
+                userFFMI={metrics?.ffmi ?? null}
+                userBodyFat={bodyFatPercentage ?? null}
+              />
             </div>
           </div>
         </div>
