@@ -9,18 +9,60 @@ import { FaqBlock } from '@/components/article/FaqBlock'
 import { GuestOnly } from '@/components/GuestOnly'
 
 type Goal = 'cut' | 'maintenance' | 'bulk'
-type ActivityLevel =
-  | 'Sedentary'
-  | 'Lightly active'
-  | 'Moderately active'
-  | 'Very active'
-  | 'Extremely active'
+type TrainingStatus = 'inactive' | 'active' | 'elite'
+
+// Evidence-based protein ranges per (goal × training status).
+// Sources: Phillips & Van Loon (2011), ISSN Position Stand (Stout et al. 2017),
+// Morton et al. (2018). Each cell is a fixed interval — no additive bonus.
+const PROTEIN_RANGES: Record<Goal, Record<TrainingStatus, { min: number; max: number }>> = {
+  cut: {
+    inactive: { min: 1.2, max: 1.6 },
+    active: { min: 1.8, max: 2.4 },
+    elite: { min: 2.2, max: 2.6 },
+  },
+  maintenance: {
+    inactive: { min: 0.8, max: 1.2 },
+    active: { min: 1.4, max: 1.8 },
+    elite: { min: 1.6, max: 2.0 },
+  },
+  bulk: {
+    inactive: { min: 1.2, max: 1.6 },
+    active: { min: 1.6, max: 2.2 },
+    elite: { min: 1.8, max: 2.4 },
+  },
+}
+
+// Rationale text per (goal × training status) — shown in result card.
+const RATIONALE: Record<Goal, Record<TrainingStatus, string>> = {
+  cut: {
+    inactive:
+      'Under kaloribrist utan regelbunden träning räcker 1,2–1,6 g/kg för att bromsa muskelmassaförlust. Viktnedgången dominerar — protein är ett skydd, inte en prestationsfaktor.',
+    active:
+      'Under viktnedgång med regelbunden träning rekommenderar forskning 1,8–2,4 g/kg. Protein skyddar muskelmassa under kaloribrist, ger hög mättnadseffekt och har hög TEF (ca 25–30% av proteinkalorierna går åt till matsmältningen).',
+    elite:
+      'Elitidrottare och tung daglig träning i kombination med kaloribrist motiverar 2,2–2,6 g/kg. Den höga träningsvolymen ökar katabolisk stress och kräver ett extra skyddsnät för muskelmassa.',
+  },
+  maintenance: {
+    inactive:
+      'WHO:s minimumrekommendation på 0,8 g/kg gäller stillasittande vuxna. För de flesta är 1,0–1,2 g/kg ett rimligare mål för att stötta immunsystem, enzymer och återhämtning.',
+    active:
+      'För att bibehålla muskelmassa och stötta återhämtning vid regelbunden träning räcker 1,4–1,8 g/kg för de flesta. Aktiva med hög träningsvolym bör sikta på övre delen av intervallet.',
+    elite:
+      'Elitidrottare behöver 1,6–2,0 g/kg även under underhållsfas för att stötta återhämtning och motverka nedbrytning vid hög träningsvolym.',
+  },
+  bulk: {
+    inactive:
+      'Utan regelbunden styrketräning är muskeluppbyggnad begränsad. 1,2–1,6 g/kg räcker för att stötta en gradvis ökning av muskelmassa i kombination med kalorioverskott.',
+    active:
+      'Under muskeluppbyggnad med regelbunden styrketräning är 1,6–2,2 g/kg det vetenskapligt stödda optimala intervallet (Morton et al., 2018: ~1,62 g/kg är nära taket för vältränade). Mer än 2,2 g/kg ger troligtvis inga ytterligare fördelar.',
+    elite:
+      'Elitidrottare med hög träningsvolym och kalorioverskott kan motivera 1,8–2,4 g/kg för att maximera muskelproteinsyntes och stötta återhämtning mellan pass.',
+  },
+}
 
 const GOALS: {
   value: Goal
   label: string
-  minMultiplier: number
-  maxMultiplier: number
   description: string
   color: string
   ring: string
@@ -28,71 +70,45 @@ const GOALS: {
   {
     value: 'cut',
     label: 'Viktnedgång (cut)',
-    minMultiplier: 1.8,
-    maxMultiplier: 2.4,
-    description:
-      'Högt proteinintag skyddar muskelmassa under kaloribrist och ger hög mättnadseffekt.',
+    description: 'Kaloribrist — skydda muskelmassa och utnyttja proteinets höga mättnadseffekt.',
     color: 'border-blue-500 bg-blue-50',
     ring: 'border-blue-500 bg-blue-500',
   },
   {
     value: 'maintenance',
     label: 'Viktstabilisering',
-    minMultiplier: 1.4,
-    maxMultiplier: 1.8,
-    description: 'Tillräckligt för att bibehålla muskelmassa och stötta allmän hälsa.',
+    description: 'Bibehåll muskelmassa och stötta allmän hälsa utan att gå upp eller ned.',
     color: 'border-neutral-500 bg-neutral-50',
     ring: 'border-neutral-500 bg-neutral-500',
   },
   {
     value: 'bulk',
     label: 'Muskeluppbyggnad (bulk)',
-    minMultiplier: 1.6,
-    maxMultiplier: 2.2,
-    description:
-      'Protein är byggstenen för muskler. Kombinera med kalorioverskott och styrketräning.',
+    description: 'Kalorioverskott + styrketräning — protein är råmaterialet för nya muskelfibrer.',
     color: 'border-green-500 bg-green-50',
     ring: 'border-green-500 bg-green-500',
   },
 ]
 
-const ACTIVITY_LEVELS: {
-  value: ActivityLevel
+const TRAINING_STATUSES: {
+  value: TrainingStatus
   label: string
   description: string
-  bonus: number
 }[] = [
   {
-    value: 'Sedentary',
-    label: 'Stillasittande',
-    description: 'Kontorsjobb eller hemarbete, liten vardagsrörelse, inga träningspass',
-    bonus: 0,
+    value: 'inactive',
+    label: 'Inaktiv / sällan träning',
+    description: 'Ingen regelbunden träning — vardagsrörelse som promenader räknas hit',
   },
   {
-    value: 'Lightly active',
-    label: 'Lätt aktiv',
-    description: 'Lätt träning 1–3 dagar/vecka, t.ex. promenader, yoga eller gym på fritiden',
-    bonus: 0.1,
+    value: 'active',
+    label: 'Tränar regelbundet',
+    description: 'Styrketräning eller konditionsträning 2–5 dagar/vecka',
   },
   {
-    value: 'Moderately active',
-    label: 'Måttligt aktiv',
-    description:
-      'Regelbunden träning 3–5 dagar/vecka med måttlig intensitet, t.ex. löpning eller styrketräning',
-    bonus: 0.2,
-  },
-  {
-    value: 'Very active',
-    label: 'Mycket aktiv',
-    description: 'Hård träning nästan varje dag (6–7 dagar/vecka) eller fysiskt aktivt arbete',
-    bonus: 0.3,
-  },
-  {
-    value: 'Extremely active',
-    label: 'Extremt aktiv',
-    description:
-      'Tungt fysiskt arbete kombinerat med daglig intensiv träning, t.ex. elitidrottare eller byggnadsarbetare som dessutom tränar',
-    bonus: 0.4,
+    value: 'elite',
+    label: 'Elitidrottare / tung daglig träning',
+    description: 'Hård träning dagligen eller dubbla pass, alternativt tungt fysiskt yrke',
   },
 ]
 
@@ -102,7 +118,7 @@ const FAQ_ITEMS = [
   {
     question: 'Hur mycket protein behöver man per dag?',
     answer:
-      'Det beror på ditt mål och aktivitetsnivå. WHO:s minimumrekommendation är 0,8 g/kg för stillasittande vuxna — men det räcker inte för den som tränar. För aktiva vuxna rekommenderar forskning 1,4–2,4 g/kg beroende på mål: lägre vid underhåll, högre vid viktnedgång (för att skydda muskler) och vid muskeluppbyggnad.',
+      'Det beror primärt på ditt mål och träningsstatus — inte på generell aktivitetsnivå. WHO:s minimumrekommendation är 0,8 g/kg för stillasittande vuxna. För den som tränar regelbundet rekommenderar forskning 1,4–2,4 g/kg beroende på mål: lägre vid underhåll, högre vid viktnedgång (för att skydda muskler) och vid muskeluppbyggnad.',
   },
   {
     question: 'Är 2 gram protein per kg optimalt?',
@@ -120,9 +136,14 @@ const FAQ_ITEMS = [
       'Forskning visar att kroppen effektivt utnyttjar ungefär 20–40 g protein per måltid för muskelproteinsyntes. Fördelat på 3–5 måltider per dag maximeras stimuleringen av muskelbyggande. Att äta 150 g protein i en enda måltid är alltså suboptimalt — sprid ut intaget jämnt.',
   },
   {
+    question: 'Spelar det någon roll vilken typ av träning man gör?',
+    answer:
+      'Ja, träningstypen påverkar proteinbehovet mer än träningens frekvens eller hur aktiv man generellt är. Styrketräning stimulerar muskelproteinsyntes direkt och kräver mer protein än konditionsträning vid samma volym. Det är därför kalkylatorn frågar om träningsstatus snarare än hur många steg du tar om dagen.',
+  },
+  {
     question: 'Kan man äta för mycket protein?',
     answer:
-      'För friska personer är högt proteinintag (upp till 3 g/kg/dag) säkert och ger inga negativa njureffekter. Den praktiska begränsningen är att ett extremt högt proteinintag tränger ut kolhydrater och fett, vilket kan försämra träningsprestanda och hormonbalans. Sikta på 1,6–2,4 g/kg och prioritera varierade proteinkällor.',
+      'För friska personer är högt proteinintag (upp till 3 g/kg/dag) säkert och ger inga negativa njureffekter. Den praktiska begränsningen är att ett extremt högt proteinintag tränger ut kolhydrater och fett, vilket kan försämra träningsprestanda och hormonbalans. Sikta på intervallet för ditt mål och prioritera varierade proteinkällor.',
   },
 ]
 
@@ -137,7 +158,7 @@ const PAGE_SCHEMA = [
     applicationCategory: 'HealthApplication',
     operatingSystem: 'Web',
     description:
-      'Gratis proteinbehov-kalkylator. Räkna ut hur mycket protein per dag du behöver baserat på vikt, aktivitetsnivå och mål — viktnedgång, underhåll eller muskeluppbyggnad.',
+      'Gratis proteinbehov-kalkylator. Räkna ut hur mycket protein per dag du behöver baserat på vikt, träningsstatus och mål — viktnedgång, underhåll eller muskeluppbyggnad.',
     offers: { '@type': 'Offer', price: '0', priceCurrency: 'SEK' },
   },
   {
@@ -159,27 +180,33 @@ const PAGE_SCHEMA = [
 export default function ProteinbehovKalkylatornPage() {
   const [weight, setWeight] = useState('')
   const [goal, setGoal] = useState<Goal>('maintenance')
-  const [activityLevel, setActivityLevel] = useState<ActivityLevel>('Moderately active')
+  const [trainingStatus, setTrainingStatus] = useState<TrainingStatus>('active')
   const [mealsPerDay, setMealsPerDay] = useState(4)
   const [hasResult, setHasResult] = useState(false)
 
-  const selectedGoal = GOALS.find(g => g.value === goal)!
-  const selectedActivity = ACTIVITY_LEVELS.find(a => a.value === activityLevel)!
+  const range = PROTEIN_RANGES[goal][trainingStatus]
+  const rationale = RATIONALE[goal][trainingStatus]
 
   const result = useMemo(() => {
     const w = parseFloat(weight)
     if (!w || w <= 0) return null
 
-    const minPerKg = selectedGoal.minMultiplier + selectedActivity.bonus
-    const maxPerKg = selectedGoal.maxMultiplier + selectedActivity.bonus
-    const minTotal = Math.round(w * minPerKg)
-    const maxTotal = Math.round(w * maxPerKg)
+    const minTotal = Math.round(w * range.min)
+    const maxTotal = Math.round(w * range.max)
     const midTotal = Math.round((minTotal + maxTotal) / 2)
     const perMealMin = Math.round(minTotal / mealsPerDay)
     const perMealMax = Math.round(maxTotal / mealsPerDay)
 
-    return { minTotal, maxTotal, midTotal, perMealMin, perMealMax, minPerKg, maxPerKg }
-  }, [weight, selectedGoal, selectedActivity, mealsPerDay])
+    return {
+      minTotal,
+      maxTotal,
+      midTotal,
+      perMealMin,
+      perMealMax,
+      minPerKg: range.min,
+      maxPerKg: range.max,
+    }
+  }, [weight, range, mealsPerDay])
 
   const handleCalculate = () => {
     if (result) setHasResult(true)
@@ -201,7 +228,7 @@ export default function ProteinbehovKalkylatornPage() {
     <div className="min-h-screen flex flex-col">
       <Seo
         title="Proteinbehov Kalkylator — Hur mycket protein per dag behöver du? (2026)"
-        description="Gratis proteinbehov-kalkylator. Räkna ut hur mycket protein per dag du behöver baserat på vikt, mål och aktivitetsnivå. Skiljer på cut, maintenance och bulk."
+        description="Gratis proteinbehov-kalkylator. Räkna ut hur mycket protein per dag du behöver baserat på vikt, mål och träningsstatus. Evidensbaserade intervall — inte linjära tumregler."
         canonical={CANONICAL}
       />
       <JsonLd schema={PAGE_SCHEMA} />
@@ -233,9 +260,9 @@ export default function ProteinbehovKalkylatornPage() {
               Kalkylator
             </h1>
             <p className="text-lg md:text-xl text-neutral-600 leading-relaxed max-w-2xl">
-              Ditt proteinbehov är inte ett fast tal — det beror på om du vill gå ner i vikt, hålla
-              vikten eller bygga muskler. Räkna ut ditt individuella proteinintervall baserat på
-              vikt, mål och aktivitetsnivå.
+              Ditt proteinbehov beror på mål och träningsstatus — inte på hur aktiv du generellt är.
+              Kalkylatorn använder evidensbaserade intervall per kombination, utan linjära
+              tumregelsbonusar.
             </p>
           </div>
         </section>
@@ -243,7 +270,6 @@ export default function ProteinbehovKalkylatornPage() {
         {/* Calculator section */}
         <section className="bg-neutral-50 py-14 border-b border-neutral-100">
           <div className="container mx-auto px-4 max-w-2xl">
-            {/* Calculator card */}
             <div className="rounded-2xl border border-neutral-200 shadow-sm overflow-hidden">
               <div className="bg-primary-50 px-6 py-4 border-b border-primary-100 flex items-center gap-2">
                 <Calculator className="h-5 w-5 text-primary-600" />
@@ -274,84 +300,68 @@ export default function ProteinbehovKalkylatornPage() {
                 <div>
                   <label className="block text-sm font-medium text-neutral-700 mb-2">Mål</label>
                   <div className="space-y-2">
-                    {GOALS.map(
-                      ({
-                        value,
-                        label,
-                        minMultiplier,
-                        maxMultiplier,
-                        description,
-                        color,
-                        ring,
-                      }) => (
-                        <button
-                          key={value}
-                          onClick={() => setGoal(value)}
-                          className={`w-full flex items-start gap-3 py-2.5 px-4 rounded-lg border text-left transition-colors ${
-                            goal === value
-                              ? color
-                              : 'border-neutral-200 bg-white hover:border-neutral-300'
+                    {GOALS.map(({ value, label, description, color, ring }) => (
+                      <button
+                        key={value}
+                        onClick={() => setGoal(value)}
+                        className={`w-full flex items-start gap-3 py-2.5 px-4 rounded-lg border text-left transition-colors ${
+                          goal === value
+                            ? color
+                            : 'border-neutral-200 bg-white hover:border-neutral-300'
+                        }`}
+                      >
+                        <div
+                          className={`mt-0.5 h-4 w-4 rounded-full border-2 flex-shrink-0 ${
+                            goal === value ? ring : 'border-neutral-300 bg-white'
                           }`}
-                        >
-                          <div
-                            className={`mt-0.5 h-4 w-4 rounded-full border-2 flex-shrink-0 ${
-                              goal === value ? ring : 'border-neutral-300 bg-white'
-                            }`}
-                          />
-                          <div>
-                            <div className="text-sm font-medium text-neutral-800">
-                              {label}
-                              <span className="ml-2 text-xs font-normal text-neutral-500">
-                                {minMultiplier}–{maxMultiplier} g/kg
-                              </span>
-                            </div>
-                            <div className="text-xs text-neutral-500 mt-0.5">{description}</div>
-                          </div>
-                        </button>
-                      )
-                    )}
+                        />
+                        <div>
+                          <div className="text-sm font-medium text-neutral-800">{label}</div>
+                          <div className="text-xs text-neutral-500 mt-0.5">{description}</div>
+                        </div>
+                      </button>
+                    ))}
                   </div>
                 </div>
 
-                {/* Activity Level */}
+                {/* Training status */}
                 <div>
                   <label className="block text-sm font-medium text-neutral-700 mb-2">
-                    Aktivitetsnivå
+                    Träningsstatus
                   </label>
                   <div className="space-y-2">
-                    {ACTIVITY_LEVELS.map(({ value, label, description, bonus }) => (
+                    {TRAINING_STATUSES.map(({ value, label, description }) => (
                       <button
                         key={value}
-                        onClick={() => setActivityLevel(value)}
+                        onClick={() => setTrainingStatus(value)}
                         className={`w-full flex items-start gap-3 py-2.5 px-4 rounded-lg border text-left transition-colors ${
-                          activityLevel === value
+                          trainingStatus === value
                             ? 'border-primary-500 bg-primary-50'
                             : 'border-neutral-200 bg-white hover:border-neutral-300'
                         }`}
                       >
                         <div
                           className={`mt-0.5 h-4 w-4 rounded-full border-2 flex-shrink-0 ${
-                            activityLevel === value
+                            trainingStatus === value
                               ? 'border-primary-500 bg-primary-500'
                               : 'border-neutral-300 bg-white'
                           }`}
                         />
                         <div>
                           <div
-                            className={`text-sm font-medium ${activityLevel === value ? 'text-primary-700' : 'text-neutral-800'}`}
+                            className={`text-sm font-medium ${trainingStatus === value ? 'text-primary-700' : 'text-neutral-800'}`}
                           >
                             {label}
-                            {bonus > 0 && (
-                              <span className="ml-2 text-xs font-normal text-neutral-500">
-                                +{bonus} g/kg
-                              </span>
-                            )}
                           </div>
                           <div className="text-xs text-neutral-500">{description}</div>
                         </div>
                       </button>
                     ))}
                   </div>
+                  <p className="text-xs text-neutral-400 mt-2">
+                    Proteinbehovet drivs av träningsstatus och mål — inte av generell aktivitetsnivå
+                    som steg eller PAL-värde.
+                  </p>
                 </div>
 
                 {/* Meals per day */}
@@ -433,19 +443,12 @@ export default function ProteinbehovKalkylatornPage() {
                     </div>
                   </div>
 
-                  {/* Goal-specific advice */}
+                  {/* Rationale */}
                   <div className="rounded-xl bg-white border border-neutral-200 p-4">
                     <div className="text-xs font-medium text-neutral-500 uppercase tracking-wider mb-2">
                       Varför detta intervall?
                     </div>
-                    <p className="text-sm text-neutral-700 leading-relaxed">
-                      {goal === 'cut' &&
-                        'Under viktnedgång ökar risken för muskelkatabolism. Högt proteinintag (1,8–2,4 g/kg) motverkar detta, ger hög mättnadseffekt och har hög TEF — ca 25–30% av proteinkalorierna används till matsmältningen.'}
-                      {goal === 'maintenance' &&
-                        'För att bibehålla muskelmassa och stötta återhämtning räcker 1,4–1,8 g/kg för de flesta aktiva. Aktiva med hög träningsvolym bör sikta på övre delen av intervallet.'}
-                      {goal === 'bulk' &&
-                        'Under muskeluppbyggnad är protein byggstenen för nya muskelfibrer. 1,6–2,2 g/kg är det vetenskapligt stödda intervallet. Mer än 2,2 g/kg ger troligtvis inga ytterligare fördelar för muskeluppbyggnad.'}
-                    </p>
+                    <p className="text-sm text-neutral-700 leading-relaxed">{rationale}</p>
                   </div>
 
                   {/* Cross-links to relevant calculators */}
@@ -482,7 +485,7 @@ export default function ProteinbehovKalkylatornPage() {
                         </Link>
                       )}
                       <Link
-                        to="/kalkylatorer"
+                        to="/kalkylatorer/tdee-kalkylator"
                         className="inline-flex items-center gap-1.5 text-xs font-medium text-primary-600 hover:underline"
                       >
                         TDEE Kalkylator
@@ -536,8 +539,9 @@ export default function ProteinbehovKalkylatornPage() {
               <ul className="space-y-3 pl-4 list-disc">
                 <li>
                   <strong>Under viktnedgång (cut):</strong> Kroppen saknar kalorier och riskerar att
-                  bryta ned muskelvävnad för energi. Högt proteinintag (1,8–2,4 g/kg) motverkar
-                  muskelkatabolism, ger hög mättnadseffekt och har hög termisk effekt (TEF).
+                  bryta ned muskelvävnad för energi. Högt proteinintag (1,8–2,4 g/kg vid regelbunden
+                  träning) motverkar muskelkatabolism, ger hög mättnadseffekt och har hög termisk
+                  effekt (TEF).
                 </li>
                 <li>
                   <strong>Under underhåll (maintenance):</strong> Du behöver protein för att
@@ -546,10 +550,25 @@ export default function ProteinbehovKalkylatornPage() {
                 </li>
                 <li>
                   <strong>Under muskeluppbyggnad (bulk):</strong> Protein är råmaterialet för nya
-                  muskelfibrer. 1,6–2,2 g/kg är det vetenskapligt stödda optimala intervallet. Mer
-                  ger troligtvis inga ytterligare fördelar för muskeluppbyggnad.
+                  muskelfibrer. 1,6–2,2 g/kg är det vetenskapligt stödda optimala intervallet
+                  (Morton et al., 2018). Mer ger troligtvis inga ytterligare fördelar.
                 </li>
               </ul>
+
+              <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900 pt-4">
+                Varför frågar kalkylatorn om träningsstatus och inte aktivitetsnivå?
+              </h2>
+              <p>
+                Generell aktivitetsnivå — hur många steg du tar, PAL-värde, hur aktiv du är på
+                jobbet — driver kaloribehovet (TDEE), men inte proteinbehovet i samma utsträckning.
+                Proteinbehov i litteraturen är primärt kopplat till träningsstatus och träningstyp:
+                styrketräning stimulerar muskelproteinsyntes direkt och kräver mer protein än en
+                aktiv kontorsdag med promenader.
+              </p>
+              <p>
+                Kalkylatorn använder därför fasta, evidensbaserade intervall per kombination av mål
+                och träningsstatus — utan linjära bonussteg.
+              </p>
 
               <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900 pt-4">
                 Hur fördela protein på dagen?
