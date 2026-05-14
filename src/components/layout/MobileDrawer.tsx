@@ -15,6 +15,10 @@ import {
   BookOpen,
   Crosshair,
   Gauge,
+  LayoutDashboard,
+  Calendar,
+  History,
+  Apple,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuth } from '@/contexts/AuthContext'
@@ -50,28 +54,38 @@ export default function MobileDrawer() {
   }
 
   const navGroups = {
+    oversikt: {
+      title: t('nav.sectionOverview'),
+      emoji: '📍',
+      items: [
+        { to: '/app', label: t('nav.dashboard'), icon: LayoutDashboard, exact: true },
+        { to: '/app/today', label: t('nav.today'), icon: Calendar },
+        { to: '/app/history', label: t('nav.history'), icon: History },
+      ],
+    },
     planering: {
       title: t('nav.sectionPlanning'),
       emoji: '🍽️',
       items: [
+        { to: '/app/food-items', label: t('nav.food'), icon: Apple },
         { to: '/app/recipes', label: t('nav.recipes'), icon: ChefHat },
         { to: '/app/saved-meals', label: t('nav.savedMeals'), icon: Bookmark },
+      ],
+    },
+    minPlan: {
+      title: t('nav.sectionMyPlan'),
+      emoji: '🎯',
+      items: [
+        { to: '/app/tools/tdee-calculator', label: t('nav.calorieNeed'), icon: Gauge },
+        { to: '/app/tools/goal-calculator', label: t('nav.goalSetting'), icon: Crosshair },
+        { to: '/app/body-composition', label: t('nav.body'), icon: Activity },
+        { to: '/app/profile', label: t('nav.profile'), icon: User },
       ],
     },
     social: {
       title: t('nav.sectionSocial'),
       emoji: '👥',
       items: [{ to: '/app/social', label: t('nav.social'), icon: Users }],
-    },
-    minPlan: {
-      title: t('nav.sectionMyPlan'),
-      emoji: '🎯',
-      items: [
-        { to: '/app/profile', label: t('nav.profile'), icon: User },
-        { to: '/app/tools/tdee-calculator', label: t('nav.calorieNeed'), icon: Gauge },
-        { to: '/app/tools/goal-calculator', label: t('nav.goalSetting'), icon: Crosshair },
-        { to: '/app/body-composition', label: t('nav.body'), icon: Activity },
-      ],
     },
   }
 
@@ -149,7 +163,7 @@ export default function MobileDrawer() {
                   <div className="space-y-0.5 mt-2">
                     {group.items.map(item => {
                       const Icon = item.icon
-                      const active = isActive(item.to)
+                      const active = isActive(item.to, 'exact' in item ? item.exact : undefined)
                       return (
                         <Link
                           key={item.to}
