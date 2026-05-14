@@ -30,17 +30,22 @@ export default function MobileBottomNav() {
   const socialBadgeCount = useSocialBadgeCount()
 
   const navItems = [
+    // ÖVERSIKT
     { to: '/app', label: t('nav.dashboard'), icon: LayoutDashboard, exact: true },
     { to: '/app/today', label: t('nav.today'), icon: Calendar },
-    { to: '/app/food-items', label: t('nav.food'), icon: Apple },
     { to: '/app/history', label: t('nav.history'), icon: History },
+    // PLANERING
+    { to: '/app/food-items', label: t('nav.food'), icon: Apple },
     { to: '/app/recipes', label: t('nav.recipes'), icon: ChefHat },
     { to: '/app/saved-meals', label: t('nav.savedMealsShort'), icon: Bookmark },
+    // SOCIAL
     { to: '/app/social', label: t('nav.social'), icon: Users },
-    { to: '/app/profile', label: t('nav.profile'), icon: User },
-    { to: '/app/body-composition', label: t('nav.bodyShort'), icon: Activity },
+    // MIN PLAN
     { to: '/app/tools/tdee-calculator', label: t('nav.tdeeShort'), icon: Calculator },
     { to: '/app/tools/goal-calculator', label: t('nav.goalCalcShort'), icon: Target },
+    { to: '/app/body-composition', label: t('nav.bodyShort'), icon: Activity },
+    { to: '/app/profile', label: t('nav.profile'), icon: User },
+    // ÖVRIGT
     { to: '/app/settings', label: t('nav.settings'), icon: Settings },
   ] as const
 
