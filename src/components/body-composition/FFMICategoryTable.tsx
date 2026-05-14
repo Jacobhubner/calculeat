@@ -86,6 +86,10 @@ export function FFMICategoryTable({ userFFMI, gender }: FFMICategoryTableProps) 
           </tbody>
         </table>
       </div>
+      <p className="text-xs text-neutral-400 px-4 py-2 border-t border-gray-100">
+        Källa: Kouri EM et al. (1995). Fat-free mass index in users and nonusers of
+        anabolic-androgenic steroids. <em>Clin J Sport Med.</em>
+      </p>
     </div>
   )
 }
