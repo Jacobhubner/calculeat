@@ -38,103 +38,445 @@ interface FfmiCategory {
   context: string
 }
 
-function getFfmiCategory(ffmi: number, gender: Gender): FfmiCategory {
-  if (gender === 'male') {
-    if (ffmi < 18)
-      return {
-        label: 'Nybörjare',
-        description: 'Låg muskelmassa relativt längd. Stor potential för utveckling.',
-        color: 'text-blue-700',
-        bg: 'bg-blue-50 border-blue-200',
-        context:
-          'De flesta som just börjat styrketräna befinner sig här. Med konsekvent träning och rätt kalorimål är snabb progression möjlig.',
-      }
-    if (ffmi < 20)
-      return {
-        label: 'Tränad',
-        description: 'Synlig muskelmassa. Typisk nivå efter 1–3 år av konsekvent träning.',
-        color: 'text-teal-700',
-        bg: 'bg-teal-50 border-teal-200',
-        context:
-          'Du har lagt en solid grund. Vidare progress kräver mer strukturerad kost och periodisering.',
-      }
-    if (ffmi < 22)
-      return {
-        label: 'Avancerad',
-        description:
-          'Imponerande muskelmassa. Kräver flerårig konsekvent träning och kostkontroll.',
-        color: 'text-green-700',
-        bg: 'bg-green-50 border-green-200',
-        context:
-          'Du befinner dig i ett segment som kräver dedikation och smarta tränings- och kostbeslut. Fortsätt med TDEE-precision.',
-      }
-    if (ffmi < 23)
-      return {
-        label: 'Exceptionell',
-        description:
-          'Nära den övre naturliga gränsen för de flesta. Sällsynt att nå utan lång träningskarriär.',
-        color: 'text-orange-700',
-        bg: 'bg-orange-50 border-orange-200',
-        context:
-          'Att befinna sig här naturligt innebär utmärkt genetik kombinerat med många år av träning och precis kost.',
-      }
-    return {
-      label: 'Elit / diskuterat spann',
-      description:
-        'FFMI ≥ 23 är ovanligt. Förekommer naturligt bland genetiska outliers och elitidrottare.',
-      color: 'text-purple-700',
-      bg: 'bg-purple-50 border-purple-200',
-      context:
-        'Forskning (Kouri 1995) visade att naturliga idrottare sällan överstiger FFMI 25. Enstaka individer med utmärkt genetik kan nå detta naturligt — men det är exceptionellt.',
-    }
-  }
-
-  // Female thresholds (lower baseline due to physiology)
-  if (ffmi < 14)
-    return {
-      label: 'Nybörjare',
-      description: 'Låg muskelmassa relativt längd. Stor potential för utveckling.',
-      color: 'text-blue-700',
-      bg: 'bg-blue-50 border-blue-200',
-      context:
-        'De flesta som just börjat styrketräna befinner sig här. Konsekvent träning och tillräckligt proteinintag ger tydlig progress.',
-    }
-  if (ffmi < 16)
-    return {
-      label: 'Tränad',
-      description: 'Synlig muskelmassa. Typisk nivå efter 1–3 år av konsekvent träning.',
-      color: 'text-teal-700',
-      bg: 'bg-teal-50 border-teal-200',
-      context:
-        'Du har lagt en solid grund. Vidare progress kräver strukturerad kost och periodisering.',
-    }
-  if (ffmi < 18)
-    return {
-      label: 'Avancerad',
-      description: 'Imponerande muskelmassa. Kräver flerårig konsekvent träning och kostkontroll.',
-      color: 'text-green-700',
-      bg: 'bg-green-50 border-green-200',
-      context:
-        'Du befinner dig i ett segment som kräver dedikation och smarta beslut kring träning och kost.',
-    }
-  if (ffmi < 19)
-    return {
-      label: 'Exceptionell',
-      description: 'Nära den övre naturliga gränsen för de flesta kvinnor.',
-      color: 'text-orange-700',
-      bg: 'bg-orange-50 border-orange-200',
-      context:
-        'Att nå FFMI 18–19 naturligt som kvinna kräver utmärkt genetik och lång träningskarriär.',
-    }
-  return {
-    label: 'Elit / diskuterat spann',
+// Each row: ffmiMin (inclusive), ffmiMax (exclusive, null = no upper bound),
+// bfMin/bfMax: body fat % range (null = any).
+// Rows are matched top-to-bottom; first match wins.
+const FFMI_MATRIX: {
+  gender: Gender
+  ffmiMin: number
+  ffmiMax: number | null
+  bfMin: number | null
+  bfMax: number | null
+  label: string
+  description: string
+  color: string
+  bg: string
+  context: string
+}[] = [
+  // ── MÄN ──
+  {
+    gender: 'male',
+    ffmiMin: 0,
+    ffmiMax: 17,
+    bfMin: null,
+    bfMax: null,
+    label: 'Mycket lågt',
+    description: 'Kraftigt begränsad muskelmassa. Möjlig undernäring eller sarkopeni.',
+    color: 'text-slate-700',
+    bg: 'bg-slate-50 border-slate-200',
+    context:
+      'FFMI under 17 indikerar mycket låg mager kroppsmassa relativt längd. Kontakta läkare om detta är oväntat.',
+  },
+  {
+    gender: 'male',
+    ffmiMin: 17,
+    ffmiMax: 18,
+    bfMin: 10,
+    bfMax: 18,
+    label: 'Smal / otränad',
+    description: 'Under genomsnittlig muskulatur. Stillasittande livsstil, "smal" framtoning.',
+    color: 'text-blue-700',
+    bg: 'bg-blue-50 border-blue-200',
+    context:
+      'Typisk för den som inte styrketränat. Stor potential för muskeluppbyggnad med rätt träning och proteinintag.',
+  },
+  {
+    gender: 'male',
+    ffmiMin: 18,
+    ffmiMax: 20,
+    bfMin: 20,
+    bfMax: 27,
+    label: 'Genomsnitt',
+    description: 'Normal muskelmassa för icke-tränande man. Hälsomässig baslinje.',
+    color: 'text-teal-700',
+    bg: 'bg-teal-50 border-teal-200',
+    context:
+      'Genomsnittlig muskelmassa för en inaktiv man. Regelbunden träning och högt proteinintag kan förbättra FFMI markant.',
+  },
+  {
+    gender: 'male',
+    ffmiMin: 19,
+    ffmiMax: 21,
+    bfMin: 25,
+    bfMax: 40,
+    label: 'Överviktig / kraftig',
     description:
-      'FFMI ≥ 19 är ovanligt för kvinnor. Förekommer naturligt bland genetiska outliers.',
+      'Genomsnittlig muskelmassa men hög fettprocent. "Kraftig" eller "satt" framtoning.',
+    color: 'text-yellow-700',
+    bg: 'bg-yellow-50 border-yellow-200',
+    context:
+      'Muskelmassan är normal men fettprocenten är hög. Fokus på kaloribrist och bibehållen träning kan förbättra kroppssammansättningen.',
+  },
+  {
+    gender: 'male',
+    ffmiMin: 20,
+    ffmiMax: 22,
+    bfMin: 10,
+    bfMax: 18,
+    label: 'Atlet / mellannivå',
+    description: 'Över genomsnittlig muskelmassa. Typiskt efter 2–3 år av konsekvent träning.',
+    color: 'text-green-700',
+    bg: 'bg-green-50 border-green-200',
+    context:
+      'Tydligt synlig muskelmassa. Vidare progress kräver mer strukturerad kost och periodisering.',
+  },
+  {
+    gender: 'male',
+    ffmiMin: 22,
+    ffmiMax: 24,
+    bfMin: 6,
+    bfMax: 12,
+    label: 'Avancerad naturlig',
+    description: 'Mycket vältränad. Typiskt efter 4–7 år av träning. Tävlingsnivå.',
+    color: 'text-orange-700',
+    bg: 'bg-orange-50 border-orange-200',
+    context:
+      'Att nå detta naturligt kräver flerårig dedikation, precis kost och bra genetik. Du befinner dig i ett sällsynt segment.',
+  },
+  {
+    gender: 'male',
+    ffmiMin: 24,
+    ffmiMax: 25,
+    bfMin: 8,
+    bfMax: 20,
+    label: 'Elit naturlig / diskuterat',
+    description: 'Nära genetiskt tak. 8+ år träning eller möjlig substansanvändning.',
     color: 'text-purple-700',
     bg: 'bg-purple-50 border-purple-200',
     context:
-      'Forskning på naturliga idrottare antyder att de flesta kvinnor maximerar runt FFMI 17–18. Enstaka individer med utmärkt genetik kan nå högre.',
+      'Kouri et al. (1995) observerade att naturliga idrottare sällan överstiger FFMI 25. Vid denna nivå är genetisk outlier-status eller substansanvändning båda möjliga förklaringar.',
+  },
+  {
+    gender: 'male',
+    ffmiMin: 25,
+    ffmiMax: 27,
+    bfMin: null,
+    bfMax: null,
+    label: 'Troligen doped',
+    description:
+      'Bortom typisk naturlig kapacitet. Genetisk outlier eller substansanvändning trolig.',
+    color: 'text-red-700',
+    bg: 'bg-red-50 border-red-200',
+    context:
+      'Statistiskt sett är FFMI 25–27 ovanligt att nå naturligt. Majoriteten i detta spann använder prestationshöjande medel.',
+  },
+  {
+    gender: 'male',
+    ffmiMin: 27,
+    ffmiMax: null,
+    bfMin: null,
+    bfMax: null,
+    label: 'Nästan säkert doped',
+    description: 'Kräver prestationshöjande medel i de allra flesta fall.',
+    color: 'text-red-900',
+    bg: 'bg-red-100 border-red-300',
+    context:
+      'FFMI över 27 är extremt sällsynt naturligt. Forskning och erfarenhet pekar starkt mot substansanvändning vid dessa nivåer.',
+  },
+  // ── KVINNOR ──
+  {
+    gender: 'female',
+    ffmiMin: 0,
+    ffmiMax: 14,
+    bfMin: null,
+    bfMax: null,
+    label: 'Mycket lågt',
+    description: 'Kraftigt begränsad muskelmassa. Hälsomässiga risker.',
+    color: 'text-slate-700',
+    bg: 'bg-slate-50 border-slate-200',
+    context:
+      'FFMI under 14 för kvinnor indikerar mycket låg mager kroppsmassa. Kontakta läkare om detta är oväntat.',
+  },
+  {
+    gender: 'female',
+    ffmiMin: 14,
+    ffmiMax: 15,
+    bfMin: 20,
+    bfMax: 25,
+    label: 'Smal / otränad',
+    description: 'Under genomsnittlig muskulatur. Stillasittande, "smal" framtoning.',
+    color: 'text-blue-700',
+    bg: 'bg-blue-50 border-blue-200',
+    context:
+      'Typisk för den som inte styrketränat. Konsekvent träning och tillräckligt proteinintag ger tydlig progress.',
+  },
+  {
+    gender: 'female',
+    ffmiMin: 14,
+    ffmiMax: 17,
+    bfMin: 22,
+    bfMax: 35,
+    label: 'Genomsnitt',
+    description: 'Normal muskelmassa för icke-tränande kvinna.',
+    color: 'text-teal-700',
+    bg: 'bg-teal-50 border-teal-200',
+    context:
+      'Genomsnittlig muskelmassa för en inaktiv kvinna. Regelbunden träning förbättrar FFMI och kroppssammansättning.',
+  },
+  {
+    gender: 'female',
+    ffmiMin: 15,
+    ffmiMax: 18,
+    bfMin: 30,
+    bfMax: 45,
+    label: 'Överviktig / kraftig',
+    description: 'Genomsnittlig muskelmassa men hög fettprocent.',
+    color: 'text-yellow-700',
+    bg: 'bg-yellow-50 border-yellow-200',
+    context:
+      'Muskelmassan är normal men fettprocenten är hög. Fokus på kaloribrist och träning förbättrar kroppssammansättningen.',
+  },
+  {
+    gender: 'female',
+    ffmiMin: 16,
+    ffmiMax: 17,
+    bfMin: 18,
+    bfMax: 25,
+    label: 'Atlet / mellannivå',
+    description: 'Över genomsnittlig muskelmassa. Typiskt efter 2–3 år av träning.',
+    color: 'text-green-700',
+    bg: 'bg-green-50 border-green-200',
+    context:
+      'Tydligt atletisk framtoning. Vidare progress kräver strukturerad kost och periodisering.',
+  },
+  {
+    gender: 'female',
+    ffmiMin: 18,
+    ffmiMax: 20,
+    bfMin: 15,
+    bfMax: 22,
+    label: 'Avancerad naturlig',
+    description: 'Mycket vältränad. Typiskt efter 4–7 år av träning. Tävlingsnivå.',
+    color: 'text-orange-700',
+    bg: 'bg-orange-50 border-orange-200',
+    context:
+      'Att nå detta naturligt som kvinna kräver många år av dedikation och bra genetik. Sällsynt segment.',
+  },
+  {
+    gender: 'female',
+    ffmiMin: 19,
+    ffmiMax: 21,
+    bfMin: 15,
+    bfMax: 30,
+    label: 'Elit naturlig / diskuterat',
+    description: 'Nära genetiskt tak för kvinnor. 8+ år träning eller möjlig substansanvändning.',
+    color: 'text-purple-700',
+    bg: 'bg-purple-50 border-purple-200',
+    context:
+      'Forskning antyder att de flesta kvinnor maximerar runt FFMI 17–19 naturligt. Vid denna nivå är genetisk outlier-status eller substansanvändning möjliga förklaringar.',
+  },
+  {
+    gender: 'female',
+    ffmiMin: 21,
+    ffmiMax: 23,
+    bfMin: null,
+    bfMax: null,
+    label: 'Troligen doped',
+    description: 'Bortom typisk naturlig kapacitet för kvinnor.',
+    color: 'text-red-700',
+    bg: 'bg-red-50 border-red-200',
+    context:
+      'Statistiskt sett är FFMI 21–23 ovanligt att nå naturligt som kvinna. Majoriteten i detta spann använder prestationshöjande medel.',
+  },
+  {
+    gender: 'female',
+    ffmiMin: 23,
+    ffmiMax: null,
+    bfMin: null,
+    bfMax: null,
+    label: 'Nästan säkert doped',
+    description: 'Kräver prestationshöjande medel i de allra flesta fall.',
+    color: 'text-red-900',
+    bg: 'bg-red-100 border-red-300',
+    context: 'FFMI över 23 är extremt sällsynt naturligt för kvinnor.',
+  },
+]
+
+function getFfmiCategory(ffmi: number, bodyFatPct: number, gender: Gender): FfmiCategory {
+  const rows = FFMI_MATRIX.filter(r => r.gender === gender)
+  for (const row of rows) {
+    const ffmiOk = ffmi >= row.ffmiMin && (row.ffmiMax === null || ffmi < row.ffmiMax)
+    const bfOk =
+      row.bfMin === null ||
+      (bodyFatPct >= row.bfMin && (row.bfMax === null || bodyFatPct < row.bfMax))
+    if (ffmiOk && bfOk) return row
   }
+  // Fallback — should not be reached for valid input
+  return rows[rows.length - 1]
+}
+
+const MEN_TABLE_ROWS = [
+  {
+    range: '< 17',
+    bf: 'Alla',
+    category: 'Mycket lågt',
+    desc: 'Kraftigt begränsad muskelmassa, möjlig undernäring eller sarkopeni',
+  },
+  {
+    range: '17–18',
+    bf: '10–18%',
+    category: 'Smal / otränad',
+    desc: 'Under genomsnittlig muskulatur, stillasittande livsstil',
+  },
+  {
+    range: '18–20',
+    bf: '20–27%',
+    category: 'Genomsnitt',
+    desc: 'Normal muskelmassa för icke-tränande man',
+  },
+  {
+    range: '19–21',
+    bf: '25–40%',
+    category: 'Överviktig / kraftig',
+    desc: 'Genomsnittlig muskel men hög fettprocent',
+  },
+  {
+    range: '20–21',
+    bf: '10–18%',
+    category: 'Atlet / mellannivå',
+    desc: 'Över genomsnittlig, 2–3 år träning, "tränar tydligt"',
+  },
+  {
+    range: '22–23',
+    bf: '6–12%',
+    category: 'Avancerad naturlig',
+    desc: 'Mycket vältränad, 4–7 år träning, tävlingsnivå',
+  },
+  {
+    range: '24–25',
+    bf: '8–20%',
+    category: 'Elit naturlig / diskuterat',
+    desc: 'Nära genetiskt tak, 8+ år träning eller möjlig substansanvändning',
+  },
+  {
+    range: '25–27',
+    bf: 'Alla',
+    category: 'Troligen doped',
+    desc: 'Bortom typisk naturlig kapacitet',
+  },
+  {
+    range: '> 27',
+    bf: 'Alla',
+    category: 'Nästan säkert doped',
+    desc: 'Kräver prestationshöjande medel i de allra flesta fall',
+  },
+]
+
+const WOMEN_TABLE_ROWS = [
+  {
+    range: '< 14',
+    bf: 'Alla',
+    category: 'Mycket lågt',
+    desc: 'Kraftigt begränsad muskelmassa, hälsomässiga risker',
+  },
+  {
+    range: '14–15',
+    bf: '20–25%',
+    category: 'Smal / otränad',
+    desc: 'Under genomsnittlig muskulatur, stillasittande',
+  },
+  {
+    range: '14–17',
+    bf: '22–35%',
+    category: 'Genomsnitt',
+    desc: 'Normal muskelmassa för icke-tränande kvinna',
+  },
+  {
+    range: '15–18',
+    bf: '30–45%',
+    category: 'Överviktig / kraftig',
+    desc: 'Genomsnittlig muskel men hög fettprocent',
+  },
+  {
+    range: '16–17',
+    bf: '18–25%',
+    category: 'Atlet / mellannivå',
+    desc: 'Över genomsnittlig, 2–3 år träning, atletisk framtoning',
+  },
+  {
+    range: '18–20',
+    bf: '15–22%',
+    category: 'Avancerad naturlig',
+    desc: 'Mycket vältränad, 4–7 år träning, tävlingsnivå',
+  },
+  {
+    range: '19–21',
+    bf: '15–30%',
+    category: 'Elit naturlig / diskuterat',
+    desc: 'Nära genetiskt tak, 8+ år träning eller möjlig substansanvändning',
+  },
+  {
+    range: '21–23',
+    bf: 'Alla',
+    category: 'Troligen doped',
+    desc: 'Bortom typisk naturlig kapacitet för kvinnor',
+  },
+  {
+    range: '> 23',
+    bf: 'Alla',
+    category: 'Nästan säkert doped',
+    desc: 'Kräver prestationshöjande medel i de allra flesta fall',
+  },
+]
+
+function FfmiReferenceTable() {
+  const [showMale, setShowMale] = useState(true)
+  const rows = showMale ? MEN_TABLE_ROWS : WOMEN_TABLE_ROWS
+
+  return (
+    <div className="mt-4">
+      <div className="flex items-center justify-between mb-2">
+        <h3 className="text-lg font-semibold text-neutral-800">FFMI-referensvärden</h3>
+        <button
+          onClick={() => setShowMale(v => !v)}
+          className="text-xs text-primary-600 hover:underline"
+        >
+          {showMale ? 'Visa kvinnors värden' : 'Visa mäns värden'}
+        </button>
+      </div>
+      <div className="overflow-x-auto rounded-xl border border-neutral-200">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="bg-neutral-100">
+              <th className="px-4 py-2.5 text-left text-xs font-semibold text-neutral-500 uppercase tracking-wider border-b border-neutral-200">
+                FFMI
+              </th>
+              <th className="px-4 py-2.5 text-left text-xs font-semibold text-neutral-500 uppercase tracking-wider border-b border-neutral-200">
+                Fettprocent
+              </th>
+              <th className="px-4 py-2.5 text-left text-xs font-semibold text-neutral-500 uppercase tracking-wider border-b border-neutral-200">
+                Kategori
+              </th>
+              <th className="px-4 py-2.5 text-left text-xs font-semibold text-neutral-500 uppercase tracking-wider border-b border-neutral-200 hidden sm:table-cell">
+                Beskrivning
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row, i) => (
+              <tr
+                key={i}
+                className={`border-b border-neutral-100 last:border-0 ${i % 2 === 0 ? 'bg-white' : 'bg-neutral-50/50'}`}
+              >
+                <td className="px-4 py-2.5 font-medium text-neutral-800 whitespace-nowrap">
+                  {row.range}
+                </td>
+                <td className="px-4 py-2.5 text-neutral-600 whitespace-nowrap">{row.bf}</td>
+                <td className="px-4 py-2.5 font-medium text-neutral-700 whitespace-nowrap">
+                  {row.category}
+                </td>
+                <td className="px-4 py-2.5 text-neutral-500 hidden sm:table-cell">{row.desc}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p className="text-xs text-neutral-400 mt-2">
+        Källa: LeanFFMI.com — FFMI Interpretation Guide. Baserat på Kouri EM et al. (1995) och
+        forskningslitteratur kring naturliga idrottares muskelmassetak.
+      </p>
+    </div>
+  )
 }
 
 const FAQ_ITEMS = [
@@ -209,7 +551,7 @@ export default function FfmiKalkylatornPage() {
     if (!h || !w || !bf || h < 100 || h > 250 || w <= 0 || bf < 2 || bf > 60) return null
     const { lbm, ffmi, normalizedFfmi } = calcFfmi(w, h, bf)
     if (ffmi < 10 || ffmi > 40) return null
-    const category = getFfmiCategory(ffmi, gender)
+    const category = getFfmiCategory(ffmi, bf, gender)
     return { lbm, ffmi, normalizedFfmi, category }
   }, [height, weight, bodyFat, gender])
 
@@ -514,52 +856,7 @@ export default function FfmiKalkylatornPage() {
                 ))}
               </div>
 
-              <h3 className="text-lg font-semibold text-neutral-800 mt-4">
-                FFMI-referensvärden (normaliserat, män)
-              </h3>
-              <div className="rounded-xl border border-neutral-200 overflow-hidden">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="bg-neutral-50 border-b border-neutral-200">
-                      <th className="text-left px-4 py-2 text-xs font-semibold text-neutral-500 uppercase tracking-wider">
-                        Kategori
-                      </th>
-                      <th className="text-left px-4 py-2 text-xs font-semibold text-neutral-500 uppercase tracking-wider">
-                        FFMI (normaliserat)
-                      </th>
-                      <th className="text-left px-4 py-2 text-xs font-semibold text-neutral-500 uppercase tracking-wider">
-                        Träningsbakgrund
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {[
-                      { cat: 'Nybörjare', range: '< 18', bg: 'Lite eller ingen styrketräning' },
-                      { cat: 'Tränad', range: '18–19,9', bg: '1–3 år konsekvent träning' },
-                      { cat: 'Avancerad', range: '20–21,9', bg: '3+ år, strukturerad kost' },
-                      { cat: 'Exceptionell', range: '22–24,9', bg: 'Lång karriär, bra genetik' },
-                      {
-                        cat: 'Elit / sällsynt',
-                        range: '≥ 25',
-                        bg: 'Statistiskt ovanligt naturligt',
-                      },
-                    ].map((row, i) => (
-                      <tr
-                        key={row.cat}
-                        className={`border-b border-neutral-100 last:border-0 ${i % 2 === 0 ? 'bg-white' : 'bg-neutral-50/50'}`}
-                      >
-                        <td className="px-4 py-2.5 font-medium text-neutral-800">{row.cat}</td>
-                        <td className="px-4 py-2.5 text-neutral-700">{row.range}</td>
-                        <td className="px-4 py-2.5 text-neutral-500">{row.bg}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              <p className="text-xs text-neutral-400 mt-1">
-                Källa: Kouri EM et al. (1995). Fat-free mass index in users and nonusers of
-                anabolic-androgenic steroids. Clin J Sport Med.
-              </p>
+              <FfmiReferenceTable />
             </div>
           </div>
         </section>
