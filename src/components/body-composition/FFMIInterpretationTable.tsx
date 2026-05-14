@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { ChevronDown } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 interface TableRow {
   ffmiMin: number
@@ -51,15 +53,21 @@ export function FFMIInterpretationTable({
 }: FFMIInterpretationTableProps) {
   const { t } = useTranslation('body')
   const [showMale, setShowMale] = useState(gender !== 'female')
+  const [expandedRow, setExpandedRow] = useState<number | null>(null)
   const rows = showMale ? MEN_ROWS : WOMEN_ROWS
   const genderKey = showMale ? 'men' : 'women'
+
+  const toggleRow = (i: number) => setExpandedRow(prev => (prev === i ? null : i))
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-neutral-200 overflow-hidden">
       <div className="flex justify-end px-2 pt-2">
         <button
           type="button"
-          onClick={() => setShowMale(v => !v)}
+          onClick={() => {
+            setShowMale(v => !v)
+            setExpandedRow(null)
+          }}
           className="text-[10px] text-primary-600 hover:underline"
         >
           {showMale
@@ -83,6 +91,8 @@ export function FFMIInterpretationTable({
               <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-500 uppercase tracking-wider hidden lg:table-cell">
                 {t('ffmiInterpretation.columnDescription')}
               </th>
+              {/* Expand toggle column — only on mobile */}
+              <th className="px-2 py-2 lg:hidden" />
             </tr>
           </thead>
           <tbody className="divide-y divide-neutral-100">
@@ -90,30 +100,50 @@ export function FFMIInterpretationTable({
               const highlighted =
                 userFFMI != null && userBodyFat != null && isMatch(row, userFFMI, userBodyFat)
               const rowKey = `row${i}` as const
+              const isExpanded = expandedRow === i
+              const baseClass = highlighted
+                ? 'bg-blue-100 border-l-4 border-l-blue-600 font-semibold'
+                : i % 2 === 0
+                  ? 'bg-white'
+                  : 'bg-neutral-50/50'
+
               return (
-                <tr
-                  key={i}
-                  className={
-                    highlighted
-                      ? 'bg-blue-100 border-l-4 border-l-blue-600 font-semibold'
-                      : i % 2 === 0
-                        ? 'bg-white'
-                        : 'bg-neutral-50/50'
-                  }
-                >
-                  <td className="px-3 py-2 text-neutral-800 whitespace-nowrap">
-                    {t(`ffmiInterpretation.${genderKey}.${rowKey}.range`)}
-                  </td>
-                  <td className="px-3 py-2 text-neutral-600 whitespace-nowrap">
-                    {t(`ffmiInterpretation.${genderKey}.${rowKey}.bf`)}
-                  </td>
-                  <td className="px-3 py-2 font-medium text-neutral-700 whitespace-nowrap">
-                    {t(`ffmiInterpretation.${genderKey}.${rowKey}.category`)}
-                  </td>
-                  <td className="px-3 py-2 text-neutral-500 hidden lg:table-cell">
-                    {t(`ffmiInterpretation.${genderKey}.${rowKey}.desc`)}
-                  </td>
-                </tr>
+                <>
+                  <tr key={i} className={baseClass}>
+                    <td className="px-3 py-2 text-neutral-800 whitespace-nowrap">
+                      {t(`ffmiInterpretation.${genderKey}.${rowKey}.range`)}
+                    </td>
+                    <td className="px-3 py-2 text-neutral-600 whitespace-nowrap">
+                      {t(`ffmiInterpretation.${genderKey}.${rowKey}.bf`)}
+                    </td>
+                    <td className="px-3 py-2 font-medium text-neutral-700 whitespace-nowrap">
+                      {t(`ffmiInterpretation.${genderKey}.${rowKey}.category`)}
+                    </td>
+                    <td className="px-3 py-2 text-neutral-500 hidden lg:table-cell">
+                      {t(`ffmiInterpretation.${genderKey}.${rowKey}.desc`)}
+                    </td>
+                    {/* Expand button — only on mobile */}
+                    <td className="px-2 py-2 lg:hidden">
+                      <button
+                        type="button"
+                        onClick={() => toggleRow(i)}
+                        className="p-1 text-neutral-400 hover:text-neutral-600 transition-colors"
+                        aria-label="Visa beskrivning"
+                      >
+                        <ChevronDown
+                          className={cn('h-4 w-4 transition-transform', isExpanded && 'rotate-180')}
+                        />
+                      </button>
+                    </td>
+                  </tr>
+                  {isExpanded && (
+                    <tr key={`${i}-desc`} className={cn(baseClass, 'lg:hidden')}>
+                      <td colSpan={4} className="px-3 pb-3 pt-0 text-xs text-neutral-500 italic">
+                        {t(`ffmiInterpretation.${genderKey}.${rowKey}.desc`)}
+                      </td>
+                    </tr>
+                  )}
+                </>
               )
             })}
           </tbody>
