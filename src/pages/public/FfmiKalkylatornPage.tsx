@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, Calculator, AlertTriangle } from 'lucide-react'
+import { ArrowRight, Calculator, AlertTriangle, ChevronDown } from 'lucide-react'
 import SiteHeader from '@/components/layout/SiteHeader'
 import SiteFooter from '@/components/layout/SiteFooter'
 import { Seo } from '@/components/seo/Seo'
@@ -446,14 +446,20 @@ const WOMEN_TABLE_ROWS = [
 
 function FfmiReferenceTable() {
   const [showMale, setShowMale] = useState(true)
+  const [expandedRow, setExpandedRow] = useState<number | null>(null)
   const rows = showMale ? MEN_TABLE_ROWS : WOMEN_TABLE_ROWS
+
+  const toggleRow = (i: number) => setExpandedRow(prev => (prev === i ? null : i))
 
   return (
     <div className="mt-4">
       <div className="flex items-center justify-between mb-2">
         <h3 className="text-lg font-semibold text-neutral-800">FFMI-referensvärden</h3>
         <button
-          onClick={() => setShowMale(v => !v)}
+          onClick={() => {
+            setShowMale(v => !v)
+            setExpandedRow(null)
+          }}
           className="text-xs text-primary-600 hover:underline"
         >
           {showMale ? 'Visa kvinnors värden' : 'Visa mäns värden'}
@@ -475,24 +481,49 @@ function FfmiReferenceTable() {
               <th className="px-4 py-2.5 text-left text-xs font-semibold text-neutral-500 uppercase tracking-wider border-b border-neutral-200 hidden sm:table-cell">
                 Beskrivning
               </th>
+              <th className="px-2 py-2.5 border-b border-neutral-200 sm:hidden" />
             </tr>
           </thead>
           <tbody>
-            {rows.map((row, i) => (
-              <tr
-                key={i}
-                className={`border-b border-neutral-100 last:border-0 ${i % 2 === 0 ? 'bg-white' : 'bg-neutral-50/50'}`}
-              >
-                <td className="px-4 py-2.5 font-medium text-neutral-800 whitespace-nowrap">
-                  {row.range}
-                </td>
-                <td className="px-4 py-2.5 text-neutral-600 whitespace-nowrap">{row.bf}</td>
-                <td className="px-4 py-2.5 font-medium text-neutral-700 whitespace-nowrap">
-                  {row.category}
-                </td>
-                <td className="px-4 py-2.5 text-neutral-500 hidden sm:table-cell">{row.desc}</td>
-              </tr>
-            ))}
+            {rows.map((row, i) => {
+              const isExpanded = expandedRow === i
+              const rowClass = `border-b border-neutral-100 last:border-0 ${i % 2 === 0 ? 'bg-white' : 'bg-neutral-50/50'}`
+              return (
+                <>
+                  <tr key={i} className={rowClass}>
+                    <td className="px-4 py-2.5 font-medium text-neutral-800 whitespace-nowrap">
+                      {row.range}
+                    </td>
+                    <td className="px-4 py-2.5 text-neutral-600 whitespace-nowrap">{row.bf}</td>
+                    <td className="px-4 py-2.5 font-medium text-neutral-700 whitespace-nowrap">
+                      {row.category}
+                    </td>
+                    <td className="px-4 py-2.5 text-neutral-500 hidden sm:table-cell">
+                      {row.desc}
+                    </td>
+                    <td className="px-2 py-2.5 sm:hidden">
+                      <button
+                        type="button"
+                        onClick={() => toggleRow(i)}
+                        className="p-1 text-neutral-400 hover:text-neutral-600 transition-colors"
+                        aria-label="Visa beskrivning"
+                      >
+                        <ChevronDown
+                          className={`h-4 w-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+                        />
+                      </button>
+                    </td>
+                  </tr>
+                  {isExpanded && (
+                    <tr key={`${i}-desc`} className={`${rowClass} sm:hidden`}>
+                      <td colSpan={4} className="px-4 pb-3 pt-0 text-xs text-neutral-500 italic">
+                        {row.desc}
+                      </td>
+                    </tr>
+                  )}
+                </>
+              )
+            })}
           </tbody>
         </table>
       </div>
