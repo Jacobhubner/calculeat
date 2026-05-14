@@ -86,8 +86,8 @@ const FFMI_MATRIX: {
     ffmiMax: 20,
     bfMin: 20,
     bfMax: 27,
-    label: 'Genomsnitt',
-    description: 'Normal muskelmassa för icke-tränande man. Hälsomässig baslinje.',
+    label: 'Befolkningsgenomsnitt',
+    description: 'Normal muskelutveckling för en man som inte tränar. Hälsomässig baslinje.',
     color: 'text-teal-700',
     bg: 'bg-teal-50 border-teal-200',
     context:
@@ -139,12 +139,12 @@ const FFMI_MATRIX: {
     ffmiMax: 25,
     bfMin: 8,
     bfMax: 20,
-    label: 'Elit naturlig / diskuterat',
+    label: 'Elitsnivå / diskuterat',
     description: 'Nära genetiskt tak. 8+ år träning eller möjlig substansanvändning.',
     color: 'text-purple-700',
     bg: 'bg-purple-50 border-purple-200',
     context:
-      'Kouri et al. (1995) observerade att naturliga idrottare sällan överstiger FFMI 25. Vid denna nivå är genetisk outlier-status eller substansanvändning båda möjliga förklaringar.',
+      'Vid denna nivå är genetisk outlier-status eller substansanvändning båda möjliga förklaringar. Sällsynt att nå naturligt.',
   },
   {
     gender: 'male',
@@ -152,7 +152,7 @@ const FFMI_MATRIX: {
     ffmiMax: 27,
     bfMin: null,
     bfMax: null,
-    label: 'Troligen doped',
+    label: 'Troligen substansanvändning',
     description:
       'Bortom typisk naturlig kapacitet. Genetisk outlier eller substansanvändning trolig.',
     color: 'text-red-700',
@@ -166,8 +166,8 @@ const FFMI_MATRIX: {
     ffmiMax: null,
     bfMin: null,
     bfMax: null,
-    label: 'Nästan säkert doped',
-    description: 'Kräver prestationshöjande medel i de allra flesta fall.',
+    label: 'Nästan säkert substansanvändning',
+    description: 'Kräver prestationshöjande medel i det stora flertalet fall.',
     color: 'text-red-900',
     bg: 'bg-red-100 border-red-300',
     context:
@@ -206,8 +206,8 @@ const FFMI_MATRIX: {
     ffmiMax: 17,
     bfMin: 22,
     bfMax: 35,
-    label: 'Genomsnitt',
-    description: 'Normal muskelmassa för icke-tränande kvinna.',
+    label: 'Befolkningsgenomsnitt',
+    description: 'Normal muskelutveckling för en kvinna som inte tränar.',
     color: 'text-teal-700',
     bg: 'bg-teal-50 border-teal-200',
     context:
@@ -258,12 +258,12 @@ const FFMI_MATRIX: {
     ffmiMax: 21,
     bfMin: 15,
     bfMax: 30,
-    label: 'Elit naturlig / diskuterat',
+    label: 'Elitsnivå / diskuterat',
     description: 'Nära genetiskt tak för kvinnor. 8+ år träning eller möjlig substansanvändning.',
     color: 'text-purple-700',
     bg: 'bg-purple-50 border-purple-200',
     context:
-      'Forskning antyder att de flesta kvinnor maximerar runt FFMI 17–19 naturligt. Vid denna nivå är genetisk outlier-status eller substansanvändning möjliga förklaringar.',
+      'Vid denna nivå är genetisk outlier-status eller substansanvändning möjliga förklaringar. Sällsynt att nå naturligt som kvinna.',
   },
   {
     gender: 'female',
@@ -271,7 +271,7 @@ const FFMI_MATRIX: {
     ffmiMax: 23,
     bfMin: null,
     bfMax: null,
-    label: 'Troligen doped',
+    label: 'Troligen substansanvändning',
     description: 'Bortom typisk naturlig kapacitet för kvinnor.',
     color: 'text-red-700',
     bg: 'bg-red-50 border-red-200',
@@ -284,8 +284,8 @@ const FFMI_MATRIX: {
     ffmiMax: null,
     bfMin: null,
     bfMax: null,
-    label: 'Nästan säkert doped',
-    description: 'Kräver prestationshöjande medel i de allra flesta fall.',
+    label: 'Nästan säkert substansanvändning',
+    description: 'Kräver prestationshöjande medel i det stora flertalet fall.',
     color: 'text-red-900',
     bg: 'bg-red-100 border-red-300',
     context: 'FFMI över 23 är extremt sällsynt naturligt för kvinnor.',
@@ -310,55 +310,55 @@ const MEN_TABLE_ROWS = [
     range: '< 17',
     bf: 'Alla',
     category: 'Mycket lågt',
-    desc: 'Kraftigt begränsad muskelmassa, möjlig undernäring eller sarkopeni',
+    desc: 'Kraftigt begränsad muskelmassa — möjlig undernäring eller sarkopeni',
   },
   {
     range: '17–18',
     bf: '10–18%',
     category: 'Smal / otränad',
-    desc: 'Under genomsnittlig muskulatur, stillasittande livsstil',
+    desc: 'Under genomsnittlig muskelutveckling, stillasittande livsstil, smal kroppstyp',
   },
   {
     range: '18–20',
     bf: '20–27%',
-    category: 'Genomsnitt',
-    desc: 'Normal muskelmassa för icke-tränande man',
+    category: 'Befolkningsgenomsnitt',
+    desc: 'Normal muskelutveckling för en man som inte tränar, hälsomässig baslinje',
   },
   {
     range: '19–21',
     bf: '25–40%',
     category: 'Överviktig / kraftig',
-    desc: 'Genomsnittlig muskel men hög fettprocent',
+    desc: 'Genomsnittlig muskelmassa men hög fettprocent, kraftig eller satt kroppstyp',
   },
   {
     range: '20–21',
     bf: '10–18%',
     category: 'Atlet / mellannivå',
-    desc: 'Över genomsnittlig, 2–3 år träning, "tränar tydligt"',
+    desc: 'Över genomsnittlig muskelutveckling, typiskt efter 2–3 år av konsekvent träning',
   },
   {
     range: '22–23',
     bf: '6–12%',
     category: 'Avancerad naturlig',
-    desc: 'Mycket vältränad, 4–7 år träning, tävlingsnivå',
+    desc: 'Mycket vältränad, typiskt efter 4–7 år av träning, tävlingsanpassad fysik',
   },
   {
     range: '24–25',
     bf: '8–20%',
-    category: 'Elit naturlig / diskuterat',
-    desc: 'Nära genetiskt tak, 8+ år träning eller möjlig substansanvändning',
+    category: 'Elitsnivå / diskuterat',
+    desc: 'Nära det genetiska taket, 8+ år av träning eller möjlig substansanvändning',
   },
   {
     range: '25–27',
     bf: 'Alla',
-    category: 'Troligen doped',
-    desc: 'Bortom typisk naturlig kapacitet',
+    category: 'Troligen substansanvändning',
+    desc: 'Bortom typisk naturlig kapacitet — genetisk outlier eller substansanvändning',
   },
   {
     range: '> 27',
     bf: 'Alla',
-    category: 'Nästan säkert doped',
-    desc: 'Kräver prestationshöjande medel i de allra flesta fall',
+    category: 'Nästan säkert substansanvändning',
+    desc: 'Kräver prestationshöjande medel i det stora flertalet fall',
   },
 ]
 
@@ -367,55 +367,55 @@ const WOMEN_TABLE_ROWS = [
     range: '< 14',
     bf: 'Alla',
     category: 'Mycket lågt',
-    desc: 'Kraftigt begränsad muskelmassa, hälsomässiga risker',
+    desc: 'Kraftigt begränsad muskelmassa — hälsomässiga risker föreligger',
   },
   {
     range: '14–15',
     bf: '20–25%',
     category: 'Smal / otränad',
-    desc: 'Under genomsnittlig muskulatur, stillasittande',
+    desc: 'Under genomsnittlig muskelutveckling, stillasittande livsstil, smal kroppstyp',
   },
   {
     range: '14–17',
     bf: '22–35%',
-    category: 'Genomsnitt',
-    desc: 'Normal muskelmassa för icke-tränande kvinna',
+    category: 'Befolkningsgenomsnitt',
+    desc: 'Normal muskelutveckling för en kvinna som inte tränar',
   },
   {
     range: '15–18',
     bf: '30–45%',
     category: 'Överviktig / kraftig',
-    desc: 'Genomsnittlig muskel men hög fettprocent',
+    desc: 'Genomsnittlig muskelmassa men hög fettprocent',
   },
   {
     range: '16–17',
     bf: '18–25%',
     category: 'Atlet / mellannivå',
-    desc: 'Över genomsnittlig, 2–3 år träning, atletisk framtoning',
+    desc: 'Över genomsnittlig muskelutveckling, typiskt efter 2–3 år av träning, atletisk framtoning',
   },
   {
     range: '18–20',
     bf: '15–22%',
     category: 'Avancerad naturlig',
-    desc: 'Mycket vältränad, 4–7 år träning, tävlingsnivå',
+    desc: 'Mycket vältränad, typiskt efter 4–7 år av träning, tävlingsanpassad fysik',
   },
   {
     range: '19–21',
     bf: '15–30%',
-    category: 'Elit naturlig / diskuterat',
-    desc: 'Nära genetiskt tak, 8+ år träning eller möjlig substansanvändning',
+    category: 'Elitsnivå / diskuterat',
+    desc: 'Nära det genetiska taket för kvinnor, 8+ år av träning eller möjlig substansanvändning',
   },
   {
     range: '21–23',
     bf: 'Alla',
-    category: 'Troligen doped',
+    category: 'Troligen substansanvändning',
     desc: 'Bortom typisk naturlig kapacitet för kvinnor',
   },
   {
     range: '> 23',
     bf: 'Alla',
-    category: 'Nästan säkert doped',
-    desc: 'Kräver prestationshöjande medel i de allra flesta fall',
+    category: 'Nästan säkert substansanvändning',
+    desc: 'Kräver prestationshöjande medel i det stora flertalet fall',
   },
 ]
 
@@ -472,8 +472,15 @@ function FfmiReferenceTable() {
         </table>
       </div>
       <p className="text-xs text-neutral-400 mt-2">
-        Källa: LeanFFMI.com — FFMI Interpretation Guide. Baserat på Kouri EM et al. (1995) och
-        forskningslitteratur kring naturliga idrottares muskelmassetak.
+        Källa:{' '}
+        <a
+          href="https://leanffmi.com/guides/ffmi/ffmi-interpretation-guide/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:underline text-primary-500"
+        >
+          LeanFFMI.com — FFMI Interpretation Guide
+        </a>
       </p>
     </div>
   )
