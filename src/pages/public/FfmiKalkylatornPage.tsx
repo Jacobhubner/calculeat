@@ -203,7 +203,7 @@ const FFMI_MATRIX: {
   {
     gender: 'female',
     ffmiMin: 14,
-    ffmiMax: 17,
+    ffmiMax: 18,
     bfMin: 22,
     bfMax: 35,
     label: 'Genomsnittsbefolkning',
@@ -295,6 +295,7 @@ const FFMI_MATRIX: {
 
 function getFfmiCategory(ffmi: number, bodyFatPct: number, gender: Gender): FfmiCategory {
   const rows = FFMI_MATRIX.filter(r => r.gender === gender)
+
   // First pass: full match (FFMI + body fat)
   for (const row of rows) {
     const ffmiOk = ffmi >= row.ffmiMin && (row.ffmiMax === null || ffmi < row.ffmiMax)
@@ -303,12 +304,30 @@ function getFfmiCategory(ffmi: number, bodyFatPct: number, gender: Gender): Ffmi
       (bodyFatPct >= row.bfMin && (row.bfMax === null || bodyFatPct < row.bfMax))
     if (ffmiOk && bfOk) return row
   }
-  // Second pass: FFMI-only match (body fat outside all defined ranges for this FFMI level)
-  for (const row of rows) {
-    const ffmiOk = ffmi >= row.ffmiMin && (row.ffmiMax === null || ffmi < row.ffmiMax)
-    if (ffmiOk) return row
-  }
-  return rows[rows.length - 1]
+
+  // Second pass: bf outside all ranges for this FFMI — pick closest bf row.
+  // "any bf" rows (bfMin === null) are always eligible; among bf-ranged rows
+  // pick the one whose interval is nearest to the user's actual bf.
+  const ffmiMatches = rows.filter(
+    r => ffmi >= r.ffmiMin && (r.ffmiMax === null || ffmi < r.ffmiMax)
+  )
+  if (ffmiMatches.length === 0) return rows[rows.length - 1]
+
+  return ffmiMatches.reduce((best, row) => {
+    // "any bf" rows are a perfect fit for the bf dimension — always prefer them
+    if (row.bfMin === null) return row
+    if (best.bfMin === null) return best
+    // Both have a bf range — pick the one whose nearest boundary is closest
+    const rowDist = Math.min(
+      Math.abs(bodyFatPct - row.bfMin),
+      row.bfMax != null ? Math.abs(bodyFatPct - row.bfMax) : Infinity
+    )
+    const bestDist = Math.min(
+      Math.abs(bodyFatPct - best.bfMin),
+      best.bfMax != null ? Math.abs(bodyFatPct - best.bfMax) : Infinity
+    )
+    return rowDist < bestDist ? row : best
+  })
 }
 
 const MEN_TABLE_ROWS = [
