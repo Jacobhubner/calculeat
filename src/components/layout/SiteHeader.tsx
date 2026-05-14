@@ -298,6 +298,13 @@ export default function SiteHeader() {
 
                     <div className="border-t border-neutral-100 py-1">
                       <Link
+                        to="/app/tools/met-calculator"
+                        onClick={() => setMobileUserMenuOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2 text-sm text-neutral-500 hover:bg-neutral-50 transition-colors"
+                      >
+                        <span>{t('nav.met')}</span>
+                      </Link>
+                      <Link
                         to="/kalkylatorer"
                         onClick={() => setMobileUserMenuOpen(false)}
                         className="flex items-center gap-3 px-4 py-2 text-sm text-neutral-500 hover:bg-neutral-50 transition-colors"
