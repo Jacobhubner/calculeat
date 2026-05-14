@@ -617,6 +617,50 @@ export default function ProteinbehovKalkylatornPage() {
           </div>
         </section>
 
+        {/* Sources */}
+        <section className="bg-white py-10 border-b border-neutral-100">
+          <div className="container mx-auto px-4 max-w-3xl">
+            <h2 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3">
+              Källor
+            </h2>
+            <ol className="space-y-1">
+              {[
+                {
+                  text: 'Phillips SM, Van Loon LJC. Dietary protein for athletes: From requirements to optimum adaptation. J Sports Sci. 2011;29(sup1):S29–S38.',
+                  url: 'https://doi.org/10.1080/02640414.2011.619204',
+                },
+                {
+                  text: 'Morton RW, Murphy KT, McKellar SR, et al. A systematic review, meta-analysis and meta-regression of the effect of protein supplementation on resistance training-induced gains in muscle mass and strength in healthy adults. Br J Sports Med. 2018;52(6):376–384.',
+                  url: 'https://doi.org/10.1136/bjsports-2017-097608',
+                },
+                {
+                  text: 'Stout JR, et al. (ISSN). International Society of Sports Nutrition Position Stand: protein and exercise. J Int Soc Sports Nutr. 2017;14:20.',
+                  url: 'https://doi.org/10.1186/s12970-017-0177-8',
+                },
+                {
+                  text: 'WHO. Protein and amino acid requirements in human nutrition. WHO Technical Report Series 935. Geneva: World Health Organization; 2007.',
+                },
+              ].map((s, i) => (
+                <li key={i} className="text-sm text-neutral-600">
+                  [{i + 1}]{' '}
+                  {s.url ? (
+                    <a
+                      href={s.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:underline text-primary-600"
+                    >
+                      {s.text}
+                    </a>
+                  ) : (
+                    s.text
+                  )}
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
+
         {/* Bottom CTA */}
         <GuestOnly>
           <section className="bg-neutral-900 py-16 md:py-20">
