@@ -399,7 +399,10 @@
       "requiredMale": ["Chest (pectoral)", "Abdominal", "Thigh"],
       "requiredFemale": ["Tricep", "Suprailiac (above the hip bone)", "Thigh"],
       "variants": {
-        "maleS2Age": { "name": "S, S², age", "measurements": "ΣS = chest + abdominal + thigh" },
+        "maleS2Age": {
+          "name": "S, S², age",
+          "measurements": "ΣS = chest + abdominal + thigh"
+        },
         "maleS2AgeC": {
           "name": "S, S², age, C",
           "measurements": "ΣS = chest + abdominal + thigh\nCw = waist circumference (m)\nCf = forearm circumference (m)"
@@ -408,7 +411,10 @@
           "name": "Clothes on",
           "measurements": "ΣS = chest + tricep + subscapular"
         },
-        "femaleS2Age": { "name": "S, S², age", "measurements": "ΣS = tricep + suprailiac + thigh" },
+        "femaleS2Age": {
+          "name": "S, S², age",
+          "measurements": "ΣS = tricep + suprailiac + thigh"
+        },
         "femaleS2C": {
           "name": "S, S², C",
           "measurements": "ΣS = tricep + suprailiac + thigh\nC = hip circumference (cm)"
@@ -547,8 +553,14 @@
       "betterFor": ["People who do not have access to calipers"],
       "required": ["Waist", "Wrist (men)", "Hip (women)", "Forearm (women)"],
       "variants": {
-        "maleAllAges": { "name": "All age groups", "measurements": "All measurements in inches" },
-        "femaleAllAges": { "name": "All age groups", "measurements": "All measurements in inches" }
+        "maleAllAges": {
+          "name": "All age groups",
+          "measurements": "All measurements in inches"
+        },
+        "femaleAllAges": {
+          "name": "All age groups",
+          "measurements": "All measurements in inches"
+        }
       }
     },
     "usNavy": {
@@ -558,8 +570,14 @@
       "betterFor": ["People with normal to high body fat who want a quick tape measure method"],
       "required": ["Neck", "Waist", "Hip (women only)", "Height"],
       "variants": {
-        "male": { "name": "", "measurements": "All measurements in inches" },
-        "female": { "name": "", "measurements": "All measurements in inches" }
+        "male": {
+          "name": "",
+          "measurements": "All measurements in inches"
+        },
+        "female": {
+          "name": "",
+          "measurements": "All measurements in inches"
+        }
       }
     },
     "ymca": {
@@ -580,7 +598,10 @@
       "betterFor": ["People who want better precision than YMCA while keeping it simple"],
       "required": ["Neck", "Waist", "Hip", "Body weight"],
       "variants": {
-        "male": { "name": "", "measurements": "Waist in inches, weight in lbs" },
+        "male": {
+          "name": "",
+          "measurements": "Waist in inches, weight in lbs"
+        },
         "female": {
           "name": "",
           "measurements": "All circumference measurements in inches, weight in lbs"
@@ -613,7 +634,132 @@
           "name": "Step 1 — Cunningham",
           "measurements": "Reverse: fat-free mass = (BMR − 370) / 21.6"
         },
-        "step2": { "name": "Step 2 — Body fat %", "measurements": "Same formula for both sexes" }
+        "step2": {
+          "name": "Step 2 — Body fat %",
+          "measurements": "Same formula for both sexes"
+        }
+      }
+    }
+  },
+  "ffmiInterpretation": {
+    "showWomensValues": "Show women's values",
+    "showMensValues": "Show men's values",
+    "columnFFMI": "FFMI",
+    "columnBodyFat": "Body Fat %",
+    "columnCategory": "Category",
+    "columnDescription": "Description",
+    "sourceLabel": "Source:",
+    "sourceLinkText": "LeanFFMI.com — FFMI Interpretation Guide",
+    "men": {
+      "row0": {
+        "range": "Below 17",
+        "bf": "Any",
+        "category": "Very Low",
+        "desc": "Severely limited muscle mass, possible malnutrition or sarcopenia"
+      },
+      "row1": {
+        "range": "17–18",
+        "bf": "10–18%",
+        "category": "Skinny/Untrained",
+        "desc": "Below average muscle, sedentary lifestyle, \"skinny\" appearance"
+      },
+      "row2": {
+        "range": "18–20",
+        "bf": "20–27%",
+        "category": "Average Population",
+        "desc": "Normal muscle mass for non-training males, healthy baseline"
+      },
+      "row3": {
+        "range": "19–21",
+        "bf": "25–40%",
+        "category": "Overweight/Obese",
+        "desc": "Average muscle but high body fat, \"husky\" or \"stocky\""
+      },
+      "row4": {
+        "range": "20–21",
+        "bf": "10–18%",
+        "category": "Athlete/Intermediate",
+        "desc": "Above average muscle, 2–3 years training, clearly looks trained"
+      },
+      "row5": {
+        "range": "22–23",
+        "bf": "6–12%",
+        "category": "Advanced Natural",
+        "desc": "Highly developed physique, 4–7 years training, competitive shape"
+      },
+      "row6": {
+        "range": "24–25",
+        "bf": "8–20%",
+        "category": "Elite Natural/Suspicious",
+        "desc": "Near genetic ceiling, 8+ years training or possible enhancement use"
+      },
+      "row7": {
+        "range": "25–27",
+        "bf": "Any",
+        "category": "Likely Enhanced",
+        "desc": "Beyond typical natural limits, genetic outlier or PED use probable"
+      },
+      "row8": {
+        "range": "Above 27",
+        "bf": "Any",
+        "category": "Almost Certainly Enhanced",
+        "desc": "Requires performance-enhancing drugs in vast majority of cases"
+      }
+    },
+    "women": {
+      "row0": {
+        "range": "Below 14",
+        "bf": "Any",
+        "category": "Very Low",
+        "desc": "Severely limited muscle mass, health concerns"
+      },
+      "row1": {
+        "range": "14–15",
+        "bf": "20–25%",
+        "category": "Skinny/Untrained",
+        "desc": "Below average muscle, sedentary, \"thin\" appearance"
+      },
+      "row2": {
+        "range": "14–17",
+        "bf": "22–35%",
+        "category": "Average Population",
+        "desc": "Normal muscle mass for non-training females"
+      },
+      "row3": {
+        "range": "15–18",
+        "bf": "30–45%",
+        "category": "Overweight/Obese",
+        "desc": "Average muscle but high body fat"
+      },
+      "row4": {
+        "range": "16–17",
+        "bf": "18–25%",
+        "category": "Athlete/Intermediate",
+        "desc": "Above average muscle, 2–3 years training, athletic build"
+      },
+      "row5": {
+        "range": "18–20",
+        "bf": "15–22%",
+        "category": "Advanced Natural",
+        "desc": "Highly developed, 4–7 years training, competitive level"
+      },
+      "row6": {
+        "range": "19–21",
+        "bf": "15–30%",
+        "category": "Elite Natural/Suspicious",
+        "desc": "Approaching genetic ceiling, 8+ years or possible enhancement"
+      },
+      "row7": {
+        "range": "21–23",
+        "bf": "Any",
+        "category": "Likely Enhanced",
+        "desc": "Beyond typical natural limits for women"
+      },
+      "row8": {
+        "range": "Above 23",
+        "bf": "Any",
+        "category": "Almost Certainly Enhanced",
+        "desc": "Requires PEDs in vast majority of cases"
       }
     }
   }

@@ -399,7 +399,10 @@
       "requiredMale": ["Bröst (pectoral)", "Buk (abdominal)", "Lår (thigh)"],
       "requiredFemale": ["Triceps", "Suprailiac (ovanför höftbenet)", "Lår (thigh)"],
       "variants": {
-        "maleS2Age": { "name": "S, S², ålder", "measurements": "ΣS = bröst + buk + lår" },
+        "maleS2Age": {
+          "name": "S, S², ålder",
+          "measurements": "ΣS = bröst + buk + lår"
+        },
         "maleS2AgeC": {
           "name": "S, S², ålder, C",
           "measurements": "ΣS = bröst + buk + lår\nCw = omkrets midja (m)\nCf = omkrets underarm (m)"
@@ -556,7 +559,10 @@
       "betterFor": ["Personer som inte har tillgång till kaliper"],
       "required": ["Midja", "Handled (män)", "Höft (kvinnor)", "Underarm (kvinnor)"],
       "variants": {
-        "maleAllAges": { "name": "Alla åldersgrupper", "measurements": "Alla mått i tum (inches)" },
+        "maleAllAges": {
+          "name": "Alla åldersgrupper",
+          "measurements": "Alla mått i tum (inches)"
+        },
         "femaleAllAges": {
           "name": "Alla åldersgrupper",
           "measurements": "Alla mått i tum (inches)"
@@ -570,8 +576,14 @@
       "betterFor": ["Personer med normal till hög kroppsfett som vill ha en snabb måttbandsmetod"],
       "required": ["Hals", "Midja", "Höft (endast kvinnor)", "Längd"],
       "variants": {
-        "male": { "name": "", "measurements": "Alla mått i tum (inches)" },
-        "female": { "name": "", "measurements": "Alla mått i tum (inches)" }
+        "male": {
+          "name": "",
+          "measurements": "Alla mått i tum (inches)"
+        },
+        "female": {
+          "name": "",
+          "measurements": "Alla mått i tum (inches)"
+        }
       }
     },
     "ymca": {
@@ -592,8 +604,14 @@
       "betterFor": ["Personer som vill ha bättre precision än YMCA men behålla enkelheten"],
       "required": ["Hals", "Midja", "Höft", "Kroppsvikt"],
       "variants": {
-        "male": { "name": "", "measurements": "Midja i tum (inches), vikt i lbs" },
-        "female": { "name": "", "measurements": "Alla omkretssmått i tum (inches), vikt i lbs" }
+        "male": {
+          "name": "",
+          "measurements": "Midja i tum (inches), vikt i lbs"
+        },
+        "female": {
+          "name": "",
+          "measurements": "Alla omkretssmått i tum (inches), vikt i lbs"
+        }
       }
     },
     "heritage": {
@@ -622,7 +640,132 @@
           "name": "Steg 1 — Cunningham",
           "measurements": "Omvänd: fettfri massa = (BMR − 370) / 21,6"
         },
-        "step2": { "name": "Steg 2 — Kroppsfett%", "measurements": "Samma formel för båda kön" }
+        "step2": {
+          "name": "Steg 2 — Kroppsfett%",
+          "measurements": "Samma formel för båda kön"
+        }
+      }
+    }
+  },
+  "ffmiInterpretation": {
+    "showWomensValues": "Visa kvinnors värden",
+    "showMensValues": "Visa mäns värden",
+    "columnFFMI": "FFMI",
+    "columnBodyFat": "Kroppsfett %",
+    "columnCategory": "Kategori",
+    "columnDescription": "Beskrivning",
+    "sourceLabel": "Källa:",
+    "sourceLinkText": "LeanFFMI.com — FFMI Interpretation Guide",
+    "men": {
+      "row0": {
+        "range": "Under 17",
+        "bf": "Valfri",
+        "category": "Mycket låg",
+        "desc": "Kraftigt begränsad muskelmassa, möjlig undernäring eller sarkopeni"
+      },
+      "row1": {
+        "range": "17–18",
+        "bf": "10–18 %",
+        "category": "Smal/Otränad",
+        "desc": "Under genomsnittlig muskelmassa, stillasittande livsstil, \"smal\" kroppsbyggnad"
+      },
+      "row2": {
+        "range": "18–20",
+        "bf": "20–27 %",
+        "category": "Genomsnittsbefolkning",
+        "desc": "Normal muskelmassa för otränade män, hälsosam grundnivå"
+      },
+      "row3": {
+        "range": "19–21",
+        "bf": "25–40 %",
+        "category": "Överviktig/Fetma",
+        "desc": "Genomsnittlig muskelmassa men hög kroppsfettsnivå, \"kraftig\" eller \"bred\" kroppsbyggnad"
+      },
+      "row4": {
+        "range": "20–21",
+        "bf": "10–18 %",
+        "category": "Atlet/Mellanliggande",
+        "desc": "Över genomsnittlig muskelmassa, 2–3 års träning, ser tydligt tränad ut"
+      },
+      "row5": {
+        "range": "22–23",
+        "bf": "6–12 %",
+        "category": "Avancerad naturlig",
+        "desc": "Mycket välutvecklad fysik, 4–7 års träning, tävlingsliknande form"
+      },
+      "row6": {
+        "range": "24–25",
+        "bf": "8–20 %",
+        "category": "Elit naturlig/Misstänkt",
+        "desc": "Nära genetiskt tak, 8+ års träning eller möjlig prestationshöjande användning"
+      },
+      "row7": {
+        "range": "25–27",
+        "bf": "Valfri",
+        "category": "Troligen dopad",
+        "desc": "Över typiska naturliga gränser, genetisk extremvariant eller sannolik PED-användning"
+      },
+      "row8": {
+        "range": "Över 27",
+        "bf": "Valfri",
+        "category": "Nästan säkert dopad",
+        "desc": "Kräver prestationshöjande preparat i de allra flesta fall"
+      }
+    },
+    "women": {
+      "row0": {
+        "range": "Under 14",
+        "bf": "Valfri",
+        "category": "Mycket låg",
+        "desc": "Kraftigt begränsad muskelmassa, möjliga hälsoproblem"
+      },
+      "row1": {
+        "range": "14–15",
+        "bf": "20–25 %",
+        "category": "Smal/Otränad",
+        "desc": "Under genomsnittlig muskelmassa, stillasittande, \"smal\" kroppsbyggnad"
+      },
+      "row2": {
+        "range": "14–17",
+        "bf": "22–35 %",
+        "category": "Genomsnittsbefolkning",
+        "desc": "Normal muskelmassa för otränade kvinnor"
+      },
+      "row3": {
+        "range": "15–18",
+        "bf": "30–45 %",
+        "category": "Överviktig/Fetma",
+        "desc": "Genomsnittlig muskelmassa men hög kroppsfettsnivå"
+      },
+      "row4": {
+        "range": "16–17",
+        "bf": "18–25 %",
+        "category": "Atlet/Mellanliggande",
+        "desc": "Över genomsnittlig muskelmassa, 2–3 års träning, atletisk kroppsbyggnad"
+      },
+      "row5": {
+        "range": "18–20",
+        "bf": "15–22 %",
+        "category": "Avancerad naturlig",
+        "desc": "Mycket välutvecklad fysik, 4–7 års träning, tävlingsnivå"
+      },
+      "row6": {
+        "range": "19–21",
+        "bf": "15–30 %",
+        "category": "Elit naturlig/Misstänkt",
+        "desc": "Närmar sig genetiskt tak, 8+ års träning eller möjlig prestationshöjande användning"
+      },
+      "row7": {
+        "range": "21–23",
+        "bf": "Valfri",
+        "category": "Troligen dopad",
+        "desc": "Över typiska naturliga gränser för kvinnor"
+      },
+      "row8": {
+        "range": "Över 23",
+        "bf": "Valfri",
+        "category": "Nästan säkert dopad",
+        "desc": "Kräver prestationshöjande preparat i de allra flesta fall"
       }
     }
   }
