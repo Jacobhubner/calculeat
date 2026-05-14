@@ -49,8 +49,8 @@ export function CompactFoodItem({
       ? Math.round((food.calories / food.reference_amount) * 100)
       : food.kcal_per_gram
         ? Math.round(food.kcal_per_gram * 100)
-        : food.weight_grams && food.weight_grams > 0
-          ? Math.round((food.calories / food.weight_grams) * 100)
+        : food.reference_amount && food.reference_amount > 0
+          ? Math.round((food.calories / food.reference_amount) * 100)
           : food.calories
 
   const detailsText =
