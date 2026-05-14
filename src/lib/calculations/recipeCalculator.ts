@@ -124,8 +124,9 @@ export function calculateIngredientNutrition(
     }
   }
 
-  // Get base weight for the food item (default to 100g if not specified)
-  const baseWeight = food.weight_grams && food.weight_grams > 0 ? food.weight_grams : 100
+  // reference_amount is always 100 for recipe-format foods; weight_grams is portion size and must NOT be used as the nutrition base
+  const baseWeight =
+    food.reference_amount && food.reference_amount > 0 ? food.reference_amount : 100
 
   // Calculate multiplier based on weight
   const multiplier = weightGrams / baseWeight
@@ -175,8 +176,8 @@ export function calculateRecipeNutrition(
     // Sum optional nutrients from food_nutrients if available
     if (allNutrients && nutrition.weightGrams > 0) {
       const baseWeight =
-        ingredient.foodItem.weight_grams && ingredient.foodItem.weight_grams > 0
-          ? ingredient.foodItem.weight_grams
+        ingredient.foodItem.reference_amount && ingredient.foodItem.reference_amount > 0
+          ? ingredient.foodItem.reference_amount
           : 100
       const multiplier = nutrition.weightGrams / baseWeight
 
