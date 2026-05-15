@@ -207,5 +207,15 @@
     "subtitle": "Klicka för att välja måltid och mängd",
     "description": "Livsmedel du loggat de senaste 7 dagarna visas här",
     "empty": "Inga livsmedel loggade de senaste 7 dagarna"
+  },
+  "adHoc": {
+    "addButton": "Lägg till extra måltid",
+    "eveningSnack": "Kvällssnack",
+    "snack": "Snack",
+    "dessert": "Efterrätt",
+    "other": "Annat",
+    "label": "Extra måltid",
+    "placeholder": "Namn på måltid...",
+    "confirm": "Lägg till"
   }
 }

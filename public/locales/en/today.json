@@ -207,5 +207,15 @@
     "subtitle": "Click to select meal and amount",
     "description": "Foods you've logged in the last 7 days appear here",
     "empty": "No foods logged in the last 7 days"
+  },
+  "adHoc": {
+    "addButton": "Add extra meal",
+    "eveningSnack": "Evening snack",
+    "snack": "Snack",
+    "dessert": "Dessert",
+    "other": "Other",
+    "label": "Extra meal",
+    "placeholder": "Meal name...",
+    "confirm": "Add"
   }
 }

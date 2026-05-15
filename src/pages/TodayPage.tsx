@@ -1,10 +1,9 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import DashboardLayout from '@/components/layout/DashboardLayout'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { MealProgressBar } from '@/components/daily/RangeProgressBar'
-import { SwipeableItem } from '@/components/ui/SwipeableItem'
+import { MealSection } from '@/components/daily/MealSection'
 import { ZonedCalorieRing } from '@/components/daily/ZonedCalorieRing'
 import EmptyState from '@/components/EmptyState'
 import RecentFoodsCard from '@/components/RecentFoodsCard'
@@ -14,21 +13,16 @@ import LoadMealToSlotDialog from '@/components/daily/LoadMealToSlotDialog'
 import { PlateCalculator } from '@/components/daily/PlateCalculator'
 import { FoodSuggestions } from '@/components/daily/FoodSuggestions'
 import { ColorBalanceCard } from '@/components/daily/ColorBalanceCard'
-import { MealMacroBreakdown } from '@/components/daily/MealMacroBreakdown'
 import { EnergyDensityIndicator } from '@/components/daily/EnergyDensityIndicator'
 import { NutrientStatusRow } from '@/components/daily/NutrientStatusBadge'
 import {
   Calendar,
   Plus,
   Check,
-  Coffee,
   UtensilsCrossed,
   Sparkles,
   Copy,
-  Trash2,
   AlertTriangle,
-  Bookmark,
-  ArrowDownToLine,
   Pencil,
   X,
 } from 'lucide-react'
@@ -39,6 +33,8 @@ import {
   useStartNewDay,
   useCopyDayToToday,
   useRemoveFoodFromMeal,
+  useDeleteMealEntry,
+  useAddAdHocMeal,
   useDailyLog,
   useUpdateDailyLogGoals,
   useUpdateLogDate,
@@ -63,6 +59,8 @@ export default function TodayPage() {
   const startNewDay = useStartNewDay()
   const copyDayToToday = useCopyDayToToday()
   const removeFoodFromMeal = useRemoveFoodFromMeal()
+  const deleteMealEntry = useDeleteMealEntry()
+  const addAdHocMeal = useAddAdHocMeal()
   const updateDailyLogGoals = useUpdateDailyLogGoals()
   const updateLogDate = useUpdateLogDate()
 
@@ -102,6 +100,14 @@ export default function TodayPage() {
     mealOrder: number
     mealEntryId?: string
   } | null>(null)
+
+  // Ad hoc meal state
+  type AdHocPickerState = 'closed' | 'chips' | 'freetext'
+  const [adHocPicker, setAdHocPicker] = useState<AdHocPickerState>('closed')
+  const [adHocCustomName, setAdHocCustomName] = useState('')
+
+  const AD_HOC_MAX = 10
+  const AD_HOC_PRESETS = [{ key: 'eveningSnack' }, { key: 'snack' }, { key: 'dessert' }] as const
 
   // Get active profile for calorie and macro targets
   const activeProfile = useProfileStore(state => state.activeProfile)
@@ -159,8 +165,16 @@ export default function TodayPage() {
     createDefaultSettings,
   ])
 
+  // All hooks MUST be before the early return to follow React's rules of hooks
+
+  // Ad hoc meals — sorted last by meal_order
+  const adHocMeals = useMemo(
+    () =>
+      (todayLog?.meals ?? []).filter(m => m.is_ad_hoc).sort((a, b) => a.meal_order - b.meal_order),
+    [todayLog?.meals]
+  )
+
   // Detect if goals differ from active profile (profile was changed mid-day)
-  // MUST be before the early return to follow React's rules of hooks
   const goalsFromDifferentProfile = useMemo(() => {
     if (!todayLog || !profile) return false
     const snapshotMin = todayLog.goal_calories_min
@@ -173,6 +187,62 @@ export default function TodayPage() {
       (snapshotMax && profileMax && Math.abs(snapshotMax - profileMax) > 1)
     )
   }, [todayLog, profile])
+
+  const handleOpenAddFoodModal = (mealName: string, mealEntryId?: string) => {
+    setPreselectedFood(null)
+    setSelectedMealForFood({ mealName, mealEntryId })
+    setAddFoodModalOpen(true)
+  }
+
+  // Ad hoc handler: remove food + auto-delete empty ad hoc meal
+  const handleRemoveAdHocFood = useCallback(
+    (itemId: string, foodName: string) => {
+      const meal = todayLog?.meals?.find(m => m.is_ad_hoc && m.items?.some(i => i.id === itemId))
+      removeFoodFromMeal.mutate(itemId, {
+        onSuccess: () => {
+          toast.success(t('today.foodRemoved', { name: foodName }))
+          if (meal && (meal.items?.length ?? 0) <= 1) {
+            deleteMealEntry.mutate(meal.id)
+          }
+        },
+        onError: () => toast.error(t('today.errorRemoveFood')),
+      })
+    },
+    [todayLog, removeFoodFromMeal, deleteMealEntry, t]
+  )
+
+  const handleCreateAdHoc = useCallback(
+    async (name: string) => {
+      if (!todayLog || !name.trim()) return
+      const currentAdHocMeals = (todayLog.meals ?? []).filter(m => m.is_ad_hoc)
+
+      const existing = currentAdHocMeals.find(
+        m => m.meal_name.toLowerCase() === name.trim().toLowerCase()
+      )
+      if (existing) {
+        setAdHocPicker('closed')
+        handleOpenAddFoodModal(existing.meal_name, existing.id)
+        return
+      }
+
+      if (currentAdHocMeals.length >= AD_HOC_MAX) return
+
+      try {
+        const newEntry = await addAdHocMeal.mutateAsync({
+          dailyLogId: todayLog.id,
+          mealName: name.trim(),
+          mealOrder: 1000 + currentAdHocMeals.length,
+        })
+        setAdHocPicker('closed')
+        setAdHocCustomName('')
+        handleOpenAddFoodModal(newEntry.meal_name, newEntry.id)
+      } catch {
+        toast.error(t('today.errorRemoveFood'))
+      }
+    },
+
+    [todayLog, addAdHocMeal, t]
+  )
 
   if (logLoading || settingsLoading) {
     return (
@@ -263,12 +333,6 @@ export default function TodayPage() {
         toast.error(t('today.errorRemoveFood'))
       },
     })
-  }
-
-  const handleOpenAddFoodModal = (mealName: string, mealEntryId?: string) => {
-    setPreselectedFood(null) // Clear any preselected food
-    setSelectedMealForFood({ mealName, mealEntryId })
-    setAddFoodModalOpen(true)
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -602,203 +666,126 @@ export default function TodayPage() {
           ) : (
             <div className="space-y-4">
               {mealSettings.map((mealSetting, index) => {
-                // Find corresponding meal entry from today's log
                 const mealEntry = todayLog?.meals?.find(
                   m => m.meal_order === mealSetting.meal_order
                 )
-                const hasItems = mealEntry?.items && mealEntry.items.length > 0
-                // Calculate meal target range (min and max based on daily goals)
-                const mealTargetMin = Math.round(
-                  (goalCaloriesMin * mealSetting.percentage_of_daily_calories) / 100
-                )
-                const mealTargetMax = Math.round(
-                  (goalCalories * mealSetting.percentage_of_daily_calories) / 100
-                )
-                const mealCurrentCalories = mealEntry?.meal_calories || 0
-                // Calculate total weight for the meal
-                const mealTotalWeight =
-                  mealEntry?.items?.reduce((sum, item) => sum + (item.weight_grams || 0), 0) || 0
-
                 return (
-                  <Card key={mealSetting.id}>
-                    <CardHeader className="pb-3">
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="flex items-center gap-3 min-w-0">
-                          {index === 0 && <Coffee className="h-5 w-5 text-primary-600 shrink-0" />}
-                          {index > 0 && (
-                            <UtensilsCrossed className="h-5 w-5 text-accent-600 shrink-0" />
-                          )}
-                          <div className="min-w-0">
-                            <CardTitle className="text-lg truncate">
-                              {mealSetting.meal_name}
-                            </CardTitle>
-                            <CardDescription className="truncate">
-                              {hasItems
-                                ? t('today.mealItemCount', { count: mealEntry.items?.length ?? 0 })
-                                : t('today.mealPercentage', {
-                                    pct: mealSetting.percentage_of_daily_calories,
-                                  })}
-                            </CardDescription>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-1.5 md:gap-3 shrink-0">
-                          {/* Save meal button - only show if meal has items */}
-                          {hasItems && mealEntry && (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="gap-1.5 px-2 md:px-3"
-                              onClick={() => handleOpenSaveMealDialog(mealEntry)}
-                            >
-                              <Bookmark className="h-4 w-4" />
-                              <span className="hidden md:inline">{t('today.saveMeal')}</span>
-                            </Button>
-                          )}
-                          {/* Load meal button */}
-                          {!todayLog?.is_completed && (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="gap-1.5 px-2 md:px-3 border-primary-300 text-primary-700"
-                              onClick={() =>
-                                handleOpenLoadMealDialog(
-                                  mealSetting.meal_name,
-                                  mealSetting.meal_order,
-                                  mealEntry?.id
-                                )
-                              }
-                            >
-                              <ArrowDownToLine className="h-4 w-4" />
-                              <span className="hidden md:inline">{t('today.loadMeal')}</span>
-                            </Button>
-                          )}
-                          {!todayLog?.is_completed && (
-                            <Button
-                              size="sm"
-                              className="gap-1.5 px-2 md:px-3"
-                              onClick={() =>
-                                handleOpenAddFoodModal(mealSetting.meal_name, mealEntry?.id)
-                              }
-                            >
-                              <Plus className="h-4 w-4" />
-                              <span className="hidden sm:inline">{t('today.addFood')}</span>
-                            </Button>
-                          )}
-                        </div>
-                      </div>
-                      {/* Mini meal energy bar */}
-                      <MealProgressBar
-                        current={mealCurrentCalories}
-                        targetMin={mealTargetMin}
-                        targetMax={mealTargetMax}
-                      />
-                    </CardHeader>
-                    <CardContent>
-                      {hasItems ? (
-                        <div className="space-y-2">
-                          {(mealEntry.items ?? []).map(item => {
-                            const foodItem = item.food_item as FoodItem | null
-                            return (
-                              <SwipeableItem
-                                key={item.id}
-                                onSwipeLeft={
-                                  todayLog?.is_completed
-                                    ? undefined
-                                    : () =>
-                                        handleRemoveFood(
-                                          item.id,
-                                          foodItem?.name || t('today.defaultFoodName')
-                                        )
-                                }
-                              >
-                                <div
-                                  className={`w-full flex items-center justify-between p-3 bg-neutral-50 rounded-lg group transition-colors text-left ${todayLog?.is_completed ? 'cursor-default' : 'hover:bg-neutral-100 cursor-pointer'}`}
-                                  onClick={() => {
-                                    if (foodItem && !todayLog?.is_completed) {
-                                      setEditItem({
-                                        itemId: item.id,
-                                        food: foodItem,
-                                        amount: item.amount,
-                                        unit: item.unit,
-                                      })
-                                    }
-                                  }}
-                                >
-                                  <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-2 min-w-0">
-                                      <p className="font-medium text-neutral-900 text-sm md:text-base truncate min-w-0">
-                                        {foodItem?.name || t('today.unknownFood')}
-                                      </p>
-                                      {foodItem?.brand && (
-                                        <span className="text-xs text-neutral-500 hidden sm:inline shrink-0">
-                                          ({foodItem.brand})
-                                        </span>
-                                      )}
-                                    </div>
-                                    <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-1 text-xs text-neutral-600">
-                                      <span>
-                                        {item.amount} {item.unit}
-                                      </span>
-                                      <span>•</span>
-                                      <span>{item.calories} kcal</span>
-                                      <span>•</span>
-                                      <span>
-                                        F: {item.fat_g}g | K: {item.carb_g}g | P: {item.protein_g}g
-                                      </span>
-                                    </div>
-                                  </div>
-                                  {!todayLog?.is_completed && (
-                                    <Button
-                                      size="sm"
-                                      variant="ghost"
-                                      className="hidden md:flex opacity-0 group-hover:opacity-100 transition-opacity text-red-600 hover:text-red-700 hover:bg-red-50"
-                                      onClick={e => {
-                                        e.stopPropagation()
-                                        handleRemoveFood(
-                                          item.id,
-                                          foodItem?.name || t('today.defaultFoodName')
-                                        )
-                                      }}
-                                      disabled={removeFoodFromMeal.isPending}
-                                    >
-                                      <Trash2 className="h-4 w-4" />
-                                    </Button>
-                                  )}
-                                </div>
-                              </SwipeableItem>
-                            )
-                          })}
-                          <div className="pt-3 border-t flex flex-wrap gap-x-4 gap-y-1 justify-between text-sm min-w-0">
-                            <span className="font-medium text-neutral-700 shrink-0">
-                              {t('today.total')}
-                            </span>
-                            <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-neutral-600 min-w-0">
-                              <span>{mealEntry.meal_calories} kcal</span>
-                              <span>F: {mealEntry.meal_fat_g}g</span>
-                              <span>K: {mealEntry.meal_carb_g}g</span>
-                              <span>P: {mealEntry.meal_protein_g}g</span>
-                            </div>
-                          </div>
-                          {/* Meal macro breakdown */}
-                          {mealEntry.meal_calories > 0 && (
-                            <MealMacroBreakdown
-                              fat={mealEntry.meal_fat_g || 0}
-                              carbs={mealEntry.meal_carb_g || 0}
-                              protein={mealEntry.meal_protein_g || 0}
-                              totalWeight={mealTotalWeight}
-                              className="mt-2"
-                            />
-                          )}
-                        </div>
-                      ) : (
-                        <div className="text-center py-8 text-neutral-400 text-sm">
-                          {t('today.noFoodItemsYet')}
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
+                  <MealSection
+                    key={mealSetting.id}
+                    mealEntry={mealEntry}
+                    mealName={mealSetting.meal_name}
+                    isFirst={index === 0}
+                    targetPct={mealSetting.percentage_of_daily_calories}
+                    goalCaloriesMin={goalCaloriesMin}
+                    goalCalories={goalCalories}
+                    isCompleted={!!todayLog?.is_completed}
+                    onAddFood={handleOpenAddFoodModal}
+                    onSaveMeal={handleOpenSaveMealDialog}
+                    onLoadMeal={handleOpenLoadMealDialog}
+                    mealOrder={mealSetting.meal_order}
+                    onRemoveFood={handleRemoveFood}
+                    onEditItem={setEditItem}
+                    removeFoodPending={removeFoodFromMeal.isPending}
+                  />
                 )
               })}
+
+              {/* Ad hoc-måltider — alltid sist */}
+              {adHocMeals.map(meal => (
+                <MealSection
+                  key={meal.id}
+                  mealEntry={meal}
+                  mealName={meal.meal_name}
+                  goalCaloriesMin={goalCaloriesMin}
+                  goalCalories={goalCalories}
+                  isCompleted={!!todayLog?.is_completed}
+                  onAddFood={handleOpenAddFoodModal}
+                  mealOrder={meal.meal_order}
+                  onRemoveFood={handleRemoveAdHocFood}
+                  onEditItem={setEditItem}
+                  removeFoodPending={removeFoodFromMeal.isPending}
+                />
+              ))}
+
+              {/* Picker: Lägg till extra måltid */}
+              {!todayLog?.is_completed && adHocMeals.length < AD_HOC_MAX && (
+                <div className="flex justify-center">
+                  {adHocPicker === 'closed' && (
+                    <button
+                      onClick={() => setAdHocPicker('chips')}
+                      className="flex items-center gap-1.5 text-sm text-neutral-400 hover:text-neutral-600 transition-colors py-2"
+                    >
+                      <Plus className="h-4 w-4" />
+                      {t('adHoc.addButton')}
+                    </button>
+                  )}
+
+                  {adHocPicker === 'chips' && (
+                    <div className="flex flex-wrap gap-2 justify-center">
+                      {AD_HOC_PRESETS.map(p => (
+                        <button
+                          key={p.key}
+                          onClick={() => handleCreateAdHoc(t(`adHoc.${p.key}`))}
+                          disabled={addAdHocMeal.isPending}
+                          className="px-4 py-2 text-sm rounded-full border border-neutral-200 bg-white hover:border-primary-300 hover:bg-primary-50 transition-colors text-neutral-700 disabled:opacity-50"
+                        >
+                          {t(`adHoc.${p.key}`)}
+                        </button>
+                      ))}
+                      <button
+                        onClick={() => setAdHocPicker('freetext')}
+                        disabled={addAdHocMeal.isPending}
+                        className="px-4 py-2 text-sm rounded-full border border-dashed border-neutral-300 text-neutral-500 hover:border-neutral-400 transition-colors disabled:opacity-50"
+                      >
+                        {t('adHoc.other')}
+                      </button>
+                      <button
+                        onClick={() => setAdHocPicker('closed')}
+                        className="text-xs text-neutral-400 hover:text-neutral-600 px-2"
+                      >
+                        {t('today.cancel' as never)}
+                      </button>
+                    </div>
+                  )}
+
+                  {adHocPicker === 'freetext' && (
+                    <div className="flex items-center gap-2 w-full max-w-xs">
+                      <input
+                        type="text"
+                        value={adHocCustomName}
+                        onChange={e => setAdHocCustomName(e.target.value)}
+                        onKeyDown={e => {
+                          if (e.key === 'Enter') handleCreateAdHoc(adHocCustomName)
+                          if (e.key === 'Escape') {
+                            setAdHocPicker('chips')
+                            setAdHocCustomName('')
+                          }
+                        }}
+                        placeholder={t('adHoc.placeholder')}
+                        autoFocus
+                        className="flex-1 text-sm border border-neutral-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary-300"
+                      />
+                      <Button
+                        size="sm"
+                        onClick={() => handleCreateAdHoc(adHocCustomName)}
+                        disabled={!adHocCustomName.trim() || addAdHocMeal.isPending}
+                      >
+                        {t('adHoc.confirm')}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => {
+                          setAdHocPicker('chips')
+                          setAdHocCustomName('')
+                        }}
+                      >
+                        {t('today.cancel' as never)}
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           )}
         </div>

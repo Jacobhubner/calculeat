@@ -136,7 +136,7 @@ export const useMeasurementSetStore = create<MeasurementSetState>()(
 
       // Replace all unsaved cards with a new one (atomic operation to prevent race conditions)
       replaceAllUnsavedWithNew: measurementSet =>
-        set(state => {
+        set(_state => {
           return {
             // Replace entire array with single new card
             unsavedMeasurementSets: [measurementSet],

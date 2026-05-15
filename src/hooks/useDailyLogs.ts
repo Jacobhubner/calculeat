@@ -27,6 +27,7 @@ export interface MealEntry {
   user_id: string
   meal_name: string
   meal_order: number
+  is_ad_hoc: boolean
   meal_calories: number
   meal_fat_g: number
   meal_carb_g: number
@@ -597,6 +598,42 @@ export function useDeleteMealEntry() {
       setTimeout(() => {
         queryClient.invalidateQueries({ queryKey: ['dailyLogs'] })
       }, 500)
+    },
+  })
+}
+
+/**
+ * Create an ad hoc meal entry for today (not tied to user_meal_settings)
+ */
+export function useAddAdHocMeal() {
+  const { user } = useAuth()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (params: { dailyLogId: string; mealName: string; mealOrder: number }) => {
+      if (!user) throw new Error('User not authenticated')
+
+      const { data, error } = await supabase
+        .from('meal_entries')
+        .insert({
+          daily_log_id: params.dailyLogId,
+          user_id: user.id,
+          meal_name: params.mealName,
+          meal_order: params.mealOrder,
+          is_ad_hoc: true,
+          meal_calories: 0,
+          meal_fat_g: 0,
+          meal_carb_g: 0,
+          meal_protein_g: 0,
+        })
+        .select()
+        .single()
+
+      if (error) throw error
+      return data as MealEntry
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['dailyLogs'] })
     },
   })
 }
