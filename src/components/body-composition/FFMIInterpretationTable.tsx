@@ -150,15 +150,7 @@ export function FFMIInterpretationTable({
         </table>
       </div>
       <p className="text-xs text-neutral-400 px-3 py-2 border-t border-neutral-100">
-        {t('ffmiInterpretation.sourceLabel')}{' '}
-        <a
-          href="https://leanffmi.com/guides/ffmi/ffmi-interpretation-guide/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="hover:underline text-primary-500"
-        >
-          {t('ffmiInterpretation.sourceLinkText')}
-        </a>
+        {t('ffmiInterpretation.sourceLabel')} {t('ffmiInterpretation.sourceLinkText')}
       </p>
     </div>
   )

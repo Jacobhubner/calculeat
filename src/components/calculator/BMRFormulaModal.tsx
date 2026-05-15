@@ -199,18 +199,7 @@ export default function BMRFormulaModal({ formula, isOpen, onClose }: BMRFormula
                       key={index}
                       className="text-sm text-neutral-600 bg-neutral-50 p-3 rounded-lg border border-neutral-200"
                     >
-                      {ref.startsWith('http') ? (
-                        <a
-                          href={ref}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-primary-600 hover:text-primary-700 hover:underline break-all"
-                        >
-                          {ref}
-                        </a>
-                      ) : (
-                        <p className="leading-relaxed">{ref}</p>
-                      )}
+                      <p className="leading-relaxed break-all">{ref}</p>
                     </div>
                   ))}
                 </div>

@@ -528,15 +528,7 @@ function FfmiReferenceTable() {
         </table>
       </div>
       <p className="text-xs text-neutral-400 mt-2">
-        Källa:{' '}
-        <a
-          href="https://leanffmi.com/guides/ffmi/ffmi-interpretation-guide/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="hover:underline text-primary-500"
-        >
-          LeanFFMI.com — FFMI Interpretation Guide
-        </a>
+        Källa: LeanFFMI.com — FFMI Interpretation Guide
       </p>
     </div>
   )
