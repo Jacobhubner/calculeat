@@ -553,7 +553,7 @@ export function AddFoodItemModal({
   useEffect(() => {
     if (barcodeError) {
       setPendingBarcode(null)
-      // Log scan failure metric
+      toast.error(barcodeError.message)
       if (scanStartTimeRef.current > 0) {
         scanStartTimeRef.current = 0
       }
