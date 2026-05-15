@@ -214,6 +214,8 @@
     "barcodeCode": "Barcode: {{barcode}}",
     "fillManually": "Enter nutrition facts manually",
     "fillManuallySaved": "(barcode will be saved)",
+    "scanLabelHint": "Take a photo of the nutrition label and we'll fill in the values automatically.",
+    "barcodeContributeHint": "When you save, the product is added to CalculEat for future scans.",
     "barcodeError": "Could not fetch the product",
     "labelError": "Could not read the label",
     "overwriteConfirm": "You have already entered values. Do you want to replace them with scanned values?",

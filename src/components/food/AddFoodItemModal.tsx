@@ -130,6 +130,8 @@ export function AddFoodItemModal({
   const [pendingBarcode, setPendingBarcode] = useState<string | null>(null)
   // lockedBarcode: kvarstår för UI + submit tills modal stängs
   const [lockedBarcode, setLockedBarcode] = useState<string | null>(null)
+  // pendingBarcodeContribution: explicit user intent att bidra — sätts bara när användaren aktivt väljer recovery
+  const [pendingBarcodeContribution, setPendingBarcodeContribution] = useState<string | null>(null)
   // Metrics refs
   const scanStartTimeRef = useRef<number>(0)
   const firstDetectionTimeRef = useRef<number>(0)
@@ -767,12 +769,11 @@ export function AddFoodItemModal({
         queryClient.invalidateQueries({ queryKey: ['foodNutrients', savedFoodItemId] })
       }
 
-      // Om produkten inte hittades externt men användaren fyllt i manuellt:
-      // bidra med näringsvärden till user_contributed-databasen (fire-and-forget)
-      if (lockedBarcode && barcodeError?.type === 'off_not_found') {
-        supabase
-          .rpc('contribute_barcode_data', {
-            p_barcode: lockedBarcode,
+      // Bidra med näringsvärden till user_contributed-databasen (fire-and-forget, best-effort)
+      if (pendingBarcodeContribution) {
+        void Promise.resolve(
+          supabase.rpc('contribute_barcode_data', {
+            p_barcode: pendingBarcodeContribution,
             p_name: data.name,
             p_calories: data.calories,
             p_fat_g: data.fat_g,
@@ -784,11 +785,13 @@ export function AddFoodItemModal({
             p_default_unit: data.default_unit === 'ml' ? 'ml' : 'g',
             p_food_type: data.food_type,
           })
+        )
           .then(({ data: result }) => {
             if (result?.action === 'created') {
               toast.success(t('toast.firstContributor'))
             }
           })
+          .catch(() => {})
       }
 
       reset()
@@ -796,6 +799,7 @@ export function AddFoodItemModal({
       setVolumeUnit('dl')
       setPendingBarcode(null)
       setLockedBarcode(null)
+      setPendingBarcodeContribution(null)
       onOpenChange(false)
       onSuccess?.(createdFoodItem)
     } catch (error) {
@@ -815,6 +819,7 @@ export function AddFoodItemModal({
     setVolumeUnit('dl')
     setPendingBarcode(null)
     setLockedBarcode(null)
+    setPendingBarcodeContribution(null)
     if (cameraStream) {
       cameraStream.getTracks().forEach(t => t.stop())
       setCameraStream(null)
@@ -951,18 +956,56 @@ export function AddFoodItemModal({
                     )}
                   </div>
                 </div>
+                {/* Primär CTA */}
                 <Button
                   type="button"
                   size="sm"
-                  variant="outline"
-                  className="w-full border-orange-300 text-orange-800 hover:bg-orange-100"
-                  onClick={() => nameInputRef.current?.focus()}
+                  className="w-full"
+                  onClick={() => {
+                    if (!lockedBarcode) return
+                    setPendingBarcodeContribution(lockedBarcode)
+                    nameInputRef.current?.focus()
+                  }}
                 >
                   {t('addFoodModal.fillManually')}
-                  <span className="text-xs ml-1.5 opacity-70">
-                    {t('addFoodModal.fillManuallySaved')}
-                  </span>
                 </Button>
+                {/* Sekundär CTA: etikettskanning */}
+                {FEATURES.SCAN_NUTRITION_LABEL && (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    className="w-full border-orange-300 text-orange-800 hover:bg-orange-100"
+                    onClick={() => {
+                      if (!lockedBarcode) return
+                      setPendingBarcodeContribution(lockedBarcode)
+                      fileInputRef.current?.click()
+                    }}
+                    disabled={labelScan.isPending}
+                  >
+                    {labelScan.isPending ? (
+                      <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+                    ) : (
+                      <Camera className="h-3.5 w-3.5 mr-1.5" />
+                    )}
+                    {labelScan.isPending ? t('addFoodModal.scanning') : t('addFoodModal.scanLabel')}
+                  </Button>
+                )}
+                {/* Hjälptext */}
+                {FEATURES.SCAN_NUTRITION_LABEL && (
+                  <div className="space-y-1">
+                    <p className="text-xs text-orange-600">{t('addFoodModal.scanLabelHint')}</p>
+                    <p className="text-xs text-orange-400">
+                      {t('addFoodModal.barcodeContributeHint')}
+                    </p>
+                  </div>
+                )}
+                {/* Inline label scan error */}
+                {labelScan.isError && (
+                  <p className="text-xs text-orange-700 font-medium">
+                    {labelScan.error?.message || t('addFoodModal.labelError')}
+                  </p>
+                )}
               </div>
             ) : barcodeError ? (
               <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 space-y-2">
@@ -1777,6 +1820,7 @@ export function AddFoodItemModal({
           queryClient.removeQueries({ queryKey: ['barcode', code] })
           setPendingBarcode(code)
           setLockedBarcode(code)
+          setPendingBarcodeContribution(null)
         }}
         onDetected={code => {
           // If confirmed code differs from preliminary (false positive on first detection),
@@ -1791,6 +1835,7 @@ export function AddFoodItemModal({
           }
           preliminaryCodeRef.current = null
           setLockedBarcode(code)
+          setPendingBarcodeContribution(null)
 
           if (cameraStream) {
             cameraStream.getTracks().forEach(t => t.stop())

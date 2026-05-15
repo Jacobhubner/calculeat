@@ -214,6 +214,8 @@
     "barcodeCode": "Streckkod: {{barcode}}",
     "fillManually": "Fyll i näringsvärden manuellt",
     "fillManuallySaved": "(streckkod sparas)",
+    "scanLabelHint": "Fotografera näringsdeklarationen så fyller vi i värdena automatiskt.",
+    "barcodeContributeHint": "När du sparar läggs produkten till i CalculEat för framtida skanningar.",
     "barcodeError": "Kunde inte hämta produkten",
     "labelError": "Kunde inte läsa etiketten",
     "overwriteConfirm": "Du har redan fyllt i värden. Vill du ersätta dem med skannade värden?",
