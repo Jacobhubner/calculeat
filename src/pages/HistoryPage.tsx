@@ -60,23 +60,37 @@ export default function HistoryPage() {
     })
   }
 
-  // Calculate stats (based on selected period)
-  const completedDays = statsLogs.filter(log => log.is_completed).length
+  // Calculate stats (based on selected period, excluding today's unfinished day)
+  const todayStr = new Date().toISOString().split('T')[0]
+  const completedStatsLogs = statsLogs.filter(log => log.log_date.split('T')[0] !== todayStr)
+  const completedDays = completedStatsLogs.filter(log => log.is_completed).length
   const avgCalories =
-    statsLogs.length > 0
-      ? Math.round(statsLogs.reduce((sum, log) => sum + log.total_calories, 0) / statsLogs.length)
+    completedStatsLogs.length > 0
+      ? Math.round(
+          completedStatsLogs.reduce((sum, log) => sum + log.total_calories, 0) /
+            completedStatsLogs.length
+        )
       : 0
   const avgFat =
-    statsLogs.length > 0
-      ? Math.round(statsLogs.reduce((sum, log) => sum + log.total_fat_g, 0) / statsLogs.length)
+    completedStatsLogs.length > 0
+      ? Math.round(
+          completedStatsLogs.reduce((sum, log) => sum + log.total_fat_g, 0) /
+            completedStatsLogs.length
+        )
       : 0
   const avgCarbs =
-    statsLogs.length > 0
-      ? Math.round(statsLogs.reduce((sum, log) => sum + log.total_carb_g, 0) / statsLogs.length)
+    completedStatsLogs.length > 0
+      ? Math.round(
+          completedStatsLogs.reduce((sum, log) => sum + log.total_carb_g, 0) /
+            completedStatsLogs.length
+        )
       : 0
   const avgProtein =
-    statsLogs.length > 0
-      ? Math.round(statsLogs.reduce((sum, log) => sum + log.total_protein_g, 0) / statsLogs.length)
+    completedStatsLogs.length > 0
+      ? Math.round(
+          completedStatsLogs.reduce((sum, log) => sum + log.total_protein_g, 0) /
+            completedStatsLogs.length
+        )
       : 0
 
   // Calculate current streak: consecutive completed days backwards from today
