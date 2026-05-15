@@ -654,12 +654,12 @@ export default function WeightTracker({
             </div>
           )}
 
-          {/* Body composition chart — Body Fat Mass + Soft Lean Mass
+          {/* Body Fat Mass chart
               TODO: Add Skeletal Muscle Mass series when a validated estimation model or smart scale data is available. */}
           {bodyCompositionChartData.length > 0 && (
             <div>
               <h4 className="text-sm font-medium text-neutral-700 mb-2">
-                {t('weightTracker.bodyCompChartTitle')}
+                {t('weightTracker.chartBodyFatMassTitle')}
               </h4>
               <div className="h-72" style={{ minWidth: 0 }}>
                 <ResponsiveContainer width="100%" height="100%">
@@ -702,7 +702,7 @@ export default function WeightTracker({
                           `${(value as number).toFixed(1)} kg`,
                           (name as string) === 'bodyFatMass'
                             ? t('weightTracker.chartBodyFatMassLabel')
-                            : t('weightTracker.chartSoftLeanMassLabel'),
+                            : t('weightTracker.chartRollingLabel'),
                         ] as [string, string]
                       }
                       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -721,7 +721,7 @@ export default function WeightTracker({
                       formatter={value =>
                         value === 'bodyFatMass'
                           ? t('weightTracker.chartBodyFatMassLabel')
-                          : t('weightTracker.chartSoftLeanMassLabel')
+                          : t('weightTracker.chartRollingLabel')
                       }
                     />
                     <Line
@@ -734,14 +734,123 @@ export default function WeightTracker({
                     />
                     <Line
                       type="monotone"
+                      dataKey="bodyFatMassRolling"
+                      stroke="#f97316"
+                      strokeWidth={2}
+                      strokeDasharray="4 2"
+                      dot={false}
+                      connectNulls={false}
+                    />
+                    <Brush
+                      key={`bfm-${bodyCompositionBrushDefault.startIndex}-${bodyCompositionBrushDefault.endIndex}`}
+                      dataKey="timestamp"
+                      startIndex={bodyCompositionBrushDefault.startIndex}
+                      endIndex={bodyCompositionBrushDefault.endIndex}
+                      height={24}
+                      stroke="#d1d5db"
+                      fill="#f9fafb"
+                      travellerWidth={8}
+                      tickFormatter={ts =>
+                        new Date(ts as number).toLocaleDateString(getDateLocale(), {
+                          month: 'short',
+                          day: 'numeric',
+                        })
+                      }
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          )}
+
+          {/* Soft Lean Mass chart */}
+          {bodyCompositionChartData.length > 0 && (
+            <div>
+              <h4 className="text-sm font-medium text-neutral-700 mb-2">
+                {t('weightTracker.chartSoftLeanMassTitle')}
+              </h4>
+              <div className="h-72" style={{ minWidth: 0 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart
+                    data={bodyCompositionChartData}
+                    margin={{ top: 5, right: 50, left: 20, bottom: 5 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                    <XAxis
+                      dataKey="timestamp"
+                      type="number"
+                      scale="time"
+                      domain={['dataMin', 'dataMax']}
+                      tick={{ fontSize: 10, fill: '#6b7280' }}
+                      angle={-45}
+                      textAnchor="end"
+                      height={60}
+                      tickFormatter={ts =>
+                        new Date(ts as number).toLocaleDateString(getDateLocale(), {
+                          month: 'short',
+                          day: 'numeric',
+                        })
+                      }
+                    />
+                    <YAxis
+                      domain={['auto', 'auto']}
+                      tick={{ fontSize: 10, fill: '#6b7280' }}
+                      label={{
+                        value: 'kg',
+                        angle: -90,
+                        position: 'insideLeft',
+                        fontSize: 10,
+                        fill: '#6b7280',
+                      }}
+                    />
+                    <Tooltip
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                      formatter={(value: any, name: any) =>
+                        [
+                          `${(value as number).toFixed(1)} kg`,
+                          (name as string) === 'softLeanMass'
+                            ? t('weightTracker.chartSoftLeanMassLabel')
+                            : t('weightTracker.chartRollingLabel'),
+                        ] as [string, string]
+                      }
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                      labelFormatter={(_ts: any, payload: any) =>
+                        payload?.[0]?.payload?.displayDate ?? ''
+                      }
+                      contentStyle={{
+                        backgroundColor: 'white',
+                        border: '1px solid #e5e7eb',
+                        borderRadius: '8px',
+                        fontSize: '12px',
+                      }}
+                    />
+                    <Legend
+                      wrapperStyle={{ fontSize: '11px' }}
+                      formatter={value =>
+                        value === 'softLeanMass'
+                          ? t('weightTracker.chartSoftLeanMassLabel')
+                          : t('weightTracker.chartRollingLabel')
+                      }
+                    />
+                    <Line
+                      type="monotone"
                       dataKey="softLeanMass"
                       stroke="#3b82f6"
                       strokeWidth={2}
                       dot={{ r: 4, fill: '#3b82f6', strokeWidth: 0 }}
                       activeDot={{ r: 6, fill: '#3b82f6' }}
                     />
+                    <Line
+                      type="monotone"
+                      dataKey="softLeanMassRolling"
+                      stroke="#a855f7"
+                      strokeWidth={2}
+                      strokeDasharray="4 2"
+                      dot={false}
+                      connectNulls={false}
+                    />
                     <Brush
-                      key={`${bodyCompositionBrushDefault.startIndex}-${bodyCompositionBrushDefault.endIndex}`}
+                      key={`slm-${bodyCompositionBrushDefault.startIndex}-${bodyCompositionBrushDefault.endIndex}`}
                       dataKey="timestamp"
                       startIndex={bodyCompositionBrushDefault.startIndex}
                       endIndex={bodyCompositionBrushDefault.endIndex}

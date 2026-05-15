@@ -263,7 +263,8 @@
     "deleteCancel": "Cancel",
     "deleteConfirm": "Delete",
     "deleting": "Deleting...",
-    "bodyCompChartTitle": "Body composition over time",
+    "chartBodyFatMassTitle": "Body Fat Mass over time",
+    "chartSoftLeanMassTitle": "Soft Lean Mass over time",
     "chartBodyFatMassLabel": "Body Fat Mass",
     "chartSoftLeanMassLabel": "Soft Lean Mass"
   },

@@ -263,7 +263,8 @@
     "deleteCancel": "Avbryt",
     "deleteConfirm": "Radera",
     "deleting": "Raderar...",
-    "bodyCompChartTitle": "Kroppssammansättning över tid",
+    "chartBodyFatMassTitle": "Body Fat Mass över tid",
+    "chartSoftLeanMassTitle": "Soft Lean Mass över tid",
     "chartBodyFatMassLabel": "Body Fat Mass",
     "chartSoftLeanMassLabel": "Soft Lean Mass"
   },
