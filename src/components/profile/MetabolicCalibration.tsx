@@ -62,10 +62,10 @@ interface MetabolicCalibrationProps {
 
 function CalibrationHistoryList({
   history,
-  profileId,
+  userId,
 }: {
   history: import('@/lib/types').CalibrationHistory[]
-  profileId: string
+  userId: string
 }) {
   const { t } = useTranslation('tools')
   const [open, setOpen] = useState(false)
@@ -106,7 +106,7 @@ function CalibrationHistoryList({
                   <div className="flex items-center gap-1">
                     <button
                       onClick={() => {
-                        deleteCalibration.mutate({ id: c.id, profileId })
+                        deleteCalibration.mutate({ id: c.id, userId })
                         setConfirmId(null)
                       }}
                       className="text-red-600 hover:text-red-800 font-medium"
@@ -168,7 +168,7 @@ export default function MetabolicCalibration({
   const createCalibrationHistory = useCreateCalibrationHistory()
   const revertCalibration = useRevertCalibration()
   const { data: calibrationHistoryList, isLoading: calibrationHistoryLoading } =
-    useCalibrationHistory(profile.id)
+    useCalibrationHistory(profile.user_id)
 
   const [periodEndDate, setPeriodEndDate] = useState<Date>(() => endOfDay(new Date()))
   const refreshNow = useCallback(() => setPeriodEndDate(endOfDay(new Date())), [])
@@ -352,6 +352,7 @@ export default function MetabolicCalibration({
 
       await createCalibrationHistory.mutateAsync({
         profile_id: profile.id,
+        user_id: profile.user_id,
         time_period_days: timePeriod,
         start_weight_kg: data.startCluster.average,
         end_weight_kg: data.endCluster.average,
@@ -395,6 +396,7 @@ export default function MetabolicCalibration({
       await revertCalibration.mutateAsync({
         calibrationId: lastActiveCalibration.id,
         profileId: profile.id,
+        userId: profile.user_id,
         previousTdee: lastActiveCalibration.previous_tdee,
       })
       onRevert?.()
@@ -1613,7 +1615,7 @@ export default function MetabolicCalibration({
                   {calibrationHistoryList && calibrationHistoryList.length > 0 && (
                     <CalibrationHistoryList
                       history={calibrationHistoryList}
-                      profileId={profile.id}
+                      userId={profile.user_id}
                     />
                   )}
                 </div>

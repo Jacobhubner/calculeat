@@ -527,6 +527,7 @@ export interface CalibrationResult {
 export interface CalibrationHistory {
   id: string
   profile_id: string
+  user_id: string
   calibrated_at: string
   time_period_days: 14 | 21 | 28
   start_weight_kg: number

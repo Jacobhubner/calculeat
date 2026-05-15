@@ -4,44 +4,46 @@ import type { CalibrationHistory } from '@/lib/types'
 import { toast } from 'sonner'
 
 /**
- * Hook to fetch calibration history for a profile
+ * Hook to fetch calibration history for a user.
+ * Reads via user_id (Fas 2 dual-identifier migration) — profile_id still written on insert.
  */
-export function useCalibrationHistory(profileId: string | undefined) {
+export function useCalibrationHistory(userId: string | undefined) {
   return useQuery({
-    queryKey: ['calibration-history', profileId],
+    queryKey: ['calibration-history', userId],
     queryFn: async () => {
-      if (!profileId) return []
+      if (!userId) return []
       const { data, error } = await supabase
         .from('calibration_history')
         .select('*')
-        .eq('profile_id', profileId)
+        .eq('user_id', userId)
         .order('calibrated_at', { ascending: false })
       if (error) throw error
       return data as CalibrationHistory[]
     },
-    enabled: !!profileId,
+    enabled: !!userId,
   })
 }
 
 /**
- * Hook to get the last calibration for a profile
+ * Hook to get the last calibration for a user.
+ * Reads via user_id (Fas 2 dual-identifier migration) — profile_id still written on insert.
  */
-export function useLastCalibration(profileId: string | undefined) {
+export function useLastCalibration(userId: string | undefined) {
   return useQuery({
-    queryKey: ['last-calibration', profileId],
+    queryKey: ['last-calibration', userId],
     queryFn: async () => {
-      if (!profileId) return null
+      if (!userId) return null
       const { data, error } = await supabase
         .from('calibration_history')
         .select('*')
-        .eq('profile_id', profileId)
+        .eq('user_id', userId)
         .order('calibrated_at', { ascending: false })
         .limit(1)
         .maybeSingle()
       if (error) throw error
       return data as CalibrationHistory | null
     },
-    enabled: !!profileId,
+    enabled: !!userId,
   })
 }
 
@@ -61,8 +63,8 @@ export function useCreateCalibrationHistory() {
       return result
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['calibration-history', variables.profile_id] })
-      queryClient.invalidateQueries({ queryKey: ['last-calibration', variables.profile_id] })
+      queryClient.invalidateQueries({ queryKey: ['calibration-history', variables.user_id] })
+      queryClient.invalidateQueries({ queryKey: ['last-calibration', variables.user_id] })
     },
     onError: () => {
       toast.error('Kunde inte spara kalibreringshistorik')
@@ -80,17 +82,20 @@ export function useRevertCalibration() {
     mutationFn: async ({
       calibrationId,
       profileId,
+      userId,
       previousTdee,
       previousCaloriesMin,
       previousCaloriesMax,
     }: {
       calibrationId: string
       profileId: string
+      userId: string
       previousTdee: number
       previousCaloriesMin?: number
       previousCaloriesMax?: number
     }) => {
       // Single atomic RPC — marks is_reverted and restores profile TDEE in one transaction
+      // RPC uses profileId — lämnas orörd i Fas 2
       const { error } = await supabase.rpc('revert_calibration', {
         p_calibration_id: calibrationId,
         p_profile_id: profileId,
@@ -101,11 +106,11 @@ export function useRevertCalibration() {
 
       if (error) throw error
 
-      return { profileId }
+      return { userId }
     },
-    onSuccess: ({ profileId }) => {
-      queryClient.invalidateQueries({ queryKey: ['calibration-history', profileId] })
-      queryClient.invalidateQueries({ queryKey: ['last-calibration', profileId] })
+    onSuccess: ({ userId }) => {
+      queryClient.invalidateQueries({ queryKey: ['calibration-history', userId] })
+      queryClient.invalidateQueries({ queryKey: ['last-calibration', userId] })
       queryClient.invalidateQueries({ queryKey: ['profiles'] })
       queryClient.invalidateQueries({ queryKey: ['user-profile'] })
       toast.success('Kalibrering ångrad — TDEE återställt')
@@ -122,14 +127,14 @@ export function useRevertCalibration() {
 export function useDeleteCalibrationHistory() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async ({ id, profileId }: { id: string; profileId: string }) => {
+    mutationFn: async ({ id, userId }: { id: string; userId: string }) => {
       const { error } = await supabase.from('calibration_history').delete().eq('id', id)
       if (error) throw error
-      return profileId
+      return userId
     },
-    onSuccess: profileId => {
-      queryClient.invalidateQueries({ queryKey: ['calibration-history', profileId] })
-      queryClient.invalidateQueries({ queryKey: ['last-calibration', profileId] })
+    onSuccess: userId => {
+      queryClient.invalidateQueries({ queryKey: ['calibration-history', userId] })
+      queryClient.invalidateQueries({ queryKey: ['last-calibration', userId] })
       toast.success('Kalibreringspost borttagen')
     },
     onError: () => {
