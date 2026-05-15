@@ -262,7 +262,10 @@
     "deleteDesc": "{{weight}} kg from {{date}}",
     "deleteCancel": "Cancel",
     "deleteConfirm": "Delete",
-    "deleting": "Deleting..."
+    "deleting": "Deleting...",
+    "bodyCompChartTitle": "Body composition over time",
+    "chartBodyFatMassLabel": "Body Fat Mass",
+    "chartSoftLeanMassLabel": "Soft Lean Mass"
   },
   "macroDistribution": {
     "title": "Macro distribution",

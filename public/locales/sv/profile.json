@@ -262,7 +262,10 @@
     "deleteDesc": "{{weight}} kg från {{date}}",
     "deleteCancel": "Avbryt",
     "deleteConfirm": "Radera",
-    "deleting": "Raderar..."
+    "deleting": "Raderar...",
+    "bodyCompChartTitle": "Kroppssammansättning över tid",
+    "chartBodyFatMassLabel": "Body Fat Mass",
+    "chartSoftLeanMassLabel": "Soft Lean Mass"
   },
   "macroDistribution": {
     "title": "Makrofördelning",
