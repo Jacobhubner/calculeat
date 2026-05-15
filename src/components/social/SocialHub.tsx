@@ -1466,7 +1466,8 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
     n =>
       n.type !== 'friend_request_received' &&
       n.type !== 'shared_list_invitation_received' &&
-      n.type !== 'share_invitation_received'
+      n.type !== 'share_invitation_received' &&
+      n.type !== 'new_message'
   )
   const unreadHistoryCount = historyNotifications.filter(n => n.read_at === null).length
 
