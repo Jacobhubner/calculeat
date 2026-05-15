@@ -269,7 +269,7 @@
     "chartSoftLeanMassLabel": "Mjuk fettfri massa",
     "infoBodyFat": "Kroppsfett % mäter hur stor andel av din totala vikt som utgörs av fett. Värdet mäts direkt vid varje registrering och ger en bild av din kroppssammansättning över tid.",
     "infoBodyFatMass": "Fettmassa är den faktiska vikten av fettet i din kropp (kg), beräknat som total kroppsvikt × kroppsfett%. Till skillnad från procentandelen tar detta mått hänsyn till din totala vikt — ett viktigt perspektiv vid analys av kroppssammansättning.",
-    "infoSoftLeanMass": "Mjuk fettfri massa är allt i kroppen utom fett: muskler, organ, blod och vatten. Beräknas som total kroppsvikt minus fettmassa. Används ofta som ett mått på muskelbyggande och viktnedgångens kvalitet."
+    "infoSoftLeanMass": "Mjuk fettfri massa är allt i kroppen utom fett: muskler, skelett, organ, blod och vatten. Beräknas som total kroppsvikt minus fettmassa. Används ofta som ett mått på muskelbyggande och viktnedgångens kvalitet."
   },
   "macroDistribution": {
     "title": "Makrofördelning",
