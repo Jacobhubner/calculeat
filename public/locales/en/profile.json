@@ -266,7 +266,10 @@
     "chartBodyFatMassTitle": "Body Fat Mass over time",
     "chartSoftLeanMassTitle": "Soft Lean Mass over time",
     "chartBodyFatMassLabel": "Body Fat Mass",
-    "chartSoftLeanMassLabel": "Soft Lean Mass"
+    "chartSoftLeanMassLabel": "Soft Lean Mass",
+    "infoBodyFat": "Body fat % measures what proportion of your total weight is fat. The value is recorded directly at each entry and gives a picture of your body composition over time.",
+    "infoBodyFatMass": "Body Fat Mass is the actual weight of the fat in your body (kg), calculated as total body weight × body fat %. Unlike the percentage, this metric accounts for your total weight — an important perspective when analysing body composition.",
+    "infoSoftLeanMass": "Soft Lean Mass is everything in your body except fat: muscles, organs, blood and water. Calculated as total body weight minus Body Fat Mass. Often used as a measure of muscle building and the quality of weight loss."
   },
   "macroDistribution": {
     "title": "Macro distribution",

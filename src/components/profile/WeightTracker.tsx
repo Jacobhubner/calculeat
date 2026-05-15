@@ -10,6 +10,7 @@
 
 import { useState, useMemo, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import {
   TrendingDown,
@@ -22,6 +23,7 @@ import {
   Trash2,
   AlertTriangle,
   ChevronDown,
+  Info,
 } from 'lucide-react'
 import type { WeightHistory } from '@/lib/types'
 import {
@@ -71,6 +73,9 @@ export default function WeightTracker({
   const [showAddWeight, setShowAddWeight] = useState(false)
   const [showHistory, setShowHistory] = useState(false)
   const [deleteConfirm, setDeleteConfirm] = useState<WeightHistory | null>(null)
+  const [showBodyFatInfo, setShowBodyFatInfo] = useState(false)
+  const [showBodyFatMassInfo, setShowBodyFatMassInfo] = useState(false)
+  const [showSoftLeanMassInfo, setShowSoftLeanMassInfo] = useState(false)
 
   // User-based weight history (shared across all profiles)
   const { data: weightHistory = [] } = useWeightHistory()
@@ -545,9 +550,18 @@ export default function WeightTracker({
           {/* Body fat chart */}
           {hasBodyFatData && (
             <div>
-              <h4 className="text-sm font-medium text-neutral-700 mb-2">
-                {t('weightTracker.bodyFatChartTitle')}
-              </h4>
+              <div className="flex items-center gap-1.5 mb-2">
+                <h4 className="text-sm font-medium text-neutral-700">
+                  {t('weightTracker.bodyFatChartTitle')}
+                </h4>
+                <button
+                  onClick={() => setShowBodyFatInfo(true)}
+                  className="text-neutral-400 hover:text-neutral-600 transition-colors"
+                  type="button"
+                >
+                  <Info className="h-3.5 w-3.5" />
+                </button>
+              </div>
               <div className="h-72" style={{ minWidth: 0 }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart
@@ -658,9 +672,18 @@ export default function WeightTracker({
               TODO: Add Skeletal Muscle Mass series when a validated estimation model or smart scale data is available. */}
           {bodyCompositionChartData.length > 0 && (
             <div>
-              <h4 className="text-sm font-medium text-neutral-700 mb-2">
-                {t('weightTracker.chartBodyFatMassTitle')}
-              </h4>
+              <div className="flex items-center gap-1.5 mb-2">
+                <h4 className="text-sm font-medium text-neutral-700">
+                  {t('weightTracker.chartBodyFatMassTitle')}
+                </h4>
+                <button
+                  onClick={() => setShowBodyFatMassInfo(true)}
+                  className="text-neutral-400 hover:text-neutral-600 transition-colors"
+                  type="button"
+                >
+                  <Info className="h-3.5 w-3.5" />
+                </button>
+              </div>
               <div className="h-72" style={{ minWidth: 0 }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart
@@ -766,9 +789,18 @@ export default function WeightTracker({
           {/* Soft Lean Mass chart */}
           {bodyCompositionChartData.length > 0 && (
             <div>
-              <h4 className="text-sm font-medium text-neutral-700 mb-2">
-                {t('weightTracker.chartSoftLeanMassTitle')}
-              </h4>
+              <div className="flex items-center gap-1.5 mb-2">
+                <h4 className="text-sm font-medium text-neutral-700">
+                  {t('weightTracker.chartSoftLeanMassTitle')}
+                </h4>
+                <button
+                  onClick={() => setShowSoftLeanMassInfo(true)}
+                  className="text-neutral-400 hover:text-neutral-600 transition-colors"
+                  type="button"
+                >
+                  <Info className="h-3.5 w-3.5" />
+                </button>
+              </div>
               <div className="h-72" style={{ minWidth: 0 }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart
@@ -980,6 +1012,40 @@ export default function WeightTracker({
           )}
         </CardContent>
       )}
+
+      {/* Info dialogs */}
+      <Dialog open={showBodyFatInfo} onOpenChange={setShowBodyFatInfo}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('weightTracker.bodyFatChartTitle')}</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-neutral-600 leading-relaxed">
+            {t('weightTracker.infoBodyFat')}
+          </p>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showBodyFatMassInfo} onOpenChange={setShowBodyFatMassInfo}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('weightTracker.chartBodyFatMassTitle')}</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-neutral-600 leading-relaxed">
+            {t('weightTracker.infoBodyFatMass')}
+          </p>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showSoftLeanMassInfo} onOpenChange={setShowSoftLeanMassInfo}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('weightTracker.chartSoftLeanMassTitle')}</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-neutral-600 leading-relaxed">
+            {t('weightTracker.infoSoftLeanMass')}
+          </p>
+        </DialogContent>
+      </Dialog>
     </Card>
   )
 }
