@@ -743,7 +743,7 @@ export default function TodayPage() {
                         onClick={() => setAdHocPicker('closed')}
                         className="text-xs text-neutral-400 hover:text-neutral-600 px-2"
                       >
-                        {t('today.cancel' as never)}
+                        {t('today.cancel')}
                       </button>
                     </div>
                   )}
@@ -780,7 +780,7 @@ export default function TodayPage() {
                           setAdHocCustomName('')
                         }}
                       >
-                        {t('today.cancel' as never)}
+                        {t('today.cancel')}
                       </Button>
                     </div>
                   )}
