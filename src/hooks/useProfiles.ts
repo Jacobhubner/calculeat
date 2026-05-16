@@ -35,10 +35,8 @@ export function useProfiles() {
       }
 
       if (upData && upData.active_profile_id) {
-        // Shape-mapping: same strategy as E4c (refreshProfile).
-        //   .id      = profiles UUID  → all .find(p => p.id === activeId) calls match unchanged
-        //   .user_id = auth UID       → correct identity
-        // Return as single-element array — all consumers unchanged.
+        // Shape-mapping: id = active_profile_id (profiles UUID) so all consumers
+        // that pass profileId to useUpdateProfile continue to work unchanged.
         const mapped = {
           ...upData,
           id: upData.active_profile_id,
@@ -48,25 +46,8 @@ export function useProfiles() {
         return [mapped]
       }
 
-      // E5b fallback: user_profiles row missing or active_profile_id null.
-      // Covers new users during onboarding and data incidents — always logged.
-      console.warn(
-        '[E5b fallback] user_profiles missing or active_profile_id null for uid:',
-        user.id,
-        '— falling back to profiles table'
-      )
-
-      const { data: pData, error: pError } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('updated_at', { ascending: false })
-
-      if (pError) {
-        throw pError
-      }
-
-      return (pData as Profile[]) || []
+      // user_profiles row missing or active_profile_id null — new user during onboarding.
+      return []
     },
     enabled: true,
     staleTime: 1000 * 60 * 5,

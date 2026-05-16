@@ -351,7 +351,6 @@ export default function MetabolicCalibration({
       })
 
       await createCalibrationHistory.mutateAsync({
-        profile_id: profile.id,
         user_id: profile.user_id,
         time_period_days: timePeriod,
         start_weight_kg: data.startCluster.average,

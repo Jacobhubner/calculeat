@@ -68,7 +68,6 @@ export function useCreateDefaultMealSettings() {
       } | null
 
       let mealsToInsert: Array<{
-        profile_id: string
         user_id: string
         meal_name: string
         meal_order: number
@@ -78,7 +77,6 @@ export function useCreateDefaultMealSettings() {
       if (mealsConfig?.meals && mealsConfig.meals.length > 0) {
         // Use meals from profile's meals_config
         mealsToInsert = mealsConfig.meals.map((meal, index) => ({
-          profile_id: profile.id,
           user_id: user.id,
           meal_name: meal.name,
           meal_order: index,
@@ -95,7 +93,6 @@ export function useCreateDefaultMealSettings() {
 
         mealsToInsert = defaultMeals.map(meal => ({
           ...meal,
-          profile_id: profile.id,
           user_id: user.id,
         }))
       }
@@ -144,7 +141,6 @@ export function useCreateMealSetting() {
       const { data, error } = await supabase
         .from('user_meal_settings')
         .insert({
-          profile_id: profile.id,
           user_id: user.id,
           ...input,
         })
@@ -286,23 +282,15 @@ export function useSyncMealSettings() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async ({
-      profileId,
-      meals,
-    }: {
-      profileId: string
-      meals: Array<{ name: string; percentage: number }>
-    }) => {
-      if (!profileId) throw new Error('Profile ID required')
+    mutationFn: async ({ meals }: { meals: Array<{ name: string; percentage: number }> }) => {
       if (!meals || meals.length === 0) throw new Error('Meals required')
       if (!user) throw new Error('User not authenticated')
 
-      // Delete all existing meal settings for this profile
-      await supabase.from('user_meal_settings').delete().eq('profile_id', profileId)
+      // Delete all existing meal settings for this user
+      await supabase.from('user_meal_settings').delete().eq('user_id', user.id)
 
-      // Insert new meals — dual-write both profile_id and user_id
+      // Insert new meals
       const mealsToInsert = meals.map((meal, index) => ({
-        profile_id: profileId,
         user_id: user.id,
         meal_name: meal.name,
         meal_order: index,
@@ -360,9 +348,9 @@ export function useResetMealSettings() {
       if (!user) throw new Error('User not authenticated')
 
       // Delete all existing
-      await supabase.from('user_meal_settings').delete().eq('profile_id', profile.id)
+      await supabase.from('user_meal_settings').delete().eq('user_id', user.id)
 
-      // Create defaults — dual-write both profile_id and user_id
+      // Create defaults
       const defaultMeals = [
         { meal_name: 'Frukost', meal_order: 0, percentage_of_daily_calories: 25 },
         { meal_name: 'Lunch', meal_order: 1, percentage_of_daily_calories: 30 },
@@ -372,7 +360,6 @@ export function useResetMealSettings() {
 
       const mealsWithIds = defaultMeals.map(meal => ({
         ...meal,
-        profile_id: profile.id,
         user_id: user.id,
       }))
 

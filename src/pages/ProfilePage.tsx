@@ -501,7 +501,6 @@ export default function ProfilePage() {
       // This ensures TodayPage (which reads from user_meal_settings) stays in sync
       if (pendingChanges.meals_config?.meals) {
         await syncMealSettings.mutateAsync({
-          profileId: activeProfile.id,
           meals: pendingChanges.meals_config.meals,
         })
       }

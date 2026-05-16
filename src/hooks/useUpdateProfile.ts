@@ -31,36 +31,33 @@ export function useUpdateProfile() {
         {} as Record<string, unknown>
       )
 
-      // Write to profiles (Fas 2 bridge — profiles still receives writes until Steg G)
-      const { data: updated, error } = await supabase
-        .from('profiles')
-        .update(sanitizedData)
-        .eq('id', profileId)
-        .select()
-
-      if (error) {
-        throw error
-      }
-
-      if (!updated || updated.length === 0) {
-        throw new Error('No profile was updated')
-      }
-
-      // Write to user_profiles — now the canonical read source (Fas 3)
       const {
         data: { user },
       } = await supabase.auth.getUser()
-      if (user) {
-        const { error: upError } = await supabase
-          .from('user_profiles')
-          .update(sanitizedData)
-          .eq('id', user.id)
-        if (upError) {
-          console.warn('[useUpdateProfile] user_profiles update failed:', upError.message)
-        }
-      }
+      if (!user) throw new Error('Not authenticated')
 
-      return updated[0] as Profile
+      // Write to user_profiles — canonical source (Fas 3)
+      const { error: upError } = await supabase
+        .from('user_profiles')
+        .update(sanitizedData)
+        .eq('id', user.id)
+
+      if (upError) throw upError
+
+      // Fetch updated row and shape-map to Profile for store/consumers
+      const { data: upData, error: fetchError } = await supabase
+        .from('user_profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single()
+
+      if (fetchError) throw fetchError
+
+      return {
+        ...upData,
+        id: profileId,
+        user_id: user.id,
+      } as Profile
     },
     onSuccess: async (updated, { profileId, silent }) => {
       // Update store

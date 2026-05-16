@@ -526,7 +526,6 @@ export interface CalibrationResult {
 // Calibration history type for tracking TDEE calibrations
 export interface CalibrationHistory {
   id: string
-  profile_id: string
   user_id: string
   calibrated_at: string
   time_period_days: 14 | 21 | 28

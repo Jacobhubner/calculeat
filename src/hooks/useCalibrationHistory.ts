@@ -5,7 +5,7 @@ import { toast } from 'sonner'
 
 /**
  * Hook to fetch calibration history for a user.
- * Reads via user_id (Fas 2 dual-identifier migration) — profile_id still written on insert.
+ * Reads and writes via user_id (Fas 3 — profile_id removed).
  */
 export function useCalibrationHistory(userId: string | undefined) {
   return useQuery({
@@ -26,7 +26,7 @@ export function useCalibrationHistory(userId: string | undefined) {
 
 /**
  * Hook to get the last calibration for a user.
- * Reads via user_id (Fas 2 dual-identifier migration) — profile_id still written on insert.
+ * Reads and writes via user_id (Fas 3 — profile_id removed).
  */
 export function useLastCalibration(userId: string | undefined) {
   return useQuery({

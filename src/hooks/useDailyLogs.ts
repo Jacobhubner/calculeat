@@ -313,7 +313,6 @@ export function useEnsureTodayLog() {
         .from('daily_logs')
         .insert({
           user_id: user.id,
-          profile_id: activeProfile.id,
           log_date: today,
           goal_calories_min: activeProfile.calories_min,
           goal_calories_max: activeProfile.calories_max,
@@ -742,7 +741,6 @@ export function useStartNewDay() {
         .from('daily_logs')
         .insert({
           user_id: user.id,
-          profile_id: activeProfile.id,
           log_date: nextDay,
           goal_calories_min: activeProfile.calories_min,
           goal_calories_max: activeProfile.calories_max,
@@ -813,7 +811,6 @@ export function useCopyDayToToday() {
           .from('daily_logs')
           .insert({
             user_id: user.id,
-            profile_id: activeProfile.id,
             log_date: today,
           })
           .select()

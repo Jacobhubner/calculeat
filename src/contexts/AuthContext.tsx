@@ -71,11 +71,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     if (upData && upData.active_profile_id) {
-      // Shape-mapping: delivers a Profile-compatible object where
-      //   .id      = profiles UUID  → useUpdateProfile, Zustand, FK-writes unchanged
-      //   .user_id = auth UID       → correct identity
-      // All other fields (tdee, calories_min, height_cm etc.) from user_profiles,
-      // kept in sync by E1 backfill + E2 dual-write.
+      // Shape-mapping: id = active_profile_id (profiles UUID) so all consumers
+      // that pass profileId to useUpdateProfile continue to work unchanged.
       const mapped = {
         ...upData,
         id: upData.active_profile_id,
@@ -87,27 +84,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return
     }
 
-    // E4 fallback: user_profiles row missing or active_profile_id null.
-    // Covers new users during onboarding and any data incident — always logged.
-    console.warn(
-      '[E4 fallback] user_profiles missing or active_profile_id null for uid:',
-      uid,
-      '— falling back to profiles table'
-    )
-
-    const { data: pData, error: pError } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('user_id', uid)
-      .eq('is_active', true)
-      .maybeSingle()
-
-    if (pError) {
-      console.error('[E4 fallback] Error fetching profiles:', pError)
-    }
-
-    setProfile(pData as UserProfile | null)
-    setUserProfile(null)
+    // user_profiles row missing or active_profile_id null — new user during onboarding.
+    setProfile(null)
+    setUserProfile(upData ?? null)
   }
 
   useEffect(() => {
