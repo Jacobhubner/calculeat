@@ -167,14 +167,16 @@ export default function TapeMeasurementsSection({
               className="bg-white rounded-2xl shadow-2xl max-w-md w-full"
               onClick={e => e.stopPropagation()}
             >
-              <div className="sticky top-0 bg-gradient-to-br from-primary-500 to-accent-500 text-white px-6 py-4 flex justify-between items-start rounded-t-2xl">
+              <div className="sticky top-0 bg-white border-b border-neutral-200 px-6 py-4 flex justify-between items-start rounded-t-2xl">
                 <div>
-                  <h2 className="text-2xl font-bold">{modalContent.title}</h2>
-                  <p className="text-sm text-white/90 mt-1">{t('tape.measurementInstruction')}</p>
+                  <h2 className="text-2xl font-bold text-neutral-900">{modalContent.title}</h2>
+                  <p className="text-sm text-neutral-600 mt-1">
+                    {t('tape.measurementInstruction')}
+                  </p>
                 </div>
                 <button
                   onClick={() => setShowModal(false)}
-                  className="text-white/90 hover:text-white transition-colors"
+                  className="text-neutral-500 hover:text-neutral-700 transition-colors"
                   aria-label={t('tape.closeModalAriaLabel')}
                 >
                   <X className="h-6 w-6" />

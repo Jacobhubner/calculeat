@@ -49,13 +49,13 @@ export default function InfoCardWithModal({
               onClick={e => e.stopPropagation()}
             >
               {/* Header */}
-              <div className="sticky top-0 bg-gradient-to-r from-primary-500 to-accent-500 text-white p-6 rounded-t-2xl flex justify-between items-start">
+              <div className="sticky top-0 bg-white border-b border-neutral-200 p-6 rounded-t-2xl flex justify-between items-start">
                 <div>
-                  <h2 className="text-2xl font-bold">{modalTitle}</h2>
+                  <h2 className="text-2xl font-bold text-neutral-900">{modalTitle}</h2>
                 </div>
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="text-white/80 hover:text-white transition-colors p-1 rounded-full hover:bg-white/10"
+                  className="text-neutral-500 hover:text-neutral-700 transition-colors p-1 rounded-full hover:bg-neutral-100"
                   aria-label="Stäng"
                 >
                   <X className="h-6 w-6" />

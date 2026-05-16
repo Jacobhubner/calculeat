@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import InfoCardWithModal from '@/components/InfoCardWithModal'
 import { Button } from '@/components/ui/button'
 import { Select } from '@/components/ui/select'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { Portal } from '@/components/ui/portal'
 import {
   Scale,
   TrendingDown,
@@ -29,11 +29,13 @@ import {
   ChevronRight,
   Info,
   Trash2,
+  X,
 } from 'lucide-react'
 
 import { startOfDay, endOfDay, subDays, addDays, isBefore, format } from 'date-fns'
 import { sv } from 'date-fns/locale'
 import { useState, useMemo, useCallback } from 'react'
+import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   useWeightHistory,
@@ -162,6 +164,7 @@ export default function MetabolicCalibration({
   const [timePeriod, setTimePeriod] = useState<14 | 21 | 28>(21)
   const [calibrationApplied, setCalibrationApplied] = useState<number | null>(null)
   const [confirmRevert, setConfirmRevert] = useState(false)
+  const [activeInfo, setActiveInfo] = useState<{ title: string; content: ReactNode } | null>(null)
 
   const { data: weightHistory } = useWeightHistory()
   const updateProfile = useUpdateProfile()
@@ -954,49 +957,52 @@ export default function MetabolicCalibration({
                             {t('metabolicCalibration.dataQuality.label')}: {data.dataQuality.label}{' '}
                             ({data.dataQuality.score}/100)
                           </p>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <button
-                                type="button"
-                                className="text-neutral-400 hover:text-neutral-600"
-                              >
-                                <Info className="h-3.5 w-3.5" />
-                              </button>
-                            </TooltipTrigger>
-                            <TooltipContent
-                              side="bottom"
-                              className="max-w-xs text-xs space-y-2 p-3"
-                            >
-                              <p className="font-medium">
-                                {t('metabolicCalibration.dataQuality.tooltipTitle')}
-                              </p>
-                              <table className="w-full text-xs">
-                                <tbody>
-                                  <tr>
-                                    <td className="pr-2 text-neutral-400">
-                                      {t('metabolicCalibration.dataQuality.foodLog')}
-                                    </td>
-                                    <td>{Math.round(data.dataQuality.factors.logScore)}/100</td>
-                                  </tr>
-                                  <tr>
-                                    <td className="pr-2 text-neutral-400">
-                                      {t('metabolicCalibration.dataQuality.measFreq')}
-                                    </td>
-                                    <td>{Math.round(data.dataQuality.factors.freqScore)}/100</td>
-                                  </tr>
-                                  <tr>
-                                    <td className="pr-2 text-neutral-400">
-                                      {t('metabolicCalibration.dataQuality.clusterSize')}
-                                    </td>
-                                    <td>{Math.round(data.dataQuality.factors.clusterScore)}/100</td>
-                                  </tr>
-                                </tbody>
-                              </table>
-                              <p className="text-neutral-400 pt-1 border-t border-neutral-200">
-                                {t('metabolicCalibration.dataQuality.legend')}
-                              </p>
-                            </TooltipContent>
-                          </Tooltip>
+                          <button
+                            type="button"
+                            className="text-neutral-400 hover:text-neutral-600"
+                            onClick={() =>
+                              setActiveInfo({
+                                title: t('metabolicCalibration.dataQuality.tooltipTitle'),
+                                content: (
+                                  <div className="space-y-2 text-sm">
+                                    <table className="w-full text-xs">
+                                      <tbody>
+                                        <tr>
+                                          <td className="pr-2 text-neutral-400 py-1">
+                                            {t('metabolicCalibration.dataQuality.foodLog')}
+                                          </td>
+                                          <td>
+                                            {Math.round(data.dataQuality.factors.logScore)}/100
+                                          </td>
+                                        </tr>
+                                        <tr>
+                                          <td className="pr-2 text-neutral-400 py-1">
+                                            {t('metabolicCalibration.dataQuality.measFreq')}
+                                          </td>
+                                          <td>
+                                            {Math.round(data.dataQuality.factors.freqScore)}/100
+                                          </td>
+                                        </tr>
+                                        <tr>
+                                          <td className="pr-2 text-neutral-400 py-1">
+                                            {t('metabolicCalibration.dataQuality.clusterSize')}
+                                          </td>
+                                          <td>
+                                            {Math.round(data.dataQuality.factors.clusterScore)}/100
+                                          </td>
+                                        </tr>
+                                      </tbody>
+                                    </table>
+                                    <p className="text-neutral-400 pt-1 border-t border-neutral-200 text-xs">
+                                      {t('metabolicCalibration.dataQuality.legend')}
+                                    </p>
+                                  </div>
+                                ),
+                              })
+                            }
+                          >
+                            <Info className="h-3.5 w-3.5" />
+                          </button>
                         </div>
                       </div>
                     )}
@@ -1279,14 +1285,22 @@ export default function MetabolicCalibration({
                           <p className="text-xs font-medium text-neutral-500">
                             {t('metabolicCalibration.clusterLabelStart')}
                           </p>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Info className="h-3 w-3 text-neutral-400 cursor-help" />
-                            </TooltipTrigger>
-                            <TooltipContent className="max-w-[220px] text-xs">
-                              {t('metabolicCalibration.clusterTooltip')}
-                            </TooltipContent>
-                          </Tooltip>
+                          <button
+                            type="button"
+                            className="text-neutral-400 hover:text-neutral-600"
+                            onClick={() =>
+                              setActiveInfo({
+                                title: t('metabolicCalibration.clusterLabelStart'),
+                                content: (
+                                  <p className="text-sm text-neutral-600">
+                                    {t('metabolicCalibration.clusterTooltip')}
+                                  </p>
+                                ),
+                              })
+                            }
+                          >
+                            <Info className="h-3 w-3" />
+                          </button>
                         </div>
                         {data.startCluster.dates.length > 0 && (
                           <p className="text-xs text-neutral-400 mb-0.5">
@@ -1312,14 +1326,22 @@ export default function MetabolicCalibration({
                           <p className="text-xs font-medium text-neutral-500">
                             {t('metabolicCalibration.clusterLabelEnd')}
                           </p>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Info className="h-3 w-3 text-neutral-400 cursor-help" />
-                            </TooltipTrigger>
-                            <TooltipContent className="max-w-[220px] text-xs">
-                              {t('metabolicCalibration.clusterTooltip')}
-                            </TooltipContent>
-                          </Tooltip>
+                          <button
+                            type="button"
+                            className="text-neutral-400 hover:text-neutral-600"
+                            onClick={() =>
+                              setActiveInfo({
+                                title: t('metabolicCalibration.clusterLabelEnd'),
+                                content: (
+                                  <p className="text-sm text-neutral-600">
+                                    {t('metabolicCalibration.clusterTooltip')}
+                                  </p>
+                                ),
+                              })
+                            }
+                          >
+                            <Info className="h-3 w-3" />
+                          </button>
                         </div>
                         {data.endCluster.dates.length > 0 && (
                           <p className="text-xs text-neutral-400 mb-0.5">
@@ -1364,18 +1386,24 @@ export default function MetabolicCalibration({
                           {t('metabolicCalibration.overPeriod')}
                         </span>
                         <span className="text-xs text-neutral-400">·</span>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <span className="text-xs text-neutral-400 underline decoration-dotted cursor-help">
-                              {t('metabolicCalibration.olsLabel')}
-                            </span>
-                          </TooltipTrigger>
-                          <TooltipContent className="max-w-[240px] text-xs">
-                            {data.warnings.some(w => w.type === 'nonlinear_trend')
-                              ? t('metabolicCalibration.olsTooltipNonlinear')
-                              : t('metabolicCalibration.olsTooltip')}
-                          </TooltipContent>
-                        </Tooltip>
+                        <button
+                          type="button"
+                          className="text-xs text-neutral-400 underline decoration-dotted"
+                          onClick={() =>
+                            setActiveInfo({
+                              title: t('metabolicCalibration.olsLabel'),
+                              content: (
+                                <p className="text-sm text-neutral-600">
+                                  {data.warnings.some(w => w.type === 'nonlinear_trend')
+                                    ? t('metabolicCalibration.olsTooltipNonlinear')
+                                    : t('metabolicCalibration.olsTooltip')}
+                                </p>
+                              ),
+                            })
+                          }
+                        >
+                          {t('metabolicCalibration.olsLabel')}
+                        </button>
                       </div>
                       <div className="flex items-center gap-1">
                         <span className="text-xs text-neutral-500">
@@ -1386,18 +1414,28 @@ export default function MetabolicCalibration({
                               : t('metabolicCalibration.calorieSourceLabel.target_calories')}
                           : {Math.round(data.averageCalories)} kcal/dag
                         </span>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Info className="h-3 w-3 text-neutral-400 cursor-help" />
-                          </TooltipTrigger>
-                          <TooltipContent className="max-w-[240px] text-xs">
-                            {data.calorieSource === 'food_log'
-                              ? t('metabolicCalibration.calorieSourceTooltip.food_log')
-                              : data.calorieSource === 'blended'
-                                ? t('metabolicCalibration.calorieSourceTooltip.blended')
-                                : t('metabolicCalibration.calorieSourceTooltip.target_calories')}
-                          </TooltipContent>
-                        </Tooltip>
+                        <button
+                          type="button"
+                          className="text-neutral-400 hover:text-neutral-600"
+                          onClick={() =>
+                            setActiveInfo({
+                              title: t('metabolicCalibration.calorieSourceLabel.food_log'),
+                              content: (
+                                <p className="text-sm text-neutral-600">
+                                  {data.calorieSource === 'food_log'
+                                    ? t('metabolicCalibration.calorieSourceTooltip.food_log')
+                                    : data.calorieSource === 'blended'
+                                      ? t('metabolicCalibration.calorieSourceTooltip.blended')
+                                      : t(
+                                          'metabolicCalibration.calorieSourceTooltip.target_calories'
+                                        )}
+                                </p>
+                              ),
+                            })
+                          }
+                        >
+                          <Info className="h-3 w-3" />
+                        </button>
                       </div>
                     </div>
                     {data.isStableMaintenance && (
@@ -1617,6 +1655,37 @@ export default function MetabolicCalibration({
                     />
                   )}
                 </div>
+              )}
+
+              {/* Info modal — shared for all i-icon tooltips */}
+              {activeInfo && (
+                <Portal>
+                  <div
+                    className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50"
+                    onClick={() => setActiveInfo(null)}
+                  >
+                    <div
+                      className="bg-white rounded-2xl shadow-2xl max-w-md w-full"
+                      onClick={e => e.stopPropagation()}
+                    >
+                      <div className="sticky top-0 bg-white border-b border-neutral-200 px-6 py-4 flex justify-between items-start rounded-t-2xl">
+                        <h2 className="text-xl font-bold text-neutral-900">{activeInfo.title}</h2>
+                        <button
+                          onClick={() => setActiveInfo(null)}
+                          className="text-neutral-500 hover:text-neutral-700 transition-colors p-1 rounded-full hover:bg-neutral-100"
+                        >
+                          <X className="h-5 w-5" />
+                        </button>
+                      </div>
+                      <div className="p-6">{activeInfo.content}</div>
+                      <div className="sticky bottom-0 bg-neutral-50 px-6 py-4 rounded-b-2xl border-t border-neutral-200">
+                        <Button onClick={() => setActiveInfo(null)} className="w-full">
+                          {t('metabolicCalibration.closeButton')}
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </Portal>
               )}
 
               {/* No data state (not error, just null) */}

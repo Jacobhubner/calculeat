@@ -72,16 +72,16 @@ export default function BMRFormulaModal({ formula, isOpen, onClose }: BMRFormula
           onClick={e => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="sticky top-0 bg-gradient-to-r from-primary-500 to-accent-500 text-white p-6 rounded-t-2xl flex justify-between items-start">
+          <div className="sticky top-0 bg-white border-b border-neutral-200 p-6 rounded-t-2xl flex justify-between items-start">
             <div>
-              <h2 className="text-2xl font-bold">{tName}</h2>
-              <p className="text-primary-100 mt-1">
+              <h2 className="text-2xl font-bold text-neutral-900">{tName}</h2>
+              <p className="text-neutral-500 mt-1">
                 {t('tdeeCalc.modal.developed', { year: description.year, type: description.type })}
               </p>
             </div>
             <button
               onClick={onClose}
-              className="text-white/80 hover:text-white transition-colors p-1 rounded-full hover:bg-white/10"
+              className="text-neutral-500 hover:text-neutral-700 transition-colors p-1 rounded-full hover:bg-neutral-100"
               aria-label={t('tdeeCalc.modal.closeAriaLabel')}
             >
               <X className="h-6 w-6" />

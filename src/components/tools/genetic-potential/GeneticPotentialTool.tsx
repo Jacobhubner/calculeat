@@ -597,13 +597,13 @@ export default function GeneticPotentialTool() {
                           className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
                           onClick={e => e.stopPropagation()}
                         >
-                          <div className="sticky top-0 bg-gradient-to-r from-primary-500 to-accent-500 text-white p-6 rounded-t-2xl flex justify-between items-start">
-                            <h2 className="text-2xl font-bold">
+                          <div className="sticky top-0 bg-white border-b border-neutral-200 p-6 rounded-t-2xl flex justify-between items-start">
+                            <h2 className="text-2xl font-bold text-neutral-900">
                               {t('geneticPotential.standardModal.title')}
                             </h2>
                             <button
                               onClick={() => setShowStandardInfo(false)}
-                              className="text-white/80 hover:text-white transition-colors p-1 rounded-full hover:bg-white/10"
+                              className="text-neutral-500 hover:text-neutral-700 transition-colors p-1 rounded-full hover:bg-neutral-100"
                               aria-label={t('geneticPotential.measurementModal.closeAriaLabel')}
                             >
                               <X className="h-6 w-6" />
@@ -685,13 +685,13 @@ export default function GeneticPotentialTool() {
                           className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
                           onClick={e => e.stopPropagation()}
                         >
-                          <div className="sticky top-0 bg-gradient-to-r from-primary-500 to-accent-500 text-white p-6 rounded-t-2xl flex justify-between items-start">
-                            <h2 className="text-2xl font-bold">
+                          <div className="sticky top-0 bg-white border-b border-neutral-200 p-6 rounded-t-2xl flex justify-between items-start">
+                            <h2 className="text-2xl font-bold text-neutral-900">
                               {t('geneticPotential.personalizedModal.title')}
                             </h2>
                             <button
                               onClick={() => setShowPersonalizedInfo(false)}
-                              className="text-white/80 hover:text-white transition-colors p-1 rounded-full hover:bg-white/10"
+                              className="text-neutral-500 hover:text-neutral-700 transition-colors p-1 rounded-full hover:bg-neutral-100"
                               aria-label={t('geneticPotential.measurementModal.closeAriaLabel')}
                             >
                               <X className="h-6 w-6" />
@@ -882,16 +882,16 @@ export default function GeneticPotentialTool() {
             className="bg-white rounded-2xl shadow-2xl max-w-md w-full"
             onClick={e => e.stopPropagation()}
           >
-            <div className="sticky top-0 bg-gradient-to-br from-primary-500 to-accent-500 text-white px-6 py-4 flex justify-between items-start rounded-t-2xl">
+            <div className="sticky top-0 bg-white border-b border-neutral-200 px-6 py-4 flex justify-between items-start rounded-t-2xl">
               <div>
-                <h2 className="text-2xl font-bold">{modalContent.title}</h2>
-                <p className="text-sm text-white/90 mt-1">
+                <h2 className="text-2xl font-bold text-neutral-900">{modalContent.title}</h2>
+                <p className="text-sm text-neutral-600 mt-1">
                   {t('geneticPotential.measurementModal.instruction')}
                 </p>
               </div>
               <button
                 onClick={() => setShowModal(false)}
-                className="text-white/90 hover:text-white transition-colors"
+                className="text-neutral-500 hover:text-neutral-700 transition-colors"
                 aria-label={t('geneticPotential.measurementModal.closeAriaLabel')}
               >
                 <X className="h-6 w-6" />

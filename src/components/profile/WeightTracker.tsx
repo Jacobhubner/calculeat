@@ -1045,11 +1045,11 @@ export default function WeightTracker({
                 className="bg-white rounded-2xl shadow-2xl max-w-md w-full"
                 onClick={e => e.stopPropagation()}
               >
-                <div className="sticky top-0 bg-gradient-to-r from-primary-500 to-accent-500 text-white px-6 py-4 flex justify-between items-start rounded-t-2xl">
-                  <h2 className="text-xl font-bold">{title}</h2>
+                <div className="sticky top-0 bg-white border-b border-neutral-200 px-6 py-4 flex justify-between items-start rounded-t-2xl">
+                  <h2 className="text-xl font-bold text-neutral-900">{title}</h2>
                   <button
                     onClick={onClose}
-                    className="text-white/80 hover:text-white transition-colors p-1 rounded-full hover:bg-white/10"
+                    className="text-neutral-500 hover:text-neutral-700 transition-colors p-1 rounded-full hover:bg-neutral-100"
                   >
                     <X className="h-5 w-5" />
                   </button>
