@@ -81,7 +81,7 @@ export function useTodayLog() {
   const completionMode = localStorage.getItem('day-completion-mode') || 'manual'
 
   return useQuery({
-    queryKey: ['dailyLogs', 'today', user?.id, activeProfile?.id, today, completionMode],
+    queryKey: ['dailyLogs', 'today', user?.id, today, completionMode],
     queryFn: async () => {
       if (!user) throw new Error('User not authenticated')
       if (!activeProfile) throw new Error('No active profile')
@@ -103,7 +103,6 @@ export function useTodayLog() {
           `
           )
           .eq('user_id', user.id)
-          .eq('profile_id', activeProfile.id)
           .eq('is_completed', false)
           .order('log_date', { ascending: false })
           .order('meal_order', { foreignTable: 'meal_entries' })
@@ -130,7 +129,6 @@ export function useTodayLog() {
         `
         )
         .eq('user_id', user.id)
-        .eq('profile_id', activeProfile.id)
         .eq('log_date', today)
         .order('meal_order', { foreignTable: 'meal_entries' })
         .order('item_order', { foreignTable: 'meal_entries.meal_entry_items' })
@@ -151,7 +149,7 @@ export function useDailyLog(date: string) {
   const activeProfile = useProfileStore(state => state.activeProfile)
 
   return useQuery({
-    queryKey: ['dailyLogs', user?.id, activeProfile?.id, date],
+    queryKey: ['dailyLogs', user?.id, date],
     queryFn: async () => {
       if (!user) throw new Error('User not authenticated')
       if (!activeProfile) throw new Error('No active profile')
@@ -171,7 +169,6 @@ export function useDailyLog(date: string) {
         `
         )
         .eq('user_id', user.id)
-        .eq('profile_id', activeProfile.id)
         .eq('log_date', date)
         .order('meal_order', { foreignTable: 'meal_entries' })
         .order('item_order', { foreignTable: 'meal_entries.meal_entry_items' })
@@ -192,7 +189,7 @@ export function useDailyLogs(startDate: string, endDate: string) {
   const activeProfile = useProfileStore(state => state.activeProfile)
 
   return useQuery({
-    queryKey: ['dailyLogs', 'range', user?.id, activeProfile?.id, startDate, endDate],
+    queryKey: ['dailyLogs', 'range', user?.id, startDate, endDate],
     queryFn: async () => {
       if (!user) throw new Error('User not authenticated')
       if (!activeProfile) throw new Error('No active profile')
@@ -212,7 +209,6 @@ export function useDailyLogs(startDate: string, endDate: string) {
         `
         )
         .eq('user_id', user.id)
-        .eq('profile_id', activeProfile.id)
         .gte('log_date', startDate)
         .lte('log_date', endDate)
         .order('log_date', { ascending: false })
@@ -247,7 +243,6 @@ export function useEnsureTodayLog() {
           .from('daily_logs')
           .select('*')
           .eq('user_id', user.id)
-          .eq('profile_id', activeProfile.id)
           .eq('is_completed', false)
           .order('log_date', { ascending: false })
           .limit(1)
@@ -261,7 +256,6 @@ export function useEnsureTodayLog() {
               .from('daily_logs')
               .select('id')
               .eq('user_id', user.id)
-              .eq('profile_id', activeProfile.id)
               .eq('log_date', today)
               .maybeSingle()
 
@@ -285,7 +279,6 @@ export function useEnsureTodayLog() {
         .from('daily_logs')
         .select('*')
         .eq('user_id', user.id)
-        .eq('profile_id', activeProfile.id)
         .eq('log_date', today)
         .maybeSingle()
 
@@ -301,7 +294,6 @@ export function useEnsureTodayLog() {
           .from('daily_logs')
           .update({ is_completed: true })
           .eq('user_id', user.id)
-          .eq('profile_id', activeProfile.id)
           .eq('log_date', yesterdayStr)
           .eq('is_completed', false)
       }
@@ -809,7 +801,6 @@ export function useCopyDayToToday() {
         .from('daily_logs')
         .select('*')
         .eq('user_id', user.id)
-        .eq('profile_id', activeProfile.id)
         .eq('log_date', today)
         .maybeSingle()
 
