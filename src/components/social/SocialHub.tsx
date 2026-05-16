@@ -1476,7 +1476,6 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
     pendingInvitations.length +
     pendingSharedListInvitations.length +
     pendingAdminInvitations.length +
-    sentRequests.length +
     unreadHistoryCount
 
   const filteredFriends = friends.filter(f => {
@@ -1896,6 +1895,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
             )}
             {messagesView === 'thread' && selectedConversation && (
               <MessageThread
+                key={selectedConversation.friendship_id}
                 conversation={selectedConversation}
                 onBack={() => {
                   setMessagesView('conversations')
