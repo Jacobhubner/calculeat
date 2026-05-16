@@ -23,15 +23,36 @@ const PARITY_FIELDS: Array<keyof Profile> = [
   'birth_date',
 ]
 
+// Numeriska fält där Postgres numeric-precision kan skilja sig från JS float-aritmetik.
+// Tolerans ±0.1 — semantiskt identiska värden triggar inte false positives.
+const NUMERIC_PARITY_FIELDS = new Set<keyof Profile>([
+  'tdee',
+  'calories_min',
+  'calories_max',
+  'weight_kg',
+])
+
 function checkParity(profilesRow: Profile, userProfilesRow: Record<string, unknown>, uid: string) {
   for (const field of PARITY_FIELDS) {
     const pVal = profilesRow[field]
     const upVal = userProfilesRow[field]
-    // Jämför som JSON-strängar för att hantera objekt/null korrekt
-    if (JSON.stringify(pVal) !== JSON.stringify(upVal)) {
-      console.warn(
-        `[E1 parity] user=${uid} field=${field} profiles=${JSON.stringify(pVal)} user_profiles=${JSON.stringify(upVal)}`
-      )
+
+    if (NUMERIC_PARITY_FIELDS.has(field)) {
+      // Tolerant numeric comparison — avoids false positives from float vs Postgres numeric precision
+      const pNum = pVal != null ? Number(pVal) : null
+      const upNum = upVal != null ? Number(upVal) : null
+      if (pNum === null && upNum === null) continue
+      if (pNum === null || upNum === null || Math.abs(pNum - upNum) > 0.1) {
+        console.warn(
+          `[E1 parity] user=${uid} field=${field} profiles=${JSON.stringify(pVal)} user_profiles=${JSON.stringify(upVal)}`
+        )
+      }
+    } else {
+      if (JSON.stringify(pVal) !== JSON.stringify(upVal)) {
+        console.warn(
+          `[E1 parity] user=${uid} field=${field} profiles=${JSON.stringify(pVal)} user_profiles=${JSON.stringify(upVal)}`
+        )
+      }
     }
   }
 }
