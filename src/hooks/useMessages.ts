@@ -191,6 +191,7 @@ export function useMarkMessagesRead(friendshipId: string | null) {
   const markedRef = useRef(false)
 
   useEffect(() => {
+    markedRef.current = false
     if (!user || !friendshipId) return
 
     const mark = async () => {

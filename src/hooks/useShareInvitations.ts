@@ -286,7 +286,8 @@ export function useSocialBadgeCount() {
       n.read_at === null &&
       n.type !== 'friend_request_received' &&
       n.type !== 'shared_list_invitation_received' &&
-      n.type !== 'share_invitation_received'
+      n.type !== 'share_invitation_received' &&
+      n.type !== 'new_message'
   ).length
   return (
     (invitationCount as number) +
