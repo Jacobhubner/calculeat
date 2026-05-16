@@ -10,8 +10,8 @@ import { queryClient } from '@/lib/react-query'
 
 interface AuthContextType {
   user: User | null
-  profile: UserProfile | null // profiles table (hälsa/TDEE-data)
-  userProfile: UserProfile | null // user_profiles table (social identitet, username)
+  profile: UserProfile | null // user_profiles (primary read source, Fas 3)
+  userProfile: UserProfile | null // user_profiles (social identity, username)
   session: Session | null
   loading: boolean
   isProfileComplete: boolean
@@ -20,7 +20,6 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<void>
   signOut: () => Promise<void>
   deleteAccount: () => Promise<void>
-  updateProfile: (data: Partial<UserProfile>) => Promise<void>
   refreshProfile: () => Promise<void>
 }
 
@@ -281,25 +280,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem('calculeat-measurement-set-storage')
   }
 
-  const updateProfile = async (data: Partial<UserProfile>) => {
-    if (!user) return
-
-    try {
-      // Update active profile in profiles table instead of legacy user_profiles
-      const { error } = await supabase
-        .from('profiles')
-        .update(data)
-        .eq('user_id', user.id)
-        .eq('is_active', true)
-
-      if (error) throw error
-      await refreshProfile()
-    } catch (error) {
-      console.error('Error updating profile:', error)
-      throw error
-    }
-  }
-
   return (
     <AuthContext.Provider
       value={{
@@ -314,7 +294,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         signIn,
         signOut,
         deleteAccount,
-        updateProfile,
         refreshProfile,
       }}
     >
