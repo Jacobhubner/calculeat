@@ -196,7 +196,7 @@ export default function MetabolicCalibration({
 
   const isAtToday = !isBefore(startOfDay(periodEndDate), today)
 
-  const { data: actualIntake } = useActualCalorieIntake(profile.id, startDate, now)
+  const { data: actualIntake } = useActualCalorieIntake(startDate, now)
 
   const isFirstCalibration = !calibrationHistoryList || calibrationHistoryList.length === 0
 

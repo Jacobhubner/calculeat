@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
-import { useProfileStore } from '@/stores/profileStore'
 import type { FoodItem } from './useFoodItems'
 
 export interface RecentFoodItem extends FoodItem {
@@ -15,13 +14,11 @@ export interface RecentFoodItem extends FoodItem {
  */
 export function useRecentFoodItems(limit = 10) {
   const { user } = useAuth()
-  const activeProfile = useProfileStore(state => state.activeProfile)
 
   return useQuery({
-    queryKey: ['recentFoodItems', user?.id, activeProfile?.id, limit],
+    queryKey: ['recentFoodItems', user?.id, limit],
     queryFn: async () => {
       if (!user) throw new Error('User not authenticated')
-      if (!activeProfile) throw new Error('No active profile')
 
       const sevenDaysAgo = new Date()
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
@@ -36,14 +33,14 @@ export function useRecentFoodItems(limit = 10) {
           created_at,
           meal_entry:meal_entries!inner(
             daily_log:daily_logs!inner(
-              profile_id,
+              user_id,
               log_date
             )
           ),
           food_item:food_items(*)
         `
         )
-        .eq('meal_entry.daily_log.profile_id', activeProfile.id)
+        .eq('meal_entry.daily_log.user_id', user.id)
         .gte('meal_entry.daily_log.log_date', sevenDaysAgoStr)
         .order('created_at', { ascending: false })
 
@@ -76,7 +73,7 @@ export function useRecentFoodItems(limit = 10) {
 
       return recentFoods
     },
-    enabled: !!user && !!activeProfile,
+    enabled: !!user,
     staleTime: 1000 * 60 * 2, // 2 minutes
   })
 }
@@ -87,13 +84,11 @@ export function useRecentFoodItems(limit = 10) {
  */
 export function useFrequentFoodItems(limit = 10) {
   const { user } = useAuth()
-  const activeProfile = useProfileStore(state => state.activeProfile)
 
   return useQuery({
-    queryKey: ['frequentFoodItems', user?.id, activeProfile?.id, limit],
+    queryKey: ['frequentFoodItems', user?.id, limit],
     queryFn: async () => {
       if (!user) throw new Error('User not authenticated')
-      if (!activeProfile) throw new Error('No active profile')
 
       const thirtyDaysAgo = new Date()
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
@@ -108,14 +103,14 @@ export function useFrequentFoodItems(limit = 10) {
           created_at,
           meal_entry:meal_entries!inner(
             daily_log:daily_logs!inner(
-              profile_id,
+              user_id,
               log_date
             )
           ),
           food_item:food_items(*)
         `
         )
-        .eq('meal_entry.daily_log.profile_id', activeProfile.id)
+        .eq('meal_entry.daily_log.user_id', user.id)
         .gte('meal_entry.daily_log.log_date', thirtyDaysAgoStr)
 
       if (error) throw error
@@ -151,7 +146,7 @@ export function useFrequentFoodItems(limit = 10) {
 
       return frequentFoods
     },
-    enabled: !!user && !!activeProfile,
+    enabled: !!user,
     staleTime: 1000 * 60 * 5, // 5 minutes
   })
 }

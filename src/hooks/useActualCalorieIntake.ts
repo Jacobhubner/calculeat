@@ -7,17 +7,13 @@ import type { ActualIntakeData } from '@/lib/types'
  * Hook to fetch actual calorie intake from food logs for a date range
  * Used by Metabolic Calibration to get real calorie data instead of assuming target calories
  */
-export function useActualCalorieIntake(
-  profileId: string | undefined,
-  startDate: Date,
-  endDate: Date
-) {
+export function useActualCalorieIntake(startDate: Date, endDate: Date) {
   const { user } = useAuth()
 
   return useQuery({
-    queryKey: ['actual-calorie-intake', profileId, startDate.toISOString(), endDate.toISOString()],
+    queryKey: ['actual-calorie-intake', user?.id, startDate.toISOString(), endDate.toISOString()],
     queryFn: async (): Promise<ActualIntakeData> => {
-      if (!user || !profileId) {
+      if (!user) {
         return {
           averageCalories: null,
           daysWithData: 0,
@@ -34,7 +30,6 @@ export function useActualCalorieIntake(
         .from('daily_logs')
         .select('log_date, total_calories, is_completed')
         .eq('user_id', user.id)
-        .eq('profile_id', profileId)
         .gte('log_date', startDateStr)
         .lte('log_date', endDateStr)
         .order('log_date', { ascending: true })
@@ -72,6 +67,6 @@ export function useActualCalorieIntake(
         dailyCalories,
       }
     },
-    enabled: !!user && !!profileId,
+    enabled: !!user,
   })
 }

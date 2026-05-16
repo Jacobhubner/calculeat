@@ -318,12 +318,10 @@ export function useSyncMealSettings() {
 
       // Propagate name changes to existing meal_entries
       // This ensures historical data stays in sync with renamed meals
-      // Scope to this profile only via daily_log_id (meal_entries has no profile_id)
-      // NOTE: daily_logs query intentionally uses profile_id — migrated in Steg 3
       const { data: profileLogs } = await supabase
         .from('daily_logs')
         .select('id')
-        .eq('profile_id', profileId)
+        .eq('user_id', user.id)
 
       const logIds = profileLogs?.map(l => l.id) ?? []
 
