@@ -10,8 +10,8 @@
 
 import { useState, useMemo, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
+import { Portal } from '@/components/ui/portal'
 import {
   TrendingDown,
   TrendingUp,
@@ -24,6 +24,7 @@ import {
   AlertTriangle,
   ChevronDown,
   Info,
+  X,
 } from 'lucide-react'
 import type { WeightHistory } from '@/lib/types'
 import {
@@ -1013,39 +1014,59 @@ export default function WeightTracker({
         </CardContent>
       )}
 
-      {/* Info dialogs */}
-      <Dialog open={showBodyFatInfo} onOpenChange={setShowBodyFatInfo}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{t('weightTracker.bodyFatChartTitle')}</DialogTitle>
-          </DialogHeader>
-          <p className="text-sm text-neutral-600 leading-relaxed">
-            {t('weightTracker.infoBodyFat')}
-          </p>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={showBodyFatMassInfo} onOpenChange={setShowBodyFatMassInfo}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{t('weightTracker.chartBodyFatMassTitle')}</DialogTitle>
-          </DialogHeader>
-          <p className="text-sm text-neutral-600 leading-relaxed">
-            {t('weightTracker.infoBodyFatMass')}
-          </p>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={showSoftLeanMassInfo} onOpenChange={setShowSoftLeanMassInfo}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{t('weightTracker.chartSoftLeanMassTitle')}</DialogTitle>
-          </DialogHeader>
-          <p className="text-sm text-neutral-600 leading-relaxed">
-            {t('weightTracker.infoSoftLeanMass')}
-          </p>
-        </DialogContent>
-      </Dialog>
+      {/* Info modals */}
+      {[
+        {
+          open: showBodyFatInfo,
+          onClose: () => setShowBodyFatInfo(false),
+          title: t('weightTracker.bodyFatChartTitle'),
+          body: t('weightTracker.infoBodyFat'),
+        },
+        {
+          open: showBodyFatMassInfo,
+          onClose: () => setShowBodyFatMassInfo(false),
+          title: t('weightTracker.chartBodyFatMassTitle'),
+          body: t('weightTracker.infoBodyFatMass'),
+        },
+        {
+          open: showSoftLeanMassInfo,
+          onClose: () => setShowSoftLeanMassInfo(false),
+          title: t('weightTracker.chartSoftLeanMassTitle'),
+          body: t('weightTracker.infoSoftLeanMass'),
+        },
+      ].map(({ open, onClose, title, body }) =>
+        open ? (
+          <Portal key={title}>
+            <div
+              className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50"
+              onClick={onClose}
+            >
+              <div
+                className="bg-white rounded-2xl shadow-2xl max-w-md w-full"
+                onClick={e => e.stopPropagation()}
+              >
+                <div className="sticky top-0 bg-gradient-to-r from-primary-500 to-accent-500 text-white px-6 py-4 flex justify-between items-start rounded-t-2xl">
+                  <h2 className="text-xl font-bold">{title}</h2>
+                  <button
+                    onClick={onClose}
+                    className="text-white/80 hover:text-white transition-colors p-1 rounded-full hover:bg-white/10"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+                <div className="p-6">
+                  <p className="text-sm text-neutral-600 leading-relaxed">{body}</p>
+                </div>
+                <div className="sticky bottom-0 bg-neutral-50 px-6 py-4 rounded-b-2xl border-t border-neutral-200">
+                  <Button onClick={onClose} className="w-full">
+                    {t('weightTracker.close')}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </Portal>
+        ) : null
+      )}
     </Card>
   )
 }
