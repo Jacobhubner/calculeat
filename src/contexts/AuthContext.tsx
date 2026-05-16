@@ -60,22 +60,55 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const uid = forUserId ?? user?.id
     if (!uid) return
 
-    const [profileResult, userProfileResult] = await Promise.all([
-      supabase.from('profiles').select('*').eq('user_id', uid).eq('is_active', true).maybeSingle(),
-      supabase.from('user_profiles').select('*').eq('id', uid).maybeSingle(),
-    ])
+    // E4: primary read — user_profiles (single-row, source-of-truth from Fas 3)
+    const { data: upData, error: upError } = await supabase
+      .from('user_profiles')
+      .select('*')
+      .eq('id', uid)
+      .maybeSingle()
 
-    if (profileResult.error) {
-      console.error('Error fetching health profile:', profileResult.error)
-    } else {
-      setProfile(profileResult.data)
+    if (upError) {
+      console.error('[E4] Error fetching user_profiles:', upError)
     }
 
-    if (userProfileResult.error) {
-      console.error('Error fetching user profile:', userProfileResult.error)
-    } else {
-      setUserProfile(userProfileResult.data)
+    if (upData && upData.active_profile_id) {
+      // Shape-mapping: delivers a Profile-compatible object where
+      //   .id      = profiles UUID  → useUpdateProfile, Zustand, FK-writes unchanged
+      //   .user_id = auth UID       → correct identity
+      // All other fields (tdee, calories_min, height_cm etc.) from user_profiles,
+      // kept in sync by E1 backfill + E2 dual-write.
+      const mapped = {
+        ...upData,
+        id: upData.active_profile_id,
+        user_id: upData.id,
+      } as UserProfile
+
+      setProfile(mapped)
+      setUserProfile(upData)
+      return
     }
+
+    // E4 fallback: user_profiles row missing or active_profile_id null.
+    // Covers new users during onboarding and any data incident — always logged.
+    console.warn(
+      '[E4 fallback] user_profiles missing or active_profile_id null for uid:',
+      uid,
+      '— falling back to profiles table'
+    )
+
+    const { data: pData, error: pError } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('user_id', uid)
+      .eq('is_active', true)
+      .maybeSingle()
+
+    if (pError) {
+      console.error('[E4 fallback] Error fetching profiles:', pError)
+    }
+
+    setProfile(pData as UserProfile | null)
+    setUserProfile(null)
   }
 
   useEffect(() => {
