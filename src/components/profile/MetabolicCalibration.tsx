@@ -395,7 +395,6 @@ export default function MetabolicCalibration({
     try {
       await revertCalibration.mutateAsync({
         calibrationId: lastActiveCalibration.id,
-        profileId: profile.id,
         userId: profile.user_id,
         previousTdee: lastActiveCalibration.previous_tdee,
       })

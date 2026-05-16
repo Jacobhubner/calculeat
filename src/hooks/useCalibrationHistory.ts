@@ -81,24 +81,20 @@ export function useRevertCalibration() {
   return useMutation({
     mutationFn: async ({
       calibrationId,
-      profileId,
       userId,
       previousTdee,
       previousCaloriesMin,
       previousCaloriesMax,
     }: {
       calibrationId: string
-      profileId: string
       userId: string
       previousTdee: number
       previousCaloriesMin?: number
       previousCaloriesMax?: number
     }) => {
-      // Single atomic RPC — marks is_reverted and restores profile TDEE in one transaction
-      // RPC uses profileId — lämnas orörd i Fas 2
-      const { error } = await supabase.rpc('revert_calibration', {
+      // Single atomic RPC — marks is_reverted and restores TDEE in one transaction
+      const { error } = await supabase.rpc('revert_calibration_v2', {
         p_calibration_id: calibrationId,
-        p_profile_id: profileId,
         p_previous_tdee: previousTdee,
         p_previous_calories_min: previousCaloriesMin ?? null,
         p_previous_calories_max: previousCaloriesMax ?? null,
