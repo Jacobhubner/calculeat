@@ -227,6 +227,14 @@ export function useDeleteMealSetting() {
         throw new Error('Du måste ha minst en måltid konfigurerad')
       }
 
+      // Fetch meal_order before deleting so we can clean up meal_entries
+      const { data: settingData } = await supabase
+        .from('user_meal_settings')
+        .select('meal_order')
+        .eq('id', id)
+        .eq('user_id', user.id)
+        .single()
+
       const { error } = await supabase
         .from('user_meal_settings')
         .delete()
@@ -234,9 +242,30 @@ export function useDeleteMealSetting() {
         .eq('user_id', user.id)
 
       if (error) throw error
+
+      // Remove meal_entries with this meal_order from all open (non-completed) daily logs.
+      // Completed logs are historical records and should not be touched.
+      if (settingData) {
+        const { data: openLogs } = await supabase
+          .from('daily_logs')
+          .select('id')
+          .eq('user_id', user.id)
+          .eq('is_completed', false)
+
+        const openLogIds = openLogs?.map(l => l.id) ?? []
+        if (openLogIds.length > 0) {
+          await supabase
+            .from('meal_entries')
+            .delete()
+            .in('daily_log_id', openLogIds)
+            .eq('meal_order', settingData.meal_order)
+            .eq('user_id', user.id)
+        }
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['mealSettings', user?.id] })
+      queryClient.invalidateQueries({ queryKey: ['dailyLogs'] })
     },
   })
 }
@@ -304,21 +333,41 @@ export function useSyncMealSettings() {
 
       if (error) throw error
 
-      // Propagate name changes to existing meal_entries
-      // This ensures historical data stays in sync with renamed meals
-      const { data: profileLogs } = await supabase
+      // Propagate name changes and remove deleted meal_orders from open daily logs
+      const { data: openLogs } = await supabase
+        .from('daily_logs')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('is_completed', false)
+
+      const { data: allLogs } = await supabase
         .from('daily_logs')
         .select('id')
         .eq('user_id', user.id)
 
-      const logIds = profileLogs?.map(l => l.id) ?? []
+      const openLogIds = openLogs?.map(l => l.id) ?? []
+      const allLogIds = allLogs?.map(l => l.id) ?? []
+      const newMealOrders = mealsToInsert.map(m => m.meal_order)
 
-      if (logIds.length > 0) {
+      // Remove meal_entries whose meal_order no longer exists in the new config,
+      // but only from open (non-completed) logs — completed logs are historical records.
+      if (openLogIds.length > 0) {
+        await supabase
+          .from('meal_entries')
+          .delete()
+          .in('daily_log_id', openLogIds)
+          .not('meal_order', 'in', `(${newMealOrders.join(',')})`)
+          .eq('user_id', user.id)
+          .eq('is_ad_hoc', false)
+      }
+
+      // Propagate name changes to existing meal_entries (all logs, including completed)
+      if (allLogIds.length > 0) {
         for (const meal of mealsToInsert) {
           await supabase
             .from('meal_entries')
             .update({ meal_name: meal.meal_name })
-            .in('daily_log_id', logIds)
+            .in('daily_log_id', allLogIds)
             .eq('meal_order', meal.meal_order)
             .neq('meal_name', meal.meal_name)
         }
