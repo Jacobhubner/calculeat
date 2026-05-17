@@ -104,6 +104,7 @@ export function AddFoodToMealModal({
   // Refs
   const isPreselectedRef = useRef(false)
   const prevOpenRef = useRef(open)
+  const searchInputRef = useRef<HTMLInputElement>(null)
 
   // Hooks
   const { data: mealSettings } = useMealSettings()
@@ -222,6 +223,8 @@ export function AddFoodToMealModal({
   useEffect(() => {
     if (open && !prevOpenRef.current) {
       initializeForm()
+      // Focus search field after dialog animation completes
+      setTimeout(() => searchInputRef.current?.focus(), 50)
     } else if (!open && prevOpenRef.current) {
       if (!skipResetRef.current) {
         resetForm()
@@ -474,11 +477,11 @@ export function AddFoodToMealModal({
                   <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400" />
                     <Input
+                      ref={searchInputRef}
                       placeholder={t('addToMealModal.searchPlaceholder')}
                       value={searchQuery}
                       onChange={e => setSearchQuery(e.target.value)}
                       className="pl-10"
-                      autoFocus
                     />
                   </div>
                   <Button
