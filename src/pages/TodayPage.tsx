@@ -888,7 +888,7 @@ export default function TodayPage() {
 
       {/* Energy Density Info Dialog */}
       <Dialog open={energyDensityInfoOpen} onOpenChange={setEnergyDensityInfoOpen}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="w-[95vw] max-w-5xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{t('profile:goals.showColorBalance')}</DialogTitle>
           </DialogHeader>

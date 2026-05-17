@@ -69,7 +69,7 @@ function ColorCard({
 
 export function EnergyDensityInfoCards() {
   return (
-    <div className="grid gap-4 sm:grid-cols-3">
+    <div className="grid gap-6 sm:grid-cols-3">
       <ColorCard
         emoji="🟢"
         titleKey="infoCards.green.title"
