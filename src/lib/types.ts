@@ -234,6 +234,7 @@ export interface Profile {
   user_id: string
   profile_name: string
   is_active: boolean
+  show_energy_density?: boolean
 
   // Personal information
   birth_date?: string
@@ -382,6 +383,9 @@ export interface ProfileFormData {
   color_green_percent?: number
   color_yellow_percent?: number
   color_orange_percent?: number
+
+  // Display preferences
+  show_energy_density?: boolean
 
   // Meal configuration
   meals_config?: {

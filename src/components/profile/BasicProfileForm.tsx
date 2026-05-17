@@ -20,6 +20,7 @@ interface BasicProfileFormProps {
   onBodyFatChange: (bodyFat: number | undefined) => void
   onGoalChange: (goal: string) => void
   onDeficitChange: (deficit: string | null) => void
+  onColorBalanceChange: (enabled: boolean) => void
 }
 
 export default function BasicProfileForm({
@@ -27,6 +28,7 @@ export default function BasicProfileForm({
   onBodyFatChange,
   onGoalChange,
   onDeficitChange,
+  onColorBalanceChange,
 }: BasicProfileFormProps) {
   const navigate = useNavigate()
   const { t } = useTranslation('profile')
@@ -119,6 +121,29 @@ export default function BasicProfileForm({
                 onDeficitChange(deficit)
               }}
             />
+
+            {/* Food balance toggle */}
+            <div className="mt-4 pt-4 border-t border-neutral-100">
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={profile.show_energy_density ?? false}
+                  onChange={e => onColorBalanceChange(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 rounded border-neutral-300 text-primary-600 focus:ring-primary-500"
+                />
+                <div>
+                  <span className="block text-sm font-medium text-neutral-800">
+                    {t('goals.showColorBalance')}
+                  </span>
+                  <span className="block text-xs text-neutral-500 mt-0.5">
+                    {t('goals.showColorBalanceDesc')}
+                  </span>
+                  <span className="block text-xs text-neutral-400 mt-1">
+                    {t('goals.showColorBalanceLegend')}
+                  </span>
+                </div>
+              </label>
+            </div>
           </CardContent>
         </Card>
       )}

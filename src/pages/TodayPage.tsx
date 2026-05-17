@@ -615,29 +615,33 @@ export default function TodayPage() {
                     </div>
                   )}
 
-                  {/* Energitäthet */}
-                  <div className="pt-4 mt-2 border-t border-neutral-200">
-                    <EnergyDensityIndicator density={dailySummary?.energyDensity || 0} size="sm" />
-                  </div>
-
-                  {/* Kaloritäthet */}
-                  {dailySummary && (
+                  {/* Energitäthet — alltid synlig när data finns */}
+                  {(dailySummary?.energyDensity ?? 0) > 0 && (
                     <div className="pt-4 mt-2 border-t border-neutral-200">
-                      <ColorBalanceCard
-                        greenCalories={dailySummary.greenCalories}
-                        yellowCalories={dailySummary.yellowCalories}
-                        orangeCalories={dailySummary.orangeCalories}
-                        greenStatus={dailySummary.greenStatus}
-                        yellowStatus={dailySummary.yellowStatus}
-                        orangeStatus={dailySummary.orangeStatus}
-                        colorTargets={dailySummary.colorTargets}
-                        caloriesMin={goalCaloriesMin}
-                        caloriesMax={goalCalories}
-                        showCard={false}
-                        size="sm"
-                      />
+                      <EnergyDensityIndicator density={dailySummary!.energyDensity} size="sm" />
                     </div>
                   )}
+
+                  {/* Matbalans (Grön/Gul/Orange) — opt-in via profilinställning */}
+                  {profile?.show_energy_density &&
+                    dailySummary &&
+                    (dailySummary.energyDensity ?? 0) > 0 && (
+                      <div className="pt-4 mt-2 border-t border-neutral-200">
+                        <ColorBalanceCard
+                          greenCalories={dailySummary.greenCalories}
+                          yellowCalories={dailySummary.yellowCalories}
+                          orangeCalories={dailySummary.orangeCalories}
+                          greenStatus={dailySummary.greenStatus}
+                          yellowStatus={dailySummary.yellowStatus}
+                          orangeStatus={dailySummary.orangeStatus}
+                          colorTargets={dailySummary.colorTargets}
+                          caloriesMin={goalCaloriesMin}
+                          caloriesMax={goalCalories}
+                          showCard={false}
+                          size="sm"
+                        />
+                      </div>
+                    )}
                 </div>
               </div>
 

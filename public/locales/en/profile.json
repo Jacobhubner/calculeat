@@ -109,6 +109,11 @@
   "energyGoal": {
     "title": "Energy goal"
   },
+  "goals": {
+    "showColorBalance": "Show food balance",
+    "showColorBalanceDesc": "Recommended for weight loss and appetite control.",
+    "showColorBalanceLegend": "🟢 Low · 🟡 Medium · 🟠 High"
+  },
   "advancedSettings": {
     "title": "Advanced settings"
   },

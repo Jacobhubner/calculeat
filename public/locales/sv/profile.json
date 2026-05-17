@@ -109,6 +109,11 @@
   "energyGoal": {
     "title": "Energimål"
   },
+  "goals": {
+    "showColorBalance": "Visa matbalans",
+    "showColorBalanceDesc": "Rekommenderas vid viktnedgång och aptitkontroll.",
+    "showColorBalanceLegend": "🟢 Låg · 🟡 Medium · 🟠 Hög"
+  },
   "advancedSettings": {
     "title": "Avancerade inställningar"
   },

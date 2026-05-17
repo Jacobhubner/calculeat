@@ -378,15 +378,15 @@ export default function HistoryDayPage() {
                 )
               })()}
 
-              {/* Energitäthet */}
-              {dailySummary && (
+              {/* Energitäthet — alltid synlig när data finns */}
+              {dailySummary && dailySummary.energyDensity > 0 && (
                 <div className="pt-3 border-t border-neutral-200">
                   <EnergyDensityIndicator density={dailySummary.energyDensity} size="sm" />
                 </div>
               )}
 
-              {/* Kaloritäthet */}
-              {dailySummary && (
+              {/* Matbalans (Grön/Gul/Orange) — opt-in via profilinställning */}
+              {profile?.show_energy_density && dailySummary && dailySummary.energyDensity > 0 && (
                 <div className="pt-3 border-t border-neutral-200">
                   <ColorBalanceCard
                     greenCalories={dailySummary.greenCalories}

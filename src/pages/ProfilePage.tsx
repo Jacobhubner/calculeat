@@ -86,6 +86,8 @@ export default function ProfilePage() {
     meals_config?: { meals: { name: string; percentage: number }[] }
     // Starting weight (set when weight_kg is first provided)
     initial_weight_kg?: number
+    // Display preferences
+    show_energy_density?: boolean
   }>({})
 
   // Check if there are unsaved changes
@@ -266,6 +268,17 @@ export default function ProfilePage() {
         return { ...prev, deficit_level: deficit }
       })
     }
+  }
+
+  const handleColorBalanceChange = (enabled: boolean) => {
+    setPendingChanges(prev => {
+      if (enabled === (activeProfile?.show_energy_density ?? false)) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { show_energy_density, ...rest } = prev
+        return rest
+      }
+      return { ...prev, show_energy_density: enabled }
+    })
   }
 
   // Handler for WeightTracker - update pending state
@@ -587,6 +600,7 @@ export default function ProfilePage() {
                   onBodyFatChange={handleBodyFatChange}
                   onGoalChange={handleGoalChange}
                   onDeficitChange={handleDeficitChange}
+                  onColorBalanceChange={handleColorBalanceChange}
                 />
 
                 {/* Weight Tracking - Use mergedProfile to show pending changes */}
