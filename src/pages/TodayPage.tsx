@@ -623,19 +623,7 @@ export default function TodayPage() {
                   {/* Energitäthet — alltid synlig när data finns */}
                   {(dailySummary?.energyDensity ?? 0) > 0 && (
                     <div className="pt-4 mt-2 border-t border-neutral-200">
-                      <div className="flex items-center gap-2">
-                        <div className="flex-1">
-                          <EnergyDensityIndicator density={dailySummary!.energyDensity} size="sm" />
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => setEnergyDensityInfoOpen(true)}
-                          className="shrink-0 text-neutral-400 hover:text-neutral-600 transition-colors"
-                          aria-label="Info om energitäthet"
-                        >
-                          <Info className="h-4 w-4" />
-                        </button>
-                      </div>
+                      <EnergyDensityIndicator density={dailySummary!.energyDensity} size="sm" />
                     </div>
                   )}
 
@@ -644,19 +632,31 @@ export default function TodayPage() {
                     dailySummary &&
                     (dailySummary.energyDensity ?? 0) > 0 && (
                       <div className="pt-4 mt-2 border-t border-neutral-200">
-                        <ColorBalanceCard
-                          greenCalories={dailySummary.greenCalories}
-                          yellowCalories={dailySummary.yellowCalories}
-                          orangeCalories={dailySummary.orangeCalories}
-                          greenStatus={dailySummary.greenStatus}
-                          yellowStatus={dailySummary.yellowStatus}
-                          orangeStatus={dailySummary.orangeStatus}
-                          colorTargets={dailySummary.colorTargets}
-                          caloriesMin={goalCaloriesMin}
-                          caloriesMax={goalCalories}
-                          showCard={false}
-                          size="sm"
-                        />
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1">
+                            <ColorBalanceCard
+                              greenCalories={dailySummary.greenCalories}
+                              yellowCalories={dailySummary.yellowCalories}
+                              orangeCalories={dailySummary.orangeCalories}
+                              greenStatus={dailySummary.greenStatus}
+                              yellowStatus={dailySummary.yellowStatus}
+                              orangeStatus={dailySummary.orangeStatus}
+                              colorTargets={dailySummary.colorTargets}
+                              caloriesMin={goalCaloriesMin}
+                              caloriesMax={goalCalories}
+                              showCard={false}
+                              size="sm"
+                            />
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setEnergyDensityInfoOpen(true)}
+                            className="shrink-0 mt-0.5 text-neutral-400 hover:text-neutral-600 transition-colors"
+                            aria-label="Info om matbalans"
+                          >
+                            <Info className="h-4 w-4" />
+                          </button>
+                        </div>
                       </div>
                     )}
                 </div>
@@ -888,9 +888,9 @@ export default function TodayPage() {
 
       {/* Energy Density Info Dialog */}
       <Dialog open={energyDensityInfoOpen} onOpenChange={setEnergyDensityInfoOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{t('energyDensity.label')}</DialogTitle>
+            <DialogTitle>{t('profile:goals.showColorBalance')}</DialogTitle>
           </DialogHeader>
           <EnergyDensityInfoCards />
         </DialogContent>
