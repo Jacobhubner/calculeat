@@ -14,7 +14,9 @@ import { PlateCalculator } from '@/components/daily/PlateCalculator'
 import { FoodSuggestions } from '@/components/daily/FoodSuggestions'
 import { ColorBalanceCard } from '@/components/daily/ColorBalanceCard'
 import { EnergyDensityIndicator } from '@/components/daily/EnergyDensityIndicator'
+import { EnergyDensityInfoCards } from '@/components/daily/EnergyDensityInfoCards'
 import { NutrientStatusRow } from '@/components/daily/NutrientStatusBadge'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import {
   Calendar,
   Plus,
@@ -25,6 +27,7 @@ import {
   AlertTriangle,
   Pencil,
   X,
+  Info,
 } from 'lucide-react'
 import {
   useTodayLog,
@@ -100,6 +103,8 @@ export default function TodayPage() {
     mealOrder: number
     mealEntryId?: string
   } | null>(null)
+
+  const [energyDensityInfoOpen, setEnergyDensityInfoOpen] = useState(false)
 
   // Ad hoc meal state
   type AdHocPickerState = 'closed' | 'chips' | 'freetext'
@@ -618,7 +623,19 @@ export default function TodayPage() {
                   {/* Energitäthet — alltid synlig när data finns */}
                   {(dailySummary?.energyDensity ?? 0) > 0 && (
                     <div className="pt-4 mt-2 border-t border-neutral-200">
-                      <EnergyDensityIndicator density={dailySummary!.energyDensity} size="sm" />
+                      <div className="flex items-center gap-2">
+                        <div className="flex-1">
+                          <EnergyDensityIndicator density={dailySummary!.energyDensity} size="sm" />
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setEnergyDensityInfoOpen(true)}
+                          className="shrink-0 text-neutral-400 hover:text-neutral-600 transition-colors"
+                          aria-label="Info om energitäthet"
+                        >
+                          <Info className="h-4 w-4" />
+                        </button>
+                      </div>
                     </div>
                   )}
 
@@ -868,6 +885,16 @@ export default function TodayPage() {
           targetMealEntryId={selectedMealForLoad.mealEntryId}
         />
       )}
+
+      {/* Energy Density Info Dialog */}
+      <Dialog open={energyDensityInfoOpen} onOpenChange={setEnergyDensityInfoOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{t('energyDensity.label')}</DialogTitle>
+          </DialogHeader>
+          <EnergyDensityInfoCards />
+        </DialogContent>
+      </Dialog>
     </DashboardLayout>
   )
 }

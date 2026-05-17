@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import DashboardLayout from '@/components/layout/DashboardLayout'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -23,6 +23,7 @@ import { supabase } from '@/lib/supabase'
 import { Badge } from '@/components/ui/badge'
 import { AddFoodItemModal } from '@/components/food/AddFoodItemModal'
 import { FoodNutrientPanel } from '@/components/food/FoodNutrientPanel'
+import { EnergyDensityInfoCards } from '@/components/daily/EnergyDensityInfoCards'
 import {
   usePaginatedFoodItems,
   useDeleteFoodItem,
@@ -1463,207 +1464,8 @@ export default function FoodItemsPage() {
       )}
 
       {/* Info Cards */}
-      <div className="grid gap-6 md:grid-cols-3 mt-8">
-        <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <span>🟢</span>
-              {t('infoCards.green.title')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3 text-xs text-neutral-600">
-            <p className="text-sm text-neutral-700 font-medium">{t('infoCards.green.subtitle')}</p>
-            <div>
-              <p className="font-semibold text-neutral-700 mb-1">
-                {t('infoCards.green.solidLabel')}
-              </p>
-              <ul className="space-y-0.5 pl-2">
-                {(
-                  t('infoCards.green.solidItems', { returnObjects: true }) as {
-                    label: string
-                    icon: string
-                  }[]
-                ).map(({ label, icon }) => (
-                  <li key={label} className="flex gap-1.5 items-center">
-                    <span className="w-4 text-center">{icon}</span>
-                    {label}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <p className="font-semibold text-neutral-700 mb-1">
-                {t('infoCards.green.liquidLabel')}
-              </p>
-              <ul className="space-y-0.5 pl-2">
-                {(
-                  t('infoCards.green.liquidItems', { returnObjects: true }) as {
-                    label: string
-                    icon: string
-                  }[]
-                ).map(({ label, icon }) => (
-                  <li key={label} className="flex gap-1.5 items-center">
-                    <span className="w-4 text-center">{icon}</span>
-                    {label}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <p className="font-semibold text-neutral-700 mb-1">
-                {t('infoCards.green.soupLabel')}
-              </p>
-              <ul className="space-y-0.5 pl-2">
-                {(
-                  t('infoCards.green.soupItems', { returnObjects: true }) as {
-                    label: string
-                    icon: string
-                  }[]
-                ).map(({ label, icon }) => (
-                  <li key={label} className="flex gap-1.5 items-center">
-                    <span className="w-4 text-center">{icon}</span>
-                    {label}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <p className="text-neutral-500 pt-1">{t('infoCards.green.tip')}</p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-br from-yellow-50 to-yellow-100 border-yellow-200">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <span>🟡</span>
-              {t('infoCards.yellow.title')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3 text-xs text-neutral-600">
-            <p className="text-sm text-neutral-700 font-medium">{t('infoCards.yellow.subtitle')}</p>
-            <div>
-              <p className="font-semibold text-neutral-700 mb-1">
-                {t('infoCards.yellow.solidLabel')}
-              </p>
-              <ul className="space-y-0.5 pl-2">
-                {(
-                  t('infoCards.yellow.solidItems', { returnObjects: true }) as {
-                    label: string
-                    icon: string
-                  }[]
-                ).map(({ label, icon }) => (
-                  <li key={label} className="flex gap-1.5 items-center">
-                    <span className="w-4 text-center">{icon}</span>
-                    {label}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <p className="font-semibold text-neutral-700 mb-1">
-                {t('infoCards.yellow.liquidLabel')}
-              </p>
-              <ul className="space-y-0.5 pl-2">
-                {(
-                  t('infoCards.yellow.liquidItems', { returnObjects: true }) as {
-                    label: string
-                    icon: string
-                  }[]
-                ).map(({ label, icon }) => (
-                  <li key={label} className="flex gap-1.5 items-center">
-                    <span className="w-4 text-center">{icon}</span>
-                    {label}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <p className="font-semibold text-neutral-700 mb-1">
-                {t('infoCards.yellow.soupLabel')}
-              </p>
-              <ul className="space-y-0.5 pl-2">
-                {(
-                  t('infoCards.yellow.soupItems', { returnObjects: true }) as {
-                    label: string
-                    icon: string
-                  }[]
-                ).map(({ label, icon }) => (
-                  <li key={label} className="flex gap-1.5 items-center">
-                    <span className="w-4 text-center">{icon}</span>
-                    {label}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <p className="text-neutral-500 pt-1">{t('infoCards.yellow.tip')}</p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <span>🟠</span>
-              {t('infoCards.orange.title')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3 text-xs text-neutral-600">
-            <p className="text-sm text-neutral-700 font-medium">{t('infoCards.orange.subtitle')}</p>
-            <div>
-              <p className="font-semibold text-neutral-700 mb-1">
-                {t('infoCards.orange.solidLabel')}
-              </p>
-              <ul className="space-y-0.5 pl-2">
-                {(
-                  t('infoCards.orange.solidItems', { returnObjects: true }) as {
-                    label: string
-                    icon: string
-                  }[]
-                ).map(({ label, icon }) => (
-                  <li key={label} className="flex gap-1.5 items-center">
-                    <span className="w-4 text-center">{icon}</span>
-                    {label}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <p className="font-semibold text-neutral-700 mb-1">
-                {t('infoCards.orange.liquidLabel')}
-              </p>
-              <ul className="space-y-0.5 pl-2">
-                {(
-                  t('infoCards.orange.liquidItems', { returnObjects: true }) as {
-                    label: string
-                    icon: string
-                  }[]
-                ).map(({ label, icon }) => (
-                  <li key={label} className="flex gap-1.5 items-center">
-                    <span className="w-4 text-center">{icon}</span>
-                    {label}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <p className="font-semibold text-neutral-700 mb-1">
-                {t('infoCards.orange.soupLabel')}
-              </p>
-              <ul className="space-y-0.5 pl-2">
-                {(
-                  t('infoCards.orange.soupItems', { returnObjects: true }) as {
-                    label: string
-                    icon: string
-                  }[]
-                ).map(({ label, icon }) => (
-                  <li key={label} className="flex gap-1.5 items-center">
-                    <span className="w-4 text-center">{icon}</span>
-                    {label}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <p className="text-neutral-500 pt-1">{t('infoCards.orange.tip')}</p>
-          </CardContent>
-        </Card>
+      <div className="mt-8">
+        <EnergyDensityInfoCards />
       </div>
 
       {/* Skapa delad lista */}
