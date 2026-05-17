@@ -218,5 +218,8 @@
     "label": "Extra måltid",
     "placeholder": "Namn på måltid...",
     "confirm": "Lägg till"
+  },
+  "energyDensityInfo": {
+    "title": "Guide till matbalansen"
   }
 }

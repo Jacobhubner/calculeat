@@ -111,8 +111,8 @@
   },
   "goals": {
     "showColorBalance": "Visa matbalans",
-    "showColorBalanceDesc": "Rekommenderas vid viktnedgång och aptitkontroll.",
-    "showColorBalanceLegend": "🟢 Låg · 🟡 Medium · 🟠 Hög"
+    "showColorBalanceDesc": "Visar en färgindikator (🟢🟡🟠) baserad på kaloritäthet per gram. Rekommenderas vid viktnedgång och aptitkontroll — inte relevant om ditt mål är muskeluppbyggnad eller underhåll.",
+    "showColorBalanceLegend": "🟢 Låg · 🟡 Medium · 🟠 Hög kaloritäthet"
   },
   "advancedSettings": {
     "title": "Avancerade inställningar"

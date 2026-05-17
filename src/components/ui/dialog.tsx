@@ -44,7 +44,7 @@ const DialogContent = React.forwardRef<
         // Mobile: fullscreen
         'inset-0 gap-0 border-0 p-0 overflow-y-auto',
         // Desktop: centered overlay
-        'md:inset-auto md:left-[50%] md:top-[50%] md:max-w-lg md:translate-x-[-50%] md:translate-y-[-50%] md:gap-4 md:border md:border-neutral-200 md:p-6 md:rounded-lg md:overflow-visible md:h-auto data-[state=closed]:md:zoom-out-95 data-[state=open]:md:zoom-in-95 data-[state=closed]:md:slide-out-to-left-1/2 data-[state=closed]:md:slide-out-to-top-[48%] data-[state=open]:md:slide-in-from-left-1/2 data-[state=open]:md:slide-in-from-top-[48%]',
+        'md:inset-auto md:left-[50%] md:top-[50%] md:translate-x-[-50%] md:translate-y-[-50%] md:gap-4 md:border md:border-neutral-200 md:p-6 md:rounded-lg md:overflow-visible md:h-auto data-[state=closed]:md:zoom-out-95 data-[state=open]:md:zoom-in-95 data-[state=closed]:md:slide-out-to-left-1/2 data-[state=closed]:md:slide-out-to-top-[48%] data-[state=open]:md:slide-in-from-left-1/2 data-[state=open]:md:slide-in-from-top-[48%]',
         className
       )}
       {...props}

@@ -111,8 +111,8 @@
   },
   "goals": {
     "showColorBalance": "Show food balance",
-    "showColorBalanceDesc": "Recommended for weight loss and appetite control.",
-    "showColorBalanceLegend": "🟢 Low · 🟡 Medium · 🟠 High"
+    "showColorBalanceDesc": "Shows a color indicator (🟢🟡🟠) based on calorie density per gram. Recommended for weight loss and appetite control — not relevant if your goal is muscle gain or maintenance.",
+    "showColorBalanceLegend": "🟢 Low · 🟡 Medium · 🟠 High calorie density"
   },
   "advancedSettings": {
     "title": "Advanced settings"
