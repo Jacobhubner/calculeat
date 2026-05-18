@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useEffect, useLayoutEffect, useCallback } from 'react'
 import {
   Users,
   UserPlus,
@@ -1117,6 +1117,7 @@ function MessageThread({
   const scrollRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const isFirstLoad = useRef(true)
+  const rafRef = useRef<number | null>(null)
 
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useMessages(
     conversation.friendship_id
@@ -1134,11 +1135,41 @@ function MessageThread({
         .flatMap(page => [...page].reverse())
     : []
 
-  // Auto-scroll till botten vid första laddning
+  // Single scroll path — all scroll calls go through this helper
+  const scrollToBottom = useCallback(() => {
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current)
+    }
+    rafRef.current = requestAnimationFrame(() => {
+      rafRef.current = null
+      if (scrollRef.current) {
+        scrollRef.current.scrollTop = scrollRef.current.scrollHeight
+      }
+    })
+  }, [])
+
+  // Cancel pending rAF on unmount
   useEffect(() => {
-    if (!isLoading && isFirstLoad.current && scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight
+    return () => {
+      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current)
+    }
+  }, [])
+
+  // Scroll to bottom on initial load
+  // Double rAF: first frame lets flex layout resolve container height,
+  // second frame reads the correct scrollHeight and scrolls.
+  useLayoutEffect(() => {
+    if (!isLoading && isFirstLoad.current && messages.length > 0) {
       isFirstLoad.current = false
+      const outer = requestAnimationFrame(() => {
+        const inner = requestAnimationFrame(() => {
+          if (scrollRef.current) {
+            scrollRef.current.scrollTop = scrollRef.current.scrollHeight
+          }
+        })
+        rafRef.current = inner
+      })
+      rafRef.current = outer
     }
   }, [isLoading, messages.length])
 
@@ -1170,11 +1201,7 @@ function MessageThread({
         setInput(trimmed)
         return
       }
-      setTimeout(() => {
-        if (scrollRef.current) {
-          scrollRef.current.scrollTop = scrollRef.current.scrollHeight
-        }
-      }, 50)
+      scrollToBottom()
     } catch {
       toast.error(t('invitations.error.generic'))
       setInput(trimmed)
@@ -1596,8 +1623,14 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
         </div>
       </div>
 
-      {/* Content */}
-      <div className="flex-1 overflow-y-auto min-h-0">
+      {/* Content — overflow-hidden + flex when thread is active so MessageThread owns its own scroll */}
+      <div
+        className={
+          tab === 'messages' && messagesView === 'thread'
+            ? 'flex-1 overflow-hidden min-h-0 flex flex-col'
+            : 'flex-1 overflow-y-auto min-h-0'
+        }
+      >
         {/* ── Vänner-tab ── */}
         {tab === 'friends' && (
           <div>
