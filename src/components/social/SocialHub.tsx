@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useLayoutEffect, useCallback } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import {
   Users,
   UserPlus,
@@ -1116,7 +1116,7 @@ function MessageThread({
   const [confirmDeleteConv, setConfirmDeleteConv] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
-  const isFirstLoad = useRef(true)
+  const didInitialScroll = useRef(false)
   const rafRef = useRef<number | null>(null)
 
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useMessages(
@@ -1135,43 +1135,58 @@ function MessageThread({
         .flatMap(page => [...page].reverse())
     : []
 
-  // Single scroll path — all scroll calls go through this helper
-  const scrollToBottom = useCallback(() => {
-    if (rafRef.current !== null) {
-      cancelAnimationFrame(rafRef.current)
+  // Single scroll path — retries up to 10 rAF frames until layout is ready,
+  // then pins scroll for 500ms to survive React Query re-renders on revisit
+  const pinScrollRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const scrollToBottom = useCallback((pin = false) => {
+    if (rafRef.current !== null) cancelAnimationFrame(rafRef.current)
+    if (pinScrollRef.current !== null) {
+      clearTimeout(pinScrollRef.current)
+      pinScrollRef.current = null
     }
-    rafRef.current = requestAnimationFrame(() => {
-      rafRef.current = null
-      if (scrollRef.current) {
-        scrollRef.current.scrollTop = scrollRef.current.scrollHeight
+    const attempt = (remaining: number) => {
+      const el = scrollRef.current
+      if (!el) return
+      const target = el.scrollHeight - el.clientHeight
+      if (target > 0) {
+        el.scrollTop = target
+        if (pin) {
+          // Re-apply after React Query revalidation re-renders the list
+          pinScrollRef.current = setTimeout(() => {
+            if (scrollRef.current) {
+              scrollRef.current.scrollTop =
+                scrollRef.current.scrollHeight - scrollRef.current.clientHeight
+            }
+            pinScrollRef.current = null
+          }, 100)
+        }
+      } else if (remaining > 0) {
+        rafRef.current = requestAnimationFrame(() => attempt(remaining - 1))
       }
-    })
+    }
+    rafRef.current = requestAnimationFrame(() => attempt(10))
   }, [])
 
-  // Cancel pending rAF on unmount
+  // Cancel pending rAF and pin timer on unmount
   useEffect(() => {
     return () => {
       if (rafRef.current !== null) cancelAnimationFrame(rafRef.current)
+      if (pinScrollRef.current !== null) clearTimeout(pinScrollRef.current)
     }
   }, [])
 
-  // Scroll to bottom on initial load
-  // Double rAF: first frame lets flex layout resolve container height,
-  // second frame reads the correct scrollHeight and scrolls.
-  useLayoutEffect(() => {
-    if (!isLoading && isFirstLoad.current && messages.length > 0) {
-      isFirstLoad.current = false
-      const outer = requestAnimationFrame(() => {
-        const inner = requestAnimationFrame(() => {
-          if (scrollRef.current) {
-            scrollRef.current.scrollTop = scrollRef.current.scrollHeight
-          }
-        })
-        rafRef.current = inner
-      })
-      rafRef.current = outer
+  // Scroll to bottom on mount (cached data) and when first data arrives (fresh fetch)
+  useEffect(() => {
+    scrollToBottom(true)
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (!didInitialScroll.current && messages.length > 0) {
+      didInitialScroll.current = true
+      scrollToBottom(true)
     }
-  }, [isLoading, messages.length])
+  }, [messages.length, scrollToBottom])
 
   // Auto-resize textarea
   useEffect(() => {
