@@ -114,9 +114,17 @@
     "title": "Energimål"
   },
   "goals": {
-    "showColorBalance": "Visa matbalans",
-    "showColorBalanceDesc": "Visar en färgindikator (🟢🟡🟠) baserad på kaloritäthet per gram. Rekommenderas vid viktnedgång och aptitkontroll — inte relevant om ditt mål är muskeluppbyggnad eller underhåll.",
-    "showColorBalanceLegend": "🟢 Låg · 🟡 Medium · 🟠 Hög kaloritäthet"
+    "showColorBalance": "Visa energitäthetsindikatorn",
+    "showColorBalanceDesc": "Färgar livsmedel efter kaloritäthet per gram. Rekommenderas vid viktnedgång och aptitkontroll.",
+    "showColorBalanceInfoTitle": "Om energitäthetsindikatorn",
+    "showColorBalanceInfoBody": "Indikatorn färgar varje livsmedel efter kaloritäthet per gram — hur mycket energi du får per tugga. Mat med låg energitäthet mättar mycket utan att kosta många kalorier, vilket gör det lättare att hålla sig inom sitt mål.",
+    "showColorBalanceWhenTitle": "När är den relevant?",
+    "showColorBalanceWhenBody": "Indikatorn passar bäst om ditt mål är viktnedgång eller aptitkontroll. Vid muskeluppbyggnad eller kaloriöverskott är målet det omvända — du behöver få i dig tillräckligt många kalorier, och livsmedel med hög energitäthet är då ett bra verktyg. I det läget kan indikatorn vara missvisande.",
+    "showColorBalanceTargetsTitle": "Dagliga mål per färg (vid viktnedgång)",
+    "showColorBalanceGreenTarget": "🟢 Grön — 30 % av dagens kalorier",
+    "showColorBalanceYellowTarget": "🟡 Gul — 45 % av dagens kalorier",
+    "showColorBalanceOrangeTarget": "🟠 Orange — 25 % av dagens kalorier",
+    "showColorBalanceClose": "Stäng"
   },
   "advancedSettings": {
     "title": "Avancerade inställningar"

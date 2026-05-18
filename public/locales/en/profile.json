@@ -114,9 +114,17 @@
     "title": "Energy goal"
   },
   "goals": {
-    "showColorBalance": "Show food balance",
-    "showColorBalanceDesc": "Shows a color indicator (🟢🟡🟠) based on calorie density per gram. Recommended for weight loss and appetite control — not relevant if your goal is muscle gain or maintenance.",
-    "showColorBalanceLegend": "🟢 Low · 🟡 Medium · 🟠 High calorie density"
+    "showColorBalance": "Show energy density indicator",
+    "showColorBalanceDesc": "Colors food items by calorie density per gram. Recommended for weight loss and appetite control.",
+    "showColorBalanceInfoTitle": "About the energy density indicator",
+    "showColorBalanceInfoBody": "The indicator colors each food item by calorie density per gram — how much energy you get per bite. Low energy density foods are filling without costing many calories, making it easier to stay within your goal.",
+    "showColorBalanceWhenTitle": "When is it relevant?",
+    "showColorBalanceWhenBody": "The indicator works best when your goal is weight loss or appetite control. For muscle gain or a calorie surplus, the goal is the opposite — you need to consume enough calories, and high energy density foods are then a useful tool. In that case, the indicator can be misleading.",
+    "showColorBalanceTargetsTitle": "Daily targets per color (for weight loss)",
+    "showColorBalanceGreenTarget": "🟢 Green — 30% of daily calories",
+    "showColorBalanceYellowTarget": "🟡 Yellow — 45% of daily calories",
+    "showColorBalanceOrangeTarget": "🟠 Orange — 25% of daily calories",
+    "showColorBalanceClose": "Close"
   },
   "advancedSettings": {
     "title": "Advanced settings"
