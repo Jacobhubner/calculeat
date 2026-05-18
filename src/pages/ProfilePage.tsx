@@ -6,7 +6,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import DashboardLayout from '@/components/layout/DashboardLayout'
-import { User, Save, Loader2, Check } from 'lucide-react'
+import { User, Loader2, Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useProfiles, useUpdateProfile, useCreateWeightHistory } from '@/hooks'
 import { Button } from '@/components/ui/button'
@@ -680,43 +680,7 @@ export default function ProfilePage() {
           </div>
 
           {/* Sidebar */}
-          <div className="order-first lg:order-none lg:sticky lg:top-20 lg:self-start space-y-4 min-w-0 overflow-hidden">
-            {/* Save button — visible only when not pristine */}
-            {hasBasicInfo && saveState !== 'pristine' && (
-              <div
-                className={cn(
-                  'rounded-xl border p-4',
-                  saveState === 'dirty' && 'bg-primary-50 border-primary-200',
-                  saveState === 'saving' && 'bg-primary-50 border-primary-200',
-                  saveState === 'saved' && 'bg-green-50 border-green-200',
-                  saveState === 'error' && 'bg-red-50 border-red-200'
-                )}
-              >
-                <Button
-                  onClick={() => activeProfile && handleSaveProfile(activeProfile.id)}
-                  disabled={saveState === 'saving' || saveState === 'saved'}
-                  aria-disabled={saveState === 'saving' || saveState === 'saved'}
-                  variant={
-                    saveState === 'error'
-                      ? 'destructive'
-                      : saveState === 'saved'
-                        ? 'success'
-                        : 'primary'
-                  }
-                  className="w-full"
-                >
-                  {saveState === 'saving' && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                  {saveState === 'saved' && <Check className="h-4 w-4 mr-2" />}
-                  {saveState === 'dirty' && <Save className="h-4 w-4 mr-2" />}
-                  {saveState === 'error' && <Save className="h-4 w-4 mr-2" />}
-                  {saveState === 'saving' && t('save.saving')}
-                  {saveState === 'saved' && t('save.saved')}
-                  {saveState === 'dirty' && t('save.saveChanges')}
-                  {saveState === 'error' && t('save.retryError')}
-                </Button>
-              </div>
-            )}
-
+          <div className="order-first lg:order-none lg:sticky lg:top-20 lg:self-start space-y-4 min-w-0 overflow-x-clip">
             {/* Results Summary - Show BMR, TDEE, Calorie Range */}
             <ProfileResultsSummary
               profile={mergedProfile}
@@ -744,17 +708,49 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* Mobile sticky save bar — shown above MobileBottomNav (bottom-16), hidden on lg+ */}
+      {/* Save bar — mobile: fixed bottom above nav | desktop: fixed top-right below header */}
       {hasBasicInfo && saveState !== 'pristine' && (
-        <div
-          role="status"
-          aria-live="polite"
-          className="fixed bottom-16 inset-x-0 z-40 px-4 pointer-events-auto lg:hidden"
-          style={{ paddingBottom: 'max(8px, env(safe-area-inset-bottom))' }}
-        >
+        <>
+          {/* Mobile */}
           <div
+            role="status"
+            aria-live="polite"
+            className="fixed bottom-16 inset-x-0 z-40 px-4 pointer-events-auto lg:hidden"
+            style={{ paddingBottom: 'max(8px, env(safe-area-inset-bottom))' }}
+          >
+            <div
+              className={cn(
+                'rounded-xl border px-4 py-3 flex items-center justify-between shadow-lg',
+                saveState === 'dirty' && 'bg-primary-50 border-primary-200',
+                saveState === 'saving' && 'bg-primary-50 border-primary-200',
+                saveState === 'saved' && 'bg-green-50 border-green-200',
+                saveState === 'error' && 'bg-red-50 border-red-200'
+              )}
+            >
+              <span className="text-sm font-medium text-neutral-700">
+                {saveState === 'dirty' && t('save.unsavedChanges')}
+                {saveState === 'saving' && t('save.saving')}
+                {saveState === 'saved' && t('save.saved')}
+                {saveState === 'error' && t('save.saveError')}
+              </span>
+              {(saveState === 'dirty' || saveState === 'error') && (
+                <Button
+                  size="sm"
+                  variant={saveState === 'error' ? 'destructive' : 'primary'}
+                  onClick={() => activeProfile && handleSaveProfile(activeProfile.id)}
+                >
+                  {t('save.saveChanges')}
+                </Button>
+              )}
+            </div>
+          </div>
+
+          {/* Desktop — fixed top-right below header */}
+          <div
+            role="status"
+            aria-live="polite"
             className={cn(
-              'rounded-xl border px-4 py-3 flex items-center justify-between shadow-lg',
+              'hidden lg:flex fixed top-20 right-6 z-40 pointer-events-auto items-center gap-3 rounded-xl border px-4 py-3 shadow-lg',
               saveState === 'dirty' && 'bg-primary-50 border-primary-200',
               saveState === 'saving' && 'bg-primary-50 border-primary-200',
               saveState === 'saved' && 'bg-green-50 border-green-200',
@@ -767,6 +763,10 @@ export default function ProfilePage() {
               {saveState === 'saved' && t('save.saved')}
               {saveState === 'error' && t('save.saveError')}
             </span>
+            {saveState === 'saving' && (
+              <Loader2 className="h-4 w-4 animate-spin text-primary-600" />
+            )}
+            {saveState === 'saved' && <Check className="h-4 w-4 text-green-600" />}
             {(saveState === 'dirty' || saveState === 'error') && (
               <Button
                 size="sm"
@@ -777,7 +777,7 @@ export default function ProfilePage() {
               </Button>
             )}
           </div>
-        </div>
+        </>
       )}
     </DashboardLayout>
   )
