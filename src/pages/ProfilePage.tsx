@@ -607,7 +607,7 @@ export default function ProfilePage() {
       </div>
 
       <div className="max-w-7xl mx-auto">
-        <div className="grid gap-6 lg:grid-cols-[1fr_320px] min-w-0 overflow-hidden">
+        <div className="grid gap-6 lg:grid-cols-[1fr_320px] min-w-0 overflow-x-clip">
           {/* Main content column - Conditional rendering */}
           <div className="space-y-6 min-w-0 overflow-hidden">
             {/* SCENARIO 1: No basic info - inline setup form */}
