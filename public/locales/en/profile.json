@@ -53,7 +53,11 @@
   "save": {
     "saving": "Saving...",
     "saveChanges": "Save changes",
-    "noChanges": "No changes"
+    "noChanges": "No changes",
+    "saved": "Saved",
+    "retryError": "Try again",
+    "unsavedChanges": "Unsaved changes",
+    "saveError": "Could not save"
   },
   "setup": {
     "title": "Fill in your basic information",

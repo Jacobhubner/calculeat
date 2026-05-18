@@ -3,10 +3,11 @@
  * Conditional rendering baserat på grundläggande information och TDEE-status
  */
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import DashboardLayout from '@/components/layout/DashboardLayout'
-import { User, Save } from 'lucide-react'
+import { User, Save, Loader2, Check } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import { useProfiles, useUpdateProfile, useCreateWeightHistory } from '@/hooks'
 import { Button } from '@/components/ui/button'
 import { useSyncMealSettings } from '@/hooks/useMealSettings'
@@ -90,8 +91,46 @@ export default function ProfilePage() {
     show_energy_density?: boolean
   }>({})
 
-  // Check if there are unsaved changes
-  const hasUnsavedChanges = Object.keys(pendingChanges).length > 0
+  // Presentation-only save state — pendingChanges is source-of-truth
+  type SaveState = 'pristine' | 'dirty' | 'saving' | 'saved' | 'error'
+  const [saveState, setSaveState] = useState<SaveState>('pristine')
+  const savedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // Derive saveState from pendingChanges.
+  // setSaveState here is intentional: saveState is presentation-only state derived
+  // from pendingChanges (the source-of-truth), not an external system sync.
+
+  useEffect(() => {
+    const hasPending = Object.keys(pendingChanges).length > 0
+    if (hasPending) {
+      if (savedTimerRef.current) {
+        clearTimeout(savedTimerRef.current)
+        savedTimerRef.current = null
+      }
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setSaveState(prev => (prev === 'saving' ? prev : 'dirty'))
+    } else {
+      setSaveState(prev =>
+        prev === 'saving' || prev === 'saved' || prev === 'error' ? prev : 'pristine'
+      )
+    }
+  }, [pendingChanges])
+
+  // Auto-dismiss saved state after 2500ms, clear timer on state change or unmount
+  useEffect(() => {
+    if (saveState === 'saved') {
+      savedTimerRef.current = setTimeout(() => {
+        setSaveState('pristine')
+        savedTimerRef.current = null
+      }, 2500)
+    }
+    return () => {
+      if (savedTimerRef.current) {
+        clearTimeout(savedTimerRef.current)
+        savedTimerRef.current = null
+      }
+    }
+  }, [saveState])
 
   // Merge active profile with pending changes for display
   const displayProfile = activeProfile ? { ...activeProfile, ...pendingChanges } : null
@@ -491,6 +530,8 @@ export default function ProfilePage() {
     }
 
     try {
+      setSaveState('saving')
+
       // If weight is being set and initial_weight_kg is not yet set, also set it as starting weight
       const dataToSave = { ...pendingChanges }
       if (dataToSave.weight_kg !== undefined && !activeProfile.initial_weight_kg) {
@@ -532,24 +573,24 @@ export default function ProfilePage() {
       if (goalsChanged && todayLog) {
         try {
           await syncFromProfile.mutateAsync(todayLog.id)
-          setPendingChanges({}) // Clear pending changes after successful save
-          toast.success(t('toast.profileSavedWithSync'), {
-            duration: 4000,
-          })
+          setPendingChanges({})
+          setSaveState('saved')
         } catch (error) {
           console.error('Error syncing today log:', error)
-          setPendingChanges({}) // Clear pending changes even if sync fails
+          setPendingChanges({})
+          setSaveState('saved')
           toast.success(t('toast.changesSaved'), {
             description: t('toast.profileSavedSyncFailed'),
             duration: 5000,
           })
         }
       } else {
-        setPendingChanges({}) // Clear pending changes after successful save
-        toast.success(t('toast.changesSaved'))
+        setPendingChanges({})
+        setSaveState('saved')
       }
     } catch (error) {
       console.error('Error saving profile:', error)
+      setSaveState('error')
       toast.error(t('toast.changesSaveError'))
     }
   }
@@ -640,16 +681,38 @@ export default function ProfilePage() {
 
           {/* Sidebar */}
           <div className="order-first lg:order-none lg:sticky lg:top-20 lg:self-start space-y-4 min-w-0 overflow-hidden">
-            {/* Save button */}
-            {hasBasicInfo && (
-              <div className="bg-white rounded-xl border border-neutral-200 p-4">
+            {/* Save button — visible only when not pristine */}
+            {hasBasicInfo && saveState !== 'pristine' && (
+              <div
+                className={cn(
+                  'rounded-xl border p-4',
+                  saveState === 'dirty' && 'bg-primary-50 border-primary-200',
+                  saveState === 'saving' && 'bg-primary-50 border-primary-200',
+                  saveState === 'saved' && 'bg-green-50 border-green-200',
+                  saveState === 'error' && 'bg-red-50 border-red-200'
+                )}
+              >
                 <Button
                   onClick={() => activeProfile && handleSaveProfile(activeProfile.id)}
-                  disabled={!hasUnsavedChanges || updateProfile.isPending}
+                  disabled={saveState === 'saving' || saveState === 'saved'}
+                  aria-disabled={saveState === 'saving' || saveState === 'saved'}
+                  variant={
+                    saveState === 'error'
+                      ? 'destructive'
+                      : saveState === 'saved'
+                        ? 'success'
+                        : 'primary'
+                  }
                   className="w-full"
                 >
-                  <Save className="h-4 w-4 mr-2" />
-                  {updateProfile.isPending ? t('save.saving') : t('save.saveChanges')}
+                  {saveState === 'saving' && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                  {saveState === 'saved' && <Check className="h-4 w-4 mr-2" />}
+                  {saveState === 'dirty' && <Save className="h-4 w-4 mr-2" />}
+                  {saveState === 'error' && <Save className="h-4 w-4 mr-2" />}
+                  {saveState === 'saving' && t('save.saving')}
+                  {saveState === 'saved' && t('save.saved')}
+                  {saveState === 'dirty' && t('save.saveChanges')}
+                  {saveState === 'error' && t('save.retryError')}
                 </Button>
               </div>
             )}
@@ -680,6 +743,42 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
+
+      {/* Mobile sticky save bar — shown above MobileBottomNav (bottom-16), hidden on lg+ */}
+      {hasBasicInfo && saveState !== 'pristine' && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="fixed bottom-16 inset-x-0 z-40 px-4 pointer-events-auto lg:hidden"
+          style={{ paddingBottom: 'max(8px, env(safe-area-inset-bottom))' }}
+        >
+          <div
+            className={cn(
+              'rounded-xl border px-4 py-3 flex items-center justify-between shadow-lg',
+              saveState === 'dirty' && 'bg-primary-50 border-primary-200',
+              saveState === 'saving' && 'bg-primary-50 border-primary-200',
+              saveState === 'saved' && 'bg-green-50 border-green-200',
+              saveState === 'error' && 'bg-red-50 border-red-200'
+            )}
+          >
+            <span className="text-sm font-medium text-neutral-700">
+              {saveState === 'dirty' && t('save.unsavedChanges')}
+              {saveState === 'saving' && t('save.saving')}
+              {saveState === 'saved' && t('save.saved')}
+              {saveState === 'error' && t('save.saveError')}
+            </span>
+            {(saveState === 'dirty' || saveState === 'error') && (
+              <Button
+                size="sm"
+                variant={saveState === 'error' ? 'destructive' : 'primary'}
+                onClick={() => activeProfile && handleSaveProfile(activeProfile.id)}
+              >
+                {t('save.saveChanges')}
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
     </DashboardLayout>
   )
 }
