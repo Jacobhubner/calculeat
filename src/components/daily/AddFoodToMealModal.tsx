@@ -224,7 +224,7 @@ export function AddFoodToMealModal({
     if (open && !prevOpenRef.current) {
       initializeForm()
       // Focus search field after dialog animation completes
-      setTimeout(() => searchInputRef.current?.focus(), 50)
+      setTimeout(() => searchInputRef.current?.focus(), 150)
     } else if (!open && prevOpenRef.current) {
       if (!skipResetRef.current) {
         resetForm()
