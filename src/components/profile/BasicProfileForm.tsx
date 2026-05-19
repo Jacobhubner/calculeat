@@ -162,7 +162,7 @@ export default function BasicProfileForm({
             </div>
 
             <Dialog open={colorInfoOpen} onOpenChange={setColorInfoOpen}>
-              <DialogContent aria-describedby={undefined}>
+              <DialogContent aria-describedby={undefined} className="max-w-sm">
                 <DialogHeader>
                   <DialogTitle>{t('goals.showColorBalanceInfoTitle')}</DialogTitle>
                 </DialogHeader>
