@@ -15,10 +15,10 @@ export function TDEEScenarioCard({ bmr, tdee }: Props) {
   const mostActiveTdee = Math.round(bmr * 1.5 + 600)
   const leastActiveTdee = Math.round(bmr + 150)
 
-  const dWalk = delta(walkScenario, tdee)
-  const dStand = delta(standScenario, tdee)
-  const dMost = delta(mostActiveTdee, tdee)
-  const dLeast = delta(leastActiveTdee, tdee)
+  const dWalk = Math.round(walkScenario - tdee)
+  const dStand = Math.round(standScenario - tdee)
+  const dMost = Math.round(mostActiveTdee - tdee)
+  const dLeast = Math.round(leastActiveTdee - tdee)
 
   const renderDelta = (d: number, atMaxKey?: string) => {
     const positive = d >= 0
