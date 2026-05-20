@@ -4,6 +4,7 @@ import OnboardingModal from '@/components/OnboardingModal'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ZonedCalorieRing } from '@/components/daily/ZonedCalorieRing'
 import { MacroRangeBar } from '@/components/daily/MacroRangeBar'
+import { TDEEScenarioCard } from '@/components/dashboard/TDEEScenarioCard'
 import EmptyState from '@/components/EmptyState'
 import { useAuth } from '@/contexts/AuthContext'
 import { useProfiles, useOnboarding } from '@/hooks'
@@ -186,6 +187,11 @@ export default function DashboardPage() {
                   )
                 })()}
             </div>
+
+            {/* TDEE Scenarios */}
+            {profile?.bmr && profile?.tdee && (
+              <TDEEScenarioCard bmr={profile.bmr} tdee={profile.tdee} />
+            )}
 
             {/* Quick links */}
             <div className="space-y-3">

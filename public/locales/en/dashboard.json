@@ -107,6 +107,15 @@
     "showLess": "Show less ↑",
     "showMore": "Show more details ↓"
   },
+  "tdeeScenarios": {
+    "title": "If you changed your activity level...",
+    "walk": ".. added a 10-minute walk after each meal:",
+    "stand": ".. stood 3 hours more daily instead of sitting:",
+    "mostActive": ".. had the most active lifestyle:",
+    "leastActive": ".. had the least active lifestyle:",
+    "alreadyAtMax": "— You are already at the estimated maximum",
+    "source": "Based on Fitness Stuff PAL values"
+  },
   "quickLinks": {
     "logFood": "Start logging your food",
     "recipes": "Create a recipe",

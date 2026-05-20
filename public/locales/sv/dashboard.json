@@ -107,6 +107,15 @@
     "showLess": "Visa mindre ↑",
     "showMore": "Visa mer detaljer ↓"
   },
+  "tdeeScenarios": {
+    "title": "Om du ändrade din aktivitetsnivå...",
+    "walk": ".. lade till en 10-minuters promenad efter varje måltid:",
+    "stand": ".. stod 3 timmar mer dagligen istället för att sitta:",
+    "mostActive": ".. hade den mest aktiva livsstilen:",
+    "leastActive": ".. hade den minst aktiva livsstilen:",
+    "alreadyAtMax": "— Du är redan på beräknad maxnivå",
+    "source": "Baserat på Fitness Stuff PAL-värden"
+  },
   "quickLinks": {
     "logFood": "Börja logga din mat",
     "recipes": "Skapa recept",
