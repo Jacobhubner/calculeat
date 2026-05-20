@@ -829,7 +829,7 @@ export default function TodayPage() {
             </CardHeader>
             <CardContent className="space-y-2 text-sm text-neutral-700">
               <p>• {t('today.tip1')}</p>
-              <p>• {t('today.tip2')}</p>
+              {profile?.calorie_goal === 'Weight loss' && <p>• {t('today.tip2')}</p>}
               <p>• {t('today.tip3')}</p>
               <p>• {t('today.tip4')}</p>
             </CardContent>
