@@ -124,7 +124,7 @@
     "showColorBalanceWhenTitle": "När är den relevant?",
     "showColorBalanceWhenBody1": "Indikatorn är främst utvecklad för viktnedgång och aptitkontroll.",
     "showColorBalanceWhenBody2": "Om ditt mål istället är muskeluppbyggnad eller viktuppgång kan livsmedel med högre energitäthet vara fördelaktiga, eftersom de gör det lättare att få i sig tillräckligt med kalorier. I de fallen blir indikatorn mindre relevant och kan ibland ge en missvisande signal.",
-    "showColorBalanceTargetsTitle": "Rekommenderad fördelning vid viktnedgång",
+    "showColorBalanceTargetsTitle": "Rekommenderad fördelning vid viktnedgång/aptitkontroll",
     "showColorBalanceGreenTarget": "🟢 Grön — 30 % av dagens kalorier",
     "showColorBalanceYellowTarget": "🟡 Gul — 45 % av dagens kalorier",
     "showColorBalanceOrangeTarget": "🟠 Orange — 25 % av dagens kalorier",
