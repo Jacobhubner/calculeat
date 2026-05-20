@@ -114,7 +114,7 @@
     "title": "Energy goal"
   },
   "goals": {
-    "showColorBalance": "Show energy density indicator",
+    "showColorBalance": "Show calorie density indicator",
     "showColorBalanceDesc": "Colors food items by calorie density per gram. Recommended for weight loss and appetite control.",
     "showColorBalanceInfoTitle": "Calorie Density Indicator",
     "showColorBalanceInfoBody": "Colors food items by energy density — i.e. how many calories the food contains per gram. Especially useful for weight loss and appetite control.",

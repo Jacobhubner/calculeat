@@ -114,7 +114,7 @@
     "title": "Energimål"
   },
   "goals": {
-    "showColorBalance": "Visa energitäthetsindikatorn",
+    "showColorBalance": "Visa kaloritäthetsindikatorn",
     "showColorBalanceDesc": "Färgar livsmedel efter kaloritäthet per gram. Rekommenderas vid viktnedgång och aptitkontroll.",
     "showColorBalanceInfoTitle": "Kaloritäthetsindikator",
     "showColorBalanceInfoBody": "Färgar livsmedel efter energitäthet — alltså hur många kalorier maten innehåller per gram. Särskilt användbar vid viktnedgång och aptitkontroll.",
