@@ -16,7 +16,8 @@ import { ColorBalanceCard } from '@/components/daily/ColorBalanceCard'
 import { EnergyDensityIndicator } from '@/components/daily/EnergyDensityIndicator'
 import { EnergyDensityInfoCards } from '@/components/daily/EnergyDensityInfoCards'
 import { NutrientStatusRow } from '@/components/daily/NutrientStatusBadge'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Portal } from '@/components/ui/portal'
+import { X } from 'lucide-react'
 import {
   Calendar,
   Plus,
@@ -54,6 +55,7 @@ import type { UserProfile } from '@/lib/types'
 
 export default function TodayPage() {
   const { t } = useTranslation('today')
+  const { t: tCommon } = useTranslation('common')
   const { data: todayLog, isLoading: logLoading } = useTodayLog()
   const { data: mealSettings, isLoading: settingsLoading } = useMealSettings()
   const ensureLog = useEnsureTodayLog()
@@ -887,17 +889,40 @@ export default function TodayPage() {
       )}
 
       {/* Energy Density Info Dialog */}
-      <Dialog open={energyDensityInfoOpen} onOpenChange={setEnergyDensityInfoOpen}>
-        <DialogContent
-          className="w-[95vw] max-w-5xl max-h-[90vh] overflow-y-auto"
-          aria-describedby={undefined}
-        >
-          <DialogHeader>
-            <DialogTitle>{t('energyDensityInfo.title')}</DialogTitle>
-          </DialogHeader>
-          <EnergyDensityInfoCards />
-        </DialogContent>
-      </Dialog>
+      {energyDensityInfoOpen && (
+        <Portal>
+          <div
+            className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50"
+            onClick={() => setEnergyDensityInfoOpen(false)}
+          >
+            <div
+              className="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto"
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="sticky top-0 bg-white border-b border-neutral-200 px-6 py-4 flex justify-between items-start rounded-t-2xl">
+                <h2 className="text-lg font-semibold text-neutral-900">
+                  {t('energyDensityInfo.title')}
+                </h2>
+                <button
+                  onClick={() => setEnergyDensityInfoOpen(false)}
+                  className="text-neutral-500 hover:text-neutral-700 transition-colors"
+                  aria-label={tCommon('actions.close')}
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+              <div className="p-6">
+                <EnergyDensityInfoCards />
+              </div>
+              <div className="sticky bottom-0 bg-white border-t border-neutral-200 px-6 py-4 rounded-b-2xl">
+                <Button onClick={() => setEnergyDensityInfoOpen(false)} className="w-full">
+                  {tCommon('actions.close')}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </Portal>
+      )}
     </DashboardLayout>
   )
 }
