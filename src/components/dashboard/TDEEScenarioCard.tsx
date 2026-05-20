@@ -22,7 +22,9 @@ export function TDEEScenarioCard({ bmr, tdee }: Props) {
   return (
     <div className="rounded-2xl border border-neutral-200 bg-white px-5 py-4 shadow-sm">
       <p className="mb-4 text-xs font-medium uppercase tracking-wide text-neutral-400">
-        {t('tdeeScenarios.title', { tdee })}
+        {t('tdeeScenarios.titleBefore')}
+        <span className="text-primary-600">{tdee}</span>
+        {t('tdeeScenarios.titleAfter')}
       </p>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
