@@ -224,7 +224,6 @@ export function AddFoodToMealModal({
     if (open && !prevOpenRef.current) {
       initializeForm()
       // Focus search field after dialog animation completes
-      setTimeout(() => searchInputRef.current?.focus(), 150)
     } else if (!open && prevOpenRef.current) {
       if (!skipResetRef.current) {
         resetForm()
@@ -416,7 +415,13 @@ export function AddFoodToMealModal({
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-lg max-h-[85vh] overflow-hidden flex flex-col">
+        <DialogContent
+          className="max-w-lg max-h-[85vh] overflow-hidden flex flex-col"
+          onOpenAutoFocus={e => {
+            e.preventDefault()
+            searchInputRef.current?.focus()
+          }}
+        >
           <DialogHeader>
             <DialogTitle>
               {isEditMode ? t('addToMealModal.titleEdit') : t('addToMealModal.title')}
