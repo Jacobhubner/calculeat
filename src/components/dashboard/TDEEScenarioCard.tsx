@@ -39,12 +39,16 @@ export function TDEEScenarioCard({ bmr, tdee }: Props) {
               key={labelKey}
               className={`flex flex-col gap-1.5 rounded-xl border ${borderClass} ${bgClass} px-3 py-3`}
             >
-              <p className="text-xs leading-snug text-neutral-500">{t(labelKey)}</p>
+              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+              <p className="text-xs leading-snug text-neutral-500">{t(labelKey as any)}</p>
               <p className={`text-lg font-bold leading-none ${textClass}`}>
                 {arrow} {Math.abs(d)}
                 <span className="ml-0.5 text-xs font-medium">kcal</span>
               </p>
-              {d === 0 && atMaxKey && <p className="text-xs text-neutral-400">{t(atMaxKey)}</p>}
+              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+              {d === 0 && atMaxKey && (
+                <p className="text-xs text-neutral-400">{t(atMaxKey as any)}</p>
+              )}
             </div>
           )
         })}

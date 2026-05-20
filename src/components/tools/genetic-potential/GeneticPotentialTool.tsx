@@ -192,7 +192,8 @@ export default function GeneticPotentialTool() {
                         size="sm"
                         onClick={() => setSelectedFormulaIndex(index)}
                       >
-                        {key ? t(`geneticPotential.formulaNames.${key}`) : result.formula}
+                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                        {key ? t(`geneticPotential.formulaNames.${key}` as any) : result.formula}
                       </Button>
                     )
                   })}

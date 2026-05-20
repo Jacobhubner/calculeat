@@ -128,7 +128,7 @@ export default function HistoryPage() {
       acc[weekKey].push(log)
       return acc
     },
-    {} as Record<string, typeof listLogs>
+    {} as Record<string, NonNullable<typeof logs>[number][]>
   )
 
   return (

@@ -859,13 +859,15 @@ export function RecipeCalculatorModal({
                           return (
                             <div key={eq} className="bg-neutral-50 rounded-xl p-3 space-y-2">
                               <p className="text-xs font-medium text-neutral-600">
-                                {t(`equipmentOptions.${eq}`)}
+                                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                                {t(`equipmentOptions.${eq}` as any)}
                               </p>
                               <div className="grid grid-cols-2 gap-3">
                                 {fields.map(field => (
                                   <div key={field.key} className="space-y-1">
                                     <span className="text-xs text-neutral-500">
-                                      {t(`equipmentFields.${field.key}`)}
+                                      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                                      {t(`equipmentFields.${field.key}` as any)}
                                       {field.unit ? ` (${field.unit})` : ''}
                                     </span>
                                     <Input

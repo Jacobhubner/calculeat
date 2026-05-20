@@ -32,25 +32,29 @@ function ColorCard({
 }) {
   const { t } = useTranslation('food')
 
-  const items = (key: string) => t(key, { returnObjects: true }) as FoodItem[]
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const items = (key: string) => t(key as any, { returnObjects: true }) as FoodItem[]
 
   return (
     <Card className={`${gradient} ${border}`}>
       <CardHeader>
         <CardTitle className="text-lg flex items-center gap-2">
           <span>{emoji}</span>
-          {t(titleKey)}
+          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+          {t(titleKey as any)}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3 text-xs text-neutral-600">
-        <p className="text-sm text-neutral-700 font-medium">{t(subtitleKey)}</p>
+        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+        <p className="text-sm text-neutral-700 font-medium">{t(subtitleKey as any)}</p>
         {[
           { labelKey: solidLabelKey, itemsKey: solidItemsKey },
           { labelKey: liquidLabelKey, itemsKey: liquidItemsKey },
           { labelKey: soupLabelKey, itemsKey: soupItemsKey },
         ].map(({ labelKey, itemsKey }) => (
           <div key={labelKey}>
-            <p className="font-semibold text-neutral-700 mb-1">{t(labelKey)}</p>
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+            <p className="font-semibold text-neutral-700 mb-1">{t(labelKey as any)}</p>
             <ul className="space-y-0.5 pl-2">
               {items(itemsKey).map(({ label, icon }) => (
                 <li key={label} className="flex gap-1.5 items-center">
@@ -61,7 +65,8 @@ function ColorCard({
             </ul>
           </div>
         ))}
-        <p className="text-neutral-500 pt-1">{t(tipKey)}</p>
+        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+        <p className="text-neutral-500 pt-1">{t(tipKey as any)}</p>
       </CardContent>
     </Card>
   )

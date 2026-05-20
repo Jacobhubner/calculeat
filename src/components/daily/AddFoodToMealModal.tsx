@@ -364,8 +364,8 @@ export function AddFoodToMealModal({
         }
         const mealSetting = mealSettings?.find(m => m.meal_name === effectiveMealName)
         const newMealEntry = await createMealEntry.mutateAsync({
-          dailyLogId,
-          mealName: effectiveMealName,
+          dailyLogId: dailyLogId!,
+          mealName: effectiveMealName!,
           mealOrder: mealSetting?.meal_order ?? 0,
         })
         targetMealEntryId = newMealEntry.id

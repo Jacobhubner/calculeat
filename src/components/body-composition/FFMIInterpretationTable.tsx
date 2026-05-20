@@ -111,16 +111,20 @@ export function FFMIInterpretationTable({
                 <>
                   <tr key={i} className={baseClass}>
                     <td className="px-3 py-2 text-neutral-800 whitespace-nowrap">
-                      {t(`ffmiInterpretation.${genderKey}.${rowKey}.range`)}
+                      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                      {t(`ffmiInterpretation.${genderKey}.${rowKey}.range` as any)}
                     </td>
                     <td className="px-3 py-2 text-neutral-600 whitespace-nowrap">
-                      {t(`ffmiInterpretation.${genderKey}.${rowKey}.bf`)}
+                      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                      {t(`ffmiInterpretation.${genderKey}.${rowKey}.bf` as any)}
                     </td>
                     <td className="px-3 py-2 font-medium text-neutral-700 whitespace-nowrap">
-                      {t(`ffmiInterpretation.${genderKey}.${rowKey}.category`)}
+                      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                      {t(`ffmiInterpretation.${genderKey}.${rowKey}.category` as any)}
                     </td>
                     <td className="px-3 py-2 text-neutral-500 hidden lg:table-cell">
-                      {t(`ffmiInterpretation.${genderKey}.${rowKey}.desc`)}
+                      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                      {t(`ffmiInterpretation.${genderKey}.${rowKey}.desc` as any)}
                     </td>
                     {/* Expand button — only on mobile */}
                     <td className="px-2 py-2 lg:hidden">
@@ -139,7 +143,8 @@ export function FFMIInterpretationTable({
                   {isExpanded && (
                     <tr key={`${i}-desc`} className={cn(baseClass, 'lg:hidden')}>
                       <td colSpan={4} className="px-3 pb-3 pt-0 text-xs text-neutral-500 italic">
-                        {t(`ffmiInterpretation.${genderKey}.${rowKey}.desc`)}
+                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                        {t(`ffmiInterpretation.${genderKey}.${rowKey}.desc` as any)}
                       </td>
                     </tr>
                   )}
