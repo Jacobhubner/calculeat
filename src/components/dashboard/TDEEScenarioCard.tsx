@@ -25,7 +25,7 @@ export function TDEEScenarioCard({ bmr, tdee }: Props) {
     const arrow = positive ? '⇧' : '⇩'
     const colorClass = positive ? 'text-green-600' : 'text-red-500'
     return (
-      <p className={`text-base font-semibold ${colorClass}`}>
+      <p className={`text-sm font-semibold ${colorClass}`}>
         {arrow} {Math.abs(d)} kcal
         {d === 0 && atMaxKey && (
           <span className="ml-1 text-xs font-normal text-neutral-500">{t(atMaxKey)}</span>
@@ -36,27 +36,29 @@ export function TDEEScenarioCard({ bmr, tdee }: Props) {
 
   return (
     <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-base">{t('tdeeScenarios.title')}</CardTitle>
+      <CardHeader className="pb-1 pt-4 px-4">
+        <CardTitle className="text-sm font-medium text-neutral-600">
+          {t('tdeeScenarios.title')}
+        </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4 text-sm">
-        <div className="space-y-0.5">
-          <p className="text-neutral-600">{t('tdeeScenarios.walk')}</p>
+      <CardContent className="space-y-2 px-4 pb-3 text-xs">
+        <div>
+          <p className="text-neutral-500">{t('tdeeScenarios.walk')}</p>
           {renderDelta(dWalk)}
         </div>
-        <div className="space-y-0.5">
-          <p className="text-neutral-600">{t('tdeeScenarios.stand')}</p>
+        <div>
+          <p className="text-neutral-500">{t('tdeeScenarios.stand')}</p>
           {renderDelta(dStand)}
         </div>
-        <div className="space-y-0.5">
-          <p className="text-neutral-600">{t('tdeeScenarios.mostActive')}</p>
+        <div>
+          <p className="text-neutral-500">{t('tdeeScenarios.mostActive')}</p>
           {renderDelta(dMost, 'tdeeScenarios.alreadyAtMax')}
         </div>
-        <div className="space-y-0.5">
-          <p className="text-neutral-600">{t('tdeeScenarios.leastActive')}</p>
+        <div>
+          <p className="text-neutral-500">{t('tdeeScenarios.leastActive')}</p>
           {renderDelta(dLeast)}
         </div>
-        <p className="text-xs text-neutral-400 italic text-right pt-1">
+        <p className="text-xs text-neutral-400 italic text-right pt-0.5">
           {t('tdeeScenarios.source')}
         </p>
       </CardContent>
