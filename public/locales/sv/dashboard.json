@@ -109,7 +109,7 @@
   },
   "tdeeScenarios": {
     "titleBefore": "En uppskattning av hur mycket din TDEE (",
-    "titleAfter": " kcal) skulle förändras om du…",
+    "titleAfterShort": ") skulle förändras om du…",
     "walk": ".. lade till en 10-minuters promenad efter varje måltid:",
     "stand": ".. stod 3 timmar mer dagligen istället för att sitta:",
     "mostActive": ".. hade den mest aktiva livsstilen:",
