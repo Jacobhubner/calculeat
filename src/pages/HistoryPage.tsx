@@ -14,6 +14,7 @@ import {
   Trash2,
 } from 'lucide-react'
 import { useDailyLogs, useDeleteDailyLog } from '@/hooks/useDailyLogs'
+import { HistoryCalendar } from '@/components/history/HistoryCalendar'
 import { toast } from 'sonner'
 import EmptyState from '@/components/EmptyState'
 
@@ -182,17 +183,7 @@ export default function HistoryPage() {
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
             {viewMode === 'calendar' ? (
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('views.calendarTitle')}</CardTitle>
-                  <CardDescription>{t('views.calendarDescription')}</CardDescription>
-                </CardHeader>
-                <CardContent className="flex justify-center">
-                  <div className="text-center py-8 text-neutral-400">
-                    {t('views.calendarComingSoon')}
-                  </div>
-                </CardContent>
-              </Card>
+              <HistoryCalendar logs={logs ?? []} />
             ) : (
               <div className="space-y-4">
                 {Object.entries(weeklyLogs || {})
