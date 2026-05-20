@@ -17,7 +17,6 @@ import { EnergyDensityIndicator } from '@/components/daily/EnergyDensityIndicato
 import { EnergyDensityInfoCards } from '@/components/daily/EnergyDensityInfoCards'
 import { NutrientStatusRow } from '@/components/daily/NutrientStatusBadge'
 import { Portal } from '@/components/ui/portal'
-import { X } from 'lucide-react'
 import {
   Calendar,
   Plus,
