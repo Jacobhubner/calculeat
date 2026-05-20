@@ -182,11 +182,25 @@ export default function BasicProfileForm({
                         {t('goals.showColorBalanceInfoBody')}
                       </p>
                       <div>
-                        <p className="font-semibold text-neutral-800 mb-1">
-                          {t('goals.showColorBalanceWhenTitle')}
+                        <p className="font-semibold text-neutral-800 mb-2">
+                          {t('goals.showColorBalanceWhatTitle')}
+                        </p>
+                        <p className="text-neutral-600 leading-relaxed mb-2">
+                          {t('goals.showColorBalanceWhatBody1')}
                         </p>
                         <p className="text-neutral-600 leading-relaxed">
-                          {t('goals.showColorBalanceWhenBody')}
+                          {t('goals.showColorBalanceWhatBody2')}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="font-semibold text-neutral-800 mb-2">
+                          {t('goals.showColorBalanceWhenTitle')}
+                        </p>
+                        <p className="text-neutral-600 leading-relaxed mb-2">
+                          {t('goals.showColorBalanceWhenBody1')}
+                        </p>
+                        <p className="text-neutral-600 leading-relaxed">
+                          {t('goals.showColorBalanceWhenBody2')}
                         </p>
                       </div>
                       <div>
