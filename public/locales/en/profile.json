@@ -116,7 +116,7 @@
   "goals": {
     "showColorBalance": "Show energy density indicator",
     "showColorBalanceDesc": "Colors food items by calorie density per gram. Recommended for weight loss and appetite control.",
-    "showColorBalanceInfoTitle": "Energy Density Indicator",
+    "showColorBalanceInfoTitle": "Calorie Density Indicator",
     "showColorBalanceInfoBody": "Colors food items by energy density — i.e. how many calories the food contains per gram. Especially useful for weight loss and appetite control.",
     "showColorBalanceWhatTitle": "What does the indicator mean?",
     "showColorBalanceWhatBody1": "The indicator shows how calorie-dense a food is. Foods with low energy density contain fewer calories per gram and often provide greater volume and better satiety for fewer calories.",

@@ -116,7 +116,7 @@
   "goals": {
     "showColorBalance": "Visa energitäthetsindikatorn",
     "showColorBalanceDesc": "Färgar livsmedel efter kaloritäthet per gram. Rekommenderas vid viktnedgång och aptitkontroll.",
-    "showColorBalanceInfoTitle": "Energitäthetsindikator",
+    "showColorBalanceInfoTitle": "Kaloritäthetsindikator",
     "showColorBalanceInfoBody": "Färgar livsmedel efter energitäthet — alltså hur många kalorier maten innehåller per gram. Särskilt användbar vid viktnedgång och aptitkontroll.",
     "showColorBalanceWhatTitle": "Vad betyder indikatorn?",
     "showColorBalanceWhatBody1": "Indikatorn visar hur kalorität ett livsmedel är. Livsmedel med låg energitäthet innehåller färre kalorier per gram och ger ofta större volym och bättre mättnad för färre kalorier.",
