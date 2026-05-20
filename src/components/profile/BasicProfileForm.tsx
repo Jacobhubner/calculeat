@@ -10,15 +10,9 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
+import { Portal } from '@/components/ui/portal'
 import { Button } from '@/components/ui/button'
-import { Weight, Target, Info } from 'lucide-react'
+import { Weight, Target, Info, X } from 'lucide-react'
 import type { Profile } from '@/lib/types'
 import EnergyGoalReferenceTable from '../calculator/EnergyGoalReferenceTable'
 
@@ -161,44 +155,66 @@ export default function BasicProfileForm({
               </div>
             </div>
 
-            <Dialog open={colorInfoOpen} onOpenChange={setColorInfoOpen}>
-              <DialogContent
-                aria-describedby={undefined}
-                className="max-w-sm flex flex-col max-h-[90vh]"
-              >
-                <DialogHeader>
-                  <DialogTitle>{t('goals.showColorBalanceInfoTitle')}</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4 text-sm overflow-y-auto">
-                  <p className="text-neutral-600 leading-relaxed">
-                    {t('goals.showColorBalanceInfoBody')}
-                  </p>
-                  <div>
-                    <p className="font-semibold text-neutral-800 mb-1">
-                      {t('goals.showColorBalanceWhenTitle')}
-                    </p>
-                    <p className="text-neutral-600 leading-relaxed">
-                      {t('goals.showColorBalanceWhenBody')}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="font-semibold text-neutral-800 mb-2">
-                      {t('goals.showColorBalanceTargetsTitle')}
-                    </p>
-                    <div className="space-y-1.5">
-                      <p className="text-neutral-700">{t('goals.showColorBalanceGreenTarget')}</p>
-                      <p className="text-neutral-700">{t('goals.showColorBalanceYellowTarget')}</p>
-                      <p className="text-neutral-700">{t('goals.showColorBalanceOrangeTarget')}</p>
+            {colorInfoOpen && (
+              <Portal>
+                <div
+                  className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50"
+                  onClick={() => setColorInfoOpen(false)}
+                >
+                  <div
+                    className="bg-white rounded-2xl shadow-2xl max-w-sm w-full max-h-[90vh] overflow-y-auto"
+                    onClick={e => e.stopPropagation()}
+                  >
+                    <div className="sticky top-0 bg-white border-b border-neutral-200 px-6 py-4 flex justify-between items-start rounded-t-2xl">
+                      <h2 className="text-lg font-semibold text-neutral-900">
+                        {t('goals.showColorBalanceInfoTitle')}
+                      </h2>
+                      <button
+                        onClick={() => setColorInfoOpen(false)}
+                        className="text-neutral-500 hover:text-neutral-700 transition-colors"
+                        aria-label={t('goals.showColorBalanceClose')}
+                      >
+                        <X className="h-5 w-5" />
+                      </button>
+                    </div>
+                    <div className="p-6 space-y-4 text-sm">
+                      <p className="text-neutral-600 leading-relaxed">
+                        {t('goals.showColorBalanceInfoBody')}
+                      </p>
+                      <div>
+                        <p className="font-semibold text-neutral-800 mb-1">
+                          {t('goals.showColorBalanceWhenTitle')}
+                        </p>
+                        <p className="text-neutral-600 leading-relaxed">
+                          {t('goals.showColorBalanceWhenBody')}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="font-semibold text-neutral-800 mb-2">
+                          {t('goals.showColorBalanceTargetsTitle')}
+                        </p>
+                        <div className="space-y-1.5">
+                          <p className="text-neutral-700">
+                            {t('goals.showColorBalanceGreenTarget')}
+                          </p>
+                          <p className="text-neutral-700">
+                            {t('goals.showColorBalanceYellowTarget')}
+                          </p>
+                          <p className="text-neutral-700">
+                            {t('goals.showColorBalanceOrangeTarget')}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="sticky bottom-0 bg-white border-t border-neutral-200 px-6 py-4 rounded-b-2xl">
+                      <Button onClick={() => setColorInfoOpen(false)} className="w-full">
+                        {t('goals.showColorBalanceClose')}
+                      </Button>
                     </div>
                   </div>
                 </div>
-                <DialogFooter>
-                  <Button onClick={() => setColorInfoOpen(false)} className="w-full">
-                    {t('goals.showColorBalanceClose')}
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
+              </Portal>
+            )}
           </CardContent>
         </Card>
       )}
