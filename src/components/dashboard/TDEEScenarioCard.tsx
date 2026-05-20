@@ -24,6 +24,19 @@ export function TDEEScenarioCard({ bmr, tdee }: Props) {
       <p className="mb-4 text-xs font-medium uppercase tracking-wide text-neutral-400">
         {t('tdeeScenarios.title')}
       </p>
+
+      {/* Current TDEE anchor */}
+      <div className="mb-4 flex items-center gap-3">
+        <div className="flex flex-col rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-2.5">
+          <p className="text-xs text-neutral-400">{t('tdeeScenarios.currentTdee')}</p>
+          <p className="text-xl font-bold leading-tight text-neutral-800">
+            {tdee}
+            <span className="ml-0.5 text-xs font-medium text-neutral-500">kcal</span>
+          </p>
+        </div>
+        <div className="h-px flex-1 bg-neutral-100" />
+      </div>
+
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         {scenarios.map(({ labelKey, d, atMaxKey }) => {
           const positive = d >= 0

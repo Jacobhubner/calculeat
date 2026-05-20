@@ -114,7 +114,8 @@
     "mostActive": ".. hade den mest aktiva livsstilen:",
     "leastActive": ".. hade den minst aktiva livsstilen:",
     "alreadyAtMax": "— Du är redan på beräknad maxnivå",
-    "source": "Baserat på Fitness Stuff PAL-värden"
+    "source": "Baserat på Fitness Stuff PAL-värden",
+    "currentTdee": "Ditt nuvarande TDEE"
   },
   "quickLinks": {
     "logFood": "Börja logga din mat",

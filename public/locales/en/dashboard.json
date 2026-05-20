@@ -114,7 +114,8 @@
     "mostActive": ".. had the most active lifestyle:",
     "leastActive": ".. had the least active lifestyle:",
     "alreadyAtMax": "— You are already at the estimated maximum",
-    "source": "Based on Fitness Stuff PAL values"
+    "source": "Based on Fitness Stuff PAL values",
+    "currentTdee": "Your current TDEE"
   },
   "quickLinks": {
     "logFood": "Start logging your food",
