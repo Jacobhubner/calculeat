@@ -71,6 +71,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     if (upData && upData.active_profile_id) {
+      // Crash-recovery: om aktiv profil är en orphaned preview (browser stängdes under preview)
+      // → auto-exit för att återställa riktiga kontot transparent
+      const { data: activeProfileRow } = await supabase
+        .from('profiles')
+        .select('profile_name')
+        .eq('id', upData.active_profile_id)
+        .maybeSingle()
+
+      if (activeProfileRow?.profile_name === '__preview__') {
+        await supabase.rpc('exit_preview_profile')
+        localStorage.removeItem('calculeat-preview-active')
+        return refreshProfile(uid)
+      }
+
       // Shape-mapping: id = active_profile_id (profiles UUID) so all consumers
       // that pass profileId to useUpdateProfile continue to work unchanged.
       const mapped = {

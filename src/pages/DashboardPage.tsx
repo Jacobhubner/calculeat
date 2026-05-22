@@ -24,7 +24,8 @@ export default function DashboardPage() {
   const activeProfile = useProfileStore(state => state.activeProfile)
   const { data: allProfiles, isLoading } = useProfiles()
   const { data: todayLog } = useTodayLog()
-  const { showOnboarding, setShowOnboarding, completeOnboarding } = useOnboarding()
+  const { showOnboarding, setShowOnboarding, completeOnboarding, saveStep, resumeStep } =
+    useOnboarding()
 
   const profile = allProfiles?.find(p => p.id === activeProfile?.id)
 
@@ -107,7 +108,12 @@ export default function DashboardPage() {
   return (
     <ProfileCompletionGuard>
       <DashboardLayout>
-        <OnboardingModal open={!!showOnboarding} onOpenChange={handleOnboardingClose} />
+        <OnboardingModal
+          open={!!showOnboarding}
+          onOpenChange={handleOnboardingClose}
+          initialStep={resumeStep()}
+          onStepChange={saveStep}
+        />
 
         {/* Header */}
         <div className="mb-8">

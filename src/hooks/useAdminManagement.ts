@@ -26,6 +26,23 @@ export function useIsSuperAdmin() {
   })
 }
 
+export function useIsAdmin() {
+  const { user } = useAuth()
+  return useQuery({
+    queryKey: ['isAdmin', user?.id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('admins')
+        .select('user_id')
+        .eq('user_id', user!.id)
+        .maybeSingle()
+      return !!data
+    },
+    enabled: !!user,
+    staleTime: 5 * 60 * 1000,
+  })
+}
+
 export function useListAdmins() {
   const { user } = useAuth()
   return useQuery({

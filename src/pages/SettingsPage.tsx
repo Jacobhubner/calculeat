@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 import {
   AlertTriangle,
   Loader2,
@@ -28,10 +29,12 @@ import { useUserProfile, useUpdateUsername } from '@/hooks/useUserProfile'
 import type { Gender } from '@/lib/types'
 import {
   useIsSuperAdmin,
+  useIsAdmin,
   useListAdmins,
   useAddAdmin,
   useRemoveAdmin,
 } from '@/hooks/useAdminManagement'
+import { usePreviewMode } from '@/hooks/usePreviewMode'
 
 type CompletionMode = 'manual' | 'auto'
 type OpenEditor = 'username' | 'email' | 'password' | null
@@ -60,6 +63,8 @@ export default function SettingsPage() {
 
   // Admin management
   const { data: isSuperAdmin = false } = useIsSuperAdmin()
+  const { data: isAdmin = false } = useIsAdmin()
+  const { isPreviewActive, enterPreview, exitPreview } = usePreviewMode()
   const { data: adminList = [] } = useListAdmins()
   const addAdmin = useAddAdmin()
   const removeAdmin = useRemoveAdmin()
@@ -786,6 +791,48 @@ export default function SettingsPage() {
                   {addAdmin.isPending ? t('settings.addingAdmin') : t('settings.addAdmin')}
                 </button>
               </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Preview as new user — visible to all admins */}
+        {isAdmin && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <ShieldCheck className="h-5 w-5 text-amber-600" />
+                Testa som ny användare
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-3">
+              <p className="text-sm text-neutral-600">
+                Skapar en tillfällig sandlådeprofil. All data (logg, vikt, kalibrering) raderas
+                automatiskt när du avslutar. Ditt riktiga konto påverkas inte.
+              </p>
+              {!isPreviewActive ? (
+                <Button
+                  variant="outline"
+                  onClick={() => enterPreview.mutate()}
+                  disabled={enterPreview.isPending}
+                  className="self-start"
+                >
+                  {enterPreview.isPending ? 'Aktiverar…' : 'Aktivera ny-användarläge'}
+                </Button>
+              ) : (
+                <>
+                  <div className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2">
+                    Du navigerar nu som ny användare. Bannern längst upp bekräftar läget.
+                  </div>
+                  <Button
+                    variant="destructive"
+                    onClick={() => exitPreview.mutate()}
+                    disabled={exitPreview.isPending}
+                    className="self-start"
+                  >
+                    {exitPreview.isPending ? 'Avslutar…' : 'Avsluta preview och radera testdata'}
+                  </Button>
+                </>
+              )}
             </CardContent>
           </Card>
         )}

@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
+import { usePreviewMode } from '@/hooks/usePreviewMode'
 
 interface DashboardLayoutProps {
   children: ReactNode
@@ -16,6 +17,7 @@ interface DashboardLayoutProps {
 export default function DashboardLayout({ children, fullHeight }: DashboardLayoutProps) {
   const { sidebarCollapsed } = useUIStore()
   const { isEmailVerified, user } = useAuth()
+  const { isPreviewActive, exitPreview } = usePreviewMode()
 
   const handleResend = async () => {
     if (!user?.email) return
@@ -32,7 +34,19 @@ export default function DashboardLayout({ children, fullHeight }: DashboardLayou
       className={cn('flex flex-col overflow-x-hidden', fullHeight ? 'h-screen' : 'min-h-screen')}
     >
       <SiteHeader />
-      {!isEmailVerified && user && (
+      {isPreviewActive && (
+        <div className="bg-amber-50 border-b border-amber-300 px-4 py-2 text-sm text-amber-800 flex items-center justify-between gap-4">
+          <span className="font-medium">🔍 Förhandsvisning — ny användare</span>
+          <button
+            onClick={() => exitPreview.mutate()}
+            disabled={exitPreview.isPending}
+            className="shrink-0 text-xs font-semibold underline hover:no-underline disabled:opacity-50"
+          >
+            {exitPreview.isPending ? 'Avslutar…' : 'Avsluta preview'}
+          </button>
+        </div>
+      )}
+      {!isEmailVerified && user && !isPreviewActive && (
         <div className="bg-amber-50 border-b border-amber-200 px-4 py-2 text-sm text-amber-800 flex items-center justify-between gap-4">
           <span>Verifiera din e-postadress för att säkra ditt konto.</span>
           <button

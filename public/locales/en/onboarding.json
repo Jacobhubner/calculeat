@@ -1,40 +1,60 @@
 {
   "step1": {
-    "title": "Welcome to CalculEat! 🎉",
-    "description": "Your personal nutrition and calorie tracker",
-    "intro": "CalculEat helps you easily keep track of your calories, macronutrients and reach your health goals.",
-    "feature1Title": "Personal calculations",
-    "feature1Description": "BMR, TDEE and calorie goals based on your profile",
-    "feature2Title": "Easy food logging",
-    "feature2Description": "Quick shortcuts and recent foods for smooth logging",
-    "feature3Title": "Detailed tracking",
-    "feature3Description": "Statistics and progress history"
+    "title": "Your personal calorie tracker",
+    "subtitle": "Understand your body. Reach your goals.",
+    "value1": "Personal calorie goals based on your body",
+    "value2": "Track your weight and energy balance over time",
+    "value3": "Easy to log – in under 30 seconds"
   },
   "step2": {
-    "title": "Complete your profile",
-    "description": "To calculate your calorie needs we need some information",
-    "intro": "We need the following information to give you accurate calculations:",
-    "item1Title": "Personal details",
-    "item1Description": "Age, gender, height and weight",
-    "item2Title": "Activity level",
-    "item2Description": "How active are you in your daily life?",
-    "item3Title": "Health goal",
-    "item3Description": "Weight loss, maintenance or gain"
+    "title": "What's your goal?",
+    "subtitle": "We'll tailor your plan to what you want to achieve.",
+    "goal": {
+      "lose": {
+        "title": "Lose weight",
+        "subtitle": "Create a sustainable calorie deficit"
+      },
+      "maintain": {
+        "title": "Maintain weight",
+        "subtitle": "Keep your current energy balance"
+      },
+      "gain": {
+        "title": "Gain weight",
+        "subtitle": "Build muscle and increase weight"
+      }
+    }
   },
   "step3": {
-    "title": "Start logging food",
-    "description": "Log your meals to reach your goals",
-    "intro": "After completing your profile you can start logging food:",
-    "card1Title": "📱 Today's log",
-    "card1Description": "Go to \"Today\" to log your meals and see daily progress",
-    "card2Title": "⚡ Quick add",
-    "card2Description": "Use \"Recent foods\" to quickly add common foods",
-    "card3Title": "📊 Track progress",
-    "card3Description": "See your history and statistics under \"History\""
+    "title": "Tell us about yourself",
+    "subtitle": "So we can calculate your personal calorie needs.",
+    "gender": "Gender",
+    "genderOption": {
+      "male": "Male",
+      "female": "Female"
+    },
+    "birthYear": "Birth year",
+    "birthYearPlaceholder": "Select year",
+    "height": "Height (cm)",
+    "heightHint": "Enter a value between 100 and 250 cm",
+    "weight": "Weight (kg)",
+    "weightHint": "Enter a value between 20 and 400 kg"
+  },
+  "step4": {
+    "title": "You're all set!",
+    "titleNamed": "You're all set, {{name}}!",
+    "tdeeLabel": "Your estimated calorie needs",
+    "tdeeSubtext": "We'll refine this when you choose your activity level",
+    "closing": "Ready to log your first meal?",
+    "kcalUnit": "kcal/day"
   },
   "actions": {
     "skip": "Skip",
     "next": "Next",
-    "goToProfile": "Go to profile"
+    "goToDashboard": "Go to your dashboard",
+    "saving": "Saving...",
+    "saveError": "Something went wrong – please try again"
+  },
+  "accessibility": {
+    "step": "Step {{current}} of {{total}}"
   }
 }
