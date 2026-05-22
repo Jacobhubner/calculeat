@@ -51,6 +51,7 @@ export function useProfiles() {
     },
     enabled: true,
     staleTime: 1000 * 60 * 5,
+    refetchOnMount: 'always',
   })
 
   // Sync to Zustand store when data changes

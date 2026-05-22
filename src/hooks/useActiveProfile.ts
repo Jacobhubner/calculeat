@@ -24,7 +24,7 @@ export function useActiveProfile() {
   const { data: allProfiles, isLoading } = useProfiles()
 
   const activeProfile = useMemo(
-    () => allProfiles?.find(p => p.id === activeId) ?? null,
+    () => allProfiles?.find(p => p.id === activeId) ?? allProfiles?.[0] ?? null,
     [activeId, allProfiles]
   )
 
