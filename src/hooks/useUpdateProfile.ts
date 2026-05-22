@@ -9,6 +9,8 @@ import type { ProfileFormData, Profile } from '@/lib/types'
 import { toast } from 'sonner'
 import { useProfileStore } from '@/stores/profileStore'
 
+const PREVIEW_KEY = 'calculeat-preview-active'
+
 interface UpdateProfileParams {
   profileId: string
   data: Partial<ProfileFormData>
@@ -21,6 +23,9 @@ export function useUpdateProfile() {
 
   return useMutation({
     mutationFn: async ({ profileId, data }: UpdateProfileParams) => {
+      // Block all writes during preview mode — user_profiles belongs to the real account
+      if (localStorage.getItem(PREVIEW_KEY) === 'true') return null as unknown as Profile
+
       // Strip undefined values — they should not overwrite existing DB values.
       // Callers must pass null explicitly if they intend to clear a field.
       const sanitizedData = Object.entries(data).reduce(
