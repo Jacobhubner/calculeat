@@ -165,13 +165,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       if (session?.user) {
-        refreshProfile(session.user.id)
+        refreshProfile(session.user.id).then(() => setLoading(false))
         if (event === 'SIGNED_IN') {
           lastSeenRef.current = Date.now()
           updateLastSeen(session.user.id)
         }
+      } else {
+        setLoading(false)
       }
-      setLoading(false)
     })
 
     return () => subscription.unsubscribe()

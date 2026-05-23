@@ -33,6 +33,10 @@ export default function ProfileCompletionGuard({ children }: ProfileCompletionGu
     // Preview mode simulates a new account — guard must not redirect
     if (isPreviewMode) return
 
+    // Onboarding wizard is active for this user — guard must not navigate away
+    const onboardingCompleted = localStorage.getItem(`calculeat_onboarding_completed_${user.id}`)
+    if (!onboardingCompleted) return
+
     // Paths that are allowed without TDEE
     const allowedWithoutTDEE = ['/app/profile', '/app/tools/tdee-calculator']
     const isAllowed = allowedWithoutTDEE.some(route => location.pathname.startsWith(route))
@@ -63,7 +67,16 @@ export default function ProfileCompletionGuard({ children }: ProfileCompletionGu
     }, 500)
 
     return () => clearTimeout(checkTimeout)
-  }, [user, profile, activeProfile, loading, isProfileComplete, navigate, location.pathname])
+  }, [
+    user,
+    user?.id,
+    profile,
+    activeProfile,
+    loading,
+    isProfileComplete,
+    navigate,
+    location.pathname,
+  ])
 
   return <>{children}</>
 }

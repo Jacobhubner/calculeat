@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { Save, User } from 'lucide-react'
@@ -112,7 +112,7 @@ export default function TDEECalculatorTool() {
       : manualBodyFat
 
   // Set weight when weight history or selection changes
-  useMemo(() => {
+  useEffect(() => {
     if (useLoggedWeight && latestLoggedWeight) {
       setLocalWeight(latestLoggedWeight.toString())
     } else if (!useLoggedWeight && profileData?.weight_kg) {
