@@ -628,17 +628,15 @@ export function usePaginatedFoodItems(params: {
   const { user, isPreviewMode } = useAuth()
   const { tab, page, pageSize = 50, searchQuery, colorFilter, isRecipeFilter } = params
 
-  // In preview, only global tabs are allowed — no personal or shared-list items
-  const effectiveTab: FoodTab =
-    isPreviewMode && (tab === 'mina' || tab === 'alla' || tab.startsWith('list:'))
-      ? 'calculeat'
-      : tab
+  // In preview, personal tabs return empty — no real user data should be visible
+  const isPersonalTab = tab === 'mina' || tab === 'alla' || tab.startsWith('list:')
+  const blockInPreview = isPreviewMode && isPersonalTab
 
   return useQuery({
     queryKey: [
       'foodItems',
       'paginated',
-      effectiveTab,
+      tab,
       page,
       pageSize,
       searchQuery,
@@ -650,8 +648,12 @@ export function usePaginatedFoodItems(params: {
     queryFn: async () => {
       if (!user) throw new Error('Not authenticated')
 
+      if (blockInPreview) {
+        return { items: [], totalCount: 0, totalPages: 0 } as PaginatedResult
+      }
+
       const { data, error } = await supabase.rpc('search_food_items', {
-        p_tab: effectiveTab,
+        p_tab: tab,
         p_user_id: user.id,
         p_search: searchQuery || null,
         p_color: colorFilter || null,
