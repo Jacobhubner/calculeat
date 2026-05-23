@@ -6,13 +6,14 @@ const STEP_KEY = 'calculeat-onboarding-step'
 const STARTED_KEY = 'calculeat-onboarding-started'
 
 export function useOnboarding() {
-  const { user, isProfileComplete } = useAuth()
+  const { user, isProfileComplete, isPreviewMode } = useAuth()
 
   const hasSeenOnboarding = user
     ? localStorage.getItem(`${ONBOARDING_KEY}_${user.id}`) === 'true'
     : true
 
-  const shouldShowOnboarding = user && !hasSeenOnboarding && !isProfileComplete
+  // In preview, always show onboarding if profile is incomplete — ignore localStorage flag
+  const shouldShowOnboarding = user && !isProfileComplete && (isPreviewMode || !hasSeenOnboarding)
 
   const [showOnboarding, setShowOnboarding] = useState(shouldShowOnboarding)
 

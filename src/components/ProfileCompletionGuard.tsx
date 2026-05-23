@@ -21,7 +21,7 @@ interface ProfileCompletionGuardProps {
  */
 export default function ProfileCompletionGuard({ children }: ProfileCompletionGuardProps) {
   const { t } = useTranslation('common')
-  const { user, profile, loading, isProfileComplete } = useAuth()
+  const { user, profile, loading, isProfileComplete, isPreviewMode } = useAuth()
   const { profile: activeProfile } = useActiveProfile()
   const navigate = useNavigate()
   const location = useLocation()
@@ -29,6 +29,9 @@ export default function ProfileCompletionGuard({ children }: ProfileCompletionGu
   useEffect(() => {
     // Don't run checks while loading or if no user
     if (loading || !user) return
+
+    // Preview mode simulates a new account — guard must not redirect
+    if (isPreviewMode) return
 
     // Paths that are allowed without TDEE
     const allowedWithoutTDEE = ['/app/profile', '/app/tools/tdee-calculator']
