@@ -628,9 +628,12 @@ export function usePaginatedFoodItems(params: {
   const { user, isPreviewMode } = useAuth()
   const { tab, page, pageSize = 50, searchQuery, colorFilter, isRecipeFilter } = params
 
-  // In preview, personal tabs return empty — no real user data should be visible
-  const isPersonalTab = tab === 'mina' || tab === 'alla' || tab.startsWith('list:')
-  const blockInPreview = isPreviewMode && isPersonalTab
+  // In preview: 'mina' and list tabs return empty; 'alla' passes a nil UUID so
+  // the RPC finds no personal items — only global (SLV/CalculEat) items show.
+  const NULL_UUID = '00000000-0000-0000-0000-000000000000'
+  const isPersonalOnlyTab = tab === 'mina' || tab.startsWith('list:')
+  const blockInPreview = isPreviewMode && isPersonalOnlyTab
+  const effectiveUserId = isPreviewMode && tab === 'alla' ? NULL_UUID : user?.id
 
   return useQuery({
     queryKey: [
@@ -654,7 +657,7 @@ export function usePaginatedFoodItems(params: {
 
       const { data, error } = await supabase.rpc('search_food_items', {
         p_tab: tab,
-        p_user_id: user.id,
+        p_user_id: effectiveUserId ?? user.id,
         p_search: searchQuery || null,
         p_color: colorFilter || null,
         p_is_recipe: isRecipeFilter || null,
