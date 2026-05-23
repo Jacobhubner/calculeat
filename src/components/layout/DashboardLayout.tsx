@@ -33,30 +33,32 @@ export default function DashboardLayout({ children, fullHeight }: DashboardLayou
     <div
       className={cn('flex flex-col overflow-x-hidden', fullHeight ? 'h-screen' : 'min-h-screen')}
     >
-      <SiteHeader />
-      {isPreviewMode && (
-        <div className="bg-amber-50 border-b border-amber-300 px-4 py-2 text-sm text-amber-800 flex items-center justify-between gap-4">
-          <span className="font-medium">🔍 Förhandsvisning — ny användare</span>
-          <button
-            onClick={() => exitPreview.mutate()}
-            disabled={exitPreview.isPending}
-            className="shrink-0 text-xs font-semibold underline hover:no-underline disabled:opacity-50"
-          >
-            {exitPreview.isPending ? 'Avslutar…' : 'Avsluta preview'}
-          </button>
-        </div>
-      )}
-      {!isEmailVerified && user && !isPreviewMode && (
-        <div className="bg-amber-50 border-b border-amber-200 px-4 py-2 text-sm text-amber-800 flex items-center justify-between gap-4">
-          <span>Verifiera din e-postadress för att säkra ditt konto.</span>
-          <button
-            onClick={handleResend}
-            className="shrink-0 text-xs font-medium underline hover:no-underline"
-          >
-            Skicka om mejl
-          </button>
-        </div>
-      )}
+      <div className="sticky top-0 z-50">
+        <SiteHeader />
+        {isPreviewMode && (
+          <div className="bg-amber-50 border-b border-amber-300 px-4 py-2 text-sm text-amber-800 flex items-center justify-between gap-4">
+            <span className="font-medium">🔍 Förhandsvisning — ny användare</span>
+            <button
+              onClick={() => exitPreview.mutate()}
+              disabled={exitPreview.isPending}
+              className="shrink-0 text-xs font-semibold underline hover:no-underline disabled:opacity-50"
+            >
+              {exitPreview.isPending ? 'Avslutar…' : 'Avsluta preview'}
+            </button>
+          </div>
+        )}
+        {!isEmailVerified && user && !isPreviewMode && (
+          <div className="bg-amber-50 border-b border-amber-200 px-4 py-2 text-sm text-amber-800 flex items-center justify-between gap-4">
+            <span>Verifiera din e-postadress för att säkra ditt konto.</span>
+            <button
+              onClick={handleResend}
+              className="shrink-0 text-xs font-medium underline hover:no-underline"
+            >
+              Skicka om mejl
+            </button>
+          </div>
+        )}
+      </div>
       <div className="flex flex-1 min-h-0 overflow-x-clip">
         <DashboardNav />
         <main

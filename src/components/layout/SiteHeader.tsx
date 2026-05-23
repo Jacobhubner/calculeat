@@ -101,7 +101,7 @@ export default function SiteHeader() {
   }, [socialHubOpen])
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-white/95 bg-blur shadow-sm">
+    <header className="w-full border-b bg-white/95 bg-blur shadow-sm">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6 lg:px-8">
         {/* Logo */}
         <Link to={user ? '/app' : '/'} className="flex items-center group">
