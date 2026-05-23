@@ -7,68 +7,36 @@
     "value3": "Enkelt att logga – på under 30 sekunder"
   },
   "tour": {
-    "title": "Utforska appen",
-    "subtitle": "Här är vad du kan göra i CalculEat.",
+    "title": "Det här kan du göra",
+    "subtitle": "CalculEat har allt du behöver för att förstå och styra din kost.",
     "skip": "Hoppa över",
     "next": "Nästa",
     "done": "Klar",
     "oversikt": {
-      "title": "Översikt",
-      "desc": "Se din dagliga logg, följ din vikthistorik och håll koll på din energibalans dag för dag."
+      "title": "Översikt & daglig loggning",
+      "teaser": "Starta här varje dag. Logga måltider, skanna streckkoder och se din energibalans i realtid.",
+      "desc": "Startsidan ger dig en daglig vy över vad du ätit. Logga måltider snabbt – sök, skanna streckkod eller välj från dina sparade recept. Under Historik ser du din vikt och energibalans dag för dag."
     },
     "planering": {
-      "title": "Planering",
-      "desc": "Hantera dina livsmedel, skapa recept och spara favoritmåltider för snabb loggning."
+      "title": "Livsmedel, recept & måltider",
+      "teaser": "Bygg upp ditt eget bibliotek av livsmedel och recept. Spara favoritmåltider för att logga dem på sekunder.",
+      "desc": "Hantera ditt livsmedelsbibliotek, skapa recept med automatisk näringsberäkning och spara måltider du äter ofta. Livsmedel kan delas med vänner – om någon lägger till ett nytt hittar du det direkt."
     },
     "minplan": {
-      "title": "Min plan",
-      "desc": "Beräkna ditt kaloribehov, sätt upp mål och analysera din kroppssammansättning."
+      "title": "Mål, kaloribehov & kropp",
+      "teaser": "Beräkna ditt kaloribehov, sätt ett viktmål och se hur lång tid det tar att nå det. Analysera din kroppssammansättning.",
+      "desc": "TDEE-kalkylatorn räknar ut ditt dagliga kaloribehov baserat på din aktivitetsnivå. Målsättningsverktyget visar beräknad tid till ditt mål. Analysera fettprocent, muskelmassa och mer under Kropp."
     },
     "social": {
-      "title": "Social",
-      "desc": "Lägg till vänner, dela livsmedel och följ varandras framsteg."
+      "title": "Vänner & delade listor",
+      "teaser": "Lägg till vänner, dela livsmedel och skapa gemensamma matlistor för familjen eller träningsgruppen.",
+      "desc": "Skicka vänförfrågningar och följ varandras framsteg. Dela livsmedel du hittat med hela nätverket. Skapa delade listor där flera kan lägga till och logga mat – perfekt för hushåll eller lag."
     }
-  },
-  "step2": {
-    "title": "Vad är ditt mål?",
-    "subtitle": "Vi anpassar din plan efter vad du vill uppnå.",
-    "goal": {
-      "lose": {
-        "title": "Gå ner i vikt",
-        "subtitle": "Skapa ett hållbart kaloriunderskott"
-      },
-      "maintain": {
-        "title": "Hålla vikten",
-        "subtitle": "Behåll din nuvarande balans"
-      },
-      "gain": {
-        "title": "Gå upp i vikt",
-        "subtitle": "Bygg muskler och öka i vikt"
-      }
-    }
-  },
-  "step3": {
-    "title": "Berätta lite om dig",
-    "subtitle": "Så vi kan beräkna ditt personliga kaloribehov.",
-    "gender": "Kön",
-    "genderOption": {
-      "male": "Man",
-      "female": "Kvinna"
-    },
-    "birthYear": "Födelseår",
-    "birthYearPlaceholder": "Välj år",
-    "height": "Längd (cm)",
-    "heightHint": "Ange ett värde mellan 100 och 250 cm",
-    "weight": "Vikt (kg)",
-    "weightHint": "Ange ett värde mellan 20 och 400 kg"
   },
   "step4": {
     "title": "Allt är klart!",
     "titleNamed": "Allt är klart, {{name}}!",
-    "tdeeLabel": "Ditt uppskattade kaloribehov",
-    "tdeeSubtext": "Vi finjusterar det när du väljer din aktivitetsnivå",
-    "closing": "Komplettera din profil för att få ditt exakta kaloribehov och personliga mål.",
-    "kcalUnit": "kcal/dag",
+    "closing": "Fyll i din profil för att få ett personligt kalorimål – det tar under en minut.",
     "primaryCta": "Komplettera min profil",
     "secondaryCta": "Utforska appen"
   },

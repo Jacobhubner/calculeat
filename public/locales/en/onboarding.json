@@ -7,68 +7,36 @@
     "value3": "Easy to log – in under 30 seconds"
   },
   "tour": {
-    "title": "Explore the app",
-    "subtitle": "Here's what you can do in CalculEat.",
+    "title": "Here's what you can do",
+    "subtitle": "CalculEat has everything you need to understand and control your diet.",
     "skip": "Skip",
     "next": "Next",
     "done": "Done",
     "oversikt": {
-      "title": "Overview",
-      "desc": "See your daily log, track your weight history and monitor your energy balance day by day."
+      "title": "Overview & daily logging",
+      "teaser": "Start here every day. Log meals, scan barcodes and see your energy balance in real time.",
+      "desc": "Your home screen gives you a daily view of what you've eaten. Log meals quickly — search, scan a barcode or pick from your saved recipes. Under History, track your weight and energy balance day by day."
     },
     "planering": {
-      "title": "Planning",
-      "desc": "Manage your food items, create recipes and save favourite meals for quick logging."
+      "title": "Food, recipes & meals",
+      "teaser": "Build your own library of food items and recipes. Save favourite meals to log them in seconds.",
+      "desc": "Manage your food library, create recipes with automatic nutrition calculations and save meals you eat often. Food items can be shared with friends — if someone adds something new, you'll find it straight away."
     },
     "minplan": {
-      "title": "My Plan",
-      "desc": "Calculate your calorie needs, set goals and analyse your body composition."
+      "title": "Goals, calorie needs & body",
+      "teaser": "Calculate your calorie needs, set a weight goal and see how long it'll take to get there. Analyse your body composition.",
+      "desc": "The TDEE calculator works out your daily calorie needs based on your activity level. The goal-setting tool shows your estimated time to reach your target. Analyse body fat, muscle mass and more under Body."
     },
     "social": {
-      "title": "Social",
-      "desc": "Add friends, share food items and follow each other's progress."
+      "title": "Friends & shared lists",
+      "teaser": "Add friends, share food items and create shared lists for your household or training group.",
+      "desc": "Send friend requests and follow each other's progress. Share food items you've found with your whole network. Create shared lists where multiple people can add and log food — perfect for households or teams."
     }
-  },
-  "step2": {
-    "title": "What's your goal?",
-    "subtitle": "We'll tailor your plan to what you want to achieve.",
-    "goal": {
-      "lose": {
-        "title": "Lose weight",
-        "subtitle": "Create a sustainable calorie deficit"
-      },
-      "maintain": {
-        "title": "Maintain weight",
-        "subtitle": "Keep your current energy balance"
-      },
-      "gain": {
-        "title": "Gain weight",
-        "subtitle": "Build muscle and increase weight"
-      }
-    }
-  },
-  "step3": {
-    "title": "Tell us about yourself",
-    "subtitle": "So we can calculate your personal calorie needs.",
-    "gender": "Gender",
-    "genderOption": {
-      "male": "Male",
-      "female": "Female"
-    },
-    "birthYear": "Birth year",
-    "birthYearPlaceholder": "Select year",
-    "height": "Height (cm)",
-    "heightHint": "Enter a value between 100 and 250 cm",
-    "weight": "Weight (kg)",
-    "weightHint": "Enter a value between 20 and 400 kg"
   },
   "step4": {
     "title": "You're all set!",
     "titleNamed": "You're all set, {{name}}!",
-    "tdeeLabel": "Your estimated calorie needs",
-    "tdeeSubtext": "We'll refine this when you choose your activity level",
-    "closing": "Complete your profile to get your exact calorie needs and personal goals.",
-    "kcalUnit": "kcal/day",
+    "closing": "Fill in your profile to get a personalised calorie goal — it takes under a minute.",
     "primaryCta": "Complete my profile",
     "secondaryCta": "Explore the app"
   },

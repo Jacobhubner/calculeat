@@ -229,21 +229,26 @@ function ValueRow({ icon, text }: { icon: React.ReactNode; text: string }) {
 
 function TourIntro({ t }: { t: T }) {
   return (
-    <div className="flex flex-col items-center text-center gap-6">
-      <div className="h-20 w-20 rounded-full bg-gradient-to-br from-accent-400 to-primary-600 flex items-center justify-center shadow-lg">
-        <Target className="h-9 w-9 text-white" />
-      </div>
+    <div className="flex flex-col gap-5">
       <div>
-        <h2 className="text-2xl md:text-3xl font-bold text-neutral-900 mb-2">{t('tour.title')}</h2>
-        <p className="text-neutral-500 text-base">{t('tour.subtitle')}</p>
+        <h2 className="text-2xl md:text-3xl font-bold text-neutral-900 mb-1">{t('tour.title')}</h2>
+        <p className="text-neutral-500 text-sm">{t('tour.subtitle')}</p>
       </div>
-      <div className="w-full flex flex-col gap-3 text-left mt-2">
+      <div className="w-full flex flex-col gap-3">
         {TOUR_SECTIONS.map(s => (
-          <div key={s.key} className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-xl bg-primary-50 flex items-center justify-center shrink-0">
+          <div
+            key={s.key}
+            className="flex items-start gap-3 rounded-2xl border border-neutral-100 bg-neutral-50 px-4 py-3"
+          >
+            <div className="h-9 w-9 rounded-xl bg-primary-50 flex items-center justify-center shrink-0 mt-0.5">
               <s.Icon className="h-5 w-5 text-primary-600" />
             </div>
-            <span className="text-neutral-700 text-sm font-medium">{t(`tour.${s.key}.title`)}</span>
+            <div>
+              <p className="text-sm font-semibold text-neutral-800">{t(`tour.${s.key}.title`)}</p>
+              <p className="text-xs text-neutral-500 mt-0.5 leading-relaxed">
+                {t(`tour.${s.key}.teaser`)}
+              </p>
+            </div>
           </div>
         ))}
       </div>
