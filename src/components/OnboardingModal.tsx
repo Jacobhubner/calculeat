@@ -169,7 +169,10 @@ export default function OnboardingModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[520px] max-h-[92vh] overflow-y-auto p-0 gap-0 rounded-3xl">
+      <DialogContent
+        className="sm:max-w-[520px] max-h-[92vh] overflow-y-auto p-0 gap-0 rounded-3xl"
+        aria-describedby={undefined}
+      >
         <DialogTitle className="sr-only">{(t as T)('step1.title')}</DialogTitle>
         {/* Screen reader live region — announces step changes */}
         <div ref={liveRef} aria-live="polite" aria-atomic="true" className="sr-only" tabIndex={-1}>

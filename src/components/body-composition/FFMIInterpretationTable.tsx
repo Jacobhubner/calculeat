@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -108,8 +108,8 @@ export function FFMIInterpretationTable({
                   : 'bg-neutral-50/50'
 
               return (
-                <>
-                  <tr key={i} className={baseClass}>
+                <Fragment key={i}>
+                  <tr className={baseClass}>
                     <td className="px-3 py-2 text-neutral-800 whitespace-nowrap">
                       {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                       {t(`ffmiInterpretation.${genderKey}.${rowKey}.range` as any)}
@@ -141,14 +141,14 @@ export function FFMIInterpretationTable({
                     </td>
                   </tr>
                   {isExpanded && (
-                    <tr key={`${i}-desc`} className={cn(baseClass, 'lg:hidden')}>
+                    <tr className={cn(baseClass, 'lg:hidden')}>
                       <td colSpan={4} className="px-3 pb-3 pt-0 text-xs text-neutral-500 italic">
                         {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                         {t(`ffmiInterpretation.${genderKey}.${rowKey}.desc` as any)}
                       </td>
                     </tr>
                   )}
-                </>
+                </Fragment>
               )
             })}
           </tbody>
