@@ -194,16 +194,13 @@ export default function OnboardingModal({
 
   const progressValue = ((currentStep + 1) / TOTAL_STEPS) * 100
 
-  // Hide modal content (but keep Dialog open) while tour overlay is active
-  const modalHidden = tourActive
-
   return (
     <>
       {/* Spotlight tour renders via portal, outside modal stacking context */}
       {tourActive && <SpotlightTour t={t as T} onDone={handleTourDone} onSkip={handleTourDone} />}
 
       <Dialog
-        open={open}
+        open={open && !tourActive}
         onOpenChange={open => {
           if (!tourActive) onOpenChange(open)
         }}
@@ -211,7 +208,6 @@ export default function OnboardingModal({
         <DialogContent
           className="sm:max-w-[520px] max-h-[92vh] overflow-y-auto p-0 gap-0 rounded-3xl"
           aria-describedby={undefined}
-          style={{ visibility: modalHidden ? 'hidden' : 'visible' }}
         >
           <DialogTitle className="sr-only">{(t as T)('step1.title')}</DialogTitle>
           <div
