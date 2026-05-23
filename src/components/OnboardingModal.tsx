@@ -5,14 +5,10 @@ import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  TrendingDown,
-  Minus,
-  TrendingUp,
   Check,
   Zap,
   BarChart2,
   Apple,
-  AlertCircle,
   CalendarDays,
   UtensilsCrossed,
   Target,
@@ -20,10 +16,7 @@ import {
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { useActiveProfile } from '@/hooks/useActiveProfile'
-import { useUpdateProfile } from '@/hooks/useUpdateProfile'
 import { useAuth } from '@/contexts/AuthContext'
-import type { Gender, CalorieGoal } from '@/lib/types'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type T = (key: string, opts?: any) => string
@@ -35,26 +28,8 @@ interface OnboardingModalProps {
   onStepChange?: (step: number) => void
 }
 
-type GoalKey = 'lose' | 'maintain' | 'gain'
-
-const GOAL_MAP: Record<GoalKey, CalorieGoal> = {
-  lose: 'Weight loss',
-  maintain: 'Maintain weight',
-  gain: 'Weight gain',
-}
-
-// Steps: 0=Welcome, 1=Tour, 2=Goal, 3=BodyData, 4=Done
-const TOTAL_STEPS = 5
-
-function estimateTDEE(gender: Gender, weightKg: number, heightCm: number, birthYear: number) {
-  const age = new Date().getFullYear() - birthYear
-  const bmr =
-    gender === 'male'
-      ? 88.4 + 13.4 * weightKg + 4.8 * heightCm - 5.7 * age
-      : 447.6 + 9.2 * weightKg + 3.1 * heightCm - 4.3 * age
-  const tdee = Math.round((bmr * 1.4) / 50) * 50
-  return tdee
-}
+// Steps: 0=Welcome, 1=TourIntro (→ spotlight), 2=Done
+const TOTAL_STEPS = 3
 
 export default function OnboardingModal({
   open,
@@ -77,23 +52,11 @@ export default function OnboardingModal({
 
   const navigate = useNavigate()
   const { user } = useAuth()
-  const { profile: activeProfile } = useActiveProfile()
-  const updateProfile = useUpdateProfile()
 
   const [currentStep, setCurrentStep] = useState(initialStep)
-  const [selectedGoal, setSelectedGoal] = useState<GoalKey | null>(null)
-  const [selectedGender, setSelectedGender] = useState<Gender | null>(null)
-  const [selectedYear, setSelectedYear] = useState('')
-  const [heightString, setHeightString] = useState('')
-  const [weightString, setWeightString] = useState('')
-  const [isSaving, setIsSaving] = useState(false)
-  const [saveError, setSaveError] = useState(false)
   const [direction, setDirection] = useState(1)
-  // Tour is running when currentStep === 1
   const [tourActive, setTourActive] = useState(false)
 
-  const heightRef = useRef<HTMLInputElement>(null)
-  const weightRef = useRef<HTMLInputElement>(null)
   const liveRef = useRef<HTMLDivElement>(null)
 
   const advanceStep = useCallback(
@@ -108,61 +71,14 @@ export default function OnboardingModal({
 
   if (!nsReady) return null
 
-  const height = parseFloat(heightString)
-  const weight = parseFloat(weightString)
-  const year = parseInt(selectedYear)
-
-  const step3Valid =
-    !!selectedGender &&
-    !!selectedYear &&
-    !isNaN(height) &&
-    height >= 100 &&
-    height <= 250 &&
-    !isNaN(weight) &&
-    weight >= 20 &&
-    weight <= 400
-
-  const estimatedTDEE =
-    step3Valid && selectedGender ? estimateTDEE(selectedGender, weight, height, year) : null
-
   const profileName = user?.user_metadata?.full_name?.split(' ')[0] ?? null
 
-  const handleNext = async () => {
-    // Step 4 (index 4) = final step: save profile
-    if (currentStep === TOTAL_STEPS - 1) {
-      if (!activeProfile?.id) return
-      setIsSaving(true)
-      setSaveError(false)
-      try {
-        await updateProfile.mutateAsync({
-          profileId: activeProfile.id,
-          data: {
-            birth_date: `${selectedYear}-01-01`,
-            gender: selectedGender!,
-            height_cm: height,
-            weight_kg: weight,
-            initial_weight_kg: weight,
-            calorie_goal: GOAL_MAP[selectedGoal!],
-          },
-          silent: true,
-        })
-        // Navigate to profile to complete setup
-        onOpenChange(false)
-        navigate('/app/profile')
-      } catch {
-        setSaveError(true)
-      } finally {
-        setIsSaving(false)
-      }
-      return
-    }
-
-    // Step 1 (index 1) = tour: activate spotlight
+  const handleNext = () => {
+    // Step 1 = tour intro: launch spotlight
     if (currentStep === 1) {
       setTourActive(true)
       return
     }
-
     advanceStep(currentStep + 1)
   }
 
@@ -175,22 +91,14 @@ export default function OnboardingModal({
     onOpenChange(false)
   }
 
-  const handleExploreDashboard = () => {
+  const handleCompleteProfile = () => {
     onOpenChange(false)
-    navigate('/app')
+    navigate('/app/profile')
   }
 
-  const step2Ready = selectedGoal !== null
-  const canAdvance =
-    currentStep === 0
-      ? true
-      : currentStep === 1
-        ? true
-        : currentStep === 2
-          ? step2Ready
-          : currentStep === 3
-            ? step3Valid
-            : true
+  const handleExploreDashboard = () => {
+    onOpenChange(false)
+  }
 
   const progressValue = ((currentStep + 1) / TOTAL_STEPS) * 100
 
@@ -235,53 +143,15 @@ export default function OnboardingModal({
               >
                 {currentStep === 0 && <Step1 t={t as T} />}
                 {currentStep === 1 && <TourIntro t={t as T} />}
-                {currentStep === 2 && (
-                  <StepGoal t={t as T} selectedGoal={selectedGoal} onSelect={setSelectedGoal} />
-                )}
-                {currentStep === 3 && (
-                  <StepBody
-                    t={t as T}
-                    selectedGender={selectedGender}
-                    onGenderSelect={setSelectedGender}
-                    selectedYear={selectedYear}
-                    onYearChange={setSelectedYear}
-                    heightString={heightString}
-                    onHeightChange={setHeightString}
-                    weightString={weightString}
-                    onWeightChange={setWeightString}
-                    height={height}
-                    weight={weight}
-                    heightRef={heightRef}
-                    weightRef={weightRef}
-                    onNext={canAdvance ? handleNext : undefined}
-                  />
-                )}
-                {currentStep === 4 && (
-                  <StepDone
-                    t={t as T}
-                    profileName={profileName}
-                    estimatedTDEE={estimatedTDEE}
-                    onExplore={handleExploreDashboard}
-                  />
-                )}
+                {currentStep === 2 && <StepDone t={t as T} profileName={profileName} />}
               </motion.div>
             </AnimatePresence>
           </div>
 
           <div className="sticky bottom-0 bg-white px-6 pb-6 pt-2 flex flex-col items-center gap-3 md:static md:pt-0">
-            {saveError && (
-              <div className="w-full flex items-center gap-2 text-sm text-error-600 bg-error-50 rounded-xl px-3 py-2">
-                <AlertCircle className="h-4 w-4 shrink-0" />
-                <span>{(t as T)('actions.saveError')}</span>
-              </div>
-            )}
-            {/* Final step has its own CTA buttons inside StepDone */}
+            {/* Steps 0–1: single Next button */}
             {currentStep < TOTAL_STEPS - 1 && (
-              <Button
-                onClick={handleNext}
-                disabled={!canAdvance || isSaving}
-                className="w-full h-12 text-base rounded-2xl"
-              >
+              <Button onClick={handleNext} className="w-full h-12 text-base rounded-2xl">
                 {currentStep === 1 ? (t as T)('tour.next') : (t as T)('actions.next')}
               </Button>
             )}
@@ -293,14 +163,14 @@ export default function OnboardingModal({
                 {(t as T)('actions.skip')}
               </button>
             )}
+            {/* Final step: dual CTA */}
             {currentStep === TOTAL_STEPS - 1 && (
               <>
                 <Button
-                  onClick={handleNext}
-                  disabled={!canAdvance || isSaving}
+                  onClick={handleCompleteProfile}
                   className="w-full h-12 text-base rounded-2xl"
                 >
-                  {isSaving ? (t as T)('actions.saving') : (t as T)('step4.primaryCta')}
+                  {(t as T)('step4.primaryCta')}
                 </Button>
                 <button
                   onClick={handleExploreDashboard}
@@ -381,219 +251,9 @@ function TourIntro({ t }: { t: T }) {
   )
 }
 
-// ─── Step 2: Goal ─────────────────────────────────────────────────────────────
+// ─── Step 3 (final): Done + dual CTA ─────────────────────────────────────────
 
-const GOAL_OPTIONS: { key: GoalKey; icon: React.ReactNode }[] = [
-  { key: 'lose', icon: <TrendingDown className="h-5 w-5" /> },
-  { key: 'maintain', icon: <Minus className="h-5 w-5" /> },
-  { key: 'gain', icon: <TrendingUp className="h-5 w-5" /> },
-]
-
-function StepGoal({
-  t,
-  selectedGoal,
-  onSelect,
-}: {
-  t: T
-  selectedGoal: GoalKey | null
-  onSelect: (g: GoalKey) => void
-}) {
-  return (
-    <div className="flex flex-col gap-5">
-      <div>
-        <h2 className="text-2xl md:text-3xl font-bold text-neutral-900 mb-1">{t('step2.title')}</h2>
-        <p className="text-neutral-500 text-sm">{t('step2.subtitle')}</p>
-      </div>
-      <div className="flex flex-col gap-3">
-        {GOAL_OPTIONS.map(({ key, icon }) => {
-          const active = selectedGoal === key
-          return (
-            <button
-              key={key}
-              onClick={() => onSelect(key)}
-              className={[
-                'flex items-center gap-4 rounded-2xl px-4 py-4 border-2 text-left transition-all duration-150',
-                active
-                  ? 'border-primary-500 bg-primary-50'
-                  : 'border-neutral-200 bg-white hover:border-neutral-300',
-              ].join(' ')}
-            >
-              <div
-                className={[
-                  'h-10 w-10 rounded-xl flex items-center justify-center shrink-0 transition-colors',
-                  active ? 'bg-primary-500 text-white' : 'bg-neutral-100 text-neutral-500',
-                ].join(' ')}
-              >
-                {icon}
-              </div>
-              <div>
-                <p
-                  className={[
-                    'font-semibold text-sm',
-                    active ? 'text-primary-900' : 'text-neutral-800',
-                  ].join(' ')}
-                >
-                  {t(`step2.goal.${key}.title`)}
-                </p>
-                <p
-                  className={[
-                    'text-xs mt-0.5',
-                    active ? 'text-primary-700' : 'text-neutral-500',
-                  ].join(' ')}
-                >
-                  {t(`step2.goal.${key}.subtitle`)}
-                </p>
-              </div>
-              {active && (
-                <div className="ml-auto h-5 w-5 rounded-full bg-primary-500 flex items-center justify-center shrink-0">
-                  <Check className="h-3 w-3 text-white" />
-                </div>
-              )}
-            </button>
-          )
-        })}
-      </div>
-    </div>
-  )
-}
-
-// ─── Step 3: Body data ────────────────────────────────────────────────────────
-
-function StepBody({
-  t,
-  selectedGender,
-  onGenderSelect,
-  selectedYear,
-  onYearChange,
-  heightString,
-  onHeightChange,
-  weightString,
-  onWeightChange,
-  height,
-  weight,
-  heightRef,
-  weightRef,
-  onNext,
-}: {
-  t: T
-  selectedGender: Gender | null
-  onGenderSelect: (g: Gender) => void
-  selectedYear: string
-  onYearChange: (y: string) => void
-  heightString: string
-  onHeightChange: (v: string) => void
-  weightString: string
-  onWeightChange: (v: string) => void
-  height: number
-  weight: number
-  heightRef: React.RefObject<HTMLInputElement | null>
-  weightRef: React.RefObject<HTMLInputElement | null>
-  onNext?: () => void
-}) {
-  const currentYear = new Date().getFullYear()
-  const years = Array.from({ length: 81 }, (_, i) => currentYear - 15 - i)
-  const heightInvalid = heightString !== '' && (isNaN(height) || height < 100 || height > 250)
-  const weightInvalid = weightString !== '' && (isNaN(weight) || weight < 20 || weight > 400)
-
-  return (
-    <div className="flex flex-col gap-5">
-      <div>
-        <h2 className="text-2xl md:text-3xl font-bold text-neutral-900 mb-1">{t('step3.title')}</h2>
-        <p className="text-neutral-500 text-sm">{t('step3.subtitle')}</p>
-      </div>
-      <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium text-neutral-700">{t('step3.gender')}</label>
-        <div className="grid grid-cols-2 gap-3">
-          {(['male', 'female'] as Gender[]).map(g => {
-            const active = selectedGender === g
-            return (
-              <button
-                key={g}
-                onClick={() => onGenderSelect(g)}
-                className={[
-                  'rounded-2xl px-4 py-3 border-2 text-sm font-semibold transition-all duration-150',
-                  active
-                    ? 'border-primary-500 bg-primary-50 text-primary-900'
-                    : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300',
-                ].join(' ')}
-              >
-                {t(`step3.genderOption.${g}`)}
-              </button>
-            )
-          })}
-        </div>
-      </div>
-      <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium text-neutral-700">{t('step3.birthYear')}</label>
-        <select
-          value={selectedYear}
-          onChange={e => onYearChange(e.target.value)}
-          className="block w-full rounded-2xl border border-neutral-300 px-4 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-        >
-          <option value="">{t('step3.birthYearPlaceholder')}</option>
-          {years.map(y => (
-            <option key={y} value={y}>
-              {y}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium text-neutral-700">{t('step3.height')}</label>
-        <input
-          ref={heightRef}
-          type="number"
-          inputMode="numeric"
-          value={heightString}
-          onChange={e => onHeightChange(e.target.value)}
-          placeholder="175"
-          min="100"
-          max="250"
-          onKeyDown={e => {
-            if (e.key === 'Enter') weightRef.current?.focus()
-          }}
-          className="block w-full rounded-2xl border border-neutral-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-        />
-        {heightInvalid && <p className="text-xs text-neutral-500">{t('step3.heightHint')}</p>}
-      </div>
-      <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium text-neutral-700">{t('step3.weight')}</label>
-        <input
-          ref={weightRef}
-          type="number"
-          inputMode="decimal"
-          value={weightString}
-          onChange={e => onWeightChange(e.target.value)}
-          placeholder="75"
-          min="20"
-          max="400"
-          step="0.1"
-          onKeyDown={e => {
-            if (e.key === 'Enter' && onNext) onNext()
-          }}
-          className="block w-full rounded-2xl border border-neutral-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-        />
-        {weightInvalid && <p className="text-xs text-neutral-500">{t('step3.weightHint')}</p>}
-      </div>
-    </div>
-  )
-}
-
-// ─── Step 4 (final): Done + dual CTA ─────────────────────────────────────────
-
-function StepDone({
-  t,
-  profileName,
-  estimatedTDEE,
-  onExplore,
-}: {
-  t: T
-  profileName: string | null
-  estimatedTDEE: number | null
-  onExplore: () => void
-}) {
-  // Suppress unused — onExplore is used in parent's action bar
-  void onExplore
+function StepDone({ t, profileName }: { t: T; profileName: string | null }) {
   return (
     <div className="flex flex-col items-center text-center gap-6 py-4">
       <motion.div
@@ -616,25 +276,10 @@ function StepDone({
             : (t as T)('step4.title')}
         </h2>
       </motion.div>
-      {estimatedTDEE && (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.35 }}
-          className="w-full bg-primary-50 rounded-2xl px-5 py-4"
-        >
-          <p className="text-sm text-primary-700 font-medium mb-0.5">{t('step4.tdeeLabel')}</p>
-          <p className="text-3xl font-bold text-primary-900">
-            ~{estimatedTDEE.toLocaleString()}{' '}
-            <span className="text-lg font-semibold">{t('step4.kcalUnit')}</span>
-          </p>
-          <p className="text-xs text-primary-600 mt-1">{t('step4.tdeeSubtext')}</p>
-        </motion.div>
-      )}
       <motion.p
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.25, delay: 0.42 }}
+        transition={{ duration: 0.25, delay: 0.3 }}
         className="text-neutral-500 text-sm"
       >
         {t('step4.closing')}
