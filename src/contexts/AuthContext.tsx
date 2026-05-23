@@ -87,9 +87,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           .maybeSingle()
 
         if (activeProfileRow?.profile_name === '__preview__') {
-          await supabase.rpc('exit_preview_profile')
-          localStorage.removeItem('calculeat-preview-active')
-          return refreshProfile(uid)
+          // Guard against infinite loop if exit_preview_profile fails (e.g. DB timeout)
+          if (sessionStorage.getItem('preview-exit-in-progress')) return
+          sessionStorage.setItem('preview-exit-in-progress', '1')
+          try {
+            await supabase.rpc('exit_preview_profile')
+            localStorage.removeItem('calculeat-preview-active')
+            return refreshProfile(uid)
+          } finally {
+            // Always clear the guard — even if RPC throws permanently
+            sessionStorage.removeItem('preview-exit-in-progress')
+          }
         }
       }
 

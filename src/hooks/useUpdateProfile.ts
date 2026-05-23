@@ -10,6 +10,7 @@ import { toast } from 'sonner'
 import { useProfileStore } from '@/stores/profileStore'
 import { useAuth } from '@/contexts/AuthContext'
 import { useTranslation } from 'react-i18next'
+import { PreviewBlockedError } from '@/hooks/usePreviewMutation'
 
 interface UpdateProfileParams {
   profileId: string
@@ -28,7 +29,7 @@ export function useUpdateProfile() {
       // Block all writes during preview mode — user_profiles belongs to the real account
       if (isPreviewMode) {
         toast.info(t('preview.mutationBlocked'))
-        return null as unknown as Profile
+        throw new PreviewBlockedError()
       }
 
       // Strip undefined values — they should not overwrite existing DB values.
@@ -88,6 +89,7 @@ export function useUpdateProfile() {
       }
     },
     onError: (error: Error) => {
+      if (error instanceof PreviewBlockedError) return
       toast.error('Kunde inte uppdatera profil', {
         description: error.message,
       })

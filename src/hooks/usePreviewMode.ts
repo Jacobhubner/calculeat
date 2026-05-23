@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import { useProfileStore } from '@/stores/profileStore'
 import { queryClient } from '@/lib/react-query'
 
 export const PREVIEW_KEY = 'calculeat-preview-active'
-const ONBOARDING_KEY = 'calculeat_onboarding_completed'
 
 function setPreviewFlag(value: boolean) {
   if (value) {
@@ -16,6 +16,12 @@ function setPreviewFlag(value: boolean) {
     localStorage.removeItem(PREVIEW_KEY)
   }
   window.dispatchEvent(new Event('preview-mode-change'))
+}
+
+function clearPreviewOnboardingKeys(userId: string | undefined) {
+  if (userId) localStorage.removeItem(`calculeat_preview_onboarding_completed_${userId}`)
+  localStorage.removeItem('calculeat_preview_onboarding_step')
+  localStorage.removeItem('calculeat_preview_onboarding_started')
 }
 
 export function usePreviewMode() {
@@ -43,7 +49,6 @@ export function usePreviewMode() {
     },
     onSuccess: async () => {
       setPreviewFlag(true)
-      if (user) localStorage.removeItem(`${ONBOARDING_KEY}_${user.id}`)
       clearProfiles()
       queryClient.clear()
       await refreshProfile()
@@ -58,10 +63,29 @@ export function usePreviewMode() {
     },
     onSuccess: async () => {
       setPreviewFlag(false)
+      clearPreviewOnboardingKeys(user?.id)
       clearProfiles()
       queryClient.clear()
       await refreshProfile()
       navigate('/app')
+    },
+    onError: error => {
+      console.error('[exitPreview] RPC failed:', error)
+      toast.error('Kunde inte avsluta preview-läget', {
+        description:
+          'Databasanropet misslyckades. Du kan försöka igen eller tvinga fram en lokal utloggning.',
+        duration: Infinity,
+        action: {
+          label: 'Tvinga avslut',
+          onClick: () => {
+            setPreviewFlag(false)
+            clearPreviewOnboardingKeys(user?.id)
+            clearProfiles()
+            queryClient.clear()
+            refreshProfile().then(() => navigate('/app'))
+          },
+        },
+      })
     },
   })
 

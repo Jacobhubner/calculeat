@@ -9,6 +9,7 @@ import DashboardLayout from '@/components/layout/DashboardLayout'
 import { User, Loader2, Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useProfiles, useUpdateProfile, useCreateWeightHistory } from '@/hooks'
+import { PreviewBlockedError } from '@/hooks/usePreviewMutation'
 import { Button } from '@/components/ui/button'
 import { useSyncMealSettings } from '@/hooks/useMealSettings'
 import { useTodayLog, useSyncTodayLogFromProfile } from '@/hooks/useDailyLogs'
@@ -420,6 +421,7 @@ export default function ProfilePage() {
       await createWeightHistory.mutateAsync({ weight_kg: data.weight_kg })
       toast.success(t('toast.basicInfoSaved'))
     } catch (error) {
+      if (error instanceof PreviewBlockedError) return
       console.error('Error saving setup info:', error)
       toast.error(t('toast.basicInfoSaveError'))
     }
