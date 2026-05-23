@@ -448,6 +448,9 @@
     "pros": "Fördelar",
     "cons": "Nackdelar / Begränsningar",
     "summary": "Sammanfattning ({{count}} formler)",
+    "summaryFiltered": "Sammanfattning ({{count}} av {{total}} formler)",
+    "include": "Inkludera i sammanfattning",
+    "exclude": "Exkludera från sammanfattning",
     "average": "Medelvärde",
     "span": "Spann: {{diff}} kcal skillnad mellan lägst och högst"
   },

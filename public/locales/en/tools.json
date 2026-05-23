@@ -442,6 +442,9 @@
     "pros": "Advantages",
     "cons": "Disadvantages / Limitations",
     "summary": "Summary ({{count}} formulas)",
+    "summaryFiltered": "Summary ({{count}} of {{total}} formulas)",
+    "include": "Include in summary",
+    "exclude": "Exclude from summary",
     "average": "Average",
     "span": "Range: {{diff}} kcal difference between lowest and highest"
   },

@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { ChevronDown, ChevronUp } from 'lucide-react'
+import { ChevronDown, ChevronUp, Eye, EyeOff } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -43,6 +43,16 @@ export default function ComparisonTab({
   const [height, setHeight] = useState('')
   const [bodyFat, setBodyFat] = useState('')
   const [expandedFormula, setExpandedFormula] = useState<BMRFormula | null>(null)
+  const [excludedFormulas, setExcludedFormulas] = useState<Set<BMRFormula>>(new Set())
+
+  const toggleExclude = (formula: BMRFormula) => {
+    setExcludedFormulas(prev => {
+      const next = new Set(prev)
+      if (next.has(formula)) next.delete(formula)
+      else next.add(formula)
+      return next
+    })
+  }
 
   const hasProfileData = !!(profileAge && profileWeight && profileHeight && profileGender)
 
@@ -74,7 +84,11 @@ export default function ComparisonTab({
     }))
   }, [params])
 
-  const validValues = bmrResults.filter(r => r.result !== null).map(r => r.result as number)
+  const allValidValues = bmrResults.filter(r => r.result !== null).map(r => r.result as number)
+  const includedResults = bmrResults.filter(
+    r => r.result !== null && !excludedFormulas.has(r.formula)
+  )
+  const validValues = includedResults.map(r => r.result as number)
   const minBMR = validValues.length > 0 ? Math.min(...validValues) : null
   const maxBMR = validValues.length > 0 ? Math.max(...validValues) : null
   const avgBMR =
@@ -94,7 +108,9 @@ export default function ComparisonTab({
           {/* Kön + Använd mina värden */}
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-2">{t('comparison.gender')}</label>
+              <label className="block text-sm font-medium text-neutral-700 mb-2">
+                {t('comparison.gender')}
+              </label>
               <div className="flex gap-2">
                 {(['male', 'female'] as Gender[]).map(g => (
                   <button
@@ -176,7 +192,9 @@ export default function ComparisonTab({
           <div>
             <label className="block text-sm font-medium text-neutral-700 mb-1">
               {t('comparison.bodyFat')}{' '}
-              <span className="text-neutral-500 font-normal">{t('comparison.bodyFatOptional')}</span>
+              <span className="text-neutral-500 font-normal">
+                {t('comparison.bodyFatOptional')}
+              </span>
             </label>
             <input
               type="number"
@@ -199,7 +217,10 @@ export default function ComparisonTab({
             <CardTitle>{t('comparison.resultsTitle')}</CardTitle>
             <CardDescription>
               {validValues.length > 0
-                ? t('comparison.resultsDescription', { count: validValues.length, total: ALL_FORMULAS.length })
+                ? t('comparison.resultsDescription', {
+                    count: validValues.length,
+                    total: ALL_FORMULAS.length,
+                  })
                 : t('comparison.fillInValues')}
             </CardDescription>
           </CardHeader>
@@ -207,8 +228,11 @@ export default function ComparisonTab({
             <div className="space-y-2">
               {bmrResults.map(({ formula, result, needsBodyFat, hasBodyFat }) => {
                 const desc = BMR_FORMULA_DESCRIPTIONS[formula]
-                const isMin = result !== null && result === minBMR && validValues.length > 1
-                const isMax = result !== null && result === maxBMR && validValues.length > 1
+                const isExcluded = excludedFormulas.has(formula)
+                const isMin =
+                  !isExcluded && result !== null && result === minBMR && validValues.length > 1
+                const isMax =
+                  !isExcluded && result !== null && result === maxBMR && validValues.length > 1
                 const missingBodyFat = needsBodyFat && !hasBodyFat
                 const isExpanded = expandedFormula === formula
 
@@ -216,11 +240,13 @@ export default function ComparisonTab({
                   <div
                     key={formula}
                     className={`rounded-xl border transition-colors ${
-                      isMin
-                        ? 'bg-green-50 border-green-200'
-                        : isMax
-                          ? 'bg-orange-50 border-orange-200'
-                          : 'bg-neutral-50 border-neutral-200'
+                      isExcluded
+                        ? 'bg-neutral-50 border-neutral-200 opacity-40'
+                        : isMin
+                          ? 'bg-green-50 border-green-200'
+                          : isMax
+                            ? 'bg-orange-50 border-orange-200'
+                            : 'bg-neutral-50 border-neutral-200'
                     }`}
                   >
                     {/* Rad med resultat och toggle */}
@@ -282,6 +308,21 @@ export default function ComparisonTab({
                             —
                           </Badge>
                         )}
+                        <button
+                          type="button"
+                          onClick={e => {
+                            e.stopPropagation()
+                            toggleExclude(formula)
+                          }}
+                          className="p-1 rounded hover:bg-neutral-200 transition-colors"
+                          title={isExcluded ? t('comparison.include') : t('comparison.exclude')}
+                        >
+                          {isExcluded ? (
+                            <EyeOff className="h-4 w-4 text-neutral-400" />
+                          ) : (
+                            <Eye className="h-4 w-4 text-neutral-400" />
+                          )}
+                        </button>
                         {isExpanded ? (
                           <ChevronUp className="h-4 w-4 text-neutral-400 shrink-0" />
                         ) : (
@@ -301,7 +342,9 @@ export default function ComparisonTab({
                         </p>
                         {desc.pros.length > 0 && (
                           <div>
-                            <p className="text-xs font-semibold text-green-700 mb-1">{t('comparison.pros')}</p>
+                            <p className="text-xs font-semibold text-green-700 mb-1">
+                              {t('comparison.pros')}
+                            </p>
                             <ul className="space-y-1">
                               {desc.pros.map((pro, i) => (
                                 <li key={i} className="flex gap-2 text-sm text-neutral-700">
@@ -338,7 +381,12 @@ export default function ComparisonTab({
             {validValues.length > 0 && (
               <div className="mt-6 p-4 bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-blue-200 rounded-xl">
                 <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-3">
-                  {t('comparison.summary', { count: validValues.length })}
+                  {excludedFormulas.size > 0
+                    ? t('comparison.summaryFiltered', {
+                        count: validValues.length,
+                        total: allValidValues.length,
+                      })
+                    : t('comparison.summary', { count: validValues.length })}
                 </p>
                 <div className="grid grid-cols-3 gap-4 text-center">
                   <div>
