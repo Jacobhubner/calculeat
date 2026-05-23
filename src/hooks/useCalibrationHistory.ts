@@ -1,5 +1,7 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
+import { usePreviewAwareQuery } from '@/hooks/usePreviewAwareQuery'
+import { usePreviewMutation } from '@/hooks/usePreviewMutation'
 import type { CalibrationHistory } from '@/lib/types'
 import { toast } from 'sonner'
 
@@ -8,8 +10,9 @@ import { toast } from 'sonner'
  * Reads and writes via user_id (Fas 3 — profile_id removed).
  */
 export function useCalibrationHistory(userId: string | undefined) {
-  return useQuery({
+  return usePreviewAwareQuery({
     queryKey: ['calibration-history', userId],
+    emptyValue: [] as CalibrationHistory[],
     queryFn: async () => {
       if (!userId) return []
       const { data, error } = await supabase
@@ -29,8 +32,9 @@ export function useCalibrationHistory(userId: string | undefined) {
  * Reads and writes via user_id (Fas 3 — profile_id removed).
  */
 export function useLastCalibration(userId: string | undefined) {
-  return useQuery({
+  return usePreviewAwareQuery({
     queryKey: ['last-calibration', userId],
+    emptyValue: null as CalibrationHistory | null,
     queryFn: async () => {
       if (!userId) return null
       const { data, error } = await supabase
@@ -52,7 +56,7 @@ export function useLastCalibration(userId: string | undefined) {
  */
 export function useCreateCalibrationHistory() {
   const queryClient = useQueryClient()
-  return useMutation({
+  return usePreviewMutation({
     mutationFn: async (data: Omit<CalibrationHistory, 'id' | 'created_at' | 'calibrated_at'>) => {
       const { data: result, error } = await supabase
         .from('calibration_history')
@@ -78,7 +82,7 @@ export function useCreateCalibrationHistory() {
  */
 export function useRevertCalibration() {
   const queryClient = useQueryClient()
-  return useMutation({
+  return usePreviewMutation({
     mutationFn: async ({
       calibrationId,
       userId,
@@ -122,7 +126,7 @@ export function useRevertCalibration() {
  */
 export function useDeleteCalibrationHistory() {
   const queryClient = useQueryClient()
-  return useMutation({
+  return usePreviewMutation({
     mutationFn: async ({ id, userId }: { id: string; userId: string }) => {
       const { error } = await supabase.from('calibration_history').delete().eq('id', id)
       if (error) throw error

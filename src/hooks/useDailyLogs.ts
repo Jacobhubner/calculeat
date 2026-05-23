@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import { useProfileStore } from '@/stores/profileStore'
+import { usePreviewAwareQuery } from '@/hooks/usePreviewAwareQuery'
 import type { FoodItem } from '@/hooks/useFoodItems'
 
 export interface MealEntryItem {
@@ -148,8 +149,9 @@ export function useDailyLog(date: string) {
   const { user } = useAuth()
   const activeProfile = useProfileStore(state => state.activeProfile)
 
-  return useQuery({
+  return usePreviewAwareQuery({
     queryKey: ['dailyLogs', user?.id, date],
+    emptyValue: null as DailyLog | null,
     queryFn: async () => {
       if (!user) throw new Error('User not authenticated')
       if (!activeProfile) throw new Error('No active profile')
@@ -188,8 +190,9 @@ export function useDailyLogs(startDate: string, endDate: string) {
   const { user } = useAuth()
   const activeProfile = useProfileStore(state => state.activeProfile)
 
-  return useQuery({
+  return usePreviewAwareQuery({
     queryKey: ['dailyLogs', 'range', user?.id, startDate, endDate],
+    emptyValue: [] as DailyLog[],
     queryFn: async () => {
       if (!user) throw new Error('User not authenticated')
       if (!activeProfile) throw new Error('No active profile')

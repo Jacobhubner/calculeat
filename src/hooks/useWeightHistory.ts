@@ -1,6 +1,8 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
+import { usePreviewAwareQuery } from '@/hooks/usePreviewAwareQuery'
+import { usePreviewMutation } from '@/hooks/usePreviewMutation'
 import type { WeightHistory } from '@/lib/types'
 import { toast } from 'sonner'
 
@@ -11,8 +13,9 @@ import { toast } from 'sonner'
 export function useWeightHistory() {
   const { user } = useAuth()
 
-  return useQuery({
+  return usePreviewAwareQuery({
     queryKey: ['weight-history', user?.id],
+    emptyValue: [] as WeightHistory[],
     queryFn: async () => {
       if (!user) return []
       const { data, error } = await supabase
@@ -35,7 +38,7 @@ export function useCreateWeightHistory() {
   const { user } = useAuth()
   const queryClient = useQueryClient()
 
-  return useMutation({
+  return usePreviewMutation({
     mutationFn: async (data: {
       weight_kg: number
       notes?: string
@@ -69,7 +72,7 @@ export function useDeleteWeightHistory() {
   const { user } = useAuth()
   const queryClient = useQueryClient()
 
-  return useMutation({
+  return usePreviewMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from('weight_history').delete().eq('id', id)
       if (error) throw error

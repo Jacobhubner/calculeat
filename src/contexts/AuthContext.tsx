@@ -76,17 +76,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     if (upData && upData.active_profile_id) {
       // Crash-recovery: om aktiv profil är en orphaned preview (browser stängdes under preview)
-      // → auto-exit för att återställa riktiga kontot transparent
-      const { data: activeProfileRow } = await supabase
-        .from('profiles')
-        .select('profile_name')
-        .eq('id', upData.active_profile_id)
-        .maybeSingle()
+      // och preview_backup_profile_id är null = backup saknas = trasigt state → auto-exit.
+      // Om preview_backup_profile_id är satt = preview är avsiktligt aktivt → låt det vara.
+      if (!upData.preview_backup_profile_id) {
+        const { data: activeProfileRow } = await supabase
+          .from('profiles')
+          .select('profile_name')
+          .eq('id', upData.active_profile_id)
+          .maybeSingle()
 
-      if (activeProfileRow?.profile_name === '__preview__') {
-        await supabase.rpc('exit_preview_profile')
-        localStorage.removeItem('calculeat-preview-active')
-        return refreshProfile(uid)
+        if (activeProfileRow?.profile_name === '__preview__') {
+          await supabase.rpc('exit_preview_profile')
+          localStorage.removeItem('calculeat-preview-active')
+          return refreshProfile(uid)
+        }
       }
 
       // Shape-mapping: id = active_profile_id (profiles UUID) so all consumers
