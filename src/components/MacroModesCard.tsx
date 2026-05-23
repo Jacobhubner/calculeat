@@ -255,12 +255,12 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
                   {t('macroModes.nnrFat')}
                 </div>
                 <div className="text-neutral-700">
-                  <span className="text-neutral-600">{t('macroModes.proteinLabel')}</span>{' '}
-                  {t('macroModes.nnrProtein')}
-                </div>
-                <div className="text-neutral-700">
                   <span className="text-neutral-600">{t('macroModes.carbsLabel')}</span>{' '}
                   {t('macroModes.nnrCarbs')}
+                </div>
+                <div className="text-neutral-700">
+                  <span className="text-neutral-600">{t('macroModes.proteinLabel')}</span>{' '}
+                  {t('macroModes.nnrProtein')}
                 </div>
               </div>
             )}
@@ -314,12 +314,12 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
                   {t('macroModes.offseasonFat')}
                 </div>
                 <div className="text-neutral-700">
-                  <span className="text-neutral-600">{t('macroModes.proteinLabel')}</span>{' '}
-                  {t('macroModes.offseasonProtein')}
-                </div>
-                <div className="text-neutral-700">
                   <span className="text-neutral-600">{t('macroModes.carbsLabel')}</span>{' '}
                   {t('macroModes.offseasonCarbs')}
+                </div>
+                <div className="text-neutral-700">
+                  <span className="text-neutral-600">{t('macroModes.proteinLabel')}</span>{' '}
+                  {t('macroModes.offseasonProtein')}
                 </div>
               </div>
             )}
@@ -390,12 +390,12 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
                   {t('macroModes.onseasonFat')}
                 </div>
                 <div className="text-neutral-700">
-                  <span className="text-neutral-600">{t('macroModes.proteinLabel')}</span>{' '}
-                  {t('macroModes.onseasonProtein')}
-                </div>
-                <div className="text-neutral-700">
                   <span className="text-neutral-600">{t('macroModes.carbsLabel')}</span>{' '}
                   {t('macroModes.onseasonCarbs')}
+                </div>
+                <div className="text-neutral-700">
+                  <span className="text-neutral-600">{t('macroModes.proteinLabel')}</span>{' '}
+                  {t('macroModes.onseasonProtein')}
                 </div>
               </div>
             )}
