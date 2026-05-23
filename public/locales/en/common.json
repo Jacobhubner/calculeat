@@ -109,5 +109,8 @@
   "onboarding": {
     "completeProfile": "Welcome! Please complete your profile to calculate your calorie needs.",
     "calculateTDEE": "Calculate or enter your TDEE to continue"
+  },
+  "preview": {
+    "mutationBlocked": "Not available in preview mode"
   }
 }

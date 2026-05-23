@@ -108,5 +108,8 @@
   "onboarding": {
     "completeProfile": "Välkommen! Vänligen slutför din profil för att beräkna dina kaloribehov.",
     "calculateTDEE": "Beräkna eller ange ditt TDEE för att fortsätta"
+  },
+  "preview": {
+    "mutationBlocked": "Inte tillgängligt i förhandsvisningsläge"
   }
 }

@@ -8,8 +8,8 @@ import { queryKeys } from '@/lib/react-query'
 import type { ProfileFormData, Profile } from '@/lib/types'
 import { toast } from 'sonner'
 import { useProfileStore } from '@/stores/profileStore'
-
-const PREVIEW_KEY = 'calculeat-preview-active'
+import { useAuth } from '@/contexts/AuthContext'
+import { useTranslation } from 'react-i18next'
 
 interface UpdateProfileParams {
   profileId: string
@@ -20,11 +20,16 @@ interface UpdateProfileParams {
 export function useUpdateProfile() {
   const queryClient = useQueryClient()
   const updateProfileInStore = useProfileStore(state => state.updateProfile)
+  const { isPreviewMode } = useAuth()
+  const { t } = useTranslation('common')
 
   return useMutation({
     mutationFn: async ({ profileId, data }: UpdateProfileParams) => {
       // Block all writes during preview mode — user_profiles belongs to the real account
-      if (localStorage.getItem(PREVIEW_KEY) === 'true') return null as unknown as Profile
+      if (isPreviewMode) {
+        toast.info(t('preview.mutationBlocked'))
+        return null as unknown as Profile
+      }
 
       // Strip undefined values — they should not overwrite existing DB values.
       // Callers must pass null explicitly if they intend to clear a field.

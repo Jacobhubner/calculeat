@@ -16,8 +16,8 @@ interface DashboardLayoutProps {
 
 export default function DashboardLayout({ children, fullHeight }: DashboardLayoutProps) {
   const { sidebarCollapsed } = useUIStore()
-  const { isEmailVerified, user } = useAuth()
-  const { isPreviewActive, exitPreview } = usePreviewMode()
+  const { isEmailVerified, user, isPreviewMode } = useAuth()
+  const { exitPreview } = usePreviewMode()
 
   const handleResend = async () => {
     if (!user?.email) return
@@ -34,7 +34,7 @@ export default function DashboardLayout({ children, fullHeight }: DashboardLayou
       className={cn('flex flex-col overflow-x-hidden', fullHeight ? 'h-screen' : 'min-h-screen')}
     >
       <SiteHeader />
-      {isPreviewActive && (
+      {isPreviewMode && (
         <div className="bg-amber-50 border-b border-amber-300 px-4 py-2 text-sm text-amber-800 flex items-center justify-between gap-4">
           <span className="font-medium">🔍 Förhandsvisning — ny användare</span>
           <button
@@ -46,7 +46,7 @@ export default function DashboardLayout({ children, fullHeight }: DashboardLayou
           </button>
         </div>
       )}
-      {!isEmailVerified && user && !isPreviewActive && (
+      {!isEmailVerified && user && !isPreviewMode && (
         <div className="bg-amber-50 border-b border-amber-200 px-4 py-2 text-sm text-amber-800 flex items-center justify-between gap-4">
           <span>Verifiera din e-postadress för att säkra ditt konto.</span>
           <button

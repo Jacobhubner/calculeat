@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
+import { usePreviewMutation } from '@/hooks/usePreviewMutation'
 import { type FoodColor, type FoodType } from '@/lib/calculations/colorDensity'
 
 export type FoodSource = 'manual' | 'livsmedelsverket' | 'user' | 'shared'
@@ -141,7 +142,7 @@ export interface CreateFoodItemInput {
  * Get all food items for the current user (global + user-specific with shadowing)
  */
 export function useFoodItems() {
-  const { user } = useAuth()
+  const { user, isPreviewMode } = useAuth()
 
   return useQuery({
     queryKey: ['foodItems', user?.id],
@@ -165,6 +166,9 @@ export function useFoodItems() {
         if (data.length < PAGE) break
         from += PAGE
       }
+
+      // Preview mode: skip personal items — show only global (SLV/Calculeat)
+      if (isPreviewMode) return globalItems
 
       const userResult = await supabase
         .from('food_items')
@@ -248,7 +252,7 @@ export function useCreateFoodItem() {
   const { user } = useAuth()
   const queryClient = useQueryClient()
 
-  return useMutation({
+  return usePreviewMutation({
     mutationFn: async (input: CreateFoodItemInput) => {
       if (!user) throw new Error('User not authenticated')
 
@@ -323,7 +327,7 @@ export function useUpdateFoodItem() {
   const { user } = useAuth()
   const queryClient = useQueryClient()
 
-  return useMutation({
+  return usePreviewMutation({
     mutationFn: async ({ id, ...input }: Partial<CreateFoodItemInput> & { id: string }) => {
       if (!user) throw new Error('User not authenticated')
 
@@ -410,7 +414,7 @@ export function useDeleteFoodItem() {
   const { user } = useAuth()
   const queryClient = useQueryClient()
 
-  return useMutation({
+  return usePreviewMutation({
     mutationFn: async (id: string) => {
       if (!user) throw new Error('User not authenticated')
 

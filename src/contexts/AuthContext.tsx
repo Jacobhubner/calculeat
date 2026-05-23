@@ -16,6 +16,7 @@ interface AuthContextType {
   loading: boolean
   isProfileComplete: boolean
   isEmailVerified: boolean
+  isPreviewMode: boolean // true when preview_backup_profile_id IS NOT NULL in DB
   signUp: (email: string, password: string, fullName: string) => Promise<void>
   signIn: (email: string, password: string) => Promise<void>
   signOut: () => Promise<void>
@@ -46,6 +47,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const clearMeasurementSets = useMeasurementSetStore(state => state.clearMeasurementSets)
 
   const isEmailVerified = !!user?.email_confirmed_at
+
+  // True when preview_backup_profile_id is set in DB — always synced via refreshProfile
+  const isPreviewMode = !!userProfile?.preview_backup_profile_id
 
   // Check if user has completed essential profile fields
   const isProfileComplete =
@@ -283,6 +287,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         loading,
         isProfileComplete,
         isEmailVerified,
+        isPreviewMode,
         signUp,
         signIn,
         signOut,

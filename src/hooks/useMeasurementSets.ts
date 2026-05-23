@@ -8,14 +8,18 @@ import { queryKeys } from '@/lib/react-query'
 import type { MeasurementSet } from '@/lib/types'
 import { useMeasurementSetStore } from '@/stores/measurementSetStore'
 import { useEffect, useState } from 'react'
+import { useAuth } from '@/contexts/AuthContext'
 
 export function useMeasurementSets() {
   const setMeasurementSets = useMeasurementSetStore(state => state.setMeasurementSets)
   const [isSynced, setIsSynced] = useState(false)
+  const { isPreviewMode } = useAuth()
 
   const query = useQuery({
     queryKey: queryKeys.measurementSets,
     queryFn: async () => {
+      if (isPreviewMode) return [] as MeasurementSet[]
+
       const {
         data: { user },
       } = await supabase.auth.getUser()
@@ -47,9 +51,9 @@ export function useMeasurementSets() {
     if (query.data && query.isSuccess) {
       setMeasurementSets(query.data)
       // Mark as synced AFTER store is updated
+
       setIsSynced(true)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query.data, query.isSuccess, setMeasurementSets])
 
   // Reset isSynced when query starts loading again

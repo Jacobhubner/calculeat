@@ -6,7 +6,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { useProfileStore } from '@/stores/profileStore'
 import { queryClient } from '@/lib/react-query'
 
-const PREVIEW_KEY = 'calculeat-preview-active'
+export const PREVIEW_KEY = 'calculeat-preview-active'
 const ONBOARDING_KEY = 'calculeat_onboarding_completed'
 
 function setPreviewFlag(value: boolean) {
@@ -19,19 +19,22 @@ function setPreviewFlag(value: boolean) {
 }
 
 export function usePreviewMode() {
-  const { user, refreshProfile } = useAuth()
+  const { user, refreshProfile, isPreviewMode } = useAuth()
   const clearProfiles = useProfileStore(state => state.clearProfiles)
   const navigate = useNavigate()
 
-  const [isPreviewActive, setIsPreviewActive] = useState(
-    () => localStorage.getItem(PREVIEW_KEY) === 'true'
-  )
+  // localStorage as secondary signal for fast initial render (avoids flash).
+  // AuthContext.isPreviewMode is the authoritative source — always DB-synced.
+  const [localFlag, setLocalFlag] = useState(() => localStorage.getItem(PREVIEW_KEY) === 'true')
 
   useEffect(() => {
-    const sync = () => setIsPreviewActive(localStorage.getItem(PREVIEW_KEY) === 'true')
+    const sync = () => setLocalFlag(localStorage.getItem(PREVIEW_KEY) === 'true')
     window.addEventListener('preview-mode-change', sync)
     return () => window.removeEventListener('preview-mode-change', sync)
   }, [])
+
+  // Use AuthContext as primary source; fall back to localFlag before first refresh
+  const isPreviewActive = isPreviewMode || localFlag
 
   const enterPreview = useMutation({
     mutationFn: async () => {

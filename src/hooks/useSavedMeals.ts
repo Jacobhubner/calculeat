@@ -1,6 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
+import { usePreviewAwareQuery } from '@/hooks/usePreviewAwareQuery'
+import { usePreviewMutation } from '@/hooks/usePreviewMutation'
 
 export interface SavedMealFoodItem {
   id: string
@@ -49,7 +51,7 @@ export interface CreateSavedMealInput {
 export function useSavedMeals() {
   const { user } = useAuth()
 
-  return useQuery({
+  return usePreviewAwareQuery({
     queryKey: ['savedMeals', user?.id],
     queryFn: async () => {
       if (!user) throw new Error('User not authenticated')
@@ -72,6 +74,7 @@ export function useSavedMeals() {
       return data as SavedMeal[]
     },
     enabled: !!user,
+    emptyValue: [] as SavedMeal[],
   })
 }
 
@@ -148,7 +151,7 @@ export function useCreateSavedMeal() {
   const { user } = useAuth()
   const queryClient = useQueryClient()
 
-  return useMutation({
+  return usePreviewMutation({
     mutationFn: async (input: CreateSavedMealInput) => {
       if (!user) throw new Error('User not authenticated')
 
@@ -195,7 +198,7 @@ export function useUpdateSavedMeal() {
   const { user } = useAuth()
   const queryClient = useQueryClient()
 
-  return useMutation({
+  return usePreviewMutation({
     mutationFn: async ({ id, ...input }: Partial<CreateSavedMealInput> & { id: string }) => {
       if (!user) throw new Error('User not authenticated')
 
@@ -249,7 +252,7 @@ export function useDeleteSavedMeal() {
   const { user } = useAuth()
   const queryClient = useQueryClient()
 
-  return useMutation({
+  return usePreviewMutation({
     mutationFn: async (id: string) => {
       if (!user) throw new Error('User not authenticated')
 

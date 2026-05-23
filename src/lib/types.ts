@@ -179,6 +179,8 @@ export interface UserProfile {
   created_at?: string
   updated_at?: string
   display_order?: number // User-controlled sort order
+  active_profile_id?: string
+  preview_backup_profile_id?: string | null
 }
 
 export interface UserProfileFormData {

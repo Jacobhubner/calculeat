@@ -1,6 +1,8 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
+import { usePreviewAwareQuery } from '@/hooks/usePreviewAwareQuery'
+import { usePreviewMutation } from '@/hooks/usePreviewMutation'
 import type { FoodColor } from '@/lib/calculations/colorDensity'
 import type { FoodItem } from '@/hooks/useFoodItems'
 import { deleteRecipeImageByUrl } from '@/hooks/useRecipeImageUpload'
@@ -102,7 +104,7 @@ export interface CreateRecipeInput {
 export function useRecipes() {
   const { user } = useAuth()
 
-  return useQuery({
+  return usePreviewAwareQuery({
     queryKey: ['recipes', user?.id],
     queryFn: async () => {
       if (!user) throw new Error('User not authenticated')
@@ -127,6 +129,7 @@ export function useRecipes() {
       return data as Recipe[]
     },
     enabled: !!user,
+    emptyValue: [] as Recipe[],
   })
 }
 
@@ -207,7 +210,7 @@ export function useCreateRecipe() {
   const { user } = useAuth()
   const queryClient = useQueryClient()
 
-  return useMutation({
+  return usePreviewMutation({
     mutationFn: async (input: CreateRecipeInput) => {
       if (!user) throw new Error('User not authenticated')
 
@@ -386,7 +389,7 @@ export function useUpdateRecipe() {
   const { user } = useAuth()
   const queryClient = useQueryClient()
 
-  return useMutation({
+  return usePreviewMutation({
     mutationFn: async ({ id, ...input }: Partial<CreateRecipeInput> & { id: string }) => {
       if (!user) throw new Error('User not authenticated')
 
@@ -589,7 +592,7 @@ export function useDeleteRecipe() {
   const { user } = useAuth()
   const queryClient = useQueryClient()
 
-  return useMutation({
+  return usePreviewMutation({
     mutationFn: async (id: string) => {
       if (!user) throw new Error('User not authenticated')
 
