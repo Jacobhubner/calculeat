@@ -201,6 +201,25 @@
       "invalidDuration": "Duration must be greater than 0",
       "calcError": "Could not calculate calories. Check your values.",
       "activityAdded": "{{activity}} added"
+    },
+    "weight": {
+      "title": "Weight",
+      "useLogged": "Use logged weight",
+      "useLoggedDetail": "{{weight}} kg from your profile",
+      "useManual": "Enter another value",
+      "useManualDetail": "Calculate with a different body weight",
+      "manualPlaceholder": "kg",
+      "noWeight": "Enter your weight to calculate calories"
+    },
+    "intensityTable": {
+      "title": "Intensity levels",
+      "metColumn": "MET",
+      "levelColumn": "Level",
+      "sedentary": "Sedentary",
+      "light": "Light",
+      "moderate": "Moderate",
+      "high": "High",
+      "veryHigh": "Very high"
     }
   },
   "tdeeCalc": {

@@ -38,6 +38,15 @@ export default function METCalculatorTool() {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedActivities, setSelectedActivities] = useState<SelectedActivity[]>([])
 
+  // Weight state
+  const [useLoggedWeight, setUseLoggedWeight] = useState(true)
+  const [manualWeight, setManualWeight] = useState('')
+
+  const effectiveWeight =
+    useLoggedWeight && profileData?.weight_kg
+      ? profileData.weight_kg
+      : parseFloat(manualWeight) || 0
+
   // Filtrera aktiviteter
   const filteredActivities = useMemo(() => {
     return searchActivities(searchTerm, selectedCategory === 'All' ? undefined : selectedCategory)
@@ -67,8 +76,10 @@ export default function METCalculatorTool() {
     )
   }
 
+  const hasValidWeight = effectiveWeight > 0
+
   const handleAddActivity = (activity: METActivity, duration: number) => {
-    if (!profileData?.weight_kg) {
+    if (!hasValidWeight) {
       toast.error(t('metCalc.toast.missingWeight'))
       return
     }
@@ -79,7 +90,7 @@ export default function METCalculatorTool() {
       return
     }
 
-    const calories = calculateCaloriesBurned(activity.met, profileData.weight_kg, duration)
+    const calories = calculateCaloriesBurned(activity.met, effectiveWeight, duration)
 
     // Validate calculation result
     if (calories <= 0 || !isFinite(calories)) {
@@ -124,6 +135,8 @@ export default function METCalculatorTool() {
       <div className="grid gap-6 md:grid-cols-[2fr_1fr] min-w-0 overflow-hidden">
         {/* Vänster: Aktivitetssökning */}
         <div className="space-y-6 min-w-0 overflow-hidden">
+          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+          <IntensityTable t={t as (key: string, opts?: any) => string} />
           <Card>
             <CardHeader>
               <CardTitle>{t('metCalc.search.title')}</CardTitle>
@@ -190,7 +203,7 @@ export default function METCalculatorTool() {
                         key={activity.id}
                         activity={activity}
                         onAdd={handleAddActivity}
-                        disabled={!profileData?.weight_kg}
+                        disabled={!hasValidWeight}
                       />
                     ))}
                   </div>
@@ -207,23 +220,108 @@ export default function METCalculatorTool() {
             <CardHeader>
               <CardTitle className="text-lg">{t('metCalc.summary.title')}</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex justify-between">
-                <span className="text-neutral-600">{t('metCalc.summary.activities')}</span>
-                <span className="font-bold">{selectedActivities.length}</span>
+            <CardContent className="space-y-4">
+              {/* Viktväljare */}
+              <div className="space-y-2">
+                <p className="text-sm font-medium text-neutral-700">{t('metCalc.weight.title')}</p>
+                {profileData?.weight_kg ? (
+                  <div className="space-y-2">
+                    <label
+                      className="flex items-center gap-3 p-3 border-2 rounded-lg cursor-pointer hover:bg-primary-50 transition-colors"
+                      style={{
+                        borderColor: useLoggedWeight
+                          ? 'var(--color-primary-500, #22c55e)'
+                          : '#e5e7eb',
+                      }}
+                    >
+                      <input
+                        type="radio"
+                        checked={useLoggedWeight}
+                        onChange={() => setUseLoggedWeight(true)}
+                        className="h-4 w-4 text-primary-600 focus:ring-primary-500"
+                      />
+                      <div className="flex-1">
+                        <p className="font-medium text-neutral-900 text-sm">
+                          {t('metCalc.weight.useLogged')}
+                        </p>
+                        <p className="text-xs text-neutral-500">
+                          {t('metCalc.weight.useLoggedDetail', { weight: profileData.weight_kg })}
+                        </p>
+                      </div>
+                    </label>
+                    <label
+                      className="flex items-center gap-3 p-3 border-2 rounded-lg cursor-pointer hover:bg-primary-50 transition-colors"
+                      style={{
+                        borderColor: !useLoggedWeight
+                          ? 'var(--color-primary-500, #22c55e)'
+                          : '#e5e7eb',
+                      }}
+                    >
+                      <input
+                        type="radio"
+                        checked={!useLoggedWeight}
+                        onChange={() => setUseLoggedWeight(false)}
+                        className="h-4 w-4 text-primary-600 focus:ring-primary-500"
+                      />
+                      <div className="flex-1">
+                        <p className="font-medium text-neutral-900 text-sm">
+                          {t('metCalc.weight.useManual')}
+                        </p>
+                        <p className="text-xs text-neutral-500">
+                          {t('metCalc.weight.useManualDetail')}
+                        </p>
+                      </div>
+                    </label>
+                    {!useLoggedWeight && (
+                      <Input
+                        type="number"
+                        inputMode="decimal"
+                        min="20"
+                        max="400"
+                        step="0.1"
+                        value={manualWeight}
+                        onChange={e => setManualWeight(e.target.value)}
+                        placeholder={t('metCalc.weight.manualPlaceholder')}
+                        className="mt-1"
+                        autoFocus
+                      />
+                    )}
+                  </div>
+                ) : (
+                  <div className="space-y-1">
+                    <p className="text-xs text-neutral-500">{t('metCalc.weight.noWeight')}</p>
+                    <Input
+                      type="number"
+                      inputMode="decimal"
+                      min="20"
+                      max="400"
+                      step="0.1"
+                      value={manualWeight}
+                      onChange={e => setManualWeight(e.target.value)}
+                      placeholder={t('metCalc.weight.manualPlaceholder')}
+                    />
+                  </div>
+                )}
               </div>
-              <div className="flex justify-between">
-                <span className="text-neutral-600">{t('metCalc.summary.time')}</span>
-                <span className="font-bold">
-                  {totalDuration} {t('metCalc.summary.minuteUnit')}
-                </span>
-              </div>
-              <div className="pt-3 border-t">
-                <div className="flex justify-between items-baseline">
-                  <span className="text-neutral-600">{t('metCalc.summary.calories')}</span>
-                  <span className="text-3xl font-bold text-orange-600">
-                    {totalCalories.toFixed(0)}
+
+              <div className="border-t pt-3 space-y-3">
+                <div className="flex justify-between">
+                  <span className="text-neutral-600">{t('metCalc.summary.activities')}</span>
+                  <span className="font-bold">{selectedActivities.length}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-neutral-600">{t('metCalc.summary.time')}</span>
+                  <span className="font-bold">
+                    {totalDuration} {t('metCalc.summary.minuteUnit')}
                   </span>
+                </div>
+                <div className="pt-3 border-t">
+                  <div className="flex justify-between items-baseline">
+                    <span className="text-neutral-600">{t('metCalc.summary.calories')}</span>
+                    <span className="text-3xl font-bold text-orange-600">
+                      {totalCalories.toFixed(0)}
+                    </span>
+                  </div>
                 </div>
               </div>
             </CardContent>
@@ -283,6 +381,51 @@ export default function METCalculatorTool() {
         </div>
       </div>
     </div>
+  )
+}
+
+// Intensitetstabell — statisk referens för MET-skalan
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function IntensityTable({ t }: { t: (key: string, opts?: any) => string }) {
+  const rows = [
+    { met: 1.0, range: '< 1.6', key: 'sedentary' },
+    { met: 2.0, range: '1.6 – 2.9', key: 'light' },
+    { met: 4.0, range: '3.0 – 5.9', key: 'moderate' },
+    { met: 7.0, range: '6.0 – 8.9', key: 'high' },
+    { met: 10.0, range: '≥ 9.0', key: 'veryHigh' },
+  ] as const
+
+  return (
+    <Card>
+      <CardHeader className="pb-3">
+        <CardTitle className="text-base">{t('metCalc.intensityTable.title')}</CardTitle>
+      </CardHeader>
+      <CardContent className="pt-0">
+        <div className="w-full text-xs">
+          <div className="grid grid-cols-3 gap-2 pb-2 border-b border-neutral-200 text-neutral-500 font-medium">
+            <span>{t('metCalc.intensityTable.levelColumn')}</span>
+            <span>{t('metCalc.intensityTable.metColumn')}</span>
+            <span></span>
+          </div>
+          <div className="divide-y divide-neutral-100">
+            {rows.map(row => {
+              const intensity = getIntensityLevel(row.met)
+              return (
+                <div key={row.key} className="grid grid-cols-3 gap-2 items-center py-2">
+                  <span className="text-neutral-700 font-medium">
+                    {t(`metCalc.intensityTable.${row.key}`)}
+                  </span>
+                  <span className="text-neutral-500">{row.range}</span>
+                  <Badge variant="secondary" className={`text-xs w-fit ${intensity.color}`}>
+                    {intensity.label}
+                  </Badge>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   )
 }
 

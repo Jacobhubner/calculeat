@@ -201,6 +201,25 @@
       "invalidDuration": "Varaktighet måste vara större än 0",
       "calcError": "Det gick inte att beräkna kalorier. Kontrollera dina värden.",
       "activityAdded": "{{activity}} tillagd"
+    },
+    "weight": {
+      "title": "Vikt",
+      "useLogged": "Använd loggad vikt",
+      "useLoggedDetail": "{{weight}} kg från din profil",
+      "useManual": "Ange annat värde",
+      "useManualDetail": "Räkna på en annan kroppsvikt",
+      "manualPlaceholder": "kg",
+      "noWeight": "Ange din vikt för att beräkna kalorier"
+    },
+    "intensityTable": {
+      "title": "Intensitetsnivåer",
+      "metColumn": "MET",
+      "levelColumn": "Nivå",
+      "sedentary": "Sittande",
+      "light": "Lätt",
+      "moderate": "Måttlig",
+      "high": "Hög",
+      "veryHigh": "Mycket hög"
     }
   },
   "tdeeCalc": {
