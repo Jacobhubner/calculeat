@@ -52,7 +52,7 @@ export default function SignUpForm() {
       setUsernameStatus('idle')
       return
     }
-    if (!/^[a-zA-Z0-9_åäöÅÄÖ]+$/.test(trimmed) || trimmed.length > 50) {
+    if (!/^[a-zA-Z0-9_åäöÅÄÖ]+$/.test(trimmed) || trimmed.length > 30) {
       setUsernameStatus('invalid')
       return
     }

@@ -93,7 +93,7 @@ export const signUpSchema = z
     profile_name: z
       .string()
       .min(2, 'Användarnamnet måste vara minst 2 tecken')
-      .max(50, 'Användarnamnet får max vara 50 tecken')
+      .max(30, 'Användarnamnet får max vara 30 tecken')
       .regex(/^[a-zA-Z0-9_åäöÅÄÖ]+$/, 'Användarnamnet får bara innehålla bokstäver, siffror och _'),
   })
   .refine(data => data.password === data.confirmPassword, {

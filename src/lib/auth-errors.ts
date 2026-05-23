@@ -79,6 +79,11 @@ export function translateAuthError(error: unknown): string {
     return 'Ogiltigt användarnamnsformat. Använd bokstäver, siffror och _'
   }
 
+  // Reserved username (from update_username RPC)
+  if (message.includes('reserved_username')) {
+    return 'Det användarnamnet är reserverat'
+  }
+
   // Reauthentication required (password change after long session)
   if (message.includes('reauthentication') || message.includes('requires recent login')) {
     return 'Av säkerhetsskäl: logga ut och in igen för att byta lösenord.'

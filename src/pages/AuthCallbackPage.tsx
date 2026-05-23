@@ -20,43 +20,37 @@ export default function AuthCallbackPage() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    const handleEmailConfirmation = async () => {
-      try {
-        // Supabase automatically handles the token from URL hash
-        // Check if user is now authenticated
-        const {
-          data: { session },
-          error,
-        } = await supabase.auth.getSession()
+    let handled = false
 
-        if (error) {
-          console.error('Session error:', error)
-          setState('error')
-          setErrorMessage(error.message)
-          return
-        }
-
-        if (session) {
-          // User is authenticated, email confirmed successfully
-          setState('success')
-
-          // Redirect to dashboard after 2 seconds
-          setTimeout(() => {
-            navigate('/app')
-          }, 2000)
-        } else {
-          // No session found, might be an expired or invalid link
-          setState('error')
-          setErrorMessage(t('authCallback.errorFallback'))
-        }
-      } catch (err) {
-        console.error('Unexpected error:', err)
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (handled) return
+      // SIGNED_IN = email-bekräftelse; INITIAL_SESSION = befintlig session (t.ex. sidarefresh)
+      if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session) {
+        handled = true
+        setState('success')
+        setTimeout(() => navigate('/app'), 2000)
+      } else if (event === 'INITIAL_SESSION' && !session) {
+        handled = true
         setState('error')
         setErrorMessage(t('authCallback.errorFallback'))
       }
-    }
+    })
 
-    handleEmailConfirmation()
+    // Fallback om INITIAL_SESSION inte triggar inom 5s (t.ex. nätverksfel)
+    const timeout = setTimeout(() => {
+      if (!handled) {
+        handled = true
+        setState('error')
+        setErrorMessage(t('authCallback.errorFallback'))
+      }
+    }, 5000)
+
+    return () => {
+      subscription.unsubscribe()
+      clearTimeout(timeout)
+    }
   }, [navigate, t])
 
   if (!ready) return null
