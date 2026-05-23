@@ -145,7 +145,7 @@ export function useFoodItems() {
   const { user, isPreviewMode } = useAuth()
 
   return useQuery({
-    queryKey: ['foodItems', user?.id],
+    queryKey: ['foodItems', user?.id, isPreviewMode],
     queryFn: async () => {
       if (!user) throw new Error('User not authenticated')
 

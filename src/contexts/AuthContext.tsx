@@ -52,12 +52,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const isPreviewMode = !!userProfile?.preview_backup_profile_id
 
   // Check if user has completed essential profile fields
+  // Use truthy check (not !== undefined) — null fields mean incomplete even if row exists
   const isProfileComplete =
     profile !== null &&
-    profile.height_cm !== undefined &&
-    profile.weight_kg !== undefined &&
-    profile.gender !== undefined &&
-    profile.birth_date !== undefined
+    !!profile.height_cm &&
+    !!profile.weight_kg &&
+    !!profile.gender &&
+    !!profile.birth_date
 
   const refreshProfile = async (forUserId?: string) => {
     const uid = forUserId ?? user?.id
