@@ -30,9 +30,7 @@ export default function DashboardLayout({ children, fullHeight }: DashboardLayou
   }
 
   return (
-    <div
-      className={cn('flex flex-col overflow-x-hidden', fullHeight ? 'h-screen' : 'min-h-screen')}
-    >
+    <div className={cn('flex flex-col', fullHeight ? 'h-screen' : 'min-h-screen')}>
       <div className="sticky top-0 z-50">
         <SiteHeader />
         {isPreviewMode && (
@@ -59,7 +57,7 @@ export default function DashboardLayout({ children, fullHeight }: DashboardLayou
           </div>
         )}
       </div>
-      <div className="flex flex-1 min-h-0 overflow-x-clip">
+      <div className="flex flex-1 min-h-0">
         <DashboardNav />
         <main
           className={cn(
