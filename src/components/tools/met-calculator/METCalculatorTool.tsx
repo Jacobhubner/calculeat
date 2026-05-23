@@ -397,32 +397,22 @@ function IntensityTable({ t }: { t: (key: string, opts?: any) => string }) {
 
   return (
     <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="text-base">{t('metCalc.intensityTable.title')}</CardTitle>
-      </CardHeader>
-      <CardContent className="pt-0">
-        <div className="w-full text-xs">
-          <div className="grid grid-cols-3 gap-2 pb-2 border-b border-neutral-200 text-neutral-500 font-medium">
-            <span>{t('metCalc.intensityTable.levelColumn')}</span>
-            <span>{t('metCalc.intensityTable.metColumn')}</span>
-            <span></span>
-          </div>
-          <div className="divide-y divide-neutral-100">
-            {rows.map(row => {
-              const intensity = getIntensityLevel(row.met)
-              return (
-                <div key={row.key} className="grid grid-cols-3 gap-2 items-center py-2">
-                  <span className="text-neutral-700 font-medium">
-                    {t(`metCalc.intensityTable.${row.key}`)}
-                  </span>
-                  <span className="text-neutral-500">{row.range}</span>
-                  <Badge variant="secondary" className={`text-xs w-fit ${intensity.color}`}>
-                    {intensity.label}
-                  </Badge>
-                </div>
-              )
-            })}
-          </div>
+      <CardContent className="pt-4 pb-3">
+        <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-2">
+          {t('metCalc.intensityTable.title')}
+        </p>
+        <div className="flex flex-wrap gap-x-4 gap-y-1">
+          {rows.map(row => {
+            const intensity = getIntensityLevel(row.met)
+            return (
+              <div key={row.key} className="flex items-center gap-1.5 text-xs text-neutral-500">
+                <Badge variant="secondary" className={`text-xs px-1.5 py-0 ${intensity.color}`}>
+                  {intensity.label}
+                </Badge>
+                <span>{row.range}</span>
+              </div>
+            )
+          })}
         </div>
       </CardContent>
     </Card>
