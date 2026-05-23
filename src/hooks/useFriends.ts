@@ -1,6 +1,8 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
+import { usePreviewAwareQuery } from '@/hooks/usePreviewAwareQuery'
+import { usePreviewMutation } from '@/hooks/usePreviewMutation'
 import type { Friend, FriendRequest, SentFriendRequest } from '@/lib/types/friends'
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -10,8 +12,9 @@ import type { Friend, FriendRequest, SentFriendRequest } from '@/lib/types/frien
 export function useFriends() {
   const { user } = useAuth()
 
-  return useQuery({
+  return usePreviewAwareQuery({
     queryKey: ['friends', 'list', user?.id],
+    emptyValue: [] as Friend[],
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_friends')
       if (error) throw error
@@ -30,8 +33,9 @@ export function useFriends() {
 export function usePendingFriendRequests() {
   const { user } = useAuth()
 
-  return useQuery({
+  return usePreviewAwareQuery({
     queryKey: ['friends', 'requests', user?.id],
+    emptyValue: [] as FriendRequest[],
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_pending_friend_requests')
       if (error) throw error
@@ -49,8 +53,9 @@ export function usePendingFriendRequests() {
 export function useSentFriendRequests() {
   const { user } = useAuth()
 
-  return useQuery({
+  return usePreviewAwareQuery({
     queryKey: ['friends', 'sent', user?.id],
+    emptyValue: [] as SentFriendRequest[],
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_sent_friend_requests')
       if (error) throw error
@@ -68,8 +73,9 @@ export function useSentFriendRequests() {
 export function usePendingFriendRequestsCount() {
   const { user } = useAuth()
 
-  return useQuery({
+  return usePreviewAwareQuery({
     queryKey: ['friends', 'count', user?.id],
+    emptyValue: 0,
     queryFn: async () => {
       if (!user) return 0
       const { data, error } = await supabase.rpc('get_pending_friend_requests_count')
@@ -89,7 +95,7 @@ export function usePendingFriendRequestsCount() {
 export function useSendFriendRequest() {
   const queryClient = useQueryClient()
 
-  return useMutation({
+  return usePreviewMutation({
     mutationFn: async (recipientEmail: string) => {
       const { data, error } = await supabase.rpc('send_friend_request', {
         p_recipient_email: recipientEmail,
@@ -106,7 +112,7 @@ export function useSendFriendRequest() {
 export function useCancelFriendRequest() {
   const queryClient = useQueryClient()
 
-  return useMutation({
+  return usePreviewMutation({
     mutationFn: async (friendshipId: string) => {
       const { data, error } = await supabase.rpc('cancel_friend_request', {
         p_friendship_id: friendshipId,
@@ -123,7 +129,7 @@ export function useCancelFriendRequest() {
 export function useAcceptFriendRequest() {
   const queryClient = useQueryClient()
 
-  return useMutation({
+  return usePreviewMutation({
     mutationFn: async (friendshipId: string) => {
       const { data, error } = await supabase.rpc('accept_friend_request', {
         p_friendship_id: friendshipId,
@@ -140,7 +146,7 @@ export function useAcceptFriendRequest() {
 export function useRejectFriendRequest() {
   const queryClient = useQueryClient()
 
-  return useMutation({
+  return usePreviewMutation({
     mutationFn: async (friendshipId: string) => {
       const { data, error } = await supabase.rpc('reject_friend_request', {
         p_friendship_id: friendshipId,
@@ -158,7 +164,7 @@ export function useRejectFriendRequest() {
 export function useRemoveFriend() {
   const queryClient = useQueryClient()
 
-  return useMutation({
+  return usePreviewMutation({
     mutationFn: async (friendshipId: string) => {
       const { data, error } = await supabase.rpc('remove_friend', {
         p_friendship_id: friendshipId,
@@ -175,7 +181,7 @@ export function useRemoveFriend() {
 export function useSetFriendAlias() {
   const queryClient = useQueryClient()
 
-  return useMutation({
+  return usePreviewMutation({
     mutationFn: async ({ friendshipId, alias }: { friendshipId: string; alias: string }) => {
       const { data, error } = await supabase.rpc('set_friend_alias', {
         p_friendship_id: friendshipId,
@@ -191,7 +197,7 @@ export function useSetFriendAlias() {
 }
 
 export function useSendShareInvitationToFriend() {
-  return useMutation({
+  return usePreviewMutation({
     mutationFn: async ({
       itemId,
       itemType,

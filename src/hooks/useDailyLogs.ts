@@ -76,7 +76,7 @@ export interface DailyLog {
  * Get today's daily log for the active profile
  */
 export function useTodayLog() {
-  const { user } = useAuth()
+  const { user, isPreviewMode } = useAuth()
   const activeProfile = useProfileStore(state => state.activeProfile)
   const today = new Date().toISOString().split('T')[0]
   const completionMode = localStorage.getItem('day-completion-mode') || 'manual'
@@ -89,7 +89,7 @@ export function useTodayLog() {
 
       // In manual mode, return the latest uncompleted log (even if from a previous day)
       if (completionMode === 'manual') {
-        const { data: openLog } = await supabase
+        const query = supabase
           .from('daily_logs')
           .select(
             `
@@ -109,7 +109,11 @@ export function useTodayLog() {
           .order('meal_order', { foreignTable: 'meal_entries' })
           .order('item_order', { foreignTable: 'meal_entries.meal_entry_items' })
           .limit(1)
-          .maybeSingle()
+
+        // In preview: only show preview logs (is_preview = true), never real logs
+        const { data: openLog } = isPreviewMode
+          ? await query.eq('is_preview', true).maybeSingle()
+          : await query.eq('is_preview', false).maybeSingle()
 
         if (openLog) return openLog as DailyLog
       }
@@ -131,6 +135,7 @@ export function useTodayLog() {
         )
         .eq('user_id', user.id)
         .eq('log_date', today)
+        .eq('is_preview', isPreviewMode ? true : false)
         .order('meal_order', { foreignTable: 'meal_entries' })
         .order('item_order', { foreignTable: 'meal_entries.meal_entry_items' })
         .maybeSingle()

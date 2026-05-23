@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
+import { usePreviewAwareQuery } from '@/hooks/usePreviewAwareQuery'
 import type { FoodItem } from './useFoodItems'
 
 export interface RecentFoodItem extends FoodItem {
@@ -15,7 +15,8 @@ export interface RecentFoodItem extends FoodItem {
 export function useRecentFoodItems(limit = 10) {
   const { user } = useAuth()
 
-  return useQuery({
+  return usePreviewAwareQuery({
+    emptyValue: [] as RecentFoodItem[],
     queryKey: ['recentFoodItems', user?.id, limit],
     queryFn: async () => {
       if (!user) throw new Error('User not authenticated')
@@ -85,7 +86,8 @@ export function useRecentFoodItems(limit = 10) {
 export function useFrequentFoodItems(limit = 10) {
   const { user } = useAuth()
 
-  return useQuery({
+  return usePreviewAwareQuery({
+    emptyValue: [] as RecentFoodItem[],
     queryKey: ['frequentFoodItems', user?.id, limit],
     queryFn: async () => {
       if (!user) throw new Error('User not authenticated')

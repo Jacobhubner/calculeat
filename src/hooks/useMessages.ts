@@ -1,7 +1,9 @@
 import { useEffect, useRef } from 'react'
-import { useQuery, useMutation, useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
+import { usePreviewAwareQuery } from '@/hooks/usePreviewAwareQuery'
+import { usePreviewMutation } from '@/hooks/usePreviewMutation'
 import type { Message, Conversation } from '@/lib/types/messages'
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -22,8 +24,9 @@ export const messageKeys = {
 export function useConversations() {
   const { user } = useAuth()
 
-  return useQuery({
+  return usePreviewAwareQuery({
     queryKey: messageKeys.conversations(),
+    emptyValue: [] as Conversation[],
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_conversations')
       if (error) throw error
@@ -86,7 +89,7 @@ export function useMessages(friendshipId: string | null) {
 export function useSendMessage() {
   const queryClient = useQueryClient()
 
-  return useMutation({
+  return usePreviewMutation({
     mutationFn: async ({ friendshipId, content }: { friendshipId: string; content: string }) => {
       const { data, error } = await supabase.rpc('send_message', {
         p_friendship_id: friendshipId,
@@ -109,7 +112,7 @@ export function useSendMessage() {
 export function useEditMessage() {
   const queryClient = useQueryClient()
 
-  return useMutation({
+  return usePreviewMutation({
     mutationFn: async ({
       messageId,
       friendshipId: _friendshipId,
@@ -139,7 +142,7 @@ export function useEditMessage() {
 export function useDeleteMessage() {
   const queryClient = useQueryClient()
 
-  return useMutation({
+  return usePreviewMutation({
     mutationFn: async ({
       messageId,
       friendshipId: _friendshipId,
@@ -167,7 +170,7 @@ export function useDeleteMessage() {
 export function useDeleteConversation() {
   const queryClient = useQueryClient()
 
-  return useMutation({
+  return usePreviewMutation({
     mutationFn: async (friendshipId: string) => {
       const { data, error } = await supabase.rpc('delete_conversation', {
         p_friendship_id: friendshipId,
@@ -222,8 +225,9 @@ export function useUnreadMessageCount(): number {
   const { user } = useAuth()
   const queryClient = useQueryClient()
 
-  const { data = 0 } = useQuery({
+  const { data = 0 } = usePreviewAwareQuery({
     queryKey: messageKeys.unread(),
+    emptyValue: 0,
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_unread_message_count')
       if (error) throw error
