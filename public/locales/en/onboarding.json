@@ -6,6 +6,29 @@
     "value2": "Track your weight and energy balance over time",
     "value3": "Easy to log – in under 30 seconds"
   },
+  "tour": {
+    "title": "Explore the app",
+    "subtitle": "Here's what you can do in CalculEat.",
+    "skip": "Skip",
+    "next": "Next",
+    "done": "Done",
+    "oversikt": {
+      "title": "Overview",
+      "desc": "See your daily log, track your weight history and monitor your energy balance day by day."
+    },
+    "planering": {
+      "title": "Planning",
+      "desc": "Manage your food items, create recipes and save favourite meals for quick logging."
+    },
+    "minplan": {
+      "title": "My Plan",
+      "desc": "Calculate your calorie needs, set goals and analyse your body composition."
+    },
+    "social": {
+      "title": "Social",
+      "desc": "Add friends, share food items and follow each other's progress."
+    }
+  },
   "step2": {
     "title": "What's your goal?",
     "subtitle": "We'll tailor your plan to what you want to achieve.",
@@ -44,8 +67,10 @@
     "titleNamed": "You're all set, {{name}}!",
     "tdeeLabel": "Your estimated calorie needs",
     "tdeeSubtext": "We'll refine this when you choose your activity level",
-    "closing": "Ready to log your first meal?",
-    "kcalUnit": "kcal/day"
+    "closing": "Complete your profile to get your exact calorie needs and personal goals.",
+    "kcalUnit": "kcal/day",
+    "primaryCta": "Complete my profile",
+    "secondaryCta": "Explore the app"
   },
   "actions": {
     "skip": "Skip",

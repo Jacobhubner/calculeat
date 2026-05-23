@@ -6,6 +6,29 @@
     "value2": "Följ din vikt och energibalans över tid",
     "value3": "Enkelt att logga – på under 30 sekunder"
   },
+  "tour": {
+    "title": "Utforska appen",
+    "subtitle": "Här är vad du kan göra i CalculEat.",
+    "skip": "Hoppa över",
+    "next": "Nästa",
+    "done": "Klar",
+    "oversikt": {
+      "title": "Översikt",
+      "desc": "Se din dagliga logg, följ din vikthistorik och håll koll på din energibalans dag för dag."
+    },
+    "planering": {
+      "title": "Planering",
+      "desc": "Hantera dina livsmedel, skapa recept och spara favoritmåltider för snabb loggning."
+    },
+    "minplan": {
+      "title": "Min plan",
+      "desc": "Beräkna ditt kaloribehov, sätt upp mål och analysera din kroppssammansättning."
+    },
+    "social": {
+      "title": "Social",
+      "desc": "Lägg till vänner, dela livsmedel och följ varandras framsteg."
+    }
+  },
   "step2": {
     "title": "Vad är ditt mål?",
     "subtitle": "Vi anpassar din plan efter vad du vill uppnå.",
@@ -44,8 +67,10 @@
     "titleNamed": "Allt är klart, {{name}}!",
     "tdeeLabel": "Ditt uppskattade kaloribehov",
     "tdeeSubtext": "Vi finjusterar det när du väljer din aktivitetsnivå",
-    "closing": "Redo att logga din första måltid?",
-    "kcalUnit": "kcal/dag"
+    "closing": "Komplettera din profil för att få ditt exakta kaloribehov och personliga mål.",
+    "kcalUnit": "kcal/dag",
+    "primaryCta": "Komplettera min profil",
+    "secondaryCta": "Utforska appen"
   },
   "actions": {
     "skip": "Hoppa över",
