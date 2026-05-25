@@ -90,30 +90,29 @@ export function calculateNutritionForUnit(
     const totalMl = amount * VOLUME_TO_ML[unitLower]
     weightGrams = totalMl / food.ml_per_gram
   } else if (unitLower === 'st' || unitLower === food.serving_unit?.toLowerCase()) {
-    // Piece/serving unit — use grams_per_piece if available, else treat as default unit
+    // Piece/serving unit — use grams_per_piece if available
     if (food.grams_per_piece) {
       weightGrams = amount * food.grams_per_piece
     } else {
-      const baseWeight = food.weight_grams || food.default_amount || 100
-      weightGrams = (amount / food.default_amount) * baseWeight
+      // No piece weight known — scale amount relative to default_amount
+      const refAmount = food.reference_amount > 0 ? food.reference_amount : 100
+      weightGrams = (amount / food.default_amount) * refAmount
     }
   } else {
-    // Unknown unit - assume it's the default unit
-    const baseWeight = food.weight_grams || 100
-    weightGrams = (amount / food.default_amount) * baseWeight
+    // Unknown unit — scale amount relative to default_amount using reference_amount as base
+    const refAmount = food.reference_amount > 0 ? food.reference_amount : 100
+    weightGrams = (amount / food.default_amount) * refAmount
   }
 
   // Calculate nutrition based on weight ratio.
-  // Calories are always stored per reference base (100g, 100ml, or portion).
-  // Portion-format recipe foods: weight_grams = portion size, but calories are per 100g — use 100.
-  // ml-based foods: use gram equivalent of reference_amount to avoid density errors.
-  // All other foods: weight_grams is the reference gram amount (typically 100).
+  // food.calories/protein_g/etc. are always stored per reference_amount (default 100g).
+  // Special case: ml-based foods — convert reference_amount (ml) to grams first.
   const baseWeight =
-    food.default_unit === 'portion'
-      ? 100
-      : food.reference_unit === 'ml' && food.ml_per_gram && food.reference_amount
-        ? food.reference_amount / food.ml_per_gram
-        : food.weight_grams || 100
+    food.reference_unit === 'ml' && food.ml_per_gram && food.reference_amount
+      ? food.reference_amount / food.ml_per_gram
+      : food.reference_amount > 0
+        ? food.reference_amount
+        : 100
   const multiplier = weightGrams / baseWeight
 
   return {
