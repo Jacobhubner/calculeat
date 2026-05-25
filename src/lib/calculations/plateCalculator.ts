@@ -157,14 +157,13 @@ export function calculatePlateForMacro(
     if (isVolumeUnit(food.default_unit)) {
       const volumeToGramsConversion = getVolumeToGrams(food.default_unit, food.ml_per_gram)
       gramsPerUnit = food.default_amount * volumeToGramsConversion
+    } else if (food.default_unit === 'g') {
+      gramsPerUnit = 1
+    } else if (food.default_unit === 'kg') {
+      gramsPerUnit = 1000
     } else {
-      // Safe division - use weight_grams if valid, then default_amount, then 100
-      gramsPerUnit =
-        food.weight_grams && food.weight_grams > 0
-          ? food.weight_grams
-          : food.default_amount && food.default_amount > 0
-            ? food.default_amount
-            : 100
+      // For other units (st, pkt, portion without grams_per_piece), fall back to default_amount
+      gramsPerUnit = food.default_amount > 0 ? food.default_amount : 100
     }
     unitsNeeded = weightGrams / gramsPerUnit
   }

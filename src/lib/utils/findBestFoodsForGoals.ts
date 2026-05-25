@@ -91,39 +91,33 @@ export function findBestFoodsForGoals(
     // Skip foods with zero calories
     if (food.calories <= 0) continue
 
-    // For piece/portion units with a known piece weight, work directly in pieces
-    const isPieceUnit =
-      food.default_unit === 'portion' || food.default_unit === 'st' || food.default_unit === 'pkt'
+    // Prioritize grams_per_piece regardless of default_unit (consistent with plateCalculator)
     const gramsPerPiece =
       food.grams_per_piece && food.grams_per_piece > 0 ? food.grams_per_piece : null
 
     let amount: number
-    let amountForCalories: number
 
-    if (isPieceUnit && gramsPerPiece) {
-      // calories on food_item = kalorier per 1 piece/portion
-      // amountForCalories = how many pieces give desiredCalories
-      amountForCalories = desiredCalories / food.calories
-      amount = amountForCalories
+    // food.calories/protein_g/etc. are always per reference_amount (default 100g)
+    const referenceAmount = food.reference_amount > 0 ? food.reference_amount : 100
+
+    // weightGrams = actual grams needed to reach desiredCalories
+    const kcalPerGram = food.calories / referenceAmount
+    const weightGrams = desiredCalories / kcalPerGram
+
+    // multiplier: how many reference_amounts fit in weightGrams (for macro scaling)
+    const multiplier = weightGrams / referenceAmount
+
+    if (gramsPerPiece) {
+      amount = weightGrams / gramsPerPiece
     } else {
-      // Get base weight (what the nutrition info is based on)
-      const baseWeight = food.weight_grams && food.weight_grams > 0 ? food.weight_grams : 100
-
-      // Calculate amount needed to reach desired calories (in terms of base portions)
-      amountForCalories = desiredCalories / food.calories
-
-      // Calculate weight in grams needed
-      const weightGrams = amountForCalories * baseWeight
-
-      // Convert weight to appropriate unit
       amount = convertWeightToUnit(weightGrams, food.default_unit, food.ml_per_gram)
     }
 
-    // Calculate what macros we'd get at that amount
-    const macroAtAmount = getMacroValue(food, desiredMacroType) * amountForCalories
+    // Macros we'd get at this weight (scaled by multiplier of reference portions)
+    const macroAtAmount = getMacroValue(food, desiredMacroType) * multiplier
 
     // Check if calories are within tolerance
-    const caloriesDiff = Math.abs(food.calories * amountForCalories - desiredCalories)
+    const caloriesDiff = Math.abs(weightGrams * kcalPerGram - desiredCalories)
     const caloriePercent = (caloriesDiff / desiredCalories) * 100
     if (caloriePercent > tolerance) continue
 
@@ -134,7 +128,7 @@ export function findBestFoodsForGoals(
     // Calculate secondary macro accuracy if applicable
     let secondaryMacroAccuracy: number | undefined
     if (useSecondaryMacro && secondaryMacroType && secondaryMacroAmount) {
-      const secondaryMacroAtAmount = getMacroValue(food, secondaryMacroType) * amountForCalories
+      const secondaryMacroAtAmount = getMacroValue(food, secondaryMacroType) * multiplier
       const secondaryMacroDiff = Math.abs(secondaryMacroAtAmount - secondaryMacroAmount)
       secondaryMacroAccuracy = Math.max(0, 100 - (secondaryMacroDiff / secondaryMacroAmount) * 100)
     }
@@ -154,11 +148,11 @@ export function findBestFoodsForGoals(
     matches.push({
       food,
       amount,
-      unit: food.default_unit,
-      calories: food.calories * amountForCalories,
-      protein: food.protein_g * amountForCalories,
-      carbs: food.carb_g * amountForCalories,
-      fat: food.fat_g * amountForCalories,
+      unit: gramsPerPiece ? food.serving_unit || 'st' : food.default_unit,
+      calories: food.calories * multiplier,
+      protein: food.protein_g * multiplier,
+      carbs: food.carb_g * multiplier,
+      fat: food.fat_g * multiplier,
       macroAccuracy,
       secondaryMacroAccuracy,
       calorieAccuracy,
@@ -261,28 +255,31 @@ export function findHighProteinFoods(
   const matches: FoodGoalMatch[] = []
 
   for (const food of sorted.slice(0, numberOfResults * 2)) {
-    const amountForCalories = targetCalories / food.calories
-    const isPieceUnit =
-      food.default_unit === 'portion' || food.default_unit === 'st' || food.default_unit === 'pkt'
+    const referenceAmount = food.reference_amount > 0 ? food.reference_amount : 100
+    const kcalPerGram = food.calories / referenceAmount
+    const weightGrams = targetCalories / kcalPerGram
+    const multiplier = weightGrams / referenceAmount
     const gramsPerPiece =
       food.grams_per_piece && food.grams_per_piece > 0 ? food.grams_per_piece : null
+
     let amount: number
-    if (isPieceUnit && gramsPerPiece) {
-      amount = amountForCalories
+    let unit: string
+    if (gramsPerPiece) {
+      amount = weightGrams / gramsPerPiece
+      unit = food.serving_unit || 'st'
     } else {
-      const baseWeight = food.weight_grams && food.weight_grams > 0 ? food.weight_grams : 100
-      const weightGrams = amountForCalories * baseWeight
       amount = convertWeightToUnit(weightGrams, food.default_unit, food.ml_per_gram)
+      unit = food.default_unit
     }
 
     matches.push({
       food,
       amount,
-      unit: food.default_unit,
-      calories: food.calories * amountForCalories,
-      protein: food.protein_g * amountForCalories,
-      carbs: food.carb_g * amountForCalories,
-      fat: food.fat_g * amountForCalories,
+      unit,
+      calories: food.calories * multiplier,
+      protein: food.protein_g * multiplier,
+      carbs: food.carb_g * multiplier,
+      fat: food.fat_g * multiplier,
       macroAccuracy: 100, // N/A for this function
       calorieAccuracy: 100,
       overallScore: (food.protein_g / food.calories) * 100,
