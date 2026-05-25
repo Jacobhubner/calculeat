@@ -141,8 +141,11 @@ export default function DashboardPage() {
           <div className="space-y-8">
             {/* Calorie Ring + Macro status */}
             <div className="grid gap-6 lg:grid-cols-2">
-              <div className="flex items-center justify-center">
-                <ZonedCalorieRing consumed={consumed} min={ringMin} max={targetMax} size="md" />
+              <div className="flex flex-col items-center justify-center gap-1">
+                <p className="text-xs font-medium text-neutral-400 uppercase tracking-widest">
+                  {t('ring.todaySummary')}
+                </p>
+                <ZonedCalorieRing consumed={consumed} min={ringMin} max={targetMax} size="sm" />
               </div>
               {dailySummary &&
                 (() => {

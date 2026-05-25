@@ -13,6 +13,7 @@ import {
   UtensilsCrossed,
   Target,
   Users,
+  Scale,
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
@@ -209,18 +210,35 @@ function Step1({ t }: { t: T }) {
           text={t('step1.value2')}
         />
         <ValueRow icon={<Check className="h-5 w-5 text-primary-600" />} text={t('step1.value3')} />
+        <ValueRow
+          icon={<Scale className="h-5 w-5 text-neutral-400" />}
+          text={t('step1.value4')}
+          muted
+        />
       </div>
     </div>
   )
 }
 
-function ValueRow({ icon, text }: { icon: React.ReactNode; text: string }) {
+function ValueRow({ icon, text, muted }: { icon: React.ReactNode; text: string; muted?: boolean }) {
   return (
     <div className="flex items-center gap-3">
-      <div className="h-9 w-9 rounded-xl bg-primary-50 flex items-center justify-center shrink-0">
+      <div
+        className={cn(
+          'h-9 w-9 rounded-xl flex items-center justify-center shrink-0',
+          muted ? 'bg-neutral-100' : 'bg-primary-50'
+        )}
+      >
         {icon}
       </div>
-      <span className="text-neutral-700 text-sm font-medium">{text}</span>
+      <span
+        className={cn(
+          'text-sm',
+          muted ? 'text-neutral-400 font-normal' : 'text-neutral-700 font-medium'
+        )}
+      >
+        {text}
+      </span>
     </div>
   )
 }

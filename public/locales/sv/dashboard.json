@@ -43,7 +43,8 @@
   "ring": {
     "goal": "Mål",
     "remaining": "Kvar",
-    "over": "Över"
+    "over": "Över",
+    "todaySummary": "Översikt idag"
   },
   "statCards": {
     "calorieGoal": "Kalorimål",

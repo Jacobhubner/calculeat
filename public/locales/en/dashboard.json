@@ -43,7 +43,8 @@
   "ring": {
     "goal": "Goal",
     "remaining": "Left",
-    "over": "Over"
+    "over": "Over",
+    "todaySummary": "Today's overview"
   },
   "statCards": {
     "calorieGoal": "Calorie goal",
