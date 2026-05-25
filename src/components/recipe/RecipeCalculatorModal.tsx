@@ -287,7 +287,8 @@ export function RecipeCalculatorModal({
     if (!foodsList) return
 
     // Map existing ingredients (filter out orphans where food has been deleted)
-    const mappedIngredients = (recipe.ingredients || [])
+    const mappedIngredients = [...(recipe.ingredients || [])]
+      .sort((a, b) => (a.ingredient_order ?? 0) - (b.ingredient_order ?? 0))
       .map(
         (ing: {
           id: string
