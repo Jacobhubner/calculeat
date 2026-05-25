@@ -31,7 +31,7 @@ interface FDCFood {
   brandedFoodCategory?: string
   foodNutrients?: Array<{
     nutrientNumber?: number | string
-    amount?: number
+    value?: number // search API uses 'value', not 'amount'
   }>
 }
 
@@ -140,12 +140,18 @@ function fdcFoodType(category: string): {
 }
 
 async function lookupFDC(barcode: string): Promise<BarcodeResult | null> {
+  // FDC stores GTINs with leading zeros (always 14 digits for GTIN-14).
+  // Search works best when the query matches the stored format, so we try
+  // the original barcode and a zero-padded-to-14 variant as the query.
+  const paddedBarcode = barcode.padStart(14, '0')
+  const queryString = paddedBarcode !== barcode ? paddedBarcode : barcode
+
   let fdcResponse: Response
   try {
     fdcResponse = await fetch(`${FDC_API_BASE}?api_key=${FDC_API_KEY}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query: barcode, dataType: ['Branded'], pageSize: 10 }),
+      body: JSON.stringify({ query: queryString, dataType: ['Branded'], pageSize: 10 }),
       signal: AbortSignal.timeout(8000),
     })
   } catch {
@@ -164,7 +170,7 @@ async function lookupFDC(barcode: string): Promise<BarcodeResult | null> {
   const foods = fdcData.foods ?? []
   if (foods.length === 0) return null
 
-  // Match by normalized GTIN/UPC — FDC may have leading-zero variants
+  // Match by normalized GTIN/UPC — strip leading zeros for comparison
   const normalizedBarcode = normalizeBarcode(barcode)
   const match = foods.find(f => f.gtinUpc && normalizeBarcode(f.gtinUpc) === normalizedBarcode)
   if (!match) return null
@@ -176,13 +182,13 @@ async function lookupFDC(barcode: string): Promise<BarcodeResult | null> {
   for (const fn of match.foodNutrients ?? []) {
     const id =
       typeof fn.nutrientNumber === 'string' ? parseInt(fn.nutrientNumber, 10) : fn.nutrientNumber
-    if (id == null || fn.amount == null) continue
+    if (id == null || fn.value == null) continue
     if (id === 307) {
-      sodiumMg = fn.amount
+      sodiumMg = fn.value
       continue
     }
     const field = FDC_NUTRIENT_MAP[id]
-    if (field) nutrients[field] = fn.amount
+    if (field) nutrients[field] = fn.value
   }
 
   const calories = typeof nutrients['calories'] === 'number' ? nutrients['calories'] : null
