@@ -71,6 +71,7 @@ export function AddFoodToMealModal({
     { key: 'mina', label: t('tabs.mine') },
     { key: 'calculeat', label: t('tabs.calculeat') },
     { key: 'slv', label: t('tabs.slv') },
+    { key: 'usda', label: t('tabs.usda') },
     { key: 'alla', label: t('tabs.all') },
   ]
 
@@ -112,10 +113,11 @@ export function AddFoodToMealModal({
 
   const allTabs = useMemo<{ key: FoodTab; label: string }[]>(
     () => [
-      STATIC_TABS[3], // Alla
-      STATIC_TABS[0], // Mina
-      STATIC_TABS[1], // CalculEat
-      STATIC_TABS[2], // Livsmedelsverket
+      STATIC_TABS.find(t => t.key === 'alla')!,
+      STATIC_TABS.find(t => t.key === 'mina')!,
+      STATIC_TABS.find(t => t.key === 'calculeat')!,
+      STATIC_TABS.find(t => t.key === 'slv')!,
+      STATIC_TABS.find(t => t.key === 'usda')!,
       ...sharedLists.map(list => ({
         key: `list:${list.id}` as FoodTab,
         label: list.name,
@@ -279,7 +281,8 @@ export function AddFoodToMealModal({
       defaultUnit = 'ml'
       defaultAmount = 100
     } else {
-      defaultUnit = 'g'
+      // Respect the food's own default_unit (e.g. 'ml' for liquid foods)
+      defaultUnit = food.default_unit && food.default_unit !== 'portion' ? food.default_unit : 'g'
       defaultAmount = 100
     }
 
@@ -585,14 +588,14 @@ export function AddFoodToMealModal({
                                       sharedLists.find(l => l.id === food.shared_list_id)?.name ??
                                         ''
                                     ).className
-                                  : SOURCE_BADGES[food.source].className
+                                  : (SOURCE_BADGES[food.source] ?? SOURCE_BADGES.user).className
                               }`}
                             >
                               {food.shared_list_id
                                 ? getListItemBadgeConfig(
                                     sharedLists.find(l => l.id === food.shared_list_id)?.name ?? ''
                                   ).label
-                                : SOURCE_BADGES[food.source].label}
+                                : (SOURCE_BADGES[food.source] ?? SOURCE_BADGES.user).label}
                             </Badge>
                           </div>
                           <p className="text-xs text-neutral-500">

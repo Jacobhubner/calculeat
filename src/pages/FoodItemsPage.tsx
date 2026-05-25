@@ -32,6 +32,8 @@ import {
   type FoodItem,
   type FoodTab,
 } from '@/hooks/useFoodItems'
+import { useFoodSource } from '@/hooks/useFoodSource'
+import { DATA_SOURCES } from '@/lib/constants/dataSources'
 import { useIsAdmin } from '@/hooks/useIsAdmin'
 import { SOURCE_BADGES, getListItemBadgeConfig } from '@/lib/constants/sourceBadges'
 import { useRecipes, type Recipe } from '@/hooks/useRecipes'
@@ -197,16 +199,30 @@ function getDefaultDisplayMode(item: FoodItem): DisplayMode {
 const PAGE_SIZE = 50
 
 export default function FoodItemsPage() {
-  const { t } = useTranslation('food')
+  const { t, i18n } = useTranslation('food')
   const queryClient = useQueryClient()
+  const { resolved: resolvedSource } = useFoodSource()
 
-  // Static tabs depend on t() so defined inside component
-  const STATIC_TABS: { key: FoodTab; label: string }[] = [
-    { key: 'alla', label: t('tabs.all') },
-    { key: 'mina', label: t('tabs.mine') },
-    { key: 'calculeat', label: t('tabs.calculeat') },
-    { key: 'slv', label: t('tabs.slv') },
-  ]
+  // Primary datasource tab driven by resolvedSource from DataSourceConfig
+  const primaryDataSourceTab = useMemo<FoodTab>(() => {
+    const ds = DATA_SOURCES.find(s => s.id === resolvedSource || s.tabKey === resolvedSource)
+    return (ds?.tabKey ?? 'slv') as FoodTab
+  }, [resolvedSource])
+
+  // Static tabs: Alla | Mina | CalculEat | SLV | USDA — always show all datasources
+  const STATIC_TABS = useMemo<{ key: FoodTab; label: string }[]>(
+    () => [
+      { key: 'alla', label: t('tabs.all') },
+      { key: 'mina', label: t('tabs.mine') },
+      { key: 'calculeat', label: t('tabs.calculeat') },
+      ...DATA_SOURCES.map(ds => ({
+        key: ds.tabKey,
+        label: ds.tabKey === 'usda' ? t('tabs.usda') : t('tabs.slv'),
+      })),
+    ],
+    [t]
+  )
+
   const { data: isAdmin = false } = useIsAdmin()
   const { data: recipes = [] } = useRecipes()
   const deleteFood = useDeleteFoodItem()
@@ -217,19 +233,16 @@ export default function FoodItemsPage() {
   const { mutateAsync: copyToSharedList } = useCopyToSharedList()
   const { mutateAsync: copyToCalculeat } = useCopyFoodItemToCalculeat()
 
-  // Build full tab list: Mina | CalculEat | Livsmedelsverket | [delade listor] | Alla
+  // Build full tab list: Alla | Mina | CalculEat | [primary datasource] | [delade listor]
   const allTabs = useMemo<{ key: FoodTab; label: string }[]>(
     () => [
-      STATIC_TABS[0], // Alla
-      STATIC_TABS[1], // Mina
-      STATIC_TABS[2], // CalculEat
-      STATIC_TABS[3], // Livsmedelsverket
+      ...STATIC_TABS,
       ...sharedLists.map(list => ({
         key: `list:${list.id}` as FoodTab,
         label: list.name,
       })),
     ],
-    [sharedLists]
+    [STATIC_TABS, sharedLists]
   )
 
   // Tab & pagination state
@@ -311,6 +324,8 @@ export default function FoodItemsPage() {
     searchQuery: debouncedSearch || undefined,
     colorFilter: colorFilter || undefined,
     isRecipeFilter: isRecipeFilter || undefined,
+    resolvedSource,
+    locale: i18n.language,
   })
 
   const activeListName = useMemo(() => {
@@ -718,20 +733,57 @@ export default function FoodItemsPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-0 border-b border-neutral-200 overflow-x-auto">
-        {allTabs.map(tab => (
-          <button
-            key={tab.key}
-            onClick={() => handleTabChange(tab.key)}
-            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
-              activeTab === tab.key
-                ? 'border-primary-500 text-primary-600'
-                : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
+      <div className="flex mb-0 border-b border-neutral-200 overflow-x-auto">
+        {/* Primary tabs: Alla, Mina, CalculEat, primary datasource, shared lists */}
+        <div className="flex gap-1">
+          {allTabs
+            .filter(tab => {
+              const isDataSourceTab = DATA_SOURCES.some(ds => ds.tabKey === tab.key)
+              return !isDataSourceTab || tab.key === primaryDataSourceTab
+            })
+            .map(tab => (
+              <button
+                key={tab.key}
+                onClick={() => handleTabChange(tab.key)}
+                className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
+                  activeTab === tab.key
+                    ? 'border-primary-500 text-primary-600'
+                    : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+        </div>
+        {/* Secondary datasource tabs: always visible but dimmed, separated */}
+        {allTabs.some(
+          tab => DATA_SOURCES.some(ds => ds.tabKey === tab.key) && tab.key !== primaryDataSourceTab
+        ) && (
+          <>
+            <div className="w-px bg-neutral-200 mx-3 my-1.5" />
+            <div className="flex gap-1">
+              {allTabs
+                .filter(
+                  tab =>
+                    DATA_SOURCES.some(ds => ds.tabKey === tab.key) &&
+                    tab.key !== primaryDataSourceTab
+                )
+                .map(tab => (
+                  <button
+                    key={tab.key}
+                    onClick={() => handleTabChange(tab.key)}
+                    className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
+                      activeTab === tab.key
+                        ? 'border-primary-500 text-primary-600 opacity-100'
+                        : 'border-transparent text-neutral-400 hover:text-neutral-600 hover:border-neutral-200 opacity-50 hover:opacity-75'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+            </div>
+          </>
+        )}
         {/* "+" knapp för att skapa ny delad lista */}
         <button
           onClick={() => setCreateListOpen(true)}
@@ -911,7 +963,7 @@ export default function FoodItemsPage() {
                           const badge =
                             activeListName && item.shared_list_id
                               ? getListItemBadgeConfig(activeListName)
-                              : SOURCE_BADGES[item.source]
+                              : (SOURCE_BADGES[item.source] ?? SOURCE_BADGES.user)
                           return (
                             <Badge
                               variant="outline"

@@ -1,8 +1,9 @@
 {
   "tabs": {
-    "mine": "Mine",
+    "mine": "My foods",
     "calculeat": "CalculEat",
     "slv": "Livsmedelsverket",
+    "usda": "USDA",
     "all": "All"
   },
   "source": {

@@ -59,7 +59,7 @@ export function PlateCalculator({ onAddToMeal }: PlateCalculatorProps) {
 
       if (calculation.unitName === 'g' && ml && preferVolume) {
         onAddToMeal(selectedFood, ml, 'ml')
-      } else if (calculation.unitName === 'g' && ml && !preferVolume) {
+      } else if (calculation.unitName === 'g') {
         onAddToMeal(selectedFood, calculation.weightGrams, 'g')
       } else {
         onAddToMeal(selectedFood, calculation.unitsNeeded, calculation.unitName)

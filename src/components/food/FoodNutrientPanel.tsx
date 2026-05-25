@@ -25,7 +25,7 @@ interface FoodNutrientPanelProps {
 }
 
 export function FoodNutrientPanel({ foodItem, open, onOpenChange }: FoodNutrientPanelProps) {
-  const { t } = useTranslation('food')
+  const { t, i18n } = useTranslation('food')
   const { data: nutrients, isLoading: nutrientsLoading } = useFoodNutrients(
     open ? (foodItem?.id ?? null) : null
   )
@@ -87,7 +87,7 @@ export function FoodNutrientPanel({ foodItem, open, onOpenChange }: FoodNutrient
   }, [grouped])
 
   const isLoading = nutrientsLoading || defsLoading
-  const sourceBadge = foodItem ? SOURCE_BADGES[foodItem.source] : null
+  const sourceBadge = foodItem ? (SOURCE_BADGES[foodItem.source] ?? SOURCE_BADGES.user) : null
   const tAny = t as (key: string) => string
   const colorLabel = foodItem?.energy_density_color
     ? tAny(`color.${foodItem.energy_density_color.toLowerCase()}`)
@@ -185,7 +185,10 @@ export function FoodNutrientPanel({ foodItem, open, onOpenChange }: FoodNutrient
                                   className={`text-sm ${isSub ? 'text-neutral-400' : 'text-neutral-700'}`}
                                 >
                                   {isSub ? `${t('panel.varav')} ` : ''}
-                                  {item.definition.display_name_sv}
+                                  {i18n.language.startsWith('sv')
+                                    ? item.definition.display_name_sv
+                                    : (item.definition.display_name_en ??
+                                      item.definition.display_name_sv)}
                                 </span>
                                 <span
                                   className={`text-sm tabular-nums ml-4 ${isSub ? 'text-neutral-400' : 'font-semibold text-neutral-900'}`}

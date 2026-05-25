@@ -4,9 +4,9 @@ import { useAuth } from '@/contexts/AuthContext'
 import { usePreviewMutation } from '@/hooks/usePreviewMutation'
 import { type FoodColor, type FoodType } from '@/lib/calculations/colorDensity'
 
-export type FoodSource = 'manual' | 'livsmedelsverket' | 'user' | 'shared'
+export type FoodSource = 'manual' | 'livsmedelsverket' | 'usda' | 'user' | 'shared'
 // 'list:{uuid}' används för gemensamma listor, t.ex. 'list:a1b2c3d4-...'
-export type FoodTab = 'mina' | 'calculeat' | 'slv' | 'alla' | `list:${string}`
+export type FoodTab = 'mina' | 'calculeat' | 'slv' | 'usda' | 'alla' | `list:${string}`
 
 export interface PaginatedResult {
   items: FoodItem[]
@@ -624,9 +624,20 @@ export function usePaginatedFoodItems(params: {
   searchQuery?: string
   colorFilter?: FoodColor | null
   isRecipeFilter?: boolean
+  resolvedSource?: string
+  locale?: string
 }) {
   const { user, isPreviewMode } = useAuth()
-  const { tab, page, pageSize = 50, searchQuery, colorFilter, isRecipeFilter } = params
+  const {
+    tab,
+    page,
+    pageSize = 50,
+    searchQuery,
+    colorFilter,
+    isRecipeFilter,
+    resolvedSource,
+    locale,
+  } = params
 
   // In preview: 'mina' and list tabs return empty; 'alla' passes a nil UUID so
   // the RPC finds no personal items — only global (SLV/CalculEat) items show.
@@ -640,6 +651,7 @@ export function usePaginatedFoodItems(params: {
       'foodItems',
       'paginated',
       tab,
+      resolvedSource,
       page,
       pageSize,
       searchQuery,
@@ -663,6 +675,7 @@ export function usePaginatedFoodItems(params: {
         p_is_recipe: isRecipeFilter || null,
         p_limit: pageSize,
         p_offset: page * pageSize,
+        p_locale: locale || null,
       })
 
       if (error) throw error
