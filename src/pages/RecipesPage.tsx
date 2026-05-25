@@ -16,7 +16,7 @@ export default function RecipesPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingRecipe, setEditingRecipe] = useState<Recipe | null>(null)
-  const [previewRecipe, setPreviewRecipe] = useState<Recipe | null>(null)
+  const [previewRecipeId, setPreviewRecipeId] = useState<string | null>(null)
 
   const { data: recipes, isLoading, isError } = useRecipes()
   const deleteRecipe = useDeleteRecipe()
@@ -30,8 +30,10 @@ export default function RecipesPage() {
     setIsModalOpen(true)
   }
 
+  const previewRecipe = recipes?.find(r => r.id === previewRecipeId) ?? null
+
   const handlePreviewRecipe = (recipe: Recipe) => {
-    setPreviewRecipe(recipe)
+    setPreviewRecipeId(recipe.id)
   }
 
   const handleEditRecipe = (recipe: Recipe) => {
@@ -179,7 +181,7 @@ export default function RecipesPage() {
       <RecipePreviewModal
         recipe={previewRecipe}
         open={!!previewRecipe}
-        onOpenChange={open => !open && setPreviewRecipe(null)}
+        onOpenChange={open => !open && setPreviewRecipeId(null)}
       />
 
       {/* Recipe Calculator Modal */}
