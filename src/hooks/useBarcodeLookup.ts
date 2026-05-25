@@ -3,12 +3,19 @@ import type { ScanResult } from '@/lib/types'
 import { supabase } from '@/lib/supabase'
 
 type LookupError = {
-  type: 'off_not_found' | 'off_incomplete' | 'validation_failed' | 'rate_limited' | 'fetch_failed'
+  type:
+    | 'off_not_found'
+    | 'not_found'
+    | 'off_incomplete'
+    | 'validation_failed'
+    | 'rate_limited'
+    | 'fetch_failed'
   message: string
 }
 
 const ERROR_MESSAGES: Record<string, string> = {
   off_not_found: 'Produkten hittades inte',
+  not_found: 'Produkten hittades inte',
   off_incomplete: 'Produkten saknar näringsvärden',
   validation_failed: 'Orimliga näringsvärden — produkten avvisades',
   rate_limited: 'För många skanningar — försök igen om en stund',
@@ -137,15 +144,20 @@ async function fetchBarcode(barcode: string): Promise<ScanResult> {
         p_status: 'found',
         p_data: result.data,
         p_error: null,
+        p_source: (result.source as string) ?? 'openfoodfacts',
       })
       .then() // fire-and-forget
-  } else if (result.error && ['off_not_found', 'off_incomplete'].includes(result.error)) {
+  } else if (
+    result.error &&
+    ['off_not_found', 'off_incomplete', 'not_found'].includes(result.error)
+  ) {
     supabase
       .rpc('save_barcode_result', {
         p_barcode: barcode,
         p_status: 'not_found',
         p_data: null,
         p_error: result.error,
+        p_source: 'openfoodfacts',
       })
       .then() // fire-and-forget
   }
