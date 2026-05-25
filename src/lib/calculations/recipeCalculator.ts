@@ -285,7 +285,7 @@ export function getAvailableUnits(food: FoodItem): string[] {
 
   // Add volume units if ml_per_gram is defined
   if (food.ml_per_gram && food.ml_per_gram > 0) {
-    units.push('dl', 'msk', 'tsk')
+    units.push('ml', 'dl', 'msk', 'tsk')
   }
 
   // Add serving unit if grams_per_piece is defined and serving_unit is explicitly set
@@ -302,13 +302,19 @@ export function getAvailableUnits(food: FoodItem): string[] {
  * Get default unit for a food item in recipe context
  */
 export function getDefaultRecipeUnit(food: FoodItem): string {
-  // Prefer serving unit if explicitly set
+  // Prefer serving unit if explicitly set and piece weight is known
   if (food.grams_per_piece && food.grams_per_piece > 0 && food.serving_unit) {
     return food.serving_unit
   }
 
-  // Otherwise use default unit or gram
-  return food.default_unit || 'g'
+  // Use default_unit only if it's a unit that getAvailableUnits will include.
+  // 'portion' without grams_per_piece is not in the available units list — fall back to 'g'.
+  const unit = food.default_unit || 'g'
+  const isVolume = unit === 'ml' || unit === 'dl' || unit === 'msk' || unit === 'tsk'
+  if (isVolume && food.ml_per_gram && food.ml_per_gram > 0) return unit
+  if (unit === 'g' || unit === 'kg') return unit
+  // For 'portion', 'st', or any custom unit without grams_per_piece, fall back to 'g'
+  return 'g'
 }
 
 /**

@@ -21,6 +21,8 @@ export function convertWeightToUnit(
       return weightGrams
     case 'kg':
       return weightGrams / 1000
+    case 'ml':
+      return weightGrams * (mlPerGram || 1)
     case 'dl': {
       // 1 dl = 100ml
       const ml = weightGrams * (mlPerGram || 1)
@@ -54,6 +56,8 @@ export function getVolumeToGrams(unit: string, mlPerGram?: number): number {
   const gramsPerMl = mlPerGram ? 1 / mlPerGram : 1
 
   switch (unit) {
+    case 'ml':
+      return gramsPerMl // 1 ml
     case 'dl':
       return 100 * gramsPerMl // 1 dl = 100ml
     case 'msk':
@@ -72,5 +76,5 @@ export function getVolumeToGrams(unit: string, mlPerGram?: number): number {
  * @returns True if unit is volume-based
  */
 export function isVolumeUnit(unit: string): boolean {
-  return unit === 'dl' || unit === 'msk' || unit === 'tsk'
+  return unit === 'ml' || unit === 'dl' || unit === 'msk' || unit === 'tsk'
 }
