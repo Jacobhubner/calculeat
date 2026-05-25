@@ -50,16 +50,16 @@ export function calculatePlateAmount(
     unitName = food.serving_unit || 'st'
     gramsPerUnit = food.grams_per_piece
 
-    // Calculate kcal per piece based on food's nutrition per weight
-    const pieceBaseWeight = food.weight_grams && food.weight_grams > 0 ? food.weight_grams : 100
-    const kcalPerGram = food.calories / pieceBaseWeight
+    // food.calories is always per reference_amount (default 100g), not per piece
+    const referenceAmount = food.reference_amount > 0 ? food.reference_amount : 100
+    const kcalPerGram = food.calories / referenceAmount
     kcalPerUnit = kcalPerGram * gramsPerUnit
   } else {
     // Use default unit
     unitName = food.default_unit
 
-    // Calculate kcal per unit based on food's nutrition per weight
-    const baseWeight = food.weight_grams && food.weight_grams > 0 ? food.weight_grams : 100
+    // food.calories is always per reference_amount (default 100g)
+    const baseWeight = food.reference_amount > 0 ? food.reference_amount : 100
     const kcalPerGram = food.calories / baseWeight
 
     // For volume units, convert to grams properly
@@ -85,8 +85,8 @@ export function calculatePlateAmount(
   const weightGrams = unitsNeeded * gramsPerUnit
 
   // Calculate macros proportionally
-  const baseWeight = food.weight_grams && food.weight_grams > 0 ? food.weight_grams : 100
-  const multiplier = weightGrams / baseWeight
+  const refWeight = food.reference_amount > 0 ? food.reference_amount : 100
+  const multiplier = weightGrams / refWeight
 
   return {
     unitsNeeded: Math.round(unitsNeeded * 100) / 100,
@@ -114,8 +114,8 @@ export function calculatePlateForMacro(
 ): PlateCalculationResult | null {
   if (targetMacro <= 0) return null
 
-  // Get macro per base weight (with safe default)
-  const baseWeight = food.weight_grams && food.weight_grams > 0 ? food.weight_grams : 100
+  // food.calories, protein_g etc. are always per reference_amount (default 100g)
+  const baseWeight = food.reference_amount > 0 ? food.reference_amount : 100
   let macroPerBaseWeight: number
 
   switch (macroType) {

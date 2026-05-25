@@ -63,23 +63,45 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
     typeof primaryMacroTarget === 'number' &&
     primaryMacroTarget > 0
 
-  const { suggestions: rawSuggestions, isLoading } = useFoodSuggestions(
-    {
-      targetCalories: typeof targetCalories === 'number' ? targetCalories : 0,
+  const resolvedCalories = typeof targetCalories === 'number' ? targetCalories : 0
+  const resolvedPrimaryTarget = typeof primaryMacroTarget === 'number' ? primaryMacroTarget : 0
+  const resolvedSecondaryTarget = secondaryMacro
+    ? typeof secondaryMacroTarget === 'number'
+      ? secondaryMacroTarget
+      : 0
+    : undefined
+  const resolvedCount = typeof count === 'number' ? count : 10
+
+  const suggestionParams = useMemo(
+    () => ({
+      targetCalories: resolvedCalories,
       primaryMacro,
-      primaryMacroTarget: typeof primaryMacroTarget === 'number' ? primaryMacroTarget : 0,
+      primaryMacroTarget: resolvedPrimaryTarget,
       secondaryMacro: secondaryMacro || undefined,
-      secondaryMacroTarget: secondaryMacro
-        ? typeof secondaryMacroTarget === 'number'
-          ? secondaryMacroTarget
-          : 0
-        : undefined,
-      count: typeof count === 'number' ? count : 10,
+      secondaryMacroTarget: resolvedSecondaryTarget,
+      count: resolvedCount,
       recipesOnly,
       nonRecipesOnly,
       energyDensityColors: colorFilter,
       sourceFilter,
-    },
+    }),
+
+    [
+      resolvedCalories,
+      primaryMacro,
+      resolvedPrimaryTarget,
+      secondaryMacro,
+      resolvedSecondaryTarget,
+      resolvedCount,
+      recipesOnly,
+      nonRecipesOnly,
+      colorFilter,
+      sourceFilter,
+    ]
+  )
+
+  const { suggestions: rawSuggestions, isLoading } = useFoodSuggestions(
+    suggestionParams,
     isSearchValid
   )
 
@@ -263,6 +285,7 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
                     { key: 'alla', labelKey: 'settings.sourceAll' },
                     { key: 'mina', labelKey: 'settings.sourceMine' },
                     { key: 'slv', labelKey: 'settings.sourceSlv' },
+                    { key: 'usda', labelKey: 'settings.sourceUsda' },
                   ] as const
                 ).map(s => (
                   <button

@@ -8,7 +8,7 @@ import {
 import type { FoodColor } from '@/lib/calculations/colorDensity'
 import type { FoodSource } from './useFoodItems'
 
-export type SuggestionSourceFilter = 'alla' | 'mina' | 'slv'
+export type SuggestionSourceFilter = 'alla' | 'mina' | 'slv' | 'usda'
 
 export interface FoodSuggestionParams {
   targetCalories: number
@@ -60,8 +60,10 @@ export function useFoodSuggestions(
           return ['user', 'manual']
         case 'slv':
           return ['livsmedelsverket']
+        case 'usda':
+          return ['usda']
         default:
-          return ['user', 'manual', 'livsmedelsverket']
+          return ['user', 'manual', 'livsmedelsverket', 'usda']
       }
     })()
     const filteredFoods = foods.filter(f => sourcesToInclude.includes(f.source))
