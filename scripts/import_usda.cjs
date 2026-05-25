@@ -127,6 +127,44 @@ function normalizeName(raw) {
 }
 
 // ---------------------------------------------------------------------------
+// Food type classification from USDA foodCategory
+//
+// Maps USDA FDC foodCategory.description → { foodType, mlPerGram }
+//
+// foodType drives energy_density_color thresholds in the DB trigger:
+//   Solid:  Green < 1.0, Yellow 1.0–2.4, Orange > 2.4 kcal/g
+//   Liquid: Green < 0.4, Yellow 0.4–0.5, Orange > 0.5 kcal/g
+//   Soup:   Green < 0.5, Yellow 0.5–1.0, Orange > 1.0 kcal/g
+//
+// mlPerGram enables volume units (ml/dl/msk/tsk) in the unit selector.
+// reference_unit stays 'g' — nutrition values remain canonical per 100g.
+//
+// mlPerGram = 1.0 is a Phase 1 approximation for beverages/soups.
+// Real densities vary (juice ~1.04, syrup ~1.3, broth ~1.0) but 1.0
+// is close enough for volume-unit UX without per-item density data.
+// Oils use 0.92 (standard vegetable oil density).
+// ---------------------------------------------------------------------------
+const FOOD_TYPE_MAP = {
+  // Liquids — ml_per_gram ≈ 1.0 (water-density approximation)
+  'Beverages':                     { foodType: 'Liquid', mlPerGram: 1.0 },
+  'Fruit and Vegetable Juices':    { foodType: 'Liquid', mlPerGram: 1.0 },
+
+  // Soups & sauces — liquid-adjacent, own thresholds
+  'Soups, Sauces, and Gravies':    { foodType: 'Soup',   mlPerGram: 1.0 },
+
+  // Fats & oils — solid food_type but with known approximate density
+  'Fats and Oils':                 { foodType: 'Solid',  mlPerGram: 0.92 },
+}
+
+/**
+ * Resolve food_type and ml_per_gram from a USDA foodCategory string.
+ * Defaults to Solid with no ml_per_gram for unrecognized categories.
+ */
+function resolveFoodTypeFromUsdaCategory(category) {
+  return FOOD_TYPE_MAP[category] ?? { foodType: 'Solid', mlPerGram: null }
+}
+
+// ---------------------------------------------------------------------------
 // Extended nutrient mapping: USDA FDC nutrient ID → { code, unit }
 //
 // Macros (calories, protein, fat, carbohydrates) are canonical in food_items
@@ -218,9 +256,10 @@ function parseRecord(record, dataType) {
   const name = normalizeName(record.description)
   if (!name) return null
 
-  // Category pruning
+  // Category pruning + food type classification
   const category = (record.foodCategory?.description || record.foodCategory || '').trim()
   if (EXCLUDED_CATEGORIES.has(category)) return null
+  const { foodType, mlPerGram } = resolveFoodTypeFromUsdaCategory(category)
 
   const nutrients = record.foodNutrients || []
 
@@ -264,6 +303,8 @@ function parseRecord(record, dataType) {
       fat_g: fat != null ? Math.round(Math.max(0, fat) * 100) / 100 : 0,
       carb_g: carb != null ? Math.round(Math.max(0, carb) * 100) / 100 : 0,
       protein_g: protein != null ? Math.round(Math.max(0, protein) * 100) / 100 : 0,
+      food_type: foodType,
+      ml_per_gram: mlPerGram,
       default_amount: 100,
       default_unit: 'g',
       reference_amount: 100,
