@@ -65,6 +65,7 @@ export function calculatePlateAmount(
     // For volume units, convert to grams properly
     if (isVolumeUnit(food.default_unit)) {
       const volumeToGramsConversion = getVolumeToGrams(food.default_unit, food.ml_per_gram)
+      if (isNaN(volumeToGramsConversion)) return null
       gramsPerUnit = food.default_amount * volumeToGramsConversion
     } else {
       gramsPerUnit = food.default_amount
@@ -73,8 +74,8 @@ export function calculatePlateAmount(
     kcalPerUnit = kcalPerGram * gramsPerUnit
   }
 
-  // Validate against division by zero
-  if (gramsPerUnit <= 0 || kcalPerUnit <= 0) {
+  // Validate against division by zero or missing density
+  if (!gramsPerUnit || gramsPerUnit <= 0 || !kcalPerUnit || kcalPerUnit <= 0) {
     return null
   }
 
@@ -156,6 +157,7 @@ export function calculatePlateForMacro(
     let gramsPerUnit: number
     if (isVolumeUnit(food.default_unit)) {
       const volumeToGramsConversion = getVolumeToGrams(food.default_unit, food.ml_per_gram)
+      if (isNaN(volumeToGramsConversion)) return null
       gramsPerUnit = food.default_amount * volumeToGramsConversion
     } else if (food.default_unit === 'g') {
       gramsPerUnit = 1

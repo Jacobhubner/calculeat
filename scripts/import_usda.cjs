@@ -129,39 +129,30 @@ function normalizeName(raw) {
 // ---------------------------------------------------------------------------
 // Food type classification from USDA foodCategory
 //
-// Maps USDA FDC foodCategory.description → { foodType, mlPerGram }
+// Maps USDA FDC foodCategory.description → { foodType }
 //
 // foodType drives energy_density_color thresholds in the DB trigger:
 //   Solid:  Green < 1.0, Yellow 1.0–2.4, Orange > 2.4 kcal/g
 //   Liquid: Green < 0.4, Yellow 0.4–0.5, Orange > 0.5 kcal/g
 //   Soup:   Green < 0.5, Yellow 0.5–1.0, Orange > 1.0 kcal/g
 //
-// mlPerGram enables volume units (ml/dl/msk/tsk) in the unit selector.
-// reference_unit stays 'g' — nutrition values remain canonical per 100g.
-//
-// mlPerGram = 1.0 is a Phase 1 approximation for beverages/soups.
-// Real densities vary (juice ~1.04, syrup ~1.3, broth ~1.0) but 1.0
-// is close enough for volume-unit UX without per-item density data.
-// Oils use 0.92 (standard vegetable oil density).
+// ml_per_gram is intentionally NOT set for USDA items — USDA source data
+// only provides values per 100g and does not include density information.
+// Volume units (ml/dl) are therefore not available for USDA items.
 // ---------------------------------------------------------------------------
 const FOOD_TYPE_MAP = {
-  // Liquids — ml_per_gram ≈ 1.0 (water-density approximation)
-  'Beverages':                     { foodType: 'Liquid', mlPerGram: 1.0 },
-  'Fruit and Vegetable Juices':    { foodType: 'Liquid', mlPerGram: 1.0 },
-
-  // Soups & sauces — liquid-adjacent, own thresholds
-  'Soups, Sauces, and Gravies':    { foodType: 'Soup',   mlPerGram: 1.0 },
-
-  // Fats & oils — solid food_type but with known approximate density
-  'Fats and Oils':                 { foodType: 'Solid',  mlPerGram: 0.92 },
+  'Beverages':                     { foodType: 'Liquid' },
+  'Fruit and Vegetable Juices':    { foodType: 'Liquid' },
+  'Soups, Sauces, and Gravies':    { foodType: 'Soup'   },
+  'Fats and Oils':                 { foodType: 'Solid'  },
 }
 
 /**
- * Resolve food_type and ml_per_gram from a USDA foodCategory string.
- * Defaults to Solid with no ml_per_gram for unrecognized categories.
+ * Resolve food_type from a USDA foodCategory string.
+ * Defaults to Solid for unrecognized categories.
  */
 function resolveFoodTypeFromUsdaCategory(category) {
-  return FOOD_TYPE_MAP[category] ?? { foodType: 'Solid', mlPerGram: null }
+  return FOOD_TYPE_MAP[category] ?? { foodType: 'Solid' }
 }
 
 // ---------------------------------------------------------------------------
@@ -259,7 +250,7 @@ function parseRecord(record, dataType) {
   // Category pruning + food type classification
   const category = (record.foodCategory?.description || record.foodCategory || '').trim()
   if (EXCLUDED_CATEGORIES.has(category)) return null
-  const { foodType, mlPerGram } = resolveFoodTypeFromUsdaCategory(category)
+  const { foodType } = resolveFoodTypeFromUsdaCategory(category)
 
   const nutrients = record.foodNutrients || []
 
@@ -304,7 +295,7 @@ function parseRecord(record, dataType) {
       carb_g: carb != null ? Math.round(Math.max(0, carb) * 100) / 100 : 0,
       protein_g: protein != null ? Math.round(Math.max(0, protein) * 100) / 100 : 0,
       food_type: foodType,
-      ml_per_gram: mlPerGram,
+      ml_per_gram: null,
       default_amount: 100,
       default_unit: 'g',
       reference_amount: 100,

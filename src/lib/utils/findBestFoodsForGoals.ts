@@ -111,6 +111,7 @@ export function findBestFoodsForGoals(
       amount = weightGrams / gramsPerPiece
     } else {
       amount = convertWeightToUnit(weightGrams, food.default_unit, food.ml_per_gram)
+      if (isNaN(amount)) continue
     }
 
     // Macros we'd get at this weight (scaled by multiplier of reference portions)
@@ -269,6 +270,7 @@ export function findHighProteinFoods(
       unit = food.serving_unit || 'st'
     } else {
       amount = convertWeightToUnit(weightGrams, food.default_unit, food.ml_per_gram)
+      if (isNaN(amount)) continue
       unit = food.default_unit
     }
 
