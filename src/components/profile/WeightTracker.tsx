@@ -85,8 +85,14 @@ export default function WeightTracker({
 
   useEffect(() => {
     if (isOpen) {
-      const id = requestAnimationFrame(() => setChartsReady(true))
-      return () => cancelAnimationFrame(id)
+      let id2: number
+      const id = requestAnimationFrame(() => {
+        id2 = requestAnimationFrame(() => setChartsReady(true))
+      })
+      return () => {
+        cancelAnimationFrame(id)
+        cancelAnimationFrame(id2)
+      }
     } else {
       setChartsReady(false)
     }
@@ -94,8 +100,14 @@ export default function WeightTracker({
 
   useEffect(() => {
     if (showBodyFatMassChart) {
-      const id = requestAnimationFrame(() => setBfmChartReady(true))
-      return () => cancelAnimationFrame(id)
+      let id2: number
+      const id = requestAnimationFrame(() => {
+        id2 = requestAnimationFrame(() => setBfmChartReady(true))
+      })
+      return () => {
+        cancelAnimationFrame(id)
+        cancelAnimationFrame(id2)
+      }
     } else {
       setBfmChartReady(false)
     }
@@ -103,8 +115,14 @@ export default function WeightTracker({
 
   useEffect(() => {
     if (showSoftLeanMassChart) {
-      const id = requestAnimationFrame(() => setSlmChartReady(true))
-      return () => cancelAnimationFrame(id)
+      let id2: number
+      const id = requestAnimationFrame(() => {
+        id2 = requestAnimationFrame(() => setSlmChartReady(true))
+      })
+      return () => {
+        cancelAnimationFrame(id)
+        cancelAnimationFrame(id2)
+      }
     } else {
       setSlmChartReady(false)
     }
