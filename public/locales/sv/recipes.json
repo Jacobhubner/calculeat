@@ -143,12 +143,13 @@
     "filterSlv": "SLV"
   },
   "imageUpload": {
-    "uploadError": "Bilden kunde inte laddas upp. Kontrollera att den är under 5 MB.",
+    "uploadError": "Bilden kunde inte laddas upp.",
     "altImage": "Receptbild",
     "removeAlt": "Ta bort bild",
     "uploading": "Laddar upp...",
     "addImage": "Lägg till bild",
-    "dragHint": "Klicka eller dra och släpp"
+    "dragHint": "Klicka eller dra och släpp",
+    "deleteError": "Bilden kunde inte tas bort. Försök igen."
   },
   "savedMealCard": {
     "foodItem": "matvara",

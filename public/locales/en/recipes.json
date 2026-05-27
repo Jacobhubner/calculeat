@@ -143,12 +143,13 @@
     "filterSlv": "SLV"
   },
   "imageUpload": {
-    "uploadError": "The image could not be uploaded. Make sure it is under 5 MB.",
+    "uploadError": "The image could not be uploaded.",
     "altImage": "Recipe image",
     "removeAlt": "Remove image",
     "uploading": "Uploading...",
     "addImage": "Add image",
-    "dragHint": "Click or drag and drop"
+    "dragHint": "Click or drag and drop",
+    "deleteError": "The image could not be removed. Please try again."
   },
   "savedMealCard": {
     "foodItem": "food item",

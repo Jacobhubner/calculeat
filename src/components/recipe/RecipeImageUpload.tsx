@@ -16,17 +16,21 @@ export function RecipeImageUpload({ value, onChange }: RecipeImageUploadProps) {
   const { uploadImage, deleteImage, isUploading } = useRecipeImageUpload()
 
   async function handleFile(file: File) {
-    const url = await uploadImage(file)
-    if (url) {
-      onChange(url)
+    const result = await uploadImage(file)
+    if (result.url) {
+      onChange(result.url)
     } else {
-      toast.error(t('imageUpload.uploadError'))
+      toast.error(result.error)
     }
   }
 
   async function handleRemove() {
     if (value) {
-      await deleteImage(value)
+      const result = await deleteImage(value)
+      if (!result.ok) {
+        toast.error(result.error)
+        return // keep image in UI if storage delete failed
+      }
     }
     onChange(null)
   }
