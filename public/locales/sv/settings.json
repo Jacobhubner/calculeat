@@ -27,6 +27,15 @@
     "changeSuccess": "Lösenordet har bytts",
     "changeError": "Kunde inte byta lösenord"
   },
+  "preview": {
+    "title": "Testa som ny användare",
+    "description": "Skapar en tillfällig sandlådeprofil. All data (logg, vikt, kalibrering) raderas automatiskt när du avslutar. Ditt riktiga konto påverkas inte.",
+    "activate": "Aktivera ny-användarläge",
+    "activating": "Aktiverar…",
+    "activeInfo": "Du navigerar nu som ny användare. Bannern längst upp bekräftar läget.",
+    "exit": "Avsluta preview och radera testdata",
+    "exiting": "Avslutar…"
+  },
   "toast": {
     "saved": "Inställningar sparade",
     "saveError": "Kunde inte spara inställningar"

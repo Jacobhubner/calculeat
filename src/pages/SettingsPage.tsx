@@ -54,6 +54,7 @@ function getPasswordStrengthMeta(password: string): {
 
 export default function SettingsPage() {
   const { t } = useTranslation('profile')
+  const { t: tSettings } = useTranslation('settings')
   const navigate = useNavigate()
   const { user, deleteAccount, refreshProfile } = useAuth()
   const { profile, isReady } = useActiveProfile()
@@ -801,14 +802,11 @@ export default function SettingsPage() {
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <ShieldCheck className="h-5 w-5 text-amber-600" />
-                Testa som ny användare
+                {tSettings('preview.title')}
               </CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col gap-3">
-              <p className="text-sm text-neutral-600">
-                Skapar en tillfällig sandlådeprofil. All data (logg, vikt, kalibrering) raderas
-                automatiskt när du avslutar. Ditt riktiga konto påverkas inte.
-              </p>
+              <p className="text-sm text-neutral-600">{tSettings('preview.description')}</p>
               {!isPreviewActive ? (
                 <Button
                   variant="outline"
@@ -816,12 +814,14 @@ export default function SettingsPage() {
                   disabled={enterPreview.isPending}
                   className="self-start"
                 >
-                  {enterPreview.isPending ? 'Aktiverar…' : 'Aktivera ny-användarläge'}
+                  {enterPreview.isPending
+                    ? tSettings('preview.activating')
+                    : tSettings('preview.activate')}
                 </Button>
               ) : (
                 <>
                   <div className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2">
-                    Du navigerar nu som ny användare. Bannern längst upp bekräftar läget.
+                    {tSettings('preview.activeInfo')}
                   </div>
                   <Button
                     variant="destructive"
@@ -829,7 +829,9 @@ export default function SettingsPage() {
                     disabled={exitPreview.isPending}
                     className="self-start"
                   >
-                    {exitPreview.isPending ? 'Avslutar…' : 'Avsluta preview och radera testdata'}
+                    {exitPreview.isPending
+                      ? tSettings('preview.exiting')
+                      : tSettings('preview.exit')}
                   </Button>
                 </>
               )}

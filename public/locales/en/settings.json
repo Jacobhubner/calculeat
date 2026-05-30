@@ -27,6 +27,15 @@
     "changeSuccess": "Password changed",
     "changeError": "Could not change password"
   },
+  "preview": {
+    "title": "Test as new user",
+    "description": "Creates a temporary sandbox profile. All data (log, weight, calibration) is automatically deleted when you exit. Your real account is not affected.",
+    "activate": "Activate new-user mode",
+    "activating": "Activating…",
+    "activeInfo": "You are now navigating as a new user. The banner at the top confirms the mode.",
+    "exit": "Exit preview and delete test data",
+    "exiting": "Exiting…"
+  },
   "toast": {
     "saved": "Settings saved",
     "saveError": "Could not save settings"
