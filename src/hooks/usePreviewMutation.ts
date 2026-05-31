@@ -32,9 +32,9 @@ export function usePreviewMutation<TData, TError = Error, TVariables = void, TCo
           throw new PreviewBlockedError()
         }
       : options.mutationFn,
-    onError: (error, variables, context) => {
+    onError: (error, variables, onMutateResult, context) => {
       if (error instanceof PreviewBlockedError) return
-      options.onError?.(error, variables, context)
+      options.onError?.(error, variables, onMutateResult, context)
     },
   })
 }

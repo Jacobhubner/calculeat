@@ -131,7 +131,7 @@ async function fetchBarcode(barcode: string): Promise<ScanResult> {
     throw makeLookupError('fetch_failed')
   }
 
-  let result: { data?: Record<string, unknown>; error?: string }
+  let result: { data?: Record<string, unknown>; error?: string; source?: string }
   try {
     result = await response.json()
   } catch {
