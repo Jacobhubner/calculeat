@@ -19,7 +19,11 @@ import {
   type FoodItem,
 } from '@/hooks/useFoodItems'
 import { calculateFoodColor, calculateCalorieDensity } from '@/lib/calculations/colorDensity'
-import { useUpdateSharedListFoodItem, useCreateSharedListFoodItem } from '@/hooks/useSharedLists'
+import {
+  useUpdateSharedListFoodItem,
+  useCreateSharedListFoodItem,
+  useSharedLists,
+} from '@/hooks/useSharedLists'
 import { FEATURES } from '@/lib/config'
 import { useBarcodeLookup } from '@/hooks/useBarcodeLookup'
 import { useScanNutritionLabel } from '@/hooks/useScanNutritionLabel'
@@ -29,6 +33,7 @@ import { toast } from 'sonner'
 import { useFoodNutrients } from '@/hooks/useFoodNutrients'
 import { supabase } from '@/lib/supabase'
 import { useTranslation } from 'react-i18next'
+import { useAuth } from '@/contexts/AuthContext'
 
 // z.preprocess() causes Zod to infer output fields as `unknown` at the type level,
 // even though the runtime values are always the correct types. This explicit type
@@ -37,7 +42,7 @@ type FormData = {
   name: string
   default_amount: number
   default_unit: string
-  weight_grams: number
+  weight_grams?: number
   calories: number
   fat_g: number
   carb_g: number
@@ -97,6 +102,8 @@ export function AddFoodItemModal({
   const { t } = useTranslation('food')
   const tAny = t as (key: string) => string
   const queryClient = useQueryClient()
+  const { user } = useAuth()
+  const { data: sharedLists = [] } = useSharedLists()
   const [duplicateWarning, setDuplicateWarning] = useState<string | null>(null)
 
   // Volymkonvertering state
@@ -322,6 +329,8 @@ export function AddFoodItemModal({
     return volumeUnits.includes(unit)
   }, [servingUnit])
 
+  const isDefaultUnitMl = (defaultUnit ?? '').toLowerCase() === 'ml'
+
   // Kontrollera om formuläret har ändrats (för redigeringsläge)
   const hasChanges = useMemo(() => {
     // Om vi inte redigerar, tillåt alltid submit
@@ -405,20 +414,31 @@ export function AddFoodItemModal({
 
   useEffect(() => {
     if (searchResults && searchResults.length > 0 && !editItem) {
-      const duplicateNames = searchResults
-        .filter(item => item.name.toLowerCase() === (name ?? '').toLowerCase())
-        .map(item => item.name)
-        .join(', ')
+      // Only warn for items the user actually owns or is a member of via shared lists.
+      // SLV/USDA global items (user_id=null) are intentionally excluded.
+      const relevantDuplicates = searchResults.filter(
+        item =>
+          item.name.toLowerCase() === (name ?? '').toLowerCase() &&
+          (item.user_id === user?.id || item.shared_list_id != null)
+      )
 
-      if (duplicateNames) {
-        setDuplicateWarning(t('addFoodModal.duplicateWarning', { name: duplicateNames }))
+      if (relevantDuplicates.length > 0) {
+        const messages = relevantDuplicates.map(item => {
+          if (item.shared_list_id) {
+            const list = sharedLists.find(l => l.id === item.shared_list_id)
+            const listName = list?.name ?? t('addFoodModal.unknownList')
+            return t('addFoodModal.duplicateInList', { name: item.name, list: listName })
+          }
+          return t('addFoodModal.duplicateInMine', { name: item.name })
+        })
+        setDuplicateWarning(messages.join(' '))
       } else {
         setDuplicateWarning(null)
       }
     } else {
       setDuplicateWarning(null)
     }
-  }, [searchResults, name, editItem])
+  }, [searchResults, name, editItem, user?.id, sharedLists, t])
 
   // Live calculations
   const liveCalculations = useMemo(() => {
@@ -460,25 +480,37 @@ export function AddFoodItemModal({
     const gramsPerPieceValue = Number(gramsPerPiece) || 0
     const servingUnitValue = servingUnit || ''
     const weightGramsValue = Number(weightGrams) || 0
+    const isML = (defaultUnit ?? '').toLowerCase() === 'ml'
 
-    // Visa bara om alla nödvändiga fält är ifyllda
-    // Tillåt 0 kalorier (t.ex. vatten)
-    if (
-      gramsPerPieceValue <= 0 ||
-      !servingUnitValue.trim() ||
-      weightGramsValue <= 0 ||
-      calories < 0
-    ) {
-      return null
+    if (gramsPerPieceValue <= 0 || !servingUnitValue.trim() || calories < 0) return null
+
+    if (isML) {
+      // ml-produkt: ingen densitet behövs — formel identisk med DB-triggern
+      const defaultAmt = Number(defaultAmount) || 100
+      const scale = gramsPerPieceValue / defaultAmt
+      return {
+        unit: servingUnitValue,
+        portionSize: gramsPerPieceValue,
+        isML: true,
+        kcal: (calories / defaultAmt) * gramsPerPieceValue,
+        protein: proteinG * scale,
+        carb: carbG * scale,
+        fat: fatG * scale,
+        saturatedFat: saturatedFatG != null && !isNaN(saturatedFatG) ? saturatedFatG * scale : null,
+        sugars: sugarsG != null && !isNaN(sugarsG) ? sugarsG * scale : null,
+        salt: saltG != null && !isNaN(saltG) ? saltG * scale : null,
+        fiber: fiberG != null && !isNaN(fiberG) ? fiberG * scale : null,
+      }
     }
 
-    const kcalPerGram = calories / weightGramsValue
-
+    // g-produkt: kräver weight_grams
+    if (weightGramsValue <= 0) return null
     const scale = gramsPerPieceValue / weightGramsValue
     return {
       unit: servingUnitValue,
-      grams: gramsPerPieceValue,
-      kcal: kcalPerGram * gramsPerPieceValue,
+      portionSize: gramsPerPieceValue,
+      isML: false,
+      kcal: (calories / weightGramsValue) * gramsPerPieceValue,
       protein: proteinG * scale,
       carb: carbG * scale,
       fat: fatG * scale,
@@ -491,6 +523,8 @@ export function AddFoodItemModal({
     gramsPerPiece,
     servingUnit,
     weightGrams,
+    defaultUnit,
+    defaultAmount,
     calories,
     proteinG,
     carbG,
@@ -522,6 +556,8 @@ export function AddFoodItemModal({
       if (result.sugars_g != null) setValue('sugars_g', result.sugars_g)
       if (result.salt_g != null) setValue('salt_g', result.salt_g)
       if (result.fiber_g != null) setValue('fiber_g', result.fiber_g)
+      if (result.serving_unit) setValue('serving_unit', result.serving_unit)
+      if (result.grams_per_piece != null) setValue('grams_per_piece', result.grams_per_piece)
       setPendingScanResult(null)
     },
     [setValue]
@@ -620,21 +656,11 @@ export function AddFoodItemModal({
 
       // Beräkna ml_per_gram från volymkonvertering
       // Formel: ml_per_gram = ml_i_vald_enhet / gram_per_enhet
+      // Kräver explicit användarinput via gramsPerVolume — ingen automatisk densitetsgissning.
       let calculatedMlPerGram: number | null = null
 
-      // 1. Om gramsPerVolume är satt (från volymkonverteringssektionen)
       if (gramsPerVolume && gramsPerVolume > 0) {
         calculatedMlPerGram = VOLUME_TO_ML[volumeUnit] / gramsPerVolume
-      }
-      // 2. Om enheten är 'ml' och weight_grams är satt, beräkna automatiskt
-      else if (
-        (data.default_unit ?? '').toLowerCase() === 'ml' &&
-        data.weight_grams &&
-        data.weight_grams > 0
-      ) {
-        // ml_per_gram = antal ml / antal gram
-        // T.ex. 100ml / 100g = 1.0 (vatten), 100ml / 92g = 1.087 (olja)
-        calculatedMlPerGram = data.default_amount / data.weight_grams
       }
 
       // Calculate density_g_per_ml from ml_per_gram (inverse)
@@ -650,12 +676,13 @@ export function AddFoodItemModal({
       // Clean up NaN values from optional number fields
       const cleanedData = {
         ...data,
+        weight_grams: data.weight_grams ?? 100,
         barcode: lockedBarcode ?? undefined,
         grams_per_piece:
           data.grams_per_piece && !isNaN(data.grams_per_piece) ? data.grams_per_piece : null,
         ml_per_gram: calculatedMlPerGram,
         serving_unit: data.serving_unit?.trim() || null,
-        reference_amount: isMLBased ? data.default_amount : data.weight_grams || 100,
+        reference_amount: isMLBased ? data.default_amount : (data.weight_grams ?? 100),
         reference_unit,
         density_g_per_ml,
       }
@@ -1155,10 +1182,12 @@ export function AddFoodItemModal({
                       <Label htmlFor="weight_grams">
                         {t('addFoodModal.fieldWeight')}
                         <span className="text-xs text-neutral-500 ml-2 font-normal">
-                          {t('addFoodModal.fieldWeightHint', {
-                            amount: defaultAmount || '?',
-                            unit: defaultUnit || '?',
-                          })}
+                          {defaultUnit?.toLowerCase() === 'ml'
+                            ? t('addFoodModal.fieldWeightMlHint')
+                            : t('addFoodModal.fieldWeightHint', {
+                                amount: defaultAmount || '?',
+                                unit: defaultUnit || '?',
+                              })}
                         </span>
                       </Label>
                       <Input
@@ -1392,13 +1421,17 @@ export function AddFoodItemModal({
                     </p>
 
                     <div className="grid grid-cols-2 gap-3">
-                      {/* Vikt per portion - dölj om portionsenheten är en volymenhet */}
+                      {/* Vikt/volym per portion - dölj om portionsenheten är en volymenhet */}
                       {!isServingUnitVolume && (
                         <div>
                           <Label htmlFor="grams_per_piece">
-                            {t('addFoodModal.servingWeightLabel')}
+                            {isDefaultUnitMl
+                              ? t('addFoodModal.servingWeightLabelMl')
+                              : t('addFoodModal.servingWeightLabel')}
                             <span className="text-xs text-neutral-500 ml-1 font-normal">
-                              {t('addFoodModal.servingWeightUnit')}
+                              {isDefaultUnitMl
+                                ? t('addFoodModal.servingWeightUnitMl')
+                                : t('addFoodModal.servingWeightUnit')}
                             </span>
                           </Label>
                           <Input
@@ -1406,7 +1439,11 @@ export function AddFoodItemModal({
                             type="number"
                             step="any"
                             {...register('grams_per_piece', { valueAsNumber: true })}
-                            placeholder="t.ex. 50"
+                            placeholder={
+                              isDefaultUnitMl
+                                ? t('addFoodModal.servingWeightPlaceholderMl')
+                                : 't.ex. 50'
+                            }
                           />
                         </div>
                       )}
@@ -1493,7 +1530,8 @@ export function AddFoodItemModal({
                             </div>
 
                             <p className="text-lg font-semibold text-neutral-900 mb-2">
-                              1 {servingPreview.unit} ({servingPreview.grams}g)
+                              1 {servingPreview.unit} ({servingPreview.portionSize}
+                              {servingPreview.isML ? 'ml' : 'g'})
                             </p>
 
                             <div className="space-y-1 text-sm">

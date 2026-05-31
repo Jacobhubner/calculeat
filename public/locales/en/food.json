@@ -103,6 +103,11 @@
     "recipe": "Recipe",
     "clearFilters": "Clear filters"
   },
+  "densityBanner": {
+    "title": "{{count}} food items missing density — volume units and portions are inactive",
+    "title_one": "1 food item missing density — volume units and portions are inactive",
+    "editButton": "Edit"
+  },
   "emptyState": {
     "noResults": "No food items found",
     "noResultsDesc": "Try adjusting your search or filters.",
@@ -223,6 +228,9 @@
     "overwriteConfirmAction": "Replace",
     "overwriteKeep": "Keep my values",
     "duplicateWarning": "⚠️ A food item named \"{{name}}\" already exists. Are you sure you want to create another?",
+    "duplicateInMine": "⚠️ You already have a food item named \"{{name}}\" in Mine.",
+    "duplicateInList": "⚠️ A food item named \"{{name}}\" already exists in the list {{list}}.",
+    "unknownList": "a shared list",
     "sectionBasic": "Basic information",
     "fieldName": "Name *",
     "fieldFoodType": "Food type",
@@ -232,8 +240,9 @@
     "fieldAmount": "Amount *",
     "fieldUnit": "Unit *",
     "fieldUnitPlaceholder": "g, ml, ea, cup...",
-    "fieldWeight": "Weight (grams) *",
+    "fieldWeight": "Weight (grams)",
     "fieldWeightHint": "How much does {{amount}} {{unit}} weigh?",
+    "fieldWeightMlHint": "Recommended — needed to enable volume units like cups and tbsp",
     "sectionNutrition": "Nutrition (per {{amount}} {{unit}})",
     "fieldCalories": "Calories (kcal) *",
     "fieldFat": "Fat (g) *",
@@ -251,7 +260,10 @@
     "volumeExamples": "Flour ≈ 60g/dl, Sugar ≈ 90g/dl, Oats ≈ 40g/dl, Rice ≈ 85g/dl",
     "servingInfo": "Serving information (optional)",
     "servingWeightLabel": "Weight per serving",
+    "servingWeightLabelMl": "Volume per serving",
     "servingWeightUnit": "(grams)",
+    "servingWeightUnitMl": "(ml)",
+    "servingWeightPlaceholderMl": "e.g. 330",
     "servingUnitLabel": "Unit",
     "servingUnitHint": "(bag, can, etc.)",
     "servingUnitPlaceholder": "e.g. bag, can, pouch",

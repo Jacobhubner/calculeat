@@ -103,6 +103,11 @@
     "recipe": "Recept",
     "clearFilters": "Rensa filter"
   },
+  "densityBanner": {
+    "title": "{{count}} livsmedel saknar densitet — volymenheter och portioner är inaktiverade",
+    "title_one": "1 livsmedel saknar densitet — volymenheter och portioner är inaktiverade",
+    "editButton": "Redigera"
+  },
   "emptyState": {
     "noResults": "Inga livsmedel hittades",
     "noResultsDesc": "Prova att ändra dina sökkriterier eller filter.",
@@ -223,6 +228,9 @@
     "overwriteConfirmAction": "Ersätt",
     "overwriteKeep": "Behåll mina värden",
     "duplicateWarning": "⚠️ Ett livsmedel med namnet \"{{name}}\" finns redan. Är du säker på att du vill skapa en till?",
+    "duplicateInMine": "⚠️ Du har redan ett livsmedel med namnet \"{{name}}\" i Mina.",
+    "duplicateInList": "⚠️ Ett livsmedel med namnet \"{{name}}\" finns redan i listan {{list}}.",
+    "unknownList": "en delad lista",
     "sectionBasic": "Grundläggande information",
     "fieldName": "Namn *",
     "fieldFoodType": "Livsmedeltyp",
@@ -232,8 +240,9 @@
     "fieldAmount": "Mängd *",
     "fieldUnit": "Enhet *",
     "fieldUnitPlaceholder": "g, ml, st, dl...",
-    "fieldWeight": "Vikt (gram) *",
+    "fieldWeight": "Vikt (gram)",
     "fieldWeightHint": "Hur mycket väger {{amount}} {{unit}}?",
+    "fieldWeightMlHint": "Rekommenderat — behövs för att aktivera dl, msk och tsk",
     "sectionNutrition": "Näringsinnehåll (per {{amount}} {{unit}})",
     "fieldCalories": "Kalorier (kcal) *",
     "fieldFat": "Fett (g) *",
@@ -251,7 +260,10 @@
     "volumeExamples": "Mjöl ≈ 60g/dl, Socker ≈ 90g/dl, Havregryn ≈ 40g/dl, Ris ≈ 85g/dl",
     "servingInfo": "Serveringsinformation (valfritt)",
     "servingWeightLabel": "Vikt per portion",
+    "servingWeightLabelMl": "Volym per portion",
     "servingWeightUnit": "(gram)",
+    "servingWeightUnitMl": "(ml)",
+    "servingWeightPlaceholderMl": "t.ex. 330",
     "servingUnitLabel": "Enhet",
     "servingUnitHint": "(pkt, burk, osv.)",
     "servingUnitPlaceholder": "t.ex. pkt, burk, påse",

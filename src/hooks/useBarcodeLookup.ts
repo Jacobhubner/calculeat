@@ -47,6 +47,8 @@ function parseData(d: Record<string, unknown>): ScanResult {
     default_amount: 100,
     default_unit: (d.default_unit as 'g' | 'ml') ?? 'g',
     food_type: (d.food_type as 'Solid' | 'Liquid' | 'Soup') ?? 'Solid',
+    serving_unit: (d.serving_unit as string | null) ?? null,
+    grams_per_piece: (d.grams_per_piece as number | null) ?? null,
   }
 }
 

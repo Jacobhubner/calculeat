@@ -52,6 +52,8 @@ interface BarcodeResult {
   default_unit: 'g' | 'ml'
   food_type: 'Solid' | 'Liquid' | 'Soup'
   default_amount: 100
+  serving_unit: string | null
+  grams_per_piece: number | null
 }
 
 // --- OpenFoodFacts helpers ---
@@ -234,6 +236,8 @@ async function lookupFDC(barcode: string): Promise<BarcodeResult | null> {
     default_unit,
     food_type: foodType,
     default_amount: 100,
+    grams_per_piece: null,
+    serving_unit: null,
   }
 }
 
@@ -366,6 +370,24 @@ Deno.serve(async (req: Request) => {
                 ? 'Liquid'
                 : 'Solid'
 
+            // Extrahera portionsstorlek — gram för g-produkter, ml för ml-produkter.
+            // DB-triggern hanterar båda korrekt baserat på default_unit.
+            let off_grams_per_piece: number | null = null
+            let off_serving_unit: string | null = null
+            // Fallback to default_unit when serving_quantity_unit is absent — common in OFF data
+            const servQtyUnit = (product.serving_quantity_unit ?? default_unit ?? 'g').toLowerCase()
+            const isGramServing = servQtyUnit === 'g' && default_unit === 'g'
+            const isMlServing = servQtyUnit === 'ml' && default_unit === 'ml'
+            if (
+              (isGramServing || isMlServing) &&
+              typeof product.serving_quantity === 'number' &&
+              product.serving_quantity > 1 &&
+              product.serving_quantity < 10000
+            ) {
+              off_grams_per_piece = Math.round(product.serving_quantity * 100) / 100
+              off_serving_unit = 'portion'
+            }
+
             const result: BarcodeResult = {
               name: resolveName(product),
               calories,
@@ -382,6 +404,8 @@ Deno.serve(async (req: Request) => {
               default_unit,
               food_type,
               default_amount: 100,
+              grams_per_piece: off_grams_per_piece,
+              serving_unit: off_serving_unit,
             }
 
             return jsonResponse({ data: result, source: 'openfoodfacts' }, 200)

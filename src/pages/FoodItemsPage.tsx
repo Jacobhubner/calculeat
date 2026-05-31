@@ -15,6 +15,8 @@ import {
   ArrowDown,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
+  ChevronUp,
   Info,
   Copy,
 } from 'lucide-react'
@@ -63,6 +65,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { toast } from 'sonner'
 import { useTranslation } from 'react-i18next'
+import { useUserLiquidItemsWithoutDensity } from '@/hooks/useUserLiquidItemsWithoutDensity'
 
 // Display mode type
 type DisplayMode = 'serving' | 'per100g' | 'perVolume'
@@ -109,7 +112,7 @@ function getDisplayData(
       }
       return {
         icon: '',
-        header: `1 ${item.serving_unit} (${item.grams_per_piece}g)`,
+        header: `1 ${item.serving_unit} (${item.grams_per_piece}${item.default_unit === 'ml' ? 'ml' : 'g'})`,
         kcal: item.kcal_per_unit,
         protein: item.protein_per_unit || 0,
         carb: item.carb_per_unit || 0,
@@ -679,6 +682,10 @@ export default function FoodItemsPage() {
   const activeList = activeListId ? (sharedLists.find(l => l.id === activeListId) ?? null) : null
   const isAdminCalculeatTab = isAdmin && isCalculeat
 
+  // Livsmedel utan densitet — visas som åtgärdsbanner i "Mina"-fliken
+  const { data: liquidNoDensityItems = [] } = useUserLiquidItemsWithoutDensity()
+  const [densityBannerExpanded, setDensityBannerExpanded] = useState(false)
+
   // Realtime-prenumeration för aktiv lista — uppdaterar cachen vid ändringar från andra members
   useSharedListRealtime(activeListId)
 
@@ -901,6 +908,54 @@ export default function FoodItemsPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Banner: livsmedel utan densitet (visas bara i Mina-fliken) */}
+      {isMina && liquidNoDensityItems.length > 0 && (
+        <div className="rounded-lg border border-amber-200 bg-amber-50 overflow-hidden">
+          <button
+            className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-amber-100 transition-colors"
+            onClick={() => setDensityBannerExpanded(prev => !prev)}
+          >
+            <span className="text-sm font-medium text-amber-800">
+              {t('densityBanner.title', { count: liquidNoDensityItems.length })}
+            </span>
+            {densityBannerExpanded ? (
+              <ChevronUp className="h-4 w-4 text-amber-600 shrink-0" />
+            ) : (
+              <ChevronDown className="h-4 w-4 text-amber-600 shrink-0" />
+            )}
+          </button>
+          {densityBannerExpanded && (
+            <ul className="border-t border-amber-200 divide-y divide-amber-100">
+              {liquidNoDensityItems.map(item => (
+                <li key={item.id} className="flex items-center justify-between px-4 py-2">
+                  <span className="text-sm text-amber-900">{item.name}</span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-xs border-amber-300 text-amber-800 hover:bg-amber-100"
+                    onClick={async () => {
+                      const fullItem = items.find(i => i.id === item.id)
+                      if (fullItem) {
+                        handleEdit(fullItem)
+                        return
+                      }
+                      const { data } = await supabase
+                        .from('food_items')
+                        .select('*')
+                        .eq('id', item.id)
+                        .single()
+                      if (data) handleEdit(data as FoodItem)
+                    }}
+                  >
+                    {t('densityBanner.editButton')}
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
 
       {/* Food Items List */}
       {isLoading ? (

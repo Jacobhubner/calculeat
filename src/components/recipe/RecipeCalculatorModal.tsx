@@ -30,12 +30,14 @@ import { Label } from '@/components/ui/label'
 import { IngredientRow, type IngredientData } from './IngredientRow'
 import { NutritionSummary } from './NutritionSummary'
 import { RecipeImageUpload } from './RecipeImageUpload'
+import { AddFoodItemModal } from '@/components/food/AddFoodItemModal'
+import { AddFoodToMealModal } from '@/components/daily/AddFoodToMealModal'
 import {
   EQUIPMENT_OPTIONS,
   EQUIPMENT_SETTINGS_FIELDS,
   type EquipmentValue,
 } from '@/lib/constants/recipeEquipment'
-import { useFoodItems } from '@/hooks/useFoodItems'
+import { useFoodItems, type FoodItem } from '@/hooks/useFoodItems'
 import { useFoodNutrientsBatch } from '@/hooks/useFoodNutrients'
 import { useCreateRecipe, useUpdateRecipe, type Recipe } from '@/hooks/useRecipes'
 import {
@@ -48,6 +50,7 @@ import {
 import {
   calculateRecipeNutrition,
   type RecipeIngredientInput,
+  getDefaultRecipeUnit,
 } from '@/lib/calculations/recipeCalculator'
 
 interface RecipeCalculatorModalProps {
@@ -171,6 +174,8 @@ interface MemoizedWrapperProps {
   sharedLists: React.ComponentProps<typeof IngredientRow>['sharedLists']
   onIngredientChange: (id: string, updated: IngredientData) => void
   onIngredientRemove: (id: string) => void
+  onOpenPicker: (id: string) => void
+  onOpenAddFood: (id: string) => void
 }
 
 const MemoizedSortableIngredientRowWrapper = React.memo(
@@ -180,6 +185,8 @@ const MemoizedSortableIngredientRowWrapper = React.memo(
     sharedLists,
     onIngredientChange,
     onIngredientRemove,
+    onOpenPicker,
+    onOpenAddFood,
   }: MemoizedWrapperProps) {
     const onChange = useCallback(
       (updated: IngredientData) => onIngredientChange(ingredient.id, updated),
@@ -189,6 +196,14 @@ const MemoizedSortableIngredientRowWrapper = React.memo(
       () => onIngredientRemove(ingredient.id),
       [ingredient.id, onIngredientRemove]
     )
+    const handleOpenPicker = useCallback(
+      () => onOpenPicker(ingredient.id),
+      [ingredient.id, onOpenPicker]
+    )
+    const handleOpenAddFood = useCallback(
+      () => onOpenAddFood(ingredient.id),
+      [ingredient.id, onOpenAddFood]
+    )
     return (
       <SortableIngredientRow
         ingredient={ingredient}
@@ -196,6 +211,8 @@ const MemoizedSortableIngredientRowWrapper = React.memo(
         sharedLists={sharedLists}
         onChange={onChange}
         onRemove={onRemove}
+        onOpenPicker={handleOpenPicker}
+        onOpenAddFood={handleOpenAddFood}
       />
     )
   }
@@ -227,6 +244,10 @@ export function RecipeCalculatorModal({
   const [prepTime, setPrepTime] = useState<number | ''>('')
   const [cookTime, setCookTime] = useState<number | ''>('')
   const [detailsOpen, setDetailsOpen] = useState(false)
+
+  // Dialog state hoisted from IngredientRow to avoid nested Radix dialogs breaking pointer-events
+  const [pickerIngredientId, setPickerIngredientId] = useState<string | null>(null)
+  const [addFoodIngredientId, setAddFoodIngredientId] = useState<string | null>(null)
 
   const { data: foods, isError: foodsError, isLoading: foodsLoading } = useFoodItems()
   const createRecipe = useCreateRecipe()
@@ -448,6 +469,19 @@ export function RecipeCalculatorModal({
     [startTransition]
   )
 
+  const handleFoodSelectForIngredient = useCallback((ingredientId: string, food: FoodItem) => {
+    setIngredients(prev =>
+      prev.map(ing => {
+        if (ing.id !== ingredientId) return ing
+        const defaultUnit = getDefaultRecipeUnit(food)
+        return { ...ing, foodItem: food, unit: defaultUnit, amount: ing.amount || 1 }
+      })
+    )
+  }, [])
+
+  const handleOpenPicker = useCallback((id: string) => setPickerIngredientId(id), [])
+  const handleOpenAddFood = useCallback((id: string) => setAddFoodIngredientId(id), [])
+
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }))
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -602,241 +636,244 @@ export function RecipeCalculatorModal({
   ])
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="md:max-w-2xl md:max-h-[90vh] md:overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <ChefHat className="h-5 w-5 text-primary-600" />
-            {isEditing ? t('modal.titleEdit') : t('modal.titleNew')}
-          </DialogTitle>
-          <DialogDescription>
-            {isEditing ? t('modal.descriptionEdit') : t('modal.descriptionNew')}
-          </DialogDescription>
-        </DialogHeader>
+    <>
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="md:max-w-2xl md:max-h-[90vh] md:overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <ChefHat className="h-5 w-5 text-primary-600" />
+              {isEditing ? t('modal.titleEdit') : t('modal.titleNew')}
+            </DialogTitle>
+            <DialogDescription>
+              {isEditing ? t('modal.descriptionEdit') : t('modal.descriptionNew')}
+            </DialogDescription>
+          </DialogHeader>
 
-        {isSharedListRecipe && (
-          <div className="bg-blue-50 border border-blue-200 rounded-md p-3 text-sm text-blue-700 mx-3 md:mx-0">
-            {isEditing ? t('modal.sharedListEdit') : t('modal.sharedListNew')}
-          </div>
-        )}
+          {isSharedListRecipe && (
+            <div className="bg-blue-50 border border-blue-200 rounded-md p-3 text-sm text-blue-700 mx-3 md:mx-0">
+              {isEditing ? t('modal.sharedListEdit') : t('modal.sharedListNew')}
+            </div>
+          )}
 
-        {changedIngredients.length > 0 && (
-          <div className="bg-amber-50 border border-amber-200 rounded-md p-3 text-sm text-amber-800 mx-3 md:mx-0">
-            <p className="font-medium mb-1">{t('modal.ingredientsChangedTitle')}</p>
-            <ul className="list-disc list-inside space-y-0.5">
-              {changedIngredients.map(ing => (
-                <li key={ing.id}>
-                  {ing.foodItem!.name} — {t('modal.ingredientsChangedFrom')}{' '}
-                  {Math.round(ing.snapshotCalories!)} {t('modal.ingredientsChangedTo')}{' '}
-                  {Math.round(ing.foodItem!.calories)} kcal/100g
-                </li>
-              ))}
-            </ul>
-            <p className="mt-1 text-amber-700 text-xs">{t('modal.ingredientsChangedHint')}</p>
-          </div>
-        )}
+          {changedIngredients.length > 0 && (
+            <div className="bg-amber-50 border border-amber-200 rounded-md p-3 text-sm text-amber-800 mx-3 md:mx-0">
+              <p className="font-medium mb-1">{t('modal.ingredientsChangedTitle')}</p>
+              <ul className="list-disc list-inside space-y-0.5">
+                {changedIngredients.map(ing => (
+                  <li key={ing.id}>
+                    {ing.foodItem!.name} — {t('modal.ingredientsChangedFrom')}{' '}
+                    {Math.round(ing.snapshotCalories!)} {t('modal.ingredientsChangedTo')}{' '}
+                    {Math.round(ing.foodItem!.calories)} kcal/100g
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-1 text-amber-700 text-xs">{t('modal.ingredientsChangedHint')}</p>
+            </div>
+          )}
 
-        <div className="space-y-6 px-3 pb-4 md:px-0 md:pb-0 overflow-x-hidden">
-          <div className="space-y-6">
-            {/* Form */}
+          <div className="space-y-6 px-3 pb-4 md:px-0 md:pb-0 overflow-x-hidden">
             <div className="space-y-6">
-              {/* Recipe name and servings */}
-              <div className={`grid gap-4 ${saveAs === '100g' ? '' : 'sm:grid-cols-2'}`}>
-                <div className="space-y-2">
-                  <Label htmlFor="recipe-name">{t('modal.recipeName')}</Label>
-                  <RecipeNameInput
-                    value={name}
-                    onChange={setName}
-                    placeholder={t('modal.recipeNamePlaceholder')}
-                    label={t('modal.recipeName')}
-                  />
-                </div>
-                {saveAs !== '100g' && (
+              {/* Form */}
+              <div className="space-y-6">
+                {/* Recipe name and servings */}
+                <div className={`grid gap-4 ${saveAs === '100g' ? '' : 'sm:grid-cols-2'}`}>
                   <div className="space-y-2">
-                    <Label htmlFor="servings">{t('modal.servings')}</Label>
-                    <ServingsInput value={servings} onChange={setServings} />
+                    <Label htmlFor="recipe-name">{t('modal.recipeName')}</Label>
+                    <RecipeNameInput
+                      value={name}
+                      onChange={setName}
+                      placeholder={t('modal.recipeNamePlaceholder')}
+                      label={t('modal.recipeName')}
+                    />
                   </div>
-                )}
-              </div>
-
-              {/* Ingredients */}
-              <div className="space-y-3">
-                <Label>{t('modal.ingredients')}</Label>
-
-                {/* Loading state for foods */}
-                {foodsLoading && (
-                  <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-6 text-center">
-                    <p className="text-neutral-500 text-sm">{t('modal.loadingFoods')}</p>
-                  </div>
-                )}
-
-                {/* Error state for foods */}
-                {foodsError && (
-                  <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3">
-                    <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0" />
-                    <p className="text-red-700 text-sm">{t('modal.foodsError')}</p>
-                  </div>
-                )}
-
-                {/* Empty state - no ingredients yet */}
-                {!foodsLoading && !foodsError && ingredients.length === 0 && (
-                  <div className="bg-neutral-50 border-2 border-dashed border-neutral-200 rounded-xl p-8 text-center">
-                    <p className="text-neutral-500 text-sm mb-4">{t('modal.noIngredients')}</p>
-                    <Button variant="outline" onClick={handleAddIngredient} className="gap-2">
-                      <Plus className="h-4 w-4" />
-                      {t('modal.addIngredient')}
-                    </Button>
-                  </div>
-                )}
-
-                {/* Ingredients list */}
-                {!foodsLoading && !foodsError && ingredients.length > 0 && (
-                  <div className="space-y-2">
-                    <DndContext
-                      sensors={sensors}
-                      collisionDetection={closestCenter}
-                      onDragEnd={handleDragEnd}
-                    >
-                      <SortableContext
-                        items={ingredients.map(i => i.id)}
-                        strategy={verticalListSortingStrategy}
-                      >
-                        {ingredients.map(ingredient => (
-                          <MemoizedSortableIngredientRowWrapper
-                            key={ingredient.id}
-                            ingredient={ingredient}
-                            availableFoods={availableFoods}
-                            sharedLists={sharedLists}
-                            onIngredientChange={handleIngredientChange}
-                            onIngredientRemove={handleIngredientRemove}
-                          />
-                        ))}
-                      </SortableContext>
-                    </DndContext>
-
-                    <Button
-                      variant="outline"
-                      onClick={handleAddIngredient}
-                      className="w-full gap-2 border-dashed"
-                    >
-                      <Plus className="h-4 w-4" />
-                      {t('modal.addIngredient')}
-                    </Button>
-                  </div>
-                )}
-              </div>
-
-              {/* Hopfällbar detaljsektion */}
-              <div className="border border-neutral-200 rounded-xl overflow-hidden">
-                <button
-                  type="button"
-                  onClick={() => setDetailsOpen(prev => !prev)}
-                  className="w-full flex items-center justify-between px-4 py-3 bg-neutral-50 hover:bg-neutral-100 transition-colors text-sm font-medium text-neutral-700"
-                >
-                  <span>{t('modal.detailsSection')}</span>
-                  {detailsOpen ? (
-                    <ChevronUp className="h-4 w-4 text-neutral-400" />
-                  ) : (
-                    <ChevronDown className="h-4 w-4 text-neutral-400" />
+                  {saveAs !== '100g' && (
+                    <div className="space-y-2">
+                      <Label htmlFor="servings">{t('modal.servings')}</Label>
+                      <ServingsInput value={servings} onChange={setServings} />
+                    </div>
                   )}
-                </button>
+                </div>
 
-                {detailsOpen && (
-                  <div className="px-4 py-4 space-y-5">
-                    {/* Bild */}
-                    <div className="space-y-2">
-                      <Label>{t('modal.imageLabel')}</Label>
-                      <RecipeImageUpload value={imageUrl} onChange={setImageUrl} />
+                {/* Ingredients */}
+                <div className="space-y-3">
+                  <Label>{t('modal.ingredients')}</Label>
+
+                  {/* Loading state for foods */}
+                  {foodsLoading && (
+                    <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-6 text-center">
+                      <p className="text-neutral-500 text-sm">{t('modal.loadingFoods')}</p>
                     </div>
+                  )}
 
-                    {/* Instruktioner */}
-                    <div className="space-y-2">
-                      <Label htmlFor="recipe-instructions">{t('modal.instructionsLabel')}</Label>
-                      <InstructionsTextarea
-                        value={instructions}
-                        onChange={setInstructions}
-                        placeholder={t('modal.instructionsPlaceholder')}
-                      />
+                  {/* Error state for foods */}
+                  {foodsError && (
+                    <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3">
+                      <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0" />
+                      <p className="text-red-700 text-sm">{t('modal.foodsError')}</p>
                     </div>
+                  )}
 
-                    {/* Tillagningstid */}
+                  {/* Empty state - no ingredients yet */}
+                  {!foodsLoading && !foodsError && ingredients.length === 0 && (
+                    <div className="bg-neutral-50 border-2 border-dashed border-neutral-200 rounded-xl p-8 text-center">
+                      <p className="text-neutral-500 text-sm mb-4">{t('modal.noIngredients')}</p>
+                      <Button variant="outline" onClick={handleAddIngredient} className="gap-2">
+                        <Plus className="h-4 w-4" />
+                        {t('modal.addIngredient')}
+                      </Button>
+                    </div>
+                  )}
+
+                  {/* Ingredients list */}
+                  {!foodsLoading && !foodsError && ingredients.length > 0 && (
                     <div className="space-y-2">
-                      <Label>{t('modal.cookingTime')}</Label>
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="space-y-1">
-                          <span className="text-xs text-neutral-500">{t('modal.prepTime')}</span>
-                          <Input
-                            type="number"
-                            min={0}
-                            value={prepTime}
-                            onChange={e =>
-                              setPrepTime(
-                                e.target.value === ''
-                                  ? ''
-                                  : Math.max(0, parseInt(e.target.value) || 0)
-                              )
-                            }
-                            placeholder="0"
-                          />
-                        </div>
-                        <div className="space-y-1">
-                          <span className="text-xs text-neutral-500">{t('modal.cookTime')}</span>
-                          <Input
-                            type="number"
-                            min={0}
-                            value={cookTime}
-                            onChange={e =>
-                              setCookTime(
-                                e.target.value === ''
-                                  ? ''
-                                  : Math.max(0, parseInt(e.target.value) || 0)
-                              )
-                            }
-                            placeholder="0"
-                          />
-                        </div>
+                      <DndContext
+                        sensors={sensors}
+                        collisionDetection={closestCenter}
+                        onDragEnd={handleDragEnd}
+                      >
+                        <SortableContext
+                          items={ingredients.map(i => i.id)}
+                          strategy={verticalListSortingStrategy}
+                        >
+                          {ingredients.map(ingredient => (
+                            <MemoizedSortableIngredientRowWrapper
+                              key={ingredient.id}
+                              ingredient={ingredient}
+                              availableFoods={availableFoods}
+                              sharedLists={sharedLists}
+                              onIngredientChange={handleIngredientChange}
+                              onIngredientRemove={handleIngredientRemove}
+                              onOpenPicker={handleOpenPicker}
+                              onOpenAddFood={handleOpenAddFood}
+                            />
+                          ))}
+                        </SortableContext>
+                      </DndContext>
+
+                      <Button
+                        variant="outline"
+                        onClick={handleAddIngredient}
+                        className="w-full gap-2 border-dashed"
+                      >
+                        <Plus className="h-4 w-4" />
+                        {t('modal.addIngredient')}
+                      </Button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Hopfällbar detaljsektion */}
+                <div className="border border-neutral-200 rounded-xl overflow-hidden">
+                  <button
+                    type="button"
+                    onClick={() => setDetailsOpen(prev => !prev)}
+                    className="w-full flex items-center justify-between px-4 py-3 bg-neutral-50 hover:bg-neutral-100 transition-colors text-sm font-medium text-neutral-700"
+                  >
+                    <span>{t('modal.detailsSection')}</span>
+                    {detailsOpen ? (
+                      <ChevronUp className="h-4 w-4 text-neutral-400" />
+                    ) : (
+                      <ChevronDown className="h-4 w-4 text-neutral-400" />
+                    )}
+                  </button>
+
+                  {detailsOpen && (
+                    <div className="px-4 py-4 space-y-5">
+                      {/* Bild */}
+                      <div className="space-y-2">
+                        <Label>{t('modal.imageLabel')}</Label>
+                        <RecipeImageUpload value={imageUrl} onChange={setImageUrl} />
                       </div>
-                      {(typeof prepTime === 'number' || typeof cookTime === 'number') &&
-                        (prepTime as number) + (cookTime as number) > 0 && (
-                          <div className="flex items-center gap-1.5 text-sm text-neutral-500">
-                            <Clock className="h-3.5 w-3.5" />
-                            <span>
-                              {t('modal.totalTime', {
-                                minutes:
-                                  (typeof prepTime === 'number' ? prepTime : 0) +
-                                  (typeof cookTime === 'number' ? cookTime : 0),
-                              })}
-                            </span>
-                          </div>
-                        )}
-                    </div>
 
-                    {/* Utrustning */}
-                    <div className="space-y-3">
-                      <Label>{t('modal.equipment')}</Label>
-                      <div className="flex flex-wrap gap-2">
-                        {EQUIPMENT_OPTIONS.map(opt => {
-                          const selected = equipment.includes(opt.value)
-                          return (
-                            <button
-                              key={opt.value}
-                              type="button"
-                              onClick={() => {
-                                setEquipment(prev =>
-                                  selected
-                                    ? prev.filter(v => v !== opt.value)
-                                    : [...prev, opt.value]
+                      {/* Instruktioner */}
+                      <div className="space-y-2">
+                        <Label htmlFor="recipe-instructions">{t('modal.instructionsLabel')}</Label>
+                        <InstructionsTextarea
+                          value={instructions}
+                          onChange={setInstructions}
+                          placeholder={t('modal.instructionsPlaceholder')}
+                        />
+                      </div>
+
+                      {/* Tillagningstid */}
+                      <div className="space-y-2">
+                        <Label>{t('modal.cookingTime')}</Label>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="space-y-1">
+                            <span className="text-xs text-neutral-500">{t('modal.prepTime')}</span>
+                            <Input
+                              type="number"
+                              min={0}
+                              value={prepTime}
+                              onChange={e =>
+                                setPrepTime(
+                                  e.target.value === ''
+                                    ? ''
+                                    : Math.max(0, parseInt(e.target.value) || 0)
                                 )
-                                // Rensa inställningar om utrustningen avmarkeras
-                                if (selected) {
-                                  setEquipmentSettings(prev => {
-                                    const next = { ...prev }
-                                    delete next[opt.value]
-                                    return next
-                                  })
-                                }
-                              }}
-                              className={`
+                              }
+                              placeholder="0"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <span className="text-xs text-neutral-500">{t('modal.cookTime')}</span>
+                            <Input
+                              type="number"
+                              min={0}
+                              value={cookTime}
+                              onChange={e =>
+                                setCookTime(
+                                  e.target.value === ''
+                                    ? ''
+                                    : Math.max(0, parseInt(e.target.value) || 0)
+                                )
+                              }
+                              placeholder="0"
+                            />
+                          </div>
+                        </div>
+                        {(typeof prepTime === 'number' || typeof cookTime === 'number') &&
+                          (prepTime as number) + (cookTime as number) > 0 && (
+                            <div className="flex items-center gap-1.5 text-sm text-neutral-500">
+                              <Clock className="h-3.5 w-3.5" />
+                              <span>
+                                {t('modal.totalTime', {
+                                  minutes:
+                                    (typeof prepTime === 'number' ? prepTime : 0) +
+                                    (typeof cookTime === 'number' ? cookTime : 0),
+                                })}
+                              </span>
+                            </div>
+                          )}
+                      </div>
+
+                      {/* Utrustning */}
+                      <div className="space-y-3">
+                        <Label>{t('modal.equipment')}</Label>
+                        <div className="flex flex-wrap gap-2">
+                          {EQUIPMENT_OPTIONS.map(opt => {
+                            const selected = equipment.includes(opt.value)
+                            return (
+                              <button
+                                key={opt.value}
+                                type="button"
+                                onClick={() => {
+                                  setEquipment(prev =>
+                                    selected
+                                      ? prev.filter(v => v !== opt.value)
+                                      : [...prev, opt.value]
+                                  )
+                                  // Rensa inställningar om utrustningen avmarkeras
+                                  if (selected) {
+                                    setEquipmentSettings(prev => {
+                                      const next = { ...prev }
+                                      delete next[opt.value]
+                                      return next
+                                    })
+                                  }
+                                }}
+                                className={`
                                 px-3 py-1.5 rounded-full text-sm border transition-colors
                                 ${
                                   selected
@@ -844,142 +881,171 @@ export function RecipeCalculatorModal({
                                     : 'bg-white text-neutral-600 border-neutral-300 hover:border-neutral-400'
                                 }
                               `}
-                            >
-                              {t(`equipmentOptions.${opt.value}`)}
-                            </button>
-                          )
-                        })}
-                      </div>
+                              >
+                                {t(`equipmentOptions.${opt.value}`)}
+                              </button>
+                            )
+                          })}
+                        </div>
 
-                      {/* Inställningsfält per vald utrustning */}
-                      {equipment
-                        .filter(eq => EQUIPMENT_SETTINGS_FIELDS[eq as EquipmentValue])
-                        .map(eq => {
-                          const fields = EQUIPMENT_SETTINGS_FIELDS[eq as EquipmentValue]!
-                          const settings = equipmentSettings[eq] ?? {}
-                          return (
-                            <div key={eq} className="bg-neutral-50 rounded-xl p-3 space-y-2">
-                              <p className="text-xs font-medium text-neutral-600">
-                                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                                {t(`equipmentOptions.${eq}` as any)}
-                              </p>
-                              <div className="grid grid-cols-2 gap-3">
-                                {fields.map(field => (
-                                  <div key={field.key} className="space-y-1">
-                                    <span className="text-xs text-neutral-500">
-                                      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                                      {t(`equipmentFields.${field.key}` as any)}
-                                      {field.unit ? ` (${field.unit})` : ''}
-                                    </span>
-                                    <Input
-                                      type={field.type}
-                                      min={field.type === 'number' ? 0 : undefined}
-                                      placeholder={field.placeholder}
-                                      value={settings[field.key] ?? ''}
-                                      onChange={e => {
-                                        const raw = e.target.value
-                                        const val =
-                                          field.type === 'number'
-                                            ? raw === ''
-                                              ? ''
-                                              : Number(raw)
-                                            : raw
-                                        setEquipmentSettings(prev => ({
-                                          ...prev,
-                                          [eq]: {
-                                            ...prev[eq],
-                                            [field.key]: val as string | number,
-                                          },
-                                        }))
-                                      }}
-                                    />
-                                  </div>
-                                ))}
+                        {/* Inställningsfält per vald utrustning */}
+                        {equipment
+                          .filter(eq => EQUIPMENT_SETTINGS_FIELDS[eq as EquipmentValue])
+                          .map(eq => {
+                            const fields = EQUIPMENT_SETTINGS_FIELDS[eq as EquipmentValue]!
+                            const settings = equipmentSettings[eq] ?? {}
+                            return (
+                              <div key={eq} className="bg-neutral-50 rounded-xl p-3 space-y-2">
+                                <p className="text-xs font-medium text-neutral-600">
+                                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                                  {t(`equipmentOptions.${eq}` as any)}
+                                </p>
+                                <div className="grid grid-cols-2 gap-3">
+                                  {fields.map(field => (
+                                    <div key={field.key} className="space-y-1">
+                                      <span className="text-xs text-neutral-500">
+                                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                                        {t(`equipmentFields.${field.key}` as any)}
+                                        {field.unit ? ` (${field.unit})` : ''}
+                                      </span>
+                                      <Input
+                                        type={field.type}
+                                        min={field.type === 'number' ? 0 : undefined}
+                                        placeholder={field.placeholder}
+                                        value={settings[field.key] ?? ''}
+                                        onChange={e => {
+                                          const raw = e.target.value
+                                          const val =
+                                            field.type === 'number'
+                                              ? raw === ''
+                                                ? ''
+                                                : Number(raw)
+                                              : raw
+                                          setEquipmentSettings(prev => ({
+                                            ...prev,
+                                            [eq]: {
+                                              ...prev[eq],
+                                              [field.key]: val as string | number,
+                                            },
+                                          }))
+                                        }}
+                                      />
+                                    </div>
+                                  ))}
+                                </div>
                               </div>
-                            </div>
-                          )
-                        })}
+                            )
+                          })}
+                      </div>
                     </div>
+                  )}
+                </div>
+
+                {/* Error message */}
+                {error && (
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700">
+                    {error}
                   </div>
                 )}
               </div>
 
-              {/* Error message */}
-              {error && (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700">
-                  {error}
-                </div>
-              )}
-            </div>
-
-            {/* Nutrition summary */}
-            <div>
-              <NutritionSummary
-                nutrition={nutrition}
-                servings={typeof servings === 'number' ? servings : 1}
-                saveAs={saveAs}
-              />
-            </div>
-          </div>
-
-          {/* Save format selection */}
-          {nutrition && (
-            <div className="border-t pt-4">
-              <Label className="text-sm font-medium mb-3 block">{t('modal.saveAsLabel')}</Label>
-              <div className="flex gap-6">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="saveAs"
-                    value="portion"
-                    checked={saveAs === 'portion'}
-                    onChange={() => setSaveAs('portion')}
-                    className="w-4 h-4 text-primary-600 focus:ring-primary-500"
-                  />
-                  <span className="text-sm">
-                    {t('modal.saveAsPortion', { weight: Math.round(nutrition.perServing.weight) })}
-                  </span>
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="saveAs"
-                    value="100g"
-                    checked={saveAs === '100g'}
-                    onChange={() => setSaveAs('100g')}
-                    className="w-4 h-4 text-primary-600 focus:ring-primary-500"
-                  />
-                  <span className="text-sm">{t('modal.saveAs100g')}</span>
-                </label>
+              {/* Nutrition summary */}
+              <div>
+                <NutritionSummary
+                  nutrition={nutrition}
+                  servings={typeof servings === 'number' ? servings : 1}
+                  saveAs={saveAs}
+                />
               </div>
-              <p className="text-xs text-neutral-500 mt-2">
-                {saveAs === 'portion' ? t('modal.saveAsPortionHint') : t('modal.saveAs100gHint')}
-              </p>
             </div>
-          )}
 
-          {/* Footer */}
-          <div className="flex justify-end gap-3 pt-4 border-t">
-            <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
-              {t('modal.cancel')}
-            </Button>
-            <Button
-              onClick={handleSubmit}
-              disabled={isLoading || (isEditing && !isDirty)}
-              className="gap-2"
-            >
-              {isLoading ? (
-                t('modal.saving')
-              ) : (
-                <>
-                  <ChefHat className="h-4 w-4" />
-                  {isEditing ? t('modal.update') : t('modal.save')}
-                </>
-              )}
-            </Button>
+            {/* Save format selection */}
+            {nutrition && (
+              <div className="border-t pt-4">
+                <Label className="text-sm font-medium mb-3 block">{t('modal.saveAsLabel')}</Label>
+                <div className="flex gap-6">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="saveAs"
+                      value="portion"
+                      checked={saveAs === 'portion'}
+                      onChange={() => setSaveAs('portion')}
+                      className="w-4 h-4 text-primary-600 focus:ring-primary-500"
+                    />
+                    <span className="text-sm">
+                      {t('modal.saveAsPortion', {
+                        weight: Math.round(nutrition.perServing.weight),
+                      })}
+                    </span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="saveAs"
+                      value="100g"
+                      checked={saveAs === '100g'}
+                      onChange={() => setSaveAs('100g')}
+                      className="w-4 h-4 text-primary-600 focus:ring-primary-500"
+                    />
+                    <span className="text-sm">{t('modal.saveAs100g')}</span>
+                  </label>
+                </div>
+                <p className="text-xs text-neutral-500 mt-2">
+                  {saveAs === 'portion' ? t('modal.saveAsPortionHint') : t('modal.saveAs100gHint')}
+                </p>
+              </div>
+            )}
+
+            {/* Footer */}
+            <div className="flex justify-end gap-3 pt-4 border-t">
+              <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
+                {t('modal.cancel')}
+              </Button>
+              <Button
+                onClick={handleSubmit}
+                disabled={isLoading || (isEditing && !isDirty)}
+                className="gap-2"
+              >
+                {isLoading ? (
+                  t('modal.saving')
+                ) : (
+                  <>
+                    <ChefHat className="h-4 w-4" />
+                    {isEditing ? t('modal.update') : t('modal.save')}
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+
+      {/* Hoisted dialogs — rendered outside the main Dialog to avoid nested Radix modal pointer-events bugs */}
+      <AddFoodToMealModal
+        open={pickerIngredientId !== null}
+        onOpenChange={open => {
+          if (!open) setPickerIngredientId(null)
+        }}
+        mealName=""
+        dailyLogId=""
+        onFoodSelect={food => {
+          if (pickerIngredientId) handleFoodSelectForIngredient(pickerIngredientId, food)
+          setPickerIngredientId(null)
+        }}
+      />
+      <AddFoodItemModal
+        open={addFoodIngredientId !== null}
+        onOpenChange={open => {
+          if (!open) setAddFoodIngredientId(null)
+        }}
+        onSuccess={newFood => {
+          if (newFood && addFoodIngredientId) {
+            handleFoodSelectForIngredient(addFoodIngredientId, newFood)
+          }
+          setAddFoodIngredientId(null)
+        }}
+      />
+    </>
   )
 }

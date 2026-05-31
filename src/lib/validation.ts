@@ -130,8 +130,14 @@ export const createFoodItemSchema = z
       .min(1, 'Enhet är obligatorisk')
       .max(50, 'Enhet får max vara 50 tecken'),
     weight_grams: z.preprocess(
-      val => (Number.isNaN(val) ? undefined : val),
-      z.number({ error: 'Vikt måste vara ett nummer' }).positive('Vikt måste vara större än 0')
+      val =>
+        val === '' || val === null || val === undefined || Number.isNaN(Number(val))
+          ? undefined
+          : Number(val),
+      z
+        .number({ error: 'Vikt måste vara ett nummer' })
+        .positive('Vikt måste vara större än 0')
+        .optional()
     ),
     calories: z.preprocess(
       val => parseDecimal(val) ?? 0,
@@ -210,7 +216,7 @@ export const createFoodItemSchema = z
       // Om enheten är g eller gram, ska weight_grams vara samma som default_amount
       const unit = (data.default_unit ?? '').toLowerCase().trim()
       if (unit === 'g' || unit === 'gram') {
-        return Math.abs(data.weight_grams - data.default_amount) < 0.01 // Tillåt minimal rundning
+        return Math.abs((data.weight_grams ?? 0) - data.default_amount) < 0.01 // Tillåt minimal rundning
       }
       return true
     },

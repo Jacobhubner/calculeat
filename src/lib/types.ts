@@ -14,6 +14,8 @@ export interface ScanResult {
   default_amount: number // alltid 100
   default_unit: string // 'g' eller 'ml' beroende på etikett
   food_type?: 'Solid' | 'Liquid' | 'Soup'
+  serving_unit?: string | null
+  grams_per_piece?: number | null
 }
 
 // All 10 BMR formulas from Excel

@@ -92,7 +92,12 @@ export function calculateNutritionForUnit(
   } else if (unitLower === 'st' || unitLower === food.serving_unit?.toLowerCase()) {
     // Piece/serving unit — use grams_per_piece if available
     if (food.grams_per_piece) {
-      weightGrams = amount * food.grams_per_piece
+      if (food.reference_unit === 'ml' && food.ml_per_gram) {
+        // grams_per_piece stores ml for ml-products; convert to gram so multiplier stays in gram/gram
+        weightGrams = (amount * food.grams_per_piece) / food.ml_per_gram
+      } else {
+        weightGrams = amount * food.grams_per_piece
+      }
     } else {
       // No piece weight known — scale amount relative to default_amount
       const refAmount = food.reference_amount > 0 ? food.reference_amount : 100

@@ -22,7 +22,9 @@ Return ONLY a JSON object with these exact fields. No comments, no explanation, 
   "saturated_fat_g": numeric value per 100g or per 100ml (the "of which saturates" row), or null if not shown,
   "sugars_g": numeric value per 100g or per 100ml (the "of which sugars" row), or null if not shown,
   "fiber_g": numeric value per 100g or per 100ml (the "fibre" or "dietary fiber" row), or null if not shown,
-  "salt_g": numeric value per 100g or per 100ml (the "salt" row on EU labels), or null if not shown
+  "salt_g": numeric value per 100g or per 100ml (the "salt" row on EU labels), or null if not shown,
+  "serving_unit": name of one serving unit if the label explicitly states it (e.g. "bar", "cookie", "portion", "biscuit", "can"), or null,
+  "grams_per_piece": quantity of one serving — in grams if the product uses grams (e.g. "1 bar = 55 g" -> 55), or in ml if the product uses ml (e.g. "1 can = 330 ml" -> 330). Match the unit field. Set to null if no explicit per-piece/per-portion quantity is stated. Do NOT guess or infer.
 }
 
 Rules:
@@ -37,7 +39,8 @@ Rules:
 - No units in numeric values, only numbers
 - If a value cannot be determined, use null
 - If the image does not contain a nutrition label, return {"error": "no_nutrition_label"}
-- If values are in kJ, convert to kcal by dividing by 4.184`
+- If values are in kJ, convert to kcal by dividing by 4.184
+- For serving_unit and grams_per_piece: only populate if the label EXPLICITLY states a quantity per piece or portion (e.g. "1 bar = 55 g", "1 burk = 330 ml", "per biscuit (18 g)"). Do NOT guess or infer.`
 
 interface GeminiResponse {
   candidates?: Array<{
@@ -273,6 +276,19 @@ Deno.serve(async (req: Request) => {
     if (trimmed.length > 0) name = trimmed
   }
 
+  // Portionsstorlek — gram för g-produkter, ml för ml-produkter (DB-triggern hanterar båda)
+  let servingUnit: string | null = null
+  if (typeof parsed.serving_unit === 'string') {
+    const trimmed = parsed.serving_unit.trim()
+    if (trimmed.length > 0) servingUnit = trimmed
+  }
+
+  let gramsPerPiece: number | null = null
+  const rawGpp = Number(parsed.grams_per_piece)
+  if (!isNaN(rawGpp) && rawGpp > 1 && rawGpp < 10000) {
+    gramsPerPiece = Math.round(rawGpp * 100) / 100
+  }
+
   await logScan(supabase, userId, true)
 
   return jsonResponse({
@@ -288,5 +304,7 @@ Deno.serve(async (req: Request) => {
     default_amount: 100,
     default_unit: unit,
     food_type: foodType,
+    serving_unit: servingUnit,
+    grams_per_piece: gramsPerPiece,
   })
 })

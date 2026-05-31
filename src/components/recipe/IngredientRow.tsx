@@ -4,14 +4,11 @@ import { Trash2, Search, GripVertical, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import type { FoodItem } from '@/hooks/useFoodItems'
-import { AddFoodItemModal } from '@/components/food/AddFoodItemModal'
-import { AddFoodToMealModal } from '@/components/daily/AddFoodToMealModal'
 
 import {
   calculateIngredientNutrition,
   calculateIngredientWeight,
   getAvailableUnits,
-  getDefaultRecipeUnit,
 } from '@/lib/calculations/recipeCalculator'
 import { convertWeightToUnit } from '@/lib/utils/unitConversion'
 
@@ -62,6 +59,8 @@ interface IngredientRowProps {
   sharedLists?: { id: string; name: string }[]
   onChange: (updated: IngredientData) => void
   onRemove: () => void
+  onOpenPicker: () => void
+  onOpenAddFood: () => void
   dragHandleProps?: React.HTMLAttributes<HTMLDivElement>
 }
 
@@ -69,11 +68,11 @@ export function IngredientRow({
   ingredient,
   onChange,
   onRemove,
+  onOpenPicker,
+  onOpenAddFood,
   dragHandleProps,
 }: IngredientRowProps) {
   const { t } = useTranslation('recipes')
-  const [addFoodItemModalOpen, setAddFoodItemModalOpen] = useState(false)
-  const [pickerOpen, setPickerOpen] = useState(false)
 
   // Get available units for selected food
   const availableUnits = useMemo(
@@ -88,19 +87,6 @@ export function IngredientRow({
         ? calculateIngredientNutrition(ingredient.foodItem, ingredient.amount, ingredient.unit)
         : null,
     [ingredient.foodItem, ingredient.amount, ingredient.unit]
-  )
-
-  const handleFoodSelect = useCallback(
-    (food: FoodItem) => {
-      const defaultUnit = getDefaultRecipeUnit(food)
-      onChange({
-        ...ingredient,
-        foodItem: food,
-        unit: defaultUnit,
-        amount: ingredient.amount || 1,
-      })
-    },
-    [ingredient, onChange]
   )
 
   const handleAmountCommit = useCallback(
@@ -169,7 +155,7 @@ export function IngredientRow({
             className="flex items-center gap-2 px-3 py-2 bg-white border border-neutral-200 rounded-lg cursor-pointer hover:border-primary-300"
             onClick={e => {
               e.stopPropagation()
-              setPickerOpen(true)
+              onOpenPicker()
             }}
           >
             {ingredient.foodItem ? (
@@ -195,7 +181,7 @@ export function IngredientRow({
         <Button
           type="button"
           size="sm"
-          onClick={() => setAddFoodItemModalOpen(true)}
+          onClick={() => onOpenAddFood()}
           className="h-8 w-8 p-0 flex-shrink-0"
           aria-label={t('ingredient.scanBarcode')}
         >
@@ -246,24 +232,6 @@ export function IngredientRow({
           <span style={{ color: '#f43f5e' }}>P: {nutrition.protein.toFixed(1)}g</span>
         </div>
       )}
-
-      <AddFoodItemModal
-        open={addFoodItemModalOpen}
-        onOpenChange={setAddFoodItemModalOpen}
-        onSuccess={newFood => {
-          if (newFood) {
-            handleFoodSelect(newFood)
-          }
-        }}
-      />
-
-      <AddFoodToMealModal
-        open={pickerOpen}
-        onOpenChange={setPickerOpen}
-        mealName=""
-        dailyLogId=""
-        onFoodSelect={food => handleFoodSelect(food)}
-      />
     </div>
   )
 }
