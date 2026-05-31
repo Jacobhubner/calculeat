@@ -276,6 +276,19 @@ export function RecipePreviewModal({ recipe, open, onOpenChange }: RecipePreview
                     </span>
                     <span className="text-neutral-500 ml-4 flex-shrink-0">
                       {ing.amount} {ing.unit}
+                      {(() => {
+                        const WEIGHT_VOLUME = new Set(['g', 'kg', 'dl', 'ml', 'msk', 'tsk'])
+                        if (WEIGHT_VOLUME.has(ing.unit)) return null
+                        const food = ing.food_item
+                        if (!food) return null
+                        const weightG = calculateIngredientWeight(food, ing.amount, ing.unit)
+                        if (weightG <= 0) return null
+                        if (food.ml_per_gram && food.ml_per_gram > 0) {
+                          const ml = Math.round(weightG * food.ml_per_gram)
+                          return <span className="text-neutral-400"> ({ml}ml)</span>
+                        }
+                        return <span className="text-neutral-400"> ({Math.round(weightG)}g)</span>
+                      })()}
                     </span>
                   </li>
                 ))}
