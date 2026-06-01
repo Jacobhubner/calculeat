@@ -213,7 +213,9 @@ export function AddFoodItemModal({
   const gramsPerPiece = watch('grams_per_piece')
   const servingUnit = watch('serving_unit')
 
-  // Populate form when editing
+  // Populate form when editing — runs on open and when editItem changes.
+  // Nutrients are populated separately below to avoid re-running this effect
+  // (which would overwrite initialEditValues and break hasChanges dirty tracking).
   useEffect(() => {
     if (editItem && open) {
       setValue('name', editItem.name)
@@ -230,9 +232,6 @@ export function AddFoodItemModal({
       if (editItem.ml_per_gram) {
         setValue('ml_per_gram', editItem.ml_per_gram)
         setVolumeUnit('dl')
-        // Bakåtberäkna gramsPerVolume bara för g-livsmedel med volymkonvertering.
-        // För ml-livsmedel hanteras densiteten via weight_grams-fältet — sätt
-        // inte gramsPerVolume så att submit-logiken använder weight_grams-grenen.
         if (editItem.default_unit?.toLowerCase() !== 'ml') {
           const gramsPerDl = VOLUME_TO_ML.dl / editItem.ml_per_gram
           initialGramsPerVolume = Math.round(gramsPerDl * 10) / 10
@@ -251,25 +250,10 @@ export function AddFoodItemModal({
         setValue('serving_unit', editItem.serving_unit)
       }
 
-      // Prefill extra nutrients if available
-      if (editItemNutrients) {
-        const satFat = editItemNutrients.find(n => n.nutrient_code === 'saturated_fat')
-        const sugars = editItemNutrients.find(n => n.nutrient_code === 'sugars')
-        const salt = editItemNutrients.find(n => n.nutrient_code === 'salt')
-        const fiber = editItemNutrients.find(n => n.nutrient_code === 'fiber')
-        if (satFat) setValue('saturated_fat_g', satFat.amount)
-        if (sugars) setValue('sugars_g', sugars.amount)
-        if (salt) setValue('salt_g', salt.amount)
-        if (fiber) setValue('fiber_g', fiber.amount)
-      }
-
-      // Spara initiala värden för jämförelse
-      const satFatInitial = editItemNutrients?.find(
-        n => n.nutrient_code === 'saturated_fat'
-      )?.amount
-      const sugarsInitial = editItemNutrients?.find(n => n.nutrient_code === 'sugars')?.amount
-      const saltInitial = editItemNutrients?.find(n => n.nutrient_code === 'salt')?.amount
-      const fiberInitial = editItemNutrients?.find(n => n.nutrient_code === 'fiber')?.amount
+      // Snapshot for hasChanges — set once at open time, never again.
+      // Extra nutrients (satFat etc.) are filled in by the effect below, but the
+      // snapshot for those starts as undefined and is updated only when nutrients
+      // arrive for the FIRST time (guarded by initialEditValues check in that effect).
       setInitialEditValues({
         name: editItem.name,
         default_amount: editItem.default_amount,
@@ -284,10 +268,10 @@ export function AddFoodItemModal({
         grams_per_piece: editItem.grams_per_piece,
         serving_unit: editItem.serving_unit,
         gramsPerVolume: initialGramsPerVolume,
-        saturated_fat_g: satFatInitial,
-        sugars_g: sugarsInitial,
-        salt_g: saltInitial,
-        fiber_g: fiberInitial,
+        saturated_fat_g: undefined,
+        sugars_g: undefined,
+        salt_g: undefined,
+        fiber_g: undefined,
       })
     } else if (!editItem && open) {
       // Reset to defaults when opening for create
@@ -296,7 +280,34 @@ export function AddFoodItemModal({
       setGramsPerVolume(undefined)
       setInitialEditValues(null)
     }
-  }, [editItem, open, editItemNutrients, setValue, reset])
+  }, [editItem, open, setValue, reset])
+
+  // Populate extra nutrients and update their snapshot values — runs when nutrient
+  // data arrives. Only updates the snapshot for nutrient fields (never touches
+  // core fields like default_unit) so hasChanges stays accurate after nutrients load.
+  useEffect(() => {
+    if (!editItem || !open || !editItemNutrients) return
+    const satFat = editItemNutrients.find(n => n.nutrient_code === 'saturated_fat')
+    const sugars = editItemNutrients.find(n => n.nutrient_code === 'sugars')
+    const salt = editItemNutrients.find(n => n.nutrient_code === 'salt')
+    const fiber = editItemNutrients.find(n => n.nutrient_code === 'fiber')
+    if (satFat) setValue('saturated_fat_g', satFat.amount)
+    if (sugars) setValue('sugars_g', sugars.amount)
+    if (salt) setValue('salt_g', salt.amount)
+    if (fiber) setValue('fiber_g', fiber.amount)
+    // Update only the nutrient portion of the snapshot so dirty-tracking stays correct.
+    setInitialEditValues(prev =>
+      prev
+        ? {
+            ...prev,
+            saturated_fat_g: satFat?.amount,
+            sugars_g: sugars?.amount,
+            salt_g: salt?.amount,
+            fiber_g: fiber?.amount,
+          }
+        : prev
+    )
+  }, [editItem, open, editItemNutrients, setValue])
 
   // Smart default: if unit is "g" or "gram", auto-set weight_grams to match default_amount
   // This works both when creating new items AND when editing (user changes unit to 'g')
