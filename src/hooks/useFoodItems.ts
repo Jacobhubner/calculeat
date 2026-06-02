@@ -125,7 +125,7 @@ export interface CreateFoodItemInput {
   salt_g?: number
   default_amount: number
   default_unit: string
-  weight_grams: number
+  weight_grams?: number | null
   reference_amount?: number
   reference_unit?: 'g' | 'ml'
   density_g_per_ml?: number | null

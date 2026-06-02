@@ -104,8 +104,8 @@
     "clearFilters": "Rensa filter"
   },
   "densityBanner": {
-    "title": "{{count}} livsmedel saknar densitet — volymenheter och portioner är inaktiverade",
-    "title_one": "1 livsmedel saknar densitet — volymenheter och portioner är inaktiverade",
+    "title": "{{count}} livsmedel saknar vikt (gram) — gram-konvertering ej tillgänglig",
+    "title_one": "1 livsmedel saknar vikt (gram) — gram-konvertering ej tillgänglig",
     "editButton": "Redigera"
   },
   "emptyState": {
@@ -134,6 +134,7 @@
     "viewAsServing": "Visa som {{serving}}",
     "viewPer100g": "Visa per 100g",
     "viewPerVolume": "Visa per volym (ml)",
+    "viewPer100ml": "Visa per 100ml",
     "viewNutrients": "Visa näringsvärden",
     "copyToList": "Kopiera till lista",
     "createSharedList": "Skapa delad lista"
@@ -242,7 +243,8 @@
     "fieldUnitPlaceholder": "g, ml, st, dl...",
     "fieldWeight": "Vikt (gram)",
     "fieldWeightHint": "Hur mycket väger {{amount}} {{unit}}?",
-    "fieldWeightMlHint": "Rekommenderat — behövs för att aktivera dl, msk och tsk",
+    "fieldWeightMlHint": "Valfritt — aktiverar gram-baserade enheter och densitetsberäkningar",
+    "fieldWeightOptionalPlaceholder": "Valfritt",
     "sectionNutrition": "Näringsinnehåll (per {{amount}} {{unit}})",
     "fieldCalories": "Kalorier (kcal) *",
     "fieldFat": "Fett (g) *",

@@ -20,7 +20,7 @@ export function useUserLiquidItemsWithoutDensity() {
         .select('id, name, calories, default_unit')
         .eq('user_id', user!.id)
         .eq('default_unit', 'ml')
-        .or('ml_per_gram.is.null,ml_per_gram.eq.0')
+        .or('weight_grams.is.null,weight_grams.eq.0')
         .eq('is_recipe', false)
         .order('name')
       if (error) throw error

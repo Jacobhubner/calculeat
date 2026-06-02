@@ -115,7 +115,7 @@ export function AddFoodItemModal({
     name: string
     default_amount: number
     default_unit: string
-    weight_grams: number
+    weight_grams: number | undefined
     calories: number
     fat_g: number
     carb_g: number
@@ -177,7 +177,7 @@ export function AddFoodItemModal({
       food_type: 'Solid',
       default_amount: 100,
       default_unit: 'g',
-      weight_grams: 100,
+      weight_grams: undefined,
       calories: 0,
       fat_g: 0,
       carb_g: 0,
@@ -221,7 +221,16 @@ export function AddFoodItemModal({
       setValue('name', editItem.name)
       setValue('default_amount', editItem.default_amount)
       setValue('default_unit', editItem.default_unit)
-      setValue('weight_grams', editItem.weight_grams || editItem.default_amount)
+      // For ml-based items, leave weight_grams empty if not set in DB (density is optional).
+      // For gram-based items, fall back to default_amount.
+      const isMlItem = (editItem.default_unit ?? '').toLowerCase() === 'ml'
+      const dbWeight = editItem.weight_grams
+      const weightToSet = isMlItem
+        ? dbWeight && dbWeight > 0
+          ? dbWeight
+          : undefined
+        : dbWeight || editItem.default_amount
+      setValue('weight_grams', weightToSet)
       setValue('calories', editItem.calories)
       setValue('fat_g', editItem.fat_g)
       setValue('carb_g', editItem.carb_g)
@@ -258,7 +267,7 @@ export function AddFoodItemModal({
         name: editItem.name,
         default_amount: editItem.default_amount,
         default_unit: editItem.default_unit,
-        weight_grams: editItem.weight_grams || editItem.default_amount,
+        weight_grams: weightToSet ?? undefined,
         calories: editItem.calories,
         fat_g: editItem.fat_g,
         carb_g: editItem.carb_g,
@@ -323,14 +332,12 @@ export function AddFoodItemModal({
     }
   }, [defaultUnit, defaultAmount, weightGrams, setValue])
 
-  // Besluta om viktfältet ska visas
+  // Besluta om viktfältet ska visas — dölj bara om enheten är gram (weight_grams = default_amount alltid)
   const shouldShowWeightField = useMemo(() => {
     const unit = (defaultUnit || '').toLowerCase().trim()
     const isGrams = unit === 'g' || unit === 'gram'
-
-    // Visa bara om INTE (enhet är gram OCH weight_grams matchar default_amount)
-    return !(isGrams && Math.abs((weightGrams || 0) - (defaultAmount || 0)) < 0.01)
-  }, [defaultUnit, defaultAmount, weightGrams])
+    return !isGrams
+  }, [defaultUnit])
 
   // Kontrollera om portionsenheten är en volymenhet
   // Om så, ska "vikt per portion" fältet döljas (använd volymkonvertering istället)
@@ -453,16 +460,16 @@ export function AddFoodItemModal({
 
   // Live calculations
   const liveCalculations = useMemo(() => {
-    if (!weightGrams || weightGrams <= 0) {
-      return null
-    }
+    const isMl = (defaultUnit || '').toLowerCase() === 'ml'
+    // For ml-based foods, density is available as long as weight_grams is filled in (any positive value).
+    // For gram-based foods, weight_grams is always required.
+    const canShowDensity = weightGrams != null && weightGrams > 0
+    if (!isMl && !canShowDensity) return null
 
-    const kcalPerGram = calculateCalorieDensity(calories, weightGrams)
-    const energyDensityColor = calculateFoodColor({
-      calories,
-      weightGrams,
-      foodType,
-    })
+    const kcalPerGram = canShowDensity ? calculateCalorieDensity(calories, weightGrams!) : null
+    const energyDensityColor = canShowDensity
+      ? calculateFoodColor({ calories, weightGrams: weightGrams!, foodType })
+      : null
 
     // Macro distribution
     const totalMacroCalories = proteinG * 4 + carbG * 4 + fatG * 9
@@ -484,7 +491,7 @@ export function AddFoodItemModal({
       macroCaloriesMismatch,
       caloriesDiffPercent,
     }
-  }, [weightGrams, calories, fatG, carbG, proteinG, foodType])
+  }, [defaultUnit, defaultAmount, weightGrams, calories, fatG, carbG, proteinG, foodType])
 
   // Serving preview calculations
   const servingPreview = useMemo(() => {
@@ -558,7 +565,10 @@ export function AddFoodItemModal({
       setValue('calories', result.calories)
       setValue('default_amount', result.default_amount, { shouldValidate: true })
       setValue('default_unit', result.default_unit, { shouldValidate: true })
-      setValue('weight_grams', result.default_amount, { shouldValidate: true })
+      // Only set weight_grams for gram-based items; ml items don't need it for volume units
+      if ((result.default_unit ?? '').toLowerCase() !== 'ml') {
+        setValue('weight_grams', result.default_amount, { shouldValidate: true })
+      }
       if (result.protein_g !== null) setValue('protein_g', result.protein_g)
       if (result.carb_g !== null) setValue('carb_g', result.carb_g)
       if (result.fat_g !== null) setValue('fat_g', result.fat_g)
@@ -660,7 +670,9 @@ export function AddFoodItemModal({
           // För gram: sätt weight_grams till 100.
           // För ml: skala weight_grams proportionellt (behåller densiteten).
           weight_grams: isML
-            ? Math.round((data.weight_grams || data.default_amount) * factor * 100) / 100
+            ? data.weight_grams && data.weight_grams > 0
+              ? Math.round(data.weight_grams * factor * 100) / 100
+              : undefined
             : 100,
         }
       }
@@ -687,7 +699,8 @@ export function AddFoodItemModal({
       // Clean up NaN values from optional number fields
       const cleanedData = {
         ...data,
-        weight_grams: data.weight_grams ?? 100,
+        // For ml-based items, weight_grams is optional (density). For gram-based, default to 100.
+        weight_grams: isMLBased ? data.weight_grams || null : (data.weight_grams ?? 100),
         barcode: lockedBarcode ?? undefined,
         grams_per_piece:
           data.grams_per_piece && !isNaN(data.grams_per_piece) ? data.grams_per_piece : null,
@@ -1187,7 +1200,7 @@ export function AddFoodItemModal({
                     </div>
                   </div>
 
-                  {/* Viktfält - visa bara om enheten inte är gram ELLER vikten skiljer sig från mängden */}
+                  {/* Viktfält - visa alltid utom när enheten är gram (då weight_grams = default_amount) */}
                   {shouldShowWeightField && (
                     <div>
                       <Label htmlFor="weight_grams">
@@ -1206,7 +1219,7 @@ export function AddFoodItemModal({
                         type="number"
                         step="any"
                         {...register('weight_grams', { valueAsNumber: true })}
-                        placeholder="100"
+                        placeholder={t('addFoodModal.fieldWeightOptionalPlaceholder')}
                         className={errors.weight_grams ? 'border-red-500' : ''}
                       />
                       {errors.weight_grams && (
@@ -1495,38 +1508,41 @@ export function AddFoodItemModal({
 
                   {liveCalculations ? (
                     <>
-                      {/* Energy density */}
-                      <div>
-                        <p className="text-xs text-neutral-600 mb-1">
-                          {t('addFoodModal.previewEnergyDensity')}
-                        </p>
-                        <p className="text-lg font-semibold text-neutral-900">
-                          {liveCalculations.kcalPerGram.toFixed(2)} kcal/g
-                        </p>
-                        <div className="flex items-center gap-2">
-                          <Badge
-                            variant="outline"
-                            className={
-                              liveCalculations.energyDensityColor === 'Green'
-                                ? 'bg-green-50 text-green-700 border-green-300'
-                                : liveCalculations.energyDensityColor === 'Yellow'
-                                  ? 'bg-yellow-50 text-yellow-700 border-yellow-300'
-                                  : 'bg-orange-50 text-orange-700 border-orange-300'
-                            }
-                          >
-                            {tAny(`color.${liveCalculations.energyDensityColor.toLowerCase()}`)}
-                          </Badge>
-                          <span className="text-xs text-neutral-600">
-                            (
-                            {foodType === 'Solid'
-                              ? t('addFoodModal.foodTypeSolid')
-                              : foodType === 'Liquid'
-                                ? t('addFoodModal.foodTypeLiquid')
-                                : t('addFoodModal.foodTypeSoup')}
-                            )
-                          </span>
-                        </div>
-                      </div>
+                      {/* Energy density — only when gram weight is known */}
+                      {liveCalculations.kcalPerGram !== null &&
+                        liveCalculations.energyDensityColor !== null && (
+                          <div>
+                            <p className="text-xs text-neutral-600 mb-1">
+                              {t('addFoodModal.previewEnergyDensity')}
+                            </p>
+                            <p className="text-lg font-semibold text-neutral-900">
+                              {liveCalculations.kcalPerGram.toFixed(2)} kcal/g
+                            </p>
+                            <div className="flex items-center gap-2">
+                              <Badge
+                                variant="outline"
+                                className={
+                                  liveCalculations.energyDensityColor === 'Green'
+                                    ? 'bg-green-50 text-green-700 border-green-300'
+                                    : liveCalculations.energyDensityColor === 'Yellow'
+                                      ? 'bg-yellow-50 text-yellow-700 border-yellow-300'
+                                      : 'bg-orange-50 text-orange-700 border-orange-300'
+                                }
+                              >
+                                {tAny(`color.${liveCalculations.energyDensityColor.toLowerCase()}`)}
+                              </Badge>
+                              <span className="text-xs text-neutral-600">
+                                (
+                                {foodType === 'Solid'
+                                  ? t('addFoodModal.foodTypeSolid')
+                                  : foodType === 'Liquid'
+                                    ? t('addFoodModal.foodTypeLiquid')
+                                    : t('addFoodModal.foodTypeSoup')}
+                                )
+                              </span>
+                            </div>
+                          </div>
+                        )}
 
                       {/* Serving portion preview - NY SEKTION */}
                       {servingPreview && (

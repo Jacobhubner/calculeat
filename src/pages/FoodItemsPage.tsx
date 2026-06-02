@@ -68,7 +68,7 @@ import { useTranslation } from 'react-i18next'
 import { useUserLiquidItemsWithoutDensity } from '@/hooks/useUserLiquidItemsWithoutDensity'
 
 // Display mode type
-type DisplayMode = 'serving' | 'per100g' | 'perVolume'
+type DisplayMode = 'serving' | 'per100g' | 'perVolume' | 'per100ml'
 
 // Sort types
 type SortKey = 'name' | 'calories' | 'protein' | 'carb' | 'fat' | 'color'
@@ -82,12 +82,23 @@ function getAvailableDisplayModes(item: FoodItem): DisplayMode[] {
     modes.push('serving')
   }
 
-  if (item.kcal_per_gram) {
-    modes.push('per100g')
-  }
+  const isMl = item.reference_unit === 'ml' || (item.default_unit ?? '').toLowerCase() === 'ml'
 
-  if (item.ml_per_gram && item.kcal_per_gram) {
-    modes.push('perVolume')
+  if (isMl) {
+    // Always show per 100ml for ml-based foods (direct from reference_amount, always reliable)
+    modes.push('per100ml')
+    // Show per 100g only if weight_grams is set (enables gram conversion)
+    if (item.weight_grams && item.weight_grams > 0 && item.kcal_per_gram) {
+      modes.push('per100g')
+    }
+    // Show perVolume if ml_per_gram is set
+    if (item.ml_per_gram && item.kcal_per_gram) {
+      modes.push('perVolume')
+    }
+  } else {
+    if (item.kcal_per_gram) {
+      modes.push('per100g')
+    }
   }
 
   return modes
@@ -155,6 +166,20 @@ function getDisplayData(
       }
     }
 
+    case 'per100ml': {
+      // ml-based food without density: nutrition stored per reference_amount ml
+      const refMl = item.reference_amount && item.reference_amount > 0 ? item.reference_amount : 100
+      const scale = 100 / refMl
+      return {
+        icon: '',
+        header: '100ml',
+        kcal: item.calories * scale,
+        protein: item.protein_g * scale,
+        carb: item.carb_g * scale,
+        fat: item.fat_g * scale,
+      }
+    }
+
     default:
       return null
   }
@@ -194,6 +219,11 @@ function getDefaultDisplayMode(item: FoodItem): DisplayMode {
 
   if (item.grams_per_piece && item.serving_unit && item.kcal_per_unit) {
     return 'serving'
+  }
+
+  const isMl = item.reference_unit === 'ml' || (item.default_unit ?? '').toLowerCase() === 'ml'
+  if (isMl) {
+    return 'per100ml'
   }
 
   return 'per100g'
@@ -373,6 +403,8 @@ export default function FoodItemsPage() {
         return '100g'
       case 'perVolume':
         return 'ml'
+      case 'per100ml':
+        return '100ml'
       default:
         return ''
     }
@@ -385,6 +417,7 @@ export default function FoodItemsPage() {
       serving: t('tooltip.viewAsServing', { serving: servingLabel }),
       per100g: t('tooltip.viewPer100g'),
       perVolume: t('tooltip.viewPerVolume'),
+      per100ml: t('tooltip.viewPer100ml'),
     }
     return labels[mode] || ''
   }

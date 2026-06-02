@@ -104,8 +104,8 @@
     "clearFilters": "Clear filters"
   },
   "densityBanner": {
-    "title": "{{count}} food items missing density — volume units and portions are inactive",
-    "title_one": "1 food item missing density — volume units and portions are inactive",
+    "title": "{{count}} food items missing weight (grams) — gram conversion unavailable",
+    "title_one": "1 food item missing weight (grams) — gram conversion unavailable",
     "editButton": "Edit"
   },
   "emptyState": {
@@ -134,6 +134,7 @@
     "viewAsServing": "View as {{serving}}",
     "viewPer100g": "View per 100g",
     "viewPerVolume": "View per volume (ml)",
+    "viewPer100ml": "View per 100ml",
     "viewNutrients": "View nutrition facts",
     "copyToList": "Copy to list",
     "createSharedList": "Create shared list"
@@ -242,7 +243,8 @@
     "fieldUnitPlaceholder": "g, ml, ea, cup...",
     "fieldWeight": "Weight (grams)",
     "fieldWeightHint": "How much does {{amount}} {{unit}} weigh?",
-    "fieldWeightMlHint": "Recommended — needed to enable volume units like cups and tbsp",
+    "fieldWeightMlHint": "Optional — enables gram-based units and density calculations",
+    "fieldWeightOptionalPlaceholder": "Optional",
     "sectionNutrition": "Nutrition (per {{amount}} {{unit}})",
     "fieldCalories": "Calories (kcal) *",
     "fieldFat": "Fat (g) *",
