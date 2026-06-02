@@ -78,8 +78,18 @@ export function calculateIngredientWeight(food: FoodItem, amount: number, unit: 
     return amount * 1000
   }
 
-  // Handle volume units (dl, msk, tsk)
+  // Handle volume units (ml, dl, msk, tsk)
   if (isVolumeUnit(unit)) {
+    const ML_PER_UNIT: Record<string, number> = { ml: 1, dl: 100, msk: 15, tsk: 5 }
+    const totalMl = amount * (ML_PER_UNIT[unit] ?? 1)
+    if (food.ml_per_gram && food.ml_per_gram > 0) {
+      // Convert ml → grams via density
+      return totalMl / food.ml_per_gram
+    }
+    if ((food.default_unit ?? '').toLowerCase() === 'ml') {
+      // ml-based food without density: return ml as the "weight" (nutrition base is per ml)
+      return totalMl
+    }
     const gramsPerUnit = getVolumeToGrams(unit, food.ml_per_gram)
     return amount * gramsPerUnit
   }
@@ -283,8 +293,10 @@ export function calculateRecipeNutrition(
 export function getAvailableUnits(food: FoodItem): string[] {
   const units: string[] = ['g']
 
-  // Add volume units if ml_per_gram is defined
-  if (food.ml_per_gram && food.ml_per_gram > 0) {
+  // Add volume units if ml-based (no density needed for ml↔dl/msk/tsk)
+  // or if ml_per_gram is set (enables gram↔volume conversion too)
+  const isMlBased = (food.default_unit ?? '').toLowerCase() === 'ml'
+  if (isMlBased || (food.ml_per_gram && food.ml_per_gram > 0)) {
     units.push('ml', 'dl', 'msk', 'tsk')
   }
 
@@ -311,7 +323,8 @@ export function getDefaultRecipeUnit(food: FoodItem): string {
   // 'portion' without grams_per_piece is not in the available units list — fall back to 'g'.
   const unit = food.default_unit || 'g'
   const isVolume = unit === 'ml' || unit === 'dl' || unit === 'msk' || unit === 'tsk'
-  if (isVolume && food.ml_per_gram && food.ml_per_gram > 0) return unit
+  const isMlBased = unit.toLowerCase() === 'ml'
+  if (isVolume && (isMlBased || (food.ml_per_gram && food.ml_per_gram > 0))) return unit
   if (unit === 'g' || unit === 'kg') return unit
   // For 'portion', 'st', or any custom unit without grams_per_piece, fall back to 'g'
   return 'g'

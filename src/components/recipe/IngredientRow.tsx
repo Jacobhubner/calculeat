@@ -107,10 +107,12 @@ export function IngredientRow({
       ingredient.amount,
       ingredient.unit
     )
+    const isMlBased = (ingredient.foodItem.default_unit ?? '').toLowerCase() === 'ml'
     const convertedAmount = convertWeightToUnit(
       weightGrams,
       newUnit,
-      ingredient.foodItem.ml_per_gram ?? undefined
+      ingredient.foodItem.ml_per_gram ?? undefined,
+      isMlBased
     )
     const WEIGHT_VOLUME_UNITS = new Set(['g', 'kg', 'dl', 'ml', 'msk', 'tsk'])
     const PIECE_UNITS = new Set(['st', 'portion'])

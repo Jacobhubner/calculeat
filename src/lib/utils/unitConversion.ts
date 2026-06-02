@@ -10,21 +10,25 @@
 export function convertWeightToUnit(
   weightGrams: number,
   targetUnit: string,
-  mlPerGram?: number | null
+  mlPerGram?: number | null,
+  sourceMlBased?: boolean
 ): number {
+  // For ml-based foods without density, weightGrams is actually ml.
+  // Use mlPerGram=1 so the ml↔volume conversions work correctly.
+  const effectiveMlPerGram = mlPerGram ?? (sourceMlBased ? 1 : null)
   switch (targetUnit) {
     case 'g':
       return weightGrams
     case 'kg':
       return weightGrams / 1000
     case 'ml':
-      return mlPerGram ? weightGrams * mlPerGram : NaN
+      return effectiveMlPerGram ? weightGrams * effectiveMlPerGram : NaN
     case 'dl':
-      return mlPerGram ? (weightGrams * mlPerGram) / 100 : NaN
+      return effectiveMlPerGram ? (weightGrams * effectiveMlPerGram) / 100 : NaN
     case 'msk':
-      return mlPerGram ? (weightGrams * mlPerGram) / 15 : NaN
+      return effectiveMlPerGram ? (weightGrams * effectiveMlPerGram) / 15 : NaN
     case 'tsk':
-      return mlPerGram ? (weightGrams * mlPerGram) / 5 : NaN
+      return effectiveMlPerGram ? (weightGrams * effectiveMlPerGram) / 5 : NaN
     default:
       return weightGrams
   }

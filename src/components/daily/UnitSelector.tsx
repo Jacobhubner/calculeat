@@ -38,8 +38,10 @@ export function getAvailableUnits(food: FoodItem): string[] {
   // Always ensure 'g' is available (for 100g reference)
   if (!units.includes('g')) units.push('g')
 
-  // If food has ml_per_gram, add volume units
-  if (food.ml_per_gram) {
+  // Add volume units if the food is ml-based (no density needed for ml↔dl/msk/tsk)
+  // or if ml_per_gram is set (enables gram↔volume conversion too)
+  const isMlBased = (food.default_unit ?? '').toLowerCase() === 'ml'
+  if (isMlBased || food.ml_per_gram) {
     if (!units.includes('ml')) units.push('ml')
     if (!units.includes('dl')) units.push('dl')
     if (!units.includes('msk')) units.push('msk')
@@ -82,13 +84,42 @@ export function calculateNutritionForUnit(
   if (unitLower === 'g') {
     weightGrams = amount
   } else if (unitLower === 'ml') {
-    if (!food.ml_per_gram) return null
-    weightGrams = amount / food.ml_per_gram
+    if (food.ml_per_gram) {
+      weightGrams = amount / food.ml_per_gram
+    } else if ((food.default_unit ?? '').toLowerCase() === 'ml') {
+      // ml-based food without density: scale directly against reference_amount (ml)
+      const refMl = food.reference_amount > 0 ? food.reference_amount : 100
+      weightGrams = (amount / refMl) * refMl // weight stays virtual; nutrition ratio is amount/refMl
+      // Override: use ml ratio directly in the nutrition calc below by returning early
+      const ratio = amount / (food.reference_amount > 0 ? food.reference_amount : 100)
+      return {
+        weightGrams: amount, // ml treated as "weight" for display purposes
+        calories: food.calories * ratio,
+        protein: food.protein_g * ratio,
+        carbs: food.carb_g * ratio,
+        fat: food.fat_g * ratio,
+      }
+    } else {
+      return null
+    }
   } else if (VOLUME_TO_ML[unitLower]) {
     // Volume unit (dl, msk, tsk)
-    if (!food.ml_per_gram) return null
     const totalMl = amount * VOLUME_TO_ML[unitLower]
-    weightGrams = totalMl / food.ml_per_gram
+    if (food.ml_per_gram) {
+      weightGrams = totalMl / food.ml_per_gram
+    } else if ((food.default_unit ?? '').toLowerCase() === 'ml') {
+      // ml-based food without density: compute ratio against reference_amount (ml)
+      const ratio = totalMl / (food.reference_amount > 0 ? food.reference_amount : 100)
+      return {
+        weightGrams: totalMl,
+        calories: food.calories * ratio,
+        protein: food.protein_g * ratio,
+        carbs: food.carb_g * ratio,
+        fat: food.fat_g * ratio,
+      }
+    } else {
+      return null
+    }
   } else if (unitLower === 'st' || unitLower === food.serving_unit?.toLowerCase()) {
     // Piece/serving unit — use grams_per_piece if available
     if (food.grams_per_piece) {
