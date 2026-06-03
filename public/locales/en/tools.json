@@ -1340,7 +1340,7 @@
             "lowConfidence": "reliability is low",
             "largeDeficit": "large calorie deficit"
           },
-          "tip": "Tip: Improve data quality (more weigh-ins, complete logging) to allow larger adjustments in the future."
+          "tip": "Tip: If the limit was due to the data quality cap — improve data quality (more weigh-ins, complete logging). If it was due to the convergence cap, allow the calibration to converge gradually over more periods."
         },
         "low_signal": {
           "desc": "The change ({{change}} kg) is below the threshold ~{{threshold}} kg (0.25% of your weight). Either your TDEE is already correct, or fluid/glycogen is masking the true trend. When weight change is small relative to daily variation, noise dominates the signal — this widens the confidence interval and makes the TDEE estimate less reliable regardless of how long the period is.",
@@ -1437,14 +1437,14 @@
         "<strong>Weigh-in frequency (35%)</strong> — how regularly you have weighed yourself; 50% of days gives full score",
         "<strong>Cluster size (20%)</strong> — how many measurements are in the start and end clusters of the period"
       ],
-      "section4p2": "DQI directly controls how large an adjustment is permitted: from ±75 kcal at low quality to ±200 kcal at high quality. This means better data not only gives a more reliable result — it also allows faster convergence towards your actual TDEE.",
+      "section4p2": "DQI controls the size of the data quality cap: from ±75 kcal at low quality to ±200 kcal at high quality. Better data not only gives a more reliable result — it also allows faster movement towards your actual TDEE if data and current TDEE diverge.",
       "section4tip": "You can choose between 14, 21, and 28 days. Longer periods provide more data and allow slightly larger adjustments. Periods shorter than 14 days are not used — the signal-to-noise ratio becomes too weak to give reliable estimates, as daily weight fluctuations can be as large as the actual weight trend change.",
       "section4tipTitle": "Choice of time period",
       "section5Title": "Limiting extreme adjustments",
       "section5clampTitle": "Adjustment limits (clamp)",
-      "section5p1": "The calibration limits how much TDEE can change in a single update. The maximum adjustment depends on data quality and normally lies between:",
-      "section5range": "±75 kcal to ±200 kcal",
-      "section5p2": "TDEE is never set below 1,200 or above 5,000 kcal regardless of what the calculation shows — these are absolute physiological limits. The clamp prevents temporary weight changes from causing unreasonable TDEE jumps.",
+      "section5p1": "The calibration limits how much TDEE can change in a single update via two separate bounds that must both be satisfied — the tighter of the two determines the result:",
+      "section5range": "Data quality cap: ±75–200 kcal (centred on calculated TDEE) · Convergence cap: 12–20% of current TDEE (per period)",
+      "section5p2": "TDEE is never set below 1,200 or above 5,000 kcal regardless of what the calculation shows — these are absolute physiological limits. If an adjustment is limited, the warning message identifies which cap was binding.",
       "section5smoothTitle": "Gradual convergence",
       "section5p3": "If the calibration proposes a new TDEE level and the clamp is <em>not</em> triggered, the result is smoothly blended towards the last 1–3 previous calibrations. If all previous calibrations point in the same direction, the system follows that trend with minimal dampening instead of braking. If the clamp is triggered, the limited value is used directly without further smoothing.",
       "section5historyTitle": "History weighting",

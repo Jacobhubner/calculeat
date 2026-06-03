@@ -1345,7 +1345,7 @@
             "lowConfidence": "tillförlitligheten är låg",
             "largeDeficit": "stort kaloriunderskott"
           },
-          "tip": "Tips: Förbättra datakvaliteten (fler vägningar, fullständig loggning) för att tillåta större justeringar framöver."
+          "tip": "Tips: Om begränsningen berodde på datakvalitetstaket — förbättra datakvaliteten (fler vägningar, fullständig loggning). Om den berodde på konvergenstaket gäller istället att låta kalibreringen konvergera gradvis under fler perioder."
         },
         "low_signal": {
           "desc": "Förändringen ({{change}} kg) är under gränsen ~{{threshold}} kg (0,25 % av din vikt). Antingen stämmer ditt TDEE redan, eller döljer vätska/glykogen den verkliga trenden. När viktförändringen är liten i förhållande till den dagliga variationen dominerar bruset över signalen — det breddar konfidensintervallet och gör TDEE-estimatet mindre tillförlitligt oavsett hur länge perioden är.",
@@ -1442,14 +1442,14 @@
         "<strong>Vägningsfrekvens (35%)</strong> — hur regelbundet du vägt dig; 50% av dagarna ger fullt utslag",
         "<strong>Klusterstorlek (20%)</strong> — hur många mätningar som finns i periodens start- och slutkluster"
       ],
-      "section4p2": "DQI styr direkt hur stor justering som tillåts: från ±75 kcal vid låg kvalitet till ±200 kcal vid hög. Det innebär att bättre data inte bara ger ett mer tillförlitligt resultat — det ger också möjlighet till snabbare konvergens mot ditt faktiska TDEE.",
+      "section4p2": "DQI styr storleken på datakvalitetstaket: från ±75 kcal vid låg kvalitet till ±200 kcal vid hög. Bättre data ger alltså inte bara ett mer tillförlitligt resultat — det tillåter också en snabbare rörelse mot ditt faktiska TDEE om data och nuvarande TDEE skiljer sig åt.",
       "section4tip": "Du kan välja mellan 14, 21 och 28 dagar. Längre perioder ger mer data och tillåter något större justeringar. Kortare perioder än 14 dagar används inte — signal/brus-förhållandet blir då för svagt för att ge tillförlitliga estimat, eftersom dagliga viktsvängningar kan vara lika stora som den faktiska vikttrendförändringen.",
       "section4tipTitle": "Val av tidsperiod",
       "section5Title": "Begränsning av extrema justeringar",
       "section5clampTitle": "Justeringsgränser (clamp)",
-      "section5p1": "Kalibreringen begränsar hur mycket TDEE kan ändras i en enskild uppdatering. Maximal justering beror på datakvaliteten och ligger normalt mellan:",
-      "section5range": "±75 kcal till ±200 kcal",
-      "section5p2": "TDEE sätts aldrig under 1 200 eller över 5 000 kcal oavsett vad beräkningen visar — dessa är absoluta fysiologiska gränser. Clampen förhindrar att tillfälliga viktförändringar ger orimliga TDEE-hopp.",
+      "section5p1": "Kalibreringen begränsar hur mycket TDEE kan ändras i en enskild uppdatering via två separata gränser som båda måste uppfyllas — den snävare av de två avgör resultatet:",
+      "section5range": "Datakvalitetstaket: ±75–200 kcal (centrerat på beräknat TDEE) · Konvergenstaket: 12–20 % av nuvarande TDEE (per period)",
+      "section5p2": "TDEE sätts aldrig under 1 200 eller över 5 000 kcal oavsett vad beräkningen visar — dessa är absoluta fysiologiska gränser. Om en justering begränsas visas vilket tak som var bindande i varningsmeddelandet.",
       "section5smoothTitle": "Gradvis konvergens",
       "section5p3": "Om kalibreringen föreslår en ny TDEE-nivå och clampen <em>inte</em> triggas, utjämnas resultatet mjukt mot de senaste 1–3 tidigare kalibreringarna. Om alla tidigare kalibreringar pekar i samma riktning följer systemet den trenden med minimal dämpning istället för att bromsa. Triggas clampen används det begränsade värdet direkt utan ytterligare utjämning.",
       "section5historyTitle": "Historikvägning",
