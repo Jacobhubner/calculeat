@@ -183,16 +183,25 @@ export default function MetabolicCalibrationGuide() {
               <div>
                 <p className="font-medium">Justeringsgränser (clamp)</p>
                 <p className="mt-1">
-                  Kalibreringen begränsar hur mycket TDEE kan ändras i en enskild uppdatering.
-                  Maximal justering beror på datakvaliteten och ligger normalt mellan:
+                  Kalibreringen begränsar hur mycket TDEE kan ändras i en enskild uppdatering via
+                  två separata gränser som båda måste uppfyllas:
                 </p>
-                <p className="font-medium text-primary-600 text-center py-1">
-                  ±75 kcal till ±200 kcal
-                </p>
-                <p>
-                  TDEE sätts aldrig under 1 200 eller över 5 000 kcal oavsett vad beräkningen visar
-                  — dessa är absoluta fysiologiska gränser. Clampen förhindrar att tillfälliga
-                  viktförändringar ger orimliga TDEE-hopp.
+                <ul className="mt-1 ml-4 list-disc space-y-1">
+                  <li>
+                    <strong>Datakvalitetstaket</strong> — begränsar hur långt det kalibrerade värdet
+                    får avvika från vad data faktiskt visar. Storleken styrs av DQI och ligger
+                    mellan ±75 kcal (låg kvalitet) och ±200 kcal (utmärkt kvalitet).
+                  </li>
+                  <li>
+                    <strong>Konvergenstaket</strong> — begränsar hur snabbt TDEE får röra sig från
+                    din nuvarande nivå per period, oavsett datakvalitet. Storleken beror på
+                    periodens längd (12–20 % av nuvarande TDEE).
+                  </li>
+                </ul>
+                <p className="mt-1">
+                  Den snävare av de två gränserna avgör det slutliga resultatet. Om en justering
+                  begränsas visas vilket tak som var bindande i varningsmeddelandet. TDEE sätts
+                  aldrig under 1 200 eller över 5 000 kcal oavsett vad beräkningen visar.
                 </p>
               </div>
               <div>
