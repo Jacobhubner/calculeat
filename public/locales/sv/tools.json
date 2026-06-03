@@ -1487,7 +1487,7 @@
       "section9bullets": [
         "<strong>Klustrad start/slut-vikt</strong> — medianankare i periodens ytterkanter skyddar mot enstaka extrema vägningar",
         "<strong>Trendestimering över alla datapunkter</strong> — regression och Theil–Sen-korscheck mäter trenden utan att förlita sig på två enskilda mätningar",
-        "<strong>Datakvalitetsvägd justeringsbegränsning</strong> — DQI styr hur stor justering som tillåts, vilket förhindrar överreaktion vid osäker data"
+        "<strong>Tvåstegs justeringsbegränsning</strong> — ett datakvalitetstak (DQI, centrerat på beräknat TDEE) och ett konvergenstak (periodberoende, centrerat på nuvarande TDEE) tillämpas oberoende; den snävare av de två begränsar resultatet"
       ],
       "section9p3": "Det är just denna kombination som gör modellen mer stabil än system som enbart jämför start- och slutvikt eller använder enkla rullande medelvärden.",
       "section9p4": "Ju mer konsekvent du loggar mat och vikt över tid, desto mer exakt kan systemet uppskatta ditt verkliga energibehov."

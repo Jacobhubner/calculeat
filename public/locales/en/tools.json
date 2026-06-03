@@ -1482,7 +1482,7 @@
       "section9bullets": [
         "<strong>Clustered start/end weight</strong> — median anchors at the period's extremes protect against individual extreme weigh-ins",
         "<strong>Trend estimation over all data points</strong> — regression and Theil–Sen cross-check measure the trend without relying on two individual measurements",
-        "<strong>Data quality-weighted adjustment limit</strong> — DQI controls how large an adjustment is permitted, which prevents overreaction with uncertain data"
+        "<strong>Two-stage adjustment limit</strong> — a data quality cap (DQI, centred on calculated TDEE) and a convergence cap (period-dependent, centred on current TDEE) are applied independently; the tighter of the two limits the result"
       ],
       "section9p3": "It is precisely this combination that makes the model more stable than systems that only compare start and end weight or use simple rolling averages.",
       "section9p4": "The more consistently you log food and weight over time, the more accurately the system can estimate your true energy requirements."
