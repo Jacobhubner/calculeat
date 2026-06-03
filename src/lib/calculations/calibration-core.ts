@@ -242,15 +242,27 @@ export function runCalibration(input: CalibrationInput): CalibrationResult | str
     maxAdjPercent *= 0.8
   }
 
-  // DQI absolute cap: override percentage-based clamp with absolute kcal limit
+  // Two separate clamps applied in series — tighter of the two wins.
+  //
+  // DQI clamp: precision bound centred on rawTDEE.
+  // Limits how far clampedTDEE can deviate from what the data actually shows.
+  // This is a data-quality guarantee, independent of where currentTDEE happens to be.
+  //
+  // Convergence clamp: rate-limit centred on currentTDEE.
+  // Prevents large single-period swings regardless of data quality.
+  // This is the intended hastighetsbegränsning from the original design.
   const maxAbsFromDQI = dataQuality.maxAbsoluteAdjustment
   const maxFromPercent = input.currentTDEE * maxAdjPercent
-  const effectiveMaxAbs = Math.min(maxFromPercent, maxAbsFromDQI)
   const dqiWasBindingCap = maxAbsFromDQI < maxFromPercent
 
-  const maxTDEE = Math.min(TDEE_CEILING, input.currentTDEE + effectiveMaxAbs)
-  const minTDEE = Math.max(TDEE_FLOOR, input.currentTDEE - effectiveMaxAbs)
-  const clampedTDEE = Math.round(Math.max(minTDEE, Math.min(maxTDEE, rawTDEE)))
+  const dqiMin = rawTDEE - maxAbsFromDQI
+  const dqiMax = rawTDEE + maxAbsFromDQI
+  const convMin = Math.max(TDEE_FLOOR, input.currentTDEE - maxFromPercent)
+  const convMax = Math.min(TDEE_CEILING, input.currentTDEE + maxFromPercent)
+
+  const finalMin = Math.max(dqiMin, convMin, TDEE_FLOOR)
+  const finalMax = Math.min(dqiMax, convMax, TDEE_CEILING)
+  const clampedTDEE = Math.round(Math.max(finalMin, Math.min(finalMax, rawTDEE)))
   const wasLimited = Math.abs(clampedTDEE - rawTDEE) > 0.5
 
   // Step 7: TDEE floor/ceiling absolute check
@@ -291,7 +303,9 @@ export function runCalibration(input: CalibrationInput): CalibrationResult | str
   if (wasLimited) {
     warnings.push({
       type: 'large_adjustment',
-      message: `Justeringen begränsades till max ±${Math.round(effectiveMaxAbs)} kcal baserat på datakvalitet.`,
+      message: dqiWasBindingCap
+        ? `Justeringen begränsades av datakvalitetstaket (±${Math.round(maxAbsFromDQI)} kcal).`
+        : `Justeringen begränsades av konvergenstaket (±${Math.round(maxFromPercent)} kcal från nuvarande TDEE).`,
     })
   }
 
