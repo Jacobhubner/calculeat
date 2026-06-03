@@ -812,26 +812,30 @@ export default function BodyCompositionCalculator() {
                                   : t('calculator.profileFieldMissing')}
                               </li>
                             )}
-                            {requirements.fields.includes('age') && (
-                              <li>
-                                <span className="font-medium">
-                                  {t('calculator.profileFieldAge')}
-                                </span>{' '}
-                                {t('calculator.profileFieldAgeUnit', {
-                                  age: calculateAge(profile.birth_date ?? null),
-                                })}
-                              </li>
-                            )}
-                            {requirements.fields.includes('gender') && (
-                              <li>
-                                <span className="font-medium">
-                                  {t('calculator.profileFieldGender')}
-                                </span>{' '}
-                                {profile.gender === 'male'
-                                  ? t('calculator.profileFieldGenderMale')
-                                  : t('calculator.profileFieldGenderFemale')}
-                              </li>
-                            )}
+                            {requirements.fields.includes('age') &&
+                              (selectedMethod !== 'Reversed Cunningham equation' ||
+                                !profile.bmr) && (
+                                <li>
+                                  <span className="font-medium">
+                                    {t('calculator.profileFieldAge')}
+                                  </span>{' '}
+                                  {t('calculator.profileFieldAgeUnit', {
+                                    age: calculateAge(profile.birth_date ?? null),
+                                  })}
+                                </li>
+                              )}
+                            {requirements.fields.includes('gender') &&
+                              (selectedMethod !== 'Reversed Cunningham equation' ||
+                                !profile.bmr) && (
+                                <li>
+                                  <span className="font-medium">
+                                    {t('calculator.profileFieldGender')}
+                                  </span>{' '}
+                                  {profile.gender === 'male'
+                                    ? t('calculator.profileFieldGenderMale')
+                                    : t('calculator.profileFieldGenderFemale')}
+                                </li>
+                              )}
                             {requirements.fields.includes('bmr') && (
                               <li>
                                 <span className="font-medium">
@@ -844,16 +848,55 @@ export default function BodyCompositionCalculator() {
                                   : t('calculator.profileFieldMissing')}
                               </li>
                             )}
-                            {requirements.fields.includes('weight') && (
+                            {requirements.fields.includes('weight') &&
+                              (selectedMethod !== 'Reversed Cunningham equation' ||
+                                !profile.bmr) && (
+                                <li>
+                                  <span className="font-medium">
+                                    {t('calculator.profileFieldWeight')}
+                                  </span>{' '}
+                                  {profile.weight_kg
+                                    ? t('calculator.profileFieldWeightValue', {
+                                        value: profile.weight_kg,
+                                      })
+                                    : t('calculator.profileFieldMissing')}
+                                </li>
+                              )}
+                            {requirements.fields.includes('height') &&
+                              (selectedMethod !== 'Reversed Cunningham equation' ||
+                                !profile.bmr) && (
+                                <li>
+                                  <span className="font-medium">
+                                    {t('calculator.profileFieldHeight')}
+                                  </span>{' '}
+                                  {profile.height_cm
+                                    ? t('calculator.profileFieldHeightValue', {
+                                        value: profile.height_cm,
+                                      })
+                                    : t('calculator.profileFieldMissing')}
+                                </li>
+                              )}
+                            {selectedMethod === 'Reversed Cunningham equation' && (
                               <li>
                                 <span className="font-medium">
-                                  {t('calculator.profileFieldWeight')}
+                                  {t('calculator.profileFieldBMR')}
                                 </span>{' '}
-                                {profile.weight_kg
-                                  ? t('calculator.profileFieldWeightValue', {
-                                      value: profile.weight_kg,
-                                    })
-                                  : t('calculator.profileFieldMissing')}
+                                {profile.bmr ? (
+                                  <>
+                                    {t('calculator.profileFieldBMRValue', {
+                                      value: Math.round(profile.bmr),
+                                    })}
+                                    {profile.bmr_formula && (
+                                      <span className="text-neutral-400 ml-1">
+                                        ({profile.bmr_formula.replace(' equation', '')})
+                                      </span>
+                                    )}
+                                  </>
+                                ) : (
+                                  <span className="text-neutral-400">
+                                    {t('calculator.profileFieldBMREstimated')}
+                                  </span>
+                                )}
                               </li>
                             )}
                           </ul>

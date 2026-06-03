@@ -6,7 +6,7 @@
 import type { BodyCompositionMethod, MethodVariation } from '@/lib/calculations/bodyComposition'
 
 export interface FormulaVariant {
-  gender: 'Män' | 'Kvinnor' | 'Båda'
+  gender?: 'Män' | 'Kvinnor' | 'Båda'
   name: string
   equation: string
   measurements: string
@@ -591,13 +591,11 @@ export const methodInformation: Record<string, MethodInfo> = {
       'Bakåträknar kroppsfett% från RMR/BMR (Resting/Basal Metabolic Rate) med antagandet att metabolismen följer Cunningham-ekvationen.\n\nOm inget BMR/RMR-värde finns tillgängligt används Mifflin-St Jeor-ekvationen för att uppskatta RMR baserat på längd, vikt, ålder och kön.',
     formulaVariants: [
       {
-        gender: 'Män',
         name: 'Steg 1 — Cunningham',
         equation: 'BMR = 370 + 21,6×fettfri massa (kg)',
         measurements: 'Omvänd: fettfri massa = (BMR − 370) / 21,6',
       },
       {
-        gender: 'Män',
         name: 'Steg 2 — Kroppsfett%',
         equation: 'Kroppsfett% = (1 − fettfri massa / kroppsvikt) × 100',
         measurements: 'Samma formel för båda kön',
