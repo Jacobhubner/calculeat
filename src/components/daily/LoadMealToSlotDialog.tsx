@@ -13,6 +13,8 @@ import { Search, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useSavedMeals, useLoadSavedMealToSlot } from '@/hooks/useSavedMeals'
 import EmptyState from '../EmptyState'
+import { calculateNutritionForUnit } from '@/lib/calculations/nutritionFromUnit'
+import type { FoodItem } from '@/hooks/useFoodItems'
 
 interface LoadMealToSlotDialogProps {
   open: boolean
@@ -79,7 +81,13 @@ export default function LoadMealToSlotDialog({
         toast.warning(t('loadMeal.warningMissingItems', { count: result.missingCount }))
       }
 
-      toast.success(t('loadMeal.successLoaded', { mealName, slotName: targetMealName, calories: result.totalCalories }))
+      toast.success(
+        t('loadMeal.successLoaded', {
+          mealName,
+          slotName: targetMealName,
+          calories: result.totalCalories,
+        })
+      )
 
       // Close modal
       onOpenChange(false)
@@ -110,9 +118,8 @@ export default function LoadMealToSlotDialog({
     const calories = meal.items.reduce((sum: number, item: any) => {
       const foodItem = item.food_item
       if (!foodItem) return sum
-      const caloriesPer100g = foodItem.calories || 0
-      const grams = item.weight_grams || item.amount * 100
-      return sum + (caloriesPer100g * grams) / 100
+      const nutrition = calculateNutritionForUnit(foodItem as FoodItem, item.amount, item.unit)
+      return sum + (nutrition?.calories ?? 0)
     }, 0)
 
     return {
@@ -150,7 +157,9 @@ export default function LoadMealToSlotDialog({
           ) : sortedMeals.length === 0 ? (
             <EmptyState
               icon={Search}
-              title={searchQuery ? t('loadMealDialog.emptySearchTitle') : t('loadMealDialog.emptyTitle')}
+              title={
+                searchQuery ? t('loadMealDialog.emptySearchTitle') : t('loadMealDialog.emptyTitle')
+              }
               description={
                 searchQuery
                   ? t('loadMealDialog.emptySearchDescription')
@@ -178,9 +187,7 @@ export default function LoadMealToSlotDialog({
                           <div className="flex items-center gap-3 mt-1 text-sm text-neutral-600">
                             <span className="font-semibold text-primary-600">{calories} kcal</span>
                             <span>•</span>
-                            <span>
-                              {t('loadMealDialog.itemCount', { count: itemCount })}
-                            </span>
+                            <span>{t('loadMealDialog.itemCount', { count: itemCount })}</span>
                             {meal.last_used_at && (
                               <>
                                 <span>•</span>

@@ -6,6 +6,8 @@ import { CalendarPlus, Pencil, Trash2, ChevronDown, ChevronUp } from 'lucide-rea
 import type { SavedMeal } from '@/hooks/useSavedMeals'
 import { useDeleteSavedMeal } from '@/hooks/useSavedMeals'
 import { toast } from 'sonner'
+import { calculateNutritionForUnit } from '@/lib/calculations/nutritionFromUnit'
+import type { FoodItem } from '@/hooks/useFoodItems'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -42,19 +44,12 @@ export default function SavedMealCard({ meal, onUseToday, onEdit }: SavedMealCar
     meal.items.forEach(item => {
       const foodItem = item.food_item
       if (!foodItem) return
-
-      const caloriesPer100g = foodItem.calories || 0
-      const proteinPer100g = foodItem.protein_g || 0
-      const carbsPer100g = foodItem.carb_g || 0
-      const fatPer100g = foodItem.fat_g || 0
-
-      const grams = item.weight_grams || item.amount * 100
-      const multiplier = grams / 100
-
-      totals.calories += caloriesPer100g * multiplier
-      totals.protein += proteinPer100g * multiplier
-      totals.carbs += carbsPer100g * multiplier
-      totals.fat += fatPer100g * multiplier
+      const nutrition = calculateNutritionForUnit(foodItem as FoodItem, item.amount, item.unit)
+      if (!nutrition) return
+      totals.calories += nutrition.calories
+      totals.protein += nutrition.protein
+      totals.carbs += nutrition.carbs
+      totals.fat += nutrition.fat
     })
   }
 
@@ -103,7 +98,10 @@ export default function SavedMealCard({ meal, onUseToday, onEdit }: SavedMealCar
               {Math.round(totals.calories)} kcal
             </span>
             <span>•</span>
-            <span>{totals.itemCount} {totals.itemCount !== 1 ? t('savedMealCard.foodItems') : t('savedMealCard.foodItem')}</span>
+            <span>
+              {totals.itemCount}{' '}
+              {totals.itemCount !== 1 ? t('savedMealCard.foodItems') : t('savedMealCard.foodItem')}
+            </span>
           </div>
 
           {/* Macros */}
@@ -164,6 +162,9 @@ export default function SavedMealCard({ meal, onUseToday, onEdit }: SavedMealCar
             <div className="mt-3 border-t pt-3 space-y-2 max-h-60 overflow-y-auto">
               {meal.items.map(item => {
                 const foodItem = item.food_item
+                const itemNutrition = foodItem
+                  ? calculateNutritionForUnit(foodItem as FoodItem, item.amount, item.unit)
+                  : null
                 return (
                   <div
                     key={item.id}
@@ -177,12 +178,9 @@ export default function SavedMealCard({ meal, onUseToday, onEdit }: SavedMealCar
                         {item.amount} {item.unit}
                       </p>
                     </div>
-                    {foodItem && (
+                    {itemNutrition && (
                       <span className="text-xs text-neutral-600 shrink-0 ml-2">
-                        {Math.round(
-                          (foodItem.calories * (item.weight_grams || item.amount * 100)) / 100
-                        )}{' '}
-                        kcal
+                        {Math.round(itemNutrition.calories)} kcal
                       </span>
                     )}
                   </div>
@@ -209,7 +207,9 @@ export default function SavedMealCard({ meal, onUseToday, onEdit }: SavedMealCar
               disabled={deleteMeal.isPending}
               className="bg-red-600 hover:bg-red-700"
             >
-              {deleteMeal.isPending ? t('savedMealCard.deleting') : t('savedMealCard.deleteConfirm')}
+              {deleteMeal.isPending
+                ? t('savedMealCard.deleting')
+                : t('savedMealCard.deleteConfirm')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

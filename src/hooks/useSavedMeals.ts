@@ -3,6 +3,8 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import { usePreviewAwareQuery } from '@/hooks/usePreviewAwareQuery'
 import { usePreviewMutation } from '@/hooks/usePreviewMutation'
+import { calculateNutritionForUnit } from '@/lib/calculations/nutritionFromUnit'
+import type { FoodItem } from '@/hooks/useFoodItems'
 
 export interface SavedMealFoodItem {
   id: string
@@ -11,6 +13,13 @@ export interface SavedMealFoodItem {
   fat_g: number
   carb_g: number
   protein_g: number
+  reference_amount: number
+  reference_unit?: string | null
+  default_unit: string
+  default_amount: number
+  ml_per_gram?: number | null
+  grams_per_piece?: number | null
+  serving_unit?: string | null
 }
 
 export interface SavedMealItem {
@@ -347,19 +356,20 @@ export function useLoadSavedMealToSlot() {
 
       const itemsToInsert = validItems.map((item: SavedMealItem, index: number) => {
         const foodItem = item.food_item
-        const grams = item.weight_grams || item.amount * 100
-        const multiplier = grams / 100
+        const nutrition = foodItem
+          ? calculateNutritionForUnit(foodItem as FoodItem, item.amount, item.unit)
+          : null
 
         return {
           meal_entry_id: mealEntryId,
           food_item_id: item.food_item_id,
           amount: item.amount,
           unit: item.unit,
-          weight_grams: item.weight_grams,
-          calories: foodItem ? (foodItem.calories || 0) * multiplier : null,
-          fat_g: foodItem ? (foodItem.fat_g || 0) * multiplier : null,
-          carb_g: foodItem ? (foodItem.carb_g || 0) * multiplier : null,
-          protein_g: foodItem ? (foodItem.protein_g || 0) * multiplier : null,
+          weight_grams: nutrition?.weightGrams ?? item.weight_grams,
+          calories: nutrition?.calories ?? null,
+          fat_g: nutrition?.fat ?? null,
+          carb_g: nutrition?.carbs ?? null,
+          protein_g: nutrition?.protein ?? null,
           item_order: (count || 0) + index,
         }
       })
@@ -378,10 +388,8 @@ export function useLoadSavedMealToSlot() {
       const totalCalories = validItems.reduce((sum: number, item: SavedMealItem) => {
         const foodItem = item.food_item
         if (!foodItem) return sum
-        // Calculate calories based on amount and unit
-        const caloriesPer100g = foodItem.calories || 0
-        const grams = item.weight_grams || item.amount * 100 // Fallback
-        return sum + (caloriesPer100g * grams) / 100
+        const nutrition = calculateNutritionForUnit(foodItem as FoodItem, item.amount, item.unit)
+        return sum + (nutrition?.calories ?? 0)
       }, 0)
 
       return {
