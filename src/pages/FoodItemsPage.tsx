@@ -84,20 +84,18 @@ function getAvailableDisplayModes(item: FoodItem): DisplayMode[] {
 
   const isMl = item.reference_unit === 'ml' || (item.default_unit ?? '').toLowerCase() === 'ml'
 
+  // Order is always: serving → 100g → 100ml (perVolume or per100ml)
   if (isMl) {
-    // Always show per 100ml for ml-based foods (direct from reference_amount, always reliable)
-    modes.push('per100ml')
-    // Show per 100g only if weight_grams is set (enables gram conversion)
     if (item.weight_grams && item.weight_grams > 0 && item.kcal_per_gram) {
       modes.push('per100g')
     }
-    // Show perVolume if ml_per_gram is set
-    if (item.ml_per_gram && item.kcal_per_gram) {
-      modes.push('perVolume')
-    }
+    modes.push('per100ml')
   } else {
     if (item.kcal_per_gram) {
       modes.push('per100g')
+    }
+    if (item.ml_per_gram && item.kcal_per_gram) {
+      modes.push('perVolume')
     }
   }
 
@@ -224,6 +222,15 @@ function getDefaultDisplayMode(item: FoodItem): DisplayMode {
   const isMl = item.reference_unit === 'ml' || (item.default_unit ?? '').toLowerCase() === 'ml'
   if (isMl) {
     return 'per100ml'
+  }
+
+  // g-based liquid/soup with density data — prefer volume view as default
+  if (
+    (item.food_type === 'Liquid' || item.food_type === 'Soup') &&
+    item.ml_per_gram &&
+    item.kcal_per_gram
+  ) {
+    return 'perVolume'
   }
 
   return 'per100g'
@@ -402,7 +409,7 @@ export default function FoodItemsPage() {
       case 'per100g':
         return '100g'
       case 'perVolume':
-        return 'ml'
+        return '100ml'
       case 'per100ml':
         return '100ml'
       default:
@@ -1105,14 +1112,14 @@ export default function FoodItemsPage() {
                       </span>
                     </div>
                     {/* Row 3: Unit pills + actions */}
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1">
+                    <div className="flex items-center justify-between gap-1 min-w-0">
+                      <div className="flex items-center gap-1 flex-wrap min-w-0 flex-1">
                         {allModes.length > 1 &&
                           allModes.map(mode => (
                             <button
                               key={mode}
                               onClick={() => switchToDisplayMode(item.id, mode)}
-                              className={`px-1.5 py-0.5 text-[9px] font-medium rounded-full transition-all ${
+                              className={`px-1.5 py-0.5 text-[9px] font-medium rounded-full transition-all shrink-0 ${
                                 mode === currentMode
                                   ? 'bg-primary-100 text-primary-700 border-2 border-primary-500'
                                   : 'text-neutral-600 bg-white border border-neutral-300 active:bg-neutral-100'
@@ -1122,7 +1129,7 @@ export default function FoodItemsPage() {
                             </button>
                           ))}
                       </div>
-                      <div className="flex gap-0.5">
+                      <div className="flex gap-0.5 shrink-0">
                         <Button
                           variant="ghost"
                           size="sm"

@@ -275,6 +275,7 @@
     "bodyFatChartTitle": "Body fat % over time",
     "chartRefStart": "Start",
     "chartRefGoal": "Goal: {{target}} kg",
+    "rangeAll": "All",
     "historyHide": "Hide history",
     "historyShow": "Show history ({{count}} measurements)",
     "historyTitle": "Weight history",

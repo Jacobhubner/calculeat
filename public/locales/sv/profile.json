@@ -275,6 +275,7 @@
     "bodyFatChartTitle": "Kroppsfett % över tid",
     "chartRefStart": "Start",
     "chartRefGoal": "Mål: {{target}} kg",
+    "rangeAll": "Allt",
     "historyHide": "Dölj historik",
     "historyShow": "Visa historik ({{count}} mätningar)",
     "historyTitle": "Vikthistorik",

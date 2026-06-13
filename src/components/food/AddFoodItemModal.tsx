@@ -1161,7 +1161,20 @@ export function AddFoodItemModal({
                     <Label htmlFor="food_type">{t('addFoodModal.fieldFoodType')}</Label>
                     <select
                       id="food_type"
-                      {...register('food_type')}
+                      {...register('food_type', {
+                        onChange: e => {
+                          const newType = e.target.value as 'Solid' | 'Liquid' | 'Soup'
+                          const currentUnit = (watch('default_unit') ?? '').toLowerCase()
+                          if (
+                            (newType === 'Liquid' || newType === 'Soup') &&
+                            currentUnit !== 'ml'
+                          ) {
+                            setValue('default_unit', 'ml', { shouldDirty: true })
+                          } else if (newType === 'Solid' && currentUnit === 'ml') {
+                            setValue('default_unit', 'g', { shouldDirty: true })
+                          }
+                        },
+                      })}
                       className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                     >
                       <option value="Solid">{t('addFoodModal.foodTypeSolid')}</option>

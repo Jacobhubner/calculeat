@@ -82,6 +82,7 @@ export default function WeightTracker({
   const [chartsReady, setChartsReady] = useState(false)
   const [bfmChartReady, setBfmChartReady] = useState(false)
   const [slmChartReady, setSlmChartReady] = useState(false)
+  const [chartRange, setChartRange] = useState<'7d' | '30d' | '90d' | 'all'>('7d')
 
   useEffect(() => {
     if (isOpen) {
@@ -207,39 +208,82 @@ export default function WeightTracker({
     [weightTrend.chartDataWithTrend]
   )
 
-  const weightBrushDefault = useMemo(() => {
-    const cutoff = new Date().getTime() - 14 * 24 * 60 * 60 * 1000
-    const idx = chartData.findIndex(d => d.timestamp >= cutoff)
-    return {
-      startIndex: idx >= 0 ? idx : Math.max(0, chartData.length - 1),
-      endIndex: chartData.length - 1,
-    }
-  }, [chartData])
+  // Brush-data = den bredare period som fungerar som "minimap"
+  // 7d → brush visar 30d, 30d → 90d, 90d → allt, all → allt (ingen brush)
+  const brushCutoff = useMemo(() => {
+    if (chartRange === 'all' || chartRange === '90d') return 0
+    const days = chartRange === '7d' ? 30 : 90
+    return new Date().getTime() - days * 24 * 60 * 60 * 1000
+  }, [chartRange])
 
-  const bodyFatBrushDefault = useMemo(() => {
-    const cutoff = new Date().getTime() - 14 * 24 * 60 * 60 * 1000
-    const idx = bodyFatChartData.findIndex(d => d.timestamp >= cutoff)
-    return {
-      startIndex: idx >= 0 ? idx : Math.max(0, bodyFatChartData.length - 1),
-      endIndex: bodyFatChartData.length - 1,
-    }
-  }, [bodyFatChartData])
+  const brushChartData = useMemo(
+    () => (brushCutoff === 0 ? chartData : chartData.filter(d => d.timestamp >= brushCutoff)),
+    [chartData, brushCutoff]
+  )
 
-  const bodyCompositionBrushDefault = useMemo(() => {
-    const cutoff = new Date().getTime() - 14 * 24 * 60 * 60 * 1000
-    const idx = bodyCompositionChartData.findIndex(d => d.timestamp >= cutoff)
+  const brushBodyFatData = useMemo(
+    () =>
+      brushCutoff === 0
+        ? bodyFatChartData
+        : bodyFatChartData.filter(d => d.timestamp >= brushCutoff),
+    [bodyFatChartData, brushCutoff]
+  )
+
+  const brushBodyCompositionData = useMemo(
+    () =>
+      brushCutoff === 0
+        ? bodyCompositionChartData
+        : bodyCompositionChartData.filter(d => d.timestamp >= brushCutoff),
+    [bodyCompositionChartData, brushCutoff]
+  )
+
+  // startIndex/endIndex för brush — det valda fönstret inom brush-data
+  const viewCutoff = useMemo(() => {
+    if (chartRange === 'all') return 0
+    const days = chartRange === '7d' ? 7 : chartRange === '30d' ? 30 : 90
+    return new Date().getTime() - days * 24 * 60 * 60 * 1000
+  }, [chartRange])
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const nowTs = useMemo(() => new Date().getTime(), [chartRange])
+
+  const brushDefaultForData = (data: { timestamp: number }[]) => {
+    if (chartRange === 'all') return undefined
+    const idx = data.findIndex(d => d.timestamp >= viewCutoff)
     return {
-      startIndex: idx >= 0 ? idx : Math.max(0, bodyCompositionChartData.length - 1),
-      endIndex: bodyCompositionChartData.length - 1,
+      startIndex: idx >= 0 ? idx : Math.max(0, data.length - 1),
+      endIndex: data.length - 1,
     }
-  }, [bodyCompositionChartData])
+  }
+
+  // Brush window state (timestamps) — styr XAxis domain
+  const [weightBrushTs, setWeightBrushTs] = useState<{ start: number; end: number } | null>(null)
+  const [bodyFatBrushTs, setBodyFatBrushTs] = useState<{ start: number; end: number } | null>(null)
+  const [bodyCompBrushTs, setBodyCompBrushTs] = useState<{ start: number; end: number } | null>(
+    null
+  )
+
+  // Återställ brush-fönstret när range-knapp trycks
+  useEffect(() => {
+    setWeightBrushTs(null)
+    setBodyFatBrushTs(null)
+    setBodyCompBrushTs(null)
+  }, [chartRange])
+
+  // Filtrerade data för Y-axel-domän (baserat på brush-fönster om aktivt, annars view cutoff)
+  const filteredChartData = useMemo(() => {
+    if (chartRange === 'all') return chartData
+    if (weightBrushTs)
+      return chartData.filter(
+        d => d.timestamp >= weightBrushTs.start && d.timestamp <= weightBrushTs.end
+      )
+    return chartData.filter(d => d.timestamp >= viewCutoff)
+  }, [chartData, chartRange, viewCutoff, weightBrushTs])
 
   // Pending-punkt borttagen — profilvikten visas inte i diagrammet om den inte är loggad
 
-  // Calculate Y-axis domain
-  const allWeights = chartData.map(d => d.weight).filter(Boolean)
+  const allWeights = filteredChartData.map(d => d.weight).filter(Boolean)
   if (targetWeight) allWeights.push(targetWeight)
-  if (initialWeight) allWeights.push(initialWeight)
   const minWeight = Math.min(...allWeights) - 2
   const maxWeight = Math.max(...allWeights) + 2
 
@@ -453,17 +497,49 @@ export default function WeightTracker({
             </div>
           )}
 
+          {/* Chart range filter */}
+          {chartsReady && chartData.length > 1 && (
+            <div className="flex gap-1 mb-2">
+              {(['7d', '30d', '90d', 'all'] as const).map(r => (
+                <button
+                  key={r}
+                  type="button"
+                  onClick={() => setChartRange(r)}
+                  className={`px-2.5 py-1 text-xs rounded-md font-medium transition-colors ${
+                    chartRange === r
+                      ? 'bg-primary-600 text-white'
+                      : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
+                  }`}
+                >
+                  {r === 'all' ? t('weightTracker.rangeAll') : r}
+                </button>
+              ))}
+            </div>
+          )}
+
           {/* Chart */}
           {chartsReady && chartData.length > 1 && (
             <div className="h-80" style={{ minWidth: 0 }}>
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={chartData} margin={{ top: 5, right: 50, left: 20, bottom: 5 }}>
+                <LineChart
+                  data={brushChartData}
+                  margin={{ top: 5, right: 50, left: 20, bottom: 5 }}
+                >
                   <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                   <XAxis
                     dataKey="timestamp"
                     type="number"
                     scale="time"
-                    domain={['dataMin', 'dataMax']}
+                    domain={
+                      weightBrushTs
+                        ? [weightBrushTs.start, weightBrushTs.end]
+                        : chartRange === 'all'
+                          ? ['dataMin', 'dataMax']
+                          : [
+                              viewCutoff,
+                              brushChartData[brushChartData.length - 1]?.timestamp ?? nowTs,
+                            ]
+                    }
                     tick={{ fontSize: 10, fill: '#6b7280' }}
                     angle={-45}
                     textAnchor="end"
@@ -497,7 +573,7 @@ export default function WeightTracker({
                       ] as [string, string]
                     }
                     labelFormatter={ts => {
-                      const entry = chartData.find(d => d.timestamp === (ts as number))
+                      const entry = brushChartData.find(d => d.timestamp === (ts as number))
                       return (
                         entry?.displayDate ||
                         new Date(ts as number).toLocaleDateString(getDateLocale())
@@ -570,22 +646,34 @@ export default function WeightTracker({
                     connectNulls={false}
                   />
 
-                  <Brush
-                    key={`${weightBrushDefault.startIndex}-${weightBrushDefault.endIndex}`}
-                    dataKey="timestamp"
-                    startIndex={weightBrushDefault.startIndex}
-                    endIndex={weightBrushDefault.endIndex}
-                    height={24}
-                    stroke="#d1d5db"
-                    fill="#f9fafb"
-                    travellerWidth={8}
-                    tickFormatter={ts =>
-                      new Date(ts as number).toLocaleDateString(getDateLocale(), {
-                        month: 'short',
-                        day: 'numeric',
-                      })
-                    }
-                  />
+                  {chartRange !== 'all' &&
+                    (() => {
+                      const bd = brushDefaultForData(brushChartData)
+                      return bd ? (
+                        <Brush
+                          key={`w-${chartRange}`}
+                          dataKey="timestamp"
+                          startIndex={bd.startIndex}
+                          endIndex={bd.endIndex}
+                          height={24}
+                          stroke="#d1d5db"
+                          fill="#f9fafb"
+                          travellerWidth={8}
+                          tickFormatter={ts =>
+                            new Date(ts as number).toLocaleDateString(getDateLocale(), {
+                              month: 'short',
+                              day: 'numeric',
+                            })
+                          }
+                          onChange={e => {
+                            if (e.startIndex == null || e.endIndex == null) return
+                            const s = brushChartData[e.startIndex]?.timestamp
+                            const en = brushChartData[e.endIndex]?.timestamp
+                            if (s != null && en != null) setWeightBrushTs({ start: s, end: en })
+                          }}
+                        />
+                      ) : null
+                    })()}
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -616,7 +704,7 @@ export default function WeightTracker({
               <div className="h-72" style={{ minWidth: 0 }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart
-                    data={bodyFatChartData}
+                    data={brushBodyFatData}
                     margin={{ top: 5, right: 50, left: 20, bottom: 5 }}
                   >
                     <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -624,7 +712,16 @@ export default function WeightTracker({
                       dataKey="timestamp"
                       type="number"
                       scale="time"
-                      domain={['dataMin', 'dataMax']}
+                      domain={
+                        bodyFatBrushTs
+                          ? [bodyFatBrushTs.start, bodyFatBrushTs.end]
+                          : chartRange === 'all'
+                            ? ['dataMin', 'dataMax']
+                            : [
+                                viewCutoff,
+                                brushBodyFatData[brushBodyFatData.length - 1]?.timestamp ?? nowTs,
+                              ]
+                      }
                       tick={{ fontSize: 10, fill: '#6b7280' }}
                       angle={-45}
                       textAnchor="end"
@@ -658,7 +755,7 @@ export default function WeightTracker({
                         ] as [string, string]
                       }
                       labelFormatter={ts => {
-                        const entry = bodyFatChartData.find(d => d.timestamp === (ts as number))
+                        const entry = brushBodyFatData.find(d => d.timestamp === (ts as number))
                         return (
                           entry?.displayDate ||
                           new Date(ts as number).toLocaleDateString(getDateLocale())
@@ -696,23 +793,34 @@ export default function WeightTracker({
                       dot={false}
                       connectNulls={false}
                     />
-
-                    <Brush
-                      key={`${bodyFatBrushDefault.startIndex}-${bodyFatBrushDefault.endIndex}`}
-                      dataKey="timestamp"
-                      startIndex={bodyFatBrushDefault.startIndex}
-                      endIndex={bodyFatBrushDefault.endIndex}
-                      height={24}
-                      stroke="#d1d5db"
-                      fill="#f9fafb"
-                      travellerWidth={8}
-                      tickFormatter={ts =>
-                        new Date(ts as number).toLocaleDateString(getDateLocale(), {
-                          month: 'short',
-                          day: 'numeric',
-                        })
-                      }
-                    />
+                    {chartRange !== 'all' &&
+                      (() => {
+                        const bd = brushDefaultForData(brushBodyFatData)
+                        return bd ? (
+                          <Brush
+                            key={`bf-${chartRange}`}
+                            dataKey="timestamp"
+                            startIndex={bd.startIndex}
+                            endIndex={bd.endIndex}
+                            height={24}
+                            stroke="#d1d5db"
+                            fill="#f9fafb"
+                            travellerWidth={8}
+                            tickFormatter={ts =>
+                              new Date(ts as number).toLocaleDateString(getDateLocale(), {
+                                month: 'short',
+                                day: 'numeric',
+                              })
+                            }
+                            onChange={e => {
+                              if (e.startIndex == null || e.endIndex == null) return
+                              const s = brushBodyFatData[e.startIndex]?.timestamp
+                              const en = brushBodyFatData[e.endIndex]?.timestamp
+                              if (s != null && en != null) setBodyFatBrushTs({ start: s, end: en })
+                            }}
+                          />
+                        ) : null
+                      })()}
                   </LineChart>
                 </ResponsiveContainer>
               </div>
@@ -751,7 +859,7 @@ export default function WeightTracker({
                 <div className="h-72" style={{ minWidth: 0 }}>
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart
-                      data={bodyCompositionChartData}
+                      data={brushBodyCompositionData}
                       margin={{ top: 5, right: 50, left: 20, bottom: 5 }}
                     >
                       <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -759,7 +867,17 @@ export default function WeightTracker({
                         dataKey="timestamp"
                         type="number"
                         scale="time"
-                        domain={['dataMin', 'dataMax']}
+                        domain={
+                          bodyCompBrushTs
+                            ? [bodyCompBrushTs.start, bodyCompBrushTs.end]
+                            : chartRange === 'all'
+                              ? ['dataMin', 'dataMax']
+                              : [
+                                  viewCutoff,
+                                  brushBodyCompositionData[brushBodyCompositionData.length - 1]
+                                    ?.timestamp ?? nowTs,
+                                ]
+                        }
                         tick={{ fontSize: 10, fill: '#6b7280' }}
                         angle={-45}
                         textAnchor="end"
@@ -828,22 +946,35 @@ export default function WeightTracker({
                         dot={false}
                         connectNulls={false}
                       />
-                      <Brush
-                        key={`bfm-${bodyCompositionBrushDefault.startIndex}-${bodyCompositionBrushDefault.endIndex}`}
-                        dataKey="timestamp"
-                        startIndex={bodyCompositionBrushDefault.startIndex}
-                        endIndex={bodyCompositionBrushDefault.endIndex}
-                        height={24}
-                        stroke="#d1d5db"
-                        fill="#f9fafb"
-                        travellerWidth={8}
-                        tickFormatter={ts =>
-                          new Date(ts as number).toLocaleDateString(getDateLocale(), {
-                            month: 'short',
-                            day: 'numeric',
-                          })
-                        }
-                      />
+                      {chartRange !== 'all' &&
+                        (() => {
+                          const bd = brushDefaultForData(brushBodyCompositionData)
+                          return bd ? (
+                            <Brush
+                              key={`bfm-${chartRange}`}
+                              dataKey="timestamp"
+                              startIndex={bd.startIndex}
+                              endIndex={bd.endIndex}
+                              height={24}
+                              stroke="#d1d5db"
+                              fill="#f9fafb"
+                              travellerWidth={8}
+                              tickFormatter={ts =>
+                                new Date(ts as number).toLocaleDateString(getDateLocale(), {
+                                  month: 'short',
+                                  day: 'numeric',
+                                })
+                              }
+                              onChange={e => {
+                                if (e.startIndex == null || e.endIndex == null) return
+                                const s = brushBodyCompositionData[e.startIndex]?.timestamp
+                                const en = brushBodyCompositionData[e.endIndex]?.timestamp
+                                if (s != null && en != null)
+                                  setBodyCompBrushTs({ start: s, end: en })
+                              }}
+                            />
+                          ) : null
+                        })()}
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
@@ -882,7 +1013,7 @@ export default function WeightTracker({
                 <div className="h-72" style={{ minWidth: 0 }}>
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart
-                      data={bodyCompositionChartData}
+                      data={brushBodyCompositionData}
                       margin={{ top: 5, right: 50, left: 20, bottom: 5 }}
                     >
                       <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -890,7 +1021,17 @@ export default function WeightTracker({
                         dataKey="timestamp"
                         type="number"
                         scale="time"
-                        domain={['dataMin', 'dataMax']}
+                        domain={
+                          bodyCompBrushTs
+                            ? [bodyCompBrushTs.start, bodyCompBrushTs.end]
+                            : chartRange === 'all'
+                              ? ['dataMin', 'dataMax']
+                              : [
+                                  viewCutoff,
+                                  brushBodyCompositionData[brushBodyCompositionData.length - 1]
+                                    ?.timestamp ?? nowTs,
+                                ]
+                        }
                         tick={{ fontSize: 10, fill: '#6b7280' }}
                         angle={-45}
                         textAnchor="end"
@@ -959,22 +1100,35 @@ export default function WeightTracker({
                         dot={false}
                         connectNulls={false}
                       />
-                      <Brush
-                        key={`slm-${bodyCompositionBrushDefault.startIndex}-${bodyCompositionBrushDefault.endIndex}`}
-                        dataKey="timestamp"
-                        startIndex={bodyCompositionBrushDefault.startIndex}
-                        endIndex={bodyCompositionBrushDefault.endIndex}
-                        height={24}
-                        stroke="#d1d5db"
-                        fill="#f9fafb"
-                        travellerWidth={8}
-                        tickFormatter={ts =>
-                          new Date(ts as number).toLocaleDateString(getDateLocale(), {
-                            month: 'short',
-                            day: 'numeric',
-                          })
-                        }
-                      />
+                      {chartRange !== 'all' &&
+                        (() => {
+                          const bd = brushDefaultForData(brushBodyCompositionData)
+                          return bd ? (
+                            <Brush
+                              key={`slm-${chartRange}`}
+                              dataKey="timestamp"
+                              startIndex={bd.startIndex}
+                              endIndex={bd.endIndex}
+                              height={24}
+                              stroke="#d1d5db"
+                              fill="#f9fafb"
+                              travellerWidth={8}
+                              tickFormatter={ts =>
+                                new Date(ts as number).toLocaleDateString(getDateLocale(), {
+                                  month: 'short',
+                                  day: 'numeric',
+                                })
+                              }
+                              onChange={e => {
+                                if (e.startIndex == null || e.endIndex == null) return
+                                const s = brushBodyCompositionData[e.startIndex]?.timestamp
+                                const en = brushBodyCompositionData[e.endIndex]?.timestamp
+                                if (s != null && en != null)
+                                  setBodyCompBrushTs({ start: s, end: en })
+                              }}
+                            />
+                          ) : null
+                        })()}
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
