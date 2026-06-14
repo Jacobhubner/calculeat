@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import { useProfileStore } from '@/stores/profileStore'
@@ -80,6 +81,22 @@ export function useTodayLog() {
   const activeProfile = useProfileStore(state => state.activeProfile)
   const today = new Date().toISOString().split('T')[0]
   const completionMode = localStorage.getItem('day-completion-mode') || 'manual'
+  const queryClient = useQueryClient()
+
+  // In auto mode, invalidate the query at midnight so yesterday's log is
+  // closed and a new one is created without requiring a manual page reload.
+  useEffect(() => {
+    if (completionMode !== 'auto') return
+    const now = new Date()
+    const midnight = new Date(now)
+    midnight.setDate(midnight.getDate() + 1)
+    midnight.setHours(0, 0, 0, 500) // 500ms after midnight to avoid edge cases
+    const msUntilMidnight = midnight.getTime() - now.getTime()
+    const timer = setTimeout(() => {
+      queryClient.invalidateQueries({ queryKey: ['dailyLogs'] })
+    }, msUntilMidnight)
+    return () => clearTimeout(timer)
+  }, [completionMode, today, queryClient])
 
   return useQuery({
     queryKey: ['dailyLogs', 'today', user?.id, today, completionMode],
