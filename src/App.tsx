@@ -17,72 +17,108 @@ import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import AuthCallbackPage from './pages/AuthCallbackPage'
 
+// Wraps lazy() to detect stale chunk errors after a new deploy on Vercel.
+// When a hashed JS file no longer exists the server returns index.html
+// (text/html), which triggers a "not a valid MIME type" error. We reload
+// once — guarded by sessionStorage to avoid infinite loops.
+function lazyWithRetry<T extends React.ComponentType<unknown>>(
+  factory: () => Promise<{ default: T }>
+): React.LazyExoticComponent<T> {
+  return lazy(() =>
+    factory().catch(err => {
+      const reloaded = sessionStorage.getItem('chunk-reload')
+      if (!reloaded) {
+        sessionStorage.setItem('chunk-reload', '1')
+        window.location.reload()
+        return new Promise(() => {}) // never resolves — reload takes over
+      }
+      throw err
+    })
+  )
+}
+
 // Lazy load - public SEO pages
-const TdeeKalkylatornPage = lazy(() => import('./pages/public/TdeeKalkylatornPage'))
-const BmiKalkylatornPage = lazy(() => import('./pages/public/BmiKalkylatornPage'))
-const KaloriberhovPage = lazy(() => import('./pages/public/KaloriberhovPage'))
-const VadArTdeePage = lazy(() => import('./pages/public/VadArTdeePage'))
-const KaloriBristPage = lazy(() => import('./pages/public/KaloriBristPage'))
-const BulkOchCutPage = lazy(() => import('./pages/public/BulkOchCutPage'))
-const OmOssPage = lazy(() => import('./pages/public/OmOssPage'))
-const KaloriunderskottKalkylatornPage = lazy(
+const TdeeKalkylatornPage = lazyWithRetry(() => import('./pages/public/TdeeKalkylatornPage'))
+const BmiKalkylatornPage = lazyWithRetry(() => import('./pages/public/BmiKalkylatornPage'))
+const KaloriberhovPage = lazyWithRetry(() => import('./pages/public/KaloriberhovPage'))
+const VadArTdeePage = lazyWithRetry(() => import('./pages/public/VadArTdeePage'))
+const KaloriBristPage = lazyWithRetry(() => import('./pages/public/KaloriBristPage'))
+const BulkOchCutPage = lazyWithRetry(() => import('./pages/public/BulkOchCutPage'))
+const OmOssPage = lazyWithRetry(() => import('./pages/public/OmOssPage'))
+const KaloriunderskottKalkylatornPage = lazyWithRetry(
   () => import('./pages/public/KaloriunderskottKalkylatornPage')
 )
-const BulkKalkylatornPage = lazy(() => import('./pages/public/BulkKalkylatornPage'))
-const CutKalkylatornPage = lazy(() => import('./pages/public/CutKalkylatornPage'))
-const ProteinbehovKalkylatornPage = lazy(() => import('./pages/public/ProteinbehovKalkylatornPage'))
-const ReverseDietPage = lazy(() => import('./pages/public/ReverseDietPage'))
-const MyFitnessPalVsCalculEatPage = lazy(() => import('./pages/public/MyFitnessPalVsCalculEatPage'))
-const BastaKaloriappenPage = lazy(() => import('./pages/public/BastaKaloriappenPage'))
-const BastaTdeeKalkylatornPage = lazy(() => import('./pages/public/BastaTdeeKalkylatornPage'))
-const IdealviktKalkylatornPage = lazy(() => import('./pages/public/IdealviktKalkylatornPage'))
-const KroppsfettKalkylatornPage = lazy(() => import('./pages/public/KroppsfettKalkylatornPage'))
-const FfmiKalkylatornPage = lazy(() => import('./pages/public/FfmiKalkylatornPage'))
-const BmrKalkylatornPage = lazy(() => import('./pages/public/BmrKalkylatornPage'))
-const VadArBmrPage = lazy(() => import('./pages/public/VadArBmrPage'))
-const BmrVsTdeePage = lazy(() => import('./pages/public/BmrVsTdeePage'))
-const BmrVsRmrPage = lazy(() => import('./pages/public/BmrVsRmrPage'))
-const BmiVsKroppsfettPage = lazy(() => import('./pages/public/BmiVsKroppsfettPage'))
-const VadArFfmiPage = lazy(() => import('./pages/public/VadArFfmiPage'))
-const VadArPalOchMetPage = lazy(() => import('./pages/public/VadArPalOchMetPage'))
-const LifesumVsCalculEatPage = lazy(() => import('./pages/public/LifesumVsCalculEatPage'))
-const YazioVsCalculEatPage = lazy(() => import('./pages/public/YazioVsCalculEatPage'))
-const MacroFactorVsCalculEatPage = lazy(() => import('./pages/public/MacroFactorVsCalculEatPage'))
-const KalkylatornHubPage = lazy(() => import('./pages/public/KalkylatornHubPage'))
-const ArtikelnHubPage = lazy(() => import('./pages/public/ArtikelnHubPage'))
-const LbmVsFfmPage = lazy(() => import('./pages/public/LbmVsFfmPage'))
-const HurMatarManKroppsfettPage = lazy(() => import('./pages/public/HurMatarManKroppsfettPage'))
+const BulkKalkylatornPage = lazyWithRetry(() => import('./pages/public/BulkKalkylatornPage'))
+const CutKalkylatornPage = lazyWithRetry(() => import('./pages/public/CutKalkylatornPage'))
+const ProteinbehovKalkylatornPage = lazyWithRetry(
+  () => import('./pages/public/ProteinbehovKalkylatornPage')
+)
+const ReverseDietPage = lazyWithRetry(() => import('./pages/public/ReverseDietPage'))
+const MyFitnessPalVsCalculEatPage = lazyWithRetry(
+  () => import('./pages/public/MyFitnessPalVsCalculEatPage')
+)
+const BastaKaloriappenPage = lazyWithRetry(() => import('./pages/public/BastaKaloriappenPage'))
+const BastaTdeeKalkylatornPage = lazyWithRetry(
+  () => import('./pages/public/BastaTdeeKalkylatornPage')
+)
+const IdealviktKalkylatornPage = lazyWithRetry(
+  () => import('./pages/public/IdealviktKalkylatornPage')
+)
+const KroppsfettKalkylatornPage = lazyWithRetry(
+  () => import('./pages/public/KroppsfettKalkylatornPage')
+)
+const FfmiKalkylatornPage = lazyWithRetry(() => import('./pages/public/FfmiKalkylatornPage'))
+const BmrKalkylatornPage = lazyWithRetry(() => import('./pages/public/BmrKalkylatornPage'))
+const VadArBmrPage = lazyWithRetry(() => import('./pages/public/VadArBmrPage'))
+const BmrVsTdeePage = lazyWithRetry(() => import('./pages/public/BmrVsTdeePage'))
+const BmrVsRmrPage = lazyWithRetry(() => import('./pages/public/BmrVsRmrPage'))
+const BmiVsKroppsfettPage = lazyWithRetry(() => import('./pages/public/BmiVsKroppsfettPage'))
+const VadArFfmiPage = lazyWithRetry(() => import('./pages/public/VadArFfmiPage'))
+const VadArPalOchMetPage = lazyWithRetry(() => import('./pages/public/VadArPalOchMetPage'))
+const LifesumVsCalculEatPage = lazyWithRetry(() => import('./pages/public/LifesumVsCalculEatPage'))
+const YazioVsCalculEatPage = lazyWithRetry(() => import('./pages/public/YazioVsCalculEatPage'))
+const MacroFactorVsCalculEatPage = lazyWithRetry(
+  () => import('./pages/public/MacroFactorVsCalculEatPage')
+)
+const KalkylatornHubPage = lazyWithRetry(() => import('./pages/public/KalkylatornHubPage'))
+const ArtikelnHubPage = lazyWithRetry(() => import('./pages/public/ArtikelnHubPage'))
+const LbmVsFfmPage = lazyWithRetry(() => import('./pages/public/LbmVsFfmPage'))
+const HurMatarManKroppsfettPage = lazyWithRetry(
+  () => import('./pages/public/HurMatarManKroppsfettPage')
+)
 
 // Lazy load - app pages (loaded on demand)
-const IconDemo = lazy(() => import('./pages/IconDemo'))
-const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage'))
-const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage'))
-const DashboardPage = lazy(() => import('./pages/DashboardPage'))
-const ProfilePage = lazy(() => import('./pages/ProfilePage'))
-const BodyCompositionPage = lazy(() => import('./pages/BodyCompositionPage'))
-const BodyCompositionHubPage = lazy(() => import('./pages/BodyCompositionHubPage'))
-const BodyCompositionCalculator = lazy(
+const IconDemo = lazyWithRetry(() => import('./pages/IconDemo'))
+const ForgotPasswordPage = lazyWithRetry(() => import('./pages/ForgotPasswordPage'))
+const ResetPasswordPage = lazyWithRetry(() => import('./pages/ResetPasswordPage'))
+const DashboardPage = lazyWithRetry(() => import('./pages/DashboardPage'))
+const ProfilePage = lazyWithRetry(() => import('./pages/ProfilePage'))
+const BodyCompositionPage = lazyWithRetry(() => import('./pages/BodyCompositionPage'))
+const BodyCompositionHubPage = lazyWithRetry(() => import('./pages/BodyCompositionHubPage'))
+const BodyCompositionCalculator = lazyWithRetry(
   () => import('./components/tools/body-composition/BodyCompositionCalculator')
 )
-const FoodItemsPage = lazy(() => import('./pages/FoodItemsPage'))
-const RecipesPage = lazy(() => import('./pages/RecipesPage'))
-const SavedMealsPage = lazy(() => import('./pages/SavedMealsPage'))
-const TodayPage = lazy(() => import('./pages/TodayPage'))
-const HistoryPage = lazy(() => import('./pages/HistoryPage'))
-const HistoryDayPage = lazy(() => import('./pages/HistoryDayPage'))
-const ToolsPage = lazy(() => import('./pages/ToolsPage'))
-const GeneticPotentialTool = lazy(
+const FoodItemsPage = lazyWithRetry(() => import('./pages/FoodItemsPage'))
+const RecipesPage = lazyWithRetry(() => import('./pages/RecipesPage'))
+const SavedMealsPage = lazyWithRetry(() => import('./pages/SavedMealsPage'))
+const TodayPage = lazyWithRetry(() => import('./pages/TodayPage'))
+const HistoryPage = lazyWithRetry(() => import('./pages/HistoryPage'))
+const HistoryDayPage = lazyWithRetry(() => import('./pages/HistoryDayPage'))
+const ToolsPage = lazyWithRetry(() => import('./pages/ToolsPage'))
+const GeneticPotentialTool = lazyWithRetry(
   () => import('./components/tools/genetic-potential/GeneticPotentialTool')
 )
-const METCalculatorTool = lazy(() => import('./components/tools/met-calculator/METCalculatorTool'))
-const TDEECalculatorTool = lazy(
+const METCalculatorTool = lazyWithRetry(
+  () => import('./components/tools/met-calculator/METCalculatorTool')
+)
+const TDEECalculatorTool = lazyWithRetry(
   () => import('./components/tools/tdee-calculator/TDEECalculatorTool')
 )
-const GoalCalculatorTool = lazy(
+const GoalCalculatorTool = lazyWithRetry(
   () => import('./components/tools/goal-calculator/GoalCalculatorTool')
 )
-const SettingsPage = lazy(() => import('./pages/SettingsPage'))
-const SocialPage = lazy(() => import('./pages/SocialPage'))
+const SettingsPage = lazyWithRetry(() => import('./pages/SettingsPage'))
+const SocialPage = lazyWithRetry(() => import('./pages/SocialPage'))
 
 // Loading fallback component
 function PageLoader() {
