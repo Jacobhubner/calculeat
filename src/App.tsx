@@ -21,19 +21,34 @@ import AuthCallbackPage from './pages/AuthCallbackPage'
 // When a hashed JS file no longer exists the server returns index.html
 // (text/html), which triggers a "not a valid MIME type" error. We reload
 // once — guarded by sessionStorage to avoid infinite loops.
+function isChunkLoadError(err: unknown): boolean {
+  const msg = (err as Error)?.message ?? ''
+  return (
+    msg.includes('Failed to fetch dynamically imported module') ||
+    msg.includes('is not a valid JavaScript MIME type') ||
+    msg.includes('Importing a module script failed') ||
+    msg.includes('error loading dynamically imported module')
+  )
+}
+
 function lazyWithRetry<T extends React.ComponentType<unknown>>(
   factory: () => Promise<{ default: T }>
 ): React.LazyExoticComponent<T> {
   return lazy(() =>
-    factory().catch(err => {
-      const reloaded = sessionStorage.getItem('chunk-reload')
-      if (!reloaded) {
-        sessionStorage.setItem('chunk-reload', '1')
-        window.location.reload()
-        return new Promise(() => {}) // never resolves — reload takes over
-      }
-      throw err
-    })
+    factory()
+      .then(mod => {
+        // Successful load — reset guard so the next deploy can retry again
+        sessionStorage.removeItem('chunk-reload')
+        return mod
+      })
+      .catch(err => {
+        if (isChunkLoadError(err) && !sessionStorage.getItem('chunk-reload')) {
+          sessionStorage.setItem('chunk-reload', '1')
+          window.location.reload()
+          return new Promise<{ default: T }>(() => {}) // never resolves — reload takes over
+        }
+        throw err
+      })
   )
 }
 

@@ -20,9 +20,19 @@ export default class ErrorBoundary extends Component<Props, State> {
     this.state = { hasError: false }
   }
 
+  static isChunkError(error: Error): boolean {
+    const msg = error?.message ?? ''
+    return (
+      msg.includes('Failed to fetch dynamically imported module') ||
+      msg.includes('is not a valid JavaScript MIME type') ||
+      msg.includes('Importing a module script failed') ||
+      msg.includes('error loading dynamically imported module')
+    )
+  }
+
   static getDerivedStateFromError(error: Error): State {
-    // Auto-reload on chunk load failures caused by new deployments
-    if (error?.message?.includes('Failed to fetch dynamically imported module')) {
+    if (ErrorBoundary.isChunkError(error)) {
+      sessionStorage.removeItem('chunk-reload')
       window.location.reload()
       return { hasError: false }
     }
@@ -49,10 +59,10 @@ export default class ErrorBoundary extends Component<Props, State> {
             <div className="rounded-2xl bg-error-100 p-6 mb-6 inline-block">
               <AlertTriangle className="h-12 w-12 text-error-600" />
             </div>
-            <h1 className="text-2xl font-bold text-neutral-900 mb-2">{i18n.t('common:errorBoundary.title')}</h1>
-            <p className="text-neutral-600 mb-6">
-              {i18n.t('common:errorBoundary.description')}
-            </p>
+            <h1 className="text-2xl font-bold text-neutral-900 mb-2">
+              {i18n.t('common:errorBoundary.title')}
+            </h1>
+            <p className="text-neutral-600 mb-6">{i18n.t('common:errorBoundary.description')}</p>
             {this.state.error && (
               <div className="mb-6 p-4 bg-neutral-100 rounded-xl text-left">
                 <p className="text-xs font-mono text-neutral-700 break-all">
@@ -64,7 +74,12 @@ export default class ErrorBoundary extends Component<Props, State> {
               <Button variant="outline" onClick={this.handleReset}>
                 {i18n.t('common:errorBoundary.tryAgain')}
               </Button>
-              <Button onClick={() => window.location.reload()}>
+              <Button
+                onClick={() => {
+                  sessionStorage.removeItem('chunk-reload')
+                  window.location.reload()
+                }}
+              >
                 <RefreshCw className="h-4 w-4 mr-2" />
                 {i18n.t('common:status.reloadPage')}
               </Button>
