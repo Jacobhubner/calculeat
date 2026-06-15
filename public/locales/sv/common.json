@@ -87,7 +87,11 @@
     "calcFfmi": "FFMI Kalkylator",
     "calcKroppsfett": "Kroppsfett Kalkylator",
     "calcIdealvikt": "Idealvikt Kalkylator",
-    "articlesHub": "Alla artiklar"
+    "articlesHub": "Alla artiklar",
+    "home": "Hem",
+    "features": "Funktioner",
+    "calculators": "Kalkylatorer",
+    "articles": "Artiklar"
   },
   "auth": {
     "loggedOut": "Du har loggats ut",

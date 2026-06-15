@@ -49,11 +49,12 @@ export default function SiteHeader() {
     }
   }
 
-  const anchorLinks = location.pathname === '/' ? [{ href: '#features', label: 'Funktioner' }] : []
+  const anchorLinks =
+    location.pathname === '/' ? [{ href: '#features', label: t('nav.features') }] : []
 
   const navLinks = [
-    { to: '/kalkylatorer', label: 'Kalkylatorer' },
-    { to: '/artiklar', label: 'Artiklar' },
+    { to: '/kalkylatorer', label: t('nav.calculators') },
+    { to: '/artiklar', label: t('nav.articles') },
   ]
 
   const isOnHomePage = location.pathname === '/'
@@ -120,7 +121,7 @@ export default function SiteHeader() {
                 to="/"
                 className="text-sm font-medium transition-colors text-neutral-600 hover:text-neutral-900"
               >
-                Hem
+                {t('nav.home')}
               </Link>
             )}
             {anchorLinks.map(link => (
@@ -350,7 +351,7 @@ export default function SiteHeader() {
                 onClick={() => setMobileMenuOpen(false)}
                 className="px-4 py-2 rounded-xl text-sm font-medium transition-colors text-neutral-600 hover:bg-neutral-50"
               >
-                Hem
+                {t('nav.home')}
               </Link>
             )}
             {anchorLinks.map(link => (

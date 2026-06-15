@@ -88,7 +88,11 @@
     "calcFfmi": "FFMI Calculator",
     "calcKroppsfett": "Body Fat Calculator",
     "calcIdealvikt": "Ideal Weight Calculator",
-    "articlesHub": "All articles"
+    "articlesHub": "All articles",
+    "home": "Home",
+    "features": "Features",
+    "calculators": "Calculators",
+    "articles": "Articles"
   },
   "auth": {
     "loggedOut": "You have been logged out",
