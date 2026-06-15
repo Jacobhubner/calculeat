@@ -17,11 +17,18 @@ import { useDailyLogs, useDeleteDailyLog } from '@/hooks/useDailyLogs'
 import { HistoryCalendar } from '@/components/history/HistoryCalendar'
 import { toast } from 'sonner'
 import EmptyState from '@/components/EmptyState'
+import { useProfileStore } from '@/stores/profileStore'
+import { useProfiles } from '@/hooks'
+import type { Profile } from '@/lib/types'
 
 export default function HistoryPage() {
   const { t } = useTranslation('history')
   const [viewMode, setViewMode] = useState<'calendar' | 'list'>('list')
   const [statsPeriod, setStatsPeriod] = useState<number>(30)
+
+  const activeProfile = useProfileStore(state => state.activeProfile)
+  const { data: allProfiles } = useProfiles()
+  const profile = allProfiles?.find(p => p.id === activeProfile?.id) as Profile | undefined
 
   const { endDate, startDate } = useMemo(() => {
     const now = new Date()
@@ -367,42 +374,48 @@ export default function HistoryPage() {
               </CardContent>
             </Card>
 
-            {/* Kaloritäthetsfördelning */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">{t('stats.densityDistribution')}</CardTitle>
-                <CardDescription>{t('stats.lastNDays', { days: statsPeriod })}</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                {(() => {
-                  const totalGreen = statsLogs.reduce((sum, log) => sum + log.green_calories, 0)
-                  const totalYellow = statsLogs.reduce((sum, log) => sum + log.yellow_calories, 0)
-                  const totalOrange = statsLogs.reduce((sum, log) => sum + log.orange_calories, 0)
-                  const total = totalGreen + totalYellow + totalOrange
+            {/* Kaloritäthetsfördelning — visas bara om funktionen är aktiverad */}
+            {profile?.show_energy_density && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">{t('stats.densityDistribution')}</CardTitle>
+                  <CardDescription>{t('stats.lastNDays', { days: statsPeriod })}</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  {(() => {
+                    const totalGreen = statsLogs.reduce((sum, log) => sum + log.green_calories, 0)
+                    const totalYellow = statsLogs.reduce((sum, log) => sum + log.yellow_calories, 0)
+                    const totalOrange = statsLogs.reduce((sum, log) => sum + log.orange_calories, 0)
+                    const total = totalGreen + totalYellow + totalOrange
 
-                  const greenPct = total > 0 ? Math.round((totalGreen / total) * 100) : 0
-                  const yellowPct = total > 0 ? Math.round((totalYellow / total) * 100) : 0
-                  const orangePct = total > 0 ? Math.round((totalOrange / total) * 100) : 0
+                    const greenPct = total > 0 ? Math.round((totalGreen / total) * 100) : 0
+                    const yellowPct = total > 0 ? Math.round((totalYellow / total) * 100) : 0
+                    const orangePct = total > 0 ? Math.round((totalOrange / total) * 100) : 0
 
-                  return (
-                    <>
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-neutral-600">{t('stats.green')}</span>
-                        <span className="text-sm font-semibold text-green-700">{greenPct}%</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-neutral-600">{t('stats.yellow')}</span>
-                        <span className="text-sm font-semibold text-yellow-700">{yellowPct}%</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-neutral-600">{t('stats.orange')}</span>
-                        <span className="text-sm font-semibold text-orange-700">{orangePct}%</span>
-                      </div>
-                    </>
-                  )
-                })()}
-              </CardContent>
-            </Card>
+                    return (
+                      <>
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-neutral-600">{t('stats.green')}</span>
+                          <span className="text-sm font-semibold text-green-700">{greenPct}%</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-neutral-600">{t('stats.yellow')}</span>
+                          <span className="text-sm font-semibold text-yellow-700">
+                            {yellowPct}%
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-neutral-600">{t('stats.orange')}</span>
+                          <span className="text-sm font-semibold text-orange-700">
+                            {orangePct}%
+                          </span>
+                        </div>
+                      </>
+                    )
+                  })()}
+                </CardContent>
+              </Card>
+            )}
 
             {/* Tips */}
             <Card className="bg-gradient-to-br from-accent-50 to-success-50 border-accent-200">
@@ -412,7 +425,7 @@ export default function HistoryPage() {
               <CardContent className="space-y-2 text-sm text-neutral-700">
                 <p>{t('tips.tip1')}</p>
                 <p>{t('tips.tip2')}</p>
-                <p>{t('tips.tip3')}</p>
+                {profile?.show_energy_density && <p>{t('tips.tip3')}</p>}
                 <p>{t('tips.tip4')}</p>
               </CardContent>
             </Card>

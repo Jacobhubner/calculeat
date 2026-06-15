@@ -378,8 +378,8 @@ export default function HistoryDayPage() {
                 )
               })()}
 
-              {/* Energitäthet — alltid synlig när data finns */}
-              {dailySummary && dailySummary.energyDensity > 0 && (
+              {/* Energitäthet — visas bara om funktionen är aktiverad */}
+              {profile?.show_energy_density && dailySummary && dailySummary.energyDensity > 0 && (
                 <div className="pt-3 border-t border-neutral-200">
                   <EnergyDensityIndicator density={dailySummary.energyDensity} size="sm" />
                 </div>
