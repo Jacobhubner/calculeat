@@ -309,18 +309,30 @@ export function useEnsureTodayLog() {
 
       if (existing) return existing as DailyLog
 
-      // Auto-complete yesterday's log if setting is "auto"
+      // Auto-complete (or delete if empty) yesterday's log if setting is "auto"
       if (completionMode === 'auto') {
         const yesterday = new Date()
         yesterday.setDate(yesterday.getDate() - 1)
         const yesterdayStr = yesterday.toISOString().split('T')[0]
 
-        await supabase
+        const { data: yesterdayLog } = await supabase
           .from('daily_logs')
-          .update({ is_completed: true })
+          .select('id, total_calories')
           .eq('user_id', user.id)
           .eq('log_date', yesterdayStr)
           .eq('is_completed', false)
+          .maybeSingle()
+
+        if (yesterdayLog) {
+          if (yesterdayLog.total_calories === 0) {
+            await supabase.from('daily_logs').delete().eq('id', yesterdayLog.id)
+          } else {
+            await supabase
+              .from('daily_logs')
+              .update({ is_completed: true })
+              .eq('id', yesterdayLog.id)
+          }
+        }
       }
 
       // Calculate macro goals in grams from profile percentages
