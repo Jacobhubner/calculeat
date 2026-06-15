@@ -21,10 +21,13 @@ import { useProfileStore } from '@/stores/profileStore'
 import { useProfiles } from '@/hooks'
 import type { Profile } from '@/lib/types'
 
+const WEEKS_PER_PAGE = 10
+
 export default function HistoryPage() {
   const { t } = useTranslation('history')
   const [viewMode, setViewMode] = useState<'calendar' | 'list'>('list')
   const [statsPeriod, setStatsPeriod] = useState<number>(30)
+  const [visibleWeeks, setVisibleWeeks] = useState(WEEKS_PER_PAGE)
 
   const activeProfile = useProfileStore(state => state.activeProfile)
   const { data: allProfiles } = useProfiles()
@@ -193,95 +196,116 @@ export default function HistoryPage() {
               <HistoryCalendar logs={logs ?? []} />
             ) : (
               <div className="space-y-4">
-                {Object.entries(weeklyLogs || {})
-                  .sort(([a], [b]) => b.localeCompare(a))
-                  .map(([weekStart, weekLogs]) => {
-                    const weekStartDate = new Date(weekStart)
-                    const weekEndDate = new Date(weekStart)
-                    weekEndDate.setDate(weekEndDate.getDate() + 6)
+                {(() => {
+                  const sortedWeeks = Object.entries(weeklyLogs || {}).sort(([a], [b]) =>
+                    b.localeCompare(a)
+                  )
+                  const visibleEntries = sortedWeeks.slice(0, visibleWeeks)
+                  const hasMore = sortedWeeks.length > visibleWeeks
 
-                    return (
-                      <Card key={weekStart}>
-                        <CardHeader>
-                          <CardTitle className="text-lg flex items-center justify-between">
-                            <span>
-                              {weekStartDate.toLocaleDateString('sv-SE', {
-                                month: 'short',
-                                day: 'numeric',
-                              })}{' '}
-                              -{' '}
-                              {weekEndDate.toLocaleDateString('sv-SE', {
-                                month: 'short',
-                                day: 'numeric',
-                              })}
-                            </span>
-                            <Badge variant="outline">
-                              {weekLogs.filter(l => l.is_completed).length} / 7 {t('week.days')}
-                            </Badge>
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-2">
-                          {weekLogs
-                            .sort((a, b) => b.log_date.localeCompare(a.log_date))
-                            .map(log => {
-                              const date = new Date(log.log_date)
+                  return (
+                    <>
+                      {visibleEntries.map(([weekStart, weekLogs]) => {
+                        const weekStartDate = new Date(weekStart)
+                        const weekEndDate = new Date(weekStart)
+                        weekEndDate.setDate(weekEndDate.getDate() + 6)
 
-                              return (
-                                <div
-                                  key={log.id}
-                                  className="flex items-center justify-between p-3 rounded-lg border hover:bg-neutral-50 transition-colors cursor-pointer"
-                                  onClick={() =>
-                                    (window.location.href = `/app/history/${log.log_date}`)
-                                  }
-                                >
-                                  <div className="flex items-center gap-3">
-                                    <div className="text-center">
-                                      <div className="text-2xl font-bold text-neutral-900">
-                                        {date.getDate()}
-                                      </div>
-                                      <div className="text-xs text-neutral-500 uppercase">
-                                        {date.toLocaleDateString('sv-SE', { weekday: 'short' })}
-                                      </div>
-                                    </div>
-                                    <div>
-                                      <div className="flex items-center gap-2">
-                                        <span className="font-medium">
-                                          {log.total_calories} kcal
-                                        </span>
-                                        {log.is_completed && (
-                                          <Badge
-                                            variant="outline"
-                                            className="gap-1 bg-success-50 text-success-700 border-success-200"
-                                          >
-                                            <Check className="h-3 w-3" />
-                                            {t('status.completed')}
-                                          </Badge>
-                                        )}
-                                      </div>
-                                      <div className="text-sm text-neutral-600">
-                                        F: {log.total_fat_g}g · K: {log.total_carb_g}g · P:{' '}
-                                        {log.total_protein_g}g
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div className="flex items-center gap-2">
-                                    <button
-                                      onClick={e => handleDeleteDay(log.id, log.log_date, e)}
-                                      className="p-1.5 rounded-md text-neutral-300 hover:text-red-500 hover:bg-red-50 transition-colors"
-                                      title={t('actions.deleteDayTitle')}
-                                      disabled={deleteDailyLog.isPending}
+                        return (
+                          <Card key={weekStart}>
+                            <CardHeader>
+                              <CardTitle className="text-lg flex items-center justify-between">
+                                <span>
+                                  {weekStartDate.toLocaleDateString('sv-SE', {
+                                    month: 'short',
+                                    day: 'numeric',
+                                  })}{' '}
+                                  -{' '}
+                                  {weekEndDate.toLocaleDateString('sv-SE', {
+                                    month: 'short',
+                                    day: 'numeric',
+                                  })}
+                                </span>
+                                <Badge variant="outline">
+                                  {weekLogs.filter(l => l.is_completed).length} / 7 {t('week.days')}
+                                </Badge>
+                              </CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-2">
+                              {weekLogs
+                                .sort((a, b) => b.log_date.localeCompare(a.log_date))
+                                .map(log => {
+                                  const date = new Date(log.log_date)
+
+                                  return (
+                                    <div
+                                      key={log.id}
+                                      className="flex items-center justify-between p-3 rounded-lg border hover:bg-neutral-50 transition-colors cursor-pointer"
+                                      onClick={() =>
+                                        (window.location.href = `/app/history/${log.log_date}`)
+                                      }
                                     >
-                                      <Trash2 className="h-4 w-4" />
-                                    </button>
-                                    <ChevronRight className="h-5 w-5 text-neutral-400" />
-                                  </div>
-                                </div>
-                              )
-                            })}
-                        </CardContent>
-                      </Card>
-                    )
-                  })}
+                                      <div className="flex items-center gap-3">
+                                        <div className="text-center">
+                                          <div className="text-2xl font-bold text-neutral-900">
+                                            {date.getDate()}
+                                          </div>
+                                          <div className="text-xs text-neutral-500 uppercase">
+                                            {date.toLocaleDateString('sv-SE', { weekday: 'short' })}
+                                          </div>
+                                        </div>
+                                        <div>
+                                          <div className="flex items-center gap-2">
+                                            <span className="font-medium">
+                                              {log.total_calories} kcal
+                                            </span>
+                                            {log.is_completed && (
+                                              <Badge
+                                                variant="outline"
+                                                className="gap-1 bg-success-50 text-success-700 border-success-200"
+                                              >
+                                                <Check className="h-3 w-3" />
+                                                {t('status.completed')}
+                                              </Badge>
+                                            )}
+                                          </div>
+                                          <div className="text-sm text-neutral-600">
+                                            F: {log.total_fat_g}g · K: {log.total_carb_g}g · P:{' '}
+                                            {log.total_protein_g}g
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div className="flex items-center gap-2">
+                                        <button
+                                          onClick={e => handleDeleteDay(log.id, log.log_date, e)}
+                                          className="p-1.5 rounded-md text-neutral-300 hover:text-red-500 hover:bg-red-50 transition-colors"
+                                          title={t('actions.deleteDayTitle')}
+                                          disabled={deleteDailyLog.isPending}
+                                        >
+                                          <Trash2 className="h-4 w-4" />
+                                        </button>
+                                        <ChevronRight className="h-5 w-5 text-neutral-400" />
+                                      </div>
+                                    </div>
+                                  )
+                                })}
+                            </CardContent>
+                          </Card>
+                        )
+                      })}
+                      {hasMore && (
+                        <Button
+                          variant="outline"
+                          className="w-full"
+                          onClick={() => setVisibleWeeks(v => v + WEEKS_PER_PAGE)}
+                        >
+                          {t('actions.showMoreWeeks', {
+                            count: Math.min(WEEKS_PER_PAGE, sortedWeeks.length - visibleWeeks),
+                          })}
+                        </Button>
+                      )}
+                    </>
+                  )
+                })()}
               </div>
             )}
           </div>

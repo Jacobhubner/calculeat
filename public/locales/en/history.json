@@ -28,7 +28,8 @@
     "confirm": "Confirm",
     "saving": "Saving...",
     "goToToday": "Go to today's log",
-    "addFood": "Add"
+    "addFood": "Add",
+    "showMoreWeeks": "Show {{count}} more weeks"
   },
   "confirm": {
     "deleteDay": "Do you want to delete the log for {{date}}? This cannot be undone."

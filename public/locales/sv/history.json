@@ -28,7 +28,8 @@
     "confirm": "Bekräfta",
     "saving": "Sparar...",
     "goToToday": "Gå till dagens logg",
-    "addFood": "Lägg till"
+    "addFood": "Lägg till",
+    "showMoreWeeks": "Visa {{count}} fler veckor"
   },
   "confirm": {
     "deleteDay": "Vill du radera loggen för {{date}}? Detta kan inte ångras."
