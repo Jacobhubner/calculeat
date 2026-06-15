@@ -9,34 +9,34 @@ export default function SiteFooter() {
 
   const footerSections = [
     {
-      title: 'Kalkylatorer',
+      title: t('footer.sections.calculators'),
       links: [
-        { label: 'TDEE-kalkylator', to: '/kalkylatorer/tdee-kalkylator' },
-        { label: 'Kaloriunderskott', to: '/kalkylatorer/kaloriunderskott' },
-        { label: 'BMI-kalkylator', to: '/kalkylatorer/bmi-kalkylator' },
-        { label: 'Proteinbehov', to: '/kalkylatorer/proteinbehov' },
-        { label: 'Idealvikt', to: '/kalkylatorer/idealvikt' },
-        { label: 'Kroppsfett', to: '/kalkylatorer/kroppsfett' },
-        { label: 'Alla kalkylatorer', to: '/kalkylatorer' },
+        { label: t('footer.links.tdeecalc'), to: '/kalkylatorer/tdee-kalkylator' },
+        { label: t('footer.links.caloriedeficit'), to: '/kalkylatorer/kaloriunderskott' },
+        { label: t('footer.links.bmicalc'), to: '/kalkylatorer/bmi-kalkylator' },
+        { label: t('footer.links.proteinneeds'), to: '/kalkylatorer/proteinbehov' },
+        { label: t('footer.links.idealweight'), to: '/kalkylatorer/idealvikt' },
+        { label: t('footer.links.bodyfat'), to: '/kalkylatorer/kroppsfett' },
+        { label: t('footer.links.allcalculators'), to: '/kalkylatorer' },
       ],
     },
     {
-      title: 'Artiklar',
+      title: t('footer.sections.articles'),
       links: [
-        { label: 'Kaloribehov', to: '/artiklar/kaloribehov' },
-        { label: 'Vad är TDEE?', to: '/artiklar/vad-ar-tdee' },
-        { label: 'Kaloribrist', to: '/artiklar/kaloribrist' },
-        { label: 'BMR vs RMR', to: '/artiklar/bmr-vs-rmr' },
-        { label: 'LBM vs FFM', to: '/artiklar/lbm-vs-ffm' },
-        { label: 'Mäta kroppsfett', to: '/artiklar/hur-mater-man-kroppsfett' },
-        { label: 'Alla artiklar', to: '/artiklar' },
+        { label: t('footer.links.calorieneeds'), to: '/artiklar/kaloribehov' },
+        { label: t('footer.links.whatistdee'), to: '/artiklar/vad-ar-tdee' },
+        { label: t('footer.links.caloriedeficiency'), to: '/artiklar/kaloribrist' },
+        { label: t('footer.links.bmrvsrmr'), to: '/artiklar/bmr-vs-rmr' },
+        { label: t('footer.links.lbmvsffm'), to: '/artiklar/lbm-vs-ffm' },
+        { label: t('footer.links.measurebodyfat'), to: '/artiklar/hur-mater-man-kroppsfett' },
+        { label: t('footer.links.allarticles'), to: '/artiklar' },
       ],
     },
     {
       title: t('footer.sections.product'),
       links: [
         { label: t('footer.links.dashboard'), to: '/app' },
-        { label: 'Om oss', to: '/om-oss' },
+        { label: t('footer.links.aboutus'), to: '/om-oss' },
       ],
     },
   ]

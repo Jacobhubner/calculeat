@@ -115,15 +115,15 @@ export default function HomePage() {
               <div className="flex items-end justify-between mb-8">
                 <div>
                   <h2 className="text-2xl md:text-3xl font-bold text-neutral-900 mb-1">
-                    Populära verktyg
+                    {t('popularTools.title')}
                   </h2>
-                  <p className="text-neutral-600 text-sm">Gratis kalkylatorer och guider</p>
+                  <p className="text-neutral-600 text-sm">{t('popularTools.subtitle')}</p>
                 </div>
                 <Link
                   to="/kalkylatorer"
                   className="hidden sm:flex items-center gap-1 text-sm text-primary-600 font-medium hover:text-primary-700 transition-colors"
                 >
-                  Alla kalkylatorer
+                  {t('popularTools.allCalculators')}
                   <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
               </div>
@@ -133,12 +133,14 @@ export default function HomePage() {
                   to="/kalkylatorer/tdee-kalkylator"
                   className="group bg-white rounded-2xl border border-neutral-200 p-5 hover:shadow-md hover:border-primary-200 transition-all"
                 >
-                  <p className="text-xs text-primary-600 font-medium mb-1">Kalkylator</p>
+                  <p className="text-xs text-primary-600 font-medium mb-1">
+                    {t('popularTools.typeCalculator')}
+                  </p>
                   <h3 className="font-semibold text-neutral-900 group-hover:text-primary-700 transition-colors mb-1.5">
-                    TDEE-kalkylator
+                    {t('popularTools.tools.tdee.title')}
                   </h3>
                   <p className="text-xs text-neutral-500 leading-relaxed">
-                    Beräkna ditt totala dagliga energibehov
+                    {t('popularTools.tools.tdee.description')}
                   </p>
                 </Link>
 
@@ -146,12 +148,14 @@ export default function HomePage() {
                   to="/kalkylatorer/kaloriunderskott"
                   className="group bg-white rounded-2xl border border-neutral-200 p-5 hover:shadow-md hover:border-primary-200 transition-all"
                 >
-                  <p className="text-xs text-primary-600 font-medium mb-1">Kalkylator</p>
+                  <p className="text-xs text-primary-600 font-medium mb-1">
+                    {t('popularTools.typeCalculator')}
+                  </p>
                   <h3 className="font-semibold text-neutral-900 group-hover:text-primary-700 transition-colors mb-1.5">
-                    Kaloriunderskott
+                    {t('popularTools.tools.deficit.title')}
                   </h3>
                   <p className="text-xs text-neutral-500 leading-relaxed">
-                    Hur stort underskott behöver du?
+                    {t('popularTools.tools.deficit.description')}
                   </p>
                 </Link>
 
@@ -159,12 +163,14 @@ export default function HomePage() {
                   to="/kalkylatorer/bmi-kalkylator"
                   className="group bg-white rounded-2xl border border-neutral-200 p-5 hover:shadow-md hover:border-primary-200 transition-all"
                 >
-                  <p className="text-xs text-primary-600 font-medium mb-1">Kalkylator</p>
+                  <p className="text-xs text-primary-600 font-medium mb-1">
+                    {t('popularTools.typeCalculator')}
+                  </p>
                   <h3 className="font-semibold text-neutral-900 group-hover:text-primary-700 transition-colors mb-1.5">
-                    BMI-kalkylator
+                    {t('popularTools.tools.bmi.title')}
                   </h3>
                   <p className="text-xs text-neutral-500 leading-relaxed">
-                    Räkna ut ditt body mass index
+                    {t('popularTools.tools.bmi.description')}
                   </p>
                 </Link>
 
@@ -172,12 +178,14 @@ export default function HomePage() {
                   to="/artiklar/kaloribehov"
                   className="group bg-white rounded-2xl border border-neutral-200 p-5 hover:shadow-md hover:border-primary-200 transition-all"
                 >
-                  <p className="text-xs text-accent-600 font-medium mb-1">Artikel</p>
+                  <p className="text-xs text-accent-600 font-medium mb-1">
+                    {t('popularTools.typeArticle')}
+                  </p>
                   <h3 className="font-semibold text-neutral-900 group-hover:text-primary-700 transition-colors mb-1.5">
-                    Kaloribehov
+                    {t('popularTools.tools.calorieneeds.title')}
                   </h3>
                   <p className="text-xs text-neutral-500 leading-relaxed">
-                    Hur mycket ska du äta egentligen?
+                    {t('popularTools.tools.calorieneeds.description')}
                   </p>
                 </Link>
               </div>
@@ -187,7 +195,7 @@ export default function HomePage() {
                   to="/kalkylatorer"
                   className="flex items-center gap-1 text-sm text-primary-600 font-medium hover:text-primary-700 transition-colors"
                 >
-                  Alla kalkylatorer
+                  {t('popularTools.allCalculators')}
                   <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
               </div>

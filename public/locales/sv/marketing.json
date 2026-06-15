@@ -199,15 +199,57 @@
       "back": "Tillbaka till startsidan"
     }
   },
+  "popularTools": {
+    "title": "Populära verktyg",
+    "subtitle": "Gratis kalkylatorer och guider",
+    "allCalculators": "Alla kalkylatorer",
+    "typeCalculator": "Kalkylator",
+    "typeArticle": "Artikel",
+    "tools": {
+      "tdee": {
+        "title": "TDEE-kalkylator",
+        "description": "Beräkna ditt totala dagliga energibehov"
+      },
+      "deficit": {
+        "title": "Kaloriunderskott",
+        "description": "Hur stort underskott behöver du?"
+      },
+      "bmi": {
+        "title": "BMI-kalkylator",
+        "description": "Räkna ut ditt body mass index"
+      },
+      "calorieneeds": {
+        "title": "Kaloribehov",
+        "description": "Hur mycket ska du äta egentligen?"
+      }
+    }
+  },
   "footer": {
     "tagline": "Din kompletta plattform för kaloriräkning, måltidsplanering och träningsspårning. Ät smart. Träna rätt. Följ allt.",
     "sections": {
+      "calculators": "Kalkylatorer",
+      "articles": "Artiklar",
       "product": "Produkt",
       "resources": "Resurser",
       "company": "Företag",
       "legal": "Legalt"
     },
     "links": {
+      "tdeecalc": "TDEE-kalkylator",
+      "caloriedeficit": "Kaloriunderskott",
+      "bmicalc": "BMI-kalkylator",
+      "proteinneeds": "Proteinbehov",
+      "idealweight": "Idealvikt",
+      "bodyfat": "Kroppsfett",
+      "allcalculators": "Alla kalkylatorer",
+      "calorieneeds": "Kaloribehov",
+      "whatistdee": "Vad är TDEE?",
+      "caloriedeficiency": "Kaloribrist",
+      "bmrvsrmr": "BMR vs RMR",
+      "lbmvsffm": "LBM vs FFM",
+      "measurebodyfat": "Mäta kroppsfett",
+      "allarticles": "Alla artiklar",
+      "aboutus": "Om oss",
       "dashboard": "Dashboard",
       "pricing": "Priser",
       "guides": "Guider",

@@ -199,15 +199,57 @@
       "back": "Back to home"
     }
   },
+  "popularTools": {
+    "title": "Popular tools",
+    "subtitle": "Free calculators and guides",
+    "allCalculators": "All calculators",
+    "typeCalculator": "Calculator",
+    "typeArticle": "Article",
+    "tools": {
+      "tdee": {
+        "title": "TDEE calculator",
+        "description": "Calculate your total daily energy expenditure"
+      },
+      "deficit": {
+        "title": "Calorie deficit",
+        "description": "How large a deficit do you need?"
+      },
+      "bmi": {
+        "title": "BMI calculator",
+        "description": "Calculate your body mass index"
+      },
+      "calorieneeds": {
+        "title": "Calorie needs",
+        "description": "How much should you actually eat?"
+      }
+    }
+  },
   "footer": {
     "tagline": "Your complete platform for calorie tracking, meal planning, and fitness tracking. Eat smart. Train right. Track everything.",
     "sections": {
+      "calculators": "Calculators",
+      "articles": "Articles",
       "product": "Product",
       "resources": "Resources",
       "company": "Company",
       "legal": "Legal"
     },
     "links": {
+      "tdeecalc": "TDEE calculator",
+      "caloriedeficit": "Calorie deficit",
+      "bmicalc": "BMI calculator",
+      "proteinneeds": "Protein needs",
+      "idealweight": "Ideal weight",
+      "bodyfat": "Body fat",
+      "allcalculators": "All calculators",
+      "calorieneeds": "Calorie needs",
+      "whatistdee": "What is TDEE?",
+      "caloriedeficiency": "Calorie deficiency",
+      "bmrvsrmr": "BMR vs RMR",
+      "lbmvsffm": "LBM vs FFM",
+      "measurebodyfat": "Measuring body fat",
+      "allarticles": "All articles",
+      "aboutus": "About us",
       "dashboard": "Dashboard",
       "pricing": "Pricing",
       "guides": "Guides",
