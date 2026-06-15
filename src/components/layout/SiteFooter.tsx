@@ -33,17 +33,6 @@ export default function SiteFooter() {
       ],
     },
     {
-      title: 'Jämför appar',
-      links: [
-        { label: 'Bästa kaloriappen', to: '/basta-kaloriappen' },
-        { label: 'Bästa TDEE-kalkylatorn', to: '/basta-tdee-kalkylatorn' },
-        { label: 'MyFitnessPal vs CalculEat', to: '/jamfor/myfitnesspal-vs-calculeat' },
-        { label: 'Lifesum vs CalculEat', to: '/jamfor/lifesum-vs-calculeat' },
-        { label: 'Yazio vs CalculEat', to: '/jamfor/yazio-vs-calculeat' },
-        { label: 'MacroFactor vs CalculEat', to: '/jamfor/macrofactor-vs-calculeat' },
-      ],
-    },
-    {
       title: t('footer.sections.product'),
       links: [
         { label: t('footer.links.dashboard'), to: '/app' },
