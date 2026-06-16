@@ -87,6 +87,8 @@ import { sv, enUS } from 'date-fns/locale'
 import { useTranslation } from 'react-i18next'
 import i18n from '@/i18n'
 import { useFriendPresence } from '@/hooks/useFriendPresence'
+import { useNavigate } from 'react-router-dom'
+import { useIsAdmin } from '@/hooks/useIsAdmin'
 
 function getDateLocale() {
   return i18n.language === 'sv' ? sv : enUS
@@ -1420,15 +1422,19 @@ function notificationIcon(type: Notification['type']) {
       return <X className="h-4 w-4 text-neutral-400" />
     case 'new_message':
       return <MessageCircle className="h-4 w-4 text-primary-600" />
+    case 'support_message_received':
+      return <MessageCircle className="h-4 w-4 text-orange-500" />
   }
 }
 
 function NotificationCard({
   notification: n,
   onMarkRead,
+  onNavigate,
 }: {
   notification: Notification
   onMarkRead: (id: string) => void
+  onNavigate?: () => void
 }) {
   const isUnread = n.read_at === null
   return (
@@ -1436,6 +1442,7 @@ function NotificationCard({
       type="button"
       onClick={() => {
         if (isUnread) onMarkRead(n.id)
+        onNavigate?.()
       }}
       className={`w-full flex items-start gap-3 rounded-lg border px-3 py-2.5 text-left transition-colors ${
         isUnread
@@ -1503,13 +1510,21 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
   const { mutate: markAllRead } = useMarkAllNotificationsRead()
   const { mutate: deleteRead, isPending: isDeletingRead } = useDeleteReadNotifications()
 
+  const navigate = useNavigate()
+  const { data: isAdmin } = useIsAdmin()
+
+  // Support-notiser visas som eget actionable-kort
+  const supportNotifications = notifications.filter(n => n.type === 'support_message_received')
+  const unreadSupportCount = supportNotifications.filter(n => n.read_at === null).length
+
   // Filtrera bort typer som redan visas som åtgärdskort
   const historyNotifications = notifications.filter(
     n =>
       n.type !== 'friend_request_received' &&
       n.type !== 'shared_list_invitation_received' &&
       n.type !== 'share_invitation_received' &&
-      n.type !== 'new_message'
+      n.type !== 'new_message' &&
+      n.type !== 'support_message_received'
   )
   const unreadHistoryCount = historyNotifications.filter(n => n.read_at === null).length
 
@@ -1518,7 +1533,8 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
     pendingInvitations.length +
     pendingSharedListInvitations.length +
     pendingAdminInvitations.length +
-    unreadHistoryCount
+    unreadHistoryCount +
+    unreadSupportCount
 
   const filteredFriends = friends.filter(f => {
     if (!friendSearch.trim()) return true
@@ -1876,6 +1892,29 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
                 </p>
                 {sentShareInvitations.map(inv => (
                   <SentShareCard key={inv.id} invitation={inv} />
+                ))}
+              </div>
+            )}
+
+            {/* Support-meddelanden */}
+            {supportNotifications.length > 0 && (
+              <div className="space-y-2">
+                <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wide">
+                  Support
+                </p>
+                {supportNotifications.map(n => (
+                  <NotificationCard
+                    key={n.id}
+                    notification={n}
+                    onMarkRead={markRead}
+                    onNavigate={() => {
+                      if (isAdmin) {
+                        navigate('/app/admin/support')
+                      } else {
+                        navigate({ search: '?support=open' })
+                      }
+                    }}
+                  />
                 ))}
               </div>
             )}

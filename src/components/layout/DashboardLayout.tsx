@@ -8,6 +8,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
 import { usePreviewMode } from '@/hooks/usePreviewMode'
+import { SupportChatButton } from '@/components/support/SupportChatButton'
 
 interface DashboardLayoutProps {
   children: ReactNode
@@ -76,6 +77,7 @@ export default function DashboardLayout({ children, fullHeight }: DashboardLayou
         </main>
       </div>
       <MobileBottomNav />
+      <SupportChatButton />
     </div>
   )
 }

@@ -25,6 +25,7 @@ import type svSocial from '../../public/locales/sv/social.json'
 import type svToday from '../../public/locales/sv/today.json'
 import type svTools from '../../public/locales/sv/tools.json'
 import type svMet from '../../public/locales/sv/met.json'
+import type svSupport from '../../public/locales/sv/support.json'
 
 declare module 'i18next' {
   interface CustomTypeOptions {
@@ -47,6 +48,7 @@ declare module 'i18next' {
       today: typeof svToday
       tools: typeof svTools
       met: typeof svMet
+      support: typeof svSupport
     }
   }
 }

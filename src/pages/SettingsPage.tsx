@@ -19,6 +19,7 @@ import {
   Check,
   ShieldCheck,
   Trash2,
+  MessageCircle,
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase'
@@ -835,6 +836,36 @@ export default function SettingsPage() {
                   </Button>
                 </>
               )}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Support — visible to all users */}
+        <Card>
+          <CardContent className="py-4">
+            <button
+              type="button"
+              onClick={() => navigate({ search: '?support=open' })}
+              className="flex items-center gap-2 text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors"
+            >
+              <MessageCircle className="h-4 w-4" />
+              {tSettings('support.openChat')}
+            </button>
+          </CardContent>
+        </Card>
+
+        {/* Support inbox link — visible to all admins */}
+        {isAdmin && (
+          <Card>
+            <CardContent className="py-4">
+              <button
+                type="button"
+                onClick={() => navigate('/app/admin/support')}
+                className="flex items-center gap-2 text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors"
+              >
+                <ShieldCheck className="h-4 w-4" />
+                {tSettings('support.inboxLink')}
+              </button>
             </CardContent>
           </Card>
         )}

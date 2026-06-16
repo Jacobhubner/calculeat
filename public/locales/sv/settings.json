@@ -36,6 +36,10 @@
     "exit": "Avsluta preview och radera testdata",
     "exiting": "Avslutar…"
   },
+  "support": {
+    "openChat": "Kontakta support →",
+    "inboxLink": "Öppna supportinkorgen →"
+  },
   "toast": {
     "saved": "Inställningar sparade",
     "saveError": "Kunde inte spara inställningar"

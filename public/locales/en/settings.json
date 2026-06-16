@@ -36,6 +36,10 @@
     "exit": "Exit preview and delete test data",
     "exiting": "Exiting…"
   },
+  "support": {
+    "openChat": "Contact support →",
+    "inboxLink": "Open support inbox →"
+  },
   "toast": {
     "saved": "Settings saved",
     "saveError": "Could not save settings"

@@ -1,0 +1,35 @@
+export interface SupportThread {
+  id: string
+  user_id: string
+  assigned_admin_id: string | null
+  status: 'open' | 'closed'
+  created_at: string
+  updated_at: string
+}
+
+export interface SupportMessage {
+  id: string
+  sender_id: string
+  content: string | null // null when deleted_at is set
+  created_at: string
+  read_at: string | null
+  deleted_at: string | null
+}
+
+export interface SupportInboxEntry {
+  thread_id: string
+  user_id: string
+  username: string
+  email: string
+  assigned_admin_id: string | null
+  status: 'open' | 'closed'
+  last_message: string | null
+  last_message_at: string | null
+  unread_count: number
+  updated_at: string
+  created_at: string
+}
+
+export type SupportRpcResult =
+  | { success: true; message_id: string }
+  | { success: false; error: string }
