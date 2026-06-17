@@ -334,6 +334,19 @@ export default function SiteHeader() {
 
                     <div className="border-t border-neutral-100 py-1">
                       <button
+                        type="button"
+                        onClick={() => {
+                          setMobileUserMenuOpen(false)
+                          navigate({ search: '?support=open' })
+                        }}
+                        className="w-full flex items-center gap-3 px-4 py-2 text-sm text-neutral-500 hover:bg-neutral-50 transition-colors"
+                      >
+                        <span>{t('nav.support')}</span>
+                      </button>
+                    </div>
+
+                    <div className="border-t border-neutral-100 py-1">
+                      <button
                         onClick={() => {
                           setMobileUserMenuOpen(false)
                           handleSignOut()
