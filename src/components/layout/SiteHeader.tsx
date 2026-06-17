@@ -25,6 +25,18 @@ export default function SiteHeader() {
   const [mobileUserMenuOpen, setMobileUserMenuOpen] = useState(false)
   const [socialHubOpen, setSocialHubOpen] = useState(false)
   const userMenuRef = useRef<HTMLDivElement>(null)
+  const socialHubRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!socialHubOpen) return
+    const handler = (e: MouseEvent) => {
+      if (socialHubRef.current && !socialHubRef.current.contains(e.target as Node)) {
+        setSocialHubOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [socialHubOpen])
   const [shareDialogOpen, setShareDialogOpen] = useState(false)
   const [sharePreselectedFriend, setSharePreselectedFriend] = useState<Friend | undefined>(
     undefined
@@ -150,7 +162,7 @@ export default function SiteHeader() {
           {user ? (
             <div className="flex items-center gap-3">
               {/* Desktop Social Hub trigger */}
-              <div className="relative">
+              <div className="relative" ref={socialHubRef}>
                 <button
                   onClick={() => setSocialHubOpen(prev => !prev)}
                   className="relative p-2 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 rounded-lg transition-colors"
@@ -168,7 +180,6 @@ export default function SiteHeader() {
                 <AnimatePresence>
                   {socialHubOpen && (
                     <>
-                      <div className="fixed inset-0 z-40" onClick={() => setSocialHubOpen(false)} />
                       <motion.div
                         className="absolute right-0 top-full mt-2 w-[420px] max-h-[600px] bg-white rounded-2xl shadow-xl border border-neutral-200 z-50 overflow-hidden flex flex-col"
                         initial={{ opacity: 0, y: -8, scale: 0.97 }}
