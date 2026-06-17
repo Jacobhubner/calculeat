@@ -10,6 +10,7 @@ export interface SupportThread {
 export interface SupportMessage {
   id: string
   sender_id: string
+  sender_username: string
   content: string | null // null when deleted_at is set
   created_at: string
   read_at: string | null

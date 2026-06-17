@@ -94,7 +94,7 @@ function getDateLocale() {
   return i18n.language === 'sv' ? sv : enUS
 }
 
-type HubTab = 'friends' | 'activity' | 'messages'
+type HubTab = 'friends' | 'activity' | 'messages' | 'support'
 type FriendsView = 'list' | 'profile' | 'add'
 type MessagesView = 'conversations' | 'thread'
 
@@ -1534,7 +1534,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
     pendingSharedListInvitations.length +
     pendingAdminInvitations.length +
     unreadHistoryCount +
-    unreadSupportCount
+    (!isAdmin ? unreadSupportCount : 0)
 
   const filteredFriends = friends.filter(f => {
     if (!friendSearch.trim()) return true
@@ -1603,7 +1603,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
         </div>
 
         {/* Tab-knappar */}
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 overflow-x-auto scrollbar-none">
           {[
             { id: 'friends' as HubTab, label: t('social.hub.tab_friends'), count: 0 },
             { id: 'activity' as HubTab, label: t('social.hub.tab_activity'), count: activityCount },
@@ -1612,6 +1612,9 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
               label: t('social.hub.tab_messages'),
               count: unreadMessageCount,
             },
+            ...(isAdmin
+              ? [{ id: 'support' as HubTab, label: 'Support', count: unreadSupportCount }]
+              : []),
           ].map(tabItem => (
             <button
               key={tabItem.id}
@@ -1622,7 +1625,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
                   queryClient.invalidateQueries({ queryKey: messageKeys.conversations() })
                 }
               }}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+              className={`shrink-0 flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                 tab === tabItem.id
                   ? 'bg-primary-600 text-white'
                   : 'text-neutral-600 hover:bg-neutral-100'
@@ -1645,11 +1648,10 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
           <button
             type="button"
             onClick={() => onOpenShareDialog(undefined)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors text-neutral-600 hover:bg-neutral-100 ml-auto"
-            title={t('social.friends.start_sharing')}
+            className="shrink-0 ml-auto flex items-center justify-center h-8 w-8 rounded-lg text-neutral-600 hover:bg-neutral-100 transition-colors"
+            title={t('social.hub.tab_sharing')}
           >
             <Share2 className="h-4 w-4" />
-            {t('social.hub.tab_sharing')}
           </button>
         </div>
       </div>
@@ -1896,8 +1898,8 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
               </div>
             )}
 
-            {/* Support-meddelanden */}
-            {supportNotifications.length > 0 && (
+            {/* Support-svar för vanliga användare (ej admin) */}
+            {!isAdmin && supportNotifications.length > 0 && (
               <div className="space-y-2">
                 <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wide">
                   Support
@@ -1907,13 +1909,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
                     key={n.id}
                     notification={n}
                     onMarkRead={markRead}
-                    onNavigate={() => {
-                      if (isAdmin) {
-                        navigate('/app/admin/support')
-                      } else {
-                        navigate({ search: '?support=open' })
-                      }
-                    }}
+                    onNavigate={() => navigate({ search: '?support=open' })}
                   />
                 ))}
               </div>
@@ -1990,6 +1986,40 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
                 }}
               />
             )}
+          </div>
+        )}
+
+        {/* ── Support-tab (admin only) ── */}
+        {tab === 'support' && isAdmin && (
+          <div className="p-4 space-y-3">
+            <button
+              type="button"
+              onClick={() => {
+                supportNotifications.filter(n => n.read_at === null).forEach(n => markRead(n.id))
+                navigate('/app/admin/support')
+              }}
+              className="w-full flex items-center gap-3 rounded-xl px-4 py-3 bg-neutral-50 hover:bg-neutral-100 transition-colors text-left"
+            >
+              <div className="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center shrink-0">
+                <ShieldCheck className="h-5 w-5 text-primary-600" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-neutral-900">Supportinkorg</p>
+                {unreadSupportCount > 0 ? (
+                  <p className="text-xs text-primary-600 font-medium">
+                    {unreadSupportCount} oläst{unreadSupportCount !== 1 ? 'a' : ''} meddelande
+                    {unreadSupportCount !== 1 ? 'n' : ''}
+                  </p>
+                ) : (
+                  <p className="text-xs text-neutral-400">Hantera supportärenden</p>
+                )}
+              </div>
+              {unreadSupportCount > 0 && (
+                <span className="shrink-0 h-5 min-w-5 px-1.5 bg-primary-600 text-white text-xs rounded-full flex items-center justify-center font-medium">
+                  {unreadSupportCount}
+                </span>
+              )}
+            </button>
           </div>
         )}
       </div>

@@ -19,6 +19,7 @@ import {
   BookOpen,
   Crosshair,
   Gauge,
+  MessageCircle,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuth } from '@/contexts/AuthContext'
@@ -248,6 +249,25 @@ export default function DashboardNav() {
                 )}
               </Link>
             ))}
+          </div>
+
+          <div className="mt-4 pt-4 border-t border-neutral-100">
+            <button
+              type="button"
+              onClick={() => navigate({ search: '?support=open' })}
+              className={cn(
+                'w-full flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-neutral-400 hover:text-neutral-600 hover:bg-neutral-50 transition-colors relative group',
+                sidebarCollapsed && 'justify-center px-2'
+              )}
+            >
+              <MessageCircle className="h-4 w-4 shrink-0" />
+              {!sidebarCollapsed && <span>{t('nav.support')}</span>}
+              {sidebarCollapsed && (
+                <div className="absolute left-full ml-2 px-2 py-1 bg-neutral-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                  {t('nav.support')}
+                </div>
+              )}
+            </button>
           </div>
         </nav>
 

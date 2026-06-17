@@ -73,7 +73,6 @@ export function SupportMessageThread({ threadId, isPanelOpen }: Props) {
     }
   }, [])
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     scrollToBottom(true)
   }, [])
@@ -132,6 +131,11 @@ export function SupportMessageThread({ threadId, isPanelOpen }: Props) {
         return (
           <div key={msg.id} className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
             <div className={`max-w-[80%] ${isOwn ? 'items-end' : 'items-start'} flex flex-col`}>
+              {!isOwn && (
+                <p className="text-[10px] text-neutral-400 px-1 mb-0.5">
+                  {msg.sender_username} · admin
+                </p>
+              )}
               <div
                 className={`rounded-2xl px-3 py-2 text-sm ${
                   isDeleted

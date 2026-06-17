@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useGetSupportThreadId, useCreateSupportThread } from '@/hooks/useSupportChat'
+import { useNotifications, useMarkNotificationRead } from '@/hooks/useNotifications'
 import { SupportMessageThread } from './SupportMessageThread'
 import { SupportMessageInput } from './SupportMessageInput'
 
@@ -58,12 +59,22 @@ export function SupportChatPanel({ isOpen, onClose }: Props) {
   const { data: threadId, isLoading: threadLoading } = useGetSupportThreadId()
   const { mutate: createThread, isPending: isCreating } = useCreateSupportThread()
   const { data: threadStatus = 'open' } = useSupportThreadStatus(threadId ?? null)
+  const { data: notifications = [] } = useNotifications()
+  const { mutate: markRead } = useMarkNotificationRead()
 
   useEffect(() => {
     if (isOpen && threadId === null && !threadLoading && !isCreating) {
       createThread()
     }
   }, [isOpen, threadId, threadLoading, isCreating, createThread])
+
+  // Markera olästa support-notiser som lästa när panelen öppnas
+  useEffect(() => {
+    if (!isOpen) return
+    notifications
+      .filter(n => n.type === 'support_message_received' && n.read_at === null)
+      .forEach(n => markRead(n.id))
+  }, [isOpen]) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!isOpen) return null
 
@@ -85,11 +96,6 @@ export function SupportChatPanel({ isOpen, onClose }: Props) {
         >
           <X className="h-4 w-4" />
         </button>
-      </div>
-
-      {/* Disclaimer */}
-      <div className="shrink-0 bg-primary-50 px-4 py-2 border-b border-primary-100">
-        <p className="text-xs text-primary-700">{t('disclaimer')}</p>
       </div>
 
       {/* Body */}
