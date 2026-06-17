@@ -203,6 +203,101 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* Popular Articles Section */}
+        <section className="py-14 md:py-20 bg-white border-t border-neutral-100">
+          <div className="container mx-auto px-4">
+            <div className="max-w-5xl mx-auto">
+              <div className="flex items-end justify-between mb-8">
+                <div>
+                  <h2 className="text-2xl md:text-3xl font-bold text-neutral-900 mb-1">
+                    {t('popularArticles.title')}
+                  </h2>
+                  <p className="text-neutral-600 text-sm">{t('popularArticles.subtitle')}</p>
+                </div>
+                <Link
+                  to="/artiklar"
+                  className="hidden sm:flex items-center gap-1 text-sm text-primary-600 font-medium hover:text-primary-700 transition-colors"
+                >
+                  {t('popularArticles.allArticles')}
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
+
+              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                <Link
+                  to="/artiklar/kaloribehov"
+                  className="group bg-white rounded-2xl border border-neutral-200 p-5 hover:shadow-md hover:border-accent-200 transition-all"
+                >
+                  <p className="text-xs text-accent-600 font-medium mb-1">
+                    {t('popularArticles.typeArticle')}
+                  </p>
+                  <h3 className="font-semibold text-neutral-900 group-hover:text-accent-700 transition-colors mb-1.5">
+                    {t('popularArticles.articles.calorieneeds.title')}
+                  </h3>
+                  <p className="text-xs text-neutral-500 leading-relaxed">
+                    {t('popularArticles.articles.calorieneeds.description')}
+                  </p>
+                </Link>
+
+                <Link
+                  to="/artiklar/vad-ar-tdee"
+                  className="group bg-white rounded-2xl border border-neutral-200 p-5 hover:shadow-md hover:border-accent-200 transition-all"
+                >
+                  <p className="text-xs text-accent-600 font-medium mb-1">
+                    {t('popularArticles.typeArticle')}
+                  </p>
+                  <h3 className="font-semibold text-neutral-900 group-hover:text-accent-700 transition-colors mb-1.5">
+                    {t('popularArticles.articles.tdee.title')}
+                  </h3>
+                  <p className="text-xs text-neutral-500 leading-relaxed">
+                    {t('popularArticles.articles.tdee.description')}
+                  </p>
+                </Link>
+
+                <Link
+                  to="/artiklar/kaloribrist"
+                  className="group bg-white rounded-2xl border border-neutral-200 p-5 hover:shadow-md hover:border-accent-200 transition-all"
+                >
+                  <p className="text-xs text-accent-600 font-medium mb-1">
+                    {t('popularArticles.typeArticle')}
+                  </p>
+                  <h3 className="font-semibold text-neutral-900 group-hover:text-accent-700 transition-colors mb-1.5">
+                    {t('popularArticles.articles.caloriedeficit.title')}
+                  </h3>
+                  <p className="text-xs text-neutral-500 leading-relaxed">
+                    {t('popularArticles.articles.caloriedeficit.description')}
+                  </p>
+                </Link>
+
+                <Link
+                  to="/artiklar/bulk-och-cut"
+                  className="group bg-white rounded-2xl border border-neutral-200 p-5 hover:shadow-md hover:border-accent-200 transition-all"
+                >
+                  <p className="text-xs text-accent-600 font-medium mb-1">
+                    {t('popularArticles.typeArticle')}
+                  </p>
+                  <h3 className="font-semibold text-neutral-900 group-hover:text-accent-700 transition-colors mb-1.5">
+                    {t('popularArticles.articles.bulkandcut.title')}
+                  </h3>
+                  <p className="text-xs text-neutral-500 leading-relaxed">
+                    {t('popularArticles.articles.bulkandcut.description')}
+                  </p>
+                </Link>
+              </div>
+
+              <div className="flex sm:hidden justify-center">
+                <Link
+                  to="/artiklar"
+                  className="flex items-center gap-1 text-sm text-primary-600 font-medium hover:text-primary-700 transition-colors"
+                >
+                  {t('popularArticles.allArticles')}
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* How It Works - Process section */}
         <HowItWorks />
 

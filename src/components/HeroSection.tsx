@@ -7,7 +7,7 @@ export function HeroSection() {
   const { t } = useTranslation('marketing')
 
   return (
-    <section className="relative overflow-hidden bg-white pt-20 pb-24 md:pt-28 md:pb-32">
+    <section className="relative overflow-hidden bg-white pt-20 pb-36 md:pt-28 md:pb-44">
       {/* Background pattern with subtle green radial gradient */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(37,189,0,0.08),transparent_50%)]" />
 

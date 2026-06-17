@@ -224,6 +224,30 @@
       }
     }
   },
+  "popularArticles": {
+    "title": "Populära artiklar",
+    "subtitle": "Guider och förklaringar",
+    "allArticles": "Alla artiklar",
+    "typeArticle": "Artikel",
+    "articles": {
+      "calorieneeds": {
+        "title": "Kaloribehov",
+        "description": "Hur mycket behöver du egentligen äta?"
+      },
+      "tdee": {
+        "title": "Vad är TDEE?",
+        "description": "Förstå totalt dagligt energibehov."
+      },
+      "caloriedeficit": {
+        "title": "Kaloribrist",
+        "description": "Allt om att gå ner i vikt på ett hållbart sätt."
+      },
+      "bulkandcut": {
+        "title": "Bulk och cut — komplett guide",
+        "description": "Planera dina faser och undvik vanliga misstag."
+      }
+    }
+  },
   "footer": {
     "tagline": "Din kompletta plattform för kaloriräkning, måltidsplanering och träningsspårning. Ät smart. Träna rätt. Följ allt.",
     "sections": {

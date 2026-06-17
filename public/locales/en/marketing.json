@@ -224,6 +224,30 @@
       }
     }
   },
+  "popularArticles": {
+    "title": "Popular articles",
+    "subtitle": "Guides and explanations",
+    "allArticles": "All articles",
+    "typeArticle": "Article",
+    "articles": {
+      "calorieneeds": {
+        "title": "Calorie needs",
+        "description": "How much do you actually need to eat?"
+      },
+      "tdee": {
+        "title": "What is TDEE?",
+        "description": "Understand Total Daily Energy Expenditure."
+      },
+      "caloriedeficit": {
+        "title": "Calorie deficit",
+        "description": "Everything about losing weight sustainably."
+      },
+      "bulkandcut": {
+        "title": "Bulk and cut — complete guide",
+        "description": "Plan your phases and avoid common mistakes."
+      }
+    }
+  },
   "footer": {
     "tagline": "Your complete platform for calorie tracking, meal planning, and fitness tracking. Eat smart. Train right. Track everything.",
     "sections": {

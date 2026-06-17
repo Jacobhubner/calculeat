@@ -690,10 +690,10 @@ export default function ProfilePage() {
                 setPendingChanges(prev => ({
                   ...prev,
                   tdee: newTdee,
-                  bmr_formula: null,
                   tdee_source: 'manual',
                   tdee_calculated_at: new Date().toISOString(),
                   tdee_calculation_snapshot: {
+                    ...activeProfile?.tdee_calculation_snapshot,
                     calculated_tdee: newTdee,
                     note: 'Manuellt angiven TDEE',
                   },
