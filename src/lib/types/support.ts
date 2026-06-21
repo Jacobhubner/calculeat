@@ -12,6 +12,7 @@ export interface SupportMessage {
   sender_id: string
   sender_username: string
   content: string | null // null when deleted_at is set
+  original_content: string | null
   created_at: string
   read_at: string | null
   deleted_at: string | null

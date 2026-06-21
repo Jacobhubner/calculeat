@@ -29,6 +29,7 @@ export function MessageBubble({ msg, isOwn, threadId, onAdminDelete }: MessageBu
   const [editing, setEditing] = useState(false)
   const [editValue, setEditValue] = useState(msg.content ?? '')
   const [showMenu, setShowMenu] = useState(false)
+  const [showOriginal, setShowOriginal] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const { mutate: editMessage, isPending: isEditing } = useEditSupportMessage(threadId)
@@ -176,8 +177,26 @@ export function MessageBubble({ msg, isOwn, threadId, onAdminDelete }: MessageBu
             {!isDeleted && (
               <span className="text-[9px] text-neutral-400">
                 {format(parseISO(msg.created_at), 'HH:mm', { locale: getDateLocale() })}
-                {msg.edited_at && <span className="ml-1 italic">redigerad</span>}
+                {msg.edited_at && msg.original_content && (
+                  <button
+                    type="button"
+                    onClick={() => setShowOriginal(v => !v)}
+                    className="ml-1 italic underline underline-offset-2 hover:text-neutral-600 transition-colors"
+                  >
+                    redigerad
+                  </button>
+                )}
               </span>
+            )}
+            {showOriginal && msg.original_content && (
+              <div
+                className={`mt-1 px-2 py-1.5 rounded-lg bg-neutral-100 border border-neutral-200 text-[11px] text-neutral-500 max-w-[240px] ${isOwn ? 'text-right' : 'text-left'}`}
+              >
+                <p className="text-[10px] font-medium text-neutral-400 mb-0.5">
+                  Originalmeddelande
+                </p>
+                <p className="italic">{msg.original_content}</p>
+              </div>
             )}
             {isOwn && !isDeleted && (
               <span className="text-[9px] text-neutral-400">
