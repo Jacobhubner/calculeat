@@ -25,13 +25,13 @@ import {
   useAdminDeleteSupportThread,
   useAssignSupportThread,
 } from '@/hooks/useSupportChat'
-import { useSupportMessages } from '@/hooks/useSupportChat'
+import { useSupportMessages, useAdminDeleteSupportMessage } from '@/hooks/useSupportChat'
 import { useAuth } from '@/contexts/AuthContext'
 import type { SupportInboxEntry, SupportMessage, SupportRpcResult } from '@/lib/types/support'
+import { MessageBubble } from '@/components/support/SupportMessageThread'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useEffect, useRef } from 'react'
-import { Check, CheckCheck } from 'lucide-react'
 
 function getDateLocale() {
   return i18n.language === 'sv' ? sv : enUS
@@ -107,6 +107,7 @@ function AdminSupportThread({
   const { mutate: reopenThread, isPending: isReopening } = useReopenSupportThread()
   const { mutate: deleteThread, isPending: isDeleting } = useAdminDeleteSupportThread()
   const { mutate: assignThread, isPending: isAssigning } = useAssignSupportThread()
+  const { mutate: deleteMessage } = useAdminDeleteSupportMessage(entry.thread_id)
   useMarkSupportMessagesRead(entry.thread_id)
 
   const isAssignedToMe = entry.assigned_admin_id === user?.id
@@ -334,45 +335,15 @@ function AdminSupportThread({
             </button>
           </div>
         )}
-        {messages.map(msg => {
-          const isOwn = msg.sender_id === user?.id
-          const isDeleted = !!msg.deleted_at
-          return (
-            <div key={msg.id} className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[80%] flex flex-col ${isOwn ? 'items-end' : 'items-start'}`}>
-                <div
-                  className={`rounded-2xl px-3 py-2 text-sm ${
-                    isDeleted
-                      ? 'bg-neutral-50 text-neutral-400 italic border border-neutral-100'
-                      : isOwn
-                        ? 'bg-primary-600 text-white rounded-br-sm'
-                        : 'bg-neutral-100 text-neutral-900 rounded-bl-sm'
-                  }`}
-                >
-                  {isDeleted ? t('deletedMessage') : msg.content}
-                </div>
-                <div
-                  className={`flex items-center gap-1 mt-0.5 ${isOwn ? 'justify-end' : 'justify-start'}`}
-                >
-                  {!isDeleted && (
-                    <span className="text-[9px] text-neutral-400">
-                      {format(parseISO(msg.created_at), 'HH:mm', { locale: getDateLocale() })}
-                    </span>
-                  )}
-                  {isOwn && !isDeleted && (
-                    <span className="text-[9px] text-neutral-400">
-                      {msg.read_at ? (
-                        <CheckCheck className="h-3 w-3 inline text-primary-400" />
-                      ) : (
-                        <Check className="h-3 w-3 inline text-neutral-300" />
-                      )}
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
-          )
-        })}
+        {messages.map(msg => (
+          <MessageBubble
+            key={msg.id}
+            msg={msg}
+            isOwn={msg.sender_id === user?.id}
+            threadId={entry.thread_id}
+            onAdminDelete={deleteMessage}
+          />
+        ))}
       </div>
 
       {/* Reply input */}

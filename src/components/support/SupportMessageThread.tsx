@@ -1,15 +1,198 @@
-import { useEffect, useRef, useCallback } from 'react'
+import { useEffect, useRef, useCallback, useState } from 'react'
 import { format, parseISO } from 'date-fns'
 import { sv, enUS } from 'date-fns/locale'
-import { Loader2, Check, CheckCheck } from 'lucide-react'
+import { Loader2, Check, CheckCheck, Pencil, X, Send } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import i18n from '@/i18n'
 import { useAuth } from '@/contexts/AuthContext'
-import { useSupportMessages, useMarkSupportMessagesRead } from '@/hooks/useSupportChat'
+import {
+  useSupportMessages,
+  useMarkSupportMessagesRead,
+  useEditSupportMessage,
+} from '@/hooks/useSupportChat'
 import type { SupportMessage } from '@/lib/types/support'
 
 function getDateLocale() {
   return i18n.language === 'sv' ? sv : enUS
+}
+
+interface MessageBubbleProps {
+  msg: SupportMessage
+  isOwn: boolean
+  threadId: string
+  /** Admin-only delete action — undefined in user chat panel */
+  onAdminDelete?: (messageId: string) => void
+}
+
+export function MessageBubble({ msg, isOwn, threadId, onAdminDelete }: MessageBubbleProps) {
+  const { t } = useTranslation('support')
+  const [editing, setEditing] = useState(false)
+  const [editValue, setEditValue] = useState(msg.content ?? '')
+  const [showMenu, setShowMenu] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const { mutate: editMessage, isPending: isEditing } = useEditSupportMessage(threadId)
+  const isDeleted = !!msg.deleted_at
+
+  // Close menu on outside click
+  useEffect(() => {
+    if (!showMenu) return
+    const handler = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setShowMenu(false)
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [showMenu])
+
+  // Auto-resize textarea
+  useEffect(() => {
+    if (!editing || !textareaRef.current) return
+    textareaRef.current.style.height = 'auto'
+    textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 120)}px`
+    textareaRef.current.focus()
+  }, [editing, editValue])
+
+  const handleEditSubmit = () => {
+    const trimmed = editValue.trim()
+    if (!trimmed || trimmed === msg.content) {
+      setEditing(false)
+      return
+    }
+    editMessage({ messageId: msg.id, content: trimmed }, { onSuccess: () => setEditing(false) })
+  }
+
+  const canEdit = isOwn && !isDeleted
+  const canDelete = !!onAdminDelete && !isDeleted
+
+  return (
+    <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
+      <div className={`max-w-[80%] ${isOwn ? 'items-end' : 'items-start'} flex flex-col`}>
+        {!isOwn && (
+          <p className="text-[10px] text-neutral-400 px-1 mb-0.5">{msg.sender_username} · admin</p>
+        )}
+
+        <div
+          className={`relative group flex items-end gap-1 ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}
+        >
+          {/* Bubble */}
+          {editing ? (
+            <div className="flex flex-col gap-1 min-w-[180px]">
+              <textarea
+                ref={textareaRef}
+                value={editValue}
+                onChange={e => setEditValue(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault()
+                    handleEditSubmit()
+                  }
+                  if (e.key === 'Escape') {
+                    setEditing(false)
+                    setEditValue(msg.content ?? '')
+                  }
+                }}
+                rows={1}
+                className="resize-none rounded-xl border border-primary-300 bg-white px-3 py-2 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                style={{ minHeight: '36px', maxHeight: '120px' }}
+              />
+              <div className="flex items-center gap-1 justify-end">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditing(false)
+                    setEditValue(msg.content ?? '')
+                  }}
+                  className="h-6 w-6 flex items-center justify-center rounded-lg text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+                <button
+                  type="button"
+                  onClick={handleEditSubmit}
+                  disabled={isEditing || !editValue.trim()}
+                  className="h-6 w-6 flex items-center justify-center rounded-lg bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-40"
+                >
+                  {isEditing ? (
+                    <Loader2 className="h-3 w-3 animate-spin" />
+                  ) : (
+                    <Send className="h-3 w-3" />
+                  )}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div
+              className={`rounded-2xl px-3 py-2 text-sm ${
+                isDeleted
+                  ? 'bg-neutral-50 text-neutral-400 italic border border-neutral-100'
+                  : isOwn
+                    ? 'bg-primary-600 text-white rounded-br-sm'
+                    : 'bg-neutral-100 text-neutral-900 rounded-bl-sm'
+              }`}
+            >
+              {isDeleted ? t('deletedMessage') : msg.content}
+            </div>
+          )}
+
+          {/* Hover-meny — visas vid hover om man kan redigera eller radera */}
+          {!editing && (canEdit || canDelete) && (
+            <div
+              ref={menuRef}
+              className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-0.5"
+            >
+              {canEdit && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditValue(msg.content ?? '')
+                    setEditing(true)
+                    setShowMenu(false)
+                  }}
+                  className="h-6 w-6 flex items-center justify-center rounded-md text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100"
+                  title="Redigera"
+                >
+                  <Pencil className="h-3 w-3" />
+                </button>
+              )}
+              {canDelete && (
+                <button
+                  type="button"
+                  onClick={() => onAdminDelete!(msg.id)}
+                  className="h-6 w-6 flex items-center justify-center rounded-md text-neutral-400 hover:text-red-500 hover:bg-red-50"
+                  title="Radera"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Timestamp + read receipt */}
+        {!editing && (
+          <div
+            className={`flex items-center gap-1 mt-0.5 ${isOwn ? 'justify-end' : 'justify-start'}`}
+          >
+            {!isDeleted && (
+              <span className="text-[9px] text-neutral-400">
+                {format(parseISO(msg.created_at), 'HH:mm', { locale: getDateLocale() })}
+                {msg.edited_at && <span className="ml-1 italic">redigerad</span>}
+              </span>
+            )}
+            {isOwn && !isDeleted && (
+              <span className="text-[9px] text-neutral-400">
+                {msg.read_at ? (
+                  <CheckCheck className="h-3 w-3 inline text-primary-400" />
+                ) : (
+                  <Check className="h-3 w-3 inline text-neutral-300" />
+                )}
+              </span>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  )
 }
 
 interface Props {
@@ -84,7 +267,6 @@ export function SupportMessageThread({ threadId, isPanelOpen }: Props) {
     }
   }, [messages.length, scrollToBottom])
 
-  // Scroll to bottom when new messages arrive
   const prevLengthRef = useRef(0)
   useEffect(() => {
     if (messages.length > prevLengthRef.current) {
@@ -124,51 +306,15 @@ export function SupportMessageThread({ threadId, isPanelOpen }: Props) {
         </div>
       )}
 
-      {messages.map(msg => {
-        const isOwn = msg.sender_id === user?.id
-        const isDeleted = !!msg.deleted_at
-
-        return (
-          <div key={msg.id} className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-[80%] ${isOwn ? 'items-end' : 'items-start'} flex flex-col`}>
-              {!isOwn && (
-                <p className="text-[10px] text-neutral-400 px-1 mb-0.5">
-                  {msg.sender_username} · admin
-                </p>
-              )}
-              <div
-                className={`rounded-2xl px-3 py-2 text-sm ${
-                  isDeleted
-                    ? 'bg-neutral-50 text-neutral-400 italic border border-neutral-100'
-                    : isOwn
-                      ? 'bg-primary-600 text-white rounded-br-sm'
-                      : 'bg-neutral-100 text-neutral-900 rounded-bl-sm'
-                }`}
-              >
-                {isDeleted ? t('deletedMessage') : msg.content}
-              </div>
-              <div
-                className={`flex items-center gap-1 mt-0.5 ${isOwn ? 'justify-end' : 'justify-start'}`}
-              >
-                {!isDeleted && (
-                  <span className="text-[9px] text-neutral-400">
-                    {format(parseISO(msg.created_at), 'HH:mm', { locale: getDateLocale() })}
-                  </span>
-                )}
-                {isOwn && !isDeleted && (
-                  <span className="text-[9px] text-neutral-400">
-                    {msg.read_at ? (
-                      <CheckCheck className="h-3 w-3 inline text-primary-400" />
-                    ) : (
-                      <Check className="h-3 w-3 inline text-neutral-300" />
-                    )}
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
-        )
-      })}
+      {threadId &&
+        messages.map(msg => (
+          <MessageBubble
+            key={msg.id}
+            msg={msg}
+            isOwn={msg.sender_id === user?.id}
+            threadId={threadId}
+          />
+        ))}
     </div>
   )
 }

@@ -503,3 +503,44 @@ export function useReopenSupportThread() {
     },
   })
 }
+
+// ──────────────────────────────────────────────────────────────────────────────
+// useEditSupportMessage — avsändaren redigerar sitt eget meddelande
+// ──────────────────────────────────────────────────────────────────────────────
+
+export function useEditSupportMessage(threadId: string) {
+  const queryClient = useQueryClient()
+
+  return usePreviewMutation({
+    mutationFn: async ({ messageId, content }: { messageId: string; content: string }) => {
+      const { error } = await supabase.rpc('edit_support_message', {
+        p_message_id: messageId,
+        p_content: content,
+      })
+      if (error) throw error
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: supportKeys.messages(threadId) })
+    },
+  })
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// useAdminDeleteSupportMessage — admin mjukraderar ett enskilt meddelande
+// ──────────────────────────────────────────────────────────────────────────────
+
+export function useAdminDeleteSupportMessage(threadId: string) {
+  const queryClient = useQueryClient()
+
+  return usePreviewMutation({
+    mutationFn: async (messageId: string) => {
+      const { error } = await supabase.rpc('admin_delete_support_message', {
+        p_message_id: messageId,
+      })
+      if (error) throw error
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: supportKeys.messages(threadId) })
+    },
+  })
+}
