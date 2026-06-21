@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { ArrowRight, Calculator, AlertTriangle } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import SiteHeader from '@/components/layout/SiteHeader'
 import SiteFooter from '@/components/layout/SiteFooter'
 import { Seo } from '@/components/seo/Seo'
@@ -8,80 +9,65 @@ import { JsonLd } from '@/components/seo/JsonLd'
 import { FaqBlock } from '@/components/article/FaqBlock'
 import { GuestOnly } from '@/components/GuestOnly'
 import { mifflinStJeor, revisedHarrisBenedict } from '@/lib/calculations/bmr'
-
-const CANONICAL = 'https://calculeat.se/kalkylatorer/bmr-kalkylator'
+import { getPageConfigByKey, getHreflangAlternates } from '@/lib/config/pages'
 
 type Gender = 'male' | 'female'
+type FaqItem = { question: string; answer: string }
+type PalLevel = { label: string; description: string }
 
-const PAL_LEVELS = [
-  { label: 'Stillasittande', description: 'Kontorsarbete, liten rörelse', multiplier: 1.2 },
-  { label: 'Lätt aktiv', description: 'Lätt träning 1–3 dagar/vecka', multiplier: 1.375 },
-  { label: 'Måttligt aktiv', description: 'Träning 3–5 dagar/vecka', multiplier: 1.55 },
-  { label: 'Mycket aktiv', description: 'Hård träning 6–7 dagar/vecka', multiplier: 1.725 },
-  {
-    label: 'Extremt aktiv',
-    description: 'Fysiskt jobb + daglig intensiv träning',
-    multiplier: 1.9,
-  },
-] as const
+// Multipliers stay in TSX — pure calculation constants
+const PAL_MULTIPLIERS = [1.2, 1.375, 1.55, 1.725, 1.9] as const
 
-const FAQ_ITEMS = [
-  {
-    question: 'Vad är skillnaden mellan BMR och TDEE?',
-    answer:
-      'BMR (Basal Metabolic Rate) är antalet kalorier din kropp förbrukar i fullständig vila — utan rörelser, matsmältning eller aktivitet. TDEE (Total Daily Energy Expenditure) är ditt faktiska totala kaloribehov per dag, inklusive all aktivitet. TDEE = BMR × aktivitetsmultiplikator. TDEE är siffran du ska använda när du planerar kalorier.',
-  },
-  {
-    question: 'Är BMR samma sak som kaloribehov?',
-    answer:
-      'Nej. BMR är bara grunden — din viloförbränning. De flesta vuxna har ett TDEE som är 20–80% högre än BMR beroende på aktivitetsnivå. Att äta på sin BMR utan att ta hänsyn till aktivitet innebär i praktiken ett kraftigt underskott, vilket kan leda till muskelförlust och metabolisk nedreglering.',
-  },
-  {
-    question: 'Är det farligt att äta under sin BMR?',
-    answer:
-      'Att konsekvent äta under sin BMR är inte rekommenderat för de flesta. Det riskerar att utlösa adaptiv termogenes (kroppen sänker ämnesomsättningen), öka muskelförlust och orsaka nutritionsbrist. Under medicinsk övervakning kan det i vissa fall vara motiverat, men generellt bör kalorimålet ligga under TDEE — inte under BMR.',
-  },
-  {
-    question: 'Hur förändras BMR med ålder?',
-    answer:
-      'BMR sjunker typiskt 1–2% per decennium efter 20-årsåldern. Det beror primärt på minskad muskelmassa (sarkopeni) snarare än ålder i sig. Styrketräning och tillräckligt proteinintag kan bromsa denna minskning avsevärt. Det är därför TDEE minskar med ålder hos inaktiva men kan hållas stabilt hos träningsaktiva.',
-  },
-  {
-    question: 'Vilken BMR-formel är mest exakt?',
-    answer:
-      'Mifflin-St Jeor (1990) anses vara den mest exakta formeln för den allmänna befolkningen med normal fettprocent, med en genomsnittlig avvikelse på ca ±10%. För personer med ovanlig kroppssammansättning (mycket låg eller hög fettprocent) ger formler som Cunningham (baserad på LBM) bättre precision. Den enda formeln som ger ett "kalibrerat" resultat är att mäta verklig vikttrend mot kaloriintag under 2–3 veckor.',
-  },
-]
-
-const PAGE_SCHEMA = [
-  {
-    '@context': 'https://schema.org',
-    '@type': 'WebApplication',
-    name: 'BMR Kalkylator',
-    url: CANONICAL,
-    applicationCategory: 'HealthApplication',
-    operatingSystem: 'Web',
-    description:
-      'Gratis BMR-kalkylator. Räkna ut din basalmetabolism (Mifflin-St Jeor) och se ett TDEE-estimat per aktivitetsnivå.',
-    offers: { '@type': 'Offer', price: '0', priceCurrency: 'SEK' },
-  },
-  {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'CalculEat', item: 'https://calculeat.se/' },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: 'Kalkylatorer',
-        item: 'https://calculeat.se/kalkylatorer',
-      },
-      { '@type': 'ListItem', position: 3, name: 'BMR Kalkylator', item: CANONICAL },
-    ],
-  },
-]
+const pageConfig = getPageConfigByKey('bmr-calculator')!
+const hreflangAlternates = getHreflangAlternates(pageConfig)
 
 export default function BmrKalkylatornPage() {
+  const { pathname } = useLocation()
+  const lng = pathname.startsWith('/en/') ? 'en' : 'sv'
+  const { t } = useTranslation('pages-tools', { lng })
+
+  const localeEntry = pageConfig.locales[lng] ?? pageConfig.locales.sv!
+  const faqItems = t('bmr-calculator.faq', { returnObjects: true }) as unknown as FaqItem[]
+  const palLevels = t('bmr-calculator.palLevels', { returnObjects: true }) as unknown as PalLevel[]
+  const relatedCalcs = t('bmr-calculator.related.calculators', {
+    returnObjects: true,
+  }) as unknown as { href: string; label: string }[]
+  const relatedArticles = t('bmr-calculator.related.articles', {
+    returnObjects: true,
+  }) as unknown as { href: string; label: string }[]
+
+  const pageSchema = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'WebApplication',
+      name: t('bmr-calculator.schema.webAppName'),
+      url: localeEntry.canonical,
+      applicationCategory: 'HealthApplication',
+      operatingSystem: 'Web',
+      description: t('bmr-calculator.schema.webAppDescription'),
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'SEK' },
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'CalculEat', item: 'https://calculeat.se/' },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: t('bmr-calculator.schema.breadcrumb.hubLabel'),
+          item: `https://calculeat.se${t('bmr-calculator.schema.breadcrumb.hubPath')}`,
+        },
+        {
+          '@type': 'ListItem',
+          position: 3,
+          name: t('bmr-calculator.schema.breadcrumb.pageLabel'),
+          item: localeEntry.canonical,
+        },
+      ],
+    },
+  ]
+
   const [gender, setGender] = useState<Gender>('male')
   const [age, setAge] = useState('')
   const [weight, setWeight] = useState('')
@@ -101,9 +87,11 @@ export default function BmrKalkylatornPage() {
     const bmrHarris = revisedHarrisBenedict(params)
     if (!bmrMifflin) return null
 
-    const tdeeEstimates = PAL_LEVELS.map(level => ({
-      ...level,
-      tdee: Math.round(bmrMifflin * level.multiplier),
+    const tdeeEstimates = PAL_MULTIPLIERS.map((multiplier, i) => ({
+      multiplier,
+      label: palLevels[i]?.label ?? '',
+      description: palLevels[i]?.description ?? '',
+      tdee: Math.round(bmrMifflin * multiplier),
     }))
 
     return {
@@ -111,20 +99,24 @@ export default function BmrKalkylatornPage() {
       bmrHarris: bmrHarris ? Math.round(bmrHarris) : null,
       tdeeEstimates,
     }
-  }, [age, weight, height, gender])
+  }, [age, weight, height, gender, palLevels])
 
   const handleCalculate = () => {
     if (result) setHasResult(true)
   }
 
+  const tdeeLocale = lng === 'en' ? 'en-US' : 'sv-SE'
+
   return (
     <div className="min-h-screen flex flex-col">
       <Seo
-        title="BMR Kalkylator — Räkna ut din basalmetabolism (2026) | CalculEat"
-        description="Gratis BMR-kalkylator (Mifflin-St Jeor). Räkna ut din basalmetabolism och se ditt uppskattade TDEE per aktivitetsnivå. Inget konto krävs."
-        canonical={CANONICAL}
+        title={t('bmr-calculator.seo.title')}
+        description={t('bmr-calculator.seo.description')}
+        canonical={localeEntry.canonical}
+        hreflangAlternates={hreflangAlternates}
+        locale={lng === 'en' ? 'en_US' : 'sv_SE'}
       />
-      <JsonLd schema={PAGE_SCHEMA} />
+      <JsonLd schema={pageSchema} />
 
       <SiteHeader />
 
@@ -139,23 +131,26 @@ export default function BmrKalkylatornPage() {
                 CalculEat
               </Link>
               <span>/</span>
-              <Link to="/kalkylatorer" className="hover:text-neutral-700 transition-colors">
-                Kalkylatorer
+              <Link
+                to={t('bmr-calculator.schema.breadcrumb.hubPath')}
+                className="hover:text-neutral-700 transition-colors"
+              >
+                {t('bmr-calculator.schema.breadcrumb.hubLabel')}
               </Link>
               <span>/</span>
-              <span className="text-neutral-700">BMR Kalkylator</span>
+              <span className="text-neutral-700">
+                {t('bmr-calculator.schema.breadcrumb.pageLabel')}
+              </span>
             </nav>
 
             <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-5 leading-tight">
               <span className="bg-gradient-to-r from-primary-600 to-accent-500 bg-clip-text text-transparent">
-                BMR
+                {t('bmr-calculator.h1Prefix')}
               </span>{' '}
-              Kalkylator — Räkna ut din basalmetabolism
+              {t('bmr-calculator.h1Suffix')}
             </h1>
             <p className="text-lg md:text-xl text-neutral-600 leading-relaxed max-w-2xl">
-              BMR är mängden kalorier din kropp förbrukar i fullständig vila för att hålla igång
-              grundläggande funktioner. Det är din energibas — men <strong>inte</strong> ditt fulla
-              kaloribehov.
+              {t('bmr-calculator.intro')}
             </p>
           </div>
         </section>
@@ -166,19 +161,25 @@ export default function BmrKalkylatornPage() {
             <div className="rounded-2xl border border-neutral-200 shadow-sm overflow-hidden">
               <div className="bg-primary-50 px-6 py-4 border-b border-primary-100 flex items-center gap-2">
                 <Calculator className="h-5 w-5 text-primary-600" />
-                <span className="font-semibold text-primary-900">Beräkna din BMR</span>
-                <span className="ml-auto text-xs text-neutral-400">Mifflin-St Jeor</span>
+                <span className="font-semibold text-primary-900">
+                  {t('bmr-calculator.calculator.header')}
+                </span>
+                <span className="ml-auto text-xs text-neutral-400">
+                  {t('bmr-calculator.calculator.formulaLabel')}
+                </span>
               </div>
 
               <div className="p-6 space-y-5">
                 {/* Gender */}
                 <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-2">Kön</label>
+                  <label className="block text-sm font-medium text-neutral-700 mb-2">
+                    {t('bmr-calculator.calculator.genderLabel')}
+                  </label>
                   <div className="grid grid-cols-2 gap-2">
                     {(
                       [
-                        { value: 'male', label: 'Man' },
-                        { value: 'female', label: 'Kvinna' },
+                        { value: 'male', label: t('bmr-calculator.calculator.genderMale') },
+                        { value: 'female', label: t('bmr-calculator.calculator.genderFemale') },
                       ] as { value: Gender; label: string }[]
                     ).map(opt => (
                       <button
@@ -202,7 +203,9 @@ export default function BmrKalkylatornPage() {
 
                 {/* Age */}
                 <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-1">Ålder</label>
+                  <label className="block text-sm font-medium text-neutral-700 mb-1">
+                    {t('bmr-calculator.calculator.ageLabel')}
+                  </label>
                   <div className="flex items-center border border-neutral-200 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-primary-300 focus-within:border-primary-400 max-w-40">
                     <input
                       type="number"
@@ -217,7 +220,7 @@ export default function BmrKalkylatornPage() {
                       className="flex-1 px-3 py-2.5 text-sm text-neutral-900 bg-white outline-none min-w-0"
                     />
                     <span className="px-2 text-xs text-neutral-400 bg-neutral-50 border-l border-neutral-200 py-2.5">
-                      år
+                      {t('bmr-calculator.calculator.ageUnit')}
                     </span>
                   </div>
                 </div>
@@ -226,14 +229,14 @@ export default function BmrKalkylatornPage() {
                 <div className="grid grid-cols-2 gap-4">
                   {[
                     {
-                      label: 'Vikt',
+                      label: t('bmr-calculator.calculator.weightLabel'),
                       unit: 'kg',
                       value: weight,
                       setter: setWeight,
                       placeholder: '75',
                     },
                     {
-                      label: 'Längd',
+                      label: t('bmr-calculator.calculator.heightLabel'),
                       unit: 'cm',
                       value: height,
                       setter: setHeight,
@@ -270,23 +273,27 @@ export default function BmrKalkylatornPage() {
                   disabled={!result}
                   className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-neutral-200 disabled:text-neutral-400 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm"
                 >
-                  Beräkna min BMR
+                  {t('bmr-calculator.calculator.button')}
                 </button>
               </div>
 
               {/* Results */}
               {hasResult && result && (
                 <div className="border-t border-neutral-100 bg-neutral-50 px-6 py-6 space-y-4">
-                  <h2 className="font-semibold text-neutral-800">Ditt resultat</h2>
+                  <h2 className="font-semibold text-neutral-800">
+                    {t('bmr-calculator.calculator.resultsTitle')}
+                  </h2>
 
                   {/* BMR card */}
                   <div className="rounded-xl border border-neutral-200 bg-white p-5">
                     <div className="text-xs text-neutral-500 uppercase tracking-wider mb-2">
-                      Din BMR (Mifflin-St Jeor)
+                      {t('bmr-calculator.calculator.bmrCardLabel')}
                     </div>
                     <div className="flex items-end gap-2">
                       <span className="text-4xl font-bold text-primary-600">{result.bmr}</span>
-                      <span className="text-neutral-500 mb-1">kcal/dag</span>
+                      <span className="text-neutral-500 mb-1">
+                        {t('bmr-calculator.calculator.bmrUnit')}
+                      </span>
                     </div>
                   </div>
 
@@ -294,11 +301,11 @@ export default function BmrKalkylatornPage() {
                   <div className="rounded-xl bg-amber-50 border border-amber-200 p-4 flex gap-3">
                     <AlertTriangle className="h-4 w-4 text-amber-600 flex-shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-sm font-medium text-amber-900 mb-1">Ät inte på din BMR</p>
+                      <p className="text-sm font-medium text-amber-900 mb-1">
+                        {t('bmr-calculator.calculator.warningTitle')}
+                      </p>
                       <p className="text-xs text-amber-700">
-                        BMR är din viloförbränning — du förbrukar mer än detta redan genom att stå,
-                        gå och äta. Ditt faktiska kaloribehov (TDEE) är 20–80% högre beroende på
-                        aktivitetsnivå.
+                        {t('bmr-calculator.calculator.warningBody')}
                       </p>
                     </div>
                   </div>
@@ -306,7 +313,7 @@ export default function BmrKalkylatornPage() {
                   {/* TDEE preview */}
                   <div>
                     <h3 className="text-sm font-semibold text-neutral-700 mb-2">
-                      Uppskattat TDEE per aktivitetsnivå
+                      {t('bmr-calculator.calculator.tdeePreviewTitle')}
                     </h3>
                     <div className="rounded-xl border border-neutral-200 overflow-hidden">
                       {result.tdeeEstimates.map((level, i) => (
@@ -324,7 +331,7 @@ export default function BmrKalkylatornPage() {
                           </div>
                           <div className="text-right">
                             <div className="text-sm font-bold text-neutral-900">
-                              {level.tdee.toLocaleString('sv-SE')} kcal
+                              {level.tdee.toLocaleString(tdeeLocale)} kcal
                             </div>
                             <div className="text-xs text-neutral-400">× {level.multiplier}</div>
                           </div>
@@ -332,8 +339,7 @@ export default function BmrKalkylatornPage() {
                       ))}
                     </div>
                     <p className="text-xs text-neutral-400 mt-2">
-                      TDEE = BMR × aktivitetsmultiplikator (PAL). Dessa är uppskattningar — räkna ut
-                      ditt exakta TDEE med kalkylatorn nedan.
+                      {t('bmr-calculator.calculator.tdeeNote')}
                     </p>
                   </div>
 
@@ -341,25 +347,26 @@ export default function BmrKalkylatornPage() {
                     {/* CTA to TDEE */}
                     <div className="rounded-xl bg-white border border-primary-200 p-4">
                       <p className="text-sm font-medium text-neutral-800 mb-1">
-                        Räkna ut ditt exakta TDEE och sätt ett kalorimål
+                        {t('bmr-calculator.calculator.ctaTitle')}
                       </p>
                       <p className="text-xs text-neutral-500 mb-3">
-                        TDEE-kalkylatorn tar samma uppgifter och ger dig ett handlingsbart kalorimål
-                        för viktnedgång, maintenance eller bulk — inte bara ett referensvärde.
+                        {t('bmr-calculator.calculator.ctaBody')}
                       </p>
                       <div className="flex flex-col sm:flex-row gap-2">
                         <Link
-                          to="/kalkylatorer"
+                          to={
+                            relatedCalcs[0]?.href ?? t('bmr-calculator.schema.breadcrumb.hubPath')
+                          }
                           className="inline-flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
                         >
-                          Räkna ut ditt TDEE
+                          {t('bmr-calculator.calculator.ctaPrimary')}
                           <ArrowRight className="h-4 w-4" />
                         </Link>
                         <Link
                           to="/register"
                           className="inline-flex items-center justify-center gap-2 border border-neutral-200 text-neutral-700 text-sm font-medium px-4 py-2 rounded-lg hover:bg-neutral-50 transition-colors"
                         >
-                          Skapa gratis konto
+                          {t('bmr-calculator.calculator.ctaSecondary')}
                         </Link>
                       </div>
                     </div>
@@ -370,7 +377,7 @@ export default function BmrKalkylatornPage() {
           </div>
         </section>
 
-        {/* Explanation section */}
+        {/* Explanation section — prose stays in TSX */}
         <section className="bg-white py-14 border-b border-neutral-100">
           <div className="container mx-auto px-4 max-w-3xl">
             <div className="space-y-4 text-neutral-700 text-base leading-relaxed">
@@ -416,7 +423,7 @@ export default function BmrKalkylatornPage() {
                   ))}
                 </div>
                 <Link
-                  to="/kalkylatorer"
+                  to={relatedCalcs[0]?.href ?? t('bmr-calculator.schema.breadcrumb.hubPath')}
                   className="inline-flex items-center gap-2 mt-4 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors"
                 >
                   Räkna ut ditt TDEE istället
@@ -492,7 +499,7 @@ export default function BmrKalkylatornPage() {
         {/* FAQ section */}
         <section className="bg-neutral-50 py-14 border-b border-neutral-100">
           <div className="container mx-auto px-4 max-w-3xl">
-            <FaqBlock items={FAQ_ITEMS} />
+            <FaqBlock items={faqItems} title={t('bmr-calculator.faqTitle')} />
           </div>
         </section>
 
@@ -501,24 +508,23 @@ export default function BmrKalkylatornPage() {
           <section className="bg-neutral-900 py-16 md:py-20">
             <div className="container mx-auto px-4 max-w-2xl text-center">
               <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
-                Gå från BMR till ett riktigt kalorimål
+                {t('bmr-calculator.cta.bottom.h2')}
               </h2>
               <p className="text-neutral-400 text-base mb-8 max-w-md mx-auto">
-                BMR är grunden. TDEE är siffran du faktiskt ska använda — och CalculEat hjälper dig
-                logga mot den.
+                {t('bmr-calculator.cta.bottom.body')}
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Link
                   to="/register"
                   className="inline-flex items-center justify-center gap-2 bg-accent-500 hover:bg-accent-600 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm"
                 >
-                  Skapa gratis konto <ArrowRight className="h-4 w-4" />
+                  {t('bmr-calculator.cta.bottom.primary')} <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link
-                  to="/kalkylatorer"
+                  to={relatedCalcs[0]?.href ?? t('bmr-calculator.schema.breadcrumb.hubPath')}
                   className="inline-flex items-center justify-center gap-2 border border-neutral-600 text-neutral-300 hover:bg-neutral-800 font-medium px-6 py-3 rounded-xl transition-colors text-sm"
                 >
-                  Räkna ut ditt TDEE
+                  {t('bmr-calculator.cta.bottom.secondary')}
                 </Link>
               </div>
             </div>
@@ -531,16 +537,10 @@ export default function BmrKalkylatornPage() {
             <div className="grid sm:grid-cols-2 gap-10">
               <div>
                 <h3 className="text-lg font-semibold text-neutral-800 mb-4">
-                  Relaterade kalkylatorer
+                  {t('bmr-calculator.related.calculatorsTitle')}
                 </h3>
                 <div className="grid gap-3">
-                  {[
-                    { href: '/kalkylatorer/tdee-kalkylator', label: 'TDEE Kalkylator' },
-                    { href: '/kalkylatorer/kaloriunderskott', label: 'Kaloribrist Kalkylator' },
-                    { href: '/kalkylatorer/bulk-kalkylator', label: 'Bulk Kalkylator' },
-                    { href: '/kalkylatorer/cut-kalkylator', label: 'Cut & Deff Kalkylator' },
-                    { href: '/kalkylatorer/proteinbehov', label: 'Proteinbehov Kalkylator' },
-                  ].map(l => (
+                  {relatedCalcs.map(l => (
                     <Link
                       key={l.href}
                       to={l.href}
@@ -553,16 +553,11 @@ export default function BmrKalkylatornPage() {
                 </div>
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-neutral-800 mb-4">Relaterade artiklar</h3>
+                <h3 className="text-lg font-semibold text-neutral-800 mb-4">
+                  {t('bmr-calculator.related.articlesTitle')}
+                </h3>
                 <div className="grid gap-3">
-                  {[
-                    { href: '/artiklar/vad-ar-bmr', label: 'Vad är BMR?' },
-                    { href: '/artiklar/bmr-vs-tdee', label: 'BMR vs TDEE' },
-                    { href: '/artiklar/vad-ar-tdee', label: 'Vad är TDEE?' },
-                    { href: '/artiklar/kaloribehov', label: 'Kaloribehov — komplett guide' },
-                    { href: '/artiklar/kaloribrist', label: 'Hur stor kaloribrist ska man ha?' },
-                    { href: '/artiklar/bulk-och-cut', label: 'Bulk och Cut' },
-                  ].map(l => (
+                  {relatedArticles.map(l => (
                     <Link
                       key={l.href}
                       to={l.href}

@@ -1,160 +1,118 @@
+import { useLocation } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { Seo } from '@/components/seo/Seo'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { ArticleLayout } from '@/components/article/ArticleLayout'
+import { getPageConfigByKey, getHreflangAlternates } from '@/lib/config/pages'
+import type { FaqItem } from '@/components/article/FaqBlock'
 
-const CANONICAL = 'https://calculeat.se/artiklar/kaloribehov'
+type Source = { text: string; url?: string }
+type RelatedLink = { href: string; label: string }
 
-const PAGE_SCHEMA = {
-  '@context': 'https://schema.org',
-  '@type': 'Article',
-  headline: 'Hur räknar man ut sitt kaloribehov? Komplett guide (2026)',
-  description:
-    'Lär dig hur du räknar ut ditt individuella kaloribehov — från BMR och TDEE till kaloribrist och bulk. Komplett guide med vetenskaplig grund.',
-  url: CANONICAL,
-  publisher: {
-    '@type': 'Organization',
-    name: 'CalculEat',
-    url: 'https://calculeat.se',
-  },
-  inLanguage: 'sv-SE',
-}
-
-const FAQ_ITEMS = [
-  {
-    question: 'Hur räknar man ut sitt kaloribehov?',
-    answer:
-      'Räkna ut ditt BMR (basalmetabolism) med Mifflin-St Jeor-formeln och multiplicera sedan med en aktivitetsfaktor (PAL) för att få ditt TDEE. TDEE är ditt underhållsbehov — det antal kalorier du behöver äta för att hålla vikten stabil.',
-  },
-  {
-    question: 'Är 1200 kcal per dag tillräckligt?',
-    answer:
-      'För de flesta vuxna är 1200 kcal/dag för lågt och leder till för stor kaloribrist, muskelmassaförlust och nutritionsbrist. De flesta behöver minst 1500–2000+ kcal beroende på storlek och aktivitetsnivå. Räkna ut ditt TDEE och dra av max 500 kcal för en hälsosam viktnedgång.',
-  },
-  {
-    question: 'Hur påverkar träning kaloribehovet?',
-    answer:
-      'Träning ökar din TDEE via EAT (planerad träning). Men kroppen kan kompensera med minskad NEAT (oplanerad rörelse). Praktiskt tumregel: lägg inte in hela träningskalorier som "extra" — välj en aktivitetsfaktor som återspeglar din totala aktivitetsnivå.',
-  },
-  {
-    question: 'Hur snabbt kan man gå ner i vikt utan att tappa muskler?',
-    answer:
-      'Ca 0,5–1% av kroppsvikten per vecka är ett bra tempo för att minimera muskelmassaförlust. För en person på 80 kg innebär det ca 0,4–0,8 kg/vecka. Det kräver en kaloribrist på 400–800 kcal/dag kombinerat med tillräckligt proteinintag (ca 1,6–2,2 g/kg kroppsvikt).',
-  },
-]
-
-const SOURCES = [
-  {
-    text: 'Mifflin MD et al. (1990). A new predictive equation for resting energy expenditure in healthy individuals. Am J Clin Nutr.',
-  },
-  { text: 'FAO/WHO/UNU (2001). Human energy requirements. Report of a Joint Expert Consultation.' },
-  {
-    text: 'Hall KD et al. (2012). Quantification of the effect of energy imbalance on bodyweight. Lancet.',
-  },
-]
+const pageConfig = getPageConfigByKey('calorie-needs')!
+const hreflangAlternates = getHreflangAlternates(pageConfig)
 
 export default function KaloriberhovPage() {
+  const { pathname } = useLocation()
+  const lng = pathname.startsWith('/en/') ? 'en' : 'sv'
+  const { t } = useTranslation('pages-articles', { lng })
+
+  const localeEntry = pageConfig.locales[lng] ?? pageConfig.locales.sv!
+  const faqItems = t('calorie-needs.faq', { returnObjects: true }) as unknown as FaqItem[]
+  const sources = t('calorie-needs.sources', { returnObjects: true }) as unknown as Source[]
+  const relatedCalcs = t('calorie-needs.related.calculators', {
+    returnObjects: true,
+  }) as unknown as RelatedLink[]
+  const relatedArticles = t('calorie-needs.related.articles', {
+    returnObjects: true,
+  }) as unknown as RelatedLink[]
+  const tStr = t as (key: string) => string
+  const bodyS1Items = t('calorie-needs.body.s1.items', {
+    returnObjects: true,
+  }) as unknown as string[]
+  const bodyS2TableHeaders = t('calorie-needs.body.s2.tableHeaders', {
+    returnObjects: true,
+  }) as unknown as string[]
+  const bodyS2TableRows = t('calorie-needs.body.s2.tableRows', {
+    returnObjects: true,
+  }) as unknown as string[][]
+  const bodyS4Items = t('calorie-needs.body.s4.items', {
+    returnObjects: true,
+  }) as unknown as string[]
+
+  const pageSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: t('calorie-needs.schema.headline'),
+    description: t('calorie-needs.schema.description'),
+    url: localeEntry.canonical,
+    publisher: { '@type': 'Organization', name: 'CalculEat', url: 'https://calculeat.se' },
+    inLanguage: lng === 'en' ? 'en' : 'sv-SE',
+  }
+
   return (
     <>
       <Seo
-        title="Hur räknar man ut sitt kaloribehov? Komplett guide (2026) | CalculEat"
-        description="Lär dig hur du räknar ut ditt individuella kaloribehov — från BMR och TDEE till kaloribrist och bulk. Vetenskaplig grund, praktiska tips."
-        canonical={CANONICAL}
+        title={t('calorie-needs.seo.title')}
+        description={t('calorie-needs.seo.description')}
+        canonical={localeEntry.canonical}
+        hreflangAlternates={hreflangAlternates}
+        locale={lng === 'en' ? 'en_US' : 'sv_SE'}
         type="article"
       />
-      <JsonLd schema={PAGE_SCHEMA} />
+      <JsonLd schema={pageSchema} />
 
       <ArticleLayout
-        title="Hur räknar man ut sitt kaloribehov? Komplett guide"
-        intro="Ditt kaloribehov beror på din basalmetabolism (BMR), aktivitetsnivå och ditt mål — viktnedgång, underhåll eller muskeluppbyggnad. Den här guiden förklarar steg för steg hur du räknar ut ditt individuella kaloribehov med vetenskapliga metoder."
-        moneyPageHref="/kalkylatorer/tdee-kalkylator"
-        moneyPageLabel="Räkna ut ditt kaloribehov direkt med vår TDEE-kalkylator"
-        faqItems={FAQ_ITEMS}
-        sources={SOURCES}
-        relatedCalculators={[
-          { href: '/kalkylatorer/tdee-kalkylator', label: 'TDEE Kalkylator' },
-          { href: '/kalkylatorer/kaloriunderskott', label: 'Kaloribrist Kalkylator' },
-          { href: '/kalkylatorer/bulk-kalkylator', label: 'Bulk Kalkylator' },
-          { href: '/kalkylatorer/cut-kalkylator', label: 'Cut & Deff Kalkylator' },
-          { href: '/kalkylatorer/proteinbehov', label: 'Proteinbehov Kalkylator' },
-          { href: '/kalkylatorer/bmi-kalkylator', label: 'BMI Kalkylator' },
-          { href: '/kalkylatorer/bmr-kalkylator', label: 'BMR Kalkylator' },
-        ]}
-        relatedArticles={[
-          { href: '/artiklar/vad-ar-tdee', label: 'Vad är TDEE?' },
-          { href: '/artiklar/kaloribrist', label: 'Hur stor kaloribrist ska man ha?' },
-          { href: '/artiklar/bulk-och-cut', label: 'Bulk och cut — kalorier för muskeluppbyggnad' },
-        ]}
+        title={t('calorie-needs.layout.title')}
+        intro={t('calorie-needs.layout.intro')}
+        moneyPageHref={t('calorie-needs.layout.moneyPageHref')}
+        moneyPageLabel={t('calorie-needs.layout.moneyPageLabel')}
+        faqItems={faqItems}
+        sources={sources}
+        relatedCalculators={relatedCalcs}
+        relatedArticles={relatedArticles}
         breadcrumb={[
-          { label: 'Artiklar', href: '/artiklar' },
-          { label: 'Kaloribehov', href: CANONICAL },
+          {
+            label: t('calorie-needs.layout.breadcrumb.hubLabel'),
+            href: t('calorie-needs.layout.breadcrumb.hubPath'),
+          },
+          { label: t('calorie-needs.layout.breadcrumb.pageLabel'), href: localeEntry.canonical },
         ]}
       >
         <h2 className="text-xl font-semibold text-neutral-900 mt-6 mb-3">
-          Steg 1: Räkna ut din BMR
+          {t('calorie-needs.body.s1.h2')}
         </h2>
+        <p>{t('calorie-needs.body.s1.p1')}</p>
         <p>
-          BMR (Basal Metabolic Rate, basalmetabolism) är de kalorier din kropp förbränner i absolut
-          vila — enbart för att hålla hjärta, hjärna och organ igång. Det är grunden för alla
-          kaloriuträkningar.
-        </p>
-        <p>
-          Den mest använda och validerade formeln för de flesta vuxna är{' '}
-          <strong>Mifflin-St Jeor</strong>:
+          {t('calorie-needs.body.s1.p2')} <strong>Mifflin-St Jeor</strong>:
         </p>
         <ul className="space-y-1 pl-4 list-disc">
-          <li>
-            <strong>Män:</strong> BMR = (9,99 × vikt) + (6,25 × längd) − (4,92 × ålder) + 5
-          </li>
-          <li>
-            <strong>Kvinnor:</strong> BMR = (9,99 × vikt) + (6,25 × längd) − (4,92 × ålder) − 161
-          </li>
+          {bodyS1Items.map((item, i) => (
+            <li key={i}>
+              <strong>{tStr(`calorie-needs.body.s1.items${i}strong`)}</strong>{' '}
+              {item.replace(/^[^:]+:\s*/, '')}
+            </li>
+          ))}
         </ul>
-        <p className="text-sm text-neutral-500">Vikt i kg, längd i cm, ålder i år.</p>
+        <p className="text-sm text-neutral-500">{t('calorie-needs.body.s1.note')}</p>
 
         <h2 className="text-xl font-semibold text-neutral-900 mt-8 mb-3">
-          Steg 2: Räkna ut ditt TDEE med aktivitetsfaktor
+          {t('calorie-needs.body.s2.h2')}
         </h2>
-        <p>
-          TDEE (Total Daily Energy Expenditure) är ditt totala kaloribehov — BMR multiplicerat med
-          din PAL-faktor (Physical Activity Level).
-        </p>
+        <p>{t('calorie-needs.body.s2.p1')}</p>
         <div className="overflow-x-auto rounded-lg border border-neutral-200">
           <table className="min-w-full text-sm">
             <thead className="bg-neutral-50 border-b border-neutral-200">
               <tr>
-                <th className="px-4 py-3 text-left font-medium text-neutral-700">Nivå</th>
-                <th className="px-4 py-3 text-left font-medium text-neutral-700">Beskrivning</th>
-                <th className="px-4 py-3 text-left font-medium text-neutral-700">PAL-faktor</th>
+                {bodyS2TableHeaders.map(h => (
+                  <th key={h} className="px-4 py-3 text-left font-medium text-neutral-700">
+                    {h}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody className="divide-y divide-neutral-100">
-              {[
-                [
-                  'Stillasittande',
-                  'Kontorsjobb eller hemarbete, liten vardagsrörelse, inga träningspass',
-                  '1.2',
-                ],
-                [
-                  'Lätt aktiv',
-                  'Lätt träning 1–3 dagar/vecka, t.ex. promenader, yoga eller gym på fritiden',
-                  '1.375',
-                ],
-                [
-                  'Måttligt aktiv',
-                  'Regelbunden träning 3–5 dagar/vecka med måttlig intensitet, t.ex. löpning eller styrketräning',
-                  '1.55',
-                ],
-                [
-                  'Mycket aktiv',
-                  'Hård träning nästan varje dag (6–7 dagar/vecka) eller fysiskt aktivt arbete',
-                  '1.725',
-                ],
-                [
-                  'Extremt aktiv',
-                  'Tungt fysiskt arbete kombinerat med daglig intensiv träning, t.ex. elitidrottare eller byggnadsarbetare som dessutom tränar',
-                  '1.9',
-                ],
-              ].map(([name, desc, pal]) => (
+              {bodyS2TableRows.map(([name, desc, pal]) => (
                 <tr key={name}>
                   <td className="px-4 py-3 font-medium text-neutral-800 whitespace-nowrap">
                     {name}
@@ -167,54 +125,40 @@ export default function KaloriberhovPage() {
           </table>
         </div>
         <p>
-          Exempel: En person, 30 år, 80 kg, 180 cm, tränar 3–5 gånger/vecka (måttligt aktiv).
+          {t('calorie-needs.body.s2.example')}
           <br />
-          BMR = (9,99 × 80) + (6,25 × 180) − (4,92 × 30) + 5 = 1 895 kcal
+          {t('calorie-needs.body.s2.exampleCalc1')}
           <br />
-          TDEE = 1 895 × 1,55 = <strong>2 937 kcal/dag</strong>
+          {t('calorie-needs.body.s2.exampleCalc2')}
+          <strong>{t('calorie-needs.body.s2.exampleCalc2Strong')}</strong>
         </p>
 
         <h2 className="text-xl font-semibold text-neutral-900 mt-8 mb-3">
-          Steg 3: Justera för ditt mål
+          {t('calorie-needs.body.s3.h2')}
         </h2>
-
-        <h3 className="font-semibold text-neutral-800 mb-2">Viktnedgång (cut)</h3>
-        <p>
-          Ät 300–500 kcal under ditt TDEE. Det ger ca 0,3–0,5 kg viktnedgång per vecka —
-          tillräckligt långsamt för att behålla muskelmassa. Kombinera med tillräckligt protein
-          (1,6–2,2 g/kg) för bästa resultat.
-        </p>
-
-        <h3 className="font-semibold text-neutral-800 mt-4 mb-2">Muskeluppbyggnad (bulk)</h3>
-        <p>
-          Ät 200–400 kcal över ditt TDEE. Det ger ett litet överskott för muskeltillväxt med
-          minimalt fettupplagrande. Mer än 500 kcal/dag i överskott leder ofta till onödig
-          fettupplagring.
-        </p>
-
-        <h3 className="font-semibold text-neutral-800 mt-4 mb-2">Underhåll</h3>
-        <p>
-          Matcha ditt TDEE. Bra under pausperioder, rehabilitering eller för att stabilisera vikt
-          efter en längre kur.
-        </p>
+        <h3 className="font-semibold text-neutral-800 mb-2">{t('calorie-needs.body.s3.h3a')}</h3>
+        <p>{t('calorie-needs.body.s3.p1')}</p>
+        <h3 className="font-semibold text-neutral-800 mt-4 mb-2">
+          {t('calorie-needs.body.s3.h3b')}
+        </h3>
+        <p>{t('calorie-needs.body.s3.p2')}</p>
+        <h3 className="font-semibold text-neutral-800 mt-4 mb-2">
+          {t('calorie-needs.body.s3.h3c')}
+        </h3>
+        <p>{t('calorie-needs.body.s3.p3')}</p>
 
         <h2 className="text-xl font-semibold text-neutral-900 mt-8 mb-3">
-          Varför stämmer inte alltid kalkylatorn?
+          {t('calorie-needs.body.s4.h2')}
         </h2>
-        <p>
-          TDEE-kalkylatorer ger en uppskattning med en felmarginal på typiskt ±10–15%. Faktorer som
-          påverkar det verkliga värdet:
-        </p>
+        <p>{t('calorie-needs.body.s4.p1')}</p>
         <ul className="space-y-1 pl-4 list-disc">
-          <li>Muskelmassa (mer muskler = högre BMR)</li>
-          <li>Sköldkörtelhormon och annan hormonbalans</li>
-          <li>Sömnkvalitet</li>
-          <li>Matens termiska effekt (proteiner kräver mer energi att smälta)</li>
-          <li>Adaptiv termogenes (kroppen sänker metabolism vid lång kaloribrist)</li>
+          {bodyS4Items.map(item => (
+            <li key={item}>{item}</li>
+          ))}
         </ul>
         <p>
-          <strong>Praktiskt råd:</strong> Använd kalkylatorn som startpunkt. Följ upp din vikt under
-          2–3 veckor och justera kalorimålet om du inte ser förväntat resultat.
+          <strong>{t('calorie-needs.body.s4.tipStrong')}</strong>
+          {t('calorie-needs.body.s4.tip')}
         </p>
       </ArticleLayout>
     </>

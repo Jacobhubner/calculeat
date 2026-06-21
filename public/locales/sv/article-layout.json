@@ -1,0 +1,20 @@
+{
+  "moneyPageCta": {
+    "subtitle": "Gratis att använda — inget konto krävs.",
+    "button": "Prova kalkylatorn"
+  },
+  "sources": {
+    "heading": "Källor"
+  },
+  "related": {
+    "calculatorsHeading": "Relaterade kalkylatorer",
+    "articlesHeading": "Relaterade artiklar"
+  },
+  "bottomCta": {
+    "h2": "Redo att omsätta kunskapen i praktiken?",
+    "body": "Skapa ett gratis konto och börja logga mat mot dina kalorimål — automatiskt beräknade från ditt TDEE.",
+    "primary": "Skapa gratis konto",
+    "secondary": "Prova kalkylatorn gratis"
+  },
+  "backLink": "Tillbaka till CalculEat"
+}

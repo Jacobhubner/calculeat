@@ -1,78 +1,36 @@
-import { Link } from 'react-router-dom'
-import { Helmet } from 'react-helmet-async'
+import { Link, useLocation } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { Calculator, ArrowRight } from 'lucide-react'
 import SiteHeader from '@/components/layout/SiteHeader'
 import SiteFooter from '@/components/layout/SiteFooter'
+import { Seo } from '@/components/seo/Seo'
 import { GuestOnly } from '@/components/GuestOnly'
+import { getPageConfigByKey, getHreflangAlternates } from '@/lib/config/pages'
 
-const calculators = [
-  {
-    to: '/kalkylatorer/tdee-kalkylator',
-    title: 'TDEE-kalkylator',
-    description:
-      'Beräkna ditt totala dagliga energibehov baserat på ålder, vikt, längd och aktivitetsnivå.',
-    tag: 'Populär',
-  },
-  {
-    to: '/kalkylatorer/kaloriunderskott',
-    title: 'Kaloriunderskott-kalkylator',
-    description: 'Räkna ut hur stort kaloriunderskott du behöver för att nå din viktnedgångsmål.',
-    tag: 'Populär',
-  },
-  {
-    to: '/kalkylatorer/bmi-kalkylator',
-    title: 'BMI-kalkylator',
-    description: 'Beräkna ditt body mass index och se var du hamnar på BMI-skalan.',
-  },
-  {
-    to: '/kalkylatorer/proteinbehov',
-    title: 'Proteinbehov-kalkylator',
-    description:
-      'Ta reda på hur mycket protein du behöver per dag utifrån din träning och dina mål.',
-  },
-  {
-    to: '/kalkylatorer/idealvikt',
-    title: 'Idealvikt-kalkylator',
-    description: 'Beräkna din idealvikt baserat på längd, kön och kroppsbyggnad.',
-  },
-  {
-    to: '/kalkylatorer/kroppsfett',
-    title: 'Kroppsfett-kalkylator',
-    description: 'Uppskatta din kroppsfettprocent med hjälp av mått och kön.',
-  },
-  {
-    to: '/kalkylatorer/bulk-kalkylator',
-    title: 'Bulk-kalkylator',
-    description: 'Räkna ut hur mycket du ska äta för att bygga muskler utan onödig fettökning.',
-  },
-  {
-    to: '/kalkylatorer/cut-kalkylator',
-    title: 'Cut & Deff-kalkylator',
-    description: 'Beräkna ditt kaloriintag för en effektiv cut/deff som bevarar muskelmassa.',
-  },
-  {
-    to: '/kalkylatorer/ffmi-kalkylator',
-    title: 'FFMI-kalkylator',
-    description: 'Mät din fettfria masseindex — ett bättre mått på muskelmassa än BMI.',
-  },
-  {
-    to: '/kalkylatorer/bmr-kalkylator',
-    title: 'BMR-kalkylator',
-    description: 'Beräkna din basalmetabolism — hur många kalorier din kropp förbränner i vila.',
-  },
-]
+type CalcItem = { href: string; title: string; description: string; popular: boolean }
+
+const pageConfig = getPageConfigByKey('calculators-hub')!
+const hreflangAlternates = getHreflangAlternates(pageConfig)
 
 export default function KalkylatornHubPage() {
+  const { pathname } = useLocation()
+  const lng = pathname.startsWith('/en/') ? 'en' : 'sv'
+  const { t } = useTranslation('pages-hubs', { lng })
+
+  const localeEntry = pageConfig.locales[lng] ?? pageConfig.locales.sv!
+  const calculators = t('calculators-hub.calculators', {
+    returnObjects: true,
+  }) as unknown as CalcItem[]
+
   return (
     <>
-      <Helmet>
-        <title>Kalkylatorer — Näring, kalorier och kropp | CalculEat</title>
-        <meta
-          name="description"
-          content="Gratis kalkylatorer för TDEE, kaloriunderskott, BMI, proteinbehov, idealvikt, kroppsfett, bulk, cut, FFMI och BMR. Beräkna dina mål direkt."
-        />
-        <link rel="canonical" href="https://calculeat.se/kalkylatorer" />
-      </Helmet>
+      <Seo
+        title={t('calculators-hub.seo.title')}
+        description={t('calculators-hub.seo.description')}
+        canonical={localeEntry.canonical}
+        hreflangAlternates={hreflangAlternates}
+        locale={lng === 'en' ? 'en_US' : 'sv_SE'}
+      />
 
       <div className="min-h-screen flex flex-col">
         <SiteHeader />
@@ -83,20 +41,17 @@ export default function KalkylatornHubPage() {
             <div className="container mx-auto px-4 max-w-3xl text-center">
               <div className="inline-flex items-center gap-2 bg-primary-50 text-primary-700 rounded-full px-4 py-1.5 text-sm font-medium mb-6">
                 <Calculator className="h-4 w-4" />
-                Gratis verktyg
+                {t('calculators-hub.badgeLabel')}
               </div>
               <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-4">
-                Kalkylatorer för kost och kropp
+                {t('calculators-hub.h1')}
               </h1>
-              <p className="text-lg text-neutral-600 mb-8">
-                Alla verktyg du behöver för att förstå ditt energibehov, sätta mål och följa din
-                utveckling — helt gratis.
-              </p>
+              <p className="text-lg text-neutral-600 mb-8">{t('calculators-hub.intro')}</p>
               <Link
-                to="/kalkylatorer"
+                to={calculators[0]?.href ?? localeEntry.canonical}
                 className="inline-flex items-center gap-2 bg-primary-600 text-white font-medium px-6 py-3 rounded-xl hover:bg-primary-700 transition-colors"
               >
-                Börja med TDEE-kalkylatorn
+                {t('calculators-hub.ctaButton')}
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
@@ -108,17 +63,17 @@ export default function KalkylatornHubPage() {
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 {calculators.map(calc => (
                   <Link
-                    key={calc.to}
-                    to={calc.to}
+                    key={calc.href}
+                    to={calc.href}
                     className="group bg-white rounded-2xl border border-neutral-200 p-6 hover:shadow-md hover:border-primary-200 transition-all flex flex-col"
                   >
                     <div className="flex items-start justify-between mb-3">
                       <h2 className="text-base font-semibold text-neutral-900 group-hover:text-primary-700 transition-colors leading-snug">
                         {calc.title}
                       </h2>
-                      {calc.tag && (
+                      {calc.popular && (
                         <span className="ml-2 flex-shrink-0 text-xs bg-primary-100 text-primary-700 px-2 py-0.5 rounded-full font-medium">
-                          {calc.tag}
+                          {t('calculators-hub.popularTag')}
                         </span>
                       )}
                     </div>
@@ -126,7 +81,7 @@ export default function KalkylatornHubPage() {
                       {calc.description}
                     </p>
                     <div className="mt-4 flex items-center gap-1 text-sm text-primary-600 font-medium">
-                      Öppna kalkylator
+                      {t('calculators-hub.openLabel')}
                       <ArrowRight className="h-3.5 w-3.5" />
                     </div>
                   </Link>
@@ -139,18 +94,15 @@ export default function KalkylatornHubPage() {
           <section className="bg-white border-t border-neutral-100 py-14">
             <div className="container mx-auto px-4 max-w-2xl text-center">
               <h2 className="text-2xl font-bold text-neutral-900 mb-3">
-                Spara dina resultat automatiskt
+                {t('calculators-hub.bottomCta.h2')}
               </h2>
-              <p className="text-neutral-600 mb-6">
-                Skapa ett gratis konto och låt CalculEat räkna ut ditt dagliga mål, spåra måltider
-                och visa hur du ligger till — dag för dag.
-              </p>
+              <p className="text-neutral-600 mb-6">{t('calculators-hub.bottomCta.body')}</p>
               <GuestOnly>
                 <Link
                   to="/register"
                   className="inline-flex items-center gap-2 bg-primary-600 text-white font-medium px-6 py-3 rounded-xl hover:bg-primary-700 transition-colors"
                 >
-                  Skapa gratis konto
+                  {t('calculators-hub.bottomCta.button')}
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </GuestOnly>

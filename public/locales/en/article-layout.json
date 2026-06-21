@@ -1,0 +1,20 @@
+{
+  "moneyPageCta": {
+    "subtitle": "Free to use — no account required.",
+    "button": "Try the calculator"
+  },
+  "sources": {
+    "heading": "Sources"
+  },
+  "related": {
+    "calculatorsHeading": "Related calculators",
+    "articlesHeading": "Related articles"
+  },
+  "bottomCta": {
+    "h2": "Ready to put the knowledge into practice?",
+    "body": "Create a free account and start logging food against your calorie goals — automatically calculated from your TDEE.",
+    "primary": "Create free account",
+    "secondary": "Try the calculator free"
+  },
+  "backLink": "Back to CalculEat"
+}

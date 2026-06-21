@@ -1,0 +1,681 @@
+{
+  "myfitnesspal-vs-calculeat": {
+    "seo": {
+      "title": "MyFitnessPal vs CalculEat — Which Calorie Counter Is Best? (2026)",
+      "description": "Comparison of MyFitnessPal and CalculEat. Which app gives you the best precision, bulk/cut support and TDEE calibration for your goal? Objective review."
+    },
+    "h1": "MyFitnessPal vs CalculEat — Which Calorie Counter Suits You Best?",
+    "intro": "Both apps let you log calories. The difference is what they do with that information. MyFitnessPal is a logging tool. CalculEat is designed so that calorie logging actually drives decisions — the right calorie goal for your objective, adapted to your body.",
+    "quickAnswer": {
+      "label": "Quick answer",
+      "verdict": "CalculEat wins for those who want precision — not just logging.",
+      "points": [
+        "Individual TDEE — not a population formula",
+        "Built-in cut/bulk cycle and reverse diet support",
+        "Free — MFP's core features require premium"
+      ],
+      "ctaCalc": "Calculate your TDEE free",
+      "ctaRegister": "Create account"
+    },
+    "comparisonTable": {
+      "h2": "Quick comparison",
+      "colFeature": "Feature",
+      "colOther": "MyFitnessPal",
+      "colCalculEat": "CalculEat",
+      "legendYes": "Yes / full support",
+      "legendPartial": "Partial",
+      "legendNo": "Missing"
+    },
+    "comparisonRows": [
+      { "feature": "Calorie logging", "note": null },
+      { "feature": "Large food database", "note": "Swedish NFA + USDA" },
+      { "feature": "TDEE calculation", "note": "MFP provides basic activity level" },
+      { "feature": "Metabolic calibration", "note": "Adjusted based on real weight change" },
+      { "feature": "Bulk/Cut phases", "note": "Separate goals per phase" },
+      { "feature": "Reverse diet support", "note": "Structured transition after cut" },
+      { "feature": "Automatic goal adaptation", "note": "Calorie goal adapts to chosen phase" },
+      { "feature": "Protein goal per phase", "note": "MFP gives fixed protein percentage" },
+      { "feature": "Macro planning", "note": null },
+      { "feature": "Barcode scanning", "note": null },
+      { "feature": "Progress tracking", "note": null },
+      { "feature": "Premium required for core features", "note": "CalculEat is free" }
+    ],
+    "midPageCta": {
+      "title": "Ready to try a more precise alternative?",
+      "body": "Calculate your TDEE, set the right calorie goal and log against numbers that actually work.",
+      "button": "Try free →"
+    },
+    "bottomCta": {
+      "h2": "Try a more precise alternative — free",
+      "body": "Calculate your actual TDEE, choose your phase and let CalculEat set the right calorie goal immediately. No credit card, no hidden costs.",
+      "primary": "Create free account",
+      "secondary": "Calculate your TDEE first"
+    },
+    "faqTitle": "Frequently Asked Questions",
+    "faq": [
+      {
+        "question": "Is CalculEat better than MyFitnessPal?",
+        "answer": "It depends on what you use the app for. MyFitnessPal has a larger food database and more integrations. CalculEat is better if you want precise TDEE calibration, support for bulk/cut cycles, reverse diet planning and actually understanding why you eat what you eat — not just logging it. For serious body composition tracking, CalculEat gives more actionable answers."
+      },
+      {
+        "question": "What is the difference between TDEE and a calorie goal?",
+        "answer": "A calorie goal in MyFitnessPal is a static number you set (e.g. 1800 kcal). TDEE is your actual total energy expenditure based on your body and activity level. In CalculEat, your calorie goal automatically adapts based on your measured TDEE and your specific objective — cut, bulk or maintenance — with the right deficit or surplus built in."
+      },
+      {
+        "question": "Do you really need metabolic calibration?",
+        "answer": "Not everyone does — but most people who have logged for a long time notice they \"aren't losing weight despite hitting their calories\". This is usually because the TDEE estimate was wrong. Metabolic calibration adjusts your goal based on how your actual weight changes (or doesn't), not just formulas. It's the difference between guessing and measuring."
+      },
+      {
+        "question": "Which app is best for cut and bulk?",
+        "answer": "CalculEat is designed for cut/bulk cycles: separate goals for each phase, protein recommendations adapted to the phase, built-in reverse diet logic and TDEE adaptation. MyFitnessPal requires you to manually change calorie goals and has no built-in support for phase transitions or reverse diet planning."
+      },
+      {
+        "question": "Is there a better alternative to MyFitnessPal?",
+        "answer": "It depends on what you're missing. Lifesum focuses on diet plans. Cronometer is best for micronutrients. CalculEat focuses on body composition goals — TDEE precision, bulk/cut support and making calorie logging actually drive decisions, not just record what you've eaten."
+      }
+    ],
+    "related": {
+      "calculatorsTitle": "Related calculators",
+      "articlesTitle": "Related articles",
+      "calculators": [
+        { "href": "/en/calculators/tdee-calculator", "label": "TDEE Calculator" },
+        { "href": "/en/calculators/protein-calculator", "label": "Protein Calculator" },
+        { "href": "/en/calculators/cut-calculator", "label": "Cut Calculator" },
+        { "href": "/en/calculators/bulk-calculator", "label": "Bulk Calculator" }
+      ],
+      "articles": [
+        { "href": "/en/articles/calorie-needs", "label": "Calorie needs — complete guide" },
+        { "href": "/en/articles/what-is-tdee", "label": "What is TDEE?" },
+        { "href": "/en/articles/reverse-diet", "label": "Reverse Diet" },
+        { "href": "/en/articles/bulk-and-cut", "label": "Bulk and Cut" }
+      ]
+    },
+    "breadcrumb": {
+      "comparisons": "Compare",
+      "pageLabel": "MyFitnessPal vs CalculEat"
+    },
+    "schema": {
+      "headline": "MyFitnessPal vs CalculEat — Which Calorie Counter Is Best? (2026)",
+      "description": "Comparison of MyFitnessPal and CalculEat. Which app gives you the best precision for weight loss, bulking and body composition goals?"
+    }
+  },
+  "lifesum-vs-calculeat": {
+    "seo": {
+      "title": "Lifesum vs CalculEat — Which Calorie Counter Is Best? (2026)",
+      "description": "Comparison of Lifesum and CalculEat. Which app suits weight loss, body composition and TDEE precision best?"
+    },
+    "h1": "Lifesum vs CalculEat — Which App Suits You Best?",
+    "intro": "Lifesum is a diet program tool. CalculEat is a body composition tool. They answer different questions — and suit different users.",
+    "quickAnswer": {
+      "label": "Quick answer",
+      "verdict": "CalculEat wins for body composition goals — Lifesum for diet programs and recipes.",
+      "points": [
+        "Individual TDEE and phase planning (cut/bulk/maintenance)",
+        "Free — Lifesum's core features require premium",
+        "Metabolic calibration based on real weight data"
+      ],
+      "ctaCalc": "Calculate your TDEE free",
+      "ctaRegister": "Create account"
+    },
+    "comparisonTable": {
+      "h2": "Quick comparison",
+      "colFeature": "Feature",
+      "colOther": "Lifesum",
+      "colCalculEat": "CalculEat",
+      "legendYes": "Yes / full support",
+      "legendPartial": "Partial",
+      "legendNo": "Missing"
+    },
+    "comparisonRows": [
+      { "feature": "Calorie logging", "note": null },
+      { "feature": "Food database", "note": "Swedish NFA + USDA" },
+      { "feature": "Diet plans", "note": "Not a CalculEat focus" },
+      { "feature": "Recipes", "note": "CalculEat: custom recipes" },
+      { "feature": "TDEE calculation", "note": "Lifesum provides basic calorie goal" },
+      { "feature": "Metabolic calibration", "note": "Adjusted based on real weight data" },
+      { "feature": "Bulk/Cut phases", "note": "Separate goals per phase" },
+      { "feature": "Reverse diet support", "note": null },
+      { "feature": "Automatic goal adaptation", "note": null },
+      { "feature": "Protein goal per phase", "note": "Lifesum: fixed percentage" },
+      { "feature": "Barcode scanning", "note": null },
+      { "feature": "Free for core features", "note": "Lifesum requires premium for most" }
+    ],
+    "midPageCta": {
+      "title": "Calculate your TDEE before choosing an app",
+      "body": "Whatever app you choose — start by knowing your actual TDEE.",
+      "button": "Try free →"
+    },
+    "bottomCta": {
+      "h2": "Try a more precise alternative — free",
+      "body": "Calculate your actual TDEE, choose your phase and let CalculEat set the right calorie goal immediately.",
+      "primary": "Create free account",
+      "secondary": "Calculate your TDEE first"
+    },
+    "faqTitle": "Frequently Asked Questions",
+    "faq": [
+      {
+        "question": "Is Lifesum better than CalculEat?",
+        "answer": "It depends on what you want. Lifesum is better if you primarily want to follow a ready-made diet program or get recipes and meal plans. CalculEat is better if you want a precise calorie goal based on your actual TDEE, support for cut/bulk cycles and logging that actually drives results — not just documents what you've eaten."
+      },
+      {
+        "question": "What is the difference between Lifesum and CalculEat?",
+        "answer": "Lifesum focuses on diet plans, recipes and lifestyle programs. CalculEat focuses on precision in the calorie goal: your individual TDEE, your phase (cut/bulk/maintenance), and adjusting the calorie goal as your body changes. Lifesum is a diet program tool. CalculEat is a body composition tool."
+      },
+      {
+        "question": "Do you need to pay to use Lifesum?",
+        "answer": "Lifesum's free version is very limited — most meaningful features (diet plans, detailed macros, recipes) require premium. CalculEat is free to use for calorie logging, TDEE calculation and phase tracking."
+      },
+      {
+        "question": "Which app is best for weight loss?",
+        "answer": "Both can work for weight loss, but in different ways. Lifesum guides you via diet programs. CalculEat gives you a precise calorie goal based on your measured TDEE and helps you calibrate it if your weight isn't moving as expected. Those who want to understand why their weight moves (or doesn't) are better served by CalculEat."
+      },
+      {
+        "question": "Can Lifesum be used for bulk and cut?",
+        "answer": "Lifesum has no built-in support for bulk/cut cycles, phase transitions or reverse diet planning. You can manually adjust calorie goals, but the app gives no guidance on the right deficit for a cut, the right surplus for bulk or how to transition between phases. CalculEat is built specifically for that."
+      }
+    ],
+    "related": {
+      "calculatorsTitle": "Related calculators",
+      "articlesTitle": "Related articles",
+      "calculators": [
+        { "href": "/en/calculators/tdee-calculator", "label": "TDEE Calculator" },
+        { "href": "/en/calculators/protein-calculator", "label": "Protein Calculator" },
+        { "href": "/en/calculators/cut-calculator", "label": "Cut Calculator" },
+        { "href": "/en/calculators/bulk-calculator", "label": "Bulk Calculator" }
+      ],
+      "articles": [
+        { "href": "/en/articles/calorie-needs", "label": "Calorie needs — complete guide" },
+        { "href": "/en/articles/what-is-tdee", "label": "What is TDEE?" },
+        { "href": "/en/articles/reverse-diet", "label": "Reverse Diet" },
+        { "href": "/en/articles/bulk-and-cut", "label": "Bulk and Cut" }
+      ]
+    },
+    "breadcrumb": {
+      "comparisons": "Compare",
+      "pageLabel": "Lifesum vs CalculEat"
+    },
+    "schema": {
+      "headline": "Lifesum vs CalculEat — Which Calorie Counter Is Best? (2026)",
+      "description": "Comparison of Lifesum and CalculEat. Which app suits weight loss, body composition and TDEE precision best?"
+    }
+  },
+  "yazio-vs-calculeat": {
+    "seo": {
+      "title": "Yazio vs CalculEat — Which Calorie Counter Is Best? (2026)",
+      "description": "Comparison of Yazio and CalculEat. Yazio offers simple logging and a fasting mode. CalculEat gives TDEE precision, bulk/cut support and calorie goals calibrated to your body."
+    },
+    "h1": "Yazio vs CalculEat — Which App Suits You Best?",
+    "intro": "Yazio documents what you eat. CalculEat helps you eat the right amount for your goal. The difference is precision versus simplicity.",
+    "quickAnswer": {
+      "label": "Quick answer",
+      "verdict": "CalculEat wins for body composition goals — Yazio for fasting and simplicity.",
+      "points": [
+        "Individual TDEE and phase planning (cut/bulk/maintenance)",
+        "Free — Yazio Pro required for most features",
+        "Metabolic calibration based on real weight data"
+      ],
+      "ctaCalc": "Calculate your TDEE free",
+      "ctaRegister": "Create account"
+    },
+    "comparisonTable": {
+      "h2": "Quick comparison",
+      "colFeature": "Feature",
+      "colOther": "Yazio",
+      "colCalculEat": "CalculEat",
+      "legendYes": "Yes / full support",
+      "legendPartial": "Partial",
+      "legendNo": "Missing"
+    },
+    "comparisonRows": [
+      { "feature": "Calorie logging", "note": null },
+      { "feature": "Large food database", "note": "Swedish NFA + USDA" },
+      { "feature": "Intermittent fasting mode", "note": "Not a CalculEat focus" },
+      { "feature": "Water tracking", "note": null },
+      { "feature": "TDEE calculation", "note": "Yazio provides basic calorie goal" },
+      { "feature": "Metabolic calibration", "note": "Adjusted based on real weight data" },
+      { "feature": "Bulk/Cut phases", "note": "Separate goals per phase" },
+      { "feature": "Reverse diet support", "note": null },
+      { "feature": "Automatic goal adaptation", "note": null },
+      { "feature": "Protein goal per phase", "note": "Yazio: fixed percentage" },
+      { "feature": "Barcode scanning", "note": null },
+      { "feature": "Free for core features", "note": "Yazio Pro required for most" }
+    ],
+    "midPageCta": {
+      "title": "Calculate your TDEE before choosing an app",
+      "body": "Whatever app you choose — start by knowing your actual TDEE.",
+      "button": "Try free →"
+    },
+    "bottomCta": {
+      "h2": "Try a more precise alternative — free",
+      "body": "Calculate your actual TDEE, choose your phase and let CalculEat set the right calorie goal immediately.",
+      "primary": "Create free account",
+      "secondary": "Calculate your TDEE first"
+    },
+    "faqTitle": "Frequently Asked Questions",
+    "faq": [
+      {
+        "question": "Is Yazio better than CalculEat?",
+        "answer": "It depends on what you're looking for. Yazio is good for simple calorie logging with a large food database and a simple interface. CalculEat is better if you want an individual TDEE, support for cut/bulk cycles and calorie goals that are calibrated against your actual weight data — not a generic starting number."
+      },
+      {
+        "question": "What is the difference between Yazio and CalculEat?",
+        "answer": "Yazio is primarily a logging tool focused on simplicity and breadth — large food database, fasting mode, water tracking. CalculEat focuses on precision in the calorie goal: individual TDEE, phase-based planning (cut/bulk/maintenance) and metabolic calibration. Yazio documents what you eat. CalculEat helps you eat the right amount for your goal."
+      },
+      {
+        "question": "Does Yazio support intermittent fasting?",
+        "answer": "Yes — Yazio has a built-in fasting mode that is one of the app's strongest features. CalculEat doesn't focus on fasting protocols but on the calorie equation and body composition."
+      },
+      {
+        "question": "Can Yazio be used for bulk and cut?",
+        "answer": "Yazio has no built-in support for bulk/cut cycles. You can manually adjust calorie goals, but the app gives no guidance on the right surplus for bulk, the right deficit for a cut or how to handle phase transitions and reverse dieting. CalculEat is built specifically for that."
+      },
+      {
+        "question": "Is Yazio free?",
+        "answer": "Yazio has a free version but many features — detailed macros, personal goals, analysis tools — require Yazio Pro. CalculEat is free for calorie logging, TDEE calculation and phase tracking."
+      }
+    ],
+    "related": {
+      "calculatorsTitle": "Related calculators",
+      "articlesTitle": "Related articles",
+      "calculators": [
+        { "href": "/en/calculators/tdee-calculator", "label": "TDEE Calculator" },
+        { "href": "/en/calculators/protein-calculator", "label": "Protein Calculator" },
+        { "href": "/en/calculators/cut-calculator", "label": "Cut Calculator" },
+        { "href": "/en/calculators/bulk-calculator", "label": "Bulk Calculator" }
+      ],
+      "articles": [
+        { "href": "/en/articles/calorie-needs", "label": "Calorie needs — complete guide" },
+        { "href": "/en/articles/what-is-tdee", "label": "What is TDEE?" },
+        { "href": "/en/articles/reverse-diet", "label": "Reverse Diet" },
+        { "href": "/en/articles/bulk-and-cut", "label": "Bulk and Cut" }
+      ]
+    },
+    "breadcrumb": {
+      "comparisons": "Compare",
+      "pageLabel": "Yazio vs CalculEat"
+    },
+    "schema": {
+      "headline": "Yazio vs CalculEat — Which Calorie Counter Is Best? (2026)",
+      "description": "Comparison of Yazio and CalculEat. Which app gives the best TDEE precision, bulk/cut support and calorie goals that actually work?"
+    }
+  },
+  "macrofactor-vs-calculeat": {
+    "seo": {
+      "title": "MacroFactor vs CalculEat — Which Calorie Counter Is Best? (2026)",
+      "description": "Comparison of MacroFactor and CalculEat. MacroFactor is an advanced premium app. CalculEat offers similar TDEE precision and phase planning for free and in English."
+    },
+    "h1": "MacroFactor vs CalculEat — Which App Suits You Best?",
+    "intro": "MacroFactor is one of the most advanced calorie apps on the market. CalculEat offers similar TDEE precision and phase planning for free.",
+    "quickAnswer": {
+      "label": "Quick answer",
+      "verdict": "CalculEat wins on price, transparency and accessibility — MacroFactor on automation.",
+      "points": [
+        "Free — MacroFactor requires a subscription",
+        "Transparent calculations — see exactly why your goal is what it is",
+        "Full bulk/cut/reverse diet phase planning"
+      ],
+      "ctaCalc": "Calculate your TDEE — free",
+      "ctaRegister": "Create account"
+    },
+    "comparisonTable": {
+      "h2": "Quick comparison",
+      "colFeature": "Feature",
+      "colOther": "MacroFactor",
+      "colCalculEat": "CalculEat",
+      "legendYes": "Yes / full support",
+      "legendPartial": "Partial",
+      "legendNo": "Missing"
+    },
+    "comparisonRows": [
+      { "feature": "Calorie logging", "note": null },
+      { "feature": "Food database", "note": "CalculEat: NFA + USDA" },
+      { "feature": "English interface", "note": "MacroFactor primarily in English" },
+      { "feature": "TDEE calculation", "note": "Both calculate individual TDEE" },
+      { "feature": "Metabolic calibration", "note": "Based on real weight data" },
+      {
+        "feature": "Auto-regulation of calorie goal",
+        "note": "MacroFactor: fully automatic weekly"
+      },
+      { "feature": "Bulk/Cut phases", "note": "Separate goals per phase" },
+      { "feature": "Reverse diet support", "note": "CalculEat: explicit phase planning" },
+      { "feature": "Transparency in calculations", "note": "CalculEat shows how" },
+      { "feature": "Barcode scanning", "note": null },
+      { "feature": "Free for core features", "note": "MacroFactor requires subscription" }
+    ],
+    "midPageCta": {
+      "title": "Calculate your TDEE — free",
+      "body": "Same precision as MacroFactor, without a subscription requirement.",
+      "button": "Try free →"
+    },
+    "bottomCta": {
+      "h2": "Try a more precise alternative — free",
+      "body": "Calculate your actual TDEE, choose your phase and let CalculEat set the right calorie goal immediately.",
+      "primary": "Create free account",
+      "secondary": "Calculate your TDEE first"
+    },
+    "faqTitle": "Frequently Asked Questions",
+    "faq": [
+      {
+        "question": "Is MacroFactor better than CalculEat?",
+        "answer": "MacroFactor is one of the most advanced calorie apps on the market with strong metabolic calibration and auto-regulation of calorie goals. CalculEat offers similar TDEE precision and phase planning for free, without a subscription requirement. MacroFactor is better for those who want maximum automation. CalculEat is better for those who want the same precision without cost."
+      },
+      {
+        "question": "What is the difference between MacroFactor and CalculEat?",
+        "answer": "MacroFactor is a premium app (subscription required) focused on advanced metabolic auto-regulation — the app automatically adjusts the calorie goal based on weight data and calculated TDEE each week. CalculEat offers individual TDEE calculation, phase-based planning (cut/bulk/maintenance) and metabolic calibration for free. MacroFactor is more automated. CalculEat gives more transparency in how calculations are made."
+      },
+      {
+        "question": "Is MacroFactor free?",
+        "answer": "No — MacroFactor requires an active subscription for all features. There is a short trial period but no permanent free alternatives for core features. CalculEat is free for calorie logging, TDEE calculation, phase tracking and metabolic calibration."
+      },
+      {
+        "question": "Which app is best for serious body composition tracking?",
+        "answer": "Both are strong choices. MacroFactor has a more automated pipeline for TDEE calibration. CalculEat gives more control and transparency — you see why the calorie goal is what it is and can manually adjust it when needed. Serious users who want to understand their numbers often prefer CalculEat."
+      },
+      {
+        "question": "Does MacroFactor support languages other than English?",
+        "answer": "MacroFactor is primarily in English and focuses on the English-speaking market. CalculEat is built for an international audience with food databases from multiple sources (including USDA) and support for multiple nutritional reference values."
+      }
+    ],
+    "related": {
+      "calculatorsTitle": "Related calculators",
+      "articlesTitle": "Related articles",
+      "calculators": [
+        { "href": "/en/calculators/tdee-calculator", "label": "TDEE Calculator" },
+        { "href": "/en/calculators/protein-calculator", "label": "Protein Calculator" },
+        { "href": "/en/calculators/cut-calculator", "label": "Cut Calculator" },
+        { "href": "/en/calculators/bulk-calculator", "label": "Bulk Calculator" }
+      ],
+      "articles": [
+        { "href": "/en/articles/calorie-needs", "label": "Calorie needs — complete guide" },
+        { "href": "/en/articles/what-is-tdee", "label": "What is TDEE?" },
+        { "href": "/en/articles/reverse-diet", "label": "Reverse Diet" },
+        { "href": "/en/articles/bulk-and-cut", "label": "Bulk and Cut" }
+      ]
+    },
+    "breadcrumb": {
+      "comparisons": "Compare",
+      "pageLabel": "MacroFactor vs CalculEat"
+    },
+    "schema": {
+      "headline": "MacroFactor vs CalculEat — Which Calorie Counter Is Best? (2026)",
+      "description": "Comparison of MacroFactor and CalculEat. MacroFactor is an advanced premium app. CalculEat offers similar TDEE precision and phase planning for free."
+    }
+  },
+  "best-calorie-app": {
+    "seo": {
+      "title": "Best Calorie Tracking App 2026 — Which Calorie Counter Is Best? | CalculEat",
+      "description": "Which is the best calorie app in 2026? Comparison of CalculEat, MyFitnessPal, MacroFactor, Lifesum and Yazio. Find the right app for weight loss, bulk and cut."
+    },
+    "h1": "Best Calorie Tracking App 2026 — Which Calorie Counter Is Best?",
+    "intro": "Most calorie apps do the same thing: they let you log food and show how much you've eaten. The difference is what they do with that information — and whether they actually help you reach your goal.",
+    "shortVersion": "Short version:",
+    "shortVersionBody": "For weight loss, bulk/cut and data-driven precision — CalculEat. For the largest food database — MyFitnessPal. For a simple beginner experience — Lifesum.",
+    "comparisonTable": {
+      "h2": "Quick comparison — 5 popular calorie apps",
+      "colFeature": "Feature",
+      "legendYes": "Yes / full support",
+      "legendPartial": "Partial",
+      "legendNo": "Missing"
+    },
+    "comparisonRows": [
+      { "feature": "Calorie logging", "note": null },
+      { "feature": "Barcode scanning", "note": null },
+      { "feature": "Food database", "note": "CalculEat: Swedish NFA + USDA" },
+      { "feature": "TDEE precision", "note": "Adaptive TDEE vs static formula" },
+      { "feature": "Metabolic calibration", "note": "Adjusted based on real weight data" },
+      { "feature": "Bulk/Cut phases", "note": "CalculEat: separate goals per phase" },
+      { "feature": "Reverse diet support", "note": null },
+      { "feature": "Protein goal per phase", "note": null },
+      { "feature": "Macro planning", "note": null },
+      {
+        "feature": "Free core features",
+        "note": "MFP, Lifesum and Yazio lock advanced features behind premium"
+      },
+      { "feature": "Swedish content", "note": "CalculEat: Swedish NFA database" }
+    ],
+    "forWhomH2": "Which calorie app suits you best?",
+    "forWhom": [
+      {
+        "title": "Best for weight loss",
+        "winner": "CalculEat",
+        "desc": "CalculEat calculates your actual TDEE and sets a correct calorie goal based on your body — not a generic formula. The calorie goal automatically adjusts if your weight isn't moving as expected. You log against the right goal, not a guessed one."
+      },
+      {
+        "title": "Best for muscle building",
+        "winner": "CalculEat",
+        "desc": "A lean bulk requires an exact calorie surplus — too little gives no results, too much leads to unnecessary fat gain. CalculEat sets the right surplus for your lean/standard/aggressive bulk goal and calculates a protein goal optimized for muscle growth."
+      },
+      {
+        "title": "Best for beginners",
+        "winner": "CalculEat or Lifesum",
+        "desc": "Lifesum has a simple and visually appealing experience. CalculEat is equally easy to get started with but gives immediately better TDEE precision. Choose CalculEat if you want the right numbers from the start — you'll learn to log just as quickly."
+      },
+      {
+        "title": "Best for data-driven precision",
+        "winner": "CalculEat or MacroFactor",
+        "desc": "MacroFactor is the industry standard for adaptive TDEE and recommended by many coaches. CalculEat matches the adaptive TDEE function and adds phase-specific support for bulk, cut and reverse diet — at no cost."
+      },
+      {
+        "title": "Best for large food databases",
+        "winner": "MyFitnessPal",
+        "desc": "With over 14 million foods in the database, MyFitnessPal wins on breadth. If you eat out often or need exotic foods, MFP is still best for data volume. The tradeoff is weaker TDEE precision and a paywall for the best features."
+      }
+    ],
+    "whyFailH2": "Why classic calorie apps don't deliver results",
+    "whyFailIntro": "The most common problem isn't that people don't log — it's that they log against the wrong goal. An app that gives you a static calorie goal based on a generic formula doesn't account for how your body actually responds.",
+    "whyFailCards": [
+      {
+        "title": "Wrong TDEE from the start",
+        "desc": "Population formulas (Mifflin-St Jeor, Harris-Benedict) can miss your individual TDEE by 200–400 kcal. You're hitting your calorie goal but it's the wrong goal."
+      },
+      {
+        "title": "The calorie goal never updates",
+        "desc": "Your weight, muscle mass and activity level change — but your app keeps the original goal. You're logging correctly, but against an outdated number."
+      },
+      {
+        "title": "No support for phase transitions",
+        "desc": "Going from a cut to maintenance requires a new calorie goal, a new protein goal and a plan for the transition. Classic apps let you do everything manually — without guidance."
+      }
+    ],
+    "whyFailOutro": "CalculEat solves all three: TDEE is calculated and calibrated against your actual weight data, the calorie goal adapts per phase, and you get the right protein goal for each phase automatically.",
+    "internalCtaH2": "Calculate your exact calorie needs",
+    "internalCtaBody": "No calorie app is better than the calorie goal you log against. Start by calculating your TDEE — it's the foundation for everything else.",
+    "internalCtaPrimary": "TDEE Calculator",
+    "internalCtaSecondary": "Calorie Deficit Calculator",
+    "faqTitle": "Frequently Asked Questions",
+    "faq": [
+      {
+        "question": "Which is the best calorie app?",
+        "answer": "It depends on your goal. MyFitnessPal is best if you want a large food database and simple logging. MacroFactor is best for serious macro tracking with adaptive TDEE. CalculEat is best if you work with specific phases — cut, bulk or reverse diet — and want a calorie goal that adapts to your body and phase automatically."
+      },
+      {
+        "question": "Is MyFitnessPal better than CalculEat?",
+        "answer": "MyFitnessPal has a larger food database and more third-party integrations. CalculEat is stronger on TDEE precision, bulk/cut support, metabolic calibration and reverse diet planning. If you primarily want to log food and don't actively work with phases, MFP works well. If you want logging to drive actual body composition results, CalculEat is better."
+      },
+      {
+        "question": "Which app is best for bulk and cut?",
+        "answer": "CalculEat is designed specifically for bulk/cut cycles: separate calorie goals per phase, protein recommendations adapted for cut (1.8–2.4 g/kg) vs bulk (1.6–2.2 g/kg), built-in reverse diet logic and automatic TDEE adaptation. No other free app offers this entire chain without manual work."
+      },
+      {
+        "question": "Do you need to pay for a good calorie counter?",
+        "answer": "No — CalculEat is completely free, including TDEE calibration, phase support and macro planning. MyFitnessPal locks its best functionality behind Premium. MacroFactor and Cronometer have good free modes but limit advanced features. You don't need to pay for precise calorie tracking."
+      },
+      {
+        "question": "Which app gives the best TDEE calculation?",
+        "answer": "MacroFactor and CalculEat are strongest on adaptive TDEE. MacroFactor recalculates TDEE every week based on weight data. CalculEat does the same but combines it with phase-specific goals — so the TDEE calculation is used directly to set the right deficit or surplus."
+      }
+    ],
+    "bottomCta": {
+      "h2": "Try CalculEat free",
+      "body": "Calculate your TDEE, choose your phase and start logging against a calorie goal that actually works. No paywall, no hidden costs.",
+      "primary": "Create free account",
+      "secondary": "Calculate your TDEE first"
+    },
+    "related": {
+      "calculatorsTitle": "Related calculators",
+      "articlesTitle": "Related articles",
+      "calculators": [
+        { "href": "/en/calculators/tdee-calculator", "label": "TDEE Calculator" },
+        {
+          "href": "/en/calculators/calorie-deficit-calculator",
+          "label": "Calorie Deficit Calculator"
+        },
+        { "href": "/en/calculators/bulk-calculator", "label": "Bulk Calculator" },
+        { "href": "/en/calculators/cut-calculator", "label": "Cut Calculator" }
+      ],
+      "articles": [
+        { "href": "/en/compare/myfitnesspal-vs-calculeat", "label": "MyFitnessPal vs CalculEat" },
+        { "href": "/en/compare/lifesum-vs-calculeat", "label": "Lifesum vs CalculEat" },
+        { "href": "/en/compare/yazio-vs-calculeat", "label": "Yazio vs CalculEat" },
+        { "href": "/en/compare/macrofactor-vs-calculeat", "label": "MacroFactor vs CalculEat" },
+        { "href": "/en/articles/calorie-needs", "label": "Calorie needs — complete guide" },
+        { "href": "/en/articles/what-is-tdee", "label": "What is TDEE?" },
+        { "href": "/en/articles/bulk-and-cut", "label": "Bulk and Cut" }
+      ]
+    },
+    "breadcrumb": { "pageLabel": "Best calorie app" },
+    "schema": {
+      "headline": "Best Calorie Tracking App 2026 — Which Calorie Counter Is Best?",
+      "description": "Comparison of the best calorie apps 2026: CalculEat, MyFitnessPal, Lifesum, Yazio and MacroFactor."
+    }
+  },
+  "best-tdee-calculator": {
+    "seo": {
+      "title": "Best TDEE Calculator 2026 — Calculate Your Calorie Needs Accurately | CalculEat",
+      "description": "Which TDEE calculator is best in 2026? Comparison of CalculEat, TDEECalculator.net, MyFitnessPal, MacroFactor and Lifesum. Find the right calculator for weight loss and bulk/cut."
+    },
+    "h1": "Best TDEE Calculator 2026 — Which Gives the Most Accurate Calorie Needs?",
+    "intro": "Most TDEE calculators use the same basic formula — but differ in how they handle activity level, goal adjustment and follow-up. The best TDEE calculator is the one that doesn't just give an estimate, but helps you adjust based on real results.",
+    "shortVersion": "Short version:",
+    "shortVersionBody": "For an actionable goal calibrated to your body — CalculEat. For a quick one-off estimate — TDEECalculator.net. For adaptive precision at coaching standard — MacroFactor.",
+    "primaryCtaTitle": "Calculate your TDEE free now",
+    "primaryCtaBody": "Enter age, weight, height and activity level — get your exact calorie needs instantly. No registration required.",
+    "primaryCtaButton": "Open TDEE Calculator",
+    "comparisonTable": {
+      "h2": "Quick comparison — 5 TDEE calculators",
+      "colFeature": "Feature",
+      "legendYes": "Yes / full support",
+      "legendPartial": "Partial",
+      "legendNo": "Missing"
+    },
+    "comparisonRows": [
+      { "feature": "TDEE calculation", "note": "MFP and Lifesum: simplified activity level" },
+      {
+        "feature": "Adjustment based on weight trend",
+        "note": "Calibrated against actual weight change"
+      },
+      { "feature": "Bulk/Cut support", "note": "CalculEat: separate calorie goals per phase" },
+      { "feature": "Calorie deficit planning", "note": "Built into the calorie goal, not manual" },
+      { "feature": "Protein recommendation", "note": "CalculEat: adapted per phase (cut vs bulk)" },
+      { "feature": "History and tracking", "note": null },
+      { "feature": "Reverse diet support", "note": null },
+      { "feature": "Swedish support", "note": "CalculEat: Swedish NFA database" },
+      { "feature": "Free version", "note": "MFP/MacroFactor/Lifesum lock features behind premium" }
+    ],
+    "forWhomH2": "Which TDEE calculator suits you best?",
+    "forWhom": [
+      {
+        "title": "Best for weight loss",
+        "winner": "CalculEat",
+        "desc": "CalculEat calculates your TDEE, sets a calorie goal with the right deficit and automatically adjusts if your weight isn't moving as expected. You don't need to manually recalculate — the app learns your actual TDEE from how your body responds."
+      },
+      {
+        "title": "Best for bulk and cut",
+        "winner": "CalculEat",
+        "desc": "TDEE calculators like TDEECalculator.net give you a single number. CalculEat gives separate calorie goals for each phase: the right surplus for bulk, the right deficit for cut, and a structured protocol for reverse dieting in between."
+      },
+      {
+        "title": "Best for precision over time",
+        "winner": "CalculEat or MacroFactor",
+        "desc": "MacroFactor is the industry standard for adaptive TDEE and used by professional coaches. CalculEat offers the same calibration function, combined with phase-specific goals and reverse diet support — without premium cost."
+      },
+      {
+        "title": "Best for quick one-off estimate",
+        "winner": "TDEECalculator.net",
+        "desc": "If you just want a quick reference value without creating an account, TDEECalculator.net is the simplest option. But the number you get is an estimate — not calibrated to your body."
+      }
+    ],
+    "whyFailH2": "Why static TDEE calculators often go wrong",
+    "whyFailIntro": "A TDEE calculator can never be accurate at first calculation — it guesses based on population averages. The problem isn't the estimate itself, it's that most apps and calculators never update it.",
+    "whyFailCards": [
+      {
+        "title": "Activity level is the weakest link",
+        "desc": "PAL multipliers (sedentary, lightly active, very active) are rough categories. The difference between 'lightly active' and 'moderately active' can be 200–400 kcal/day. Almost no one knows exactly which they belong to."
+      },
+      {
+        "title": "Adaptive thermogenesis is ignored",
+        "desc": "During a longer cut your actual TDEE drops by 150–300 kcal compared to the formula — the body reduces NEAT and BMR in response to energy deficit. A static calculator never accounts for this."
+      },
+      {
+        "title": "The formula doesn't fit all body types",
+        "desc": "Mifflin-St Jeor is the most validated formula but has a confidence interval of ±10%. For someone with a TDEE of 2500 kcal that means a possible error of ±250 kcal — enough to derail a cut."
+      }
+    ],
+    "whyFailOutro": "The solution is not a better formula — it's a system that measures your actual weight trend and calibrates the TDEE estimate against reality. That's exactly what CalculEat does.",
+    "whenBetterH2": "When CalculEat is better than classic TDEE calculators",
+    "whenBetterIntro": "A static TDEE calculator serves its purpose as a reference value. CalculEat is a different tool with a different purpose: making the TDEE calculation actually drive an actionable and correct calorie goal.",
+    "whenBetterPoints": [
+      "You want to log against a calorie goal that updates as your weight changes — not the same number you calculated at the start.",
+      "You're working with a cut or bulk and need a calorie goal with the right deficit or surplus built in, adapted to your phase.",
+      "You've been logging in another app for a long time but haven't seen results — the classic symptom of logging against the wrong TDEE.",
+      "You're planning a reverse diet and need a structured protocol to increase calories gradually without storing fat.",
+      "You want a protein goal adapted to your phase — higher during cut (1.8–2.4 g/kg) to protect muscle mass, lower during bulk (1.6–2.2 g/kg)."
+    ],
+    "readMoreH2": "Read more about TDEE",
+    "faqTitle": "Frequently Asked Questions",
+    "faq": [
+      {
+        "question": "Which TDEE calculator is most accurate?",
+        "answer": "No static TDEE calculator is accurate — they are all estimates based on population formulas. Accuracy depends on how the calculator handles activity level and whether it can be calibrated against real results. CalculEat and MacroFactor are the only free alternatives that adjust your TDEE based on actual weight changes — and are therefore more accurate over time than static calculators like TDEECalculator.net."
+      },
+      {
+        "question": "Is TDEECalculator.net better than CalculEat?",
+        "answer": "TDEECalculator.net is a good tool for a quick one-off estimate. CalculEat is better if you're actually going to use the TDEE result — it connects directly to your calorie goal, adapts it per phase (cut/bulk/maintenance) and calibrates against your weight data. TDEECalculator.net gives you a number. CalculEat gives you an actionable goal."
+      },
+      {
+        "question": "Why do different TDEE calculators give different results?",
+        "answer": "The differences come from three factors: which BMR formula is used (Mifflin-St Jeor, Harris-Benedict, Katch-McArdle), how activity levels are defined (some are more generous than others), and whether the calculator accounts for NEAT and training volume separately."
+      },
+      {
+        "question": "How do you know if your TDEE is accurate?",
+        "answer": "Log calories exactly for 2–3 weeks and measure your weight change daily (morning, fasting). If you eat 2200 kcal and your weight is stable, your TDEE is approximately 2200. If you lose 0.3 kg/week, your actual TDEE is approximately 2200 + 330 = 2530 kcal. This method — called metabolic calibration — is more accurate than any formula and is built into CalculEat."
+      },
+      {
+        "question": "How often should you update your calorie needs?",
+        "answer": "Every 4–6 weeks if you're actively trying to change your body. TDEE changes with body weight, muscle mass, training volume and adaptive thermogenesis. A static calculator you used at the start won't be accurate after 12 weeks of cutting. CalculEat continuously updates your calorie goal based on actual weight trends — you don't need to recalculate manually."
+      }
+    ],
+    "bottomCta": {
+      "h2": "Calculate your TDEE free",
+      "body": "Enter your details and get your calorie needs instantly — no registration required to use the calculator. Save your result and start logging against the right goal.",
+      "primary": "Open TDEE Calculator",
+      "secondary": "Create free account"
+    },
+    "related": {
+      "calculatorsTitle": "Related calculators",
+      "articlesTitle": "Related pages",
+      "calculators": [
+        { "href": "/en/calculators/tdee-calculator", "label": "TDEE Calculator" },
+        {
+          "href": "/en/calculators/calorie-deficit-calculator",
+          "label": "Calorie Deficit Calculator"
+        },
+        { "href": "/en/calculators/protein-calculator", "label": "Protein Calculator" },
+        { "href": "/en/calculators/bulk-calculator", "label": "Bulk Calculator" },
+        { "href": "/en/calculators/cut-calculator", "label": "Cut Calculator" }
+      ],
+      "articles": [
+        { "href": "/en/articles/what-is-tdee", "label": "What is TDEE?" },
+        { "href": "/en/articles/calorie-needs", "label": "Calorie needs — complete guide" },
+        { "href": "/en/articles/calorie-deficit", "label": "How large a calorie deficit?" },
+        { "href": "/en/compare/best-calorie-app", "label": "Best calorie app 2026" },
+        { "href": "/en/compare/myfitnesspal-vs-calculeat", "label": "MyFitnessPal vs CalculEat" }
+      ]
+    },
+    "breadcrumb": { "pageLabel": "Best TDEE Calculator" },
+    "schema": {
+      "headline": "Best TDEE Calculator 2026 — Which Gives the Most Accurate Calorie Needs?",
+      "description": "Comparison of the best TDEE calculators 2026: CalculEat, TDEECalculator.net, MyFitnessPal, MacroFactor and Lifesum."
+    }
+  }
+}

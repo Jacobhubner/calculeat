@@ -1,0 +1,179 @@
+{
+  "calculators-hub": {
+    "seo": {
+      "title": "Calculators — Nutrition, Calories and Body Composition | CalculEat",
+      "description": "Free calculators for TDEE, calorie deficit, BMI, protein needs, ideal weight, body fat, bulk, cut, FFMI and BMR. Calculate your goals instantly."
+    },
+    "h1": "Calculators for Nutrition and Body Composition",
+    "intro": "All the tools you need to understand your energy needs, set goals and track your progress — completely free.",
+    "badgeLabel": "Free tools",
+    "popularTag": "Popular",
+    "openLabel": "Open calculator",
+    "ctaButton": "Start with the TDEE Calculator",
+    "bottomCta": {
+      "h2": "Save your results automatically",
+      "body": "Create a free account and let CalculEat calculate your daily goal, track meals and show how you're progressing — day by day.",
+      "button": "Create free account"
+    },
+    "calculators": [
+      {
+        "href": "/en/calculators/tdee-calculator",
+        "title": "TDEE Calculator",
+        "description": "Calculate your total daily energy expenditure based on age, weight, height and activity level.",
+        "popular": true
+      },
+      {
+        "href": "/en/calculators/calorie-deficit-calculator",
+        "title": "Calorie Deficit Calculator",
+        "description": "Calculate how large a calorie deficit you need to reach your weight loss goal.",
+        "popular": true
+      },
+      {
+        "href": "/en/calculators/bmi-calculator",
+        "title": "BMI Calculator",
+        "description": "Calculate your body mass index and see where you fall on the BMI scale.",
+        "popular": false
+      },
+      {
+        "href": "/en/calculators/protein-calculator",
+        "title": "Protein Calculator",
+        "description": "Find out how much protein you need per day based on your training and goals.",
+        "popular": false
+      },
+      {
+        "href": "/en/calculators/ideal-weight-calculator",
+        "title": "Ideal Weight Calculator",
+        "description": "Calculate your ideal weight based on height, gender and body frame.",
+        "popular": false
+      },
+      {
+        "href": "/en/calculators/body-fat-calculator",
+        "title": "Body Fat Calculator",
+        "description": "Estimate your body fat percentage using measurements and gender.",
+        "popular": false
+      },
+      {
+        "href": "/en/calculators/bulk-calculator",
+        "title": "Bulk Calculator",
+        "description": "Calculate how much to eat to build muscle without unnecessary fat gain.",
+        "popular": false
+      },
+      {
+        "href": "/en/calculators/cut-calculator",
+        "title": "Cut Calculator",
+        "description": "Calculate your calorie intake for an effective cut that preserves muscle mass.",
+        "popular": false
+      },
+      {
+        "href": "/en/calculators/ffmi-calculator",
+        "title": "FFMI Calculator",
+        "description": "Measure your fat-free mass index — a better measure of muscle mass than BMI.",
+        "popular": false
+      },
+      {
+        "href": "/en/calculators/bmr-calculator",
+        "title": "BMR Calculator",
+        "description": "Calculate your basal metabolic rate — how many calories your body burns at rest.",
+        "popular": false
+      }
+    ]
+  },
+  "articles-hub": {
+    "seo": {
+      "title": "Articles on Nutrition, Calories and Training | CalculEat",
+      "description": "Guides and articles on calorie needs, TDEE, BMR, bulk, cut, calorie deficit and more. Learn to understand your body and reach your goals."
+    },
+    "h1": "Articles on Nutrition and Body Composition",
+    "intro": "Understand energy balance, metabolism and nutrition science — written clearly and based on science.",
+    "badgeLabel": "Guides and explanations",
+    "pillarTag": "Pillar",
+    "readLabel": "Read article",
+    "ctaButton": "Start with calorie needs",
+    "bottomCta": {
+      "h2": "Put the theory into practice",
+      "body": "Calculate your calorie needs with the TDEE calculator and start logging directly in CalculEat — free.",
+      "primaryButton": "Try the TDEE Calculator",
+      "secondaryButton": "Create free account"
+    },
+    "articles": [
+      {
+        "href": "/en/articles/calorie-needs",
+        "title": "Calorie Needs — How Much Should You Eat?",
+        "description": "A complete guide to calculating your daily calorie needs based on goals, activity and body composition.",
+        "pillar": true
+      },
+      {
+        "href": "/en/articles/what-is-tdee",
+        "title": "What is TDEE?",
+        "description": "Understand Total Daily Energy Expenditure — what it is, how it's calculated and why it matters more than BMR.",
+        "pillar": false
+      },
+      {
+        "href": "/en/articles/calorie-deficit",
+        "title": "Calorie Deficit — What You Need to Know",
+        "description": "How does a calorie deficit work? How large should it be? Everything about losing weight sustainably.",
+        "pillar": false
+      },
+      {
+        "href": "/en/articles/bulk-and-cut",
+        "title": "Bulk and Cut — Complete Guide",
+        "description": "Learn the difference between bulk and cut, how to plan the phases and avoid common mistakes.",
+        "pillar": false
+      },
+      {
+        "href": "/en/articles/reverse-diet",
+        "title": "Reverse Diet — Rebuild Your Metabolism",
+        "description": "What is reverse dieting, when does it work and how do you increase calories without gaining fat?",
+        "pillar": false
+      },
+      {
+        "href": "/en/articles/what-is-bmr",
+        "title": "What is BMR?",
+        "description": "Basal metabolic rate explained — how the body burns calories at rest and what it means for you.",
+        "pillar": false
+      },
+      {
+        "href": "/en/articles/bmr-vs-rmr",
+        "title": "BMR vs RMR — What Is the Difference?",
+        "description": "BMR and RMR both measure energy expenditure at rest but differ in measurement conditions. Which formulas calculate what?",
+        "pillar": false
+      },
+      {
+        "href": "/en/articles/bmr-vs-tdee",
+        "title": "BMR vs TDEE — What Is the Difference?",
+        "description": "Understand the relationship between basal metabolism and total energy needs, and which measure to actually use.",
+        "pillar": false
+      },
+      {
+        "href": "/en/articles/bmi-vs-body-fat",
+        "title": "BMI vs Body Fat — Which Is Better?",
+        "description": "BMI is simple but misleading. Here we compare the two measures and when to use which.",
+        "pillar": false
+      },
+      {
+        "href": "/en/articles/what-is-ffmi",
+        "title": "What is FFMI?",
+        "description": "Fat-free mass index is a better measure of muscle mass than BMI. Learn how it's calculated and interpreted.",
+        "pillar": false
+      },
+      {
+        "href": "/en/articles/what-is-pal-and-met",
+        "title": "What is PAL and MET?",
+        "description": "Physical activity level and metabolic equivalent — how activity level is measured and used in TDEE calculations.",
+        "pillar": false
+      },
+      {
+        "href": "/en/articles/lbm-vs-ffm",
+        "title": "LBM vs FFM — What Is the Difference?",
+        "description": "Lean Body Mass and Fat Free Mass are often used synonymously but don't measure the same thing. Learn the difference.",
+        "pillar": false
+      },
+      {
+        "href": "/en/articles/how-to-measure-body-fat",
+        "title": "How to Measure Body Fat?",
+        "description": "DEXA, bioimpedance, calipers or the Navy method? Learn the differences in accuracy and choose the right method.",
+        "pillar": false
+      }
+    ]
+  }
+}

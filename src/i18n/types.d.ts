@@ -26,6 +26,12 @@ import type svToday from '../../public/locales/sv/today.json'
 import type svTools from '../../public/locales/sv/tools.json'
 import type svMet from '../../public/locales/sv/met.json'
 import type svSupport from '../../public/locales/sv/support.json'
+import type svPagesTools from '../../public/locales/sv/pages-tools.json'
+import type svPagesArticles from '../../public/locales/sv/pages-articles.json'
+import type svPagesCompare from '../../public/locales/sv/pages-compare.json'
+import type svPagesHubs from '../../public/locales/sv/pages-hubs.json'
+import type svArticleLayout from '../../public/locales/sv/article-layout.json'
+import type svPagesOther from '../../public/locales/sv/pages-other.json'
 
 declare module 'i18next' {
   interface CustomTypeOptions {
@@ -49,6 +55,12 @@ declare module 'i18next' {
       tools: typeof svTools
       met: typeof svMet
       support: typeof svSupport
+      'pages-tools': typeof svPagesTools
+      'pages-articles': typeof svPagesArticles
+      'pages-compare': typeof svPagesCompare
+      'pages-hubs': typeof svPagesHubs
+      'article-layout': typeof svArticleLayout
+      'pages-other': typeof svPagesOther
     }
   }
 }

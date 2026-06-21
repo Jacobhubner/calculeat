@@ -1,167 +1,154 @@
+import { useLocation } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { Seo } from '@/components/seo/Seo'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { ArticleLayout } from '@/components/article/ArticleLayout'
+import { getPageConfigByKey, getHreflangAlternates } from '@/lib/config/pages'
+import type { FaqItem } from '@/components/article/FaqBlock'
 
-const CANONICAL = 'https://calculeat.se/artiklar/bulk-och-cut'
+type Source = { text: string; url?: string }
+type RelatedLink = { href: string; label: string }
 
-const PAGE_SCHEMA = {
-  '@context': 'https://schema.org',
-  '@type': 'Article',
-  headline: 'Bulk och Cut — Kalorier för muskeluppbyggnad och fettförbränning',
-  description:
-    'Lär dig hur bulk och cut fungerar, hur mycket kalorier du ska äta i varje fas och hur du optimerar för muskeluppbyggnad och fettförbränning.',
-  url: CANONICAL,
-  publisher: { '@type': 'Organization', name: 'CalculEat', url: 'https://calculeat.se' },
-  inLanguage: 'sv-SE',
-}
-
-const FAQ_ITEMS = [
-  {
-    question: 'Vad är bulk och cut?',
-    answer:
-      'Bulk och cut är två faser i ett träningscykel. Under bulk äter du i kalorioverskott för att maximera muskeluppbyggnad. Under cut äter du i kaloribrist för att tappa fett och bevara muskelmassa. Alternativen är "recomp" (äta på underhåll, bygga muskler och tappa fett långsamt) eller "mini cut" (kortare, aggressivare fettförbrännig).',
-  },
-  {
-    question: 'Hur många kalorier ska man äta på bulk?',
-    answer:
-      'En "lean bulk" på 200–400 kcal över TDEE ger optimal muskeluppbyggnad med minimal fettupplagring. Mer än 500 kcal i överskott leder ofta till onödig fettupplagring utan proportionellt mer muskeltillväxt.',
-  },
-  {
-    question: 'Hur länge ska man bulka innan man cutter?',
-    answer:
-      'En typisk bulkfas är 3–6 månader. Avsluta bulk när fettprocenten blivit för hög (ca 15–18% för män, 25–30% för kvinnor). Cutfasen bör vara tillräckligt lång för att tappa tillbaka till önskad fettprocent utan att stressa kroppen.',
-  },
-  {
-    question: 'Kan man bygga muskler och tappa fett samtidigt?',
-    answer:
-      'Ja — "body recomposition" fungerar, men kräver tid och är mest effektivt för nybörjare, personer med hög fettprocent eller de som återkommer till träning efter ett uppehåll. Erfarna atleter med låg fettprocent får bättre resultat av separata bulk- och cutfaser.',
-  },
-  {
-    question: 'Hur mycket protein behöver man under bulk?',
-    answer:
-      '1,6–2,2 g protein per kg kroppsvikt per dag. Protein stimulerar muskelproteinsyntes och skyddar mot fettupplagring. Under bulk räcker ofta den nedre delen av intervallet (1,6–1,8 g/kg).',
-  },
-]
-
-const SOURCES = [
-  {
-    text: 'Morton RW et al. (2018). A systematic review, meta-analysis and meta-regression of the effect of protein supplementation on resistance training-induced gains in muscle mass and strength in healthy adults. Br J Sports Med.',
-  },
-  {
-    text: 'Barakat C et al. (2020). Body Recomposition: Can Trained Individuals Build Muscle and Lose Fat at the Same Time? Strength Cond J.',
-  },
-]
+const pageConfig = getPageConfigByKey('bulk-and-cut')!
+const hreflangAlternates = getHreflangAlternates(pageConfig)
 
 export default function BulkOchCutPage() {
+  const { pathname } = useLocation()
+  const lng = pathname.startsWith('/en/') ? 'en' : 'sv'
+  const { t } = useTranslation('pages-articles', { lng })
+
+  const localeEntry = pageConfig.locales[lng] ?? pageConfig.locales.sv!
+  const faqItems = t('bulk-and-cut.faq', { returnObjects: true }) as unknown as FaqItem[]
+  const sources = t('bulk-and-cut.sources', { returnObjects: true }) as unknown as Source[]
+  const relatedCalcs = t('bulk-and-cut.related.calculators', {
+    returnObjects: true,
+  }) as unknown as RelatedLink[]
+  const relatedArticles = t('bulk-and-cut.related.articles', {
+    returnObjects: true,
+  }) as unknown as RelatedLink[]
+  const tStr = t as (key: string) => string
+  const bodyS4Items = t('bulk-and-cut.body.s4.items', {
+    returnObjects: true,
+  }) as unknown as string[]
+  const bodyS5Items = t('bulk-and-cut.body.s5.items', {
+    returnObjects: true,
+  }) as unknown as string[]
+
+  const pageSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: t('bulk-and-cut.schema.headline'),
+    description: t('bulk-and-cut.schema.description'),
+    url: localeEntry.canonical,
+    publisher: { '@type': 'Organization', name: 'CalculEat', url: 'https://calculeat.se' },
+    inLanguage: lng === 'en' ? 'en' : 'sv-SE',
+  }
+
   return (
     <>
       <Seo
-        title="Bulk och Cut — Kalorier för muskeluppbyggnad och fettförbränning | CalculEat"
-        description="Hur bulk och cut fungerar, hur många kalorier du ska äta i varje fas och hur du optimerar din träningscykel för muskeluppbyggnad och fettförbränning."
-        canonical={CANONICAL}
+        title={t('bulk-and-cut.seo.title')}
+        description={t('bulk-and-cut.seo.description')}
+        canonical={localeEntry.canonical}
+        hreflangAlternates={hreflangAlternates}
+        locale={lng === 'en' ? 'en_US' : 'sv_SE'}
         type="article"
       />
-      <JsonLd schema={PAGE_SCHEMA} />
+      <JsonLd schema={pageSchema} />
 
       <ArticleLayout
-        title="Bulk och Cut — Kalorier för muskeluppbyggnad och fettförbränning"
-        intro="Bulk och cut är de två faserna i en klassisk träningscykel. Under bulk äter du i kalorioverskott för att maximera muskeluppbyggnad. Under cut äter du i kaloribrist för att tappa fett och bevara den muskelmassa du byggt. Nyckeln är att veta exakt hur stora överskott och underskott du ska sikta på."
-        moneyPageHref="/kalkylatorer/bulk-kalkylator"
-        moneyPageLabel="Räkna ut dina bulk-kalorier direkt"
-        faqItems={FAQ_ITEMS}
-        sources={SOURCES}
-        relatedCalculators={[
-          { href: '/kalkylatorer/bulk-kalkylator', label: 'Bulk Kalkylator' },
-          { href: '/kalkylatorer/cut-kalkylator', label: 'Cut & Deff Kalkylator' },
-          { href: '/kalkylatorer/tdee-kalkylator', label: 'TDEE Kalkylator' },
-        ]}
-        relatedArticles={[
-          { href: '/artiklar/kaloribehov', label: 'Kaloribehov — komplett guide' },
-          { href: '/artiklar/vad-ar-tdee', label: 'Vad är TDEE?' },
-          { href: '/artiklar/kaloribrist', label: 'Hur stor kaloribrist ska man ha?' },
-        ]}
+        title={t('bulk-and-cut.layout.title')}
+        intro={t('bulk-and-cut.layout.intro')}
+        moneyPageHref={t('bulk-and-cut.layout.moneyPageHref')}
+        moneyPageLabel={t('bulk-and-cut.layout.moneyPageLabel')}
+        faqItems={faqItems}
+        sources={sources}
+        relatedCalculators={relatedCalcs}
+        relatedArticles={relatedArticles}
         breadcrumb={[
-          { label: 'Artiklar', href: '/artiklar' },
-          { label: 'Bulk och cut', href: CANONICAL },
+          {
+            label: t('bulk-and-cut.layout.breadcrumb.hubLabel'),
+            href: t('bulk-and-cut.layout.breadcrumb.hubPath'),
+          },
+          { label: t('bulk-and-cut.layout.breadcrumb.pageLabel'), href: localeEntry.canonical },
         ]}
       >
         <h2 className="text-xl font-semibold text-neutral-900 mt-6 mb-3">
-          Bulk — muskeluppbyggnad
+          {t('bulk-and-cut.body.s1.h2')}
         </h2>
+        <p>{t('bulk-and-cut.body.s1.p1')}</p>
+        <h3 className="font-semibold text-neutral-800 mt-4 mb-2">
+          {t('bulk-and-cut.body.s1.h3a')}
+        </h3>
         <p>
-          Under bulk äter du mer kalorier än du förbränner. Det skapar ett anabolt klimat där
-          kroppen har råd att bygga muskelvävnad. Utan kalorioverskott är muskeluppbyggnad möjlig
-          men avsevärt långsammare.
+          <strong>{t('bulk-and-cut.body.s1.p2Strong')}</strong>
+          {t('bulk-and-cut.body.s1.p2')}
         </p>
-
-        <h3 className="font-semibold text-neutral-800 mt-4 mb-2">Lean bulk (rekommenderat)</h3>
+        <h3 className="font-semibold text-neutral-800 mt-4 mb-2">
+          {t('bulk-and-cut.body.s1.h3b')}
+        </h3>
         <p>
-          <strong>200–400 kcal/dag över TDEE.</strong> Optimal balans mellan muskeltillväxt och
-          minimal fettupplagring. Förväntat tempo: ca 0,2–0,4 kg per vecka (varav en stor del är
-          muskler de första månaderna).
-        </p>
-
-        <h3 className="font-semibold text-neutral-800 mt-4 mb-2">Aggressiv bulk</h3>
-        <p>
-          <strong>500–1000+ kcal/dag över TDEE.</strong> Snabbare viktuppgång men stor andel är
-          fett. Fungerar för hardgainers och nybörjare men leder för erfarna atleter mest till
-          fettupplagring som måste cuttats bort igen.
-        </p>
-
-        <h2 className="text-xl font-semibold text-neutral-900 mt-8 mb-3">Cut — fettförbränning</h2>
-        <p>
-          Under cut äter du under ditt TDEE för att tappa fett, med målet att bevara maximal
-          muskelmassa. Det kräver disciplin, tillräckligt protein och styrketräning.
-        </p>
-
-        <h3 className="font-semibold text-neutral-800 mt-4 mb-2">Hållbar cut</h3>
-        <p>
-          <strong>300–500 kcal/dag under TDEE.</strong> Rekommenderat tempo för de flesta. Ger
-          0,3–0,5 kg/vecka med god muskelmassabevaranfring.
-        </p>
-
-        <h3 className="font-semibold text-neutral-800 mt-4 mb-2">Mini cut</h3>
-        <p>
-          <strong>500–750 kcal/dag under TDEE, kortare period (4–8 veckor).</strong> Aggressivare
-          men tidsbegränsad — minskar risken för adaptiv termogenes. Kräver högt protein och
-          styrketräning.
+          <strong>{t('bulk-and-cut.body.s1.p3Strong')}</strong>
+          {t('bulk-and-cut.body.s1.p3')}
         </p>
 
         <h2 className="text-xl font-semibold text-neutral-900 mt-8 mb-3">
-          Body Recomposition — alternativet
+          {t('bulk-and-cut.body.s2.h2')}
         </h2>
+        <p>{t('bulk-and-cut.body.s2.p1')}</p>
+        <h3 className="font-semibold text-neutral-800 mt-4 mb-2">
+          {t('bulk-and-cut.body.s2.h3a')}
+        </h3>
         <p>
-          Istället för separata bulk/cut-faser kan man äta runt underhållsintag och långsamt bygga
-          muskler och tappa fett <em>samtidigt</em>. Det är långsammare men undviker yo-yo-effekten.
+          <strong>{t('bulk-and-cut.body.s2.p2Strong')}</strong>
+          {t('bulk-and-cut.body.s2.p2')}
         </p>
+        <h3 className="font-semibold text-neutral-800 mt-4 mb-2">
+          {t('bulk-and-cut.body.s2.h3b')}
+        </h3>
         <p>
-          Fungerar bäst för: nybörjare, personer med hög fettprocent, och de som återkommer efter
-          träningsuppehåll. Erfarna atleter med låg fettprocent får bättre resultat av separata
-          faser.
+          <strong>{t('bulk-and-cut.body.s2.p3Strong')}</strong>
+          {t('bulk-and-cut.body.s2.p3')}
         </p>
 
         <h2 className="text-xl font-semibold text-neutral-900 mt-8 mb-3">
-          Hur vet du när du ska byta fas?
+          {t('bulk-and-cut.body.s3.h2')}
+        </h2>
+        <p>
+          {t('bulk-and-cut.body.s3.p1')
+            .split(t('bulk-and-cut.body.s3.p1Em'))
+            .map((part, i, arr) =>
+              i < arr.length - 1 ? (
+                <span key={i}>
+                  {part}
+                  <em>{t('bulk-and-cut.body.s3.p1Em')}</em>
+                </span>
+              ) : (
+                <span key={i}>{part}</span>
+              )
+            )}
+        </p>
+        <p>{t('bulk-and-cut.body.s3.p2')}</p>
+
+        <h2 className="text-xl font-semibold text-neutral-900 mt-8 mb-3">
+          {t('bulk-and-cut.body.s4.h2')}
         </h2>
         <ul className="space-y-2 pl-4 list-disc">
-          <li>
-            <strong>Avsluta bulk när:</strong> Fettprocenten blivit för hög (ca 15–18% för män,
-            25–30% för kvinnor). Styrkan planar ut trots kalorioverskott.
-          </li>
-          <li>
-            <strong>Avsluta cut när:</strong> Du nått önskad fettprocent. Viktnedgången planar ut
-            trots kaloribrist. Prestationsförmågan sjunker markant.
-          </li>
+          {bodyS4Items.map((item, i) => (
+            <li key={i}>
+              <strong>{tStr(`bulk-and-cut.body.s4.items${i}strong`)}</strong>{' '}
+              {item.replace(/^[^:]+:\s*/, '')}
+            </li>
+          ))}
         </ul>
 
-        <h2 className="text-xl font-semibold text-neutral-900 mt-8 mb-3">Praktisk guide</h2>
+        <h2 className="text-xl font-semibold text-neutral-900 mt-8 mb-3">
+          {t('bulk-and-cut.body.s5.h2')}
+        </h2>
         <ol className="space-y-2 pl-5 list-decimal">
-          <li>Räkna ut ditt TDEE med kalkylatorn</li>
-          <li>Bulk: lägg till 300 kcal → ditt bulkintag</li>
-          <li>Cut: dra av 400 kcal → ditt cutintag</li>
-          <li>Ät 1,8–2,2 g protein/kg i båda faserna</li>
-          <li>Träna styrka 3–4 ggr/vecka</li>
-          <li>Justera kalorimålet var 2–3 vecka baserat på verklig viktutveckling</li>
+          {bodyS5Items.map(item => (
+            <li key={item}>{item}</li>
+          ))}
         </ol>
       </ArticleLayout>
     </>

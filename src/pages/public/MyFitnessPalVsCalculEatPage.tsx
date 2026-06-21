@@ -1,121 +1,20 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { ArrowRight, Check, X, Minus } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import SiteHeader from '@/components/layout/SiteHeader'
 import SiteFooter from '@/components/layout/SiteFooter'
 import { Seo } from '@/components/seo/Seo'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { FaqBlock } from '@/components/article/FaqBlock'
 import { GuestOnly } from '@/components/GuestOnly'
-
-const CANONICAL = 'https://calculeat.se/jamfor/myfitnesspal-vs-calculeat'
-
-const FAQ_ITEMS = [
-  {
-    question: 'Är CalculEat bättre än MyFitnessPal?',
-    answer:
-      'Det beror på vad du använder appen till. MyFitnessPal har en större matdatabas och fler integrationer. CalculEat är bättre om du vill ha precis TDEE-kalibrering, stöd för bulk/cut-cykler, reverse diet-planering och att faktiskt förstå varför du äter det du äter — inte bara logga det. För seriös kroppskompositions-tracking ger CalculEat mer handlingsbara svar.',
-  },
-  {
-    question: 'Vad är skillnaden mellan TDEE och kalorimål?',
-    answer:
-      'Kalorimål i MyFitnessPal är ett statiskt tal du sätter (t.ex. 1800 kcal). TDEE är din faktiska totala energiförbrukning baserat på din kropp och aktivitetsnivå. I CalculEat anpassas ditt kalorimål automatiskt baserat på ditt uppmätta TDEE och ditt specifika mål — cut, bulk eller maintenance — med rätt underskott eller överskott inbyggt.',
-  },
-  {
-    question: 'Behöver man verkligen metabolisk kalibrering?',
-    answer:
-      'Inte alla behöver det — men de flesta som logging länge märker att de "inte går ner trots att de håller kalorierna". Det beror oftast på att TDEE-uppskattningen var fel. Metabolisk kalibrering justerar ditt mål baserat på hur din faktiska vikt förändras (eller inte), inte bara formler. Det är skillnaden mellan att gissa och att mäta.',
-  },
-  {
-    question: 'Vilken app är bäst för cut och bulk?',
-    answer:
-      'CalculEat är designat för cut/bulk-cykler: separata mål för varje fas, proteinrekommendation anpassad till fasen, inbyggd reverse diet-logik och TDEE-anpassning. MyFitnessPal kräver att du manuellt ändrar kalorimål och har inget inbyggt stöd för fasbyten eller reverse diet-planering.',
-  },
-  {
-    question: 'Finns ett bättre alternativ till MyFitnessPal?',
-    answer:
-      'Det beror på vad du saknar. Lifesum fokuserar på kostplaner. Cronometer är bäst för mikronäringsämnen. CalculEat fokuserar på kroppskompositionsmål — TDEE-precision, bulk/cut-stöd och att kaloriloggningen faktiskt driver beslut, inte bara registrerar vad du ätit.',
-  },
-]
-
-const PAGE_SCHEMA = [
-  {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
-    headline: 'MyFitnessPal vs CalculEat — Vilken kaloriräknare är bäst? (2026)',
-    description:
-      'Jämförelse av MyFitnessPal och CalculEat. Vilken app ger dig bäst precision för viktnedgång, bulk och kroppskompositionsmål?',
-    url: CANONICAL,
-    publisher: { '@type': 'Organization', name: 'CalculEat', url: 'https://calculeat.se' },
-    inLanguage: 'sv-SE',
-  },
-  {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'CalculEat', item: 'https://calculeat.se/' },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: 'Jämförelser',
-        item: 'https://calculeat.se/jamfor',
-      },
-      {
-        '@type': 'ListItem',
-        position: 3,
-        name: 'MyFitnessPal vs CalculEat',
-        item: CANONICAL,
-      },
-    ],
-  },
-]
+import { getPageConfigByKey, getHreflangAlternates } from '@/lib/config/pages'
+import type { FaqItem } from '@/components/article/FaqBlock'
 
 type CellType = 'yes' | 'no' | 'partial'
+type RelatedLink = { href: string; label: string }
+type LocaleRow = { feature: string; note: string | null }
 
-const COMPARISON_ROWS: {
-  feature: string
-  mfp: CellType
-  ce: CellType
-  note?: string
-}[] = [
-  { feature: 'Kaloriloggning', mfp: 'yes', ce: 'yes' },
-  { feature: 'Stor matdatabas', mfp: 'yes', ce: 'partial', note: 'Livsmedelsverket + USDA' },
-  {
-    feature: 'TDEE-beräkning',
-    mfp: 'partial',
-    ce: 'yes',
-    note: 'MFP ger grundläggande aktivitetsnivå',
-  },
-  {
-    feature: 'Metabolisk kalibrering',
-    mfp: 'no',
-    ce: 'yes',
-    note: 'Justeras baserat på verklig viktförändring',
-  },
-  { feature: 'Bulk/Cut-faser', mfp: 'no', ce: 'yes', note: 'Separata mål per fas' },
-  {
-    feature: 'Reverse diet-stöd',
-    mfp: 'no',
-    ce: 'yes',
-    note: 'Strukturerad övergång efter cut',
-  },
-  {
-    feature: 'Automatisk målanpassning',
-    mfp: 'no',
-    ce: 'yes',
-    note: 'Kalorimål anpassas till vald fas',
-  },
-  {
-    feature: 'Proteinmål per fas',
-    mfp: 'partial',
-    ce: 'yes',
-    note: 'MFP ger fast proteinprocent',
-  },
-  { feature: 'Makroplanering', mfp: 'yes', ce: 'yes' },
-  { feature: 'Streckkodsskanning', mfp: 'yes', ce: 'yes' },
-  { feature: 'Progress tracking', mfp: 'yes', ce: 'yes' },
-  { feature: 'Premium-krav för kärn-features', mfp: 'yes', ce: 'no', note: 'CalculEat är gratis' },
-]
-
+// Cell logic stays in TSX — pure UI
 function Cell({ type }: { type: CellType }) {
   if (type === 'yes')
     return (
@@ -136,16 +35,91 @@ function Cell({ type }: { type: CellType }) {
   )
 }
 
+// CellType values stay in TSX — not translatable content
+const CELL_DATA: { mfp: CellType; ce: CellType }[] = [
+  { mfp: 'yes', ce: 'yes' },
+  { mfp: 'yes', ce: 'partial' },
+  { mfp: 'partial', ce: 'yes' },
+  { mfp: 'no', ce: 'yes' },
+  { mfp: 'no', ce: 'yes' },
+  { mfp: 'no', ce: 'yes' },
+  { mfp: 'no', ce: 'yes' },
+  { mfp: 'partial', ce: 'yes' },
+  { mfp: 'yes', ce: 'yes' },
+  { mfp: 'yes', ce: 'yes' },
+  { mfp: 'yes', ce: 'yes' },
+  { mfp: 'yes', ce: 'no' },
+]
+
+const pageConfig = getPageConfigByKey('myfitnesspal-vs-calculeat')!
+const hreflangAlternates = getHreflangAlternates(pageConfig)
+
 export default function MyFitnessPalVsCalculEatPage() {
+  const { pathname } = useLocation()
+  const lng = pathname.startsWith('/en/') ? 'en' : 'sv'
+  const { t } = useTranslation('pages-compare', { lng })
+
+  const localeEntry = pageConfig.locales[lng] ?? pageConfig.locales.sv!
+  const faqItems = t('myfitnesspal-vs-calculeat.faq', {
+    returnObjects: true,
+  }) as unknown as FaqItem[]
+  const localeRows = t('myfitnesspal-vs-calculeat.comparisonRows', {
+    returnObjects: true,
+  }) as unknown as LocaleRow[]
+  const relatedCalcs = t('myfitnesspal-vs-calculeat.related.calculators', {
+    returnObjects: true,
+  }) as unknown as RelatedLink[]
+  const relatedArticles = t('myfitnesspal-vs-calculeat.related.articles', {
+    returnObjects: true,
+  }) as unknown as RelatedLink[]
+  const quickPoints = t('myfitnesspal-vs-calculeat.quickAnswer.points', {
+    returnObjects: true,
+  }) as unknown as string[]
+
+  const pageSchema = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: t('myfitnesspal-vs-calculeat.schema.headline'),
+      description: t('myfitnesspal-vs-calculeat.schema.description'),
+      url: localeEntry.canonical,
+      publisher: { '@type': 'Organization', name: 'CalculEat', url: 'https://calculeat.se' },
+      inLanguage: lng === 'en' ? 'en' : 'sv-SE',
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'CalculEat', item: 'https://calculeat.se/' },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: t('myfitnesspal-vs-calculeat.breadcrumb.comparisons'),
+          item: `https://calculeat.se/${lng === 'en' ? 'en/compare' : 'jamfor'}`,
+        },
+        {
+          '@type': 'ListItem',
+          position: 3,
+          name: t('myfitnesspal-vs-calculeat.breadcrumb.pageLabel'),
+          item: localeEntry.canonical,
+        },
+      ],
+    },
+  ]
+
+  const calcHubHref = lng === 'en' ? '/en/calculators' : '/kalkylatorer'
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Seo
-        title="MyFitnessPal vs CalculEat — Vilken kaloriräknare är bäst? (2026)"
-        description="Jämförelse av MyFitnessPal och CalculEat. Vilken app ger dig bäst precision, bulk/cut-stöd och TDEE-kalibrering för ditt mål? Objektiv genomgång."
-        canonical={CANONICAL}
+        title={t('myfitnesspal-vs-calculeat.seo.title')}
+        description={t('myfitnesspal-vs-calculeat.seo.description')}
+        canonical={localeEntry.canonical}
+        hreflangAlternates={hreflangAlternates}
+        locale={lng === 'en' ? 'en_US' : 'sv_SE'}
         type="article"
       />
-      <JsonLd schema={PAGE_SCHEMA} />
+      <JsonLd schema={pageSchema} />
 
       <SiteHeader />
 
@@ -157,43 +131,40 @@ export default function MyFitnessPalVsCalculEatPage() {
               CalculEat
             </Link>
             <span>/</span>
-            <span className="text-neutral-700">Jämförelser</span>
+            <span className="text-neutral-700">
+              {t('myfitnesspal-vs-calculeat.breadcrumb.comparisons')}
+            </span>
             <span>/</span>
-            <span className="text-neutral-700">MyFitnessPal vs CalculEat</span>
+            <span className="text-neutral-700">
+              {t('myfitnesspal-vs-calculeat.breadcrumb.pageLabel')}
+            </span>
           </nav>
 
           <h1 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-3 leading-tight">
-            MyFitnessPal vs CalculEat — Vilken kaloriräknare passar dig bäst?
+            {t('myfitnesspal-vs-calculeat.h1')}
           </h1>
 
-          {/* Winner summary box */}
+          {/* Quick answer box */}
           <div className="rounded-xl border border-primary-200 bg-primary-50 p-5 mb-6">
             <p className="text-xs font-semibold text-primary-500 uppercase tracking-wider mb-2">
-              Snabbsvar
+              {t('myfitnesspal-vs-calculeat.quickAnswer.label')}
             </p>
             <p className="text-sm font-semibold text-primary-900 mb-3">
-              CalculEat vinner för den som vill ha precision — inte bara loggning.
+              {t('myfitnesspal-vs-calculeat.quickAnswer.verdict')}
             </p>
             <ul className="space-y-1.5 text-sm text-primary-800">
-              <li className="flex items-start gap-2">
-                <Check className="h-4 w-4 text-primary-600 mt-0.5 shrink-0" /> Individuellt TDEE —
-                inte en populationsformel
-              </li>
-              <li className="flex items-start gap-2">
-                <Check className="h-4 w-4 text-primary-600 mt-0.5 shrink-0" /> Stöd för
-                cut/bulk-cykler och reverse diet inbyggt
-              </li>
-              <li className="flex items-start gap-2">
-                <Check className="h-4 w-4 text-primary-600 mt-0.5 shrink-0" /> Gratis — MFPs
-                kärn-features kräver premium
-              </li>
+              {quickPoints.map(pt => (
+                <li key={pt} className="flex items-start gap-2">
+                  <Check className="h-4 w-4 text-primary-600 mt-0.5 shrink-0" /> {pt}
+                </li>
+              ))}
             </ul>
             <div className="mt-4 flex flex-col sm:flex-row gap-2">
               <Link
-                to="/kalkylatorer"
+                to={calcHubHref}
                 className="inline-flex items-center justify-center gap-2 bg-primary-600 text-white font-semibold px-4 py-2.5 rounded-lg hover:bg-primary-700 transition-colors text-sm"
               >
-                Räkna ut ditt TDEE gratis
+                {t('myfitnesspal-vs-calculeat.quickAnswer.ctaCalc')}
                 <ArrowRight className="h-4 w-4" />
               </Link>
               <GuestOnly>
@@ -201,52 +172,47 @@ export default function MyFitnessPalVsCalculEatPage() {
                   to="/register"
                   className="inline-flex items-center justify-center gap-2 border border-primary-300 text-primary-700 font-medium px-4 py-2.5 rounded-lg hover:bg-primary-100 transition-colors text-sm"
                 >
-                  Skapa konto
+                  {t('myfitnesspal-vs-calculeat.quickAnswer.ctaRegister')}
                 </Link>
               </GuestOnly>
             </div>
           </div>
 
           <p className="text-base text-neutral-600 leading-relaxed mb-8">
-            Båda apparna låter dig logga kalorier. Skillnaden är vad de gör med den informationen.
-            MyFitnessPal är ett loggningsverktyg. CalculEat är designat för att kaloriloggningen
-            faktiskt ska driva beslut — rätt kalorimål för ditt mål, anpassat till din kropp.
+            {t('myfitnesspal-vs-calculeat.intro')}
           </p>
 
           {/* Comparison table */}
           <section className="mb-10">
-            <h2 className="text-xl font-semibold text-neutral-900 mb-4">Snabb jämförelse</h2>
+            <h2 className="text-xl font-semibold text-neutral-900 mb-4">
+              {t('myfitnesspal-vs-calculeat.comparisonTable.h2')}
+            </h2>
             <div className="rounded-2xl border border-neutral-200 overflow-hidden">
-              {/* Header */}
               <div className="grid grid-cols-[1fr_auto_auto] gap-0 bg-neutral-50 border-b border-neutral-200">
                 <div className="px-4 py-3 text-xs font-semibold text-neutral-500 uppercase tracking-wider">
-                  Funktion
+                  {t('myfitnesspal-vs-calculeat.comparisonTable.colFeature')}
                 </div>
                 <div className="px-4 py-3 text-xs font-semibold text-neutral-500 uppercase tracking-wider text-center w-28">
-                  MyFitnessPal
+                  {t('myfitnesspal-vs-calculeat.comparisonTable.colOther')}
                 </div>
                 <div className="px-4 py-3 text-xs font-semibold text-primary-600 uppercase tracking-wider text-center w-28">
-                  CalculEat
+                  {t('myfitnesspal-vs-calculeat.comparisonTable.colCalculEat')}
                 </div>
               </div>
-
-              {/* Rows */}
-              {COMPARISON_ROWS.map(({ feature, mfp, ce, note }, i) => (
+              {localeRows.map((row, i) => (
                 <div
-                  key={feature}
-                  className={`grid grid-cols-[1fr_auto_auto] gap-0 border-b border-neutral-100 last:border-0 ${
-                    i % 2 === 0 ? 'bg-white' : 'bg-neutral-50/50'
-                  }`}
+                  key={row.feature}
+                  className={`grid grid-cols-[1fr_auto_auto] gap-0 border-b border-neutral-100 last:border-0 ${i % 2 === 0 ? 'bg-white' : 'bg-neutral-50/50'}`}
                 >
                   <div className="px-4 py-3">
-                    <div className="text-sm text-neutral-800 font-medium">{feature}</div>
-                    {note && <div className="text-xs text-neutral-400 mt-0.5">{note}</div>}
+                    <div className="text-sm text-neutral-800 font-medium">{row.feature}</div>
+                    {row.note && <div className="text-xs text-neutral-400 mt-0.5">{row.note}</div>}
                   </div>
                   <div className="px-4 py-3 flex items-center justify-center w-28">
-                    <Cell type={mfp} />
+                    <Cell type={CELL_DATA[i]?.mfp ?? 'no'} />
                   </div>
                   <div className="px-4 py-3 flex items-center justify-center w-28">
-                    <Cell type={ce} />
+                    <Cell type={CELL_DATA[i]?.ce ?? 'no'} />
                   </div>
                 </div>
               ))}
@@ -256,24 +222,24 @@ export default function MyFitnessPalVsCalculEatPage() {
                 <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-green-100">
                   <Check className="h-3 w-3 text-green-700" />
                 </span>
-                Ja / fullt stöd
+                {t('myfitnesspal-vs-calculeat.comparisonTable.legendYes')}
               </span>
               <span className="flex items-center gap-1.5">
                 <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-yellow-100">
                   <Minus className="h-3 w-3 text-yellow-600" />
                 </span>
-                Delvis
+                {t('myfitnesspal-vs-calculeat.comparisonTable.legendPartial')}
               </span>
               <span className="flex items-center gap-1.5">
                 <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-red-100">
                   <X className="h-3 w-3 text-red-600" />
                 </span>
-                Saknas
+                {t('myfitnesspal-vs-calculeat.comparisonTable.legendNo')}
               </span>
             </div>
           </section>
 
-          {/* For whom */}
+          {/* Article prose — stays in TSX */}
           <section className="space-y-5 text-neutral-700 text-sm leading-relaxed mb-8">
             <h2 className="text-xl font-semibold text-neutral-900">För vem passar MyFitnessPal?</h2>
             <p>
@@ -393,45 +359,44 @@ export default function MyFitnessPalVsCalculEatPage() {
           <div className="rounded-xl border border-primary-200 bg-primary-50 p-5 mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-4">
             <div className="flex-1">
               <p className="text-sm font-semibold text-primary-900 mb-0.5">
-                Redo att testa ett mer precist alternativ?
+                {t('myfitnesspal-vs-calculeat.midPageCta.title')}
               </p>
               <p className="text-xs text-primary-700">
-                Räkna ut ditt TDEE, sätt rätt kalorimål och logga mot siffror som faktiskt stämmer.
+                {t('myfitnesspal-vs-calculeat.midPageCta.body')}
               </p>
             </div>
             <Link
-              to="/kalkylatorer"
+              to={calcHubHref}
               className="shrink-0 inline-flex items-center gap-2 bg-primary-600 text-white font-semibold px-4 py-2.5 rounded-lg hover:bg-primary-700 transition-colors text-sm"
             >
-              Testa gratis →
+              {t('myfitnesspal-vs-calculeat.midPageCta.button')}
             </Link>
           </div>
 
-          <FaqBlock items={FAQ_ITEMS} />
+          <FaqBlock items={faqItems} title={t('myfitnesspal-vs-calculeat.faqTitle')} />
 
-          {/* CTA */}
+          {/* Bottom CTA */}
           <GuestOnly>
             <section className="mt-10 rounded-2xl bg-primary-600 p-8 text-center">
               <h2 className="text-xl font-bold text-white mb-2">
-                Prova ett mer precist alternativ — gratis
+                {t('myfitnesspal-vs-calculeat.bottomCta.h2')}
               </h2>
               <p className="text-primary-200 text-sm mb-6 max-w-md mx-auto">
-                Räkna ut ditt faktiska TDEE, välj din fas och låt CalculEat sätta rätt kalorimål
-                direkt. Inget kreditkort, inga dolda kostnader.
+                {t('myfitnesspal-vs-calculeat.bottomCta.body')}
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Link
                   to="/register"
                   className="inline-flex items-center justify-center gap-2 bg-white text-primary-700 font-semibold px-6 py-3 rounded-xl hover:bg-primary-50 transition-colors text-sm"
                 >
-                  Skapa gratis konto
+                  {t('myfitnesspal-vs-calculeat.bottomCta.primary')}
                   <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link
-                  to="/kalkylatorer"
+                  to={calcHubHref}
                   className="inline-flex items-center justify-center gap-2 border border-primary-400 text-white font-medium px-6 py-3 rounded-xl hover:bg-primary-700 transition-colors text-sm"
                 >
-                  Räkna ut ditt TDEE först
+                  {t('myfitnesspal-vs-calculeat.bottomCta.secondary')}
                 </Link>
               </div>
             </section>
@@ -441,15 +406,10 @@ export default function MyFitnessPalVsCalculEatPage() {
           <section className="mt-10 pt-8 border-t border-neutral-200 grid sm:grid-cols-2 gap-6">
             <div>
               <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3">
-                Relaterade kalkylatorer
+                {t('myfitnesspal-vs-calculeat.related.calculatorsTitle')}
               </h3>
               <ul className="space-y-2">
-                {[
-                  { href: '/kalkylatorer/tdee-kalkylator', label: 'TDEE Kalkylator' },
-                  { href: '/kalkylatorer/proteinbehov', label: 'Proteinbehov Kalkylator' },
-                  { href: '/kalkylatorer/cut-kalkylator', label: 'Cut & Deff Kalkylator' },
-                  { href: '/kalkylatorer/bulk-kalkylator', label: 'Bulk Kalkylator' },
-                ].map(l => (
+                {relatedCalcs.map(l => (
                   <li key={l.href}>
                     <Link
                       to={l.href}
@@ -464,15 +424,10 @@ export default function MyFitnessPalVsCalculEatPage() {
             </div>
             <div>
               <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3">
-                Relaterade artiklar
+                {t('myfitnesspal-vs-calculeat.related.articlesTitle')}
               </h3>
               <ul className="space-y-2">
-                {[
-                  { href: '/artiklar/kaloribehov', label: 'Kaloribehov — komplett guide' },
-                  { href: '/artiklar/vad-ar-tdee', label: 'Vad är TDEE?' },
-                  { href: '/artiklar/reverse-diet', label: 'Reverse Diet' },
-                  { href: '/artiklar/bulk-och-cut', label: 'Bulk och Cut' },
-                ].map(l => (
+                {relatedArticles.map(l => (
                   <li key={l.href}>
                     <Link
                       to={l.href}

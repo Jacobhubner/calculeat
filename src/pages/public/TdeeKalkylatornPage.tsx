@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { ArrowRight, Calculator, Info } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import SiteHeader from '@/components/layout/SiteHeader'
 import SiteFooter from '@/components/layout/SiteFooter'
 import { Seo } from '@/components/seo/Seo'
@@ -9,6 +10,7 @@ import { FaqBlock } from '@/components/article/FaqBlock'
 import { mifflinStJeor } from '@/lib/calculations/bmr'
 import type { Gender } from '@/lib/types'
 import { GuestOnly } from '@/components/GuestOnly'
+import { getPageConfigByKey, getHreflangAlternates } from '@/lib/config/pages'
 
 type ActivityLevel =
   | 'Sedentary'
@@ -17,35 +19,8 @@ type ActivityLevel =
   | 'Very active'
   | 'Extremely active'
 
-const ACTIVITY_LEVELS: { value: ActivityLevel; label: string; description: string }[] = [
-  {
-    value: 'Sedentary',
-    label: 'Stillasittande',
-    description: 'Kontorsjobb eller hemarbete, liten vardagsrörelse, inga träningspass',
-  },
-  {
-    value: 'Lightly active',
-    label: 'Lätt aktiv',
-    description: 'Lätt träning 1–3 dagar/vecka, t.ex. promenader, yoga eller gym på fritiden',
-  },
-  {
-    value: 'Moderately active',
-    label: 'Måttligt aktiv',
-    description:
-      'Regelbunden träning 3–5 dagar/vecka med måttlig intensitet, t.ex. löpning eller styrketräning',
-  },
-  {
-    value: 'Very active',
-    label: 'Mycket aktiv',
-    description: 'Hård träning nästan varje dag (6–7 dagar/vecka) eller fysiskt aktivt arbete',
-  },
-  {
-    value: 'Extremely active',
-    label: 'Extremt aktiv',
-    description:
-      'Tungt fysiskt arbete kombinerat med daglig intensiv träning, t.ex. elitidrottare eller byggnadsarbetare som dessutom tränar',
-  },
-]
+type ActivityLevelConfig = { value: ActivityLevel; label: string; description: string }
+type FaqItem = { question: string; answer: string }
 
 const PAL_MULTIPLIERS: Record<ActivityLevel, number> = {
   Sedentary: 1.2,
@@ -55,65 +30,61 @@ const PAL_MULTIPLIERS: Record<ActivityLevel, number> = {
   'Extremely active': 1.9,
 }
 
-const FAQ_ITEMS = [
-  {
-    question: 'Är TDEE detsamma som kaloribehov?',
-    answer:
-      'Ja, i praktiken används begreppen synonymt. TDEE (Total Daily Energy Expenditure) är den totala mängden kalorier du förbränner per dag — och det är detta tal du bör matcha eller avvika från beroende på ditt mål. Vill du gå ner i vikt äter du under TDEE, vill du bygga muskler äter du över.',
-  },
-  {
-    question: 'Hur noggrant är en TDEE-kalkylator?',
-    answer:
-      'En TDEE-kalkylator ger en uppskattning baserad på statistiska formler — Mifflin-St Jeor för BMR multiplicerat med en PAL-faktor (1.2–1.9) för aktivitetsnivå. Felmarginal är typiskt ±10–15%. Individuella faktorer som muskelmassa, hormonbalans och metabolism påverkar det verkliga värdet. Använd resultatet som startpunkt och justera efter hur din vikt faktiskt förändras.',
-  },
-  {
-    question: 'Hur stor kaloribrist ska man ha för viktnedgång?',
-    answer:
-      'En kaloribrist på 300–500 kcal/dag under TDEE är ett hållbart tempo och leder till ca 0,3–0,5 kg viktnedgång per vecka. En brist på mer än 1000 kcal/dag ökar risken för muskelmassaförlust och är sällan hållbar på lång sikt.',
-  },
-  {
-    question: 'Hur förändras mitt TDEE om jag tränar mer?',
-    answer:
-      'När du ökar din träningsvolym stiger ditt TDEE — du förbränner fler kalorier. Kom dock ihåg att kroppen kan kompensera genom att minska oplanerad rörelse (NEAT). Praktiskt: om vikten planar ut trots träningsökning, höj inte kalorier direkt — vänta 2–3 veckor och se hur kroppen svarar.',
-  },
-  {
-    question: 'Vad är skillnaden mellan BMR och TDEE?',
-    answer:
-      'BMR (Basal Metabolic Rate) är de kalorier din kropp förbränner i absolut vila — enbart för att hålla organ igång. TDEE inkluderar dessutom all fysisk aktivitet, NEAT (oplanerad rörelse) och TEF (matens termiska effekt). TDEE är alltid högre än BMR och är det relevanta talet för kaloriplanering.',
-  },
-]
-
-const CANONICAL = 'https://calculeat.se/kalkylatorer/tdee-kalkylator'
-
-const PAGE_SCHEMA = [
-  {
-    '@context': 'https://schema.org',
-    '@type': 'WebApplication',
-    name: 'TDEE Kalkylator',
-    url: CANONICAL,
-    applicationCategory: 'HealthApplication',
-    operatingSystem: 'Web',
-    description:
-      'Gratis TDEE-kalkylator som räknar ut ditt totala dagliga kaloribehov baserat på ålder, vikt, längd, kön och aktivitetsnivå.',
-    offers: { '@type': 'Offer', price: '0', priceCurrency: 'SEK' },
-  },
-  {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'CalculEat', item: 'https://calculeat.se/' },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: 'Kalkylatorer',
-        item: 'https://calculeat.se/kalkylatorer',
-      },
-      { '@type': 'ListItem', position: 3, name: 'TDEE Kalkylator', item: CANONICAL },
-    ],
-  },
-]
+const pageConfig = getPageConfigByKey('tdee-calculator')!
+const hreflangAlternates = getHreflangAlternates(pageConfig)
 
 export default function TdeeKalkylatornPage() {
+  const { pathname } = useLocation()
+  const lng = pathname.startsWith('/en/') ? 'en' : 'sv'
+  const { t } = useTranslation('pages-tools', { lng })
+
+  const localeEntry = pageConfig.locales[lng] ?? pageConfig.locales.sv!
+  const activityLevels = t('tdee-calculator.activityLevels', {
+    returnObjects: true,
+  }) as unknown as ActivityLevelConfig[]
+  const faqItems = t('tdee-calculator.faq', { returnObjects: true }) as unknown as FaqItem[]
+  const relatedCalcs = t('tdee-calculator.related.calculators', {
+    returnObjects: true,
+  }) as unknown as { href: string; label: string }[]
+  const relatedArticles = t('tdee-calculator.related.articles', {
+    returnObjects: true,
+  }) as unknown as { href: string; label: string }[]
+  const ctaFeatures = t('tdee-calculator.cta.gated.features', {
+    returnObjects: true,
+  }) as unknown as string[]
+
+  const pageSchema = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'WebApplication',
+      name: t('tdee-calculator.schema.webAppName'),
+      url: localeEntry.canonical,
+      applicationCategory: 'HealthApplication',
+      operatingSystem: 'Web',
+      description: t('tdee-calculator.schema.webAppDescription'),
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'SEK' },
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'CalculEat', item: 'https://calculeat.se/' },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: t('tdee-calculator.schema.breadcrumb.hubLabel'),
+          item: `https://calculeat.se${t('tdee-calculator.schema.breadcrumb.hubPath')}`,
+        },
+        {
+          '@type': 'ListItem',
+          position: 3,
+          name: t('tdee-calculator.schema.breadcrumb.pageLabel'),
+          item: localeEntry.canonical,
+        },
+      ],
+    },
+  ]
+
   const [weight, setWeight] = useState('')
   const [height, setHeight] = useState('')
   const [age, setAge] = useState('')
@@ -144,11 +115,13 @@ export default function TdeeKalkylatornPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <Seo
-        title="TDEE Kalkylator — Räkna ut ditt kaloribehov exakt (2026)"
-        description="Gratis TDEE-kalkylator. Räkna ut ditt totala dagliga kaloribehov baserat på ålder, vikt, längd och aktivitetsnivå. Resultat direkt — inget konto krävs."
-        canonical={CANONICAL}
+        title={t('tdee-calculator.seo.title')}
+        description={t('tdee-calculator.seo.description')}
+        canonical={localeEntry.canonical}
+        hreflangAlternates={hreflangAlternates}
+        locale={lng === 'en' ? 'en_US' : 'sv_SE'}
       />
-      <JsonLd schema={PAGE_SCHEMA} />
+      <JsonLd schema={pageSchema} />
 
       <SiteHeader />
 
@@ -162,23 +135,26 @@ export default function TdeeKalkylatornPage() {
                 CalculEat
               </Link>
               <span>/</span>
-              <Link to="/kalkylatorer" className="hover:text-neutral-700 transition-colors">
-                Kalkylatorer
+              <Link
+                to={t('tdee-calculator.schema.breadcrumb.hubPath')}
+                className="hover:text-neutral-700 transition-colors"
+              >
+                {t('tdee-calculator.schema.breadcrumb.hubLabel')}
               </Link>
               <span>/</span>
-              <span className="text-neutral-700">TDEE Kalkylator</span>
+              <span className="text-neutral-700">
+                {t('tdee-calculator.schema.breadcrumb.pageLabel')}
+              </span>
             </nav>
 
             <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-5 leading-tight">
               <span className="bg-gradient-to-r from-primary-600 to-accent-500 bg-clip-text text-transparent">
-                TDEE
+                {t('tdee-calculator.h1Prefix')}
               </span>{' '}
-              Kalkylator
+              {t('tdee-calculator.h1Suffix')}
             </h1>
             <p className="text-lg md:text-xl text-neutral-600 leading-relaxed max-w-2xl">
-              TDEE är den totala mängden kalorier din kropp förbränner per dag. Fyll i dina
-              uppgifter för att räkna ut ditt individuella kaloribehov — gratis, direkt och utan
-              registrering.
+              {t('tdee-calculator.intro')}
             </p>
           </div>
         </section>
@@ -189,19 +165,23 @@ export default function TdeeKalkylatornPage() {
             <div className="rounded-2xl border border-neutral-200 shadow-sm overflow-hidden bg-white">
               <div className="bg-primary-50 px-6 py-4 border-b border-primary-100 flex items-center gap-2">
                 <Calculator className="h-5 w-5 text-primary-600" />
-                <span className="font-semibold text-primary-900">Beräkna ditt TDEE</span>
+                <span className="font-semibold text-primary-900">
+                  {t('tdee-calculator.calculator.header')}
+                </span>
               </div>
 
               <div className="p-6 space-y-5">
                 {/* Gender */}
                 <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-2">Kön</label>
+                  <label className="block text-sm font-medium text-neutral-700 mb-2">
+                    {t('tdee-calculator.calculator.genderLabel')}
+                  </label>
                   <div className="grid grid-cols-3 gap-2">
                     {(
                       [
-                        { value: 'male', label: 'Man' },
-                        { value: 'female', label: 'Kvinna' },
-                        { value: 'other', label: 'Annat' },
+                        { value: 'male', label: t('tdee-calculator.calculator.genderMale') },
+                        { value: 'female', label: t('tdee-calculator.calculator.genderFemale') },
+                        { value: 'other', label: t('tdee-calculator.calculator.genderOther') },
                       ] as { value: Gender | 'other'; label: string }[]
                     ).map(opt => (
                       <button
@@ -225,7 +205,7 @@ export default function TdeeKalkylatornPage() {
                     <div className="mt-2 flex items-start gap-2 rounded-lg bg-amber-50 border border-amber-200 px-3 py-2.5">
                       <Info className="h-4 w-4 text-amber-600 flex-shrink-0 mt-0.5" />
                       <p className="text-sm text-amber-800">
-                        Ogiltigt val. Finns bara två kön, dumsnut.
+                        {t('tdee-calculator.calculator.genderError')}
                       </p>
                     </div>
                   )}
@@ -234,16 +214,22 @@ export default function TdeeKalkylatornPage() {
                 {/* Age, Weight, Height */}
                 <div className="grid grid-cols-3 gap-4">
                   {[
-                    { label: 'Ålder', unit: 'år', value: age, setter: setAge, placeholder: '30' },
                     {
-                      label: 'Vikt',
+                      label: t('tdee-calculator.calculator.ageLabel'),
+                      unit: t('tdee-calculator.calculator.ageUnit'),
+                      value: age,
+                      setter: setAge,
+                      placeholder: '30',
+                    },
+                    {
+                      label: t('tdee-calculator.calculator.weightLabel'),
                       unit: 'kg',
                       value: weight,
                       setter: setWeight,
                       placeholder: '75',
                     },
                     {
-                      label: 'Längd',
+                      label: t('tdee-calculator.calculator.heightLabel'),
                       unit: 'cm',
                       value: height,
                       setter: setHeight,
@@ -275,10 +261,10 @@ export default function TdeeKalkylatornPage() {
                 {/* Activity Level */}
                 <div>
                   <label className="block text-sm font-medium text-neutral-700 mb-2">
-                    Aktivitetsnivå
+                    {t('tdee-calculator.calculator.activityLabel')}
                   </label>
                   <div className="space-y-2">
-                    {ACTIVITY_LEVELS.map(({ value, label, description }) => (
+                    {activityLevels.map(({ value, label, description }) => (
                       <button
                         key={value}
                         onClick={() => setActivityLevel(value)}
@@ -313,79 +299,96 @@ export default function TdeeKalkylatornPage() {
                   disabled={!bmr || !tdee}
                   className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-neutral-200 disabled:text-neutral-400 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm"
                 >
-                  Beräkna mitt TDEE
+                  {t('tdee-calculator.calculator.button')}
                 </button>
               </div>
 
               {/* Results */}
               {hasResult && tdee && bmr && (
                 <div className="border-t border-neutral-100 bg-neutral-50 px-6 py-6">
-                  <h2 className="font-semibold text-neutral-800 mb-4">Dina resultat</h2>
+                  <h2 className="font-semibold text-neutral-800 mb-4">
+                    {t('tdee-calculator.calculator.resultsTitle')}
+                  </h2>
 
                   <div className="grid grid-cols-2 gap-4 mb-4">
                     <div className="rounded-xl bg-white border border-neutral-200 p-4 text-center">
                       <div className="text-2xl font-bold text-primary-600">{Math.round(bmr)}</div>
-                      <div className="text-xs text-neutral-500 mt-0.5">BMR (kcal/dag)</div>
-                      <div className="text-xs text-neutral-400">Kalorier i absolut vila</div>
+                      <div className="text-xs text-neutral-500 mt-0.5">
+                        {t('tdee-calculator.calculator.bmrLabel')}
+                      </div>
+                      <div className="text-xs text-neutral-400">
+                        {t('tdee-calculator.calculator.bmrSub')}
+                      </div>
                     </div>
                     <div className="rounded-xl bg-primary-600 p-4 text-center">
                       <div className="text-2xl font-bold text-white">{tdee}</div>
-                      <div className="text-xs text-primary-200 mt-0.5">TDEE (kcal/dag)</div>
-                      <div className="text-xs text-primary-300">Ditt totala kaloribehov</div>
+                      <div className="text-xs text-primary-200 mt-0.5">
+                        {t('tdee-calculator.calculator.tdeeLabel')}
+                      </div>
+                      <div className="text-xs text-primary-300">
+                        {t('tdee-calculator.calculator.tdeeSub')}
+                      </div>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3 mb-4">
                     <div className="rounded-lg bg-primary-50 border border-primary-100 p-3 text-center">
                       <div className="text-lg font-semibold text-primary-700">{cutTarget}</div>
-                      <div className="text-xs text-primary-600">Mål för viktnedgång</div>
-                      <div className="text-xs text-primary-400">−400 kcal/dag</div>
+                      <div className="text-xs text-primary-600">
+                        {t('tdee-calculator.calculator.cutLabel')}
+                      </div>
+                      <div className="text-xs text-primary-400">
+                        {t('tdee-calculator.calculator.cutSub')}
+                      </div>
                     </div>
                     <div className="rounded-lg bg-accent-50 border border-accent-100 p-3 text-center">
                       <div className="text-lg font-semibold text-accent-700">{bulkTarget}</div>
-                      <div className="text-xs text-accent-600">Mål för muskeluppbyggnad</div>
-                      <div className="text-xs text-accent-400">+300 kcal/dag</div>
+                      <div className="text-xs text-accent-600">
+                        {t('tdee-calculator.calculator.bulkLabel')}
+                      </div>
+                      <div className="text-xs text-accent-400">
+                        {t('tdee-calculator.calculator.bulkSub')}
+                      </div>
                     </div>
                   </div>
 
                   <p className="text-xs text-neutral-400 text-center mb-2">
-                    Baserat på Mifflin-St Jeor-formeln + PAL-faktorer (1.2–1.9) — ett etablerat
-                    system för att uppskatta dagligt kaloribehov.
+                    {t('tdee-calculator.calculator.formulaNote')}
                   </p>
                   <p className="text-xs text-neutral-400 text-center mb-4">
-                    Målen ovan är fasta riktvärden. Hur stort underskott eller överskott de faktiskt
-                    innebär beror på din storlek — för en liten person kan −400 kcal vara ganska
-                    aggressivt, för en stor person knappt märkbart. Med ett konto anpassas målen
-                    till ditt faktiska kaloribehov.
+                    {t('tdee-calculator.calculator.adjustNote')}
                   </p>
 
                   <GuestOnly>
                     {/* Gated CTA */}
                     <div className="rounded-xl border border-neutral-200 bg-white p-5 text-center shadow-sm">
                       <p className="text-sm font-bold text-neutral-900 mb-1">
-                        Få en personlig plan + följ din utveckling
+                        {t('tdee-calculator.cta.gated.title')}
                       </p>
                       <p className="text-xs text-neutral-600 mb-4">
-                        Spara ditt TDEE, sätt kalorimål för din fas (cut/bulk/maintenance), logga
-                        mat och se hur din vikt rör sig mot målet.
+                        {t('tdee-calculator.cta.gated.body')}
                       </p>
                       <Link
                         to="/register"
                         className="inline-flex items-center justify-center gap-2 bg-primary-600 text-white font-semibold px-5 py-2.5 rounded-lg hover:bg-primary-700 transition-colors text-sm w-full sm:w-auto"
                       >
-                        Skapa gratis konto
+                        {t('tdee-calculator.cta.gated.button')}
                         <ArrowRight className="h-4 w-4" />
                       </Link>
-                      <p className="text-xs text-neutral-400 mt-2">Inget kreditkort krävs</p>
+                      <p className="text-xs text-neutral-400 mt-2">
+                        {t('tdee-calculator.cta.gated.subtext')}
+                      </p>
                       <div className="mt-3 text-left text-xs space-y-0.5 border-t border-neutral-100 pt-3">
-                        <p className="text-neutral-500 font-medium mb-1">Vad ingår:</p>
-                        <p className="text-neutral-500">✓ Beräkna TDEE — alltid gratis</p>
-                        <p className="text-neutral-500">✓ Spara plan och logga mat — med konto</p>
-                        <p className="text-neutral-500">
-                          ✓ Följ vikttrend och kalibrera mål — med konto
+                        <p className="text-neutral-500 font-medium mb-1">
+                          {t('tdee-calculator.cta.gated.featuresTitle')}
                         </p>
+                        {ctaFeatures.map(f => (
+                          <p key={f} className="text-neutral-500">
+                            ✓ {f}
+                          </p>
+                        ))}
                         <p className="text-neutral-400 mt-1.5 italic">
-                          Fler funktioner i premiumversionen framöver.
+                          {t('tdee-calculator.cta.gated.premium')}
                         </p>
                       </div>
                     </div>
@@ -396,7 +399,7 @@ export default function TdeeKalkylatornPage() {
           </div>
         </section>
 
-        {/* Explanation */}
+        {/* Explanation — prose stays in TSX */}
         <section className="bg-white py-14 border-b border-neutral-100">
           <div className="container mx-auto px-4 max-w-3xl">
             <div className="space-y-6 text-neutral-700 leading-relaxed">
@@ -456,7 +459,7 @@ export default function TdeeKalkylatornPage() {
         {/* FAQ */}
         <section className="bg-neutral-50 py-14 border-b border-neutral-100">
           <div className="container mx-auto px-4 max-w-3xl">
-            <FaqBlock items={FAQ_ITEMS} />
+            <FaqBlock items={faqItems} title={t('tdee-calculator.faqTitle')} />
           </div>
         </section>
 
@@ -465,25 +468,24 @@ export default function TdeeKalkylatornPage() {
           <section className="bg-neutral-900 py-16 md:py-20">
             <div className="container mx-auto px-4 max-w-2xl text-center">
               <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
-                Redo att gå från siffror till resultat?
+                {t('tdee-calculator.cta.bottom.h2')}
               </h2>
               <p className="text-neutral-400 text-base mb-8 max-w-md mx-auto">
-                Du har ditt TDEE. Nästa steg är att logga mat mot rätt mål, följa din vikttrend och
-                kalibrera ditt kalorimål när kroppen svarar.
+                {t('tdee-calculator.cta.bottom.body')}
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Link
                   to="/register"
                   className="inline-flex items-center justify-center gap-2 bg-accent-500 hover:bg-accent-600 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm"
                 >
-                  Skapa gratis konto
+                  {t('tdee-calculator.cta.bottom.primary')}
                   <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link
-                  to="/kalkylatorer/kaloriunderskott"
+                  to={relatedCalcs[0]?.href ?? '/kalkylatorer/kaloriunderskott'}
                   className="inline-flex items-center justify-center gap-2 border border-neutral-600 text-neutral-300 hover:bg-neutral-800 font-medium px-6 py-3 rounded-xl transition-colors text-sm"
                 >
-                  Räkna ut ditt kaloriunderskott
+                  {t('tdee-calculator.cta.bottom.secondary')}
                 </Link>
               </div>
             </div>
@@ -496,17 +498,10 @@ export default function TdeeKalkylatornPage() {
             <div className="grid sm:grid-cols-2 gap-10">
               <div>
                 <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-4">
-                  Relaterade kalkylatorer
+                  {t('tdee-calculator.related.calculatorsTitle')}
                 </h3>
                 <div className="grid gap-3">
-                  {[
-                    { href: '/kalkylatorer/kaloriunderskott', label: 'Kaloribrist Kalkylator' },
-                    { href: '/kalkylatorer/bulk-kalkylator', label: 'Bulk Kalkylator' },
-                    { href: '/kalkylatorer/cut-kalkylator', label: 'Cut & Deff Kalkylator' },
-                    { href: '/kalkylatorer/proteinbehov', label: 'Proteinbehov Kalkylator' },
-                    { href: '/kalkylatorer/bmi-kalkylator', label: 'BMI Kalkylator' },
-                    { href: '/kalkylatorer/bmr-kalkylator', label: 'BMR Kalkylator' },
-                  ].map(l => (
+                  {relatedCalcs.map(l => (
                     <Link
                       key={l.href}
                       to={l.href}
@@ -520,14 +515,10 @@ export default function TdeeKalkylatornPage() {
               </div>
               <div>
                 <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-4">
-                  Relaterade artiklar
+                  {t('tdee-calculator.related.articlesTitle')}
                 </h3>
                 <div className="grid gap-3">
-                  {[
-                    { href: '/artiklar/vad-ar-tdee', label: 'Vad är TDEE?' },
-                    { href: '/artiklar/kaloribrist', label: 'Hur stor kaloribrist?' },
-                    { href: '/artiklar/kaloribehov', label: 'Kaloribehov — komplett guide' },
-                  ].map(l => (
+                  {relatedArticles.map(l => (
                     <Link
                       key={l.href}
                       to={l.href}

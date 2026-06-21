@@ -1,0 +1,675 @@
+{
+  "myfitnesspal-vs-calculeat": {
+    "seo": {
+      "title": "MyFitnessPal vs CalculEat — Vilken kaloriräknare är bäst? (2026)",
+      "description": "Jämförelse av MyFitnessPal och CalculEat. Vilken app ger dig bäst precision, bulk/cut-stöd och TDEE-kalibrering för ditt mål? Objektiv genomgång."
+    },
+    "h1": "MyFitnessPal vs CalculEat — Vilken kaloriräknare passar dig bäst?",
+    "intro": "Båda apparna låter dig logga kalorier. Skillnaden är vad de gör med den informationen. MyFitnessPal är ett loggningsverktyg. CalculEat är designat för att kaloriloggningen faktiskt ska driva beslut — rätt kalorimål för ditt mål, anpassat till din kropp.",
+    "quickAnswer": {
+      "label": "Snabbsvar",
+      "verdict": "CalculEat vinner för den som vill ha precision — inte bara loggning.",
+      "points": [
+        "Individuellt TDEE — inte en populationsformel",
+        "Stöd för cut/bulk-cykler och reverse diet inbyggt",
+        "Gratis — MFPs kärn-features kräver premium"
+      ],
+      "ctaCalc": "Räkna ut ditt TDEE gratis",
+      "ctaRegister": "Skapa konto"
+    },
+    "comparisonTable": {
+      "h2": "Snabb jämförelse",
+      "colFeature": "Funktion",
+      "colOther": "MyFitnessPal",
+      "colCalculEat": "CalculEat",
+      "legendYes": "Ja / fullt stöd",
+      "legendPartial": "Delvis",
+      "legendNo": "Saknas"
+    },
+    "comparisonRows": [
+      { "feature": "Kaloriloggning", "note": null },
+      { "feature": "Stor matdatabas", "note": "Livsmedelsverket + USDA" },
+      { "feature": "TDEE-beräkning", "note": "MFP ger grundläggande aktivitetsnivå" },
+      { "feature": "Metabolisk kalibrering", "note": "Justeras baserat på verklig viktförändring" },
+      { "feature": "Bulk/Cut-faser", "note": "Separata mål per fas" },
+      { "feature": "Reverse diet-stöd", "note": "Strukturerad övergång efter cut" },
+      { "feature": "Automatisk målanpassning", "note": "Kalorimål anpassas till vald fas" },
+      { "feature": "Proteinmål per fas", "note": "MFP ger fast proteinprocent" },
+      { "feature": "Makroplanering", "note": null },
+      { "feature": "Streckkodsskanning", "note": null },
+      { "feature": "Progress tracking", "note": null },
+      { "feature": "Premium-krav för kärn-features", "note": "CalculEat är gratis" }
+    ],
+    "midPageCta": {
+      "title": "Redo att testa ett mer precist alternativ?",
+      "body": "Räkna ut ditt TDEE, sätt rätt kalorimål och logga mot siffror som faktiskt stämmer.",
+      "button": "Testa gratis →"
+    },
+    "bottomCta": {
+      "h2": "Prova ett mer precist alternativ — gratis",
+      "body": "Räkna ut ditt faktiska TDEE, välj din fas och låt CalculEat sätta rätt kalorimål direkt. Inget kreditkort, inga dolda kostnader.",
+      "primary": "Skapa gratis konto",
+      "secondary": "Räkna ut ditt TDEE först"
+    },
+    "faqTitle": "Vanliga frågor",
+    "faq": [
+      {
+        "question": "Är CalculEat bättre än MyFitnessPal?",
+        "answer": "Det beror på vad du använder appen till. MyFitnessPal har en större matdatabas och fler integrationer. CalculEat är bättre om du vill ha precis TDEE-kalibrering, stöd för bulk/cut-cykler, reverse diet-planering och att faktiskt förstå varför du äter det du äter — inte bara logga det. För seriös kroppskompositions-tracking ger CalculEat mer handlingsbara svar."
+      },
+      {
+        "question": "Vad är skillnaden mellan TDEE och kalorimål?",
+        "answer": "Kalorimål i MyFitnessPal är ett statiskt tal du sätter (t.ex. 1800 kcal). TDEE är din faktiska totala energiförbrukning baserat på din kropp och aktivitetsnivå. I CalculEat anpassas ditt kalorimål automatiskt baserat på ditt uppmätta TDEE och ditt specifika mål — cut, bulk eller maintenance — med rätt underskott eller överskott inbyggt."
+      },
+      {
+        "question": "Behöver man verkligen metabolisk kalibrering?",
+        "answer": "Inte alla behöver det — men de flesta som logging länge märker att de \"inte går ner trots att de håller kalorierna\". Det beror oftast på att TDEE-uppskattningen var fel. Metabolisk kalibrering justerar ditt mål baserat på hur din faktiska vikt förändras (eller inte), inte bara formler. Det är skillnaden mellan att gissa och att mäta."
+      },
+      {
+        "question": "Vilken app är bäst för cut och bulk?",
+        "answer": "CalculEat är designat för cut/bulk-cykler: separata mål för varje fas, proteinrekommendation anpassad till fasen, inbyggd reverse diet-logik och TDEE-anpassning. MyFitnessPal kräver att du manuellt ändrar kalorimål och har inget inbyggt stöd för fasbyten eller reverse diet-planering."
+      },
+      {
+        "question": "Finns ett bättre alternativ till MyFitnessPal?",
+        "answer": "Det beror på vad du saknar. Lifesum fokuserar på kostplaner. Cronometer är bäst för mikronäringsämnen. CalculEat fokuserar på kroppskompositionsmål — TDEE-precision, bulk/cut-stöd och att kaloriloggningen faktiskt driver beslut, inte bara registrerar vad du ätit."
+      }
+    ],
+    "related": {
+      "calculatorsTitle": "Relaterade kalkylatorer",
+      "articlesTitle": "Relaterade artiklar",
+      "calculators": [
+        { "href": "/kalkylatorer/tdee-kalkylator", "label": "TDEE Kalkylator" },
+        { "href": "/kalkylatorer/proteinbehov", "label": "Proteinbehov Kalkylator" },
+        { "href": "/kalkylatorer/cut-kalkylator", "label": "Cut & Deff Kalkylator" },
+        { "href": "/kalkylatorer/bulk-kalkylator", "label": "Bulk Kalkylator" }
+      ],
+      "articles": [
+        { "href": "/artiklar/kaloribehov", "label": "Kaloribehov — komplett guide" },
+        { "href": "/artiklar/vad-ar-tdee", "label": "Vad är TDEE?" },
+        { "href": "/artiklar/reverse-diet", "label": "Reverse Diet" },
+        { "href": "/artiklar/bulk-och-cut", "label": "Bulk och Cut" }
+      ]
+    },
+    "breadcrumb": {
+      "comparisons": "Jämförelser",
+      "pageLabel": "MyFitnessPal vs CalculEat"
+    },
+    "schema": {
+      "headline": "MyFitnessPal vs CalculEat — Vilken kaloriräknare är bäst? (2026)",
+      "description": "Jämförelse av MyFitnessPal och CalculEat. Vilken app ger dig bäst precision för viktnedgång, bulk och kroppskompositionsmål?"
+    }
+  },
+  "lifesum-vs-calculeat": {
+    "seo": {
+      "title": "Lifesum vs CalculEat — Vilken kaloriräknare är bäst? (2026)",
+      "description": "Jämförelse av Lifesum och CalculEat. Vilken app passar bäst för viktnedgång, kroppskomposition och TDEE-precision?"
+    },
+    "h1": "Lifesum vs CalculEat — Vilken app passar dig bäst?",
+    "intro": "Lifesum är ett kostprogram-verktyg. CalculEat är ett kroppskompositions-verktyg. De svarar på olika frågor — och passar olika användare.",
+    "quickAnswer": {
+      "label": "Snabbsvar",
+      "verdict": "CalculEat vinner för kroppskompositionsmål — Lifesum för kostprogram och recept.",
+      "points": [
+        "Individuellt TDEE och fasplanering (cut/bulk/maintenance)",
+        "Gratis — Lifesums kärn-features kräver premium",
+        "Metabolisk kalibrering baserat på verklig viktdata"
+      ],
+      "ctaCalc": "Räkna ut ditt TDEE gratis",
+      "ctaRegister": "Skapa konto"
+    },
+    "comparisonTable": {
+      "h2": "Snabb jämförelse",
+      "colFeature": "Funktion",
+      "colOther": "Lifesum",
+      "colCalculEat": "CalculEat",
+      "legendYes": "Ja / fullt stöd",
+      "legendPartial": "Delvis",
+      "legendNo": "Saknas"
+    },
+    "comparisonRows": [
+      { "feature": "Kaloriloggning", "note": null },
+      { "feature": "Matdatabas", "note": "Livsmedelsverket + USDA" },
+      { "feature": "Kostplaner / dieter", "note": "Ej fokus för CalculEat" },
+      { "feature": "Recept", "note": "CalculEat: egna recept" },
+      { "feature": "TDEE-beräkning", "note": "Lifesum ger grundläggande kalorimål" },
+      { "feature": "Metabolisk kalibrering", "note": "Justeras baserat på faktisk viktdata" },
+      { "feature": "Bulk/Cut-faser", "note": "Separata mål per fas" },
+      { "feature": "Reverse diet-stöd", "note": null },
+      { "feature": "Automatisk målanpassning", "note": null },
+      { "feature": "Proteinmål per fas", "note": "Lifesum: fast procent" },
+      { "feature": "Streckkodsskanning", "note": null },
+      { "feature": "Gratis för kärn-features", "note": "Lifesum kräver premium för det mesta" }
+    ],
+    "midPageCta": {
+      "title": "Räkna ut ditt TDEE innan du väljer app",
+      "body": "Oavsett vilken app du väljer — börja med att veta ditt faktiska TDEE.",
+      "button": "Testa gratis →"
+    },
+    "bottomCta": {
+      "h2": "Prova ett mer precist alternativ — gratis",
+      "body": "Räkna ut ditt faktiska TDEE, välj din fas och låt CalculEat sätta rätt kalorimål direkt.",
+      "primary": "Skapa gratis konto",
+      "secondary": "Räkna ut ditt TDEE först"
+    },
+    "faqTitle": "Vanliga frågor",
+    "faq": [
+      {
+        "question": "Är Lifesum bättre än CalculEat?",
+        "answer": "Det beror på vad du vill ha. Lifesum är bättre om du primärt vill följa ett färdigt kostprogram eller få recept och kostplaner. CalculEat är bättre om du vill ha ett precist kalorimål baserat på ditt faktiska TDEE, stöd för cut/bulk-cykler och att loggningen faktiskt driver resultat — inte bara dokumenterar vad du ätit."
+      },
+      {
+        "question": "Vad är skillnaden mellan Lifesum och CalculEat?",
+        "answer": "Lifesum fokuserar på kostplaner, recept och livsstilsprogram. CalculEat fokuserar på precisionen i kalorimålet: ditt individuella TDEE, din fas (cut/bulk/maintenance), och att justera kalorimålet när din kropp förändras. Lifesum är ett kostprogram-verktyg. CalculEat är ett kroppskompositions-verktyg."
+      },
+      {
+        "question": "Behöver man betala för att använda Lifesum?",
+        "answer": "Lifesums gratisversion är mycket begränsad — de flesta meningsfulla funktioner (kostplaner, detaljerade makron, recept) kräver premium. CalculEat är gratis att använda för kaloriloggning, TDEE-beräkning och fas-tracking."
+      },
+      {
+        "question": "Vilken app är bäst för viktnedgång?",
+        "answer": "Båda kan fungera för viktnedgång, men på olika sätt. Lifesum guidar dig via kostprogram. CalculEat ger dig ett precist kalorimål baserat på ditt uppmätta TDEE och hjälper dig kalibrera det om vikten inte rör sig som förväntat. Den som vill förstå varför vikten rör sig (eller inte) är bättre betjänt av CalculEat."
+      },
+      {
+        "question": "Kan Lifesum användas för bulk och cut?",
+        "answer": "Lifesum har inget inbyggt stöd för bulk/cut-cykler, fasbyten eller reverse diet-planering. Du kan manuellt justera kalorimål, men appen ger ingen vägledning om rätt underskott för cut, rätt surplus för bulk eller hur man övergår mellan faser. CalculEat är byggt specifikt för det."
+      }
+    ],
+    "related": {
+      "calculatorsTitle": "Relaterade kalkylatorer",
+      "articlesTitle": "Relaterade artiklar",
+      "calculators": [
+        { "href": "/kalkylatorer/tdee-kalkylator", "label": "TDEE Kalkylator" },
+        { "href": "/kalkylatorer/proteinbehov", "label": "Proteinbehov Kalkylator" },
+        { "href": "/kalkylatorer/cut-kalkylator", "label": "Cut & Deff Kalkylator" },
+        { "href": "/kalkylatorer/bulk-kalkylator", "label": "Bulk Kalkylator" }
+      ],
+      "articles": [
+        { "href": "/artiklar/kaloribehov", "label": "Kaloribehov — komplett guide" },
+        { "href": "/artiklar/vad-ar-tdee", "label": "Vad är TDEE?" },
+        { "href": "/artiklar/reverse-diet", "label": "Reverse Diet" },
+        { "href": "/artiklar/bulk-och-cut", "label": "Bulk och Cut" }
+      ]
+    },
+    "breadcrumb": {
+      "comparisons": "Jämförelser",
+      "pageLabel": "Lifesum vs CalculEat"
+    },
+    "schema": {
+      "headline": "Lifesum vs CalculEat — Vilken kaloriräknare är bäst? (2026)",
+      "description": "Jämförelse av Lifesum och CalculEat. Vilken app passar bäst för viktnedgång, kroppskomposition och TDEE-precision?"
+    }
+  },
+  "yazio-vs-calculeat": {
+    "seo": {
+      "title": "Yazio vs CalculEat — Vilken kaloriräknare är bäst? (2026)",
+      "description": "Jämförelse av Yazio och CalculEat. Yazio erbjuder enkel loggning och fasting-läge. CalculEat ger TDEE-precision, bulk/cut-stöd och kalorimål som kalibreras efter din kropp."
+    },
+    "h1": "Yazio vs CalculEat — Vilken app passar dig bäst?",
+    "intro": "Yazio dokumenterar vad du äter. CalculEat hjälper dig att äta rätt mängd för ditt mål. Skillnaden är precision kontra enkelhet.",
+    "quickAnswer": {
+      "label": "Snabbsvar",
+      "verdict": "CalculEat vinner för kroppskompositionsmål — Yazio för fasting och enkelhet.",
+      "points": [
+        "Individuellt TDEE och fasplanering (cut/bulk/maintenance)",
+        "Gratis — Yazio Pro krävs för de flesta funktioner",
+        "Metabolisk kalibrering baserat på verklig viktdata"
+      ],
+      "ctaCalc": "Räkna ut ditt TDEE gratis",
+      "ctaRegister": "Skapa konto"
+    },
+    "comparisonTable": {
+      "h2": "Snabb jämförelse",
+      "colFeature": "Funktion",
+      "colOther": "Yazio",
+      "colCalculEat": "CalculEat",
+      "legendYes": "Ja / fullt stöd",
+      "legendPartial": "Delvis",
+      "legendNo": "Saknas"
+    },
+    "comparisonRows": [
+      { "feature": "Kaloriloggning", "note": null },
+      { "feature": "Stor matdatabas", "note": "Livsmedelsverket + USDA" },
+      { "feature": "Intermittent fasting-läge", "note": "Ej fokus för CalculEat" },
+      { "feature": "Vattenkoll", "note": null },
+      { "feature": "TDEE-beräkning", "note": "Yazio ger grundläggande kalorimål" },
+      { "feature": "Metabolisk kalibrering", "note": "Justeras baserat på faktisk viktdata" },
+      { "feature": "Bulk/Cut-faser", "note": "Separata mål per fas" },
+      { "feature": "Reverse diet-stöd", "note": null },
+      { "feature": "Automatisk målanpassning", "note": null },
+      { "feature": "Proteinmål per fas", "note": "Yazio: fast procentsats" },
+      { "feature": "Streckkodsskanning", "note": null },
+      { "feature": "Gratis för kärn-features", "note": "Yazio Pro krävs för det mesta" }
+    ],
+    "midPageCta": {
+      "title": "Räkna ut ditt TDEE innan du väljer app",
+      "body": "Oavsett vilken app du väljer — börja med att veta ditt faktiska TDEE.",
+      "button": "Testa gratis →"
+    },
+    "bottomCta": {
+      "h2": "Prova ett mer precist alternativ — gratis",
+      "body": "Räkna ut ditt faktiska TDEE, välj din fas och låt CalculEat sätta rätt kalorimål direkt.",
+      "primary": "Skapa gratis konto",
+      "secondary": "Räkna ut ditt TDEE först"
+    },
+    "faqTitle": "Vanliga frågor",
+    "faq": [
+      {
+        "question": "Är Yazio bättre än CalculEat?",
+        "answer": "Det beror på vad du söker. Yazio är bra för enkel kaloriloggning med en stor matdatabas och ett enkelt gränssnitt. CalculEat är bättre om du vill ha ett individuellt TDEE, stöd för cut/bulk-cykler och kalorimål som kalibreras mot din faktiska viktdata — inte ett generiskt starttal."
+      },
+      {
+        "question": "Vad är skillnaden mellan Yazio och CalculEat?",
+        "answer": "Yazio är primärt ett loggningsverktyg med fokus på enkelhet och bredd — stor matdatabas, fastingläge, vattenkoll. CalculEat fokuserar på precision i kalorimålet: individuellt TDEE, fasbaserad planering (cut/bulk/maintenance) och metabolisk kalibrering. Yazio dokumenterar vad du äter. CalculEat hjälper dig att äta rätt mängd för ditt mål."
+      },
+      {
+        "question": "Har Yazio intermittent fasting-stöd?",
+        "answer": "Ja — Yazio har ett inbyggt fasting-läge som är en av appens starkaste sidor. CalculEat fokuserar inte på fastingprotokoll utan på kaloriekvationen och kroppskomposition."
+      },
+      {
+        "question": "Kan Yazio användas för bulk och cut?",
+        "answer": "Yazio har inget inbyggt stöd för bulk/cut-cykler. Du kan manuellt justera kalorimål, men appen ger ingen vägledning om rätt surplus för bulk, rätt underskott för cut eller hur man hanterar fasbyte och reverse diet. CalculEat är byggt specifikt för det."
+      },
+      {
+        "question": "Är Yazio gratis?",
+        "answer": "Yazio har en gratisversion men många funktioner — detaljerade makron, personliga mål, analysverktyg — kräver Yazio Pro. CalculEat är gratis för kaloriloggning, TDEE-beräkning och fas-tracking."
+      }
+    ],
+    "related": {
+      "calculatorsTitle": "Relaterade kalkylatorer",
+      "articlesTitle": "Relaterade artiklar",
+      "calculators": [
+        { "href": "/kalkylatorer/tdee-kalkylator", "label": "TDEE Kalkylator" },
+        { "href": "/kalkylatorer/proteinbehov", "label": "Proteinbehov Kalkylator" },
+        { "href": "/kalkylatorer/cut-kalkylator", "label": "Cut & Deff Kalkylator" },
+        { "href": "/kalkylatorer/bulk-kalkylator", "label": "Bulk Kalkylator" }
+      ],
+      "articles": [
+        { "href": "/artiklar/kaloribehov", "label": "Kaloribehov — komplett guide" },
+        { "href": "/artiklar/vad-ar-tdee", "label": "Vad är TDEE?" },
+        { "href": "/artiklar/reverse-diet", "label": "Reverse Diet" },
+        { "href": "/artiklar/bulk-och-cut", "label": "Bulk och Cut" }
+      ]
+    },
+    "breadcrumb": {
+      "comparisons": "Jämförelser",
+      "pageLabel": "Yazio vs CalculEat"
+    },
+    "schema": {
+      "headline": "Yazio vs CalculEat — Vilken kaloriräknare är bäst? (2026)",
+      "description": "Jämförelse av Yazio och CalculEat. Vilken app ger bäst TDEE-precision, bulk/cut-stöd och kalorimål som faktiskt stämmer?"
+    }
+  },
+  "macrofactor-vs-calculeat": {
+    "seo": {
+      "title": "MacroFactor vs CalculEat — Vilken kaloriräknare är bäst? (2026)",
+      "description": "Jämförelse av MacroFactor och CalculEat. MacroFactor är en avancerad premiumapp. CalculEat erbjuder liknande TDEE-precision och fas-planering gratis och på svenska."
+    },
+    "h1": "MacroFactor vs CalculEat — Vilken app passar dig bäst?",
+    "intro": "MacroFactor är en av marknadens mest avancerade kaloriappar. CalculEat erbjuder liknande TDEE-precision och fas-planering gratis, på svenska.",
+    "quickAnswer": {
+      "label": "Snabbsvar",
+      "verdict": "CalculEat vinner på pris, språk och transparens — MacroFactor på automation.",
+      "points": [
+        "Gratis — MacroFactor kräver abonnemang",
+        "Helt på svenska",
+        "Transparens i beräkningarna"
+      ],
+      "ctaCalc": "Räkna ut ditt TDEE — gratis",
+      "ctaRegister": "Skapa konto"
+    },
+    "comparisonTable": {
+      "h2": "Snabb jämförelse",
+      "colFeature": "Funktion",
+      "colOther": "MacroFactor",
+      "colCalculEat": "CalculEat",
+      "legendYes": "Ja / fullt stöd",
+      "legendPartial": "Delvis",
+      "legendNo": "Saknas"
+    },
+    "comparisonRows": [
+      { "feature": "Kaloriloggning", "note": null },
+      { "feature": "Matdatabas", "note": "CalculEat: Livsmedelsverket + USDA" },
+      { "feature": "Svenska", "note": "MacroFactor är primärt på engelska" },
+      { "feature": "TDEE-beräkning", "note": "Båda beräknar individuellt TDEE" },
+      { "feature": "Metabolisk kalibrering", "note": "Baseras på faktisk viktdata" },
+      {
+        "feature": "Autoregulering av kalorimål",
+        "note": "MacroFactor: helautomatisk varje vecka"
+      },
+      { "feature": "Bulk/Cut-faser", "note": "Separata mål per fas" },
+      { "feature": "Reverse diet-stöd", "note": "CalculEat: explicit fas-planering" },
+      { "feature": "Transparens i beräkning", "note": "CalculEat visar hur" },
+      { "feature": "Streckkodsskanning", "note": null },
+      { "feature": "Gratis för kärn-features", "note": "MacroFactor kräver abonnemang" }
+    ],
+    "midPageCta": {
+      "title": "Räkna ut ditt TDEE — gratis",
+      "body": "Samma precision som MacroFactor, utan abonnemangskrav.",
+      "button": "Testa gratis →"
+    },
+    "bottomCta": {
+      "h2": "Prova ett mer precist alternativ — gratis",
+      "body": "Räkna ut ditt faktiska TDEE, välj din fas och låt CalculEat sätta rätt kalorimål direkt.",
+      "primary": "Skapa gratis konto",
+      "secondary": "Räkna ut ditt TDEE först"
+    },
+    "faqTitle": "Vanliga frågor",
+    "faq": [
+      {
+        "question": "Är MacroFactor bättre än CalculEat?",
+        "answer": "MacroFactor är en av marknadens mest avancerade kaloriappar med stark metabolisk kalibrering och autoregulering av kalorimål. CalculEat erbjuder liknande TDEE-precision och fas-planering gratis, på svenska, utan abonnemangskrav. MacroFactor är bättre för den som vill ha maximal automatisering. CalculEat är bättre för den som vill ha samma precision utan kostnad och på sitt eget språk."
+      },
+      {
+        "question": "Vad är skillnaden mellan MacroFactor och CalculEat?",
+        "answer": "MacroFactor är en premiumapp (abonnemang krävs) med fokus på avancerad metabolisk autoregulering — appen justerar kalorimålet automatiskt baserat på viktdata och beräknat TDEE varje vecka. CalculEat erbjuder individuell TDEE-beräkning, fasbaserad planering (cut/bulk/maintenance) och metabolisk kalibrering gratis. MacroFactor är mer automatiserad. CalculEat ger mer transparens i hur beräkningarna görs."
+      },
+      {
+        "question": "Är MacroFactor gratis?",
+        "answer": "Nej — MacroFactor kräver ett aktivt abonnemang för alla funktioner. Det finns en kortare provperiod men inga permanenta gratisalternativ för kärn-features. CalculEat är gratis för kaloriloggning, TDEE-beräkning, fas-tracking och metabolisk kalibrering."
+      },
+      {
+        "question": "Vilken app är bäst för seriös kroppskompositionstracking?",
+        "answer": "Båda är starka val. MacroFactor har en mer automatiserad pipeline för TDEE-kalibrering. CalculEat ger mer kontroll och transparens — du ser varför kalorimålet är som det är och kan justera det manuellt vid behov. Seriösa användare som vill förstå sina siffror föredrar ofta CalculEat."
+      },
+      {
+        "question": "Stödjer MacroFactor svenska?",
+        "answer": "MacroFactor är primärt på engelska och fokuserar på den engelskspråkiga marknaden. CalculEat är byggt för den svenska marknaden — matdatabas från Livsmedelsverket, gränssnitt på svenska och stöd för svenska nutritionsreferensvärden."
+      }
+    ],
+    "related": {
+      "calculatorsTitle": "Relaterade kalkylatorer",
+      "articlesTitle": "Relaterade artiklar",
+      "calculators": [
+        { "href": "/kalkylatorer/tdee-kalkylator", "label": "TDEE Kalkylator" },
+        { "href": "/kalkylatorer/proteinbehov", "label": "Proteinbehov Kalkylator" },
+        { "href": "/kalkylatorer/cut-kalkylator", "label": "Cut & Deff Kalkylator" },
+        { "href": "/kalkylatorer/bulk-kalkylator", "label": "Bulk Kalkylator" }
+      ],
+      "articles": [
+        { "href": "/artiklar/kaloribehov", "label": "Kaloribehov — komplett guide" },
+        { "href": "/artiklar/vad-ar-tdee", "label": "Vad är TDEE?" },
+        { "href": "/artiklar/reverse-diet", "label": "Reverse Diet" },
+        { "href": "/artiklar/bulk-och-cut", "label": "Bulk och Cut" }
+      ]
+    },
+    "breadcrumb": {
+      "comparisons": "Jämförelser",
+      "pageLabel": "MacroFactor vs CalculEat"
+    },
+    "schema": {
+      "headline": "MacroFactor vs CalculEat — Vilken kaloriräknare är bäst? (2026)",
+      "description": "Jämförelse av MacroFactor och CalculEat. MacroFactor är en avancerad premiumapp. CalculEat erbjuder liknande TDEE-precision och fas-planering gratis och på svenska."
+    }
+  },
+  "best-calorie-app": {
+    "seo": {
+      "title": "Bästa kaloriappen 2026 — Bästa kaloriräknaren för viktminskning | CalculEat",
+      "description": "Vilken är bästa kaloriappen 2026? Jämförelse av CalculEat, MyFitnessPal, MacroFactor, Lifesum och Yazio. Hitta rätt app för viktminskning, bulk och cut."
+    },
+    "h1": "Bästa kaloriappen 2026 — Vilken kaloriräknare är bäst?",
+    "intro": "De flesta kaloriappar gör samma sak: de låter dig logga mat och visar hur mycket du ätit. Skillnaden är vad de gör med den informationen — och om de faktiskt hjälper dig att nå ditt mål.",
+    "shortVersion": "Kortversion:",
+    "shortVersionBody": "För viktminskning, bulk/cut och datadriven precision — CalculEat. För störst matdatabas — MyFitnessPal. För enkel nybörjarupplevelse — Lifesum.",
+    "comparisonTable": {
+      "h2": "Snabb jämförelse — 5 populära kaloriappar",
+      "colFeature": "Funktion",
+      "legendYes": "Ja / fullt stöd",
+      "legendPartial": "Delvis",
+      "legendNo": "Saknas"
+    },
+    "comparisonRows": [
+      { "feature": "Kaloriloggning", "note": null },
+      { "feature": "Streckkodsskanning", "note": null },
+      { "feature": "Matdatabas", "note": "CalculEat: Livsmedelsverket + USDA" },
+      { "feature": "TDEE-precision", "note": "Adaptiv TDEE vs statisk formel" },
+      { "feature": "Metabolisk kalibrering", "note": "Justeras baserat på verklig viktdata" },
+      { "feature": "Bulk/Cut-faser", "note": "CalculEat: separata mål per fas" },
+      { "feature": "Reverse diet-stöd", "note": null },
+      { "feature": "Proteinmål per fas", "note": null },
+      { "feature": "Makroplanering", "note": null },
+      {
+        "feature": "Helt gratis kärn-features",
+        "note": "MFP, Lifesum och Yazio låser avancerat bakom premium"
+      },
+      { "feature": "Svenskt innehåll", "note": "CalculEat: Livsmedelsverkets databas" }
+    ],
+    "forWhomH2": "Vilken kaloriapp passar dig bäst?",
+    "forWhom": [
+      {
+        "title": "Bäst för viktminskning",
+        "winner": "CalculEat",
+        "desc": "CalculEat beräknar ditt faktiska TDEE och sätter ett korrekt kalorimål baserat på din kropp — inte en generisk formel. Kalorimålet justeras automatiskt om din vikt inte rör sig som förväntat. Du loggar mot rätt mål, inte ett gissat."
+      },
+      {
+        "title": "Bäst för muskeluppbyggnad",
+        "winner": "CalculEat",
+        "desc": "Lean bulk kräver ett exakt kaloriöverskott — för litet ger inget resultat, för stort ger onödig fettupplagring. CalculEat sätter rätt överskott för ditt lean/standard/aggressivt bulkmål och beräknar ett proteinmål optimalt för muskeltillväxt."
+      },
+      {
+        "title": "Bäst för nybörjare",
+        "winner": "CalculEat eller Lifesum",
+        "desc": "Lifesum har en enkel och visuellt tilltalande upplevelse. CalculEat är lika enkelt att komma igång med men ger direkt bättre TDEE-precision. Välj CalculEat om du vill ha rätt siffror från start — du lär dig att logga lika snabbt."
+      },
+      {
+        "title": "Bäst för datadriven precision",
+        "winner": "CalculEat eller MacroFactor",
+        "desc": "MacroFactor är branschstandarden för adaptiv TDEE och rekommenderas av många coaches. CalculEat matchar den adaptiva TDEE-funktionen och lägger till fasspecifikt stöd för bulk, cut och reverse diet — utan kostnad."
+      },
+      {
+        "title": "Bäst för stora matdatabaser",
+        "winner": "MyFitnessPal",
+        "desc": "Med över 14 miljoner livsmedel i databasen vinner MyFitnessPal på bredd. Om du äter ute ofta eller behöver exotiska livsmedel är MFP fortfarande bäst på datamängd. Kompromissen är sämre TDEE-precision och betalvägg för de bästa funktionerna."
+      }
+    ],
+    "whyFailH2": "Varför klassiska kaloriappar inte ger resultat",
+    "whyFailIntro": "Det vanligaste problemet är inte att folk inte loggar — det är att de loggar mot fel mål. En app som ger dig ett statiskt kalorimål baserat på en generisk formel tar inte hänsyn till hur din kropp faktiskt svarar.",
+    "whyFailCards": [
+      {
+        "title": "Fel TDEE från start",
+        "desc": "Populationsformler (Mifflin-St Jeor, Harris-Benedict) kan missa ditt individuella TDEE med 200–400 kcal. Du håller ditt kalorimål men det är fel kalorimål."
+      },
+      {
+        "title": "Kalorimålet uppdateras aldrig",
+        "desc": "Din vikt, muskelmassa och aktivitetsnivå förändras — men din app håller kvar det ursprungliga målet. Du loggar rätt, men mot en föråldrad siffra."
+      },
+      {
+        "title": "Inget stöd för fasbyten",
+        "desc": "Att gå från cut till maintenance kräver ett nytt kalorimål, nytt proteinmål och en plan för övergången. Klassiska appar låter dig göra allt manuellt — utan vägledning."
+      }
+    ],
+    "whyFailOutro": "CalculEat löser alla tre: TDEE beräknas och kalibreras mot din faktiska viktdata, kalorimålet anpassas per fas, och du får rätt proteinmål för varje fas automatiskt.",
+    "internalCtaH2": "Räkna ut ditt exakta kaloribehov",
+    "internalCtaBody": "Ingen kaloriapp är bättre än det kalorimål du loggar mot. Börja med att räkna ut ditt TDEE — det är basen för allt annat.",
+    "internalCtaPrimary": "TDEE Kalkylator",
+    "internalCtaSecondary": "Kaloribrist Kalkylator",
+    "faqTitle": "Vanliga frågor",
+    "faq": [
+      {
+        "question": "Vilken är den bästa kaloriappen?",
+        "answer": "Det beror på ditt mål. MyFitnessPal är bäst om du vill ha en stor matdatabas och enkel loggning. MacroFactor är bäst för seriös makrotracking med adaptiv TDEE. CalculEat är bäst om du arbetar med specifika faser — cut, bulk eller reverse diet — och vill ha ett kalorimål som anpassas till din kropp och fas automatiskt. För svenska användare med tränings- och kroppskompositionsmål är CalculEat det starkaste alternativet."
+      },
+      {
+        "question": "Är MyFitnessPal bättre än CalculEat?",
+        "answer": "MyFitnessPal har en större matdatabas och fler tredjepartsintegrationer. CalculEat är starkare på TDEE-precision, bulk/cut-stöd, metabolisk kalibrering och reverse diet-planering. Om du primärt vill logga mat och inte aktivt arbetar med faser passar MFP bra. Om du vill att loggningen ska driva faktiska kroppskompositionsresultat passar CalculEat bättre."
+      },
+      {
+        "question": "Vilken app är bäst för bulk och cut?",
+        "answer": "CalculEat är designat specifikt för bulk/cut-cykler: separata kalorimål per fas, proteinrekommendation anpassad till cut (1,8–2,4 g/kg) vs bulk (1,6–2,2 g/kg), inbyggd reverse diet-logik och automatisk TDEE-anpassning. Ingen annan gratisapp erbjuder hela den här kedjan utan manuellt arbete."
+      },
+      {
+        "question": "Behöver man betala för en bra kaloriräknare?",
+        "answer": "Nej — CalculEat är helt gratis, inklusive TDEE-kalibrering, fas-stöd och makroplanering. MyFitnessPal låser sin bästa funktionalitet bakom Premium (ca 500–700 kr/månad). MacroFactor och Cronometer har bra gratislägen men begränsar avancerade funktioner. Du behöver inte betala för att få precis kalorispårning."
+      },
+      {
+        "question": "Vilken app ger bäst TDEE-beräkning?",
+        "answer": "MacroFactor och CalculEat är starkast på adaptiv TDEE. MacroFactor beräknar om TDEE varje vecka baserat på viktdata. CalculEat gör detsamma men kombinerar det med fasspecifika mål — så TDEE-beräkningen används direkt för att sätta rätt underskott eller överskott, inte bara visa ett tal."
+      }
+    ],
+    "bottomCta": {
+      "h2": "Testa CalculEat gratis",
+      "body": "Räkna ut ditt TDEE, välj din fas och börja logga mot ett kalorimål som faktiskt stämmer. Ingen betalvägg, inga dolda kostnader.",
+      "primary": "Skapa gratis konto",
+      "secondary": "Räkna ut ditt TDEE först"
+    },
+    "related": {
+      "calculatorsTitle": "Relaterade kalkylatorer",
+      "articlesTitle": "Relaterade artiklar",
+      "calculators": [
+        { "href": "/kalkylatorer/tdee-kalkylator", "label": "TDEE Kalkylator" },
+        { "href": "/kalkylatorer/kaloriunderskott", "label": "Kaloribrist Kalkylator" },
+        { "href": "/kalkylatorer/bulk-kalkylator", "label": "Bulk Kalkylator" },
+        { "href": "/kalkylatorer/cut-kalkylator", "label": "Cut & Deff Kalkylator" }
+      ],
+      "articles": [
+        { "href": "/jamfor/myfitnesspal-vs-calculeat", "label": "MyFitnessPal vs CalculEat" },
+        { "href": "/jamfor/lifesum-vs-calculeat", "label": "Lifesum vs CalculEat" },
+        { "href": "/jamfor/yazio-vs-calculeat", "label": "Yazio vs CalculEat" },
+        { "href": "/jamfor/macrofactor-vs-calculeat", "label": "MacroFactor vs CalculEat" },
+        { "href": "/artiklar/kaloribehov", "label": "Kaloribehov — komplett guide" },
+        { "href": "/artiklar/vad-ar-tdee", "label": "Vad är TDEE?" },
+        { "href": "/artiklar/bulk-och-cut", "label": "Bulk och Cut" }
+      ]
+    },
+    "breadcrumb": { "pageLabel": "Bästa kaloriappen" },
+    "schema": {
+      "headline": "Bästa kaloriappen 2026 — Vilken kaloriräknare är bäst?",
+      "description": "Jämförelse av de bästa kaloriapparna 2026: CalculEat, MyFitnessPal, Lifesum, Yazio och MacroFactor."
+    }
+  },
+  "best-tdee-calculator": {
+    "seo": {
+      "title": "Bästa TDEE Kalkylatorn 2026 — Räkna ut ditt kaloribehov rätt | CalculEat",
+      "description": "Vilken TDEE-kalkylator är bäst 2026? Jämförelse av CalculEat, TDEECalculator.net, MyFitnessPal, MacroFactor och Lifesum. Hitta rätt kalkylator för viktminskning och bulk/cut."
+    },
+    "h1": "Bästa TDEE Kalkylatorn 2026 — Vilken ger mest exakt kaloribehov?",
+    "intro": "De flesta TDEE-kalkylatorer använder samma grundformel — men skiljer sig i hur de hanterar aktivitetsnivå, måljustering och uppföljning. Den bästa TDEE-kalkylatorn är den som inte bara ger en uppskattning, utan hjälper dig justera efter verkliga resultat.",
+    "shortVersion": "Kortversion:",
+    "shortVersionBody": "För ett handlingsbart mål som kalibreras mot din kropp — CalculEat. För en snabb engångsuppskattning — TDEECalculator.net. För adaptiv precision med coaching-standard — MacroFactor.",
+    "primaryCtaTitle": "Räkna ut ditt TDEE gratis nu",
+    "primaryCtaBody": "Fyll i ålder, vikt, längd och aktivitetsnivå — få ditt exakta kaloribehov direkt. Ingen registrering krävs.",
+    "primaryCtaButton": "Öppna TDEE Kalkylatorn",
+    "comparisonTable": {
+      "h2": "Snabb jämförelse — 5 TDEE-kalkylatorer",
+      "colFeature": "Funktion",
+      "legendYes": "Ja / fullt stöd",
+      "legendPartial": "Delvis",
+      "legendNo": "Saknas"
+    },
+    "comparisonRows": [
+      { "feature": "TDEE-beräkning", "note": "MFP och Lifesum: förenklad aktivitetsnivå" },
+      { "feature": "Anpassning efter vikttrend", "note": "Kalibreras mot faktisk viktförändring" },
+      { "feature": "Bulk/Cut-stöd", "note": "CalculEat: separata kalorimål per fas" },
+      { "feature": "Kaloriunderskott-planering", "note": "Inbyggt i kalorimålet, inte manuellt" },
+      { "feature": "Proteinrekommendation", "note": "CalculEat: anpassad per fas (cut vs bulk)" },
+      { "feature": "Historik och uppföljning", "note": null },
+      { "feature": "Reverse diet-stöd", "note": null },
+      { "feature": "Svenskt stöd", "note": "CalculEat: Livsmedelsverkets databas" },
+      {
+        "feature": "Gratisversion",
+        "note": "MFP/MacroFactor/Lifesum låser funktioner bakom premium"
+      }
+    ],
+    "forWhomH2": "Vilken TDEE-kalkylator passar dig bäst?",
+    "forWhom": [
+      {
+        "title": "Bäst för viktminskning",
+        "winner": "CalculEat",
+        "desc": "CalculEat beräknar ditt TDEE, sätter ett kalorimål med rätt underskott och justerar automatiskt om vikten inte rör sig som förväntat. Du behöver inte manuellt räkna om — appen lär sig ditt faktiska TDEE från hur din kropp svarar."
+      },
+      {
+        "title": "Bäst för bulk och cut",
+        "winner": "CalculEat",
+        "desc": "TDEE-kalkylatorer som TDEECalculator.net ger ett enda tal. CalculEat ger separata kalorimål för varje fas: rätt överskott för bulk, rätt underskott för cut, och ett strukturerat protokoll för reverse diet däremellan."
+      },
+      {
+        "title": "Bäst för precision över tid",
+        "winner": "CalculEat eller MacroFactor",
+        "desc": "MacroFactor är branschstandarden för adaptiv TDEE och används av professionella coaches. CalculEat erbjuder samma kalibreringsfunktion, kombinerat med fasspecifika mål och reverse diet-stöd — utan premiumkostnad."
+      },
+      {
+        "title": "Bäst för snabb engångsuppskattning",
+        "winner": "TDEECalculator.net",
+        "desc": "Om du bara vill ha ett snabbt referensvärde utan att skapa ett konto är TDEECalculator.net det enklaste alternativet. Men siffran du får är en uppskattning — inte kalibrerad till din kropp."
+      }
+    ],
+    "whyFailH2": "Varför statiska TDEE-kalkylatorer ofta blir fel",
+    "whyFailIntro": "En TDEE-kalkylator kan aldrig vara exakt vid första beräkningen — den gissar baserat på genomsnittsvärden. Problemet är inte uppskattningen i sig, det är att de flesta appar och kalkylatorer aldrig uppdaterar den.",
+    "whyFailCards": [
+      {
+        "title": "Aktivitetsnivå är det svagaste ledet",
+        "desc": "PAL-multiplikatorerna (sedentary, lightly active, very active) är grova kategorier. Skillnaden mellan 'lightly active' och 'moderately active' kan vara 200–400 kcal/dag. Nästan ingen vet exakt vilken de tillhör."
+      },
+      {
+        "title": "Adaptiv termogenes ignoreras",
+        "desc": "Under en längre cut sjunker ditt faktiska TDEE med 150–300 kcal jämfört med formeln — kroppen minskar NEAT och BMR som svar på energibrist. En statisk kalkylator tar aldrig hänsyn till detta."
+      },
+      {
+        "title": "Formeln stämmer inte för alla kroppstyper",
+        "desc": "Mifflin-St Jeor är den mest validerade formeln men har ett konfidensintervall på ±10%. För en person med TDEE 2500 kcal innebär det ett möjligt fel på ±250 kcal — tillräckligt för att sabotera ett cut."
+      }
+    ],
+    "whyFailOutro": "Lösningen är inte en bättre formel — det är ett system som mäter din faktiska vikttrend och kalibrerar TDEE-uppskattningen mot verkligheten. Det är precis vad CalculEat gör.",
+    "whenBetterH2": "När CalculEat är bättre än klassiska TDEE-kalkylatorer",
+    "whenBetterIntro": "En statisk TDEE-kalkylator fyller sin funktion som referensvärde. CalculEat är ett annat verktyg med ett annat syfte: att TDEE-beräkningen faktiskt driver ett handlingsbart och korrekt kalorimål.",
+    "whenBetterPoints": [
+      "Du vill logga mot ett kalorimål som uppdateras när din vikt förändras — inte samma siffra som du räknade ut vid start.",
+      "Du arbetar med cut eller bulk och behöver ett kalorimål med rätt underskott eller överskott inbyggt, anpassat till din fas.",
+      "Du har loggat länge i en annan app men inte sett resultat — det klassiska symptomet på att du loggar mot fel TDEE.",
+      "Du planerar en reverse diet och behöver ett strukturerat protokoll för att höja kalorier gradvis utan att lagra fett.",
+      "Du vill ha proteinmål anpassat till fasen — högre under cut (1,8–2,4 g/kg) för att skydda muskelmassa, lägre under bulk (1,6–2,2 g/kg)."
+    ],
+    "readMoreH2": "Läs mer om TDEE",
+    "faqTitle": "Vanliga frågor",
+    "faq": [
+      {
+        "question": "Vilken TDEE kalkylator är mest exakt?",
+        "answer": "Ingen statisk TDEE-kalkylator är exakt — de är alla uppskattningar baserade på populationsformler. Exaktheten avgörs av hur kalkylatorn hanterar aktivitetsnivå och om den kan kalibreras mot verkliga resultat. CalculEat och MacroFactor är de enda gratisalternativen som justerar ditt TDEE baserat på faktisk viktförändring — och är därför mer exakta över tid än statiska kalkylatorer som TDEECalculator.net."
+      },
+      {
+        "question": "Är TDEECalculator.net bättre än CalculEat?",
+        "answer": "TDEECalculator.net är ett bra verktyg för en snabb engångsuppskattning. CalculEat är bättre om du faktiskt ska använda TDEE-resultatet — det kopplar direkt till ditt kalorimål, anpassar det per fas (cut/bulk/maintenance) och kalibrerar mot din viktdata. TDEECalculator.net ger dig ett tal. CalculEat ger dig ett handlingsbart mål."
+      },
+      {
+        "question": "Varför skiljer sig olika TDEE-kalkylatorer?",
+        "answer": "Skillnaderna beror på tre faktorer: vilken BMR-formel som används (Mifflin-St Jeor, Harris-Benedict, Katch-McArdle), hur aktivitetsnivåer är definierade (vissa är mer generösa än andra), och om kalkylatorn tar hänsyn till NEAT och träningsvolym separat."
+      },
+      {
+        "question": "Hur vet man om sitt TDEE stämmer?",
+        "answer": "Logga kalorier exakt under 2–3 veckor och mät viktförändringen varje dag (morgon, fastande). Om du äter 2200 kcal och vikten är stabil är ditt TDEE ca 2200. Om du tappar 0,3 kg/vecka är ditt faktiska TDEE ca 2200 + 330 = 2530 kcal. Den här metoden — kallas metabolisk kalibrering — är mer exakt än alla formler och är inbyggd i CalculEat."
+      },
+      {
+        "question": "Hur ofta ska man uppdatera sitt kaloribehov?",
+        "answer": "Var 4–6 vecka om du aktivt försöker förändra din kropp. TDEE förändras med kroppsvikt, muskelmassa, träningsvolym och adaptiv termogenes. En statisk kalkylator du använde vid start stämmer inte efter 12 veckors cut. CalculEat uppdaterar ditt kalorimål löpande baserat på faktisk vikttrend — du behöver inte räkna om manuellt."
+      }
+    ],
+    "bottomCta": {
+      "h2": "Räkna ut ditt TDEE gratis",
+      "body": "Fyll i dina uppgifter och få ditt kaloribehov direkt — ingen registrering krävs för att använda kalkylatorn. Spara ditt resultat och börja logga mot rätt mål.",
+      "primary": "Öppna TDEE Kalkylatorn",
+      "secondary": "Skapa gratis konto"
+    },
+    "related": {
+      "calculatorsTitle": "Relaterade kalkylatorer",
+      "articlesTitle": "Relaterade sidor",
+      "calculators": [
+        { "href": "/kalkylatorer/tdee-kalkylator", "label": "TDEE Kalkylator" },
+        { "href": "/kalkylatorer/kaloriunderskott", "label": "Kaloribrist Kalkylator" },
+        { "href": "/kalkylatorer/proteinbehov", "label": "Proteinbehov Kalkylator" },
+        { "href": "/kalkylatorer/bulk-kalkylator", "label": "Bulk Kalkylator" },
+        { "href": "/kalkylatorer/cut-kalkylator", "label": "Cut & Deff Kalkylator" }
+      ],
+      "articles": [
+        { "href": "/artiklar/vad-ar-tdee", "label": "Vad är TDEE?" },
+        { "href": "/artiklar/kaloribehov", "label": "Kaloribehov — komplett guide" },
+        { "href": "/artiklar/kaloribrist", "label": "Hur stor kaloribrist ska man ha?" },
+        { "href": "/basta-kaloriappen", "label": "Bästa kaloriappen 2026" },
+        { "href": "/jamfor/myfitnesspal-vs-calculeat", "label": "MyFitnessPal vs CalculEat" }
+      ]
+    },
+    "breadcrumb": { "pageLabel": "Bästa TDEE Kalkylatorn" },
+    "schema": {
+      "headline": "Bästa TDEE Kalkylatorn 2026 — Vilken ger mest exakt kaloribehov?",
+      "description": "Jämförelse av de bästa TDEE-kalkylatorer 2026: CalculEat, TDEECalculator.net, MyFitnessPal, MacroFactor och Lifesum."
+    }
+  }
+}

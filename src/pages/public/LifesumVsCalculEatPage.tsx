@@ -1,115 +1,18 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { ArrowRight, Check, X, Minus } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import SiteHeader from '@/components/layout/SiteHeader'
 import SiteFooter from '@/components/layout/SiteFooter'
 import { Seo } from '@/components/seo/Seo'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { FaqBlock } from '@/components/article/FaqBlock'
 import { GuestOnly } from '@/components/GuestOnly'
-
-const CANONICAL = 'https://calculeat.se/jamfor/lifesum-vs-calculeat'
-
-const FAQ_ITEMS = [
-  {
-    question: 'Är Lifesum bättre än CalculEat?',
-    answer:
-      'Det beror på vad du vill ha. Lifesum är bättre om du primärt vill följa ett färdigt kostprogram eller få recept och kostplaner. CalculEat är bättre om du vill ha ett precist kalorimål baserat på ditt faktiska TDEE, stöd för cut/bulk-cykler och att loggningen faktiskt driver resultat — inte bara dokumenterar vad du ätit.',
-  },
-  {
-    question: 'Vad är skillnaden mellan Lifesum och CalculEat?',
-    answer:
-      'Lifesum fokuserar på kostplaner, recept och livsstilsprogram. CalculEat fokuserar på precisionen i kalorimålet: ditt individuella TDEE, din fas (cut/bulk/maintenance), och att justera kalorimålet när din kropp förändras. Lifesum är ett kostprogram-verktyg. CalculEat är ett kroppskompositions-verktyg.',
-  },
-  {
-    question: 'Behöver man betala för att använda Lifesum?',
-    answer:
-      'Lifesums gratisversion är mycket begränsad — de flesta meningsfulla funktioner (kostplaner, detaljerade makron, recept) kräver premium. CalculEat är gratis att använda för kaloriloggning, TDEE-beräkning och fas-tracking.',
-  },
-  {
-    question: 'Vilken app är bäst för viktnedgång?',
-    answer:
-      'Båda kan fungera för viktnedgång, men på olika sätt. Lifesum guidar dig via kostprogram. CalculEat ger dig ett precist kalorimål baserat på ditt uppmätta TDEE och hjälper dig kalibrera det om vikten inte rör sig som förväntat. Den som vill förstå varför vikten rör sig (eller inte) är bättre betjänt av CalculEat.',
-  },
-  {
-    question: 'Kan Lifesum användas för bulk och cut?',
-    answer:
-      'Lifesum har inget inbyggt stöd för bulk/cut-cykler, fasbyten eller reverse diet-planering. Du kan manuellt justera kalorimål, men appen ger ingen vägledning om rätt underskott för cut, rätt surplus för bulk eller hur man övergår mellan faser. CalculEat är byggt specifikt för det.',
-  },
-]
-
-const PAGE_SCHEMA = [
-  {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
-    headline: 'Lifesum vs CalculEat — Vilken kaloriräknare är bäst? (2026)',
-    description:
-      'Jämförelse av Lifesum och CalculEat. Vilken app passar bäst för viktnedgång, kroppskomposition och TDEE-precision?',
-    url: CANONICAL,
-    publisher: { '@type': 'Organization', name: 'CalculEat', url: 'https://calculeat.se' },
-    inLanguage: 'sv-SE',
-  },
-  {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'CalculEat', item: 'https://calculeat.se/' },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: 'Jämförelser',
-        item: 'https://calculeat.se/jamfor',
-      },
-      {
-        '@type': 'ListItem',
-        position: 3,
-        name: 'Lifesum vs CalculEat',
-        item: CANONICAL,
-      },
-    ],
-  },
-]
+import { getPageConfigByKey, getHreflangAlternates } from '@/lib/config/pages'
+import type { FaqItem } from '@/components/article/FaqBlock'
 
 type CellType = 'yes' | 'no' | 'partial'
-
-const COMPARISON_ROWS: {
-  feature: string
-  lifesum: CellType
-  ce: CellType
-  note?: string
-}[] = [
-  { feature: 'Kaloriloggning', lifesum: 'yes', ce: 'yes' },
-  { feature: 'Matdatabas', lifesum: 'yes', ce: 'partial', note: 'Livsmedelsverket + USDA' },
-  { feature: 'Kostplaner / dieter', lifesum: 'yes', ce: 'no', note: 'Ej fokus för CalculEat' },
-  { feature: 'Recept', lifesum: 'yes', ce: 'yes', note: 'CalculEat: egna recept' },
-  {
-    feature: 'TDEE-beräkning',
-    lifesum: 'partial',
-    ce: 'yes',
-    note: 'Lifesum ger grundläggande kalorimål',
-  },
-  {
-    feature: 'Metabolisk kalibrering',
-    lifesum: 'no',
-    ce: 'yes',
-    note: 'Justeras baserat på faktisk viktdata',
-  },
-  { feature: 'Bulk/Cut-faser', lifesum: 'no', ce: 'yes', note: 'Separata mål per fas' },
-  { feature: 'Reverse diet-stöd', lifesum: 'no', ce: 'yes' },
-  { feature: 'Automatisk målanpassning', lifesum: 'no', ce: 'yes' },
-  {
-    feature: 'Proteinmål per fas',
-    lifesum: 'partial',
-    ce: 'yes',
-    note: 'Lifesum: fast procent',
-  },
-  { feature: 'Streckkodsskanning', lifesum: 'yes', ce: 'yes' },
-  {
-    feature: 'Gratis för kärn-features',
-    lifesum: 'no',
-    ce: 'yes',
-    note: 'Lifesum kräver premium för det mesta',
-  },
-]
+type RelatedLink = { href: string; label: string }
+type LocaleRow = { feature: string; note: string | null }
 
 function Cell({ type }: { type: CellType }) {
   if (type === 'yes')
@@ -131,64 +34,132 @@ function Cell({ type }: { type: CellType }) {
   )
 }
 
+// CellType values stay in TSX — not translatable content
+const CELL_DATA: { lifesum: CellType; ce: CellType }[] = [
+  { lifesum: 'yes', ce: 'yes' },
+  { lifesum: 'yes', ce: 'partial' },
+  { lifesum: 'yes', ce: 'no' },
+  { lifesum: 'yes', ce: 'yes' },
+  { lifesum: 'partial', ce: 'yes' },
+  { lifesum: 'no', ce: 'yes' },
+  { lifesum: 'no', ce: 'yes' },
+  { lifesum: 'no', ce: 'yes' },
+  { lifesum: 'no', ce: 'yes' },
+  { lifesum: 'partial', ce: 'yes' },
+  { lifesum: 'yes', ce: 'yes' },
+  { lifesum: 'no', ce: 'yes' },
+]
+
+const pageConfig = getPageConfigByKey('lifesum-vs-calculeat')!
+const hreflangAlternates = getHreflangAlternates(pageConfig)
+
 export default function LifesumVsCalculEatPage() {
+  const { pathname } = useLocation()
+  const lng = pathname.startsWith('/en/') ? 'en' : 'sv'
+  const { t } = useTranslation('pages-compare', { lng })
+
+  const localeEntry = pageConfig.locales[lng] ?? pageConfig.locales.sv!
+  const faqItems = t('lifesum-vs-calculeat.faq', { returnObjects: true }) as unknown as FaqItem[]
+  const localeRows = t('lifesum-vs-calculeat.comparisonRows', {
+    returnObjects: true,
+  }) as unknown as LocaleRow[]
+  const relatedCalcs = t('lifesum-vs-calculeat.related.calculators', {
+    returnObjects: true,
+  }) as unknown as RelatedLink[]
+  const relatedArticles = t('lifesum-vs-calculeat.related.articles', {
+    returnObjects: true,
+  }) as unknown as RelatedLink[]
+  const quickPoints = t('lifesum-vs-calculeat.quickAnswer.points', {
+    returnObjects: true,
+  }) as unknown as string[]
+
+  const pageSchema = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: t('lifesum-vs-calculeat.schema.headline'),
+      description: t('lifesum-vs-calculeat.schema.description'),
+      url: localeEntry.canonical,
+      publisher: { '@type': 'Organization', name: 'CalculEat', url: 'https://calculeat.se' },
+      inLanguage: lng === 'en' ? 'en' : 'sv-SE',
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'CalculEat', item: 'https://calculeat.se/' },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: t('lifesum-vs-calculeat.breadcrumb.comparisons'),
+          item: `https://calculeat.se/${lng === 'en' ? 'en/compare' : 'jamfor'}`,
+        },
+        {
+          '@type': 'ListItem',
+          position: 3,
+          name: t('lifesum-vs-calculeat.breadcrumb.pageLabel'),
+          item: localeEntry.canonical,
+        },
+      ],
+    },
+  ]
+
+  const calcHubHref = lng === 'en' ? '/en/calculators' : '/kalkylatorer'
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Seo
-        title="Lifesum vs CalculEat — Vilken kaloriräknare är bäst? (2026)"
-        description="Jämförelse av Lifesum och CalculEat. Lifesum erbjuder kostplaner och recept. CalculEat ger TDEE-precision, bulk/cut-stöd och kalorimål som faktiskt stämmer."
-        canonical={CANONICAL}
+        title={t('lifesum-vs-calculeat.seo.title')}
+        description={t('lifesum-vs-calculeat.seo.description')}
+        canonical={localeEntry.canonical}
+        hreflangAlternates={hreflangAlternates}
+        locale={lng === 'en' ? 'en_US' : 'sv_SE'}
         type="article"
       />
-      <JsonLd schema={PAGE_SCHEMA} />
+      <JsonLd schema={pageSchema} />
 
       <SiteHeader />
 
       <main className="flex-1">
         <div className="container mx-auto px-4 py-10 max-w-2xl">
-          {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-sm text-neutral-500 mb-6">
             <Link to="/" className="hover:text-neutral-700 transition-colors">
               CalculEat
             </Link>
             <span>/</span>
-            <span className="text-neutral-700">Jämförelser</span>
+            <span className="text-neutral-700">
+              {t('lifesum-vs-calculeat.breadcrumb.comparisons')}
+            </span>
             <span>/</span>
-            <span className="text-neutral-700">Lifesum vs CalculEat</span>
+            <span className="text-neutral-700">
+              {t('lifesum-vs-calculeat.breadcrumb.pageLabel')}
+            </span>
           </nav>
 
           <h1 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-3 leading-tight">
-            Lifesum vs CalculEat — Vilken app passar dig bäst?
+            {t('lifesum-vs-calculeat.h1')}
           </h1>
 
-          {/* Winner summary box */}
           <div className="rounded-xl border border-primary-200 bg-primary-50 p-5 mb-6">
             <p className="text-xs font-semibold text-primary-500 uppercase tracking-wider mb-2">
-              Snabbsvar
+              {t('lifesum-vs-calculeat.quickAnswer.label')}
             </p>
             <p className="text-sm font-semibold text-primary-900 mb-3">
-              CalculEat vinner för den som vill ha precision — inte kostprogram.
+              {t('lifesum-vs-calculeat.quickAnswer.verdict')}
             </p>
             <ul className="space-y-1.5 text-sm text-primary-800">
-              <li className="flex items-start gap-2">
-                <Check className="h-4 w-4 text-primary-600 mt-0.5 shrink-0" /> Individuellt TDEE
-                kalibrerat mot din faktiska viktdata
-              </li>
-              <li className="flex items-start gap-2">
-                <Check className="h-4 w-4 text-primary-600 mt-0.5 shrink-0" /> Inbyggt stöd för
-                cut/bulk-faser och reverse diet
-              </li>
-              <li className="flex items-start gap-2">
-                <Check className="h-4 w-4 text-primary-600 mt-0.5 shrink-0" /> Gratis — Lifesums
-                kärn-features kräver premium
-              </li>
+              {quickPoints.map(pt => (
+                <li key={pt} className="flex items-start gap-2">
+                  <Check className="h-4 w-4 text-primary-600 mt-0.5 shrink-0" /> {pt}
+                </li>
+              ))}
             </ul>
             <div className="mt-4 flex flex-col sm:flex-row gap-2">
               <Link
-                to="/kalkylatorer"
+                to={calcHubHref}
                 className="inline-flex items-center justify-center gap-2 bg-primary-600 text-white font-semibold px-4 py-2.5 rounded-lg hover:bg-primary-700 transition-colors text-sm"
               >
-                Räkna ut ditt TDEE gratis
+                {t('lifesum-vs-calculeat.quickAnswer.ctaCalc')}
                 <ArrowRight className="h-4 w-4" />
               </Link>
               <GuestOnly>
@@ -196,69 +167,63 @@ export default function LifesumVsCalculEatPage() {
                   to="/register"
                   className="inline-flex items-center justify-center gap-2 border border-primary-300 text-primary-700 font-medium px-4 py-2.5 rounded-lg hover:bg-primary-100 transition-colors text-sm"
                 >
-                  Skapa konto
+                  {t('lifesum-vs-calculeat.quickAnswer.ctaRegister')}
                 </Link>
               </GuestOnly>
             </div>
           </div>
 
           <p className="text-base text-neutral-600 leading-relaxed mb-6">
-            Lifesum är ett kostprogram-verktyg med dieter, recept och livsstilsguider. CalculEat är
-            ett precisionsverktyg för kroppskomposition — individuellt TDEE, rätt kalorimål per fas
-            och kalibrering baserat på din faktiska viktdata.
+            {t('lifesum-vs-calculeat.intro')}
           </p>
 
-          {/* Inline CTA — high on page */}
           <div className="rounded-xl border border-primary-200 bg-primary-50 p-5 mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-4">
             <div className="flex-1">
               <p className="text-sm font-semibold text-primary-900 mb-0.5">
-                Räkna ut ditt TDEE innan du väljer app
+                {t('lifesum-vs-calculeat.midPageCta.title')}
               </p>
               <p className="text-xs text-primary-700">
-                Utan ett korrekt TDEE är kalorimålet en gissning — oavsett vilken app du använder.
+                {t('lifesum-vs-calculeat.midPageCta.body')}
               </p>
             </div>
             <Link
-              to="/kalkylatorer"
+              to={calcHubHref}
               className="shrink-0 inline-flex items-center gap-2 bg-primary-600 text-white font-semibold px-4 py-2.5 rounded-lg hover:bg-primary-700 transition-colors text-sm"
             >
-              TDEE-kalkylator
-              <ArrowRight className="h-4 w-4" />
+              {t('lifesum-vs-calculeat.midPageCta.button')}
             </Link>
           </div>
 
-          {/* Comparison table */}
           <section className="mb-10">
-            <h2 className="text-xl font-semibold text-neutral-900 mb-4">Snabb jämförelse</h2>
+            <h2 className="text-xl font-semibold text-neutral-900 mb-4">
+              {t('lifesum-vs-calculeat.comparisonTable.h2')}
+            </h2>
             <div className="rounded-2xl border border-neutral-200 overflow-hidden">
               <div className="grid grid-cols-[1fr_auto_auto] gap-0 bg-neutral-50 border-b border-neutral-200">
                 <div className="px-4 py-3 text-xs font-semibold text-neutral-500 uppercase tracking-wider">
-                  Funktion
+                  {t('lifesum-vs-calculeat.comparisonTable.colFeature')}
                 </div>
                 <div className="px-4 py-3 text-xs font-semibold text-neutral-500 uppercase tracking-wider text-center w-28">
-                  Lifesum
+                  {t('lifesum-vs-calculeat.comparisonTable.colOther')}
                 </div>
                 <div className="px-4 py-3 text-xs font-semibold text-primary-600 uppercase tracking-wider text-center w-28">
-                  CalculEat
+                  {t('lifesum-vs-calculeat.comparisonTable.colCalculEat')}
                 </div>
               </div>
-
-              {COMPARISON_ROWS.map(({ feature, lifesum, ce, note }, i) => (
+              {localeRows.map((row, i) => (
                 <div
-                  key={feature}
-                  className={`grid grid-cols-[1fr_auto_auto] gap-0 border-b border-neutral-100 last:border-0 ${
-                    i % 2 === 0 ? 'bg-white' : 'bg-neutral-50/50'
-                  }`}
+                  key={row.feature}
+                  className={`grid grid-cols-[1fr_auto_auto] gap-0 border-b border-neutral-100 last:border-0 ${i % 2 === 0 ? 'bg-white' : 'bg-neutral-50/50'}`}
                 >
                   <div className="px-4 py-3">
-                    <div className="text-sm text-neutral-800 font-medium">{feature}</div>
-                    {note && <div className="text-xs text-neutral-400 mt-0.5">{note}</div>}
+                    <div className="text-sm text-neutral-800 font-medium">{row.feature}</div>
+                    {row.note && <div className="text-xs text-neutral-400 mt-0.5">{row.note}</div>}
                   </div>
                   <div className="px-4 py-3 flex items-center justify-center w-28">
-                    <Cell type={lifesum} />
+                    <Cell type={CELL_DATA[i]?.lifesum ?? 'no'} />
                   </div>
                   <div className="px-4 py-3 flex items-center justify-center w-28">
-                    <Cell type={ce} />
+                    <Cell type={CELL_DATA[i]?.ce ?? 'no'} />
                   </div>
                 </div>
               ))}
@@ -268,24 +233,24 @@ export default function LifesumVsCalculEatPage() {
                 <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-green-100">
                   <Check className="h-3 w-3 text-green-700" />
                 </span>
-                Ja / fullt stöd
+                {t('lifesum-vs-calculeat.comparisonTable.legendYes')}
               </span>
               <span className="flex items-center gap-1.5">
                 <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-yellow-100">
                   <Minus className="h-3 w-3 text-yellow-600" />
                 </span>
-                Delvis
+                {t('lifesum-vs-calculeat.comparisonTable.legendPartial')}
               </span>
               <span className="flex items-center gap-1.5">
                 <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-red-100">
                   <X className="h-3 w-3 text-red-600" />
                 </span>
-                Saknas
+                {t('lifesum-vs-calculeat.comparisonTable.legendNo')}
               </span>
             </div>
           </section>
 
-          {/* For whom */}
+          {/* Article prose — stays in TSX */}
           <section className="space-y-5 text-neutral-700 text-sm leading-relaxed mb-8">
             <h2 className="text-xl font-semibold text-neutral-900">För vem passar Lifesum?</h2>
             <p>
@@ -382,70 +347,41 @@ export default function LifesumVsCalculEatPage() {
             </div>
           </section>
 
-          {/* Mid-page CTA */}
-          <div className="rounded-xl border border-primary-200 bg-primary-50 p-5 mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            <div className="flex-1">
-              <p className="text-sm font-semibold text-primary-900 mb-0.5">
-                Vill du ha precision istället för program?
-              </p>
-              <p className="text-xs text-primary-700">
-                Räkna ut ditt TDEE, välj din fas — cut, bulk eller maintenance — och logga mot rätt
-                siffra.
-              </p>
-            </div>
-            <Link
-              to="/kalkylatorer"
-              className="shrink-0 inline-flex items-center gap-2 bg-primary-600 text-white font-semibold px-4 py-2.5 rounded-lg hover:bg-primary-700 transition-colors text-sm"
-            >
-              Testa gratis →
-            </Link>
-          </div>
+          <FaqBlock items={faqItems} title={t('lifesum-vs-calculeat.faqTitle')} />
 
-          <FaqBlock items={FAQ_ITEMS} />
-
-          {/* CTA */}
           <GuestOnly>
             <section className="mt-10 rounded-2xl bg-primary-600 p-8 text-center">
               <h2 className="text-xl font-bold text-white mb-2">
-                Testa precision istället för program — gratis
+                {t('lifesum-vs-calculeat.bottomCta.h2')}
               </h2>
               <p className="text-primary-200 text-sm mb-6 max-w-md mx-auto">
-                Räkna ut ditt faktiska TDEE, sätt rätt kalorimål för din fas och logga mot siffror
-                som faktiskt stämmer. Inget kreditkort, inga dolda kostnader.
+                {t('lifesum-vs-calculeat.bottomCta.body')}
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Link
                   to="/register"
                   className="inline-flex items-center justify-center gap-2 bg-white text-primary-700 font-semibold px-6 py-3 rounded-xl hover:bg-primary-50 transition-colors text-sm"
                 >
-                  Skapa gratis konto
+                  {t('lifesum-vs-calculeat.bottomCta.primary')}
                   <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link
-                  to="/kalkylatorer"
+                  to={calcHubHref}
                   className="inline-flex items-center justify-center gap-2 border border-primary-400 text-white font-medium px-6 py-3 rounded-xl hover:bg-primary-700 transition-colors text-sm"
                 >
-                  Räkna ut ditt TDEE först
+                  {t('lifesum-vs-calculeat.bottomCta.secondary')}
                 </Link>
               </div>
             </section>
           </GuestOnly>
 
-          {/* Related */}
           <section className="mt-10 pt-8 border-t border-neutral-200 grid sm:grid-cols-2 gap-6">
             <div>
               <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3">
-                Relaterade jämförelser
+                {t('lifesum-vs-calculeat.related.calculatorsTitle')}
               </h3>
               <ul className="space-y-2">
-                {[
-                  {
-                    href: '/jamfor/myfitnesspal-vs-calculeat',
-                    label: 'MyFitnessPal vs CalculEat',
-                  },
-                  { href: '/basta-kaloriappen', label: 'Bästa kaloriappen 2026' },
-                  { href: '/basta-tdee-kalkylatorn', label: 'Bästa TDEE-kalkylatorn' },
-                ].map(l => (
+                {relatedCalcs.map(l => (
                   <li key={l.href}>
                     <Link
                       to={l.href}
@@ -460,15 +396,10 @@ export default function LifesumVsCalculEatPage() {
             </div>
             <div>
               <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3">
-                Relaterade kalkylatorer
+                {t('lifesum-vs-calculeat.related.articlesTitle')}
               </h3>
               <ul className="space-y-2">
-                {[
-                  { href: '/kalkylatorer/tdee-kalkylator', label: 'TDEE Kalkylator' },
-                  { href: '/kalkylatorer/kaloriunderskott', label: 'Kaloribrist Kalkylator' },
-                  { href: '/kalkylatorer/cut-kalkylator', label: 'Cut & Deff Kalkylator' },
-                  { href: '/kalkylatorer/bulk-kalkylator', label: 'Bulk Kalkylator' },
-                ].map(l => (
+                {relatedArticles.map(l => (
                   <li key={l.href}>
                     <Link
                       to={l.href}

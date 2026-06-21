@@ -1,0 +1,55 @@
+{
+  "about": {
+    "seo": {
+      "title": "About CalculEat — Science-based Nutrition App | CalculEat",
+      "description": "CalculEat is a nutrition app with science-based calculators for TDEE, BMR, FFMI and more. We explain our methodology and data sources."
+    },
+    "schema": {
+      "pageName": "About CalculEat",
+      "pageDescription": "CalculEat is a nutrition app with science-based calculators for TDEE, BMR, FFMI and more. Learn about our methodology and data sources.",
+      "orgDescription": "Nutrition app with science-based calculators and food logging."
+    },
+    "breadcrumb": "About",
+    "h1": "About CalculEat",
+    "intro": "CalculEat is a nutrition app that combines science-based calculators with simple food logging — all in one place.",
+    "sections": {
+      "whatIs": {
+        "h2": "What is CalculEat?",
+        "body": "CalculEat helps you calculate your calorie needs (TDEE), plan macronutrients, log food and track your body composition. We focus on precision and scientific foundation — not on simplifications that can lead you astray."
+      },
+      "methodology": {
+        "h2": "Our methodology",
+        "calculatorsLabel": "Calculators:",
+        "calculatorsBody": "All calculators are based on published research. The TDEE calculator uses Mifflin-St Jeor for BMR (validated in independent studies as the most accurate for the general population) and five PAL levels (1.2–1.9) for activity factor. We also offer 9 alternative BMR formulas for different populations.",
+        "databaseLabel": "Food database:",
+        "databaseBody": "Food data is sourced from the Swedish National Food Database (Livsmedelsverket), USDA FoodData Central and user-submitted foods. We verify contributed data via a community system.",
+        "contentLabel": "Information content:",
+        "contentBody": "All articles and explanations are reviewed against published research (PubMed, WHO, ACSM, EFSA). We include source references so you can review the evidence yourself."
+      },
+      "limitations": {
+        "h2": "Limitations",
+        "body1": "Calculators provide estimates — not diagnoses. TDEE formulas have a margin of error of approximately ±10–15%. Individual factors such as muscle mass, hormonal balance and metabolism affect the real value. Always use the results as a starting point and adjust based on actual outcomes.",
+        "body2": "CalculEat is not a medical tool and does not replace advice from a dietitian or doctor. For illness, eating disorders or special medical needs — always consult healthcare professionals."
+      },
+      "contact": {
+        "h2": "Contact",
+        "body": "Feedback, bug reports and questions are welcome via"
+      }
+    },
+    "cta": {
+      "h2": "Get started",
+      "links": [
+        {
+          "href": "/en/calculators/tdee-calculator",
+          "label": "TDEE Calculator — calculate your calorie needs"
+        },
+        { "href": "/en/calculators/bmi-calculator", "label": "BMI Calculator" },
+        {
+          "href": "/en/articles/calorie-needs",
+          "label": "Guide: How to calculate your calorie needs?"
+        },
+        { "href": "/register", "label": "Create free account" }
+      ]
+    }
+  }
+}

@@ -1,0 +1,179 @@
+{
+  "calculators-hub": {
+    "seo": {
+      "title": "Kalkylatorer — Näring, kalorier och kropp | CalculEat",
+      "description": "Gratis kalkylatorer för TDEE, kaloriunderskott, BMI, proteinbehov, idealvikt, kroppsfett, bulk, cut, FFMI och BMR. Beräkna dina mål direkt."
+    },
+    "h1": "Kalkylatorer för kost och kropp",
+    "intro": "Alla verktyg du behöver för att förstå ditt energibehov, sätta mål och följa din utveckling — helt gratis.",
+    "badgeLabel": "Gratis verktyg",
+    "popularTag": "Populär",
+    "openLabel": "Öppna kalkylator",
+    "ctaButton": "Börja med TDEE-kalkylatorn",
+    "bottomCta": {
+      "h2": "Spara dina resultat automatiskt",
+      "body": "Skapa ett gratis konto och låt CalculEat räkna ut ditt dagliga mål, spåra måltider och visa hur du ligger till — dag för dag.",
+      "button": "Skapa gratis konto"
+    },
+    "calculators": [
+      {
+        "href": "/kalkylatorer/tdee-kalkylator",
+        "title": "TDEE-kalkylator",
+        "description": "Beräkna ditt totala dagliga energibehov baserat på ålder, vikt, längd och aktivitetsnivå.",
+        "popular": true
+      },
+      {
+        "href": "/kalkylatorer/kaloriunderskott",
+        "title": "Kaloriunderskott-kalkylator",
+        "description": "Räkna ut hur stort kaloriunderskott du behöver för att nå din viktnedgångsmål.",
+        "popular": true
+      },
+      {
+        "href": "/kalkylatorer/bmi-kalkylator",
+        "title": "BMI-kalkylator",
+        "description": "Beräkna ditt body mass index och se var du hamnar på BMI-skalan.",
+        "popular": false
+      },
+      {
+        "href": "/kalkylatorer/proteinbehov",
+        "title": "Proteinbehov-kalkylator",
+        "description": "Ta reda på hur mycket protein du behöver per dag utifrån din träning och dina mål.",
+        "popular": false
+      },
+      {
+        "href": "/kalkylatorer/idealvikt",
+        "title": "Idealvikt-kalkylator",
+        "description": "Beräkna din idealvikt baserat på längd, kön och kroppsbyggnad.",
+        "popular": false
+      },
+      {
+        "href": "/kalkylatorer/kroppsfett",
+        "title": "Kroppsfett-kalkylator",
+        "description": "Uppskatta din kroppsfettprocent med hjälp av mått och kön.",
+        "popular": false
+      },
+      {
+        "href": "/kalkylatorer/bulk-kalkylator",
+        "title": "Bulk-kalkylator",
+        "description": "Räkna ut hur mycket du ska äta för att bygga muskler utan onödig fettökning.",
+        "popular": false
+      },
+      {
+        "href": "/kalkylatorer/cut-kalkylator",
+        "title": "Cut & Deff-kalkylator",
+        "description": "Beräkna ditt kaloriintag för en effektiv cut/deff som bevarar muskelmassa.",
+        "popular": false
+      },
+      {
+        "href": "/kalkylatorer/ffmi-kalkylator",
+        "title": "FFMI-kalkylator",
+        "description": "Mät din fettfria masseindex — ett bättre mått på muskelmassa än BMI.",
+        "popular": false
+      },
+      {
+        "href": "/kalkylatorer/bmr-kalkylator",
+        "title": "BMR-kalkylator",
+        "description": "Beräkna din basalmetabolism — hur många kalorier din kropp förbränner i vila.",
+        "popular": false
+      }
+    ]
+  },
+  "articles-hub": {
+    "seo": {
+      "title": "Artiklar om näring, kalorier och träning | CalculEat",
+      "description": "Guider och artiklar om kaloribehov, TDEE, BMR, bulk, cut, kaloribrist och mer. Lär dig förstå din kropp och nå dina mål."
+    },
+    "h1": "Artiklar om kost och kropp",
+    "intro": "Förstå energibalans, metabolism och näringslära — skrivet enkelt och baserat på vetenskap.",
+    "badgeLabel": "Guider och förklaringar",
+    "pillarTag": "Pillar",
+    "readLabel": "Läs artikel",
+    "ctaButton": "Börja med kaloribehov",
+    "bottomCta": {
+      "h2": "Omsätt teorin i praktiken",
+      "body": "Beräkna ditt kaloribehov med TDEE-kalkylatorn och börja logga direkt i CalculEat — gratis.",
+      "primaryButton": "Prova TDEE-kalkylatorn",
+      "secondaryButton": "Skapa gratis konto"
+    },
+    "articles": [
+      {
+        "href": "/artiklar/kaloribehov",
+        "title": "Kaloribehov — hur mycket behöver du äta?",
+        "description": "En komplett guide till hur du räknar ut ditt dagliga kaloribehov baserat på mål, aktivitet och kroppssammansättning.",
+        "pillar": true
+      },
+      {
+        "href": "/artiklar/vad-ar-tdee",
+        "title": "Vad är TDEE?",
+        "description": "Förstå Total Daily Energy Expenditure — vad det är, hur det beräknas och varför det är viktigare än BMR.",
+        "pillar": false
+      },
+      {
+        "href": "/artiklar/kaloribrist",
+        "title": "Kaloribrist — vad du behöver veta",
+        "description": "Hur fungerar ett kaloriunderskott? Hur stort ska det vara? Allt om att gå ner i vikt på ett hållbart sätt.",
+        "pillar": false
+      },
+      {
+        "href": "/artiklar/bulk-och-cut",
+        "title": "Bulk och cut — komplett guide",
+        "description": "Lär dig skillnaden mellan bulk och cut, hur du planerar faserna och undviker vanliga misstag.",
+        "pillar": false
+      },
+      {
+        "href": "/artiklar/reverse-diet",
+        "title": "Reverse diet — återbygg ämnesomsättningen",
+        "description": "Vad är reverse dieting, när passar det och hur ökar du kalorierna utan att gå upp i fett?",
+        "pillar": false
+      },
+      {
+        "href": "/artiklar/vad-ar-bmr",
+        "title": "Vad är BMR?",
+        "description": "Basal metabolic rate förklarad — hur kroppen förbränner kalorier i vila och vad det betyder för dig.",
+        "pillar": false
+      },
+      {
+        "href": "/artiklar/bmr-vs-rmr",
+        "title": "BMR vs RMR — vad är skillnaden?",
+        "description": "BMR och RMR mäter båda energiförbrukning i vila men skiljer sig i mätvillkor. Vilka formler beräknar vad — och spelar det roll?",
+        "pillar": false
+      },
+      {
+        "href": "/artiklar/bmr-vs-tdee",
+        "title": "BMR vs TDEE — vad är skillnaden?",
+        "description": "Förstå relationen mellan basalmetabolism och totalt energibehov, och vilket mått du faktiskt ska använda.",
+        "pillar": false
+      },
+      {
+        "href": "/artiklar/bmi-vs-kroppsfett",
+        "title": "BMI vs kroppsfett — vilket mått är bättre?",
+        "description": "BMI är enkelt men missvisande. Här jämförs de två måtten och när du bör använda vilket.",
+        "pillar": false
+      },
+      {
+        "href": "/artiklar/vad-ar-ffmi",
+        "title": "Vad är FFMI?",
+        "description": "Fat-free mass index är ett bättre mått på muskelmassa än BMI. Lär dig hur det beräknas och tolkas.",
+        "pillar": false
+      },
+      {
+        "href": "/artiklar/vad-ar-pal-och-met",
+        "title": "Vad är PAL och MET?",
+        "description": "Physical activity level och metabolic equivalent — hur aktivitetsnivå mäts och används i TDEE-beräkningar.",
+        "pillar": false
+      },
+      {
+        "href": "/artiklar/lbm-vs-ffm",
+        "title": "LBM vs FFM — vad är skillnaden?",
+        "description": "Lean Body Mass och Fat Free Mass används ofta som synonymer men mäter inte samma sak. Lär dig skillnaden och vilket mått du ska använda.",
+        "pillar": false
+      },
+      {
+        "href": "/artiklar/hur-mater-man-kroppsfett",
+        "title": "Hur mäter man kroppsfett?",
+        "description": "DEXA, bioimpedans, kaliper eller Navy-metoden? Lär dig skillnaderna i noggrannhet och välj rätt metod för din situation.",
+        "pillar": false
+      }
+    ]
+  }
+}

@@ -1,12 +1,14 @@
 import { useState, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { ArrowRight, Calculator, AlertTriangle } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import SiteHeader from '@/components/layout/SiteHeader'
 import SiteFooter from '@/components/layout/SiteFooter'
 import { Seo } from '@/components/seo/Seo'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { FaqBlock } from '@/components/article/FaqBlock'
 import { GuestOnly } from '@/components/GuestOnly'
+import { getPageConfigByKey, getHreflangAlternates } from '@/lib/config/pages'
 
 interface BmiCategory {
   label: string
@@ -40,65 +42,62 @@ function getBmiCategory(bmi: number): BmiCategory {
   return { label: 'Fetma', range: '≥ 30', color: 'text-red-700', bg: 'bg-red-50 border-red-200' }
 }
 
-const FAQ_ITEMS = [
-  {
-    question: 'Vad är ett bra BMI?',
-    answer:
-      'WHO definierar normalvikt som BMI 18.5–24.9. Under 18.5 räknas som undervikt, 25–29.9 som övervikt och 30 eller mer som fetma. Kom ihåg att BMI är ett grovt mått och inte tar hänsyn till muskelmassa, fettprocent eller var fettet sitter.',
-  },
-  {
-    question: 'Stämmer BMI för muskulösa personer?',
-    answer:
-      'Nej — BMI kan överskatta risken för muskulösa individer eftersom muskler väger mer än fett. En vältränad person kan ha BMI 27 (övervikt) men med låg fettprocent och utmärkt hälsa. FFMI och fettprocent ger en mer träffsäker bild för den som tränar regelbundet.',
-  },
-  {
-    question: 'Vad är skillnaden mellan BMI och kroppsfett?',
-    answer:
-      'BMI beräknas enbart från vikt och längd och säger inget om kroppssammansättning. Kroppsfett (%) mäter faktiskt hur stor andel av din kropp som är fett. Två personer med samma BMI kan ha helt olika fettprocent. För hälsobedömning är fettprocent och midjeomfång ofta mer informativa.',
-  },
-  {
-    question: 'Hur räknar man ut BMI manuellt?',
-    answer:
-      'BMI = vikt (kg) ÷ (längd (m) × längd (m)). Exempel: 75 kg och 175 cm → 75 ÷ (1,75 × 1,75) = 75 ÷ 3,0625 ≈ 24,5.',
-  },
-  {
-    question: 'Kan BMI användas för barn?',
-    answer:
-      'För barn (2–18 år) används BMI för ålder och kön (BMI-för-ålder) och tolkas mot tillväxtkurvor, inte mot de vuxna gränserna 18.5/25/30. Använd alltid barnspecifika verktyg och rådgör med BVC.',
-  },
-]
+type FaqItem = { question: string; answer: string }
+type BmiScaleRow = { range: string; label: string }
 
-const CANONICAL = 'https://calculeat.se/kalkylatorer/bmi-kalkylator'
-
-const PAGE_SCHEMA = [
-  {
-    '@context': 'https://schema.org',
-    '@type': 'WebApplication',
-    name: 'BMI Kalkylator',
-    url: CANONICAL,
-    applicationCategory: 'HealthApplication',
-    operatingSystem: 'Web',
-    description:
-      'Gratis BMI-kalkylator. Räkna ut ditt body mass index och se vilken kategori du tillhör.',
-    offers: { '@type': 'Offer', price: '0', priceCurrency: 'SEK' },
-  },
-  {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'CalculEat', item: 'https://calculeat.se/' },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: 'Kalkylatorer',
-        item: 'https://calculeat.se/kalkylatorer',
-      },
-      { '@type': 'ListItem', position: 3, name: 'BMI Kalkylator', item: CANONICAL },
-    ],
-  },
-]
+const pageConfig = getPageConfigByKey('bmi-calculator')!
+const hreflangAlternates = getHreflangAlternates(pageConfig)
 
 export default function BmiKalkylatornPage() {
+  const { pathname } = useLocation()
+  const lng = pathname.startsWith('/en/') ? 'en' : 'sv'
+  const { t } = useTranslation('pages-tools', { lng })
+
+  const localeEntry = pageConfig.locales[lng] ?? pageConfig.locales.sv!
+  const faqItems = t('bmi-calculator.faq', { returnObjects: true }) as unknown as FaqItem[]
+  const bmiScale = t('bmi-calculator.bmiScale', { returnObjects: true }) as unknown as BmiScaleRow[]
+  const bmiLabels = t('bmi-calculator.categoryLabels', {
+    returnObjects: true,
+  }) as unknown as Record<string, string>
+  const relatedCalcs = t('bmi-calculator.related.calculators', {
+    returnObjects: true,
+  }) as unknown as { href: string; label: string }[]
+  const relatedArticles = t('bmi-calculator.related.articles', {
+    returnObjects: true,
+  }) as unknown as { href: string; label: string }[]
+
+  const pageSchema = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'WebApplication',
+      name: t('bmi-calculator.schema.webAppName'),
+      url: localeEntry.canonical,
+      applicationCategory: 'HealthApplication',
+      operatingSystem: 'Web',
+      description: t('bmi-calculator.schema.webAppDescription'),
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'SEK' },
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'CalculEat', item: 'https://calculeat.se/' },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: t('bmi-calculator.schema.breadcrumb.hubLabel'),
+          item: `https://calculeat.se${t('bmi-calculator.schema.breadcrumb.hubPath')}`,
+        },
+        {
+          '@type': 'ListItem',
+          position: 3,
+          name: t('bmi-calculator.schema.breadcrumb.pageLabel'),
+          item: localeEntry.canonical,
+        },
+      ],
+    },
+  ]
+
   const [weight, setWeight] = useState('')
   const [height, setHeight] = useState('')
   const [hasResult, setHasResult] = useState(false)
@@ -119,11 +118,13 @@ export default function BmiKalkylatornPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <Seo
-        title="BMI Kalkylator — Räkna ut ditt body mass index (2026)"
-        description="Gratis BMI-kalkylator. Räkna ut ditt body mass index och se om du har normalvikt, övervikt eller undervikt. Resultat direkt — inget konto krävs."
-        canonical={CANONICAL}
+        title={t('bmi-calculator.seo.title')}
+        description={t('bmi-calculator.seo.description')}
+        canonical={localeEntry.canonical}
+        hreflangAlternates={hreflangAlternates}
+        locale={lng === 'en' ? 'en_US' : 'sv_SE'}
       />
-      <JsonLd schema={PAGE_SCHEMA} />
+      <JsonLd schema={pageSchema} />
 
       <SiteHeader />
 
@@ -138,22 +139,26 @@ export default function BmiKalkylatornPage() {
                 CalculEat
               </Link>
               <span>/</span>
-              <Link to="/kalkylatorer" className="hover:text-neutral-700 transition-colors">
-                Kalkylatorer
+              <Link
+                to={t('bmi-calculator.schema.breadcrumb.hubPath')}
+                className="hover:text-neutral-700 transition-colors"
+              >
+                {t('bmi-calculator.schema.breadcrumb.hubLabel')}
               </Link>
               <span>/</span>
-              <span className="text-neutral-700">BMI Kalkylator</span>
+              <span className="text-neutral-700">
+                {t('bmi-calculator.schema.breadcrumb.pageLabel')}
+              </span>
             </nav>
 
             <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-5 leading-tight">
               <span className="bg-gradient-to-r from-primary-600 to-accent-500 bg-clip-text text-transparent">
-                BMI
+                {t('bmi-calculator.h1Prefix')}
               </span>{' '}
-              Kalkylator
+              {t('bmi-calculator.h1Suffix')}
             </h1>
             <p className="text-lg md:text-xl text-neutral-600 leading-relaxed max-w-2xl">
-              BMI (Body Mass Index) är ett enkelt mått på förhållandet mellan din vikt och längd.
-              Fyll i dina uppgifter nedan för att beräkna ditt BMI direkt.
+              {t('bmi-calculator.intro')}
             </p>
           </div>
         </section>
@@ -164,21 +169,23 @@ export default function BmiKalkylatornPage() {
             <div className="rounded-2xl border border-neutral-200 shadow-sm overflow-hidden">
               <div className="bg-primary-50 px-6 py-4 border-b border-primary-100 flex items-center gap-2">
                 <Calculator className="h-5 w-5 text-primary-600" />
-                <span className="font-semibold text-primary-900">Beräkna ditt BMI</span>
+                <span className="font-semibold text-primary-900">
+                  {t('bmi-calculator.calculator.header')}
+                </span>
               </div>
 
               <div className="p-6 space-y-5">
                 <div className="grid grid-cols-2 gap-4">
                   {[
                     {
-                      label: 'Vikt',
+                      label: t('bmi-calculator.calculator.weightLabel'),
                       unit: 'kg',
                       value: weight,
                       setter: setWeight,
                       placeholder: '75',
                     },
                     {
-                      label: 'Längd',
+                      label: t('bmi-calculator.calculator.heightLabel'),
                       unit: 'cm',
                       value: height,
                       setter: setHeight,
@@ -212,14 +219,16 @@ export default function BmiKalkylatornPage() {
                   disabled={!bmi}
                   className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-neutral-200 disabled:text-neutral-400 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm"
                 >
-                  Beräkna mitt BMI
+                  {t('bmi-calculator.calculator.button')}
                 </button>
               </div>
 
               {/* Results */}
               {hasResult && bmi && category && (
                 <div className="border-t border-neutral-100 bg-neutral-50 px-6 py-6 space-y-4">
-                  <h2 className="font-semibold text-neutral-800">Ditt resultat</h2>
+                  <h2 className="font-semibold text-neutral-800">
+                    {t('bmi-calculator.calculator.resultsTitle')}
+                  </h2>
 
                   <div className={`rounded-xl border p-5 flex items-center gap-5 ${category.bg}`}>
                     <div className="text-center">
@@ -228,7 +237,7 @@ export default function BmiKalkylatornPage() {
                     </div>
                     <div>
                       <div className={`text-lg font-semibold ${category.color}`}>
-                        {category.label}
+                        {bmiLabels[category.label] ?? category.label}
                       </div>
                       <div className="text-sm text-neutral-600">BMI {category.range}</div>
                     </div>
@@ -236,20 +245,25 @@ export default function BmiKalkylatornPage() {
 
                   {/* BMI scale */}
                   <div className="rounded-lg bg-white border border-neutral-200 p-4">
-                    <div className="text-xs font-medium text-neutral-500 mb-2">BMI-skala</div>
+                    <div className="text-xs font-medium text-neutral-500 mb-2">
+                      {t('bmi-calculator.calculator.bmiScaleTitle')}
+                    </div>
                     <div className="space-y-1.5">
-                      {[
-                        { range: '< 18.5', label: 'Undervikt', color: 'bg-blue-400' },
-                        { range: '18.5 – 24.9', label: 'Normalvikt', color: 'bg-green-400' },
-                        { range: '25 – 29.9', label: 'Övervikt', color: 'bg-yellow-400' },
-                        { range: '≥ 30', label: 'Fetma', color: 'bg-red-400' },
-                      ].map(row => (
-                        <div key={row.range} className="flex items-center gap-3 text-xs">
-                          <div className={`w-3 h-3 rounded-sm flex-shrink-0 ${row.color}`} />
-                          <span className="text-neutral-500 w-24">{row.range}</span>
-                          <span className="text-neutral-700">{row.label}</span>
-                        </div>
-                      ))}
+                      {bmiScale.map((row, i) => {
+                        const colors = [
+                          'bg-blue-400',
+                          'bg-green-400',
+                          'bg-yellow-400',
+                          'bg-red-400',
+                        ]
+                        return (
+                          <div key={row.range} className="flex items-center gap-3 text-xs">
+                            <div className={`w-3 h-3 rounded-sm flex-shrink-0 ${colors[i]}`} />
+                            <span className="text-neutral-500 w-24">{row.range}</span>
+                            <span className="text-neutral-700">{row.label}</span>
+                          </div>
+                        )
+                      })}
                     </div>
                   </div>
 
@@ -258,12 +272,10 @@ export default function BmiKalkylatornPage() {
                     <AlertTriangle className="h-4 w-4 text-amber-600 flex-shrink-0 mt-0.5" />
                     <div>
                       <p className="text-sm font-medium text-amber-900 mb-1">
-                        BMI berättar inte allt
+                        {t('bmi-calculator.calculator.warningTitle')}
                       </p>
                       <p className="text-xs text-amber-700">
-                        BMI tar inte hänsyn till muskelmassa, fettprocent eller var fettet sitter.
-                        För en mer komplett bild bör du även räkna ut ditt TDEE och förstå din
-                        kroppssammansättning.
+                        {t('bmi-calculator.calculator.warningBody')}
                       </p>
                     </div>
                   </div>
@@ -271,17 +283,16 @@ export default function BmiKalkylatornPage() {
                   {/* CTA to money page */}
                   <div className="rounded-xl bg-white border border-primary-200 p-4">
                     <p className="text-sm font-medium text-neutral-800 mb-1">
-                      Räkna ut ditt faktiska kaloribehov
+                      {t('bmi-calculator.calculator.ctaTitle')}
                     </p>
                     <p className="text-xs text-neutral-500 mb-3">
-                      BMI är en förenklad indikator. TDEE-kalkylatorn ger dig det kaloribehov du
-                      faktiskt behöver för att nå ditt mål.
+                      {t('bmi-calculator.calculator.ctaBody')}
                     </p>
                     <Link
-                      to="/kalkylatorer"
+                      to={t('bmi-calculator.schema.breadcrumb.hubPath')}
                       className="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
                     >
-                      Räkna ut ditt TDEE
+                      {t('bmi-calculator.calculator.ctaButton')}
                       <ArrowRight className="h-4 w-4" />
                     </Link>
                   </div>
@@ -291,7 +302,7 @@ export default function BmiKalkylatornPage() {
           </div>
         </section>
 
-        {/* Explanation section */}
+        {/* Explanation section — prose stays in TSX */}
         <section className="bg-white py-14 border-b border-neutral-100">
           <div className="container mx-auto px-4 max-w-3xl">
             <div className="space-y-4 text-neutral-700 text-base leading-relaxed">
@@ -324,7 +335,7 @@ export default function BmiKalkylatornPage() {
         {/* FAQ section */}
         <section className="bg-neutral-50 py-14 border-b border-neutral-100">
           <div className="container mx-auto px-4 max-w-3xl">
-            <FaqBlock items={FAQ_ITEMS} />
+            <FaqBlock items={faqItems} title={t('bmi-calculator.faqTitle')} />
           </div>
         </section>
 
@@ -333,40 +344,39 @@ export default function BmiKalkylatornPage() {
           <section className="bg-neutral-900 py-16 md:py-20">
             <div className="container mx-auto px-4 max-w-2xl text-center">
               <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
-                Förstå din kropp — inte bara en siffra
+                {t('bmi-calculator.cta.bottom.h2')}
               </h2>
               <p className="text-neutral-400 text-base mb-8 max-w-md mx-auto">
-                BMI är ett startpunkt. Logga mat mot ditt kalorimål och följ hur din kropp faktiskt
-                svarar.
+                {t('bmi-calculator.cta.bottom.body')}
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Link
                   to="/register"
                   className="inline-flex items-center justify-center gap-2 bg-accent-500 hover:bg-accent-600 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm"
                 >
-                  Skapa gratis konto <ArrowRight className="h-4 w-4" />
+                  {t('bmi-calculator.cta.bottom.primary')} <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link
-                  to="/kalkylatorer"
+                  to={relatedCalcs[0]?.href ?? t('bmi-calculator.schema.breadcrumb.hubPath')}
                   className="inline-flex items-center justify-center gap-2 border border-neutral-600 text-neutral-300 hover:bg-neutral-800 font-medium px-6 py-3 rounded-xl transition-colors text-sm"
                 >
-                  Räkna ut ditt TDEE
+                  {t('bmi-calculator.cta.bottom.secondary')}
                 </Link>
               </div>
             </div>
           </section>
         </GuestOnly>
 
-        {/* Related links — card style */}
+        {/* Related links */}
         <section className="bg-white py-14">
           <div className="container mx-auto px-4 max-w-5xl">
             <div className="grid sm:grid-cols-2 gap-10">
               <div>
                 <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-4">
-                  Relaterade kalkylatorer
+                  {t('bmi-calculator.related.calculatorsTitle')}
                 </h3>
                 <div className="grid gap-3">
-                  {[{ href: '/kalkylatorer/tdee-kalkylator', label: 'TDEE Kalkylator' }].map(l => (
+                  {relatedCalcs.map(l => (
                     <Link
                       key={l.href}
                       to={l.href}
@@ -380,14 +390,10 @@ export default function BmiKalkylatornPage() {
               </div>
               <div>
                 <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-4">
-                  Relaterade artiklar
+                  {t('bmi-calculator.related.articlesTitle')}
                 </h3>
                 <div className="grid gap-3">
-                  {[
-                    { href: '/artiklar/kaloribehov', label: 'Kaloribehov — komplett guide' },
-                    { href: '/artiklar/vad-ar-tdee', label: 'Vad är TDEE?' },
-                    { href: '/artiklar/bmi-vs-kroppsfett', label: 'BMI vs Kroppsfett' },
-                  ].map(l => (
+                  {relatedArticles.map(l => (
                     <Link
                       key={l.href}
                       to={l.href}

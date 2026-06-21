@@ -1,16 +1,17 @@
 import { useState, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { ArrowRight, Calculator, AlertTriangle, ChevronDown } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import SiteHeader from '@/components/layout/SiteHeader'
 import SiteFooter from '@/components/layout/SiteFooter'
 import { Seo } from '@/components/seo/Seo'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { FaqBlock } from '@/components/article/FaqBlock'
 import { GuestOnly } from '@/components/GuestOnly'
-
-const CANONICAL = 'https://calculeat.se/kalkylatorer/ffmi-kalkylator'
+import { getPageConfigByKey, getHreflangAlternates } from '@/lib/config/pages'
 
 type Gender = 'male' | 'female'
+type FaqItem = { question: string; answer: string }
 
 // FFMI = LBM (kg) / height² (m²)
 // Normalized FFMI adjusts to a 1.8m baseline: FFMI + 6.1 × (1.8 - height)
@@ -330,131 +331,29 @@ function getFfmiCategory(ffmi: number, bodyFatPct: number, gender: Gender): Ffmi
   })
 }
 
-const MEN_TABLE_ROWS = [
-  {
-    range: 'Under 17',
-    bf: 'Valfri',
-    category: 'Mycket låg',
-    desc: 'Kraftigt begränsad muskelmassa, möjlig undernäring eller sarkopeni',
-  },
-  {
-    range: '17–18',
-    bf: '10–18 %',
-    category: 'Smal/Otränad',
-    desc: 'Under genomsnittlig muskelmassa, stillasittande livsstil, "smal" kroppsbyggnad',
-  },
-  {
-    range: '18–20',
-    bf: '20–27 %',
-    category: 'Genomsnittsbefolkning',
-    desc: 'Normal muskelmassa för otränade män, hälsosam grundnivå',
-  },
-  {
-    range: '19–21',
-    bf: '25–40 %',
-    category: 'Överviktig/Fetma',
-    desc: 'Genomsnittlig muskelmassa men hög kroppsfettsnivå, "kraftig" eller "bred" kroppsbyggnad',
-  },
-  {
-    range: '20–21',
-    bf: '10–18 %',
-    category: 'Atlet/Mellanliggande',
-    desc: 'Över genomsnittlig muskelmassa, 2–3 års träning, ser tydligt tränad ut',
-  },
-  {
-    range: '22–23',
-    bf: '6–12 %',
-    category: 'Avancerad naturlig',
-    desc: 'Mycket välutvecklad fysik, 4–7 års träning, tävlingsliknande form',
-  },
-  {
-    range: '24–25',
-    bf: '8–20 %',
-    category: 'Elit naturlig/Misstänkt',
-    desc: 'Nära genetiskt tak, 8+ års träning eller möjlig prestationshöjande användning',
-  },
-  {
-    range: '25–27',
-    bf: 'Valfri',
-    category: 'Troligen dopad',
-    desc: 'Över typiska naturliga gränser, genetisk extremvariant eller sannolik PED-användning',
-  },
-  {
-    range: 'Över 27',
-    bf: 'Valfri',
-    category: 'Nästan säkert dopad',
-    desc: 'Kräver prestationshöjande preparat i de allra flesta fall',
-  },
-]
+type TFn = ((key: string) => string) & ((key: string, options: { returnObjects: true }) => unknown)
 
-const WOMEN_TABLE_ROWS = [
-  {
-    range: 'Under 14',
-    bf: 'Valfri',
-    category: 'Mycket låg',
-    desc: 'Kraftigt begränsad muskelmassa, möjliga hälsoproblem',
-  },
-  {
-    range: '14–15',
-    bf: '20–25 %',
-    category: 'Smal/Otränad',
-    desc: 'Under genomsnittlig muskelmassa, stillasittande, "smal" kroppsbyggnad',
-  },
-  {
-    range: '14–17',
-    bf: '22–35 %',
-    category: 'Genomsnittsbefolkning',
-    desc: 'Normal muskelmassa för otränade kvinnor',
-  },
-  {
-    range: '15–18',
-    bf: '30–45 %',
-    category: 'Överviktig/Fetma',
-    desc: 'Genomsnittlig muskelmassa men hög kroppsfettsnivå',
-  },
-  {
-    range: '16–17',
-    bf: '18–25 %',
-    category: 'Atlet/Mellanliggande',
-    desc: 'Över genomsnittlig muskelmassa, 2–3 års träning, atletisk kroppsbyggnad',
-  },
-  {
-    range: '18–20',
-    bf: '15–22 %',
-    category: 'Avancerad naturlig',
-    desc: 'Mycket välutvecklad fysik, 4–7 års träning, tävlingsnivå',
-  },
-  {
-    range: '19–21',
-    bf: '15–30 %',
-    category: 'Elit naturlig/Misstänkt',
-    desc: 'Närmar sig genetiskt tak, 8+ års träning eller möjlig prestationshöjande användning',
-  },
-  {
-    range: '21–23',
-    bf: 'Valfri',
-    category: 'Troligen dopad',
-    desc: 'Över typiska naturliga gränser för kvinnor',
-  },
-  {
-    range: 'Över 23',
-    bf: 'Valfri',
-    category: 'Nästan säkert dopad',
-    desc: 'Kräver prestationshöjande preparat i de allra flesta fall',
-  },
-]
+type TableRow = { range: string; bf: string; category: string; desc: string }
 
-function FfmiReferenceTable() {
+function FfmiReferenceTable({ t }: { t: TFn }) {
   const [showMale, setShowMale] = useState(true)
   const [expandedRow, setExpandedRow] = useState<number | null>(null)
-  const rows = showMale ? MEN_TABLE_ROWS : WOMEN_TABLE_ROWS
+  const menRows = t('ffmi-calculator.referenceTable.menRows', {
+    returnObjects: true,
+  }) as unknown as TableRow[]
+  const womenRows = t('ffmi-calculator.referenceTable.womenRows', {
+    returnObjects: true,
+  }) as unknown as TableRow[]
+  const rows = showMale ? menRows : womenRows
 
   const toggleRow = (i: number) => setExpandedRow(prev => (prev === i ? null : i))
 
   return (
     <div className="mt-4">
       <div className="flex items-center justify-between mb-2">
-        <h3 className="text-lg font-semibold text-neutral-800">FFMI-referensvärden</h3>
+        <h3 className="text-lg font-semibold text-neutral-800">
+          {t('ffmi-calculator.referenceTable.title')}
+        </h3>
         <button
           onClick={() => {
             setShowMale(v => !v)
@@ -462,7 +361,9 @@ function FfmiReferenceTable() {
           }}
           className="text-xs text-primary-600 hover:underline"
         >
-          {showMale ? 'Visa kvinnors värden' : 'Visa mäns värden'}
+          {showMale
+            ? t('ffmi-calculator.referenceTable.showFemale')
+            : t('ffmi-calculator.referenceTable.showMale')}
         </button>
       </div>
       <div className="overflow-x-auto rounded-xl border border-neutral-200">
@@ -470,16 +371,16 @@ function FfmiReferenceTable() {
           <thead>
             <tr className="bg-neutral-100">
               <th className="px-4 py-2.5 text-left text-xs font-semibold text-neutral-500 uppercase tracking-wider border-b border-neutral-200">
-                FFMI
+                {t('ffmi-calculator.referenceTable.colFfmi')}
               </th>
               <th className="px-4 py-2.5 text-left text-xs font-semibold text-neutral-500 uppercase tracking-wider border-b border-neutral-200">
-                Kroppsfett %
+                {t('ffmi-calculator.referenceTable.colBf')}
               </th>
               <th className="px-4 py-2.5 text-left text-xs font-semibold text-neutral-500 uppercase tracking-wider border-b border-neutral-200">
-                Kategori
+                {t('ffmi-calculator.referenceTable.colCategory')}
               </th>
               <th className="px-4 py-2.5 text-left text-xs font-semibold text-neutral-500 uppercase tracking-wider border-b border-neutral-200 hidden sm:table-cell">
-                Beskrivning
+                {t('ffmi-calculator.referenceTable.colDesc')}
               </th>
               <th className="px-2 py-2.5 border-b border-neutral-200 sm:hidden" />
             </tr>
@@ -506,7 +407,7 @@ function FfmiReferenceTable() {
                         type="button"
                         onClick={() => toggleRow(i)}
                         className="p-1 text-neutral-400 hover:text-neutral-600 transition-colors"
-                        aria-label="Visa beskrivning"
+                        aria-label={t('ffmi-calculator.referenceTable.expandAriaLabel')}
                       >
                         <ChevronDown
                           className={`h-4 w-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
@@ -534,63 +435,61 @@ function FfmiReferenceTable() {
   )
 }
 
-const FAQ_ITEMS = [
-  {
-    question: 'Vad är ett bra FFMI?',
-    answer:
-      'Det beror på kön och träningsbakgrund. För män: nybörjare (<18), tränad (18–19), avancerad (20–21), exceptionell (22+). För kvinnor är värdena ca 4–5 enheter lägre. FFMI 20–22 för en naturlig man kräver flerårig konsekvent träning. Det är ett relativt mått — jämför din progress med dig själv snarare än med andra.',
-  },
-  {
-    question: 'Är 25 FFMI den naturliga gränsen?',
-    answer:
-      'Kouri et al. (1995) fann att naturliga manliga idrottare sällan översteg normaliserat FFMI 25. Det är en observation, inte en hård biologisk gräns. Individer med exceptionell genetik kan nå 25–26 naturligt. Men ett normaliserat FFMI konsekvent över 25 är statistiskt sällsynt bland naturliga utövare och ökar sannolikheten för substansanvändning avsevärt.',
-  },
-  {
-    question: 'Är FFMI ett bättre mått än BMI?',
-    answer:
-      'För den som styrketränar: ja. BMI skiljer inte på muskler och fett. FFMI mäter specifikt fettfri massa (muskler, organ, ben) i relation till längd, vilket är mer relevant för att bedöma muskeluppbyggnad och fysik. En vältränad person med högt BMI kan ha lågt FFMI — och tvärtom.',
-  },
-  {
-    question: 'Hur räknar man ut FFMI?',
-    answer:
-      'FFMI = (kroppsvikt × (1 − fettprocent/100)) ÷ längd². Normaliserat FFMI = FFMI + 6,1 × (1,8 − längd i meter). Exempel: 80 kg, 175 cm, 15% kroppsfett → LBM = 80 × 0,85 = 68 kg → FFMI = 68 ÷ 1,75² = 22,2 → Normaliserat = 22,2 + 6,1 × (1,8 − 1,75) = 22,5.',
-  },
-  {
-    question: 'Kan man ha högt FFMI utan att vara stark?',
-    answer:
-      'Ja. FFMI mäter muskelmassa, inte styrka eller prestation. En person med naturligt stor skelettstruktur och hög muskelmassa utan träning kan ha ett FFMI på 20 utan att lyfta tungt. Och en person med FFMI 19 kan vara starkare än någon med FFMI 22 beroende på neuromuskulär effektivitet och teknik.',
-  },
-]
-
-const PAGE_SCHEMA = [
-  {
-    '@context': 'https://schema.org',
-    '@type': 'WebApplication',
-    name: 'FFMI Kalkylator',
-    url: CANONICAL,
-    applicationCategory: 'HealthApplication',
-    operatingSystem: 'Web',
-    description:
-      'Gratis FFMI-kalkylator. Räkna ut ditt Fat-Free Mass Index och normaliserat FFMI. Bedöm din muskelmassa relativt längd utan att ta hänsyn till fettvikt.',
-    offers: { '@type': 'Offer', price: '0', priceCurrency: 'SEK' },
-  },
-  {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'CalculEat', item: 'https://calculeat.se/' },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: 'Kalkylatorer',
-        item: 'https://calculeat.se/kalkylatorer',
-      },
-      { '@type': 'ListItem', position: 3, name: 'FFMI Kalkylator', item: CANONICAL },
-    ],
-  },
-]
+const pageConfig = getPageConfigByKey('ffmi-calculator')!
+const hreflangAlternates = getHreflangAlternates(pageConfig)
 
 export default function FfmiKalkylatornPage() {
+  const { pathname } = useLocation()
+  const lng = pathname.startsWith('/en/') ? 'en' : 'sv'
+  const { t } = useTranslation('pages-tools', { lng })
+
+  const localeEntry = pageConfig.locales[lng] ?? pageConfig.locales.sv!
+  const faqItems = t('ffmi-calculator.faq', { returnObjects: true }) as unknown as FaqItem[]
+  const relatedCalcs = t('ffmi-calculator.related.calculators', {
+    returnObjects: true,
+  }) as unknown as { href: string; label: string }[]
+  const relatedArticles = t('ffmi-calculator.related.articles', {
+    returnObjects: true,
+  }) as unknown as { href: string; label: string }[]
+  type FfmiMatrixLocale = { label: string; description: string; context: string }
+  const ffmiLabels = t('ffmi-calculator.matrixLabels', {
+    returnObjects: true,
+  }) as unknown as Record<string, Record<string, FfmiMatrixLocale>>
+
+  const tSimple = t as unknown as TFn
+
+  const pageSchema = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'WebApplication',
+      name: t('ffmi-calculator.schema.webAppName'),
+      url: localeEntry.canonical,
+      applicationCategory: 'HealthApplication',
+      operatingSystem: 'Web',
+      description: t('ffmi-calculator.schema.webAppDescription'),
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'SEK' },
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'CalculEat', item: 'https://calculeat.se/' },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: t('ffmi-calculator.schema.breadcrumb.hubLabel'),
+          item: `https://calculeat.se${t('ffmi-calculator.schema.breadcrumb.hubPath')}`,
+        },
+        {
+          '@type': 'ListItem',
+          position: 3,
+          name: t('ffmi-calculator.schema.breadcrumb.pageLabel'),
+          item: localeEntry.canonical,
+        },
+      ],
+    },
+  ]
+
   const [gender, setGender] = useState<Gender>('male')
   const [height, setHeight] = useState('')
   const [weight, setWeight] = useState('')
@@ -617,11 +516,13 @@ export default function FfmiKalkylatornPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <Seo
-        title="FFMI Kalkylator — Räkna ut ditt Fat-Free Mass Index (2026) | CalculEat"
-        description="Gratis FFMI-kalkylator. Räkna ut ditt Fat-Free Mass Index och normaliserat FFMI. Bedöm din muskelmassa, kategori och natural limit i kontext."
-        canonical={CANONICAL}
+        title={t('ffmi-calculator.seo.title')}
+        description={t('ffmi-calculator.seo.description')}
+        canonical={localeEntry.canonical}
+        hreflangAlternates={hreflangAlternates}
+        locale={lng === 'en' ? 'en_US' : 'sv_SE'}
       />
-      <JsonLd schema={PAGE_SCHEMA} />
+      <JsonLd schema={pageSchema} />
 
       <SiteHeader />
 
@@ -636,23 +537,26 @@ export default function FfmiKalkylatornPage() {
                 CalculEat
               </Link>
               <span>/</span>
-              <Link to="/kalkylatorer" className="hover:text-neutral-700 transition-colors">
-                Kalkylatorer
+              <Link
+                to={t('ffmi-calculator.schema.breadcrumb.hubPath')}
+                className="hover:text-neutral-700 transition-colors"
+              >
+                {t('ffmi-calculator.schema.breadcrumb.hubLabel')}
               </Link>
               <span>/</span>
-              <span className="text-neutral-700">FFMI Kalkylator</span>
+              <span className="text-neutral-700">
+                {t('ffmi-calculator.schema.breadcrumb.pageLabel')}
+              </span>
             </nav>
 
             <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-5 leading-tight">
               <span className="bg-gradient-to-r from-primary-600 to-accent-500 bg-clip-text text-transparent">
-                FFMI
+                {t('ffmi-calculator.h1Prefix')}
               </span>{' '}
-              Kalkylator
+              {t('ffmi-calculator.h1Suffix')}
             </h1>
             <p className="text-lg md:text-xl text-neutral-600 leading-relaxed max-w-2xl">
-              FFMI (Fat-Free Mass Index) visar hur mycket muskelmassa du har i förhållande till din
-              längd. Det används för att bedöma fysik, mäta progression och ge kontext kring vad som
-              är möjligt att uppnå naturligt.
+              {t('ffmi-calculator.intro')}
             </p>
           </div>
         </section>
@@ -663,18 +567,22 @@ export default function FfmiKalkylatornPage() {
             <div className="rounded-2xl border border-neutral-200 shadow-sm overflow-hidden">
               <div className="bg-primary-50 px-6 py-4 border-b border-primary-100 flex items-center gap-2">
                 <Calculator className="h-5 w-5 text-primary-600" />
-                <span className="font-semibold text-primary-900">Beräkna ditt FFMI</span>
+                <span className="font-semibold text-primary-900">
+                  {t('ffmi-calculator.calculator.header')}
+                </span>
               </div>
 
               <div className="p-6 space-y-5">
                 {/* Gender */}
                 <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-2">Kön</label>
+                  <label className="block text-sm font-medium text-neutral-700 mb-2">
+                    {t('ffmi-calculator.calculator.genderLabel')}
+                  </label>
                   <div className="grid grid-cols-2 gap-2">
                     {(
                       [
-                        { value: 'male', label: 'Man' },
-                        { value: 'female', label: 'Kvinna' },
+                        { value: 'male', label: t('ffmi-calculator.calculator.genderMale') },
+                        { value: 'female', label: t('ffmi-calculator.calculator.genderFemale') },
                       ] as { value: Gender; label: string }[]
                     ).map(opt => (
                       <button
@@ -700,14 +608,14 @@ export default function FfmiKalkylatornPage() {
                 <div className="grid grid-cols-2 gap-4">
                   {[
                     {
-                      label: 'Längd',
+                      label: t('ffmi-calculator.calculator.heightLabel'),
                       unit: 'cm',
                       value: height,
                       setter: setHeight,
                       placeholder: '175',
                     },
                     {
-                      label: 'Vikt',
+                      label: t('ffmi-calculator.calculator.weightLabel'),
                       unit: 'kg',
                       value: weight,
                       setter: setWeight,
@@ -742,15 +650,15 @@ export default function FfmiKalkylatornPage() {
                 {/* Body fat */}
                 <div>
                   <label className="block text-sm font-medium text-neutral-700 mb-1">
-                    Kroppsfettprocent
+                    {t('ffmi-calculator.calculator.bfLabel')}
                   </label>
                   <div className="text-xs text-neutral-400 mb-1">
-                    Vet du inte din fettprocent?{' '}
+                    {t('ffmi-calculator.calculator.bfHintPrefix')}{' '}
                     <Link
-                      to="/kalkylatorer/kroppsfett"
+                      to={relatedCalcs[0]?.href ?? '/kalkylatorer/kroppsfett'}
                       className="text-primary-600 hover:underline"
                     >
-                      Räkna ut den här
+                      {t('ffmi-calculator.calculator.bfHintLink')}
                     </Link>
                   </div>
                   <div className="flex items-center border border-neutral-200 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-primary-300 focus-within:border-primary-400 max-w-40">
@@ -777,14 +685,16 @@ export default function FfmiKalkylatornPage() {
                   disabled={!result}
                   className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-neutral-200 disabled:text-neutral-400 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm"
                 >
-                  Beräkna mitt FFMI
+                  {t('ffmi-calculator.calculator.button')}
                 </button>
               </div>
 
               {/* Results */}
               {hasResult && result && (
                 <div className="border-t border-neutral-100 bg-neutral-50 px-6 py-6 space-y-4">
-                  <h2 className="font-semibold text-neutral-800">Ditt resultat</h2>
+                  <h2 className="font-semibold text-neutral-800">
+                    {t('ffmi-calculator.calculator.resultsTitle')}
+                  </h2>
 
                   {/* Category card */}
                   <div className={`rounded-xl border p-5 ${result.category.bg}`}>
@@ -793,23 +703,38 @@ export default function FfmiKalkylatornPage() {
                         {result.ffmi}
                       </span>
                       <span className={`text-lg font-semibold mb-0.5 ${result.category.color}`}>
-                        {result.category.label}
+                        {ffmiLabels[gender]?.[result.category.label]?.label ??
+                          result.category.label}
                       </span>
                     </div>
-                    <p className="text-sm text-neutral-700 mb-2">{result.category.description}</p>
-                    <p className="text-xs text-neutral-500 italic">{result.category.context}</p>
+                    <p className="text-sm text-neutral-700 mb-2">
+                      {ffmiLabels[gender]?.[result.category.label]?.description ??
+                        result.category.description}
+                    </p>
+                    <p className="text-xs text-neutral-500 italic">
+                      {ffmiLabels[gender]?.[result.category.label]?.context ??
+                        result.category.context}
+                    </p>
                   </div>
 
                   {/* Stats grid */}
                   <div className="grid grid-cols-3 gap-3">
                     {[
-                      { label: 'FFMI', value: result.ffmi, desc: 'Fat-Free Mass Index' },
                       {
-                        label: 'Normaliserat',
-                        value: result.normalizedFfmi,
-                        desc: 'Justerat till 180 cm',
+                        label: t('ffmi-calculator.calculator.ffmiStatLabel'),
+                        value: result.ffmi,
+                        desc: t('ffmi-calculator.calculator.ffmiStatDesc'),
                       },
-                      { label: 'Lean body mass', value: `${result.lbm} kg`, desc: 'Fettfri massa' },
+                      {
+                        label: t('ffmi-calculator.calculator.normalizedLabel'),
+                        value: result.normalizedFfmi,
+                        desc: t('ffmi-calculator.calculator.normalizedDesc'),
+                      },
+                      {
+                        label: t('ffmi-calculator.calculator.lbmLabel'),
+                        value: `${result.lbm} kg`,
+                        desc: t('ffmi-calculator.calculator.lbmDesc'),
+                      },
                     ].map(stat => (
                       <div
                         key={stat.label}
@@ -826,12 +751,11 @@ export default function FfmiKalkylatornPage() {
                   <div className="rounded-xl bg-amber-50 border border-amber-200 p-4 flex gap-3">
                     <AlertTriangle className="h-4 w-4 text-amber-600 flex-shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-sm font-medium text-amber-900 mb-1">FFMI är ett estimat</p>
+                      <p className="text-sm font-medium text-amber-900 mb-1">
+                        {t('ffmi-calculator.calculator.warningTitle')}
+                      </p>
                       <p className="text-xs text-amber-700">
-                        FFMI beror direkt på fettprocent-uppskattningen — om den är +3% fel blir
-                        FFMI också fel. Normaliserat FFMI ≥ 25 (män) är statistiskt sällsynt
-                        naturligt men inte omöjligt. Tolka ditt FFMI som ett relativt mått, inte ett
-                        absolut värde.
+                        {t('ffmi-calculator.calculator.warningBody')}
                       </p>
                     </div>
                   </div>
@@ -840,25 +764,26 @@ export default function FfmiKalkylatornPage() {
                     {/* CTA */}
                     <div className="rounded-xl bg-white border border-primary-200 p-4">
                       <p className="text-sm font-medium text-neutral-800 mb-1">
-                        Matcha din muskelmassa med rätt kalorimål
+                        {t('ffmi-calculator.calculator.ctaTitle')}
                       </p>
                       <p className="text-xs text-neutral-500 mb-3">
-                        Lean body mass är den starkaste prediktorn för ditt BMR. Räkna ut ditt
-                        exakta TDEE och sätt ett kalorimål som matchar din kroppssammansättning.
+                        {t('ffmi-calculator.calculator.ctaBody')}
                       </p>
                       <div className="flex flex-col sm:flex-row gap-2">
                         <Link
-                          to="/kalkylatorer"
+                          to={
+                            relatedCalcs[1]?.href ?? t('ffmi-calculator.schema.breadcrumb.hubPath')
+                          }
                           className="inline-flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
                         >
-                          Räkna ut ditt TDEE
+                          {t('ffmi-calculator.calculator.ctaPrimary')}
                           <ArrowRight className="h-4 w-4" />
                         </Link>
                         <Link
                           to="/register"
                           className="inline-flex items-center justify-center gap-2 border border-neutral-200 text-neutral-700 text-sm font-medium px-4 py-2 rounded-lg hover:bg-neutral-50 transition-colors"
                         >
-                          Skapa gratis konto
+                          {t('ffmi-calculator.calculator.ctaSecondary')}
                         </Link>
                       </div>
                     </div>
@@ -911,7 +836,7 @@ export default function FfmiKalkylatornPage() {
                 ))}
               </div>
 
-              <FfmiReferenceTable />
+              <FfmiReferenceTable t={tSimple} />
             </div>
           </div>
         </section>
@@ -919,7 +844,7 @@ export default function FfmiKalkylatornPage() {
         {/* FAQ section */}
         <section className="bg-neutral-50 py-14 border-b border-neutral-100">
           <div className="container mx-auto px-4 max-w-3xl">
-            <FaqBlock items={FAQ_ITEMS} />
+            <FaqBlock items={faqItems} title={t('ffmi-calculator.faqTitle')} />
           </div>
         </section>
 
@@ -928,23 +853,23 @@ export default function FfmiKalkylatornPage() {
           <section className="bg-neutral-900 py-16 md:py-20">
             <div className="container mx-auto px-4 max-w-2xl text-center">
               <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
-                Matcha din muskelmassa med rätt kalorimål
+                {t('ffmi-calculator.cta.bottom.h2')}
               </h2>
               <p className="text-neutral-400 text-base mb-8 max-w-md mx-auto">
-                FFMI visar var du är. TDEE och makroplanering visar hur du tar dig dit du vill.
+                {t('ffmi-calculator.cta.bottom.body')}
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Link
                   to="/register"
                   className="inline-flex items-center justify-center gap-2 bg-accent-500 hover:bg-accent-600 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm"
                 >
-                  Skapa gratis konto <ArrowRight className="h-4 w-4" />
+                  {t('ffmi-calculator.cta.bottom.primary')} <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link
-                  to="/kalkylatorer/bulk-kalkylator"
+                  to={relatedCalcs[4]?.href ?? '/kalkylatorer/bulk-kalkylator'}
                   className="inline-flex items-center justify-center gap-2 border border-neutral-600 text-neutral-300 hover:bg-neutral-800 font-medium px-6 py-3 rounded-xl transition-colors text-sm"
                 >
-                  Räkna ut dina bulk-kalorier
+                  {t('ffmi-calculator.cta.bottom.secondary')}
                 </Link>
               </div>
             </div>
@@ -957,16 +882,10 @@ export default function FfmiKalkylatornPage() {
             <div className="grid sm:grid-cols-2 gap-10">
               <div>
                 <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3">
-                  Relaterade kalkylatorer
+                  {t('ffmi-calculator.related.calculatorsTitle')}
                 </h3>
                 <div className="grid gap-3">
-                  {[
-                    { href: '/kalkylatorer/kroppsfett', label: 'Kroppsfett Kalkylator' },
-                    { href: '/kalkylatorer/tdee-kalkylator', label: 'TDEE Kalkylator' },
-                    { href: '/kalkylatorer/bmi-kalkylator', label: 'BMI Kalkylator' },
-                    { href: '/kalkylatorer/proteinbehov', label: 'Proteinbehov Kalkylator' },
-                    { href: '/kalkylatorer/bulk-kalkylator', label: 'Bulk Kalkylator' },
-                  ].map(l => (
+                  {relatedCalcs.map(l => (
                     <Link
                       key={l.href}
                       to={l.href}
@@ -980,16 +899,10 @@ export default function FfmiKalkylatornPage() {
               </div>
               <div>
                 <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3">
-                  Relaterade artiklar
+                  {t('ffmi-calculator.related.articlesTitle')}
                 </h3>
                 <div className="grid gap-3">
-                  {[
-                    { href: '/artiklar/vad-ar-ffmi', label: 'Vad är FFMI?' },
-                    { href: '/artiklar/bulk-och-cut', label: 'Bulk och Cut — komplett guide' },
-                    { href: '/artiklar/kaloribehov', label: 'Kaloribehov — komplett guide' },
-                    { href: '/artiklar/reverse-diet', label: 'Reverse Diet' },
-                    { href: '/artiklar/kaloribrist', label: 'Hur stor kaloribrist ska man ha?' },
-                  ].map(l => (
+                  {relatedArticles.map(l => (
                     <Link
                       key={l.href}
                       to={l.href}

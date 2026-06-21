@@ -1,114 +1,18 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { ArrowRight, Check, X, Minus } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import SiteHeader from '@/components/layout/SiteHeader'
 import SiteFooter from '@/components/layout/SiteFooter'
 import { Seo } from '@/components/seo/Seo'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { FaqBlock } from '@/components/article/FaqBlock'
 import { GuestOnly } from '@/components/GuestOnly'
-
-const CANONICAL = 'https://calculeat.se/jamfor/macrofactor-vs-calculeat'
-
-const FAQ_ITEMS = [
-  {
-    question: 'Är MacroFactor bättre än CalculEat?',
-    answer:
-      'MacroFactor är en av marknadens mest avancerade kaloriappar med stark metabolisk kalibrering och autoregulering av kalorimål. CalculEat erbjuder liknande TDEE-precision och fas-planering gratis, på svenska, utan abonnemangskrav. MacroFactor är bättre för den som vill ha maximal automatisering. CalculEat är bättre för den som vill ha samma precision utan kostnad och på sitt eget språk.',
-  },
-  {
-    question: 'Vad är skillnaden mellan MacroFactor och CalculEat?',
-    answer:
-      'MacroFactor är en premiumapp (abonnemang krävs) med fokus på avancerad metabolisk autoregulering — appen justerar kalorimålet automatiskt baserat på viktdata och beräknat TDEE varje vecka. CalculEat erbjuder individuell TDEE-beräkning, fasbaserad planering (cut/bulk/maintenance) och metabolisk kalibrering gratis. MacroFactor är mer automatiserad. CalculEat ger mer transparens i hur beräkningarna görs.',
-  },
-  {
-    question: 'Är MacroFactor gratis?',
-    answer:
-      'Nej — MacroFactor kräver ett aktivt abonnemang för alla funktioner. Det finns en kortare provperiod men inga permanenta gratisalternativ för kärn-features. CalculEat är gratis för kaloriloggning, TDEE-beräkning, fas-tracking och metabolisk kalibrering.',
-  },
-  {
-    question: 'Vilken app är bäst för seriös kroppskompositionstracking?',
-    answer:
-      'Båda är starka val. MacroFactor har en mer automatiserad pipeline för TDEE-kalibrering. CalculEat ger mer kontroll och transparens — du ser varför kalorimålet är som det är och kan justera det manuellt vid behov. Seriösa användare som vill förstå sina siffror föredrar ofta CalculEat. Den som bara vill att appen ska sköta allt automatiskt kan uppskatta MacroFactor.',
-  },
-  {
-    question: 'Stödjer MacroFactor svenska?',
-    answer:
-      'MacroFactor är primärt på engelska och fokuserar på den engelskspråkiga marknaden. CalculEat är byggt för den svenska marknaden — matdatabas från Livsmedelsverket, gränssnitt på svenska och stöd för svenska nutritionsreferensvärden.',
-  },
-]
-
-const PAGE_SCHEMA = [
-  {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
-    headline: 'MacroFactor vs CalculEat — Vilken kaloriräknare är bäst? (2026)',
-    description:
-      'Jämförelse av MacroFactor och CalculEat. MacroFactor är en avancerad premiumapp. CalculEat erbjuder liknande TDEE-precision och fas-planering gratis och på svenska.',
-    url: CANONICAL,
-    publisher: { '@type': 'Organization', name: 'CalculEat', url: 'https://calculeat.se' },
-    inLanguage: 'sv-SE',
-  },
-  {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'CalculEat', item: 'https://calculeat.se/' },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: 'Jämförelser',
-        item: 'https://calculeat.se/jamfor',
-      },
-      { '@type': 'ListItem', position: 3, name: 'MacroFactor vs CalculEat', item: CANONICAL },
-    ],
-  },
-]
+import { getPageConfigByKey, getHreflangAlternates } from '@/lib/config/pages'
+import type { FaqItem } from '@/components/article/FaqBlock'
 
 type CellType = 'yes' | 'no' | 'partial'
-
-const COMPARISON_ROWS: {
-  feature: string
-  mf: CellType
-  ce: CellType
-  note?: string
-}[] = [
-  { feature: 'Kaloriloggning', mf: 'yes', ce: 'yes' },
-  { feature: 'Matdatabas', mf: 'yes', ce: 'partial', note: 'CalculEat: Livsmedelsverket + USDA' },
-  { feature: 'Svenska', mf: 'no', ce: 'yes', note: 'MacroFactor är primärt på engelska' },
-  {
-    feature: 'TDEE-beräkning',
-    mf: 'yes',
-    ce: 'yes',
-    note: 'Båda beräknar individuellt TDEE',
-  },
-  {
-    feature: 'Metabolisk kalibrering',
-    mf: 'yes',
-    ce: 'yes',
-    note: 'Baseras på faktisk viktdata',
-  },
-  {
-    feature: 'Autoregulering av kalorimål',
-    mf: 'yes',
-    ce: 'partial',
-    note: 'MacroFactor: helautomatisk varje vecka',
-  },
-  { feature: 'Bulk/Cut-faser', mf: 'yes', ce: 'yes', note: 'Separata mål per fas' },
-  {
-    feature: 'Reverse diet-stöd',
-    mf: 'partial',
-    ce: 'yes',
-    note: 'CalculEat: explicit fas-planering',
-  },
-  { feature: 'Transparens i beräkning', mf: 'partial', ce: 'yes', note: 'CalculEat visar hur' },
-  { feature: 'Streckkodsskanning', mf: 'yes', ce: 'yes' },
-  {
-    feature: 'Gratis för kärn-features',
-    mf: 'no',
-    ce: 'yes',
-    note: 'MacroFactor kräver abonnemang',
-  },
-]
+type RelatedLink = { href: string; label: string }
+type LocaleRow = { feature: string; note: string | null }
 
 function Cell({ type }: { type: CellType }) {
   if (type === 'yes')
@@ -130,64 +34,129 @@ function Cell({ type }: { type: CellType }) {
   )
 }
 
+const CELL_DATA: { mf: CellType; ce: CellType }[] = [
+  { mf: 'yes', ce: 'yes' },
+  { mf: 'yes', ce: 'partial' },
+  { mf: 'no', ce: 'yes' },
+  { mf: 'yes', ce: 'yes' },
+  { mf: 'yes', ce: 'yes' },
+  { mf: 'yes', ce: 'partial' },
+  { mf: 'yes', ce: 'yes' },
+  { mf: 'partial', ce: 'yes' },
+  { mf: 'partial', ce: 'yes' },
+  { mf: 'yes', ce: 'yes' },
+  { mf: 'no', ce: 'yes' },
+]
+
+const pageConfig = getPageConfigByKey('macrofactor-vs-calculeat')!
+const hreflangAlternates = getHreflangAlternates(pageConfig)
+
 export default function MacroFactorVsCalculEatPage() {
+  const { pathname } = useLocation()
+  const lng = pathname.startsWith('/en/') ? 'en' : 'sv'
+  const { t } = useTranslation('pages-compare', { lng })
+
+  const localeEntry = pageConfig.locales[lng] ?? pageConfig.locales.sv!
+  const faqItems = t('macrofactor-vs-calculeat.faq', {
+    returnObjects: true,
+  }) as unknown as FaqItem[]
+  const localeRows = t('macrofactor-vs-calculeat.comparisonRows', {
+    returnObjects: true,
+  }) as unknown as LocaleRow[]
+  const relatedCalcs = t('macrofactor-vs-calculeat.related.calculators', {
+    returnObjects: true,
+  }) as unknown as RelatedLink[]
+  const relatedArticles = t('macrofactor-vs-calculeat.related.articles', {
+    returnObjects: true,
+  }) as unknown as RelatedLink[]
+  const quickPoints = t('macrofactor-vs-calculeat.quickAnswer.points', {
+    returnObjects: true,
+  }) as unknown as string[]
+
+  const pageSchema = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: t('macrofactor-vs-calculeat.schema.headline'),
+      description: t('macrofactor-vs-calculeat.schema.description'),
+      url: localeEntry.canonical,
+      publisher: { '@type': 'Organization', name: 'CalculEat', url: 'https://calculeat.se' },
+      inLanguage: lng === 'en' ? 'en' : 'sv-SE',
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'CalculEat', item: 'https://calculeat.se/' },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: t('macrofactor-vs-calculeat.breadcrumb.comparisons'),
+          item: `https://calculeat.se/${lng === 'en' ? 'en/compare' : 'jamfor'}`,
+        },
+        {
+          '@type': 'ListItem',
+          position: 3,
+          name: t('macrofactor-vs-calculeat.breadcrumb.pageLabel'),
+          item: localeEntry.canonical,
+        },
+      ],
+    },
+  ]
+
+  const calcHubHref = lng === 'en' ? '/en/calculators' : '/kalkylatorer'
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Seo
-        title="MacroFactor vs CalculEat — Vilken kaloriräknare är bäst? (2026)"
-        description="Jämförelse av MacroFactor och CalculEat. MacroFactor är en avancerad premiumapp med automatisk TDEE-kalibrering. CalculEat erbjuder samma precision gratis och på svenska."
-        canonical={CANONICAL}
+        title={t('macrofactor-vs-calculeat.seo.title')}
+        description={t('macrofactor-vs-calculeat.seo.description')}
+        canonical={localeEntry.canonical}
+        hreflangAlternates={hreflangAlternates}
+        locale={lng === 'en' ? 'en_US' : 'sv_SE'}
         type="article"
       />
-      <JsonLd schema={PAGE_SCHEMA} />
-
+      <JsonLd schema={pageSchema} />
       <SiteHeader />
-
       <main className="flex-1">
         <div className="container mx-auto px-4 py-10 max-w-2xl">
-          {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-sm text-neutral-500 mb-6">
             <Link to="/" className="hover:text-neutral-700 transition-colors">
               CalculEat
             </Link>
             <span>/</span>
-            <span className="text-neutral-700">Jämförelser</span>
+            <span className="text-neutral-700">
+              {t('macrofactor-vs-calculeat.breadcrumb.comparisons')}
+            </span>
             <span>/</span>
-            <span className="text-neutral-700">MacroFactor vs CalculEat</span>
+            <span className="text-neutral-700">
+              {t('macrofactor-vs-calculeat.breadcrumb.pageLabel')}
+            </span>
           </nav>
-
           <h1 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-3 leading-tight">
-            MacroFactor vs CalculEat — Vilken app passar dig bäst?
+            {t('macrofactor-vs-calculeat.h1')}
           </h1>
 
-          {/* Winner summary box */}
           <div className="rounded-xl border border-primary-200 bg-primary-50 p-5 mb-6">
             <p className="text-xs font-semibold text-primary-500 uppercase tracking-wider mb-2">
-              Snabbsvar
+              {t('macrofactor-vs-calculeat.quickAnswer.label')}
             </p>
             <p className="text-sm font-semibold text-primary-900 mb-3">
-              CalculEat vinner på pris, språk och transparens — MacroFactor på automation.
+              {t('macrofactor-vs-calculeat.quickAnswer.verdict')}
             </p>
             <ul className="space-y-1.5 text-sm text-primary-800">
-              <li className="flex items-start gap-2">
-                <Check className="h-4 w-4 text-primary-600 mt-0.5 shrink-0" /> Samma TDEE-precision
-                och metabolisk kalibrering — helt gratis
-              </li>
-              <li className="flex items-start gap-2">
-                <Check className="h-4 w-4 text-primary-600 mt-0.5 shrink-0" /> Fullt på svenska med
-                Livsmedelsverkets matdatabas
-              </li>
-              <li className="flex items-start gap-2">
-                <Check className="h-4 w-4 text-primary-600 mt-0.5 shrink-0" /> Full transparens i
-                hur ditt kalorimål beräknas
-              </li>
+              {quickPoints.map(pt => (
+                <li key={pt} className="flex items-start gap-2">
+                  <Check className="h-4 w-4 text-primary-600 mt-0.5 shrink-0" /> {pt}
+                </li>
+              ))}
             </ul>
             <div className="mt-4 flex flex-col sm:flex-row gap-2">
               <Link
-                to="/kalkylatorer"
+                to={calcHubHref}
                 className="inline-flex items-center justify-center gap-2 bg-primary-600 text-white font-semibold px-4 py-2.5 rounded-lg hover:bg-primary-700 transition-colors text-sm"
               >
-                Räkna ut ditt TDEE gratis
+                {t('macrofactor-vs-calculeat.quickAnswer.ctaCalc')}
                 <ArrowRight className="h-4 w-4" />
               </Link>
               <GuestOnly>
@@ -195,71 +164,63 @@ export default function MacroFactorVsCalculEatPage() {
                   to="/register"
                   className="inline-flex items-center justify-center gap-2 border border-primary-300 text-primary-700 font-medium px-4 py-2.5 rounded-lg hover:bg-primary-100 transition-colors text-sm"
                 >
-                  Skapa konto
+                  {t('macrofactor-vs-calculeat.quickAnswer.ctaRegister')}
                 </Link>
               </GuestOnly>
             </div>
           </div>
 
           <p className="text-base text-neutral-600 leading-relaxed mb-6">
-            MacroFactor är en av marknadens mest avancerade kaloriappar — automatisk metabolisk
-            kalibrering, veckovis TDEE-justering, kraftfull för seriösa användare. Men den kräver
-            abonnemang och är på engelska. CalculEat erbjuder individuellt TDEE, fas-planering och
-            metabolisk kalibrering gratis och på svenska.
+            {t('macrofactor-vs-calculeat.intro')}
           </p>
 
-          {/* Inline CTA */}
           <div className="rounded-xl border border-primary-200 bg-primary-50 p-5 mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-4">
             <div className="flex-1">
               <p className="text-sm font-semibold text-primary-900 mb-0.5">
-                Räkna ut ditt TDEE — gratis
+                {t('macrofactor-vs-calculeat.midPageCta.title')}
               </p>
               <p className="text-xs text-primary-700">
-                Prova CalculEats TDEE-kalkylator innan du bestämmer dig för vilken app du vill
-                använda.
+                {t('macrofactor-vs-calculeat.midPageCta.body')}
               </p>
             </div>
             <Link
-              to="/kalkylatorer"
+              to={calcHubHref}
               className="shrink-0 inline-flex items-center gap-2 bg-primary-600 text-white font-semibold px-4 py-2.5 rounded-lg hover:bg-primary-700 transition-colors text-sm"
             >
-              TDEE-kalkylator
-              <ArrowRight className="h-4 w-4" />
+              {t('macrofactor-vs-calculeat.midPageCta.button')}
             </Link>
           </div>
 
-          {/* Comparison table */}
           <section className="mb-10">
-            <h2 className="text-xl font-semibold text-neutral-900 mb-4">Snabb jämförelse</h2>
+            <h2 className="text-xl font-semibold text-neutral-900 mb-4">
+              {t('macrofactor-vs-calculeat.comparisonTable.h2')}
+            </h2>
             <div className="rounded-2xl border border-neutral-200 overflow-hidden">
               <div className="grid grid-cols-[1fr_auto_auto] gap-0 bg-neutral-50 border-b border-neutral-200">
                 <div className="px-4 py-3 text-xs font-semibold text-neutral-500 uppercase tracking-wider">
-                  Funktion
+                  {t('macrofactor-vs-calculeat.comparisonTable.colFeature')}
                 </div>
                 <div className="px-4 py-3 text-xs font-semibold text-neutral-500 uppercase tracking-wider text-center w-28">
-                  MacroFactor
+                  {t('macrofactor-vs-calculeat.comparisonTable.colOther')}
                 </div>
                 <div className="px-4 py-3 text-xs font-semibold text-primary-600 uppercase tracking-wider text-center w-28">
-                  CalculEat
+                  {t('macrofactor-vs-calculeat.comparisonTable.colCalculEat')}
                 </div>
               </div>
-
-              {COMPARISON_ROWS.map(({ feature, mf, ce, note }, i) => (
+              {localeRows.map((row, i) => (
                 <div
-                  key={feature}
-                  className={`grid grid-cols-[1fr_auto_auto] gap-0 border-b border-neutral-100 last:border-0 ${
-                    i % 2 === 0 ? 'bg-white' : 'bg-neutral-50/50'
-                  }`}
+                  key={row.feature}
+                  className={`grid grid-cols-[1fr_auto_auto] gap-0 border-b border-neutral-100 last:border-0 ${i % 2 === 0 ? 'bg-white' : 'bg-neutral-50/50'}`}
                 >
                   <div className="px-4 py-3">
-                    <div className="text-sm text-neutral-800 font-medium">{feature}</div>
-                    {note && <div className="text-xs text-neutral-400 mt-0.5">{note}</div>}
+                    <div className="text-sm text-neutral-800 font-medium">{row.feature}</div>
+                    {row.note && <div className="text-xs text-neutral-400 mt-0.5">{row.note}</div>}
                   </div>
                   <div className="px-4 py-3 flex items-center justify-center w-28">
-                    <Cell type={mf} />
+                    <Cell type={CELL_DATA[i]?.mf ?? 'no'} />
                   </div>
                   <div className="px-4 py-3 flex items-center justify-center w-28">
-                    <Cell type={ce} />
+                    <Cell type={CELL_DATA[i]?.ce ?? 'no'} />
                   </div>
                 </div>
               ))}
@@ -269,24 +230,24 @@ export default function MacroFactorVsCalculEatPage() {
                 <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-green-100">
                   <Check className="h-3 w-3 text-green-700" />
                 </span>
-                Ja / fullt stöd
+                {t('macrofactor-vs-calculeat.comparisonTable.legendYes')}
               </span>
               <span className="flex items-center gap-1.5">
                 <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-yellow-100">
                   <Minus className="h-3 w-3 text-yellow-600" />
                 </span>
-                Delvis
+                {t('macrofactor-vs-calculeat.comparisonTable.legendPartial')}
               </span>
               <span className="flex items-center gap-1.5">
                 <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-red-100">
                   <X className="h-3 w-3 text-red-600" />
                 </span>
-                Saknas
+                {t('macrofactor-vs-calculeat.comparisonTable.legendNo')}
               </span>
             </div>
           </section>
 
-          {/* For whom */}
+          {/* Article prose — stays in TSX */}
           <section className="space-y-5 text-neutral-700 text-sm leading-relaxed mb-8">
             <h2 className="text-xl font-semibold text-neutral-900">För vem passar MacroFactor?</h2>
             <p>
@@ -392,70 +353,41 @@ export default function MacroFactorVsCalculEatPage() {
             </div>
           </section>
 
-          {/* Mid-page CTA */}
-          <div className="rounded-xl border border-primary-200 bg-primary-50 p-5 mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            <div className="flex-1">
-              <p className="text-sm font-semibold text-primary-900 mb-0.5">
-                Vill du ha MacroFactors precision — utan abonnemanget?
-              </p>
-              <p className="text-xs text-primary-700">
-                Individuellt TDEE, metabolisk kalibrering och fas-planering. Gratis, på svenska.
-              </p>
-            </div>
-            <Link
-              to="/kalkylatorer"
-              className="shrink-0 inline-flex items-center gap-2 bg-primary-600 text-white font-semibold px-4 py-2.5 rounded-lg hover:bg-primary-700 transition-colors text-sm"
-            >
-              Testa gratis →
-            </Link>
-          </div>
+          <FaqBlock items={faqItems} title={t('macrofactor-vs-calculeat.faqTitle')} />
 
-          <FaqBlock items={FAQ_ITEMS} />
-
-          {/* CTA */}
           <GuestOnly>
             <section className="mt-10 rounded-2xl bg-primary-600 p-8 text-center">
               <h2 className="text-xl font-bold text-white mb-2">
-                Samma precision som MacroFactor — helt gratis
+                {t('macrofactor-vs-calculeat.bottomCta.h2')}
               </h2>
               <p className="text-primary-200 text-sm mb-6 max-w-md mx-auto">
-                Individuellt TDEE, metabolisk kalibrering och fas-planering. På svenska, utan
-                abonnemang. Skapa konto och kom igång direkt.
+                {t('macrofactor-vs-calculeat.bottomCta.body')}
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Link
                   to="/register"
                   className="inline-flex items-center justify-center gap-2 bg-white text-primary-700 font-semibold px-6 py-3 rounded-xl hover:bg-primary-50 transition-colors text-sm"
                 >
-                  Skapa gratis konto
+                  {t('macrofactor-vs-calculeat.bottomCta.primary')}
                   <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link
-                  to="/kalkylatorer"
+                  to={calcHubHref}
                   className="inline-flex items-center justify-center gap-2 border border-primary-400 text-white font-medium px-6 py-3 rounded-xl hover:bg-primary-700 transition-colors text-sm"
                 >
-                  Räkna ut ditt TDEE först
+                  {t('macrofactor-vs-calculeat.bottomCta.secondary')}
                 </Link>
               </div>
             </section>
           </GuestOnly>
 
-          {/* Related */}
           <section className="mt-10 pt-8 border-t border-neutral-200 grid sm:grid-cols-2 gap-6">
             <div>
               <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3">
-                Relaterade jämförelser
+                {t('macrofactor-vs-calculeat.related.calculatorsTitle')}
               </h3>
               <ul className="space-y-2">
-                {[
-                  {
-                    href: '/jamfor/myfitnesspal-vs-calculeat',
-                    label: 'MyFitnessPal vs CalculEat',
-                  },
-                  { href: '/jamfor/lifesum-vs-calculeat', label: 'Lifesum vs CalculEat' },
-                  { href: '/jamfor/yazio-vs-calculeat', label: 'Yazio vs CalculEat' },
-                  { href: '/basta-kaloriappen', label: 'Bästa kaloriappen 2026' },
-                ].map(l => (
+                {relatedCalcs.map(l => (
                   <li key={l.href}>
                     <Link
                       to={l.href}
@@ -470,15 +402,10 @@ export default function MacroFactorVsCalculEatPage() {
             </div>
             <div>
               <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3">
-                Relaterade kalkylatorer
+                {t('macrofactor-vs-calculeat.related.articlesTitle')}
               </h3>
               <ul className="space-y-2">
-                {[
-                  { href: '/kalkylatorer/tdee-kalkylator', label: 'TDEE Kalkylator' },
-                  { href: '/kalkylatorer/kaloriunderskott', label: 'Kaloribrist Kalkylator' },
-                  { href: '/kalkylatorer/cut-kalkylator', label: 'Cut & Deff Kalkylator' },
-                  { href: '/kalkylatorer/bulk-kalkylator', label: 'Bulk Kalkylator' },
-                ].map(l => (
+                {relatedArticles.map(l => (
                   <li key={l.href}>
                     <Link
                       to={l.href}
@@ -494,7 +421,6 @@ export default function MacroFactorVsCalculEatPage() {
           </section>
         </div>
       </main>
-
       <SiteFooter />
     </div>
   )

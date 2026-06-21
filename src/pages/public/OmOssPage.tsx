@@ -1,40 +1,53 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { ArrowRight } from 'lucide-react'
 import SiteHeader from '@/components/layout/SiteHeader'
 import SiteFooter from '@/components/layout/SiteFooter'
 import { Seo } from '@/components/seo/Seo'
 import { JsonLd } from '@/components/seo/JsonLd'
+import { getPageConfigByKey, getHreflangAlternates } from '@/lib/config/pages'
 
-const CANONICAL = 'https://calculeat.se/om-oss'
+type CtaLink = { href: string; label: string }
 
-const PAGE_SCHEMA = {
-  '@context': 'https://schema.org',
-  '@type': 'AboutPage',
-  name: 'Om CalculEat',
-  url: CANONICAL,
-  description:
-    'CalculEat är en svensk nutritionsapp med vetenskapligt grundade kalkylatorer för TDEE, BMR, FFMI och mer. Lär dig om vår metodik och datakällor.',
-  publisher: { '@type': 'Organization', name: 'CalculEat', url: 'https://calculeat.se' },
-}
-
-const ORG_SCHEMA = {
-  '@context': 'https://schema.org',
-  '@type': 'Organization',
-  name: 'CalculEat',
-  url: 'https://calculeat.se',
-  description: 'Svensk nutritionsapp med vetenskapligt grundade kalkylatorer och matloggning.',
-  sameAs: [],
-}
+const pageConfig = getPageConfigByKey('about')!
+const hreflangAlternates = getHreflangAlternates(pageConfig)
 
 export default function OmOssPage() {
+  const { pathname } = useLocation()
+  const lng = pathname.startsWith('/en/') ? 'en' : 'sv'
+  const { t } = useTranslation('pages-other', { lng })
+
+  const localeEntry = pageConfig.locales[lng] ?? pageConfig.locales.sv!
+  const ctaLinks = t('about.cta.links', { returnObjects: true }) as unknown as CtaLink[]
+
+  const pageSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'AboutPage',
+    name: t('about.schema.pageName'),
+    url: localeEntry.canonical,
+    description: t('about.schema.pageDescription'),
+    publisher: { '@type': 'Organization', name: 'CalculEat', url: 'https://calculeat.se' },
+  }
+
+  const orgSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'CalculEat',
+    url: 'https://calculeat.se',
+    description: t('about.schema.orgDescription'),
+    sameAs: [],
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Seo
-        title="Om CalculEat — Vetenskapligt grundad nutritionsapp | CalculEat"
-        description="CalculEat är en svensk nutritionsapp med vetenskapligt grundade kalkylatorer för TDEE, BMR, FFMI och mer. Vi förklarar vår metodik och datakällor."
-        canonical={CANONICAL}
+        title={t('about.seo.title')}
+        description={t('about.seo.description')}
+        canonical={localeEntry.canonical}
+        hreflangAlternates={hreflangAlternates}
+        locale={lng === 'en' ? 'en_US' : 'sv_SE'}
       />
-      <JsonLd schema={[PAGE_SCHEMA, ORG_SCHEMA]} />
+      <JsonLd schema={[pageSchema, orgSchema]} />
 
       <SiteHeader />
 
@@ -46,68 +59,59 @@ export default function OmOssPage() {
               CalculEat
             </Link>
             <span>/</span>
-            <span className="text-neutral-700">Om oss</span>
+            <span className="text-neutral-700">{t('about.breadcrumb')}</span>
           </nav>
 
-          <h1 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-4">Om CalculEat</h1>
+          <h1 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-4">{t('about.h1')}</h1>
 
-          <p className="text-lg text-neutral-600 leading-relaxed mb-10">
-            CalculEat är en svensk nutritionsapp som kombinerar vetenskapligt grundade kalkylatorer
-            med enkel matloggning — allt på ett ställe.
-          </p>
+          <p className="text-lg text-neutral-600 leading-relaxed mb-10">{t('about.intro')}</p>
 
           <section className="space-y-8">
             <div>
-              <h2 className="text-xl font-semibold text-neutral-900 mb-3">Vad är CalculEat?</h2>
-              <p className="text-neutral-600 leading-relaxed">
-                CalculEat hjälper dig räkna ut ditt kaloribehov (TDEE), planera makronäringsämnen,
-                logga mat och följa din kroppssammansättning. Vi fokuserar på precision och
-                vetenskaplig grund — inte på förenklingar som kan leda fel.
-              </p>
+              <h2 className="text-xl font-semibold text-neutral-900 mb-3">
+                {t('about.sections.whatIs.h2')}
+              </h2>
+              <p className="text-neutral-600 leading-relaxed">{t('about.sections.whatIs.body')}</p>
             </div>
 
             <div>
-              <h2 className="text-xl font-semibold text-neutral-900 mb-3">Vår metodik</h2>
+              <h2 className="text-xl font-semibold text-neutral-900 mb-3">
+                {t('about.sections.methodology.h2')}
+              </h2>
               <div className="space-y-4 text-neutral-600 leading-relaxed">
                 <p>
-                  <strong>Kalkylatorer:</strong> Alla kalkylatorer bygger på publicerad forskning.
-                  TDEE-kalkylatorn använder Mifflin-St Jeor för BMR (validerad i oberoende studier
-                  som den mest korrekta för normalpopulationen) och fem PAL-nivåer (1.2–1.9) för
-                  aktivitetsfaktor. Vi erbjuder även 9 alternativa BMR-formler för olika
-                  populationer.
+                  <strong>{t('about.sections.methodology.calculatorsLabel')}</strong>{' '}
+                  {t('about.sections.methodology.calculatorsBody')}
                 </p>
                 <p>
-                  <strong>Matdatabas:</strong> Livsmedelsdata hämtas från Livsmedelsverkets
-                  nationella livsmedelsdatabas, USDA FoodData Central och användarinlagda livsmedel.
-                  Vi verifierar bidragsdata via ett community-system.
+                  <strong>{t('about.sections.methodology.databaseLabel')}</strong>{' '}
+                  {t('about.sections.methodology.databaseBody')}
                 </p>
                 <p>
-                  <strong>Informationsinnehåll:</strong> Alla artiklar och förklaringar granskas mot
-                  publicerad forskning (PubMed, WHO, ACSM, EFSA). Vi inkluderar källhänvisningar så
-                  att du kan granska underlagen själv.
+                  <strong>{t('about.sections.methodology.contentLabel')}</strong>{' '}
+                  {t('about.sections.methodology.contentBody')}
                 </p>
               </div>
             </div>
 
             <div>
-              <h2 className="text-xl font-semibold text-neutral-900 mb-3">Begränsningar</h2>
+              <h2 className="text-xl font-semibold text-neutral-900 mb-3">
+                {t('about.sections.limitations.h2')}
+              </h2>
               <p className="text-neutral-600 leading-relaxed">
-                Kalkylatorer ger uppskattningar — inte diagnoser. TDEE-formler har en felmarginal på
-                ca ±10–15%. Individuella faktorer som muskelmassa, hormonbalans och metabolism
-                påverkar det verkliga värdet. Använd alltid resultaten som startpunkt och justera
-                baserat på verkligt utfall.
+                {t('about.sections.limitations.body1')}
               </p>
               <p className="mt-3 text-neutral-600 leading-relaxed">
-                CalculEat är inte ett medicinskt verktyg och ersätter inte rådgivning från dietist
-                eller läkare. Vid sjukdom, ätstörningar eller speciella medicinska behov — rådfråga
-                alltid sjukvård.
+                {t('about.sections.limitations.body2')}
               </p>
             </div>
 
             <div>
-              <h2 className="text-xl font-semibold text-neutral-900 mb-3">Kontakt</h2>
+              <h2 className="text-xl font-semibold text-neutral-900 mb-3">
+                {t('about.sections.contact.h2')}
+              </h2>
               <p className="text-neutral-600">
-                Feedback, felrapporter och frågor välkomnas via{' '}
+                {t('about.sections.contact.body')}{' '}
                 <a href="mailto:kontakt@calculeat.se" className="text-primary-600 hover:underline">
                   kontakt@calculeat.se
                 </a>
@@ -118,20 +122,9 @@ export default function OmOssPage() {
 
           {/* CTA */}
           <div className="mt-12 pt-8 border-t border-neutral-100">
-            <h2 className="text-lg font-semibold text-neutral-800 mb-4">Kom igång</h2>
+            <h2 className="text-lg font-semibold text-neutral-800 mb-4">{t('about.cta.h2')}</h2>
             <div className="grid sm:grid-cols-2 gap-3">
-              {[
-                {
-                  href: '/kalkylatorer/tdee-kalkylator',
-                  label: 'TDEE Kalkylator — räkna ut ditt kaloribehov',
-                },
-                { href: '/kalkylatorer/bmi-kalkylator', label: 'BMI Kalkylator' },
-                {
-                  href: '/artiklar/kaloribehov',
-                  label: 'Guide: Hur räknar man ut sitt kaloribehov?',
-                },
-                { href: '/register', label: 'Skapa gratis konto' },
-              ].map(l => (
+              {ctaLinks.map(l => (
                 <Link
                   key={l.href}
                   to={l.href}

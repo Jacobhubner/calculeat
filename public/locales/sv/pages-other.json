@@ -1,0 +1,52 @@
+{
+  "about": {
+    "seo": {
+      "title": "Om CalculEat — Vetenskapligt grundad nutritionsapp | CalculEat",
+      "description": "CalculEat är en svensk nutritionsapp med vetenskapligt grundade kalkylatorer för TDEE, BMR, FFMI och mer. Vi förklarar vår metodik och datakällor."
+    },
+    "schema": {
+      "pageName": "Om CalculEat",
+      "pageDescription": "CalculEat är en svensk nutritionsapp med vetenskapligt grundade kalkylatorer för TDEE, BMR, FFMI och mer. Lär dig om vår metodik och datakällor.",
+      "orgDescription": "Svensk nutritionsapp med vetenskapligt grundade kalkylatorer och matloggning."
+    },
+    "breadcrumb": "Om oss",
+    "h1": "Om CalculEat",
+    "intro": "CalculEat är en svensk nutritionsapp som kombinerar vetenskapligt grundade kalkylatorer med enkel matloggning — allt på ett ställe.",
+    "sections": {
+      "whatIs": {
+        "h2": "Vad är CalculEat?",
+        "body": "CalculEat hjälper dig räkna ut ditt kaloribehov (TDEE), planera makronäringsämnen, logga mat och följa din kroppssammansättning. Vi fokuserar på precision och vetenskaplig grund — inte på förenklingar som kan leda fel."
+      },
+      "methodology": {
+        "h2": "Vår metodik",
+        "calculatorsLabel": "Kalkylatorer:",
+        "calculatorsBody": "Alla kalkylatorer bygger på publicerad forskning. TDEE-kalkylatorn använder Mifflin-St Jeor för BMR (validerad i oberoende studier som den mest korrekta för normalpopulationen) och fem PAL-nivåer (1.2–1.9) för aktivitetsfaktor. Vi erbjuder även 9 alternativa BMR-formler för olika populationer.",
+        "databaseLabel": "Matdatabas:",
+        "databaseBody": "Livsmedelsdata hämtas från Livsmedelsverkets nationella livsmedelsdatabas, USDA FoodData Central och användarinlagda livsmedel. Vi verifierar bidragsdata via ett community-system.",
+        "contentLabel": "Informationsinnehåll:",
+        "contentBody": "Alla artiklar och förklaringar granskas mot publicerad forskning (PubMed, WHO, ACSM, EFSA). Vi inkluderar källhänvisningar så att du kan granska underlagen själv."
+      },
+      "limitations": {
+        "h2": "Begränsningar",
+        "body1": "Kalkylatorer ger uppskattningar — inte diagnoser. TDEE-formler har en felmarginal på ca ±10–15%. Individuella faktorer som muskelmassa, hormonbalans och metabolism påverkar det verkliga värdet. Använd alltid resultaten som startpunkt och justera baserat på verkligt utfall.",
+        "body2": "CalculEat är inte ett medicinskt verktyg och ersätter inte rådgivning från dietist eller läkare. Vid sjukdom, ätstörningar eller speciella medicinska behov — rådfråga alltid sjukvård."
+      },
+      "contact": {
+        "h2": "Kontakt",
+        "body": "Feedback, felrapporter och frågor välkomnas via"
+      }
+    },
+    "cta": {
+      "h2": "Kom igång",
+      "links": [
+        {
+          "href": "/kalkylatorer/tdee-kalkylator",
+          "label": "TDEE Kalkylator — räkna ut ditt kaloribehov"
+        },
+        { "href": "/kalkylatorer/bmi-kalkylator", "label": "BMI Kalkylator" },
+        { "href": "/artiklar/kaloribehov", "label": "Guide: Hur räknar man ut sitt kaloribehov?" },
+        { "href": "/register", "label": "Skapa gratis konto" }
+      ]
+    }
+  }
+}

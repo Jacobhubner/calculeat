@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { ArrowRight, Calculator, AlertTriangle } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import SiteHeader from '@/components/layout/SiteHeader'
 import SiteFooter from '@/components/layout/SiteFooter'
 import { Seo } from '@/components/seo/Seo'
@@ -9,6 +10,7 @@ import { FaqBlock } from '@/components/article/FaqBlock'
 import { mifflinStJeor } from '@/lib/calculations/bmr'
 import type { Gender } from '@/lib/types'
 import { GuestOnly } from '@/components/GuestOnly'
+import { getPageConfigByKey, getHreflangAlternates } from '@/lib/config/pages'
 
 type ActivityLevel =
   | 'Sedentary'
@@ -19,36 +21,11 @@ type ActivityLevel =
 
 type Goal = 'mild' | 'moderate' | 'aggressive'
 
-const ACTIVITY_LEVELS: { value: ActivityLevel; label: string; description: string }[] = [
-  {
-    value: 'Sedentary',
-    label: 'Stillasittande',
-    description: 'Kontorsjobb eller hemarbete, liten vardagsrörelse, inga träningspass',
-  },
-  {
-    value: 'Lightly active',
-    label: 'Lätt aktiv',
-    description: 'Lätt träning 1–3 dagar/vecka, t.ex. promenader, yoga eller gym på fritiden',
-  },
-  {
-    value: 'Moderately active',
-    label: 'Måttligt aktiv',
-    description:
-      'Regelbunden träning 3–5 dagar/vecka med måttlig intensitet, t.ex. löpning eller styrketräning',
-  },
-  {
-    value: 'Very active',
-    label: 'Mycket aktiv',
-    description: 'Hård träning nästan varje dag (6–7 dagar/vecka) eller fysiskt aktivt arbete',
-  },
-  {
-    value: 'Extremely active',
-    label: 'Extremt aktiv',
-    description:
-      'Tungt fysiskt arbete kombinerat med daglig intensiv träning, t.ex. elitidrottare eller byggnadsarbetare som dessutom tränar',
-  },
-]
+type FaqItem = { question: string; answer: string }
+type ActivityLevelConfig = { value: ActivityLevel; label: string; description: string }
+type GoalConfig = { value: Goal; label: string; weeklyLoss: string; description: string }
 
+// Calculation constants stay in TSX
 const PAL_MULTIPLIERS: Record<ActivityLevel, number> = {
   Sedentary: 1.2,
   'Lightly active': 1.375,
@@ -57,104 +34,84 @@ const PAL_MULTIPLIERS: Record<ActivityLevel, number> = {
   'Extremely active': 1.9,
 }
 
-const GOALS: {
-  value: Goal
-  label: string
-  deficit: number
-  weeklyLoss: string
-  description: string
-  color: string
-  ring: string
-}[] = [
-  {
-    value: 'mild',
-    label: 'Mild',
-    deficit: 250,
-    weeklyLoss: '~0,2–0,3 kg/vecka',
-    description: 'Lämplig nybörjare, nära tävling eller lite fett att tappa. Minimal muskelrisk.',
-    color: 'border-green-500 bg-green-50',
-    ring: 'border-green-500 bg-green-500',
-  },
-  {
-    value: 'moderate',
-    label: 'Måttlig',
-    deficit: 400,
-    weeklyLoss: '~0,3–0,5 kg/vecka',
-    description:
-      'Den vetenskapliga standarden. Balans mellan tempo och muskelbevarande. Funkar för de flesta.',
-    color: 'border-primary-500 bg-primary-50',
-    ring: 'border-primary-500 bg-primary-500',
-  },
-  {
-    value: 'aggressive',
-    label: 'Aggressiv',
-    deficit: 700,
-    weeklyLoss: '~0,5–0,8 kg/vecka',
-    description: 'Acceptabelt vid hög fettprocent. Kräver högt proteinintag och styrketräning.',
-    color: 'border-orange-500 bg-orange-50',
-    ring: 'border-orange-500 bg-orange-500',
-  },
-]
+const GOAL_DEFICITS: Record<Goal, number> = {
+  mild: 250,
+  moderate: 400,
+  aggressive: 700,
+}
 
-const FAQ_ITEMS = [
-  {
-    question: 'Hur stor kaloribrist ger 1 kg viktnedgång per vecka?',
-    answer:
-      '1 kg kroppsfett innehåller ca 7 700 kcal. För att tappa 1 kg/vecka behövs ett underskott på ca 1 100 kcal/dag — vilket är aggressivt och innebär hög risk för muskelmassaförlust. 0,5 kg/vecka (ca 550 kcal/dag underskott) är ett mer hållbart tempo för de flesta.',
-  },
-  {
-    question: 'Vad är skillnaden mellan kaloribrist och kaloriunderskott?',
-    answer:
-      'Begreppen används synonymt på svenska. Kaloribrist och kaloriunderskott betyder att du äter färre kalorier än du förbränner (under ditt TDEE), vilket tvingar kroppen att använda lagrad energi — i första hand fett, men även viss muskelmassa om bristen är för stor.',
-  },
-  {
-    question: 'Kan man äta för lite och ändå inte gå ner i vikt?',
-    answer:
-      'Ja — adaptiv termogenes kan bromsa viktnedgången vid lång kaloribrist. Kroppen sänker sin NEAT (oplanerad rörelse) och BMR sjunker något som försvar mot svält. Lösning: ta en diet break på 1–2 veckor på underhållsintag (ditt TDEE) för att återställa ämnesomsättningen.',
-  },
-  {
-    question: 'Hur mycket protein behöver man under kaloribrist?',
-    answer:
-      '1,6–2,2 g protein per kg kroppsvikt per dag rekommenderas för att bevara muskelmassa under kaloribrist. Vid aggressivare underskott eller intensiv träning, sikta på övre delen av intervallet (2,0–2,2 g/kg). Protein ger också hög mättnadseffekt.',
-  },
-  {
-    question: 'Är det farligt med kaloribrist?',
-    answer:
-      'En måttlig kaloribrist (300–500 kcal/dag) är inte farlig för friska vuxna. En mycket stor brist (>1000 kcal/dag) ökar risken för muskelmassaförlust, näringsbrist, trötthet och hormonella störningar. Rådfråga sjukvård vid extrem restriktion eller om du har underliggande sjukdomar.',
-  },
-]
+const GOAL_COLORS: Record<Goal, string> = {
+  mild: 'border-green-500 bg-green-50',
+  moderate: 'border-primary-500 bg-primary-50',
+  aggressive: 'border-orange-500 bg-orange-50',
+}
 
-const CANONICAL = 'https://calculeat.se/kalkylatorer/kaloriunderskott'
+const GOAL_RINGS: Record<Goal, string> = {
+  mild: 'border-green-500 bg-green-500',
+  moderate: 'border-primary-500 bg-primary-500',
+  aggressive: 'border-orange-500 bg-orange-500',
+}
 
-const PAGE_SCHEMA = [
-  {
-    '@context': 'https://schema.org',
-    '@type': 'WebApplication',
-    name: 'Kaloribrist Kalkylator',
-    url: CANONICAL,
-    applicationCategory: 'HealthApplication',
-    operatingSystem: 'Web',
-    description:
-      'Gratis kaloribrist-kalkylator. Räkna ut ditt TDEE och ditt optimala kaloriintag för viktnedgång baserat på hur snabbt du vill gå ner.',
-    offers: { '@type': 'Offer', price: '0', priceCurrency: 'SEK' },
-  },
-  {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'CalculEat', item: 'https://calculeat.se/' },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: 'Kalkylatorer',
-        item: 'https://calculeat.se/kalkylatorer',
-      },
-      { '@type': 'ListItem', position: 3, name: 'Kaloribrist Kalkylator', item: CANONICAL },
-    ],
-  },
-]
+const pageConfig = getPageConfigByKey('calorie-deficit-calculator')!
+const hreflangAlternates = getHreflangAlternates(pageConfig)
 
 export default function KaloriunderskottKalkylatornPage() {
+  const { pathname } = useLocation()
+  const lng = pathname.startsWith('/en/') ? 'en' : 'sv'
+  const { t } = useTranslation('pages-tools', { lng })
+
+  const localeEntry = pageConfig.locales[lng] ?? pageConfig.locales.sv!
+  const faqItems = t('calorie-deficit-calculator.faq', {
+    returnObjects: true,
+  }) as unknown as FaqItem[]
+  const activityLevels = t('calorie-deficit-calculator.activityLevels', {
+    returnObjects: true,
+  }) as unknown as ActivityLevelConfig[]
+  const goals = t('calorie-deficit-calculator.goals', {
+    returnObjects: true,
+  }) as unknown as GoalConfig[]
+  const ctaFeatures = t('calorie-deficit-calculator.calculator.features', {
+    returnObjects: true,
+  }) as unknown as string[]
+  const relatedCalcs = t('calorie-deficit-calculator.related.calculators', {
+    returnObjects: true,
+  }) as unknown as { href: string; label: string }[]
+  const relatedArticles = t('calorie-deficit-calculator.related.articles', {
+    returnObjects: true,
+  }) as unknown as { href: string; label: string }[]
+
+  const pageSchema = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'WebApplication',
+      name: t('calorie-deficit-calculator.schema.webAppName'),
+      url: localeEntry.canonical,
+      applicationCategory: 'HealthApplication',
+      operatingSystem: 'Web',
+      description: t('calorie-deficit-calculator.schema.webAppDescription'),
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'SEK' },
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'CalculEat', item: 'https://calculeat.se/' },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: t('calorie-deficit-calculator.schema.breadcrumb.hubLabel'),
+          item: `https://calculeat.se${t('calorie-deficit-calculator.schema.breadcrumb.hubPath')}`,
+        },
+        {
+          '@type': 'ListItem',
+          position: 3,
+          name: t('calorie-deficit-calculator.schema.breadcrumb.pageLabel'),
+          item: localeEntry.canonical,
+        },
+      ],
+    },
+  ]
+
   const [weight, setWeight] = useState('')
   const [height, setHeight] = useState('')
   const [age, setAge] = useState('')
@@ -176,8 +133,9 @@ export default function KaloriunderskottKalkylatornPage() {
     return Math.round(bmr * PAL_MULTIPLIERS[activityLevel])
   }, [bmr, gender, activityLevel])
 
-  const selectedGoal = GOALS.find(g => g.value === goal)!
-  const targetCalories = tdee ? Math.round(tdee - selectedGoal.deficit) : null
+  const selectedGoalConfig = goals.find(g => g.value === goal) ?? goals[1]
+  const deficit = GOAL_DEFICITS[goal]
+  const targetCalories = tdee ? Math.round(tdee - deficit) : null
   const proteinMin = weight ? Math.round(parseFloat(weight) * 1.6) : null
   const proteinMax = weight ? Math.round(parseFloat(weight) * 2.2) : null
 
@@ -188,11 +146,13 @@ export default function KaloriunderskottKalkylatornPage() {
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Seo
-        title="Kaloribrist Kalkylator — Räkna ut ditt kaloriunderskott (2026)"
-        description="Gratis kaloribrist-kalkylator. Räkna ut ditt TDEE och exakt hur många kalorier du ska äta för att gå ner i vikt i ditt önskade tempo. Resultat direkt."
-        canonical={CANONICAL}
+        title={t('calorie-deficit-calculator.seo.title')}
+        description={t('calorie-deficit-calculator.seo.description')}
+        canonical={localeEntry.canonical}
+        hreflangAlternates={hreflangAlternates}
+        locale={lng === 'en' ? 'en_US' : 'sv_SE'}
       />
-      <JsonLd schema={PAGE_SCHEMA} />
+      <JsonLd schema={pageSchema} />
 
       <SiteHeader />
 
@@ -201,29 +161,31 @@ export default function KaloriunderskottKalkylatornPage() {
         <section className="relative overflow-hidden bg-white border-b border-neutral-100">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(37,189,0,0.07),transparent_60%)]" />
           <div className="relative container mx-auto px-4 pt-16 pb-14 max-w-3xl">
-            {/* Breadcrumb */}
             <nav className="flex items-center gap-2 text-sm text-neutral-500 mb-6">
               <Link to="/" className="hover:text-neutral-700 transition-colors">
                 CalculEat
               </Link>
               <span>/</span>
-              <Link to="/kalkylatorer" className="hover:text-neutral-700 transition-colors">
-                Kalkylatorer
+              <Link
+                to={t('calorie-deficit-calculator.schema.breadcrumb.hubPath')}
+                className="hover:text-neutral-700 transition-colors"
+              >
+                {t('calorie-deficit-calculator.schema.breadcrumb.hubLabel')}
               </Link>
               <span>/</span>
-              <span className="text-neutral-700">Kaloribrist Kalkylator</span>
+              <span className="text-neutral-700">
+                {t('calorie-deficit-calculator.schema.breadcrumb.pageLabel')}
+              </span>
             </nav>
 
             <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-5 leading-tight">
               <span className="bg-gradient-to-r from-primary-600 to-accent-500 bg-clip-text text-transparent">
-                Kaloribrist
+                {t('calorie-deficit-calculator.h1Prefix')}
               </span>{' '}
-              Kalkylator
+              {t('calorie-deficit-calculator.h1Suffix')}
             </h1>
             <p className="text-lg md:text-xl text-neutral-600 leading-relaxed max-w-2xl">
-              Räkna ut ditt TDEE och ditt optimala dagliga kaloriintag för viktnedgång — baserat på
-              ditt valda tempo. En kaloribrist på 300–500 kcal/dag är det vetenskapligt
-              rekommenderade intervallet för att tappa fett utan att förlora muskelmassa.
+              {t('calorie-deficit-calculator.intro')}
             </p>
           </div>
         </section>
@@ -231,19 +193,20 @@ export default function KaloriunderskottKalkylatornPage() {
         {/* Calculator section */}
         <section className="bg-neutral-50 py-14 border-b border-neutral-100">
           <div className="container mx-auto px-4 max-w-2xl">
-            {/* Calculator card */}
             <div className="rounded-2xl border border-neutral-200 shadow-sm overflow-hidden">
               <div className="bg-primary-50 px-6 py-4 border-b border-primary-100 flex items-center gap-2">
                 <Calculator className="h-5 w-5 text-primary-600" />
                 <span className="font-semibold text-primary-900">
-                  Beräkna ditt kaloriunderskott
+                  {t('calorie-deficit-calculator.calculator.header')}
                 </span>
               </div>
 
               <div className="p-6 space-y-5">
                 {/* Gender */}
                 <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-2">Kön</label>
+                  <label className="block text-sm font-medium text-neutral-700 mb-2">
+                    {t('calorie-deficit-calculator.calculator.genderLabel')}
+                  </label>
                   <div className="grid grid-cols-2 gap-3">
                     {(['male', 'female'] as Gender[]).map(g => (
                       <button
@@ -255,7 +218,9 @@ export default function KaloriunderskottKalkylatornPage() {
                             : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300'
                         }`}
                       >
-                        {g === 'male' ? 'Man' : 'Kvinna'}
+                        {g === 'male'
+                          ? t('calorie-deficit-calculator.calculator.genderMale')
+                          : t('calorie-deficit-calculator.calculator.genderFemale')}
                       </button>
                     ))}
                   </div>
@@ -264,16 +229,22 @@ export default function KaloriunderskottKalkylatornPage() {
                 {/* Age, Weight, Height */}
                 <div className="grid grid-cols-3 gap-4">
                   {[
-                    { label: 'Ålder', unit: 'år', value: age, setter: setAge, placeholder: '30' },
                     {
-                      label: 'Vikt',
+                      label: t('calorie-deficit-calculator.calculator.ageLabel'),
+                      unit: t('calorie-deficit-calculator.calculator.ageUnit'),
+                      value: age,
+                      setter: setAge,
+                      placeholder: '30',
+                    },
+                    {
+                      label: t('calorie-deficit-calculator.calculator.weightLabel'),
                       unit: 'kg',
                       value: weight,
                       setter: setWeight,
                       placeholder: '75',
                     },
                     {
-                      label: 'Längd',
+                      label: t('calorie-deficit-calculator.calculator.heightLabel'),
                       unit: 'cm',
                       value: height,
                       setter: setHeight,
@@ -305,10 +276,10 @@ export default function KaloriunderskottKalkylatornPage() {
                 {/* Activity Level */}
                 <div>
                   <label className="block text-sm font-medium text-neutral-700 mb-2">
-                    Aktivitetsnivå
+                    {t('calorie-deficit-calculator.calculator.activityLabel')}
                   </label>
                   <div className="space-y-2">
-                    {ACTIVITY_LEVELS.map(({ value, label, description }) => (
+                    {activityLevels.map(({ value, label, description }) => (
                       <button
                         key={value}
                         onClick={() => setActivityLevel(value)}
@@ -341,37 +312,35 @@ export default function KaloriunderskottKalkylatornPage() {
                 {/* Goal / Tempo */}
                 <div>
                   <label className="block text-sm font-medium text-neutral-700 mb-2">
-                    Önskat tempo
+                    {t('calorie-deficit-calculator.calculator.tempoLabel')}
                   </label>
                   <div className="space-y-2">
-                    {GOALS.map(
-                      ({ value, label, deficit, weeklyLoss, description, color, ring }) => (
-                        <button
-                          key={value}
-                          onClick={() => setGoal(value)}
-                          className={`w-full flex items-start gap-3 py-2.5 px-4 rounded-lg border text-left transition-colors ${
-                            goal === value
-                              ? color
-                              : 'border-neutral-200 bg-white hover:border-neutral-300'
+                    {goals.map(({ value, label, weeklyLoss, description }) => (
+                      <button
+                        key={value}
+                        onClick={() => setGoal(value)}
+                        className={`w-full flex items-start gap-3 py-2.5 px-4 rounded-lg border text-left transition-colors ${
+                          goal === value
+                            ? GOAL_COLORS[value]
+                            : 'border-neutral-200 bg-white hover:border-neutral-300'
+                        }`}
+                      >
+                        <div
+                          className={`mt-0.5 h-4 w-4 rounded-full border-2 flex-shrink-0 ${
+                            goal === value ? GOAL_RINGS[value] : 'border-neutral-300 bg-white'
                           }`}
-                        >
-                          <div
-                            className={`mt-0.5 h-4 w-4 rounded-full border-2 flex-shrink-0 ${
-                              goal === value ? ring : 'border-neutral-300 bg-white'
-                            }`}
-                          />
-                          <div>
-                            <div className="text-sm font-medium text-neutral-800">
-                              {label} — {deficit} kcal/dag underskott
-                              <span className="ml-2 text-xs font-normal text-neutral-500">
-                                {weeklyLoss}
-                              </span>
-                            </div>
-                            <div className="text-xs text-neutral-500 mt-0.5">{description}</div>
+                        />
+                        <div>
+                          <div className="text-sm font-medium text-neutral-800">
+                            {label} — {GOAL_DEFICITS[value]} kcal/dag underskott
+                            <span className="ml-2 text-xs font-normal text-neutral-500">
+                              {weeklyLoss}
+                            </span>
                           </div>
-                        </button>
-                      )
-                    )}
+                          <div className="text-xs text-neutral-500 mt-0.5">{description}</div>
+                        </div>
+                      </button>
+                    ))}
                   </div>
                 </div>
 
@@ -380,57 +349,69 @@ export default function KaloriunderskottKalkylatornPage() {
                   disabled={!bmr || !tdee}
                   className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-neutral-200 disabled:text-neutral-400 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm"
                 >
-                  Beräkna mitt kaloriunderskott
+                  {t('calorie-deficit-calculator.calculator.button')}
                 </button>
               </div>
 
               {/* Results */}
               {hasResult && tdee && bmr && targetCalories && (
                 <div className="border-t border-neutral-100 bg-neutral-50 px-6 py-6 space-y-4">
-                  <h2 className="font-semibold text-neutral-800">Dina resultat</h2>
+                  <h2 className="font-semibold text-neutral-800">
+                    {t('calorie-deficit-calculator.calculator.resultsTitle')}
+                  </h2>
 
-                  {/* TDEE + target */}
                   <div className="grid grid-cols-2 gap-4">
                     <div className="rounded-xl bg-white border border-neutral-200 p-4 text-center">
                       <div className="text-2xl font-bold text-neutral-700">{tdee}</div>
-                      <div className="text-xs text-neutral-500 mt-0.5">TDEE (kcal/dag)</div>
-                      <div className="text-xs text-neutral-400">Ditt underhållsbehov</div>
+                      <div className="text-xs text-neutral-500 mt-0.5">
+                        {t('calorie-deficit-calculator.calculator.tdeeLabel')}
+                      </div>
+                      <div className="text-xs text-neutral-400">
+                        {t('calorie-deficit-calculator.calculator.tdeeSub')}
+                      </div>
                     </div>
                     <div className="rounded-xl bg-primary-600 p-4 text-center">
                       <div className="text-2xl font-bold text-white">{targetCalories}</div>
-                      <div className="text-xs text-primary-200 mt-0.5">Mål (kcal/dag)</div>
-                      <div className="text-xs text-primary-300">
-                        −{selectedGoal.deficit} kcal/dag
+                      <div className="text-xs text-primary-200 mt-0.5">
+                        {t('calorie-deficit-calculator.calculator.targetLabel')}
                       </div>
+                      <div className="text-xs text-primary-300">−{deficit} kcal/dag</div>
                     </div>
                   </div>
 
-                  {/* Summary row */}
                   <div className="rounded-xl bg-white border border-neutral-200 p-4">
-                    <div className="text-sm font-medium text-neutral-800 mb-3">Din plan</div>
+                    <div className="text-sm font-medium text-neutral-800 mb-3">
+                      {t('calorie-deficit-calculator.calculator.planHeading')}
+                    </div>
                     <div className="space-y-2 text-sm text-neutral-700">
                       <div className="flex justify-between">
-                        <span className="text-neutral-500">Underhållskalorier (TDEE)</span>
+                        <span className="text-neutral-500">
+                          {t('calorie-deficit-calculator.calculator.maintenanceRow')}
+                        </span>
                         <span className="font-medium">{tdee} kcal</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-neutral-500">Dagligt underskott</span>
-                        <span className="font-medium text-orange-600">
-                          −{selectedGoal.deficit} kcal
+                        <span className="text-neutral-500">
+                          {t('calorie-deficit-calculator.calculator.deficitRow')}
                         </span>
+                        <span className="font-medium text-orange-600">−{deficit} kcal</span>
                       </div>
                       <div className="flex justify-between border-t border-neutral-100 pt-2 mt-2">
-                        <span className="font-medium">Dagligt kaloriintag</span>
+                        <span className="font-medium">
+                          {t('calorie-deficit-calculator.calculator.intakeRow')}
+                        </span>
                         <span className="font-bold text-primary-600">{targetCalories} kcal</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-neutral-500">Förväntat tempo</span>
-                        <span className="font-medium">{selectedGoal.weeklyLoss}</span>
+                        <span className="text-neutral-500">
+                          {t('calorie-deficit-calculator.calculator.rateRow')}
+                        </span>
+                        <span className="font-medium">{selectedGoalConfig?.weeklyLoss}</span>
                       </div>
                       {proteinMin && proteinMax && (
                         <div className="flex justify-between border-t border-neutral-100 pt-2 mt-2">
                           <span className="text-neutral-500">
-                            Proteinmål (för att bevara muskler)
+                            {t('calorie-deficit-calculator.calculator.proteinRow')}
                           </span>
                           <span className="font-medium">
                             {proteinMin}–{proteinMax} g/dag
@@ -440,54 +421,47 @@ export default function KaloriunderskottKalkylatornPage() {
                     </div>
                   </div>
 
-                  {/* Warning for aggressive */}
                   {goal === 'aggressive' && (
                     <div className="rounded-xl bg-amber-50 border border-amber-200 p-4 flex gap-3">
                       <AlertTriangle className="h-4 w-4 text-amber-600 flex-shrink-0 mt-0.5" />
                       <div>
                         <p className="text-sm font-medium text-amber-900 mb-1">
-                          Aggressivt underskott
+                          {t('calorie-deficit-calculator.calculator.warningTitle')}
                         </p>
                         <p className="text-xs text-amber-700">
-                          Vid 700 kcal/dag underskott ökar risken för muskelmassaförlust markant. Se
-                          till att äta {proteinMax}+ g protein per dag och styrketräna regelbundet.
+                          {t('calorie-deficit-calculator.calculator.warningBodyTemplate').replace(
+                            '{{proteinMax}}',
+                            String(proteinMax ?? '')
+                          )}
                         </p>
                       </div>
                     </div>
                   )}
 
-                  <p className="text-xs text-neutral-400 text-center mb-4">
-                    {selectedGoal.value === 'mild'
-                      ? `−${selectedGoal.deficit} kcal är ett försiktigt riktvärde — men hur stort underskott det faktiskt innebär beror på din storlek. För en liten person kan det ändå märkas tydligt. Med ett konto anpassas målet till ditt faktiska kaloribehov.`
-                      : selectedGoal.value === 'moderate'
-                        ? `−${selectedGoal.deficit} kcal är ett rimligt riktvärde för de flesta. Men hur stort underskott det faktiskt innebär beror på din storlek — för en liten person kan det vara ganska aggressivt, för en stor person knappt märkbart. Med ett konto anpassas målet till ditt faktiska kaloribehov.`
-                        : `−${selectedGoal.deficit} kcal är ett aggressivt riktvärde. För en liten person kan det innebära ett mycket stort underskott med ökad risk för muskelmassaförlust. Med ett konto anpassas målet till ditt faktiska kaloribehov.`}
-                  </p>
-
                   <GuestOnly>
-                    {/* Gated CTA */}
                     <div className="rounded-xl bg-white border border-primary-200 p-4">
                       <p className="text-sm font-medium text-neutral-800 mb-1">
-                        Spara din plan och logga mot ditt mål
+                        {t('calorie-deficit-calculator.calculator.saveCtaTitle')}
                       </p>
                       <p className="text-xs text-neutral-500 mb-3">
-                        Skapa ett gratis konto för att spara ditt kaloriintag, sätta mål och följa
-                        din progress dag för dag.
+                        {t('calorie-deficit-calculator.calculator.saveCtaBody')}
                       </p>
                       <Link
                         to="/register"
                         className="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
                       >
-                        Spara din plan gratis
+                        {t('calorie-deficit-calculator.calculator.saveCtaButton')}
                         <ArrowRight className="h-4 w-4" />
                       </Link>
                       <div className="mt-3 pt-3 border-t border-neutral-100 text-xs text-neutral-500 space-y-0.5">
-                        <p className="font-medium text-neutral-700 mb-1">Vad ingår:</p>
-                        <p>✓ Beräkna kaloriunderskott — alltid gratis</p>
-                        <p>✓ Spara plan och logga mat — med konto</p>
-                        <p>✓ Följ progress dag för dag — med konto</p>
+                        <p className="font-medium text-neutral-700 mb-1">
+                          {t('calorie-deficit-calculator.calculator.featuresTitle')}
+                        </p>
+                        {ctaFeatures.map(f => (
+                          <p key={f}>✓ {f}</p>
+                        ))}
                         <p className="text-neutral-400 mt-1.5 italic">
-                          Fler funktioner i premiumversionen framöver.
+                          {t('calorie-deficit-calculator.calculator.premium')}
                         </p>
                       </div>
                     </div>
@@ -498,7 +472,7 @@ export default function KaloriunderskottKalkylatornPage() {
           </div>
         </section>
 
-        {/* Explanation section */}
+        {/* Explanation section — prose stays in TSX */}
         <section className="bg-white py-14 border-b border-neutral-100">
           <div className="container mx-auto px-4 max-w-3xl">
             <div className="space-y-5 text-neutral-700 text-base leading-relaxed">
@@ -554,7 +528,7 @@ export default function KaloriunderskottKalkylatornPage() {
         {/* FAQ section */}
         <section className="bg-neutral-50 py-14 border-b border-neutral-100">
           <div className="container mx-auto px-4 max-w-3xl">
-            <FaqBlock items={FAQ_ITEMS} />
+            <FaqBlock items={faqItems} title={t('calorie-deficit-calculator.faqTitle')} />
           </div>
         </section>
 
@@ -563,23 +537,27 @@ export default function KaloriunderskottKalkylatornPage() {
           <section className="bg-neutral-900 py-16 md:py-20">
             <div className="container mx-auto px-4 max-w-2xl text-center">
               <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
-                Redo att nå ditt viktnedgångsmål?
+                {t('calorie-deficit-calculator.cta.bottom.h2')}
               </h2>
               <p className="text-neutral-400 text-base mb-8 max-w-md mx-auto">
-                Du har kalorimålet. Nästa steg är att logga mat mot det och se hur kroppen svarar.
+                {t('calorie-deficit-calculator.cta.bottom.body')}
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Link
                   to="/register"
                   className="inline-flex items-center justify-center gap-2 bg-accent-500 hover:bg-accent-600 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm"
                 >
-                  Skapa gratis konto <ArrowRight className="h-4 w-4" />
+                  {t('calorie-deficit-calculator.cta.bottom.primary')}{' '}
+                  <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link
-                  to="/kalkylatorer/cut-kalkylator"
+                  to={
+                    relatedCalcs[1]?.href ??
+                    t('calorie-deficit-calculator.schema.breadcrumb.hubPath')
+                  }
                   className="inline-flex items-center justify-center gap-2 border border-neutral-600 text-neutral-300 hover:bg-neutral-800 font-medium px-6 py-3 rounded-xl transition-colors text-sm"
                 >
-                  Räkna ut dina cut-kalorier
+                  {t('calorie-deficit-calculator.cta.bottom.secondary')}
                 </Link>
               </div>
             </div>
@@ -592,14 +570,10 @@ export default function KaloriunderskottKalkylatornPage() {
             <div className="grid sm:grid-cols-2 gap-10">
               <div>
                 <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3">
-                  Relaterade kalkylatorer
+                  {t('calorie-deficit-calculator.related.calculatorsTitle')}
                 </h3>
                 <ul className="space-y-2">
-                  {[
-                    { href: '/kalkylatorer/tdee-kalkylator', label: 'TDEE Kalkylator' },
-                    { href: '/kalkylatorer/cut-kalkylator', label: 'Cut & Deff Kalkylator' },
-                    { href: '/kalkylatorer/bmi-kalkylator', label: 'BMI Kalkylator' },
-                  ].map(l => (
+                  {relatedCalcs.map(l => (
                     <li key={l.href}>
                       <Link
                         to={l.href}
@@ -614,14 +588,10 @@ export default function KaloriunderskottKalkylatornPage() {
               </div>
               <div>
                 <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3">
-                  Relaterade artiklar
+                  {t('calorie-deficit-calculator.related.articlesTitle')}
                 </h3>
                 <ul className="space-y-2">
-                  {[
-                    { href: '/artiklar/kaloribrist', label: 'Hur stor kaloribrist ska man ha?' },
-                    { href: '/artiklar/vad-ar-tdee', label: 'Vad är TDEE?' },
-                    { href: '/artiklar/kaloribehov', label: 'Kaloribehov — komplett guide' },
-                  ].map(l => (
+                  {relatedArticles.map(l => (
                     <li key={l.href}>
                       <Link
                         to={l.href}

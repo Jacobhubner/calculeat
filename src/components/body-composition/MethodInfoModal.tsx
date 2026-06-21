@@ -46,6 +46,7 @@ export default function MethodInfoModal({
   onClose,
 }: MethodInfoModalProps) {
   const { t } = useTranslation('body')
+  const tStr = t as (key: string, opts?: { defaultValue?: string }) => string
 
   if (!open || !method) return null
 
@@ -185,9 +186,12 @@ export default function MethodInfoModal({
                     <div key={i}>
                       {isFirstOfGender && (
                         <h3 className="text-lg font-semibold text-neutral-800 mb-3 mt-2">
-                          {t(`genderLabel.${genderLocaleKeyMap[v.gender] ?? 'both'}`, {
-                            defaultValue: v.gender,
-                          })}
+                          {tStr(
+                            `genderLabel.${(v.gender ? genderLocaleKeyMap[v.gender] : null) ?? 'both'}`,
+                            {
+                              defaultValue: v.gender ?? '',
+                            }
+                          )}
                         </h3>
                       )}
                       <div className="mb-4">

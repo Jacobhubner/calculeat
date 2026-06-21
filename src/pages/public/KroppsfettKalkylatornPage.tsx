@@ -1,18 +1,19 @@
 import { useState, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { ArrowRight, Calculator, AlertTriangle } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import SiteHeader from '@/components/layout/SiteHeader'
 import SiteFooter from '@/components/layout/SiteFooter'
 import { Seo } from '@/components/seo/Seo'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { FaqBlock } from '@/components/article/FaqBlock'
 import { GuestOnly } from '@/components/GuestOnly'
-
-const CANONICAL = 'https://calculeat.se/kalkylatorer/kroppsfett'
+import { getPageConfigByKey, getHreflangAlternates } from '@/lib/config/pages'
 
 type Gender = 'male' | 'female'
+type FaqItem = { question: string; answer: string }
 
-// US Navy Method
+// US Navy Method — calculation logic unchanged
 function navyBodyFat(
   gender: Gender,
   heightCm: number,
@@ -92,7 +93,6 @@ function getBfCategory(bf: number, gender: Gender): BfCategory {
     }
   }
 
-  // Female thresholds
   if (bf < 14)
     return {
       label: 'Essentiellt fett',
@@ -142,62 +142,6 @@ function getBfCategory(bf: number, gender: Gender): BfCategory {
   }
 }
 
-const FAQ_ITEMS = [
-  {
-    question: 'Hur exakt är en kroppsfett-kalkylator?',
-    answer:
-      'US Navy-metoden har ett typiskt felmarginal på ±3–4 procentenheter jämfört med DEXA-scanning (guldstandarden). Den är tillräckligt exakt för att följa trend över tid men ger inte ett exakt värde. Mät alltid på samma sätt och tid på dagen för att jämföra resultat — relativ förändring är mer informativ än absolut värde.',
-  },
-  {
-    question: 'Är kroppsfett ett bättre mått än BMI?',
-    answer:
-      'Ja, för de flesta syften. BMI berättar bara om relationen vikt/längd. Kroppsfett säger hur stor andel av din kropp som faktiskt är fett — vilket är det hälsorelevanta. Två personer med samma BMI kan ha 15% respektive 30% kroppsfett. För träningssyfte är kroppsfett nästan alltid mer informativt.',
-  },
-  {
-    question: 'Vad är en bra kroppsfettprocent?',
-    answer:
-      'Det beror på kön och mål. För män: athletic (6–13%), fit (14–17%), genomsnitt (18–24%). För kvinnor: athletic (14–20%), fit (21–24%), genomsnitt (25–31%). Dessa är riktmärken — inte medicinska gränsvärden. Det viktigaste är att din fettprocent inte ökar okontrollerat och att du kan upprätthålla din nivå långsiktigt.',
-  },
-  {
-    question: 'Kan man se magrutor vid samma fettprocent?',
-    answer:
-      'Ja. Hur synliga magrutor är beror på muskelmassa, fettdistribution och genetik — inte bara fettprocent. En person med 12% kroppsfett men lite muskelmassa kan ha osynliga magrutor, medan en person med 14% och mer muskelmassa kan ha tydliga. Det är därför FFMI (Fat Free Mass Index) kompletterar fettprocent bra som mått.',
-  },
-  {
-    question: 'Hur snabbt kan man sänka kroppsfett?',
-    answer:
-      'En realistisk minskning är 0,5–1% kroppsfett per vecka vid ett välplanerat kaloriunderskott på 400–600 kcal/dag. Snabbare är möjligt men ökar risken för muskelförlust. Högt proteinintag (1,8–2,4 g/kg) och styrketräning är avgörande för att behålla muskelmassa under en cut.',
-  },
-]
-
-const PAGE_SCHEMA = [
-  {
-    '@context': 'https://schema.org',
-    '@type': 'WebApplication',
-    name: 'Kroppsfett Kalkylator',
-    url: CANONICAL,
-    applicationCategory: 'HealthApplication',
-    operatingSystem: 'Web',
-    description:
-      'Gratis kroppsfett-kalkylator (US Navy Method). Uppskatta din kroppsfettprocent och lean body mass. Resultat direkt utan konto.',
-    offers: { '@type': 'Offer', price: '0', priceCurrency: 'SEK' },
-  },
-  {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'CalculEat', item: 'https://calculeat.se/' },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: 'Kalkylatorer',
-        item: 'https://calculeat.se/kalkylatorer',
-      },
-      { '@type': 'ListItem', position: 3, name: 'Kroppsfett Kalkylator', item: CANONICAL },
-    ],
-  },
-]
-
 function InputField({
   label,
   unit,
@@ -235,7 +179,59 @@ function InputField({
   )
 }
 
+const pageConfig = getPageConfigByKey('bodyfat-calculator')!
+const hreflangAlternates = getHreflangAlternates(pageConfig)
+
 export default function KroppsfettKalkylatornPage() {
+  const { pathname } = useLocation()
+  const lng = pathname.startsWith('/en/') ? 'en' : 'sv'
+  const { t } = useTranslation('pages-tools', { lng })
+
+  const localeEntry = pageConfig.locales[lng] ?? pageConfig.locales.sv!
+  const faqItems = t('bodyfat-calculator.faq', { returnObjects: true }) as unknown as FaqItem[]
+  const relatedCalcs = t('bodyfat-calculator.related.calculators', {
+    returnObjects: true,
+  }) as unknown as { href: string; label: string }[]
+  const relatedArticles = t('bodyfat-calculator.related.articles', {
+    returnObjects: true,
+  }) as unknown as { href: string; label: string }[]
+  type BfCategoryLocale = { label: string; description: string; nextStep: string }
+  const bfLabels = t('bodyfat-calculator.categoryLabels', {
+    returnObjects: true,
+  }) as unknown as Record<string, Record<string, BfCategoryLocale>>
+
+  const pageSchema = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'WebApplication',
+      name: t('bodyfat-calculator.schema.webAppName'),
+      url: localeEntry.canonical,
+      applicationCategory: 'HealthApplication',
+      operatingSystem: 'Web',
+      description: t('bodyfat-calculator.schema.webAppDescription'),
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'SEK' },
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'CalculEat', item: 'https://calculeat.se/' },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: t('bodyfat-calculator.schema.breadcrumb.hubLabel'),
+          item: `https://calculeat.se${t('bodyfat-calculator.schema.breadcrumb.hubPath')}`,
+        },
+        {
+          '@type': 'ListItem',
+          position: 3,
+          name: t('bodyfat-calculator.schema.breadcrumb.pageLabel'),
+          item: localeEntry.canonical,
+        },
+      ],
+    },
+  ]
+
   const [gender, setGender] = useState<Gender>('male')
   const [height, setHeight] = useState('')
   const [weight, setWeight] = useState('')
@@ -255,7 +251,7 @@ export default function KroppsfettKalkylatornPage() {
 
     if (!h || !w || !waistN || !neckN || h <= 0 || w <= 0 || waistN <= 0 || neckN <= 0) return null
     if (gender === 'female' && (!hipN || hipN <= 0)) return null
-    if (waistN <= neckN) return null // log of negative
+    if (waistN <= neckN) return null
     if (gender === 'female' && waistN + hipN <= neckN) return null
 
     const bf = navyBodyFat(gender, h, waistN, neckN, hipN)
@@ -278,11 +274,13 @@ export default function KroppsfettKalkylatornPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <Seo
-        title="Kroppsfett Kalkylator — Räkna ut din kroppsfettprocent (2026) | CalculEat"
-        description="Gratis kroppsfett-kalkylator (US Navy Method). Räkna ut din kroppsfettprocent, lean body mass och se din kategori. Resultat direkt — inget konto krävs."
-        canonical={CANONICAL}
+        title={t('bodyfat-calculator.seo.title')}
+        description={t('bodyfat-calculator.seo.description')}
+        canonical={localeEntry.canonical}
+        hreflangAlternates={hreflangAlternates}
+        locale={lng === 'en' ? 'en_US' : 'sv_SE'}
       />
-      <JsonLd schema={PAGE_SCHEMA} />
+      <JsonLd schema={pageSchema} />
 
       <SiteHeader />
 
@@ -297,23 +295,26 @@ export default function KroppsfettKalkylatornPage() {
                 CalculEat
               </Link>
               <span>/</span>
-              <Link to="/kalkylatorer" className="hover:text-neutral-700 transition-colors">
-                Kalkylatorer
+              <Link
+                to={t('bodyfat-calculator.schema.breadcrumb.hubPath')}
+                className="hover:text-neutral-700 transition-colors"
+              >
+                {t('bodyfat-calculator.schema.breadcrumb.hubLabel')}
               </Link>
               <span>/</span>
-              <span className="text-neutral-700">Kroppsfett Kalkylator</span>
+              <span className="text-neutral-700">
+                {t('bodyfat-calculator.schema.breadcrumb.pageLabel')}
+              </span>
             </nav>
 
             <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-5 leading-tight">
               <span className="bg-gradient-to-r from-primary-600 to-accent-500 bg-clip-text text-transparent">
-                Kroppsfett
+                {t('bodyfat-calculator.h1Prefix')}
               </span>{' '}
-              Kalkylator
+              {t('bodyfat-calculator.h1Suffix')}
             </h1>
             <p className="text-lg md:text-xl text-neutral-600 leading-relaxed max-w-2xl">
-              Kroppsfettprocent visar hur stor del av din kroppsvikt som består av fettmassa. Det
-              ger en mer användbar bild än BMI när du vill bedöma form, hälsa och planera
-              viktnedgång eller muskeluppbyggnad.
+              {t('bodyfat-calculator.intro')}
             </p>
           </div>
         </section>
@@ -324,19 +325,25 @@ export default function KroppsfettKalkylatornPage() {
             <div className="rounded-2xl border border-neutral-200 shadow-sm overflow-hidden">
               <div className="bg-primary-50 px-6 py-4 border-b border-primary-100 flex items-center gap-2">
                 <Calculator className="h-5 w-5 text-primary-600" />
-                <span className="font-semibold text-primary-900">Beräkna din kroppsfett%</span>
-                <span className="ml-auto text-xs text-neutral-400">US Navy Method</span>
+                <span className="font-semibold text-primary-900">
+                  {t('bodyfat-calculator.calculator.header')}
+                </span>
+                <span className="ml-auto text-xs text-neutral-400">
+                  {t('bodyfat-calculator.calculator.methodLabel')}
+                </span>
               </div>
 
               <div className="p-6 space-y-5">
                 {/* Gender */}
                 <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-2">Kön</label>
+                  <label className="block text-sm font-medium text-neutral-700 mb-2">
+                    {t('bodyfat-calculator.calculator.genderLabel')}
+                  </label>
                   <div className="grid grid-cols-2 gap-2">
                     {(
                       [
-                        { value: 'male', label: 'Man' },
-                        { value: 'female', label: 'Kvinna' },
+                        { value: 'male', label: t('bodyfat-calculator.calculator.genderMale') },
+                        { value: 'female', label: t('bodyfat-calculator.calculator.genderFemale') },
                       ] as { value: Gender; label: string }[]
                     ).map(opt => (
                       <button
@@ -361,7 +368,7 @@ export default function KroppsfettKalkylatornPage() {
                 {/* Height + Weight */}
                 <div className="grid grid-cols-2 gap-4">
                   <InputField
-                    label="Längd"
+                    label={t('bodyfat-calculator.calculator.heightLabel')}
                     unit="cm"
                     value={height}
                     onChange={v => {
@@ -371,7 +378,7 @@ export default function KroppsfettKalkylatornPage() {
                     placeholder="175"
                   />
                   <InputField
-                    label="Vikt"
+                    label={t('bodyfat-calculator.calculator.weightLabel')}
                     unit="kg"
                     value={weight}
                     onChange={v => {
@@ -385,7 +392,7 @@ export default function KroppsfettKalkylatornPage() {
                 {/* Circumferences */}
                 <div className="grid grid-cols-2 gap-4">
                   <InputField
-                    label="Midjemått"
+                    label={t('bodyfat-calculator.calculator.waistLabel')}
                     unit="cm"
                     value={waist}
                     onChange={v => {
@@ -393,10 +400,10 @@ export default function KroppsfettKalkylatornPage() {
                       resetResult()
                     }}
                     placeholder="85"
-                    hint="Mät vid naveln"
+                    hint={t('bodyfat-calculator.calculator.waistHint')}
                   />
                   <InputField
-                    label="Halsmått"
+                    label={t('bodyfat-calculator.calculator.neckLabel')}
                     unit="cm"
                     value={neck}
                     onChange={v => {
@@ -404,13 +411,13 @@ export default function KroppsfettKalkylatornPage() {
                       resetResult()
                     }}
                     placeholder="38"
-                    hint="Mät under adamsäpplet"
+                    hint={t('bodyfat-calculator.calculator.neckHint')}
                   />
                 </div>
 
                 {gender === 'female' && (
                   <InputField
-                    label="Höftmått"
+                    label={t('bodyfat-calculator.calculator.hipLabel')}
                     unit="cm"
                     value={hip}
                     onChange={v => {
@@ -418,7 +425,7 @@ export default function KroppsfettKalkylatornPage() {
                       resetResult()
                     }}
                     placeholder="95"
-                    hint="Mät vid det bredaste stället"
+                    hint={t('bodyfat-calculator.calculator.hipHint')}
                   />
                 )}
 
@@ -427,14 +434,16 @@ export default function KroppsfettKalkylatornPage() {
                   disabled={!canCalculate}
                   className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-neutral-200 disabled:text-neutral-400 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm"
                 >
-                  Beräkna min kroppsfett%
+                  {t('bodyfat-calculator.calculator.button')}
                 </button>
               </div>
 
               {/* Results */}
               {hasResult && result && (
                 <div className="border-t border-neutral-100 bg-neutral-50 px-6 py-6 space-y-4">
-                  <h2 className="font-semibold text-neutral-800">Ditt resultat</h2>
+                  <h2 className="font-semibold text-neutral-800">
+                    {t('bodyfat-calculator.calculator.resultsTitle')}
+                  </h2>
 
                   {/* Category card */}
                   <div className={`rounded-xl border p-5 ${result.category.bg}`}>
@@ -443,24 +452,27 @@ export default function KroppsfettKalkylatornPage() {
                         {result.bf}%
                       </span>
                       <span className={`text-lg font-semibold mb-0.5 ${result.category.color}`}>
-                        {result.category.label}
+                        {bfLabels[gender]?.[result.category.label]?.label ?? result.category.label}
                       </span>
                     </div>
-                    <p className="text-sm text-neutral-700">{result.category.description}</p>
+                    <p className="text-sm text-neutral-700">
+                      {bfLabels[gender]?.[result.category.label]?.description ??
+                        result.category.description}
+                    </p>
                   </div>
 
                   {/* Stats grid */}
                   <div className="grid grid-cols-2 gap-3">
                     {[
                       {
-                        label: 'Lean body mass',
+                        label: t('bodyfat-calculator.calculator.lbmLabel'),
                         value: `${result.lbm} kg`,
-                        desc: 'Muskler, organ, ben',
+                        desc: t('bodyfat-calculator.calculator.lbmDesc'),
                       },
                       {
-                        label: 'Fettmassa',
+                        label: t('bodyfat-calculator.calculator.fatMassLabel'),
                         value: `${result.fatMass} kg`,
-                        desc: 'Total fettmassa',
+                        desc: t('bodyfat-calculator.calculator.fatMassDesc'),
                       },
                     ].map(stat => (
                       <div
@@ -477,43 +489,45 @@ export default function KroppsfettKalkylatornPage() {
                   {/* Next step */}
                   <div className="rounded-xl bg-white border border-neutral-200 p-4">
                     <div className="text-sm font-medium text-neutral-800 mb-1">
-                      Rekommenderat nästa steg
+                      {t('bodyfat-calculator.calculator.nextStepTitle')}
                     </div>
-                    <p className="text-xs text-neutral-600 mb-3">{result.category.nextStep}</p>
+                    <p className="text-xs text-neutral-600 mb-3">
+                      {bfLabels[gender]?.[result.category.label]?.nextStep ??
+                        result.category.nextStep}
+                    </p>
                   </div>
 
                   {/* Disclaimer */}
                   <div className="rounded-xl bg-amber-50 border border-amber-200 p-4 flex gap-3">
                     <AlertTriangle className="h-4 w-4 text-amber-600 flex-shrink-0 mt-0.5" />
                     <p className="text-xs text-amber-700">
-                      US Navy-metoden ger en uppskattning med ±3–4% felmarginal. Resultatet speglar
-                      trend — inte ett exakt värde. DEXA-scanning är guldstandarden om du behöver
-                      precision.
+                      {t('bodyfat-calculator.calculator.disclaimerBody')}
                     </p>
                   </div>
 
                   {/* CTA */}
                   <div className="rounded-xl bg-white border border-primary-200 p-4">
                     <p className="text-sm font-medium text-neutral-800 mb-1">
-                      Nu vet du din kroppssammansättning — räkna ut rätt kaloriplan
+                      {t('bodyfat-calculator.calculator.ctaTitle')}
                     </p>
                     <p className="text-xs text-neutral-500 mb-3">
-                      TDEE-kalkylatorn tar din kroppsvikt och aktivitetsnivå och ger dig det
-                      kalorimål du faktiskt ska logga mot.
+                      {t('bodyfat-calculator.calculator.ctaBody')}
                     </p>
                     <div className="flex flex-col sm:flex-row gap-2">
                       <Link
-                        to="/kalkylatorer"
+                        to={
+                          relatedCalcs[0]?.href ?? t('bodyfat-calculator.schema.breadcrumb.hubPath')
+                        }
                         className="inline-flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
                       >
-                        Räkna ut ditt TDEE
+                        {t('bodyfat-calculator.calculator.ctaPrimary')}
                         <ArrowRight className="h-4 w-4" />
                       </Link>
                       <Link
-                        to="/kalkylatorer/ffmi-kalkylator"
+                        to={relatedCalcs[3]?.href ?? '/kalkylatorer/ffmi-kalkylator'}
                         className="inline-flex items-center justify-center gap-2 border border-neutral-200 text-neutral-700 text-sm font-medium px-4 py-2 rounded-lg hover:bg-neutral-50 transition-colors"
                       >
-                        Beräkna ditt FFMI
+                        {t('bodyfat-calculator.calculator.ctaSecondary')}
                       </Link>
                     </div>
                   </div>
@@ -523,7 +537,7 @@ export default function KroppsfettKalkylatornPage() {
           </div>
         </section>
 
-        {/* Context/explanation section */}
+        {/* Context/explanation section — prose stays in TSX */}
         <section className="bg-white py-14 border-b border-neutral-100">
           <div className="container mx-auto px-4 max-w-3xl">
             <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900 mb-5">
@@ -584,7 +598,7 @@ export default function KroppsfettKalkylatornPage() {
         {/* FAQ section */}
         <section className="bg-neutral-50 py-14 border-b border-neutral-100">
           <div className="container mx-auto px-4 max-w-3xl">
-            <FaqBlock items={FAQ_ITEMS} />
+            <FaqBlock items={faqItems} title={t('bodyfat-calculator.faqTitle')} />
           </div>
         </section>
 
@@ -593,24 +607,23 @@ export default function KroppsfettKalkylatornPage() {
           <section className="bg-neutral-900 py-16 md:py-20">
             <div className="container mx-auto px-4 max-w-2xl text-center">
               <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
-                Sätt ett kalorimål som matchar din kropp
+                {t('bodyfat-calculator.cta.bottom.h2')}
               </h2>
               <p className="text-neutral-400 text-base mb-8 max-w-md mx-auto">
-                Nu vet du din fettprocent. Räkna ut TDEE och börja logga mot ett mål som faktiskt
-                stämmer.
+                {t('bodyfat-calculator.cta.bottom.body')}
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Link
                   to="/register"
                   className="inline-flex items-center justify-center gap-2 bg-accent-500 hover:bg-accent-600 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm"
                 >
-                  Skapa gratis konto <ArrowRight className="h-4 w-4" />
+                  {t('bodyfat-calculator.cta.bottom.primary')} <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link
-                  to="/kalkylatorer"
+                  to={relatedCalcs[0]?.href ?? t('bodyfat-calculator.schema.breadcrumb.hubPath')}
                   className="inline-flex items-center justify-center gap-2 border border-neutral-600 text-neutral-300 hover:bg-neutral-800 font-medium px-6 py-3 rounded-xl transition-colors text-sm"
                 >
-                  Räkna ut ditt TDEE
+                  {t('bodyfat-calculator.cta.bottom.secondary')}
                 </Link>
               </div>
             </div>
@@ -623,16 +636,10 @@ export default function KroppsfettKalkylatornPage() {
             <div className="grid sm:grid-cols-2 gap-10">
               <div>
                 <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3">
-                  Relaterade kalkylatorer
+                  {t('bodyfat-calculator.related.calculatorsTitle')}
                 </h3>
                 <div className="grid gap-3">
-                  {[
-                    { href: '/kalkylatorer/tdee-kalkylator', label: 'TDEE Kalkylator' },
-                    { href: '/kalkylatorer/bmi-kalkylator', label: 'BMI Kalkylator' },
-                    { href: '/kalkylatorer/idealvikt', label: 'Idealvikt Kalkylator' },
-                    { href: '/kalkylatorer/ffmi-kalkylator', label: 'FFMI Kalkylator' },
-                    { href: '/kalkylatorer/proteinbehov', label: 'Proteinbehov Kalkylator' },
-                  ].map(l => (
+                  {relatedCalcs.map(l => (
                     <Link
                       key={l.href}
                       to={l.href}
@@ -646,16 +653,10 @@ export default function KroppsfettKalkylatornPage() {
               </div>
               <div>
                 <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3">
-                  Relaterade artiklar
+                  {t('bodyfat-calculator.related.articlesTitle')}
                 </h3>
                 <div className="grid gap-3">
-                  {[
-                    { href: '/artiklar/kaloribehov', label: 'Kaloribehov — komplett guide' },
-                    { href: '/artiklar/vad-ar-tdee', label: 'Vad är TDEE?' },
-                    { href: '/artiklar/bulk-och-cut', label: 'Bulk och Cut' },
-                    { href: '/artiklar/kaloribrist', label: 'Hur stor kaloribrist ska man ha?' },
-                    { href: '/artiklar/bmi-vs-kroppsfett', label: 'BMI vs Kroppsfett' },
-                  ].map(l => (
+                  {relatedArticles.map(l => (
                     <Link
                       key={l.href}
                       to={l.href}

@@ -61,12 +61,15 @@ export default function SiteHeader() {
     }
   }
 
+  const isEnPath = location.pathname.startsWith('/en/')
+  const loc = (sv: string, en: string) => (isEnPath ? en : sv)
+
   const anchorLinks =
     location.pathname === '/' ? [{ href: '#features', label: t('nav.features') }] : []
 
   const navLinks = [
-    { to: '/kalkylatorer', label: t('nav.calculators') },
-    { to: '/artiklar', label: t('nav.articles') },
+    { to: loc('/kalkylatorer', '/en/calculators'), label: t('nav.calculators') },
+    { to: loc('/artiklar', '/en/articles'), label: t('nav.articles') },
   ]
 
   const isOnHomePage = location.pathname === '/'
@@ -317,14 +320,14 @@ export default function SiteHeader() {
                         <span>{t('nav.met')}</span>
                       </Link>
                       <Link
-                        to="/kalkylatorer"
+                        to={loc('/kalkylatorer', '/en/calculators')}
                         onClick={() => setMobileUserMenuOpen(false)}
                         className="flex items-center gap-3 px-4 py-2 text-sm text-neutral-500 hover:bg-neutral-50 transition-colors"
                       >
                         <span>{t('nav.freeTools')}</span>
                       </Link>
                       <Link
-                        to="/artiklar"
+                        to={loc('/artiklar', '/en/articles')}
                         onClick={() => setMobileUserMenuOpen(false)}
                         className="flex items-center gap-3 px-4 py-2 text-sm text-neutral-500 hover:bg-neutral-50 transition-colors"
                       >

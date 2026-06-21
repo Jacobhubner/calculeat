@@ -1,110 +1,18 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { ArrowRight, Check, X, Minus } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import SiteHeader from '@/components/layout/SiteHeader'
 import SiteFooter from '@/components/layout/SiteFooter'
 import { Seo } from '@/components/seo/Seo'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { FaqBlock } from '@/components/article/FaqBlock'
 import { GuestOnly } from '@/components/GuestOnly'
-
-const CANONICAL = 'https://calculeat.se/jamfor/yazio-vs-calculeat'
-
-const FAQ_ITEMS = [
-  {
-    question: 'Är Yazio bättre än CalculEat?',
-    answer:
-      'Det beror på vad du söker. Yazio är bra för enkel kaloriloggning med en stor matdatabas och ett enkelt gränssnitt. CalculEat är bättre om du vill ha ett individuellt TDEE, stöd för cut/bulk-cykler och kalorimål som kalibreras mot din faktiska viktdata — inte ett generiskt starttal.',
-  },
-  {
-    question: 'Vad är skillnaden mellan Yazio och CalculEat?',
-    answer:
-      'Yazio är primärt ett loggningsverktyg med fokus på enkelhet och bredd — stor matdatabas, fastingläge, vattenkoll. CalculEat fokuserar på precision i kalorimålet: individuellt TDEE, fasbaserad planering (cut/bulk/maintenance) och metabolisk kalibrering. Yazio dokumenterar vad du äter. CalculEat hjälper dig att äta rätt mängd för ditt mål.',
-  },
-  {
-    question: 'Har Yazio intermittent fasting-stöd?',
-    answer:
-      'Ja — Yazio har ett inbyggt fasting-läge som är en av appens starkaste sidor. CalculEat fokuserar inte på fastingprotokoll utan på kaloriekvationen och kroppskomposition. Fastingintresserade användare som också vill ha TDEE-precision kan använda Yazio för fasting-tracking och CalculEat för kalorimål och fasplanering.',
-  },
-  {
-    question: 'Kan Yazio användas för bulk och cut?',
-    answer:
-      'Yazio har inget inbyggt stöd för bulk/cut-cykler. Du kan manuellt justera kalorimål, men appen ger ingen vägledning om rätt surplus för bulk, rätt underskott för cut eller hur man hanterar fasbyte och reverse diet. CalculEat är byggt specifikt för det.',
-  },
-  {
-    question: 'Är Yazio gratis?',
-    answer:
-      'Yazio har en gratisversion men många funktioner — detaljerade makron, personliga mål, analysverktyg — kräver Yazio Pro. CalculEat är gratis för kaloriloggning, TDEE-beräkning och fas-tracking.',
-  },
-]
-
-const PAGE_SCHEMA = [
-  {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
-    headline: 'Yazio vs CalculEat — Vilken kaloriräknare är bäst? (2026)',
-    description:
-      'Jämförelse av Yazio och CalculEat. Vilken app ger bäst TDEE-precision, bulk/cut-stöd och kalorimål som faktiskt stämmer?',
-    url: CANONICAL,
-    publisher: { '@type': 'Organization', name: 'CalculEat', url: 'https://calculeat.se' },
-    inLanguage: 'sv-SE',
-  },
-  {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'CalculEat', item: 'https://calculeat.se/' },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: 'Jämförelser',
-        item: 'https://calculeat.se/jamfor',
-      },
-      { '@type': 'ListItem', position: 3, name: 'Yazio vs CalculEat', item: CANONICAL },
-    ],
-  },
-]
+import { getPageConfigByKey, getHreflangAlternates } from '@/lib/config/pages'
+import type { FaqItem } from '@/components/article/FaqBlock'
 
 type CellType = 'yes' | 'no' | 'partial'
-
-const COMPARISON_ROWS: {
-  feature: string
-  yazio: CellType
-  ce: CellType
-  note?: string
-}[] = [
-  { feature: 'Kaloriloggning', yazio: 'yes', ce: 'yes' },
-  { feature: 'Stor matdatabas', yazio: 'yes', ce: 'partial', note: 'Livsmedelsverket + USDA' },
-  { feature: 'Intermittent fasting-läge', yazio: 'yes', ce: 'no', note: 'Ej fokus för CalculEat' },
-  { feature: 'Vattenkoll', yazio: 'yes', ce: 'no' },
-  {
-    feature: 'TDEE-beräkning',
-    yazio: 'partial',
-    ce: 'yes',
-    note: 'Yazio ger grundläggande kalorimål',
-  },
-  {
-    feature: 'Metabolisk kalibrering',
-    yazio: 'no',
-    ce: 'yes',
-    note: 'Justeras baserat på faktisk viktdata',
-  },
-  { feature: 'Bulk/Cut-faser', yazio: 'no', ce: 'yes', note: 'Separata mål per fas' },
-  { feature: 'Reverse diet-stöd', yazio: 'no', ce: 'yes' },
-  { feature: 'Automatisk målanpassning', yazio: 'no', ce: 'yes' },
-  {
-    feature: 'Proteinmål per fas',
-    yazio: 'partial',
-    ce: 'yes',
-    note: 'Yazio: fast procentsats',
-  },
-  { feature: 'Streckkodsskanning', yazio: 'yes', ce: 'yes' },
-  {
-    feature: 'Gratis för kärn-features',
-    yazio: 'partial',
-    ce: 'yes',
-    note: 'Yazio Pro krävs för det mesta',
-  },
-]
+type RelatedLink = { href: string; label: string }
+type LocaleRow = { feature: string; note: string | null }
 
 function Cell({ type }: { type: CellType }) {
   if (type === 'yes')
@@ -126,64 +34,126 @@ function Cell({ type }: { type: CellType }) {
   )
 }
 
+const CELL_DATA: { yazio: CellType; ce: CellType }[] = [
+  { yazio: 'yes', ce: 'yes' },
+  { yazio: 'yes', ce: 'partial' },
+  { yazio: 'yes', ce: 'no' },
+  { yazio: 'yes', ce: 'no' },
+  { yazio: 'partial', ce: 'yes' },
+  { yazio: 'no', ce: 'yes' },
+  { yazio: 'no', ce: 'yes' },
+  { yazio: 'no', ce: 'yes' },
+  { yazio: 'no', ce: 'yes' },
+  { yazio: 'partial', ce: 'yes' },
+  { yazio: 'yes', ce: 'yes' },
+  { yazio: 'partial', ce: 'yes' },
+]
+
+const pageConfig = getPageConfigByKey('yazio-vs-calculeat')!
+const hreflangAlternates = getHreflangAlternates(pageConfig)
+
 export default function YazioVsCalculEatPage() {
+  const { pathname } = useLocation()
+  const lng = pathname.startsWith('/en/') ? 'en' : 'sv'
+  const { t } = useTranslation('pages-compare', { lng })
+
+  const localeEntry = pageConfig.locales[lng] ?? pageConfig.locales.sv!
+  const faqItems = t('yazio-vs-calculeat.faq', { returnObjects: true }) as unknown as FaqItem[]
+  const localeRows = t('yazio-vs-calculeat.comparisonRows', {
+    returnObjects: true,
+  }) as unknown as LocaleRow[]
+  const relatedCalcs = t('yazio-vs-calculeat.related.calculators', {
+    returnObjects: true,
+  }) as unknown as RelatedLink[]
+  const relatedArticles = t('yazio-vs-calculeat.related.articles', {
+    returnObjects: true,
+  }) as unknown as RelatedLink[]
+  const quickPoints = t('yazio-vs-calculeat.quickAnswer.points', {
+    returnObjects: true,
+  }) as unknown as string[]
+
+  const pageSchema = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: t('yazio-vs-calculeat.schema.headline'),
+      description: t('yazio-vs-calculeat.schema.description'),
+      url: localeEntry.canonical,
+      publisher: { '@type': 'Organization', name: 'CalculEat', url: 'https://calculeat.se' },
+      inLanguage: lng === 'en' ? 'en' : 'sv-SE',
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'CalculEat', item: 'https://calculeat.se/' },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: t('yazio-vs-calculeat.breadcrumb.comparisons'),
+          item: `https://calculeat.se/${lng === 'en' ? 'en/compare' : 'jamfor'}`,
+        },
+        {
+          '@type': 'ListItem',
+          position: 3,
+          name: t('yazio-vs-calculeat.breadcrumb.pageLabel'),
+          item: localeEntry.canonical,
+        },
+      ],
+    },
+  ]
+
+  const calcHubHref = lng === 'en' ? '/en/calculators' : '/kalkylatorer'
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Seo
-        title="Yazio vs CalculEat — Vilken kaloriräknare är bäst? (2026)"
-        description="Jämförelse av Yazio och CalculEat. Yazio erbjuder enkel loggning och fasting-läge. CalculEat ger TDEE-precision, bulk/cut-stöd och kalorimål som kalibreras efter din kropp."
-        canonical={CANONICAL}
+        title={t('yazio-vs-calculeat.seo.title')}
+        description={t('yazio-vs-calculeat.seo.description')}
+        canonical={localeEntry.canonical}
+        hreflangAlternates={hreflangAlternates}
+        locale={lng === 'en' ? 'en_US' : 'sv_SE'}
         type="article"
       />
-      <JsonLd schema={PAGE_SCHEMA} />
-
+      <JsonLd schema={pageSchema} />
       <SiteHeader />
-
       <main className="flex-1">
         <div className="container mx-auto px-4 py-10 max-w-2xl">
-          {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-sm text-neutral-500 mb-6">
             <Link to="/" className="hover:text-neutral-700 transition-colors">
               CalculEat
             </Link>
             <span>/</span>
-            <span className="text-neutral-700">Jämförelser</span>
+            <span className="text-neutral-700">
+              {t('yazio-vs-calculeat.breadcrumb.comparisons')}
+            </span>
             <span>/</span>
-            <span className="text-neutral-700">Yazio vs CalculEat</span>
+            <span className="text-neutral-700">{t('yazio-vs-calculeat.breadcrumb.pageLabel')}</span>
           </nav>
-
           <h1 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-3 leading-tight">
-            Yazio vs CalculEat — Vilken app passar dig bäst?
+            {t('yazio-vs-calculeat.h1')}
           </h1>
 
-          {/* Winner summary box */}
           <div className="rounded-xl border border-primary-200 bg-primary-50 p-5 mb-6">
             <p className="text-xs font-semibold text-primary-500 uppercase tracking-wider mb-2">
-              Snabbsvar
+              {t('yazio-vs-calculeat.quickAnswer.label')}
             </p>
             <p className="text-sm font-semibold text-primary-900 mb-3">
-              CalculEat vinner för kroppskompositionsmål — Yazio vinner för fasting och enkelhet.
+              {t('yazio-vs-calculeat.quickAnswer.verdict')}
             </p>
             <ul className="space-y-1.5 text-sm text-primary-800">
-              <li className="flex items-start gap-2">
-                <Check className="h-4 w-4 text-primary-600 mt-0.5 shrink-0" /> Individuellt TDEE
-                kalibrerat mot din faktiska viktdata
-              </li>
-              <li className="flex items-start gap-2">
-                <Check className="h-4 w-4 text-primary-600 mt-0.5 shrink-0" /> Inbyggt stöd för
-                cut/bulk-faser — Yazio saknar det helt
-              </li>
-              <li className="flex items-start gap-2">
-                <Check className="h-4 w-4 text-primary-600 mt-0.5 shrink-0" /> Gratis — Yazio Pro
-                krävs för detaljerade makron
-              </li>
+              {quickPoints.map(pt => (
+                <li key={pt} className="flex items-start gap-2">
+                  <Check className="h-4 w-4 text-primary-600 mt-0.5 shrink-0" /> {pt}
+                </li>
+              ))}
             </ul>
             <div className="mt-4 flex flex-col sm:flex-row gap-2">
               <Link
-                to="/kalkylatorer"
+                to={calcHubHref}
                 className="inline-flex items-center justify-center gap-2 bg-primary-600 text-white font-semibold px-4 py-2.5 rounded-lg hover:bg-primary-700 transition-colors text-sm"
               >
-                Räkna ut ditt TDEE gratis
+                {t('yazio-vs-calculeat.quickAnswer.ctaCalc')}
                 <ArrowRight className="h-4 w-4" />
               </Link>
               <GuestOnly>
@@ -191,69 +161,61 @@ export default function YazioVsCalculEatPage() {
                   to="/register"
                   className="inline-flex items-center justify-center gap-2 border border-primary-300 text-primary-700 font-medium px-4 py-2.5 rounded-lg hover:bg-primary-100 transition-colors text-sm"
                 >
-                  Skapa konto
+                  {t('yazio-vs-calculeat.quickAnswer.ctaRegister')}
                 </Link>
               </GuestOnly>
             </div>
           </div>
 
           <p className="text-base text-neutral-600 leading-relaxed mb-6">
-            Yazio är en lättanvänd kaloriräknare med fokus på enkelt loggning, intermittent fasting
-            och bredd. CalculEat är ett precisionsverktyg för kroppskomposition — individuellt TDEE,
-            rätt kalorimål per fas och kalibrering baserat på din faktiska viktdata.
+            {t('yazio-vs-calculeat.intro')}
           </p>
 
-          {/* Inline CTA */}
           <div className="rounded-xl border border-primary-200 bg-primary-50 p-5 mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-4">
             <div className="flex-1">
               <p className="text-sm font-semibold text-primary-900 mb-0.5">
-                Räkna ut ditt TDEE innan du väljer app
+                {t('yazio-vs-calculeat.midPageCta.title')}
               </p>
-              <p className="text-xs text-primary-700">
-                Utan ett korrekt TDEE är kalorimålet en gissning — oavsett vilken app du använder.
-              </p>
+              <p className="text-xs text-primary-700">{t('yazio-vs-calculeat.midPageCta.body')}</p>
             </div>
             <Link
-              to="/kalkylatorer"
+              to={calcHubHref}
               className="shrink-0 inline-flex items-center gap-2 bg-primary-600 text-white font-semibold px-4 py-2.5 rounded-lg hover:bg-primary-700 transition-colors text-sm"
             >
-              TDEE-kalkylator
-              <ArrowRight className="h-4 w-4" />
+              {t('yazio-vs-calculeat.midPageCta.button')}
             </Link>
           </div>
 
-          {/* Comparison table */}
           <section className="mb-10">
-            <h2 className="text-xl font-semibold text-neutral-900 mb-4">Snabb jämförelse</h2>
+            <h2 className="text-xl font-semibold text-neutral-900 mb-4">
+              {t('yazio-vs-calculeat.comparisonTable.h2')}
+            </h2>
             <div className="rounded-2xl border border-neutral-200 overflow-hidden">
               <div className="grid grid-cols-[1fr_auto_auto] gap-0 bg-neutral-50 border-b border-neutral-200">
                 <div className="px-4 py-3 text-xs font-semibold text-neutral-500 uppercase tracking-wider">
-                  Funktion
+                  {t('yazio-vs-calculeat.comparisonTable.colFeature')}
                 </div>
                 <div className="px-4 py-3 text-xs font-semibold text-neutral-500 uppercase tracking-wider text-center w-28">
-                  Yazio
+                  {t('yazio-vs-calculeat.comparisonTable.colOther')}
                 </div>
                 <div className="px-4 py-3 text-xs font-semibold text-primary-600 uppercase tracking-wider text-center w-28">
-                  CalculEat
+                  {t('yazio-vs-calculeat.comparisonTable.colCalculEat')}
                 </div>
               </div>
-
-              {COMPARISON_ROWS.map(({ feature, yazio, ce, note }, i) => (
+              {localeRows.map((row, i) => (
                 <div
-                  key={feature}
-                  className={`grid grid-cols-[1fr_auto_auto] gap-0 border-b border-neutral-100 last:border-0 ${
-                    i % 2 === 0 ? 'bg-white' : 'bg-neutral-50/50'
-                  }`}
+                  key={row.feature}
+                  className={`grid grid-cols-[1fr_auto_auto] gap-0 border-b border-neutral-100 last:border-0 ${i % 2 === 0 ? 'bg-white' : 'bg-neutral-50/50'}`}
                 >
                   <div className="px-4 py-3">
-                    <div className="text-sm text-neutral-800 font-medium">{feature}</div>
-                    {note && <div className="text-xs text-neutral-400 mt-0.5">{note}</div>}
+                    <div className="text-sm text-neutral-800 font-medium">{row.feature}</div>
+                    {row.note && <div className="text-xs text-neutral-400 mt-0.5">{row.note}</div>}
                   </div>
                   <div className="px-4 py-3 flex items-center justify-center w-28">
-                    <Cell type={yazio} />
+                    <Cell type={CELL_DATA[i]?.yazio ?? 'no'} />
                   </div>
                   <div className="px-4 py-3 flex items-center justify-center w-28">
-                    <Cell type={ce} />
+                    <Cell type={CELL_DATA[i]?.ce ?? 'no'} />
                   </div>
                 </div>
               ))}
@@ -263,24 +225,24 @@ export default function YazioVsCalculEatPage() {
                 <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-green-100">
                   <Check className="h-3 w-3 text-green-700" />
                 </span>
-                Ja / fullt stöd
+                {t('yazio-vs-calculeat.comparisonTable.legendYes')}
               </span>
               <span className="flex items-center gap-1.5">
                 <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-yellow-100">
                   <Minus className="h-3 w-3 text-yellow-600" />
                 </span>
-                Delvis
+                {t('yazio-vs-calculeat.comparisonTable.legendPartial')}
               </span>
               <span className="flex items-center gap-1.5">
                 <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-red-100">
                   <X className="h-3 w-3 text-red-600" />
                 </span>
-                Saknas
+                {t('yazio-vs-calculeat.comparisonTable.legendNo')}
               </span>
             </div>
           </section>
 
-          {/* For whom */}
+          {/* Article prose — stays in TSX */}
           <section className="space-y-5 text-neutral-700 text-sm leading-relaxed mb-8">
             <h2 className="text-xl font-semibold text-neutral-900">För vem passar Yazio?</h2>
             <p>
@@ -376,69 +338,41 @@ export default function YazioVsCalculEatPage() {
             </div>
           </section>
 
-          {/* Mid-page CTA */}
-          <div className="rounded-xl border border-primary-200 bg-primary-50 p-5 mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            <div className="flex-1">
-              <p className="text-sm font-semibold text-primary-900 mb-0.5">
-                Vill du logga mot ett kalorimål som faktiskt stämmer?
-              </p>
-              <p className="text-xs text-primary-700">
-                Räkna ut ditt individuella TDEE och se skillnaden mot ett generiskt kalorimål.
-              </p>
-            </div>
-            <Link
-              to="/kalkylatorer"
-              className="shrink-0 inline-flex items-center gap-2 bg-primary-600 text-white font-semibold px-4 py-2.5 rounded-lg hover:bg-primary-700 transition-colors text-sm"
-            >
-              Testa gratis →
-            </Link>
-          </div>
+          <FaqBlock items={faqItems} title={t('yazio-vs-calculeat.faqTitle')} />
 
-          <FaqBlock items={FAQ_ITEMS} />
-
-          {/* CTA */}
           <GuestOnly>
             <section className="mt-10 rounded-2xl bg-primary-600 p-8 text-center">
               <h2 className="text-xl font-bold text-white mb-2">
-                Prova precision istället för generiska mål — gratis
+                {t('yazio-vs-calculeat.bottomCta.h2')}
               </h2>
               <p className="text-primary-200 text-sm mb-6 max-w-md mx-auto">
-                Räkna ut ditt faktiska TDEE, välj din fas och logga mot ett kalorimål som faktiskt
-                stämmer. Inget kreditkort, inga dolda kostnader.
+                {t('yazio-vs-calculeat.bottomCta.body')}
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Link
                   to="/register"
                   className="inline-flex items-center justify-center gap-2 bg-white text-primary-700 font-semibold px-6 py-3 rounded-xl hover:bg-primary-50 transition-colors text-sm"
                 >
-                  Skapa gratis konto
+                  {t('yazio-vs-calculeat.bottomCta.primary')}
                   <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link
-                  to="/kalkylatorer"
+                  to={calcHubHref}
                   className="inline-flex items-center justify-center gap-2 border border-primary-400 text-white font-medium px-6 py-3 rounded-xl hover:bg-primary-700 transition-colors text-sm"
                 >
-                  Räkna ut ditt TDEE först
+                  {t('yazio-vs-calculeat.bottomCta.secondary')}
                 </Link>
               </div>
             </section>
           </GuestOnly>
 
-          {/* Related */}
           <section className="mt-10 pt-8 border-t border-neutral-200 grid sm:grid-cols-2 gap-6">
             <div>
               <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3">
-                Relaterade jämförelser
+                {t('yazio-vs-calculeat.related.calculatorsTitle')}
               </h3>
               <ul className="space-y-2">
-                {[
-                  {
-                    href: '/jamfor/myfitnesspal-vs-calculeat',
-                    label: 'MyFitnessPal vs CalculEat',
-                  },
-                  { href: '/jamfor/lifesum-vs-calculeat', label: 'Lifesum vs CalculEat' },
-                  { href: '/basta-kaloriappen', label: 'Bästa kaloriappen 2026' },
-                ].map(l => (
+                {relatedCalcs.map(l => (
                   <li key={l.href}>
                     <Link
                       to={l.href}
@@ -453,15 +387,10 @@ export default function YazioVsCalculEatPage() {
             </div>
             <div>
               <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3">
-                Relaterade kalkylatorer
+                {t('yazio-vs-calculeat.related.articlesTitle')}
               </h3>
               <ul className="space-y-2">
-                {[
-                  { href: '/kalkylatorer/tdee-kalkylator', label: 'TDEE Kalkylator' },
-                  { href: '/kalkylatorer/kaloriunderskott', label: 'Kaloribrist Kalkylator' },
-                  { href: '/kalkylatorer/cut-kalkylator', label: 'Cut & Deff Kalkylator' },
-                  { href: '/kalkylatorer/bulk-kalkylator', label: 'Bulk Kalkylator' },
-                ].map(l => (
+                {relatedArticles.map(l => (
                   <li key={l.href}>
                     <Link
                       to={l.href}
@@ -477,7 +406,6 @@ export default function YazioVsCalculEatPage() {
           </section>
         </div>
       </main>
-
       <SiteFooter />
     </div>
   )

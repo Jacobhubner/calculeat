@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { Github, Mail, Twitter, Heart } from 'lucide-react'
 import { Separator } from '../ui/separator'
 import { useTranslation } from 'react-i18next'
@@ -6,30 +6,69 @@ import { useTranslation } from 'react-i18next'
 export default function SiteFooter() {
   const { t } = useTranslation('marketing')
   const currentYear = new Date().getFullYear()
+  const { pathname } = useLocation()
+  const isEnPath = pathname.startsWith('/en/')
+  const loc = (sv: string, en: string) => (isEnPath ? en : sv)
 
   const footerSections = [
     {
       title: t('footer.sections.calculators'),
       links: [
-        { label: t('footer.links.tdeecalc'), to: '/kalkylatorer/tdee-kalkylator' },
-        { label: t('footer.links.caloriedeficit'), to: '/kalkylatorer/kaloriunderskott' },
-        { label: t('footer.links.bmicalc'), to: '/kalkylatorer/bmi-kalkylator' },
-        { label: t('footer.links.proteinneeds'), to: '/kalkylatorer/proteinbehov' },
-        { label: t('footer.links.idealweight'), to: '/kalkylatorer/idealvikt' },
-        { label: t('footer.links.bodyfat'), to: '/kalkylatorer/kroppsfett' },
-        { label: t('footer.links.allcalculators'), to: '/kalkylatorer' },
+        {
+          label: t('footer.links.tdeecalc'),
+          to: loc('/kalkylatorer/tdee-kalkylator', '/en/calculators/tdee-calculator'),
+        },
+        {
+          label: t('footer.links.caloriedeficit'),
+          to: loc('/kalkylatorer/kaloriunderskott', '/en/calculators/calorie-deficit-calculator'),
+        },
+        {
+          label: t('footer.links.bmicalc'),
+          to: loc('/kalkylatorer/bmi-kalkylator', '/en/calculators/bmi-calculator'),
+        },
+        {
+          label: t('footer.links.proteinneeds'),
+          to: loc('/kalkylatorer/proteinbehov', '/en/calculators/protein-calculator'),
+        },
+        {
+          label: t('footer.links.idealweight'),
+          to: loc('/kalkylatorer/idealvikt', '/en/calculators/ideal-weight-calculator'),
+        },
+        {
+          label: t('footer.links.bodyfat'),
+          to: loc('/kalkylatorer/kroppsfett', '/en/calculators/body-fat-calculator'),
+        },
+        { label: t('footer.links.allcalculators'), to: loc('/kalkylatorer', '/en/calculators') },
       ],
     },
     {
       title: t('footer.sections.articles'),
       links: [
-        { label: t('footer.links.calorieneeds'), to: '/artiklar/kaloribehov' },
-        { label: t('footer.links.whatistdee'), to: '/artiklar/vad-ar-tdee' },
-        { label: t('footer.links.caloriedeficiency'), to: '/artiklar/kaloribrist' },
-        { label: t('footer.links.bmrvsrmr'), to: '/artiklar/bmr-vs-rmr' },
-        { label: t('footer.links.lbmvsffm'), to: '/artiklar/lbm-vs-ffm' },
-        { label: t('footer.links.measurebodyfat'), to: '/artiklar/hur-mater-man-kroppsfett' },
-        { label: t('footer.links.allarticles'), to: '/artiklar' },
+        {
+          label: t('footer.links.calorieneeds'),
+          to: loc('/artiklar/kaloribehov', '/en/articles/calorie-needs'),
+        },
+        {
+          label: t('footer.links.whatistdee'),
+          to: loc('/artiklar/vad-ar-tdee', '/en/articles/what-is-tdee'),
+        },
+        {
+          label: t('footer.links.caloriedeficiency'),
+          to: loc('/artiklar/kaloribrist', '/en/articles/calorie-deficit'),
+        },
+        {
+          label: t('footer.links.bmrvsrmr'),
+          to: loc('/artiklar/bmr-vs-rmr', '/en/articles/bmr-vs-rmr'),
+        },
+        {
+          label: t('footer.links.lbmvsffm'),
+          to: loc('/artiklar/lbm-vs-ffm', '/en/articles/lbm-vs-ffm'),
+        },
+        {
+          label: t('footer.links.measurebodyfat'),
+          to: loc('/artiklar/hur-mater-man-kroppsfett', '/en/articles/how-to-measure-body-fat'),
+        },
+        { label: t('footer.links.allarticles'), to: loc('/artiklar', '/en/articles') },
       ],
     },
     {

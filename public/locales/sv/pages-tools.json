@@ -1,0 +1,1488 @@
+{
+  "tdee-calculator": {
+    "seo": {
+      "title": "TDEE Kalkylator — Räkna ut ditt kaloribehov exakt (2026)",
+      "description": "Gratis TDEE-kalkylator. Räkna ut ditt totala dagliga kaloribehov baserat på ålder, vikt, längd och aktivitetsnivå. Resultat direkt — inget konto krävs."
+    },
+    "h1Prefix": "TDEE",
+    "h1Suffix": "Kalkylator",
+    "intro": "TDEE är den totala mängden kalorier din kropp förbränner per dag. Fyll i dina uppgifter för att räkna ut ditt individuella kaloribehov — gratis, direkt och utan registrering.",
+    "calculator": {
+      "header": "Beräkna ditt TDEE",
+      "ageUnit": "år",
+      "genderLabel": "Kön",
+      "genderMale": "Man",
+      "genderFemale": "Kvinna",
+      "genderOther": "Annat",
+      "genderError": "Ogiltigt val. Finns bara två kön, dumsnut.",
+      "ageLabel": "Ålder",
+      "weightLabel": "Vikt",
+      "heightLabel": "Längd",
+      "activityLabel": "Aktivitetsnivå",
+      "button": "Beräkna mitt TDEE",
+      "resultsTitle": "Dina resultat",
+      "bmrLabel": "BMR (kcal/dag)",
+      "bmrSub": "Kalorier i absolut vila",
+      "tdeeLabel": "TDEE (kcal/dag)",
+      "tdeeSub": "Ditt totala kaloribehov",
+      "cutLabel": "Mål för viktnedgång",
+      "cutSub": "−400 kcal/dag",
+      "bulkLabel": "Mål för muskeluppbyggnad",
+      "bulkSub": "+300 kcal/dag",
+      "formulaNote": "Baserat på Mifflin-St Jeor-formeln + PAL-faktorer (1.2–1.9) — ett etablerat system för att uppskatta dagligt kaloribehov.",
+      "adjustNote": "Målen ovan är fasta riktvärden. Hur stort underskott eller överskott de faktiskt innebär beror på din storlek — för en liten person kan −400 kcal vara ganska aggressivt, för en stor person knappt märkbart. Med ett konto anpassas målen till ditt faktiska kaloribehov."
+    },
+    "activityLevels": [
+      {
+        "value": "Sedentary",
+        "label": "Stillasittande",
+        "description": "Kontorsjobb eller hemarbete, liten vardagsrörelse, inga träningspass"
+      },
+      {
+        "value": "Lightly active",
+        "label": "Lätt aktiv",
+        "description": "Lätt träning 1–3 dagar/vecka, t.ex. promenader, yoga eller gym på fritiden"
+      },
+      {
+        "value": "Moderately active",
+        "label": "Måttligt aktiv",
+        "description": "Regelbunden träning 3–5 dagar/vecka med måttlig intensitet, t.ex. löpning eller styrketräning"
+      },
+      {
+        "value": "Very active",
+        "label": "Mycket aktiv",
+        "description": "Hård träning nästan varje dag (6–7 dagar/vecka) eller fysiskt aktivt arbete"
+      },
+      {
+        "value": "Extremely active",
+        "label": "Extremt aktiv",
+        "description": "Tungt fysiskt arbete kombinerat med daglig intensiv träning, t.ex. elitidrottare eller byggnadsarbetare som dessutom tränar"
+      }
+    ],
+    "faqTitle": "Vanliga frågor",
+    "faq": [
+      {
+        "question": "Är TDEE detsamma som kaloribehov?",
+        "answer": "Ja, i praktiken används begreppen synonymt. TDEE (Total Daily Energy Expenditure) är den totala mängden kalorier du förbränner per dag — och det är detta tal du bör matcha eller avvika från beroende på ditt mål. Vill du gå ner i vikt äter du under TDEE, vill du bygga muskler äter du över."
+      },
+      {
+        "question": "Hur noggrant är en TDEE-kalkylator?",
+        "answer": "En TDEE-kalkylator ger en uppskattning baserad på statistiska formler — Mifflin-St Jeor för BMR multiplicerat med en PAL-faktor (1.2–1.9) för aktivitetsnivå. Felmarginal är typiskt ±10–15%. Individuella faktorer som muskelmassa, hormonbalans och metabolism påverkar det verkliga värdet. Använd resultatet som startpunkt och justera efter hur din vikt faktiskt förändras."
+      },
+      {
+        "question": "Hur stor kaloribrist ska man ha för viktnedgång?",
+        "answer": "En kaloribrist på 300–500 kcal/dag under TDEE är ett hållbart tempo och leder till ca 0,3–0,5 kg viktnedgång per vecka. En brist på mer än 1000 kcal/dag ökar risken för muskelmassaförlust och är sällan hållbar på lång sikt."
+      },
+      {
+        "question": "Hur förändras mitt TDEE om jag tränar mer?",
+        "answer": "När du ökar din träningsvolym stiger ditt TDEE — du förbränner fler kalorier. Kom dock ihåg att kroppen kan kompensera genom att minska oplanerad rörelse (NEAT). Praktiskt: om vikten planar ut trots träningsökning, höj inte kalorier direkt — vänta 2–3 veckor och se hur kroppen svarar."
+      },
+      {
+        "question": "Vad är skillnaden mellan BMR och TDEE?",
+        "answer": "BMR (Basal Metabolic Rate) är de kalorier din kropp förbränner i absolut vila — enbart för att hålla organ igång. TDEE inkluderar dessutom all fysisk aktivitet, NEAT (oplanerad rörelse) och TEF (matens termiska effekt). TDEE är alltid högre än BMR och är det relevanta talet för kaloriplanering."
+      }
+    ],
+    "cta": {
+      "gated": {
+        "title": "Få en personlig plan + följ din utveckling",
+        "body": "Spara ditt TDEE, sätt kalorimål för din fas (cut/bulk/maintenance), logga mat och se hur din vikt rör sig mot målet.",
+        "button": "Skapa gratis konto",
+        "subtext": "Inget kreditkort krävs",
+        "featuresTitle": "Vad ingår:",
+        "features": [
+          "Beräkna TDEE — alltid gratis",
+          "Spara plan och logga mat — med konto",
+          "Följ vikttrend och kalibrera mål — med konto"
+        ],
+        "premium": "Fler funktioner i premiumversionen framöver."
+      },
+      "bottom": {
+        "h2": "Redo att gå från siffror till resultat?",
+        "body": "Du har ditt TDEE. Nästa steg är att logga mat mot rätt mål, följa din vikttrend och kalibrera ditt kalorimål när kroppen svarar.",
+        "primary": "Skapa gratis konto",
+        "secondary": "Räkna ut ditt kaloriunderskott"
+      }
+    },
+    "related": {
+      "calculatorsTitle": "Relaterade kalkylatorer",
+      "articlesTitle": "Relaterade artiklar",
+      "calculators": [
+        { "href": "/kalkylatorer/kaloriunderskott", "label": "Kaloribrist Kalkylator" },
+        { "href": "/kalkylatorer/bulk-kalkylator", "label": "Bulk Kalkylator" },
+        { "href": "/kalkylatorer/cut-kalkylator", "label": "Cut & Deff Kalkylator" },
+        { "href": "/kalkylatorer/proteinbehov", "label": "Proteinbehov Kalkylator" },
+        { "href": "/kalkylatorer/bmi-kalkylator", "label": "BMI Kalkylator" },
+        { "href": "/kalkylatorer/bmr-kalkylator", "label": "BMR Kalkylator" }
+      ],
+      "articles": [
+        { "href": "/artiklar/vad-ar-tdee", "label": "Vad är TDEE?" },
+        { "href": "/artiklar/kaloribrist", "label": "Hur stor kaloribrist?" },
+        { "href": "/artiklar/kaloribehov", "label": "Kaloribehov — komplett guide" }
+      ]
+    },
+    "schema": {
+      "webAppName": "TDEE Kalkylator",
+      "webAppDescription": "Gratis TDEE-kalkylator som räknar ut ditt totala dagliga kaloribehov baserat på ålder, vikt, längd, kön och aktivitetsnivå.",
+      "breadcrumb": {
+        "hubLabel": "Kalkylatorer",
+        "hubPath": "/kalkylatorer",
+        "pageLabel": "TDEE Kalkylator"
+      }
+    }
+  },
+  "bmi-calculator": {
+    "seo": {
+      "title": "BMI Kalkylator — Räkna ut ditt body mass index (2026)",
+      "description": "Gratis BMI-kalkylator. Räkna ut ditt body mass index och se om du har normalvikt, övervikt eller undervikt. Resultat direkt — inget konto krävs."
+    },
+    "h1Prefix": "BMI",
+    "h1Suffix": "Kalkylator",
+    "intro": "BMI (Body Mass Index) är ett enkelt mått på förhållandet mellan din vikt och längd. Fyll i dina uppgifter nedan för att beräkna ditt BMI direkt.",
+    "calculator": {
+      "header": "Beräkna ditt BMI",
+      "weightLabel": "Vikt",
+      "heightLabel": "Längd",
+      "button": "Beräkna mitt BMI",
+      "resultsTitle": "Ditt resultat",
+      "bmiScaleTitle": "BMI-skala",
+      "warningTitle": "BMI berättar inte allt",
+      "warningBody": "BMI tar inte hänsyn till muskelmassa, fettprocent eller var fettet sitter. För en mer komplett bild bör du även räkna ut ditt TDEE och förstå din kroppssammansättning.",
+      "ctaTitle": "Räkna ut ditt faktiska kaloribehov",
+      "ctaBody": "BMI är en förenklad indikator. TDEE-kalkylatorn ger dig det kaloribehov du faktiskt behöver för att nå ditt mål.",
+      "ctaButton": "Räkna ut ditt TDEE"
+    },
+    "categoryLabels": {
+      "Undervikt": "Undervikt",
+      "Normalvikt": "Normalvikt",
+      "Övervikt": "Övervikt",
+      "Fetma": "Fetma"
+    },
+    "bmiScale": [
+      { "range": "< 18.5", "label": "Undervikt" },
+      { "range": "18.5 – 24.9", "label": "Normalvikt" },
+      { "range": "25 – 29.9", "label": "Övervikt" },
+      { "range": "≥ 30", "label": "Fetma" }
+    ],
+    "faqTitle": "Vanliga frågor",
+    "faq": [
+      {
+        "question": "Vad är ett bra BMI?",
+        "answer": "WHO definierar normalvikt som BMI 18.5–24.9. Under 18.5 räknas som undervikt, 25–29.9 som övervikt och 30 eller mer som fetma. Kom ihåg att BMI är ett grovt mått och inte tar hänsyn till muskelmassa, fettprocent eller var fettet sitter."
+      },
+      {
+        "question": "Stämmer BMI för muskulösa personer?",
+        "answer": "Nej — BMI kan överskatta risken för muskulösa individer eftersom muskler väger mer än fett. En vältränad person kan ha BMI 27 (övervikt) men med låg fettprocent och utmärkt hälsa. FFMI och fettprocent ger en mer träffsäker bild för den som tränar regelbundet."
+      },
+      {
+        "question": "Vad är skillnaden mellan BMI och kroppsfett?",
+        "answer": "BMI beräknas enbart från vikt och längd och säger inget om kroppssammansättning. Kroppsfett (%) mäter faktiskt hur stor andel av din kropp som är fett. Två personer med samma BMI kan ha helt olika fettprocent. För hälsobedömning är fettprocent och midjeomfång ofta mer informativa."
+      },
+      {
+        "question": "Hur räknar man ut BMI manuellt?",
+        "answer": "BMI = vikt (kg) ÷ (längd (m) × längd (m)). Exempel: 75 kg och 175 cm → 75 ÷ (1,75 × 1,75) = 75 ÷ 3,0625 ≈ 24,5."
+      },
+      {
+        "question": "Kan BMI användas för barn?",
+        "answer": "För barn (2–18 år) används BMI för ålder och kön (BMI-för-ålder) och tolkas mot tillväxtkurvor, inte mot de vuxna gränserna 18.5/25/30. Använd alltid barnspecifika verktyg och rådgör med BVC."
+      }
+    ],
+    "cta": {
+      "bottom": {
+        "h2": "Förstå din kropp — inte bara en siffra",
+        "body": "BMI är ett startpunkt. Logga mat mot ditt kalorimål och följ hur din kropp faktiskt svarar.",
+        "primary": "Skapa gratis konto",
+        "secondary": "Räkna ut ditt TDEE"
+      }
+    },
+    "related": {
+      "calculatorsTitle": "Relaterade kalkylatorer",
+      "articlesTitle": "Relaterade artiklar",
+      "calculators": [{ "href": "/kalkylatorer/tdee-kalkylator", "label": "TDEE Kalkylator" }],
+      "articles": [
+        { "href": "/artiklar/kaloribehov", "label": "Kaloribehov — komplett guide" },
+        { "href": "/artiklar/vad-ar-tdee", "label": "Vad är TDEE?" },
+        { "href": "/artiklar/bmi-vs-kroppsfett", "label": "BMI vs Kroppsfett" }
+      ]
+    },
+    "schema": {
+      "webAppName": "BMI Kalkylator",
+      "webAppDescription": "Gratis BMI-kalkylator. Räkna ut ditt body mass index och se vilken kategori du tillhör.",
+      "breadcrumb": {
+        "hubLabel": "Kalkylatorer",
+        "hubPath": "/kalkylatorer",
+        "pageLabel": "BMI Kalkylator"
+      }
+    }
+  },
+  "bmr-calculator": {
+    "seo": {
+      "title": "BMR Kalkylator — Räkna ut din basalmetabolism (2026) | CalculEat",
+      "description": "Gratis BMR-kalkylator (Mifflin-St Jeor). Räkna ut din basalmetabolism och se ditt uppskattade TDEE per aktivitetsnivå. Inget konto krävs."
+    },
+    "h1Prefix": "BMR",
+    "h1Suffix": "Kalkylator — Räkna ut din basalmetabolism",
+    "intro": "BMR är mängden kalorier din kropp förbrukar i fullständig vila för att hålla igång grundläggande funktioner. Det är din energibas — men inte ditt fulla kaloribehov.",
+    "calculator": {
+      "header": "Beräkna din BMR",
+      "formulaLabel": "Mifflin-St Jeor",
+      "genderLabel": "Kön",
+      "genderMale": "Man",
+      "genderFemale": "Kvinna",
+      "ageLabel": "Ålder",
+      "ageUnit": "år",
+      "weightLabel": "Vikt",
+      "heightLabel": "Längd",
+      "button": "Beräkna min BMR",
+      "resultsTitle": "Ditt resultat",
+      "bmrCardLabel": "Din BMR (Mifflin-St Jeor)",
+      "bmrUnit": "kcal/dag",
+      "warningTitle": "Ät inte på din BMR",
+      "warningBody": "BMR är din viloförbränning — du förbrukar mer än detta redan genom att stå, gå och äta. Ditt faktiska kaloribehov (TDEE) är 20–80% högre beroende på aktivitetsnivå.",
+      "tdeePreviewTitle": "Uppskattat TDEE per aktivitetsnivå",
+      "tdeeNote": "TDEE = BMR × aktivitetsmultiplikator (PAL). Dessa är uppskattningar — räkna ut ditt exakta TDEE med kalkylatorn nedan.",
+      "ctaTitle": "Räkna ut ditt exakta TDEE och sätt ett kalorimål",
+      "ctaBody": "TDEE-kalkylatorn tar samma uppgifter och ger dig ett handlingsbart kalorimål för viktnedgång, maintenance eller bulk — inte bara ett referensvärde.",
+      "ctaPrimary": "Räkna ut ditt TDEE",
+      "ctaSecondary": "Skapa gratis konto"
+    },
+    "palLevels": [
+      { "label": "Stillasittande", "description": "Kontorsarbete, liten rörelse" },
+      { "label": "Lätt aktiv", "description": "Lätt träning 1–3 dagar/vecka" },
+      { "label": "Måttligt aktiv", "description": "Träning 3–5 dagar/vecka" },
+      { "label": "Mycket aktiv", "description": "Hård träning 6–7 dagar/vecka" },
+      { "label": "Extremt aktiv", "description": "Fysiskt jobb + daglig intensiv träning" }
+    ],
+    "faqTitle": "Vanliga frågor",
+    "faq": [
+      {
+        "question": "Vad är skillnaden mellan BMR och TDEE?",
+        "answer": "BMR (Basal Metabolic Rate) är antalet kalorier din kropp förbrukar i fullständig vila — utan rörelser, matsmältning eller aktivitet. TDEE (Total Daily Energy Expenditure) är ditt faktiska totala kaloribehov per dag, inklusive all aktivitet. TDEE = BMR × aktivitetsmultiplikator. TDEE är siffran du ska använda när du planerar kalorier."
+      },
+      {
+        "question": "Är BMR samma sak som kaloribehov?",
+        "answer": "Nej. BMR är bara grunden — din viloförbränning. De flesta vuxna har ett TDEE som är 20–80% högre än BMR beroende på aktivitetsnivå. Att äta på sin BMR utan att ta hänsyn till aktivitet innebär i praktiken ett kraftigt underskott, vilket kan leda till muskelförlust och metabolisk nedreglering."
+      },
+      {
+        "question": "Är det farligt att äta under sin BMR?",
+        "answer": "Att konsekvent äta under sin BMR är inte rekommenderat för de flesta. Det riskerar att utlösa adaptiv termogenes (kroppen sänker ämnesomsättningen), öka muskelförlust och orsaka nutritionsbrist. Under medicinsk övervakning kan det i vissa fall vara motiverat, men generellt bör kalorimålet ligga under TDEE — inte under BMR."
+      },
+      {
+        "question": "Hur förändras BMR med ålder?",
+        "answer": "BMR sjunker typiskt 1–2% per decennium efter 20-årsåldern. Det beror primärt på minskad muskelmassa (sarkopeni) snarare än ålder i sig. Styrketräning och tillräckligt proteinintag kan bromsa denna minskning avsevärt. Det är därför TDEE minskar med ålder hos inaktiva men kan hållas stabilt hos träningsaktiva."
+      },
+      {
+        "question": "Vilken BMR-formel är mest exakt?",
+        "answer": "Mifflin-St Jeor (1990) anses vara den mest exakta formeln för den allmänna befolkningen med normal fettprocent, med en genomsnittlig avvikelse på ca ±10%. För personer med ovanlig kroppssammansättning (mycket låg eller hög fettprocent) ger formler som Cunningham (baserad på LBM) bättre precision. Den enda formeln som ger ett kalibrerat resultat är att mäta verklig vikttrend mot kaloriintag under 2–3 veckor."
+      }
+    ],
+    "cta": {
+      "bottom": {
+        "h2": "Gå från BMR till ett riktigt kalorimål",
+        "body": "BMR är grunden. TDEE är siffran du faktiskt ska använda — och CalculEat hjälper dig logga mot den.",
+        "primary": "Skapa gratis konto",
+        "secondary": "Räkna ut ditt TDEE"
+      }
+    },
+    "related": {
+      "calculatorsTitle": "Relaterade kalkylatorer",
+      "articlesTitle": "Relaterade artiklar",
+      "calculators": [
+        { "href": "/kalkylatorer/tdee-kalkylator", "label": "TDEE Kalkylator" },
+        { "href": "/kalkylatorer/kaloriunderskott", "label": "Kaloribrist Kalkylator" },
+        { "href": "/kalkylatorer/bulk-kalkylator", "label": "Bulk Kalkylator" },
+        { "href": "/kalkylatorer/cut-kalkylator", "label": "Cut & Deff Kalkylator" },
+        { "href": "/kalkylatorer/proteinbehov", "label": "Proteinbehov Kalkylator" }
+      ],
+      "articles": [
+        { "href": "/artiklar/vad-ar-bmr", "label": "Vad är BMR?" },
+        { "href": "/artiklar/bmr-vs-tdee", "label": "BMR vs TDEE" },
+        { "href": "/artiklar/vad-ar-tdee", "label": "Vad är TDEE?" },
+        { "href": "/artiklar/kaloribehov", "label": "Kaloribehov — komplett guide" },
+        { "href": "/artiklar/kaloribrist", "label": "Hur stor kaloribrist ska man ha?" },
+        { "href": "/artiklar/bulk-och-cut", "label": "Bulk och Cut" }
+      ]
+    },
+    "schema": {
+      "webAppName": "BMR Kalkylator",
+      "webAppDescription": "Gratis BMR-kalkylator. Räkna ut din basalmetabolism (Mifflin-St Jeor) och se ett TDEE-estimat per aktivitetsnivå.",
+      "breadcrumb": {
+        "hubLabel": "Kalkylatorer",
+        "hubPath": "/kalkylatorer",
+        "pageLabel": "BMR Kalkylator"
+      }
+    }
+  },
+  "bodyfat-calculator": {
+    "seo": {
+      "title": "Kroppsfett Kalkylator — Räkna ut din kroppsfettprocent (2026) | CalculEat",
+      "description": "Gratis kroppsfett-kalkylator (US Navy Method). Räkna ut din kroppsfettprocent, lean body mass och se din kategori. Resultat direkt — inget konto krävs."
+    },
+    "h1Prefix": "Kroppsfett",
+    "h1Suffix": "Kalkylator",
+    "intro": "Kroppsfettprocent visar hur stor del av din kroppsvikt som består av fettmassa. Det ger en mer användbar bild än BMI när du vill bedöma form, hälsa och planera viktnedgång eller muskeluppbyggnad.",
+    "calculator": {
+      "header": "Beräkna din kroppsfett%",
+      "methodLabel": "US Navy Method",
+      "genderLabel": "Kön",
+      "genderMale": "Man",
+      "genderFemale": "Kvinna",
+      "heightLabel": "Längd",
+      "weightLabel": "Vikt",
+      "waistLabel": "Midjemått",
+      "waistHint": "Mät vid naveln",
+      "neckLabel": "Halsmått",
+      "neckHint": "Mät under adamsäpplet",
+      "hipLabel": "Höftmått",
+      "hipHint": "Mät vid det bredaste stället",
+      "button": "Beräkna min kroppsfett%",
+      "resultsTitle": "Ditt resultat",
+      "lbmLabel": "Lean body mass",
+      "lbmDesc": "Muskler, organ, ben",
+      "fatMassLabel": "Fettmassa",
+      "fatMassDesc": "Total fettmassa",
+      "nextStepTitle": "Rekommenderat nästa steg",
+      "disclaimerBody": "US Navy-metoden ger en uppskattning med ±3–4% felmarginal. Resultatet speglar trend — inte ett exakt värde. DEXA-scanning är guldstandarden om du behöver precision.",
+      "ctaTitle": "Nu vet du din kroppssammansättning — räkna ut rätt kaloriplan",
+      "ctaBody": "TDEE-kalkylatorn tar din kroppsvikt och aktivitetsnivå och ger dig det kalorimål du faktiskt ska logga mot.",
+      "ctaPrimary": "Räkna ut ditt TDEE",
+      "ctaSecondary": "Beräkna ditt FFMI"
+    },
+    "categoryLabels": {
+      "male": {
+        "Essentiellt fett": {
+          "label": "Essentiellt fett",
+          "description": "Under nivå för normala fysiologiska funktioner. Inte ett hållbart mål.",
+          "nextStep": "Fokus bör ligga på att öka kalorier och nå athletic-zonen."
+        },
+        "Athletic": {
+          "label": "Athletic",
+          "description": "Typisk nivå för aktiva tränare och idrottare. Väldigt låg fettprocent.",
+          "nextStep": "Du är i utmärkt form. TDEE och makroplanering håller dig här."
+        },
+        "Fit": {
+          "label": "Fit",
+          "description": "Hälsosam och aktiv nivå. Tydlig muskeldefiniton, låg hälsorisk.",
+          "nextStep": "Bra utgångspunkt för cut mot athletic eller bulk mot mer muskelmassa."
+        },
+        "Genomsnitt": {
+          "label": "Genomsnitt",
+          "description": "Normalt intervall för männen. Muskler syns men med lager fett ovanpå.",
+          "nextStep": "En strukturerad cut med 300–500 kcal underskott per dag tar dig till fit-zonen."
+        },
+        "Övervikt": {
+          "label": "Övervikt",
+          "description": "Ökad hälsorisk. Tydligt viktmål rekommenderas.",
+          "nextStep": "Räkna ut ditt TDEE och sätt ett kalorimål med 400–600 kcal underskott."
+        },
+        "Fetma": {
+          "label": "Fetma",
+          "description": "Hög hälsorisk. Medicinsk rådgivning rekommenderas.",
+          "nextStep": "Räkna ut ditt TDEE och börja med ett måttligt kaloriunderskott. Rådgör med läkare."
+        }
+      },
+      "female": {
+        "Essentiellt fett": {
+          "label": "Essentiellt fett",
+          "description": "Under nivå för normala fysiologiska funktioner. Inte ett hållbart mål.",
+          "nextStep": "Fokus bör ligga på att öka kalorier och nå athletic-zonen."
+        },
+        "Athletic": {
+          "label": "Athletic",
+          "description": "Typisk nivå för aktiva tränare och idrottare.",
+          "nextStep": "Du är i utmärkt form. TDEE och makroplanering håller dig här."
+        },
+        "Fit": {
+          "label": "Fit",
+          "description": "Hälsosam och aktiv nivå. Låg hälsorisk.",
+          "nextStep": "Bra utgångspunkt för cut eller bulk beroende på ditt mål."
+        },
+        "Genomsnitt": {
+          "label": "Genomsnitt",
+          "description": "Normalt intervall för kvinnor. Hälsosam men med utrymme för förbättring.",
+          "nextStep": "En strukturerad cut med 300–400 kcal underskott per dag tar dig till fit-zonen."
+        },
+        "Övervikt": {
+          "label": "Övervikt",
+          "description": "Ökad hälsorisk. Tydligt viktmål rekommenderas.",
+          "nextStep": "Räkna ut ditt TDEE och sätt ett kalorimål med 400–600 kcal underskott."
+        },
+        "Fetma": {
+          "label": "Fetma",
+          "description": "Hög hälsorisk. Medicinsk rådgivning rekommenderas.",
+          "nextStep": "Räkna ut ditt TDEE och börja med ett måttligt kaloriunderskott. Rådgör med läkare."
+        }
+      }
+    },
+    "faqTitle": "Vanliga frågor",
+    "faq": [
+      {
+        "question": "Hur exakt är en kroppsfett-kalkylator?",
+        "answer": "US Navy-metoden har ett typiskt felmarginal på ±3–4 procentenheter jämfört med DEXA-scanning (guldstandarden). Den är tillräckligt exakt för att följa trend över tid men ger inte ett exakt värde. Mät alltid på samma sätt och tid på dagen för att jämföra resultat — relativ förändring är mer informativ än absolut värde."
+      },
+      {
+        "question": "Är kroppsfett ett bättre mått än BMI?",
+        "answer": "Ja, för de flesta syften. BMI berättar bara om relationen vikt/längd. Kroppsfett säger hur stor andel av din kropp som faktiskt är fett — vilket är det hälsorelevanta. Två personer med samma BMI kan ha 15% respektive 30% kroppsfett. För träningssyfte är kroppsfett nästan alltid mer informativt."
+      },
+      {
+        "question": "Vad är en bra kroppsfettprocent?",
+        "answer": "Det beror på kön och mål. För män: athletic (6–13%), fit (14–17%), genomsnitt (18–24%). För kvinnor: athletic (14–20%), fit (21–24%), genomsnitt (25–31%). Dessa är riktmärken — inte medicinska gränsvärden. Det viktigaste är att din fettprocent inte ökar okontrollerat och att du kan upprätthålla din nivå långsiktigt."
+      },
+      {
+        "question": "Kan man se magrutor vid samma fettprocent?",
+        "answer": "Ja. Hur synliga magrutor är beror på muskelmassa, fettdistribution och genetik — inte bara fettprocent. En person med 12% kroppsfett men lite muskelmassa kan ha osynliga magrutor, medan en person med 14% och mer muskelmassa kan ha tydliga. Det är därför FFMI (Fat Free Mass Index) kompletterar fettprocent bra som mått."
+      },
+      {
+        "question": "Hur snabbt kan man sänka kroppsfett?",
+        "answer": "En realistisk minskning är 0,5–1% kroppsfett per vecka vid ett välplanerat kaloriunderskott på 400–600 kcal/dag. Snabbare är möjligt men ökar risken för muskelförlust. Högt proteinintag (1,8–2,4 g/kg) och styrketräning är avgörande för att behålla muskelmassa under en cut."
+      }
+    ],
+    "cta": {
+      "bottom": {
+        "h2": "Sätt ett kalorimål som matchar din kropp",
+        "body": "Nu vet du din fettprocent. Räkna ut TDEE och börja logga mot ett mål som faktiskt stämmer.",
+        "primary": "Skapa gratis konto",
+        "secondary": "Räkna ut ditt TDEE"
+      }
+    },
+    "related": {
+      "calculatorsTitle": "Relaterade kalkylatorer",
+      "articlesTitle": "Relaterade artiklar",
+      "calculators": [
+        { "href": "/kalkylatorer/tdee-kalkylator", "label": "TDEE Kalkylator" },
+        { "href": "/kalkylatorer/bmi-kalkylator", "label": "BMI Kalkylator" },
+        { "href": "/kalkylatorer/idealvikt", "label": "Idealvikt Kalkylator" },
+        { "href": "/kalkylatorer/ffmi-kalkylator", "label": "FFMI Kalkylator" },
+        { "href": "/kalkylatorer/proteinbehov", "label": "Proteinbehov Kalkylator" }
+      ],
+      "articles": [
+        { "href": "/artiklar/kaloribehov", "label": "Kaloribehov — komplett guide" },
+        { "href": "/artiklar/vad-ar-tdee", "label": "Vad är TDEE?" },
+        { "href": "/artiklar/bulk-och-cut", "label": "Bulk och Cut" },
+        { "href": "/artiklar/kaloribrist", "label": "Hur stor kaloribrist ska man ha?" },
+        { "href": "/artiklar/bmi-vs-kroppsfett", "label": "BMI vs Kroppsfett" }
+      ]
+    },
+    "schema": {
+      "webAppName": "Kroppsfett Kalkylator",
+      "webAppDescription": "Gratis kroppsfett-kalkylator (US Navy Method). Uppskatta din kroppsfettprocent och lean body mass. Resultat direkt utan konto.",
+      "breadcrumb": {
+        "hubLabel": "Kalkylatorer",
+        "hubPath": "/kalkylatorer",
+        "pageLabel": "Kroppsfett Kalkylator"
+      }
+    }
+  },
+  "ffmi-calculator": {
+    "seo": {
+      "title": "FFMI Kalkylator — Räkna ut ditt Fat-Free Mass Index (2026) | CalculEat",
+      "description": "Gratis FFMI-kalkylator. Räkna ut ditt Fat-Free Mass Index och normaliserat FFMI. Bedöm din muskelmassa, kategori och natural limit i kontext."
+    },
+    "h1Prefix": "FFMI",
+    "h1Suffix": "Kalkylator",
+    "intro": "FFMI (Fat-Free Mass Index) visar hur mycket muskelmassa du har i förhållande till din längd. Det används för att bedöma fysik, mäta progression och ge kontext kring vad som är möjligt att uppnå naturligt.",
+    "calculator": {
+      "header": "Beräkna ditt FFMI",
+      "genderLabel": "Kön",
+      "genderMale": "Man",
+      "genderFemale": "Kvinna",
+      "heightLabel": "Längd",
+      "weightLabel": "Vikt",
+      "bfLabel": "Kroppsfettprocent",
+      "bfHintPrefix": "Vet du inte din fettprocent?",
+      "bfHintLink": "Räkna ut den här",
+      "button": "Beräkna mitt FFMI",
+      "resultsTitle": "Ditt resultat",
+      "ffmiStatLabel": "FFMI",
+      "ffmiStatDesc": "Fat-Free Mass Index",
+      "normalizedLabel": "Normaliserat",
+      "normalizedDesc": "Justerat till 180 cm",
+      "lbmLabel": "Lean body mass",
+      "lbmDesc": "Fettfri massa",
+      "warningTitle": "FFMI är ett estimat",
+      "warningBody": "FFMI beror direkt på fettprocent-uppskattningen — om den är +3% fel blir FFMI också fel. Normaliserat FFMI ≥ 25 (män) är statistiskt sällsynt naturligt men inte omöjligt. Tolka ditt FFMI som ett relativt mått, inte ett absolut värde.",
+      "ctaTitle": "Matcha din muskelmassa med rätt kalorimål",
+      "ctaBody": "Lean body mass är den starkaste prediktorn för ditt BMR. Räkna ut ditt exakta TDEE och sätt ett kalorimål som matchar din kroppssammansättning.",
+      "ctaPrimary": "Räkna ut ditt TDEE",
+      "ctaSecondary": "Skapa gratis konto"
+    },
+    "matrixLabels": {
+      "male": {
+        "Mycket låg": {
+          "label": "Mycket låg",
+          "description": "Kraftigt begränsad muskelmassa, möjlig undernäring eller sarkopeni.",
+          "context": "FFMI under 17 indikerar mycket låg mager kroppsmassa relativt längd. Kontakta läkare om detta är oväntat."
+        },
+        "Smal/Otränad": {
+          "label": "Smal/Otränad",
+          "description": "Under genomsnittlig muskelmassa, stillasittande livsstil, \"smal\" kroppsbyggnad.",
+          "context": "Typisk för den som inte styrketränat. Stor potential för muskeluppbyggnad med rätt träning och proteinintag."
+        },
+        "Genomsnittsbefolkning": {
+          "label": "Genomsnittsbefolkning",
+          "description": "Normal muskelmassa för otränade män, hälsosam grundnivå.",
+          "context": "Genomsnittlig muskelmassa för en inaktiv man. Regelbunden träning och högt proteinintag kan förbättra FFMI markant."
+        },
+        "Överviktig/Fetma": {
+          "label": "Överviktig/Fetma",
+          "description": "Genomsnittlig muskelmassa men hög kroppsfettsnivå, \"kraftig\" eller \"bred\" kroppsbyggnad.",
+          "context": "Muskelmassan är normal men fettprocenten är hög. Fokus på kaloribrist och bibehållen träning kan förbättra kroppssammansättningen."
+        },
+        "Atlet/Mellanliggande": {
+          "label": "Atlet/Mellanliggande",
+          "description": "Över genomsnittlig muskelmassa, 2–3 års träning, ser tydligt tränad ut.",
+          "context": "Tydligt synlig muskelmassa. Vidare progress kräver mer strukturerad kost och periodisering."
+        },
+        "Avancerad naturlig": {
+          "label": "Avancerad naturlig",
+          "description": "Mycket välutvecklad fysik, 4–7 års träning, tävlingsliknande form.",
+          "context": "Att nå detta naturligt kräver flerårig dedikation, precis kost och bra genetik. Du befinner dig i ett sällsynt segment."
+        },
+        "Elit naturlig/Misstänkt": {
+          "label": "Elit naturlig/Misstänkt",
+          "description": "Nära genetiskt tak, 8+ års träning eller möjlig prestationshöjande användning.",
+          "context": "Vid denna nivå är genetisk outlier-status eller substansanvändning båda möjliga förklaringar. Sällsynt att nå naturligt."
+        },
+        "Troligen dopad": {
+          "label": "Troligen dopad",
+          "description": "Över typiska naturliga gränser, genetisk extremvariant eller sannolik PED-användning.",
+          "context": "Statistiskt sett är FFMI 25–27 ovanligt att nå naturligt. Majoriteten i detta spann använder prestationshöjande medel."
+        },
+        "Nästan säkert dopad": {
+          "label": "Nästan säkert dopad",
+          "description": "Kräver prestationshöjande preparat i de allra flesta fall.",
+          "context": "FFMI över 27 är extremt sällsynt naturligt. Forskning och erfarenhet pekar starkt mot substansanvändning vid dessa nivåer."
+        }
+      },
+      "female": {
+        "Mycket låg": {
+          "label": "Mycket låg",
+          "description": "Kraftigt begränsad muskelmassa, möjliga hälsoproblem.",
+          "context": "FFMI under 14 för kvinnor indikerar mycket låg mager kroppsmassa. Kontakta läkare om detta är oväntat."
+        },
+        "Smal/Otränad": {
+          "label": "Smal/Otränad",
+          "description": "Under genomsnittlig muskelmassa, stillasittande, \"smal\" kroppsbyggnad.",
+          "context": "Typisk för den som inte styrketränat. Konsekvent träning och tillräckligt proteinintag ger tydlig progress."
+        },
+        "Genomsnittsbefolkning": {
+          "label": "Genomsnittsbefolkning",
+          "description": "Normal muskelmassa för otränade kvinnor.",
+          "context": "Genomsnittlig muskelmassa för en inaktiv kvinna. Regelbunden träning förbättrar FFMI och kroppssammansättning."
+        },
+        "Överviktig/Fetma": {
+          "label": "Överviktig/Fetma",
+          "description": "Genomsnittlig muskelmassa men hög kroppsfettsnivå.",
+          "context": "Muskelmassan är normal men fettprocenten är hög. Fokus på kaloribrist och träning förbättrar kroppssammansättningen."
+        },
+        "Atlet/Mellanliggande": {
+          "label": "Atlet/Mellanliggande",
+          "description": "Över genomsnittlig muskelmassa, 2–3 års träning, atletisk kroppsbyggnad.",
+          "context": "Tydligt atletisk framtoning. Vidare progress kräver strukturerad kost och periodisering."
+        },
+        "Avancerad naturlig": {
+          "label": "Avancerad naturlig",
+          "description": "Mycket välutvecklad fysik, 4–7 års träning, tävlingsnivå.",
+          "context": "Att nå detta naturligt som kvinna kräver många år av dedikation och bra genetik. Sällsynt segment."
+        },
+        "Elit naturlig/Misstänkt": {
+          "label": "Elit naturlig/Misstänkt",
+          "description": "Närmar sig genetiskt tak, 8+ års träning eller möjlig prestationshöjande användning.",
+          "context": "Vid denna nivå är genetisk outlier-status eller substansanvändning möjliga förklaringar. Sällsynt att nå naturligt som kvinna."
+        },
+        "Troligen dopad": {
+          "label": "Troligen dopad",
+          "description": "Över typiska naturliga gränser för kvinnor.",
+          "context": "Statistiskt sett är FFMI 21–23 ovanligt att nå naturligt som kvinna. Majoriteten i detta spann använder prestationshöjande medel."
+        },
+        "Nästan säkert dopad": {
+          "label": "Nästan säkert dopad",
+          "description": "Kräver prestationshöjande preparat i de allra flesta fall.",
+          "context": "FFMI över 23 är extremt sällsynt naturligt för kvinnor."
+        }
+      }
+    },
+    "referenceTable": {
+      "title": "FFMI-referensvärden",
+      "showMale": "Visa mäns värden",
+      "showFemale": "Visa kvinnors värden",
+      "colFfmi": "FFMI",
+      "colBf": "Kroppsfett %",
+      "colCategory": "Kategori",
+      "colDesc": "Beskrivning",
+      "expandAriaLabel": "Visa beskrivning",
+      "menRows": [
+        {
+          "range": "Under 17",
+          "bf": "Valfri",
+          "category": "Mycket låg",
+          "desc": "Kraftigt begränsad muskelmassa, möjlig undernäring eller sarkopeni"
+        },
+        {
+          "range": "17–18",
+          "bf": "10–18 %",
+          "category": "Smal/Otränad",
+          "desc": "Under genomsnittlig muskelmassa, stillasittande livsstil, \"smal\" kroppsbyggnad"
+        },
+        {
+          "range": "18–20",
+          "bf": "20–27 %",
+          "category": "Genomsnittsbefolkning",
+          "desc": "Normal muskelmassa för otränade män, hälsosam grundnivå"
+        },
+        {
+          "range": "19–21",
+          "bf": "25–40 %",
+          "category": "Överviktig/Fetma",
+          "desc": "Genomsnittlig muskelmassa men hög kroppsfettsnivå, \"kraftig\" eller \"bred\" kroppsbyggnad"
+        },
+        {
+          "range": "20–21",
+          "bf": "10–18 %",
+          "category": "Atlet/Mellanliggande",
+          "desc": "Över genomsnittlig muskelmassa, 2–3 års träning, ser tydligt tränad ut"
+        },
+        {
+          "range": "22–23",
+          "bf": "6–12 %",
+          "category": "Avancerad naturlig",
+          "desc": "Mycket välutvecklad fysik, 4–7 års träning, tävlingsliknande form"
+        },
+        {
+          "range": "24–25",
+          "bf": "8–20 %",
+          "category": "Elit naturlig/Misstänkt",
+          "desc": "Nära genetiskt tak, 8+ års träning eller möjlig prestationshöjande användning"
+        },
+        {
+          "range": "25–27",
+          "bf": "Valfri",
+          "category": "Troligen dopad",
+          "desc": "Över typiska naturliga gränser, genetisk extremvariant eller sannolik PED-användning"
+        },
+        {
+          "range": "Över 27",
+          "bf": "Valfri",
+          "category": "Nästan säkert dopad",
+          "desc": "Kräver prestationshöjande preparat i de allra flesta fall"
+        }
+      ],
+      "womenRows": [
+        {
+          "range": "Under 14",
+          "bf": "Valfri",
+          "category": "Mycket låg",
+          "desc": "Kraftigt begränsad muskelmassa, möjliga hälsoproblem"
+        },
+        {
+          "range": "14–15",
+          "bf": "20–25 %",
+          "category": "Smal/Otränad",
+          "desc": "Under genomsnittlig muskelmassa, stillasittande, \"smal\" kroppsbyggnad"
+        },
+        {
+          "range": "14–17",
+          "bf": "22–35 %",
+          "category": "Genomsnittsbefolkning",
+          "desc": "Normal muskelmassa för otränade kvinnor"
+        },
+        {
+          "range": "15–18",
+          "bf": "30–45 %",
+          "category": "Överviktig/Fetma",
+          "desc": "Genomsnittlig muskelmassa men hög kroppsfettsnivå"
+        },
+        {
+          "range": "16–17",
+          "bf": "18–25 %",
+          "category": "Atlet/Mellanliggande",
+          "desc": "Över genomsnittlig muskelmassa, 2–3 års träning, atletisk kroppsbyggnad"
+        },
+        {
+          "range": "18–20",
+          "bf": "15–22 %",
+          "category": "Avancerad naturlig",
+          "desc": "Mycket välutvecklad fysik, 4–7 års träning, tävlingsnivå"
+        },
+        {
+          "range": "19–21",
+          "bf": "15–30 %",
+          "category": "Elit naturlig/Misstänkt",
+          "desc": "Närmar sig genetiskt tak, 8+ års träning eller möjlig prestationshöjande användning"
+        },
+        {
+          "range": "21–23",
+          "bf": "Valfri",
+          "category": "Troligen dopad",
+          "desc": "Över typiska naturliga gränser för kvinnor"
+        },
+        {
+          "range": "Över 23",
+          "bf": "Valfri",
+          "category": "Nästan säkert dopad",
+          "desc": "Kräver prestationshöjande preparat i de allra flesta fall"
+        }
+      ]
+    },
+    "faqTitle": "Vanliga frågor",
+    "faq": [
+      {
+        "question": "Vad är ett bra FFMI?",
+        "answer": "Det beror på kön och träningsbakgrund. För män: nybörjare (<18), tränad (18–19), avancerad (20–21), exceptionell (22+). För kvinnor är värdena ca 4–5 enheter lägre. FFMI 20–22 för en naturlig man kräver flerårig konsekvent träning. Det är ett relativt mått — jämför din progress med dig själv snarare än med andra."
+      },
+      {
+        "question": "Är 25 FFMI den naturliga gränsen?",
+        "answer": "Kouri et al. (1995) fann att naturliga manliga idrottare sällan översteg normaliserat FFMI 25. Det är en observation, inte en hård biologisk gräns. Individer med exceptionell genetik kan nå 25–26 naturligt. Men ett normaliserat FFMI konsekvent över 25 är statistiskt sällsynt bland naturliga utövare och ökar sannolikheten för substansanvändning avsevärt."
+      },
+      {
+        "question": "Är FFMI ett bättre mått än BMI?",
+        "answer": "För den som styrketränar: ja. BMI skiljer inte på muskler och fett. FFMI mäter specifikt fettfri massa (muskler, organ, ben) i relation till längd, vilket är mer relevant för att bedöma muskeluppbyggnad och fysik. En vältränad person med högt BMI kan ha lågt FFMI — och tvärtom."
+      },
+      {
+        "question": "Hur räknar man ut FFMI?",
+        "answer": "FFMI = (kroppsvikt × (1 − fettprocent/100)) ÷ längd². Normaliserat FFMI = FFMI + 6,1 × (1,8 − längd i meter). Exempel: 80 kg, 175 cm, 15% kroppsfett → LBM = 80 × 0,85 = 68 kg → FFMI = 68 ÷ 1,75² = 22,2 → Normaliserat = 22,2 + 6,1 × (1,8 − 1,75) = 22,5."
+      },
+      {
+        "question": "Kan man ha högt FFMI utan att vara stark?",
+        "answer": "Ja. FFMI mäter muskelmassa, inte styrka eller prestation. En person med naturligt stor skelettstruktur och hög muskelmassa utan träning kan ha ett FFMI på 20 utan att lyfta tungt. Och en person med FFMI 19 kan vara starkare än någon med FFMI 22 beroende på neuromuskulär effektivitet och teknik."
+      }
+    ],
+    "cta": {
+      "bottom": {
+        "h2": "Matcha din muskelmassa med rätt kalorimål",
+        "body": "FFMI visar var du är. TDEE och makroplanering visar hur du tar dig dit du vill.",
+        "primary": "Skapa gratis konto",
+        "secondary": "Räkna ut dina bulk-kalorier"
+      }
+    },
+    "related": {
+      "calculatorsTitle": "Relaterade kalkylatorer",
+      "articlesTitle": "Relaterade artiklar",
+      "calculators": [
+        { "href": "/kalkylatorer/kroppsfett", "label": "Kroppsfett Kalkylator" },
+        { "href": "/kalkylatorer/tdee-kalkylator", "label": "TDEE Kalkylator" },
+        { "href": "/kalkylatorer/bmi-kalkylator", "label": "BMI Kalkylator" },
+        { "href": "/kalkylatorer/proteinbehov", "label": "Proteinbehov Kalkylator" },
+        { "href": "/kalkylatorer/bulk-kalkylator", "label": "Bulk Kalkylator" }
+      ],
+      "articles": [
+        { "href": "/artiklar/vad-ar-ffmi", "label": "Vad är FFMI?" },
+        { "href": "/artiklar/bulk-och-cut", "label": "Bulk och Cut — komplett guide" },
+        { "href": "/artiklar/kaloribehov", "label": "Kaloribehov — komplett guide" },
+        { "href": "/artiklar/reverse-diet", "label": "Reverse Diet" },
+        { "href": "/artiklar/kaloribrist", "label": "Hur stor kaloribrist ska man ha?" }
+      ]
+    },
+    "schema": {
+      "webAppName": "FFMI Kalkylator",
+      "webAppDescription": "Gratis FFMI-kalkylator. Räkna ut ditt Fat-Free Mass Index och normaliserat FFMI. Bedöm din muskelmassa relativt längd utan att ta hänsyn till fettvikt.",
+      "breadcrumb": {
+        "hubLabel": "Kalkylatorer",
+        "hubPath": "/kalkylatorer",
+        "pageLabel": "FFMI Kalkylator"
+      }
+    }
+  },
+  "calorie-deficit-calculator": {
+    "seo": {
+      "title": "Kaloribrist Kalkylator — Räkna ut ditt kaloriunderskott (2026)",
+      "description": "Gratis kaloribrist-kalkylator. Räkna ut ditt TDEE och exakt hur många kalorier du ska äta för att gå ner i vikt i ditt önskade tempo. Resultat direkt."
+    },
+    "h1Prefix": "Kaloribrist",
+    "h1Suffix": "Kalkylator",
+    "intro": "Räkna ut ditt TDEE och ditt optimala dagliga kaloriintag för viktnedgång — baserat på ditt valda tempo. En kaloribrist på 300–500 kcal/dag är det vetenskapligt rekommenderade intervallet för att tappa fett utan att förlora muskelmassa.",
+    "calculator": {
+      "header": "Beräkna ditt kaloriunderskott",
+      "genderLabel": "Kön",
+      "genderMale": "Man",
+      "genderFemale": "Kvinna",
+      "ageLabel": "Ålder",
+      "ageUnit": "år",
+      "weightLabel": "Vikt",
+      "heightLabel": "Längd",
+      "activityLabel": "Aktivitetsnivå",
+      "tempoLabel": "Önskat tempo",
+      "button": "Beräkna mitt kaloriunderskott",
+      "resultsTitle": "Dina resultat",
+      "tdeeLabel": "TDEE (kcal/dag)",
+      "tdeeSub": "Ditt underhållsbehov",
+      "targetLabel": "Mål (kcal/dag)",
+      "maintenanceRow": "Underhållskalorier (TDEE)",
+      "deficitRow": "Dagligt underskott",
+      "intakeRow": "Dagligt kaloriintag",
+      "rateRow": "Förväntat tempo",
+      "proteinRow": "Proteinmål (för att bevara muskler)",
+      "planHeading": "Din plan",
+      "warningTitle": "Aggressivt underskott",
+      "warningBodyTemplate": "Vid 700 kcal/dag underskott ökar risken för muskelmassaförlust markant. Se till att äta {{proteinMax}}+ g protein per dag och styrketräna regelbundet.",
+      "saveCtaTitle": "Spara din plan och logga mot ditt mål",
+      "saveCtaBody": "Skapa ett gratis konto för att spara ditt kaloriintag, sätta mål och följa din progress dag för dag.",
+      "saveCtaButton": "Spara din plan gratis",
+      "featuresTitle": "Vad ingår:",
+      "features": [
+        "Beräkna kaloriunderskott — alltid gratis",
+        "Spara plan och logga mat — med konto",
+        "Följ progress dag för dag — med konto"
+      ],
+      "premium": "Fler funktioner i premiumversionen framöver."
+    },
+    "activityLevels": [
+      {
+        "value": "Sedentary",
+        "label": "Stillasittande",
+        "description": "Kontorsjobb eller hemarbete, liten vardagsrörelse, inga träningspass"
+      },
+      {
+        "value": "Lightly active",
+        "label": "Lätt aktiv",
+        "description": "Lätt träning 1–3 dagar/vecka, t.ex. promenader, yoga eller gym på fritiden"
+      },
+      {
+        "value": "Moderately active",
+        "label": "Måttligt aktiv",
+        "description": "Regelbunden träning 3–5 dagar/vecka med måttlig intensitet, t.ex. löpning eller styrketräning"
+      },
+      {
+        "value": "Very active",
+        "label": "Mycket aktiv",
+        "description": "Hård träning nästan varje dag (6–7 dagar/vecka) eller fysiskt aktivt arbete"
+      },
+      {
+        "value": "Extremely active",
+        "label": "Extremt aktiv",
+        "description": "Tungt fysiskt arbete kombinerat med daglig intensiv träning, t.ex. elitidrottare eller byggnadsarbetare som dessutom tränar"
+      }
+    ],
+    "goals": [
+      {
+        "value": "mild",
+        "label": "Mild",
+        "weeklyLoss": "~0,2–0,3 kg/vecka",
+        "description": "Lämplig nybörjare, nära tävling eller lite fett att tappa. Minimal muskelrisk."
+      },
+      {
+        "value": "moderate",
+        "label": "Måttlig",
+        "weeklyLoss": "~0,3–0,5 kg/vecka",
+        "description": "Den vetenskapliga standarden. Balans mellan tempo och muskelbevarande. Funkar för de flesta."
+      },
+      {
+        "value": "aggressive",
+        "label": "Aggressiv",
+        "weeklyLoss": "~0,5–0,8 kg/vecka",
+        "description": "Acceptabelt vid hög fettprocent. Kräver högt proteinintag och styrketräning."
+      }
+    ],
+    "faqTitle": "Vanliga frågor",
+    "faq": [
+      {
+        "question": "Hur stor kaloribrist ger 1 kg viktnedgång per vecka?",
+        "answer": "1 kg kroppsfett innehåller ca 7 700 kcal. För att tappa 1 kg/vecka behövs ett underskott på ca 1 100 kcal/dag — vilket är aggressivt och innebär hög risk för muskelmassaförlust. 0,5 kg/vecka (ca 550 kcal/dag underskott) är ett mer hållbart tempo för de flesta."
+      },
+      {
+        "question": "Vad är skillnaden mellan kaloribrist och kaloriunderskott?",
+        "answer": "Begreppen används synonymt på svenska. Kaloribrist och kaloriunderskott betyder att du äter färre kalorier än du förbränner (under ditt TDEE), vilket tvingar kroppen att använda lagrad energi — i första hand fett, men även viss muskelmassa om bristen är för stor."
+      },
+      {
+        "question": "Kan man äta för lite och ändå inte gå ner i vikt?",
+        "answer": "Ja — adaptiv termogenes kan bromsa viktnedgången vid lång kaloribrist. Kroppen sänker sin NEAT (oplanerad rörelse) och BMR sjunker något som försvar mot svält. Lösning: ta en diet break på 1–2 veckor på underhållsintag (ditt TDEE) för att återställa ämnesomsättningen."
+      },
+      {
+        "question": "Hur mycket protein behöver man under kaloribrist?",
+        "answer": "1,6–2,2 g protein per kg kroppsvikt per dag rekommenderas för att bevara muskelmassa under kaloribrist. Vid aggressivare underskott eller intensiv träning, sikta på övre delen av intervallet (2,0–2,2 g/kg). Protein ger också hög mättnadseffekt."
+      },
+      {
+        "question": "Är det farligt med kaloribrist?",
+        "answer": "En måttlig kaloribrist (300–500 kcal/dag) är inte farlig för friska vuxna. En mycket stor brist (>1000 kcal/dag) ökar risken för muskelmassaförlust, näringsbrist, trötthet och hormonella störningar. Rådfråga sjukvård vid extrem restriktion eller om du har underliggande sjukdomar."
+      }
+    ],
+    "cta": {
+      "bottom": {
+        "h2": "Redo att nå ditt viktnedgångsmål?",
+        "body": "Du har kalorimålet. Nästa steg är att logga mat mot det och se hur kroppen svarar.",
+        "primary": "Skapa gratis konto",
+        "secondary": "Räkna ut dina cut-kalorier"
+      }
+    },
+    "related": {
+      "calculatorsTitle": "Relaterade kalkylatorer",
+      "articlesTitle": "Relaterade artiklar",
+      "calculators": [
+        { "href": "/kalkylatorer/tdee-kalkylator", "label": "TDEE Kalkylator" },
+        { "href": "/kalkylatorer/cut-kalkylator", "label": "Cut & Deff Kalkylator" },
+        { "href": "/kalkylatorer/bmi-kalkylator", "label": "BMI Kalkylator" }
+      ],
+      "articles": [
+        { "href": "/artiklar/kaloribrist", "label": "Hur stor kaloribrist ska man ha?" },
+        { "href": "/artiklar/vad-ar-tdee", "label": "Vad är TDEE?" },
+        { "href": "/artiklar/kaloribehov", "label": "Kaloribehov — komplett guide" }
+      ]
+    },
+    "schema": {
+      "webAppName": "Kaloribrist Kalkylator",
+      "webAppDescription": "Gratis kaloribrist-kalkylator. Räkna ut ditt TDEE och ditt optimala kaloriintag för viktnedgång baserat på hur snabbt du vill gå ner.",
+      "breadcrumb": {
+        "hubLabel": "Kalkylatorer",
+        "hubPath": "/kalkylatorer",
+        "pageLabel": "Kaloribrist Kalkylator"
+      }
+    }
+  },
+  "bulk-calculator": {
+    "seo": {
+      "title": "Bulk Kalkylator — Räkna ut kalorier för lean bulk (2026)",
+      "description": "Gratis bulk-kalkylator. Räkna ut hur många kalorier du behöver för lean bulk, standard bulk eller aggressiv bulk. Baserat på ditt TDEE. Resultat direkt."
+    },
+    "h1Prefix": "Bulk",
+    "h1Suffix": "Kalkylator",
+    "intro": "Räkna ut exakt hur många kalorier du behöver för att bygga muskler effektivt — utan att lagra onödigt fett. En lean bulk på +150–250 kcal/dag ger maximal muskeltillväxt med minimalt fettupplagrande.",
+    "calculator": {
+      "header": "Beräkna dina bulk-kalorier",
+      "genderLabel": "Kön",
+      "genderMale": "Man",
+      "genderFemale": "Kvinna",
+      "ageLabel": "Ålder",
+      "ageUnit": "år",
+      "weightLabel": "Vikt",
+      "heightLabel": "Längd",
+      "activityLabel": "Aktivitetsnivå",
+      "strategyLabel": "Bulk-strategi",
+      "button": "Beräkna mina bulk-kalorier",
+      "resultsTitle": "Dina resultat",
+      "tdeeLabel": "TDEE (kcal/dag)",
+      "tdeeSub": "Ditt underhållsbehov",
+      "bulkTargetLabel": "Bulk-mål (kcal/dag)",
+      "maintenanceRow": "Underhållskalorier (TDEE)",
+      "surplusRow": "Dagligt överskott",
+      "intakeRow": "Dagligt kaloriintag",
+      "rateRow": "Förväntad viktuppgång",
+      "proteinRow": "Proteinmål",
+      "planHeading": "Din bulk-plan",
+      "crossLinkTitle": "Planerar du en cut-fas efter bulken?",
+      "crossLinkBody": "Räkna ut dina cut-kalorier redan nu.",
+      "crossLinkButton": "Cut & Deff Kalkylator",
+      "saveCtaTitle": "Spara din bulk-plan och logga mat",
+      "saveCtaBody": "Skapa ett gratis konto för att spara ditt kaloriintag, följa din progress och planera makron.",
+      "saveCtaButton": "Spara din plan gratis",
+      "featuresTitle": "Vad ingår:",
+      "features": [
+        "Beräkna bulk-kalorier — alltid gratis",
+        "Spara plan och logga mat — med konto",
+        "Följ makron och vikt — med konto"
+      ],
+      "premium": "Fler funktioner i premiumversionen framöver."
+    },
+    "activityLevels": [
+      {
+        "value": "Sedentary",
+        "label": "Stillasittande",
+        "description": "Kontorsjobb eller hemarbete, liten vardagsrörelse, inga träningspass"
+      },
+      {
+        "value": "Lightly active",
+        "label": "Lätt aktiv",
+        "description": "Lätt träning 1–3 dagar/vecka, t.ex. promenader, yoga eller gym på fritiden"
+      },
+      {
+        "value": "Moderately active",
+        "label": "Måttligt aktiv",
+        "description": "Regelbunden träning 3–5 dagar/vecka med måttlig intensitet, t.ex. löpning eller styrketräning"
+      },
+      {
+        "value": "Very active",
+        "label": "Mycket aktiv",
+        "description": "Hård träning nästan varje dag (6–7 dagar/vecka) eller fysiskt aktivt arbete"
+      },
+      {
+        "value": "Extremely active",
+        "label": "Extremt aktiv",
+        "description": "Tungt fysiskt arbete kombinerat med daglig intensiv träning, t.ex. elitidrottare eller byggnadsarbetare som dessutom tränar"
+      }
+    ],
+    "bulkModes": [
+      {
+        "value": "lean",
+        "label": "Lean Bulk",
+        "weeklyGain": "~0,1–0,2 kg/vecka",
+        "description": "Minimalt fettupplagrande. Tar längre tid men du behåller din definition. Bäst för avancerade lyftare."
+      },
+      {
+        "value": "standard",
+        "label": "Standard Bulk",
+        "weeklyGain": "~0,2–0,4 kg/vecka",
+        "description": "Den vetenskapliga standarden. Bra balans mellan muskeluppbyggnad och fettupplagrande. Funkar för de flesta."
+      },
+      {
+        "value": "aggressive",
+        "label": "Aggressiv Bulk",
+        "weeklyGain": "~0,4–0,7 kg/vecka",
+        "description": "Snabbare massa men mer fett. Lämplig för nybörjare och hardgainers som kämpat med att gå upp."
+      }
+    ],
+    "faqTitle": "Vanliga frågor",
+    "faq": [
+      {
+        "question": "Hur mycket kalorier ska man äta på bulk?",
+        "answer": "Du ska äta mer än ditt TDEE (underhållsbehov). Hur mycket beror på ditt mål: lean bulk = +150–250 kcal/dag, standard bulk = +300–500 kcal/dag, aggressiv bulk = +500+ kcal/dag. Det vanligaste misstaget är att äta för mycket och lagra onödigt fett, eller för lite och inte bygga muskler."
+      },
+      {
+        "question": "Vad är skillnaden mellan lean bulk och dirty bulk?",
+        "answer": "En lean bulk är ett kontrollerat kalorioverskott (+150–350 kcal/dag) som maximerar muskeltillväxt med minimalt fettupplagrande. En dirty bulk innebär att man äter utan kontroll — snabb viktuppgång men stor andel av det är fett, som sedan kräver en längre och tuffare cut. Lean bulk är alltid det bättre valet om du inte är ett hårdgainer-fall."
+      },
+      {
+        "question": "Hur snabbt ska man gå upp i vikt under bulk?",
+        "answer": "Nybörjare: 0,5–1% av kroppsvikten per månad. Avancerade: 0,25–0,5% per månad. Går du upp snabbare lagrar du troligtvis mer fett än muskler. Muskelproteinsyntes är begränsad — kroppen kan bara bygga en viss mängd muskler per tidsenhet oavsett hur mycket du äter."
+      },
+      {
+        "question": "Hur mycket protein behövs under bulk?",
+        "answer": "1,6–2,2 g protein per kg kroppsvikt per dag är det vetenskapligt stödda intervallet för muskeluppbyggnad. Under bulk är du inte i kaloribrist, men protein är fortfarande det viktigaste makronutrientet — det är byggstenen för muskler. Prioritera protein, fördela resterande kalorier på kolhydrater och fett efter preferens."
+      },
+      {
+        "question": "Hur länge ska man bulka?",
+        "answer": "En typisk bulk-fas pågår 3–6 månader. När du nått din önskade kroppsvikt eller fettprocenten kommit upp till 18–20% (man) / 28–30% (kvinna) är det dags att gå in i en cut-fas för att reducera fett och avslöja musklerna du byggt."
+      }
+    ],
+    "cta": {
+      "bottom": {
+        "h2": "Redo att bygga muskler smart?",
+        "body": "Du har kaloriöverskottet. Logga mat mot ditt mål och följ din viktuppgång vecka för vecka.",
+        "primary": "Skapa gratis konto",
+        "secondary": "Planera din cut-fas"
+      }
+    },
+    "related": {
+      "calculatorsTitle": "Relaterade kalkylatorer",
+      "articlesTitle": "Relaterade artiklar",
+      "calculators": [
+        { "href": "/kalkylatorer/cut-kalkylator", "label": "Cut & Deff Kalkylator" },
+        { "href": "/kalkylatorer/proteinbehov", "label": "Proteinbehov Kalkylator" },
+        { "href": "/kalkylatorer/tdee-kalkylator", "label": "TDEE Kalkylator" },
+        { "href": "/kalkylatorer/kaloriunderskott", "label": "Kaloribrist Kalkylator" }
+      ],
+      "articles": [
+        { "href": "/artiklar/bulk-och-cut", "label": "Bulk och Cut — komplett guide" },
+        { "href": "/artiklar/kaloribehov", "label": "Kaloribehov — komplett guide" },
+        { "href": "/artiklar/vad-ar-tdee", "label": "Vad är TDEE?" }
+      ]
+    },
+    "schema": {
+      "webAppName": "Bulk Kalkylator",
+      "webAppDescription": "Gratis bulk-kalkylator. Räkna ut exakt hur många kalorier du behöver för lean bulk, standard bulk eller aggressiv bulk baserat på ditt TDEE.",
+      "breadcrumb": {
+        "hubLabel": "Kalkylatorer",
+        "hubPath": "/kalkylatorer",
+        "pageLabel": "Bulk Kalkylator"
+      }
+    }
+  },
+  "cut-calculator": {
+    "seo": {
+      "title": "Cut & Deff Kalkylator — Räkna ut kalorier för din deff (2026)",
+      "description": "Gratis cut- och deff-kalkylator för dig som tränar. Räkna ut hur många kalorier du ska äta för att bränna fett utan att tappa muskelmassa. Baserat på ditt TDEE."
+    },
+    "h1Prefix": "Cut & Deff",
+    "h1Suffix": "Kalkylator",
+    "intro": "Oavsett om du kallar det cut eller deff — målet är detsamma: bränna fett utan att tappa muskelmassa. Räkna ut ditt optimala kaloriintag baserat på ditt TDEE, välj tempo och få ett proteinmål anpassat för att skydda musklerna under fasen.",
+    "calculator": {
+      "header": "Beräkna dina cut/deff-kalorier",
+      "genderLabel": "Kön",
+      "genderMale": "Man",
+      "genderFemale": "Kvinna",
+      "ageLabel": "Ålder",
+      "ageUnit": "år",
+      "weightLabel": "Vikt",
+      "heightLabel": "Längd",
+      "activityLabel": "Aktivitetsnivå",
+      "strategyLabel": "Cut/deff-strategi",
+      "button": "Beräkna mina cut/deff-kalorier",
+      "resultsTitle": "Dina resultat",
+      "tdeeLabel": "TDEE (kcal/dag)",
+      "tdeeSub": "Ditt underhållsbehov",
+      "cutTargetLabel": "Cut/deff-mål (kcal/dag)",
+      "maintenanceRow": "Underhållskalorier (TDEE)",
+      "deficitRow": "Dagligt underskott",
+      "intakeRow": "Dagligt kaloriintag",
+      "rateRow": "Förväntad viktnedgång",
+      "proteinRow": "Proteinmål (muskelskydd)",
+      "planHeading": "Din cut/deff-plan",
+      "warningTitle": "Aggressiv cut",
+      "warningBodyTemplate": "Vid −700 kcal/dag ökar risken för muskelmassaförlust markant. Säkerställ {{proteinMax}}+ g protein per dag och fortsätt styrketräna med progressiv belastning.",
+      "crossLinkTitle": "Ska du bulka efter cutten?",
+      "crossLinkBody": "Planera nästa fas med bulk-kalkylatorn.",
+      "crossLinkButton": "Bulk Kalkylator",
+      "saveCtaTitle": "Spara din cut/deff-plan och logga mat",
+      "saveCtaBody": "Skapa ett gratis konto för att spara ditt kaloriintag, följa din progress och hålla koll på proteinet under deffa-fasen.",
+      "saveCtaButton": "Spara din plan gratis",
+      "featuresTitle": "Vad ingår:",
+      "features": [
+        "Beräkna cut/deff-kalorier — alltid gratis",
+        "Spara plan och logga mat — med konto",
+        "Följ protein och vikt under deffa-fasen — med konto"
+      ],
+      "premium": "Fler funktioner i premiumversionen framöver."
+    },
+    "activityLevels": [
+      {
+        "value": "Sedentary",
+        "label": "Stillasittande",
+        "description": "Kontorsjobb eller hemarbete, liten vardagsrörelse, inga träningspass"
+      },
+      {
+        "value": "Lightly active",
+        "label": "Lätt aktiv",
+        "description": "Lätt träning 1–3 dagar/vecka, t.ex. promenader, yoga eller gym på fritiden"
+      },
+      {
+        "value": "Moderately active",
+        "label": "Måttligt aktiv",
+        "description": "Regelbunden träning 3–5 dagar/vecka med måttlig intensitet, t.ex. löpning eller styrketräning"
+      },
+      {
+        "value": "Very active",
+        "label": "Mycket aktiv",
+        "description": "Hård träning nästan varje dag (6–7 dagar/vecka) eller fysiskt aktivt arbete"
+      },
+      {
+        "value": "Extremely active",
+        "label": "Extremt aktiv",
+        "description": "Tungt fysiskt arbete kombinerat med daglig intensiv träning, t.ex. elitidrottare eller byggnadsarbetare som dessutom tränar"
+      }
+    ],
+    "cutModes": [
+      {
+        "value": "mild",
+        "label": "Mild Cut",
+        "weeklyLoss": "~0,2–0,3 kg/vecka",
+        "description": "Minimal muskelrisk. Lämplig nära tävling, sista veckornas finjustering eller låg fettprocent att tappa."
+      },
+      {
+        "value": "moderate",
+        "label": "Standard Cut",
+        "weeklyLoss": "~0,3–0,5 kg/vecka",
+        "description": "Den vetenskapliga standarden. Balans mellan fettförbränning och muskelbevarande. Funkar för de flesta."
+      },
+      {
+        "value": "aggressive",
+        "label": "Aggressiv Cut",
+        "weeklyLoss": "~0,5–0,8 kg/vecka",
+        "description": "Lämplig vid hög fettprocent. Kräver högt proteinintag (2,2+ g/kg) och styrketräning för att skydda muskler."
+      }
+    ],
+    "faqTitle": "Vanliga frågor",
+    "faq": [
+      {
+        "question": "Vad är skillnaden på cut och deff?",
+        "answer": "Ingenting — det är två ord för samma sak. \"Deff\" är gymslang (troligtvis från engelskans \"definition\") och används framför allt i svenska träningskretsar. \"Cut\" är den internationellt vanligare termen. Båda syftar på en fas där du äter under ditt underhållsbehov för att minska fettprocenten med bibehållen muskelmassa."
+      },
+      {
+        "question": "Hur många kalorier ska man äta på cut/deff?",
+        "answer": "Du ska äta under ditt TDEE (underhållsbehov). Hur mycket beror på tempo: mild = −250 kcal/dag, standard = −400 kcal/dag, aggressiv = −700 kcal/dag. Tumregel: tappa inte mer än 0,5–1% av kroppsvikten per vecka för att minimera muskelmassaförlust."
+      },
+      {
+        "question": "Hur mycket protein behövs under deff?",
+        "answer": "Under cut/deff rekommenderas 1,8–2,4 g protein per kg kroppsvikt — högre än under bulk. Anledningen: i kaloribrist ökar risken för muskelkatabolism. Högt proteinintag ger mättnadseffekt, hög TEF (ca 25–30% av proteinkalorierna går till matsmältning) och skyddar muskelmassa."
+      },
+      {
+        "question": "Hur undviker man muskelförlust under deff?",
+        "answer": "Tre saker avgör: 1) Tillräckligt proteinintag (1,8–2,4 g/kg). 2) Fortsätta styrketräna med progressiv belastning — signalen till kroppen att muskelmassa behövs. 3) Inte för aggressivt kaloriunderskott. Kombinerar du dessa tre kan du förlora nästan enbart fett."
+      },
+      {
+        "question": "Vad är en mini cut/deff och när passar den?",
+        "answer": "En mini cut är en kort, intensiv cut-fas (4–8 veckor) med ett något aggressivare underskott (−500–700 kcal/dag). Den passar när du just avslutat en bulk och vill snabbt reducera fettprocenten innan nästa bulk-fas — utan att gå igenom en full, lång cut-cykel."
+      }
+    ],
+    "cta": {
+      "bottom": {
+        "h2": "Redo att deffa — utan att tappa muskler?",
+        "body": "Du har cut/deff-kalorimålet. Nästa steg är att logga mat mot det och se hur kroppen svarar.",
+        "primary": "Skapa gratis konto",
+        "secondary": "Räkna ut ditt proteinbehov"
+      }
+    },
+    "related": {
+      "calculatorsTitle": "Relaterade kalkylatorer",
+      "articlesTitle": "Relaterade artiklar",
+      "calculators": [
+        { "href": "/kalkylatorer/bulk-kalkylator", "label": "Bulk Kalkylator" },
+        { "href": "/kalkylatorer/proteinbehov", "label": "Proteinbehov Kalkylator" },
+        { "href": "/kalkylatorer/kaloriunderskott", "label": "Kaloribrist Kalkylator" },
+        { "href": "/kalkylatorer/tdee-kalkylator", "label": "TDEE Kalkylator" }
+      ],
+      "articles": [
+        { "href": "/artiklar/reverse-diet", "label": "Reverse Diet — efter cutten" },
+        { "href": "/artiklar/bulk-och-cut", "label": "Bulk och Cut — komplett guide" },
+        { "href": "/artiklar/kaloribrist", "label": "Hur stor kaloribrist ska man ha?" },
+        { "href": "/artiklar/kaloribehov", "label": "Kaloribehov — komplett guide" }
+      ]
+    },
+    "schema": {
+      "webAppName": "Cut & Deff Kalkylator",
+      "webAppDescription": "Gratis cut- och deff-kalkylator för dig som tränar. Räkna ut hur många kalorier du ska äta för att bränna fett utan att tappa muskelmassa. Baserat på ditt TDEE och önskat tempo.",
+      "breadcrumb": {
+        "hubLabel": "Kalkylatorer",
+        "hubPath": "/kalkylatorer",
+        "pageLabel": "Cut & Deff Kalkylator"
+      }
+    }
+  },
+  "protein-calculator": {
+    "seo": {
+      "title": "Proteinbehov Kalkylator — Hur mycket protein per dag behöver du? (2026)",
+      "description": "Gratis proteinbehov-kalkylator. Räkna ut hur mycket protein per dag du behöver baserat på vikt, mål och träningsstatus. Evidensbaserade intervall — inte linjära tumregler."
+    },
+    "h1Prefix": "Proteinbehov",
+    "h1Suffix": "Kalkylator",
+    "intro": "Ditt proteinbehov beror på mål och träningsstatus — inte på hur aktiv du generellt är. Kalkylatorn använder evidensbaserade intervall per kombination, utan linjära tumregelsbonusar.",
+    "calculator": {
+      "header": "Beräkna ditt proteinbehov",
+      "weightLabel": "Vikt",
+      "goalLabel": "Mål",
+      "trainingLabel": "Träningsstatus",
+      "trainingNote": "Proteinbehovet drivs av träningsstatus och mål — inte av generell aktivitetsnivå som steg eller PAL-värde.",
+      "mealsLabel": "Antal måltider per dag",
+      "mealsNote": "Används för att beräkna protein per måltid",
+      "button": "Beräkna mitt proteinbehov",
+      "resultsTitle": "Ditt proteinbehov",
+      "perDaySub": "protein per dag",
+      "perKgSub": "g per kg kroppsvikt",
+      "breakdownTitle": "Fördelning per dag",
+      "dailyRangeRow": "Dagligt proteinintervall",
+      "recommendedRow": "Rekommenderat mål",
+      "perMealRowTemplate": "Per måltid ({{n}} måltider/dag)",
+      "rationaleTitle": "Varför detta intervall?",
+      "nextStepTitle": "Nästa steg — räkna ut ditt kalorisbehov",
+      "saveCtaTitle": "Spara din kostplan och följ ditt proteinintag",
+      "saveCtaBody": "Skapa ett gratis konto för att logga mat, följa protein per dag och spara dina mål.",
+      "saveCtaButton": "Spara din plan gratis",
+      "featuresTitle": "Vad ingår:",
+      "features": [
+        "Beräkna proteinbehov — alltid gratis",
+        "Spara plan och logga mat — med konto",
+        "Följ proteinintag dag för dag — med konto"
+      ],
+      "premium": "Fler funktioner i premiumversionen framöver."
+    },
+    "goals": [
+      {
+        "value": "cut",
+        "label": "Viktnedgång (cut)",
+        "description": "Kaloribrist — skydda muskelmassa och utnyttja proteinets höga mättnadseffekt."
+      },
+      {
+        "value": "maintenance",
+        "label": "Viktstabilisering",
+        "description": "Bibehåll muskelmassa och stötta allmän hälsa utan att gå upp eller ned."
+      },
+      {
+        "value": "bulk",
+        "label": "Muskeluppbyggnad (bulk)",
+        "description": "Kalorioverskott + styrketräning — protein är råmaterialet för nya muskelfibrer."
+      }
+    ],
+    "trainingStatuses": [
+      {
+        "value": "inactive",
+        "label": "Inaktiv / sällan träning",
+        "description": "Ingen regelbunden träning — vardagsrörelse som promenader räknas hit"
+      },
+      {
+        "value": "active",
+        "label": "Tränar regelbundet",
+        "description": "Styrketräning eller konditionsträning 2–5 dagar/vecka"
+      },
+      {
+        "value": "elite",
+        "label": "Elitidrottare / tung daglig träning",
+        "description": "Hård träning dagligen eller dubbla pass, alternativt tungt fysiskt yrke"
+      }
+    ],
+    "rationale": {
+      "cut": {
+        "inactive": "Under kaloribrist utan regelbunden träning räcker 1,2–1,6 g/kg för att bromsa muskelmassaförlust. Viktnedgången dominerar — protein är ett skydd, inte en prestationsfaktor.",
+        "active": "Under viktnedgång med regelbunden träning rekommenderar forskning 1,8–2,4 g/kg. Protein skyddar muskelmassa under kaloribrist, ger hög mättnadseffekt och har hög TEF (ca 25–30% av proteinkalorierna går åt till matsmältningen).",
+        "elite": "Elitidrottare och tung daglig träning i kombination med kaloribrist motiverar 2,2–2,6 g/kg. Den höga träningsvolymen ökar katabolisk stress och kräver ett extra skyddsnät för muskelmassa."
+      },
+      "maintenance": {
+        "inactive": "WHO:s minimumrekommendation på 0,8 g/kg gäller stillasittande vuxna. För de flesta är 1,0–1,2 g/kg ett rimligare mål för att stötta immunsystem, enzymer och återhämtning.",
+        "active": "För att bibehålla muskelmassa och stötta återhämtning vid regelbunden träning räcker 1,4–1,8 g/kg för de flesta. Aktiva med hög träningsvolym bör sikta på övre delen av intervallet.",
+        "elite": "Elitidrottare behöver 1,6–2,0 g/kg även under underhållsfas för att stötta återhämtning och motverka nedbrytning vid hög träningsvolym."
+      },
+      "bulk": {
+        "inactive": "Utan regelbunden styrketräning är muskeluppbyggnad begränsad. 1,2–1,6 g/kg räcker för att stötta en gradvis ökning av muskelmassa i kombination med kalorioverskott.",
+        "active": "Under muskeluppbyggnad med regelbunden styrketräning är 1,6–2,2 g/kg det vetenskapligt stödda optimala intervallet (Morton et al., 2018: ~1,62 g/kg är nära taket för vältränade). Mer än 2,2 g/kg ger troligtvis inga ytterligare fördelar.",
+        "elite": "Elitidrottare med hög träningsvolym och kalorioverskott kan motivera 1,8–2,4 g/kg för att maximera muskelproteinsyntes och stötta återhämtning mellan pass."
+      }
+    },
+    "faqTitle": "Vanliga frågor",
+    "faq": [
+      {
+        "question": "Hur mycket protein behöver man per dag?",
+        "answer": "Det beror primärt på ditt mål och träningsstatus — inte på generell aktivitetsnivå. WHO:s minimumrekommendation är 0,8 g/kg för stillasittande vuxna. För den som tränar regelbundet rekommenderar forskning 1,4–2,4 g/kg beroende på mål: lägre vid underhåll, högre vid viktnedgång (för att skydda muskler) och vid muskeluppbyggnad."
+      },
+      {
+        "question": "Är 2 gram protein per kg optimalt?",
+        "answer": "2 g/kg är en bra tumregel för aktiva som styrketränar. Forskning (Morton et al., 2018) visar att 1,62 g/kg är nära det maximalt effektiva för muskeluppbyggnad hos vältränade. Under viktnedgång kan 2,0–2,4 g/kg vara motiverat för att minimera muskelmassaförlust. Mer än 3 g/kg ger troligtvis inga ytterligare fördelar."
+      },
+      {
+        "question": "Behöver man mer protein vid viktnedgång?",
+        "answer": "Ja — under kaloribrist ökar kroppen sin nedbrytning av muskelvävnad som energikälla. Högt proteinintag (1,8–2,4 g/kg) motverkar detta och ger dessutom hög mättnadseffekt. Protein har också hög TEF (ca 25–30% av proteinkalorierna används till att smälta proteinet), vilket är extra fördelaktigt vid viktnedgång."
+      },
+      {
+        "question": "Hur mycket protein per måltid är bäst?",
+        "answer": "Forskning visar att kroppen effektivt utnyttjar ungefär 20–40 g protein per måltid för muskelproteinsyntes. Fördelat på 3–5 måltider per dag maximeras stimuleringen av muskelbyggande. Att äta 150 g protein i en enda måltid är alltså suboptimalt — sprid ut intaget jämnt."
+      },
+      {
+        "question": "Spelar det någon roll vilken typ av träning man gör?",
+        "answer": "Ja, träningstypen påverkar proteinbehovet mer än träningens frekvens eller hur aktiv man generellt är. Styrketräning stimulerar muskelproteinsyntes direkt och kräver mer protein än konditionsträning vid samma volym. Det är därför kalkylatorn frågar om träningsstatus snarare än hur många steg du tar om dagen."
+      },
+      {
+        "question": "Kan man äta för mycket protein?",
+        "answer": "För friska personer är högt proteinintag (upp till 3 g/kg/dag) säkert och ger inga negativa njureffekter. Den praktiska begränsningen är att ett extremt högt proteinintag tränger ut kolhydrater och fett, vilket kan försämra träningsprestanda och hormonbalans. Sikta på intervallet för ditt mål och prioritera varierade proteinkällor."
+      }
+    ],
+    "cta": {
+      "bottom": {
+        "h2": "Följ ditt proteinintag dag för dag",
+        "body": "Skapa ett gratis konto och logga mat mot ditt proteinmål — automatiskt beräknat för ditt mål.",
+        "primary": "Skapa gratis konto",
+        "secondary": "Räkna ut ditt TDEE"
+      }
+    },
+    "related": {
+      "calculatorsTitle": "Relaterade kalkylatorer",
+      "articlesTitle": "Relaterade artiklar",
+      "calculators": [
+        { "href": "/kalkylatorer/tdee-kalkylator", "label": "TDEE Kalkylator" },
+        { "href": "/kalkylatorer/cut-kalkylator", "label": "Cut & Deff Kalkylator" },
+        { "href": "/kalkylatorer/bulk-kalkylator", "label": "Bulk Kalkylator" },
+        { "href": "/kalkylatorer/kaloriunderskott", "label": "Kaloribrist Kalkylator" }
+      ],
+      "articles": [
+        { "href": "/artiklar/reverse-diet", "label": "Reverse Diet — efter cutten" },
+        { "href": "/artiklar/bulk-och-cut", "label": "Bulk och Cut — komplett guide" },
+        { "href": "/artiklar/kaloribrist", "label": "Hur stor kaloribrist ska man ha?" },
+        { "href": "/artiklar/kaloribehov", "label": "Kaloribehov — komplett guide" }
+      ]
+    },
+    "schema": {
+      "webAppName": "Proteinbehov Kalkylator",
+      "webAppDescription": "Gratis proteinbehov-kalkylator. Räkna ut hur mycket protein per dag du behöver baserat på vikt, träningsstatus och mål — viktnedgång, underhåll eller muskeluppbyggnad.",
+      "breadcrumb": {
+        "hubLabel": "Kalkylatorer",
+        "hubPath": "/kalkylatorer",
+        "pageLabel": "Proteinbehov Kalkylator"
+      }
+    }
+  },
+  "idealweight-calculator": {
+    "seo": {
+      "title": "Idealvikt Kalkylator — Räkna ut din hälsosamma målvikt (2026) | CalculEat",
+      "description": "Gratis idealvikt-kalkylator. Räkna ut ditt hälsosamma viktspann baserat på längd och kön. Se var du är nu och vad som är nästa steg mot ditt mål."
+    },
+    "h1Prefix": "Idealvikt",
+    "h1Suffix": "Kalkylator",
+    "intro": "Idealvikt är ett uppskattat hälsosamt viktspann baserat på längd och kön. Det är ett riktmärke — inte ett exakt mål. Räkna ut ditt spann nedan och se vad som faktiskt driver resultaten vidare.",
+    "calculator": {
+      "header": "Beräkna din idealvikt",
+      "genderLabel": "Kön",
+      "genderMale": "Man",
+      "genderFemale": "Kvinna",
+      "heightLabel": "Längd",
+      "weightLabel": "Nuvarande vikt",
+      "button": "Beräkna min idealvikt",
+      "resultsTitle": "Ditt resultat",
+      "rangeLabel": "Hälsosamt viktspann (BMI 18.5–24.9)",
+      "formulaLabel": "Formel-idealvikt (Robinson):",
+      "diffOverLabel": "kg över formelvärdet",
+      "diffUnderLabel": "kg under formelvärdet",
+      "insightTitle": "Idealvikt är inte detsamma som rätt kaloriplan",
+      "insightBody": "Att veta din idealvikt säger dig inte hur du når den. Ditt TDEE — totalt dagligt kaloribehov — är nyckeln. Det avgör hur mycket du ska äta för att gå ner, hålla vikten eller bygga muskler.",
+      "nextStepTitle": "Nästa steg: räkna ut ditt kaloribehov",
+      "nextStepBody": "TDEE-kalkylatorn tar din idealvikt och aktivitetsnivå och ger dig ett exakt kalorimål att logga mot.",
+      "nextStepPrimary": "Räkna ut ditt TDEE",
+      "nextStepSecondary": "Skapa gratis konto"
+    },
+    "positionLabels": [
+      {
+        "value": "underweight",
+        "label": "Under hälsosamt spann",
+        "desc": "Din nuvarande vikt är under det uppskattade hälsosamma viktspannet. Fokus på kalorier och protein för att nå din målvikt."
+      },
+      {
+        "value": "below_ideal",
+        "label": "Strax under spannet",
+        "desc": "Du är nära det hälsosamma viktspannet. Lite justeringar i kalorier räcker för att nå dit."
+      },
+      {
+        "value": "within",
+        "label": "Inom hälsosamt spann",
+        "desc": "Din nuvarande vikt är inom det uppskattade hälsosamma viktspannet. Fokus bör nu ligga på kroppssammansättning och kaloribehov — inte vikten i sig."
+      },
+      {
+        "value": "above_ideal",
+        "label": "Strax över spannet",
+        "desc": "Du är något över det uppskattade spannet. En måttlig kaloribrist på 300–400 kcal/dag räcker för att gradvis nå din målvikt."
+      },
+      {
+        "value": "overweight",
+        "label": "Över hälsosamt spann",
+        "desc": "Din nuvarande vikt är över det uppskattade hälsosamma spannet. En välplanerad kaloribrist kombinerat med styrketräning ger bäst resultat på lång sikt."
+      }
+    ],
+    "faqTitle": "Vanliga frågor",
+    "faq": [
+      {
+        "question": "Vad räknas som idealvikt?",
+        "answer": "Idealvikt är ett uppskattat viktspann baserat på din längd och kön, ofta beräknat via formler som Robinson (1983) eller BMI 18.5–24.9. Det är ett riktmärke, inte ett exakt mål. Faktorer som muskelmassa, ålder, benstorlek och träningsnivå påverkar vad som är hälsosamt för just dig."
+      },
+      {
+        "question": "Är idealvikt samma sak som BMI?",
+        "answer": "Nej — men de är relaterade. BMI (Body Mass Index) är ett tal som beräknas från vikt och längd. Idealvikt är ett viktintervall som svarar mot ett hälsosamt BMI (18.5–24.9). Skillnaden är att idealvikt-formler som Robinson justerar för längd och kön separat, medan BMI är ett rent förhållandemått."
+      },
+      {
+        "question": "Kan man väga mer och ändå vara hälsosam?",
+        "answer": "Ja. Muskler väger mer än fett, och en vältränad person kan väga mer än idealviktsformeln anger utan att ha ökad hälsorisk. Fettprocent, midjeomfång och metabola markörer (blodtryck, blodfetter) är bättre indikatorer på hälsorisk än vikten ensam. Idealvikt är ett riktmärke — inte en absolut gräns."
+      },
+      {
+        "question": "Hur mycket bör man gå ner per vecka?",
+        "answer": "0,3–0,7 kg per vecka är ett hälsosamt tempo som minimerar muskelförlust. Det kräver ett kalorimål på ca 300–700 kcal under ditt TDEE per dag. Snabbare viktnedgång ökar risken för att tappa muskelmassa och påverka ämnesomsättningen negativt."
+      },
+      {
+        "question": "Är idealvikt relevant om man styrketränar?",
+        "answer": "Begränsat. Styrketränande personer bygger muskelmassa som ökar vikten utan att öka fettmassa. En vältränad person kan väga 5–10 kg mer än idealviktsformeln anger och ha utmärkt hälsa. För den som tränar regelbundet är TDEE-beräkning, makroplanering och fettprocent mer relevanta mått än en idealvikts-siffra."
+      }
+    ],
+    "cta": {
+      "bottom": {
+        "h2": "Från idealvikt till handlingsplan",
+        "body": "Du vet målvikten. Nästa steg är att räkna ut ditt kalorimål och börja logga mot det.",
+        "primary": "Skapa gratis konto",
+        "secondary": "Räkna ut ditt TDEE"
+      }
+    },
+    "related": {
+      "calculatorsTitle": "Relaterade kalkylatorer",
+      "articlesTitle": "Relaterade artiklar",
+      "calculators": [
+        { "href": "/kalkylatorer/tdee-kalkylator", "label": "TDEE Kalkylator" },
+        { "href": "/kalkylatorer/bmi-kalkylator", "label": "BMI Kalkylator" },
+        { "href": "/kalkylatorer/kaloriunderskott", "label": "Kaloribrist Kalkylator" },
+        { "href": "/kalkylatorer/proteinbehov", "label": "Proteinbehov Kalkylator" }
+      ],
+      "articles": [
+        { "href": "/artiklar/kaloribehov", "label": "Kaloribehov — komplett guide" },
+        { "href": "/artiklar/vad-ar-tdee", "label": "Vad är TDEE?" },
+        { "href": "/artiklar/kaloribrist", "label": "Hur stor kaloribrist ska man ha?" },
+        { "href": "/artiklar/bulk-och-cut", "label": "Bulk och Cut" }
+      ]
+    },
+    "schema": {
+      "webAppName": "Idealvikt Kalkylator",
+      "webAppDescription": "Gratis idealvikt-kalkylator. Räkna ut ditt hälsosamma viktspann baserat på längd och kön. Få ditt TDEE-kaloribehov som nästa steg.",
+      "breadcrumb": {
+        "hubLabel": "Kalkylatorer",
+        "hubPath": "/kalkylatorer",
+        "pageLabel": "Idealvikt Kalkylator"
+      }
+    }
+  }
+}

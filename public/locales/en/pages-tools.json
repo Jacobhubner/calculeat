@@ -1,0 +1,1503 @@
+{
+  "tdee-calculator": {
+    "seo": {
+      "title": "TDEE Calculator — Calculate Your Exact Calorie Needs (2026)",
+      "description": "Free TDEE calculator. Calculate your total daily energy expenditure based on age, weight, height and activity level. Instant results — no account required."
+    },
+    "h1Prefix": "TDEE",
+    "h1Suffix": "Calculator",
+    "intro": "TDEE is the total amount of calories your body burns per day. Enter your details to calculate your individual calorie needs — free, instant, and without registration.",
+    "calculator": {
+      "header": "Calculate Your TDEE",
+      "ageUnit": "yrs",
+      "genderLabel": "Gender",
+      "genderMale": "Male",
+      "genderFemale": "Female",
+      "genderOther": "Other",
+      "genderError": "Please select Male or Female for the calculation.",
+      "ageLabel": "Age",
+      "weightLabel": "Weight",
+      "heightLabel": "Height",
+      "activityLabel": "Activity level",
+      "button": "Calculate My TDEE",
+      "resultsTitle": "Your Results",
+      "bmrLabel": "BMR (kcal/day)",
+      "bmrSub": "Calories at complete rest",
+      "tdeeLabel": "TDEE (kcal/day)",
+      "tdeeSub": "Your total calorie needs",
+      "cutLabel": "Weight loss target",
+      "cutSub": "−400 kcal/day",
+      "bulkLabel": "Muscle building target",
+      "bulkSub": "+300 kcal/day",
+      "formulaNote": "Based on the Mifflin-St Jeor formula + PAL factors (1.2–1.9) — an established system for estimating daily calorie needs.",
+      "adjustNote": "The goals above are fixed reference values. How large a deficit or surplus they represent depends on your size — for a small person −400 kcal can be quite aggressive, for a large person barely noticeable. With an account, goals are adapted to your actual calorie needs."
+    },
+    "activityLevels": [
+      {
+        "value": "Sedentary",
+        "label": "Sedentary",
+        "description": "Office or home work, little daily movement, no exercise sessions"
+      },
+      {
+        "value": "Lightly active",
+        "label": "Lightly active",
+        "description": "Light exercise 1–3 days/week, e.g. walks, yoga or gym on weekends"
+      },
+      {
+        "value": "Moderately active",
+        "label": "Moderately active",
+        "description": "Regular exercise 3–5 days/week at moderate intensity, e.g. running or strength training"
+      },
+      {
+        "value": "Very active",
+        "label": "Very active",
+        "description": "Hard training almost every day (6–7 days/week) or physically demanding work"
+      },
+      {
+        "value": "Extremely active",
+        "label": "Extremely active",
+        "description": "Heavy physical work combined with daily intense training, e.g. elite athletes or construction workers who also train"
+      }
+    ],
+    "faqTitle": "Frequently Asked Questions",
+    "faq": [
+      {
+        "question": "Is TDEE the same as calorie needs?",
+        "answer": "Yes, in practice the terms are used synonymously. TDEE (Total Daily Energy Expenditure) is the total amount of calories you burn per day — and this is the number you should match or deviate from depending on your goal. To lose weight, eat below TDEE; to build muscle, eat above it."
+      },
+      {
+        "question": "How accurate is a TDEE calculator?",
+        "answer": "A TDEE calculator provides an estimate based on statistical formulas — Mifflin-St Jeor for BMR multiplied by a PAL factor (1.2–1.9) for activity level. Margin of error is typically ±10–15%. Individual factors such as muscle mass, hormonal balance and metabolism affect the true value. Use the result as a starting point and adjust based on how your weight actually changes."
+      },
+      {
+        "question": "How large a calorie deficit for weight loss?",
+        "answer": "A calorie deficit of 300–500 kcal/day below TDEE is a sustainable pace and leads to approximately 0.3–0.5 kg of weight loss per week. A deficit of more than 1000 kcal/day increases the risk of muscle mass loss and is rarely sustainable long-term."
+      },
+      {
+        "question": "How does my TDEE change if I train more?",
+        "answer": "When you increase your training volume your TDEE rises — you burn more calories. However, remember that the body can compensate by reducing unplanned movement (NEAT). Practical advice: if your weight plateaus despite increased training, don't immediately add calories — wait 2–3 weeks and see how your body responds."
+      },
+      {
+        "question": "What is the difference between BMR and TDEE?",
+        "answer": "BMR (Basal Metabolic Rate) is the calories your body burns at complete rest — only to keep organs running. TDEE also includes all physical activity, NEAT (unplanned movement) and TEF (thermic effect of food). TDEE is always higher than BMR and is the relevant number for calorie planning."
+      }
+    ],
+    "cta": {
+      "gated": {
+        "title": "Get a personal plan + track your progress",
+        "body": "Save your TDEE, set calorie goals for your phase (cut/bulk/maintenance), log food and see how your weight moves toward the goal.",
+        "button": "Create free account",
+        "subtext": "No credit card required",
+        "featuresTitle": "What's included:",
+        "features": [
+          "Calculate TDEE — always free",
+          "Save plan and log food — with account",
+          "Track weight trend and calibrate goals — with account"
+        ],
+        "premium": "More features in the premium version coming soon."
+      },
+      "bottom": {
+        "h2": "Ready to go from numbers to results?",
+        "body": "You have your TDEE. The next step is to log food against the right goal, track your weight trend and calibrate your calorie goal when your body responds.",
+        "primary": "Create free account",
+        "secondary": "Calculate your calorie deficit"
+      }
+    },
+    "related": {
+      "calculatorsTitle": "Related calculators",
+      "articlesTitle": "Related articles",
+      "calculators": [
+        { "href": "/en/calculators/calorie-deficit", "label": "Calorie Deficit Calculator" },
+        { "href": "/en/calculators/bulk-calculator", "label": "Bulk Calculator" },
+        { "href": "/en/calculators/cut-calculator", "label": "Cut Calculator" },
+        { "href": "/en/calculators/protein-calculator", "label": "Protein Needs Calculator" },
+        { "href": "/en/calculators/bmi-calculator", "label": "BMI Calculator" },
+        { "href": "/en/calculators/bmr-calculator", "label": "BMR Calculator" }
+      ],
+      "articles": [
+        { "href": "/en/articles/what-is-tdee", "label": "What is TDEE?" },
+        { "href": "/en/articles/calorie-deficit", "label": "How large a calorie deficit?" },
+        { "href": "/en/articles/calorie-needs", "label": "Calorie needs — complete guide" }
+      ]
+    },
+    "schema": {
+      "webAppName": "TDEE Calculator",
+      "webAppDescription": "Free TDEE calculator that calculates your total daily calorie needs based on age, weight, height, gender and activity level.",
+      "breadcrumb": {
+        "hubLabel": "Calculators",
+        "hubPath": "/en/calculators",
+        "pageLabel": "TDEE Calculator"
+      }
+    }
+  },
+  "bmi-calculator": {
+    "seo": {
+      "title": "BMI Calculator — Calculate Your Body Mass Index (2026)",
+      "description": "Free BMI calculator. Calculate your body mass index and see whether you're underweight, normal weight or overweight. Instant results — no account required."
+    },
+    "h1Prefix": "BMI",
+    "h1Suffix": "Calculator",
+    "intro": "BMI (Body Mass Index) is a simple measure of the relationship between your weight and height. Enter your details below to calculate your BMI instantly.",
+    "calculator": {
+      "header": "Calculate Your BMI",
+      "weightLabel": "Weight",
+      "heightLabel": "Height",
+      "button": "Calculate My BMI",
+      "resultsTitle": "Your Result",
+      "bmiScaleTitle": "BMI Scale",
+      "warningTitle": "BMI doesn't tell the whole story",
+      "warningBody": "BMI doesn't account for muscle mass, body fat percentage or where fat is distributed. For a more complete picture, also calculate your TDEE and understand your body composition.",
+      "ctaTitle": "Calculate your actual calorie needs",
+      "ctaBody": "BMI is a simplified indicator. The TDEE calculator gives you the calorie needs you actually need to reach your goal.",
+      "ctaButton": "Calculate Your TDEE"
+    },
+    "categoryLabels": {
+      "Undervikt": "Underweight",
+      "Normalvikt": "Normal weight",
+      "Övervikt": "Overweight",
+      "Fetma": "Obese"
+    },
+    "bmiScale": [
+      { "range": "< 18.5", "label": "Underweight" },
+      { "range": "18.5 – 24.9", "label": "Normal weight" },
+      { "range": "25 – 29.9", "label": "Overweight" },
+      { "range": "≥ 30", "label": "Obese" }
+    ],
+    "faqTitle": "Frequently Asked Questions",
+    "faq": [
+      {
+        "question": "What is a good BMI?",
+        "answer": "WHO defines normal weight as BMI 18.5–24.9. Below 18.5 is underweight, 25–29.9 is overweight and 30 or more is obese. Keep in mind that BMI is a rough measure and doesn't account for muscle mass, body fat percentage or where fat is stored."
+      },
+      {
+        "question": "Is BMI accurate for muscular people?",
+        "answer": "No — BMI can overestimate risk for muscular individuals because muscle weighs more than fat. A fit person may have BMI 27 (overweight) but with low body fat and excellent health. FFMI and body fat percentage give a more accurate picture for those who train regularly."
+      },
+      {
+        "question": "What is the difference between BMI and body fat?",
+        "answer": "BMI is calculated only from weight and height and says nothing about body composition. Body fat (%) actually measures what proportion of your body is fat. Two people with the same BMI can have completely different body fat percentages. For health assessment, body fat and waist circumference are often more informative."
+      },
+      {
+        "question": "How do you calculate BMI manually?",
+        "answer": "BMI = weight (kg) ÷ (height (m) × height (m)). Example: 75 kg and 175 cm → 75 ÷ (1.75 × 1.75) = 75 ÷ 3.0625 ≈ 24.5."
+      },
+      {
+        "question": "Can BMI be used for children?",
+        "answer": "For children (2–18 years), BMI-for-age and sex is used and interpreted against growth charts, not against the adult thresholds 18.5/25/30. Always use child-specific tools and consult a healthcare provider."
+      }
+    ],
+    "cta": {
+      "bottom": {
+        "h2": "Understand your body — not just a number",
+        "body": "BMI is a starting point. Log food against your calorie goal and track how your body actually responds.",
+        "primary": "Create free account",
+        "secondary": "Calculate your TDEE"
+      }
+    },
+    "related": {
+      "calculatorsTitle": "Related calculators",
+      "articlesTitle": "Related articles",
+      "calculators": [{ "href": "/en/calculators/tdee-calculator", "label": "TDEE Calculator" }],
+      "articles": [
+        { "href": "/en/articles/calorie-needs", "label": "Calorie needs — complete guide" },
+        { "href": "/en/articles/what-is-tdee", "label": "What is TDEE?" },
+        { "href": "/en/articles/bmi-vs-body-fat", "label": "BMI vs Body Fat" }
+      ]
+    },
+    "schema": {
+      "webAppName": "BMI Calculator",
+      "webAppDescription": "Free BMI calculator. Calculate your body mass index and see which category you belong to.",
+      "breadcrumb": {
+        "hubLabel": "Calculators",
+        "hubPath": "/en/calculators",
+        "pageLabel": "BMI Calculator"
+      }
+    }
+  },
+  "bmr-calculator": {
+    "seo": {
+      "title": "BMR Calculator — Calculate Your Basal Metabolic Rate (2026) | CalculEat",
+      "description": "Free BMR calculator (Mifflin-St Jeor). Calculate your basal metabolic rate and see your estimated TDEE per activity level. No account required."
+    },
+    "h1Prefix": "BMR",
+    "h1Suffix": "Calculator — Calculate Your Basal Metabolic Rate",
+    "intro": "BMR is the number of calories your body burns at complete rest to keep basic functions running. It's your energy baseline — but not your full calorie needs.",
+    "calculator": {
+      "header": "Calculate Your BMR",
+      "formulaLabel": "Mifflin-St Jeor",
+      "genderLabel": "Gender",
+      "genderMale": "Male",
+      "genderFemale": "Female",
+      "ageLabel": "Age",
+      "ageUnit": "yrs",
+      "weightLabel": "Weight",
+      "heightLabel": "Height",
+      "button": "Calculate My BMR",
+      "resultsTitle": "Your Result",
+      "bmrCardLabel": "Your BMR (Mifflin-St Jeor)",
+      "bmrUnit": "kcal/day",
+      "warningTitle": "Don't eat at your BMR",
+      "warningBody": "BMR is your resting burn rate — you already burn more than this just by standing, walking and eating. Your actual calorie needs (TDEE) are 20–80% higher depending on activity level.",
+      "tdeePreviewTitle": "Estimated TDEE per activity level",
+      "tdeeNote": "TDEE = BMR × activity multiplier (PAL). These are estimates — calculate your exact TDEE with the calculator below.",
+      "ctaTitle": "Calculate your exact TDEE and set a calorie goal",
+      "ctaBody": "The TDEE calculator takes the same inputs and gives you an actionable calorie goal for weight loss, maintenance or bulking — not just a reference value.",
+      "ctaPrimary": "Calculate Your TDEE",
+      "ctaSecondary": "Create free account"
+    },
+    "palLevels": [
+      { "label": "Sedentary", "description": "Office work, little movement" },
+      { "label": "Lightly active", "description": "Light exercise 1–3 days/week" },
+      { "label": "Moderately active", "description": "Exercise 3–5 days/week" },
+      { "label": "Very active", "description": "Hard training 6–7 days/week" },
+      { "label": "Extremely active", "description": "Physical job + daily intense training" }
+    ],
+    "faqTitle": "Frequently Asked Questions",
+    "faq": [
+      {
+        "question": "What is the difference between BMR and TDEE?",
+        "answer": "BMR (Basal Metabolic Rate) is the calories your body burns at complete rest — without movement, digestion or activity. TDEE (Total Daily Energy Expenditure) is your actual total calorie needs per day, including all activity. TDEE = BMR × activity multiplier. TDEE is the number to use when planning calories."
+      },
+      {
+        "question": "Is BMR the same as calorie needs?",
+        "answer": "No. BMR is just the baseline — your resting burn rate. Most adults have a TDEE that is 20–80% higher than BMR depending on activity level. Eating at BMR without accounting for activity creates a severe deficit in practice, which can lead to muscle loss and metabolic downregulation."
+      },
+      {
+        "question": "Is it dangerous to eat below your BMR?",
+        "answer": "Consistently eating below your BMR is not recommended for most people. It risks triggering adaptive thermogenesis (the body lowers metabolism), increasing muscle loss and causing nutritional deficiencies. Under medical supervision it may be justified in certain cases, but generally calorie goals should be set below TDEE — not below BMR."
+      },
+      {
+        "question": "How does BMR change with age?",
+        "answer": "BMR typically drops 1–2% per decade after age 20. This is primarily due to decreased muscle mass (sarcopenia) rather than age itself. Strength training and adequate protein intake can significantly slow this decline. That's why TDEE decreases with age in inactive people but can remain stable in those who train."
+      },
+      {
+        "question": "Which BMR formula is most accurate?",
+        "answer": "Mifflin-St Jeor (1990) is considered the most accurate formula for the general population with normal body fat, with an average deviation of about ±10%. For people with unusual body composition (very low or high body fat), formulas like Cunningham (based on LBM) give better precision. The only formula that gives a calibrated result is tracking actual weight trend against calorie intake over 2–3 weeks."
+      }
+    ],
+    "cta": {
+      "bottom": {
+        "h2": "Go from BMR to a real calorie goal",
+        "body": "BMR is the foundation. TDEE is the number you actually use — and CalculEat helps you log against it.",
+        "primary": "Create free account",
+        "secondary": "Calculate your TDEE"
+      }
+    },
+    "related": {
+      "calculatorsTitle": "Related calculators",
+      "articlesTitle": "Related articles",
+      "calculators": [
+        { "href": "/en/calculators/tdee-calculator", "label": "TDEE Calculator" },
+        {
+          "href": "/en/calculators/calorie-deficit-calculator",
+          "label": "Calorie Deficit Calculator"
+        },
+        { "href": "/en/calculators/bulk-calculator", "label": "Bulk Calculator" },
+        { "href": "/en/calculators/cut-calculator", "label": "Cut Calculator" },
+        { "href": "/en/calculators/protein-calculator", "label": "Protein Calculator" }
+      ],
+      "articles": [
+        { "href": "/en/articles/what-is-bmr", "label": "What is BMR?" },
+        { "href": "/en/articles/bmr-vs-tdee", "label": "BMR vs TDEE" },
+        { "href": "/en/articles/what-is-tdee", "label": "What is TDEE?" },
+        { "href": "/en/articles/calorie-needs", "label": "Calorie needs — complete guide" },
+        { "href": "/en/articles/calorie-deficit", "label": "How large a calorie deficit?" },
+        { "href": "/en/articles/bulk-and-cut", "label": "Bulk and Cut" }
+      ]
+    },
+    "schema": {
+      "webAppName": "BMR Calculator",
+      "webAppDescription": "Free BMR calculator. Calculate your basal metabolic rate (Mifflin-St Jeor) and see an estimated TDEE per activity level.",
+      "breadcrumb": {
+        "hubLabel": "Calculators",
+        "hubPath": "/en/calculators",
+        "pageLabel": "BMR Calculator"
+      }
+    }
+  },
+  "bodyfat-calculator": {
+    "seo": {
+      "title": "Body Fat Calculator — Calculate Your Body Fat Percentage (2026) | CalculEat",
+      "description": "Free body fat calculator (US Navy Method). Calculate your body fat percentage, lean body mass and see your category. Instant results — no account required."
+    },
+    "h1Prefix": "Body Fat",
+    "h1Suffix": "Calculator",
+    "intro": "Body fat percentage shows what proportion of your body weight consists of fat mass. It gives a more useful picture than BMI when assessing shape, health, and planning weight loss or muscle building.",
+    "calculator": {
+      "header": "Calculate Your Body Fat %",
+      "methodLabel": "US Navy Method",
+      "genderLabel": "Gender",
+      "genderMale": "Male",
+      "genderFemale": "Female",
+      "heightLabel": "Height",
+      "weightLabel": "Weight",
+      "waistLabel": "Waist circumference",
+      "waistHint": "Measure at the navel",
+      "neckLabel": "Neck circumference",
+      "neckHint": "Measure below the Adam's apple",
+      "hipLabel": "Hip circumference",
+      "hipHint": "Measure at the widest point",
+      "button": "Calculate My Body Fat %",
+      "resultsTitle": "Your Result",
+      "lbmLabel": "Lean body mass",
+      "lbmDesc": "Muscle, organs, bone",
+      "fatMassLabel": "Fat mass",
+      "fatMassDesc": "Total fat mass",
+      "nextStepTitle": "Recommended next step",
+      "disclaimerBody": "The US Navy method gives an estimate with ±3–4% margin of error. The result reflects trend — not an exact value. DEXA scanning is the gold standard if you need precision.",
+      "ctaTitle": "Now you know your body composition — calculate the right calorie plan",
+      "ctaBody": "The TDEE calculator takes your body weight and activity level and gives you the calorie goal you should actually log against.",
+      "ctaPrimary": "Calculate Your TDEE",
+      "ctaSecondary": "Calculate Your FFMI"
+    },
+    "categoryLabels": {
+      "male": {
+        "Essentiellt fett": {
+          "label": "Essential fat",
+          "description": "Below the level for normal physiological functions. Not a sustainable goal.",
+          "nextStep": "Focus should be on increasing calories and reaching the athletic zone."
+        },
+        "Athletic": {
+          "label": "Athletic",
+          "description": "Typical level for active athletes and trainers. Very low body fat.",
+          "nextStep": "You're in excellent shape. TDEE and macro planning will keep you here."
+        },
+        "Fit": {
+          "label": "Fit",
+          "description": "Healthy and active level. Clear muscle definition, low health risk.",
+          "nextStep": "Good starting point for a cut toward athletic or bulk toward more muscle mass."
+        },
+        "Genomsnitt": {
+          "label": "Average",
+          "description": "Normal range for men. Muscles visible but with a layer of fat on top.",
+          "nextStep": "A structured cut with a 300–500 kcal deficit per day will take you to the fit zone."
+        },
+        "Övervikt": {
+          "label": "Overweight",
+          "description": "Increased health risk. A clear weight goal is recommended.",
+          "nextStep": "Calculate your TDEE and set a calorie goal with a 400–600 kcal deficit."
+        },
+        "Fetma": {
+          "label": "Obese",
+          "description": "High health risk. Medical advice is recommended.",
+          "nextStep": "Calculate your TDEE and start with a moderate calorie deficit. Consult a doctor."
+        }
+      },
+      "female": {
+        "Essentiellt fett": {
+          "label": "Essential fat",
+          "description": "Below the level for normal physiological functions. Not a sustainable goal.",
+          "nextStep": "Focus should be on increasing calories and reaching the athletic zone."
+        },
+        "Athletic": {
+          "label": "Athletic",
+          "description": "Typical level for active athletes and trainers.",
+          "nextStep": "You're in excellent shape. TDEE and macro planning will keep you here."
+        },
+        "Fit": {
+          "label": "Fit",
+          "description": "Healthy and active level. Low health risk.",
+          "nextStep": "Good starting point for a cut or bulk depending on your goal."
+        },
+        "Genomsnitt": {
+          "label": "Average",
+          "description": "Normal range for women. Healthy but with room for improvement.",
+          "nextStep": "A structured cut with a 300–400 kcal deficit per day will take you to the fit zone."
+        },
+        "Övervikt": {
+          "label": "Overweight",
+          "description": "Increased health risk. A clear weight goal is recommended.",
+          "nextStep": "Calculate your TDEE and set a calorie goal with a 400–600 kcal deficit."
+        },
+        "Fetma": {
+          "label": "Obese",
+          "description": "High health risk. Medical advice is recommended.",
+          "nextStep": "Calculate your TDEE and start with a moderate calorie deficit. Consult a doctor."
+        }
+      }
+    },
+    "faqTitle": "Frequently Asked Questions",
+    "faq": [
+      {
+        "question": "How accurate is a body fat calculator?",
+        "answer": "The US Navy method has a typical margin of error of ±3–4 percentage points compared to DEXA scanning (the gold standard). It's accurate enough to track trends over time but doesn't give an exact value. Always measure in the same way and at the same time of day to compare results — relative change is more informative than absolute value."
+      },
+      {
+        "question": "Is body fat a better measure than BMI?",
+        "answer": "Yes, for most purposes. BMI only tells you about the weight-to-height relationship. Body fat tells you what proportion of your body is actually fat — which is what's health-relevant. Two people with the same BMI can have 15% and 30% body fat respectively. For fitness purposes, body fat is almost always more informative."
+      },
+      {
+        "question": "What is a good body fat percentage?",
+        "answer": "It depends on gender and goal. For men: athletic (6–13%), fit (14–17%), average (18–24%). For women: athletic (14–20%), fit (21–24%), average (25–31%). These are benchmarks — not medical thresholds. The most important thing is that your body fat doesn't increase uncontrollably and that you can sustain your level long-term."
+      },
+      {
+        "question": "Can you see abs at the same body fat percentage?",
+        "answer": "Yes. How visible abs are depends on muscle mass, fat distribution and genetics — not just body fat percentage. A person with 12% body fat but little muscle mass may have invisible abs, while a person with 14% and more muscle mass may have visible ones. That's why FFMI (Fat Free Mass Index) complements body fat well as a measure."
+      },
+      {
+        "question": "How quickly can you lower body fat?",
+        "answer": "A realistic reduction is 0.5–1% body fat per week with a well-planned calorie deficit of 400–600 kcal/day. Faster is possible but increases the risk of muscle loss. High protein intake (1.8–2.4 g/kg) and strength training are essential to preserve muscle mass during a cut."
+      }
+    ],
+    "cta": {
+      "bottom": {
+        "h2": "Set a calorie goal that matches your body",
+        "body": "Now you know your body fat. Calculate TDEE and start logging against a goal that actually fits.",
+        "primary": "Create free account",
+        "secondary": "Calculate your TDEE"
+      }
+    },
+    "related": {
+      "calculatorsTitle": "Related calculators",
+      "articlesTitle": "Related articles",
+      "calculators": [
+        { "href": "/en/calculators/tdee-calculator", "label": "TDEE Calculator" },
+        { "href": "/en/calculators/bmi-calculator", "label": "BMI Calculator" },
+        { "href": "/en/calculators/idealweight-calculator", "label": "Ideal Weight Calculator" },
+        { "href": "/en/calculators/ffmi-calculator", "label": "FFMI Calculator" },
+        { "href": "/en/calculators/protein-calculator", "label": "Protein Calculator" }
+      ],
+      "articles": [
+        { "href": "/en/articles/calorie-needs", "label": "Calorie needs — complete guide" },
+        { "href": "/en/articles/what-is-tdee", "label": "What is TDEE?" },
+        { "href": "/en/articles/bulk-and-cut", "label": "Bulk and Cut" },
+        { "href": "/en/articles/calorie-deficit", "label": "How large a calorie deficit?" },
+        { "href": "/en/articles/bmi-vs-body-fat", "label": "BMI vs Body Fat" }
+      ]
+    },
+    "schema": {
+      "webAppName": "Body Fat Calculator",
+      "webAppDescription": "Free body fat calculator (US Navy Method). Estimate your body fat percentage and lean body mass. Instant results without account.",
+      "breadcrumb": {
+        "hubLabel": "Calculators",
+        "hubPath": "/en/calculators",
+        "pageLabel": "Body Fat Calculator"
+      }
+    }
+  },
+  "ffmi-calculator": {
+    "seo": {
+      "title": "FFMI Calculator — Calculate Your Fat-Free Mass Index (2026) | CalculEat",
+      "description": "Free FFMI calculator. Calculate your Fat-Free Mass Index and normalized FFMI. Assess your muscle mass, category and natural limit in context."
+    },
+    "h1Prefix": "FFMI",
+    "h1Suffix": "Calculator",
+    "intro": "FFMI (Fat-Free Mass Index) shows how much muscle mass you have relative to your height. It is used to assess physique, measure progress and provide context around what is achievable naturally.",
+    "calculator": {
+      "header": "Calculate Your FFMI",
+      "genderLabel": "Gender",
+      "genderMale": "Male",
+      "genderFemale": "Female",
+      "heightLabel": "Height",
+      "weightLabel": "Weight",
+      "bfLabel": "Body fat percentage",
+      "bfHintPrefix": "Don't know your body fat?",
+      "bfHintLink": "Calculate it here",
+      "button": "Calculate My FFMI",
+      "resultsTitle": "Your Result",
+      "ffmiStatLabel": "FFMI",
+      "ffmiStatDesc": "Fat-Free Mass Index",
+      "normalizedLabel": "Normalized",
+      "normalizedDesc": "Adjusted to 180 cm",
+      "lbmLabel": "Lean body mass",
+      "lbmDesc": "Fat-free mass",
+      "warningTitle": "FFMI is an estimate",
+      "warningBody": "FFMI depends directly on the body fat estimate — if it's +3% off, so is FFMI. Normalized FFMI ≥ 25 (men) is statistically rare naturally but not impossible. Interpret your FFMI as a relative measure, not an absolute value.",
+      "ctaTitle": "Match your muscle mass with the right calorie goal",
+      "ctaBody": "Lean body mass is the strongest predictor of your BMR. Calculate your exact TDEE and set a calorie goal that matches your body composition.",
+      "ctaPrimary": "Calculate Your TDEE",
+      "ctaSecondary": "Create free account"
+    },
+    "matrixLabels": {
+      "male": {
+        "Mycket låg": {
+          "label": "Very low",
+          "description": "Severely limited muscle mass, possible malnutrition or sarcopenia.",
+          "context": "FFMI below 17 indicates very low lean body mass relative to height. Consult a doctor if this is unexpected."
+        },
+        "Smal/Otränad": {
+          "label": "Slim/Untrained",
+          "description": "Below average muscle mass, sedentary lifestyle, 'slim' build.",
+          "context": "Typical for those who haven't strength trained. Large potential for muscle building with the right training and protein intake."
+        },
+        "Genomsnittsbefolkning": {
+          "label": "General population",
+          "description": "Normal muscle mass for untrained men, healthy baseline.",
+          "context": "Average muscle mass for an inactive man. Regular training and high protein intake can significantly improve FFMI."
+        },
+        "Överviktig/Fetma": {
+          "label": "Overweight/Obese",
+          "description": "Average muscle mass but high body fat level, 'stocky' or 'broad' build.",
+          "context": "Muscle mass is normal but body fat percentage is high. Focus on calorie deficit and maintained training can improve body composition."
+        },
+        "Atlet/Mellanliggande": {
+          "label": "Athlete/Intermediate",
+          "description": "Above average muscle mass, 2–3 years of training, clearly looks trained.",
+          "context": "Clearly visible muscle mass. Further progress requires more structured nutrition and periodization."
+        },
+        "Avancerad naturlig": {
+          "label": "Advanced natural",
+          "description": "Highly developed physique, 4–7 years of training, competition-level shape.",
+          "context": "Reaching this naturally requires years of dedication, precise nutrition and good genetics. You're in a rare segment."
+        },
+        "Elit naturlig/Misstänkt": {
+          "label": "Elite natural/Suspect",
+          "description": "Near genetic ceiling, 8+ years of training or possible performance-enhancing use.",
+          "context": "At this level, both genetic outlier status and substance use are possible explanations. Rare to reach naturally."
+        },
+        "Troligen dopad": {
+          "label": "Likely enhanced",
+          "description": "Above typical natural limits, genetic extreme variant or probable PED use.",
+          "context": "Statistically, FFMI 25–27 is uncommon to reach naturally. The majority in this range use performance-enhancing substances."
+        },
+        "Nästan säkert dopad": {
+          "label": "Almost certainly enhanced",
+          "description": "Requires performance-enhancing drugs in the vast majority of cases.",
+          "context": "FFMI above 27 is extremely rare naturally. Research and experience strongly point to substance use at these levels."
+        }
+      },
+      "female": {
+        "Mycket låg": {
+          "label": "Very low",
+          "description": "Severely limited muscle mass, possible health problems.",
+          "context": "FFMI below 14 for women indicates very low lean body mass. Consult a doctor if this is unexpected."
+        },
+        "Smal/Otränad": {
+          "label": "Slim/Untrained",
+          "description": "Below average muscle mass, sedentary, 'slim' build.",
+          "context": "Typical for those who haven't strength trained. Consistent training and adequate protein intake gives clear progress."
+        },
+        "Genomsnittsbefolkning": {
+          "label": "General population",
+          "description": "Normal muscle mass for untrained women.",
+          "context": "Average muscle mass for an inactive woman. Regular training improves FFMI and body composition."
+        },
+        "Överviktig/Fetma": {
+          "label": "Overweight/Obese",
+          "description": "Average muscle mass but high body fat level.",
+          "context": "Muscle mass is normal but body fat percentage is high. Focus on calorie deficit and training improves body composition."
+        },
+        "Atlet/Mellanliggande": {
+          "label": "Athlete/Intermediate",
+          "description": "Above average muscle mass, 2–3 years of training, athletic build.",
+          "context": "Clearly athletic appearance. Further progress requires structured nutrition and periodization."
+        },
+        "Avancerad naturlig": {
+          "label": "Advanced natural",
+          "description": "Highly developed physique, 4–7 years of training, competition level.",
+          "context": "Reaching this naturally as a woman requires many years of dedication and good genetics. Rare segment."
+        },
+        "Elit naturlig/Misstänkt": {
+          "label": "Elite natural/Suspect",
+          "description": "Approaching genetic ceiling, 8+ years of training or possible performance-enhancing use.",
+          "context": "At this level, both genetic outlier status and substance use are possible explanations. Rare to reach naturally as a woman."
+        },
+        "Troligen dopad": {
+          "label": "Likely enhanced",
+          "description": "Above typical natural limits for women.",
+          "context": "Statistically, FFMI 21–23 is uncommon to reach naturally as a woman. The majority in this range use performance-enhancing substances."
+        },
+        "Nästan säkert dopad": {
+          "label": "Almost certainly enhanced",
+          "description": "Requires performance-enhancing drugs in the vast majority of cases.",
+          "context": "FFMI above 23 is extremely rare naturally for women."
+        }
+      }
+    },
+    "referenceTable": {
+      "title": "FFMI reference values",
+      "showMale": "Show men's values",
+      "showFemale": "Show women's values",
+      "colFfmi": "FFMI",
+      "colBf": "Body fat %",
+      "colCategory": "Category",
+      "colDesc": "Description",
+      "expandAriaLabel": "Show description",
+      "menRows": [
+        {
+          "range": "Below 17",
+          "bf": "Any",
+          "category": "Very low",
+          "desc": "Severely limited muscle mass, possible malnutrition or sarcopenia"
+        },
+        {
+          "range": "17–18",
+          "bf": "10–18%",
+          "category": "Slim/Untrained",
+          "desc": "Below average muscle mass, sedentary lifestyle, 'slim' build"
+        },
+        {
+          "range": "18–20",
+          "bf": "20–27%",
+          "category": "General population",
+          "desc": "Normal muscle mass for untrained men, healthy baseline"
+        },
+        {
+          "range": "19–21",
+          "bf": "25–40%",
+          "category": "Overweight/Obese",
+          "desc": "Average muscle mass but high body fat level, 'stocky' or 'broad' build"
+        },
+        {
+          "range": "20–21",
+          "bf": "10–18%",
+          "category": "Athlete/Intermediate",
+          "desc": "Above average muscle mass, 2–3 years of training, clearly looks trained"
+        },
+        {
+          "range": "22–23",
+          "bf": "6–12%",
+          "category": "Advanced natural",
+          "desc": "Highly developed physique, 4–7 years of training, competition-level shape"
+        },
+        {
+          "range": "24–25",
+          "bf": "8–20%",
+          "category": "Elite natural/Suspect",
+          "desc": "Near genetic ceiling, 8+ years of training or possible performance-enhancing use"
+        },
+        {
+          "range": "25–27",
+          "bf": "Any",
+          "category": "Likely enhanced",
+          "desc": "Above typical natural limits, genetic extreme variant or probable PED use"
+        },
+        {
+          "range": "Above 27",
+          "bf": "Any",
+          "category": "Almost certainly enhanced",
+          "desc": "Requires performance-enhancing drugs in the vast majority of cases"
+        }
+      ],
+      "womenRows": [
+        {
+          "range": "Below 14",
+          "bf": "Any",
+          "category": "Very low",
+          "desc": "Severely limited muscle mass, possible health problems"
+        },
+        {
+          "range": "14–15",
+          "bf": "20–25%",
+          "category": "Slim/Untrained",
+          "desc": "Below average muscle mass, sedentary, 'slim' build"
+        },
+        {
+          "range": "14–17",
+          "bf": "22–35%",
+          "category": "General population",
+          "desc": "Normal muscle mass for untrained women"
+        },
+        {
+          "range": "15–18",
+          "bf": "30–45%",
+          "category": "Overweight/Obese",
+          "desc": "Average muscle mass but high body fat level"
+        },
+        {
+          "range": "16–17",
+          "bf": "18–25%",
+          "category": "Athlete/Intermediate",
+          "desc": "Above average muscle mass, 2–3 years of training, athletic build"
+        },
+        {
+          "range": "18–20",
+          "bf": "15–22%",
+          "category": "Advanced natural",
+          "desc": "Highly developed physique, 4–7 years of training, competition level"
+        },
+        {
+          "range": "19–21",
+          "bf": "15–30%",
+          "category": "Elite natural/Suspect",
+          "desc": "Approaching genetic ceiling, 8+ years of training or possible performance-enhancing use"
+        },
+        {
+          "range": "21–23",
+          "bf": "Any",
+          "category": "Likely enhanced",
+          "desc": "Above typical natural limits for women"
+        },
+        {
+          "range": "Above 23",
+          "bf": "Any",
+          "category": "Almost certainly enhanced",
+          "desc": "Requires performance-enhancing drugs in the vast majority of cases"
+        }
+      ]
+    },
+    "faqTitle": "Frequently Asked Questions",
+    "faq": [
+      {
+        "question": "What is a good FFMI?",
+        "answer": "It depends on gender and training background. For men: beginner (<18), trained (18–19), advanced (20–21), exceptional (22+). For women the values are about 4–5 units lower. FFMI 20–22 for a natural man requires years of consistent training. It's a relative measure — compare your progress with yourself rather than others."
+      },
+      {
+        "question": "Is FFMI 25 the natural limit?",
+        "answer": "Kouri et al. (1995) found that natural male athletes rarely exceeded normalized FFMI 25. This is an observation, not a hard biological limit. Individuals with exceptional genetics can reach 25–26 naturally. But a normalized FFMI consistently above 25 is statistically rare among natural athletes and significantly increases the likelihood of substance use."
+      },
+      {
+        "question": "Is FFMI a better measure than BMI?",
+        "answer": "For those who strength train: yes. BMI doesn't distinguish between muscle and fat. FFMI specifically measures fat-free mass (muscle, organs, bone) relative to height, which is more relevant for assessing muscle development and physique. A well-trained person with high BMI can have low FFMI — and vice versa."
+      },
+      {
+        "question": "How do you calculate FFMI?",
+        "answer": "FFMI = (body weight × (1 − body fat/100)) ÷ height². Normalized FFMI = FFMI + 6.1 × (1.8 − height in meters). Example: 80 kg, 175 cm, 15% body fat → LBM = 80 × 0.85 = 68 kg → FFMI = 68 ÷ 1.75² = 22.2 → Normalized = 22.2 + 6.1 × (1.8 − 1.75) = 22.5."
+      },
+      {
+        "question": "Can you have a high FFMI without being strong?",
+        "answer": "Yes. FFMI measures muscle mass, not strength or performance. A person with a naturally large skeletal structure and high muscle mass without training can have an FFMI of 20 without heavy lifting. And a person with FFMI 19 can be stronger than someone with FFMI 22 depending on neuromuscular efficiency and technique."
+      }
+    ],
+    "cta": {
+      "bottom": {
+        "h2": "Match your muscle mass with the right calorie goal",
+        "body": "FFMI shows where you are. TDEE and macro planning show how to get where you want to be.",
+        "primary": "Create free account",
+        "secondary": "Calculate your bulk calories"
+      }
+    },
+    "related": {
+      "calculatorsTitle": "Related calculators",
+      "articlesTitle": "Related articles",
+      "calculators": [
+        { "href": "/en/calculators/body-fat-calculator", "label": "Body Fat Calculator" },
+        { "href": "/en/calculators/tdee-calculator", "label": "TDEE Calculator" },
+        { "href": "/en/calculators/bmi-calculator", "label": "BMI Calculator" },
+        { "href": "/en/calculators/protein-calculator", "label": "Protein Calculator" },
+        { "href": "/en/calculators/bulk-calculator", "label": "Bulk Calculator" }
+      ],
+      "articles": [
+        { "href": "/en/articles/what-is-ffmi", "label": "What is FFMI?" },
+        { "href": "/en/articles/bulk-and-cut", "label": "Bulk and Cut — complete guide" },
+        { "href": "/en/articles/calorie-needs", "label": "Calorie needs — complete guide" },
+        { "href": "/en/articles/reverse-diet", "label": "Reverse Diet" },
+        { "href": "/en/articles/calorie-deficit", "label": "How large a calorie deficit?" }
+      ]
+    },
+    "schema": {
+      "webAppName": "FFMI Calculator",
+      "webAppDescription": "Free FFMI calculator. Calculate your Fat-Free Mass Index and normalized FFMI. Assess your muscle mass relative to height without accounting for fat weight.",
+      "breadcrumb": {
+        "hubLabel": "Calculators",
+        "hubPath": "/en/calculators",
+        "pageLabel": "FFMI Calculator"
+      }
+    }
+  },
+  "calorie-deficit-calculator": {
+    "seo": {
+      "title": "Calorie Deficit Calculator — Calculate Your Calorie Deficit (2026)",
+      "description": "Free calorie deficit calculator. Calculate your TDEE and exactly how many calories to eat to lose weight at your desired pace. Instant results."
+    },
+    "h1Prefix": "Calorie Deficit",
+    "h1Suffix": "Calculator",
+    "intro": "Calculate your TDEE and your optimal daily calorie intake for weight loss — based on your chosen pace. A calorie deficit of 300–500 kcal/day is the scientifically recommended range to lose fat without losing muscle mass.",
+    "calculator": {
+      "header": "Calculate Your Calorie Deficit",
+      "genderLabel": "Gender",
+      "genderMale": "Male",
+      "genderFemale": "Female",
+      "ageLabel": "Age",
+      "ageUnit": "yrs",
+      "weightLabel": "Weight",
+      "heightLabel": "Height",
+      "activityLabel": "Activity level",
+      "tempoLabel": "Desired pace",
+      "button": "Calculate My Calorie Deficit",
+      "resultsTitle": "Your Results",
+      "tdeeLabel": "TDEE (kcal/day)",
+      "tdeeSub": "Your maintenance needs",
+      "targetLabel": "Goal (kcal/day)",
+      "maintenanceRow": "Maintenance calories (TDEE)",
+      "deficitRow": "Daily deficit",
+      "intakeRow": "Daily calorie intake",
+      "rateRow": "Expected pace",
+      "proteinRow": "Protein goal (to preserve muscle)",
+      "planHeading": "Your plan",
+      "warningTitle": "Aggressive deficit",
+      "warningBodyTemplate": "At a 700 kcal/day deficit the risk of muscle mass loss increases significantly. Make sure to eat {{proteinMax}}+ g of protein per day and train with weights regularly.",
+      "saveCtaTitle": "Save your plan and log against your goal",
+      "saveCtaBody": "Create a free account to save your calorie intake, set goals and track your progress day by day.",
+      "saveCtaButton": "Save your plan free",
+      "featuresTitle": "What's included:",
+      "features": [
+        "Calculate calorie deficit — always free",
+        "Save plan and log food — with account",
+        "Track progress day by day — with account"
+      ],
+      "premium": "More features in the premium version coming soon."
+    },
+    "activityLevels": [
+      {
+        "value": "Sedentary",
+        "label": "Sedentary",
+        "description": "Office or home work, little daily movement, no exercise sessions"
+      },
+      {
+        "value": "Lightly active",
+        "label": "Lightly active",
+        "description": "Light exercise 1–3 days/week, e.g. walks, yoga or gym on weekends"
+      },
+      {
+        "value": "Moderately active",
+        "label": "Moderately active",
+        "description": "Regular exercise 3–5 days/week at moderate intensity, e.g. running or strength training"
+      },
+      {
+        "value": "Very active",
+        "label": "Very active",
+        "description": "Hard training almost every day (6–7 days/week) or physically demanding work"
+      },
+      {
+        "value": "Extremely active",
+        "label": "Extremely active",
+        "description": "Heavy physical work combined with daily intense training, e.g. elite athletes or construction workers who also train"
+      }
+    ],
+    "goals": [
+      {
+        "value": "mild",
+        "label": "Mild",
+        "weeklyLoss": "~0.2–0.3 kg/week",
+        "description": "Suitable for beginners, close to competition or little fat to lose. Minimal muscle risk."
+      },
+      {
+        "value": "moderate",
+        "label": "Moderate",
+        "weeklyLoss": "~0.3–0.5 kg/week",
+        "description": "The scientific standard. Balance between pace and muscle preservation. Works for most people."
+      },
+      {
+        "value": "aggressive",
+        "label": "Aggressive",
+        "weeklyLoss": "~0.5–0.8 kg/week",
+        "description": "Acceptable at high body fat percentage. Requires high protein intake and strength training."
+      }
+    ],
+    "faqTitle": "Frequently Asked Questions",
+    "faq": [
+      {
+        "question": "How large a calorie deficit gives 1 kg weight loss per week?",
+        "answer": "1 kg of body fat contains about 7,700 kcal. To lose 1 kg/week requires a deficit of about 1,100 kcal/day — which is aggressive and carries a high risk of muscle mass loss. 0.5 kg/week (about 550 kcal/day deficit) is a more sustainable pace for most people."
+      },
+      {
+        "question": "What is the difference between calorie deficit and calorie restriction?",
+        "answer": "The terms are used synonymously. A calorie deficit means you eat fewer calories than you burn (below your TDEE), forcing the body to use stored energy — primarily fat, but also some muscle mass if the deficit is too large."
+      },
+      {
+        "question": "Can you eat too little and still not lose weight?",
+        "answer": "Yes — adaptive thermogenesis can slow weight loss with a prolonged calorie deficit. The body lowers its NEAT (unplanned movement) and BMR drops slightly as a defense against starvation. Solution: take a diet break of 1–2 weeks at maintenance intake (your TDEE) to reset your metabolism."
+      },
+      {
+        "question": "How much protein do you need during a calorie deficit?",
+        "answer": "1.6–2.2 g of protein per kg of body weight per day is recommended to preserve muscle mass during a calorie deficit. With more aggressive deficits or intense training, aim for the upper end of the range (2.0–2.2 g/kg). Protein also provides high satiety."
+      },
+      {
+        "question": "Is a calorie deficit dangerous?",
+        "answer": "A moderate calorie deficit (300–500 kcal/day) is not dangerous for healthy adults. A very large deficit (>1000 kcal/day) increases the risk of muscle mass loss, nutritional deficiency, fatigue and hormonal disruption. Consult healthcare providers with extreme restriction or if you have underlying conditions."
+      }
+    ],
+    "cta": {
+      "bottom": {
+        "h2": "Ready to reach your weight loss goal?",
+        "body": "You have the calorie goal. The next step is to log food against it and see how your body responds.",
+        "primary": "Create free account",
+        "secondary": "Calculate your cut calories"
+      }
+    },
+    "related": {
+      "calculatorsTitle": "Related calculators",
+      "articlesTitle": "Related articles",
+      "calculators": [
+        { "href": "/en/calculators/tdee-calculator", "label": "TDEE Calculator" },
+        { "href": "/en/calculators/cut-calculator", "label": "Cut Calculator" },
+        { "href": "/en/calculators/bmi-calculator", "label": "BMI Calculator" }
+      ],
+      "articles": [
+        { "href": "/en/articles/calorie-deficit", "label": "How large a calorie deficit?" },
+        { "href": "/en/articles/what-is-tdee", "label": "What is TDEE?" },
+        { "href": "/en/articles/calorie-needs", "label": "Calorie needs — complete guide" }
+      ]
+    },
+    "schema": {
+      "webAppName": "Calorie Deficit Calculator",
+      "webAppDescription": "Free calorie deficit calculator. Calculate your TDEE and your optimal calorie intake for weight loss based on how fast you want to lose weight.",
+      "breadcrumb": {
+        "hubLabel": "Calculators",
+        "hubPath": "/en/calculators",
+        "pageLabel": "Calorie Deficit Calculator"
+      }
+    }
+  },
+  "bulk-calculator": {
+    "seo": {
+      "title": "Bulk Calculator — Calculate Calories for Lean Bulk (2026)",
+      "description": "Free bulk calculator. Calculate how many calories you need for lean bulk, standard bulk or aggressive bulk. Based on your TDEE. Instant results."
+    },
+    "h1Prefix": "Bulk",
+    "h1Suffix": "Calculator",
+    "intro": "Calculate exactly how many calories you need to build muscle efficiently — without storing unnecessary fat. A lean bulk of +150–250 kcal/day gives maximum muscle growth with minimal fat gain.",
+    "calculator": {
+      "header": "Calculate Your Bulk Calories",
+      "genderLabel": "Gender",
+      "genderMale": "Male",
+      "genderFemale": "Female",
+      "ageLabel": "Age",
+      "ageUnit": "yrs",
+      "weightLabel": "Weight",
+      "heightLabel": "Height",
+      "activityLabel": "Activity level",
+      "strategyLabel": "Bulk strategy",
+      "button": "Calculate My Bulk Calories",
+      "resultsTitle": "Your Results",
+      "tdeeLabel": "TDEE (kcal/day)",
+      "tdeeSub": "Your maintenance needs",
+      "bulkTargetLabel": "Bulk goal (kcal/day)",
+      "maintenanceRow": "Maintenance calories (TDEE)",
+      "surplusRow": "Daily surplus",
+      "intakeRow": "Daily calorie intake",
+      "rateRow": "Expected weight gain",
+      "proteinRow": "Protein goal",
+      "planHeading": "Your bulk plan",
+      "crossLinkTitle": "Planning a cut phase after bulking?",
+      "crossLinkBody": "Calculate your cut calories now.",
+      "crossLinkButton": "Cut Calculator",
+      "saveCtaTitle": "Save your bulk plan and log food",
+      "saveCtaBody": "Create a free account to save your calorie intake, track your progress and plan macros.",
+      "saveCtaButton": "Save your plan free",
+      "featuresTitle": "What's included:",
+      "features": [
+        "Calculate bulk calories — always free",
+        "Save plan and log food — with account",
+        "Track macros and weight — with account"
+      ],
+      "premium": "More features in the premium version coming soon."
+    },
+    "activityLevels": [
+      {
+        "value": "Sedentary",
+        "label": "Sedentary",
+        "description": "Office or home work, little daily movement, no exercise sessions"
+      },
+      {
+        "value": "Lightly active",
+        "label": "Lightly active",
+        "description": "Light exercise 1–3 days/week, e.g. walks, yoga or gym on weekends"
+      },
+      {
+        "value": "Moderately active",
+        "label": "Moderately active",
+        "description": "Regular exercise 3–5 days/week at moderate intensity, e.g. running or strength training"
+      },
+      {
+        "value": "Very active",
+        "label": "Very active",
+        "description": "Hard training almost every day (6–7 days/week) or physically demanding work"
+      },
+      {
+        "value": "Extremely active",
+        "label": "Extremely active",
+        "description": "Heavy physical work combined with daily intense training, e.g. elite athletes or construction workers who also train"
+      }
+    ],
+    "bulkModes": [
+      {
+        "value": "lean",
+        "label": "Lean Bulk",
+        "weeklyGain": "~0.1–0.2 kg/week",
+        "description": "Minimal fat gain. Takes longer but you maintain your definition. Best for advanced lifters."
+      },
+      {
+        "value": "standard",
+        "label": "Standard Bulk",
+        "weeklyGain": "~0.2–0.4 kg/week",
+        "description": "The scientific standard. Good balance between muscle building and fat gain. Works for most people."
+      },
+      {
+        "value": "aggressive",
+        "label": "Aggressive Bulk",
+        "weeklyGain": "~0.4–0.7 kg/week",
+        "description": "Faster mass but more fat. Suitable for beginners and hardgainers who have struggled to gain weight."
+      }
+    ],
+    "faqTitle": "Frequently Asked Questions",
+    "faq": [
+      {
+        "question": "How many calories should you eat when bulking?",
+        "answer": "You should eat more than your TDEE (maintenance needs). How much depends on your goal: lean bulk = +150–250 kcal/day, standard bulk = +300–500 kcal/day, aggressive bulk = +500+ kcal/day. The most common mistake is eating too much and storing unnecessary fat, or too little and not building muscle."
+      },
+      {
+        "question": "What is the difference between lean bulk and dirty bulk?",
+        "answer": "A lean bulk is a controlled calorie surplus (+150–350 kcal/day) that maximizes muscle growth with minimal fat gain. A dirty bulk means eating without control — rapid weight gain but a large proportion is fat that then requires a longer and tougher cut. Lean bulk is always the better choice unless you're a hardgainer case."
+      },
+      {
+        "question": "How fast should you gain weight during a bulk?",
+        "answer": "Beginners: 0.5–1% of body weight per month. Advanced: 0.25–0.5% per month. If you're gaining faster you're likely storing more fat than muscle. Muscle protein synthesis is limited — the body can only build a certain amount of muscle per unit of time regardless of how much you eat."
+      },
+      {
+        "question": "How much protein is needed during a bulk?",
+        "answer": "1.6–2.2 g of protein per kg of body weight per day is the scientifically supported range for muscle building. During a bulk you're not in a calorie deficit, but protein is still the most important macronutrient — it's the building block for muscles. Prioritize protein and distribute remaining calories between carbs and fat by preference."
+      },
+      {
+        "question": "How long should you bulk?",
+        "answer": "A typical bulk phase lasts 3–6 months. When you've reached your desired body weight or body fat has risen to 18–20% (men) / 28–30% (women), it's time to enter a cut phase to reduce fat and reveal the muscles you've built."
+      }
+    ],
+    "cta": {
+      "bottom": {
+        "h2": "Ready to build muscle smart?",
+        "body": "You have the calorie surplus. Log food against your goal and track your weight gain week by week.",
+        "primary": "Create free account",
+        "secondary": "Plan your cut phase"
+      }
+    },
+    "related": {
+      "calculatorsTitle": "Related calculators",
+      "articlesTitle": "Related articles",
+      "calculators": [
+        { "href": "/en/calculators/cut-calculator", "label": "Cut Calculator" },
+        { "href": "/en/calculators/protein-calculator", "label": "Protein Calculator" },
+        { "href": "/en/calculators/tdee-calculator", "label": "TDEE Calculator" },
+        {
+          "href": "/en/calculators/calorie-deficit-calculator",
+          "label": "Calorie Deficit Calculator"
+        }
+      ],
+      "articles": [
+        { "href": "/en/articles/bulk-and-cut", "label": "Bulk and Cut — complete guide" },
+        { "href": "/en/articles/calorie-needs", "label": "Calorie needs — complete guide" },
+        { "href": "/en/articles/what-is-tdee", "label": "What is TDEE?" }
+      ]
+    },
+    "schema": {
+      "webAppName": "Bulk Calculator",
+      "webAppDescription": "Free bulk calculator. Calculate exactly how many calories you need for lean bulk, standard bulk or aggressive bulk based on your TDEE.",
+      "breadcrumb": {
+        "hubLabel": "Calculators",
+        "hubPath": "/en/calculators",
+        "pageLabel": "Bulk Calculator"
+      }
+    }
+  },
+  "cut-calculator": {
+    "seo": {
+      "title": "Cut Calculator — Calculate Calories for Your Cut (2026)",
+      "description": "Free cut calculator for those who train. Calculate how many calories to eat to burn fat without losing muscle. Based on your TDEE."
+    },
+    "h1Prefix": "Cut",
+    "h1Suffix": "Calculator",
+    "intro": "Whether you call it a cut or a shred — the goal is the same: burn fat without losing muscle mass. Calculate your optimal calorie intake based on your TDEE, choose your pace and get a protein goal tailored to protect your muscles during the phase.",
+    "calculator": {
+      "header": "Calculate Your Cut Calories",
+      "genderLabel": "Gender",
+      "genderMale": "Male",
+      "genderFemale": "Female",
+      "ageLabel": "Age",
+      "ageUnit": "yrs",
+      "weightLabel": "Weight",
+      "heightLabel": "Height",
+      "activityLabel": "Activity level",
+      "strategyLabel": "Cut strategy",
+      "button": "Calculate My Cut Calories",
+      "resultsTitle": "Your Results",
+      "tdeeLabel": "TDEE (kcal/day)",
+      "tdeeSub": "Your maintenance needs",
+      "cutTargetLabel": "Cut goal (kcal/day)",
+      "maintenanceRow": "Maintenance calories (TDEE)",
+      "deficitRow": "Daily deficit",
+      "intakeRow": "Daily calorie intake",
+      "rateRow": "Expected weight loss",
+      "proteinRow": "Protein goal (muscle protection)",
+      "planHeading": "Your cut plan",
+      "warningTitle": "Aggressive cut",
+      "warningBodyTemplate": "At −700 kcal/day the risk of muscle mass loss increases significantly. Ensure {{proteinMax}}+ g of protein per day and continue strength training with progressive load.",
+      "crossLinkTitle": "Planning to bulk after the cut?",
+      "crossLinkBody": "Plan your next phase with the bulk calculator.",
+      "crossLinkButton": "Bulk Calculator",
+      "saveCtaTitle": "Save your cut plan and log food",
+      "saveCtaBody": "Create a free account to save your calorie intake, track your progress and monitor protein during the cut phase.",
+      "saveCtaButton": "Save your plan free",
+      "featuresTitle": "What's included:",
+      "features": [
+        "Calculate cut calories — always free",
+        "Save plan and log food — with account",
+        "Track protein and weight during cut — with account"
+      ],
+      "premium": "More features in the premium version coming soon."
+    },
+    "activityLevels": [
+      {
+        "value": "Sedentary",
+        "label": "Sedentary",
+        "description": "Office or home work, little daily movement, no exercise sessions"
+      },
+      {
+        "value": "Lightly active",
+        "label": "Lightly active",
+        "description": "Light exercise 1–3 days/week, e.g. walks, yoga or gym on weekends"
+      },
+      {
+        "value": "Moderately active",
+        "label": "Moderately active",
+        "description": "Regular exercise 3–5 days/week at moderate intensity, e.g. running or strength training"
+      },
+      {
+        "value": "Very active",
+        "label": "Very active",
+        "description": "Hard training almost every day (6–7 days/week) or physically demanding work"
+      },
+      {
+        "value": "Extremely active",
+        "label": "Extremely active",
+        "description": "Heavy physical work combined with daily intense training, e.g. elite athletes or construction workers who also train"
+      }
+    ],
+    "cutModes": [
+      {
+        "value": "mild",
+        "label": "Mild Cut",
+        "weeklyLoss": "~0.2–0.3 kg/week",
+        "description": "Minimal muscle risk. Suitable close to competition, final weeks of fine-tuning or low body fat to lose."
+      },
+      {
+        "value": "moderate",
+        "label": "Standard Cut",
+        "weeklyLoss": "~0.3–0.5 kg/week",
+        "description": "The scientific standard. Balance between fat loss and muscle preservation. Works for most people."
+      },
+      {
+        "value": "aggressive",
+        "label": "Aggressive Cut",
+        "weeklyLoss": "~0.5–0.8 kg/week",
+        "description": "Suitable at high body fat percentage. Requires high protein intake (2.2+ g/kg) and strength training to protect muscles."
+      }
+    ],
+    "faqTitle": "Frequently Asked Questions",
+    "faq": [
+      {
+        "question": "What is a cut?",
+        "answer": "A cut is a phase where you eat below your maintenance needs (TDEE) to reduce body fat percentage while preserving muscle mass. It requires not just the right calorie intake but also the right protein intake and continued strength training. A good cut is methodical, not desperate."
+      },
+      {
+        "question": "How many calories should you eat on a cut?",
+        "answer": "You should eat below your TDEE (maintenance needs). How much depends on pace: mild = −250 kcal/day, standard = −400 kcal/day, aggressive = −700 kcal/day. Rule of thumb: don't lose more than 0.5–1% of body weight per week to minimize muscle mass loss."
+      },
+      {
+        "question": "How much protein is needed during a cut?",
+        "answer": "During a cut 1.8–2.4 g of protein per kg of body weight is recommended — higher than during a bulk. The reason: in a calorie deficit the risk of muscle catabolism increases. High protein intake provides satiety, high TEF (about 25–30% of protein calories go to digestion) and protects muscle mass."
+      },
+      {
+        "question": "How do you avoid muscle loss during a cut?",
+        "answer": "Three things matter: 1) Adequate protein intake (1.8–2.4 g/kg). 2) Continue strength training with progressive load — signaling to the body that muscle mass is needed. 3) Not too aggressive a calorie deficit. Combine these three and you can lose almost exclusively fat."
+      },
+      {
+        "question": "What is a mini cut and when does it work?",
+        "answer": "A mini cut is a short, intense cut phase (4–8 weeks) with a somewhat more aggressive deficit (−500–700 kcal/day). It works when you've just finished a bulk and want to quickly reduce body fat before the next bulk phase — without going through a full, long cut cycle."
+      }
+    ],
+    "cta": {
+      "bottom": {
+        "h2": "Ready to cut — without losing muscle?",
+        "body": "You have the cut calorie goal. The next step is to log food against it and see how your body responds.",
+        "primary": "Create free account",
+        "secondary": "Calculate your protein needs"
+      }
+    },
+    "related": {
+      "calculatorsTitle": "Related calculators",
+      "articlesTitle": "Related articles",
+      "calculators": [
+        { "href": "/en/calculators/bulk-calculator", "label": "Bulk Calculator" },
+        { "href": "/en/calculators/protein-calculator", "label": "Protein Calculator" },
+        {
+          "href": "/en/calculators/calorie-deficit-calculator",
+          "label": "Calorie Deficit Calculator"
+        },
+        { "href": "/en/calculators/tdee-calculator", "label": "TDEE Calculator" }
+      ],
+      "articles": [
+        { "href": "/en/articles/reverse-diet", "label": "Reverse Diet — after the cut" },
+        { "href": "/en/articles/bulk-and-cut", "label": "Bulk and Cut — complete guide" },
+        { "href": "/en/articles/calorie-deficit", "label": "How large a calorie deficit?" },
+        { "href": "/en/articles/calorie-needs", "label": "Calorie needs — complete guide" }
+      ]
+    },
+    "schema": {
+      "webAppName": "Cut Calculator",
+      "webAppDescription": "Free cut calculator for those who train. Calculate how many calories to eat to burn fat without losing muscle. Based on your TDEE and desired pace.",
+      "breadcrumb": {
+        "hubLabel": "Calculators",
+        "hubPath": "/en/calculators",
+        "pageLabel": "Cut Calculator"
+      }
+    }
+  },
+  "protein-calculator": {
+    "seo": {
+      "title": "Protein Calculator — How Much Protein Per Day Do You Need? (2026)",
+      "description": "Free protein calculator. Calculate how much protein per day you need based on weight, goal and training status. Evidence-based ranges — not linear rules of thumb."
+    },
+    "h1Prefix": "Protein",
+    "h1Suffix": "Calculator",
+    "intro": "Your protein needs depend on your goal and training status — not on how active you are in general. The calculator uses evidence-based ranges per combination, without linear rule-of-thumb bonuses.",
+    "calculator": {
+      "header": "Calculate Your Protein Needs",
+      "weightLabel": "Weight",
+      "goalLabel": "Goal",
+      "trainingLabel": "Training status",
+      "trainingNote": "Protein needs are driven by training status and goal — not by general activity level like steps or PAL value.",
+      "mealsLabel": "Number of meals per day",
+      "mealsNote": "Used to calculate protein per meal",
+      "button": "Calculate My Protein Needs",
+      "resultsTitle": "Your Protein Needs",
+      "perDaySub": "protein per day",
+      "perKgSub": "g per kg body weight",
+      "breakdownTitle": "Daily breakdown",
+      "dailyRangeRow": "Daily protein range",
+      "recommendedRow": "Recommended goal",
+      "perMealRowTemplate": "Per meal ({{n}} meals/day)",
+      "rationaleTitle": "Why this range?",
+      "nextStepTitle": "Next step — calculate your calorie needs",
+      "saveCtaTitle": "Save your meal plan and track your protein intake",
+      "saveCtaBody": "Create a free account to log food, track protein per day and save your goals.",
+      "saveCtaButton": "Save your plan free",
+      "featuresTitle": "What's included:",
+      "features": [
+        "Calculate protein needs — always free",
+        "Save plan and log food — with account",
+        "Track protein intake day by day — with account"
+      ],
+      "premium": "More features in the premium version coming soon."
+    },
+    "goals": [
+      {
+        "value": "cut",
+        "label": "Weight loss (cut)",
+        "description": "Calorie deficit — protect muscle mass and leverage protein's high satiety effect."
+      },
+      {
+        "value": "maintenance",
+        "label": "Weight maintenance",
+        "description": "Maintain muscle mass and support general health without gaining or losing weight."
+      },
+      {
+        "value": "bulk",
+        "label": "Muscle building (bulk)",
+        "description": "Calorie surplus + strength training — protein is the raw material for new muscle fibers."
+      }
+    ],
+    "trainingStatuses": [
+      {
+        "value": "inactive",
+        "label": "Inactive / rarely trains",
+        "description": "No regular training — everyday movement like walks counts here"
+      },
+      {
+        "value": "active",
+        "label": "Trains regularly",
+        "description": "Strength training or cardio 2–5 days/week"
+      },
+      {
+        "value": "elite",
+        "label": "Elite athlete / heavy daily training",
+        "description": "Hard training daily or double sessions, or heavy physical occupation"
+      }
+    ],
+    "rationale": {
+      "cut": {
+        "inactive": "During a calorie deficit without regular training, 1.2–1.6 g/kg is enough to slow muscle mass loss. Weight loss dominates — protein is a protection, not a performance factor.",
+        "active": "During weight loss with regular training, research recommends 1.8–2.4 g/kg. Protein protects muscle mass during a calorie deficit, provides high satiety and has high TEF (about 25–30% of protein calories go to digestion).",
+        "elite": "Elite athletes and heavy daily training combined with a calorie deficit justify 2.2–2.6 g/kg. The high training volume increases catabolic stress and requires an extra protective net for muscle mass."
+      },
+      "maintenance": {
+        "inactive": "WHO's minimum recommendation of 0.8 g/kg applies to sedentary adults. For most people 1.0–1.2 g/kg is a more reasonable goal to support immune system, enzymes and recovery.",
+        "active": "To maintain muscle mass and support recovery with regular training, 1.4–1.8 g/kg is enough for most people. Active individuals with high training volume should aim for the upper end of the range.",
+        "elite": "Elite athletes need 1.6–2.0 g/kg even during a maintenance phase to support recovery and counteract breakdown with high training volume."
+      },
+      "bulk": {
+        "inactive": "Without regular strength training, muscle building is limited. 1.2–1.6 g/kg is enough to support a gradual increase in muscle mass combined with a calorie surplus.",
+        "active": "During muscle building with regular strength training, 1.6–2.2 g/kg is the scientifically supported optimal range (Morton et al., 2018: ~1.62 g/kg is close to the ceiling for trained individuals). More than 2.2 g/kg likely provides no additional benefit.",
+        "elite": "Elite athletes with high training volume and a calorie surplus may justify 1.8–2.4 g/kg to maximize muscle protein synthesis and support recovery between sessions."
+      }
+    },
+    "faqTitle": "Frequently Asked Questions",
+    "faq": [
+      {
+        "question": "How much protein do you need per day?",
+        "answer": "It depends primarily on your goal and training status — not on general activity level. WHO's minimum recommendation is 0.8 g/kg for sedentary adults. For those who train regularly, research recommends 1.4–2.4 g/kg depending on goal: lower for maintenance, higher for weight loss (to protect muscles) and muscle building."
+      },
+      {
+        "question": "Is 2 grams of protein per kg optimal?",
+        "answer": "2 g/kg is a good rule of thumb for active people who strength train. Research (Morton et al., 2018) shows that 1.62 g/kg is close to the maximum effective amount for muscle building in trained individuals. During weight loss 2.0–2.4 g/kg may be justified to minimize muscle mass loss. More than 3 g/kg likely provides no additional benefit."
+      },
+      {
+        "question": "Do you need more protein when losing weight?",
+        "answer": "Yes — during a calorie deficit the body increases its breakdown of muscle tissue as an energy source. High protein intake (1.8–2.4 g/kg) counteracts this and also provides high satiety. Protein also has high TEF (about 25–30% of protein calories are used to digest the protein), which is extra beneficial during weight loss."
+      },
+      {
+        "question": "How much protein per meal is best?",
+        "answer": "Research shows the body can effectively use about 20–40 g of protein per meal for muscle protein synthesis. Spread over 3–5 meals per day, stimulation of muscle building is maximized. Eating 150 g of protein in a single meal is therefore suboptimal — distribute intake evenly."
+      },
+      {
+        "question": "Does the type of training matter?",
+        "answer": "Yes, training type affects protein needs more than training frequency or how generally active you are. Strength training directly stimulates muscle protein synthesis and requires more protein than cardio at the same volume. That's why the calculator asks about training status rather than how many steps you take per day."
+      },
+      {
+        "question": "Can you eat too much protein?",
+        "answer": "For healthy people, high protein intake (up to 3 g/kg/day) is safe and has no negative kidney effects. The practical limitation is that extremely high protein intake crowds out carbohydrates and fat, which can impair training performance and hormonal balance. Aim for the range for your goal and prioritize varied protein sources."
+      }
+    ],
+    "cta": {
+      "bottom": {
+        "h2": "Track your protein intake day by day",
+        "body": "Create a free account and log food against your protein goal — automatically calculated for your goal.",
+        "primary": "Create free account",
+        "secondary": "Calculate your TDEE"
+      }
+    },
+    "related": {
+      "calculatorsTitle": "Related calculators",
+      "articlesTitle": "Related articles",
+      "calculators": [
+        { "href": "/en/calculators/tdee-calculator", "label": "TDEE Calculator" },
+        { "href": "/en/calculators/cut-calculator", "label": "Cut Calculator" },
+        { "href": "/en/calculators/bulk-calculator", "label": "Bulk Calculator" },
+        {
+          "href": "/en/calculators/calorie-deficit-calculator",
+          "label": "Calorie Deficit Calculator"
+        }
+      ],
+      "articles": [
+        { "href": "/en/articles/reverse-diet", "label": "Reverse Diet — after the cut" },
+        { "href": "/en/articles/bulk-and-cut", "label": "Bulk and Cut — complete guide" },
+        { "href": "/en/articles/calorie-deficit", "label": "How large a calorie deficit?" },
+        { "href": "/en/articles/calorie-needs", "label": "Calorie needs — complete guide" }
+      ]
+    },
+    "schema": {
+      "webAppName": "Protein Calculator",
+      "webAppDescription": "Free protein calculator. Calculate how much protein per day you need based on weight, training status and goal — weight loss, maintenance or muscle building.",
+      "breadcrumb": {
+        "hubLabel": "Calculators",
+        "hubPath": "/en/calculators",
+        "pageLabel": "Protein Calculator"
+      }
+    }
+  },
+  "idealweight-calculator": {
+    "seo": {
+      "title": "Ideal Weight Calculator — Calculate Your Healthy Target Weight (2026) | CalculEat",
+      "description": "Free ideal weight calculator. Calculate your healthy weight range based on height and gender. See where you are now and what the next step is toward your goal."
+    },
+    "h1Prefix": "Ideal Weight",
+    "h1Suffix": "Calculator",
+    "intro": "Ideal weight is an estimated healthy weight range based on height and gender. It's a benchmark — not an exact goal. Calculate your range below and see what actually drives the results forward.",
+    "calculator": {
+      "header": "Calculate Your Ideal Weight",
+      "genderLabel": "Gender",
+      "genderMale": "Male",
+      "genderFemale": "Female",
+      "heightLabel": "Height",
+      "weightLabel": "Current weight",
+      "button": "Calculate My Ideal Weight",
+      "resultsTitle": "Your Result",
+      "rangeLabel": "Healthy weight range (BMI 18.5–24.9)",
+      "formulaLabel": "Formula ideal weight (Robinson):",
+      "diffOverLabel": "kg above formula value",
+      "diffUnderLabel": "kg below formula value",
+      "insightTitle": "Ideal weight is not the same as the right calorie plan",
+      "insightBody": "Knowing your ideal weight doesn't tell you how to reach it. Your TDEE — total daily calorie needs — is the key. It determines how much you should eat to lose weight, maintain weight or build muscle.",
+      "nextStepTitle": "Next step: calculate your calorie needs",
+      "nextStepBody": "The TDEE calculator takes your ideal weight and activity level and gives you an exact calorie goal to log against.",
+      "nextStepPrimary": "Calculate Your TDEE",
+      "nextStepSecondary": "Create free account"
+    },
+    "positionLabels": [
+      {
+        "value": "underweight",
+        "label": "Below healthy range",
+        "desc": "Your current weight is below the estimated healthy weight range. Focus on calories and protein to reach your target weight."
+      },
+      {
+        "value": "below_ideal",
+        "label": "Just below the range",
+        "desc": "You're close to the healthy weight range. Small calorie adjustments are enough to get there."
+      },
+      {
+        "value": "within",
+        "label": "Within healthy range",
+        "desc": "Your current weight is within the estimated healthy weight range. Focus should now be on body composition and calorie needs — not the weight itself."
+      },
+      {
+        "value": "above_ideal",
+        "label": "Just above the range",
+        "desc": "You're slightly above the estimated range. A moderate calorie deficit of 300–400 kcal/day is enough to gradually reach your target weight."
+      },
+      {
+        "value": "overweight",
+        "label": "Above healthy range",
+        "desc": "Your current weight is above the estimated healthy weight range. A well-planned calorie deficit combined with strength training gives the best results in the long run."
+      }
+    ],
+    "faqTitle": "Frequently Asked Questions",
+    "faq": [
+      {
+        "question": "What counts as ideal weight?",
+        "answer": "Ideal weight is an estimated weight range based on your height and gender, often calculated via formulas like Robinson (1983) or BMI 18.5–24.9. It's a benchmark, not an exact goal. Factors like muscle mass, age, bone size and training level affect what is healthy for you specifically."
+      },
+      {
+        "question": "Is ideal weight the same as BMI?",
+        "answer": "No — but they are related. BMI (Body Mass Index) is a number calculated from weight and height. Ideal weight is a weight range corresponding to a healthy BMI (18.5–24.9). The difference is that ideal weight formulas like Robinson adjust for height and gender separately, while BMI is a pure ratio."
+      },
+      {
+        "question": "Can you weigh more and still be healthy?",
+        "answer": "Yes. Muscle weighs more than fat, and a well-trained person can weigh more than the ideal weight formula indicates without increased health risk. Body fat percentage, waist circumference and metabolic markers (blood pressure, blood fats) are better indicators of health risk than weight alone. Ideal weight is a benchmark — not an absolute limit."
+      },
+      {
+        "question": "How much should you lose per week?",
+        "answer": "0.3–0.7 kg per week is a healthy pace that minimizes muscle loss. It requires a calorie goal of about 300–700 kcal below your TDEE per day. Faster weight loss increases the risk of losing muscle mass and negatively affecting your metabolism."
+      },
+      {
+        "question": "Is ideal weight relevant if you strength train?",
+        "answer": "Limited. People who strength train build muscle mass that increases weight without increasing fat mass. A well-trained person can weigh 5–10 kg more than the ideal weight formula indicates and have excellent health. For those who train regularly, TDEE calculation, macro planning and body fat percentage are more relevant measures than an ideal weight number."
+      }
+    ],
+    "cta": {
+      "bottom": {
+        "h2": "From ideal weight to action plan",
+        "body": "You know the target weight. The next step is to calculate your calorie goal and start logging against it.",
+        "primary": "Create free account",
+        "secondary": "Calculate your TDEE"
+      }
+    },
+    "related": {
+      "calculatorsTitle": "Related calculators",
+      "articlesTitle": "Related articles",
+      "calculators": [
+        { "href": "/en/calculators/tdee-calculator", "label": "TDEE Calculator" },
+        { "href": "/en/calculators/bmi-calculator", "label": "BMI Calculator" },
+        {
+          "href": "/en/calculators/calorie-deficit-calculator",
+          "label": "Calorie Deficit Calculator"
+        },
+        { "href": "/en/calculators/protein-calculator", "label": "Protein Calculator" }
+      ],
+      "articles": [
+        { "href": "/en/articles/calorie-needs", "label": "Calorie needs — complete guide" },
+        { "href": "/en/articles/what-is-tdee", "label": "What is TDEE?" },
+        { "href": "/en/articles/calorie-deficit", "label": "How large a calorie deficit?" },
+        { "href": "/en/articles/bulk-and-cut", "label": "Bulk and Cut" }
+      ]
+    },
+    "schema": {
+      "webAppName": "Ideal Weight Calculator",
+      "webAppDescription": "Free ideal weight calculator. Calculate your healthy weight range based on height and gender. Get your TDEE calorie needs as the next step.",
+      "breadcrumb": {
+        "hubLabel": "Calculators",
+        "hubPath": "/en/calculators",
+        "pageLabel": "Ideal Weight Calculator"
+      }
+    }
+  }
+}

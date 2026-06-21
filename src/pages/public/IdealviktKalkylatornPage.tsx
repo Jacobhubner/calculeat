@@ -1,16 +1,20 @@
 import { useState, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { ArrowRight, Calculator, AlertTriangle } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import SiteHeader from '@/components/layout/SiteHeader'
 import SiteFooter from '@/components/layout/SiteFooter'
 import { Seo } from '@/components/seo/Seo'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { FaqBlock } from '@/components/article/FaqBlock'
 import { GuestOnly } from '@/components/GuestOnly'
-
-const CANONICAL = 'https://calculeat.se/kalkylatorer/idealvikt'
+import { getPageConfigByKey, getHreflangAlternates } from '@/lib/config/pages'
 
 type Gender = 'male' | 'female'
+type Position = 'underweight' | 'below_ideal' | 'within' | 'above_ideal' | 'overweight'
+
+type FaqItem = { question: string; answer: string }
+type PositionLabel = { value: Position; label: string; desc: string }
 
 // Robinson (1983) formula — most cited for healthy weight estimation
 function robinsonIdealWeight(heightCm: number, gender: Gender): number {
@@ -28,8 +32,6 @@ function healthyWeightRange(heightCm: number): { min: number; max: number } {
   }
 }
 
-type Position = 'underweight' | 'below_ideal' | 'within' | 'above_ideal' | 'overweight'
-
 function getPosition(currentWeight: number, rangeMin: number, rangeMax: number): Position {
   if (currentWeight < rangeMin - 2) return 'underweight'
   if (currentWeight < rangeMin) return 'below_ideal'
@@ -38,99 +40,77 @@ function getPosition(currentWeight: number, rangeMin: number, rangeMax: number):
   return 'overweight'
 }
 
-const POSITION_CONFIG: Record<
-  Position,
-  { label: string; color: string; bg: string; desc: string }
-> = {
-  underweight: {
-    label: 'Under hälsosamt spann',
-    color: 'text-blue-700',
-    bg: 'bg-blue-50 border-blue-200',
-    desc: 'Din nuvarande vikt är under det uppskattade hälsosamma viktspannet. Fokus på kalorier och protein för att nå din målvikt.',
-  },
-  below_ideal: {
-    label: 'Strax under spannet',
-    color: 'text-cyan-700',
-    bg: 'bg-cyan-50 border-cyan-200',
-    desc: 'Du är nära det hälsosamma viktspannet. Lite justeringar i kalorier räcker för att nå dit.',
-  },
-  within: {
-    label: 'Inom hälsosamt spann',
-    color: 'text-green-700',
-    bg: 'bg-green-50 border-green-200',
-    desc: 'Din nuvarande vikt är inom det uppskattade hälsosamma viktspannet. Fokus bör nu ligga på kroppssammansättning och kaloribehov — inte vikten i sig.',
-  },
-  above_ideal: {
-    label: 'Strax över spannet',
-    color: 'text-yellow-700',
-    bg: 'bg-yellow-50 border-yellow-200',
-    desc: 'Du är något över det uppskattade spannet. En måttlig kaloribrist på 300–400 kcal/dag räcker för att gradvis nå din målvikt.',
-  },
-  overweight: {
-    label: 'Över hälsosamt spann',
-    color: 'text-orange-700',
-    bg: 'bg-orange-50 border-orange-200',
-    desc: 'Din nuvarande vikt är över det uppskattade hälsosamma spannet. En välplanerad kaloribrist kombinerat med styrketräning ger bäst resultat på lång sikt.',
-  },
+// Color/bg classes stay in TSX — not content
+const POSITION_COLORS: Record<Position, string> = {
+  underweight: 'text-blue-700',
+  below_ideal: 'text-cyan-700',
+  within: 'text-green-700',
+  above_ideal: 'text-yellow-700',
+  overweight: 'text-orange-700',
 }
 
-const FAQ_ITEMS = [
-  {
-    question: 'Vad räknas som idealvikt?',
-    answer:
-      'Idealvikt är ett uppskattat viktspann baserat på din längd och kön, ofta beräknat via formler som Robinson (1983) eller BMI 18.5–24.9. Det är ett riktmärke, inte ett exakt mål. Faktorer som muskelmassa, ålder, benstorlek och träningsnivå påverkar vad som är hälsosamt för just dig.',
-  },
-  {
-    question: 'Är idealvikt samma sak som BMI?',
-    answer:
-      'Nej — men de är relaterade. BMI (Body Mass Index) är ett tal som beräknas från vikt och längd. Idealvikt är ett viktintervall som svarar mot ett hälsosamt BMI (18.5–24.9). Skillnaden är att idealvikt-formler som Robinson justerar för längd och kön separat, medan BMI är ett rent förhållandemått.',
-  },
-  {
-    question: 'Kan man väga mer och ändå vara hälsosam?',
-    answer:
-      'Ja. Muskler väger mer än fett, och en vältränad person kan väga mer än idealviktsformeln anger utan att ha ökad hälsorisk. Fettprocent, midjeomfång och metabola markörer (blodtryck, blodfetter) är bättre indikatorer på hälsorisk än vikten ensam. Idealvikt är ett riktmärke — inte en absolut gräns.',
-  },
-  {
-    question: 'Hur mycket bör man gå ner per vecka?',
-    answer:
-      '0,3–0,7 kg per vecka är ett hälsosamt tempo som minimerar muskelförlust. Det kräver ett kalorimål på ca 300–700 kcal under ditt TDEE per dag. Snabbare viktnedgång ökar risken för att tappa muskelmassa och påverka ämnesomsättningen negativt.',
-  },
-  {
-    question: 'Är idealvikt relevant om man styrketränar?',
-    answer:
-      'Begränsat. Styrketränande personer bygger muskelmassa som ökar vikten utan att öka fettmassa. En vältränad person kan väga 5–10 kg mer än idealviktsformeln anger och ha utmärkt hälsa. För den som tränar regelbundet är TDEE-beräkning, makroplanering och fettprocent mer relevanta mått än en idealvikts-siffra.',
-  },
-]
+const POSITION_BG: Record<Position, string> = {
+  underweight: 'bg-blue-50 border-blue-200',
+  below_ideal: 'bg-cyan-50 border-cyan-200',
+  within: 'bg-green-50 border-green-200',
+  above_ideal: 'bg-yellow-50 border-yellow-200',
+  overweight: 'bg-orange-50 border-orange-200',
+}
 
-const PAGE_SCHEMA = [
-  {
-    '@context': 'https://schema.org',
-    '@type': 'WebApplication',
-    name: 'Idealvikt Kalkylator',
-    url: CANONICAL,
-    applicationCategory: 'HealthApplication',
-    operatingSystem: 'Web',
-    description:
-      'Gratis idealvikt-kalkylator. Räkna ut ditt hälsosamma viktspann baserat på längd och kön. Få ditt TDEE-kaloribehov som nästa steg.',
-    offers: { '@type': 'Offer', price: '0', priceCurrency: 'SEK' },
-  },
-  {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'CalculEat', item: 'https://calculeat.se/' },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: 'Kalkylatorer',
-        item: 'https://calculeat.se/kalkylatorer',
-      },
-      { '@type': 'ListItem', position: 3, name: 'Idealvikt Kalkylator', item: CANONICAL },
-    ],
-  },
-]
+const pageConfig = getPageConfigByKey('idealweight-calculator')!
+const hreflangAlternates = getHreflangAlternates(pageConfig)
 
 export default function IdealviktKalkylatornPage() {
+  const { pathname } = useLocation()
+  const lng = pathname.startsWith('/en/') ? 'en' : 'sv'
+  const { t } = useTranslation('pages-tools', { lng })
+
+  const localeEntry = pageConfig.locales[lng] ?? pageConfig.locales.sv!
+  const faqItems = t('idealweight-calculator.faq', { returnObjects: true }) as unknown as FaqItem[]
+  const positionLabels = t('idealweight-calculator.positionLabels', {
+    returnObjects: true,
+  }) as unknown as PositionLabel[]
+  const relatedCalcs = t('idealweight-calculator.related.calculators', {
+    returnObjects: true,
+  }) as unknown as { href: string; label: string }[]
+  const relatedArticles = t('idealweight-calculator.related.articles', {
+    returnObjects: true,
+  }) as unknown as { href: string; label: string }[]
+
+  const getPositionLabel = (pos: Position) => positionLabels.find(p => p.value === pos)
+
+  const pageSchema = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'WebApplication',
+      name: t('idealweight-calculator.schema.webAppName'),
+      url: localeEntry.canonical,
+      applicationCategory: 'HealthApplication',
+      operatingSystem: 'Web',
+      description: t('idealweight-calculator.schema.webAppDescription'),
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'SEK' },
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'CalculEat', item: 'https://calculeat.se/' },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: t('idealweight-calculator.schema.breadcrumb.hubLabel'),
+          item: `https://calculeat.se${t('idealweight-calculator.schema.breadcrumb.hubPath')}`,
+        },
+        {
+          '@type': 'ListItem',
+          position: 3,
+          name: t('idealweight-calculator.schema.breadcrumb.pageLabel'),
+          item: localeEntry.canonical,
+        },
+      ],
+    },
+  ]
+
   const [gender, setGender] = useState<Gender>('male')
   const [height, setHeight] = useState('')
   const [weight, setWeight] = useState('')
@@ -145,7 +125,13 @@ export default function IdealviktKalkylatornPage() {
     const ideal = Math.round(robinsonIdealWeight(h, gender) * 10) / 10
 
     if (!w || w <= 0 || w > 400) {
-      return { range, ideal, position: null, currentWeight: null }
+      return {
+        range,
+        ideal,
+        position: null as Position | null,
+        currentWeight: null as number | null,
+        diff: null as number | null,
+      }
     }
 
     const position = getPosition(w, range.min, range.max)
@@ -163,11 +149,13 @@ export default function IdealviktKalkylatornPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <Seo
-        title="Idealvikt Kalkylator — Räkna ut din hälsosamma målvikt (2026) | CalculEat"
-        description="Gratis idealvikt-kalkylator. Räkna ut ditt hälsosamma viktspann baserat på längd och kön. Se var du är nu och vad som är nästa steg mot ditt mål."
-        canonical={CANONICAL}
+        title={t('idealweight-calculator.seo.title')}
+        description={t('idealweight-calculator.seo.description')}
+        canonical={localeEntry.canonical}
+        hreflangAlternates={hreflangAlternates}
+        locale={lng === 'en' ? 'en_US' : 'sv_SE'}
       />
-      <JsonLd schema={PAGE_SCHEMA} />
+      <JsonLd schema={pageSchema} />
 
       <SiteHeader />
 
@@ -176,29 +164,31 @@ export default function IdealviktKalkylatornPage() {
         <section className="relative overflow-hidden bg-white border-b border-neutral-100">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(37,189,0,0.07),transparent_60%)]" />
           <div className="relative container mx-auto px-4 pt-16 pb-14 max-w-3xl">
-            {/* Breadcrumb */}
             <nav className="flex items-center gap-2 text-sm text-neutral-500 mb-6">
               <Link to="/" className="hover:text-neutral-700 transition-colors">
                 CalculEat
               </Link>
               <span>/</span>
-              <Link to="/kalkylatorer" className="hover:text-neutral-700 transition-colors">
-                Kalkylatorer
+              <Link
+                to={t('idealweight-calculator.schema.breadcrumb.hubPath')}
+                className="hover:text-neutral-700 transition-colors"
+              >
+                {t('idealweight-calculator.schema.breadcrumb.hubLabel')}
               </Link>
               <span>/</span>
-              <span className="text-neutral-700">Idealvikt</span>
+              <span className="text-neutral-700">
+                {t('idealweight-calculator.schema.breadcrumb.pageLabel')}
+              </span>
             </nav>
 
             <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-5 leading-tight">
               <span className="bg-gradient-to-r from-primary-600 to-accent-500 bg-clip-text text-transparent">
-                Idealvikt
+                {t('idealweight-calculator.h1Prefix')}
               </span>{' '}
-              Kalkylator
+              {t('idealweight-calculator.h1Suffix')}
             </h1>
             <p className="text-lg md:text-xl text-neutral-600 leading-relaxed max-w-2xl">
-              Idealvikt är ett uppskattat hälsosamt viktspann baserat på längd och kön. Det är ett
-              riktmärke — inte ett exakt mål. Räkna ut ditt spann nedan och se vad som faktiskt
-              driver resultaten vidare.
+              {t('idealweight-calculator.intro')}
             </p>
           </div>
         </section>
@@ -209,18 +199,25 @@ export default function IdealviktKalkylatornPage() {
             <div className="rounded-2xl border border-neutral-200 shadow-sm overflow-hidden">
               <div className="bg-primary-50 px-6 py-4 border-b border-primary-100 flex items-center gap-2">
                 <Calculator className="h-5 w-5 text-primary-600" />
-                <span className="font-semibold text-primary-900">Beräkna din idealvikt</span>
+                <span className="font-semibold text-primary-900">
+                  {t('idealweight-calculator.calculator.header')}
+                </span>
               </div>
 
               <div className="p-6 space-y-5">
                 {/* Gender */}
                 <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-2">Kön</label>
+                  <label className="block text-sm font-medium text-neutral-700 mb-2">
+                    {t('idealweight-calculator.calculator.genderLabel')}
+                  </label>
                   <div className="grid grid-cols-2 gap-2">
                     {(
                       [
-                        { value: 'male', label: 'Man' },
-                        { value: 'female', label: 'Kvinna' },
+                        { value: 'male', label: t('idealweight-calculator.calculator.genderMale') },
+                        {
+                          value: 'female',
+                          label: t('idealweight-calculator.calculator.genderFemale'),
+                        },
                       ] as { value: Gender; label: string }[]
                     ).map(opt => (
                       <button
@@ -246,7 +243,7 @@ export default function IdealviktKalkylatornPage() {
                 <div className="grid grid-cols-2 gap-4">
                   {[
                     {
-                      label: 'Längd',
+                      label: t('idealweight-calculator.calculator.heightLabel'),
                       unit: 'cm',
                       value: height,
                       setter: (v: string) => {
@@ -254,11 +251,9 @@ export default function IdealviktKalkylatornPage() {
                         setHasResult(false)
                       },
                       placeholder: '175',
-                      min: 100,
-                      max: 250,
                     },
                     {
-                      label: 'Nuvarande vikt',
+                      label: t('idealweight-calculator.calculator.weightLabel'),
                       unit: 'kg',
                       value: weight,
                       setter: (v: string) => {
@@ -266,8 +261,6 @@ export default function IdealviktKalkylatornPage() {
                         setHasResult(false)
                       },
                       placeholder: '75',
-                      min: 30,
-                      max: 400,
                     },
                   ].map(({ label, unit, value, setter, placeholder }) => (
                     <div key={label}>
@@ -297,19 +290,21 @@ export default function IdealviktKalkylatornPage() {
                   disabled={!canCalculate}
                   className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-neutral-200 disabled:text-neutral-400 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm"
                 >
-                  Beräkna min idealvikt
+                  {t('idealweight-calculator.calculator.button')}
                 </button>
               </div>
 
               {/* Results */}
               {hasResult && result && (
                 <div className="border-t border-neutral-100 bg-neutral-50 px-6 py-6 space-y-4">
-                  <h2 className="font-semibold text-neutral-800">Ditt resultat</h2>
+                  <h2 className="font-semibold text-neutral-800">
+                    {t('idealweight-calculator.calculator.resultsTitle')}
+                  </h2>
 
                   {/* Main range card */}
                   <div className="rounded-xl border bg-white border-neutral-200 p-5">
                     <div className="text-xs text-neutral-500 font-medium uppercase tracking-wider mb-3">
-                      Hälsosamt viktspann (BMI 18.5–24.9)
+                      {t('idealweight-calculator.calculator.rangeLabel')}
                     </div>
                     <div className="flex items-end gap-2">
                       <span className="text-4xl font-bold text-neutral-900">
@@ -318,70 +313,71 @@ export default function IdealviktKalkylatornPage() {
                       <span className="text-neutral-500 mb-1">kg</span>
                     </div>
                     <div className="text-sm text-neutral-500 mt-1">
-                      Formel-idealvikt (Robinson):{' '}
+                      {t('idealweight-calculator.calculator.formulaLabel')}{' '}
                       <strong className="text-neutral-700">{result.ideal} kg</strong>
                     </div>
                   </div>
 
                   {/* Position card — only when current weight provided */}
-                  {result.position && result.currentWeight && (
-                    <div className={`rounded-xl border p-4 ${POSITION_CONFIG[result.position].bg}`}>
-                      <div
-                        className={`font-semibold mb-1 ${POSITION_CONFIG[result.position].color}`}
-                      >
-                        {POSITION_CONFIG[result.position].label}
-                      </div>
-                      <p className="text-sm text-neutral-700">
-                        {POSITION_CONFIG[result.position].desc}
-                      </p>
-                      {result.diff !== null && result.diff !== 0 && (
-                        <div className="mt-2 text-sm font-medium text-neutral-600">
-                          {result.diff > 0
-                            ? `${result.diff} kg över formelvärdet`
-                            : `${Math.abs(result.diff)} kg under formelvärdet`}
+                  {result.position &&
+                    result.currentWeight &&
+                    (() => {
+                      const posLabel = getPositionLabel(result.position)
+                      if (!posLabel) return null
+                      return (
+                        <div className={`rounded-xl border p-4 ${POSITION_BG[result.position]}`}>
+                          <div className={`font-semibold mb-1 ${POSITION_COLORS[result.position]}`}>
+                            {posLabel.label}
+                          </div>
+                          <p className="text-sm text-neutral-700">{posLabel.desc}</p>
+                          {result.diff !== null && result.diff !== 0 && (
+                            <div className="mt-2 text-sm font-medium text-neutral-600">
+                              {result.diff > 0
+                                ? `${result.diff} ${t('idealweight-calculator.calculator.diffOverLabel')}`
+                                : `${Math.abs(result.diff)} ${t('idealweight-calculator.calculator.diffUnderLabel')}`}
+                            </div>
+                          )}
                         </div>
-                      )}
-                    </div>
-                  )}
+                      )
+                    })()}
 
                   {/* Key insight box */}
                   <div className="rounded-xl bg-amber-50 border border-amber-200 p-4 flex gap-3">
                     <AlertTriangle className="h-4 w-4 text-amber-600 flex-shrink-0 mt-0.5" />
                     <div>
                       <p className="text-sm font-medium text-amber-900 mb-1">
-                        Idealvikt är inte detsamma som rätt kaloriplan
+                        {t('idealweight-calculator.calculator.insightTitle')}
                       </p>
                       <p className="text-xs text-amber-700">
-                        Att veta din idealvikt säger dig inte hur du når den. Ditt TDEE — totalt
-                        dagligt kaloribehov — är nyckeln. Det avgör hur mycket du ska äta för att gå
-                        ner, hålla vikten eller bygga muskler.
+                        {t('idealweight-calculator.calculator.insightBody')}
                       </p>
                     </div>
                   </div>
 
                   <GuestOnly>
-                    {/* CTA to money page */}
                     <div className="rounded-xl bg-white border border-primary-200 p-4">
                       <p className="text-sm font-medium text-neutral-800 mb-1">
-                        Nästa steg: räkna ut ditt kaloribehov
+                        {t('idealweight-calculator.calculator.nextStepTitle')}
                       </p>
                       <p className="text-xs text-neutral-500 mb-3">
-                        TDEE-kalkylatorn tar din idealvikt och aktivitetsnivå och ger dig ett exakt
-                        kalorimål att logga mot.
+                        {t('idealweight-calculator.calculator.nextStepBody')}
                       </p>
                       <div className="flex flex-col sm:flex-row gap-2">
                         <Link
-                          to="/kalkylatorer"
+                          to={
+                            relatedCalcs[0]?.href ??
+                            t('idealweight-calculator.schema.breadcrumb.hubPath')
+                          }
                           className="inline-flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
                         >
-                          Räkna ut ditt TDEE
+                          {t('idealweight-calculator.calculator.nextStepPrimary')}
                           <ArrowRight className="h-4 w-4" />
                         </Link>
                         <Link
                           to="/register"
                           className="inline-flex items-center justify-center gap-2 border border-neutral-200 text-neutral-700 text-sm font-medium px-4 py-2 rounded-lg hover:bg-neutral-50 transition-colors"
                         >
-                          Skapa gratis konto
+                          {t('idealweight-calculator.calculator.nextStepSecondary')}
                         </Link>
                       </div>
                     </div>
@@ -392,7 +388,7 @@ export default function IdealviktKalkylatornPage() {
           </div>
         </section>
 
-        {/* Explanation section */}
+        {/* Explanation section — prose stays in TSX */}
         <section className="bg-white py-14 border-b border-neutral-100">
           <div className="container mx-auto px-4 max-w-3xl">
             <div className="space-y-4 text-neutral-700 text-base leading-relaxed">
@@ -443,7 +439,9 @@ export default function IdealviktKalkylatornPage() {
                   <li>Justera kalorimålet var 2–3 vecka baserat på faktisk vikttrend</li>
                 </ol>
                 <Link
-                  to="/kalkylatorer"
+                  to={
+                    relatedCalcs[0]?.href ?? t('idealweight-calculator.schema.breadcrumb.hubPath')
+                  }
                   className="inline-flex items-center gap-2 mt-4 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors"
                 >
                   Starta med TDEE-kalkylatorn
@@ -457,7 +455,7 @@ export default function IdealviktKalkylatornPage() {
         {/* FAQ section */}
         <section className="bg-neutral-50 py-14 border-b border-neutral-100">
           <div className="container mx-auto px-4 max-w-3xl">
-            <FaqBlock items={FAQ_ITEMS} />
+            <FaqBlock items={faqItems} title={t('idealweight-calculator.faqTitle')} />
           </div>
         </section>
 
@@ -466,23 +464,26 @@ export default function IdealviktKalkylatornPage() {
           <section className="bg-neutral-900 py-16 md:py-20">
             <div className="container mx-auto px-4 max-w-2xl text-center">
               <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
-                Från idealvikt till handlingsplan
+                {t('idealweight-calculator.cta.bottom.h2')}
               </h2>
               <p className="text-neutral-400 text-base mb-8 max-w-md mx-auto">
-                Du vet målvikten. Nästa steg är att räkna ut ditt kalorimål och börja logga mot det.
+                {t('idealweight-calculator.cta.bottom.body')}
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Link
                   to="/register"
                   className="inline-flex items-center justify-center gap-2 bg-accent-500 hover:bg-accent-600 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm"
                 >
-                  Skapa gratis konto <ArrowRight className="h-4 w-4" />
+                  {t('idealweight-calculator.cta.bottom.primary')}{' '}
+                  <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link
-                  to="/kalkylatorer"
+                  to={
+                    relatedCalcs[0]?.href ?? t('idealweight-calculator.schema.breadcrumb.hubPath')
+                  }
                   className="inline-flex items-center justify-center gap-2 border border-neutral-600 text-neutral-300 hover:bg-neutral-800 font-medium px-6 py-3 rounded-xl transition-colors text-sm"
                 >
-                  Räkna ut ditt TDEE
+                  {t('idealweight-calculator.cta.bottom.secondary')}
                 </Link>
               </div>
             </div>
@@ -495,15 +496,10 @@ export default function IdealviktKalkylatornPage() {
             <div className="grid sm:grid-cols-2 gap-10">
               <div>
                 <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3">
-                  Relaterade kalkylatorer
+                  {t('idealweight-calculator.related.calculatorsTitle')}
                 </h3>
                 <div className="grid gap-3">
-                  {[
-                    { href: '/kalkylatorer/tdee-kalkylator', label: 'TDEE Kalkylator' },
-                    { href: '/kalkylatorer/bmi-kalkylator', label: 'BMI Kalkylator' },
-                    { href: '/kalkylatorer/kaloriunderskott', label: 'Kaloribrist Kalkylator' },
-                    { href: '/kalkylatorer/proteinbehov', label: 'Proteinbehov Kalkylator' },
-                  ].map(l => (
+                  {relatedCalcs.map(l => (
                     <Link
                       key={l.href}
                       to={l.href}
@@ -517,15 +513,10 @@ export default function IdealviktKalkylatornPage() {
               </div>
               <div>
                 <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3">
-                  Relaterade artiklar
+                  {t('idealweight-calculator.related.articlesTitle')}
                 </h3>
                 <div className="grid gap-3">
-                  {[
-                    { href: '/artiklar/kaloribehov', label: 'Kaloribehov — komplett guide' },
-                    { href: '/artiklar/vad-ar-tdee', label: 'Vad är TDEE?' },
-                    { href: '/artiklar/kaloribrist', label: 'Hur stor kaloribrist ska man ha?' },
-                    { href: '/artiklar/bulk-och-cut', label: 'Bulk och Cut' },
-                  ].map(l => (
+                  {relatedArticles.map(l => (
                     <Link
                       key={l.href}
                       to={l.href}

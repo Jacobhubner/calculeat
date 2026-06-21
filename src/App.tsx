@@ -194,38 +194,88 @@ function App() {
 
                     {/* Public SEO pages */}
                     <Route path="/kalkylatorer/tdee-kalkylator" element={<TdeeKalkylatornPage />} />
+                    <Route
+                      path="/en/calculators/tdee-calculator"
+                      element={<TdeeKalkylatornPage />}
+                    />
                     <Route path="/kalkylatorer/bmi-kalkylator" element={<BmiKalkylatornPage />} />
+                    <Route path="/en/calculators/bmi-calculator" element={<BmiKalkylatornPage />} />
                     <Route
                       path="/kalkylatorer/kaloriunderskott"
                       element={<KaloriunderskottKalkylatornPage />}
                     />
+                    <Route
+                      path="/en/calculators/calorie-deficit-calculator"
+                      element={<KaloriunderskottKalkylatornPage />}
+                    />
                     <Route path="/kalkylatorer/bulk-kalkylator" element={<BulkKalkylatornPage />} />
+                    <Route
+                      path="/en/calculators/bulk-calculator"
+                      element={<BulkKalkylatornPage />}
+                    />
                     <Route path="/kalkylatorer/cut-kalkylator" element={<CutKalkylatornPage />} />
+                    <Route path="/en/calculators/cut-calculator" element={<CutKalkylatornPage />} />
                     <Route
                       path="/kalkylatorer/proteinbehov"
                       element={<ProteinbehovKalkylatornPage />}
                     />
+                    <Route
+                      path="/en/calculators/protein-calculator"
+                      element={<ProteinbehovKalkylatornPage />}
+                    />
                     <Route path="/kalkylatorer/idealvikt" element={<IdealviktKalkylatornPage />} />
+                    <Route
+                      path="/en/calculators/ideal-weight-calculator"
+                      element={<IdealviktKalkylatornPage />}
+                    />
                     <Route
                       path="/kalkylatorer/kroppsfett"
                       element={<KroppsfettKalkylatornPage />}
                     />
+                    <Route
+                      path="/en/calculators/body-fat-calculator"
+                      element={<KroppsfettKalkylatornPage />}
+                    />
                     <Route path="/kalkylatorer/ffmi-kalkylator" element={<FfmiKalkylatornPage />} />
+                    <Route
+                      path="/en/calculators/ffmi-calculator"
+                      element={<FfmiKalkylatornPage />}
+                    />
                     <Route path="/kalkylatorer/bmr-kalkylator" element={<BmrKalkylatornPage />} />
+                    <Route path="/en/calculators/bmr-calculator" element={<BmrKalkylatornPage />} />
                     <Route path="/artiklar/kaloribehov" element={<KaloriberhovPage />} />
+                    <Route path="/en/articles/calorie-needs" element={<KaloriberhovPage />} />
                     <Route path="/artiklar/vad-ar-tdee" element={<VadArTdeePage />} />
+                    <Route path="/en/articles/what-is-tdee" element={<VadArTdeePage />} />
                     <Route path="/artiklar/kaloribrist" element={<KaloriBristPage />} />
+                    <Route path="/en/articles/calorie-deficit" element={<KaloriBristPage />} />
                     <Route path="/artiklar/bulk-och-cut" element={<BulkOchCutPage />} />
+                    <Route path="/en/articles/bulk-and-cut" element={<BulkOchCutPage />} />
                     <Route path="/artiklar/reverse-diet" element={<ReverseDietPage />} />
+                    <Route path="/en/articles/reverse-diet" element={<ReverseDietPage />} />
                     <Route path="/artiklar/vad-ar-bmr" element={<VadArBmrPage />} />
+                    <Route path="/en/articles/what-is-bmr" element={<VadArBmrPage />} />
                     <Route path="/artiklar/bmr-vs-rmr" element={<BmrVsRmrPage />} />
+                    <Route path="/en/articles/bmr-vs-rmr" element={<BmrVsRmrPage />} />
                     <Route path="/artiklar/bmr-vs-tdee" element={<BmrVsTdeePage />} />
+                    <Route path="/en/articles/bmr-vs-tdee" element={<BmrVsTdeePage />} />
                     <Route path="/artiklar/bmi-vs-kroppsfett" element={<BmiVsKroppsfettPage />} />
+                    <Route path="/en/articles/bmi-vs-body-fat" element={<BmiVsKroppsfettPage />} />
                     <Route path="/artiklar/vad-ar-ffmi" element={<VadArFfmiPage />} />
+                    <Route path="/en/articles/what-is-ffmi" element={<VadArFfmiPage />} />
                     <Route path="/artiklar/vad-ar-pal-och-met" element={<VadArPalOchMetPage />} />
+                    <Route
+                      path="/en/articles/what-is-pal-and-met"
+                      element={<VadArPalOchMetPage />}
+                    />
                     <Route path="/artiklar/lbm-vs-ffm" element={<LbmVsFfmPage />} />
+                    <Route path="/en/articles/lbm-vs-ffm" element={<LbmVsFfmPage />} />
                     <Route
                       path="/artiklar/hur-mater-man-kroppsfett"
+                      element={<HurMatarManKroppsfettPage />}
+                    />
+                    <Route
+                      path="/en/articles/how-to-measure-body-fat"
                       element={<HurMatarManKroppsfettPage />}
                     />
                     <Route
@@ -233,19 +283,43 @@ function App() {
                       element={<MyFitnessPalVsCalculEatPage />}
                     />
                     <Route
+                      path="/en/compare/myfitnesspal-vs-calculeat"
+                      element={<MyFitnessPalVsCalculEatPage />}
+                    />
+                    <Route
                       path="/jamfor/lifesum-vs-calculeat"
+                      element={<LifesumVsCalculEatPage />}
+                    />
+                    <Route
+                      path="/en/compare/lifesum-vs-calculeat"
                       element={<LifesumVsCalculEatPage />}
                     />
                     <Route path="/jamfor/yazio-vs-calculeat" element={<YazioVsCalculEatPage />} />
                     <Route
+                      path="/en/compare/yazio-vs-calculeat"
+                      element={<YazioVsCalculEatPage />}
+                    />
+                    <Route
                       path="/jamfor/macrofactor-vs-calculeat"
                       element={<MacroFactorVsCalculEatPage />}
                     />
+                    <Route
+                      path="/en/compare/macrofactor-vs-calculeat"
+                      element={<MacroFactorVsCalculEatPage />}
+                    />
                     <Route path="/basta-kaloriappen" element={<BastaKaloriappenPage />} />
+                    <Route path="/en/compare/best-calorie-app" element={<BastaKaloriappenPage />} />
                     <Route path="/basta-tdee-kalkylatorn" element={<BastaTdeeKalkylatornPage />} />
+                    <Route
+                      path="/en/compare/best-tdee-calculator"
+                      element={<BastaTdeeKalkylatornPage />}
+                    />
                     <Route path="/kalkylatorer" element={<KalkylatornHubPage />} />
+                    <Route path="/en/calculators" element={<KalkylatornHubPage />} />
                     <Route path="/artiklar" element={<ArtikelnHubPage />} />
+                    <Route path="/en/articles" element={<ArtikelnHubPage />} />
                     <Route path="/om-oss" element={<OmOssPage />} />
+                    <Route path="/en/about" element={<OmOssPage />} />
 
                     <Route
                       path="/app"
