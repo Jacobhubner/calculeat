@@ -1901,9 +1901,34 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
             {/* Support-svar för vanliga användare (ej admin) */}
             {!isAdmin && supportNotifications.length > 0 && (
               <div className="space-y-2">
-                <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wide">
-                  Support
-                </p>
+                <div className="flex items-center justify-between">
+                  <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wide">
+                    Support
+                  </p>
+                  <div className="flex items-center gap-3">
+                    {unreadSupportCount > 0 && (
+                      <button
+                        onClick={() =>
+                          supportNotifications
+                            .filter(n => n.read_at === null)
+                            .forEach(n => markRead(n.id))
+                        }
+                        className="text-xs text-primary-600 hover:text-primary-800 transition-colors"
+                      >
+                        {t('social.activity.mark_all_read')}
+                      </button>
+                    )}
+                    <button
+                      onClick={() => deleteRead()}
+                      disabled={
+                        isDeletingRead || supportNotifications.every(n => n.read_at === null)
+                      }
+                      className="text-xs text-neutral-400 hover:text-red-500 transition-colors disabled:opacity-30"
+                    >
+                      {t('social.activity.clear_read')}
+                    </button>
+                  </div>
+                </div>
                 {supportNotifications.map(n => (
                   <NotificationCard
                     key={n.id}
