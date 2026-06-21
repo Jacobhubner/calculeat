@@ -9,6 +9,7 @@ import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
 import { usePreviewMode } from '@/hooks/usePreviewMode'
 import { SupportChatButton } from '@/components/support/SupportChatButton'
+import { useSupportAdminUnreadCount } from '@/hooks/useSupportChat'
 
 interface DashboardLayoutProps {
   children: ReactNode
@@ -19,6 +20,7 @@ export default function DashboardLayout({ children, fullHeight }: DashboardLayou
   const { sidebarCollapsed } = useUIStore()
   const { isEmailVerified, user, isPreviewMode } = useAuth()
   const { exitPreview } = usePreviewMode()
+  useSupportAdminUnreadCount() // aktiverar realtime-kanal för admin-inbox
 
   const handleResend = async () => {
     if (!user?.email) return
