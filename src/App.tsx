@@ -59,7 +59,7 @@ const KaloriberhovPage = lazyWithRetry(() => import('./pages/public/Kaloriberhov
 const VadArTdeePage = lazyWithRetry(() => import('./pages/public/VadArTdeePage'))
 const KaloriBristPage = lazyWithRetry(() => import('./pages/public/KaloriBristPage'))
 const BulkOchCutPage = lazyWithRetry(() => import('./pages/public/BulkOchCutPage'))
-const OmOssPage = lazyWithRetry(() => import('./pages/public/OmOssPage'))
+
 const KaloriunderskottKalkylatornPage = lazyWithRetry(
   () => import('./pages/public/KaloriunderskottKalkylatornPage')
 )
@@ -69,13 +69,7 @@ const ProteinbehovKalkylatornPage = lazyWithRetry(
   () => import('./pages/public/ProteinbehovKalkylatornPage')
 )
 const ReverseDietPage = lazyWithRetry(() => import('./pages/public/ReverseDietPage'))
-const MyFitnessPalVsCalculEatPage = lazyWithRetry(
-  () => import('./pages/public/MyFitnessPalVsCalculEatPage')
-)
-const BastaKaloriappenPage = lazyWithRetry(() => import('./pages/public/BastaKaloriappenPage'))
-const BastaTdeeKalkylatornPage = lazyWithRetry(
-  () => import('./pages/public/BastaTdeeKalkylatornPage')
-)
+
 const IdealviktKalkylatornPage = lazyWithRetry(
   () => import('./pages/public/IdealviktKalkylatornPage')
 )
@@ -90,11 +84,7 @@ const BmrVsRmrPage = lazyWithRetry(() => import('./pages/public/BmrVsRmrPage'))
 const BmiVsKroppsfettPage = lazyWithRetry(() => import('./pages/public/BmiVsKroppsfettPage'))
 const VadArFfmiPage = lazyWithRetry(() => import('./pages/public/VadArFfmiPage'))
 const VadArPalOchMetPage = lazyWithRetry(() => import('./pages/public/VadArPalOchMetPage'))
-const LifesumVsCalculEatPage = lazyWithRetry(() => import('./pages/public/LifesumVsCalculEatPage'))
-const YazioVsCalculEatPage = lazyWithRetry(() => import('./pages/public/YazioVsCalculEatPage'))
-const MacroFactorVsCalculEatPage = lazyWithRetry(
-  () => import('./pages/public/MacroFactorVsCalculEatPage')
-)
+
 const KalkylatornHubPage = lazyWithRetry(() => import('./pages/public/KalkylatornHubPage'))
 const ArtikelnHubPage = lazyWithRetry(() => import('./pages/public/ArtikelnHubPage'))
 const LbmVsFfmPage = lazyWithRetry(() => import('./pages/public/LbmVsFfmPage'))
@@ -278,48 +268,10 @@ function App() {
                       path="/en/articles/how-to-measure-body-fat"
                       element={<HurMatarManKroppsfettPage />}
                     />
-                    <Route
-                      path="/jamfor/myfitnesspal-vs-calculeat"
-                      element={<MyFitnessPalVsCalculEatPage />}
-                    />
-                    <Route
-                      path="/en/compare/myfitnesspal-vs-calculeat"
-                      element={<MyFitnessPalVsCalculEatPage />}
-                    />
-                    <Route
-                      path="/jamfor/lifesum-vs-calculeat"
-                      element={<LifesumVsCalculEatPage />}
-                    />
-                    <Route
-                      path="/en/compare/lifesum-vs-calculeat"
-                      element={<LifesumVsCalculEatPage />}
-                    />
-                    <Route path="/jamfor/yazio-vs-calculeat" element={<YazioVsCalculEatPage />} />
-                    <Route
-                      path="/en/compare/yazio-vs-calculeat"
-                      element={<YazioVsCalculEatPage />}
-                    />
-                    <Route
-                      path="/jamfor/macrofactor-vs-calculeat"
-                      element={<MacroFactorVsCalculEatPage />}
-                    />
-                    <Route
-                      path="/en/compare/macrofactor-vs-calculeat"
-                      element={<MacroFactorVsCalculEatPage />}
-                    />
-                    <Route path="/basta-kaloriappen" element={<BastaKaloriappenPage />} />
-                    <Route path="/en/compare/best-calorie-app" element={<BastaKaloriappenPage />} />
-                    <Route path="/basta-tdee-kalkylatorn" element={<BastaTdeeKalkylatornPage />} />
-                    <Route
-                      path="/en/compare/best-tdee-calculator"
-                      element={<BastaTdeeKalkylatornPage />}
-                    />
                     <Route path="/kalkylatorer" element={<KalkylatornHubPage />} />
                     <Route path="/en/calculators" element={<KalkylatornHubPage />} />
                     <Route path="/artiklar" element={<ArtikelnHubPage />} />
                     <Route path="/en/articles" element={<ArtikelnHubPage />} />
-                    <Route path="/om-oss" element={<OmOssPage />} />
-                    <Route path="/en/about" element={<OmOssPage />} />
 
                     <Route
                       path="/app"
