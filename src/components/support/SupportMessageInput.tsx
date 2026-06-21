@@ -3,13 +3,14 @@ import { Send, Loader2, RotateCcw, Trash2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import {
   useSendSupportMessage,
+  useCreateSupportThread,
   useUserReopenSupportThread,
   useDeleteSupportThread,
 } from '@/hooks/useSupportChat'
 import type { SupportRpcResult } from '@/lib/types/support'
 
 interface Props {
-  threadId: string
+  threadId: string | null
   status: 'open' | 'closed'
 }
 
@@ -21,6 +22,7 @@ export function SupportMessageInput({ threadId, status }: Props) {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const { mutateAsync: sendMessage, isPending: isSending } = useSendSupportMessage()
+  const { mutateAsync: createThread, isPending: isCreating } = useCreateSupportThread()
   const { mutate: userReopen, isPending: isReopening } = useUserReopenSupportThread()
   const { mutate: deleteThread, isPending: isDeleting } = useDeleteSupportThread()
 
@@ -33,10 +35,11 @@ export function SupportMessageInput({ threadId, status }: Props) {
 
   const handleSend = async () => {
     const trimmed = input.trim()
-    if (!trimmed || isSending) return
+    if (!trimmed || isSending || isCreating) return
     setInlineError(null)
 
-    const result = await sendMessage({ content: trimmed, threadId })
+    const resolvedThreadId = threadId ?? (await createThread())
+    const result = await sendMessage({ content: trimmed, threadId: resolvedThreadId })
     const res = result as SupportRpcResult
     if (!res.success) {
       if (res.error === 'rate_limited') {
@@ -62,7 +65,7 @@ export function SupportMessageInput({ threadId, status }: Props) {
     }
   }
 
-  if (status === 'closed') {
+  if (status === 'closed' && threadId) {
     return (
       <div className="shrink-0 border-t border-neutral-100 px-4 py-4 flex flex-col items-center gap-3 bg-neutral-50">
         <p className="text-sm text-neutral-500 text-center">{t('threadClosed')}</p>

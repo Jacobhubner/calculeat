@@ -13,7 +13,7 @@ function getDateLocale() {
 }
 
 interface Props {
-  threadId: string
+  threadId: string | null
   isPanelOpen: boolean
 }
 

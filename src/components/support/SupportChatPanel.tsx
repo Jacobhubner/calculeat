@@ -1,9 +1,9 @@
 import { useEffect } from 'react'
-import { X, Loader2 } from 'lucide-react'
+import { X } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
-import { useGetSupportThreadId, useCreateSupportThread } from '@/hooks/useSupportChat'
+import { useGetSupportThreadId } from '@/hooks/useSupportChat'
 import { useNotifications, useMarkNotificationRead } from '@/hooks/useNotifications'
 import { SupportMessageThread } from './SupportMessageThread'
 import { SupportMessageInput } from './SupportMessageInput'
@@ -56,17 +56,10 @@ function useSupportThreadStatus(threadId: string | null) {
 
 export function SupportChatPanel({ isOpen, onClose }: Props) {
   const { t } = useTranslation('support')
-  const { data: threadId, isLoading: threadLoading } = useGetSupportThreadId()
-  const { mutate: createThread, isPending: isCreating } = useCreateSupportThread()
+  const { data: threadId } = useGetSupportThreadId()
   const { data: threadStatus = 'open' } = useSupportThreadStatus(threadId ?? null)
   const { data: notifications = [] } = useNotifications()
   const { mutate: markRead } = useMarkNotificationRead()
-
-  useEffect(() => {
-    if (isOpen && threadId === null && !threadLoading && !isCreating) {
-      createThread()
-    }
-  }, [isOpen, threadId, threadLoading, isCreating, createThread])
 
   // Markera olästa support-notiser som lästa när panelen öppnas
   useEffect(() => {
@@ -77,8 +70,6 @@ export function SupportChatPanel({ isOpen, onClose }: Props) {
   }, [isOpen]) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!isOpen) return null
-
-  const isReady = !!threadId
 
   return (
     <div className="fixed bottom-24 md:bottom-20 right-4 md:right-6 z-40 w-[340px] max-w-[calc(100vw-2rem)] h-[500px] flex flex-col rounded-2xl border border-neutral-200 bg-white shadow-2xl overflow-hidden">
@@ -99,16 +90,10 @@ export function SupportChatPanel({ isOpen, onClose }: Props) {
       </div>
 
       {/* Body */}
-      {!isReady ? (
-        <div className="flex-1 flex items-center justify-center">
-          <Loader2 className="h-5 w-5 animate-spin text-neutral-400" />
-        </div>
-      ) : (
-        <>
-          <SupportMessageThread threadId={threadId} isPanelOpen={isOpen} />
-          <SupportMessageInput threadId={threadId} status={threadStatus} />
-        </>
-      )}
+      <>
+        <SupportMessageThread threadId={threadId ?? null} isPanelOpen={isOpen} />
+        <SupportMessageInput threadId={threadId ?? null} status={threadStatus} />
+      </>
     </div>
   )
 }
