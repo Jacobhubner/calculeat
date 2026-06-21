@@ -2,7 +2,17 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { format, parseISO } from 'date-fns'
 import { sv, enUS } from 'date-fns/locale'
-import { Loader2, Send, X, Lock, Unlock, InboxIcon, Trash2 } from 'lucide-react'
+import {
+  Loader2,
+  Send,
+  X,
+  Lock,
+  Unlock,
+  InboxIcon,
+  Trash2,
+  UserCheck,
+  UserMinus,
+} from 'lucide-react'
 import i18n from '@/i18n'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { useIsAdmin } from '@/hooks/useIsAdmin'
@@ -13,6 +23,7 @@ import {
   useCloseSupportThread,
   useReopenSupportThread,
   useAdminDeleteSupportThread,
+  useAssignSupportThread,
 } from '@/hooks/useSupportChat'
 import { useSupportMessages } from '@/hooks/useSupportChat'
 import { useAuth } from '@/contexts/AuthContext'
@@ -95,7 +106,10 @@ function AdminSupportThread({
   const { mutate: closeThread, isPending: isClosing } = useCloseSupportThread()
   const { mutate: reopenThread, isPending: isReopening } = useReopenSupportThread()
   const { mutate: deleteThread, isPending: isDeleting } = useAdminDeleteSupportThread()
+  const { mutate: assignThread, isPending: isAssigning } = useAssignSupportThread()
   useMarkSupportMessagesRead(entry.thread_id)
+
+  const isAssignedToMe = entry.assigned_admin_id === user?.id
 
   const messages: SupportMessage[] = data
     ? data.pages
@@ -180,9 +194,47 @@ function AdminSupportThread({
           <p className="text-sm font-semibold text-neutral-900 truncate">
             {entry.username || entry.email}
           </p>
-          <p className="text-xs text-neutral-500 truncate">{entry.email}</p>
+          <div className="flex items-center gap-1.5 mt-0.5">
+            <p className="text-xs text-neutral-500 truncate">{entry.email}</p>
+            {entry.assigned_admin_id && (
+              <span className="shrink-0 text-[10px] bg-primary-50 text-primary-700 rounded px-1.5 py-0.5 leading-none font-medium">
+                {isAssignedToMe ? 'Du hanterar' : `@${entry.assigned_admin_username ?? '...'}`}
+              </span>
+            )}
+          </div>
         </div>
         <div className="flex items-center gap-1 shrink-0">
+          {/* Ta / Lämna ärendet */}
+          {isAssignedToMe ? (
+            <button
+              type="button"
+              onClick={() => assignThread({ threadId: entry.thread_id, adminId: null })}
+              disabled={isAssigning}
+              className="flex items-center gap-1 text-xs text-neutral-600 hover:text-neutral-900 bg-neutral-100 hover:bg-neutral-200 px-2 py-1 rounded-lg transition-colors disabled:opacity-50"
+            >
+              {isAssigning ? (
+                <Loader2 className="h-3 w-3 animate-spin" />
+              ) : (
+                <UserMinus className="h-3 w-3" />
+              )}
+              Lämna
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => assignThread({ threadId: entry.thread_id, adminId: user?.id ?? null })}
+              disabled={isAssigning}
+              className="flex items-center gap-1 text-xs text-primary-600 hover:text-primary-700 bg-primary-50 hover:bg-primary-100 px-2 py-1 rounded-lg transition-colors disabled:opacity-50"
+            >
+              {isAssigning ? (
+                <Loader2 className="h-3 w-3 animate-spin" />
+              ) : (
+                <UserCheck className="h-3 w-3" />
+              )}
+              Ta ärendet
+            </button>
+          )}
+
           {threadStatus === 'open' ? (
             <button
               type="button"
@@ -415,6 +467,11 @@ function AdminSupportInbox({
                 {entry.status === 'closed' && (
                   <span className="shrink-0 text-[10px] bg-neutral-100 text-neutral-500 rounded px-1 py-0.5 leading-none">
                     {t('closed')}
+                  </span>
+                )}
+                {entry.assigned_admin_id && (
+                  <span className="shrink-0 text-[10px] bg-primary-50 text-primary-700 rounded px-1 py-0.5 leading-none">
+                    @{entry.assigned_admin_username ?? '...'}
                   </span>
                 )}
               </div>

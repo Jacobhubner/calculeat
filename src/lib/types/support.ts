@@ -23,6 +23,7 @@ export interface SupportInboxEntry {
   username: string
   email: string
   assigned_admin_id: string | null
+  assigned_admin_username: string | null
   status: 'open' | 'closed'
   last_message: string | null
   last_message_at: string | null

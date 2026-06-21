@@ -418,6 +418,27 @@ export function useDeleteSupportThread() {
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
+// useAssignSupportThread — admin tilldelar ärende till sig själv eller annan admin
+// ──────────────────────────────────────────────────────────────────────────────
+
+export function useAssignSupportThread() {
+  const queryClient = useQueryClient()
+
+  return usePreviewMutation({
+    mutationFn: async ({ threadId, adminId }: { threadId: string; adminId: string | null }) => {
+      const { error } = await supabase.rpc('assign_support_thread', {
+        p_thread_id: threadId,
+        p_admin_id: adminId,
+      })
+      if (error) throw error
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: supportKeys.inbox })
+    },
+  })
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
 // useAdminDeleteSupportThread — admin raderar valfri stängd tråd
 // ──────────────────────────────────────────────────────────────────────────────
 
