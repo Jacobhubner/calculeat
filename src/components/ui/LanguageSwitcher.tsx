@@ -7,9 +7,17 @@ export function LanguageSwitcher() {
   const { pathname } = useLocation()
   const navigate = useNavigate()
 
-  // Derive current display locale from URL (public pages) or i18n state (app pages)
-  const isEnPath = pathname.startsWith('/en/')
-  const current: SupportedLocale = isEnPath ? 'en' : 'sv'
+  // On public pages with URL-based locale routing use the URL; elsewhere use i18n state.
+  // URL wins only when the current path is actually a known public page —
+  // otherwise (app pages, unknown paths) fall back to i18n.language.
+  const pageConfig = getPageConfigByPath(pathname)
+  const current: SupportedLocale = pageConfig
+    ? pathname.startsWith('/en/')
+      ? 'en'
+      : 'sv'
+    : i18n.language?.startsWith('en')
+      ? 'en'
+      : 'sv'
 
   function switchLanguage(target: SupportedLocale) {
     if (target === current) return
