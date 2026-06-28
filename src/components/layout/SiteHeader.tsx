@@ -16,7 +16,7 @@ import type { Friend } from '@/lib/types/friends'
 import { LanguageSwitcher } from '../ui/LanguageSwitcher'
 
 export default function SiteHeader() {
-  const { t } = useTranslation('common')
+  const { t, i18n } = useTranslation('common')
   const { user, signOut, userProfile } = useAuth()
   const { mobileMenuOpen, toggleMobileMenu, setMobileMenuOpen } = useUIStore()
 
@@ -62,7 +62,8 @@ export default function SiteHeader() {
   }
 
   const isEnPath = location.pathname.startsWith('/en/')
-  const loc = (sv: string, en: string) => (isEnPath ? en : sv)
+  const isEn = isEnPath || i18n.language?.startsWith('en')
+  const loc = (sv: string, en: string) => (isEn ? en : sv)
 
   const anchorLinks =
     location.pathname === '/' ? [{ href: '#features', label: t('nav.features') }] : []

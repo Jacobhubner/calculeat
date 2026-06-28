@@ -30,7 +30,8 @@ function toFiniteOrUndefined(value: unknown): number | undefined {
 
 export default function TDEECalculatorTool() {
   const navigate = useNavigate()
-  const { t } = useTranslation('tools')
+  const { t, i18n } = useTranslation('tools')
+  const isEn = i18n.language?.startsWith('en')
   const { profile: activeProfile } = useActiveProfile()
   const updateProfile = useUpdateProfile()
   const profileData = useProfileData([
@@ -431,10 +432,22 @@ export default function TDEECalculatorTool() {
           {/* Article links */}
           <div className="grid gap-3 md:grid-cols-2">
             {[
-              { to: '/artiklar/bmr-vs-rmr', label: 'Vad är BMR och RMR?' },
-              { to: '/artiklar/vad-ar-pal-och-met', label: 'Vad är PAL och MET?' },
-              { to: '/artiklar/vad-ar-tdee', label: 'Vad är TDEE?' },
-              { to: '/artiklar/lbm-vs-ffm', label: 'Skillnad på LBM och FFM?' },
+              {
+                to: isEn ? '/en/articles/bmr-vs-rmr' : '/artiklar/bmr-vs-rmr',
+                label: isEn ? 'What is BMR and RMR?' : 'Vad är BMR och RMR?',
+              },
+              {
+                to: isEn ? '/en/articles/what-is-pal-and-met' : '/artiklar/vad-ar-pal-och-met',
+                label: isEn ? 'What is PAL and MET?' : 'Vad är PAL och MET?',
+              },
+              {
+                to: isEn ? '/en/articles/what-is-tdee' : '/artiklar/vad-ar-tdee',
+                label: isEn ? 'What is TDEE?' : 'Vad är TDEE?',
+              },
+              {
+                to: isEn ? '/en/articles/lbm-vs-ffm' : '/artiklar/lbm-vs-ffm',
+                label: isEn ? 'Difference between LBM and FFM?' : 'Skillnad på LBM och FFM?',
+              },
             ].map(({ to, label }) => (
               <Link
                 key={to}

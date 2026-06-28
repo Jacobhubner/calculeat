@@ -40,7 +40,10 @@ interface NavItem {
 }
 
 export default function DashboardNav() {
-  const { t } = useTranslation('common')
+  const { t, i18n } = useTranslation('common')
+  const isEn = i18n.language?.startsWith('en')
+  const calculatorsPath = isEn ? '/en/calculators' : '/kalkylatorer'
+  const articlesPath = isEn ? '/en/articles' : '/artiklar'
   const { user, signOut, userProfile } = useAuth()
   const { sidebarCollapsed, toggleSidebar } = useUIStore()
   const location = useLocation()
@@ -132,8 +135,8 @@ export default function DashboardNav() {
 
   const discreteLinks = [
     { to: '/app/tools/met-calculator', label: t('nav.met'), icon: Flame },
-    { to: '/kalkylatorer', label: t('nav.freeTools'), icon: Calculator },
-    { to: '/artiklar', label: t('nav.articlesHub'), icon: BookOpen },
+    { to: calculatorsPath, label: t('nav.freeTools'), icon: Calculator },
+    { to: articlesPath, label: t('nav.articlesHub'), icon: BookOpen },
   ]
 
   const getInitials = () => {

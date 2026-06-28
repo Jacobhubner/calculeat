@@ -29,7 +29,10 @@ import { Separator } from '../ui/separator'
 import { useSocialBadgeCount } from '@/hooks/useShareInvitations'
 
 export default function MobileDrawer() {
-  const { t } = useTranslation('common')
+  const { t, i18n } = useTranslation('common')
+  const isEn = i18n.language?.startsWith('en')
+  const calculatorsPath = isEn ? '/en/calculators' : '/kalkylatorer'
+  const articlesPath = isEn ? '/en/articles' : '/artiklar'
   const { user, signOut, userProfile } = useAuth()
   const { mobileDrawerOpen, setMobileDrawerOpen } = useUIStore()
   const location = useLocation()
@@ -91,8 +94,8 @@ export default function MobileDrawer() {
 
   const discreteLinks = [
     { to: '/app/tools/met-calculator', label: t('nav.met'), icon: Flame },
-    { to: '/kalkylatorer', label: t('nav.freeTools'), icon: Calculator },
-    { to: '/artiklar', label: t('nav.articlesHub'), icon: BookOpen },
+    { to: calculatorsPath, label: t('nav.freeTools'), icon: Calculator },
+    { to: articlesPath, label: t('nav.articlesHub'), icon: BookOpen },
   ]
 
   const getInitials = () => {
