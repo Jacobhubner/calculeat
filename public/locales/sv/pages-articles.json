@@ -264,7 +264,8 @@
       "s3": {
         "h2": "Hur använder man TDEE i praktiken?",
         "p1Em": "underhållsbehov",
-        "p1": "TDEE är ditt . Beroende på mål:",
+        "p1pre": "TDEE är ditt ",
+        "p1post": ". Beroende på mål:",
         "items": [
           "Viktnedgång: Ät 300–500 kcal under TDEE → ca 0,3–0,5 kg/vecka",
           "Muskeluppbyggnad: Ät 200–400 kcal över TDEE → lean bulk med minimal fettupplagring",
@@ -575,8 +576,9 @@
       "s1": {
         "h2": "Vad är reverse diet?",
         "p1": "Reverse diet är processen att gradvis höja kaloriintaget efter en period av kaloribrist (cut). Istället för att gå direkt från t.ex. 1600 kcal/dag till 2300 kcal/dag, höjer du med 50–100 kcal per vecka tills du når ditt underhållsintag (TDEE).",
+        "p2pre": "Idén bygger på en verklig fysiologisk mekanism: ",
         "p2Strong": "adaptiv termogenes",
-        "p2": "Idén bygger på en verklig fysiologisk mekanism: — den metaboliska nedreglering som sker under längre perioder av kaloribrist. Kroppen sänker sin NEAT (oplanerad rörelse), sköldkörtelhormon och leptinnivåer som svar på energibrist. Det gör att ditt verkliga TDEE under cutten är lägre än det var innan."
+        "p2": "— den metaboliska nedreglering som sker under längre perioder av kaloribrist. Kroppen sänker sin NEAT (oplanerad rörelse), sköldkörtelhormon och leptinnivåer som svar på energibrist. Det gör att ditt verkliga TDEE under cutten är lägre än det var innan."
       },
       "s2": {
         "h2": "När är reverse diet relevant?",
@@ -594,8 +596,9 @@
       },
       "s3": {
         "h2": "När reverse diet inte behövs",
+        "p1pre": "Reverse diet är ",
         "p1Em": "inte",
-        "p1": "Reverse diet är nödvändigt i alla situationer och är ibland onödigt komplicerat:",
+        "p1": "nödvändigt i alla situationer och är ibland onödigt komplicerat:",
         "items": [
           "Du har diäteat i ett måttligt tempo (−300–400 kcal/dag) under 8–12 veckor — metabolisk adaptation är troligtvis minimal.",
           "Du har inte tappat mer än 5–8% av kroppsvikten totalt — ingen stor hormonell störning förväntas.",
@@ -755,8 +758,9 @@
         "h2": "Varför ska du inte äta på ditt BMR?",
         "p1": "BMR är det absoluta minimum — inte ett kalorimål. Att äta exakt på BMR innebär att du ger kroppen precis vad den behöver för att överleva i absolut vila, men ingenting till rörelse, matsmältning eller normal daglig aktivitet.",
         "p2": "Konsekvenserna av att äta på BMR under längre tid inkluderar förlust av muskelmassa, trötthet, hormonella störningar och metabolisk adaptation — kroppen sänker sitt eget BMR för att spara energi. Det gör viktnedgången allt svårare.",
+        "p3pre": "Det rätta är att räkna ut ditt ",
         "p3Strong": "TDEE",
-        "p3": "Det rätta är att räkna ut ditt (BMR × aktivitetsfaktor) och skapa ett måttligt underskott därifrån — typiskt 300–500 kcal/dag för hållbar viktnedgång."
+        "p3": "(BMR × aktivitetsfaktor) och skapa ett måttligt underskott därifrån — typiskt 300–500 kcal/dag för hållbar viktnedgång."
       },
       "s4": {
         "h2": "Från BMR till kalorimål — steg för steg",

@@ -98,9 +98,7 @@ export default function VadArBmrPage() {
         <p>{t('what-is-bmr.body.s3.p1')}</p>
         <p className="mt-3">{t('what-is-bmr.body.s3.p2')}</p>
         <p className="mt-3">
-          {lng === 'en'
-            ? 'The right approach is to calculate your '
-            : 'Det rätta är att räkna ut ditt '}
+          {t('what-is-bmr.body.s3.p3pre')}
           <strong>{t('what-is-bmr.body.s3.p3Strong')}</strong> {t('what-is-bmr.body.s3.p3')}
         </p>
 

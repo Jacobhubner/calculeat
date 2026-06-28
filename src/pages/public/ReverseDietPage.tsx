@@ -88,9 +88,7 @@ export default function ReverseDietPage() {
         </h2>
         <p>{t('reverse-diet.body.s1.p1')}</p>
         <p>
-          {lng === 'en'
-            ? 'The idea is based on a real physiological mechanism: '
-            : 'Idén bygger på en verklig fysiologisk mekanism: '}
+          {t('reverse-diet.body.s1.p2pre')}
           <strong>{t('reverse-diet.body.s1.p2Strong')}</strong> {t('reverse-diet.body.s1.p2')}
         </p>
 
@@ -111,7 +109,7 @@ export default function ReverseDietPage() {
           {t('reverse-diet.body.s3.h2')}
         </h2>
         <p>
-          {lng === 'en' ? 'A reverse diet is ' : 'Reverse diet är '}
+          {t('reverse-diet.body.s3.p1pre')}
           <em>{t('reverse-diet.body.s3.p1Em')}</em> {t('reverse-diet.body.s3.p1')}
         </p>
         <ul className="space-y-2 pl-4 list-disc">

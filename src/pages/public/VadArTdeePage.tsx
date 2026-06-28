@@ -142,8 +142,9 @@ export default function VadArTdeePage() {
           {t('what-is-tdee.body.s3.h2')}
         </h2>
         <p>
-          TDEE {lng === 'en' ? 'is your' : 'är ditt'} <em>{t('what-is-tdee.body.s3.p1Em')}</em>.{' '}
-          {lng === 'en' ? 'Depending on goal:' : 'Beroende på mål:'}
+          {t('what-is-tdee.body.s3.p1pre')}
+          <em>{t('what-is-tdee.body.s3.p1Em')}</em>
+          {t('what-is-tdee.body.s3.p1post')}
         </p>
         <ul className="space-y-2 pl-4 list-disc mt-2">
           {bodyS3Items.map((item, i) => (

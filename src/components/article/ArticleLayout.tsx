@@ -117,7 +117,7 @@ export function ArticleLayout({
         {faqItems && faqItems.length > 0 && (
           <section className="bg-neutral-50 py-14 border-b border-neutral-100">
             <div className="container mx-auto px-4 max-w-3xl">
-              <FaqBlock items={faqItems} />
+              <FaqBlock items={faqItems} title={t('faqTitle')} />
             </div>
           </section>
         )}

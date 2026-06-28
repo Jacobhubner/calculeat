@@ -271,7 +271,8 @@
       "s3": {
         "h2": "How do you use TDEE in practice?",
         "p1Em": "maintenance need",
-        "p1": "TDEE is your . Depending on goal:",
+        "p1pre": "TDEE is your ",
+        "p1post": ". Depending on goal:",
         "items": [
           "Weight loss: Eat 300–500 kcal below TDEE → approx. 0.3–0.5 kg/week",
           "Muscle building: Eat 200–400 kcal above TDEE → lean bulk with minimal fat gain",
@@ -597,8 +598,9 @@
       "s1": {
         "h2": "What is a reverse diet?",
         "p1": "A reverse diet is the process of gradually raising calorie intake after a period of calorie deficit (cut). Instead of going directly from e.g. 1,600 kcal/day to 2,300 kcal/day, you increase by 50–100 kcal per week until you reach your maintenance intake (TDEE).",
+        "p2pre": "The idea is based on a real physiological mechanism: ",
         "p2Strong": "adaptive thermogenesis",
-        "p2": "The idea is based on a real physiological mechanism: — the metabolic downregulation that occurs during prolonged periods of calorie deficit. The body lowers its NEAT (unplanned movement), thyroid hormones and leptin levels in response to energy shortage. This means your actual TDEE during the cut is lower than it was before."
+        "p2": "— the metabolic downregulation that occurs during prolonged periods of calorie deficit. The body lowers its NEAT (unplanned movement), thyroid hormones and leptin levels in response to energy shortage. This means your actual TDEE during the cut is lower than it was before."
       },
       "s2": {
         "h2": "When is a reverse diet relevant?",
@@ -616,8 +618,9 @@
       },
       "s3": {
         "h2": "When a reverse diet is not needed",
+        "p1pre": "A reverse diet is ",
         "p1Em": "not",
-        "p1": "A reverse diet is necessary in all situations and is sometimes unnecessarily complicated:",
+        "p1": "necessary in all situations and is sometimes unnecessarily complicated:",
         "items": [
           "You have dieted at a moderate pace (−300–400 kcal/day) for 8–12 weeks — metabolic adaptation is probably minimal.",
           "You have not lost more than 5–8% of body weight in total — no large hormonal disruption is expected.",
@@ -784,8 +787,9 @@
         "h2": "Why should you not eat at your BMR?",
         "p1": "BMR is the absolute minimum — not a calorie goal. Eating exactly at BMR means giving the body precisely what it needs to survive at complete rest, but nothing for movement, digestion or normal daily activity.",
         "p2": "The consequences of eating at BMR for an extended period include muscle mass loss, fatigue, hormonal disruptions and metabolic adaptation — the body lowers its own BMR to save energy. This makes weight loss increasingly difficult.",
+        "p3pre": "The right approach is to calculate your ",
         "p3Strong": "TDEE",
-        "p3": "The right approach is to calculate your (BMR × activity factor) and create a moderate deficit from there — typically 300–500 kcal/day for sustainable weight loss."
+        "p3": "(BMR × activity factor) and create a moderate deficit from there — typically 300–500 kcal/day for sustainable weight loss."
       },
       "s4": {
         "h2": "From BMR to calorie goal — step by step",
