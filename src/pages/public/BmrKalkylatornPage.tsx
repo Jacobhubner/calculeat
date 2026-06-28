@@ -377,42 +377,26 @@ export default function BmrKalkylatornPage() {
           </div>
         </section>
 
-        {/* Explanation section — prose stays in TSX */}
+        {/* Explanation section */}
         <section className="bg-white py-14 border-b border-neutral-100">
           <div className="container mx-auto px-4 max-w-3xl">
             <div className="space-y-4 text-neutral-700 text-base leading-relaxed">
               <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900">
-                BMR vs TDEE — vad du ska använda
+                {t('bmr-calculator.explanation.h2_1')}
               </h2>
-              <p>
-                BMR är ett mått på din viloförbränning — kroppen i fullständig inaktivitet. Det är
-                ett teoretiskt baslinjevärde, inte ett kalorimål.
-              </p>
-              <p>
-                <strong>TDEE är siffran du faktiskt ska använda.</strong> Oavsett om du vill gå ner
-                i vikt, hålla vikten eller bygga muskler — alla beslut om kalorimål ska utgå från
-                TDEE, inte BMR.
-              </p>
+              <p>{t('bmr-calculator.explanation.p_1')}</p>
+              <p>{t('bmr-calculator.explanation.p_2')}</p>
 
               <div className="rounded-2xl bg-primary-50 border border-primary-200 p-5">
                 <div className="font-semibold text-neutral-800 mb-3">
-                  Varför du inte kan använda BMR som kalorimål
+                  {t('bmr-calculator.explanation.box_title')}
                 </div>
                 <div className="space-y-3">
-                  {[
-                    {
-                      title: 'Du förbränner mer än BMR redan vid vila',
-                      desc: 'NEAT (icke-träningsaktivitet — att stå, gå, gestikulera) lägger till 15–50% ovanpå BMR för de flesta. Din kropp är aldrig i fullständig BMR-vila under en normal dag.',
-                    },
-                    {
-                      title: 'Termisk effekt av mat (TEF)',
-                      desc: 'Matsmältning förbrukar 8–15% av din kalorikonsumtion. Protein har TEF 25–30%. Det räknas inte in i BMR.',
-                    },
-                    {
-                      title: 'Träning adderas ovanpå',
-                      desc: 'En träningssession om 60 minuter kan förbruka 300–600 kcal — allt utöver BMR. Det enda sättet att inkludera detta är via TDEE-multiplikatorn.',
-                    },
-                  ].map(({ title, desc }) => (
+                  {(
+                    t('bmr-calculator.explanation.box_items', {
+                      returnObjects: true,
+                    }) as { title: string; desc: string }[]
+                  ).map(({ title, desc }) => (
                     <div key={title} className="flex gap-3">
                       <div className="w-1.5 h-1.5 rounded-full bg-primary-500 flex-shrink-0 mt-1.5" />
                       <div>
@@ -426,56 +410,39 @@ export default function BmrKalkylatornPage() {
                   to={relatedCalcs[0]?.href ?? t('bmr-calculator.schema.breadcrumb.hubPath')}
                   className="inline-flex items-center gap-2 mt-4 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors"
                 >
-                  Räkna ut ditt TDEE istället
+                  {t('bmr-calculator.explanation.box_link')}
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </div>
 
               <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900 pt-2">
-                Hur BMR beräknas — formlerna
+                {t('bmr-calculator.explanation.h2_2')}
               </h2>
-              <p>
-                CalculEat använder <strong>Mifflin-St Jeor (1990)</strong> som primär formel — den
-                mest validerade för den allmänna befolkningen med normal till medelhög fettprocent.
-              </p>
+              <p>{t('bmr-calculator.explanation.p_3')}</p>
               <div className="rounded-xl border border-neutral-200 overflow-hidden">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="bg-neutral-50 border-b border-neutral-200">
-                      <th className="text-left px-4 py-2 text-xs font-semibold text-neutral-500 uppercase tracking-wider">
-                        Formel
-                      </th>
-                      <th className="text-left px-4 py-2 text-xs font-semibold text-neutral-500 uppercase tracking-wider">
-                        Styrka
-                      </th>
-                      <th className="text-left px-4 py-2 text-xs font-semibold text-neutral-500 uppercase tracking-wider">
-                        Bäst för
-                      </th>
+                      {(
+                        t('bmr-calculator.explanation.table_headers', {
+                          returnObjects: true,
+                        }) as string[]
+                      ).map(header => (
+                        <th
+                          key={header}
+                          className="text-left px-4 py-2 text-xs font-semibold text-neutral-500 uppercase tracking-wider"
+                        >
+                          {header}
+                        </th>
+                      ))}
                     </tr>
                   </thead>
                   <tbody>
-                    {[
-                      {
-                        name: 'Mifflin-St Jeor (1990)',
-                        strength: 'Mest validerad generellt',
-                        best: 'Normal population, ±10%',
-                      },
-                      {
-                        name: 'Harris-Benedict (reviderad)',
-                        strength: 'Lång historik, bred användning',
-                        best: 'Generell population',
-                      },
-                      {
-                        name: 'Cunningham',
-                        strength: 'Kräver fettprocent (LBM-baserad)',
-                        best: 'Atleter, låg fettprocent',
-                      },
-                      {
-                        name: 'Oxford/Henry',
-                        strength: 'WHO-rekommenderad, åldersanpassad',
-                        best: 'Äldre, barn',
-                      },
-                    ].map((row, i) => (
+                    {(
+                      t('bmr-calculator.explanation.table_rows', {
+                        returnObjects: true,
+                      }) as { name: string; strength: string; best: string }[]
+                    ).map((row, i) => (
                       <tr
                         key={row.name}
                         className={`border-b border-neutral-100 last:border-0 ${i % 2 === 0 ? 'bg-white' : 'bg-neutral-50/50'}`}
@@ -488,10 +455,7 @@ export default function BmrKalkylatornPage() {
                   </tbody>
                 </table>
               </div>
-              <p className="text-xs text-neutral-400">
-                Ingen formel är exakt. Alla formler ger ett populationsbaserat estimat — kalibrering
-                mot faktisk vikttrend är den enda metoden som ger ett individuellt exakt resultat.
-              </p>
+              <p className="text-xs text-neutral-400">{t('bmr-calculator.explanation.note')}</p>
             </div>
           </div>
         </section>

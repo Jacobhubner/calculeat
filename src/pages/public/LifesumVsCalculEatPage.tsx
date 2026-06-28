@@ -250,100 +250,75 @@ export default function LifesumVsCalculEatPage() {
             </div>
           </section>
 
-          {/* Article prose — stays in TSX */}
+          {/* Article prose */}
           <section className="space-y-5 text-neutral-700 text-sm leading-relaxed mb-8">
-            <h2 className="text-xl font-semibold text-neutral-900">För vem passar Lifesum?</h2>
-            <p>
-              Lifesum är ett bra val om du vill ha struktur via ett färdigt program snarare än att
-              räkna kalorier manuellt. Det passar dig som:
-            </p>
+            <h2 className="text-xl font-semibold text-neutral-900">
+              {t('lifesum-vs-calculeat.explanation.for_whom_ls_h2')}
+            </h2>
+            <p>{t('lifesum-vs-calculeat.explanation.for_whom_ls_p')}</p>
             <ul className="space-y-1.5 pl-4 list-disc">
-              <li>Vill ha ett färdigt kostprogram att följa (5:2, ketodiet, LCHF etc.)</li>
-              <li>Föredrar recept och måltidsförslag framför fri loggning</li>
-              <li>Inte primärt tränar med mål kring kroppskomposition</li>
-              <li>Vill ha en helhetsapp för kost, hälsa och livsstil i en och samma plattform</li>
+              {(
+                t('lifesum-vs-calculeat.explanation.for_whom_ls_list', {
+                  returnObjects: true,
+                }) as string[]
+              ).map((item, i) => (
+                <li key={i}>{item}</li>
+              ))}
             </ul>
             <p>
-              <strong>Begränsningen:</strong> Lifesums styrka är bredden — kostplaner, recept,
-              hälsoinsikter. Men bredden innebär kompromisser i precision. TDEE-beräkningen är
-              grundläggande, kalorimålet är statiskt och det saknas stöd för seriösa
-              kroppskompositionsmål.
+              <strong>
+                {t('lifesum-vs-calculeat.explanation.for_whom_ls_limitation')
+                  .split(': ')[0]
+                  .replace(/\*\*/g, '')}
+                :
+              </strong>{' '}
+              {t('lifesum-vs-calculeat.explanation.for_whom_ls_limitation')
+                .split(': ')
+                .slice(1)
+                .join(': ')}
             </p>
 
             <h2 className="text-xl font-semibold text-neutral-900 pt-2">
-              För vem passar CalculEat?
+              {t('lifesum-vs-calculeat.explanation.for_whom_ce_h2')}
             </h2>
-            <p>
-              CalculEat passar dig som vill att siffrorna faktiskt stämmer. Det är rätt app om du:
-            </p>
+            <p>{t('lifesum-vs-calculeat.explanation.for_whom_ce_p')}</p>
             <ul className="space-y-1.5 pl-4 list-disc">
-              <li>
-                Vill ha ett <strong>individuellt TDEE</strong> — inte ett populationsgenomsnitt
-              </li>
-              <li>
-                Arbetar med{' '}
-                <Link to="/kalkylatorer/cut-kalkylator" className="text-primary-600 underline">
-                  cut
-                </Link>
-                {'/'}
-                <Link to="/kalkylatorer/bulk-kalkylator" className="text-primary-600 underline">
-                  bulk-cykler
-                </Link>{' '}
-                och behöver rätt kalorimål per fas
-              </li>
-              <li>
-                Märker att loggningen inte ger förväntat resultat och vill ha{' '}
-                <strong>metabolisk kalibrering</strong> — börja med att räkna ut ditt{' '}
-                <Link to="/kalkylatorer/kaloriunderskott" className="text-primary-600 underline">
-                  exakta kaloriunderskott
-                </Link>
-              </li>
-              <li>
-                Planerar eller håller på med en <strong>reverse diet</strong>
-              </li>
-              <li>Vill använda en gratis app utan att låsa upp allt via premium</li>
+              {(
+                t('lifesum-vs-calculeat.explanation.for_whom_ce_list', {
+                  returnObjects: true,
+                }) as string[]
+              ).map((item, i) => (
+                <li key={i}>{item}</li>
+              ))}
             </ul>
 
             <h2 className="text-xl font-semibold text-neutral-900 pt-4">
-              Kostprogram vs kroppskomposition
+              {t('lifesum-vs-calculeat.explanation.diff_h2')}
             </h2>
-            <p>
-              Lifesums modell är: ge användaren ett program att följa. CalculEats modell är: ge
-              användaren rätt tal baserat på deras kropp och mål.
-            </p>
-            <p className="mt-2">
-              Om du följer ett kostprogram och det fungerar för dig behöver du inte byta. Men om du
-              märker att du loggat noggrant men inte ser resultat — eller att du inte vet{' '}
-              <em>varför</em> vikten rör sig eller inte — är precision i TDEE-målet mer värdefullt
-              än fler recept.
-            </p>
+            <p>{t('lifesum-vs-calculeat.explanation.diff_p1')}</p>
+            <p className="mt-2">{t('lifesum-vs-calculeat.explanation.diff_p2')}</p>
 
             <h2 className="text-xl font-semibold text-neutral-900 pt-4">
-              Tre saker Lifesum inte löser
+              {t('lifesum-vs-calculeat.explanation.three_things_h2')}
             </h2>
             <div className="space-y-3 mt-3">
-              {[
-                {
-                  title: 'Fel TDEE från start',
-                  desc: 'Lifesums kalorimål baseras på en standardformel utan kalibrering. Om din metabolism avviker från genomsnittet — och det gör den — är kalorimålet fel från dag ett.',
-                  color: 'bg-red-50 border-red-200',
-                },
-                {
-                  title: 'Inga fasbyten',
-                  desc: 'Ska du byta från cut till maintenance eller starta en bulk? Lifesum saknar inbyggt stöd för fasbyten. Du får manuellt räkna ut och ändra kalorimål — utan vägledning om rätt nivå.',
-                  color: 'bg-orange-50 border-orange-200',
-                },
-                {
-                  title: 'Kalorimålet uppdateras aldrig',
-                  desc: 'Under en cut sjunker ditt TDEE i takt med att du tappar vikt. Lifesums kalorimål är statiskt — det du satte i vecka 1 gäller fortfarande i vecka 12, även om din kropp har förändrats.',
-                  color: 'bg-yellow-50 border-yellow-200',
-                },
-              ].map(({ title, desc, color }) => (
-                <div key={title} className={`rounded-xl border p-4 ${color}`}>
-                  <div className="font-semibold text-neutral-800 mb-1 text-sm">{title}</div>
-                  <div className="text-sm text-neutral-700">{desc}</div>
-                </div>
-              ))}
+              {(
+                t('lifesum-vs-calculeat.explanation.three_things_cards', {
+                  returnObjects: true,
+                }) as { title: string; desc: string }[]
+              ).map(({ title, desc }, i) => {
+                const colors = [
+                  'bg-red-50 border-red-200',
+                  'bg-orange-50 border-orange-200',
+                  'bg-yellow-50 border-yellow-200',
+                ]
+                return (
+                  <div key={i} className={`rounded-xl border p-4 ${colors[i]}`}>
+                    <div className="font-semibold text-neutral-800 mb-1 text-sm">{title}</div>
+                    <div className="text-sm text-neutral-700">{desc}</div>
+                  </div>
+                )
+              })}
             </div>
           </section>
 

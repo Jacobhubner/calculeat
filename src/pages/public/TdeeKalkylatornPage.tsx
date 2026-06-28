@@ -399,58 +399,47 @@ export default function TdeeKalkylatornPage() {
           </div>
         </section>
 
-        {/* Explanation — prose stays in TSX */}
+        {/* Explanation */}
         <section className="bg-white py-14 border-b border-neutral-100">
           <div className="container mx-auto px-4 max-w-3xl">
             <div className="space-y-6 text-neutral-700 leading-relaxed">
               <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900">
-                Hur tolkar du ditt TDEE?
+                {t('tdee-calculator.explanation.h2_1')}
               </h2>
-              <p className="text-base">
-                Ditt TDEE är ditt <strong>underhållsbehov</strong> — den mängd kalorier du behöver
-                äta för att hålla din nuvarande vikt stabil. Beroende på ditt mål justerar du kring
-                detta:
-              </p>
+              <p className="text-base">{t('tdee-calculator.explanation.p_1')}</p>
               <ul className="space-y-3 pl-4 list-disc text-base">
-                <li>
-                  <strong>Viktnedgång:</strong> Ät 300–500 kcal under ditt TDEE. Det ger ca 0,3–0,5
-                  kg i veckan utan att riskera muskelmassaförlust.
-                </li>
-                <li>
-                  <strong>Muskeluppbyggnad:</strong> Ät 200–400 kcal över ditt TDEE. Det ger ett
-                  litet överskott för muskeltillväxt med minimalt fettupplagrande.
-                </li>
-                <li>
-                  <strong>Underhåll:</strong> Matcha ditt TDEE. Bra under pausperioder eller för att
-                  stabilisera vikt efter en kur.
-                </li>
+                {(t('tdee-calculator.explanation.list_1', { returnObjects: true }) as string[]).map(
+                  (item, i) => {
+                    const colonIdx = item.indexOf(': ')
+                    const bold = item.substring(0, colonIdx)
+                    const rest = item.substring(colonIdx + 2)
+                    return (
+                      <li key={i}>
+                        <strong>{bold}:</strong> {rest}
+                      </li>
+                    )
+                  }
+                )}
               </ul>
-              <p className="text-base">
-                Kom ihåg att TDEE-kalkylatorer ger en <em>uppskattning</em>. Det verkliga värdet
-                varierar beroende på muskelmassa, hormonbalans och metabolism. Följ upp din vikt
-                under 2–3 veckor och justera kaloriintaget om du inte ser förväntat resultat.
-              </p>
+              <p className="text-base">{t('tdee-calculator.explanation.p_2')}</p>
 
               <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900 pt-4">
-                Vad påverkar ditt TDEE?
+                {t('tdee-calculator.explanation.h2_2')}
               </h2>
-              <p className="text-base">TDEE består av fyra komponenter:</p>
+              <p className="text-base">{t('tdee-calculator.explanation.p_3')}</p>
               <ul className="space-y-3 pl-4 list-disc text-base">
-                <li>
-                  <strong>BMR (ca 60–75%):</strong> Din basalmetabolism — kalorierna din kropp
-                  förbränner i vila för att hålla organ igång.
-                </li>
-                <li>
-                  <strong>NEAT (15–30%):</strong> Oplanerad rörelse — gå, stå, fidgeta, handla. Ofta
-                  underskattat men kan variera med hundratals kcal.
-                </li>
-                <li>
-                  <strong>EAT (5–10%):</strong> Planerad träning och motion.
-                </li>
-                <li>
-                  <strong>TEF (8–15%):</strong> Matens termiska effekt — kalorierna det kostar att
-                  smälta maten du äter.
-                </li>
+                {(t('tdee-calculator.explanation.list_2', { returnObjects: true }) as string[]).map(
+                  (item, i) => {
+                    const colonIdx = item.indexOf(': ')
+                    const bold = item.substring(0, colonIdx)
+                    const rest = item.substring(colonIdx + 2)
+                    return (
+                      <li key={i}>
+                        <strong>{bold}:</strong> {rest}
+                      </li>
+                    )
+                  }
+                )}
               </ul>
             </div>
           </div>

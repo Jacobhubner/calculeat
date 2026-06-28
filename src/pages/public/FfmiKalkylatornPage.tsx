@@ -798,42 +798,30 @@ export default function FfmiKalkylatornPage() {
         <section className="bg-white py-14 border-b border-neutral-100">
           <div className="container mx-auto px-4 max-w-3xl">
             <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900 mb-5">
-              Vad FFMI mäter — och vad det inte mäter
+              {t('ffmi-calculator.explanation.h2_1')}
             </h2>
             <div className="space-y-4 text-neutral-700 text-base leading-relaxed">
-              <p>
-                FFMI mäter muskelmassa i förhållande till längd. Det är ett bättre mått än BMI för
-                den som tränar eftersom det isolerar fettfri massa och inte straffar muskelvolym.
-              </p>
-              <p>
-                Men det är <strong>inte ett hälsomått</strong> och inte ett styrke- eller
-                prestationsmått. Det är ett fysikmått som ger kontext kring var du befinner dig i
-                muskelutvecklingen — och vad som är ett realistiskt mål.
-              </p>
+              <p>{t('ffmi-calculator.explanation.p_1')}</p>
+              <p>{t('ffmi-calculator.explanation.p_2')}</p>
 
               <div className="space-y-3 mt-2">
-                {[
-                  {
-                    title: 'FFMI vs BMI',
-                    desc: 'En vältränad man, 80 kg och 175 cm (BMI 26,1 — övervikt) med 12% kroppsfett har FFMI 22,2. BMI klassificerar honom som överviktig. FFMI visar att han är i avancerad kategori. För den som tränar är FFMI nästan alltid mer informativt.',
-                    color: 'bg-blue-50 border-blue-200',
-                  },
-                  {
-                    title: 'Naturliga gränser i kontext',
-                    desc: 'Kouri et al. (1995) analyserade naturliga idrottare och fann ett normaliserat FFMI-tak runt 25 för män. Det är en statistisk observation — inte en hård biologisk gräns. Genetiska outliers kan nå 25–26 naturligt. Men det är sällsynt nog att vara ett signifikant avvikande resultat.',
-                    color: 'bg-primary-50 border-primary-200',
-                  },
-                  {
-                    title: 'Hur du förbättrar ditt FFMI',
-                    desc: 'FFMI ökar genom att bygga muskelmassa (bulk med kaloriöverskott + styrketräning) eller behålla muskelmassa medan fettprocent minskar (cut eller recomp). Rätt kalorimål per fas, högt proteinintag (1,6–2,2 g/kg) och progressiv träning är de tre faktorerna som driver FFMI uppåt.',
-                    color: 'bg-green-50 border-green-200',
-                  },
-                ].map(({ title, desc, color }) => (
-                  <div key={title} className={`rounded-xl border p-4 ${color}`}>
-                    <div className="font-semibold text-neutral-800 mb-1">{title}</div>
-                    <div className="text-neutral-700">{desc}</div>
-                  </div>
-                ))}
+                {(
+                  t('ffmi-calculator.explanation.cards', {
+                    returnObjects: true,
+                  }) as { title: string; desc: string }[]
+                ).map(({ title, desc }, i) => {
+                  const colors = [
+                    'bg-blue-50 border-blue-200',
+                    'bg-primary-50 border-primary-200',
+                    'bg-green-50 border-green-200',
+                  ]
+                  return (
+                    <div key={title} className={`rounded-xl border p-4 ${colors[i]}`}>
+                      <div className="font-semibold text-neutral-800 mb-1">{title}</div>
+                      <div className="text-neutral-700">{desc}</div>
+                    </div>
+                  )
+                })}
               </div>
 
               <FfmiReferenceTable t={tSimple} />

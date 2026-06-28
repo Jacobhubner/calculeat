@@ -388,55 +388,49 @@ export default function IdealviktKalkylatornPage() {
           </div>
         </section>
 
-        {/* Explanation section — prose stays in TSX */}
+        {/* Explanation section */}
         <section className="bg-white py-14 border-b border-neutral-100">
           <div className="container mx-auto px-4 max-w-3xl">
             <div className="space-y-4 text-neutral-700 text-base leading-relaxed">
               <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900">
-                Idealvikt är ett riktmärke — inte en kaloriplan
+                {t('idealweight-calculator.explanation.h2_1')}
               </h2>
-              <p>
-                Idealvikt säger dig ett slutmål på vågen. Det säger dig inte hur du tar dig dit, hur
-                snabbt det är rimligt, eller vad du ska äta för att hålla dig där. Det är tre helt
-                olika frågor.
-              </p>
-              <p>
-                De flesta som fokuserar enbart på en målvikt missar den viktigaste variabeln: deras
-                faktiska kaloribehov (TDEE). Utan det loggat mot ett korrekt mål rör sig kroppen
-                inte i rätt riktning — oavsett hur rätt idealvikten är.
-              </p>
+              <p>{t('idealweight-calculator.explanation.p_1')}</p>
+              <p>{t('idealweight-calculator.explanation.p_2')}</p>
 
               <h3 className="text-lg font-semibold text-neutral-800 mt-4">
-                Vad idealvikt inte tar hänsyn till
+                {t('idealweight-calculator.explanation.h3_1')}
               </h3>
               <ul className="space-y-1.5 pl-4 list-disc">
-                <li>
-                  <strong>Muskelmassa</strong> — en vältränad person kan väga 5–10 kg mer än
-                  idealviktsformeln och ha utmärkt hälsa
-                </li>
-                <li>
-                  <strong>Fettprocent</strong> — samma vikt kan innebära 15% eller 30% kroppsfett
-                  beroende på träningsnivå
-                </li>
-                <li>
-                  <strong>Aktivitetsnivå</strong> — kaloribehov varierar kraftigt med träning, och
-                  formeln justerar inte för det
-                </li>
-                <li>
-                  <strong>Metabolism</strong> — adaptiv termogenes vid lång kaloribrist gör att en
-                  statisk idealviktssiffra inte hjälper dig att planera en realistisk tidslinje
-                </li>
+                {(
+                  t('idealweight-calculator.explanation.list_1', {
+                    returnObjects: true,
+                  }) as string[]
+                ).map((item, i) => {
+                  const dashIdx = item.indexOf(' — ')
+                  const bold = item.substring(2, dashIdx - 2)
+                  const rest = item.substring(dashIdx)
+                  return (
+                    <li key={i}>
+                      <strong>{bold}</strong>
+                      {rest}
+                    </li>
+                  )
+                })}
               </ul>
 
               <div className="rounded-xl bg-primary-50 border border-primary-200 p-5 mt-4">
                 <div className="font-semibold text-neutral-800 mb-2">
-                  Hur du faktiskt når din målvikt
+                  {t('idealweight-calculator.explanation.box_title')}
                 </div>
                 <ol className="space-y-1.5 pl-4 list-decimal text-base text-neutral-700">
-                  <li>Räkna ut ditt TDEE (totalt kaloribehov per dag)</li>
-                  <li>Sätt ett kalorimål med lagom underskott — 300–500 kcal/dag</li>
-                  <li>Ät 1,6–2,2 g protein per kg kroppsvikt för att skydda muskelmassa</li>
-                  <li>Justera kalorimålet var 2–3 vecka baserat på faktisk vikttrend</li>
+                  {(
+                    t('idealweight-calculator.explanation.box_steps', {
+                      returnObjects: true,
+                    }) as string[]
+                  ).map((step, i) => (
+                    <li key={i}>{step}</li>
+                  ))}
                 </ol>
                 <Link
                   to={
@@ -444,7 +438,7 @@ export default function IdealviktKalkylatornPage() {
                   }
                   className="inline-flex items-center gap-2 mt-4 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors"
                 >
-                  Starta med TDEE-kalkylatorn
+                  {t('idealweight-calculator.explanation.box_link')}
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </div>

@@ -469,62 +469,41 @@ export default function BulkKalkylatornPage() {
           </div>
         </section>
 
-        {/* Explanation section — prose stays in TSX */}
+        {/* Explanation section */}
         <section className="bg-white py-14 border-b border-neutral-100">
           <div className="container mx-auto px-4 max-w-3xl">
             <div className="space-y-5 text-neutral-700 text-base leading-relaxed">
               <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900">
-                Lean bulk vs dirty bulk — vad är skillnaden?
+                {t('bulk-calculator.explanation.h2_1')}
               </h2>
-              <p>
-                Lean bulk innebär ett kontrollerat överskott på +150–350 kcal/dag. Du bygger muskler
-                med minimalt fettupplagrande och behåller din definition under hela fasen. Det tar
-                längre tid men kräver en kortare (eller ingen) efterföljande cut.
-              </p>
-              <p>
-                Dirty bulk innebär att äta utan tak — snabb viktuppgång men stor andel är fett som
-                sedan kräver en lång, tuff cut-fas. Nettoresultatet är ofta sämre än en välplanerad
-                lean bulk.
-              </p>
-              <p>
-                <strong>Undantag:</strong> Hardgainers och nybörjare kan ha svårt att äta
-                tillräckligt på lean bulk. I sådana fall är ett aggressivare överskott (+400–600
-                kcal/dag) acceptabelt — muskeltillväxten är snabbare relativt fettupplagrandet för
-                dem.
-              </p>
+              <p>{t('bulk-calculator.explanation.p_1')}</p>
+              <p>{t('bulk-calculator.explanation.p_2')}</p>
+              <p>{t('bulk-calculator.explanation.p_3')}</p>
 
               <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900 pt-4">
-                Hur snabbt kan man bygga muskler?
+                {t('bulk-calculator.explanation.h2_2')}
               </h2>
-              <p>
-                Muskelproteinsyntes är biologiskt begränsad. Forskning visar att naturliga lyftare
-                kan förvänta sig:
-              </p>
+              <p>{t('bulk-calculator.explanation.p_4')}</p>
               <ul className="space-y-2 pl-4 list-disc">
-                <li>
-                  <strong>Nybörjare (0–1 år):</strong> 1–1,5 kg muskelmassa per månad vid optimal
-                  kost och träning
-                </li>
-                <li>
-                  <strong>Intermediär (1–3 år):</strong> 0,5–1 kg per månad
-                </li>
-                <li>
-                  <strong>Avancerad (3+ år):</strong> 0,25–0,5 kg per månad
-                </li>
+                {(t('bulk-calculator.explanation.list_1', { returnObjects: true }) as string[]).map(
+                  (item, i) => {
+                    const colonIdx = item.indexOf(':')
+                    const bold = item.substring(2, colonIdx - 2)
+                    const rest = item.substring(colonIdx + 2)
+                    return (
+                      <li key={i}>
+                        <strong>{bold}:</strong> {rest}
+                      </li>
+                    )
+                  }
+                )}
               </ul>
-              <p>
-                Det innebär att du inte kan bygga mer muskler genom att äta mer — du lagrar bara mer
-                fett. Härav vikten av ett kontrollerat överskott.
-              </p>
+              <p>{t('bulk-calculator.explanation.p_5')}</p>
 
               <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900 pt-4">
-                Hur länge ska man bulka?
+                {t('bulk-calculator.explanation.h2_3')}
               </h2>
-              <p>
-                En typisk bulk-fas pågår 3–6 månader. Avbryt och gå in i en cut-fas när
-                fettprocenten stigit till 18–20% (man) eller 28–30% (kvinna), eller när du nått
-                önskad kroppsvikt. Alternativt: planera in bulk/cut-cykler på 3 månader vardera.
-              </p>
+              <p>{t('bulk-calculator.explanation.p_6')}</p>
             </div>
           </div>
         </section>

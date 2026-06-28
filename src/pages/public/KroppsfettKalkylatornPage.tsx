@@ -537,60 +537,54 @@ export default function KroppsfettKalkylatornPage() {
           </div>
         </section>
 
-        {/* Context/explanation section — prose stays in TSX */}
+        {/* Context/explanation section */}
         <section className="bg-white py-14 border-b border-neutral-100">
           <div className="container mx-auto px-4 max-w-3xl">
             <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900 mb-5">
-              Varför kroppsfett är mer användbart än BMI
+              {t('bodyfat-calculator.explanation.h2_1')}
             </h2>
             <p className="text-base text-neutral-700 leading-relaxed mb-6">
-              BMI berättar bara om förhållandet mellan din vikt och längd. Det skiljer inte på
-              muskler och fett — vilket är det enda som faktiskt spelar roll för hälsa och
-              kroppskomposition.
+              {t('bodyfat-calculator.explanation.p_1')}
             </p>
             <div className="space-y-3 mb-8">
-              {[
-                {
-                  title: 'Samma BMI — helt olika kroppssammansättning',
-                  desc: 'En vältränad person med 75 kg och 175 cm (BMI 24,5) kan ha 12% kroppsfett. En inaktiv person med samma mått kan ha 28%. BMI ser identiskt ut — kroppen är fundamentalt annorlunda.',
-                  color: 'bg-blue-50 border-blue-200',
-                },
-                {
-                  title: 'Fettprocent styr ditt faktiska kalorimål',
-                  desc: 'Lean body mass (LBM) är den starkaste prediktorn för BMR. Ju mer muskelmassa du har, desto högre är ditt kaloribehov. Två personer med samma vikt och aktivitetsnivå kan ha 200–300 kcal skillnad i TDEE enbart p.g.a. skillnad i LBM.',
-                  color: 'bg-primary-50 border-primary-200',
-                },
-                {
-                  title: 'Bryggan till FFMI och muskeluppbyggnad',
-                  desc: 'FFMI (Fat Free Mass Index) mäter muskelmassa i relation till längd och är det bästa måttet för den som tränar. Det beräknas direkt från din fettprocent och vikt — och ger ett mycket mer precist mål att jobba mot än en idealviktssiffra.',
-                  color: 'bg-green-50 border-green-200',
-                },
-              ].map(({ title, desc, color }) => (
-                <div key={title} className={`rounded-xl border p-4 ${color}`}>
-                  <div className="font-semibold text-neutral-800 mb-1">{title}</div>
-                  <div className="text-base text-neutral-700">{desc}</div>
-                </div>
-              ))}
+              {(
+                t('bodyfat-calculator.explanation.cards', {
+                  returnObjects: true,
+                }) as { title: string; desc: string }[]
+              ).map(({ title, desc }, i) => {
+                const colors = [
+                  'bg-blue-50 border-blue-200',
+                  'bg-primary-50 border-primary-200',
+                  'bg-green-50 border-green-200',
+                ]
+                return (
+                  <div key={title} className={`rounded-xl border p-4 ${colors[i]}`}>
+                    <div className="font-semibold text-neutral-800 mb-1">{title}</div>
+                    <div className="text-base text-neutral-700">{desc}</div>
+                  </div>
+                )
+              })}
             </div>
 
             <h3 className="text-lg font-semibold text-neutral-800 mb-3">
-              Hur du mäter rätt (US Navy Method)
+              {t('bodyfat-calculator.explanation.h3_1')}
             </h3>
             <ul className="space-y-1.5 pl-4 list-disc text-base text-neutral-700 leading-relaxed">
-              <li>
-                <strong>Midjemått:</strong> Mät horisontellt vid naveln — inte vid det smalaste
-                stället. Håll bandet snug men utan att trycka in huden.
-              </li>
-              <li>
-                <strong>Halsmått:</strong> Mät precis under adamsäpplet. Håll bandet plant runt
-                halsen.
-              </li>
-              <li>
-                <strong>Höftmått (kvinnor):</strong> Mät vid det bredaste stället på höfterna.
-              </li>
-              <li>
-                Mät alltid på morgonen, fastande, och på samma dag i veckan för jämförbara resultat.
-              </li>
+              {(
+                t('bodyfat-calculator.explanation.list_1', { returnObjects: true }) as string[]
+              ).map((item, i) => {
+                const colonIdx = item.indexOf(':')
+                if (item.startsWith('**') && colonIdx > 0) {
+                  const bold = item.substring(2, colonIdx - 2)
+                  const rest = item.substring(colonIdx + 2)
+                  return (
+                    <li key={i}>
+                      <strong>{bold}:</strong> {rest}
+                    </li>
+                  )
+                }
+                return <li key={i}>{item}</li>
+              })}
             </ul>
           </div>
         </section>

@@ -472,55 +472,41 @@ export default function KaloriunderskottKalkylatornPage() {
           </div>
         </section>
 
-        {/* Explanation section — prose stays in TSX */}
+        {/* Explanation section */}
         <section className="bg-white py-14 border-b border-neutral-100">
           <div className="container mx-auto px-4 max-w-3xl">
             <div className="space-y-5 text-neutral-700 text-base leading-relaxed">
               <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900">
-                Hur stort kaloriunderskott är optimalt?
+                {t('calorie-deficit-calculator.explanation.h2_1')}
               </h2>
-              <p>
-                Det optimala underskottet beror på hur mycket fett du har att tappa och hur snabbt
-                du vill nå målet. Generella riktlinjer:
-              </p>
+              <p>{t('calorie-deficit-calculator.explanation.p_1')}</p>
               <ul className="space-y-2 pl-4 list-disc">
-                <li>
-                  <strong>200–300 kcal/dag (mild):</strong> Lämplig om du är nära målvikt, ny på
-                  viktnedgång eller vill minimera muskelförlust. Långsamt men hållbart.
-                </li>
-                <li>
-                  <strong>300–500 kcal/dag (måttlig):</strong> Den vetenskapliga standarden. Ger
-                  0,3–0,5 kg/vecka — tillräckligt snabbt för att se resultat utan att kompromissa
-                  med muskelmassa.
-                </li>
-                <li>
-                  <strong>500–1000 kcal/dag (aggressiv):</strong> Acceptabelt vid hög fettprocent.
-                  Kräver högt proteinintag (2,0–2,2 g/kg) och styrketräning för att skydda muskler.
-                </li>
+                {(
+                  t('calorie-deficit-calculator.explanation.list_1', {
+                    returnObjects: true,
+                  }) as string[]
+                ).map((item, i) => {
+                  const colonIdx = item.indexOf(':')
+                  const bold = item.substring(0, colonIdx)
+                  const rest = item.substring(colonIdx + 2)
+                  return (
+                    <li key={i}>
+                      <strong>{bold}:</strong> {rest}
+                    </li>
+                  )
+                })}
               </ul>
 
               <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900 pt-4">
-                Varför planar vikten ut?
+                {t('calorie-deficit-calculator.explanation.h2_2')}
               </h2>
-              <p>
-                Vid lång kaloribrist sänker kroppen sin ämnesomsättning som försvar — adaptiv
-                termogenes. NEAT (oplanerad rörelse) minskar instinktivt och BMR sjunker något.
-              </p>
-              <p>
-                <strong>Lösning:</strong> Ta en <em>diet break</em> på 1–2 veckor på underhållsintag
-                (ditt TDEE) var 8–12:e vecka. Det återställer hormonbalansen och gör nästa dietfas
-                effektivare. Det är inte ett misslyckande — det är strategi.
-              </p>
+              <p>{t('calorie-deficit-calculator.explanation.p_2')}</p>
+              <p>{t('calorie-deficit-calculator.explanation.p_3')}</p>
 
               <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900 pt-4">
-                Proteinets roll
+                {t('calorie-deficit-calculator.explanation.h2_3')}
               </h2>
-              <p>
-                Det viktigaste du kan göra för att bevara muskelmassa under kaloribrist är
-                tillräckligt proteinintag. Forskning stöder 1,6–2,2 g protein per kg kroppsvikt.
-                Protein har dessutom hög mättnadseffekt och hög TEF (ca 25–30% av proteinkalorierna
-                används till att smälta proteinet) — vilket gör det extra värdefullt under en kur.
-              </p>
+              <p>{t('calorie-deficit-calculator.explanation.p_4')}</p>
             </div>
           </div>
         </section>

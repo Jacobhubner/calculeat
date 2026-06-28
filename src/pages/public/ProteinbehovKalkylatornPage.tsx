@@ -480,133 +480,102 @@ export default function ProteinbehovKalkylatornPage() {
           </div>
         </section>
 
-        {/* Explanation section — prose stays in TSX */}
+        {/* Explanation section */}
         <section className="bg-white py-14 border-b border-neutral-100">
           <div className="container mx-auto px-4 max-w-3xl">
             <div className="space-y-5 text-neutral-700 text-base leading-relaxed">
               <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900">
-                Varför skiljer sig proteinbehovet beroende på mål?
+                {t('protein-calculator.explanation.h2_1')}
               </h2>
-              <p>Protein fyller olika funktioner beroende på vad din kropp är i för fas:</p>
+              <p>{t('protein-calculator.explanation.p_1')}</p>
               <ul className="space-y-3 pl-4 list-disc">
-                <li>
-                  <strong>Under viktnedgång (cut):</strong> Kroppen saknar kalorier och riskerar att
-                  bryta ned muskelvävnad för energi. Högt proteinintag (1,8–2,4 g/kg vid regelbunden
-                  träning) motverkar muskelkatabolism, ger hög mättnadseffekt och har hög termisk
-                  effekt (TEF).
-                </li>
-                <li>
-                  <strong>Under underhåll (maintenance):</strong> Du behöver protein för att
-                  reparera och bevara muskelvävnad, stötta immunsystem och enzymer. 1,4–1,8 g/kg
-                  räcker för de flesta aktiva.
-                </li>
-                <li>
-                  <strong>Under muskeluppbyggnad (bulk):</strong> Protein är råmaterialet för nya
-                  muskelfibrer. 1,6–2,2 g/kg är det vetenskapligt stödda optimala intervallet
-                  (Morton et al., 2018). Mer ger troligtvis inga ytterligare fördelar.
-                </li>
+                {(
+                  t('protein-calculator.explanation.list_1', { returnObjects: true }) as string[]
+                ).map((item, i) => {
+                  const colonIdx = item.indexOf(':')
+                  const bold = item.substring(2, colonIdx - 2)
+                  const rest = item.substring(colonIdx + 2)
+                  return (
+                    <li key={i}>
+                      <strong>{bold}:</strong> {rest}
+                    </li>
+                  )
+                })}
               </ul>
 
-              {/* Reference table — stays in TSX */}
+              {/* Reference table */}
               <div className="overflow-x-auto rounded-xl border border-neutral-200 mt-6">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="bg-neutral-100 text-left">
-                      <th className="px-4 py-3 font-semibold text-neutral-700 border-b border-neutral-200" />
-                      <th className="px-4 py-3 font-semibold text-neutral-700 border-b border-neutral-200">
-                        Inaktiv
-                      </th>
-                      <th className="px-4 py-3 font-semibold text-neutral-700 border-b border-neutral-200">
-                        Tränar regelbundet
-                      </th>
-                      <th className="px-4 py-3 font-semibold text-neutral-700 border-b border-neutral-200">
-                        Elit
-                      </th>
+                      {(
+                        t('protein-calculator.explanation.table_headers', {
+                          returnObjects: true,
+                        }) as string[]
+                      ).map((header, i) => (
+                        <th
+                          key={i}
+                          className="px-4 py-3 font-semibold text-neutral-700 border-b border-neutral-200"
+                        >
+                          {header}
+                        </th>
+                      ))}
                     </tr>
                   </thead>
                   <tbody>
-                    <tr className="border-b border-neutral-100">
-                      <td className="px-4 py-3 font-medium text-neutral-700 bg-neutral-50">
-                        Viktnedgång
-                      </td>
-                      <td className="px-4 py-3 text-neutral-600">1,2–1,6 g/kg</td>
-                      <td className="px-4 py-3 text-neutral-600">1,8–2,4 g/kg</td>
-                      <td className="px-4 py-3 text-neutral-600">2,2–2,6 g/kg</td>
-                    </tr>
-                    <tr className="border-b border-neutral-100">
-                      <td className="px-4 py-3 font-medium text-neutral-700 bg-neutral-50">
-                        Viktstabilisering
-                      </td>
-                      <td className="px-4 py-3 text-neutral-600">0,8–1,2 g/kg</td>
-                      <td className="px-4 py-3 text-neutral-600">1,4–1,8 g/kg</td>
-                      <td className="px-4 py-3 text-neutral-600">1,6–2,0 g/kg</td>
-                    </tr>
-                    <tr>
-                      <td className="px-4 py-3 font-medium text-neutral-700 bg-neutral-50">
-                        Muskeluppbyggnad
-                      </td>
-                      <td className="px-4 py-3 text-neutral-600">1,2–1,6 g/kg</td>
-                      <td className="px-4 py-3 text-neutral-600">1,6–2,2 g/kg</td>
-                      <td className="px-4 py-3 text-neutral-600">1,8–2,4 g/kg</td>
-                    </tr>
+                    {(
+                      t('protein-calculator.explanation.table_rows', {
+                        returnObjects: true,
+                      }) as { label: string; cols: string[] }[]
+                    ).map((row, ri) => (
+                      <tr key={ri} className={ri < 2 ? 'border-b border-neutral-100' : ''}>
+                        <td className="px-4 py-3 font-medium text-neutral-700 bg-neutral-50">
+                          {row.label}
+                        </td>
+                        {row.cols.map((col, ci) => (
+                          <td key={ci} className="px-4 py-3 text-neutral-600">
+                            {col}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
               <p className="text-xs text-neutral-400 mt-2">
-                Intervallen baseras på Phillips &amp; Van Loon (2011), Morton et al. (2018) och ISSN
-                Position Stand (2017). Värden anges per kg total kroppsvikt.
+                {t('protein-calculator.explanation.table_note')}
               </p>
 
               <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900 pt-4">
-                Varför frågar kalkylatorn om träningsstatus och inte aktivitetsnivå?
+                {t('protein-calculator.explanation.h2_2')}
               </h2>
-              <p>
-                Generell aktivitetsnivå — hur många steg du tar, PAL-värde, hur aktiv du är på
-                jobbet — driver kaloribehovet (TDEE), men inte proteinbehovet i samma utsträckning.
-                Proteinbehov i litteraturen är primärt kopplat till träningsstatus och träningstyp:
-                styrketräning stimulerar muskelproteinsyntes direkt och kräver mer protein än en
-                aktiv kontorsdag med promenader.
-              </p>
-              <p>
-                Kalkylatorn använder därför fasta, evidensbaserade intervall per kombination av mål
-                och träningsstatus — utan linjära bonussteg.
-              </p>
+              <p>{t('protein-calculator.explanation.p_2')}</p>
+              <p>{t('protein-calculator.explanation.p_3')}</p>
 
               <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900 pt-4">
-                Hur fördela protein på dagen?
+                {t('protein-calculator.explanation.h2_3')}
               </h2>
-              <p>
-                Kroppen kan effektivt utnyttja ca 20–40 g protein per måltid för
-                muskelproteinsyntes. Att äta 150 g protein i en enda måltid är suboptimalt — sprid
-                ut intaget jämnt över 3–5 måltider. Det ger ett kontinuerligt flöde av aminosyror
-                till muskelvävnaden.
-              </p>
-              <p>
-                <strong>Praktisk tumregel:</strong> Sikta på 30–40 g protein per måltid, 3–4 gånger
-                om dagen. Det är lättare att nå och ger bättre mättnadseffekt än få, stora
-                portioner.
-              </p>
+              <p>{t('protein-calculator.explanation.p_4')}</p>
+              <p>{t('protein-calculator.explanation.p_5')}</p>
 
               <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900 pt-4">
-                De bästa proteinkällorna
+                {t('protein-calculator.explanation.h2_4')}
               </h2>
-              <p>
-                Kompletta proteiner (med alla essentiella aminosyror) ger störst stimulans av
-                muskelproteinsyntes:
-              </p>
+              <p>{t('protein-calculator.explanation.p_6')}</p>
               <ul className="space-y-1.5 pl-4 list-disc">
-                <li>
-                  <strong>Animaliska:</strong> kyckling (31 g/100 g), torsk (23 g/100 g), ägg (13
-                  g/100 g), cottage cheese (11 g/100 g), quark (11 g/100 g)
-                </li>
-                <li>
-                  <strong>Vegetabiliska:</strong> linser (9 g/100 g kokt), tofu (8 g/100 g), edamame
-                  (11 g/100 g), kvarg, bönor
-                </li>
-                <li>
-                  <strong>Komplement:</strong> Proteinpulver (whey, kasein, ärt) är ett praktiskt
-                  komplement — inte en ersättning för riktig mat
-                </li>
+                {(
+                  t('protein-calculator.explanation.list_2', { returnObjects: true }) as string[]
+                ).map((item, i) => {
+                  const colonIdx = item.indexOf(':')
+                  const bold = item.substring(2, colonIdx - 2)
+                  const rest = item.substring(colonIdx + 2)
+                  return (
+                    <li key={i}>
+                      <strong>{bold}:</strong>
+                      {rest}
+                    </li>
+                  )
+                })}
               </ul>
             </div>
           </div>

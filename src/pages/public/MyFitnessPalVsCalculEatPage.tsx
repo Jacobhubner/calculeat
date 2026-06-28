@@ -239,120 +239,79 @@ export default function MyFitnessPalVsCalculEatPage() {
             </div>
           </section>
 
-          {/* Article prose — stays in TSX */}
+          {/* Article prose */}
           <section className="space-y-5 text-neutral-700 text-sm leading-relaxed mb-8">
-            <h2 className="text-xl font-semibold text-neutral-900">För vem passar MyFitnessPal?</h2>
-            <p>
-              MyFitnessPal är ett utmärkt val om du primärt vill logga mat utan att tänka för mycket
-              på precision. Det passar dig som:
-            </p>
+            <h2 className="text-xl font-semibold text-neutral-900">
+              {t('myfitnesspal-vs-calculeat.explanation.for_whom_mfp_h2')}
+            </h2>
+            <p>{t('myfitnesspal-vs-calculeat.explanation.for_whom_mfp_p')}</p>
             <ul className="space-y-1.5 pl-4 list-disc">
-              <li>Vill ha tillgång till en stor matdatabas med hundratals miljoner livsmedel</li>
-              <li>Redan har ett kalorimål du är nöjd med och bara vill hålla koll</li>
-              <li>
-                Använder andra appar eller enheter (Garmin, Fitbit) och vill synkronisera data
-              </li>
-              <li>Inte primärt tränar med kroppskompositionsmål</li>
+              {(
+                t('myfitnesspal-vs-calculeat.explanation.for_whom_mfp_list', {
+                  returnObjects: true,
+                }) as string[]
+              ).map((item, i) => (
+                <li key={i}>{item}</li>
+              ))}
             </ul>
             <p>
-              <strong>Begränsningen:</strong> MyFitnessPal ger dig ett kalorimål — men anpassar det
-              inte automatiskt till om du bulkar, cutter, ska börja reverse dieta eller om din
-              metabolism har förändrats. Det manuella arbetet faller på dig.
+              <strong>
+                {t('myfitnesspal-vs-calculeat.explanation.for_whom_mfp_limitation')
+                  .split(': ')[0]
+                  .replace(/\*\*/g, '')}
+                :
+              </strong>{' '}
+              {t('myfitnesspal-vs-calculeat.explanation.for_whom_mfp_limitation')
+                .split(': ')
+                .slice(1)
+                .join(': ')}
             </p>
 
             <h2 className="text-xl font-semibold text-neutral-900 pt-2">
-              För vem passar CalculEat?
+              {t('myfitnesspal-vs-calculeat.explanation.for_whom_ce_h2')}
             </h2>
-            <p>
-              CalculEat är byggt för den som vill att kaloriloggningen ska driva faktiska resultat —
-              inte bara dokumentera vad man ätit. Det passar dig som:
-            </p>
+            <p>{t('myfitnesspal-vs-calculeat.explanation.for_whom_ce_p')}</p>
             <ul className="space-y-1.5 pl-4 list-disc">
-              <li>
-                Vill ha ett <strong>exakt TDEE</strong> baserat på din kropp, inte en
-                populationsformel
-              </li>
-              <li>
-                Arbetar med{' '}
-                <Link to="/kalkylatorer/cut-kalkylator" className="text-primary-600 underline">
-                  cut
-                </Link>
-                {'/'}
-                <Link to="/kalkylatorer/bulk-kalkylator" className="text-primary-600 underline">
-                  bulk-cykler
-                </Link>{' '}
-                och behöver separata mål per fas
-              </li>
-              <li>
-                Planerar eller håller på med en <strong>reverse diet</strong> efter en längre{' '}
-                <Link to="/kalkylatorer/kaloriunderskott" className="text-primary-600 underline">
-                  kaloriunderskott
-                </Link>
-              </li>
-              <li>
-                Vill ha <strong>proteinmål anpassat till fasen</strong> (högre under cut, lägre
-                under bulk)
-              </li>
-              <li>
-                Trött på att vikten inte reagerar som förväntat och vill ha{' '}
-                <strong>metabolisk kalibrering</strong> baserat på verklig viktdata
-              </li>
+              {(
+                t('myfitnesspal-vs-calculeat.explanation.for_whom_ce_list', {
+                  returnObjects: true,
+                }) as string[]
+              ).map((item, i) => (
+                <li key={i}>{item}</li>
+              ))}
             </ul>
 
             <h2 className="text-xl font-semibold text-neutral-900 pt-4">
-              Den största skillnaden i praktiken
+              {t('myfitnesspal-vs-calculeat.explanation.diff_h2')}
             </h2>
-            <p>
-              MyFitnessPal frågar: <em>&ldquo;Hur mycket vill du väga?&rdquo;</em> och ger dig ett
-              generiskt kalorimål.
-            </p>
-            <p>
-              CalculEat frågar:{' '}
-              <em>
-                &ldquo;Vad är ditt faktiska TDEE just nu, i vilken fas är du, och hur ska ditt
-                kalorimål justeras utifrån hur din kropp faktiskt svarar?&rdquo;
-              </em>
-            </p>
-            <p>
-              Det är skillnaden mellan att gissa och att mäta. De flesta som loggat länge i
-              MyFitnessPal utan resultat loggade rätt — men mot fel mål.
-            </p>
+            <p>{t('myfitnesspal-vs-calculeat.explanation.diff_p1')}</p>
+            <p>{t('myfitnesspal-vs-calculeat.explanation.diff_p2')}</p>
+            <p>{t('myfitnesspal-vs-calculeat.explanation.diff_p3')}</p>
 
             <h2 className="text-xl font-semibold text-neutral-900 pt-4">
-              Varför &ldquo;bara logga kalorier&rdquo; ofta inte räcker
+              {t('myfitnesspal-vs-calculeat.explanation.why_h2')}
             </h2>
-            <p>
-              Kaloriloggning är ett verktyg, inte ett mål. Det ger värde bara om det kopplas till
-              ett korrekt och dynamiskt kalorimål. Tre vanliga problem med statisk loggning:
-            </p>
+            <p>{t('myfitnesspal-vs-calculeat.explanation.why_p')}</p>
             <div className="space-y-3 mt-3">
-              {[
-                {
-                  title: 'TDEE-felet',
-                  desc: 'Du loggar mot 1800 kcal för att en app sa det. Men ditt faktiska TDEE är 2100 eller 1600. Resultaten stämmer inte — men du vet inte varför.',
-                  color: 'bg-red-50 border-red-200',
-                },
-                {
-                  title: 'Fasblandningen',
-                  desc: 'Du äter på ett cut-mål men egentligen är du i maintenance-fas. Kroppen anpassar sig nedåt och du tappar muskler, inte fett.',
-                  color: 'bg-orange-50 border-orange-200',
-                },
-                {
-                  title: 'Metabolisk drift',
-                  desc: 'Efter 12 veckors cut är ditt TDEE 150–300 kcal lägre än det var vid start. Kalorimålet du satte i vecka 1 stämmer inte i vecka 12.',
-                  color: 'bg-yellow-50 border-yellow-200',
-                },
-              ].map(({ title, desc, color }) => (
-                <div key={title} className={`rounded-xl border p-4 ${color}`}>
-                  <div className="font-semibold text-neutral-800 mb-1 text-sm">{title}</div>
-                  <div className="text-sm text-neutral-700">{desc}</div>
-                </div>
-              ))}
+              {(
+                t('myfitnesspal-vs-calculeat.explanation.why_cards', {
+                  returnObjects: true,
+                }) as { title: string; desc: string }[]
+              ).map(({ title, desc }, i) => {
+                const colors = [
+                  'bg-red-50 border-red-200',
+                  'bg-orange-50 border-orange-200',
+                  'bg-yellow-50 border-yellow-200',
+                ]
+                return (
+                  <div key={i} className={`rounded-xl border p-4 ${colors[i]}`}>
+                    <div className="font-semibold text-neutral-800 mb-1 text-sm">{title}</div>
+                    <div className="text-sm text-neutral-700">{desc}</div>
+                  </div>
+                )
+              })}
             </div>
-            <p className="mt-4">
-              CalculEat löser alla tre: TDEE beräknas individuellt, justeras baserat på faktisk
-              viktdata, och kalorimålet uppdateras automatiskt när du byter fas.
-            </p>
+            <p className="mt-4">{t('myfitnesspal-vs-calculeat.explanation.why_outro')}</p>
           </section>
 
           {/* Mid-page CTA */}

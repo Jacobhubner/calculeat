@@ -120,6 +120,24 @@
         { "href": "/en/articles/calorie-needs", "label": "Calorie needs — complete guide" }
       ]
     },
+    "explanation": {
+      "h2_1": "How do you interpret your TDEE?",
+      "p_1": "Your TDEE is your **maintenance requirement** — the amount of calories you need to eat to keep your current weight stable. Depending on your goal, adjust around this:",
+      "list_1": [
+        "Weight loss: Eat 300–500 kcal below your TDEE. This gives about 0.3–0.5 kg per week without risking muscle loss.",
+        "Muscle building: Eat 200–400 kcal above your TDEE. This gives a small surplus for muscle growth with minimal fat gain.",
+        "Maintenance: Match your TDEE. Good during rest periods or to stabilize weight after a cut."
+      ],
+      "p_2": "Remember that TDEE calculators give an *estimate*. The actual value varies depending on muscle mass, hormonal balance, and metabolism. Track your weight for 2–3 weeks and adjust your calorie intake if you don't see the expected result.",
+      "h2_2": "What affects your TDEE?",
+      "p_3": "TDEE consists of four components:",
+      "list_2": [
+        "BMR (approx. 60–75%): Your basal metabolic rate — the calories your body burns at rest to keep organs running.",
+        "NEAT (15–30%): Unplanned movement — walking, standing, fidgeting, shopping. Often underestimated but can vary by hundreds of kcal.",
+        "EAT (5–10%): Planned exercise and sport.",
+        "TEF (8–15%): The thermic effect of food — the calories it costs to digest what you eat."
+      ]
+    },
     "schema": {
       "webAppName": "TDEE Calculator",
       "webAppDescription": "Free TDEE calculator that calculates your total daily calorie needs based on age, weight, height, gender and activity level.",
@@ -202,6 +220,19 @@
         { "href": "/en/articles/calorie-needs", "label": "Calorie needs — complete guide" },
         { "href": "/en/articles/what-is-tdee", "label": "What is TDEE?" },
         { "href": "/en/articles/bmi-vs-body-fat", "label": "BMI vs Body Fat" }
+      ]
+    },
+    "explanation": {
+      "h2_1": "What is BMI and how is it calculated?",
+      "p_1": "BMI is calculated using the formula: **BMI = weight (kg) ÷ height² (m²)**.",
+      "p_2": "It is a simple screening tool that WHO uses to classify weight at the population level. It is *not* a diagnostic tool — it is not sufficient on its own to assess health risk at the individual level.",
+      "h3_1": "Limitations of BMI",
+      "list_1": [
+        "Does not account for muscle mass — muscular people can be classified as \"overweight\"",
+        "Does not distinguish between fat and muscle",
+        "Does not account for where fat is stored (belly fat vs. subcutaneous fat)",
+        "Can be misleading for older adults (lower muscle mass)",
+        "Does not apply directly to children"
       ]
     },
     "schema": {
@@ -304,6 +335,53 @@
         { "href": "/en/articles/calorie-deficit", "label": "How large a calorie deficit?" },
         { "href": "/en/articles/bulk-and-cut", "label": "Bulk and Cut" }
       ]
+    },
+    "explanation": {
+      "h2_1": "BMR vs TDEE — what you should use",
+      "p_1": "BMR measures your resting energy expenditure — your body in complete inactivity. It is a theoretical baseline value, not a calorie target.",
+      "p_2": "**TDEE is the number you should actually use.** Whether you want to lose weight, maintain, or build muscle — all calorie target decisions should be based on TDEE, not BMR.",
+      "box_title": "Why you can't use BMR as a calorie target",
+      "box_items": [
+        {
+          "title": "You burn more than BMR even at rest",
+          "desc": "NEAT (non-exercise activity — standing, walking, fidgeting) adds 15–50% on top of BMR for most people. Your body is never in complete BMR rest during a normal day."
+        },
+        {
+          "title": "Thermic effect of food (TEF)",
+          "desc": "Digestion consumes 8–15% of your calorie intake. Protein has a TEF of 25–30%. This is not included in BMR."
+        },
+        {
+          "title": "Exercise is added on top",
+          "desc": "A 60-minute training session can burn 300–600 kcal — all on top of BMR. The only way to include this is through the TDEE multiplier."
+        }
+      ],
+      "box_link": "Calculate your TDEE instead",
+      "h2_2": "How BMR is calculated — the formulas",
+      "p_3": "CalculEat uses **Mifflin-St Jeor (1990)** as the primary formula — the most validated for the general population with normal to moderately elevated body fat.",
+      "table_headers": ["Formula", "Strength", "Best for"],
+      "table_rows": [
+        {
+          "name": "Mifflin-St Jeor (1990)",
+          "strength": "Most validated generally",
+          "best": "General population, ±10%"
+        },
+        {
+          "name": "Harris-Benedict (revised)",
+          "strength": "Long history, wide use",
+          "best": "General population"
+        },
+        {
+          "name": "Cunningham",
+          "strength": "Requires body fat % (LBM-based)",
+          "best": "Athletes, low body fat"
+        },
+        {
+          "name": "Oxford/Henry",
+          "strength": "WHO-recommended, age-adjusted",
+          "best": "Older adults, children"
+        }
+      ],
+      "note": "No formula is exact. All formulas give a population-based estimate — calibrating against actual weight trends is the only method that gives an individually accurate result."
     },
     "schema": {
       "webAppName": "BMR Calculator",
@@ -463,6 +541,31 @@
         { "href": "/en/articles/bulk-and-cut", "label": "Bulk and Cut" },
         { "href": "/en/articles/calorie-deficit", "label": "How large a calorie deficit?" },
         { "href": "/en/articles/bmi-vs-body-fat", "label": "BMI vs Body Fat" }
+      ]
+    },
+    "explanation": {
+      "h2_1": "Why body fat is more useful than BMI",
+      "p_1": "BMI only tells you the ratio between your weight and height. It does not distinguish between muscle and fat — which is the only thing that actually matters for health and body composition.",
+      "cards": [
+        {
+          "title": "Same BMI — completely different body composition",
+          "desc": "A well-trained person weighing 75 kg at 175 cm (BMI 24.5) may have 12% body fat. An inactive person with the same measurements may have 28%. BMI looks identical — the body is fundamentally different."
+        },
+        {
+          "title": "Body fat percentage determines your actual calorie target",
+          "desc": "Lean body mass (LBM) is the strongest predictor of BMR. The more muscle mass you have, the higher your calorie needs. Two people with the same weight and activity level can have 200–300 kcal difference in TDEE solely due to differences in LBM."
+        },
+        {
+          "title": "The bridge to FFMI and muscle building",
+          "desc": "FFMI (Fat Free Mass Index) measures muscle mass relative to height and is the best measure for those who train. It is calculated directly from your body fat percentage and weight — and gives a much more precise goal to work toward than an ideal weight number."
+        }
+      ],
+      "h3_1": "How to measure correctly (US Navy Method)",
+      "list_1": [
+        "**Waist measurement:** Measure horizontally at the navel — not at the narrowest point. Keep the tape snug but without pressing into the skin.",
+        "**Neck measurement:** Measure just below the Adam's apple. Keep the tape flat around the neck.",
+        "**Hip measurement (women):** Measure at the widest point of the hips.",
+        "Always measure in the morning, fasting, and on the same day each week for comparable results."
       ]
     },
     "schema": {
@@ -775,6 +878,25 @@
         { "href": "/en/articles/calorie-deficit", "label": "How large a calorie deficit?" }
       ]
     },
+    "explanation": {
+      "h2_1": "What FFMI measures — and what it doesn't",
+      "p_1": "FFMI measures muscle mass relative to height. It is a better measure than BMI for those who train because it isolates fat-free mass and does not penalize muscle volume.",
+      "p_2": "But it is **not a health measure** and not a strength or performance measure. It is a physique measure that provides context about where you are in muscle development — and what is a realistic goal.",
+      "cards": [
+        {
+          "title": "FFMI vs BMI",
+          "desc": "A well-trained man, 80 kg and 175 cm (BMI 26.1 — overweight) with 12% body fat has an FFMI of 22.2. BMI classifies him as overweight. FFMI shows he is in the advanced category. For those who train, FFMI is almost always more informative."
+        },
+        {
+          "title": "Natural limits in context",
+          "desc": "Kouri et al. (1995) analyzed natural athletes and found a normalized FFMI ceiling around 25 for men. This is a statistical observation — not a hard biological limit. Genetic outliers can reach 25–26 naturally. But it is rare enough to be a significantly deviating result."
+        },
+        {
+          "title": "How to improve your FFMI",
+          "desc": "FFMI increases by building muscle mass (bulk with calorie surplus + strength training) or maintaining muscle mass while body fat percentage decreases (cut or recomp). The right calorie target per phase, high protein intake (1.6–2.2 g/kg), and progressive training are the three factors that drive FFMI upward."
+        }
+      ]
+    },
     "schema": {
       "webAppName": "FFMI Calculator",
       "webAppDescription": "Free FFMI calculator. Calculate your Fat-Free Mass Index and normalized FFMI. Assess your muscle mass relative to height without accounting for fat weight.",
@@ -919,6 +1041,20 @@
         { "href": "/en/articles/what-is-tdee", "label": "What is TDEE?" },
         { "href": "/en/articles/calorie-needs", "label": "Calorie needs — complete guide" }
       ]
+    },
+    "explanation": {
+      "h2_1": "What is the optimal calorie deficit?",
+      "p_1": "The optimal deficit depends on how much fat you have to lose and how quickly you want to reach your goal. General guidelines:",
+      "list_1": [
+        "**200–300 kcal/day (mild):** Suitable if you are close to your target weight, new to weight loss, or want to minimize muscle loss. Slow but sustainable.",
+        "**300–500 kcal/day (moderate):** The scientific standard. Gives 0.3–0.5 kg/week — fast enough to see results without compromising muscle mass.",
+        "**500–1000 kcal/day (aggressive):** Acceptable at high body fat percentage. Requires high protein intake (2.0–2.2 g/kg) and strength training to protect muscle."
+      ],
+      "h2_2": "Why does weight stall?",
+      "p_2": "During prolonged calorie restriction, the body lowers its metabolism as a defense — adaptive thermogenesis. NEAT (unplanned movement) instinctively decreases and BMR drops slightly.",
+      "p_3": "**Solution:** Take a *diet break* of 1–2 weeks at maintenance calories (your TDEE) every 8–12 weeks. This restores hormonal balance and makes the next diet phase more effective. It is not a failure — it is strategy.",
+      "h2_3": "The role of protein",
+      "p_4": "The most important thing you can do to preserve muscle mass during calorie restriction is adequate protein intake. Research supports 1.6–2.2 g protein per kg body weight. Protein also has high satiety effect and high TEF (about 25–30% of protein calories go to digesting the protein) — making it extra valuable during a cut."
     },
     "schema": {
       "webAppName": "Calorie Deficit Calculator",
@@ -1069,6 +1205,22 @@
         { "href": "/en/articles/calorie-needs", "label": "Calorie needs — complete guide" },
         { "href": "/en/articles/what-is-tdee", "label": "What is TDEE?" }
       ]
+    },
+    "explanation": {
+      "h2_1": "Lean bulk vs dirty bulk — what's the difference?",
+      "p_1": "Lean bulk means a controlled surplus of +150–350 kcal/day. You build muscle with minimal fat gain and maintain your definition throughout the phase. It takes longer but requires a shorter (or no) subsequent cut.",
+      "p_2": "Dirty bulk means eating without limits — rapid weight gain but a large proportion is fat that then requires a long, tough cut phase. The net result is often worse than a well-planned lean bulk.",
+      "p_3": "**Exception:** Hardgainers and beginners may struggle to eat enough on a lean bulk. In such cases, a more aggressive surplus (+400–600 kcal/day) is acceptable — muscle growth is faster relative to fat gain for them.",
+      "h2_2": "How fast can you build muscle?",
+      "p_4": "Muscle protein synthesis is biologically limited. Research shows that natural lifters can expect:",
+      "list_1": [
+        "**Beginner (0–1 year):** 1–1.5 kg of muscle mass per month with optimal diet and training",
+        "**Intermediate (1–3 years):** 0.5–1 kg per month",
+        "**Advanced (3+ years):** 0.25–0.5 kg per month"
+      ],
+      "p_5": "This means you cannot build more muscle by eating more — you only store more fat. Hence the importance of a controlled surplus.",
+      "h2_3": "How long should you bulk?",
+      "p_6": "A typical bulk phase lasts 3–6 months. Stop and enter a cut phase when body fat has risen to 18–20% (men) or 28–30% (women), or when you have reached your desired body weight. Alternatively: plan bulk/cut cycles of 3 months each."
     },
     "schema": {
       "webAppName": "Bulk Calculator",
@@ -1223,6 +1375,21 @@
         { "href": "/en/articles/calorie-needs", "label": "Calorie needs — complete guide" }
       ]
     },
+    "explanation": {
+      "h2_1": "Cut, deficit, and calorie restriction — what's the difference?",
+      "p_1": "Calorie deficit is a general term for eating below TDEE — used by everyone, regardless of goal or training background. *Cut* and *deff* are gym culture terms for the same thing, but with a clearer focus: reducing body fat percentage without losing muscle mass. This requires not just the right calorie intake but also the right protein intake and continued strength training. A good cut is methodical, not desperate.",
+      "h2_2": "Why is protein more important during a cut than a bulk?",
+      "p_2": "During calorie restriction, the body lacks energy and risks breaking down muscle tissue for fuel (muscle catabolism). High protein intake provides three benefits during a cut:",
+      "list_1": [
+        "**Muscle protection:** Adequate protein minimizes muscle catabolism",
+        "**Satiety effect:** Protein is the most satiating macronutrient per kcal",
+        "**High TEF:** about 25–30% of protein calories go to digesting the protein — this helps calorie balance"
+      ],
+      "p_3": "Recommendation during cut: 1.8–2.4 g/kg body weight, compared to 1.6–2.2 g/kg during maintenance or bulk.",
+      "h2_3": "Why does weight stall despite a calorie deficit?",
+      "p_4": "Adaptive thermogenesis: the body lowers its metabolism and NEAT (unplanned movement) as a defense against prolonged calorie restriction. This is normal and not a failure.",
+      "p_5": "Solution: take a *diet break* of 1–2 weeks at maintenance calories every 8–12 weeks. This restores hormonal balance (leptin, cortisol, thyroid hormones) and makes the next cut phase more effective."
+    },
     "schema": {
       "webAppName": "Cut Calculator",
       "webAppDescription": "Free cut calculator for those who train. Calculate how many calories to eat to burn fat without losing muscle. Based on your TDEE and desired pace.",
@@ -1375,6 +1542,35 @@
         { "href": "/en/articles/calorie-needs", "label": "Calorie needs — complete guide" }
       ]
     },
+    "explanation": {
+      "h2_1": "Why does protein need vary by goal?",
+      "p_1": "Protein serves different functions depending on what phase your body is in:",
+      "list_1": [
+        "**During weight loss (cut):** The body lacks calories and risks breaking down muscle tissue for energy. High protein intake (1.8–2.4 g/kg with regular training) counteracts muscle catabolism, provides high satiety, and has high thermic effect (TEF).",
+        "**During maintenance:** You need protein to repair and preserve muscle tissue, support the immune system and enzymes. 1.4–1.8 g/kg is sufficient for most active people.",
+        "**During muscle building (bulk):** Protein is the raw material for new muscle fibers. 1.6–2.2 g/kg is the scientifically supported optimal range (Morton et al., 2018). More likely provides no additional benefit."
+      ],
+      "table_headers": ["", "Inactive", "Trains regularly", "Elite"],
+      "table_rows": [
+        { "label": "Weight loss", "cols": ["1.2–1.6 g/kg", "1.8–2.4 g/kg", "2.2–2.6 g/kg"] },
+        { "label": "Maintenance", "cols": ["0.8–1.2 g/kg", "1.4–1.8 g/kg", "1.6–2.0 g/kg"] },
+        { "label": "Muscle building", "cols": ["1.2–1.6 g/kg", "1.6–2.2 g/kg", "1.8–2.4 g/kg"] }
+      ],
+      "table_note": "The ranges are based on Phillips & Van Loon (2011), Morton et al. (2018), and ISSN Position Stand (2017). Values are given per kg total body weight.",
+      "h2_2": "Why does the calculator ask about training status and not activity level?",
+      "p_2": "General activity level — how many steps you take, PAL value, how active you are at work — drives calorie needs (TDEE), but not protein needs to the same extent. Protein needs in the literature are primarily linked to training status and type: strength training directly stimulates muscle protein synthesis and requires more protein than an active office day with walks.",
+      "p_3": "The calculator therefore uses fixed, evidence-based ranges per combination of goal and training status — without linear bonus steps.",
+      "h2_3": "How to distribute protein throughout the day?",
+      "p_4": "The body can effectively utilize about 20–40 g of protein per meal for muscle protein synthesis. Eating 150 g of protein in a single meal is suboptimal — spread the intake evenly over 3–5 meals. This provides a continuous flow of amino acids to muscle tissue.",
+      "p_5": "**Practical rule of thumb:** Aim for 30–40 g of protein per meal, 3–4 times a day. It is easier to achieve and gives better satiety than few, large portions.",
+      "h2_4": "The best protein sources",
+      "p_6": "Complete proteins (with all essential amino acids) provide the greatest stimulus for muscle protein synthesis:",
+      "list_2": [
+        "**Animal sources:** chicken (31 g/100 g), cod (23 g/100 g), eggs (13 g/100 g), cottage cheese (11 g/100 g), quark (11 g/100 g)",
+        "**Plant sources:** lentils (9 g/100 g cooked), tofu (8 g/100 g), edamame (11 g/100 g), quark, beans",
+        "**Supplement:** Protein powder (whey, casein, pea) is a practical supplement — not a replacement for real food"
+      ]
+    },
     "schema": {
       "webAppName": "Protein Calculator",
       "webAppDescription": "Free protein calculator. Calculate how much protein per day you need based on weight, training status and goal — weight loss, maintenance or muscle building.",
@@ -1489,6 +1685,26 @@
         { "href": "/en/articles/calorie-deficit", "label": "How large a calorie deficit?" },
         { "href": "/en/articles/bulk-and-cut", "label": "Bulk and Cut" }
       ]
+    },
+    "explanation": {
+      "h2_1": "Ideal weight is a benchmark — not a calorie plan",
+      "p_1": "Ideal weight tells you an end goal on the scale. It does not tell you how to get there, how fast it is reasonable, or what to eat to stay there. Those are three entirely different questions.",
+      "p_2": "Most people who focus solely on a target weight miss the most important variable: their actual calorie needs (TDEE). Without tracking that against a correct target, the body does not move in the right direction — regardless of how accurate the ideal weight is.",
+      "h3_1": "What ideal weight does not account for",
+      "list_1": [
+        "**Muscle mass** — a well-trained person can weigh 5–10 kg more than the ideal weight formula and have excellent health",
+        "**Body fat percentage** — the same weight can mean 15% or 30% body fat depending on training level",
+        "**Activity level** — calorie needs vary greatly with exercise, and the formula does not adjust for it",
+        "**Metabolism** — adaptive thermogenesis during prolonged calorie restriction means a static ideal weight figure does not help you plan a realistic timeline"
+      ],
+      "box_title": "How to actually reach your target weight",
+      "box_steps": [
+        "Calculate your TDEE (total daily calorie needs)",
+        "Set a calorie target with a moderate deficit — 300–500 kcal/day",
+        "Eat 1.6–2.2 g protein per kg body weight to protect muscle mass",
+        "Adjust your calorie target every 2–3 weeks based on actual weight trend"
+      ],
+      "box_link": "Start with the TDEE calculator"
     },
     "schema": {
       "webAppName": "Ideal Weight Calculator",

@@ -302,31 +302,24 @@ export default function BmiKalkylatornPage() {
           </div>
         </section>
 
-        {/* Explanation section — prose stays in TSX */}
+        {/* Explanation section */}
         <section className="bg-white py-14 border-b border-neutral-100">
           <div className="container mx-auto px-4 max-w-3xl">
             <div className="space-y-4 text-neutral-700 text-base leading-relaxed">
               <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900">
-                Vad är BMI och hur räknar man?
+                {t('bmi-calculator.explanation.h2_1')}
               </h2>
-              <p>
-                BMI beräknas med formeln: <strong>BMI = vikt (kg) ÷ längd² (m²)</strong>.
-              </p>
-              <p>
-                Det är ett enkelt screeningverktyg som WHO använder för att klassificera vikt på
-                befolkningsnivå. Det är <em>inte</em> ett diagnostiskt verktyg — det räcker inte
-                ensamt för att bedöma hälsorisk på individnivå.
-              </p>
-              <h3 className="text-lg font-semibold text-neutral-800 mt-4">Begränsningar med BMI</h3>
+              <p>{t('bmi-calculator.explanation.p_1')}</p>
+              <p>{t('bmi-calculator.explanation.p_2')}</p>
+              <h3 className="text-lg font-semibold text-neutral-800 mt-4">
+                {t('bmi-calculator.explanation.h3_1')}
+              </h3>
               <ul className="space-y-1.5 pl-4 list-disc">
-                <li>
-                  Tar inte hänsyn till muskelmassa — muskulösa personer kan hamna i
-                  &ldquo;övervikt&rdquo;
-                </li>
-                <li>Skiljer inte på fett och muskler</li>
-                <li>Tar inte hänsyn till var fettet sitter (bukfetma vs. underhudsfett)</li>
-                <li>Kan vara missvisande för äldre (lägre muskelmassa)</li>
-                <li>Gäller inte direkt för barn</li>
+                {(t('bmi-calculator.explanation.list_1', { returnObjects: true }) as string[]).map(
+                  (item, i) => (
+                    <li key={i}>{item}</li>
+                  )
+                )}
               </ul>
             </div>
           </div>

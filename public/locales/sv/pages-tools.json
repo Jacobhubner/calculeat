@@ -120,6 +120,24 @@
         { "href": "/artiklar/kaloribehov", "label": "Kaloribehov — komplett guide" }
       ]
     },
+    "explanation": {
+      "h2_1": "Hur tolkar du ditt TDEE?",
+      "p_1": "Ditt TDEE är ditt **underhållsbehov** — den mängd kalorier du behöver äta för att hålla din nuvarande vikt stabil. Beroende på ditt mål justerar du kring detta:",
+      "list_1": [
+        "Viktnedgång: Ät 300–500 kcal under ditt TDEE. Det ger ca 0,3–0,5 kg i veckan utan att riskera muskelmassaförlust.",
+        "Muskeluppbyggnad: Ät 200–400 kcal över ditt TDEE. Det ger ett litet överskott för muskeltillväxt med minimalt fettupplagrande.",
+        "Underhåll: Matcha ditt TDEE. Bra under pausperioder eller för att stabilisera vikt efter en kur."
+      ],
+      "p_2": "Kom ihåg att TDEE-kalkylatorer ger en *uppskattning*. Det verkliga värdet varierar beroende på muskelmassa, hormonbalans och metabolism. Följ upp din vikt under 2–3 veckor och justera kaloriintaget om du inte ser förväntat resultat.",
+      "h2_2": "Vad påverkar ditt TDEE?",
+      "p_3": "TDEE består av fyra komponenter:",
+      "list_2": [
+        "BMR (ca 60–75%): Din basalmetabolism — kalorierna din kropp förbränner i vila för att hålla organ igång.",
+        "NEAT (15–30%): Oplanerad rörelse — gå, stå, fidgeta, handla. Ofta underskattat men kan variera med hundratals kcal.",
+        "EAT (5–10%): Planerad träning och motion.",
+        "TEF (8–15%): Matens termiska effekt — kalorierna det kostar att smälta maten du äter."
+      ]
+    },
     "schema": {
       "webAppName": "TDEE Kalkylator",
       "webAppDescription": "Gratis TDEE-kalkylator som räknar ut ditt totala dagliga kaloribehov baserat på ålder, vikt, längd, kön och aktivitetsnivå.",
@@ -202,6 +220,19 @@
         { "href": "/artiklar/kaloribehov", "label": "Kaloribehov — komplett guide" },
         { "href": "/artiklar/vad-ar-tdee", "label": "Vad är TDEE?" },
         { "href": "/artiklar/bmi-vs-kroppsfett", "label": "BMI vs Kroppsfett" }
+      ]
+    },
+    "explanation": {
+      "h2_1": "Vad är BMI och hur räknar man?",
+      "p_1": "BMI beräknas med formeln: **BMI = vikt (kg) ÷ längd² (m²)**.",
+      "p_2": "Det är ett enkelt screeningverktyg som WHO använder för att klassificera vikt på befolkningsnivå. Det är *inte* ett diagnostiskt verktyg — det räcker inte ensamt för att bedöma hälsorisk på individnivå.",
+      "h3_1": "Begränsningar med BMI",
+      "list_1": [
+        "Tar inte hänsyn till muskelmassa — muskulösa personer kan hamna i \"övervikt\"",
+        "Skiljer inte på fett och muskler",
+        "Tar inte hänsyn till var fettet sitter (bukfetma vs. underhudsfett)",
+        "Kan vara missvisande för äldre (lägre muskelmassa)",
+        "Gäller inte direkt för barn"
       ]
     },
     "schema": {
@@ -301,6 +332,53 @@
         { "href": "/artiklar/kaloribrist", "label": "Hur stor kaloribrist ska man ha?" },
         { "href": "/artiklar/bulk-och-cut", "label": "Bulk och Cut" }
       ]
+    },
+    "explanation": {
+      "h2_1": "BMR vs TDEE — vad du ska använda",
+      "p_1": "BMR är ett mått på din viloförbränning — kroppen i fullständig inaktivitet. Det är ett teoretiskt baslinjevärde, inte ett kalorimål.",
+      "p_2": "**TDEE är siffran du faktiskt ska använda.** Oavsett om du vill gå ner i vikt, hålla vikten eller bygga muskler — alla beslut om kalorimål ska utgå från TDEE, inte BMR.",
+      "box_title": "Varför du inte kan använda BMR som kalorimål",
+      "box_items": [
+        {
+          "title": "Du förbränner mer än BMR redan vid vila",
+          "desc": "NEAT (icke-träningsaktivitet — att stå, gå, gestikulera) lägger till 15–50% ovanpå BMR för de flesta. Din kropp är aldrig i fullständig BMR-vila under en normal dag."
+        },
+        {
+          "title": "Termisk effekt av mat (TEF)",
+          "desc": "Matsmältning förbrukar 8–15% av din kalorikonsumtion. Protein har TEF 25–30%. Det räknas inte in i BMR."
+        },
+        {
+          "title": "Träning adderas ovanpå",
+          "desc": "En träningssession om 60 minuter kan förbruka 300–600 kcal — allt utöver BMR. Det enda sättet att inkludera detta är via TDEE-multiplikatorn."
+        }
+      ],
+      "box_link": "Räkna ut ditt TDEE istället",
+      "h2_2": "Hur BMR beräknas — formlerna",
+      "p_3": "CalculEat använder **Mifflin-St Jeor (1990)** som primär formel — den mest validerade för den allmänna befolkningen med normal till medelhög fettprocent.",
+      "table_headers": ["Formel", "Styrka", "Bäst för"],
+      "table_rows": [
+        {
+          "name": "Mifflin-St Jeor (1990)",
+          "strength": "Mest validerad generellt",
+          "best": "Normal population, ±10%"
+        },
+        {
+          "name": "Harris-Benedict (reviderad)",
+          "strength": "Lång historik, bred användning",
+          "best": "Generell population"
+        },
+        {
+          "name": "Cunningham",
+          "strength": "Kräver fettprocent (LBM-baserad)",
+          "best": "Atleter, låg fettprocent"
+        },
+        {
+          "name": "Oxford/Henry",
+          "strength": "WHO-rekommenderad, åldersanpassad",
+          "best": "Äldre, barn"
+        }
+      ],
+      "note": "Ingen formel är exakt. Alla formler ger ett populationsbaserat estimat — kalibrering mot faktisk vikttrend är den enda metoden som ger ett individuellt exakt resultat."
     },
     "schema": {
       "webAppName": "BMR Kalkylator",
@@ -460,6 +538,31 @@
         { "href": "/artiklar/bulk-och-cut", "label": "Bulk och Cut" },
         { "href": "/artiklar/kaloribrist", "label": "Hur stor kaloribrist ska man ha?" },
         { "href": "/artiklar/bmi-vs-kroppsfett", "label": "BMI vs Kroppsfett" }
+      ]
+    },
+    "explanation": {
+      "h2_1": "Varför kroppsfett är mer användbart än BMI",
+      "p_1": "BMI berättar bara om förhållandet mellan din vikt och längd. Det skiljer inte på muskler och fett — vilket är det enda som faktiskt spelar roll för hälsa och kroppskomposition.",
+      "cards": [
+        {
+          "title": "Samma BMI — helt olika kroppssammansättning",
+          "desc": "En vältränad person med 75 kg och 175 cm (BMI 24,5) kan ha 12% kroppsfett. En inaktiv person med samma mått kan ha 28%. BMI ser identiskt ut — kroppen är fundamentalt annorlunda."
+        },
+        {
+          "title": "Fettprocent styr ditt faktiska kalorimål",
+          "desc": "Lean body mass (LBM) är den starkaste prediktorn för BMR. Ju mer muskelmassa du har, desto högre är ditt kaloribehov. Två personer med samma vikt och aktivitetsnivå kan ha 200–300 kcal skillnad i TDEE enbart p.g.a. skillnad i LBM."
+        },
+        {
+          "title": "Bryggan till FFMI och muskeluppbyggnad",
+          "desc": "FFMI (Fat Free Mass Index) mäter muskelmassa i relation till längd och är det bästa måttet för den som tränar. Det beräknas direkt från din fettprocent och vikt — och ger ett mycket mer precist mål att jobba mot än en idealviktssiffra."
+        }
+      ],
+      "h3_1": "Hur du mäter rätt (US Navy Method)",
+      "list_1": [
+        "**Midjemått:** Mät horisontellt vid naveln — inte vid det smalaste stället. Håll bandet snug men utan att trycka in huden.",
+        "**Halsmått:** Mät precis under adamsäpplet. Håll bandet plant runt halsen.",
+        "**Höftmått (kvinnor):** Mät vid det bredaste stället på höfterna.",
+        "Mät alltid på morgonen, fastande, och på samma dag i veckan för jämförbara resultat."
       ]
     },
     "schema": {
@@ -772,6 +875,25 @@
         { "href": "/artiklar/kaloribrist", "label": "Hur stor kaloribrist ska man ha?" }
       ]
     },
+    "explanation": {
+      "h2_1": "Vad FFMI mäter — och vad det inte mäter",
+      "p_1": "FFMI mäter muskelmassa i förhållande till längd. Det är ett bättre mått än BMI för den som tränar eftersom det isolerar fettfri massa och inte straffar muskelvolym.",
+      "p_2": "Men det är **inte ett hälsomått** och inte ett styrke- eller prestationsmått. Det är ett fysikmått som ger kontext kring var du befinner dig i muskelutvecklingen — och vad som är ett realistiskt mål.",
+      "cards": [
+        {
+          "title": "FFMI vs BMI",
+          "desc": "En vältränad man, 80 kg och 175 cm (BMI 26,1 — övervikt) med 12% kroppsfett har FFMI 22,2. BMI klassificerar honom som överviktig. FFMI visar att han är i avancerad kategori. För den som tränar är FFMI nästan alltid mer informativt."
+        },
+        {
+          "title": "Naturliga gränser i kontext",
+          "desc": "Kouri et al. (1995) analyserade naturliga idrottare och fann ett normaliserat FFMI-tak runt 25 för män. Det är en statistisk observation — inte en hård biologisk gräns. Genetiska outliers kan nå 25–26 naturligt. Men det är sällsynt nog att vara ett signifikant avvikande resultat."
+        },
+        {
+          "title": "Hur du förbättrar ditt FFMI",
+          "desc": "FFMI ökar genom att bygga muskelmassa (bulk med kaloriöverskott + styrketräning) eller behålla muskelmassa medan fettprocent minskar (cut eller recomp). Rätt kalorimål per fas, högt proteinintag (1,6–2,2 g/kg) och progressiv träning är de tre faktorerna som driver FFMI uppåt."
+        }
+      ]
+    },
     "schema": {
       "webAppName": "FFMI Kalkylator",
       "webAppDescription": "Gratis FFMI-kalkylator. Räkna ut ditt Fat-Free Mass Index och normaliserat FFMI. Bedöm din muskelmassa relativt längd utan att ta hänsyn till fettvikt.",
@@ -916,6 +1038,20 @@
         { "href": "/artiklar/vad-ar-tdee", "label": "Vad är TDEE?" },
         { "href": "/artiklar/kaloribehov", "label": "Kaloribehov — komplett guide" }
       ]
+    },
+    "explanation": {
+      "h2_1": "Hur stort kaloriunderskott är optimalt?",
+      "p_1": "Det optimala underskottet beror på hur mycket fett du har att tappa och hur snabbt du vill nå målet. Generella riktlinjer:",
+      "list_1": [
+        "**200–300 kcal/dag (mild):** Lämplig om du är nära målvikt, ny på viktnedgång eller vill minimera muskelförlust. Långsamt men hållbart.",
+        "**300–500 kcal/dag (måttlig):** Den vetenskapliga standarden. Ger 0,3–0,5 kg/vecka — tillräckligt snabbt för att se resultat utan att kompromissa med muskelmassa.",
+        "**500–1000 kcal/dag (aggressiv):** Acceptabelt vid hög fettprocent. Kräver högt proteinintag (2,0–2,2 g/kg) och styrketräning för att skydda muskler."
+      ],
+      "h2_2": "Varför planar vikten ut?",
+      "p_2": "Vid lång kaloribrist sänker kroppen sin ämnesomsättning som försvar — adaptiv termogenes. NEAT (oplanerad rörelse) minskar instinktivt och BMR sjunker något.",
+      "p_3": "**Lösning:** Ta en *diet break* på 1–2 veckor på underhållsintag (ditt TDEE) var 8–12:e vecka. Det återställer hormonbalansen och gör nästa dietfas effektivare. Det är inte ett misslyckande — det är strategi.",
+      "h2_3": "Proteinets roll",
+      "p_4": "Det viktigaste du kan göra för att bevara muskelmassa under kaloribrist är tillräckligt proteinintag. Forskning stöder 1,6–2,2 g protein per kg kroppsvikt. Protein har dessutom hög mättnadseffekt och hög TEF (ca 25–30% av proteinkalorierna används till att smälta proteinet) — vilket gör det extra värdefullt under en kur."
     },
     "schema": {
       "webAppName": "Kaloribrist Kalkylator",
@@ -1063,6 +1199,22 @@
         { "href": "/artiklar/kaloribehov", "label": "Kaloribehov — komplett guide" },
         { "href": "/artiklar/vad-ar-tdee", "label": "Vad är TDEE?" }
       ]
+    },
+    "explanation": {
+      "h2_1": "Lean bulk vs dirty bulk — vad är skillnaden?",
+      "p_1": "Lean bulk innebär ett kontrollerat överskott på +150–350 kcal/dag. Du bygger muskler med minimalt fettupplagrande och behåller din definition under hela fasen. Det tar längre tid men kräver en kortare (eller ingen) efterföljande cut.",
+      "p_2": "Dirty bulk innebär att äta utan tak — snabb viktuppgång men stor andel är fett som sedan kräver en lång, tuff cut-fas. Nettoresultatet är ofta sämre än en välplanerad lean bulk.",
+      "p_3": "**Undantag:** Hardgainers och nybörjare kan ha svårt att äta tillräckligt på lean bulk. I sådana fall är ett aggressivare överskott (+400–600 kcal/dag) acceptabelt — muskeltillväxten är snabbare relativt fettupplagrandet för dem.",
+      "h2_2": "Hur snabbt kan man bygga muskler?",
+      "p_4": "Muskelproteinsyntes är biologiskt begränsad. Forskning visar att naturliga lyftare kan förvänta sig:",
+      "list_1": [
+        "**Nybörjare (0–1 år):** 1–1,5 kg muskelmassa per månad vid optimal kost och träning",
+        "**Intermediär (1–3 år):** 0,5–1 kg per månad",
+        "**Avancerad (3+ år):** 0,25–0,5 kg per månad"
+      ],
+      "p_5": "Det innebär att du inte kan bygga mer muskler genom att äta mer — du lagrar bara mer fett. Härav vikten av ett kontrollerat överskott.",
+      "h2_3": "Hur länge ska man bulka?",
+      "p_6": "En typisk bulk-fas pågår 3–6 månader. Avbryt och gå in i en cut-fas när fettprocenten stigit till 18–20% (man) eller 28–30% (kvinna), eller när du nått önskad kroppsvikt. Alternativt: planera in bulk/cut-cykler på 3 månader vardera."
     },
     "schema": {
       "webAppName": "Bulk Kalkylator",
@@ -1214,6 +1366,21 @@
         { "href": "/artiklar/kaloribehov", "label": "Kaloribehov — komplett guide" }
       ]
     },
+    "explanation": {
+      "h2_1": "Cut, deff och kaloribrist — vad är skillnaden?",
+      "p_1": "Kaloribrist är ett generellt begrepp för att äta under TDEE — används av alla, oavsett mål eller träningsbakgrund. *Cut* och *deff* är gymkulturens termer för samma sak, men med ett tydligare fokus: minska fettprocenten utan att tappa muskelmassa. Det kräver inte bara rätt kaloriintag utan också rätt proteinintag och fortsatt styrketräning. En bra cut/deff är metodisk, inte desperat.",
+      "h2_2": "Varför är protein viktigare under cut än bulk?",
+      "p_2": "Under kaloribrist saknar kroppen energi och riskerar att bryta ned muskelvävnad för bränsle (muskelkatabolism). Högt proteinintag ger tre fördelar under cut:",
+      "list_1": [
+        "**Muskelskydd:** Tillräckligt protein minimerar muskelkatabolism",
+        "**Mättnadseffekt:** Protein är det mest mättande makronutrientet per kcal",
+        "**Hög TEF:** ca 25–30% av proteinkalorierna går till att smälta proteinet — det hjälper kaloribalansen"
+      ],
+      "p_3": "Rekommendation under cut: 1,8–2,4 g/kg kroppsvikt, jämfört med 1,6–2,2 g/kg under underhåll eller bulk.",
+      "h2_3": "Varför planar vikten ut trots kaloriunderskott?",
+      "p_4": "Adaptiv termogenes: kroppen sänker sin ämnesomsättning och NEAT (oplanerad rörelse) som försvar mot lång kaloribrist. Det är normalt och inte ett misslyckande.",
+      "p_5": "Lösning: ta en *diet break* på 1–2 veckor på underhållsintag var 8–12:e vecka. Det återställer hormonbalansen (leptin, kortisol, sköldkörtelhormon) och gör nästa cut-fas effektivare."
+    },
     "schema": {
       "webAppName": "Cut & Deff Kalkylator",
       "webAppDescription": "Gratis cut- och deff-kalkylator för dig som tränar. Räkna ut hur många kalorier du ska äta för att bränna fett utan att tappa muskelmassa. Baserat på ditt TDEE och önskat tempo.",
@@ -1363,6 +1530,35 @@
         { "href": "/artiklar/kaloribehov", "label": "Kaloribehov — komplett guide" }
       ]
     },
+    "explanation": {
+      "h2_1": "Varför skiljer sig proteinbehovet beroende på mål?",
+      "p_1": "Protein fyller olika funktioner beroende på vad din kropp är i för fas:",
+      "list_1": [
+        "**Under viktnedgång (cut):** Kroppen saknar kalorier och riskerar att bryta ned muskelvävnad för energi. Högt proteinintag (1,8–2,4 g/kg vid regelbunden träning) motverkar muskelkatabolism, ger hög mättnadseffekt och har hög termisk effekt (TEF).",
+        "**Under underhåll (maintenance):** Du behöver protein för att reparera och bevara muskelvävnad, stötta immunsystem och enzymer. 1,4–1,8 g/kg räcker för de flesta aktiva.",
+        "**Under muskeluppbyggnad (bulk):** Protein är råmaterialet för nya muskelfibrer. 1,6–2,2 g/kg är det vetenskapligt stödda optimala intervallet (Morton et al., 2018). Mer ger troligtvis inga ytterligare fördelar."
+      ],
+      "table_headers": ["", "Inaktiv", "Tränar regelbundet", "Elit"],
+      "table_rows": [
+        { "label": "Viktnedgång", "cols": ["1,2–1,6 g/kg", "1,8–2,4 g/kg", "2,2–2,6 g/kg"] },
+        { "label": "Viktstabilisering", "cols": ["0,8–1,2 g/kg", "1,4–1,8 g/kg", "1,6–2,0 g/kg"] },
+        { "label": "Muskeluppbyggnad", "cols": ["1,2–1,6 g/kg", "1,6–2,2 g/kg", "1,8–2,4 g/kg"] }
+      ],
+      "table_note": "Intervallen baseras på Phillips & Van Loon (2011), Morton et al. (2018) och ISSN Position Stand (2017). Värden anges per kg total kroppsvikt.",
+      "h2_2": "Varför frågar kalkylatorn om träningsstatus och inte aktivitetsnivå?",
+      "p_2": "Generell aktivitetsnivå — hur många steg du tar, PAL-värde, hur aktiv du är på jobbet — driver kaloribehovet (TDEE), men inte proteinbehovet i samma utsträckning. Proteinbehov i litteraturen är primärt kopplat till träningsstatus och träningstyp: styrketräning stimulerar muskelproteinsyntes direkt och kräver mer protein än en aktiv kontorsdag med promenader.",
+      "p_3": "Kalkylatorn använder därför fasta, evidensbaserade intervall per kombination av mål och träningsstatus — utan linjära bonussteg.",
+      "h2_3": "Hur fördela protein på dagen?",
+      "p_4": "Kroppen kan effektivt utnyttja ca 20–40 g protein per måltid för muskelproteinsyntes. Att äta 150 g protein i en enda måltid är suboptimalt — sprid ut intaget jämnt över 3–5 måltider. Det ger ett kontinuerligt flöde av aminosyror till muskelvävnaden.",
+      "p_5": "**Praktisk tumregel:** Sikta på 30–40 g protein per måltid, 3–4 gånger om dagen. Det är lättare att nå och ger bättre mättnadseffekt än få, stora portioner.",
+      "h2_4": "De bästa proteinkällorna",
+      "p_6": "Kompletta proteiner (med alla essentiella aminosyror) ger störst stimulans av muskelproteinsyntes:",
+      "list_2": [
+        "**Animaliska:** kyckling (31 g/100 g), torsk (23 g/100 g), ägg (13 g/100 g), cottage cheese (11 g/100 g), quark (11 g/100 g)",
+        "**Vegetabiliska:** linser (9 g/100 g kokt), tofu (8 g/100 g), edamame (11 g/100 g), kvarg, bönor",
+        "**Komplement:** Proteinpulver (whey, kasein, ärt) är ett praktiskt komplement — inte en ersättning för riktig mat"
+      ]
+    },
     "schema": {
       "webAppName": "Proteinbehov Kalkylator",
       "webAppDescription": "Gratis proteinbehov-kalkylator. Räkna ut hur mycket protein per dag du behöver baserat på vikt, träningsstatus och mål — viktnedgång, underhåll eller muskeluppbyggnad.",
@@ -1474,6 +1670,26 @@
         { "href": "/artiklar/kaloribrist", "label": "Hur stor kaloribrist ska man ha?" },
         { "href": "/artiklar/bulk-och-cut", "label": "Bulk och Cut" }
       ]
+    },
+    "explanation": {
+      "h2_1": "Idealvikt är ett riktmärke — inte en kaloriplan",
+      "p_1": "Idealvikt säger dig ett slutmål på vågen. Det säger dig inte hur du tar dig dit, hur snabbt det är rimligt, eller vad du ska äta för att hålla dig där. Det är tre helt olika frågor.",
+      "p_2": "De flesta som fokuserar enbart på en målvikt missar den viktigaste variabeln: deras faktiska kaloribehov (TDEE). Utan det loggat mot ett korrekt mål rör sig kroppen inte i rätt riktning — oavsett hur rätt idealvikten är.",
+      "h3_1": "Vad idealvikt inte tar hänsyn till",
+      "list_1": [
+        "**Muskelmassa** — en vältränad person kan väga 5–10 kg mer än idealviktsformeln och ha utmärkt hälsa",
+        "**Fettprocent** — samma vikt kan innebära 15% eller 30% kroppsfett beroende på träningsnivå",
+        "**Aktivitetsnivå** — kaloribehov varierar kraftigt med träning, och formeln justerar inte för det",
+        "**Metabolism** — adaptiv termogenes vid lång kaloribrist gör att en statisk idealviktssiffra inte hjälper dig att planera en realistisk tidslinje"
+      ],
+      "box_title": "Hur du faktiskt når din målvikt",
+      "box_steps": [
+        "Räkna ut ditt TDEE (totalt kaloribehov per dag)",
+        "Sätt ett kalorimål med lagom underskott — 300–500 kcal/dag",
+        "Ät 1,6–2,2 g protein per kg kroppsvikt för att skydda muskelmassa",
+        "Justera kalorimålet var 2–3 vecka baserat på faktisk vikttrend"
+      ],
+      "box_link": "Starta med TDEE-kalkylatorn"
     },
     "schema": {
       "webAppName": "Idealvikt Kalkylator",

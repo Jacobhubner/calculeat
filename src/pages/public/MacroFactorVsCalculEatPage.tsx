@@ -247,109 +247,76 @@ export default function MacroFactorVsCalculEatPage() {
             </div>
           </section>
 
-          {/* Article prose — stays in TSX */}
+          {/* Article prose */}
           <section className="space-y-5 text-neutral-700 text-sm leading-relaxed mb-8">
-            <h2 className="text-xl font-semibold text-neutral-900">För vem passar MacroFactor?</h2>
-            <p>
-              MacroFactor är ett starkt val för den som vill ha maximal automatisering av
-              kaloriplanering och TDEE-kalibrering. Det passar dig som:
-            </p>
+            <h2 className="text-xl font-semibold text-neutral-900">
+              {t('macrofactor-vs-calculeat.explanation.for_whom_mf_h2')}
+            </h2>
+            <p>{t('macrofactor-vs-calculeat.explanation.for_whom_mf_p')}</p>
             <ul className="space-y-1.5 pl-4 list-disc">
-              <li>Är erfaren med kaloriräkning och vill ha en helautomatiserad pipeline</li>
-              <li>
-                Vill att appen ska justera kalorimålet veckovis baserat på din vikttrend — utan att
-                du behöver räkna
-              </li>
-              <li>Är bekväm med ett engelskt gränssnitt</li>
-              <li>Är villig att betala ett abonnemang för avancerade funktioner</li>
+              {(
+                t('macrofactor-vs-calculeat.explanation.for_whom_mf_list', {
+                  returnObjects: true,
+                }) as string[]
+              ).map((item, i) => (
+                <li key={i}>{item}</li>
+              ))}
             </ul>
             <p>
-              <strong>Begränsningen:</strong> MacroFactor är en premiumapp som kräver ett aktivt
-              abonnemang. Gränssnittet är på engelska. Och trots kraftfull automatisering ger appen
-              mindre transparens i hur beräkningarna görs — du ser resultatet men inte alltid
-              logiken bakom.
+              <strong>
+                {t('macrofactor-vs-calculeat.explanation.for_whom_mf_limitation')
+                  .split(': ')[0]
+                  .replace(/\*\*/g, '')}
+                :
+              </strong>{' '}
+              {t('macrofactor-vs-calculeat.explanation.for_whom_mf_limitation')
+                .split(': ')
+                .slice(1)
+                .join(': ')}
             </p>
 
             <h2 className="text-xl font-semibold text-neutral-900 pt-2">
-              För vem passar CalculEat?
+              {t('macrofactor-vs-calculeat.explanation.for_whom_ce_h2')}
             </h2>
-            <p>
-              CalculEat passar dig som vill ha precision och transparens — utan kostnad och på
-              svenska. Det är rätt app om du:
-            </p>
+            <p>{t('macrofactor-vs-calculeat.explanation.for_whom_ce_p')}</p>
             <ul className="space-y-1.5 pl-4 list-disc">
-              <li>
-                Vill ha <strong>individuellt TDEE</strong> och metabolisk kalibrering{' '}
-                <strong>gratis</strong>
-              </li>
-              <li>
-                Föredrar ett <strong>svenskt gränssnitt</strong> och matdatabas med
-                Livsmedelsverket-data
-              </li>
-              <li>
-                Vill ha <strong>full transparens</strong> i hur ditt kalorimål beräknas
-              </li>
-              <li>
-                Arbetar med{' '}
-                <Link to="/kalkylatorer/cut-kalkylator" className="text-primary-600 underline">
-                  cut
-                </Link>
-                {'/'}
-                <Link to="/kalkylatorer/bulk-kalkylator" className="text-primary-600 underline">
-                  bulk
-                </Link>
-                {'/reverse diet och vill ha explicit fas-planering med '}
-                <Link to="/kalkylatorer/kaloriunderskott" className="text-primary-600 underline">
-                  rätt kaloriunderskott
-                </Link>
-              </li>
-              <li>Vill ha kontroll — inte bara automation</li>
+              {(
+                t('macrofactor-vs-calculeat.explanation.for_whom_ce_list', {
+                  returnObjects: true,
+                }) as string[]
+              ).map((item, i) => (
+                <li key={i}>{item}</li>
+              ))}
             </ul>
 
             <h2 className="text-xl font-semibold text-neutral-900 pt-4">
-              Automatisering vs transparens
+              {t('macrofactor-vs-calculeat.explanation.diff_h2')}
             </h2>
-            <p>
-              MacroFactors styrka är att den sköter sig själv. Appen samlar in viktdata, beräknar
-              TDEE-trend och justerar kalorimålet utan att du behöver göra något.
-            </p>
-            <p className="mt-2">
-              CalculEats styrka är transparens och kontroll. Du ser hur ditt TDEE räknades ut, du
-              väljer din fas manuellt och du förstår varför kalorimålet är som det är. Det gör det
-              lättare att lita på siffrorna — och att göra informerade justeringar när något inte
-              stämmer.
-            </p>
-            <p className="mt-2">
-              Ingen av de två modellerna är objektivt bättre. Det handlar om vad du föredrar: vill
-              du att appen sköter allt, eller vill du förstå vad som händer?
-            </p>
+            <p>{t('macrofactor-vs-calculeat.explanation.diff_p1')}</p>
+            <p className="mt-2">{t('macrofactor-vs-calculeat.explanation.diff_p2')}</p>
+            <p className="mt-2">{t('macrofactor-vs-calculeat.explanation.diff_p3')}</p>
 
             <h2 className="text-xl font-semibold text-neutral-900 pt-4">
-              Tre skäl att välja CalculEat framför MacroFactor
+              {t('macrofactor-vs-calculeat.explanation.three_things_h2')}
             </h2>
             <div className="space-y-3 mt-3">
-              {[
-                {
-                  title: 'Gratis',
-                  desc: 'MacroFactor kräver ett aktivt abonnemang. CalculEat är gratis för kaloriloggning, TDEE-beräkning, fas-tracking och metabolisk kalibrering. Inga dolda kostnader.',
-                  color: 'bg-green-50 border-green-200',
-                },
-                {
-                  title: 'Helt på svenska',
-                  desc: 'CalculEat är byggt för den svenska marknaden med matdatabas från Livsmedelsverket och ett fullständigt svenskt gränssnitt. MacroFactor är primärt engelskspråkig.',
-                  color: 'bg-blue-50 border-blue-200',
-                },
-                {
-                  title: 'Transparens i beräkningarna',
-                  desc: 'CalculEat visar hur ditt TDEE beräknas och varför kalorimålet är som det är. Du förstår logiken — inte bara resultatet. Det ger bättre kontroll när saker inte går som planerat.',
-                  color: 'bg-primary-50 border-primary-200',
-                },
-              ].map(({ title, desc, color }) => (
-                <div key={title} className={`rounded-xl border p-4 ${color}`}>
-                  <div className="font-semibold text-neutral-800 mb-1 text-sm">{title}</div>
-                  <div className="text-sm text-neutral-700">{desc}</div>
-                </div>
-              ))}
+              {(
+                t('macrofactor-vs-calculeat.explanation.three_things_cards', {
+                  returnObjects: true,
+                }) as { title: string; desc: string }[]
+              ).map(({ title, desc }, i) => {
+                const colors = [
+                  'bg-green-50 border-green-200',
+                  'bg-blue-50 border-blue-200',
+                  'bg-primary-50 border-primary-200',
+                ]
+                return (
+                  <div key={i} className={`rounded-xl border p-4 ${colors[i]}`}>
+                    <div className="font-semibold text-neutral-800 mb-1 text-sm">{title}</div>
+                    <div className="text-sm text-neutral-700">{desc}</div>
+                  </div>
+                )
+              })}
             </div>
           </section>
 

@@ -488,58 +488,40 @@ export default function CutKalkylatornPage() {
           </div>
         </section>
 
-        {/* Explanation section — prose stays in TSX */}
+        {/* Explanation section */}
         <section className="bg-white py-14 border-b border-neutral-100">
           <div className="container mx-auto px-4 max-w-3xl">
             <div className="space-y-5 text-neutral-700 text-base leading-relaxed">
               <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900">
-                Cut, deff och kaloribrist — vad är skillnaden?
+                {t('cut-calculator.explanation.h2_1')}
               </h2>
-              <p>
-                Kaloribrist är ett generellt begrepp för att äta under TDEE — används av alla,
-                oavsett mål eller träningsbakgrund. <em>Cut</em> och <em>deff</em> är gymkulturens
-                termer för samma sak, men med ett tydligare fokus: minska fettprocenten utan att
-                tappa muskelmassa. Det kräver inte bara rätt kaloriintag utan också rätt
-                proteinintag och fortsatt styrketräning. En bra cut/deff är metodisk, inte desperat.
-              </p>
+              <p>{t('cut-calculator.explanation.p_1')}</p>
 
               <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900 pt-4">
-                Varför är protein viktigare under cut än bulk?
+                {t('cut-calculator.explanation.h2_2')}
               </h2>
-              <p>
-                Under kaloribrist saknar kroppen energi och riskerar att bryta ned muskelvävnad för
-                bränsle (muskelkatabolism). Högt proteinintag ger tre fördelar under cut:
-              </p>
+              <p>{t('cut-calculator.explanation.p_2')}</p>
               <ul className="space-y-2 pl-4 list-disc">
-                <li>
-                  <strong>Muskelskydd:</strong> Tillräckligt protein minimerar muskelkatabolism
-                </li>
-                <li>
-                  <strong>Mättnadseffekt:</strong> Protein är det mest mättande makronutrientet per
-                  kcal
-                </li>
-                <li>
-                  <strong>Hög TEF:</strong> ca 25–30% av proteinkalorierna går till att smälta
-                  proteinet — det hjälper kaloribalansen
-                </li>
+                {(t('cut-calculator.explanation.list_1', { returnObjects: true }) as string[]).map(
+                  (item, i) => {
+                    const colonIdx = item.indexOf(':')
+                    const bold = item.substring(2, colonIdx - 2)
+                    const rest = item.substring(colonIdx + 2)
+                    return (
+                      <li key={i}>
+                        <strong>{bold}:</strong> {rest}
+                      </li>
+                    )
+                  }
+                )}
               </ul>
-              <p>
-                Rekommendation under cut: 1,8–2,4 g/kg kroppsvikt, jämfört med 1,6–2,2 g/kg under
-                underhåll eller bulk.
-              </p>
+              <p>{t('cut-calculator.explanation.p_3')}</p>
 
               <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900 pt-4">
-                Varför planar vikten ut trots kaloriunderskott?
+                {t('cut-calculator.explanation.h2_3')}
               </h2>
-              <p>
-                Adaptiv termogenes: kroppen sänker sin ämnesomsättning och NEAT (oplanerad rörelse)
-                som försvar mot lång kaloribrist. Det är normalt och inte ett misslyckande.
-              </p>
-              <p>
-                Lösning: ta en <em>diet break</em> på 1–2 veckor på underhållsintag var 8–12:e
-                vecka. Det återställer hormonbalansen (leptin, kortisol, sköldkörtelhormon) och gör
-                nästa cut-fas effektivare.
-              </p>
+              <p>{t('cut-calculator.explanation.p_4')}</p>
+              <p>{t('cut-calculator.explanation.p_5')}</p>
             </div>
           </div>
         </section>

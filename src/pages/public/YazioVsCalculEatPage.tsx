@@ -242,99 +242,76 @@ export default function YazioVsCalculEatPage() {
             </div>
           </section>
 
-          {/* Article prose — stays in TSX */}
+          {/* Article prose */}
           <section className="space-y-5 text-neutral-700 text-sm leading-relaxed mb-8">
-            <h2 className="text-xl font-semibold text-neutral-900">För vem passar Yazio?</h2>
-            <p>
-              Yazio är ett bra val om du vill ha ett enkelt och lättstartat loggningsverktyg. Det
-              passar dig som:
-            </p>
+            <h2 className="text-xl font-semibold text-neutral-900">
+              {t('yazio-vs-calculeat.explanation.for_whom_y_h2')}
+            </h2>
+            <p>{t('yazio-vs-calculeat.explanation.for_whom_y_p')}</p>
             <ul className="space-y-1.5 pl-4 list-disc">
-              <li>Praktiserar intermittent fasting och vill ha ett inbyggt fasting-läge</li>
-              <li>Vill ha en stor matdatabas med minimal inlärningskurva</li>
-              <li>Loggar kalorier utan avancerade mål kring kroppskomposition</li>
-              <li>Vill ha vattenkoll och enkla hälsopåminnelser i en app</li>
+              {(
+                t('yazio-vs-calculeat.explanation.for_whom_y_list', {
+                  returnObjects: true,
+                }) as string[]
+              ).map((item, i) => (
+                <li key={i}>{item}</li>
+              ))}
             </ul>
             <p>
-              <strong>Begränsningen:</strong> Yazioss styrka är enkelhet. Men enkelhet innebär att
-              kalorimålet är statiskt och generiskt — det anpassas inte till din faktiska
-              metabolism, din nuvarande fas eller hur din kropp faktiskt svarar på kaloriintaget.
+              <strong>
+                {t('yazio-vs-calculeat.explanation.for_whom_y_limitation')
+                  .split(': ')[0]
+                  .replace(/\*\*/g, '')}
+                :
+              </strong>{' '}
+              {t('yazio-vs-calculeat.explanation.for_whom_y_limitation')
+                .split(': ')
+                .slice(1)
+                .join(': ')}
             </p>
 
             <h2 className="text-xl font-semibold text-neutral-900 pt-2">
-              För vem passar CalculEat?
+              {t('yazio-vs-calculeat.explanation.for_whom_ce_h2')}
             </h2>
-            <p>
-              CalculEat passar dig som vill ha precision — inte bara loggning. Det är rätt app om
-              du:
-            </p>
+            <p>{t('yazio-vs-calculeat.explanation.for_whom_ce_p')}</p>
             <ul className="space-y-1.5 pl-4 list-disc">
-              <li>
-                Vill ha ett <strong>individuellt TDEE</strong> baserat på din kropp, inte ett
-                populationssnitt
-              </li>
-              <li>
-                Arbetar med{' '}
-                <Link to="/kalkylatorer/cut-kalkylator" className="text-primary-600 underline">
-                  cut
-                </Link>
-                {'/'}
-                <Link to="/kalkylatorer/bulk-kalkylator" className="text-primary-600 underline">
-                  bulk-cykler
-                </Link>{' '}
-                och behöver separata kalorimål per fas
-              </li>
-              <li>
-                Märker att loggningen inte ger resultat och vill ha{' '}
-                <strong>metabolisk kalibrering</strong> — räkna ut ditt{' '}
-                <Link to="/kalkylatorer/kaloriunderskott" className="text-primary-600 underline">
-                  exakta kaloriunderskott
-                </Link>{' '}
-                som ett första steg
-              </li>
-              <li>
-                Planerar en <strong>reverse diet</strong> efter en längre cut
-              </li>
-              <li>Vill ha en gratis app utan att låsa upp allt via premium</li>
+              {(
+                t('yazio-vs-calculeat.explanation.for_whom_ce_list', {
+                  returnObjects: true,
+                }) as string[]
+              ).map((item, i) => (
+                <li key={i}>{item}</li>
+              ))}
             </ul>
 
-            <h2 className="text-xl font-semibold text-neutral-900 pt-4">Enkelhet vs precision</h2>
-            <p>
-              Yazioss modell är: gör loggningen så enkel som möjligt. CalculEats modell är: se till
-              att du loggar mot rätt mål.
-            </p>
-            <p className="mt-2">
-              Enkel loggning ger värde — men bara om kalorimålet stämmer. Om ditt TDEE är 2 400 kcal
-              men appen säger 2 000 loggar du noggrant mot fel siffra. Resultaten uteblir och du vet
-              inte varför.
-            </p>
+            <h2 className="text-xl font-semibold text-neutral-900 pt-4">
+              {t('yazio-vs-calculeat.explanation.diff_h2')}
+            </h2>
+            <p>{t('yazio-vs-calculeat.explanation.diff_p1')}</p>
+            <p className="mt-2">{t('yazio-vs-calculeat.explanation.diff_p2')}</p>
 
             <h2 className="text-xl font-semibold text-neutral-900 pt-4">
-              Tre saker Yazio inte löser
+              {t('yazio-vs-calculeat.explanation.three_things_h2')}
             </h2>
             <div className="space-y-3 mt-3">
-              {[
-                {
-                  title: 'Statiskt kalorimål',
-                  desc: 'Yazioss kalorimål sätts en gång och ändras inte. Under en cut sjunker ditt TDEE gradvis i takt med viktminskning. I vecka 12 är kalorimålet från vecka 1 inte längre korrekt.',
-                  color: 'bg-red-50 border-red-200',
-                },
-                {
-                  title: 'Inga fasbyten',
-                  desc: 'Ska du växla från cut till maintenance eller bulk? Yazio saknar inbyggt stöd — du manuellt justerar kalorimål utan vägledning om rätt nivå per fas.',
-                  color: 'bg-orange-50 border-orange-200',
-                },
-                {
-                  title: 'Ingen kalibrering mot verklig viktdata',
-                  desc: 'Om din vikt inte rör sig som förväntat ger Yazio inga svar. CalculEat jämför ditt faktiska viktmönster mot förväntat och justerar TDEE-uppskattningen därefter.',
-                  color: 'bg-yellow-50 border-yellow-200',
-                },
-              ].map(({ title, desc, color }) => (
-                <div key={title} className={`rounded-xl border p-4 ${color}`}>
-                  <div className="font-semibold text-neutral-800 mb-1 text-sm">{title}</div>
-                  <div className="text-sm text-neutral-700">{desc}</div>
-                </div>
-              ))}
+              {(
+                t('yazio-vs-calculeat.explanation.three_things_cards', { returnObjects: true }) as {
+                  title: string
+                  desc: string
+                }[]
+              ).map(({ title, desc }, i) => {
+                const colors = [
+                  'bg-red-50 border-red-200',
+                  'bg-orange-50 border-orange-200',
+                  'bg-yellow-50 border-yellow-200',
+                ]
+                return (
+                  <div key={i} className={`rounded-xl border p-4 ${colors[i]}`}>
+                    <div className="font-semibold text-neutral-800 mb-1 text-sm">{title}</div>
+                    <div className="text-sm text-neutral-700">{desc}</div>
+                  </div>
+                )
+              })}
             </div>
           </section>
 
