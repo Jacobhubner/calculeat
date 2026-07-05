@@ -8,6 +8,19 @@ import { BMR_FORMULA_DESCRIPTIONS } from '@/lib/calculations/bmrDescriptions'
 import type { BMRFormula } from '@/lib/calculations/bmr'
 import type { Gender } from '@/lib/types'
 
+const FORMULA_KEY_MAP: Record<BMRFormula, string> = {
+  'Mifflin-St Jeor equation': 'mifflinStJeor',
+  'Cunningham equation': 'cunningham',
+  'Oxford/Henry equation': 'oxfordHenry',
+  'Schofield equation': 'schofield',
+  'Revised Harris-Benedict equation': 'revisedHarrisBenedict',
+  'Original Harris-Benedict equation': 'originalHarrisBenedict',
+  'MacroFactor standard equation': 'macroFactorStandard',
+  'MacroFactor FFM equation': 'macroFactorFFM',
+  'MacroFactor athlete equation': 'macroFactorAthlete',
+  'Fitness Stuff Podcast equation': 'fitnessStuffPodcast',
+}
+
 const ALL_FORMULAS: BMRFormula[] = [
   'Mifflin-St Jeor equation',
   'Revised Harris-Benedict equation',
@@ -37,6 +50,33 @@ export default function ComparisonTab({
   profileBodyFat,
 }: ComparisonTabProps) {
   const { t } = useTranslation('tools')
+  const tDyn = t as unknown as (key: string, opts: object) => unknown
+
+  const getFormulaName = (formula: BMRFormula) => {
+    const fk = FORMULA_KEY_MAP[formula]
+    return t(`bmrFormulas.${fk}.name`, { defaultValue: BMR_FORMULA_DESCRIPTIONS[formula].name })
+  }
+  const getFormulaDescription = (formula: BMRFormula) => {
+    const fk = FORMULA_KEY_MAP[formula]
+    return t(`bmrFormulas.${fk}.description`, {
+      defaultValue: BMR_FORMULA_DESCRIPTIONS[formula].description,
+    })
+  }
+  const getFormulaPros = (formula: BMRFormula) => {
+    const fk = FORMULA_KEY_MAP[formula]
+    return tDyn(`bmrFormulas.${fk}.pros`, {
+      returnObjects: true,
+      defaultValue: BMR_FORMULA_DESCRIPTIONS[formula].pros,
+    }) as string[]
+  }
+  const getFormulaCons = (formula: BMRFormula) => {
+    const fk = FORMULA_KEY_MAP[formula]
+    return tDyn(`bmrFormulas.${fk}.cons`, {
+      returnObjects: true,
+      defaultValue: BMR_FORMULA_DESCRIPTIONS[formula].cons,
+    }) as string[]
+  }
+
   const [gender, setGender] = useState<Gender>('male')
   const [age, setAge] = useState('')
   const [weight, setWeight] = useState('')
@@ -228,6 +268,10 @@ export default function ComparisonTab({
             <div className="space-y-2">
               {bmrResults.map(({ formula, result, needsBodyFat, hasBodyFat }) => {
                 const desc = BMR_FORMULA_DESCRIPTIONS[formula]
+                const formulaName = getFormulaName(formula)
+                const formulaDescription = getFormulaDescription(formula)
+                const formulaPros = getFormulaPros(formula)
+                const formulaCons = getFormulaCons(formula)
                 const isExcluded = excludedFormulas.has(formula)
                 const isMin =
                   !isExcluded && result !== null && result === minBMR && validValues.length > 1
@@ -257,7 +301,9 @@ export default function ComparisonTab({
                     >
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-sm font-medium text-neutral-900">{desc.name}</span>
+                          <span className="text-sm font-medium text-neutral-900">
+                            {formulaName}
+                          </span>
                           <Badge
                             variant="outline"
                             className="text-[10px] px-1.5 py-0 h-4 shrink-0 bg-neutral-100 text-neutral-600"
@@ -335,18 +381,18 @@ export default function ComparisonTab({
                     {isExpanded && (
                       <div className="px-4 pb-4 space-y-3 border-t border-neutral-200 mt-0 pt-3">
                         <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide">
-                          {desc.name} — {desc.year}
+                          {formulaName} — {desc.year}
                         </p>
                         <p className="text-sm text-neutral-700 leading-relaxed">
-                          {desc.description}
+                          {formulaDescription}
                         </p>
-                        {desc.pros.length > 0 && (
+                        {formulaPros.length > 0 && (
                           <div>
                             <p className="text-xs font-semibold text-green-700 mb-1">
                               {t('comparison.pros')}
                             </p>
                             <ul className="space-y-1">
-                              {desc.pros.map((pro, i) => (
+                              {formulaPros.map((pro, i) => (
                                 <li key={i} className="flex gap-2 text-sm text-neutral-700">
                                   <span className="text-green-600 font-bold shrink-0">•</span>
                                   <span>{pro}</span>
@@ -355,13 +401,13 @@ export default function ComparisonTab({
                             </ul>
                           </div>
                         )}
-                        {desc.cons.length > 0 && (
+                        {formulaCons.length > 0 && (
                           <div>
                             <p className="text-xs font-semibold text-amber-700 mb-1">
                               {t('comparison.cons')}
                             </p>
                             <ul className="space-y-1">
-                              {desc.cons.map((con, i) => (
+                              {formulaCons.map((con, i) => (
                                 <li key={i} className="flex gap-2 text-sm text-neutral-700">
                                   <span className="text-amber-600 font-bold shrink-0">•</span>
                                   <span>{con}</span>
