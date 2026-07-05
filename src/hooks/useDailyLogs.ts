@@ -345,7 +345,7 @@ export function useEnsureTodayLog() {
       const proteinMinG = (avgCalories * (activeProfile.protein_min_percent || 15)) / 100 / 4
       const proteinMaxG = (avgCalories * (activeProfile.protein_max_percent || 25)) / 100 / 4
 
-      // Create new log — ignore unique_violation (23505) if race condition or double-click
+      // Create new log — ignore conflict if row already exists (race condition / double-click)
       const { error: insertError } = await supabase.from('daily_logs').insert({
         user_id: user.id,
         log_date: today,
@@ -359,7 +359,12 @@ export function useEnsureTodayLog() {
         goal_protein_max_g: Math.round(proteinMaxG),
       })
 
-      if (insertError && insertError.code !== '23505') throw insertError
+      const isConflict =
+        insertError?.code === '23505' ||
+        insertError?.code === '409' ||
+        insertError?.message?.toLowerCase().includes('duplicate') ||
+        insertError?.message?.toLowerCase().includes('unique')
+      if (insertError && !isConflict) throw insertError
 
       const { data: log, error: fetchError } = await supabase
         .from('daily_logs')
@@ -792,7 +797,12 @@ export function useStartNewDay() {
         goal_protein_max_g: Math.round(proteinMaxG),
       })
 
-      if (insertError && insertError.code !== '23505') throw insertError
+      const isConflict =
+        insertError?.code === '23505' ||
+        insertError?.code === '409' ||
+        insertError?.message?.toLowerCase().includes('duplicate') ||
+        insertError?.message?.toLowerCase().includes('unique')
+      if (insertError && !isConflict) throw insertError
 
       const { data: log, error: fetchError } = await supabase
         .from('daily_logs')
