@@ -348,22 +348,37 @@ export function useEnsureTodayLog() {
       // Create new log with all goals from active profile
       const { data: newLog, error } = await supabase
         .from('daily_logs')
-        .insert({
-          user_id: user.id,
-          log_date: today,
-          goal_calories_min: activeProfile.calories_min,
-          goal_calories_max: activeProfile.calories_max,
-          goal_fat_min_g: Math.round(fatMinG),
-          goal_fat_max_g: Math.round(fatMaxG),
-          goal_carb_min_g: Math.round(carbMinG),
-          goal_carb_max_g: Math.round(carbMaxG),
-          goal_protein_min_g: Math.round(proteinMinG),
-          goal_protein_max_g: Math.round(proteinMaxG),
-        })
+        .upsert(
+          {
+            user_id: user.id,
+            log_date: today,
+            goal_calories_min: activeProfile.calories_min,
+            goal_calories_max: activeProfile.calories_max,
+            goal_fat_min_g: Math.round(fatMinG),
+            goal_fat_max_g: Math.round(fatMaxG),
+            goal_carb_min_g: Math.round(carbMinG),
+            goal_carb_max_g: Math.round(carbMaxG),
+            goal_protein_min_g: Math.round(proteinMinG),
+            goal_protein_max_g: Math.round(proteinMaxG),
+          },
+          { onConflict: 'user_id,log_date', ignoreDuplicates: true }
+        )
         .select()
-        .single()
+        .maybeSingle()
 
       if (error) throw error
+
+      // If ignoreDuplicates swallowed the conflict, fetch the existing row
+      if (!newLog) {
+        const { data: existing } = await supabase
+          .from('daily_logs')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('log_date', today)
+          .single()
+        return existing as DailyLog
+      }
+
       return newLog as DailyLog
     },
     onSuccess: () => {
@@ -776,22 +791,36 @@ export function useStartNewDay() {
 
       const { data: newLog, error } = await supabase
         .from('daily_logs')
-        .insert({
-          user_id: user.id,
-          log_date: nextDay,
-          goal_calories_min: activeProfile.calories_min,
-          goal_calories_max: activeProfile.calories_max,
-          goal_fat_min_g: Math.round(fatMinG),
-          goal_fat_max_g: Math.round(fatMaxG),
-          goal_carb_min_g: Math.round(carbMinG),
-          goal_carb_max_g: Math.round(carbMaxG),
-          goal_protein_min_g: Math.round(proteinMinG),
-          goal_protein_max_g: Math.round(proteinMaxG),
-        })
+        .upsert(
+          {
+            user_id: user.id,
+            log_date: nextDay,
+            goal_calories_min: activeProfile.calories_min,
+            goal_calories_max: activeProfile.calories_max,
+            goal_fat_min_g: Math.round(fatMinG),
+            goal_fat_max_g: Math.round(fatMaxG),
+            goal_carb_min_g: Math.round(carbMinG),
+            goal_carb_max_g: Math.round(carbMaxG),
+            goal_protein_min_g: Math.round(proteinMinG),
+            goal_protein_max_g: Math.round(proteinMaxG),
+          },
+          { onConflict: 'user_id,log_date', ignoreDuplicates: true }
+        )
         .select()
-        .single()
+        .maybeSingle()
 
       if (error) throw error
+
+      if (!newLog) {
+        const { data: existing } = await supabase
+          .from('daily_logs')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('log_date', nextDay)
+          .single()
+        return existing as DailyLog
+      }
+
       return newLog as DailyLog
     },
     onSuccess: () => {
