@@ -821,14 +821,9 @@ export function useStartNewDay() {
       if (fetchError) throw fetchError
       return log as DailyLog
     },
-    onSuccess: newLog => {
-      // Immediately populate the cache so useTodayLog picks up the new day without delay
-      const completionMode = localStorage.getItem('day-completion-mode') || 'manual'
-      queryClient.setQueryData(['dailyLogs', 'today', newLog.user_id, completionMode], {
-        ...newLog,
-        meals: [],
-      })
-      queryClient.invalidateQueries({ queryKey: ['dailyLogs'] })
+    onSuccess: () => {
+      // Reset all daily log queries so useTodayLog re-fetches from scratch
+      queryClient.resetQueries({ queryKey: ['dailyLogs'] })
     },
   })
 }
