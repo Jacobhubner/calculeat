@@ -21,7 +21,7 @@ import { useProfileStore } from '@/stores/profileStore'
 import { useProfiles } from '@/hooks'
 import type { Profile } from '@/lib/types'
 
-const WEEKS_PER_PAGE = 10
+const WEEKS_PER_PAGE = 4
 
 export default function HistoryPage() {
   const { t } = useTranslation('history')
