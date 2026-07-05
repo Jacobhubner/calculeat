@@ -72,10 +72,9 @@ export default function HistoryPage() {
     })
   }
 
-  // Calculate stats (based on selected period, excluding today's unfinished day)
-  const todayStr = new Date().toISOString().split('T')[0]
-  const completedStatsLogs = statsLogs.filter(log => log.log_date.split('T')[0] !== todayStr)
-  const completedDays = completedStatsLogs.filter(log => log.is_completed).length
+  // Calculate stats based on completed days only
+  const completedStatsLogs = statsLogs.filter(log => log.is_completed)
+  const completedDays = completedStatsLogs.length
   const avgCalories =
     completedStatsLogs.length > 0
       ? Math.round(
@@ -428,9 +427,18 @@ export default function HistoryPage() {
                 </CardHeader>
                 <CardContent className="space-y-2">
                   {(() => {
-                    const totalGreen = statsLogs.reduce((sum, log) => sum + log.green_calories, 0)
-                    const totalYellow = statsLogs.reduce((sum, log) => sum + log.yellow_calories, 0)
-                    const totalOrange = statsLogs.reduce((sum, log) => sum + log.orange_calories, 0)
+                    const totalGreen = completedStatsLogs.reduce(
+                      (sum, log) => sum + log.green_calories,
+                      0
+                    )
+                    const totalYellow = completedStatsLogs.reduce(
+                      (sum, log) => sum + log.yellow_calories,
+                      0
+                    )
+                    const totalOrange = completedStatsLogs.reduce(
+                      (sum, log) => sum + log.orange_calories,
+                      0
+                    )
                     const total = totalGreen + totalYellow + totalOrange
 
                     const greenPct = total > 0 ? Math.round((totalGreen / total) * 100) : 0
