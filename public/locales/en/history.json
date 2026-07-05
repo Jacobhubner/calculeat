@@ -54,6 +54,8 @@
   },
   "stats": {
     "summaryTitle": "{{days}}-day summary",
+    "summaryTitleAll": "Summary — all data",
+    "allTime": "All",
     "periodDays": "{{days}} d",
     "completedDays": "Completed days",
     "avgPerDay": "Daily average",

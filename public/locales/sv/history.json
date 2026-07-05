@@ -54,6 +54,8 @@
   },
   "stats": {
     "summaryTitle": "{{days}}-dagars sammanfattning",
+    "summaryTitleAll": "Sammanfattning — all data",
+    "allTime": "Allt",
     "periodDays": "{{days}} d",
     "completedDays": "Avslutade dagar",
     "avgPerDay": "Snitt per dag",

@@ -26,7 +26,7 @@ const WEEKS_PER_PAGE = 4
 export default function HistoryPage() {
   const { t } = useTranslation('history')
   const [viewMode, setViewMode] = useState<'calendar' | 'list'>('list')
-  const [statsPeriod, setStatsPeriod] = useState<number>(30)
+  const [statsPeriod, setStatsPeriod] = useState<number | null>(30)
   const [visibleWeeks, setVisibleWeeks] = useState(WEEKS_PER_PAGE)
 
   const activeProfile = useProfileStore(state => state.activeProfile)
@@ -39,7 +39,7 @@ export default function HistoryPage() {
     future.setFullYear(now.getFullYear() + 1)
     const end = future.toISOString().split('T')[0]
     const ninetyDaysAgo = new Date(now)
-    ninetyDaysAgo.setDate(now.getDate() - 365)
+    ninetyDaysAgo.setFullYear(now.getFullYear() - 10)
     const start = ninetyDaysAgo.toISOString().split('T')[0]
     return { endDate: end, startDate: start }
   }, [])
@@ -49,6 +49,7 @@ export default function HistoryPage() {
   // Filter logs to selected stats period
   const statsLogs = useMemo(() => {
     if (!logs) return []
+    if (statsPeriod === null) return logs
     const cutoff = new Date()
     cutoff.setDate(cutoff.getDate() - statsPeriod)
     const cutoffStr = cutoff.toISOString().split('T')[0]
@@ -317,7 +318,9 @@ export default function HistoryPage() {
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <BarChart3 className="h-5 w-5" />
-                  {t('stats.summaryTitle', { days: statsPeriod })}
+                  {statsPeriod === null
+                    ? t('stats.summaryTitleAll')
+                    : t('stats.summaryTitle', { days: statsPeriod })}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -336,19 +339,33 @@ export default function HistoryPage() {
                         {p === 14 ? '2v' : p === 21 ? '3v' : `${p}d`}
                       </button>
                     ))}
+                    <button
+                      onClick={() => setStatsPeriod(null)}
+                      className={`flex-1 py-1 text-xs rounded-md font-medium transition-colors ${
+                        statsPeriod === null
+                          ? 'bg-primary-600 text-white'
+                          : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
+                      }`}
+                    >
+                      {t('stats.allTime')}
+                    </button>
                   </div>
-                  <input
-                    type="range"
-                    min={1}
-                    max={90}
-                    value={statsPeriod}
-                    onChange={e => setStatsPeriod(Number(e.target.value))}
-                    className="w-full accent-primary-600"
-                  />
-                  <div className="flex justify-between text-xs text-neutral-400">
-                    <span>1d</span>
-                    <span>90d</span>
-                  </div>
+                  {statsPeriod !== null && (
+                    <>
+                      <input
+                        type="range"
+                        min={1}
+                        max={90}
+                        value={statsPeriod}
+                        onChange={e => setStatsPeriod(Number(e.target.value))}
+                        className="w-full accent-primary-600"
+                      />
+                      <div className="flex justify-between text-xs text-neutral-400">
+                        <span>1d</span>
+                        <span>90d</span>
+                      </div>
+                    </>
+                  )}
                 </div>
                 <div>
                   <div className="text-2xl font-bold text-neutral-900">{completedDays}</div>
@@ -403,7 +420,11 @@ export default function HistoryPage() {
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg">{t('stats.densityDistribution')}</CardTitle>
-                  <CardDescription>{t('stats.lastNDays', { days: statsPeriod })}</CardDescription>
+                  <CardDescription>
+                    {statsPeriod === null
+                      ? t('stats.summaryTitleAll')
+                      : t('stats.lastNDays', { days: statsPeriod })}
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-2">
                   {(() => {
