@@ -150,12 +150,7 @@ export default function TodayPage() {
   useEffect(() => {
     // Don't create a log while startNewDay is in flight or just completed —
     // the new day's log will appear via invalidation once the mutation settles.
-    const needsEnsure =
-      !logLoading &&
-      !ensureLog.isPending &&
-      !todayLog &&
-      !startNewDay.isPending &&
-      !startNewDay.isSuccess
+    const needsEnsure = !logLoading && !ensureLog.isPending && !todayLog && !startNewDay.isPending
     if (needsEnsure) {
       ensureLog.mutate()
     }

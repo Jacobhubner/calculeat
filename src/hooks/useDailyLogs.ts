@@ -132,6 +132,7 @@ export function useTodayLog() {
           ? await query.eq('is_preview', true).maybeSingle()
           : await query.eq('is_preview', false).maybeSingle()
 
+        console.log('[useTodayLog] openLog from DB:', openLog?.log_date, openLog?.is_completed)
         if (openLog) return openLog as DailyLog
       }
 
