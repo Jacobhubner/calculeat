@@ -148,9 +148,14 @@ export default function TodayPage() {
 
   // Ensure log and settings exist
   useEffect(() => {
-    // Only create a new log if there is no log at all — never if the user
-    // has manually changed the log date to a different day.
-    const needsEnsure = !logLoading && !ensureLog.isPending && !todayLog
+    // Don't create a log while startNewDay is in flight or just completed —
+    // the new day's log will appear via invalidation once the mutation settles.
+    const needsEnsure =
+      !logLoading &&
+      !ensureLog.isPending &&
+      !todayLog &&
+      !startNewDay.isPending &&
+      !startNewDay.isSuccess
     if (needsEnsure) {
       ensureLog.mutate()
     }

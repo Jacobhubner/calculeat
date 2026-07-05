@@ -822,8 +822,7 @@ export function useStartNewDay() {
       return log as DailyLog
     },
     onSuccess: () => {
-      // Reset all daily log queries so useTodayLog re-fetches from scratch
-      queryClient.resetQueries({ queryKey: ['dailyLogs'] })
+      queryClient.invalidateQueries({ queryKey: ['dailyLogs'] })
     },
   })
 }
