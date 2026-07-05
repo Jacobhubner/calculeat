@@ -348,27 +348,24 @@ export function useEnsureTodayLog() {
       // Create new log with all goals from active profile
       const { data: newLog, error } = await supabase
         .from('daily_logs')
-        .upsert(
-          {
-            user_id: user.id,
-            log_date: today,
-            goal_calories_min: activeProfile.calories_min,
-            goal_calories_max: activeProfile.calories_max,
-            goal_fat_min_g: Math.round(fatMinG),
-            goal_fat_max_g: Math.round(fatMaxG),
-            goal_carb_min_g: Math.round(carbMinG),
-            goal_carb_max_g: Math.round(carbMaxG),
-            goal_protein_min_g: Math.round(proteinMinG),
-            goal_protein_max_g: Math.round(proteinMaxG),
-          },
-          { onConflict: 'user_id,log_date', ignoreDuplicates: true }
-        )
+        .insert({
+          user_id: user.id,
+          log_date: today,
+          goal_calories_min: activeProfile.calories_min,
+          goal_calories_max: activeProfile.calories_max,
+          goal_fat_min_g: Math.round(fatMinG),
+          goal_fat_max_g: Math.round(fatMaxG),
+          goal_carb_min_g: Math.round(carbMinG),
+          goal_carb_max_g: Math.round(carbMaxG),
+          goal_protein_min_g: Math.round(proteinMinG),
+          goal_protein_max_g: Math.round(proteinMaxG),
+        })
         .select()
         .maybeSingle()
 
-      if (error) throw error
+      // 23505 = unique_violation — row already exists, just fetch it
+      if (error && error.code !== '23505') throw error
 
-      // If ignoreDuplicates swallowed the conflict, fetch the existing row
       if (!newLog) {
         const { data: existing } = await supabase
           .from('daily_logs')
@@ -791,25 +788,23 @@ export function useStartNewDay() {
 
       const { data: newLog, error } = await supabase
         .from('daily_logs')
-        .upsert(
-          {
-            user_id: user.id,
-            log_date: nextDay,
-            goal_calories_min: activeProfile.calories_min,
-            goal_calories_max: activeProfile.calories_max,
-            goal_fat_min_g: Math.round(fatMinG),
-            goal_fat_max_g: Math.round(fatMaxG),
-            goal_carb_min_g: Math.round(carbMinG),
-            goal_carb_max_g: Math.round(carbMaxG),
-            goal_protein_min_g: Math.round(proteinMinG),
-            goal_protein_max_g: Math.round(proteinMaxG),
-          },
-          { onConflict: 'user_id,log_date', ignoreDuplicates: true }
-        )
+        .insert({
+          user_id: user.id,
+          log_date: nextDay,
+          goal_calories_min: activeProfile.calories_min,
+          goal_calories_max: activeProfile.calories_max,
+          goal_fat_min_g: Math.round(fatMinG),
+          goal_fat_max_g: Math.round(fatMaxG),
+          goal_carb_min_g: Math.round(carbMinG),
+          goal_carb_max_g: Math.round(carbMaxG),
+          goal_protein_min_g: Math.round(proteinMinG),
+          goal_protein_max_g: Math.round(proteinMaxG),
+        })
         .select()
         .maybeSingle()
 
-      if (error) throw error
+      // 23505 = unique_violation — row already exists, just fetch it
+      if (error && error.code !== '23505') throw error
 
       if (!newLog) {
         const { data: existing } = await supabase
