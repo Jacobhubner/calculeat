@@ -100,6 +100,7 @@ export function useTodayLog() {
 
   return useQuery({
     queryKey: ['dailyLogs', 'today', user?.id, completionMode],
+    staleTime: 0,
     queryFn: async () => {
       if (!user) throw new Error('User not authenticated')
       if (!activeProfile) throw new Error('No active profile')
@@ -132,11 +133,38 @@ export function useTodayLog() {
           ? await query.eq('is_preview', true).maybeSingle()
           : await query.eq('is_preview', false).maybeSingle()
 
-        console.log('[useTodayLog] openLog from DB:', openLog?.log_date, openLog?.is_completed)
         if (openLog) return openLog as DailyLog
       }
 
-      // In auto mode (or no open log found), look up today's date
+      // In auto mode (or no open log found), look up the most recent open log
+      // (handles the case where user pressed "Start new day" which creates a future-dated log)
+      const { data: openLog, error: openError } = await supabase
+        .from('daily_logs')
+        .select(
+          `
+          *,
+          meals:meal_entries(
+            *,
+            items:meal_entry_items(
+              *,
+              food_item:food_items(*)
+            )
+          )
+        `
+        )
+        .eq('user_id', user.id)
+        .eq('is_completed', false)
+        .eq('is_preview', isPreviewMode ? true : false)
+        .order('log_date', { ascending: false })
+        .order('meal_order', { foreignTable: 'meal_entries' })
+        .order('item_order', { foreignTable: 'meal_entries.meal_entry_items' })
+        .limit(1)
+        .maybeSingle()
+
+      if (openError) throw openError
+      if (openLog) return openLog as DailyLog
+
+      // Fall back to today's log (even if completed)
       const { data, error } = await supabase
         .from('daily_logs')
         .select(
