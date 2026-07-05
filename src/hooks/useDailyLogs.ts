@@ -99,7 +99,7 @@ export function useTodayLog() {
   }, [completionMode, today, queryClient])
 
   return useQuery({
-    queryKey: ['dailyLogs', 'today', user?.id, today, completionMode],
+    queryKey: ['dailyLogs', 'today', user?.id, completionMode],
     queryFn: async () => {
       if (!user) throw new Error('User not authenticated')
       if (!activeProfile) throw new Error('No active profile')
@@ -821,7 +821,13 @@ export function useStartNewDay() {
       if (fetchError) throw fetchError
       return log as DailyLog
     },
-    onSuccess: () => {
+    onSuccess: newLog => {
+      // Immediately populate the cache so useTodayLog picks up the new day without delay
+      const completionMode = localStorage.getItem('day-completion-mode') || 'manual'
+      queryClient.setQueryData(['dailyLogs', 'today', newLog.user_id, completionMode], {
+        ...newLog,
+        meals: [],
+      })
       queryClient.invalidateQueries({ queryKey: ['dailyLogs'] })
     },
   })
