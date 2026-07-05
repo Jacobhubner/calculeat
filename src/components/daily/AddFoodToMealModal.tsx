@@ -50,6 +50,8 @@ interface AddFoodToMealModalProps {
   preselectedFood?: PreselectedFood
   editItem?: EditItemData
   onFoodSelect?: (food: FoodItem) => void
+  showMealSelector?: boolean
+  extraMealOptions?: { id: string; meal_name: string; meal_order: number }[]
 }
 
 export function AddFoodToMealModal({
@@ -62,6 +64,8 @@ export function AddFoodToMealModal({
   preselectedFood,
   editItem,
   onFoodSelect,
+  showMealSelector = false,
+  extraMealOptions = [],
 }: AddFoodToMealModalProps) {
   const { t } = useTranslation('food')
   const tAny = t as (key: string) => string
@@ -201,7 +205,8 @@ export function AddFoodToMealModal({
     if (mealName) {
       setSelectedMealName(mealName)
     } else if (mealSettings && mealSettings.length > 0) {
-      setSelectedMealName(mealSettings[0].meal_name)
+      const last = [...mealSettings].sort((a, b) => b.meal_order - a.meal_order)[0]
+      setSelectedMealName(last.meal_name)
     }
 
     if (editItem) {
@@ -419,7 +424,7 @@ export function AddFoodToMealModal({
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent
-          className="max-w-lg max-h-[85vh] overflow-hidden flex flex-col"
+          className="max-w-lg flex flex-col"
           onOpenAutoFocus={e => {
             e.preventDefault()
             searchInputRef.current?.focus()
@@ -438,26 +443,7 @@ export function AddFoodToMealModal({
             </DialogDescription>
           </DialogHeader>
 
-          {/* Meal selector */}
-          {!isEditMode && !mealName && !onFoodSelect && mealSettings && mealSettings.length > 0 && (
-            <div className="space-y-2">
-              <Label>{t('addToMealModal.selectMeal')}</Label>
-              <Select
-                value={selectedMealName}
-                onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                  setSelectedMealName(e.target.value)
-                }
-              >
-                {mealSettings.map(meal => (
-                  <option key={meal.id} value={meal.meal_name}>
-                    {meal.meal_name}
-                  </option>
-                ))}
-              </Select>
-            </div>
-          )}
-
-          <div className="flex-1 overflow-y-auto space-y-3">
+          <div className="overflow-y-auto space-y-3">
             {!selectedFood ? (
               <>
                 {/* Tabs */}
@@ -704,36 +690,67 @@ export function AddFoodToMealModal({
                     fat={nutritionPreview.fat}
                     weightGrams={nutritionPreview.weightGrams}
                     energyDensityColor={selectedFood.energy_density_color}
+                    saturatedFat={nutritionPreview.saturatedFat}
+                    sugars={nutritionPreview.sugars}
+                    fiber={nutritionPreview.fiber}
+                    salt={nutritionPreview.salt}
                   />
                 )}
               </>
             )}
           </div>
 
-          {/* Action buttons */}
-          <div className="flex justify-between pt-4 border-t mt-4">
-            <Button variant="ghost" onClick={() => onOpenChange(false)}>
-              {t('addToMealModal.cancel')}
-            </Button>
-            {selectedFood && (
-              <Button
-                onClick={handleAddFood}
-                disabled={
-                  !nutritionPreview ||
-                  addFoodToMeal.isPending ||
-                  createMealEntry.isPending ||
-                  updateMealItem.isPending
-                }
-              >
-                {isEditMode
-                  ? updateMealItem.isPending
-                    ? t('addToMealModal.saving')
-                    : t('addToMealModal.save')
-                  : addFoodToMeal.isPending || createMealEntry.isPending
-                    ? t('addToMealModal.adding')
-                    : t('addToMealModal.add')}
+          <div>
+            {/* Meal selector — visas längst ned när användaren kommer från sidebar */}
+            {!isEditMode &&
+              (showMealSelector || !mealName) &&
+              !onFoodSelect &&
+              mealSettings &&
+              mealSettings.length > 0 && (
+                <div className="space-y-2 mt-3">
+                  <Label>{t('addToMealModal.selectMeal')}</Label>
+                  <Select
+                    value={selectedMealName}
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                      setSelectedMealName(e.target.value)
+                    }
+                  >
+                    {[...(mealSettings ?? []), ...extraMealOptions]
+                      .sort((a, b) => a.meal_order - b.meal_order)
+                      .map(meal => (
+                        <option key={meal.id} value={meal.meal_name}>
+                          {meal.meal_name}
+                        </option>
+                      ))}
+                  </Select>
+                </div>
+              )}
+
+            {/* Action buttons */}
+            <div className="flex justify-between pt-4 border-t mt-4 pb-4 md:pb-0">
+              <Button variant="ghost" onClick={() => onOpenChange(false)}>
+                {t('addToMealModal.cancel')}
               </Button>
-            )}
+              {selectedFood && (
+                <Button
+                  onClick={handleAddFood}
+                  disabled={
+                    !nutritionPreview ||
+                    addFoodToMeal.isPending ||
+                    createMealEntry.isPending ||
+                    updateMealItem.isPending
+                  }
+                >
+                  {isEditMode
+                    ? updateMealItem.isPending
+                      ? t('addToMealModal.saving')
+                      : t('addToMealModal.save')
+                    : addFoodToMeal.isPending || createMealEntry.isPending
+                      ? t('addToMealModal.adding')
+                      : t('addToMealModal.add')}
+                </Button>
+              )}
+            </div>
           </div>
         </DialogContent>
       </Dialog>

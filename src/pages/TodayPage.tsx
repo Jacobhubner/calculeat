@@ -74,6 +74,7 @@ export default function TodayPage() {
 
   // State for AddFoodToMealModal
   const [addFoodModalOpen, setAddFoodModalOpen] = useState(false)
+  const [showMealSelectorInModal, setShowMealSelectorInModal] = useState(false)
   const [selectedMealForFood, setSelectedMealForFood] = useState<{
     mealName: string
     mealEntryId?: string
@@ -196,6 +197,7 @@ export default function TodayPage() {
 
   const handleOpenAddFoodModal = (mealName: string, mealEntryId?: string) => {
     setPreselectedFood(null)
+    setShowMealSelectorInModal(false)
     setSelectedMealForFood({ mealName, mealEntryId })
     setAddFoodModalOpen(true)
   }
@@ -355,7 +357,12 @@ export default function TodayPage() {
   // Handler for sidebar tools (PlateCalculator, FoodSuggestions)
   const handleAddFromSidebar = (food: FoodItem, amount: number, unit: string) => {
     setPreselectedFood({ food, amount, unit })
-    setSelectedMealForFood({ mealName: '' }) // Empty name = let user choose meal
+    // Pre-select the last meal in the log (highest meal_order), including ad hoc
+    const lastMeal = todayLog?.meals
+      ? [...todayLog.meals].sort((a, b) => b.meal_order - a.meal_order)[0]
+      : null
+    setShowMealSelectorInModal(true)
+    setSelectedMealForFood({ mealName: lastMeal?.meal_name ?? '' })
     setAddFoodModalOpen(true)
   }
 
@@ -846,12 +853,14 @@ export default function TodayPage() {
           open={addFoodModalOpen}
           onOpenChange={open => {
             setAddFoodModalOpen(open)
-            if (!open) setPreselectedFood(null) // Clear preselected food when closing
+            if (!open) setPreselectedFood(null)
           }}
           mealName={selectedMealForFood.mealName}
           mealEntryId={selectedMealForFood.mealEntryId}
           dailyLogId={todayLog.id}
           preselectedFood={preselectedFood || undefined}
+          showMealSelector={showMealSelectorInModal}
+          extraMealOptions={todayLog.meals?.filter(m => m.is_ad_hoc) ?? []}
         />
       )}
 
