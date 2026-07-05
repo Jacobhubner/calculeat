@@ -47,11 +47,10 @@ export function useActualCalorieIntake(startDate: Date, endDate: Date) {
         isComplete: log.is_completed || false,
       }))
 
-      // Exclude today — an in-progress day would skew the average downward
-      const todayStr = new Date().toISOString().split('T')[0]
-      const filteredDailyCalories = dailyCalories.filter(d => d.date !== todayStr)
+      // Only use completed days — incomplete days are partial and would skew the average
+      const filteredDailyCalories = dailyCalories.filter(d => d.isComplete)
 
-      // Filter to days with meaningful calorie data (>800 kcal to avoid partial logs)
+      // Filter to days with meaningful calorie data (>800 kcal to avoid near-zero completed days)
       const daysWithData = filteredDailyCalories.filter(d => d.calories > 800).length
 
       // Calculate average from days with data
