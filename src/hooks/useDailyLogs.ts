@@ -771,6 +771,13 @@ export function useStartNewDay() {
       if (!user) throw new Error('User not authenticated')
       if (!activeProfile) throw new Error('No active profile')
 
+      // Ensure the completed log is actually marked as completed
+      await supabase
+        .from('daily_logs')
+        .update({ is_completed: true })
+        .eq('user_id', user.id)
+        .eq('log_date', completedLogDate)
+
       const base = new Date(completedLogDate + 'T12:00:00')
       base.setDate(base.getDate() + 1)
       const nextDay = base.toISOString().split('T')[0]
