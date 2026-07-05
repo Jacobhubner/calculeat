@@ -106,9 +106,9 @@ export default function SavedMealCard({ meal, onUseToday, onEdit }: SavedMealCar
 
           {/* Macros */}
           <div className="flex items-center gap-3 text-xs text-neutral-500 mt-1">
-            <span>P: {totals.protein.toFixed(1)}g</span>
-            <span>K: {totals.carbs.toFixed(1)}g</span>
             <span>F: {totals.fat.toFixed(1)}g</span>
+            <span>K: {totals.carbs.toFixed(1)}g</span>
+            <span>P: {totals.protein.toFixed(1)}g</span>
           </div>
 
           {/* Last Used */}

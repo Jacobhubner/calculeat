@@ -722,6 +722,8 @@ export default function TodayPage() {
                   goalCalories={goalCalories}
                   isCompleted={!!todayLog?.is_completed}
                   onAddFood={handleOpenAddFoodModal}
+                  onSaveMeal={handleOpenSaveMealDialog}
+                  onLoadMeal={handleOpenLoadMealDialog}
                   mealOrder={meal.meal_order}
                   onRemoveFood={handleRemoveAdHocFood}
                   onEditItem={setEditItem}
