@@ -164,7 +164,16 @@ export function findBestFoodsForGoals(
   // Sort by overall score (highest first)
   matches.sort((a, b) => b.overallScore - a.overallScore)
 
-  return matches.slice(0, numberOfResults)
+  // Deduplicate by name+brand — keep highest-scoring entry (first after sort)
+  const seen = new Set<string>()
+  const deduped = matches.filter(m => {
+    const key = `${m.food.name}||${m.food.brand ?? ''}`
+    if (seen.has(key)) return false
+    seen.add(key)
+    return true
+  })
+
+  return deduped.slice(0, numberOfResults)
 }
 
 /**
