@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /app/
 
-Sitemap: https://calculeat.se/sitemap.xml
+Sitemap: https://calculeat.com/sitemap.xml

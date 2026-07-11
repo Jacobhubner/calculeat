@@ -121,14 +121,14 @@ export default function BastaKaloriappenPage() {
       headline: t('best-calorie-app.schema.headline'),
       description: t('best-calorie-app.schema.description'),
       url: localeEntry.canonical,
-      publisher: { '@type': 'Organization', name: 'CalculEat', url: 'https://calculeat.se' },
+      publisher: { '@type': 'Organization', name: 'CalculEat', url: 'https://calculeat.com' },
       inLanguage: lng === 'en' ? 'en' : 'sv-SE',
     },
     {
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
       itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'CalculEat', item: 'https://calculeat.se/' },
+        { '@type': 'ListItem', position: 1, name: 'CalculEat', item: 'https://calculeat.com/' },
         {
           '@type': 'ListItem',
           position: 2,

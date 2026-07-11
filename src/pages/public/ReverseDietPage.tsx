@@ -50,7 +50,7 @@ export default function ReverseDietPage() {
     headline: t('reverse-diet.schema.headline'),
     description: t('reverse-diet.schema.description'),
     url: localeEntry.canonical,
-    publisher: { '@type': 'Organization', name: 'CalculEat', url: 'https://calculeat.se' },
+    publisher: { '@type': 'Organization', name: 'CalculEat', url: 'https://calculeat.com' },
     inLanguage: lng === 'en' ? 'en' : 'sv-SE',
   }
 

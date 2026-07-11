@@ -103,12 +103,12 @@ export default function ProteinbehovKalkylatornPage() {
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
       itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'CalculEat', item: 'https://calculeat.se/' },
+        { '@type': 'ListItem', position: 1, name: 'CalculEat', item: 'https://calculeat.com/' },
         {
           '@type': 'ListItem',
           position: 2,
           name: t('protein-calculator.schema.breadcrumb.hubLabel'),
-          item: `https://calculeat.se${t('protein-calculator.schema.breadcrumb.hubPath')}`,
+          item: `https://calculeat.com${t('protein-calculator.schema.breadcrumb.hubPath')}`,
         },
         {
           '@type': 'ListItem',

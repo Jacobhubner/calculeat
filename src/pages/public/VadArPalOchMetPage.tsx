@@ -34,7 +34,7 @@ export default function VadArPalOchMetPage() {
     headline: t('what-is-pal-and-met.schema.headline'),
     description: t('what-is-pal-and-met.schema.description'),
     url: localeEntry.canonical,
-    publisher: { '@type': 'Organization', name: 'CalculEat', url: 'https://calculeat.se' },
+    publisher: { '@type': 'Organization', name: 'CalculEat', url: 'https://calculeat.com' },
     inLanguage: lng === 'en' ? 'en' : 'sv-SE',
   }
 

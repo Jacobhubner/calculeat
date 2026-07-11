@@ -24,7 +24,7 @@ export function Seo({
   hreflangAlternates,
   locale,
 }: SeoProps) {
-  const image = ogImage ?? 'https://calculeat.se/og-default.png'
+  const image = ogImage ?? 'https://calculeat.com/og-default.png'
   const ogLocale = locale ?? (canonical.includes('/en/') ? 'en_US' : 'sv_SE')
 
   return (

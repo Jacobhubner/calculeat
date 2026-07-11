@@ -35,7 +35,7 @@ export default function LbmVsFfmPage() {
     headline: t('lbm-vs-ffm.schema.headline'),
     description: t('lbm-vs-ffm.schema.description'),
     url: localeEntry.canonical,
-    publisher: { '@type': 'Organization', name: 'CalculEat', url: 'https://calculeat.se' },
+    publisher: { '@type': 'Organization', name: 'CalculEat', url: 'https://calculeat.com' },
     inLanguage: lng === 'en' ? 'en' : 'sv-SE',
   }
 

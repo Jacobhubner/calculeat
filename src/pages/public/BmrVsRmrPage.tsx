@@ -34,7 +34,7 @@ export default function BmrVsRmrPage() {
     headline: t('bmr-vs-rmr.schema.headline'),
     description: t('bmr-vs-rmr.schema.description'),
     url: localeEntry.canonical,
-    publisher: { '@type': 'Organization', name: 'CalculEat', url: 'https://calculeat.se' },
+    publisher: { '@type': 'Organization', name: 'CalculEat', url: 'https://calculeat.com' },
     inLanguage: lng === 'en' ? 'en' : 'sv-SE',
   }
 

@@ -215,12 +215,12 @@ export default function KroppsfettKalkylatornPage() {
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
       itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'CalculEat', item: 'https://calculeat.se/' },
+        { '@type': 'ListItem', position: 1, name: 'CalculEat', item: 'https://calculeat.com/' },
         {
           '@type': 'ListItem',
           position: 2,
           name: t('bodyfat-calculator.schema.breadcrumb.hubLabel'),
-          item: `https://calculeat.se${t('bodyfat-calculator.schema.breadcrumb.hubPath')}`,
+          item: `https://calculeat.com${t('bodyfat-calculator.schema.breadcrumb.hubPath')}`,
         },
         {
           '@type': 'ListItem',

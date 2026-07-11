@@ -26,14 +26,14 @@ export default function OmOssPage() {
     name: t('about.schema.pageName'),
     url: localeEntry.canonical,
     description: t('about.schema.pageDescription'),
-    publisher: { '@type': 'Organization', name: 'CalculEat', url: 'https://calculeat.se' },
+    publisher: { '@type': 'Organization', name: 'CalculEat', url: 'https://calculeat.com' },
   }
 
   const orgSchema = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: 'CalculEat',
-    url: 'https://calculeat.se',
+    url: 'https://calculeat.com',
     description: t('about.schema.orgDescription'),
     sameAs: [],
   }
@@ -112,8 +112,8 @@ export default function OmOssPage() {
               </h2>
               <p className="text-neutral-600">
                 {t('about.sections.contact.body')}{' '}
-                <a href="mailto:kontakt@calculeat.se" className="text-primary-600 hover:underline">
-                  kontakt@calculeat.se
+                <a href="mailto:contact@calculeat.com" className="text-primary-600 hover:underline">
+                  contact@calculeat.com
                 </a>
                 .
               </p>

@@ -5,6 +5,8 @@
   "description": "CalculEat – Räkna kalorier & näringsvärde enkelt",
   "scripts": {
     "dev": "vite",
+    "check:domain": "node scripts/check-domain.mjs",
+    "prebuild": "npm run check:domain",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext js,jsx,ts,tsx",

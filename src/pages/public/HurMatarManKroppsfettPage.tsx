@@ -45,7 +45,7 @@ export default function HurMatarManKroppsfettPage() {
     headline: t('how-to-measure-bodyfat.schema.headline'),
     description: t('how-to-measure-bodyfat.schema.description'),
     url: localeEntry.canonical,
-    publisher: { '@type': 'Organization', name: 'CalculEat', url: 'https://calculeat.se' },
+    publisher: { '@type': 'Organization', name: 'CalculEat', url: 'https://calculeat.com' },
     inLanguage: lng === 'en' ? 'en' : 'sv-SE',
   }
 

@@ -83,19 +83,19 @@ export default function MyFitnessPalVsCalculEatPage() {
       headline: t('myfitnesspal-vs-calculeat.schema.headline'),
       description: t('myfitnesspal-vs-calculeat.schema.description'),
       url: localeEntry.canonical,
-      publisher: { '@type': 'Organization', name: 'CalculEat', url: 'https://calculeat.se' },
+      publisher: { '@type': 'Organization', name: 'CalculEat', url: 'https://calculeat.com' },
       inLanguage: lng === 'en' ? 'en' : 'sv-SE',
     },
     {
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
       itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'CalculEat', item: 'https://calculeat.se/' },
+        { '@type': 'ListItem', position: 1, name: 'CalculEat', item: 'https://calculeat.com/' },
         {
           '@type': 'ListItem',
           position: 2,
           name: t('myfitnesspal-vs-calculeat.breadcrumb.comparisons'),
-          item: `https://calculeat.se/${lng === 'en' ? 'en/compare' : 'jamfor'}`,
+          item: `https://calculeat.com/${lng === 'en' ? 'en/compare' : 'jamfor'}`,
         },
         {
           '@type': 'ListItem',

@@ -14,7 +14,13 @@ export interface PageConfig {
   changefreq?: string
 }
 
-const BASE = 'https://calculeat.se'
+/**
+ * Kanonisk produktions-origin. Används för canonical, hreflang, sitemap och JSON-LD.
+ * Medvetet INTE en env-var: preview-deploys ska också peka canonicals mot produktion.
+ * scripts/check-domain.mjs failar bygget om den gamla .se-domänen smyger in igen.
+ */
+export const SITE_ORIGIN = 'https://calculeat.com'
+const BASE = SITE_ORIGIN
 
 export const PAGE_CONFIGS: PageConfig[] = [
   // ── Kalkylatorer ─────────────────────────────────────────────────────────

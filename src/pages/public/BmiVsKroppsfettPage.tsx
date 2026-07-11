@@ -42,7 +42,7 @@ export default function BmiVsKroppsfettPage() {
     headline: t('bmi-vs-bodyfat.schema.headline'),
     description: t('bmi-vs-bodyfat.schema.description'),
     url: localeEntry.canonical,
-    publisher: { '@type': 'Organization', name: 'CalculEat', url: 'https://calculeat.se' },
+    publisher: { '@type': 'Organization', name: 'CalculEat', url: 'https://calculeat.com' },
     inLanguage: lng === 'en' ? 'en' : 'sv-SE',
   }
 
