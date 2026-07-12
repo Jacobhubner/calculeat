@@ -9,7 +9,7 @@ export const AUTHOR = {
   name: 'Jacob Hübner',
   jobTitle: {
     sv: 'Legitimerad naprapat, certifierad kostrådgivare och personlig tränare EQF Level 4',
-    en: 'Licensed Naprapath, Certified Nutrition Advisor and EQF Level 4 Personal Trainer',
+    en: 'Doctor of Naprapathy, Certified Nutrition Advisor and EQF Level 4 Personal Trainer',
   },
   url: {
     sv: `${SITE_ORIGIN}/om-oss`,
