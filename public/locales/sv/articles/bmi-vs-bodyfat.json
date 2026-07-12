@@ -1,0 +1,161 @@
+{
+  "seo": {
+    "title": "BMI vs Kroppsfett — Vilken mätning stämmer bäst? | CalculEat",
+    "description": "BMI mäter vikt i relation till längd. Kroppsfett mäter faktisk fettprocent. Lär dig när BMI missar och när du behöver ett mer precist mått för att sätta rätt kalorimål."
+  },
+  "layout": {
+    "title": "BMI vs Kroppsfett — Vilken mätning stämmer bäst?",
+    "intro": "BMI (Body Mass Index) är enkelt att räkna ut men mäter bara vikt i relation till längd — inte hur vikten fördelar sig. Kroppsfett mäter den faktiska andelen fett i kroppen och ger en mer komplett bild. Båda har sitt värde, men de svarar på olika frågor.",
+    "moneyPageHref": "/kalkylatorer/tdee-kalkylator",
+    "moneyPageLabel": "Räkna ut ditt kaloribehov med TDEE-kalkylatorn",
+    "breadcrumb": {
+      "hubLabel": "Artiklar",
+      "hubPath": "/artiklar",
+      "pageLabel": "BMI vs Kroppsfett"
+    }
+  },
+  "schema": {
+    "headline": "BMI vs Kroppsfett — Vilken mätning stämmer bäst?",
+    "description": "BMI mäter vikt i relation till längd. Kroppsfett mäter faktisk fettprocent. Lär dig när BMI missar och när du behöver ett mer precist mått."
+  },
+  "body": [
+    {
+      "type": "h2",
+      "text": "Vad mäter BMI?",
+      "tight": true
+    },
+    {
+      "type": "p",
+      "text": "BMI räknas ut som vikt (kg) delat på längd² (m²). Resultatet placeras i en av fyra kategorier: undervikt (under 18,5), normalvikt (18,5–24,9), övervikt (25–29,9) eller fetma (30+).",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": "Fördelen med BMI är enkelheten — du behöver bara vikt och längd. Nackdelen är att det inte skiljer på muskelmassa och fettvävnad. En vältränad person med hög muskelmassa kan hamna i \"övervikt\" enligt BMI trots låg fettprocent."
+    },
+    {
+      "type": "h2",
+      "text": "Vad mäter kroppsfett?"
+    },
+    {
+      "type": "p",
+      "text": "Kroppsfett är andelen av din kroppsvikt som består av fettvävnad. Det mäts med metoder som US Navy-metoden (baserad på kroppsmått), hudvecksmätning, bioimpedans eller DEXA (röntgen). DEXA är guldstandarden men kräver specialutrustning.",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": "Kroppsfett ger en mer precis bild av kroppskomposition — hur mycket som är muskler, fett, ben och vätska. Det är särskilt viktigt för personer med hög muskelmassa (idrottare, styrkelyftare) där BMI systematiskt överskattar hälsorisken."
+    },
+    {
+      "type": "h2",
+      "text": "Jämförelse: BMI vs Kroppsfett"
+    },
+    {
+      "type": "table",
+      "variant": "bordered",
+      "headers": ["Egenskap", "BMI", "Kroppsfett"],
+      "rows": [
+        ["Vad mäts?", "Vikt/längd²", "Andel fettvävnad"],
+        ["Tar hänsyn till muskler?", "Nej", "Ja"],
+        ["Mätmetod", "Vikt + längd", "Kroppsmått / DEXA / bioimpedans"],
+        ["Noggrannhet", "Grov uppskattning", "Mer precis (metodberoende)"],
+        ["Används för?", "Snabb hälsoindikator", "Kroppskomposition och mål"],
+        ["Kräver utrustning?", "Nej", "Måttband (Navy-metod) eller mer"]
+      ]
+    },
+    {
+      "type": "h2",
+      "text": "När BMI är tillräckligt — och när det missar"
+    },
+    {
+      "type": "p",
+      "text": "BMI fungerar som ett grovt screeningverktyg för befolkningsnivå och för de flesta normalviktiga utan extremt hög eller låg muskelmassa. Det är snabbt, gratis och kräver ingen utrustning.",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": "BMI är däremot missvisande för:"
+    },
+    {
+      "type": "ul",
+      "items": [
+        "Muskulösa individer (tränade, idrottare, styrkelyftare)",
+        "Äldre med låg muskelmassa men normal vikt (\"sarcopenic obesity\")",
+        "Gravida",
+        "Barn och ungdomar (kräver åldersspecifika referensvärden)",
+        "Individer med mycket låg muskelmassa och hög fettprocent (\"skinny fat\")"
+      ],
+      "gap": 1
+    },
+    {
+      "type": "h2",
+      "text": "Vilket mål ska du använda?"
+    },
+    {
+      "type": "p",
+      "text": "Oavsett vilket mått du tittar på — BMI eller kroppsfett — är ditt kalorimål det praktiska verktyget för att nå dit. Kalorimålet bygger på ditt TDEE, inte på BMI eller fettprocent i sig. Räkna ut ditt TDEE för att få en siffra du faktiskt kan agera på.",
+      "flush": true
+    }
+  ],
+  "faq": [
+    {
+      "question": "Vilket mått är bäst — BMI eller kroppsfett?",
+      "answer": "Kroppsfett är mer informativt för de flesta syften. BMI kan missbedöma hälsa hos muskulösa individer (klassas som överviktiga), äldre (låg muskelmassa ger normalt BMI trots hög fettprocent) och kortare personer. Kroppsfett direkt adresserar vad som faktiskt spelar roll för hälsorisk."
+    },
+    {
+      "question": "Kan man ha normalt BMI men hög fettprocent?",
+      "answer": "Ja — detta kallas 'normal-weight obesity' eller 'skinny fat'. Det är relativt vanligt hos personer med lite muskelmassa. En person med 170 cm och 65 kg har BMI 22,5 (normalvikt) men kan ha 30% kroppsfett om de har lite muskelmassa."
+    },
+    {
+      "question": "Kan man ha högt BMI men låg fettprocent?",
+      "answer": "Ja — muskulösa individer klassas ofta som 'överviktiga' på BMI-skalan trots låg fettprocent och utmärkt hälsa. En vältränad person på 175 cm och 85 kg (BMI 27,8) kan ha 12% kroppsfett och vara i utmärkt form."
+    },
+    {
+      "question": "Vilket mått ska man använda för att sätta ett kalorimål?",
+      "answer": "Varken BMI eller kroppsfett ensamt. TDEE (ditt faktiska kaloribehov) är utgångspunkten för kaloriplanering. Kroppsfett är värdefull information för att förstå var du är och vart du vill — men kalorimålet sätts mot TDEE, inte mot en kroppsfett-procent."
+    }
+  ],
+  "sources": [
+    {
+      "text": "Romero-Corral A, et al. Accuracy of body mass index in diagnosing obesity in the adult general population. Int J Obes (Lond). 2008;32(6):959–966."
+    },
+    {
+      "text": "Gallagher D, et al. Healthy percentage body fat ranges: an approach for developing guidelines based on body mass index. Am J Clin Nutr. 2000;72(3):694–701."
+    },
+    {
+      "text": "Flegal KM, Shepherd JA, Looker AC, et al. Comparisons of percentage body fat, body mass index, waist circumference, and waist-stature ratio in adults. Am J Clin Nutr. 2009;89(2):500–508."
+    }
+  ],
+  "related": {
+    "calculatorsTitle": "Relaterade kalkylatorer",
+    "articlesTitle": "Relaterade artiklar",
+    "calculators": [
+      {
+        "href": "/kalkylatorer/bmi-kalkylator",
+        "label": "BMI Kalkylator"
+      },
+      {
+        "href": "/kalkylatorer/kroppsfett",
+        "label": "Kroppsfett Kalkylator"
+      },
+      {
+        "href": "/kalkylatorer/ffmi-kalkylator",
+        "label": "FFMI Kalkylator"
+      },
+      {
+        "href": "/kalkylatorer/tdee-kalkylator",
+        "label": "TDEE Kalkylator"
+      }
+    ],
+    "articles": [
+      {
+        "href": "/artiklar/kaloribehov",
+        "label": "Kaloribehov — komplett guide"
+      },
+      {
+        "href": "/artiklar/vad-ar-tdee",
+        "label": "Vad är TDEE?"
+      }
+    ]
+  }
+}

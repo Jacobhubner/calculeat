@@ -17,5 +17,9 @@
     "secondary": "Prova kalkylatorn gratis"
   },
   "backLink": "Tillbaka till CalculEat",
-  "faqTitle": "Vanliga frågor"
+  "faqTitle": "Vanliga frågor",
+  "byline": {
+    "authorPrefix": "Av",
+    "updatedLabel": "Uppdaterad"
+  }
 }

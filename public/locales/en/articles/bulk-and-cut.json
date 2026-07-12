@@ -1,0 +1,228 @@
+{
+  "seo": {
+    "title": "Bulk and Cut — Calories for Muscle Building and Fat Loss | CalculEat",
+    "description": "How bulk and cut work, how many calories to eat in each phase and how to optimize your training cycle for muscle building and fat loss."
+  },
+  "layout": {
+    "title": "Bulk and Cut — Calories for Muscle Building and Fat Loss",
+    "intro": "Bulk and cut are the two phases in a classic training cycle. During a bulk you eat in a calorie surplus to maximize muscle building. During a cut you eat in a calorie deficit to lose fat and preserve the muscle mass you've built. The key is knowing exactly how large a surplus and deficit to aim for.",
+    "moneyPageHref": "/en/calculators/bulk-calculator",
+    "moneyPageLabel": "Calculate your bulk calories directly",
+    "breadcrumb": {
+      "hubLabel": "Articles",
+      "hubPath": "/en/articles",
+      "pageLabel": "Bulk and cut"
+    }
+  },
+  "schema": {
+    "headline": "Bulk and Cut — Calories for Muscle Building and Fat Loss",
+    "description": "How bulk and cut work, how many calories to eat in each phase and how to optimize your training cycle."
+  },
+  "body": [
+    {
+      "type": "h2",
+      "text": "Bulk — muscle building",
+      "tight": true
+    },
+    {
+      "type": "p",
+      "text": "During a bulk you eat more calories than you burn. This creates an anabolic environment where the body can afford to build muscle tissue. Without a calorie surplus, muscle building is possible but considerably slower.",
+      "flush": true
+    },
+    {
+      "type": "h3",
+      "text": "Lean bulk (recommended)"
+    },
+    {
+      "type": "p",
+      "text": [
+        {
+          "text": "200–400 kcal/day above TDEE.",
+          "strong": true
+        },
+        {
+          "text": " Optimal balance between muscle growth and minimal fat gain. Expected pace: approx. 0.2–0.4 kg per week (of which a large proportion is muscle in the first months)."
+        }
+      ],
+      "flush": true
+    },
+    {
+      "type": "h3",
+      "text": "Aggressive bulk"
+    },
+    {
+      "type": "p",
+      "text": [
+        {
+          "text": "500–1000+ kcal/day above TDEE.",
+          "strong": true
+        },
+        {
+          "text": " Faster weight gain but a large proportion is fat. Works for hardgainers and beginners but for experienced athletes mostly results in fat storage that needs to be cut away again."
+        }
+      ],
+      "flush": true
+    },
+    {
+      "type": "h2",
+      "text": "Cut — fat loss"
+    },
+    {
+      "type": "p",
+      "text": "During a cut you eat below your TDEE to lose fat, with the goal of preserving maximum muscle mass. It requires discipline, adequate protein and strength training.",
+      "flush": true
+    },
+    {
+      "type": "h3",
+      "text": "Sustainable cut"
+    },
+    {
+      "type": "p",
+      "text": [
+        {
+          "text": "300–500 kcal/day below TDEE.",
+          "strong": true
+        },
+        {
+          "text": " Recommended pace for most people. Gives 0.3–0.5 kg/week with good muscle mass preservation."
+        }
+      ],
+      "flush": true
+    },
+    {
+      "type": "h3",
+      "text": "Mini cut"
+    },
+    {
+      "type": "p",
+      "text": [
+        {
+          "text": "500–750 kcal/day below TDEE, shorter period (4–8 weeks).",
+          "strong": true
+        },
+        {
+          "text": " More aggressive but time-limited — reduces the risk of adaptive thermogenesis. Requires high protein and strength training."
+        }
+      ],
+      "flush": true
+    },
+    {
+      "type": "h2",
+      "text": "Body Recomposition — the alternative"
+    },
+    {
+      "type": "p",
+      "text": "Instead of separate bulk/cut phases you can eat around maintenance intake and slowly build muscle and lose fat . It's slower but avoids the yo-yo effect.",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": "Works best for: beginners, people with high body fat percentage, and those returning after a training break. Experienced athletes with low body fat get better results from separate phases.",
+      "flush": true
+    },
+    {
+      "type": "h2",
+      "text": "How do you know when to switch phase?"
+    },
+    {
+      "type": "ul",
+      "items": [
+        [
+          {
+            "text": "End bulk when:",
+            "strong": true
+          },
+          {
+            "text": " Body fat percentage has become too high (approx. 15–18% for men, 25–30% for women). Strength plateaus despite calorie surplus."
+          }
+        ],
+        [
+          {
+            "text": "End cut when:",
+            "strong": true
+          },
+          {
+            "text": " You've reached the desired body fat percentage. Weight loss plateaus despite calorie deficit. Performance drops markedly."
+          }
+        ]
+      ]
+    },
+    {
+      "type": "h2",
+      "text": "Practical guide"
+    },
+    {
+      "type": "ol",
+      "items": [
+        "Calculate your TDEE with the calculator",
+        "Bulk: add 300 kcal → your bulk intake",
+        "Cut: subtract 400 kcal → your cut intake",
+        "Eat 1.8–2.2 g protein/kg in both phases",
+        "Strength train 3–4 times/week",
+        "Adjust the calorie goal every 2–3 weeks based on actual weight development"
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "How long should you bulk before cutting?",
+      "answer": "A typical bulk phase lasts 3–6 months. Stop and enter a cut when body fat has risen to 18–20% (men) or 28–30% (women), or when you've reached your desired body weight. Alternatively: run 3-month cycles (bulk 3 months, cut 3 months) and keep body fat stable over time."
+    },
+    {
+      "question": "Can you build muscle and burn fat at the same time (body recomposition)?",
+      "answer": "Yes — but primarily for beginners, those returning to training after a break, or those with high body fat percentage. For well-trained individuals the effect is small and slow. Body recomposition requires a neutral or minimal calorie surplus (±100 kcal), high protein (1.8–2.2 g/kg) and progressive strength training."
+    },
+    {
+      "question": "How much muscle can you expect to build during a bulk?",
+      "answer": "Natural lifters can expect: beginners 1–1.5 kg of muscle mass per month, intermediate 0.5–1 kg/month, advanced 0.25–0.5 kg/month. If you're gaining faster you're likely storing more fat than muscle — muscle protein synthesis is biologically limited regardless of calorie intake."
+    },
+    {
+      "question": "What is the difference between lean bulk and dirty bulk?",
+      "answer": "Lean bulk = controlled surplus (+150–350 kcal/day) → minimal fat gain, maintain definition, longer but more effective process. Dirty bulk = eating without limits → rapid weight gain but a large proportion is fat requiring a long cut afterwards. Lean bulk is almost always the better choice."
+    },
+    {
+      "question": "How much protein is needed during bulk vs cut?",
+      "answer": "During bulk: 1.6–2.2 g/kg body weight/day — sufficient for muscle protein synthesis. During cut: 1.8–2.4 g/kg/day — slightly higher to counteract muscle catabolism during a calorie deficit. Protein is the most important macronutrient in both phases."
+    }
+  ],
+  "sources": [
+    {
+      "text": "Barakat C, et al. Body Recomposition: Can Trained Individuals Build Muscle and Lose Fat at the Same Time? Strength Cond J. 2020;42(5):7–21."
+    },
+    {
+      "text": "Morton RW, et al. A systematic review, meta-analysis and meta-regression of the effect of protein supplementation on resistance training-induced gains in muscle mass and strength. Br J Sports Med. 2018;52(6):376–384."
+    }
+  ],
+  "related": {
+    "calculatorsTitle": "Related calculators",
+    "articlesTitle": "Related articles",
+    "calculators": [
+      {
+        "href": "/en/calculators/bulk-calculator",
+        "label": "Bulk Calculator"
+      },
+      {
+        "href": "/en/calculators/cut-calculator",
+        "label": "Cut Calculator"
+      },
+      {
+        "href": "/en/calculators/tdee-calculator",
+        "label": "TDEE Calculator"
+      }
+    ],
+    "articles": [
+      {
+        "href": "/en/articles/calorie-needs",
+        "label": "Calorie needs — complete guide"
+      },
+      {
+        "href": "/en/articles/what-is-tdee",
+        "label": "What is TDEE?"
+      },
+      {
+        "href": "/en/articles/calorie-deficit",
+        "label": "How large a calorie deficit?"
+      }
+    ]
+  }
+}

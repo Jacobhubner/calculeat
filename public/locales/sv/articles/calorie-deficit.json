@@ -1,0 +1,185 @@
+{
+  "seo": {
+    "title": "Hur stor kaloribrist ska man ha för viktnedgång? | CalculEat",
+    "description": "Hur stor kaloribrist är lagom? Vetenskapliga riktlinjer för tempo, protein och hållbar viktnedgång utan att tappa muskler."
+  },
+  "layout": {
+    "title": "Hur stor kaloribrist ska man ha för viktnedgång?",
+    "intro": "En kaloribrist på 300–500 kcal per dag under ditt TDEE är det vetenskapligt rekommenderade tempot för hållbar viktnedgång utan att tappa muskler. Det ger ca 0,3–0,5 kg viktnedgång per vecka — tillräckligt snabbt för att se resultat, tillräckligt långsamt för att kroppen ska anpassa sig hälsosamt.",
+    "moneyPageHref": "/kalkylatorer/kaloriunderskott",
+    "moneyPageLabel": "Räkna ut ditt exakta kaloriintag med kaloribrist-kalkylatorn",
+    "breadcrumb": {
+      "hubLabel": "Artiklar",
+      "hubPath": "/artiklar",
+      "pageLabel": "Kaloribrist"
+    }
+  },
+  "schema": {
+    "headline": "Hur stor kaloribrist ska man ha för viktnedgång?",
+    "description": "Vetenskapliga riktlinjer för kaloribrist, tempo och hållbar viktnedgång utan att tappa muskler."
+  },
+  "body": [
+    {
+      "type": "h2",
+      "text": "Varför spelar tempo roll?",
+      "tight": true
+    },
+    {
+      "type": "p",
+      "text": "Viktnedgång handlar inte enbart om att gå ner i vikt på vågen — det handlar om att behålla muskelmassa och tappa fett. Går du ned för snabbt ökar andelen muskelmassa du förlorar, vilket försämrar din ämnesomsättning på lång sikt och gör det svårare att hålla vikten efteråt.",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": [
+        {
+          "text": "Tumregel:",
+          "strong": true
+        },
+        {
+          "text": " Tappa inte mer än 0,5–1% av kroppsvikten per vecka."
+        }
+      ],
+      "flush": true
+    },
+    {
+      "type": "h2",
+      "text": "Tre nivåer av kaloribrist"
+    },
+    {
+      "type": "cards",
+      "items": [
+        {
+          "title": "Mild: 200–300 kcal/dag",
+          "label": "Tempo: ca 0,2–0,3 kg/vecka",
+          "text": "Lämplig nybörjare, nära tävling eller om du har lite fett att tappa. Mycket låg risk för muskelmassaförlust.",
+          "color": "bg-green-50 border-green-200"
+        },
+        {
+          "title": "Måttlig: 300–500 kcal/dag",
+          "label": "Tempo: ca 0,3–0,5 kg/vecka",
+          "text": "Den vetenskapliga standarden. Balans mellan tempo och muskelmassabevarande. Funkar för de flesta.",
+          "color": "bg-blue-50 border-blue-200"
+        },
+        {
+          "title": "Aggressiv: 500–1000 kcal/dag",
+          "label": "Tempo: ca 0,5–1 kg/vecka",
+          "text": "Acceptabelt vid hög fettprocent. Kräver högt proteinintag (2,0–2,2 g/kg) och styrketräning för att skydda muskelmassa.",
+          "color": "bg-yellow-50 border-yellow-200"
+        }
+      ]
+    },
+    {
+      "type": "h2",
+      "text": "Proteinets roll under kaloribrist"
+    },
+    {
+      "type": "p",
+      "text": "Det viktigaste du kan göra för att bevara muskelmassa under en diet är tillräckligt proteinintag. Forskning stöder 1,6–2,2 g protein per kg kroppsvikt per dag.",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": "Protein har också hög mättnadseffekt och hög TEF (ca 25–30% av proteinkalorierna används till att smälta proteinet) — vilket gör det extra värdefullt under kaloribrist.",
+      "flush": true
+    },
+    {
+      "type": "h2",
+      "text": "Adaptiv termogenes — varför planar vikten ut?"
+    },
+    {
+      "type": "p",
+      "text": "Vid lång kaloribrist sänker kroppen sin ämnesomsättning som ett försvar mot svält. Du rör dig instinktivt mindre (NEAT minskar) och BMR sjunker något. Det är normalt och inte ett tecken på att något är fel.",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": [
+        {
+          "text": "Lösning:",
+          "strong": true
+        },
+        {
+          "text": " Ta en \"diet break\" på 1–2 veckor på underhållsintag (ditt TDEE) var 8–12 vecka. Det återställer hormonbalansen, minskar adaptiv termogenes och gör nästa dietfas effektivare."
+        }
+      ],
+      "flush": true
+    },
+    {
+      "type": "h2",
+      "text": "Praktisk checklista"
+    },
+    {
+      "type": "ul",
+      "items": [
+        "Räkna ut ditt TDEE med kalkylator",
+        "Dra av 400 kcal för ett bra starttempo",
+        "Ät 1,8–2,2 g protein per kg kroppsvikt",
+        "Träna styrka 2–4 ggr/vecka för att skydda muskelmassa",
+        "Justera kalorimålet var 2–3 vecka baserat på verklig viktutveckling",
+        "Planera in diet break var 8–12 vecka"
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "Vad är en säker kaloribrist per dag?",
+      "answer": "300–500 kcal/dag är det vetenskapligt rekommenderade intervallet för hållbar viktnedgång för de flesta friska vuxna. Det ger 0,3–0,5 kg viktnedgång per vecka med minimal muskelförlust. En brist på mer än 1 000 kcal/dag ökar risken för muskelmassaförlust och adaptiv termogenes markant."
+    },
+    {
+      "question": "Hur snabbt kan man gå ner i vikt med kaloribrist?",
+      "answer": "Med ett underskott på 500 kcal/dag förlorar du ca 0,5 kg fett per vecka (500 × 7 = 3 500 kcal ≈ 0,5 kg fettmassa). I verkligheten variera viktförlusten pga vattenretention, glykogenförändringar och anpassningar. Räkna med 0,3–0,7 kg/vecka som realistiskt intervall."
+    },
+    {
+      "question": "Ska man äta tillbaka kalorier efter träning?",
+      "answer": "Det beror på din kalkylmetod. Om du räknat TDEE med NEAT och träningsaktivitet redan inkluderat — nej. Om du räknat ett lägre basalt TDEE och lägger till träning separat — ja. Det vanligaste misstaget är att dubbelräkna aktivitet och sedan äta tillbaka kalorier man egentligen inte förbränt."
+    },
+    {
+      "question": "Vad händer om man äter för lite länge?",
+      "answer": "Vid prolongerat aggressivt underskott (>1 000 kcal/dag under många veckor) sänker kroppen sin ämnesomsättning via adaptiv termogenes. NEAT minskar, BMR sjunker något, och energiförbrukning under träning kan minska. En diet break på 1–2 veckor på underhållsintag var 8–12:e vecka motverkar detta."
+    }
+  ],
+  "sources": [
+    {
+      "text": "Hall KD, et al. Quantification of the effect of energy imbalance on bodyweight. Lancet. 2011;378(9793):826–837."
+    },
+    {
+      "text": "Helms ER, Aragon AA, Fitschen PJ. Evidence-based recommendations for natural bodybuilding contest preparation: nutrition and supplementation. J Int Soc Sports Nutr. 2014;11:20."
+    },
+    {
+      "text": "Trexler ET, Smith-Ryan AE, Norton LE. Metabolic adaptation to weight loss: implications for the athlete. J Int Soc Sports Nutr. 2014;11(1):7."
+    }
+  ],
+  "related": {
+    "calculatorsTitle": "Relaterade kalkylatorer",
+    "articlesTitle": "Relaterade artiklar",
+    "calculators": [
+      {
+        "href": "/kalkylatorer/kaloriunderskott",
+        "label": "Kaloribrist Kalkylator"
+      },
+      {
+        "href": "/kalkylatorer/tdee-kalkylator",
+        "label": "TDEE Kalkylator"
+      }
+    ],
+    "articles": [
+      {
+        "href": "/artiklar/reverse-diet",
+        "label": "Reverse Diet"
+      },
+      {
+        "href": "/artiklar/kaloribehov",
+        "label": "Kaloribehov — komplett guide"
+      },
+      {
+        "href": "/artiklar/vad-ar-tdee",
+        "label": "Vad är TDEE?"
+      },
+      {
+        "href": "/artiklar/bulk-och-cut",
+        "label": "Bulk och cut"
+      }
+    ]
+  }
+}

@@ -1,0 +1,321 @@
+{
+  "seo": {
+    "title": "Vad är TDEE? Totalt dagligt energibehov förklarat | CalculEat",
+    "description": "TDEE (Total Daily Energy Expenditure) är de kalorier din kropp förbränner per dag. Lär dig hur TDEE beräknas och hur du använder det för viktnedgång eller muskeluppbyggnad."
+  },
+  "layout": {
+    "title": "Vad är TDEE? Totalt dagligt energibehov förklarat",
+    "intro": "TDEE (Total Daily Energy Expenditure) är den totala mängden kalorier din kropp förbränner under ett dygn, inklusive all rörelse och aktivitet. Det är ditt underhållsbehov — och utgångspunkten för att räkna kalorier oavsett om målet är viktnedgång, muskeluppbyggnad eller att hålla vikten.",
+    "moneyPageHref": "/kalkylatorer/tdee-kalkylator",
+    "moneyPageLabel": "Räkna ut ditt TDEE direkt med vår gratis kalkylator",
+    "breadcrumb": {
+      "hubLabel": "Artiklar",
+      "hubPath": "/artiklar",
+      "pageLabel": "Vad är TDEE?"
+    }
+  },
+  "schema": {
+    "headline": "Vad är TDEE? Totalt dagligt energibehov förklarat",
+    "description": "TDEE (Total Daily Energy Expenditure) är de kalorier din kropp förbränner per dag. Lär dig hur TDEE beräknas och hur du använder det."
+  },
+  "body": [
+    {
+      "type": "h2",
+      "text": "De fyra komponenterna i TDEE",
+      "tight": true
+    },
+    {
+      "type": "p",
+      "text": "TDEE beräknas som summan av fyra fysiologiska komponenter. Varje komponent representerar en unik del av kroppens energiförbrukning utan överlappning:",
+      "flush": true
+    },
+    {
+      "type": "formula",
+      "text": "TDEE = BMR + NEAT + EAT + TEF"
+    },
+    {
+      "type": "img",
+      "src": "/TDEE.png",
+      "alt": "TDEE-komponenter illustration",
+      "width": 890,
+      "height": 1017
+    },
+    {
+      "type": "h3",
+      "text": "BMR — Basalmetabolism (ca 60–75% av TDEE)"
+    },
+    {
+      "type": "p",
+      "text": "BMR (Basal Metabolic Rate) är den energi kroppen kräver för att upprätthålla grundläggande fysiologiska funktioner i absolut vila — andning, blodcirkulation, temperaturreglering och cellulära processer. Den viktigaste determinanten för BMR är fettfri massa, som uppskattas förklara omkring 80% av variationen.",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": "Hos personer med låg fysisk aktivitet utgör BMR vanligtvis cirka 60% av total energiförbrukning, och ännu mer hos individer med mycket låg rörelseaktivitet såsom sederade och mekaniskt ventilerade patienter på intensivvårdsavdelningar."
+    },
+    {
+      "type": "p",
+      "text": "BMR mäts under strikt kontrollerade laboratorieförhållanden: efter sömn, i fastande tillstånd och i termoneutral miljö. I praktiska sammanhang används oftare RMR (Resting Metabolic Rate), uppmätt när som helst under dagen, vilket kan skilja sig från BMR med upp till 10%. De flesta online-kalkylatorer — inklusive CalculEat — beräknar tekniskt sett RMR, men använder termen BMR i vardagligt bruk."
+    },
+    {
+      "type": "p",
+      "text": "Guldstandarden för mätning är indirekt kalorimetri via Weirs ekvation (1949). När det inte är tillgängligt används prediktiva ekvationer som Mifflin-St Jeor, Harris-Benedict eller Cunningham, vilka har en felmarginal på ±10–15% på individnivå."
+    },
+    {
+      "type": "h3",
+      "text": "NEAT — Non-Exercise Activity Thermogenesis (15–30%)"
+    },
+    {
+      "type": "p",
+      "text": "NEAT omfattar all energiförbrukning från kroppsrörelser som inte är planerad träning: gång, stående, hushållsarbete, fidgeting och posturala justeringar. Det är den mest variabla komponenten — och den mest underskattade.",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": "Hos normalt aktiva individer utgör NEAT ca 15–30% av TDEE, men variationen är extrem. Hos mycket inaktiva individer kan NEAT vara så lågt som 6–10%, medan det hos rörliga individer kan överstiga 50% av total energiförbrukning. I en kontrollerad övermatningsstudie varierade förändringen i NEAT mellan −98 och +692 kcal/dag mellan individer med liknande kroppssammansättning (Levine et al., 1999). Totala skillnader i NEAT mellan individer kan uppgå till över 1 000 kcal/dag."
+    },
+    {
+      "type": "p",
+      "text": "Det förklarar varför två personer med identisk vikt och träningsrutin kan ha så olika kaloribehov — skillnaden sitter i spontan rörelse utanför gymmet, inte i träningspassen."
+    },
+    {
+      "type": "h3",
+      "text": "EAT — Exercise Activity Thermogenesis (5–10%)"
+    },
+    {
+      "type": "p",
+      "text": "EAT representerar energiförbrukning från planerad fysisk träning. Det utgör vanligtvis en förvånansvärt liten andel av TDEE — under 5% hos stillasittande individer. Vid hög träningsvolym kan EAT öka till 15–30% eller mer hos elitidrottare (Westerterp, 2013).",
+      "flush": true
+    },
+    {
+      "type": "h3",
+      "text": "TEF — Thermic Effect of Food (8–15%)"
+    },
+    {
+      "type": "p",
+      "text": "TEF är den energi som krävs för digestion, absorption och metabolism av näringsämnen. Under energibalans motsvarar TEF i genomsnitt ca 10% av energiintaget, med ett typiskt intervall på 8–15% beroende på måltidets sammansättning.",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": "TEF varierar markant mellan makronutrienter:"
+    },
+    {
+      "type": "ul",
+      "items": [
+        [
+          {
+            "text": "Protein: ca 20–30%",
+            "strong": true
+          },
+          {
+            "text": " aminosyrametabolism och ureabildning är energikrävande"
+          }
+        ],
+        [
+          {
+            "text": "Kolhydrater: ca 5–10%",
+            "strong": true
+          },
+          {
+            "text": " Kolhydrater: ca 5–10%"
+          }
+        ],
+        [
+          {
+            "text": "Fett: ca 0–3%",
+            "strong": true
+          },
+          {
+            "text": " låg termogen effekt"
+          }
+        ]
+      ],
+      "gap": 1
+    },
+    {
+      "type": "p",
+      "text": "Den praktiska konsekvensen: ett proteinrikt kostmönster ger genuint något högre energiförbrukning vid samma kaloriintag jämfört med ett fettdominerat kostmönster (Westerterp, 2004; Halton & Hu, 2004)."
+    },
+    {
+      "type": "h2",
+      "text": "Hur beräknas TDEE?"
+    },
+    {
+      "type": "p",
+      "text": "Det enklaste sättet är metoden BMR × PAL-faktor:",
+      "flush": true
+    },
+    {
+      "type": "ol",
+      "items": [
+        "Räkna ut BMR med Mifflin-St Jeor (rekommenderas för friska vuxna)",
+        "Multiplicera med en PAL-faktor (Physical Activity Level) som speglar din aktivitetsnivå"
+      ]
+    },
+    {
+      "type": "p",
+      "text": [
+        {
+          "text": "Exempel: BMR 1 800 kcal × PAL 1,55 (måttligt aktiv) = "
+        },
+        {
+          "text": "2 790 kcal TDEE",
+          "strong": true
+        },
+        {
+          "text": "."
+        }
+      ]
+    },
+    {
+      "type": "h2",
+      "text": "Hur använder man TDEE i praktiken?"
+    },
+    {
+      "type": "p",
+      "text": [
+        {
+          "text": "TDEE är ditt "
+        },
+        {
+          "text": "underhållsbehov",
+          "em": true
+        },
+        {
+          "text": ". Beroende på mål:"
+        }
+      ],
+      "flush": true
+    },
+    {
+      "type": "ul",
+      "items": [
+        [
+          {
+            "text": "Viktnedgång:",
+            "strong": true
+          },
+          {
+            "text": " Ät 300–500 kcal under TDEE → ca 0,3–0,5 kg/vecka"
+          }
+        ],
+        [
+          {
+            "text": "Muskeluppbyggnad:",
+            "strong": true
+          },
+          {
+            "text": " Ät 200–400 kcal över TDEE → lean bulk med minimal fettupplagring"
+          }
+        ],
+        [
+          {
+            "text": "Underhåll:",
+            "strong": true
+          },
+          {
+            "text": " Ät på TDEE → stabil vikt"
+          }
+        ]
+      ]
+    },
+    {
+      "type": "p",
+      "text": "Kalkylatorn ger en uppskattning med en felmarginal på ±10–15%. Följ upp din vikt under 2–3 veckor och justera om resultatet inte stämmer med förväntan."
+    },
+    {
+      "type": "h2",
+      "text": "Varför sjunker TDEE under en diet?"
+    },
+    {
+      "type": "p",
+      "text": "Adaptiv termogenes — kroppen sänker sin metabolism som svar på långvarig kaloribrist. Det sker på flera nivåer: NEAT minskar (kroppen rör sig instinktivt mindre), BMR sjunker något och matsmältningens effektivitet ökar. NEAT är den komponent som reagerar snabbast och störst — och det är också därför viktnedgång bromsar upp trots oförändrat intag.",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": "Lösning: ta regelbundna \"diet breaks\" (kortare perioder på underhållsintag) för att motverka adaptionen, och prioritera styrketräning för att bevara muskelmassa och hålla BMR uppe."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Är TDEE detsamma som kaloribehov?",
+      "answer": "Ja, i praktiken används begreppen synonymt. TDEE (Total Daily Energy Expenditure) är den vetenskapliga termen för ditt totala dagliga energibehov — antalet kalorier du förbränner under en dag inklusive all aktivitet."
+    },
+    {
+      "question": "Hur noggrant är en TDEE-kalkylator?",
+      "answer": "En TDEE-kalkylator ger en uppskattning baserad på statistiska formler — Mifflin-St Jeor för BMR multiplicerat med en PAL-faktor (1.2–1.9) för aktivitetsnivå. Felmarginal är typiskt ±10–15%. Individuella faktorer som muskelmassa, hormonbalans och metabolism påverkar det verkliga värdet. Använd resultatet som startpunkt och justera efter hur din vikt faktiskt förändras."
+    },
+    {
+      "question": "Vad är skillnaden mellan BMR och TDEE?",
+      "answer": "BMR (Basal Metabolic Rate) är de kalorier din kropp förbränner i absolut vila — enbart för att hålla organ igång. TDEE inkluderar dessutom all fysisk aktivitet, NEAT (oplanerad rörelse) och TEF (matens termiska effekt). TDEE är alltid högre än BMR och är det relevanta talet för kaloriplanering."
+    },
+    {
+      "question": "Hur förändras TDEE med åldern?",
+      "answer": "TDEE minskar typiskt med åldern av två skäl: dels sjunker BMR något per decennium (primärt pga minskad muskelmassa), dels minskar aktivitetsnivån hos de flesta. Styrketräning och tillräckligt proteinintag kan bromsa båda processerna avsevärt."
+    },
+    {
+      "question": "Varför kan två personer med samma vikt ha så olika kaloribehov?",
+      "answer": "Muskelmassa är den viktigaste faktorn — muskler förbrukar mer energi än fett även i vila. Aktivitetsnivå är den näst viktigaste. Två personer med samma vikt kan ha 500–800 kcal skillnad i TDEE om en tränar aktivt och den andra är stillasittande."
+    }
+  ],
+  "sources": [
+    {
+      "text": "Mifflin MD, et al. A new predictive equation for resting energy expenditure in healthy individuals. Am J Clin Nutr. 1990;51(2):241–247."
+    },
+    {
+      "text": "FAO/WHO/UNU. Human energy requirements. Report of a Joint Expert Consultation. Food and Nutrition Technical Report Series 1. Rome, 2004."
+    },
+    {
+      "text": "von Loeffelholz C, Birkenfeld AL. Non-Exercise Activity Thermogenesis in Human Energy Homeostasis. In: Feingold KR, et al., editors. Endotext. South Dartmouth (MA): MDText.com, Inc.; 2022."
+    },
+    {
+      "text": "Levine JA. Non-exercise activity thermogenesis (NEAT). Best Pract Res Clin Endocrinol Metab. 2002;16(4):679–702."
+    },
+    {
+      "text": "Westerterp KR. Diet induced thermogenesis. Nutr Metab (Lond). 2004;1(1):5."
+    },
+    {
+      "text": "Pontzer H, et al. Daily energy expenditure through the human life course. Science. 2021;373(6556):808–812."
+    },
+    {
+      "text": "Ainsworth BE, et al. 2011 Compendium of Physical Activities: a second update of codes and MET values. Med Sci Sports Exerc. 2011;43(8):1575–1581."
+    },
+    {
+      "text": "Speakman JR, Selman C. Physical activity and resting metabolic rate. Proc Nutr Soc. 2003;62(3):621–634."
+    }
+  ],
+  "related": {
+    "calculatorsTitle": "Relaterade kalkylatorer",
+    "articlesTitle": "Relaterade artiklar",
+    "calculators": [
+      {
+        "href": "/kalkylatorer/tdee-kalkylator",
+        "label": "TDEE Kalkylator"
+      },
+      {
+        "href": "/kalkylatorer/bmr-kalkylator",
+        "label": "BMR Kalkylator"
+      },
+      {
+        "href": "/kalkylatorer/bmi-kalkylator",
+        "label": "BMI Kalkylator"
+      }
+    ],
+    "articles": [
+      {
+        "href": "/artiklar/kaloribehov",
+        "label": "Kaloribehov — komplett guide"
+      },
+      {
+        "href": "/artiklar/kaloribrist",
+        "label": "Hur stor kaloribrist?"
+      },
+      {
+        "href": "/artiklar/bulk-och-cut",
+        "label": "Bulk och cut"
+      }
+    ]
+  }
+}

@@ -17,5 +17,9 @@
     "secondary": "Try the calculator free"
   },
   "backLink": "Back to CalculEat",
-  "faqTitle": "Frequently Asked Questions"
+  "faqTitle": "Frequently Asked Questions",
+  "byline": {
+    "authorPrefix": "By",
+    "updatedLabel": "Updated"
+  }
 }

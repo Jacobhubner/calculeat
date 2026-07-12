@@ -1,0 +1,346 @@
+{
+  "seo": {
+    "title": "Reverse Diet — Vad det är och hur du ökar kalorier efter diet (2026) | CalculEat",
+    "description": "Reverse diet innebär att du sakta ökar kaloriintaget efter en cut för att återställa metabolism utan att lagra fett. Lär dig när det behövs, hur du gör det och vad forskningen säger."
+  },
+  "layout": {
+    "title": "Reverse Diet — Vad det är och hur du ökar kalorier efter diet",
+    "intro": "En reverse diet är ett strukturerat sätt att höja kaloriintaget efter en cut — gradvis, kontrollerat, utan att lagra onödigt fett. Det är inte en fitness-myt. Det är ett praktiskt verktyg för den som diäteat aggressivt och vill återgå till underhållsintag utan att studsa tillbaka i vikt.",
+    "moneyPageHref": "/kalkylatorer/tdee-kalkylator",
+    "moneyPageLabel": "Beräkna ditt underhållsbehov (TDEE) som startpunkt för reverse diet",
+    "breadcrumb": {
+      "hubLabel": "Artiklar",
+      "hubPath": "/artiklar",
+      "pageLabel": "Reverse Diet"
+    }
+  },
+  "schema": {
+    "headline": "Reverse Diet — Vad det är och hur du ökar kalorier efter diet",
+    "description": "Reverse diet innebär att du sakta ökar kaloriintaget efter en cut för att återställa metabolism utan att lagra fett."
+  },
+  "body": [
+    {
+      "type": "h2",
+      "text": "Vad är reverse diet?",
+      "tight": true
+    },
+    {
+      "type": "p",
+      "text": "Reverse diet är processen att gradvis höja kaloriintaget efter en period av kaloribrist (cut). Istället för att gå direkt från t.ex. 1600 kcal/dag till 2300 kcal/dag, höjer du med 50–100 kcal per vecka tills du når ditt underhållsintag (TDEE).",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": [
+        {
+          "text": "Idén bygger på en verklig fysiologisk mekanism: "
+        },
+        {
+          "text": "adaptiv termogenes",
+          "strong": true
+        },
+        {
+          "text": " — den metaboliska nedreglering som sker under längre perioder av kaloribrist. Kroppen sänker sin NEAT (oplanerad rörelse), sköldkörtelhormon och leptinnivåer som svar på energibrist. Det gör att ditt verkliga TDEE under cutten är lägre än det var innan."
+        }
+      ],
+      "flush": true
+    },
+    {
+      "type": "h2",
+      "text": "När är reverse diet relevant?"
+    },
+    {
+      "type": "p",
+      "text": "Reverse diet är mest motiverat i dessa situationer:",
+      "flush": true
+    },
+    {
+      "type": "ul",
+      "items": [
+        [
+          {
+            "text": "Du har diäteat aggressivt länge (12+ veckor).",
+            "strong": true
+          },
+          {
+            "text": " Ju längre och mer restriktiv dieten var, desto mer uttalad är den metaboliska adaptationen — och desto försiktigare bör övergången vara."
+          }
+        ],
+        [
+          {
+            "text": "Du har tydliga tecken på adaptiv termogenes:",
+            "strong": true
+          },
+          {
+            "text": " "
+          }
+        ],
+        [
+          {
+            "text": "Du planerar direkt på en ny bulk- eller muskeluppbyggnadsfas.",
+            "strong": true
+          },
+          {
+            "text": " En kontrollerad övergång via reverse diet ger en bättre utgångspunkt för bulken och minskar risken för \"rebound fettupplagring\" vid plötslig kalorikvinst."
+          }
+        ],
+        [
+          {
+            "text": "Psykologiskt behov av struktur.",
+            "strong": true
+          },
+          {
+            "text": " Många finner att ha ett schema för ökning — snarare än att bara \"äta mer\" — minskar anxiety kring mat efter en lång diet."
+          }
+        ]
+      ],
+      "gap": 3
+    },
+    {
+      "type": "h2",
+      "text": "När reverse diet inte behövs"
+    },
+    {
+      "type": "p",
+      "text": [
+        {
+          "text": "Reverse diet är "
+        },
+        {
+          "text": "inte",
+          "em": true
+        },
+        {
+          "text": " nödvändigt i alla situationer och är ibland onödigt komplicerat:"
+        }
+      ],
+      "flush": true
+    },
+    {
+      "type": "ul",
+      "items": [
+        [
+          {
+            "text": "måttligt tempo (−300–400 kcal/dag)",
+            "strong": true
+          },
+          {
+            "text": " Du har diäteat i ett under 8–12 veckor — metabolisk adaptation är troligtvis minimal."
+          }
+        ],
+        [
+          {
+            "text": "5–8% av kroppsvikten",
+            "strong": true
+          },
+          {
+            "text": " Du har inte tappat mer än totalt — ingen stor hormonell störning förväntas."
+          }
+        ],
+        [
+          {
+            "text": "en längre maintenancefas",
+            "strong": true
+          },
+          {
+            "text": " Du planerar (3+ månader) utan nytt viktmål direkt — kroppen återhämtar sig naturligt."
+          }
+        ]
+      ]
+    },
+    {
+      "type": "p",
+      "text": "I dessa fall kan du gå direkt till ditt beräknade TDEE utan att strukturera en formell reverse diet.",
+      "flush": true
+    },
+    {
+      "type": "h2",
+      "text": "Reverse diet, diet break och maintenance — vad är skillnaden?"
+    },
+    {
+      "type": "cards",
+      "items": [
+        {
+          "title": "Reverse Diet",
+          "text": "Gradvis ökning av kaloriintaget (50–100 kcal/vecka) från cut-intag upp till TDEE. Pågår 4–12 veckor. Används efter en lång eller aggressiv cut.",
+          "color": "bg-primary-50 border-primary-200"
+        },
+        {
+          "title": "Diet Break",
+          "text": "Kortare period (1–2 veckor) på underhållsintag mitt i en pågående cut. Syftet är att återställa leptin och metabolism tillfälligt — sedan fortsätter dieten. En diet break är inte en reverse diet.",
+          "color": "bg-blue-50 border-blue-200"
+        },
+        {
+          "title": "Maintenance",
+          "text": "Att äta på ditt TDEE permanent, utan mål om viktförändring. Kan nås direkt eller via reverse diet. Maintenance är slutmålet för reverse diet.",
+          "color": "bg-green-50 border-green-200"
+        }
+      ]
+    },
+    {
+      "type": "h2",
+      "text": "Steg-för-steg: så gör du en reverse diet"
+    },
+    {
+      "type": "ol",
+      "items": [
+        [
+          {
+            "text": "Räkna ut ditt mål-TDEE.",
+            "strong": true
+          },
+          {
+            "text": " Använd en TDEE-kalkylator baserad på din nuvarande vikt, längd, ålder och aktivitetsnivå. Det är ditt slutmål — det kaloriintag du gradvis ska ta dig till."
+          }
+        ],
+        [
+          {
+            "text": "Börja med ditt nuvarande cut-intag.",
+            "strong": true
+          },
+          {
+            "text": " Om du avslutar cutten på 1 700 kcal/dag, starta reverse dieten därifrån."
+          }
+        ],
+        [
+          {
+            "text": "Öka med 50–100 kcal per vecka.",
+            "strong": true
+          },
+          {
+            "text": " Lägg till kalorierna primärt på kolhydrater och fett — proteinintaget behöver inte ökas (håll 1,6–2,2 g/kg)."
+          }
+        ],
+        [
+          {
+            "text": "Följ din vikt varje vecka.",
+            "strong": true
+          },
+          {
+            "text": " Viss uppgång är normal (vatten, glykogen). Om vikten stiger mer än 0,3 kg/vecka under mer än 2 veckor i rad — pausa ökningen en vecka och se hur kroppen svarar."
+          }
+        ],
+        [
+          {
+            "text": "Fortsätt tills du når ditt TDEE.",
+            "strong": true
+          },
+          {
+            "text": " När du äter på eller nära TDEE och vikten är stabil — är reverse dieten klar. Du är nu i maintenance."
+          }
+        ]
+      ],
+      "gap": 4
+    },
+    {
+      "type": "h2",
+      "text": "Vanliga misstag"
+    },
+    {
+      "type": "ul",
+      "items": [
+        [
+          {
+            "text": "Öka för snabbt.",
+            "strong": true
+          },
+          {
+            "text": " +200–300 kcal/dag direkt ger snabb fettinlagring om metabolismen inte hunnit återhämta sig. Ta det lugnt."
+          }
+        ],
+        [
+          {
+            "text": "Räkna inte proteinet.",
+            "strong": true
+          },
+          {
+            "text": " Under reverse diet är det frestande att lägga till kalorier via godis eller processad mat. Håll proteinet högt — det skyddar muskler och minskar fettinlagringen under kaloristegringen."
+          }
+        ],
+        [
+          {
+            "text": "Förväxla normal viktuppgång med fettupplagring.",
+            "strong": true
+          },
+          {
+            "text": " De första 1–2 kg som tillkommer är nästan alltid vatten och glykogen, inte fett. Panikera inte."
+          }
+        ],
+        [
+          {
+            "text": "Skippa reverse diet när det faktiskt behövs.",
+            "strong": true
+          },
+          {
+            "text": " Att gå från 1 400 till 2 400 kcal direkt efter 16 veckors aggressiv cut ökar risken för \"fat overshoot\" — kroppen lagrar oproportionerligt mycket fett som respons på den plötsliga energiöverskötten."
+          }
+        ]
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "Vad är en reverse diet?",
+      "answer": "En reverse diet är en fas efter en cut där du gradvis ökar kaloriintaget med 50–100 kcal/vecka tills du nått ditt nya underhållsbehov (TDEE). Syftet är att återställa metabolismen och leptin-nivåerna utan att lagra fett snabbt."
+    },
+    {
+      "question": "Behöver alla göra en reverse diet?",
+      "answer": "Nej. En reverse diet är framför allt relevant för dig som diäteat aggressivt under lång tid (>12 veckor med stort underskott), upplever tecken på adaptiv termogenes (plattad vikt trots underskott, trötthet, lägre prestation) eller planerar en ny bulk och vill maximera muskeltillväxtpotentialen."
+    },
+    {
+      "question": "Hur snabbt ökar man kalorier under reverse diet?",
+      "answer": "Typiskt 50–100 kcal/vecka tills du nått ditt TDEE. Det innebär 8–16 veckor för att öka 500–800 kcal om du diäteat långt under underhållet. Snabbare ökning (200+ kcal/vecka) är möjlig men ger mer fettupplagrande och missar poängen med reverse diet."
+    },
+    {
+      "question": "Kan man gå upp i vikt under en reverse diet?",
+      "answer": "Ja — lite viktökning är normalt och förväntad, primärt från ökad glykogenlagring och vattenretention när kolhydraterna ökar. Faktisk fettökning bör vara minimal om du gör det gradvis. Om du snabbt går upp mer än 0,5–1 kg i veckan ökar du troligtvis för fort."
+    },
+    {
+      "question": "Vad är skillnaden mellan reverse diet och bulk?",
+      "answer": "En reverse diet tar dig från ett underskott till underhåll — målet är att återställa metabolism, inte att bygga muskler. En bulk tar dig från underhåll till ett överskott för muskeluppbyggnad. En reverse diet kan föregå en bulk men är ett distinkt steg."
+    }
+  ],
+  "sources": [
+    {
+      "text": "Trexler ET, Smith-Ryan AE, Norton LE. Metabolic adaptation to weight loss: implications for the athlete. J Int Soc Sports Nutr. 2014;11(1):7."
+    },
+    {
+      "text": "Rosenbaum M, Leibel RL. Models of energy homeostasis in the context of obesity. Curr Opin Clin Nutr Metab Care. 2010;13(4):422–426."
+    },
+    {
+      "text": "Müller MJ, et al. Metabolic adaptation to caloric restriction and subsequent refeeding: the Minnesota Starvation Experiment revisited. Am J Clin Nutr. 2015;102(4):807–819."
+    }
+  ],
+  "related": {
+    "calculatorsTitle": "Relaterade kalkylatorer",
+    "articlesTitle": "Relaterade artiklar",
+    "calculators": [
+      {
+        "href": "/kalkylatorer/tdee-kalkylator",
+        "label": "TDEE Kalkylator"
+      },
+      {
+        "href": "/kalkylatorer/proteinbehov",
+        "label": "Proteinbehov Kalkylator"
+      },
+      {
+        "href": "/kalkylatorer/cut-kalkylator",
+        "label": "Cut & Deff Kalkylator"
+      }
+    ],
+    "articles": [
+      {
+        "href": "/artiklar/kaloribrist",
+        "label": "Hur stor kaloribrist?"
+      },
+      {
+        "href": "/artiklar/bulk-och-cut",
+        "label": "Bulk och cut"
+      },
+      {
+        "href": "/artiklar/kaloribehov",
+        "label": "Kaloribehov — komplett guide"
+      }
+    ]
+  }
+}

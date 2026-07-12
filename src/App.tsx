@@ -10,6 +10,7 @@ import ErrorBoundary from './components/ErrorBoundary'
 import ProtectedRoute from './components/ProtectedRoute'
 import PublicOnlyRoute from './components/PublicOnlyRoute'
 import { Skeleton } from './components/ui/skeleton'
+import { ARTICLES } from './content/articles/registry'
 
 // Eager load - landing & auth pages (needed immediately)
 import HomePage from './pages/HomePage'
@@ -31,9 +32,9 @@ function isChunkLoadError(err: unknown): boolean {
   )
 }
 
-function lazyWithRetry<T extends React.ComponentType<unknown>>(
-  factory: () => Promise<{ default: T }>
-): React.LazyExoticComponent<T> {
+function lazyWithRetry<P extends object>(
+  factory: () => Promise<{ default: React.ComponentType<P> }>
+): React.LazyExoticComponent<React.ComponentType<P>> {
   return lazy(() =>
     factory()
       .then(mod => {
@@ -45,7 +46,7 @@ function lazyWithRetry<T extends React.ComponentType<unknown>>(
         if (isChunkLoadError(err) && !sessionStorage.getItem('chunk-reload')) {
           sessionStorage.setItem('chunk-reload', '1')
           window.location.reload()
-          return new Promise<{ default: T }>(() => {}) // never resolves — reload takes over
+          return new Promise<{ default: React.ComponentType<P> }>(() => {}) // never resolves — reload takes over
         }
         throw err
       })
@@ -55,10 +56,6 @@ function lazyWithRetry<T extends React.ComponentType<unknown>>(
 // Lazy load - public SEO pages
 const TdeeKalkylatornPage = lazyWithRetry(() => import('./pages/public/TdeeKalkylatornPage'))
 const BmiKalkylatornPage = lazyWithRetry(() => import('./pages/public/BmiKalkylatornPage'))
-const KaloriberhovPage = lazyWithRetry(() => import('./pages/public/KaloriberhovPage'))
-const VadArTdeePage = lazyWithRetry(() => import('./pages/public/VadArTdeePage'))
-const KaloriBristPage = lazyWithRetry(() => import('./pages/public/KaloriBristPage'))
-const BulkOchCutPage = lazyWithRetry(() => import('./pages/public/BulkOchCutPage'))
 
 const KaloriunderskottKalkylatornPage = lazyWithRetry(
   () => import('./pages/public/KaloriunderskottKalkylatornPage')
@@ -68,7 +65,6 @@ const CutKalkylatornPage = lazyWithRetry(() => import('./pages/public/CutKalkyla
 const ProteinbehovKalkylatornPage = lazyWithRetry(
   () => import('./pages/public/ProteinbehovKalkylatornPage')
 )
-const ReverseDietPage = lazyWithRetry(() => import('./pages/public/ReverseDietPage'))
 
 const IdealviktKalkylatornPage = lazyWithRetry(
   () => import('./pages/public/IdealviktKalkylatornPage')
@@ -78,12 +74,9 @@ const KroppsfettKalkylatornPage = lazyWithRetry(
 )
 const FfmiKalkylatornPage = lazyWithRetry(() => import('./pages/public/FfmiKalkylatornPage'))
 const BmrKalkylatornPage = lazyWithRetry(() => import('./pages/public/BmrKalkylatornPage'))
-const VadArBmrPage = lazyWithRetry(() => import('./pages/public/VadArBmrPage'))
-const BmrVsTdeePage = lazyWithRetry(() => import('./pages/public/BmrVsTdeePage'))
-const BmrVsRmrPage = lazyWithRetry(() => import('./pages/public/BmrVsRmrPage'))
-const BmiVsKroppsfettPage = lazyWithRetry(() => import('./pages/public/BmiVsKroppsfettPage'))
-const VadArFfmiPage = lazyWithRetry(() => import('./pages/public/VadArFfmiPage'))
-const VadArPalOchMetPage = lazyWithRetry(() => import('./pages/public/VadArPalOchMetPage'))
+
+// Alla artiklar renderas av en generisk sida; innehåll + routes drivs av registryt
+const ArticlePage = lazyWithRetry(() => import('./pages/public/ArticlePage'))
 
 const MyFitnessPalVsCalculEatPage = lazyWithRetry(
   () => import('./pages/public/MyFitnessPalVsCalculEatPage')
@@ -101,10 +94,6 @@ const OmOssPage = lazyWithRetry(() => import('./pages/public/OmOssPage'))
 
 const KalkylatornHubPage = lazyWithRetry(() => import('./pages/public/KalkylatornHubPage'))
 const ArtikelnHubPage = lazyWithRetry(() => import('./pages/public/ArtikelnHubPage'))
-const LbmVsFfmPage = lazyWithRetry(() => import('./pages/public/LbmVsFfmPage'))
-const HurMatarManKroppsfettPage = lazyWithRetry(
-  () => import('./pages/public/HurMatarManKroppsfettPage')
-)
 
 // Lazy load - app pages (loaded on demand)
 const IconDemo = lazyWithRetry(() => import('./pages/IconDemo'))
@@ -247,41 +236,16 @@ function App() {
                     />
                     <Route path="/kalkylatorer/bmr-kalkylator" element={<BmrKalkylatornPage />} />
                     <Route path="/en/calculators/bmr-calculator" element={<BmrKalkylatornPage />} />
-                    <Route path="/artiklar/kaloribehov" element={<KaloriberhovPage />} />
-                    <Route path="/en/articles/calorie-needs" element={<KaloriberhovPage />} />
-                    <Route path="/artiklar/vad-ar-tdee" element={<VadArTdeePage />} />
-                    <Route path="/en/articles/what-is-tdee" element={<VadArTdeePage />} />
-                    <Route path="/artiklar/kaloribrist" element={<KaloriBristPage />} />
-                    <Route path="/en/articles/calorie-deficit" element={<KaloriBristPage />} />
-                    <Route path="/artiklar/bulk-och-cut" element={<BulkOchCutPage />} />
-                    <Route path="/en/articles/bulk-and-cut" element={<BulkOchCutPage />} />
-                    <Route path="/artiklar/reverse-diet" element={<ReverseDietPage />} />
-                    <Route path="/en/articles/reverse-diet" element={<ReverseDietPage />} />
-                    <Route path="/artiklar/vad-ar-bmr" element={<VadArBmrPage />} />
-                    <Route path="/en/articles/what-is-bmr" element={<VadArBmrPage />} />
-                    <Route path="/artiklar/bmr-vs-rmr" element={<BmrVsRmrPage />} />
-                    <Route path="/en/articles/bmr-vs-rmr" element={<BmrVsRmrPage />} />
-                    <Route path="/artiklar/bmr-vs-tdee" element={<BmrVsTdeePage />} />
-                    <Route path="/en/articles/bmr-vs-tdee" element={<BmrVsTdeePage />} />
-                    <Route path="/artiklar/bmi-vs-kroppsfett" element={<BmiVsKroppsfettPage />} />
-                    <Route path="/en/articles/bmi-vs-body-fat" element={<BmiVsKroppsfettPage />} />
-                    <Route path="/artiklar/vad-ar-ffmi" element={<VadArFfmiPage />} />
-                    <Route path="/en/articles/what-is-ffmi" element={<VadArFfmiPage />} />
-                    <Route path="/artiklar/vad-ar-pal-och-met" element={<VadArPalOchMetPage />} />
-                    <Route
-                      path="/en/articles/what-is-pal-and-met"
-                      element={<VadArPalOchMetPage />}
-                    />
-                    <Route path="/artiklar/lbm-vs-ffm" element={<LbmVsFfmPage />} />
-                    <Route path="/en/articles/lbm-vs-ffm" element={<LbmVsFfmPage />} />
-                    <Route
-                      path="/artiklar/hur-mater-man-kroppsfett"
-                      element={<HurMatarManKroppsfettPage />}
-                    />
-                    <Route
-                      path="/en/articles/how-to-measure-body-fat"
-                      element={<HurMatarManKroppsfettPage />}
-                    />
+                    {/* Artiklar — genereras från registryt, en <Route> per språk */}
+                    {ARTICLES.flatMap(a =>
+                      (['sv', 'en'] as const).map(lng => (
+                        <Route
+                          key={`${a.key}-${lng}`}
+                          path={`/${a.paths[lng]}`}
+                          element={<ArticlePage articleKey={a.key} />}
+                        />
+                      ))
+                    )}
                     <Route
                       path="/jamfor/myfitnesspal-vs-calculeat"
                       element={<MyFitnessPalVsCalculEatPage />}

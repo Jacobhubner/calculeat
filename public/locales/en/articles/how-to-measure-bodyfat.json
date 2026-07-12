@@ -1,0 +1,319 @@
+{
+  "seo": {
+    "title": "How to Measure Body Fat? Methods and Accuracy Explained | CalculEat",
+    "description": "Learn the most common methods for measuring body fat — DEXA, bioimpedance, calipers and the Navy method — and what a good body fat percentage looks like."
+  },
+  "layout": {
+    "title": "How to Measure Body Fat?",
+    "intro": "Body weight says little about the body — body fat percentage says more. Two people can weigh exactly the same but have completely different body compositions. Here we go through the most common methods for measuring body fat, how accurate they are and what the numbers actually mean.",
+    "moneyPageHref": "/en/calculators/body-fat-calculator",
+    "moneyPageLabel": "Calculate your body fat percentage with the Navy method",
+    "breadcrumb": {
+      "hubLabel": "Articles",
+      "hubPath": "/en/articles",
+      "pageLabel": "How to measure body fat?"
+    }
+  },
+  "schema": {
+    "headline": "How to Measure Body Fat?",
+    "description": "Learn the most common methods for measuring body fat — DEXA, bioimpedance, calipers and the Navy method — and what the numbers actually mean."
+  },
+  "body": [
+    {
+      "type": "h2",
+      "text": "Why measure body fat?",
+      "tight": true
+    },
+    {
+      "type": "p",
+      "text": "Body weight is a blunt measure. A person who loses fat and builds muscle can see their weight stand still — or even increase — despite the body changing in the right direction. Body fat percentage gives a better picture of what's actually happening.",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": "Body fat is measured as the proportion of fat tissue out of total weight. The rest is fat-free mass (FFM): muscles, skeleton, organs and water. It is the distribution between these that determines health, performance and appearance — not total weight itself."
+    },
+    {
+      "type": "h2",
+      "text": "Reference values — what is normal?"
+    },
+    {
+      "type": "p",
+      "text": "The most common categorisations for body fat percentage (American Council on Exercise):",
+      "flush": true
+    },
+    {
+      "type": "tableGrid",
+      "tables": [
+        {
+          "header": "Men",
+          "rows": [
+            ["Essential fat", "2–5%"],
+            ["Athletic", "6–13%"],
+            ["Fitness", "14–17%"],
+            ["Normal", "18–24%"],
+            ["Overweight", "25%+"]
+          ]
+        },
+        {
+          "header": "Women",
+          "rows": [
+            ["Essential fat", "10–13%"],
+            ["Athletic", "14–20%"],
+            ["Fitness", "21–24%"],
+            ["Normal", "25–31%"],
+            ["Overweight", "32%+"]
+          ]
+        }
+      ]
+    },
+    {
+      "type": "note",
+      "text": "Essential fat is biologically necessary — it exists in organs, brain and cell membranes and must never be undercut."
+    },
+    {
+      "type": "h2",
+      "text": "Measurement methods — from gold standard to home solution"
+    },
+    {
+      "type": "h3",
+      "text": "DEXA — gold standard (margin of error ±1–2%)"
+    },
+    {
+      "type": "p",
+      "text": "DEXA (dual-energy X-ray absorptiometry) is the most accurate method available outside a laboratory. A low-dose X-ray distinguishes fat, muscle and bone mass throughout the body and provides a detailed map — including how fat is distributed regionally (abdomen, legs, arms).",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": [
+        {
+          "text": "Advantages:",
+          "strong": true
+        },
+        {
+          "text": " Extremely accurate, also measures bone mineral density, reproducible."
+        },
+        {
+          "br": true
+        },
+        {
+          "text": "Disadvantages:",
+          "strong": true
+        },
+        {
+          "text": " Costs $50–150, requires a clinic, weak radiation exposure. Best suited for baseline measurement and follow-up every 6–12 months."
+        }
+      ]
+    },
+    {
+      "type": "h3",
+      "text": "Hydrodensitometry — underwater weighing (margin of error ±1–3%)"
+    },
+    {
+      "type": "p",
+      "text": "Historically considered the gold standard. The body is weighed underwater — the difference from air weight gives body density which is converted to body fat via the Siri equation (1961). Now almost completely replaced by DEXA for practical use.",
+      "flush": true
+    },
+    {
+      "type": "h3",
+      "text": "Bioimpedance — BIA (margin of error ±3–5%)"
+    },
+    {
+      "type": "p",
+      "text": "A weak electrical current is passed through the body. Fat conducts electricity less well than muscle and water, and the resistance is used to estimate body fat. Found in everything from home scales to clinical InBody machines.",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": "Accuracy varies greatly with hydration, last meal, caffeine and time of day. An InBody at a clinic is considerably more reliable than a home scale."
+    },
+    {
+      "type": "p",
+      "text": [
+        {
+          "text": "Tip:",
+          "strong": true
+        },
+        {
+          "text": " Always measure in the morning, fasting and after visiting the bathroom — the same time each time. This minimises variability and makes the trend meaningful."
+        }
+      ]
+    },
+    {
+      "type": "h3",
+      "text": "Tape measure methods (margin of error ±3–5%)"
+    },
+    {
+      "type": "p",
+      "text": "Several formulas calculate body fat solely from body measurements with a tape measure — no special instruments needed. The most common is the US Navy method (Hodgdon & Beckett, 1984), which measures waist circumference, neck circumference and (for women) hip circumference and calculates body fat via a logarithmic formula. Other tape-measure-based methods use different combinations of measurement points and give somewhat varying results.",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": "The advantage is that it's completely free and can be done at home. The accuracy is sufficient to follow the trend, which is the most important thing for most people."
+    },
+    {
+      "type": "h3",
+      "text": "Caliper methods (margin of error ±3–5%)"
+    },
+    {
+      "type": "p",
+      "text": "Calipers measure skinfold thickness at specific points — usually 3, 4 or 7 measurement points depending on the protocol (e.g. Jackson-Pollock). The results are entered into a formula that estimates total body fat percentage. Accuracy depends greatly on the measurer's technique and consistency — an experienced trainer or nutritionist gives more reliable results than self-measurement.",
+      "flush": true
+    },
+    {
+      "type": "h3",
+      "text": "Profile-based estimation"
+    },
+    {
+      "type": "p",
+      "text": "With profile data — age, gender, BMI and activity level — body fat can be estimated via population-based formulas (e.g. Deurenberg). This requires no measurement instruments at all but gives the lowest individual precision and is best used as a rough orientation.",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": "A complementary way to calibrate your estimate is to compare with reference images — photographs of real bodies with known measured body fat percentage. This gives a visual anchor that numbers alone cannot provide."
+    },
+    {
+      "type": "h2",
+      "text": "Which method should you choose?"
+    },
+    {
+      "type": "p",
+      "text": "It depends on what you want to achieve and what resources you have:",
+      "flush": true
+    },
+    {
+      "type": "ul",
+      "items": [
+        [
+          {
+            "text": "Best precision:",
+            "strong": true
+          },
+          {
+            "text": " DEXA — do a baseline measurement and follow-up every 3–6 months."
+          }
+        ],
+        [
+          {
+            "text": "Regular home follow-up:",
+            "strong": true
+          },
+          {
+            "text": " Tape measure method, caliper measurement or a consistent bioimpedance scale under identical conditions each time."
+          }
+        ],
+        [
+          {
+            "text": "Clinical follow-up:",
+            "strong": true
+          },
+          {
+            "text": " InBody (BIA) at a gym or clinic — more reliable than home scales."
+          }
+        ],
+        [
+          {
+            "text": "Quick orientation without instruments:",
+            "strong": true
+          },
+          {
+            "text": " Profile-based estimation or comparison with reference images gives a rough but quick picture."
+          }
+        ]
+      ]
+    },
+    {
+      "type": "p",
+      "text": "With a personal account in CalculEat you get access to all methods — several tape measure formulas, caliper protocols and profile-based estimation — as well as reference images for visual calibration. This makes it easy to choose the right method for your situation and follow the trend over time in one place."
+    },
+    {
+      "type": "p",
+      "text": "The absolute value is always less important than the trend. Choose one method, stick to it and measure under identical conditions each time."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Which method for measuring body fat is most accurate?",
+      "answer": "DEXA scanning (Dual-Energy X-ray Absorptiometry) is the gold standard with ±1–2% margin of error. It measures bone, fat and soft tissue separately using X-rays. Downsides: costs $50–200, requires a clinic. For home use, the US Navy method (±3–4%) is a good alternative."
+    },
+    {
+      "question": "Are bioimpedance scales reliable?",
+      "answer": "Consumer scales with bioimpedance have typically ±5–8% margin of error and are strongly affected by hydration status — eating a little salt or drinking a lot of water makes the results vary markedly. They're useful for tracking trends if you always measure under the same conditions (morning, fasting, after using the bathroom). Absolute values are unreliable."
+    },
+    {
+      "question": "What is a good body fat percentage?",
+      "answer": "Benchmarks: Men — athletic 6–13%, fit 14–17%, average 18–24%, overweight 25–29%, obese ≥30%. Women — athletic 14–20%, fit 21–24%, average 25–31%, overweight 32–39%, obese ≥40%. These are population-based benchmarks, not medical thresholds."
+    },
+    {
+      "question": "How often should you measure body fat?",
+      "answer": "Every 4–8 weeks is sufficient. Daily measurements give too much noise due to fluid variations. The most important thing is to measure consistently: same method, same time of day (morning, fasting), same measurement points."
+    },
+    {
+      "question": "Can you see abs without having a low body fat percentage?",
+      "answer": "No — abs require a low enough body fat percentage (typically below 14–16% for men, 18–22% for women) and sufficient muscle mass. Genetics, fat distribution and lighting affect how visible they are. It's not the body fat percentage alone that determines it, but the combination of body fat + muscle mass."
+    },
+    {
+      "question": "Why do body fat measurements vary so much?",
+      "answer": "Different methods measure different things and have different error margins. Additionally, body fat varies with time of day, hydration status, food intake and menstrual cycle (for women). Focus on trends over time with one consistent method, not absolute values from different methods."
+    }
+  ],
+  "sources": [
+    {
+      "text": "Deurenberg P, Yap M, van Staveren WA. Body mass index and percent body fat: a meta analysis among different ethnic groups. Int J Obes Relat Metab Disord. 1998;22(12):1164–1171."
+    },
+    {
+      "text": "Heymsfield SB, et al. Human body composition. Human Kinetics, 2005."
+    },
+    {
+      "text": "Ackland TR, et al. Current status of body composition assessment in sport. Sports Med. 2012;42(3):227–249."
+    },
+    {
+      "text": "Gallagher D, et al. Healthy percentage body fat ranges. Am J Clin Nutr. 2000;72(3):694–701."
+    },
+    {
+      "text": "Hodgdon JA, Beckett MB. Prediction of percent body fat for US Navy men from body circumferences and height. Report No. 84-11. Naval Health Research Center, 1984."
+    },
+    {
+      "text": "Kyle UG, et al. Bioelectrical impedance analysis—part I: review of principles and methods. Clin Nutr. 2004;23(5):1226–1243."
+    }
+  ],
+  "related": {
+    "calculatorsTitle": "Related calculators",
+    "articlesTitle": "Related articles",
+    "calculators": [
+      {
+        "href": "/en/calculators/body-fat-calculator",
+        "label": "Body Fat Calculator"
+      },
+      {
+        "href": "/en/calculators/ffmi-calculator",
+        "label": "FFMI Calculator"
+      },
+      {
+        "href": "/en/calculators/tdee-calculator",
+        "label": "TDEE Calculator"
+      }
+    ],
+    "articles": [
+      {
+        "href": "/en/articles/bmi-vs-body-fat",
+        "label": "BMI vs Body Fat"
+      },
+      {
+        "href": "/en/articles/what-is-ffmi",
+        "label": "What is FFMI?"
+      },
+      {
+        "href": "/en/articles/lbm-vs-ffm",
+        "label": "LBM vs FFM"
+      },
+      {
+        "href": "/en/articles/bulk-and-cut",
+        "label": "Bulk and cut"
+      }
+    ]
+  }
+}

@@ -1,0 +1,319 @@
+{
+  "seo": {
+    "title": "Hur mäter man kroppsfett? Metoder och noggrannhet förklarat | CalculEat",
+    "description": "Lär dig de vanligaste metoderna för att mäta kroppsfett — DEXA, bioimpedans, kaliper och Navy-metoden — och vad som är en bra kroppsfett-procent."
+  },
+  "layout": {
+    "title": "Hur mäter man kroppsfett?",
+    "intro": "Kroppsvikt säger lite om kroppen — kroppsfett-procent säger mer. Två personer kan väga exakt lika mycket men ha helt olika kroppssammansättning. Här går vi igenom de vanligaste metoderna för att mäta kroppsfett, hur exakta de är och vad siffrorna faktiskt betyder.",
+    "moneyPageHref": "/kalkylatorer/kroppsfett",
+    "moneyPageLabel": "Räkna ut din kroppsfett-procent med Navy-metoden",
+    "breadcrumb": {
+      "hubLabel": "Artiklar",
+      "hubPath": "/artiklar",
+      "pageLabel": "Hur mäter man kroppsfett?"
+    }
+  },
+  "schema": {
+    "headline": "Hur mäter man kroppsfett?",
+    "description": "Lär dig de vanligaste metoderna för att mäta kroppsfett — DEXA, bioimpedans, kaliper och Navy-metoden — och vad siffrorna faktiskt betyder."
+  },
+  "body": [
+    {
+      "type": "h2",
+      "text": "Varför mäta kroppsfett?",
+      "tight": true
+    },
+    {
+      "type": "p",
+      "text": "Kroppsvikt är ett trubbigt mått. En person som tappar fett och bygger muskler kan se vikten stå still — eller till och med öka — trots att kroppen förändras i rätt riktning. Kroppsfett-procent ger en bättre bild av vad som faktiskt händer.",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": "Kroppsfett mäts som andelen fettvävnad av totalvikten. Resten är fettfri massa (FFM): muskler, skelett, organ och vatten. Det är fördelningen mellan dessa som avgör hälsa, prestation och utseende — inte totalvikten i sig."
+    },
+    {
+      "type": "h2",
+      "text": "Referensvärden — vad är normalt?"
+    },
+    {
+      "type": "p",
+      "text": "De vanligaste kategoriseringarna för kroppsfett-procent (American Council on Exercise):",
+      "flush": true
+    },
+    {
+      "type": "tableGrid",
+      "tables": [
+        {
+          "header": "Män",
+          "rows": [
+            ["Essentiellt fett", "2–5%"],
+            ["Athletic", "6–13%"],
+            ["Fitness", "14–17%"],
+            ["Normal", "18–24%"],
+            ["Övervikt", "25%+"]
+          ]
+        },
+        {
+          "header": "Kvinnor",
+          "rows": [
+            ["Essentiellt fett", "10–13%"],
+            ["Athletic", "14–20%"],
+            ["Fitness", "21–24%"],
+            ["Normal", "25–31%"],
+            ["Övervikt", "32%+"]
+          ]
+        }
+      ]
+    },
+    {
+      "type": "note",
+      "text": "Essentiellt fett är biologiskt nödvändigt — det finns i organ, hjärna och cellmembran och ska aldrig underskridas."
+    },
+    {
+      "type": "h2",
+      "text": "Mätmetoder — från guldstandard till hemmalösning"
+    },
+    {
+      "type": "h3",
+      "text": "DEXA — guldstandard (felmarginal ±1–2%)"
+    },
+    {
+      "type": "p",
+      "text": "DEXA (dual-energy X-ray absorptiometry) är den mest exakta tillgängliga metoden utanför laboratorium. En låg-dos röntgenstråle skiljer på fett, muskler och benmassa i hela kroppen och ger en detaljerad karta — inklusive hur fettet fördelar sig regionalt (buk, ben, armar).",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": [
+        {
+          "text": "Fördelar:",
+          "strong": true
+        },
+        {
+          "text": " Extremt exakt, mäter även benmineraldensitet, reproducerbar."
+        },
+        {
+          "br": true
+        },
+        {
+          "text": "Nackdelar:",
+          "strong": true
+        },
+        {
+          "text": " Kostar 500–1 500 kr, kräver klinik, svagt strålningsexponering. Passar bäst för baseline-mätning och uppföljning var 6–12 månader."
+        }
+      ]
+    },
+    {
+      "type": "h3",
+      "text": "Hydrodensitometri — undervattenvägning (felmarginal ±1–3%)"
+    },
+    {
+      "type": "p",
+      "text": "Historiskt ansedd som guldstandard. Kroppen vägs under vatten — skillnaden mot luftvikt ger kroppsdensitet som omräknas till kroppsfett via Siri-ekvationen (1961). I dag nästan helt ersatt av DEXA för praktiskt bruk.",
+      "flush": true
+    },
+    {
+      "type": "h3",
+      "text": "Bioimpedans — BIA (felmarginal ±3–5%)"
+    },
+    {
+      "type": "p",
+      "text": "En svag elektrisk ström leds genom kroppen. Fett leder ström sämre än muskler och vatten, och motståndet används för att uppskatta kroppsfett. Finns i allt från hemma-vågar till kliniska InBody-maskiner.",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": "Noggrannheten varierar kraftigt med hydrering, senaste måltid, koffein och tid på dygnet. En InBody på klinik är avsevärt mer tillförlitlig än en hemma-våg."
+    },
+    {
+      "type": "p",
+      "text": [
+        {
+          "text": "Tips:",
+          "strong": true
+        },
+        {
+          "text": " Mät alltid på morgonen, fastande och efter toalettbesök — samma tid varje gång. Det minimerar variabiliteten och gör trenden meningsfull."
+        }
+      ]
+    },
+    {
+      "type": "h3",
+      "text": "Måttbandsmetoder (felmarginal ±3–5%)"
+    },
+    {
+      "type": "p",
+      "text": "Flera formler beräknar kroppsfett enbart från kroppsmått med ett måttband — inga specialinstrument behövs. Den vanligaste är US Navy-metoden (Hodgdon & Beckett, 1984), som mäter midjeomfång, nackens omkrets och (för kvinnor) höftomfång och beräknar kroppsfett via en logaritmisk formel. Andra måttbandsbaserade metoder använder olika kombinationer av mätpunkter och ger något varierande resultat.",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": "Fördelen är att det är helt gratis och kan göras hemma. Noggrannheten är tillräcklig för att följa trenden, vilket är det viktigaste för de flesta."
+    },
+    {
+      "type": "h3",
+      "text": "Kalipermetoder (felmarginal ±3–5%)"
+    },
+    {
+      "type": "p",
+      "text": "Kaliper mäter hudveckstjocklek på specifika punkter — vanligen 3, 4 eller 7 mätpunkter beroende på protokoll (t.ex. Jackson-Pollock). Resultaten matas in i en formel som uppskattar total kroppsfett-procent. Noggrannheten beror mycket på mätarens teknik och konsekvens — en erfaren tränare eller nutritionist ger mer tillförlitliga resultat än självmätning.",
+      "flush": true
+    },
+    {
+      "type": "h3",
+      "text": "Profilbaserad uppskattning"
+    },
+    {
+      "type": "p",
+      "text": "Med profildata — ålder, kön, BMI och aktivitetsnivå — kan kroppsfett uppskattas via populationsbaserade formler (t.ex. Deurenberg). Det kräver inga mätinstrument alls men ger den lägsta individuella precisionen och passar bäst som grov orientering.",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": "Ett kompletterande sätt att kalibrera sin uppskattning är att jämföra med referensbilder — fotografier av verkliga kroppar med känd uppmätt kroppsfett-procent. Det ger en visuell förankring som siffror ensamt inte ger."
+    },
+    {
+      "type": "h2",
+      "text": "Vilken metod ska du välja?"
+    },
+    {
+      "type": "p",
+      "text": "Det beror på vad du vill uppnå och vilka resurser du har:",
+      "flush": true
+    },
+    {
+      "type": "ul",
+      "items": [
+        [
+          {
+            "text": "Bästa precision:",
+            "strong": true
+          },
+          {
+            "text": " DEXA — gör en baseline-mätning och uppföljning var 3–6 månader."
+          }
+        ],
+        [
+          {
+            "text": "Regelbunden hemmauppföljning:",
+            "strong": true
+          },
+          {
+            "text": " Måttbandsmetod, kalipermätning eller en konsekvent bioimpedansvåg under identiska förhållanden varje gång."
+          }
+        ],
+        [
+          {
+            "text": "Klinisk uppföljning:",
+            "strong": true
+          },
+          {
+            "text": " InBody (BIA) på gym eller klinik — mer tillförlitlig än hemma-vågar."
+          }
+        ],
+        [
+          {
+            "text": "Snabb orientering utan instrument:",
+            "strong": true
+          },
+          {
+            "text": " Profilbaserad uppskattning eller jämförelse med referensbilder ger en grov men snabb bild."
+          }
+        ]
+      ]
+    },
+    {
+      "type": "p",
+      "text": "Med ett personligt konto i CalculEat får du tillgång till samtliga metoder — flera måttbandsformler, kaliperprotokoll och profilbaserad uppskattning — samt referensbilder för visuell kalibrering. Det gör det enkelt att välja rätt metod för din situation och följa trenden över tid på ett ställe."
+    },
+    {
+      "type": "p",
+      "text": "Det absoluta värdet är alltid mindre viktigt än trenden. Välj en metod, håll dig till den och mät under identiska förhållanden varje gång."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Vilken metod för att mäta kroppsfett är mest exakt?",
+      "answer": "DEXA-scanning (Dual-Energy X-ray Absorptiometry) är guldstandarden med ±1–2% felmarginal. Den mäter ben, fett och mjukvävnad separat med röntgenstrålar. Nackdelar: kostar 500–2 000 kr, kräver klinik. För hemmabruk är US Navy-metoden (±3–4%) ett bra alternativ."
+    },
+    {
+      "question": "Är bioimpedans-vågar pålitliga?",
+      "answer": "Konsumentvågar med bioimpedans har typiskt ±5–8% felmarginal och påverkas kraftigt av hydreringsstatus — äter du lite salt eller dricker mycket vatten varierar resultaten markant. De är användbara för att följa trend om du alltid mäter under samma förhållanden (morgon, fastande, efter toalettbesök). Absoluta värden är opålitliga."
+    },
+    {
+      "question": "Vad är en bra kroppsfett-procent?",
+      "answer": "Riktmärken: Män — athletic 6–13%, fit 14–17%, genomsnitt 18–24%, övervikt 25–29%, fetma ≥30%. Kvinnor — athletic 14–20%, fit 21–24%, genomsnitt 25–31%, övervikt 32–39%, fetma ≥40%. Dessa är populationsbaserade riktmärken, inte medicinska gränsvärden."
+    },
+    {
+      "question": "Hur ofta ska man mäta kroppsfett?",
+      "answer": "Var 4–8 vecka är tillräckligt. Dagliga mätningar ger för mycket brus pga vätskevariationer. Det viktigaste är att mäta konsekvent: samma metod, samma tid på dagen (morgon, fastande), samma mätpunkter."
+    },
+    {
+      "question": "Kan man se magrutor utan att ha låg fettprocent?",
+      "answer": "Nej — magrutor kräver tillräckligt låg fettprocent (typiskt under 14–16% för män, 18–22% för kvinnor) och tillräcklig muskelmassa. Genetik, fettdistribution och belysning påverkar hur tydliga de är. Det är inte fettprocent-procentenheter som avgör utan kombinationen fettprocent + muskelmassa."
+    },
+    {
+      "question": "Varför varierar kroppsfett-mätningar så mycket?",
+      "answer": "Olika metoder mäter olika saker och har olika felmarginaler. Dessutom varierar kroppsfett med tid på dagen, hydreringsstatus, matintag och menscykel (för kvinnor). Fokusera på trend över tid med en och samma metod, inte absoluta värden från olika metoder."
+    }
+  ],
+  "sources": [
+    {
+      "text": "Deurenberg P, Yap M, van Staveren WA. Body mass index and percent body fat: a meta analysis among different ethnic groups. Int J Obes Relat Metab Disord. 1998;22(12):1164–1171."
+    },
+    {
+      "text": "Heymsfield SB, et al. Human body composition. Human Kinetics, 2005."
+    },
+    {
+      "text": "Ackland TR, et al. Current status of body composition assessment in sport. Sports Med. 2012;42(3):227–249."
+    },
+    {
+      "text": "Gallagher D, et al. Healthy percentage body fat ranges. Am J Clin Nutr. 2000;72(3):694–701."
+    },
+    {
+      "text": "Hodgdon JA, Beckett MB. Prediction of percent body fat for US Navy men from body circumferences and height. Report No. 84-11. Naval Health Research Center, 1984."
+    },
+    {
+      "text": "Kyle UG, et al. Bioelectrical impedance analysis—part I: review of principles and methods. Clin Nutr. 2004;23(5):1226–1243."
+    }
+  ],
+  "related": {
+    "calculatorsTitle": "Relaterade kalkylatorer",
+    "articlesTitle": "Relaterade artiklar",
+    "calculators": [
+      {
+        "href": "/kalkylatorer/kroppsfett",
+        "label": "Kroppsfett Kalkylator"
+      },
+      {
+        "href": "/kalkylatorer/ffmi-kalkylator",
+        "label": "FFMI Kalkylator"
+      },
+      {
+        "href": "/kalkylatorer/tdee-kalkylator",
+        "label": "TDEE Kalkylator"
+      }
+    ],
+    "articles": [
+      {
+        "href": "/artiklar/bmi-vs-kroppsfett",
+        "label": "BMI vs Kroppsfett"
+      },
+      {
+        "href": "/artiklar/vad-ar-ffmi",
+        "label": "Vad är FFMI?"
+      },
+      {
+        "href": "/artiklar/lbm-vs-ffm",
+        "label": "LBM vs FFM"
+      },
+      {
+        "href": "/artiklar/bulk-och-cut",
+        "label": "Bulk och cut"
+      }
+    ]
+  }
+}

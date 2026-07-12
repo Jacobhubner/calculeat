@@ -1,0 +1,114 @@
+{
+  "seo": {
+    "title": "BMR vs RMR — vad är skillnaden? | CalculEat",
+    "description": "BMR och RMR mäter båda energiförbrukning i vila men skiljer sig i mätvillkor. Lär dig skillnaden, vilka formler som beräknar vad och varför det spelar roll."
+  },
+  "layout": {
+    "title": "BMR vs RMR — vad är skillnaden?",
+    "intro": "BMR (Basal Metabolic Rate) och RMR (Resting Metabolic Rate) är två begrepp som ofta används synonymt — men de är tekniskt sett olika saker. Skillnaden handlar om mätvillkor och är vanligtvis 5–10%. Här förklarar vi vad som skiljer dem åt, vilka formler som beräknar vad, och om det spelar någon roll för din kaloriplanering.",
+    "moneyPageHref": "/kalkylatorer/bmr-kalkylator",
+    "moneyPageLabel": "Räkna ut ditt BMR/RMR med kalkylatorn",
+    "breadcrumb": {
+      "hubLabel": "Artiklar",
+      "hubPath": "/artiklar",
+      "pageLabel": "BMR vs RMR"
+    }
+  },
+  "schema": {
+    "headline": "BMR vs RMR — vad är skillnaden?",
+    "description": "BMR och RMR mäter båda energiförbrukning i vila men skiljer sig i mätvillkor. Lär dig skillnaden och vilka formler som beräknar vad."
+  },
+  "body": [
+    {
+      "type": "component",
+      "name": "BMRvsRMRContent"
+    },
+    {
+      "type": "h2",
+      "text": "Varför är skillnaden 5–10%?"
+    },
+    {
+      "type": "p",
+      "text": "BMR mäts under extremt kontrollerade villkor: efter minst 8 timmars sömn, 12 timmars fasta och i termoneutral miljö (~22°C). Under dessa förhållanden är kroppen bokstavligen på sin lägsta möjliga energinivå.",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": "RMR mäts i realistisk vila — du är avslappnad och stilla, men inte nödvändigtvis fastande eller precis uppvaknad. Kroppen håller fortfarande viss muskelspänning, bearbetar kanske en måltid och anpassar sig till rumstemperaturen. Det ger en marginellt högre energiförbrukning — typiskt 5–10% över BMR."
+    },
+    {
+      "type": "h2",
+      "text": "Spelar skillnaden roll i praktiken?"
+    },
+    {
+      "type": "p",
+      "text": "Sällan. Alla prediktiva formler har en felmarginal på ±10–15% på individnivå — det är redan större än skillnaden mellan BMR och RMR. Distinktionen är relevant i klinisk forskning och vid indirekt kalorimetri, men för vardaglig kaloriplanering är det ointressant vilket begrepp en formel tekniskt sett beräknar.",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": "Det som faktiskt spelar roll: välj en formel, multiplicera med rätt PAL-faktor för att få ditt TDEE, och följ din vikttrend under 2–3 veckor. Verklig viktförändring är alltid mer tillförlitlig än formelbaserade estimat."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Är BMR alltid lägre än RMR?",
+      "answer": "Ja — BMR mäts under striktare villkor (fasta, termoneutral miljö, absolut vila efter sömn) och representerar kroppens absoluta minimum. RMR mäts under mer praktiska förhållanden och inkluderar lite mer aktivitet. Skillnaden är typiskt 5–10%, ibland upp till 20% hos individer med hög NEAT."
+    },
+    {
+      "question": "Vilken formel ska man använda?",
+      "answer": "Mifflin-St Jeor (1990) beräknar i praktiken RMR, inte strikt BMR, men kallas ofta BMR. Det är den mest validerade formeln för normalbefolkningen. Harris-Benedict (reviderad) ger liknande resultat. Cunningham (baserad på LBM) är bäst för atleter med känd fettprocent."
+    },
+    {
+      "question": "Spelar det någon roll för kaloriplanering?",
+      "answer": "Nej, i praktiken. När du räknar TDEE (BMR/RMR × aktivitetsfaktor) absorberas 5–10%-skillnaden i formlernas felmarginaler och i aktivitetsfaktorns osäkerhet. Använd Mifflin-St Jeor som standard och kalibrera sedan mot din faktiska vikttrend."
+    },
+    {
+      "question": "Varför kallas Mifflin-St Jeor för BMR-formel om den mäter RMR?",
+      "answer": "Terminologin i litteraturen är inkonsekvent. Mifflin et al. (1990) kalibrerade mot RMR-mätningar men rubricerade det som RMR. Popularisering i kost- och träningssammanhang har sedan etiketterat resultaten som 'BMR'. Innehållsmässigt är det samma sak för klinisk kaloriplanering."
+    },
+    {
+      "question": "Kan man mäta BMR/RMR hemma?",
+      "answer": "Indirekt — via kalorimetri-enheter (t.ex. BodyGem, MedGem) som mäter syreförbrukning. Dessa är rimligt exakta men kostar tusentals kronor. Hemformlerna (Mifflin-St Jeor etc.) ger typiskt ±10% felmarginal, vilket är acceptabelt för kaloriplanering."
+    }
+  ],
+  "sources": [
+    {
+      "text": "Mifflin MD, et al. A new predictive equation for resting energy expenditure in healthy individuals. Am J Clin Nutr. 1990;51(2):241–247."
+    },
+    {
+      "text": "Weir JB. New methods for calculating metabolic rate with special reference to protein metabolism. J Physiol. 1949;109(1–2):1–9."
+    },
+    {
+      "text": "Frankenfield D, Roth-Yousey L, Compher C. Comparison of predictive equations for resting metabolic rate in healthy nonobese and obese adults. J Am Diet Assoc. 2005;105(5):775–789."
+    }
+  ],
+  "related": {
+    "calculatorsTitle": "Relaterade kalkylatorer",
+    "articlesTitle": "Relaterade artiklar",
+    "calculators": [
+      {
+        "href": "/kalkylatorer/bmr-kalkylator",
+        "label": "BMR Kalkylator"
+      },
+      {
+        "href": "/kalkylatorer/tdee-kalkylator",
+        "label": "TDEE Kalkylator"
+      }
+    ],
+    "articles": [
+      {
+        "href": "/artiklar/vad-ar-bmr",
+        "label": "Vad är BMR?"
+      },
+      {
+        "href": "/artiklar/bmr-vs-tdee",
+        "label": "BMR vs TDEE"
+      },
+      {
+        "href": "/artiklar/vad-ar-tdee",
+        "label": "Vad är TDEE?"
+      }
+    ]
+  }
+}

@@ -1,0 +1,119 @@
+{
+  "seo": {
+    "title": "What is FFMI? Fat-Free Mass Index Explained | CalculEat",
+    "description": "FFMI (Fat-Free Mass Index) measures muscle mass relative to height — independent of body fat percentage. Learn what FFMI is, how it's calculated and what natural limits mean."
+  },
+  "layout": {
+    "title": "What is FFMI? Fat-Free Mass Index Explained",
+    "intro": "FFMI (Fat-Free Mass Index) measures your fat-free muscle mass relative to your height. Unlike BMI, FFMI is not affected by your body fat percentage — it is a pure measure of muscle development. FFMI is used to assess training level and, in research, to distinguish natural athletes from those who use performance-enhancing drugs.",
+    "moneyPageHref": "/en/calculators/tdee-calculator",
+    "moneyPageLabel": "Calculate your calorie needs for muscle building",
+    "breadcrumb": {
+      "hubLabel": "Articles",
+      "hubPath": "/en/articles",
+      "pageLabel": "What is FFMI?"
+    }
+  },
+  "schema": {
+    "headline": "What is FFMI? Fat-Free Mass Index Explained",
+    "description": "FFMI (Fat-Free Mass Index) measures muscle mass relative to height. Learn what FFMI is and what natural limits mean."
+  },
+  "body": [
+    {
+      "type": "component",
+      "name": "FFMIContent"
+    },
+    {
+      "type": "component",
+      "name": "NormalizedFFMIContent",
+      "className": "mt-8"
+    },
+    {
+      "type": "h2",
+      "text": "How do you improve your FFMI?"
+    },
+    {
+      "type": "p",
+      "text": "FFMI increases when you build muscle mass — it's that simple. In practice it requires a combination of consistent strength training, adequate protein intake (1.6–2.2 g/kg body weight) and a slight calorie surplus (bulk).",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": "Important: reducing body fat percentage without building muscle does not improve FFMI — it remains unchanged. FFMI measures only fat-free mass, not how your body looks in the mirror."
+    },
+    {
+      "type": "p",
+      "text": "Calculate your TDEE to set the right calorie goal — either a small surplus for muscle building, or maintenance intake with a focus on strength training."
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is a normal FFMI?",
+      "answer": "For untrained men: 18–20. For untrained women: 14–16. With 3–5 years of consistent strength training, natural lifters can reach 21–23 (men) and 17–19 (women). Normalized FFMI above 25 (men) is statistically rare naturally."
+    },
+    {
+      "question": "Why can't FFMI be calculated without body fat percentage?",
+      "answer": "FFMI = (weight × (1 − body fat/100)) ÷ height². Without body fat you don't know what proportion of your weight is fat-free mass (muscle, organs, bone). That's why the FFMI calculator requires a body fat estimate, preferably measured with the US Navy method."
+    },
+    {
+      "question": "Is FFMI 25 a hard limit for natural athletes?",
+      "answer": "No — it's a statistical observation, not a biological limit. Kouri et al. (1995) found that natural athletes rarely exceeded normalized FFMI 25. Individuals with exceptional genetics and skeletal structure can reach 25–26 naturally. But it's rare enough to be a statistically significant outlier."
+    },
+    {
+      "question": "How does FFMI differ from BMI?",
+      "answer": "BMI = weight ÷ height². It is affected by body fat percentage and doesn't distinguish between muscle and fat. FFMI = fat-free mass ÷ height². It is a pure muscle mass measure. A well-trained person with high BMI (classified as overweight) can have a low FFMI if they have little muscle, and vice versa."
+    },
+    {
+      "question": "Can you improve FFMI without gaining weight?",
+      "answer": "Yes — via body recomposition (building muscle and burning fat simultaneously). FFMI increases when fat-free mass increases relative to weight. It's slower than a dedicated bulk but possible, especially for beginners and those returning to training after a break."
+    }
+  ],
+  "sources": [
+    {
+      "text": "Kouri EM, Pope HG Jr, Katz DL, Oliva P. Fat-free mass index in users and nonusers of anabolic-androgenic steroids. Clin J Sport Med. 1995;5(4):223–228."
+    },
+    {
+      "text": "Schutz Y, Kyle UU, Pichard C. Fat-free mass index and fat mass index percentiles in Caucasians aged 18-98 y. Int J Obes Relat Metab Disord. 2002;26(7):953–960."
+    }
+  ],
+  "related": {
+    "calculatorsTitle": "Related calculators",
+    "articlesTitle": "Related articles",
+    "calculators": [
+      {
+        "href": "/en/calculators/ffmi-calculator",
+        "label": "FFMI Calculator"
+      },
+      {
+        "href": "/en/calculators/body-fat-calculator",
+        "label": "Body Fat Calculator"
+      },
+      {
+        "href": "/en/calculators/tdee-calculator",
+        "label": "TDEE Calculator"
+      },
+      {
+        "href": "/en/calculators/bulk-calculator",
+        "label": "Bulk Calculator"
+      }
+    ],
+    "articles": [
+      {
+        "href": "/en/articles/bmi-vs-body-fat",
+        "label": "BMI vs Body Fat"
+      },
+      {
+        "href": "/en/articles/what-is-bmr",
+        "label": "What is BMR?"
+      },
+      {
+        "href": "/en/articles/bulk-and-cut",
+        "label": "Bulk and cut"
+      },
+      {
+        "href": "/en/articles/calorie-needs",
+        "label": "Calorie needs — complete guide"
+      }
+    ]
+  }
+}

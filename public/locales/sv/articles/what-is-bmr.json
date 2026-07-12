@@ -1,0 +1,210 @@
+{
+  "seo": {
+    "title": "Vad är BMR? Basalmetabolism förklarat | CalculEat",
+    "description": "BMR (Basal Metabolic Rate) är de kalorier din kropp förbränner i absolut vila. Lär dig vad BMR är, hur det skiljer sig från TDEE och varför du aldrig ska äta på ditt BMR."
+  },
+  "layout": {
+    "title": "Vad är BMR? Basalmetabolism förklarat",
+    "intro": "BMR (Basal Metabolic Rate) är de kalorier din kropp förbränner i absolut vila — utan rörelse, mat eller aktivitet. Det är kroppens minimala energibehov för att hålla hjärta, lungor, hjärna och organ igång. BMR är grunden för att räkna ut ditt faktiska kaloribehov, men det är inte siffran du ska äta på.",
+    "moneyPageHref": "/kalkylatorer/tdee-kalkylator",
+    "moneyPageLabel": "Räkna ut ditt faktiska kaloribehov med TDEE-kalkylatorn",
+    "breadcrumb": {
+      "hubLabel": "Artiklar",
+      "hubPath": "/artiklar",
+      "pageLabel": "Vad är BMR?"
+    }
+  },
+  "schema": {
+    "headline": "Vad är BMR? Basalmetabolism förklarat",
+    "description": "BMR (Basal Metabolic Rate) är de kalorier din kropp förbränner i absolut vila. Lär dig vad BMR är och hur det skiljer sig från TDEE."
+  },
+  "body": [
+    {
+      "type": "h2",
+      "text": "Vad bestämmer ditt BMR?",
+      "tight": true
+    },
+    {
+      "type": "p",
+      "text": "Den viktigaste determinanten för BMR är fettfri massa (FFM) — muskler, organ och skelett. Fettfri massa uppskattas förklara omkring 80% av variationen i BMR mellan individer. Det förklarar varför vältränade personer med hög muskelmassa har ett högre BMR än personer med samma totalvikt men mer kroppsfett.",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": "Hos personer med låg fysisk aktivitet utgör BMR vanligtvis cirka 60% av total energiförbrukning, och ännu mer hos individer med mycket låg rörelseaktivitet såsom sederade och mekaniskt ventilerade patienter på intensivvårdsavdelningar."
+    },
+    {
+      "type": "p",
+      "text": "Övriga faktorer som påverkar BMR: ålder (BMR sjunker ca 1–2% per decennium från 30-årsåldern pga. minskad muskelmassa), kön (män har i genomsnitt högre BMR per kg kroppsvikt tack vare högre andel muskelmassa) samt hormonbalans (framför allt sköldkörtelhormoner)."
+    },
+    {
+      "type": "h2",
+      "text": "Hur mäts och beräknas BMR?"
+    },
+    {
+      "type": "p",
+      "text": "BMR mäts under strikt kontrollerade laboratorieförhållanden: efter sömn, i fastande tillstånd och i termoneutral miljö. Guldstandarden är indirekt kalorimetri via Weirs ekvation (1949), som beräknar energiförbrukning från syreförbrukning och koldioxidproduktion.",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": "I praktiska sammanhang används oftare RMR (Resting Metabolic Rate), uppmätt när som helst under dagen, vilket kan skilja sig från BMR med upp till 10%. De flesta online-kalkylatorer — inklusive CalculEat — beräknar tekniskt sett RMR, men använder termen BMR i vardagligt bruk."
+    },
+    {
+      "type": "p",
+      "text": "När direkt mätning inte är tillgängligt används prediktiva ekvationer. De vanligaste är:"
+    },
+    {
+      "type": "ul",
+      "items": [
+        [
+          {
+            "text": "Mifflin-St Jeor (1990)",
+            "strong": true
+          },
+          {
+            "text": " — rekommenderas för friska vuxna, ger bäst träffsäkerhet i moderna populationer"
+          }
+        ],
+        [
+          {
+            "text": "Harris-Benedict (reviderad 1984)",
+            "strong": true
+          },
+          {
+            "text": " — äldre men fortfarande vanlig"
+          }
+        ],
+        [
+          {
+            "text": "Cunningham (1991)",
+            "strong": true
+          },
+          {
+            "text": " — beräknar RMR baserat på fettfri massa, bättre för vältränade individer"
+          }
+        ]
+      ],
+      "gap": 1
+    },
+    {
+      "type": "p",
+      "text": "Alla prediktiva formler har en felmarginal på ±10–15% på individnivå. Verklig vikttrend under 2–3 veckor är alltid ett mer tillförlitligt mått än formelbaserade estimat."
+    },
+    {
+      "type": "h2",
+      "text": "Varför ska du inte äta på ditt BMR?"
+    },
+    {
+      "type": "p",
+      "text": "BMR är det absoluta minimum — inte ett kalorimål. Att äta exakt på BMR innebär att du ger kroppen precis vad den behöver för att överleva i absolut vila, men ingenting till rörelse, matsmältning eller normal daglig aktivitet.",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": "Konsekvenserna av att äta på BMR under längre tid inkluderar förlust av muskelmassa, trötthet, hormonella störningar och metabolisk adaptation — kroppen sänker sitt eget BMR för att spara energi. Det gör viktnedgången allt svårare."
+    },
+    {
+      "type": "p",
+      "text": [
+        {
+          "text": "Det rätta är att räkna ut ditt "
+        },
+        {
+          "text": "TDEE",
+          "strong": true
+        },
+        {
+          "text": " (BMR × aktivitetsfaktor) och skapa ett måttligt underskott därifrån — typiskt 300–500 kcal/dag för hållbar viktnedgång."
+        }
+      ]
+    },
+    {
+      "type": "h2",
+      "text": "Från BMR till kalorimål — steg för steg"
+    },
+    {
+      "type": "ol",
+      "items": [
+        "Räkna ut ditt BMR med Mifflin-St Jeor-formeln (ålder, kön, vikt, längd).",
+        "Multiplicera med din aktivitetsfaktor (PAL) — stillasittande (×1,2) till extremt aktiv (×1,9).",
+        "Resultatet är ditt TDEE — ditt underhållsbehov.",
+        "Dra av 300–500 kcal/dag för viktnedgång, eller lägg till 200–300 kcal/dag för muskeluppbyggnad."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "Vad är skillnaden mellan BMR och TDEE?",
+      "answer": "BMR är viloförbränningen — de kalorier du behöver om du låg stilla hela dagen. TDEE är ditt faktiska kaloribehov inklusive all rörelse och aktivitet. TDEE = BMR × aktivitetsfaktor (PAL). För de flesta är TDEE 20–80% högre än BMR."
+    },
+    {
+      "question": "Kan man äta på sitt BMR?",
+      "answer": "Nej, det rekommenderas inte. BMR är din viloförbränning — du förbränner mer än detta redan genom att stå, gå och äta (TEF). Att konsekvent äta på BMR innebär ett aggressivt kaloriunderskott, med risk för muskelmassaförlust, näringsbrist och metabolisk nedreglering."
+    },
+    {
+      "question": "Hur beräknas BMR?",
+      "answer": "Den mest använda formeln är Mifflin-St Jeor (1990): Män: BMR = 10 × vikt(kg) + 6,25 × längd(cm) − 5 × ålder + 5. Kvinnor: BMR = 10 × vikt(kg) + 6,25 × längd(cm) − 5 × ålder − 161. Denna formel ger en felmarginal på ±10% för de flesta."
+    },
+    {
+      "question": "Sjunker BMR när man bantar?",
+      "answer": "Ja — dels minskar BMR pga lägre kroppsvikt (du bär på mindre massa att underhålla), dels kan adaptiv termogenes sänka BMR något utöver det som förklaras av viktnedgången. Det är ett av skälen till att viktnedgång planar ut och varför diet breaks är värdefulla."
+    },
+    {
+      "question": "Vad höjer BMR?",
+      "answer": "Muskelmassa är den starkaste BMR-höjaren — muskler förbränner mer energi i vila än fett. Styrketräning och tillräckligt proteinintag bromsar muskelmassaförlust vid åldrande och diet. Kalla temperaturer ökar tillfälligt BMR (brun fettvävnad aktiveras)."
+    }
+  ],
+  "sources": [
+    {
+      "text": "Mifflin MD, St Jeor ST, Hill LA, Scott BJ, Daugherty SA, Koh YO. A new predictive equation for resting energy expenditure in healthy individuals. Am J Clin Nutr. 1990;51(2):241–247."
+    },
+    {
+      "text": "Harris JA, Benedict FG. A biometric study of human basal metabolism. Proc Natl Acad Sci USA. 1918;4(12):370–373."
+    },
+    {
+      "text": "Cunningham JJ. A reanalysis of the factors influencing basal metabolic rate in normal adults. Am J Clin Nutr. 1980;33(11):2372–2374."
+    },
+    {
+      "text": "Roza AM, Shizgal HM. The Harris Benedict equation reevaluated: resting energy requirements and the body cell mass. Am J Clin Nutr. 1984;40(1):168–182."
+    },
+    {
+      "text": "Henry CJ. Basal metabolic rate studies in humans: measurement and development of new equations. Public Health Nutr. 2005;8(7A):1133–1152."
+    },
+    {
+      "text": "Trexler ET, Smith-Ryan AE, Norton LE. Metabolic adaptation to weight loss: implications for the athlete. J Int Soc Sports Nutr. 2014;11(1):7."
+    }
+  ],
+  "related": {
+    "calculatorsTitle": "Relaterade kalkylatorer",
+    "articlesTitle": "Relaterade artiklar",
+    "calculators": [
+      {
+        "href": "/kalkylatorer/bmr-kalkylator",
+        "label": "BMR Kalkylator"
+      },
+      {
+        "href": "/kalkylatorer/tdee-kalkylator",
+        "label": "TDEE Kalkylator"
+      },
+      {
+        "href": "/kalkylatorer/kaloriunderskott",
+        "label": "Kaloribrist Kalkylator"
+      }
+    ],
+    "articles": [
+      {
+        "href": "/artiklar/vad-ar-tdee",
+        "label": "Vad är TDEE?"
+      },
+      {
+        "href": "/artiklar/kaloribehov",
+        "label": "Kaloribehov — komplett guide"
+      },
+      {
+        "href": "/artiklar/kaloribrist",
+        "label": "Hur stor kaloribrist?"
+      }
+    ]
+  }
+}

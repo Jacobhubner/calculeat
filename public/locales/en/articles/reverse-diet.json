@@ -1,0 +1,346 @@
+{
+  "seo": {
+    "title": "Reverse Diet — What It Is and How to Increase Calories After Dieting (2026) | CalculEat",
+    "description": "A reverse diet means slowly increasing calorie intake after a cut to restore metabolism without storing fat. Learn when it's needed, how to do it and what the research says."
+  },
+  "layout": {
+    "title": "Reverse Diet — What It Is and How to Increase Calories After Dieting",
+    "intro": "A reverse diet is a structured way to raise calorie intake after a cut — gradually, controlled, without storing unnecessary fat. It's not a fitness myth. It's a practical tool for those who have dieted aggressively and want to return to maintenance intake without rebounding in weight.",
+    "moneyPageHref": "/en/calculators/tdee-calculator",
+    "moneyPageLabel": "Calculate your maintenance needs (TDEE) as a starting point for reverse dieting",
+    "breadcrumb": {
+      "hubLabel": "Articles",
+      "hubPath": "/en/articles",
+      "pageLabel": "Reverse Diet"
+    }
+  },
+  "schema": {
+    "headline": "Reverse Diet — What It Is and How to Increase Calories After Dieting",
+    "description": "A reverse diet means slowly increasing calorie intake after a cut to restore metabolism without storing fat."
+  },
+  "body": [
+    {
+      "type": "h2",
+      "text": "What is a reverse diet?",
+      "tight": true
+    },
+    {
+      "type": "p",
+      "text": "A reverse diet is the process of gradually raising calorie intake after a period of calorie deficit (cut). Instead of going directly from e.g. 1,600 kcal/day to 2,300 kcal/day, you increase by 50–100 kcal per week until you reach your maintenance intake (TDEE).",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": [
+        {
+          "text": "The idea is based on a real physiological mechanism: "
+        },
+        {
+          "text": "adaptive thermogenesis",
+          "strong": true
+        },
+        {
+          "text": " — the metabolic downregulation that occurs during prolonged periods of calorie deficit. The body lowers its NEAT (unplanned movement), thyroid hormones and leptin levels in response to energy shortage. This means your actual TDEE during the cut is lower than it was before."
+        }
+      ],
+      "flush": true
+    },
+    {
+      "type": "h2",
+      "text": "When is a reverse diet relevant?"
+    },
+    {
+      "type": "p",
+      "text": "A reverse diet is most justified in these situations:",
+      "flush": true
+    },
+    {
+      "type": "ul",
+      "items": [
+        [
+          {
+            "text": "You have dieted aggressively for a long time (12+ weeks).",
+            "strong": true
+          },
+          {
+            "text": " The longer and more restrictive the diet was, the more pronounced the metabolic adaptation — and the more careful the transition should be."
+          }
+        ],
+        [
+          {
+            "text": "You have clear signs of adaptive thermogenesis:",
+            "strong": true
+          },
+          {
+            "text": " "
+          }
+        ],
+        [
+          {
+            "text": "You are planning directly for a new bulk or muscle building phase.",
+            "strong": true
+          },
+          {
+            "text": " A controlled transition via reverse diet provides a better starting point for the bulk and reduces the risk of \"rebound fat storage\" with a sudden calorie increase."
+          }
+        ],
+        [
+          {
+            "text": "Psychological need for structure.",
+            "strong": true
+          },
+          {
+            "text": " Many find that having a schedule for increase — rather than just \"eating more\" — reduces food anxiety after a long diet."
+          }
+        ]
+      ],
+      "gap": 3
+    },
+    {
+      "type": "h2",
+      "text": "When a reverse diet is not needed"
+    },
+    {
+      "type": "p",
+      "text": [
+        {
+          "text": "A reverse diet is "
+        },
+        {
+          "text": "not",
+          "em": true
+        },
+        {
+          "text": " necessary in all situations and is sometimes unnecessarily complicated:"
+        }
+      ],
+      "flush": true
+    },
+    {
+      "type": "ul",
+      "items": [
+        [
+          {
+            "text": "moderate pace (−300–400 kcal/day)",
+            "strong": true
+          },
+          {
+            "text": " You have dieted at a for 8–12 weeks — metabolic adaptation is probably minimal."
+          }
+        ],
+        [
+          {
+            "text": "5–8% of body weight",
+            "strong": true
+          },
+          {
+            "text": " You have not lost more than in total — no large hormonal disruption is expected."
+          }
+        ],
+        [
+          {
+            "text": "a longer maintenance phase",
+            "strong": true
+          },
+          {
+            "text": " You are planning (3+ months) without a new weight goal immediately — the body recovers naturally."
+          }
+        ]
+      ]
+    },
+    {
+      "type": "p",
+      "text": "In these cases you can go directly to your calculated TDEE without structuring a formal reverse diet.",
+      "flush": true
+    },
+    {
+      "type": "h2",
+      "text": "Reverse diet, diet break and maintenance — what's the difference?"
+    },
+    {
+      "type": "cards",
+      "items": [
+        {
+          "title": "Reverse Diet",
+          "text": "Gradual increase of calorie intake (50–100 kcal/week) from cut intake up to TDEE. Lasts 4–12 weeks. Used after a long or aggressive cut.",
+          "color": "bg-primary-50 border-primary-200"
+        },
+        {
+          "title": "Diet Break",
+          "text": "Shorter period (1–2 weeks) at maintenance intake in the middle of an ongoing cut. The purpose is to temporarily restore leptin and metabolism — then the diet continues. A diet break is not a reverse diet.",
+          "color": "bg-blue-50 border-blue-200"
+        },
+        {
+          "title": "Maintenance",
+          "text": "Eating at your TDEE permanently, without a weight change goal. Can be reached directly or via reverse diet. Maintenance is the end goal of a reverse diet.",
+          "color": "bg-green-50 border-green-200"
+        }
+      ]
+    },
+    {
+      "type": "h2",
+      "text": "Step by step: how to do a reverse diet"
+    },
+    {
+      "type": "ol",
+      "items": [
+        [
+          {
+            "text": "Calculate your target TDEE.",
+            "strong": true
+          },
+          {
+            "text": " Use a TDEE calculator based on your current weight, height, age and activity level. This is your end goal — the calorie intake you gradually aim to reach."
+          }
+        ],
+        [
+          {
+            "text": "Start with your current cut intake.",
+            "strong": true
+          },
+          {
+            "text": " If you end the cut at 1,700 kcal/day, start the reverse diet from there."
+          }
+        ],
+        [
+          {
+            "text": "Increase by 50–100 kcal per week.",
+            "strong": true
+          },
+          {
+            "text": " Add the calories primarily to carbohydrates and fat — protein intake doesn't need to increase (maintain 1.6–2.2 g/kg)."
+          }
+        ],
+        [
+          {
+            "text": "Monitor your weight each week.",
+            "strong": true
+          },
+          {
+            "text": " Some increase is normal (water, glycogen). If weight rises more than 0.3 kg/week for more than 2 consecutive weeks — pause the increase for a week and see how the body responds."
+          }
+        ],
+        [
+          {
+            "text": "Continue until you reach your TDEE.",
+            "strong": true
+          },
+          {
+            "text": " When you're eating at or close to TDEE and weight is stable — the reverse diet is complete. You are now in maintenance."
+          }
+        ]
+      ],
+      "gap": 4
+    },
+    {
+      "type": "h2",
+      "text": "Common mistakes"
+    },
+    {
+      "type": "ul",
+      "items": [
+        [
+          {
+            "text": "Increasing too fast.",
+            "strong": true
+          },
+          {
+            "text": " +200–300 kcal/day immediately leads to rapid fat storage if the metabolism hasn't had time to recover. Take it slow."
+          }
+        ],
+        [
+          {
+            "text": "Not counting protein.",
+            "strong": true
+          },
+          {
+            "text": " During a reverse diet it's tempting to add calories via candy or processed food. Keep protein high — it protects muscles and reduces fat storage during the calorie increase."
+          }
+        ],
+        [
+          {
+            "text": "Confusing normal weight gain with fat storage.",
+            "strong": true
+          },
+          {
+            "text": " The first 1–2 kg gained are almost always water and glycogen, not fat. Don't panic."
+          }
+        ],
+        [
+          {
+            "text": "Skipping reverse diet when it's actually needed.",
+            "strong": true
+          },
+          {
+            "text": " Going from 1,400 to 2,400 kcal directly after 16 weeks of aggressive cut increases the risk of \"fat overshoot\" — the body stores disproportionately much fat in response to the sudden energy surplus."
+          }
+        ]
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is a reverse diet?",
+      "answer": "A reverse diet is a phase after a cut where you gradually increase calorie intake by 50–100 kcal/week until you've reached your new maintenance needs (TDEE). The goal is to restore metabolism and leptin levels without rapidly storing fat."
+    },
+    {
+      "question": "Does everyone need a reverse diet?",
+      "answer": "No. A reverse diet is most relevant for those who have dieted aggressively for a long time (>12 weeks with a large deficit), experience signs of adaptive thermogenesis (weight plateau despite deficit, fatigue, lower performance) or are planning a new bulk and want to maximize muscle growth potential."
+    },
+    {
+      "question": "How fast do you increase calories during a reverse diet?",
+      "answer": "Typically 50–100 kcal/week until you reach your TDEE. This means 8–16 weeks to increase 500–800 kcal if you've dieted well below maintenance. Faster increases (200+ kcal/week) are possible but result in more fat gain and miss the point of a reverse diet."
+    },
+    {
+      "question": "Can you gain weight during a reverse diet?",
+      "answer": "Yes — some weight gain is normal and expected, primarily from increased glycogen storage and water retention as carbohydrates increase. Actual fat gain should be minimal if done gradually. If you're rapidly gaining more than 0.5–1 kg per week you're likely increasing too fast."
+    },
+    {
+      "question": "What is the difference between a reverse diet and a bulk?",
+      "answer": "A reverse diet takes you from a deficit to maintenance — the goal is to restore metabolism, not to build muscle. A bulk takes you from maintenance to a surplus for muscle building. A reverse diet may precede a bulk but is a distinct step."
+    }
+  ],
+  "sources": [
+    {
+      "text": "Trexler ET, Smith-Ryan AE, Norton LE. Metabolic adaptation to weight loss: implications for the athlete. J Int Soc Sports Nutr. 2014;11(1):7."
+    },
+    {
+      "text": "Rosenbaum M, Leibel RL. Models of energy homeostasis in the context of obesity. Curr Opin Clin Nutr Metab Care. 2010;13(4):422–426."
+    },
+    {
+      "text": "Müller MJ, et al. Metabolic adaptation to caloric restriction and subsequent refeeding: the Minnesota Starvation Experiment revisited. Am J Clin Nutr. 2015;102(4):807–819."
+    }
+  ],
+  "related": {
+    "calculatorsTitle": "Related calculators",
+    "articlesTitle": "Related articles",
+    "calculators": [
+      {
+        "href": "/en/calculators/tdee-calculator",
+        "label": "TDEE Calculator"
+      },
+      {
+        "href": "/en/calculators/protein-calculator",
+        "label": "Protein Calculator"
+      },
+      {
+        "href": "/en/calculators/cut-calculator",
+        "label": "Cut Calculator"
+      }
+    ],
+    "articles": [
+      {
+        "href": "/en/articles/calorie-deficit",
+        "label": "How large a calorie deficit?"
+      },
+      {
+        "href": "/en/articles/bulk-and-cut",
+        "label": "Bulk and cut"
+      },
+      {
+        "href": "/en/articles/calorie-needs",
+        "label": "Calorie needs — complete guide"
+      }
+    ]
+  }
+}

@@ -1,0 +1,109 @@
+{
+  "seo": {
+    "title": "Vad är PAL och MET? Aktivitetsnivå och energiförbrukning förklarat | CalculEat",
+    "description": "PAL (Physical Activity Level) och MET (Metabolic Equivalent of Task) är två sätt att mäta aktivitetsnivå. Lär dig hur de används för att räkna ut TDEE och kaloribehov."
+  },
+  "layout": {
+    "title": "Vad är PAL och MET? Aktivitetsnivå och energiförbrukning förklarat",
+    "intro": "PAL (Physical Activity Level) är aktivitetsfaktorn som multipliceras med BMR för att ge ditt TDEE — ditt faktiska kaloribehov. MET (Metabolic Equivalent of Task) mäter hur intensiv en specifik aktivitet är i förhållande till vila. Båda används för att beräkna energiförbrukning, men på olika sätt.",
+    "moneyPageHref": "/kalkylatorer/tdee-kalkylator",
+    "moneyPageLabel": "Räkna ut ditt TDEE med rätt aktivitetsnivå",
+    "breadcrumb": {
+      "hubLabel": "Artiklar",
+      "hubPath": "/artiklar",
+      "pageLabel": "Vad är PAL och MET?"
+    }
+  },
+  "schema": {
+    "headline": "Vad är PAL och MET? Aktivitetsnivå och energiförbrukning förklarat",
+    "description": "PAL och MET är två sätt att mäta aktivitetsnivå. Lär dig hur de används för att räkna ut TDEE och kaloribehov."
+  },
+  "body": [
+    {
+      "type": "component",
+      "name": "PALvsMETContent"
+    },
+    {
+      "type": "h2",
+      "text": "Välj rätt PAL för ditt kalorimål"
+    },
+    {
+      "type": "p",
+      "text": "Det vanligaste misstaget vid TDEE-beräkning är att överskatta sin aktivitetsnivå. Om du tränar 3 dagar i veckan men sitter stilla resten av dagen är du sannolikt \"lätt aktiv\" (PAL 1,375) — inte \"måttligt aktiv\" (PAL 1,55).",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": "En praktisk metod: börja med ett konservativt PAL-värde och öka om din vikt sjunker snabbare än planerat. Det är lättare att justera upp än att hantera ett för stort kaloriunderskott."
+    },
+    {
+      "type": "p",
+      "text": "Prova vår TDEE-kalkylator för att räkna ut ditt kaloribehov med olika aktivitetsnivåer och se hur stor skillnaden faktiskt är."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Vad är skillnaden mellan PAL och MET?",
+      "answer": "PAL (Physical Activity Level) är en daglig genomsnittsfaktor som multipliceras med BMR för att ge TDEE. PAL 1.2 = stillasittande, PAL 1.9 = extremt aktiv. MET (Metabolic Equivalent of Task) mäter energiförbrukning för en enskild aktivitet relativt vila (1 MET = viloenergi). PAL är ett dagligt genomsnitt; MET är aktivitetspecifikt."
+    },
+    {
+      "question": "Hur väljer man rätt PAL-faktor?",
+      "answer": "PAL 1.2 (Sedentary): kontorsarbete, minimal rörelse. PAL 1.375 (Lightly active): lätt träning 1–3 dagar/vecka. PAL 1.55 (Moderately active): träning 3–5 dagar/vecka. PAL 1.725 (Very active): hård träning 6–7 dagar/vecka. PAL 1.9 (Extremely active): fysiskt arbete + daglig intensiv träning. Välj ärl baserat på din totala veckoaktivitet."
+    },
+    {
+      "question": "Kan man räkna ut TDEE med MET-värden istället för PAL?",
+      "answer": "Ja — TDEE = BMR × PAL, eller alternativt: summera energiförbrukning per aktivitet via MET-värden (Energi kcal = MET × vikt(kg) × tid(h)) och lägg till BMR × 24 för viloförbränningen. MET-metoden är mer exakt för specifika träningsperioder men mer komplex att tillämpa dagligen."
+    },
+    {
+      "question": "Varför skiljer sig PAL-faktorer mellan individer?",
+      "answer": "NEAT (Non-Exercise Activity Thermogenesis) — oplanerad rörelse som fidgeting, stående, promenader — varierar enormt (200–800 kcal/dag) och påverkar PAL markant. Två personer med identisk träningsrutin men olika NEAT kan ha PAL-faktorer som skiljer 0,2–0,3 enheter."
+    }
+  ],
+  "sources": [
+    {
+      "text": "FAO/WHO/UNU. Human energy requirements. Report of a Joint Expert Consultation. Rome, 2004."
+    },
+    {
+      "text": "Ainsworth BE, et al. 2011 Compendium of Physical Activities: a second update of codes and MET values. Med Sci Sports Exerc. 2011;43(8):1575–1581."
+    },
+    {
+      "text": "Levine JA. Non-exercise activity thermogenesis (NEAT). Best Pract Res Clin Endocrinol Metab. 2002;16(4):679–702."
+    }
+  ],
+  "related": {
+    "calculatorsTitle": "Relaterade kalkylatorer",
+    "articlesTitle": "Relaterade artiklar",
+    "calculators": [
+      {
+        "href": "/kalkylatorer/tdee-kalkylator",
+        "label": "TDEE Kalkylator"
+      },
+      {
+        "href": "/kalkylatorer/bmr-kalkylator",
+        "label": "BMR Kalkylator"
+      },
+      {
+        "href": "/kalkylatorer/kaloriunderskott",
+        "label": "Kaloribrist Kalkylator"
+      }
+    ],
+    "articles": [
+      {
+        "href": "/artiklar/vad-ar-tdee",
+        "label": "Vad är TDEE?"
+      },
+      {
+        "href": "/artiklar/vad-ar-bmr",
+        "label": "Vad är BMR?"
+      },
+      {
+        "href": "/artiklar/bmr-vs-tdee",
+        "label": "BMR vs TDEE"
+      },
+      {
+        "href": "/artiklar/kaloribehov",
+        "label": "Kaloribehov — komplett guide"
+      }
+    ]
+  }
+}

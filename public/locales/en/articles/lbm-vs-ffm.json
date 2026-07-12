@@ -1,0 +1,184 @@
+{
+  "seo": {
+    "title": "LBM vs FFM — The Difference Between Lean Body Mass and Fat Free Mass | CalculEat",
+    "description": "LBM and FFM both describe the body's non-fat mass but are not identical. Learn what sets them apart and which measure to use in your calculations."
+  },
+  "layout": {
+    "title": "LBM vs FFM — What Is the Difference?",
+    "intro": "LBM (Lean Body Mass) and FFM (Fat Free Mass) are often used synonymously, but they don't measure exactly the same thing. Both describe the body's non-fat mass — but the definition of 'fat' differs in a way that actually matters when choosing a formula or interpreting a measurement result.",
+    "moneyPageHref": "/en/calculators/body-fat-calculator",
+    "moneyPageLabel": "Calculate your body composition with our calculator",
+    "breadcrumb": {
+      "hubLabel": "Articles",
+      "hubPath": "/en/articles",
+      "pageLabel": "LBM vs FFM"
+    }
+  },
+  "schema": {
+    "headline": "LBM vs FFM — What Is the Difference?",
+    "description": "LBM and FFM both describe the body's non-fat mass but are not identical. Learn what sets them apart."
+  },
+  "body": [
+    {
+      "type": "h2",
+      "text": "What is LBM — Lean Body Mass?",
+      "tight": true
+    },
+    {
+      "type": "p",
+      "text": "LBM is everything in the body except body fat. That sounds like a simple definition, but the key lies in the word : LBM includes the fat the body cannot do without — essential fat.",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": "Essential fat is found in:"
+    },
+    {
+      "type": "ul",
+      "items": [
+        "Organs (heart, liver, kidneys)",
+        "The brain and nervous system",
+        "Cell membranes throughout the body"
+      ],
+      "gap": 1
+    },
+    {
+      "type": "p",
+      "text": "This fat is structurally and functionally necessary — it cannot be reduced without disrupting the body's basic processes. It is therefore counted as part of the \"lean\" mass in the LBM definition."
+    },
+    {
+      "type": "h2",
+      "text": "What is FFM — Fat Free Mass?"
+    },
+    {
+      "type": "p",
+      "text": "FFM is a stricter definition: completely fat-free tissue. No fat is included — not even essential fat. FFM consists of:",
+      "flush": true
+    },
+    {
+      "type": "ul",
+      "items": [
+        "Muscles",
+        "Organs (without adipose tissue)",
+        "Body fluid and water",
+        "Skeleton and minerals"
+      ],
+      "gap": 1
+    },
+    {
+      "type": "p",
+      "text": "FFM is thus a purer biochemical definition — the mass you would have left if all fat were eliminated, including what the body actually needs."
+    },
+    {
+      "type": "h2",
+      "text": "The difference in practice"
+    },
+    {
+      "type": "infoBox",
+      "items": [
+        [
+          {
+            "text": "LBM",
+            "strong": true
+          },
+          {
+            "text": " — includes essential fat (organs, brain, cell membranes)"
+          }
+        ],
+        [
+          {
+            "text": "FFM",
+            "strong": true
+          },
+          {
+            "text": " — completely fat-free, no form of fat included"
+          }
+        ],
+        "Difference: approx. 3–5% of body weight"
+      ]
+    },
+    {
+      "type": "p",
+      "text": "For a person at 80 kg with 15% body fat, LBM is approx. 2–3 kg higher than FFM. In most practical contexts — calculating calorie needs, protein intake or training load — that difference is negligible. But it's important to know which measure a given formula expects.",
+      "flush": true
+    },
+    {
+      "type": "h2",
+      "text": "Which measure should you use?"
+    },
+    {
+      "type": "p",
+      "text": "Most measurement methods — DEXA, bioimpedance and calipers — return FFM, not LBM. FFM is the standard measure in research and clinical practice.",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": "Practical consequence: if a formula asks for \"fat-free mass\", it is FFM you should enter — that is, the value you get directly from your measurement. The Cunningham equation for RMR is a typical example: it is built on FFM and gives more accurate results for well-trained individuals than Mifflin-St Jeor, which only uses total weight."
+    },
+    {
+      "type": "p",
+      "text": "If you don't know which measure your measurement method gives — assume FFM. It is the most common output and matches the formulas you are likely to use."
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is the difference between LBM and FFM?",
+      "answer": "FFM (Fat Free Mass) = all tissue minus all fat (including essential fat in cell membranes, nerve tissue etc.). LBM (Lean Body Mass) = FFM + essential fat (about 3% for men, 12% for women). In practice, LBM > FFM by about 3–12% depending on gender. For most calorie planning purposes the difference is not clinically relevant."
+    },
+    {
+      "question": "Which measure is used in BMR formulas?",
+      "answer": "The Cunningham formula (the only LBM-based BMR formula in common use) technically uses LBM: BMR = 500 + 22 × LBM(kg). In practice, LBM and FFM are used synonymously in most formula contexts."
+    },
+    {
+      "question": "Do you need to know your LBM to calculate calorie needs?",
+      "answer": "No — not for Mifflin-St Jeor or Harris-Benedict, which only use total weight, height, age and gender. LBM is needed for the Cunningham formula and for more advanced protein planning (g/kg LBM instead of g/kg total weight)."
+    },
+    {
+      "question": "How do you measure LBM/FFM?",
+      "answer": "DEXA scanning is the gold standard. Hydrostatic weighing, air displacement plethysmography (BOD POD) and MRI provide high precision. The US Navy method (as our calculator uses) gives an estimate with ±3–4% margin of error — sufficient for calorie planning."
+    }
+  ],
+  "sources": [
+    {
+      "text": "Heymsfield SB, et al. Human body composition. Human Kinetics, 2005."
+    },
+    {
+      "text": "Cunningham JJ. A reanalysis of the factors influencing basal metabolic rate in normal adults. Am J Clin Nutr. 1980;33(11):2372–2374."
+    },
+    {
+      "text": "Wang ZM, et al. The five-level model: a new approach to organizing body-composition research. Am J Clin Nutr. 1992;56(1):19–28."
+    }
+  ],
+  "related": {
+    "calculatorsTitle": "Related calculators",
+    "articlesTitle": "Related articles",
+    "calculators": [
+      {
+        "href": "/en/calculators/body-fat-calculator",
+        "label": "Body Fat Calculator"
+      },
+      {
+        "href": "/en/calculators/ffmi-calculator",
+        "label": "FFMI Calculator"
+      },
+      {
+        "href": "/en/calculators/bmr-calculator",
+        "label": "BMR Calculator"
+      }
+    ],
+    "articles": [
+      {
+        "href": "/en/articles/what-is-ffmi",
+        "label": "What is FFMI?"
+      },
+      {
+        "href": "/en/articles/bmi-vs-body-fat",
+        "label": "BMI vs Body Fat"
+      },
+      {
+        "href": "/en/articles/what-is-bmr",
+        "label": "What is BMR?"
+      }
+    ]
+  }
+}

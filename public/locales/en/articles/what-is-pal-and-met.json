@@ -1,0 +1,109 @@
+{
+  "seo": {
+    "title": "What is PAL and MET? Activity Level and Energy Expenditure Explained | CalculEat",
+    "description": "PAL (Physical Activity Level) and MET (Metabolic Equivalent of Task) are two ways to measure activity level. Learn how they're used to calculate TDEE and calorie needs."
+  },
+  "layout": {
+    "title": "What is PAL and MET? Activity Level and Energy Expenditure Explained",
+    "intro": "PAL (Physical Activity Level) is the activity factor multiplied by BMR to give your TDEE — your actual calorie needs. MET (Metabolic Equivalent of Task) measures how intense a specific activity is relative to rest. Both are used to calculate energy expenditure, but in different ways.",
+    "moneyPageHref": "/en/calculators/tdee-calculator",
+    "moneyPageLabel": "Calculate your TDEE with the right activity level",
+    "breadcrumb": {
+      "hubLabel": "Articles",
+      "hubPath": "/en/articles",
+      "pageLabel": "What is PAL and MET?"
+    }
+  },
+  "schema": {
+    "headline": "What is PAL and MET? Activity Level and Energy Expenditure Explained",
+    "description": "PAL and MET are two ways to measure activity level. Learn how they're used to calculate TDEE and calorie needs."
+  },
+  "body": [
+    {
+      "type": "component",
+      "name": "PALvsMETContent"
+    },
+    {
+      "type": "h2",
+      "text": "Choose the right PAL for your calorie goal"
+    },
+    {
+      "type": "p",
+      "text": "The most common mistake in TDEE calculation is overestimating your activity level. If you train 3 days per week but sit still the rest of the day, you are probably \"lightly active\" (PAL 1.375) — not \"moderately active\" (PAL 1.55).",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": "A practical method: start with a conservative PAL value and increase if your weight drops faster than planned. It's easier to adjust up than to handle an excessively large calorie deficit."
+    },
+    {
+      "type": "p",
+      "text": "Try our TDEE calculator to calculate your calorie needs with different activity levels and see how large the difference actually is."
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is the difference between PAL and MET?",
+      "answer": "PAL (Physical Activity Level) is a daily average factor multiplied by BMR to give TDEE. PAL 1.2 = sedentary, PAL 1.9 = extremely active. MET (Metabolic Equivalent of Task) measures energy expenditure for a single activity relative to rest (1 MET = resting energy). PAL is a daily average; MET is activity-specific."
+    },
+    {
+      "question": "How do you choose the right PAL factor?",
+      "answer": "PAL 1.2 (Sedentary): office work, minimal movement. PAL 1.375 (Lightly active): light exercise 1–3 days/week. PAL 1.55 (Moderately active): exercise 3–5 days/week. PAL 1.725 (Very active): hard training 6–7 days/week. PAL 1.9 (Extremely active): physical work + daily intense training. Choose honestly based on your total weekly activity."
+    },
+    {
+      "question": "Can you calculate TDEE with MET values instead of PAL?",
+      "answer": "Yes — TDEE = BMR × PAL, or alternatively: sum energy expenditure per activity via MET values (Energy kcal = MET × weight(kg) × time(h)) and add BMR × 24 for resting burn. The MET method is more accurate for specific exercise periods but more complex to apply daily."
+    },
+    {
+      "question": "Why do PAL factors differ between individuals?",
+      "answer": "NEAT (Non-Exercise Activity Thermogenesis) — unplanned movement like fidgeting, standing, walking — varies enormously (200–800 kcal/day) and significantly affects PAL. Two people with identical exercise routines but different NEAT can have PAL factors differing by 0.2–0.3 units."
+    }
+  ],
+  "sources": [
+    {
+      "text": "FAO/WHO/UNU. Human energy requirements. Report of a Joint Expert Consultation. Rome, 2004."
+    },
+    {
+      "text": "Ainsworth BE, et al. 2011 Compendium of Physical Activities: a second update of codes and MET values. Med Sci Sports Exerc. 2011;43(8):1575–1581."
+    },
+    {
+      "text": "Levine JA. Non-exercise activity thermogenesis (NEAT). Best Pract Res Clin Endocrinol Metab. 2002;16(4):679–702."
+    }
+  ],
+  "related": {
+    "calculatorsTitle": "Related calculators",
+    "articlesTitle": "Related articles",
+    "calculators": [
+      {
+        "href": "/en/calculators/tdee-calculator",
+        "label": "TDEE Calculator"
+      },
+      {
+        "href": "/en/calculators/bmr-calculator",
+        "label": "BMR Calculator"
+      },
+      {
+        "href": "/en/calculators/calorie-deficit-calculator",
+        "label": "Calorie Deficit Calculator"
+      }
+    ],
+    "articles": [
+      {
+        "href": "/en/articles/what-is-tdee",
+        "label": "What is TDEE?"
+      },
+      {
+        "href": "/en/articles/what-is-bmr",
+        "label": "What is BMR?"
+      },
+      {
+        "href": "/en/articles/bmr-vs-tdee",
+        "label": "BMR vs TDEE"
+      },
+      {
+        "href": "/en/articles/calorie-needs",
+        "label": "Calorie needs — complete guide"
+      }
+    ]
+  }
+}

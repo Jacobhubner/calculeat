@@ -1,0 +1,114 @@
+{
+  "seo": {
+    "title": "BMR vs RMR — What Is the Difference? | CalculEat",
+    "description": "BMR and RMR both measure energy expenditure at rest but differ in measurement conditions. Learn the difference, which formulas calculate what and why it matters."
+  },
+  "layout": {
+    "title": "BMR vs RMR — What Is the Difference?",
+    "intro": "BMR (Basal Metabolic Rate) and RMR (Resting Metabolic Rate) are two terms often used interchangeably — but they are technically different things. The difference comes down to measurement conditions and is typically 5–10%. Here we explain what sets them apart, which formulas calculate what, and whether it matters for your calorie planning.",
+    "moneyPageHref": "/en/calculators/bmr-calculator",
+    "moneyPageLabel": "Calculate your BMR/RMR with the calculator",
+    "breadcrumb": {
+      "hubLabel": "Articles",
+      "hubPath": "/en/articles",
+      "pageLabel": "BMR vs RMR"
+    }
+  },
+  "schema": {
+    "headline": "BMR vs RMR — What Is the Difference?",
+    "description": "BMR and RMR both measure energy expenditure at rest but differ in measurement conditions. Learn the difference and which formulas calculate what."
+  },
+  "body": [
+    {
+      "type": "component",
+      "name": "BMRvsRMRContent"
+    },
+    {
+      "type": "h2",
+      "text": "Why is the difference 5–10%?"
+    },
+    {
+      "type": "p",
+      "text": "BMR is measured under extremely controlled conditions: after at least 8 hours of sleep, 12 hours of fasting and in a thermoneutral environment (~22°C). Under these conditions the body is literally at its lowest possible energy level.",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": "RMR is measured in realistic rest — you are relaxed and still, but not necessarily fasting or just woken up. The body still maintains some muscle tension, may be processing a meal and adjusting to room temperature. This gives marginally higher energy expenditure — typically 5–10% above BMR."
+    },
+    {
+      "type": "h2",
+      "text": "Does the difference matter in practice?"
+    },
+    {
+      "type": "p",
+      "text": "Rarely. All predictive formulas have a margin of error of ±10–15% at the individual level — that's already larger than the difference between BMR and RMR. The distinction is relevant in clinical research and with indirect calorimetry, but for everyday calorie planning it's unimportant which concept a formula technically calculates.",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": "What actually matters: choose a formula, multiply by the correct PAL factor to get your TDEE, and monitor your weight trend for 2–3 weeks. Actual weight change is always more reliable than formula-based estimates."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Is BMR always lower than RMR?",
+      "answer": "Yes — BMR is measured under stricter conditions (fasting, thermoneutral environment, complete rest after sleep) and represents the body's absolute minimum. RMR is measured under more practical conditions and includes a little more activity. The difference is typically 5–10%, sometimes up to 20% in individuals with high NEAT."
+    },
+    {
+      "question": "Which formula should you use?",
+      "answer": "Mifflin-St Jeor (1990) technically calculates RMR, not strict BMR, but is commonly called a BMR formula. It is the most validated formula for the general population. Harris-Benedict (revised) gives similar results. Cunningham (based on LBM) is best for athletes with known body fat percentage."
+    },
+    {
+      "question": "Does it matter for calorie planning?",
+      "answer": "No, in practice. When you calculate TDEE (BMR/RMR × activity factor), the 5–10% difference is absorbed in the formulas' error margins and the activity factor's uncertainty. Use Mifflin-St Jeor as standard and then calibrate against your actual weight trend."
+    },
+    {
+      "question": "Why is Mifflin-St Jeor called a BMR formula if it measures RMR?",
+      "answer": "The terminology in the literature is inconsistent. Mifflin et al. (1990) calibrated against RMR measurements but labelled it as RMR. Popularization in nutrition and fitness contexts then tagged the results as 'BMR'. For practical calorie planning it's the same thing."
+    },
+    {
+      "question": "Can you measure BMR/RMR at home?",
+      "answer": "Indirectly — via calorimetry devices (e.g. BodyGem, MedGem) that measure oxygen consumption. These are reasonably accurate but cost thousands of dollars. Home formulas (Mifflin-St Jeor etc.) give typically ±10% margin of error, which is acceptable for calorie planning."
+    }
+  ],
+  "sources": [
+    {
+      "text": "Mifflin MD, et al. A new predictive equation for resting energy expenditure. Am J Clin Nutr. 1990;51(2):241–247."
+    },
+    {
+      "text": "Weir JB. New methods for calculating metabolic rate with special reference to protein metabolism. J Physiol. 1949;109(1–2):1–9."
+    },
+    {
+      "text": "Frankenfield D, Roth-Yousey L, Compher C. Comparison of predictive equations for resting metabolic rate in healthy nonobese and obese adults. J Am Diet Assoc. 2005;105(5):775–789."
+    }
+  ],
+  "related": {
+    "calculatorsTitle": "Related calculators",
+    "articlesTitle": "Related articles",
+    "calculators": [
+      {
+        "href": "/en/calculators/bmr-calculator",
+        "label": "BMR Calculator"
+      },
+      {
+        "href": "/en/calculators/tdee-calculator",
+        "label": "TDEE Calculator"
+      }
+    ],
+    "articles": [
+      {
+        "href": "/en/articles/what-is-bmr",
+        "label": "What is BMR?"
+      },
+      {
+        "href": "/en/articles/bmr-vs-tdee",
+        "label": "BMR vs TDEE"
+      },
+      {
+        "href": "/en/articles/what-is-tdee",
+        "label": "What is TDEE?"
+      }
+    ]
+  }
+}

@@ -1,0 +1,321 @@
+{
+  "seo": {
+    "title": "What is TDEE? Total Daily Energy Expenditure Explained | CalculEat",
+    "description": "TDEE (Total Daily Energy Expenditure) is the calories your body burns per day. Learn how TDEE is calculated and how to use it for weight loss or muscle building."
+  },
+  "layout": {
+    "title": "What is TDEE? Total Daily Energy Expenditure Explained",
+    "intro": "TDEE (Total Daily Energy Expenditure) is the total amount of calories your body burns over the course of a day, including all movement and activity. It is your maintenance need — and the starting point for counting calories whether your goal is weight loss, muscle building or maintaining weight.",
+    "moneyPageHref": "/en/calculators/tdee-calculator",
+    "moneyPageLabel": "Calculate your TDEE directly with our free calculator",
+    "breadcrumb": {
+      "hubLabel": "Articles",
+      "hubPath": "/en/articles",
+      "pageLabel": "What is TDEE?"
+    }
+  },
+  "schema": {
+    "headline": "What is TDEE? Total Daily Energy Expenditure Explained",
+    "description": "TDEE (Total Daily Energy Expenditure) is the calories your body burns per day. Learn how TDEE is calculated and how to use it."
+  },
+  "body": [
+    {
+      "type": "h2",
+      "text": "The four components of TDEE",
+      "tight": true
+    },
+    {
+      "type": "p",
+      "text": "TDEE is calculated as the sum of four physiological components. Each component represents a unique part of the body's energy expenditure without overlap:",
+      "flush": true
+    },
+    {
+      "type": "formula",
+      "text": "TDEE = BMR + NEAT + EAT + TEF"
+    },
+    {
+      "type": "img",
+      "src": "/TDEE.png",
+      "alt": "TDEE components illustration",
+      "width": 890,
+      "height": 1017
+    },
+    {
+      "type": "h3",
+      "text": "BMR — Basal Metabolic Rate (approx. 60–75% of TDEE)"
+    },
+    {
+      "type": "p",
+      "text": "BMR (Basal Metabolic Rate) is the energy the body requires to maintain basic physiological functions at complete rest — breathing, blood circulation, temperature regulation and cellular processes. The most important determinant of BMR is fat-free mass, which is estimated to explain around 80% of the variation.",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": "In people with low physical activity, BMR typically constitutes about 60% of total energy expenditure, and even more in individuals with very low movement activity such as sedated and mechanically ventilated patients in intensive care units."
+    },
+    {
+      "type": "p",
+      "text": "BMR is measured under strictly controlled laboratory conditions: after sleep, in a fasting state and in a thermoneutral environment. In practical contexts, RMR (Resting Metabolic Rate) is more commonly used, measured at any time during the day, which can differ from BMR by up to 10%. Most online calculators — including CalculEat — technically calculate RMR, but use the term BMR in everyday use."
+    },
+    {
+      "type": "p",
+      "text": "The gold standard for measurement is indirect calorimetry via Weir's equation (1949). When unavailable, predictive equations such as Mifflin-St Jeor, Harris-Benedict or Cunningham are used, which have a margin of error of ±10–15% at the individual level."
+    },
+    {
+      "type": "h3",
+      "text": "NEAT — Non-Exercise Activity Thermogenesis (15–30%)"
+    },
+    {
+      "type": "p",
+      "text": "NEAT encompasses all energy expenditure from bodily movements that are not planned exercise: walking, standing, household chores, fidgeting and postural adjustments. It is the most variable component — and the most underestimated.",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": "In normally active individuals, NEAT constitutes approximately 15–30% of TDEE, but the variation is extreme. In very inactive individuals, NEAT can be as low as 6–10%, while in active individuals it can exceed 50% of total energy expenditure. In a controlled overfeeding study, the change in NEAT ranged from −98 to +692 kcal/day between individuals with similar body composition (Levine et al., 1999). Total differences in NEAT between individuals can amount to over 1,000 kcal/day."
+    },
+    {
+      "type": "p",
+      "text": "It explains why two people of identical weight and training routine can have such different calorie needs — the difference lies in spontaneous movement outside the gym, not in the training sessions."
+    },
+    {
+      "type": "h3",
+      "text": "EAT — Exercise Activity Thermogenesis (5–10%)"
+    },
+    {
+      "type": "p",
+      "text": "EAT represents energy expenditure from planned physical exercise. It typically constitutes a surprisingly small proportion of TDEE — under 5% in sedentary individuals. At high training volumes, EAT can increase to 15–30% or more in elite athletes (Westerterp, 2013).",
+      "flush": true
+    },
+    {
+      "type": "h3",
+      "text": "TEF — Thermic Effect of Food (8–15%)"
+    },
+    {
+      "type": "p",
+      "text": "TEF is the energy required for digestion, absorption and metabolism of nutrients. Under energy balance, TEF averages about 10% of energy intake, with a typical range of 8–15% depending on meal composition.",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": "TEF varies markedly between macronutrients:"
+    },
+    {
+      "type": "ul",
+      "items": [
+        [
+          {
+            "text": "Protein: approx. 20–30%",
+            "strong": true
+          },
+          {
+            "text": " amino acid metabolism and urea formation are energy-intensive"
+          }
+        ],
+        [
+          {
+            "text": "Carbohydrates: approx. 5–10%",
+            "strong": true
+          },
+          {
+            "text": " Carbohydrates: approx. 5–10%"
+          }
+        ],
+        [
+          {
+            "text": "Fat: approx. 0–3%",
+            "strong": true
+          },
+          {
+            "text": " low thermogenic effect"
+          }
+        ]
+      ],
+      "gap": 1
+    },
+    {
+      "type": "p",
+      "text": "The practical consequence: a protein-rich diet genuinely produces slightly higher energy expenditure at the same calorie intake compared to a fat-dominated diet (Westerterp, 2004; Halton & Hu, 2004)."
+    },
+    {
+      "type": "h2",
+      "text": "How is TDEE calculated?"
+    },
+    {
+      "type": "p",
+      "text": "The simplest method is BMR × PAL factor:",
+      "flush": true
+    },
+    {
+      "type": "ol",
+      "items": [
+        "Calculate BMR with Mifflin-St Jeor (recommended for healthy adults)",
+        "Multiply by a PAL factor (Physical Activity Level) that reflects your activity level"
+      ]
+    },
+    {
+      "type": "p",
+      "text": [
+        {
+          "text": "Example: BMR 1,800 kcal × PAL 1.55 (moderately active) = "
+        },
+        {
+          "text": "2,790 kcal TDEE",
+          "strong": true
+        },
+        {
+          "text": "."
+        }
+      ]
+    },
+    {
+      "type": "h2",
+      "text": "How do you use TDEE in practice?"
+    },
+    {
+      "type": "p",
+      "text": [
+        {
+          "text": "TDEE is your "
+        },
+        {
+          "text": "maintenance need",
+          "em": true
+        },
+        {
+          "text": ". Depending on goal:"
+        }
+      ],
+      "flush": true
+    },
+    {
+      "type": "ul",
+      "items": [
+        [
+          {
+            "text": "Weight loss:",
+            "strong": true
+          },
+          {
+            "text": " Eat 300–500 kcal below TDEE → approx. 0.3–0.5 kg/week"
+          }
+        ],
+        [
+          {
+            "text": "Muscle building:",
+            "strong": true
+          },
+          {
+            "text": " Eat 200–400 kcal above TDEE → lean bulk with minimal fat gain"
+          }
+        ],
+        [
+          {
+            "text": "Maintenance:",
+            "strong": true
+          },
+          {
+            "text": " Eat at TDEE → stable weight"
+          }
+        ]
+      ]
+    },
+    {
+      "type": "p",
+      "text": "The calculator provides an estimate with a margin of error of ±10–15%. Monitor your weight for 2–3 weeks and adjust if the result doesn't match expectations."
+    },
+    {
+      "type": "h2",
+      "text": "Why does TDEE drop during a diet?"
+    },
+    {
+      "type": "p",
+      "text": "Adaptive thermogenesis — the body lowers its metabolism in response to prolonged calorie deficit. It happens at several levels: NEAT decreases (the body instinctively moves less), BMR drops slightly and digestive efficiency increases. NEAT is the component that reacts fastest and most — and it is also why weight loss slows down despite unchanged intake.",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": "Solution: take regular \"diet breaks\" (shorter periods at maintenance intake) to counteract the adaptation, and prioritise strength training to preserve muscle mass and keep BMR up."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Is TDEE the same as calorie needs?",
+      "answer": "Yes, in practice the terms are used synonymously. TDEE (Total Daily Energy Expenditure) is the scientific term for your total daily energy needs — the number of calories you burn during a day including all activity."
+    },
+    {
+      "question": "How accurate is a TDEE calculator?",
+      "answer": "A TDEE calculator provides an estimate based on statistical formulas — Mifflin-St Jeor for BMR multiplied by a PAL factor (1.2–1.9) for activity level. Margin of error is typically ±10–15%. Individual factors such as muscle mass, hormonal balance and metabolism affect the true value. Use the result as a starting point and adjust based on how your weight actually changes."
+    },
+    {
+      "question": "What is the difference between BMR and TDEE?",
+      "answer": "BMR (Basal Metabolic Rate) is the calories your body burns at complete rest — only to keep organs running. TDEE also includes all physical activity, NEAT (unplanned movement) and TEF (thermic effect of food). TDEE is always higher than BMR and is the relevant number for calorie planning."
+    },
+    {
+      "question": "How does TDEE change with age?",
+      "answer": "TDEE typically decreases with age for two reasons: BMR drops slightly per decade (primarily due to decreased muscle mass), and most people's activity level decreases. Strength training and adequate protein intake can significantly slow both processes."
+    },
+    {
+      "question": "Why can two people of the same weight have such different calorie needs?",
+      "answer": "Muscle mass is the most important factor — muscles burn more energy at rest than fat. Activity level is the second most important. Two people of the same weight can have 500–800 kcal difference in TDEE if one trains actively and the other is sedentary."
+    }
+  ],
+  "sources": [
+    {
+      "text": "Mifflin MD, et al. A new predictive equation for resting energy expenditure in healthy individuals. Am J Clin Nutr. 1990;51(2):241–247."
+    },
+    {
+      "text": "FAO/WHO/UNU. Human energy requirements. Report of a Joint Expert Consultation. Food and Nutrition Technical Report Series 1. Rome, 2004."
+    },
+    {
+      "text": "von Loeffelholz C, Birkenfeld AL. Non-Exercise Activity Thermogenesis in Human Energy Homeostasis. In: Feingold KR, et al., editors. Endotext. South Dartmouth (MA): MDText.com, Inc.; 2022."
+    },
+    {
+      "text": "Levine JA. Non-exercise activity thermogenesis (NEAT). Best Pract Res Clin Endocrinol Metab. 2002;16(4):679–702."
+    },
+    {
+      "text": "Westerterp KR. Diet induced thermogenesis. Nutr Metab (Lond). 2004;1(1):5."
+    },
+    {
+      "text": "Pontzer H, et al. Daily energy expenditure through the human life course. Science. 2021;373(6556):808–812."
+    },
+    {
+      "text": "Ainsworth BE, et al. 2011 Compendium of Physical Activities. Med Sci Sports Exerc. 2011;43(8):1575–1581."
+    },
+    {
+      "text": "Speakman JR, Selman C. Physical activity and resting metabolic rate. Proc Nutr Soc. 2003;62(3):621–634."
+    }
+  ],
+  "related": {
+    "calculatorsTitle": "Related calculators",
+    "articlesTitle": "Related articles",
+    "calculators": [
+      {
+        "href": "/en/calculators/tdee-calculator",
+        "label": "TDEE Calculator"
+      },
+      {
+        "href": "/en/calculators/bmr-calculator",
+        "label": "BMR Calculator"
+      },
+      {
+        "href": "/en/calculators/bmi-calculator",
+        "label": "BMI Calculator"
+      }
+    ],
+    "articles": [
+      {
+        "href": "/en/articles/calorie-needs",
+        "label": "Calorie needs — complete guide"
+      },
+      {
+        "href": "/en/articles/calorie-deficit",
+        "label": "How large a calorie deficit?"
+      },
+      {
+        "href": "/en/articles/bulk-and-cut",
+        "label": "Bulk and cut"
+      }
+    ]
+  }
+}

@@ -1,0 +1,195 @@
+{
+  "seo": {
+    "title": "LBM vs FFM — skillnaden mellan Lean Body Mass och Fat Free Mass | CalculEat",
+    "description": "LBM och FFM beskriver båda kroppens icke-fettmassa men är inte identiska. Lär dig vad som skiljer dem åt och vilket mått du ska använda i dina beräkningar."
+  },
+  "layout": {
+    "title": "LBM vs FFM — vad är skillnaden?",
+    "intro": "LBM (Lean Body Mass) och FFM (Fat Free Mass) används ofta som synonymer, men de mäter inte exakt samma sak. Båda beskriver kroppens icke-fettmassa — men definitionen av 'fett' skiljer sig åt på ett sätt som faktiskt spelar roll när du väljer formel eller tolkar ett mätresultat.",
+    "moneyPageHref": "/kalkylatorer/kroppsfett",
+    "moneyPageLabel": "Räkna ut din kroppssammansättning med vår kalkylator",
+    "breadcrumb": {
+      "hubLabel": "Artiklar",
+      "hubPath": "/artiklar",
+      "pageLabel": "LBM vs FFM"
+    }
+  },
+  "schema": {
+    "headline": "LBM vs FFM — vad är skillnaden?",
+    "description": "LBM och FFM beskriver båda kroppens icke-fettmassa men är inte identiska. Lär dig vad som skiljer dem åt."
+  },
+  "body": [
+    {
+      "type": "h2",
+      "text": "Vad är LBM — Lean Body Mass?",
+      "tight": true
+    },
+    {
+      "type": "p",
+      "text": [
+        {
+          "text": "LBM är allt i kroppen förutom "
+        },
+        {
+          "text": "lagrat",
+          "em": true
+        },
+        {
+          "text": " kroppsfett. Det låter som en enkel definition, men nyckeln ligger i ordet : LBM inkluderar det fett som kroppen inte kan undvara — essentiellt fett."
+        }
+      ],
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": "Essentiellt fett finns i:"
+    },
+    {
+      "type": "ul",
+      "items": [
+        "Organ (hjärta, lever, njurar)",
+        "Hjärnan och nervsystemet",
+        "Cellmembran i hela kroppen"
+      ],
+      "gap": 1
+    },
+    {
+      "type": "p",
+      "text": "Detta fett är strukturellt och funktionellt nödvändigt — det kan inte reduceras utan att kroppens grundläggande processer störs. Det räknas därför som en del av den \"magra\" massan i LBM-definitionen."
+    },
+    {
+      "type": "h2",
+      "text": "Vad är FFM — Fat Free Mass?"
+    },
+    {
+      "type": "p",
+      "text": "FFM är en striktare definition: helt fettfri vävnad. Inget fett inkluderas — inte ens det essentiella. FFM består av:",
+      "flush": true
+    },
+    {
+      "type": "ul",
+      "items": [
+        "Muskler",
+        "Organ (utan fettvävnad)",
+        "Kroppsvätska och vatten",
+        "Skelett och mineraler"
+      ],
+      "gap": 1
+    },
+    {
+      "type": "p",
+      "text": "FFM är alltså en renare biokemisk definition — den massa du skulle ha kvar om allt fett eliminerats, inklusive det som kroppen faktiskt behöver."
+    },
+    {
+      "type": "h2",
+      "text": "Skillnaden i praktiken"
+    },
+    {
+      "type": "infoBox",
+      "items": [
+        [
+          {
+            "text": "LBM",
+            "strong": true
+          },
+          {
+            "text": " — inkluderar essentiellt fett (organ, hjärna, cellmembran)"
+          }
+        ],
+        [
+          {
+            "text": "FFM",
+            "strong": true
+          },
+          {
+            "text": " — helt fettfritt, ingen form av fett inkluderas"
+          }
+        ],
+        "Skillnaden: ca 3–5% av kroppsvikten"
+      ]
+    },
+    {
+      "type": "p",
+      "text": "För en person på 80 kg med 15% kroppsfett innebär det att LBM är ca 2–3 kg högre än FFM. I de flesta praktiska sammanhang — beräkning av kaloribehov, proteinintag eller träningslast — är den skillnaden försumbar. Men det är viktigt att veta vilket mått en given formel förväntar sig.",
+      "flush": true
+    },
+    {
+      "type": "h2",
+      "text": "Vilket mått ska du använda?"
+    },
+    {
+      "type": "p",
+      "text": "De flesta mätmetoder — DEXA, bioimpedans och kaliper — returnerar FFM, inte LBM. Det är FFM som är standardmåttet i forskning och klinisk praxis.",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": "Praktisk konsekvens: om en formel ber om \"fettfri massa\" är det FFM du ska mata in — alltså värdet du får direkt från din mätning. Cunningham-ekvationen för RMR är ett typiskt exempel: den bygger på FFM och ger mer exakta resultat för vältränade individer än Mifflin-St Jeor, som enbart använder totalvikt."
+    },
+    {
+      "type": "p",
+      "text": "Om du inte vet vilket mått din mätmetod ger — anta FFM. Det är den vanligaste outputen och matchar de formler du sannolikt kommer att använda."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Vad är skillnaden mellan LBM och FFM?",
+      "answer": "FFM (Fat Free Mass) = all vävnad minus allt fett (inklusive essentiellt fett i cellmembraner, nervvävnad etc.). LBM (Lean Body Mass) = FFM + essentiellt fett (ca 3% för män, 12% för kvinnor). I praktiken är LBM > FFM med ca 3–12% beroende på kön. För de flesta kaloriplaneringsändamål är skillnaden inte kliniskt relevant."
+    },
+    {
+      "question": "Vilket mått används i BMR-formler?",
+      "answer": "Cunningham-formeln (den enda LBM-baserade BMR-formeln i vanligt bruk) använder tekniskt LBM: BMR = 500 + 22 × LBM(kg). I praktiken används LBM och FFM synonymt i de flesta formelkontexter."
+    },
+    {
+      "question": "Behöver man veta sin LBM för att räkna ut kaloribehov?",
+      "answer": "Nej — inte för Mifflin-St Jeor eller Harris-Benedict, som bara använder total vikt, längd, ålder och kön. LBM behövs för Cunningham-formeln och vid mer avancerad proteinplanering (g/kg LBM istället för g/kg total vikt)."
+    },
+    {
+      "question": "Hur mäter man sin LBM/FFM?",
+      "answer": "DEXA-scanning är guldstandarden. Hydrostatisk vägning, luftförträngningsplethysmografi (BOD POD) och MRI ger hög precision. US Navy-metoden (som vår kalkylator använder) ger en uppskattning med ±3–4% felmarginal — tillräckligt för kaloriplanering."
+    }
+  ],
+  "sources": [
+    {
+      "text": "Heymsfield SB, et al. Human body composition. Human Kinetics, 2005."
+    },
+    {
+      "text": "Cunningham JJ. A reanalysis of the factors influencing basal metabolic rate in normal adults. Am J Clin Nutr. 1980;33(11):2372–2374."
+    },
+    {
+      "text": "Wang ZM, et al. The five-level model: a new approach to organizing body-composition research. Am J Clin Nutr. 1992;56(1):19–28."
+    }
+  ],
+  "related": {
+    "calculatorsTitle": "Relaterade kalkylatorer",
+    "articlesTitle": "Relaterade artiklar",
+    "calculators": [
+      {
+        "href": "/kalkylatorer/kroppsfett",
+        "label": "Kroppsfett Kalkylator"
+      },
+      {
+        "href": "/kalkylatorer/ffmi-kalkylator",
+        "label": "FFMI Kalkylator"
+      },
+      {
+        "href": "/kalkylatorer/bmr-kalkylator",
+        "label": "BMR Kalkylator"
+      }
+    ],
+    "articles": [
+      {
+        "href": "/artiklar/vad-ar-ffmi",
+        "label": "Vad är FFMI?"
+      },
+      {
+        "href": "/artiklar/bmi-vs-kroppsfett",
+        "label": "BMI vs Kroppsfett"
+      },
+      {
+        "href": "/artiklar/vad-ar-bmr",
+        "label": "Vad är BMR?"
+      }
+    ]
+  }
+}

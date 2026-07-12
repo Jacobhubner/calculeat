@@ -27,6 +27,9 @@ interface ArticleLayoutProps {
   relatedArticles?: RelatedLink[]
   relatedCalculators?: RelatedLink[]
   breadcrumb?: { label: string; href: string }[]
+  /** Synlig byline: "Av {authorName} · Uppdaterad {dateModified}" */
+  authorName?: string
+  dateModified?: string // 'YYYY-MM-DD'
 }
 
 export function ArticleLayout({
@@ -40,10 +43,18 @@ export function ArticleLayout({
   relatedArticles,
   relatedCalculators,
   breadcrumb,
+  authorName,
+  dateModified,
 }: ArticleLayoutProps) {
   const { pathname } = useLocation()
   const lng = pathname.startsWith('/en/') ? 'en' : 'sv'
   const { t } = useTranslation('article-layout', { lng })
+
+  const formattedDate = dateModified
+    ? new Intl.DateTimeFormat(lng === 'en' ? 'en-US' : 'sv-SE', { dateStyle: 'long' }).format(
+        new Date(`${dateModified}T00:00:00`)
+      )
+    : undefined
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -80,6 +91,23 @@ export function ArticleLayout({
             </h1>
 
             <p className="text-lg md:text-xl text-neutral-600 leading-relaxed max-w-2xl">{intro}</p>
+
+            {(authorName || formattedDate) && (
+              // data-byline: exkluderas i golden-snapshot-diffen (layouttext, inte artikelinnehåll)
+              <p data-byline className="text-sm text-neutral-500 mt-5">
+                {authorName && (
+                  <>
+                    {t('byline.authorPrefix')} <span className="font-medium">{authorName}</span>
+                  </>
+                )}
+                {authorName && formattedDate && <span className="mx-2">·</span>}
+                {formattedDate && (
+                  <>
+                    {t('byline.updatedLabel')} <time dateTime={dateModified}>{formattedDate}</time>
+                  </>
+                )}
+              </p>
+            )}
           </div>
         </section>
 

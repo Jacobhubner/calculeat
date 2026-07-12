@@ -10,6 +10,33 @@
       så statiska dubbletter följer med i prerendrad HTML och förvirrar crawlers.
     -->
     <title>CalculEat — Kalorikalkylator och matloggning</title>
+    <!-- Sajtvid Organization + WebSite. Article-schemats publisher pekar på
+         @id nedan — håll dem i synk med src/lib/seo/constants.ts -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://calculeat.com/#organization",
+            "name": "CalculEat",
+            "url": "https://calculeat.com",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://calculeat.com/logo-512.png"
+            }
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://calculeat.com/#website",
+            "name": "CalculEat",
+            "url": "https://calculeat.com",
+            "publisher": { "@id": "https://calculeat.com/#organization" },
+            "inLanguage": "sv-SE"
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

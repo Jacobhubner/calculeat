@@ -1,0 +1,161 @@
+{
+  "seo": {
+    "title": "BMI vs Body Fat — Which Measurement Is Most Accurate? | CalculEat",
+    "description": "BMI measures weight in relation to height. Body fat measures actual fat percentage. Learn when BMI misses the mark and when you need a more precise measure to set the right calorie goal."
+  },
+  "layout": {
+    "title": "BMI vs Body Fat — Which Measurement Is Most Accurate?",
+    "intro": "BMI (Body Mass Index) is easy to calculate but only measures weight in relation to height — not how weight is distributed. Body fat measures the actual proportion of fat in the body and gives a more complete picture. Both have their uses, but they answer different questions.",
+    "moneyPageHref": "/en/calculators/tdee-calculator",
+    "moneyPageLabel": "Calculate your calorie needs with the TDEE calculator",
+    "breadcrumb": {
+      "hubLabel": "Articles",
+      "hubPath": "/en/articles",
+      "pageLabel": "BMI vs Body Fat"
+    }
+  },
+  "schema": {
+    "headline": "BMI vs Body Fat — Which Measurement Is Most Accurate?",
+    "description": "BMI measures weight in relation to height. Body fat measures actual fat percentage. Learn when BMI misses the mark."
+  },
+  "body": [
+    {
+      "type": "h2",
+      "text": "What does BMI measure?",
+      "tight": true
+    },
+    {
+      "type": "p",
+      "text": "BMI is calculated as weight (kg) divided by height² (m²). The result is placed in one of four categories: underweight (below 18.5), normal weight (18.5–24.9), overweight (25–29.9) or obese (30+).",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": "The advantage of BMI is its simplicity — you only need weight and height. The disadvantage is that it doesn't distinguish between muscle mass and fat tissue. A well-trained person with high muscle mass can end up in the \"overweight\" category according to BMI despite low body fat percentage."
+    },
+    {
+      "type": "h2",
+      "text": "What does body fat measure?"
+    },
+    {
+      "type": "p",
+      "text": "Body fat is the proportion of your body weight that consists of fat tissue. It is measured with methods such as the US Navy method (based on body measurements), skinfold measurement, bioimpedance or DEXA (X-ray). DEXA is the gold standard but requires specialist equipment.",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": "Body fat gives a more precise picture of body composition — how much is muscle, fat, bone and fluid. This is particularly important for people with high muscle mass (athletes, powerlifters) where BMI systematically overestimates health risk."
+    },
+    {
+      "type": "h2",
+      "text": "Comparison: BMI vs Body Fat"
+    },
+    {
+      "type": "table",
+      "variant": "bordered",
+      "headers": ["Property", "BMI", "Body Fat"],
+      "rows": [
+        ["What is measured?", "Weight/height²", "Proportion of fat tissue"],
+        ["Accounts for muscle?", "No", "Yes"],
+        ["Measurement method", "Weight + height", "Body measurements / DEXA / bioimpedance"],
+        ["Accuracy", "Rough estimate", "More precise (method-dependent)"],
+        ["Used for?", "Quick health indicator", "Body composition and goals"],
+        ["Requires equipment?", "No", "Tape measure (Navy method) or more"]
+      ]
+    },
+    {
+      "type": "h2",
+      "text": "When BMI is sufficient — and when it misses"
+    },
+    {
+      "type": "p",
+      "text": "BMI works as a rough screening tool at the population level and for most normal-weight people without extremely high or low muscle mass. It's quick, free and requires no equipment.",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": "BMI is however misleading for:"
+    },
+    {
+      "type": "ul",
+      "items": [
+        "Muscular individuals (trained, athletes, powerlifters)",
+        "Older people with low muscle mass but normal weight (\"sarcopenic obesity\")",
+        "Pregnant women",
+        "Children and adolescents (require age-specific reference values)",
+        "Individuals with very low muscle mass and high body fat percentage (\"skinny fat\")"
+      ],
+      "gap": 1
+    },
+    {
+      "type": "h2",
+      "text": "Which goal should you use?"
+    },
+    {
+      "type": "p",
+      "text": "Regardless of which measure you look at — BMI or body fat — your calorie goal is the practical tool for getting there. The calorie goal is based on your TDEE, not on BMI or body fat percentage per se. Calculate your TDEE to get a figure you can actually act on.",
+      "flush": true
+    }
+  ],
+  "faq": [
+    {
+      "question": "Which measure is better — BMI or body fat?",
+      "answer": "Body fat is more informative for most purposes. BMI can misjudge health in muscular individuals (classified as overweight), older people (low muscle mass gives normal BMI despite high body fat) and shorter people. Body fat directly addresses what actually matters for health risk."
+    },
+    {
+      "question": "Can you have a normal BMI but high body fat?",
+      "answer": "Yes — this is called 'normal-weight obesity' or 'skinny fat'. It's relatively common in people with little muscle mass. A person at 170 cm and 65 kg has BMI 22.5 (normal weight) but can have 30% body fat if they have little muscle mass."
+    },
+    {
+      "question": "Can you have a high BMI but low body fat?",
+      "answer": "Yes — muscular individuals are often classified as 'overweight' on the BMI scale despite low body fat and excellent health. A well-trained person at 175 cm and 85 kg (BMI 27.8) can have 12% body fat and be in excellent shape."
+    },
+    {
+      "question": "Which measure should you use to set a calorie goal?",
+      "answer": "Neither BMI nor body fat alone. TDEE (your actual calorie needs) is the starting point for calorie planning. Body fat is valuable information for understanding where you are and where you want to go — but the calorie goal is set against TDEE, not against a body fat percentage."
+    }
+  ],
+  "sources": [
+    {
+      "text": "Romero-Corral A, et al. Accuracy of body mass index in diagnosing obesity in the adult general population. Int J Obes (Lond). 2008;32(6):959–966."
+    },
+    {
+      "text": "Gallagher D, et al. Healthy percentage body fat ranges. Am J Clin Nutr. 2000;72(3):694–701."
+    },
+    {
+      "text": "Flegal KM, et al. Comparisons of percentage body fat, body mass index, waist circumference, and waist-stature ratio in adults. Am J Clin Nutr. 2009;89(2):500–508."
+    }
+  ],
+  "related": {
+    "calculatorsTitle": "Related calculators",
+    "articlesTitle": "Related articles",
+    "calculators": [
+      {
+        "href": "/en/calculators/bmi-calculator",
+        "label": "BMI Calculator"
+      },
+      {
+        "href": "/en/calculators/body-fat-calculator",
+        "label": "Body Fat Calculator"
+      },
+      {
+        "href": "/en/calculators/ffmi-calculator",
+        "label": "FFMI Calculator"
+      },
+      {
+        "href": "/en/calculators/tdee-calculator",
+        "label": "TDEE Calculator"
+      }
+    ],
+    "articles": [
+      {
+        "href": "/en/articles/calorie-needs",
+        "label": "Calorie needs — complete guide"
+      },
+      {
+        "href": "/en/articles/what-is-tdee",
+        "label": "What is TDEE?"
+      }
+    ]
+  }
+}

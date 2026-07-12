@@ -18,21 +18,21 @@ const PORT = portArg > -1 ? process.argv[portArg + 1] : '4173'
 const DIFF_MODE = process.argv.includes('--diff')
 const ORIGIN = `http://localhost:${PORT}`
 
-// Artikel-paths läses från pages.ts via enkel regex-parsning (undviker
-// TS-import i .mjs). Formatet är stabilt: category: 'article' + path-strängar.
-const pagesTs = readFileSync(path.join(ROOT, 'src', 'lib', 'config', 'pages.ts'), 'utf8')
-const articleBlocks = pagesTs.split(/\{\s*\n\s*key:/).filter(b => b.includes("category: 'article'"))
+// Artikel-paths läses från registry.ts via enkel regex-parsning (undviker
+// TS-import i .mjs). Formatet är vårt eget och stabilt.
+const registryTs = readFileSync(
+  path.join(ROOT, 'src', 'content', 'articles', 'registry.ts'),
+  'utf8'
+)
 const routes = []
-for (const block of articleBlocks) {
-  const key = block.match(/^\s*'([^']+)'/)?.[1]
-  const paths = [...block.matchAll(/path:\s*'([^']+)'/g)].map(m => m[1])
-  for (const p of paths) {
-    const lng = p.startsWith('en/') ? 'en' : 'sv'
-    routes.push({ key, lng, urlPath: '/' + p })
-  }
+for (const m of registryTs.matchAll(
+  /key:\s*'([^']+)',\s*paths:\s*\{\s*sv:\s*'([^']+)',\s*en:\s*'([^']+)'/gs
+)) {
+  routes.push({ key: m[1], lng: 'sv', urlPath: '/' + m[2] })
+  routes.push({ key: m[1], lng: 'en', urlPath: '/' + m[3] })
 }
 if (routes.length === 0) {
-  console.error('Hittade inga artikel-routes i pages.ts — har formatet ändrats?')
+  console.error('Hittade inga artiklar i registry.ts — har formatet ändrats?')
   process.exit(1)
 }
 
@@ -47,7 +47,12 @@ for (const { key, lng, urlPath } of routes) {
     const h1 = document.querySelector('main h1')
     return !!h1 && h1.textContent.trim().length > 0
   })
-  const text = await page.evaluate(() => document.querySelector('main').innerText)
+  const text = await page.evaluate(() => {
+    // Byline ("Av X · Uppdaterad Y") är layouttext, inte artikelinnehåll —
+    // den fanns inte när golden togs och ska inte ingå i jämförelsen
+    document.querySelectorAll('[data-byline]').forEach(el => el.remove())
+    return document.querySelector('main').innerText
+  })
   const normalized = text.replace(/\s+/g, ' ').trim()
   const file = path.join(OUT_DIR, `${key}.${lng}.txt`)
 

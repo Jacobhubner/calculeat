@@ -1,0 +1,157 @@
+{
+  "seo": {
+    "title": "BMR vs TDEE — What Is the Difference and Which Should You Use? | CalculEat",
+    "description": "BMR is your resting burn rate. TDEE is what you actually burn per day. Learn the difference and why you should always plan calories based on TDEE — not BMR."
+  },
+  "layout": {
+    "title": "BMR vs TDEE — What Is the Difference and Which Should You Use?",
+    "intro": "BMR is your resting burn rate — the calories your body needs at complete rest. TDEE is what you actually burn over an entire day, including movement, exercise and digestion. This is an important distinction: you should always plan calories based on TDEE, never BMR.",
+    "moneyPageHref": "/en/calculators/tdee-calculator",
+    "moneyPageLabel": "Calculate your TDEE directly — free calculator",
+    "breadcrumb": {
+      "hubLabel": "Articles",
+      "hubPath": "/en/articles",
+      "pageLabel": "BMR vs TDEE"
+    }
+  },
+  "schema": {
+    "headline": "BMR vs TDEE — What Is the Difference and Which Should You Use?",
+    "description": "BMR is your resting burn rate. TDEE is what you actually burn per day. Learn the difference and why you should always plan calories based on TDEE."
+  },
+  "body": [
+    {
+      "type": "h2",
+      "text": "What is BMR?",
+      "tight": true
+    },
+    {
+      "type": "p",
+      "text": "BMR (Basal Metabolic Rate) is the calories your body burns at complete rest — without movement, digestion or external activity. It is the energy that goes to keeping the heart, lungs, brain and organs running.",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": "BMR is calculated with formulas like Mifflin-St Jeor or Harris-Benedict, based on gender, age, weight and height. It is the starting point for all calorie calculations — but it is not the number you should eat at."
+    },
+    {
+      "type": "h2",
+      "text": "What is TDEE?"
+    },
+    {
+      "type": "p",
+      "text": "TDEE (Total Daily Energy Expenditure) is the calories you actually burn during a day — including all movement and activity. TDEE is calculated as:",
+      "flush": true
+    },
+    {
+      "type": "callout",
+      "text": "TDEE = BMR × Activity Factor (PAL)"
+    },
+    {
+      "type": "p",
+      "text": "PAL (Physical Activity Level) ranges from 1.3 for sedentary to 2.1 or more for very active. TDEE includes planned exercise (EAT), spontaneous movement (NEAT) and the energy cost of digestion (TEF)."
+    },
+    {
+      "type": "h2",
+      "text": "Comparison: BMR vs TDEE"
+    },
+    {
+      "type": "table",
+      "variant": "bordered",
+      "headers": ["Property", "BMR", "TDEE"],
+      "rows": [
+        ["What is measured?", "Resting burn rate", "Total daily burn"],
+        ["Includes activity?", "No", "Yes"],
+        ["Includes exercise?", "No", "Yes"],
+        ["Includes digestion?", "No", "Yes (TEF)"],
+        ["Used for?", "Calculation base", "Calorie goals and planning"],
+        ["Typical level (70 kg, active)", "~1,600 kcal", "~2,500 kcal"]
+      ]
+    },
+    {
+      "type": "h2",
+      "text": "Why you should always use TDEE"
+    },
+    {
+      "type": "p",
+      "text": "Planning calories based on BMR creates an uncontrolled deficit. Example: a person with BMR 1,700 kcal and TDEE 2,400 kcal who eats 1,700 kcal thinks they are at maintenance — but are actually in a 700 kcal deficit.",
+      "flush": true
+    },
+    {
+      "type": "p",
+      "text": "This leads to rapid weight loss initially, but with significant muscle mass loss and metabolic adaptation. The body lowers BMR to save energy, making it harder to sustain weight loss."
+    },
+    {
+      "type": "p",
+      "text": "Right approach: calculate your TDEE and create a controlled deficit of — sufficient for sustainable weight loss without sacrificing muscle mass."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can you eat at your BMR?",
+      "answer": "No — BMR is your absolute resting burn rate. You burn more energy just by standing, walking and eating (TEF ≈ 10% of calorie intake). Eating at BMR means an aggressive calorie deficit with risk of muscle loss and metabolic downregulation."
+    },
+    {
+      "question": "How large is the difference between BMR and TDEE?",
+      "answer": "Typically 20–80% depending on activity level. A sedentary person (PAL 1.2) has a TDEE that is 20% above BMR. An extremely active person (PAL 1.9) has a TDEE that is 90% above BMR. The average for a normally active adult is about 40–50% above BMR."
+    },
+    {
+      "question": "Do you calculate a calorie deficit against BMR or TDEE?",
+      "answer": "Always against TDEE. A calorie deficit is by definition eating below your total daily energy needs (TDEE). If you calculate a deficit against BMR you're actually eating enormously below your real needs."
+    },
+    {
+      "question": "Why is BMR used if TDEE is the relevant measure?",
+      "answer": "BMR is the starting point in the calculation — a measurable baseline value that is then multiplied by an activity factor to give TDEE. BMR alone is not useful for calorie planning, but it is the scientific foundation for all TDEE calculations."
+    },
+    {
+      "question": "Does the BMR/TDEE relationship change with age?",
+      "answer": "Yes. BMR drops about 1–2% per decade after age 20 (muscle mass loss). Activity level also tends to decrease. The result is that TDEE drops more than BMR in relative terms — but the BMR/TDEE ratio remains roughly the same if the activity pattern is unchanged."
+    }
+  ],
+  "sources": [
+    {
+      "text": "Mifflin MD, et al. A new predictive equation for resting energy expenditure. Am J Clin Nutr. 1990;51(2):241–247."
+    },
+    {
+      "text": "Ainsworth BE, et al. 2011 Compendium of Physical Activities. Med Sci Sports Exerc. 2011;43(8):1575–1581."
+    },
+    {
+      "text": "Pontzer H, et al. Daily energy expenditure through the human life course. Science. 2021;373(6556):808–812."
+    }
+  ],
+  "related": {
+    "calculatorsTitle": "Related calculators",
+    "articlesTitle": "Related articles",
+    "calculators": [
+      {
+        "href": "/en/calculators/tdee-calculator",
+        "label": "TDEE Calculator"
+      },
+      {
+        "href": "/en/calculators/bmr-calculator",
+        "label": "BMR Calculator"
+      },
+      {
+        "href": "/en/calculators/calorie-deficit-calculator",
+        "label": "Calorie Deficit Calculator"
+      }
+    ],
+    "articles": [
+      {
+        "href": "/en/articles/what-is-bmr",
+        "label": "What is BMR?"
+      },
+      {
+        "href": "/en/articles/what-is-tdee",
+        "label": "What is TDEE?"
+      },
+      {
+        "href": "/en/articles/calorie-deficit",
+        "label": "How large a calorie deficit?"
+      },
+      {
+        "href": "/en/articles/calorie-needs",
+        "label": "Calorie needs — complete guide"
+      }
+    ]
+  }
+}

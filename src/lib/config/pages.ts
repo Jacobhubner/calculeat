@@ -1,3 +1,6 @@
+import { ARTICLES } from '@/content/articles/registry'
+import type { ArticleMeta } from '@/content/articles/types'
+
 export type SupportedLocale = 'sv' | 'en' // utöka: | 'de' | 'es'
 
 export interface PageLocaleEntry {
@@ -22,7 +25,7 @@ export interface PageConfig {
 export const SITE_ORIGIN = 'https://calculeat.com'
 const BASE = SITE_ORIGIN
 
-export const PAGE_CONFIGS: PageConfig[] = [
+const STATIC_PAGE_CONFIGS: PageConfig[] = [
   // ── Kalkylatorer ─────────────────────────────────────────────────────────
   {
     key: 'tdee-calculator',
@@ -177,159 +180,7 @@ export const PAGE_CONFIGS: PageConfig[] = [
     changefreq: 'monthly',
   },
 
-  // ── Artiklar ──────────────────────────────────────────────────────────────
-  {
-    key: 'calorie-needs',
-    category: 'article',
-    locales: {
-      sv: { path: 'artiklar/kaloribehov', canonical: `${BASE}/artiklar/kaloribehov` },
-      en: { path: 'en/articles/calorie-needs', canonical: `${BASE}/en/articles/calorie-needs` },
-    },
-    xDefault: `${BASE}/artiklar/kaloribehov`,
-    priority: 0.8,
-    changefreq: 'monthly',
-  },
-  {
-    key: 'what-is-tdee',
-    category: 'article',
-    locales: {
-      sv: { path: 'artiklar/vad-ar-tdee', canonical: `${BASE}/artiklar/vad-ar-tdee` },
-      en: { path: 'en/articles/what-is-tdee', canonical: `${BASE}/en/articles/what-is-tdee` },
-    },
-    xDefault: `${BASE}/artiklar/vad-ar-tdee`,
-    priority: 0.7,
-    changefreq: 'monthly',
-  },
-  {
-    key: 'calorie-deficit',
-    category: 'article',
-    locales: {
-      sv: { path: 'artiklar/kaloribrist', canonical: `${BASE}/artiklar/kaloribrist` },
-      en: { path: 'en/articles/calorie-deficit', canonical: `${BASE}/en/articles/calorie-deficit` },
-    },
-    xDefault: `${BASE}/artiklar/kaloribrist`,
-    priority: 0.7,
-    changefreq: 'monthly',
-  },
-  {
-    key: 'bulk-and-cut',
-    category: 'article',
-    locales: {
-      sv: { path: 'artiklar/bulk-och-cut', canonical: `${BASE}/artiklar/bulk-och-cut` },
-      en: { path: 'en/articles/bulk-and-cut', canonical: `${BASE}/en/articles/bulk-and-cut` },
-    },
-    xDefault: `${BASE}/artiklar/bulk-och-cut`,
-    priority: 0.7,
-    changefreq: 'monthly',
-  },
-  {
-    key: 'reverse-diet',
-    category: 'article',
-    locales: {
-      sv: { path: 'artiklar/reverse-diet', canonical: `${BASE}/artiklar/reverse-diet` },
-      en: { path: 'en/articles/reverse-diet', canonical: `${BASE}/en/articles/reverse-diet` },
-    },
-    xDefault: `${BASE}/artiklar/reverse-diet`,
-    priority: 0.7,
-    changefreq: 'monthly',
-  },
-  {
-    key: 'what-is-bmr',
-    category: 'article',
-    locales: {
-      sv: { path: 'artiklar/vad-ar-bmr', canonical: `${BASE}/artiklar/vad-ar-bmr` },
-      en: { path: 'en/articles/what-is-bmr', canonical: `${BASE}/en/articles/what-is-bmr` },
-    },
-    xDefault: `${BASE}/artiklar/vad-ar-bmr`,
-    priority: 0.7,
-    changefreq: 'monthly',
-  },
-  {
-    key: 'bmr-vs-rmr',
-    category: 'article',
-    locales: {
-      sv: { path: 'artiklar/bmr-vs-rmr', canonical: `${BASE}/artiklar/bmr-vs-rmr` },
-      en: { path: 'en/articles/bmr-vs-rmr', canonical: `${BASE}/en/articles/bmr-vs-rmr` },
-    },
-    xDefault: `${BASE}/artiklar/bmr-vs-rmr`,
-    priority: 0.7,
-    changefreq: 'monthly',
-  },
-  {
-    key: 'bmr-vs-tdee',
-    category: 'article',
-    locales: {
-      sv: { path: 'artiklar/bmr-vs-tdee', canonical: `${BASE}/artiklar/bmr-vs-tdee` },
-      en: { path: 'en/articles/bmr-vs-tdee', canonical: `${BASE}/en/articles/bmr-vs-tdee` },
-    },
-    xDefault: `${BASE}/artiklar/bmr-vs-tdee`,
-    priority: 0.7,
-    changefreq: 'monthly',
-  },
-  {
-    key: 'bmi-vs-bodyfat',
-    category: 'article',
-    locales: {
-      sv: { path: 'artiklar/bmi-vs-kroppsfett', canonical: `${BASE}/artiklar/bmi-vs-kroppsfett` },
-      en: { path: 'en/articles/bmi-vs-body-fat', canonical: `${BASE}/en/articles/bmi-vs-body-fat` },
-    },
-    xDefault: `${BASE}/artiklar/bmi-vs-kroppsfett`,
-    priority: 0.7,
-    changefreq: 'monthly',
-  },
-  {
-    key: 'what-is-ffmi',
-    category: 'article',
-    locales: {
-      sv: { path: 'artiklar/vad-ar-ffmi', canonical: `${BASE}/artiklar/vad-ar-ffmi` },
-      en: { path: 'en/articles/what-is-ffmi', canonical: `${BASE}/en/articles/what-is-ffmi` },
-    },
-    xDefault: `${BASE}/artiklar/vad-ar-ffmi`,
-    priority: 0.7,
-    changefreq: 'monthly',
-  },
-  {
-    key: 'what-is-pal-and-met',
-    category: 'article',
-    locales: {
-      sv: { path: 'artiklar/vad-ar-pal-och-met', canonical: `${BASE}/artiklar/vad-ar-pal-och-met` },
-      en: {
-        path: 'en/articles/what-is-pal-and-met',
-        canonical: `${BASE}/en/articles/what-is-pal-and-met`,
-      },
-    },
-    xDefault: `${BASE}/artiklar/vad-ar-pal-och-met`,
-    priority: 0.7,
-    changefreq: 'monthly',
-  },
-  {
-    key: 'lbm-vs-ffm',
-    category: 'article',
-    locales: {
-      sv: { path: 'artiklar/lbm-vs-ffm', canonical: `${BASE}/artiklar/lbm-vs-ffm` },
-      en: { path: 'en/articles/lbm-vs-ffm', canonical: `${BASE}/en/articles/lbm-vs-ffm` },
-    },
-    xDefault: `${BASE}/artiklar/lbm-vs-ffm`,
-    priority: 0.7,
-    changefreq: 'monthly',
-  },
-  {
-    key: 'how-to-measure-bodyfat',
-    category: 'article',
-    locales: {
-      sv: {
-        path: 'artiklar/hur-mater-man-kroppsfett',
-        canonical: `${BASE}/artiklar/hur-mater-man-kroppsfett`,
-      },
-      en: {
-        path: 'en/articles/how-to-measure-body-fat',
-        canonical: `${BASE}/en/articles/how-to-measure-body-fat`,
-      },
-    },
-    xDefault: `${BASE}/artiklar/hur-mater-man-kroppsfett`,
-    priority: 0.7,
-    changefreq: 'monthly',
-  },
+  // ── Artiklar: genereras från src/content/articles/registry.ts (se nedan) ──
 
   // ── Jämförelser ───────────────────────────────────────────────────────────
   {
@@ -454,6 +305,26 @@ export const PAGE_CONFIGS: PageConfig[] = [
     priority: 0.5,
     changefreq: 'yearly',
   },
+]
+
+function articleToPageConfig(a: ArticleMeta): PageConfig {
+  return {
+    key: a.key,
+    category: 'article',
+    locales: {
+      sv: { path: a.paths.sv, canonical: `${BASE}/${a.paths.sv}` },
+      en: { path: a.paths.en, canonical: `${BASE}/${a.paths.en}` },
+    },
+    xDefault: `${BASE}/${a.paths.sv}`,
+    priority: a.priority ?? 0.7,
+    changefreq: 'monthly',
+  }
+}
+
+/** Alla publika sidor: statiska configs + artiklar genererade från registryt */
+export const PAGE_CONFIGS: PageConfig[] = [
+  ...STATIC_PAGE_CONFIGS,
+  ...ARTICLES.map(articleToPageConfig),
 ]
 
 const LOCALE_TO_HREFLANG: Record<SupportedLocale, string> = {
