@@ -8,7 +8,7 @@
     "check:domain": "node scripts/check-domain.mjs",
     "seo:sitemap": "tsx scripts/generate-sitemap.ts",
     "seo:og": "tsx scripts/og/generate-og.ts",
-    "prerender": "tsx scripts/prerender.ts",
+    "prerender": "puppeteer browsers install chrome && tsx scripts/prerender.ts",
     "prebuild": "npm run check:domain && npm run seo:sitemap && npm run seo:og",
     "build": "vite build",
     "postbuild": "npm run prerender",
