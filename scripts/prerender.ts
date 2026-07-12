@@ -18,6 +18,7 @@
 import { preview } from 'vite'
 import puppeteer, { Browser, Page } from 'puppeteer'
 import { mkdirSync, writeFileSync, copyFileSync, existsSync, rmSync, readdirSync } from 'node:fs'
+import { execSync } from 'node:child_process'
 import path from 'node:path'
 import { PAGE_CONFIGS } from '../src/lib/config/pages'
 import type { SupportedLocale } from '../src/lib/config/pages'
@@ -30,7 +31,43 @@ const DIST = path.join(process.cwd(), 'dist')
 // (med inbakade helmet-taggar) till rutter som ännu inte renderats → Helmets
 // reconciling mot främmande data-rh-taggar gör canonical-läget odeterministiskt.
 const STAGING = path.join(process.cwd(), 'dist-prerender')
-const CONCURRENCY = 6
+
+const IS_VERCEL = !!process.env.VERCEL
+// Vercels byggmaskin har 2 kärnor — fler parallella flikar ger inget där
+const CONCURRENCY = IS_VERCEL ? 4 : 6
+
+const EXTRA_ARGS = [
+  // Bakgrundsflikar får inte throttlas — rAF/timers måste ticka i alla workers
+  '--disable-background-timer-throttling',
+  '--disable-backgrounding-occluded-windows',
+  '--disable-renderer-backgrounding',
+]
+
+/**
+ * Vercels byggcontainer (Amazon Linux 2023) saknar systembiblioteken som
+ * Googles Chrome-binär är dynamiskt länkad mot (libnspr4 m.fl.) — därför
+ * används @sparticuz/chromium där: en Chromium byggd för Amazon Linux med
+ * allt inbakat. Deras Lambda-flaggor --single-process/--no-zygote filtreras
+ * bort — de behövs bara i Lambdas processmodell och är instabila med flera
+ * parallella browser-kontexter. Lokalt används puppeteers egna Chrome
+ * (cache i node_modules/.cache via .puppeteerrc.cjs).
+ */
+async function launchBrowser(): Promise<Browser> {
+  if (IS_VERCEL) {
+    const { default: chromium } = await import('@sparticuz/chromium')
+    const args = chromium.args.filter(a => a !== '--single-process' && a !== '--no-zygote')
+    return puppeteer.launch({
+      args: [...args, ...EXTRA_ARGS],
+      executablePath: await chromium.executablePath(),
+      headless: chromium.headless as 'shell',
+    })
+  }
+  // Idempotent — snabb no-op när Chrome redan finns i cachen
+  execSync('npx puppeteer browsers install chrome', { stdio: 'inherit' })
+  return puppeteer.launch({
+    args: ['--no-sandbox', '--disable-dev-shm-usage', ...EXTRA_ARGS],
+  })
+}
 
 interface RouteJob {
   urlPath: string
@@ -136,16 +173,7 @@ async function main() {
 
   const started = Date.now()
   const server = await preview({ preview: { port: PORT, strictPort: true } })
-  const browser = await puppeteer.launch({
-    args: [
-      '--no-sandbox',
-      '--disable-dev-shm-usage',
-      // Bakgrundsflikar får inte throttlas — rAF/timers måste ticka i alla workers
-      '--disable-background-timer-throttling',
-      '--disable-backgrounding-occluded-windows',
-      '--disable-renderer-backgrounding',
-    ],
-  })
+  const browser = await launchBrowser()
 
   const failures: string[] = []
   const queue = [...jobs]
