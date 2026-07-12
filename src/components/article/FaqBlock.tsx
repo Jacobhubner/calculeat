@@ -32,7 +32,9 @@ export function FaqBlock({ items, title = 'Vanliga frågor' }: FaqBlockProps) {
     <>
       <JsonLd schema={schema} />
       <section className="mt-10">
-        <h2 className="text-xl font-semibold text-neutral-900 mb-4">{title}</h2>
+        <h2 data-layout-text className="text-xl font-semibold text-neutral-900 mb-4">
+          {title}
+        </h2>
         <div className="divide-y divide-neutral-200 border border-neutral-200 rounded-xl overflow-hidden">
           {items.map((item, i) => (
             <details key={i} className="group">

@@ -48,9 +48,11 @@ for (const { key, lng, urlPath } of routes) {
     return !!h1 && h1.textContent.trim().length > 0
   })
   const text = await page.evaluate(() => {
-    // Byline ("Av X · Uppdaterad Y") är layouttext, inte artikelinnehåll —
-    // den fanns inte när golden togs och ska inte ingå i jämförelsen
-    document.querySelectorAll('[data-byline]').forEach(el => el.remove())
+    // Golden-skyddet gäller ARTIKELINNEHÅLL. Layouttext (byline, sektions-
+    // etiketter, CTA-texter, TOC m.m.) är taggad med data-byline eller
+    // data-layout-text i mallen och exkluderas ur jämförelsen — den får
+    // ändras fritt utan att bryta innehållsgarantin.
+    document.querySelectorAll('[data-byline],[data-layout-text]').forEach(el => el.remove())
     return document.querySelector('main').innerText
   })
   const normalized = text.replace(/\s+/g, ' ').trim()

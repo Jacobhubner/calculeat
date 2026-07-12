@@ -75,12 +75,12 @@ export function ArticleLayout({
             {/* Breadcrumb */}
             {breadcrumb && breadcrumb.length > 0 && (
               <nav className="flex items-center gap-2 text-sm text-neutral-500 mb-8">
-                <Link to="/" className="hover:text-neutral-700 transition-colors">
+                <Link data-layout-text to="/" className="hover:text-neutral-700 transition-colors">
                   CalculEat
                 </Link>
                 {breadcrumb.map((crumb, i) => (
                   <span key={i} className="flex items-center gap-2">
-                    <span>/</span>
+                    <span data-layout-text>/</span>
                     {i === breadcrumb.length - 1 ? (
                       <span className="text-neutral-700">{crumb.label}</span>
                     ) : (
@@ -151,9 +151,12 @@ export function ArticleLayout({
               <div className="rounded-2xl border border-primary-200 bg-primary-50 p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
                 <div className="flex-1">
                   <p className="font-semibold text-primary-900 mb-1">{moneyPageLabel}</p>
-                  <p className="text-sm text-primary-700">{t('moneyPageCta.subtitle')}</p>
+                  <p data-layout-text className="text-sm text-primary-700">
+                    {t('moneyPageCta.subtitle')}
+                  </p>
                 </div>
                 <Link
+                  data-layout-text
                   to={moneyPageHref}
                   className="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white font-medium px-5 py-2.5 rounded-xl transition-colors text-sm whitespace-nowrap"
                 >
@@ -178,13 +181,16 @@ export function ArticleLayout({
         {sources && sources.length > 0 && (
           <section className="bg-white py-10 border-b border-neutral-100">
             <div className="container mx-auto px-4 max-w-3xl">
-              <h2 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3">
+              <h2
+                data-layout-text
+                className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3"
+              >
                 {t('sources.heading')}
               </h2>
               <ol className="space-y-1">
                 {sources.map((s, i) => (
                   <li key={i} className="text-sm text-neutral-600">
-                    [{i + 1}]{' '}
+                    <span data-layout-text>[{i + 1}] </span>
                     {s.url ? (
                       <a
                         href={s.url}
@@ -212,7 +218,10 @@ export function ArticleLayout({
               <div className="grid sm:grid-cols-2 gap-10">
                 {relatedCalculators && relatedCalculators.length > 0 && (
                   <div>
-                    <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-4">
+                    <h3
+                      data-layout-text
+                      className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-4"
+                    >
                       {t('related.calculatorsHeading')}
                     </h3>
                     <div className="grid gap-3">
@@ -231,7 +240,10 @@ export function ArticleLayout({
                 )}
                 {relatedArticles && relatedArticles.length > 0 && (
                   <div>
-                    <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-4">
+                    <h3
+                      data-layout-text
+                      className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-4"
+                    >
                       {t('related.articlesHeading')}
                     </h3>
                     <div className="grid gap-3">
@@ -254,7 +266,7 @@ export function ArticleLayout({
         )}
 
         {/* Bottom CTA */}
-        <section className="bg-neutral-900 py-16 md:py-20">
+        <section data-layout-text className="bg-neutral-900 py-16 md:py-20">
           <div className="container mx-auto px-4 max-w-2xl text-center">
             <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">{t('bottomCta.h2')}</h2>
             <p className="text-neutral-400 text-base mb-8 max-w-md mx-auto">
@@ -281,7 +293,7 @@ export function ArticleLayout({
         </section>
 
         {/* Back link */}
-        <div className="bg-white py-8 border-t border-neutral-100">
+        <div data-layout-text className="bg-white py-8 border-t border-neutral-100">
           <div className="container mx-auto px-4 max-w-3xl">
             <Link
               to="/"
