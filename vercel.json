@@ -1,8 +1,9 @@
 {
+  "trailingSlash": false,
   "rewrites": [
     {
       "source": "/((?!locales/).*)",
-      "destination": "/index.html"
+      "destination": "/app-shell.html"
     }
   ]
 }

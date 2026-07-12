@@ -6,7 +6,8 @@ interface JsonLdProps {
 
 export function JsonLd({ schema }: JsonLdProps) {
   return (
-    <Helmet>
+    // defer={false}: se kommentar i Seo.tsx — krävs för prerendering
+    <Helmet defer={false}>
       <script type="application/ld+json">{JSON.stringify(schema)}</script>
     </Helmet>
   )

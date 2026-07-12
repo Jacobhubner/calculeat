@@ -15,6 +15,8 @@ export interface PageConfig {
   xDefault: string // x-default → svenska URL (ingen prefix = default)
   priority: number
   changefreq?: string
+  /** 'YYYY-MM-DD' — sätts redaktionellt; artiklar får den från registryts dateModified */
+  lastmod?: string
 }
 
 /**
@@ -318,6 +320,7 @@ function articleToPageConfig(a: ArticleMeta): PageConfig {
     xDefault: `${BASE}/${a.paths.sv}`,
     priority: a.priority ?? 0.7,
     changefreq: 'monthly',
+    lastmod: a.dateModified,
   }
 }
 

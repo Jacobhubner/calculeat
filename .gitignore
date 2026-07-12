@@ -34,3 +34,8 @@ dist-ssr
 
 .vercel
 nul
+
+# Genererat i prebuild (scripts/generate-sitemap.ts + scripts/og/generate-og.ts)
+public/sitemap.xml
+public/og/
+dist-prerender

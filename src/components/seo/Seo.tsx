@@ -1,8 +1,27 @@
 import { Helmet } from 'react-helmet-async'
+import { SITE_ORIGIN, getPageConfigByPath } from '@/lib/config/pages'
+import type { SupportedLocale } from '@/lib/config/pages'
 
 interface HreflangEntry {
   hreflang: string
   href: string
+}
+
+/**
+ * Härleder sidans genererade OG-bild (/og/{key}-{locale}.png, se
+ * scripts/og/generate-og.ts) från canonical-URL:en. Fallback: default-bilden.
+ */
+function defaultOgImage(canonical: string): string {
+  const pathname = new URL(canonical).pathname.replace(/^\//, '')
+  const cfg = getPageConfigByPath(pathname)
+  if (cfg) {
+    const locale =
+      (Object.entries(cfg.locales).find(([, e]) => e?.path === pathname)?.[0] as
+        | SupportedLocale
+        | undefined) ?? 'sv'
+    return `${SITE_ORIGIN}/og/${cfg.key}-${locale}.png`
+  }
+  return `${SITE_ORIGIN}/og/default.png`
 }
 
 interface SeoProps {
@@ -24,12 +43,15 @@ export function Seo({
   hreflangAlternates,
   locale,
 }: SeoProps) {
-  const image = ogImage ?? 'https://calculeat.com/og-default.png'
+  const image = ogImage ?? defaultOgImage(canonical)
   const ogLocale = locale ?? (canonical.includes('/en/') ? 'en_US' : 'sv_SE')
   const htmlLang = ogLocale.startsWith('en') ? 'en' : 'sv'
 
   return (
-    <Helmet htmlAttributes={{ lang: htmlLang }}>
+    // defer={false}: applicera head-taggar synkront vid commit. Default (rAF-
+    // deferred) gör att taggarna aldrig skrivs i bakgrundsflikar — vilket
+    // bryter prerendering och gör crawler-innehåll timing-beroende.
+    <Helmet defer={false} htmlAttributes={{ lang: htmlLang }}>
       <title>{title}</title>
       <meta name="description" content={description} />
       <link rel="canonical" href={canonical} />
@@ -44,6 +66,9 @@ export function Seo({
       <meta property="og:url" content={canonical} />
       <meta property="og:type" content={type} />
       <meta property="og:image" content={image} />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta property="og:image:alt" content={title} />
       <meta property="og:site_name" content="CalculEat" />
       <meta property="og:locale" content={ogLocale} />
 
