@@ -21,5 +21,8 @@
   "byline": {
     "authorPrefix": "By",
     "updatedLabel": "Updated"
+  },
+  "authorBox": {
+    "titles": ["Licensed Naprapath", "Certified Nutrition Advisor", "EQF Level 4 Personal Trainer"]
   }
 }

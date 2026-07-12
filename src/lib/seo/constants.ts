@@ -8,8 +8,8 @@ import { SITE_ORIGIN } from '@/lib/config/pages'
 export const AUTHOR = {
   name: 'Jacob Hübner',
   jobTitle: {
-    sv: 'Legitimerad naprapat, EQF Level 4 Personlig tränare och Kostrådgivare',
-    en: 'Licensed Naprapath, EQF Level 4 Personal Trainer and Nutrition Advisor',
+    sv: 'Legitimerad naprapat, certifierad kostrådgivare och personlig tränare EQF Level 4',
+    en: 'Licensed Naprapath, Certified Nutrition Advisor and EQF Level 4 Personal Trainer',
   },
   url: {
     sv: `${SITE_ORIGIN}/om-oss`,

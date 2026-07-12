@@ -56,6 +56,13 @@ export function ArticleLayout({
       )
     : undefined
 
+  const authorTitles = t('authorBox.titles', { returnObjects: true }) as unknown as string[]
+  const authorInitials = authorName
+    ?.split(/\s+/)
+    .map(n => n[0])
+    .join('')
+    .toUpperCase()
+
   return (
     <div className="min-h-screen flex flex-col">
       <SiteHeader />
@@ -92,20 +99,11 @@ export function ArticleLayout({
 
             <p className="text-lg md:text-xl text-neutral-600 leading-relaxed max-w-2xl">{intro}</p>
 
-            {(authorName || formattedDate) && (
-              // data-byline: exkluderas i golden-snapshot-diffen (layouttext, inte artikelinnehåll)
+            {formattedDate && (
+              // data-byline: exkluderas i golden-snapshot-diffen (layouttext, inte artikelinnehåll).
+              // Författarens namn visas i författarboxen under heron — inte här.
               <p data-byline className="text-sm text-neutral-500 mt-5">
-                {authorName && (
-                  <>
-                    {t('byline.authorPrefix')} <span className="font-medium">{authorName}</span>
-                  </>
-                )}
-                {authorName && formattedDate && <span className="mx-2">·</span>}
-                {formattedDate && (
-                  <>
-                    {t('byline.updatedLabel')} <time dateTime={dateModified}>{formattedDate}</time>
-                  </>
-                )}
+                {t('byline.updatedLabel')} <time dateTime={dateModified}>{formattedDate}</time>
               </p>
             )}
           </div>
@@ -114,6 +112,32 @@ export function ArticleLayout({
         {/* Article body */}
         <section className="bg-neutral-50 py-14 border-b border-neutral-100">
           <div className="container mx-auto px-4 max-w-3xl">
+            {/* Författarbox — endast titlar (ägarens beslut: inget foto/bio).
+                data-byline: layouttext, exkluderas i golden-snapshot-diffen */}
+            {authorName && Array.isArray(authorTitles) && (
+              <div
+                data-byline
+                className="mb-10 rounded-2xl border border-neutral-200 bg-white p-5 sm:p-6 flex gap-4 items-start shadow-sm"
+              >
+                <div className="h-14 w-14 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-bold text-lg flex-shrink-0">
+                  {authorInitials}
+                </div>
+                <div className="min-w-0">
+                  <p className="font-semibold text-neutral-900">{authorName}</p>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {authorTitles.map(title => (
+                      <span
+                        key={title}
+                        className="text-xs border border-primary-200 bg-primary-50 text-primary-800 rounded-full px-3 py-1"
+                      >
+                        {title}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
             <article className="prose prose-neutral max-w-none text-neutral-700 leading-relaxed space-y-6 text-base">
               {children}
             </article>

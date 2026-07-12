@@ -21,5 +21,8 @@
   "byline": {
     "authorPrefix": "Av",
     "updatedLabel": "Uppdaterad"
+  },
+  "authorBox": {
+    "titles": ["Legitimerad naprapat", "Certifierad kostrådgivare", "Personlig tränare EQF Level 4"]
   }
 }
