@@ -15,7 +15,7 @@ export function ArticleImage({
   width,
   height,
   webpSrc,
-  className = 'w-full max-w-md rounded-lg my-4 h-auto',
+  className = 'w-full max-w-md rounded-xl border border-neutral-200 shadow-xs my-8 h-auto',
 }: ArticleImageProps) {
   const img = (
     <img

@@ -1,6 +1,8 @@
 @import 'tailwindcss';
 
 @theme {
+  --shadow-card: 0 1px 2px 0 rgb(0 0 0 / 0.04), 0 2px 8px -2px rgb(0 0 0 / 0.06);
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --color-primary-50: hsl(108 100% 95%);
   --color-primary-100: hsl(108 100% 90%);
   --color-primary-200: hsl(108 100% 80%);

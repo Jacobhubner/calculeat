@@ -4,11 +4,19 @@
     "button": "Try the calculator"
   },
   "sources": {
-    "heading": "Sources"
+    "heading": "Scientific sources",
+    "note": "References to peer-reviewed research this article is based on."
   },
   "related": {
+    "heading": "Keep reading",
     "calculatorsHeading": "Related calculators",
     "articlesHeading": "Related articles"
+  },
+  "toc": {
+    "heading": "Contents"
+  },
+  "anchor": {
+    "copyLabel": "Copy link to section"
   },
   "bottomCta": {
     "h2": "Ready to put the knowledge into practice?",
@@ -20,7 +28,9 @@
   "faqTitle": "Frequently Asked Questions",
   "byline": {
     "authorPrefix": "By",
-    "updatedLabel": "Updated"
+    "updatedLabel": "Updated",
+    "readingTime_one": "{{count}} min read",
+    "readingTime_other": "{{count}} min read"
   },
   "authorBox": {
     "titles": [

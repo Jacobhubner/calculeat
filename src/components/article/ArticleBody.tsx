@@ -1,4 +1,5 @@
 import { Fragment } from 'react'
+import { Link2 } from 'lucide-react'
 import type { Block, ComponentName, RichText, Run } from '@/content/articles/types'
 import { ArticleImage } from './ArticleImage'
 import FFMIContent from '@/components/info/FFMIContent'
@@ -11,6 +12,16 @@ const COMPONENTS: Record<ComponentName, React.ComponentType> = {
   NormalizedFFMIContent,
   PALvsMETContent,
   BMRvsRMRContent,
+}
+
+// Cards-färgerna i innehålls-JSON (får ej ändras där) normaliseras till
+// palettens nyanser här i renderern
+const CARD_COLORS: Record<string, string> = {
+  'bg-green-50 border-green-200': 'bg-primary-50/60 border-primary-200/70',
+  'bg-blue-50 border-blue-200': 'bg-neutral-50 border-neutral-200',
+  'bg-yellow-50 border-yellow-200': 'bg-accent-50/60 border-accent-200/70',
+  'bg-red-50 border-red-200': 'bg-error-50 border-error-200',
+  'bg-primary-50 border-primary-200': 'bg-primary-50/60 border-primary-200/70',
 }
 
 function Rich({ text }: { text: RichText }) {
@@ -27,32 +38,66 @@ function Rich({ text }: { text: RichText }) {
   )
 }
 
-const LIST_GAP: Record<number, string> = { 1: 'space-y-1', 2: 'space-y-2', 4: 'space-y-4' }
+const LIST_GAP: Record<number, string> = {
+  1: 'space-y-1.5',
+  2: 'space-y-2.5',
+  4: 'space-y-4',
+}
 
-/** Renderar en artikels body-blocklista med samma klasser som de gamla TSX-sidorna */
-export function ArticleBody({ blocks }: { blocks: Block[] }) {
+// OBS: ingen `uppercase` här — tabellrubriker är artikelinnehåll och
+// text-transform ändrar renderad text (bryter golden-garantin)
+const TH_CLASS = 'px-4 py-3 text-left text-xs font-semibold text-neutral-500'
+
+interface ArticleBodyProps {
+  blocks: Block[]
+  /** blockindex → ankar-id för h2 (från deriveToc) */
+  headingIds?: Record<number, string>
+  /** aria-label för kopiera-länk-knappen på h2 (layouttext) */
+  anchorCopyLabel?: string
+}
+
+function copyAnchor(id: string) {
+  const url = `${window.location.origin}${window.location.pathname}#${id}`
+  void navigator.clipboard?.writeText(url)
+}
+
+/** Renderar en artikels body-blocklista — typografi och komponentspråk ägs här */
+export function ArticleBody({ blocks, headingIds, anchorCopyLabel }: ArticleBodyProps) {
   return (
     <>
       {blocks.map((block, i) => {
         switch (block.type) {
-          case 'h2':
+          case 'h2': {
+            const id = headingIds?.[i]
             return (
               <h2
                 key={i}
-                className={`text-xl font-semibold text-neutral-900 ${block.tight ? 'mt-6' : 'mt-8'} mb-3`}
+                id={id}
+                className={`group relative text-2xl font-semibold tracking-tight text-neutral-900 ${block.tight ? 'mt-8' : 'mt-12'} mb-4 scroll-mt-8`}
               >
+                {id && (
+                  <button
+                    type="button"
+                    aria-label={anchorCopyLabel}
+                    onClick={() => copyAnchor(id)}
+                    className="absolute -left-7 top-1/2 -translate-y-1/2 hidden md:flex h-5 w-5 items-center justify-center text-neutral-300 opacity-0 group-hover:opacity-100 hover:text-primary-600 transition-all"
+                  >
+                    <Link2 className="h-4 w-4" />
+                  </button>
+                )}
                 <Rich text={block.text} />
               </h2>
             )
+          }
           case 'h3':
             return (
-              <h3 key={i} className="text-base font-semibold text-neutral-900 mt-6 mb-2">
+              <h3 key={i} className="text-lg font-semibold text-neutral-900 mt-8 mb-3">
                 <Rich text={block.text} />
               </h3>
             )
           case 'p':
             return (
-              <p key={i} className={block.flush ? undefined : 'mt-3'}>
+              <p key={i} className={block.flush ? 'text-pretty' : 'mt-5 text-pretty'}>
                 <Rich text={block.text} />
               </p>
             )
@@ -61,7 +106,9 @@ export function ArticleBody({ blocks }: { blocks: Block[] }) {
               <p
                 key={i}
                 className={
-                  block.subtle ? 'text-sm text-neutral-500' : 'mt-3 text-sm text-neutral-600'
+                  block.subtle
+                    ? 'text-[15px] leading-relaxed text-neutral-500'
+                    : 'mt-3 text-[15px] leading-relaxed text-neutral-500'
                 }
               >
                 <Rich text={block.text} />
@@ -71,9 +118,9 @@ export function ArticleBody({ blocks }: { blocks: Block[] }) {
             return (
               <div
                 key={i}
-                className="bg-neutral-100 border border-neutral-200 rounded-lg px-4 py-3 my-4"
+                className="my-6 rounded-xl border border-neutral-200 bg-neutral-50 px-5 py-4"
               >
-                <p className="text-sm font-mono text-neutral-800">
+                <p className="font-mono text-[15px] leading-relaxed text-neutral-800">
                   <Rich text={block.text} />
                 </p>
               </div>
@@ -82,7 +129,7 @@ export function ArticleBody({ blocks }: { blocks: Block[] }) {
             return (
               <div
                 key={i}
-                className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-3 text-center font-medium text-neutral-900"
+                className="mt-6 rounded-xl border border-primary-200/70 bg-primary-50/60 px-5 py-4 text-center font-medium text-primary-950"
               >
                 <Rich text={block.text} />
               </div>
@@ -91,7 +138,7 @@ export function ArticleBody({ blocks }: { blocks: Block[] }) {
             return (
               <div
                 key={i}
-                className="bg-neutral-100 border border-neutral-200 rounded-lg px-4 py-3 my-4 space-y-1 text-sm"
+                className="my-6 rounded-xl border border-neutral-200 bg-neutral-50 px-5 py-4 space-y-1.5 text-[15px] leading-relaxed text-neutral-700"
               >
                 {block.items.map((item, j) => (
                   <p key={j}>
@@ -115,9 +162,12 @@ export function ArticleBody({ blocks }: { blocks: Block[] }) {
           case 'ol': {
             const Tag = block.type
             const gap = LIST_GAP[block.gap ?? 2]
-            const marker = block.type === 'ul' ? 'list-disc' : 'list-decimal'
+            const marker =
+              block.type === 'ul'
+                ? 'list-disc marker:text-primary-600'
+                : 'list-decimal marker:text-neutral-400 marker:font-medium'
             return (
-              <Tag key={i} className={`${gap} pl-4 ${marker} mt-2`}>
+              <Tag key={i} className={`${gap} pl-5 ${marker} mt-4`}>
                 {block.items.map((item, j) => (
                   <li key={j}>
                     <Rich text={item} />
@@ -127,44 +177,16 @@ export function ArticleBody({ blocks }: { blocks: Block[] }) {
             )
           }
           case 'table':
-            return block.variant === 'bordered' ? (
-              <div key={i} className="overflow-x-auto mt-3">
-                <table className="w-full text-sm border-collapse">
-                  <thead>
-                    <tr className="bg-neutral-100">
-                      {block.headers.map(h => (
-                        <th
-                          key={h}
-                          className="text-left p-3 border border-neutral-200 font-semibold"
-                        >
-                          {h}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {block.rows.map((row, r) => (
-                      <tr key={r} className="even:bg-neutral-50">
-                        {row.map((cell, c) => (
-                          <td
-                            key={c}
-                            className={`p-3 border border-neutral-200 ${c === 0 ? 'font-medium text-neutral-700' : 'text-neutral-600'}`}
-                          >
-                            {cell}
-                          </td>
-                        ))}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <div key={i} className="overflow-x-auto rounded-lg border border-neutral-200">
-                <table className="min-w-full text-sm">
+            return (
+              <div
+                key={i}
+                className="mt-6 overflow-x-auto rounded-xl border border-neutral-200 bg-white shadow-xs"
+              >
+                <table className={`${block.variant === 'plain' ? 'min-w-full' : 'w-full'} text-sm`}>
                   <thead className="bg-neutral-50 border-b border-neutral-200">
                     <tr>
                       {block.headers.map(h => (
-                        <th key={h} className="px-4 py-3 text-left font-medium text-neutral-700">
+                        <th key={h} className={TH_CLASS}>
                           {h}
                         </th>
                       ))}
@@ -172,14 +194,19 @@ export function ArticleBody({ blocks }: { blocks: Block[] }) {
                   </thead>
                   <tbody className="divide-y divide-neutral-100">
                     {block.rows.map((row, r) => (
-                      <tr key={r}>
+                      <tr
+                        key={r}
+                        className={
+                          block.variant === 'bordered' ? 'even:bg-neutral-50/60' : undefined
+                        }
+                      >
                         {row.map((cell, c) => (
                           <td
                             key={c}
                             className={
                               c === 0
-                                ? 'px-4 py-3 font-medium text-neutral-800 whitespace-nowrap'
-                                : 'px-4 py-3 text-neutral-600'
+                                ? `px-4 py-3 font-medium text-neutral-800 ${block.variant === 'plain' ? 'whitespace-nowrap' : ''}`
+                                : 'px-4 py-3 text-neutral-600 tabular-nums'
                             }
                           >
                             {cell}
@@ -193,18 +220,23 @@ export function ArticleBody({ blocks }: { blocks: Block[] }) {
             )
           case 'tableGrid':
             return (
-              <div key={i} className="mt-4 grid sm:grid-cols-2 gap-4">
+              <div key={i} className="mt-6 grid sm:grid-cols-2 gap-4">
                 {block.tables.map((t, j) => (
-                  <div key={j} className="rounded-lg border border-neutral-200 overflow-hidden">
-                    <div className="bg-neutral-100 px-4 py-2 text-sm font-semibold text-neutral-700">
+                  <div
+                    key={j}
+                    className="rounded-xl border border-neutral-200 bg-white shadow-xs overflow-hidden"
+                  >
+                    <div className="bg-neutral-50 border-b border-neutral-200 px-4 py-2.5 text-[13px] font-semibold text-neutral-800">
                       {t.header}
                     </div>
                     <table className="w-full text-sm">
                       <tbody>
                         {t.rows.map(([label, value], r) => (
-                          <tr key={r} className="border-t border-neutral-100">
-                            <td className="px-4 py-2 text-neutral-700">{label}</td>
-                            <td className="px-4 py-2 text-neutral-500 text-right">{value}</td>
+                          <tr key={r} className="border-t border-neutral-100 first:border-t-0">
+                            <td className="px-4 py-2.5 text-neutral-600">{label}</td>
+                            <td className="px-4 py-2.5 text-right font-medium text-neutral-800 tabular-nums">
+                              {value}
+                            </td>
                           </tr>
                         ))}
                       </tbody>
@@ -215,14 +247,21 @@ export function ArticleBody({ blocks }: { blocks: Block[] }) {
             )
           case 'cards':
             return (
-              <div key={i} className="space-y-4">
+              <div key={i} className="mt-6 space-y-4">
                 {block.items.map((card, j) => (
-                  <div key={j} className={`rounded-xl border p-4 ${card.color}`}>
-                    <div className="font-semibold text-neutral-800 mb-1">{card.title}</div>
+                  <div
+                    key={j}
+                    className={`rounded-xl border p-5 ${CARD_COLORS[card.color] ?? card.color}`}
+                  >
+                    <div className="font-semibold text-neutral-900">{card.title}</div>
                     {card.label && (
-                      <div className="text-xs text-neutral-500 mb-2">{card.label}</div>
+                      <div className="text-xs font-medium text-neutral-500 mt-0.5 mb-2">
+                        {card.label}
+                      </div>
                     )}
-                    <div className="text-sm text-neutral-700">{card.text}</div>
+                    <div className="text-[15px] leading-relaxed text-neutral-700 mt-1">
+                      {card.text}
+                    </div>
                   </div>
                 ))}
               </div>

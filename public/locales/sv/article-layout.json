@@ -4,11 +4,19 @@
     "button": "Prova kalkylatorn"
   },
   "sources": {
-    "heading": "Källor"
+    "heading": "Vetenskapliga källor",
+    "note": "Referenser till granskad forskning som artikeln bygger på."
   },
   "related": {
+    "heading": "Läs vidare",
     "calculatorsHeading": "Relaterade kalkylatorer",
     "articlesHeading": "Relaterade artiklar"
+  },
+  "toc": {
+    "heading": "Innehåll"
+  },
+  "anchor": {
+    "copyLabel": "Kopiera länk till avsnittet"
   },
   "bottomCta": {
     "h2": "Redo att omsätta kunskapen i praktiken?",
@@ -20,7 +28,9 @@
   "faqTitle": "Vanliga frågor",
   "byline": {
     "authorPrefix": "Av",
-    "updatedLabel": "Uppdaterad"
+    "updatedLabel": "Uppdaterad",
+    "readingTime_one": "{{count}} min läsning",
+    "readingTime_other": "{{count}} min läsning"
   },
   "authorBox": {
     "titles": ["Legitimerad naprapat", "Certifierad kostrådgivare", "Personlig tränare EQF Level 4"]
