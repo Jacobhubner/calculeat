@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { ArrowLeft, ArrowRight, ChevronRight, FlaskConical } from 'lucide-react'
+import { ArrowLeft, ArrowRight, BadgeCheck, ChevronRight, FlaskConical } from 'lucide-react'
 import SiteHeader from '@/components/layout/SiteHeader'
 import SiteFooter from '@/components/layout/SiteFooter'
 import type { FaqItem } from './FaqBlock'
@@ -64,11 +64,6 @@ export function ArticleLayout({
     : undefined
 
   const authorTitles = t('authorBox.titles', { returnObjects: true }) as unknown as string[]
-  const authorInitials = authorName
-    ?.split(/\s+/)
-    .map(n => n[0])
-    .join('')
-    .toUpperCase()
 
   const hasToc = !!tocItems && tocItems.length >= 3
 
@@ -146,29 +141,19 @@ export function ArticleLayout({
           <div className="xl:grid xl:grid-cols-[1fr_minmax(0,42rem)_1fr]">
             <div aria-hidden className="hidden xl:block" />
             <div className="container mx-auto px-4 max-w-2xl xl:max-w-none xl:w-full">
-              {/* Författar-byline (endast titlar — ägarens beslut) */}
+              {/* Författar-byline — diskret enrads (endast titlar, ägarens beslut) */}
               {authorName && Array.isArray(authorTitles) && (
-                <div
+                <p
                   data-byline
-                  className="mb-10 flex items-start gap-3.5 border-b border-neutral-200/70 pb-8"
+                  className="mb-10 flex flex-wrap items-center gap-x-2 gap-y-1 border-b border-neutral-200/70 pb-6 text-[13px] leading-relaxed text-neutral-500"
                 >
-                  <div className="h-11 w-11 rounded-full bg-gradient-primary text-white flex items-center justify-center font-semibold text-sm flex-shrink-0 ring-2 ring-white shadow-xs outline outline-1 outline-primary-200/60">
-                    {authorInitials}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold text-neutral-900">{authorName}</p>
-                    <div className="mt-1.5 flex flex-wrap gap-1.5">
-                      {authorTitles.map(title => (
-                        <span
-                          key={title}
-                          className="text-[11px] font-medium rounded-full border border-primary-200/70 bg-primary-50/70 text-primary-800 px-2.5 py-0.5"
-                        >
-                          {title}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
+                  <BadgeCheck aria-hidden className="h-4 w-4 text-primary-600 flex-shrink-0" />
+                  <span className="font-medium text-neutral-800">{authorName}</span>
+                  <span aria-hidden className="text-neutral-300">
+                    ·
+                  </span>
+                  <span>{authorTitles.join(' · ')}</span>
+                </p>
               )}
 
               {hasToc && (
