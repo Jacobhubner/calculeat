@@ -1,5 +1,9 @@
 {
   "home": {
+    "seo": {
+      "title": "CalculEat — Kalorikalkylator och matloggning",
+      "description": "CalculEat är en gratis svensk nutritionsapp med TDEE-kalkylator, BMI-kalkylator, matloggning och recept. Räkna ut ditt kaloribehov och nå dina mål."
+    },
     "hero": {
       "h1": "Ta kontroll över din kost.",
       "h1Highlight": "Enkelt med CalculEat.",

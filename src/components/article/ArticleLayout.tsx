@@ -132,7 +132,19 @@ export function ArticleLayout({
               <ol className="space-y-1">
                 {sources.map((s, i) => (
                   <li key={i} className="text-sm text-neutral-600">
-                    [{i + 1}] {s.text}
+                    [{i + 1}]{' '}
+                    {s.url ? (
+                      <a
+                        href={s.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline decoration-neutral-300 underline-offset-2 hover:text-neutral-800 transition-colors"
+                      >
+                        {s.text}
+                      </a>
+                    ) : (
+                      s.text
+                    )}
                   </li>
                 ))}
               </ol>

@@ -26,9 +26,10 @@ export function Seo({
 }: SeoProps) {
   const image = ogImage ?? 'https://calculeat.com/og-default.png'
   const ogLocale = locale ?? (canonical.includes('/en/') ? 'en_US' : 'sv_SE')
+  const htmlLang = ogLocale.startsWith('en') ? 'en' : 'sv'
 
   return (
-    <Helmet>
+    <Helmet htmlAttributes={{ lang: htmlLang }}>
       <title>{title}</title>
       <meta name="description" content={description} />
       <link rel="canonical" href={canonical} />

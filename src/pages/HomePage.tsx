@@ -1,6 +1,7 @@
 import { Link, Navigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/contexts/AuthContext'
+import { Seo } from '@/components/seo/Seo'
 import SiteHeader from '@/components/layout/SiteHeader'
 import SiteFooter from '@/components/layout/SiteFooter'
 import { HeroSection } from '@/components/HeroSection'
@@ -18,6 +19,11 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <Seo
+        title={t('marketing:home.seo.title')}
+        description={t('marketing:home.seo.description')}
+        canonical="https://calculeat.com/"
+      />
       <SiteHeader />
 
       <main>

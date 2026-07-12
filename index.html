@@ -2,19 +2,14 @@
 <html lang="sv">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--
+      Fallback-title för rutter utan <Seo> (t.ex. /login, /app/*).
+      description/og/canonical sätts per sida via react-helmet-async i <Seo> —
+      lägg ALDRIG tillbaka dem statiskt här: Helmet äger bara sina egna taggar,
+      så statiska dubbletter följer med i prerendrad HTML och förvirrar crawlers.
+    -->
     <title>CalculEat — Kalorikalkylator och matloggning</title>
-    <meta name="description" content="CalculEat är en gratis svensk nutritionsapp med TDEE-kalkylator, BMI-kalkylator, matloggning och recept. Räkna ut ditt kaloribehov och nå dina mål." />
-    <meta property="og:title" content="CalculEat — Kalorikalkylator och matloggning" />
-    <meta property="og:description" content="Gratis TDEE-kalkylator, matloggning och nutritionskalkylatorer. Räkna ut ditt kaloribehov och nå dina mål." />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://calculeat.com/" />
-    <meta property="og:locale" content="sv_SE" />
-    <meta property="og:site_name" content="CalculEat" />
-    <link rel="canonical" href="https://calculeat.com/" />
   </head>
   <body>
     <div id="root"></div>

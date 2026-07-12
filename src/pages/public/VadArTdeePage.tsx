@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Seo } from '@/components/seo/Seo'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { ArticleLayout } from '@/components/article/ArticleLayout'
+import { ArticleImage } from '@/components/article/ArticleImage'
 import { getPageConfigByKey, getHreflangAlternates } from '@/lib/config/pages'
 import type { FaqItem } from '@/components/article/FaqBlock'
 
@@ -83,10 +84,11 @@ export default function VadArTdeePage() {
         <div className="bg-neutral-100 border border-neutral-200 rounded-lg px-4 py-3 my-4">
           <p className="text-sm font-mono text-neutral-800">{t('what-is-tdee.body.s1.formula')}</p>
         </div>
-        <img
+        <ArticleImage
           src="/TDEE.png"
           alt={t('what-is-tdee.body.s1.imgAlt')}
-          className="w-full max-w-md rounded-lg my-4"
+          width={890}
+          height={1017}
         />
 
         <h3 className="text-base font-semibold text-neutral-900 mt-6 mb-2">

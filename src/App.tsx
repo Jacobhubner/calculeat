@@ -85,6 +85,20 @@ const BmiVsKroppsfettPage = lazyWithRetry(() => import('./pages/public/BmiVsKrop
 const VadArFfmiPage = lazyWithRetry(() => import('./pages/public/VadArFfmiPage'))
 const VadArPalOchMetPage = lazyWithRetry(() => import('./pages/public/VadArPalOchMetPage'))
 
+const MyFitnessPalVsCalculEatPage = lazyWithRetry(
+  () => import('./pages/public/MyFitnessPalVsCalculEatPage')
+)
+const LifesumVsCalculEatPage = lazyWithRetry(() => import('./pages/public/LifesumVsCalculEatPage'))
+const YazioVsCalculEatPage = lazyWithRetry(() => import('./pages/public/YazioVsCalculEatPage'))
+const MacroFactorVsCalculEatPage = lazyWithRetry(
+  () => import('./pages/public/MacroFactorVsCalculEatPage')
+)
+const BastaKaloriappenPage = lazyWithRetry(() => import('./pages/public/BastaKaloriappenPage'))
+const BastaTdeeKalkylatornPage = lazyWithRetry(
+  () => import('./pages/public/BastaTdeeKalkylatornPage')
+)
+const OmOssPage = lazyWithRetry(() => import('./pages/public/OmOssPage'))
+
 const KalkylatornHubPage = lazyWithRetry(() => import('./pages/public/KalkylatornHubPage'))
 const ArtikelnHubPage = lazyWithRetry(() => import('./pages/public/ArtikelnHubPage'))
 const LbmVsFfmPage = lazyWithRetry(() => import('./pages/public/LbmVsFfmPage'))
@@ -268,6 +282,44 @@ function App() {
                       path="/en/articles/how-to-measure-body-fat"
                       element={<HurMatarManKroppsfettPage />}
                     />
+                    <Route
+                      path="/jamfor/myfitnesspal-vs-calculeat"
+                      element={<MyFitnessPalVsCalculEatPage />}
+                    />
+                    <Route
+                      path="/en/compare/myfitnesspal-vs-calculeat"
+                      element={<MyFitnessPalVsCalculEatPage />}
+                    />
+                    <Route
+                      path="/jamfor/lifesum-vs-calculeat"
+                      element={<LifesumVsCalculEatPage />}
+                    />
+                    <Route
+                      path="/en/compare/lifesum-vs-calculeat"
+                      element={<LifesumVsCalculEatPage />}
+                    />
+                    <Route path="/jamfor/yazio-vs-calculeat" element={<YazioVsCalculEatPage />} />
+                    <Route
+                      path="/en/compare/yazio-vs-calculeat"
+                      element={<YazioVsCalculEatPage />}
+                    />
+                    <Route
+                      path="/jamfor/macrofactor-vs-calculeat"
+                      element={<MacroFactorVsCalculEatPage />}
+                    />
+                    <Route
+                      path="/en/compare/macrofactor-vs-calculeat"
+                      element={<MacroFactorVsCalculEatPage />}
+                    />
+                    <Route path="/basta-kaloriappen" element={<BastaKaloriappenPage />} />
+                    <Route path="/en/compare/best-calorie-app" element={<BastaKaloriappenPage />} />
+                    <Route path="/basta-tdee-kalkylatorn" element={<BastaTdeeKalkylatornPage />} />
+                    <Route
+                      path="/en/compare/best-tdee-calculator"
+                      element={<BastaTdeeKalkylatornPage />}
+                    />
+                    <Route path="/om-oss" element={<OmOssPage />} />
+                    <Route path="/en/about" element={<OmOssPage />} />
                     <Route path="/kalkylatorer" element={<KalkylatornHubPage />} />
                     <Route path="/en/calculators" element={<KalkylatornHubPage />} />
                     <Route path="/artiklar" element={<ArtikelnHubPage />} />

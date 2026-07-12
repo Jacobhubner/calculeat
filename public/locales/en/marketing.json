@@ -1,5 +1,9 @@
 {
   "home": {
+    "seo": {
+      "title": "CalculEat — Calorie Calculator and Food Logging",
+      "description": "CalculEat is a free nutrition app with a TDEE calculator, BMI calculator, food logging and recipes. Calculate your calorie needs and reach your goals."
+    },
     "hero": {
       "h1": "Take control of your diet.",
       "h1Highlight": "Simple with CalculEat.",
