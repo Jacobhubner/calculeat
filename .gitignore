@@ -39,3 +39,6 @@ nul
 public/sitemap.xml
 public/og/
 dist-prerender
+
+# MCP-konfiguration (innehåller Supabase access token)
+.mcp.json
