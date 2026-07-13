@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Sparkles, Loader2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { supabase } from '@/lib/supabase'
+import { trackConversion } from '@/lib/analytics'
 import { FREE_LIMITS, PremiumLimitKey } from '@/lib/constants/entitlements'
 
 interface UpgradeModalProps {
@@ -41,8 +42,14 @@ export function UpgradeModal({ open, onOpenChange, limitKey }: UpgradeModalProps
   const { t } = useTranslation('premium')
   const [loadingPlan, setLoadingPlan] = useState<'monthly' | 'yearly' | null>(null)
 
+  // Funnel-steg 1: paywallen visades (med ev. kvot som utlöste den)
+  useEffect(() => {
+    if (open) trackConversion('paywall_shown', limitKey ? { limitKey } : undefined)
+  }, [open, limitKey])
+
   const startCheckout = async (plan: 'monthly' | 'yearly') => {
     setLoadingPlan(plan)
+    trackConversion('checkout_started', { plan })
     try {
       const { data, error } = await supabase.functions.invoke('create-checkout-session', {
         body: { plan },

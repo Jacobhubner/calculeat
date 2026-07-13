@@ -75,6 +75,7 @@ export default function SiteFooter() {
       title: t('footer.sections.product'),
       links: [
         { label: t('footer.links.dashboard'), to: '/app' },
+        { label: t('footer.links.pricing'), to: loc('/premium', '/en/premium') },
         { label: t('footer.links.aboutus'), to: '/om-oss' },
       ],
     },

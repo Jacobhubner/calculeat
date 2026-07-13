@@ -16,6 +16,8 @@ import { useNavigate } from 'react-router-dom'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDailySummary } from '@/hooks/useDailySummary'
+import { useEntitlements } from '@/hooks/useEntitlements'
+import { useUpgradeModalStore } from '@/stores/upgradeModalStore'
 
 export default function DashboardPage() {
   const navigate = useNavigate()
@@ -26,6 +28,8 @@ export default function DashboardPage() {
   const { data: todayLog } = useTodayLog()
   const { showOnboarding, setShowOnboarding, completeOnboarding, saveStep, resumeStep } =
     useOnboarding()
+  const { plan } = useEntitlements()
+  const openUpgradeModal = useUpgradeModalStore(state => state.open)
 
   const profile = allProfiles?.find(p => p.id === activeProfile?.id)
 
@@ -77,7 +81,15 @@ export default function DashboardPage() {
   const ringMin = profile?.calories_min ?? Math.round(targetMax * 0.85)
 
   const handleOnboardingClose = (open: boolean) => {
-    if (!open) completeOnboarding()
+    if (!open) {
+      completeOnboarding()
+      // Fas 5-touchpoint: visa premiumerbjudandet en gång direkt efter
+      // avslutad onboarding — men bara för free (no-op under soft launch,
+      // där alla behandlas som founder)
+      if (plan === 'free') {
+        openUpgradeModal()
+      }
+    }
     setShowOnboarding(open)
   }
 

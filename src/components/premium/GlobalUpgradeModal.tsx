@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { queryClient } from '@/lib/react-query'
+import { trackConversion } from '@/lib/analytics'
 import { useUpgradeModalStore } from '@/stores/upgradeModalStore'
 import { UpgradeModal } from './UpgradeModal'
 
@@ -40,6 +41,7 @@ export function GlobalUpgradeModal() {
 
     if (checkoutResult === 'success') {
       toast.success(t('checkout.success'))
+      trackConversion('checkout_success')
       // Webhooken har (eller hinner strax) skriva prenumerationsraden —
       // hämta om entitlements + prenumerationen så gates och
       // inställningskortet uppdateras utan omladdning
@@ -47,6 +49,7 @@ export function GlobalUpgradeModal() {
       queryClient.invalidateQueries({ queryKey: ['my-subscription'] })
     } else if (checkoutResult === 'cancelled') {
       toast.info(t('checkout.cancelled'))
+      trackConversion('checkout_cancelled')
     }
   }, [checkoutResult, ready, t])
 

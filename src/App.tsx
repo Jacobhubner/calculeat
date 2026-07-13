@@ -93,6 +93,7 @@ const BastaTdeeKalkylatornPage = lazyWithRetry(
   () => import('./pages/public/BastaTdeeKalkylatornPage')
 )
 const OmOssPage = lazyWithRetry(() => import('./pages/public/OmOssPage'))
+const PremiumPage = lazyWithRetry(() => import('./pages/public/PremiumPage'))
 
 const KalkylatornHubPage = lazyWithRetry(() => import('./pages/public/KalkylatornHubPage'))
 const ArtikelnHubPage = lazyWithRetry(() => import('./pages/public/ArtikelnHubPage'))
@@ -287,6 +288,8 @@ function App() {
                     />
                     <Route path="/om-oss" element={<OmOssPage />} />
                     <Route path="/en/about" element={<OmOssPage />} />
+                    <Route path="/premium" element={<PremiumPage />} />
+                    <Route path="/en/premium" element={<PremiumPage />} />
                     <Route path="/kalkylatorer" element={<KalkylatornHubPage />} />
                     <Route path="/en/calculators" element={<KalkylatornHubPage />} />
                     <Route path="/artiklar" element={<ArtikelnHubPage />} />

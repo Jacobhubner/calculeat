@@ -51,5 +51,32 @@
         { "href": "/register", "label": "Create free account" }
       ]
     }
+  },
+  "premium": {
+    "seo": {
+      "title": "CalculEat Premium — Pricing and features | CalculEat",
+      "description": "Compare CalculEat Free and Premium: unlimited history, all TDEE formulas, body composition methods, and CSV export. 45 kr/month or 399 kr/year with a 7-day free trial."
+    },
+    "schema": {
+      "pageDescription": "Subscription that unlocks unlimited history, every calculation formula, and advanced analysis in the CalculEat nutrition app."
+    },
+    "breadcrumb": "Premium",
+    "h1": "CalculEat Premium",
+    "intro": "The core of CalculEat is free — unlimited food logging, barcode scanning, and the Swedish Food Agency database. Premium unlocks full precision: unlimited history, every calculation formula, and advanced analysis.",
+    "plans": {
+      "monthlyName": "Monthly",
+      "monthlyPrice": "45 kr",
+      "monthlyPeriod": "per month",
+      "yearlyName": "Yearly",
+      "yearlyPrice": "399 kr",
+      "yearlyPeriod": "per year",
+      "yearlyBadge": "Save 26%",
+      "trial": "7-day free trial — cancel anytime.",
+      "cta": "Create free account",
+      "ctaHint": "You upgrade directly in the app.",
+      "login": "Already have an account? Sign in"
+    },
+    "tableTitle": "Compare Free and Premium",
+    "dataPromise": "Your data is always saved — regardless of plan. Downgrading never deletes anything."
   }
 }

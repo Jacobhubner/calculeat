@@ -48,5 +48,32 @@
         { "href": "/register", "label": "Skapa gratis konto" }
       ]
     }
+  },
+  "premium": {
+    "seo": {
+      "title": "CalculEat Premium — Priser och funktioner | CalculEat",
+      "description": "Jämför CalculEat Gratis och Premium: obegränsad historik, alla TDEE-formler, kroppskompositionsmetoder och CSV-export. 45 kr/mån eller 399 kr/år med 7 dagars gratis provperiod."
+    },
+    "schema": {
+      "pageDescription": "Prenumeration som låser upp obegränsad historik, alla beräkningsformler och avancerad analys i nutritionsappen CalculEat."
+    },
+    "breadcrumb": "Premium",
+    "h1": "CalculEat Premium",
+    "intro": "Kärnan i CalculEat är gratis — obegränsad matloggning, streckkodsskanning och Livsmedelsverkets databas. Premium låser upp full precision: obegränsad historik, alla beräkningsformler och avancerad analys.",
+    "plans": {
+      "monthlyName": "Månadsvis",
+      "monthlyPrice": "45 kr",
+      "monthlyPeriod": "per månad",
+      "yearlyName": "Årsvis",
+      "yearlyPrice": "399 kr",
+      "yearlyPeriod": "per år",
+      "yearlyBadge": "Spara 26 %",
+      "trial": "7 dagars gratis provperiod — avsluta när som helst.",
+      "cta": "Skapa gratis konto",
+      "ctaHint": "Du uppgraderar sedan direkt i appen.",
+      "login": "Har du redan ett konto? Logga in"
+    },
+    "tableTitle": "Jämför Gratis och Premium",
+    "dataPromise": "Din data sparas alltid — oavsett plan. En nedgradering raderar aldrig någonting."
   }
 }

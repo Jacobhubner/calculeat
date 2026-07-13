@@ -307,6 +307,17 @@ const STATIC_PAGE_CONFIGS: PageConfig[] = [
     priority: 0.5,
     changefreq: 'yearly',
   },
+  {
+    key: 'premium',
+    category: 'other',
+    locales: {
+      sv: { path: 'premium', canonical: `${BASE}/premium` },
+      en: { path: 'en/premium', canonical: `${BASE}/en/premium` },
+    },
+    xDefault: `${BASE}/premium`,
+    priority: 0.8,
+    changefreq: 'monthly',
+  },
 ]
 
 function articleToPageConfig(a: ArticleMeta): PageConfig {
