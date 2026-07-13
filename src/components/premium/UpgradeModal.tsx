@@ -73,6 +73,7 @@ export function UpgradeModal({ open, onOpenChange, limitKey }: UpgradeModalProps
     'tdee',
     'calibration',
     'bodyComp',
+    'equations',
     'trends',
     'csv',
   ] as const

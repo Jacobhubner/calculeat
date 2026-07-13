@@ -53,6 +53,7 @@
           "free": "Vikttrend",
           "premium": "Alla + periodjämförelser"
         },
+        "equations": { "label": "Exakta ekvationer", "free": "—", "premium": "Ingår" },
         "csv": { "label": "CSV-export", "free": "—", "premium": "Ingår" }
       }
     },

@@ -49,6 +49,7 @@
           "free": "Weight trend",
           "premium": "All + period comparisons"
         },
+        "equations": { "label": "Exact equations", "free": "—", "premium": "Included" },
         "csv": { "label": "CSV export", "free": "—", "premium": "Included" }
       }
     },
