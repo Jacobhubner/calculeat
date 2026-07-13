@@ -58,6 +58,7 @@
     "allTime": "All",
     "periodDays": "{{days}} d",
     "completedDays": "Completed days",
+    "completedDaysOf": "of {{days}} days completed",
     "avgPerDay": "Daily average",
     "avgCaloriesLabel": "Calories",
     "avgFatLabel": "Fat",

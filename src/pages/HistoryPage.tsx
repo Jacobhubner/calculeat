@@ -368,7 +368,11 @@ export default function HistoryPage() {
                 </div>
                 <div>
                   <div className="text-2xl font-bold text-neutral-900">{completedDays}</div>
-                  <div className="text-sm text-neutral-600">{t('stats.completedDays')}</div>
+                  <div className="text-sm text-neutral-600">
+                    {statsPeriod === null
+                      ? t('stats.completedDays')
+                      : t('stats.completedDaysOf', { days: statsPeriod })}
+                  </div>
                 </div>
                 <div className="border-t pt-3">
                   <div className="text-xs font-medium text-neutral-500 uppercase tracking-wide mb-2">

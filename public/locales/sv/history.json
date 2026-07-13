@@ -58,6 +58,7 @@
     "allTime": "Allt",
     "periodDays": "{{days}} d",
     "completedDays": "Avslutade dagar",
+    "completedDaysOf": "av {{days}} dagar avslutade",
     "avgPerDay": "Snitt per dag",
     "avgCaloriesLabel": "Kalorier",
     "avgFatLabel": "Fett",
