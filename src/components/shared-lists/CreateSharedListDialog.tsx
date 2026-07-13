@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useFriends } from '@/hooks/useFriends'
 import { useCreateSharedList } from '@/hooks/useSharedLists'
+import { handlePremiumLimitError } from '@/stores/upgradeModalStore'
 import { toast } from 'sonner'
 import type { Friend } from '@/lib/types/friends'
 
@@ -49,10 +50,20 @@ export function CreateSharedListDialog({
   async function handleCreate() {
     if (!listName.trim()) return
 
-    const result = await createList({
-      name: listName.trim(),
-      friendUserId: selectedFriend?.friend_id,
-    })
+    let result
+    try {
+      result = await createList({
+        name: listName.trim(),
+        friendUserId: selectedFriend?.friend_id,
+      })
+    } catch (error) {
+      if (handlePremiumLimitError(error)) {
+        handleClose()
+        return
+      }
+      toast.error('Kunde inte skapa listan. Försök igen.')
+      return
+    }
 
     if (result?.success) {
       const msg = selectedFriend

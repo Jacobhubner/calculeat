@@ -40,6 +40,7 @@ import {
 import { useFoodItems, type FoodItem } from '@/hooks/useFoodItems'
 import { useFoodNutrientsBatch } from '@/hooks/useFoodNutrients'
 import { useCreateRecipe, useUpdateRecipe, type Recipe } from '@/hooks/useRecipes'
+import { handlePremiumLimitError } from '@/stores/upgradeModalStore'
 import {
   useCreateSharedListRecipe,
   useUpdateSharedListRecipe,
@@ -573,6 +574,10 @@ export function RecipeCalculatorModal({
       onOpenChange(false)
       onSuccess?.()
     } catch (err) {
+      if (handlePremiumLimitError(err)) {
+        onOpenChange(false)
+        return
+      }
       console.error('Failed to save recipe:', err)
       toast.error(t('modal.saveError'))
     }

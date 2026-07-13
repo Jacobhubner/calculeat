@@ -14,6 +14,7 @@ import { AlertTriangle } from 'lucide-react'
 import { toast } from 'sonner'
 import type { MealEntry } from '@/hooks/useDailyLogs'
 import { useCreateSavedMeal, useSavedMeals, useDeleteSavedMeal } from '@/hooks/useSavedMeals'
+import { handlePremiumLimitError } from '@/stores/upgradeModalStore'
 import { generateDefaultMealName, transformMealToSavedMeal } from '@/lib/meal-utils'
 
 interface SaveMealDialogProps {
@@ -85,6 +86,10 @@ export default function SaveMealDialog({ open, onOpenChange, mealEntry }: SaveMe
       toast.success(t('saveMeal.successSaved', { name: trimmedName }))
       onOpenChange(false)
     } catch (error) {
+      if (handlePremiumLimitError(error)) {
+        onOpenChange(false)
+        return
+      }
       console.error('Error saving meal:', error)
       toast.error(t('saveMeal.errorSaveFailed'))
     }
@@ -148,9 +153,7 @@ export default function SaveMealDialog({ open, onOpenChange, mealEntry }: SaveMe
                   <h4 className="font-semibold text-yellow-900 mb-1">
                     {t('saveMeal.duplicateWarningTitle', { name: mealName.trim() })}
                   </h4>
-                  <p className="text-sm text-yellow-800">
-                    {t('saveMeal.duplicateWarningText')}
-                  </p>
+                  <p className="text-sm text-yellow-800">{t('saveMeal.duplicateWarningText')}</p>
                 </div>
               </AlertDescription>
             </Alert>

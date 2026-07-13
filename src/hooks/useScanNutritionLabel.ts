@@ -73,6 +73,7 @@ async function compressImage(file: File): Promise<string> {
 const ERROR_MESSAGES: Record<string, string> = {
   unauthorized: 'Du är inte inloggad. Ladda om sidan och försök igen.',
   quota_exceeded: 'Skanning tillfälligt otillgänglig. Försök igen senare.',
+  premium_limit: 'Du har använt månadens etikettskanningar på gratisnivån.',
   timeout: 'Skanning tog för lång tid. Försök igen.',
   no_nutrition_label: 'Bilden verkar inte innehålla en näringsetikett.',
   validation_failed: 'Kunde inte läsa etiketten. Försök med en tydligare bild.',

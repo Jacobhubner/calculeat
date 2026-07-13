@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next'
 import { Camera, X, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useRecipeImageUpload } from '@/hooks/useRecipeImageUpload'
+import { useEntitlements } from '@/hooks/useEntitlements'
+import { useUpgradeModalStore } from '@/stores/upgradeModalStore'
 
 interface RecipeImageUploadProps {
   value: string | null
@@ -14,8 +16,16 @@ export function RecipeImageUpload({ value, onChange }: RecipeImageUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [isDragOver, setIsDragOver] = useState(false)
   const { uploadImage, deleteImage, isUploading } = useRecipeImageUpload()
+  const { limits } = useEntitlements()
+  const openUpgradeModal = useUpgradeModalStore(state => state.open)
 
   async function handleFile(file: File) {
+    // Nya uppladdningar är premium; befintliga bilder visas alltid kvar
+    // (nedgraderingsregel: läsbar men låst, se docs/PREMIUM_SPEC.md)
+    if (!limits.recipe_images) {
+      openUpgradeModal()
+      return
+    }
     const result = await uploadImage(file)
     if (result.url) {
       onChange(result.url)
@@ -73,7 +83,13 @@ export function RecipeImageUpload({ value, onChange }: RecipeImageUploadProps) {
       ) : (
         <button
           type="button"
-          onClick={() => inputRef.current?.click()}
+          onClick={() => {
+            if (!limits.recipe_images) {
+              openUpgradeModal()
+              return
+            }
+            inputRef.current?.click()
+          }}
           onDragOver={e => {
             e.preventDefault()
             setIsDragOver(true)

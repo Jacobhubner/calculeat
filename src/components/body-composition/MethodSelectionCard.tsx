@@ -13,6 +13,9 @@ import {
 import type { Gender } from '@/lib/types'
 import { Calculator, Info } from 'lucide-react'
 import MethodInfoModal from './MethodInfoModal'
+import { useEntitlements } from '@/hooks/useEntitlements'
+import { useUpgradeModalStore } from '@/stores/upgradeModalStore'
+import { FREE_BODY_COMP_METHODS } from '@/lib/constants/entitlements'
 
 interface MethodSelectionCardProps {
   selectedMethod: BodyCompositionMethod | ''
@@ -25,8 +28,28 @@ export default function MethodSelectionCard({
   onMethodChange,
   gender,
 }: MethodSelectionCardProps) {
-  const { t } = useTranslation('body')
+  const { t } = useTranslation(['body', 'premium'])
   const [showInfo, setShowInfo] = useState(false)
+  const { limits } = useEntitlements()
+  const openUpgradeModal = useUpgradeModalStore(state => state.open)
+
+  const isMethodLocked = (method: string) =>
+    !limits.advanced_body_comp && !FREE_BODY_COMP_METHODS.includes(method)
+
+  const handleMethodChange = (method: BodyCompositionMethod | '') => {
+    if (method && isMethodLocked(method)) {
+      openUpgradeModal()
+      return
+    }
+    onMethodChange(method)
+  }
+
+  const methodOptionLabel = (method: BodyCompositionMethod) => {
+    const name = t(`methodNames.${methodNameKeyMap[method]}`, {
+      defaultValue: methodNameTranslations[method],
+    })
+    return isMethodLocked(method) ? `${name} — ${t('premium:badge.premium')}` : name
+  }
 
   const methodNameKeyMap: Record<string, string> = {
     'Jackson/Pollock 3 Caliper Method (Male)': 'jp3male',
@@ -61,7 +84,7 @@ export default function MethodSelectionCard({
                 <Select
                   id="method-select"
                   value={selectedMethod}
-                  onChange={e => onMethodChange(e.target.value as BodyCompositionMethod | '')}
+                  onChange={e => handleMethodChange(e.target.value as BodyCompositionMethod | '')}
                   className="w-full"
                 >
                   <option value="">{t('methodSelection.placeholder')}</option>
@@ -74,9 +97,7 @@ export default function MethodSelectionCard({
                   >
                     {filterMethodsByGender(methodCategories.caliper.methods, gender).map(method => (
                       <option key={method} value={method}>
-                        {t(`methodNames.${methodNameKeyMap[method]}`, {
-                          defaultValue: methodNameTranslations[method],
-                        })}
+                        {methodOptionLabel(method)}
                       </option>
                     ))}
                   </optgroup>
@@ -89,9 +110,7 @@ export default function MethodSelectionCard({
                   >
                     {filterMethodsByGender(methodCategories.tape.methods, gender).map(method => (
                       <option key={method} value={method}>
-                        {t(`methodNames.${methodNameKeyMap[method]}`, {
-                          defaultValue: methodNameTranslations[method],
-                        })}
+                        {methodOptionLabel(method)}
                       </option>
                     ))}
                   </optgroup>
@@ -104,9 +123,7 @@ export default function MethodSelectionCard({
                   >
                     {filterMethodsByGender(methodCategories.profile.methods, gender).map(method => (
                       <option key={method} value={method}>
-                        {t(`methodNames.${methodNameKeyMap[method]}`, {
-                          defaultValue: methodNameTranslations[method],
-                        })}
+                        {methodOptionLabel(method)}
                       </option>
                     ))}
                   </optgroup>

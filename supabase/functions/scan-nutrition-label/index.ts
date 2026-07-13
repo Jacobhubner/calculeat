@@ -127,6 +127,32 @@ Deno.serve(async (req: Request) => {
     return errorResponse('image_too_large', 'Bilden är för stor. Försök med en mindre bild.')
   }
 
+  // Plan-baserad månadskvot: gratisnivån har X lyckade skanningar per
+  // kalendermånad, premium/founder obegränsat (se docs/PREMIUM_SPEC.md).
+  // Körs som användaren — get_my_entitlements läser auth.uid().
+  const { data: entitlements } = await supabase.rpc('get_my_entitlements')
+  const monthlyLimit = entitlements?.limits?.label_scans_per_month ?? -1
+  if (typeof monthlyLimit === 'number' && monthlyLimit >= 0) {
+    const monthStart = new Date()
+    monthStart.setUTCDate(1)
+    monthStart.setUTCHours(0, 0, 0, 0)
+    const { count: monthCount } = await supabase
+      .from('scan_usage')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .eq('scan_type', 'nutrition_label')
+      .eq('success', true)
+      .gte('created_at', monthStart.toISOString())
+
+    if ((monthCount ?? 0) >= monthlyLimit) {
+      await logScan(supabase, userId, false, 'quota_plan')
+      return errorResponse(
+        'premium_limit',
+        'Du har använt månadens etikettskanningar på gratisnivån.'
+      )
+    }
+  }
+
   const { count: userCount } = await supabase
     .from('scan_usage')
     .select('*', { count: 'exact', head: true })

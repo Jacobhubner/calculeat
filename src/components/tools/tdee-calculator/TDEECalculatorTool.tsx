@@ -20,6 +20,7 @@ import PALSystemModal from '@/components/calculator/PALSystemModal'
 import PALTableContainer from '@/components/calculator/PALTableContainer'
 import { translatePALSystem } from '@/lib/translations'
 import ComparisonTab from './ComparisonTab'
+import { PremiumGate } from '@/components/premium/PremiumGate'
 import MetabolicCalibration from '@/components/profile/MetabolicCalibration'
 
 // Returns a finite number, or undefined. Handles '', NaN, null, and non-numeric strings.
@@ -418,13 +419,15 @@ export default function TDEECalculatorTool() {
       </div>
 
       {activeTab === 'jämförelse' && (
-        <ComparisonTab
-          profileGender={profileData?.gender}
-          profileAge={age}
-          profileWeight={profileData?.weight_kg}
-          profileHeight={profileData?.height_cm}
-          profileBodyFat={profileData?.body_fat_percentage}
-        />
+        <PremiumGate feature="all_tdee_formulas">
+          <ComparisonTab
+            profileGender={profileData?.gender}
+            profileAge={age}
+            profileWeight={profileData?.weight_kg}
+            profileHeight={profileData?.height_cm}
+            profileBodyFat={profileData?.body_fat_percentage}
+          />
+        </PremiumGate>
       )}
 
       {activeTab === 'kalkylator' && (

@@ -10,6 +10,8 @@ import EditSavedMealDialog from '@/components/saved-meals/EditSavedMealDialog'
 import SelectMealSlotDialog from '@/components/daily/SelectMealSlotDialog'
 import { useSavedMeals } from '@/hooks/useSavedMeals'
 import type { SavedMeal } from '@/hooks/useSavedMeals'
+import { QuotaCounter } from '@/components/premium/QuotaCounter'
+import { useEntitlements } from '@/hooks/useEntitlements'
 
 export default function SavedMealsPage() {
   const { t } = useTranslation('recipes')
@@ -23,6 +25,7 @@ export default function SavedMealsPage() {
   const [selectedMealForEdit, setSelectedMealForEdit] = useState<SavedMeal | null>(null)
 
   const { data: savedMeals, isLoading } = useSavedMeals()
+  const { limits } = useEntitlements()
 
   // Filter saved meals by search query
   const filteredMeals = useMemo(() => {
@@ -75,6 +78,11 @@ export default function SavedMealsPage() {
           </h1>
           <p className="text-sm md:text-base text-neutral-600">
             {t('savedMeals.subtitle')}
+            <QuotaCounter
+              used={savedMeals?.length ?? 0}
+              limit={limits.saved_meals}
+              className="ml-2"
+            />
           </p>
         </div>
       </div>
@@ -104,9 +112,7 @@ export default function SavedMealsPage() {
           icon={searchQuery ? Search : Bookmark}
           title={searchQuery ? t('savedMeals.emptyTitleSearch') : t('savedMeals.emptyTitle')}
           description={
-            searchQuery
-              ? t('savedMeals.emptyDescriptionSearch')
-              : t('savedMeals.emptyDescription')
+            searchQuery ? t('savedMeals.emptyDescriptionSearch') : t('savedMeals.emptyDescription')
           }
           action={
             searchQuery
@@ -150,10 +156,12 @@ export default function SavedMealsPage() {
           </CardHeader>
           <CardContent className="space-y-2 text-sm text-neutral-700">
             <p>
-              <span className="font-semibold">{t('savedMeals.recipeExplain')}</span> {t('savedMeals.recipeExplainText')}
+              <span className="font-semibold">{t('savedMeals.recipeExplain')}</span>{' '}
+              {t('savedMeals.recipeExplainText')}
             </p>
             <p>
-              <span className="font-semibold">{t('savedMeals.savedMealExplain')}</span> {t('savedMeals.savedMealExplainText')}
+              <span className="font-semibold">{t('savedMeals.savedMealExplain')}</span>{' '}
+              {t('savedMeals.savedMealExplainText')}
             </p>
           </CardContent>
         </Card>

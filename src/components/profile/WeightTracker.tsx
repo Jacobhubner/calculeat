@@ -35,6 +35,7 @@ import {
   useBodyCompositionTrend,
 } from '@/hooks'
 import { useWeightTrend } from '@/hooks/useWeightTrend'
+import { useEntitlements } from '@/hooks/useEntitlements'
 import type { Profile } from '@/lib/types'
 import {
   LineChart,
@@ -167,6 +168,8 @@ export default function WeightTracker({
 
   // Use the new trend hook for calculations (user-based, no profile dependency)
   const weightTrend = useWeightTrend(weightHistory, targetWeight, weight)
+  // Vikttrenden är alltid gratis; kroppskompositionsgraferna kräver advanced_trends
+  const { limits } = useEntitlements()
   const bodyFatChartData = useBodyFatTrend(weightHistory)
   const hasBodyFatData = bodyFatChartData.length > 0
   const bodyCompositionChartData = useBodyCompositionTrend(weightHistory)
@@ -687,7 +690,7 @@ export default function WeightTracker({
           )}
 
           {/* Body fat chart */}
-          {chartsReady && hasBodyFatData && (
+          {limits.advanced_trends && chartsReady && hasBodyFatData && (
             <div>
               <div className="flex items-center gap-1.5 mb-2">
                 <h4 className="text-sm font-medium text-neutral-700">
@@ -829,7 +832,7 @@ export default function WeightTracker({
 
           {/* Body Fat Mass chart
               TODO: Add Skeletal Muscle Mass series when a validated estimation model or smart scale data is available. */}
-          {bodyCompositionChartData.length > 0 && (
+          {limits.advanced_trends && bodyCompositionChartData.length > 0 && (
             <div>
               <div
                 onClick={() => setShowBodyFatMassChart(v => !v)}
@@ -983,7 +986,7 @@ export default function WeightTracker({
           )}
 
           {/* Soft Lean Mass chart */}
-          {bodyCompositionChartData.length > 0 && (
+          {limits.advanced_trends && bodyCompositionChartData.length > 0 && (
             <div>
               <div
                 onClick={() => setShowSoftLeanMassChart(v => !v)}

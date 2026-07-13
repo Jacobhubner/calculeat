@@ -11,6 +11,10 @@ import {
   MIN_NEW_WEIGHTS_AFTER_CALIBRATION,
   buildClusters,
 } from '@/lib/calculations/calibration'
+import { useEntitlements, isUnlimited } from '@/hooks/useEntitlements'
+
+/** Dagar mellan kalibreringar på gratisnivån (1×/kvartal, se docs/PREMIUM_SPEC.md) */
+const FREE_CALIBRATION_INTERVAL_DAYS = 90
 
 /**
  * Determine if TDEE calibration is available and recommended.
@@ -23,6 +27,9 @@ export function useCalibrationAvailability(
   weightHistory: WeightHistory[] | undefined,
   lastCalibration: CalibrationHistory | null | undefined
 ): CalibrationAvailability {
+  const { limits } = useEntitlements()
+  const quarterLimited = !isUnlimited(limits.calibrations_per_quarter)
+
   return useMemo(() => {
     const unavailable: CalibrationAvailability = {
       isAvailable: false,
@@ -90,6 +97,22 @@ export function useCalibrationAvailability(
       daysSinceLastCalibration = Math.floor(
         (now.getTime() - new Date(lastCalibration.calibrated_at).getTime()) / (1000 * 60 * 60 * 24)
       )
+    }
+
+    // Plan-gräns: gratisnivån får kalibrera 1×/kvartal (premium/founder obegränsat)
+    if (
+      quarterLimited &&
+      daysSinceLastCalibration !== null &&
+      daysSinceLastCalibration < FREE_CALIBRATION_INTERVAL_DAYS
+    ) {
+      const daysLeft = FREE_CALIBRATION_INTERVAL_DAYS - daysSinceLastCalibration
+      return {
+        ...unavailable,
+        currentDataPoints: weightHistory.length,
+        daysSinceLastCalibration,
+        daysUntilNextRecommended: daysLeft,
+        reason: `Nästa kalibrering om ${daysLeft} dagar — gratisnivån kalibrerar 1 gång per kvartal`,
+      }
     }
 
     // Analyze weight trend using sorted weights in the best period
@@ -197,5 +220,5 @@ export function useCalibrationAvailability(
       suggestedTimePeriod: bestPeriod,
       confidencePreview,
     }
-  }, [profile, weightHistory, lastCalibration])
+  }, [profile, weightHistory, lastCalibration, quarterLimited])
 }

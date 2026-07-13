@@ -12,8 +12,13 @@ import {
   ChevronRight,
   BarChart3,
   Trash2,
+  Lock,
+  Download,
 } from 'lucide-react'
 import { useDailyLogs, useDeleteDailyLog } from '@/hooks/useDailyLogs'
+import { useEntitlements, isUnlimited } from '@/hooks/useEntitlements'
+import { useUpgradeModalStore } from '@/stores/upgradeModalStore'
+import { dailyLogsToCsv, downloadCsv } from '@/lib/exportCsv'
 import { HistoryCalendar } from '@/components/history/HistoryCalendar'
 import { toast } from 'sonner'
 import EmptyState from '@/components/EmptyState'
@@ -25,6 +30,7 @@ const WEEKS_PER_PAGE = 4
 
 export default function HistoryPage() {
   const { t } = useTranslation('history')
+  const { t: tPremium } = useTranslation('premium')
   const [viewMode, setViewMode] = useState<'calendar' | 'list'>('list')
   const [statsPeriod, setStatsPeriod] = useState<number | null>(30)
   const [visibleWeeks, setVisibleWeeks] = useState(WEEKS_PER_PAGE)
@@ -33,16 +39,46 @@ export default function HistoryPage() {
   const { data: allProfiles } = useProfiles()
   const profile = allProfiles?.find(p => p.id === activeProfile?.id) as Profile | undefined
 
+  const { limits } = useEntitlements()
+  const openUpgradeModal = useUpgradeModalStore(state => state.open)
+  const historyDays = limits.history_days
+  const historyLimited = !isUnlimited(historyDays)
+
+  // Synligt fönster: obegränsat för premium/founder, annars history_days bakåt.
+  // Endast UI-gating — all data sparas alltid (se docs/PREMIUM_SPEC.md).
   const { endDate, startDate } = useMemo(() => {
     const now = new Date()
     const future = new Date(now)
     future.setFullYear(now.getFullYear() + 1)
     const end = future.toISOString().split('T')[0]
-    const ninetyDaysAgo = new Date(now)
-    ninetyDaysAgo.setFullYear(now.getFullYear() - 10)
-    const start = ninetyDaysAgo.toISOString().split('T')[0]
+    const windowStart = new Date(now)
+    if (historyLimited) {
+      windowStart.setDate(windowStart.getDate() - historyDays)
+    } else {
+      windowStart.setFullYear(now.getFullYear() - 10)
+    }
+    const start = windowStart.toISOString().split('T')[0]
     return { endDate: end, startDate: start }
-  }, [])
+  }, [historyLimited, historyDays])
+
+  // Perioder utanför fönstret öppnar UpgradeModal istället för att väljas
+  const requestStatsPeriod = (p: number | null) => {
+    if (historyLimited && (p === null || p > historyDays)) {
+      openUpgradeModal()
+      return
+    }
+    setStatsPeriod(p)
+  }
+
+  const handleExportCsv = () => {
+    if (!limits.csv_export) {
+      openUpgradeModal()
+      return
+    }
+    if (!logs || logs.length === 0) return
+    const today = new Date().toISOString().split('T')[0]
+    downloadCsv(`calculeat-historik-${today}.csv`, dailyLogsToCsv(logs))
+  }
 
   const { data: logs, isLoading } = useDailyLogs(startDate, endDate)
 
@@ -169,6 +205,10 @@ export default function HistoryPage() {
         >
           <CalendarIcon className="h-4 w-4" />
           {t('views.calendar')}
+        </Button>
+        <Button variant="outline" onClick={handleExportCsv} className="gap-2 ml-auto">
+          {limits.csv_export ? <Download className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
+          {tPremium('export.csvButton')}
         </Button>
       </div>
 
@@ -328,25 +368,27 @@ export default function HistoryPage() {
                     {([14, 21, 30, 90] as const).map(p => (
                       <button
                         key={p}
-                        onClick={() => setStatsPeriod(p)}
-                        className={`flex-1 py-1 text-xs rounded-md font-medium transition-colors ${
+                        onClick={() => requestStatsPeriod(p)}
+                        className={`flex-1 py-1 text-xs rounded-md font-medium transition-colors inline-flex items-center justify-center gap-0.5 ${
                           statsPeriod === p
                             ? 'bg-primary-600 text-white'
                             : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
                         }`}
                       >
                         {p === 14 ? '2v' : p === 21 ? '3v' : `${p}d`}
+                        {historyLimited && p > historyDays && <Lock className="h-3 w-3" />}
                       </button>
                     ))}
                     <button
-                      onClick={() => setStatsPeriod(null)}
-                      className={`flex-1 py-1 text-xs rounded-md font-medium transition-colors ${
+                      onClick={() => requestStatsPeriod(null)}
+                      className={`flex-1 py-1 text-xs rounded-md font-medium transition-colors inline-flex items-center justify-center gap-0.5 ${
                         statsPeriod === null
                           ? 'bg-primary-600 text-white'
                           : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
                       }`}
                     >
                       {t('stats.allTime')}
+                      {historyLimited && <Lock className="h-3 w-3" />}
                     </button>
                   </div>
                   {statsPeriod !== null && (
@@ -354,14 +396,14 @@ export default function HistoryPage() {
                       <input
                         type="range"
                         min={1}
-                        max={90}
+                        max={historyLimited ? Math.min(90, historyDays) : 90}
                         value={statsPeriod}
                         onChange={e => setStatsPeriod(Number(e.target.value))}
                         className="w-full accent-primary-600"
                       />
                       <div className="flex justify-between text-xs text-neutral-400">
                         <span>1d</span>
-                        <span>90d</span>
+                        <span>{historyLimited ? `${Math.min(90, historyDays)}d` : '90d'}</span>
                       </div>
                     </>
                   )}

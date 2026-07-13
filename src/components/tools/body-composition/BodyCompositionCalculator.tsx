@@ -10,6 +10,7 @@ import BodyCompositionResults from '@/components/body-composition/BodyCompositio
 import TabNavigation from '@/components/body-composition/TabNavigation'
 import AllMeasurementsForm from '@/components/body-composition/AllMeasurementsForm'
 import MethodComparisonTable from '@/components/body-composition/MethodComparisonTable'
+import { PremiumGate } from '@/components/premium/PremiumGate'
 import MeasurementSetSidebar from '@/components/body-composition/MeasurementSetSidebar'
 import CollapsibleSidebar from '@/components/CollapsibleSidebar'
 import EmptyState from '@/components/EmptyState'
@@ -978,11 +979,13 @@ export default function BodyCompositionCalculator() {
                   />
                 )}
 
-                <MethodComparisonTable
-                  results={comparisonResults}
-                  onSaveResult={handleSaveComparisonResult}
-                  isSaving={isSaving}
-                />
+                <PremiumGate feature="advanced_body_comp">
+                  <MethodComparisonTable
+                    results={comparisonResults}
+                    onSaveResult={handleSaveComparisonResult}
+                    isSaving={isSaving}
+                  />
+                </PremiumGate>
               </div>
             )}
           </div>

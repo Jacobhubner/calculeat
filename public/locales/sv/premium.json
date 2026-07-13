@@ -1,0 +1,35 @@
+{
+  "badge": {
+    "premium": "Premium",
+    "includedInPremium": "Ingår i Premium"
+  },
+  "export": {
+    "csvButton": "Exportera CSV"
+  },
+  "gate": {
+    "lockedTitle": "Premiumfunktion",
+    "lockedDescription": "Den här funktionen ingår i CalculEat Premium.",
+    "quotaCounter": "{{used}} av {{limit}} använda",
+    "unlimited": "Obegränsat"
+  },
+  "upgradeModal": {
+    "title": "Uppgradera till Premium",
+    "description": "Lås upp obegränsad historik, alla verktyg och full precision.",
+    "limitReached": {
+      "saved_meals": "Du har nått gränsen för sparade måltider ({{limit}} st på gratisnivån).",
+      "recipes": "Du har nått gränsen för recept ({{limit}} st på gratisnivån).",
+      "owned_shared_lists": "På gratisnivån kan du skapa {{limit}} gemensam lista. Du kan fortfarande vara medlem i hur många listor som helst.",
+      "label_scans_per_month": "Du har använt månadens {{limit}} etikettskanningar på gratisnivån.",
+      "generic": "Du har nått en gräns på gratisnivån."
+    },
+    "benefits": {
+      "history": "Obegränsad historik — även retroaktivt",
+      "recipes": "Obegränsat antal recept och sparade måltider, med bilder",
+      "tools": "Alla TDEE-formler, kroppskompositionsmetoder och obegränsad kalibrering",
+      "analysis": "Trendgrafer, periodjämförelser och CSV-export"
+    },
+    "dataPromise": "Din data sparas alltid — oavsett plan.",
+    "cta": "Kommer snart",
+    "later": "Inte nu"
+  }
+}

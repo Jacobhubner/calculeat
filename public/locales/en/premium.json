@@ -1,0 +1,35 @@
+{
+  "badge": {
+    "premium": "Premium",
+    "includedInPremium": "Included in Premium"
+  },
+  "export": {
+    "csvButton": "Export CSV"
+  },
+  "gate": {
+    "lockedTitle": "Premium feature",
+    "lockedDescription": "This feature is part of CalculEat Premium.",
+    "quotaCounter": "{{used}} of {{limit}} used",
+    "unlimited": "Unlimited"
+  },
+  "upgradeModal": {
+    "title": "Upgrade to Premium",
+    "description": "Unlock unlimited history, every tool, and full precision.",
+    "limitReached": {
+      "saved_meals": "You have reached the saved meals limit ({{limit}} on the free plan).",
+      "recipes": "You have reached the recipe limit ({{limit}} on the free plan).",
+      "owned_shared_lists": "The free plan lets you create {{limit}} shared list. You can still be a member of unlimited lists.",
+      "label_scans_per_month": "You have used this month's {{limit}} label scans on the free plan.",
+      "generic": "You have reached a limit on the free plan."
+    },
+    "benefits": {
+      "history": "Unlimited history — including retroactively",
+      "recipes": "Unlimited recipes and saved meals, with photos",
+      "tools": "All TDEE formulas, body composition methods, and unlimited calibration",
+      "analysis": "Trend charts, period comparisons, and CSV export"
+    },
+    "dataPromise": "Your data is always saved — regardless of plan.",
+    "cta": "Coming soon",
+    "later": "Not now"
+  }
+}

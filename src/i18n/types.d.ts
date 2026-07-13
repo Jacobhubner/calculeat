@@ -31,6 +31,7 @@ import type svPagesCompare from '../../public/locales/sv/pages-compare.json'
 import type svPagesHubs from '../../public/locales/sv/pages-hubs.json'
 import type svArticleLayout from '../../public/locales/sv/article-layout.json'
 import type svPagesOther from '../../public/locales/sv/pages-other.json'
+import type svPremium from '../../public/locales/sv/premium.json'
 
 declare module 'i18next' {
   interface CustomTypeOptions {
@@ -61,6 +62,7 @@ declare module 'i18next' {
       'pages-hubs': typeof svPagesHubs
       'article-layout': typeof svArticleLayout
       'pages-other': typeof svPagesOther
+      premium: typeof svPremium
     }
   }
 }

@@ -27,6 +27,7 @@ import {
 import { FEATURES } from '@/lib/config'
 import { useBarcodeLookup } from '@/hooks/useBarcodeLookup'
 import { useScanNutritionLabel } from '@/hooks/useScanNutritionLabel'
+import { useUpgradeModalStore } from '@/stores/upgradeModalStore'
 import { BarcodeScannerModal } from '@/components/food/BarcodeScannerModal'
 import type { ScanResult } from '@/lib/types'
 import { toast } from 'sonner'
@@ -630,8 +631,12 @@ export function AddFoodItemModal({
       try {
         const result = await labelScan.mutateAsync(file)
         handleScanResult(result)
-      } catch {
-        // Error is available via labelScan.error
+      } catch (err) {
+        // Månadskvot på gratisnivån → uppgraderingsmodal; övriga fel
+        // visas inline via labelScan.error
+        if ((err as { type?: string })?.type === 'premium_limit') {
+          useUpgradeModalStore.getState().open('label_scans_per_month')
+        }
       }
     },
     [labelScan, handleScanResult]

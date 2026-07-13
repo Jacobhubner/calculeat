@@ -10,6 +10,9 @@ import { useRecipes, useDeleteRecipe, type Recipe } from '@/hooks/useRecipes'
 import { RecipeCard } from '@/components/recipe/RecipeCard'
 import { RecipeCalculatorModal } from '@/components/recipe/RecipeCalculatorModal'
 import { RecipePreviewModal } from '@/components/recipe/RecipePreviewModal'
+import { QuotaCounter } from '@/components/premium/QuotaCounter'
+import { useEntitlements, isUnlimited } from '@/hooks/useEntitlements'
+import { useUpgradeModalStore } from '@/stores/upgradeModalStore'
 
 export default function RecipesPage() {
   const { t } = useTranslation('recipes')
@@ -20,12 +23,19 @@ export default function RecipesPage() {
 
   const { data: recipes, isLoading, isError } = useRecipes()
   const deleteRecipe = useDeleteRecipe()
+  const { limits } = useEntitlements()
+  const openUpgradeModal = useUpgradeModalStore(state => state.open)
 
   const filteredRecipes = useMemo(() => {
     return recipes?.filter(recipe => recipe.name.toLowerCase().includes(searchQuery.toLowerCase()))
   }, [recipes, searchQuery])
 
   const handleNewRecipe = () => {
+    // Mjuk förkontroll av receptkvoten — servertriggern är sista försvarslinjen
+    if (!isUnlimited(limits.recipes) && (recipes?.length ?? 0) >= limits.recipes) {
+      openUpgradeModal('recipes')
+      return
+    }
     setEditingRecipe(null)
     setIsModalOpen(true)
   }
@@ -72,6 +82,7 @@ export default function RecipesPage() {
             {recipes &&
               recipes.length > 0 &&
               ` ${t('page.subtitleWithCount', { filtered: filteredRecipes?.length || 0, total: recipes.length })}`}
+            <QuotaCounter used={recipes?.length ?? 0} limit={limits.recipes} className="ml-2" />
           </p>
         </div>
         <Button className="gap-2 self-start sm:self-auto" size="sm" onClick={handleNewRecipe}>

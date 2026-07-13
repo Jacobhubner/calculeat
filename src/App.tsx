@@ -7,6 +7,8 @@ import { queryClient } from './lib/react-query'
 import { Toaster } from './components/ui/toast'
 import { TooltipProvider } from './components/ui/tooltip'
 import ErrorBoundary from './components/ErrorBoundary'
+import { GlobalUpgradeModal } from './components/premium/GlobalUpgradeModal'
+import { PremiumGate } from './components/premium/PremiumGate'
 import ProtectedRoute from './components/ProtectedRoute'
 import PublicOnlyRoute from './components/PublicOnlyRoute'
 import { Skeleton } from './components/ui/skeleton'
@@ -160,6 +162,7 @@ function App() {
             <PresenceProvider>
               <BrowserRouter>
                 <ScrollToTop />
+                <GlobalUpgradeModal />
                 <Suspense fallback={<PageLoader />}>
                   <Routes>
                     <Route path="/" element={<HomePage />} />
@@ -315,7 +318,14 @@ function App() {
                     >
                       <Route index element={<BodyCompositionHubPage />} />
                       <Route path="calculate" element={<BodyCompositionCalculator />} />
-                      <Route path="genetic-potential" element={<GeneticPotentialTool />} />
+                      <Route
+                        path="genetic-potential"
+                        element={
+                          <PremiumGate feature="genetic_potential">
+                            <GeneticPotentialTool />
+                          </PremiumGate>
+                        }
+                      />
                     </Route>
                     <Route
                       path="/app/food-items"
