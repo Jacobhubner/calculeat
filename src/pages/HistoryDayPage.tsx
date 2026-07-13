@@ -1,6 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams, useNavigate } from 'react-router-dom'
+import { useEntitlements, isUnlimited } from '@/hooks/useEntitlements'
+import { useUpgradeModalStore } from '@/stores/upgradeModalStore'
 import i18n from '@/i18n'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -30,7 +32,24 @@ export default function HistoryDayPage() {
   const { t } = useTranslation('history')
   const { date } = useParams<{ date: string }>()
   const navigate = useNavigate()
-  const { data: log, isLoading } = useDailyLog(date || '')
+
+  // Historikfönster: dagar äldre än history_days är premium — direkt-URL
+  // ska inte kringgå fönstret i HistoryPage (se docs/PREMIUM_SPEC.md)
+  const { limits } = useEntitlements()
+  const openUpgradeModal = useUpgradeModalStore(state => state.open)
+  const historyLimited = !isUnlimited(limits.history_days)
+  const windowStart = new Date()
+  windowStart.setDate(windowStart.getDate() - limits.history_days)
+  const outsideWindow = historyLimited && !!date && date < windowStart.toISOString().split('T')[0]
+
+  useEffect(() => {
+    if (outsideWindow) {
+      navigate('/app/history', { replace: true })
+      openUpgradeModal()
+    }
+  }, [outsideWindow, navigate, openUpgradeModal])
+
+  const { data: log, isLoading } = useDailyLog(!outsideWindow && date ? date : '')
   const copyDay = useCopyDayToToday()
   const reopenDay = useReopenDay()
   const finishDay = useFinishDay()
@@ -53,6 +72,10 @@ export default function HistoryDayPage() {
   if (!date) {
     navigate('/app/history')
     return null
+  }
+
+  if (outsideWindow) {
+    return null // useEffect ovan navigerar tillbaka + öppnar UpgradeModal
   }
 
   const handleCopyToToday = () => {

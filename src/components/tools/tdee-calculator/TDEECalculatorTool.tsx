@@ -21,6 +21,9 @@ import PALTableContainer from '@/components/calculator/PALTableContainer'
 import { translatePALSystem } from '@/lib/translations'
 import ComparisonTab from './ComparisonTab'
 import { PremiumGate } from '@/components/premium/PremiumGate'
+import { useEntitlements } from '@/hooks/useEntitlements'
+import { useUpgradeModalStore } from '@/stores/upgradeModalStore'
+import { FREE_BMR_FORMULAS, FREE_PAL_SYSTEMS } from '@/lib/constants/entitlements'
 import MetabolicCalibration from '@/components/profile/MetabolicCalibration'
 
 // Returns a finite number, or undefined. Handles '', NaN, null, and non-numeric strings.
@@ -127,6 +130,33 @@ export default function TDEECalculatorTool() {
   const [palSystem, setPalSystem] = useState<PALSystem | ''>('')
   const [showBMRModal, setShowBMRModal] = useState(false)
   const [showPALModal, setShowPALModal] = useState(false)
+
+  // Plan-gating: free = Mifflin + standard-PAL; övriga formler/system premium
+  const { limits } = useEntitlements()
+  const openUpgradeModal = useUpgradeModalStore(state => state.open)
+
+  const isFormulaLocked = (formula: string) =>
+    !limits.all_tdee_formulas && !FREE_BMR_FORMULAS.includes(formula)
+  const isPalLocked = (system: string) =>
+    !limits.all_tdee_formulas && !FREE_PAL_SYSTEMS.includes(system)
+
+  const handleBmrFormulaChange = (formula: BMRFormula | '') => {
+    if (formula && isFormulaLocked(formula)) {
+      openUpgradeModal()
+      return
+    }
+    setBmrFormula(formula)
+  }
+
+  const handlePalSystemChange = (system: PALSystem | '') => {
+    if (system && isPalLocked(system)) {
+      openUpgradeModal()
+      return
+    }
+    setPalSystem(system)
+  }
+
+  const premiumSuffix = (locked: boolean) => (locked ? ' — Premium' : '')
 
   // Calculate age from birth_date
   const age = useMemo(() => {
@@ -570,7 +600,7 @@ export default function TDEECalculatorTool() {
                   </div>
                   <select
                     value={bmrFormula}
-                    onChange={e => setBmrFormula(e.target.value as BMRFormula | '')}
+                    onChange={e => handleBmrFormulaChange(e.target.value as BMRFormula | '')}
                     className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
                   >
                     <option value="">{t('tdeeCalc.bmr.placeholder')}</option>
@@ -579,30 +609,39 @@ export default function TDEECalculatorTool() {
                     </option>
                     <option value="Revised Harris-Benedict equation">
                       {t('tdeeCalc.bmr.formulas.revisedHarrisBenedict')}
+                      {premiumSuffix(isFormulaLocked('Revised Harris-Benedict equation'))}
                     </option>
                     <option value="Original Harris-Benedict equation">
                       {t('tdeeCalc.bmr.formulas.originalHarrisBenedict')}
+                      {premiumSuffix(isFormulaLocked('Original Harris-Benedict equation'))}
                     </option>
                     <option value="Schofield equation">
                       {t('tdeeCalc.bmr.formulas.schofield')}
+                      {premiumSuffix(isFormulaLocked('Schofield equation'))}
                     </option>
                     <option value="Oxford/Henry equation">
                       {t('tdeeCalc.bmr.formulas.oxford')}
+                      {premiumSuffix(isFormulaLocked('Oxford/Henry equation'))}
                     </option>
                     <option value="MacroFactor standard equation">
                       {t('tdeeCalc.bmr.formulas.macrofactorStandard')}
+                      {premiumSuffix(isFormulaLocked('MacroFactor standard equation'))}
                     </option>
                     <option value="Cunningham equation">
                       {t('tdeeCalc.bmr.formulas.cunningham')}
+                      {premiumSuffix(isFormulaLocked('Cunningham equation'))}
                     </option>
                     <option value="MacroFactor FFM equation">
                       {t('tdeeCalc.bmr.formulas.macrofactorFFM')}
+                      {premiumSuffix(isFormulaLocked('MacroFactor FFM equation'))}
                     </option>
                     <option value="MacroFactor athlete equation">
                       {t('tdeeCalc.bmr.formulas.macrofactorAthlete')}
+                      {premiumSuffix(isFormulaLocked('MacroFactor athlete equation'))}
                     </option>
                     <option value="Fitness Stuff Podcast equation">
                       {t('tdeeCalc.bmr.formulas.fitnessStuff')}
+                      {premiumSuffix(isFormulaLocked('Fitness Stuff Podcast equation'))}
                     </option>
                   </select>
 
@@ -695,7 +734,7 @@ export default function TDEECalculatorTool() {
                   </div>
                   <select
                     value={palSystem}
-                    onChange={e => setPalSystem(e.target.value as PALSystem | '')}
+                    onChange={e => handlePalSystemChange(e.target.value as PALSystem | '')}
                     className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
                   >
                     <option value="">{t('tdeeCalc.pal.placeholder')}</option>
@@ -704,18 +743,23 @@ export default function TDEECalculatorTool() {
                     </option>
                     <option value="FAO/WHO/UNU based PAL values">
                       {translatePALSystem('FAO/WHO/UNU based PAL values')}
+                      {premiumSuffix(isPalLocked('FAO/WHO/UNU based PAL values'))}
                     </option>
                     <option value="DAMNRIPPED PAL values">
                       {translatePALSystem('DAMNRIPPED PAL values')}
+                      {premiumSuffix(isPalLocked('DAMNRIPPED PAL values'))}
                     </option>
                     <option value="Pro Physique PAL values">
                       {translatePALSystem('Pro Physique PAL values')}
+                      {premiumSuffix(isPalLocked('Pro Physique PAL values'))}
                     </option>
                     <option value="Fitness Stuff PAL values">
                       {translatePALSystem('Fitness Stuff PAL values')}
+                      {premiumSuffix(isPalLocked('Fitness Stuff PAL values'))}
                     </option>
                     <option value="Beräkna din aktivitetsnivå">
                       {t('tdeeCalc.pal.calculateLevel')}
+                      {premiumSuffix(isPalLocked('Beräkna din aktivitetsnivå'))}
                     </option>
                     <option value="Custom PAL">{translatePALSystem('Custom PAL')}</option>
                   </select>

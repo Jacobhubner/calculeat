@@ -990,19 +990,21 @@ export default function BodyCompositionCalculator() {
             )}
           </div>
 
-          {/* Right sidebar - Measurement Sets */}
+          {/* Right sidebar - Measurement Sets (mäthistorik är premium, se PREMIUM_SPEC) */}
           <div>
             <CollapsibleSidebar>
-              <MeasurementSetSidebar
-                onCreateNew={handleCreateNewMeasurement}
-                hasUnsavedChanges={hasUnsavedMeasurements}
-                onSelectSet={handleSelectMeasurementSet}
-                onSaveSet={handleSaveMeasurementSet}
-                onDeleteSet={handleDeleteMeasurementSet}
-                isSaving={
-                  createMeasurementSetMutation.isPending || updateMeasurementSetMutation.isPending
-                }
-              />
+              <PremiumGate feature="advanced_body_comp">
+                <MeasurementSetSidebar
+                  onCreateNew={handleCreateNewMeasurement}
+                  hasUnsavedChanges={hasUnsavedMeasurements}
+                  onSelectSet={handleSelectMeasurementSet}
+                  onSaveSet={handleSaveMeasurementSet}
+                  onDeleteSet={handleDeleteMeasurementSet}
+                  isSaving={
+                    createMeasurementSetMutation.isPending || updateMeasurementSetMutation.isPending
+                  }
+                />
+              </PremiumGate>
             </CollapsibleSidebar>
           </div>
         </div>

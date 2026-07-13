@@ -87,6 +87,14 @@ export const FREE_BODY_COMP_METHODS: readonly string[] = [
   'Heritage BMI to Body Fat Method',
 ]
 
+/**
+ * BMR-formler och PAL-system som ingår i gratisnivån ("ett beräkningsläge",
+ * se docs/PREMIUM_SPEC.md). Övriga kräver `all_tdee_formulas`.
+ */
+export const FREE_BMR_FORMULAS: readonly string[] = ['Mifflin-St Jeor equation']
+
+export const FREE_PAL_SYSTEMS: readonly string[] = ['Basic internet PAL values', 'Custom PAL']
+
 /** Kvot-nycklar som servertriggarna kan kasta för */
 export type PremiumLimitKey = keyof PlanLimits
 

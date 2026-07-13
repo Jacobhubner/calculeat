@@ -21,21 +21,21 @@ vara i synk.
 
 ## Feature-matris (beslutad: "justerad matris")
 
-| Nyckel (limits-JSON)       | Gratis                                       | Premium/Founder            | Enforcement                                                           |
-| -------------------------- | -------------------------------------------- | -------------------------- | --------------------------------------------------------------------- |
-| `saved_meals`              | 10                                           | obegränsat (-1)            | DB-trigger på `saved_meals` INSERT                                    |
-| `recipes`                  | 3 (personliga)                               | obegränsat (-1)            | DB-trigger på `recipes` INSERT (endast `shared_list_id IS NULL`)      |
-| `recipe_images`            | nej                                          | ja                         | UI + storage-policy (Fas 2+)                                          |
-| `history_days`             | 30                                           | obegränsat (-1)            | Endast UI (egen data, inget att skydda)                               |
-| `csv_export`               | nej                                          | ja                         | UI (funktionen byggs direkt bakom gate)                               |
-| `advanced_trends`          | nej (vikttrend alltid gratis)                | ja                         | UI                                                                    |
-| `period_stats`             | nej (30-d snitt gratis)                      | ja (90-d jämförelser)      | UI                                                                    |
-| `all_tdee_formulas`        | nej (Mifflin + standard-PAL)                 | ja (alla 10 + wizard)      | UI; jämförelsefliken visas suddad/låst, inte gömd                     |
-| `calibrations_per_quarter` | 1                                            | obegränsat (-1)            | UI + kontroll i `useCalibrationAvailability`                          |
-| `advanced_body_comp`       | nej (2 basmetoder: U.S. Navy + Heritage BMI) | ja (alla 12 + mäthistorik) | UI                                                                    |
-| `genetic_potential`        | nej                                          | ja                         | UI                                                                    |
-| `owned_shared_lists`       | 1 (skapade & fortfarande medlem)             | obegränsat (-1)            | DB-trigger på `shared_lists` INSERT                                   |
-| `label_scans_per_month`    | 5                                            | obegränsat (-1)            | Räknas ur `scan_usage` (`scan_type='nutrition_label'`, kalendermånad) |
+| Nyckel (limits-JSON)       | Gratis                                          | Premium/Founder                                          | Enforcement                                                                                                                                    |
+| -------------------------- | ----------------------------------------------- | -------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `saved_meals`              | 10                                              | obegränsat (-1)                                          | DB-trigger på `saved_meals` INSERT                                                                                                             |
+| `recipes`                  | 3 (personliga)                                  | obegränsat (-1)                                          | DB-trigger på `recipes` INSERT (endast `shared_list_id IS NULL`)                                                                               |
+| `recipe_images`            | nej                                             | ja                                                       | UI + storage-policy (Fas 2+)                                                                                                                   |
+| `history_days`             | 30                                              | obegränsat (-1)                                          | Endast UI (egen data, inget att skydda)                                                                                                        |
+| `csv_export`               | nej                                             | ja                                                       | UI (funktionen byggs direkt bakom gate)                                                                                                        |
+| `advanced_trends`          | nej (vikttrend alltid gratis)                   | ja                                                       | UI                                                                                                                                             |
+| `period_stats`             | nej (30-d snitt gratis)                         | ja (90-d jämförelser)                                    | UI                                                                                                                                             |
+| `all_tdee_formulas`        | nej (Mifflin + Basic internet-PAL + Custom PAL) | ja (alla 10 formler, alla PAL-system + aktivitetswizard) | UI; jämförelsefliken suddad/låst; låsta select-alternativ märks "— Premium" + intercept (FREE_BMR_FORMULAS/FREE_PAL_SYSTEMS i entitlements.ts) |
+| `calibrations_per_quarter` | 1                                               | obegränsat (-1)                                          | UI + kontroll i `useCalibrationAvailability`                                                                                                   |
+| `advanced_body_comp`       | nej (2 basmetoder: U.S. Navy + Heritage BMI)    | ja (alla 12 + mäthistorik)                               | UI                                                                                                                                             |
+| `genetic_potential`        | nej                                             | ja                                                       | UI                                                                                                                                             |
+| `owned_shared_lists`       | 1 (skapade & fortfarande medlem)                | obegränsat (-1)                                          | DB-trigger på `shared_lists` INSERT                                                                                                            |
+| `label_scans_per_month`    | 5                                               | obegränsat (-1)                                          | Räknas ur `scan_usage` (`scan_type='nutrition_label'`, kalendermånad)                                                                          |
 
 **Alltid gratis (aldrig gate:at):** daglig loggning, streckkodsskanning, makros,
 Livsmedelsverket + manuella livsmedel, vänner, chatt, delning (share_invitations),
