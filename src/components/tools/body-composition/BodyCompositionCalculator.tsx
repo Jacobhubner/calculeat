@@ -979,13 +979,12 @@ export default function BodyCompositionCalculator() {
                   />
                 )}
 
-                <PremiumGate feature="advanced_body_comp">
-                  <MethodComparisonTable
-                    results={comparisonResults}
-                    onSaveResult={handleSaveComparisonResult}
-                    isSaving={isSaving}
-                  />
-                </PremiumGate>
+                {/* Gaten ligger INUTI tabellen — rubrik/beskrivning synlig för free */}
+                <MethodComparisonTable
+                  results={comparisonResults}
+                  onSaveResult={handleSaveComparisonResult}
+                  isSaving={isSaving}
+                />
               </div>
             )}
           </div>
