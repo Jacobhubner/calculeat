@@ -4,6 +4,7 @@ import { PAL_SYSTEM_DESCRIPTIONS, type PALFormulaVariant } from '@/lib/calculati
 import type { PALSystem } from '@/lib/types'
 import { Button } from '../ui/button'
 import { Portal } from '../ui/portal'
+import { EquationGate } from '@/components/premium/EquationGate'
 
 const PAL_KEY_MAP: Record<PALSystem, string> = {
   'FAO/WHO/UNU based PAL values': 'faoWhoUnu',
@@ -98,12 +99,11 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
                     let bulletsUsed = false
                     return description.descriptionBlocks!.map((block, i) =>
                       block.type === 'formula' ? (
-                        <div
-                          key={i}
-                          className="bg-neutral-100 border border-neutral-200 rounded-lg px-4 py-3"
-                        >
-                          <p className="text-sm font-mono text-neutral-800">{block.text}</p>
-                        </div>
+                        <EquationGate key={i} feature="all_tdee_formulas">
+                          <div className="bg-neutral-100 border border-neutral-200 rounded-lg px-4 py-3">
+                            <p className="text-sm font-mono text-neutral-800">{block.text}</p>
+                          </div>
+                        </EquationGate>
                       ) : block.type === 'bullets' ? (
                         <ul key={i} className="space-y-1 pl-1">
                           {(bulletsUsed
@@ -261,12 +261,11 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
                                 {block.text}
                               </p>
                             ) : block.type === 'formula' ? (
-                              <div
-                                key={bi}
-                                className="bg-neutral-100 border border-neutral-200 rounded-lg px-4 py-3"
-                              >
-                                <p className="text-sm font-mono text-neutral-800">{block.text}</p>
-                              </div>
+                              <EquationGate key={bi} feature="all_tdee_formulas">
+                                <div className="bg-neutral-100 border border-neutral-200 rounded-lg px-4 py-3">
+                                  <p className="text-sm font-mono text-neutral-800">{block.text}</p>
+                                </div>
+                              </EquationGate>
                             ) : block.type === 'bullets' ? (
                               <ul key={bi} className="space-y-1 pl-1">
                                 {(() => {
@@ -384,11 +383,13 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
                                 </table>
                               </div>
                             ) : tEquation ? (
-                              <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-3">
-                                <p className="text-sm font-mono text-neutral-800 whitespace-pre-line">
-                                  {tEquation}
-                                </p>
-                              </div>
+                              <EquationGate feature="all_tdee_formulas">
+                                <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-3">
+                                  <p className="text-sm font-mono text-neutral-800 whitespace-pre-line">
+                                    {tEquation}
+                                  </p>
+                                </div>
+                              </EquationGate>
                             ) : null}
                             {tMeasurements && (
                               <p className="text-xs text-neutral-500 mt-1 whitespace-pre-line">

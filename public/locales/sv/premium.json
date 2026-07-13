@@ -11,6 +11,7 @@
     "lockedTitle": "Premiumfunktion",
     "lockedDescription": "Den här funktionen ingår i CalculEat Premium.",
     "quotaCounter": "{{used}} av {{limit}} använda",
+    "equationLocked": "Exakta ekvationer ingår i Premium",
     "unlimited": "Obegränsat"
   },
   "upgradeModal": {

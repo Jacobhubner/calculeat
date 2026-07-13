@@ -11,6 +11,7 @@
     "lockedTitle": "Premium feature",
     "lockedDescription": "This feature is part of CalculEat Premium.",
     "quotaCounter": "{{used}} of {{limit}} used",
+    "equationLocked": "Exact equations are included in Premium",
     "unlimited": "Unlimited"
   },
   "upgradeModal": {

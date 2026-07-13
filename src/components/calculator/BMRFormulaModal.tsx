@@ -7,6 +7,7 @@ import {
 import type { BMRFormula } from '@/lib/types'
 import { Button } from '../ui/button'
 import { Portal } from '../ui/portal'
+import { EquationGate } from '@/components/premium/EquationGate'
 
 const FORMULA_KEY_MAP: Record<BMRFormula, string> = {
   'Mifflin-St Jeor equation': 'mifflinStJeor',
@@ -132,58 +133,60 @@ export default function BMRFormulaModal({ formula, isOpen, onClose }: BMRFormula
               </div>
             )}
 
-            {/* Formula variants */}
+            {/* Formula variants — exakta ekvationer är premium (EquationGate) */}
             {description.formulaVariants && description.formulaVariants.length > 0 && (
               <div>
                 <h3 className="text-lg font-semibold text-neutral-800 mb-3">
                   {t('tdeeCalc.modal.formula')}
                 </h3>
-                <div className="space-y-4">
-                  {(() => {
-                    let maleCount = 0
-                    let femaleCount = 0
-                    return description.formulaVariants!.map((v: BMRFormulaVariant, i: number) => {
-                      if (v.gender === 'Män') ++maleCount
-                      else if (v.gender === 'Kvinnor') ++femaleCount
-                      const isFirstOfGender =
-                        (v.gender === 'Män' && maleCount === 1) ||
-                        (v.gender === 'Kvinnor' && femaleCount === 1)
-                      const genderLabel =
-                        v.gender === 'Män'
-                          ? t('bmrFormulas.genderMale')
-                          : v.gender === 'Kvinnor'
-                            ? t('bmrFormulas.genderFemale')
-                            : t('bmrFormulas.genderBoth')
-                      const measurements = getMeasurements(v, i)
-                      return (
-                        <div key={i}>
-                          {isFirstOfGender && (
-                            <h3 className="text-lg font-semibold text-neutral-800 mb-3 mt-2">
-                              {genderLabel}
-                            </h3>
-                          )}
-                          <div className="mb-4">
-                            {v.name && (
-                              <p className="text-sm font-semibold text-neutral-600 mb-1">
-                                {v.name}
-                              </p>
+                <EquationGate feature="all_tdee_formulas">
+                  <div className="space-y-4">
+                    {(() => {
+                      let maleCount = 0
+                      let femaleCount = 0
+                      return description.formulaVariants!.map((v: BMRFormulaVariant, i: number) => {
+                        if (v.gender === 'Män') ++maleCount
+                        else if (v.gender === 'Kvinnor') ++femaleCount
+                        const isFirstOfGender =
+                          (v.gender === 'Män' && maleCount === 1) ||
+                          (v.gender === 'Kvinnor' && femaleCount === 1)
+                        const genderLabel =
+                          v.gender === 'Män'
+                            ? t('bmrFormulas.genderMale')
+                            : v.gender === 'Kvinnor'
+                              ? t('bmrFormulas.genderFemale')
+                              : t('bmrFormulas.genderBoth')
+                        const measurements = getMeasurements(v, i)
+                        return (
+                          <div key={i}>
+                            {isFirstOfGender && (
+                              <h3 className="text-lg font-semibold text-neutral-800 mb-3 mt-2">
+                                {genderLabel}
+                              </h3>
                             )}
-                            <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-3">
-                              <p className="text-sm font-mono text-neutral-800 whitespace-pre-line">
-                                {v.equation}
-                              </p>
+                            <div className="mb-4">
+                              {v.name && (
+                                <p className="text-sm font-semibold text-neutral-600 mb-1">
+                                  {v.name}
+                                </p>
+                              )}
+                              <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-3">
+                                <p className="text-sm font-mono text-neutral-800 whitespace-pre-line">
+                                  {v.equation}
+                                </p>
+                              </div>
+                              {measurements && (
+                                <p className="text-xs text-neutral-500 mt-1 whitespace-pre-line">
+                                  {measurements}
+                                </p>
+                              )}
                             </div>
-                            {measurements && (
-                              <p className="text-xs text-neutral-500 mt-1 whitespace-pre-line">
-                                {measurements}
-                              </p>
-                            )}
                           </div>
-                        </div>
-                      )
-                    })
-                  })()}
-                </div>
+                        )
+                      })
+                    })()}
+                  </div>
+                </EquationGate>
               </div>
             )}
 
