@@ -1,6 +1,7 @@
 {
   "badge": {
     "premium": "Premium",
+    "free": "Gratis",
     "includedInPremium": "Ingår i Premium"
   },
   "export": {
@@ -22,14 +23,54 @@
       "label_scans_per_month": "Du har använt månadens {{limit}} etikettskanningar på gratisnivån.",
       "generic": "Du har nått en gräns på gratisnivån."
     },
-    "benefits": {
-      "history": "Obegränsad historik — även retroaktivt",
-      "recipes": "Obegränsat antal recept och sparade måltider, med bilder",
-      "tools": "Alla TDEE-formler, kroppskompositionsmetoder och obegränsad kalibrering",
-      "analysis": "Trendgrafer, periodjämförelser och CSV-export"
+    "compare": {
+      "freeHeader": "Gratis",
+      "premiumHeader": "Premium",
+      "rows": {
+        "history": {
+          "label": "Historik",
+          "free": "30 dagar",
+          "premium": "Obegränsad + retroaktiv"
+        },
+        "recipes": { "label": "Recept", "free": "3 st", "premium": "Obegränsat + bilder" },
+        "meals": { "label": "Sparade måltider", "free": "10 st", "premium": "Obegränsat" },
+        "barcode": { "label": "Streckkodsskanning", "free": "Obegränsad", "premium": "Obegränsad" },
+        "labelScan": {
+          "label": "Etikettskanning (AI)",
+          "free": "5 per månad",
+          "premium": "20 per dag"
+        },
+        "tdee": { "label": "TDEE-formler", "free": "1 formel", "premium": "Alla 10 + jämförelse" },
+        "calibration": { "label": "Kalibrering", "free": "1×/kvartal", "premium": "Obegränsad" },
+        "bodyComp": {
+          "label": "Kroppskomposition",
+          "free": "2 metoder",
+          "premium": "Alla 12 + genetisk potential"
+        },
+        "trends": {
+          "label": "Trendgrafer",
+          "free": "Vikttrend",
+          "premium": "Alla + periodjämförelser"
+        },
+        "csv": { "label": "CSV-export", "free": "—", "premium": "Ingår" }
+      }
     },
     "dataPromise": "Din data sparas alltid — oavsett plan.",
-    "cta": "Kommer snart",
+    "ctaMonthly": "Uppgradera — 45 kr/mån",
+    "ctaYearly": "Årsplan — 399 kr/år (spara 26 %)",
+    "ctaLoading": "Öppnar kassan…",
+    "trialNote": "7 dagar gratis provperiod, avsluta när som helst.",
+    "checkoutError": "Kunde inte öppna kassan. Försök igen.",
     "later": "Inte nu"
+  },
+  "checkout": {
+    "success": "Välkommen till Premium! 🎉",
+    "cancelled": "Betalningen avbröts — inget har dragits."
+  },
+  "subscription": {
+    "manage": "Hantera prenumeration",
+    "upgradeCta": "Uppgradera till Premium",
+    "freeText": "Du använder gratisnivån. Uppgradera för obegränsad historik, alla verktyg och full precision.",
+    "portalError": "Kunde inte öppna prenumerationssidan. Försök igen."
   }
 }

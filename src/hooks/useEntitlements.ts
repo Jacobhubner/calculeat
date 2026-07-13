@@ -30,6 +30,8 @@ export function useEntitlements() {
     limits: entitlements.limits,
     /** premium och founder är likvärdiga i UI:t */
     isPremium: entitlements.plan !== 'free',
+    /** 'off' = soft launch (alla founder), 'on' = hard launch */
+    enforcement: entitlements.enforcement,
     /** true först när svaret (eller fallbacken efter fel) är stabilt */
     isLoading: query.isLoading,
   }
@@ -38,4 +40,32 @@ export function useEntitlements() {
 /** Hjälpare för kvoträknare: true om värdet är obegränsat */
 export function isUnlimited(limit: number): boolean {
   return limit === UNLIMITED
+}
+
+export interface MySubscription {
+  plan: string
+  status: string
+  source: 'manual' | 'stripe'
+  current_period_end: string | null
+}
+
+/**
+ * Inloggad användares egen prenumerationsrad (RLS släpper bara igenom egen rad).
+ * null = ingen rad = planen följer enforcement-läget.
+ */
+export function useMySubscription() {
+  const { user } = useAuth()
+  return useQuery({
+    queryKey: ['my-subscription', user?.id],
+    queryFn: async (): Promise<MySubscription | null> => {
+      const { data, error } = await supabase
+        .from('user_subscriptions')
+        .select('plan, status, source, current_period_end')
+        .maybeSingle()
+      if (error) throw error
+      return data as MySubscription | null
+    },
+    enabled: !!user,
+    staleTime: 5 * 60 * 1000,
+  })
 }

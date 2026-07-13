@@ -26,6 +26,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { useUIStore } from '@/stores/uiStore'
 import { cn } from '@/lib/utils'
 import { Avatar, AvatarFallback } from '../ui/avatar'
+import { PlanBadge } from '@/components/premium/PlanBadge'
 import { Separator } from '../ui/separator'
 import { useSocialBadgeCount } from '@/hooks/useShareInvitations'
 import type { LucideProps } from 'lucide-react'
@@ -169,6 +170,7 @@ export default function DashboardNav() {
                   {userProfile?.username ? `@${userProfile.username}` : '...'}
                 </p>
                 <p className="text-xs text-neutral-500 truncate">{user?.email}</p>
+                <PlanBadge className="mt-1" />
               </div>
             )}
           </div>

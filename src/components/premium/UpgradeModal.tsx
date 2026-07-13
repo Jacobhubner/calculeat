@@ -1,5 +1,7 @@
-import { Sparkles, TrendingUp, UtensilsCrossed, Calculator, LineChart } from 'lucide-react'
+import { useState } from 'react'
+import { Sparkles, Loader2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
 import {
   Dialog,
   DialogContent,
@@ -8,6 +10,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
+import { supabase } from '@/lib/supabase'
 import { FREE_LIMITS, PremiumLimitKey } from '@/lib/constants/entitlements'
 
 interface UpgradeModalProps {
@@ -31,11 +34,27 @@ function isLimitMessageKey(key: PremiumLimitKey): key is LimitMessageKey {
 }
 
 /**
- * Central uppgraderingsmodal. CTA:n är "Kommer snart" tills Stripe-flödet
- * finns (Fas 4) — modalen byggs nu så att alla gates redan pekar rätt.
+ * Central uppgraderingsmodal. CTA-knapparna skapar en Stripe Checkout-session
+ * via Edge Functionen create-checkout-session och skickar användaren dit.
  */
 export function UpgradeModal({ open, onOpenChange, limitKey }: UpgradeModalProps) {
   const { t } = useTranslation('premium')
+  const [loadingPlan, setLoadingPlan] = useState<'monthly' | 'yearly' | null>(null)
+
+  const startCheckout = async (plan: 'monthly' | 'yearly') => {
+    setLoadingPlan(plan)
+    try {
+      const { data, error } = await supabase.functions.invoke('create-checkout-session', {
+        body: { plan },
+      })
+      if (error || !data?.url) throw error ?? new Error('missing checkout url')
+      window.location.href = data.url
+    } catch (err) {
+      console.error('Checkout error:', err)
+      toast.error(t('upgradeModal.checkoutError'))
+      setLoadingPlan(null)
+    }
+  }
 
   const limitMessage = limitKey
     ? isLimitMessageKey(limitKey)
@@ -45,16 +64,22 @@ export function UpgradeModal({ open, onOpenChange, limitKey }: UpgradeModalProps
       : t('upgradeModal.limitReached.generic')
     : null
 
-  const benefits = [
-    { icon: TrendingUp, text: t('upgradeModal.benefits.history') },
-    { icon: UtensilsCrossed, text: t('upgradeModal.benefits.recipes') },
-    { icon: Calculator, text: t('upgradeModal.benefits.tools') },
-    { icon: LineChart, text: t('upgradeModal.benefits.analysis') },
-  ]
+  const compareRows = [
+    'barcode',
+    'labelScan',
+    'history',
+    'recipes',
+    'meals',
+    'tdee',
+    'calibration',
+    'bodyComp',
+    'trends',
+    'csv',
+  ] as const
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-amber-500" aria-hidden="true" />
@@ -63,20 +88,69 @@ export function UpgradeModal({ open, onOpenChange, limitKey }: UpgradeModalProps
           <DialogDescription>{limitMessage ?? t('upgradeModal.description')}</DialogDescription>
         </DialogHeader>
 
-        <ul className="space-y-3 py-2">
-          {benefits.map(({ icon: Icon, text }) => (
-            <li key={text} className="flex items-start gap-3 text-sm text-neutral-700">
-              <Icon className="mt-0.5 h-4 w-4 shrink-0 text-primary-600" aria-hidden="true" />
-              {text}
-            </li>
+        {/* Free vs Premium — jämförelsen är säljargumentet */}
+        <div className="overflow-hidden rounded-xl border border-neutral-200">
+          <div className="grid grid-cols-[1.1fr_0.8fr_1.1fr] bg-neutral-50 text-xs font-semibold">
+            <div className="px-3 py-2" />
+            <div className="px-2 py-2 text-center text-neutral-500">
+              {t('upgradeModal.compare.freeHeader')}
+            </div>
+            <div className="flex items-center justify-center gap-1 bg-amber-100 px-2 py-2 text-amber-700">
+              <Sparkles className="h-3 w-3" aria-hidden="true" />
+              {t('upgradeModal.compare.premiumHeader')}
+            </div>
+          </div>
+          {compareRows.map(row => (
+            <div
+              key={row}
+              className="grid grid-cols-[1.1fr_0.8fr_1.1fr] border-t border-neutral-100 text-xs"
+            >
+              <div className="px-3 py-2 font-medium text-neutral-700">
+                {t(`upgradeModal.compare.rows.${row}.label`)}
+              </div>
+              <div className="px-2 py-2 text-center text-neutral-500">
+                {t(`upgradeModal.compare.rows.${row}.free`)}
+              </div>
+              <div className="bg-amber-50 px-2 py-2 text-center font-medium text-amber-800">
+                {t(`upgradeModal.compare.rows.${row}.premium`)}
+              </div>
+            </div>
           ))}
-        </ul>
+        </div>
 
         <p className="text-xs text-neutral-500">{t('upgradeModal.dataPromise')}</p>
 
         <div className="flex flex-col gap-2 pt-2">
-          <Button disabled>{t('upgradeModal.cta')}</Button>
-          <Button variant="ghost" onClick={() => onOpenChange(false)}>
+          <Button onClick={() => startCheckout('monthly')} disabled={loadingPlan !== null}>
+            {loadingPlan === 'monthly' ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
+                {t('upgradeModal.ctaLoading')}
+              </>
+            ) : (
+              t('upgradeModal.ctaMonthly')
+            )}
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => startCheckout('yearly')}
+            disabled={loadingPlan !== null}
+          >
+            {loadingPlan === 'yearly' ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
+                {t('upgradeModal.ctaLoading')}
+              </>
+            ) : (
+              t('upgradeModal.ctaYearly')
+            )}
+          </Button>
+          <p className="text-center text-xs text-neutral-500">{t('upgradeModal.trialNote')}</p>
+          <Button
+            variant="ghost"
+            onClick={() => onOpenChange(false)}
+            disabled={loadingPlan !== null}
+          >
             {t('upgradeModal.later')}
           </Button>
         </div>

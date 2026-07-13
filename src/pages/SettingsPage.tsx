@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { SubscriptionSection } from '@/components/premium/SubscriptionSection'
 import { Button } from '@/components/ui/button'
 import {
   AlertTriangle,
@@ -485,6 +486,9 @@ export default function SettingsPage() {
             )}
           </CardContent>
         </Card>
+
+        {/* Prenumeration (visas endast med aktiv Stripe-prenumeration) */}
+        <SubscriptionSection />
 
         {/* Konto */}
         <Card>

@@ -1,6 +1,7 @@
 {
   "badge": {
     "premium": "Premium",
+    "free": "Free",
     "includedInPremium": "Included in Premium"
   },
   "export": {
@@ -22,14 +23,50 @@
       "label_scans_per_month": "You have used this month's {{limit}} label scans on the free plan.",
       "generic": "You have reached a limit on the free plan."
     },
-    "benefits": {
-      "history": "Unlimited history — including retroactively",
-      "recipes": "Unlimited recipes and saved meals, with photos",
-      "tools": "All TDEE formulas, body composition methods, and unlimited calibration",
-      "analysis": "Trend charts, period comparisons, and CSV export"
+    "compare": {
+      "freeHeader": "Free",
+      "premiumHeader": "Premium",
+      "rows": {
+        "history": { "label": "History", "free": "30 days", "premium": "Unlimited + retroactive" },
+        "recipes": { "label": "Recipes", "free": "3", "premium": "Unlimited + photos" },
+        "meals": { "label": "Saved meals", "free": "10", "premium": "Unlimited" },
+        "barcode": { "label": "Barcode scanning", "free": "Unlimited", "premium": "Unlimited" },
+        "labelScan": {
+          "label": "Label scanning (AI)",
+          "free": "5 per month",
+          "premium": "20 per day"
+        },
+        "tdee": { "label": "TDEE formulas", "free": "1 formula", "premium": "All 10 + comparison" },
+        "calibration": { "label": "Calibration", "free": "1×/quarter", "premium": "Unlimited" },
+        "bodyComp": {
+          "label": "Body composition",
+          "free": "2 methods",
+          "premium": "All 12 + genetic potential"
+        },
+        "trends": {
+          "label": "Trend charts",
+          "free": "Weight trend",
+          "premium": "All + period comparisons"
+        },
+        "csv": { "label": "CSV export", "free": "—", "premium": "Included" }
+      }
     },
     "dataPromise": "Your data is always saved — regardless of plan.",
-    "cta": "Coming soon",
+    "ctaMonthly": "Upgrade — 45 kr/month",
+    "ctaYearly": "Yearly plan — 399 kr/year (save 26%)",
+    "ctaLoading": "Opening checkout…",
+    "trialNote": "7-day free trial, cancel anytime.",
+    "checkoutError": "Could not open checkout. Please try again.",
     "later": "Not now"
+  },
+  "checkout": {
+    "success": "Welcome to Premium! 🎉",
+    "cancelled": "Payment cancelled — nothing was charged."
+  },
+  "subscription": {
+    "manage": "Manage subscription",
+    "upgradeCta": "Upgrade to Premium",
+    "freeText": "You are on the free plan. Upgrade for unlimited history, every tool, and full precision.",
+    "portalError": "Could not open the subscription page. Please try again."
   }
 }
