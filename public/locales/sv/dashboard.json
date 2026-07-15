@@ -117,7 +117,19 @@
     "leastActive": ".. hade den minst aktiva livsstilen:",
     "alreadyAtMax": "— Du är redan på beräknad maxnivå",
     "source": "Baserat på Fitness Stuff PAL-värden",
-    "currentTdee": "Ditt nuvarande TDEE"
+    "currentTdee": "Ditt nuvarande TDEE",
+    "infoTitle": "Hur räknas scenarierna ut?",
+    "infoModalTitle": "TDEE-scenarier — formler",
+    "infoIntro": "Alla fyra scenarier utgår från ditt BMR och nuvarande TDEE. \"⇧\"/\"⇩\" visar skillnaden mot ditt nuvarande TDEE.",
+    "formulaWalkTitle": "10-minuters promenad efter varje måltid",
+    "formulaWalk": "Fast tillägg = 210 kcal/dag\n(baserat på ca 3 × 10 minuters promenad à ~70 kcal)",
+    "formulaStandTitle": "3 timmar mer stående istället för sittande",
+    "formulaStand": "Fast tillägg = 385 kcal/dag\n(baserat på energiskillnaden stående vs. sittande, Fitness Stuff PAL-värden)",
+    "formulaMostActiveTitle": "Mest aktiva livsstilen",
+    "formulaMostActive": "Uppskattat TDEE vid maximal aktivitet = BMR × 1.5 + 600 kcal\n\nSkillnad som visas = (BMR × 1.5 + 600) − Nuvarande TDEE",
+    "formulaLeastActiveTitle": "Minst aktiva livsstilen",
+    "formulaLeastActive": "Uppskattat TDEE vid minimal aktivitet = BMR + 150 kcal\n\nSkillnad som visas = (BMR + 150) − Nuvarande TDEE",
+    "infoModalClose": "Stäng"
   },
   "quickLinks": {
     "logFood": "Börja logga din mat",

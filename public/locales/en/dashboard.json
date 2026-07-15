@@ -117,7 +117,19 @@
     "leastActive": ".. had the least active lifestyle:",
     "alreadyAtMax": "— You are already at the estimated maximum",
     "source": "Based on Fitness Stuff PAL values",
-    "currentTdee": "Your current TDEE"
+    "currentTdee": "Your current TDEE",
+    "infoTitle": "How are the scenarios calculated?",
+    "infoModalTitle": "TDEE scenarios — formulas",
+    "infoIntro": "All four scenarios start from your BMR and current TDEE. \"⇧\"/\"⇩\" shows the difference versus your current TDEE.",
+    "formulaWalkTitle": "10-minute walk after each meal",
+    "formulaWalk": "Fixed addition = 210 kcal/day\n(based on roughly 3 × 10-minute walks at ~70 kcal each)",
+    "formulaStandTitle": "3 more hours standing instead of sitting",
+    "formulaStand": "Fixed addition = 385 kcal/day\n(based on the energy difference standing vs. sitting, Fitness Stuff PAL values)",
+    "formulaMostActiveTitle": "Most active lifestyle",
+    "formulaMostActive": "Estimated TDEE at maximum activity = BMR × 1.5 + 600 kcal\n\nDifference shown = (BMR × 1.5 + 600) − Current TDEE",
+    "formulaLeastActiveTitle": "Least active lifestyle",
+    "formulaLeastActive": "Estimated TDEE at minimum activity = BMR + 150 kcal\n\nDifference shown = (BMR + 150) − Current TDEE",
+    "infoModalClose": "Close"
   },
   "quickLinks": {
     "logFood": "Start logging your food",

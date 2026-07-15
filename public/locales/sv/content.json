@@ -76,7 +76,9 @@
     "sourcesScientificLabel": "Vetenskaplig grund:",
     "sourcesScientificText": "Alpert SS. A limit on the energy transfer rate from the human fat store in hypophagia. Journal of Theoretical Biology. 2005 Mar 7;233(1):1–13. doi: 10.1016/j.jtbi.2004.09.015. Epub 2004 Dec 8. PMID: 15615615.",
     "sourcesPracticalLabel": "Praktisk tolkning:",
-    "sourcesPracticalText": "Lyle McDonald (The Rapid Fat Loss Handbook), Tom Venuto (Burn the Fat Blog)"
+    "sourcesPracticalText": "Lyle McDonald (The Rapid Fat Loss Handbook), Tom Venuto (Burn the Fat Blog)",
+    "formulaTitle": "Formel",
+    "formula": "Fettmassa (kg) = Kroppsvikt − Fettfri massa (FFM)\n\nPraktiskt tak = Fettmassa × 31 kcal/kg/dag\n\nReferensvärden (samma fettmassa):\n  Observerat max (Alpert) = Fettmassa × 69 kcal/kg/dag\n  Teoretiskt max (Alpert) = Fettmassa × 86 kcal/kg/dag"
   },
   "normalizedFFMI": {
     "section1Title": "Vad är Normaliserad FFMI?",

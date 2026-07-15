@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { EquationGate } from '@/components/premium/EquationGate'
 
 export default function MaxFatMetabolismContent() {
   const { t } = useTranslation('content')
@@ -12,6 +13,17 @@ export default function MaxFatMetabolismContent() {
         <p className="mb-4">{t('maxFatMetabolism.section1P1')}</p>
         <p className="mb-4">{t('maxFatMetabolism.section1P2')}</p>
         <p>{t('maxFatMetabolism.section1P3')}</p>
+      </section>
+
+      <section>
+        <h3 className="text-lg font-semibold text-neutral-900 mb-3">
+          {t('maxFatMetabolism.formulaTitle')}
+        </h3>
+        <EquationGate feature="all_tdee_formulas">
+          <div className="bg-neutral-50 text-neutral-800 font-mono text-sm px-4 py-3 rounded-lg border border-neutral-200 whitespace-pre-line">
+            {t('maxFatMetabolism.formula')}
+          </div>
+        </EquationGate>
       </section>
 
       <section className="bg-red-50 border border-red-200 rounded-lg p-4">
