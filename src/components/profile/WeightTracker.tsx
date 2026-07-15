@@ -83,7 +83,7 @@ export default function WeightTracker({
   const [chartsReady, setChartsReady] = useState(false)
   const [bfmChartReady, setBfmChartReady] = useState(false)
   const [slmChartReady, setSlmChartReady] = useState(false)
-  const [chartRange, setChartRange] = useState<'7d' | '30d' | '90d' | 'all'>('7d')
+  const [chartRange, setChartRange] = useState<'14d' | '30d' | '90d' | 'all'>('14d')
 
   useEffect(() => {
     if (isOpen) {
@@ -212,10 +212,10 @@ export default function WeightTracker({
   )
 
   // Brush-data = den bredare period som fungerar som "minimap"
-  // 7d → brush visar 30d, 30d → 90d, 90d → allt, all → allt (ingen brush)
+  // 14d → brush visar 30d, 30d → 90d, 90d → allt, all → allt (ingen brush)
   const brushCutoff = useMemo(() => {
     if (chartRange === 'all' || chartRange === '90d') return 0
-    const days = chartRange === '7d' ? 30 : 90
+    const days = chartRange === '14d' ? 30 : 90
     return new Date().getTime() - days * 24 * 60 * 60 * 1000
   }, [chartRange])
 
@@ -243,7 +243,7 @@ export default function WeightTracker({
   // startIndex/endIndex för brush — det valda fönstret inom brush-data
   const viewCutoff = useMemo(() => {
     if (chartRange === 'all') return 0
-    const days = chartRange === '7d' ? 7 : chartRange === '30d' ? 30 : 90
+    const days = chartRange === '14d' ? 14 : chartRange === '30d' ? 30 : 90
     return new Date().getTime() - days * 24 * 60 * 60 * 1000
   }, [chartRange])
 
@@ -503,7 +503,7 @@ export default function WeightTracker({
           {/* Chart range filter */}
           {chartsReady && chartData.length > 1 && (
             <div className="flex gap-1 mb-2">
-              {(['7d', '30d', '90d', 'all'] as const).map(r => (
+              {(['14d', '30d', '90d', 'all'] as const).map(r => (
                 <button
                   key={r}
                   type="button"
