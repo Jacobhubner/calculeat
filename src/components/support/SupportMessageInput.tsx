@@ -116,7 +116,7 @@ export function SupportMessageInput({ threadId, status }: Props) {
           onKeyDown={handleKeyDown}
           placeholder={t('inputPlaceholder')}
           rows={1}
-          className="flex-1 resize-none rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+          className="flex-1 resize-none rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-base md:text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
           style={{ minHeight: '40px', maxHeight: '120px' }}
         />
         <button

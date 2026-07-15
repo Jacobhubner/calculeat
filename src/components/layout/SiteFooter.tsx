@@ -154,7 +154,7 @@ export default function SiteFooter() {
               <input
                 type="email"
                 placeholder={t('footer.newsletter.placeholder')}
-                className="flex-1 h-11 rounded-xl border border-neutral-300 bg-white px-4 text-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                className="flex-1 h-11 rounded-xl border border-neutral-300 bg-white px-4 text-base md:text-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
               />
               <button className="h-11 px-6 rounded-xl bg-primary-600 text-white text-sm font-medium hover:bg-primary-700 transition-colors">
                 {t('footer.newsletter.button')}

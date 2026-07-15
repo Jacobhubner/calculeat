@@ -146,7 +146,7 @@ const InstructionsTextarea = React.memo(function InstructionsTextarea({
       onBlur={e => onChange(e.target.value)}
       placeholder={placeholder}
       rows={5}
-      className="w-full rounded-xl border border-neutral-300 p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+      className="w-full rounded-xl border border-neutral-300 p-3 text-base md:text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
     />
   )
 })

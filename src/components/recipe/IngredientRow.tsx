@@ -212,7 +212,7 @@ export function IngredientRow({
         <select
           value={ingredient.unit}
           onChange={e => handleUnitChange(e.target.value)}
-          className="flex-1 h-11 px-3 bg-white border border-neutral-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+          className="flex-1 h-11 px-3 bg-white border border-neutral-200 rounded-2xl text-base md:text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
           aria-label={t('ingredient.selectUnit')}
         >
           {availableUnits.map(unit => (

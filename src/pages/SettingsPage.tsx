@@ -577,7 +577,7 @@ export default function SettingsPage() {
                         value={emailInput}
                         onChange={e => setEmailInput(e.target.value)}
                         placeholder="ny@email.se"
-                        className="flex-1 px-3 py-2 text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        className="flex-1 px-3 py-2 text-base md:text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         onKeyDown={e => {
                           if (e.key === 'Enter') handleSaveEmail()
                           if (e.key === 'Escape') closeEditor()
@@ -771,7 +771,7 @@ export default function SettingsPage() {
                   value={newAdminIdentifier}
                   onChange={e => setNewAdminIdentifier(e.target.value)}
                   placeholder={t('settings.adminPlaceholder')}
-                  className="flex-1 px-3 py-2 text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="flex-1 px-3 py-2 text-base md:text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                 />
                 <button
                   onClick={async () => {

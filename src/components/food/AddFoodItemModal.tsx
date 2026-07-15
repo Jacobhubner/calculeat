@@ -1180,7 +1180,7 @@ export function AddFoodItemModal({
                           }
                         },
                       })}
-                      className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-base md:text-sm"
                     >
                       <option value="Solid">{t('addFoodModal.foodTypeSolid')}</option>
                       <option value="Liquid">{t('addFoodModal.foodTypeLiquid')}</option>
@@ -1427,7 +1427,7 @@ export function AddFoodItemModal({
                               id="volume_unit"
                               value={volumeUnit}
                               onChange={e => setVolumeUnit(e.target.value as VolumeUnit)}
-                              className="w-20 px-2 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
+                              className="w-20 px-2 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-base md:text-sm"
                             >
                               <option value="dl">dl</option>
                               <option value="msk">msk</option>
