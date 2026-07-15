@@ -169,8 +169,15 @@ export function useSendSupportMessage() {
       return data as SupportRpcResult
     },
     onSuccess: (data, variables) => {
-      if (data.success && variables.threadId) {
-        queryClient.invalidateQueries({ queryKey: supportKeys.messages(variables.threadId) })
+      if (!data.success) return
+      // send_support_message may have transparently created a new thread
+      // (the caller's threadId was closed, or null) — follow it.
+      const resolvedThreadId = data.thread_id ?? variables.threadId
+      if (resolvedThreadId && resolvedThreadId !== variables.threadId) {
+        queryClient.setQueryData(supportKeys.thread, resolvedThreadId)
+      }
+      if (resolvedThreadId) {
+        queryClient.invalidateQueries({ queryKey: supportKeys.messages(resolvedThreadId) })
       }
     },
   })

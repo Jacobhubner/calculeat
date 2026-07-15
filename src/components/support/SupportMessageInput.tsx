@@ -1,10 +1,9 @@
 import { useState, useRef, useEffect } from 'react'
-import { Send, Loader2, RotateCcw, Trash2 } from 'lucide-react'
+import { Send, Loader2, Trash2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import {
   useSendSupportMessage,
   useCreateSupportThread,
-  useUserReopenSupportThread,
   useDeleteSupportThread,
 } from '@/hooks/useSupportChat'
 import type { SupportRpcResult } from '@/lib/types/support'
@@ -23,7 +22,6 @@ export function SupportMessageInput({ threadId, status }: Props) {
 
   const { mutateAsync: sendMessage, isPending: isSending } = useSendSupportMessage()
   const { mutateAsync: createThread, isPending: isCreating } = useCreateSupportThread()
-  const { mutate: userReopen, isPending: isReopening } = useUserReopenSupportThread()
   const { mutate: deleteThread, isPending: isDeleting } = useDeleteSupportThread()
 
   useEffect(() => {
@@ -65,65 +63,47 @@ export function SupportMessageInput({ threadId, status }: Props) {
     }
   }
 
-  if (status === 'closed' && threadId) {
-    return (
-      <div className="shrink-0 border-t border-neutral-100 px-4 py-4 flex flex-col items-center gap-3 bg-neutral-50">
-        <p className="text-sm text-neutral-500 text-center">{t('threadClosed')}</p>
-
-        <button
-          type="button"
-          onClick={() => userReopen(threadId)}
-          disabled={isReopening || isDeleting}
-          className="flex items-center gap-1.5 text-sm text-primary-600 font-medium hover:text-primary-700 disabled:opacity-50 transition-colors"
-        >
-          {isReopening ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <RotateCcw className="h-4 w-4" />
-          )}
-          {t('continueConversation')}
-        </button>
-
-        {!confirmDelete ? (
-          <button
-            type="button"
-            onClick={() => setConfirmDelete(true)}
-            disabled={isReopening || isDeleting}
-            className="flex items-center gap-1.5 text-xs text-neutral-400 hover:text-red-500 disabled:opacity-50 transition-colors"
-          >
-            <Trash2 className="h-3.5 w-3.5" />
-            {t('deleteConversation')}
-          </button>
-        ) : (
-          <div className="flex items-center gap-3">
-            <span className="text-xs text-neutral-500">{t('deleteConfirm')}</span>
-            <button
-              type="button"
-              onClick={() => deleteThread(threadId)}
-              disabled={isDeleting}
-              className="text-xs text-red-500 font-medium hover:text-red-600 disabled:opacity-50 transition-colors"
-            >
-              {isDeleting ? (
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              ) : (
-                t('deleteConfirmYes')
-              )}
-            </button>
-            <button
-              type="button"
-              onClick={() => setConfirmDelete(false)}
-              className="text-xs text-neutral-400 hover:text-neutral-600 transition-colors"
-            >
-              {t('deleteConfirmNo')}
-            </button>
-          </div>
-        )}
-      </div>
-    )
-  }
-
   return (
     <div className="shrink-0 border-t border-neutral-100 px-3 py-3">
+      {status === 'closed' && threadId && (
+        <div className="mb-3 flex flex-col items-center gap-2 rounded-lg bg-neutral-50 px-3 py-3 text-center">
+          <p className="text-xs text-neutral-500">{t('threadClosedNotice')}</p>
+          {!confirmDelete ? (
+            <button
+              type="button"
+              onClick={() => setConfirmDelete(true)}
+              disabled={isDeleting}
+              className="flex items-center gap-1.5 text-xs text-neutral-400 hover:text-red-500 disabled:opacity-50 transition-colors"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+              {t('deleteConversation')}
+            </button>
+          ) : (
+            <div className="flex items-center gap-3">
+              <span className="text-xs text-neutral-500">{t('deleteConfirm')}</span>
+              <button
+                type="button"
+                onClick={() => deleteThread(threadId)}
+                disabled={isDeleting}
+                className="text-xs text-red-500 font-medium hover:text-red-600 disabled:opacity-50 transition-colors"
+              >
+                {isDeleting ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  t('deleteConfirmYes')
+                )}
+              </button>
+              <button
+                type="button"
+                onClick={() => setConfirmDelete(false)}
+                className="text-xs text-neutral-400 hover:text-neutral-600 transition-colors"
+              >
+                {t('deleteConfirmNo')}
+              </button>
+            </div>
+          )}
+        </div>
+      )}
       {inlineError && <p className="text-xs text-red-500 mb-2 px-1">{inlineError}</p>}
       <div className="flex items-end gap-2">
         <textarea

@@ -35,5 +35,5 @@ export interface SupportInboxEntry {
 }
 
 export type SupportRpcResult =
-  | { success: true; message_id: string }
+  | { success: true; message_id: string; thread_id?: string }
   | { success: false; error: string }
