@@ -110,13 +110,7 @@ export default function OmOssPage() {
               <h2 className="text-xl font-semibold text-neutral-900 mb-3">
                 {t('about.sections.contact.h2')}
               </h2>
-              <p className="text-neutral-600">
-                {t('about.sections.contact.body')}{' '}
-                <a href="mailto:contact@calculeat.com" className="text-primary-600 hover:underline">
-                  contact@calculeat.com
-                </a>
-                .
-              </p>
+              <p className="text-neutral-600">{t('about.sections.contact.body')}</p>
             </div>
           </section>
 

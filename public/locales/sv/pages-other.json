@@ -33,7 +33,7 @@
       },
       "contact": {
         "h2": "Kontakt",
-        "body": "Feedback, felrapporter och frågor välkomnas via"
+        "body": "Feedback, felrapporter och frågor välkomnas via supportchatten i appen — logga in och klicka på chattikonen nere till höger."
       }
     },
     "cta": {
@@ -88,7 +88,7 @@
     "sections": [
       {
         "h2": "1. Om tjänsten",
-        "body": "CalculEat är en nutritionsapp för matloggning, kaloriberäkning och kroppssammansättning som tillhandahålls via calculeat.com. Kontakt: contact@calculeat.com."
+        "body": "CalculEat är en nutritionsapp för matloggning, kaloriberäkning och kroppssammansättning som tillhandahålls via calculeat.com. Kontakt sker via supportchatten i appen."
       },
       {
         "h2": "2. Konto",
@@ -104,7 +104,7 @@
       },
       {
         "h2": "5. Ångerrätt",
-        "body": "Du har 14 dagars ångerrätt enligt distansavtalslagen. Eftersom provperioden är 7 dagar debiteras du inget om du avslutar innan den löper ut. Har en betalning hunnit ske inom ångerfristen återbetalar vi den om du kontaktar oss på contact@calculeat.com."
+        "body": "Du har 14 dagars ångerrätt enligt distansavtalslagen. Eftersom provperioden är 7 dagar debiteras du inget om du avslutar innan den löper ut. Har en betalning hunnit ske inom ångerfristen återbetalar vi den om du kontaktar oss via supportchatten i appen."
       },
       {
         "h2": "6. Nedgradering och din data",
@@ -124,7 +124,7 @@
       },
       {
         "h2": "10. Tillämplig lag och tvist",
-        "body": "Svensk lag gäller. Vid tvist kan du vända dig till Allmänna reklamationsnämnden (ARN) eller EU:s plattform för tvistlösning online. Frågor: contact@calculeat.com."
+        "body": "Svensk lag gäller. Vid tvist kan du vända dig till Allmänna reklamationsnämnden (ARN) eller EU:s plattform för tvistlösning online. Frågor besvaras via supportchatten i appen."
       }
     ]
   },
@@ -140,7 +140,7 @@
     "sections": [
       {
         "h2": "1. Personuppgiftsansvarig",
-        "body": "CalculEat är personuppgiftsansvarig för behandlingen som beskrivs här. Kontakt: contact@calculeat.com."
+        "body": "CalculEat är personuppgiftsansvarig för behandlingen som beskrivs här. Kontakt sker via supportchatten i appen."
       },
       {
         "h2": "2. Uppgifter vi behandlar",
@@ -160,7 +160,7 @@
       },
       {
         "h2": "6. Dina rättigheter",
-        "body": "Du har rätt till tillgång, rättelse, radering, begränsning, dataportabilitet och att invända mot behandling. Kostnadsfri export av all din data får du genom att kontakta contact@calculeat.com. Du kan också klaga hos Integritetsskyddsmyndigheten (imy.se)."
+        "body": "Du har rätt till tillgång, rättelse, radering, begränsning, dataportabilitet och att invända mot behandling. Kostnadsfri export av all din data får du genom att kontakta oss via supportchatten i appen. Du kan också klaga hos Integritetsskyddsmyndigheten (imy.se)."
       },
       {
         "h2": "7. Cookies och lokal lagring",
