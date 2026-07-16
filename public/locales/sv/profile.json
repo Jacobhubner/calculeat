@@ -43,6 +43,7 @@
     "saveError": "Kunde inte spara profilen",
     "basicInfoSaved": "Grundläggande information sparad",
     "basicInfoSaveError": "Kunde inte spara information",
+    "basicInfoSaveErrorNetwork": "Kontrollera din internetanslutning och försök igen",
     "profileSavedWithSync": "Profil sparad! Dagens mål har uppdaterats automatiskt.",
     "profileSavedSyncFailed": "Obs: Kunde inte uppdatera dagens mål. Försök synkronisera manuellt.",
     "changesSaved": "Ändringar sparade",

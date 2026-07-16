@@ -407,7 +407,11 @@ export default function ProfilePage() {
     weight_kg: number
   }) => {
     if (!activeProfile) return
-    try {
+
+    const isNetworkError = (error: unknown) =>
+      error instanceof TypeError && /fetch/i.test(error.message)
+
+    const attemptSave = async () => {
       await updateProfile.mutateAsync({
         profileId: activeProfile.id,
         data: {
@@ -419,11 +423,38 @@ export default function ProfilePage() {
         },
       })
       await createWeightHistory.mutateAsync({ weight_kg: data.weight_kg })
+    }
+
+    try {
+      await attemptSave()
       toast.success(t('toast.basicInfoSaved'))
     } catch (error) {
       if (error instanceof PreviewBlockedError) return
-      console.error('Error saving setup info:', error)
-      toast.error(t('toast.basicInfoSaveError'))
+
+      // Nätverksglapp (t.ex. dålig mobiluppkoppling) är ofta övergående — ett
+      // automatiskt återförsök löser problemet utan att användaren behöver göra något.
+      if (isNetworkError(error)) {
+        try {
+          await attemptSave()
+          toast.success(t('toast.basicInfoSaved'))
+          return
+        } catch (retryError) {
+          if (retryError instanceof PreviewBlockedError) return
+          console.error('Error saving setup info (after retry):', retryError)
+        }
+      } else {
+        console.error('Error saving setup info:', error)
+      }
+
+      toast.error(t('toast.basicInfoSaveError'), {
+        description: isNetworkError(error) ? t('toast.basicInfoSaveErrorNetwork') : undefined,
+        action: {
+          label: t('save.retryError'),
+          onClick: () => {
+            void handleSetupSave(data)
+          },
+        },
+      })
     }
   }
 

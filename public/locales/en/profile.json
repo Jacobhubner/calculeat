@@ -43,6 +43,7 @@
     "saveError": "Could not save profile",
     "basicInfoSaved": "Basic information saved",
     "basicInfoSaveError": "Could not save information",
+    "basicInfoSaveErrorNetwork": "Check your internet connection and try again",
     "profileSavedWithSync": "Profile saved! Today's goals have been updated automatically.",
     "profileSavedSyncFailed": "Note: Could not update today's goals. Try syncing manually.",
     "changesSaved": "Changes saved",
