@@ -13,6 +13,7 @@ export interface SupportMessage {
   sender_username: string
   content: string | null // null when deleted_at is set
   original_content: string | null
+  image_path: string | null // storage-path i 'support-attachments'; null när deleted_at är satt
   created_at: string
   read_at: string | null
   deleted_at: string | null

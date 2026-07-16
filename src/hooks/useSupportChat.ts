@@ -160,10 +160,19 @@ export function useSendSupportMessage() {
   const queryClient = useQueryClient()
 
   return usePreviewMutation({
-    mutationFn: async ({ content, threadId }: { content: string; threadId: string | null }) => {
+    mutationFn: async ({
+      content,
+      threadId,
+      imagePath,
+    }: {
+      content: string
+      threadId: string | null
+      imagePath?: string | null
+    }) => {
       const { data, error } = await supabase.rpc('send_support_message', {
         p_content: content,
         p_thread_id: threadId ?? undefined,
+        p_image_path: imagePath ?? undefined,
       })
       if (error) throw error
       return data as SupportRpcResult
@@ -192,11 +201,20 @@ export function useReplySupportMessage() {
   const { data: isAdmin } = useIsAdmin()
 
   return usePreviewMutation({
-    mutationFn: async ({ threadId, content }: { threadId: string; content: string }) => {
+    mutationFn: async ({
+      threadId,
+      content,
+      imagePath,
+    }: {
+      threadId: string
+      content: string
+      imagePath?: string | null
+    }) => {
       if (!isAdmin) throw new Error('forbidden')
       const { data, error } = await supabase.rpc('reply_support_message', {
         p_thread_id: threadId,
         p_content: content,
+        p_image_path: imagePath ?? undefined,
       })
       if (error) throw error
       return data as SupportRpcResult

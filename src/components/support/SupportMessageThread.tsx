@@ -1,19 +1,83 @@
 import { useEffect, useRef, useCallback, useState } from 'react'
 import { format, parseISO } from 'date-fns'
 import { sv, enUS } from 'date-fns/locale'
-import { Loader2, Check, CheckCheck, Pencil, X, Send } from 'lucide-react'
+import { Loader2, Check, CheckCheck, Pencil, X, Send, ImageOff } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { useQuery } from '@tanstack/react-query'
 import i18n from '@/i18n'
+import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import {
   useSupportMessages,
   useMarkSupportMessagesRead,
   useEditSupportMessage,
 } from '@/hooks/useSupportChat'
+import { SUPPORT_ATTACHMENTS_BUCKET } from '@/hooks/useSupportImageUpload'
 import type { SupportMessage } from '@/lib/types/support'
 
 function getDateLocale() {
   return i18n.language === 'sv' ? sv : enUS
+}
+
+const SIGNED_URL_TTL_SECONDS = 3600
+
+/**
+ * Bilaga i meddelandebubbla. Bucketen är privat — bilden hämtas via en
+ * signerad URL (RLS avgör vem som får signera). Klick öppnar full storlek.
+ */
+function SupportAttachmentImage({ path }: { path: string }) {
+  const { t } = useTranslation('support')
+
+  const {
+    data: signedUrl,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ['support-attachment-url', path],
+    queryFn: async () => {
+      const { data, error } = await supabase.storage
+        .from(SUPPORT_ATTACHMENTS_BUCKET)
+        .createSignedUrl(path, SIGNED_URL_TTL_SECONDS)
+      if (error) throw error
+      return data.signedUrl
+    },
+    // Förnya innan signaturen går ut så <img> aldrig pekar på en död länk
+    staleTime: (SIGNED_URL_TTL_SECONDS - 300) * 1000,
+    retry: 1,
+  })
+
+  if (isLoading) {
+    return (
+      <div className="h-32 w-44 rounded-xl bg-neutral-100 animate-pulse flex items-center justify-center">
+        <Loader2 className="h-4 w-4 animate-spin text-neutral-300" />
+      </div>
+    )
+  }
+
+  if (isError || !signedUrl) {
+    return (
+      <div className="h-16 w-44 rounded-xl bg-neutral-50 border border-neutral-100 flex items-center justify-center gap-1.5 text-neutral-400">
+        <ImageOff className="h-3.5 w-3.5" />
+        <span className="text-[11px]">{t('imageLoadError')}</span>
+      </div>
+    )
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={() => window.open(signedUrl, '_blank', 'noopener,noreferrer')}
+      className="block rounded-xl overflow-hidden border border-neutral-200 hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-primary-500"
+      title={t('openImage')}
+    >
+      <img
+        src={signedUrl}
+        alt={t('attachedImageAlt')}
+        loading="lazy"
+        className="max-h-48 max-w-[240px] object-cover"
+      />
+    </button>
+  )
 }
 
 interface MessageBubbleProps {
@@ -122,16 +186,21 @@ export function MessageBubble({ msg, isOwn, threadId, onAdminDelete }: MessageBu
               </div>
             </div>
           ) : (
-            <div
-              className={`rounded-2xl px-3 py-2 text-sm ${
-                isDeleted
-                  ? 'bg-neutral-50 text-neutral-400 italic border border-neutral-100'
-                  : isOwn
-                    ? 'bg-primary-600 text-white rounded-br-sm'
-                    : 'bg-neutral-100 text-neutral-900 rounded-bl-sm'
-              }`}
-            >
-              {isDeleted ? t('deletedMessage') : msg.content}
+            <div className={`flex flex-col gap-1 ${isOwn ? 'items-end' : 'items-start'}`}>
+              {!isDeleted && msg.image_path && <SupportAttachmentImage path={msg.image_path} />}
+              {(isDeleted || msg.content) && (
+                <div
+                  className={`rounded-2xl px-3 py-2 text-sm ${
+                    isDeleted
+                      ? 'bg-neutral-50 text-neutral-400 italic border border-neutral-100'
+                      : isOwn
+                        ? 'bg-primary-600 text-white rounded-br-sm'
+                        : 'bg-neutral-100 text-neutral-900 rounded-bl-sm'
+                  }`}
+                >
+                  {isDeleted ? t('deletedMessage') : msg.content}
+                </div>
+              )}
             </div>
           )}
 

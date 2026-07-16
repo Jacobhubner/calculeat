@@ -12,6 +12,7 @@ import {
   Trash2,
   UserCheck,
   UserMinus,
+  ImagePlus,
 } from 'lucide-react'
 import i18n from '@/i18n'
 import DashboardLayout from '@/components/layout/DashboardLayout'
@@ -26,6 +27,7 @@ import {
   useAssignSupportThread,
 } from '@/hooks/useSupportChat'
 import { useSupportMessages, useAdminDeleteSupportMessage } from '@/hooks/useSupportChat'
+import { useSupportImageUpload } from '@/hooks/useSupportImageUpload'
 import { useAuth } from '@/contexts/AuthContext'
 import type { SupportInboxEntry, SupportMessage, SupportRpcResult } from '@/lib/types/support'
 import { MessageBubble } from '@/components/support/SupportMessageThread'
@@ -92,8 +94,11 @@ function AdminSupportThread({
   const [input, setInput] = useState('')
   const [inlineError, setInlineError] = useState<string | null>(null)
   const [confirmDelete, setConfirmDelete] = useState(false)
+  const [attachedFile, setAttachedFile] = useState<File | null>(null)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const didInitialScroll = useRef(false)
   const rafRef = useRef<number | null>(null)
 
@@ -108,6 +113,7 @@ function AdminSupportThread({
   const { mutate: deleteThread, isPending: isDeleting } = useAdminDeleteSupportThread()
   const { mutate: assignThread, isPending: isAssigning } = useAssignSupportThread()
   const { mutate: deleteMessage } = useAdminDeleteSupportMessage(entry.thread_id)
+  const { uploadImage, removeImage, isUploading } = useSupportImageUpload()
   useMarkSupportMessagesRead(entry.thread_id)
 
   const isAssignedToMe = entry.assigned_admin_id === user?.id
@@ -166,17 +172,58 @@ function AdminSupportThread({
     el.style.height = `${Math.min(el.scrollHeight, 120)}px`
   }, [input])
 
+  // Städa object-URL när bilagan byts/tas bort eller komponenten avmonteras
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl)
+    }
+  }, [previewUrl])
+
+  const handleFileSelected = (file: File | undefined) => {
+    if (!file) return
+    if (!file.type.startsWith('image/')) {
+      setInlineError(t('errorNotAnImage'))
+      return
+    }
+    setInlineError(null)
+    if (previewUrl) URL.revokeObjectURL(previewUrl)
+    setAttachedFile(file)
+    setPreviewUrl(URL.createObjectURL(file))
+  }
+
+  const clearAttachment = () => {
+    if (previewUrl) URL.revokeObjectURL(previewUrl)
+    setAttachedFile(null)
+    setPreviewUrl(null)
+    if (fileInputRef.current) fileInputRef.current.value = ''
+  }
+
+  const isBusy = isReplying || isUploading
+
   const handleSend = async () => {
     const trimmed = input.trim()
-    if (!trimmed || isReplying) return
+    if ((!trimmed && !attachedFile) || isBusy) return
     setInlineError(null)
-    const result = await reply({ threadId: entry.thread_id, content: trimmed })
+
+    let imagePath: string | null = null
+    if (attachedFile) {
+      const { path, error } = await uploadImage(attachedFile)
+      if (error || !path) {
+        setInlineError(error ?? t('errorGeneric'))
+        return
+      }
+      imagePath = path
+    }
+
+    const result = await reply({ threadId: entry.thread_id, content: trimmed, imagePath })
     const res = result as SupportRpcResult
     if (!res.success) {
+      if (imagePath) void removeImage(imagePath)
       setInlineError(res.error === 'thread_closed' ? t('errorThreadClosed') : t('errorGeneric'))
       return
     }
     setInput('')
+    clearAttachment()
     if (textareaRef.current) textareaRef.current.style.height = 'auto'
   }
 
@@ -350,7 +397,43 @@ function AdminSupportThread({
       {threadStatus === 'open' ? (
         <div className="shrink-0 border-t border-neutral-100 px-3 py-3">
           {inlineError && <p className="text-xs text-red-500 mb-2 px-1">{inlineError}</p>}
+          {previewUrl && (
+            <div className="mb-2 px-1">
+              <div className="relative inline-block">
+                <img
+                  src={previewUrl}
+                  alt={t('attachedImageAlt')}
+                  className="h-16 w-16 rounded-lg object-cover border border-neutral-200"
+                />
+                <button
+                  type="button"
+                  onClick={clearAttachment}
+                  disabled={isBusy}
+                  className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-neutral-700 text-white flex items-center justify-center hover:bg-neutral-900 transition-colors disabled:opacity-50"
+                  title={t('removeImage')}
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </div>
+            </div>
+          )}
           <div className="flex items-end gap-2">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={e => handleFileSelected(e.target.files?.[0])}
+            />
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isBusy}
+              className="shrink-0 h-9 w-9 rounded-xl text-neutral-400 hover:text-primary-600 hover:bg-primary-50 flex items-center justify-center transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              title={t('attachImage')}
+            >
+              <ImagePlus className="h-4 w-4" />
+            </button>
             <textarea
               ref={textareaRef}
               value={input}
@@ -367,14 +450,10 @@ function AdminSupportThread({
             <button
               type="button"
               onClick={handleSend}
-              disabled={!input.trim() || isReplying}
+              disabled={(!input.trim() && !attachedFile) || isBusy}
               className="shrink-0 h-9 w-9 rounded-xl bg-primary-600 text-white flex items-center justify-center hover:bg-primary-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              {isReplying ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Send className="h-4 w-4" />
-              )}
+              {isBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
             </button>
           </div>
         </div>
@@ -447,7 +526,10 @@ function AdminSupportInbox({
                 )}
               </div>
               <p className="text-xs text-neutral-500 truncate">
-                {entry.last_message ?? t('noMessages')}
+                {/* Tom sträng = bildmeddelande utan text */}
+                {entry.last_message === ''
+                  ? t('imageAttachment')
+                  : (entry.last_message ?? t('noMessages'))}
               </p>
             </div>
             <div className="flex flex-col items-end gap-1 shrink-0">
