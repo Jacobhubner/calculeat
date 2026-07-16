@@ -78,5 +78,101 @@
     },
     "tableTitle": "Compare Free and Premium",
     "dataPromise": "Your data is always saved — regardless of plan. Downgrading never deletes anything."
+  },
+  "terms": {
+    "seo": {
+      "title": "Terms of Service | CalculEat",
+      "description": "CalculEat terms of service — account, Premium subscription, payment, right of withdrawal, and limitations of liability."
+    },
+    "breadcrumb": "Terms of Service",
+    "h1": "Terms of Service",
+    "updated": "Last updated: July 16, 2026",
+    "intro": "These terms apply when you use CalculEat. By creating an account you accept the terms.",
+    "sections": [
+      {
+        "h2": "1. About the service",
+        "body": "CalculEat is a nutrition app for food logging, calorie calculation, and body composition, provided via calculeat.com. Contact: contact@calculeat.com."
+      },
+      {
+        "h2": "2. Account",
+        "body": "You must be at least 16 years old to create an account. You are responsible for keeping your login credentials secret and for activity on your account. An account is personal and may not be shared."
+      },
+      {
+        "h2": "3. Free and Premium",
+        "body": "CalculEat's core features are free. Premium is a subscription costing 45 SEK per month or 399 SEK per year, VAT included, with a 7-day free trial. Current prices and what each tier includes are always shown at calculeat.com/premium. Price changes are announced at least 30 days in advance and apply from the next renewal at the earliest."
+      },
+      {
+        "h2": "4. Payment, renewal, and cancellation",
+        "body": "Payments are handled by Stripe. We never store your card details. The subscription renews automatically until cancelled. You can cancel at any time via Manage subscription in the app settings — the subscription then continues to the end of the period you have already paid for, with no further charges."
+      },
+      {
+        "h2": "5. Right of withdrawal",
+        "body": "You have a 14-day right of withdrawal under Swedish distance contract law. Since the trial period is 7 days, you are charged nothing if you cancel before it ends. If a payment has been made within the withdrawal period, we refund it if you contact us at contact@calculeat.com."
+      },
+      {
+        "h2": "6. Downgrading and your data",
+        "body": "Your data is never deleted because of your tier. If you go from Premium to the free tier, content above the free limits becomes readable but locked — nothing disappears. If you delete your account, all your data is permanently deleted."
+      },
+      {
+        "h2": "7. Acceptable use",
+        "body": "You may not abuse the service, attempt to circumvent technical restrictions, disrupt operations, or use the service in ways that harm other users. We reserve the right to suspend accounts that violate these terms."
+      },
+      {
+        "h2": "8. Limitation of liability",
+        "body": "CalculEat's calculators and computations are estimates and do not constitute medical advice. In case of illness, eating disorders, or special medical needs, always consult healthcare professionals. The service is provided as is. To the extent permitted by mandatory consumer law, our liability is limited to what you have paid for the service in the last twelve months. Your statutory consumer rights are never affected by these terms."
+      },
+      {
+        "h2": "9. Changes to the terms",
+        "body": "Material changes are announced in the app or by email at least 30 days before they take effect. Continued use after that constitutes acceptance of the new terms."
+      },
+      {
+        "h2": "10. Governing law and disputes",
+        "body": "Swedish law applies. In case of a dispute you can turn to the Swedish National Board for Consumer Disputes (ARN) or the EU online dispute resolution platform. Questions: contact@calculeat.com."
+      }
+    ]
+  },
+  "privacy": {
+    "seo": {
+      "title": "Privacy Policy | CalculEat",
+      "description": "How CalculEat processes your personal data — what we collect, why, who receives it, and your rights under the GDPR."
+    },
+    "breadcrumb": "Privacy Policy",
+    "h1": "Privacy Policy",
+    "updated": "Last updated: July 16, 2026",
+    "intro": "CalculEat processes your personal data in accordance with the EU General Data Protection Regulation (GDPR). Here we explain what we collect, why, and what rights you have.",
+    "sections": [
+      {
+        "h2": "1. Data controller",
+        "body": "CalculEat is the data controller for the processing described here. Contact: contact@calculeat.com."
+      },
+      {
+        "h2": "2. Data we process",
+        "body": "Account data: email address and username. Health-related data you enter yourself: weight, height, sex, date of birth, body measurements, food and weight logs. Payments: handled entirely by Stripe — we never see your card details, only subscription status. Technical information required for login and security."
+      },
+      {
+        "h2": "3. Purposes and legal basis",
+        "body": "We process your data to deliver the service (contract, Art. 6(1)(b) GDPR). Health-related data is processed with your explicit consent (Art. 9(2)(a)) — you give it by entering the data yourself, and you can withdraw it at any time by deleting the data or your account. Security and abuse protection is based on legitimate interest (Art. 6(1)(f)), and bookkeeping of payments on legal obligation (Art. 6(1)(c))."
+      },
+      {
+        "h2": "4. Who receives the data",
+        "body": "We use data processors to run the service: Supabase (database and authentication), Stripe (payments), Vercel (hosting), and Google (AI reading of nutrition label photos when you use label scanning — the image is sent to Google's Gemini service for interpretation and is not stored by us). GDPR data processing agreements are in place with all of them. For transfers outside the EU/EEA, the European Commission's standard contractual clauses are used."
+      },
+      {
+        "h2": "5. Retention",
+        "body": "Your data is kept as long as your account exists. If you delete your account, all your personal data is permanently deleted. Payment records are kept for seven years under the Swedish Bookkeeping Act."
+      },
+      {
+        "h2": "6. Your rights",
+        "body": "You have the right to access, rectification, erasure, restriction, data portability, and to object to processing. You can get a free export of all your data by contacting contact@calculeat.com. You can also lodge a complaint with the Swedish Authority for Privacy Protection (imy.se)."
+      },
+      {
+        "h2": "7. Cookies and local storage",
+        "body": "CalculEat only uses necessary local storage in your browser for login and settings. We use no advertising cookies and no third-party tracking."
+      },
+      {
+        "h2": "8. Changes",
+        "body": "Changes to this policy are announced in the app. For material changes concerning health data, we ask for renewed consent."
+      }
+    ]
   }
 }

@@ -318,6 +318,28 @@ const STATIC_PAGE_CONFIGS: PageConfig[] = [
     priority: 0.8,
     changefreq: 'monthly',
   },
+  {
+    key: 'terms',
+    category: 'other',
+    locales: {
+      sv: { path: 'villkor', canonical: `${BASE}/villkor` },
+      en: { path: 'en/terms', canonical: `${BASE}/en/terms` },
+    },
+    xDefault: `${BASE}/villkor`,
+    priority: 0.3,
+    changefreq: 'yearly',
+  },
+  {
+    key: 'privacy',
+    category: 'other',
+    locales: {
+      sv: { path: 'integritetspolicy', canonical: `${BASE}/integritetspolicy` },
+      en: { path: 'en/privacy', canonical: `${BASE}/en/privacy` },
+    },
+    xDefault: `${BASE}/integritetspolicy`,
+    priority: 0.3,
+    changefreq: 'yearly',
+  },
 ]
 
 function articleToPageConfig(a: ArticleMeta): PageConfig {

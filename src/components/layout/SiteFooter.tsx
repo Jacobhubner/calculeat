@@ -77,6 +77,8 @@ export default function SiteFooter() {
         { label: t('footer.links.dashboard'), to: '/app' },
         { label: t('footer.links.pricing'), to: loc('/premium', '/en/premium') },
         { label: t('footer.links.aboutus'), to: '/om-oss' },
+        { label: t('footer.links.terms'), to: loc('/villkor', '/en/terms') },
+        { label: t('footer.links.privacy'), to: loc('/integritetspolicy', '/en/privacy') },
       ],
     },
   ]

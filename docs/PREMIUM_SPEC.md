@@ -7,11 +7,11 @@ vara i synk.
 
 ## Planer
 
-| Plan      | Beskrivning                                                                        |
-| --------- | ---------------------------------------------------------------------------------- |
-| `free`    | Gratisnivån efter hard launch                                                      |
-| `premium` | Betald nivå (Stripe, Fas 4)                                                        |
-| `founder` | Gratis premium — soft launch-testare, manuellt tilldelad. Behåller allt permanent. |
+| Plan      | Beskrivning                                                                                                                                                                                                                                 |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `free`    | Gratisnivån efter hard launch                                                                                                                                                                                                               |
+| `premium` | Betald nivå (Stripe, Fas 4)                                                                                                                                                                                                                 |
+| `founder` | Gratis premium — manuellt tilldelad via admin_set_user_plan (admins är alltid founder). BESLUT 2026-07-14: ingen automatisk founder till soft launch-testare — alla icke-admin-konton blir free vid hard launch och betalar som alla andra. |
 
 **Regler:**
 

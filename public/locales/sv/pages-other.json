@@ -75,5 +75,101 @@
     },
     "tableTitle": "Jämför Gratis och Premium",
     "dataPromise": "Din data sparas alltid — oavsett plan. En nedgradering raderar aldrig någonting."
+  },
+  "terms": {
+    "seo": {
+      "title": "Användarvillkor | CalculEat",
+      "description": "Användarvillkor för CalculEat — konto, Premium-prenumeration, betalning, ångerrätt och ansvarsbegränsningar."
+    },
+    "breadcrumb": "Användarvillkor",
+    "h1": "Användarvillkor",
+    "updated": "Senast uppdaterad: 16 juli 2026",
+    "intro": "Dessa villkor gäller när du använder CalculEat. Genom att skapa ett konto godkänner du villkoren.",
+    "sections": [
+      {
+        "h2": "1. Om tjänsten",
+        "body": "CalculEat är en nutritionsapp för matloggning, kaloriberäkning och kroppssammansättning som tillhandahålls via calculeat.com. Kontakt: contact@calculeat.com."
+      },
+      {
+        "h2": "2. Konto",
+        "body": "Du måste vara minst 16 år för att skapa ett konto. Du ansvarar för att dina inloggningsuppgifter hålls hemliga och för aktivitet som sker via ditt konto. Ett konto är personligt och får inte delas."
+      },
+      {
+        "h2": "3. Gratis och Premium",
+        "body": "CalculEats kärnfunktioner är gratis. Premium är en prenumeration som kostar 45 kr per månad eller 399 kr per år, inklusive moms, med 7 dagars gratis provperiod. Aktuella priser och vad som ingår i respektive nivå framgår alltid på calculeat.com/premium. Prisändringar meddelas minst 30 dagar i förväg och gäller tidigast från nästa förnyelse."
+      },
+      {
+        "h2": "4. Betalning, förnyelse och uppsägning",
+        "body": "Betalning hanteras av Stripe. Vi lagrar aldrig dina kortuppgifter. Prenumerationen förnyas automatiskt tills den sägs upp. Du kan säga upp när som helst via Hantera prenumeration i appens inställningar — prenumerationen fortsätter då till slutet av den period du redan betalat för, utan ytterligare debitering."
+      },
+      {
+        "h2": "5. Ångerrätt",
+        "body": "Du har 14 dagars ångerrätt enligt distansavtalslagen. Eftersom provperioden är 7 dagar debiteras du inget om du avslutar innan den löper ut. Har en betalning hunnit ske inom ångerfristen återbetalar vi den om du kontaktar oss på contact@calculeat.com."
+      },
+      {
+        "h2": "6. Nedgradering och din data",
+        "body": "Din data raderas aldrig på grund av vilken nivå du har. Om du går från Premium till gratisnivån blir innehåll över gratisnivåns gränser läsbart men låst — inget försvinner. Raderar du ditt konto raderas all din data permanent."
+      },
+      {
+        "h2": "7. Tillåten användning",
+        "body": "Du får inte missbruka tjänsten, försöka kringgå tekniska begränsningar, störa driften eller använda tjänsten på sätt som skadar andra användare. Vi förbehåller oss rätten att stänga av konton som bryter mot villkoren."
+      },
+      {
+        "h2": "8. Ansvarsbegränsning",
+        "body": "CalculEats kalkylatorer och beräkningar är uppskattningar och utgör inte medicinsk rådgivning. Vid sjukdom, ätstörningar eller särskilda medicinska behov ska du alltid rådfråga sjukvården. Tjänsten tillhandahålls i befintligt skick. I den utsträckning tvingande konsumentlagstiftning tillåter är vårt ansvar begränsat till vad du betalat för tjänsten de senaste tolv månaderna. Dina lagstadgade rättigheter som konsument påverkas aldrig av dessa villkor."
+      },
+      {
+        "h2": "9. Ändringar av villkoren",
+        "body": "Väsentliga ändringar meddelas i appen eller via e-post minst 30 dagar innan de träder i kraft. Fortsatt användning efter det innebär att du godkänner de nya villkoren."
+      },
+      {
+        "h2": "10. Tillämplig lag och tvist",
+        "body": "Svensk lag gäller. Vid tvist kan du vända dig till Allmänna reklamationsnämnden (ARN) eller EU:s plattform för tvistlösning online. Frågor: contact@calculeat.com."
+      }
+    ]
+  },
+  "privacy": {
+    "seo": {
+      "title": "Integritetspolicy | CalculEat",
+      "description": "Så behandlar CalculEat dina personuppgifter — vilka uppgifter vi samlar in, varför, vilka som tar del av dem och vilka rättigheter du har enligt GDPR."
+    },
+    "breadcrumb": "Integritetspolicy",
+    "h1": "Integritetspolicy",
+    "updated": "Senast uppdaterad: 16 juli 2026",
+    "intro": "CalculEat behandlar dina personuppgifter enligt EU:s dataskyddsförordning (GDPR). Här förklarar vi vad vi samlar in, varför, och vilka rättigheter du har.",
+    "sections": [
+      {
+        "h2": "1. Personuppgiftsansvarig",
+        "body": "CalculEat är personuppgiftsansvarig för behandlingen som beskrivs här. Kontakt: contact@calculeat.com."
+      },
+      {
+        "h2": "2. Uppgifter vi behandlar",
+        "body": "Kontouppgifter: e-postadress och användarnamn. Hälsorelaterade uppgifter som du själv lägger in: vikt, längd, kön, födelsedatum, kroppsmått, mat- och viktloggar. Betalning: hanteras helt av Stripe — vi ser aldrig dina kortuppgifter, endast prenumerationsstatus. Teknisk information som krävs för inloggning och säkerhet."
+      },
+      {
+        "h2": "3. Ändamål och rättslig grund",
+        "body": "Vi behandlar dina uppgifter för att leverera tjänsten (avtal, art. 6.1 b GDPR). Hälsorelaterade uppgifter behandlas med ditt uttryckliga samtycke (art. 9.2 a) — du lämnar det genom att själv lägga in uppgifterna, och du kan när som helst återkalla det genom att radera uppgifterna eller ditt konto. Säkerhets- och missbruksskydd sker med stöd av berättigat intresse (art. 6.1 f), och bokföring av betalningar enligt rättslig förpliktelse (art. 6.1 c)."
+      },
+      {
+        "h2": "4. Vilka tar del av uppgifterna",
+        "body": "Vi använder personuppgiftsbiträden för att driva tjänsten: Supabase (databas och inloggning), Stripe (betalningar), Vercel (webbhotell) samt Google (AI-tolkning av foton på näringsetiketter när du använder etikettskanningen — bilden skickas till Googles Gemini-tjänst för avläsning och lagras inte av oss). Biträdesavtal enligt GDPR finns med samtliga. Vid överföring utanför EU/EES används EU-kommissionens standardavtalsklausuler."
+      },
+      {
+        "h2": "5. Lagringstid",
+        "body": "Dina uppgifter sparas så länge ditt konto finns. Raderar du kontot raderas alla dina personuppgifter permanent. Betalningsunderlag sparas i sju år enligt bokföringslagen."
+      },
+      {
+        "h2": "6. Dina rättigheter",
+        "body": "Du har rätt till tillgång, rättelse, radering, begränsning, dataportabilitet och att invända mot behandling. Kostnadsfri export av all din data får du genom att kontakta contact@calculeat.com. Du kan också klaga hos Integritetsskyddsmyndigheten (imy.se)."
+      },
+      {
+        "h2": "7. Cookies och lokal lagring",
+        "body": "CalculEat använder endast nödvändig lokal lagring i din webbläsare för inloggning och inställningar. Vi använder inga annonscookies och ingen tredjepartsspårning."
+      },
+      {
+        "h2": "8. Ändringar",
+        "body": "Ändringar i denna policy meddelas i appen. Vid väsentliga ändringar som rör hälsouppgifter ber vi om nytt samtycke."
+      }
+    ]
   }
 }

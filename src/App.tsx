@@ -94,6 +94,7 @@ const BastaTdeeKalkylatornPage = lazyWithRetry(
 )
 const OmOssPage = lazyWithRetry(() => import('./pages/public/OmOssPage'))
 const PremiumPage = lazyWithRetry(() => import('./pages/public/PremiumPage'))
+const LegalPage = lazyWithRetry(() => import('./pages/public/LegalPage'))
 
 const KalkylatornHubPage = lazyWithRetry(() => import('./pages/public/KalkylatornHubPage'))
 const ArtikelnHubPage = lazyWithRetry(() => import('./pages/public/ArtikelnHubPage'))
@@ -290,6 +291,10 @@ function App() {
                     <Route path="/en/about" element={<OmOssPage />} />
                     <Route path="/premium" element={<PremiumPage />} />
                     <Route path="/en/premium" element={<PremiumPage />} />
+                    <Route path="/villkor" element={<LegalPage pageKey="terms" />} />
+                    <Route path="/en/terms" element={<LegalPage pageKey="terms" />} />
+                    <Route path="/integritetspolicy" element={<LegalPage pageKey="privacy" />} />
+                    <Route path="/en/privacy" element={<LegalPage pageKey="privacy" />} />
                     <Route path="/kalkylatorer" element={<KalkylatornHubPage />} />
                     <Route path="/en/calculators" element={<KalkylatornHubPage />} />
                     <Route path="/artiklar" element={<ArtikelnHubPage />} />
