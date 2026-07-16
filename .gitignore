@@ -42,3 +42,6 @@ dist-prerender
 
 # MCP-konfiguration (innehåller Supabase access token)
 .mcp.json
+
+# Lokala USDA FoodData Central-dumpar (200+ MB, anvands av scripts/ for import/verifiering)
+data/
