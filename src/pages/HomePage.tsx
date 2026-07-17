@@ -13,7 +13,8 @@ export default function HomePage() {
   const { t, ready } = useTranslation(['marketing', 'common'])
   const { user } = useAuth()
 
-  if (user) return <Navigate to="/app" replace />
+  // Anonyma gästsessioner (supportchatt) ska stanna på publika sidor
+  if (user && !user.is_anonymous) return <Navigate to="/app" replace />
 
   if (!ready) return null
 

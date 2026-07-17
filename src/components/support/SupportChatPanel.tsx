@@ -1,8 +1,9 @@
 import { useEffect } from 'react'
-import { X } from 'lucide-react'
+import { X, Info } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
+import { useAuth } from '@/contexts/AuthContext'
 import { useGetSupportThreadId } from '@/hooks/useSupportChat'
 import { useNotifications, useMarkNotificationRead } from '@/hooks/useNotifications'
 import { SupportMessageThread } from './SupportMessageThread'
@@ -56,6 +57,8 @@ function useSupportThreadStatus(threadId: string | null) {
 
 export function SupportChatPanel({ isOpen, onClose }: Props) {
   const { t } = useTranslation('support')
+  const { user } = useAuth()
+  const isGuest = !!user?.is_anonymous
   const { data: threadId } = useGetSupportThreadId()
   const { data: threadStatus = 'open' } = useSupportThreadStatus(threadId ?? null)
   const { data: notifications = [] } = useNotifications()
@@ -88,6 +91,14 @@ export function SupportChatPanel({ isOpen, onClose }: Props) {
           <X className="h-4 w-4" />
         </button>
       </div>
+
+      {/* Gästnotis — sessionen är webbläsarbunden, svaren visas i panelen */}
+      {isGuest && (
+        <div className="shrink-0 flex items-start gap-2 px-4 py-2 bg-primary-50 border-b border-primary-100">
+          <Info className="h-3.5 w-3.5 text-primary-600 mt-0.5 shrink-0" />
+          <p className="text-[11px] text-primary-800 leading-snug">{t('guestNotice')}</p>
+        </div>
+      )}
 
       {/* Body */}
       <>

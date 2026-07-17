@@ -8,6 +8,7 @@ import { Toaster } from './components/ui/toast'
 import { TooltipProvider } from './components/ui/tooltip'
 import ErrorBoundary from './components/ErrorBoundary'
 import { GlobalUpgradeModal } from './components/premium/GlobalUpgradeModal'
+import { PublicSupportChat } from './components/support/PublicSupportChat'
 import { PremiumGate } from './components/premium/PremiumGate'
 import ProtectedRoute from './components/ProtectedRoute'
 import PublicOnlyRoute from './components/PublicOnlyRoute'
@@ -155,6 +156,14 @@ function ScrollToTop() {
   return null
 }
 
+// Supportchatt på publika sidor (gäster + inloggade). /app har redan
+// SupportChatButton via DashboardLayout — undanta för att slippa dubblett.
+function PublicSupportChatMount() {
+  const { pathname } = useLocation()
+  if (pathname.startsWith('/app')) return null
+  return <PublicSupportChat />
+}
+
 function App() {
   return (
     <ErrorBoundary>
@@ -165,6 +174,7 @@ function App() {
               <BrowserRouter>
                 <ScrollToTop />
                 <GlobalUpgradeModal />
+                <PublicSupportChatMount />
                 <Suspense fallback={<PageLoader />}>
                   <Routes>
                     <Route path="/" element={<HomePage />} />

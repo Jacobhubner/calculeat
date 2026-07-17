@@ -19,7 +19,9 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     )
   }
 
-  if (!user) {
+  // Anonyma gästsessioner (supportchatt på publika sidor) räknas som utloggade
+  // här — de ska aldrig nå /app-ytorna.
+  if (!user || user.is_anonymous) {
     // Save the intended destination so we can redirect after login
     return <Navigate to="/login" state={{ from: location.pathname }} replace />
   }

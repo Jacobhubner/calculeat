@@ -240,7 +240,12 @@ function AdminSupportThread({
       <div className="shrink-0 flex items-center justify-between px-4 py-3 border-b border-neutral-100">
         <div className="min-w-0">
           <p className="text-sm font-semibold text-neutral-900 truncate">
-            {entry.username || entry.email}
+            {entry.username || entry.email || t('guestFallbackName')}
+            {entry.is_guest && (
+              <span className="ml-1.5 align-middle text-[10px] bg-amber-50 text-amber-700 border border-amber-200 rounded px-1.5 py-0.5 leading-none font-medium">
+                {t('guestBadge')}
+              </span>
+            )}
           </p>
           <div className="flex items-center gap-1.5 mt-0.5">
             <p className="text-xs text-neutral-500 truncate">{entry.email}</p>
@@ -512,8 +517,13 @@ function AdminSupportInbox({
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1.5 mb-0.5">
                 <p className="text-sm font-medium text-neutral-900 truncate">
-                  {entry.username || entry.email}
+                  {entry.username || entry.email || t('guestFallbackName')}
                 </p>
+                {entry.is_guest && (
+                  <span className="shrink-0 text-[10px] bg-amber-50 text-amber-700 border border-amber-200 rounded px-1 py-0.5 leading-none font-medium">
+                    {t('guestBadge')}
+                  </span>
+                )}
                 {entry.status === 'closed' && (
                   <span className="shrink-0 text-[10px] bg-neutral-100 text-neutral-500 rounded px-1 py-0.5 leading-none">
                     {t('closed')}

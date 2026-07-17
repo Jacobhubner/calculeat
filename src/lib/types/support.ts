@@ -23,8 +23,9 @@ export interface SupportMessage {
 export interface SupportInboxEntry {
   thread_id: string
   user_id: string
-  username: string
-  email: string
+  username: string | null // gästens ifyllda namn när is_guest
+  email: string | null // gästens ifyllda e-post när is_guest
+  is_guest: boolean
   assigned_admin_id: string | null
   assigned_admin_username: string | null
   status: 'open' | 'closed'

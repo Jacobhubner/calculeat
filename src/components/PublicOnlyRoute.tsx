@@ -22,8 +22,10 @@ export default function PublicOnlyRoute({ children }: PublicOnlyRouteProps) {
     )
   }
 
-  // If user is authenticated, redirect to dashboard
-  if (user) {
+  // If user is authenticated, redirect to dashboard.
+  // Anonyma gästsessioner (supportchatt) räknas som utloggade — annars
+  // ping-pongar de mellan /login (hit) och /app (ProtectedRoute).
+  if (user && !user.is_anonymous) {
     return <Navigate to="/app" replace />
   }
 

@@ -17,7 +17,10 @@ import { LanguageSwitcher } from '../ui/LanguageSwitcher'
 
 export default function SiteHeader() {
   const { t, i18n } = useTranslation('common')
-  const { user, signOut, userProfile } = useAuth()
+  const { user: authUser, signOut, userProfile } = useAuth()
+  // Anonyma gästsessioner (supportchatt) ska se headern som utloggade —
+  // annars visas "Logga ut"/tom avatar och /app-länkar som gästen inte får nå
+  const user = authUser && !authUser.is_anonymous ? authUser : null
   const { mobileMenuOpen, toggleMobileMenu, setMobileMenuOpen } = useUIStore()
 
   const location = useLocation()
