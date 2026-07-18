@@ -1,22 +1,9 @@
 import { useTranslation } from 'react-i18next'
-import { EquationGate } from '@/components/premium/EquationGate'
 
-interface NormalizedFFMIContentProps {
-  /** true i appens info-modaler (exakta ekvationer är premium);
-      false/utelämnad i publika artiklar där innehållet är fritt SEO-material */
-  gateEquations?: boolean
-}
-
-export default function NormalizedFFMIContent({
-  gateEquations = false,
-}: NormalizedFFMIContentProps) {
+// Formeln är publik (artikeln vad-ar-ffmi) och visas därför alltid —
+// publika ekvationer låses aldrig i appen (beslut 2026-07-18).
+export default function NormalizedFFMIContent() {
   const { t } = useTranslation('content')
-
-  const formulaBlock = (
-    <div className="bg-neutral-50 border border-blue-200 rounded-lg p-3">
-      <code className="text-sm">{t('normalizedFFMI.section2Formula')}</code>
-    </div>
-  )
 
   return (
     <div className="space-y-6 text-neutral-700">
@@ -32,11 +19,9 @@ export default function NormalizedFFMIContent({
       <section className="bg-blue-50 border border-blue-200 rounded-lg p-4">
         <h4 className="font-semibold text-blue-900 mb-2">{t('normalizedFFMI.section2Title')}</h4>
         <div className="space-y-2 text-sm text-blue-800">
-          {gateEquations ? (
-            <EquationGate feature="advanced_body_comp">{formulaBlock}</EquationGate>
-          ) : (
-            formulaBlock
-          )}
+          <div className="bg-neutral-50 border border-blue-200 rounded-lg p-3">
+            <code className="text-sm">{t('normalizedFFMI.section2Formula')}</code>
+          </div>
           <p>{t('normalizedFFMI.section2Note')}</p>
         </div>
       </section>

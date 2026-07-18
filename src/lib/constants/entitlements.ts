@@ -96,6 +96,18 @@ export const FREE_BODY_COMP_METHODS: readonly string[] = [
  */
 export const FREE_BMR_FORMULAS: readonly string[] = ['Mifflin-St Jeor equation']
 
+/**
+ * BMR-formler vars EKVATIONSTEXT är publik (står i SEO-artiklarnas FAQ:
+ * Mifflin i vad-ar-bmr, Cunningham i lbm-vs-ffm) och därför aldrig låses
+ * i appens info-modaler — det som är publikt på hemsidan är gratis i appen
+ * (beslut 2026-07-18). Gäller VISNINGEN av ekvationen; att ANVÄNDA
+ * formeln i kalkylatorn styrs separat av FREE_BMR_FORMULAS.
+ */
+export const PUBLIC_EQUATION_BMR_FORMULAS: readonly string[] = [
+  'Mifflin-St Jeor equation',
+  'Cunningham equation',
+]
+
 export const FREE_PAL_SYSTEMS: readonly string[] = ['Basic internet PAL values', 'Custom PAL']
 
 /** Kvot-nycklar som servertriggarna kan kasta för */

@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { X } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import {
@@ -8,6 +9,14 @@ import type { BMRFormula } from '@/lib/types'
 import { Button } from '../ui/button'
 import { Portal } from '../ui/portal'
 import { EquationGate } from '@/components/premium/EquationGate'
+import { PUBLIC_EQUATION_BMR_FORMULAS } from '@/lib/constants/entitlements'
+
+// Ekvationer som är publika på hemsidan (artiklarnas FAQ) låses aldrig i
+// appen — det som framgår gratis publikt ska framgå gratis här (2026-07-18)
+function MaybeEquationGate({ locked, children }: { locked: boolean; children: ReactNode }) {
+  if (!locked) return <>{children}</>
+  return <EquationGate feature="all_tdee_formulas">{children}</EquationGate>
+}
 
 const FORMULA_KEY_MAP: Record<BMRFormula, string> = {
   'Mifflin-St Jeor equation': 'mifflinStJeor',
@@ -139,7 +148,7 @@ export default function BMRFormulaModal({ formula, isOpen, onClose }: BMRFormula
                 <h3 className="text-lg font-semibold text-neutral-800 mb-3">
                   {t('tdeeCalc.modal.formula')}
                 </h3>
-                <EquationGate feature="all_tdee_formulas">
+                <MaybeEquationGate locked={!PUBLIC_EQUATION_BMR_FORMULAS.includes(formula)}>
                   <div className="space-y-4">
                     {(() => {
                       let maleCount = 0
@@ -186,7 +195,7 @@ export default function BMRFormulaModal({ formula, isOpen, onClose }: BMRFormula
                       })
                     })()}
                   </div>
-                </EquationGate>
+                </MaybeEquationGate>
               </div>
             )}
 

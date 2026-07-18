@@ -1,25 +1,10 @@
 import { useTranslation } from 'react-i18next'
-import { EquationGate } from '@/components/premium/EquationGate'
 
-interface FFMIContentProps {
-  /** true i appens info-modaler (exakta ekvationer är premium);
-      false/utelämnad i publika artiklar där innehållet är fritt SEO-material */
-  gateEquations?: boolean
-}
-
-export default function FFMIContent({ gateEquations = false }: FFMIContentProps) {
+// FFMI-formeln är publik (artikeln vad-ar-ffmi + FFMI-kalkylatorsidan)
+// och visas därför alltid — publika ekvationer låses aldrig i appen
+// (beslut 2026-07-18, se PREMIUM_SPEC).
+export default function FFMIContent() {
   const { t } = useTranslation('content')
-
-  const formulaBlock = (
-    <>
-      <div className="bg-neutral-50 border border-blue-200 rounded-lg p-3">
-        <code className="text-sm">{t('ffmi.section2Formula')}</code>
-      </div>
-      <p>
-        {t('ffmi.section2Note')} <code>{t('ffmi.section2NoteCode')}</code>
-      </p>
-    </>
-  )
 
   return (
     <div className="space-y-6 text-neutral-700">
@@ -33,11 +18,12 @@ export default function FFMIContent({ gateEquations = false }: FFMIContentProps)
       <section className="bg-blue-50 border border-blue-200 rounded-lg p-4">
         <h4 className="font-semibold text-blue-900 mb-2">{t('ffmi.section2Title')}</h4>
         <div className="space-y-2 text-sm text-blue-800">
-          {gateEquations ? (
-            <EquationGate feature="advanced_body_comp">{formulaBlock}</EquationGate>
-          ) : (
-            formulaBlock
-          )}
+          <div className="bg-neutral-50 border border-blue-200 rounded-lg p-3">
+            <code className="text-sm">{t('ffmi.section2Formula')}</code>
+          </div>
+          <p>
+            {t('ffmi.section2Note')} <code>{t('ffmi.section2NoteCode')}</code>
+          </p>
         </div>
       </section>
 

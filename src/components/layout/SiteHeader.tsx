@@ -5,6 +5,7 @@ import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '../ui/button'
 import { Avatar, AvatarFallback } from '../ui/avatar'
+import { PlanBadge } from '@/components/premium/PlanBadge'
 import { useAuth } from '@/contexts/AuthContext'
 import { useUIStore } from '@/stores/uiStore'
 import { useState, useRef, useEffect } from 'react'
@@ -250,6 +251,8 @@ export default function SiteHeader() {
         {/* Mobile: Social + Avatar when logged in */}
         {user && (
           <div className="md:hidden flex items-center gap-2">
+            {/* Plan-chip — i mobilen finns ingen sidebar, så planen visas här */}
+            <PlanBadge />
             <LanguageSwitcher />
             {/* Mobile Social — navigera direkt till /app/social */}
             <Link
