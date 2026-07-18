@@ -12,6 +12,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { supabase } from '@/lib/supabase'
 import { trackConversion } from '@/lib/analytics'
+import { useMySubscription } from '@/hooks/useEntitlements'
 import { FREE_LIMITS, PremiumLimitKey } from '@/lib/constants/entitlements'
 
 interface UpgradeModalProps {
@@ -41,6 +42,10 @@ function isLimitMessageKey(key: PremiumLimitKey): key is LimitMessageKey {
 export function UpgradeModal({ open, onOpenChange, limitKey }: UpgradeModalProps) {
   const { t } = useTranslation('premium')
   const [loadingPlan, setLoadingPlan] = useState<'monthly' | 'yearly' | null>(null)
+  // Trial ges bara första gången (se create-checkout-session) — lova den
+  // inte i UI:t för den som redan förbrukat sin
+  const { data: subscription } = useMySubscription()
+  const hasUsedTrial = subscription?.source === 'stripe'
 
   // Funnel-steg 1: paywallen visades (med ev. kvot som utlöste den)
   useEffect(() => {
@@ -153,7 +158,9 @@ export function UpgradeModal({ open, onOpenChange, limitKey }: UpgradeModalProps
               t('upgradeModal.ctaYearly')
             )}
           </Button>
-          <p className="text-center text-xs text-neutral-500">{t('upgradeModal.trialNote')}</p>
+          {!hasUsedTrial && (
+            <p className="text-center text-xs text-neutral-500">{t('upgradeModal.trialNote')}</p>
+          )}
           <Button
             variant="ghost"
             onClick={() => onOpenChange(false)}

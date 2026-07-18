@@ -68,7 +68,7 @@ Deno.serve(async (req: Request) => {
   )
   const { data: existing } = await supabaseAdmin
     .from('user_subscriptions')
-    .select('status, source')
+    .select('status, source, stripe_customer_id')
     .eq('user_id', user.id)
     .maybeSingle()
 
@@ -83,6 +83,11 @@ Deno.serve(async (req: Request) => {
     )
   }
 
+  // Missbruksskydd: trial ges bara FÖRSTA gången. Raden raderas aldrig vid
+  // uppsägning (status='canceled'), så en tidigare Stripe-prenumeration =
+  // trialen är förbrukad — omtecknande debiteras direkt.
+  const hasUsedTrial = existing?.source === 'stripe'
+
   const stripe = new Stripe(STRIPE_SECRET_KEY)
 
   const lookupKey = plan === 'monthly' ? 'premium_monthly' : 'premium_yearly'
@@ -95,13 +100,17 @@ Deno.serve(async (req: Request) => {
 
   const origin = req.headers.get('origin') ?? FALLBACK_ORIGIN
 
+  // Återanvänd Stripe-kunden vid omtecknande — samma användare ska vara
+  // samma kund (historik, sparade betalmetoder i portalen)
   const session = await stripe.checkout.sessions.create({
     mode: 'subscription',
     line_items: [{ price: price.id, quantity: 1 }],
     client_reference_id: user.id,
-    customer_email: user.email ?? undefined,
+    ...(existing?.stripe_customer_id
+      ? { customer: existing.stripe_customer_id }
+      : { customer_email: user.email ?? undefined }),
     subscription_data: {
-      trial_period_days: TRIAL_DAYS,
+      ...(hasUsedTrial ? {} : { trial_period_days: TRIAL_DAYS }),
       metadata: { user_id: user.id },
     },
     allow_promotion_codes: true,
