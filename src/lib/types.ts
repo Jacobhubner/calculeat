@@ -60,7 +60,7 @@ export type DailySteps =
 
 export type CalorieGoal = 'Maintain weight' | 'Weight gain' | 'Weight loss' | 'Custom TDEE'
 
-export type DeficitLevel = '10-15%' | '20-25%' | '25-30%'
+export type DeficitLevel = '10-15%' | '15-20%' | '20-25%' | '25-30%'
 
 // All 12 body composition methods from Excel
 export type BodyCompositionMethod =

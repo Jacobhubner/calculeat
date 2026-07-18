@@ -54,8 +54,11 @@ export function nnrMode(_avgCalories: number): MacroMode {
  *   (1,25 ± 0,17 g/kg) stödjer nedre delen (doi: 10.3945/ajcn.112.044321)
  * - Fett 20–35 E%: AMDR-spannet; Wycherleys interventioner var low-fat (~≤30 E%),
  *   så ett 40 %-tak kan INTE tillskrivas den — därav 35 som tak
- * - Underskottet 10–15 % är sedvanlig måttlig restriktion (hållbarhet) och
- *   tillskrivs INTE studierna — de anger ingen procentsats
+ * - Underskott 15–20 %: Wycherleys inkluderade studier använde ~500–1000
+ *   kcal/dag (oftast 500 kcal ≈ 2092 kJ), vilket för en typisk användare
+ *   motsvarar ~20–30 %. Deltagarna var dock feta (höga TDEE), så deras
+ *   absoluta underskott blir ett mindre % för en normalviktig användare;
+ *   15–20 % är därför den evidensinformerade, hållbara nivån (~300–500 kcal)
  */
 export function weightLossMode(
   weight: number,
@@ -83,15 +86,15 @@ export function weightLossMode(
 
   return {
     calorieGoal: 'Weight loss',
-    deficitLevel: '10-15%',
+    deficitLevel: '15-20%',
     fatMinPercent,
     fatMaxPercent,
     proteinMinPercent,
     proteinMaxPercent,
     carbMinPercent,
     carbMaxPercent,
-    calorieMinMultiplier: 0.85, // TDEE * 0.85 (15 % underskott)
-    calorieMaxMultiplier: 0.9, // TDEE * 0.9 (10 % underskott)
+    calorieMinMultiplier: 0.8, // TDEE * 0.8 (20 % underskott)
+    calorieMaxMultiplier: 0.85, // TDEE * 0.85 (15 % underskott)
   }
 }
 
