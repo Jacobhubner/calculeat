@@ -3,7 +3,7 @@
  * Preview predefined macro modes (NNR, Off-season, On-season)
  */
 
-import { applyMacroMode, type MacroMode } from '@/lib/utils/macroModes'
+import { applyMacroMode, type MacroMode, type MacroModeId } from '@/lib/utils/macroModes'
 import { useProfileStore } from '@/stores/profileStore'
 import { useAuth } from '@/contexts/AuthContext'
 import { useProfiles } from '@/hooks'
@@ -12,7 +12,7 @@ import { calculateLeanMass } from '@/lib/calculations/bodyComposition'
 /**
  * Preview macro mode without applying
  */
-export function usePreviewMacroMode(mode: 'nnr' | 'offseason' | 'onseason'): MacroMode | null {
+export function usePreviewMacroMode(mode: MacroModeId): MacroMode | null {
   const activeProfile = useProfileStore(state => state.activeProfile)
   const { profile: legacyProfile } = useAuth()
   const { data: allProfiles = [] } = useProfiles()

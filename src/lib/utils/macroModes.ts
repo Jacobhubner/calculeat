@@ -1,9 +1,14 @@
 /**
- * Predefined Macro Modes
- * NNR, Off-Season, On-Season modes from Apps Script
+ * Predefined Macro Modes (Kostlägen)
+ * NNR, Weight Loss, Active, Off-Season, On-Season
+ *
+ * Evidensbas per läge dokumenteras vid respektive funktion och visas
+ * för användaren via referensknapparna i MacroModesCard.
  */
 
 import type { CalorieGoal, DeficitLevel } from '@/lib/types'
+
+export type MacroModeId = 'nnr' | 'weightloss' | 'active' | 'offseason' | 'onseason'
 
 export interface MacroMode {
   calorieGoal: CalorieGoal
@@ -35,6 +40,101 @@ export function nnrMode(_avgCalories: number): MacroMode {
     carbMaxPercent: 60,
     calorieMinMultiplier: 0.97, // TDEE * 0.97 (±3%)
     calorieMaxMultiplier: 1.03, // TDEE * 1.03 (±3%)
+  }
+}
+
+/**
+ * Weight Loss Mode (allmän viktminskning)
+ * Måttligt underskott (10–15 %) med förhöjt protein för mättnad och
+ * bevarad muskelmassa — för allmänheten, inte tävlingsförberedelse.
+ *
+ * Evidens:
+ * - Protein 1,2–1,6 g/kg vid energiunderskott: Leidy et al., Am J Clin Nutr 2015
+ *   (doi: 10.3945/ajcn.114.084038)
+ * - Högre protein vid viktminskning bevarar fettfri massa: Wycherley et al.,
+ *   meta-analys, Am J Clin Nutr 2012 (doi: 10.3945/ajcn.112.044321)
+ * - Fettspann 25–40 E% enligt NNR 2023
+ */
+export function weightLossMode(
+  weight: number,
+  caloriesMin: number,
+  caloriesMax: number
+): MacroMode {
+  // FAT: 25–40 % av kalorier (NNR-spann)
+  const fatMinKcal = caloriesMin * 0.25
+  const fatMaxKcal = caloriesMax * 0.4
+
+  // PROTEIN: 1,2–1,6 g per kg kroppsvikt
+  const proteinMinGrams = weight * 1.2
+  const proteinMaxGrams = weight * 1.6
+  const proteinMinKcal = proteinMinGrams * 4
+  const proteinMaxKcal = proteinMaxGrams * 4
+
+  const fatMinPercent = (fatMinKcal / caloriesMin) * 100
+  const fatMaxPercent = (fatMaxKcal / caloriesMax) * 100
+  const proteinMinPercent = (proteinMinKcal / caloriesMin) * 100
+  const proteinMaxPercent = (proteinMaxKcal / caloriesMax) * 100
+
+  // CARBS: resterande så att summan blir exakt 100 %
+  const carbMinPercent = 100 - (fatMaxPercent + proteinMaxPercent)
+  const carbMaxPercent = 100 - (fatMinPercent + proteinMinPercent)
+
+  return {
+    calorieGoal: 'Weight loss',
+    deficitLevel: '10-15%',
+    fatMinPercent,
+    fatMaxPercent,
+    proteinMinPercent,
+    proteinMaxPercent,
+    carbMinPercent,
+    carbMaxPercent,
+    calorieMinMultiplier: 0.85, // TDEE * 0.85 (15 % underskott)
+    calorieMaxMultiplier: 0.9, // TDEE * 0.9 (10 % underskott)
+  }
+}
+
+/**
+ * Active Mode (aktiv/underhåll)
+ * Underhållskalorier med träningsanpassat protein — för den som
+ * styrketränar regelbundet utan bulk-/cut-ambitioner.
+ *
+ * Evidens:
+ * - Protein ≥1,6 g/kg maximerar styrketräningsadaptioner (övre KI ~2,2):
+ *   Morton et al., meta-analys, Br J Sports Med 2018
+ *   (doi: 10.1136/bjsports-2017-097608)
+ * - ISSN position stand 1,4–2,0 g/kg för fysiskt aktiva: Jäger et al.,
+ *   J Int Soc Sports Nutr 2017 (doi: 10.1186/s12970-017-0177-8)
+ */
+export function activeMode(weight: number, caloriesMin: number, caloriesMax: number): MacroMode {
+  // FAT: 20–35 % av kalorier
+  const fatMinKcal = caloriesMin * 0.2
+  const fatMaxKcal = caloriesMax * 0.35
+
+  // PROTEIN: 1,6–2,2 g per kg kroppsvikt
+  const proteinMinGrams = weight * 1.6
+  const proteinMaxGrams = weight * 2.2
+  const proteinMinKcal = proteinMinGrams * 4
+  const proteinMaxKcal = proteinMaxGrams * 4
+
+  const fatMinPercent = (fatMinKcal / caloriesMin) * 100
+  const fatMaxPercent = (fatMaxKcal / caloriesMax) * 100
+  const proteinMinPercent = (proteinMinKcal / caloriesMin) * 100
+  const proteinMaxPercent = (proteinMaxKcal / caloriesMax) * 100
+
+  // CARBS: resterande så att summan blir exakt 100 %
+  const carbMinPercent = 100 - (fatMaxPercent + proteinMaxPercent)
+  const carbMaxPercent = 100 - (fatMinPercent + proteinMinPercent)
+
+  return {
+    calorieGoal: 'Maintain weight',
+    fatMinPercent,
+    fatMaxPercent,
+    proteinMinPercent,
+    proteinMaxPercent,
+    carbMinPercent,
+    carbMaxPercent,
+    calorieMinMultiplier: 0.97, // TDEE ±3 % (underhåll)
+    calorieMaxMultiplier: 1.03,
   }
 }
 
@@ -133,7 +233,7 @@ export function onSeasonMode(
  * Apply a macro mode to user profile
  */
 export function applyMacroMode(
-  mode: 'nnr' | 'offseason' | 'onseason',
+  mode: MacroModeId,
   params: {
     weight: number
     fatFreeMass?: number
@@ -146,6 +246,12 @@ export function applyMacroMode(
   switch (mode) {
     case 'nnr':
       return nnrMode(avgCalories)
+
+    case 'weightloss':
+      return weightLossMode(params.weight, params.caloriesMin, params.caloriesMax)
+
+    case 'active':
+      return activeMode(params.weight, params.caloriesMin, params.caloriesMax)
 
     case 'offseason':
       return offSeasonMode(params.weight, params.caloriesMin, params.caloriesMax)

@@ -1,6 +1,7 @@
 /**
- * Macro Modes Card Component
- * Allows users to quickly apply predefined macro modes
+ * Macro Modes Card Component (Kostläge)
+ * Allows users to quickly apply predefined, evidence-based diet modes.
+ * Skala: NNR (underhåll) → Viktminskning → Aktiv → Bulk → Cut.
  *
  * Uses pending changes - macros only saved when diskette clicked
  */
@@ -10,9 +11,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { Target, TrendingUp, TrendingDown, Minus, ChevronDown, Info, X } from 'lucide-react'
-import { usePreviewMacroMode } from '@/hooks/useMacroModes'
-import { applyMacroMode } from '@/lib/utils/macroModes'
+import { InfoModal } from '@/components/ui/InfoModal'
+import { Target, TrendingUp, TrendingDown, Minus, Activity, ChevronDown, Info } from 'lucide-react'
+import { applyMacroMode, type MacroModeId } from '@/lib/utils/macroModes'
 import { calculateLeanMass } from '@/lib/calculations/bodyComposition'
 import type { Profile } from '@/lib/types'
 import { useTranslation } from 'react-i18next'
@@ -33,15 +34,81 @@ interface MacroModesCardProps {
   }) => void
 }
 
+interface ModeConfig {
+  id: MacroModeId
+  /** Visningsnamn — engelska "Mode"-namn som etablerad konvention */
+  name: string
+  icon: typeof Minus
+  badgeClass?: string
+  /** i18n-suffix: {id}Badge, {id}Desc, {id}Fat, {id}Protein, {id}Carbs */
+  energyLabelKey: string
+  requiresBodyFat?: boolean
+  /** Veckoförändring visas endast där faktorer är belagda (bulk/cut) */
+  weekly?: { labelKey: string; valueKey: string; minFactor: number; maxFactor: number }
+  hasRef?: boolean
+}
+
+const MODES: ModeConfig[] = [
+  { id: 'nnr', name: 'NNR Mode', icon: Minus, energyLabelKey: 'maintainWeight' },
+  {
+    id: 'weightloss',
+    name: 'Weight Loss Mode',
+    icon: TrendingDown,
+    badgeClass: 'bg-rose-50 text-rose-700 border-rose-200',
+    energyLabelKey: 'weightLossModerate',
+    hasRef: true,
+  },
+  {
+    id: 'active',
+    name: 'Active Mode',
+    icon: Activity,
+    badgeClass: 'bg-blue-50 text-blue-700 border-blue-200',
+    energyLabelKey: 'maintainWeight',
+    hasRef: true,
+  },
+  {
+    id: 'offseason',
+    name: 'Off-Season Mode',
+    icon: TrendingUp,
+    badgeClass: 'bg-orange-50 text-orange-700 border-orange-200',
+    energyLabelKey: 'weightGain',
+    weekly: {
+      labelKey: 'weeklyGain',
+      valueKey: 'weeklyGainValue',
+      minFactor: 0.0025,
+      maxFactor: 0.005,
+    },
+    hasRef: true,
+  },
+  {
+    id: 'onseason',
+    name: 'On-Season Mode',
+    icon: TrendingDown,
+    badgeClass: 'bg-success-50 text-success-700 border-success-200',
+    energyLabelKey: 'weightLoss',
+    requiresBodyFat: true,
+    weekly: {
+      labelKey: 'weeklyLoss',
+      valueKey: 'weeklyLossValue',
+      minFactor: 0.005,
+      maxFactor: 0.01,
+    },
+    hasRef: true,
+  },
+]
+
 export default function MacroModesCard({ profile, onMacroModeApply }: MacroModesCardProps) {
   const { t } = useTranslation('profile')
   const [isOpen, setIsOpen] = useState(false)
-  const [activeRef, setActiveRef] = useState<'offseason' | 'onseason' | null>(null)
-  const nnrPreview = usePreviewMacroMode('nnr')
-  const offseasonPreview = usePreviewMacroMode('offseason')
+  const [activeRef, setActiveRef] = useState<MacroModeId | null>(null)
+  const [showInfo, setShowInfo] = useState(false)
+
+  // Dynamiska nycklar per läge — samma konvention som övriga t-anrop i filen
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const tm = (key: string, opts?: Record<string, unknown>) => t(`macroModes.${key}` as any, opts)
 
   // Function to calculate preview based on current profile (including pending changes)
-  const calculatePreviewForProfile = (mode: 'nnr' | 'offseason' | 'onseason') => {
+  const calculatePreviewForProfile = (mode: MacroModeId) => {
     if (!profile?.weight_kg || !profile?.tdee) return null
     if (mode === 'onseason' && !profile.body_fat_percentage) return null
 
@@ -73,7 +140,7 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
   }
 
   // Function to check if a preset already matches current profile settings
-  const isModeActive = (mode: 'nnr' | 'offseason' | 'onseason'): boolean => {
+  const isModeActive = (mode: MacroModeId): boolean => {
     if (!profile) return false
 
     const preview = calculatePreviewForProfile(mode)
@@ -117,26 +184,12 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
     )
   }
 
-  const handleApplyMode = (mode: 'nnr' | 'offseason' | 'onseason') => {
-    if (!profile) return
+  const handleApplyMode = (mode: MacroModeId) => {
+    if (!profile?.weight_kg || !profile?.tdee) return
 
-    // Validate required data
-    if (!profile.weight_kg) {
-      return
-    }
-
-    if (!profile.tdee) {
-      return
-    }
-
-    // Use body fat from profile
     const bodyFatPercentage = profile.body_fat_percentage
+    if (mode === 'onseason' && !bodyFatPercentage) return
 
-    if (mode === 'onseason' && !bodyFatPercentage) {
-      return
-    }
-
-    // Calculate FFM (Fat Free Mass) if body fat percentage is available
     const ffm =
       bodyFatPercentage && profile.weight_kg
         ? calculateLeanMass(profile.weight_kg, bodyFatPercentage)
@@ -150,7 +203,6 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
       caloriesMax: profile.tdee,
     })
 
-    // Apply multipliers to TDEE to get actual CalorieMin/Max
     const newCaloriesMin = profile.tdee * tempMacroMode.calorieMinMultiplier
     const newCaloriesMax = profile.tdee * tempMacroMode.calorieMaxMultiplier
 
@@ -177,46 +229,42 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
     })
   }
 
-  const getModeIcon = (mode: 'nnr' | 'offseason' | 'onseason') => {
-    switch (mode) {
-      case 'nnr':
-        return <Minus className="h-4 w-4" />
-      case 'offseason':
-        return <TrendingUp className="h-4 w-4" />
-      case 'onseason':
-        return <TrendingDown className="h-4 w-4" />
-    }
-  }
-
   // Check if we have required data
   const hasBodyFat = !!profile?.body_fat_percentage
   const weightKg = profile?.weight_kg
   const hasTdee = !!profile?.tdee
-
-  // Allow applying modes if we have the required data
-  const canApplyOnSeason = hasBodyFat && !!weightKg && hasTdee
   const canApplyAny = !!weightKg && hasTdee
+
+  const activeRefMode = activeRef ? MODES.find(m => m.id === activeRef) : null
 
   return (
     <Card>
       <CardHeader className="pb-3">
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="w-full flex items-center justify-between hover:opacity-70 transition-opacity"
-          type="button"
-        >
-          <div>
+        <div className="w-full flex items-center justify-between gap-2">
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="flex-1 flex items-center justify-between hover:opacity-70 transition-opacity"
+            type="button"
+          >
             <CardTitle className="flex items-center gap-2 text-lg leading-snug">
               <Target className="h-5 w-5 text-accent-600" />
               {t('macroModes.title')}
             </CardTitle>
-          </div>
-          <ChevronDown
-            className={`h-5 w-5 text-neutral-600 transition-transform duration-200 flex-shrink-0 ${
-              isOpen ? 'rotate-180' : ''
-            }`}
-          />
-        </button>
+            <ChevronDown
+              className={`h-5 w-5 text-neutral-600 transition-transform duration-200 flex-shrink-0 ${
+                isOpen ? 'rotate-180' : ''
+              }`}
+            />
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowInfo(true)}
+            className="p-1 rounded-lg text-neutral-400 hover:text-primary-600 hover:bg-neutral-100 transition-colors flex-shrink-0"
+            aria-label={tm('infoAriaLabel')}
+          >
+            <Info className="h-4 w-4" />
+          </button>
+        </div>
       </CardHeader>
       {isOpen && (
         <CardContent className="space-y-4 pt-0">
@@ -226,180 +274,86 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
             </div>
           )}
 
-          {/* NNR Mode */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                {getModeIcon('nnr')}
-                <span className="font-semibold">NNR Mode</span>
-                <Badge variant="outline">{t('macroModes.nnrBadge')}</Badge>
-              </div>
-              <Button
-                size="sm"
-                variant={isModeActive('nnr') ? 'primary' : 'outline'}
-                onClick={() => handleApplyMode('nnr')}
-                disabled={!canApplyAny || isModeActive('nnr')}
-              >
-                {isModeActive('nnr') ? t('macroModes.active') : t('macroModes.apply')}
-              </Button>
-            </div>
-            <p className="text-sm text-neutral-600">{t('macroModes.nnrDesc')}</p>
-            {nnrPreview && (
-              <div className="text-xs space-y-1.5 pl-6 mt-3">
-                <div className="font-medium text-neutral-800">
-                  <span className="text-neutral-600">{t('macroModes.energyGoalLabel')}</span>{' '}
-                  {t('macroModes.maintainWeight')}
-                </div>
-                <div className="text-neutral-700">
-                  <span className="text-neutral-600">{t('macroModes.fatLabel')}</span>{' '}
-                  {t('macroModes.nnrFat')}
-                </div>
-                <div className="text-neutral-700">
-                  <span className="text-neutral-600">{t('macroModes.carbsLabel')}</span>{' '}
-                  {t('macroModes.nnrCarbs')}
-                </div>
-                <div className="text-neutral-700">
-                  <span className="text-neutral-600">{t('macroModes.proteinLabel')}</span>{' '}
-                  {t('macroModes.nnrProtein')}
-                </div>
-              </div>
-            )}
-          </div>
+          {MODES.map((mode, index) => {
+            const Icon = mode.icon
+            const active = isModeActive(mode.id)
+            const canApply = mode.requiresBodyFat ? canApplyAny && hasBodyFat : canApplyAny
 
-          <Separator />
-
-          {/* Off-Season Mode */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                {getModeIcon('offseason')}
-                <span className="font-semibold">Off-Season Mode</span>
-                <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">
-                  {t('macroModes.offseasonBadge')}
-                </Badge>
-                <button
-                  type="button"
-                  onClick={() => setActiveRef('offseason')}
-                  className="text-neutral-400 hover:text-primary-600 transition-colors"
-                  aria-label={t('macroModes.showRefOffseason')}
-                >
-                  <Info className="h-3.5 w-3.5" />
-                </button>
-              </div>
-              <Button
-                size="sm"
-                variant={isModeActive('offseason') ? 'primary' : 'outline'}
-                onClick={() => handleApplyMode('offseason')}
-                disabled={!canApplyAny || isModeActive('offseason')}
-              >
-                {isModeActive('offseason') ? t('macroModes.active') : t('macroModes.apply')}
-              </Button>
-            </div>
-            <p className="text-sm text-neutral-600">{t('macroModes.offseasonDesc')}</p>
-            {offseasonPreview && profile?.weight_kg && (
-              <div className="text-xs space-y-1.5 pl-6 mt-3">
-                <div className="font-medium text-neutral-800">
-                  <span className="text-neutral-600">{t('macroModes.energyGoalLabel')}</span>{' '}
-                  {t('macroModes.weightGain')}
-                </div>
-                <div className="text-neutral-700">
-                  <span className="text-neutral-600">{t('macroModes.weeklyGain')}</span>{' '}
-                  {t('macroModes.weeklyGainValue', {
-                    min: (profile.weight_kg * 0.0025).toFixed(2),
-                    max: (profile.weight_kg * 0.005).toFixed(2),
-                  })}
-                </div>
-                <div className="text-neutral-700">
-                  <span className="text-neutral-600">{t('macroModes.fatLabel')}</span>{' '}
-                  {t('macroModes.offseasonFat')}
-                </div>
-                <div className="text-neutral-700">
-                  <span className="text-neutral-600">{t('macroModes.carbsLabel')}</span>{' '}
-                  {t('macroModes.offseasonCarbs')}
-                </div>
-                <div className="text-neutral-700">
-                  <span className="text-neutral-600">{t('macroModes.proteinLabel')}</span>{' '}
-                  {t('macroModes.offseasonProtein')}
-                </div>
-              </div>
-            )}
-          </div>
-
-          <Separator />
-
-          {/* On-Season Mode */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                {getModeIcon('onseason')}
-                <span className="font-semibold">On-Season Mode</span>
-                <Badge
-                  variant="outline"
-                  className="bg-success-50 text-success-700 border-success-200"
-                >
-                  {t('macroModes.onseasonBadge')}
-                </Badge>
-                <button
-                  type="button"
-                  onClick={() => setActiveRef('onseason')}
-                  className="text-neutral-400 hover:text-primary-600 transition-colors"
-                  aria-label={t('macroModes.showRefOnseason')}
-                >
-                  <Info className="h-3.5 w-3.5" />
-                </button>
-              </div>
-              <Button
-                size="sm"
-                variant={isModeActive('onseason') ? 'primary' : 'outline'}
-                onClick={() => handleApplyMode('onseason')}
-                disabled={!canApplyOnSeason || isModeActive('onseason')}
-                className={
-                  !canApplyOnSeason && !isModeActive('onseason')
-                    ? 'opacity-40 cursor-not-allowed'
-                    : ''
-                }
-              >
-                {isModeActive('onseason')
-                  ? t('macroModes.active')
-                  : !canApplyOnSeason
-                    ? t('macroModes.requiresBodyFat')
-                    : t('macroModes.apply')}
-              </Button>
-            </div>
-            <p className="text-sm text-neutral-600">{t('macroModes.onseasonDesc')}</p>
-            {!canApplyOnSeason && (
-              <div className="text-xs text-yellow-700 bg-yellow-50 border border-yellow-200 rounded p-2">
-                {t('macroModes.requiresBodyFatDesc')}
-              </div>
-            )}
-            {profile?.weight_kg && (
-              <div className="text-xs space-y-1.5 pl-6 mt-3">
-                <div className="font-medium text-neutral-800">
-                  <span className="text-neutral-600">{t('macroModes.energyGoalLabel')}</span>{' '}
-                  {t('macroModes.weightLoss')}
-                </div>
-                <div className="text-neutral-700">
-                  <span className="text-neutral-600">{t('macroModes.weeklyLoss')}</span>{' '}
-                  {t('macroModes.weeklyLossValue', {
-                    min: (profile.weight_kg * 0.005).toFixed(2),
-                    max: (profile.weight_kg * 0.01).toFixed(2),
-                  })}
-                </div>
-                <div className="text-neutral-700">
-                  <span className="text-neutral-600">{t('macroModes.fatLabel')}</span>{' '}
-                  {t('macroModes.onseasonFat')}
-                </div>
-                <div className="text-neutral-700">
-                  <span className="text-neutral-600">{t('macroModes.carbsLabel')}</span>{' '}
-                  {t('macroModes.onseasonCarbs')}
-                </div>
-                <div className="text-neutral-700">
-                  <span className="text-neutral-600">{t('macroModes.proteinLabel')}</span>{' '}
-                  {t('macroModes.onseasonProtein')}
+            return (
+              <div key={mode.id}>
+                {index > 0 && <Separator className="mb-4" />}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Icon className="h-4 w-4" />
+                      <span className="font-semibold">{mode.name}</span>
+                      <Badge variant="outline" className={mode.badgeClass}>
+                        {tm(`${mode.id}Badge`)}
+                      </Badge>
+                      {mode.hasRef && (
+                        <button
+                          type="button"
+                          onClick={() => setActiveRef(mode.id)}
+                          className="text-neutral-400 hover:text-primary-600 transition-colors"
+                          aria-label={tm(`showRef`, { mode: mode.name })}
+                        >
+                          <Info className="h-3.5 w-3.5" />
+                        </button>
+                      )}
+                    </div>
+                    <Button
+                      size="sm"
+                      variant={active ? 'primary' : 'outline'}
+                      onClick={() => handleApplyMode(mode.id)}
+                      disabled={!canApply || active}
+                      className={!canApply && !active ? 'opacity-40 cursor-not-allowed' : ''}
+                    >
+                      {active
+                        ? t('macroModes.active')
+                        : !canApply && mode.requiresBodyFat
+                          ? t('macroModes.requiresBodyFat')
+                          : t('macroModes.apply')}
+                    </Button>
+                  </div>
+                  <p className="text-sm text-neutral-600">{tm(`${mode.id}Desc`)}</p>
+                  {mode.requiresBodyFat && !canApply && (
+                    <div className="text-xs text-yellow-700 bg-yellow-50 border border-yellow-200 rounded p-2">
+                      {t('macroModes.requiresBodyFatDesc')}
+                    </div>
+                  )}
+                  {weightKg && (
+                    <div className="text-xs space-y-1.5 pl-6 mt-3">
+                      <div className="font-medium text-neutral-800">
+                        <span className="text-neutral-600">{t('macroModes.energyGoalLabel')}</span>{' '}
+                        {tm(mode.energyLabelKey)}
+                      </div>
+                      {mode.weekly && (
+                        <div className="text-neutral-700">
+                          <span className="text-neutral-600">{tm(mode.weekly.labelKey)}</span>{' '}
+                          {tm(mode.weekly.valueKey, {
+                            min: (weightKg * mode.weekly.minFactor).toFixed(2),
+                            max: (weightKg * mode.weekly.maxFactor).toFixed(2),
+                          })}
+                        </div>
+                      )}
+                      <div className="text-neutral-700">
+                        <span className="text-neutral-600">{t('macroModes.fatLabel')}</span>{' '}
+                        {tm(`${mode.id}Fat`)}
+                      </div>
+                      <div className="text-neutral-700">
+                        <span className="text-neutral-600">{t('macroModes.carbsLabel')}</span>{' '}
+                        {tm(`${mode.id}Carbs`)}
+                      </div>
+                      <div className="text-neutral-700">
+                        <span className="text-neutral-600">{t('macroModes.proteinLabel')}</span>{' '}
+                        {tm(`${mode.id}Protein`)}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
-            )}
-          </div>
+            )
+          })}
 
           <Separator />
 
@@ -407,44 +361,36 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
             <p>
               💡 <strong>{t('macroModes.tipTitle')}</strong>
             </p>
-            <p>• {t('macroModes.tipNnr')}</p>
-            <p>• {t('macroModes.tipOffseason')}</p>
-            <p>• {t('macroModes.tipOnseason')}</p>
+            {MODES.map(mode => (
+              <p key={mode.id}>• {tm(`tip_${mode.id}`)}</p>
+            ))}
           </div>
         </CardContent>
       )}
-      {activeRef && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40"
-          onClick={() => setActiveRef(null)}
+
+      {/* Referenser — evidensbas per läge */}
+      {activeRefMode && (
+        <InfoModal
+          open
+          onClose={() => setActiveRef(null)}
+          title={tm('refTitle', { mode: activeRefMode.name })}
+          size="md"
         >
-          <div
-            className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-5 space-y-3"
-            onClick={e => e.stopPropagation()}
-          >
-            <div className="flex items-start justify-between gap-2">
-              <h3 className="text-sm font-semibold text-neutral-900">
-                {activeRef === 'offseason'
-                  ? t('macroModes.refOffseasonTitle')
-                  : t('macroModes.refOnseasonTitle')}
-              </h3>
-              <button
-                type="button"
-                onClick={() => setActiveRef(null)}
-                className="text-neutral-400 hover:text-neutral-600 transition-colors shrink-0"
-                aria-label={t('macroModes.closeRef')}
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-            <p className="text-xs text-neutral-700 leading-relaxed">
-              {activeRef === 'offseason'
-                ? t('macroModes.refOffseasonText')
-                : t('macroModes.refOnseasonText')}
-            </p>
-          </div>
-        </div>
+          <p className="text-sm text-neutral-700 leading-relaxed whitespace-pre-line">
+            {tm(`ref_${activeRefMode.id}`)}
+          </p>
+        </InfoModal>
       )}
+
+      {/* Info om hela funktionen */}
+      <InfoModal
+        open={showInfo}
+        onClose={() => setShowInfo(false)}
+        title={t('macroModes.title')}
+        size="md"
+      >
+        <p className="text-neutral-700 leading-relaxed whitespace-pre-line">{tm('infoBody')}</p>
+      </InfoModal>
     </Card>
   )
 }
