@@ -36,6 +36,7 @@ vara i synk.
 | `genetic_potential`        | nej                                             | ja                                                       | UI                                                                                                                                             |
 | `owned_shared_lists`       | 1 (skapade & fortfarande medlem)                | obegränsat (-1)                                          | DB-trigger på `shared_lists` INSERT                                                                                                            |
 | `label_scans_per_month`    | 5                                               | obegränsat (-1)                                          | Räknas ur `scan_usage` (`scan_type='nutrition_label'`, kalendermånad)                                                                          |
+| `food_suggestions`         | nej                                             | ja                                                       | UI (PremiumGate i TodayPage-sidopanelen; ren klientberäkning). Portionsberäknaren är ALLTID gratis (kärnloop, beslut 2026-07-18)               |
 
 **Alltid gratis (aldrig gate:at):** daglig loggning, streckkodsskanning, makros,
 Livsmedelsverket + manuella livsmedel, vänner, chatt, delning (share_invitations),

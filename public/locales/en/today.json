@@ -146,6 +146,8 @@
   },
   "plateCalculator": {
     "title": "Portion calculator",
+    "infoBody": "The portion calculator works backwards: pick a food and a goal — for example 300 kcal or 30 g of protein — and you get exactly how many grams, milliliters, or portions you need to hit the target.\n\nThe result can be added directly to any meal in today's log.",
+    "infoAriaLabel": "About the portion calculator",
     "reset": "Reset",
     "goalLabel": "Goal:",
     "goalType": {
@@ -162,6 +164,8 @@
   },
   "foodSuggestions": {
     "title": "What should I eat?",
+    "infoBody": "Enter how many calories you have left and which macro to prioritize — CalculEat then searches the entire food database and ranks the foods and recipes that best match your goals.\n\nFilter by recipes, energy density (green/yellow/orange), or source, and add suggestions directly to any meal.\n\nIncluded in Premium.",
+    "infoAriaLabel": "About What should I eat?",
     "settingsTitle": "Settings",
     "macroUnit": "g {{macro}}",
     "macro": {

@@ -26,6 +26,7 @@ export interface PlanLimits {
   genetic_potential: boolean
   owned_shared_lists: number
   label_scans_per_month: number
+  food_suggestions: boolean
 }
 
 export const FREE_LIMITS: PlanLimits = {
@@ -42,6 +43,7 @@ export const FREE_LIMITS: PlanLimits = {
   genetic_potential: false,
   owned_shared_lists: 1,
   label_scans_per_month: 5,
+  food_suggestions: false,
 }
 
 export const PREMIUM_LIMITS: PlanLimits = {
@@ -58,6 +60,7 @@ export const PREMIUM_LIMITS: PlanLimits = {
   genetic_potential: true,
   owned_shared_lists: UNLIMITED,
   label_scans_per_month: UNLIMITED,
+  food_suggestions: true,
 }
 
 export interface Entitlements {

@@ -15,6 +15,7 @@ const hreflangAlternates = getHreflangAlternates(pageConfig)
 const COMPARE_ROWS = [
   'barcode',
   'labelScan',
+  'suggestions',
   'history',
   'recipes',
   'meals',

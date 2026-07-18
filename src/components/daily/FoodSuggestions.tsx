@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useFoodSuggestions, type SuggestionSourceFilter } from '@/hooks/useFoodSuggestions'
+import { ToolInfoButton } from '@/components/daily/ToolInfoButton'
 import type { FoodItem } from '@/hooks/useFoodItems'
 import type { FoodColor } from '@/lib/calculations/colorDensity'
 import { useTranslation } from 'react-i18next'
@@ -140,6 +141,11 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
           <CardTitle className="text-base flex items-center gap-2">
             <Lightbulb className="h-4 w-4 text-primary-600" />
             {t('foodSuggestions.title')}
+            <ToolInfoButton
+              title={t('foodSuggestions.title')}
+              body={t('foodSuggestions.infoBody')}
+              ariaLabel={t('foodSuggestions.infoAriaLabel')}
+            />
           </CardTitle>
           <button
             onClick={() => setShowSettings(!showSettings)}

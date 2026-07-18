@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import type { FoodItem } from '@/hooks/useFoodItems'
 import { calculatePlateAmount, calculatePlateForMacro } from '@/lib/calculations/plateCalculator'
 import { AddFoodToMealModal } from '@/components/daily/AddFoodToMealModal'
+import { ToolInfoButton } from '@/components/daily/ToolInfoButton'
 import { useTranslation } from 'react-i18next'
 
 type GoalType = 'kcal' | 'carbs' | 'fat' | 'protein'
@@ -84,6 +85,11 @@ export function PlateCalculator({ onAddToMeal }: PlateCalculatorProps) {
           <CardTitle className="text-base flex items-center gap-2">
             <Calculator className="h-4 w-4 text-primary-600" />
             {t('plateCalculator.title')}
+            <ToolInfoButton
+              title={t('plateCalculator.title')}
+              body={t('plateCalculator.infoBody')}
+              ariaLabel={t('plateCalculator.infoAriaLabel')}
+            />
           </CardTitle>
           {(selectedFood || targetAmount !== '') && (
             <Button

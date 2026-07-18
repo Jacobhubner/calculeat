@@ -79,6 +79,7 @@ export function UpgradeModal({ open, onOpenChange, limitKey }: UpgradeModalProps
   const compareRows = [
     'barcode',
     'labelScan',
+    'suggestions',
     'history',
     'recipes',
     'meals',

@@ -12,6 +12,7 @@ import SaveMealDialog from '@/components/daily/SaveMealDialog'
 import LoadMealToSlotDialog from '@/components/daily/LoadMealToSlotDialog'
 import { PlateCalculator } from '@/components/daily/PlateCalculator'
 import { FoodSuggestions } from '@/components/daily/FoodSuggestions'
+import { PremiumGate } from '@/components/premium/PremiumGate'
 import { ColorBalanceCard } from '@/components/daily/ColorBalanceCard'
 import { EnergyDensityIndicator } from '@/components/daily/EnergyDensityIndicator'
 import { EnergyDensityInfoCards } from '@/components/daily/EnergyDensityInfoCards'
@@ -826,8 +827,10 @@ export default function TodayPage() {
           {/* Plate Calculator */}
           <PlateCalculator onAddToMeal={handleAddFromSidebar} />
 
-          {/* Food Suggestions */}
-          <FoodSuggestions onAddToMeal={handleAddFromSidebar} />
+          {/* Food Suggestions — premium (food_suggestions); visas suddad för free */}
+          <PremiumGate feature="food_suggestions">
+            <FoodSuggestions onAddToMeal={handleAddFromSidebar} />
+          </PremiumGate>
 
           {/* Recent Foods */}
           <RecentFoodsCard dailyLogId={todayLog?.id} onFoodSelect={handleAddFromSidebar} />

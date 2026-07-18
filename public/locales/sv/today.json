@@ -146,6 +146,8 @@
   },
   "plateCalculator": {
     "title": "Portionsberäknare",
+    "infoBody": "Portionsberäknaren räknar baklänges: välj ett livsmedel och ett mål — till exempel 300 kcal eller 30 g protein — så får du exakt hur många gram, milliliter eller portioner du behöver för att nå målet.\n\nResultatet kan läggas till direkt i valfri måltid i dagens logg.",
+    "infoAriaLabel": "Om Portionsberäknaren",
     "reset": "Återställ",
     "goalLabel": "Mål:",
     "goalType": {
@@ -162,6 +164,8 @@
   },
   "foodSuggestions": {
     "title": "Vad ska jag äta?",
+    "infoBody": "Ange hur många kalorier du har kvar och vilket makro du vill prioritera — så söker CalculEat igenom hela livsmedelsdatabasen och rankar de livsmedel och recept som bäst matchar dina mål.\n\nFiltrera på recept, energitäthet (grön/gul/orange) eller källa, och lägg till förslagen direkt i valfri måltid.\n\nIngår i Premium.",
+    "infoAriaLabel": "Om Vad ska jag äta?",
     "settingsTitle": "Inställningar",
     "macroUnit": "g {{macro}}",
     "macro": {

@@ -41,6 +41,7 @@
           "free": "5 per månad",
           "premium": "20 per dag"
         },
+        "suggestions": { "label": "Vad ska jag äta? (förslag)", "free": "—", "premium": "Ingår" },
         "tdee": { "label": "TDEE-formler", "free": "1 formel", "premium": "Alla 10 + jämförelse" },
         "calibration": { "label": "Kalibrering", "free": "1×/kvartal", "premium": "Obegränsad" },
         "bodyComp": {

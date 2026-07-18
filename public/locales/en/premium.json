@@ -37,6 +37,11 @@
           "free": "5 per month",
           "premium": "20 per day"
         },
+        "suggestions": {
+          "label": "What should I eat? (suggestions)",
+          "free": "—",
+          "premium": "Included"
+        },
         "tdee": { "label": "TDEE formulas", "free": "1 formula", "premium": "All 10 + comparison" },
         "calibration": { "label": "Calibration", "free": "1×/quarter", "premium": "Unlimited" },
         "bodyComp": {
