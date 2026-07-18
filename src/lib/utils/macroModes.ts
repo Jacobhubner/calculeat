@@ -48,21 +48,23 @@ export function nnrMode(_avgCalories: number): MacroMode {
  * Måttligt underskott (10–15 %) med förhöjt protein för mättnad och
  * bevarad muskelmassa — för allmänheten, inte tävlingsförberedelse.
  *
- * Evidens:
+ * Evidens (attribution verifierad mot fulltext 2026-07-18):
  * - Protein 1,2–1,6 g/kg vid energiunderskott: Leidy et al., Am J Clin Nutr 2015
- *   (doi: 10.3945/ajcn.114.084038)
- * - Högre protein vid viktminskning bevarar fettfri massa: Wycherley et al.,
- *   meta-analys, Am J Clin Nutr 2012 (doi: 10.3945/ajcn.112.044321)
- * - Fettspann 25–40 E% enligt NNR 2023
+ *   (doi: 10.3945/ajcn.114.084038) — exakt deras intervall; Wycherleys HP-arm
+ *   (1,25 ± 0,17 g/kg) stödjer nedre delen (doi: 10.3945/ajcn.112.044321)
+ * - Fett 20–35 E%: AMDR-spannet; Wycherleys interventioner var low-fat (~≤30 E%),
+ *   så ett 40 %-tak kan INTE tillskrivas den — därav 35 som tak
+ * - Underskottet 10–15 % är sedvanlig måttlig restriktion (hållbarhet) och
+ *   tillskrivs INTE studierna — de anger ingen procentsats
  */
 export function weightLossMode(
   weight: number,
   caloriesMin: number,
   caloriesMax: number
 ): MacroMode {
-  // FAT: 25–40 % av kalorier (NNR-spann)
-  const fatMinKcal = caloriesMin * 0.25
-  const fatMaxKcal = caloriesMax * 0.4
+  // FAT: 20–35 % av kalorier (AMDR; Wycherley-interventionerna var low-fat)
+  const fatMinKcal = caloriesMin * 0.2
+  const fatMaxKcal = caloriesMax * 0.35
 
   // PROTEIN: 1,2–1,6 g per kg kroppsvikt
   const proteinMinGrams = weight * 1.2
@@ -98,21 +100,22 @@ export function weightLossMode(
  * Underhållskalorier med träningsanpassat protein — för den som
  * styrketränar regelbundet utan bulk-/cut-ambitioner.
  *
- * Evidens:
- * - Protein ≥1,6 g/kg maximerar styrketräningsadaptioner (övre KI ~2,2):
- *   Morton et al., meta-analys, Br J Sports Med 2018
- *   (doi: 10.1136/bjsports-2017-097608)
- * - ISSN position stand 1,4–2,0 g/kg för fysiskt aktiva: Jäger et al.,
- *   J Int Soc Sports Nutr 2017 (doi: 10.1186/s12970-017-0177-8)
+ * Evidens (attribution verifierad mot fulltext 2026-07-18):
+ * - Protein 1,6–2,0 g/kg: Mortons brytpunkt är 1,62 g/kg (95 % KI 1,03–2,20) —
+ *   intag DÄRUTÖVER gav ingen ytterligare FFM-vinst; 2,0 är ISSN:s övre gräns
+ *   för muskeluppbyggnad/underhåll (1,4–2,0 g/kg). Morton et al., Br J Sports
+ *   Med 2018 (doi: 10.1136/bjsports-2017-097608); Jäger et al., J Int Soc
+ *   Sports Nutr 2017 (doi: 10.1186/s12970-017-0177-8)
+ * - Fett 20–35 E%: AMDR — tillskrivs inte proteinstudierna
  */
 export function activeMode(weight: number, caloriesMin: number, caloriesMax: number): MacroMode {
-  // FAT: 20–35 % av kalorier
+  // FAT: 20–35 % av kalorier (AMDR)
   const fatMinKcal = caloriesMin * 0.2
   const fatMaxKcal = caloriesMax * 0.35
 
-  // PROTEIN: 1,6–2,2 g per kg kroppsvikt
+  // PROTEIN: 1,6–2,0 g per kg kroppsvikt (Morton-brytpunkt → ISSN-tak)
   const proteinMinGrams = weight * 1.6
-  const proteinMaxGrams = weight * 2.2
+  const proteinMaxGrams = weight * 2.0
   const proteinMinKcal = proteinMinGrams * 4
   const proteinMaxKcal = proteinMaxGrams * 4
 
