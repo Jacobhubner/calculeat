@@ -65,6 +65,12 @@
     "success": "Welcome to Premium! 🎉",
     "cancelled": "Payment cancelled — nothing was charged."
   },
+  "launchNotice": {
+    "title": "CalculEat launches Premium 🎉",
+    "body": "Thank you so much for helping test CalculEat!\n\nWe are now launching for real, and with it comes Premium (45 kr/month or 399 kr/year with a 7-day free trial). Your account has moved to the free tier.\n\nAll your data is still there — but content above the free tier limits (e.g. more than 3 recipes or history older than 30 days) is locked until you upgrade. Everything unlocks again instantly if you go Premium.\n\nQuestions? Reach out in the support chat!",
+    "cta": "See what Premium includes",
+    "dismiss": "Got it"
+  },
   "subscription": {
     "manage": "Manage subscription",
     "upgradeCta": "Upgrade to Premium",

@@ -1,5 +1,6 @@
 import { ReactNode } from 'react'
 import SiteHeader from './SiteHeader'
+import { LaunchAnnouncement } from '@/components/premium/LaunchAnnouncement'
 import DashboardNav from './DashboardNav'
 import MobileBottomNav from './MobileBottomNav'
 import { useUIStore } from '@/stores/uiStore'
@@ -34,6 +35,8 @@ export default function DashboardLayout({ children, fullHeight }: DashboardLayou
 
   return (
     <div className={cn('flex flex-col', fullHeight ? 'h-screen' : 'min-h-screen')}>
+      {/* Engångsnotis till soft launch-testare efter premium-flippen */}
+      <LaunchAnnouncement />
       <div className="sticky top-0 z-50">
         <SiteHeader />
         {isPreviewMode && (

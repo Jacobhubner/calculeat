@@ -69,6 +69,12 @@
     "success": "Välkommen till Premium! 🎉",
     "cancelled": "Betalningen avbröts — inget har dragits."
   },
+  "launchNotice": {
+    "title": "CalculEat lanserar Premium 🎉",
+    "body": "Stort tack för att du varit med och testat CalculEat!\n\nNu lanserar vi skarpt, och samtidigt införs Premium (45 kr/mån eller 399 kr/år med 7 dagars gratis provperiod). Ditt konto har gått över till gratisnivån.\n\nAll din data finns kvar — men innehåll över gratisnivåns gränser (t.ex. fler än 3 recept eller historik äldre än 30 dagar) är låst tills du eventuellt uppgraderar. Allt låses upp igen direkt om du blir Premium.\n\nFrågor? Hör av dig i supportchatten!",
+    "cta": "Se vad Premium innehåller",
+    "dismiss": "Okej, jag förstår"
+  },
   "subscription": {
     "manage": "Hantera prenumeration",
     "upgradeCta": "Uppgradera till Premium",
