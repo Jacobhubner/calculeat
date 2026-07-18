@@ -318,6 +318,8 @@
     "typeFood": "Livsmedel",
     "noFoodsFound": "Inga livsmedel hittades",
     "noFoods": "Inga livsmedel",
+    "recentHeading": "Senaste",
+    "allFoodsHeading": "Alla livsmedel",
     "loading": "Laddar livsmedel...",
     "fieldAmount": "Mängd",
     "fieldUnit": "Enhet",

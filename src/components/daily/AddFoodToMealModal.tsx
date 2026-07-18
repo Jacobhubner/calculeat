@@ -14,6 +14,7 @@ import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Select } from '@/components/ui/select'
 import { usePaginatedFoodItems, type FoodItem, type FoodTab } from '@/hooks/useFoodItems'
+import { useRecentFoodItems } from '@/hooks/useRecentFoodItems'
 import { useAddFoodToMeal, useCreateMealEntry, useUpdateMealItem } from '@/hooks/useDailyLogs'
 import { useMealSettings } from '@/hooks/useMealSettings'
 import { useSharedLists } from '@/hooks/useSharedLists'
@@ -176,6 +177,17 @@ export function AddFoodToMealModal({
   const foods = paginatedData?.items ?? []
   const totalPages = paginatedData?.totalPages ?? 0
 
+  // Senaste loggade livsmedel — visas överst när listan är ofiltrerad.
+  // Samma limit som RecentFoodsCard så att React Query-cachen delas.
+  const { data: recentFoods = [] } = useRecentFoodItems(6)
+  const showRecentSection =
+    activeTab === 'alla' &&
+    !debouncedSearch &&
+    !colorFilter &&
+    recipeFilter === null &&
+    page === 0 &&
+    recentFoods.length > 0
+
   // Page clamping
   /* eslint-disable react-hooks/set-state-in-effect -- Legitimate pattern for clamping page on data change */
   useEffect(() => {
@@ -258,6 +270,27 @@ export function AddFoodToMealModal({
     setSearchQuery('')
 
     const availableUnits = getAvailableUnits(food)
+
+    // Förifyll senast loggad mängd/enhet för detta livsmedel
+    try {
+      const savedPortion = localStorage.getItem(`food-last-portion:${food.id}`)
+      if (savedPortion) {
+        const parsed = JSON.parse(savedPortion) as { amount?: number; unit?: string }
+        if (
+          typeof parsed.amount === 'number' &&
+          parsed.amount > 0 &&
+          typeof parsed.unit === 'string' &&
+          availableUnits.includes(parsed.unit)
+        ) {
+          setSelectedUnit(parsed.unit)
+          setAmount(parsed.amount)
+          return
+        }
+      }
+    } catch {
+      // Ignore localStorage errors
+    }
+
     let displayMode: string | null = null
 
     try {
@@ -341,6 +374,18 @@ export function AddFoodToMealModal({
     setAmount(newAmount)
   }
 
+  const saveLastPortion = () => {
+    if (!selectedFood || amount === '' || amount <= 0) return
+    try {
+      localStorage.setItem(
+        `food-last-portion:${selectedFood.id}`,
+        JSON.stringify({ amount: Number(amount), unit: selectedUnit })
+      )
+    } catch {
+      // Ignore localStorage errors
+    }
+  }
+
   const handleAddFood = async () => {
     if (!selectedFood || !nutritionPreview) return
 
@@ -356,6 +401,7 @@ export function AddFoodToMealModal({
           carb_g: nutritionPreview.carbs,
           fat_g: nutritionPreview.fat,
         })
+        saveLastPortion()
         toast.success(t('addToMealModal.toastUpdated'))
         onOpenChange(false)
         onSuccess?.()
@@ -391,6 +437,7 @@ export function AddFoodToMealModal({
         fat_g: nutritionPreview.fat,
       })
 
+      saveLastPortion()
       toast.success(
         t('addToMealModal.toastAdded', { food: selectedFood.name, meal: selectedMealName })
       )
@@ -419,6 +466,44 @@ export function AddFoodToMealModal({
       </Badge>
     )
   }
+
+  const renderFoodRow = (food: FoodItem, keyPrefix = '') => (
+    <button
+      key={`${keyPrefix}${food.id}`}
+      onClick={() => handleSelectFood(food)}
+      className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-neutral-50 transition-colors text-left border border-transparent hover:border-neutral-200"
+    >
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-1.5 min-w-0">
+          <p className="font-medium text-neutral-900 truncate">{food.name}</p>
+          <Badge
+            variant="outline"
+            className={`text-[9px] px-1 py-0 h-4 shrink-0 ${
+              food.shared_list_id
+                ? getListItemBadgeConfig(
+                    sharedLists.find(l => l.id === food.shared_list_id)?.name ?? ''
+                  ).className
+                : (SOURCE_BADGES[food.source] ?? SOURCE_BADGES.user).className
+            }`}
+          >
+            {food.shared_list_id
+              ? getListItemBadgeConfig(
+                  sharedLists.find(l => l.id === food.shared_list_id)?.name ?? ''
+                ).label
+              : (SOURCE_BADGES[food.source] ?? SOURCE_BADGES.user).label}
+          </Badge>
+        </div>
+        <p className="text-xs text-neutral-500">
+          {food.calories} kcal / {food.default_amount} {food.default_unit}
+          {food.brand && ` • ${food.brand}`}
+        </p>
+      </div>
+      <div className="flex items-center gap-2 ml-2 shrink-0">
+        {getColorBadge(food.energy_density_color)}
+        <Plus className="h-4 w-4 text-neutral-400" />
+      </div>
+    </button>
+  )
 
   return (
     <>
@@ -548,6 +633,17 @@ export function AddFoodToMealModal({
 
                 {/* Food list */}
                 <div className="space-y-1">
+                  {showRecentSection && (
+                    <>
+                      <p className="text-[11px] font-semibold uppercase tracking-wide text-neutral-400 px-1 pt-1">
+                        {t('addToMealModal.recentHeading')}
+                      </p>
+                      {recentFoods.map(food => renderFoodRow(food, 'recent-'))}
+                      <p className="text-[11px] font-semibold uppercase tracking-wide text-neutral-400 px-1 pt-2">
+                        {t('addToMealModal.allFoodsHeading')}
+                      </p>
+                    </>
+                  )}
                   {foodsLoading ? (
                     <p className="text-sm text-neutral-500 text-center py-4">
                       {t('addToMealModal.loading')}
@@ -557,44 +653,7 @@ export function AddFoodToMealModal({
                       {searchQuery ? t('addToMealModal.noFoodsFound') : t('addToMealModal.noFoods')}
                     </p>
                   ) : (
-                    foods.map(food => (
-                      <button
-                        key={food.id}
-                        onClick={() => handleSelectFood(food)}
-                        className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-neutral-50 transition-colors text-left border border-transparent hover:border-neutral-200"
-                      >
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-1.5 min-w-0">
-                            <p className="font-medium text-neutral-900 truncate">{food.name}</p>
-                            <Badge
-                              variant="outline"
-                              className={`text-[9px] px-1 py-0 h-4 shrink-0 ${
-                                food.shared_list_id
-                                  ? getListItemBadgeConfig(
-                                      sharedLists.find(l => l.id === food.shared_list_id)?.name ??
-                                        ''
-                                    ).className
-                                  : (SOURCE_BADGES[food.source] ?? SOURCE_BADGES.user).className
-                              }`}
-                            >
-                              {food.shared_list_id
-                                ? getListItemBadgeConfig(
-                                    sharedLists.find(l => l.id === food.shared_list_id)?.name ?? ''
-                                  ).label
-                                : (SOURCE_BADGES[food.source] ?? SOURCE_BADGES.user).label}
-                            </Badge>
-                          </div>
-                          <p className="text-xs text-neutral-500">
-                            {food.calories} kcal / {food.default_amount} {food.default_unit}
-                            {food.brand && ` • ${food.brand}`}
-                          </p>
-                        </div>
-                        <div className="flex items-center gap-2 ml-2 shrink-0">
-                          {getColorBadge(food.energy_density_color)}
-                          <Plus className="h-4 w-4 text-neutral-400" />
-                        </div>
-                      </button>
-                    ))
+                    foods.map(food => renderFoodRow(food))
                   )}
                 </div>
 

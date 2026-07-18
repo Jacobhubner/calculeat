@@ -318,6 +318,8 @@
     "typeFood": "Food item",
     "noFoodsFound": "No food items found",
     "noFoods": "No food items",
+    "recentHeading": "Recent",
+    "allFoodsHeading": "All food items",
     "loading": "Loading food items...",
     "fieldAmount": "Amount",
     "fieldUnit": "Unit",
