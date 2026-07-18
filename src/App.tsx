@@ -1,4 +1,5 @@
 import { lazy, Suspense, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { AuthProvider } from './contexts/AuthContext'
@@ -162,6 +163,17 @@ function PublicSupportChatMount() {
   const { pathname } = useLocation()
   if (pathname.startsWith('/app')) return null
   return <PublicSupportChat />
+}
+
+// Route-nivå-gate för genetisk potential med funktionsnamn i låsvyn
+// (title kräver tools-namespacet, därav egen komponent)
+function GatedGeneticPotential() {
+  const { t } = useTranslation('tools')
+  return (
+    <PremiumGate feature="genetic_potential" title={t('geneticPotential.header.title')}>
+      <GeneticPotentialTool />
+    </PremiumGate>
+  )
 }
 
 function App() {
@@ -336,14 +348,7 @@ function App() {
                     >
                       <Route index element={<BodyCompositionHubPage />} />
                       <Route path="calculate" element={<BodyCompositionCalculator />} />
-                      <Route
-                        path="genetic-potential"
-                        element={
-                          <PremiumGate feature="genetic_potential">
-                            <GeneticPotentialTool />
-                          </PremiumGate>
-                        }
-                      />
+                      <Route path="genetic-potential" element={<GatedGeneticPotential />} />
                     </Route>
                     <Route
                       path="/app/food-items"

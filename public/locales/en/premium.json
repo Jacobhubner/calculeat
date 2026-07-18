@@ -12,6 +12,7 @@
     "lockedDescription": "This feature is part of CalculEat Premium.",
     "quotaCounter": "{{used}} of {{limit}} used",
     "equationLocked": "Exact equations are included in Premium",
+    "whatIsThis": "What is this?",
     "unlimited": "Unlimited"
   },
   "upgradeModal": {

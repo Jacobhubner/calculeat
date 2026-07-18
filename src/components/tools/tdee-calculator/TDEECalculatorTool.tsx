@@ -449,7 +449,7 @@ export default function TDEECalculatorTool() {
       </div>
 
       {activeTab === 'jämförelse' && (
-        <PremiumGate feature="all_tdee_formulas">
+        <PremiumGate feature="all_tdee_formulas" title={t('tdeeCalc.tabs.comparison')}>
           <ComparisonTab
             profileGender={profileData?.gender}
             profileAge={age}

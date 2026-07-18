@@ -827,8 +827,13 @@ export default function TodayPage() {
           {/* Plate Calculator */}
           <PlateCalculator onAddToMeal={handleAddFromSidebar} />
 
-          {/* Food Suggestions — premium (food_suggestions); visas suddad för free */}
-          <PremiumGate feature="food_suggestions">
+          {/* Food Suggestions — premium (food_suggestions); visas suddad för free
+              med synligt namn + läsbar beskrivning (informationen är aldrig premium) */}
+          <PremiumGate
+            feature="food_suggestions"
+            title={t('foodSuggestions.title')}
+            infoBody={t('foodSuggestions.infoBody')}
+          >
             <FoodSuggestions onAddToMeal={handleAddFromSidebar} />
           </PremiumGate>
 

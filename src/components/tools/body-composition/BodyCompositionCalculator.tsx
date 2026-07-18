@@ -992,7 +992,7 @@ export default function BodyCompositionCalculator() {
           {/* Right sidebar - Measurement Sets (mäthistorik är premium, se PREMIUM_SPEC) */}
           <div>
             <CollapsibleSidebar>
-              <PremiumGate feature="advanced_body_comp">
+              <PremiumGate feature="advanced_body_comp" title={t('sidebar.savedMeasurements')}>
                 <MeasurementSetSidebar
                   onCreateNew={handleCreateNewMeasurement}
                   hasUnsavedChanges={hasUnsavedMeasurements}
