@@ -49,7 +49,7 @@ export default function BodyCompositionHubPage() {
     onClose: () => void,
     title: string,
     subtitle: string,
-    ContentComponent: React.ComponentType
+    ContentComponent: React.ComponentType<{ gateEquations?: boolean }>
   ) => {
     if (!show) return null
 
@@ -77,7 +77,9 @@ export default function BodyCompositionHubPage() {
               </button>
             </div>
             <div className="p-6">
-              <ContentComponent />
+              {/* Appens info-modaler låser exakta ekvationer för free —
+                  samma komponenter renderas ogatade i publika artiklar */}
+              <ContentComponent gateEquations />
             </div>
             <div className="sticky bottom-0 bg-white border-t border-neutral-200 px-6 py-4 rounded-b-2xl">
               <Button onClick={onClose} className="w-full">
