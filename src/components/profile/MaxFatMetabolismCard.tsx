@@ -5,9 +5,8 @@
 
 import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Portal } from '@/components/ui/portal'
-import { Flame, Info, X } from 'lucide-react'
+import { InfoModal } from '@/components/ui/InfoModal'
+import { Flame, Info } from 'lucide-react'
 import type { Profile } from '@/lib/types'
 import { calculateFatFreeMass } from '@/lib/calculations/bodyComposition'
 import { calculateMaxFatMetabolism } from '@/lib/calculations/ffmiCalculations'
@@ -60,49 +59,15 @@ export default function MaxFatMetabolismCard({ profile }: MaxFatMetabolismCardPr
         </CardContent>
       </Card>
 
-      {/* Information Modal */}
-      {showModal && (
-        <Portal>
-          <div
-            className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50"
-            onClick={() => setShowModal(false)}
-          >
-            <div
-              className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
-              onClick={e => e.stopPropagation()}
-            >
-              {/* Header */}
-              <div className="sticky top-0 bg-white border-b border-neutral-200 px-6 py-4 flex justify-between items-start rounded-t-2xl">
-                <div>
-                  <h2 className="text-2xl font-bold text-neutral-900">Maximal fettmetabolism</h2>
-                  <p className="text-sm text-neutral-600 mt-1">
-                    Vetenskaplig bakgrund och praktisk tillämpning
-                  </p>
-                </div>
-                <button
-                  onClick={() => setShowModal(false)}
-                  className="text-neutral-500 hover:text-neutral-700 transition-colors"
-                  aria-label="Stäng modal"
-                >
-                  <X className="h-6 w-6" />
-                </button>
-              </div>
-
-              {/* Content */}
-              <div className="p-6">
-                <MaxFatMetabolismContent />
-              </div>
-
-              {/* Footer */}
-              <div className="sticky bottom-0 bg-white border-t border-neutral-200 px-6 py-4 rounded-b-2xl">
-                <Button onClick={() => setShowModal(false)} className="w-full">
-                  Stäng
-                </Button>
-              </div>
-            </div>
-          </div>
-        </Portal>
-      )}
+      {/* Information Modal — delat skal, se InfoModal */}
+      <InfoModal
+        open={showModal}
+        onClose={() => setShowModal(false)}
+        title="Maximal fettmetabolism"
+        subtitle="Vetenskaplig bakgrund och praktisk tillämpning"
+      >
+        <MaxFatMetabolismContent />
+      </InfoModal>
     </>
   )
 }

@@ -11,7 +11,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Portal } from '@/components/ui/portal'
+import { InfoModal } from '@/components/ui/InfoModal'
 import {
   TrendingDown,
   TrendingUp,
@@ -24,7 +24,6 @@ import {
   AlertTriangle,
   ChevronDown,
   Info,
-  X,
 } from 'lucide-react'
 import type { WeightHistory } from '@/lib/types'
 import {
@@ -1269,39 +1268,11 @@ export default function WeightTracker({
           title: t('weightTracker.chartSoftLeanMassTitle'),
           body: t('weightTracker.infoSoftLeanMass'),
         },
-      ].map(({ open, onClose, title, body }) =>
-        open ? (
-          <Portal key={title}>
-            <div
-              className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50"
-              onClick={onClose}
-            >
-              <div
-                className="bg-white rounded-2xl shadow-2xl max-w-md w-full"
-                onClick={e => e.stopPropagation()}
-              >
-                <div className="sticky top-0 bg-white border-b border-neutral-200 px-6 py-4 flex justify-between items-start rounded-t-2xl">
-                  <h2 className="text-xl font-bold text-neutral-900">{title}</h2>
-                  <button
-                    onClick={onClose}
-                    className="text-neutral-500 hover:text-neutral-700 transition-colors p-1 rounded-full hover:bg-neutral-100"
-                  >
-                    <X className="h-5 w-5" />
-                  </button>
-                </div>
-                <div className="p-6">
-                  <p className="text-sm text-neutral-600 leading-relaxed">{body}</p>
-                </div>
-                <div className="sticky bottom-0 bg-neutral-50 px-6 py-4 rounded-b-2xl border-t border-neutral-200">
-                  <Button onClick={onClose} className="w-full">
-                    {t('weightTracker.close')}
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </Portal>
-        ) : null
-      )}
+      ].map(({ open, onClose, title, body }) => (
+        <InfoModal key={title} open={open} onClose={onClose} title={title} size="md">
+          <p className="text-sm text-neutral-600 leading-relaxed">{body}</p>
+        </InfoModal>
+      ))}
     </Card>
   )
 }

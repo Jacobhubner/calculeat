@@ -1,8 +1,7 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Info, X } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Portal } from '@/components/ui/portal'
+import { Info } from 'lucide-react'
+import { InfoModal } from '@/components/ui/InfoModal'
 import { EquationGate } from '@/components/premium/EquationGate'
 
 interface Props {
@@ -74,64 +73,37 @@ export function TDEEScenarioCard({ bmr, tdee }: Props) {
       </div>
       <p className="mt-3 text-right text-xs italic text-neutral-300">{t('tdeeScenarios.source')}</p>
 
-      {showModal && (
-        <Portal>
-          <div
-            className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50"
-            onClick={() => setShowModal(false)}
-          >
-            <div
-              className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
-              onClick={e => e.stopPropagation()}
-            >
-              <div className="sticky top-0 bg-white border-b border-neutral-200 px-6 py-4 flex justify-between items-start rounded-t-2xl">
-                <h2 className="text-xl font-bold text-neutral-900">
-                  {t('tdeeScenarios.infoModalTitle')}
-                </h2>
-                <button
-                  onClick={() => setShowModal(false)}
-                  className="text-neutral-500 hover:text-neutral-700 transition-colors"
-                  aria-label={t('tdeeScenarios.infoModalClose')}
-                >
-                  <X className="h-6 w-6" />
-                </button>
-              </div>
+      <InfoModal
+        open={showModal}
+        onClose={() => setShowModal(false)}
+        title={t('tdeeScenarios.infoModalTitle')}
+      >
+        <div className="space-y-6">
+          <p className="text-sm text-neutral-700">{t('tdeeScenarios.infoIntro')}</p>
 
-              <div className="p-6 space-y-6">
-                <p className="text-sm text-neutral-700">{t('tdeeScenarios.infoIntro')}</p>
-
-                {(
-                  [
-                    ['formulaWalkTitle', 'formulaWalk'],
-                    ['formulaStandTitle', 'formulaStand'],
-                    ['formulaMostActiveTitle', 'formulaMostActive'],
-                    ['formulaLeastActiveTitle', 'formulaLeastActive'],
-                  ] as const
-                ).map(([titleKey, formulaKey]) => (
-                  <section key={formulaKey}>
-                    <h3 className="text-sm font-semibold text-neutral-900 mb-2">
-                      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                      {t(`tdeeScenarios.${titleKey}` as any)}
-                    </h3>
-                    <EquationGate feature="all_tdee_formulas">
-                      <div className="bg-neutral-50 text-neutral-800 font-mono text-sm px-4 py-3 rounded-lg border border-neutral-200 whitespace-pre-line">
-                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                        {t(`tdeeScenarios.${formulaKey}` as any)}
-                      </div>
-                    </EquationGate>
-                  </section>
-                ))}
-              </div>
-
-              <div className="sticky bottom-0 bg-white border-t border-neutral-200 px-6 py-4 rounded-b-2xl">
-                <Button onClick={() => setShowModal(false)} className="w-full">
-                  {t('tdeeScenarios.infoModalClose')}
-                </Button>
-              </div>
-            </div>
-          </div>
-        </Portal>
-      )}
+          {(
+            [
+              ['formulaWalkTitle', 'formulaWalk'],
+              ['formulaStandTitle', 'formulaStand'],
+              ['formulaMostActiveTitle', 'formulaMostActive'],
+              ['formulaLeastActiveTitle', 'formulaLeastActive'],
+            ] as const
+          ).map(([titleKey, formulaKey]) => (
+            <section key={formulaKey}>
+              <h3 className="text-sm font-semibold text-neutral-900 mb-2">
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                {t(`tdeeScenarios.${titleKey}` as any)}
+              </h3>
+              <EquationGate feature="all_tdee_formulas">
+                <div className="bg-neutral-50 text-neutral-800 font-mono text-sm px-4 py-3 rounded-lg border border-neutral-200 whitespace-pre-line">
+                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                  {t(`tdeeScenarios.${formulaKey}` as any)}
+                </div>
+              </EquationGate>
+            </section>
+          ))}
+        </div>
+      </InfoModal>
     </div>
   )
 }

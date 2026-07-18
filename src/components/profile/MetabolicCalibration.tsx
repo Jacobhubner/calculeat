@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import InfoCardWithModal from '@/components/InfoCardWithModal'
 import { Button } from '@/components/ui/button'
 import { Select } from '@/components/ui/select'
-import { Portal } from '@/components/ui/portal'
+import { InfoModal } from '@/components/ui/InfoModal'
 import {
   Scale,
   TrendingDown,
@@ -29,7 +29,6 @@ import {
   ChevronRight,
   Info,
   Trash2,
-  X,
 } from 'lucide-react'
 
 import { startOfDay, endOfDay, subDays, addDays, isBefore, format } from 'date-fns'
@@ -1657,35 +1656,16 @@ export default function MetabolicCalibration({
                 </div>
               )}
 
-              {/* Info modal — shared for all i-icon tooltips */}
+              {/* Info modal — delat skal, se InfoModal */}
               {activeInfo && (
-                <Portal>
-                  <div
-                    className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50"
-                    onClick={() => setActiveInfo(null)}
-                  >
-                    <div
-                      className="bg-white rounded-2xl shadow-2xl max-w-md w-full"
-                      onClick={e => e.stopPropagation()}
-                    >
-                      <div className="sticky top-0 bg-white border-b border-neutral-200 px-6 py-4 flex justify-between items-start rounded-t-2xl">
-                        <h2 className="text-xl font-bold text-neutral-900">{activeInfo.title}</h2>
-                        <button
-                          onClick={() => setActiveInfo(null)}
-                          className="text-neutral-500 hover:text-neutral-700 transition-colors p-1 rounded-full hover:bg-neutral-100"
-                        >
-                          <X className="h-5 w-5" />
-                        </button>
-                      </div>
-                      <div className="p-6">{activeInfo.content}</div>
-                      <div className="sticky bottom-0 bg-neutral-50 px-6 py-4 rounded-b-2xl border-t border-neutral-200">
-                        <Button onClick={() => setActiveInfo(null)} className="w-full">
-                          {t('metabolicCalibration.closeButton')}
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </Portal>
+                <InfoModal
+                  open
+                  onClose={() => setActiveInfo(null)}
+                  title={activeInfo.title}
+                  size="md"
+                >
+                  {activeInfo.content}
+                </InfoModal>
               )}
 
               {/* No data state (not error, just null) */}

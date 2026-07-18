@@ -1,12 +1,11 @@
 import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Calculator, TrendingUp, Ruler, Weight, Info, X, AlertCircle } from 'lucide-react'
+import { Calculator, TrendingUp, Ruler, Weight, Info, AlertCircle } from 'lucide-react'
 import FeatureCard from '@/components/FeatureCard'
 import StatCard from '@/components/StatCard'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Button } from '@/components/ui/button'
-import { Portal } from '@/components/ui/portal'
+import { InfoModal } from '@/components/ui/InfoModal'
 import { useActiveProfile } from '@/hooks/useActiveProfile'
 import { calculateFFMI, calculateNormalizedFFMI } from '@/lib/calculations/ffmiCalculations'
 import { calculateFatFreeMass } from '@/lib/calculations/bodyComposition'
@@ -43,52 +42,18 @@ export default function BodyCompositionHubPage() {
     }
   }, [bodyFatPercentage, weight, height])
 
-  // Utility function för modal rendering
+  // Delat modal-skal — se InfoModal för den frysta designen
   const renderModal = (
     show: boolean,
     onClose: () => void,
     title: string,
     subtitle: string,
     ContentComponent: React.ComponentType
-  ) => {
-    if (!show) return null
-
-    return (
-      <Portal>
-        <div
-          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50"
-          onClick={onClose}
-        >
-          <div
-            className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
-            onClick={e => e.stopPropagation()}
-          >
-            <div className="sticky top-0 bg-white border-b border-neutral-200 px-6 py-4 flex justify-between items-start rounded-t-2xl">
-              <div>
-                <h2 className="text-2xl font-bold text-neutral-900">{title}</h2>
-                <p className="text-sm text-neutral-600 mt-1">{subtitle}</p>
-              </div>
-              <button
-                onClick={onClose}
-                className="text-neutral-500 hover:text-neutral-700 transition-colors"
-                aria-label={t('hub.closeModalAriaLabel')}
-              >
-                <X className="h-6 w-6" />
-              </button>
-            </div>
-            <div className="p-6">
-              <ContentComponent />
-            </div>
-            <div className="sticky bottom-0 bg-white border-t border-neutral-200 px-6 py-4 rounded-b-2xl">
-              <Button onClick={onClose} className="w-full">
-                {t('hub.closeModal')}
-              </Button>
-            </div>
-          </div>
-        </div>
-      </Portal>
-    )
-  }
+  ) => (
+    <InfoModal open={show} onClose={onClose} title={title} subtitle={subtitle}>
+      <ContentComponent />
+    </InfoModal>
+  )
 
   // Om ingen profil eller data saknas, visa informationsmeddelande
   if (!profile || !bodyFatPercentage || !weight || !height) {

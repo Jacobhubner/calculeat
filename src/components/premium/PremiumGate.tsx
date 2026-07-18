@@ -1,13 +1,7 @@
 import { ReactNode, useState } from 'react'
 import { Info, Lock } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
+import { InfoModal } from '@/components/ui/InfoModal'
 import { useAuth } from '@/contexts/AuthContext'
 import { useEntitlements } from '@/hooks/useEntitlements'
 import { PlanLimits } from '@/lib/constants/entitlements'
@@ -89,16 +83,14 @@ export function PremiumGate({ feature, children, className, title, infoBody }: P
       </div>
       <UpgradeModal open={modalOpen} onOpenChange={setModalOpen} />
       {infoBody && (
-        <Dialog open={infoOpen} onOpenChange={setInfoOpen}>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle>{title ?? t('gate.lockedTitle')}</DialogTitle>
-              <DialogDescription className="whitespace-pre-line pt-2 text-left">
-                {infoBody}
-              </DialogDescription>
-            </DialogHeader>
-          </DialogContent>
-        </Dialog>
+        <InfoModal
+          open={infoOpen}
+          onClose={() => setInfoOpen(false)}
+          title={title ?? t('gate.lockedTitle')}
+          size="md"
+        >
+          <p className="text-neutral-700 leading-relaxed whitespace-pre-line">{infoBody}</p>
+        </InfoModal>
       )}
     </div>
   )

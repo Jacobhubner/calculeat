@@ -1,12 +1,6 @@
 import { useState } from 'react'
 import { Info } from 'lucide-react'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
+import { InfoModal } from '@/components/ui/InfoModal'
 
 interface ToolInfoButtonProps {
   title: string
@@ -17,7 +11,7 @@ interface ToolInfoButtonProps {
 
 /**
  * Liten info-ikon för verktygskorten i dagens logg (Portionsberäknaren,
- * Vad ska jag äta?). Öppnar en kompakt dialog som förklarar funktionen.
+ * Vad ska jag äta?). Öppnar appens gemensamma InfoModal.
  */
 export function ToolInfoButton({ title, body, ariaLabel }: ToolInfoButtonProps) {
   const [open, setOpen] = useState(false)
@@ -32,16 +26,9 @@ export function ToolInfoButton({ title, body, ariaLabel }: ToolInfoButtonProps) 
       >
         <Info className="h-4 w-4" />
       </button>
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>{title}</DialogTitle>
-            <DialogDescription className="whitespace-pre-line pt-2 text-left">
-              {body}
-            </DialogDescription>
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
+      <InfoModal open={open} onClose={() => setOpen(false)} title={title} size="md">
+        <p className="text-neutral-700 leading-relaxed whitespace-pre-line">{body}</p>
+      </InfoModal>
     </>
   )
 }
