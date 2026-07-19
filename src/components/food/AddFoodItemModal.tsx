@@ -34,6 +34,7 @@ import { toast } from 'sonner'
 import { useFoodNutrients } from '@/hooks/useFoodNutrients'
 import { supabase } from '@/lib/supabase'
 import { useTranslation } from 'react-i18next'
+import { useShowEnergyDensity } from '@/hooks/useShowEnergyDensity'
 import { useAuth } from '@/contexts/AuthContext'
 
 // z.preprocess() causes Zod to infer output fields as `unknown` at the type level,
@@ -102,6 +103,7 @@ export function AddFoodItemModal({
 }: AddFoodItemModalProps) {
   const { t } = useTranslation('food')
   const tAny = t as (key: string) => string
+  const showEnergyDensity = useShowEnergyDensity()
   const queryClient = useQueryClient()
   const { user } = useAuth()
   const { data: sharedLists = [] } = useSharedLists()
@@ -1536,29 +1538,33 @@ export function AddFoodItemModal({
                             <p className="text-lg font-semibold text-neutral-900">
                               {liveCalculations.kcalPerGram.toFixed(2)} kcal/g
                             </p>
-                            <div className="flex items-center gap-2">
-                              <Badge
-                                variant="outline"
-                                className={
-                                  liveCalculations.energyDensityColor === 'Green'
-                                    ? 'bg-green-50 text-green-700 border-green-300'
-                                    : liveCalculations.energyDensityColor === 'Yellow'
-                                      ? 'bg-yellow-50 text-yellow-700 border-yellow-300'
-                                      : 'bg-orange-50 text-orange-700 border-orange-300'
-                                }
-                              >
-                                {tAny(`color.${liveCalculations.energyDensityColor.toLowerCase()}`)}
-                              </Badge>
-                              <span className="text-xs text-neutral-600">
-                                (
-                                {foodType === 'Solid'
-                                  ? t('addFoodModal.foodTypeSolid')
-                                  : foodType === 'Liquid'
-                                    ? t('addFoodModal.foodTypeLiquid')
-                                    : t('addFoodModal.foodTypeSoup')}
-                                )
-                              </span>
-                            </div>
+                            {showEnergyDensity && (
+                              <div className="flex items-center gap-2">
+                                <Badge
+                                  variant="outline"
+                                  className={
+                                    liveCalculations.energyDensityColor === 'Green'
+                                      ? 'bg-green-50 text-green-700 border-green-300'
+                                      : liveCalculations.energyDensityColor === 'Yellow'
+                                        ? 'bg-yellow-50 text-yellow-700 border-yellow-300'
+                                        : 'bg-orange-50 text-orange-700 border-orange-300'
+                                  }
+                                >
+                                  {tAny(
+                                    `color.${liveCalculations.energyDensityColor.toLowerCase()}`
+                                  )}
+                                </Badge>
+                                <span className="text-xs text-neutral-600">
+                                  (
+                                  {foodType === 'Solid'
+                                    ? t('addFoodModal.foodTypeSolid')
+                                    : foodType === 'Liquid'
+                                      ? t('addFoodModal.foodTypeLiquid')
+                                      : t('addFoodModal.foodTypeSoup')}
+                                  )
+                                </span>
+                              </div>
+                            )}
                           </div>
                         )}
 

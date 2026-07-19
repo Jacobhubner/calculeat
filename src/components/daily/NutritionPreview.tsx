@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { Badge } from '@/components/ui/badge'
+import { useShowEnergyDensity } from '@/hooks/useShowEnergyDensity'
 
 interface NutritionPreviewProps {
   calories: number
@@ -29,13 +30,14 @@ export function NutritionPreview({
   salt,
 }: NutritionPreviewProps) {
   const { t } = useTranslation('today')
+  const showEnergyDensity = useShowEnergyDensity()
   return (
     <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-3 space-y-3">
       <div className="flex items-center justify-between">
         <span className="text-sm font-medium text-neutral-700">
           {t('nutritionPreview.heading')}
         </span>
-        {energyDensityColor && (
+        {showEnergyDensity && energyDensityColor && (
           <Badge
             variant="outline"
             className={

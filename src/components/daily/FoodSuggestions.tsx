@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useFoodSuggestions, type SuggestionSourceFilter } from '@/hooks/useFoodSuggestions'
 import { ToolInfoButton } from '@/components/daily/ToolInfoButton'
+import { useShowEnergyDensity } from '@/hooks/useShowEnergyDensity'
 import type { FoodItem } from '@/hooks/useFoodItems'
 import type { FoodColor } from '@/lib/calculations/colorDensity'
 import { useTranslation } from 'react-i18next'
@@ -14,7 +15,8 @@ interface FoodSuggestionsProps {
 }
 
 function ColorDot({ color }: { color?: string | null }) {
-  if (!color) return null
+  const showEnergyDensity = useShowEnergyDensity()
+  if (!showEnergyDensity || !color) return null
   const colorClass = {
     Green: 'bg-green-500',
     Yellow: 'bg-yellow-500',
@@ -31,6 +33,7 @@ function ScoreBadge({ score }: { score: number }) {
 
 export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
   const { t } = useTranslation('today')
+  const showEnergyDensity = useShowEnergyDensity()
 
   const [targetCalories, setTargetCalories] = useState<number | ''>('')
   const [primaryMacro, setPrimaryMacro] = useState<'protein' | 'carbs' | 'fat'>('protein')
@@ -339,69 +342,71 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
-              <Label className="text-xs shrink-0">{t('foodSuggestions.settings.color')}</Label>
-              <div className="flex gap-1 flex-wrap">
-                <button
-                  onClick={() => setFilterByColor(false)}
-                  className={`px-2 py-0.5 text-xs rounded-full border transition-colors ${
-                    !filterByColor
-                      ? 'bg-primary-500 text-white border-primary-600'
-                      : 'bg-white text-neutral-500 border-neutral-200 hover:border-neutral-400'
-                  }`}
-                >
-                  {t('foodSuggestions.settings.colorAll')}
-                </button>
-                {(
-                  [
-                    {
-                      key: 'green',
-                      labelKey: 'settings.colorGreen',
-                      dot: 'bg-green-500',
-                      checked: showGreen,
-                      set: setShowGreen,
-                    },
-                    {
-                      key: 'yellow',
-                      labelKey: 'settings.colorYellow',
-                      dot: 'bg-yellow-400',
-                      checked: showYellow,
-                      set: setShowYellow,
-                    },
-                    {
-                      key: 'orange',
-                      labelKey: 'settings.colorOrange',
-                      dot: 'bg-orange-500',
-                      checked: showOrange,
-                      set: setShowOrange,
-                    },
-                  ] as const
-                ).map(c => (
+            {showEnergyDensity && (
+              <div className="flex items-center gap-3">
+                <Label className="text-xs shrink-0">{t('foodSuggestions.settings.color')}</Label>
+                <div className="flex gap-1 flex-wrap">
                   <button
-                    key={c.key}
-                    onClick={() => {
-                      const next = !c.checked
-                      c.set(next)
-                      setFilterByColor(
-                        c.key === 'green'
-                          ? next || showYellow || showOrange
-                          : c.key === 'yellow'
-                            ? showGreen || next || showOrange
-                            : showGreen || showYellow || next
-                      )
-                    }}
-                    className={`flex items-center gap-1 px-2 py-0.5 text-xs rounded-full border transition-colors ${
-                      filterByColor && c.checked
-                        ? `${c.key === 'yellow' ? 'bg-yellow-400 border-yellow-500 text-neutral-900' : c.key === 'green' ? 'bg-green-500 border-green-600 text-white' : 'bg-orange-500 border-orange-600 text-white'}`
+                    onClick={() => setFilterByColor(false)}
+                    className={`px-2 py-0.5 text-xs rounded-full border transition-colors ${
+                      !filterByColor
+                        ? 'bg-primary-500 text-white border-primary-600'
                         : 'bg-white text-neutral-500 border-neutral-200 hover:border-neutral-400'
                     }`}
                   >
-                    <span className={`w-2 h-2 rounded-full shrink-0 ${c.dot}`} />
-                    {t(`foodSuggestions.${c.labelKey}`)}
+                    {t('foodSuggestions.settings.colorAll')}
                   </button>
-                ))}
+                  {(
+                    [
+                      {
+                        key: 'green',
+                        labelKey: 'settings.colorGreen',
+                        dot: 'bg-green-500',
+                        checked: showGreen,
+                        set: setShowGreen,
+                      },
+                      {
+                        key: 'yellow',
+                        labelKey: 'settings.colorYellow',
+                        dot: 'bg-yellow-400',
+                        checked: showYellow,
+                        set: setShowYellow,
+                      },
+                      {
+                        key: 'orange',
+                        labelKey: 'settings.colorOrange',
+                        dot: 'bg-orange-500',
+                        checked: showOrange,
+                        set: setShowOrange,
+                      },
+                    ] as const
+                  ).map(c => (
+                    <button
+                      key={c.key}
+                      onClick={() => {
+                        const next = !c.checked
+                        c.set(next)
+                        setFilterByColor(
+                          c.key === 'green'
+                            ? next || showYellow || showOrange
+                            : c.key === 'yellow'
+                              ? showGreen || next || showOrange
+                              : showGreen || showYellow || next
+                        )
+                      }}
+                      className={`flex items-center gap-1 px-2 py-0.5 text-xs rounded-full border transition-colors ${
+                        filterByColor && c.checked
+                          ? `${c.key === 'yellow' ? 'bg-yellow-400 border-yellow-500 text-neutral-900' : c.key === 'green' ? 'bg-green-500 border-green-600 text-white' : 'bg-orange-500 border-orange-600 text-white'}`
+                          : 'bg-white text-neutral-500 border-neutral-200 hover:border-neutral-400'
+                      }`}
+                    >
+                      <span className={`w-2 h-2 rounded-full shrink-0 ${c.dot}`} />
+                      {t(`foodSuggestions.${c.labelKey}`)}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         )}
 

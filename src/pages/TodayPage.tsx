@@ -628,8 +628,8 @@ export default function TodayPage() {
                     </div>
                   )}
 
-                  {/* Energitäthet — alltid synlig när data finns */}
-                  {(dailySummary?.energyDensity ?? 0) > 0 && (
+                  {/* Energitäthet — styrs av profilinställningen show_energy_density */}
+                  {profile?.show_energy_density && (dailySummary?.energyDensity ?? 0) > 0 && (
                     <div className="pt-4 mt-2 border-t border-neutral-200">
                       <EnergyDensityIndicator density={dailySummary!.energyDensity} size="sm" />
                     </div>

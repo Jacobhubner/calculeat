@@ -22,6 +22,7 @@ import { UnitSelector, getAvailableUnits, calculateNutritionForUnit } from './Un
 import { calculateIngredientWeight } from '@/lib/calculations/recipeCalculator'
 import { convertWeightToUnit } from '@/lib/utils/unitConversion'
 import { NutritionPreview } from './NutritionPreview'
+import { useShowEnergyDensity } from '@/hooks/useShowEnergyDensity'
 import { toast } from 'sonner'
 import { SOURCE_BADGES, getListItemBadgeConfig } from '@/lib/constants/sourceBadges'
 import { AddFoodItemModal } from '@/components/food/AddFoodItemModal'
@@ -70,6 +71,7 @@ export function AddFoodToMealModal({
 }: AddFoodToMealModalProps) {
   const { t } = useTranslation('food')
   const tAny = t as (key: string) => string
+  const showEnergyDensity = useShowEnergyDensity()
   const isEditMode = !!editItem
 
   const STATIC_TABS: { key: FoodTab; label: string }[] = [
@@ -450,7 +452,7 @@ export function AddFoodToMealModal({
   }
 
   const getColorBadge = (color?: string | null) => {
-    if (!color) return null
+    if (!showEnergyDensity || !color) return null
     return (
       <Badge
         variant="outline"
@@ -578,35 +580,40 @@ export function AddFoodToMealModal({
                   </Button>
                 </div>
 
-                {/* Color filter pills */}
+                {/* Color filter pills — respekterar show_energy_density */}
                 <div className="flex flex-wrap gap-1">
-                  {([null, 'Green', 'Yellow', 'Orange'] as const).map(c => (
-                    <button
-                      key={c ?? 'all'}
-                      onClick={() => {
-                        setColorFilter(c)
-                        setPage(0)
-                      }}
-                      className={`px-2 py-0.5 text-xs rounded-full border transition-colors ${
-                        colorFilter === c
-                          ? c === 'Green'
-                            ? 'bg-green-500 text-white border-green-600'
-                            : c === 'Yellow'
-                              ? 'bg-yellow-400 text-neutral-900 border-yellow-500'
-                              : c === 'Orange'
-                                ? 'bg-orange-500 text-white border-orange-600'
-                                : 'bg-neutral-200 text-neutral-700 border-neutral-400'
-                          : 'bg-white text-neutral-500 border-neutral-200 hover:border-neutral-400'
-                      }`}
-                    >
-                      {c === null ? t('addToMealModal.colorAll') : tAny(`color.${c.toLowerCase()}`)}
-                    </button>
-                  ))}
+                  {showEnergyDensity &&
+                    ([null, 'Green', 'Yellow', 'Orange'] as const).map(c => (
+                      <button
+                        key={c ?? 'all'}
+                        onClick={() => {
+                          setColorFilter(c)
+                          setPage(0)
+                        }}
+                        className={`px-2 py-0.5 text-xs rounded-full border transition-colors ${
+                          colorFilter === c
+                            ? c === 'Green'
+                              ? 'bg-green-500 text-white border-green-600'
+                              : c === 'Yellow'
+                                ? 'bg-yellow-400 text-neutral-900 border-yellow-500'
+                                : c === 'Orange'
+                                  ? 'bg-orange-500 text-white border-orange-600'
+                                  : 'bg-neutral-200 text-neutral-700 border-neutral-400'
+                            : 'bg-white text-neutral-500 border-neutral-200 hover:border-neutral-400'
+                        }`}
+                      >
+                        {c === null
+                          ? t('addToMealModal.colorAll')
+                          : tAny(`color.${c.toLowerCase()}`)}
+                      </button>
+                    ))}
 
                   {/* Recipe filter — on Mina and Alla tabs */}
                   {(activeTab === 'mina' || activeTab === 'alla') && (
                     <>
-                      <span className="text-neutral-200 border-l border-neutral-200 mx-0.5" />
+                      {showEnergyDensity && (
+                        <span className="text-neutral-200 border-l border-neutral-200 mx-0.5" />
+                      )}
                       {([null, true, false] as const).map(r => (
                         <button
                           key={r === null ? 'r-all' : r ? 'r-recept' : 'r-livsmedel'}

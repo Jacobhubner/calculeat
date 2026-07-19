@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import type { Recipe, RecipeIngredient } from '@/hooks/useRecipes'
 import type { FoodItem } from '@/hooks/useFoodItems'
+import { useShowEnergyDensity } from '@/hooks/useShowEnergyDensity'
 
 interface RecipeWithIngredients extends Recipe {
   ingredients?: Array<
@@ -43,7 +44,8 @@ export function RecipeCard({ recipe, onPreview, onEdit, onDelete }: RecipeCardPr
   const displayProtein = fi
     ? (savedAs100g ? fi.protein_g : (fi.protein_per_unit ?? fi.protein_g)).toFixed(1)
     : '0.0'
-  const energyDensityColor = fi?.energy_density_color ?? null
+  const showEnergyDensity = useShowEnergyDensity()
+  const energyDensityColor = showEnergyDensity ? (fi?.energy_density_color ?? null) : null
 
   const colorBadgeClass = {
     Green: 'bg-green-100 text-green-700 border-green-300',

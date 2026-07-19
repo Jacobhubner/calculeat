@@ -7,6 +7,7 @@ import { useFoodNutrients, useNutrientDefinitions } from '@/hooks/useFoodNutrien
 import type { FoodItem } from '@/hooks/useFoodItems'
 import { SOURCE_BADGES } from '@/lib/constants/sourceBadges'
 import { useTranslation } from 'react-i18next'
+import { useShowEnergyDensity } from '@/hooks/useShowEnergyDensity'
 
 const CATEGORY_ORDER = ['macro', 'vitamin', 'mineral']
 
@@ -26,6 +27,7 @@ interface FoodNutrientPanelProps {
 
 export function FoodNutrientPanel({ foodItem, open, onOpenChange }: FoodNutrientPanelProps) {
   const { t, i18n } = useTranslation('food')
+  const showEnergyDensity = useShowEnergyDensity()
   const { data: nutrients, isLoading: nutrientsLoading } = useFoodNutrients(
     open ? (foodItem?.id ?? null) : null
   )
@@ -89,9 +91,10 @@ export function FoodNutrientPanel({ foodItem, open, onOpenChange }: FoodNutrient
   const isLoading = nutrientsLoading || defsLoading
   const sourceBadge = foodItem ? (SOURCE_BADGES[foodItem.source] ?? SOURCE_BADGES.user) : null
   const tAny = t as (key: string) => string
-  const colorLabel = foodItem?.energy_density_color
-    ? tAny(`color.${foodItem.energy_density_color.toLowerCase()}`)
-    : null
+  const colorLabel =
+    showEnergyDensity && foodItem?.energy_density_color
+      ? tAny(`color.${foodItem.energy_density_color.toLowerCase()}`)
+      : null
 
   if (!open || !foodItem) return null
 

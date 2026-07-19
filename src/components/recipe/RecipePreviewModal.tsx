@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import type { Recipe, RecipeIngredient } from '@/hooks/useRecipes'
 import type { FoodItem } from '@/hooks/useFoodItems'
+import { useShowEnergyDensity } from '@/hooks/useShowEnergyDensity'
 import { useFoodNutrientsBatch } from '@/hooks/useFoodNutrients'
 import { calculateIngredientWeight } from '@/lib/calculations/recipeCalculator'
 
@@ -119,6 +120,8 @@ export function RecipePreviewModal({ recipe, open, onOpenChange }: RecipePreview
     }
   }, [allNutrients, sortedIngredients, servings])
 
+  const showEnergyDensity = useShowEnergyDensity()
+
   if (!recipe) return null
 
   const totalTime = (recipe.prep_time_min ?? 0) + (recipe.cook_time_min ?? 0)
@@ -134,7 +137,7 @@ export function RecipePreviewModal({ recipe, open, onOpenChange }: RecipePreview
     ? (savedAs100g ? fi.protein_g : (fi.protein_per_unit ?? fi.protein_g)).toFixed(1)
     : null
 
-  const energyDensityColor = fi?.energy_density_color ?? null
+  const energyDensityColor = showEnergyDensity ? (fi?.energy_density_color ?? null) : null
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

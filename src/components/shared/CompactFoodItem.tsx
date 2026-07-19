@@ -1,4 +1,5 @@
 import type { FoodItem } from '@/hooks/useFoodItems'
+import { useShowEnergyDensity } from '@/hooks/useShowEnergyDensity'
 
 interface CompactFoodItemProps {
   food: FoodItem
@@ -10,9 +11,10 @@ interface CompactFoodItemProps {
   disabled?: boolean
 }
 
-// Färgprick för energitäthet
+// Färgprick för energitäthet — respekterar profilinställningen
 function ColorDot({ color }: { color?: string | null }) {
-  if (!color) return null
+  const showEnergyDensity = useShowEnergyDensity()
+  if (!showEnergyDensity || !color) return null
 
   const colorClass = {
     Green: 'bg-green-500',

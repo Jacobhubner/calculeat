@@ -26,6 +26,7 @@ import { Badge } from '@/components/ui/badge'
 import { AddFoodItemModal } from '@/components/food/AddFoodItemModal'
 import { FoodNutrientPanel } from '@/components/food/FoodNutrientPanel'
 import { EnergyDensityInfoCards } from '@/components/daily/EnergyDensityInfoCards'
+import { useShowEnergyDensity } from '@/hooks/useShowEnergyDensity'
 import {
   usePaginatedFoodItems,
   useDeleteFoodItem,
@@ -242,6 +243,7 @@ export default function FoodItemsPage() {
   const { t, i18n } = useTranslation('food')
   const queryClient = useQueryClient()
   const { resolved: resolvedSource } = useFoodSource()
+  const showEnergyDensity = useShowEnergyDensity()
 
   // Primary datasource tab driven by resolvedSource from DataSourceConfig
   const primaryDataSourceTab = useMemo<FoodTab>(() => {
@@ -1069,7 +1071,7 @@ export default function FoodItemsPage() {
                           )
                         })()}
                       </div>
-                      {item.energy_density_color && (
+                      {showEnergyDensity && item.energy_density_color && (
                         <div
                           className={`h-2 w-2 rounded-full shrink-0 ${
                             item.energy_density_color === 'Green'
@@ -1291,23 +1293,25 @@ export default function FoodItemsPage() {
                           )}
                         </button>
                       </th>
-                      <th className="text-center p-4 text-sm font-semibold text-neutral-900">
-                        <button
-                          onClick={() => handleSort('color')}
-                          className="flex items-center gap-1 mx-auto hover:text-primary-600 transition-colors"
-                        >
-                          {t('table.type')}
-                          {sortBy === 'color' ? (
-                            sortDirection === 'asc' ? (
-                              <ArrowUp className="h-4 w-4" />
+                      {showEnergyDensity && (
+                        <th className="text-center p-4 text-sm font-semibold text-neutral-900">
+                          <button
+                            onClick={() => handleSort('color')}
+                            className="flex items-center gap-1 mx-auto hover:text-primary-600 transition-colors"
+                          >
+                            {t('table.type')}
+                            {sortBy === 'color' ? (
+                              sortDirection === 'asc' ? (
+                                <ArrowUp className="h-4 w-4" />
+                              ) : (
+                                <ArrowDown className="h-4 w-4" />
+                              )
                             ) : (
-                              <ArrowDown className="h-4 w-4" />
-                            )
-                          ) : (
-                            <ArrowUpDown className="h-4 w-4 opacity-30" />
-                          )}
-                        </button>
-                      </th>
+                              <ArrowUpDown className="h-4 w-4 opacity-30" />
+                            )}
+                          </button>
+                        </th>
+                      )}
                     </tr>
                   </thead>
                   <tbody>
@@ -1483,26 +1487,28 @@ export default function FoodItemsPage() {
                             </>
                           )
                         })()}
-                        <td className="p-4 text-center">
-                          {item.energy_density_color && (
-                            <Badge
-                              variant="outline"
-                              className={
-                                item.energy_density_color === 'Green'
-                                  ? 'bg-green-100 text-green-700 border-green-300'
+                        {showEnergyDensity && (
+                          <td className="p-4 text-center">
+                            {item.energy_density_color && (
+                              <Badge
+                                variant="outline"
+                                className={
+                                  item.energy_density_color === 'Green'
+                                    ? 'bg-green-100 text-green-700 border-green-300'
+                                    : item.energy_density_color === 'Yellow'
+                                      ? 'bg-yellow-100 text-yellow-700 border-yellow-300'
+                                      : 'bg-orange-100 text-orange-700 border-orange-300'
+                                }
+                              >
+                                {item.energy_density_color === 'Green'
+                                  ? t('color.green')
                                   : item.energy_density_color === 'Yellow'
-                                    ? 'bg-yellow-100 text-yellow-700 border-yellow-300'
-                                    : 'bg-orange-100 text-orange-700 border-orange-300'
-                              }
-                            >
-                              {item.energy_density_color === 'Green'
-                                ? t('color.green')
-                                : item.energy_density_color === 'Yellow'
-                                  ? t('color.yellow')
-                                  : t('color.orange')}
-                            </Badge>
-                          )}
-                        </td>
+                                    ? t('color.yellow')
+                                    : t('color.orange')}
+                              </Badge>
+                            )}
+                          </td>
+                        )}
                         <td className="p-4 text-right">
                           <div className="flex justify-end gap-2">
                             {isMina && (sharedLists.length > 0 || isAdmin) && (
@@ -1610,10 +1616,12 @@ export default function FoodItemsPage() {
         </>
       )}
 
-      {/* Info Cards */}
-      <div className="mt-8">
-        <EnergyDensityInfoCards />
-      </div>
+      {/* Info Cards — förklaringsmodellen visas endast när indikatorn är på */}
+      {showEnergyDensity && (
+        <div className="mt-8">
+          <EnergyDensityInfoCards />
+        </div>
+      )}
 
       {/* Skapa delad lista */}
       <CreateSharedListDialog

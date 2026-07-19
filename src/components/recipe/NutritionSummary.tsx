@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { Badge } from '@/components/ui/badge'
 import type { RecipeNutrition } from '@/lib/calculations/recipeCalculator'
+import { useShowEnergyDensity } from '@/hooks/useShowEnergyDensity'
 
 interface NutritionSummaryProps {
   nutrition: RecipeNutrition | null
@@ -14,6 +15,7 @@ export function NutritionSummary({
   saveAs = 'portion',
 }: NutritionSummaryProps) {
   const { t } = useTranslation('recipes')
+  const showEnergyDensity = useShowEnergyDensity()
 
   if (!nutrition || nutrition.totalCalories === 0) {
     return (
@@ -220,7 +222,7 @@ export function NutritionSummary({
         </div>
 
         {/* Energy density color */}
-        {nutrition.energyDensityColor && (
+        {showEnergyDensity && nutrition.energyDensityColor && (
           <div className="flex justify-between items-center text-sm">
             <span className="text-neutral-600">{t('nutrition.energyDensity')}</span>
             <Badge variant="outline" className={colorBadgeClass[nutrition.energyDensityColor]}>
