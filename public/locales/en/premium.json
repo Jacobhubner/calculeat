@@ -44,7 +44,7 @@
           "premium": "Included"
         },
         "tdee": { "label": "TDEE formulas", "free": "1 formula", "premium": "All 10 + comparison" },
-        "dietModes": { "label": "Diet modes", "free": "1 (NNR)", "premium": "All 5" },
+        "dietModes": { "label": "Diet modes", "free": "2 (NNR + Weight Loss)", "premium": "All 5" },
         "calibration": { "label": "Calibration", "free": "1×/quarter", "premium": "Unlimited" },
         "bodyComp": {
           "label": "Body composition",

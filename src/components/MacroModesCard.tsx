@@ -117,8 +117,10 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
   const [showInfo, setShowInfo] = useState(false)
   const [upgradeOpen, setUpgradeOpen] = useState(false)
 
-  // Kostlägen är premium utom NNR (all_diet_modes, se PREMIUM_SPEC)
-  const isLocked = (id: MacroModeId) => id !== 'nnr' && !limits.all_diet_modes
+  // Kostlägen: allmänhetslägena (NNR + Weight Loss) alltid gratis,
+  // atletlägena (Active, Off-/On-Season) premium (all_diet_modes, se PREMIUM_SPEC)
+  const FREE_MODES: MacroModeId[] = ['nnr', 'weightloss']
+  const isLocked = (id: MacroModeId) => !FREE_MODES.includes(id) && !limits.all_diet_modes
 
   // Dynamiska nycklar per läge — samma konvention som övriga t-anrop i filen
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
