@@ -57,7 +57,7 @@ export function nnrMode(_avgCalories: number): MacroMode {
  * - Underskott 20–25 %: Wycherleys inkluderade studier använde ~500–1000
  *   kcal/dag (oftast 500 kcal ≈ 2092 kJ), i linje med riktlinjen 500–750
  *   kcal/dag. För en typisk användare (TDEE 2000–2500) ligger 20–25 % (~450–625
- *   kcal) i det spannet. Samma energinivå som Cut — skillnaden är proteinet
+ *   kcal) i det spannet.
  */
 export function weightLossMode(
   weight: number,
