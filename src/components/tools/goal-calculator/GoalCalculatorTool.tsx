@@ -889,6 +889,7 @@ export default function GoalCalculatorTool() {
                   // Definiera presets baserat på mål
                   let presets: Array<{
                     label: string
+                    desc?: string
                     tooltip: string
                     kgPerWeek: { min: number; max: number }
                   }> = []
@@ -897,16 +898,19 @@ export default function GoalCalculatorTool() {
                     presets = [
                       {
                         label: t('goalCalc.weeklyChange.presets.cautious'),
+                        desc: t('goalCalc.weeklyChange.presets.cautiousDesc'),
                         tooltip: `${Math.round(tdee * 0.85)} - ${Math.round(tdee * 0.9)} kcal/dag`,
                         kgPerWeek: calcKgPerWeek(0.1, 0.15),
                       },
                       {
                         label: t('goalCalc.weeklyChange.presets.normal'),
+                        desc: t('goalCalc.weeklyChange.presets.normalDesc'),
                         tooltip: `${Math.round(tdee * 0.75)} - ${Math.round(tdee * 0.8)} kcal/dag`,
                         kgPerWeek: calcKgPerWeek(0.2, 0.25),
                       },
                       {
                         label: t('goalCalc.weeklyChange.presets.aggressive'),
+                        desc: t('goalCalc.weeklyChange.presets.aggressiveDesc'),
                         tooltip: `${Math.round(tdee * 0.7)} - ${Math.round(tdee * 0.75)} kcal/dag`,
                         kgPerWeek: calcKgPerWeek(0.25, 0.3),
                       },
@@ -947,6 +951,11 @@ export default function GoalCalculatorTool() {
                               title={preset.tooltip}
                             >
                               <span className="font-medium">{preset.label.split(' (')[0]}</span>
+                              {preset.desc && (
+                                <span className="text-[10px] opacity-70 mt-1 whitespace-normal leading-snug">
+                                  {preset.desc}
+                                </span>
+                              )}
                               <span className="text-[10px] opacity-70 mt-1">
                                 {preset.kgPerWeek.min.toFixed(1)}-{preset.kgPerWeek.max.toFixed(1)}{' '}
                                 kg/v

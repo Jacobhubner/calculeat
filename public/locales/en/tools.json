@@ -114,8 +114,11 @@
       "weightGainLabel": "Weight gain - Choose pace according to Energy Goal:",
       "presets": {
         "cautious": "Cautious (10-15%)",
+        "cautiousDesc": "Slow weight loss, best for preserving muscle mass",
         "normal": "Normal (20-25%)",
+        "normalDesc": "Balanced weight loss with good energy levels",
         "aggressive": "Aggressive (25-30%)",
+        "aggressiveDesc": "Rapid weight loss, recommended only for short periods",
         "gain": "Weight gain (10-20%)",
         "cautiousShort": "Cautious",
         "normalShort": "Normal",

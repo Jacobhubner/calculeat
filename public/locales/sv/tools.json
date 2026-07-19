@@ -114,8 +114,11 @@
       "weightGainLabel": "Viktökning - Välj tempo enligt Energimål:",
       "presets": {
         "cautious": "Försiktigt (10-15%)",
+        "cautiousDesc": "Långsam viktnedgång, bäst för att bevara muskelmassa",
         "normal": "Normalt (20-25%)",
+        "normalDesc": "Balanserad viktnedgång med god energinivå",
         "aggressive": "Aggressivt (25-30%)",
+        "aggressiveDesc": "Snabb viktnedgång, rekommenderas endast för korta perioder",
         "gain": "Viktuppgång (10-20%)",
         "cautiousShort": "Försiktigt",
         "normalShort": "Normalt",
