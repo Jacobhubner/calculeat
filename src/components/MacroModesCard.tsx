@@ -388,17 +388,6 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
               </div>
             )
           })}
-
-          <Separator />
-
-          <div className="text-xs text-neutral-500 space-y-1">
-            <p>
-              💡 <strong>{t('macroModes.tipTitle')}</strong>
-            </p>
-            {MODES.map(mode => (
-              <p key={mode.id}>• {tm(`tip_${mode.id}`)}</p>
-            ))}
-          </div>
         </CardContent>
       )}
 
