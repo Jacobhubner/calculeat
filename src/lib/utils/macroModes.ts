@@ -45,29 +45,29 @@ export function nnrMode(_avgCalories: number): MacroMode {
 
 /**
  * Weight Loss Mode (allmän viktminskning)
- * Måttligt underskott (10–15 %) med förhöjt protein för mättnad och
- * bevarad muskelmassa — för allmänheten, inte tävlingsförberedelse.
+ * Måttligt underskott med förhöjt protein för mättnad och bevarad
+ * muskelmassa — för allmänheten, inte tävlingsförberedelse.
  *
  * Evidens (attribution verifierad mot fulltext 2026-07-18):
  * - Protein 1,2–1,6 g/kg vid energiunderskott: Leidy et al., Am J Clin Nutr 2015
  *   (doi: 10.3945/ajcn.114.084038) — exakt deras intervall; Wycherleys HP-arm
  *   (1,25 ± 0,17 g/kg) stödjer nedre delen (doi: 10.3945/ajcn.112.044321)
- * - Fett 20–35 E%: AMDR-spannet; Wycherleys interventioner var low-fat (~≤30 E%),
- *   så ett 40 %-tak kan INTE tillskrivas den — därav 35 som tak
- * - Underskott 15–20 %: Wycherleys inkluderade studier använde ~500–1000
- *   kcal/dag (oftast 500 kcal ≈ 2092 kJ), vilket för en typisk användare
- *   motsvarar ~20–30 %. Deltagarna var dock feta (höga TDEE), så deras
- *   absoluta underskott blir ett mindre % för en normalviktig användare;
- *   15–20 % är därför den evidensinformerade, hållbara nivån (~300–500 kcal)
+ * - Fett 20–30 E%: Wycherleys interventioner var per design low-fat
+ *   (prescriberat ≤30 %, achieved 22–33 %); AMDR:s nedre halva
+ * - Underskott 20–25 %: Wycherleys inkluderade studier använde ~500–1000
+ *   kcal/dag (oftast 500 kcal ≈ 2092 kJ), i linje med riktlinjen 500–750
+ *   kcal/dag. För en typisk användare (TDEE 2000–2500) ligger 20–25 % (~450–625
+ *   kcal) i det spannet. Samma energinivå som Cut — skillnaden är proteinet
  */
 export function weightLossMode(
   weight: number,
   caloriesMin: number,
   caloriesMax: number
 ): MacroMode {
-  // FAT: 20–35 % av kalorier (AMDR; Wycherley-interventionerna var low-fat)
+  // FAT: 20–30 % av kalorier — Wycherley-interventionerna var low-fat
+  // (prescriberat ≤30 %, achieved 22–33 %); AMDR:s nedre halva
   const fatMinKcal = caloriesMin * 0.2
-  const fatMaxKcal = caloriesMax * 0.35
+  const fatMaxKcal = caloriesMax * 0.3
 
   // PROTEIN: 1,2–1,6 g per kg kroppsvikt
   const proteinMinGrams = weight * 1.2
@@ -86,15 +86,15 @@ export function weightLossMode(
 
   return {
     calorieGoal: 'Weight loss',
-    deficitLevel: '15-20%',
+    deficitLevel: '20-25%',
     fatMinPercent,
     fatMaxPercent,
     proteinMinPercent,
     proteinMaxPercent,
     carbMinPercent,
     carbMaxPercent,
-    calorieMinMultiplier: 0.8, // TDEE * 0.8 (20 % underskott)
-    calorieMaxMultiplier: 0.85, // TDEE * 0.85 (15 % underskott)
+    calorieMinMultiplier: 0.75, // TDEE * 0.75 (25 % underskott)
+    calorieMaxMultiplier: 0.8, // TDEE * 0.8 (20 % underskott)
   }
 }
 
