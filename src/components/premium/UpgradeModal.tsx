@@ -84,6 +84,7 @@ export function UpgradeModal({ open, onOpenChange, limitKey }: UpgradeModalProps
     'recipes',
     'meals',
     'tdee',
+    'dietModes',
     'calibration',
     'bodyComp',
     'equations',

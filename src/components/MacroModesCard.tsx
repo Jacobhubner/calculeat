@@ -12,8 +12,20 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { InfoModal } from '@/components/ui/InfoModal'
-import { Target, TrendingUp, TrendingDown, Minus, Activity, ChevronDown, Info } from 'lucide-react'
+import {
+  Target,
+  TrendingUp,
+  TrendingDown,
+  Minus,
+  Activity,
+  ChevronDown,
+  Info,
+  Lock,
+} from 'lucide-react'
 import { applyMacroMode, type MacroModeId } from '@/lib/utils/macroModes'
+import { useEntitlements } from '@/hooks/useEntitlements'
+import { PremiumBadge } from '@/components/premium/PremiumBadge'
+import { UpgradeModal } from '@/components/premium/UpgradeModal'
 import { calculateLeanMass } from '@/lib/calculations/bodyComposition'
 import type { Profile } from '@/lib/types'
 import { useTranslation } from 'react-i18next'
@@ -49,7 +61,7 @@ interface ModeConfig {
 }
 
 const MODES: ModeConfig[] = [
-  { id: 'nnr', name: 'NNR Mode', icon: Minus, energyLabelKey: 'maintainWeight' },
+  { id: 'nnr', name: 'NNR Mode', icon: Minus, energyLabelKey: 'maintainWeight', hasRef: true },
   {
     id: 'weightloss',
     name: 'Weight Loss Mode',
@@ -99,9 +111,14 @@ const MODES: ModeConfig[] = [
 
 export default function MacroModesCard({ profile, onMacroModeApply }: MacroModesCardProps) {
   const { t } = useTranslation('profile')
+  const { limits } = useEntitlements()
   const [isOpen, setIsOpen] = useState(false)
   const [activeRef, setActiveRef] = useState<MacroModeId | null>(null)
   const [showInfo, setShowInfo] = useState(false)
+  const [upgradeOpen, setUpgradeOpen] = useState(false)
+
+  // Kostlägen är premium utom NNR (all_diet_modes, se PREMIUM_SPEC)
+  const isLocked = (id: MacroModeId) => id !== 'nnr' && !limits.all_diet_modes
 
   // Dynamiska nycklar per läge — samma konvention som övriga t-anrop i filen
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -278,6 +295,7 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
             const Icon = mode.icon
             const active = isModeActive(mode.id)
             const canApply = mode.requiresBodyFat ? canApplyAny && hasBodyFat : canApplyAny
+            const locked = isLocked(mode.id)
 
             return (
               <div key={mode.id}>
@@ -290,27 +308,35 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
                       <Badge variant="outline" className={mode.badgeClass}>
                         {tm(`${mode.id}Badge`)}
                       </Badge>
+                      {locked && <PremiumBadge />}
                       {mode.hasRef && (
                         <button
                           type="button"
-                          onClick={() => setActiveRef(mode.id)}
+                          onClick={() => (locked ? setUpgradeOpen(true) : setActiveRef(mode.id))}
                           className="text-neutral-400 hover:text-primary-600 transition-colors"
                           aria-label={tm(`showRef`, { mode: mode.name })}
                         >
-                          <Info className="h-3.5 w-3.5" />
+                          {locked ? (
+                            <Lock className="h-3.5 w-3.5" />
+                          ) : (
+                            <Info className="h-3.5 w-3.5" />
+                          )}
                         </button>
                       )}
                     </div>
                     <Button
                       size="sm"
                       variant={active ? 'primary' : 'outline'}
-                      onClick={() => handleApplyMode(mode.id)}
-                      disabled={!canApply || active}
-                      className={!canApply && !active ? 'opacity-40 cursor-not-allowed' : ''}
+                      onClick={() => (locked ? setUpgradeOpen(true) : handleApplyMode(mode.id))}
+                      disabled={active || (!locked && !canApply)}
+                      className={
+                        !locked && !canApply && !active ? 'opacity-40 cursor-not-allowed' : ''
+                      }
                     >
+                      {locked && !active && <Lock className="mr-1 h-3 w-3" aria-hidden="true" />}
                       {active
                         ? t('macroModes.active')
-                        : !canApply && mode.requiresBodyFat
+                        : !locked && !canApply && mode.requiresBodyFat
                           ? t('macroModes.requiresBodyFat')
                           : t('macroModes.apply')}
                     </Button>
@@ -391,6 +417,8 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
       >
         <p className="text-neutral-700 leading-relaxed whitespace-pre-line">{tm('infoBody')}</p>
       </InfoModal>
+
+      <UpgradeModal open={upgradeOpen} onOpenChange={setUpgradeOpen} />
     </Card>
   )
 }

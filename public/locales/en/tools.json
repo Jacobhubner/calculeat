@@ -709,7 +709,7 @@
     "lossNormalLabel": "Normal (20-25%)",
     "lossNormalDesc": "Balanced weight loss with good energy levels · ~{{kgMin}}–{{kgMax}} kg/week",
     "lossAggressiveLabel": "Aggressive (25-30%)",
-    "lossAggressiveDesc": "Rapid weight loss, short periods only · ~{{kgMin}}–{{kgMax}} kg/week"
+    "lossAggressiveDesc": "Rapid weight loss, recommended only for short periods · ~{{kgMin}}–{{kgMax}} kg/week"
   },
   "bmrFormulas": {
     "mifflinStJeor": {

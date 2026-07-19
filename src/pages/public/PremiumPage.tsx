@@ -20,6 +20,7 @@ const COMPARE_ROWS = [
   'recipes',
   'meals',
   'tdee',
+  'dietModes',
   'calibration',
   'bodyComp',
   'equations',

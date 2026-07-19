@@ -27,6 +27,7 @@ export interface PlanLimits {
   owned_shared_lists: number
   label_scans_per_month: number
   food_suggestions: boolean
+  all_diet_modes: boolean
 }
 
 export const FREE_LIMITS: PlanLimits = {
@@ -44,6 +45,7 @@ export const FREE_LIMITS: PlanLimits = {
   owned_shared_lists: 1,
   label_scans_per_month: 5,
   food_suggestions: false,
+  all_diet_modes: false,
 }
 
 export const PREMIUM_LIMITS: PlanLimits = {
@@ -61,6 +63,7 @@ export const PREMIUM_LIMITS: PlanLimits = {
   owned_shared_lists: UNLIMITED,
   label_scans_per_month: UNLIMITED,
   food_suggestions: true,
+  all_diet_modes: true,
 }
 
 export interface Entitlements {

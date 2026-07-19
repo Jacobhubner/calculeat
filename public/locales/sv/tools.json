@@ -715,7 +715,7 @@
     "lossNormalLabel": "Normalt (20-25%)",
     "lossNormalDesc": "Balanserad viktnedgång med god energinivå · ~{{kgMin}}–{{kgMax}} kg/vecka",
     "lossAggressiveLabel": "Aggressivt (25-30%)",
-    "lossAggressiveDesc": "Snabb viktnedgång, endast för kort period · ~{{kgMin}}–{{kgMax}} kg/vecka"
+    "lossAggressiveDesc": "Snabb viktnedgång, rekommenderas endast för korta perioder · ~{{kgMin}}–{{kgMax}} kg/vecka"
   },
   "bmrFormulas": {
     "mifflinStJeor": {

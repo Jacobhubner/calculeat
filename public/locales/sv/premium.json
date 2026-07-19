@@ -44,6 +44,7 @@
         },
         "suggestions": { "label": "Vad ska jag äta? (förslag)", "free": "—", "premium": "Ingår" },
         "tdee": { "label": "TDEE-formler", "free": "1 formel", "premium": "Alla 10 + jämförelse" },
+        "dietModes": { "label": "Kostlägen", "free": "1 (NNR)", "premium": "Alla 5" },
         "calibration": { "label": "Kalibrering", "free": "1×/kvartal", "premium": "Obegränsad" },
         "bodyComp": {
           "label": "Kroppskomposition",
