@@ -106,6 +106,9 @@ export interface TDEECalculationSnapshot {
   calculated_bmr?: number
   calculated_tdee?: number
   note?: string
+  /** BMR uppskattad med Mifflin vid manuell TDEE-inmatning (ej beräknad av användaren) */
+  estimated_bmr?: number
+  estimated_bmr_formula?: string
 }
 
 export interface UserProfile {

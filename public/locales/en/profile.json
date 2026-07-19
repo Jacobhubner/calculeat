@@ -103,7 +103,8 @@
     "basalMetabolism": "Basal metabolism",
     "totalEnergyNeed": "Total energy needs",
     "calorieRange": "Calorie range",
-    "palCalculated": "Calculated activity level"
+    "palCalculated": "Calculated activity level",
+    "estimatedBmr": "Estimated (Mifflin-St Jeor)"
   },
   "bodyComposition": {
     "title": "Body composition",

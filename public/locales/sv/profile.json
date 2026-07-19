@@ -103,7 +103,8 @@
     "basalMetabolism": "Basalmetabolism",
     "totalEnergyNeed": "Totalt energibehov",
     "calorieRange": "Kaloriintervall",
-    "palCalculated": "Beräknad aktivitetsnivå"
+    "palCalculated": "Beräknad aktivitetsnivå",
+    "estimatedBmr": "Uppskattad (Mifflin-St Jeor)"
   },
   "bodyComposition": {
     "title": "Kroppssammansättning",

@@ -85,6 +85,9 @@ export default function ProfileResultsSummary({ profile, onTDEEEdit }: ProfileRe
     bmr = profile.bmr
   }
 
+  // Uppskattad BMR (Mifflin) från manuell TDEE-inmatning — märks i UI
+  const isEstimatedBmr = !bmrFormula && !!profile.tdee_calculation_snapshot?.estimated_bmr
+
   const tdee = profile.tdee
   const calorieGoal = profile.calorie_goal
 
@@ -112,10 +115,14 @@ export default function ProfileResultsSummary({ profile, onTDEEEdit }: ProfileRe
               <Flame className="h-4 w-4 text-orange-500" />
               <div>
                 <p className="text-sm font-medium text-neutral-700">
-                  {getMetabolicRateLabel(bmrFormula!)}
+                  {bmrFormula ? getMetabolicRateLabel(bmrFormula) : 'BMR/RMR'}
                 </p>
                 <p className="text-xs text-neutral-500">{t('results.basalMetabolism')}</p>
-                <p className="text-xs text-neutral-400">{getFormulaDisplayName(bmrFormula!)}</p>
+                {bmrFormula ? (
+                  <p className="text-xs text-neutral-400">{getFormulaDisplayName(bmrFormula)}</p>
+                ) : isEstimatedBmr ? (
+                  <p className="text-xs text-neutral-400">{t('results.estimatedBmr')}</p>
+                ) : null}
               </div>
             </div>
             <p className="text-sm font-semibold text-neutral-900 whitespace-nowrap">

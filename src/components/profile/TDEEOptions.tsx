@@ -24,6 +24,7 @@ interface TDEEOptionsProps {
   onTDEEChange: (data: {
     tdee: number
     bodyFat?: number
+    bmr?: number
     baseline_bmr?: number
     weight_kg?: number
     tdee_source: string
@@ -40,9 +41,9 @@ interface TDEEOptionsProps {
 
 export default function TDEEOptions({
   initialWeight,
-  height: _height,
-  birthDate: _birthDate,
-  gender: _gender,
+  height,
+  birthDate,
+  gender,
   tdee,
   bodyFatPercentage,
   onTDEEChange,
@@ -108,6 +109,9 @@ export default function TDEEOptions({
         <div className="mt-4">
           <ManualTDEEEntry
             initialWeight={initialWeight}
+            height={height}
+            birthDate={birthDate}
+            gender={gender}
             tdee={tdee}
             bodyFatPercentage={bodyFatPercentage}
             onTDEEChange={onTDEEChange}

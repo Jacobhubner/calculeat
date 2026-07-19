@@ -21,6 +21,8 @@ import { toast } from 'sonner'
 import ProfileResultsSummary from '@/components/profile/ProfileResultsSummary'
 import MaxFatMetabolismCard from '@/components/profile/MaxFatMetabolismCard'
 import TDEEOptions from '@/components/profile/TDEEOptions'
+import { mifflinStJeor } from '@/lib/calculations/bmr'
+import { calculateAge } from '@/lib/calculations/helpers'
 import BasicProfileForm from '@/components/profile/BasicProfileForm'
 import WeightTracker from '@/components/profile/WeightTracker'
 import SetupProfileForm from '@/components/profile/SetupProfileForm'
@@ -65,6 +67,7 @@ export default function ProfilePage() {
     weight_kg?: number
     // TDEE
     tdee?: number
+    bmr?: number
     tdee_source?: string
     tdee_calculated_at?: string
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -462,6 +465,7 @@ export default function ProfilePage() {
   const handleTDEEChange = (data: {
     tdee: number
     bodyFat?: number
+    bmr?: number
     baseline_bmr?: number
     weight_kg?: number
     tdee_source: string
@@ -492,6 +496,8 @@ export default function ProfilePage() {
       // Manual TDEE has no associated formula — clear bmr_formula for consistency.
       // tdee_calculator_tool sets its own formula; calibration doesn't touch it.
       ...(data.tdee_source === 'manual' && { bmr_formula: null }),
+      // Uppskattad Mifflin-BMR från ManualTDEEEntry (märkt i snapshot)
+      ...(data.bmr !== undefined && { bmr: data.bmr }),
       baseline_bmr: data.baseline_bmr,
       weight_kg: data.weight_kg,
       tdee_source: data.tdee_source,
@@ -718,15 +724,39 @@ export default function ProfilePage() {
             <ProfileResultsSummary
               profile={mergedProfile}
               onTDEEEdit={newTdee => {
+                // Backfill uppskattad Mifflin-BMR om profilen saknar BMR
+                // (så BMR-beroende funktioner som TDEE-scenarier fungerar)
+                const p = mergedProfile
+                const estimatedBmr =
+                  !p?.bmr &&
+                  p?.weight_kg &&
+                  p?.height_cm &&
+                  p?.birth_date &&
+                  (p?.gender === 'male' || p?.gender === 'female')
+                    ? mifflinStJeor({
+                        weight: p.weight_kg,
+                        height: p.height_cm,
+                        age: calculateAge(p.birth_date),
+                        gender: p.gender,
+                      })
+                    : null
+
                 setPendingChanges(prev => ({
                   ...prev,
                   tdee: newTdee,
+                  ...(estimatedBmr ? { bmr: Math.round(estimatedBmr) } : {}),
                   tdee_source: 'manual',
                   tdee_calculated_at: new Date().toISOString(),
                   tdee_calculation_snapshot: {
                     ...activeProfile?.tdee_calculation_snapshot,
                     calculated_tdee: newTdee,
                     note: 'Manuellt angiven TDEE',
+                    ...(estimatedBmr
+                      ? {
+                          estimated_bmr: Math.round(estimatedBmr),
+                          estimated_bmr_formula: 'Mifflin-St Jeor equation',
+                        }
+                      : {}),
                   },
                   calorie_goal: activeProfile?.calorie_goal ?? 'Maintain weight',
                   calories_min: newTdee * 0.97,
