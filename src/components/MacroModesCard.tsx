@@ -343,14 +343,22 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
                           : t('macroModes.apply')}
                     </Button>
                   </div>
-                  <p className="text-sm text-neutral-600">{tm(`${mode.id}Desc`)}</p>
-                  {mode.requiresBodyFat && !canApply && (
+                  <p className="text-sm text-neutral-600">
+                    {locked ? tm(`${mode.id}DescShort`) : tm(`${mode.id}Desc`)}
+                  </p>
+                  {!locked && mode.requiresBodyFat && !canApply && (
                     <div className="text-xs text-yellow-700 bg-yellow-50 border border-yellow-200 rounded p-2">
                       {t('macroModes.requiresBodyFatDesc')}
                     </div>
                   )}
                   {weightKg && (
-                    <div className="text-xs space-y-1.5 pl-6 mt-3">
+                    <div
+                      className={`text-xs space-y-1.5 pl-6 mt-3 ${
+                        locked ? 'blur-sm select-none cursor-pointer' : ''
+                      }`}
+                      aria-hidden={locked || undefined}
+                      onClick={locked ? () => setUpgradeOpen(true) : undefined}
+                    >
                       <div className="font-medium text-neutral-800">
                         <span className="text-neutral-600">{t('macroModes.energyGoalLabel')}</span>{' '}
                         {tm(mode.energyLabelKey)}
