@@ -114,7 +114,6 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
   const { limits } = useEntitlements()
   const [isOpen, setIsOpen] = useState(false)
   const [activeRef, setActiveRef] = useState<MacroModeId | null>(null)
-  const [showInfo, setShowInfo] = useState(false)
   const [upgradeOpen, setUpgradeOpen] = useState(false)
 
   // Kostlägen: allmänhetslägena (NNR + Weight Loss) alltid gratis,
@@ -259,31 +258,21 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
   return (
     <Card>
       <CardHeader className="pb-3">
-        <div className="w-full flex items-center justify-between gap-2">
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="flex-1 flex items-center justify-between hover:opacity-70 transition-opacity"
-            type="button"
-          >
-            <CardTitle className="flex items-center gap-2 text-lg leading-snug">
-              <Target className="h-5 w-5 text-accent-600" />
-              {t('macroModes.title')}
-            </CardTitle>
-            <ChevronDown
-              className={`h-5 w-5 text-neutral-600 transition-transform duration-200 flex-shrink-0 ${
-                isOpen ? 'rotate-180' : ''
-              }`}
-            />
-          </button>
-          <button
-            type="button"
-            onClick={() => setShowInfo(true)}
-            className="p-1 rounded-lg text-neutral-400 hover:text-primary-600 hover:bg-neutral-100 transition-colors flex-shrink-0"
-            aria-label={tm('infoAriaLabel')}
-          >
-            <Info className="h-4 w-4" />
-          </button>
-        </div>
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="w-full flex items-center justify-between hover:opacity-70 transition-opacity"
+          type="button"
+        >
+          <CardTitle className="flex items-center gap-2 text-lg leading-snug">
+            <Target className="h-5 w-5 text-accent-600" />
+            {t('macroModes.title')}
+          </CardTitle>
+          <ChevronDown
+            className={`h-5 w-5 text-neutral-600 transition-transform duration-200 flex-shrink-0 ${
+              isOpen ? 'rotate-180' : ''
+            }`}
+          />
+        </button>
       </CardHeader>
       {isOpen && (
         <CardContent className="space-y-4 pt-0">
@@ -404,16 +393,6 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
           </p>
         </InfoModal>
       )}
-
-      {/* Info om hela funktionen */}
-      <InfoModal
-        open={showInfo}
-        onClose={() => setShowInfo(false)}
-        title={t('macroModes.title')}
-        size="md"
-      >
-        <p className="text-neutral-700 leading-relaxed whitespace-pre-line">{tm('infoBody')}</p>
-      </InfoModal>
 
       <UpgradeModal open={upgradeOpen} onOpenChange={setUpgradeOpen} />
     </Card>

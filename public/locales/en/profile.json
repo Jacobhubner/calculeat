@@ -307,8 +307,6 @@
   },
   "macroModes": {
     "title": "Diet mode",
-    "infoAriaLabel": "About diet modes",
-    "infoBody": "A diet mode fills in your energy goal and macro distribution (fat, carbohydrates, protein) with one click, based on published research.\n\nThe modes form a scale from general population to athlete:\n• NNR — weight stability per the Nordic Nutrition Recommendations\n• Weight Loss — sustainable weight loss with a moderate deficit\n• Active — maintenance for regular resistance training\n• Off-Season (Bulk) and On-Season (Cut) — build and cut phases for strength athletes\n\nThe values are starting points — you can fine-tune every range manually afterwards. The sources behind each mode are available via the i icon next to it. Diet modes do not constitute medical advice.",
     "missingData": "Enter weight and calorie goal to use diet modes.",
     "nnrBadge": "Maintain weight",
     "nnrDesc": "For general health and weight stability",

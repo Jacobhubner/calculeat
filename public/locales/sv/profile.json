@@ -307,8 +307,6 @@
   },
   "macroModes": {
     "title": "Kostläge",
-    "infoAriaLabel": "Om kostlägen",
-    "infoBody": "Ett kostläge fyller i energimål och makrofördelning (fett, kolhydrater, protein) åt dig med ett klick, baserat på publicerad forskning.\n\nLägena är en skala från allmänhet till atlet:\n• NNR — viktstabilitet enligt Nordiska näringsrekommendationerna\n• Weight Loss — hållbar viktminskning med måttligt underskott\n• Active — underhåll för dig som styrketränar regelbundet\n• Off-Season (Bulk) och On-Season (Cut) — uppbyggnads- respektive nedskärningsfas för styrketränande\n\nVärdena är startpunkter — du kan finjustera alla intervall manuellt efteråt. Källorna bakom varje läge når du via i-ikonen vid respektive läge. Kostlägen utgör inte medicinsk rådgivning.",
     "missingData": "Fyll i vikt och kalorimål för att använda kostlägen.",
     "nnrBadge": "Bibehåll vikt",
     "nnrDesc": "För allmän hälsa och viktstabilitet",
