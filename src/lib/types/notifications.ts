@@ -9,6 +9,9 @@ export type NotificationType =
   | 'share_invitation_rejected'
   | 'new_message'
   | 'support_message_received'
+  | 'admin_invitation_received'
+  | 'admin_invitation_accepted'
+  | 'admin_invitation_rejected'
 
 export interface Notification {
   id: string

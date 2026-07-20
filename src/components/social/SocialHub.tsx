@@ -1424,6 +1424,12 @@ function notificationIcon(type: Notification['type']) {
       return <MessageCircle className="h-4 w-4 text-primary-600" />
     case 'support_message_received':
       return <MessageCircle className="h-4 w-4 text-orange-500" />
+    case 'admin_invitation_received':
+      return <ShieldCheck className="h-4 w-4 text-primary-600" />
+    case 'admin_invitation_accepted':
+      return <Check className="h-4 w-4 text-green-600" />
+    case 'admin_invitation_rejected':
+      return <X className="h-4 w-4 text-neutral-400" />
   }
 }
 
@@ -1524,7 +1530,8 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
       n.type !== 'shared_list_invitation_received' &&
       n.type !== 'share_invitation_received' &&
       n.type !== 'new_message' &&
-      n.type !== 'support_message_received'
+      n.type !== 'support_message_received' &&
+      n.type !== 'admin_invitation_received'
   )
   const unreadHistoryCount = historyNotifications.filter(n => n.read_at === null).length
 
