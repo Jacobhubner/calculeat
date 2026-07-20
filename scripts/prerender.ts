@@ -78,6 +78,7 @@ interface RouteJob {
 // Rutlistan drivs HELT från PAGE_CONFIGS → nya artiklar följer med automatiskt
 const jobs: RouteJob[] = [{ urlPath: '/', lng: 'sv', expectedCanonical: null }]
 for (const cfg of PAGE_CONFIGS) {
+  if (cfg.noindex) continue // sidor under arbete prerenderas ej
   for (const [lng, entry] of Object.entries(cfg.locales) as [
     SupportedLocale,
     { path: string; canonical: string } | undefined,

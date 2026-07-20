@@ -32,6 +32,13 @@ interface SeoProps {
   type?: 'website' | 'article'
   hreflangAlternates?: HreflangEntry[]
   locale?: 'sv_SE' | 'en_US' | 'de_DE' | 'es_ES'
+  /**
+   * Sätt true för sidor som inte ska indexeras av sökmotorer (t.ex. sidor
+   * under arbete). Skriver <meta robots noindex, follow> och utelämnar
+   * canonical + hreflang så inga blandade indexeringssignaler skickas.
+   * Länkar följs fortfarande (follow) så internt länkvärde inte fastnar.
+   */
+  noindex?: boolean
 }
 
 export function Seo({
@@ -42,6 +49,7 @@ export function Seo({
   type = 'website',
   hreflangAlternates,
   locale,
+  noindex = false,
 }: SeoProps) {
   const image = ogImage ?? defaultOgImage(canonical)
   const ogLocale = locale ?? (canonical.includes('/en/') ? 'en_US' : 'sv_SE')
@@ -54,11 +62,13 @@ export function Seo({
     <Helmet defer={false} htmlAttributes={{ lang: htmlLang }}>
       <title>{title}</title>
       <meta name="description" content={description} />
-      <link rel="canonical" href={canonical} />
+      {noindex && <meta name="robots" content="noindex, follow" />}
+      {!noindex && <link rel="canonical" href={canonical} />}
 
-      {hreflangAlternates?.map(({ hreflang, href }) => (
-        <link key={hreflang} rel="alternate" hrefLang={hreflang} href={href} />
-      ))}
+      {!noindex &&
+        hreflangAlternates?.map(({ hreflang, href }) => (
+          <link key={hreflang} rel="alternate" hrefLang={hreflang} href={href} />
+        ))}
 
       {/* Open Graph */}
       <meta property="og:title" content={title} />

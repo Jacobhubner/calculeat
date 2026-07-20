@@ -23,6 +23,7 @@ entries.push(`  <url>
   </url>`)
 
 for (const cfg of PAGE_CONFIGS) {
+  if (cfg.noindex) continue // sidor under arbete hör inte hemma i sitemap
   const alts = getHreflangAlternates(cfg)
   const altLines = alts
     .map(a => `    <xhtml:link rel="alternate" hreflang="${a.hreflang}" href="${esc(a.href)}"/>`)

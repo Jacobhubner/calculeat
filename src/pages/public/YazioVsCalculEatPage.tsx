@@ -114,6 +114,7 @@ export default function YazioVsCalculEatPage() {
         hreflangAlternates={hreflangAlternates}
         locale={lng === 'en' ? 'en_US' : 'sv_SE'}
         type="article"
+        noindex={pageConfig.noindex}
       />
       <JsonLd schema={pageSchema} />
       <SiteHeader />

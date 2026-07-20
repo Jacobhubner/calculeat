@@ -118,6 +118,7 @@ export default function MyFitnessPalVsCalculEatPage() {
         hreflangAlternates={hreflangAlternates}
         locale={lng === 'en' ? 'en_US' : 'sv_SE'}
         type="article"
+        noindex={pageConfig.noindex}
       />
       <JsonLd schema={pageSchema} />
 

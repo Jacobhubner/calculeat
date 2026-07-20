@@ -17,6 +17,12 @@ export interface PageConfig {
   changefreq?: string
   /** 'YYYY-MM-DD' — sätts redaktionellt; artiklar får den från registryts dateModified */
   lastmod?: string
+  /**
+   * true = sidan är under arbete och ska inte indexeras. Utesluts ur
+   * sitemap-generering och prerendering, och sidkomponenten sätter
+   * <meta robots noindex>. Rutten finns kvar (nåbar via direkt-URL).
+   */
+  noindex?: boolean
 }
 
 /**
@@ -201,6 +207,7 @@ const STATIC_PAGE_CONFIGS: PageConfig[] = [
     xDefault: `${BASE}/jamfor/myfitnesspal-vs-calculeat`,
     priority: 0.8,
     changefreq: 'monthly',
+    noindex: true, // under arbete — ej publik ännu
   },
   {
     key: 'lifesum-vs-calculeat',
@@ -215,6 +222,7 @@ const STATIC_PAGE_CONFIGS: PageConfig[] = [
     xDefault: `${BASE}/jamfor/lifesum-vs-calculeat`,
     priority: 0.8,
     changefreq: 'monthly',
+    noindex: true, // under arbete — ej publik ännu
   },
   {
     key: 'yazio-vs-calculeat',
@@ -229,6 +237,7 @@ const STATIC_PAGE_CONFIGS: PageConfig[] = [
     xDefault: `${BASE}/jamfor/yazio-vs-calculeat`,
     priority: 0.8,
     changefreq: 'monthly',
+    noindex: true, // under arbete — ej publik ännu
   },
   {
     key: 'macrofactor-vs-calculeat',
@@ -246,6 +255,7 @@ const STATIC_PAGE_CONFIGS: PageConfig[] = [
     xDefault: `${BASE}/jamfor/macrofactor-vs-calculeat`,
     priority: 0.8,
     changefreq: 'monthly',
+    noindex: true, // under arbete — ej publik ännu
   },
 
   // ── Hubbar & övrigt ───────────────────────────────────────────────────────
@@ -281,6 +291,7 @@ const STATIC_PAGE_CONFIGS: PageConfig[] = [
     xDefault: `${BASE}/basta-kaloriappen`,
     priority: 0.8,
     changefreq: 'monthly',
+    noindex: true, // under arbete — ej publik ännu
   },
   {
     key: 'best-tdee-calculator',
@@ -295,6 +306,7 @@ const STATIC_PAGE_CONFIGS: PageConfig[] = [
     xDefault: `${BASE}/basta-tdee-kalkylatorn`,
     priority: 0.8,
     changefreq: 'monthly',
+    noindex: true, // under arbete — ej publik ännu
   },
   {
     key: 'about',
