@@ -36,6 +36,13 @@
     "exit": "Avsluta preview och radera testdata",
     "exiting": "Avslutar…"
   },
+  "freeView": {
+    "title": "Visa som gratisanvändare",
+    "description": "Navigera CalculEat med din riktiga data men tvingade gratis-gränser — se lås, blur och uppgraderingsflöden som en gratisanvändare skulle. Ditt konto och din data påverkas inte.",
+    "activate": "Aktivera gratisvy",
+    "activeInfo": "Du navigerar nu med gratis-gränser. Bannern längst upp bekräftar läget.",
+    "exit": "Avsluta gratisvy"
+  },
   "support": {
     "openChat": "Kontakta support →",
     "inboxLink": "Öppna supportinkorgen →"

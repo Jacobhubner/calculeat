@@ -36,6 +36,7 @@ import {
   useRemoveAdmin,
 } from '@/hooks/useAdminManagement'
 import { usePreviewMode } from '@/hooks/usePreviewMode'
+import { useFreeViewMode } from '@/hooks/useFreeViewMode'
 
 type CompletionMode = 'manual' | 'auto'
 type OpenEditor = 'username' | 'email' | 'password' | null
@@ -67,6 +68,7 @@ export default function SettingsPage() {
   const { data: isSuperAdmin = false } = useIsSuperAdmin()
   const { data: isAdmin = false } = useIsAdmin()
   const { isPreviewActive, enterPreview, exitPreview } = usePreviewMode()
+  const { isFreeViewActive, enterFreeView, exitFreeView } = useFreeViewMode()
   const { data: adminList = [] } = useListAdmins()
   const addAdmin = useAddAdmin()
   const removeAdmin = useRemoveAdmin()
@@ -815,7 +817,7 @@ export default function SettingsPage() {
                 <Button
                   variant="outline"
                   onClick={() => enterPreview.mutate()}
-                  disabled={enterPreview.isPending}
+                  disabled={enterPreview.isPending || isFreeViewActive}
                   className="self-start"
                 >
                   {enterPreview.isPending
@@ -836,6 +838,44 @@ export default function SettingsPage() {
                     {exitPreview.isPending
                       ? tSettings('preview.exiting')
                       : tSettings('preview.exit')}
+                  </Button>
+                </>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Visa som gratisanvändare — riktig data, tvingade gratis-entitlements */}
+        {isAdmin && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <ShieldCheck className="h-5 w-5 text-amber-600" />
+                {tSettings('freeView.title')}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-3">
+              <p className="text-sm text-neutral-600">{tSettings('freeView.description')}</p>
+              {!isFreeViewActive ? (
+                <Button
+                  variant="outline"
+                  onClick={() => enterFreeView()}
+                  disabled={isPreviewActive}
+                  className="self-start"
+                >
+                  {tSettings('freeView.activate')}
+                </Button>
+              ) : (
+                <>
+                  <div className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2">
+                    {tSettings('freeView.activeInfo')}
+                  </div>
+                  <Button
+                    variant="destructive"
+                    onClick={() => exitFreeView()}
+                    className="self-start"
+                  >
+                    {tSettings('freeView.exit')}
                   </Button>
                 </>
               )}
