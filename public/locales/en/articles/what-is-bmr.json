@@ -6,8 +6,8 @@
   "layout": {
     "title": "What is BMR? Basal Metabolic Rate Explained",
     "intro": "BMR (Basal Metabolic Rate) is the calories your body burns at complete rest — without movement, food or activity. It is the body's minimum energy requirement to keep the heart, lungs, brain and organs running. BMR is the foundation for calculating your actual calorie needs, but it is not the number you should eat at.",
-    "moneyPageHref": "/en/calculators/tdee-calculator",
-    "moneyPageLabel": "Calculate your actual calorie needs with the TDEE calculator",
+    "moneyPageHref": "/en/calculators/bmr-calculator",
+    "moneyPageLabel": "Calculate your BMR with our calculator",
     "breadcrumb": {
       "hubLabel": "Articles",
       "hubPath": "/en/articles",

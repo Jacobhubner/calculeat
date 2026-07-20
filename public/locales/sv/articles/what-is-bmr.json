@@ -6,8 +6,8 @@
   "layout": {
     "title": "Vad är BMR? Basalmetabolism förklarat",
     "intro": "BMR (Basal Metabolic Rate) är de kalorier din kropp förbränner i absolut vila — utan rörelse, mat eller aktivitet. Det är kroppens minimala energibehov för att hålla hjärta, lungor, hjärna och organ igång. BMR är grunden för att räkna ut ditt faktiska kaloribehov, men det är inte siffran du ska äta på.",
-    "moneyPageHref": "/kalkylatorer/tdee-kalkylator",
-    "moneyPageLabel": "Räkna ut ditt faktiska kaloribehov med TDEE-kalkylatorn",
+    "moneyPageHref": "/kalkylatorer/bmr-kalkylator",
+    "moneyPageLabel": "Räkna ut din BMR med vår kalkylator",
     "breadcrumb": {
       "hubLabel": "Artiklar",
       "hubPath": "/artiklar",
