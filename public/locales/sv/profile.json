@@ -311,6 +311,11 @@
   "macroModes": {
     "title": "Kostläge",
     "missingData": "Fyll i vikt och kalorimål för att använda kostlägen.",
+    "nnrName": "NNR-läge",
+    "weightlossName": "Viktminskningsläge",
+    "activeName": "Aktiv-läge",
+    "offseasonName": "Off-Season-läge",
+    "onseasonName": "On-Season-läge",
     "nnrBadge": "Bibehåll vikt",
     "nnrDesc": "För allmän hälsa och viktstabilitet",
     "weightlossBadge": "Viktminskning",

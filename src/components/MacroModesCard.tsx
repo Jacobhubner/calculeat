@@ -48,8 +48,7 @@ interface MacroModesCardProps {
 
 interface ModeConfig {
   id: MacroModeId
-  /** Visningsnamn — engelska "Mode"-namn som etablerad konvention */
-  name: string
+  /** Visningsnamn hämtas via i18n: macroModes.{id}Name */
   icon: typeof Minus
   badgeClass?: string
   /** i18n-suffix: {id}Badge, {id}Desc, {id}Fat, {id}Protein, {id}Carbs */
@@ -61,10 +60,9 @@ interface ModeConfig {
 }
 
 const MODES: ModeConfig[] = [
-  { id: 'nnr', name: 'NNR Mode', icon: Minus, energyLabelKey: 'maintainWeight', hasRef: true },
+  { id: 'nnr', icon: Minus, energyLabelKey: 'maintainWeight', hasRef: true },
   {
     id: 'weightloss',
-    name: 'Weight Loss Mode',
     icon: TrendingDown,
     badgeClass: 'bg-rose-50 text-rose-700 border-rose-200',
     energyLabelKey: 'weightLossModerate',
@@ -72,7 +70,6 @@ const MODES: ModeConfig[] = [
   },
   {
     id: 'active',
-    name: 'Active Mode',
     icon: Activity,
     badgeClass: 'bg-blue-50 text-blue-700 border-blue-200',
     energyLabelKey: 'maintainWeight',
@@ -80,7 +77,6 @@ const MODES: ModeConfig[] = [
   },
   {
     id: 'offseason',
-    name: 'Off-Season Mode',
     icon: TrendingUp,
     badgeClass: 'bg-orange-50 text-orange-700 border-orange-200',
     energyLabelKey: 'weightGain',
@@ -94,7 +90,6 @@ const MODES: ModeConfig[] = [
   },
   {
     id: 'onseason',
-    name: 'On-Season Mode',
     icon: TrendingDown,
     badgeClass: 'bg-success-50 text-success-700 border-success-200',
     energyLabelKey: 'weightLoss',
@@ -295,7 +290,7 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Icon className="h-4 w-4" />
-                      <span className="font-semibold">{mode.name}</span>
+                      <span className="font-semibold">{tm(`${mode.id}Name`)}</span>
                       <Badge variant="outline" className={mode.badgeClass}>
                         {tm(`${mode.id}Badge`)}
                       </Badge>
@@ -305,7 +300,7 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
                           type="button"
                           onClick={() => (locked ? setUpgradeOpen(true) : setActiveRef(mode.id))}
                           className="text-neutral-400 hover:text-primary-600 transition-colors"
-                          aria-label={tm(`showRef`, { mode: mode.name })}
+                          aria-label={tm(`showRef`, { mode: tm(`${mode.id}Name`) })}
                         >
                           {locked ? (
                             <Lock className="h-3.5 w-3.5" />
@@ -385,7 +380,7 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
         <InfoModal
           open
           onClose={() => setActiveRef(null)}
-          title={tm('refTitle', { mode: activeRefMode.name })}
+          title={tm('refTitle', { mode: tm(`${activeRefMode.id}Name`) })}
           size="md"
         >
           <p className="text-sm text-neutral-700 leading-relaxed whitespace-pre-line">

@@ -311,6 +311,11 @@
   "macroModes": {
     "title": "Diet mode",
     "missingData": "Enter weight and calorie goal to use diet modes.",
+    "nnrName": "NNR Mode",
+    "weightlossName": "Weight Loss Mode",
+    "activeName": "Active Mode",
+    "offseasonName": "Off-Season Mode",
+    "onseasonName": "On-Season Mode",
     "nnrBadge": "Maintain weight",
     "nnrDesc": "For general health and weight stability",
     "weightlossBadge": "Weight loss",
