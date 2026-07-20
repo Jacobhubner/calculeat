@@ -61,3 +61,42 @@ export function useRespondAdminInvitation() {
     },
   })
 }
+
+export interface SentAdminInvitation {
+  id: string
+  recipient_id: string
+  recipient_name: string
+  status: 'pending' | 'accepted' | 'rejected'
+  created_at: string
+  responded_at: string | null
+}
+
+export function useSentAdminInvitations() {
+  const { user } = useAuth()
+  return useQuery({
+    queryKey: ['adminInvitations', 'sent', user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc('get_sent_admin_invitations')
+      if (error) throw error
+      return data as SentAdminInvitation[]
+    },
+    enabled: !!user,
+    staleTime: 30_000,
+  })
+}
+
+export function useCancelAdminInvitation() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (invitationId: string) => {
+      const { data, error } = await supabase.rpc('cancel_admin_invitation', {
+        p_invitation_id: invitationId,
+      })
+      if (error) throw error
+      return data as { success: boolean; error?: string }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['adminInvitations'] })
+    },
+  })
+}

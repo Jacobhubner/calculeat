@@ -32,7 +32,13 @@ import {
   useCancelShareInvitation,
   type SentShareInvitation,
 } from '@/hooks/useShareInvitations'
-import { usePendingAdminInvitations, useRespondAdminInvitation } from '@/hooks/useAdminInvitations'
+import {
+  usePendingAdminInvitations,
+  useRespondAdminInvitation,
+  useSentAdminInvitations,
+  useCancelAdminInvitation,
+  type SentAdminInvitation,
+} from '@/hooks/useAdminInvitations'
 import {
   usePendingSharedListInvitations,
   useAcceptSharedListInvitation,
@@ -464,6 +470,50 @@ function SentShareCard({ invitation }: { invitation: SentShareInvitation }) {
         <p className="text-xs text-neutral-400">
           {t('invitations.sent.to')} {invitation.recipient_name}
         </p>
+      </div>
+      <Button
+        size="sm"
+        variant="ghost"
+        onClick={handleCancel}
+        disabled={isCancelling}
+        className="h-7 text-xs text-red-500 hover:text-red-700 hover:bg-red-50 shrink-0 gap-1"
+      >
+        {isCancelling ? <Loader2 className="h-3 w-3 animate-spin" /> : <X className="h-3 w-3" />}
+        {t('invitations.action.cancel')}
+      </Button>
+    </div>
+  )
+}
+
+function SentAdminInvitationCard({ invitation }: { invitation: SentAdminInvitation }) {
+  const { t } = useTranslation('social')
+  const [isCancelling, setIsCancelling] = useState(false)
+  const { mutateAsync: cancel } = useCancelAdminInvitation()
+
+  const handleCancel = async () => {
+    setIsCancelling(true)
+    try {
+      const result = await cancel(invitation.id)
+      if (!result.success) {
+        toast.error(t('invitations.error.cancel_failed'))
+        return
+      }
+      toast.success(t('invitations.toast.cancelled'))
+    } catch {
+      toast.error(t('invitations.error.cancel_failed'))
+    } finally {
+      setIsCancelling(false)
+    }
+  }
+
+  return (
+    <div className="rounded-lg border border-neutral-100 p-3 bg-white flex items-center gap-2">
+      <div className="p-1.5 rounded bg-neutral-50 shrink-0">
+        <ShieldCheck className="h-4 w-4 text-neutral-400" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-medium text-neutral-900 truncate">{invitation.recipient_name}</p>
+        <p className="text-xs text-neutral-400">{t('social.activity.admin_invite_awaiting')}</p>
       </div>
       <Button
         size="sm"
@@ -1507,6 +1557,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
   const { data: pendingCount = 0 } = usePendingFriendRequestsCount()
   const { data: pendingAdminInvitations = [] } = usePendingAdminInvitations()
   const respondAdminInvitation = useRespondAdminInvitation()
+  const { data: sentAdminInvitations = [] } = useSentAdminInvitations()
   const { data: conversations = [], refetch: refetchConversations } = useConversations()
   const unreadMessageCount = useUnreadMessageCount()
   const { mutateAsync: sendFriendRequest } = useSendFriendRequest()
@@ -1901,6 +1952,18 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
                 </p>
                 {sentShareInvitations.map(inv => (
                   <SentShareCard key={inv.id} invitation={inv} />
+                ))}
+              </div>
+            )}
+
+            {/* Skickade admin-inbjudningar */}
+            {sentAdminInvitations.length > 0 && (
+              <div className="space-y-2">
+                <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wide">
+                  {t('social.activity.sent_admin_invitations')}
+                </p>
+                {sentAdminInvitations.map(inv => (
+                  <SentAdminInvitationCard key={inv.id} invitation={inv} />
                 ))}
               </div>
             )}

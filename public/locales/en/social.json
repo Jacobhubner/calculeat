@@ -208,6 +208,8 @@
       "admin_invite_desc": "As admin you can edit and add food items to the CalculEat list.",
       "admin_accepted": "You are now an admin!",
       "admin_denied": "Invitation declined",
+      "admin_invite_awaiting": "Awaiting response",
+      "sent_admin_invitations": "Sent admin invitations",
       "friend_requests": "Friend requests",
       "share_invitations": "Share invitations",
       "list_invitations": "List invitations",

@@ -208,6 +208,8 @@
       "admin_invite_desc": "Som admin kan du redigera och lägga till livsmedel i CalculEat-listan.",
       "admin_accepted": "Du är nu admin!",
       "admin_denied": "Inbjudan nekad",
+      "admin_invite_awaiting": "Inväntar svar",
+      "sent_admin_invitations": "Skickade admin-inbjudningar",
       "friend_requests": "Vänförfrågningar",
       "share_invitations": "Delningsförfrågningar",
       "list_invitations": "Inbjudningar till listor",
