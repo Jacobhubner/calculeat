@@ -16,6 +16,7 @@ import { useNavigate } from 'react-router-dom'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDailySummary } from '@/hooks/useDailySummary'
+import { macroGramsFromPercent } from '@/lib/calculations/dailySummary'
 import { useEntitlements } from '@/hooks/useEntitlements'
 import { useUpgradeModalStore } from '@/stores/upgradeModalStore'
 
@@ -59,17 +60,34 @@ export default function DashboardPage() {
       profile.carb_min_percent != null &&
       profile.carb_max_percent != null
     ) {
-      const targetCalories = calorieGoal.target
-      const proteinMinG = Math.round((targetCalories * profile.protein_min_percent) / 100 / 4)
-      const proteinMaxG = Math.round((targetCalories * profile.protein_max_percent) / 100 / 4)
-      const fatMinG = Math.round((targetCalories * profile.fat_min_percent) / 100 / 9)
-      const fatMaxG = Math.round((targetCalories * profile.fat_max_percent) / 100 / 9)
-      const carbMinG = Math.round((targetCalories * profile.carb_min_percent) / 100 / 4)
-      const carbMaxG = Math.round((targetCalories * profile.carb_max_percent) / 100 / 4)
+      // Nedre gräns mot calories_min, övre mot calories_max — konsekvent med
+      // profilsidan och Today-vyn (macroGramsFromPercent). Tidigare användes
+      // medelvärdet (target) för båda gränserna, vilket gav förskjutna gram.
+      const protein = macroGramsFromPercent(
+        profile.protein_min_percent,
+        profile.protein_max_percent,
+        calorieGoal.min,
+        calorieGoal.max,
+        4
+      )
+      const fat = macroGramsFromPercent(
+        profile.fat_min_percent,
+        profile.fat_max_percent,
+        calorieGoal.min,
+        calorieGoal.max,
+        9
+      )
+      const carbs = macroGramsFromPercent(
+        profile.carb_min_percent,
+        profile.carb_max_percent,
+        calorieGoal.min,
+        calorieGoal.max,
+        4
+      )
       macros = {
-        protein: { gramsMin: proteinMinG, gramsMax: proteinMaxG },
-        fat: { gramsMin: fatMinG, gramsMax: fatMaxG },
-        carbs: { gramsMin: carbMinG, gramsMax: carbMaxG },
+        protein: { gramsMin: Math.round(protein.minGrams), gramsMax: Math.round(protein.maxGrams) },
+        fat: { gramsMin: Math.round(fat.minGrams), gramsMax: Math.round(fat.maxGrams) },
+        carbs: { gramsMin: Math.round(carbs.minGrams), gramsMax: Math.round(carbs.maxGrams) },
       }
     }
 

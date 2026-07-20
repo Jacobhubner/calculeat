@@ -12,6 +12,7 @@ import {
   areMacrosBalanced,
   isColorBalanceOk,
   DEFAULT_COLOR_TARGETS,
+  DEFAULT_MACRO_PERCENTS,
   type NutrientStatus,
   type DailySummaryData,
 } from '@/lib/calculations/dailySummary'
@@ -63,13 +64,15 @@ export function useDailySummary(
     const caloriesMax = dailyLog.goal_calories_max ?? profile.calories_max ?? 0
     const avgCalories = (caloriesMin + caloriesMax) / 2
 
-    // Get macro percentages from profile
-    const fatMinPercent = (profile.fat_min_percent ?? 20) / 100
-    const fatMaxPercent = (profile.fat_max_percent ?? 35) / 100
-    const carbMinPercent = (profile.carb_min_percent ?? 45) / 100
-    const carbMaxPercent = (profile.carb_max_percent ?? 65) / 100
-    const proteinMinPercent = (profile.protein_min_percent ?? 10) / 100
-    const proteinMaxPercent = (profile.protein_max_percent ?? 35) / 100
+    // Get macro percentages from profile (0-100). Fallback till NNR-defaults
+    // via delad konstant så alla kodvägar ger samma mål för en profil utan
+    // egna värden.
+    const fatMinPercent = profile.fat_min_percent ?? DEFAULT_MACRO_PERCENTS.fatMin
+    const fatMaxPercent = profile.fat_max_percent ?? DEFAULT_MACRO_PERCENTS.fatMax
+    const carbMinPercent = profile.carb_min_percent ?? DEFAULT_MACRO_PERCENTS.carbMin
+    const carbMaxPercent = profile.carb_max_percent ?? DEFAULT_MACRO_PERCENTS.carbMax
+    const proteinMinPercent = profile.protein_min_percent ?? DEFAULT_MACRO_PERCENTS.proteinMin
+    const proteinMaxPercent = profile.protein_max_percent ?? DEFAULT_MACRO_PERCENTS.proteinMax
 
     // Get color targets (use defaults for now, can be extended to profile later)
     const colorTargets = {
@@ -106,13 +109,21 @@ export function useDailySummary(
     // Calculate all statuses
     const calorieStatus = calculateNutrientStatus(totalCalories, caloriesMin, caloriesMax, 'kcal')
 
-    const fatStatus = calculateMacroStatus(totalFat, fatMinPercent, fatMaxPercent, avgCalories, 9)
+    const fatStatus = calculateMacroStatus(
+      totalFat,
+      fatMinPercent,
+      fatMaxPercent,
+      caloriesMin,
+      caloriesMax,
+      9
+    )
 
     const carbStatus = calculateMacroStatus(
       totalCarbs,
       carbMinPercent,
       carbMaxPercent,
-      avgCalories,
+      caloriesMin,
+      caloriesMax,
       4
     )
 
@@ -120,7 +131,8 @@ export function useDailySummary(
       totalProtein,
       proteinMinPercent,
       proteinMaxPercent,
-      avgCalories,
+      caloriesMin,
+      caloriesMax,
       4
     )
 

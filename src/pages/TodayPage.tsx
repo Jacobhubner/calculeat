@@ -42,6 +42,7 @@ import {
   useDailyLog,
   useUpdateDailyLogGoals,
   useUpdateLogDate,
+  macroGoalSnapshot,
 } from '@/hooks/useDailyLogs'
 import { useMealSettings, useCreateDefaultMealSettings } from '@/hooks/useMealSettings'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -474,28 +475,13 @@ export default function TodayPage() {
                 onClick={() => {
                   if (!todayLog?.id || !profile) return
 
-                  // Calculate macro goals in grams from profile percentages
-                  const avgCalories =
-                    ((profile.calories_min || 0) + (profile.calories_max || 0)) / 2
-                  const fatMinG = (avgCalories * (profile.fat_min_percent || 20)) / 100 / 9
-                  const fatMaxG = (avgCalories * (profile.fat_max_percent || 35)) / 100 / 9
-                  const carbMinG = (avgCalories * (profile.carb_min_percent || 45)) / 100 / 4
-                  const carbMaxG = (avgCalories * (profile.carb_max_percent || 55)) / 100 / 4
-                  const proteinMinG = (avgCalories * (profile.protein_min_percent || 15)) / 100 / 4
-                  const proteinMaxG = (avgCalories * (profile.protein_max_percent || 25)) / 100 / 4
-
                   updateDailyLogGoals.mutate(
                     {
                       dailyLogId: todayLog.id,
                       goals: {
                         goal_calories_min: profile.calories_min,
                         goal_calories_max: profile.calories_max,
-                        goal_fat_min_g: Math.round(fatMinG),
-                        goal_fat_max_g: Math.round(fatMaxG),
-                        goal_carb_min_g: Math.round(carbMinG),
-                        goal_carb_max_g: Math.round(carbMaxG),
-                        goal_protein_min_g: Math.round(proteinMinG),
-                        goal_protein_max_g: Math.round(proteinMaxG),
+                        ...macroGoalSnapshot(profile),
                       },
                     },
                     {

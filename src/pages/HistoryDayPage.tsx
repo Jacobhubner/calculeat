@@ -23,6 +23,7 @@ import {
   useUpdateLogDate,
 } from '@/hooks/useDailyLogs'
 import { useDailySummary } from '@/hooks/useDailySummary'
+import { DEFAULT_MACRO_PERCENTS } from '@/lib/calculations/dailySummary'
 import { useProfiles } from '@/hooks'
 import { useProfileStore } from '@/stores/profileStore'
 import { AddFoodToMealModal } from '@/components/daily/AddFoodToMealModal'
@@ -342,34 +343,37 @@ export default function HistoryDayPage() {
                 const proteinMinG = log.goal_protein_min_g ?? dailySummary?.proteinStatus.min ?? 0
                 const proteinMaxG = log.goal_protein_max_g ?? dailySummary?.proteinStatus.max ?? 0
 
-                const avgCalories =
-                  ((log.goal_calories_min ?? 0) + (log.goal_calories_max ?? 0)) / 2 ||
-                  ((profile?.calories_min ?? 0) + (profile?.calories_max ?? 0)) / 2
+                // Räkna gram→procent baklänges med rätt kalori-ände: nedre
+                // gram mot calories_min, övre mot calories_max — konsekvent med
+                // hur snapshotten skrevs (macroGramsFromPercent). avgCalories
+                // gav tidigare förskjutna procent.
+                const calMin = (log.goal_calories_min ?? profile?.calories_min ?? 0) || 0
+                const calMax = (log.goal_calories_max ?? profile?.calories_max ?? 0) || 0
 
                 const fatMinPct =
-                  avgCalories > 0 && fatMinG > 0
-                    ? Math.round(((fatMinG * 9) / avgCalories) * 100)
-                    : (profile?.fat_min_percent ?? 25)
+                  calMin > 0 && fatMinG > 0
+                    ? Math.round(((fatMinG * 9) / calMin) * 100)
+                    : (profile?.fat_min_percent ?? DEFAULT_MACRO_PERCENTS.fatMin)
                 const fatMaxPct =
-                  avgCalories > 0 && fatMaxG > 0
-                    ? Math.round(((fatMaxG * 9) / avgCalories) * 100)
-                    : (profile?.fat_max_percent ?? 40)
+                  calMax > 0 && fatMaxG > 0
+                    ? Math.round(((fatMaxG * 9) / calMax) * 100)
+                    : (profile?.fat_max_percent ?? DEFAULT_MACRO_PERCENTS.fatMax)
                 const carbMinPct =
-                  avgCalories > 0 && carbMinG > 0
-                    ? Math.round(((carbMinG * 4) / avgCalories) * 100)
-                    : (profile?.carb_min_percent ?? 45)
+                  calMin > 0 && carbMinG > 0
+                    ? Math.round(((carbMinG * 4) / calMin) * 100)
+                    : (profile?.carb_min_percent ?? DEFAULT_MACRO_PERCENTS.carbMin)
                 const carbMaxPct =
-                  avgCalories > 0 && carbMaxG > 0
-                    ? Math.round(((carbMaxG * 4) / avgCalories) * 100)
-                    : (profile?.carb_max_percent ?? 60)
+                  calMax > 0 && carbMaxG > 0
+                    ? Math.round(((carbMaxG * 4) / calMax) * 100)
+                    : (profile?.carb_max_percent ?? DEFAULT_MACRO_PERCENTS.carbMax)
                 const proteinMinPct =
-                  avgCalories > 0 && proteinMinG > 0
-                    ? Math.round(((proteinMinG * 4) / avgCalories) * 100)
-                    : (profile?.protein_min_percent ?? 10)
+                  calMin > 0 && proteinMinG > 0
+                    ? Math.round(((proteinMinG * 4) / calMin) * 100)
+                    : (profile?.protein_min_percent ?? DEFAULT_MACRO_PERCENTS.proteinMin)
                 const proteinMaxPct =
-                  avgCalories > 0 && proteinMaxG > 0
-                    ? Math.round(((proteinMaxG * 4) / avgCalories) * 100)
-                    : (profile?.protein_max_percent ?? 20)
+                  calMax > 0 && proteinMaxG > 0
+                    ? Math.round(((proteinMaxG * 4) / calMax) * 100)
+                    : (profile?.protein_max_percent ?? DEFAULT_MACRO_PERCENTS.proteinMax)
 
                 return (
                   <MacroRangeBar

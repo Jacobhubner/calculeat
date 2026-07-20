@@ -5,6 +5,57 @@ import { useAuth } from '@/contexts/AuthContext'
 import { useProfileStore } from '@/stores/profileStore'
 import { usePreviewAwareQuery } from '@/hooks/usePreviewAwareQuery'
 import type { FoodItem } from '@/hooks/useFoodItems'
+import { macroGramsFromPercent, DEFAULT_MACRO_PERCENTS } from '@/lib/calculations/dailySummary'
+
+/**
+ * Beräknar frysta gram-mål för en daily_log-snapshot från en profils
+ * makroprocent. Nedre gräns mot calories_min, övre mot calories_max (via
+ * macroGramsFromPercent) — konsekvent med profilsidan och Today-vyn. Saknade
+ * procent faller tillbaka till NNR-defaults. Alla tre snapshot-skrivarna nedan
+ * använder denna så de aldrig kan divergera.
+ */
+export function macroGoalSnapshot(profile: {
+  calories_min?: number | null
+  calories_max?: number | null
+  fat_min_percent?: number | null
+  fat_max_percent?: number | null
+  carb_min_percent?: number | null
+  carb_max_percent?: number | null
+  protein_min_percent?: number | null
+  protein_max_percent?: number | null
+}) {
+  const cMin = profile.calories_min ?? 0
+  const cMax = profile.calories_max ?? 0
+  const fat = macroGramsFromPercent(
+    profile.fat_min_percent ?? DEFAULT_MACRO_PERCENTS.fatMin,
+    profile.fat_max_percent ?? DEFAULT_MACRO_PERCENTS.fatMax,
+    cMin,
+    cMax,
+    9
+  )
+  const carb = macroGramsFromPercent(
+    profile.carb_min_percent ?? DEFAULT_MACRO_PERCENTS.carbMin,
+    profile.carb_max_percent ?? DEFAULT_MACRO_PERCENTS.carbMax,
+    cMin,
+    cMax,
+    4
+  )
+  const protein = macroGramsFromPercent(
+    profile.protein_min_percent ?? DEFAULT_MACRO_PERCENTS.proteinMin,
+    profile.protein_max_percent ?? DEFAULT_MACRO_PERCENTS.proteinMax,
+    cMin,
+    cMax,
+    4
+  )
+  return {
+    goal_fat_min_g: Math.round(fat.minGrams),
+    goal_fat_max_g: Math.round(fat.maxGrams),
+    goal_carb_min_g: Math.round(carb.minGrams),
+    goal_carb_max_g: Math.round(carb.maxGrams),
+    goal_protein_min_g: Math.round(protein.minGrams),
+    goal_protein_max_g: Math.round(protein.maxGrams),
+  }
+}
 
 export interface MealEntryItem {
   id: string
@@ -365,27 +416,13 @@ export function useEnsureTodayLog() {
       }
 
       // Calculate macro goals in grams from profile percentages
-      const avgCalories =
-        ((activeProfile.calories_min || 0) + (activeProfile.calories_max || 0)) / 2
-      const fatMinG = (avgCalories * (activeProfile.fat_min_percent || 20)) / 100 / 9
-      const fatMaxG = (avgCalories * (activeProfile.fat_max_percent || 35)) / 100 / 9
-      const carbMinG = (avgCalories * (activeProfile.carb_min_percent || 45)) / 100 / 4
-      const carbMaxG = (avgCalories * (activeProfile.carb_max_percent || 55)) / 100 / 4
-      const proteinMinG = (avgCalories * (activeProfile.protein_min_percent || 15)) / 100 / 4
-      const proteinMaxG = (avgCalories * (activeProfile.protein_max_percent || 25)) / 100 / 4
-
       // Create new log — ignore conflict if row already exists (race condition / double-click)
       const { error: insertError } = await supabase.from('daily_logs').insert({
         user_id: user.id,
         log_date: today,
         goal_calories_min: activeProfile.calories_min,
         goal_calories_max: activeProfile.calories_max,
-        goal_fat_min_g: Math.round(fatMinG),
-        goal_fat_max_g: Math.round(fatMaxG),
-        goal_carb_min_g: Math.round(carbMinG),
-        goal_carb_max_g: Math.round(carbMaxG),
-        goal_protein_min_g: Math.round(proteinMinG),
-        goal_protein_max_g: Math.round(proteinMaxG),
+        ...macroGoalSnapshot(activeProfile),
       })
 
       const isConflict =
@@ -811,26 +848,12 @@ export function useStartNewDay() {
       base.setDate(base.getDate() + 1)
       const nextDay = base.toISOString().split('T')[0]
 
-      const avgCalories =
-        ((activeProfile.calories_min || 0) + (activeProfile.calories_max || 0)) / 2
-      const fatMinG = (avgCalories * (activeProfile.fat_min_percent || 20)) / 100 / 9
-      const fatMaxG = (avgCalories * (activeProfile.fat_max_percent || 35)) / 100 / 9
-      const carbMinG = (avgCalories * (activeProfile.carb_min_percent || 45)) / 100 / 4
-      const carbMaxG = (avgCalories * (activeProfile.carb_max_percent || 55)) / 100 / 4
-      const proteinMinG = (avgCalories * (activeProfile.protein_min_percent || 15)) / 100 / 4
-      const proteinMaxG = (avgCalories * (activeProfile.protein_max_percent || 25)) / 100 / 4
-
       const { error: insertError } = await supabase.from('daily_logs').insert({
         user_id: user.id,
         log_date: nextDay,
         goal_calories_min: activeProfile.calories_min,
         goal_calories_max: activeProfile.calories_max,
-        goal_fat_min_g: Math.round(fatMinG),
-        goal_fat_max_g: Math.round(fatMaxG),
-        goal_carb_min_g: Math.round(carbMinG),
-        goal_carb_max_g: Math.round(carbMaxG),
-        goal_protein_min_g: Math.round(proteinMinG),
-        goal_protein_max_g: Math.round(proteinMaxG),
+        ...macroGoalSnapshot(activeProfile),
       })
 
       const isConflict =
@@ -1047,28 +1070,13 @@ export function useSyncTodayLogFromProfile() {
         )
       }
 
-      // Calculate macro goals in grams from profile percentages
-      const avgCalories =
-        ((activeProfile.calories_min || 0) + (activeProfile.calories_max || 0)) / 2
-      const fatMinG = (avgCalories * (activeProfile.fat_min_percent || 0)) / 100 / 9
-      const fatMaxG = (avgCalories * (activeProfile.fat_max_percent || 0)) / 100 / 9
-      const carbMinG = (avgCalories * (activeProfile.carb_min_percent || 0)) / 100 / 4
-      const carbMaxG = (avgCalories * (activeProfile.carb_max_percent || 0)) / 100 / 4
-      const proteinMinG = (avgCalories * (activeProfile.protein_min_percent || 0)) / 100 / 4
-      const proteinMaxG = (avgCalories * (activeProfile.protein_max_percent || 0)) / 100 / 4
-
       // Update daily log with goals from profile
       const { data, error } = await supabase
         .from('daily_logs')
         .update({
           goal_calories_min: activeProfile.calories_min,
           goal_calories_max: activeProfile.calories_max,
-          goal_fat_min_g: Math.round(fatMinG),
-          goal_fat_max_g: Math.round(fatMaxG),
-          goal_carb_min_g: Math.round(carbMinG),
-          goal_carb_max_g: Math.round(carbMaxG),
-          goal_protein_min_g: Math.round(proteinMinG),
-          goal_protein_max_g: Math.round(proteinMaxG),
+          ...macroGoalSnapshot(activeProfile),
         })
         .eq('id', dailyLogId)
         .eq('user_id', user.id)

@@ -97,24 +97,74 @@ export function calculateMealStatus(
 }
 
 /**
+ * Standard-makrofördelning (NNR 2023) i procent. Används som fallback när en
+ * profil ännu saknar sparade makroprocent (t.ex. race under onboarding). En
+ * enda källa till sanning så att alla kodvägar ger identiska mål för en profil
+ * utan egna värden. Speglar NNR Mode i macroModes.ts.
+ */
+export const DEFAULT_MACRO_PERCENTS = {
+  fatMin: 25,
+  fatMax: 40,
+  carbMin: 45,
+  carbMax: 60,
+  proteinMin: 10,
+  proteinMax: 20,
+} as const
+
+/**
+ * Konverterar makroprocent-spann till gram-spann.
+ *
+ * ENDA KÄLLA TILL SANNING för procent→gram. Nedre gränsen beräknas mot
+ * caloriesMin och övre mot caloriesMax — identiskt med MacroDistributionCard
+ * (profilsidan) och kostlägenas round-trip-konstruktion i macroModes.ts. Att
+ * blanda in ett medelvärde (caloriesMin+caloriesMax)/2 för båda gränserna gav
+ * tidigare förskjutna gram som inte matchade profilen.
+ *
+ * @param minPercent - Nedre procent av kalorier (0-100)
+ * @param maxPercent - Övre procent av kalorier (0-100)
+ * @param caloriesMin - Nedre kalorimål
+ * @param caloriesMax - Övre kalorimål
+ * @param kcalPerGram - Kalorier per gram (protein/kolhydrat: 4, fett: 9)
+ */
+export function macroGramsFromPercent(
+  minPercent: number,
+  maxPercent: number,
+  caloriesMin: number,
+  caloriesMax: number,
+  kcalPerGram: number
+): { minGrams: number; maxGrams: number } {
+  return {
+    minGrams: (caloriesMin * minPercent) / 100 / kcalPerGram,
+    maxGrams: (caloriesMax * maxPercent) / 100 / kcalPerGram,
+  }
+}
+
+/**
  * Calculate macro status (protein, carbs, fat)
  * Converts percentage goals to gram goals
  *
  * @param currentGrams - Current intake in grams
  * @param minPercent - Minimum percentage of calories (0-1)
  * @param maxPercent - Maximum percentage of calories (0-1)
- * @param avgCalories - Average daily calorie goal ((min + max) / 2)
+ * @param caloriesMin - Nedre kalorimål
+ * @param caloriesMax - Övre kalorimål
  * @param kcalPerGram - Calories per gram (protein/carb: 4, fat: 9)
  */
 export function calculateMacroStatus(
   currentGrams: number,
   minPercent: number,
   maxPercent: number,
-  avgCalories: number,
+  caloriesMin: number,
+  caloriesMax: number,
   kcalPerGram: number
 ): NutrientStatus {
-  const minGrams = (avgCalories * minPercent) / kcalPerGram
-  const maxGrams = (avgCalories * maxPercent) / kcalPerGram
+  const { minGrams, maxGrams } = macroGramsFromPercent(
+    minPercent,
+    maxPercent,
+    caloriesMin,
+    caloriesMax,
+    kcalPerGram
+  )
   return calculateNutrientStatus(currentGrams, minGrams, maxGrams, 'g')
 }
 
