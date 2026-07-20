@@ -215,7 +215,11 @@
     "related": {
       "calculatorsTitle": "Related calculators",
       "articlesTitle": "Related articles",
-      "calculators": [{ "href": "/en/calculators/tdee-calculator", "label": "TDEE Calculator" }],
+      "calculators": [
+        { "href": "/en/calculators/tdee-calculator", "label": "TDEE Calculator" },
+        { "href": "/en/calculators/body-fat-calculator", "label": "Body Fat Calculator" },
+        { "href": "/en/calculators/bmr-calculator", "label": "BMR Calculator" }
+      ],
       "articles": [
         { "href": "/en/articles/calorie-needs", "label": "Calorie needs — complete guide" },
         { "href": "/en/articles/what-is-tdee", "label": "What is TDEE?" },
@@ -319,6 +323,7 @@
       "articlesTitle": "Related articles",
       "calculators": [
         { "href": "/en/calculators/tdee-calculator", "label": "TDEE Calculator" },
+        { "href": "/en/calculators/body-fat-calculator", "label": "Body Fat Calculator" },
         {
           "href": "/en/calculators/calorie-deficit-calculator",
           "label": "Calorie Deficit Calculator"
@@ -530,6 +535,7 @@
       "articlesTitle": "Related articles",
       "calculators": [
         { "href": "/en/calculators/tdee-calculator", "label": "TDEE Calculator" },
+        { "href": "/en/calculators/bmr-calculator", "label": "BMR Calculator" },
         { "href": "/en/calculators/bmi-calculator", "label": "BMI Calculator" },
         { "href": "/en/calculators/idealweight-calculator", "label": "Ideal Weight Calculator" },
         { "href": "/en/calculators/ffmi-calculator", "label": "FFMI Calculator" },
@@ -1033,6 +1039,7 @@
       "articlesTitle": "Related articles",
       "calculators": [
         { "href": "/en/calculators/tdee-calculator", "label": "TDEE Calculator" },
+        { "href": "/en/calculators/bmr-calculator", "label": "BMR Calculator" },
         { "href": "/en/calculators/cut-calculator", "label": "Cut Calculator" },
         { "href": "/en/calculators/bmi-calculator", "label": "BMI Calculator" }
       ],
@@ -1672,6 +1679,7 @@
       "articlesTitle": "Related articles",
       "calculators": [
         { "href": "/en/calculators/tdee-calculator", "label": "TDEE Calculator" },
+        { "href": "/en/calculators/body-fat-calculator", "label": "Body Fat Calculator" },
         { "href": "/en/calculators/bmi-calculator", "label": "BMI Calculator" },
         {
           "href": "/en/calculators/calorie-deficit-calculator",

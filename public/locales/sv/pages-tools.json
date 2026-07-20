@@ -215,7 +215,11 @@
     "related": {
       "calculatorsTitle": "Relaterade kalkylatorer",
       "articlesTitle": "Relaterade artiklar",
-      "calculators": [{ "href": "/kalkylatorer/tdee-kalkylator", "label": "TDEE Kalkylator" }],
+      "calculators": [
+        { "href": "/kalkylatorer/tdee-kalkylator", "label": "TDEE Kalkylator" },
+        { "href": "/kalkylatorer/kroppsfett", "label": "Kroppsfett Kalkylator" },
+        { "href": "/kalkylatorer/bmr-kalkylator", "label": "BMR Kalkylator" }
+      ],
       "articles": [
         { "href": "/artiklar/kaloribehov", "label": "Kaloribehov — komplett guide" },
         { "href": "/artiklar/vad-ar-tdee", "label": "Vad är TDEE?" },
@@ -319,6 +323,7 @@
       "articlesTitle": "Relaterade artiklar",
       "calculators": [
         { "href": "/kalkylatorer/tdee-kalkylator", "label": "TDEE Kalkylator" },
+        { "href": "/kalkylatorer/kroppsfett", "label": "Kroppsfett Kalkylator" },
         { "href": "/kalkylatorer/kaloriunderskott", "label": "Kaloribrist Kalkylator" },
         { "href": "/kalkylatorer/bulk-kalkylator", "label": "Bulk Kalkylator" },
         { "href": "/kalkylatorer/cut-kalkylator", "label": "Cut & Deff Kalkylator" },
@@ -527,6 +532,7 @@
       "articlesTitle": "Relaterade artiklar",
       "calculators": [
         { "href": "/kalkylatorer/tdee-kalkylator", "label": "TDEE Kalkylator" },
+        { "href": "/kalkylatorer/bmr-kalkylator", "label": "BMR Kalkylator" },
         { "href": "/kalkylatorer/bmi-kalkylator", "label": "BMI Kalkylator" },
         { "href": "/kalkylatorer/idealvikt", "label": "Idealvikt Kalkylator" },
         { "href": "/kalkylatorer/ffmi-kalkylator", "label": "FFMI Kalkylator" },
@@ -1030,6 +1036,7 @@
       "articlesTitle": "Relaterade artiklar",
       "calculators": [
         { "href": "/kalkylatorer/tdee-kalkylator", "label": "TDEE Kalkylator" },
+        { "href": "/kalkylatorer/bmr-kalkylator", "label": "BMR Kalkylator" },
         { "href": "/kalkylatorer/cut-kalkylator", "label": "Cut & Deff Kalkylator" },
         { "href": "/kalkylatorer/bmi-kalkylator", "label": "BMI Kalkylator" }
       ],
@@ -1660,6 +1667,7 @@
       "articlesTitle": "Relaterade artiklar",
       "calculators": [
         { "href": "/kalkylatorer/tdee-kalkylator", "label": "TDEE Kalkylator" },
+        { "href": "/kalkylatorer/kroppsfett", "label": "Kroppsfett Kalkylator" },
         { "href": "/kalkylatorer/bmi-kalkylator", "label": "BMI Kalkylator" },
         { "href": "/kalkylatorer/kaloriunderskott", "label": "Kaloribrist Kalkylator" },
         { "href": "/kalkylatorer/proteinbehov", "label": "Proteinbehov Kalkylator" }
