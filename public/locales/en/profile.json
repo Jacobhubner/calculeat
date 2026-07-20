@@ -49,7 +49,9 @@
     "changesSaved": "Changes saved",
     "changesSaveError": "Could not save changes",
     "incompleteBasicInfo": "Please fill in all basic information before saving",
-    "incompleteBasicInfoDesc": "Date of birth, gender, height and weight are required"
+    "incompleteBasicInfoDesc": "Date of birth, gender, height and weight are required",
+    "macroSumInvalid": "The macro distribution must add up to 100% (currently {{total}}%). Adjust the ranges before saving.",
+    "mealSumInvalid": "The meal distribution must add up to 100% (currently {{total}}%). Adjust the percentages before saving."
   },
   "save": {
     "saving": "Saving...",

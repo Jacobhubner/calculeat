@@ -49,7 +49,9 @@
     "changesSaved": "Ändringar sparade",
     "changesSaveError": "Kunde inte spara ändringar",
     "incompleteBasicInfo": "Fyll i all grundläggande information innan du sparar",
-    "incompleteBasicInfoDesc": "Födelsedatum, kön, längd och vikt krävs"
+    "incompleteBasicInfoDesc": "Födelsedatum, kön, längd och vikt krävs",
+    "macroSumInvalid": "Makrofördelningen måste summera till 100 % (nu {{total}} %). Justera intervallen innan du sparar.",
+    "mealSumInvalid": "Måltidsfördelningen måste summera till 100 % (nu {{total}} %). Justera procentsatserna innan du sparar."
   },
   "save": {
     "saving": "Sparar...",

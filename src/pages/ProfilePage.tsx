@@ -557,6 +557,31 @@ export default function ProfilePage() {
       return
     }
 
+    // Makrofördelningens mittpunkter måste summera till exakt 100 %
+    // (samma beräkning som MacroDistributionCard visar)
+    const fatMid =
+      ((displayProfile?.fat_min_percent ?? 25) + (displayProfile?.fat_max_percent ?? 40)) / 2
+    const carbMid =
+      ((displayProfile?.carb_min_percent ?? 45) + (displayProfile?.carb_max_percent ?? 60)) / 2
+    const proteinMid =
+      ((displayProfile?.protein_min_percent ?? 10) + (displayProfile?.protein_max_percent ?? 20)) /
+      2
+    const macroTotal = Math.round(fatMid + carbMid + proteinMid)
+    if (macroTotal !== 100) {
+      toast.error(t('toast.macroSumInvalid', { total: macroTotal }))
+      return
+    }
+
+    // Måltidsfördelningen måste summera till exakt 100 %
+    const meals = displayProfile?.meals_config?.meals
+    if (meals && meals.length > 0) {
+      const mealTotal = meals.reduce((sum, m) => sum + (m.percentage || 0), 0)
+      if (mealTotal !== 100) {
+        toast.error(t('toast.mealSumInvalid', { total: mealTotal }))
+        return
+      }
+    }
+
     // Overwrite confirmation when manually setting TDEE over an existing value
     if (
       pendingChanges.tdee_source === 'manual' &&
