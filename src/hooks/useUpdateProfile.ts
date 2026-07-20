@@ -21,7 +21,7 @@ interface UpdateProfileParams {
 export function useUpdateProfile() {
   const queryClient = useQueryClient()
   const updateProfileInStore = useProfileStore(state => state.updateProfile)
-  const { isPreviewMode } = useAuth()
+  const { isPreviewMode, refreshProfile } = useAuth()
   const { t } = useTranslation('common')
 
   return useMutation({
@@ -81,6 +81,11 @@ export function useUpdateProfile() {
         queryKey: queryKeys.profiles,
         type: 'active',
       })
+
+      // Håll AuthContext i synk — ProfileCompletionGuard läser
+      // isProfileComplete därifrån och studsar annars användaren
+      // tillbaka till profilen trots att datat är sparat
+      await refreshProfile()
 
       if (!silent) {
         toast.success('Profil uppdaterad', {
