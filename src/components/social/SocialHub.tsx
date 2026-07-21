@@ -95,6 +95,7 @@ import i18n from '@/i18n'
 import { useFriendPresence } from '@/hooks/useFriendPresence'
 import { useNavigate } from 'react-router-dom'
 import { useIsAdmin } from '@/hooks/useIsAdmin'
+import { useRecipeRequests, useDeleteRecipeRequest } from '@/hooks/useOfficialRecipes'
 
 function getDateLocale() {
   return i18n.language === 'sv' ? sv : enUS
@@ -1569,6 +1570,8 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
 
   const navigate = useNavigate()
   const { data: isAdmin } = useIsAdmin()
+  const { data: recipeRequests = [] } = useRecipeRequests(!!isAdmin)
+  const deleteRecipeRequest = useDeleteRecipeRequest()
 
   // Support-notiser visas som eget actionable-kort
   const supportNotifications = notifications.filter(n => n.type === 'support_message_received')
@@ -1591,6 +1594,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
     pendingInvitations.length +
     pendingSharedListInvitations.length +
     pendingAdminInvitations.length +
+    (isAdmin ? recipeRequests.length : 0) +
     unreadHistoryCount +
     (!isAdmin ? unreadSupportCount : 0)
 
@@ -1891,6 +1895,42 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
                         {t('social.action.deny')}
                       </button>
                     </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Receptönskemål — endast admins; Klar = radera (delad state) */}
+            {isAdmin && recipeRequests.length > 0 && (
+              <div className="space-y-2">
+                <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wide">
+                  {t('social.activity.recipe_requests')}
+                </p>
+                {recipeRequests.map(req => (
+                  <div
+                    key={req.id}
+                    className="rounded-lg border border-neutral-100 bg-white p-3 flex items-start justify-between gap-3"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm text-neutral-900">{req.request_text}</p>
+                      <p className="mt-0.5 text-xs text-neutral-400">
+                        @{req.requester_name} ·{' '}
+                        {formatDistanceToNow(new Date(req.created_at), {
+                          addSuffix: true,
+                          locale: getDateLocale(),
+                        })}
+                      </p>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => deleteRecipeRequest.mutate(req.id)}
+                      disabled={deleteRecipeRequest.isPending}
+                      className="h-7 shrink-0 gap-1 text-xs text-neutral-500 hover:text-green-700 hover:bg-green-50"
+                    >
+                      <Check className="h-3.5 w-3.5" />
+                      {t('social.activity.recipe_request_done')}
+                    </Button>
                   </div>
                 ))}
               </div>

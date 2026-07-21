@@ -17,7 +17,11 @@
       "food_item": "Livsmedlet"
     },
     "shared_by": "Delad av",
-    "sent": "Skickad",
+    "sent": {
+      "section_title": "Skickade (inväntar svar)",
+      "to": "Till",
+      "empty": "Inga pågående delningar."
+    },
     "preview": {
       "servings": "{{count}} portioner",
       "ingredients": "{{count}} ingredienser",
@@ -46,11 +50,6 @@
       "generic_retry": "Något gick fel. Försök igen.",
       "reject_failed": "Kunde inte avvisa inbjudan.",
       "cancel_failed": "Kunde inte avbryta delningen."
-    },
-    "sent": {
-      "section_title": "Skickade (inväntar svar)",
-      "to": "Till",
-      "empty": "Inga pågående delningar."
     },
     "history": {
       "section_title": "Besvarade delningar",
@@ -218,7 +217,9 @@
       "all_clear_sub": "Inga väntande åtgärder.",
       "history": "Händelser",
       "mark_all_read": "Markera alla lästa",
-      "clear_read": "Rensa lästa"
+      "clear_read": "Rensa lästa",
+      "recipe_requests": "Receptönskemål",
+      "recipe_request_done": "Klar"
     }
   }
 }

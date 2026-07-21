@@ -5,7 +5,7 @@ import DashboardLayout from '@/components/layout/DashboardLayout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Plus, Search, ChefHat, BookOpen, Compass, Lock, Lightbulb } from 'lucide-react'
+import { Plus, Search, ChefHat, BookOpen, Compass, Lock, Lightbulb, Trash2 } from 'lucide-react'
 import EmptyState from '@/components/EmptyState'
 import { useRecipes, useDeleteRecipe, type Recipe } from '@/hooks/useRecipes'
 import {
@@ -13,6 +13,7 @@ import {
   useCopyOfficialRecipe,
   useRequestRecipe,
   useRecipeRequests,
+  useDeleteRecipeRequest,
 } from '@/hooks/useOfficialRecipes'
 import { useIsAdmin } from '@/hooks/useIsAdmin'
 import { PreviewBlockedError } from '@/hooks/usePreviewMutation'
@@ -66,6 +67,7 @@ export default function RecipesPage() {
   const [requestText, setRequestText] = useState('')
   const { data: isAdmin = false } = useIsAdmin()
   const { data: recipeRequests = [] } = useRecipeRequests(isAdmin)
+  const deleteRecipeRequest = useDeleteRecipeRequest()
 
   const handleRequestRecipe = async () => {
     const text = requestText.trim()
@@ -401,10 +403,22 @@ export default function RecipesPage() {
                     key={req.id}
                     className="flex items-start justify-between gap-3 rounded-lg border border-neutral-100 bg-neutral-50 px-3 py-2"
                   >
-                    <span className="text-sm text-neutral-800">{req.request_text}</span>
-                    <span className="shrink-0 text-xs text-neutral-400">
-                      {new Date(req.created_at).toLocaleDateString()}
-                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm text-neutral-800">{req.request_text}</p>
+                      <p className="mt-0.5 text-xs text-neutral-400">
+                        @{req.requester_name} · {new Date(req.created_at).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => deleteRecipeRequest.mutate(req.id)}
+                      disabled={deleteRecipeRequest.isPending}
+                      className="h-7 w-7 shrink-0 p-0 text-neutral-400 hover:text-red-600 hover:bg-red-50"
+                      aria-label={t('discover.adminRequestDelete')}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </li>
                 ))}
               </ul>

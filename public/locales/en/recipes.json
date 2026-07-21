@@ -78,8 +78,9 @@
     "requestThanks": "Thanks for your request!",
     "requestError": "Could not send the request. Please try again.",
     "requestRateLimit": "You have sent many requests today — try again tomorrow.",
-    "adminRequestsTitle": "Incoming requests (admin)",
-    "adminRequestsEmpty": "No requests yet."
+    "adminRequestsTitle": "Incoming requests",
+    "adminRequestsEmpty": "No requests yet.",
+    "adminRequestDelete": "Delete request"
   },
   "modal": {
     "titleNew": "New recipe",

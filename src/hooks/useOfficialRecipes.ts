@@ -86,29 +86,39 @@ export function useCopyOfficialRecipe() {
 
 export interface RecipeRequest {
   id: string
-  user_id: string
   request_text: string
   created_at: string
+  requester_name: string
 }
 
 /**
- * Admin: alla inkomna receptönskemål (RLS släpper igenom allt för admins;
- * vanliga användare skulle bara se sina egna — rendering gate:as på isAdmin).
+ * Admin: alla inkomna receptönskemål med avsändarens användarnamn
+ * (SECURITY DEFINER-RPC; returnerar tomt för icke-admins).
  */
 export function useRecipeRequests(enabled: boolean) {
   return useQuery({
     queryKey: ['recipeRequests'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('recipe_requests')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(100)
+      const { data, error } = await supabase.rpc('get_recipe_requests')
       if (error) throw error
       return data as RecipeRequest[]
     },
     enabled,
     staleTime: 60_000,
+  })
+}
+
+/** Admin: klarmarkera = radera önskemålet (försvinner för ALLA admins). */
+export function useDeleteRecipeRequest() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (requestId: string) => {
+      const { error } = await supabase.from('recipe_requests').delete().eq('id', requestId)
+      if (error) throw error
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['recipeRequests'] })
+    },
   })
 }
 

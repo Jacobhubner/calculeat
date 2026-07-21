@@ -17,7 +17,11 @@
       "food_item": "The food item"
     },
     "shared_by": "Shared by",
-    "sent": "Sent",
+    "sent": {
+      "section_title": "Sent (awaiting response)",
+      "to": "To",
+      "empty": "No pending shares."
+    },
     "preview": {
       "servings": "{{count}} servings",
       "ingredients": "{{count}} ingredients",
@@ -46,11 +50,6 @@
       "generic_retry": "Something went wrong. Please try again.",
       "reject_failed": "Could not decline the invitation.",
       "cancel_failed": "Could not cancel the sharing."
-    },
-    "sent": {
-      "section_title": "Sent (awaiting response)",
-      "to": "To",
-      "empty": "No pending shares."
     },
     "history": {
       "section_title": "Responded shares",
@@ -218,7 +217,9 @@
       "all_clear_sub": "No pending actions.",
       "history": "Events",
       "mark_all_read": "Mark all as read",
-      "clear_read": "Clear read"
+      "clear_read": "Clear read",
+      "recipe_requests": "Recipe requests",
+      "recipe_request_done": "Done"
     }
   }
 }
