@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { Edit2, Trash2, ScrollText, Users, Clock } from 'lucide-react'
+import { Edit2, Trash2, ScrollText, Users, Clock, BookmarkPlus, Loader2 } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -18,11 +18,23 @@ interface RecipeWithIngredients extends Recipe {
 interface RecipeCardProps {
   recipe: RecipeWithIngredients
   onPreview: () => void
-  onEdit: () => void
-  onDelete: () => void
+  /** Utelämnas för bankrecept (Upptäck) — då visas ingen redigeringsknapp */
+  onEdit?: () => void
+  /** Utelämnas för bankrecept (Upptäck) — då visas ingen raderingsknapp */
+  onDelete?: () => void
+  /** Bankrecept: "Spara till mina recept"-knapp */
+  onSave?: () => void
+  isSaving?: boolean
 }
 
-export function RecipeCard({ recipe, onPreview, onEdit, onDelete }: RecipeCardProps) {
+export function RecipeCard({
+  recipe,
+  onPreview,
+  onEdit,
+  onDelete,
+  onSave,
+  isSaving,
+}: RecipeCardProps) {
   const { t } = useTranslation('recipes')
 
   const servings = recipe.servings || 1
@@ -102,17 +114,37 @@ export function RecipeCard({ recipe, onPreview, onEdit, onDelete }: RecipeCardPr
 
           {/* Actions */}
           <div className="flex items-center gap-1 flex-shrink-0" onClick={e => e.stopPropagation()}>
-            <Button variant="ghost" size="sm" onClick={onEdit} className="h-8 w-8 p-0">
-              <Edit2 className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onDelete}
-              className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
+            {onSave && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onSave}
+                disabled={isSaving}
+                className="h-8 gap-1.5 text-primary-700"
+              >
+                {isSaving ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <BookmarkPlus className="h-4 w-4" />
+                )}
+                <span className="hidden sm:inline">{t('card.saveToMine')}</span>
+              </Button>
+            )}
+            {onEdit && (
+              <Button variant="ghost" size="sm" onClick={onEdit} className="h-8 w-8 p-0">
+                <Edit2 className="h-4 w-4" />
+              </Button>
+            )}
+            {onDelete && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onDelete}
+                className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            )}
           </div>
         </div>
       </CardContent>

@@ -23,6 +23,7 @@
       "recipes": "You have reached the recipe limit ({{limit}} on the free plan).",
       "owned_shared_lists": "The free plan lets you create {{limit}} shared list. You can still be a member of unlimited lists.",
       "label_scans_per_month": "You have used this month's {{limit}} label scans on the free plan.",
+      "recipe_bank_full": "This recipe is part of Premium. Upgrade to unlock the full recipe bank.",
       "generic": "You have reached a limit on the free plan."
     },
     "compare": {

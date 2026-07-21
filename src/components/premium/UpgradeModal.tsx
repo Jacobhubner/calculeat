@@ -27,6 +27,7 @@ const LIMIT_MESSAGE_KEYS = [
   'recipes',
   'owned_shared_lists',
   'label_scans_per_month',
+  'recipe_bank_full',
 ] as const
 
 type LimitMessageKey = (typeof LIMIT_MESSAGE_KEYS)[number]

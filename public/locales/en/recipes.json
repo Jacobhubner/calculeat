@@ -54,9 +54,21 @@
     "ingredientCount": "{{count}} ingredients",
     "edit": "Edit",
     "delete": "Delete",
+    "saveToMine": "Save",
     "colorGreen": "Green",
     "colorYellow": "Yellow",
     "colorOrange": "Orange"
+  },
+  "tabs": {
+    "mine": "My recipes",
+    "discover": "Discover"
+  },
+  "discover": {
+    "savedToast": "”{{name}}” was saved to your recipes",
+    "saveError": "Could not save the recipe. Please try again.",
+    "emptyTitle": "The recipe bank is being filled",
+    "emptyDescription": "CalculEat publishes ready-made recipes here that you can save to your own with one click. Check back soon!",
+    "lockedHint": "Unlock with Premium"
   },
   "modal": {
     "titleNew": "New recipe",

@@ -54,9 +54,21 @@
     "ingredientCount": "{{count}} ingredienser",
     "edit": "Redigera",
     "delete": "Ta bort",
+    "saveToMine": "Spara",
     "colorGreen": "Grön",
     "colorYellow": "Gul",
     "colorOrange": "Orange"
+  },
+  "tabs": {
+    "mine": "Mina recept",
+    "discover": "Upptäck"
+  },
+  "discover": {
+    "savedToast": "”{{name}}” sparades till dina recept",
+    "saveError": "Kunde inte spara receptet. Försök igen.",
+    "emptyTitle": "Receptbanken fylls på",
+    "emptyDescription": "Här publicerar CalculEat färdiga recept som du kan spara till dina egna med ett klick. Titta tillbaka snart!",
+    "lockedHint": "Lås upp med Premium"
   },
   "modal": {
     "titleNew": "Nytt recept",

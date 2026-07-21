@@ -23,6 +23,7 @@
       "recipes": "Du har nått gränsen för recept ({{limit}} st på gratisnivån).",
       "owned_shared_lists": "På gratisnivån kan du skapa {{limit}} gemensam lista. Du kan fortfarande vara medlem i hur många listor som helst.",
       "label_scans_per_month": "Du har använt månadens {{limit}} etikettskanningar på gratisnivån.",
+      "recipe_bank_full": "Det här receptet ingår i Premium. Uppgradera för att låsa upp hela receptbanken.",
       "generic": "Du har nått en gräns på gratisnivån."
     },
     "compare": {

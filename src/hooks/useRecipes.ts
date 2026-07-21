@@ -41,6 +41,10 @@ export interface Recipe {
   created_at: string
   updated_at: string
   ingredients?: RecipeIngredient[]
+  // Receptbanken (officiella recept)
+  visibility?: 'private' | 'official'
+  premium_only?: boolean
+  tags?: string[]
 }
 
 export interface RecipeNutritionData {
