@@ -68,6 +68,7 @@
     "saveError": "Kunde inte spara receptet. Försök igen.",
     "emptyTitle": "Receptbanken fylls på",
     "emptyDescription": "Här publicerar CalculEat färdiga recept som du kan spara till dina egna med ett klick. Titta tillbaka snart!",
+    "allTags": "Alla",
     "lockedHint": "Lås upp med Premium"
   },
   "modal": {

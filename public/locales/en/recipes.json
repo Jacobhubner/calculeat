@@ -68,6 +68,7 @@
     "saveError": "Could not save the recipe. Please try again.",
     "emptyTitle": "The recipe bank is being filled",
     "emptyDescription": "CalculEat publishes ready-made recipes here that you can save to your own with one click. Check back soon!",
+    "allTags": "All",
     "lockedHint": "Unlock with Premium"
   },
   "modal": {

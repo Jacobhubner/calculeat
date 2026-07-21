@@ -39,11 +39,20 @@ export default function RecipesPage() {
     return recipes?.filter(recipe => recipe.name.toLowerCase().includes(searchQuery.toLowerCase()))
   }, [recipes, searchQuery])
 
+  const [tagFilter, setTagFilter] = useState<string | null>(null)
+
+  const allTags = useMemo(
+    () => [...new Set(officialRecipes?.flatMap(r => r.tags ?? []) ?? [])].sort(),
+    [officialRecipes]
+  )
+
   const filteredOfficialRecipes = useMemo(() => {
-    return officialRecipes?.filter(recipe =>
-      recipe.name.toLowerCase().includes(searchQuery.toLowerCase())
+    return officialRecipes?.filter(
+      recipe =>
+        recipe.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+        (!tagFilter || (recipe.tags ?? []).includes(tagFilter))
     )
-  }, [officialRecipes, searchQuery])
+  }, [officialRecipes, searchQuery, tagFilter])
 
   const isRecipeLocked = (recipe: Recipe) => !!recipe.premium_only && !limits.recipe_bank_full
 
@@ -203,6 +212,37 @@ export default function RecipesPage() {
             ))}
           </div>
         ))}
+
+      {/* Taggfilter för Upptäck */}
+      {tab === 'discover' && allTags.length > 0 && (
+        <div className="mb-4 flex flex-wrap gap-1.5">
+          <button
+            type="button"
+            onClick={() => setTagFilter(null)}
+            className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+              tagFilter === null
+                ? 'bg-primary-600 text-white'
+                : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
+            }`}
+          >
+            {t('discover.allTags')}
+          </button>
+          {allTags.map(tag => (
+            <button
+              key={tag}
+              type="button"
+              onClick={() => setTagFilter(tagFilter === tag ? null : tag)}
+              className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                tagFilter === tag
+                  ? 'bg-primary-600 text-white'
+                  : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
+              }`}
+            >
+              {tag}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Innehåll: Upptäck (receptbanken) */}
       {tab === 'discover' &&
