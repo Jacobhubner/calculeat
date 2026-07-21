@@ -83,6 +83,7 @@ export function UpgradeModal({ open, onOpenChange, limitKey }: UpgradeModalProps
     'suggestions',
     'history',
     'recipes',
+    'recipeBank',
     'meals',
     'tdee',
     'dietModes',

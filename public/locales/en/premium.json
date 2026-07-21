@@ -30,10 +30,31 @@
       "freeHeader": "Free",
       "premiumHeader": "Premium",
       "rows": {
-        "history": { "label": "History", "free": "30 days", "premium": "Unlimited + retroactive" },
-        "recipes": { "label": "Recipes", "free": "3", "premium": "Unlimited + photos" },
-        "meals": { "label": "Saved meals", "free": "10", "premium": "Unlimited" },
-        "barcode": { "label": "Barcode scanning", "free": "Unlimited", "premium": "Unlimited" },
+        "history": {
+          "label": "History",
+          "free": "30 days",
+          "premium": "Unlimited + retroactive"
+        },
+        "recipes": {
+          "label": "Own recipes",
+          "free": "3",
+          "premium": "Unlimited + photos"
+        },
+        "recipeBank": {
+          "label": "Recipe bank",
+          "free": "Selected recipes",
+          "premium": "All recipes"
+        },
+        "meals": {
+          "label": "Saved meals",
+          "free": "10",
+          "premium": "Unlimited"
+        },
+        "barcode": {
+          "label": "Barcode scanning",
+          "free": "Unlimited",
+          "premium": "Unlimited"
+        },
         "labelScan": {
           "label": "Label scanning (AI)",
           "free": "5 per month",
@@ -44,9 +65,21 @@
           "free": "—",
           "premium": "Included"
         },
-        "tdee": { "label": "TDEE formulas", "free": "1 formula", "premium": "All 10 + comparison" },
-        "dietModes": { "label": "Diet modes", "free": "2 (NNR + Weight Loss)", "premium": "All 5" },
-        "calibration": { "label": "Calibration", "free": "1×/quarter", "premium": "Unlimited" },
+        "tdee": {
+          "label": "TDEE formulas",
+          "free": "1 formula",
+          "premium": "All 10 + comparison"
+        },
+        "dietModes": {
+          "label": "Diet modes",
+          "free": "2 (NNR + Weight Loss)",
+          "premium": "All 5"
+        },
+        "calibration": {
+          "label": "Calibration",
+          "free": "1×/quarter",
+          "premium": "Unlimited"
+        },
         "bodyComp": {
           "label": "Body composition",
           "free": "2 methods",
@@ -57,8 +90,16 @@
           "free": "Weight trend",
           "premium": "All + period comparisons"
         },
-        "equations": { "label": "Exact equations", "free": "—", "premium": "Included" },
-        "csv": { "label": "CSV export", "free": "—", "premium": "Included" }
+        "equations": {
+          "label": "Exact equations",
+          "free": "—",
+          "premium": "Included"
+        },
+        "csv": {
+          "label": "CSV export",
+          "free": "—",
+          "premium": "Included"
+        }
       }
     },
     "dataPromise": "Your data is always saved — regardless of plan.",

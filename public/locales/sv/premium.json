@@ -35,22 +35,51 @@
           "free": "30 dagar",
           "premium": "Obegränsad + retroaktiv"
         },
-        "recipes": { "label": "Recept", "free": "3 st", "premium": "Obegränsat + bilder" },
-        "meals": { "label": "Sparade måltider", "free": "10 st", "premium": "Obegränsat" },
-        "barcode": { "label": "Streckkodsskanning", "free": "Obegränsad", "premium": "Obegränsad" },
+        "recipes": {
+          "label": "Egna recept",
+          "free": "3 st",
+          "premium": "Obegränsat + bilder"
+        },
+        "recipeBank": {
+          "label": "Receptbanken",
+          "free": "Utvalda recept",
+          "premium": "Alla recept"
+        },
+        "meals": {
+          "label": "Sparade måltider",
+          "free": "10 st",
+          "premium": "Obegränsat"
+        },
+        "barcode": {
+          "label": "Streckkodsskanning",
+          "free": "Obegränsad",
+          "premium": "Obegränsad"
+        },
         "labelScan": {
           "label": "Etikettskanning (AI)",
           "free": "5 per månad",
           "premium": "20 per dag"
         },
-        "suggestions": { "label": "Vad ska jag äta? (förslag)", "free": "—", "premium": "Ingår" },
-        "tdee": { "label": "TDEE-formler", "free": "1 formel", "premium": "Alla 10 + jämförelse" },
+        "suggestions": {
+          "label": "Vad ska jag äta? (förslag)",
+          "free": "—",
+          "premium": "Ingår"
+        },
+        "tdee": {
+          "label": "TDEE-formler",
+          "free": "1 formel",
+          "premium": "Alla 10 + jämförelse"
+        },
         "dietModes": {
           "label": "Kostlägen",
           "free": "2 (NNR + Viktminskning)",
           "premium": "Alla 5"
         },
-        "calibration": { "label": "Kalibrering", "free": "1×/kvartal", "premium": "Obegränsad" },
+        "calibration": {
+          "label": "Kalibrering",
+          "free": "1×/kvartal",
+          "premium": "Obegränsad"
+        },
         "bodyComp": {
           "label": "Kroppskomposition",
           "free": "2 metoder",
@@ -61,8 +90,16 @@
           "free": "Vikttrend",
           "premium": "Alla + periodjämförelser"
         },
-        "equations": { "label": "Exakta ekvationer", "free": "—", "premium": "Ingår" },
-        "csv": { "label": "CSV-export", "free": "—", "premium": "Ingår" }
+        "equations": {
+          "label": "Exakta ekvationer",
+          "free": "—",
+          "premium": "Ingår"
+        },
+        "csv": {
+          "label": "CSV-export",
+          "free": "—",
+          "premium": "Ingår"
+        }
       }
     },
     "dataPromise": "Din data sparas alltid — oavsett plan.",
