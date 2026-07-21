@@ -14,6 +14,7 @@ import {
   Check,
   X,
   MessageCircle,
+  Megaphone,
   ChevronLeft,
   Send,
   ArrowLeft,
@@ -1481,6 +1482,8 @@ function notificationIcon(type: Notification['type']) {
       return <Check className="h-4 w-4 text-green-600" />
     case 'admin_invitation_rejected':
       return <X className="h-4 w-4 text-neutral-400" />
+    case 'admin_message':
+      return <Megaphone className="h-4 w-4 text-primary-600" />
   }
 }
 

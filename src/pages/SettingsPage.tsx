@@ -19,6 +19,7 @@ import {
   X,
   Check,
   ShieldCheck,
+  Megaphone,
   Trash2,
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
@@ -34,6 +35,7 @@ import {
   useListAdmins,
   useAddAdmin,
   useRemoveAdmin,
+  useSendAdminMessage,
 } from '@/hooks/useAdminManagement'
 import { usePreviewMode } from '@/hooks/usePreviewMode'
 import { useFreeViewMode } from '@/hooks/useFreeViewMode'
@@ -71,6 +73,33 @@ export default function SettingsPage() {
   const { isFreeViewActive, enterFreeView, exitFreeView } = useFreeViewMode()
   const { data: adminList = [] } = useListAdmins()
   const addAdmin = useAddAdmin()
+  const sendAdminMessage = useSendAdminMessage()
+  const [adminMsgTo, setAdminMsgTo] = useState('')
+  const [adminMsgText, setAdminMsgText] = useState('')
+
+  const handleSendAdminMessage = async () => {
+    const to = adminMsgTo.trim()
+    const text = adminMsgText.trim()
+    if (!to || !text) return
+    try {
+      const result = await sendAdminMessage.mutateAsync({ identifier: to, text })
+      if (!result.success) {
+        if (result.error === 'user_not_found') {
+          toast.error(t('settings.adminMsgNotFound'))
+        } else if (result.error === 'rate_limit') {
+          toast.error(t('settings.adminMsgRateLimit'))
+        } else {
+          toast.error(t('settings.adminMsgError'))
+        }
+        return
+      }
+      toast.success(t('settings.adminMsgSent', { user: to }))
+      setAdminMsgTo('')
+      setAdminMsgText('')
+    } catch {
+      toast.error(t('settings.adminMsgError'))
+    }
+  }
   const removeAdmin = useRemoveAdmin()
   const [newAdminIdentifier, setNewAdminIdentifier] = useState('')
 
@@ -798,6 +827,48 @@ export default function SettingsPage() {
                   {addAdmin.isPending ? t('settings.addingAdmin') : t('settings.addAdmin')}
                 </button>
               </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Admin: skicka direktmeddelande till en användare — alla admins */}
+        {isAdmin && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Megaphone className="h-5 w-5 text-primary-600" />
+                {t('settings.adminMsgTitle')}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-3">
+              <p className="text-sm text-neutral-600">{t('settings.adminMsgDesc')}</p>
+              <input
+                type="text"
+                value={adminMsgTo}
+                onChange={e => setAdminMsgTo(e.target.value)}
+                placeholder={t('settings.adminMsgToPlaceholder')}
+                className="px-3 py-2 text-base md:text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              />
+              <textarea
+                value={adminMsgText}
+                onChange={e => setAdminMsgText(e.target.value)}
+                placeholder={t('settings.adminMsgTextPlaceholder')}
+                maxLength={1000}
+                rows={3}
+                className="px-3 py-2 text-base md:text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
+              />
+              <button
+                onClick={handleSendAdminMessage}
+                disabled={sendAdminMessage.isPending || !adminMsgTo.trim() || !adminMsgText.trim()}
+                className="self-start inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors disabled:opacity-50"
+              >
+                {sendAdminMessage.isPending ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Megaphone className="h-4 w-4" />
+                )}
+                {t('settings.adminMsgSend')}
+              </button>
             </CardContent>
           </Card>
         )}

@@ -12,6 +12,7 @@ export type NotificationType =
   | 'admin_invitation_received'
   | 'admin_invitation_accepted'
   | 'admin_invitation_rejected'
+  | 'admin_message'
 
 export interface Notification {
   id: string

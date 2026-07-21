@@ -241,7 +241,16 @@
     "deleteAccountPermanent": "Delete permanently",
     "deleting": "Deleting...",
     "accountDeleted": "Your account has been deleted.",
-    "deleteError": "Something went wrong deleting your account. Please try again."
+    "deleteError": "Something went wrong deleting your account. Please try again.",
+    "adminMsgTitle": "Send message to user",
+    "adminMsgDesc": "Send a message to a specific user. It appears as a notification in the user's Activity tab. One-way — for a dialogue the user uses the support chat.",
+    "adminMsgToPlaceholder": "Username or email address",
+    "adminMsgTextPlaceholder": "Your message...",
+    "adminMsgSend": "Send message",
+    "adminMsgSent": "The message was sent to {{user}}.",
+    "adminMsgNotFound": "No user found with that name/email.",
+    "adminMsgRateLimit": "You have sent many messages today. Try again tomorrow.",
+    "adminMsgError": "Could not send the message. Please try again."
   },
   "tdeeOptions": {
     "calculateTitle": "Calculate TDEE",

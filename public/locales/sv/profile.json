@@ -241,7 +241,16 @@
     "deleteAccountPermanent": "Radera permanent",
     "deleting": "Raderar...",
     "accountDeleted": "Ditt konto har raderats.",
-    "deleteError": "Något gick fel vid radering av kontot. Försök igen."
+    "deleteError": "Något gick fel vid radering av kontot. Försök igen.",
+    "adminMsgTitle": "Skicka meddelande till användare",
+    "adminMsgDesc": "Skicka ett meddelande till en specifik användare. Det visas som en notis i användarens Aktivitet-flik. Envägs — för dialog använder användaren supportchatten.",
+    "adminMsgToPlaceholder": "Användarnamn eller e-postadress",
+    "adminMsgTextPlaceholder": "Ditt meddelande...",
+    "adminMsgSend": "Skicka meddelande",
+    "adminMsgSent": "Meddelandet skickades till {{user}}.",
+    "adminMsgNotFound": "Ingen användare hittades med det namnet/e-posten.",
+    "adminMsgRateLimit": "Du har skickat många meddelanden idag. Försök igen imorgon.",
+    "adminMsgError": "Kunde inte skicka meddelandet. Försök igen."
   },
   "tdeeOptions": {
     "calculateTitle": "Beräkna TDEE",

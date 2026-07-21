@@ -79,3 +79,20 @@ export function useRemoveAdmin() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['adminList'] }),
   })
 }
+
+/**
+ * Admin: skicka ett envägs direktmeddelande till en användare (namn eller
+ * e-post). Landar som notis i mottagarens Aktivitet-flik.
+ */
+export function useSendAdminMessage() {
+  return useMutation({
+    mutationFn: async (params: { identifier: string; text: string }) => {
+      const { data, error } = await supabase.rpc('send_admin_message', {
+        p_identifier: params.identifier,
+        p_text: params.text,
+      })
+      if (error) throw error
+      return data as { success: boolean; error?: string }
+    },
+  })
+}
