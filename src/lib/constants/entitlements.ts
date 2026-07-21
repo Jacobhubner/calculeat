@@ -28,6 +28,8 @@ export interface PlanLimits {
   label_scans_per_month: number
   food_suggestions: boolean
   all_diet_modes: boolean
+  /** Full tillgång till receptbanken (premium_only-recept). Gratis ser dem blurrade. */
+  recipe_bank_full: boolean
 }
 
 export const FREE_LIMITS: PlanLimits = {
@@ -46,6 +48,7 @@ export const FREE_LIMITS: PlanLimits = {
   label_scans_per_month: 5,
   food_suggestions: false,
   all_diet_modes: false,
+  recipe_bank_full: false,
 }
 
 export const PREMIUM_LIMITS: PlanLimits = {
@@ -64,6 +67,7 @@ export const PREMIUM_LIMITS: PlanLimits = {
   label_scans_per_month: UNLIMITED,
   food_suggestions: true,
   all_diet_modes: true,
+  recipe_bank_full: true,
 }
 
 export interface Entitlements {
