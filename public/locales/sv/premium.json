@@ -38,7 +38,7 @@
         "recipes": {
           "label": "Egna recept",
           "free": "3 st",
-          "premium": "Obegränsat + bilder"
+          "premium": "Obegränsat"
         },
         "recipeBank": {
           "label": "Receptbanken",
