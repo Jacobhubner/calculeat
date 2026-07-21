@@ -84,6 +84,34 @@ export function useCopyOfficialRecipe() {
   })
 }
 
+export interface RecipeRequest {
+  id: string
+  user_id: string
+  request_text: string
+  created_at: string
+}
+
+/**
+ * Admin: alla inkomna receptönskemål (RLS släpper igenom allt för admins;
+ * vanliga användare skulle bara se sina egna — rendering gate:as på isAdmin).
+ */
+export function useRecipeRequests(enabled: boolean) {
+  return useQuery({
+    queryKey: ['recipeRequests'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('recipe_requests')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(100)
+      if (error) throw error
+      return data as RecipeRequest[]
+    },
+    enabled,
+    staleTime: 60_000,
+  })
+}
+
 /**
  * "Önska recept" — sparar ett önskemål som admins läser inför nästa
  * receptbatch. Rate limit (5/dygn) enforce:as av DB-trigger som kastar

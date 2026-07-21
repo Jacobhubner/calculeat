@@ -12,7 +12,9 @@ import {
   useOfficialRecipes,
   useCopyOfficialRecipe,
   useRequestRecipe,
+  useRecipeRequests,
 } from '@/hooks/useOfficialRecipes'
+import { useIsAdmin } from '@/hooks/useIsAdmin'
 import { PreviewBlockedError } from '@/hooks/usePreviewMutation'
 import { RecipeCard } from '@/components/recipe/RecipeCard'
 import { RecipeCalculatorModal } from '@/components/recipe/RecipeCalculatorModal'
@@ -62,6 +64,8 @@ export default function RecipesPage() {
 
   const requestRecipe = useRequestRecipe()
   const [requestText, setRequestText] = useState('')
+  const { data: isAdmin = false } = useIsAdmin()
+  const { data: recipeRequests = [] } = useRecipeRequests(isAdmin)
 
   const handleRequestRecipe = async () => {
     const text = requestText.trim()
@@ -371,6 +375,40 @@ export default function RecipesPage() {
                   : t('discover.requestSubmit')}
               </Button>
             </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Admin: inkomna receptönskemål — endast Upptäck-fliken */}
+      {tab === 'discover' && isAdmin && (
+        <Card className="mt-6 border-amber-200">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <BookOpen className="h-5 w-5 text-amber-600" />
+              {t('discover.adminRequestsTitle')}
+              <span className="text-sm font-normal text-neutral-400">
+                ({recipeRequests.length})
+              </span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {recipeRequests.length === 0 ? (
+              <p className="text-sm text-neutral-500">{t('discover.adminRequestsEmpty')}</p>
+            ) : (
+              <ul className="space-y-2">
+                {recipeRequests.map(req => (
+                  <li
+                    key={req.id}
+                    className="flex items-start justify-between gap-3 rounded-lg border border-neutral-100 bg-neutral-50 px-3 py-2"
+                  >
+                    <span className="text-sm text-neutral-800">{req.request_text}</span>
+                    <span className="shrink-0 text-xs text-neutral-400">
+                      {new Date(req.created_at).toLocaleDateString()}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
           </CardContent>
         </Card>
       )}
