@@ -108,6 +108,75 @@ export function useRecipeRequests(enabled: boolean) {
   })
 }
 
+interface PublishResult {
+  success: boolean
+  error?: string
+  ingredients?: string[]
+}
+
+/**
+ * Superadmin: publicera ett eget privat recept till receptbanken.
+ * Servern validerar att alla ingredienser är globala och flyttar
+ * följeslagar-food_item till globalt ägarskap.
+ */
+export function usePublishRecipe() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (params: { recipeId: string; premium: boolean; tags: string[] }) => {
+      const { data, error } = await supabase.rpc('publish_recipe_to_bank', {
+        p_recipe_id: params.recipeId,
+        p_premium: params.premium,
+        p_tags: params.tags,
+      })
+      if (error) throw error
+      return data as PublishResult
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['recipes'] })
+      queryClient.invalidateQueries({ queryKey: ['foodItems'] })
+    },
+  })
+}
+
+/** Superadmin: avpublicera — receptet blir privat igen. */
+export function useUnpublishRecipe() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (recipeId: string) => {
+      const { data, error } = await supabase.rpc('unpublish_recipe_from_bank', {
+        p_recipe_id: recipeId,
+      })
+      if (error) throw error
+      return data as PublishResult
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['recipes'] })
+      queryClient.invalidateQueries({ queryKey: ['foodItems'] })
+    },
+  })
+}
+
+/**
+ * Superadmin: sätt/byt bild på ett officiellt recept (bara image_url på
+ * receptraden — rör aldrig följeslagar-food_item). Bilden laddas upp
+ * separat via useRecipeImageUpload till recipe-images-bucketen.
+ */
+export function useSetOfficialRecipeImage() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (params: { recipeId: string; imageUrl: string }) => {
+      const { error } = await supabase
+        .from('recipes')
+        .update({ image_url: params.imageUrl })
+        .eq('id', params.recipeId)
+      if (error) throw error
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['recipes'] })
+    },
+  })
+}
+
 /** Admin: klarmarkera = radera önskemålet (försvinner för ALLA admins). */
 export function useDeleteRecipeRequest() {
   const queryClient = useQueryClient()

@@ -57,7 +57,10 @@
     "saveToMine": "Spara",
     "colorGreen": "Grön",
     "colorYellow": "Gul",
-    "colorOrange": "Orange"
+    "colorOrange": "Orange",
+    "publish": "Publicera till receptbanken",
+    "unpublish": "Avpublicera från banken",
+    "uploadImage": "Ladda upp bild"
   },
   "tabs": {
     "mine": "Mina recept",
@@ -80,7 +83,17 @@
     "requestRateLimit": "Du har skickat många önskemål idag — försök igen imorgon.",
     "adminRequestsTitle": "Inkomna önskemål",
     "adminRequestsEmpty": "Inga önskemål ännu.",
-    "adminRequestDelete": "Radera önskemål"
+    "adminRequestDelete": "Radera önskemål",
+    "publishConfirm": "Publicera ”{{name}}” till receptbanken? Alla användare kommer se receptet.",
+    "publishPremiumQ": "Ska receptet vara premium-låst? OK = Premium, Avbryt = Gratis",
+    "publishTagsPrompt": "Taggar (kommaseparerade, t.ex. middag, högprotein):",
+    "publishSuccess": "”{{name}}” är nu publicerat i receptbanken!",
+    "publishError": "Kunde inte publicera receptet.",
+    "publishNonGlobal": "Receptet kan inte publiceras — följande ingredienser är inte globala livsmedel: {{list}}. Byt till livsmedel från SLV/CalculEat-listan först.",
+    "unpublishConfirm": "Avpublicera ”{{name}}” från receptbanken? Receptet blir privat igen.",
+    "unpublishSuccess": "”{{name}}” är avpublicerat.",
+    "imageUpdated": "Bilden är uppdaterad!",
+    "imageError": "Kunde inte ladda upp bilden."
   },
   "modal": {
     "titleNew": "Nytt recept",

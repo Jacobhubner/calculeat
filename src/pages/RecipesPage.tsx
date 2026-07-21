@@ -14,8 +14,14 @@ import {
   useRequestRecipe,
   useRecipeRequests,
   useDeleteRecipeRequest,
+  usePublishRecipe,
+  useUnpublishRecipe,
+  useSetOfficialRecipeImage,
 } from '@/hooks/useOfficialRecipes'
 import { useIsAdmin } from '@/hooks/useIsAdmin'
+import { useIsSuperAdmin } from '@/hooks/useAdminManagement'
+import { useRecipeImageUpload } from '@/hooks/useRecipeImageUpload'
+import { useRef } from 'react'
 import { PreviewBlockedError } from '@/hooks/usePreviewMutation'
 import { RecipeCard } from '@/components/recipe/RecipeCard'
 import { RecipeCalculatorModal } from '@/components/recipe/RecipeCalculatorModal'
@@ -68,6 +74,76 @@ export default function RecipesPage() {
   const { data: isAdmin = false } = useIsAdmin()
   const { data: recipeRequests = [] } = useRecipeRequests(isAdmin)
   const deleteRecipeRequest = useDeleteRecipeRequest()
+
+  // Superadmin: publicera/avpublicera + bilduppladdning på officiella recept
+  const { data: isSuperAdmin = false } = useIsSuperAdmin()
+  const publishRecipe = usePublishRecipe()
+  const unpublishRecipe = useUnpublishRecipe()
+  const setOfficialImage = useSetOfficialRecipeImage()
+  const { uploadImage } = useRecipeImageUpload()
+  const imageInputRef = useRef<HTMLInputElement>(null)
+  const imageTargetRecipeId = useRef<string | null>(null)
+
+  const handlePublishRecipe = async (recipe: Recipe) => {
+    if (!confirm(t('discover.publishConfirm', { name: recipe.name }))) return
+    const premium = confirm(t('discover.publishPremiumQ'))
+    const tagsInput = prompt(t('discover.publishTagsPrompt'), 'middag') ?? ''
+    const tags = tagsInput
+      .split(',')
+      .map(s => s.trim().toLowerCase())
+      .filter(Boolean)
+    try {
+      const result = await publishRecipe.mutateAsync({ recipeId: recipe.id, premium, tags })
+      if (!result.success) {
+        if (result.error === 'non_global_ingredients') {
+          alert(t('discover.publishNonGlobal', { list: (result.ingredients ?? []).join(', ') }))
+        } else {
+          toast.error(t('discover.publishError'))
+        }
+        return
+      }
+      toast.success(t('discover.publishSuccess', { name: recipe.name }))
+    } catch {
+      toast.error(t('discover.publishError'))
+    }
+  }
+
+  const handleUnpublishRecipe = async (recipe: Recipe) => {
+    if (!confirm(t('discover.unpublishConfirm', { name: recipe.name }))) return
+    try {
+      const result = await unpublishRecipe.mutateAsync(recipe.id)
+      if (!result.success) {
+        toast.error(t('discover.publishError'))
+        return
+      }
+      toast.success(t('discover.unpublishSuccess', { name: recipe.name }))
+    } catch {
+      toast.error(t('discover.publishError'))
+    }
+  }
+
+  const handlePickImage = (recipe: Recipe) => {
+    imageTargetRecipeId.current = recipe.id
+    imageInputRef.current?.click()
+  }
+
+  const handleImageSelected = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    e.target.value = ''
+    const recipeId = imageTargetRecipeId.current
+    if (!file || !recipeId) return
+    const result = await uploadImage(file)
+    if (result.error || !result.url) {
+      toast.error(t('discover.imageError'))
+      return
+    }
+    try {
+      await setOfficialImage.mutateAsync({ recipeId, imageUrl: result.url })
+      toast.success(t('discover.imageUpdated'))
+    } catch {
+      toast.error(t('discover.imageError'))
+    }
+  }
 
   const handleRequestRecipe = async () => {
     const text = requestText.trim()
@@ -232,15 +308,26 @@ export default function RecipesPage() {
           />
         ) : (
           <div className="flex flex-col gap-2">
-            {filteredRecipes.map(recipe => (
-              <RecipeCard
-                key={recipe.id}
-                recipe={recipe}
-                onPreview={() => handlePreviewRecipe(recipe)}
-                onEdit={() => handleEditRecipe(recipe)}
-                onDelete={() => handleDeleteRecipe(recipe)}
-              />
-            ))}
+            {filteredRecipes.map(recipe => {
+              const isOfficial = recipe.visibility === 'official'
+              return (
+                <RecipeCard
+                  key={recipe.id}
+                  recipe={recipe}
+                  onPreview={() => handlePreviewRecipe(recipe)}
+                  // Officiella recept redigeras/raderas inte härifrån —
+                  // avpublicera först (följeslagar-food_item är globalägd)
+                  onEdit={isOfficial ? undefined : () => handleEditRecipe(recipe)}
+                  onDelete={isOfficial ? undefined : () => handleDeleteRecipe(recipe)}
+                  onPublish={
+                    isSuperAdmin && !isOfficial ? () => handlePublishRecipe(recipe) : undefined
+                  }
+                  onUnpublish={
+                    isSuperAdmin && isOfficial ? () => handleUnpublishRecipe(recipe) : undefined
+                  }
+                />
+              )
+            })}
           </div>
         ))}
 
@@ -340,6 +427,7 @@ export default function RecipesPage() {
                   onPreview={() => handlePreviewRecipe(recipe)}
                   onSave={() => handleSaveOfficialRecipe(recipe)}
                   isSaving={copyOfficialRecipe.isPending}
+                  onUploadImage={isSuperAdmin ? () => handlePickImage(recipe) : undefined}
                 />
               )
             )}
@@ -475,6 +563,15 @@ export default function RecipesPage() {
           </CardContent>
         </Card>
       )}
+
+      {/* Dold filväljare för admin-bilduppladdning på officiella recept */}
+      <input
+        ref={imageInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={handleImageSelected}
+      />
 
       {/* Recipe Preview Modal */}
       <RecipePreviewModal

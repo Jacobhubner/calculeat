@@ -57,7 +57,10 @@
     "saveToMine": "Save",
     "colorGreen": "Green",
     "colorYellow": "Yellow",
-    "colorOrange": "Orange"
+    "colorOrange": "Orange",
+    "publish": "Publish to recipe bank",
+    "unpublish": "Unpublish from bank",
+    "uploadImage": "Upload image"
   },
   "tabs": {
     "mine": "My recipes",
@@ -80,7 +83,17 @@
     "requestRateLimit": "You have sent many requests today — try again tomorrow.",
     "adminRequestsTitle": "Incoming requests",
     "adminRequestsEmpty": "No requests yet.",
-    "adminRequestDelete": "Delete request"
+    "adminRequestDelete": "Delete request",
+    "publishConfirm": "Publish \"{{name}}\" to the recipe bank? All users will see the recipe.",
+    "publishPremiumQ": "Should the recipe be premium-locked? OK = Premium, Cancel = Free",
+    "publishTagsPrompt": "Tags (comma-separated, e.g. dinner, high protein):",
+    "publishSuccess": "\"{{name}}\" is now published in the recipe bank!",
+    "publishError": "Could not publish the recipe.",
+    "publishNonGlobal": "The recipe cannot be published — these ingredients are not global food items: {{list}}. Switch to items from the SLV/CalculEat list first.",
+    "unpublishConfirm": "Unpublish \"{{name}}\" from the recipe bank? The recipe becomes private again.",
+    "unpublishSuccess": "\"{{name}}\" has been unpublished.",
+    "imageUpdated": "Image updated!",
+    "imageError": "Could not upload the image."
   },
   "modal": {
     "titleNew": "New recipe",

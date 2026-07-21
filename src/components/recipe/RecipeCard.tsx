@@ -1,5 +1,16 @@
 import { useTranslation } from 'react-i18next'
-import { Edit2, Trash2, ScrollText, Users, Clock, BookmarkPlus, Loader2 } from 'lucide-react'
+import {
+  Edit2,
+  Trash2,
+  ScrollText,
+  Users,
+  Clock,
+  BookmarkPlus,
+  Loader2,
+  Globe,
+  Undo2,
+  Camera,
+} from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -25,6 +36,12 @@ interface RecipeCardProps {
   /** Bankrecept: "Spara till mina recept"-knapp */
   onSave?: () => void
   isSaving?: boolean
+  /** Superadmin: publicera receptet till receptbanken */
+  onPublish?: () => void
+  /** Superadmin: avpublicera från receptbanken */
+  onUnpublish?: () => void
+  /** Superadmin: ladda upp/byt bild på ett officiellt recept */
+  onUploadImage?: () => void
 }
 
 export function RecipeCard({
@@ -34,6 +51,9 @@ export function RecipeCard({
   onDelete,
   onSave,
   isSaving,
+  onPublish,
+  onUnpublish,
+  onUploadImage,
 }: RecipeCardProps) {
   const { t } = useTranslation('recipes')
 
@@ -75,8 +95,17 @@ export function RecipeCard({
     <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={onPreview}>
       <CardContent className="p-3">
         <div className="flex items-center gap-3">
-          {/* Icon */}
-          <ScrollText className="h-4 w-4 text-primary-600 flex-shrink-0" />
+          {/* Tumnagel eller ikon */}
+          {recipe.image_url ? (
+            <img
+              src={recipe.image_url}
+              alt={recipe.name}
+              className="h-10 w-10 rounded-lg object-cover flex-shrink-0"
+              loading="lazy"
+            />
+          ) : (
+            <ScrollText className="h-4 w-4 text-primary-600 flex-shrink-0" />
+          )}
 
           {/* Name + meta */}
           <div className="flex-1 min-w-0">
@@ -128,6 +157,39 @@ export function RecipeCard({
                   <BookmarkPlus className="h-4 w-4" />
                 )}
                 <span className="hidden sm:inline">{t('card.saveToMine')}</span>
+              </Button>
+            )}
+            {onUploadImage && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onUploadImage}
+                className="h-8 w-8 p-0 text-amber-600 hover:text-amber-800 hover:bg-amber-50"
+                aria-label={t('card.uploadImage')}
+              >
+                <Camera className="h-4 w-4" />
+              </Button>
+            )}
+            {onPublish && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onPublish}
+                className="h-8 w-8 p-0 text-primary-600 hover:text-primary-800 hover:bg-primary-50"
+                aria-label={t('card.publish')}
+              >
+                <Globe className="h-4 w-4" />
+              </Button>
+            )}
+            {onUnpublish && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onUnpublish}
+                className="h-8 w-8 p-0 text-amber-600 hover:text-amber-800 hover:bg-amber-50"
+                aria-label={t('card.unpublish')}
+              >
+                <Undo2 className="h-4 w-4" />
               </Button>
             )}
             {onEdit && (
