@@ -83,3 +83,27 @@ export function useCopyOfficialRecipe() {
     },
   })
 }
+
+/**
+ * "Önska recept" — sparar ett önskemål som admins läser inför nästa
+ * receptbatch. Rate limit (5/dygn) enforce:as av DB-trigger som kastar
+ * RATE_LIMIT:recipe_requests.
+ */
+export function useRequestRecipe() {
+  const { user, isPreviewMode } = useAuth()
+  const { t } = useTranslation('common')
+
+  return useMutation({
+    mutationFn: async (text: string) => {
+      if (isPreviewMode) {
+        toast.info(t('preview.mutationBlocked'))
+        throw new PreviewBlockedError()
+      }
+      if (!user) throw new Error('Not authenticated')
+      const { error } = await supabase
+        .from('recipe_requests')
+        .insert({ user_id: user.id, request_text: text.trim() })
+      if (error) throw error
+    },
+  })
+}

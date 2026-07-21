@@ -69,7 +69,15 @@
     "emptyTitle": "Receptbanken fylls på",
     "emptyDescription": "Här publicerar CalculEat färdiga recept som du kan spara till dina egna med ett klick. Titta tillbaka snart!",
     "allTags": "Alla",
-    "lockedHint": "Lås upp med Premium"
+    "lockedHint": "Lås upp med Premium",
+    "requestTitle": "Önska ett recept",
+    "requestDescription": "Saknar du något i receptbanken? Berätta vad du vill se — önskemålen styr vilka recept vi lägger in härnäst.",
+    "requestPlaceholder": "T.ex. fler vegetariska storkok, LCHF-frukostar...",
+    "requestSubmit": "Skicka önskemål",
+    "requestSending": "Skickar...",
+    "requestThanks": "Tack för ditt önskemål!",
+    "requestError": "Kunde inte skicka önskemålet. Försök igen.",
+    "requestRateLimit": "Du har skickat många önskemål idag — försök igen imorgon."
   },
   "modal": {
     "titleNew": "Nytt recept",

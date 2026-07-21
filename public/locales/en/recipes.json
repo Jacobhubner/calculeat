@@ -69,7 +69,15 @@
     "emptyTitle": "The recipe bank is being filled",
     "emptyDescription": "CalculEat publishes ready-made recipes here that you can save to your own with one click. Check back soon!",
     "allTags": "All",
-    "lockedHint": "Unlock with Premium"
+    "lockedHint": "Unlock with Premium",
+    "requestTitle": "Request a recipe",
+    "requestDescription": "Missing something in the recipe bank? Tell us what you want to see — requests guide which recipes we add next.",
+    "requestPlaceholder": "E.g. more vegetarian batch cooking, LCHF breakfasts...",
+    "requestSubmit": "Send request",
+    "requestSending": "Sending...",
+    "requestThanks": "Thanks for your request!",
+    "requestError": "Could not send the request. Please try again.",
+    "requestRateLimit": "You have sent many requests today — try again tomorrow."
   },
   "modal": {
     "titleNew": "New recipe",

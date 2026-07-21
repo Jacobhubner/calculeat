@@ -5,10 +5,14 @@ import DashboardLayout from '@/components/layout/DashboardLayout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Plus, Search, ChefHat, BookOpen, Compass, Lock } from 'lucide-react'
+import { Plus, Search, ChefHat, BookOpen, Compass, Lock, Lightbulb } from 'lucide-react'
 import EmptyState from '@/components/EmptyState'
 import { useRecipes, useDeleteRecipe, type Recipe } from '@/hooks/useRecipes'
-import { useOfficialRecipes, useCopyOfficialRecipe } from '@/hooks/useOfficialRecipes'
+import {
+  useOfficialRecipes,
+  useCopyOfficialRecipe,
+  useRequestRecipe,
+} from '@/hooks/useOfficialRecipes'
 import { PreviewBlockedError } from '@/hooks/usePreviewMutation'
 import { RecipeCard } from '@/components/recipe/RecipeCard'
 import { RecipeCalculatorModal } from '@/components/recipe/RecipeCalculatorModal'
@@ -55,6 +59,27 @@ export default function RecipesPage() {
   }, [officialRecipes, searchQuery, tagFilter])
 
   const isRecipeLocked = (recipe: Recipe) => !!recipe.premium_only && !limits.recipe_bank_full
+
+  const requestRecipe = useRequestRecipe()
+  const [requestText, setRequestText] = useState('')
+
+  const handleRequestRecipe = async () => {
+    const text = requestText.trim()
+    if (text.length < 3) return
+    try {
+      await requestRecipe.mutateAsync(text)
+      setRequestText('')
+      toast.success(t('discover.requestThanks'))
+    } catch (error) {
+      if (error instanceof PreviewBlockedError) return
+      const msg = error instanceof Error ? error.message : ''
+      if (msg.includes('RATE_LIMIT:recipe_requests')) {
+        toast.error(t('discover.requestRateLimit'))
+      } else {
+        toast.error(t('discover.requestError'))
+      }
+    }
+  }
 
   const handleSaveOfficialRecipe = async (recipe: Recipe) => {
     try {
@@ -315,52 +340,89 @@ export default function RecipesPage() {
           </div>
         ))}
 
-      {/* Info Card */}
-      <Card className="mt-8 bg-gradient-to-br from-accent-50 to-primary-50 border-primary-200">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <BookOpen className="h-5 w-5" />
-            {t('page.infoTitle')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3 text-sm text-neutral-700">
-          <div className="flex gap-2">
-            <div className="flex-shrink-0 mt-1">
-              <div className="h-2 w-2 rounded-full bg-primary-600" />
+      {/* Önska recept — endast Upptäck-fliken */}
+      {tab === 'discover' && (
+        <Card className="mt-8 bg-gradient-to-br from-primary-50 to-accent-50 border-primary-200">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Lightbulb className="h-5 w-5 text-primary-600" />
+              {t('discover.requestTitle')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <p className="text-sm text-neutral-600">{t('discover.requestDescription')}</p>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <Input
+                value={requestText}
+                onChange={e => setRequestText(e.target.value)}
+                placeholder={t('discover.requestPlaceholder')}
+                maxLength={500}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') handleRequestRecipe()
+                }}
+              />
+              <Button
+                onClick={handleRequestRecipe}
+                disabled={requestText.trim().length < 3 || requestRecipe.isPending}
+                className="shrink-0"
+              >
+                {requestRecipe.isPending
+                  ? t('discover.requestSending')
+                  : t('discover.requestSubmit')}
+              </Button>
             </div>
-            <p>
-              <span className="font-semibold">{t('page.infoCombine')}</span>{' '}
-              {t('page.infoCombineText')}
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <div className="flex-shrink-0 mt-1">
-              <div className="h-2 w-2 rounded-full bg-primary-600" />
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Info Card — endast Mina recept */}
+      {tab === 'mine' && (
+        <Card className="mt-8 bg-gradient-to-br from-accent-50 to-primary-50 border-primary-200">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <BookOpen className="h-5 w-5" />
+              {t('page.infoTitle')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3 text-sm text-neutral-700">
+            <div className="flex gap-2">
+              <div className="flex-shrink-0 mt-1">
+                <div className="h-2 w-2 rounded-full bg-primary-600" />
+              </div>
+              <p>
+                <span className="font-semibold">{t('page.infoCombine')}</span>{' '}
+                {t('page.infoCombineText')}
+              </p>
             </div>
-            <p>
-              <span className="font-semibold">{t('page.infoNutrition')}</span>{' '}
-              {t('page.infoNutritionText')}
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <div className="flex-shrink-0 mt-1">
-              <div className="h-2 w-2 rounded-full bg-primary-600" />
+            <div className="flex gap-2">
+              <div className="flex-shrink-0 mt-1">
+                <div className="h-2 w-2 rounded-full bg-primary-600" />
+              </div>
+              <p>
+                <span className="font-semibold">{t('page.infoNutrition')}</span>{' '}
+                {t('page.infoNutritionText')}
+              </p>
             </div>
-            <p>
-              <span className="font-semibold">{t('page.infoServings')}</span>{' '}
-              {t('page.infoServingsText')}
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <div className="flex-shrink-0 mt-1">
-              <div className="h-2 w-2 rounded-full bg-primary-600" />
+            <div className="flex gap-2">
+              <div className="flex-shrink-0 mt-1">
+                <div className="h-2 w-2 rounded-full bg-primary-600" />
+              </div>
+              <p>
+                <span className="font-semibold">{t('page.infoServings')}</span>{' '}
+                {t('page.infoServingsText')}
+              </p>
             </div>
-            <p>
-              <span className="font-semibold">{t('page.infoAdd')}</span> {t('page.infoAddText')}
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+            <div className="flex gap-2">
+              <div className="flex-shrink-0 mt-1">
+                <div className="h-2 w-2 rounded-full bg-primary-600" />
+              </div>
+              <p>
+                <span className="font-semibold">{t('page.infoAdd')}</span> {t('page.infoAddText')}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Recipe Preview Modal */}
       <RecipePreviewModal
