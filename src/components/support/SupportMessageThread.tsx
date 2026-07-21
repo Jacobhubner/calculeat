@@ -133,7 +133,10 @@ export function MessageBubble({ msg, isOwn, threadId, onAdminDelete }: MessageBu
     <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
       <div className={`max-w-[80%] ${isOwn ? 'items-end' : 'items-start'} flex flex-col`}>
         {!isOwn && (
-          <p className="text-[10px] text-neutral-400 px-1 mb-0.5">{msg.sender_username} · admin</p>
+          <p className="text-[10px] text-neutral-400 px-1 mb-0.5">
+            {msg.sender_username}
+            {msg.sender_is_admin && ' · admin'}
+          </p>
         )}
 
         <div

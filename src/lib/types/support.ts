@@ -11,6 +11,7 @@ export interface SupportMessage {
   id: string
   sender_id: string
   sender_username: string
+  sender_is_admin: boolean
   content: string | null // null when deleted_at is set
   original_content: string | null
   image_path: string | null // storage-path i 'support-attachments'; null när deleted_at är satt
