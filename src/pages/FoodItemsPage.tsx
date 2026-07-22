@@ -929,7 +929,7 @@ export default function FoodItemsPage() {
               >
                 {t('filter.orange')}
               </Button>
-              {(isMina || activeTab === 'alla') && (
+              {(isMina || isCalculeat || activeTab === 'alla') && (
                 <Button
                   variant="outline"
                   size="sm"
