@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
+import { useFreeViewMode } from '@/hooks/useFreeViewMode'
 import { usePreviewMutation } from '@/hooks/usePreviewMutation'
 import { type FoodColor, type FoodType } from '@/lib/calculations/colorDensity'
 
@@ -628,6 +629,7 @@ export function usePaginatedFoodItems(params: {
   locale?: string
 }) {
   const { user, isPreviewMode } = useAuth()
+  const { isFreeViewActive } = useFreeViewMode()
   const {
     tab,
     page,
@@ -659,6 +661,7 @@ export function usePaginatedFoodItems(params: {
       isRecipeFilter,
       user?.id,
       isPreviewMode,
+      isFreeViewActive,
     ],
     queryFn: async () => {
       if (!user) throw new Error('Not authenticated')
@@ -676,6 +679,7 @@ export function usePaginatedFoodItems(params: {
         p_limit: pageSize,
         p_offset: page * pageSize,
         p_locale: locale || null,
+        p_force_free: isFreeViewActive,
       })
 
       if (error) throw error
