@@ -95,7 +95,13 @@
     "unpublishSuccess": "\"{{name}}\" has been unpublished.",
     "imageUpdated": "Image updated!",
     "imageError": "Could not upload the image.",
-    "editHint": "Save a recipe to My recipes to edit and customize it."
+    "editHint": "Save a recipe to My recipes to edit and customize it.",
+    "editChoiceTitle": "Edit CalculEat recipe",
+    "editChoiceDesc": "How do you want to edit \"{{name}}\"?",
+    "editGlobal": "Edit globally",
+    "editGlobalHint": "The change affects the recipe for all users.",
+    "editCopy": "Create your own copy",
+    "editCopyHint": "Saves an editable copy to My recipes. The original is unaffected."
   },
   "modal": {
     "titleNew": "New recipe",

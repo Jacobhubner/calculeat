@@ -95,7 +95,13 @@
     "unpublishSuccess": "”{{name}}” är avpublicerat.",
     "imageUpdated": "Bilden är uppdaterad!",
     "imageError": "Kunde inte ladda upp bilden.",
-    "editHint": "Spara ett recept till Mina recept för att kunna redigera och anpassa det."
+    "editHint": "Spara ett recept till Mina recept för att kunna redigera och anpassa det.",
+    "editChoiceTitle": "Redigera CalculEat-recept",
+    "editChoiceDesc": "Hur vill du redigera ”{{name}}”?",
+    "editGlobal": "Redigera globalt",
+    "editGlobalHint": "Ändringen påverkar receptet för alla användare.",
+    "editCopy": "Skapa egen kopia",
+    "editCopyHint": "Sparar en redigerbar kopia i Mina recept. Originalet påverkas inte."
   },
   "modal": {
     "titleNew": "Nytt recept",

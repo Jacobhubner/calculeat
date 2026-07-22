@@ -399,12 +399,14 @@ export function useUpdateRecipe() {
     mutationFn: async ({ id, ...input }: Partial<CreateRecipeInput> & { id: string }) => {
       if (!user) throw new Error('User not authenticated')
 
-      // Get existing recipe to find food_item_id
+      // Get existing recipe to find food_item_id. Ingen user_id-filtrering:
+      // officiella recept ägs av superadmin men får redigeras av alla admins
+      // (RLS på recipes/food_items skyddar — bara ägare, listmedlem eller
+      // admin på official släpps igenom).
       const { data: existingRecipe } = await supabase
         .from('recipes')
         .select('food_item_id')
         .eq('id', id)
-        .eq('user_id', user.id)
         .single()
 
       // Update food_item if it exists and nutrition data is provided
@@ -547,7 +549,6 @@ export function useUpdateRecipe() {
           ...(input.cook_time_min !== undefined && { cook_time_min: input.cook_time_min }),
         })
         .eq('id', id)
-        .eq('user_id', user.id)
         .select()
         .single()
 

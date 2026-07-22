@@ -5,7 +5,24 @@ import DashboardLayout from '@/components/layout/DashboardLayout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Plus, Search, ChefHat, BookOpen, Compass, Lock, Lightbulb, Trash2 } from 'lucide-react'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog'
+import {
+  Plus,
+  Search,
+  ChefHat,
+  BookOpen,
+  Compass,
+  Lock,
+  Lightbulb,
+  Trash2,
+  Globe,
+} from 'lucide-react'
 import EmptyState from '@/components/EmptyState'
 import { useRecipes, useDeleteRecipe, type Recipe } from '@/hooks/useRecipes'
 import {
@@ -197,6 +214,23 @@ export default function RecipesPage() {
   const handleEditRecipe = (recipe: Recipe) => {
     setEditingRecipe(recipe)
     setIsModalOpen(true)
+  }
+
+  // Admin: klick på Redigera på ett officiellt recept → beslutsdialog
+  const [editChoiceRecipe, setEditChoiceRecipe] = useState<Recipe | null>(null)
+
+  const handleEditGlobally = () => {
+    if (!editChoiceRecipe) return
+    setEditingRecipe(editChoiceRecipe)
+    setIsModalOpen(true)
+    setEditChoiceRecipe(null)
+  }
+
+  const handleEditAsCopy = async () => {
+    const recipe = editChoiceRecipe
+    setEditChoiceRecipe(null)
+    if (!recipe) return
+    await handleSaveOfficialRecipe(recipe) // skapar kopia i Mina recept + toast
   }
 
   const handleDeleteRecipe = async (recipe: Recipe) => {
@@ -430,6 +464,7 @@ export default function RecipesPage() {
                   onPreview={() => handlePreviewRecipe(recipe)}
                   onSave={() => handleSaveOfficialRecipe(recipe)}
                   isSaving={copyOfficialRecipe.isPending}
+                  onEdit={isAdmin ? () => setEditChoiceRecipe(recipe) : undefined}
                   onUploadImage={isSuperAdmin ? () => handlePickImage(recipe) : undefined}
                 />
               )
@@ -582,6 +617,34 @@ export default function RecipesPage() {
         open={!!previewRecipe}
         onOpenChange={open => !open && setPreviewRecipeId(null)}
       />
+
+      {/* Admin: redigera officiellt recept — val globalt eller egen kopia */}
+      <Dialog open={!!editChoiceRecipe} onOpenChange={open => !open && setEditChoiceRecipe(null)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>{t('discover.editChoiceTitle')}</DialogTitle>
+            <DialogDescription>
+              {t('discover.editChoiceDesc', { name: editChoiceRecipe?.name ?? '' })}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col gap-2 pt-2">
+            <Button variant="outline" onClick={handleEditGlobally} className="justify-start gap-2">
+              <Globe className="h-4 w-4 text-amber-600" />
+              <span className="flex flex-col items-start text-left">
+                <span className="font-medium">{t('discover.editGlobal')}</span>
+                <span className="text-xs text-neutral-500">{t('discover.editGlobalHint')}</span>
+              </span>
+            </Button>
+            <Button variant="outline" onClick={handleEditAsCopy} className="justify-start gap-2">
+              <ChefHat className="h-4 w-4 text-primary-600" />
+              <span className="flex flex-col items-start text-left">
+                <span className="font-medium">{t('discover.editCopy')}</span>
+                <span className="text-xs text-neutral-500">{t('discover.editCopyHint')}</span>
+              </span>
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Recipe Calculator Modal */}
       <RecipeCalculatorModal
