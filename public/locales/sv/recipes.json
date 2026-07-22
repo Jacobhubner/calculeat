@@ -60,7 +60,8 @@
     "colorOrange": "Orange",
     "publish": "Publicera till receptbanken",
     "unpublish": "Avpublicera från banken",
-    "uploadImage": "Ladda upp bild"
+    "uploadImage": "Ladda upp bild",
+    "saveToMineHint": "Sparar en egen, redigerbar kopia i Mina recept"
   },
   "tabs": {
     "mine": "Mina recept",
@@ -93,7 +94,8 @@
     "unpublishConfirm": "Avpublicera ”{{name}}” från receptbanken? Receptet blir privat igen.",
     "unpublishSuccess": "”{{name}}” är avpublicerat.",
     "imageUpdated": "Bilden är uppdaterad!",
-    "imageError": "Kunde inte ladda upp bilden."
+    "imageError": "Kunde inte ladda upp bilden.",
+    "editHint": "Spara ett recept till Mina recept för att kunna redigera och anpassa det."
   },
   "modal": {
     "titleNew": "Nytt recept",

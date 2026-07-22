@@ -383,6 +383,9 @@ export default function RecipesPage() {
           />
         ) : (
           <div className="flex flex-col gap-2">
+            <p className="mb-1 rounded-lg bg-primary-50 px-3 py-2 text-xs text-primary-700">
+              {t('discover.editHint')}
+            </p>
             {filteredOfficialRecipes.map(recipe =>
               isRecipeLocked(recipe) ? (
                 // Låst premiumrecept — blur-mönstret från kostlägena

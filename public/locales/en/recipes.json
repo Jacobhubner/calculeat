@@ -60,7 +60,8 @@
     "colorOrange": "Orange",
     "publish": "Publish to recipe bank",
     "unpublish": "Unpublish from bank",
-    "uploadImage": "Upload image"
+    "uploadImage": "Upload image",
+    "saveToMineHint": "Saves your own editable copy to My recipes"
   },
   "tabs": {
     "mine": "My recipes",
@@ -93,7 +94,8 @@
     "unpublishConfirm": "Unpublish \"{{name}}\" from the recipe bank? The recipe becomes private again.",
     "unpublishSuccess": "\"{{name}}\" has been unpublished.",
     "imageUpdated": "Image updated!",
-    "imageError": "Could not upload the image."
+    "imageError": "Could not upload the image.",
+    "editHint": "Save a recipe to My recipes to edit and customize it."
   },
   "modal": {
     "titleNew": "New recipe",

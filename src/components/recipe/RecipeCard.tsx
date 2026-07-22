@@ -149,6 +149,7 @@ export function RecipeCard({
                 size="sm"
                 onClick={onSave}
                 disabled={isSaving}
+                title={t('card.saveToMineHint')}
                 className="h-8 gap-1.5 text-primary-700"
               >
                 {isSaving ? (

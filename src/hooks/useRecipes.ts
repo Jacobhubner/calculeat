@@ -127,6 +127,7 @@ export function useRecipes() {
         )
         .eq('user_id', user.id)
         .is('shared_list_id', null) // Exkludera listrecept — visas via useSharedListRecipes
+        .neq('visibility', 'official') // Officiella recept visas bara i Upptäck-fliken, inte Mina recept
         .order('name')
 
       if (error) throw error
@@ -162,6 +163,7 @@ export function useSearchRecipes(query: string) {
         )
         .eq('user_id', user.id)
         .is('shared_list_id', null) // Exkludera listrecept
+        .neq('visibility', 'official') // Officiella visas bara i Upptäck
         .ilike('name', `%${query}%`)
         .order('name')
 
