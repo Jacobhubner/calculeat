@@ -9,7 +9,6 @@ import type { ProfileFormData, Profile } from '@/lib/types'
 import { toast } from 'sonner'
 import { useProfileStore } from '@/stores/profileStore'
 import { useAuth } from '@/contexts/AuthContext'
-import { useTranslation } from 'react-i18next'
 import { PreviewBlockedError } from '@/hooks/usePreviewMutation'
 
 interface UpdateProfileParams {
@@ -21,16 +20,16 @@ interface UpdateProfileParams {
 export function useUpdateProfile() {
   const queryClient = useQueryClient()
   const updateProfileInStore = useProfileStore(state => state.updateProfile)
-  const { isPreviewMode, refreshProfile } = useAuth()
-  const { t } = useTranslation('common')
+  const { refreshProfile } = useAuth()
 
   return useMutation({
     mutationFn: async ({ profileId, data }: UpdateProfileParams) => {
-      // Block all writes during preview mode — user_profiles belongs to the real account
-      if (isPreviewMode) {
-        toast.info(t('preview.mutationBlocked'))
-        throw new PreviewBlockedError()
-      }
+      // Preview-läget: sparning TILLÅTS. create_preview_profile har redan
+      // säkerhetskopierat den riktiga user_profiles-raden till JSONB och
+      // nollställt den, så skrivningar hamnar på preview-versionen. Vid
+      // exit_preview_profile skrivs raden tillbaka från backupen — så inget
+      // preview-värde överlever. En äkta sandlåda: fyll i profil som en ny
+      // användare, allt raderas vid avslut.
 
       // Strip undefined values — they should not overwrite existing DB values.
       // Callers must pass null explicitly if they intend to clear a field.
