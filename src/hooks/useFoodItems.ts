@@ -2,7 +2,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import { useFreeViewMode } from '@/hooks/useFreeViewMode'
-import { usePreviewMutation } from '@/hooks/usePreviewMutation'
 import { type FoodColor, type FoodType } from '@/lib/calculations/colorDensity'
 
 export type FoodSource = 'manual' | 'livsmedelsverket' | 'usda' | 'user' | 'shared'
@@ -168,13 +167,14 @@ export function useFoodItems() {
         from += PAGE
       }
 
-      // Preview mode: skip personal items — show only global (SLV/Calculeat)
-      if (isPreviewMode) return globalItems
-
+      // Personliga livsmedel: i preview läses bara is_preview=true-rader
+      // (sandlådan), annars bara is_preview=false (riktiga). Globala items
+      // är alltid is_preview=false och visas i båda lägena.
       const userResult = await supabase
         .from('food_items')
         .select('*')
         .eq('user_id', user.id)
+        .eq('is_preview', isPreviewMode ? true : false)
         .order('name')
         .limit(10000)
 
@@ -193,18 +193,23 @@ export function useFoodItems() {
  * Search food items (global + user-specific with shadowing)
  */
 export function useSearchFoodItems(query: string, colorFilter?: FoodColor) {
-  const { user } = useAuth()
+  const { user, isPreviewMode } = useAuth()
 
   return useQuery({
-    queryKey: ['foodItems', 'search', user?.id, query, colorFilter],
+    queryKey: ['foodItems', 'search', user?.id, query, colorFilter, isPreviewMode],
     queryFn: async () => {
       if (!user) throw new Error('User not authenticated')
 
-      // Include recipes in search so they can be found and logged
+      // Include recipes in search so they can be found and logged.
+      // Preview-isolering: globala items (user_id null, alltid is_preview=false)
+      // syns alltid; personliga items filtreras på is_preview så preview bara
+      // ser sandlåde-livsmedel och riktigt läge bara riktiga.
       let queryBuilder = supabase
         .from('food_items')
         .select('*')
-        .or(`user_id.is.null,user_id.eq.${user.id}`)
+        .or(
+          `user_id.is.null,and(user_id.eq.${user.id},is_preview.eq.${isPreviewMode ? 'true' : 'false'})`
+        )
 
       if (query) {
         queryBuilder = queryBuilder.or(`name.ilike.%${query}%,brand.ilike.%${query}%`)
@@ -250,10 +255,10 @@ export function useFoodItem(id: string) {
  * Create a new food item
  */
 export function useCreateFoodItem() {
-  const { user } = useAuth()
+  const { user, isPreviewMode } = useAuth()
   const queryClient = useQueryClient()
 
-  return usePreviewMutation({
+  return useMutation({
     mutationFn: async (input: CreateFoodItemInput) => {
       if (!user) throw new Error('User not authenticated')
 
@@ -283,6 +288,7 @@ export function useCreateFoodItem() {
           food_type: input.food_type,
           notes: input.notes,
           is_recipe: false,
+          is_preview: isPreviewMode,
         })
         .select('id')
         .single()
@@ -325,10 +331,10 @@ const NON_DB_FOOD_ITEM_FIELDS = [
  * Update a food item (with Copy-on-Write for global items)
  */
 export function useUpdateFoodItem() {
-  const { user } = useAuth()
+  const { user, isPreviewMode } = useAuth()
   const queryClient = useQueryClient()
 
-  return usePreviewMutation({
+  return useMutation({
     mutationFn: async ({ id, ...input }: Partial<CreateFoodItemInput> & { id: string }) => {
       if (!user) throw new Error('User not authenticated')
 
@@ -355,11 +361,16 @@ export function useUpdateFoodItem() {
         })
         if (rpcError) throw rpcError
 
+        // Preview-isolering: copy_food_to_user skapar kopian med is_preview=false
+        // (DB-default). I preview måste kopian taggas is_preview=true så den
+        // raderas vid avslut och inte läcker till riktiga "Mina livsmedel".
+        const previewPatch = isPreviewMode ? { is_preview: true } : {}
+
         // If edits were provided, apply them to the copy
-        if (Object.keys(dbInput).length > 0) {
+        if (Object.keys(dbInput).length > 0 || isPreviewMode) {
           const { data, error } = await supabase
             .from('food_items')
-            .update(dbInput)
+            .update({ ...dbInput, ...previewPatch })
             .eq('id', copyId)
             .eq('user_id', user.id)
             .select()
@@ -412,10 +423,10 @@ export function useUpdateFoodItem() {
  * Delete a food item (with soft-delete for global items)
  */
 export function useDeleteFoodItem() {
-  const { user } = useAuth()
+  const { user, isPreviewMode } = useAuth()
   const queryClient = useQueryClient()
 
-  return usePreviewMutation({
+  return useMutation({
     mutationFn: async (id: string) => {
       if (!user) throw new Error('User not authenticated')
 
@@ -436,6 +447,7 @@ export function useDeleteFoodItem() {
           .select('id')
           .eq('user_id', user.id)
           .eq('global_food_id', id)
+          .eq('is_preview', isPreviewMode ? true : false)
           .single()
 
         if (existingMarker) {
@@ -465,6 +477,7 @@ export function useDeleteFoodItem() {
             protein_g: 0,
             food_type: 'Solid',
             is_recipe: false,
+            is_preview: isPreviewMode,
           })
 
           if (insertError) throw insertError
@@ -641,12 +654,12 @@ export function usePaginatedFoodItems(params: {
     locale,
   } = params
 
-  // In preview: 'mina' and list tabs return empty; 'alla' passes a nil UUID so
-  // the RPC finds no personal items — only global (SLV/CalculEat) items show.
-  const NULL_UUID = '00000000-0000-0000-0000-000000000000'
-  const isPersonalOnlyTab = tab === 'mina' || tab.startsWith('list:')
-  const blockInPreview = isPreviewMode && isPersonalOnlyTab
-  const effectiveUserId = isPreviewMode && tab === 'alla' ? NULL_UUID : user?.id
+  // Preview-sandlåda: personliga livsmedel isoleras via p_is_preview i RPC:n.
+  // I preview visar 'mina'/'alla' bara is_preview=true-rader; globala items
+  // syns i båda lägena. Gemensamma listor (list:) finns inte för preview-
+  // användare, så de returnerar tomt.
+  const isListTab = tab.startsWith('list:')
+  const blockInPreview = isPreviewMode && isListTab
 
   return useQuery({
     queryKey: [
@@ -672,7 +685,7 @@ export function usePaginatedFoodItems(params: {
 
       const { data, error } = await supabase.rpc('search_food_items', {
         p_tab: tab,
-        p_user_id: effectiveUserId ?? user.id,
+        p_user_id: user.id,
         p_search: searchQuery || null,
         p_color: colorFilter || null,
         p_is_recipe: isRecipeFilter || null,
@@ -680,6 +693,7 @@ export function usePaginatedFoodItems(params: {
         p_offset: page * pageSize,
         p_locale: locale || null,
         p_force_free: isFreeViewActive,
+        p_is_preview: isPreviewMode,
       })
 
       if (error) throw error
