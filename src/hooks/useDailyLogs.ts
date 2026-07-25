@@ -3,7 +3,6 @@ import { useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import { useProfileStore } from '@/stores/profileStore'
-import { usePreviewAwareQuery } from '@/hooks/usePreviewAwareQuery'
 import type { FoodItem } from '@/hooks/useFoodItems'
 import { macroGramsFromPercent, DEFAULT_MACRO_PERCENTS } from '@/lib/calculations/dailySummary'
 
@@ -248,12 +247,11 @@ export function useTodayLog() {
  * Get daily log by date for the active profile
  */
 export function useDailyLog(date: string) {
-  const { user } = useAuth()
+  const { user, isPreviewMode } = useAuth()
   const activeProfile = useProfileStore(state => state.activeProfile)
 
-  return usePreviewAwareQuery({
-    queryKey: ['dailyLogs', user?.id, date],
-    emptyValue: null as DailyLog | null,
+  return useQuery({
+    queryKey: ['dailyLogs', user?.id, date, isPreviewMode],
     queryFn: async () => {
       if (!user) throw new Error('User not authenticated')
       if (!activeProfile) throw new Error('No active profile')
@@ -274,6 +272,7 @@ export function useDailyLog(date: string) {
         )
         .eq('user_id', user.id)
         .eq('log_date', date)
+        .eq('is_preview', isPreviewMode ? true : false)
         .order('meal_order', { foreignTable: 'meal_entries' })
         .order('item_order', { foreignTable: 'meal_entries.meal_entry_items' })
         .maybeSingle()
@@ -289,12 +288,11 @@ export function useDailyLog(date: string) {
  * Get daily logs for a date range for the active profile
  */
 export function useDailyLogs(startDate: string, endDate: string) {
-  const { user } = useAuth()
+  const { user, isPreviewMode } = useAuth()
   const activeProfile = useProfileStore(state => state.activeProfile)
 
-  return usePreviewAwareQuery({
-    queryKey: ['dailyLogs', 'range', user?.id, startDate, endDate],
-    emptyValue: [] as DailyLog[],
+  return useQuery({
+    queryKey: ['dailyLogs', 'range', user?.id, startDate, endDate, isPreviewMode],
     queryFn: async () => {
       if (!user) throw new Error('User not authenticated')
       if (!activeProfile) throw new Error('No active profile')
@@ -316,6 +314,7 @@ export function useDailyLogs(startDate: string, endDate: string) {
         .eq('user_id', user.id)
         .gte('log_date', startDate)
         .lte('log_date', endDate)
+        .eq('is_preview', isPreviewMode ? true : false)
         .order('log_date', { ascending: false })
         .order('meal_order', { foreignTable: 'meal_entries' })
 
@@ -330,7 +329,7 @@ export function useDailyLogs(startDate: string, endDate: string) {
  * Create or get today's log for active profile (ensures log exists)
  */
 export function useEnsureTodayLog() {
-  const { user } = useAuth()
+  const { user, isPreviewMode } = useAuth()
   const activeProfile = useProfileStore(state => state.activeProfile)
   const queryClient = useQueryClient()
 
@@ -348,6 +347,7 @@ export function useEnsureTodayLog() {
           .from('daily_logs')
           .select('*')
           .eq('user_id', user.id)
+          .eq('is_preview', isPreviewMode ? true : false)
           .eq('is_completed', false)
           .order('log_date', { ascending: false })
           .limit(1)
@@ -361,6 +361,7 @@ export function useEnsureTodayLog() {
               .from('daily_logs')
               .select('id')
               .eq('user_id', user.id)
+              .eq('is_preview', isPreviewMode ? true : false)
               .eq('log_date', today)
               .maybeSingle()
 
@@ -384,6 +385,7 @@ export function useEnsureTodayLog() {
         .from('daily_logs')
         .select('*')
         .eq('user_id', user.id)
+        .eq('is_preview', isPreviewMode ? true : false)
         .eq('log_date', today)
         .maybeSingle()
 
@@ -399,6 +401,7 @@ export function useEnsureTodayLog() {
           .from('daily_logs')
           .select('id, total_calories')
           .eq('user_id', user.id)
+          .eq('is_preview', isPreviewMode ? true : false)
           .eq('log_date', yesterdayStr)
           .eq('is_completed', false)
           .maybeSingle()
@@ -422,6 +425,7 @@ export function useEnsureTodayLog() {
         log_date: today,
         goal_calories_min: activeProfile.calories_min,
         goal_calories_max: activeProfile.calories_max,
+        is_preview: isPreviewMode,
         ...macroGoalSnapshot(activeProfile),
       })
 
@@ -436,6 +440,7 @@ export function useEnsureTodayLog() {
         .from('daily_logs')
         .select('*')
         .eq('user_id', user.id)
+        .eq('is_preview', isPreviewMode ? true : false)
         .eq('log_date', today)
         .single()
 
@@ -452,7 +457,7 @@ export function useEnsureTodayLog() {
  * Update the date of a daily log
  */
 export function useUpdateLogDate() {
-  const { user } = useAuth()
+  const { user, isPreviewMode } = useAuth()
   const queryClient = useQueryClient()
 
   return useMutation({
@@ -464,6 +469,7 @@ export function useUpdateLogDate() {
         .from('daily_logs')
         .select('id')
         .eq('user_id', user.id)
+        .eq('is_preview', isPreviewMode ? true : false)
         .eq('log_date', newDate)
         .neq('id', logId)
         .maybeSingle()
@@ -622,7 +628,7 @@ export function useUpdateMealItem() {
  * Create a new meal entry for today
  */
 export function useCreateMealEntry() {
-  const { user } = useAuth()
+  const { user, isPreviewMode } = useAuth()
   const queryClient = useQueryClient()
 
   return useMutation({
@@ -662,6 +668,7 @@ export function useCreateMealEntry() {
           meal_fat_g: 0,
           meal_carb_g: 0,
           meal_protein_g: 0,
+          is_preview: isPreviewMode,
         })
         .select()
         .single()
@@ -710,7 +717,7 @@ export function useDeleteMealEntry() {
  * Create an ad hoc meal entry for today (not tied to user_meal_settings)
  */
 export function useAddAdHocMeal() {
-  const { user } = useAuth()
+  const { user, isPreviewMode } = useAuth()
   const queryClient = useQueryClient()
 
   return useMutation({
@@ -729,6 +736,7 @@ export function useAddAdHocMeal() {
           meal_fat_g: 0,
           meal_carb_g: 0,
           meal_protein_g: 0,
+          is_preview: isPreviewMode,
         })
         .select()
         .single()
@@ -828,7 +836,7 @@ export function useFinishDay() {
  * Creates a fresh log for today even if a completed log already exists.
  */
 export function useStartNewDay() {
-  const { user } = useAuth()
+  const { user, isPreviewMode } = useAuth()
   const activeProfile = useProfileStore(state => state.activeProfile)
   const queryClient = useQueryClient()
 
@@ -842,6 +850,7 @@ export function useStartNewDay() {
         .from('daily_logs')
         .update({ is_completed: true })
         .eq('user_id', user.id)
+        .eq('is_preview', isPreviewMode ? true : false)
         .eq('log_date', completedLogDate)
 
       const base = new Date(completedLogDate + 'T12:00:00')
@@ -853,6 +862,7 @@ export function useStartNewDay() {
         log_date: nextDay,
         goal_calories_min: activeProfile.calories_min,
         goal_calories_max: activeProfile.calories_max,
+        is_preview: isPreviewMode,
         ...macroGoalSnapshot(activeProfile),
       })
 
@@ -867,6 +877,7 @@ export function useStartNewDay() {
         .from('daily_logs')
         .select('*')
         .eq('user_id', user.id)
+        .eq('is_preview', isPreviewMode ? true : false)
         .eq('log_date', nextDay)
         .single()
 
@@ -883,7 +894,7 @@ export function useStartNewDay() {
  * Copy a previous day's meals to today for the active profile
  */
 export function useCopyDayToToday() {
-  const { user } = useAuth()
+  const { user, isPreviewMode } = useAuth()
   const activeProfile = useProfileStore(state => state.activeProfile)
   const queryClient = useQueryClient()
 
@@ -915,6 +926,7 @@ export function useCopyDayToToday() {
         .from('daily_logs')
         .select('*')
         .eq('user_id', user.id)
+        .eq('is_preview', isPreviewMode ? true : false)
         .eq('log_date', today)
         .maybeSingle()
 
@@ -928,6 +940,7 @@ export function useCopyDayToToday() {
           .insert({
             user_id: user.id,
             log_date: today,
+            is_preview: isPreviewMode,
           })
           .select()
           .single()
@@ -964,6 +977,7 @@ export function useCopyDayToToday() {
             meal_fat_g: 0,
             meal_carb_g: 0,
             meal_protein_g: 0,
+            is_preview: isPreviewMode,
           })
           .select()
           .single()

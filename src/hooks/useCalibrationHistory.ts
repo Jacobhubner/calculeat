@@ -1,24 +1,28 @@
-import { useQueryClient } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
-import { usePreviewAwareQuery } from '@/hooks/usePreviewAwareQuery'
-import { usePreviewMutation } from '@/hooks/usePreviewMutation'
+import { useAuth } from '@/contexts/AuthContext'
 import type { CalibrationHistory } from '@/lib/types'
 import { toast } from 'sonner'
 
 /**
  * Hook to fetch calibration history for a user.
  * Reads and writes via user_id (Fas 3 — profile_id removed).
+ *
+ * Preview-läget ("Testa som ny användare") är en äkta sandlåda: i preview
+ * läses/skrivs is_preview=true-rader (samma mönster som useDailyLogs och
+ * useWeightHistory). exit_preview_profile raderar dem — inget överlever.
  */
 export function useCalibrationHistory(userId: string | undefined) {
-  return usePreviewAwareQuery({
-    queryKey: ['calibration-history', userId],
-    emptyValue: [] as CalibrationHistory[],
+  const { isPreviewMode } = useAuth()
+  return useQuery({
+    queryKey: ['calibration-history', userId, isPreviewMode],
     queryFn: async () => {
       if (!userId) return []
       const { data, error } = await supabase
         .from('calibration_history')
         .select('*')
         .eq('user_id', userId)
+        .eq('is_preview', isPreviewMode ? true : false)
         .order('calibrated_at', { ascending: false })
       if (error) throw error
       return data as CalibrationHistory[]
@@ -32,15 +36,16 @@ export function useCalibrationHistory(userId: string | undefined) {
  * Reads and writes via user_id (Fas 3 — profile_id removed).
  */
 export function useLastCalibration(userId: string | undefined) {
-  return usePreviewAwareQuery({
-    queryKey: ['last-calibration', userId],
-    emptyValue: null as CalibrationHistory | null,
+  const { isPreviewMode } = useAuth()
+  return useQuery({
+    queryKey: ['last-calibration', userId, isPreviewMode],
     queryFn: async () => {
       if (!userId) return null
       const { data, error } = await supabase
         .from('calibration_history')
         .select('*')
         .eq('user_id', userId)
+        .eq('is_preview', isPreviewMode ? true : false)
         .order('calibrated_at', { ascending: false })
         .limit(1)
         .maybeSingle()
@@ -56,11 +61,12 @@ export function useLastCalibration(userId: string | undefined) {
  */
 export function useCreateCalibrationHistory() {
   const queryClient = useQueryClient()
-  return usePreviewMutation({
+  const { isPreviewMode } = useAuth()
+  return useMutation({
     mutationFn: async (data: Omit<CalibrationHistory, 'id' | 'created_at' | 'calibrated_at'>) => {
       const { data: result, error } = await supabase
         .from('calibration_history')
-        .insert([data])
+        .insert([{ ...data, is_preview: isPreviewMode }])
         .select()
         .single()
       if (error) throw error
@@ -82,7 +88,7 @@ export function useCreateCalibrationHistory() {
  */
 export function useRevertCalibration() {
   const queryClient = useQueryClient()
-  return usePreviewMutation({
+  return useMutation({
     mutationFn: async ({
       calibrationId,
       userId,
@@ -126,7 +132,7 @@ export function useRevertCalibration() {
  */
 export function useDeleteCalibrationHistory() {
   const queryClient = useQueryClient()
-  return usePreviewMutation({
+  return useMutation({
     mutationFn: async ({ id, userId }: { id: string; userId: string }) => {
       const { error } = await supabase.from('calibration_history').delete().eq('id', id)
       if (error) throw error
