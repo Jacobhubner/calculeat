@@ -74,7 +74,7 @@ export function calculateNutritionForUnit(
         carbs: food.carb_g * ratio,
         fat: food.fat_g * ratio,
         saturatedFat: food.saturated_fat_g != null ? food.saturated_fat_g * ratio : null,
-        sugars: food.sugars_g != null ? food.sugars_g * ratio : null,
+        sugars: food.sugar_g != null ? food.sugar_g * ratio : null,
         fiber: food.fiber_g != null ? food.fiber_g * ratio : null,
         salt: food.salt_g != null ? food.salt_g * ratio : null,
       }
@@ -94,7 +94,7 @@ export function calculateNutritionForUnit(
         carbs: food.carb_g * ratio,
         fat: food.fat_g * ratio,
         saturatedFat: food.saturated_fat_g != null ? food.saturated_fat_g * ratio : null,
-        sugars: food.sugars_g != null ? food.sugars_g * ratio : null,
+        sugars: food.sugar_g != null ? food.sugar_g * ratio : null,
         fiber: food.fiber_g != null ? food.fiber_g * ratio : null,
         salt: food.salt_g != null ? food.salt_g * ratio : null,
       }
@@ -133,7 +133,7 @@ export function calculateNutritionForUnit(
     fat: Math.round(food.fat_g * multiplier * 10) / 10,
     saturatedFat:
       food.saturated_fat_g != null ? Math.round(food.saturated_fat_g * multiplier * 10) / 10 : null,
-    sugars: food.sugars_g != null ? Math.round(food.sugars_g * multiplier * 10) / 10 : null,
+    sugars: food.sugar_g != null ? Math.round(food.sugar_g * multiplier * 10) / 10 : null,
     fiber: food.fiber_g != null ? Math.round(food.fiber_g * multiplier * 10) / 10 : null,
     salt: food.salt_g != null ? Math.round(food.salt_g * multiplier * 10) / 10 : null,
   }
