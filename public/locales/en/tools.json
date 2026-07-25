@@ -1099,7 +1099,6 @@
             "NEAT is also the most variable component of energy expenditure between individuals with similar body weight and BMI. Therefore, NEAT is of particular interest for weight regulation and fat mass — small differences in spontaneous activity can over years produce considerable energy differences.",
             "In the model, NEAT is divided into three sub-components: locomotion, posture, and other spontaneous movements, including fidgeting (small, often unconscious movements)."
           ],
-          "formula": "NEAT_total = (NEAT_steps + NEAT_standing + NEAT_household) × SPA_factor",
           "refs": [
             "Tzeravini E, Tentolouris A, Kokkinos A, Tentolouris N, Katsilambros N. Diet induced thermogenesis, older and newer data with emphasis on obesity and diabetes mellitus - A narrative review. Metabol Open. 2024 Jun 5;22:100291.",
             "von Loeffelholz C, Birkenfeld AL. Non-Exercise Activity Thermogenesis in Human Energy Homeostasis. In: Feingold KR, et al., editors. Endotext [Internet]. MDText.com, Inc.; 2000-."
