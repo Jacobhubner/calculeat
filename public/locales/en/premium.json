@@ -47,7 +47,7 @@
         },
         "meals": {
           "label": "Saved meals",
-          "free": "10",
+          "free": "3",
           "premium": "Unlimited"
         },
         "barcode": {

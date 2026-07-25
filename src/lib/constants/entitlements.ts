@@ -33,7 +33,7 @@ export interface PlanLimits {
 }
 
 export const FREE_LIMITS: PlanLimits = {
-  saved_meals: 10,
+  saved_meals: 3,
   recipes: 3,
   recipe_images: false,
   history_days: 30,

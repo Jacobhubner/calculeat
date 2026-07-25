@@ -47,7 +47,7 @@
         },
         "meals": {
           "label": "Sparade måltider",
-          "free": "10 st",
+          "free": "3 st",
           "premium": "Obegränsat"
         },
         "barcode": {
