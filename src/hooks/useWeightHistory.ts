@@ -1,27 +1,30 @@
-import { useQueryClient } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
-import { usePreviewAwareQuery } from '@/hooks/usePreviewAwareQuery'
-import { usePreviewMutation } from '@/hooks/usePreviewMutation'
 import type { WeightHistory } from '@/lib/types'
 import { toast } from 'sonner'
 
 /**
- * Hook to fetch weight history for the current user
- * Weight history is now shared across all profile cards
+ * Hook to fetch weight history for the current user.
+ * Weight history is shared across all profile cards.
+ *
+ * Preview-läget ("Testa som ny användare") är en äkta sandlåda: i preview
+ * läses och skrivs is_preview=true-rader (samma mönster som useDailyLogs).
+ * exit_preview_profile raderar alla is_preview=true-viktposter — så inget
+ * överlever avslut. Utanför preview läses bara is_preview=false.
  */
 export function useWeightHistory() {
-  const { user } = useAuth()
+  const { user, isPreviewMode } = useAuth()
 
-  return usePreviewAwareQuery({
-    queryKey: ['weight-history', user?.id],
-    emptyValue: [] as WeightHistory[],
+  return useQuery({
+    queryKey: ['weight-history', user?.id, isPreviewMode],
     queryFn: async () => {
       if (!user) return []
       const { data, error } = await supabase
         .from('weight_history')
         .select('*')
         .eq('user_id', user.id)
+        .eq('is_preview', isPreviewMode ? true : false)
         .order('recorded_at', { ascending: false })
       if (error) throw error
       return data as WeightHistory[]
@@ -31,14 +34,14 @@ export function useWeightHistory() {
 }
 
 /**
- * Hook to create a new weight history entry
- * Automatically uses the current user's ID
+ * Hook to create a new weight history entry.
+ * Automatically uses the current user's ID and tags preview rows.
  */
 export function useCreateWeightHistory() {
-  const { user } = useAuth()
+  const { user, isPreviewMode } = useAuth()
   const queryClient = useQueryClient()
 
-  return usePreviewMutation({
+  return useMutation({
     mutationFn: async (data: {
       weight_kg: number
       notes?: string
@@ -49,7 +52,7 @@ export function useCreateWeightHistory() {
 
       const { data: result, error } = await supabase
         .from('weight_history')
-        .insert([{ ...data, user_id: user.id }])
+        .insert([{ ...data, user_id: user.id, is_preview: isPreviewMode }])
         .select()
         .single()
       if (error) throw error
@@ -72,7 +75,7 @@ export function useDeleteWeightHistory() {
   const { user } = useAuth()
   const queryClient = useQueryClient()
 
-  return usePreviewMutation({
+  return useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from('weight_history').delete().eq('id', id)
       if (error) throw error

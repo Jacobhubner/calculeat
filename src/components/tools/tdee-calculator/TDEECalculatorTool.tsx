@@ -116,11 +116,14 @@ export default function TDEECalculatorTool() {
       ? profileData.body_fat_percentage.toString()
       : manualBodyFat
 
-  // Set weight when weight history or selection changes
+  // Set weight when weight history or selection changes.
+  // Fall tillbaka på profilvikten när ingen loggad vikt finns — annars blir
+  // fältet tomt för nya användare (och i preview) som fyllt i profilvikt men
+  // ännu inte loggat någon vikt.
   useEffect(() => {
     if (useLoggedWeight && latestLoggedWeight) {
       setLocalWeight(latestLoggedWeight.toString())
-    } else if (!useLoggedWeight && profileData?.weight_kg) {
+    } else if (profileData?.weight_kg) {
       setLocalWeight(profileData.weight_kg.toString())
     }
   }, [useLoggedWeight, latestLoggedWeight, profileData?.weight_kg])
