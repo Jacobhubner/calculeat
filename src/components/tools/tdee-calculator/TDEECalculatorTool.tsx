@@ -32,6 +32,20 @@ function toFiniteOrUndefined(value: unknown): number | undefined {
   return isFinite(n) ? n : undefined
 }
 
+// Formel-råvärde → i18n-nyckel (tdeeCalc.bmr.formulas.*) för läsraden.
+const BMR_FORMULA_I18N_KEY: Record<string, string> = {
+  'Mifflin-St Jeor equation': 'mifflin',
+  'Revised Harris-Benedict equation': 'revisedHarrisBenedict',
+  'Original Harris-Benedict equation': 'originalHarrisBenedict',
+  'Schofield equation': 'schofield',
+  'Oxford/Henry equation': 'oxford',
+  'MacroFactor standard equation': 'macrofactorStandard',
+  'Cunningham equation': 'cunningham',
+  'MacroFactor FFM equation': 'macrofactorFFM',
+  'MacroFactor athlete equation': 'macrofactorAthlete',
+  'Fitness Stuff Podcast equation': 'fitnessStuff',
+}
+
 export default function TDEECalculatorTool() {
   const navigate = useNavigate()
   const { t, i18n } = useTranslation('tools')
@@ -128,8 +142,9 @@ export default function TDEECalculatorTool() {
     }
   }, [useLoggedWeight, latestLoggedWeight, profileData?.weight_kg])
 
-  // BMR and PAL state
-  const [bmrFormula, setBmrFormula] = useState<BMRFormula | ''>('')
+  // BMR and PAL state. Mifflin är förvald standard (grepp 2) — nybörjaren
+  // behöver inte välja formel; expertvalet göms bakom "Avancerat".
+  const [bmrFormula, setBmrFormula] = useState<BMRFormula | ''>('Mifflin-St Jeor equation')
   const [palSystem, setPalSystem] = useState<PALSystem | ''>('')
   const [showBMRModal, setShowBMRModal] = useState(false)
   const [showPALModal, setShowPALModal] = useState(false)
@@ -587,66 +602,89 @@ export default function TDEECalculatorTool() {
             <CardContent>
               <div className="space-y-4">
                 <div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <label className="block text-sm font-medium text-neutral-700">
-                      {t('tdeeCalc.bmr.fieldLabel')} <span className="text-red-600">*</span>
-                    </label>
-                    {bmrFormula && (
-                      <button
-                        type="button"
-                        onClick={() => setShowBMRModal(true)}
-                        className="text-sm text-primary-600 hover:text-primary-700 underline transition-colors"
-                      >
-                        {t('tdeeCalc.bmr.factLink')}
-                      </button>
+                  {/* Läsrad: vilken formel som används (standard = Mifflin). */}
+                  <p className="text-sm text-neutral-600">
+                    {t('tdeeCalc.bmr.usingLabel')}:{' '}
+                    <span className="font-medium text-neutral-900">
+                      {bmrFormula && BMR_FORMULA_I18N_KEY[bmrFormula]
+                        ? (t as (k: string) => string)(
+                            `tdeeCalc.bmr.formulas.${BMR_FORMULA_I18N_KEY[bmrFormula]}`
+                          )
+                        : t('tdeeCalc.bmr.placeholder')}
+                    </span>
+                    {bmrFormula === 'Mifflin-St Jeor equation' && (
+                      <span className="text-neutral-500"> ({t('tdeeCalc.bmr.usingStandard')})</span>
                     )}
-                  </div>
-                  <select
-                    value={bmrFormula}
-                    onChange={e => handleBmrFormulaChange(e.target.value as BMRFormula | '')}
-                    className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
-                  >
-                    <option value="">{t('tdeeCalc.bmr.placeholder')}</option>
-                    <option value="Mifflin-St Jeor equation">
-                      {t('tdeeCalc.bmr.formulas.mifflin')}
-                    </option>
-                    <option value="Revised Harris-Benedict equation">
-                      {t('tdeeCalc.bmr.formulas.revisedHarrisBenedict')}
-                      {premiumSuffix(isFormulaLocked('Revised Harris-Benedict equation'))}
-                    </option>
-                    <option value="Original Harris-Benedict equation">
-                      {t('tdeeCalc.bmr.formulas.originalHarrisBenedict')}
-                      {premiumSuffix(isFormulaLocked('Original Harris-Benedict equation'))}
-                    </option>
-                    <option value="Schofield equation">
-                      {t('tdeeCalc.bmr.formulas.schofield')}
-                      {premiumSuffix(isFormulaLocked('Schofield equation'))}
-                    </option>
-                    <option value="Oxford/Henry equation">
-                      {t('tdeeCalc.bmr.formulas.oxford')}
-                      {premiumSuffix(isFormulaLocked('Oxford/Henry equation'))}
-                    </option>
-                    <option value="MacroFactor standard equation">
-                      {t('tdeeCalc.bmr.formulas.macrofactorStandard')}
-                      {premiumSuffix(isFormulaLocked('MacroFactor standard equation'))}
-                    </option>
-                    <option value="Cunningham equation">
-                      {t('tdeeCalc.bmr.formulas.cunningham')}
-                      {premiumSuffix(isFormulaLocked('Cunningham equation'))}
-                    </option>
-                    <option value="MacroFactor FFM equation">
-                      {t('tdeeCalc.bmr.formulas.macrofactorFFM')}
-                      {premiumSuffix(isFormulaLocked('MacroFactor FFM equation'))}
-                    </option>
-                    <option value="MacroFactor athlete equation">
-                      {t('tdeeCalc.bmr.formulas.macrofactorAthlete')}
-                      {premiumSuffix(isFormulaLocked('MacroFactor athlete equation'))}
-                    </option>
-                    <option value="Fitness Stuff Podcast equation">
-                      {t('tdeeCalc.bmr.formulas.fitnessStuff')}
-                      {premiumSuffix(isFormulaLocked('Fitness Stuff Podcast equation'))}
-                    </option>
-                  </select>
+                  </p>
+
+                  {/* Expertval — göms bakom "Avancerat" (grepp 2). */}
+                  <details className="mt-3 group">
+                    <summary className="cursor-pointer text-sm text-primary-600 hover:text-primary-700 select-none">
+                      {t('tdeeCalc.bmr.advancedToggle')}
+                    </summary>
+                    <div className="mt-3">
+                      <div className="flex items-center gap-2 mb-2">
+                        <label className="block text-sm font-medium text-neutral-700">
+                          {t('tdeeCalc.bmr.fieldLabel')} <span className="text-red-600">*</span>
+                        </label>
+                        {bmrFormula && (
+                          <button
+                            type="button"
+                            onClick={() => setShowBMRModal(true)}
+                            className="text-sm text-primary-600 hover:text-primary-700 underline transition-colors"
+                          >
+                            {t('tdeeCalc.bmr.factLink')}
+                          </button>
+                        )}
+                      </div>
+                      <select
+                        value={bmrFormula}
+                        onChange={e => handleBmrFormulaChange(e.target.value as BMRFormula | '')}
+                        className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                      >
+                        <option value="">{t('tdeeCalc.bmr.placeholder')}</option>
+                        <option value="Mifflin-St Jeor equation">
+                          {t('tdeeCalc.bmr.formulas.mifflin')}
+                        </option>
+                        <option value="Revised Harris-Benedict equation">
+                          {t('tdeeCalc.bmr.formulas.revisedHarrisBenedict')}
+                          {premiumSuffix(isFormulaLocked('Revised Harris-Benedict equation'))}
+                        </option>
+                        <option value="Original Harris-Benedict equation">
+                          {t('tdeeCalc.bmr.formulas.originalHarrisBenedict')}
+                          {premiumSuffix(isFormulaLocked('Original Harris-Benedict equation'))}
+                        </option>
+                        <option value="Schofield equation">
+                          {t('tdeeCalc.bmr.formulas.schofield')}
+                          {premiumSuffix(isFormulaLocked('Schofield equation'))}
+                        </option>
+                        <option value="Oxford/Henry equation">
+                          {t('tdeeCalc.bmr.formulas.oxford')}
+                          {premiumSuffix(isFormulaLocked('Oxford/Henry equation'))}
+                        </option>
+                        <option value="MacroFactor standard equation">
+                          {t('tdeeCalc.bmr.formulas.macrofactorStandard')}
+                          {premiumSuffix(isFormulaLocked('MacroFactor standard equation'))}
+                        </option>
+                        <option value="Cunningham equation">
+                          {t('tdeeCalc.bmr.formulas.cunningham')}
+                          {premiumSuffix(isFormulaLocked('Cunningham equation'))}
+                        </option>
+                        <option value="MacroFactor FFM equation">
+                          {t('tdeeCalc.bmr.formulas.macrofactorFFM')}
+                          {premiumSuffix(isFormulaLocked('MacroFactor FFM equation'))}
+                        </option>
+                        <option value="MacroFactor athlete equation">
+                          {t('tdeeCalc.bmr.formulas.macrofactorAthlete')}
+                          {premiumSuffix(isFormulaLocked('MacroFactor athlete equation'))}
+                        </option>
+                        <option value="Fitness Stuff Podcast equation">
+                          {t('tdeeCalc.bmr.formulas.fitnessStuff')}
+                          {premiumSuffix(isFormulaLocked('Fitness Stuff Podcast equation'))}
+                        </option>
+                      </select>
+                    </div>
+                  </details>
 
                   {/* Body fat — shown inline when formula requires it */}
                   {bmrFormula && requiresBodyFat(bmrFormula) && (

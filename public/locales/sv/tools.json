@@ -276,10 +276,13 @@
       "submitLabel": "Spara till profil"
     },
     "bmr": {
-      "title": "BMR/RMR-formel",
-      "description": "Välj formel för att beräkna din basalmetabolism",
+      "title": "Beräkningsformel",
+      "description": "Vi använder en väl beprövad standardformel. Du behöver inte ändra något här.",
       "fieldLabel": "BMR/RMR-formel",
       "factLink": "Fakta om denna formel",
+      "usingLabel": "Beräknas med",
+      "usingStandard": "standard",
+      "advancedToggle": "Avancerat: byt beräkningsformel",
       "placeholder": "Välj BMR/RMR-formel...",
       "bodyFatWarning": "Denna formel kräver kroppsfettprocent. Vänligen fyll i kroppsfettprocent ovan.",
       "formulas": {

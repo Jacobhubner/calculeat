@@ -276,10 +276,13 @@
       "submitLabel": "Save to profile"
     },
     "bmr": {
-      "title": "BMR/RMR formula",
-      "description": "Choose a formula to calculate your basal metabolic rate",
+      "title": "Calculation formula",
+      "description": "We use a well-established standard formula. You don't need to change anything here.",
       "fieldLabel": "BMR/RMR formula",
       "factLink": "Facts about this formula",
+      "usingLabel": "Calculated with",
+      "usingStandard": "standard",
+      "advancedToggle": "Advanced: change calculation formula",
       "placeholder": "Select BMR/RMR formula...",
       "bodyFatWarning": "This formula requires body fat percentage. Please fill in body fat percentage above.",
       "formulas": {
