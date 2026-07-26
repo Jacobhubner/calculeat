@@ -11,8 +11,9 @@ export function LanguageSwitcher() {
   // URL wins only when the current path is actually a known public page —
   // otherwise (app pages, unknown paths) fall back to i18n.language.
   const pageConfig = getPageConfigByPath(pathname)
+  const isEnglishPath = pathname === '/en' || pathname.startsWith('/en/')
   const current: SupportedLocale = pageConfig
-    ? pathname.startsWith('/en/')
+    ? isEnglishPath
       ? 'en'
       : 'sv'
     : i18n.language?.startsWith('en')

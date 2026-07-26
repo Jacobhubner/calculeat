@@ -210,6 +210,7 @@ function App() {
                 <Suspense fallback={<PageLoader />}>
                   <Routes>
                     <Route path="/" element={<HomePage />} />
+                    <Route path="/en" element={<HomePage />} />
                     <Route path="/features" element={<Navigate to="/" replace />} />
                     <Route path="/icon-demo" element={<IconDemo />} />
                     <Route

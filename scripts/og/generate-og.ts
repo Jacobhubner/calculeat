@@ -141,6 +141,14 @@ function loadTitles(locale: SupportedLocale): Map<string, string> {
       if (val?.seo?.title) map.set(key, val.seo.title)
     }
   }
+  // Startsidan bor i marketing.json under home.seo.title (ingen egen pages-*.json)
+  const marketingPath = path.join(dir, 'marketing.json')
+  if (existsSync(marketingPath)) {
+    const json = JSON.parse(readFileSync(marketingPath, 'utf8')) as {
+      home?: { seo?: { title?: string } }
+    }
+    if (json?.home?.seo?.title) map.set('home', json.home.seo.title)
+  }
   const articlesDir = path.join(dir, 'articles')
   if (existsSync(articlesDir)) {
     for (const f of readdirSync(articlesDir).filter(f => f.endsWith('.json'))) {

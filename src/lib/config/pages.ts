@@ -34,6 +34,19 @@ export const SITE_ORIGIN = 'https://calculeat.com'
 const BASE = SITE_ORIGIN
 
 const STATIC_PAGE_CONFIGS: PageConfig[] = [
+  // ── Startsida ─────────────────────────────────────────────────────────────
+  {
+    key: 'home',
+    category: 'other',
+    locales: {
+      sv: { path: '', canonical: `${BASE}/` },
+      en: { path: 'en', canonical: `${BASE}/en` },
+    },
+    xDefault: `${BASE}/`,
+    priority: 1.0,
+    changefreq: 'weekly',
+  },
+
   // ── Kalkylatorer ─────────────────────────────────────────────────────────
   {
     key: 'tdee-calculator',

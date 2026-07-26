@@ -1,7 +1,8 @@
-import { Link, Navigate } from 'react-router-dom'
+import { Link, Navigate, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/contexts/AuthContext'
 import { Seo } from '@/components/seo/Seo'
+import { getPageConfigByKey, getHreflangAlternates } from '@/lib/config/pages'
 import SiteHeader from '@/components/layout/SiteHeader'
 import SiteFooter from '@/components/layout/SiteFooter'
 import { HeroSection } from '@/components/HeroSection'
@@ -9,9 +10,15 @@ import { HowItWorks } from '@/components/HowItWorks'
 import { Button } from '@/components/ui/button'
 import { Scan, Share2, ChefHat, Scale, Target, ArrowRight } from 'lucide-react'
 
+const homeConfig = getPageConfigByKey('home')!
+const hreflangAlternates = getHreflangAlternates(homeConfig)
+
 export default function HomePage() {
   const { t, ready } = useTranslation(['marketing', 'common'])
   const { user } = useAuth()
+  const { pathname } = useLocation()
+  const lng = pathname === '/en' || pathname.startsWith('/en/') ? 'en' : 'sv'
+  const localeEntry = homeConfig.locales[lng] ?? homeConfig.locales.sv!
 
   // Anonyma gästsessioner (supportchatt) ska stanna på publika sidor
   if (user && !user.is_anonymous) return <Navigate to="/app" replace />
@@ -23,7 +30,9 @@ export default function HomePage() {
       <Seo
         title={t('marketing:home.seo.title')}
         description={t('marketing:home.seo.description')}
-        canonical="https://calculeat.com/"
+        canonical={localeEntry.canonical}
+        hreflangAlternates={hreflangAlternates}
+        locale={lng === 'en' ? 'en_US' : 'sv_SE'}
       />
       <SiteHeader />
 

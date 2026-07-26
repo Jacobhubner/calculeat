@@ -9,18 +9,11 @@
  */
 import { writeFileSync } from 'node:fs'
 import path from 'node:path'
-import { PAGE_CONFIGS, SITE_ORIGIN, getHreflangAlternates } from '../src/lib/config/pages'
+import { PAGE_CONFIGS, getHreflangAlternates } from '../src/lib/config/pages'
 
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;')
 
 const entries: string[] = []
-
-// Startsidan finns inte i PAGE_CONFIGS (den har ingen /en-variant)
-entries.push(`  <url>
-    <loc>${SITE_ORIGIN}/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>1.0</priority>
-  </url>`)
 
 for (const cfg of PAGE_CONFIGS) {
   if (cfg.noindex) continue // sidor under arbete hör inte hemma i sitemap
