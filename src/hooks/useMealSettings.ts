@@ -1,8 +1,7 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import { useProfileStore } from '@/stores/profileStore'
-import { usePreviewMutation } from '@/hooks/usePreviewMutation'
 
 export interface MealSetting {
   id: string
@@ -21,16 +20,23 @@ export interface CreateMealSettingInput {
   percentage_of_daily_calories: number
 }
 
+// Preview-sandlådan: user_meal_settings isoleras via is_preview-kolumnen
+// (migration 20260726120000). I preview läses/skrivs bara is_preview=true-rader;
+// utanför preview bara is_preview=false. exit_preview_profile raderar preview-
+// raderna vid avslut. Så måltidsinställningar kan ändras i sandlådan utan att
+// påverka det riktiga kontot. daily_logs/meal_entries-städningen filtreras också
+// på is_preview så preview aldrig rör riktiga loggar.
+
 /**
  * Get user's meal settings
  */
 export function useMealSettings() {
   const activeProfile = useProfileStore(state => state.activeProfile)
-  const { profile: legacyProfile, user } = useAuth()
+  const { profile: legacyProfile, user, isPreviewMode } = useAuth()
   const profile = activeProfile || legacyProfile
 
   return useQuery({
-    queryKey: ['mealSettings', user?.id],
+    queryKey: ['mealSettings', user?.id, isPreviewMode],
     queryFn: async () => {
       if (!profile) throw new Error('Profile not found')
       if (!user) throw new Error('User not authenticated')
@@ -39,6 +45,7 @@ export function useMealSettings() {
         .from('user_meal_settings')
         .select('*')
         .eq('user_id', user.id)
+        .eq('is_preview', isPreviewMode ? true : false)
         .order('meal_order')
 
       if (error) throw error
@@ -54,11 +61,11 @@ export function useMealSettings() {
  */
 export function useCreateDefaultMealSettings() {
   const activeProfile = useProfileStore(state => state.activeProfile)
-  const { profile: legacyProfile, user } = useAuth()
+  const { profile: legacyProfile, user, isPreviewMode } = useAuth()
   const profile = activeProfile || legacyProfile
   const queryClient = useQueryClient()
 
-  return usePreviewMutation({
+  return useMutation({
     mutationFn: async () => {
       if (!profile) throw new Error('Profile not found')
       if (!user) throw new Error('User not authenticated')
@@ -73,6 +80,7 @@ export function useCreateDefaultMealSettings() {
         meal_name: string
         meal_order: number
         percentage_of_daily_calories: number
+        is_preview: boolean
       }>
 
       if (mealsConfig?.meals && mealsConfig.meals.length > 0) {
@@ -82,6 +90,7 @@ export function useCreateDefaultMealSettings() {
           meal_name: meal.name,
           meal_order: index,
           percentage_of_daily_calories: meal.percentage,
+          is_preview: isPreviewMode,
         }))
       } else {
         // Default 4 meals
@@ -95,6 +104,7 @@ export function useCreateDefaultMealSettings() {
         mealsToInsert = defaultMeals.map(meal => ({
           ...meal,
           user_id: user.id,
+          is_preview: isPreviewMode,
         }))
       }
 
@@ -117,11 +127,11 @@ export function useCreateDefaultMealSettings() {
  */
 export function useCreateMealSetting() {
   const activeProfile = useProfileStore(state => state.activeProfile)
-  const { profile: legacyProfile, user } = useAuth()
+  const { profile: legacyProfile, user, isPreviewMode } = useAuth()
   const profile = activeProfile || legacyProfile
   const queryClient = useQueryClient()
 
-  return usePreviewMutation({
+  return useMutation({
     mutationFn: async (input: CreateMealSettingInput) => {
       if (!profile) throw new Error('Profile not found')
       if (!user) throw new Error('User not authenticated')
@@ -131,6 +141,7 @@ export function useCreateMealSetting() {
         .from('user_meal_settings')
         .select('percentage_of_daily_calories')
         .eq('user_id', user.id)
+        .eq('is_preview', isPreviewMode ? true : false)
 
       const currentTotal =
         existing?.reduce((sum, m) => sum + m.percentage_of_daily_calories, 0) || 0
@@ -144,6 +155,7 @@ export function useCreateMealSetting() {
         .insert({
           user_id: user.id,
           ...input,
+          is_preview: isPreviewMode,
         })
         .select()
         .single()
@@ -162,11 +174,11 @@ export function useCreateMealSetting() {
  */
 export function useUpdateMealSetting() {
   const activeProfile = useProfileStore(state => state.activeProfile)
-  const { profile: legacyProfile, user } = useAuth()
+  const { profile: legacyProfile, user, isPreviewMode } = useAuth()
   const profile = activeProfile || legacyProfile
   const queryClient = useQueryClient()
 
-  return usePreviewMutation({
+  return useMutation({
     mutationFn: async ({ id, ...input }: Partial<CreateMealSettingInput> & { id: string }) => {
       if (!profile) throw new Error('Profile not found')
       if (!user) throw new Error('User not authenticated')
@@ -177,6 +189,7 @@ export function useUpdateMealSetting() {
           .from('user_meal_settings')
           .select('percentage_of_daily_calories')
           .eq('user_id', user.id)
+          .eq('is_preview', isPreviewMode ? true : false)
           .neq('id', id)
 
         const otherTotal =
@@ -192,6 +205,7 @@ export function useUpdateMealSetting() {
         .update(input)
         .eq('id', id)
         .eq('user_id', user.id)
+        .eq('is_preview', isPreviewMode ? true : false)
         .select()
         .single()
 
@@ -209,11 +223,11 @@ export function useUpdateMealSetting() {
  */
 export function useDeleteMealSetting() {
   const activeProfile = useProfileStore(state => state.activeProfile)
-  const { profile: legacyProfile, user } = useAuth()
+  const { profile: legacyProfile, user, isPreviewMode } = useAuth()
   const profile = activeProfile || legacyProfile
   const queryClient = useQueryClient()
 
-  return usePreviewMutation({
+  return useMutation({
     mutationFn: async (id: string) => {
       if (!profile) throw new Error('Profile not found')
       if (!user) throw new Error('User not authenticated')
@@ -223,6 +237,7 @@ export function useDeleteMealSetting() {
         .from('user_meal_settings')
         .select('*', { count: 'exact', head: true })
         .eq('user_id', user.id)
+        .eq('is_preview', isPreviewMode ? true : false)
 
       if (count && count <= 1) {
         throw new Error('Du måste ha minst en måltid konfigurerad')
@@ -234,6 +249,7 @@ export function useDeleteMealSetting() {
         .select('meal_order')
         .eq('id', id)
         .eq('user_id', user.id)
+        .eq('is_preview', isPreviewMode ? true : false)
         .single()
 
       const { error } = await supabase
@@ -241,16 +257,19 @@ export function useDeleteMealSetting() {
         .delete()
         .eq('id', id)
         .eq('user_id', user.id)
+        .eq('is_preview', isPreviewMode ? true : false)
 
       if (error) throw error
 
       // Remove meal_entries with this meal_order from all open (non-completed) daily logs.
-      // Completed logs are historical records and should not be touched.
+      // Completed logs are historical records and should not be touched. Scoped to
+      // is_preview so preview only touches preview logs.
       if (settingData) {
         const { data: openLogs } = await supabase
           .from('daily_logs')
           .select('id')
           .eq('user_id', user.id)
+          .eq('is_preview', isPreviewMode ? true : false)
           .eq('is_completed', false)
 
         const openLogIds = openLogs?.map(l => l.id) ?? []
@@ -276,11 +295,11 @@ export function useDeleteMealSetting() {
  */
 export function useReorderMealSettings() {
   const activeProfile = useProfileStore(state => state.activeProfile)
-  const { profile: legacyProfile, user } = useAuth()
+  const { profile: legacyProfile, user, isPreviewMode } = useAuth()
   const profile = activeProfile || legacyProfile
   const queryClient = useQueryClient()
 
-  return usePreviewMutation({
+  return useMutation({
     mutationFn: async (meals: Array<{ id: string; meal_order: number }>) => {
       if (!profile) throw new Error('Profile not found')
       if (!user) throw new Error('User not authenticated')
@@ -292,6 +311,7 @@ export function useReorderMealSettings() {
           .update({ meal_order: meal.meal_order })
           .eq('id', meal.id)
           .eq('user_id', user.id)
+          .eq('is_preview', isPreviewMode ? true : false)
       )
 
       await Promise.all(updates)
@@ -308,16 +328,20 @@ export function useReorderMealSettings() {
  * with the meal configuration saved in the profile.
  */
 export function useSyncMealSettings() {
-  const { user } = useAuth()
+  const { user, isPreviewMode } = useAuth()
   const queryClient = useQueryClient()
 
-  return usePreviewMutation({
+  return useMutation({
     mutationFn: async ({ meals }: { meals: Array<{ name: string; percentage: number }> }) => {
       if (!meals || meals.length === 0) throw new Error('Meals required')
       if (!user) throw new Error('User not authenticated')
 
-      // Delete all existing meal settings for this user
-      await supabase.from('user_meal_settings').delete().eq('user_id', user.id)
+      // Delete existing settings for this scope (preview vs real)
+      await supabase
+        .from('user_meal_settings')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('is_preview', isPreviewMode ? true : false)
 
       // Insert new meals
       const mealsToInsert = meals.map((meal, index) => ({
@@ -325,6 +349,7 @@ export function useSyncMealSettings() {
         meal_name: meal.name,
         meal_order: index,
         percentage_of_daily_calories: meal.percentage,
+        is_preview: isPreviewMode,
       }))
 
       const { data, error } = await supabase
@@ -334,17 +359,20 @@ export function useSyncMealSettings() {
 
       if (error) throw error
 
-      // Propagate name changes and remove deleted meal_orders from open daily logs
+      // Propagate name changes and remove deleted meal_orders from open daily logs.
+      // Scoped to is_preview so preview only affects preview logs.
       const { data: openLogs } = await supabase
         .from('daily_logs')
         .select('id')
         .eq('user_id', user.id)
+        .eq('is_preview', isPreviewMode ? true : false)
         .eq('is_completed', false)
 
       const { data: allLogs } = await supabase
         .from('daily_logs')
         .select('id')
         .eq('user_id', user.id)
+        .eq('is_preview', isPreviewMode ? true : false)
 
       const openLogIds = openLogs?.map(l => l.id) ?? []
       const allLogIds = allLogs?.map(l => l.id) ?? []
@@ -388,17 +416,21 @@ export function useSyncMealSettings() {
  */
 export function useResetMealSettings() {
   const activeProfile = useProfileStore(state => state.activeProfile)
-  const { profile: legacyProfile, user } = useAuth()
+  const { profile: legacyProfile, user, isPreviewMode } = useAuth()
   const profile = activeProfile || legacyProfile
   const queryClient = useQueryClient()
 
-  return usePreviewMutation({
+  return useMutation({
     mutationFn: async () => {
       if (!profile) throw new Error('Profile not found')
       if (!user) throw new Error('User not authenticated')
 
-      // Delete all existing
-      await supabase.from('user_meal_settings').delete().eq('user_id', user.id)
+      // Delete all existing for this scope (preview vs real)
+      await supabase
+        .from('user_meal_settings')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('is_preview', isPreviewMode ? true : false)
 
       // Create defaults
       const defaultMeals = [
@@ -411,6 +443,7 @@ export function useResetMealSettings() {
       const mealsWithIds = defaultMeals.map(meal => ({
         ...meal,
         user_id: user.id,
+        is_preview: isPreviewMode,
       }))
 
       const { data, error } = await supabase
