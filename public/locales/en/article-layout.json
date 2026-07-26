@@ -31,12 +31,5 @@
     "updatedLabel": "Updated",
     "readingTime_one": "{{count}} min read",
     "readingTime_other": "{{count}} min read"
-  },
-  "authorBox": {
-    "titles": [
-      "Doctor of Naprapathy",
-      "Certified Nutrition Advisor",
-      "EQF Level 4 Personal Trainer"
-    ]
   }
 }

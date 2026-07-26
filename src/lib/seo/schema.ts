@@ -38,9 +38,9 @@ export function buildArticleSchemas(input: ArticleSchemaInput) {
     datePublished,
     dateModified,
     author: {
-      '@type': 'Person',
+      '@type': 'Organization',
+      '@id': ORG_ID,
       name: AUTHOR.name,
-      jobTitle: AUTHOR.jobTitle[lng] ?? AUTHOR.jobTitle.sv,
       url: AUTHOR.url[lng] ?? AUTHOR.url.sv,
     },
     publisher: {

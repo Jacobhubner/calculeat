@@ -31,8 +31,5 @@
     "updatedLabel": "Uppdaterad",
     "readingTime_one": "{{count}} min läsning",
     "readingTime_other": "{{count}} min läsning"
-  },
-  "authorBox": {
-    "titles": ["Legitimerad naprapat", "Certifierad kostrådgivare", "Personlig tränare EQF Level 4"]
   }
 }

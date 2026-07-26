@@ -63,8 +63,6 @@ export function ArticleLayout({
       )
     : undefined
 
-  const authorTitles = t('authorBox.titles', { returnObjects: true }) as unknown as string[]
-
   const hasToc = !!tocItems && tocItems.length >= 3
 
   return (
@@ -141,18 +139,15 @@ export function ArticleLayout({
           <div className="xl:grid xl:grid-cols-[1fr_minmax(0,42rem)_1fr]">
             <div aria-hidden className="hidden xl:block" />
             <div className="container mx-auto px-4 max-w-2xl xl:max-w-none xl:w-full">
-              {/* Författar-byline — diskret enrads (endast titlar, ägarens beslut) */}
-              {authorName && Array.isArray(authorTitles) && (
+              {/* Författar-byline — diskret enrads. Innehåll tillskrivs
+                  organisationen Calculeat (personnamn borttaget 2026-07-26). */}
+              {authorName && (
                 <p
                   data-byline
                   className="mb-10 flex flex-wrap items-center gap-x-2 gap-y-1 border-b border-neutral-200/70 pb-6 text-[13px] leading-relaxed text-neutral-500"
                 >
                   <BadgeCheck aria-hidden className="h-4 w-4 text-primary-600 flex-shrink-0" />
                   <span className="font-medium text-neutral-800">{authorName}</span>
-                  <span aria-hidden className="text-neutral-300">
-                    ·
-                  </span>
-                  <span>{authorTitles.join(' · ')}</span>
                 </p>
               )}
 

@@ -1,23 +1,19 @@
 import { SITE_ORIGIN } from '@/lib/config/pages'
 
+/** Stabilt @id så Article.publisher refererar samma nod som Organization-schemat i index.html */
+export const ORG_ID = `${SITE_ORIGIN}/#organization`
+export const ORG_NAME = 'Calculeat'
+export const ORG_LOGO_URL = `${SITE_ORIGIN}/logo-512.png`
+
 /**
- * Författare för allt artikelinnehåll (E-E-A-T-signal i Article-schema
- * och synlig byline). Nutrition är YMYL — namngiven människa med
- * kvalifikationer väger tyngre än anonym organisation.
+ * Författare för allt artikelinnehåll (Article-schema + synlig byline).
+ * Innehållet tillskrivs organisationen Calculeat (beslut 2026-07-26 —
+ * personnamn borttaget).
  */
 export const AUTHOR = {
-  name: 'Jacob Hübner',
-  jobTitle: {
-    sv: 'Legitimerad naprapat, certifierad kostrådgivare och personlig tränare EQF Level 4',
-    en: 'Doctor of Naprapathy, Certified Nutrition Advisor and EQF Level 4 Personal Trainer',
-  },
+  name: ORG_NAME,
   url: {
     sv: `${SITE_ORIGIN}/om-oss`,
     en: `${SITE_ORIGIN}/en/about`,
   },
 } as const
-
-/** Stabilt @id så Article.publisher refererar samma nod som Organization-schemat i index.html */
-export const ORG_ID = `${SITE_ORIGIN}/#organization`
-export const ORG_NAME = 'Calculeat'
-export const ORG_LOGO_URL = `${SITE_ORIGIN}/logo-512.png`
