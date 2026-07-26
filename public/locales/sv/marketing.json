@@ -1,17 +1,18 @@
 {
   "home": {
     "seo": {
-      "title": "CalculEat — Kalorikalkylator och matloggning",
-      "description": "CalculEat är en gratis svensk nutritionsapp med TDEE-kalkylator, BMI-kalkylator, matloggning och recept. Räkna ut ditt kaloribehov och nå dina mål."
+      "title": "Calculeat — Kalorikalkylator och matloggning",
+      "description": "Calculeat är en gratis svensk nutritionsapp med TDEE-kalkylator, BMI-kalkylator, matloggning och recept. Räkna ut ditt kaloribehov och nå dina mål."
     },
     "hero": {
       "h1": "Ta kontroll över din kost.",
-      "h1Highlight": "Enkelt med CalculEat.",
+      "h1Highlight": "Enkelt med Calculeat.",
+      "tagline": "Calculate your eating",
       "body": "Scanna livsmedel med kameran. Bygg egna recept. Dela listor med familj och vänner. Koll på kalorier, makron och kroppssammansättning — allt på ett ställe.",
       "subtext": "Tar mindre än en minut att komma igång.",
       "ctaPrimary": "Kom igång — det är gratis",
       "ctaSecondary": "Prova kalkylatorn",
-      "cardHeader": "CalculEat — dina verktyg",
+      "cardHeader": "Calculeat — dina verktyg",
       "tile1": "Skanna streckkoder",
       "tile2": "Bygg recept",
       "tile3": "Dela listor",
@@ -23,7 +24,7 @@
     "features": {
       "scan": {
         "title": "Skanna direkt i affären",
-        "description": "Håll upp kameran mot streckkoden på förpackningen. CalculEat hämtar näringsvärden och lägger till livsmedlet på sekunder."
+        "description": "Håll upp kameran mot streckkoden på förpackningen. Calculeat hämtar näringsvärden och lägger till livsmedlet på sekunder."
       },
       "recipes": {
         "title": "Bygg recept och se näringsvärdet live",
@@ -39,7 +40,7 @@
       },
       "goals": {
         "title": "Sätt mål och få en konkret plan",
-        "description": "Ange ditt viktmål — CalculEat räknar ut kalorimål, makrofördelning och en realistisk tidslinje. Inte ett genomsnitt, utan din plan."
+        "description": "Ange ditt viktmål — Calculeat räknar ut kalorimål, makrofördelning och en realistisk tidslinje. Inte ett genomsnitt, utan din plan."
       }
     },
     "calculator": {
@@ -88,7 +89,7 @@
     },
     "cta": {
       "title": "Precision börjar här.",
-      "description": "CalculEat är byggt för dem som vill förstå sin kost på riktigt — inte för dem som nöjer sig med ungefärliga estimat. Konto tar 60 sekunder att skapa.",
+      "description": "Calculeat är byggt för dem som vill förstå sin kost på riktigt — inte för dem som nöjer sig med ungefärliga estimat. Konto tar 60 sekunder att skapa.",
       "createAccount": "Skapa mitt konto gratis",
       "noPaid": "Ingen betald version — alla funktioner är tillgängliga utan kostnad.",
       "secure": "Dina uppgifter lagras säkert och delas aldrig med tredje part."
@@ -118,7 +119,7 @@
     "hero": {
       "title": "Kraftfulla funktioner för bättre hälsa",
       "titleHighlight": "bättre hälsa",
-      "subtitle": "CalculEat kombinerar vetenskapliga kalkyler, smart kostloggning och detaljerad progress tracking i ett kraftfullt verktyg för att hjälpa dig nå dina hälsomål."
+      "subtitle": "Calculeat kombinerar vetenskapliga kalkyler, smart kostloggning och detaljerad progress tracking i ett kraftfullt verktyg för att hjälpa dig nå dina hälsomål."
     },
     "overview": {
       "smart": "Smart Kalkyler",
@@ -182,7 +183,7 @@
     },
     "more": {
       "title": "Och mycket mer...",
-      "subtitle": "Utforska alla funktioner som gör CalculEat till det ultimata verktyget",
+      "subtitle": "Utforska alla funktioner som gör Calculeat till det ultimata verktyget",
       "density": {
         "title": "Kaloritäthetssystem",
         "description": "Smartare matval med färgkodade livsmedel baserat på kaloritäthet (volumetrics) för mer balanserade matval."
@@ -300,7 +301,7 @@
       "placeholder": "Din e-postadress",
       "button": "Prenumerera"
     },
-    "copyright": "© {{year}} CalculEat. Alla rättigheter förbehållna.",
+    "copyright": "© {{year}} Calculeat. Alla rättigheter förbehållna.",
     "madeWith": "Gjord med",
     "madeIn": "i Sverige"
   },
@@ -314,17 +315,17 @@
       "anna": {
         "name": "Anna Andersson",
         "achievement": "Gick ner 15 kg på 6 månader",
-        "quote": "CalculEat gjorde det enkelt att förstå mitt kaloriintag och hålla koll på mina makron. Jag har äntligen hittat ett hållbart sätt att nå mina viktmål!"
+        "quote": "Calculeat gjorde det enkelt att förstå mitt kaloriintag och hålla koll på mina makron. Jag har äntligen hittat ett hållbart sätt att nå mina viktmål!"
       },
       "erik": {
         "name": "Erik Nilsson",
         "achievement": "Ökade 8 kg muskelmassa",
-        "quote": "Som gymmare är det avgörande att få rätt mängd protein. Med CalculEat kunde jag optimera min kost och se fantastiska resultat på bara 4 månader."
+        "quote": "Som gymmare är det avgörande att få rätt mängd protein. Med Calculeat kunde jag optimera min kost och se fantastiska resultat på bara 4 månader."
       },
       "maria": {
         "name": "Maria Johansson",
         "achievement": "Bibehållit vikten i 1 år",
-        "quote": "Efter att ha nått mitt målvikt använder jag fortfarande CalculEat dagligen. Det hjälper mig att hålla balansen och känna kontroll över min hälsa."
+        "quote": "Efter att ha nått mitt målvikt använder jag fortfarande Calculeat dagligen. Det hjälper mig att hålla balansen och känna kontroll över min hälsa."
       }
     }
   }

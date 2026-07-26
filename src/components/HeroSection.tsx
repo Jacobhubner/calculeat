@@ -16,6 +16,9 @@ export function HeroSection() {
           {/* Left column - Text content */}
           <div className="text-center lg:text-left space-y-8">
             <div className="space-y-4">
+              <p className="text-sm font-semibold uppercase tracking-wider text-primary-600">
+                {t('home.hero.tagline')}
+              </p>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-neutral-900 leading-tight">
                 {t('home.hero.h1')}{' '}
                 <span className="bg-gradient-to-r from-primary-600 to-accent-500 bg-clip-text text-transparent">

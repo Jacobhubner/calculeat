@@ -1,29 +1,30 @@
 {
   "home": {
     "seo": {
-      "title": "CalculEat â€” Calorie Calculator and Food Logging",
-      "description": "CalculEat is a free nutrition app with a TDEE calculator, BMI calculator, food logging and recipes. Calculate your calorie needs and reach your goals."
+      "title": "Calculeat — Calorie Calculator and Food Logging",
+      "description": "Calculeat is a free nutrition app with a TDEE calculator, BMI calculator, food logging and recipes. Calculate your calorie needs and reach your goals."
     },
     "hero": {
       "h1": "Take control of your diet.",
-      "h1Highlight": "Simple with CalculEat.",
-      "body": "Scan foods with your camera. Build your own recipes. Share lists with family and friends. Track calories, macros, and body composition â€” all in one place.",
+      "h1Highlight": "Simple with Calculeat.",
+      "tagline": "Calculate your eating",
+      "body": "Scan foods with your camera. Build your own recipes. Share lists with family and friends. Track calories, macros, and body composition — all in one place.",
       "subtext": "Takes less than a minute to get started.",
-      "ctaPrimary": "Get started â€” it's free",
+      "ctaPrimary": "Get started — it's free",
       "ctaSecondary": "Try the calculator",
-      "cardHeader": "CalculEat â€” your tools",
+      "cardHeader": "Calculeat — your tools",
       "tile1": "Scan barcodes",
       "tile2": "Build recipes",
       "tile3": "Share lists",
       "tile4": "Body composition",
       "cardFooter": "+ Calorie tracking, goals, trends and more.",
       "featuresTitle": "Features that actually get used",
-      "featuresSubtitle": "Not a tool you open once â€” one that follows you in the kitchen, the grocery store, and the gym."
+      "featuresSubtitle": "Not a tool you open once — one that follows you in the kitchen, the grocery store, and the gym."
     },
     "features": {
       "scan": {
         "title": "Scan directly in the store",
-        "description": "Point your camera at the barcode on the packaging. CalculEat fetches nutrition data and adds the food in seconds."
+        "description": "Point your camera at the barcode on the packaging. Calculeat fetches nutrition data and adds the food in seconds."
       },
       "recipes": {
         "title": "Build recipes and see nutrition live",
@@ -39,12 +40,12 @@
       },
       "goals": {
         "title": "Set goals and get a concrete plan",
-        "description": "Enter your weight goal â€” CalculEat calculates your calorie target, macro distribution, and a realistic timeline. Not an average, your plan."
+        "description": "Enter your weight goal — Calculeat calculates your calorie target, macro distribution, and a realistic timeline. Not an average, your plan."
       }
     },
     "calculator": {
       "title": "Try our calculator",
-      "subtitle": "Get your personal energy needs instantly â€” no login required."
+      "subtitle": "Get your personal energy needs instantly — no login required."
     },
     "smartCalc": {
       "title": "Calculate your daily calorie needs.",
@@ -64,9 +65,9 @@
       "activityVery": "Very active",
       "activityExtremely": "Extremely active",
       "activityDescSedentary": "Little to no exercise. Suitable for people with minimal physical activity (e.g. desk job, no regular training).",
-      "activityDescLightly": "Light exercise or sport 1â€“3 days/week. Suitable for those who exercise lightly sometimes (e.g. walking, light jogging, yoga).",
-      "activityDescModerately": "Moderate exercise or sport 3â€“5 days/week. Ideal for people with regular moderate training routines (e.g. gym, swimming, cycling).",
-      "activityDescVery": "Hard exercise or sport 6â€“7 days/week. Suitable for people who train intensively almost daily (e.g. athletes, intense training).",
+      "activityDescLightly": "Light exercise or sport 1–3 days/week. Suitable for those who exercise lightly sometimes (e.g. walking, light jogging, yoga).",
+      "activityDescModerately": "Moderate exercise or sport 3–5 days/week. Ideal for people with regular moderate training routines (e.g. gym, swimming, cycling).",
+      "activityDescVery": "Hard exercise or sport 6–7 days/week. Suitable for people who train intensively almost daily (e.g. athletes, intense training).",
       "activityDescExtremely": "Very hard exercise, physical work, or training twice a day. For those with exceptionally high energy expenditure (e.g. professional athletes, heavy manual labor).",
       "calculateButton": "Calculate",
       "resultsTitle": "Your results",
@@ -88,18 +89,18 @@
     },
     "cta": {
       "title": "Precision starts here.",
-      "description": "CalculEat is built for those who want to truly understand their diet â€” not for those who settle for rough estimates. An account takes 60 seconds to create.",
+      "description": "Calculeat is built for those who want to truly understand their diet — not for those who settle for rough estimates. An account takes 60 seconds to create.",
       "createAccount": "Create my account for free",
-      "noPaid": "No paid version â€” all features are available at no cost.",
+      "noPaid": "No paid version — all features are available at no cost.",
       "secure": "Your data is stored securely and never shared with third parties."
     }
   },
   "howItWorks": {
     "title": "How it works",
-    "subtitle": "From the grocery shelf to the dinner plate â€” and everything in between.",
+    "subtitle": "From the grocery shelf to the dinner plate — and everything in between.",
     "step1": {
       "title": "Scan or search for food",
-      "description": "Point your camera at the barcode in the store or search our database with thousands of foods. Nutrition data is fetched instantly â€” you log it with one tap."
+      "description": "Point your camera at the barcode in the store or search our database with thousands of foods. Nutrition data is fetched instantly — you log it with one tap."
     },
     "step2": {
       "title": "Build recipes and log meals",
@@ -111,14 +112,14 @@
     },
     "step4": {
       "title": "Track your progress and adjust",
-      "description": "Graphs and statistics show what you're actually eating week by week. Compare against your calorie goal and body composition â€” and adjust when needed."
+      "description": "Graphs and statistics show what you're actually eating week by week. Compare against your calorie goal and body composition — and adjust when needed."
     }
   },
   "features": {
     "hero": {
       "title": "Powerful features for better health",
       "titleHighlight": "better health",
-      "subtitle": "CalculEat combines scientific calculations, smart food logging, and detailed progress tracking in one powerful tool to help you reach your health goals."
+      "subtitle": "Calculeat combines scientific calculations, smart food logging, and detailed progress tracking in one powerful tool to help you reach your health goals."
     },
     "overview": {
       "smart": "Smart Calculators",
@@ -133,7 +134,7 @@
     "detailed": {
       "calculators": {
         "title": "Scientific Calculators",
-        "description": "Choose from 10 different BMR formulas and 6 PAL systems for maximally accurate calculations tailored to your situation. From Mifflin-St Jeor to Cunningham and Oxford/Henry â€” we have all the formulas you need.",
+        "description": "Choose from 10 different BMR formulas and 6 PAL systems for maximally accurate calculations tailored to your situation. From Mifflin-St Jeor to Cunningham and Oxford/Henry — we have all the formulas you need.",
         "highlight1": "10 BMR formulas for different situations",
         "highlight2": "6 PAL systems for accurate TDEE",
         "highlight3": "BMI and ideal weight calculations",
@@ -149,7 +150,7 @@
       },
       "macros": {
         "title": "Professional Macro Programs",
-        "description": "Preset macro programs for different goals â€” from healthy eating according to NNR (Nordic Nutrition Recommendations) to bodybuilding-specific modes for bulk and cut. Customize to your needs.",
+        "description": "Preset macro programs for different goals — from healthy eating according to NNR (Nordic Nutrition Recommendations) to bodybuilding-specific modes for bulk and cut. Customize to your needs.",
         "highlight1": "NNR mode for healthy eating",
         "highlight2": "Off-Season mode for muscle growth",
         "highlight3": "On-Season mode for fat loss",
@@ -165,7 +166,7 @@
       },
       "body": {
         "title": "Body Composition",
-        "description": "Measure your body composition with 12 professional methods â€” from caliper measurements to tape measurements. Track your lean mass and body fat percentage over time.",
+        "description": "Measure your body composition with 12 professional methods — from caliper measurements to tape measurements. Track your lean mass and body fat percentage over time.",
         "highlight1": "12 different measurement methods",
         "highlight2": "Jackson/Pollock, Durnin/Womersley, U.S. Navy",
         "highlight3": "Caliper and tape measurements",
@@ -182,7 +183,7 @@
     },
     "more": {
       "title": "And much more...",
-      "subtitle": "Explore all the features that make CalculEat the ultimate tool",
+      "subtitle": "Explore all the features that make Calculeat the ultimate tool",
       "density": {
         "title": "Calorie Density System",
         "description": "Smarter food choices with color-coded foods based on calorie density (volumetrics) for more balanced eating."
@@ -198,7 +199,7 @@
     },
     "cta": {
       "title": "Ready to start your journey?",
-      "subtitle": "Create your account today and get access to all powerful features â€” completely free to get started!",
+      "subtitle": "Create your account today and get access to all powerful features — completely free to get started!",
       "button": "Create account for free",
       "back": "Back to home"
     }
@@ -247,7 +248,7 @@
         "description": "Everything about losing weight sustainably."
       },
       "bulkandcut": {
-        "title": "Bulk and cut â€” complete guide",
+        "title": "Bulk and cut — complete guide",
         "description": "Plan your phases and avoid common mistakes."
       }
     }
@@ -300,7 +301,7 @@
       "placeholder": "Your email address",
       "button": "Subscribe"
     },
-    "copyright": "Â© {{year}} CalculEat. All rights reserved.",
+    "copyright": "Â© {{year}} Calculeat. All rights reserved.",
     "madeWith": "Made with",
     "madeIn": "in Sweden"
   },
@@ -314,17 +315,17 @@
       "anna": {
         "name": "Anna Andersson",
         "achievement": "Lost 15 kg in 6 months",
-        "quote": "CalculEat made it easy to understand my calorie intake and keep track of my macros. I've finally found a sustainable way to reach my weight goals!"
+        "quote": "Calculeat made it easy to understand my calorie intake and keep track of my macros. I've finally found a sustainable way to reach my weight goals!"
       },
       "erik": {
         "name": "Erik Nilsson",
         "achievement": "Gained 8 kg of muscle mass",
-        "quote": "As a gym-goer, getting the right amount of protein is crucial. With CalculEat I was able to optimize my diet and see amazing results in just 4 months."
+        "quote": "As a gym-goer, getting the right amount of protein is crucial. With Calculeat I was able to optimize my diet and see amazing results in just 4 months."
       },
       "maria": {
         "name": "Maria Johansson",
         "achievement": "Maintained weight for 1 year",
-        "quote": "After reaching my target weight I still use CalculEat daily. It helps me maintain balance and feel in control of my health."
+        "quote": "After reaching my target weight I still use Calculeat daily. It helps me maintain balance and feel in control of my health."
       }
     }
   }
