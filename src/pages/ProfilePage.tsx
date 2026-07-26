@@ -4,6 +4,7 @@
  */
 
 import { useState, useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { User, Loader2, Check } from 'lucide-react'
@@ -59,6 +60,10 @@ function caloriesForGoal(
 
 export default function ProfilePage() {
   const { t } = useTranslation('profile')
+  const navigate = useNavigate()
+  // Öppna manuell TDEE-inmatning direkt när användaren valde "Ange manuellt"
+  // i det hopslagna setup-steget.
+  const [openManualEntry, setOpenManualEntry] = useState(false)
   // Load profiles
   const { data: allProfiles = [] } = useProfiles()
 
@@ -427,13 +432,16 @@ export default function ProfilePage() {
   }
 
   // Handler for SetupProfileForm — sparar direkt (inte pending) vid första inloggning
-  const handleSetupSave = async (data: {
-    birth_date: string
-    gender: Gender
-    height_cm: number
-    weight_kg: number
-    calorie_goal: 'Weight loss' | 'Maintain weight' | 'Weight gain'
-  }) => {
+  const handleSetupSave = async (
+    data: {
+      birth_date: string
+      gender: Gender
+      height_cm: number
+      weight_kg: number
+      calorie_goal: 'Weight loss' | 'Maintain weight' | 'Weight gain'
+    },
+    method: 'calculate' | 'manual'
+  ) => {
     if (!activeProfile) return
 
     const isNetworkError = (error: unknown) =>
@@ -464,9 +472,20 @@ export default function ProfilePage() {
       await createWeightHistory.mutateAsync({ weight_kg: data.weight_kg })
     }
 
+    // Efter lyckad sparning: gå vidare enligt vald metod. 'calculate' navigerar
+    // till TDEE-kalkylatorn; 'manual' visar Scenario 2 med manuell inmatning öppen.
+    const proceed = () => {
+      if (method === 'calculate') {
+        navigate('/app/tools/tdee-calculator')
+      } else {
+        setOpenManualEntry(true)
+      }
+    }
+
     try {
       await attemptSave()
       toast.success(t('toast.basicInfoSaved'))
+      proceed()
     } catch (error) {
       if (error instanceof PreviewBlockedError) return
 
@@ -476,6 +495,7 @@ export default function ProfilePage() {
         try {
           await attemptSave()
           toast.success(t('toast.basicInfoSaved'))
+          proceed()
           return
         } catch (retryError) {
           if (retryError instanceof PreviewBlockedError) return
@@ -490,7 +510,7 @@ export default function ProfilePage() {
         action: {
           label: t('save.retryError'),
           onClick: () => {
-            void handleSetupSave(data)
+            void handleSetupSave(data, method)
           },
         },
       })
@@ -762,6 +782,7 @@ export default function ProfilePage() {
                 tdee={displayProfile.tdee}
                 bodyFatPercentage={displayProfile.body_fat_percentage}
                 onTDEEChange={handleTDEEChange}
+                defaultShowManual={openManualEntry}
                 onBeforeNavigate={async () => {
                   if (activeProfile) {
                     await handleSaveProfile(activeProfile.id)

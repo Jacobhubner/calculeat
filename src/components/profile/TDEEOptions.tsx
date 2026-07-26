@@ -37,6 +37,8 @@ interface TDEEOptionsProps {
     accumulated_at?: number
   }) => void
   onBeforeNavigate?: () => Promise<void>
+  /** Öppna manuell inmatning direkt (från det hopslagna setup-steget). */
+  defaultShowManual?: boolean
 }
 
 export default function TDEEOptions({
@@ -48,10 +50,11 @@ export default function TDEEOptions({
   bodyFatPercentage,
   onTDEEChange,
   onBeforeNavigate,
+  defaultShowManual = false,
 }: TDEEOptionsProps) {
   const { t } = useTranslation('profile')
   const navigate = useNavigate()
-  const [showManualEntry, setShowManualEntry] = useState(false)
+  const [showManualEntry, setShowManualEntry] = useState(defaultShowManual)
 
   const handleCalculateTDEE = async () => {
     // Save profile before navigating

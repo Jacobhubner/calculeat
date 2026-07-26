@@ -14,13 +14,18 @@ import type { Gender } from '@/lib/types'
 type CalorieGoal = 'Weight loss' | 'Maintain weight' | 'Weight gain'
 
 interface SetupProfileFormProps {
-  onSave: (data: {
-    birth_date: string
-    gender: Gender
-    height_cm: number
-    weight_kg: number
-    calorie_goal: CalorieGoal
-  }) => Promise<void>
+  onSave: (
+    data: {
+      birth_date: string
+      gender: Gender
+      height_cm: number
+      weight_kg: number
+      calorie_goal: CalorieGoal
+    },
+    // 'calculate' = spara och gå till TDEE-kalkylatorn; 'manual' = spara och
+    // öppna manuell inmatning. Slår ihop grunduppgifter + metodval till en vy.
+    method: 'calculate' | 'manual'
+  ) => Promise<void>
   isSaving: boolean
 }
 
@@ -53,15 +58,18 @@ export default function SetupProfileForm({ onSave, isSaving }: SetupProfileFormP
     weight >= 20 &&
     weight <= 400
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (method: 'calculate' | 'manual') => {
     if (!isValid || !gender || !goal) return
-    await onSave({
-      birth_date: birthDate,
-      gender: gender as Gender,
-      height_cm: height,
-      weight_kg: weight,
-      calorie_goal: goal,
-    })
+    await onSave(
+      {
+        birth_date: birthDate,
+        gender: gender as Gender,
+        height_cm: height,
+        weight_kg: weight,
+        calorie_goal: goal,
+      },
+      method
+    )
   }
 
   return (
@@ -206,9 +214,32 @@ export default function SetupProfileForm({ onSave, isSaving }: SetupProfileFormP
           </div>
         </div>
 
-        <Button onClick={handleSubmit} disabled={!isValid || isSaving} className="w-full sm:w-auto">
-          {isSaving ? t('save.saving') : t('setup.saveAndContinue')}
-        </Button>
+        {/* Metodval — slås ihop med grunduppgifterna på samma vy (steg 1+2).
+            Båda knapparna sparar grunduppgifterna först och går sedan vidare. */}
+        <div className="border-t border-neutral-100 pt-5">
+          <p className="text-sm font-medium text-neutral-700 mb-1">{t('setup.methodTitle')}</p>
+          <p className="text-xs text-neutral-500 mb-3">{t('setup.methodHint')}</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <Button
+              onClick={() => handleSubmit('calculate')}
+              disabled={!isValid || isSaving}
+              className="h-12"
+            >
+              {isSaving ? t('save.saving') : t('setup.methodCalculate')}
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => handleSubmit('manual')}
+              disabled={!isValid || isSaving}
+              className="h-12"
+            >
+              {t('setup.methodManual')}
+            </Button>
+          </div>
+          {!isValid && (
+            <p className="text-xs text-neutral-400 mt-2">{t('setup.methodFillFirst')}</p>
+          )}
+        </div>
       </CardContent>
     </Card>
   )

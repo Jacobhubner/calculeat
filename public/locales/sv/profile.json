@@ -69,7 +69,12 @@
     "goalLoss": "Gå ner i vikt",
     "goalMaintain": "Behålla vikten",
     "goalGain": "Gå upp i vikt",
-    "saveAndContinue": "Spara och fortsätt"
+    "saveAndContinue": "Spara och fortsätt",
+    "methodTitle": "Hur vill du räkna ut ditt kaloribehov?",
+    "methodHint": "Vi uppskattar det åt dig utifrån några enkla frågor — eller ange det själv om du redan vet.",
+    "methodCalculate": "Räkna ut åt mig",
+    "methodManual": "Jag vet redan mitt kaloribehov",
+    "methodFillFirst": "Fyll i alla uppgifter ovan för att gå vidare."
   },
   "basicInfo": {
     "title": "Grundläggande information",

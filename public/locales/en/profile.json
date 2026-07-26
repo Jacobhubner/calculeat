@@ -69,7 +69,12 @@
     "goalLoss": "Lose weight",
     "goalMaintain": "Maintain weight",
     "goalGain": "Gain weight",
-    "saveAndContinue": "Save and continue"
+    "saveAndContinue": "Save and continue",
+    "methodTitle": "How do you want to find your calorie needs?",
+    "methodHint": "We'll estimate it for you from a few simple questions — or enter it yourself if you already know it.",
+    "methodCalculate": "Calculate it for me",
+    "methodManual": "I already know my calorie needs",
+    "methodFillFirst": "Fill in all the details above to continue."
   },
   "basicInfo": {
     "title": "Basic information",

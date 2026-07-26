@@ -326,6 +326,8 @@
       "description": "Basalmetabolism och total daglig energiförbrukning",
       "bmrLabel": "BASALMETABOLISM",
       "tdeeLabel": "TOTAL ENERGIFÖRBRUKNING",
+      "bmrExplain": "Energin din kropp gör av med i vila — bara för att hålla dig igång.",
+      "tdeeExplain": "Ditt totala dagliga kaloribehov — vila plus all rörelse. Utgångspunkten för ditt mål.",
       "kcalPerDay": "kcal/dag",
       "saveButton": "Spara till profil",
       "saving": "Sparar..."

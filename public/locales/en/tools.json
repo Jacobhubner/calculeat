@@ -326,6 +326,8 @@
       "description": "Basal metabolic rate and total daily energy expenditure",
       "bmrLabel": "BASAL METABOLIC RATE",
       "tdeeLabel": "TOTAL ENERGY EXPENDITURE",
+      "bmrExplain": "The energy your body burns at rest — just to keep you going.",
+      "tdeeExplain": "Your total daily calorie needs — rest plus all movement. The starting point for your goal.",
       "kcalPerDay": "kcal/day",
       "saveButton": "Save to profile",
       "saving": "Saving..."

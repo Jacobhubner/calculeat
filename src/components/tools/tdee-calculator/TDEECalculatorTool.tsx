@@ -932,6 +932,9 @@ export default function TDEECalculatorTool() {
                       <p className="text-sm text-blue-600 font-semibold mb-2">BMR</p>
                       <p className="text-5xl font-bold text-blue-700 mb-1">{Math.round(bmr)}</p>
                       <p className="text-sm text-neutral-500">{t('tdeeCalc.results.kcalPerDay')}</p>
+                      <p className="mt-2 text-xs text-neutral-600 leading-relaxed">
+                        {t('tdeeCalc.results.bmrExplain')}
+                      </p>
                       <p className="mt-3 text-xs text-neutral-500 border-t border-blue-200 pt-3">
                         {bmrFormula}
                       </p>
@@ -947,6 +950,9 @@ export default function TDEECalculatorTool() {
                       <p className="text-sm text-green-600 font-semibold mb-2">TDEE</p>
                       <p className="text-5xl font-bold text-green-700 mb-1">{Math.round(tdee)}</p>
                       <p className="text-sm text-neutral-500">{t('tdeeCalc.results.kcalPerDay')}</p>
+                      <p className="mt-2 text-xs text-neutral-600 leading-relaxed">
+                        {t('tdeeCalc.results.tdeeExplain')}
+                      </p>
                       <p className="mt-3 text-xs text-neutral-500 border-t border-green-200 pt-3">
                         {palSystemName(palSystem as PALSystem)}
                       </p>
