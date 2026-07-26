@@ -96,7 +96,12 @@ export function UpgradeModal({ open, onOpenChange, limitKey }: UpgradeModalProps
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+      {/* z-[10000] så jämförelsen alltid ligger över InfoModal (z-[9999]) när
+          man klickar på ett låst element inuti en info-modal. */}
+      <DialogContent
+        overlayClassName="z-[10000]"
+        className="z-[10000] max-w-md max-h-[90vh] overflow-y-auto"
+      >
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-amber-500" aria-hidden="true" />
