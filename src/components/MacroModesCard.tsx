@@ -28,6 +28,7 @@ import { PremiumBadge } from '@/components/premium/PremiumBadge'
 import { UpgradeModal } from '@/components/premium/UpgradeModal'
 import { calculateLeanMass } from '@/lib/calculations/bodyComposition'
 import type { Profile } from '@/lib/types'
+import { cn } from '@/lib/utils'
 import { useTranslation } from 'react-i18next'
 
 interface MacroModesCardProps {
@@ -286,9 +287,9 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
               <div key={mode.id}>
                 {index > 0 && <Separator className="mb-4" />}
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Icon className="h-4 w-4" />
+                  <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-2">
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1 min-w-0">
+                      <Icon className="h-4 w-4 flex-shrink-0" />
                       <span className="font-semibold">{tm(`${mode.id}Name`)}</span>
                       <Badge variant="outline" className={mode.badgeClass}>
                         {tm(`${mode.id}Badge`)}
@@ -298,7 +299,7 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
                         <button
                           type="button"
                           onClick={() => (locked ? setUpgradeOpen(true) : setActiveRef(mode.id))}
-                          className="text-neutral-400 hover:text-primary-600 transition-colors"
+                          className="text-neutral-400 hover:text-primary-600 transition-colors flex-shrink-0"
                           aria-label={tm(`showRef`, { mode: tm(`${mode.id}Name`) })}
                         >
                           {locked ? (
@@ -314,9 +315,10 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
                       variant={active ? 'primary' : 'outline'}
                       onClick={() => (locked ? setUpgradeOpen(true) : handleApplyMode(mode.id))}
                       disabled={active || (!locked && !canApply)}
-                      className={
+                      className={cn(
+                        'flex-shrink-0',
                         !locked && !canApply && !active ? 'opacity-40 cursor-not-allowed' : ''
-                      }
+                      )}
                     >
                       {locked && !active && <Lock className="mr-1 h-3 w-3" aria-hidden="true" />}
                       {active
