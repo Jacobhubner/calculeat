@@ -14,7 +14,7 @@ import { calculateTDEE } from '@/lib/calculations/tdee'
 import type { PALSystem, ActivityLevel, IntensityLevel, DailySteps } from '@/lib/calculations/tdee'
 import { calculateAge } from '@/lib/calculations/helpers'
 import { toast } from 'sonner'
-import type { TDEECalculationSnapshot, BMRFormula } from '@/lib/types'
+import type { TDEECalculationSnapshot, BMRFormula, CalorieGoal, DeficitLevel } from '@/lib/types'
 import BMRFormulaModal from '@/components/calculator/BMRFormulaModal'
 import PALSystemModal from '@/components/calculator/PALSystemModal'
 import PALTableContainer from '@/components/calculator/PALTableContainer'
@@ -30,6 +30,45 @@ import MetabolicCalibration from '@/components/profile/MetabolicCalibration'
 function toFiniteOrUndefined(value: unknown): number | undefined {
   const n = parseFloat(String(value ?? ''))
   return isFinite(n) ? n : undefined
+}
+
+// Kaloriintervall + mål för DB-sparning. Bevarar profilens redan valda mål
+// (t.ex. från onboarding-uppsättningen) i stället för att hårdkoda maintenance.
+// Utan tidigare mål (helt ny profil): maintenance ±3%.
+function caloriesForGoalPreset(
+  tdee: number,
+  goal?: string | null,
+  deficitLevel?: string | null
+): {
+  calorie_goal: CalorieGoal
+  calories_min: number
+  calories_max: number
+  deficit_level?: DeficitLevel
+} {
+  if (goal === 'Weight gain') {
+    return {
+      calorie_goal: 'Weight gain',
+      calories_min: tdee * 1.1,
+      calories_max: tdee * 1.2,
+    }
+  }
+  if (goal === 'Weight loss') {
+    const d: DeficitLevel =
+      deficitLevel === '25-30%' || deficitLevel === '10-15%' ? deficitLevel : '20-25%'
+    const mult = d === '25-30%' ? [0.7, 0.75] : d === '10-15%' ? [0.85, 0.9] : [0.75, 0.8] // 20-25% standard
+    return {
+      calorie_goal: 'Weight loss',
+      calories_min: tdee * mult[0],
+      calories_max: tdee * mult[1],
+      deficit_level: d,
+    }
+  }
+  // Maintain weight (och ingen/okänt mål)
+  return {
+    calorie_goal: 'Maintain weight',
+    calories_min: tdee * 0.97,
+    calories_max: tdee * 1.03,
+  }
 }
 
 // Formel-råvärde → i18n-nyckel (tdeeCalc.bmr.formulas.*) för läsraden.
@@ -406,10 +445,9 @@ export default function TDEECalculatorTool() {
           tdee_calculated_at: new Date().toISOString(),
           tdee_source: 'tdee_calculator_tool',
           tdee_calculation_snapshot: snapshot,
-          // Set default calorie goal and interval (maintenance ±3%)
-          calorie_goal: 'Maintain weight',
-          calories_min: tdee * 0.97,
-          calories_max: tdee * 1.03,
+          // Behåll det mål användaren redan valt (t.ex. i onboarding) och räkna om
+          // kaloriintervallet för det. Utan tidigare mål: maintenance ±3% som default.
+          ...caloriesForGoalPreset(tdee, activeProfile.calorie_goal, activeProfile.deficit_level),
         },
       })
 
