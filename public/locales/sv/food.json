@@ -1,4 +1,10 @@
 {
+  "copyToCalculeatPrompt": {
+    "title": "Lägg även till i Calculeat-listan?",
+    "body": "\"{{name}}\" sparades bland dina livsmedel. Vill du också lägga en kopia i den globala Calculeat-listan? Den syns då för alla användare.",
+    "confirm": "Ja, kopiera",
+    "decline": "Nej tack"
+  },
   "tabs": {
     "mine": "Mina",
     "calculeat": "Calculeat",

@@ -38,6 +38,7 @@ import {
 import { useFoodSource } from '@/hooks/useFoodSource'
 import { DATA_SOURCES } from '@/lib/constants/dataSources'
 import { useIsAdmin } from '@/hooks/useIsAdmin'
+import { useAuth } from '@/contexts/AuthContext'
 import { SOURCE_BADGES, getListItemBadgeConfig } from '@/lib/constants/sourceBadges'
 import { useRecipes, type Recipe } from '@/hooks/useRecipes'
 import { useRecipeImpact, type RecipeImpact } from '@/hooks/useRecipeImpact'
@@ -266,6 +267,7 @@ export default function FoodItemsPage() {
   )
 
   const { data: isAdmin = false } = useIsAdmin()
+  const { isPreviewMode } = useAuth()
   const { data: recipes = [] } = useRecipes()
   const deleteFood = useDeleteFoodItem()
   const adminDeleteFood = useAdminDeleteFoodItem()
@@ -307,6 +309,9 @@ export default function FoodItemsPage() {
   const [listEditItem, setListEditItem] = useState<FoodItem | null>(null)
   const [listEditConfirmShared, setListEditConfirmShared] = useState(false)
   const [editCopyMode, setEditCopyMode] = useState(false)
+  // Admin: efter att ha skapat ett nytt personligt livsmedel — fråga om en kopia
+  // också ska läggas i den globala Calculeat-listan. Aldrig i preview.
+  const [copyToCalculeatPrompt, setCopyToCalculeatPrompt] = useState<FoodItem | null>(null)
   const [listDeleteItem, setListDeleteItem] = useState<FoodItem | null>(null)
   const [adminDeleteItem, setAdminDeleteItem] = useState<FoodItem | null>(null)
   const [adminEditItem, setAdminEditItem] = useState<FoodItem | null>(null)
@@ -606,21 +611,39 @@ export default function FoodItemsPage() {
     setEditCopyMode(false)
   }
 
-  const handleModalSuccess = useCallback(() => {
-    queryClient.invalidateQueries({ queryKey: ['foodItems'] })
-    // Switch to Mina tab when: creating personal copy of list item, or CoW of global item
-    // But NOT when admin is editing/creating directly on the calculeat tab
-    const adminOnCalculeat = isAdmin && activeTab === 'calculeat'
-    if (
-      editCopyMode ||
-      (editingItem &&
-        editingItem.user_id === null &&
-        !editingItem.shared_list_id &&
-        !adminOnCalculeat)
-    ) {
-      setActiveTab('mina')
-    }
-  }, [queryClient, editingItem, editCopyMode, isAdmin, activeTab])
+  const handleModalSuccess = useCallback(
+    (createdFood?: FoodItem) => {
+      queryClient.invalidateQueries({ queryKey: ['foodItems'] })
+
+      // Admin skapade ett NYTT personligt livsmedel (inte redigering, inte
+      // Calculeat-fliken, inte preview) → fråga om en kopia även ska läggas i den
+      // globala Calculeat-listan.
+      if (
+        isAdmin &&
+        !isPreviewMode &&
+        !editingItem &&
+        activeTab !== 'calculeat' &&
+        createdFood?.id &&
+        createdFood.user_id !== null
+      ) {
+        setCopyToCalculeatPrompt(createdFood)
+      }
+
+      // Switch to Mina tab when: creating personal copy of list item, or CoW of global item
+      // But NOT when admin is editing/creating directly on the calculeat tab
+      const adminOnCalculeat = isAdmin && activeTab === 'calculeat'
+      if (
+        editCopyMode ||
+        (editingItem &&
+          editingItem.user_id === null &&
+          !editingItem.shared_list_id &&
+          !adminOnCalculeat)
+      ) {
+        setActiveTab('mina')
+      }
+    },
+    [queryClient, editingItem, editCopyMode, isAdmin, activeTab, isPreviewMode]
+  )
 
   const handleShowNutrients = (item: FoodItem) => {
     if (item.is_recipe) {
@@ -1801,6 +1824,35 @@ export default function FoodItemsPage() {
         copyMode={editCopyMode}
         adminGlobalMode={isAdminCalculeatTab}
       />
+
+      {/* Admin: fråga om nyskapat livsmedel även ska kopieras till Calculeat-listan */}
+      <Dialog
+        open={!!copyToCalculeatPrompt}
+        onOpenChange={open => !open && setCopyToCalculeatPrompt(null)}
+      >
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>{t('copyToCalculeatPrompt.title')}</DialogTitle>
+            <DialogDescription>
+              {t('copyToCalculeatPrompt.body', { name: copyToCalculeatPrompt?.name ?? '' })}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex gap-2 justify-end mt-2">
+            <Button variant="outline" onClick={() => setCopyToCalculeatPrompt(null)}>
+              {t('copyToCalculeatPrompt.decline')}
+            </Button>
+            <Button
+              onClick={async () => {
+                const item = copyToCalculeatPrompt
+                setCopyToCalculeatPrompt(null)
+                if (item) await handleCopyToCalculeat(item.id)
+              }}
+            >
+              {t('copyToCalculeatPrompt.confirm')}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Nutrient Detail Panel */}
       <FoodNutrientPanel

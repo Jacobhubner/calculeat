@@ -1,4 +1,10 @@
 {
+  "copyToCalculeatPrompt": {
+    "title": "Also add to the Calculeat list?",
+    "body": "\"{{name}}\" was saved to your foods. Do you also want to add a copy to the global Calculeat list? It will then be visible to all users.",
+    "confirm": "Yes, copy",
+    "decline": "No thanks"
+  },
   "tabs": {
     "mine": "My foods",
     "calculeat": "Calculeat",
