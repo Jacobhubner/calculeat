@@ -439,11 +439,13 @@ export default function ProfilePage() {
     const isNetworkError = (error: unknown) =>
       error instanceof TypeError && /fetch/i.test(error.message)
 
-    // Kaloritäthetsindikatorn hjälper den som vill gå NER (undvika kaloritäta
-    // livsmedel) — förvälj den bara vid viktnedgång, och sätt den explicit av
-    // vid övriga mål så inget gammalt värde ligger kvar. Vid viktnedgång även
-    // normalt underskott (20-25%). Smart förval, användaren kan ändra efteråt.
+    // Kaloritäthetsindikatorn förväljs vid viktnedgång OCH underhåll (hjälper både
+    // kaloriundvikande och aptitkontroll — mätta sig på volym), men av vid
+    // viktuppgång (då man snarare vill ha kaloritäta livsmedel). Sätts explicit så
+    // inget gammalt värde ligger kvar vid målbyte. Vid viktnedgång även normalt
+    // underskott (20-25%). Användaren kan ändra efteråt.
     const isWeightLoss = data.calorie_goal === 'Weight loss'
+    const isWeightGain = data.calorie_goal === 'Weight gain'
 
     const attemptSave = async () => {
       await updateProfile.mutateAsync({
@@ -455,7 +457,7 @@ export default function ProfilePage() {
           weight_kg: data.weight_kg,
           initial_weight_kg: data.weight_kg,
           calorie_goal: data.calorie_goal,
-          show_energy_density: isWeightLoss,
+          show_energy_density: !isWeightGain,
           ...(isWeightLoss ? { deficit_level: '20-25%' } : {}),
         },
       })
