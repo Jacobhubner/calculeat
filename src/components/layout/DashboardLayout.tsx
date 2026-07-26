@@ -9,7 +9,6 @@ import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
 import { usePreviewMode } from '@/hooks/usePreviewMode'
-import { useFreeViewMode } from '@/hooks/useFreeViewMode'
 import { SupportChatButton } from '@/components/support/SupportChatButton'
 import { useSupportAdminUnreadCount } from '@/hooks/useSupportChat'
 
@@ -22,7 +21,6 @@ export default function DashboardLayout({ children, fullHeight }: DashboardLayou
   const { sidebarCollapsed } = useUIStore()
   const { isEmailVerified, user, isPreviewMode } = useAuth()
   const { exitPreview } = usePreviewMode()
-  const { isFreeViewActive, exitFreeView } = useFreeViewMode()
   useSupportAdminUnreadCount() // aktiverar realtime-kanal för admin-inbox
 
   const handleResend = async () => {
@@ -50,17 +48,6 @@ export default function DashboardLayout({ children, fullHeight }: DashboardLayou
               className="shrink-0 text-xs font-semibold underline hover:no-underline disabled:opacity-50"
             >
               {exitPreview.isPending ? 'Avslutar…' : 'Avsluta preview'}
-            </button>
-          </div>
-        )}
-        {isFreeViewActive && (
-          <div className="bg-amber-50 border-b border-amber-300 px-4 py-2 text-sm text-amber-800 flex items-center justify-between gap-4">
-            <span className="font-medium">👤 Förhandsvisning — gratisanvändare</span>
-            <button
-              onClick={() => exitFreeView()}
-              className="shrink-0 text-xs font-semibold underline hover:no-underline"
-            >
-              Avsluta gratisvy
             </button>
           </div>
         )}
