@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import { useFreeViewMode } from '@/hooks/useFreeViewMode'
+import { usePreviewMutation } from '@/hooks/usePreviewMutation'
 import { type FoodColor, type FoodType } from '@/lib/calculations/colorDensity'
 
 export type FoodSource = 'manual' | 'livsmedelsverket' | 'usda' | 'user' | 'shared'
@@ -585,11 +586,13 @@ export function useAdminUpdateFoodItem() {
 
 /**
  * Admin: Kopiera ett eget livsmedel till den globala Calculeat-listan.
+ * Blockeras i preview-sandlådan (usePreviewMutation) — kopian skulle annars
+ * skrivas GLOBALT (utanför sandlådan) och läcka ut ur previewen.
  */
 export function useCopyFoodItemToCalculeat() {
   const queryClient = useQueryClient()
 
-  return useMutation({
+  return usePreviewMutation({
     mutationFn: async (foodItemId: string) => {
       const { data, error } = await supabase.rpc('copy_food_item_to_calculeat', {
         p_food_item_id: foodItemId,
