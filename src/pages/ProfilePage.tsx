@@ -782,7 +782,7 @@ export default function ProfilePage() {
                 tdee={displayProfile.tdee}
                 bodyFatPercentage={displayProfile.body_fat_percentage}
                 onTDEEChange={handleTDEEChange}
-                defaultShowManual={openManualEntry}
+                manualOnly={openManualEntry}
                 onBeforeNavigate={async () => {
                   if (activeProfile) {
                     await handleSaveProfile(activeProfile.id)
