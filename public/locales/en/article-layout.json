@@ -27,7 +27,7 @@
   "backLink": "Back to Calculeat",
   "faqTitle": "Frequently Asked Questions",
   "byline": {
-    "authorPrefix": "By",
+    "reviewedBy": "Reviewed by the Calculeat team",
     "updatedLabel": "Updated",
     "readingTime_one": "{{count}} min read",
     "readingTime_other": "{{count}} min read"

@@ -147,10 +147,7 @@ export function ArticleLayout({
                   className="mb-10 flex flex-wrap items-center gap-x-2 gap-y-1 border-b border-neutral-200/70 pb-6 text-[13px] leading-relaxed text-neutral-500"
                 >
                   <ShieldCheck aria-hidden className="h-4 w-4 text-primary-600 flex-shrink-0" />
-                  <span>
-                    {t('byline.authorPrefix')}{' '}
-                    <span className="font-medium text-neutral-800">{authorName}</span>
-                  </span>
+                  <span className="font-medium text-neutral-800">{t('byline.reviewedBy')}</span>
                 </p>
               )}
 

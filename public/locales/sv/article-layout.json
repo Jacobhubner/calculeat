@@ -27,7 +27,7 @@
   "backLink": "Tillbaka till Calculeat",
   "faqTitle": "Vanliga frågor",
   "byline": {
-    "authorPrefix": "Av",
+    "reviewedBy": "Granskat av Calculeat-teamet",
     "updatedLabel": "Uppdaterad",
     "readingTime_one": "{{count}} min läsning",
     "readingTime_other": "{{count}} min läsning"
