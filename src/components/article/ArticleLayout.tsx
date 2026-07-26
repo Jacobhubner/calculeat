@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { ArrowLeft, ArrowRight, BadgeCheck, ChevronRight, FlaskConical } from 'lucide-react'
+import { ArrowLeft, ArrowRight, ShieldCheck, ChevronRight, FlaskConical } from 'lucide-react'
 import SiteHeader from '@/components/layout/SiteHeader'
 import SiteFooter from '@/components/layout/SiteFooter'
 import type { FaqItem } from './FaqBlock'
@@ -146,8 +146,11 @@ export function ArticleLayout({
                   data-byline
                   className="mb-10 flex flex-wrap items-center gap-x-2 gap-y-1 border-b border-neutral-200/70 pb-6 text-[13px] leading-relaxed text-neutral-500"
                 >
-                  <BadgeCheck aria-hidden className="h-4 w-4 text-primary-600 flex-shrink-0" />
-                  <span className="font-medium text-neutral-800">{authorName}</span>
+                  <ShieldCheck aria-hidden className="h-4 w-4 text-primary-600 flex-shrink-0" />
+                  <span>
+                    {t('byline.authorPrefix')}{' '}
+                    <span className="font-medium text-neutral-800">{authorName}</span>
+                  </span>
                 </p>
               )}
 
