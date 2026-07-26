@@ -26,6 +26,9 @@ import { useShowEnergyDensity } from '@/hooks/useShowEnergyDensity'
 import { toast } from 'sonner'
 import { SOURCE_BADGES, getListItemBadgeConfig } from '@/lib/constants/sourceBadges'
 import { AddFoodItemModal } from '@/components/food/AddFoodItemModal'
+import { useIsAdmin } from '@/hooks/useIsAdmin'
+import { useAuth } from '@/contexts/AuthContext'
+import { useCopyFoodItemToCalculeat } from '@/hooks/useFoodItems'
 
 const PAGE_SIZE = 50
 
@@ -73,6 +76,13 @@ export function AddFoodToMealModal({
   const tAny = t as (key: string) => string
   const showEnergyDensity = useShowEnergyDensity()
   const isEditMode = !!editItem
+
+  // Admin: efter att ha skapat ett nytt personligt livsmedel härifrån — fråga om
+  // en kopia även ska läggas i den globala Calculeat-listan. Aldrig i preview.
+  const { data: isAdmin = false } = useIsAdmin()
+  const { isPreviewMode } = useAuth()
+  const { mutateAsync: copyToCalculeat } = useCopyFoodItemToCalculeat()
+  const [copyPrompt, setCopyPrompt] = useState<FoodItem | null>(null)
 
   const STATIC_TABS: { key: FoodTab; label: string }[] = [
     { key: 'mina', label: t('tabs.mine') },
@@ -833,6 +843,11 @@ export function AddFoodToMealModal({
         onSuccess={newFood => {
           if (newFood) {
             pendingScannedFoodRef.current = newFood
+            // Admin skapade ett nytt personligt livsmedel härifrån (ej preview) →
+            // fråga om en kopia även ska läggas i globala Calculeat-listan.
+            if (isAdmin && !isPreviewMode && newFood.id && newFood.user_id !== null) {
+              setCopyPrompt(newFood)
+            }
             // Reopen AddFoodToMealModal and select the new food after it fully opens
             setTimeout(() => {
               onOpenChange(true)
@@ -847,6 +862,42 @@ export function AddFoodToMealModal({
           }
         }}
       />
+
+      {/* Admin: fråga om nyskapat livsmedel även ska kopieras till Calculeat-listan */}
+      <Dialog open={!!copyPrompt} onOpenChange={open => !open && setCopyPrompt(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>{t('copyToCalculeatPrompt.title')}</DialogTitle>
+            <DialogDescription>
+              {t('copyToCalculeatPrompt.body', { name: copyPrompt?.name ?? '' })}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex gap-2 justify-end mt-2">
+            <Button variant="outline" onClick={() => setCopyPrompt(null)}>
+              {t('copyToCalculeatPrompt.decline')}
+            </Button>
+            <Button
+              onClick={async () => {
+                const item = copyPrompt
+                setCopyPrompt(null)
+                if (!item) return
+                try {
+                  const result = await copyToCalculeat(item.id)
+                  if (result?.success) {
+                    toast.success(t('toast.copiedToCalculeat'))
+                  } else {
+                    toast.error(t('toast.copyError'))
+                  }
+                } catch {
+                  toast.error(t('toast.copyError'))
+                }
+              }}
+            >
+              {t('copyToCalculeatPrompt.confirm')}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   )
 }
