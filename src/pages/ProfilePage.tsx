@@ -408,11 +408,17 @@ export default function ProfilePage() {
     gender: Gender
     height_cm: number
     weight_kg: number
+    calorie_goal: 'Weight loss' | 'Maintain weight' | 'Weight gain'
   }) => {
     if (!activeProfile) return
 
     const isNetworkError = (error: unknown) =>
       error instanceof TypeError && /fetch/i.test(error.message)
+
+    // Vid viktnedgång: förvälj ett rimligt underskott och slå på
+    // kaloritäthetsindikatorn (grepp 4). Bara här, vid första uppsättningen —
+    // ett smart förval, användaren kan ändra i profilen efteråt.
+    const isWeightLoss = data.calorie_goal === 'Weight loss'
 
     const attemptSave = async () => {
       await updateProfile.mutateAsync({
@@ -423,6 +429,8 @@ export default function ProfilePage() {
           height_cm: data.height_cm,
           weight_kg: data.weight_kg,
           initial_weight_kg: data.weight_kg,
+          calorie_goal: data.calorie_goal,
+          ...(isWeightLoss ? { deficit_level: '10-15%', show_energy_density: true } : {}),
         },
       })
       await createWeightHistory.mutateAsync({ weight_kg: data.weight_kg })

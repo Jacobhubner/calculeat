@@ -11,12 +11,15 @@ import { Button } from '@/components/ui/button'
 import { User } from 'lucide-react'
 import type { Gender } from '@/lib/types'
 
+type CalorieGoal = 'Weight loss' | 'Maintain weight' | 'Weight gain'
+
 interface SetupProfileFormProps {
   onSave: (data: {
     birth_date: string
     gender: Gender
     height_cm: number
     weight_kg: number
+    calorie_goal: CalorieGoal
   }) => Promise<void>
   isSaving: boolean
 }
@@ -29,6 +32,7 @@ export default function SetupProfileForm({ onSave, isSaving }: SetupProfileFormP
   const [gender, setGender] = useState<Gender | ''>('')
   const [heightString, setHeightString] = useState('')
   const [weightString, setWeightString] = useState('')
+  const [goal, setGoal] = useState<CalorieGoal | ''>('')
 
   const birthDate =
     birthDay && birthMonth && birthYear
@@ -41,6 +45,7 @@ export default function SetupProfileForm({ onSave, isSaving }: SetupProfileFormP
   const isValid =
     !!birthDate &&
     !!gender &&
+    !!goal &&
     !isNaN(height) &&
     height >= 100 &&
     height <= 250 &&
@@ -49,12 +54,13 @@ export default function SetupProfileForm({ onSave, isSaving }: SetupProfileFormP
     weight <= 400
 
   const handleSubmit = async () => {
-    if (!isValid || !gender) return
+    if (!isValid || !gender || !goal) return
     await onSave({
       birth_date: birthDate,
       gender: gender as Gender,
       height_cm: height,
       weight_kg: weight,
+      calorie_goal: goal,
     })
   }
 
@@ -171,6 +177,33 @@ export default function SetupProfileForm({ onSave, isSaving }: SetupProfileFormP
             step="0.1"
             className="w-full max-w-xs px-3 py-2 text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
           />
+        </div>
+
+        {/* Mål — styr förvalt underskott och kaloritäthetsindikatorn (grepp 4) */}
+        <div>
+          <p className="text-sm font-medium text-neutral-700 mb-2">{t('setup.goalLabel')}</p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            {(
+              [
+                ['Weight loss', 'setup.goalLoss'],
+                ['Maintain weight', 'setup.goalMaintain'],
+                ['Weight gain', 'setup.goalGain'],
+              ] as const
+            ).map(([value, key]) => (
+              <button
+                key={value}
+                type="button"
+                onClick={() => setGoal(value)}
+                className={`px-4 py-3 rounded-xl border text-sm font-medium transition-colors ${
+                  goal === value
+                    ? 'border-primary-400 bg-primary-50 text-primary-700'
+                    : 'border-neutral-200 text-neutral-700 hover:border-neutral-300'
+                }`}
+              >
+                {t(key)}
+              </button>
+            ))}
+          </div>
         </div>
 
         <Button onClick={handleSubmit} disabled={!isValid || isSaving} className="w-full sm:w-auto">

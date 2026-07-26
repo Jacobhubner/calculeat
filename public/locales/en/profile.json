@@ -65,6 +65,10 @@
   "setup": {
     "title": "Fill in your basic information",
     "description": "We need this information to calculate your energy needs.",
+    "goalLabel": "What's your goal?",
+    "goalLoss": "Lose weight",
+    "goalMaintain": "Maintain weight",
+    "goalGain": "Gain weight",
     "saveAndContinue": "Save and continue"
   },
   "basicInfo": {

@@ -65,6 +65,10 @@
   "setup": {
     "title": "Fyll i din grundläggande information",
     "description": "Vi behöver dessa uppgifter för att beräkna ditt energibehov.",
+    "goalLabel": "Vad är ditt mål?",
+    "goalLoss": "Gå ner i vikt",
+    "goalMaintain": "Behålla vikten",
+    "goalGain": "Gå upp i vikt",
     "saveAndContinue": "Spara och fortsätt"
   },
   "basicInfo": {
