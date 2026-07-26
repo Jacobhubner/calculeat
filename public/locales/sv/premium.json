@@ -2,7 +2,8 @@
   "badge": {
     "premium": "Premium",
     "free": "Gratis",
-    "includedInPremium": "Ingår i Premium"
+    "includedInPremium": "Ingår i Premium",
+    "adminToggleHint": "Admin: växla mellan premium- och gratisvy"
   },
   "export": {
     "csvButton": "Exportera CSV"
