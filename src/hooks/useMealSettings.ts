@@ -1,7 +1,8 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import { useProfileStore } from '@/stores/profileStore'
+import { usePreviewMutation } from '@/hooks/usePreviewMutation'
 
 export interface MealSetting {
   id: string
@@ -57,7 +58,7 @@ export function useCreateDefaultMealSettings() {
   const profile = activeProfile || legacyProfile
   const queryClient = useQueryClient()
 
-  return useMutation({
+  return usePreviewMutation({
     mutationFn: async () => {
       if (!profile) throw new Error('Profile not found')
       if (!user) throw new Error('User not authenticated')
@@ -120,7 +121,7 @@ export function useCreateMealSetting() {
   const profile = activeProfile || legacyProfile
   const queryClient = useQueryClient()
 
-  return useMutation({
+  return usePreviewMutation({
     mutationFn: async (input: CreateMealSettingInput) => {
       if (!profile) throw new Error('Profile not found')
       if (!user) throw new Error('User not authenticated')
@@ -165,7 +166,7 @@ export function useUpdateMealSetting() {
   const profile = activeProfile || legacyProfile
   const queryClient = useQueryClient()
 
-  return useMutation({
+  return usePreviewMutation({
     mutationFn: async ({ id, ...input }: Partial<CreateMealSettingInput> & { id: string }) => {
       if (!profile) throw new Error('Profile not found')
       if (!user) throw new Error('User not authenticated')
@@ -212,7 +213,7 @@ export function useDeleteMealSetting() {
   const profile = activeProfile || legacyProfile
   const queryClient = useQueryClient()
 
-  return useMutation({
+  return usePreviewMutation({
     mutationFn: async (id: string) => {
       if (!profile) throw new Error('Profile not found')
       if (!user) throw new Error('User not authenticated')
@@ -279,7 +280,7 @@ export function useReorderMealSettings() {
   const profile = activeProfile || legacyProfile
   const queryClient = useQueryClient()
 
-  return useMutation({
+  return usePreviewMutation({
     mutationFn: async (meals: Array<{ id: string; meal_order: number }>) => {
       if (!profile) throw new Error('Profile not found')
       if (!user) throw new Error('User not authenticated')
@@ -310,7 +311,7 @@ export function useSyncMealSettings() {
   const { user } = useAuth()
   const queryClient = useQueryClient()
 
-  return useMutation({
+  return usePreviewMutation({
     mutationFn: async ({ meals }: { meals: Array<{ name: string; percentage: number }> }) => {
       if (!meals || meals.length === 0) throw new Error('Meals required')
       if (!user) throw new Error('User not authenticated')
@@ -391,7 +392,7 @@ export function useResetMealSettings() {
   const profile = activeProfile || legacyProfile
   const queryClient = useQueryClient()
 
-  return useMutation({
+  return usePreviewMutation({
     mutationFn: async () => {
       if (!profile) throw new Error('Profile not found')
       if (!user) throw new Error('User not authenticated')

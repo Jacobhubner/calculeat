@@ -2,7 +2,8 @@
  * Custom hook för att hämta användarprofil med React Query
  */
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { usePreviewMutation } from '@/hooks/usePreviewMutation'
 import { supabase } from '@/lib/supabase'
 import { queryKeys } from '@/lib/react-query'
 import type { UserProfile } from '@/lib/types'
@@ -53,7 +54,9 @@ export function useUserProfile(userId?: string) {
 
 export function useUpdateUsername() {
   const queryClient = useQueryClient()
-  return useMutation({
+  // Blockeras i preview: username hör till det riktiga kontot, ingår inte i
+  // sandlådans backup/restore och ska inte ändras i testläget.
+  return usePreviewMutation({
     mutationFn: async (newUsername: string) => {
       const { data, error } = await supabase.rpc('update_username', {
         p_new_username: newUsername,

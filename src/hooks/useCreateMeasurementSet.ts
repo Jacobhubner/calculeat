@@ -2,7 +2,8 @@
  * Custom hook för att skapa ett nytt measurement set
  */
 
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query'
+import { usePreviewMutation } from '@/hooks/usePreviewMutation'
 import { supabase } from '@/lib/supabase'
 import { queryKeys } from '@/lib/react-query'
 import { toast } from 'sonner'
@@ -18,7 +19,7 @@ export function useCreateMeasurementSet() {
   const queryClient = useQueryClient()
   const addMeasurementSet = useMeasurementSetStore(state => state.addMeasurementSet)
 
-  return useMutation({
+  return usePreviewMutation({
     mutationFn: async (data: CreateMeasurementSetInput) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { tempId, ...measurementData } = data // Extrahera tempId (används i onSuccess)

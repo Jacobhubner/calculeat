@@ -2,7 +2,8 @@
  * Custom hook för att uppdatera namn på ett measurement set
  */
 
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query'
+import { usePreviewMutation } from '@/hooks/usePreviewMutation'
 import { supabase } from '@/lib/supabase'
 import { queryKeys } from '@/lib/react-query'
 import { toast } from 'sonner'
@@ -12,7 +13,7 @@ export function useUpdateMeasurementSetName() {
   const queryClient = useQueryClient()
   const updateMeasurementSet = useMeasurementSetStore(state => state.updateMeasurementSet)
 
-  return useMutation({
+  return usePreviewMutation({
     mutationFn: async ({ id, name }: { id: string; name: string | null }) => {
       const { data, error } = await supabase
         .from('measurement_sets')

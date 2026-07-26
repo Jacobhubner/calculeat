@@ -2,7 +2,8 @@
  * Custom hook för att radera ett measurement set
  */
 
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query'
+import { usePreviewMutation } from '@/hooks/usePreviewMutation'
 import { supabase } from '@/lib/supabase'
 import { queryKeys } from '@/lib/react-query'
 import { toast } from 'sonner'
@@ -12,7 +13,7 @@ export function useDeleteMeasurementSet() {
   const queryClient = useQueryClient()
   const removeMeasurementSet = useMeasurementSetStore(state => state.removeMeasurementSet)
 
-  return useMutation({
+  return usePreviewMutation({
     mutationFn: async (measurementSetId: string) => {
       const { error } = await supabase.from('measurement_sets').delete().eq('id', measurementSetId)
 

@@ -2,7 +2,8 @@
  * Custom hook för att ändra ordning på measurement sets med upp/ned-knappar
  */
 
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query'
+import { usePreviewMutation } from '@/hooks/usePreviewMutation'
 import { supabase } from '@/lib/supabase'
 import { queryKeys } from '@/lib/react-query'
 import { toast } from 'sonner'
@@ -13,7 +14,7 @@ export function useReorderMeasurementSets() {
   const queryClient = useQueryClient()
   const updateMeasurementSet = useMeasurementSetStore(state => state.updateMeasurementSet)
 
-  return useMutation({
+  return usePreviewMutation({
     mutationFn: async ({
       setId,
       direction,
