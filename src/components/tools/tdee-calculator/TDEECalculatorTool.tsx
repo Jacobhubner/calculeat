@@ -24,7 +24,7 @@ import { PremiumGate } from '@/components/premium/PremiumGate'
 import { useEntitlements } from '@/hooks/useEntitlements'
 import { useUpgradeModalStore } from '@/stores/upgradeModalStore'
 import { FREE_BMR_FORMULAS, FREE_PAL_SYSTEMS } from '@/lib/constants/entitlements'
-import { applyMacroMode, macroModeForGoal } from '@/lib/utils/macroModes'
+import { freeMacrosForGoal } from '@/lib/utils/macroModes'
 import MetabolicCalibration from '@/components/profile/MetabolicCalibration'
 
 // Returns a finite number, or undefined. Handles '', NaN, null, and non-numeric strings.
@@ -418,13 +418,15 @@ export default function TDEECalculatorTool() {
       }
 
       // Bevara målet + räkna om kalorier, och sätt makrofördelningen för det
-      // målets standardläge så kostläget matchar direkt (annars null-makron).
+      // målets standardläge — men bara om det läget är gratis. Viktuppgång
+      // mappar till offseason (premium) → inga makron tvingas på (freeMacrosForGoal
+      // returnerar null); då sätts bara mål + kalorier.
       const goalPreset = caloriesForGoalPreset(
         tdee,
         activeProfile.calorie_goal,
         activeProfile.deficit_level
       )
-      const macros = applyMacroMode(macroModeForGoal(goalPreset.calorie_goal), {
+      const macros = freeMacrosForGoal(goalPreset.calorie_goal, {
         weight: weightNum ?? 0,
         caloriesMin: goalPreset.calories_min,
         caloriesMax: goalPreset.calories_max,
@@ -462,13 +464,18 @@ export default function TDEECalculatorTool() {
           // Behåll det mål användaren redan valt (t.ex. i onboarding) och räkna om
           // kaloriintervallet för det. Utan tidigare mål: maintenance ±3% som default.
           ...goalPreset,
-          // Makrofördelning för målets standardläge (så kostläget matchar).
-          fat_min_percent: macros.fatMinPercent,
-          fat_max_percent: macros.fatMaxPercent,
-          carb_min_percent: macros.carbMinPercent,
-          carb_max_percent: macros.carbMaxPercent,
-          protein_min_percent: macros.proteinMinPercent,
-          protein_max_percent: macros.proteinMaxPercent,
+          // Makrofördelning för målets gratis-läge (så kostläget matchar). Vid
+          // premium-läge (viktuppgång/offseason) är macros null → inga makron sätts.
+          ...(macros
+            ? {
+                fat_min_percent: macros.fatMinPercent,
+                fat_max_percent: macros.fatMaxPercent,
+                carb_min_percent: macros.carbMinPercent,
+                carb_max_percent: macros.carbMaxPercent,
+                protein_min_percent: macros.proteinMinPercent,
+                protein_max_percent: macros.proteinMaxPercent,
+              }
+            : {}),
         },
       })
 

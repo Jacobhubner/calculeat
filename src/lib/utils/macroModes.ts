@@ -238,6 +238,10 @@ export function onSeasonMode(
 /**
  * Apply a macro mode to user profile
  */
+// Gratis kostlägen (se PREMIUM_SPEC: all_diet_modes). Atletlägena
+// (active, offseason, onseason) kräver premium.
+export const FREE_MACRO_MODES: MacroModeId[] = ['nnr', 'weightloss']
+
 // Standardläge för ett kalorimål — används vid onboarding/TDEE-beräkning för
 // att sätta en makrofördelning som matchar målet direkt (annars matchar inget
 // kostläge och makrofördelningen blir odefinierad).
@@ -245,6 +249,18 @@ export function macroModeForGoal(goal?: string | null): MacroModeId {
   if (goal === 'Weight loss') return 'weightloss'
   if (goal === 'Weight gain') return 'offseason'
   return 'nnr' // Maintain weight (och ingen/okänt mål)
+}
+
+// Makrofördelning för målets standardläge — MEN endast om det läget är gratis.
+// Viktuppgång mappar till offseason (premium) och returnerar därför null, så att
+// onboarding inte tvingar på ett premium-läge. Då sätts bara mål + kalorier.
+export function freeMacrosForGoal(
+  goal: string | null | undefined,
+  params: { weight: number; caloriesMin: number; caloriesMax: number }
+): MacroMode | null {
+  const mode = macroModeForGoal(goal)
+  if (!FREE_MACRO_MODES.includes(mode)) return null
+  return applyMacroMode(mode, params)
 }
 
 export function applyMacroMode(

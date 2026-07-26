@@ -32,7 +32,7 @@ import MacroDistributionCard from '@/components/MacroDistributionCard'
 import MealSettingsCard from '@/components/MealSettingsCard'
 import MacroModesCard from '@/components/MacroModesCard'
 import MacroConverterCard from '@/components/profile/MacroConverterCard'
-import { applyMacroMode, macroModeForGoal } from '@/lib/utils/macroModes'
+import { freeMacrosForGoal } from '@/lib/utils/macroModes'
 
 // Beräknar kaloriintervall för ett mål (ren funktion — delas av handleGoalChange
 // och handleTDEEChange så att målet från onboarding respekteras vid TDEE-beräkning).
@@ -528,8 +528,9 @@ export default function ProfilePage() {
       existingGoal && existingGoal !== data.calorie_goal
         ? (() => {
             const c = caloriesForGoal(data.tdee, existingGoal, activeProfile?.deficit_level)
-            // Sätt makrofördelning för målets standardläge så kostläget matchar.
-            const m = applyMacroMode(macroModeForGoal(existingGoal), {
+            // Sätt makrofördelning för målets gratis-läge så kostläget matchar.
+            // Premium-läge (viktuppgång/offseason) → null, inga makron tvingas på.
+            const m = freeMacrosForGoal(existingGoal, {
               weight: data.weight_kg ?? activeProfile?.weight_kg ?? 0,
               caloriesMin: c.caloriesMin,
               caloriesMax: c.caloriesMax,
@@ -539,12 +540,16 @@ export default function ProfilePage() {
               calories_min: c.caloriesMin,
               calories_max: c.caloriesMax,
               deficit_level: c.deficitLevel,
-              fat_min_percent: m.fatMinPercent,
-              fat_max_percent: m.fatMaxPercent,
-              carb_min_percent: m.carbMinPercent,
-              carb_max_percent: m.carbMaxPercent,
-              protein_min_percent: m.proteinMinPercent,
-              protein_max_percent: m.proteinMaxPercent,
+              ...(m
+                ? {
+                    fat_min_percent: m.fatMinPercent,
+                    fat_max_percent: m.fatMaxPercent,
+                    carb_min_percent: m.carbMinPercent,
+                    carb_max_percent: m.carbMaxPercent,
+                    protein_min_percent: m.proteinMinPercent,
+                    protein_max_percent: m.proteinMaxPercent,
+                  }
+                : {}),
             }
           })()
         : null

@@ -22,7 +22,7 @@ import {
   Info,
   Lock,
 } from 'lucide-react'
-import { applyMacroMode, type MacroModeId } from '@/lib/utils/macroModes'
+import { applyMacroMode, FREE_MACRO_MODES, type MacroModeId } from '@/lib/utils/macroModes'
 import { useEntitlements } from '@/hooks/useEntitlements'
 import { PremiumBadge } from '@/components/premium/PremiumBadge'
 import { UpgradeModal } from '@/components/premium/UpgradeModal'
@@ -113,8 +113,7 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
 
   // Kostlägen: allmänhetslägena (NNR + Weight Loss) alltid gratis,
   // atletlägena (Active, Off-/On-Season) premium (all_diet_modes, se PREMIUM_SPEC)
-  const FREE_MODES: MacroModeId[] = ['nnr', 'weightloss']
-  const isLocked = (id: MacroModeId) => !FREE_MODES.includes(id) && !limits.all_diet_modes
+  const isLocked = (id: MacroModeId) => !FREE_MACRO_MODES.includes(id) && !limits.all_diet_modes
 
   // Dynamiska nycklar per läge — samma konvention som övriga t-anrop i filen
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
