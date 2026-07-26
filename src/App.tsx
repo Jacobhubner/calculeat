@@ -15,6 +15,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 import PublicOnlyRoute from './components/PublicOnlyRoute'
 import { Skeleton } from './components/ui/skeleton'
 import { ARTICLES } from './content/articles/registry'
+import { getPageConfigByPath } from './lib/config/pages'
 
 // Eager load - landing & auth pages (needed immediately)
 import HomePage from './pages/HomePage'
@@ -157,17 +158,23 @@ function ScrollToTop() {
   return null
 }
 
-// Synkar det globala i18n-språket med URL:en på publika sidor. Publika
-// sidor är URL-språkdrivna (/en/... = engelska, annars svenska) men
-// LanguageSwitcher navigerar bara — inget anropar changeLanguage när man
-// LANDAR på en /en/-URL (t.ex. via länk, delning eller sökmotor). Utan
-// detta visar header/footer/globala UI-strängar svenska på engelska sidor.
-// App-sidor (/app) lämnas orörda — där styr användarens val (localStorage).
+// Synkar det globala i18n-språket med URL:en på URL-språkdrivna publika sidor.
+// Publika SEO-sidor är URL-språkdrivna (/en/... = engelska, annars svenska)
+// men LanguageSwitcher navigerar bara — inget anropar changeLanguage när man
+// LANDAR på en /en/-URL (t.ex. via länk, delning eller sökmotor). Utan detta
+// visar header/footer/globala UI-strängar svenska på engelska sidor.
+//
+// VIKTIGT: bara sidor som finns i PAGE_CONFIGS är URL-språkdrivna. App-sidor
+// (/app) OCH auth-sidor (/login, /register, /forgot-password, ...) styrs av
+// användarens val (i18n/localStorage) — där får LocaleSync ALDRIG tvinga ett
+// språk, annars skrivs ett aktivt engelskt val över till svenska vid varje
+// navigering dit.
 function LocaleSync() {
   const { pathname } = useLocation()
   const { i18n } = useTranslation()
   useEffect(() => {
-    if (pathname.startsWith('/app')) return
+    // Enbart konfigurerade publika sidor är URL-språkdrivna
+    if (!getPageConfigByPath(pathname)) return
     const target = pathname.startsWith('/en/') || pathname === '/en' ? 'en' : 'sv'
     if (!i18n.language?.startsWith(target)) {
       i18n.changeLanguage(target)
