@@ -12,22 +12,6 @@ export const palSystemTranslations: Record<string, string> = {
   'Custom PAL': 'Anpassat PAL-värde',
 }
 
-export const activityLevelTranslations: Record<string, string> = {
-  Sedentary: 'Stillasittande',
-  'Lightly active': 'Lätt aktiv',
-  'Moderately active': 'Måttligt aktiv',
-  'Very active': 'Mycket aktiv',
-  'Extremely active': 'Extremt aktiv',
-}
-
-export const intensityLevelTranslations: Record<string, string> = {
-  None: 'Ingen',
-  Light: 'Lätt',
-  Moderate: 'Måttlig',
-  Difficult: 'Svår',
-  Intense: 'Intensiv',
-}
-
 export const deficitLevelTranslations: Record<string, string> = {
   Slow: 'Litet underskott (10-15%)',
   Moderate: 'Måttligt underskott (20-25%)',
@@ -53,16 +37,6 @@ export const dailyStepsTranslations: Record<string, string> = {
 export function translatePALSystem(palSystem?: string): string {
   if (!palSystem) return ''
   return palSystemTranslations[palSystem] || palSystem
-}
-
-export function translateActivityLevel(level?: string): string {
-  if (!level) return ''
-  return activityLevelTranslations[level] || level
-}
-
-export function translateIntensityLevel(level?: string): string {
-  if (!level) return ''
-  return intensityLevelTranslations[level] || level
 }
 
 export function translateDeficitLevel(level?: string): string {

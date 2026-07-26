@@ -699,6 +699,64 @@
     "customPALHint": "Enter your own PAL value if you know it",
     "customPALWarning": "Unusual PAL value — normal range is 1.0–2.5"
   },
+  "activityLevelLabels": {
+    "Sedentary": "Sedentary",
+    "Lightly active": "Lightly active",
+    "Moderately active": "Moderately active",
+    "Very active": "Very active",
+    "Extremely active": "Extremely active"
+  },
+  "intensityLevelLabels": {
+    "None": "None",
+    "Light": "Light",
+    "Moderate": "Moderate",
+    "Difficult": "Hard",
+    "Intense": "Intense"
+  },
+  "activityDescriptions": {
+    "fao": {
+      "Sedentary": "A sitting or lying lifestyle with minimal physical activity. Example: office work without regular exercise, mostly sedentary activities.",
+      "Lightly active": "A lightly active lifestyle with some daily movement. Example: light office work with regular walks, lighter housework, standing work with some movement.",
+      "Moderately active": "A moderately active lifestyle with regular movement. Example: active work that involves standing and walking, regular exercise 3–5 days/week, active housework.",
+      "Very active": "A very active lifestyle with intense daily activity. Example: physically demanding work, intense training 6–7 days/week, a mix of heavy work and exercise.",
+      "Extremely active": "An extremely active lifestyle with exceptionally high energy expenditure. Example: heavy physical work combined with daily intense training, professional athletes in competition season."
+    },
+    "damnripped": {
+      "Sedentary": "Minimal daily activity. Mostly sitting or lying down. Example: working from home at a computer without exercise.",
+      "Lightly active": "Limited daily activity. Some standing or walking. Example: office work with shorter walks.",
+      "Moderately active": "Moderate daily activity. Regular standing and walking. Example: active work or regular everyday activities.",
+      "Very active": "High daily activity. Lots of standing, walking and moving around at work. Example: retail work, waiting tables, construction.",
+      "Extremely active": "Extremely high daily activity. Constant movement and physically demanding work. Example: heavy construction, forestry work."
+    },
+    "proPhysique": {
+      "Sedentary": "Very little everyday activity. Mostly sedentary. Example: office work, minimal movement during the day.",
+      "Lightly active": "Some everyday activity. Lighter physical tasks. Example: lighter office work with some movement, short walks.",
+      "Moderately active": "Moderate everyday activity. Regular physical activity. Example: active work with standing and walking, everyday household activities.",
+      "Very active": "High everyday activity. Physically demanding tasks. Example: physical work, a very active lifestyle."
+    },
+    "basic": {
+      "Sedentary": "Little or no exercise. Mostly sitting lifestyle. Example: office work without regular physical activity.",
+      "Lightly active": "Light exercise 1–3 days/week. Example: light jogging, yoga, lighter gym sessions a few times a week.",
+      "Moderately active": "Moderate exercise 3–5 days/week. Example: regular gym training, running, swimming several times a week.",
+      "Very active": "Intense exercise 6–7 days/week. Example: daily high-intensity training, sport at an advanced level.",
+      "Extremely active": "Very intense exercise or physical work daily. Example: professional athletes, two training sessions a day."
+    }
+  },
+  "intensityDescriptions": {
+    "damnripped": {
+      "None": "No structured training or extra physical activity beyond everyday activities.",
+      "Light": "Light, low-intensity training. Example: gentle yoga, calm walks, stretching, lighter strength training.",
+      "Moderate": "Moderate, medium-intensity training. Example: faster jogging, moderate cycling, standard gym training, basic cardio.",
+      "Difficult": "Intense, high-effort training. Example: heavy strength training, interval training, longer runs at a fast pace, intense cardio.",
+      "Intense": "Maximal training at or near your performance limit. Example: HIIT, maximal strength training, competition-focused training, extremely high intensity."
+    },
+    "proPhysique": {
+      "Light": "Light training intensity. The workout is minimally challenging. Example: light strength training, easy cardio, recovery sessions.",
+      "Moderate": "Moderate training intensity. The workout is noticeable but manageable. Example: a standard strength program, moderate cardio.",
+      "Difficult": "High training intensity. The workout is challenging and takes good effort. Example: heavy strength training near max, intense cardio, demanding programs.",
+      "Intense": "Very high training intensity. The workout is extremely demanding. Example: maximal strength training, high-intensity sessions, advanced programs."
+    }
+  },
   "energyGoalTable": {
     "title": "Energy goal - Overview",
     "invalidTdee": "Invalid TDEE value. Please calculate your TDEE first.",

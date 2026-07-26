@@ -1,13 +1,9 @@
 import { useTranslation } from 'react-i18next'
-import { activityLevelTranslations, intensityLevelTranslations } from '@/lib/translations'
+import { useActivityIntensityText } from '@/hooks/useActivityIntensityText'
 import { Select } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
 import { UseFormRegister, UseFormWatch } from 'react-hook-form'
 import type { ActivityLevel, IntensityLevel } from '@/lib/types'
-import {
-  PAL_SPECIFIC_ACTIVITY_DESCRIPTIONS,
-  PAL_SPECIFIC_INTENSITY_DESCRIPTIONS,
-} from '@/lib/calculations/tdee'
 
 interface PALTableDAMNRIPPEDProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -16,10 +12,29 @@ interface PALTableDAMNRIPPEDProps {
   watch?: UseFormWatch<any>
 }
 
+const ACTIVITY_LEVELS: ActivityLevel[] = [
+  'Sedentary',
+  'Lightly active',
+  'Moderately active',
+  'Very active',
+  'Extremely active',
+]
+
+const INTENSITY_LEVELS: IntensityLevel[] = ['None', 'Light', 'Moderate', 'Difficult', 'Intense']
+
 export default function PALTableDAMNRIPPED({ register, watch }: PALTableDAMNRIPPEDProps) {
   const { t } = useTranslation('tools')
+  const { activityLabel, intensityLabel, activityDescription, intensityDescription } =
+    useActivityIntensityText()
   const selectedActivityLevel = watch?.('activity_level') as ActivityLevel | undefined
   const selectedIntensityLevel = watch?.('intensity_level') as IntensityLevel | undefined
+
+  const activityDesc = selectedActivityLevel
+    ? activityDescription('DAMNRIPPED PAL values', selectedActivityLevel)
+    : ''
+  const intensityDesc = selectedIntensityLevel
+    ? intensityDescription('DAMNRIPPED PAL values', selectedIntensityLevel)
+    : ''
 
   return (
     <div className="w-full space-y-4">
@@ -32,28 +47,17 @@ export default function PALTableDAMNRIPPED({ register, watch }: PALTableDAMNRIPP
             </Label>
             <Select id="activity_level" {...register('activity_level')} className="mt-2">
               <option value="">{t('tdeeCalc.palTable.activityPlaceholder')}</option>
-              <option value="Sedentary">{activityLevelTranslations['Sedentary']}</option>
-              <option value="Lightly active">{activityLevelTranslations['Lightly active']}</option>
-              <option value="Moderately active">
-                {activityLevelTranslations['Moderately active']}
-              </option>
-              <option value="Very active">{activityLevelTranslations['Very active']}</option>
-              <option value="Extremely active">
-                {activityLevelTranslations['Extremely active']}
-              </option>
+              {ACTIVITY_LEVELS.map(level => (
+                <option key={level} value={level}>
+                  {activityLabel(level)}
+                </option>
+              ))}
             </Select>
-            {selectedActivityLevel &&
-              PAL_SPECIFIC_ACTIVITY_DESCRIPTIONS['DAMNRIPPED PAL values'][
-                selectedActivityLevel
-              ] && (
-                <p className="text-xs text-neutral-600 mt-2 p-2 bg-blue-50 rounded border border-blue-200">
-                  {
-                    PAL_SPECIFIC_ACTIVITY_DESCRIPTIONS['DAMNRIPPED PAL values'][
-                      selectedActivityLevel
-                    ]
-                  }
-                </p>
-              )}
+            {activityDesc && (
+              <p className="text-xs text-neutral-600 mt-2 p-2 bg-blue-50 rounded border border-blue-200">
+                {activityDesc}
+              </p>
+            )}
           </div>
           <div>
             <Label htmlFor="intensity_level">
@@ -61,24 +65,17 @@ export default function PALTableDAMNRIPPED({ register, watch }: PALTableDAMNRIPP
             </Label>
             <Select id="intensity_level" {...register('intensity_level')} className="mt-2">
               <option value="">{t('tdeeCalc.palTable.intensityPlaceholder')}</option>
-              <option value="None">{intensityLevelTranslations['None']}</option>
-              <option value="Light">{intensityLevelTranslations['Light']}</option>
-              <option value="Moderate">{intensityLevelTranslations['Moderate']}</option>
-              <option value="Difficult">{intensityLevelTranslations['Difficult']}</option>
-              <option value="Intense">{intensityLevelTranslations['Intense']}</option>
+              {INTENSITY_LEVELS.map(level => (
+                <option key={level} value={level}>
+                  {intensityLabel(level)}
+                </option>
+              ))}
             </Select>
-            {selectedIntensityLevel &&
-              PAL_SPECIFIC_INTENSITY_DESCRIPTIONS['DAMNRIPPED PAL values'][
-                selectedIntensityLevel
-              ] && (
-                <p className="text-xs text-neutral-600 mt-2 p-2 bg-green-50 rounded border border-green-200">
-                  {
-                    PAL_SPECIFIC_INTENSITY_DESCRIPTIONS['DAMNRIPPED PAL values'][
-                      selectedIntensityLevel
-                    ]
-                  }
-                </p>
-              )}
+            {intensityDesc && (
+              <p className="text-xs text-neutral-600 mt-2 p-2 bg-green-50 rounded border border-green-200">
+                {intensityDesc}
+              </p>
+            )}
           </div>
         </div>
       )}

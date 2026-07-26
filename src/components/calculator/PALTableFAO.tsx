@@ -1,10 +1,9 @@
 import { useTranslation } from 'react-i18next'
-import { activityLevelTranslations } from '@/lib/translations'
+import { useActivityIntensityText } from '@/hooks/useActivityIntensityText'
 import { Select } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
 import { UseFormRegister, UseFormWatch } from 'react-hook-form'
 import type { ActivityLevel } from '@/lib/types'
-import { PAL_SPECIFIC_ACTIVITY_DESCRIPTIONS } from '@/lib/calculations/tdee'
 
 interface PALTableFAOProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -13,9 +12,22 @@ interface PALTableFAOProps {
   watch?: UseFormWatch<any>
 }
 
+const LEVELS: ActivityLevel[] = [
+  'Sedentary',
+  'Lightly active',
+  'Moderately active',
+  'Very active',
+  'Extremely active',
+]
+
 export default function PALTableFAO({ register, watch }: PALTableFAOProps) {
   const { t } = useTranslation('tools')
+  const { activityLabel, activityDescription } = useActivityIntensityText()
   const selectedActivityLevel = watch?.('activity_level') as ActivityLevel | undefined
+
+  const description = selectedActivityLevel
+    ? activityDescription('FAO/WHO/UNU based PAL values', selectedActivityLevel)
+    : ''
 
   return (
     <div className="w-full space-y-4">
@@ -27,28 +39,17 @@ export default function PALTableFAO({ register, watch }: PALTableFAOProps) {
           </Label>
           <Select id="activity_level" {...register('activity_level')} className="mt-2">
             <option value="">{t('tdeeCalc.palTable.activityPlaceholder')}</option>
-            <option value="Sedentary">{activityLevelTranslations['Sedentary']}</option>
-            <option value="Lightly active">{activityLevelTranslations['Lightly active']}</option>
-            <option value="Moderately active">
-              {activityLevelTranslations['Moderately active']}
-            </option>
-            <option value="Very active">{activityLevelTranslations['Very active']}</option>
-            <option value="Extremely active">
-              {activityLevelTranslations['Extremely active']}
-            </option>
+            {LEVELS.map(level => (
+              <option key={level} value={level}>
+                {activityLabel(level)}
+              </option>
+            ))}
           </Select>
-          {selectedActivityLevel &&
-            PAL_SPECIFIC_ACTIVITY_DESCRIPTIONS['FAO/WHO/UNU based PAL values'][
-              selectedActivityLevel
-            ] && (
-              <p className="text-xs text-neutral-600 mt-2 p-2 bg-blue-50 rounded border border-blue-200">
-                {
-                  PAL_SPECIFIC_ACTIVITY_DESCRIPTIONS['FAO/WHO/UNU based PAL values'][
-                    selectedActivityLevel
-                  ]
-                }
-              </p>
-            )}
+          {description && (
+            <p className="text-xs text-neutral-600 mt-2 p-2 bg-blue-50 rounded border border-blue-200">
+              {description}
+            </p>
+          )}
         </div>
       )}
     </div>
