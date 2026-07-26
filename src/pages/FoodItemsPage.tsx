@@ -39,6 +39,7 @@ import { useFoodSource } from '@/hooks/useFoodSource'
 import { DATA_SOURCES } from '@/lib/constants/dataSources'
 import { useIsAdmin } from '@/hooks/useIsAdmin'
 import { useAuth } from '@/contexts/AuthContext'
+import { CopyToCalculeatPrompt } from '@/components/food/CopyToCalculeatPrompt'
 import { SOURCE_BADGES, getListItemBadgeConfig } from '@/lib/constants/sourceBadges'
 import { useRecipes, type Recipe } from '@/hooks/useRecipes'
 import { useRecipeImpact, type RecipeImpact } from '@/hooks/useRecipeImpact'
@@ -1826,33 +1827,10 @@ export default function FoodItemsPage() {
       />
 
       {/* Admin: fråga om nyskapat livsmedel även ska kopieras till Calculeat-listan */}
-      <Dialog
-        open={!!copyToCalculeatPrompt}
-        onOpenChange={open => !open && setCopyToCalculeatPrompt(null)}
-      >
-        <DialogContent className="max-w-sm">
-          <DialogHeader>
-            <DialogTitle>{t('copyToCalculeatPrompt.title')}</DialogTitle>
-            <DialogDescription>
-              {t('copyToCalculeatPrompt.body', { name: copyToCalculeatPrompt?.name ?? '' })}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex gap-2 justify-end mt-2">
-            <Button variant="outline" onClick={() => setCopyToCalculeatPrompt(null)}>
-              {t('copyToCalculeatPrompt.decline')}
-            </Button>
-            <Button
-              onClick={async () => {
-                const item = copyToCalculeatPrompt
-                setCopyToCalculeatPrompt(null)
-                if (item) await handleCopyToCalculeat(item.id)
-              }}
-            >
-              {t('copyToCalculeatPrompt.confirm')}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <CopyToCalculeatPrompt
+        item={copyToCalculeatPrompt}
+        onClose={() => setCopyToCalculeatPrompt(null)}
+      />
 
       {/* Nutrient Detail Panel */}
       <FoodNutrientPanel
