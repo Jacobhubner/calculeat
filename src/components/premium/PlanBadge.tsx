@@ -30,32 +30,56 @@ export function PlanBadge({ className }: PlanBadgeProps) {
   const { isPreviewActive } = usePreviewMode()
   const openUpgradeModal = useUpgradeModalStore(state => state.open)
 
-  // Admin-testväxel: klick byter mellan gratis- och premiumvy. Inaktiverad under
-  // preview-läget (de två admin-lägena är ömsesidigt uteslutande, som i Inställningar).
+  // Admin-testväxel: en toggle-switch mellan premium- och gratisvy. Inaktiverad
+  // under preview-läget (de två admin-lägena är ömsesidigt uteslutande).
   if (isAdmin) {
     const showingFree = isFreeViewActive
     return (
-      <button
-        type="button"
-        onClick={() => {
-          if (isPreviewActive) return
-          if (showingFree) exitFreeView()
-          else enterFreeView()
-        }}
-        disabled={isPreviewActive}
-        title={t('badge.adminToggleHint')}
-        className={cn(
-          'inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-semibold transition-colors',
-          isPreviewActive ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
-          showingFree
-            ? 'border-neutral-300 bg-neutral-100 text-neutral-600 hover:border-neutral-400'
-            : 'border-amber-400 bg-amber-100 text-amber-700 hover:border-amber-500',
-          className
-        )}
-      >
-        <Sparkles className="h-2.5 w-2.5" aria-hidden="true" />
-        {showingFree ? t('badge.free') : t('badge.premium')}
-      </button>
+      <div className={cn('flex items-center gap-2', className)}>
+        <span className="text-[10px] font-semibold uppercase tracking-wide text-neutral-400">
+          {t('badge.adminViewLabel')}
+        </span>
+        <button
+          type="button"
+          role="switch"
+          aria-checked={showingFree}
+          disabled={isPreviewActive}
+          onClick={() => {
+            if (isPreviewActive) return
+            if (showingFree) exitFreeView()
+            else enterFreeView()
+          }}
+          title={t('badge.adminToggleHint')}
+          className={cn(
+            'inline-flex items-center gap-1.5 rounded-full border px-1 py-0.5 transition-colors',
+            isPreviewActive ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
+            showingFree ? 'border-neutral-300 bg-neutral-100' : 'border-amber-400 bg-amber-100'
+          )}
+        >
+          {/* Track + knopp */}
+          <span
+            className={cn(
+              'relative h-3.5 w-6 rounded-full transition-colors',
+              showingFree ? 'bg-neutral-300' : 'bg-amber-400'
+            )}
+          >
+            <span
+              className={cn(
+                'absolute top-0.5 h-2.5 w-2.5 rounded-full bg-white shadow transition-all',
+                showingFree ? 'left-0.5' : 'left-3'
+              )}
+            />
+          </span>
+          <span
+            className={cn(
+              'pr-1 text-[10px] font-semibold',
+              showingFree ? 'text-neutral-600' : 'text-amber-700'
+            )}
+          >
+            {showingFree ? t('badge.free') : t('badge.premium')}
+          </span>
+        </button>
+      </div>
     )
   }
 

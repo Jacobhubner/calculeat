@@ -3,7 +3,8 @@
     "premium": "Premium",
     "free": "Gratis",
     "includedInPremium": "Ingår i Premium",
-    "adminToggleHint": "Admin: växla mellan premium- och gratisvy"
+    "adminToggleHint": "Admin: växla mellan premium- och gratisvy",
+    "adminViewLabel": "Adminvy"
   },
   "export": {
     "csvButton": "Exportera CSV"
