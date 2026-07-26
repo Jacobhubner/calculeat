@@ -4,7 +4,6 @@ import { useEntitlements, useMySubscription } from '@/hooks/useEntitlements'
 import { useUpgradeModalStore } from '@/stores/upgradeModalStore'
 import { useIsAdmin } from '@/hooks/useIsAdmin'
 import { useFreeViewMode } from '@/hooks/useFreeViewMode'
-import { usePreviewMode } from '@/hooks/usePreviewMode'
 import { cn } from '@/lib/utils'
 
 interface PlanBadgeProps {
@@ -27,11 +26,11 @@ export function PlanBadge({ className }: PlanBadgeProps) {
   const { data: subscription } = useMySubscription()
   const { data: isAdmin = false } = useIsAdmin()
   const { isFreeViewActive, enterFreeView, exitFreeView } = useFreeViewMode()
-  const { isPreviewActive } = usePreviewMode()
   const openUpgradeModal = useUpgradeModalStore(state => state.open)
 
-  // Admin-testväxel: en toggle-switch mellan premium- och gratisvy. Inaktiverad
-  // under preview-läget (de två admin-lägena är ömsesidigt uteslutande).
+  // Admin-testväxel: en toggle-switch mellan premium- och gratisvy. Fungerar
+  // även i preview-sandlådan (preview styr data, freeView styr entitlements —
+  // oberoende, går att kombinera för att testa som ny gratisanvändare).
   if (isAdmin) {
     const showingFree = isFreeViewActive
     return (
@@ -43,16 +42,13 @@ export function PlanBadge({ className }: PlanBadgeProps) {
           type="button"
           role="switch"
           aria-checked={showingFree}
-          disabled={isPreviewActive}
           onClick={() => {
-            if (isPreviewActive) return
             if (showingFree) exitFreeView()
             else enterFreeView()
           }}
           title={t('badge.adminToggleHint')}
           className={cn(
-            'inline-flex items-center gap-1.5 rounded-full border px-1 py-0.5 transition-colors',
-            isPreviewActive ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
+            'inline-flex items-center gap-1.5 rounded-full border px-1 py-0.5 transition-colors cursor-pointer',
             showingFree ? 'border-neutral-300 bg-neutral-100' : 'border-amber-400 bg-amber-100'
           )}
         >
