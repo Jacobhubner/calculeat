@@ -3,7 +3,7 @@ import type { FoodSource } from '@/hooks/useFoodItems'
 export const SOURCE_BADGES: Record<FoodSource, { label: string; className: string }> = {
   user: { label: 'Min', className: 'bg-neutral-100 text-neutral-600 border-neutral-300' },
   manual: {
-    label: 'CalculEat',
+    label: 'Calculeat',
     className: 'bg-primary-100 text-primary-700 border-primary-400 font-semibold',
   },
   livsmedelsverket: { label: 'SLV', className: 'bg-yellow-100 text-yellow-700 border-yellow-400' },

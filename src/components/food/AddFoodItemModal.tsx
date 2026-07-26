@@ -66,7 +66,7 @@ interface AddFoodItemModalProps {
   editItem?: FoodItem | null
   sharedListId?: string | null
   copyMode?: boolean // prefyll från editItem men skapa nytt personligt item
-  adminGlobalMode?: boolean // admin: skapa/redigera globalt CalculEat-item direkt
+  adminGlobalMode?: boolean // admin: skapa/redigera globalt Calculeat-item direkt
 }
 
 // Slumpmässiga placeholder-exempel för namn-fältet
@@ -743,7 +743,7 @@ export function AddFoodItemModal({
         })
         savedFoodItemId = created?.id ?? null
       } else if (adminGlobalMode) {
-        // Admin: skapa globalt CalculEat-item
+        // Admin: skapa globalt Calculeat-item
         const created = await adminCreateMutation.mutateAsync(cleanedData)
         savedFoodItemId = created?.id ?? null
       } else {

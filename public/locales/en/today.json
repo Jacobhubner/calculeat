@@ -164,7 +164,7 @@
   },
   "foodSuggestions": {
     "title": "What should I eat?",
-    "infoBody": "Enter how many calories you have left and which macro to prioritize — CalculEat then searches the entire food database and ranks the foods and recipes that best match your goals.\n\nFilter by recipes, energy density (green/yellow/orange), or source, and add suggestions directly to any meal.\n\nIncluded in Premium.",
+    "infoBody": "Enter how many calories you have left and which macro to prioritize — Calculeat then searches the entire food database and ranks the foods and recipes that best match your goals.\n\nFilter by recipes, energy density (green/yellow/orange), or source, and add suggestions directly to any meal.\n\nIncluded in Premium.",
     "infoAriaLabel": "About What should I eat?",
     "settingsTitle": "Settings",
     "macroUnit": "g {{macro}}",
@@ -194,7 +194,7 @@
       "sort": "Sort",
       "source": "Source",
       "sourceAll": "All",
-      "sourceMine": "Mine & CalculEat",
+      "sourceMine": "Mine & Calculeat",
       "sourceSlv": "SLV",
       "sourceUsda": "USDA",
       "type": "Type",

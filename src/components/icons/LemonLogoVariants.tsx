@@ -60,7 +60,7 @@ export default function LemonLogoVariants({
           <rect x="25" y="52" width="32" height="4" rx="2" fill="white" opacity="0.9" />
           <rect x="25" y="62" width="42" height="4" rx="2" fill="white" opacity="0.9" />
         </svg>
-        <div style={{ fontSize: size * 0.35, fontWeight: 700, color: '#52b788' }}>CalculEat</div>
+        <div style={{ fontSize: size * 0.35, fontWeight: 700, color: '#52b788' }}>Calculeat</div>
       </div>
     )
   }
@@ -80,7 +80,7 @@ export default function LemonLogoVariants({
           <rect x="25" y="52" width="32" height="4" rx="2" fill="#52b788" />
           <rect x="25" y="62" width="42" height="4" rx="2" fill="#52b788" />
         </svg>
-        <div style={{ fontSize: size * 0.35, fontWeight: 700, color: '#52b788' }}>CalculEat</div>
+        <div style={{ fontSize: size * 0.35, fontWeight: 700, color: '#52b788' }}>Calculeat</div>
       </div>
     )
   }

@@ -1,4 +1,4 @@
-# CalculEat — Architecture & Data Model
+# Calculeat — Architecture & Data Model
 
 ## Nutrition Data Model
 

@@ -38,7 +38,7 @@
   },
   "freeView": {
     "title": "View as free user",
-    "description": "Navigate CalculEat with your real data but forced free-tier limits — see locks, blur, and upgrade flows the way a free user would. Your account and data are not affected.",
+    "description": "Navigate Calculeat with your real data but forced free-tier limits — see locks, blur, and upgrade flows the way a free user would. Your account and data are not affected.",
     "activate": "Activate free view",
     "activeInfo": "You are now navigating with free-tier limits. The banner at the top confirms the mode.",
     "exit": "Exit free view"

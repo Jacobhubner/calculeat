@@ -7,7 +7,7 @@
 -- som daily_logs/meal_entries/weight_history/calibration_history) och filtrerar
 -- i läsningarna. exit_preview_profile raderar dem så inget överlever avslut.
 --
--- Globala livsmedel (user_id IS NULL — SLV/CalculEat/USDA) är alltid
+-- Globala livsmedel (user_id IS NULL — SLV/Calculeat/USDA) är alltid
 -- is_preview=false och visas i båda lägena. Endast PERSONLIGA rader
 -- (user_id = p_user_id) filtreras på is_preview.
 

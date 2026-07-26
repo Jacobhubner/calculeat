@@ -501,7 +501,7 @@ export function useDeleteFoodItem() {
 }
 
 /**
- * Admin: Skapa ett globalt CalculEat-livsmedel (user_id=NULL, source='manual').
+ * Admin: Skapa ett globalt Calculeat-livsmedel (user_id=NULL, source='manual').
  * Kräver att anroparen är admin — RLS blockerar annars.
  */
 export function useAdminCreateFoodItem() {
@@ -547,7 +547,7 @@ export function useAdminCreateFoodItem() {
 }
 
 /**
- * Admin: Uppdatera ett globalt CalculEat-livsmedel direkt (ingen CoW).
+ * Admin: Uppdatera ett globalt Calculeat-livsmedel direkt (ingen CoW).
  * Kräver att anroparen är admin — RLS blockerar annars.
  */
 export function useAdminUpdateFoodItem() {
@@ -584,7 +584,7 @@ export function useAdminUpdateFoodItem() {
 }
 
 /**
- * Admin: Kopiera ett eget livsmedel till den globala CalculEat-listan.
+ * Admin: Kopiera ett eget livsmedel till den globala Calculeat-listan.
  */
 export function useCopyFoodItemToCalculeat() {
   const queryClient = useQueryClient()
@@ -604,7 +604,7 @@ export function useCopyFoodItemToCalculeat() {
 }
 
 /**
- * Admin: Ta bort ett globalt CalculEat-livsmedel permanent (ingen soft-delete).
+ * Admin: Ta bort ett globalt Calculeat-livsmedel permanent (ingen soft-delete).
  * Kräver att anroparen är admin — RLS blockerar annars.
  */
 export function useAdminDeleteFoodItem() {

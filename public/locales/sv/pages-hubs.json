@@ -1,7 +1,7 @@
 {
   "calculators-hub": {
     "seo": {
-      "title": "Kalkylatorer — Näring, kalorier och kropp | CalculEat",
+      "title": "Kalkylatorer — Näring, kalorier och kropp | Calculeat",
       "description": "Gratis kalkylatorer för TDEE, kaloriunderskott, BMI, proteinbehov, idealvikt, kroppsfett, bulk, cut, FFMI och BMR. Beräkna dina mål direkt."
     },
     "h1": "Kalkylatorer för kost och kropp",
@@ -12,7 +12,7 @@
     "ctaButton": "Börja med TDEE-kalkylatorn",
     "bottomCta": {
       "h2": "Spara dina resultat automatiskt",
-      "body": "Skapa ett gratis konto och låt CalculEat räkna ut ditt dagliga mål, spåra måltider och visa hur du ligger till — dag för dag.",
+      "body": "Skapa ett gratis konto och låt Calculeat räkna ut ditt dagliga mål, spåra måltider och visa hur du ligger till — dag för dag.",
       "button": "Skapa gratis konto"
     },
     "calculators": [
@@ -80,7 +80,7 @@
   },
   "articles-hub": {
     "seo": {
-      "title": "Artiklar om näring, kalorier och träning | CalculEat",
+      "title": "Artiklar om näring, kalorier och träning | Calculeat",
       "description": "Guider och artiklar om kaloribehov, TDEE, BMR, bulk, cut, kaloribrist och mer. Lär dig förstå din kropp och nå dina mål."
     },
     "h1": "Artiklar om kost och kropp",
@@ -91,7 +91,7 @@
     "ctaButton": "Börja med kaloribehov",
     "bottomCta": {
       "h2": "Omsätt teorin i praktiken",
-      "body": "Beräkna ditt kaloribehov med TDEE-kalkylatorn och börja logga direkt i CalculEat — gratis.",
+      "body": "Beräkna ditt kaloribehov med TDEE-kalkylatorn och börja logga direkt i Calculeat — gratis.",
       "primaryButton": "Prova TDEE-kalkylatorn",
       "secondaryButton": "Skapa gratis konto"
     },

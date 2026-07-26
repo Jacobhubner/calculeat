@@ -93,7 +93,7 @@ export default function BulkKalkylatornPage() {
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
       itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'CalculEat', item: 'https://calculeat.com/' },
+        { '@type': 'ListItem', position: 1, name: 'Calculeat', item: 'https://calculeat.com/' },
         {
           '@type': 'ListItem',
           position: 2,
@@ -161,7 +161,7 @@ export default function BulkKalkylatornPage() {
           <div className="relative container mx-auto px-4 pt-16 pb-14 max-w-3xl">
             <nav className="flex items-center gap-2 text-sm text-neutral-500 mb-6">
               <Link to="/" className="hover:text-neutral-700 transition-colors">
-                CalculEat
+                Calculeat
               </Link>
               <span>/</span>
               <Link

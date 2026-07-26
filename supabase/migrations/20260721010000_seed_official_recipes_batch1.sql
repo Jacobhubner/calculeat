@@ -9,7 +9,7 @@
 -- beraknat fran ingredienserna (samma logik som appens receptkalkylator,
 -- inkl. fargtrosklarna Solid <1 Gron, <=2.4 Gul, annars Orange).
 -- Recepten ags av superadminen. Idempotent via namn-guard.
--- Instruktionstexterna ar originaltext skriven for CalculEat.
+-- Instruktionstexterna ar originaltext skriven for Calculeat.
 -- =========================================================
 
 CREATE FUNCTION pg_temp.seed_official_recipe(

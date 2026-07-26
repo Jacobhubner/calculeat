@@ -1,6 +1,6 @@
 {
   "seo": {
-    "title": "Vad är TDEE? Totalt dagligt energibehov förklarat | CalculEat",
+    "title": "Vad är TDEE? Totalt dagligt energibehov förklarat | Calculeat",
     "description": "TDEE (Total Daily Energy Expenditure) är de kalorier din kropp förbränner per dag. Lär dig hur TDEE beräknas och hur du använder det för viktnedgång eller muskeluppbyggnad."
   },
   "layout": {
@@ -55,7 +55,7 @@
     },
     {
       "type": "p",
-      "text": "BMR mäts under strikt kontrollerade laboratorieförhållanden: efter sömn, i fastande tillstånd och i termoneutral miljö. I praktiska sammanhang används oftare RMR (Resting Metabolic Rate), uppmätt när som helst under dagen, vilket kan skilja sig från BMR med upp till 10%. De flesta online-kalkylatorer — inklusive CalculEat — beräknar tekniskt sett RMR, men använder termen BMR i vardagligt bruk."
+      "text": "BMR mäts under strikt kontrollerade laboratorieförhållanden: efter sömn, i fastande tillstånd och i termoneutral miljö. I praktiska sammanhang används oftare RMR (Resting Metabolic Rate), uppmätt när som helst under dagen, vilket kan skilja sig från BMR med upp till 10%. De flesta online-kalkylatorer — inklusive Calculeat — beräknar tekniskt sett RMR, men använder termen BMR i vardagligt bruk."
     },
     {
       "type": "p",

@@ -26,13 +26,13 @@ export default function OmOssPage() {
     name: t('about.schema.pageName'),
     url: localeEntry.canonical,
     description: t('about.schema.pageDescription'),
-    publisher: { '@type': 'Organization', name: 'CalculEat', url: 'https://calculeat.com' },
+    publisher: { '@type': 'Organization', name: 'Calculeat', url: 'https://calculeat.com' },
   }
 
   const orgSchema = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: 'CalculEat',
+    name: 'Calculeat',
     url: 'https://calculeat.com',
     description: t('about.schema.orgDescription'),
     sameAs: [],
@@ -56,7 +56,7 @@ export default function OmOssPage() {
           {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-sm text-neutral-500 mb-8">
             <Link to="/" className="hover:text-neutral-700 transition-colors">
-              CalculEat
+              Calculeat
             </Link>
             <span>/</span>
             <span className="text-neutral-700">{t('about.breadcrumb')}</span>

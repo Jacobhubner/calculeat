@@ -128,7 +128,7 @@ export default function IconDemo() {
       <div className="container mx-auto px-4 md:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-12 text-center">
-          <h1 className="mb-4 text-4xl font-bold text-neutral-900">Välj Ikon för CalculEat</h1>
+          <h1 className="mb-4 text-4xl font-bold text-neutral-900">Välj Ikon för Calculeat</h1>
           <p className="text-lg text-neutral-600 mb-2">
             Olika ikonförslag baserade på dina referensbilder
           </p>
@@ -194,7 +194,7 @@ export default function IconDemo() {
         <div className="mt-16 text-center">
           <div className="bg-gradient-to-r from-primary-50 to-accent-50 rounded-2xl p-8 mb-6">
             <p className="text-neutral-700 mb-2 font-medium">
-              💡 Välj den logotyp som bäst representerar CalculEat
+              💡 Välj den logotyp som bäst representerar Calculeat
             </p>
             <p className="text-sm text-neutral-600">
               Dessa är enkla koncept. Om du gillar en design kan den utvecklas och förfinas

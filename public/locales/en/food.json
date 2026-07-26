@@ -1,14 +1,14 @@
 {
   "tabs": {
     "mine": "My foods",
-    "calculeat": "CalculEat",
+    "calculeat": "Calculeat",
     "slv": "Livsmedelsverket",
     "usda": "USDA",
     "all": "All"
   },
   "source": {
     "user": "My",
-    "manual": "CalculEat",
+    "manual": "Calculeat",
     "livsmedelsverket": "SLV",
     "usda": "USDA",
     "shared": "Shared"
@@ -28,8 +28,8 @@
     "copiedToList": "Food item copied to \"{{listName}}\"",
     "alreadyInList": "Food item already in the list",
     "copyError": "Could not copy. Please try again.",
-    "copiedToCalculeat": "Food item copied to the CalculEat list",
-    "alreadyInCalculeat": "A food item with the same name already exists in CalculEat",
+    "copiedToCalculeat": "Food item copied to the Calculeat list",
+    "alreadyInCalculeat": "A food item with the same name already exists in Calculeat",
     "firstContributor": "You were the first to add this product. Thank you!"
   },
   "fields": {
@@ -175,7 +175,7 @@
   },
   "adminEdit": {
     "title": "Edit global food item?",
-    "description": "You are about to edit \"{{name}}\". This change will affect this food item for ALL users in the CalculEat list. Are you sure?",
+    "description": "You are about to edit \"{{name}}\". This change will affect this food item for ALL users in the Calculeat list. Are you sure?",
     "cancel": "Cancel",
     "confirm": "Yes, edit globally"
   },
@@ -202,12 +202,12 @@
   },
   "addFoodModal": {
     "titleCopy": "Create personal copy",
-    "titleAdminEdit": "Edit CalculEat food item",
-    "titleAdminNew": "New CalculEat food item",
+    "titleAdminEdit": "Edit Calculeat food item",
+    "titleAdminNew": "New Calculeat food item",
     "titleEdit": "Edit food item",
     "titleNew": "New food item",
     "adminEditWarning": "Editing global food item. Changes will be visible to all users immediately.",
-    "adminNewWarning": "Creating global CalculEat food item. Visible to all users.",
+    "adminNewWarning": "Creating global Calculeat food item. Visible to all users.",
     "cowInfo": "A personal copy will be created in your list (Mine).",
     "sharedEditWarning": "Editing a shared food item. Changes will be visible to all list members.",
     "barcode": {
@@ -222,7 +222,7 @@
     "fillManually": "Enter nutrition facts manually",
     "fillManuallySaved": "(barcode will be saved)",
     "scanLabelHint": "Take a photo of the nutrition label and we'll fill in the values automatically.",
-    "barcodeContributeHint": "When you save, the product is added to CalculEat for future scans.",
+    "barcodeContributeHint": "When you save, the product is added to Calculeat for future scans.",
     "barcodeError": "Could not fetch the product",
     "labelError": "Could not read the label",
     "overwriteConfirm": "You have already entered values. Do you want to replace them with scanned values?",

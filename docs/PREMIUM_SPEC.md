@@ -1,4 +1,4 @@
-# Premium-spec — CalculEat
+# Premium-spec — Calculeat
 
 Beslutad 2026-07-12. Detta dokument är facit för all premium-gating: exakta gränser,
 nedgraderingsregler och lanseringsläge. Ändringar i gränser görs HÄR först, sedan i

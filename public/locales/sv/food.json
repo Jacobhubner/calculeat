@@ -1,14 +1,14 @@
 {
   "tabs": {
     "mine": "Mina",
-    "calculeat": "CalculEat",
+    "calculeat": "Calculeat",
     "slv": "Livsmedelsverket",
     "usda": "USDA",
     "all": "Alla"
   },
   "source": {
     "user": "Min",
-    "manual": "CalculEat",
+    "manual": "Calculeat",
     "livsmedelsverket": "SLV",
     "usda": "USDA",
     "shared": "Delad"
@@ -28,8 +28,8 @@
     "copiedToList": "Livsmedlet kopierades till \"{{listName}}\"",
     "alreadyInList": "Livsmedlet finns redan i listan",
     "copyError": "Kunde inte kopiera. Försök igen.",
-    "copiedToCalculeat": "Livsmedlet kopierades till CalculEat-listan",
-    "alreadyInCalculeat": "Ett livsmedel med samma namn finns redan i CalculEat",
+    "copiedToCalculeat": "Livsmedlet kopierades till Calculeat-listan",
+    "alreadyInCalculeat": "Ett livsmedel med samma namn finns redan i Calculeat",
     "firstContributor": "Du var först att lägga till denna produkt. Tack!"
   },
   "fields": {
@@ -175,7 +175,7 @@
   },
   "adminEdit": {
     "title": "Redigera globalt livsmedel?",
-    "description": "Du är på väg att redigera \"{{name}}\". Ändringen påverkar detta livsmedel för ALLA användare i CalculEat-listan. Är du säker?",
+    "description": "Du är på väg att redigera \"{{name}}\". Ändringen påverkar detta livsmedel för ALLA användare i Calculeat-listan. Är du säker?",
     "cancel": "Avbryt",
     "confirm": "Ja, redigera globalt"
   },
@@ -202,12 +202,12 @@
   },
   "addFoodModal": {
     "titleCopy": "Skapa personlig kopia",
-    "titleAdminEdit": "Redigera CalculEat-livsmedel",
-    "titleAdminNew": "Nytt CalculEat-livsmedel",
+    "titleAdminEdit": "Redigera Calculeat-livsmedel",
+    "titleAdminNew": "Nytt Calculeat-livsmedel",
     "titleEdit": "Redigera livsmedel",
     "titleNew": "Nytt livsmedel",
     "adminEditWarning": "Redigerar globalt livsmedel. Ändringarna syns direkt för alla användare.",
-    "adminNewWarning": "Skapar globalt CalculEat-livsmedel. Syns för alla användare.",
+    "adminNewWarning": "Skapar globalt Calculeat-livsmedel. Syns för alla användare.",
     "cowInfo": "En personlig kopia skapas i din lista (Mina).",
     "sharedEditWarning": "Redigerar ett delat livsmedel. Ändringarna syns hos alla listmedlemmar.",
     "barcode": {
@@ -222,7 +222,7 @@
     "fillManually": "Fyll i näringsvärden manuellt",
     "fillManuallySaved": "(streckkod sparas)",
     "scanLabelHint": "Fotografera näringsdeklarationen så fyller vi i värdena automatiskt.",
-    "barcodeContributeHint": "När du sparar läggs produkten till i CalculEat för framtida skanningar.",
+    "barcodeContributeHint": "När du sparar läggs produkten till i Calculeat för framtida skanningar.",
     "barcodeError": "Kunde inte hämta produkten",
     "labelError": "Kunde inte läsa etiketten",
     "overwriteConfirm": "Du har redan fyllt i värden. Vill du ersätta dem med skannade värden?",

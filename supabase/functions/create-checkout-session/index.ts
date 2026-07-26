@@ -1,4 +1,4 @@
-// Skapar en Stripe Checkout-session för CalculEat Premium.
+// Skapar en Stripe Checkout-session för Calculeat Premium.
 // Kräver secrets: STRIPE_SECRET_KEY. Priser slås upp via lookup_keys
 // (premium_monthly / premium_yearly) — inga hårdkodade pris-ID:n.
 // Se docs/PREMIUM_SPEC.md (Fas 4).

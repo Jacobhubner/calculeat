@@ -1,4 +1,4 @@
--- Extended user profile for CalculEat
+-- Extended user profile for Calculeat
 -- Stores all user data from Profile sheet
 
 CREATE TABLE IF NOT EXISTS public.users_extended (

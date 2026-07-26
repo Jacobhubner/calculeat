@@ -1,5 +1,5 @@
 /**
- * Design Tokens för CalculEat
+ * Design Tokens för Calculeat
  * Centraliserad design system konfiguration
  */
 

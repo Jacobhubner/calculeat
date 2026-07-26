@@ -608,7 +608,7 @@ export function AddFoodToMealModal({
                       </button>
                     ))}
 
-                  {/* Recipe filter — on Mina, CalculEat and Alla tabs */}
+                  {/* Recipe filter — on Mina, Calculeat and Alla tabs */}
                   {(activeTab === 'mina' || activeTab === 'calculeat' || activeTab === 'alla') && (
                     <>
                       {showEnergyDensity && (

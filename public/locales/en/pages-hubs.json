@@ -1,7 +1,7 @@
 {
   "calculators-hub": {
     "seo": {
-      "title": "Calculators — Nutrition, Calories and Body Composition | CalculEat",
+      "title": "Calculators — Nutrition, Calories and Body Composition | Calculeat",
       "description": "Free calculators for TDEE, calorie deficit, BMI, protein needs, ideal weight, body fat, bulk, cut, FFMI and BMR. Calculate your goals instantly."
     },
     "h1": "Calculators for Nutrition and Body Composition",
@@ -12,7 +12,7 @@
     "ctaButton": "Start with the TDEE Calculator",
     "bottomCta": {
       "h2": "Save your results automatically",
-      "body": "Create a free account and let CalculEat calculate your daily goal, track meals and show how you're progressing — day by day.",
+      "body": "Create a free account and let Calculeat calculate your daily goal, track meals and show how you're progressing — day by day.",
       "button": "Create free account"
     },
     "calculators": [
@@ -80,7 +80,7 @@
   },
   "articles-hub": {
     "seo": {
-      "title": "Articles on Nutrition, Calories and Training | CalculEat",
+      "title": "Articles on Nutrition, Calories and Training | Calculeat",
       "description": "Guides and articles on calorie needs, TDEE, BMR, bulk, cut, calorie deficit and more. Learn to understand your body and reach your goals."
     },
     "h1": "Articles on Nutrition and Body Composition",
@@ -91,7 +91,7 @@
     "ctaButton": "Start with calorie needs",
     "bottomCta": {
       "h2": "Put the theory into practice",
-      "body": "Calculate your calorie needs with the TDEE calculator and start logging directly in CalculEat — free.",
+      "body": "Calculate your calorie needs with the TDEE calculator and start logging directly in Calculeat — free.",
       "primaryButton": "Try the TDEE Calculator",
       "secondaryButton": "Create free account"
     },

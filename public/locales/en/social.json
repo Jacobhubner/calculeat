@@ -72,7 +72,7 @@
       "email_placeholder": "recipient@example.com",
       "checking": "Checking...",
       "user_found": "User found",
-      "user_not_found": "No CalculEat user with that email",
+      "user_not_found": "No Calculeat user with that email",
       "next": "Next →"
     },
     "content": {
@@ -172,7 +172,7 @@
       "no_friends": "You have no friends yet",
       "add_friend": "Add friend",
       "add_placeholder": "Username or email address",
-      "add_hint": "If the person exists in CalculEat they will receive a friend request.",
+      "add_hint": "If the person exists in Calculeat they will receive a friend request.",
       "send_request": "Send request",
       "request_sent": "Friend request sent!",
       "request_send_failed": "Could not send request.",
@@ -204,7 +204,7 @@
     "activity": {
       "admin_invitations": "Admin invitations",
       "admin_invite_title": "{{name}} wants to make you an admin",
-      "admin_invite_desc": "As admin you can edit and add food items to the CalculEat list.",
+      "admin_invite_desc": "As admin you can edit and add food items to the Calculeat list.",
       "admin_accepted": "You are now an admin!",
       "admin_denied": "Invitation declined",
       "admin_invite_awaiting": "Awaiting response",

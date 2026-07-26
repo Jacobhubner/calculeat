@@ -164,7 +164,7 @@
   },
   "foodSuggestions": {
     "title": "Vad ska jag äta?",
-    "infoBody": "Ange hur många kalorier du har kvar och vilket makro du vill prioritera — så söker CalculEat igenom hela livsmedelsdatabasen och rankar de livsmedel och recept som bäst matchar dina mål.\n\nFiltrera på recept, energitäthet (grön/gul/orange) eller källa, och lägg till förslagen direkt i valfri måltid.\n\nIngår i Premium.",
+    "infoBody": "Ange hur många kalorier du har kvar och vilket makro du vill prioritera — så söker Calculeat igenom hela livsmedelsdatabasen och rankar de livsmedel och recept som bäst matchar dina mål.\n\nFiltrera på recept, energitäthet (grön/gul/orange) eller källa, och lägg till förslagen direkt i valfri måltid.\n\nIngår i Premium.",
     "infoAriaLabel": "Om Vad ska jag äta?",
     "settingsTitle": "Inställningar",
     "macroUnit": "g {{macro}}",
@@ -194,7 +194,7 @@
       "sort": "Sortera",
       "source": "Källa",
       "sourceAll": "Alla",
-      "sourceMine": "Mina & CalculEat",
+      "sourceMine": "Mina & Calculeat",
       "sourceSlv": "SLV",
       "sourceUsda": "USDA",
       "type": "Typ",

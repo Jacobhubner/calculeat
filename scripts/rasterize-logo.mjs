@@ -1,4 +1,4 @@
-// Engångs: rastrerar public/CalculEat-logo.svg till public/logo-512.png
+// Engångs: rastrerar public/Calculeat-logo.svg till public/logo-512.png
 // (Organization-schemats publisher.logo kräver rasterbild ≥112×112).
 // Loggan är i praktiken en base64-PNG i SVG-skal med filter — puppeteer
 // renderar hela kedjan korrekt, till skillnad från rena SVG-rastrerare.
@@ -7,7 +7,7 @@ import { readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 
 const ROOT = process.cwd()
-const svg = readFileSync(path.join(ROOT, 'public', 'CalculEat-logo.svg'), 'utf8')
+const svg = readFileSync(path.join(ROOT, 'public', 'Calculeat-logo.svg'), 'utf8')
 
 const browser = await puppeteer.launch({ args: ['--no-sandbox'] })
 const page = await browser.newPage()

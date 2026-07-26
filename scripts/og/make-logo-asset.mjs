@@ -5,7 +5,7 @@ import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
 import path from 'node:path'
 
 const ROOT = process.cwd()
-const svg = readFileSync(path.join(ROOT, 'public', 'CalculEat-logo.svg'), 'utf8')
+const svg = readFileSync(path.join(ROOT, 'public', 'Calculeat-logo.svg'), 'utf8')
 
 const browser = await puppeteer.launch({ args: ['--no-sandbox'] })
 const page = await browser.newPage()

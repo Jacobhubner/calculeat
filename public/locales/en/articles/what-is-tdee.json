@@ -1,6 +1,6 @@
 {
   "seo": {
-    "title": "What is TDEE? Total Daily Energy Expenditure Explained | CalculEat",
+    "title": "What is TDEE? Total Daily Energy Expenditure Explained | Calculeat",
     "description": "TDEE (Total Daily Energy Expenditure) is the calories your body burns per day. Learn how TDEE is calculated and how to use it for weight loss or muscle building."
   },
   "layout": {
@@ -55,7 +55,7 @@
     },
     {
       "type": "p",
-      "text": "BMR is measured under strictly controlled laboratory conditions: after sleep, in a fasting state and in a thermoneutral environment. In practical contexts, RMR (Resting Metabolic Rate) is more commonly used, measured at any time during the day, which can differ from BMR by up to 10%. Most online calculators — including CalculEat — technically calculate RMR, but use the term BMR in everyday use."
+      "text": "BMR is measured under strictly controlled laboratory conditions: after sleep, in a fasting state and in a thermoneutral environment. In practical contexts, RMR (Resting Metabolic Rate) is more commonly used, measured at any time during the day, which can differ from BMR by up to 10%. Most online calculators — including Calculeat — technically calculate RMR, but use the term BMR in everyday use."
     },
     {
       "type": "p",

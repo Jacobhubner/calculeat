@@ -17,7 +17,7 @@ interface LegalPageProps {
 
 /**
  * Gemensam mall för juridiksidorna (/villkor, /integritetspolicy).
- * Innehållet är UTKAST skrivna för CalculEat — granska innan skarp
+ * Innehållet är UTKAST skrivna för Calculeat — granska innan skarp
  * lansering; detta är inte juridisk rådgivning.
  */
 export default function LegalPage({ pageKey }: LegalPageProps) {
@@ -48,7 +48,7 @@ export default function LegalPage({ pageKey }: LegalPageProps) {
           {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-sm text-neutral-500 mb-8">
             <Link to="/" className="hover:text-neutral-700 transition-colors">
-              CalculEat
+              Calculeat
             </Link>
             <span>/</span>
             <span className="text-neutral-700">{t(`${pageKey}.breadcrumb`)}</span>

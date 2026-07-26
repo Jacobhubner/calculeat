@@ -1,6 +1,6 @@
-# CalculEat
+# Calculeat
 
-CalculEat – Räkna kalorier & näringsvärde enkelt. Det smarta verktyget för kostloggning, träning och aktivitetsnivåer – från nybörjare till avancerade bodybuilders.
+Calculeat – Räkna kalorier & näringsvärde enkelt. Det smarta verktyget för kostloggning, träning och aktivitetsnivåer – från nybörjare till avancerade bodybuilders.
 
 ## 🚀 Tech Stack
 

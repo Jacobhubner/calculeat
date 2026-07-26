@@ -1,9 +1,9 @@
 -- =========================================================
 -- MIGRATION: Add 'calculeat' tab to search_food_items RPC
 -- Date: 2026-03-01
--- Description: Separerar "Mina & CalculEat"-fliken i två:
+-- Description: Separerar "Mina & Calculeat"-fliken i två:
 --   'mina'      → bara användarens egna (user_id = p_user_id)
---   'calculeat' → bara CalculEat-förinställda (user_id IS NULL AND source = 'manual')
+--   'calculeat' → bara Calculeat-förinställda (user_id IS NULL AND source = 'manual')
 --   'slv'       → oförändrad
 --   'alla'      → allt utan shadowing (visar globala original + användarkopior)
 -- =========================================================

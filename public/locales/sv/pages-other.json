@@ -1,21 +1,21 @@
 {
   "about": {
     "seo": {
-      "title": "Om CalculEat — Vetenskapligt grundad nutritionsapp | CalculEat",
-      "description": "CalculEat är en svensk nutritionsapp med vetenskapligt grundade kalkylatorer för TDEE, BMR, FFMI och mer. Vi förklarar vår metodik och datakällor."
+      "title": "Om Calculeat — Vetenskapligt grundad nutritionsapp | Calculeat",
+      "description": "Calculeat är en svensk nutritionsapp med vetenskapligt grundade kalkylatorer för TDEE, BMR, FFMI och mer. Vi förklarar vår metodik och datakällor."
     },
     "schema": {
-      "pageName": "Om CalculEat",
-      "pageDescription": "CalculEat är en svensk nutritionsapp med vetenskapligt grundade kalkylatorer för TDEE, BMR, FFMI och mer. Lär dig om vår metodik och datakällor.",
+      "pageName": "Om Calculeat",
+      "pageDescription": "Calculeat är en svensk nutritionsapp med vetenskapligt grundade kalkylatorer för TDEE, BMR, FFMI och mer. Lär dig om vår metodik och datakällor.",
       "orgDescription": "Svensk nutritionsapp med vetenskapligt grundade kalkylatorer och matloggning."
     },
     "breadcrumb": "Om oss",
-    "h1": "Om CalculEat",
-    "intro": "CalculEat är en svensk nutritionsapp som kombinerar vetenskapligt grundade kalkylatorer med enkel matloggning — allt på ett ställe.",
+    "h1": "Om Calculeat",
+    "intro": "Calculeat är en svensk nutritionsapp som kombinerar vetenskapligt grundade kalkylatorer med enkel matloggning — allt på ett ställe.",
     "sections": {
       "whatIs": {
-        "h2": "Vad är CalculEat?",
-        "body": "CalculEat hjälper dig räkna ut ditt kaloribehov (TDEE), planera makronäringsämnen, logga mat och följa din kroppssammansättning. Vi fokuserar på precision och vetenskaplig grund — inte på förenklingar som kan leda fel."
+        "h2": "Vad är Calculeat?",
+        "body": "Calculeat hjälper dig räkna ut ditt kaloribehov (TDEE), planera makronäringsämnen, logga mat och följa din kroppssammansättning. Vi fokuserar på precision och vetenskaplig grund — inte på förenklingar som kan leda fel."
       },
       "methodology": {
         "h2": "Vår metodik",
@@ -29,7 +29,7 @@
       "limitations": {
         "h2": "Begränsningar",
         "body1": "Kalkylatorer ger uppskattningar — inte diagnoser. TDEE-formler har en felmarginal på ca ±10–15%. Individuella faktorer som muskelmassa, hormonbalans och metabolism påverkar det verkliga värdet. Använd alltid resultaten som startpunkt och justera baserat på verkligt utfall.",
-        "body2": "CalculEat är inte ett medicinskt verktyg och ersätter inte rådgivning från dietist eller läkare. Vid sjukdom, ätstörningar eller speciella medicinska behov — rådfråga alltid sjukvård."
+        "body2": "Calculeat är inte ett medicinskt verktyg och ersätter inte rådgivning från dietist eller läkare. Vid sjukdom, ätstörningar eller speciella medicinska behov — rådfråga alltid sjukvård."
       },
       "contact": {
         "h2": "Kontakt",
@@ -51,15 +51,15 @@
   },
   "premium": {
     "seo": {
-      "title": "CalculEat Premium — Priser och funktioner | CalculEat",
-      "description": "Jämför CalculEat Gratis och Premium: obegränsad historik, alla TDEE-formler, kroppskompositionsmetoder och CSV-export. 45 kr/mån eller 399 kr/år med 7 dagars gratis provperiod."
+      "title": "Calculeat Premium — Priser och funktioner | Calculeat",
+      "description": "Jämför Calculeat Gratis och Premium: obegränsad historik, alla TDEE-formler, kroppskompositionsmetoder och CSV-export. 45 kr/mån eller 399 kr/år med 7 dagars gratis provperiod."
     },
     "schema": {
-      "pageDescription": "Prenumeration som låser upp obegränsad historik, alla beräkningsformler och avancerad analys i nutritionsappen CalculEat."
+      "pageDescription": "Prenumeration som låser upp obegränsad historik, alla beräkningsformler och avancerad analys i nutritionsappen Calculeat."
     },
     "breadcrumb": "Premium",
-    "h1": "CalculEat Premium",
-    "intro": "Kärnan i CalculEat är gratis — obegränsad matloggning, streckkodsskanning och Livsmedelsverkets databas. Premium låser upp full precision: obegränsad historik, alla beräkningsformler och avancerad analys.",
+    "h1": "Calculeat Premium",
+    "intro": "Kärnan i Calculeat är gratis — obegränsad matloggning, streckkodsskanning och Livsmedelsverkets databas. Premium låser upp full precision: obegränsad historik, alla beräkningsformler och avancerad analys.",
     "plans": {
       "monthlyName": "Månadsvis",
       "monthlyPrice": "45 kr",
@@ -78,17 +78,17 @@
   },
   "terms": {
     "seo": {
-      "title": "Användarvillkor | CalculEat",
-      "description": "Användarvillkor för CalculEat — konto, Premium-prenumeration, betalning, ångerrätt och ansvarsbegränsningar."
+      "title": "Användarvillkor | Calculeat",
+      "description": "Användarvillkor för Calculeat — konto, Premium-prenumeration, betalning, ångerrätt och ansvarsbegränsningar."
     },
     "breadcrumb": "Användarvillkor",
     "h1": "Användarvillkor",
     "updated": "Senast uppdaterad: 16 juli 2026",
-    "intro": "Dessa villkor gäller när du använder CalculEat. Genom att skapa ett konto godkänner du villkoren.",
+    "intro": "Dessa villkor gäller när du använder Calculeat. Genom att skapa ett konto godkänner du villkoren.",
     "sections": [
       {
         "h2": "1. Om tjänsten",
-        "body": "CalculEat är en nutritionsapp för matloggning, kaloriberäkning och kroppssammansättning som tillhandahålls via calculeat.com. Kontakt sker via supportchatten i appen."
+        "body": "Calculeat är en nutritionsapp för matloggning, kaloriberäkning och kroppssammansättning som tillhandahålls via calculeat.com. Kontakt sker via supportchatten i appen."
       },
       {
         "h2": "2. Konto",
@@ -96,7 +96,7 @@
       },
       {
         "h2": "3. Gratis och Premium",
-        "body": "CalculEats kärnfunktioner är gratis. Premium är en prenumeration som kostar 45 kr per månad eller 399 kr per år, inklusive moms, med 7 dagars gratis provperiod. Aktuella priser och vad som ingår i respektive nivå framgår alltid på calculeat.com/premium. Prisändringar meddelas minst 30 dagar i förväg och gäller tidigast från nästa förnyelse."
+        "body": "Calculeats kärnfunktioner är gratis. Premium är en prenumeration som kostar 45 kr per månad eller 399 kr per år, inklusive moms, med 7 dagars gratis provperiod. Aktuella priser och vad som ingår i respektive nivå framgår alltid på calculeat.com/premium. Prisändringar meddelas minst 30 dagar i förväg och gäller tidigast från nästa förnyelse."
       },
       {
         "h2": "4. Betalning, förnyelse och uppsägning",
@@ -116,7 +116,7 @@
       },
       {
         "h2": "8. Ansvarsbegränsning",
-        "body": "CalculEats kalkylatorer och beräkningar är uppskattningar och utgör inte medicinsk rådgivning. Vid sjukdom, ätstörningar eller särskilda medicinska behov ska du alltid rådfråga sjukvården. Tjänsten tillhandahålls i befintligt skick. I den utsträckning tvingande konsumentlagstiftning tillåter är vårt ansvar begränsat till vad du betalat för tjänsten de senaste tolv månaderna. Dina lagstadgade rättigheter som konsument påverkas aldrig av dessa villkor."
+        "body": "Calculeats kalkylatorer och beräkningar är uppskattningar och utgör inte medicinsk rådgivning. Vid sjukdom, ätstörningar eller särskilda medicinska behov ska du alltid rådfråga sjukvården. Tjänsten tillhandahålls i befintligt skick. I den utsträckning tvingande konsumentlagstiftning tillåter är vårt ansvar begränsat till vad du betalat för tjänsten de senaste tolv månaderna. Dina lagstadgade rättigheter som konsument påverkas aldrig av dessa villkor."
       },
       {
         "h2": "9. Ändringar av villkoren",
@@ -130,17 +130,17 @@
   },
   "privacy": {
     "seo": {
-      "title": "Integritetspolicy | CalculEat",
-      "description": "Så behandlar CalculEat dina personuppgifter — vilka uppgifter vi samlar in, varför, vilka som tar del av dem och vilka rättigheter du har enligt GDPR."
+      "title": "Integritetspolicy | Calculeat",
+      "description": "Så behandlar Calculeat dina personuppgifter — vilka uppgifter vi samlar in, varför, vilka som tar del av dem och vilka rättigheter du har enligt GDPR."
     },
     "breadcrumb": "Integritetspolicy",
     "h1": "Integritetspolicy",
     "updated": "Senast uppdaterad: 16 juli 2026",
-    "intro": "CalculEat behandlar dina personuppgifter enligt EU:s dataskyddsförordning (GDPR). Här förklarar vi vad vi samlar in, varför, och vilka rättigheter du har.",
+    "intro": "Calculeat behandlar dina personuppgifter enligt EU:s dataskyddsförordning (GDPR). Här förklarar vi vad vi samlar in, varför, och vilka rättigheter du har.",
     "sections": [
       {
         "h2": "1. Personuppgiftsansvarig",
-        "body": "CalculEat är personuppgiftsansvarig för behandlingen som beskrivs här. Kontakt sker via supportchatten i appen."
+        "body": "Calculeat är personuppgiftsansvarig för behandlingen som beskrivs här. Kontakt sker via supportchatten i appen."
       },
       {
         "h2": "2. Uppgifter vi behandlar",
@@ -164,7 +164,7 @@
       },
       {
         "h2": "7. Cookies och lokal lagring",
-        "body": "CalculEat använder endast nödvändig lokal lagring i din webbläsare för inloggning och inställningar. Vi använder inga annonscookies och ingen tredjepartsspårning."
+        "body": "Calculeat använder endast nödvändig lokal lagring i din webbläsare för inloggning och inställningar. Vi använder inga annonscookies och ingen tredjepartsspårning."
       },
       {
         "h2": "8. Ändringar",

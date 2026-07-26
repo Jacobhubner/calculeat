@@ -251,7 +251,7 @@ export default function FoodItemsPage() {
     return (ds?.tabKey ?? 'slv') as FoodTab
   }, [resolvedSource])
 
-  // Static tabs: Alla | Mina | CalculEat | SLV | USDA — always show all datasources
+  // Static tabs: Alla | Mina | Calculeat | SLV | USDA — always show all datasources
   const STATIC_TABS = useMemo<{ key: FoodTab; label: string }[]>(
     () => [
       { key: 'alla', label: t('tabs.all') },
@@ -275,7 +275,7 @@ export default function FoodItemsPage() {
   const { mutateAsync: copyToSharedList } = useCopyToSharedList()
   const { mutateAsync: copyToCalculeat } = useCopyFoodItemToCalculeat()
 
-  // Build full tab list: Alla | Mina | CalculEat | [primary datasource] | [delade listor]
+  // Build full tab list: Alla | Mina | Calculeat | [primary datasource] | [delade listor]
   const allTabs = useMemo<{ key: FoodTab; label: string }[]>(
     () => [
       ...STATIC_TABS,
@@ -484,7 +484,7 @@ export default function FoodItemsPage() {
       return
     }
 
-    // Admin på CalculEat-fliken: hård delete av globalt item — kräver bekräftelsedialog
+    // Admin på Calculeat-fliken: hård delete av globalt item — kräver bekräftelsedialog
     if (isAdmin && activeTab === 'calculeat' && item?.user_id === null) {
       setAdminDeleteItem(item)
       return
@@ -533,7 +533,7 @@ export default function FoodItemsPage() {
       setListEditConfirmShared(false)
       return
     }
-    // Admin på CalculEat-fliken: redigera globalt item — kräver bekräftelsedialog
+    // Admin på Calculeat-fliken: redigera globalt item — kräver bekräftelsedialog
     if (isAdmin && activeTab === 'calculeat' && item.user_id === null) {
       setAdminEditItem(item)
       return
@@ -783,7 +783,7 @@ export default function FoodItemsPage() {
 
       {/* Tabs */}
       <div className="flex mb-0 border-b border-neutral-200 overflow-x-auto">
-        {/* Primary tabs: Alla, Mina, CalculEat, primary datasource, shared lists */}
+        {/* Primary tabs: Alla, Mina, Calculeat, primary datasource, shared lists */}
         <div className="flex gap-1">
           {allTabs
             .filter(tab => {
@@ -1167,7 +1167,7 @@ export default function FoodItemsPage() {
                                   onClick={() => handleCopyToCalculeat(item.id)}
                                   className="text-amber-700 font-medium"
                                 >
-                                  CalculEat-listan
+                                  Calculeat-listan
                                 </DropdownMenuItem>
                               )}
                             </DropdownMenuContent>
@@ -1544,7 +1544,7 @@ export default function FoodItemsPage() {
                                       }}
                                       className="text-amber-700 font-medium"
                                     >
-                                      CalculEat-listan
+                                      Calculeat-listan
                                     </DropdownMenuItem>
                                   )}
                                 </DropdownMenuContent>
@@ -1705,7 +1705,7 @@ export default function FoodItemsPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Bekräftelse: admin redigerar globalt CalculEat-livsmedel */}
+      {/* Bekräftelse: admin redigerar globalt Calculeat-livsmedel */}
       <Dialog
         open={!!adminEditItem}
         onOpenChange={open => {
@@ -1733,7 +1733,7 @@ export default function FoodItemsPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Bekräftelse: admin tar bort globalt CalculEat-livsmedel permanent */}
+      {/* Bekräftelse: admin tar bort globalt Calculeat-livsmedel permanent */}
       <Dialog
         open={!!adminDeleteItem}
         onOpenChange={open => {

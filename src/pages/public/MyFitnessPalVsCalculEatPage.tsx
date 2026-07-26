@@ -83,14 +83,14 @@ export default function MyFitnessPalVsCalculEatPage() {
       headline: t('myfitnesspal-vs-calculeat.schema.headline'),
       description: t('myfitnesspal-vs-calculeat.schema.description'),
       url: localeEntry.canonical,
-      publisher: { '@type': 'Organization', name: 'CalculEat', url: 'https://calculeat.com' },
+      publisher: { '@type': 'Organization', name: 'Calculeat', url: 'https://calculeat.com' },
       inLanguage: lng === 'en' ? 'en' : 'sv-SE',
     },
     {
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
       itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'CalculEat', item: 'https://calculeat.com/' },
+        { '@type': 'ListItem', position: 1, name: 'Calculeat', item: 'https://calculeat.com/' },
         {
           '@type': 'ListItem',
           position: 2,
@@ -129,7 +129,7 @@ export default function MyFitnessPalVsCalculEatPage() {
           {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-sm text-neutral-500 mb-6">
             <Link to="/" className="hover:text-neutral-700 transition-colors">
-              CalculEat
+              Calculeat
             </Link>
             <span>/</span>
             <span className="text-neutral-700">

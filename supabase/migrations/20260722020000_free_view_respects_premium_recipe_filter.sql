@@ -4,7 +4,7 @@
 -- Problem: "Visa som gratisanvändare" är client-side (tvingar limits i UI),
 -- men premium-recept-filtret i search_food_items frågar anroparens RIKTIGA
 -- plan. En admin i gratisvy ser darfor fortfarande premium-recepten i
--- CalculEat-fliken — inte "exakt som en gratisanvandare".
+-- Calculeat-fliken — inte "exakt som en gratisanvandare".
 -- Fix: p_force_free-parameter. Nar den ar true OCH anroparen ar admin
 -- behandlas anvandaren som gratis (recipe_bank_full=false) i filtret.
 -- Endast admins far tvinga — en vanlig anvandare kan inte pavarka utfallet

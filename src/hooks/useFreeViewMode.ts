@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 
 /**
- * Admin-verktyg: navigera CalculEat med riktig data men tvingade
+ * Admin-verktyg: navigera Calculeat med riktig data men tvingade
  * gratis-entitlements, för att se premium-lås/blur/uppgraderingsflöden
  * som en gratisanvändare skulle. Ren client-side override — ingen
  * DB-skrivning, ingen sandlåda. Se usePreviewMode för det andra

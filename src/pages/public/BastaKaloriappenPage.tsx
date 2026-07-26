@@ -17,39 +17,39 @@ type ForWhomItem = { title: string; winner: string; desc: string }
 type WhyFailCard = { title: string; desc: string }
 
 // App names and CellType data stay in TSX — not translatable content
-const APPS = ['CalculEat', 'MyFitnessPal', 'MacroFactor', 'Lifesum', 'Yazio'] as const
+const APPS = ['Calculeat', 'MyFitnessPal', 'MacroFactor', 'Lifesum', 'Yazio'] as const
 type App = (typeof APPS)[number]
 
 const CELL_DATA: Record<App, CellType>[] = [
-  { CalculEat: 'yes', MyFitnessPal: 'yes', MacroFactor: 'yes', Lifesum: 'yes', Yazio: 'yes' },
-  { CalculEat: 'yes', MyFitnessPal: 'yes', MacroFactor: 'yes', Lifesum: 'yes', Yazio: 'yes' },
-  { CalculEat: 'partial', MyFitnessPal: 'yes', MacroFactor: 'yes', Lifesum: 'yes', Yazio: 'yes' },
+  { Calculeat: 'yes', MyFitnessPal: 'yes', MacroFactor: 'yes', Lifesum: 'yes', Yazio: 'yes' },
+  { Calculeat: 'yes', MyFitnessPal: 'yes', MacroFactor: 'yes', Lifesum: 'yes', Yazio: 'yes' },
+  { Calculeat: 'partial', MyFitnessPal: 'yes', MacroFactor: 'yes', Lifesum: 'yes', Yazio: 'yes' },
   {
-    CalculEat: 'yes',
+    Calculeat: 'yes',
     MyFitnessPal: 'partial',
     MacroFactor: 'yes',
     Lifesum: 'partial',
     Yazio: 'partial',
   },
-  { CalculEat: 'yes', MyFitnessPal: 'no', MacroFactor: 'yes', Lifesum: 'no', Yazio: 'no' },
-  { CalculEat: 'yes', MyFitnessPal: 'no', MacroFactor: 'partial', Lifesum: 'no', Yazio: 'no' },
-  { CalculEat: 'yes', MyFitnessPal: 'no', MacroFactor: 'no', Lifesum: 'no', Yazio: 'no' },
+  { Calculeat: 'yes', MyFitnessPal: 'no', MacroFactor: 'yes', Lifesum: 'no', Yazio: 'no' },
+  { Calculeat: 'yes', MyFitnessPal: 'no', MacroFactor: 'partial', Lifesum: 'no', Yazio: 'no' },
+  { Calculeat: 'yes', MyFitnessPal: 'no', MacroFactor: 'no', Lifesum: 'no', Yazio: 'no' },
   {
-    CalculEat: 'yes',
+    Calculeat: 'yes',
     MyFitnessPal: 'partial',
     MacroFactor: 'yes',
     Lifesum: 'partial',
     Yazio: 'partial',
   },
   {
-    CalculEat: 'yes',
+    Calculeat: 'yes',
     MyFitnessPal: 'yes',
     MacroFactor: 'yes',
     Lifesum: 'partial',
     Yazio: 'partial',
   },
-  { CalculEat: 'yes', MyFitnessPal: 'no', MacroFactor: 'partial', Lifesum: 'no', Yazio: 'no' },
-  { CalculEat: 'yes', MyFitnessPal: 'partial', MacroFactor: 'no', Lifesum: 'yes', Yazio: 'yes' },
+  { Calculeat: 'yes', MyFitnessPal: 'no', MacroFactor: 'partial', Lifesum: 'no', Yazio: 'no' },
+  { Calculeat: 'yes', MyFitnessPal: 'partial', MacroFactor: 'no', Lifesum: 'yes', Yazio: 'yes' },
 ]
 
 const FOR_WHOM_COLORS = [
@@ -121,14 +121,14 @@ export default function BastaKaloriappenPage() {
       headline: t('best-calorie-app.schema.headline'),
       description: t('best-calorie-app.schema.description'),
       url: localeEntry.canonical,
-      publisher: { '@type': 'Organization', name: 'CalculEat', url: 'https://calculeat.com' },
+      publisher: { '@type': 'Organization', name: 'Calculeat', url: 'https://calculeat.com' },
       inLanguage: lng === 'en' ? 'en' : 'sv-SE',
     },
     {
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
       itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'CalculEat', item: 'https://calculeat.com/' },
+        { '@type': 'ListItem', position: 1, name: 'Calculeat', item: 'https://calculeat.com/' },
         {
           '@type': 'ListItem',
           position: 2,
@@ -157,7 +157,7 @@ export default function BastaKaloriappenPage() {
         <div className="container mx-auto px-4 py-10 max-w-3xl">
           <nav className="flex items-center gap-2 text-sm text-neutral-500 mb-6">
             <Link to="/" className="hover:text-neutral-700 transition-colors">
-              CalculEat
+              Calculeat
             </Link>
             <span>/</span>
             <span className="text-neutral-700">{t('best-calorie-app.breadcrumb.pageLabel')}</span>
@@ -189,7 +189,7 @@ export default function BastaKaloriappenPage() {
                     {APPS.map(app => (
                       <th
                         key={app}
-                        className={`px-3 py-3 text-xs font-semibold uppercase tracking-wider text-center w-24 ${app === 'CalculEat' ? 'text-primary-600' : 'text-neutral-500'}`}
+                        className={`px-3 py-3 text-xs font-semibold uppercase tracking-wider text-center w-24 ${app === 'Calculeat' ? 'text-primary-600' : 'text-neutral-500'}`}
                       >
                         {app}
                       </th>

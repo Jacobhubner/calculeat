@@ -2,7 +2,7 @@
  * Import script for Livsmedelsverket (Swedish Food Agency) food database.
  *
  * Fetches ~2575 foods + nutrients from SLV's public API and upserts into
- * CalculEat's Supabase database. Idempotent via (source, external_id) UNIQUE index.
+ * Calculeat's Supabase database. Idempotent via (source, external_id) UNIQUE index.
  *
  * Usage:
  *   npx tsx scripts/import-livsmedelsverket.ts

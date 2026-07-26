@@ -91,7 +91,7 @@ export function ArticleLayout({
             {breadcrumb && breadcrumb.length > 0 && (
               <nav className="flex flex-wrap items-center gap-1.5 text-[13px] text-neutral-500 mb-6">
                 <Link data-layout-text to="/" className="hover:text-neutral-900 transition-colors">
-                  CalculEat
+                  Calculeat
                 </Link>
                 {breadcrumb.map((crumb, i) => (
                   <span key={i} className="flex items-center gap-1.5">

@@ -251,7 +251,7 @@
   },
   "bmr-calculator": {
     "seo": {
-      "title": "BMR Kalkylator — Räkna ut din basalmetabolism (2026) | CalculEat",
+      "title": "BMR Kalkylator — Räkna ut din basalmetabolism (2026) | Calculeat",
       "description": "Gratis BMR-kalkylator (Mifflin-St Jeor). Räkna ut din basalmetabolism och se ditt uppskattade TDEE per aktivitetsnivå. Inget konto krävs."
     },
     "h1Prefix": "BMR",
@@ -313,7 +313,7 @@
     "cta": {
       "bottom": {
         "h2": "Gå från BMR till ett riktigt kalorimål",
-        "body": "BMR är grunden. TDEE är siffran du faktiskt ska använda — och CalculEat hjälper dig logga mot den.",
+        "body": "BMR är grunden. TDEE är siffran du faktiskt ska använda — och Calculeat hjälper dig logga mot den.",
         "primary": "Skapa gratis konto",
         "secondary": "Räkna ut ditt TDEE"
       }
@@ -359,7 +359,7 @@
       ],
       "box_link": "Räkna ut ditt TDEE istället",
       "h2_2": "Hur BMR beräknas — formlerna",
-      "p_3": "CalculEat använder **Mifflin-St Jeor (1990)** som primär formel — den mest validerade för den allmänna befolkningen med normal till medelhög fettprocent.",
+      "p_3": "Calculeat använder **Mifflin-St Jeor (1990)** som primär formel — den mest validerade för den allmänna befolkningen med normal till medelhög fettprocent.",
       "table_headers": ["Formel", "Styrka", "Bäst för"],
       "table_rows": [
         {
@@ -397,7 +397,7 @@
   },
   "bodyfat-calculator": {
     "seo": {
-      "title": "Kroppsfett Kalkylator — Räkna ut din kroppsfettprocent (2026) | CalculEat",
+      "title": "Kroppsfett Kalkylator — Räkna ut din kroppsfettprocent (2026) | Calculeat",
       "description": "Gratis kroppsfett-kalkylator (US Navy Method). Räkna ut din kroppsfettprocent, lean body mass och se din kategori. Resultat direkt — inget konto krävs."
     },
     "h1Prefix": "Kroppsfett",
@@ -583,7 +583,7 @@
   },
   "ffmi-calculator": {
     "seo": {
-      "title": "FFMI Kalkylator — Räkna ut ditt Fat-Free Mass Index (2026) | CalculEat",
+      "title": "FFMI Kalkylator — Räkna ut ditt Fat-Free Mass Index (2026) | Calculeat",
       "description": "Gratis FFMI-kalkylator. Räkna ut ditt Fat-Free Mass Index och normaliserat FFMI. Bedöm din muskelmassa, kategori och natural limit i kontext."
     },
     "h1Prefix": "FFMI",
@@ -1578,7 +1578,7 @@
   },
   "idealweight-calculator": {
     "seo": {
-      "title": "Idealvikt Kalkylator — Räkna ut din hälsosamma målvikt (2026) | CalculEat",
+      "title": "Idealvikt Kalkylator — Räkna ut din hälsosamma målvikt (2026) | Calculeat",
       "description": "Gratis idealvikt-kalkylator. Räkna ut ditt hälsosamma viktspann baserat på längd och kön. Se var du är nu och vad som är nästa steg mot ditt mål."
     },
     "h1Prefix": "Idealvikt",

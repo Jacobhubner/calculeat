@@ -17,68 +17,68 @@ type ForWhomItem = { title: string; winner: string; desc: string }
 type WhyFailCard = { title: string; desc: string }
 
 // Tool names and CellType data stay in TSX — not translatable content
-const TOOLS = ['CalculEat', 'TDEECalculator.net', 'MyFitnessPal', 'MacroFactor', 'Lifesum'] as const
+const TOOLS = ['Calculeat', 'TDEECalculator.net', 'MyFitnessPal', 'MacroFactor', 'Lifesum'] as const
 type Tool = (typeof TOOLS)[number]
 
 const CELL_DATA: Record<Tool, CellType>[] = [
   {
-    CalculEat: 'yes',
+    Calculeat: 'yes',
     'TDEECalculator.net': 'yes',
     MyFitnessPal: 'partial',
     MacroFactor: 'yes',
     Lifesum: 'partial',
   },
   {
-    CalculEat: 'yes',
+    Calculeat: 'yes',
     'TDEECalculator.net': 'no',
     MyFitnessPal: 'no',
     MacroFactor: 'yes',
     Lifesum: 'no',
   },
   {
-    CalculEat: 'yes',
+    Calculeat: 'yes',
     'TDEECalculator.net': 'partial',
     MyFitnessPal: 'no',
     MacroFactor: 'partial',
     Lifesum: 'no',
   },
   {
-    CalculEat: 'yes',
+    Calculeat: 'yes',
     'TDEECalculator.net': 'partial',
     MyFitnessPal: 'no',
     MacroFactor: 'yes',
     Lifesum: 'no',
   },
   {
-    CalculEat: 'yes',
+    Calculeat: 'yes',
     'TDEECalculator.net': 'partial',
     MyFitnessPal: 'partial',
     MacroFactor: 'yes',
     Lifesum: 'partial',
   },
   {
-    CalculEat: 'yes',
+    Calculeat: 'yes',
     'TDEECalculator.net': 'no',
     MyFitnessPal: 'yes',
     MacroFactor: 'yes',
     Lifesum: 'yes',
   },
   {
-    CalculEat: 'yes',
+    Calculeat: 'yes',
     'TDEECalculator.net': 'no',
     MyFitnessPal: 'no',
     MacroFactor: 'no',
     Lifesum: 'no',
   },
   {
-    CalculEat: 'yes',
+    Calculeat: 'yes',
     'TDEECalculator.net': 'no',
     MyFitnessPal: 'partial',
     MacroFactor: 'no',
     Lifesum: 'yes',
   },
   {
-    CalculEat: 'yes',
+    Calculeat: 'yes',
     'TDEECalculator.net': 'yes',
     MyFitnessPal: 'partial',
     MacroFactor: 'partial',
@@ -184,14 +184,14 @@ export default function BastaTdeeKalkylatornPage() {
       headline: t('best-tdee-calculator.schema.headline'),
       description: t('best-tdee-calculator.schema.description'),
       url: localeEntry.canonical,
-      publisher: { '@type': 'Organization', name: 'CalculEat', url: 'https://calculeat.com' },
+      publisher: { '@type': 'Organization', name: 'Calculeat', url: 'https://calculeat.com' },
       inLanguage: lng === 'en' ? 'en' : 'sv-SE',
     },
     {
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
       itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'CalculEat', item: 'https://calculeat.com/' },
+        { '@type': 'ListItem', position: 1, name: 'Calculeat', item: 'https://calculeat.com/' },
         {
           '@type': 'ListItem',
           position: 2,
@@ -220,7 +220,7 @@ export default function BastaTdeeKalkylatornPage() {
         <div className="container mx-auto px-4 py-10 max-w-3xl">
           <nav className="flex items-center gap-2 text-sm text-neutral-500 mb-6">
             <Link to="/" className="hover:text-neutral-700 transition-colors">
-              CalculEat
+              Calculeat
             </Link>
             <span>/</span>
             <span className="text-neutral-700">
@@ -273,7 +273,7 @@ export default function BastaTdeeKalkylatornPage() {
                     {TOOLS.map(tool => (
                       <th
                         key={tool}
-                        className={`px-3 py-3 text-xs font-semibold uppercase tracking-wider text-center w-24 ${tool === 'CalculEat' ? 'text-primary-600' : 'text-neutral-500'}`}
+                        className={`px-3 py-3 text-xs font-semibold uppercase tracking-wider text-center w-24 ${tool === 'Calculeat' ? 'text-primary-600' : 'text-neutral-500'}`}
                       >
                         {tool}
                       </th>
@@ -369,7 +369,7 @@ export default function BastaTdeeKalkylatornPage() {
             <p>{t('best-tdee-calculator.whyFailOutro')}</p>
           </section>
 
-          {/* When CalculEat is better */}
+          {/* When Calculeat is better */}
           <section className="mb-12 space-y-3 text-sm text-neutral-700 leading-relaxed">
             <h2 className="text-xl font-semibold text-neutral-900">
               {t('best-tdee-calculator.whenBetterH2')}

@@ -36,20 +36,20 @@ export default function PremiumPage() {
 
   const localeEntry = pageConfig.locales[lng] ?? pageConfig.locales.sv!
 
-  // CalculEat Premium är en mjukvaruprenumeration (SaaS), inte en fysisk produkt.
+  // Calculeat Premium är en mjukvaruprenumeration (SaaS), inte en fysisk produkt.
   // Product-schema triggade Googles merchant-listing-krav (image/shipping/retur/
   // review) som är irrelevanta här. SoftwareApplication är Googles rätta typ för
   // appar och undviker de kraven helt medan priserna behålls i offers.
   const softwareSchema = {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
-    name: 'CalculEat Premium',
+    name: 'Calculeat Premium',
     description: t('premium.schema.pageDescription'),
     applicationCategory: 'HealthApplication',
     operatingSystem: 'Web',
     url: localeEntry.canonical,
     image: `https://calculeat.com/og/premium-${lng}.png`,
-    publisher: { '@type': 'Organization', name: 'CalculEat', url: 'https://calculeat.com' },
+    publisher: { '@type': 'Organization', name: 'Calculeat', url: 'https://calculeat.com' },
     offers: [
       {
         '@type': 'Offer',
@@ -86,7 +86,7 @@ export default function PremiumPage() {
           {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-sm text-neutral-500 mb-8">
             <Link to="/" className="hover:text-neutral-700 transition-colors">
-              CalculEat
+              Calculeat
             </Link>
             <span>/</span>
             <span className="text-neutral-700">{t('premium.breadcrumb')}</span>

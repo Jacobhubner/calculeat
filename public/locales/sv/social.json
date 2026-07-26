@@ -72,7 +72,7 @@
       "email_placeholder": "mottagare@exempel.se",
       "checking": "Kontrollerar...",
       "user_found": "Användare hittad",
-      "user_not_found": "Ingen CalculEat-användare med den e-posten",
+      "user_not_found": "Ingen Calculeat-användare med den e-posten",
       "next": "Nästa →"
     },
     "content": {
@@ -172,7 +172,7 @@
       "no_friends": "Du har inga vänner ännu",
       "add_friend": "Lägg till vän",
       "add_placeholder": "Användarnamn eller e-postadress",
-      "add_hint": "Om personen finns i CalculEat får de en vänförfrågan.",
+      "add_hint": "Om personen finns i Calculeat får de en vänförfrågan.",
       "send_request": "Skicka förfrågan",
       "request_sent": "Vänförfrågan skickad!",
       "request_send_failed": "Kunde inte skicka förfrågan.",
@@ -204,7 +204,7 @@
     "activity": {
       "admin_invitations": "Admin-inbjudningar",
       "admin_invite_title": "{{name}} vill göra dig till admin",
-      "admin_invite_desc": "Som admin kan du redigera och lägga till livsmedel i CalculEat-listan.",
+      "admin_invite_desc": "Som admin kan du redigera och lägga till livsmedel i Calculeat-listan.",
       "admin_accepted": "Du är nu admin!",
       "admin_denied": "Inbjudan nekad",
       "admin_invite_awaiting": "Inväntar svar",

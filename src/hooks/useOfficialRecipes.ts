@@ -1,5 +1,5 @@
 /**
- * Receptbanken — officiella recept publicerade av CalculEat.
+ * Receptbanken — officiella recept publicerade av Calculeat.
  *
  * useOfficialRecipes: läser alla visibility='official'-recept (RLS släpper
  * igenom dem för alla inloggade icke-anonyma användare).

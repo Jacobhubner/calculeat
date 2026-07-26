@@ -3,7 +3,7 @@
 -- Date: 2026-07-22
 -- Läcka: premium-låsta officiella recept var blurrade i Upptäck-fliken,
 -- men deras globala följeslagar-food_items (is_recipe=true, user_id=NULL)
--- låg öppna i CalculEat-fliken och gick att söka fram och LOGGA gratis.
+-- låg öppna i Calculeat-fliken och gick att söka fram och LOGGA gratis.
 -- Fix: search_food_items döljer helt food_items som tillhör ett
 -- premium_only-officiellt recept, om användaren saknar recipe_bank_full
 -- OCH premium_enforcement='on'. En hjälppredikat-funktion håller villkoret

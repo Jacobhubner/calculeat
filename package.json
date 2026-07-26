@@ -2,7 +2,7 @@
   "name": "calculeat",
   "version": "1.0.0",
   "type": "module",
-  "description": "CalculEat – Räkna kalorier & näringsvärde enkelt",
+  "description": "Calculeat – Räkna kalorier & näringsvärde enkelt",
   "scripts": {
     "dev": "vite",
     "check:domain": "node scripts/check-domain.mjs",

@@ -1,7 +1,7 @@
 /**
  * OG-bildpipeline (Fas 5 i SEO-överhalningen).
  * Genererar en unik Open Graph-bild (1200×630 PNG) per publik sida × språk
- * från en SVG-mall med sidans titel + CalculEat-branding.
+ * från en SVG-mall med sidans titel + Calculeat-branding.
  *
  * - Rastrering: @resvg/resvg-js med bundlade Inter-fonter (loadSystemFonts: false
  *   → pixelidentiskt på Windows-dev och Vercel-Linux)
@@ -153,7 +153,7 @@ function loadTitles(locale: SupportedLocale): Map<string, string> {
   return map
 }
 
-const stripSuffix = (title: string) => title.replace(/\s*\|\s*CalculEat\s*$/, '')
+const stripSuffix = (title: string) => title.replace(/\s*\|\s*Calculeat\s*$/, '')
 
 // ── Huvudflöde ──────────────────────────────────────────────────────────────
 mkdirSync(OG_DIR, { recursive: true })

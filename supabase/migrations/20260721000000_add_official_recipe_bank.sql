@@ -2,7 +2,7 @@
 -- MIGRATION: Officiell receptbank ("Upptack recept") — Fas 1A backend
 -- Date: 2026-07-21
 --
--- CalculEat publicerar kuraterade recept som alla anvandare kan blada
+-- Calculeat publicerar kuraterade recept som alla anvandare kan blada
 -- bland och kopiera till sina egna recept. Premium-modell (blur-monstret
 -- fran kostlagena): varje officiellt recept har premium_only-flagga.
 -- Gratisanvandare ser gratisrecepten fullt ut och premiumrecepten som

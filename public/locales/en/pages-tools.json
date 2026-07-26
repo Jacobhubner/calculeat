@@ -251,7 +251,7 @@
   },
   "bmr-calculator": {
     "seo": {
-      "title": "BMR Calculator — Calculate Your Basal Metabolic Rate (2026) | CalculEat",
+      "title": "BMR Calculator — Calculate Your Basal Metabolic Rate (2026) | Calculeat",
       "description": "Free BMR calculator (Mifflin-St Jeor). Calculate your basal metabolic rate and see your estimated TDEE per activity level. No account required."
     },
     "h1Prefix": "BMR",
@@ -313,7 +313,7 @@
     "cta": {
       "bottom": {
         "h2": "Go from BMR to a real calorie goal",
-        "body": "BMR is the foundation. TDEE is the number you actually use — and CalculEat helps you log against it.",
+        "body": "BMR is the foundation. TDEE is the number you actually use — and Calculeat helps you log against it.",
         "primary": "Create free account",
         "secondary": "Calculate your TDEE"
       }
@@ -362,7 +362,7 @@
       ],
       "box_link": "Calculate your TDEE instead",
       "h2_2": "How BMR is calculated — the formulas",
-      "p_3": "CalculEat uses **Mifflin-St Jeor (1990)** as the primary formula — the most validated for the general population with normal to moderately elevated body fat.",
+      "p_3": "Calculeat uses **Mifflin-St Jeor (1990)** as the primary formula — the most validated for the general population with normal to moderately elevated body fat.",
       "table_headers": ["Formula", "Strength", "Best for"],
       "table_rows": [
         {
@@ -400,7 +400,7 @@
   },
   "bodyfat-calculator": {
     "seo": {
-      "title": "Body Fat Calculator — Calculate Your Body Fat Percentage (2026) | CalculEat",
+      "title": "Body Fat Calculator — Calculate Your Body Fat Percentage (2026) | Calculeat",
       "description": "Free body fat calculator (US Navy Method). Calculate your body fat percentage, lean body mass and see your category. Instant results — no account required."
     },
     "h1Prefix": "Body Fat",
@@ -586,7 +586,7 @@
   },
   "ffmi-calculator": {
     "seo": {
-      "title": "FFMI Calculator — Calculate Your Fat-Free Mass Index (2026) | CalculEat",
+      "title": "FFMI Calculator — Calculate Your Fat-Free Mass Index (2026) | Calculeat",
       "description": "Free FFMI calculator. Calculate your Fat-Free Mass Index and normalized FFMI. Assess your muscle mass, category and natural limit in context."
     },
     "h1Prefix": "FFMI",
@@ -1590,7 +1590,7 @@
   },
   "idealweight-calculator": {
     "seo": {
-      "title": "Ideal Weight Calculator — Calculate Your Healthy Target Weight (2026) | CalculEat",
+      "title": "Ideal Weight Calculator — Calculate Your Healthy Target Weight (2026) | Calculeat",
       "description": "Free ideal weight calculator. Calculate your healthy weight range based on height and gender. See where you are now and what the next step is toward your goal."
     },
     "h1Prefix": "Ideal Weight",

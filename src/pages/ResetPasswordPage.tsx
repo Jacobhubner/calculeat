@@ -161,7 +161,7 @@ export default function ResetPasswordPage() {
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
             <div className="flex items-center justify-center mb-4">
-              <img src="/CalculEat-logo.svg" alt="CalculEat Logo" className="h-16 object-contain" />
+              <img src="/Calculeat-logo.svg" alt="Calculeat Logo" className="h-16 object-contain" />
             </div>
             <p className="text-neutral-600">{t('resetPassword.subtitle')}</p>
           </div>

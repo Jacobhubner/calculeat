@@ -1,6 +1,6 @@
-# CalculEat - Setup Guide för Production
+# Calculeat - Setup Guide för Production
 
-Detta dokument beskriver steg-för-steg hur du konfigurerar CalculEat för production med custom email-domän och förbättrad säkerhet.
+Detta dokument beskriver steg-för-steg hur du konfigurerar Calculeat för production med custom email-domän och förbättrad säkerhet.
 
 ---
 
@@ -58,7 +58,7 @@ SMTP Port: 587
 SMTP User: apikey
 SMTP Password: <your-sendgrid-api-key>
 Sender Email: noreply@calculeat.com
-Sender Name: CalculEat
+Sender Name: Calculeat
 ```
 
 **För Amazon SES:**
@@ -69,7 +69,7 @@ SMTP Port: 587
 SMTP User: <your-ses-smtp-username>
 SMTP Password: <your-ses-smtp-password>
 Sender Email: noreply@calculeat.com
-Sender Name: CalculEat
+Sender Name: Calculeat
 ```
 
 4. Klicka "Save"
@@ -83,7 +83,7 @@ Gå till [Supabase Dashboard → Authentication → Email Templates](https://sup
 
 ### 2.1 Confirm Signup Template
 
-**Subject:** `Bekräfta din registrering på CalculEat`
+**Subject:** `Bekräfta din registrering på Calculeat`
 
 **Body:**
 
@@ -118,7 +118,7 @@ Gå till [Supabase Dashboard → Authentication → Email Templates](https://sup
                 style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px; text-align: center;"
               >
                 <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700;">
-                  CalculEat
+                  Calculeat
                 </h1>
               </td>
             </tr>
@@ -127,11 +127,11 @@ Gå till [Supabase Dashboard → Authentication → Email Templates](https://sup
             <tr>
               <td style="padding: 40px;">
                 <h2 style="margin: 0 0 20px 0; color: #111827; font-size: 24px; font-weight: 600;">
-                  Välkommen till CalculEat!
+                  Välkommen till Calculeat!
                 </h2>
 
                 <p style="margin: 0 0 20px 0; color: #4b5563; font-size: 16px; line-height: 1.6;">
-                  Tack för att du registrerat dig hos CalculEat. För att komma igång behöver du
+                  Tack för att du registrerat dig hos Calculeat. För att komma igång behöver du
                   bekräfta din e-postadress genom att klicka på knappen nedan.
                 </p>
 
@@ -161,7 +161,7 @@ Gå till [Supabase Dashboard → Authentication → Email Templates](https://sup
                 <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;" />
 
                 <p style="margin: 0; color: #9ca3af; font-size: 13px; line-height: 1.6;">
-                  Om du inte registrerade dig på CalculEat kan du ignorera detta email.
+                  Om du inte registrerade dig på Calculeat kan du ignorera detta email.
                   <br /><br />
                   Länken är giltig i 24 timmar.
                 </p>
@@ -172,7 +172,7 @@ Gå till [Supabase Dashboard → Authentication → Email Templates](https://sup
             <tr>
               <td style="background-color: #f9fafb; padding: 30px; text-align: center;">
                 <p style="margin: 0; color: #9ca3af; font-size: 12px;">
-                  © 2025 CalculEat. Alla rättigheter förbehållna.
+                  © 2025 Calculeat. Alla rättigheter förbehållna.
                   <br />
                   <a href="{{ .SiteURL }}" style="color: #667eea; text-decoration: none;"
                     >calculeat.com</a
@@ -190,7 +190,7 @@ Gå till [Supabase Dashboard → Authentication → Email Templates](https://sup
 
 ### 2.2 Reset Password Template
 
-**Subject:** `Återställ ditt lösenord - CalculEat`
+**Subject:** `Återställ ditt lösenord - Calculeat`
 
 **Body:**
 
@@ -225,7 +225,7 @@ Gå till [Supabase Dashboard → Authentication → Email Templates](https://sup
                 style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px; text-align: center;"
               >
                 <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700;">
-                  CalculEat
+                  Calculeat
                 </h1>
               </td>
             </tr>
@@ -238,7 +238,7 @@ Gå till [Supabase Dashboard → Authentication → Email Templates](https://sup
                 </h2>
 
                 <p style="margin: 0 0 20px 0; color: #4b5563; font-size: 16px; line-height: 1.6;">
-                  Vi fick en begäran om att återställa lösenordet för ditt CalculEat-konto. Klicka
+                  Vi fick en begäran om att återställa lösenordet för ditt Calculeat-konto. Klicka
                   på knappen nedan för att välja ett nytt lösenord.
                 </p>
 
@@ -279,7 +279,7 @@ Gå till [Supabase Dashboard → Authentication → Email Templates](https://sup
             <tr>
               <td style="background-color: #f9fafb; padding: 30px; text-align: center;">
                 <p style="margin: 0; color: #9ca3af; font-size: 12px;">
-                  © 2025 CalculEat. Alla rättigheter förbehållna.
+                  © 2025 Calculeat. Alla rättigheter förbehållna.
                   <br />
                   <a href="{{ .SiteURL }}" style="color: #667eea; text-decoration: none;"
                     >calculeat.com</a
@@ -297,7 +297,7 @@ Gå till [Supabase Dashboard → Authentication → Email Templates](https://sup
 
 ### 2.3 Magic Link Template
 
-**Subject:** `Din inloggningslänk - CalculEat`
+**Subject:** `Din inloggningslänk - Calculeat`
 
 **Body:**
 
@@ -332,7 +332,7 @@ Gå till [Supabase Dashboard → Authentication → Email Templates](https://sup
                 style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px; text-align: center;"
               >
                 <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700;">
-                  CalculEat
+                  Calculeat
                 </h1>
               </td>
             </tr>
@@ -341,11 +341,11 @@ Gå till [Supabase Dashboard → Authentication → Email Templates](https://sup
             <tr>
               <td style="padding: 40px;">
                 <h2 style="margin: 0 0 20px 0; color: #111827; font-size: 24px; font-weight: 600;">
-                  Logga in på CalculEat
+                  Logga in på Calculeat
                 </h2>
 
                 <p style="margin: 0 0 20px 0; color: #4b5563; font-size: 16px; line-height: 1.6;">
-                  Klicka på knappen nedan för att logga in på ditt CalculEat-konto.
+                  Klicka på knappen nedan för att logga in på ditt Calculeat-konto.
                 </p>
 
                 <!-- Button -->
@@ -385,7 +385,7 @@ Gå till [Supabase Dashboard → Authentication → Email Templates](https://sup
             <tr>
               <td style="background-color: #f9fafb; padding: 30px; text-align: center;">
                 <p style="margin: 0; color: #9ca3af; font-size: 12px;">
-                  © 2025 CalculEat. Alla rättigheter förbehållna.
+                  © 2025 Calculeat. Alla rättigheter förbehållna.
                   <br />
                   <a href="{{ .SiteURL }}" style="color: #667eea; text-decoration: none;"
                     >calculeat.com</a
