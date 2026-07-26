@@ -299,10 +299,13 @@
       }
     },
     "pal": {
-      "title": "PAL-system (Aktivitetsnivå)",
-      "description": "Välj system för att beräkna din fysiska aktivitetsnivå",
+      "title": "Aktivitetsnivå",
+      "description": "Välj hur aktiv du är i vardagen. Vi använder ett enkelt standardsystem.",
       "fieldLabel": "PAL-system",
       "factLink": "Fakta om detta PAL-system",
+      "usingLabel": "Beräknas med",
+      "usingStandard": "standard",
+      "advancedToggle": "Avancerat: byt beräkningssystem",
       "placeholder": "Välj PAL-system...",
       "calculateLevel": "Beräkna din aktivitetsnivå",
       "systems": {

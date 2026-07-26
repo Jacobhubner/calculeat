@@ -145,7 +145,9 @@ export default function TDEECalculatorTool() {
   // BMR and PAL state. Mifflin är förvald standard (grepp 2) — nybörjaren
   // behöver inte välja formel; expertvalet göms bakom "Avancerat".
   const [bmrFormula, setBmrFormula] = useState<BMRFormula | ''>('Mifflin-St Jeor equation')
-  const [palSystem, setPalSystem] = useState<PALSystem | ''>('')
+  // Grundläggande PAL är förvald standard (grepp 5) — nybörjaren möter bara
+  // aktivitetsnivå-dropdownen; systembytet göms bakom "Avancerat".
+  const [palSystem, setPalSystem] = useState<PALSystem | ''>('Basic internet PAL values')
   const [showBMRModal, setShowBMRModal] = useState(false)
   const [showPALModal, setShowPALModal] = useState(false)
 
@@ -759,51 +761,70 @@ export default function TDEECalculatorTool() {
             <CardContent>
               <div className="space-y-4">
                 <div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <label className="block text-sm font-medium text-neutral-700">
-                      {t('tdeeCalc.pal.fieldLabel')} <span className="text-red-600">*</span>
-                    </label>
-                    {palSystem && (
-                      <button
-                        type="button"
-                        onClick={() => setShowPALModal(true)}
-                        className="text-sm text-primary-600 hover:text-primary-700 underline transition-colors"
-                      >
-                        {t('tdeeCalc.pal.factLink')}
-                      </button>
+                  {/* Läsrad: vilket system som används (standard = Grundläggande PAL). */}
+                  <p className="text-sm text-neutral-600">
+                    {t('tdeeCalc.pal.usingLabel')}:{' '}
+                    <span className="font-medium text-neutral-900">
+                      {palSystem ? translatePALSystem(palSystem) : t('tdeeCalc.pal.placeholder')}
+                    </span>
+                    {palSystem === 'Basic internet PAL values' && (
+                      <span className="text-neutral-500"> ({t('tdeeCalc.pal.usingStandard')})</span>
                     )}
-                  </div>
-                  <select
-                    value={palSystem}
-                    onChange={e => handlePalSystemChange(e.target.value as PALSystem | '')}
-                    className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
-                  >
-                    <option value="">{t('tdeeCalc.pal.placeholder')}</option>
-                    <option value="Basic internet PAL values">
-                      {t('tdeeCalc.pal.systems.basicInternet')}
-                    </option>
-                    <option value="FAO/WHO/UNU based PAL values">
-                      {translatePALSystem('FAO/WHO/UNU based PAL values')}
-                      {premiumSuffix(isPalLocked('FAO/WHO/UNU based PAL values'))}
-                    </option>
-                    <option value="DAMNRIPPED PAL values">
-                      {translatePALSystem('DAMNRIPPED PAL values')}
-                      {premiumSuffix(isPalLocked('DAMNRIPPED PAL values'))}
-                    </option>
-                    <option value="Pro Physique PAL values">
-                      {translatePALSystem('Pro Physique PAL values')}
-                      {premiumSuffix(isPalLocked('Pro Physique PAL values'))}
-                    </option>
-                    <option value="Fitness Stuff PAL values">
-                      {translatePALSystem('Fitness Stuff PAL values')}
-                      {premiumSuffix(isPalLocked('Fitness Stuff PAL values'))}
-                    </option>
-                    <option value="Beräkna din aktivitetsnivå">
-                      {t('tdeeCalc.pal.calculateLevel')}
-                      {premiumSuffix(isPalLocked('Beräkna din aktivitetsnivå'))}
-                    </option>
-                    <option value="Custom PAL">{translatePALSystem('Custom PAL')}</option>
-                  </select>
+                  </p>
+
+                  {/* Expertval — göms bakom "Avancerat" (grepp 5). */}
+                  <details className="mt-3">
+                    <summary className="cursor-pointer text-sm text-primary-600 hover:text-primary-700 select-none">
+                      {t('tdeeCalc.pal.advancedToggle')}
+                    </summary>
+                    <div className="mt-3">
+                      <div className="flex items-center gap-2 mb-2">
+                        <label className="block text-sm font-medium text-neutral-700">
+                          {t('tdeeCalc.pal.fieldLabel')} <span className="text-red-600">*</span>
+                        </label>
+                        {palSystem && (
+                          <button
+                            type="button"
+                            onClick={() => setShowPALModal(true)}
+                            className="text-sm text-primary-600 hover:text-primary-700 underline transition-colors"
+                          >
+                            {t('tdeeCalc.pal.factLink')}
+                          </button>
+                        )}
+                      </div>
+                      <select
+                        value={palSystem}
+                        onChange={e => handlePalSystemChange(e.target.value as PALSystem | '')}
+                        className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                      >
+                        <option value="">{t('tdeeCalc.pal.placeholder')}</option>
+                        <option value="Basic internet PAL values">
+                          {t('tdeeCalc.pal.systems.basicInternet')}
+                        </option>
+                        <option value="FAO/WHO/UNU based PAL values">
+                          {translatePALSystem('FAO/WHO/UNU based PAL values')}
+                          {premiumSuffix(isPalLocked('FAO/WHO/UNU based PAL values'))}
+                        </option>
+                        <option value="DAMNRIPPED PAL values">
+                          {translatePALSystem('DAMNRIPPED PAL values')}
+                          {premiumSuffix(isPalLocked('DAMNRIPPED PAL values'))}
+                        </option>
+                        <option value="Pro Physique PAL values">
+                          {translatePALSystem('Pro Physique PAL values')}
+                          {premiumSuffix(isPalLocked('Pro Physique PAL values'))}
+                        </option>
+                        <option value="Fitness Stuff PAL values">
+                          {translatePALSystem('Fitness Stuff PAL values')}
+                          {premiumSuffix(isPalLocked('Fitness Stuff PAL values'))}
+                        </option>
+                        <option value="Beräkna din aktivitetsnivå">
+                          {t('tdeeCalc.pal.calculateLevel')}
+                          {premiumSuffix(isPalLocked('Beräkna din aktivitetsnivå'))}
+                        </option>
+                        <option value="Custom PAL">{translatePALSystem('Custom PAL')}</option>
+                      </select>
+                    </div>
+                  </details>
                 </div>
 
                 {/* Show PAL table if system is selected */}

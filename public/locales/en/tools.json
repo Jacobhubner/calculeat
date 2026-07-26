@@ -299,10 +299,13 @@
       }
     },
     "pal": {
-      "title": "PAL system (Activity level)",
-      "description": "Choose a system to calculate your physical activity level",
+      "title": "Activity level",
+      "description": "Choose how active you are day to day. We use a simple standard system.",
       "fieldLabel": "PAL system",
       "factLink": "Facts about this PAL system",
+      "usingLabel": "Calculated with",
+      "usingStandard": "standard",
+      "advancedToggle": "Advanced: change calculation system",
       "placeholder": "Select PAL system...",
       "calculateLevel": "Calculate your activity level",
       "systems": {
