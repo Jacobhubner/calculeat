@@ -33,6 +33,29 @@ import MealSettingsCard from '@/components/MealSettingsCard'
 import MacroModesCard from '@/components/MacroModesCard'
 import MacroConverterCard from '@/components/profile/MacroConverterCard'
 
+// Beräknar kaloriintervall för ett mål (ren funktion — delas av handleGoalChange
+// och handleTDEEChange så att målet från onboarding respekteras vid TDEE-beräkning).
+function caloriesForGoal(
+  tdee: number,
+  goal: string,
+  deficitLevel?: string | null
+): { caloriesMin: number; caloriesMax: number; deficitLevel: string | null } {
+  if (goal === 'Weight gain') {
+    return { caloriesMin: tdee * 1.1, caloriesMax: tdee * 1.2, deficitLevel: null }
+  }
+  if (goal === 'Weight loss') {
+    const d = deficitLevel || '10-15%'
+    if (d === '20-25%')
+      return { caloriesMin: tdee * 0.75, caloriesMax: tdee * 0.8, deficitLevel: d }
+    if (d === '25-30%')
+      return { caloriesMin: tdee * 0.7, caloriesMax: tdee * 0.75, deficitLevel: d }
+    // 10-15% (standard) + fallback
+    return { caloriesMin: tdee * 0.85, caloriesMax: tdee * 0.9, deficitLevel: '10-15%' }
+  }
+  // Maintain weight (och okänt mål)
+  return { caloriesMin: tdee * 0.97, caloriesMax: tdee * 1.03, deficitLevel: null }
+}
+
 export default function ProfilePage() {
   const { t } = useTranslation('profile')
   // Load profiles
@@ -415,7 +438,7 @@ export default function ProfilePage() {
     const isNetworkError = (error: unknown) =>
       error instanceof TypeError && /fetch/i.test(error.message)
 
-    // Vid viktnedgång: förvälj ett rimligt underskott och slå på
+    // Vid viktnedgång: förvälj normal viktnedgång (20-25%) och slå på
     // kaloritäthetsindikatorn (grepp 4). Bara här, vid första uppsättningen —
     // ett smart förval, användaren kan ändra i profilen efteråt.
     const isWeightLoss = data.calorie_goal === 'Weight loss'
@@ -430,7 +453,7 @@ export default function ProfilePage() {
           weight_kg: data.weight_kg,
           initial_weight_kg: data.weight_kg,
           calorie_goal: data.calorie_goal,
-          ...(isWeightLoss ? { deficit_level: '10-15%', show_energy_density: true } : {}),
+          ...(isWeightLoss ? { deficit_level: '20-25%', show_energy_density: true } : {}),
         },
       })
       await createWeightHistory.mutateAsync({ weight_kg: data.weight_kg })
@@ -495,6 +518,24 @@ export default function ProfilePage() {
       return
     }
 
+    // Respektera målet som redan valts (t.ex. i onboarding-uppsättningen) —
+    // TDEE-verktygen skickar alltid 'Maintain weight' som default, vilket annars
+    // skrev över användarens val. Finns ett mål redan: behåll det och räkna om
+    // kaloriintervallet för det målet + befintligt deficit_level.
+    const existingGoal = activeProfile?.calorie_goal
+    const goalOverride =
+      existingGoal && existingGoal !== data.calorie_goal
+        ? (() => {
+            const c = caloriesForGoal(data.tdee, existingGoal, activeProfile?.deficit_level)
+            return {
+              calorie_goal: existingGoal,
+              calories_min: c.caloriesMin,
+              calories_max: c.caloriesMax,
+              deficit_level: c.deficitLevel,
+            }
+          })()
+        : null
+
     setPendingChanges(prev => ({
       ...prev,
       tdee: data.tdee,
@@ -515,6 +556,8 @@ export default function ProfilePage() {
       calories_min: data.calories_min,
       calories_max: data.calories_max,
       accumulated_at: data.accumulated_at,
+      // Skriv efter spread så målet + omräknade kalorier vinner över TDEE-defaults.
+      ...(goalOverride ?? {}),
     }))
   }
 
