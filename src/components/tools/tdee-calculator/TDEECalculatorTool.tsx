@@ -24,6 +24,7 @@ import { PremiumGate } from '@/components/premium/PremiumGate'
 import { useEntitlements } from '@/hooks/useEntitlements'
 import { useUpgradeModalStore } from '@/stores/upgradeModalStore'
 import { FREE_BMR_FORMULAS, FREE_PAL_SYSTEMS } from '@/lib/constants/entitlements'
+import { applyMacroMode, macroModeForGoal } from '@/lib/utils/macroModes'
 import MetabolicCalibration from '@/components/profile/MetabolicCalibration'
 
 // Returns a finite number, or undefined. Handles '', NaN, null, and non-numeric strings.
@@ -416,6 +417,19 @@ export default function TDEECalculatorTool() {
         calculated_tdee: tdee,
       }
 
+      // Bevara målet + räkna om kalorier, och sätt makrofördelningen för det
+      // målets standardläge så kostläget matchar direkt (annars null-makron).
+      const goalPreset = caloriesForGoalPreset(
+        tdee,
+        activeProfile.calorie_goal,
+        activeProfile.deficit_level
+      )
+      const macros = applyMacroMode(macroModeForGoal(goalPreset.calorie_goal), {
+        weight: weightNum ?? 0,
+        caloriesMin: goalPreset.calories_min,
+        caloriesMax: goalPreset.calories_max,
+      })
+
       await updateProfile.mutateAsync({
         profileId: activeProfile.id,
         data: {
@@ -447,7 +461,14 @@ export default function TDEECalculatorTool() {
           tdee_calculation_snapshot: snapshot,
           // Behåll det mål användaren redan valt (t.ex. i onboarding) och räkna om
           // kaloriintervallet för det. Utan tidigare mål: maintenance ±3% som default.
-          ...caloriesForGoalPreset(tdee, activeProfile.calorie_goal, activeProfile.deficit_level),
+          ...goalPreset,
+          // Makrofördelning för målets standardläge (så kostläget matchar).
+          fat_min_percent: macros.fatMinPercent,
+          fat_max_percent: macros.fatMaxPercent,
+          carb_min_percent: macros.carbMinPercent,
+          carb_max_percent: macros.carbMaxPercent,
+          protein_min_percent: macros.proteinMinPercent,
+          protein_max_percent: macros.proteinMaxPercent,
         },
       })
 

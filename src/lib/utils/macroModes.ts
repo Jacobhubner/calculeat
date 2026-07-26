@@ -238,6 +238,15 @@ export function onSeasonMode(
 /**
  * Apply a macro mode to user profile
  */
+// Standardläge för ett kalorimål — används vid onboarding/TDEE-beräkning för
+// att sätta en makrofördelning som matchar målet direkt (annars matchar inget
+// kostläge och makrofördelningen blir odefinierad).
+export function macroModeForGoal(goal?: string | null): MacroModeId {
+  if (goal === 'Weight loss') return 'weightloss'
+  if (goal === 'Weight gain') return 'offseason'
+  return 'nnr' // Maintain weight (och ingen/okänt mål)
+}
+
 export function applyMacroMode(
   mode: MacroModeId,
   params: {
