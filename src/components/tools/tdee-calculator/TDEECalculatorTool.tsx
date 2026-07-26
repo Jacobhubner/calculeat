@@ -18,7 +18,7 @@ import type { TDEECalculationSnapshot, BMRFormula } from '@/lib/types'
 import BMRFormulaModal from '@/components/calculator/BMRFormulaModal'
 import PALSystemModal from '@/components/calculator/PALSystemModal'
 import PALTableContainer from '@/components/calculator/PALTableContainer'
-import { translatePALSystem } from '@/lib/translations'
+import { useActivityIntensityText } from '@/hooks/useActivityIntensityText'
 import ComparisonTab from './ComparisonTab'
 import { PremiumGate } from '@/components/premium/PremiumGate'
 import { useEntitlements } from '@/hooks/useEntitlements'
@@ -49,6 +49,7 @@ const BMR_FORMULA_I18N_KEY: Record<string, string> = {
 export default function TDEECalculatorTool() {
   const navigate = useNavigate()
   const { t, i18n } = useTranslation('tools')
+  const { palSystemName } = useActivityIntensityText()
   const isEn = i18n.language?.startsWith('en')
   const { profile: activeProfile } = useActiveProfile()
   const updateProfile = useUpdateProfile()
@@ -765,7 +766,7 @@ export default function TDEECalculatorTool() {
                   <p className="text-sm text-neutral-600">
                     {t('tdeeCalc.pal.usingLabel')}:{' '}
                     <span className="font-medium text-neutral-900">
-                      {palSystem ? translatePALSystem(palSystem) : t('tdeeCalc.pal.placeholder')}
+                      {palSystem ? palSystemName(palSystem) : t('tdeeCalc.pal.placeholder')}
                     </span>
                     {palSystem === 'Basic internet PAL values' && (
                       <span className="text-neutral-500"> ({t('tdeeCalc.pal.usingStandard')})</span>
@@ -802,26 +803,26 @@ export default function TDEECalculatorTool() {
                           {t('tdeeCalc.pal.systems.basicInternet')}
                         </option>
                         <option value="FAO/WHO/UNU based PAL values">
-                          {translatePALSystem('FAO/WHO/UNU based PAL values')}
+                          {palSystemName('FAO/WHO/UNU based PAL values')}
                           {premiumSuffix(isPalLocked('FAO/WHO/UNU based PAL values'))}
                         </option>
                         <option value="DAMNRIPPED PAL values">
-                          {translatePALSystem('DAMNRIPPED PAL values')}
+                          {palSystemName('DAMNRIPPED PAL values')}
                           {premiumSuffix(isPalLocked('DAMNRIPPED PAL values'))}
                         </option>
                         <option value="Pro Physique PAL values">
-                          {translatePALSystem('Pro Physique PAL values')}
+                          {palSystemName('Pro Physique PAL values')}
                           {premiumSuffix(isPalLocked('Pro Physique PAL values'))}
                         </option>
                         <option value="Fitness Stuff PAL values">
-                          {translatePALSystem('Fitness Stuff PAL values')}
+                          {palSystemName('Fitness Stuff PAL values')}
                           {premiumSuffix(isPalLocked('Fitness Stuff PAL values'))}
                         </option>
                         <option value="Beräkna din aktivitetsnivå">
                           {t('tdeeCalc.pal.calculateLevel')}
                           {premiumSuffix(isPalLocked('Beräkna din aktivitetsnivå'))}
                         </option>
-                        <option value="Custom PAL">{translatePALSystem('Custom PAL')}</option>
+                        <option value="Custom PAL">{palSystemName('Custom PAL')}</option>
                       </select>
                     </div>
                   </details>
@@ -881,7 +882,7 @@ export default function TDEECalculatorTool() {
                       <p className="text-5xl font-bold text-green-700 mb-1">{Math.round(tdee)}</p>
                       <p className="text-sm text-neutral-500">{t('tdeeCalc.results.kcalPerDay')}</p>
                       <p className="mt-3 text-xs text-neutral-500 border-t border-green-200 pt-3">
-                        {translatePALSystem(palSystem as PALSystem)}
+                        {palSystemName(palSystem as PALSystem)}
                       </p>
                     </div>
                   )}

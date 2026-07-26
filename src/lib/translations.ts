@@ -2,16 +2,6 @@
  * Svenska översättningar för kalkylatorn
  */
 
-export const palSystemTranslations: Record<string, string> = {
-  'FAO/WHO/UNU based PAL values': 'FAO/WHO/UNU-baserade PAL-värden',
-  'DAMNRIPPED PAL values': 'DAMNRIPPED PAL-värden',
-  'Pro Physique PAL values': 'Pro Physique PAL-värden',
-  'Fitness Stuff PAL values': 'Fitness Stuff PAL-värden',
-  'Basic internet PAL values': 'Grundläggande PAL-värden',
-  'Beräkna din aktivitetsnivå': 'Beräkna din aktivitetsnivå',
-  'Custom PAL': 'Anpassat PAL-värde',
-}
-
 export const deficitLevelTranslations: Record<string, string> = {
   Slow: 'Litet underskott (10-15%)',
   Moderate: 'Måttligt underskott (20-25%)',
@@ -34,11 +24,6 @@ export const dailyStepsTranslations: Record<string, string> = {
 }
 
 // Helper funktioner för översättning
-export function translatePALSystem(palSystem?: string): string {
-  if (!palSystem) return ''
-  return palSystemTranslations[palSystem] || palSystem
-}
-
 export function translateDeficitLevel(level?: string): string {
   if (!level) return ''
   return deficitLevelTranslations[level] || level

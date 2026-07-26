@@ -310,6 +310,15 @@
       "calculateLevel": "Calculate your activity level",
       "systems": {
         "basicInternet": "Basic PAL values (Recommended)"
+      },
+      "systemNames": {
+        "fao": "FAO/WHO/UNU-based PAL values",
+        "damnripped": "DAMNRIPPED PAL values",
+        "proPhysique": "Pro Physique PAL values",
+        "fitnessStuff": "Fitness Stuff PAL values",
+        "basic": "Basic PAL values",
+        "calculate": "Calculate your activity level",
+        "custom": "Custom PAL value"
       }
     },
     "results": {

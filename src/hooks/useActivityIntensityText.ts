@@ -9,13 +9,25 @@ import type { ActivityLevel, IntensityLevel, PALSystem } from '@/lib/calculation
  * intensityLevelLabels, intensityDescriptions).
  */
 
-// PAL-systemets fulla namn → kebab-id som används i JSON-nycklarna.
+// PAL-systemets fulla namn → kebab-id som används i beskrivnings-nycklarna
+// (activityDescriptions/intensityDescriptions). Endast system med beskrivningar.
 const PAL_KEY: Partial<Record<PALSystem, string>> = {
   'FAO/WHO/UNU based PAL values': 'fao',
   'DAMNRIPPED PAL values': 'damnripped',
   'Pro Physique PAL values': 'proPhysique',
   'Fitness Stuff PAL values': 'fitnessStuff',
   'Basic internet PAL values': 'basic',
+}
+
+// Fullständig mappning för systemNAMN (alla system, inkl. Custom/Beräkna).
+const PAL_NAME_KEY: Record<string, string> = {
+  'FAO/WHO/UNU based PAL values': 'fao',
+  'DAMNRIPPED PAL values': 'damnripped',
+  'Pro Physique PAL values': 'proPhysique',
+  'Fitness Stuff PAL values': 'fitnessStuff',
+  'Basic internet PAL values': 'basic',
+  'Beräkna din aktivitetsnivå': 'calculate',
+  'Custom PAL': 'custom',
 }
 
 export function useActivityIntensityText() {
@@ -45,5 +57,17 @@ export function useActivityIntensityText() {
     return t(`intensityDescriptions.${key}.${level}`, { defaultValue: '' })
   }
 
-  return { activityLabel, intensityLabel, activityDescription, intensityDescription }
+  const palSystemName = (palSystem: PALSystem | string): string => {
+    const key = PAL_NAME_KEY[palSystem]
+    if (!key) return String(palSystem)
+    return t(`pal.systemNames.${key}`, { defaultValue: String(palSystem) })
+  }
+
+  return {
+    activityLabel,
+    intensityLabel,
+    activityDescription,
+    intensityDescription,
+    palSystemName,
+  }
 }

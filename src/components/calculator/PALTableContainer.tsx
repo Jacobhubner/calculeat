@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { translatePALSystem } from '@/lib/translations'
+import { useActivityIntensityText } from '@/hooks/useActivityIntensityText'
 import type { PALSystem } from '@/lib/types'
 import { UseFormRegister, UseFormWatch } from 'react-hook-form'
 import PALTableFAO from './PALTableFAO'
@@ -30,6 +30,7 @@ export default function PALTableContainer({
   tdee,
 }: PALTableContainerProps) {
   const { t } = useTranslation('tools')
+  const { palSystemName } = useActivityIntensityText()
   const renderTable = () => {
     switch (system) {
       case 'FAO/WHO/UNU based PAL values':
@@ -86,7 +87,7 @@ export default function PALTableContainer({
     <Card className="bg-gradient-to-br from-primary-50 to-accent-50 border-2 border-primary-200">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-base">
-          📊 {translatePALSystem(system)}
+          📊 {palSystemName(system)}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">{renderTable()}</CardContent>

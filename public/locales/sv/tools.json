@@ -310,6 +310,15 @@
       "calculateLevel": "Beräkna din aktivitetsnivå",
       "systems": {
         "basicInternet": "Grundläggande PAL-värden (Rekommenderad)"
+      },
+      "systemNames": {
+        "fao": "FAO/WHO/UNU-baserade PAL-värden",
+        "damnripped": "DAMNRIPPED PAL-värden",
+        "proPhysique": "Pro Physique PAL-värden",
+        "fitnessStuff": "Fitness Stuff PAL-värden",
+        "basic": "Grundläggande PAL-värden",
+        "calculate": "Beräkna din aktivitetsnivå",
+        "custom": "Anpassat PAL-värde"
       }
     },
     "results": {
