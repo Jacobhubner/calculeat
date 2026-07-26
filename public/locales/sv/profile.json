@@ -253,13 +253,13 @@
     "adminMsgError": "Kunde inte skicka meddelandet. Försök igen."
   },
   "tdeeOptions": {
-    "calculateTitle": "Beräkna TDEE",
-    "calculateDesc": "Använd vår kalkylator för att beräkna ditt TDEE baserat på aktivitetsnivå och träning",
-    "calculateButton": "Gå till TDEE-kalkylator",
-    "manualTitle": "Ange TDEE manuellt",
-    "manualDesc": "Ange ditt TDEE om du redan känner till det från en annan källa",
-    "showForm": "Visa formulär",
-    "hideForm": "Dölj formulär"
+    "calculateTitle": "Räkna ut hur mycket du kan äta",
+    "calculateDesc": "Svara på några enkla frågor om dig och din vardag, så uppskattar vi ditt dagliga kaloribehov (kallas TDEE).",
+    "calculateButton": "Kom igång",
+    "manualTitle": "Jag vet redan mitt kaloribehov",
+    "manualDesc": "Ange ditt dagliga kaloribehov (TDEE) om du redan känner till det från en annan källa.",
+    "showForm": "Ange manuellt",
+    "hideForm": "Dölj"
   },
   "weightTracker": {
     "title": "Viktspårning",

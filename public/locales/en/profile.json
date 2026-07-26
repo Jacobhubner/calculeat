@@ -253,13 +253,13 @@
     "adminMsgError": "Could not send the message. Please try again."
   },
   "tdeeOptions": {
-    "calculateTitle": "Calculate TDEE",
-    "calculateDesc": "Use our calculator to calculate your TDEE based on activity level and training",
-    "calculateButton": "Go to TDEE calculator",
-    "manualTitle": "Enter TDEE manually",
-    "manualDesc": "Enter your TDEE if you already know it from another source",
-    "showForm": "Show form",
-    "hideForm": "Hide form"
+    "calculateTitle": "Find out how much you can eat",
+    "calculateDesc": "Answer a few simple questions about you and your daily life, and we'll estimate your daily calorie needs (called TDEE).",
+    "calculateButton": "Get started",
+    "manualTitle": "I already know my calorie needs",
+    "manualDesc": "Enter your daily calorie needs (TDEE) if you already know it from another source.",
+    "showForm": "Enter manually",
+    "hideForm": "Hide"
   },
   "weightTracker": {
     "title": "Weight tracking",
