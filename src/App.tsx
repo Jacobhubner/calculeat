@@ -157,6 +157,25 @@ function ScrollToTop() {
   return null
 }
 
+// Synkar det globala i18n-språket med URL:en på publika sidor. Publika
+// sidor är URL-språkdrivna (/en/... = engelska, annars svenska) men
+// LanguageSwitcher navigerar bara — inget anropar changeLanguage när man
+// LANDAR på en /en/-URL (t.ex. via länk, delning eller sökmotor). Utan
+// detta visar header/footer/globala UI-strängar svenska på engelska sidor.
+// App-sidor (/app) lämnas orörda — där styr användarens val (localStorage).
+function LocaleSync() {
+  const { pathname } = useLocation()
+  const { i18n } = useTranslation()
+  useEffect(() => {
+    if (pathname.startsWith('/app')) return
+    const target = pathname.startsWith('/en/') || pathname === '/en' ? 'en' : 'sv'
+    if (!i18n.language?.startsWith(target)) {
+      i18n.changeLanguage(target)
+    }
+  }, [pathname, i18n])
+  return null
+}
+
 // Supportchatt på publika sidor (gäster + inloggade). /app har redan
 // SupportChatButton via DashboardLayout — undanta för att slippa dubblett.
 function PublicSupportChatMount() {
@@ -185,6 +204,7 @@ function App() {
             <PresenceProvider>
               <BrowserRouter>
                 <ScrollToTop />
+                <LocaleSync />
                 <GlobalUpgradeModal />
                 <PublicSupportChatMount />
                 <Suspense fallback={<PageLoader />}>
