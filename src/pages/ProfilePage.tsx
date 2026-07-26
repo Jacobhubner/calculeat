@@ -439,9 +439,10 @@ export default function ProfilePage() {
     const isNetworkError = (error: unknown) =>
       error instanceof TypeError && /fetch/i.test(error.message)
 
-    // Vid viktnedgång: förvälj normal viktnedgång (20-25%) och slå på
-    // kaloritäthetsindikatorn (grepp 4). Bara här, vid första uppsättningen —
-    // ett smart förval, användaren kan ändra i profilen efteråt.
+    // Kaloritäthetsindikatorn hjälper den som vill gå NER (undvika kaloritäta
+    // livsmedel) — förvälj den bara vid viktnedgång, och sätt den explicit av
+    // vid övriga mål så inget gammalt värde ligger kvar. Vid viktnedgång även
+    // normalt underskott (20-25%). Smart förval, användaren kan ändra efteråt.
     const isWeightLoss = data.calorie_goal === 'Weight loss'
 
     const attemptSave = async () => {
@@ -454,7 +455,8 @@ export default function ProfilePage() {
           weight_kg: data.weight_kg,
           initial_weight_kg: data.weight_kg,
           calorie_goal: data.calorie_goal,
-          ...(isWeightLoss ? { deficit_level: '20-25%', show_energy_density: true } : {}),
+          show_energy_density: isWeightLoss,
+          ...(isWeightLoss ? { deficit_level: '20-25%' } : {}),
         },
       })
       await createWeightHistory.mutateAsync({ weight_kg: data.weight_kg })
