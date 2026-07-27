@@ -39,7 +39,8 @@
       "Bash(timeout:*)",
       "Bash(start:*)",
       "Bash(ping:*)",
-      "Bash(git commit -m ' *)"
+      "Bash(git commit -m ' *)",
+      "Bash(git add *)"
     ],
     "deny": [],
     "ask": []

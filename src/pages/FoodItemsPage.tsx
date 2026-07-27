@@ -1071,8 +1071,12 @@ export default function FoodItemsPage() {
               const displayData = getDisplayData(item, currentMode)
               const allModes = getAvailableDisplayModes(item)
               return (
-                <Card key={item.id} className="overflow-hidden">
-                  <CardContent className="p-2">
+                <Card
+                  key={item.id}
+                  variant="gradient"
+                  className="overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                >
+                  <CardContent className="p-3">
                     {/* Row 1: Name + color badge */}
                     <div className="flex items-center justify-between gap-2 mb-0.5">
                       <div className="flex items-center gap-1.5 min-w-0 flex-1">

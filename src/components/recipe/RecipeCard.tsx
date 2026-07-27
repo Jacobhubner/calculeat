@@ -92,7 +92,11 @@ export function RecipeCard({
   }
 
   return (
-    <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={onPreview}>
+    <Card
+      variant="gradient"
+      className="hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+      onClick={onPreview}
+    >
       <CardContent className="p-3">
         <div className="flex items-center gap-3">
           {/* Tumnagel eller ikon */}
