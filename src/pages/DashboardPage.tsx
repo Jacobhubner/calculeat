@@ -5,13 +5,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ZonedCalorieRing } from '@/components/daily/ZonedCalorieRing'
 import { MacroRangeBar } from '@/components/daily/MacroRangeBar'
 import { TDEEScenarioCard } from '@/components/dashboard/TDEEScenarioCard'
+import { DashboardHeroSection } from '@/components/dashboard/DashboardHeroSection'
 import EmptyState from '@/components/EmptyState'
 import { useAuth } from '@/contexts/AuthContext'
 import { useProfiles, useOnboarding } from '@/hooks'
 import { useTodayLog } from '@/hooks/useDailyLogs'
 import { useProfileStore } from '@/stores/profileStore'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Scale, UtensilsCrossed, BookOpen, User, Target, ChevronRight } from 'lucide-react'
+import { Scale, UtensilsCrossed, BookOpen, User, Target } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -169,9 +170,13 @@ export default function DashboardPage() {
           />
         ) : (
           <div className="space-y-8">
-            {/* Calorie Ring + Macro status */}
+            {/* Hero Section - Redesigned */}
+            <DashboardHeroSection consumed={consumed} min={ringMin} max={targetMax} />
+
+            {/* Calorie Ring + Macro status - now secondary */}
             <div className="grid gap-6 lg:grid-cols-2">
-              <div className="flex flex-col items-center justify-center gap-1">
+              {/* Hidden on new hero design, kept for reference */}
+              <div className="hidden lg:flex flex-col items-center justify-center gap-1">
                 <p className="text-xs font-medium text-neutral-400 uppercase tracking-widest">
                   {t('ring.todaySummary')}
                 </p>
@@ -190,8 +195,8 @@ export default function DashboardPage() {
                   const proteinPct =
                     macroTotalKcal > 0 ? Math.round((proteinKcal / macroTotalKcal) * 100) : 0
                   return (
-                    <Card>
-                      <CardHeader className="pb-2">
+                    <Card variant="gradient">
+                      <CardHeader className="pb-3">
                         <CardTitle>{t('macros.title')}</CardTitle>
                       </CardHeader>
                       <CardContent>
@@ -233,22 +238,26 @@ export default function DashboardPage() {
             )}
 
             {/* Quick links */}
-            <div className="space-y-3">
-              {quickLinks.map(({ icon: Icon, label, to }) => (
-                <button
-                  key={to}
-                  onClick={() => navigate(to)}
-                  className="w-full flex items-center gap-4 bg-white border border-neutral-200 rounded-2xl px-5 py-4 hover:border-primary-300 hover:bg-primary-50 transition-colors shadow-sm"
-                >
-                  <div className="flex-shrink-0 h-10 w-10 rounded-xl bg-primary-100 flex items-center justify-center">
-                    <Icon className="h-5 w-5 text-primary-600" />
-                  </div>
-                  <span className="flex-1 text-left text-base font-medium text-neutral-800">
-                    {label}
-                  </span>
-                  <ChevronRight className="h-5 w-5 text-neutral-400 flex-shrink-0" />
-                </button>
-              ))}
+            <div className="space-y-2">
+              <p className="text-sm font-semibold text-neutral-600 px-2 uppercase tracking-wider">
+                {t('dashboard.quickAccess')}
+              </p>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {quickLinks.map(({ icon: Icon, label, to }) => (
+                  <button
+                    key={to}
+                    onClick={() => navigate(to)}
+                    className="flex flex-col items-center gap-3 p-4 rounded-2xl bg-gradient-to-br from-white to-neutral-50 border border-neutral-200 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                  >
+                    <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary-100 to-accent-100 flex items-center justify-center">
+                      <Icon className="h-5 w-5 text-primary-600" />
+                    </div>
+                    <span className="text-center text-sm font-medium text-neutral-800 leading-tight">
+                      {label}
+                    </span>
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         )}
