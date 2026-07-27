@@ -148,7 +148,7 @@ export default function DashboardNav() {
   return (
     <aside
       className={cn(
-        'hidden md:block fixed left-0 top-16 h-[calc(100vh-4rem)] border-r bg-white transition-all duration-300 z-40',
+        'hidden md:block fixed left-0 top-16 h-[calc(100vh-4rem)] border-r border-neutral-200 bg-gradient-to-b from-white via-neutral-50 to-white transition-all duration-300 z-40',
         sidebarCollapsed ? 'w-20' : 'w-64'
       )}
     >
@@ -204,10 +204,10 @@ export default function DashboardNav() {
                       key={item.to}
                       to={item.to}
                       className={cn(
-                        'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors relative group',
+                        'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all relative group',
                         active
-                          ? 'bg-primary-100 text-primary-700'
-                          : 'text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900',
+                          ? 'bg-primary-100/60 text-primary-700 shadow-sm'
+                          : 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900',
                         sidebarCollapsed && 'justify-center px-2'
                       )}
                     >
