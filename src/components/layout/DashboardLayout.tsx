@@ -63,7 +63,7 @@ export default function DashboardLayout({ children, fullHeight }: DashboardLayou
           </div>
         )}
       </div>
-      <div className="flex flex-1 min-h-0">
+      <div className="flex flex-1 min-h-0 bg-gradient-to-br from-neutral-50 via-white to-neutral-50">
         <DashboardNav />
         <main
           className={cn(

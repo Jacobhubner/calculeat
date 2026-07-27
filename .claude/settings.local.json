@@ -38,7 +38,8 @@
       "mcp__supabase__search_docs",
       "Bash(timeout:*)",
       "Bash(start:*)",
-      "Bash(ping:*)"
+      "Bash(ping:*)",
+      "Bash(git commit -m ' *)"
     ],
     "deny": [],
     "ask": []

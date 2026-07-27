@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { Plus, Bookmark, ArrowDownToLine, Trash2, Coffee, UtensilsCrossed } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { SwipeableItem } from '@/components/ui/SwipeableItem'
 import { MealProgressBar } from '@/components/daily/RangeProgressBar'
@@ -62,7 +62,7 @@ export function MealSection({
   const mealTargetMax = targetPct ? Math.round((goalCalories * targetPct) / 100) : undefined
 
   return (
-    <Card>
+    <Card variant="gradient">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-3 min-w-0">
@@ -72,14 +72,14 @@ export function MealSection({
               <UtensilsCrossed className="h-5 w-5 text-accent-600 shrink-0" />
             )}
             <div className="min-w-0">
-              <CardTitle className="text-lg truncate">{mealName}</CardTitle>
-              <CardDescription className="truncate">
+              <h3 className="text-lg font-bold text-neutral-950 truncate">{mealName}</h3>
+              <p className="text-sm text-neutral-500 truncate">
                 {hasItems
                   ? t('today.mealItemCount', { count: mealEntry?.items?.length ?? 0 })
                   : targetPct
                     ? t('today.mealPercentage', { pct: targetPct })
                     : t('adHoc.label')}
-              </CardDescription>
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-1.5 md:gap-3 shrink-0">
