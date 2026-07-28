@@ -8,7 +8,7 @@ import SiteFooter from '@/components/layout/SiteFooter'
 import { HeroSection } from '@/components/HeroSection'
 import { HowItWorks } from '@/components/HowItWorks'
 import { Button } from '@/components/ui/button'
-import { Scan, Share2, ChefHat, Scale, Target, ArrowRight } from 'lucide-react'
+import { Scan, Share2, ChefHat, Scale, Target, ArrowRight, Database, Activity } from 'lucide-react'
 
 const homeConfig = getPageConfigByKey('home')!
 const hreflangAlternates = getHreflangAlternates(homeConfig)
@@ -112,7 +112,7 @@ export default function HomePage() {
                 </div>
               </div>
 
-              <div className="group rounded-2xl border border-neutral-200 bg-gradient-to-br from-green-50/80 to-emerald-50/40 p-6 flex gap-5 items-start hover:shadow-lg hover:-translate-y-1 transition-all duration-300 sm:col-span-2 lg:col-span-1">
+              <div className="group rounded-2xl border border-neutral-200 bg-gradient-to-br from-green-50/80 to-emerald-50/40 p-6 flex gap-5 items-start hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
                 <div className="flex-shrink-0 rounded-xl p-3 bg-primary-600/10 text-primary-700">
                   <Target className="h-8 w-8" strokeWidth={2} />
                 </div>
@@ -122,6 +122,34 @@ export default function HomePage() {
                   </h3>
                   <p className="text-sm text-neutral-600 leading-relaxed">
                     {t('home.features.goals.description')}
+                  </p>
+                </div>
+              </div>
+
+              <div className="group rounded-2xl border border-neutral-200 bg-gradient-to-br from-blue-50/80 to-cyan-50/40 p-6 flex gap-5 items-start hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                <div className="flex-shrink-0 rounded-xl p-3 bg-accent-600/10 text-accent-700">
+                  <Database className="h-8 w-8" strokeWidth={2} />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-neutral-950 text-lg mb-2">
+                    {t('home.features.database.title')}
+                  </h3>
+                  <p className="text-sm text-neutral-600 leading-relaxed">
+                    {t('home.features.database.description')}
+                  </p>
+                </div>
+              </div>
+
+              <div className="group rounded-2xl border border-neutral-200 bg-gradient-to-br from-green-50/80 to-emerald-50/40 p-6 flex gap-5 items-start hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                <div className="flex-shrink-0 rounded-xl p-3 bg-primary-600/10 text-primary-700">
+                  <Activity className="h-8 w-8" strokeWidth={2} />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-neutral-950 text-lg mb-2">
+                    {t('home.features.calibration.title')}
+                  </h3>
+                  <p className="text-sm text-neutral-600 leading-relaxed">
+                    {t('home.features.calibration.description')}
                   </p>
                 </div>
               </div>
