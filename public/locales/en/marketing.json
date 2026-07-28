@@ -13,18 +13,28 @@
       "ctaPrimary": "Get started — it's free",
       "ctaSecondary": "Try the calculator",
       "cardHeader": "Calculeat — your tools",
-      "tile1": "Scan barcodes",
-      "tile2": "Build recipes",
-      "tile3": "Share lists",
-      "tile4": "Body composition",
+      "tile1": "Scan barcodes fast",
+      "tile2": "Huge food database",
+      "tile3": "Metabolic calibration",
+      "tile4": "Share lists",
+      "tile5": "Build recipes",
+      "tile6": "Body composition",
       "cardFooter": "+ Calorie tracking, goals, trends and more.",
       "featuresTitle": "Features that actually get used",
       "featuresSubtitle": "Not a tool you open once — one that follows you in the kitchen, the grocery store, and the gym."
     },
     "features": {
       "scan": {
-        "title": "Scan directly in the store",
-        "description": "Point your camera at the barcode on the packaging. Calculeat fetches nutrition data and adds the food in seconds."
+        "title": "Scan barcodes fast",
+        "description": "Point your camera at the barcode on the packaging. Calculeat fetches nutrition data directly from our huge database with thousands of foods and adds the food in seconds."
+      },
+      "database": {
+        "title": "Huge database with thousands of foods",
+        "description": "Access a comprehensive food database with Swedish and international products. Search, filter, and find exactly what you need — or scan the barcode for quick lookup."
+      },
+      "calibration": {
+        "title": "Metabolic calibration",
+        "description": "Calculeat learns from your logged data and adjusts your metabolic estimate over time. The more you log, the more accurate your personal calorie needs become."
       },
       "recipes": {
         "title": "Build recipes and see nutrition live",

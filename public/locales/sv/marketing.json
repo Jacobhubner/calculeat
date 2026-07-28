@@ -13,18 +13,28 @@
       "ctaPrimary": "Kom igång — det är gratis",
       "ctaSecondary": "Prova kalkylatorn",
       "cardHeader": "Calculeat — dina verktyg",
-      "tile1": "Skanna streckkoder",
-      "tile2": "Bygg recept",
-      "tile3": "Dela listor",
-      "tile4": "Kroppssammansättning",
+      "tile1": "Skanna streckkoder snabbt",
+      "tile2": "Stor livsmedelsdatabas",
+      "tile3": "Metabolisk kalibrering",
+      "tile4": "Dela listor",
+      "tile5": "Bygg recept",
+      "tile6": "Kroppssammansättning",
       "cardFooter": "+ Kaloriräkning, mål, trender och mer.",
       "featuresTitle": "Funktioner som faktiskt används",
       "featuresSubtitle": "Inte ett verktyg du öppnar en gång — ett som följer med i köket, mataffären och på gymmet."
     },
     "features": {
       "scan": {
-        "title": "Skanna direkt i affären",
-        "description": "Håll upp kameran mot streckkoden på förpackningen. Calculeat hämtar näringsvärden och lägger till livsmedlet på sekunder."
+        "title": "Skanna streckkoder snabbt",
+        "description": "Håll upp kameran mot streckkoden på förpackningen. Calculeat hämtar näringsvärden direkt från vår stora databas med tusentals livsmedel och lägger till det på sekunder."
+      },
+      "database": {
+        "title": "Stor databas med tusentals livsmedel",
+        "description": "Åtkomst till en omfattande livsmedelsdatabas med svenska och internationella produkter. Sök, filtrera och hitta exakt vad du behöver — eller scanna streckkoden för snabb sökning."
+      },
+      "calibration": {
+        "title": "Metabolisk kalibrering",
+        "description": "Calculeat lär sig från dina loggade data och justerar din metaboliska estimat över tid. Ju mer du loggar, desto mer exakt blir dina personliga kaloribehov."
       },
       "recipes": {
         "title": "Bygg recept och se näringsvärdet live",

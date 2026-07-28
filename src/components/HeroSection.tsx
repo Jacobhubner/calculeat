@@ -1,5 +1,15 @@
 import { Link } from 'react-router'
-import { ArrowRight, Calculator, Scan, ChefHat, Users, Scale, LayoutGrid } from 'lucide-react'
+import {
+  ArrowRight,
+  Calculator,
+  Scan,
+  ChefHat,
+  Users,
+  Scale,
+  LayoutGrid,
+  Database,
+  Activity,
+} from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Button } from './ui/button'
 
@@ -74,23 +84,31 @@ export function HeroSection() {
                   </span>
                 </div>
 
-                {/* 2x2 feature tile grid */}
+                {/* 3x2 feature tile grid */}
                 <div className="grid grid-cols-2 gap-3 mb-5">
                   <div className="rounded-xl bg-primary-50 border border-primary-200 p-4 flex flex-col gap-2">
                     <Scan className="h-5 w-5 text-primary-600" strokeWidth={2} />
                     <p className="text-sm font-medium text-neutral-700">{t('home.hero.tile1')}</p>
                   </div>
                   <div className="rounded-xl bg-accent-50 border border-accent-200 p-4 flex flex-col gap-2">
-                    <ChefHat className="h-5 w-5 text-accent-600" strokeWidth={2} />
+                    <Database className="h-5 w-5 text-accent-600" strokeWidth={2} />
                     <p className="text-sm font-medium text-neutral-700">{t('home.hero.tile2')}</p>
                   </div>
                   <div className="rounded-xl bg-primary-50 border border-primary-200 p-4 flex flex-col gap-2">
-                    <Users className="h-5 w-5 text-primary-600" strokeWidth={2} />
+                    <Activity className="h-5 w-5 text-primary-600" strokeWidth={2} />
                     <p className="text-sm font-medium text-neutral-700">{t('home.hero.tile3')}</p>
                   </div>
                   <div className="rounded-xl bg-accent-50 border border-accent-200 p-4 flex flex-col gap-2">
-                    <Scale className="h-5 w-5 text-accent-600" strokeWidth={2} />
+                    <Users className="h-5 w-5 text-accent-600" strokeWidth={2} />
                     <p className="text-sm font-medium text-neutral-700">{t('home.hero.tile4')}</p>
+                  </div>
+                  <div className="rounded-xl bg-primary-50 border border-primary-200 p-4 flex flex-col gap-2">
+                    <ChefHat className="h-5 w-5 text-primary-600" strokeWidth={2} />
+                    <p className="text-sm font-medium text-neutral-700">{t('home.hero.tile5')}</p>
+                  </div>
+                  <div className="rounded-xl bg-accent-50 border border-accent-200 p-4 flex flex-col gap-2">
+                    <Scale className="h-5 w-5 text-accent-600" strokeWidth={2} />
+                    <p className="text-sm font-medium text-neutral-700">{t('home.hero.tile6')}</p>
                   </div>
                 </div>
 
