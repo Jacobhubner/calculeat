@@ -1,5 +1,18 @@
 {
   "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.calculeat.com"
+        }
+      ],
+      "destination": "https://calculeat.com/:path*",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/((?!locales/).*)",

@@ -2,12 +2,17 @@
   "greeting": {
     "hello": "Hej {{name}}! 👋",
     "helloNoName": "Hej! 👋",
+    "welcomeBack": "Välkommen tillbaka",
+    "user": "Användare",
     "fillProfile": "Fyll i din profil för att komma igång"
   },
   "status": {
     "question": "Hur börjar din dag?",
     "onTrack": "Du är på rätt spår idag.",
     "withinGoal": "Bra jobbat — du håller målet.",
+    "onTarget": "I mål",
+    "exceeded": "Överskridet",
+    "undershoot": "Under mål",
     "overGoal": "Du har gått lite över idag."
   },
   "subtitle": {
@@ -44,14 +49,25 @@
     "goal": "Mål",
     "remaining": "Kvar",
     "over": "Över",
-    "todaySummary": "Översikt idag"
+    "todaySummary": "Översikt idag",
+    "calories": "kcal",
+    "targetRange": "Målintervall: {{min}}–{{max}} kcal",
+    "dailyGoal": "Dagligt mål",
+    "targetLabel": "Målkalorier",
+    "burned": "Förbränd",
+    "exercise": "Träning",
+    "exceededAlert": "Du har överskridit ditt dagliga kalorimål. Fokusera på dina nästa måltider!"
   },
   "statCards": {
     "calorieGoal": "Kalorimål",
     "weight": "Vikt"
   },
   "macros": {
-    "title": "Makromål idag"
+    "title": "Makromål idag",
+    "breakdown": "Makrofördelning",
+    "protein": "Protein",
+    "fat": "Fett",
+    "carbs": "Kolhydrater"
   },
   "today": {
     "label": "IDAG",
@@ -130,6 +146,11 @@
     "formulaLeastActiveTitle": "Minst aktiva livsstilen",
     "formulaLeastActive": "Uppskattat TDEE vid minimal aktivitet = BMR + 150 kcal\n\nSkillnad som visas = (BMR + 150) − Nuvarande TDEE",
     "infoModalClose": "Stäng"
+  },
+  "summary": {
+    "calorieDeficit": "Kalorier underskud",
+    "weightTrend": "Viktutveckling",
+    "goalProgress": "Målframsteg"
   },
   "quickLinks": {
     "logFood": "Börja logga din mat",

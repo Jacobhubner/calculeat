@@ -2,12 +2,17 @@
   "greeting": {
     "hello": "Hi {{name}}! 👋",
     "helloNoName": "Hi! 👋",
+    "welcomeBack": "Welcome back",
+    "user": "User",
     "fillProfile": "Fill in your profile to get started"
   },
   "status": {
     "question": "How is your day starting?",
     "onTrack": "You are on track today.",
     "withinGoal": "Great job — you are hitting your goal.",
+    "onTarget": "On Target",
+    "exceeded": "Exceeded",
+    "undershoot": "Under Target",
     "overGoal": "You went a little over today."
   },
   "subtitle": {
@@ -44,14 +49,25 @@
     "goal": "Goal",
     "remaining": "Left",
     "over": "Over",
-    "todaySummary": "Today's overview"
+    "todaySummary": "Today's overview",
+    "calories": "kcal",
+    "targetRange": "Target range: {{min}}–{{max}} kcal",
+    "dailyGoal": "Daily goal",
+    "targetLabel": "Target calories",
+    "burned": "Burned",
+    "exercise": "Exercise",
+    "exceededAlert": "You've exceeded your daily calorie goal. Focus on your next meals!"
   },
   "statCards": {
     "calorieGoal": "Calorie goal",
     "weight": "Weight"
   },
   "macros": {
-    "title": "Today's macro goals"
+    "title": "Today's macro goals",
+    "breakdown": "Macro breakdown",
+    "protein": "Protein",
+    "fat": "Fat",
+    "carbs": "Carbs"
   },
   "today": {
     "label": "TODAY",
@@ -130,6 +146,11 @@
     "formulaLeastActiveTitle": "Least active lifestyle",
     "formulaLeastActive": "Estimated TDEE at minimum activity = BMR + 150 kcal\n\nDifference shown = (BMR + 150) − Current TDEE",
     "infoModalClose": "Close"
+  },
+  "summary": {
+    "calorieDeficit": "Calorie Deficit",
+    "weightTrend": "Weight Trend",
+    "goalProgress": "Goal Progress"
   },
   "quickLinks": {
     "logFood": "Start logging your food",
