@@ -53,7 +53,7 @@ const CELL_DATA: { lifesum: CellType; ce: CellType }[] = [
 const pageConfig = getPageConfigByKey('lifesum-vs-calculeat')!
 const hreflangAlternates = getHreflangAlternates(pageConfig)
 
-export default function LifesumVsCalculEatPage() {
+export default function LifesumVsCalculeatPage() {
   const { pathname } = useLocation()
   const lng = pathname.startsWith('/en/') ? 'en' : 'sv'
   const { t } = useTranslation('pages-compare', { lng })

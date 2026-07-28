@@ -83,13 +83,13 @@ const BmrKalkylatornPage = lazyWithRetry(() => import('./pages/public/BmrKalkyla
 // Alla artiklar renderas av en generisk sida; innehåll + routes drivs av registryt
 const ArticlePage = lazyWithRetry(() => import('./pages/public/ArticlePage'))
 
-const MyFitnessPalVsCalculEatPage = lazyWithRetry(
-  () => import('./pages/public/MyFitnessPalVsCalculEatPage')
+const MyFitnessPalVsCalculeatPage = lazyWithRetry(
+  () => import('./pages/public/MyFitnessPalVsCalculeatPage')
 )
-const LifesumVsCalculEatPage = lazyWithRetry(() => import('./pages/public/LifesumVsCalculEatPage'))
-const YazioVsCalculEatPage = lazyWithRetry(() => import('./pages/public/YazioVsCalculEatPage'))
-const MacroFactorVsCalculEatPage = lazyWithRetry(
-  () => import('./pages/public/MacroFactorVsCalculEatPage')
+const LifesumVsCalculeatPage = lazyWithRetry(() => import('./pages/public/LifesumVsCalculeatPage'))
+const YazioVsCalculeatPage = lazyWithRetry(() => import('./pages/public/YazioVsCalculeatPage'))
+const MacroFactorVsCalculeatPage = lazyWithRetry(
+  () => import('./pages/public/MacroFactorVsCalculeatPage')
 )
 const BastaKaloriappenPage = lazyWithRetry(() => import('./pages/public/BastaKaloriappenPage'))
 const BastaTdeeKalkylatornPage = lazyWithRetry(
@@ -303,32 +303,32 @@ function App() {
                     )}
                     <Route
                       path="/jamfor/myfitnesspal-vs-calculeat"
-                      element={<MyFitnessPalVsCalculEatPage />}
+                      element={<MyFitnessPalVsCalculeatPage />}
                     />
                     <Route
                       path="/en/compare/myfitnesspal-vs-calculeat"
-                      element={<MyFitnessPalVsCalculEatPage />}
+                      element={<MyFitnessPalVsCalculeatPage />}
                     />
                     <Route
                       path="/jamfor/lifesum-vs-calculeat"
-                      element={<LifesumVsCalculEatPage />}
+                      element={<LifesumVsCalculeatPage />}
                     />
                     <Route
                       path="/en/compare/lifesum-vs-calculeat"
-                      element={<LifesumVsCalculEatPage />}
+                      element={<LifesumVsCalculeatPage />}
                     />
-                    <Route path="/jamfor/yazio-vs-calculeat" element={<YazioVsCalculEatPage />} />
+                    <Route path="/jamfor/yazio-vs-calculeat" element={<YazioVsCalculeatPage />} />
                     <Route
                       path="/en/compare/yazio-vs-calculeat"
-                      element={<YazioVsCalculEatPage />}
+                      element={<YazioVsCalculeatPage />}
                     />
                     <Route
                       path="/jamfor/macrofactor-vs-calculeat"
-                      element={<MacroFactorVsCalculEatPage />}
+                      element={<MacroFactorVsCalculeatPage />}
                     />
                     <Route
                       path="/en/compare/macrofactor-vs-calculeat"
-                      element={<MacroFactorVsCalculEatPage />}
+                      element={<MacroFactorVsCalculeatPage />}
                     />
                     <Route path="/basta-kaloriappen" element={<BastaKaloriappenPage />} />
                     <Route path="/en/compare/best-calorie-app" element={<BastaKaloriappenPage />} />

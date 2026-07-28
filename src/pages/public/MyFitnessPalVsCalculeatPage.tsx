@@ -54,7 +54,7 @@ const CELL_DATA: { mfp: CellType; ce: CellType }[] = [
 const pageConfig = getPageConfigByKey('myfitnesspal-vs-calculeat')!
 const hreflangAlternates = getHreflangAlternates(pageConfig)
 
-export default function MyFitnessPalVsCalculEatPage() {
+export default function MyFitnessPalVsCalculeatPage() {
   const { pathname } = useLocation()
   const lng = pathname.startsWith('/en/') ? 'en' : 'sv'
   const { t } = useTranslation('pages-compare', { lng })
