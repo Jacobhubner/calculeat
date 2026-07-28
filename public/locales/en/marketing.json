@@ -40,6 +40,10 @@
         "title": "Portion Calculator — exact amount on your plate",
         "description": "Tell us how much protein, fat, or carbs you want from a food — Calculeat calculates the exact portion size in grams, ml, or servings. Perfect when plating your meal or baking a recipe."
       },
+      "savedMeals": {
+        "title": "Saved Meals — reuse your favorites",
+        "description": "Save meals you eat often and log them with one click next time. No time wasted searching for the same foods again — your favorites are always available."
+      },
       "recipes": {
         "title": "Build recipes and see nutrition live",
         "description": "Add ingredients one by one and track calories, protein, fat, and carbs in real time. Save the recipe and log it directly."

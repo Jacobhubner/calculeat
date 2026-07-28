@@ -40,6 +40,10 @@
         "title": "Portionsberäknaren — exakt mängd på tallriken",
         "description": "Säg hur mycket protein, fett eller kolhydrater du vill från ett livsmedel — Calculeat beräknar exakt portionsstorlek på gram, ml eller enheter. Perfekt när du ska fylla tallriken eller baka recept."
       },
+      "savedMeals": {
+        "title": "Sparade måltider — återanvänd dina favoriter",
+        "description": "Spara måltider du ofta äter och logga dem med ett klick nästa gång. Ingen tid slösad på att söka samma livsmedel igen — dina favoriter är alltid tillgängliga."
+      },
       "recipes": {
         "title": "Bygg recept och se näringsvärdet live",
         "description": "Lägg till ingredienser ett i taget och följ kalorier, protein, fett och kolhydrater i realtid. Spara receptet och logga det direkt."

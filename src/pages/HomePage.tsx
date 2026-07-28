@@ -18,6 +18,7 @@ import {
   Database,
   Activity,
   Calculator,
+  Bookmark,
 } from 'lucide-react'
 
 const homeConfig = getPageConfigByKey('home')!
@@ -174,6 +175,20 @@ export default function HomePage() {
                   </h3>
                   <p className="text-sm text-neutral-600 leading-relaxed">
                     {t('home.features.portions.description')}
+                  </p>
+                </div>
+              </div>
+
+              <div className="group rounded-2xl border border-neutral-200 bg-gradient-to-br from-green-50/80 to-emerald-50/40 p-6 flex gap-5 items-start hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                <div className="flex-shrink-0 rounded-xl p-3 bg-primary-600/10 text-primary-700">
+                  <Bookmark className="h-8 w-8" strokeWidth={2} />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-neutral-950 text-lg mb-2">
+                    {t('home.features.savedMeals.title')}
+                  </h3>
+                  <p className="text-sm text-neutral-600 leading-relaxed">
+                    {t('home.features.savedMeals.description')}
                   </p>
                 </div>
               </div>
