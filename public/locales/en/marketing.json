@@ -36,6 +36,10 @@
         "title": "Metabolic calibration",
         "description": "Calculeat learns from your logged data and adjusts your metabolic estimate over time. The more you log, the more accurate your personal calorie needs become."
       },
+      "portions": {
+        "title": "Portion Calculator — exact amount on your plate",
+        "description": "Tell us how much protein, fat, or carbs you want from a food — Calculeat calculates the exact portion size in grams, ml, or servings. Perfect when plating your meal or baking a recipe."
+      },
       "recipes": {
         "title": "Build recipes and see nutrition live",
         "description": "Add ingredients one by one and track calories, protein, fat, and carbs in real time. Save the recipe and log it directly."
