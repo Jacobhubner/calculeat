@@ -17,7 +17,7 @@ export function DashboardHeroSection({ consumed, min, max }: DashboardHeroSectio
   const isOver = consumed > max
 
   return (
-    <Card variant="gradient" className="border-t-4 border-t-primary-600 overflow-hidden">
+    <Card variant="gradient" className="border-t-4 border-t-neutral-300 overflow-hidden">
       <CardContent className="p-0">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-8 p-8">
           {/* Left: Ring + Info */}
