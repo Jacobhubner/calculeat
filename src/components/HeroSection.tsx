@@ -7,21 +7,22 @@ export function HeroSection() {
   const { t } = useTranslation('marketing')
 
   return (
-    <section className="relative overflow-hidden bg-white pt-20 pb-36 md:pt-28 md:pb-44">
-      {/* Background pattern with subtle green radial gradient */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(37,189,0,0.08),transparent_50%)]" />
+    <section className="relative overflow-hidden bg-gradient-to-br from-green-50 via-blue-50 to-white pt-20 pb-48 md:pt-32 md:pb-56">
+      {/* Bold gradient background */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(37,189,0,0.15),transparent_60%)] mix-blend-multiply" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_60%,rgba(14,165,233,0.1),transparent_60%)] mix-blend-screen" />
 
       <div className="container relative mx-auto px-4">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
           {/* Left column - Text content */}
           <div className="text-center lg:text-left space-y-8">
             <div className="space-y-4">
-              <p className="text-sm font-semibold uppercase tracking-wider text-primary-600">
+              <p className="text-sm font-semibold uppercase tracking-wider text-primary-700">
                 {t('home.hero.tagline')}
               </p>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-neutral-900 leading-tight">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-neutral-950 leading-tight">
                 {t('home.hero.h1')}{' '}
-                <span className="bg-gradient-to-r from-primary-600 to-accent-500 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-primary-600 via-green-500 to-emerald-500 bg-clip-text text-transparent">
                   {t('home.hero.h1Highlight')}
                 </span>
               </h1>
@@ -64,7 +65,7 @@ export function HeroSection() {
           {/* Right column - Feature tiles preview */}
           <div className="hidden lg:flex justify-center lg:justify-end">
             <div className="w-full max-w-md">
-              <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-xl rotate-1 hover:rotate-0 transition-transform duration-300">
+              <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:-translate-y-1">
                 {/* Card header */}
                 <div className="flex items-center gap-2 mb-5 pb-4 border-b border-neutral-100">
                   <LayoutGrid className="h-4 w-4 text-primary-600" />
@@ -99,21 +100,6 @@ export function HeroSection() {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Bottom wave */}
-      <div className="absolute bottom-0 left-0 right-0">
-        <svg
-          viewBox="0 0 1440 120"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          className="w-full h-auto"
-        >
-          <path
-            d="M0 0L60 10C120 20 240 40 360 46.7C480 53 600 47 720 43.3C840 40 960 40 1080 46.7C1200 53 1320 67 1380 73.3L1440 80V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0V0Z"
-            fill="rgb(250, 250, 249)"
-          />
-        </svg>
       </div>
     </section>
   )

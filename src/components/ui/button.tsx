@@ -8,14 +8,20 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary: 'bg-primary-600 text-white hover:bg-primary-700 active:scale-[0.98] shadow-sm',
-        secondary: 'bg-neutral-200 text-neutral-900 hover:bg-neutral-300 active:scale-[0.98]',
-        ghost: 'text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900 active:scale-[0.98]',
+        primary:
+          'bg-primary-600 text-white hover:bg-primary-700 hover:shadow-lg hover:-translate-y-0.5 active:scale-[0.98] shadow-md',
+        secondary:
+          'bg-neutral-200 text-neutral-900 hover:bg-neutral-300 hover:shadow-md hover:-translate-y-0.5 active:scale-[0.98]',
+        ghost:
+          'text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900 hover:-translate-y-0.5 active:scale-[0.98]',
         outline:
-          'border-2 border-neutral-300 text-neutral-700 hover:bg-neutral-50 active:scale-[0.98]',
-        destructive: 'bg-error-600 text-white hover:bg-error-700 active:scale-[0.98] shadow-sm',
-        accent: 'bg-accent-600 text-white hover:bg-accent-700 active:scale-[0.98] shadow-sm',
-        success: 'bg-success-600 text-white hover:bg-success-700 active:scale-[0.98] shadow-sm',
+          'border-2 border-neutral-300 text-neutral-700 hover:bg-neutral-50 hover:shadow-md hover:-translate-y-0.5 active:scale-[0.98]',
+        destructive:
+          'bg-error-600 text-white hover:bg-error-700 hover:shadow-lg hover:-translate-y-0.5 active:scale-[0.98] shadow-md',
+        accent:
+          'bg-accent-600 text-white hover:bg-accent-700 hover:shadow-lg hover:-translate-y-0.5 active:scale-[0.98] shadow-md',
+        success:
+          'bg-success-600 text-white hover:bg-success-700 hover:shadow-lg hover:-translate-y-0.5 active:scale-[0.98] shadow-md',
       },
       size: {
         sm: 'h-9 px-4 text-sm',

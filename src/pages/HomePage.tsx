@@ -41,22 +41,27 @@ export default function HomePage() {
         <HeroSection />
 
         {/* Feature Showcase Section — 4 stora kort */}
-        <section id="features" className="py-16 md:py-20 bg-white border-t border-neutral-100">
+        <section
+          id="features"
+          className="py-20 md:py-28 bg-gradient-to-b from-white to-neutral-50 border-t border-neutral-100"
+        >
           <div className="container mx-auto px-4">
-            <div className="text-center max-w-2xl mx-auto mb-12">
-              <h2 className="text-3xl md:text-4xl font-semibold text-neutral-900 mb-3">
+            <div className="text-center max-w-2xl mx-auto mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold text-neutral-950 mb-4 bg-gradient-to-r from-primary-600 to-emerald-600 bg-clip-text text-transparent">
                 {t('home.hero.featuresTitle')}
               </h2>
-              <p className="text-lg text-neutral-600">{t('home.hero.featuresSubtitle')}</p>
+              <p className="text-lg text-neutral-600 leading-relaxed">
+                {t('home.hero.featuresSubtitle')}
+              </p>
             </div>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-              <div className="rounded-2xl border border-neutral-200 p-6 flex gap-5 items-start hover:shadow-md transition-shadow">
-                <div className="flex-shrink-0 rounded-xl p-3 bg-primary-100 text-primary-600">
-                  <Scan className="h-7 w-7" strokeWidth={2} />
+              <div className="group rounded-2xl border border-neutral-200 bg-gradient-to-br from-green-50/80 to-emerald-50/40 p-6 flex gap-5 items-start hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                <div className="flex-shrink-0 rounded-xl p-3 bg-primary-600/10 text-primary-700">
+                  <Scan className="h-8 w-8" strokeWidth={2} />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-neutral-900 text-lg mb-1">
+                  <h3 className="font-semibold text-neutral-950 text-lg mb-2">
                     {t('home.features.scan.title')}
                   </h3>
                   <p className="text-sm text-neutral-600 leading-relaxed">
@@ -65,12 +70,12 @@ export default function HomePage() {
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-neutral-200 p-6 flex gap-5 items-start hover:shadow-md transition-shadow">
-                <div className="flex-shrink-0 rounded-xl p-3 bg-accent-100 text-accent-600">
-                  <ChefHat className="h-7 w-7" strokeWidth={2} />
+              <div className="group rounded-2xl border border-neutral-200 bg-gradient-to-br from-blue-50/80 to-cyan-50/40 p-6 flex gap-5 items-start hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                <div className="flex-shrink-0 rounded-xl p-3 bg-accent-600/10 text-accent-700">
+                  <ChefHat className="h-8 w-8" strokeWidth={2} />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-neutral-900 text-lg mb-1">
+                  <h3 className="font-semibold text-neutral-950 text-lg mb-2">
                     {t('home.features.recipes.title')}
                   </h3>
                   <p className="text-sm text-neutral-600 leading-relaxed">
@@ -79,12 +84,12 @@ export default function HomePage() {
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-neutral-200 p-6 flex gap-5 items-start hover:shadow-md transition-shadow">
-                <div className="flex-shrink-0 rounded-xl p-3 bg-primary-100 text-primary-600">
-                  <Share2 className="h-7 w-7" strokeWidth={2} />
+              <div className="group rounded-2xl border border-neutral-200 bg-gradient-to-br from-green-50/80 to-emerald-50/40 p-6 flex gap-5 items-start hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                <div className="flex-shrink-0 rounded-xl p-3 bg-primary-600/10 text-primary-700">
+                  <Share2 className="h-8 w-8" strokeWidth={2} />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-neutral-900 text-lg mb-1">
+                  <h3 className="font-semibold text-neutral-950 text-lg mb-2">
                     {t('home.features.share.title')}
                   </h3>
                   <p className="text-sm text-neutral-600 leading-relaxed">
@@ -93,12 +98,12 @@ export default function HomePage() {
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-neutral-200 p-6 flex gap-5 items-start hover:shadow-md transition-shadow">
-                <div className="flex-shrink-0 rounded-xl p-3 bg-accent-100 text-accent-600">
-                  <Scale className="h-7 w-7" strokeWidth={2} />
+              <div className="group rounded-2xl border border-neutral-200 bg-gradient-to-br from-blue-50/80 to-cyan-50/40 p-6 flex gap-5 items-start hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                <div className="flex-shrink-0 rounded-xl p-3 bg-accent-600/10 text-accent-700">
+                  <Scale className="h-8 w-8" strokeWidth={2} />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-neutral-900 text-lg mb-1">
+                  <h3 className="font-semibold text-neutral-950 text-lg mb-2">
                     {t('home.features.body.title')}
                   </h3>
                   <p className="text-sm text-neutral-600 leading-relaxed">
@@ -107,12 +112,12 @@ export default function HomePage() {
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-neutral-200 p-6 flex gap-5 items-start hover:shadow-md transition-shadow sm:col-span-2 lg:col-span-1">
-                <div className="flex-shrink-0 rounded-xl p-3 bg-primary-100 text-primary-600">
-                  <Target className="h-7 w-7" strokeWidth={2} />
+              <div className="group rounded-2xl border border-neutral-200 bg-gradient-to-br from-green-50/80 to-emerald-50/40 p-6 flex gap-5 items-start hover:shadow-lg hover:-translate-y-1 transition-all duration-300 sm:col-span-2 lg:col-span-1">
+                <div className="flex-shrink-0 rounded-xl p-3 bg-primary-600/10 text-primary-700">
+                  <Target className="h-8 w-8" strokeWidth={2} />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-neutral-900 text-lg mb-1">
+                  <h3 className="font-semibold text-neutral-950 text-lg mb-2">
                     {t('home.features.goals.title')}
                   </h3>
                   <p className="text-sm text-neutral-600 leading-relaxed">
@@ -125,15 +130,15 @@ export default function HomePage() {
         </section>
 
         {/* Popular Tools Section */}
-        <section className="py-14 md:py-20 bg-neutral-50 border-t border-neutral-100">
+        <section className="py-20 md:py-28 bg-gradient-to-b from-neutral-50 to-white border-t border-neutral-100">
           <div className="container mx-auto px-4">
             <div className="max-w-5xl mx-auto">
-              <div className="flex items-end justify-between mb-8">
+              <div className="flex items-end justify-between mb-12">
                 <div>
-                  <h2 className="text-2xl md:text-3xl font-bold text-neutral-900 mb-1">
+                  <h2 className="text-3xl md:text-4xl font-bold text-neutral-950 mb-2 bg-gradient-to-r from-primary-600 to-blue-600 bg-clip-text text-transparent">
                     {t('popularTools.title')}
                   </h2>
-                  <p className="text-neutral-600 text-sm">{t('popularTools.subtitle')}</p>
+                  <p className="text-neutral-600 text-base">{t('popularTools.subtitle')}</p>
                 </div>
                 <Link
                   to="/kalkylatorer"
@@ -220,15 +225,15 @@ export default function HomePage() {
         </section>
 
         {/* Popular Articles Section */}
-        <section className="py-14 md:py-20 bg-white border-t border-neutral-100">
+        <section className="py-20 md:py-28 bg-gradient-to-b from-white to-neutral-50 border-t border-neutral-100">
           <div className="container mx-auto px-4">
             <div className="max-w-5xl mx-auto">
-              <div className="flex items-end justify-between mb-8">
+              <div className="flex items-end justify-between mb-12">
                 <div>
-                  <h2 className="text-2xl md:text-3xl font-bold text-neutral-900 mb-1">
+                  <h2 className="text-3xl md:text-4xl font-bold text-neutral-950 mb-2 bg-gradient-to-r from-accent-600 to-green-600 bg-clip-text text-transparent">
                     {t('popularArticles.title')}
                   </h2>
-                  <p className="text-neutral-600 text-sm">{t('popularArticles.subtitle')}</p>
+                  <p className="text-neutral-600 text-base">{t('popularArticles.subtitle')}</p>
                 </div>
                 <Link
                   to="/artiklar"
@@ -318,16 +323,24 @@ export default function HomePage() {
         <HowItWorks />
 
         {/* CTA Footer */}
-        <section className="bg-neutral-900 py-20 md:py-28">
-          <div className="container mx-auto px-4 text-center">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-white">
+        <section className="bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 py-24 md:py-32 relative overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(37,189,0,0.1),transparent_50%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_80%,rgba(14,165,233,0.08),transparent_50%)]" />
+
+          <div className="container relative mx-auto px-4 text-center">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-white leading-tight">
               {t('home.cta.title')}
             </h2>
-            <p className="text-lg md:text-xl text-neutral-300 mb-10 max-w-2xl mx-auto">
+            <p className="text-lg md:text-xl text-neutral-300 mb-12 max-w-2xl mx-auto leading-relaxed">
               {t('home.cta.description')}
             </p>
 
-            <Button size="lg" variant="accent" className="shadow-lg hover:shadow-xl mb-8" asChild>
+            <Button
+              size="lg"
+              variant="accent"
+              className="shadow-2xl hover:shadow-3xl hover:-translate-y-1 transition-all mb-8"
+              asChild
+            >
               <Link to="/register">{t('home.cta.createAccount')}</Link>
             </Button>
 

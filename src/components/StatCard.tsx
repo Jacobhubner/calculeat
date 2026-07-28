@@ -27,19 +27,19 @@ export default function StatCard({
   className,
 }: StatCardProps) {
   const variantStyles = {
-    default: 'bg-neutral-100 text-neutral-600',
-    primary: 'bg-primary-100 text-primary-600',
-    accent: 'bg-accent-100 text-accent-600',
-    success: 'bg-success-100 text-success-600',
+    default: 'bg-neutral-200/50 text-neutral-700',
+    primary: 'bg-primary-200/40 text-primary-700',
+    accent: 'bg-accent-200/40 text-accent-700',
+    success: 'bg-success-200/40 text-success-700',
   }
 
   return (
-    <Card className={cn('relative overflow-hidden', className)}>
+    <Card variant="gradient" className={cn('relative overflow-hidden', className)}>
       <div className="flex items-start justify-between">
         <div className="flex-1">
-          <p className="text-sm font-medium text-neutral-600 mb-1">{title}</p>
+          <p className="text-sm font-medium text-neutral-600 mb-2">{title}</p>
           <div className="flex items-baseline gap-2">
-            <h3 className="text-3xl font-bold text-neutral-900">{value}</h3>
+            <h3 className="text-4xl font-bold text-neutral-950">{value}</h3>
             {unit && <span className="text-sm text-neutral-500">{unit}</span>}
           </div>
           {subtitle && <p className="mt-1 text-xs text-neutral-500">{subtitle}</p>}

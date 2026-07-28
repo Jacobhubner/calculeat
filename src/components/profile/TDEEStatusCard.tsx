@@ -91,7 +91,7 @@ export function TDEEStatusCard({ profile }: TDEEStatusCardProps) {
 
   // Has TDEE
   return (
-    <Card className="border-gray-200">
+    <Card variant="gradient" className="border-l-4 border-l-primary-600">
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg">TDEE & Energibehov</CardTitle>
