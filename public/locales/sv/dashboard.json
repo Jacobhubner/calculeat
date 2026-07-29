@@ -149,8 +149,18 @@
   },
   "summary": {
     "calorieDeficit": "Kalorier underskud",
+    "calorieGoal": "Energimål",
     "weightTrend": "Viktutveckling",
-    "goalProgress": "Målframsteg"
+    "goalProgress": "Målframsteg",
+    "tdee": "TDEE",
+    "deficitAmount": "{{amount}} kcal underskud",
+    "surplusAmount": "{{amount}} kcal överskud",
+    "maintenanceAmount": "Bibehålla vikten"
+  },
+  "goal": {
+    "maintain": "Bibehålla vikten",
+    "weight_loss": "Gå ner i vikt",
+    "weight_gain": "Gå upp i vikt"
   },
   "quickLinks": {
     "logFood": "Börja logga din mat",

@@ -149,8 +149,18 @@
   },
   "summary": {
     "calorieDeficit": "Calorie Deficit",
+    "calorieGoal": "Energy Goal",
     "weightTrend": "Weight Trend",
-    "goalProgress": "Goal Progress"
+    "goalProgress": "Goal Progress",
+    "tdee": "TDEE",
+    "deficitAmount": "{{amount}} kcal deficit",
+    "surplusAmount": "{{amount}} kcal surplus",
+    "maintenanceAmount": "Maintain weight"
+  },
+  "goal": {
+    "maintain": "Maintain weight",
+    "weight_loss": "Weight loss",
+    "weight_gain": "Weight gain"
   },
   "quickLinks": {
     "logFood": "Start logging your food",

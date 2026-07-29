@@ -213,6 +213,8 @@ export default function DashboardPage() {
               weightChange={weightChange}
               goalProgress={Math.round((consumed / targetMax) * 100)}
               isWeightTrendingDown={isDownTrend}
+              tdee={Math.round(targetMax)}
+              calorieGoal={profile?.calorie_goal}
             />
 
             {/* Macro status */}
