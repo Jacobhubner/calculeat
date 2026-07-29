@@ -5,12 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { MacroRangeBar } from '@/components/daily/MacroRangeBar'
 import { TDEEScenarioCard } from '@/components/dashboard/TDEEScenarioCard'
 import { DashboardHeroSection } from '@/components/dashboard/DashboardHeroSection'
-import { QuickSummaryCards } from '@/components/dashboard/QuickSummaryCards'
 import EmptyState from '@/components/EmptyState'
 import { useAuth } from '@/contexts/AuthContext'
 import { useProfiles, useOnboarding } from '@/hooks'
 import { useTodayLog } from '@/hooks/useDailyLogs'
-import { useWeightHistory } from '@/hooks/useWeightHistory'
 import { useProfileStore } from '@/stores/profileStore'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Scale, UtensilsCrossed, BookOpen, User, Target } from 'lucide-react'
@@ -29,7 +27,6 @@ export default function DashboardPage() {
   const activeProfile = useProfileStore(state => state.activeProfile)
   const { data: allProfiles, isLoading } = useProfiles()
   const { data: todayLog } = useTodayLog()
-  const { data: weightHistory } = useWeightHistory()
   const { showOnboarding, setShowOnboarding, completeOnboarding, saveStep, resumeStep } =
     useOnboarding()
   const { plan } = useEntitlements()
@@ -100,35 +97,6 @@ export default function DashboardPage() {
   const consumed = todayLog?.total_calories || 0
   const targetMax = profile?.calories_max || 2000
   const ringMin = profile?.calories_min ?? Math.round(targetMax * 0.85)
-
-  // Calculate weight change over last 30 days
-  const getWeightTrend = () => {
-    if (!weightHistory || weightHistory.length < 1) {
-      return { weightChange: 0, isDownTrend: false }
-    }
-
-    const now = new Date()
-    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
-
-    // Most recent weight is first (sorted descending by recorded_at)
-    const currentWeight = weightHistory[0]?.weight_kg
-
-    // Find oldest weight in last 30 days
-    const oldestInRange = weightHistory.find(w => new Date(w.recorded_at) <= thirtyDaysAgo)
-    const oldWeight = oldestInRange?.weight_kg
-
-    if (currentWeight === undefined || oldWeight === undefined) {
-      return { weightChange: 0, isDownTrend: false }
-    }
-
-    const change = currentWeight - oldWeight // negative = lost weight, positive = gained weight
-    const isDownTrend = change < 0 // true if lost weight
-    const displayValue = Math.abs(change)
-
-    return { weightChange: displayValue, isDownTrend }
-  }
-
-  const { weightChange, isDownTrend } = getWeightTrend()
 
   const handleOnboardingClose = (open: boolean) => {
     if (!open) {
@@ -206,16 +174,6 @@ export default function DashboardPage() {
           <div className="space-y-8">
             {/* Hero Section - Redesigned */}
             <DashboardHeroSection consumed={consumed} min={ringMin} max={targetMax} />
-
-            {/* Quick Summary Cards - Phase 3 */}
-            <QuickSummaryCards
-              calorieDeficit={Math.round(targetMax - consumed)}
-              weightChange={weightChange}
-              goalProgress={Math.round((consumed / targetMax) * 100)}
-              isWeightTrendingDown={isDownTrend}
-              tdee={Math.round(targetMax)}
-              calorieGoal={profile?.calorie_goal}
-            />
 
             {/* Macro status */}
             {dailySummary &&
