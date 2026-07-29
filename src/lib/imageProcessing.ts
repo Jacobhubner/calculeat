@@ -5,7 +5,7 @@
  */
 
 export const MAX_RAW_BYTES = 15 * 1024 * 1024 // 15 MB — raw input limit (before resize/convert)
-export const MAX_PROCESSED_BYTES = 3 * 1024 * 1024 // 3 MB  — post-WebP safety net
+export const MAX_PROCESSED_BYTES = 5 * 1024 * 1024 // 5 MB  — post-WebP safety net
 export const MAX_WIDTH = 1200
 
 // ─── EXIF orientation ────────────────────────────────────────────────────────
@@ -122,7 +122,7 @@ export async function resizeAndConvertToWebP(file: File): Promise<Blob> {
           resolve(blob)
         },
         'image/webp',
-        0.85
+        0.7
       )
     }
 
