@@ -46,7 +46,7 @@ export default function ForgotPasswordPage() {
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
             <div className="flex items-center justify-center mb-4">
-              <img src="/calculeat-logo-full.svg" alt="Calculeat" className="h-16 object-contain" />
+              <img src="/calculeat-logo-full.svg" alt="Calculeat" className="h-24 object-contain" />
             </div>
             <p className="text-neutral-600">{t('forgotPassword.subtitle')}</p>
           </div>
