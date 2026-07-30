@@ -92,9 +92,9 @@ export default function SiteFooter() {
           <div className="lg:col-span-2 space-y-4">
             <Link to="/" className="flex items-center group w-fit">
               <img
-                src="/calculeat-leaf-icon.svg"
-                alt="Calculeat Logo"
-                className="h-10 object-contain transition-transform group-hover:scale-105"
+                src="/calculeat-logo-full.svg"
+                alt="Calculeat"
+                className="h-12 object-contain transition-transform group-hover:scale-105"
               />
             </Link>
             <p className="text-sm text-neutral-600 max-w-xs">{t('footer.tagline')}</p>

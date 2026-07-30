@@ -26,6 +26,15 @@ export function HeroSection() {
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
           {/* Left column - Text content */}
           <div className="text-center lg:text-left space-y-8">
+            {/* Logo */}
+            <div className="flex justify-center lg:justify-start">
+              <img
+                src="/calculeat-logo-full.svg"
+                alt="Calculeat"
+                className="h-16 md:h-20 object-contain"
+              />
+            </div>
+
             <div className="space-y-4">
               <p className="text-sm font-semibold uppercase tracking-wider text-primary-700">
                 {t('home.hero.tagline')}
