@@ -32,12 +32,12 @@ export function HeroSection() {
               </p>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-neutral-950 leading-tight">
                 {t('home.hero.h1')}{' '}
-                <span className="inline-flex items-center gap-2">
+                <span className="inline-flex items-center gap-3 align-middle">
                   <span>Enkelt med</span>
                   <img
                     src="/calculeat-logo-full.svg"
                     alt="Calculeat"
-                    className="h-16 md:h-20 lg:h-24 object-contain inline"
+                    className="h-24 md:h-32 lg:h-40 object-contain inline"
                   />
                   <span>.</span>
                 </span>
