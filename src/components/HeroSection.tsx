@@ -23,9 +23,9 @@ export function HeroSection() {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_60%,rgba(14,165,233,0.1),transparent_60%)] mix-blend-screen" />
 
       <div className="container relative mx-auto px-4">
-        <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
-          {/* Left column - Text content */}
-          <div className="text-center space-y-8 flex flex-col items-center w-full">
+        <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-start">
+          {/* Main hero content - centered single column */}
+          <div className="text-center space-y-8 flex flex-col items-center w-full lg:col-span-2 lg:max-w-3xl lg:mx-auto">
             {/* Intro tagline */}
             <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-primary-700">
               {t('home.hero.tagline')}
