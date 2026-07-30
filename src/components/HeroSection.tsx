@@ -30,18 +30,18 @@ export function HeroSection() {
               <p className="text-sm font-semibold uppercase tracking-wider text-primary-700">
                 {t('home.hero.tagline')}
               </p>
-              <div className="space-y-6">
-                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-neutral-950 leading-tight">
+              <div className="space-y-8 lg:space-y-12">
+                <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-neutral-950 leading-tight text-center lg:text-left">
                   {t('home.hero.h1')}
                 </h1>
-                <div className="flex flex-col lg:flex-row items-center lg:items-end justify-center lg:justify-start gap-6 lg:gap-8">
-                  <span className="text-4xl md:text-5xl lg:text-6xl font-bold text-neutral-950">
+                <div className="flex flex-col lg:flex-row items-center lg:items-center justify-center lg:justify-start gap-4 lg:gap-6">
+                  <span className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-neutral-950 text-center lg:text-left">
                     Enkelt med
                   </span>
                   <img
                     src="/calculeat-logo-full.svg"
                     alt="Calculeat"
-                    className="h-48 md:h-64 lg:h-80 object-contain"
+                    className="h-56 md:h-72 lg:h-96 xl:h-[28rem] object-contain flex-shrink-0"
                   />
                 </div>
               </div>
