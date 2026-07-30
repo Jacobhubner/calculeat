@@ -26,15 +26,6 @@ export function HeroSection() {
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
           {/* Left column - Text content */}
           <div className="text-center lg:text-left space-y-8">
-            {/* Logo */}
-            <div className="flex justify-center lg:justify-start mb-4">
-              <img
-                src="/calculeat-logo-full.svg"
-                alt="Calculeat"
-                className="h-20 md:h-28 lg:h-32 object-contain"
-              />
-            </div>
-
             <div className="space-y-4">
               <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-primary-700">
                 {t('home.hero.tagline')}
@@ -44,6 +35,14 @@ export function HeroSection() {
                 <br />
                 Enkelt med
               </p>
+              {/* Large Logo */}
+              <div className="flex justify-center lg:justify-start pt-4">
+                <img
+                  src="/calculeat-logo-full.svg"
+                  alt="Calculeat"
+                  className="h-52 sm:h-60 md:h-80 lg:h-96 xl:h-[28rem] object-contain"
+                />
+              </div>
               <p className="text-lg md:text-xl text-neutral-700 max-w-2xl mx-auto lg:mx-0">
                 {t('home.hero.body')}
               </p>
