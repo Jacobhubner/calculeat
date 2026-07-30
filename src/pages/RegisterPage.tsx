@@ -15,11 +15,7 @@ export default function RegisterPage() {
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
             <div className="flex items-center justify-center mb-4">
-              <img
-                src="/calculeat-leaf-icon.svg"
-                alt="Calculeat Logo"
-                className="h-16 object-contain"
-              />
+              <img src="/calculeat-logo-full.svg" alt="Calculeat" className="h-16 object-contain" />
             </div>
             <p className="text-neutral-600">{t('register.subtitle')}</p>
           </div>
