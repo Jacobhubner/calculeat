@@ -30,11 +30,11 @@ export function HeroSection() {
               <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-primary-700">
                 {t('home.hero.tagline')}
               </p>
-              <p className="text-lg md:text-2xl lg:text-3xl font-medium text-neutral-600 max-w-2xl leading-relaxed">
+              <h1 className="text-lg md:text-2xl lg:text-3xl font-medium text-neutral-600 max-w-2xl leading-relaxed">
                 {t('home.hero.h1')}
                 <br />
                 {t('home.hero.h1Intro')}
-              </p>
+              </h1>
               {/* Large Logo */}
               <div className="flex justify-center lg:justify-start mt-4 lg:-mt-16">
                 <img
