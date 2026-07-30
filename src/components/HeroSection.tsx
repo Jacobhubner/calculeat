@@ -40,7 +40,6 @@ export function HeroSection() {
                       alt="Calculeat"
                       className="h-40 md:h-56 lg:h-72 object-contain"
                     />
-                    <span>.</span>
                   </span>
                 </span>
               </h1>
