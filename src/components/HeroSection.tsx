@@ -26,23 +26,20 @@ export function HeroSection() {
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
           {/* Left column - Text content */}
           <div className="text-center lg:text-left space-y-8">
-            {/* Logo */}
-            <div className="flex justify-center lg:justify-start mb-4">
-              <img
-                src="/calculeat-logo-full.svg"
-                alt="Calculeat"
-                className="h-20 md:h-28 lg:h-32 object-contain"
-              />
-            </div>
-
             <div className="space-y-4">
               <p className="text-sm font-semibold uppercase tracking-wider text-primary-700">
                 {t('home.hero.tagline')}
               </p>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-neutral-950 leading-tight">
                 {t('home.hero.h1')}{' '}
-                <span className="bg-gradient-to-r from-primary-600 via-green-500 to-emerald-500 bg-clip-text text-transparent">
-                  {t('home.hero.h1Highlight')}
+                <span className="inline-flex items-center gap-2">
+                  <span>Enkelt med</span>
+                  <img
+                    src="/calculeat-logo-full.svg"
+                    alt="Calculeat"
+                    className="h-16 md:h-20 lg:h-24 object-contain inline"
+                  />
+                  <span>.</span>
                 </span>
               </h1>
               <p className="text-lg md:text-xl text-neutral-700 max-w-2xl mx-auto lg:mx-0">
