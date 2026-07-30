@@ -36,7 +36,7 @@ export function HeroSection() {
                 {t('home.hero.h1Intro')}
               </p>
               {/* Large Logo */}
-              <div className="flex justify-center lg:justify-start -mt-6">
+              <div className="flex justify-center lg:justify-start -mt-16">
                 <img
                   src="/calculeat-logo-full.svg"
                   alt="Calculeat"
