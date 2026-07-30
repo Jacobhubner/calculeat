@@ -32,14 +32,16 @@ export function HeroSection() {
               </p>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-neutral-950 leading-tight">
                 {t('home.hero.h1')}{' '}
-                <span className="inline-flex items-center gap-3 align-middle">
-                  <span>Enkelt med</span>
-                  <img
-                    src="/calculeat-logo-full.svg"
-                    alt="Calculeat"
-                    className="h-24 md:h-32 lg:h-40 object-contain inline"
-                  />
-                  <span>.</span>
+                <span className="block mt-4">
+                  <span className="inline-flex items-center gap-4 align-middle flex-wrap justify-center lg:justify-start">
+                    <span>Enkelt med</span>
+                    <img
+                      src="/calculeat-logo-full.svg"
+                      alt="Calculeat"
+                      className="h-40 md:h-56 lg:h-72 object-contain"
+                    />
+                    <span>.</span>
+                  </span>
                 </span>
               </h1>
               <p className="text-lg md:text-xl text-neutral-700 max-w-2xl mx-auto lg:mx-0">
