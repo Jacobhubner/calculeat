@@ -30,19 +30,21 @@ export function HeroSection() {
               <p className="text-sm font-semibold uppercase tracking-wider text-primary-700">
                 {t('home.hero.tagline')}
               </p>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-neutral-950 leading-tight">
-                {t('home.hero.h1')}{' '}
-                <span className="block mt-4">
-                  <span className="inline-flex items-center gap-4 align-middle flex-wrap justify-center lg:justify-start">
-                    <span>Enkelt med</span>
-                    <img
-                      src="/calculeat-logo-full.svg"
-                      alt="Calculeat"
-                      className="h-40 md:h-56 lg:h-72 object-contain"
-                    />
+              <div className="space-y-6">
+                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-neutral-950 leading-tight">
+                  {t('home.hero.h1')}
+                </h1>
+                <div className="flex flex-col lg:flex-row items-center lg:items-end justify-center lg:justify-start gap-6 lg:gap-8">
+                  <span className="text-4xl md:text-5xl lg:text-6xl font-bold text-neutral-950">
+                    Enkelt med
                   </span>
-                </span>
-              </h1>
+                  <img
+                    src="/calculeat-logo-full.svg"
+                    alt="Calculeat"
+                    className="h-48 md:h-64 lg:h-80 object-contain"
+                  />
+                </div>
+              </div>
               <p className="text-lg md:text-xl text-neutral-700 max-w-2xl mx-auto lg:mx-0">
                 {t('home.hero.body')}
               </p>
