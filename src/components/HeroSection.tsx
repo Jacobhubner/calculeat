@@ -36,15 +36,15 @@ export function HeroSection() {
             </div>
 
             <div className="space-y-4">
-              <p className="text-sm font-semibold uppercase tracking-wider text-primary-700">
+              <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-primary-700">
                 {t('home.hero.tagline')}
               </p>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-neutral-950 leading-tight">
-                {t('home.hero.h1')}{' '}
-                <span className="bg-gradient-to-r from-primary-600 via-green-500 to-emerald-500 bg-clip-text text-transparent">
-                  {t('home.hero.h1Highlight')}
-                </span>
-              </h1>
+              <p className="text-lg md:text-2xl lg:text-3xl font-medium text-neutral-600 max-w-2xl leading-relaxed">
+                {t('home.hero.h1')}
+              </p>
+              <p className="text-lg md:text-2xl lg:text-3xl font-semibold text-neutral-800">
+                Enkelt med
+              </p>
               <p className="text-lg md:text-xl text-neutral-700 max-w-2xl mx-auto lg:mx-0">
                 {t('home.hero.body')}
               </p>
