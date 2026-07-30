@@ -25,22 +25,22 @@ export function HeroSection() {
       <div className="container relative mx-auto px-4">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
           {/* Left column - Text content */}
-          <div className="text-center lg:text-left space-y-8">
+          <div className="text-center space-y-8 flex flex-col items-center w-full">
             {/* Intro tagline */}
             <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-primary-700">
               {t('home.hero.tagline')}
             </p>
 
-            {/* Main content group */}
-            <div className="space-y-8 lg:space-y-10 flex flex-col items-center lg:items-start w-full">
+            {/* Main content group - centered */}
+            <div className="space-y-6 lg:space-y-8 flex flex-col items-center w-full">
               {/* Problem statement */}
-              <p className="text-lg md:text-2xl lg:text-3xl font-medium text-neutral-600 max-w-2xl leading-relaxed text-center lg:text-left">
+              <p className="text-lg md:text-2xl lg:text-3xl font-medium text-neutral-600 max-w-2xl leading-relaxed text-center">
                 {t('home.hero.h1')}
               </p>
 
-              {/* Solution group: "Enkelt med" + Logo */}
-              <div className="flex flex-col md:flex-row items-center md:items-center justify-center md:justify-start gap-4 md:gap-6 lg:gap-8 w-full">
-                <p className="text-lg md:text-2xl lg:text-3xl font-semibold text-neutral-800 flex-shrink-0 text-center md:text-left">
+              {/* Solution group: "Enkelt med" + Logo - centered */}
+              <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-6 lg:gap-8 w-full">
+                <p className="text-lg md:text-2xl lg:text-3xl font-semibold text-neutral-800 flex-shrink-0 text-center">
                   Enkelt med
                 </p>
                 <img
@@ -52,17 +52,17 @@ export function HeroSection() {
             </div>
 
             {/* Body description */}
-            <p className="text-base md:text-lg text-neutral-700 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+            <p className="text-base md:text-lg text-neutral-700 max-w-2xl mx-auto leading-relaxed text-center">
               {t('home.hero.body')}
             </p>
 
             {/* Subtext */}
-            <p className="text-sm text-neutral-500 max-w-2xl mx-auto lg:mx-0">
+            <p className="text-sm text-neutral-500 max-w-2xl mx-auto text-center">
               {t('home.hero.subtext')}
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button
                 asChild
                 size="lg"
