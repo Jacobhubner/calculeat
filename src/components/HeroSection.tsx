@@ -35,10 +35,10 @@ export function HeroSection() {
                 <br />
                 {t('home.hero.h1Intro')}
               </p>
-              {/* Large Logo Icon */}
+              {/* Large Logo */}
               <div className="flex justify-center lg:justify-start mt-4 lg:-mt-16">
                 <img
-                  src="/calculeat-leaf-icon.svg"
+                  src="/calculeat-logo-full.svg"
                   alt="Calculeat"
                   className="h-52 sm:h-60 md:h-80 lg:h-96 xl:h-[28rem] object-contain"
                 />
