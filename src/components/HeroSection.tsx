@@ -23,46 +23,38 @@ export function HeroSection() {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_60%,rgba(14,165,233,0.1),transparent_60%)] mix-blend-screen" />
 
       <div className="container relative mx-auto px-4">
-        <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-start">
-          {/* Main hero content - centered single column */}
-          <div className="text-center space-y-8 flex flex-col items-center w-full lg:col-span-2 lg:max-w-3xl lg:mx-auto">
-            {/* Intro tagline */}
-            <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-primary-700">
-              {t('home.hero.tagline')}
-            </p>
-
-            {/* Main content group - centered */}
-            <div className="space-y-6 lg:space-y-8 flex flex-col items-center w-full">
-              {/* Problem statement */}
-              <p className="text-lg md:text-2xl lg:text-3xl font-medium text-neutral-600 max-w-2xl leading-relaxed text-center">
-                {t('home.hero.h1')}
-              </p>
-
-              {/* Solution group: "Enkelt med" + Logo - centered */}
-              <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-6 lg:gap-8 w-full">
-                <p className="text-lg md:text-2xl lg:text-3xl font-semibold text-neutral-800 flex-shrink-0 text-center">
-                  Enkelt med
-                </p>
-                <img
-                  src="/calculeat-logo-full.svg"
-                  alt="Calculeat"
-                  className="h-52 sm:h-60 md:h-80 lg:h-96 xl:h-[28rem] object-contain flex-shrink-0"
-                />
-              </div>
+        <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
+          {/* Left column - Text content */}
+          <div className="text-center lg:text-left space-y-8">
+            {/* Logo */}
+            <div className="flex justify-center lg:justify-start mb-4">
+              <img
+                src="/calculeat-logo-full.svg"
+                alt="Calculeat"
+                className="h-20 md:h-28 lg:h-32 object-contain"
+              />
             </div>
 
-            {/* Body description */}
-            <p className="text-base md:text-lg text-neutral-700 max-w-2xl mx-auto leading-relaxed text-center">
-              {t('home.hero.body')}
-            </p>
-
-            {/* Subtext */}
-            <p className="text-sm text-neutral-500 max-w-2xl mx-auto text-center">
-              {t('home.hero.subtext')}
-            </p>
+            <div className="space-y-4">
+              <p className="text-sm font-semibold uppercase tracking-wider text-primary-700">
+                {t('home.hero.tagline')}
+              </p>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-neutral-950 leading-tight">
+                {t('home.hero.h1')}{' '}
+                <span className="bg-gradient-to-r from-primary-600 via-green-500 to-emerald-500 bg-clip-text text-transparent">
+                  {t('home.hero.h1Highlight')}
+                </span>
+              </h1>
+              <p className="text-lg md:text-xl text-neutral-700 max-w-2xl mx-auto lg:mx-0">
+                {t('home.hero.body')}
+              </p>
+              <p className="text-sm text-neutral-500 max-w-2xl mx-auto lg:mx-0">
+                {t('home.hero.subtext')}
+              </p>
+            </div>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <Button
                 asChild
                 size="lg"
