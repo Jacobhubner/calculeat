@@ -41,8 +41,7 @@ export function HeroSection() {
               </p>
               <p className="text-lg md:text-2xl lg:text-3xl font-medium text-neutral-600 max-w-2xl leading-relaxed">
                 {t('home.hero.h1')}
-              </p>
-              <p className="text-lg md:text-2xl lg:text-3xl font-semibold text-neutral-800">
+                <br />
                 Enkelt med
               </p>
               <p className="text-lg md:text-xl text-neutral-700 max-w-2xl mx-auto lg:mx-0">
