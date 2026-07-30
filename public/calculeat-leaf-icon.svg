@@ -1,0 +1,30 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="leafGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#25BD00;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#D4C71A;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FB923C;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Left leaf (green) -->
+  <g>
+    <path d="M 60 120 Q 50 80 70 50 Q 85 70 90 100 Q 85 115 60 120 Z"
+          fill="#25BD00" opacity="0.95"/>
+    <!-- Leaf vein detail -->
+    <path d="M 70 60 Q 80 85 75 110"
+          stroke="white" stroke-width="1.5" fill="none" opacity="0.5"/>
+  </g>
+
+  <!-- Right leaf (gradient yellow-orange) -->
+  <g>
+    <path d="M 140 120 Q 150 80 130 50 Q 115 70 110 100 Q 115 115 140 120 Z"
+          fill="url(#leafGradient)" opacity="0.95"/>
+    <!-- Leaf vein detail -->
+    <path d="M 130 60 Q 120 85 125 110"
+          stroke="white" stroke-width="1.5" fill="none" opacity="0.5"/>
+  </g>
+
+  <!-- Center stem -->
+  <line x1="100" y1="50" x2="100" y2="125" stroke="#2D5016" stroke-width="3" stroke-linecap="round"/>
+</svg>

@@ -44,7 +44,16 @@
       "Bash(npm run *)",
       "Bash(curl -s http://localhost:5173)",
       "Bash(pkill -f \"vite\")",
-      "Bash(curl -s -I http://localhost:5173)"
+      "Bash(curl -s -I http://localhost:5173)",
+      "Bash(cd \"c:\\\\Users\\\\jahub\\\\Documents\\\\Calculeat\" && git status)",
+      "Read(//c/Users/jahub/Documents/Calculeat/**)",
+      "Bash(cd \"c:\\\\Users\\\\jahub\\\\Documents\\\\Calculeat\" && grep -r \"CalculEat\" --include=\"*.json\" --include=\"*.ts\" --include=\"*.tsx\" --include=\"*.js\" --include=\"*.jsx\" --include=\"*.md\" --include=\"*.env*\" --include=\"*.yml\" --include=\"*.yaml\" -l 2>/dev/null | head -20)",
+      "Bash(git push *)",
+      "Bash(cd \"c:\\\\Users\\\\jahub\\\\Documents\\\\Calculeat\" && grep -r \"KALORIER UNDERSKUD\\\\|Deficit tracking\" src/ --include=\"*.tsx\" --include=\"*.ts\" -i -l)",
+      "Bash(cd \"c:\\\\Users\\\\jahub\\\\Documents\\\\Calculeat\" && grep -r \"QuickSummaryCards\" src/ --include=\"*.tsx\" -A 3 -B 2 | head -30)",
+      "Bash(cd \"c:\\\\Users\\\\jahub\\\\Documents\\\\Calculeat\" && grep -n \"QuickSummaryCards\" src/pages/DashboardPage.tsx -A 10 -B 10 | head -40)",
+      "Bash(ls -lah \"C:\\\\Users\\\\jahub\\\\Desktop\\\\calculeat_icons\")",
+      "Read(//c/Users/jahub/Desktop/calculeat_icons/**)"
     ],
     "deny": [],
     "ask": []

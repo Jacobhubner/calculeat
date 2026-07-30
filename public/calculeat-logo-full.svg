@@ -1,0 +1,33 @@
+<svg viewBox="0 0 500 150" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="leafGradFull" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#25BD00;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#D4C71A;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FB923C;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Leaf icon -->
+  <g transform="translate(20, 40)">
+    <!-- Left leaf (green) -->
+    <path d="M 30 60 Q 25 40 35 25 Q 42 35 45 50 Q 42 57 30 60 Z"
+          fill="#25BD00" opacity="0.95"/>
+    <path d="M 35 30 Q 40 42 37 55"
+          stroke="white" stroke-width="1" fill="none" opacity="0.5"/>
+
+    <!-- Right leaf (gradient) -->
+    <path d="M 70 60 Q 75 40 65 25 Q 58 35 55 50 Q 58 57 70 60 Z"
+          fill="url(#leafGradFull)" opacity="0.95"/>
+    <path d="M 65 30 Q 60 42 63 55"
+          stroke="white" stroke-width="1" fill="none" opacity="0.5"/>
+
+    <!-- Stem -->
+    <line x1="50" y1="25" x2="50" y2="62" stroke="#2D5016" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- Text: Calculeat -->
+  <text x="140" y="95" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="72" font-weight="700" letter-spacing="-1" fill="#1F2937">Calculeat</text>
+
+  <!-- Colored accent on 'eat' part -->
+  <text x="340" y="95" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="72" font-weight="700" letter-spacing="-1" fill="url(#leafGradFull)">eat</text>
+</svg>
