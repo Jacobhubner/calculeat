@@ -94,7 +94,7 @@ export default function SiteFooter() {
               <img
                 src="/calculeat-logo-full.svg"
                 alt="Calculeat"
-                className="h-24 object-contain transition-transform group-hover:scale-105"
+                className="h-16 object-contain transition-transform group-hover:scale-105"
               />
             </Link>
             <p className="text-sm text-neutral-600 max-w-xs">{t('footer.tagline')}</p>
