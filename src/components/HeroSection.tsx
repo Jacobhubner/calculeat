@@ -27,11 +27,11 @@ export function HeroSection() {
           {/* Left column - Text content */}
           <div className="text-center lg:text-left space-y-8">
             {/* Logo */}
-            <div className="flex justify-center lg:justify-start">
+            <div className="flex justify-center lg:justify-start mb-4">
               <img
                 src="/calculeat-logo-full.svg"
                 alt="Calculeat"
-                className="h-16 md:h-20 object-contain"
+                className="h-20 md:h-28 lg:h-32 object-contain"
               />
             </div>
 

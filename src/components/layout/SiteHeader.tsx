@@ -127,9 +127,9 @@ export default function SiteHeader() {
         {/* Logo */}
         <Link to={user ? '/app' : '/'} className="flex items-center group">
           <img
-            src="/calculeat-leaf-icon.svg"
-            alt="Calculeat Logo"
-            className="h-10 object-contain transition-transform group-hover:scale-105"
+            src="/calculeat-logo-full.svg"
+            alt="Calculeat"
+            className="h-8 object-contain transition-transform group-hover:scale-105"
           />
         </Link>
 
