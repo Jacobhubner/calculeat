@@ -33,7 +33,7 @@ export function HeroSection() {
               <p className="text-lg md:text-2xl lg:text-3xl font-medium text-neutral-600 max-w-2xl leading-relaxed">
                 {t('home.hero.h1')}
                 <br />
-                Enkelt med
+                {t('home.hero.h1Intro')}
               </p>
               {/* Large Logo */}
               <div className="flex justify-center lg:justify-start pt-4">
