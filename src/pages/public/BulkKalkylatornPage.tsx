@@ -487,14 +487,17 @@ export default function BulkKalkylatornPage() {
               <ul className="space-y-2 pl-4 list-disc">
                 {(t('bulk-calculator.explanation.list_1', { returnObjects: true }) as string[]).map(
                   (item, i) => {
-                    const colonIdx = item.indexOf(':')
-                    const bold = item.substring(2, colonIdx - 2)
-                    const rest = item.substring(colonIdx + 2)
-                    return (
-                      <li key={i}>
-                        <strong>{bold}:</strong> {rest}
-                      </li>
-                    )
+                    const colonIdx = item.indexOf(':**')
+                    if (item.startsWith('**') && colonIdx > 0) {
+                      const bold = item.substring(2, colonIdx)
+                      const rest = item.substring(colonIdx + 3).trim()
+                      return (
+                        <li key={i}>
+                          <strong>{bold}:</strong> {rest}
+                        </li>
+                      )
+                    }
+                    return <li key={i}>{item}</li>
                   }
                 )}
               </ul>
