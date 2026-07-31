@@ -83,10 +83,10 @@ export default function CalorieRing({
         <div className="text-center">
           {min && max ? (
             <p className="text-xl font-semibold text-neutral-900">
-              {Math.round(min)} - {Math.round(max)}
+              {Math.round(min)} - {Math.round(max)} kcal
             </p>
           ) : (
-            <p className="text-2xl font-semibold text-neutral-900">{Math.round(target)}</p>
+            <p className="text-2xl font-semibold text-neutral-900">{Math.round(target)} kcal</p>
           )}
           <p className="text-xs text-neutral-500 uppercase tracking-wide">{t('ring.goal')}</p>
         </div>
@@ -100,7 +100,8 @@ export default function CalorieRing({
             {isOverTarget ? '+' : ''}
             {isOverTarget
               ? Math.round(consumed - goalForProgress)
-              : Math.round(calculatedRemaining)}
+              : Math.round(calculatedRemaining)}{' '}
+            kcal
           </p>
           <p className="text-xs text-neutral-500 uppercase tracking-wide">
             {isOverTarget ? t('ring.over') : t('ring.remaining')}
