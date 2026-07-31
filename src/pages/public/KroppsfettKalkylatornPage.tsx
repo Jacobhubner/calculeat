@@ -573,10 +573,9 @@ export default function KroppsfettKalkylatornPage() {
               {(
                 t('bodyfat-calculator.explanation.list_1', { returnObjects: true }) as string[]
               ).map((item, i) => {
-                const colonIdx = item.indexOf(':')
-                if (item.startsWith('**') && colonIdx > 0) {
-                  const bold = item.substring(2, colonIdx - 2)
-                  const rest = item.substring(colonIdx + 2)
+                const match = item.match(/^\*\*([^*]+)\*\*:\s*(.+)$/)
+                if (match) {
+                  const [, bold, rest] = match
                   return (
                     <li key={i}>
                       <strong>{bold}:</strong> {rest}
