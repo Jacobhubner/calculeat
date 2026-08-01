@@ -30,9 +30,14 @@ export function DashboardHeroSection({ consumed, min, max }: DashboardHeroSectio
           <div className="flex flex-col gap-4 flex-1 w-full lg:w-auto">
             {/* Main CTA Button */}
             <Link to="/app/today" className="w-full">
-              {/* Loggans gradient — knappen sitter bredvid ringen, så den
-                  helmättade primärgrönen med emerald skar sig mot märket. */}
-              <Button className="w-full gap-3 text-lg py-7 bg-[linear-gradient(135deg,#7bbe2a_0%,#edbe0c_53%,#fc8518_100%)] text-white shadow-lg shadow-accent-500/20 hover:shadow-xl hover:brightness-105 transition-all [text-shadow:0_1px_2px_rgba(0,0,0,0.25)]">
+              {/* Mjuk grön yta i stället för full gradient: ringen bredvid bär
+                  redan märkets färger, och en gradientknapp här blev både en
+                  andra huvudperson och en tvilling till "+"-knappen i
+                  mobilnavigeringen. */}
+              <Button
+                variant="ghost"
+                className="w-full gap-3 text-lg py-7 bg-[#eaf5da] text-[#3f6b12] font-semibold hover:bg-[#dcefc4] hover:text-[#33590d] hover:translate-y-0 active:scale-[0.99] transition-colors"
+              >
                 <Plus className="h-6 w-6" />
                 {t('quickLinks.logFood')}
               </Button>
