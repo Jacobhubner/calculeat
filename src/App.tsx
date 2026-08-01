@@ -113,9 +113,7 @@ const BodyCompositionHubPage = lazyWithRetry(() => import('./pages/BodyCompositi
 const BodyCompositionCalculator = lazyWithRetry(
   () => import('./components/tools/body-composition/BodyCompositionCalculator')
 )
-const FoodItemsPage = lazyWithRetry(() => import('./pages/FoodItemsPage'))
-const RecipesPage = lazyWithRetry(() => import('./pages/RecipesPage'))
-const SavedMealsPage = lazyWithRetry(() => import('./pages/SavedMealsPage'))
+const FoodHubPage = lazyWithRetry(() => import('./pages/FoodHubPage'))
 const TodayPage = lazyWithRetry(() => import('./pages/TodayPage'))
 const HistoryPage = lazyWithRetry(() => import('./pages/HistoryPage'))
 const HistoryDayPage = lazyWithRetry(() => import('./pages/HistoryDayPage'))
@@ -378,11 +376,14 @@ function App() {
                       <Route path="calculate" element={<BodyCompositionCalculator />} />
                       <Route path="genetic-potential" element={<GatedGeneticPotential />} />
                     </Route>
+                    {/* Mat-ytan: tre flikar, tre bevarade URL:er (bokmärken/länkar
+                        fortsätter fungera). Varje rutt renderar samma sida med
+                        rätt aktiv flik. */}
                     <Route
                       path="/app/food-items"
                       element={
                         <ProtectedRoute>
-                          <FoodItemsPage />
+                          <FoodHubPage tab="food" />
                         </ProtectedRoute>
                       }
                     />
@@ -390,7 +391,7 @@ function App() {
                       path="/app/recipes"
                       element={
                         <ProtectedRoute>
-                          <RecipesPage />
+                          <FoodHubPage tab="recipes" />
                         </ProtectedRoute>
                       }
                     />
@@ -398,7 +399,7 @@ function App() {
                       path="/app/saved-meals"
                       element={
                         <ProtectedRoute>
-                          <SavedMealsPage />
+                          <FoodHubPage tab="saved" />
                         </ProtectedRoute>
                       }
                     />

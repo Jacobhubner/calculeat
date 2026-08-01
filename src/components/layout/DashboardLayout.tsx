@@ -11,6 +11,7 @@ import { toast } from 'sonner'
 import { usePreviewMode } from '@/hooks/usePreviewMode'
 import { SupportChatButton } from '@/components/support/SupportChatButton'
 import { useSupportAdminUnreadCount } from '@/hooks/useSupportChat'
+import { useFoodHubTabs } from './foodHubTabs'
 
 interface DashboardLayoutProps {
   children: ReactNode
@@ -21,6 +22,7 @@ export default function DashboardLayout({ children, fullHeight }: DashboardLayou
   const { sidebarCollapsed } = useUIStore()
   const { isEmailVerified, user, isPreviewMode } = useAuth()
   const { exitPreview } = usePreviewMode()
+  const foodHubTabs = useFoodHubTabs()
   useSupportAdminUnreadCount() // aktiverar realtime-kanal för admin-inbox
 
   const handleResend = async () => {
@@ -73,9 +75,13 @@ export default function DashboardLayout({ children, fullHeight }: DashboardLayou
           )}
         >
           {fullHeight ? (
-            <div className="flex-1 min-h-0 flex flex-col overflow-hidden">{children}</div>
+            <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
+              {foodHubTabs}
+              {children}
+            </div>
           ) : (
             <div className="mx-auto px-3 py-4 md:px-4 md:py-8 lg:px-8 max-w-[1600px] overflow-x-hidden">
+              {foodHubTabs}
               {children}
             </div>
           )}
