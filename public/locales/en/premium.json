@@ -3,8 +3,7 @@
     "premium": "Premium",
     "free": "Free",
     "includedInPremium": "Included in Premium",
-    "adminToggleHint": "Admin: toggle between premium and free view",
-    "adminViewLabel": "Admin view"
+    "adminToggleHint": "Admin: toggle between premium and free view"
   },
   "export": {
     "csvButton": "Export CSV"

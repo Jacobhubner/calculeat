@@ -34,48 +34,47 @@ export function PlanBadge({ className }: PlanBadgeProps) {
   if (isAdmin) {
     const showingFree = isFreeViewActive
     return (
-      <div className={cn('flex items-center gap-2', className)}>
-        <span className="text-[10px] font-semibold uppercase tracking-wide text-neutral-400">
-          {t('badge.adminViewLabel')}
-        </span>
-        <button
-          type="button"
-          role="switch"
-          aria-checked={showingFree}
-          onClick={() => {
-            if (showingFree) exitFreeView()
-            else enterFreeView()
-          }}
-          title={t('badge.adminToggleHint')}
+      <button
+        type="button"
+        role="switch"
+        aria-checked={showingFree}
+        aria-label={t('badge.adminToggleHint')}
+        onClick={() => {
+          if (showingFree) exitFreeView()
+          else enterFreeView()
+        }}
+        title={t('badge.adminToggleHint')}
+        className={cn(
+          // Ingen "ADMINVY"-etikett: reglaget visar redan vilket läge som är
+          // aktivt, och title/aria-label förklarar för den som behöver det.
+          'inline-flex items-center gap-1.5 rounded-full border px-1 py-0.5 transition-colors cursor-pointer',
+          showingFree ? 'border-neutral-300 bg-neutral-100' : 'border-amber-400 bg-amber-100',
+          className
+        )}
+      >
+        {/* Track + knopp */}
+        <span
           className={cn(
-            'inline-flex items-center gap-1.5 rounded-full border px-1 py-0.5 transition-colors cursor-pointer',
-            showingFree ? 'border-neutral-300 bg-neutral-100' : 'border-amber-400 bg-amber-100'
+            'relative h-3.5 w-6 rounded-full transition-colors',
+            showingFree ? 'bg-neutral-300' : 'bg-amber-400'
           )}
         >
-          {/* Track + knopp */}
           <span
             className={cn(
-              'relative h-3.5 w-6 rounded-full transition-colors',
-              showingFree ? 'bg-neutral-300' : 'bg-amber-400'
+              'absolute top-0.5 h-2.5 w-2.5 rounded-full bg-white shadow transition-all',
+              showingFree ? 'left-0.5' : 'left-3'
             )}
-          >
-            <span
-              className={cn(
-                'absolute top-0.5 h-2.5 w-2.5 rounded-full bg-white shadow transition-all',
-                showingFree ? 'left-0.5' : 'left-3'
-              )}
-            />
-          </span>
-          <span
-            className={cn(
-              'pr-1 text-[10px] font-semibold',
-              showingFree ? 'text-neutral-600' : 'text-amber-700'
-            )}
-          >
-            {showingFree ? t('badge.free') : t('badge.premium')}
-          </span>
-        </button>
-      </div>
+          />
+        </span>
+        <span
+          className={cn(
+            'pr-1 text-[10px] font-semibold',
+            showingFree ? 'text-neutral-600' : 'text-amber-700'
+          )}
+        >
+          {showingFree ? t('badge.free') : t('badge.premium')}
+        </span>
+      </button>
     )
   }
 
