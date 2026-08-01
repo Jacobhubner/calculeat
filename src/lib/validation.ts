@@ -96,10 +96,14 @@ export const signUpSchema = z
       .max(30, 'Användarnamnet får max vara 30 tecken')
       .regex(/^[a-zA-Z0-9_åäöÅÄÖ]+$/, 'Användarnamnet får bara innehålla bokstäver, siffror och _'),
     acceptTerms: z.boolean().refine(val => val === true, {
-      message: 'Du måste godkänna användarvillkoren',
+      message: 'Du måste acceptera användarvillkoren',
     }),
     acceptPrivacy: z.boolean().refine(val => val === true, {
-      message: 'Du måste godkänna integritetspolicyn',
+      message: 'Du måste bekräfta att du läst integritetspolicyn',
+    }),
+    // Villkoren kräver 16 år (GDPR art. 8 + art. 9 för hälsodata)
+    acceptAge: z.boolean().refine(val => val === true, {
+      message: 'Du måste vara minst 16 år för att skapa ett konto',
     }),
   })
   .refine(data => data.password === data.confirmPassword, {

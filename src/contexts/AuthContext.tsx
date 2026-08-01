@@ -218,7 +218,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     acceptTerms?: boolean,
     acceptPrivacy?: boolean
   ) => {
-    const { data, error } = await supabase.auth.signUp({
+    // Samtycket loggas av handle_new_user-triggern, atomärt med kontoskapandet.
+    // Klienten har medvetet ingen INSERT-behörighet på consent_audit_log —
+    // ett audit trail som subjektet kan skriva i har inget bevisvärde (GDPR art. 7.1).
+    const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -226,37 +229,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           profile_name: profileName,
           accept_terms: acceptTerms ?? false,
           accept_privacy: acceptPrivacy ?? false,
+          user_agent: navigator.userAgent,
         },
         emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     })
 
     if (error) throw error
-
-    // Log consent in audit trail if user was created
-    if (data.user && acceptTerms) {
-      await supabase
-        .from('consent_audit_log')
-        .insert({
-          user_id: data.user.id,
-          consent_type: 'terms',
-          accepted: true,
-          user_agent: navigator.userAgent,
-        })
-        .then()
-    }
-
-    if (data.user && acceptPrivacy) {
-      await supabase
-        .from('consent_audit_log')
-        .insert({
-          user_id: data.user.id,
-          consent_type: 'privacy',
-          accepted: true,
-          user_agent: navigator.userAgent,
-        })
-        .then()
-    }
   }
 
   const signIn = async (email: string, password: string) => {

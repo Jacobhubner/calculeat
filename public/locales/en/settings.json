@@ -42,17 +42,16 @@
     "format": "File format",
     "button": "Export data",
     "exporting": "Exporting…",
-    "info": "The file contains: profile, meals, measurements, and consents."
-  },
-  "deleteAccount": {
-    "title": "Delete account",
-    "warning": "Deleting your account will permanently remove all your data. This cannot be undone.",
-    "button": "Delete account",
-    "confirm": "Are you absolutely sure? Type \"delete\" below to confirm.",
-    "sure": "Yes, delete my account",
-    "final": "This is irreversible. Type \"delete account\" to confirm permanently.",
-    "cancel": "Cancel",
-    "success": "Account deleted"
+    "info": "The file contains everything we store about you: profile, food diary, recipes, saved meals, weight and measurement data, messages, shares, support conversations and consent log.",
+    "success": "Your data has been exported as {{format}}",
+    "partialWarning": "The export finished, but some parts could not be retrieved. Contact support if something is missing.",
+    "errors": {
+      "notLoggedIn": "You must be logged in to export data",
+      "sessionExpired": "Your session has expired. Log in again and retry.",
+      "timeout": "The export took too long. Please try again shortly.",
+      "network": "Network error — check your connection and try again.",
+      "generic": "Could not export data. Please try again later."
+    }
   },
   "support": {
     "openChat": "Contact support →",

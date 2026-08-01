@@ -19,13 +19,19 @@ type SignUpFormData = {
   profile_name: string
   acceptTerms: boolean
   acceptPrivacy: boolean
+  acceptAge: boolean
 }
 
 type UsernameStatus = 'idle' | 'checking' | 'available' | 'taken' | 'invalid'
 
 export default function SignUpForm() {
   const { signUp } = useAuth()
-  const { t } = useTranslation('auth')
+  const { t, i18n } = useTranslation('auth')
+  // De svenska rutterna heter /villkor och /integritetspolicy — /terms och
+  // /privacy är 404 på svenska och skulle göra samtycket oinformerat.
+  const isEn = i18n.language?.startsWith('en')
+  const termsPath = isEn ? '/en/terms' : '/villkor'
+  const privacyPath = isEn ? '/en/privacy' : '/integritetspolicy'
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -247,7 +253,7 @@ export default function SignUpForm() {
               components={{
                 link: (
                   <a
-                    href="/terms"
+                    href={termsPath}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="font-medium text-primary-600 hover:underline"
@@ -272,7 +278,7 @@ export default function SignUpForm() {
               components={{
                 link: (
                   <a
-                    href="/privacy"
+                    href={privacyPath}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="font-medium text-primary-600 hover:underline"
@@ -285,6 +291,16 @@ export default function SignUpForm() {
         {errors.acceptPrivacy && (
           <p className="text-red-500 text-sm">{errors.acceptPrivacy.message}</p>
         )}
+
+        <label className="flex items-start gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            {...register('acceptAge')}
+            className="mt-1 h-4 w-4 rounded border-neutral-300"
+          />
+          <span className="text-sm text-neutral-700">{t('register.consent.age')}</span>
+        </label>
+        {errors.acceptAge && <p className="text-red-500 text-sm">{errors.acceptAge.message}</p>}
       </div>
 
       <Button

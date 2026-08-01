@@ -38,21 +38,20 @@
   },
   "dataExport": {
     "title": "Exportera min data",
-    "description": "Ladda ner alla dina personuppgifter i maskinläsbar format (JSON eller CSV). Du har rätt till detta enligt GDPR.",
+    "description": "Ladda ner alla dina personuppgifter i maskinläsbart format (JSON eller CSV). Du har rätt till detta enligt GDPR.",
     "format": "Filformat",
     "button": "Exportera data",
     "exporting": "Exporterar…",
-    "info": "Filen innehåller: profil, måltider, mätningar, och godkännanden."
-  },
-  "deleteAccount": {
-    "title": "Radera konto",
-    "warning": "Att radera ditt konto kommer att ta bort all din data permanent. Detta kan inte ångras.",
-    "button": "Radera konto",
-    "confirm": "Är du helt säker? Skriv \"radera\" nedan för att bekräfta.",
-    "sure": "Ja, radera mitt konto",
-    "final": "Detta är irreversibelt. Skriv \"radera konto\" för att bekräfta slutgiltigt.",
-    "cancel": "Avbryt",
-    "success": "Konto raderat"
+    "info": "Filen innehåller allt vi lagrar om dig: profil, matdagbok, recept, sparade måltider, vikt- och mätdata, meddelanden, delningar, supportkonversationer och samtyckeslogg.",
+    "success": "Din data har exporterats som {{format}}",
+    "partialWarning": "Exporten är klar, men vissa delar kunde inte hämtas. Kontakta support om något saknas.",
+    "errors": {
+      "notLoggedIn": "Du måste vara inloggad för att exportera data",
+      "sessionExpired": "Din session har löpt ut. Logga in igen och försök på nytt.",
+      "timeout": "Exporten tog för lång tid. Försök igen om en stund.",
+      "network": "Nätverksfel — kontrollera din anslutning och försök igen.",
+      "generic": "Kunde inte exportera data. Försök igen senare."
+    }
   },
   "support": {
     "openChat": "Kontakta support →",
