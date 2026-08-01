@@ -88,7 +88,8 @@
     "myPlan": "Min Plan",
     "explore": "Utforska",
     "account": "Konto",
-    "foodHub": "Mat"
+    "foodHub": "Mat",
+    "socialWithCount": "Social — {{count}} nya"
   },
   "auth": {
     "loggedOut": "Du har loggats ut",

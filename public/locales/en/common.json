@@ -88,7 +88,8 @@
     "myPlan": "My Plan",
     "explore": "Explore",
     "account": "Account",
-    "foodHub": "Food"
+    "foodHub": "Food",
+    "socialWithCount": "Social — {{count}} new"
   },
   "auth": {
     "loggedOut": "You have been logged out",

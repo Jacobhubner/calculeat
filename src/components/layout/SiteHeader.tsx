@@ -289,10 +289,34 @@ export default function SiteHeader() {
 
         {/* Mobile: Social + Avatar when logged in */}
         {user && (
-          <div className="md:hidden flex items-center gap-2">
+          <div className="md:hidden flex items-center gap-1 sm:gap-2">
             {/* Plan-chip — i mobilen finns ingen sidebar, så planen visas här */}
             <PlanBadge />
             <LanguageSwitcher />
+
+            {/* Social — egen knapp med badge. En inkorg som kräver att man
+                öppnar en meny för att se att något hänt fungerar inte som
+                inkorg; notisen ska synas direkt i headern. */}
+            <Link
+              to="/app/social"
+              aria-label={
+                badgeCount > 0 ? t('nav.socialWithCount', { count: badgeCount }) : t('nav.social')
+              }
+              className={cn(
+                'relative flex items-center justify-center h-10 w-10 rounded-lg transition-colors',
+                'focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:outline-none',
+                isActive('/app/social')
+                  ? 'text-primary-600 bg-primary-50'
+                  : 'text-neutral-600 active:bg-neutral-100'
+              )}
+            >
+              <Users className="h-5 w-5" />
+              {badgeCount > 0 && (
+                <span className="absolute top-1 right-1 flex items-center justify-center bg-primary-600 text-white text-[10px] font-bold rounded-full min-w-[16px] h-4 px-1 leading-none ring-2 ring-white">
+                  {badgeCount > 99 ? '99+' : badgeCount}
+                </span>
+              )}
+            </Link>
 
             <div className="relative" ref={userMenuRef}>
               <button
@@ -309,11 +333,6 @@ export default function SiteHeader() {
                   {isAdmin && (
                     <span className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5">
                       <ShieldCheck className="h-3.5 w-3.5 text-primary-600" />
-                    </span>
-                  )}
-                  {badgeCount > 0 && (
-                    <span className="absolute -top-1 -right-1 flex items-center justify-center bg-primary-600 text-white text-[10px] font-bold rounded-full min-w-[16px] h-4 px-1 leading-none">
-                      {badgeCount > 99 ? '99+' : badgeCount}
                     </span>
                   )}
                 </span>
@@ -389,27 +408,14 @@ export default function SiteHeader() {
                       </Link>
                     </div>
 
-                    {/* SOCIAL & TOOLS */}
+                    {/* VERKTYG & RESURSER — Social ligger som egen knapp i
+                        headern, inte här, så notisen syns utan att menyn öppnas. */}
                     <div className="border-t border-neutral-100 py-2 px-4">
                       <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-1">
                         {t('nav.explore')}
                       </p>
                     </div>
                     <div className="py-1">
-                      <Link
-                        to="/app/social"
-                        role="menuitem"
-                        onClick={() => setMobileUserMenuOpen(false)}
-                        className={cn(menuItemClass('/app/social'), 'relative')}
-                      >
-                        <Users className="h-4 w-4" />
-                        <span>{t('nav.social')}</span>
-                        {badgeCount > 0 && (
-                          <span className="ml-auto flex items-center justify-center bg-primary-600 text-white text-[10px] font-bold rounded-full min-w-[18px] h-4 px-1 leading-none">
-                            {badgeCount > 99 ? '99+' : badgeCount}
-                          </span>
-                        )}
-                      </Link>
                       <Link
                         to="/app/tools/met-calculator"
                         role="menuitem"
