@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Share2,
   Apple,
@@ -6,11 +6,8 @@ import {
   ChefHat,
   Search,
   Send,
-  Users,
   ListOrdered,
   ChevronLeft,
-  Check,
-  X,
 } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
@@ -21,7 +18,6 @@ import {
   useShareableSavedMeals,
   useShareableFoodListCount,
 } from '@/hooks/useShareableItems'
-import { useSendShareInvitation, useCheckUserExists } from '@/hooks/useShareInvitations'
 import { useFriends, useSendShareInvitationToFriend } from '@/hooks/useFriends'
 import { useAuth } from '@/contexts/AuthContext'
 import { toast } from 'sonner'
@@ -29,7 +25,6 @@ import type { Friend } from '@/lib/types/friends'
 import { useTranslation } from 'react-i18next'
 
 type Step = 'recipient' | 'content' | 'confirm'
-type RecipientTab = 'friend' | 'email'
 type ContentType = 'food_item' | 'recipe' | 'saved_meal' | 'food_list'
 
 interface ShareDialogProps {
@@ -69,19 +64,12 @@ export function ShareDialog({
     : 'recipient'
 
   const [step, setStep] = useState<Step>(initialStep)
-  const [recipientTab, setRecipientTab] = useState<RecipientTab>('friend')
   const [selectedFriend, setSelectedFriend] = useState<Friend | null>(preselectedFriend ?? null)
-  const [email, setEmail] = useState('')
-  const [emailStatus, setEmailStatus] = useState<'idle' | 'checking' | 'found' | 'not_found'>(
-    'idle'
-  )
   const [friendSearch, setFriendSearch] = useState('')
   const [contentType, setContentType] = useState<ContentType>(preselectedContentType ?? 'food_item')
   const [selectedId, setSelectedId] = useState<string>(preselectedItem?.id ?? '')
   const [selectedName, setSelectedName] = useState<string>(preselectedItem?.name ?? '')
   const [itemSearch, setItemSearch] = useState('')
-
-  const emailDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Sync step and selectedFriend when preselectedFriend changes (e.g. different friend clicked)
   useEffect(() => {
@@ -101,39 +89,11 @@ export function ShareDialog({
   const { data: savedMeals = [] } = useShareableSavedMeals()
   const { count: foodListCount, isLoading: foodListLoading } = useShareableFoodListCount()
   const { data: friends = [] } = useFriends()
-  const { mutateAsync: sendByEmail, isPending: isSendingEmail } = useSendShareInvitation()
-  const { mutateAsync: sendToFriend, isPending: isSendingFriend } = useSendShareInvitationToFriend()
-  const { mutateAsync: checkEmail } = useCheckUserExists()
-
-  const handleEmailChange = useCallback(
-    (value: string) => {
-      setEmail(value)
-      if (emailDebounceRef.current) clearTimeout(emailDebounceRef.current)
-      if (!value.trim() || value.trim() === user?.email) {
-        setEmailStatus('idle')
-        return
-      }
-      setEmailStatus('checking')
-      emailDebounceRef.current = setTimeout(async () => {
-        try {
-          const result = await checkEmail(value.trim())
-          setEmailStatus(result.exists ? 'found' : 'not_found')
-        } catch {
-          setEmailStatus('idle')
-        }
-      }, 600)
-    },
-    [user?.email, checkEmail]
-  )
-
-  const isPending = isSendingEmail || isSendingFriend
+  const { mutateAsync: sendToFriend, isPending } = useSendShareInvitationToFriend()
 
   const reset = () => {
     setStep(initialStep)
-    setRecipientTab('friend')
     setSelectedFriend(preselectedFriend ?? null)
-    setEmail('')
-    setEmailStatus('idle')
     setFriendSearch('')
     setContentType(preselectedContentType ?? 'food_item')
     setSelectedId(preselectedItem?.id ?? '')
@@ -164,9 +124,7 @@ export function ShareDialog({
     m => !itemSearch.trim() || m.name.toLowerCase().includes(itemSearch.toLowerCase())
   )
 
-  const recipientLabel = selectedFriend
-    ? (selectedFriend.alias ?? selectedFriend.friend_name)
-    : email
+  const recipientLabel = selectedFriend ? (selectedFriend.alias ?? selectedFriend.friend_name) : ''
 
   const handleFriendSelect = (friend: Friend) => {
     setSelectedFriend(friend)
@@ -188,68 +146,36 @@ export function ShareDialog({
   }
 
   const handleSend = async () => {
-    if (!user) return
+    if (!user || !selectedFriend) return
     try {
       if (contentType === 'food_list') {
-        if (selectedFriend) {
-          const result = await sendToFriend({
-            itemId: null,
-            itemType: 'food_list',
-            friendUserId: selectedFriend.friend_id,
-          })
-          if (!result.success) {
-            toast.error(
-              result.error === 'empty_food_list'
-                ? t('share.error.empty_food_list')
-                : t('share.error.generic')
-            )
-            return
-          }
-        } else {
-          const result = await sendByEmail({
-            itemId: null,
-            itemType: 'food_list',
-            recipientEmail: email,
-          })
-          if (!result.success) {
-            toast.error(
-              result.error === 'empty_food_list'
-                ? t('share.error.empty_food_list')
-                : t('share.error.generic')
-            )
-            return
-          }
+        const result = await sendToFriend({
+          itemId: null,
+          itemType: 'food_list',
+          friendUserId: selectedFriend.friend_id,
+        })
+        if (!result.success) {
+          toast.error(
+            result.error === 'empty_food_list'
+              ? t('share.error.empty_food_list')
+              : t('share.error.generic')
+          )
+          return
         }
         toast.success(t('share.toast.food_list_shared', { count: foodListCount }))
       } else {
-        if (selectedFriend) {
-          const result = await sendToFriend({
-            itemId: selectedId,
-            itemType: contentType,
-            friendUserId: selectedFriend.friend_id,
-          })
-          if (!result.success) {
-            toast.error(
-              result.error === 'empty_saved_meal'
-                ? t('share.error.empty_saved_meal')
-                : t('share.error.friend_share_failed')
-            )
-            return
-          }
-        } else {
-          const result = await sendByEmail({
-            itemId: selectedId,
-            itemType: contentType,
-            recipientEmail: email,
-          })
-          if (!result.success) {
-            toast.error(
-              result.error === 'empty_saved_meal'
-                ? t('share.error.empty_saved_meal')
-                : t('share.error.generic')
-            )
-            return
-          }
+        const result = await sendToFriend({
+          itemId: selectedId,
+          itemType: contentType,
+          friendUserId: selectedFriend.friend_id,
+        })
+        if (!result.success) {
+          toast.error(
+            result.error === 'empty_saved_meal'
+              ? t('share.error.empty_saved_meal')
+              : t('share.error.friend_share_failed')
+          )
+          return
         }
         toast.success(t('share.toast.item_shared', { name: selectedName }))
       }
@@ -281,115 +207,48 @@ export function ShareDialog({
         {/* ── Steg 1: Välj mottagare ── */}
         {step === 'recipient' && (
           <div className="space-y-4">
-            <div className="flex rounded-lg border border-neutral-200 p-1 gap-1">
-              <button
-                type="button"
-                onClick={() => setRecipientTab('friend')}
-                className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-md text-sm font-medium transition-colors ${
-                  recipientTab === 'friend'
-                    ? 'bg-primary-600 text-white'
-                    : 'text-neutral-600 hover:bg-neutral-100'
-                }`}
-              >
-                <Users className="h-4 w-4" />
-                {t('share.recipient.tab_friends')}
-              </button>
-              <button
-                type="button"
-                onClick={() => setRecipientTab('email')}
-                className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-md text-sm font-medium transition-colors ${
-                  recipientTab === 'email'
-                    ? 'bg-primary-600 text-white'
-                    : 'text-neutral-600 hover:bg-neutral-100'
-                }`}
-              >
-                {t('share.recipient.tab_email')}
-              </button>
-            </div>
-
-            {recipientTab === 'friend' && (
-              <div className="space-y-2">
-                {friends.length === 0 ? (
-                  <p className="text-sm text-neutral-500 text-center py-4">
-                    {t('share.recipient.no_friends')}
-                  </p>
-                ) : (
-                  <>
-                    {friends.length > 4 && (
-                      <Input
-                        placeholder={t('share.recipient.search_placeholder')}
-                        value={friendSearch}
-                        onChange={e => setFriendSearch(e.target.value)}
-                        className="text-sm"
-                      />
-                    )}
-                    <div className="space-y-1 max-h-52 overflow-y-auto">
-                      {filteredFriends.map(friend => (
-                        <button
-                          key={friend.friendship_id}
-                          type="button"
-                          onClick={() => handleFriendSelect(friend)}
-                          className="w-full flex items-center gap-3 p-2.5 rounded-lg hover:bg-primary-50 transition-colors text-left"
-                        >
-                          <div className="h-8 w-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 text-xs font-semibold shrink-0">
-                            {getInitials(friend.alias ?? friend.friend_name)}
-                          </div>
-                          <div className="min-w-0">
-                            <p className="text-sm font-medium text-neutral-900 truncate">
-                              {friend.alias ?? `@${friend.friend_username ?? friend.friend_name}`}
+            <div className="space-y-2">
+              {friends.length === 0 ? (
+                <p className="text-sm text-neutral-500 text-center py-4">
+                  {t('share.recipient.no_friends')}
+                </p>
+              ) : (
+                <>
+                  {friends.length > 4 && (
+                    <Input
+                      placeholder={t('share.recipient.search_placeholder')}
+                      value={friendSearch}
+                      onChange={e => setFriendSearch(e.target.value)}
+                      className="text-sm"
+                    />
+                  )}
+                  <div className="space-y-1 max-h-52 overflow-y-auto">
+                    {filteredFriends.map(friend => (
+                      <button
+                        key={friend.friendship_id}
+                        type="button"
+                        onClick={() => handleFriendSelect(friend)}
+                        className="w-full flex items-center gap-3 p-2.5 rounded-lg hover:bg-primary-50 transition-colors text-left"
+                      >
+                        <div className="h-8 w-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 text-xs font-semibold shrink-0">
+                          {getInitials(friend.alias ?? friend.friend_name)}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-neutral-900 truncate">
+                            {friend.alias ?? `@${friend.friend_username ?? friend.friend_name}`}
+                          </p>
+                          {friend.alias && (
+                            <p className="text-xs text-neutral-400 truncate">
+                              @{friend.friend_username ?? friend.friend_name}
                             </p>
-                            {friend.alias && (
-                              <p className="text-xs text-neutral-400 truncate">
-                                @{friend.friend_username ?? friend.friend_name}
-                              </p>
-                            )}
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  </>
-                )}
-              </div>
-            )}
-
-            {recipientTab === 'email' && (
-              <div className="space-y-3">
-                <div className="space-y-1">
-                  <Input
-                    type="email"
-                    placeholder={t('share.recipient.email_placeholder')}
-                    value={email}
-                    onChange={e => handleEmailChange(e.target.value)}
-                    onKeyDown={e =>
-                      e.key === 'Enter' &&
-                      emailStatus === 'found' &&
-                      setStep(preselectedItem ? 'confirm' : 'content')
-                    }
-                    autoFocus
-                  />
-                  {email.trim() && emailStatus === 'checking' && (
-                    <p className="text-xs text-neutral-400 pl-1">{t('share.recipient.checking')}</p>
-                  )}
-                  {emailStatus === 'found' && (
-                    <p className="text-xs text-green-600 pl-1 flex items-center gap-1">
-                      <Check className="h-3 w-3" /> {t('share.recipient.user_found')}
-                    </p>
-                  )}
-                  {emailStatus === 'not_found' && (
-                    <p className="text-xs text-red-500 pl-1 flex items-center gap-1">
-                      <X className="h-3 w-3" /> {t('share.recipient.user_not_found')}
-                    </p>
-                  )}
-                </div>
-                <Button
-                  onClick={() => setStep(preselectedItem ? 'confirm' : 'content')}
-                  disabled={emailStatus !== 'found'}
-                  className="w-full"
-                >
-                  {t('share.recipient.next')}
-                </Button>
-              </div>
-            )}
+                          )}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         )}
 

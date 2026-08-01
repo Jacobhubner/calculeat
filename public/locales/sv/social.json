@@ -68,15 +68,8 @@
       "confirm_item": "Dela \"{{name}}\""
     },
     "recipient": {
-      "tab_friends": "Vänner",
-      "tab_email": "E-post",
       "no_friends": "Du har inga vänner ännu. Lägg till vänner via Social.",
-      "search_placeholder": "Sök vän...",
-      "email_placeholder": "mottagare@exempel.se",
-      "checking": "Kontrollerar...",
-      "user_found": "Användare hittad",
-      "user_not_found": "Ingen Calculeat-användare med den e-posten",
-      "next": "Nästa →"
+      "search_placeholder": "Sök vän..."
     },
     "content": {
       "tab_food_item": "Livsmedel",

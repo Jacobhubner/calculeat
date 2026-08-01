@@ -94,47 +94,9 @@ export function usePendingInvitations() {
   })
 }
 
-// ──────────────────────────────────────────────────────────────────────────────
-// Send invitation
-// ──────────────────────────────────────────────────────────────────────────────
-
-export function useSendShareInvitation() {
-  return useMutation({
-    mutationFn: async ({
-      itemId,
-      itemType,
-      recipientEmail,
-    }: {
-      itemId: string | null
-      itemType: ItemType
-      recipientEmail: string
-    }) => {
-      const { data, error } = await supabase.rpc('send_share_invitation', {
-        p_item_id: itemId,
-        p_item_type: itemType,
-        p_recipient_email: recipientEmail,
-      })
-      if (error) throw error
-      return data as { success: boolean; invitation_id?: string | null; error?: string }
-    },
-  })
-}
-
-// ──────────────────────────────────────────────────────────────────────────────
-// Check if a user exists by email (for UI feedback, not for security enforcement)
-// ──────────────────────────────────────────────────────────────────────────────
-
-export function useCheckUserExists() {
-  return useMutation({
-    mutationFn: async (email: string) => {
-      const { data, error } = await supabase.rpc('check_user_exists_by_email', {
-        p_email: email,
-      })
-      if (error) throw error
-      return data as { exists: boolean }
-    },
-  })
-}
+// Delning sker endast till vänner — se useSendShareInvitationToFriend i
+// useFriends.ts. E-postvägen (send_share_invitation, check_user_exists_by_email)
+// är borttagen ur klienten.
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Accept invitation

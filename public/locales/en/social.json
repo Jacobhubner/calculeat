@@ -68,15 +68,8 @@
       "confirm_item": "Share \"{{name}}\""
     },
     "recipient": {
-      "tab_friends": "Friends",
-      "tab_email": "Email",
       "no_friends": "You have no friends yet. Add friends via Social.",
-      "search_placeholder": "Search friend...",
-      "email_placeholder": "recipient@example.com",
-      "checking": "Checking...",
-      "user_found": "User found",
-      "user_not_found": "No Calculeat user with that email",
-      "next": "Next →"
+      "search_placeholder": "Search friend..."
     },
     "content": {
       "tab_food_item": "Food item",
