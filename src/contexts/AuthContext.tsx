@@ -17,7 +17,13 @@ interface AuthContextType {
   isProfileComplete: boolean
   isEmailVerified: boolean
   isPreviewMode: boolean // true when preview_backup_profile_id IS NOT NULL in DB
-  signUp: (email: string, password: string, fullName: string) => Promise<void>
+  signUp: (
+    email: string,
+    password: string,
+    fullName: string,
+    acceptTerms?: boolean,
+    acceptPrivacy?: boolean
+  ) => Promise<void>
   signIn: (email: string, password: string) => Promise<void>
   signOut: () => Promise<void>
   deleteAccount: () => Promise<void>
@@ -205,19 +211,52 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [user])
 
-  const signUp = async (email: string, password: string, profileName: string) => {
-    const { error } = await supabase.auth.signUp({
+  const signUp = async (
+    email: string,
+    password: string,
+    profileName: string,
+    acceptTerms?: boolean,
+    acceptPrivacy?: boolean
+  ) => {
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: {
           profile_name: profileName,
+          accept_terms: acceptTerms ?? false,
+          accept_privacy: acceptPrivacy ?? false,
         },
         emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     })
 
     if (error) throw error
+
+    // Log consent in audit trail if user was created
+    if (data.user && acceptTerms) {
+      await supabase
+        .from('consent_audit_log')
+        .insert({
+          user_id: data.user.id,
+          consent_type: 'terms',
+          accepted: true,
+          user_agent: navigator.userAgent,
+        })
+        .then()
+    }
+
+    if (data.user && acceptPrivacy) {
+      await supabase
+        .from('consent_audit_log')
+        .insert({
+          user_id: data.user.id,
+          consent_type: 'privacy',
+          accepted: true,
+          user_agent: navigator.userAgent,
+        })
+        .then()
+    }
   }
 
   const signIn = async (email: string, password: string) => {

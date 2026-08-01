@@ -17,6 +17,8 @@ type SignUpFormData = {
   password: string
   confirmPassword: string
   profile_name: string
+  acceptTerms: boolean
+  acceptPrivacy: boolean
 }
 
 type UsernameStatus = 'idle' | 'checking' | 'available' | 'taken' | 'invalid'
@@ -89,7 +91,13 @@ export default function SignUpForm() {
     setIsLoading(true)
     setError(null)
     try {
-      await signUp(data.email, data.password, data.profile_name)
+      await signUp(
+        data.email,
+        data.password,
+        data.profile_name,
+        data.acceptTerms,
+        data.acceptPrivacy
+      )
       setSuccess(true)
       toast.success(t('register.success'))
 
@@ -221,6 +229,61 @@ export default function SignUpForm() {
         />
         {errors.confirmPassword && (
           <p className="text-red-500 text-sm mt-1">{errors.confirmPassword.message}</p>
+        )}
+      </div>
+
+      {/* Godkännande av villkor */}
+      <div className="space-y-3 pt-2">
+        <label className="flex items-start gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            {...register('acceptTerms')}
+            className="mt-1 h-4 w-4 rounded border-neutral-300"
+          />
+          <span className="text-sm text-neutral-700">
+            <Trans
+              i18nKey="register.consent.terms"
+              ns="auth"
+              components={{
+                link: (
+                  <a
+                    href="/terms"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-medium text-primary-600 hover:underline"
+                  />
+                ),
+              }}
+            />
+          </span>
+        </label>
+        {errors.acceptTerms && <p className="text-red-500 text-sm">{errors.acceptTerms.message}</p>}
+
+        <label className="flex items-start gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            {...register('acceptPrivacy')}
+            className="mt-1 h-4 w-4 rounded border-neutral-300"
+          />
+          <span className="text-sm text-neutral-700">
+            <Trans
+              i18nKey="register.consent.privacy"
+              ns="auth"
+              components={{
+                link: (
+                  <a
+                    href="/privacy"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-medium text-primary-600 hover:underline"
+                  />
+                ),
+              }}
+            />
+          </span>
+        </label>
+        {errors.acceptPrivacy && (
+          <p className="text-red-500 text-sm">{errors.acceptPrivacy.message}</p>
         )}
       </div>
 

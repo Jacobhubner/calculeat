@@ -53,7 +53,9 @@
       "Bash(cd \"c:\\\\Users\\\\jahub\\\\Documents\\\\Calculeat\" && grep -r \"QuickSummaryCards\" src/ --include=\"*.tsx\" -A 3 -B 2 | head -30)",
       "Bash(cd \"c:\\\\Users\\\\jahub\\\\Documents\\\\Calculeat\" && grep -n \"QuickSummaryCards\" src/pages/DashboardPage.tsx -A 10 -B 10 | head -40)",
       "Bash(ls -lah \"C:\\\\Users\\\\jahub\\\\Desktop\\\\calculeat_icons\")",
-      "Read(//c/Users/jahub/Desktop/calculeat_icons/**)"
+      "Read(//c/Users/jahub/Desktop/calculeat_icons/**)",
+      "Read(//c/Users/jahub/Pictures/Screenshots/**)",
+      "Bash(grep -E \"\\\\.\\(json|ts\\)$\")"
     ],
     "deny": [],
     "ask": []
