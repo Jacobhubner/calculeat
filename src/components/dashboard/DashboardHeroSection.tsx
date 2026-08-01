@@ -17,7 +17,10 @@ export function DashboardHeroSection({ consumed, min, max }: DashboardHeroSectio
   const isOver = consumed > max
 
   return (
-    <Card variant="gradient" className="border-t-4 border-t-neutral-300 overflow-hidden">
+    <Card
+      variant="gradient"
+      className="border-t-4 border-t-neutral-300 overflow-hidden dark:border-t-neutral-700"
+    >
       <CardContent className="p-0">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-8 p-8">
           {/* Left: Ring + Info */}
@@ -36,7 +39,7 @@ export function DashboardHeroSection({ consumed, min, max }: DashboardHeroSectio
                   mobilnavigeringen. */}
               <Button
                 variant="ghost"
-                className="w-full gap-3 text-lg py-7 bg-[#eaf5da] text-[#3f6b12] font-semibold hover:bg-[#dcefc4] hover:text-[#33590d] hover:translate-y-0 active:scale-[0.99] transition-colors"
+                className="w-full gap-3 text-lg py-7 bg-[#eaf5da] text-[#3f6b12] font-semibold hover:bg-[#dcefc4] hover:text-[#33590d] hover:translate-y-0 active:scale-[0.99] transition-colors dark:bg-primary-900/40 dark:text-primary-200 dark:hover:bg-primary-900/60 dark:hover:text-primary-100"
               >
                 <Plus className="h-6 w-6" />
                 {t('quickLinks.logFood')}
@@ -45,9 +48,11 @@ export function DashboardHeroSection({ consumed, min, max }: DashboardHeroSectio
 
             {/* Tips or Info */}
             {isOver && (
-              <div className="bg-error-50 border border-error-200 rounded-xl p-4 flex gap-3">
-                <AlertCircle className="h-5 w-5 text-error-600 flex-shrink-0 mt-0.5" />
-                <p className="text-sm font-medium text-error-700">{t('ring.exceededAlert')}</p>
+              <div className="bg-error-50 border border-error-200 rounded-xl p-4 flex gap-3 dark:bg-error-900/25 dark:border-error-800">
+                <AlertCircle className="h-5 w-5 text-error-600 flex-shrink-0 mt-0.5 dark:text-error-400" />
+                <p className="text-sm font-medium text-error-700 dark:text-error-200">
+                  {t('ring.exceededAlert')}
+                </p>
               </div>
             )}
           </div>

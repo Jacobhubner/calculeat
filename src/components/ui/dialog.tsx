@@ -23,7 +23,7 @@ const DialogOverlay = React.forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      'fixed inset-0 z-50 bg-black/50  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+      'fixed inset-0 z-50 bg-black/50 dark:bg-black/70  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
       className
     )}
     {...props}
@@ -43,9 +43,9 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        'fixed z-50 w-full bg-white shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+        'fixed z-50 w-full bg-white dark:bg-neutral-850 dark:text-neutral-100 shadow-lg dark:shadow-black/40 duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
         // Mobile + Desktop: centered overlay
-        'left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] gap-4 border border-neutral-200 p-6 rounded-lg max-h-[90vh] overflow-y-auto',
+        'left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] gap-4 border border-neutral-200 dark:border-neutral-700 p-6 rounded-lg max-h-[90vh] overflow-y-auto',
         'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]',
         // Mobile tweaks
         'max-w-[calc(100vw-2rem)]',
@@ -54,7 +54,7 @@ const DialogContent = React.forwardRef<
       {...props}
     >
       {children}
-      <DialogPrimitive.Close className="absolute right-3 top-3 md:right-4 md:top-4 p-2 md:p-0 rounded-lg md:rounded-sm opacity-70 ring-offset-white transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-neutral-950 focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-neutral-100 data-[state=open]:text-neutral-500">
+      <DialogPrimitive.Close className="absolute right-3 top-3 md:right-4 md:top-4 p-2 md:p-0 rounded-lg md:rounded-sm opacity-70 ring-offset-white dark:ring-offset-neutral-850 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-neutral-950 dark:focus:ring-neutral-300 focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-neutral-100 dark:data-[state=open]:bg-neutral-800 data-[state=open]:text-neutral-500 dark:data-[state=open]:text-neutral-400">
         <X className="h-4 w-4" />
         <span className="sr-only">Stäng</span>
       </DialogPrimitive.Close>
@@ -94,7 +94,7 @@ const DialogDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Description
     ref={ref}
-    className={cn('text-sm text-neutral-500', className)}
+    className={cn('text-sm text-neutral-500 dark:text-neutral-400', className)}
     {...props}
   />
 ))

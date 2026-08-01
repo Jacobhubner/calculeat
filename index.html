@@ -45,6 +45,28 @@
         ]
       }
     </script>
+
+    <!--
+      Sätter temaklassen innan React monterar. Utan detta hinner sidan måla
+      upp sig ljus och blinka till mörk när storen läser in sitt sparade val.
+      Håll logiken i synk med src/stores/themeStore.ts.
+    -->
+    <script>
+      ;(function () {
+        try {
+          var stored = localStorage.getItem('calculeat-theme')
+          var preference = stored ? JSON.parse(stored).state.preference : 'system'
+          var dark =
+            preference === 'dark' ||
+            (preference === 'system' &&
+              window.matchMedia('(prefers-color-scheme: dark)').matches)
+          document.documentElement.classList.toggle('dark', dark)
+          document.documentElement.style.colorScheme = dark ? 'dark' : 'light'
+        } catch (e) {
+          /* Blockerad localStorage eller trasigt värde — ljust läge duger. */
+        }
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>

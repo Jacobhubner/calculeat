@@ -259,7 +259,12 @@
     "adminMsgSent": "Meddelandet skickades till {{user}}.",
     "adminMsgNotFound": "Ingen användare hittades med det namnet/e-posten.",
     "adminMsgRateLimit": "Du har skickat många meddelanden idag. Försök igen imorgon.",
-    "adminMsgError": "Kunde inte skicka meddelandet. Försök igen."
+    "adminMsgError": "Kunde inte skicka meddelandet. Försök igen.",
+    "theme": "Utseende",
+    "themeSystem": "System",
+    "themeLight": "Ljust",
+    "themeDark": "Mörkt",
+    "themeDesc": "System följer inställningen på din telefon eller dator."
   },
   "tdeeOptions": {
     "calculateTitle": "Räkna ut hur mycket du kan äta",

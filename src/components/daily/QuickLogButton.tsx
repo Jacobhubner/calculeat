@@ -47,7 +47,7 @@ export default function QuickLogButton() {
         <span
           className={cn(
             'relative flex items-center justify-center h-12 w-12 -mt-6 rounded-full',
-            'text-white ring-4 ring-white',
+            'text-white ring-4 ring-white dark:ring-neutral-850',
             'transition-transform duration-150 active:scale-95',
             // Loggans gradient: blad-grönt → gult → orange, samma vinkel som märket
             'bg-[linear-gradient(135deg,#7bbe2a_0%,#edbe0c_53%,#fc8518_100%)]',

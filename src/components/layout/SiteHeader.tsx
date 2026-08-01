@@ -102,8 +102,8 @@ export default function SiteHeader() {
     cn(
       'flex items-center gap-3 px-4 py-3 text-sm transition-colors',
       path && isActive(path)
-        ? 'bg-primary-100 text-primary-700 font-medium'
-        : 'text-neutral-700 hover:bg-neutral-50'
+        ? 'bg-primary-100 text-primary-700 font-medium dark:bg-primary-900/40 dark:text-primary-300'
+        : 'text-neutral-700 hover:bg-neutral-50 dark:text-neutral-300 dark:hover:bg-neutral-800'
     )
 
   const getInitials = () => {
@@ -160,7 +160,7 @@ export default function SiteHeader() {
   }, [socialHubOpen])
 
   return (
-    <header className="w-full border-b bg-white/95 bg-blur shadow-sm">
+    <header className="w-full border-b bg-white/95 bg-blur shadow-sm dark:bg-neutral-850/95 dark:border-neutral-700">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6 lg:px-8">
         {/* Logo */}
         <Link to={user ? '/app' : '/'} className="flex items-center group">
@@ -178,7 +178,7 @@ export default function SiteHeader() {
             {!isOnHomePage && (
               <Link
                 to="/"
-                className="text-sm font-medium transition-colors text-neutral-600 hover:text-neutral-900"
+                className="text-sm font-medium transition-colors text-neutral-600 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-neutral-100"
               >
                 {t('nav.home')}
               </Link>
@@ -187,7 +187,7 @@ export default function SiteHeader() {
               <a
                 key={link.href}
                 href={link.href}
-                className="text-sm font-medium transition-colors text-neutral-600 hover:text-neutral-900"
+                className="text-sm font-medium transition-colors text-neutral-600 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-neutral-100"
               >
                 {link.label}
               </a>
@@ -196,7 +196,7 @@ export default function SiteHeader() {
               <Link
                 key={link.to}
                 to={link.to}
-                className="text-sm font-medium transition-colors text-neutral-600 hover:text-neutral-900"
+                className="text-sm font-medium transition-colors text-neutral-600 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-neutral-100"
               >
                 {link.label}
               </Link>
@@ -212,7 +212,7 @@ export default function SiteHeader() {
               <div className="relative" ref={socialHubRef}>
                 <button
                   onClick={() => setSocialHubOpen(prev => !prev)}
-                  className="relative p-2 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 rounded-lg transition-colors"
+                  className="relative p-2 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 rounded-lg transition-colors dark:text-neutral-300 dark:hover:text-neutral-100 dark:hover:bg-neutral-800"
                   aria-label="Social"
                   title="Social"
                 >
@@ -228,7 +228,7 @@ export default function SiteHeader() {
                   {socialHubOpen && (
                     <>
                       <motion.div
-                        className="absolute right-0 top-full mt-2 w-[420px] max-h-[600px] bg-white rounded-2xl shadow-xl border border-neutral-200 z-50 overflow-hidden flex flex-col"
+                        className="absolute right-0 top-full mt-2 w-[420px] max-h-[600px] bg-white rounded-2xl shadow-xl border border-neutral-200 z-50 overflow-hidden flex flex-col dark:bg-neutral-850 dark:border-neutral-700"
                         initial={{ opacity: 0, y: -8, scale: 0.97 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -8, scale: 0.97 }}
@@ -249,8 +249,8 @@ export default function SiteHeader() {
                   <AvatarFallback className="text-xs">{getInitials()}</AvatarFallback>
                 </Avatar>
                 {isAdmin && (
-                  <span className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5">
-                    <ShieldCheck className="h-3.5 w-3.5 text-primary-600" />
+                  <span className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5 dark:bg-neutral-850">
+                    <ShieldCheck className="h-3.5 w-3.5 text-primary-600 dark:text-primary-400" />
                   </span>
                 )}
               </Link>
@@ -279,7 +279,7 @@ export default function SiteHeader() {
             <LanguageSwitcher />
             <button
               onClick={toggleMobileMenu}
-              className="p-2 text-neutral-600 hover:text-neutral-900 transition-colors"
+              className="p-2 text-neutral-600 hover:text-neutral-900 transition-colors dark:text-neutral-300 dark:hover:text-neutral-100"
               aria-label="Toggle menu"
             >
               {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -306,13 +306,13 @@ export default function SiteHeader() {
                 'relative flex items-center justify-center h-10 w-10 rounded-lg transition-colors',
                 'focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:outline-none',
                 isActive('/app/social')
-                  ? 'text-primary-600 bg-primary-50'
-                  : 'text-neutral-600 active:bg-neutral-100'
+                  ? 'text-primary-600 bg-primary-50 dark:text-primary-300 dark:bg-primary-900/40'
+                  : 'text-neutral-600 active:bg-neutral-100 dark:text-neutral-300 dark:active:bg-neutral-800'
               )}
             >
               <Users className="h-5 w-5" />
               {badgeCount > 0 && (
-                <span className="absolute top-1 right-1 flex items-center justify-center bg-primary-600 text-white text-[10px] font-bold rounded-full min-w-[16px] h-4 px-1 leading-none ring-2 ring-white">
+                <span className="absolute top-1 right-1 flex items-center justify-center bg-primary-600 text-white text-[10px] font-bold rounded-full min-w-[16px] h-4 px-1 leading-none ring-2 ring-white dark:ring-neutral-850">
                   {badgeCount > 99 ? '99+' : badgeCount}
                 </span>
               )}
@@ -331,7 +331,7 @@ export default function SiteHeader() {
                     <AvatarFallback className="text-xs">{getInitials()}</AvatarFallback>
                   </Avatar>
                   {isAdmin && (
-                    <span className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5">
+                    <span className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5 dark:bg-neutral-850">
                       <ShieldCheck className="h-3.5 w-3.5 text-primary-600" />
                     </span>
                   )}
@@ -352,20 +352,22 @@ export default function SiteHeader() {
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.15 }}
                     role="menu"
-                    className="absolute right-0 top-full mt-2 w-64 max-h-[calc(100vh-6rem)] overflow-y-auto overscroll-contain bg-white rounded-lg shadow-lg border border-neutral-200 py-1 z-50"
+                    className="absolute right-0 top-full mt-2 w-64 max-h-[calc(100vh-6rem)] overflow-y-auto overscroll-contain bg-white rounded-lg shadow-lg border border-neutral-200 py-1 z-50 dark:bg-neutral-850 dark:border-neutral-700"
                   >
-                    <div className="px-4 py-3 border-b border-neutral-100">
-                      <p className="text-sm font-medium text-neutral-900 truncate">
+                    <div className="px-4 py-3 border-b border-neutral-100 dark:border-neutral-700">
+                      <p className="text-sm font-medium text-neutral-900 truncate dark:text-neutral-100">
                         {userProfile?.username ? `@${userProfile.username}` : '...'}
                       </p>
-                      <p className="text-xs text-neutral-500 truncate">{user.email}</p>
+                      <p className="text-xs text-neutral-500 truncate dark:text-neutral-400">
+                        {user.email}
+                      </p>
                     </div>
 
                     {/* MY PLAN — Historik och Sparade måltider ligger inte här:
                         Historik finns i bottennavigeringen, Sparade måltider är
                         en flik i Mat-ytan. Menyn ska inte dubblera dem. */}
                     <div className="py-2 px-4">
-                      <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-1">
+                      <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-1 dark:text-neutral-400">
                         {t('nav.myPlan')}
                       </p>
                     </div>
@@ -410,8 +412,8 @@ export default function SiteHeader() {
 
                     {/* VERKTYG & RESURSER — Social ligger som egen knapp i
                         headern, inte här, så notisen syns utan att menyn öppnas. */}
-                    <div className="border-t border-neutral-100 py-2 px-4">
-                      <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-1">
+                    <div className="border-t border-neutral-100 py-2 px-4 dark:border-neutral-700">
+                      <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-1 dark:text-neutral-400">
                         {t('nav.explore')}
                       </p>
                     </div>
@@ -446,8 +448,8 @@ export default function SiteHeader() {
                     </div>
 
                     {/* ACCOUNT */}
-                    <div className="border-t border-neutral-100 py-2 px-4">
-                      <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-1">
+                    <div className="border-t border-neutral-100 py-2 px-4 dark:border-neutral-700">
+                      <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-1 dark:text-neutral-400">
                         {t('nav.account')}
                       </p>
                     </div>
@@ -468,21 +470,21 @@ export default function SiteHeader() {
                           setMobileUserMenuOpen(false)
                           navigate({ search: '?support=open' })
                         }}
-                        className="w-full flex items-center gap-3 px-4 py-3 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors"
+                        className="w-full flex items-center gap-3 px-4 py-3 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors dark:text-neutral-300 dark:hover:bg-neutral-800"
                       >
                         <MessageCircle className="h-4 w-4" />
                         <span>{t('nav.support')}</span>
                       </button>
                     </div>
 
-                    <div className="border-t border-neutral-100 py-1">
+                    <div className="border-t border-neutral-100 py-1 dark:border-neutral-700">
                       <button
                         role="menuitem"
                         onClick={() => {
                           setMobileUserMenuOpen(false)
                           handleSignOut()
                         }}
-                        className="w-full flex items-center gap-3 px-4 py-3 text-sm text-error-600 hover:bg-error-50 transition-colors"
+                        className="w-full flex items-center gap-3 px-4 py-3 text-sm text-error-600 hover:bg-error-50 transition-colors dark:text-error-400 dark:hover:bg-error-900/25"
                       >
                         <LogOut className="h-4 w-4" />
                         <span>{t('nav.logout')}</span>
@@ -498,13 +500,13 @@ export default function SiteHeader() {
 
       {/* Mobile Navigation - Only show when logged out */}
       {mobileMenuOpen && !user && (
-        <div className="md:hidden border-t bg-white">
+        <div className="md:hidden border-t bg-white dark:bg-neutral-850 dark:border-neutral-700">
           <nav className="container mx-auto px-4 py-4 flex flex-col gap-2">
             {!isOnHomePage && (
               <Link
                 to="/"
                 onClick={() => setMobileMenuOpen(false)}
-                className="px-4 py-2 rounded-xl text-sm font-medium transition-colors text-neutral-600 hover:bg-neutral-50"
+                className="px-4 py-2 rounded-xl text-sm font-medium transition-colors text-neutral-600 hover:bg-neutral-50 dark:text-neutral-300 dark:hover:bg-neutral-800"
               >
                 {t('nav.home')}
               </Link>
@@ -514,7 +516,7 @@ export default function SiteHeader() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className="px-4 py-2 rounded-xl text-sm font-medium transition-colors text-neutral-600 hover:bg-neutral-50"
+                className="px-4 py-2 rounded-xl text-sm font-medium transition-colors text-neutral-600 hover:bg-neutral-50 dark:text-neutral-300 dark:hover:bg-neutral-800"
               >
                 {link.label}
               </a>
@@ -524,13 +526,13 @@ export default function SiteHeader() {
                 key={link.to}
                 to={link.to}
                 onClick={() => setMobileMenuOpen(false)}
-                className="px-4 py-2 rounded-xl text-sm font-medium transition-colors text-neutral-600 hover:bg-neutral-50"
+                className="px-4 py-2 rounded-xl text-sm font-medium transition-colors text-neutral-600 hover:bg-neutral-50 dark:text-neutral-300 dark:hover:bg-neutral-800"
               >
                 {link.label}
               </Link>
             ))}
 
-            <div className="border-t mt-2 pt-2">
+            <div className="border-t mt-2 pt-2 dark:border-neutral-700">
               <div className="flex flex-col gap-2">
                 <Button variant="outline" size="sm" asChild>
                   <Link to="/login" onClick={() => setMobileMenuOpen(false)}>

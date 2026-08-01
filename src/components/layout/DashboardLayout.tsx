@@ -42,7 +42,7 @@ export default function DashboardLayout({ children, fullHeight }: DashboardLayou
       <div className="sticky top-0 z-50">
         <SiteHeader />
         {isPreviewMode && (
-          <div className="bg-amber-50 border-b border-amber-300 px-4 py-2 text-sm text-amber-800 flex items-center justify-between gap-4">
+          <div className="bg-amber-50 border-b border-amber-300 px-4 py-2 text-sm text-amber-800 flex items-center justify-between gap-4 dark:bg-amber-900/25 dark:border-amber-800 dark:text-amber-200">
             <span className="font-medium">🔍 Förhandsvisning — ny användare</span>
             <button
               onClick={() => exitPreview.mutate()}
@@ -54,7 +54,7 @@ export default function DashboardLayout({ children, fullHeight }: DashboardLayou
           </div>
         )}
         {!isEmailVerified && user && !isPreviewMode && (
-          <div className="bg-amber-50 border-b border-amber-200 px-4 py-2 text-sm text-amber-800 flex items-center justify-between gap-4">
+          <div className="bg-amber-50 border-b border-amber-200 px-4 py-2 text-sm text-amber-800 flex items-center justify-between gap-4 dark:bg-amber-900/25 dark:border-amber-800 dark:text-amber-200">
             <span>Verifiera din e-postadress för att säkra ditt konto.</span>
             <button
               onClick={handleResend}
@@ -65,7 +65,7 @@ export default function DashboardLayout({ children, fullHeight }: DashboardLayou
           </div>
         )}
       </div>
-      <div className="flex flex-1 min-h-0 bg-gradient-to-br from-neutral-50 via-white to-neutral-50">
+      <div className="flex flex-1 min-h-0 bg-gradient-to-br from-neutral-50 via-white to-neutral-50 dark:from-neutral-900 dark:via-neutral-850 dark:to-neutral-900">
         <DashboardNav />
         <main
           className={cn(

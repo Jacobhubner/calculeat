@@ -1,5 +1,10 @@
 @import 'tailwindcss';
 
+/* Tailwind v4 läser INTE darkMode ur tailwind.config.ts — varianten måste
+   deklareras här. Utan den här raden matchar `dark:`-klasser aldrig, oavsett
+   vad configen säger. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --shadow-card: 0 1px 2px 0 rgb(0 0 0 / 0.04), 0 2px 8px -2px rgb(0 0 0 / 0.06);
   --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
@@ -49,6 +54,101 @@
   --color-error-700: hsl(0 84% 50%);
   --color-error-800: hsl(0 84% 45%);
   --color-error-900: hsl(0 84% 40%);
+  /* 950 saknades i skalan medan primary/accent/success alla har den. Behövs
+     som mörk zonbakgrund i kaloriringen, där 900 är för ljus och tävlar med
+     den betydelsebärande error-500-bågen. */
+  --color-error-950: hsl(0 84% 14%);
+
+  /* Kaloriringens blå "under målet"-zon i mörkt läge. Tailwinds sky-950 ligger
+     på ~29 % ljushet mot success-950:s 15 %, vilket fick den blå zonen att
+     dominera de två andra. Egen token på samma nivå som de övriga. */
+  --color-underzone-950: hsl(204 80% 14%);
+
+  /* Varningsgult. Skalan fanns bara i tailwind.config.ts, som Tailwind v4
+     inte läser — alltså genererades noll warning-utilities och klasser som
+     bg-warning-100 renderade transparent. */
+  --color-warning-50: hsl(45 93% 95%);
+  --color-warning-100: hsl(45 93% 90%);
+  --color-warning-200: hsl(45 93% 80%);
+  --color-warning-300: hsl(45 93% 70%);
+  --color-warning-400: hsl(45 93% 60%);
+  --color-warning-500: hsl(45 93% 50%);
+  --color-warning-600: hsl(45 93% 45%);
+  --color-warning-700: hsl(45 93% 40%);
+  --color-warning-800: hsl(45 93% 35%);
+  --color-warning-900: hsl(45 93% 30%);
+
+  /* Egen neutral med svag grön dragning i stället för Tailwinds rena grå.
+     Ett helt neutralt grått mörkerläge ser sterilt ut bredvid bladmärket;
+     några graders grönt gör bakgrunden till en del av identiteten.
+     850 finns för att ge kort en yta strax ljusare än sidbakgrunden (900). */
+  --color-neutral-50: hsl(90 20% 97%);
+  --color-neutral-100: hsl(90 16% 94%);
+  --color-neutral-200: hsl(92 14% 88%);
+  --color-neutral-300: hsl(92 12% 78%);
+  --color-neutral-400: hsl(94 10% 60%);
+  --color-neutral-500: hsl(96 10% 45%);
+  --color-neutral-600: hsl(98 12% 35%);
+  --color-neutral-700: hsl(100 14% 26%);
+  --color-neutral-800: hsl(102 16% 17%);
+  --color-neutral-850: hsl(104 18% 13%);
+  --color-neutral-900: hsl(104 20% 10%);
+  --color-neutral-950: hsl(106 24% 6%);
+
+  /* Semantiska ytor — se :root/.dark nedan för värdena per tema */
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-sunken: var(--surface-sunken);
+  --color-surface-overlay: var(--surface-overlay);
+  --color-content: var(--content);
+  --color-content-muted: var(--content-muted);
+  --color-content-subtle: var(--content-subtle);
+  --color-edge: var(--edge);
+  --color-edge-strong: var(--edge-strong);
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   Semantiska tokens
+   Namnger ytans ROLL, inte dess färg, så samma klass fungerar i båda teman.
+   Mörkerläget är grönsvart snarare än neutralt grått — ett rent grått mörker
+   ser sterilt ut bredvid bladmärket.
+
+   Nya komponenter bör använda bg-surface / text-content / border-edge i
+   stället för bg-white / text-neutral-900 / border-neutral-200.
+   ─────────────────────────────────────────────────────────────────────────── */
+:root {
+  --surface: hsl(0 0% 100%);
+  --surface-raised: hsl(0 0% 100%);
+  --surface-sunken: hsl(90 20% 97%);
+  --surface-overlay: hsl(0 0% 100%);
+
+  --content: hsl(104 20% 10%);
+  --content-muted: hsl(96 10% 45%);
+  --content-subtle: hsl(94 10% 60%);
+
+  --edge: hsl(92 14% 88%);
+  --edge-strong: hsl(92 12% 78%);
+
+  color-scheme: light;
+}
+
+.dark {
+  /* Botten är mörkast, korten ljusare — motsatt ljust läge, där korten är
+     vitare än bakgrunden. Ger djup utan att förlita sig på skuggor, som
+     knappt syns mot mörka ytor. */
+  --surface: hsl(104 20% 10%);
+  --surface-raised: hsl(102 16% 14%);
+  --surface-sunken: hsl(106 24% 6%);
+  --surface-overlay: hsl(102 16% 16%);
+
+  --content: hsl(90 16% 94%);
+  --content-muted: hsl(94 10% 68%);
+  --content-subtle: hsl(94 10% 55%);
+
+  --edge: hsl(102 14% 22%);
+  --edge-strong: hsl(100 14% 30%);
+
+  color-scheme: dark;
 }
 
 @layer base {
@@ -57,11 +157,12 @@
   }
 
   * {
-    @apply border-neutral-200;
+    @apply border-neutral-200 dark:border-neutral-800;
   }
 
   body {
     @apply bg-neutral-50 text-neutral-800 antialiased;
+    @apply dark:bg-neutral-900 dark:text-neutral-100;
   }
 
   h1,

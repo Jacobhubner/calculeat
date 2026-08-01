@@ -21,7 +21,12 @@ import {
   ShieldCheck,
   Megaphone,
   Trash2,
+  Monitor,
+  Sun,
+  MoonStar,
 } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { useThemeStore } from '@/stores/themeStore'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase'
 import { translateAuthError } from '@/lib/auth-errors'
@@ -63,6 +68,8 @@ export default function SettingsPage() {
   const { t: tSettings } = useTranslation('settings')
   const navigate = useNavigate()
   const { user, deleteAccount, refreshProfile } = useAuth()
+  const themePreference = useThemeStore(state => state.preference)
+  const setThemePreference = useThemeStore(state => state.setPreference)
   const { profile, isReady } = useActiveProfile()
   const updateProfile = useUpdateProfile()
   const { data: userProfile } = useUserProfile()
@@ -338,7 +345,62 @@ export default function SettingsPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <p className="text-sm font-medium text-neutral-900 mb-3">
+              <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100 mb-3">
+                {t('settings.theme')}
+              </p>
+              <div className="grid grid-cols-3 gap-2">
+                {/* Nycklarna skrivs ut explicit — i18n-typerna är genererade,
+                    så en mall som `settings.theme${x}` går inte att verifiera. */}
+                {(
+                  [
+                    { value: 'system', Icon: Monitor, label: t('settings.themeSystem') },
+                    { value: 'light', Icon: Sun, label: t('settings.themeLight') },
+                    { value: 'dark', Icon: MoonStar, label: t('settings.themeDark') },
+                  ] as const
+                ).map(({ value: option, Icon, label }) => {
+                  const active = themePreference === option
+                  return (
+                    <button
+                      key={option}
+                      type="button"
+                      onClick={() => setThemePreference(option)}
+                      aria-pressed={active}
+                      className={cn(
+                        'flex flex-col items-center gap-1.5 rounded-lg border p-3 transition-colors',
+                        active
+                          ? 'border-primary-300 bg-primary-50 dark:border-primary-700 dark:bg-primary-900/30'
+                          : 'border-neutral-200 hover:border-neutral-300 dark:border-neutral-700 dark:hover:border-neutral-600'
+                      )}
+                    >
+                      <Icon
+                        className={cn(
+                          'h-4 w-4',
+                          active
+                            ? 'text-primary-600 dark:text-primary-400'
+                            : 'text-neutral-500 dark:text-neutral-400'
+                        )}
+                      />
+                      <span
+                        className={cn(
+                          'text-xs font-medium',
+                          active
+                            ? 'text-primary-700 dark:text-primary-300'
+                            : 'text-neutral-600 dark:text-neutral-300'
+                        )}
+                      >
+                        {label}
+                      </span>
+                    </button>
+                  )
+                })}
+              </div>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-2">
+                {t('settings.themeDesc')}
+              </p>
+            </div>
+
+            <div>
+              <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100 mb-3">
                 {t('settings.dayCompletion')}
               </p>
               <div className="space-y-2">

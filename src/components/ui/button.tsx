@@ -4,24 +4,24 @@ import { Slot } from '@radix-ui/react-slot'
 import { cn } from '@/lib/utils'
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 rounded-2xl text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none disabled:cursor-not-allowed',
+  'inline-flex items-center justify-center gap-2 rounded-2xl text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-neutral-900 disabled:opacity-50 disabled:pointer-events-none disabled:cursor-not-allowed',
   {
     variants: {
       variant: {
         primary:
-          'bg-primary-600 text-white hover:bg-primary-700 hover:shadow-lg hover:-translate-y-0.5 active:scale-[0.98] shadow-md',
+          'bg-primary-600 text-white hover:bg-primary-700 hover:shadow-lg hover:-translate-y-0.5 active:scale-[0.98] shadow-md dark:shadow-black/30',
         secondary:
-          'bg-neutral-200 text-neutral-900 hover:bg-neutral-300 hover:shadow-md hover:-translate-y-0.5 active:scale-[0.98]',
+          'bg-neutral-200 text-neutral-900 hover:bg-neutral-300 dark:bg-neutral-800 dark:text-neutral-100 dark:hover:bg-neutral-700 hover:shadow-md dark:hover:shadow-black/30 hover:-translate-y-0.5 active:scale-[0.98]',
         ghost:
-          'text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900 hover:-translate-y-0.5 active:scale-[0.98]',
+          'text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-200 dark:hover:bg-neutral-800 dark:hover:text-neutral-100 hover:-translate-y-0.5 active:scale-[0.98]',
         outline:
-          'border-2 border-neutral-300 text-neutral-700 hover:bg-neutral-50 hover:shadow-md hover:-translate-y-0.5 active:scale-[0.98]',
+          'border-2 border-neutral-300 text-neutral-700 hover:bg-neutral-50 dark:border-neutral-600 dark:text-neutral-200 dark:hover:bg-neutral-800 hover:shadow-md dark:hover:shadow-black/30 hover:-translate-y-0.5 active:scale-[0.98]',
         destructive:
-          'bg-error-600 text-white hover:bg-error-700 hover:shadow-lg hover:-translate-y-0.5 active:scale-[0.98] shadow-md',
+          'bg-error-600 text-white hover:bg-error-700 hover:shadow-lg hover:-translate-y-0.5 active:scale-[0.98] shadow-md dark:shadow-black/30',
         accent:
-          'bg-accent-600 text-white hover:bg-accent-700 hover:shadow-lg hover:-translate-y-0.5 active:scale-[0.98] shadow-md',
+          'bg-accent-600 text-white hover:bg-accent-700 hover:shadow-lg hover:-translate-y-0.5 active:scale-[0.98] shadow-md dark:shadow-black/30',
         success:
-          'bg-success-600 text-white hover:bg-success-700 hover:shadow-lg hover:-translate-y-0.5 active:scale-[0.98] shadow-md',
+          'bg-success-600 text-white hover:bg-success-700 hover:shadow-lg hover:-translate-y-0.5 active:scale-[0.98] shadow-md dark:shadow-black/30',
       },
       size: {
         sm: 'h-9 px-4 text-sm',

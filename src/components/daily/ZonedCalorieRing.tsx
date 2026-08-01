@@ -65,6 +65,7 @@ export function ZonedCalorieRing({
   // Unik gradient-id per instans — ringen renderas på flera sidor samtidigt,
   // och delade SVG-id:n gör att den sist monterade vinner för alla.
   const glowId = useId()
+  const glowDarkId = useId()
 
   return (
     <div className={cn('flex flex-col items-center', className)}>
@@ -78,6 +79,15 @@ export function ZonedCalorieRing({
               <stop offset="55%" stopColor="#7bbe2a" stopOpacity="0.12" />
               <stop offset="100%" stopColor="#fc8518" stopOpacity="0" />
             </radialGradient>
+            {/* Mörka bakgrunder slukar svaga toner, så glöden får högre
+                opacitet i mörkt läge. Två gradienter i stället för en:
+                stopOpacity är ett SVG-attribut och kan inte styras av
+                dark:-klasser, bara valet av vilken cirkel som visas. */}
+            <radialGradient id={glowDarkId}>
+              <stop offset="0%" stopColor="#edbe0c" stopOpacity="0.38" />
+              <stop offset="55%" stopColor="#7bbe2a" stopOpacity="0.22" />
+              <stop offset="100%" stopColor="#fc8518" stopOpacity="0" />
+            </radialGradient>
           </defs>
 
           <circle
@@ -85,6 +95,14 @@ export function ZonedCalorieRing({
             cy={config.size / 2}
             r={config.size / 2 - 2}
             fill={`url(#${glowId})`}
+            className="block dark:hidden"
+          />
+          <circle
+            cx={config.size / 2}
+            cy={config.size / 2}
+            r={config.size / 2 - 2}
+            fill={`url(#${glowDarkId})`}
+            className="hidden dark:block"
           />
 
           {/* Zone 1: Sky zone (0 to min) - background */}
@@ -97,7 +115,9 @@ export function ZonedCalorieRing({
             fill="none"
             strokeDasharray={circumference}
             strokeDashoffset={minOffset}
-            className="text-sky-100"
+            // underzone-950 i stället för sky-950: den senare ligger på ~29 %
+            // ljushet mot success-950:s 15 % och dominerade de andra zonerna.
+            className="text-sky-100 dark:text-underzone-950"
           />
 
           {/* Zone 2: Success zone (min to max) — clamped to 0 if min > max */}
@@ -110,10 +130,16 @@ export function ZonedCalorieRing({
             fill="none"
             strokeDasharray={`${Math.max(0, (maxPercent - minPercent) / 100) * circumference} ${circumference}`}
             strokeDashoffset={-((minPercent / 100) * circumference)}
-            className="text-success-100"
+            className="text-success-100 dark:text-success-950"
           />
 
-          {/* Zone 3: Error zone (max to visual max) — clamped to 0 */}
+          {/* Zone 3: Error zone (max to visual max) — clamped to 0.
+              Obs: error-skalan slutar på 900 i @theme, så det finns ingen
+              error-950 — den klassen hade tyst genererat noll CSS och lämnat
+              zonen bländande ljus. error-900 (40% L) är för ljus för en
+              bakgrundszon och hade tävlat med den betydelsebärande
+              error-500-bågen, därför ett explicit värde på 14% L som matchar
+              success-950 (15%) och sky-950 (~29%). */}
           <circle
             cx={config.size / 2}
             cy={config.size / 2}
@@ -123,7 +149,7 @@ export function ZonedCalorieRing({
             fill="none"
             strokeDasharray={`${Math.max(0, (100 - maxPercent) / 100) * circumference} ${circumference}`}
             strokeDashoffset={-((maxPercent / 100) * circumference)}
-            className="text-error-100"
+            className="text-error-100 dark:text-error-950"
           />
 
           {/* Consumed progress arc */}
@@ -141,21 +167,24 @@ export function ZonedCalorieRing({
           />
 
           {/* Målmarkörer — ritas sist så de aldrig döljs av den konsumerade
-              bågen. Vit understreck ger kontrast oavsett vad som ligger under,
+              bågen. Understrecket ger kontrast oavsett vad som ligger under,
               så "här börjar målet" och "här är det för mycket" går att läsa
-              av lika tydligt som förut. */}
+              av lika tydligt som förut. I mörkt läge vänds det från vitt till
+              mörkt, annars lyser det som en rand mot den mörka ringen.
+              stroke sätts via className (inte attributet) eftersom dark:
+              bara kan påverka klasser. */}
           {[
-            { percent: minPercent, color: 'text-success-700' },
-            { percent: maxPercent, color: 'text-error-700' },
+            { percent: minPercent, color: 'text-success-700 dark:text-success-300' },
+            { percent: maxPercent, color: 'text-error-700 dark:text-error-300' },
           ].map(mark => (
             <g key={mark.color}>
               <circle
                 cx={config.size / 2}
                 cy={config.size / 2}
                 r={radius}
-                stroke="white"
                 strokeWidth={config.strokeWidth + 7}
                 fill="none"
+                className="stroke-white dark:stroke-neutral-900"
                 strokeDasharray={`4 ${circumference - 4}`}
                 strokeDashoffset={-((mark.percent / 100) * circumference) + 2}
               />
@@ -176,29 +205,43 @@ export function ZonedCalorieRing({
 
         {/* Center content */}
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <p className={cn('font-bold text-neutral-900', config.textSize)}>
+          <p className={cn('font-bold text-neutral-900 dark:text-neutral-100', config.textSize)}>
             {Math.round(consumed)}
           </p>
-          <p className={cn('text-neutral-500 uppercase tracking-wide', config.subTextSize)}>kcal</p>
+          <p
+            className={cn(
+              'text-neutral-500 uppercase tracking-wide dark:text-neutral-400',
+              config.subTextSize
+            )}
+          >
+            kcal
+          </p>
         </div>
       </div>
 
       {/* Stats row */}
       <div className="mt-4 flex items-center justify-center gap-4 sm:gap-6 text-center">
         <div>
-          <p className="text-lg font-semibold text-neutral-900">
+          <p className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
             {Math.round(safeMin)}-{Math.round(safeMax)} kcal
           </p>
-          <p className="text-[10px] text-neutral-500 uppercase tracking-wide">Mål</p>
+          <p className="text-[10px] text-neutral-500 uppercase tracking-wide dark:text-neutral-400">
+            Mål
+          </p>
         </div>
-        <div className="h-8 w-px bg-neutral-200" />
+        <div className="h-8 w-px bg-neutral-200 dark:bg-neutral-700" />
         <div>
           <p
-            className={cn('text-lg font-semibold', isOver ? 'text-error-600' : 'text-neutral-700')}
+            className={cn(
+              'text-lg font-semibold',
+              isOver
+                ? 'text-error-600 dark:text-error-400'
+                : 'text-neutral-700 dark:text-neutral-300'
+            )}
           >
             {isOver ? `+${Math.round(consumed - max)}` : Math.round(remaining)} kcal
           </p>
-          <p className="text-[10px] text-neutral-500 uppercase tracking-wide">
+          <p className="text-[10px] text-neutral-500 uppercase tracking-wide dark:text-neutral-400">
             {isOver ? 'Över' : 'Kvar'}
           </p>
         </div>

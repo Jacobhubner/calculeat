@@ -41,10 +41,12 @@ export default function MobileBottomNav() {
         to={item.to}
         className={cn(
           'flex flex-col items-center justify-center gap-0.5 text-[10px] font-medium transition-colors flex-1 px-2',
-          active ? 'text-primary-600' : 'text-neutral-400 active:text-neutral-600'
+          active
+            ? 'text-primary-600 dark:text-primary-300'
+            : 'text-neutral-400 active:text-neutral-600 dark:active:text-neutral-200'
         )}
       >
-        <Icon className={cn('h-5 w-5', active && 'text-primary-600')} />
+        <Icon className={cn('h-5 w-5', active && 'text-primary-600 dark:text-primary-300')} />
         <span className="truncate">{item.label}</span>
       </Link>
     )
@@ -52,7 +54,7 @@ export default function MobileBottomNav() {
 
   return (
     <nav
-      className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-neutral-200 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]"
+      className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-neutral-200 shadow-[0_-2px_10px_rgba(0,0,0,0.05)] dark:bg-neutral-850 dark:border-neutral-700 dark:shadow-[0_-2px_10px_rgba(0,0,0,0.4)]"
       style={{ paddingBottom: 'max(0px, env(safe-area-inset-bottom))' }}
     >
       <div className="flex items-stretch h-16">

@@ -2,6 +2,9 @@ import type { Config } from 'tailwindcss'
 
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  // OBS: Tailwind v4 läser varken darkMode eller färger härifrån — allt det
+  // ligger i src/index.css (@custom-variant dark + @theme). Den här filen
+  // finns kvar för verktyg som fortfarande läser den.
   theme: {
     extend: {
       colors: {
