@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { createPortal } from 'react-dom'
+import { tourSelector, type TourGroupKey } from '@/lib/constants/tourTargets'
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
@@ -315,16 +316,18 @@ function StepDone({ t, profileName }: { t: T; profileName: string | null }) {
 // ─── Spotlight Tour ───────────────────────────────────────────────────────────
 
 interface TourSection {
-  key: 'oversikt' | 'planering' | 'minplan' | 'social'
+  key: TourGroupKey
   selector: string
   Icon: React.FC<{ className?: string }>
 }
 
+// Selektorerna härleds från samma källa som sidebarens data-tour-attribut,
+// så de två kan inte glida isär utan att typkontrollen säger till.
 const TOUR_SECTIONS: TourSection[] = [
-  { key: 'oversikt', selector: '[data-tour="nav-oversikt"]', Icon: CalendarDays },
-  { key: 'planering', selector: '[data-tour="nav-planering"]', Icon: UtensilsCrossed },
-  { key: 'minplan', selector: '[data-tour="nav-minplan"]', Icon: Target },
-  { key: 'social', selector: '[data-tour="nav-social"]', Icon: Users },
+  { key: 'oversikt', selector: tourSelector('oversikt'), Icon: CalendarDays },
+  { key: 'planering', selector: tourSelector('planering'), Icon: UtensilsCrossed },
+  { key: 'minplan', selector: tourSelector('minplan'), Icon: Target },
+  { key: 'social', selector: tourSelector('social'), Icon: Users },
 ]
 
 interface SpotRect {

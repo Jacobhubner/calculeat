@@ -13,10 +13,8 @@ import {
   Crosshair,
   BookOpen,
   MessageCircle,
-  Bookmark,
   Flame,
   ChevronDown,
-  History,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -344,37 +342,15 @@ export default function SiteHeader() {
                       <p className="text-xs text-neutral-500 truncate">{user.email}</p>
                     </div>
 
-                    {/* Historik — daglig vy, men vecko-/månadsvis behov.
-                        Ligger här istället för i bottom nav, som är reserverad
-                        för det man gör varje dag. */}
-                    <div className="py-1">
-                      <Link
-                        to="/app/history"
-                        role="menuitem"
-                        onClick={() => setMobileUserMenuOpen(false)}
-                        className={menuItemClass('/app/history')}
-                      >
-                        <History className="h-4 w-4" />
-                        <span>{t('nav.history')}</span>
-                      </Link>
-                    </div>
-
-                    {/* MY PLAN */}
-                    <div className="border-t border-neutral-100 py-2 px-4">
+                    {/* MY PLAN — Historik och Sparade måltider ligger inte här:
+                        Historik finns i bottennavigeringen, Sparade måltider är
+                        en flik i Mat-ytan. Menyn ska inte dubblera dem. */}
+                    <div className="py-2 px-4">
                       <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-1">
                         {t('nav.myPlan')}
                       </p>
                     </div>
                     <div className="py-1">
-                      <Link
-                        to="/app/saved-meals"
-                        role="menuitem"
-                        onClick={() => setMobileUserMenuOpen(false)}
-                        className={menuItemClass('/app/saved-meals')}
-                      >
-                        <Bookmark className="h-4 w-4" />
-                        <span>{t('nav.savedMeals')}</span>
-                      </Link>
                       <Link
                         to="/app/profile"
                         role="menuitem"

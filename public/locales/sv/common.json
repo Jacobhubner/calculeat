@@ -87,7 +87,8 @@
     "articles": "Artiklar",
     "myPlan": "Min Plan",
     "explore": "Utforska",
-    "account": "Konto"
+    "account": "Konto",
+    "foodHub": "Mat"
   },
   "auth": {
     "loggedOut": "Du har loggats ut",

@@ -87,7 +87,8 @@
     "articles": "Articles",
     "myPlan": "My Plan",
     "explore": "Explore",
-    "account": "Account"
+    "account": "Account",
+    "foodHub": "Food"
   },
   "auth": {
     "loggedOut": "You have been logged out",

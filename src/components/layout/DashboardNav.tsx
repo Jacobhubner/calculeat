@@ -1,5 +1,6 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { tourAttr, type TourGroupKey } from '@/lib/constants/tourTargets'
 import {
   LayoutDashboard,
   User,
@@ -64,7 +65,9 @@ export default function DashboardNav() {
     }
   }
 
-  const navGroups: Record<string, { title: string; emoji: string; items: NavItem[] }> = {
+  // Nycklarna är typade mot TourGroupKey — onboarding-tourens spotlight pekar
+  // på dem via data-tour, så ett namnbyte här ska bli ett kompileringsfel.
+  const navGroups: Record<TourGroupKey, { title: string; emoji: string; items: NavItem[] }> = {
     oversikt: {
       title: t('nav.sectionOverview'),
       emoji: '📍',
@@ -94,7 +97,7 @@ export default function DashboardNav() {
         },
       ],
     },
-    minPlan: {
+    minplan: {
       title: t('nav.sectionMyPlan'),
       emoji: '🎯',
       items: [
@@ -184,7 +187,7 @@ export default function DashboardNav() {
             <div
               key={key}
               className={groupIndex > 0 ? 'mt-6' : ''}
-              data-tour={`nav-${key.toLowerCase()}`}
+              data-tour={tourAttr(key as TourGroupKey)}
             >
               {!sidebarCollapsed && (
                 <h3 className="px-3 py-2 text-xs font-semibold text-neutral-500 uppercase tracking-wider flex items-center gap-2">

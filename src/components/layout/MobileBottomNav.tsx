@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { LayoutDashboard, Calendar, Apple, ChefHat, type LucideIcon } from 'lucide-react'
+import { LayoutDashboard, Calendar, Apple, History, type LucideIcon } from 'lucide-react'
 import QuickLogButton from '@/components/daily/QuickLogButton'
 import { cn } from '@/lib/utils'
 
@@ -9,23 +9,26 @@ export default function MobileBottomNav() {
   const location = useLocation()
 
   // Två destinationer per sida om den upphöjda snabblogg-knappen i mitten.
-  // Historik ligger i avatar-menyn — det är en vecko-/månadsvy, inte ett
-  // dagligt behov, och den nås även från Översikt.
   const leftItems = [
     { to: '/app', label: t('nav.dashboard'), icon: LayoutDashboard, exact: true },
     { to: '/app/today', label: t('nav.today'), icon: Calendar },
   ] as const
 
+  // Livsmedel, Recept och Sparade måltider är flikar i samma Mat-yta —
+  // en knapp räcker, flikraden tar över därifrån.
   const rightItems = [
-    { to: '/app/food-items', label: t('nav.food'), icon: Apple },
-    { to: '/app/recipes', label: t('nav.recipes'), icon: ChefHat },
+    { to: '/app/food-items', label: t('nav.foodHub'), icon: Apple },
+    { to: '/app/history', label: t('nav.history'), icon: History },
   ] as const
+
+  // Mat-ytans tre flikar delar en knapp, så alla tre URL:er markerar den.
+  const FOOD_HUB_PATHS = ['/app/food-items', '/app/recipes', '/app/saved-meals']
 
   const isActive = (path: string, exact?: boolean) => {
     if (exact) return location.pathname === path
-    // Sparade måltider är en flik i Mat-ytan — markera Livsmedel där, annars
-    // skulle ingen knapp lysa när användaren står på den fliken.
-    if (path === '/app/food-items' && location.pathname.startsWith('/app/saved-meals')) return true
+    if (path === '/app/food-items') {
+      return FOOD_HUB_PATHS.some(p => location.pathname.startsWith(p))
+    }
     return location.pathname.startsWith(path)
   }
 
