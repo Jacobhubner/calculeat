@@ -74,8 +74,8 @@ export function ZonedCalorieRing({
             {/* Loggans färger som mjuk glöd bakom ringen. Ligger under alla
                 bågar och markörer, så statusavläsningen är oförändrad. */}
             <radialGradient id={glowId}>
-              <stop offset="0%" stopColor="#edbe0c" stopOpacity="0.18" />
-              <stop offset="55%" stopColor="#7bbe2a" stopOpacity="0.09" />
+              <stop offset="0%" stopColor="#edbe0c" stopOpacity="0.22" />
+              <stop offset="55%" stopColor="#7bbe2a" stopOpacity="0.12" />
               <stop offset="100%" stopColor="#fc8518" stopOpacity="0" />
             </radialGradient>
           </defs>
@@ -110,10 +110,7 @@ export function ZonedCalorieRing({
             fill="none"
             strokeDasharray={`${Math.max(0, (maxPercent - minPercent) / 100) * circumference} ${circumference}`}
             strokeDashoffset={-((minPercent / 100) * circumference)}
-            // Mål- och överzonen ligger ett steg mörkare än under-zonen: det är
-            // de två som säger något (här är det bra, här är det för mycket),
-            // och glöden bakom drar annars ner kontrasten på ljusa toner.
-            className="text-success-200"
+            className="text-success-100"
           />
 
           {/* Zone 3: Error zone (max to visual max) — clamped to 0 */}
@@ -126,7 +123,7 @@ export function ZonedCalorieRing({
             fill="none"
             strokeDasharray={`${Math.max(0, (100 - maxPercent) / 100) * circumference} ${circumference}`}
             strokeDashoffset={-((maxPercent / 100) * circumference)}
-            className="text-error-200"
+            className="text-error-100"
           />
 
           {/* Consumed progress arc */}
