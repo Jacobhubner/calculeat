@@ -13,10 +13,11 @@
     "skip": "Hoppa över",
     "next": "Nästa",
     "done": "Klar",
+    "mobileHint": "På mobilen når du dina dagliga vyer längst ner på skärmen. Under avataren uppe till höger hittar du din plan, dina verktyg och dina inställningar.",
     "oversikt": {
       "title": "Översikt & daglig loggning",
       "teaser": "Starta här varje dag. Logga måltider, skanna streckkoder och se din energibalans i realtid.",
-      "desc": "Startsidan ger dig en daglig vy över vad du ätit. Logga måltider snabbt – sök, skanna streckkod eller välj från dina sparade recept. Under Historik ser du din vikt och energibalans dag för dag."
+      "desc": "Startsidan ger dig en daglig vy över vad du ätit. Logga måltider snabbt – sök, skanna streckkod eller välj från dina sparade recept. Historiken visar din vikt och energibalans dag för dag."
     },
     "planering": {
       "title": "Livsmedel, recept & måltider",
@@ -26,7 +27,7 @@
     "minplan": {
       "title": "Mål, kaloribehov & kropp",
       "teaser": "Beräkna ditt kaloribehov, sätt ett viktmål och se hur lång tid det tar att nå det. Analysera din kroppssammansättning.",
-      "desc": "TDEE-kalkylatorn räknar ut ditt dagliga kaloribehov baserat på din aktivitetsnivå. Målsättningsverktyget visar beräknad tid till ditt mål. Analysera fettprocent, muskelmassa och mer under Kropp."
+      "desc": "TDEE-kalkylatorn räknar ut ditt dagliga kaloribehov baserat på din aktivitetsnivå. Målsättningsverktyget visar beräknad tid till ditt mål. Kroppsverktygen analyserar fettprocent, muskelmassa och mer."
     },
     "social": {
       "title": "Vänner & delade listor",

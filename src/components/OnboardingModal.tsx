@@ -452,6 +452,9 @@ function SpotlightTour({ t, onDone, onSkip }: { t: T; onDone: () => void; onSkip
               </div>
             ))}
           </div>
+          <p className="text-xs text-neutral-500 leading-relaxed rounded-2xl bg-neutral-50 border border-neutral-100 px-4 py-3">
+            {t('tour.mobileHint')}
+          </p>
           <button
             onClick={onDone}
             className="w-full h-11 rounded-2xl bg-primary-600 text-white text-sm font-semibold hover:bg-primary-700 transition-colors"
