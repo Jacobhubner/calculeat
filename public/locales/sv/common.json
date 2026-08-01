@@ -111,5 +111,9 @@
   },
   "preview": {
     "mutationBlocked": "Inte tillgängligt i förhandsvisningsläge"
+  },
+  "quickLog": {
+    "label": "Logga",
+    "error": "Kunde inte öppna loggningen. Försök igen."
   }
 }

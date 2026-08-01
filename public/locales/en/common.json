@@ -111,5 +111,9 @@
   },
   "preview": {
     "mutationBlocked": "Not available in preview mode"
+  },
+  "quickLog": {
+    "label": "Log",
+    "error": "Could not open logging. Please try again."
   }
 }
