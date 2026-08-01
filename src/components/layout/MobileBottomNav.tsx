@@ -90,7 +90,10 @@ export default function MobileBottomNav() {
     exact ? location.pathname === path : location.pathname.startsWith(path)
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-neutral-200 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
+    <nav
+      className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-neutral-200 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]"
+      style={{ paddingBottom: 'max(0px, env(safe-area-inset-bottom))' }}
+    >
       <div className="relative">
         {/* Left fade */}
         <div
@@ -104,7 +107,11 @@ export default function MobileBottomNav() {
           className="absolute right-0 top-0 bottom-0 w-14 bg-gradient-to-l from-white via-white/60 to-transparent z-10 pointer-events-none transition-opacity duration-150"
           style={{ opacity: 1 }}
         />
-        <div ref={scrollRef} className="flex items-stretch h-16 overflow-x-auto scrollbar-hide">
+        <div
+          ref={scrollRef}
+          className="flex items-stretch h-16 overflow-x-auto scrollbar-hide"
+          style={{ WebkitOverflowScrolling: 'touch', touchAction: 'pan-x pan-y' }}
+        >
           {navItems.map(item => {
             const Icon = item.icon
             const active = isActive(item.to, 'exact' in item ? item.exact : undefined)
