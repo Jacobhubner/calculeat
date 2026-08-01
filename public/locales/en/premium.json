@@ -96,11 +96,6 @@
           "label": "Exact equations",
           "free": "—",
           "premium": "Included"
-        },
-        "csv": {
-          "label": "CSV export",
-          "free": "—",
-          "premium": "Included"
         }
       }
     },
