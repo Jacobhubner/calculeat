@@ -1,20 +1,7 @@
 import { useRef, useEffect, useLayoutEffect, useCallback } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import {
-  LayoutDashboard,
-  Calendar,
-  Apple,
-  History,
-  ChefHat,
-  Bookmark,
-  User,
-  Activity,
-  Gauge,
-  Crosshair,
-  Settings,
-  Users,
-} from 'lucide-react'
+import { LayoutDashboard, Calendar, Apple, History, ChefHat } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useSocialBadgeCount } from '@/hooks/useShareInvitations'
 
@@ -30,23 +17,13 @@ export default function MobileBottomNav() {
   const socialBadgeCount = useSocialBadgeCount()
 
   const navItems = [
-    // ÖVERSIKT
+    // CORE ITEMS — Daily use only
     { to: '/app', label: t('nav.dashboard'), icon: LayoutDashboard, exact: true },
     { to: '/app/today', label: t('nav.today'), icon: Calendar },
     { to: '/app/history', label: t('nav.history'), icon: History },
-    // PLANERING
     { to: '/app/food-items', label: t('nav.food'), icon: Apple },
     { to: '/app/recipes', label: t('nav.recipes'), icon: ChefHat },
-    { to: '/app/saved-meals', label: t('nav.savedMealsShort'), icon: Bookmark },
-    // MIN PLAN (speglar desktopsidebaren: Profil → Kaloribehov → Målsättning → Kropp)
-    { to: '/app/profile', label: t('nav.profile'), icon: User },
-    { to: '/app/tools/tdee-calculator', label: t('nav.calorieNeedShort'), icon: Gauge },
-    { to: '/app/tools/goal-calculator', label: t('nav.goalSettingShort'), icon: Crosshair },
-    { to: '/app/body-composition', label: t('nav.bodyShort'), icon: Activity },
-    // SOCIAL
-    { to: '/app/social', label: t('nav.social'), icon: Users },
-    // ÖVRIGT
-    { to: '/app/settings', label: t('nav.settings'), icon: Settings },
+    // NOTE: Profile, Settings, TDEE, Goal, Body, Social, and Tools moved to avatar menu
   ] as const
 
   const updateFades = useCallback(() => {

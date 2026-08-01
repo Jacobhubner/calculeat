@@ -92,7 +92,10 @@
     "home": "Hem",
     "features": "Funktioner",
     "calculators": "Kalkylatorer",
-    "articles": "Artiklar"
+    "articles": "Artiklar",
+    "myPlan": "Min Plan",
+    "explore": "Utforska",
+    "account": "Konto"
   },
   "auth": {
     "loggedOut": "Du har loggats ut",

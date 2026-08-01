@@ -1,6 +1,19 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Menu, X, LogOut, User, Settings, Users, ShieldCheck } from 'lucide-react'
+import {
+  Menu,
+  X,
+  LogOut,
+  User,
+  Settings,
+  Users,
+  ShieldCheck,
+  Activity,
+  Gauge,
+  Crosshair,
+  BookOpen,
+  MessageCircle,
+} from 'lucide-react'
 import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '../ui/button'
@@ -300,6 +313,12 @@ export default function SiteHeader() {
                       <p className="text-xs text-neutral-500 truncate">{user.email}</p>
                     </div>
 
+                    {/* MY PLAN */}
+                    <div className="py-2 px-4">
+                      <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-1">
+                        {t('nav.myPlan') || 'Min Plan'}
+                      </p>
+                    </div>
                     <div className="py-1">
                       <Link
                         to="/app/profile"
@@ -310,6 +329,84 @@ export default function SiteHeader() {
                         <span>{t('nav.profile')}</span>
                       </Link>
                       <Link
+                        to="/app/body-composition"
+                        onClick={() => setMobileUserMenuOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors"
+                      >
+                        <Activity className="h-4 w-4" />
+                        <span>{t('nav.bodyShort') || 'Kropp'}</span>
+                      </Link>
+                      <Link
+                        to="/app/tools/tdee-calculator"
+                        onClick={() => setMobileUserMenuOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors"
+                      >
+                        <Gauge className="h-4 w-4" />
+                        <span>{t('nav.calorieNeedShort') || 'Kaloribehov'}</span>
+                      </Link>
+                      <Link
+                        to="/app/tools/goal-calculator"
+                        onClick={() => setMobileUserMenuOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors"
+                      >
+                        <Crosshair className="h-4 w-4" />
+                        <span>{t('nav.goalSettingShort') || 'Målsättning'}</span>
+                      </Link>
+                    </div>
+
+                    {/* SOCIAL & TOOLS */}
+                    <div className="border-t border-neutral-100 py-2 px-4">
+                      <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-1">
+                        {t('nav.explore') || 'Utforska'}
+                      </p>
+                    </div>
+                    <div className="py-1">
+                      <Link
+                        to="/app/social"
+                        onClick={() => setMobileUserMenuOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors relative"
+                      >
+                        <Users className="h-4 w-4" />
+                        <span>{t('nav.social')}</span>
+                        {badgeCount > 0 && (
+                          <span className="ml-auto flex items-center justify-center bg-primary-600 text-white text-[10px] font-bold rounded-full min-w-[18px] h-4 px-1 leading-none">
+                            {badgeCount > 99 ? '99+' : badgeCount}
+                          </span>
+                        )}
+                      </Link>
+                      <Link
+                        to="/app/tools/met-calculator"
+                        onClick={() => setMobileUserMenuOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors"
+                      >
+                        <span>{t('nav.met') || 'MET-kalkylator'}</span>
+                      </Link>
+                      <Link
+                        to={loc('/kalkylatorer', '/en/calculators')}
+                        onClick={() => setMobileUserMenuOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors"
+                      >
+                        <Gauge className="h-4 w-4" />
+                        <span>{t('nav.freeTools')}</span>
+                      </Link>
+                      <Link
+                        to={loc('/artiklar', '/en/articles')}
+                        onClick={() => setMobileUserMenuOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors"
+                      >
+                        <BookOpen className="h-4 w-4" />
+                        <span>{t('nav.articlesHub')}</span>
+                      </Link>
+                    </div>
+
+                    {/* ACCOUNT */}
+                    <div className="border-t border-neutral-100 py-2 px-4">
+                      <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-1">
+                        {t('nav.account') || 'Konto'}
+                      </p>
+                    </div>
+                    <div className="py-1">
+                      <Link
                         to="/app/settings"
                         onClick={() => setMobileUserMenuOpen(false)}
                         className="flex items-center gap-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors"
@@ -317,41 +414,15 @@ export default function SiteHeader() {
                         <Settings className="h-4 w-4" />
                         <span>{t('nav.settings')}</span>
                       </Link>
-                    </div>
-
-                    <div className="border-t border-neutral-100 py-1">
-                      <Link
-                        to="/app/tools/met-calculator"
-                        onClick={() => setMobileUserMenuOpen(false)}
-                        className="flex items-center gap-3 px-4 py-2 text-sm text-neutral-500 hover:bg-neutral-50 transition-colors"
-                      >
-                        <span>{t('nav.met')}</span>
-                      </Link>
-                      <Link
-                        to={loc('/kalkylatorer', '/en/calculators')}
-                        onClick={() => setMobileUserMenuOpen(false)}
-                        className="flex items-center gap-3 px-4 py-2 text-sm text-neutral-500 hover:bg-neutral-50 transition-colors"
-                      >
-                        <span>{t('nav.freeTools')}</span>
-                      </Link>
-                      <Link
-                        to={loc('/artiklar', '/en/articles')}
-                        onClick={() => setMobileUserMenuOpen(false)}
-                        className="flex items-center gap-3 px-4 py-2 text-sm text-neutral-500 hover:bg-neutral-50 transition-colors"
-                      >
-                        <span>{t('nav.articlesHub')}</span>
-                      </Link>
-                    </div>
-
-                    <div className="border-t border-neutral-100 py-1">
                       <button
                         type="button"
                         onClick={() => {
                           setMobileUserMenuOpen(false)
                           navigate({ search: '?support=open' })
                         }}
-                        className="w-full flex items-center gap-3 px-4 py-2 text-sm text-neutral-500 hover:bg-neutral-50 transition-colors"
+                        className="w-full flex items-center gap-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors"
                       >
+                        <MessageCircle className="h-4 w-4" />
                         <span>{t('nav.support')}</span>
                       </button>
                     </div>

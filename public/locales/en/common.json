@@ -92,7 +92,10 @@
     "home": "Home",
     "features": "Features",
     "calculators": "Calculators",
-    "articles": "Articles"
+    "articles": "Articles",
+    "myPlan": "My Plan",
+    "explore": "Explore",
+    "account": "Account"
   },
   "auth": {
     "loggedOut": "You have been logged out",
