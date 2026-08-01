@@ -380,15 +380,6 @@ export default function SiteHeader() {
                         <span>{t('nav.profile')}</span>
                       </Link>
                       <Link
-                        to="/app/body-composition"
-                        role="menuitem"
-                        onClick={() => setMobileUserMenuOpen(false)}
-                        className={menuItemClass('/app/body-composition')}
-                      >
-                        <Activity className="h-4 w-4" />
-                        <span>{t('nav.body')}</span>
-                      </Link>
-                      <Link
                         to="/app/tools/tdee-calculator"
                         role="menuitem"
                         onClick={() => setMobileUserMenuOpen(false)}
@@ -396,6 +387,15 @@ export default function SiteHeader() {
                       >
                         <Gauge className="h-4 w-4" />
                         <span>{t('nav.calorieNeed')}</span>
+                      </Link>
+                      <Link
+                        to="/app/body-composition"
+                        role="menuitem"
+                        onClick={() => setMobileUserMenuOpen(false)}
+                        className={menuItemClass('/app/body-composition')}
+                      >
+                        <Activity className="h-4 w-4" />
+                        <span>{t('nav.body')}</span>
                       </Link>
                       <Link
                         to="/app/tools/goal-calculator"
