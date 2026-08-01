@@ -45,3 +45,6 @@ dist-prerender
 
 # Lokala USDA FoodData Central-dumpar (200+ MB, anvands av scripts/ for import/verifiering)
 data/
+
+# Supabase CLI lokala filer (projekt-ref, pooler-URL m.m.)
+supabase/.temp/
