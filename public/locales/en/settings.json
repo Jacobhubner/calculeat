@@ -36,6 +36,24 @@
     "exit": "Exit preview and delete test data",
     "exiting": "Exiting…"
   },
+  "dataExport": {
+    "title": "Export my data",
+    "description": "Download all your personal information in machine-readable format (JSON or CSV). You have this right under GDPR.",
+    "format": "File format",
+    "button": "Export data",
+    "exporting": "Exporting…",
+    "info": "The file contains: profile, meals, measurements, and consents."
+  },
+  "deleteAccount": {
+    "title": "Delete account",
+    "warning": "Deleting your account will permanently remove all your data. This cannot be undone.",
+    "button": "Delete account",
+    "confirm": "Are you absolutely sure? Type \"delete\" below to confirm.",
+    "sure": "Yes, delete my account",
+    "final": "This is irreversible. Type \"delete account\" to confirm permanently.",
+    "cancel": "Cancel",
+    "success": "Account deleted"
+  },
   "support": {
     "openChat": "Contact support →",
     "inboxLink": "Open support inbox →"

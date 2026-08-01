@@ -39,6 +39,8 @@ import {
 } from '@/hooks/useAdminManagement'
 import { usePreviewMode } from '@/hooks/usePreviewMode'
 import { useFreeViewMode } from '@/hooks/useFreeViewMode'
+import { useDataExport } from '@/hooks/useDataExport'
+import { Download } from 'lucide-react'
 
 type CompletionMode = 'manual' | 'auto'
 type OpenEditor = 'username' | 'email' | 'password' | null
@@ -76,6 +78,10 @@ export default function SettingsPage() {
   const sendAdminMessage = useSendAdminMessage()
   const [adminMsgTo, setAdminMsgTo] = useState('')
   const [adminMsgText, setAdminMsgText] = useState('')
+
+  // Data export
+  const { exportData, isExporting } = useDataExport()
+  const [exportFormat, setExportFormat] = useState<'json' | 'csv'>('json')
 
   const handleSendAdminMessage = async () => {
     const to = adminMsgTo.trim()
@@ -915,6 +921,62 @@ export default function SettingsPage() {
             </CardContent>
           </Card>
         )}
+
+        {/* Data Export Card */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Download className="h-5 w-5" />
+              {tSettings('dataExport.title')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-sm text-neutral-600">{tSettings('dataExport.description')}</p>
+
+            <div className="space-y-3">
+              <div>
+                <label className="text-sm font-medium text-neutral-700 block mb-2">
+                  {tSettings('dataExport.format')}
+                </label>
+                <div className="flex gap-2">
+                  {(['json', 'csv'] as const).map(fmt => (
+                    <button
+                      key={fmt}
+                      onClick={() => setExportFormat(fmt)}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                        exportFormat === fmt
+                          ? 'bg-primary-600 text-white'
+                          : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
+                      }`}
+                    >
+                      {fmt.toUpperCase()}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <Button
+                onClick={() => exportData(exportFormat)}
+                disabled={isExporting}
+                className="gap-2"
+              >
+                {isExporting ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    {tSettings('dataExport.exporting')}
+                  </>
+                ) : (
+                  <>
+                    <Download className="h-4 w-4" />
+                    {tSettings('dataExport.button')}
+                  </>
+                )}
+              </Button>
+
+              <p className="text-xs text-neutral-500">{tSettings('dataExport.info')}</p>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Delete Account Card — Farozon */}
         <Card className="border-2 border-error-200">

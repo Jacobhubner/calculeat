@@ -36,6 +36,24 @@
     "exit": "Avsluta preview och radera testdata",
     "exiting": "Avslutar…"
   },
+  "dataExport": {
+    "title": "Exportera min data",
+    "description": "Ladda ner alla dina personuppgifter i maskinläsbar format (JSON eller CSV). Du har rätt till detta enligt GDPR.",
+    "format": "Filformat",
+    "button": "Exportera data",
+    "exporting": "Exporterar…",
+    "info": "Filen innehåller: profil, måltider, mätningar, och godkännanden."
+  },
+  "deleteAccount": {
+    "title": "Radera konto",
+    "warning": "Att radera ditt konto kommer att ta bort all din data permanent. Detta kan inte ångras.",
+    "button": "Radera konto",
+    "confirm": "Är du helt säker? Skriv \"radera\" nedan för att bekräfta.",
+    "sure": "Ja, radera mitt konto",
+    "final": "Detta är irreversibelt. Skriv \"radera konto\" för att bekräfta slutgiltigt.",
+    "cancel": "Avbryt",
+    "success": "Konto raderat"
+  },
   "support": {
     "openChat": "Kontakta support →",
     "inboxLink": "Öppna supportinkorgen →"
