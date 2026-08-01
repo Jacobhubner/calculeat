@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { usePreviewAwareQuery } from '@/hooks/usePreviewAwareQuery'
 import { usePreviewMutation } from '@/hooks/usePreviewMutation'
 import type { Friend, FriendRequest, SentFriendRequest } from '@/lib/types/friends'
+import type { ItemType } from '@/lib/types/sharing'
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Friends list
@@ -204,7 +205,7 @@ export function useSendShareInvitationToFriend() {
       friendUserId,
     }: {
       itemId: string | null
-      itemType: 'food_item' | 'recipe' | 'food_list'
+      itemType: ItemType
       friendUserId: string
     }) => {
       const { data, error } = await supabase.rpc('send_share_invitation_to_friend', {

@@ -53,6 +53,41 @@ export function useShareableFoodItems() {
   })
 }
 
+// Delbar sparad måltid — endast fälten ShareDialog behöver för urvalslistan
+export interface ShareableSavedMeal {
+  id: string
+  name: string
+  item_count: number
+}
+
+// Hämtar användarens delbara sparade måltider: user_id=current_user.id
+// Måltider utan livsmedel filtreras bort — de går inte att dela meningsfullt.
+export function useShareableSavedMeals() {
+  const { user } = useAuth()
+
+  return useQuery({
+    queryKey: ['shareableSavedMeals', user?.id],
+    queryFn: async () => {
+      if (!user) return []
+      const { data, error } = await supabase
+        .from('saved_meals')
+        .select('id, name, items:saved_meal_items(id)')
+        .eq('user_id', user.id)
+        .order('name')
+      if (error) throw error
+      return (data as Array<{ id: string; name: string; items: { id: string }[] | null }>)
+        .map(meal => ({
+          id: meal.id,
+          name: meal.name,
+          item_count: meal.items?.length ?? 0,
+        }))
+        .filter(meal => meal.item_count > 0)
+    },
+    enabled: !!user,
+    staleTime: 60_000,
+  })
+}
+
 // Hämtar användarens delbara recept: user_id=current_user.id
 export function useShareableRecipes() {
   const { user } = useAuth()

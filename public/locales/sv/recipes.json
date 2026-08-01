@@ -210,7 +210,8 @@
     "deleteConfirm": "Ta bort",
     "deleting": "Tar bort...",
     "deleteSuccess": "{{name}} har tagits bort",
-    "deleteError": "Kunde inte ta bort måltiden. Försök igen."
+    "deleteError": "Kunde inte ta bort måltiden. Försök igen.",
+    "share": "Dela måltid"
   },
   "editMealDialog": {
     "title": "Byt namn på måltid",

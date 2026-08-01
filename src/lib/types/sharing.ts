@@ -39,7 +39,21 @@ export interface RecipeSnapshot {
   ingredients: RecipeIngredientSnapshot[]
 }
 
-export type ItemType = 'food_item' | 'recipe' | 'food_list'
+export interface SavedMealItemSnapshot {
+  amount: number
+  unit: string
+  weight_grams: number | null
+  item_order: number
+  food_item_snapshot: FoodItemSnapshot
+}
+
+export interface SavedMealSnapshot {
+  snapshot_version: number
+  name: string
+  items: SavedMealItemSnapshot[]
+}
+
+export type ItemType = 'food_item' | 'recipe' | 'food_list' | 'saved_meal'
 
 export interface FoodListSnapshot {
   items: FoodItemSnapshot[]

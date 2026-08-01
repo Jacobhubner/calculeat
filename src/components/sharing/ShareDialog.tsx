@@ -2,6 +2,7 @@ import { useState, useRef, useCallback, useEffect } from 'react'
 import {
   Share2,
   Apple,
+  Bookmark,
   ChefHat,
   Search,
   Send,
@@ -17,6 +18,7 @@ import { Input } from '@/components/ui/input'
 import {
   useShareableFoodItems,
   useShareableRecipes,
+  useShareableSavedMeals,
   useShareableFoodListCount,
 } from '@/hooks/useShareableItems'
 import { useSendShareInvitation, useCheckUserExists } from '@/hooks/useShareInvitations'
@@ -28,12 +30,16 @@ import { useTranslation } from 'react-i18next'
 
 type Step = 'recipient' | 'content' | 'confirm'
 type RecipientTab = 'friend' | 'email'
-type ContentType = 'food_item' | 'recipe' | 'food_list'
+type ContentType = 'food_item' | 'recipe' | 'saved_meal' | 'food_list'
 
 interface ShareDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   preselectedFriend?: Friend
+  /** Förvald innehållstyp, t.ex. när dialogen öppnas från en sparad måltid */
+  preselectedContentType?: ContentType
+  /** Förvalt objekt (id + namn) — hoppar direkt till bekräftelsesteget */
+  preselectedItem?: { id: string; name: string }
 }
 
 function getInitials(name: string) {
@@ -45,11 +51,24 @@ function getInitials(name: string) {
     .substring(0, 2)
 }
 
-export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDialogProps) {
+export function ShareDialog({
+  open,
+  onOpenChange,
+  preselectedFriend,
+  preselectedContentType,
+  preselectedItem,
+}: ShareDialogProps) {
   const { t } = useTranslation('social')
   const { user } = useAuth()
 
-  const [step, setStep] = useState<Step>(preselectedFriend ? 'content' : 'recipient')
+  // Med både mottagare och objekt förvalda finns inget kvar att välja → bekräfta direkt
+  const initialStep: Step = preselectedFriend
+    ? preselectedItem
+      ? 'confirm'
+      : 'content'
+    : 'recipient'
+
+  const [step, setStep] = useState<Step>(initialStep)
   const [recipientTab, setRecipientTab] = useState<RecipientTab>('friend')
   const [selectedFriend, setSelectedFriend] = useState<Friend | null>(preselectedFriend ?? null)
   const [email, setEmail] = useState('')
@@ -57,9 +76,9 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
     'idle'
   )
   const [friendSearch, setFriendSearch] = useState('')
-  const [contentType, setContentType] = useState<ContentType>('food_item')
-  const [selectedId, setSelectedId] = useState<string>('')
-  const [selectedName, setSelectedName] = useState<string>('')
+  const [contentType, setContentType] = useState<ContentType>(preselectedContentType ?? 'food_item')
+  const [selectedId, setSelectedId] = useState<string>(preselectedItem?.id ?? '')
+  const [selectedName, setSelectedName] = useState<string>(preselectedItem?.name ?? '')
   const [itemSearch, setItemSearch] = useState('')
 
   const emailDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -68,14 +87,18 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
   useEffect(() => {
     if (open) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setStep(preselectedFriend ? 'content' : 'recipient')
+      setStep(initialStep)
 
       setSelectedFriend(preselectedFriend ?? null)
+      setContentType(preselectedContentType ?? 'food_item')
+      setSelectedId(preselectedItem?.id ?? '')
+      setSelectedName(preselectedItem?.name ?? '')
     }
-  }, [open, preselectedFriend])
+  }, [open, initialStep, preselectedFriend, preselectedContentType, preselectedItem])
 
   const { data: foodItems = [] } = useShareableFoodItems()
   const { data: recipes = [] } = useShareableRecipes()
+  const { data: savedMeals = [] } = useShareableSavedMeals()
   const { count: foodListCount, isLoading: foodListLoading } = useShareableFoodListCount()
   const { data: friends = [] } = useFriends()
   const { mutateAsync: sendByEmail, isPending: isSendingEmail } = useSendShareInvitation()
@@ -106,15 +129,15 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
   const isPending = isSendingEmail || isSendingFriend
 
   const reset = () => {
-    setStep(preselectedFriend ? 'content' : 'recipient')
+    setStep(initialStep)
     setRecipientTab('friend')
     setSelectedFriend(preselectedFriend ?? null)
     setEmail('')
     setEmailStatus('idle')
     setFriendSearch('')
-    setContentType('food_item')
-    setSelectedId('')
-    setSelectedName('')
+    setContentType(preselectedContentType ?? 'food_item')
+    setSelectedId(preselectedItem?.id ?? '')
+    setSelectedName(preselectedItem?.name ?? '')
     setItemSearch('')
   }
 
@@ -137,13 +160,19 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
     r => !itemSearch.trim() || r.name.toLowerCase().includes(itemSearch.toLowerCase())
   )
 
+  const filteredSavedMeals = savedMeals.filter(
+    m => !itemSearch.trim() || m.name.toLowerCase().includes(itemSearch.toLowerCase())
+  )
+
   const recipientLabel = selectedFriend
     ? (selectedFriend.alias ?? selectedFriend.friend_name)
     : email
 
   const handleFriendSelect = (friend: Friend) => {
     setSelectedFriend(friend)
-    setStep('content')
+    // Är objektet redan förvalt (t.ex. delning från ett måltidskort) finns inget
+    // innehåll kvar att välja — gå direkt till bekräftelsesteget.
+    setStep(preselectedItem ? 'confirm' : 'content')
   }
 
   const handleItemSelect = (id: string, name: string) => {
@@ -200,11 +229,27 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
             friendUserId: selectedFriend.friend_id,
           })
           if (!result.success) {
-            toast.error(t('share.error.friend_share_failed'))
+            toast.error(
+              result.error === 'empty_saved_meal'
+                ? t('share.error.empty_saved_meal')
+                : t('share.error.friend_share_failed')
+            )
             return
           }
         } else {
-          await sendByEmail({ itemId: selectedId, itemType: contentType, recipientEmail: email })
+          const result = await sendByEmail({
+            itemId: selectedId,
+            itemType: contentType,
+            recipientEmail: email,
+          })
+          if (!result.success) {
+            toast.error(
+              result.error === 'empty_saved_meal'
+                ? t('share.error.empty_saved_meal')
+                : t('share.error.generic')
+            )
+            return
+          }
         }
         toast.success(t('share.toast.item_shared', { name: selectedName }))
       }
@@ -316,7 +361,9 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
                     value={email}
                     onChange={e => handleEmailChange(e.target.value)}
                     onKeyDown={e =>
-                      e.key === 'Enter' && emailStatus === 'found' && setStep('content')
+                      e.key === 'Enter' &&
+                      emailStatus === 'found' &&
+                      setStep(preselectedItem ? 'confirm' : 'content')
                     }
                     autoFocus
                   />
@@ -335,7 +382,7 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
                   )}
                 </div>
                 <Button
-                  onClick={() => setStep('content')}
+                  onClick={() => setStep(preselectedItem ? 'confirm' : 'content')}
                   disabled={emailStatus !== 'found'}
                   className="w-full"
                 >
@@ -361,7 +408,7 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
             )}
 
             <div className="flex gap-1 rounded-lg border border-neutral-200 p-1">
-              {(['food_item', 'recipe', 'food_list'] as const).map(type => (
+              {(['food_item', 'recipe', 'saved_meal', 'food_list'] as const).map(type => (
                 <button
                   key={type}
                   type="button"
@@ -379,12 +426,15 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
                 >
                   {type === 'food_item' && <Apple className="h-3.5 w-3.5" />}
                   {type === 'recipe' && <ChefHat className="h-3.5 w-3.5" />}
+                  {type === 'saved_meal' && <Bookmark className="h-3.5 w-3.5" />}
                   {type === 'food_list' && <ListOrdered className="h-3.5 w-3.5" />}
                   {type === 'food_item'
                     ? t('share.content.tab_food_item')
                     : type === 'recipe'
                       ? t('share.content.tab_recipe')
-                      : t('share.content.tab_food_list')}
+                      : type === 'saved_meal'
+                        ? t('share.content.tab_saved_meal')
+                        : t('share.content.tab_food_list')}
                 </button>
               ))}
             </div>
@@ -465,6 +515,44 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
               </div>
             )}
 
+            {contentType === 'saved_meal' && (
+              <div className="space-y-2">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
+                  <Input
+                    placeholder={t('share.content.search_saved_meal_placeholder')}
+                    value={itemSearch}
+                    onChange={e => setItemSearch(e.target.value)}
+                    className="pl-9 text-sm"
+                    autoFocus
+                  />
+                </div>
+                <div className="space-y-1 max-h-52 overflow-y-auto">
+                  {filteredSavedMeals.length === 0 ? (
+                    <p className="text-sm text-neutral-400 text-center py-4">
+                      {t('share.content.no_saved_meals')}
+                    </p>
+                  ) : (
+                    filteredSavedMeals.map(meal => (
+                      <button
+                        key={meal.id}
+                        type="button"
+                        onClick={() => handleItemSelect(meal.id, meal.name)}
+                        className="w-full flex items-center justify-between p-2.5 rounded-lg hover:bg-primary-50 transition-colors text-left"
+                      >
+                        <span className="text-sm font-medium text-neutral-900 truncate">
+                          {meal.name}
+                        </span>
+                        <span className="text-xs text-neutral-400 shrink-0 ml-2">
+                          {t('share.content.saved_meal_item_count', { count: meal.item_count })}
+                        </span>
+                      </button>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
+
             {contentType === 'food_list' && (
               <div className="space-y-3">
                 {foodListLoading ? (
@@ -518,6 +606,9 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
                 {contentType === 'recipe' && (
                   <ChefHat className="h-5 w-5 text-amber-600 shrink-0" />
                 )}
+                {contentType === 'saved_meal' && (
+                  <Bookmark className="h-5 w-5 text-violet-600 shrink-0" />
+                )}
                 {contentType === 'food_list' && (
                   <ListOrdered className="h-5 w-5 text-primary-600 shrink-0" />
                 )}
@@ -532,7 +623,9 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
                       ? t('share.confirm.type_food_item')
                       : contentType === 'recipe'
                         ? t('share.confirm.type_recipe')
-                        : t('share.confirm.type_food_list')}
+                        : contentType === 'saved_meal'
+                          ? t('share.confirm.type_saved_meal')
+                          : t('share.confirm.type_food_list')}
                   </p>
                 </div>
               </div>
@@ -547,8 +640,8 @@ export function ShareDialog({ open, onOpenChange, preselectedFriend }: ShareDial
             <div className="flex gap-2">
               <Button
                 variant="ghost"
-                onClick={() => setStep('content')}
-                disabled={isPending}
+                onClick={() => setStep(preselectedItem ? 'recipient' : 'content')}
+                disabled={isPending || (!!preselectedItem && !!preselectedFriend)}
                 className="flex-1"
               >
                 <ChevronLeft className="h-4 w-4 mr-1" />

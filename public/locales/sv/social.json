@@ -10,11 +10,13 @@
     },
     "badge": {
       "recipe": "Recept",
-      "food_item": "Livsmedel"
+      "food_item": "Livsmedel",
+      "saved_meal": "Måltid"
     },
     "label": {
       "recipe": "Receptet",
-      "food_item": "Livsmedlet"
+      "food_item": "Livsmedlet",
+      "saved_meal": "Måltiden"
     },
     "shared_by": "Delad av",
     "sent": {
@@ -25,7 +27,8 @@
     "preview": {
       "servings": "{{count}} portioner",
       "ingredients": "{{count}} ingredienser",
-      "serving": "portion"
+      "serving": "portion",
+      "meal_items": "{{count}} livsmedel"
     },
     "expiry": {
       "soon": "Utgår snart",
@@ -85,7 +88,11 @@
       "no_recipes": "Inga recept hittades",
       "loading": "Laddar...",
       "no_food_list": "Du har inga livsmedel att dela ännu",
-      "servings_abbr": "port."
+      "servings_abbr": "port.",
+      "tab_saved_meal": "Måltid",
+      "search_saved_meal_placeholder": "Sök sparad måltid...",
+      "no_saved_meals": "Inga sparade måltider hittades",
+      "saved_meal_item_count": "{{count}} livsmedel"
     },
     "food_list": {
       "title": "Min lista",
@@ -100,13 +107,15 @@
       "duplicate_note": "Dubbletter med liknande näringsvärden hoppas automatiskt över vid import.",
       "back": "Tillbaka",
       "send": "Skicka",
-      "sending": "Skickar..."
+      "sending": "Skickar...",
+      "type_saved_meal": "Sparad måltid"
     },
     "error": {
       "empty_food_list": "Du har inga livsmedel att dela.",
       "generic": "Något gick fel.",
       "friend_share_failed": "Kunde inte dela. Kontrollera att vänskapen fortfarande är aktiv.",
-      "send_failed": "Något gick fel vid delningen."
+      "send_failed": "Något gick fel vid delningen.",
+      "empty_saved_meal": "Måltiden innehåller inga livsmedel att dela."
     },
     "toast": {
       "food_list_shared": "Din lista med {{count}} livsmedel delades!",
@@ -144,7 +153,8 @@
       "food_list": "{{imp}} livsmedel importerade!",
       "food_list_with_skipped": "{{imp}} livsmedel importerade! ({{skip}} hoppades över)",
       "recipe": "Receptet importerades!",
-      "food_item": "Livsmedlet importerades!"
+      "food_item": "Livsmedlet importerades!",
+      "saved_meal": "Måltiden har importerats!"
     },
     "shared_list": {
       "joined": "Du är nu med i \"{{name}}\"!",

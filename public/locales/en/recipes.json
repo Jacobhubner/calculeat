@@ -210,7 +210,8 @@
     "deleteConfirm": "Delete",
     "deleting": "Deleting...",
     "deleteSuccess": "{{name}} has been deleted",
-    "deleteError": "Could not delete the meal. Try again."
+    "deleteError": "Could not delete the meal. Try again.",
+    "share": "Share meal"
   },
   "editMealDialog": {
     "title": "Rename meal",

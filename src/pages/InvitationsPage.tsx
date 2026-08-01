@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Bell, Apple, ChefHat, Loader2, Send, X } from 'lucide-react'
+import { Bell, Apple, Bookmark, ChefHat, Loader2, Send, X } from 'lucide-react'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -50,7 +50,9 @@ function InvitationCard({ invitation }: { invitation: PendingInvitation }) {
       const label =
         invitation.item_type === 'recipe'
           ? t('invitations.label.recipe')
-          : t('invitations.label.food_item')
+          : invitation.item_type === 'saved_meal'
+            ? t('invitations.label.saved_meal')
+            : t('invitations.label.food_item')
       toast.success(t('invitations.toast.imported', { label }))
     } catch {
       toast.error(t('invitations.error.generic_retry'))
@@ -84,6 +86,8 @@ function InvitationCard({ invitation }: { invitation: PendingInvitation }) {
         <div className="p-2 rounded-lg bg-violet-50 shrink-0">
           {invitation.item_type === 'recipe' ? (
             <ChefHat className="h-5 w-5 text-violet-600" />
+          ) : invitation.item_type === 'saved_meal' ? (
+            <Bookmark className="h-5 w-5 text-violet-600" />
           ) : (
             <Apple className="h-5 w-5 text-violet-600" />
           )}
@@ -94,7 +98,9 @@ function InvitationCard({ invitation }: { invitation: PendingInvitation }) {
             <Badge className="bg-violet-100 text-violet-700 border-violet-300 text-[10px] px-1.5 py-0 h-4 shrink-0">
               {invitation.item_type === 'recipe'
                 ? t('invitations.badge.recipe')
-                : t('invitations.badge.food_item')}
+                : invitation.item_type === 'saved_meal'
+                  ? t('invitations.badge.saved_meal')
+                  : t('invitations.badge.food_item')}
             </Badge>
           </div>
           <p className="text-sm text-neutral-500 mt-0.5">
@@ -112,6 +118,11 @@ function InvitationCard({ invitation }: { invitation: PendingInvitation }) {
           {preview.carb_g && <span>{preview.carb_g}g K</span>}
           {preview.fat_g && <span>{preview.fat_g}g F</span>}
           {preview.brand && <span className="text-neutral-400 truncate">{preview.brand}</span>}
+        </div>
+      )}
+      {invitation.item_type === 'saved_meal' && preview.item_count !== undefined && (
+        <div className="flex gap-4 text-xs text-neutral-500">
+          <span>{t('invitations.preview.meal_items', { count: preview.item_count })}</span>
         </div>
       )}
       {invitation.item_type === 'recipe' && (
@@ -197,6 +208,8 @@ function SentInvitationCard({ invitation }: { invitation: SentShareInvitation })
       <div className="p-2 rounded-lg bg-neutral-50 shrink-0">
         {invitation.item_type === 'recipe' ? (
           <ChefHat className="h-5 w-5 text-neutral-400" />
+        ) : invitation.item_type === 'saved_meal' ? (
+          <Bookmark className="h-5 w-5 text-neutral-400" />
         ) : (
           <Apple className="h-5 w-5 text-neutral-400" />
         )}

@@ -2,9 +2,10 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { CalendarPlus, Pencil, Trash2, ChevronDown, ChevronUp } from 'lucide-react'
+import { CalendarPlus, Pencil, Share2, Trash2, ChevronDown, ChevronUp } from 'lucide-react'
 import type { SavedMeal } from '@/hooks/useSavedMeals'
 import { useDeleteSavedMeal } from '@/hooks/useSavedMeals'
+import { ShareDialog } from '@/components/sharing/ShareDialog'
 import { toast } from 'sonner'
 import { calculateNutritionForUnit } from '@/lib/calculations/nutritionFromUnit'
 import type { FoodItem } from '@/hooks/useFoodItems'
@@ -29,6 +30,7 @@ export default function SavedMealCard({ meal, onUseToday, onEdit }: SavedMealCar
   const { t } = useTranslation('recipes')
   const [showItems, setShowItems] = useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [showShareDialog, setShowShareDialog] = useState(false)
   const deleteMeal = useDeleteSavedMeal()
 
   // Calculate totals
@@ -71,6 +73,18 @@ export default function SavedMealCard({ meal, onUseToday, onEdit }: SavedMealCar
           <div className="flex items-start justify-between gap-2">
             <CardTitle className="text-lg truncate flex-1">{meal.name}</CardTitle>
             <div className="flex items-center gap-1 shrink-0">
+              {totals.itemCount > 0 && (
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-8 w-8 p-0"
+                  onClick={() => setShowShareDialog(true)}
+                  title={t('savedMealCard.share')}
+                  aria-label={t('savedMealCard.share')}
+                >
+                  <Share2 className="h-4 w-4" />
+                </Button>
+              )}
               {onEdit && (
                 <Button
                   size="sm"
@@ -190,6 +204,16 @@ export default function SavedMealCard({ meal, onUseToday, onEdit }: SavedMealCar
           )}
         </CardContent>
       </Card>
+
+      {/* Share Dialog — måltiden är förvald, användaren väljer bara mottagare */}
+      {showShareDialog && (
+        <ShareDialog
+          open={showShareDialog}
+          onOpenChange={setShowShareDialog}
+          preselectedContentType="saved_meal"
+          preselectedItem={{ id: meal.id, name: meal.name }}
+        />
+      )}
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>

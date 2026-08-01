@@ -3,6 +3,7 @@ import {
   Users,
   UserPlus,
   Apple,
+  Bookmark,
   ChefHat,
   ListOrdered,
   Loader2,
@@ -167,7 +168,9 @@ function MiniInvitationCard({ invitation }: { invitation: PendingInvitation }) {
         toast.success(
           invitation.item_type === 'recipe'
             ? t('social.import.recipe')
-            : t('social.import.food_item')
+            : invitation.item_type === 'saved_meal'
+              ? t('social.import.saved_meal')
+              : t('social.import.food_item')
         )
       }
     } catch {
@@ -196,6 +199,8 @@ function MiniInvitationCard({ invitation }: { invitation: PendingInvitation }) {
       <ChefHat className="h-4 w-4 text-violet-600" />
     ) : invitation.item_type === 'food_list' ? (
       <ListOrdered className="h-4 w-4 text-violet-600" />
+    ) : invitation.item_type === 'saved_meal' ? (
+      <Bookmark className="h-4 w-4 text-violet-600" />
     ) : (
       <Apple className="h-4 w-4 text-violet-600" />
     )
@@ -205,7 +210,9 @@ function MiniInvitationCard({ invitation }: { invitation: PendingInvitation }) {
       ? t('invitations.badge.recipe')
       : invitation.item_type === 'food_list'
         ? t('social.badge.list')
-        : t('invitations.badge.food_item')
+        : invitation.item_type === 'saved_meal'
+          ? t('invitations.badge.saved_meal')
+          : t('invitations.badge.food_item')
 
   return (
     <div className="rounded-lg border border-neutral-100 p-3 space-y-2 bg-white">
@@ -460,6 +467,8 @@ function SentShareCard({ invitation }: { invitation: SentShareInvitation }) {
   const itemIcon =
     invitation.item_type === 'recipe' ? (
       <ChefHat className="h-4 w-4 text-neutral-400" />
+    ) : invitation.item_type === 'saved_meal' ? (
+      <Bookmark className="h-4 w-4 text-neutral-400" />
     ) : (
       <Apple className="h-4 w-4 text-neutral-400" />
     )

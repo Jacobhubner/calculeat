@@ -10,11 +10,13 @@
     },
     "badge": {
       "recipe": "Recipe",
-      "food_item": "Food item"
+      "food_item": "Food item",
+      "saved_meal": "Meal"
     },
     "label": {
       "recipe": "The recipe",
-      "food_item": "The food item"
+      "food_item": "The food item",
+      "saved_meal": "The meal"
     },
     "shared_by": "Shared by",
     "sent": {
@@ -25,7 +27,8 @@
     "preview": {
       "servings": "{{count}} servings",
       "ingredients": "{{count}} ingredients",
-      "serving": "serving"
+      "serving": "serving",
+      "meal_items": "{{count}} food items"
     },
     "expiry": {
       "soon": "Expires soon",
@@ -85,7 +88,11 @@
       "no_recipes": "No recipes found",
       "loading": "Loading...",
       "no_food_list": "You have no food items to share yet",
-      "servings_abbr": "srv."
+      "servings_abbr": "srv.",
+      "tab_saved_meal": "Meal",
+      "search_saved_meal_placeholder": "Search saved meals...",
+      "no_saved_meals": "No saved meals found",
+      "saved_meal_item_count": "{{count}} food items"
     },
     "food_list": {
       "title": "My list",
@@ -100,13 +107,15 @@
       "duplicate_note": "Duplicates with similar nutritional values are automatically skipped on import.",
       "back": "Back",
       "send": "Send",
-      "sending": "Sending..."
+      "sending": "Sending...",
+      "type_saved_meal": "Saved meal"
     },
     "error": {
       "empty_food_list": "You have no food items to share.",
       "generic": "Something went wrong.",
       "friend_share_failed": "Could not share. Check that the friendship is still active.",
-      "send_failed": "Something went wrong while sharing."
+      "send_failed": "Something went wrong while sharing.",
+      "empty_saved_meal": "The meal contains no food items to share."
     },
     "toast": {
       "food_list_shared": "Your list of {{count}} food items was shared!",
@@ -144,7 +153,8 @@
       "food_list": "{{imp}} food items imported!",
       "food_list_with_skipped": "{{imp}} food items imported! ({{skip}} skipped)",
       "recipe": "The recipe was imported!",
-      "food_item": "The food item was imported!"
+      "food_item": "The food item was imported!",
+      "saved_meal": "The meal has been imported!"
     },
     "shared_list": {
       "joined": "You are now a member of \"{{name}}\"!",

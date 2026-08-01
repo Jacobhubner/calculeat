@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
-import type { PendingInvitation } from '@/lib/types/sharing'
+import type { ItemType, PendingInvitation } from '@/lib/types/sharing'
 import { usePendingFriendRequestsCount } from './useFriends'
 import { useUnreadMessageCount } from './useMessages'
 import { usePendingSharedListInvitationsCount } from './useSharedLists'
@@ -106,7 +106,7 @@ export function useSendShareInvitation() {
       recipientEmail,
     }: {
       itemId: string | null
-      itemType: 'food_item' | 'recipe' | 'food_list'
+      itemType: ItemType
       recipientEmail: string
     }) => {
       const { data, error } = await supabase.rpc('send_share_invitation', {
@@ -154,6 +154,7 @@ export function useAcceptShareInvitation() {
         item_type?: string
         food_item_id?: string
         recipe_id?: string
+        saved_meal_id?: string
         imported_count?: number
         skipped_count?: number
         error?: string
@@ -164,6 +165,7 @@ export function useAcceptShareInvitation() {
       queryClient.invalidateQueries({ queryKey: ['shareInvitations'] })
       queryClient.invalidateQueries({ queryKey: ['foodItems'] })
       queryClient.invalidateQueries({ queryKey: ['recipes'] })
+      queryClient.invalidateQueries({ queryKey: ['savedMeals'] })
     },
   })
 }
@@ -195,7 +197,7 @@ export function useRejectShareInvitation() {
 
 export interface SentShareInvitation {
   id: string
-  item_type: 'food_item' | 'recipe' | 'food_list'
+  item_type: ItemType
   item_id: string
   item_name: string
   recipient_id: string
@@ -244,7 +246,7 @@ export function useCancelShareInvitation() {
 
 export interface RespondedShareInvitation {
   id: string
-  item_type: 'food_item' | 'recipe' | 'food_list'
+  item_type: ItemType
   item_id: string
   item_name: string
   recipient_id: string
