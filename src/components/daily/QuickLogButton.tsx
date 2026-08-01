@@ -46,15 +46,24 @@ export default function QuickLogButton() {
       >
         <span
           className={cn(
-            'flex items-center justify-center h-11 w-11 -mt-5 rounded-full',
-            'bg-primary-600 text-white shadow-lg shadow-primary-600/30',
-            'ring-4 ring-white transition-transform active:scale-95'
+            'relative flex items-center justify-center h-12 w-12 -mt-6 rounded-full',
+            'text-white ring-4 ring-white',
+            'transition-transform duration-150 active:scale-95',
+            // Loggans gradient: blad-grönt → gult → orange, samma vinkel som märket
+            'bg-[linear-gradient(135deg,#7bbe2a_0%,#edbe0c_53%,#fc8518_100%)]',
+            'shadow-[0_4px_14px_-2px_rgba(252,133,24,0.45)]'
           )}
         >
+          {/* Mjuk högdager uppe till vänster ger knappen samma rundade
+              volym som bladet i märket, istället för en platt cirkel. */}
+          <span
+            aria-hidden
+            className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_32%_28%,rgba(255,255,255,0.42),transparent_58%)]"
+          />
           {ensureLog.isPending ? (
-            <Loader2 className="h-5 w-5 animate-spin" />
+            <Loader2 className="relative h-5 w-5 animate-spin" />
           ) : (
-            <Plus className="h-6 w-6" strokeWidth={2.5} />
+            <Plus className="relative h-6 w-6 drop-shadow-sm" strokeWidth={2.75} />
           )}
         </span>
         <span className="truncate">{t('quickLog.label')}</span>
