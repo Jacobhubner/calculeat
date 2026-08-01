@@ -91,7 +91,6 @@ export function UpgradeModal({ open, onOpenChange, limitKey }: UpgradeModalProps
     'bodyComp',
     'equations',
     'trends',
-    'csv',
   ] as const
 
   return (

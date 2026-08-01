@@ -25,7 +25,6 @@ const COMPARE_ROWS = [
   'bodyComp',
   'equations',
   'trends',
-  'csv',
 ] as const
 
 export default function PremiumPage() {

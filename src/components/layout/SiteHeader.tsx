@@ -13,6 +13,9 @@ import {
   Crosshair,
   BookOpen,
   MessageCircle,
+  Bookmark,
+  Flame,
+  ChevronDown,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -28,6 +31,7 @@ import { useSocialBadgeCount } from '@/hooks/useShareInvitations'
 import { useIsAdmin } from '@/hooks/useIsAdmin'
 import type { Friend } from '@/lib/types/friends'
 import { LanguageSwitcher } from '../ui/LanguageSwitcher'
+import { cn } from '@/lib/utils'
 
 export default function SiteHeader() {
   const { t, i18n } = useTranslation('common')
@@ -92,6 +96,17 @@ export default function SiteHeader() {
 
   const isOnHomePage = location.pathname === '/'
 
+  const isActive = (path: string) => location.pathname === path
+
+  // Delade klasser för mobilmenyns länkar — py-3 ger 44px tap-target (Apple HIG)
+  const menuItemClass = (path?: string) =>
+    cn(
+      'flex items-center gap-3 px-4 py-3 text-sm transition-colors',
+      path && isActive(path)
+        ? 'bg-primary-100 text-primary-700 font-medium'
+        : 'text-neutral-700 hover:bg-neutral-50'
+    )
+
   const getInitials = () => {
     if (userProfile?.username) return userProfile.username.substring(0, 2).toUpperCase()
     return '...'
@@ -99,14 +114,25 @@ export default function SiteHeader() {
 
   // Close mobile user menu when clicking outside
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setMobileUserMenuOpen(false)
+      }
+    }
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
         setMobileUserMenuOpen(false)
       }
     }
     if (mobileUserMenuOpen) {
       document.addEventListener('mousedown', handleClickOutside)
-      return () => document.removeEventListener('mousedown', handleClickOutside)
+      document.addEventListener('touchstart', handleClickOutside)
+      document.addEventListener('keydown', handleKeyDown)
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside)
+        document.removeEventListener('touchstart', handleClickOutside)
+        document.removeEventListener('keydown', handleKeyDown)
+      }
     }
   }, [mobileUserMenuOpen])
 
@@ -268,33 +294,36 @@ export default function SiteHeader() {
             {/* Plan-chip — i mobilen finns ingen sidebar, så planen visas här */}
             <PlanBadge />
             <LanguageSwitcher />
-            {/* Mobile Social — navigera direkt till /app/social */}
-            <Link
-              to="/app/social"
-              className="relative p-2 text-neutral-600 rounded-lg transition-colors"
-              aria-label="Social"
-            >
-              <Users className="h-5 w-5" />
-              {badgeCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 flex items-center justify-center bg-primary-600 text-white text-[10px] font-bold rounded-full min-w-[16px] h-4 px-1 leading-none">
-                  {badgeCount > 99 ? '99+' : badgeCount}
-                </span>
-              )}
-            </Link>
 
             <div className="relative" ref={userMenuRef}>
               <button
                 onClick={() => setMobileUserMenuOpen(!mobileUserMenuOpen)}
-                className="focus:outline-none relative"
+                className="relative flex items-center gap-1 rounded-lg focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:outline-none"
+                aria-haspopup="menu"
+                aria-expanded={mobileUserMenuOpen}
+                aria-label={t('nav.openMenu')}
               >
-                <Avatar className="h-9 w-9 cursor-pointer ring-2 ring-transparent active:ring-primary-200 transition-all">
-                  <AvatarFallback className="text-xs">{getInitials()}</AvatarFallback>
-                </Avatar>
-                {isAdmin && (
-                  <span className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5">
-                    <ShieldCheck className="h-3.5 w-3.5 text-primary-600" />
-                  </span>
-                )}
+                <span className="relative">
+                  <Avatar className="h-9 w-9 cursor-pointer ring-2 ring-transparent active:ring-primary-200 transition-all">
+                    <AvatarFallback className="text-xs">{getInitials()}</AvatarFallback>
+                  </Avatar>
+                  {isAdmin && (
+                    <span className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5">
+                      <ShieldCheck className="h-3.5 w-3.5 text-primary-600" />
+                    </span>
+                  )}
+                  {badgeCount > 0 && (
+                    <span className="absolute -top-1 -right-1 flex items-center justify-center bg-primary-600 text-white text-[10px] font-bold rounded-full min-w-[16px] h-4 px-1 leading-none">
+                      {badgeCount > 99 ? '99+' : badgeCount}
+                    </span>
+                  )}
+                </span>
+                <ChevronDown
+                  className={cn(
+                    'h-3.5 w-3.5 text-neutral-400 transition-transform',
+                    mobileUserMenuOpen && 'rotate-180'
+                  )}
+                />
               </button>
 
               <AnimatePresence>
@@ -304,7 +333,8 @@ export default function SiteHeader() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.15 }}
-                    className="absolute right-0 top-full mt-2 w-56 bg-white rounded-lg shadow-lg border border-neutral-200 py-1 z-50"
+                    role="menu"
+                    className="absolute right-0 top-full mt-2 w-64 max-h-[calc(100vh-6rem)] overflow-y-auto overscroll-contain bg-white rounded-lg shadow-lg border border-neutral-200 py-1 z-50"
                   >
                     <div className="px-4 py-3 border-b border-neutral-100">
                       <p className="text-sm font-medium text-neutral-900 truncate">
@@ -316,55 +346,69 @@ export default function SiteHeader() {
                     {/* MY PLAN */}
                     <div className="py-2 px-4">
                       <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-1">
-                        {t('nav.myPlan') || 'Min Plan'}
+                        {t('nav.myPlan')}
                       </p>
                     </div>
                     <div className="py-1">
                       <Link
-                        to="/app/profile"
+                        to="/app/saved-meals"
+                        role="menuitem"
                         onClick={() => setMobileUserMenuOpen(false)}
-                        className="flex items-center gap-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors"
+                        className={menuItemClass('/app/saved-meals')}
+                      >
+                        <Bookmark className="h-4 w-4" />
+                        <span>{t('nav.savedMeals')}</span>
+                      </Link>
+                      <Link
+                        to="/app/profile"
+                        role="menuitem"
+                        onClick={() => setMobileUserMenuOpen(false)}
+                        className={menuItemClass('/app/profile')}
                       >
                         <User className="h-4 w-4" />
                         <span>{t('nav.profile')}</span>
                       </Link>
                       <Link
                         to="/app/body-composition"
+                        role="menuitem"
                         onClick={() => setMobileUserMenuOpen(false)}
-                        className="flex items-center gap-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors"
+                        className={menuItemClass('/app/body-composition')}
                       >
                         <Activity className="h-4 w-4" />
-                        <span>{t('nav.bodyShort') || 'Kropp'}</span>
+                        <span>{t('nav.body')}</span>
                       </Link>
                       <Link
                         to="/app/tools/tdee-calculator"
+                        role="menuitem"
                         onClick={() => setMobileUserMenuOpen(false)}
-                        className="flex items-center gap-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors"
+                        className={menuItemClass('/app/tools/tdee-calculator')}
                       >
                         <Gauge className="h-4 w-4" />
-                        <span>{t('nav.calorieNeedShort') || 'Kaloribehov'}</span>
+                        <span>{t('nav.calorieNeed')}</span>
                       </Link>
                       <Link
                         to="/app/tools/goal-calculator"
+                        role="menuitem"
                         onClick={() => setMobileUserMenuOpen(false)}
-                        className="flex items-center gap-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors"
+                        className={menuItemClass('/app/tools/goal-calculator')}
                       >
                         <Crosshair className="h-4 w-4" />
-                        <span>{t('nav.goalSettingShort') || 'Målsättning'}</span>
+                        <span>{t('nav.goalSetting')}</span>
                       </Link>
                     </div>
 
                     {/* SOCIAL & TOOLS */}
                     <div className="border-t border-neutral-100 py-2 px-4">
                       <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-1">
-                        {t('nav.explore') || 'Utforska'}
+                        {t('nav.explore')}
                       </p>
                     </div>
                     <div className="py-1">
                       <Link
                         to="/app/social"
+                        role="menuitem"
                         onClick={() => setMobileUserMenuOpen(false)}
-                        className="flex items-center gap-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors relative"
+                        className={cn(menuItemClass('/app/social'), 'relative')}
                       >
                         <Users className="h-4 w-4" />
                         <span>{t('nav.social')}</span>
@@ -376,23 +420,27 @@ export default function SiteHeader() {
                       </Link>
                       <Link
                         to="/app/tools/met-calculator"
+                        role="menuitem"
                         onClick={() => setMobileUserMenuOpen(false)}
-                        className="flex items-center gap-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors"
+                        className={menuItemClass('/app/tools/met-calculator')}
                       >
-                        <span>{t('nav.met') || 'MET-kalkylator'}</span>
+                        <Flame className="h-4 w-4" />
+                        <span>{t('nav.met')}</span>
                       </Link>
                       <Link
                         to={loc('/kalkylatorer', '/en/calculators')}
+                        role="menuitem"
                         onClick={() => setMobileUserMenuOpen(false)}
-                        className="flex items-center gap-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors"
+                        className={menuItemClass()}
                       >
                         <Gauge className="h-4 w-4" />
                         <span>{t('nav.freeTools')}</span>
                       </Link>
                       <Link
                         to={loc('/artiklar', '/en/articles')}
+                        role="menuitem"
                         onClick={() => setMobileUserMenuOpen(false)}
-                        className="flex items-center gap-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors"
+                        className={menuItemClass()}
                       >
                         <BookOpen className="h-4 w-4" />
                         <span>{t('nav.articlesHub')}</span>
@@ -402,25 +450,27 @@ export default function SiteHeader() {
                     {/* ACCOUNT */}
                     <div className="border-t border-neutral-100 py-2 px-4">
                       <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-1">
-                        {t('nav.account') || 'Konto'}
+                        {t('nav.account')}
                       </p>
                     </div>
                     <div className="py-1">
                       <Link
                         to="/app/settings"
+                        role="menuitem"
                         onClick={() => setMobileUserMenuOpen(false)}
-                        className="flex items-center gap-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors"
+                        className={menuItemClass('/app/settings')}
                       >
                         <Settings className="h-4 w-4" />
                         <span>{t('nav.settings')}</span>
                       </Link>
                       <button
                         type="button"
+                        role="menuitem"
                         onClick={() => {
                           setMobileUserMenuOpen(false)
                           navigate({ search: '?support=open' })
                         }}
-                        className="w-full flex items-center gap-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors"
+                        className="w-full flex items-center gap-3 px-4 py-3 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors"
                       >
                         <MessageCircle className="h-4 w-4" />
                         <span>{t('nav.support')}</span>
@@ -429,11 +479,12 @@ export default function SiteHeader() {
 
                     <div className="border-t border-neutral-100 py-1">
                       <button
+                        role="menuitem"
                         onClick={() => {
                           setMobileUserMenuOpen(false)
                           handleSignOut()
                         }}
-                        className="w-full flex items-center gap-3 px-4 py-2 text-sm text-error-600 hover:bg-error-50 transition-colors"
+                        className="w-full flex items-center gap-3 px-4 py-3 text-sm text-error-600 hover:bg-error-50 transition-colors"
                       >
                         <LogOut className="h-4 w-4" />
                         <span>{t('nav.logout')}</span>

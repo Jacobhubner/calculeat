@@ -95,7 +95,7 @@ export function MacroBreakdownChart({ protein, fat, carbs }: MacroBreakdownChart
                 ))}
               </Pie>
               <Tooltip
-                formatter={(value: number) => `${value}%`}
+                formatter={(value?: number) => `${value ?? 0}%`}
                 contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e5e7eb' }}
               />
             </PieChart>
