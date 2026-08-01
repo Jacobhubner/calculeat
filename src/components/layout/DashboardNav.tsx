@@ -110,15 +110,15 @@ export default function DashboardNav() {
         },
         {
           type: 'single' as const,
-          to: '/app/tools/goal-calculator',
-          label: t('nav.goalSetting'),
-          icon: Crosshair,
-        },
-        {
-          type: 'single' as const,
           to: '/app/body-composition',
           label: t('nav.body'),
           icon: Activity,
+        },
+        {
+          type: 'single' as const,
+          to: '/app/tools/goal-calculator',
+          label: t('nav.goalSetting'),
+          icon: Crosshair,
         },
       ],
     },
