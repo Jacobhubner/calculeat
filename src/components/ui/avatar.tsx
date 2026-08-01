@@ -33,7 +33,12 @@ const AvatarFallback = React.forwardRef<
   <AvatarPrimitive.Fallback
     ref={ref}
     className={cn(
-      'flex h-full w-full items-center justify-center rounded-full bg-gradient-primary text-sm font-medium text-white',
+      // Loggans gradient i stället för den helmättade primärgrönen — avataren
+      // är appens mest sedda märkesyta efter loggan själv.
+      'flex h-full w-full items-center justify-center rounded-full text-sm font-semibold text-white',
+      'bg-[linear-gradient(135deg,#7bbe2a_0%,#edbe0c_53%,#fc8518_100%)]',
+      // Gradientens gula mittparti är ljust — skuggan håller initialerna läsbara
+      '[text-shadow:0_1px_2px_rgba(0,0,0,0.28)]',
       className
     )}
     {...props}

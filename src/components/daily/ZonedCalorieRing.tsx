@@ -1,3 +1,4 @@
+import { useId } from 'react'
 import { cn } from '@/lib/utils'
 
 interface ZonedCalorieRingProps {
@@ -61,10 +62,31 @@ export function ZonedCalorieRing({
     return 'text-sky-400'
   }
 
+  // Unik gradient-id per instans — ringen renderas på flera sidor samtidigt,
+  // och delade SVG-id:n gör att den sist monterade vinner för alla.
+  const glowId = useId()
+
   return (
     <div className={cn('flex flex-col items-center', className)}>
       <div className="relative">
         <svg width={config.size} height={config.size} className="transform -rotate-90">
+          <defs>
+            {/* Loggans färger som mjuk glöd bakom ringen. Ligger under alla
+                bågar och markörer, så statusavläsningen är oförändrad. */}
+            <radialGradient id={glowId}>
+              <stop offset="0%" stopColor="#edbe0c" stopOpacity="0.22" />
+              <stop offset="55%" stopColor="#7bbe2a" stopOpacity="0.12" />
+              <stop offset="100%" stopColor="#fc8518" stopOpacity="0" />
+            </radialGradient>
+          </defs>
+
+          <circle
+            cx={config.size / 2}
+            cy={config.size / 2}
+            r={config.size / 2 - 2}
+            fill={`url(#${glowId})`}
+          />
+
           {/* Zone 1: Sky zone (0 to min) - background */}
           <circle
             cx={config.size / 2}
@@ -118,31 +140,38 @@ export function ZonedCalorieRing({
             className={cn('transition-all duration-500 ease-out', getConsumedColor())}
           />
 
-          {/* Min indicator mark */}
-          <circle
-            cx={config.size / 2}
-            cy={config.size / 2}
-            r={radius}
-            stroke="currentColor"
-            strokeWidth={config.strokeWidth + 4}
-            fill="none"
-            strokeDasharray={`2 ${circumference - 2}`}
-            strokeDashoffset={-((minPercent / 100) * circumference) + 1}
-            className="text-success-700"
-          />
-
-          {/* Max indicator mark */}
-          <circle
-            cx={config.size / 2}
-            cy={config.size / 2}
-            r={radius}
-            stroke="currentColor"
-            strokeWidth={config.strokeWidth + 4}
-            fill="none"
-            strokeDasharray={`2 ${circumference - 2}`}
-            strokeDashoffset={-((maxPercent / 100) * circumference) + 1}
-            className="text-error-700"
-          />
+          {/* Målmarkörer — ritas sist så de aldrig döljs av den konsumerade
+              bågen. Vit understreck ger kontrast oavsett vad som ligger under,
+              så "här börjar målet" och "här är det för mycket" går att läsa
+              av lika tydligt som förut. */}
+          {[
+            { percent: minPercent, color: 'text-success-700' },
+            { percent: maxPercent, color: 'text-error-700' },
+          ].map(mark => (
+            <g key={mark.color}>
+              <circle
+                cx={config.size / 2}
+                cy={config.size / 2}
+                r={radius}
+                stroke="white"
+                strokeWidth={config.strokeWidth + 7}
+                fill="none"
+                strokeDasharray={`4 ${circumference - 4}`}
+                strokeDashoffset={-((mark.percent / 100) * circumference) + 2}
+              />
+              <circle
+                cx={config.size / 2}
+                cy={config.size / 2}
+                r={radius}
+                stroke="currentColor"
+                strokeWidth={config.strokeWidth + 7}
+                fill="none"
+                strokeDasharray={`2 ${circumference - 2}`}
+                strokeDashoffset={-((mark.percent / 100) * circumference) + 1}
+                className={mark.color}
+              />
+            </g>
+          ))}
         </svg>
 
         {/* Center content */}

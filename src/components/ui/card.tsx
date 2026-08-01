@@ -9,8 +9,10 @@ const cardVariants = cva('rounded-2xl bg-white w-full min-w-0 max-w-full', {
       elevated: 'shadow-lg border border-neutral-200',
       outlined: 'border-2 border-neutral-300',
       ghost: 'border-0 shadow-none',
+      // Tonad i loggans bladgrön i stället för den helmättade primary-50,
+      // som skar sig mot märket när den låg bakom ringen.
       gradient:
-        'border border-neutral-200 bg-gradient-to-br from-primary-50/50 via-white to-neutral-50/50 shadow-md hover:shadow-lg transition-shadow duration-300',
+        'border border-neutral-200 bg-gradient-to-br from-[#7bbe2a]/[0.07] via-white to-neutral-50/50 shadow-md hover:shadow-lg transition-shadow duration-300',
     },
   },
   defaultVariants: {
