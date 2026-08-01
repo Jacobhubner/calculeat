@@ -134,12 +134,9 @@ export function ZonedCalorieRing({
           />
 
           {/* Zone 3: Error zone (max to visual max) — clamped to 0.
-              Obs: error-skalan slutar på 900 i @theme, så det finns ingen
-              error-950 — den klassen hade tyst genererat noll CSS och lämnat
-              zonen bländande ljus. error-900 (40% L) är för ljus för en
-              bakgrundszon och hade tävlat med den betydelsebärande
-              error-500-bågen, därför ett explicit värde på 14% L som matchar
-              success-950 (15%) och sky-950 (~29%). */}
+              error-950 ligger på 14% L: error-900 (40% L) är för ljus för en
+              bakgrundszon och skulle tävla med den betydelsebärande
+              error-500-bågen. */}
           <circle
             cx={config.size / 2}
             cy={config.size / 2}

@@ -12,8 +12,6 @@ const badgeVariants = cva(
           'bg-neutral-100 text-neutral-800 border border-neutral-200 dark:bg-neutral-800 dark:text-neutral-200 dark:border-neutral-700',
         success:
           'bg-success-100 text-success-800 border border-success-200 dark:bg-success-900/30 dark:text-success-300 dark:border-success-900',
-        // Obs: `warning-*` saknar skala i @theme (src/index.css) och kompilerar
-        // inte till någon CSS — därför orange, samma ton som Alert-varianten.
         warning:
           'bg-warning-100 text-warning-800 border border-warning-200 dark:bg-warning-900/30 dark:text-warning-300 dark:border-warning-900',
         error:
