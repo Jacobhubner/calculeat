@@ -509,7 +509,7 @@ function AdminSupportInbox({
           key={entry.thread_id}
           type="button"
           onClick={() => onSelect(entry)}
-          className={`w-full text-left px-4 py-3 hover:bg-neutral-50 transition-colors ${
+          className={`w-full text-left px-4 py-3 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors ${
             selectedId === entry.thread_id
               ? 'bg-primary-50 border-l-2 border-primary-600 dark:bg-primary-900/25'
               : ''
@@ -599,7 +599,7 @@ export default function AdminSupportPage() {
         <div
           className={`${
             selectedEntry ? 'hidden md:flex' : 'flex'
-          } flex-col w-full md:w-80 lg:w-96 shrink-0 border-r border-neutral-200 overflow-y-auto`}
+          } flex-col w-full md:w-80 lg:w-96 shrink-0 border-r border-neutral-200 dark:border-neutral-700 overflow-y-auto`}
         >
           <div className="shrink-0 px-4 py-3 border-b border-neutral-100">
             <h1 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">

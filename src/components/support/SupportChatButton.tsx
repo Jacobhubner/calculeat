@@ -54,7 +54,7 @@ export function SupportChatButton() {
           type="button"
           onClick={handleHide}
           aria-label="Dölj support"
-          className="mb-0.5 h-5 w-5 rounded-full bg-neutral-200 text-neutral-500 hover:bg-neutral-300 flex items-center justify-center transition-colors"
+          className="mb-0.5 h-5 w-5 rounded-full bg-neutral-200 text-neutral-500 hover:bg-neutral-300 dark:bg-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-600 flex items-center justify-center transition-colors"
         >
           <X className="h-3 w-3" />
         </button>

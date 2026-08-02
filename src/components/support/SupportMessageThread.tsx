@@ -197,7 +197,9 @@ export function MessageBubble({ msg, isOwn, threadId, onAdminDelete }: MessageBu
                     isDeleted
                       ? 'bg-neutral-50 text-neutral-400 italic border border-neutral-100 dark:bg-neutral-900 dark:text-neutral-500'
                       : isOwn
-                        ? 'bg-primary-600 text-white rounded-br-sm'
+                        ? // primary-600 gav bara 3.3:1 mot vit text — under
+                          // WCAG AA. 800 ger 6.3:1 och håller i båda teman.
+                          'bg-primary-800 text-white rounded-br-sm'
                         : 'bg-neutral-100 text-neutral-900 rounded-bl-sm dark:bg-neutral-800 dark:text-neutral-100'
                   }`}
                 >
@@ -253,7 +255,7 @@ export function MessageBubble({ msg, isOwn, threadId, onAdminDelete }: MessageBu
                   <button
                     type="button"
                     onClick={() => setShowOriginal(v => !v)}
-                    className="ml-1 italic underline underline-offset-2 hover:text-neutral-600 transition-colors"
+                    className="ml-1 italic underline underline-offset-2 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors"
                   >
                     redigerad
                   </button>
@@ -262,7 +264,7 @@ export function MessageBubble({ msg, isOwn, threadId, onAdminDelete }: MessageBu
             )}
             {showOriginal && msg.original_content && (
               <div
-                className={`mt-1 px-2 py-1.5 rounded-lg bg-neutral-100 border border-neutral-200 text-[11px] text-neutral-500 max-w-[240px] ${isOwn ? 'text-right' : 'text-left'}`}
+                className={`mt-1 px-2 py-1.5 rounded-lg bg-neutral-100 border border-neutral-200 text-[11px] text-neutral-500 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-400 max-w-[240px] ${isOwn ? 'text-right' : 'text-left'}`}
               >
                 <p className="text-[10px] font-medium text-neutral-400 mb-0.5 dark:text-neutral-500">
                   Originalmeddelande

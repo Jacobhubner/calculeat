@@ -25,7 +25,7 @@ export function ShareNotificationBadge({ mode, className }: ShareNotificationBad
   return (
     <Link
       to="/app/social"
-      className={`relative inline-flex items-center justify-center p-2 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 rounded-lg transition-colors ${className ?? ''}`}
+      className={`relative inline-flex items-center justify-center p-2 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 rounded-lg dark:text-neutral-400 dark:hover:text-neutral-100 dark:hover:bg-neutral-800 transition-colors ${className ?? ''}`}
       aria-label={`${count} väntande notifikation${count !== 1 ? 'er' : ''}`}
     >
       <Bell className="h-5 w-5" />

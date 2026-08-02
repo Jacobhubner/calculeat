@@ -83,7 +83,7 @@ function InvitationCard({ invitation }: { invitation: PendingInvitation }) {
     <div className="bg-white rounded-xl border border-neutral-200 p-4 space-y-3 dark:border-neutral-700 dark:bg-neutral-850">
       {/* Header */}
       <div className="flex items-start gap-3">
-        <div className="p-2 rounded-lg bg-violet-50 shrink-0">
+        <div className="p-2 rounded-lg bg-violet-50 shrink-0 dark:bg-violet-500/20">
           {invitation.item_type === 'recipe' ? (
             <ChefHat className="h-5 w-5 text-violet-600" />
           ) : invitation.item_type === 'saved_meal' ? (
@@ -97,7 +97,7 @@ function InvitationCard({ invitation }: { invitation: PendingInvitation }) {
             <p className="font-semibold text-neutral-900 truncate dark:text-neutral-100">
               {invitation.item_name}
             </p>
-            <Badge className="bg-violet-100 text-violet-700 border-violet-300 text-[10px] px-1.5 py-0 h-4 shrink-0">
+            <Badge className="bg-violet-100 text-violet-700 border-violet-300 text-[10px] dark:bg-violet-500/20 dark:text-violet-200 dark:border-violet-700 px-1.5 py-0 h-4 shrink-0">
               {invitation.item_type === 'recipe'
                 ? t('invitations.badge.recipe')
                 : invitation.item_type === 'saved_meal'
@@ -238,7 +238,7 @@ function SentInvitationCard({ invitation }: { invitation: SentShareInvitation })
         size="sm"
         onClick={handleCancel}
         disabled={isCancelling}
-        className="shrink-0 text-red-500 hover:text-red-700 hover:bg-red-50 gap-1"
+        className="shrink-0 text-red-500 hover:text-red-700 hover:bg-red-50 gap-1 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-900/25"
       >
         {isCancelling ? <Loader2 className="h-3 w-3 animate-spin" /> : <X className="h-3 w-3" />}
         {t('invitations.action.cancel')}

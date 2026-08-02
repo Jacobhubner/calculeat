@@ -217,13 +217,13 @@ function MiniInvitationCard({ invitation }: { invitation: PendingInvitation }) {
   return (
     <div className="rounded-lg border border-neutral-100 p-3 space-y-2 bg-white dark:bg-neutral-850">
       <div className="flex items-start gap-2">
-        <div className="p-1.5 rounded bg-violet-50 shrink-0">{itemIcon}</div>
+        <div className="p-1.5 rounded bg-violet-50 shrink-0 dark:bg-violet-500/20">{itemIcon}</div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5">
             <p className="text-sm font-medium text-neutral-900 truncate dark:text-neutral-100">
               {invitation.item_name}
             </p>
-            <Badge className="text-[9px] px-1 py-0 h-3.5 bg-violet-100 text-violet-700 border-violet-200 shrink-0">
+            <Badge className="text-[9px] px-1 py-0 h-3.5 bg-violet-100 text-violet-700 border-violet-200 shrink-0 dark:bg-violet-500/20 dark:text-violet-200 dark:border-violet-700">
               {typeLabel}
             </Badge>
           </div>
@@ -493,7 +493,7 @@ function SentShareCard({ invitation }: { invitation: SentShareInvitation }) {
         variant="ghost"
         onClick={handleCancel}
         disabled={isCancelling}
-        className="h-7 text-xs text-red-500 hover:text-red-700 hover:bg-red-50 shrink-0 gap-1"
+        className="h-7 text-xs text-red-500 hover:text-red-700 hover:bg-red-50 shrink-0 gap-1 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-900/25"
       >
         {isCancelling ? <Loader2 className="h-3 w-3 animate-spin" /> : <X className="h-3 w-3" />}
         {t('invitations.action.cancel')}
@@ -541,7 +541,7 @@ function SentAdminInvitationCard({ invitation }: { invitation: SentAdminInvitati
         variant="ghost"
         onClick={handleCancel}
         disabled={isCancelling}
-        className="h-7 text-xs text-red-500 hover:text-red-700 hover:bg-red-50 shrink-0 gap-1"
+        className="h-7 text-xs text-red-500 hover:text-red-700 hover:bg-red-50 shrink-0 gap-1 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-900/25"
       >
         {isCancelling ? <Loader2 className="h-3 w-3 animate-spin" /> : <X className="h-3 w-3" />}
         {t('invitations.action.cancel')}
@@ -1027,7 +1027,7 @@ function MessageBubble({
               setMenuOpen(v => !v)
               setConfirmDelete(false)
             }}
-            className={`absolute -top-2 ${isOwn ? '-left-6' : '-right-6'} opacity-0 group-hover:opacity-100 p-1 rounded-full bg-white shadow border border-neutral-100 text-neutral-400 hover:text-neutral-700 transition-all z-10`}
+            className={`absolute -top-2 ${isOwn ? '-left-6' : '-right-6'} opacity-0 group-hover:opacity-100 p-1 rounded-full bg-white shadow border border-neutral-100 text-neutral-400 hover:text-neutral-700 transition-all z-10 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-100`}
           >
             <MoreHorizontal className="h-3 w-3" />
           </button>
@@ -1035,7 +1035,7 @@ function MessageBubble({
 
         {menuOpen && (
           <div
-            className={`absolute top-0 ${isOwn ? 'right-full mr-1' : 'left-full ml-1'} z-50 bg-white rounded-lg shadow-lg border border-neutral-100 py-1 min-w-[130px]`}
+            className={`absolute top-0 ${isOwn ? 'right-full mr-1' : 'left-full ml-1'} z-50 bg-white rounded-lg shadow-lg border border-neutral-100 py-1 min-w-[130px] dark:bg-neutral-800 dark:border-neutral-700 dark:shadow-black/40`}
           >
             {!confirmDelete ? (
               <>

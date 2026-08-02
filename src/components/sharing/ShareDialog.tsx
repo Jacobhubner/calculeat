@@ -228,7 +228,7 @@ export function ShareDialog({
                         key={friend.friendship_id}
                         type="button"
                         onClick={() => handleFriendSelect(friend)}
-                        className="w-full flex items-center gap-3 p-2.5 rounded-lg hover:bg-primary-50 transition-colors text-left"
+                        className="w-full flex items-center gap-3 p-2.5 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/25 transition-colors text-left"
                       >
                         <div className="h-8 w-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 text-xs font-semibold shrink-0 dark:bg-primary-900/25 dark:text-primary-300">
                           {getInitials(friend.alias ?? friend.friend_name)}
@@ -321,7 +321,7 @@ export function ShareDialog({
                         key={item.id}
                         type="button"
                         onClick={() => handleItemSelect(item.id, item.name)}
-                        className="w-full flex items-center justify-between p-2.5 rounded-lg hover:bg-primary-50 transition-colors text-left"
+                        className="w-full flex items-center justify-between p-2.5 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/25 transition-colors text-left"
                       >
                         <span className="text-sm font-medium text-neutral-900 truncate dark:text-neutral-100">
                           {item.name}
@@ -359,7 +359,7 @@ export function ShareDialog({
                         key={recipe.id}
                         type="button"
                         onClick={() => handleItemSelect(recipe.id, recipe.name)}
-                        className="w-full flex items-center justify-between p-2.5 rounded-lg hover:bg-primary-50 transition-colors text-left"
+                        className="w-full flex items-center justify-between p-2.5 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/25 transition-colors text-left"
                       >
                         <span className="text-sm font-medium text-neutral-900 truncate dark:text-neutral-100">
                           {recipe.name}
@@ -397,7 +397,7 @@ export function ShareDialog({
                         key={meal.id}
                         type="button"
                         onClick={() => handleItemSelect(meal.id, meal.name)}
-                        className="w-full flex items-center justify-between p-2.5 rounded-lg hover:bg-primary-50 transition-colors text-left"
+                        className="w-full flex items-center justify-between p-2.5 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/25 transition-colors text-left"
                       >
                         <span className="text-sm font-medium text-neutral-900 truncate dark:text-neutral-100">
                           {meal.name}

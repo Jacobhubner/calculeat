@@ -50,7 +50,7 @@ const AVATAR_COLORS = [
   'bg-green-100 text-green-700 dark:bg-green-900/25 dark:text-green-300',
   'bg-purple-100 text-purple-700 dark:bg-purple-900/25 dark:text-purple-300',
   'bg-orange-100 text-orange-700 dark:bg-orange-900/25 dark:text-orange-300',
-  'bg-pink-100 text-pink-700',
+  'bg-pink-100 text-pink-700 dark:bg-pink-900/25 dark:text-pink-300',
   'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/25 dark:text-yellow-300',
 ]
 
