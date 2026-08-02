@@ -31,6 +31,9 @@ import { IngredientRow, type IngredientData } from './IngredientRow'
 import { NutritionSummary } from './NutritionSummary'
 import { RecipeImageUpload } from './RecipeImageUpload'
 import { AddFoodItemModal } from '@/components/food/AddFoodItemModal'
+import { CopyToCalculeatPrompt } from '@/components/food/CopyToCalculeatPrompt'
+import { useIsAdmin } from '@/hooks/useIsAdmin'
+import { useAuth } from '@/contexts/AuthContext'
 import { AddFoodToMealModal } from '@/components/daily/AddFoodToMealModal'
 import {
   EQUIPMENT_OPTIONS,
@@ -227,6 +230,12 @@ export function RecipeCalculatorModal({
   sharedListId,
 }: RecipeCalculatorModalProps) {
   const { t } = useTranslation('recipes')
+  const { data: isAdmin = false } = useIsAdmin()
+  const { isPreviewMode } = useAuth()
+  // Admin som skapar ett livsmedel härifrån ska få samma kopieringsfråga som
+  // i dagboken och på livsmedelssidan — annars beror det på var man råkar
+  // befinna sig om ett nytt livsmedel hamnar i den globala listan.
+  const [copyPrompt, setCopyPrompt] = useState<FoodItem | null>(null)
   const [, startTransition] = useTransition()
   const [name, setName] = useState('')
   const [servings, setServings] = useState<number | ''>(1)
@@ -1062,10 +1071,16 @@ export function RecipeCalculatorModal({
         onSuccess={newFood => {
           if (newFood && addFoodIngredientId) {
             handleFoodSelectForIngredient(addFoodIngredientId, newFood)
+            if (isAdmin && !isPreviewMode && newFood.id && newFood.user_id !== null) {
+              setCopyPrompt(newFood)
+            }
           }
           setAddFoodIngredientId(null)
         }}
       />
+
+      {/* Admin: fråga om nyskapat livsmedel även ska kopieras till Calculeat-listan */}
+      <CopyToCalculeatPrompt item={copyPrompt} onClose={() => setCopyPrompt(null)} />
     </>
   )
 }

@@ -310,15 +310,7 @@
       "blog": "Blogg",
       "careers": "Karriär",
       "contact": "Kontakt",
-      "privacy": "Integritetspolicy",
-      "terms": "Användarvillkor",
       "cookies": "Cookies"
-    },
-    "newsletter": {
-      "title": "Håll dig uppdaterad",
-      "description": "Få de senaste tipsen om näring, träning och hälsa direkt i din inkorg.",
-      "placeholder": "Din e-postadress",
-      "button": "Prenumerera"
     },
     "copyright": "© {{year}} Calculeat. Alla rättigheter förbehållna.",
     "madeWith": "Gjord med",

@@ -147,28 +147,6 @@ export default function SiteFooter() {
           ))}
         </div>
 
-        {/* Newsletter Section */}
-        <div className="mt-12 rounded-2xl bg-gradient-to-br from-primary-50 to-accent-50 p-8 dark:from-primary-900/30 dark:to-accent-900/20">
-          <div className="max-w-xl">
-            <h3 className="text-lg font-semibold text-neutral-900 mb-2 dark:text-neutral-100">
-              {t('footer.newsletter.title')}
-            </h3>
-            <p className="text-sm text-neutral-600 mb-4 dark:text-neutral-400">
-              {t('footer.newsletter.description')}
-            </p>
-            <div className="flex gap-2">
-              <input
-                type="email"
-                placeholder={t('footer.newsletter.placeholder')}
-                className="flex-1 h-11 rounded-xl border border-neutral-300 bg-white px-4 text-base md:text-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:border-neutral-600 dark:bg-neutral-850"
-              />
-              <button className="h-11 px-6 rounded-xl bg-primary-600 text-white text-sm font-medium hover:bg-primary-700 transition-colors">
-                {t('footer.newsletter.button')}
-              </button>
-            </div>
-          </div>
-        </div>
-
         <Separator className="my-8" />
 
         {/* Bottom Bar */}
