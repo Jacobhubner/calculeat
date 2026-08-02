@@ -8,11 +8,11 @@
  */
 
 export interface METCalculationResult {
-  calories: number;
-  met: number;
-  durationMinutes: number;
-  weightKg: number;
-  activity: string;
+  calories: number
+  met: number
+  durationMinutes: number
+  weightKg: number
+  activity: string
 }
 
 /**
@@ -30,17 +30,17 @@ export function calculateCaloriesBurned(
 ): number {
   // Validate inputs to prevent invalid calculations
   if (met < 0 || weightKg <= 0 || durationMinutes < 0) {
-    return 0;
+    return 0
   }
 
   // MET values are typically between 0.9 (sleeping) and 23 (running very fast)
   // Warn if unrealistic but don't fail
   if (met > 25) {
-    console.warn(`Unusually high MET value: ${met}`);
+    console.warn(`Unusually high MET value: ${met}`)
   }
 
-  const durationHours = durationMinutes / 60;
-  return met * weightKg * durationHours;
+  const durationHours = durationMinutes / 60
+  return met * weightKg * durationHours
 }
 
 /**
@@ -58,11 +58,11 @@ export function calculateTimeRequired(
 ): number {
   // Validate inputs to prevent division by zero or invalid calculations
   if (targetCalories <= 0 || met <= 0 || weightKg <= 0) {
-    return 0;
+    return 0
   }
 
-  const hoursRequired = targetCalories / (met * weightKg);
-  return hoursRequired * 60;
+  const hoursRequired = targetCalories / (met * weightKg)
+  return hoursRequired * 60
 }
 
 /**
@@ -86,7 +86,7 @@ export function compareActivities(
       durationMinutes,
       calories: calculateCaloriesBurned(activity.met, weightKg, durationMinutes),
     }))
-    .sort((a, b) => b.calories - a.calories);
+    .sort((a, b) => b.calories - a.calories)
 }
 
 /**
@@ -100,18 +100,18 @@ export function calculateAverageMET(
 ): number {
   // Validate input array
   if (!activities || activities.length === 0) {
-    return 0;
+    return 0
   }
 
-  const totalMinutes = activities.reduce((sum, a) => sum + a.durationMinutes, 0);
-  const weightedSum = activities.reduce((sum, a) => sum + a.met * a.durationMinutes, 0);
+  const totalMinutes = activities.reduce((sum, a) => sum + a.durationMinutes, 0)
+  const weightedSum = activities.reduce((sum, a) => sum + a.met * a.durationMinutes, 0)
 
   // Prevent division by zero
   if (totalMinutes === 0) {
-    return 0;
+    return 0
   }
 
-  return weightedSum / totalMinutes;
+  return weightedSum / totalMinutes
 }
 
 /**
@@ -119,20 +119,43 @@ export function calculateAverageMET(
  * Uppdaterad för svenska intensitetsnivåer
  */
 export function getIntensityLevel(met: number): {
-  level: 'sittande' | 'lätt' | 'måttlig' | 'hög' | 'mycket hög';
-  label: string;
-  color: string;
+  level: 'sittande' | 'lätt' | 'måttlig' | 'hög' | 'mycket hög'
+  label: string
+  color: string
 } {
+  // Skalan går grå → blå → grön → orange → röd. Dark-varianterna använder
+  // mättad ton på låg opacitet; utan dem faller alla fem tillbaka på
+  // badge-komponentens standardyta och blir omöjliga att skilja åt.
   if (met < 1.6) {
-    return { level: 'sittande', label: 'Sittande', color: 'bg-gray-100 text-gray-700' };
+    return {
+      level: 'sittande',
+      label: 'Sittande',
+      color: 'bg-gray-100 text-gray-700 dark:bg-neutral-700 dark:text-neutral-200',
+    }
   } else if (met < 3.0) {
-    return { level: 'lätt', label: 'Lätt', color: 'bg-blue-100 text-blue-700' };
+    return {
+      level: 'lätt',
+      label: 'Lätt',
+      color: 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-200',
+    }
   } else if (met < 6.0) {
-    return { level: 'måttlig', label: 'Måttlig', color: 'bg-green-100 text-green-700' };
+    return {
+      level: 'måttlig',
+      label: 'Måttlig',
+      color: 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-200',
+    }
   } else if (met < 9.0) {
-    return { level: 'hög', label: 'Hög', color: 'bg-orange-100 text-orange-700' };
+    return {
+      level: 'hög',
+      label: 'Hög',
+      color: 'bg-orange-100 text-orange-700 dark:bg-orange-500/20 dark:text-orange-200',
+    }
   } else {
-    return { level: 'mycket hög', label: 'Mycket hög', color: 'bg-red-100 text-red-700' };
+    return {
+      level: 'mycket hög',
+      label: 'Mycket hög',
+      color: 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-200',
+    }
   }
 }
 
@@ -149,9 +172,9 @@ export function calculateDailyEnergyExpenditure(
   weightKg: number,
   bmr: number
 ): {
-  activitiesCalories: number;
-  totalCalories: number;
-  pal: number; // Physical Activity Level
+  activitiesCalories: number
+  totalCalories: number
+  pal: number // Physical Activity Level
 } {
   // Validate inputs
   if (weightKg <= 0 || bmr <= 0) {
@@ -159,19 +182,19 @@ export function calculateDailyEnergyExpenditure(
       activitiesCalories: 0,
       totalCalories: 0,
       pal: 1.0, // Default PAL for sedentary
-    };
+    }
   }
 
   const activitiesCalories = activities.reduce((sum, activity) => {
-    return sum + calculateCaloriesBurned(activity.met, weightKg, activity.durationMinutes);
-  }, 0);
+    return sum + calculateCaloriesBurned(activity.met, weightKg, activity.durationMinutes)
+  }, 0)
 
-  const totalCalories = bmr + activitiesCalories;
-  const pal = totalCalories / bmr;
+  const totalCalories = bmr + activitiesCalories
+  const pal = totalCalories / bmr
 
   return {
     activitiesCalories,
     totalCalories,
     pal,
-  };
+  }
 }

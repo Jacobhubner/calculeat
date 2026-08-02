@@ -17,7 +17,8 @@ export const DATA_SOURCES: DataSourceConfig[] = [
     id: 'livsmedelsverket',
     tabKey: 'slv',
     labelKey: 'tabs.slv',
-    badgeClass: 'bg-yellow-100 text-yellow-700 border-yellow-400',
+    badgeClass:
+      'bg-yellow-100 text-yellow-700 border-yellow-400 dark:bg-yellow-500/20 dark:text-yellow-200 dark:border-yellow-600',
     primaryLocales: ['sv'],
     defaultQualityScore: 100,
     isVerified: true,
@@ -28,7 +29,8 @@ export const DATA_SOURCES: DataSourceConfig[] = [
     id: 'usda',
     tabKey: 'usda',
     labelKey: 'tabs.usda',
-    badgeClass: 'bg-blue-100 text-blue-700 border-blue-400',
+    badgeClass:
+      'bg-blue-100 text-blue-700 border-blue-400 dark:bg-blue-500/20 dark:text-blue-200 dark:border-blue-600',
     primaryLocales: ['en'],
     defaultQualityScore: 90,
     isVerified: true,
