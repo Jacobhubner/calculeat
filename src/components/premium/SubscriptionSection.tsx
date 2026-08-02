@@ -22,8 +22,11 @@ export function SubscriptionSection() {
   const [loading, setLoading] = useState(false)
 
   if (plan === 'free') {
+    // amber-900/orange-900 är mörkbruna — mot den mörkgröna sidbottnen blev
+    // kortet grumligt snarare än guldigt. Mättad ton på låg opacitet behåller
+    // premiumkänslan.
     return (
-      <Card className="border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/30 dark:to-orange-900/20">
+      <Card className="border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50 dark:border-amber-700/60 dark:from-amber-500/15 dark:to-orange-500/10">
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-amber-500" aria-hidden="true" />
@@ -31,7 +34,9 @@ export function SubscriptionSection() {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          <p className="text-sm text-neutral-700">{t('subscription.freeText')}</p>
+          <p className="text-sm text-neutral-700 dark:text-neutral-300">
+            {t('subscription.freeText')}
+          </p>
           <Button onClick={() => openUpgradeModal()} className="gap-2">
             <Sparkles className="h-4 w-4" aria-hidden="true" />
             {t('subscription.upgradeCta')}

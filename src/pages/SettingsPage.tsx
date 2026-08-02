@@ -313,7 +313,12 @@ export default function SettingsPage() {
       navigate('/', { replace: true })
     } catch (error) {
       console.error('Delete account error:', error)
-      toast.error(t('settings.deleteError'))
+      // Edge-funktionen namnger steget som brast. Utan det blir ett misslyckat
+      // kontoborttag omöjligt att felsöka utan devtools.
+      const detail = error instanceof Error ? error.message : ''
+      toast.error(t('settings.deleteError'), {
+        description: detail || undefined,
+      })
     } finally {
       setIsDeleting(false)
     }

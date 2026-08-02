@@ -1357,7 +1357,7 @@ function ResultCard({
                   return 'from-blue-50 to-blue-100 border-blue-300 dark:from-blue-900/25 dark:to-blue-900/40 dark:border-blue-800'
                 if (bf <= 20)
                   return 'from-yellow-50 to-yellow-100 border-yellow-300 dark:from-yellow-900/25 dark:to-yellow-900/40 dark:border-yellow-800'
-                return 'from-orange-50 to-orange-100 border-orange-300 dark:from-orange-900/25 dark:to-orange-900/40 dark:border-orange-800'
+                return 'from-orange-50 to-orange-100 border-orange-300 dark:from-orange-500/15 dark:to-orange-500/10 dark:border-orange-700/60'
               }
 
               return (

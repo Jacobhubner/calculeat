@@ -117,7 +117,7 @@ export default function CalculationResults({
 
       {/* Time to Goal Card */}
       {timeToGoal && profile.target_weight_kg && (
-        <Card className="bg-gradient-to-br from-amber-50 to-amber-100 border-2 border-amber-300 dark:from-amber-900/30 dark:to-amber-900/20">
+        <Card className="bg-gradient-to-br from-amber-50 to-amber-100 border-2 border-amber-300 dark:from-amber-500/15 dark:to-amber-500/10 dark:border-amber-700/60">
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">🎯 Tid till målvikt</CardTitle>
           </CardHeader>

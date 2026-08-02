@@ -118,7 +118,7 @@ export function EnergyDensityInfoCards() {
         liquidItemsKey="infoCards.orange.liquidItems"
         soupItemsKey="infoCards.orange.soupItems"
         tipKey="infoCards.orange.tip"
-        gradient="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/25 dark:to-orange-900/40"
+        gradient="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-500/15 dark:to-orange-500/10"
         border="border-orange-200 dark:border-orange-800"
       />
     </div>
