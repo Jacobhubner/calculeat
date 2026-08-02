@@ -63,8 +63,8 @@ export function TDEEScenarioCard({ bmr, tdee }: Props) {
               key={labelKey}
               className={`flex flex-col gap-1.5 rounded-xl border ${borderClass} ${bgClass} px-3 py-3`}
             >
-              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
               <p className="text-xs leading-snug text-neutral-500 dark:text-neutral-400">
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                 {t(labelKey as any)}
               </p>
               <p className={`text-lg font-bold leading-none ${textClass}`}>
@@ -72,8 +72,8 @@ export function TDEEScenarioCard({ bmr, tdee }: Props) {
                 <span className="ml-0.5 text-xs font-medium">kcal</span>
               </p>
               {d === 0 && atMaxKey && (
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 <p className="text-xs text-neutral-400 dark:text-neutral-400">
+                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                   {t(atMaxKey as any)}
                 </p>
               )}

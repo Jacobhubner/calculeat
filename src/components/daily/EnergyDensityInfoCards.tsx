@@ -45,8 +45,8 @@ function ColorCard({
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3 text-xs text-neutral-600 dark:text-neutral-400">
-        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
         <p className="text-sm text-neutral-700 font-medium dark:text-neutral-200">
+          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
           {t(subtitleKey as any)}
         </p>
         {[
@@ -55,8 +55,8 @@ function ColorCard({
           { labelKey: soupLabelKey, itemsKey: soupItemsKey },
         ].map(({ labelKey, itemsKey }) => (
           <div key={labelKey}>
-            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
             <p className="font-semibold text-neutral-700 mb-1 dark:text-neutral-200">
+              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
               {t(labelKey as any)}
             </p>
             <ul className="space-y-0.5 pl-2">
@@ -90,7 +90,7 @@ export function EnergyDensityInfoCards() {
         liquidItemsKey="infoCards.green.liquidItems"
         soupItemsKey="infoCards.green.soupItems"
         tipKey="infoCards.green.tip"
-        gradient="bg-gradient-to-br from-green-50 to-green-100"
+        gradient="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/25 dark:to-green-900/40"
         border="border-green-200 dark:border-green-800"
       />
       <ColorCard
@@ -104,7 +104,7 @@ export function EnergyDensityInfoCards() {
         liquidItemsKey="infoCards.yellow.liquidItems"
         soupItemsKey="infoCards.yellow.soupItems"
         tipKey="infoCards.yellow.tip"
-        gradient="bg-gradient-to-br from-yellow-50 to-yellow-100"
+        gradient="bg-gradient-to-br from-yellow-50 to-yellow-100 dark:from-yellow-900/25 dark:to-yellow-900/40"
         border="border-yellow-200 dark:border-yellow-800"
       />
       <ColorCard
@@ -118,7 +118,7 @@ export function EnergyDensityInfoCards() {
         liquidItemsKey="infoCards.orange.liquidItems"
         soupItemsKey="infoCards.orange.soupItems"
         tipKey="infoCards.orange.tip"
-        gradient="bg-gradient-to-br from-orange-50 to-orange-100"
+        gradient="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/25 dark:to-orange-900/40"
         border="border-orange-200 dark:border-orange-800"
       />
     </div>

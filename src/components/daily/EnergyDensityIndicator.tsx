@@ -89,16 +89,15 @@ export function EnergyDensityIndicator({
             sizeClasses[size].bar
           )}
         >
-          {/* Cyan zone: 0-0.5 (16.7%) */}
-          <div className="bg-cyan-200" style={{ width: '16.7%' }} />
-          {/* Green zone: 0.5-1.0 (16.7%) */}
-          <div className="bg-green-200" style={{ width: '16.7%' }} />
-          {/* Yellow zone: 1.0-2.0 (33.3%) */}
-          <div className="bg-yellow-200" style={{ width: '33.3%' }} />
-          {/* Orange zone: 2.0-2.5 (16.7%) */}
-          <div className="bg-orange-200" style={{ width: '16.6%' }} />
-          {/* Red zone: 2.5-3.0 (16.7%) */}
-          <div className="bg-red-200" style={{ width: '16.7%' }} />
+          {/* Skalans zoner. I ljust läge räcker pastelltoner (-200), men mot
+              mörk botten blir de bländande band. Mörkt läge använder därför
+              mättade toner på låg opacitet: samma kulör, men som underlag
+              i stället för som ljuskälla. */}
+          <div className="bg-cyan-200 dark:bg-cyan-500/30" style={{ width: '16.7%' }} />
+          <div className="bg-green-200 dark:bg-green-500/30" style={{ width: '16.7%' }} />
+          <div className="bg-yellow-200 dark:bg-yellow-500/30" style={{ width: '33.3%' }} />
+          <div className="bg-orange-200 dark:bg-orange-500/30" style={{ width: '16.6%' }} />
+          <div className="bg-red-200 dark:bg-red-500/30" style={{ width: '16.7%' }} />
         </div>
 
         {/* Current value indicator */}
