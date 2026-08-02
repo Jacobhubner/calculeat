@@ -23,7 +23,7 @@ export function SubscriptionSection() {
 
   if (plan === 'free') {
     return (
-      <Card className="border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50">
+      <Card className="border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/30 dark:to-orange-900/20">
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-amber-500" aria-hidden="true" />

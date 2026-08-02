@@ -78,7 +78,7 @@ export function NutritionSummary({
     totalMacroCalories > 0 ? ((displayValues.fat * 9) / totalMacroCalories) * 100 : 0
 
   return (
-    <div className="bg-gradient-to-br from-primary-50 to-accent-50 rounded-xl p-4 md:p-6 space-y-4 md:space-y-6">
+    <div className="bg-gradient-to-br from-primary-50 to-accent-50 rounded-xl p-4 md:p-6 space-y-4 md:space-y-6 dark:from-primary-900/30 dark:to-accent-900/20">
       {/* Sparas som - main highlighted section */}
       <div className="bg-white/80 rounded-xl p-4 border-2 border-primary-200 dark:border-primary-800">
         <h4 className="text-sm font-semibold text-primary-700 mb-3 uppercase tracking-wide flex items-center gap-2 dark:text-primary-300">

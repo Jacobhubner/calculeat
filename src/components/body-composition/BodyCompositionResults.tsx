@@ -28,7 +28,7 @@ export default function BodyCompositionResults({
     <div className="space-y-4">
       {/* Body Density Card - Only for density-based methods */}
       {bodyDensity && (
-        <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-300">
+        <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-300 dark:from-blue-900/30 dark:to-blue-900/20">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Droplet className="h-5 w-5 text-blue-600" />
@@ -38,14 +38,16 @@ export default function BodyCompositionResults({
           <CardContent>
             <div className="text-3xl font-bold text-blue-700">{bodyDensity.toFixed(4)}</div>
             <p className="text-sm text-blue-600 mt-1">
-              {t('results.densityUnit', { method: conversionMethod === 'siri' ? 'Siri' : 'Brozek' })}
+              {t('results.densityUnit', {
+                method: conversionMethod === 'siri' ? 'Siri' : 'Brozek',
+              })}
             </p>
           </CardContent>
         </Card>
       )}
 
       {/* Body Fat % Card */}
-      <Card className="bg-gradient-to-br from-primary-50 to-accent-50 border-2 border-primary-300">
+      <Card className="bg-gradient-to-br from-primary-50 to-accent-50 border-2 border-primary-300 dark:from-primary-900/30 dark:to-accent-900/20">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Gauge className="h-5 w-5 text-primary-600" />
@@ -64,7 +66,9 @@ export default function BodyCompositionResults({
           >
             {bodyFatPercentage.toFixed(1)}%
           </div>
-          <p className="text-sm text-neutral-600 mt-2">{t('results.method', { method: selectedMethod })}</p>
+          <p className="text-sm text-neutral-600 mt-2">
+            {t('results.method', { method: selectedMethod })}
+          </p>
           {isEstimatedBMR && selectedMethod === 'Reversed Cunningham equation' && (
             <p className="text-xs text-amber-700 mt-1 bg-amber-50 p-2 rounded border border-amber-200">
               ℹ️ {t('results.estimatedRMR')}

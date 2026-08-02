@@ -55,7 +55,7 @@ export default function BodyFatGoalCalculation({
   }
 
   return (
-    <div className="mt-4 p-4 bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-xl">
+    <div className="mt-4 p-4 bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-xl dark:from-blue-900/30 dark:to-cyan-900/20">
       <h4 className="font-semibold text-neutral-800 mb-3 flex items-center gap-2">
         <span className="text-lg">🎯</span>
         Kroppsfettmål Beräkning

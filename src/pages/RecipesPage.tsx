@@ -476,7 +476,7 @@ export default function RecipesPage() {
 
       {/* Önska recept — endast Upptäck-fliken */}
       {tab === 'discover' && (
-        <Card className="mt-8 bg-gradient-to-br from-primary-50 to-accent-50 border-primary-200 dark:border-primary-800">
+        <Card className="mt-8 bg-gradient-to-br from-primary-50 to-accent-50 border-primary-200 dark:from-primary-900/30 dark:to-accent-900/20 dark:border-primary-800">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
               <Lightbulb className="h-5 w-5 text-primary-600 dark:text-primary-300" />
@@ -563,7 +563,7 @@ export default function RecipesPage() {
 
       {/* Info Card — endast Mina recept */}
       {tab === 'mine' && (
-        <Card className="mt-8 bg-gradient-to-br from-accent-50 to-primary-50 border-primary-200 dark:border-primary-800">
+        <Card className="mt-8 bg-gradient-to-br from-accent-50 to-primary-50 border-primary-200 dark:from-accent-900/25 dark:to-primary-900/25 dark:border-primary-800">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <BookOpen className="h-5 w-5" />

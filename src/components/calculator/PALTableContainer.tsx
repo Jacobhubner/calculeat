@@ -84,7 +84,7 @@ export default function PALTableContainer({
   }
 
   return (
-    <Card className="bg-gradient-to-br from-primary-50 to-accent-50 border-2 border-primary-200">
+    <Card className="bg-gradient-to-br from-primary-50 to-accent-50 border-2 border-primary-200 dark:from-primary-900/30 dark:to-accent-900/20">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-base">
           📊 {palSystemName(system)}

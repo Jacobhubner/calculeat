@@ -23,7 +23,7 @@ export default function InfoCardWithModal({
 
   return (
     <>
-      <Card className="bg-gradient-to-br from-primary-50 to-accent-50 p-4">
+      <Card className="bg-gradient-to-br from-primary-50 to-accent-50 p-4 dark:from-primary-900/30 dark:to-accent-900/20">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-semibold text-neutral-900">{title}</h3>
           <button

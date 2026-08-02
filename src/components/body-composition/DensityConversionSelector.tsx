@@ -20,7 +20,7 @@ export default function DensityConversionSelector({
 
   return (
     <>
-      <Card className="bg-gradient-to-br from-accent-50 to-primary-50">
+      <Card className="bg-gradient-to-br from-accent-50 to-primary-50 dark:from-accent-900/30 dark:to-primary-900/20">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <FlaskConical className="h-5 w-5 text-primary-600" />
@@ -67,7 +67,9 @@ export default function DensityConversionSelector({
                 onClick={() => onMethodChange('brozek')}
               >
                 <span className="font-semibold">Brozek</span>
-                <span className="text-xs opacity-80">{t('densityConversion.brozekAlternative')}</span>
+                <span className="text-xs opacity-80">
+                  {t('densityConversion.brozekAlternative')}
+                </span>
               </Button>
               <button
                 type="button"

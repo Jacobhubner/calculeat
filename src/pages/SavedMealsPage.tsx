@@ -138,7 +138,7 @@ export default function SavedMealsPage() {
 
       {/* Quick Tips */}
       <div className="grid gap-6 md:grid-cols-2 mt-8">
-        <Card className="bg-gradient-to-br from-primary-50 to-accent-50 border-primary-200 dark:border-primary-800">
+        <Card className="bg-gradient-to-br from-primary-50 to-accent-50 border-primary-200 dark:border-primary-800 dark:from-primary-900/30 dark:to-accent-900/20">
           <CardHeader>
             <CardTitle className="text-lg">💡 {t('savedMeals.tipsTitle')}</CardTitle>
           </CardHeader>
@@ -150,7 +150,7 @@ export default function SavedMealsPage() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-accent-50 to-success-50 border-accent-200 dark:border-accent-800">
+        <Card className="bg-gradient-to-br from-accent-50 to-success-50 border-accent-200 dark:border-accent-800 dark:from-accent-900/30 dark:to-success-900/20">
           <CardHeader>
             <CardTitle className="text-lg">📋 {t('savedMeals.differenceTitle')}</CardTitle>
           </CardHeader>

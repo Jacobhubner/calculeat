@@ -20,7 +20,7 @@ export default function CalculationResults({
 }: CalculationResultsProps) {
   if (!profile) {
     return (
-      <Card className="bg-gradient-to-br from-neutral-50 to-neutral-100">
+      <Card className="bg-gradient-to-br from-neutral-50 to-neutral-100 dark:from-neutral-900 dark:to-neutral-900">
         <CardContent className="py-8 text-center">
           <p className="text-neutral-500">Fyll i dina uppgifter för att se beräkningar</p>
         </CardContent>
@@ -68,7 +68,7 @@ export default function CalculationResults({
   return (
     <div className="space-y-4">
       {/* BMR Card */}
-      <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-2 border-purple-300">
+      <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-2 border-purple-300 dark:from-purple-900/30 dark:to-purple-900/20">
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2">
             🔥 Basalomsättning (BMR)
@@ -81,7 +81,7 @@ export default function CalculationResults({
       </Card>
 
       {/* TDEE Card */}
-      <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-300">
+      <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-300 dark:from-blue-900/30 dark:to-blue-900/20">
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2">
             ⚡ Totalt energibehov (TDEE)
@@ -94,7 +94,7 @@ export default function CalculationResults({
       </Card>
 
       {/* Calorie Goal Card */}
-      <Card className="bg-gradient-to-br from-primary-50 to-accent-50 border-2 border-primary-300">
+      <Card className="bg-gradient-to-br from-primary-50 to-accent-50 border-2 border-primary-300 dark:from-primary-900/30 dark:to-accent-900/20">
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2">
             {getGoalIcon()}
@@ -117,7 +117,7 @@ export default function CalculationResults({
 
       {/* Time to Goal Card */}
       {timeToGoal && profile.target_weight_kg && (
-        <Card className="bg-gradient-to-br from-amber-50 to-amber-100 border-2 border-amber-300">
+        <Card className="bg-gradient-to-br from-amber-50 to-amber-100 border-2 border-amber-300 dark:from-amber-900/30 dark:to-amber-900/20">
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">🎯 Tid till målvikt</CardTitle>
           </CardHeader>
@@ -129,7 +129,7 @@ export default function CalculationResults({
       )}
 
       {/* Macros Card */}
-      <Card className="bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-300">
+      <Card className="bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-300 dark:from-green-900/30 dark:to-green-900/20">
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2">🥗 Makrofördelning</CardTitle>
         </CardHeader>

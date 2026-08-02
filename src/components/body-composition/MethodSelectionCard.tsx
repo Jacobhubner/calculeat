@@ -68,7 +68,7 @@ export default function MethodSelectionCard({
 
   return (
     <>
-      <Card className="bg-gradient-to-br from-primary-50 to-accent-50">
+      <Card className="bg-gradient-to-br from-primary-50 to-accent-50 dark:from-primary-900/30 dark:to-accent-900/20">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Calculator className="h-5 w-5 text-primary-600" />
