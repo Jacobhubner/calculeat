@@ -16,17 +16,20 @@ const COMPONENTS: Record<ComponentName, React.ComponentType> = {
 
 // Cards-färgerna i innehålls-JSON (får ej ändras där) normaliseras till
 // palettens nyanser här i renderern
+// NYCKLARNA måste matcha strängarna i innehålls-JSON ordagrant — de får
+// alltså aldrig dark:-klasser. Det är VÄRDENA som renderas och som bär
+// temat.
 const CARD_COLORS: Record<string, string> = {
-  'bg-green-50 border-green-200 dark:bg-green-900/25 dark:border-green-800':
-    'bg-primary-50/60 border-primary-200/70',
-  'bg-blue-50 border-blue-200 dark:bg-blue-900/25 dark:border-blue-800':
-    'bg-neutral-50 border-neutral-200 dark:border-neutral-700 dark:bg-neutral-900',
-  'bg-yellow-50 border-yellow-200 dark:bg-yellow-900/25 dark:border-yellow-800':
-    'bg-accent-50/60 border-accent-200/70',
-  'bg-red-50 border-red-200 dark:bg-red-900/25 dark:border-red-800':
+  'bg-green-50 border-green-200':
+    'bg-primary-50/60 border-primary-200/70 dark:bg-primary-900/25 dark:border-primary-800',
+  'bg-blue-50 border-blue-200':
+    'bg-neutral-50 border-neutral-200 dark:bg-neutral-900 dark:border-neutral-700',
+  'bg-yellow-50 border-yellow-200':
+    'bg-accent-50/60 border-accent-200/70 dark:bg-accent-900/25 dark:border-accent-800',
+  'bg-red-50 border-red-200':
     'bg-error-50 border-error-200 dark:bg-error-900/25 dark:border-error-800',
-  'bg-primary-50 border-primary-200 dark:bg-primary-900/25 dark:border-primary-800':
-    'bg-primary-50/60 border-primary-200/70',
+  'bg-primary-50 border-primary-200':
+    'bg-primary-50/60 border-primary-200/70 dark:bg-primary-900/25 dark:border-primary-800',
 }
 
 function Rich({ text }: { text: RichText }) {

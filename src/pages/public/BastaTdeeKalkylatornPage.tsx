@@ -350,7 +350,7 @@ export default function BastaTdeeKalkylatornPage() {
                     <div className="font-semibold text-neutral-800 dark:text-neutral-200">
                       {item.title}
                     </div>
-                    <div className="text-xs font-semibold text-neutral-600 bg-white/70 rounded-lg px-2 py-1 whitespace-nowrap shrink-0 dark:text-neutral-400">
+                    <div className="text-xs font-semibold text-neutral-600 bg-white/70 rounded-lg px-2 py-1 whitespace-nowrap shrink-0 dark:text-neutral-400 dark:bg-neutral-800/70">
                       {item.winner}
                     </div>
                   </div>
