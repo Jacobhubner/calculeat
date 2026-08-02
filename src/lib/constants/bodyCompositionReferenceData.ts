@@ -66,7 +66,7 @@ export const FFMI_WITH_BODY_FAT_RANGES: FFMIWithBodyFatRange[] = [
     ffmiWomen: '14–15',
     bodyFatWomen: '20–25%',
     description: 'Smal',
-    colorClass: 'bg-blue-50',
+    colorClass: 'bg-blue-50 dark:bg-blue-500/15',
   },
   {
     ffmiMen: '18–20',
@@ -74,7 +74,7 @@ export const FFMI_WITH_BODY_FAT_RANGES: FFMIWithBodyFatRange[] = [
     ffmiWomen: '14–17',
     bodyFatWomen: '22–35%',
     description: 'Medel',
-    colorClass: 'bg-yellow-50',
+    colorClass: 'bg-yellow-50 dark:bg-yellow-500/15',
   },
   {
     ffmiMen: '19–21',
@@ -82,7 +82,7 @@ export const FFMI_WITH_BODY_FAT_RANGES: FFMIWithBodyFatRange[] = [
     ffmiWomen: '15–18',
     bodyFatWomen: '30–45%',
     description: 'Överviktig',
-    colorClass: 'bg-orange-50',
+    colorClass: 'bg-orange-50 dark:bg-orange-500/15',
   },
   {
     ffmiMen: '20–21',
@@ -90,7 +90,7 @@ export const FFMI_WITH_BODY_FAT_RANGES: FFMIWithBodyFatRange[] = [
     ffmiWomen: '16–17',
     bodyFatWomen: '18–25%',
     description: 'Atlet / Medel gymmare',
-    colorClass: 'bg-green-50',
+    colorClass: 'bg-green-50 dark:bg-green-500/15',
   },
   {
     ffmiMen: '22–23',
@@ -98,7 +98,7 @@ export const FFMI_WITH_BODY_FAT_RANGES: FFMIWithBodyFatRange[] = [
     ffmiWomen: '18–20',
     bodyFatWomen: '15–22%',
     description: 'Avancerad gymmare',
-    colorClass: 'bg-green-100',
+    colorClass: 'bg-green-100 dark:bg-green-500/20',
   },
   {
     ffmiMen: '24–25',
@@ -106,7 +106,7 @@ export const FFMI_WITH_BODY_FAT_RANGES: FFMIWithBodyFatRange[] = [
     ffmiWomen: '19–21',
     bodyFatWomen: '15–30%',
     description: 'Bodybuilder / Styrkelyftare / Tyngdlyftare',
-    colorClass: 'bg-green-200',
+    colorClass: 'bg-green-200 dark:bg-green-500/25',
   },
 ]
 
@@ -118,42 +118,42 @@ export const FFMI_DESCRIPTION_CATEGORIES: FFMIDescriptionCategory[] = [
     description: 'Under medel',
     men: '< 18',
     women: '< 15',
-    colorClass: 'bg-gray-50',
+    colorClass: 'bg-gray-50 dark:bg-neutral-800/60',
   },
   {
     description: 'Medel',
     men: '18–20',
     women: '15–17',
-    colorClass: 'bg-yellow-50',
+    colorClass: 'bg-yellow-50 dark:bg-yellow-500/15',
   },
   {
     description: 'Över medel',
     men: '20–22',
     women: '17–18',
-    colorClass: 'bg-green-50',
+    colorClass: 'bg-green-50 dark:bg-green-500/15',
   },
   {
     description: 'Utmärkt',
     men: '22–23',
     women: '18–19',
-    colorClass: 'bg-green-100',
+    colorClass: 'bg-green-100 dark:bg-green-500/20',
   },
   {
     description: 'Överlägsen',
     men: '23–26',
     women: '19–21.5',
-    colorClass: 'bg-green-200',
+    colorClass: 'bg-green-200 dark:bg-green-500/25',
   },
   {
     description: 'Misstanke om steroidanvändning',
     men: '26–28',
     women: '21.5–25',
-    colorClass: 'bg-orange-100',
+    colorClass: 'bg-orange-100 dark:bg-orange-500/20',
   },
   {
     description: 'Steroidanvändning trolig',
     men: '> 28',
     women: '> 25',
-    colorClass: 'bg-red-100',
+    colorClass: 'bg-red-100 dark:bg-red-500/20',
   },
 ]

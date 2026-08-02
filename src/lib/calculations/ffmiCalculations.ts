@@ -197,7 +197,7 @@ export function calculateMaxFatMetabolism(
  */
 export function getFFMICategoryColorClass(category: string): string {
   const categoryData = FFMI_DESCRIPTION_CATEGORIES.find(c => c.description === category)
-  return categoryData?.colorClass || 'bg-gray-50'
+  return categoryData?.colorClass || 'bg-gray-50 dark:bg-neutral-900'
 }
 
 /**
@@ -208,5 +208,5 @@ export function getFFMICategoryColorClass(category: string): string {
  */
 export function getFFMIDescriptionColorClass(description: string): string {
   const descriptionData = FFMI_WITH_BODY_FAT_RANGES.find(r => r.description === description)
-  return descriptionData?.colorClass || 'bg-gray-50'
+  return descriptionData?.colorClass || 'bg-gray-50 dark:bg-neutral-900'
 }

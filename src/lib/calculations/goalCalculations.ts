@@ -177,31 +177,31 @@ export function getBodyFatCategory(
       return {
         category: 'Essentiellt fett',
         description: '2–5% — hälsorisk vid långvarigt underskott',
-        color: 'text-red-600',
+        color: 'text-red-600 dark:text-red-400',
       }
     } else if (bodyFat < 14) {
       return {
         category: 'Atlet',
         description: '6–13% — mycket låg kroppsfett',
-        color: 'text-green-600',
+        color: 'text-green-600 dark:text-green-400',
       }
     } else if (bodyFat < 18) {
       return {
         category: 'Fitness (vältränad)',
         description: '14–17% — låg kroppsfett',
-        color: 'text-blue-600',
+        color: 'text-blue-600 dark:text-blue-400',
       }
     } else if (bodyFat < 25) {
       return {
         category: 'Hälsosamt medel',
         description: '18–24% — acceptabel nivå',
-        color: 'text-yellow-600',
+        color: 'text-yellow-600 dark:text-yellow-400',
       }
     } else {
       return {
         category: 'Överviktig',
         description: '≥ 25% — förhöjd hälsorisk',
-        color: 'text-orange-600',
+        color: 'text-orange-600 dark:text-orange-400',
       }
     }
   } else {
@@ -210,31 +210,31 @@ export function getBodyFatCategory(
       return {
         category: 'Essentiellt fett',
         description: '10–13% — hälsorisk vid långvarigt underskott',
-        color: 'text-red-600',
+        color: 'text-red-600 dark:text-red-400',
       }
     } else if (bodyFat < 21) {
       return {
         category: 'Atlet',
         description: '14–20% — mycket låg kroppsfett',
-        color: 'text-green-600',
+        color: 'text-green-600 dark:text-green-400',
       }
     } else if (bodyFat < 25) {
       return {
         category: 'Fitness (vältränad)',
         description: '21–24% — låg kroppsfett',
-        color: 'text-blue-600',
+        color: 'text-blue-600 dark:text-blue-400',
       }
     } else if (bodyFat < 32) {
       return {
         category: 'Hälsosamt medel',
         description: '25–31% — acceptabel nivå',
-        color: 'text-yellow-600',
+        color: 'text-yellow-600 dark:text-yellow-400',
       }
     } else {
       return {
         category: 'Överviktig',
         description: '≥ 32% — förhöjd hälsorisk',
-        color: 'text-orange-600',
+        color: 'text-orange-600 dark:text-orange-400',
       }
     }
   }
