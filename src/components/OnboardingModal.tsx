@@ -151,7 +151,7 @@ export default function OnboardingModal({
             </AnimatePresence>
           </div>
 
-          <div className="sticky bottom-0 bg-white px-6 pb-6 pt-2 flex flex-col items-center gap-3 md:static md:pt-0">
+          <div className="sticky bottom-0 bg-white px-6 pb-6 pt-2 flex flex-col items-center gap-3 md:static md:pt-0 dark:bg-neutral-850">
             {/* Steps 0–1: single Next button */}
             {currentStep < TOTAL_STEPS - 1 && (
               <Button onClick={handleNext} className="w-full h-12 text-base rounded-2xl">
@@ -161,7 +161,7 @@ export default function OnboardingModal({
             {currentStep === 0 && (
               <button
                 onClick={handleSkip}
-                className="text-sm text-neutral-400 underline underline-offset-2 hover:text-neutral-500 transition-colors"
+                className="text-sm text-neutral-400 underline underline-offset-2 hover:text-neutral-500 transition-colors dark:text-neutral-500"
               >
                 {(t as T)('actions.skip')}
               </button>
@@ -177,7 +177,7 @@ export default function OnboardingModal({
                 </Button>
                 <button
                   onClick={handleExploreDashboard}
-                  className="text-sm text-neutral-400 underline underline-offset-2 hover:text-neutral-500 transition-colors"
+                  className="text-sm text-neutral-400 underline underline-offset-2 hover:text-neutral-500 transition-colors dark:text-neutral-500"
                 >
                   {(t as T)('step4.secondaryCta')}
                 </button>
@@ -202,18 +202,26 @@ function Step1({ t }: { t: T }) {
         <Apple className="h-9 w-9 text-white" />
       </div>
       <div>
-        <h2 className="text-2xl md:text-3xl font-bold text-neutral-900 mb-2">{t('step1.title')}</h2>
-        <p className="text-neutral-500 text-base">{t('step1.subtitle')}</p>
+        <h2 className="text-2xl md:text-3xl font-bold text-neutral-900 mb-2 dark:text-neutral-100">
+          {t('step1.title')}
+        </h2>
+        <p className="text-neutral-500 text-base dark:text-neutral-400">{t('step1.subtitle')}</p>
       </div>
       <div className="w-full flex flex-col gap-3 text-left mt-2">
-        <ValueRow icon={<Zap className="h-5 w-5 text-primary-600" />} text={t('step1.value1')} />
         <ValueRow
-          icon={<BarChart2 className="h-5 w-5 text-primary-600" />}
+          icon={<Zap className="h-5 w-5 text-primary-600 dark:text-primary-300" />}
+          text={t('step1.value1')}
+        />
+        <ValueRow
+          icon={<BarChart2 className="h-5 w-5 text-primary-600 dark:text-primary-300" />}
           text={t('step1.value2')}
         />
-        <ValueRow icon={<Check className="h-5 w-5 text-primary-600" />} text={t('step1.value3')} />
         <ValueRow
-          icon={<Scale className="h-5 w-5 text-neutral-400" />}
+          icon={<Check className="h-5 w-5 text-primary-600 dark:text-primary-300" />}
+          text={t('step1.value3')}
+        />
+        <ValueRow
+          icon={<Scale className="h-5 w-5 text-neutral-400 dark:text-neutral-500" />}
           text={t('step1.value4')}
           muted
         />
@@ -228,7 +236,7 @@ function ValueRow({ icon, text, muted }: { icon: React.ReactNode; text: string; 
       <div
         className={cn(
           'h-9 w-9 rounded-xl flex items-center justify-center shrink-0',
-          muted ? 'bg-neutral-100' : 'bg-primary-50'
+          muted ? 'bg-neutral-100 dark:bg-neutral-800' : 'bg-primary-50 dark:bg-primary-900/25'
         )}
       >
         {icon}
@@ -236,7 +244,9 @@ function ValueRow({ icon, text, muted }: { icon: React.ReactNode; text: string; 
       <span
         className={cn(
           'text-sm',
-          muted ? 'text-neutral-400 font-normal' : 'text-neutral-700 font-medium'
+          muted
+            ? 'text-neutral-400 font-normal dark:text-neutral-500'
+            : 'text-neutral-700 font-medium dark:text-neutral-200'
         )}
       >
         {text}
@@ -251,21 +261,25 @@ function TourIntro({ t }: { t: T }) {
   return (
     <div className="flex flex-col gap-5">
       <div>
-        <h2 className="text-2xl md:text-3xl font-bold text-neutral-900 mb-1">{t('tour.title')}</h2>
-        <p className="text-neutral-500 text-sm">{t('tour.subtitle')}</p>
+        <h2 className="text-2xl md:text-3xl font-bold text-neutral-900 mb-1 dark:text-neutral-100">
+          {t('tour.title')}
+        </h2>
+        <p className="text-neutral-500 text-sm dark:text-neutral-400">{t('tour.subtitle')}</p>
       </div>
       <div className="w-full flex flex-col gap-3">
         {TOUR_SECTIONS.map(s => (
           <div
             key={s.key}
-            className="flex items-start gap-3 rounded-2xl border border-neutral-100 bg-neutral-50 px-4 py-3"
+            className="flex items-start gap-3 rounded-2xl border border-neutral-100 bg-neutral-50 px-4 py-3 dark:bg-neutral-900"
           >
-            <div className="h-9 w-9 rounded-xl bg-primary-50 flex items-center justify-center shrink-0 mt-0.5">
-              <s.Icon className="h-5 w-5 text-primary-600" />
+            <div className="h-9 w-9 rounded-xl bg-primary-50 flex items-center justify-center shrink-0 mt-0.5 dark:bg-primary-900/25">
+              <s.Icon className="h-5 w-5 text-primary-600 dark:text-primary-300" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-neutral-800">{t(`tour.${s.key}.title`)}</p>
-              <p className="text-xs text-neutral-500 mt-0.5 leading-relaxed">
+              <p className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
+                {t(`tour.${s.key}.title`)}
+              </p>
+              <p className="text-xs text-neutral-500 mt-0.5 leading-relaxed dark:text-neutral-400">
                 {t(`tour.${s.key}.teaser`)}
               </p>
             </div>
@@ -295,7 +309,7 @@ function StepDone({ t, profileName }: { t: T; profileName: string | null }) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.2 }}
       >
-        <h2 className="text-2xl md:text-3xl font-bold text-neutral-900">
+        <h2 className="text-2xl md:text-3xl font-bold text-neutral-900 dark:text-neutral-100">
           {profileName
             ? (t as T)('step4.titleNamed').replace('{{name}}', profileName)
             : (t as T)('step4.title')}
@@ -305,7 +319,7 @@ function StepDone({ t, profileName }: { t: T; profileName: string | null }) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.25, delay: 0.3 }}
-        className="text-neutral-500 text-sm"
+        className="text-neutral-500 text-sm dark:text-neutral-400"
       >
         {t('step4.closing')}
       </motion.p>
@@ -435,27 +449,31 @@ function SpotlightTour({ t, onDone, onSkip }: { t: T; onDone: () => void; onSkip
   if (isMobile) {
     return createPortal(
       <div className="fixed inset-0 z-[100] bg-black/60 flex items-center justify-center p-6">
-        <div className="bg-white rounded-3xl p-6 w-full max-w-sm flex flex-col gap-5 shadow-2xl">
+        <div className="bg-white rounded-3xl p-6 w-full max-w-sm flex flex-col gap-5 shadow-2xl dark:bg-neutral-850">
           <div>
-            <h2 className="text-xl font-bold text-neutral-900 mb-1">{t('tour.title')}</h2>
-            <p className="text-sm text-neutral-500">{t('tour.subtitle')}</p>
+            <h2 className="text-xl font-bold text-neutral-900 mb-1 dark:text-neutral-100">
+              {t('tour.title')}
+            </h2>
+            <p className="text-sm text-neutral-500 dark:text-neutral-400">{t('tour.subtitle')}</p>
           </div>
           <div className="flex flex-col gap-4">
             {TOUR_SECTIONS.map(s => (
               <div key={s.key} className="flex items-start gap-3">
-                <div className="h-9 w-9 rounded-xl bg-primary-50 flex items-center justify-center shrink-0 mt-0.5">
-                  <s.Icon className="h-5 w-5 text-primary-600" />
+                <div className="h-9 w-9 rounded-xl bg-primary-50 flex items-center justify-center shrink-0 mt-0.5 dark:bg-primary-900/25">
+                  <s.Icon className="h-5 w-5 text-primary-600 dark:text-primary-300" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-neutral-800">
+                  <p className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
                     {t(`tour.${s.key}.title`)}
                   </p>
-                  <p className="text-xs text-neutral-500 mt-0.5">{t(`tour.${s.key}.desc`)}</p>
+                  <p className="text-xs text-neutral-500 mt-0.5 dark:text-neutral-400">
+                    {t(`tour.${s.key}.desc`)}
+                  </p>
                 </div>
               </div>
             ))}
           </div>
-          <p className="text-xs text-neutral-500 leading-relaxed rounded-2xl bg-neutral-50 border border-neutral-100 px-4 py-3">
+          <p className="text-xs text-neutral-500 leading-relaxed rounded-2xl bg-neutral-50 border border-neutral-100 px-4 py-3 dark:bg-neutral-900 dark:text-neutral-400">
             {t('tour.mobileHint')}
           </p>
           <button
@@ -523,18 +541,22 @@ function SpotlightTour({ t, onDone, onSkip }: { t: T; onDone: () => void; onSkip
       {/* Tooltip card */}
       <div
         style={{ position: 'fixed', zIndex: 101, ...tooltipStyle }}
-        className="bg-white rounded-2xl shadow-2xl p-5 flex flex-col gap-4"
+        className="bg-white rounded-2xl shadow-2xl p-5 flex flex-col gap-4 dark:bg-neutral-850"
       >
         {/* Icon + title */}
         <div className="flex items-center gap-3">
-          <div className="h-9 w-9 rounded-xl bg-primary-50 flex items-center justify-center shrink-0">
-            <section.Icon className="h-5 w-5 text-primary-600" />
+          <div className="h-9 w-9 rounded-xl bg-primary-50 flex items-center justify-center shrink-0 dark:bg-primary-900/25">
+            <section.Icon className="h-5 w-5 text-primary-600 dark:text-primary-300" />
           </div>
-          <p className="font-bold text-neutral-900 text-sm">{t(`tour.${section.key}.title`)}</p>
+          <p className="font-bold text-neutral-900 text-sm dark:text-neutral-100">
+            {t(`tour.${section.key}.title`)}
+          </p>
         </div>
 
         {/* Description */}
-        <p className="text-xs text-neutral-600 leading-relaxed">{t(`tour.${section.key}.desc`)}</p>
+        <p className="text-xs text-neutral-600 leading-relaxed dark:text-neutral-400">
+          {t(`tour.${section.key}.desc`)}
+        </p>
 
         {/* Dots + Next button */}
         <div className="flex items-center justify-between">
@@ -551,7 +573,7 @@ function SpotlightTour({ t, onDone, onSkip }: { t: T; onDone: () => void; onSkip
           <div className="flex items-center gap-3">
             <button
               onClick={onSkip}
-              className="text-xs text-neutral-400 hover:text-neutral-600 transition-colors"
+              className="text-xs text-neutral-400 hover:text-neutral-600 transition-colors dark:text-neutral-500"
             >
               {t('tour.skip')}
             </button>

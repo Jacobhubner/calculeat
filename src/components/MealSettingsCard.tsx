@@ -146,7 +146,7 @@ export default function MealSettingsCard({ tdee, onMealChange }: MealSettingsCar
             {meals.map((meal, index) => (
               <div
                 key={index}
-                className="p-3 border border-neutral-200 rounded-lg bg-neutral-50 space-y-2"
+                className="p-3 border border-neutral-200 rounded-lg bg-neutral-50 space-y-2 dark:border-neutral-700 dark:bg-neutral-900"
               >
                 {/* Meal Header */}
                 <div className="flex items-center gap-2">
@@ -157,10 +157,10 @@ export default function MealSettingsCard({ tdee, onMealChange }: MealSettingsCar
                         type="text"
                         value={meal.name}
                         onChange={e => handleMealNameChange(index, e.target.value)}
-                        className={`flex-1 px-2 py-1.5 text-sm rounded-lg shadow-sm bg-white ${
+                        className={`flex-1 px-2 py-1.5 text-sm rounded-lg shadow-sm bg-white dark:bg-neutral-900 dark:text-neutral-100 ${
                           isDuplicate
                             ? 'border-red-400 focus:border-red-500 focus:ring-red-500'
-                            : 'border-neutral-300 focus:border-primary-500 focus:ring-primary-500'
+                            : 'border-neutral-300 focus:border-primary-500 focus:ring-primary-500 dark:border-neutral-600'
                         }`}
                         placeholder={t('mealSettings.mealNamePlaceholder')}
                       />
@@ -171,21 +171,27 @@ export default function MealSettingsCard({ tdee, onMealChange }: MealSettingsCar
                   <button
                     onClick={() => handleRemoveMeal(index)}
                     disabled={meals.length === 1}
-                    className="p-1.5 rounded-lg bg-red-100 hover:bg-red-200 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                    title={meals.length === 1 ? t('mealSettings.removeDisabled') : t('mealSettings.remove')}
+                    className="p-1.5 rounded-lg bg-red-100 hover:bg-red-200 transition-colors disabled:opacity-40 disabled:cursor-not-allowed dark:bg-red-900/25"
+                    title={
+                      meals.length === 1
+                        ? t('mealSettings.removeDisabled')
+                        : t('mealSettings.remove')
+                    }
                   >
-                    <X className="h-3.5 w-3.5 text-red-600" />
+                    <X className="h-3.5 w-3.5 text-red-600 dark:text-red-300" />
                   </button>
                 </div>
 
                 {/* Percentage Slider */}
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-xs text-neutral-600">{t('mealSettings.percentage')}</span>
-                    <div className="text-xs font-semibold text-primary-600">
+                    <span className="text-xs text-neutral-600 dark:text-neutral-400">
+                      {t('mealSettings.percentage')}
+                    </span>
+                    <div className="text-xs font-semibold text-primary-600 dark:text-primary-300">
                       {meal.percentage}%
                       {tdee && (
-                        <span className="text-neutral-500 font-normal ml-1.5">
+                        <span className="text-neutral-500 font-normal ml-1.5 dark:text-neutral-400">
                           ({calculateCalories(meal.percentage)} kcal)
                         </span>
                       )}
@@ -217,40 +223,48 @@ export default function MealSettingsCard({ tdee, onMealChange }: MealSettingsCar
           {/* Total Summary */}
           <div
             className={`p-3 rounded-lg border ${
-              isValidTotal ? 'bg-green-50 border-green-300' : 'bg-amber-50 border-amber-300'
+              isValidTotal
+                ? 'bg-green-50 border-green-300 dark:bg-green-900/25 dark:border-green-800'
+                : 'bg-amber-50 border-amber-300 dark:bg-amber-900/25 dark:border-amber-800'
             }`}
           >
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-neutral-700">{t('mealSettings.totalDistribution')}</span>
+              <span className="text-xs font-medium text-neutral-700 dark:text-neutral-200">
+                {t('mealSettings.totalDistribution')}
+              </span>
               <div className="flex items-center gap-1.5">
                 <span
                   className={`text-base font-bold ${
-                    isValidTotal ? 'text-green-700' : 'text-amber-700'
+                    isValidTotal
+                      ? 'text-green-700 dark:text-green-300'
+                      : 'text-amber-700 dark:text-amber-300'
                   }`}
                 >
                   {totalPercentage}%
                 </span>
-                <span className="text-xs text-neutral-600">{isValidTotal ? '✓' : '⚠️'}</span>
+                <span className="text-xs text-neutral-600 dark:text-neutral-400">
+                  {isValidTotal ? '✓' : '⚠️'}
+                </span>
               </div>
             </div>
             {!isValidTotal && (
-              <p className="text-[10px] text-amber-700 mt-1.5">
+              <p className="text-[10px] text-amber-700 mt-1.5 dark:text-amber-300">
                 {t('mealSettings.totalError')}
               </p>
             )}
             {hasDuplicates && (
-              <p className="text-[10px] text-red-700 mt-1.5">
+              <p className="text-[10px] text-red-700 mt-1.5 dark:text-red-300">
                 {t('mealSettings.duplicateError')}
               </p>
             )}
           </div>
 
           {/* Info message */}
-          <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-3 space-y-1.5">
-            <p className="text-xs text-neutral-700 leading-relaxed">
+          <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-3 space-y-1.5 dark:border-neutral-700 dark:bg-neutral-900">
+            <p className="text-xs text-neutral-700 leading-relaxed dark:text-neutral-200">
               {t('mealSettings.tip')}
             </p>
-            <p className="text-xs text-neutral-500 leading-relaxed">
+            <p className="text-xs text-neutral-500 leading-relaxed dark:text-neutral-400">
               {t('mealSettings.saveHint')}
             </p>
           </div>

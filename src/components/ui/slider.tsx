@@ -29,7 +29,7 @@ const Slider = React.forwardRef<HTMLInputElement, SliderProps>(
         value={value[0] ?? 0}
         onChange={handleChange}
         className={cn(
-          'w-full h-2 bg-neutral-200 rounded-lg appearance-none cursor-pointer',
+          'w-full h-2 bg-neutral-200 dark:bg-neutral-700 rounded-lg appearance-none cursor-pointer',
           'focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2',
           '[&::-webkit-slider-thumb]:appearance-none',
           '[&::-webkit-slider-thumb]:w-5',

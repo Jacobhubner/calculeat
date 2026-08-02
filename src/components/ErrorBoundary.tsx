@@ -54,18 +54,20 @@ export default class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div className="min-h-screen flex items-center justify-center p-4 bg-neutral-50">
+        <div className="min-h-screen flex items-center justify-center p-4 bg-neutral-50 dark:bg-neutral-900">
           <Card className="max-w-md w-full p-8 text-center">
-            <div className="rounded-2xl bg-error-100 p-6 mb-6 inline-block">
-              <AlertTriangle className="h-12 w-12 text-error-600" />
+            <div className="rounded-2xl bg-error-100 p-6 mb-6 inline-block dark:bg-error-900/25">
+              <AlertTriangle className="h-12 w-12 text-error-600 dark:text-error-300" />
             </div>
-            <h1 className="text-2xl font-bold text-neutral-900 mb-2">
+            <h1 className="text-2xl font-bold text-neutral-900 mb-2 dark:text-neutral-100">
               {i18n.t('common:errorBoundary.title')}
             </h1>
-            <p className="text-neutral-600 mb-6">{i18n.t('common:errorBoundary.description')}</p>
+            <p className="text-neutral-600 mb-6 dark:text-neutral-400">
+              {i18n.t('common:errorBoundary.description')}
+            </p>
             {this.state.error && (
-              <div className="mb-6 p-4 bg-neutral-100 rounded-xl text-left">
-                <p className="text-xs font-mono text-neutral-700 break-all">
+              <div className="mb-6 p-4 bg-neutral-100 rounded-xl text-left dark:bg-neutral-800">
+                <p className="text-xs font-mono text-neutral-700 break-all dark:text-neutral-200">
                   {this.state.error.message}
                 </p>
               </div>

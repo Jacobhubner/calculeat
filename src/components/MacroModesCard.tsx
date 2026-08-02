@@ -65,21 +65,24 @@ const MODES: ModeConfig[] = [
   {
     id: 'weightloss',
     icon: TrendingDown,
-    badgeClass: 'bg-rose-50 text-rose-700 border-rose-200',
+    badgeClass:
+      'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-900/25 dark:text-rose-300 dark:border-rose-800',
     energyLabelKey: 'weightLossModerate',
     hasRef: true,
   },
   {
     id: 'active',
     icon: Activity,
-    badgeClass: 'bg-blue-50 text-blue-700 border-blue-200',
+    badgeClass:
+      'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/25 dark:text-blue-300 dark:border-blue-800',
     energyLabelKey: 'maintainWeight',
     hasRef: true,
   },
   {
     id: 'offseason',
     icon: TrendingUp,
-    badgeClass: 'bg-orange-50 text-orange-700 border-orange-200',
+    badgeClass:
+      'bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-900/25 dark:text-orange-300 dark:border-orange-800',
     energyLabelKey: 'weightGain',
     weekly: {
       labelKey: 'weeklyGain',
@@ -92,7 +95,8 @@ const MODES: ModeConfig[] = [
   {
     id: 'onseason',
     icon: TrendingDown,
-    badgeClass: 'bg-success-50 text-success-700 border-success-200',
+    badgeClass:
+      'bg-success-50 text-success-700 border-success-200 dark:bg-success-900/25 dark:text-success-300 dark:border-success-800',
     energyLabelKey: 'weightLoss',
     requiresBodyFat: true,
     weekly: {
@@ -259,7 +263,7 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
           type="button"
         >
           <CardTitle className="flex items-center gap-2 text-lg leading-snug">
-            <Target className="h-5 w-5 text-accent-600" />
+            <Target className="h-5 w-5 text-accent-600 dark:text-accent-300" />
             {t('macroModes.title')}
           </CardTitle>
           <ChevronDown
@@ -272,8 +276,10 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
       {isOpen && (
         <CardContent className="space-y-4 pt-0">
           {!canApplyAny && (
-            <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <p className="text-sm text-yellow-800">{t('macroModes.missingData')}</p>
+            <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg dark:bg-yellow-900/25 dark:border-yellow-800">
+              <p className="text-sm text-yellow-800 dark:text-yellow-300">
+                {t('macroModes.missingData')}
+              </p>
             </div>
           )}
 
@@ -299,7 +305,7 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
                         <button
                           type="button"
                           onClick={() => (locked ? setUpgradeOpen(true) : setActiveRef(mode.id))}
-                          className="text-neutral-400 hover:text-primary-600 transition-colors flex-shrink-0"
+                          className="text-neutral-400 hover:text-primary-600 transition-colors flex-shrink-0 dark:text-neutral-500"
                           aria-label={tm(`showRef`, { mode: tm(`${mode.id}Name`) })}
                         >
                           {locked ? (
@@ -328,9 +334,11 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
                           : t('macroModes.apply')}
                     </Button>
                   </div>
-                  <p className="text-sm text-neutral-600">{tm(`${mode.id}Desc`)}</p>
+                  <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                    {tm(`${mode.id}Desc`)}
+                  </p>
                   {!locked && mode.requiresBodyFat && !canApply && (
-                    <div className="text-xs text-yellow-700 bg-yellow-50 border border-yellow-200 rounded p-2">
+                    <div className="text-xs text-yellow-700 bg-yellow-50 border border-yellow-200 rounded p-2 dark:bg-yellow-900/25 dark:text-yellow-300 dark:border-yellow-800">
                       {t('macroModes.requiresBodyFatDesc')}
                     </div>
                   )}
@@ -342,29 +350,39 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
                       aria-hidden={locked || undefined}
                       onClick={locked ? () => setUpgradeOpen(true) : undefined}
                     >
-                      <div className="font-medium text-neutral-800">
-                        <span className="text-neutral-600">{t('macroModes.energyGoalLabel')}</span>{' '}
+                      <div className="font-medium text-neutral-800 dark:text-neutral-200">
+                        <span className="text-neutral-600 dark:text-neutral-400">
+                          {t('macroModes.energyGoalLabel')}
+                        </span>{' '}
                         {tm(mode.energyLabelKey)}
                       </div>
                       {mode.weekly && (
-                        <div className="text-neutral-700">
-                          <span className="text-neutral-600">{tm(mode.weekly.labelKey)}</span>{' '}
+                        <div className="text-neutral-700 dark:text-neutral-200">
+                          <span className="text-neutral-600 dark:text-neutral-400">
+                            {tm(mode.weekly.labelKey)}
+                          </span>{' '}
                           {tm(mode.weekly.valueKey, {
                             min: (weightKg * mode.weekly.minFactor).toFixed(2),
                             max: (weightKg * mode.weekly.maxFactor).toFixed(2),
                           })}
                         </div>
                       )}
-                      <div className="text-neutral-700">
-                        <span className="text-neutral-600">{t('macroModes.fatLabel')}</span>{' '}
+                      <div className="text-neutral-700 dark:text-neutral-200">
+                        <span className="text-neutral-600 dark:text-neutral-400">
+                          {t('macroModes.fatLabel')}
+                        </span>{' '}
                         {tm(`${mode.id}Fat`)}
                       </div>
-                      <div className="text-neutral-700">
-                        <span className="text-neutral-600">{t('macroModes.carbsLabel')}</span>{' '}
+                      <div className="text-neutral-700 dark:text-neutral-200">
+                        <span className="text-neutral-600 dark:text-neutral-400">
+                          {t('macroModes.carbsLabel')}
+                        </span>{' '}
                         {tm(`${mode.id}Carbs`)}
                       </div>
-                      <div className="text-neutral-700">
-                        <span className="text-neutral-600">{t('macroModes.proteinLabel')}</span>{' '}
+                      <div className="text-neutral-700 dark:text-neutral-200">
+                        <span className="text-neutral-600 dark:text-neutral-400">
+                          {t('macroModes.proteinLabel')}
+                        </span>{' '}
                         {tm(`${mode.id}Protein`)}
                       </div>
                     </div>
@@ -384,7 +402,7 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
           title={tm('refTitle', { mode: tm(`${activeRefMode.id}Name`) })}
           size="md"
         >
-          <p className="text-sm text-neutral-700 leading-relaxed whitespace-pre-line">
+          <p className="text-sm text-neutral-700 leading-relaxed whitespace-pre-line dark:text-neutral-200">
             {tm(`ref_${activeRefMode.id}`)}
           </p>
         </InfoModal>

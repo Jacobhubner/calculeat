@@ -118,7 +118,7 @@ export default function MacroDistributionCard({
         >
           <div>
             <CardTitle className="flex items-center gap-2 text-lg leading-snug">
-              <PieChart className="h-5 w-5 text-primary-600" />
+              <PieChart className="h-5 w-5 text-primary-600 dark:text-primary-300" />
               {t('macroDistribution.title')}
             </CardTitle>
           </div>
@@ -134,13 +134,13 @@ export default function MacroDistributionCard({
           {/* Fat Slider */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-sm font-medium text-neutral-700">
+              <label className="text-sm font-medium text-neutral-700 dark:text-neutral-200">
                 {t('macroDistribution.fat')}
               </label>
               <div className="text-sm font-semibold" style={{ color: '#f5c518' }}>
                 {fatRange[0].toFixed(0)}% - {fatRange[1].toFixed(0)}%
                 {caloriesMin && caloriesMax && (
-                  <span className="text-neutral-500 font-normal ml-2 text-xs">
+                  <span className="text-neutral-500 font-normal ml-2 text-xs dark:text-neutral-400">
                     ({calculateMinGrams(fatRange[0], 9)}g - {calculateMaxGrams(fatRange[1], 9)}g)
                   </span>
                 )}
@@ -164,13 +164,13 @@ export default function MacroDistributionCard({
           {/* Carb Slider */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-sm font-medium text-neutral-700">
+              <label className="text-sm font-medium text-neutral-700 dark:text-neutral-200">
                 {t('macroDistribution.carbs')}
               </label>
               <div className="text-sm font-semibold" style={{ color: '#fb923c' }}>
                 {carbRange[0].toFixed(0)}% - {carbRange[1].toFixed(0)}%
                 {caloriesMin && caloriesMax && (
-                  <span className="text-neutral-500 font-normal ml-2 text-xs">
+                  <span className="text-neutral-500 font-normal ml-2 text-xs dark:text-neutral-400">
                     ({calculateMinGrams(carbRange[0], 4)}g - {calculateMaxGrams(carbRange[1], 4)}g)
                   </span>
                 )}
@@ -194,13 +194,13 @@ export default function MacroDistributionCard({
           {/* Protein Slider */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-sm font-medium text-neutral-700">
+              <label className="text-sm font-medium text-neutral-700 dark:text-neutral-200">
                 {t('macroDistribution.protein')}
               </label>
               <div className="text-sm font-semibold" style={{ color: '#f43f5e' }}>
                 {proteinRange[0].toFixed(0)}% - {proteinRange[1].toFixed(0)}%
                 {caloriesMin && caloriesMax && (
-                  <span className="text-neutral-500 font-normal ml-2 text-xs">
+                  <span className="text-neutral-500 font-normal ml-2 text-xs dark:text-neutral-400">
                     ({calculateMinGrams(proteinRange[0], 4)}g -{' '}
                     {calculateMaxGrams(proteinRange[1], 4)}g)
                   </span>
@@ -226,24 +226,24 @@ export default function MacroDistributionCard({
           <div
             className={`p-3 rounded-lg border-2 ${
               totalPercentage === 100
-                ? 'bg-green-50 border-green-300'
+                ? 'bg-green-50 border-green-300 dark:bg-green-900/25 dark:border-green-800'
                 : totalPercentage < 95 || totalPercentage > 105
-                  ? 'bg-red-50 border-red-300'
-                  : 'bg-yellow-50 border-yellow-300'
+                  ? 'bg-red-50 border-red-300 dark:bg-red-900/25 dark:border-red-800'
+                  : 'bg-yellow-50 border-yellow-300 dark:bg-yellow-900/25 dark:border-yellow-800'
             }`}
           >
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-neutral-700">
+              <span className="text-sm font-medium text-neutral-700 dark:text-neutral-200">
                 {t('macroDistribution.total')}
               </span>
               <div className="flex items-center gap-2">
                 <span
                   className={`text-lg font-bold ${
                     totalPercentage === 100
-                      ? 'text-green-700'
+                      ? 'text-green-700 dark:text-green-300'
                       : totalPercentage < 95 || totalPercentage > 105
-                        ? 'text-red-700'
-                        : 'text-yellow-700'
+                        ? 'text-red-700 dark:text-red-300'
+                        : 'text-yellow-700 dark:text-yellow-300'
                   }`}
                 >
                   {totalPercentage}%
@@ -258,7 +258,7 @@ export default function MacroDistributionCard({
               </div>
             </div>
             {totalPercentage !== 100 && (
-              <p className="text-xs mt-2 text-neutral-600">
+              <p className="text-xs mt-2 text-neutral-600 dark:text-neutral-400">
                 {totalPercentage < 95 || totalPercentage > 105
                   ? t('macroDistribution.tooLow')
                   : t('macroDistribution.nearHundred')}
@@ -267,8 +267,8 @@ export default function MacroDistributionCard({
           </div>
 
           {/* Info message */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-            <p className="text-xs text-neutral-700 leading-relaxed">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 dark:bg-blue-900/25 dark:border-blue-800">
+            <p className="text-xs text-neutral-700 leading-relaxed dark:text-neutral-200">
               💡 <strong>Tips:</strong> {t('macroDistribution.tip')}
             </p>
           </div>

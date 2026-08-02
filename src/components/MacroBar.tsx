@@ -50,11 +50,13 @@ export default function MacroBar({ protein, carbs, fat, className }: MacroBarPro
 
   return (
     <Card className={cn('p-6', className)}>
-      <h3 className="text-lg font-semibold text-neutral-900 mb-4">{t('macros.distribution')}</h3>
+      <h3 className="text-lg font-semibold text-neutral-900 mb-4 dark:text-neutral-100">
+        {t('macros.distribution')}
+      </h3>
 
       {/* Stacked bar: two layers per macro — min (solid) + extra-to-max (light) */}
       <div className="mb-6">
-        <div className="flex h-6 rounded-full overflow-hidden gap-px bg-neutral-100">
+        <div className="flex h-6 rounded-full overflow-hidden gap-px bg-neutral-100 dark:bg-neutral-800">
           {MACROS.map(m => {
             const data = dataMap[m.key]
             const pct = (data.percentage / totalPct) * 100
@@ -89,7 +91,7 @@ export default function MacroBar({ protein, carbs, fat, className }: MacroBarPro
             return (
               <div key={m.key} className="text-center overflow-hidden" style={{ width: `${pct}%` }}>
                 {hasRange && (
-                  <span className="text-[9px] text-neutral-400 whitespace-nowrap">
+                  <span className="text-[9px] text-neutral-400 whitespace-nowrap dark:text-neutral-500">
                     {data.gramsMin}–{data.gramsMax}g
                   </span>
                 )}
@@ -114,12 +116,16 @@ export default function MacroBar({ protein, carbs, fat, className }: MacroBarPro
                 {data.grams}g
               </p>
               {hasRange && (
-                <p className="text-[10px] text-neutral-500 leading-tight">
+                <p className="text-[10px] text-neutral-500 leading-tight dark:text-neutral-400">
                   {data.gramsMin}–{data.gramsMax}g
                 </p>
               )}
-              <p className="text-xs font-medium text-neutral-700 mt-1">{m.name}</p>
-              <p className="text-[10px] text-neutral-400">{data.percentage}%</p>
+              <p className="text-xs font-medium text-neutral-700 mt-1 dark:text-neutral-200">
+                {m.name}
+              </p>
+              <p className="text-[10px] text-neutral-400 dark:text-neutral-500">
+                {data.percentage}%
+              </p>
             </div>
           )
         })}

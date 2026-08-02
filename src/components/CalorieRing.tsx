@@ -72,8 +72,12 @@ export default function CalorieRing({
         {/* Center content */}
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <div className="text-center">
-            <p className="text-5xl font-bold text-neutral-900">{Math.round(consumed)}</p>
-            <p className="text-xs text-neutral-500 uppercase tracking-wide">kcal</p>
+            <p className="text-5xl font-bold text-neutral-900 dark:text-neutral-100">
+              {Math.round(consumed)}
+            </p>
+            <p className="text-xs text-neutral-500 uppercase tracking-wide dark:text-neutral-400">
+              kcal
+            </p>
           </div>
         </div>
       </div>
@@ -82,19 +86,25 @@ export default function CalorieRing({
       <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-6 w-full">
         <div className="text-center">
           {min && max ? (
-            <p className="text-xl font-semibold text-neutral-900">
+            <p className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
               {Math.round(min)} - {Math.round(max)} kcal
             </p>
           ) : (
-            <p className="text-2xl font-semibold text-neutral-900">{Math.round(target)} kcal</p>
+            <p className="text-2xl font-semibold text-neutral-900 dark:text-neutral-100">
+              {Math.round(target)} kcal
+            </p>
           )}
-          <p className="text-xs text-neutral-500 uppercase tracking-wide">{t('ring.goal')}</p>
+          <p className="text-xs text-neutral-500 uppercase tracking-wide dark:text-neutral-400">
+            {t('ring.goal')}
+          </p>
         </div>
         <div className="text-center">
           <p
             className={cn(
               'text-2xl font-semibold',
-              isOverTarget ? 'text-error-600' : 'text-success-600'
+              isOverTarget
+                ? 'text-error-600 dark:text-error-300'
+                : 'text-success-600 dark:text-success-300'
             )}
           >
             {isOverTarget ? '+' : ''}
@@ -103,7 +113,7 @@ export default function CalorieRing({
               : Math.round(calculatedRemaining)}{' '}
             kcal
           </p>
-          <p className="text-xs text-neutral-500 uppercase tracking-wide">
+          <p className="text-xs text-neutral-500 uppercase tracking-wide dark:text-neutral-400">
             {isOverTarget ? t('ring.over') : t('ring.remaining')}
           </p>
         </div>

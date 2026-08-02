@@ -14,7 +14,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-neutral-600">{t('status.loading')}</div>
+        <div className="text-neutral-600 dark:text-neutral-400">{t('status.loading')}</div>
       </div>
     )
   }

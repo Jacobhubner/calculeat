@@ -39,15 +39,15 @@ export default function CollapsibleSidebar({ children, className }: CollapsibleS
       <button
         onClick={toggleCollapse}
         className={cn(
-          'absolute top-0 z-50 p-2 bg-white border border-neutral-200 rounded-lg shadow-sm hover:shadow-md hover:bg-neutral-50 transition-all',
+          'absolute top-0 z-50 p-2 bg-white border border-neutral-200 rounded-lg shadow-sm hover:shadow-md hover:bg-neutral-50 transition-all dark:hover:bg-neutral-800 dark:border-neutral-700 dark:bg-neutral-850',
           isCollapsed ? 'left-1' : 'right-1'
         )}
         title={isCollapsed ? 'Expandera sidopanel' : 'Minimera sidopanel'}
       >
         {isCollapsed ? (
-          <ChevronLeft className="h-4 w-4 text-neutral-600" />
+          <ChevronLeft className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
         ) : (
-          <ChevronRight className="h-4 w-4 text-neutral-600" />
+          <ChevronRight className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
         )}
       </button>
 
@@ -64,7 +64,7 @@ export default function CollapsibleSidebar({ children, className }: CollapsibleS
       {/* Collapsed State Indicator */}
       {isCollapsed && (
         <div className="absolute left-1/2 top-20 -translate-x-1/2 rotate-90 whitespace-nowrap">
-          <span className="text-xs font-medium text-neutral-500">Info</span>
+          <span className="text-xs font-medium text-neutral-500 dark:text-neutral-400">Info</span>
         </div>
       )}
     </div>

@@ -96,7 +96,7 @@ export function RangeSlider({
       {/* Slider track */}
       <div className="relative w-full">
         {/* Background track */}
-        <div className="absolute h-2 w-full rounded-lg bg-neutral-200" />
+        <div className="absolute h-2 w-full rounded-lg bg-neutral-200 dark:bg-neutral-700" />
         {/* Active range */}
         <div ref={range} className="absolute h-2 rounded-lg bg-primary-500" />
       </div>
