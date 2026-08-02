@@ -327,29 +327,31 @@ export function getStatusBadgeConfig(status: NutrientStatus): {
   textClass: string
 } {
   switch (status.status) {
+    // Klasserna konsumeras av NutrientStatusBadge m.fl. — dark:-varianterna
+    // hör därför hemma här, annars måste varje konsument lägga till dem själv.
     case 'under':
       return {
         variant: 'under',
         icon: '⇧',
-        colorClass: 'text-blue-400',
-        bgClass: 'bg-blue-50 border-blue-200',
-        textClass: 'text-blue-500',
+        colorClass: 'text-blue-400 dark:text-blue-300',
+        bgClass: 'bg-blue-50 border-blue-200 dark:bg-blue-900/25 dark:border-blue-800',
+        textClass: 'text-blue-500 dark:text-blue-300',
       }
     case 'within':
       return {
         variant: 'within',
         icon: '✔',
-        colorClass: 'text-green-600',
-        bgClass: 'bg-green-50 border-green-200',
-        textClass: 'text-green-700',
+        colorClass: 'text-green-600 dark:text-green-400',
+        bgClass: 'bg-green-50 border-green-200 dark:bg-green-900/25 dark:border-green-800',
+        textClass: 'text-green-700 dark:text-green-300',
       }
     case 'over':
       return {
         variant: 'over',
         icon: '⇩',
-        colorClass: 'text-red-600',
-        bgClass: 'bg-red-50 border-red-200',
-        textClass: 'text-red-700',
+        colorClass: 'text-red-600 dark:text-red-400',
+        bgClass: 'bg-red-50 border-red-200 dark:bg-red-900/25 dark:border-red-800',
+        textClass: 'text-red-700 dark:text-red-300',
       }
   }
 }

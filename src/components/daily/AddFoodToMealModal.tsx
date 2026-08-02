@@ -467,10 +467,10 @@ export function AddFoodToMealModal({
         variant="outline"
         className={
           color === 'Green'
-            ? 'bg-green-50 text-green-700 border-green-300'
+            ? 'bg-green-50 text-green-700 border-green-300 dark:bg-green-900/25 dark:text-green-300 dark:border-green-800'
             : color === 'Yellow'
-              ? 'bg-yellow-50 text-yellow-700 border-yellow-300'
-              : 'bg-orange-50 text-orange-700 border-orange-300'
+              ? 'bg-yellow-50 text-yellow-700 border-yellow-300 dark:bg-yellow-900/25 dark:text-yellow-300 dark:border-yellow-800'
+              : 'bg-orange-50 text-orange-700 border-orange-300 dark:bg-orange-900/25 dark:text-orange-300 dark:border-orange-800'
         }
       >
         {tAny(`color.${color.toLowerCase()}`)}
@@ -482,11 +482,11 @@ export function AddFoodToMealModal({
     <button
       key={`${keyPrefix}${food.id}`}
       onClick={() => handleSelectFood(food)}
-      className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-neutral-50 transition-colors text-left border border-transparent hover:border-neutral-200"
+      className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-neutral-50 transition-colors text-left border border-transparent hover:border-neutral-200 dark:hover:bg-neutral-800 dark:hover:border-neutral-700"
     >
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5 min-w-0">
-          <p className="font-medium text-neutral-900 truncate">{food.name}</p>
+          <p className="font-medium text-neutral-900 truncate dark:text-neutral-100">{food.name}</p>
           <Badge
             variant="outline"
             className={`text-[9px] px-1 py-0 h-4 shrink-0 ${
@@ -504,14 +504,14 @@ export function AddFoodToMealModal({
               : (SOURCE_BADGES[food.source] ?? SOURCE_BADGES.user).label}
           </Badge>
         </div>
-        <p className="text-xs text-neutral-500">
+        <p className="text-xs text-neutral-500 dark:text-neutral-400">
           {food.calories} kcal / {food.default_amount} {food.default_unit}
           {food.brand && ` • ${food.brand}`}
         </p>
       </div>
       <div className="flex items-center gap-2 ml-2 shrink-0">
         {getColorBadge(food.energy_density_color)}
-        <Plus className="h-4 w-4 text-neutral-400" />
+        <Plus className="h-4 w-4 text-neutral-400 dark:text-neutral-500" />
       </div>
     </button>
   )
@@ -543,7 +543,7 @@ export function AddFoodToMealModal({
             {!selectedFood ? (
               <>
                 {/* Tabs */}
-                <div className="flex gap-1 border-b border-neutral-200 overflow-x-auto">
+                <div className="flex gap-1 border-b border-neutral-200 overflow-x-auto dark:border-neutral-700">
                   {allTabs.map(tab => (
                     <button
                       key={tab.key}
@@ -553,8 +553,8 @@ export function AddFoodToMealModal({
                       }}
                       className={`px-3 py-1.5 text-sm font-medium border-b-2 transition-colors ${
                         activeTab === tab.key
-                          ? 'border-primary-500 text-primary-600'
-                          : 'border-transparent text-neutral-500 hover:text-neutral-700'
+                          ? 'border-primary-500 text-primary-600 dark:text-primary-300'
+                          : 'border-transparent text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-200 dark:text-neutral-400'
                       }`}
                     >
                       {tab.label}
@@ -565,7 +565,7 @@ export function AddFoodToMealModal({
                 {/* Search + scan row */}
                 <div className="flex gap-2">
                   <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400" />
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400 dark:text-neutral-500" />
                     <Input
                       ref={searchInputRef}
                       placeholder={t('addToMealModal.searchPlaceholder')}
@@ -604,11 +604,11 @@ export function AddFoodToMealModal({
                             ? c === 'Green'
                               ? 'bg-green-500 text-white border-green-600'
                               : c === 'Yellow'
-                                ? 'bg-yellow-400 text-neutral-900 border-yellow-500'
+                                ? 'bg-yellow-400 text-neutral-900 border-yellow-500 dark:text-neutral-100'
                                 : c === 'Orange'
                                   ? 'bg-orange-500 text-white border-orange-600'
-                                  : 'bg-neutral-200 text-neutral-700 border-neutral-400'
-                            : 'bg-white text-neutral-500 border-neutral-200 hover:border-neutral-400'
+                                  : 'bg-neutral-200 text-neutral-700 border-neutral-400 dark:border-neutral-500 dark:bg-neutral-700 dark:text-neutral-200'
+                            : 'bg-white text-neutral-500 border-neutral-200 hover:border-neutral-400 dark:hover:border-neutral-500 dark:border-neutral-700 dark:bg-neutral-850 dark:text-neutral-400'
                         }`}
                       >
                         {c === null
@@ -621,7 +621,7 @@ export function AddFoodToMealModal({
                   {(activeTab === 'mina' || activeTab === 'calculeat' || activeTab === 'alla') && (
                     <>
                       {showEnergyDensity && (
-                        <span className="text-neutral-200 border-l border-neutral-200 mx-0.5" />
+                        <span className="text-neutral-200 border-l border-neutral-200 mx-0.5 dark:border-neutral-700" />
                       )}
                       {([null, true, false] as const).map(r => (
                         <button
@@ -633,7 +633,7 @@ export function AddFoodToMealModal({
                           className={`px-2 py-0.5 text-xs rounded-full border transition-colors ${
                             recipeFilter === r
                               ? 'bg-primary-500 text-white border-primary-600'
-                              : 'bg-white text-neutral-500 border-neutral-200 hover:border-neutral-400'
+                              : 'bg-white text-neutral-500 border-neutral-200 hover:border-neutral-400 dark:hover:border-neutral-500 dark:border-neutral-700 dark:bg-neutral-850 dark:text-neutral-400'
                           }`}
                         >
                           {r === null
@@ -651,21 +651,21 @@ export function AddFoodToMealModal({
                 <div className="space-y-1">
                   {showRecentSection && (
                     <>
-                      <p className="text-[11px] font-semibold uppercase tracking-wide text-neutral-400 px-1 pt-1">
+                      <p className="text-[11px] font-semibold uppercase tracking-wide text-neutral-400 px-1 pt-1 dark:text-neutral-500">
                         {t('addToMealModal.recentHeading')}
                       </p>
                       {recentFoods.map(food => renderFoodRow(food, 'recent-'))}
-                      <p className="text-[11px] font-semibold uppercase tracking-wide text-neutral-400 px-1 pt-2">
+                      <p className="text-[11px] font-semibold uppercase tracking-wide text-neutral-400 px-1 pt-2 dark:text-neutral-500">
                         {t('addToMealModal.allFoodsHeading')}
                       </p>
                     </>
                   )}
                   {foodsLoading ? (
-                    <p className="text-sm text-neutral-500 text-center py-4">
+                    <p className="text-sm text-neutral-500 text-center py-4 dark:text-neutral-400">
                       {t('addToMealModal.loading')}
                     </p>
                   ) : foods.length === 0 ? (
-                    <p className="text-sm text-neutral-500 text-center py-4">
+                    <p className="text-sm text-neutral-500 text-center py-4 dark:text-neutral-400">
                       {searchQuery ? t('addToMealModal.noFoodsFound') : t('addToMealModal.noFoods')}
                     </p>
                   ) : (
@@ -676,7 +676,7 @@ export function AddFoodToMealModal({
                 {/* Pagination */}
                 {totalPages > 1 && (
                   <div className="flex items-center justify-between pt-2 border-t border-neutral-100">
-                    <span className="text-xs text-neutral-500">
+                    <span className="text-xs text-neutral-500 dark:text-neutral-400">
                       {t('addToMealModal.page', { page: page + 1, total: totalPages })}
                     </span>
                     <div className="flex gap-1">
@@ -705,10 +705,12 @@ export function AddFoodToMealModal({
             ) : (
               <>
                 {/* Selected food header */}
-                <div className="flex items-center justify-between p-3 bg-neutral-50 rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-neutral-50 rounded-lg dark:bg-neutral-900">
                   <div className="flex-1">
-                    <p className="font-medium text-neutral-900">{selectedFood.name}</p>
-                    <p className="text-xs text-neutral-500">
+                    <p className="font-medium text-neutral-900 dark:text-neutral-100">
+                      {selectedFood.name}
+                    </p>
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400">
                       {selectedFood.calories} kcal / {selectedFood.default_amount}{' '}
                       {selectedFood.default_unit}
                     </p>
@@ -720,7 +722,7 @@ export function AddFoodToMealModal({
                         variant="ghost"
                         size="sm"
                         onClick={() => setSelectedFood(null)}
-                        className="text-neutral-500 hover:text-neutral-700"
+                        className="text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-200 dark:text-neutral-400"
                       >
                         <X className="h-4 w-4" />
                       </Button>

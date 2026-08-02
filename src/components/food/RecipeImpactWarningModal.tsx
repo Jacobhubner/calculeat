@@ -40,7 +40,7 @@ export function RecipeImpactWarningModal({
         </DialogHeader>
 
         <div className="space-y-4 py-1">
-          <p className="text-sm text-neutral-600">
+          <p className="text-sm text-neutral-600 dark:text-neutral-400">
             {isDelete ? (
               <>
                 <span className="font-medium">{foodItemName}</span>{' '}
@@ -55,17 +55,17 @@ export function RecipeImpactWarningModal({
             )}
           </p>
 
-          <div className="max-h-48 overflow-y-auto space-y-1.5 rounded-lg border border-neutral-200 p-2">
+          <div className="max-h-48 overflow-y-auto space-y-1.5 rounded-lg border border-neutral-200 p-2 dark:border-neutral-700">
             {affectedRecipes.map(recipe => (
               <div
                 key={recipe.recipe_id}
-                className="flex items-center gap-2 px-2 py-1.5 rounded-md bg-neutral-50"
+                className="flex items-center gap-2 px-2 py-1.5 rounded-md bg-neutral-50 dark:bg-neutral-900"
               >
-                <ChefHat className="h-4 w-4 text-neutral-400 shrink-0" />
-                <span className="text-sm text-neutral-800 flex-1 truncate">
+                <ChefHat className="h-4 w-4 text-neutral-400 shrink-0 dark:text-neutral-500" />
+                <span className="text-sm text-neutral-800 flex-1 truncate dark:text-neutral-200">
                   {recipe.recipe_name}
                 </span>
-                <span className="text-xs text-neutral-400 shrink-0">
+                <span className="text-xs text-neutral-400 shrink-0 dark:text-neutral-500">
                   {t('recipeImpact.servings', { count: recipe.servings })} ·{' '}
                   {t('recipeImpact.ingredients', { count: recipe.ingredient_count })}
                 </span>

@@ -65,27 +65,32 @@ export default function RecentFoodsCard({ dailyLogId, onFoodSelect }: RecentFood
         {recentFoods.map(food => (
           <div
             key={food.id}
-            className="flex items-center justify-between gap-2 p-2 md:p-3 bg-neutral-50 rounded-lg hover:bg-neutral-100 transition-colors"
+            className="flex items-center justify-between gap-2 p-2 md:p-3 bg-neutral-50 rounded-lg hover:bg-neutral-100 transition-colors dark:bg-neutral-900 dark:hover:bg-neutral-800"
           >
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-1 md:gap-2">
-                <p className="font-medium text-sm md:text-base text-neutral-900 truncate">
+                <p className="font-medium text-sm md:text-base text-neutral-900 truncate dark:text-neutral-100">
                   {food.name}
                 </p>
                 {food.brand && (
-                  <span className="hidden md:inline text-xs text-neutral-500 truncate">
+                  <span className="hidden md:inline text-xs text-neutral-500 truncate dark:text-neutral-400">
                     ({food.brand})
                   </span>
                 )}
               </div>
-              <div className="flex flex-wrap items-center gap-1 md:gap-3 mt-1 text-xs text-neutral-600">
+              {/* Mängd och kalorier är det man scannar efter — de får full
+                  kontrast, makrofördelningen dämpas ett steg så raden får en
+                  läsordning i stället för en enda gråtonad remsa. */}
+              <div className="flex flex-wrap items-center gap-1 md:gap-3 mt-1 text-xs text-neutral-600 dark:text-neutral-300">
                 <span>
                   {food.default_amount} {food.default_unit}
                 </span>
-                <span className="hidden md:inline">•</span>
-                <span>{food.calories} kcal</span>
-                <span className="hidden sm:flex items-center gap-1">
-                  <span className="hidden md:inline">•</span>
+                <span className="hidden md:inline text-neutral-400 dark:text-neutral-600">•</span>
+                <span className="font-medium text-neutral-700 dark:text-neutral-200">
+                  {food.calories} kcal
+                </span>
+                <span className="hidden sm:flex items-center gap-1 text-neutral-500 dark:text-neutral-400">
+                  <span className="hidden md:inline text-neutral-400 dark:text-neutral-600">•</span>
                   F: {food.fat_g}g | K: {food.carb_g}g | P: {food.protein_g}g
                 </span>
               </div>

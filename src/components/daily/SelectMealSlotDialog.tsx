@@ -90,7 +90,13 @@ export default function SelectMealSlotDialog({
         toast.warning(t('loadMeal.warningMissingItems', { count: result.missingCount }))
       }
 
-      toast.success(t('loadMeal.successLoaded', { mealName: savedMealName, slotName: slot.name, calories: result.totalCalories }))
+      toast.success(
+        t('loadMeal.successLoaded', {
+          mealName: savedMealName,
+          slotName: slot.name,
+          calories: result.totalCalories,
+        })
+      )
 
       // Close modal
       onOpenChange(false)
@@ -131,28 +137,32 @@ export default function SelectMealSlotDialog({
                 key={slot.name}
                 className={`cursor-pointer transition-all hover:border-primary-300 hover:bg-primary-50 ${
                   isLoading ? 'opacity-50 pointer-events-none' : ''
-                } ${slot.isSuggested ? 'border-primary-300 bg-primary-50' : ''}`}
+                } ${slot.isSuggested ? 'border-primary-300 bg-primary-50 dark:bg-primary-900/25 dark:border-primary-800' : ''}`}
                 onClick={() => handleSelectSlot(slot)}
               >
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <Icon className="h-5 w-5 text-primary-600" />
+                      <Icon className="h-5 w-5 text-primary-600 dark:text-primary-300" />
                       <div>
-                        <h3 className="font-medium text-neutral-900">
+                        <h3 className="font-medium text-neutral-900 dark:text-neutral-100">
                           {slot.name}
                           {slot.isSuggested && (
-                            <span className="ml-2 text-xs text-primary-600 font-normal">
+                            <span className="ml-2 text-xs text-primary-600 font-normal dark:text-primary-300">
                               ({t('selectSlot.recommended')})
                             </span>
                           )}
                         </h3>
                         {(slot.calories ?? 0) > 0 && (
-                          <p className="text-sm text-neutral-600 mt-0.5">{slot.calories} kcal</p>
+                          <p className="text-sm text-neutral-600 mt-0.5 dark:text-neutral-400">
+                            {slot.calories} kcal
+                          </p>
                         )}
                       </div>
                     </div>
-                    {isLoading && <Loader2 className="h-5 w-5 animate-spin text-primary-600" />}
+                    {isLoading && (
+                      <Loader2 className="h-5 w-5 animate-spin text-primary-600 dark:text-primary-300" />
+                    )}
                   </div>
                 </CardContent>
               </Card>

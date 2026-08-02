@@ -138,7 +138,7 @@ export default function LoadMealToSlotDialog({
 
         {/* Search Bar */}
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400 dark:text-neutral-500" />
           <Input
             placeholder={t('loadMealDialog.searchPlaceholder')}
             value={searchQuery}
@@ -152,7 +152,7 @@ export default function LoadMealToSlotDialog({
         <div className="flex-1 overflow-y-auto -mx-6 px-6">
           {mealsLoading ? (
             <div className="flex items-center justify-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin text-primary-600" />
+              <Loader2 className="h-8 w-8 animate-spin text-primary-600 dark:text-primary-300" />
             </div>
           ) : sortedMeals.length === 0 ? (
             <EmptyState
@@ -183,15 +183,19 @@ export default function LoadMealToSlotDialog({
                     <CardContent className="p-4">
                       <div className="flex items-center justify-between">
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-medium text-neutral-900 truncate">{meal.name}</h3>
-                          <div className="flex items-center gap-3 mt-1 text-sm text-neutral-600">
-                            <span className="font-semibold text-primary-600">{calories} kcal</span>
+                          <h3 className="font-medium text-neutral-900 truncate dark:text-neutral-100">
+                            {meal.name}
+                          </h3>
+                          <div className="flex items-center gap-3 mt-1 text-sm text-neutral-600 dark:text-neutral-400">
+                            <span className="font-semibold text-primary-600 dark:text-primary-300">
+                              {calories} kcal
+                            </span>
                             <span>•</span>
                             <span>{t('loadMealDialog.itemCount', { count: itemCount })}</span>
                             {meal.last_used_at && (
                               <>
                                 <span>•</span>
-                                <span className="text-xs text-neutral-500">
+                                <span className="text-xs text-neutral-500 dark:text-neutral-400">
                                   {t('loadMealDialog.lastUsed')}{' '}
                                   {new Date(meal.last_used_at).toLocaleDateString('sv-SE', {
                                     day: 'numeric',
@@ -203,7 +207,7 @@ export default function LoadMealToSlotDialog({
                           </div>
                         </div>
                         {isLoading && (
-                          <Loader2 className="h-5 w-5 animate-spin text-primary-600 ml-3 shrink-0" />
+                          <Loader2 className="h-5 w-5 animate-spin text-primary-600 ml-3 shrink-0 dark:text-primary-300" />
                         )}
                       </div>
                     </CardContent>

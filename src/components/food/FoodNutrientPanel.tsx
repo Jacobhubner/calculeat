@@ -105,11 +105,11 @@ export function FoodNutrientPanel({ foodItem, open, onOpenChange }: FoodNutrient
         onClick={() => onOpenChange(false)}
       >
         <div
-          className="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto"
+          className="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto dark:bg-neutral-850"
           onClick={e => e.stopPropagation()}
         >
           {/* Sticky gradient header */}
-          <div className="sticky top-0 bg-white border-b border-neutral-200 p-6 rounded-t-2xl flex justify-between items-start">
+          <div className="sticky top-0 bg-white border-b border-neutral-200 p-6 rounded-t-2xl flex justify-between items-start dark:border-neutral-700 dark:bg-neutral-850">
             <div className="flex-1 min-w-0">
               <div className="flex items-start gap-2 flex-wrap">
                 <h2 className="text-2xl font-bold leading-snug">{foodItem.name}</h2>
@@ -122,7 +122,7 @@ export function FoodNutrientPanel({ foodItem, open, onOpenChange }: FoodNutrient
                   </Badge>
                 )}
               </div>
-              <div className="text-sm text-neutral-500 mt-1 space-y-0.5">
+              <div className="text-sm text-neutral-500 mt-1 space-y-0.5 dark:text-neutral-400">
                 <p>
                   per {foodItem.reference_amount ?? 100} {foodItem.reference_unit ?? 'g'}
                 </p>
@@ -142,7 +142,7 @@ export function FoodNutrientPanel({ foodItem, open, onOpenChange }: FoodNutrient
             </div>
             <button
               onClick={() => onOpenChange(false)}
-              className="text-neutral-500 hover:text-neutral-700 transition-colors p-1 rounded-full hover:bg-neutral-100 shrink-0"
+              className="text-neutral-500 hover:text-neutral-700 transition-colors p-1 rounded-full hover:bg-neutral-100 shrink-0 dark:hover:bg-neutral-800 dark:hover:text-neutral-200 dark:text-neutral-400"
               aria-label={t('panel.close')}
             >
               <X className="h-6 w-6" />
@@ -151,15 +151,21 @@ export function FoodNutrientPanel({ foodItem, open, onOpenChange }: FoodNutrient
 
           {/* Content */}
           <div className="p-6 space-y-4">
-            {isLoading && <p className="text-sm text-neutral-500 py-4">{t('panel.loading')}</p>}
+            {isLoading && (
+              <p className="text-sm text-neutral-500 py-4 dark:text-neutral-400">
+                {t('panel.loading')}
+              </p>
+            )}
 
             {!isLoading && totalNutrientCount === 0 && (
-              <p className="text-sm text-neutral-500 py-4">{t('panel.noData')}</p>
+              <p className="text-sm text-neutral-500 py-4 dark:text-neutral-400">
+                {t('panel.noData')}
+              </p>
             )}
 
             {!isLoading && totalNutrientCount > 0 && (
               <div className="space-y-4">
-                <p className="text-xs text-neutral-400">
+                <p className="text-xs text-neutral-400 dark:text-neutral-500">
                   {t('panel.nutrientCount', { count: totalNutrientCount })}
                 </p>
 
@@ -170,9 +176,9 @@ export function FoodNutrientPanel({ foodItem, open, onOpenChange }: FoodNutrient
                   return (
                     <div key={cat}>
                       {catIdx > 0 && <div className="border-t border-neutral-100 mb-4" />}
-                      <div className="rounded-xl border border-neutral-200 overflow-hidden">
-                        <div className="bg-neutral-50 px-4 py-2 border-b border-neutral-200">
-                          <h3 className="text-xs font-semibold text-neutral-500 uppercase tracking-wide">
+                      <div className="rounded-xl border border-neutral-200 overflow-hidden dark:border-neutral-700">
+                        <div className="bg-neutral-50 px-4 py-2 border-b border-neutral-200 dark:border-neutral-700 dark:bg-neutral-900">
+                          <h3 className="text-xs font-semibold text-neutral-500 uppercase tracking-wide dark:text-neutral-400">
                             {tAny(`panel.categories.${cat}`) || cat}
                           </h3>
                         </div>
@@ -182,10 +188,10 @@ export function FoodNutrientPanel({ foodItem, open, onOpenChange }: FoodNutrient
                             return (
                               <div
                                 key={item.nutrient_code}
-                                className={`flex justify-between items-center px-4 py-2.5 ${isSub ? 'pl-8 bg-neutral-50/50' : 'bg-white'}`}
+                                className={`flex justify-between items-center px-4 py-2.5 ${isSub ? 'pl-8 bg-neutral-50/50' : 'bg-white dark:bg-neutral-850'}`}
                               >
                                 <span
-                                  className={`text-sm ${isSub ? 'text-neutral-400' : 'text-neutral-700'}`}
+                                  className={`text-sm ${isSub ? 'text-neutral-400 dark:text-neutral-500' : 'text-neutral-700 dark:text-neutral-200'}`}
                                 >
                                   {isSub ? `${t('panel.varav')} ` : ''}
                                   {i18n.language.startsWith('sv')
@@ -194,10 +200,10 @@ export function FoodNutrientPanel({ foodItem, open, onOpenChange }: FoodNutrient
                                       item.definition.display_name_sv)}
                                 </span>
                                 <span
-                                  className={`text-sm tabular-nums ml-4 ${isSub ? 'text-neutral-400' : 'font-semibold text-neutral-900'}`}
+                                  className={`text-sm tabular-nums ml-4 ${isSub ? 'text-neutral-400 dark:text-neutral-500' : 'font-semibold text-neutral-900 dark:text-neutral-100'}`}
                                 >
                                   {formatAmount(item.amount)}{' '}
-                                  <span className="font-normal text-neutral-400 text-xs">
+                                  <span className="font-normal text-neutral-400 text-xs dark:text-neutral-500">
                                     {item.definition.unit}
                                   </span>
                                 </span>
@@ -214,7 +220,7 @@ export function FoodNutrientPanel({ foodItem, open, onOpenChange }: FoodNutrient
           </div>
 
           {/* Sticky footer */}
-          <div className="sticky bottom-0 bg-neutral-50 p-6 rounded-b-2xl border-t border-neutral-200">
+          <div className="sticky bottom-0 bg-neutral-50 p-6 rounded-b-2xl border-t border-neutral-200 dark:border-neutral-700 dark:bg-neutral-900">
             <Button onClick={() => onOpenChange(false)} className="w-full">
               {t('panel.close')}
             </Button>

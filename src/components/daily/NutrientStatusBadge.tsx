@@ -90,11 +90,11 @@ export function NutrientStatusRow({
   return (
     <div className={cn('space-y-1', className)}>
       <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-        <span className="text-sm font-medium text-neutral-700 truncate block min-w-0 flex-1">
+        <span className="text-sm font-medium text-neutral-700 truncate block min-w-0 flex-1 dark:text-neutral-300">
           {label}
         </span>
         <div className="flex items-center gap-2">
-          <span className="text-sm text-neutral-600">
+          <span className="text-sm text-neutral-600 dark:text-neutral-400">
             {Math.round(status.current)} / {Math.round(status.min)}-{Math.round(status.max)}
             {unit && ` ${unit}`}
           </span>
@@ -102,16 +102,18 @@ export function NutrientStatusRow({
         </div>
       </div>
       {showProgress && (
-        <div className="relative h-2 rounded-full overflow-hidden">
-          {/* Zone 1: Path to goal (0 to min) - sky */}
+        <div className="relative h-2 rounded-full overflow-hidden bg-neutral-100 dark:bg-neutral-800">
+          {/* Zonerna är bara vägvisare bakom den fyllda stapeln — i mörkt läge
+              dovas de kraftigt, annars lyser tre nästan vita band starkare än
+              statusfärgen de ska stödja. */}
           <div
-            className="absolute h-full bg-sky-100"
+            className="absolute h-full bg-sky-100 dark:bg-sky-500/15"
             style={{ left: 0, width: `${minPosition}%` }}
           />
 
           {/* Zone 2: Goal zone (min to max) - success */}
           <div
-            className="absolute h-full bg-success-100"
+            className="absolute h-full bg-success-100 dark:bg-success-500/20"
             style={{
               left: `${minPosition}%`,
               width: `${goalZoneWidth}%`,
@@ -120,7 +122,7 @@ export function NutrientStatusRow({
 
           {/* Zone 3: Over zone (max to end) - error */}
           <div
-            className="absolute h-full bg-error-100"
+            className="absolute h-full bg-error-100 dark:bg-error-500/15"
             style={{
               left: `${maxPosition}%`,
               width: `${overZoneWidth}%`,
@@ -136,16 +138,17 @@ export function NutrientStatusRow({
             style={{ width: `${valuePosition}%` }}
           />
 
-          {/* Min indicator line */}
+          {/* Min indicator line — ljusare i mörkt läge, annars försvinner den
+              mörka linjen mot den mörka zonen bakom */}
           <div
-            className="absolute w-0.5 h-full bg-success-700 z-10"
+            className="absolute w-0.5 h-full bg-success-700 z-10 dark:bg-success-300"
             style={{ left: `${minPosition}%` }}
             title={`Min: ${Math.round(status.min)} ${unit}`}
           />
 
           {/* Max indicator line */}
           <div
-            className="absolute w-0.5 h-full bg-error-700 z-10"
+            className="absolute w-0.5 h-full bg-error-700 z-10 dark:bg-error-300"
             style={{ left: `${maxPosition}%` }}
             title={`Max: ${Math.round(status.max)} ${unit}`}
           />
@@ -170,7 +173,7 @@ export function CompactStatusIndicator({ status, label, className }: CompactStat
   return (
     <div className={cn('flex items-center gap-1.5', className)}>
       <span className={cn('text-lg', config.colorClass)}>{config.icon}</span>
-      <span className="text-sm text-neutral-700">{label}</span>
+      <span className="text-sm text-neutral-700 dark:text-neutral-300">{label}</span>
     </div>
   )
 }
@@ -192,9 +195,9 @@ export function StatusIcon({ status, size = 'md', className }: StatusIconProps) 
   }
 
   const colorClasses = {
-    under: 'text-blue-400',
-    within: 'text-green-600',
-    over: 'text-red-600',
+    under: 'text-blue-400 dark:text-blue-300',
+    within: 'text-green-600 dark:text-green-400',
+    over: 'text-red-600 dark:text-red-400',
   }
 
   const icons = {

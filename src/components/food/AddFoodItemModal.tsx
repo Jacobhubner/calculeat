@@ -910,7 +910,7 @@ export function AddFoodItemModal({
           </DialogHeader>
 
           {adminGlobalMode && (
-            <div className="bg-amber-50 border border-amber-200 rounded-md p-3 text-sm text-amber-700">
+            <div className="bg-amber-50 border border-amber-200 rounded-md p-3 text-sm text-amber-700 dark:bg-amber-900/25 dark:text-amber-300 dark:border-amber-800">
               {editItem ? t('addFoodModal.adminEditWarning') : t('addFoodModal.adminNewWarning')}
             </div>
           )}
@@ -918,12 +918,12 @@ export function AddFoodItemModal({
             editItem &&
             editItem.user_id === null &&
             !editItem.shared_list_id && (
-              <div className="bg-blue-50 border border-blue-200 rounded-md p-3 text-sm text-blue-700">
+              <div className="bg-blue-50 border border-blue-200 rounded-md p-3 text-sm text-blue-700 dark:bg-blue-900/25 dark:text-blue-300 dark:border-blue-800">
                 {t('addFoodModal.cowInfo')}
               </div>
             )}
           {!copyMode && editItem?.shared_list_id && (
-            <div className="bg-orange-50 border border-orange-200 rounded-md p-3 text-sm text-orange-700">
+            <div className="bg-orange-50 border border-orange-200 rounded-md p-3 text-sm text-orange-700 dark:bg-orange-900/25 dark:text-orange-300 dark:border-orange-800">
               {t('addFoodModal.sharedEditWarning')}
             </div>
           )}
@@ -1000,15 +1000,15 @@ export function AddFoodItemModal({
 
             {/* Barcode error */}
             {barcodeError && barcodeError.type === 'off_not_found' ? (
-              <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 space-y-3">
+              <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 space-y-3 dark:bg-orange-900/25 dark:border-orange-800">
                 <div className="flex items-start gap-2">
-                  <AlertCircle className="h-4 w-4 text-orange-600 mt-0.5 shrink-0" />
+                  <AlertCircle className="h-4 w-4 text-orange-600 mt-0.5 shrink-0 dark:text-orange-300" />
                   <div>
-                    <p className="text-sm font-medium text-orange-800">
+                    <p className="text-sm font-medium text-orange-800 dark:text-orange-300">
                       {t('addFoodModal.barcodeNotFound')}
                     </p>
                     {lockedBarcode && (
-                      <p className="text-xs text-orange-600 mt-0.5">
+                      <p className="text-xs text-orange-600 mt-0.5 dark:text-orange-300">
                         {t('addFoodModal.barcodeCode', { barcode: lockedBarcode })}
                       </p>
                     )}
@@ -1033,7 +1033,7 @@ export function AddFoodItemModal({
                     type="button"
                     size="sm"
                     variant="outline"
-                    className="w-full border-orange-300 text-orange-800 hover:bg-orange-100"
+                    className="w-full border-orange-300 text-orange-800 hover:bg-orange-100 dark:text-orange-300 dark:border-orange-800"
                     onClick={() => {
                       if (!lockedBarcode) return
                       setPendingBarcodeContribution(lockedBarcode)
@@ -1052,7 +1052,9 @@ export function AddFoodItemModal({
                 {/* Hjälptext */}
                 {FEATURES.SCAN_NUTRITION_LABEL && (
                   <div className="space-y-1">
-                    <p className="text-xs text-orange-600">{t('addFoodModal.scanLabelHint')}</p>
+                    <p className="text-xs text-orange-600 dark:text-orange-300">
+                      {t('addFoodModal.scanLabelHint')}
+                    </p>
                     <p className="text-xs text-orange-400">
                       {t('addFoodModal.barcodeContributeHint')}
                     </p>
@@ -1060,14 +1062,14 @@ export function AddFoodItemModal({
                 )}
                 {/* Inline label scan error */}
                 {labelScan.isError && (
-                  <p className="text-xs text-orange-700 font-medium">
+                  <p className="text-xs text-orange-700 font-medium dark:text-orange-300">
                     {labelScan.error?.message || t('addFoodModal.labelError')}
                   </p>
                 )}
               </div>
             ) : barcodeError ? (
-              <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 space-y-2">
-                <p className="text-sm text-orange-800">
+              <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 space-y-2 dark:bg-orange-900/25 dark:border-orange-800">
+                <p className="text-sm text-orange-800 dark:text-orange-300">
                   {barcodeError.message || t('addFoodModal.barcodeError')}
                 </p>
                 {barcodeError.type === 'fetch_failed' && lockedBarcode && (
@@ -1075,7 +1077,7 @@ export function AddFoodItemModal({
                     type="button"
                     size="sm"
                     variant="outline"
-                    className="w-full border-orange-300 text-orange-800 hover:bg-orange-100"
+                    className="w-full border-orange-300 text-orange-800 hover:bg-orange-100 dark:text-orange-300 dark:border-orange-800"
                     onClick={() => {
                       queryClient.removeQueries({ queryKey: ['barcode', lockedBarcode] })
                       setPendingBarcode(lockedBarcode)
@@ -1089,8 +1091,8 @@ export function AddFoodItemModal({
 
             {/* Label scan error */}
             {labelScan.error && (
-              <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
-                <p className="text-sm text-orange-800">
+              <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 dark:bg-orange-900/25 dark:border-orange-800">
+                <p className="text-sm text-orange-800 dark:text-orange-300">
                   {labelScan.error.message || t('addFoodModal.labelError')}
                 </p>
               </div>
@@ -1098,8 +1100,10 @@ export function AddFoodItemModal({
 
             {/* Overwrite confirmation */}
             {showOverwriteConfirm && pendingScanResult && (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <p className="text-sm text-blue-900 mb-3">{t('addFoodModal.overwriteConfirm')}</p>
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 dark:bg-blue-900/25 dark:border-blue-800">
+                <p className="text-sm text-blue-900 mb-3 dark:text-blue-300">
+                  {t('addFoodModal.overwriteConfirm')}
+                </p>
                 <div className="flex gap-2">
                   <Button
                     type="button"
@@ -1128,11 +1132,13 @@ export function AddFoodItemModal({
 
             {/* Duplicate warning */}
             {duplicateWarning && (
-              <div className="bg-orange-50 border-2 border-orange-300 rounded-lg p-4">
+              <div className="bg-orange-50 border-2 border-orange-300 rounded-lg p-4 dark:bg-orange-900/25 dark:border-orange-800">
                 <div className="flex items-start gap-3">
-                  <AlertCircle className="h-5 w-5 text-orange-600 mt-0.5 shrink-0" />
+                  <AlertCircle className="h-5 w-5 text-orange-600 mt-0.5 shrink-0 dark:text-orange-300" />
                   <div>
-                    <p className="text-sm font-medium text-orange-900">{duplicateWarning}</p>
+                    <p className="text-sm font-medium text-orange-900 dark:text-orange-300">
+                      {duplicateWarning}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -1143,7 +1149,7 @@ export function AddFoodItemModal({
               <div className="space-y-6">
                 {/* Basic information */}
                 <div className="space-y-4">
-                  <h3 className="text-sm font-semibold text-neutral-900">
+                  <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
                     {t('addFoodModal.sectionBasic')}
                   </h3>
 
@@ -1160,7 +1166,9 @@ export function AddFoodItemModal({
                       className={errors.name ? 'border-red-500' : ''}
                     />
                     {errors.name && (
-                      <p className="text-sm text-red-600 mt-1">{errors.name.message}</p>
+                      <p className="text-sm text-red-600 mt-1 dark:text-red-300">
+                        {errors.name.message}
+                      </p>
                     )}
                   </div>
 
@@ -1182,7 +1190,7 @@ export function AddFoodItemModal({
                           }
                         },
                       })}
-                      className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-base md:text-sm"
+                      className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-base md:text-sm dark:border-neutral-600"
                     >
                       <option value="Solid">{t('addFoodModal.foodTypeSolid')}</option>
                       <option value="Liquid">{t('addFoodModal.foodTypeLiquid')}</option>
@@ -1202,7 +1210,9 @@ export function AddFoodItemModal({
                         className={errors.default_amount ? 'border-red-500' : ''}
                       />
                       {errors.default_amount && (
-                        <p className="text-sm text-red-600 mt-1">{errors.default_amount.message}</p>
+                        <p className="text-sm text-red-600 mt-1 dark:text-red-300">
+                          {errors.default_amount.message}
+                        </p>
                       )}
                     </div>
 
@@ -1215,7 +1225,9 @@ export function AddFoodItemModal({
                         className={errors.default_unit ? 'border-red-500' : ''}
                       />
                       {errors.default_unit && (
-                        <p className="text-sm text-red-600 mt-1">{errors.default_unit.message}</p>
+                        <p className="text-sm text-red-600 mt-1 dark:text-red-300">
+                          {errors.default_unit.message}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -1225,7 +1237,7 @@ export function AddFoodItemModal({
                     <div>
                       <Label htmlFor="weight_grams">
                         {t('addFoodModal.fieldWeight')}
-                        <span className="text-xs text-neutral-500 ml-2 font-normal">
+                        <span className="text-xs text-neutral-500 ml-2 font-normal dark:text-neutral-400">
                           {defaultUnit?.toLowerCase() === 'ml'
                             ? t('addFoodModal.fieldWeightMlHint')
                             : t('addFoodModal.fieldWeightHint', {
@@ -1243,7 +1255,9 @@ export function AddFoodItemModal({
                         className={errors.weight_grams ? 'border-red-500' : ''}
                       />
                       {errors.weight_grams && (
-                        <p className="text-sm text-red-600 mt-1">{errors.weight_grams.message}</p>
+                        <p className="text-sm text-red-600 mt-1 dark:text-red-300">
+                          {errors.weight_grams.message}
+                        </p>
                       )}
                     </div>
                   )}
@@ -1251,7 +1265,7 @@ export function AddFoodItemModal({
 
                 {/* Nutrition */}
                 <div className="space-y-4">
-                  <h3 className="text-sm font-semibold text-neutral-900">
+                  <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
                     {t('addFoodModal.sectionNutrition', {
                       amount: defaultAmount || '?',
                       unit: defaultUnit || '?',
@@ -1270,7 +1284,9 @@ export function AddFoodItemModal({
                         className={errors.calories ? 'border-red-500' : ''}
                       />
                       {errors.calories && (
-                        <p className="text-sm text-red-600 mt-1">{errors.calories.message}</p>
+                        <p className="text-sm text-red-600 mt-1 dark:text-red-300">
+                          {errors.calories.message}
+                        </p>
                       )}
                     </div>
 
@@ -1286,12 +1302,17 @@ export function AddFoodItemModal({
                         className={errors.fat_g ? 'border-red-500' : ''}
                       />
                       {errors.fat_g && (
-                        <p className="text-sm text-red-600 mt-1">{errors.fat_g.message}</p>
+                        <p className="text-sm text-red-600 mt-1 dark:text-red-300">
+                          {errors.fat_g.message}
+                        </p>
                       )}
                     </div>
 
                     <div>
-                      <Label htmlFor="saturated_fat_g" className="text-neutral-500">
+                      <Label
+                        htmlFor="saturated_fat_g"
+                        className="text-neutral-500 dark:text-neutral-400"
+                      >
                         {t('addFoodModal.fieldSaturatedFat')}
                       </Label>
                       <Input
@@ -1303,7 +1324,7 @@ export function AddFoodItemModal({
                         className={errors.saturated_fat_g ? 'border-red-500' : ''}
                       />
                       {errors.saturated_fat_g && (
-                        <p className="text-sm text-red-600 mt-1">
+                        <p className="text-sm text-red-600 mt-1 dark:text-red-300">
                           {errors.saturated_fat_g.message}
                         </p>
                       )}
@@ -1321,12 +1342,14 @@ export function AddFoodItemModal({
                         className={errors.carb_g ? 'border-red-500' : ''}
                       />
                       {errors.carb_g && (
-                        <p className="text-sm text-red-600 mt-1">{errors.carb_g.message}</p>
+                        <p className="text-sm text-red-600 mt-1 dark:text-red-300">
+                          {errors.carb_g.message}
+                        </p>
                       )}
                     </div>
 
                     <div>
-                      <Label htmlFor="sugars_g" className="text-neutral-500">
+                      <Label htmlFor="sugars_g" className="text-neutral-500 dark:text-neutral-400">
                         {t('addFoodModal.fieldSugars')}
                       </Label>
                       <Input
@@ -1338,12 +1361,14 @@ export function AddFoodItemModal({
                         className={errors.sugars_g ? 'border-red-500' : ''}
                       />
                       {errors.sugars_g && (
-                        <p className="text-sm text-red-600 mt-1">{errors.sugars_g.message}</p>
+                        <p className="text-sm text-red-600 mt-1 dark:text-red-300">
+                          {errors.sugars_g.message}
+                        </p>
                       )}
                     </div>
 
                     <div className="col-start-2">
-                      <Label htmlFor="fiber_g" className="text-neutral-500">
+                      <Label htmlFor="fiber_g" className="text-neutral-500 dark:text-neutral-400">
                         {t('addFoodModal.fieldFiber')}
                       </Label>
                       <Input
@@ -1355,7 +1380,9 @@ export function AddFoodItemModal({
                         className={errors.fiber_g ? 'border-red-500' : ''}
                       />
                       {errors.fiber_g && (
-                        <p className="text-sm text-red-600 mt-1">{errors.fiber_g.message}</p>
+                        <p className="text-sm text-red-600 mt-1 dark:text-red-300">
+                          {errors.fiber_g.message}
+                        </p>
                       )}
                     </div>
 
@@ -1371,12 +1398,14 @@ export function AddFoodItemModal({
                         className={errors.protein_g ? 'border-red-500' : ''}
                       />
                       {errors.protein_g && (
-                        <p className="text-sm text-red-600 mt-1">{errors.protein_g.message}</p>
+                        <p className="text-sm text-red-600 mt-1 dark:text-red-300">
+                          {errors.protein_g.message}
+                        </p>
                       )}
                     </div>
 
                     <div>
-                      <Label htmlFor="salt_g" className="text-neutral-500">
+                      <Label htmlFor="salt_g" className="text-neutral-500 dark:text-neutral-400">
                         {t('addFoodModal.fieldSalt')}
                       </Label>
                       <Input
@@ -1388,15 +1417,17 @@ export function AddFoodItemModal({
                         className={errors.salt_g ? 'border-red-500' : ''}
                       />
                       {errors.salt_g && (
-                        <p className="text-sm text-red-600 mt-1">{errors.salt_g.message}</p>
+                        <p className="text-sm text-red-600 mt-1 dark:text-red-300">
+                          {errors.salt_g.message}
+                        </p>
                       )}
                     </div>
                   </div>
 
                   {/* Macro mismatch warning */}
                   {liveCalculations?.macroCaloriesMismatch && (
-                    <div className="bg-yellow-50 border border-yellow-300 rounded-lg p-3">
-                      <p className="text-xs text-yellow-800">
+                    <div className="bg-yellow-50 border border-yellow-300 rounded-lg p-3 dark:bg-yellow-900/25 dark:border-yellow-800">
+                      <p className="text-xs text-yellow-800 dark:text-yellow-300">
                         {t('addFoodModal.macroMismatch', {
                           macro: Math.round(proteinG * 4 + carbG * 4 + fatG * 9),
                           calories: Math.round(calories),
@@ -1411,8 +1442,8 @@ export function AddFoodItemModal({
                 <div className="border-t pt-4 space-y-4">
                   {/* Volymkonvertering - dölj bara för ml-livsmedel */}
                   {defaultUnit?.toLowerCase() !== 'ml' && (
-                    <div className="space-y-3 border border-neutral-200 rounded-lg p-3 bg-neutral-50">
-                      <p className="text-sm font-medium text-neutral-900">
+                    <div className="space-y-3 border border-neutral-200 rounded-lg p-3 bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-900">
+                      <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
                         {t('addFoodModal.volumeConversion')}
                       </p>
 
@@ -1429,7 +1460,7 @@ export function AddFoodItemModal({
                               id="volume_unit"
                               value={volumeUnit}
                               onChange={e => setVolumeUnit(e.target.value as VolumeUnit)}
-                              className="w-20 px-2 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-base md:text-sm"
+                              className="w-20 px-2 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-base md:text-sm dark:border-neutral-600"
                             >
                               <option value="dl">dl</option>
                               <option value="msk">msk</option>
@@ -1447,20 +1478,22 @@ export function AddFoodItemModal({
                               placeholder="gram"
                               className="flex-1"
                             />
-                            <span className="self-center text-sm text-neutral-600">
+                            <span className="self-center text-sm text-neutral-600 dark:text-neutral-400">
                               {t('addFoodModal.volumeGramsUnit')}
                             </span>
                           </div>
                         </div>
                       </div>
 
-                      <p className="text-xs text-neutral-500">{t('addFoodModal.volumeExamples')}</p>
+                      <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                        {t('addFoodModal.volumeExamples')}
+                      </p>
                     </div>
                   )}
 
                   {/* Serveringsfunktion - gram per bit/styck */}
-                  <div className="space-y-3 border border-neutral-200 rounded-lg p-3 bg-neutral-50">
-                    <p className="text-sm font-medium text-neutral-900">
+                  <div className="space-y-3 border border-neutral-200 rounded-lg p-3 bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-900">
+                    <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
                       {t('addFoodModal.servingInfo')}
                     </p>
 
@@ -1472,7 +1505,7 @@ export function AddFoodItemModal({
                             {isDefaultUnitMl
                               ? t('addFoodModal.servingWeightLabelMl')
                               : t('addFoodModal.servingWeightLabel')}
-                            <span className="text-xs text-neutral-500 ml-1 font-normal">
+                            <span className="text-xs text-neutral-500 ml-1 font-normal dark:text-neutral-400">
                               {isDefaultUnitMl
                                 ? t('addFoodModal.servingWeightUnitMl')
                                 : t('addFoodModal.servingWeightUnit')}
@@ -1495,7 +1528,7 @@ export function AddFoodItemModal({
                       <div className={isServingUnitVolume ? 'col-span-2' : ''}>
                         <Label htmlFor="serving_unit">
                           {t('addFoodModal.servingUnitLabel')}
-                          <span className="text-xs text-neutral-500 ml-1 font-normal">
+                          <span className="text-xs text-neutral-500 ml-1 font-normal dark:text-neutral-400">
                             {t('addFoodModal.servingUnitHint')}
                           </span>
                         </Label>
@@ -1509,9 +1542,11 @@ export function AddFoodItemModal({
                     </div>
 
                     {isServingUnitVolume ? (
-                      <p className="text-xs text-amber-600">{t('addFoodModal.servingVolumeTip')}</p>
+                      <p className="text-xs text-amber-600 dark:text-amber-300">
+                        {t('addFoodModal.servingVolumeTip')}
+                      </p>
                     ) : (
-                      <p className="text-xs text-neutral-500">
+                      <p className="text-xs text-neutral-500 dark:text-neutral-400">
                         {t('addFoodModal.servingExamples')}
                       </p>
                     )}
@@ -1521,8 +1556,8 @@ export function AddFoodItemModal({
 
               {/* Live preview panel */}
               <div className="lg:sticky lg:top-0 h-fit">
-                <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4 space-y-4">
-                  <h3 className="text-sm font-semibold text-neutral-900 flex items-center gap-2">
+                <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4 space-y-4 dark:border-neutral-700 dark:bg-neutral-900">
+                  <h3 className="text-sm font-semibold text-neutral-900 flex items-center gap-2 dark:text-neutral-100">
                     {t('addFoodModal.preview')}
                   </h3>
 
@@ -1532,10 +1567,10 @@ export function AddFoodItemModal({
                       {liveCalculations.kcalPerGram !== null &&
                         liveCalculations.energyDensityColor !== null && (
                           <div>
-                            <p className="text-xs text-neutral-600 mb-1">
+                            <p className="text-xs text-neutral-600 mb-1 dark:text-neutral-400">
                               {t('addFoodModal.previewEnergyDensity')}
                             </p>
-                            <p className="text-lg font-semibold text-neutral-900">
+                            <p className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
                               {liveCalculations.kcalPerGram.toFixed(2)} kcal/g
                             </p>
                             {showEnergyDensity && (
@@ -1544,17 +1579,17 @@ export function AddFoodItemModal({
                                   variant="outline"
                                   className={
                                     liveCalculations.energyDensityColor === 'Green'
-                                      ? 'bg-green-50 text-green-700 border-green-300'
+                                      ? 'bg-green-50 text-green-700 border-green-300 dark:bg-green-900/25 dark:text-green-300 dark:border-green-800'
                                       : liveCalculations.energyDensityColor === 'Yellow'
-                                        ? 'bg-yellow-50 text-yellow-700 border-yellow-300'
-                                        : 'bg-orange-50 text-orange-700 border-orange-300'
+                                        ? 'bg-yellow-50 text-yellow-700 border-yellow-300 dark:bg-yellow-900/25 dark:text-yellow-300 dark:border-yellow-800'
+                                        : 'bg-orange-50 text-orange-700 border-orange-300 dark:bg-orange-900/25 dark:text-orange-300 dark:border-orange-800'
                                   }
                                 >
                                   {tAny(
                                     `color.${liveCalculations.energyDensityColor.toLowerCase()}`
                                   )}
                                 </Badge>
-                                <span className="text-xs text-neutral-600">
+                                <span className="text-xs text-neutral-600 dark:text-neutral-400">
                                   (
                                   {foodType === 'Solid'
                                     ? t('addFoodModal.foodTypeSolid')
@@ -1571,89 +1606,89 @@ export function AddFoodItemModal({
                       {/* Serving portion preview - NY SEKTION */}
                       {servingPreview && (
                         <>
-                          <div className="border-t border-neutral-200 my-3" />
+                          <div className="border-t border-neutral-200 my-3 dark:border-neutral-700" />
                           <div>
                             <div className="flex items-center gap-2 mb-2">
                               <span className="text-lg">🍽️</span>
-                              <p className="text-xs text-neutral-600 font-medium">
+                              <p className="text-xs text-neutral-600 font-medium dark:text-neutral-400">
                                 {t('addFoodModal.previewServingPortion')}
                               </p>
                             </div>
 
-                            <p className="text-lg font-semibold text-neutral-900 mb-2">
+                            <p className="text-lg font-semibold text-neutral-900 mb-2 dark:text-neutral-100">
                               1 {servingPreview.unit} ({servingPreview.portionSize}
                               {servingPreview.isML ? 'ml' : 'g'})
                             </p>
 
                             <div className="space-y-1 text-sm">
                               <div className="flex justify-between">
-                                <span className="text-neutral-600">
+                                <span className="text-neutral-600 dark:text-neutral-400">
                                   {t('addFoodModal.previewEnergy')}
                                 </span>
-                                <span className="font-semibold text-neutral-900">
+                                <span className="font-semibold text-neutral-900 dark:text-neutral-100">
                                   {Math.round(servingPreview.kcal)} kcal
                                 </span>
                               </div>
                               <div className="flex justify-between">
-                                <span className="text-neutral-600">
+                                <span className="text-neutral-600 dark:text-neutral-400">
                                   {t('addFoodModal.previewFat')}
                                 </span>
-                                <span className="font-semibold text-neutral-900">
+                                <span className="font-semibold text-neutral-900 dark:text-neutral-100">
                                   {servingPreview.fat.toFixed(1)}g
                                 </span>
                               </div>
                               {servingPreview.saturatedFat != null && (
                                 <div className="flex justify-between pl-3">
-                                  <span className="text-neutral-400">
+                                  <span className="text-neutral-400 dark:text-neutral-500">
                                     {t('addFoodModal.previewSaturatedFat')}
                                   </span>
-                                  <span className="text-neutral-600">
+                                  <span className="text-neutral-600 dark:text-neutral-400">
                                     {servingPreview.saturatedFat.toFixed(1)}g
                                   </span>
                                 </div>
                               )}
                               <div className="flex justify-between">
-                                <span className="text-neutral-600">
+                                <span className="text-neutral-600 dark:text-neutral-400">
                                   {t('addFoodModal.previewCarbs')}
                                 </span>
-                                <span className="font-semibold text-neutral-900">
+                                <span className="font-semibold text-neutral-900 dark:text-neutral-100">
                                   {servingPreview.carb.toFixed(1)}g
                                 </span>
                               </div>
                               {servingPreview.sugars != null && (
                                 <div className="flex justify-between pl-3">
-                                  <span className="text-neutral-400">
+                                  <span className="text-neutral-400 dark:text-neutral-500">
                                     {t('addFoodModal.previewSugars')}
                                   </span>
-                                  <span className="text-neutral-600">
+                                  <span className="text-neutral-600 dark:text-neutral-400">
                                     {servingPreview.sugars.toFixed(1)}g
                                   </span>
                                 </div>
                               )}
                               {servingPreview.fiber != null && (
                                 <div className="flex justify-between pl-3">
-                                  <span className="text-neutral-400">
+                                  <span className="text-neutral-400 dark:text-neutral-500">
                                     {t('addFoodModal.previewFiber')}
                                   </span>
-                                  <span className="text-neutral-600">
+                                  <span className="text-neutral-600 dark:text-neutral-400">
                                     {servingPreview.fiber.toFixed(1)}g
                                   </span>
                                 </div>
                               )}
                               <div className="flex justify-between">
-                                <span className="text-neutral-600">
+                                <span className="text-neutral-600 dark:text-neutral-400">
                                   {t('addFoodModal.previewProtein')}
                                 </span>
-                                <span className="font-semibold text-neutral-900">
+                                <span className="font-semibold text-neutral-900 dark:text-neutral-100">
                                   {servingPreview.protein.toFixed(1)}g
                                 </span>
                               </div>
                               {servingPreview.salt != null && (
                                 <div className="flex justify-between pl-3">
-                                  <span className="text-neutral-400">
+                                  <span className="text-neutral-400 dark:text-neutral-500">
                                     {t('addFoodModal.previewSalt')}
                                   </span>
-                                  <span className="text-neutral-600">
+                                  <span className="text-neutral-600 dark:text-neutral-400">
                                     {servingPreview.salt.toFixed(1)}g
                                   </span>
                                 </div>
@@ -1672,7 +1707,7 @@ export function AddFoodItemModal({
                         sugarsG != null ||
                         saltG != null) && (
                         <div>
-                          <p className="text-xs text-neutral-600 mb-1">
+                          <p className="text-xs text-neutral-600 mb-1 dark:text-neutral-400">
                             {t('addFoodModal.sectionNutrition', {
                               amount: defaultAmount || '?',
                               unit: defaultUnit || '?',
@@ -1680,79 +1715,85 @@ export function AddFoodItemModal({
                           </p>
                           <div className="space-y-1 text-sm">
                             <div className="flex justify-between">
-                              <span className="text-neutral-600">
+                              <span className="text-neutral-600 dark:text-neutral-400">
                                 {t('addFoodModal.previewEnergy')}
                               </span>
-                              <span className="font-semibold text-neutral-900">
+                              <span className="font-semibold text-neutral-900 dark:text-neutral-100">
                                 {Math.round(calories)} kcal
                               </span>
                             </div>
                             <div className="flex justify-between">
-                              <span className="text-neutral-600">
+                              <span className="text-neutral-600 dark:text-neutral-400">
                                 {t('addFoodModal.previewFat')}
                               </span>
-                              <span className="font-medium text-neutral-900">
+                              <span className="font-medium text-neutral-900 dark:text-neutral-100">
                                 {fatG.toFixed(1)}g
                               </span>
                             </div>
                             {saturatedFatG != null && !isNaN(saturatedFatG) && (
                               <div className="flex justify-between pl-3">
-                                <span className="text-neutral-400">
+                                <span className="text-neutral-400 dark:text-neutral-500">
                                   {t('addFoodModal.previewSaturatedFat')}
                                 </span>
-                                <span className="text-neutral-600">
+                                <span className="text-neutral-600 dark:text-neutral-400">
                                   {saturatedFatG.toFixed(1)}g
                                 </span>
                               </div>
                             )}
                             <div className="flex justify-between">
-                              <span className="text-neutral-600">
+                              <span className="text-neutral-600 dark:text-neutral-400">
                                 {t('addFoodModal.previewCarbs')}
                               </span>
-                              <span className="font-medium text-neutral-900">
+                              <span className="font-medium text-neutral-900 dark:text-neutral-100">
                                 {carbG.toFixed(1)}g
                               </span>
                             </div>
                             {sugarsG != null && !isNaN(sugarsG) && (
                               <div className="flex justify-between pl-3">
-                                <span className="text-neutral-400">
+                                <span className="text-neutral-400 dark:text-neutral-500">
                                   {t('addFoodModal.previewSugars')}
                                 </span>
-                                <span className="text-neutral-600">{sugarsG.toFixed(1)}g</span>
+                                <span className="text-neutral-600 dark:text-neutral-400">
+                                  {sugarsG.toFixed(1)}g
+                                </span>
                               </div>
                             )}
                             {fiberG != null && !isNaN(fiberG) && (
                               <div className="flex justify-between pl-3">
-                                <span className="text-neutral-400">
+                                <span className="text-neutral-400 dark:text-neutral-500">
                                   {t('addFoodModal.previewFiber')}
                                 </span>
-                                <span className="text-neutral-600">{fiberG.toFixed(1)}g</span>
+                                <span className="text-neutral-600 dark:text-neutral-400">
+                                  {fiberG.toFixed(1)}g
+                                </span>
                               </div>
                             )}
                             <div className="flex justify-between">
-                              <span className="text-neutral-600">
+                              <span className="text-neutral-600 dark:text-neutral-400">
                                 {t('addFoodModal.previewProtein')}
                               </span>
-                              <span className="font-medium text-neutral-900">
+                              <span className="font-medium text-neutral-900 dark:text-neutral-100">
                                 {proteinG.toFixed(1)}g
                               </span>
                             </div>
                             {saltG != null && !isNaN(saltG) && (
                               <div className="flex justify-between pl-3">
-                                <span className="text-neutral-400">
+                                <span className="text-neutral-400 dark:text-neutral-500">
                                   {t('addFoodModal.previewSalt')}
                                 </span>
-                                <span className="text-neutral-600">{saltG.toFixed(1)}g</span>
+                                <span className="text-neutral-600 dark:text-neutral-400">
+                                  {saltG.toFixed(1)}g
+                                </span>
                               </div>
                             )}
                           </div>
-                          <div className="border-t border-neutral-200 mt-2 mb-2" />
+                          <div className="border-t border-neutral-200 mt-2 mb-2 dark:border-neutral-700" />
                         </div>
                       )}
 
                       {/* Energy comparison */}
                       <div>
-                        <p className="text-xs text-neutral-600 mb-1">
+                        <p className="text-xs text-neutral-600 mb-1 dark:text-neutral-400">
                           {t('addFoodModal.previewEnergyComparison')}
                         </p>
                         <div className="space-y-1 text-sm">
@@ -1771,8 +1812,8 @@ export function AddFoodItemModal({
                             <span
                               className={`font-semibold ${
                                 Math.abs(liveCalculations.caloriesDiffPercent) > 10
-                                  ? 'text-red-600'
-                                  : 'text-green-600'
+                                  ? 'text-red-600 dark:text-red-300'
+                                  : 'text-green-600 dark:text-green-300'
                               }`}
                             >
                               {calories - (proteinG * 4 + carbG * 4 + fatG * 9) > 0 ? '+' : ''}
@@ -1781,12 +1822,12 @@ export function AddFoodItemModal({
                           </div>
                         </div>
                         {/* Divider */}
-                        <div className="border-t border-neutral-200 mt-2 mb-2"></div>
+                        <div className="border-t border-neutral-200 mt-2 mb-2 dark:border-neutral-700"></div>
                       </div>
 
                       {/* Macro distribution */}
                       <div>
-                        <p className="text-xs text-neutral-600 mb-2">
+                        <p className="text-xs text-neutral-600 mb-2 dark:text-neutral-400">
                           {t('addFoodModal.previewMacroDistribution')}
                         </p>
                         <div className="space-y-2">
@@ -1799,7 +1840,7 @@ export function AddFoodItemModal({
                                 {Math.round(liveCalculations.fatPercent)}%
                               </span>
                             </div>
-                            <div className="h-2 bg-neutral-200 rounded-full overflow-hidden">
+                            <div className="h-2 bg-neutral-200 rounded-full overflow-hidden dark:bg-neutral-700">
                               <div
                                 className="h-full rounded-full"
                                 style={{
@@ -1819,7 +1860,7 @@ export function AddFoodItemModal({
                                 {Math.round(liveCalculations.carbPercent)}%
                               </span>
                             </div>
-                            <div className="h-2 bg-neutral-200 rounded-full overflow-hidden">
+                            <div className="h-2 bg-neutral-200 rounded-full overflow-hidden dark:bg-neutral-700">
                               <div
                                 className="h-full rounded-full"
                                 style={{
@@ -1839,7 +1880,7 @@ export function AddFoodItemModal({
                                 {Math.round(liveCalculations.proteinPercent)}%
                               </span>
                             </div>
-                            <div className="h-2 bg-neutral-200 rounded-full overflow-hidden">
+                            <div className="h-2 bg-neutral-200 rounded-full overflow-hidden dark:bg-neutral-700">
                               <div
                                 className="h-full rounded-full"
                                 style={{
@@ -1853,7 +1894,9 @@ export function AddFoodItemModal({
                       </div>
                     </>
                   ) : (
-                    <p className="text-sm text-neutral-500">{t('addFoodModal.previewEmpty')}</p>
+                    <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                      {t('addFoodModal.previewEmpty')}
+                    </p>
                   )}
                 </div>
               </div>

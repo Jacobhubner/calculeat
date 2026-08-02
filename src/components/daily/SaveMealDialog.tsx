@@ -129,7 +129,10 @@ export default function SaveMealDialog({ open, onOpenChange, mealEntry }: SaveMe
         <div className="flex-1 overflow-y-auto space-y-4">
           {/* Name Input */}
           <div>
-            <label htmlFor="meal-name" className="block text-sm font-medium text-neutral-700 mb-2">
+            <label
+              htmlFor="meal-name"
+              className="block text-sm font-medium text-neutral-700 mb-2 dark:text-neutral-200"
+            >
               {t('saveMeal.nameLabel')}
             </label>
             <Input
@@ -150,10 +153,12 @@ export default function SaveMealDialog({ open, onOpenChange, mealEntry }: SaveMe
               <AlertTriangle className="h-4 w-4" />
               <AlertDescription>
                 <div className="flex-1">
-                  <h4 className="font-semibold text-yellow-900 mb-1">
+                  <h4 className="font-semibold text-yellow-900 mb-1 dark:text-yellow-300">
                     {t('saveMeal.duplicateWarningTitle', { name: mealName.trim() })}
                   </h4>
-                  <p className="text-sm text-yellow-800">{t('saveMeal.duplicateWarningText')}</p>
+                  <p className="text-sm text-yellow-800 dark:text-yellow-300">
+                    {t('saveMeal.duplicateWarningText')}
+                  </p>
                 </div>
               </AlertDescription>
             </Alert>
@@ -161,10 +166,10 @@ export default function SaveMealDialog({ open, onOpenChange, mealEntry }: SaveMe
 
           {/* Food Items Preview */}
           <div>
-            <h3 className="text-sm font-medium text-neutral-700 mb-2">
+            <h3 className="text-sm font-medium text-neutral-700 mb-2 dark:text-neutral-200">
               {t('saveMeal.foodItemsHeading', { count: mealEntry?.items?.length || 0 })}
             </h3>
-            <div className="border rounded-lg bg-neutral-50 max-h-60 overflow-y-auto">
+            <div className="border rounded-lg bg-neutral-50 max-h-60 overflow-y-auto dark:bg-neutral-900">
               {hasItems ? (
                 <div className="divide-y">
                   {(mealEntry.items ?? []).map(item => {
@@ -173,14 +178,14 @@ export default function SaveMealDialog({ open, onOpenChange, mealEntry }: SaveMe
                       <div key={item.id} className="p-3 text-sm">
                         <div className="flex items-start justify-between gap-2">
                           <div className="flex-1 min-w-0">
-                            <p className="font-medium text-neutral-900 truncate">
+                            <p className="font-medium text-neutral-900 truncate dark:text-neutral-100">
                               {foodItem?.name || t('saveMeal.unknownFood')}
                             </p>
-                            <p className="text-xs text-neutral-500 mt-0.5">
+                            <p className="text-xs text-neutral-500 mt-0.5 dark:text-neutral-400">
                               {item.amount} {item.unit}
                             </p>
                           </div>
-                          <span className="text-xs text-neutral-600 shrink-0">
+                          <span className="text-xs text-neutral-600 shrink-0 dark:text-neutral-400">
                             {item.calories} kcal
                           </span>
                         </div>
@@ -189,7 +194,7 @@ export default function SaveMealDialog({ open, onOpenChange, mealEntry }: SaveMe
                   })}
                 </div>
               ) : (
-                <div className="p-8 text-center text-neutral-400 text-sm">
+                <div className="p-8 text-center text-neutral-400 text-sm dark:text-neutral-500">
                   {t('saveMeal.noFoodItems')}
                 </div>
               )}
@@ -200,9 +205,11 @@ export default function SaveMealDialog({ open, onOpenChange, mealEntry }: SaveMe
           {hasItems && (
             <div className="border-t pt-3">
               <div className="flex items-center justify-between text-sm">
-                <span className="font-medium text-neutral-700">{t('saveMeal.total')}</span>
-                <div className="flex gap-3 text-neutral-600">
-                  <span className="font-semibold text-primary-600">
+                <span className="font-medium text-neutral-700 dark:text-neutral-200">
+                  {t('saveMeal.total')}
+                </span>
+                <div className="flex gap-3 text-neutral-600 dark:text-neutral-400">
+                  <span className="font-semibold text-primary-600 dark:text-primary-300">
                     {Math.round(totals.calories)} kcal
                   </span>
                   <span style={{ color: '#f5c518' }}>F: {totals.fat.toFixed(1)}g</span>
