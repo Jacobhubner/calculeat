@@ -21,7 +21,7 @@ export default function AllMeasurementsForm({
   const { t } = useTranslation('body')
   return (
     <div className="space-y-6">
-      <Card className="bg-primary-50 border-primary-200">
+      <Card className="bg-primary-50 border-primary-200 dark:bg-primary-900/25 dark:border-primary-800">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Info className="h-5 w-5 text-primary-600" />

@@ -106,7 +106,7 @@ export default function MeasurementSetCard({
         !isUnsaved && [
           'border-2',
           isActive
-            ? 'border-l-4 border-l-primary-600 bg-primary-50/50 border-primary-500'
+            ? 'border-l-4 border-l-primary-600 bg-primary-50/50 border-primary-500 dark:bg-primary-900/20'
             : 'border-neutral-200 hover:border-primary-300 hover:bg-neutral-50 hover:shadow-sm dark:hover:bg-neutral-800 dark:border-neutral-700',
         ]
       )}

@@ -13,30 +13,30 @@ export function MaxFatMetabolismCard({ maxFatKcal, percentOfTDEE }: MaxFatMetabo
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden dark:bg-neutral-850">
-      <div className="px-6 py-4 border-b border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-900">
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden dark:bg-neutral-850 dark:border-neutral-700">
+      <div className="px-6 py-4 border-b border-gray-200 dark:border-neutral-700">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-neutral-100">
           <span className="text-orange-600 dark:text-orange-300">{t('maxFat.title')}</span>
         </h3>
       </div>
 
       <div className="p-6">
-        <div className="border-2 border-gray-300 rounded-lg p-4 bg-gray-50">
+        <div className="border-2 border-gray-300 rounded-lg p-4 bg-gray-50 dark:bg-neutral-900 dark:border-neutral-600">
           <div className="flex items-baseline justify-center gap-4">
             <div className="text-center">
-              <div className="text-2xl font-bold text-gray-900">
+              <div className="text-2xl font-bold text-gray-900 dark:text-neutral-100">
                 {t('maxFat.deficit', { value: maxFatKcal })}
               </div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-gray-900">
+              <div className="text-2xl font-bold text-gray-900 dark:text-neutral-100">
                 {t('maxFat.tdeePercent', { value: percentOfTDEE })}
               </div>
             </div>
           </div>
         </div>
 
-        <div className="mt-4 text-sm text-gray-600">
+        <div className="mt-4 text-sm text-gray-600 dark:text-neutral-400">
           <p>{t('maxFat.description')}</p>
         </div>
       </div>

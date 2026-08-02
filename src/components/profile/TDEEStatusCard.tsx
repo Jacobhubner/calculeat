@@ -66,7 +66,7 @@ export function TDEEStatusCard({ profile }: TDEEStatusCardProps) {
   // Missing TDEE
   if (statusInfo.status === 'missing') {
     return (
-      <Card className="border-gray-200">
+      <Card className="border-gray-200 dark:border-neutral-700">
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg">TDEE & Energibehov</CardTitle>

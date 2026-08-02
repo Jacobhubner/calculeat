@@ -34,7 +34,7 @@ export function FFMIReferenceTable({ userFFMI, userBodyFat, gender }: FFMIRefere
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden dark:bg-neutral-850">
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden dark:bg-neutral-850 dark:border-neutral-700">
       <div className="flex justify-end px-2 pt-2">
         <button
           type="button"
@@ -47,19 +47,19 @@ export function FFMIReferenceTable({ userFFMI, userBodyFat, gender }: FFMIRefere
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="bg-gray-50 border-b border-gray-200">
-              <th className="px-4 py-2 text-left font-semibold text-gray-900">
+            <tr className="bg-gray-50 border-b border-gray-200 dark:bg-neutral-900 dark:border-neutral-700">
+              <th className="px-4 py-2 text-left font-semibold text-gray-900 dark:text-neutral-100">
                 {showMale ? t('refTable.ffmiMen') : t('refTable.ffmiWomen')}
               </th>
-              <th className="px-4 py-2 text-left font-semibold text-gray-900">
+              <th className="px-4 py-2 text-left font-semibold text-gray-900 dark:text-neutral-100">
                 {t('refTable.bodyFat')}
               </th>
-              <th className="px-4 py-2 text-left font-semibold text-gray-900">
+              <th className="px-4 py-2 text-left font-semibold text-gray-900 dark:text-neutral-100">
                 {t('refTable.description')}
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">
+          <tbody className="divide-y divide-gray-200 dark:divide-neutral-700">
             {FFMI_WITH_BODY_FAT_RANGES.map((row, index) => {
               const isHighlighted = isUserInRange(row)
               const ffmiValue = isMale ? row.ffmiMen : row.ffmiWomen
@@ -72,11 +72,11 @@ export function FFMIReferenceTable({ userFFMI, userBodyFat, gender }: FFMIRefere
                     isHighlighted
                       ? 'bg-blue-100 border-l-4 border-l-blue-600 font-semibold dark:bg-blue-900/25'
                       : row.colorClass || 'bg-white dark:bg-neutral-850'
-                  } hover:bg-gray-50 transition-colors`}
+                  } hover:bg-gray-50 dark:hover:bg-neutral-800 transition-colors`}
                 >
-                  <td className="px-4 py-2 text-gray-900">{ffmiValue}</td>
-                  <td className="px-4 py-2 text-gray-700">{bfValue}</td>
-                  <td className="px-4 py-2 text-gray-900">
+                  <td className="px-4 py-2 text-gray-900 dark:text-neutral-100">{ffmiValue}</td>
+                  <td className="px-4 py-2 text-gray-700 dark:text-neutral-200">{bfValue}</td>
+                  <td className="px-4 py-2 text-gray-900 dark:text-neutral-100">
                     {t(`refTable.ffmiRangeDescriptions.${row.description}`, {
                       defaultValue: row.description,
                     })}

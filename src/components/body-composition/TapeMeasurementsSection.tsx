@@ -317,7 +317,7 @@ export default function TapeMeasurementsSection({
                             return (
                               <div
                                 key={idx}
-                                className="bg-pink-50 border-pink-200 border rounded-lg p-4"
+                                className="bg-pink-50 border-pink-200 border rounded-lg p-4 dark:bg-pink-900/25 dark:border-pink-800"
                               >
                                 <p className="font-semibold text-pink-700 mb-2">👩 {femaleLabel}</p>
                                 <p className="text-pink-900 leading-relaxed">{section.content}</p>

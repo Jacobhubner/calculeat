@@ -14,7 +14,7 @@ const colorClasses = {
   orange:
     'bg-orange-100 text-orange-800 border-orange-300 dark:bg-orange-900/30 dark:text-orange-300 dark:border-orange-800',
   blue: 'bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800',
-  gray: 'bg-gray-100 text-gray-800 border-gray-300',
+  gray: 'bg-gray-100 text-gray-800 border-gray-300 dark:bg-neutral-800 dark:text-neutral-200 dark:border-neutral-600',
 }
 
 const iconEmojis = {

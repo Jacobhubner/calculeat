@@ -49,7 +49,7 @@ export default function DensityConversionSelector({
                   e.stopPropagation()
                   setShowInfo('siri')
                 }}
-                className="absolute -top-2 -right-2 bg-white border border-neutral-200 rounded-full p-1 hover:bg-neutral-50 shadow-sm"
+                className="absolute -top-2 -right-2 bg-white border border-neutral-200 rounded-full p-1 hover:bg-neutral-50 shadow-sm dark:bg-neutral-850 dark:border-neutral-700 dark:hover:bg-neutral-800"
                 title={t('densityConversion.showInfoSiri')}
               >
                 <Info className="h-3.5 w-3.5 text-primary-600" />
@@ -77,7 +77,7 @@ export default function DensityConversionSelector({
                   e.stopPropagation()
                   setShowInfo('brozek')
                 }}
-                className="absolute -top-2 -right-2 bg-white border border-neutral-200 rounded-full p-1 hover:bg-neutral-50 shadow-sm"
+                className="absolute -top-2 -right-2 bg-white border border-neutral-200 rounded-full p-1 hover:bg-neutral-50 shadow-sm dark:bg-neutral-850 dark:border-neutral-700 dark:hover:bg-neutral-800"
                 title={t('densityConversion.showInfoBrozek')}
               >
                 <Info className="h-3.5 w-3.5 text-primary-600" />

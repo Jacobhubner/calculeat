@@ -120,7 +120,9 @@ export default function MeasurementSetList({
       minute: '2-digit',
     })
 
-    const confirmed = window.confirm(t('list.deleteConfirm', { date: displayDate, time: displayTime }))
+    const confirmed = window.confirm(
+      t('list.deleteConfirm', { date: displayDate, time: displayTime })
+    )
 
     if (!confirmed) return
 
@@ -157,12 +159,16 @@ export default function MeasurementSetList({
   const allSets = [...unsavedMeasurementSets, ...sortedSavedSets]
 
   if (isLoading) {
-    return <div className="text-sm text-neutral-500 text-center py-4">{t('list.loading')}</div>
+    return (
+      <div className="text-sm text-neutral-500 text-center py-4 dark:text-neutral-400">
+        {t('list.loading')}
+      </div>
+    )
   }
 
   if (allSets.length === 0) {
     return (
-      <div className="text-sm text-neutral-500 text-center py-4">
+      <div className="text-sm text-neutral-500 text-center py-4 dark:text-neutral-400">
         {t('list.emptyList')}
       </div>
     )

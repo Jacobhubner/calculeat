@@ -66,7 +66,7 @@ export default function BodyCompositionResults({
           >
             {bodyFatPercentage.toFixed(1)}%
           </div>
-          <p className="text-sm text-neutral-600 mt-2">
+          <p className="text-sm text-neutral-600 mt-2 dark:text-neutral-400">
             {t('results.method', { method: selectedMethod })}
           </p>
           {isEstimatedBMR && selectedMethod === 'Reversed Cunningham equation' && (
