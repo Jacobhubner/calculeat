@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { RichParagraph } from '@/components/RichParagraph'
 import { Link, useLocation } from 'react-router-dom'
 import { ArrowRight, Calculator, AlertTriangle } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -274,7 +275,7 @@ export default function BmrKalkylatornPage() {
                 <button
                   onClick={handleCalculate}
                   disabled={!result}
-                  className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-neutral-200 disabled:text-neutral-400 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm"
+                  className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-neutral-200 disabled:text-neutral-400 dark:disabled:bg-neutral-800 dark:disabled:text-neutral-500 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm"
                 >
                   {t('bmr-calculator.calculator.button')}
                 </button>
@@ -325,7 +326,9 @@ export default function BmrKalkylatornPage() {
                         <div
                           key={level.label}
                           className={`flex items-center justify-between px-4 py-3 border-b border-neutral-100 last:border-0 ${
-                            i % 2 === 0 ? 'bg-white dark:bg-neutral-850' : 'bg-neutral-50/50'
+                            i % 2 === 0
+                              ? 'bg-white dark:bg-neutral-850'
+                              : 'bg-neutral-50/50 dark:bg-neutral-900/50'
                           }`}
                         >
                           <div>
@@ -393,8 +396,12 @@ export default function BmrKalkylatornPage() {
               <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900 dark:text-neutral-100">
                 {t('bmr-calculator.explanation.h2_1')}
               </h2>
-              <p>{t('bmr-calculator.explanation.p_1')}</p>
-              <p>{t('bmr-calculator.explanation.p_2')}</p>
+              <p>
+                <RichParagraph text={t('bmr-calculator.explanation.p_1')} />
+              </p>
+              <p>
+                <RichParagraph text={t('bmr-calculator.explanation.p_2')} />
+              </p>
 
               <div className="rounded-2xl bg-primary-50 border border-primary-200 p-5 dark:bg-primary-900/25 dark:border-primary-800">
                 <div className="font-semibold text-neutral-800 mb-3 dark:text-neutral-200">
@@ -429,7 +436,9 @@ export default function BmrKalkylatornPage() {
               <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900 pt-2 dark:text-neutral-100">
                 {t('bmr-calculator.explanation.h2_2')}
               </h2>
-              <p>{t('bmr-calculator.explanation.p_3')}</p>
+              <p>
+                <RichParagraph text={t('bmr-calculator.explanation.p_3')} />
+              </p>
               <div className="rounded-xl border border-neutral-200 overflow-hidden dark:border-neutral-700">
                 <table className="w-full text-sm">
                   <thead>
@@ -456,7 +465,7 @@ export default function BmrKalkylatornPage() {
                     ).map((row, i) => (
                       <tr
                         key={row.name}
-                        className={`border-b border-neutral-100 last:border-0 ${i % 2 === 0 ? 'bg-white dark:bg-neutral-850' : 'bg-neutral-50/50'}`}
+                        className={`border-b border-neutral-100 last:border-0 ${i % 2 === 0 ? 'bg-white dark:bg-neutral-850' : 'bg-neutral-50/50 dark:bg-neutral-900/50'}`}
                       >
                         <td className="px-4 py-2.5 font-medium text-neutral-800 dark:text-neutral-200">
                           {row.name}

@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { RichParagraph } from '@/components/RichParagraph'
 import { Link, useLocation } from 'react-router-dom'
 import { ArrowRight, Calculator, AlertTriangle, ChevronDown } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -388,7 +389,7 @@ function FfmiReferenceTable({ t }: { t: TFn }) {
           <tbody>
             {rows.map((row, i) => {
               const isExpanded = expandedRow === i
-              const rowClass = `border-b border-neutral-100 last:border-0 ${i % 2 === 0 ? 'bg-white dark:bg-neutral-850' : 'bg-neutral-50/50'}`
+              const rowClass = `border-b border-neutral-100 last:border-0 ${i % 2 === 0 ? 'bg-white dark:bg-neutral-850' : 'bg-neutral-50/50 dark:bg-neutral-900/50'}`
               return (
                 <>
                   <tr key={i} className={rowClass}>
@@ -691,7 +692,7 @@ export default function FfmiKalkylatornPage() {
                 <button
                   onClick={handleCalculate}
                   disabled={!result}
-                  className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-neutral-200 disabled:text-neutral-400 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm"
+                  className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-neutral-200 disabled:text-neutral-400 dark:disabled:bg-neutral-800 dark:disabled:text-neutral-500 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm"
                 >
                   {t('ffmi-calculator.calculator.button')}
                 </button>
@@ -815,8 +816,12 @@ export default function FfmiKalkylatornPage() {
               {t('ffmi-calculator.explanation.h2_1')}
             </h2>
             <div className="space-y-4 text-neutral-700 text-base leading-relaxed dark:text-neutral-200">
-              <p>{t('ffmi-calculator.explanation.p_1')}</p>
-              <p>{t('ffmi-calculator.explanation.p_2')}</p>
+              <p>
+                <RichParagraph text={t('ffmi-calculator.explanation.p_1')} />
+              </p>
+              <p>
+                <RichParagraph text={t('ffmi-calculator.explanation.p_2')} />
+              </p>
 
               <div className="space-y-3 mt-2">
                 {(

@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { RichParagraph } from '@/components/RichParagraph'
 import { Link, useLocation } from 'react-router-dom'
 import { ArrowRight, Calculator, TrendingUp } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -346,7 +347,7 @@ export default function BulkKalkylatornPage() {
                 <button
                   onClick={handleCalculate}
                   disabled={!bmr || !tdee}
-                  className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-neutral-200 disabled:text-neutral-400 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm"
+                  className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-neutral-200 disabled:text-neutral-400 dark:disabled:bg-neutral-800 dark:disabled:text-neutral-500 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm"
                 >
                   {t('bulk-calculator.calculator.button')}
                 </button>
@@ -489,14 +490,22 @@ export default function BulkKalkylatornPage() {
               <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900 dark:text-neutral-100">
                 {t('bulk-calculator.explanation.h2_1')}
               </h2>
-              <p>{t('bulk-calculator.explanation.p_1')}</p>
-              <p>{t('bulk-calculator.explanation.p_2')}</p>
-              <p>{t('bulk-calculator.explanation.p_3')}</p>
+              <p>
+                <RichParagraph text={t('bulk-calculator.explanation.p_1')} />
+              </p>
+              <p>
+                <RichParagraph text={t('bulk-calculator.explanation.p_2')} />
+              </p>
+              <p>
+                <RichParagraph text={t('bulk-calculator.explanation.p_3')} />
+              </p>
 
               <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900 pt-4 dark:text-neutral-100">
                 {t('bulk-calculator.explanation.h2_2')}
               </h2>
-              <p>{t('bulk-calculator.explanation.p_4')}</p>
+              <p>
+                <RichParagraph text={t('bulk-calculator.explanation.p_4')} />
+              </p>
               <ul className="space-y-2 pl-4 list-disc">
                 {(t('bulk-calculator.explanation.list_1', { returnObjects: true }) as string[]).map(
                   (item, i) => {
@@ -514,12 +523,16 @@ export default function BulkKalkylatornPage() {
                   }
                 )}
               </ul>
-              <p>{t('bulk-calculator.explanation.p_5')}</p>
+              <p>
+                <RichParagraph text={t('bulk-calculator.explanation.p_5')} />
+              </p>
 
               <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900 pt-4 dark:text-neutral-100">
                 {t('bulk-calculator.explanation.h2_3')}
               </h2>
-              <p>{t('bulk-calculator.explanation.p_6')}</p>
+              <p>
+                <RichParagraph text={t('bulk-calculator.explanation.p_6')} />
+              </p>
             </div>
           </div>
         </section>

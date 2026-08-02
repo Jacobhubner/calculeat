@@ -207,7 +207,7 @@ export default function BastaKaloriappenPage() {
                   {localeRows.map((row, i) => (
                     <tr
                       key={row.feature}
-                      className={`border-b border-neutral-100 last:border-0 ${i % 2 === 0 ? 'bg-white dark:bg-neutral-850' : 'bg-neutral-50/50'}`}
+                      className={`border-b border-neutral-100 last:border-0 ${i % 2 === 0 ? 'bg-white dark:bg-neutral-850' : 'bg-neutral-50/50 dark:bg-neutral-900/50'}`}
                     >
                       <td className="px-4 py-3">
                         <div className="text-neutral-800 font-medium dark:text-neutral-200">

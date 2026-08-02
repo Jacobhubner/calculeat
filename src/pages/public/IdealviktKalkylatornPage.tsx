@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { RichParagraph } from '@/components/RichParagraph'
 import { Link, useLocation } from 'react-router-dom'
 import { ArrowRight, Calculator, AlertTriangle } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -291,7 +292,7 @@ export default function IdealviktKalkylatornPage() {
                 <button
                   onClick={handleCalculate}
                   disabled={!canCalculate}
-                  className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-neutral-200 disabled:text-neutral-400 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm"
+                  className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-neutral-200 disabled:text-neutral-400 dark:disabled:bg-neutral-800 dark:disabled:text-neutral-500 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm"
                 >
                   {t('idealweight-calculator.calculator.button')}
                 </button>
@@ -402,8 +403,12 @@ export default function IdealviktKalkylatornPage() {
               <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900 dark:text-neutral-100">
                 {t('idealweight-calculator.explanation.h2_1')}
               </h2>
-              <p>{t('idealweight-calculator.explanation.p_1')}</p>
-              <p>{t('idealweight-calculator.explanation.p_2')}</p>
+              <p>
+                <RichParagraph text={t('idealweight-calculator.explanation.p_1')} />
+              </p>
+              <p>
+                <RichParagraph text={t('idealweight-calculator.explanation.p_2')} />
+              </p>
 
               <h3 className="text-lg font-semibold text-neutral-800 mt-4 dark:text-neutral-200">
                 {t('idealweight-calculator.explanation.h3_1')}

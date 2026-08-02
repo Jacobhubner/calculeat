@@ -302,7 +302,7 @@ export default function TdeeKalkylatornPage() {
                 <button
                   onClick={handleCalculate}
                   disabled={!bmr || !tdee}
-                  className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-neutral-200 disabled:text-neutral-400 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm"
+                  className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-neutral-200 disabled:text-neutral-400 dark:disabled:bg-neutral-800 dark:disabled:text-neutral-500 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm"
                 >
                   {t('tdee-calculator.calculator.button')}
                 </button>

@@ -207,7 +207,7 @@ export default function MyFitnessPalVsCalculeatPage() {
               {localeRows.map((row, i) => (
                 <div
                   key={row.feature}
-                  className={`grid grid-cols-[1fr_auto_auto] gap-0 border-b border-neutral-100 last:border-0 ${i % 2 === 0 ? 'bg-white dark:bg-neutral-850' : 'bg-neutral-50/50'}`}
+                  className={`grid grid-cols-[1fr_auto_auto] gap-0 border-b border-neutral-100 last:border-0 ${i % 2 === 0 ? 'bg-white dark:bg-neutral-850' : 'bg-neutral-50/50 dark:bg-neutral-900/50'}`}
                 >
                   <div className="px-4 py-3">
                     <div className="text-sm text-neutral-800 font-medium dark:text-neutral-200">

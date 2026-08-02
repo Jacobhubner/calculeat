@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { RichParagraph } from '@/components/RichParagraph'
 import { Link, useLocation } from 'react-router-dom'
 import { ArrowRight, Calculator, AlertTriangle } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -225,7 +226,7 @@ export default function BmiKalkylatornPage() {
                 <button
                   onClick={handleCalculate}
                   disabled={!bmi}
-                  className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-neutral-200 disabled:text-neutral-400 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm"
+                  className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-neutral-200 disabled:text-neutral-400 dark:disabled:bg-neutral-800 dark:disabled:text-neutral-500 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm"
                 >
                   {t('bmi-calculator.calculator.button')}
                 </button>
@@ -325,8 +326,12 @@ export default function BmiKalkylatornPage() {
               <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900 dark:text-neutral-100">
                 {t('bmi-calculator.explanation.h2_1')}
               </h2>
-              <p>{t('bmi-calculator.explanation.p_1')}</p>
-              <p>{t('bmi-calculator.explanation.p_2')}</p>
+              <p>
+                <RichParagraph text={t('bmi-calculator.explanation.p_1')} />
+              </p>
+              <p>
+                <RichParagraph text={t('bmi-calculator.explanation.p_2')} />
+              </p>
               <h3 className="text-lg font-semibold text-neutral-800 mt-4 dark:text-neutral-200">
                 {t('bmi-calculator.explanation.h3_1')}
               </h3>

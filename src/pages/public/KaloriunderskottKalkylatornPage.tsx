@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { RichParagraph } from '@/components/RichParagraph'
 import { Link, useLocation } from 'react-router-dom'
 import { ArrowRight, Calculator, AlertTriangle } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -356,7 +357,7 @@ export default function KaloriunderskottKalkylatornPage() {
                 <button
                   onClick={handleCalculate}
                   disabled={!bmr || !tdee}
-                  className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-neutral-200 disabled:text-neutral-400 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm"
+                  className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-neutral-200 disabled:text-neutral-400 dark:disabled:bg-neutral-800 dark:disabled:text-neutral-500 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm"
                 >
                   {t('calorie-deficit-calculator.calculator.button')}
                 </button>
@@ -494,7 +495,9 @@ export default function KaloriunderskottKalkylatornPage() {
               <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900 dark:text-neutral-100">
                 {t('calorie-deficit-calculator.explanation.h2_1')}
               </h2>
-              <p>{t('calorie-deficit-calculator.explanation.p_1')}</p>
+              <p>
+                <RichParagraph text={t('calorie-deficit-calculator.explanation.p_1')} />
+              </p>
               <ul className="space-y-2 pl-4 list-disc">
                 {(
                   t('calorie-deficit-calculator.explanation.list_1', {
@@ -515,13 +518,19 @@ export default function KaloriunderskottKalkylatornPage() {
               <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900 pt-4 dark:text-neutral-100">
                 {t('calorie-deficit-calculator.explanation.h2_2')}
               </h2>
-              <p>{t('calorie-deficit-calculator.explanation.p_2')}</p>
-              <p>{t('calorie-deficit-calculator.explanation.p_3')}</p>
+              <p>
+                <RichParagraph text={t('calorie-deficit-calculator.explanation.p_2')} />
+              </p>
+              <p>
+                <RichParagraph text={t('calorie-deficit-calculator.explanation.p_3')} />
+              </p>
 
               <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900 pt-4 dark:text-neutral-100">
                 {t('calorie-deficit-calculator.explanation.h2_3')}
               </h2>
-              <p>{t('calorie-deficit-calculator.explanation.p_4')}</p>
+              <p>
+                <RichParagraph text={t('calorie-deficit-calculator.explanation.p_4')} />
+              </p>
             </div>
           </div>
         </section>
