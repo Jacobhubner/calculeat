@@ -204,10 +204,12 @@ export function ArticleLayout({
                 <Link
                   data-layout-text
                   to={moneyPageHref}
-                  // Ljus knapp mot den mörkgröna banderollen i båda teman.
-                  // Hovern speglar den ljusa: vit → ljusgrön, alltså samma
-                  // riktning och samma synliga hopp.
-                  className="inline-flex items-center justify-center gap-2 bg-white text-primary-800 hover:bg-primary-50 font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm whitespace-nowrap shadow-xs w-full sm:w-auto dark:text-primary-900 dark:hover:bg-primary-100"
+                  // Ljust läge: vit knapp mot grön banderoll.
+                  // Mörkt läge: genomskinlig med kant — en vit yta blir annars
+                  // det ljusaste på hela sidan och drar mer blick än
+                  // banderollen den sitter i. Hovern fyller den lätt i stället
+                  // för att byta ton.
+                  className="inline-flex items-center justify-center gap-2 bg-white text-primary-800 hover:bg-primary-50 font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm whitespace-nowrap shadow-xs w-full sm:w-auto dark:bg-transparent dark:text-white dark:border dark:border-white/60 dark:shadow-none dark:hover:bg-white/10 dark:hover:border-white"
                 >
                   {t('moneyPageCta.button')}
                   <ArrowRight className="h-4 w-4" />
