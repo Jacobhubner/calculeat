@@ -330,10 +330,10 @@ export default function SettingsPage() {
         {/* Page Header */}
         <div>
           <h1 className="text-2xl md:text-3xl font-bold text-neutral-900 flex items-center gap-2 md:gap-3 dark:text-neutral-100">
-            <SettingsIcon className="h-6 w-6 md:h-8 md:w-8 text-primary-600" />
+            <SettingsIcon className="h-6 w-6 md:h-8 md:w-8 text-primary-600 dark:text-primary-300" />
             {t('settings.title')}
           </h1>
-          <p className="text-sm md:text-base text-neutral-600 mt-1 md:mt-2">
+          <p className="text-sm md:text-base text-neutral-600 mt-1 md:mt-2 dark:text-neutral-400">
             {t('settings.description')}
           </p>
         </div>
@@ -407,8 +407,8 @@ export default function SettingsPage() {
                 <label
                   className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
                     completionMode === 'manual'
-                      ? 'border-primary-300 bg-primary-50'
-                      : 'border-neutral-200 hover:border-neutral-300'
+                      ? 'border-primary-300 bg-primary-50 dark:border-primary-700 dark:bg-primary-900/30'
+                      : 'border-neutral-200 hover:border-neutral-300 dark:border-neutral-700'
                   }`}
                 >
                   <input
@@ -423,14 +423,16 @@ export default function SettingsPage() {
                     <span className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
                       {t('settings.manual')}
                     </span>
-                    <p className="text-xs text-neutral-500 mt-0.5">{t('settings.manualDesc')}</p>
+                    <p className="text-xs text-neutral-500 mt-0.5 dark:text-neutral-400">
+                      {t('settings.manualDesc')}
+                    </p>
                   </div>
                 </label>
                 <label
                   className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
                     completionMode === 'auto'
-                      ? 'border-primary-300 bg-primary-50'
-                      : 'border-neutral-200 hover:border-neutral-300'
+                      ? 'border-primary-300 bg-primary-50 dark:border-primary-700 dark:bg-primary-900/30'
+                      : 'border-neutral-200 hover:border-neutral-300 dark:border-neutral-700'
                   }`}
                 >
                   <input
@@ -445,7 +447,9 @@ export default function SettingsPage() {
                     <span className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
                       {t('settings.auto')}
                     </span>
-                    <p className="text-xs text-neutral-500 mt-0.5">{t('settings.autoDesc')}</p>
+                    <p className="text-xs text-neutral-500 mt-0.5 dark:text-neutral-400">
+                      {t('settings.autoDesc')}
+                    </p>
                   </div>
                 </label>
               </div>
@@ -460,12 +464,14 @@ export default function SettingsPage() {
           </CardHeader>
           <CardContent className="divide-y divide-neutral-100">
             {!isReady ? (
-              <div className="py-4 text-sm text-neutral-500">{t('settings.loading')}</div>
+              <div className="py-4 text-sm text-neutral-500 dark:text-neutral-400">
+                {t('settings.loading')}
+              </div>
             ) : (
               <>
                 {/* Födelsedatum */}
                 <div className="py-3">
-                  <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide mb-2">
+                  <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide mb-2 dark:text-neutral-400">
                     {t('birthDate.label')}
                   </p>
                   <div className="grid grid-cols-3 gap-2">
@@ -475,7 +481,7 @@ export default function SettingsPage() {
                         setBirthDay(e.target.value)
                         updateBirthDate(e.target.value, birthMonth, birthYear)
                       }}
-                      className="block w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="block w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-600"
                     >
                       <option value="">{t('birthDate.day')}</option>
                       {Array.from({ length: 31 }, (_, i) => i + 1).map(day => (
@@ -490,7 +496,7 @@ export default function SettingsPage() {
                         setBirthMonth(e.target.value)
                         updateBirthDate(birthDay, e.target.value, birthYear)
                       }}
-                      className="block w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="block w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-600"
                     >
                       <option value="">{t('birthDate.month')}</option>
                       {Array.from({ length: 12 }, (_, i) => i + 1).map(i => (
@@ -505,7 +511,7 @@ export default function SettingsPage() {
                         setBirthYear(e.target.value)
                         updateBirthDate(birthDay, birthMonth, e.target.value)
                       }}
-                      className="block w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="block w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-600"
                     >
                       <option value="">{t('birthDate.year')}</option>
                       {Array.from({ length: 105 }, (_, i) => new Date().getFullYear() - i).map(
@@ -521,7 +527,7 @@ export default function SettingsPage() {
 
                 {/* Kön */}
                 <div className="py-3">
-                  <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide mb-2">
+                  <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide mb-2 dark:text-neutral-400">
                     {t('fields.gender')}
                   </p>
                   <div className="flex gap-6">
@@ -534,7 +540,9 @@ export default function SettingsPage() {
                         onChange={() => setGender('male')}
                         className="h-4 w-4 accent-primary-600"
                       />
-                      <span className="text-sm text-neutral-700">{t('gender.male')}</span>
+                      <span className="text-sm text-neutral-700 dark:text-neutral-300">
+                        {t('gender.male')}
+                      </span>
                     </label>
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input
@@ -545,14 +553,16 @@ export default function SettingsPage() {
                         onChange={() => setGender('female')}
                         className="h-4 w-4 accent-primary-600"
                       />
-                      <span className="text-sm text-neutral-700">{t('gender.female')}</span>
+                      <span className="text-sm text-neutral-700 dark:text-neutral-300">
+                        {t('gender.female')}
+                      </span>
                     </label>
                   </div>
                 </div>
 
                 {/* Längd */}
                 <div className="py-3">
-                  <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide mb-2">
+                  <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide mb-2 dark:text-neutral-400">
                     {t('fields.height')}
                   </p>
                   <input
@@ -566,7 +576,7 @@ export default function SettingsPage() {
                     placeholder="180"
                     min="100"
                     max="250"
-                    className="w-full max-w-xs px-3 py-2 text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="w-full max-w-xs px-3 py-2 text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-600"
                   />
                 </div>
 
@@ -599,7 +609,7 @@ export default function SettingsPage() {
             <div className="py-3">
               {openEditor === 'username' ? (
                 <div className="space-y-2">
-                  <label className="text-xs font-medium text-neutral-500 uppercase tracking-wide">
+                  <label className="text-xs font-medium text-neutral-500 uppercase tracking-wide dark:text-neutral-400">
                     {t('settings.username')}
                   </label>
                   <div className="flex gap-2">
@@ -609,7 +619,7 @@ export default function SettingsPage() {
                       onChange={e => setUsernameInput(e.target.value)}
                       placeholder={t('settings.usernamePlaceholder')}
                       disabled={updateUsername.isPending}
-                      className="flex-1 px-3 py-2 text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex-1 px-3 py-2 text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed dark:border-neutral-600"
                       onKeyDown={e => {
                         if (e.key === 'Enter') handleSaveUsername()
                         if (e.key === 'Escape') closeEditor()
@@ -629,17 +639,19 @@ export default function SettingsPage() {
                     </button>
                     <button
                       onClick={closeEditor}
-                      className="p-2 text-neutral-500 hover:text-neutral-700 bg-neutral-100 hover:bg-neutral-200 rounded-lg"
+                      className="p-2 text-neutral-500 hover:text-neutral-700 bg-neutral-100 hover:bg-neutral-200 rounded-lg dark:hover:text-neutral-200 dark:bg-neutral-800 dark:text-neutral-400"
                     >
                       <X className="h-4 w-4" />
                     </button>
                   </div>
-                  <p className="text-xs text-neutral-400">{t('settings.usernameHint')}</p>
+                  <p className="text-xs text-neutral-400 dark:text-neutral-500">
+                    {t('settings.usernameHint')}
+                  </p>
                 </div>
               ) : (
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide mb-0.5">
+                    <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide mb-0.5 dark:text-neutral-400">
                       {t('settings.username')}
                     </p>
                     <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
@@ -648,7 +660,7 @@ export default function SettingsPage() {
                   </div>
                   <button
                     onClick={() => openEditorFor('username')}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-neutral-600 hover:text-neutral-900 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors dark:text-neutral-100"
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-neutral-600 hover:text-neutral-900 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors dark:text-neutral-300 dark:hover:text-neutral-100 dark:bg-neutral-800 dark:hover:bg-neutral-700"
                   >
                     <Pencil className="h-3 w-3" />
                     {t('settings.edit')}
@@ -661,11 +673,11 @@ export default function SettingsPage() {
             <div className="py-3">
               {openEditor === 'email' ? (
                 <div className="space-y-2">
-                  <label className="text-xs font-medium text-neutral-500 uppercase tracking-wide">
+                  <label className="text-xs font-medium text-neutral-500 uppercase tracking-wide dark:text-neutral-400">
                     {t('settings.email')}
                   </label>
                   {emailPending ? (
-                    <div className="text-sm text-success-700 bg-success-50 border border-success-200 rounded-lg px-3 py-2">
+                    <div className="text-sm text-success-700 bg-success-50 border border-success-200 rounded-lg px-3 py-2 dark:bg-success-900/25 dark:text-success-300 dark:border-success-800">
                       {t('settings.emailConfirmNotice')} <strong>{emailInput}</strong>.{' '}
                       {t('settings.emailConfirmAction')}
                     </div>
@@ -676,7 +688,7 @@ export default function SettingsPage() {
                         value={emailInput}
                         onChange={e => setEmailInput(e.target.value)}
                         placeholder="ny@email.se"
-                        className="flex-1 px-3 py-2 text-base md:text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        className="flex-1 px-3 py-2 text-base md:text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-600"
                         onKeyDown={e => {
                           if (e.key === 'Enter') handleSaveEmail()
                           if (e.key === 'Escape') closeEditor()
@@ -696,19 +708,21 @@ export default function SettingsPage() {
                       </button>
                       <button
                         onClick={closeEditor}
-                        className="p-2 text-neutral-500 hover:text-neutral-700 bg-neutral-100 hover:bg-neutral-200 rounded-lg"
+                        className="p-2 text-neutral-500 hover:text-neutral-700 bg-neutral-100 hover:bg-neutral-200 rounded-lg dark:hover:text-neutral-200 dark:bg-neutral-800 dark:text-neutral-400"
                       >
                         <X className="h-4 w-4" />
                       </button>
                     </div>
                   )}
                   {!emailPending && (
-                    <p className="text-xs text-neutral-400">{t('settings.emailHint')}</p>
+                    <p className="text-xs text-neutral-400 dark:text-neutral-500">
+                      {t('settings.emailHint')}
+                    </p>
                   )}
                   {emailPending && (
                     <button
                       onClick={closeEditor}
-                      className="text-xs text-neutral-500 hover:text-neutral-700 underline"
+                      className="text-xs text-neutral-500 hover:text-neutral-700 underline dark:hover:text-neutral-200 dark:text-neutral-400"
                     >
                       {t('settings.close')}
                     </button>
@@ -717,7 +731,7 @@ export default function SettingsPage() {
               ) : (
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide mb-0.5">
+                    <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide mb-0.5 dark:text-neutral-400">
                       {t('settings.email')}
                     </p>
                     <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
@@ -726,7 +740,7 @@ export default function SettingsPage() {
                   </div>
                   <button
                     onClick={() => openEditorFor('email')}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-neutral-600 hover:text-neutral-900 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors dark:text-neutral-100"
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-neutral-600 hover:text-neutral-900 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors dark:text-neutral-300 dark:hover:text-neutral-100 dark:bg-neutral-800 dark:hover:bg-neutral-700"
                   >
                     <Pencil className="h-3 w-3" />
                     {t('settings.edit')}
@@ -739,7 +753,7 @@ export default function SettingsPage() {
             <div className="py-3">
               {openEditor === 'password' ? (
                 <div className="space-y-2">
-                  <label className="text-xs font-medium text-neutral-500 uppercase tracking-wide">
+                  <label className="text-xs font-medium text-neutral-500 uppercase tracking-wide dark:text-neutral-400">
                     {t('settings.newPassword')}
                   </label>
                   <input
@@ -747,18 +761,20 @@ export default function SettingsPage() {
                     value={passwordInput}
                     onChange={e => setPasswordInput(e.target.value)}
                     placeholder={t('settings.passwordPlaceholder')}
-                    className="w-full px-3 py-2 text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-3 py-2 text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-600"
                     autoFocus
                   />
                   {passwordInput.length > 0 && (
                     <div className="space-y-1">
-                      <div className="h-1.5 w-full bg-neutral-200 rounded-full overflow-hidden">
+                      <div className="h-1.5 w-full bg-neutral-200 rounded-full overflow-hidden dark:bg-neutral-700">
                         <div
                           className={`h-full rounded-full transition-all ${passwordStrengthMeta.color}`}
                           style={{ width: passwordStrengthMeta.width }}
                         />
                       </div>
-                      <p className="text-xs text-neutral-500">{passwordStrengthLabel}</p>
+                      <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                        {passwordStrengthLabel}
+                      </p>
                     </div>
                   )}
                   <input
@@ -768,8 +784,8 @@ export default function SettingsPage() {
                     placeholder={t('settings.confirmPassword')}
                     className={`w-full px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 ${
                       passwordConfirm.length > 0 && passwordInput !== passwordConfirm
-                        ? 'border-error-300'
-                        : 'border-neutral-300'
+                        ? 'border-error-300 dark:border-error-800'
+                        : 'border-neutral-300 dark:border-neutral-600'
                     }`}
                     onKeyDown={e => {
                       if (e.key === 'Enter') handleSavePassword()
@@ -777,7 +793,9 @@ export default function SettingsPage() {
                     }}
                   />
                   {passwordConfirm.length > 0 && passwordInput !== passwordConfirm && (
-                    <p className="text-xs text-error-600">{t('settings.passwordMismatch')}</p>
+                    <p className="text-xs text-error-600 dark:text-error-300">
+                      {t('settings.passwordMismatch')}
+                    </p>
                   )}
                   <div className="flex gap-2 pt-1">
                     <button
@@ -794,7 +812,7 @@ export default function SettingsPage() {
                     </button>
                     <button
                       onClick={closeEditor}
-                      className="px-4 py-2 text-sm font-medium text-neutral-600 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors"
+                      className="px-4 py-2 text-sm font-medium text-neutral-600 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors dark:bg-neutral-800 dark:text-neutral-400"
                     >
                       {t('settings.cancel')}
                     </button>
@@ -803,7 +821,7 @@ export default function SettingsPage() {
               ) : (
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide mb-0.5">
+                    <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide mb-0.5 dark:text-neutral-400">
                       {t('settings.passwordLabel')}
                     </p>
                     <p className="text-sm font-medium text-neutral-900 tracking-widest dark:text-neutral-100">
@@ -812,7 +830,7 @@ export default function SettingsPage() {
                   </div>
                   <button
                     onClick={() => openEditorFor('password')}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-neutral-600 hover:text-neutral-900 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors dark:text-neutral-100"
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-neutral-600 hover:text-neutral-900 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors dark:text-neutral-300 dark:hover:text-neutral-100 dark:bg-neutral-800 dark:hover:bg-neutral-700"
                   >
                     <Pencil className="h-3 w-3" />
                     {t('settings.edit')}
@@ -828,7 +846,7 @@ export default function SettingsPage() {
           <Card>
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
-                <ShieldCheck className="h-5 w-5 text-primary-600" />
+                <ShieldCheck className="h-5 w-5 text-primary-600 dark:text-primary-300" />
                 {t('settings.adminManagement')}
               </CardTitle>
             </CardHeader>
@@ -838,14 +856,16 @@ export default function SettingsPage() {
                 {adminList.map(admin => (
                   <div
                     key={admin.user_id}
-                    className="flex items-center justify-between p-3 rounded-lg bg-neutral-50 border border-neutral-200"
+                    className="flex items-center justify-between p-3 rounded-lg bg-neutral-50 border border-neutral-200 dark:bg-neutral-900 dark:border-neutral-700"
                   >
                     <div>
                       <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
                         {admin.email}
                       </p>
                       {admin.is_super_admin && (
-                        <p className="text-xs text-primary-600 font-medium">Super admin</p>
+                        <p className="text-xs text-primary-600 font-medium dark:text-primary-300">
+                          Super admin
+                        </p>
                       )}
                     </div>
                     {!admin.is_super_admin && (
@@ -859,7 +879,7 @@ export default function SettingsPage() {
                           }
                         }}
                         disabled={removeAdmin.isPending}
-                        className="p-1.5 rounded-lg text-neutral-400 hover:text-error-600 hover:bg-error-50 transition-colors"
+                        className="p-1.5 rounded-lg text-neutral-400 hover:text-error-600 hover:bg-error-50 transition-colors dark:text-neutral-500 dark:hover:text-error-400 dark:hover:bg-error-900/25"
                         title={t('settings.adminRemoveTitle')}
                       >
                         <Trash2 className="h-4 w-4" />
@@ -876,7 +896,7 @@ export default function SettingsPage() {
                   value={newAdminIdentifier}
                   onChange={e => setNewAdminIdentifier(e.target.value)}
                   placeholder={t('settings.adminPlaceholder')}
-                  className="flex-1 px-3 py-2 text-base md:text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="flex-1 px-3 py-2 text-base md:text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-600"
                 />
                 <button
                   onClick={async () => {
@@ -910,18 +930,20 @@ export default function SettingsPage() {
           <Card>
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
-                <Megaphone className="h-5 w-5 text-primary-600" />
+                <Megaphone className="h-5 w-5 text-primary-600 dark:text-primary-300" />
                 {t('settings.adminMsgTitle')}
               </CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col gap-3">
-              <p className="text-sm text-neutral-600">{t('settings.adminMsgDesc')}</p>
+              <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                {t('settings.adminMsgDesc')}
+              </p>
               <input
                 type="text"
                 value={adminMsgTo}
                 onChange={e => setAdminMsgTo(e.target.value)}
                 placeholder={t('settings.adminMsgToPlaceholder')}
-                className="px-3 py-2 text-base md:text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="px-3 py-2 text-base md:text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-600"
               />
               <textarea
                 value={adminMsgText}
@@ -929,7 +951,7 @@ export default function SettingsPage() {
                 placeholder={t('settings.adminMsgTextPlaceholder')}
                 maxLength={1000}
                 rows={3}
-                className="px-3 py-2 text-base md:text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
+                className="px-3 py-2 text-base md:text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none dark:border-neutral-600"
               />
               <button
                 onClick={handleSendAdminMessage}
@@ -952,12 +974,14 @@ export default function SettingsPage() {
           <Card>
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
-                <ShieldCheck className="h-5 w-5 text-amber-600" />
+                <ShieldCheck className="h-5 w-5 text-amber-600 dark:text-amber-300" />
                 {tSettings('preview.title')}
               </CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col gap-3">
-              <p className="text-sm text-neutral-600">{tSettings('preview.description')}</p>
+              <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                {tSettings('preview.description')}
+              </p>
               {!isPreviewActive ? (
                 <Button
                   variant="outline"
@@ -971,7 +995,7 @@ export default function SettingsPage() {
                 </Button>
               ) : (
                 <>
-                  <div className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2">
+                  <div className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2 dark:bg-amber-900/25 dark:text-amber-300 dark:border-amber-800">
                     {tSettings('preview.activeInfo')}
                   </div>
                   <Button
@@ -999,11 +1023,13 @@ export default function SettingsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="text-sm text-neutral-600">{tSettings('dataExport.description')}</p>
+            <p className="text-sm text-neutral-600 dark:text-neutral-400">
+              {tSettings('dataExport.description')}
+            </p>
 
             <div className="space-y-3">
               <div>
-                <label className="text-sm font-medium text-neutral-700 block mb-2">
+                <label className="text-sm font-medium text-neutral-700 block mb-2 dark:text-neutral-200">
                   {tSettings('dataExport.format')}
                 </label>
                 <div className="flex gap-2">
@@ -1014,7 +1040,7 @@ export default function SettingsPage() {
                       className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                         exportFormat === fmt
                           ? 'bg-primary-600 text-white'
-                          : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
+                          : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-200'
                       }`}
                     >
                       {fmt.toUpperCase()}
@@ -1041,27 +1067,31 @@ export default function SettingsPage() {
                 )}
               </Button>
 
-              <p className="text-xs text-neutral-500">{tSettings('dataExport.info')}</p>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                {tSettings('dataExport.info')}
+              </p>
             </div>
           </CardContent>
         </Card>
 
         {/* Delete Account Card — Farozon */}
-        <Card className="border-2 border-error-200">
+        <Card className="border-2 border-error-200 dark:border-error-800">
           <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2 text-error-700">
+            <CardTitle className="text-lg flex items-center gap-2 text-error-700 dark:text-error-300">
               <AlertTriangle className="h-5 w-5" />
               {t('settings.deleteAccountTitle')}
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="rounded-lg border-2 border-error-200 bg-error-50/50 p-4 space-y-3">
+            <div className="rounded-lg border-2 border-error-200 bg-error-50/50 p-4 space-y-3 dark:border-error-800 dark:bg-error-900/20">
               {deleteStep === 0 && (
                 <>
-                  <p className="text-sm text-neutral-700">{t('settings.deleteAccountWarning')}</p>
+                  <p className="text-sm text-neutral-700 dark:text-neutral-300">
+                    {t('settings.deleteAccountWarning')}
+                  </p>
                   <button
                     onClick={() => setDeleteStep(1)}
-                    className="px-4 py-2 text-sm font-medium text-error-700 bg-error-100 hover:bg-error-200 rounded-lg transition-colors"
+                    className="px-4 py-2 text-sm font-medium text-error-700 bg-error-100 hover:bg-error-200 rounded-lg transition-colors dark:bg-error-900/25 dark:text-error-300"
                   >
                     {t('settings.deleteAccountButton')}
                   </button>
@@ -1069,7 +1099,7 @@ export default function SettingsPage() {
               )}
               {deleteStep === 1 && (
                 <>
-                  <p className="text-sm font-medium text-error-700">
+                  <p className="text-sm font-medium text-error-700 dark:text-error-300">
                     {t('settings.deleteAccountConfirm')}
                   </p>
                   <div className="flex gap-2">
@@ -1081,7 +1111,7 @@ export default function SettingsPage() {
                     </button>
                     <button
                       onClick={resetDeleteFlow}
-                      className="px-4 py-2 text-sm font-medium text-neutral-700 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors"
+                      className="px-4 py-2 text-sm font-medium text-neutral-700 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors dark:bg-neutral-800 dark:text-neutral-200"
                     >
                       {t('settings.cancel')}
                     </button>
@@ -1090,7 +1120,7 @@ export default function SettingsPage() {
               )}
               {deleteStep === 2 && (
                 <>
-                  <p className="text-sm font-medium text-error-700">
+                  <p className="text-sm font-medium text-error-700 dark:text-error-300">
                     {t('settings.deleteAccountFinal')}
                   </p>
                   <input
@@ -1098,7 +1128,7 @@ export default function SettingsPage() {
                     value={confirmText}
                     onChange={e => setConfirmText(e.target.value)}
                     placeholder={t('settings.deleteAccountPlaceholder')}
-                    className="w-full px-3 py-2 text-sm border border-error-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-error-500"
+                    className="w-full px-3 py-2 text-sm border border-error-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-error-500 dark:border-error-800"
                   />
                   <div className="flex gap-2">
                     <button
@@ -1111,7 +1141,7 @@ export default function SettingsPage() {
                     </button>
                     <button
                       onClick={resetDeleteFlow}
-                      className="px-4 py-2 text-sm font-medium text-neutral-700 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors"
+                      className="px-4 py-2 text-sm font-medium text-neutral-700 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors dark:bg-neutral-800 dark:text-neutral-200"
                     >
                       {t('settings.cancel')}
                     </button>
