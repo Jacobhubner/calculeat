@@ -204,9 +204,10 @@ export function ArticleLayout({
                 <Link
                   data-layout-text
                   to={moneyPageHref}
-                  // Knappen behöll text-primary-800 när ytan blev mörk —
-                  // mörkt på mörkt. Ljus text i mörkt läge i stället.
-                  className="inline-flex items-center justify-center gap-2 bg-white text-primary-800 hover:bg-primary-50 font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm whitespace-nowrap shadow-xs w-full sm:w-auto dark:bg-neutral-100 dark:text-primary-900 dark:hover:bg-white"
+                  // Ljus knapp mot den mörkgröna banderollen i båda teman.
+                  // Hovern speglar den ljusa: vit → ljusgrön, alltså samma
+                  // riktning och samma synliga hopp.
+                  className="inline-flex items-center justify-center gap-2 bg-white text-primary-800 hover:bg-primary-50 font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm whitespace-nowrap shadow-xs w-full sm:w-auto dark:text-primary-900 dark:hover:bg-primary-100"
                 >
                   {t('moneyPageCta.button')}
                   <ArrowRight className="h-4 w-4" />
