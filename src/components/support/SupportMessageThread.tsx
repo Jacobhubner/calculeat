@@ -48,7 +48,7 @@ function SupportAttachmentImage({ path }: { path: string }) {
 
   if (isLoading) {
     return (
-      <div className="h-32 w-44 rounded-xl bg-neutral-100 animate-pulse flex items-center justify-center">
+      <div className="h-32 w-44 rounded-xl bg-neutral-100 animate-pulse flex items-center justify-center dark:bg-neutral-800">
         <Loader2 className="h-4 w-4 animate-spin text-neutral-300" />
       </div>
     )
@@ -56,7 +56,7 @@ function SupportAttachmentImage({ path }: { path: string }) {
 
   if (isError || !signedUrl) {
     return (
-      <div className="h-16 w-44 rounded-xl bg-neutral-50 border border-neutral-100 flex items-center justify-center gap-1.5 text-neutral-400">
+      <div className="h-16 w-44 rounded-xl bg-neutral-50 border border-neutral-100 flex items-center justify-center gap-1.5 text-neutral-400 dark:bg-neutral-900 dark:text-neutral-500">
         <ImageOff className="h-3.5 w-3.5" />
         <span className="text-[11px]">{t('imageLoadError')}</span>
       </div>
@@ -67,7 +67,7 @@ function SupportAttachmentImage({ path }: { path: string }) {
     <button
       type="button"
       onClick={() => window.open(signedUrl, '_blank', 'noopener,noreferrer')}
-      className="block rounded-xl overflow-hidden border border-neutral-200 hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-primary-500"
+      className="block rounded-xl overflow-hidden border border-neutral-200 hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-700"
       title={t('openImage')}
     >
       <img
@@ -133,7 +133,7 @@ export function MessageBubble({ msg, isOwn, threadId, onAdminDelete }: MessageBu
     <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
       <div className={`max-w-[80%] ${isOwn ? 'items-end' : 'items-start'} flex flex-col`}>
         {!isOwn && (
-          <p className="text-[10px] text-neutral-400 px-1 mb-0.5">
+          <p className="text-[10px] text-neutral-400 px-1 mb-0.5 dark:text-neutral-500">
             {msg.sender_username}
             {msg.sender_is_admin && ' · admin'}
           </p>
@@ -160,7 +160,7 @@ export function MessageBubble({ msg, isOwn, threadId, onAdminDelete }: MessageBu
                   }
                 }}
                 rows={1}
-                className="resize-none rounded-xl border border-primary-300 bg-white px-3 py-2 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="resize-none rounded-xl border border-primary-300 bg-white px-3 py-2 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-neutral-850 dark:text-neutral-100"
                 style={{ minHeight: '36px', maxHeight: '120px' }}
               />
               <div className="flex items-center gap-1 justify-end">
@@ -170,7 +170,7 @@ export function MessageBubble({ msg, isOwn, threadId, onAdminDelete }: MessageBu
                     setEditing(false)
                     setEditValue(msg.content ?? '')
                   }}
-                  className="h-6 w-6 flex items-center justify-center rounded-lg text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100"
+                  className="h-6 w-6 flex items-center justify-center rounded-lg text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:text-neutral-500"
                 >
                   <X className="h-3 w-3" />
                 </button>
@@ -195,10 +195,10 @@ export function MessageBubble({ msg, isOwn, threadId, onAdminDelete }: MessageBu
                 <div
                   className={`rounded-2xl px-3 py-2 text-sm ${
                     isDeleted
-                      ? 'bg-neutral-50 text-neutral-400 italic border border-neutral-100'
+                      ? 'bg-neutral-50 text-neutral-400 italic border border-neutral-100 dark:bg-neutral-900 dark:text-neutral-500'
                       : isOwn
                         ? 'bg-primary-600 text-white rounded-br-sm'
-                        : 'bg-neutral-100 text-neutral-900 rounded-bl-sm'
+                        : 'bg-neutral-100 text-neutral-900 rounded-bl-sm dark:bg-neutral-800 dark:text-neutral-100'
                   }`}
                 >
                   {isDeleted ? t('deletedMessage') : msg.content}
@@ -221,7 +221,7 @@ export function MessageBubble({ msg, isOwn, threadId, onAdminDelete }: MessageBu
                     setEditing(true)
                     setShowMenu(false)
                   }}
-                  className="h-6 w-6 flex items-center justify-center rounded-md text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100"
+                  className="h-6 w-6 flex items-center justify-center rounded-md text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:text-neutral-500"
                   title="Redigera"
                 >
                   <Pencil className="h-3 w-3" />
@@ -231,7 +231,7 @@ export function MessageBubble({ msg, isOwn, threadId, onAdminDelete }: MessageBu
                 <button
                   type="button"
                   onClick={() => onAdminDelete!(msg.id)}
-                  className="h-6 w-6 flex items-center justify-center rounded-md text-neutral-400 hover:text-red-500 hover:bg-red-50"
+                  className="h-6 w-6 flex items-center justify-center rounded-md text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:text-neutral-500"
                   title="Radera"
                 >
                   <X className="h-3 w-3" />
@@ -247,7 +247,7 @@ export function MessageBubble({ msg, isOwn, threadId, onAdminDelete }: MessageBu
             className={`flex items-center gap-1 mt-0.5 ${isOwn ? 'justify-end' : 'justify-start'}`}
           >
             {!isDeleted && (
-              <span className="text-[9px] text-neutral-400">
+              <span className="text-[9px] text-neutral-400 dark:text-neutral-500">
                 {format(parseISO(msg.created_at), 'HH:mm', { locale: getDateLocale() })}
                 {msg.edited_at && msg.original_content && (
                   <button
@@ -264,14 +264,14 @@ export function MessageBubble({ msg, isOwn, threadId, onAdminDelete }: MessageBu
               <div
                 className={`mt-1 px-2 py-1.5 rounded-lg bg-neutral-100 border border-neutral-200 text-[11px] text-neutral-500 max-w-[240px] ${isOwn ? 'text-right' : 'text-left'}`}
               >
-                <p className="text-[10px] font-medium text-neutral-400 mb-0.5">
+                <p className="text-[10px] font-medium text-neutral-400 mb-0.5 dark:text-neutral-500">
                   Originalmeddelande
                 </p>
                 <p className="italic">{msg.original_content}</p>
               </div>
             )}
             {isOwn && !isDeleted && (
-              <span className="text-[9px] text-neutral-400">
+              <span className="text-[9px] text-neutral-400 dark:text-neutral-500">
                 {msg.read_at ? (
                   <CheckCheck className="h-3 w-3 inline text-primary-400" />
                 ) : (
@@ -369,7 +369,7 @@ export function SupportMessageThread({ threadId, isPanelOpen }: Props) {
   if (isLoading) {
     return (
       <div className="flex-1 flex items-center justify-center">
-        <Loader2 className="h-5 w-5 animate-spin text-neutral-400" />
+        <Loader2 className="h-5 w-5 animate-spin text-neutral-400 dark:text-neutral-500" />
       </div>
     )
   }
@@ -382,7 +382,7 @@ export function SupportMessageThread({ threadId, isPanelOpen }: Props) {
             type="button"
             onClick={() => fetchNextPage()}
             disabled={isFetchingNextPage}
-            className="text-xs text-primary-600 hover:underline disabled:opacity-50"
+            className="text-xs text-primary-600 hover:underline disabled:opacity-50 dark:text-primary-300"
           >
             {isFetchingNextPage ? <Loader2 className="h-3 w-3 animate-spin inline mr-1" /> : null}
             {t('loadMore')}
@@ -392,8 +392,10 @@ export function SupportMessageThread({ threadId, isPanelOpen }: Props) {
 
       {messages.length === 0 && (
         <div className="flex flex-col items-center justify-center h-full py-10 text-center">
-          <p className="text-sm text-neutral-500">{t('emptyThread')}</p>
-          <p className="text-xs text-neutral-400 mt-1">{t('emptyThreadSub')}</p>
+          <p className="text-sm text-neutral-500 dark:text-neutral-400">{t('emptyThread')}</p>
+          <p className="text-xs text-neutral-400 mt-1 dark:text-neutral-500">
+            {t('emptyThreadSub')}
+          </p>
         </div>
       )}
 

@@ -113,21 +113,25 @@ export function SupportMessageInput({ threadId, status }: Props) {
   return (
     <div className="shrink-0 border-t border-neutral-100 px-3 py-3">
       {status === 'closed' && threadId && (
-        <div className="mb-3 flex flex-col items-center gap-2 rounded-lg bg-neutral-50 px-3 py-3 text-center">
-          <p className="text-xs text-neutral-500">{t('threadClosedNotice')}</p>
+        <div className="mb-3 flex flex-col items-center gap-2 rounded-lg bg-neutral-50 px-3 py-3 text-center dark:bg-neutral-900">
+          <p className="text-xs text-neutral-500 dark:text-neutral-400">
+            {t('threadClosedNotice')}
+          </p>
           {!confirmDelete ? (
             <button
               type="button"
               onClick={() => setConfirmDelete(true)}
               disabled={isDeleting}
-              className="flex items-center gap-1.5 text-xs text-neutral-400 hover:text-red-500 disabled:opacity-50 transition-colors"
+              className="flex items-center gap-1.5 text-xs text-neutral-400 hover:text-red-500 disabled:opacity-50 transition-colors dark:text-neutral-500"
             >
               <Trash2 className="h-3.5 w-3.5" />
               {t('deleteConversation')}
             </button>
           ) : (
             <div className="flex items-center gap-3">
-              <span className="text-xs text-neutral-500">{t('deleteConfirm')}</span>
+              <span className="text-xs text-neutral-500 dark:text-neutral-400">
+                {t('deleteConfirm')}
+              </span>
               <button
                 type="button"
                 onClick={() => deleteThread(threadId)}
@@ -143,7 +147,7 @@ export function SupportMessageInput({ threadId, status }: Props) {
               <button
                 type="button"
                 onClick={() => setConfirmDelete(false)}
-                className="text-xs text-neutral-400 hover:text-neutral-600 transition-colors"
+                className="text-xs text-neutral-400 hover:text-neutral-600 transition-colors dark:text-neutral-500"
               >
                 {t('deleteConfirmNo')}
               </button>
@@ -158,7 +162,7 @@ export function SupportMessageInput({ threadId, status }: Props) {
             <img
               src={previewUrl}
               alt={t('attachedImageAlt')}
-              className="h-16 w-16 rounded-lg object-cover border border-neutral-200"
+              className="h-16 w-16 rounded-lg object-cover border border-neutral-200 dark:border-neutral-700"
             />
             <button
               type="button"
@@ -184,7 +188,7 @@ export function SupportMessageInput({ threadId, status }: Props) {
           type="button"
           onClick={() => fileInputRef.current?.click()}
           disabled={isBusy || status === 'closed'}
-          className="shrink-0 h-9 w-9 rounded-xl text-neutral-400 hover:text-primary-600 hover:bg-primary-50 flex items-center justify-center transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          className="shrink-0 h-9 w-9 rounded-xl text-neutral-400 hover:text-primary-600 hover:bg-primary-50 flex items-center justify-center transition-colors disabled:opacity-40 disabled:cursor-not-allowed dark:text-neutral-500"
           title={t('attachImage')}
         >
           <ImagePlus className="h-4 w-4" />
@@ -199,7 +203,7 @@ export function SupportMessageInput({ threadId, status }: Props) {
           onKeyDown={handleKeyDown}
           placeholder={t('inputPlaceholder')}
           rows={1}
-          className="flex-1 resize-none rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-base md:text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+          className="flex-1 resize-none rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-base md:text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100"
           style={{ minHeight: '40px', maxHeight: '120px' }}
         />
         <button

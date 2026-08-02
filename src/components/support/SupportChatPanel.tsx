@@ -75,17 +75,19 @@ export function SupportChatPanel({ isOpen, onClose }: Props) {
   if (!isOpen) return null
 
   return (
-    <div className="fixed bottom-24 md:bottom-20 right-4 md:right-6 z-40 w-[340px] max-w-[calc(100vw-2rem)] h-[500px] flex flex-col rounded-2xl border border-neutral-200 bg-white shadow-2xl overflow-hidden">
+    <div className="fixed bottom-24 md:bottom-20 right-4 md:right-6 z-40 w-[340px] max-w-[calc(100vw-2rem)] h-[500px] flex flex-col rounded-2xl border border-neutral-200 bg-white shadow-2xl overflow-hidden dark:border-neutral-700 dark:bg-neutral-850">
       {/* Header */}
-      <div className="shrink-0 flex items-center gap-3 px-4 py-3 border-b border-neutral-100 bg-white">
+      <div className="shrink-0 flex items-center gap-3 px-4 py-3 border-b border-neutral-100 bg-white dark:bg-neutral-850">
         <div className="flex-1">
-          <p className="text-sm font-semibold text-neutral-900">{t('panelTitle')}</p>
-          <p className="text-xs text-neutral-500">{t('panelSubtitle')}</p>
+          <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+            {t('panelTitle')}
+          </p>
+          <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('panelSubtitle')}</p>
         </div>
         <button
           type="button"
           onClick={onClose}
-          className="h-7 w-7 flex items-center justify-center rounded-lg text-neutral-500 hover:bg-neutral-100 hover:text-neutral-700 transition-colors"
+          className="h-7 w-7 flex items-center justify-center rounded-lg text-neutral-500 hover:bg-neutral-100 hover:text-neutral-700 transition-colors dark:hover:bg-neutral-800 dark:hover:text-neutral-200 dark:text-neutral-400"
           aria-label={t('close')}
         >
           <X className="h-4 w-4" />
@@ -94,9 +96,11 @@ export function SupportChatPanel({ isOpen, onClose }: Props) {
 
       {/* Gästnotis — sessionen är webbläsarbunden, svaren visas i panelen */}
       {isGuest && (
-        <div className="shrink-0 flex items-start gap-2 px-4 py-2 bg-primary-50 border-b border-primary-100">
-          <Info className="h-3.5 w-3.5 text-primary-600 mt-0.5 shrink-0" />
-          <p className="text-[11px] text-primary-800 leading-snug">{t('guestNotice')}</p>
+        <div className="shrink-0 flex items-start gap-2 px-4 py-2 bg-primary-50 border-b border-primary-100 dark:bg-primary-900/25">
+          <Info className="h-3.5 w-3.5 text-primary-600 mt-0.5 shrink-0 dark:text-primary-300" />
+          <p className="text-[11px] text-primary-800 leading-snug dark:text-primary-300">
+            {t('guestNotice')}
+          </p>
         </div>
       )}
 

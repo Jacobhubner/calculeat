@@ -199,7 +199,7 @@ export function ShareDialog({
       <DialogContent className="max-w-md" aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Share2 className="h-4 w-4 text-primary-600" />
+            <Share2 className="h-4 w-4 text-primary-600 dark:text-primary-300" />
             {getTitle()}
           </DialogTitle>
         </DialogHeader>
@@ -209,7 +209,7 @@ export function ShareDialog({
           <div className="space-y-4">
             <div className="space-y-2">
               {friends.length === 0 ? (
-                <p className="text-sm text-neutral-500 text-center py-4">
+                <p className="text-sm text-neutral-500 text-center py-4 dark:text-neutral-400">
                   {t('share.recipient.no_friends')}
                 </p>
               ) : (
@@ -230,15 +230,15 @@ export function ShareDialog({
                         onClick={() => handleFriendSelect(friend)}
                         className="w-full flex items-center gap-3 p-2.5 rounded-lg hover:bg-primary-50 transition-colors text-left"
                       >
-                        <div className="h-8 w-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 text-xs font-semibold shrink-0">
+                        <div className="h-8 w-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 text-xs font-semibold shrink-0 dark:bg-primary-900/25 dark:text-primary-300">
                           {getInitials(friend.alias ?? friend.friend_name)}
                         </div>
                         <div className="min-w-0">
-                          <p className="text-sm font-medium text-neutral-900 truncate">
+                          <p className="text-sm font-medium text-neutral-900 truncate dark:text-neutral-100">
                             {friend.alias ?? `@${friend.friend_username ?? friend.friend_name}`}
                           </p>
                           {friend.alias && (
-                            <p className="text-xs text-neutral-400 truncate">
+                            <p className="text-xs text-neutral-400 truncate dark:text-neutral-500">
                               @{friend.friend_username ?? friend.friend_name}
                             </p>
                           )}
@@ -259,14 +259,14 @@ export function ShareDialog({
               <button
                 type="button"
                 onClick={() => setStep('recipient')}
-                className="flex items-center gap-1 text-sm text-neutral-500 hover:text-neutral-700 transition-colors"
+                className="flex items-center gap-1 text-sm text-neutral-500 hover:text-neutral-700 transition-colors dark:hover:text-neutral-200 dark:text-neutral-400"
               >
                 <ChevronLeft className="h-4 w-4" />
                 {recipientLabel}
               </button>
             )}
 
-            <div className="flex gap-1 rounded-lg border border-neutral-200 p-1">
+            <div className="flex gap-1 rounded-lg border border-neutral-200 p-1 dark:border-neutral-700">
               {(['food_item', 'recipe', 'saved_meal', 'food_list'] as const).map(type => (
                 <button
                   key={type}
@@ -280,7 +280,7 @@ export function ShareDialog({
                   className={`flex-1 flex items-center justify-center gap-1 py-2 px-1.5 rounded-md text-xs font-medium transition-colors ${
                     contentType === type
                       ? 'bg-primary-600 text-white'
-                      : 'text-neutral-600 hover:bg-neutral-100'
+                      : 'text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:text-neutral-400'
                   }`}
                 >
                   {type === 'food_item' && <Apple className="h-3.5 w-3.5" />}
@@ -301,7 +301,7 @@ export function ShareDialog({
             {contentType === 'food_item' && (
               <div className="space-y-2">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400 dark:text-neutral-500" />
                   <Input
                     placeholder={t('share.content.search_food_placeholder')}
                     value={itemSearch}
@@ -312,7 +312,7 @@ export function ShareDialog({
                 </div>
                 <div className="space-y-1 max-h-52 overflow-y-auto">
                   {filteredFoodItems.length === 0 ? (
-                    <p className="text-sm text-neutral-400 text-center py-4">
+                    <p className="text-sm text-neutral-400 text-center py-4 dark:text-neutral-500">
                       {t('share.content.no_food_items')}
                     </p>
                   ) : (
@@ -323,10 +323,10 @@ export function ShareDialog({
                         onClick={() => handleItemSelect(item.id, item.name)}
                         className="w-full flex items-center justify-between p-2.5 rounded-lg hover:bg-primary-50 transition-colors text-left"
                       >
-                        <span className="text-sm font-medium text-neutral-900 truncate">
+                        <span className="text-sm font-medium text-neutral-900 truncate dark:text-neutral-100">
                           {item.name}
                         </span>
-                        <span className="text-xs text-neutral-400 shrink-0 ml-2">
+                        <span className="text-xs text-neutral-400 shrink-0 ml-2 dark:text-neutral-500">
                           {item.calories} kcal
                         </span>
                       </button>
@@ -339,7 +339,7 @@ export function ShareDialog({
             {contentType === 'recipe' && (
               <div className="space-y-2">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400 dark:text-neutral-500" />
                   <Input
                     placeholder={t('share.content.search_recipe_placeholder')}
                     value={itemSearch}
@@ -350,7 +350,7 @@ export function ShareDialog({
                 </div>
                 <div className="space-y-1 max-h-52 overflow-y-auto">
                   {filteredRecipes.length === 0 ? (
-                    <p className="text-sm text-neutral-400 text-center py-4">
+                    <p className="text-sm text-neutral-400 text-center py-4 dark:text-neutral-500">
                       {t('share.content.no_recipes')}
                     </p>
                   ) : (
@@ -361,10 +361,10 @@ export function ShareDialog({
                         onClick={() => handleItemSelect(recipe.id, recipe.name)}
                         className="w-full flex items-center justify-between p-2.5 rounded-lg hover:bg-primary-50 transition-colors text-left"
                       >
-                        <span className="text-sm font-medium text-neutral-900 truncate">
+                        <span className="text-sm font-medium text-neutral-900 truncate dark:text-neutral-100">
                           {recipe.name}
                         </span>
-                        <span className="text-xs text-neutral-400 shrink-0 ml-2">
+                        <span className="text-xs text-neutral-400 shrink-0 ml-2 dark:text-neutral-500">
                           {recipe.servings} {t('share.content.servings_abbr')}
                         </span>
                       </button>
@@ -377,7 +377,7 @@ export function ShareDialog({
             {contentType === 'saved_meal' && (
               <div className="space-y-2">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400 dark:text-neutral-500" />
                   <Input
                     placeholder={t('share.content.search_saved_meal_placeholder')}
                     value={itemSearch}
@@ -388,7 +388,7 @@ export function ShareDialog({
                 </div>
                 <div className="space-y-1 max-h-52 overflow-y-auto">
                   {filteredSavedMeals.length === 0 ? (
-                    <p className="text-sm text-neutral-400 text-center py-4">
+                    <p className="text-sm text-neutral-400 text-center py-4 dark:text-neutral-500">
                       {t('share.content.no_saved_meals')}
                     </p>
                   ) : (
@@ -399,10 +399,10 @@ export function ShareDialog({
                         onClick={() => handleItemSelect(meal.id, meal.name)}
                         className="w-full flex items-center justify-between p-2.5 rounded-lg hover:bg-primary-50 transition-colors text-left"
                       >
-                        <span className="text-sm font-medium text-neutral-900 truncate">
+                        <span className="text-sm font-medium text-neutral-900 truncate dark:text-neutral-100">
                           {meal.name}
                         </span>
-                        <span className="text-xs text-neutral-400 shrink-0 ml-2">
+                        <span className="text-xs text-neutral-400 shrink-0 ml-2 dark:text-neutral-500">
                           {t('share.content.saved_meal_item_count', { count: meal.item_count })}
                         </span>
                       </button>
@@ -415,24 +415,28 @@ export function ShareDialog({
             {contentType === 'food_list' && (
               <div className="space-y-3">
                 {foodListLoading ? (
-                  <p className="text-sm text-neutral-400 text-center py-4">
+                  <p className="text-sm text-neutral-400 text-center py-4 dark:text-neutral-500">
                     {t('share.content.loading')}
                   </p>
                 ) : foodListCount === 0 ? (
                   <div className="text-center py-6 space-y-2">
                     <ListOrdered className="h-8 w-8 text-neutral-300 mx-auto" />
-                    <p className="text-sm text-neutral-400">{t('share.content.no_food_list')}</p>
+                    <p className="text-sm text-neutral-400 dark:text-neutral-500">
+                      {t('share.content.no_food_list')}
+                    </p>
                   </div>
                 ) : (
                   <button
                     type="button"
                     onClick={handleFoodListSelect}
-                    className="w-full flex items-center gap-4 p-4 rounded-xl border-2 border-primary-200 bg-primary-50 hover:bg-primary-100 transition-colors text-left"
+                    className="w-full flex items-center gap-4 p-4 rounded-xl border-2 border-primary-200 bg-primary-50 hover:bg-primary-100 transition-colors text-left dark:bg-primary-900/25 dark:border-primary-800"
                   >
-                    <ListOrdered className="h-8 w-8 text-primary-600 shrink-0" />
+                    <ListOrdered className="h-8 w-8 text-primary-600 shrink-0 dark:text-primary-300" />
                     <div>
-                      <p className="font-semibold text-neutral-900">{t('share.food_list.title')}</p>
-                      <p className="text-sm text-neutral-500">
+                      <p className="font-semibold text-neutral-900 dark:text-neutral-100">
+                        {t('share.food_list.title')}
+                      </p>
+                      <p className="text-sm text-neutral-500 dark:text-neutral-400">
                         {t('share.food_list.count_label', { count: foodListCount })}
                       </p>
                     </div>
@@ -446,38 +450,40 @@ export function ShareDialog({
         {/* ── Steg 3: Bekräfta ── */}
         {step === 'confirm' && (
           <div className="space-y-4">
-            <div className="rounded-xl border border-neutral-200 p-4 space-y-3">
+            <div className="rounded-xl border border-neutral-200 p-4 space-y-3 dark:border-neutral-700">
               <div className="flex items-center gap-3">
-                <div className="h-9 w-9 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 text-sm font-semibold shrink-0">
+                <div className="h-9 w-9 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 text-sm font-semibold shrink-0 dark:bg-primary-900/25 dark:text-primary-300">
                   {getInitials(recipientLabel)}
                 </div>
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-neutral-900 truncate">
+                  <p className="text-sm font-semibold text-neutral-900 truncate dark:text-neutral-100">
                     {recipientLabel}
                   </p>
-                  <p className="text-xs text-neutral-400">{t('share.confirm.recipient_label')}</p>
+                  <p className="text-xs text-neutral-400 dark:text-neutral-500">
+                    {t('share.confirm.recipient_label')}
+                  </p>
                 </div>
               </div>
               <div className="border-t border-neutral-100 pt-3 flex items-center gap-3">
                 {contentType === 'food_item' && (
-                  <Apple className="h-5 w-5 text-green-600 shrink-0" />
+                  <Apple className="h-5 w-5 text-green-600 shrink-0 dark:text-green-300" />
                 )}
                 {contentType === 'recipe' && (
-                  <ChefHat className="h-5 w-5 text-amber-600 shrink-0" />
+                  <ChefHat className="h-5 w-5 text-amber-600 shrink-0 dark:text-amber-300" />
                 )}
                 {contentType === 'saved_meal' && (
                   <Bookmark className="h-5 w-5 text-violet-600 shrink-0" />
                 )}
                 {contentType === 'food_list' && (
-                  <ListOrdered className="h-5 w-5 text-primary-600 shrink-0" />
+                  <ListOrdered className="h-5 w-5 text-primary-600 shrink-0 dark:text-primary-300" />
                 )}
                 <div>
-                  <p className="text-sm font-medium text-neutral-900">
+                  <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
                     {contentType === 'food_list'
                       ? t('share.confirm.food_list_name', { count: foodListCount })
                       : selectedName}
                   </p>
-                  <p className="text-xs text-neutral-400">
+                  <p className="text-xs text-neutral-400 dark:text-neutral-500">
                     {contentType === 'food_item'
                       ? t('share.confirm.type_food_item')
                       : contentType === 'recipe'
@@ -491,7 +497,7 @@ export function ShareDialog({
             </div>
 
             {contentType === 'food_list' && (
-              <p className="text-xs text-neutral-400 text-center">
+              <p className="text-xs text-neutral-400 text-center dark:text-neutral-500">
                 {t('share.confirm.duplicate_note')}
               </p>
             )}

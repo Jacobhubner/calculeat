@@ -215,21 +215,23 @@ function MiniInvitationCard({ invitation }: { invitation: PendingInvitation }) {
           : t('invitations.badge.food_item')
 
   return (
-    <div className="rounded-lg border border-neutral-100 p-3 space-y-2 bg-white">
+    <div className="rounded-lg border border-neutral-100 p-3 space-y-2 bg-white dark:bg-neutral-850">
       <div className="flex items-start gap-2">
         <div className="p-1.5 rounded bg-violet-50 shrink-0">{itemIcon}</div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5">
-            <p className="text-sm font-medium text-neutral-900 truncate">{invitation.item_name}</p>
+            <p className="text-sm font-medium text-neutral-900 truncate dark:text-neutral-100">
+              {invitation.item_name}
+            </p>
             <Badge className="text-[9px] px-1 py-0 h-3.5 bg-violet-100 text-violet-700 border-violet-200 shrink-0">
               {typeLabel}
             </Badge>
           </div>
-          <p className="text-xs text-neutral-400">
+          <p className="text-xs text-neutral-400 dark:text-neutral-500">
             {t('social.from')} {invitation.sender_name}
           </p>
           {isExpiringSoon && (
-            <p className="text-xs text-amber-600">
+            <p className="text-xs text-amber-600 dark:text-amber-300">
               {daysLeft <= 0
                 ? t('invitations.expiry.soon')
                 : t('social.expiry.days_short', { count: daysLeft })}
@@ -253,7 +255,7 @@ function MiniInvitationCard({ invitation }: { invitation: PendingInvitation }) {
           variant="ghost"
           onClick={handleReject}
           disabled={isBusy}
-          className="flex-1 h-7 text-xs text-neutral-500"
+          className="flex-1 h-7 text-xs text-neutral-500 dark:text-neutral-400"
         >
           {isRejecting ? (
             <Loader2 className="h-3 w-3 animate-spin" />
@@ -309,18 +311,20 @@ function MiniSharedListInvitationCard({ invitation }: { invitation: SharedListIn
   const isBusy = isAccepting || isRejecting
 
   return (
-    <div className="rounded-lg border border-neutral-100 p-3 space-y-2 bg-white">
+    <div className="rounded-lg border border-neutral-100 p-3 space-y-2 bg-white dark:bg-neutral-850">
       <div className="flex items-start gap-2">
-        <div className="p-1.5 rounded bg-blue-50 shrink-0">
-          <ListOrdered className="h-4 w-4 text-blue-600" />
+        <div className="p-1.5 rounded bg-blue-50 shrink-0 dark:bg-blue-900/25">
+          <ListOrdered className="h-4 w-4 text-blue-600 dark:text-blue-300" />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-neutral-900 truncate">{invitation.list_name}</p>
-          <p className="text-xs text-neutral-500">
+          <p className="text-sm font-medium text-neutral-900 truncate dark:text-neutral-100">
+            {invitation.list_name}
+          </p>
+          <p className="text-xs text-neutral-500 dark:text-neutral-400">
             {t('social.shared_list.invited_by')} {invitation.sender_name}
           </p>
         </div>
-        <Badge className="text-[9px] px-1 py-0 h-3.5 bg-blue-100 text-blue-700 border-blue-200 shrink-0">
+        <Badge className="text-[9px] px-1 py-0 h-3.5 bg-blue-100 text-blue-700 border-blue-200 shrink-0 dark:bg-blue-900/25 dark:text-blue-300 dark:border-blue-800">
           {t('social.badge.shared_list')}
         </Badge>
       </div>
@@ -341,7 +345,7 @@ function MiniSharedListInvitationCard({ invitation }: { invitation: SharedListIn
         <Button
           variant="outline"
           size="sm"
-          className="h-7 text-xs flex-1 gap-1 text-neutral-600"
+          className="h-7 text-xs flex-1 gap-1 text-neutral-600 dark:text-neutral-400"
           onClick={handleReject}
           disabled={isBusy}
         >
@@ -394,16 +398,16 @@ function MiniFriendRequestCard({ request }: { request: FriendRequest }) {
   const isBusy = isAccepting || isRejecting
 
   return (
-    <div className="rounded-lg border border-neutral-100 p-3 space-y-2 bg-white">
+    <div className="rounded-lg border border-neutral-100 p-3 space-y-2 bg-white dark:bg-neutral-850">
       <div className="flex items-center gap-2">
-        <div className="h-8 w-8 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-600 text-xs font-semibold shrink-0">
+        <div className="h-8 w-8 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-600 text-xs font-semibold shrink-0 dark:bg-neutral-800 dark:text-neutral-400">
           {getInitials(request.requester_name)}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-neutral-900 truncate">
+          <p className="text-sm font-medium text-neutral-900 truncate dark:text-neutral-100">
             @{request.requester_username ?? request.requester_name}
           </p>
-          <p className="text-xs text-neutral-400">
+          <p className="text-xs text-neutral-400 dark:text-neutral-500">
             {formatDistanceToNow(parseISO(request.created_at), {
               addSuffix: true,
               locale: getDateLocale(),
@@ -425,7 +429,7 @@ function MiniFriendRequestCard({ request }: { request: FriendRequest }) {
           variant="ghost"
           onClick={handleReject}
           disabled={isBusy}
-          className="flex-1 h-7 text-xs text-neutral-500"
+          className="flex-1 h-7 text-xs text-neutral-500 dark:text-neutral-400"
         >
           {isRejecting ? (
             <Loader2 className="h-3 w-3 animate-spin" />
@@ -466,19 +470,21 @@ function SentShareCard({ invitation }: { invitation: SentShareInvitation }) {
 
   const itemIcon =
     invitation.item_type === 'recipe' ? (
-      <ChefHat className="h-4 w-4 text-neutral-400" />
+      <ChefHat className="h-4 w-4 text-neutral-400 dark:text-neutral-500" />
     ) : invitation.item_type === 'saved_meal' ? (
-      <Bookmark className="h-4 w-4 text-neutral-400" />
+      <Bookmark className="h-4 w-4 text-neutral-400 dark:text-neutral-500" />
     ) : (
-      <Apple className="h-4 w-4 text-neutral-400" />
+      <Apple className="h-4 w-4 text-neutral-400 dark:text-neutral-500" />
     )
 
   return (
-    <div className="rounded-lg border border-neutral-100 p-3 bg-white flex items-center gap-2">
-      <div className="p-1.5 rounded bg-neutral-50 shrink-0">{itemIcon}</div>
+    <div className="rounded-lg border border-neutral-100 p-3 bg-white flex items-center gap-2 dark:bg-neutral-850">
+      <div className="p-1.5 rounded bg-neutral-50 shrink-0 dark:bg-neutral-900">{itemIcon}</div>
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-neutral-900 truncate">{invitation.item_name}</p>
-        <p className="text-xs text-neutral-400">
+        <p className="text-sm font-medium text-neutral-900 truncate dark:text-neutral-100">
+          {invitation.item_name}
+        </p>
+        <p className="text-xs text-neutral-400 dark:text-neutral-500">
           {t('invitations.sent.to')} {invitation.recipient_name}
         </p>
       </div>
@@ -518,13 +524,17 @@ function SentAdminInvitationCard({ invitation }: { invitation: SentAdminInvitati
   }
 
   return (
-    <div className="rounded-lg border border-neutral-100 p-3 bg-white flex items-center gap-2">
-      <div className="p-1.5 rounded bg-neutral-50 shrink-0">
-        <ShieldCheck className="h-4 w-4 text-neutral-400" />
+    <div className="rounded-lg border border-neutral-100 p-3 bg-white flex items-center gap-2 dark:bg-neutral-850">
+      <div className="p-1.5 rounded bg-neutral-50 shrink-0 dark:bg-neutral-900">
+        <ShieldCheck className="h-4 w-4 text-neutral-400 dark:text-neutral-500" />
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-neutral-900 truncate">{invitation.recipient_name}</p>
-        <p className="text-xs text-neutral-400">{t('social.activity.admin_invite_awaiting')}</p>
+        <p className="text-sm font-medium text-neutral-900 truncate dark:text-neutral-100">
+          {invitation.recipient_name}
+        </p>
+        <p className="text-xs text-neutral-400 dark:text-neutral-500">
+          {t('social.activity.admin_invite_awaiting')}
+        </p>
       </div>
       <Button
         size="sm"
@@ -562,16 +572,16 @@ function SentFriendRequestCard({ request }: { request: SentFriendRequest }) {
   }
 
   return (
-    <div className="rounded-lg border border-neutral-100 p-3 space-y-2 bg-white">
+    <div className="rounded-lg border border-neutral-100 p-3 space-y-2 bg-white dark:bg-neutral-850">
       <div className="flex items-center gap-2">
-        <div className="h-8 w-8 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-600 text-xs font-semibold shrink-0">
+        <div className="h-8 w-8 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-600 text-xs font-semibold shrink-0 dark:bg-neutral-800 dark:text-neutral-400">
           {getInitials(request.addressee_name)}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-neutral-900 truncate">
+          <p className="text-sm font-medium text-neutral-900 truncate dark:text-neutral-100">
             @{request.addressee_username ?? request.addressee_name}
           </p>
-          <p className="text-xs text-neutral-400">
+          <p className="text-xs text-neutral-400 dark:text-neutral-500">
             {t('social.friends.awaiting_response')} &middot;{' '}
             {formatDistanceToNow(parseISO(request.created_at), {
               addSuffix: true,
@@ -585,7 +595,7 @@ function SentFriendRequestCard({ request }: { request: SentFriendRequest }) {
         variant="ghost"
         onClick={handleCancel}
         disabled={isCancelling}
-        className="w-full h-7 text-xs text-neutral-500 hover:text-red-600 hover:bg-red-50"
+        className="w-full h-7 text-xs text-neutral-500 hover:text-red-600 hover:bg-red-50 dark:text-neutral-400"
       >
         {isCancelling ? (
           <Loader2 className="h-3 w-3 animate-spin mr-1" />
@@ -657,7 +667,7 @@ function FriendProfile({
       <button
         type="button"
         onClick={onBack}
-        className="flex items-center gap-1 text-sm text-neutral-500 hover:text-neutral-700 transition-colors px-4 pt-2"
+        className="flex items-center gap-1 text-sm text-neutral-500 hover:text-neutral-700 transition-colors px-4 pt-2 dark:hover:text-neutral-200 dark:text-neutral-400"
       >
         <ChevronLeft className="h-4 w-4" />
         {t('social.action.back')}
@@ -666,7 +676,7 @@ function FriendProfile({
       {/* Avatar + info */}
       <div className="flex flex-col items-center py-4 gap-2">
         <div className="relative">
-          <div className="h-16 w-16 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 text-2xl font-semibold">
+          <div className="h-16 w-16 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 text-2xl font-semibold dark:bg-primary-900/25 dark:text-primary-300">
             {getInitials(displayName)}
           </div>
           {onlineFriendIds.has(friend.friend_id) && (
@@ -674,19 +684,19 @@ function FriendProfile({
           )}
         </div>
         <div className="text-center">
-          <p className="font-semibold text-neutral-900">{displayName}</p>
+          <p className="font-semibold text-neutral-900 dark:text-neutral-100">{displayName}</p>
           {/* Visa alltid @username som subtext — tydligare om alias är satt */}
-          <p className="text-sm text-neutral-500">
+          <p className="text-sm text-neutral-500 dark:text-neutral-400">
             @{friend.friend_username ?? friend.friend_name}
           </p>
           {getPresenceLabel(friend, onlineFriendIds, t) && (
             <p
-              className={`text-xs font-medium ${onlineFriendIds.has(friend.friend_id) ? 'text-green-500' : 'text-neutral-400'}`}
+              className={`text-xs font-medium ${onlineFriendIds.has(friend.friend_id) ? 'text-green-500' : 'text-neutral-400 dark:text-neutral-500'}`}
             >
               {getPresenceLabel(friend, onlineFriendIds, t)}
             </p>
           )}
-          <p className="text-xs text-neutral-400">
+          <p className="text-xs text-neutral-400 dark:text-neutral-500">
             {t('social.friends.friends_since')}{' '}
             {format(parseISO(friend.since), 'd MMM yyyy', { locale: getDateLocale() })}
           </p>
@@ -696,9 +706,9 @@ function FriendProfile({
       {/* Åtgärder */}
       <div className="px-4 pb-4 space-y-2">
         {/* Redigera smeknamn */}
-        <div className="rounded-lg border border-neutral-200 overflow-hidden">
+        <div className="rounded-lg border border-neutral-200 overflow-hidden dark:border-neutral-700">
           <div className="flex items-center gap-3 p-3">
-            <Pencil className="h-4 w-4 text-neutral-400 shrink-0" />
+            <Pencil className="h-4 w-4 text-neutral-400 shrink-0 dark:text-neutral-500" />
             <div className="flex-1 min-w-0">
               {isEditingAlias ? (
                 <div className="flex items-center gap-2">
@@ -720,7 +730,7 @@ function FriendProfile({
                   <button
                     onClick={handleSaveAlias}
                     disabled={isSavingAlias}
-                    className="text-primary-600 hover:text-primary-800"
+                    className="text-primary-600 hover:text-primary-800 dark:text-primary-300"
                   >
                     {isSavingAlias ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
@@ -733,7 +743,7 @@ function FriendProfile({
                       setAliasInput(friend.alias ?? '')
                       setIsEditingAlias(false)
                     }}
-                    className="text-neutral-400"
+                    className="text-neutral-400 dark:text-neutral-500"
                   >
                     <X className="h-4 w-4" />
                   </button>
@@ -741,7 +751,7 @@ function FriendProfile({
               ) : (
                 <button
                   onClick={() => setIsEditingAlias(true)}
-                  className="text-sm text-neutral-700 hover:text-primary-600 transition-colors text-left w-full"
+                  className="text-sm text-neutral-700 hover:text-primary-600 transition-colors text-left w-full dark:text-neutral-200"
                 >
                   {friend.alias
                     ? t('social.friends.alias_set', { alias: friend.alias })
@@ -756,10 +766,10 @@ function FriendProfile({
         <button
           type="button"
           onClick={() => onShare(friend)}
-          className="w-full flex items-center gap-3 p-3 rounded-lg border border-neutral-200 hover:bg-primary-50 hover:border-primary-200 transition-colors text-left"
+          className="w-full flex items-center gap-3 p-3 rounded-lg border border-neutral-200 hover:bg-primary-50 hover:border-primary-200 transition-colors text-left dark:border-neutral-700"
         >
-          <Share2 className="h-4 w-4 text-primary-600 shrink-0" />
-          <span className="text-sm font-medium text-neutral-700">
+          <Share2 className="h-4 w-4 text-primary-600 shrink-0 dark:text-primary-300" />
+          <span className="text-sm font-medium text-neutral-700 dark:text-neutral-200">
             {t('social.friends.start_sharing')}
           </span>
         </button>
@@ -768,18 +778,18 @@ function FriendProfile({
         <button
           type="button"
           onClick={() => onMessage(friend)}
-          className="w-full flex items-center gap-3 p-3 rounded-lg border border-neutral-200 hover:bg-primary-50 hover:border-primary-200 transition-colors text-left"
+          className="w-full flex items-center gap-3 p-3 rounded-lg border border-neutral-200 hover:bg-primary-50 hover:border-primary-200 transition-colors text-left dark:border-neutral-700"
         >
-          <MessageCircle className="h-4 w-4 text-primary-600 shrink-0" />
-          <span className="text-sm font-medium text-neutral-700">
+          <MessageCircle className="h-4 w-4 text-primary-600 shrink-0 dark:text-primary-300" />
+          <span className="text-sm font-medium text-neutral-700 dark:text-neutral-200">
             {t('social.friends.send_message')}
           </span>
         </button>
 
         {/* Ta bort vän */}
         {confirmRemove ? (
-          <div className="rounded-lg border border-red-200 bg-red-50 p-3 space-y-2">
-            <p className="text-sm text-red-700 font-medium">
+          <div className="rounded-lg border border-red-200 bg-red-50 p-3 space-y-2 dark:bg-red-900/25 dark:border-red-800">
+            <p className="text-sm text-red-700 font-medium dark:text-red-300">
               {t('social.friends.confirm_remove', { name: displayName })}
             </p>
             <div className="flex gap-2">
@@ -809,10 +819,10 @@ function FriendProfile({
           <button
             type="button"
             onClick={() => setConfirmRemove(true)}
-            className="w-full flex items-center gap-3 p-3 rounded-lg border border-neutral-200 hover:bg-red-50 hover:border-red-200 transition-colors text-left"
+            className="w-full flex items-center gap-3 p-3 rounded-lg border border-neutral-200 hover:bg-red-50 hover:border-red-200 transition-colors text-left dark:border-neutral-700"
           >
             <Trash2 className="h-4 w-4 text-red-400 shrink-0" />
-            <span className="text-sm text-neutral-500 hover:text-red-600 transition-colors">
+            <span className="text-sm text-neutral-500 hover:text-red-600 transition-colors dark:text-neutral-400">
               {t('social.friends.remove_friend')}
             </span>
           </button>
@@ -842,10 +852,12 @@ function ConversationList({ onOpenThread }: { onOpenThread: (conv: Conversation)
     return (
       <div className="text-center py-10 px-4 space-y-2">
         <MessageCircle className="h-10 w-10 text-neutral-200 mx-auto" />
-        <p className="text-sm font-medium text-neutral-500">
+        <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400">
           {t('social.messages.no_conversations')}
         </p>
-        <p className="text-xs text-neutral-400">{t('social.messages.no_conversations_hint')}</p>
+        <p className="text-xs text-neutral-400 dark:text-neutral-500">
+          {t('social.messages.no_conversations_hint')}
+        </p>
       </div>
     )
   }
@@ -860,20 +872,20 @@ function ConversationList({ onOpenThread }: { onOpenThread: (conv: Conversation)
             key={conv.friendship_id}
             type="button"
             onClick={() => onOpenThread(conv)}
-            className="w-full flex items-center gap-3 px-4 py-3 hover:bg-neutral-50 transition-colors text-left"
+            className="w-full flex items-center gap-3 px-4 py-3 hover:bg-neutral-50 transition-colors text-left dark:hover:bg-neutral-800"
           >
-            <div className="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 text-sm font-semibold shrink-0">
+            <div className="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 text-sm font-semibold shrink-0 dark:bg-primary-900/25 dark:text-primary-300">
               {getInitials(displayName)}
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between gap-2">
                 <p
-                  className={`text-sm truncate ${isUnread ? 'font-semibold text-neutral-900' : 'font-medium text-neutral-700'}`}
+                  className={`text-sm truncate ${isUnread ? 'font-semibold text-neutral-900 dark:text-neutral-100' : 'font-medium text-neutral-700 dark:text-neutral-200'}`}
                 >
                   {displayName}
                 </p>
                 {conv.last_message_at && (
-                  <p className="text-[10px] text-neutral-400 shrink-0">
+                  <p className="text-[10px] text-neutral-400 shrink-0 dark:text-neutral-500">
                     {formatDistanceToNow(parseISO(conv.last_message_at), {
                       addSuffix: false,
                       locale: getDateLocale(),
@@ -883,7 +895,7 @@ function ConversationList({ onOpenThread }: { onOpenThread: (conv: Conversation)
               </div>
               <div className="flex items-center justify-between gap-2">
                 <p
-                  className={`text-xs truncate ${isUnread ? 'text-neutral-700' : 'text-neutral-400'}`}
+                  className={`text-xs truncate ${isUnread ? 'text-neutral-700 dark:text-neutral-200' : 'text-neutral-400 dark:text-neutral-500'}`}
                 >
                   {conv.last_message_content ?? ''}
                 </p>
@@ -1034,7 +1046,7 @@ function MessageBubble({
                     setIsEditing(true)
                     setMenuOpen(false)
                   }}
-                  className="w-full flex items-center gap-2 px-3 py-1.5 text-sm text-neutral-700 hover:bg-neutral-50"
+                  className="w-full flex items-center gap-2 px-3 py-1.5 text-sm text-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-800 dark:text-neutral-200"
                 >
                   <Pencil className="h-3.5 w-3.5" />
                   {t('social.messages.edit')}
@@ -1042,7 +1054,7 @@ function MessageBubble({
                 <button
                   type="button"
                   onClick={() => setConfirmDelete(true)}
-                  className="w-full flex items-center gap-2 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50"
+                  className="w-full flex items-center gap-2 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50 dark:text-red-300"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                   {t('social.messages.delete')}
@@ -1050,12 +1062,14 @@ function MessageBubble({
               </>
             ) : (
               <div className="px-3 py-2 space-y-2">
-                <p className="text-xs text-neutral-600">{t('social.messages.confirm_delete')}</p>
+                <p className="text-xs text-neutral-600 dark:text-neutral-400">
+                  {t('social.messages.confirm_delete')}
+                </p>
                 <div className="flex gap-1.5">
                   <button
                     type="button"
                     onClick={() => setConfirmDelete(false)}
-                    className="flex-1 text-xs text-neutral-500 hover:text-neutral-700 py-1"
+                    className="flex-1 text-xs text-neutral-500 hover:text-neutral-700 py-1 dark:hover:text-neutral-200 dark:text-neutral-400"
                   >
                     {t('social.action.cancel')}
                   </button>
@@ -1102,7 +1116,7 @@ function MessageBubble({
                   setIsEditing(false)
                   setEditInput(msg.content ?? '')
                 }}
-                className="text-xs text-neutral-500 hover:text-neutral-700 px-2 py-1"
+                className="text-xs text-neutral-500 hover:text-neutral-700 px-2 py-1 dark:hover:text-neutral-200 dark:text-neutral-400"
               >
                 {t('social.action.cancel')}
               </button>
@@ -1125,10 +1139,10 @@ function MessageBubble({
             <div
               className={`rounded-2xl px-3 py-2 text-sm ${
                 isDeleted
-                  ? 'bg-neutral-50 text-neutral-400 italic border border-neutral-100'
+                  ? 'bg-neutral-50 text-neutral-400 italic border border-neutral-100 dark:bg-neutral-900 dark:text-neutral-500'
                   : isOwn
                     ? 'bg-primary-600 text-white rounded-br-sm'
-                    : 'bg-neutral-100 text-neutral-900 rounded-bl-sm'
+                    : 'bg-neutral-100 text-neutral-900 rounded-bl-sm dark:bg-neutral-800 dark:text-neutral-100'
               }`}
             >
               {isDeleted ? t('social.messages.deleted_message') : msg.content}
@@ -1138,15 +1152,17 @@ function MessageBubble({
               className={`flex items-center gap-1 mt-0.5 ${isOwn ? 'justify-end' : 'justify-start'}`}
             >
               {msg.edited_at && !isDeleted && (
-                <span className="text-[9px] text-neutral-400">{t('social.messages.edited')}</span>
+                <span className="text-[9px] text-neutral-400 dark:text-neutral-500">
+                  {t('social.messages.edited')}
+                </span>
               )}
               {!isDeleted && (
-                <span className="text-[9px] text-neutral-400">
+                <span className="text-[9px] text-neutral-400 dark:text-neutral-500">
                   {format(parseISO(msg.created_at), 'HH:mm', { locale: getDateLocale() })}
                 </span>
               )}
               {isOwn && !isDeleted && (
-                <span className="text-[9px] text-neutral-400">
+                <span className="text-[9px] text-neutral-400 dark:text-neutral-500">
                   {msg.read_at ? (
                     <CheckCheck className="h-3 w-3 inline text-primary-400" />
                   ) : (
@@ -1314,17 +1330,19 @@ function MessageThread({
         <button
           type="button"
           onClick={onBack}
-          className="p-1 text-neutral-400 hover:text-neutral-700 transition-colors"
+          className="p-1 text-neutral-400 hover:text-neutral-700 transition-colors dark:hover:text-neutral-200 dark:text-neutral-500"
         >
           <ArrowLeft className="h-4 w-4" />
         </button>
-        <div className="h-7 w-7 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 text-xs font-semibold shrink-0">
+        <div className="h-7 w-7 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 text-xs font-semibold shrink-0 dark:bg-primary-900/25 dark:text-primary-300">
           {getInitials(displayName)}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-neutral-900 truncate">{displayName}</p>
+          <p className="text-sm font-medium text-neutral-900 truncate dark:text-neutral-100">
+            {displayName}
+          </p>
           {conversation.friend_alias && (
-            <p className="text-[10px] text-neutral-400 truncate">
+            <p className="text-[10px] text-neutral-400 truncate dark:text-neutral-500">
               @{conversation.friend_username ?? conversation.friend_name}
             </p>
           )}
@@ -1332,13 +1350,13 @@ function MessageThread({
         {/* Ta bort konversation */}
         {confirmDeleteConv ? (
           <div className="flex items-center gap-1.5 shrink-0">
-            <span className="text-xs text-neutral-500">
+            <span className="text-xs text-neutral-500 dark:text-neutral-400">
               {t('social.messages.confirm_delete_conv')}
             </span>
             <button
               type="button"
               onClick={() => setConfirmDeleteConv(false)}
-              className="text-xs text-neutral-400 hover:text-neutral-600 px-1.5 py-0.5 rounded"
+              className="text-xs text-neutral-400 hover:text-neutral-600 px-1.5 py-0.5 rounded dark:text-neutral-500"
             >
               {t('social.action.no')}
             </button>
@@ -1381,7 +1399,7 @@ function MessageThread({
               type="button"
               onClick={() => fetchNextPage()}
               disabled={isFetchingNextPage}
-              className="text-xs text-primary-600 hover:text-primary-800 transition-colors"
+              className="text-xs text-primary-600 hover:text-primary-800 transition-colors dark:text-primary-300"
             >
               {isFetchingNextPage ? (
                 <Loader2 className="h-3 w-3 animate-spin" />
@@ -1394,7 +1412,9 @@ function MessageThread({
 
         {!isLoading && messages.length === 0 && (
           <div className="text-center py-8">
-            <p className="text-xs text-neutral-400">{t('social.messages.no_messages')}</p>
+            <p className="text-xs text-neutral-400 dark:text-neutral-500">
+              {t('social.messages.no_messages')}
+            </p>
           </div>
         )}
 
@@ -1410,7 +1430,7 @@ function MessageThread({
               <div key={msg.id}>
                 {showTimestamp && (
                   <div className="flex justify-center py-1">
-                    <span className="text-[10px] text-neutral-400">
+                    <span className="text-[10px] text-neutral-400 dark:text-neutral-500">
                       {format(parseISO(msg.created_at), 'd MMM, HH:mm', {
                         locale: getDateLocale(),
                       })}
@@ -1427,7 +1447,7 @@ function MessageThread({
       <div className="shrink-0 border-t border-neutral-100 px-3 py-2">
         {showCharCount && (
           <p
-            className={`text-[10px] mb-1 text-right ${isOverLimit ? 'text-red-500' : 'text-neutral-400'}`}
+            className={`text-[10px] mb-1 text-right ${isOverLimit ? 'text-red-500' : 'text-neutral-400 dark:text-neutral-500'}`}
           >
             {charCount}/2000
           </p>
@@ -1440,7 +1460,7 @@ function MessageThread({
             onKeyDown={handleKeyDown}
             placeholder={t('social.messages.input_placeholder')}
             rows={1}
-            className="flex-1 resize-none rounded-xl border border-neutral-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            className="flex-1 resize-none rounded-xl border border-neutral-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:border-neutral-700"
             style={{ maxHeight: '120px' }}
           />
           <button
@@ -1468,31 +1488,31 @@ function MessageThread({
 function notificationIcon(type: Notification['type']) {
   switch (type) {
     case 'friend_request_received':
-      return <UserPlus className="h-4 w-4 text-primary-600" />
+      return <UserPlus className="h-4 w-4 text-primary-600 dark:text-primary-300" />
     case 'friend_request_accepted':
-      return <UserCheck className="h-4 w-4 text-green-600" />
+      return <UserCheck className="h-4 w-4 text-green-600 dark:text-green-300" />
     case 'shared_list_invitation_received':
-      return <ListOrdered className="h-4 w-4 text-blue-600" />
+      return <ListOrdered className="h-4 w-4 text-blue-600 dark:text-blue-300" />
     case 'shared_list_member_left':
-      return <Users className="h-4 w-4 text-neutral-500" />
+      return <Users className="h-4 w-4 text-neutral-500 dark:text-neutral-400" />
     case 'shared_list_member_joined':
-      return <UserPlus className="h-4 w-4 text-green-600" />
+      return <UserPlus className="h-4 w-4 text-green-600 dark:text-green-300" />
     case 'share_invitation_accepted':
-      return <Check className="h-4 w-4 text-green-600" />
+      return <Check className="h-4 w-4 text-green-600 dark:text-green-300" />
     case 'share_invitation_rejected':
-      return <X className="h-4 w-4 text-neutral-400" />
+      return <X className="h-4 w-4 text-neutral-400 dark:text-neutral-500" />
     case 'new_message':
-      return <MessageCircle className="h-4 w-4 text-primary-600" />
+      return <MessageCircle className="h-4 w-4 text-primary-600 dark:text-primary-300" />
     case 'support_message_received':
       return <MessageCircle className="h-4 w-4 text-orange-500" />
     case 'admin_invitation_received':
-      return <ShieldCheck className="h-4 w-4 text-primary-600" />
+      return <ShieldCheck className="h-4 w-4 text-primary-600 dark:text-primary-300" />
     case 'admin_invitation_accepted':
-      return <Check className="h-4 w-4 text-green-600" />
+      return <Check className="h-4 w-4 text-green-600 dark:text-green-300" />
     case 'admin_invitation_rejected':
-      return <X className="h-4 w-4 text-neutral-400" />
+      return <X className="h-4 w-4 text-neutral-400 dark:text-neutral-500" />
     case 'admin_message':
-      return <Megaphone className="h-4 w-4 text-primary-600" />
+      return <Megaphone className="h-4 w-4 text-primary-600 dark:text-primary-300" />
   }
 }
 
@@ -1515,18 +1535,18 @@ function NotificationCard({
       }}
       className={`w-full flex items-start gap-3 rounded-lg border px-3 py-2.5 text-left transition-colors ${
         isUnread
-          ? 'border-primary-100 bg-primary-50 hover:bg-primary-100'
-          : 'border-neutral-100 bg-white hover:bg-neutral-50'
+          ? 'border-primary-100 bg-primary-50 hover:bg-primary-100 dark:bg-primary-900/25'
+          : 'border-neutral-100 bg-white hover:bg-neutral-50 dark:hover:bg-neutral-800 dark:bg-neutral-850'
       }`}
     >
       <div className="mt-0.5 shrink-0">{notificationIcon(n.type)}</div>
       <div className="flex-1 min-w-0">
         <p
-          className={`text-sm ${isUnread ? 'font-semibold text-neutral-900' : 'text-neutral-700'}`}
+          className={`text-sm ${isUnread ? 'font-semibold text-neutral-900 dark:text-neutral-100' : 'text-neutral-700 dark:text-neutral-200'}`}
         >
           {n.title}
         </p>
-        <p className="text-[10px] text-neutral-400 mt-0.5">
+        <p className="text-[10px] text-neutral-400 mt-0.5 dark:text-neutral-500">
           {formatDistanceToNow(new Date(n.created_at), {
             addSuffix: true,
             locale: getDateLocale(),
@@ -1673,7 +1693,9 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
       {/* Header */}
       <div className="px-4 pt-4 pb-2 border-b border-neutral-100 shrink-0">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="font-semibold text-neutral-900">{t('social.hub.title')}</h2>
+          <h2 className="font-semibold text-neutral-900 dark:text-neutral-100">
+            {t('social.hub.title')}
+          </h2>
         </div>
 
         {/* Tab-knappar */}
@@ -1702,7 +1724,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
               className={`shrink-0 flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                 tab === tabItem.id
                   ? 'bg-primary-600 text-white'
-                  : 'text-neutral-600 hover:bg-neutral-100'
+                  : 'text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:text-neutral-400'
               }`}
             >
               {tabItem.label}
@@ -1711,7 +1733,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
                   className={`text-[10px] rounded-full px-1.5 py-0.5 min-w-[18px] text-center leading-none ${
                     tab === tabItem.id
                       ? 'bg-white/30 text-white'
-                      : 'bg-primary-100 text-primary-700'
+                      : 'bg-primary-100 text-primary-700 dark:bg-primary-900/25 dark:text-primary-300'
                   }`}
                 >
                   {tabItem.count > 99 ? '99+' : tabItem.count}
@@ -1722,7 +1744,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
           <button
             type="button"
             onClick={() => onOpenShareDialog(undefined)}
-            className="shrink-0 ml-auto flex items-center justify-center h-8 w-8 rounded-lg text-neutral-600 hover:bg-neutral-100 transition-colors"
+            className="shrink-0 ml-auto flex items-center justify-center h-8 w-8 rounded-lg text-neutral-600 hover:bg-neutral-100 transition-colors dark:hover:bg-neutral-800 dark:text-neutral-400"
             title={t('social.hub.tab_sharing')}
           >
             <Share2 className="h-4 w-4" />
@@ -1746,7 +1768,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
                 <Button
                   variant="outline"
                   size="sm"
-                  className="w-full justify-center gap-2 border-dashed text-neutral-600 hover:text-primary-700 hover:border-primary-400"
+                  className="w-full justify-center gap-2 border-dashed text-neutral-600 hover:text-primary-700 hover:border-primary-400 dark:text-neutral-400"
                   onClick={() => setFriendsView('add')}
                 >
                   <UserPlus className="h-4 w-4" />
@@ -1765,7 +1787,9 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
                 {friends.length === 0 ? (
                   <div className="text-center py-8 space-y-2">
                     <Users className="h-10 w-10 text-neutral-200 mx-auto" />
-                    <p className="text-sm text-neutral-400">{t('social.friends.no_friends')}</p>
+                    <p className="text-sm text-neutral-400 dark:text-neutral-500">
+                      {t('social.friends.no_friends')}
+                    </p>
                   </div>
                 ) : (
                   <div className="space-y-1">
@@ -1774,10 +1798,10 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
                         key={friend.friendship_id}
                         type="button"
                         onClick={() => handleOpenProfile(friend)}
-                        className="w-full flex items-center gap-3 p-2.5 rounded-lg hover:bg-neutral-50 transition-colors text-left"
+                        className="w-full flex items-center gap-3 p-2.5 rounded-lg hover:bg-neutral-50 transition-colors text-left dark:hover:bg-neutral-800"
                       >
                         <div className="relative shrink-0">
-                          <div className="h-9 w-9 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 text-sm font-semibold">
+                          <div className="h-9 w-9 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 text-sm font-semibold dark:bg-primary-900/25 dark:text-primary-300">
                             {getInitials(friend.alias ?? friend.friend_name)}
                           </div>
                           {onlineFriendIds.has(friend.friend_id) && (
@@ -1785,11 +1809,11 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-neutral-900 truncate">
+                          <p className="text-sm font-medium text-neutral-900 truncate dark:text-neutral-100">
                             {friend.alias ?? friend.friend_name}
                           </p>
                           <p
-                            className={`text-xs truncate ${onlineFriendIds.has(friend.friend_id) ? 'text-green-500 font-medium' : 'text-neutral-400'}`}
+                            className={`text-xs truncate ${onlineFriendIds.has(friend.friend_id) ? 'text-green-500 font-medium' : 'text-neutral-400 dark:text-neutral-500'}`}
                           >
                             {getPresenceLabel(friend, onlineFriendIds, t)}
                           </p>
@@ -1806,13 +1830,13 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
                 <button
                   type="button"
                   onClick={() => setFriendsView('list')}
-                  className="flex items-center gap-1 text-sm text-neutral-500 hover:text-neutral-700 transition-colors"
+                  className="flex items-center gap-1 text-sm text-neutral-500 hover:text-neutral-700 transition-colors dark:hover:text-neutral-200 dark:text-neutral-400"
                 >
                   <ChevronLeft className="h-4 w-4" />
                   {t('social.action.back')}
                 </button>
                 <div className="space-y-2">
-                  <p className="text-sm font-medium text-neutral-700">
+                  <p className="text-sm font-medium text-neutral-700 dark:text-neutral-200">
                     {t('social.friends.add_friend')}
                   </p>
                   <Input
@@ -1823,7 +1847,9 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
                     onKeyDown={e => e.key === 'Enter' && handleAddFriend()}
                     autoFocus
                   />
-                  <p className="text-xs text-neutral-400">{t('social.friends.add_hint')}</p>
+                  <p className="text-xs text-neutral-400 dark:text-neutral-500">
+                    {t('social.friends.add_hint')}
+                  </p>
                 </div>
                 <Button
                   onClick={handleAddFriend}
@@ -1858,21 +1884,21 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
             {/* Admin-inbjudningar */}
             {pendingAdminInvitations.length > 0 && (
               <div className="space-y-2">
-                <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wide">
+                <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wide dark:text-neutral-500">
                   {t('social.activity.admin_invitations')}
                 </p>
                 {pendingAdminInvitations.map(inv => (
                   <div
                     key={inv.id}
-                    className="rounded-xl border border-primary-200 bg-primary-50 p-3 space-y-2"
+                    className="rounded-xl border border-primary-200 bg-primary-50 p-3 space-y-2 dark:bg-primary-900/25 dark:border-primary-800"
                   >
                     <div className="flex items-start gap-2">
-                      <ShieldCheck className="h-4 w-4 text-primary-600 mt-0.5 shrink-0" />
+                      <ShieldCheck className="h-4 w-4 text-primary-600 mt-0.5 shrink-0 dark:text-primary-300" />
                       <div>
-                        <p className="text-sm font-medium text-neutral-900">
+                        <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
                           {t('social.activity.admin_invite_title', { name: inv.sender_name })}
                         </p>
-                        <p className="text-xs text-neutral-500 mt-0.5">
+                        <p className="text-xs text-neutral-500 mt-0.5 dark:text-neutral-400">
                           {t('social.activity.admin_invite_desc')}
                         </p>
                       </div>
@@ -1901,7 +1927,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
                           toast.success(t('social.activity.admin_denied'))
                         }}
                         disabled={respondAdminInvitation.isPending}
-                        className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-sm font-medium text-neutral-700 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors disabled:opacity-50"
+                        className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-sm font-medium text-neutral-700 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors disabled:opacity-50 dark:bg-neutral-800 dark:text-neutral-200"
                       >
                         <X className="h-3.5 w-3.5" />
                         {t('social.action.deny')}
@@ -1915,17 +1941,19 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
             {/* Receptönskemål — endast admins; Klar = radera (delad state) */}
             {isAdmin && recipeRequests.length > 0 && (
               <div className="space-y-2">
-                <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wide">
+                <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wide dark:text-neutral-500">
                   {t('social.activity.recipe_requests')}
                 </p>
                 {recipeRequests.map(req => (
                   <div
                     key={req.id}
-                    className="rounded-lg border border-neutral-100 bg-white p-3 flex items-start justify-between gap-3"
+                    className="rounded-lg border border-neutral-100 bg-white p-3 flex items-start justify-between gap-3 dark:bg-neutral-850"
                   >
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm text-neutral-900">{req.request_text}</p>
-                      <p className="mt-0.5 text-xs text-neutral-400">
+                      <p className="text-sm text-neutral-900 dark:text-neutral-100">
+                        {req.request_text}
+                      </p>
+                      <p className="mt-0.5 text-xs text-neutral-400 dark:text-neutral-500">
                         @{req.requester_name} ·{' '}
                         {formatDistanceToNow(new Date(req.created_at), {
                           addSuffix: true,
@@ -1938,7 +1966,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
                       variant="ghost"
                       onClick={() => deleteRecipeRequest.mutate(req.id)}
                       disabled={deleteRecipeRequest.isPending}
-                      className="h-7 shrink-0 gap-1 text-xs text-neutral-500 hover:text-green-700 hover:bg-green-50"
+                      className="h-7 shrink-0 gap-1 text-xs text-neutral-500 hover:text-green-700 hover:bg-green-50 dark:text-neutral-400"
                     >
                       <Check className="h-3.5 w-3.5" />
                       {t('social.activity.recipe_request_done')}
@@ -1951,7 +1979,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
             {/* Vänförfrågningar */}
             {friendRequests.length > 0 && (
               <div className="space-y-2">
-                <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wide">
+                <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wide dark:text-neutral-500">
                   {t('social.activity.friend_requests')}
                 </p>
                 {friendRequests.map(req => (
@@ -1963,7 +1991,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
             {/* Delningsförfrågningar */}
             {pendingInvitations.length > 0 && (
               <div className="space-y-2">
-                <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wide">
+                <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wide dark:text-neutral-500">
                   {t('social.activity.share_invitations')}
                 </p>
                 {pendingInvitations.map(inv => (
@@ -1975,7 +2003,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
             {/* Inbjudningar till delade listor */}
             {pendingSharedListInvitations.length > 0 && (
               <div className="space-y-2">
-                <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wide">
+                <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wide dark:text-neutral-500">
                   {t('social.activity.list_invitations')}
                 </p>
                 {pendingSharedListInvitations.map(inv => (
@@ -1987,7 +2015,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
             {/* Skickade vänförfrågningar */}
             {sentRequests.length > 0 && (
               <div className="space-y-2">
-                <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wide">
+                <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wide dark:text-neutral-500">
                   {t('social.activity.sent_requests')}
                 </p>
                 {sentRequests.map(req => (
@@ -1999,7 +2027,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
             {/* Skickade delningar */}
             {sentShareInvitations.length > 0 && (
               <div className="space-y-2">
-                <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wide">
+                <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wide dark:text-neutral-500">
                   {t('invitations.sent.section_title')}
                 </p>
                 {sentShareInvitations.map(inv => (
@@ -2011,7 +2039,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
             {/* Skickade admin-inbjudningar */}
             {sentAdminInvitations.length > 0 && (
               <div className="space-y-2">
-                <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wide">
+                <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wide dark:text-neutral-500">
                   {t('social.activity.sent_admin_invitations')}
                 </p>
                 {sentAdminInvitations.map(inv => (
@@ -2024,7 +2052,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
             {!isAdmin && supportNotifications.length > 0 && (
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wide">
+                  <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wide dark:text-neutral-500">
                     Support
                   </p>
                   <div className="flex items-center gap-3">
@@ -2035,7 +2063,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
                             .filter(n => n.read_at === null)
                             .forEach(n => markRead(n.id))
                         }
-                        className="text-xs text-primary-600 hover:text-primary-800 transition-colors"
+                        className="text-xs text-primary-600 hover:text-primary-800 transition-colors dark:text-primary-300"
                       >
                         {t('social.activity.mark_all_read')}
                       </button>
@@ -2045,7 +2073,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
                       disabled={
                         isDeletingRead || supportNotifications.every(n => n.read_at === null)
                       }
-                      className="text-xs text-neutral-400 hover:text-red-500 transition-colors disabled:opacity-30"
+                      className="text-xs text-neutral-400 hover:text-red-500 transition-colors disabled:opacity-30 dark:text-neutral-500"
                     >
                       {t('social.activity.clear_read')}
                     </button>
@@ -2066,14 +2094,14 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
             {historyNotifications.length > 0 && (
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wide">
+                  <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wide dark:text-neutral-500">
                     {t('social.activity.history')}
                   </p>
                   <div className="flex items-center gap-3">
                     {unreadHistoryCount > 0 && (
                       <button
                         onClick={() => markAllRead()}
-                        className="text-xs text-primary-600 hover:text-primary-800 transition-colors"
+                        className="text-xs text-primary-600 hover:text-primary-800 transition-colors dark:text-primary-300"
                       >
                         {t('social.activity.mark_all_read')}
                       </button>
@@ -2083,7 +2111,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
                       disabled={
                         isDeletingRead || historyNotifications.every(n => n.read_at === null)
                       }
-                      className="text-xs text-neutral-400 hover:text-red-500 transition-colors disabled:opacity-30"
+                      className="text-xs text-neutral-400 hover:text-red-500 transition-colors disabled:opacity-30 dark:text-neutral-500"
                     >
                       {t('social.activity.clear_read')}
                     </button>
@@ -2103,10 +2131,12 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
               notifications.length === 0 && (
                 <div className="text-center py-10 space-y-2">
                   <p className="text-2xl">🎉</p>
-                  <p className="text-sm font-medium text-neutral-600">
+                  <p className="text-sm font-medium text-neutral-600 dark:text-neutral-400">
                     {t('social.activity.all_clear')}
                   </p>
-                  <p className="text-xs text-neutral-400">{t('social.activity.all_clear_sub')}</p>
+                  <p className="text-xs text-neutral-400 dark:text-neutral-500">
+                    {t('social.activity.all_clear_sub')}
+                  </p>
                 </div>
               )}
           </div>
@@ -2145,20 +2175,24 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
                 supportNotifications.filter(n => n.read_at === null).forEach(n => markRead(n.id))
                 navigate('/app/admin/support')
               }}
-              className="w-full flex items-center gap-3 rounded-xl px-4 py-3 bg-neutral-50 hover:bg-neutral-100 transition-colors text-left"
+              className="w-full flex items-center gap-3 rounded-xl px-4 py-3 bg-neutral-50 hover:bg-neutral-100 transition-colors text-left dark:hover:bg-neutral-800 dark:bg-neutral-900"
             >
-              <div className="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center shrink-0">
-                <ShieldCheck className="h-5 w-5 text-primary-600" />
+              <div className="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center shrink-0 dark:bg-primary-900/25">
+                <ShieldCheck className="h-5 w-5 text-primary-600 dark:text-primary-300" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-neutral-900">Supportinkorg</p>
+                <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                  Supportinkorg
+                </p>
                 {unreadSupportCount > 0 ? (
-                  <p className="text-xs text-primary-600 font-medium">
+                  <p className="text-xs text-primary-600 font-medium dark:text-primary-300">
                     {unreadSupportCount} oläst{unreadSupportCount !== 1 ? 'a' : ''} meddelande
                     {unreadSupportCount !== 1 ? 'n' : ''}
                   </p>
                 ) : (
-                  <p className="text-xs text-neutral-400">Hantera supportärenden</p>
+                  <p className="text-xs text-neutral-400 dark:text-neutral-500">
+                    Hantera supportärenden
+                  </p>
                 )}
               </div>
               {unreadSupportCount > 0 && (

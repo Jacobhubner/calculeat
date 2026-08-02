@@ -89,7 +89,7 @@ export function PremiumGate({ feature, children, className, title, infoBody }: P
           title={title ?? t('gate.lockedTitle')}
           size="md"
         >
-          <p className="text-neutral-700 leading-relaxed whitespace-pre-line dark:text-neutral-300">
+          <p className="text-neutral-700 leading-relaxed whitespace-pre-line dark:text-neutral-200">
             {infoBody}
           </p>
         </InfoModal>
