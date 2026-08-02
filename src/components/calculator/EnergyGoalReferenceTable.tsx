@@ -124,11 +124,12 @@ export default function EnergyGoalReferenceTable({
   ]
 
   return (
-    <div className="mt-4 rounded-xl border border-neutral-200 bg-white overflow-hidden shadow-sm">
+    <div className="mt-4 rounded-xl border border-neutral-200 bg-white overflow-hidden shadow-sm dark:border-neutral-700 dark:bg-neutral-850">
+      {/* Gradientrubriken fungerar i båda teman och lämnas orörd */}
       <div className="bg-gradient-to-r from-primary-500 to-accent-500 px-4 py-3">
         <h4 className="text-sm font-semibold text-white">{t('energyGoalTable.title')}</h4>
       </div>
-      <div className="divide-y divide-neutral-200">
+      <div className="divide-y divide-neutral-200 dark:divide-neutral-700">
         {goals.map((goal, index) => {
           const handleClick = () => {
             if (!goal.goalValue) return
@@ -150,8 +151,8 @@ export default function EnergyGoalReferenceTable({
               onClick={handleClick}
               className={`transition-colors ${
                 goal.isSelected
-                  ? 'bg-primary-50 border-l-4 border-l-primary-500'
-                  : 'bg-white hover:bg-neutral-50'
+                  ? 'bg-primary-50 border-l-4 border-l-primary-500 dark:bg-primary-900/25'
+                  : 'bg-white hover:bg-neutral-50 dark:bg-neutral-850 dark:hover:bg-neutral-800'
               } ${goal.isSubItem ? 'pl-8 pr-4 py-2' : 'px-4 py-3'} ${
                 goal.goalValue ? 'cursor-pointer' : 'cursor-default'
               }`}
@@ -161,22 +162,26 @@ export default function EnergyGoalReferenceTable({
                   <span
                     className={`text-sm ${
                       goal.isSelected
-                        ? 'font-semibold text-primary-900'
+                        ? 'font-semibold text-primary-900 dark:text-primary-200'
                         : goal.isSubItem
-                          ? 'font-normal text-neutral-600'
-                          : 'font-medium text-neutral-700'
+                          ? 'font-normal text-neutral-600 dark:text-neutral-400'
+                          : 'font-medium text-neutral-700 dark:text-neutral-200'
                     }`}
                   >
-                    {goal.isSubItem && <span className="mr-2 text-neutral-400">•</span>}
+                    {goal.isSubItem && (
+                      <span className="mr-2 text-neutral-400 dark:text-neutral-500">•</span>
+                    )}
                     {goal.label}
                   </span>
                   {goal.description && (
-                    <p className="text-xs text-neutral-500 mt-1 ml-4">{goal.description}</p>
+                    <p className="text-xs text-neutral-500 mt-1 ml-4 dark:text-neutral-400">
+                      {goal.description}
+                    </p>
                   )}
                 </div>
                 {goal.percentage && (
                   <span
-                    className={`text-sm ml-4 ${goal.isSelected ? 'text-primary-700 font-semibold' : 'text-neutral-600'}`}
+                    className={`text-sm ml-4 ${goal.isSelected ? 'text-primary-700 font-semibold dark:text-primary-300' : 'text-neutral-600 dark:text-neutral-400'}`}
                   >
                     {goal.percentage}
                   </span>

@@ -76,20 +76,24 @@ export default function SetupProfileForm({ onSave, isSaving }: SetupProfileFormP
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <User className="h-5 w-5 text-primary-600" />
+          <User className="h-5 w-5 text-primary-600 dark:text-primary-300" />
           {t('setup.title')}
         </CardTitle>
-        <p className="text-sm text-neutral-500 mt-1">{t('setup.description')}</p>
+        <p className="text-sm text-neutral-500 mt-1 dark:text-neutral-400">
+          {t('setup.description')}
+        </p>
       </CardHeader>
       <CardContent className="space-y-5">
         {/* Födelsedatum */}
         <div>
-          <p className="text-sm font-medium text-neutral-700 mb-2">{t('birthDate.label')}</p>
+          <p className="text-sm font-medium text-neutral-700 mb-2 dark:text-neutral-200">
+            {t('birthDate.label')}
+          </p>
           <div className="grid grid-cols-3 gap-2">
             <select
               value={birthDay}
               onChange={e => setBirthDay(e.target.value)}
-              className="block w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="block w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-600"
             >
               <option value="">{t('birthDate.day')}</option>
               {Array.from({ length: 31 }, (_, i) => i + 1).map(d => (
@@ -101,7 +105,7 @@ export default function SetupProfileForm({ onSave, isSaving }: SetupProfileFormP
             <select
               value={birthMonth}
               onChange={e => setBirthMonth(e.target.value)}
-              className="block w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="block w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-600"
             >
               <option value="">{t('birthDate.month')}</option>
               {Array.from({ length: 12 }, (_, i) => i + 1).map(i => (
@@ -113,7 +117,7 @@ export default function SetupProfileForm({ onSave, isSaving }: SetupProfileFormP
             <select
               value={birthYear}
               onChange={e => setBirthYear(e.target.value)}
-              className="block w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="block w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-600"
             >
               <option value="">{t('birthDate.year')}</option>
               {Array.from({ length: 105 }, (_, i) => new Date().getFullYear() - i).map(y => (
@@ -127,7 +131,9 @@ export default function SetupProfileForm({ onSave, isSaving }: SetupProfileFormP
 
         {/* Kön */}
         <div>
-          <p className="text-sm font-medium text-neutral-700 mb-2">{t('fields.gender')}</p>
+          <p className="text-sm font-medium text-neutral-700 mb-2 dark:text-neutral-200">
+            {t('fields.gender')}
+          </p>
           <div className="flex gap-6">
             <label className="flex items-center gap-2 cursor-pointer">
               <input
@@ -138,7 +144,9 @@ export default function SetupProfileForm({ onSave, isSaving }: SetupProfileFormP
                 onChange={() => setGender('male')}
                 className="h-4 w-4 accent-primary-600"
               />
-              <span className="text-sm text-neutral-700">{t('gender.male')}</span>
+              <span className="text-sm text-neutral-700 dark:text-neutral-200">
+                {t('gender.male')}
+              </span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
               <input
@@ -149,14 +157,16 @@ export default function SetupProfileForm({ onSave, isSaving }: SetupProfileFormP
                 onChange={() => setGender('female')}
                 className="h-4 w-4 accent-primary-600"
               />
-              <span className="text-sm text-neutral-700">{t('gender.female')}</span>
+              <span className="text-sm text-neutral-700 dark:text-neutral-200">
+                {t('gender.female')}
+              </span>
             </label>
           </div>
         </div>
 
         {/* Längd */}
         <div>
-          <label className="block text-sm font-medium text-neutral-700 mb-2">
+          <label className="block text-sm font-medium text-neutral-700 mb-2 dark:text-neutral-200">
             {t('fields.height')}
           </label>
           <input
@@ -166,13 +176,13 @@ export default function SetupProfileForm({ onSave, isSaving }: SetupProfileFormP
             placeholder="180"
             min="100"
             max="250"
-            className="w-full max-w-xs px-3 py-2 text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="w-full max-w-xs px-3 py-2 text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-600"
           />
         </div>
 
         {/* Vikt */}
         <div>
-          <label className="block text-sm font-medium text-neutral-700 mb-2">
+          <label className="block text-sm font-medium text-neutral-700 mb-2 dark:text-neutral-200">
             {t('fields.weight')}
           </label>
           <input
@@ -183,13 +193,15 @@ export default function SetupProfileForm({ onSave, isSaving }: SetupProfileFormP
             min="20"
             max="400"
             step="0.1"
-            className="w-full max-w-xs px-3 py-2 text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="w-full max-w-xs px-3 py-2 text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-600"
           />
         </div>
 
         {/* Mål — styr förvalt underskott och kaloritäthetsindikatorn (grepp 4) */}
         <div>
-          <p className="text-sm font-medium text-neutral-700 mb-2">{t('setup.goalLabel')}</p>
+          <p className="text-sm font-medium text-neutral-700 mb-2 dark:text-neutral-200">
+            {t('setup.goalLabel')}
+          </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
             {(
               [
@@ -204,8 +216,8 @@ export default function SetupProfileForm({ onSave, isSaving }: SetupProfileFormP
                 onClick={() => setGoal(value)}
                 className={`px-4 py-3 rounded-xl border text-sm font-medium transition-colors ${
                   goal === value
-                    ? 'border-primary-400 bg-primary-50 text-primary-700'
-                    : 'border-neutral-200 text-neutral-700 hover:border-neutral-300'
+                    ? 'border-primary-400 bg-primary-50 text-primary-700 dark:bg-primary-900/25 dark:text-primary-300'
+                    : 'border-neutral-200 text-neutral-700 hover:border-neutral-300 dark:border-neutral-700 dark:text-neutral-200'
                 }`}
               >
                 {t(key)}
@@ -216,9 +228,13 @@ export default function SetupProfileForm({ onSave, isSaving }: SetupProfileFormP
 
         {/* Metodval — slås ihop med grunduppgifterna på samma vy (steg 1+2).
             Båda knapparna sparar grunduppgifterna först och går sedan vidare. */}
-        <div className="border-t border-neutral-100 pt-5">
-          <p className="text-sm font-medium text-neutral-700 mb-1">{t('setup.methodTitle')}</p>
-          <p className="text-xs text-neutral-500 mb-3">{t('setup.methodHint')}</p>
+        <div className="border-t border-neutral-100 pt-5 dark:border-neutral-700">
+          <p className="text-sm font-medium text-neutral-700 mb-1 dark:text-neutral-200">
+            {t('setup.methodTitle')}
+          </p>
+          <p className="text-xs text-neutral-500 mb-3 dark:text-neutral-400">
+            {t('setup.methodHint')}
+          </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Button
               onClick={() => handleSubmit('calculate')}
@@ -237,7 +253,9 @@ export default function SetupProfileForm({ onSave, isSaving }: SetupProfileFormP
             </Button>
           </div>
           {!isValid && (
-            <p className="text-xs text-neutral-400 mt-2">{t('setup.methodFillFirst')}</p>
+            <p className="text-xs text-neutral-400 mt-2 dark:text-neutral-500">
+              {t('setup.methodFillFirst')}
+            </p>
           )}
         </div>
       </CardContent>

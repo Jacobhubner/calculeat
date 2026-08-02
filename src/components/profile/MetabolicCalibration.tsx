@@ -75,10 +75,10 @@ function CalibrationHistoryList({
   const active = history.filter(c => !c.is_reverted)
   if (active.length === 0) return null
   return (
-    <div className="border-t border-neutral-100 pt-3">
+    <div className="border-t border-neutral-100 pt-3 dark:border-neutral-700">
       <button
         onClick={() => setOpen(o => !o)}
-        className="flex items-center gap-1.5 text-xs text-neutral-500 hover:text-neutral-700 w-full"
+        className="flex items-center gap-1.5 text-xs text-neutral-500 hover:text-neutral-700 w-full dark:text-neutral-400 dark:hover:text-neutral-200"
       >
         <ChevronDown className={`h-3.5 w-3.5 transition-transform ${open ? 'rotate-180' : ''}`} />
         {t('metabolicCalibration.historyTitle', { count: active.length })}
@@ -86,15 +86,18 @@ function CalibrationHistoryList({
       {open && (
         <div className="mt-2 space-y-1.5">
           {active.map((c, i) => (
-            <div key={c.id} className="flex justify-between items-center text-xs text-neutral-600">
-              <span className="text-neutral-400">
+            <div
+              key={c.id}
+              className="flex justify-between items-center text-xs text-neutral-600 dark:text-neutral-400"
+            >
+              <span className="text-neutral-400 dark:text-neutral-500">
                 {new Date(c.calibrated_at).toLocaleDateString('sv-SE', {
                   day: 'numeric',
                   month: 'short',
                   year: 'numeric',
                 })}
                 {i === 0 && (
-                  <span className="ml-1 text-primary-600 font-medium">
+                  <span className="ml-1 text-primary-600 font-medium dark:text-primary-300">
                     {t('metabolicCalibration.historyLatest')}
                   </span>
                 )}
@@ -110,14 +113,14 @@ function CalibrationHistoryList({
                         deleteCalibration.mutate({ id: c.id, userId })
                         setConfirmId(null)
                       }}
-                      className="text-red-600 hover:text-red-800 font-medium"
+                      className="text-red-600 hover:text-red-800 font-medium dark:text-red-300"
                     >
                       {t('metabolicCalibration.historyDelete')}
                     </button>
-                    <span className="text-neutral-300">|</span>
+                    <span className="text-neutral-300 dark:text-neutral-600">|</span>
                     <button
                       onClick={() => setConfirmId(null)}
-                      className="text-neutral-500 hover:text-neutral-700"
+                      className="text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
                     >
                       {t('metabolicCalibration.historyCancel')}
                     </button>
@@ -125,7 +128,7 @@ function CalibrationHistoryList({
                 ) : (
                   <button
                     onClick={() => setConfirmId(c.id)}
-                    className="text-neutral-300 hover:text-red-500 transition-colors"
+                    className="text-neutral-300 hover:text-red-500 transition-colors dark:text-neutral-600"
                     aria-label={t('metabolicCalibration.historyDelete')}
                   >
                     <Trash2 className="h-3 w-3" />
@@ -419,11 +422,11 @@ export default function MetabolicCalibration({
 
   const confidenceColor = data
     ? data.confidence.level === 'high'
-      ? 'text-green-600'
+      ? 'text-green-600 dark:text-green-300'
       : data.confidence.level === 'standard'
-        ? 'text-yellow-600'
-        : 'text-orange-600'
-    : 'text-neutral-400'
+        ? 'text-yellow-600 dark:text-yellow-300'
+        : 'text-orange-600 dark:text-orange-300'
+    : 'text-neutral-400 dark:text-neutral-500'
 
   const confidenceLabel = data
     ? data.confidence.level === 'high'
@@ -467,36 +470,36 @@ export default function MetabolicCalibration({
                       {t('metabolicCalibration.infoModal.section1Title')}
                     </h3>
                     <p
-                      className="text-neutral-700 leading-relaxed"
+                      className="text-neutral-700 leading-relaxed dark:text-neutral-200"
                       dangerouslySetInnerHTML={{
                         __html: t('metabolicCalibration.infoModal.section1p1'),
                       }}
                     />
                     <p
-                      className="text-neutral-700 leading-relaxed mt-2"
+                      className="text-neutral-700 leading-relaxed mt-2 dark:text-neutral-200"
                       dangerouslySetInnerHTML={{
                         __html: t('metabolicCalibration.infoModal.section1p2'),
                       }}
                     />
-                    <p className="text-neutral-700 leading-relaxed mt-2">
+                    <p className="text-neutral-700 leading-relaxed mt-2 dark:text-neutral-200">
                       {t('metabolicCalibration.infoModal.section1p3')}
                     </p>
                   </section>
 
                   {/* Section 2 */}
-                  <section className="bg-neutral-50 p-4 rounded-lg border border-neutral-200">
+                  <section className="bg-neutral-50 p-4 rounded-lg border border-neutral-200 dark:bg-neutral-900 dark:border-neutral-700">
                     <h3 className="font-semibold text-base mb-2">
                       {t('metabolicCalibration.infoModal.section2Title')}
                     </h3>
-                    <div className="space-y-3 text-neutral-700">
+                    <div className="space-y-3 text-neutral-700 dark:text-neutral-200">
                       <div>
                         <p>{t('metabolicCalibration.infoModal.section2intro')}</p>
-                        <p className="text-neutral-600 italic ml-2 mt-1">
+                        <p className="text-neutral-600 italic ml-2 mt-1 dark:text-neutral-400">
                           {t('metabolicCalibration.infoModal.section2principle')}
                         </p>
                       </div>
                       <p>{t('metabolicCalibration.infoModal.section2detail')}</p>
-                      <p className="font-medium text-primary-600 text-center py-1">
+                      <p className="font-medium text-primary-600 text-center py-1 dark:text-primary-300">
                         {t('metabolicCalibration.infoModal.section2formula')}
                       </p>
                       <p
@@ -534,19 +537,19 @@ export default function MetabolicCalibration({
                     <h3 className="font-semibold text-base mb-2">
                       {t('metabolicCalibration.infoModal.section3Title')}
                     </h3>
-                    <p className="text-neutral-700 leading-relaxed">
+                    <p className="text-neutral-700 leading-relaxed dark:text-neutral-200">
                       {t('metabolicCalibration.infoModal.section3p1')}
                     </p>
                     <p
-                      className="text-neutral-700 leading-relaxed mt-2"
+                      className="text-neutral-700 leading-relaxed mt-2 dark:text-neutral-200"
                       dangerouslySetInnerHTML={{
                         __html: t('metabolicCalibration.infoModal.section3p2'),
                       }}
                     />
-                    <p className="text-neutral-700 leading-relaxed mt-2">
+                    <p className="text-neutral-700 leading-relaxed mt-2 dark:text-neutral-200">
                       {t('metabolicCalibration.infoModal.section3p3')}
                     </p>
-                    <p className="text-neutral-700 leading-relaxed mt-2">
+                    <p className="text-neutral-700 leading-relaxed mt-2 dark:text-neutral-200">
                       {t('metabolicCalibration.infoModal.section3p4')}
                     </p>
                   </section>
@@ -557,12 +560,12 @@ export default function MetabolicCalibration({
                       {t('metabolicCalibration.infoModal.section4Title')}
                     </h3>
                     <p
-                      className="text-neutral-700 leading-relaxed"
+                      className="text-neutral-700 leading-relaxed dark:text-neutral-200"
                       dangerouslySetInnerHTML={{
                         __html: t('metabolicCalibration.infoModal.section4p1'),
                       }}
                     />
-                    <ul className="list-disc list-inside space-y-1 ml-2 mt-2 text-neutral-700">
+                    <ul className="list-disc list-inside space-y-1 ml-2 mt-2 text-neutral-700 dark:text-neutral-200">
                       {(
                         t('metabolicCalibration.infoModal.section4bullets', {
                           returnObjects: true,
@@ -571,10 +574,10 @@ export default function MetabolicCalibration({
                         <li key={i} dangerouslySetInnerHTML={{ __html: item }} />
                       ))}
                     </ul>
-                    <p className="text-neutral-700 leading-relaxed mt-2">
+                    <p className="text-neutral-700 leading-relaxed mt-2 dark:text-neutral-200">
                       {t('metabolicCalibration.infoModal.section4p2')}
                     </p>
-                    <div className="mt-3 p-3 bg-neutral-100 rounded text-neutral-600 text-xs">
+                    <div className="mt-3 p-3 bg-neutral-100 rounded text-neutral-600 text-xs dark:bg-neutral-800 dark:text-neutral-400">
                       <p className="font-medium mb-1">
                         {t('metabolicCalibration.infoModal.section4tipTitle')}
                       </p>
@@ -583,17 +586,17 @@ export default function MetabolicCalibration({
                   </section>
 
                   {/* Section 5 */}
-                  <section className="bg-neutral-50 p-4 rounded-lg border border-neutral-200">
+                  <section className="bg-neutral-50 p-4 rounded-lg border border-neutral-200 dark:bg-neutral-900 dark:border-neutral-700">
                     <h3 className="font-semibold text-base mb-2">
                       {t('metabolicCalibration.infoModal.section5Title')}
                     </h3>
-                    <div className="space-y-3 text-neutral-700">
+                    <div className="space-y-3 text-neutral-700 dark:text-neutral-200">
                       <div>
                         <p className="font-medium">
                           {t('metabolicCalibration.infoModal.section5clampTitle')}
                         </p>
                         <p className="mt-1">{t('metabolicCalibration.infoModal.section5p1')}</p>
-                        <p className="font-medium text-primary-600 text-center py-1">
+                        <p className="font-medium text-primary-600 text-center py-1 dark:text-primary-300">
                           {t('metabolicCalibration.infoModal.section5range')}
                         </p>
                         <p>{t('metabolicCalibration.infoModal.section5p2')}</p>
@@ -624,15 +627,15 @@ export default function MetabolicCalibration({
                       {t('metabolicCalibration.infoModal.section6Title')}
                     </h3>
                     <p
-                      className="text-neutral-700 leading-relaxed"
+                      className="text-neutral-700 leading-relaxed dark:text-neutral-200"
                       dangerouslySetInnerHTML={{
                         __html: t('metabolicCalibration.infoModal.section6p1'),
                       }}
                     />
-                    <p className="text-neutral-700 leading-relaxed mt-2">
+                    <p className="text-neutral-700 leading-relaxed mt-2 dark:text-neutral-200">
                       {t('metabolicCalibration.infoModal.section6p2')}
                     </p>
-                    <ul className="list-disc list-inside space-y-1 ml-2 mt-1 text-neutral-700">
+                    <ul className="list-disc list-inside space-y-1 ml-2 mt-1 text-neutral-700 dark:text-neutral-200">
                       {(
                         t('metabolicCalibration.infoModal.section6bullets', {
                           returnObjects: true,
@@ -641,7 +644,7 @@ export default function MetabolicCalibration({
                         <li key={i} dangerouslySetInnerHTML={{ __html: item }} />
                       ))}
                     </ul>
-                    <p className="text-neutral-700 leading-relaxed mt-2">
+                    <p className="text-neutral-700 leading-relaxed mt-2 dark:text-neutral-200">
                       {t('metabolicCalibration.infoModal.section6p3')}
                     </p>
                   </section>
@@ -651,10 +654,10 @@ export default function MetabolicCalibration({
                     <h3 className="font-semibold text-base mb-3">
                       {t('metabolicCalibration.infoModal.section7Title')}
                     </h3>
-                    <p className="text-neutral-700 mb-2">
+                    <p className="text-neutral-700 mb-2 dark:text-neutral-200">
                       {t('metabolicCalibration.infoModal.section7p1')}
                     </p>
-                    <p className="text-neutral-700 font-medium mb-1">
+                    <p className="text-neutral-700 font-medium mb-1 dark:text-neutral-200">
                       {t('metabolicCalibration.infoModal.section7goodTitle')}
                     </p>
                     <ul className="space-y-2">
@@ -664,9 +667,9 @@ export default function MetabolicCalibration({
                         }) as string[]
                       ).map((item, i) => (
                         <li key={i} className="flex items-start gap-2">
-                          <span className="text-green-600 mt-0.5">✓</span>
+                          <span className="text-green-600 mt-0.5 dark:text-green-300">✓</span>
                           <span
-                            className="text-neutral-700"
+                            className="text-neutral-700 dark:text-neutral-200"
                             dangerouslySetInnerHTML={{ __html: item }}
                           />
                         </li>
@@ -675,24 +678,26 @@ export default function MetabolicCalibration({
                   </section>
 
                   {/* Section 8 */}
-                  <section className="bg-orange-50 p-4 rounded-lg border border-orange-200">
+                  <section className="bg-orange-50 p-4 rounded-lg border border-orange-200 dark:bg-orange-900/25 dark:border-orange-800">
                     <h3 className="font-semibold text-base mb-2">
                       {t('metabolicCalibration.infoModal.section8Title')}
                     </h3>
-                    <p className="text-neutral-700 mb-2">
+                    <p className="text-neutral-700 mb-2 dark:text-neutral-200">
                       {t('metabolicCalibration.infoModal.section8p1')}
                     </p>
-                    <p className="text-neutral-700 font-medium mb-1">
+                    <p className="text-neutral-700 font-medium mb-1 dark:text-neutral-200">
                       {t('metabolicCalibration.infoModal.section8badTitle')}
                     </p>
-                    <ul className="space-y-2 text-neutral-700">
+                    <ul className="space-y-2 text-neutral-700 dark:text-neutral-200">
                       {(
                         t('metabolicCalibration.infoModal.section8bad', {
                           returnObjects: true,
                         }) as string[]
                       ).map((item, i) => (
                         <li key={i} className="flex items-start gap-2">
-                          <span className="text-orange-600 mt-0.5 font-bold">×</span>
+                          <span className="text-orange-600 mt-0.5 font-bold dark:text-orange-300">
+                            ×
+                          </span>
                           <span dangerouslySetInnerHTML={{ __html: item }} />
                         </li>
                       ))}
@@ -700,17 +705,17 @@ export default function MetabolicCalibration({
                   </section>
 
                   {/* Section 9 */}
-                  <section className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                  <section className="bg-blue-50 p-4 rounded-lg border border-blue-200 dark:bg-blue-900/25 dark:border-blue-800">
                     <h3 className="font-semibold text-base mb-2">
                       {t('metabolicCalibration.infoModal.section9Title')}
                     </h3>
-                    <p className="text-neutral-700 leading-relaxed">
+                    <p className="text-neutral-700 leading-relaxed dark:text-neutral-200">
                       {t('metabolicCalibration.infoModal.section9p1')}
                     </p>
-                    <p className="text-neutral-700 leading-relaxed mt-2">
+                    <p className="text-neutral-700 leading-relaxed mt-2 dark:text-neutral-200">
                       {t('metabolicCalibration.infoModal.section9p2')}
                     </p>
-                    <ul className="list-disc list-inside space-y-1 ml-2 mt-1 text-neutral-700">
+                    <ul className="list-disc list-inside space-y-1 ml-2 mt-1 text-neutral-700 dark:text-neutral-200">
                       {(
                         t('metabolicCalibration.infoModal.section9bullets', {
                           returnObjects: true,
@@ -719,10 +724,10 @@ export default function MetabolicCalibration({
                         <li key={i} dangerouslySetInnerHTML={{ __html: item }} />
                       ))}
                     </ul>
-                    <p className="text-neutral-700 leading-relaxed mt-2">
+                    <p className="text-neutral-700 leading-relaxed mt-2 dark:text-neutral-200">
                       {t('metabolicCalibration.infoModal.section9p3')}
                     </p>
-                    <p className="text-neutral-700 leading-relaxed mt-2">
+                    <p className="text-neutral-700 leading-relaxed mt-2 dark:text-neutral-200">
                       {t('metabolicCalibration.infoModal.section9p4')}
                     </p>
                   </section>
@@ -734,7 +739,7 @@ export default function MetabolicCalibration({
           {/* Time period selector */}
           {now !== null && (
             <div className="space-y-2">
-              <label className="text-sm font-medium text-neutral-700">
+              <label className="text-sm font-medium text-neutral-700 dark:text-neutral-200">
                 {t('metabolicCalibration.timePeriodLabel')}
               </label>
               <Select
@@ -769,11 +774,11 @@ export default function MetabolicCalibration({
                 <button
                   type="button"
                   onClick={goBack}
-                  className="p-1 rounded hover:bg-neutral-100 text-neutral-500 hover:text-neutral-700 transition-colors"
+                  className="p-1 rounded hover:bg-neutral-100 text-neutral-500 hover:text-neutral-700 transition-colors dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </button>
-                <span className="flex-1 text-center text-xs text-neutral-500">
+                <span className="flex-1 text-center text-xs text-neutral-500 dark:text-neutral-400">
                   {startDate && periodEndDate
                     ? `${format(startDate, 'd MMM', { locale: sv })} – ${format(periodEndDate, 'd MMM', { locale: sv })}`
                     : ''}
@@ -782,7 +787,7 @@ export default function MetabolicCalibration({
                   type="button"
                   onClick={goForward}
                   disabled={isAtToday}
-                  className="p-1 rounded hover:bg-neutral-100 text-neutral-500 hover:text-neutral-700 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="p-1 rounded hover:bg-neutral-100 text-neutral-500 hover:text-neutral-700 transition-colors disabled:opacity-30 disabled:cursor-not-allowed dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
                 >
                   <ChevronRight className="h-4 w-4" />
                 </button>
@@ -790,7 +795,7 @@ export default function MetabolicCalibration({
                   <button
                     type="button"
                     onClick={refreshNow}
-                    className="ml-1 text-xs text-primary-600 hover:underline"
+                    className="ml-1 text-xs text-primary-600 hover:underline dark:text-primary-300"
                   >
                     {t('metabolicCalibration.today')}
                   </button>
@@ -806,10 +811,10 @@ export default function MetabolicCalibration({
                 <div
                   className={`flex items-start gap-2 p-3 rounded-lg text-sm ${
                     data?.calorieSource === 'food_log'
-                      ? 'bg-green-50 text-green-800'
+                      ? 'bg-green-50 text-green-800 dark:bg-green-900/25 dark:text-green-300'
                       : data?.calorieSource === 'blended'
-                        ? 'bg-blue-50 text-blue-800'
-                        : 'bg-amber-50 text-amber-800'
+                        ? 'bg-blue-50 text-blue-800 dark:bg-blue-900/25 dark:text-blue-300'
+                        : 'bg-amber-50 text-amber-800 dark:bg-amber-900/25 dark:text-amber-300'
                   }`}
                 >
                   {data?.calorieSource === 'food_log' ? (
@@ -856,7 +861,7 @@ export default function MetabolicCalibration({
                             unlogged: actualIntake.totalDays - actualIntake.daysWithData,
                           })}
                         </p>
-                        <p className="text-xs text-neutral-400 mt-1">
+                        <p className="text-xs text-neutral-400 mt-1 dark:text-neutral-500">
                           {t('metabolicCalibration.calorieSource.blended.tip')}
                         </p>
                       </div>
@@ -882,10 +887,10 @@ export default function MetabolicCalibration({
 
               {/* Error state */}
               {isError && (
-                <div className="text-center py-6 text-sm text-neutral-500">
-                  <AlertCircle className="h-8 w-8 mx-auto mb-2 text-neutral-400" />
+                <div className="text-center py-6 text-sm text-neutral-500 dark:text-neutral-400">
+                  <AlertCircle className="h-8 w-8 mx-auto mb-2 text-neutral-400 dark:text-neutral-500" />
                   <p>{calibrationResult}</p>
-                  <p className="text-xs text-neutral-400 mt-2">
+                  <p className="text-xs text-neutral-400 mt-2 dark:text-neutral-500">
                     {t('metabolicCalibration.errorFallback')}
                   </p>
                 </div>
@@ -895,7 +900,7 @@ export default function MetabolicCalibration({
               {data && (
                 <div className="space-y-4 pt-2">
                   {/* Confidence + Data Quality */}
-                  <div className="rounded-lg border border-neutral-200 divide-y divide-neutral-100">
+                  <div className="rounded-lg border border-neutral-200 divide-y divide-neutral-100 dark:border-neutral-700 dark:divide-neutral-700">
                     <div className="flex items-start gap-3 p-3">
                       <ConfidenceIcon
                         className={`h-4 w-4 flex-shrink-0 mt-0.5 ${confidenceColor}`}
@@ -904,7 +909,7 @@ export default function MetabolicCalibration({
                         <p className={`text-sm font-medium ${confidenceColor}`}>
                           {confidenceLabel}
                         </p>
-                        <p className="text-xs text-neutral-500 mt-0.5">
+                        <p className="text-xs text-neutral-500 mt-0.5 dark:text-neutral-400">
                           {data.confidence.level === 'high'
                             ? t('metabolicCalibration.confidence.highDesc', {
                                 start: data.confidence.startClusterSize,
@@ -940,17 +945,17 @@ export default function MetabolicCalibration({
                     </div>
                     {data.dataQuality && (
                       <div className="flex items-start gap-3 p-3">
-                        <BarChart3 className="h-4 w-4 flex-shrink-0 mt-0.5 text-neutral-400" />
+                        <BarChart3 className="h-4 w-4 flex-shrink-0 mt-0.5 text-neutral-400 dark:text-neutral-500" />
                         <div className="flex items-center gap-1.5">
                           <p
                             className={`text-sm font-medium ${
                               data.dataQuality.score >= 80
-                                ? 'text-green-600'
+                                ? 'text-green-600 dark:text-green-300'
                                 : data.dataQuality.score >= 60
-                                  ? 'text-blue-600'
+                                  ? 'text-blue-600 dark:text-blue-300'
                                   : data.dataQuality.score >= 40
-                                    ? 'text-yellow-600'
-                                    : 'text-orange-600'
+                                    ? 'text-yellow-600 dark:text-yellow-300'
+                                    : 'text-orange-600 dark:text-orange-300'
                             }`}
                           >
                             {t('metabolicCalibration.dataQuality.label')}: {data.dataQuality.label}{' '}
@@ -958,7 +963,7 @@ export default function MetabolicCalibration({
                           </p>
                           <button
                             type="button"
-                            className="text-neutral-400 hover:text-neutral-600"
+                            className="text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300"
                             onClick={() =>
                               setActiveInfo({
                                 title: t('metabolicCalibration.dataQuality.tooltipTitle'),
@@ -967,7 +972,7 @@ export default function MetabolicCalibration({
                                     <table className="w-full text-xs">
                                       <tbody>
                                         <tr>
-                                          <td className="pr-2 text-neutral-400 py-1">
+                                          <td className="pr-2 text-neutral-400 py-1 dark:text-neutral-500">
                                             {t('metabolicCalibration.dataQuality.foodLog')}
                                           </td>
                                           <td>
@@ -975,7 +980,7 @@ export default function MetabolicCalibration({
                                           </td>
                                         </tr>
                                         <tr>
-                                          <td className="pr-2 text-neutral-400 py-1">
+                                          <td className="pr-2 text-neutral-400 py-1 dark:text-neutral-500">
                                             {t('metabolicCalibration.dataQuality.measFreq')}
                                           </td>
                                           <td>
@@ -983,7 +988,7 @@ export default function MetabolicCalibration({
                                           </td>
                                         </tr>
                                         <tr>
-                                          <td className="pr-2 text-neutral-400 py-1">
+                                          <td className="pr-2 text-neutral-400 py-1 dark:text-neutral-500">
                                             {t('metabolicCalibration.dataQuality.clusterSize')}
                                           </td>
                                           <td>
@@ -992,7 +997,7 @@ export default function MetabolicCalibration({
                                         </tr>
                                       </tbody>
                                     </table>
-                                    <p className="text-neutral-400 pt-1 border-t border-neutral-200 text-xs">
+                                    <p className="text-neutral-400 pt-1 border-t border-neutral-200 text-xs dark:text-neutral-500 dark:border-neutral-700">
                                       {t('metabolicCalibration.dataQuality.legend')}
                                     </p>
                                   </div>
@@ -1009,11 +1014,11 @@ export default function MetabolicCalibration({
 
                   {/* Warnings */}
                   {data.warnings.length > 0 && (
-                    <div className="rounded-lg bg-orange-50 overflow-hidden">
+                    <div className="rounded-lg bg-orange-50 overflow-hidden dark:bg-orange-900/25">
                       <button
                         type="button"
                         onClick={() => setWarningSectionOpen(e => !e)}
-                        className="w-full flex items-center gap-2 px-3 py-2.5 text-sm text-orange-800 hover:bg-orange-100 transition-colors"
+                        className="w-full flex items-center gap-2 px-3 py-2.5 text-sm text-orange-800 hover:bg-orange-100 transition-colors dark:text-orange-300 dark:hover:bg-orange-900/30"
                       >
                         <AlertCircle className="h-4 w-4 flex-shrink-0" />
                         <span className="flex-1 text-left font-medium">
@@ -1028,15 +1033,18 @@ export default function MetabolicCalibration({
                         />
                       </button>
                       {warningSectionOpen && (
-                        <div className="border-t border-orange-200 divide-y divide-orange-200">
+                        <div className="border-t border-orange-200 divide-y divide-orange-200 dark:border-orange-800 dark:divide-orange-800">
                           {data.warnings.map((warning, i) => (
-                            <div key={i} className="px-3 py-2.5 text-sm text-orange-800">
+                            <div
+                              key={i}
+                              className="px-3 py-2.5 text-sm text-orange-800 dark:text-orange-300"
+                            >
                               <div className="flex items-start justify-between gap-2">
                                 <p className="flex-1">{warning.message}</p>
                                 <button
                                   type="button"
                                   onClick={() => toggleWarning(i)}
-                                  className="flex-shrink-0 text-xs text-orange-600 hover:text-orange-800 underline underline-offset-2 mt-0.5"
+                                  className="flex-shrink-0 text-xs text-orange-600 hover:text-orange-800 underline underline-offset-2 mt-0.5 dark:text-orange-300"
                                 >
                                   {expandedWarnings.has(i)
                                     ? t('metabolicCalibration.warnings.hide')
@@ -1044,7 +1052,7 @@ export default function MetabolicCalibration({
                                 </button>
                               </div>
                               {expandedWarnings.has(i) && warning.type === 'high_cv' && (
-                                <div className="text-xs text-orange-700 mt-1 space-y-1">
+                                <div className="text-xs text-orange-700 mt-1 space-y-1 dark:text-orange-300">
                                   <p>{t('metabolicCalibration.warnings.types.high_cv.desc')}</p>
                                   <ul className="list-disc list-inside space-y-0.5">
                                     {(
@@ -1055,14 +1063,14 @@ export default function MetabolicCalibration({
                                       <li key={j}>{b}</li>
                                     ))}
                                   </ul>
-                                  <p className="text-orange-600 font-medium">
+                                  <p className="text-orange-600 font-medium dark:text-orange-300">
                                     {t('metabolicCalibration.warnings.types.high_cv.tip')}
                                   </p>
                                 </div>
                               )}
                               {expandedWarnings.has(i) &&
                                 warning.type === 'target_calories_fallback' && (
-                                  <div className="text-xs text-orange-700 mt-1 space-y-1">
+                                  <div className="text-xs text-orange-700 mt-1 space-y-1 dark:text-orange-300">
                                     <p>
                                       {t(
                                         'metabolicCalibration.warnings.types.target_calories_fallback.desc'
@@ -1078,7 +1086,7 @@ export default function MetabolicCalibration({
                                         <li key={j}>{b}</li>
                                       ))}
                                     </ul>
-                                    <p className="text-orange-600 font-medium">
+                                    <p className="text-orange-600 font-medium dark:text-orange-300">
                                       {t(
                                         'metabolicCalibration.warnings.types.target_calories_fallback.tip'
                                       )}
@@ -1086,7 +1094,7 @@ export default function MetabolicCalibration({
                                   </div>
                                 )}
                               {expandedWarnings.has(i) && warning.type === 'selective_logging' && (
-                                <div className="text-xs text-orange-700 mt-1 space-y-1">
+                                <div className="text-xs text-orange-700 mt-1 space-y-1 dark:text-orange-300">
                                   <p>
                                     {t(
                                       'metabolicCalibration.warnings.types.selective_logging.desc'
@@ -1102,13 +1110,13 @@ export default function MetabolicCalibration({
                                       <li key={j}>{b}</li>
                                     ))}
                                   </ul>
-                                  <p className="text-orange-600 font-medium">
+                                  <p className="text-orange-600 font-medium dark:text-orange-300">
                                     {t('metabolicCalibration.warnings.types.selective_logging.tip')}
                                   </p>
                                 </div>
                               )}
                               {expandedWarnings.has(i) && warning.type === 'glycogen_event' && (
-                                <div className="text-xs text-orange-700 mt-1 space-y-1">
+                                <div className="text-xs text-orange-700 mt-1 space-y-1 dark:text-orange-300">
                                   <p>
                                     {t('metabolicCalibration.warnings.types.glycogen_event.desc')}
                                   </p>
@@ -1122,13 +1130,13 @@ export default function MetabolicCalibration({
                                       <li key={j}>{b}</li>
                                     ))}
                                   </ul>
-                                  <p className="text-orange-600 font-medium">
+                                  <p className="text-orange-600 font-medium dark:text-orange-300">
                                     {t('metabolicCalibration.warnings.types.glycogen_event.tip')}
                                   </p>
                                 </div>
                               )}
                               {expandedWarnings.has(i) && warning.type === 'nonlinear_trend' && (
-                                <div className="text-xs text-orange-700 mt-1 space-y-1">
+                                <div className="text-xs text-orange-700 mt-1 space-y-1 dark:text-orange-300">
                                   <p>
                                     {t('metabolicCalibration.warnings.types.nonlinear_trend.desc')}
                                   </p>
@@ -1142,13 +1150,13 @@ export default function MetabolicCalibration({
                                       <li key={j}>{b}</li>
                                     ))}
                                   </ul>
-                                  <p className="text-orange-600 font-medium">
+                                  <p className="text-orange-600 font-medium dark:text-orange-300">
                                     {t('metabolicCalibration.warnings.types.nonlinear_trend.tip')}
                                   </p>
                                 </div>
                               )}
                               {expandedWarnings.has(i) && warning.type === 'large_deficit' && (
-                                <div className="text-xs text-orange-700 mt-1 space-y-1">
+                                <div className="text-xs text-orange-700 mt-1 space-y-1 dark:text-orange-300">
                                   <p>
                                     {t('metabolicCalibration.warnings.types.large_deficit.desc')}
                                   </p>
@@ -1162,13 +1170,13 @@ export default function MetabolicCalibration({
                                       <li key={j}>{b}</li>
                                     ))}
                                   </ul>
-                                  <p className="text-orange-600 font-medium">
+                                  <p className="text-orange-600 font-medium dark:text-orange-300">
                                     {t('metabolicCalibration.warnings.types.large_deficit.tip')}
                                   </p>
                                 </div>
                               )}
                               {expandedWarnings.has(i) && warning.type === 'low_confidence' && (
-                                <div className="text-xs text-orange-700 mt-1 space-y-1">
+                                <div className="text-xs text-orange-700 mt-1 space-y-1 dark:text-orange-300">
                                   <p>
                                     {t('metabolicCalibration.warnings.types.low_confidence.desc')}
                                   </p>
@@ -1182,13 +1190,13 @@ export default function MetabolicCalibration({
                                       <li key={j}>{b}</li>
                                     ))}
                                   </ul>
-                                  <p className="text-orange-600 font-medium">
+                                  <p className="text-orange-600 font-medium dark:text-orange-300">
                                     {t('metabolicCalibration.warnings.types.low_confidence.tip')}
                                   </p>
                                 </div>
                               )}
                               {expandedWarnings.has(i) && warning.type === 'large_adjustment' && (
-                                <div className="text-xs text-orange-700 mt-1 space-y-1">
+                                <div className="text-xs text-orange-700 mt-1 space-y-1 dark:text-orange-300">
                                   <p>
                                     {(() => {
                                       const diff = Math.round(data.rawTDEE - data.currentTDEE)
@@ -1229,13 +1237,13 @@ export default function MetabolicCalibration({
                                       )
                                     })()}
                                   </p>
-                                  <p className="text-orange-600 font-medium">
+                                  <p className="text-orange-600 font-medium dark:text-orange-300">
                                     {t('metabolicCalibration.warnings.types.large_adjustment.tip')}
                                   </p>
                                 </div>
                               )}
                               {expandedWarnings.has(i) && warning.type === 'low_signal' && (
-                                <div className="text-xs text-orange-700 mt-1 space-y-1">
+                                <div className="text-xs text-orange-700 mt-1 space-y-1 dark:text-orange-300">
                                   <p>
                                     {t('metabolicCalibration.warnings.types.low_signal.desc', {
                                       change: Math.abs(data.weightChangeKg).toFixed(2),
@@ -1243,7 +1251,7 @@ export default function MetabolicCalibration({
                                         Math.round(data.endCluster.average * 0.0025 * 10) / 10,
                                     })}
                                   </p>
-                                  <p className="text-orange-600 font-medium">
+                                  <p className="text-orange-600 font-medium dark:text-orange-300">
                                     {t('metabolicCalibration.warnings.types.low_signal.tip')}
                                   </p>
                                 </div>
@@ -1251,7 +1259,7 @@ export default function MetabolicCalibration({
                               {expandedWarnings.has(i) &&
                                 warning.type === 'outlier_removed' &&
                                 data.filteredOutliers.length > 0 && (
-                                  <div className="text-xs text-orange-700 mt-1 space-y-1">
+                                  <div className="text-xs text-orange-700 mt-1 space-y-1 dark:text-orange-300">
                                     <ul className="space-y-0.5">
                                       {data.filteredOutliers.map((o, j) => (
                                         <li key={j}>
@@ -1264,7 +1272,7 @@ export default function MetabolicCalibration({
                                         </li>
                                       ))}
                                     </ul>
-                                    <p className="text-orange-600 font-medium">
+                                    <p className="text-orange-600 font-medium dark:text-orange-300">
                                       {t('metabolicCalibration.warnings.types.outlier_removed.tip')}
                                     </p>
                                   </div>
@@ -1277,21 +1285,21 @@ export default function MetabolicCalibration({
                   )}
 
                   {/* Cluster details + weight change */}
-                  <div className="rounded-lg border border-neutral-200 overflow-hidden">
-                    <div className="grid grid-cols-2 divide-x divide-neutral-200">
+                  <div className="rounded-lg border border-neutral-200 overflow-hidden dark:border-neutral-700">
+                    <div className="grid grid-cols-2 divide-x divide-neutral-200 dark:divide-neutral-700">
                       <div className="p-3">
                         <div className="flex items-center gap-1 mb-0.5">
-                          <p className="text-xs font-medium text-neutral-500">
+                          <p className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
                             {t('metabolicCalibration.clusterLabelStart')}
                           </p>
                           <button
                             type="button"
-                            className="text-neutral-400 hover:text-neutral-600"
+                            className="text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300"
                             onClick={() =>
                               setActiveInfo({
                                 title: t('metabolicCalibration.clusterLabelStart'),
                                 content: (
-                                  <p className="text-sm text-neutral-600">
+                                  <p className="text-sm text-neutral-600 dark:text-neutral-400">
                                     {t('metabolicCalibration.clusterTooltip')}
                                   </p>
                                 ),
@@ -1302,7 +1310,7 @@ export default function MetabolicCalibration({
                           </button>
                         </div>
                         {data.startCluster.dates.length > 0 && (
-                          <p className="text-xs text-neutral-400 mb-0.5">
+                          <p className="text-xs text-neutral-400 mb-0.5 dark:text-neutral-500">
                             {data.startCluster.dates[0].toLocaleDateString('sv-SE', {
                               day: 'numeric',
                               month: 'short',
@@ -1313,26 +1321,26 @@ export default function MetabolicCalibration({
                             ].toLocaleDateString('sv-SE', { day: 'numeric', month: 'short' })}
                           </p>
                         )}
-                        <p className="text-base font-bold text-neutral-900">
+                        <p className="text-base font-bold text-neutral-900 dark:text-neutral-100">
                           {data.startCluster.average.toFixed(1)} kg
                         </p>
-                        <p className="text-xs text-neutral-400 mt-0.5">
+                        <p className="text-xs text-neutral-400 mt-0.5 dark:text-neutral-500">
                           {t('metabolicCalibration.clusterAvg', { count: data.startCluster.count })}
                         </p>
                       </div>
                       <div className="p-3">
                         <div className="flex items-center gap-1 mb-0.5">
-                          <p className="text-xs font-medium text-neutral-500">
+                          <p className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
                             {t('metabolicCalibration.clusterLabelEnd')}
                           </p>
                           <button
                             type="button"
-                            className="text-neutral-400 hover:text-neutral-600"
+                            className="text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300"
                             onClick={() =>
                               setActiveInfo({
                                 title: t('metabolicCalibration.clusterLabelEnd'),
                                 content: (
-                                  <p className="text-sm text-neutral-600">
+                                  <p className="text-sm text-neutral-600 dark:text-neutral-400">
                                     {t('metabolicCalibration.clusterTooltip')}
                                   </p>
                                 ),
@@ -1343,7 +1351,7 @@ export default function MetabolicCalibration({
                           </button>
                         </div>
                         {data.endCluster.dates.length > 0 && (
-                          <p className="text-xs text-neutral-400 mb-0.5">
+                          <p className="text-xs text-neutral-400 mb-0.5 dark:text-neutral-500">
                             {data.endCluster.dates[0].toLocaleDateString('sv-SE', {
                               day: 'numeric',
                               month: 'short',
@@ -1354,15 +1362,15 @@ export default function MetabolicCalibration({
                             ].toLocaleDateString('sv-SE', { day: 'numeric', month: 'short' })}
                           </p>
                         )}
-                        <p className="text-base font-bold text-neutral-900">
+                        <p className="text-base font-bold text-neutral-900 dark:text-neutral-100">
                           {data.endCluster.average.toFixed(1)} kg
                         </p>
-                        <p className="text-xs text-neutral-400 mt-0.5">
+                        <p className="text-xs text-neutral-400 mt-0.5 dark:text-neutral-500">
                           {t('metabolicCalibration.clusterAvg', { count: data.endCluster.count })}
                         </p>
                       </div>
                     </div>
-                    <div className="border-t border-neutral-200 p-3 flex items-center justify-between">
+                    <div className="border-t border-neutral-200 p-3 flex items-center justify-between dark:border-neutral-700">
                       <div className="flex items-center gap-1.5">
                         {data.weightChangeKg > 0 ? (
                           <TrendingUp className="h-4 w-4 text-orange-500" />
@@ -1372,27 +1380,27 @@ export default function MetabolicCalibration({
                         <span
                           className={`text-sm font-semibold ${
                             data.weightChangeKg > 0
-                              ? 'text-orange-600'
+                              ? 'text-orange-600 dark:text-orange-300'
                               : data.weightChangeKg < 0
-                                ? 'text-blue-600'
-                                : 'text-neutral-600'
+                                ? 'text-blue-600 dark:text-blue-300'
+                                : 'text-neutral-600 dark:text-neutral-400'
                           }`}
                         >
                           {data.weightChangeKg > 0 ? '+' : ''}
                           {data.weightChangeKg.toFixed(2)} kg
                         </span>
-                        <span className="text-xs text-neutral-400">
+                        <span className="text-xs text-neutral-400 dark:text-neutral-500">
                           {t('metabolicCalibration.overPeriod')}
                         </span>
-                        <span className="text-xs text-neutral-400">·</span>
+                        <span className="text-xs text-neutral-400 dark:text-neutral-500">·</span>
                         <button
                           type="button"
-                          className="text-xs text-neutral-400 underline decoration-dotted"
+                          className="text-xs text-neutral-400 underline decoration-dotted dark:text-neutral-500"
                           onClick={() =>
                             setActiveInfo({
                               title: t('metabolicCalibration.olsLabel'),
                               content: (
-                                <p className="text-sm text-neutral-600">
+                                <p className="text-sm text-neutral-600 dark:text-neutral-400">
                                   {data.warnings.some(w => w.type === 'nonlinear_trend')
                                     ? t('metabolicCalibration.olsTooltipNonlinear')
                                     : t('metabolicCalibration.olsTooltip')}
@@ -1405,7 +1413,7 @@ export default function MetabolicCalibration({
                         </button>
                       </div>
                       <div className="flex items-center gap-1">
-                        <span className="text-xs text-neutral-500">
+                        <span className="text-xs text-neutral-500 dark:text-neutral-400">
                           {data.calorieSource === 'food_log'
                             ? t('metabolicCalibration.calorieSourceLabel.food_log')
                             : data.calorieSource === 'blended'
@@ -1415,12 +1423,12 @@ export default function MetabolicCalibration({
                         </span>
                         <button
                           type="button"
-                          className="text-neutral-400 hover:text-neutral-600"
+                          className="text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300"
                           onClick={() =>
                             setActiveInfo({
                               title: t('metabolicCalibration.calorieSourceLabel.food_log'),
                               content: (
-                                <p className="text-sm text-neutral-600">
+                                <p className="text-sm text-neutral-600 dark:text-neutral-400">
                                   {data.calorieSource === 'food_log'
                                     ? t('metabolicCalibration.calorieSourceTooltip.food_log')
                                     : data.calorieSource === 'blended'
@@ -1438,8 +1446,8 @@ export default function MetabolicCalibration({
                       </div>
                     </div>
                     {data.isStableMaintenance && (
-                      <div className="border-t border-green-100 bg-green-50 px-3 py-2">
-                        <p className="text-xs text-green-700">
+                      <div className="border-t border-green-100 bg-green-50 px-3 py-2 dark:border-green-800 dark:bg-green-900/25">
+                        <p className="text-xs text-green-700 dark:text-green-300">
                           {t('metabolicCalibration.stableMaintenance')}
                         </p>
                       </div>
@@ -1447,55 +1455,55 @@ export default function MetabolicCalibration({
                   </div>
 
                   {/* TDEE comparison */}
-                  <div className="rounded-lg border border-neutral-200 overflow-hidden">
-                    <div className="grid grid-cols-3 divide-x divide-neutral-200">
+                  <div className="rounded-lg border border-neutral-200 overflow-hidden dark:border-neutral-700">
+                    <div className="grid grid-cols-3 divide-x divide-neutral-200 dark:divide-neutral-700">
                       <div className="p-3">
-                        <p className="text-xs text-neutral-500 mb-1">
+                        <p className="text-xs text-neutral-500 mb-1 dark:text-neutral-400">
                           {t('metabolicCalibration.tdeeComparison.current')}
                         </p>
-                        <p className="text-base font-bold text-neutral-700">
+                        <p className="text-base font-bold text-neutral-700 dark:text-neutral-200">
                           {Math.round(data.currentTDEE)}
                         </p>
-                        <p className="text-xs text-neutral-400">kcal</p>
+                        <p className="text-xs text-neutral-400 dark:text-neutral-500">kcal</p>
                       </div>
-                      <div className="p-3 bg-primary-50">
-                        <p className="text-xs text-neutral-500 mb-1">
+                      <div className="p-3 bg-primary-50 dark:bg-primary-900/25">
+                        <p className="text-xs text-neutral-500 mb-1 dark:text-neutral-400">
                           {t('metabolicCalibration.tdeeComparison.calibrated')}
                         </p>
-                        <p className="text-base font-bold text-primary-600">
+                        <p className="text-base font-bold text-primary-600 dark:text-primary-300">
                           {Math.round(data.clampedTDEE)}
                         </p>
-                        <p className="text-xs text-neutral-400">kcal</p>
+                        <p className="text-xs text-neutral-400 dark:text-neutral-500">kcal</p>
                       </div>
                       <div className="p-3">
-                        <p className="text-xs text-neutral-500 mb-1">
+                        <p className="text-xs text-neutral-500 mb-1 dark:text-neutral-400">
                           {t('metabolicCalibration.tdeeComparison.difference')}
                         </p>
                         <p
                           className={`text-base font-bold ${
                             data.adjustmentPercent > 0
-                              ? 'text-orange-600'
+                              ? 'text-orange-600 dark:text-orange-300'
                               : data.adjustmentPercent < 0
-                                ? 'text-blue-600'
-                                : 'text-neutral-600'
+                                ? 'text-blue-600 dark:text-blue-300'
+                                : 'text-neutral-600 dark:text-neutral-400'
                           }`}
                         >
                           {data.adjustmentPercent > 0 ? '+' : ''}
                           {Math.round(data.clampedTDEE - data.currentTDEE)}
                         </p>
-                        <p className="text-xs text-neutral-400">
+                        <p className="text-xs text-neutral-400 dark:text-neutral-500">
                           {data.adjustmentPercent > 0 ? '+' : ''}
                           {data.adjustmentPercent.toFixed(1)}%
                         </p>
                       </div>
                     </div>
                     {data.tdeeLower90 && data.tdeeUpper90 && (
-                      <div className="flex items-center justify-between px-3 py-2 border-t border-neutral-100">
-                        <span className="flex items-center gap-1.5 text-xs text-neutral-500">
+                      <div className="flex items-center justify-between px-3 py-2 border-t border-neutral-100 dark:border-neutral-700">
+                        <span className="flex items-center gap-1.5 text-xs text-neutral-500 dark:text-neutral-400">
                           <Info className="h-3.5 w-3.5 flex-shrink-0" />
                           {t('metabolicCalibration.tdeeComparison.confidenceInterval')}
                         </span>
-                        <span className="text-xs font-medium text-neutral-700">
+                        <span className="text-xs font-medium text-neutral-700 dark:text-neutral-200">
                           {Math.round(data.tdeeLower90)}–{Math.round(data.tdeeUpper90)} kcal
                         </span>
                       </div>
@@ -1504,17 +1512,17 @@ export default function MetabolicCalibration({
 
                   {/* Apply button or success state */}
                   {calibrationApplied ? (
-                    <div className="p-4 rounded-lg bg-green-50 border border-green-200 text-center">
-                      <CheckCircle className="h-6 w-6 text-green-600 mx-auto mb-2" />
-                      <p className="text-sm font-medium text-green-800">
+                    <div className="p-4 rounded-lg bg-green-50 border border-green-200 text-center dark:bg-green-900/25 dark:border-green-800">
+                      <CheckCircle className="h-6 w-6 text-green-600 mx-auto mb-2 dark:text-green-300" />
+                      <p className="text-sm font-medium text-green-800 dark:text-green-300">
                         {t('metabolicCalibration.successTitle', {
                           kcal: Math.round(calibrationApplied),
                         })}
                       </p>
-                      <p className="text-xs text-green-600 mt-1">
+                      <p className="text-xs text-green-600 mt-1 dark:text-green-300">
                         {t('metabolicCalibration.successDesc')}
                       </p>
-                      <p className="text-xs text-neutral-500 mt-1">
+                      <p className="text-xs text-neutral-500 mt-1 dark:text-neutral-400">
                         {t('metabolicCalibration.nextCalibration', {
                           date: format(addDays(new Date(), timePeriod), 'd MMM yyyy', {
                             locale: sv,
@@ -1543,14 +1551,14 @@ export default function MetabolicCalibration({
                           : t('metabolicCalibration.applyButton')}
                       </Button>
                       {!hasNewDataSinceCalibration && lastActiveCalibration && (
-                        <div className="text-xs space-y-2 rounded-lg bg-neutral-50 border border-neutral-200 p-3">
+                        <div className="text-xs space-y-2 rounded-lg bg-neutral-50 border border-neutral-200 p-3 dark:bg-neutral-900 dark:border-neutral-700">
                           {availabilityGuard.overlaps && (
                             <div>
-                              <p className="font-medium text-neutral-600">
+                              <p className="font-medium text-neutral-600 dark:text-neutral-400">
                                 {t('metabolicCalibration.guardOverlap.title')}
                               </p>
-                              <p className="mt-1 text-neutral-500">
-                                <span className="font-medium text-neutral-700">
+                              <p className="mt-1 text-neutral-500 dark:text-neutral-400">
+                                <span className="font-medium text-neutral-700 dark:text-neutral-200">
                                   {availabilityGuard.nextAvailableDate
                                     ? t('metabolicCalibration.guardOverlap.nextDate', {
                                         date: format(
@@ -1569,14 +1577,14 @@ export default function MetabolicCalibration({
                           )}
                           {!availabilityGuard.overlaps && (
                             <div>
-                              <p className="font-medium text-neutral-600">
+                              <p className="font-medium text-neutral-600 dark:text-neutral-400">
                                 {t('metabolicCalibration.guardNewWeights.title', {
                                   count: availabilityGuard.newWeightCount,
                                   required: MIN_NEW_WEIGHTS_AFTER_CALIBRATION,
                                 })}
                               </p>
-                              <p className="mt-1 text-neutral-500">
-                                <span className="font-medium text-neutral-700">
+                              <p className="mt-1 text-neutral-500 dark:text-neutral-400">
+                                <span className="font-medium text-neutral-700 dark:text-neutral-200">
                                   {availabilityGuard.nextAvailableDate
                                     ? t('metabolicCalibration.guardNewWeights.nextDate', {
                                         date: format(
@@ -1601,8 +1609,8 @@ export default function MetabolicCalibration({
                   {/* Undo last calibration — only within 14-day window */}
                   {canRevert &&
                     (confirmRevert ? (
-                      <div className="border border-neutral-200 rounded-lg p-3 space-y-2">
-                        <p className="text-xs text-neutral-700">
+                      <div className="border border-neutral-200 rounded-lg p-3 space-y-2 dark:border-neutral-700">
+                        <p className="text-xs text-neutral-700 dark:text-neutral-200">
                           {t('metabolicCalibration.revertConfirm', {
                             kcal: Math.round(lastActiveCalibration!.previous_tdee),
                           })}
@@ -1616,7 +1624,7 @@ export default function MetabolicCalibration({
                               setConfirmRevert(false)
                             }}
                             disabled={revertCalibration.isPending}
-                            className="flex-1 text-red-600 border-red-200 hover:bg-red-50"
+                            className="flex-1 text-red-600 border-red-200 hover:bg-red-50 dark:text-red-300 dark:border-red-800 dark:hover:bg-red-900/25"
                           >
                             {revertCalibration.isPending
                               ? t('metabolicCalibration.revertingLabel')
@@ -1637,7 +1645,7 @@ export default function MetabolicCalibration({
                         variant="outline"
                         size="sm"
                         onClick={() => setConfirmRevert(true)}
-                        className="w-full text-neutral-600"
+                        className="w-full text-neutral-600 dark:text-neutral-400"
                       >
                         <Undo2 className="h-3.5 w-3.5 mr-1.5" />
                         {t('metabolicCalibration.revertButton', {
@@ -1670,8 +1678,8 @@ export default function MetabolicCalibration({
 
               {/* No data state (not error, just null) */}
               {!data && !isError && (
-                <div className="text-center py-6 text-sm text-neutral-500">
-                  <AlertCircle className="h-8 w-8 mx-auto mb-2 text-neutral-400" />
+                <div className="text-center py-6 text-sm text-neutral-500 dark:text-neutral-400">
+                  <AlertCircle className="h-8 w-8 mx-auto mb-2 text-neutral-400 dark:text-neutral-500" />
                   <p>
                     {t('metabolicCalibration.noDataState.line1', {
                       min: MIN_DATA_POINTS[timePeriod],

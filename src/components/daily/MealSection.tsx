@@ -67,13 +67,15 @@ export function MealSection({
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-3 min-w-0">
             {isFirst ? (
-              <Coffee className="h-5 w-5 text-primary-600 shrink-0" />
+              <Coffee className="h-5 w-5 text-primary-600 dark:text-primary-400 shrink-0" />
             ) : (
-              <UtensilsCrossed className="h-5 w-5 text-accent-600 shrink-0" />
+              <UtensilsCrossed className="h-5 w-5 text-accent-600 dark:text-accent-400 shrink-0" />
             )}
             <div className="min-w-0">
-              <h3 className="text-lg font-bold text-neutral-950 truncate">{mealName}</h3>
-              <p className="text-sm text-neutral-500 truncate">
+              <h3 className="text-lg font-bold text-neutral-950 dark:text-neutral-100 truncate">
+                {mealName}
+              </h3>
+              <p className="text-sm text-neutral-500 dark:text-neutral-400 truncate">
                 {hasItems
                   ? t('today.mealItemCount', { count: mealEntry?.items?.length ?? 0 })
                   : targetPct
@@ -98,7 +100,7 @@ export function MealSection({
               <Button
                 size="sm"
                 variant="outline"
-                className="gap-1.5 px-2 md:px-3 border-primary-300 text-primary-700"
+                className="gap-1.5 px-2 md:px-3 border-primary-300 dark:border-primary-700 text-primary-700 dark:text-primary-300"
                 onClick={() => onLoadMeal(mealName, mealOrder, mealEntry?.id)}
               >
                 <ArrowDownToLine className="h-4 w-4" />
@@ -125,7 +127,7 @@ export function MealSection({
           />
         ) : (
           // Ad hoc: visa enkel kcal-summering istället för progress bar
-          <div className="text-xs text-neutral-400 mt-1">
+          <div className="text-xs text-neutral-400 dark:text-neutral-400 mt-1">
             {mealCurrentCalories > 0 && `${mealCurrentCalories} kcal`}
           </div>
         )}
@@ -145,7 +147,7 @@ export function MealSection({
                   }
                 >
                   <div
-                    className={`w-full flex items-center justify-between p-3 bg-neutral-50 rounded-lg group transition-colors text-left ${isCompleted ? 'cursor-default' : 'hover:bg-neutral-100 cursor-pointer'}`}
+                    className={`w-full flex items-center justify-between p-3 bg-neutral-50 dark:bg-neutral-900 rounded-lg group transition-colors text-left ${isCompleted ? 'cursor-default' : 'hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer'}`}
                     onClick={() => {
                       if (foodItem && !isCompleted) {
                         onEditItem({
@@ -159,16 +161,16 @@ export function MealSection({
                   >
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 min-w-0">
-                        <p className="font-medium text-neutral-900 text-sm md:text-base truncate min-w-0">
+                        <p className="font-medium text-neutral-900 dark:text-neutral-100 text-sm md:text-base truncate min-w-0">
                           {foodItem?.name || t('today.unknownFood')}
                         </p>
                         {foodItem?.brand && (
-                          <span className="text-xs text-neutral-500 hidden sm:inline shrink-0">
+                          <span className="text-xs text-neutral-500 dark:text-neutral-400 hidden sm:inline shrink-0">
                             ({foodItem.brand})
                           </span>
                         )}
                       </div>
-                      <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-1 text-xs text-neutral-600">
+                      <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-1 text-xs text-neutral-600 dark:text-neutral-300">
                         <span>
                           {item.amount} {item.unit}
                         </span>
@@ -184,7 +186,7 @@ export function MealSection({
                       <Button
                         size="sm"
                         variant="ghost"
-                        className="hidden md:flex opacity-0 group-hover:opacity-100 transition-opacity text-red-600 hover:text-red-700 hover:bg-red-50"
+                        className="hidden md:flex opacity-0 group-hover:opacity-100 transition-opacity text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/25"
                         onClick={e => {
                           e.stopPropagation()
                           onRemoveFood(item.id, foodItem?.name || t('today.defaultFoodName'))
@@ -198,9 +200,11 @@ export function MealSection({
                 </SwipeableItem>
               )
             })}
-            <div className="pt-3 border-t flex flex-wrap gap-x-4 gap-y-1 justify-between text-sm min-w-0">
-              <span className="font-medium text-neutral-700 shrink-0">{t('today.total')}</span>
-              <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-neutral-600 min-w-0">
+            <div className="pt-3 border-t dark:border-neutral-700 flex flex-wrap gap-x-4 gap-y-1 justify-between text-sm min-w-0">
+              <span className="font-medium text-neutral-700 dark:text-neutral-300 shrink-0">
+                {t('today.total')}
+              </span>
+              <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-neutral-600 dark:text-neutral-300 min-w-0">
                 <span>{mealEntry!.meal_calories} kcal</span>
                 <span>F: {mealEntry!.meal_fat_g}g</span>
                 <span>K: {mealEntry!.meal_carb_g}g</span>
@@ -218,7 +222,7 @@ export function MealSection({
             )}
           </div>
         ) : (
-          <div className="text-center py-8 text-neutral-400 text-sm">
+          <div className="text-center py-8 text-neutral-400 dark:text-neutral-400 text-sm">
             {t('today.noFoodItemsYet')}
           </div>
         )}

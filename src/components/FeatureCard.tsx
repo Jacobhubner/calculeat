@@ -35,7 +35,7 @@ export default function FeatureCard({
   const colors = colorClasses[accentColor]
 
   return (
-    <div className="group rounded-2xl border border-neutral-200 bg-white p-6 shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-[1.02] hover:border-primary-300">
+    <div className="group rounded-2xl border border-neutral-200 bg-white p-6 dark:border-neutral-700 dark:bg-neutral-850 shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-[1.02] hover:border-primary-300">
       {/* Icon or Placeholder */}
       <div className="mb-4">
         {Icon ? (
@@ -58,10 +58,10 @@ export default function FeatureCard({
       </div>
 
       {/* Content */}
-      <h3 className="mb-2 text-xl font-bold text-neutral-900 group-hover:text-primary-700 transition-colors">
+      <h3 className="mb-2 text-xl font-bold text-neutral-900 group-hover:text-primary-700 dark:text-neutral-100 dark:group-hover:text-primary-300 transition-colors">
         {title}
       </h3>
-      <p className="text-neutral-600 leading-relaxed">{description}</p>
+      <p className="text-neutral-600 leading-relaxed dark:text-neutral-400">{description}</p>
     </div>
   )
 }

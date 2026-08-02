@@ -363,16 +363,19 @@ export default function GoalCalculatorTool() {
       {/* Header */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div className="flex-1 min-w-0">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-neutral-100">
             {t('goalCalc.header.title')}
           </h2>
-          <p className="text-neutral-600 mt-1 text-sm md:text-base">
+          <p className="text-neutral-600 dark:text-neutral-300 mt-1 text-sm md:text-base">
             {profileData?.body_fat_percentage
               ? t('goalCalc.header.descriptionWithBodyFat')
               : t('goalCalc.header.descriptionWithoutBodyFat')}
           </p>
         </div>
-        <Badge variant="secondary" className="bg-purple-100 text-purple-700 shrink-0">
+        <Badge
+          variant="secondary"
+          className="bg-purple-100 text-purple-700 shrink-0 dark:bg-purple-900/30 dark:text-purple-300"
+        >
           {t('goalCalc.header.badge')}
         </Badge>
       </div>
@@ -397,13 +400,13 @@ export default function GoalCalculatorTool() {
       )}
 
       {/* Info Alert */}
-      <Card className="border-blue-200 bg-blue-50">
+      <Card className="border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-900/25">
         <CardContent className="pt-6">
           <div className="flex items-start gap-3">
-            <Info className="h-5 w-5 text-blue-600 mt-0.5 shrink-0" />
-            <div className="text-sm text-blue-900">
+            <Info className="h-5 w-5 text-blue-600 dark:text-blue-300 mt-0.5 shrink-0" />
+            <div className="text-sm text-blue-900 dark:text-blue-300">
               <p className="font-medium mb-1">{t('goalCalc.infoAlert.title')}</p>
-              <p className="text-blue-700">
+              <p className="text-blue-700 dark:text-blue-300">
                 {profileData?.body_fat_percentage
                   ? t('goalCalc.infoAlert.descriptionWithBodyFat')
                   : t('goalCalc.infoAlert.descriptionWithoutBodyFat')}{' '}
@@ -426,21 +429,21 @@ export default function GoalCalculatorTool() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4">
-                    <p className="text-sm text-neutral-600 mb-1">
+                  <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4 dark:bg-neutral-900 dark:border-neutral-700">
+                    <p className="text-sm text-neutral-600 dark:text-neutral-300 mb-1">
                       {t('goalCalc.currentStatus.weight')}
                     </p>
-                    <p className="text-2xl font-bold text-neutral-900">
+                    <p className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
                       {profileData.weight_kg.toFixed(1)} kg
                     </p>
                   </div>
                   {/* Visa kroppsfett bara om det finns */}
                   {profileData.body_fat_percentage && (
-                    <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4">
-                      <p className="text-sm text-neutral-600 mb-1">
+                    <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4 dark:bg-neutral-900 dark:border-neutral-700">
+                      <p className="text-sm text-neutral-600 dark:text-neutral-300 mb-1">
                         {t('goalCalc.currentStatus.bodyFat')}
                       </p>
-                      <p className="text-2xl font-bold text-neutral-900">
+                      <p className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
                         {profileData.body_fat_percentage.toFixed(1)}%
                       </p>
                     </div>
@@ -450,19 +453,19 @@ export default function GoalCalculatorTool() {
                 {/* Visa bara om vi har kroppsfettprocent OCH goalResult med massa-data */}
                 {profileData.body_fat_percentage && goalResult?.currentLeanMass !== undefined && (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-                    <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                      <p className="text-sm text-green-700 mb-1">
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-4 dark:bg-green-900/25 dark:border-green-800">
+                      <p className="text-sm text-green-700 dark:text-green-300 mb-1">
                         {t('goalCalc.currentStatus.leanMass')}
                       </p>
-                      <p className="text-xl font-bold text-green-900">
+                      <p className="text-xl font-bold text-green-900 dark:text-green-300">
                         {goalResult.currentLeanMass.toFixed(1)} kg
                       </p>
                     </div>
-                    <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
-                      <p className="text-sm text-orange-700 mb-1">
+                    <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 dark:bg-orange-900/25 dark:border-orange-800">
+                      <p className="text-sm text-orange-700 dark:text-orange-300 mb-1">
                         {t('goalCalc.currentStatus.fatMass')}
                       </p>
-                      <p className="text-xl font-bold text-orange-900">
+                      <p className="text-xl font-bold text-orange-900 dark:text-orange-300">
                         {goalResult.currentFatMass!.toFixed(1)} kg
                       </p>
                     </div>
@@ -472,10 +475,10 @@ export default function GoalCalculatorTool() {
                 {/* Kategori - bara om vi har kroppsfettprocent */}
                 {profileData.body_fat_percentage && currentCategory && (
                   <div className="mt-4">
-                    <p className="text-sm text-neutral-600 mb-2">
+                    <p className="text-sm text-neutral-600 dark:text-neutral-300 mb-2">
                       {t('goalCalc.currentStatus.category')}
                     </p>
-                    <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-3">
+                    <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-3 dark:bg-neutral-900 dark:border-neutral-700">
                       <p className={`font-semibold ${currentCategory.color}`}>
                         {currentCategory.category}
                       </p>
@@ -485,7 +488,7 @@ export default function GoalCalculatorTool() {
 
                 {/* Warning om BMI saknas */}
                 {!profileData?.height_cm && (
-                  <p className="text-xs text-amber-600 mt-2">
+                  <p className="text-xs text-amber-600 dark:text-amber-300 mt-2">
                     {t('goalCalc.currentStatus.bmiMissing')}
                   </p>
                 )}
@@ -518,8 +521,10 @@ export default function GoalCalculatorTool() {
                 {/* Nuvarande och Mål BMI - Kompakt inline */}
                 <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm flex-wrap">
                   <div className="flex items-center gap-1 sm:gap-2">
-                    <span className="text-neutral-600 shrink-0">{t('goalCalc.bmi.current')}</span>
-                    <span className="font-bold text-neutral-900">
+                    <span className="text-neutral-600 dark:text-neutral-300 shrink-0">
+                      {t('goalCalc.bmi.current')}
+                    </span>
+                    <span className="font-bold text-neutral-900 dark:text-neutral-100">
                       {bmiData.current.bmi.toFixed(1)}
                     </span>
                     <Badge
@@ -528,12 +533,12 @@ export default function GoalCalculatorTool() {
                         bmiData.current.category === 'undervikt_1' ||
                         bmiData.current.category === 'undervikt_2' ||
                         bmiData.current.category === 'undervikt_3'
-                          ? 'bg-yellow-100 text-yellow-800'
+                          ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
                           : bmiData.current.category === 'normalvikt'
-                            ? 'bg-green-100 text-green-800'
+                            ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
                             : bmiData.current.category === 'övervikt'
-                              ? 'bg-orange-100 text-orange-800'
-                              : 'bg-red-100 text-red-800'
+                              ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300'
+                              : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
                       }`}
                     >
                       {t(`goalCalc.bmi.category.${bmiData.current.category}`)}
@@ -543,10 +548,10 @@ export default function GoalCalculatorTool() {
                     <>
                       <span className="text-neutral-400 hidden sm:inline">→</span>
                       <div className="flex items-center gap-1 sm:gap-2">
-                        <span className="text-neutral-600 shrink-0">
+                        <span className="text-neutral-600 dark:text-neutral-300 shrink-0">
                           {t('goalCalc.bmi.target')}
                         </span>
-                        <span className="font-bold text-purple-900">
+                        <span className="font-bold text-purple-900 dark:text-purple-300">
                           {bmiData.target.bmi.toFixed(1)}
                         </span>
                         <Badge
@@ -555,12 +560,12 @@ export default function GoalCalculatorTool() {
                             bmiData.target.category === 'undervikt_1' ||
                             bmiData.target.category === 'undervikt_2' ||
                             bmiData.target.category === 'undervikt_3'
-                              ? 'bg-yellow-100 text-yellow-800'
+                              ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
                               : bmiData.target.category === 'normalvikt'
-                                ? 'bg-green-100 text-green-800'
+                                ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
                                 : bmiData.target.category === 'övervikt'
-                                  ? 'bg-orange-100 text-orange-800'
-                                  : 'bg-red-100 text-red-800'
+                                  ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300'
+                                  : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
                           }`}
                         >
                           {t(`goalCalc.bmi.category.${bmiData.target.category}`)}
@@ -578,21 +583,21 @@ export default function GoalCalculatorTool() {
                       ? parsedHeight
                       : (profileData?.height_cm ?? 0)
                   return (
-                    <div className="border border-neutral-200 rounded-lg overflow-x-auto">
-                      <table className="w-full text-xs min-w-[300px]">
-                        <thead className="bg-neutral-100">
+                    <div className="border border-neutral-200 dark:border-neutral-700 rounded-lg overflow-x-auto">
+                      <table className="w-full text-xs min-w-[300px] dark:bg-neutral-850 dark:text-neutral-100">
+                        <thead className="bg-neutral-100 dark:bg-neutral-800">
                           <tr>
-                            <th className="px-3 py-1.5 text-left font-semibold">
+                            <th className="px-3 py-1.5 text-left font-semibold dark:text-neutral-100">
                               {t('goalCalc.bmi.table.category')}
                             </th>
-                            <th className="px-3 py-1.5 text-left font-semibold">
+                            <th className="px-3 py-1.5 text-left font-semibold dark:text-neutral-100">
                               {t('goalCalc.bmi.table.bmi')}
                             </th>
-                            <th className="px-3 py-1.5 text-left font-semibold">
+                            <th className="px-3 py-1.5 text-left font-semibold dark:text-neutral-100">
                               <div className="flex items-center gap-1.5 flex-wrap">
                                 <span>{t('goalCalc.bmi.table.weight')}</span>
                                 <span
-                                  className="font-normal text-neutral-500 cursor-pointer hover:text-primary-600 hover:underline"
+                                  className="font-normal text-neutral-500 dark:text-neutral-400 cursor-pointer hover:text-primary-600 hover:underline"
                                   onClick={() =>
                                     setBmiHeightInput(String(profileData?.height_cm ?? ''))
                                   }
@@ -607,9 +612,9 @@ export default function GoalCalculatorTool() {
                                     placeholder="—"
                                     min={100}
                                     max={250}
-                                    className="w-14 px-1.5 py-0.5 text-xs border border-neutral-300 rounded text-neutral-700 focus:outline-none focus:border-primary-400"
+                                    className="w-14 px-1.5 py-0.5 text-xs border border-neutral-300 rounded text-neutral-700 focus:outline-none focus:border-primary-400 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100"
                                   />
-                                  <span className="text-neutral-500">cm</span>
+                                  <span className="text-neutral-500 dark:text-neutral-400">cm</span>
                                 </div>
                               </div>
                             </th>
@@ -617,112 +622,128 @@ export default function GoalCalculatorTool() {
                         </thead>
                         <tbody>
                           <tr
-                            className={`border-t ${
+                            className={`border-t dark:border-neutral-700 ${
                               bmiData.current.category === 'undervikt_3'
-                                ? 'bg-yellow-50 border-l-4 border-l-yellow-500'
+                                ? 'bg-yellow-50 border-l-4 border-l-yellow-500 dark:bg-yellow-900/30'
                                 : ''
                             }`}
                           >
                             <td className="px-3 py-1.5">{t('goalCalc.bmi.table.underweight3')}</td>
-                            <td className="px-3 py-1.5 text-neutral-600">&lt; 16.0</td>
-                            <td className="px-3 py-1.5 text-neutral-600">
+                            <td className="px-3 py-1.5 text-neutral-600 dark:text-neutral-300">
+                              &lt; 16.0
+                            </td>
+                            <td className="px-3 py-1.5 text-neutral-600 dark:text-neutral-300">
                               &lt; {Math.ceil(16.0 * Math.pow(bmiHeight / 100, 2))}
                             </td>
                           </tr>
                           <tr
-                            className={`border-t ${
+                            className={`border-t dark:border-neutral-700 ${
                               bmiData.current.category === 'undervikt_2'
-                                ? 'bg-yellow-50 border-l-4 border-l-yellow-500'
+                                ? 'bg-yellow-50 border-l-4 border-l-yellow-500 dark:bg-yellow-900/30'
                                 : ''
                             }`}
                           >
                             <td className="px-3 py-1.5">{t('goalCalc.bmi.table.underweight2')}</td>
-                            <td className="px-3 py-1.5 text-neutral-600">16.0 - 16.9</td>
-                            <td className="px-3 py-1.5 text-neutral-600">
+                            <td className="px-3 py-1.5 text-neutral-600 dark:text-neutral-300">
+                              16.0 - 16.9
+                            </td>
+                            <td className="px-3 py-1.5 text-neutral-600 dark:text-neutral-300">
                               {Math.ceil(16.0 * Math.pow(bmiHeight / 100, 2))} -{' '}
                               {Math.floor(17.0 * Math.pow(bmiHeight / 100, 2))}
                             </td>
                           </tr>
                           <tr
-                            className={`border-t ${
+                            className={`border-t dark:border-neutral-700 ${
                               bmiData.current.category === 'undervikt_1'
-                                ? 'bg-yellow-50 border-l-4 border-l-yellow-500'
+                                ? 'bg-yellow-50 border-l-4 border-l-yellow-500 dark:bg-yellow-900/30'
                                 : ''
                             }`}
                           >
                             <td className="px-3 py-1.5">{t('goalCalc.bmi.table.underweight1')}</td>
-                            <td className="px-3 py-1.5 text-neutral-600">17.0 - 18.4</td>
-                            <td className="px-3 py-1.5 text-neutral-600">
+                            <td className="px-3 py-1.5 text-neutral-600 dark:text-neutral-300">
+                              17.0 - 18.4
+                            </td>
+                            <td className="px-3 py-1.5 text-neutral-600 dark:text-neutral-300">
                               {Math.ceil(17.0 * Math.pow(bmiHeight / 100, 2))} -{' '}
                               {Math.floor(18.5 * Math.pow(bmiHeight / 100, 2))}
                             </td>
                           </tr>
                           <tr
-                            className={`border-t ${
+                            className={`border-t dark:border-neutral-700 ${
                               bmiData.current.category === 'normalvikt'
-                                ? 'bg-green-50 border-l-4 border-l-green-500'
+                                ? 'bg-green-50 border-l-4 border-l-green-500 dark:bg-green-900/30'
                                 : ''
                             }`}
                           >
                             <td className="px-3 py-1.5">{t('goalCalc.bmi.table.normalweight')}</td>
-                            <td className="px-3 py-1.5 text-neutral-600">18.5 - 24.9</td>
-                            <td className="px-3 py-1.5 text-green-700 font-semibold">
+                            <td className="px-3 py-1.5 text-neutral-600 dark:text-neutral-300">
+                              18.5 - 24.9
+                            </td>
+                            <td className="px-3 py-1.5 text-green-700 dark:text-green-300 font-semibold">
                               {Math.ceil(18.5 * Math.pow(bmiHeight / 100, 2))} -{' '}
                               {Math.floor(25 * Math.pow(bmiHeight / 100, 2))}
                             </td>
                           </tr>
                           <tr
-                            className={`border-t ${
+                            className={`border-t dark:border-neutral-700 ${
                               bmiData.current.category === 'övervikt'
-                                ? 'bg-orange-50 border-l-4 border-l-orange-500'
+                                ? 'bg-orange-50 border-l-4 border-l-orange-500 dark:bg-orange-900/30'
                                 : ''
                             }`}
                           >
                             <td className="px-3 py-1.5">{t('goalCalc.bmi.table.overweight')}</td>
-                            <td className="px-3 py-1.5 text-neutral-600">25 - 29.9</td>
-                            <td className="px-3 py-1.5 text-neutral-600">
+                            <td className="px-3 py-1.5 text-neutral-600 dark:text-neutral-300">
+                              25 - 29.9
+                            </td>
+                            <td className="px-3 py-1.5 text-neutral-600 dark:text-neutral-300">
                               {Math.ceil(25 * Math.pow(bmiHeight / 100, 2))} -{' '}
                               {Math.floor(30 * Math.pow(bmiHeight / 100, 2))}
                             </td>
                           </tr>
                           <tr
-                            className={`border-t ${
+                            className={`border-t dark:border-neutral-700 ${
                               bmiData.current.category === 'fetma_1'
-                                ? 'bg-red-50 border-l-4 border-l-red-500'
+                                ? 'bg-red-50 border-l-4 border-l-red-500 dark:bg-red-900/30'
                                 : ''
                             }`}
                           >
                             <td className="px-3 py-1.5">{t('goalCalc.bmi.table.obese1')}</td>
-                            <td className="px-3 py-1.5 text-neutral-600">30 - 34.9</td>
-                            <td className="px-3 py-1.5 text-neutral-600">
+                            <td className="px-3 py-1.5 text-neutral-600 dark:text-neutral-300">
+                              30 - 34.9
+                            </td>
+                            <td className="px-3 py-1.5 text-neutral-600 dark:text-neutral-300">
                               {Math.ceil(30 * Math.pow(bmiHeight / 100, 2))} -{' '}
                               {Math.floor(35 * Math.pow(bmiHeight / 100, 2))}
                             </td>
                           </tr>
                           <tr
-                            className={`border-t ${
+                            className={`border-t dark:border-neutral-700 ${
                               bmiData.current.category === 'fetma_2'
-                                ? 'bg-red-50 border-l-4 border-l-red-500'
+                                ? 'bg-red-50 border-l-4 border-l-red-500 dark:bg-red-900/30'
                                 : ''
                             }`}
                           >
                             <td className="px-3 py-1.5">{t('goalCalc.bmi.table.obese2')}</td>
-                            <td className="px-3 py-1.5 text-neutral-600">35 - 39.9</td>
-                            <td className="px-3 py-1.5 text-neutral-600">
+                            <td className="px-3 py-1.5 text-neutral-600 dark:text-neutral-300">
+                              35 - 39.9
+                            </td>
+                            <td className="px-3 py-1.5 text-neutral-600 dark:text-neutral-300">
                               {Math.ceil(35 * Math.pow(bmiHeight / 100, 2))} -{' '}
                               {Math.floor(40 * Math.pow(bmiHeight / 100, 2))}
                             </td>
                           </tr>
                           <tr
-                            className={`border-t ${
+                            className={`border-t dark:border-neutral-700 ${
                               bmiData.current.category === 'fetma_3'
-                                ? 'bg-red-50 border-l-4 border-l-red-500'
+                                ? 'bg-red-50 border-l-4 border-l-red-500 dark:bg-red-900/30'
                                 : ''
                             }`}
                           >
                             <td className="px-3 py-1.5">{t('goalCalc.bmi.table.obese3')}</td>
-                            <td className="px-3 py-1.5 text-neutral-600">&ge; 40</td>
-                            <td className="px-3 py-1.5 text-neutral-600">
+                            <td className="px-3 py-1.5 text-neutral-600 dark:text-neutral-300">
+                              &ge; 40
+                            </td>
+                            <td className="px-3 py-1.5 text-neutral-600 dark:text-neutral-300">
                               &ge; {Math.ceil(40 * Math.pow(bmiHeight / 100, 2))}
                             </td>
                           </tr>
@@ -732,7 +753,7 @@ export default function GoalCalculatorTool() {
                   )
                 })()}
 
-                <p className="text-[10px] text-neutral-500 italic">
+                <p className="text-[10px] text-neutral-500 dark:text-neutral-400 italic">
                   {t('goalCalc.bmi.disclaimer')}
                 </p>
               </CardContent>
@@ -786,7 +807,7 @@ export default function GoalCalculatorTool() {
                       }}
                       className="w-20 text-center"
                     />
-                    <span className="text-sm text-neutral-600">kg</span>
+                    <span className="text-sm text-neutral-600 dark:text-neutral-300">kg</span>
                   </div>
                 </div>
                 <Slider
@@ -797,7 +818,7 @@ export default function GoalCalculatorTool() {
                   step={0.1}
                   className="w-full"
                 />
-                <div className="flex justify-between text-xs text-neutral-500 mt-2">
+                <div className="flex justify-between text-xs text-neutral-500 dark:text-neutral-400 mt-2">
                   <span>{t('goalCalc.goal.minus30')}</span>
                   <span>{t('goalCalc.goal.current')}</span>
                   <span>{t('goalCalc.goal.plus30')}</span>
@@ -823,7 +844,7 @@ export default function GoalCalculatorTool() {
                         }}
                         className="w-20 text-center"
                       />
-                      <span className="text-sm text-neutral-600">%</span>
+                      <span className="text-sm text-neutral-600 dark:text-neutral-300">%</span>
                     </div>
                   </div>
                   <Slider
@@ -834,14 +855,14 @@ export default function GoalCalculatorTool() {
                     step={0.5}
                     className="w-full"
                   />
-                  <div className="flex justify-between text-xs text-neutral-500 mt-2">
+                  <div className="flex justify-between text-xs text-neutral-500 dark:text-neutral-400 mt-2">
                     <span>5%</span>
                     <span>20%</span>
                     <span>35%</span>
                   </div>
 
                   {/* Info om synkning */}
-                  <p className="text-xs text-neutral-500 mt-3 italic">
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-3 italic">
                     {t('goalCalc.goal.syncHint')}
                   </p>
                 </div>
@@ -849,8 +870,8 @@ export default function GoalCalculatorTool() {
 
               {/* Målkategori - bara om vi har kroppsfettprocent */}
               {profileData?.body_fat_percentage && targetCategory && (
-                <div className="pt-6 border-t border-neutral-200 bg-neutral-50 border border-neutral-200 rounded-lg p-4">
-                  <p className="text-sm text-neutral-600 mb-2">
+                <div className="pt-6 border-t border-neutral-200 bg-neutral-50 border border-neutral-200 rounded-lg p-4 dark:bg-neutral-900 dark:border-neutral-700">
+                  <p className="text-sm text-neutral-600 dark:text-neutral-300 mb-2">
                     {t('goalCalc.goal.targetCategory')}
                   </p>
                   <p className={`font-semibold ${targetCategory.color}`}>
@@ -867,7 +888,7 @@ export default function GoalCalculatorTool() {
                 {(() => {
                   if (!goalResult || !profileData?.tdee) {
                     return (
-                      <p className="text-sm text-neutral-500 italic">
+                      <p className="text-sm text-neutral-500 dark:text-neutral-400 italic">
                         {t('goalCalc.weeklyChange.noGoalHint')}
                       </p>
                     )
@@ -927,7 +948,7 @@ export default function GoalCalculatorTool() {
 
                   return presets.length > 0 ? (
                     <div>
-                      <p className="text-xs text-neutral-600 mb-2">
+                      <p className="text-xs text-neutral-600 dark:text-neutral-300 mb-2">
                         {isWeightLoss
                           ? t('goalCalc.weeklyChange.weightLossLabel')
                           : t('goalCalc.weeklyChange.weightGainLabel')}
@@ -981,34 +1002,36 @@ export default function GoalCalculatorTool() {
                 <CardTitle className="text-lg">{t('goalCalc.results.title')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="bg-gradient-to-br from-purple-50 to-blue-50 border-2 border-purple-200 rounded-lg p-6 text-center">
-                  <p className="text-sm text-neutral-600 mb-2">
+                <div className="bg-gradient-to-br from-purple-50 to-blue-50 border-2 border-purple-200 rounded-lg p-6 text-center dark:from-purple-900/25 dark:to-blue-900/25 dark:border-purple-800">
+                  <p className="text-sm text-neutral-600 dark:text-neutral-300 mb-2">
                     {t('goalCalc.results.targetWeightLabel')}
                   </p>
-                  <p className="text-4xl font-bold text-purple-700">
+                  <p className="text-4xl font-bold text-purple-700 dark:text-purple-300">
                     {goalResult.targetWeight.toFixed(1)}
                   </p>
-                  <p className="text-sm text-neutral-500 mt-1">
+                  <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
                     {t('goalCalc.results.weightUnit')}
                   </p>
 
-                  <div className="mt-4 pt-4 border-t border-purple-200">
+                  <div className="mt-4 pt-4 border-t border-purple-200 dark:border-purple-800">
                     <div className="flex items-center justify-center gap-2">
                       {goalResult.weightToChange < 0 ? (
-                        <TrendingDown className="h-5 w-5 text-red-600" />
+                        <TrendingDown className="h-5 w-5 text-red-600 dark:text-red-400" />
                       ) : (
-                        <TrendingUp className="h-5 w-5 text-green-600" />
+                        <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400" />
                       )}
                       <span
                         className={`text-xl font-bold ${
-                          goalResult.weightToChange < 0 ? 'text-red-600' : 'text-green-600'
+                          goalResult.weightToChange < 0
+                            ? 'text-red-600 dark:text-red-400'
+                            : 'text-green-600 dark:text-green-400'
                         }`}
                       >
                         {goalResult.weightToChange > 0 ? '+' : ''}
                         {goalResult.weightToChange.toFixed(1)} kg
                       </span>
                     </div>
-                    <p className="text-xs text-neutral-500 mt-1">
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
                       {goalResult.weightToChange < 0
                         ? t('goalCalc.results.toLoose')
                         : t('goalCalc.results.toGain')}
@@ -1022,11 +1045,11 @@ export default function GoalCalculatorTool() {
             <Card className="overflow-hidden">
               <CardContent className="p-0">
                 {/* Header */}
-                <div className="px-5 py-4 border-b border-neutral-100">
+                <div className="px-5 py-4 border-b border-neutral-100 dark:border-neutral-700">
                   <p className="text-xs font-semibold text-neutral-400 uppercase tracking-widest mb-1">
                     {t('goalCalc.timeline.title')}
                   </p>
-                  <p className="text-lg font-bold text-neutral-900 leading-snug">
+                  <p className="text-lg font-bold text-neutral-900 dark:text-neutral-100 leading-snug">
                     {(() => {
                       if (!goalResult || !profileData?.tdee) {
                         return `${weeklyWeightChange.min.toFixed(1)}–${weeklyWeightChange.max.toFixed(1)} kg/vecka`
@@ -1076,21 +1099,21 @@ export default function GoalCalculatorTool() {
                 </div>
 
                 {/* Veckor / Månader */}
-                <div className="grid grid-cols-2 divide-x divide-neutral-100 border-b border-neutral-100">
+                <div className="grid grid-cols-2 divide-x divide-neutral-100 border-b border-neutral-100 dark:divide-neutral-700 dark:border-neutral-700">
                   <div className="px-5 py-4">
-                    <p className="text-xs text-neutral-400 uppercase tracking-wide mb-1">
+                    <p className="text-xs text-neutral-400 dark:text-neutral-400 uppercase tracking-wide mb-1">
                       {t('goalCalc.timeline.weeks')}
                     </p>
-                    <p className="text-sm font-semibold text-neutral-800">
+                    <p className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
                       {timeline.min.weeksRequired}–{timeline.max.weeksRequired}{' '}
                       {t('goalCalc.timeline.weeksUnit')}
                     </p>
                   </div>
                   <div className="px-5 py-4">
-                    <p className="text-xs text-neutral-400 uppercase tracking-wide mb-1">
+                    <p className="text-xs text-neutral-400 dark:text-neutral-400 uppercase tracking-wide mb-1">
                       {t('goalCalc.timeline.months')}
                     </p>
-                    <p className="text-sm font-semibold text-neutral-800">
+                    <p className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
                       {Math.round(timeline.min.monthsRequired * 10) / 10}–
                       {Math.round(timeline.max.monthsRequired * 10) / 10}{' '}
                       {t('goalCalc.timeline.monthsUnit')}
@@ -1099,12 +1122,12 @@ export default function GoalCalculatorTool() {
                 </div>
 
                 {/* Slutdatum */}
-                <div className="grid grid-cols-2 divide-x divide-neutral-100 border-b border-neutral-100">
+                <div className="grid grid-cols-2 divide-x divide-neutral-100 border-b border-neutral-100 dark:divide-neutral-700 dark:border-neutral-700">
                   <div className="px-5 py-4">
-                    <p className="text-xs text-neutral-400 uppercase tracking-wide mb-1">
+                    <p className="text-xs text-neutral-400 dark:text-neutral-400 uppercase tracking-wide mb-1">
                       {t('goalCalc.timeline.earliestDone')}
                     </p>
-                    <p className="text-sm font-semibold text-neutral-800">
+                    <p className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
                       {timeline.min.estimatedEndDate.toLocaleDateString('sv-SE', {
                         day: 'numeric',
                         month: 'short',
@@ -1113,10 +1136,10 @@ export default function GoalCalculatorTool() {
                     </p>
                   </div>
                   <div className="px-5 py-4">
-                    <p className="text-xs text-neutral-400 uppercase tracking-wide mb-1">
+                    <p className="text-xs text-neutral-400 dark:text-neutral-400 uppercase tracking-wide mb-1">
                       {t('goalCalc.timeline.latestDone')}
                     </p>
-                    <p className="text-sm font-semibold text-neutral-800">
+                    <p className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
                       {timeline.max.estimatedEndDate.toLocaleDateString('sv-SE', {
                         day: 'numeric',
                         month: 'short',
@@ -1133,7 +1156,7 @@ export default function GoalCalculatorTool() {
                       <p className="text-xs text-neutral-400 uppercase tracking-wide">
                         {t('goalCalc.timeline.energyGoal')}
                       </p>
-                      <p className="text-sm font-semibold text-neutral-800">
+                      <p className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
                         {appliedCalories.min}–{appliedCalories.max} kcal/dag
                       </p>
                     </div>

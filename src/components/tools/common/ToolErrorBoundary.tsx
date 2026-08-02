@@ -1,67 +1,67 @@
-import { Component, ReactNode, ErrorInfo } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useTranslation } from 'react-i18next';
+import { Component, ReactNode, ErrorInfo } from 'react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { AlertCircle } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { useTranslation } from 'react-i18next'
 
 interface Props {
-  children: ReactNode;
+  children: ReactNode
 }
 
 interface State {
-  hasError: boolean;
-  error?: Error;
+  hasError: boolean
+  error?: Error
 }
 
 export default class ToolErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
-    super(props);
-    this.state = { hasError: false };
+    super(props)
+    this.state = { hasError: false }
   }
 
   static getDerivedStateFromError(error: Error): State {
-    return { hasError: true, error };
+    return { hasError: true, error }
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('Tool Error:', error, errorInfo);
+    console.error('Tool Error:', error, errorInfo)
   }
 
   handleReset = () => {
-    this.setState({ hasError: false, error: undefined });
-    window.location.reload();
-  };
+    this.setState({ hasError: false, error: undefined })
+    window.location.reload()
+  }
 
   render() {
     if (this.state.hasError) {
-      return <ToolErrorContent error={this.state.error} onReset={this.handleReset} />;
+      return <ToolErrorContent error={this.state.error} onReset={this.handleReset} />
     }
 
-    return this.props.children;
+    return this.props.children
   }
 }
 
 function ToolErrorContent({ error, onReset }: { error?: Error; onReset: () => void }) {
-  const { t } = useTranslation('tools');
+  const { t } = useTranslation('tools')
   return (
     <div className="space-y-6">
-      <Card className="border-red-200 bg-red-50">
+      <Card className="border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950/30">
         <CardHeader>
           <div className="flex items-center gap-3">
-            <AlertCircle className="h-6 w-6 text-red-600" />
-            <CardTitle className="text-red-900">{t('errorBoundary.title')}</CardTitle>
+            <AlertCircle className="h-6 w-6 text-red-600 dark:text-red-400" />
+            <CardTitle className="text-red-900 dark:text-red-300">
+              {t('errorBoundary.title')}
+            </CardTitle>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p className="text-sm text-red-700">
-            {t('errorBoundary.description')}
-          </p>
+          <p className="text-sm text-red-700 dark:text-red-300">{t('errorBoundary.description')}</p>
           {error && (
-            <details className="text-xs text-red-600">
+            <details className="text-xs text-red-600 dark:text-red-400">
               <summary className="cursor-pointer font-medium mb-2">
                 {t('errorBoundary.technicalInfo')}
               </summary>
-              <pre className="bg-red-100 p-3 rounded overflow-auto">
+              <pre className="bg-red-100 p-3 rounded overflow-auto dark:bg-red-900/30 dark:text-red-200">
                 {error.toString()}
               </pre>
             </details>
@@ -77,5 +77,5 @@ function ToolErrorContent({ error, onReset }: { error?: Error; onReset: () => vo
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

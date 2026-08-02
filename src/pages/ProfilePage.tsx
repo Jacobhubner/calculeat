@@ -757,10 +757,12 @@ export default function ProfilePage() {
       {/* Header */}
       <div className="mb-6 md:mb-8">
         <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent mb-1 md:mb-2 flex items-center gap-2 md:gap-3">
-          <User className="h-6 w-6 md:h-8 md:w-8 text-primary-600" />
+          <User className="h-6 w-6 md:h-8 md:w-8 text-primary-600 dark:text-primary-300" />
           {t('header.title')}
         </h1>
-        <p className="text-sm md:text-base text-neutral-600">{t('header.description')}</p>
+        <p className="text-sm md:text-base text-neutral-600 dark:text-neutral-400">
+          {t('header.description')}
+        </p>
       </div>
 
       <div className="max-w-7xl mx-auto">
@@ -831,7 +833,7 @@ export default function ProfilePage() {
 
             {/* No active profile selected */}
             {!activeProfile && (
-              <div className="text-center py-12 text-neutral-500">
+              <div className="text-center py-12 text-neutral-500 dark:text-neutral-400">
                 <p>{t('noProfile')}</p>
               </div>
             )}
@@ -903,13 +905,17 @@ export default function ProfilePage() {
             <div
               className={cn(
                 'rounded-xl border px-4 py-3 flex items-center justify-between shadow-lg',
-                saveState === 'dirty' && 'bg-primary-50 border-primary-200',
-                saveState === 'saving' && 'bg-primary-50 border-primary-200',
-                saveState === 'saved' && 'bg-green-50 border-green-200',
-                saveState === 'error' && 'bg-red-50 border-red-200'
+                saveState === 'dirty' &&
+                  'bg-primary-50 border-primary-200 dark:bg-primary-900/25 dark:border-primary-800',
+                saveState === 'saving' &&
+                  'bg-primary-50 border-primary-200 dark:bg-primary-900/25 dark:border-primary-800',
+                saveState === 'saved' &&
+                  'bg-green-50 border-green-200 dark:bg-green-900/25 dark:border-green-800',
+                saveState === 'error' &&
+                  'bg-red-50 border-red-200 dark:bg-red-900/25 dark:border-red-800'
               )}
             >
-              <span className="text-sm font-medium text-neutral-700">
+              <span className="text-sm font-medium text-neutral-700 dark:text-neutral-200">
                 {saveState === 'dirty' && t('save.unsavedChanges')}
                 {saveState === 'saving' && t('save.saving')}
                 {saveState === 'saved' && t('save.saved')}
@@ -933,22 +939,28 @@ export default function ProfilePage() {
             aria-live="polite"
             className={cn(
               'hidden lg:flex fixed top-20 right-6 z-40 pointer-events-auto items-center gap-3 rounded-xl border px-4 py-3 shadow-lg',
-              saveState === 'dirty' && 'bg-primary-50 border-primary-200',
-              saveState === 'saving' && 'bg-primary-50 border-primary-200',
-              saveState === 'saved' && 'bg-green-50 border-green-200',
-              saveState === 'error' && 'bg-red-50 border-red-200'
+              saveState === 'dirty' &&
+                'bg-primary-50 border-primary-200 dark:bg-primary-900/25 dark:border-primary-800',
+              saveState === 'saving' &&
+                'bg-primary-50 border-primary-200 dark:bg-primary-900/25 dark:border-primary-800',
+              saveState === 'saved' &&
+                'bg-green-50 border-green-200 dark:bg-green-900/25 dark:border-green-800',
+              saveState === 'error' &&
+                'bg-red-50 border-red-200 dark:bg-red-900/25 dark:border-red-800'
             )}
           >
-            <span className="text-sm font-medium text-neutral-700">
+            <span className="text-sm font-medium text-neutral-700 dark:text-neutral-200">
               {saveState === 'dirty' && t('save.unsavedChanges')}
               {saveState === 'saving' && t('save.saving')}
               {saveState === 'saved' && t('save.saved')}
               {saveState === 'error' && t('save.saveError')}
             </span>
             {saveState === 'saving' && (
-              <Loader2 className="h-4 w-4 animate-spin text-primary-600" />
+              <Loader2 className="h-4 w-4 animate-spin text-primary-600 dark:text-primary-300" />
             )}
-            {saveState === 'saved' && <Check className="h-4 w-4 text-green-600" />}
+            {saveState === 'saved' && (
+              <Check className="h-4 w-4 text-green-600 dark:text-green-300" />
+            )}
             {(saveState === 'dirty' || saveState === 'error') && (
               <Button
                 size="sm"

@@ -50,6 +50,7 @@ import {
 } from 'recharts'
 import { useTranslation } from 'react-i18next'
 import i18n from '@/i18n'
+import { useChartTheme } from '@/hooks/useChartTheme'
 
 function getDateLocale() {
   return i18n.language === 'sv' ? 'sv-SE' : 'en-GB'
@@ -66,6 +67,8 @@ export default function WeightTracker({
   onWeightChange,
   onCalibrateClick: _onCalibrateClick,
 }: WeightTrackerProps) {
+  // Recharts tar färger som props, inte klasser — dark: når dem aldrig
+  const chartTheme = useChartTheme()
   const { t } = useTranslation('profile')
   const [isOpen, setIsOpen] = useState(false)
   const [currentWeight, setCurrentWeight] = useState(profile.weight_kg?.toString() || '')
@@ -321,7 +324,7 @@ export default function WeightTracker({
               {t('weightTracker.title')}
             </CardTitle>
             <ChevronDown
-              className={`h-5 w-5 text-neutral-600 transition-transform duration-200 ${
+              className={`h-5 w-5 text-neutral-600 dark:text-neutral-400 transition-transform duration-200 ${
                 isOpen ? 'rotate-180' : ''
               }`}
             />
@@ -342,9 +345,9 @@ export default function WeightTracker({
         <CardContent className="space-y-6 pt-0">
           {/* Add Weight Form */}
           {showAddWeight && (
-            <div className="bg-primary-50 border border-primary-200 rounded-lg p-4 space-y-3">
+            <div className="bg-primary-50 dark:bg-primary-900/25 border border-primary-200 dark:border-primary-800 rounded-lg p-4 space-y-3">
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-2">
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-200 mb-2">
                   {t('weightTracker.newWeight')}
                 </label>
                 <div className="flex gap-2">
@@ -357,7 +360,7 @@ export default function WeightTracker({
                         handleAddWeight()
                       }
                     }}
-                    className="flex-1 rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                    className="flex-1 rounded-xl border-neutral-300 dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-100 shadow-sm focus:border-primary-500 focus:ring-primary-500"
                     placeholder="75.5"
                     min="20"
                     max="300"
@@ -366,20 +369,20 @@ export default function WeightTracker({
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-2">
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-200 mb-2">
                   {t('weightTracker.date')}
                 </label>
                 <input
                   type="date"
                   value={recordedDate}
                   onChange={e => setRecordedDate(e.target.value)}
-                  className="w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                  className="w-full rounded-xl border-neutral-300 dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-100 shadow-sm focus:border-primary-500 focus:ring-primary-500"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-2">
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-200 mb-2">
                   {t('weightTracker.bodyFat')}{' '}
-                  <span className="text-xs text-neutral-400 font-normal">
+                  <span className="text-xs text-neutral-400 dark:text-neutral-500 font-normal">
                     {t('weightTracker.bodyFatOptional')}
                   </span>
                 </label>
@@ -387,13 +390,15 @@ export default function WeightTracker({
                   type="number"
                   value={bodyFatInput}
                   onChange={e => setBodyFatInput(e.target.value)}
-                  className="w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                  className="w-full rounded-xl border-neutral-300 dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-100 shadow-sm focus:border-primary-500 focus:ring-primary-500"
                   placeholder="15.0"
                   min="0"
                   max="100"
                   step="0.1"
                 />
-                <p className="text-xs text-neutral-400 mt-1">{t('weightTracker.bodyFatNote')}</p>
+                <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-1">
+                  {t('weightTracker.bodyFatNote')}
+                </p>
               </div>
               <Button onClick={handleAddWeight} className="w-full">
                 {t('weightTracker.addButton')}
@@ -404,73 +409,85 @@ export default function WeightTracker({
           {/* Current Stats - 4 columns */}
           <div className="grid grid-cols-4 gap-4">
             <div className="text-center">
-              <p className="text-xs text-neutral-500 mb-1">{t('weightTracker.statStart')}</p>
-              <p className="text-lg font-bold text-neutral-900">
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">
+                {t('weightTracker.statStart')}
+              </p>
+              <p className="text-lg font-bold text-neutral-900 dark:text-neutral-100">
                 {initialWeight > 0 ? `${initialWeight.toFixed(1)}` : '-'}
               </p>
-              <p className="text-xs text-neutral-400">kg</p>
+              <p className="text-xs text-neutral-400 dark:text-neutral-500">kg</p>
             </div>
             <div className="text-center">
-              <p className="text-xs text-neutral-500 mb-1">{t('weightTracker.statCurrent')}</p>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">
+                {t('weightTracker.statCurrent')}
+              </p>
               <p className="text-lg font-bold text-primary-600">{weight.toFixed(1)}</p>
-              <p className="text-xs text-neutral-400">kg</p>
+              <p className="text-xs text-neutral-400 dark:text-neutral-500">kg</p>
             </div>
             <div className="text-center">
-              <p className="text-xs text-neutral-500 mb-1">{t('weightTracker.statChange')}</p>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">
+                {t('weightTracker.statChange')}
+              </p>
               <p
                 className={`text-lg font-bold ${
                   weightTrend.totalChangeKg < -0.1
-                    ? 'text-green-600'
+                    ? 'text-green-600 dark:text-green-300'
                     : weightTrend.totalChangeKg > 0.1
-                      ? 'text-amber-600'
-                      : 'text-neutral-900'
+                      ? 'text-amber-600 dark:text-amber-300'
+                      : 'text-neutral-900 dark:text-neutral-100'
                 }`}
               >
                 {weightTrend.totalChangeKg >= 0 ? '+' : ''}
                 {weightTrend.totalChangeKg.toFixed(1)}
               </p>
-              <p className="text-xs text-neutral-400">{t('weightTracker.statKgTotal')}</p>
+              <p className="text-xs text-neutral-400 dark:text-neutral-500">
+                {t('weightTracker.statKgTotal')}
+              </p>
             </div>
             <div className="text-center">
-              <p className="text-xs text-neutral-500 mb-1">{t('weightTracker.statTempo')}</p>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">
+                {t('weightTracker.statTempo')}
+              </p>
               <p
                 className={`text-lg font-bold ${
                   weightTrend.weeklyChangeKg !== null
                     ? weightTrend.weeklyChangeKg < -0.1
-                      ? 'text-green-600'
+                      ? 'text-green-600 dark:text-green-300'
                       : weightTrend.weeklyChangeKg > 0.1
-                        ? 'text-amber-600'
-                        : 'text-neutral-900'
-                    : 'text-neutral-400'
+                        ? 'text-amber-600 dark:text-amber-300'
+                        : 'text-neutral-900 dark:text-neutral-100'
+                    : 'text-neutral-400 dark:text-neutral-500'
                 }`}
               >
                 {weightTrend.weeklyChangeKg !== null
                   ? `${weightTrend.weeklyChangeKg >= 0 ? '+' : ''}${weightTrend.weeklyChangeKg.toFixed(2)}`
                   : '-'}
               </p>
-              <p className="text-xs text-neutral-400">{t('weightTracker.statKgWeek')}</p>
+              <p className="text-xs text-neutral-400 dark:text-neutral-500">
+                {t('weightTracker.statKgWeek')}
+              </p>
             </div>
           </div>
 
           {/* Progress toward goal */}
           {targetWeight && targetWeight !== initialWeight && (
-            <div className="bg-neutral-50 rounded-lg p-4">
+            <div className="bg-neutral-50 dark:bg-neutral-900 rounded-lg p-4">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <Target className="h-4 w-4 text-primary-500" />
-                  <span className="text-sm font-medium text-neutral-700">
+                  <span className="text-sm font-medium text-neutral-700 dark:text-neutral-200">
                     {t('weightTracker.goalProgress', { target: targetWeight })}
                   </span>
                 </div>
                 {weightTrend.progressPercent !== null && (
-                  <span className="text-sm font-bold text-primary-600">
+                  <span className="text-sm font-bold text-primary-600 dark:text-primary-300">
                     {Math.round(weightTrend.progressPercent)}%
                   </span>
                 )}
               </div>
 
               {/* Progress bar */}
-              <div className="h-2 bg-neutral-200 rounded-full overflow-hidden mb-2">
+              <div className="h-2 bg-neutral-200 dark:bg-neutral-700 rounded-full overflow-hidden mb-2">
                 <div
                   className="h-full bg-primary-500 rounded-full transition-all duration-300"
                   style={{ width: `${Math.min(100, weightTrend.progressPercent || 0)}%` }}
@@ -479,7 +496,7 @@ export default function WeightTracker({
 
               {/* Projected goal date */}
               {weightTrend.projectedGoalDate && weightTrend.weeksToGoal && (
-                <div className="flex items-center gap-2 text-xs text-neutral-600">
+                <div className="flex items-center gap-2 text-xs text-neutral-600 dark:text-neutral-400">
                   <Calendar className="h-3 w-3" />
                   <span>
                     {t('weightTracker.projectedDate')}{' '}
@@ -510,7 +527,7 @@ export default function WeightTracker({
                   className={`px-2.5 py-1 text-xs rounded-md font-medium transition-colors ${
                     chartRange === r
                       ? 'bg-primary-600 text-white'
-                      : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
+                      : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700'
                   }`}
                 >
                   {r === 'all' ? t('weightTracker.rangeAll') : r}
@@ -527,7 +544,7 @@ export default function WeightTracker({
                   data={brushChartData}
                   margin={{ top: 5, right: 50, left: 20, bottom: 5 }}
                 >
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                  <CartesianGrid strokeDasharray="3 3" stroke={chartTheme.grid} />
                   <XAxis
                     dataKey="timestamp"
                     type="number"
@@ -542,7 +559,7 @@ export default function WeightTracker({
                               brushChartData[brushChartData.length - 1]?.timestamp ?? nowTs,
                             ]
                     }
-                    tick={{ fontSize: 10, fill: '#6b7280' }}
+                    tick={{ fontSize: 10, fill: chartTheme.axisTick }}
                     angle={-45}
                     textAnchor="end"
                     height={60}
@@ -555,13 +572,13 @@ export default function WeightTracker({
                   />
                   <YAxis
                     domain={[minWeight, maxWeight]}
-                    tick={{ fontSize: 10, fill: '#6b7280' }}
+                    tick={{ fontSize: 10, fill: chartTheme.axisTick }}
                     label={{
                       value: 'kg',
                       angle: -90,
                       position: 'insideLeft',
                       fontSize: 10,
-                      fill: '#6b7280',
+                      fill: chartTheme.axisTick,
                     }}
                   />
                   <Tooltip
@@ -658,8 +675,8 @@ export default function WeightTracker({
                           startIndex={bd.startIndex}
                           endIndex={bd.endIndex}
                           height={24}
-                          stroke="#d1d5db"
-                          fill="#f9fafb"
+                          stroke={chartTheme.brush.stroke}
+                          fill={chartTheme.brush.fill}
                           travellerWidth={8}
                           tickFormatter={ts =>
                             new Date(ts as number).toLocaleDateString(getDateLocale(), {
@@ -682,7 +699,7 @@ export default function WeightTracker({
           )}
 
           {chartData.length <= 1 && (
-            <div className="text-center py-8 text-neutral-500">
+            <div className="text-center py-8 text-neutral-500 dark:text-neutral-400">
               <p>{t('weightTracker.noHistory')}</p>
               <p className="text-sm mt-1">{t('weightTracker.noHistoryHint')}</p>
             </div>
@@ -692,12 +709,12 @@ export default function WeightTracker({
           {limits.advanced_trends && chartsReady && hasBodyFatData && (
             <div>
               <div className="flex items-center gap-1.5 mb-2">
-                <h4 className="text-sm font-medium text-neutral-700">
+                <h4 className="text-sm font-medium text-neutral-700 dark:text-neutral-200">
                   {t('weightTracker.bodyFatChartTitle')}
                 </h4>
                 <button
                   onClick={() => setShowBodyFatInfo(true)}
-                  className="text-neutral-400 hover:text-neutral-600 transition-colors"
+                  className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors"
                   type="button"
                 >
                   <Info className="h-3.5 w-3.5" />
@@ -709,7 +726,7 @@ export default function WeightTracker({
                     data={brushBodyFatData}
                     margin={{ top: 5, right: 50, left: 20, bottom: 5 }}
                   >
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                    <CartesianGrid strokeDasharray="3 3" stroke={chartTheme.grid} />
                     <XAxis
                       dataKey="timestamp"
                       type="number"
@@ -724,7 +741,7 @@ export default function WeightTracker({
                                 brushBodyFatData[brushBodyFatData.length - 1]?.timestamp ?? nowTs,
                               ]
                       }
-                      tick={{ fontSize: 10, fill: '#6b7280' }}
+                      tick={{ fontSize: 10, fill: chartTheme.axisTick }}
                       angle={-45}
                       textAnchor="end"
                       height={60}
@@ -737,13 +754,13 @@ export default function WeightTracker({
                     />
                     <YAxis
                       domain={['auto', 'auto']}
-                      tick={{ fontSize: 10, fill: '#6b7280' }}
+                      tick={{ fontSize: 10, fill: chartTheme.axisTick }}
                       label={{
                         value: '%',
                         angle: -90,
                         position: 'insideLeft',
                         fontSize: 10,
-                        fill: '#6b7280',
+                        fill: chartTheme.axisTick,
                       }}
                     />
                     <Tooltip
@@ -805,8 +822,8 @@ export default function WeightTracker({
                             startIndex={bd.startIndex}
                             endIndex={bd.endIndex}
                             height={24}
-                            stroke="#d1d5db"
-                            fill="#f9fafb"
+                            stroke={chartTheme.brush.stroke}
+                            fill={chartTheme.brush.fill}
                             travellerWidth={8}
                             tickFormatter={ts =>
                               new Date(ts as number).toLocaleDateString(getDateLocale(), {
@@ -840,18 +857,18 @@ export default function WeightTracker({
                 tabIndex={0}
                 onKeyDown={e => e.key === 'Enter' && setShowBodyFatMassChart(v => !v)}
               >
-                <h4 className="text-sm font-medium text-neutral-700">
+                <h4 className="text-sm font-medium text-neutral-700 dark:text-neutral-200">
                   {t('weightTracker.chartBodyFatMassTitle')}
                 </h4>
                 <ChevronDown
-                  className={`h-4 w-4 text-neutral-500 transition-transform duration-200 ${showBodyFatMassChart ? 'rotate-180' : ''}`}
+                  className={`h-4 w-4 text-neutral-500 dark:text-neutral-400 transition-transform duration-200 ${showBodyFatMassChart ? 'rotate-180' : ''}`}
                 />
                 <button
                   onClick={e => {
                     e.stopPropagation()
                     setShowBodyFatMassInfo(true)
                   }}
-                  className="text-neutral-400 hover:text-neutral-600 transition-colors ml-auto"
+                  className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors ml-auto"
                   type="button"
                 >
                   <Info className="h-3.5 w-3.5" />
@@ -864,7 +881,7 @@ export default function WeightTracker({
                       data={brushBodyCompositionData}
                       margin={{ top: 5, right: 50, left: 20, bottom: 5 }}
                     >
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                      <CartesianGrid strokeDasharray="3 3" stroke={chartTheme.grid} />
                       <XAxis
                         dataKey="timestamp"
                         type="number"
@@ -880,7 +897,7 @@ export default function WeightTracker({
                                     ?.timestamp ?? nowTs,
                                 ]
                         }
-                        tick={{ fontSize: 10, fill: '#6b7280' }}
+                        tick={{ fontSize: 10, fill: chartTheme.axisTick }}
                         angle={-45}
                         textAnchor="end"
                         height={60}
@@ -893,13 +910,13 @@ export default function WeightTracker({
                       />
                       <YAxis
                         domain={['auto', 'auto']}
-                        tick={{ fontSize: 10, fill: '#6b7280' }}
+                        tick={{ fontSize: 10, fill: chartTheme.axisTick }}
                         label={{
                           value: 'kg',
                           angle: -90,
                           position: 'insideLeft',
                           fontSize: 10,
-                          fill: '#6b7280',
+                          fill: chartTheme.axisTick,
                         }}
                       />
                       <Tooltip
@@ -958,8 +975,8 @@ export default function WeightTracker({
                               startIndex={bd.startIndex}
                               endIndex={bd.endIndex}
                               height={24}
-                              stroke="#d1d5db"
-                              fill="#f9fafb"
+                              stroke={chartTheme.brush.stroke}
+                              fill={chartTheme.brush.fill}
                               travellerWidth={8}
                               tickFormatter={ts =>
                                 new Date(ts as number).toLocaleDateString(getDateLocale(), {
@@ -994,18 +1011,18 @@ export default function WeightTracker({
                 tabIndex={0}
                 onKeyDown={e => e.key === 'Enter' && setShowSoftLeanMassChart(v => !v)}
               >
-                <h4 className="text-sm font-medium text-neutral-700">
+                <h4 className="text-sm font-medium text-neutral-700 dark:text-neutral-200">
                   {t('weightTracker.chartSoftLeanMassTitle')}
                 </h4>
                 <ChevronDown
-                  className={`h-4 w-4 text-neutral-500 transition-transform duration-200 ${showSoftLeanMassChart ? 'rotate-180' : ''}`}
+                  className={`h-4 w-4 text-neutral-500 dark:text-neutral-400 transition-transform duration-200 ${showSoftLeanMassChart ? 'rotate-180' : ''}`}
                 />
                 <button
                   onClick={e => {
                     e.stopPropagation()
                     setShowSoftLeanMassInfo(true)
                   }}
-                  className="text-neutral-400 hover:text-neutral-600 transition-colors ml-auto"
+                  className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors ml-auto"
                   type="button"
                 >
                   <Info className="h-3.5 w-3.5" />
@@ -1018,7 +1035,7 @@ export default function WeightTracker({
                       data={brushBodyCompositionData}
                       margin={{ top: 5, right: 50, left: 20, bottom: 5 }}
                     >
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                      <CartesianGrid strokeDasharray="3 3" stroke={chartTheme.grid} />
                       <XAxis
                         dataKey="timestamp"
                         type="number"
@@ -1034,7 +1051,7 @@ export default function WeightTracker({
                                     ?.timestamp ?? nowTs,
                                 ]
                         }
-                        tick={{ fontSize: 10, fill: '#6b7280' }}
+                        tick={{ fontSize: 10, fill: chartTheme.axisTick }}
                         angle={-45}
                         textAnchor="end"
                         height={60}
@@ -1047,13 +1064,13 @@ export default function WeightTracker({
                       />
                       <YAxis
                         domain={['auto', 'auto']}
-                        tick={{ fontSize: 10, fill: '#6b7280' }}
+                        tick={{ fontSize: 10, fill: chartTheme.axisTick }}
                         label={{
                           value: 'kg',
                           angle: -90,
                           position: 'insideLeft',
                           fontSize: 10,
-                          fill: '#6b7280',
+                          fill: chartTheme.axisTick,
                         }}
                       />
                       <Tooltip
@@ -1112,8 +1129,8 @@ export default function WeightTracker({
                               startIndex={bd.startIndex}
                               endIndex={bd.endIndex}
                               height={24}
-                              stroke="#d1d5db"
-                              fill="#f9fafb"
+                              stroke={chartTheme.brush.stroke}
+                              fill={chartTheme.brush.fill}
                               travellerWidth={8}
                               tickFormatter={ts =>
                                 new Date(ts as number).toLocaleDateString(getDateLocale(), {
@@ -1154,23 +1171,23 @@ export default function WeightTracker({
               </Button>
 
               {showHistory && (
-                <div className="border border-neutral-200 rounded-lg overflow-hidden">
-                  <div className="bg-neutral-50 px-4 py-2 border-b border-neutral-200">
-                    <p className="text-sm font-medium text-neutral-700">
+                <div className="border border-neutral-200 dark:border-neutral-700 rounded-lg overflow-hidden">
+                  <div className="bg-neutral-50 dark:bg-neutral-900 px-4 py-2 border-b border-neutral-200 dark:border-neutral-700">
+                    <p className="text-sm font-medium text-neutral-700 dark:text-neutral-200">
                       {t('weightTracker.historyTitle')}
                     </p>
                   </div>
-                  <div className="max-h-64 overflow-y-auto divide-y divide-neutral-100">
+                  <div className="max-h-64 overflow-y-auto divide-y divide-neutral-100 dark:divide-neutral-700">
                     {sortedHistoryForList.map(entry => (
                       <div
                         key={entry.id}
-                        className="flex items-center justify-between px-4 py-3 hover:bg-neutral-50"
+                        className="flex items-center justify-between px-4 py-3 hover:bg-neutral-50 dark:hover:bg-neutral-800"
                       >
                         <div>
-                          <p className="text-sm font-medium text-neutral-900">
+                          <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
                             {entry.weight_kg.toFixed(1)} kg
                           </p>
-                          <p className="text-xs text-neutral-500">
+                          <p className="text-xs text-neutral-500 dark:text-neutral-400">
                             {new Date(entry.recorded_at).toLocaleDateString(getDateLocale(), {
                               weekday: 'short',
                               day: 'numeric',
@@ -1181,7 +1198,7 @@ export default function WeightTracker({
                             })}
                           </p>
                           {entry.body_fat_percentage != null && (
-                            <p className="text-xs text-neutral-400">
+                            <p className="text-xs text-neutral-400 dark:text-neutral-500">
                               {t('weightTracker.historyBodyFat', {
                                 value: entry.body_fat_percentage.toFixed(1),
                               })}
@@ -1192,7 +1209,7 @@ export default function WeightTracker({
                           variant="ghost"
                           size="sm"
                           onClick={() => setDeleteConfirm(entry)}
-                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                          className="text-red-600 dark:text-red-300 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/30"
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
@@ -1204,14 +1221,14 @@ export default function WeightTracker({
 
               {/* Delete confirmation dialog */}
               {deleteConfirm && (
-                <div className="border border-red-200 bg-red-50 rounded-lg p-4">
+                <div className="border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/25 rounded-lg p-4">
                   <div className="flex items-start gap-3">
-                    <AlertTriangle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+                    <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-300 flex-shrink-0 mt-0.5" />
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-red-900">
+                      <p className="text-sm font-medium text-red-900 dark:text-red-300">
                         {t('weightTracker.deleteTitle')}
                       </p>
-                      <p className="text-sm text-red-700 mt-1">
+                      <p className="text-sm text-red-700 dark:text-red-300 mt-1">
                         {t('weightTracker.deleteDesc', {
                           weight: deleteConfirm.weight_kg.toFixed(1),
                           date: new Date(deleteConfirm.recorded_at).toLocaleDateString(
@@ -1270,7 +1287,7 @@ export default function WeightTracker({
         },
       ].map(({ open, onClose, title, body }) => (
         <InfoModal key={title} open={open} onClose={onClose} title={title} size="md">
-          <p className="text-sm text-neutral-600 leading-relaxed">{body}</p>
+          <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">{body}</p>
         </InfoModal>
       ))}
     </Card>

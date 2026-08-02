@@ -43,7 +43,7 @@ function MiniPieChart({
           stroke="currentColor"
           strokeWidth={strokeWidth}
           fill="none"
-          className="text-neutral-100"
+          className="text-neutral-100 dark:text-neutral-700"
         />
         {/* Segments */}
         {segments.map((segment, i) => {
@@ -68,7 +68,11 @@ function MiniPieChart({
           )
         })}
       </svg>
-      {label && <span className="text-[10px] text-neutral-500 font-medium">{label}</span>}
+      {label && (
+        <span className="text-[10px] text-neutral-500 dark:text-neutral-400 font-medium">
+          {label}
+        </span>
+      )}
       {/* Percentage labels */}
       <div className="flex flex-wrap justify-center gap-x-1.5 gap-y-0.5 text-[10px]">
         {segments.map((segment, i) => (
@@ -116,7 +120,7 @@ export function MealMacroBreakdown({
   const proteinColor = '#f43f5e' // rose-500 (klarröd)
 
   return (
-    <div className={cn('mt-3 pt-2 border-t border-neutral-100', className)}>
+    <div className={cn('mt-3 pt-2 border-t border-neutral-100 dark:border-neutral-800', className)}>
       <div className="flex items-start justify-center gap-4 sm:gap-6">
         {/* Weight pie chart (only if weight is available) */}
         {totalWeight > 0 && (

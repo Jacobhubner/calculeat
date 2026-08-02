@@ -44,7 +44,7 @@ export function MealProgressBar({
   return (
     <div className={cn('space-y-1', className)}>
       {showLabels && (
-        <div className="flex items-center justify-between text-xs text-neutral-500">
+        <div className="flex items-center justify-between text-xs text-neutral-500 dark:text-neutral-400">
           <span>{calories} kcal</span>
           <span>
             {Math.round(targetMin)}-{Math.round(targetMax)} kcal
@@ -57,19 +57,19 @@ export function MealProgressBar({
         {/* Background with zone indicators */}
         <div
           className={cn(
-            'w-full bg-neutral-100 rounded-full overflow-hidden',
+            'w-full bg-neutral-100 dark:bg-neutral-700 rounded-full overflow-hidden',
             heightClasses[height]
           )}
         >
           {/* Under-minimum zone (left part - cyan when under) */}
           <div
-            className="absolute top-0 left-0 h-full bg-blue-50 rounded-l-full"
+            className="absolute top-0 left-0 h-full bg-blue-50 dark:bg-blue-900/25 rounded-l-full"
             style={{ width: `${minZonePercent}%` }}
           />
 
           {/* Target zone (green area) */}
           <div
-            className="absolute top-0 h-full bg-green-50"
+            className="absolute top-0 h-full bg-green-50 dark:bg-green-900/25"
             style={{
               left: `${minZonePercent}%`,
               width: `${100 - minZonePercent}%`,
@@ -92,7 +92,7 @@ export function MealProgressBar({
         {/* Zone markers */}
         {targetMin > 0 && targetMin !== targetMax && (
           <div
-            className="absolute top-0 h-full w-0.5 bg-neutral-300"
+            className="absolute top-0 h-full w-0.5 bg-neutral-300 dark:bg-neutral-500"
             style={{ left: `${minZonePercent}%` }}
           />
         )}
@@ -132,11 +132,15 @@ export function MealProgressCompact({
   return (
     <div className={cn('flex items-center justify-between', className)}>
       <div className="flex items-center gap-2">
-        <span className="text-sm font-medium text-neutral-700">{mealName}</span>
-        <span className="text-xs text-neutral-400">({Math.round(mealPercent * 100)}%)</span>
+        <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+          {mealName}
+        </span>
+        <span className="text-xs text-neutral-400 dark:text-neutral-400">
+          ({Math.round(mealPercent * 100)}%)
+        </span>
       </div>
       <div className="flex items-center gap-2">
-        <span className="text-sm text-neutral-600">{calories} kcal</span>
+        <span className="text-sm text-neutral-600 dark:text-neutral-300">{calories} kcal</span>
         <span className={cn('text-sm font-medium', statusConfig.colorClass)}>
           {status.displayText}
         </span>
@@ -166,8 +170,10 @@ export function MealProgressHeader({
   return (
     <div className={cn('flex items-center justify-between', className)}>
       <div className="flex items-center gap-2">
-        <span className="font-semibold text-neutral-800">{mealName}</span>
-        <span className="text-sm text-neutral-500">({Math.round(mealPercent * 100)}%)</span>
+        <span className="font-semibold text-neutral-800 dark:text-neutral-200">{mealName}</span>
+        <span className="text-sm text-neutral-500 dark:text-neutral-400">
+          ({Math.round(mealPercent * 100)}%)
+        </span>
       </div>
       <span className={cn('text-sm font-medium', statusConfig.colorClass)}>
         {status.displayText}

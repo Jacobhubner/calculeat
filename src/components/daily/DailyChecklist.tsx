@@ -66,18 +66,20 @@ export function DailyChecklist({
       </div>
 
       {/* Progress summary */}
-      <div className="pt-2 border-t">
+      <div className="pt-2 border-t dark:border-neutral-700">
         <div className="flex items-center justify-between">
-          <span className="text-sm text-neutral-600">
+          <span className="text-sm text-neutral-600 dark:text-neutral-300">
             {t('checklist.progress', { completed: completedCount, total: totalCount })}
           </span>
           {allComplete && (
-            <span className="text-sm font-medium text-green-600">{t('checklist.allDone')}</span>
+            <span className="text-sm font-medium text-green-600 dark:text-green-400">
+              {t('checklist.allDone')}
+            </span>
           )}
         </div>
 
         {/* Progress bar */}
-        <div className="mt-2 h-2 bg-neutral-100 rounded-full overflow-hidden">
+        <div className="mt-2 h-2 bg-neutral-100 dark:bg-neutral-700 rounded-full overflow-hidden">
           <div
             className={cn(
               'h-full rounded-full transition-all duration-500',
@@ -113,26 +115,30 @@ function ChecklistRow({ item }: ChecklistRowProps) {
     <div
       className={cn(
         'flex items-center gap-3 p-2 rounded-lg transition-colors',
-        item.isComplete ? 'bg-green-50' : 'bg-neutral-50'
+        item.isComplete ? 'bg-green-50 dark:bg-green-900/25' : 'bg-neutral-50 dark:bg-neutral-900'
       )}
     >
       <div
         className={cn(
           'w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0',
-          item.isComplete ? 'bg-green-500 text-white' : 'bg-neutral-200 text-neutral-400'
+          item.isComplete
+            ? 'bg-green-500 text-white'
+            : 'bg-neutral-200 dark:bg-neutral-700 text-neutral-400'
         )}
       >
         {item.isComplete ? (
           <Check className="h-4 w-4" />
         ) : (
-          <Circle className="h-4 w-4 text-neutral-300" strokeWidth={1.5} />
+          <Circle className="h-4 w-4 text-neutral-300 dark:text-neutral-500" strokeWidth={1.5} />
         )}
       </div>
       <div className="flex-1">
         <span
           className={cn(
             'text-sm font-medium',
-            item.isComplete ? 'text-green-700' : 'text-neutral-600'
+            item.isComplete
+              ? 'text-green-700 dark:text-green-300'
+              : 'text-neutral-600 dark:text-neutral-300'
           )}
         >
           {item.label}
@@ -164,10 +170,10 @@ export function ChecklistSummaryBadge({
       className={cn(
         'inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-sm font-medium',
         allComplete
-          ? 'bg-green-100 text-green-700'
+          ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
           : completedCount > 0
-            ? 'bg-amber-100 text-amber-700'
-            : 'bg-neutral-100 text-neutral-600',
+            ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300'
+            : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300',
         className
       )}
     >

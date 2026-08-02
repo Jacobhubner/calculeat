@@ -99,7 +99,7 @@ export function BodyFatReferenceTable({
   const insights = showMale ? maleInsights : femaleInsights
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 dark:bg-neutral-850 dark:border-neutral-700 overflow-hidden">
       <div className="flex justify-end px-2 pt-2">
         <button
           type="button"
@@ -112,16 +112,16 @@ export function BodyFatReferenceTable({
       <div className="overflow-x-auto">
         <table className="w-full text-xs">
           <thead>
-            <tr className="bg-gray-50 border-b border-gray-200">
-              <th className="px-2 py-1.5 text-left font-semibold text-gray-900">
+            <tr className="bg-gray-50 border-b border-gray-200 dark:bg-neutral-900 dark:border-neutral-700">
+              <th className="px-2 py-1.5 text-left font-semibold text-gray-900 dark:text-neutral-100">
                 {t('refTable.category')}
               </th>
-              <th className="px-2 py-1.5 text-left font-semibold text-gray-900">
+              <th className="px-2 py-1.5 text-left font-semibold text-gray-900 dark:text-neutral-100">
                 {showMale ? t('refTable.men') : t('refTable.women')}
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">
+          <tbody className="divide-y divide-gray-200 dark:divide-neutral-700">
             {BODY_FAT_CATEGORIES_ACE.map((row, index) => {
               const isHighlightedByCategory =
                 highlightedCategory &&
@@ -134,16 +134,16 @@ export function BodyFatReferenceTable({
                   key={index}
                   className={`${
                     isHighlightedByCategory || isUserCategory
-                      ? 'bg-blue-100 border-l-4 border-l-blue-600 font-semibold'
-                      : 'bg-white'
-                  } hover:bg-gray-50 transition-colors`}
+                      ? 'bg-blue-100 border-l-4 border-l-blue-600 font-semibold dark:bg-blue-900/35'
+                      : 'bg-white dark:bg-neutral-850'
+                  } hover:bg-gray-50 transition-colors dark:hover:bg-neutral-800`}
                 >
-                  <td className="px-2 py-1.5 text-gray-900 font-medium">
+                  <td className="px-2 py-1.5 text-gray-900 font-medium dark:text-neutral-100">
                     {t(`refTable.bodyFatCategories.${row.category}`, {
                       defaultValue: row.category,
                     })}
                   </td>
-                  <td className="px-2 py-1.5 text-gray-700">{value}</td>
+                  <td className="px-2 py-1.5 text-gray-700 dark:text-neutral-300">{value}</td>
                 </tr>
               )
             })}
@@ -151,16 +151,18 @@ export function BodyFatReferenceTable({
         </table>
       </div>
 
-      <div className="px-2 py-1.5 bg-gray-50 border-t border-gray-200">
-        <p className="text-[10px] text-gray-600 italic">{t('refTable.source')}</p>
+      <div className="px-2 py-1.5 bg-gray-50 border-t border-gray-200 dark:bg-neutral-900 dark:border-neutral-700">
+        <p className="text-[10px] text-gray-600 italic dark:text-neutral-400">
+          {t('refTable.source')}
+        </p>
       </div>
 
       {/* Expandable section: images + insights */}
-      <div className="border-t border-gray-200">
+      <div className="border-t border-gray-200 dark:border-neutral-700">
         <button
           type="button"
           onClick={() => setExpanded(v => !v)}
-          className="w-full flex items-center justify-between px-3 py-2 text-[11px] text-gray-600 hover:bg-gray-50 transition-colors"
+          className="w-full flex items-center justify-between px-3 py-2 text-[11px] text-gray-600 hover:bg-gray-50 dark:text-neutral-400 dark:hover:bg-neutral-800 transition-colors dark:hover:bg-neutral-800"
         >
           <span>{t('refTable.whatDoRangesMean')}</span>
           {expanded ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
@@ -171,8 +173,10 @@ export function BodyFatReferenceTable({
             <div className="flex flex-col gap-1.5">
               {insights.map(({ range, text }) => (
                 <div key={range} className="text-[11px]">
-                  <span className="font-semibold text-gray-800">{range}:</span>{' '}
-                  <span className="text-gray-600">{text}</span>
+                  <span className="font-semibold text-gray-800 dark:text-neutral-200">
+                    {range}:
+                  </span>{' '}
+                  <span className="text-gray-600 dark:text-neutral-400">{text}</span>
                 </div>
               ))}
             </div>

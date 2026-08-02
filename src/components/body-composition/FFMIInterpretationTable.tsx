@@ -60,7 +60,7 @@ export function FFMIInterpretationTable({
   const toggleRow = (i: number) => setExpandedRow(prev => (prev === i ? null : i))
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-neutral-200 overflow-hidden">
+    <div className="bg-white rounded-lg shadow-sm border border-neutral-200 dark:bg-neutral-850 dark:border-neutral-700 overflow-hidden">
       <div className="flex justify-end px-2 pt-2">
         <button
           type="button"
@@ -78,51 +78,51 @@ export function FFMIInterpretationTable({
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="bg-neutral-50 border-b border-neutral-200">
-              <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-500 uppercase tracking-wider">
+            <tr className="bg-neutral-50 border-b border-neutral-200 dark:bg-neutral-900 dark:border-neutral-700">
+              <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-500 uppercase dark:text-neutral-400 tracking-wider">
                 {t('ffmiInterpretation.columnFFMI')}
               </th>
-              <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-500 uppercase tracking-wider">
+              <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-500 uppercase dark:text-neutral-400 tracking-wider">
                 {t('ffmiInterpretation.columnBodyFat')}
               </th>
-              <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-500 uppercase tracking-wider">
+              <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-500 uppercase dark:text-neutral-400 tracking-wider">
                 {t('ffmiInterpretation.columnCategory')}
               </th>
-              <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-500 uppercase tracking-wider hidden lg:table-cell">
+              <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-500 uppercase dark:text-neutral-400 tracking-wider hidden lg:table-cell">
                 {t('ffmiInterpretation.columnDescription')}
               </th>
               {/* Expand toggle column — only on mobile */}
               <th className="px-2 py-2 lg:hidden" />
             </tr>
           </thead>
-          <tbody className="divide-y divide-neutral-100">
+          <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700">
             {rows.map((row, i) => {
               const highlighted =
                 userFFMI != null && userBodyFat != null && isMatch(row, userFFMI, userBodyFat)
               const rowKey = `row${i}` as const
               const isExpanded = expandedRow === i
               const baseClass = highlighted
-                ? 'bg-blue-100 border-l-4 border-l-blue-600 font-semibold'
+                ? 'bg-blue-100 border-l-4 border-l-blue-600 font-semibold dark:bg-blue-900/35'
                 : i % 2 === 0
-                  ? 'bg-white'
-                  : 'bg-neutral-50/50'
+                  ? 'bg-white dark:bg-neutral-850'
+                  : 'bg-neutral-50/50 dark:bg-neutral-900/50'
 
               return (
                 <Fragment key={i}>
                   <tr className={baseClass}>
-                    <td className="px-3 py-2 text-neutral-800 whitespace-nowrap">
+                    <td className="px-3 py-2 text-neutral-800 whitespace-nowrap dark:text-neutral-200">
                       {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                       {t(`ffmiInterpretation.${genderKey}.${rowKey}.range` as any)}
                     </td>
-                    <td className="px-3 py-2 text-neutral-600 whitespace-nowrap">
+                    <td className="px-3 py-2 text-neutral-600 whitespace-nowrap dark:text-neutral-400">
                       {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                       {t(`ffmiInterpretation.${genderKey}.${rowKey}.bf` as any)}
                     </td>
-                    <td className="px-3 py-2 font-medium text-neutral-700 whitespace-nowrap">
+                    <td className="px-3 py-2 font-medium text-neutral-700 whitespace-nowrap dark:text-neutral-200">
                       {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                       {t(`ffmiInterpretation.${genderKey}.${rowKey}.category` as any)}
                     </td>
-                    <td className="px-3 py-2 text-neutral-500 hidden lg:table-cell">
+                    <td className="px-3 py-2 text-neutral-500 hidden lg:table-cell dark:text-neutral-400">
                       {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                       {t(`ffmiInterpretation.${genderKey}.${rowKey}.desc` as any)}
                     </td>
@@ -131,7 +131,7 @@ export function FFMIInterpretationTable({
                       <button
                         type="button"
                         onClick={() => toggleRow(i)}
-                        className="p-1 text-neutral-400 hover:text-neutral-600 transition-colors"
+                        className="p-1 text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 transition-colors"
                         aria-label="Visa beskrivning"
                       >
                         <ChevronDown
@@ -142,7 +142,10 @@ export function FFMIInterpretationTable({
                   </tr>
                   {isExpanded && (
                     <tr className={cn(baseClass, 'lg:hidden')}>
-                      <td colSpan={4} className="px-3 pb-3 pt-0 text-xs text-neutral-500 italic">
+                      <td
+                        colSpan={4}
+                        className="px-3 pb-3 pt-0 text-xs text-neutral-500 italic dark:text-neutral-400"
+                      >
                         {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                         {t(`ffmiInterpretation.${genderKey}.${rowKey}.desc` as any)}
                       </td>

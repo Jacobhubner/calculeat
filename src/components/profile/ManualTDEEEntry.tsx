@@ -116,8 +116,8 @@ export default function ManualTDEEEntry({
     <div className="space-y-4">
       {/* TDEE Input */}
       <div>
-        <label className="block text-sm font-medium text-neutral-700 mb-2">
-          TDEE (kcal/dag) <span className="text-red-600">*</span>
+        <label className="block text-sm font-medium text-neutral-700 mb-2 dark:text-neutral-200">
+          TDEE (kcal/dag) <span className="text-red-600 dark:text-red-300">*</span>
         </label>
         <input
           type="number"
@@ -128,7 +128,7 @@ export default function ManualTDEEEntry({
               handleContinue()
             }
           }}
-          className="block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+          className="block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:border-neutral-600"
           placeholder="2500"
           min="500"
           max="10000"
@@ -138,7 +138,7 @@ export default function ManualTDEEEntry({
       {/* Body Fat Percentage (Optional) */}
       {showBodyFat && (
         <div>
-          <label className="block text-sm font-medium text-neutral-700 mb-2">
+          <label className="block text-sm font-medium text-neutral-700 mb-2 dark:text-neutral-200">
             Kroppsfettprocent (valfri)
           </label>
           <input
@@ -150,13 +150,13 @@ export default function ManualTDEEEntry({
                 handleContinue()
               }
             }}
-            className="block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+            className="block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:border-neutral-600"
             placeholder="15"
             min="0"
             max="100"
             step="0.1"
           />
-          <p className="text-xs text-neutral-500 mt-1">
+          <p className="text-xs text-neutral-500 mt-1 dark:text-neutral-400">
             Krävs för vissa BMR-formler om du vill beräkna TDEE senare
           </p>
         </div>

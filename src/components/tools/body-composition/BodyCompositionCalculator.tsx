@@ -737,7 +737,7 @@ export default function BodyCompositionCalculator() {
           <Activity className="h-8 w-8 text-primary-600" />
           {t('calculator.title')}
         </h1>
-        <p className="text-neutral-600">{t('calculator.subtitle')}</p>
+        <p className="text-neutral-600 dark:text-neutral-300">{t('calculator.subtitle')}</p>
       </div>
 
       <div className="max-w-7xl mx-auto">
@@ -798,11 +798,11 @@ export default function BodyCompositionCalculator() {
                       )}
 
                       {requirements.type === 'profile' && (
-                        <div className="rounded-2xl border border-neutral-200 bg-white p-6">
-                          <p className="text-sm text-neutral-600 mb-4">
+                        <div className="rounded-2xl border border-neutral-200 bg-white p-6 dark:border-neutral-700 dark:bg-neutral-850">
+                          <p className="text-sm text-neutral-600 dark:text-neutral-300 mb-4">
                             {t('calculator.profileDataTitle')}
                           </p>
-                          <ul className="space-y-2 text-sm">
+                          <ul className="space-y-2 text-sm dark:text-neutral-200">
                             {requirements.fields.includes('bmi') && (
                               <li>
                                 <span className="font-medium">
@@ -888,7 +888,7 @@ export default function BodyCompositionCalculator() {
                                       value: Math.round(profile.bmr),
                                     })}
                                     {profile.bmr_formula && (
-                                      <span className="text-neutral-400 ml-1">
+                                      <span className="text-neutral-400 dark:text-neutral-400 ml-1">
                                         ({profile.bmr_formula.replace(' equation', '')})
                                       </span>
                                     )}
@@ -901,7 +901,7 @@ export default function BodyCompositionCalculator() {
                               </li>
                             )}
                           </ul>
-                          <p className="text-xs text-neutral-500 mt-4">
+                          <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-4">
                             {t('calculator.profileDataUpdate')}
                           </p>
                         </div>
@@ -935,14 +935,18 @@ export default function BodyCompositionCalculator() {
                   )}
 
                   {!selectedMethod && (
-                    <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-8 text-center">
-                      <p className="text-neutral-600">{t('calculator.noMethodSelected')}</p>
+                    <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-8 text-center dark:border-neutral-700 dark:bg-neutral-900">
+                      <p className="text-neutral-600 dark:text-neutral-300">
+                        {t('calculator.noMethodSelected')}
+                      </p>
                     </div>
                   )}
 
                   {selectedMethod && bodyFatPercentage === null && (
-                    <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-8 text-center">
-                      <p className="text-neutral-600">{t('calculator.missingFields')}</p>
+                    <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-8 text-center dark:border-neutral-700 dark:bg-neutral-900">
+                      <p className="text-neutral-600 dark:text-neutral-300">
+                        {t('calculator.missingFields')}
+                      </p>
                     </div>
                   )}
                 </div>

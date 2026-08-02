@@ -84,10 +84,10 @@ export default function TDEEOptions({
     <div className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Option 1: Calculate TDEE */}
-        <Card className="border-2 border-primary-200 hover:border-primary-400 transition-colors">
+        <Card className="border-2 border-primary-200 hover:border-primary-400 transition-colors dark:border-primary-800">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
-              <Calculator className="h-5 w-5 text-primary-600" />
+              <Calculator className="h-5 w-5 text-primary-600 dark:text-primary-300" />
               {t('tdeeOptions.calculateTitle')}
             </CardTitle>
             <CardDescription>{t('tdeeOptions.calculateDesc')}</CardDescription>
@@ -101,10 +101,10 @@ export default function TDEEOptions({
         </Card>
 
         {/* Option 2: Manual TDEE Entry */}
-        <Card className="border-2 border-blue-200 hover:border-blue-400 transition-colors">
+        <Card className="border-2 border-blue-200 hover:border-blue-400 transition-colors dark:border-blue-800">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
-              <Edit3 className="h-5 w-5 text-blue-600" />
+              <Edit3 className="h-5 w-5 text-blue-600 dark:text-blue-300" />
               {t('tdeeOptions.manualTitle')}
             </CardTitle>
             <CardDescription>{t('tdeeOptions.manualDesc')}</CardDescription>

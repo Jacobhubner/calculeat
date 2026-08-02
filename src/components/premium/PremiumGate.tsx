@@ -60,11 +60,11 @@ export function PremiumGate({ feature, children, className, title, infoBody }: P
       <div aria-hidden="true" className="pointer-events-none select-none blur-sm">
         {children}
       </div>
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 rounded-lg bg-white/40">
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 rounded-lg bg-white/40 dark:bg-neutral-950/50">
         <button
           type="button"
           onClick={() => setModalOpen(true)}
-          className="flex flex-col items-center gap-2 rounded-lg px-6 py-3 text-neutral-700 transition-colors hover:bg-white/60"
+          className="flex flex-col items-center gap-2 rounded-lg px-6 py-3 text-neutral-700 transition-colors hover:bg-white/60 dark:text-neutral-300 dark:hover:bg-neutral-900/60"
         >
           <Lock className="h-5 w-5" aria-hidden="true" />
           <span className="text-sm font-medium">{title ?? t('gate.lockedTitle')}</span>
@@ -74,7 +74,7 @@ export function PremiumGate({ feature, children, className, title, infoBody }: P
           <button
             type="button"
             onClick={() => setInfoOpen(true)}
-            className="flex items-center gap-1 text-xs text-neutral-600 underline hover:text-neutral-900"
+            className="flex items-center gap-1 text-xs text-neutral-600 underline hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200"
           >
             <Info className="h-3.5 w-3.5" aria-hidden="true" />
             {t('gate.whatIsThis')}
@@ -89,7 +89,9 @@ export function PremiumGate({ feature, children, className, title, infoBody }: P
           title={title ?? t('gate.lockedTitle')}
           size="md"
         >
-          <p className="text-neutral-700 leading-relaxed whitespace-pre-line">{infoBody}</p>
+          <p className="text-neutral-700 leading-relaxed whitespace-pre-line dark:text-neutral-300">
+            {infoBody}
+          </p>
         </InfoModal>
       )}
     </div>

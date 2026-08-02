@@ -27,7 +27,11 @@ function ColorDot({ color }: { color?: string | null }) {
 
 function ScoreBadge({ score }: { score: number }) {
   const colorClass =
-    score >= 80 ? 'text-green-600' : score >= 60 ? 'text-yellow-600' : 'text-neutral-500'
+    score >= 80
+      ? 'text-green-600 dark:text-green-400'
+      : score >= 60
+        ? 'text-yellow-600 dark:text-yellow-400'
+        : 'text-neutral-500 dark:text-neutral-400'
   return <span className={`text-xs font-medium ${colorClass}`}>{Math.round(score)}%</span>
 }
 
@@ -142,7 +146,7 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className="text-base flex items-center gap-2">
-            <Lightbulb className="h-4 w-4 text-primary-600" />
+            <Lightbulb className="h-4 w-4 text-primary-600 dark:text-primary-400" />
             {t('foodSuggestions.title')}
             <ToolInfoButton
               title={t('foodSuggestions.title')}
@@ -154,8 +158,8 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
             onClick={() => setShowSettings(!showSettings)}
             className={`p-1.5 rounded-lg transition-colors ${
               showSettings
-                ? 'bg-primary-100 text-primary-600'
-                : 'hover:bg-neutral-100 text-neutral-500'
+                ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-300'
+                : 'hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-500 dark:text-neutral-400'
             }`}
             title={t('foodSuggestions.settingsTitle')}
           >
@@ -177,8 +181,8 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
             min={0}
             placeholder="kcal"
           />
-          <span className="text-xs text-neutral-500">kcal</span>
-          <span className="text-neutral-300">+</span>
+          <span className="text-xs text-neutral-500 dark:text-neutral-400">kcal</span>
+          <span className="text-neutral-300 dark:text-neutral-500">+</span>
           <Input
             type="number"
             value={primaryMacroTarget}
@@ -190,18 +194,18 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
             min={0}
             placeholder="g"
           />
-          <span className="text-xs text-neutral-500">
+          <span className="text-xs text-neutral-500 dark:text-neutral-400">
             {t('foodSuggestions.macroUnit', { macro: t(`foodSuggestions.macro.${primaryMacro}`) })}
           </span>
           {!isSearchValid && (
-            <span className="text-xs text-neutral-400 ml-auto">
+            <span className="text-xs text-neutral-400 dark:text-neutral-400 ml-auto">
               {t('foodSuggestions.enterGoal')}
             </span>
           )}
         </div>
 
         {showSettings && (
-          <div className="p-3 bg-neutral-50 rounded-lg space-y-3 border">
+          <div className="p-3 bg-neutral-50 dark:bg-neutral-900 rounded-lg space-y-3 border dark:border-neutral-700">
             <div className="flex items-center gap-3">
               <Label className="text-xs shrink-0">
                 {t('foodSuggestions.settings.primaryMacro')}
@@ -211,7 +215,7 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
                 onChange={e =>
                   handlePrimaryMacroChange(e.target.value as 'protein' | 'carbs' | 'fat')
                 }
-                className="h-7 text-xs px-2 rounded-lg border border-neutral-300 bg-white"
+                className="h-7 text-xs px-2 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 dark:text-neutral-100"
               >
                 <option value="fat">{t('foodSuggestions.macro.fat')}</option>
                 <option value="carbs">{t('foodSuggestions.macro.carbs')}</option>
@@ -228,7 +232,7 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
                 onChange={e =>
                   setSecondaryMacro(e.target.value as 'protein' | 'carbs' | 'fat' | '')
                 }
-                className="h-7 text-xs px-2 rounded-lg border border-neutral-300 bg-white"
+                className="h-7 text-xs px-2 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 dark:text-neutral-100"
               >
                 <option value="">{t('foodSuggestions.settings.secondaryNone')}</option>
                 {primaryMacro !== 'fat' && (
@@ -253,7 +257,7 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
                     className="h-7 w-16 text-xs text-center"
                     min={0}
                   />
-                  <span className="text-xs text-neutral-500">g</span>
+                  <span className="text-xs text-neutral-500 dark:text-neutral-400">g</span>
                 </>
               )}
             </div>
@@ -277,7 +281,7 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
                 onChange={e =>
                   setSortBy(e.target.value as 'score' | 'protein' | 'calories' | 'name')
                 }
-                className="h-7 text-xs px-2 rounded-lg border border-neutral-300 bg-white"
+                className="h-7 text-xs px-2 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 dark:text-neutral-100"
               >
                 <option value="score">{t('foodSuggestions.sort.score')}</option>
                 <option value="protein">{t('foodSuggestions.sort.protein')}</option>
@@ -303,7 +307,7 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
                     className={`px-2 py-0.5 text-xs rounded-full border transition-colors ${
                       sourceFilter === s.key
                         ? 'bg-primary-500 text-white border-primary-600'
-                        : 'bg-white text-neutral-500 border-neutral-200 hover:border-neutral-400'
+                        : 'bg-white dark:bg-neutral-850 text-neutral-500 dark:text-neutral-300 border-neutral-200 dark:border-neutral-700 hover:border-neutral-400 dark:hover:border-neutral-500'
                     }`}
                   >
                     {t(`foodSuggestions.${s.labelKey}`)}
@@ -333,7 +337,7 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
                       (item.key === 'livsmedel' && nonRecipesOnly) ||
                       (item.key === 'alla' && !recipesOnly && !nonRecipesOnly)
                         ? 'bg-primary-500 text-white border-primary-600'
-                        : 'bg-white text-neutral-500 border-neutral-200 hover:border-neutral-400'
+                        : 'bg-white dark:bg-neutral-850 text-neutral-500 dark:text-neutral-300 border-neutral-200 dark:border-neutral-700 hover:border-neutral-400 dark:hover:border-neutral-500'
                     }`}
                   >
                     {t(`foodSuggestions.${item.labelKey}`)}
@@ -351,7 +355,7 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
                     className={`px-2 py-0.5 text-xs rounded-full border transition-colors ${
                       !filterByColor
                         ? 'bg-primary-500 text-white border-primary-600'
-                        : 'bg-white text-neutral-500 border-neutral-200 hover:border-neutral-400'
+                        : 'bg-white dark:bg-neutral-850 text-neutral-500 dark:text-neutral-300 border-neutral-200 dark:border-neutral-700 hover:border-neutral-400 dark:hover:border-neutral-500'
                     }`}
                   >
                     {t('foodSuggestions.settings.colorAll')}
@@ -397,7 +401,7 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
                       className={`flex items-center gap-1 px-2 py-0.5 text-xs rounded-full border transition-colors ${
                         filterByColor && c.checked
                           ? `${c.key === 'yellow' ? 'bg-yellow-400 border-yellow-500 text-neutral-900' : c.key === 'green' ? 'bg-green-500 border-green-600 text-white' : 'bg-orange-500 border-orange-600 text-white'}`
-                          : 'bg-white text-neutral-500 border-neutral-200 hover:border-neutral-400'
+                          : 'bg-white dark:bg-neutral-850 text-neutral-500 dark:text-neutral-300 border-neutral-200 dark:border-neutral-700 hover:border-neutral-400 dark:hover:border-neutral-500'
                       }`}
                     >
                       <span className={`w-2 h-2 rounded-full shrink-0 ${c.dot}`} />
@@ -411,21 +415,25 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
         )}
 
         {isLoading ? (
-          <p className="text-xs text-neutral-500 text-center py-4">
+          <p className="text-xs text-neutral-500 dark:text-neutral-400 text-center py-4">
             {t('foodSuggestions.searching')}
           </p>
         ) : !isSearchValid ? (
-          <p className="text-xs text-neutral-400 text-center py-3">
+          <p className="text-xs text-neutral-400 dark:text-neutral-400 text-center py-3">
             {t('foodSuggestions.enterGoalHint')}
           </p>
         ) : suggestions.length === 0 ? (
           <div className="text-center py-4">
-            <p className="text-sm text-neutral-600">{t('foodSuggestions.noMatches')}</p>
-            <p className="text-xs text-neutral-400 mt-1">{t('foodSuggestions.noMatchesHint')}</p>
+            <p className="text-sm text-neutral-600 dark:text-neutral-300">
+              {t('foodSuggestions.noMatches')}
+            </p>
+            <p className="text-xs text-neutral-400 dark:text-neutral-400 mt-1">
+              {t('foodSuggestions.noMatchesHint')}
+            </p>
           </div>
         ) : (
           <>
-            <div className="flex items-center justify-between text-xs text-neutral-500 border-b pb-1">
+            <div className="flex items-center justify-between text-xs text-neutral-500 dark:text-neutral-400 border-b dark:border-neutral-700 pb-1">
               <span>{t('foodSuggestions.resultsCount', { count: suggestions.length })}</span>
               <span>
                 {t('foodSuggestions.sortedBy')} {t(`foodSuggestions.sort.${sortBy}`)}
@@ -437,22 +445,22 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
                 return (
                   <div
                     key={match.food.id}
-                    className="px-1 py-1.5 hover:bg-neutral-50 transition-colors border-b border-neutral-100 last:border-b-0"
+                    className="px-1 py-1.5 hover:bg-neutral-50 dark:hover:bg-neutral-900 transition-colors border-b border-neutral-100 dark:border-neutral-800 last:border-b-0"
                   >
                     <div className="flex items-center gap-1.5">
-                      <span className="text-xs text-neutral-400 w-4 text-center flex-shrink-0">
+                      <span className="text-xs text-neutral-400 dark:text-neutral-400 w-4 text-center flex-shrink-0">
                         {index + 1}
                       </span>
 
-                      <span className="text-sm text-neutral-900 flex-1 min-w-0 leading-tight">
+                      <span className="text-sm text-neutral-900 dark:text-neutral-100 flex-1 min-w-0 leading-tight">
                         {match.food.name}
                       </span>
 
-                      <span className="text-xs font-medium text-primary-600 whitespace-nowrap flex-shrink-0">
+                      <span className="text-xs font-medium text-primary-600 dark:text-primary-300 whitespace-nowrap flex-shrink-0">
                         {match.amount.toFixed(1).replace(/\.0$/, '')} {match.unit}
                       </span>
 
-                      <span className="text-xs text-neutral-600 whitespace-nowrap w-14 text-right flex-shrink-0">
+                      <span className="text-xs text-neutral-600 dark:text-neutral-300 whitespace-nowrap w-14 text-right flex-shrink-0">
                         {Math.round(match.calories)} kcal
                       </span>
 
@@ -495,22 +503,32 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
                     <div className="flex items-center gap-2 mt-0.5 ml-9 text-xs">
                       <ColorDot color={match.food.energy_density_color} />
                       <ScoreBadge score={match.overallScore} />
-                      <span className="text-neutral-300">•</span>
+                      <span className="text-neutral-300 dark:text-neutral-500">•</span>
                       <span
-                        className={primaryMacro === 'fat' ? 'font-semibold' : 'text-neutral-500'}
+                        className={
+                          primaryMacro === 'fat'
+                            ? 'font-semibold'
+                            : 'text-neutral-500 dark:text-neutral-400'
+                        }
                         style={primaryMacro === 'fat' ? { color: '#f5c518' } : undefined}
                       >
                         F:{match.fat.toFixed(0)}g
                       </span>
                       <span
-                        className={primaryMacro === 'carbs' ? 'font-semibold' : 'text-neutral-500'}
+                        className={
+                          primaryMacro === 'carbs'
+                            ? 'font-semibold'
+                            : 'text-neutral-500 dark:text-neutral-400'
+                        }
                         style={primaryMacro === 'carbs' ? { color: '#fb923c' } : undefined}
                       >
                         K:{match.carbs.toFixed(0)}g
                       </span>
                       <span
                         className={
-                          primaryMacro === 'protein' ? 'font-semibold' : 'text-neutral-500'
+                          primaryMacro === 'protein'
+                            ? 'font-semibold'
+                            : 'text-neutral-500 dark:text-neutral-400'
                         }
                         style={primaryMacro === 'protein' ? { color: '#f43f5e' } : undefined}
                       >

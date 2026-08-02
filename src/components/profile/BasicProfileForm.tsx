@@ -72,7 +72,7 @@ export default function BasicProfileForm({
         <CardContent className="space-y-4">
           {/* Body Fat Percentage */}
           <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-2">
+            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-200 mb-2">
               {t('bodyComposition.bodyFatLabel')}
             </label>
             <input
@@ -80,18 +80,18 @@ export default function BasicProfileForm({
               value={bodyFat}
               onChange={e => setBodyFat(e.target.value)}
               onBlur={handleBodyFatBlur}
-              className="block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+              className="block w-full rounded-xl border-neutral-300 dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-100 shadow-sm focus:border-primary-500 focus:ring-primary-500"
               placeholder=""
               min="0"
               max="100"
               step="0.1"
             />
-            <p className="text-xs text-neutral-500 mt-1">
+            <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
               {t('bodyComposition.bodyFatHint')}{' '}
               <button
                 type="button"
                 onClick={() => navigate('/app/body-composition')}
-                className="text-primary-600 hover:underline"
+                className="text-primary-600 dark:text-primary-300 hover:underline"
               >
                 {t('bodyComposition.goToBodyComp')}
               </button>
@@ -126,20 +126,20 @@ export default function BasicProfileForm({
             />
 
             {/* Energy density indicator toggle */}
-            <div className="mt-4 pt-4 border-t border-neutral-100">
+            <div className="mt-4 pt-4 border-t border-neutral-100 dark:border-neutral-700">
               <div className="flex items-start justify-between gap-2">
                 <label className="flex items-start gap-3 cursor-pointer flex-1">
                   <input
                     type="checkbox"
                     checked={profile.show_energy_density ?? false}
                     onChange={e => onColorBalanceChange(e.target.checked)}
-                    className="mt-0.5 h-4 w-4 rounded border-neutral-300 text-primary-600 focus:ring-primary-500"
+                    className="mt-0.5 h-4 w-4 rounded border-neutral-300 dark:border-neutral-600 dark:bg-neutral-900 text-primary-600 focus:ring-primary-500"
                   />
                   <div>
-                    <span className="block text-sm font-medium text-neutral-800">
+                    <span className="block text-sm font-medium text-neutral-800 dark:text-neutral-200">
                       {t('goals.showColorBalance')}
                     </span>
-                    <span className="block text-xs text-neutral-500 mt-0.5">
+                    <span className="block text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
                       {t('goals.showColorBalanceDesc')}
                     </span>
                   </div>
@@ -147,7 +147,7 @@ export default function BasicProfileForm({
                 <button
                   type="button"
                   onClick={() => setColorInfoOpen(true)}
-                  className="shrink-0 mt-0.5 text-neutral-400 hover:text-neutral-600 transition-colors"
+                  className="shrink-0 mt-0.5 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors"
                   aria-label={t('goals.showColorBalanceInfoTitle')}
                 >
                   <Info className="h-4 w-4" />
@@ -162,65 +162,65 @@ export default function BasicProfileForm({
                   onClick={() => setColorInfoOpen(false)}
                 >
                   <div
-                    className="bg-white rounded-2xl shadow-2xl max-w-sm w-full max-h-[90vh] overflow-y-auto"
+                    className="bg-white dark:bg-neutral-850 rounded-2xl shadow-2xl max-w-sm w-full max-h-[90vh] overflow-y-auto"
                     onClick={e => e.stopPropagation()}
                   >
-                    <div className="sticky top-0 bg-white border-b border-neutral-200 px-6 py-4 flex justify-between items-start rounded-t-2xl">
-                      <h2 className="text-lg font-semibold text-neutral-900">
+                    <div className="sticky top-0 bg-white dark:bg-neutral-850 border-b border-neutral-200 dark:border-neutral-700 px-6 py-4 flex justify-between items-start rounded-t-2xl">
+                      <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
                         {t('goals.showColorBalanceInfoTitle')}
                       </h2>
                       <button
                         onClick={() => setColorInfoOpen(false)}
-                        className="text-neutral-500 hover:text-neutral-700 transition-colors"
+                        className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 transition-colors"
                         aria-label={t('goals.showColorBalanceClose')}
                       >
                         <X className="h-5 w-5" />
                       </button>
                     </div>
                     <div className="p-6 space-y-4 text-sm">
-                      <p className="text-neutral-600 leading-relaxed">
+                      <p className="text-neutral-600 dark:text-neutral-400 leading-relaxed">
                         {t('goals.showColorBalanceInfoBody')}
                       </p>
                       <div>
-                        <p className="font-semibold text-neutral-800 mb-2">
+                        <p className="font-semibold text-neutral-800 dark:text-neutral-200 mb-2">
                           {t('goals.showColorBalanceWhatTitle')}
                         </p>
-                        <p className="text-neutral-600 leading-relaxed mb-2">
+                        <p className="text-neutral-600 dark:text-neutral-400 leading-relaxed mb-2">
                           {t('goals.showColorBalanceWhatBody1')}
                         </p>
-                        <p className="text-neutral-600 leading-relaxed">
+                        <p className="text-neutral-600 dark:text-neutral-400 leading-relaxed">
                           {t('goals.showColorBalanceWhatBody2')}
                         </p>
                       </div>
                       <div>
-                        <p className="font-semibold text-neutral-800 mb-2">
+                        <p className="font-semibold text-neutral-800 dark:text-neutral-200 mb-2">
                           {t('goals.showColorBalanceWhenTitle')}
                         </p>
-                        <p className="text-neutral-600 leading-relaxed mb-2">
+                        <p className="text-neutral-600 dark:text-neutral-400 leading-relaxed mb-2">
                           {t('goals.showColorBalanceWhenBody1')}
                         </p>
-                        <p className="text-neutral-600 leading-relaxed">
+                        <p className="text-neutral-600 dark:text-neutral-400 leading-relaxed">
                           {t('goals.showColorBalanceWhenBody2')}
                         </p>
                       </div>
                       <div>
-                        <p className="font-semibold text-neutral-800 mb-2">
+                        <p className="font-semibold text-neutral-800 dark:text-neutral-200 mb-2">
                           {t('goals.showColorBalanceTargetsTitle')}
                         </p>
                         <div className="space-y-1.5">
-                          <p className="text-neutral-700">
+                          <p className="text-neutral-700 dark:text-neutral-200">
                             {t('goals.showColorBalanceGreenTarget')}
                           </p>
-                          <p className="text-neutral-700">
+                          <p className="text-neutral-700 dark:text-neutral-200">
                             {t('goals.showColorBalanceYellowTarget')}
                           </p>
-                          <p className="text-neutral-700">
+                          <p className="text-neutral-700 dark:text-neutral-200">
                             {t('goals.showColorBalanceOrangeTarget')}
                           </p>
                         </div>
                       </div>
                     </div>
-                    <div className="sticky bottom-0 bg-white border-t border-neutral-200 px-6 py-4 rounded-b-2xl">
+                    <div className="sticky bottom-0 bg-white dark:bg-neutral-850 border-t border-neutral-200 dark:border-neutral-700 px-6 py-4 rounded-b-2xl">
                       <Button onClick={() => setColorInfoOpen(false)} className="w-full">
                         {t('goals.showColorBalanceClose')}
                       </Button>

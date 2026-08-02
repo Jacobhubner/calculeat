@@ -148,7 +148,7 @@ export default function ComparisonTab({
           {/* Kön + Använd mina värden */}
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-2">
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
                 {t('comparison.gender')}
               </label>
               <div className="flex gap-2">
@@ -160,7 +160,7 @@ export default function ComparisonTab({
                     className={`px-4 py-2 rounded-full text-sm font-medium border transition-colors ${
                       gender === g
                         ? 'bg-primary-600 text-white border-primary-600'
-                        : 'bg-white text-neutral-700 border-neutral-300 hover:border-primary-400'
+                        : 'bg-white text-neutral-700 border-neutral-300 hover:border-primary-400 dark:bg-neutral-850 dark:text-neutral-300 dark:border-neutral-700'
                     }`}
                   >
                     {g === 'male' ? t('comparison.male') : t('comparison.female')}
@@ -172,7 +172,7 @@ export default function ComparisonTab({
               <button
                 type="button"
                 onClick={loadProfileValues}
-                className="px-4 py-2 rounded-full text-sm font-medium border border-accent-500 text-accent-600 bg-white hover:bg-accent-50 transition-colors"
+                className="px-4 py-2 rounded-full text-sm font-medium border border-accent-500 text-accent-600 bg-white hover:bg-accent-50 transition-colors dark:bg-neutral-850 dark:text-accent-300 dark:hover:bg-accent-900/25"
               >
                 {t('comparison.useMyValues')}
               </button>
@@ -182,8 +182,8 @@ export default function ComparisonTab({
           {/* Ålder / Vikt / Längd */}
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-1">
-                {t('comparison.age')} <span className="text-red-600">*</span>
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                {t('comparison.age')} <span className="text-red-600 dark:text-red-400">*</span>
               </label>
               <input
                 type="number"
@@ -193,12 +193,12 @@ export default function ComparisonTab({
                 min="10"
                 max="120"
                 step="1"
-                className="w-full px-3 py-2 rounded-lg border border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-1">
-                {t('comparison.weight')} <span className="text-red-600">*</span>
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                {t('comparison.weight')} <span className="text-red-600 dark:text-red-400">*</span>
               </label>
               <input
                 type="number"
@@ -208,12 +208,12 @@ export default function ComparisonTab({
                 min="20"
                 max="300"
                 step="0.1"
-                className="w-full px-3 py-2 rounded-lg border border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-1">
-                {t('comparison.height')} <span className="text-red-600">*</span>
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                {t('comparison.height')} <span className="text-red-600 dark:text-red-400">*</span>
               </label>
               <input
                 type="number"
@@ -223,7 +223,7 @@ export default function ComparisonTab({
                 min="100"
                 max="250"
                 step="1"
-                className="w-full px-3 py-2 rounded-lg border border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100"
               />
             </div>
           </div>
@@ -232,7 +232,7 @@ export default function ComparisonTab({
           <div>
             <label className="block text-sm font-medium text-neutral-700 mb-1">
               {t('comparison.bodyFat')}{' '}
-              <span className="text-neutral-500 font-normal">
+              <span className="text-neutral-500 dark:text-neutral-400 font-normal">
                 {t('comparison.bodyFatOptional')}
               </span>
             </label>
@@ -244,7 +244,7 @@ export default function ComparisonTab({
               min="3"
               max="60"
               step="0.1"
-              className="w-full max-w-xs px-3 py-2 rounded-lg border border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm"
+              className="w-full max-w-xs px-3 py-2 rounded-lg border border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100"
             />
           </div>
         </CardContent>
@@ -285,12 +285,12 @@ export default function ComparisonTab({
                     key={formula}
                     className={`rounded-xl border transition-colors ${
                       isExcluded
-                        ? 'bg-neutral-50 border-neutral-200 opacity-40'
+                        ? 'bg-neutral-50 border-neutral-200 opacity-40 dark:bg-neutral-900 dark:border-neutral-700'
                         : isMin
-                          ? 'bg-green-50 border-green-200'
+                          ? 'bg-green-50 border-green-200 dark:bg-green-900/25 dark:border-green-800'
                           : isMax
-                            ? 'bg-orange-50 border-orange-200'
-                            : 'bg-neutral-50 border-neutral-200'
+                            ? 'bg-orange-50 border-orange-200 dark:bg-orange-900/25 dark:border-orange-800'
+                            : 'bg-neutral-50 border-neutral-200 dark:bg-neutral-900 dark:border-neutral-700'
                     }`}
                   >
                     {/* Rad med resultat och toggle */}
@@ -301,19 +301,19 @@ export default function ComparisonTab({
                     >
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-sm font-medium text-neutral-900">
+                          <span className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
                             {formulaName}
                           </span>
                           <Badge
                             variant="outline"
-                            className="text-[10px] px-1.5 py-0 h-4 shrink-0 bg-neutral-100 text-neutral-600"
+                            className="text-[10px] px-1.5 py-0 h-4 shrink-0 bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300 dark:border-neutral-700"
                           >
                             {desc.type}
                           </Badge>
                           {isMin && (
                             <Badge
                               variant="outline"
-                              className="text-[10px] px-1.5 py-0 h-4 shrink-0 bg-green-100 text-green-700 border-green-300"
+                              className="text-[10px] px-1.5 py-0 h-4 shrink-0 bg-green-100 text-green-700 border-green-300 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800"
                             >
                               {t('comparison.lowest')}
                             </Badge>
@@ -321,7 +321,7 @@ export default function ComparisonTab({
                           {isMax && (
                             <Badge
                               variant="outline"
-                              className="text-[10px] px-1.5 py-0 h-4 shrink-0 bg-orange-100 text-orange-700 border-orange-300"
+                              className="text-[10px] px-1.5 py-0 h-4 shrink-0 bg-orange-100 text-orange-700 border-orange-300 dark:bg-orange-900/30 dark:text-orange-300 dark:border-orange-800"
                             >
                               {t('comparison.highest')}
                             </Badge>
@@ -332,7 +332,7 @@ export default function ComparisonTab({
                         {missingBodyFat ? (
                           <Badge
                             variant="outline"
-                            className="text-xs bg-amber-50 text-amber-700 border-amber-300"
+                            className="text-xs bg-amber-50 text-amber-700 border-amber-300 dark:bg-amber-900/25 dark:text-amber-300 dark:border-amber-800"
                           >
                             {t('comparison.requiresBodyFat')}
                           </Badge>
@@ -340,17 +340,22 @@ export default function ComparisonTab({
                           <span
                             className={`text-lg font-bold ${
                               isMin
-                                ? 'text-green-700'
+                                ? 'text-green-700 dark:text-green-300'
                                 : isMax
-                                  ? 'text-orange-700'
-                                  : 'text-neutral-900'
+                                  ? 'text-orange-700 dark:text-orange-300'
+                                  : 'text-neutral-900 dark:text-neutral-100'
                             }`}
                           >
                             {Math.round(result)}{' '}
-                            <span className="text-xs font-normal text-neutral-500">kcal</span>
+                            <span className="text-xs font-normal text-neutral-500 dark:text-neutral-400">
+                              kcal
+                            </span>
                           </span>
                         ) : (
-                          <Badge variant="outline" className="text-xs text-neutral-500">
+                          <Badge
+                            variant="outline"
+                            className="text-xs text-neutral-500 dark:text-neutral-400 dark:border-neutral-700"
+                          >
                             —
                           </Badge>
                         )}
@@ -360,7 +365,7 @@ export default function ComparisonTab({
                             e.stopPropagation()
                             toggleExclude(formula)
                           }}
-                          className="p-1 rounded hover:bg-neutral-200 transition-colors"
+                          className="p-1 rounded hover:bg-neutral-200 transition-colors dark:hover:bg-neutral-700"
                           title={isExcluded ? t('comparison.include') : t('comparison.exclude')}
                         >
                           {isExcluded ? (
@@ -379,22 +384,27 @@ export default function ComparisonTab({
 
                     {/* Expanderat informationskort */}
                     {isExpanded && (
-                      <div className="px-4 pb-4 space-y-3 border-t border-neutral-200 mt-0 pt-3">
-                        <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide">
+                      <div className="px-4 pb-4 space-y-3 border-t border-neutral-200 dark:border-neutral-700 mt-0 pt-3">
+                        <p className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wide">
                           {formulaName} — {desc.year}
                         </p>
-                        <p className="text-sm text-neutral-700 leading-relaxed">
+                        <p className="text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed">
                           {formulaDescription}
                         </p>
                         {formulaPros.length > 0 && (
                           <div>
-                            <p className="text-xs font-semibold text-green-700 mb-1">
+                            <p className="text-xs font-semibold text-green-700 dark:text-green-300 mb-1">
                               {t('comparison.pros')}
                             </p>
                             <ul className="space-y-1">
                               {formulaPros.map((pro, i) => (
-                                <li key={i} className="flex gap-2 text-sm text-neutral-700">
-                                  <span className="text-green-600 font-bold shrink-0">•</span>
+                                <li
+                                  key={i}
+                                  className="flex gap-2 text-sm text-neutral-700 dark:text-neutral-300"
+                                >
+                                  <span className="text-green-600 dark:text-green-400 font-bold shrink-0">
+                                    •
+                                  </span>
                                   <span>{pro}</span>
                                 </li>
                               ))}
@@ -403,13 +413,18 @@ export default function ComparisonTab({
                         )}
                         {formulaCons.length > 0 && (
                           <div>
-                            <p className="text-xs font-semibold text-amber-700 mb-1">
+                            <p className="text-xs font-semibold text-amber-700 dark:text-amber-300 mb-1">
                               {t('comparison.cons')}
                             </p>
                             <ul className="space-y-1">
                               {formulaCons.map((con, i) => (
-                                <li key={i} className="flex gap-2 text-sm text-neutral-700">
-                                  <span className="text-amber-600 font-bold shrink-0">•</span>
+                                <li
+                                  key={i}
+                                  className="flex gap-2 text-sm text-neutral-700 dark:text-neutral-300"
+                                >
+                                  <span className="text-amber-600 dark:text-amber-400 font-bold shrink-0">
+                                    •
+                                  </span>
                                   <span>{con}</span>
                                 </li>
                               ))}
@@ -425,8 +440,8 @@ export default function ComparisonTab({
 
             {/* Sammanfattning */}
             {validValues.length > 0 && (
-              <div className="mt-6 p-4 bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-blue-200 rounded-xl">
-                <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-3">
+              <div className="mt-6 p-4 bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-blue-200 rounded-xl dark:from-blue-900/25 dark:to-purple-900/25 dark:border-blue-800">
+                <p className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wide mb-3">
                   {excludedFormulas.size > 0
                     ? t('comparison.summaryFiltered', {
                         count: validValues.length,
@@ -436,27 +451,35 @@ export default function ComparisonTab({
                 </p>
                 <div className="grid grid-cols-3 gap-4 text-center">
                   <div>
-                    <p className="text-xs text-neutral-500 mb-1">{t('comparison.lowest')}</p>
-                    <p className="text-xl font-bold text-green-700">
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">
+                      {t('comparison.lowest')}
+                    </p>
+                    <p className="text-xl font-bold text-green-700 dark:text-green-300">
                       {minBMR !== null ? Math.round(minBMR) : '—'}
                     </p>
                     <p className="text-xs text-neutral-400">kcal</p>
                   </div>
                   <div>
-                    <p className="text-xs text-neutral-500 mb-1">{t('comparison.average')}</p>
-                    <p className="text-2xl font-bold text-blue-700">{avgBMR ?? '—'}</p>
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">
+                      {t('comparison.average')}
+                    </p>
+                    <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">
+                      {avgBMR ?? '—'}
+                    </p>
                     <p className="text-xs text-neutral-400">kcal</p>
                   </div>
                   <div>
-                    <p className="text-xs text-neutral-500 mb-1">{t('comparison.highest')}</p>
-                    <p className="text-xl font-bold text-orange-700">
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">
+                      {t('comparison.highest')}
+                    </p>
+                    <p className="text-xl font-bold text-orange-700 dark:text-orange-300">
                       {maxBMR !== null ? Math.round(maxBMR) : '—'}
                     </p>
                     <p className="text-xs text-neutral-400">kcal</p>
                   </div>
                 </div>
                 {minBMR !== null && maxBMR !== null && (
-                  <p className="mt-3 text-xs text-neutral-500 text-center border-t border-blue-200 pt-3">
+                  <p className="mt-3 text-xs text-neutral-500 dark:text-neutral-400 text-center border-t border-blue-200 dark:border-blue-800 pt-3">
                     {t('comparison.span', { diff: Math.round(maxBMR - minBMR) })}
                   </p>
                 )}

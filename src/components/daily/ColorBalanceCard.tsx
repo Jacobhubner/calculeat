@@ -47,7 +47,9 @@ export function ColorBalanceCard({
   const content = (
     <div className={cn(isCompact ? 'space-y-1' : 'space-y-3', className)}>
       {/* Header */}
-      <h3 className="text-sm font-medium text-neutral-700">{t('colorDensity.title')}</h3>
+      <h3 className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+        {t('colorDensity.title')}
+      </h3>
 
       {/* Color rows */}
       <div className={isCompact ? 'space-y-1' : 'space-y-2'}>
@@ -127,25 +129,25 @@ function ColorRow({
 
   const colorClasses = {
     green: {
-      bg: 'bg-green-50',
-      border: 'border-green-200',
+      bg: 'bg-green-50 dark:bg-green-900/25',
+      border: 'border-green-200 dark:border-green-800',
       dot: 'bg-green-500',
-      text: 'text-green-700',
-      lightText: 'text-green-600',
+      text: 'text-green-700 dark:text-green-300',
+      lightText: 'text-green-600 dark:text-green-400',
     },
     yellow: {
-      bg: 'bg-yellow-50',
-      border: 'border-yellow-200',
+      bg: 'bg-yellow-50 dark:bg-yellow-900/25',
+      border: 'border-yellow-200 dark:border-yellow-800',
       dot: 'bg-yellow-500',
-      text: 'text-yellow-700',
-      lightText: 'text-yellow-600',
+      text: 'text-yellow-700 dark:text-yellow-300',
+      lightText: 'text-yellow-600 dark:text-yellow-400',
     },
     orange: {
-      bg: 'bg-orange-50',
-      border: 'border-orange-200',
+      bg: 'bg-orange-50 dark:bg-orange-900/25',
+      border: 'border-orange-200 dark:border-orange-800',
       dot: 'bg-orange-500',
-      text: 'text-orange-700',
-      lightText: 'text-orange-600',
+      text: 'text-orange-700 dark:text-orange-300',
+      lightText: 'text-orange-600 dark:text-orange-400',
     },
   }
 
@@ -157,8 +159,8 @@ function ColorRow({
         <span className={cn('w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full flex-shrink-0', classes.dot)} />
         <span className={cn('font-medium', classes.text)}>{label}</span>
         <span className={cn('font-semibold', classes.text)}>{calories}</span>
-        <span className="text-neutral-400">/</span>
-        <span className="text-neutral-500 truncate">
+        <span className="text-neutral-400 dark:text-neutral-400">/</span>
+        <span className="text-neutral-500 dark:text-neutral-400 truncate">
           {Math.round(caloriesMin * targetPercent)}-{Math.round(caloriesMax * targetPercent)}
         </span>
         <span className={cn('ml-auto font-medium whitespace-nowrap', statusConfig.colorClass)}>
@@ -213,17 +215,25 @@ export function ColorBalanceCompact({
 
   return (
     <div className={cn('flex gap-3', className)}>
-      <div className="flex-1 text-center p-3 bg-green-50 rounded-lg border border-green-200">
-        <div className="text-2xl font-bold text-green-700">{greenCalories}</div>
-        <div className="text-xs text-green-600">{t('colorDensity.green')}</div>
+      <div className="flex-1 text-center p-3 bg-green-50 dark:bg-green-900/25 rounded-lg border border-green-200 dark:border-green-800">
+        <div className="text-2xl font-bold text-green-700 dark:text-green-300">{greenCalories}</div>
+        <div className="text-xs text-green-600 dark:text-green-400">{t('colorDensity.green')}</div>
       </div>
-      <div className="flex-1 text-center p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-        <div className="text-2xl font-bold text-yellow-700">{yellowCalories}</div>
-        <div className="text-xs text-yellow-600">{t('colorDensity.yellow')}</div>
+      <div className="flex-1 text-center p-3 bg-yellow-50 dark:bg-yellow-900/25 rounded-lg border border-yellow-200 dark:border-yellow-800">
+        <div className="text-2xl font-bold text-yellow-700 dark:text-yellow-300">
+          {yellowCalories}
+        </div>
+        <div className="text-xs text-yellow-600 dark:text-yellow-400">
+          {t('colorDensity.yellow')}
+        </div>
       </div>
-      <div className="flex-1 text-center p-3 bg-orange-50 rounded-lg border border-orange-200">
-        <div className="text-2xl font-bold text-orange-700">{orangeCalories}</div>
-        <div className="text-xs text-orange-600">{t('colorDensity.orange')}</div>
+      <div className="flex-1 text-center p-3 bg-orange-50 dark:bg-orange-900/25 rounded-lg border border-orange-200 dark:border-orange-800">
+        <div className="text-2xl font-bold text-orange-700 dark:text-orange-300">
+          {orangeCalories}
+        </div>
+        <div className="text-xs text-orange-600 dark:text-orange-400">
+          {t('colorDensity.orange')}
+        </div>
       </div>
     </div>
   )
@@ -250,8 +260,8 @@ export function ColorBalanceBar({
 
   if (total === 0) {
     return (
-      <div className={cn('h-4 bg-neutral-100 rounded-full', className)}>
-        <div className="h-full flex items-center justify-center text-xs text-neutral-400">
+      <div className={cn('h-4 bg-neutral-100 dark:bg-neutral-700 rounded-full', className)}>
+        <div className="h-full flex items-center justify-center text-xs text-neutral-400 dark:text-neutral-400">
           {t('colorDensity.noData')}
         </div>
       </div>

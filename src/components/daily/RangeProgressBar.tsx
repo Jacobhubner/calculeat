@@ -71,7 +71,7 @@ export function RangeProgressBar({
       {showLabel && (
         <div className={cn('flex justify-between', textSize)}>
           <span className="font-medium">{label}</span>
-          <span className="text-neutral-600">
+          <span className="text-neutral-600 dark:text-neutral-400">
             {Math.round(value)} / {Math.round(min)}-{Math.round(max)} {unit}
           </span>
         </div>
@@ -81,13 +81,13 @@ export function RangeProgressBar({
       <div className={cn('relative rounded-full overflow-hidden', barHeight)}>
         {/* Zone 1: Path to goal (0 to min) - light blue/gray */}
         <div
-          className="absolute h-full bg-blue-100"
+          className="absolute h-full bg-blue-100 dark:bg-blue-900/40"
           style={{ left: 0, width: `${minPosition}%` }}
         />
 
         {/* Zone 2: Goal zone (min to max) - light green */}
         <div
-          className="absolute h-full bg-green-200"
+          className="absolute h-full bg-green-200 dark:bg-green-900/40"
           style={{
             left: `${minPosition}%`,
             width: `${goalZoneWidth}%`,
@@ -96,7 +96,7 @@ export function RangeProgressBar({
 
         {/* Zone 3: Over zone (max to end) - light red */}
         <div
-          className="absolute h-full bg-red-200"
+          className="absolute h-full bg-red-200 dark:bg-red-900/40"
           style={{
             left: `${maxPosition}%`,
             width: `${overZoneWidth}%`,
@@ -180,7 +180,7 @@ export function MealProgressBar({
   return (
     <div className="mt-3">
       <div className="flex items-center justify-between text-sm mb-1">
-        <span className="text-neutral-600">
+        <span className="text-neutral-600 dark:text-neutral-400">
           {Math.round(current)} / {Math.round(targetMin)}-{Math.round(targetMax)} {unit}
         </span>
         <span className={cn('font-medium', getStatusColor())}>{getStatusText()}</span>
@@ -188,13 +188,13 @@ export function MealProgressBar({
       <div className="relative h-2 rounded-full overflow-hidden">
         {/* Zone 1: Path to goal (0 to min) - light blue */}
         <div
-          className="absolute h-full bg-blue-100"
+          className="absolute h-full bg-blue-100 dark:bg-blue-900/40"
           style={{ left: 0, width: `${minPosition}%` }}
         />
 
         {/* Zone 2: Goal zone (min to max) - light green */}
         <div
-          className="absolute h-full bg-green-200"
+          className="absolute h-full bg-green-200 dark:bg-green-900/40"
           style={{
             left: `${minPosition}%`,
             width: `${goalZoneWidth}%`,
@@ -203,7 +203,7 @@ export function MealProgressBar({
 
         {/* Zone 3: Over zone (max to end) - light red */}
         <div
-          className="absolute h-full bg-red-200"
+          className="absolute h-full bg-red-200 dark:bg-red-900/40"
           style={{
             left: `${maxPosition}%`,
             width: `${overZoneWidth}%`,

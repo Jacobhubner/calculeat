@@ -83,7 +83,7 @@ export function PlateCalculator({ onAddToMeal }: PlateCalculatorProps) {
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className="text-base flex items-center gap-2">
-            <Calculator className="h-4 w-4 text-primary-600" />
+            <Calculator className="h-4 w-4 text-primary-600 dark:text-primary-400" />
             {t('plateCalculator.title')}
             <ToolInfoButton
               title={t('plateCalculator.title')}
@@ -96,7 +96,7 @@ export function PlateCalculator({ onAddToMeal }: PlateCalculatorProps) {
               variant="ghost"
               size="sm"
               onClick={handleReset}
-              className="h-6 px-2 text-xs text-neutral-500"
+              className="h-6 px-2 text-xs text-neutral-500 dark:text-neutral-400"
             >
               <RotateCcw className="h-3 w-3 mr-1" />
               {t('plateCalculator.reset')}
@@ -106,15 +106,15 @@ export function PlateCalculator({ onAddToMeal }: PlateCalculatorProps) {
       </CardHeader>
 
       <CardContent className="space-y-3">
-        <div className="flex gap-1 p-1 bg-neutral-100 rounded-lg">
+        <div className="flex gap-1 p-1 bg-neutral-100 dark:bg-neutral-800 rounded-lg">
           {(['kcal', 'fat', 'carbs', 'protein'] as GoalType[]).map(type => (
             <button
               key={type}
               onClick={() => setGoalType(type)}
               className={`flex-1 px-2 py-1.5 text-xs font-medium rounded transition-colors ${
                 goalType === type
-                  ? 'bg-white text-primary-600 shadow-sm'
-                  : 'text-neutral-600 hover:text-neutral-900'
+                  ? 'bg-white dark:bg-neutral-850 text-primary-600 dark:text-primary-300 shadow-sm'
+                  : 'text-neutral-600 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-neutral-100'
               }`}
             >
               {t(`plateCalculator.goalType.${type}`)}
@@ -123,7 +123,7 @@ export function PlateCalculator({ onAddToMeal }: PlateCalculatorProps) {
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-sm text-neutral-600 font-medium">
+          <span className="text-sm text-neutral-600 dark:text-neutral-300 font-medium">
             {t('plateCalculator.goalLabel')}
           </span>
           <Input
@@ -137,7 +137,9 @@ export function PlateCalculator({ onAddToMeal }: PlateCalculatorProps) {
             min={0}
             placeholder={GOAL_UNITS[goalType]}
           />
-          <span className="text-xs text-neutral-500">{GOAL_UNITS[goalType]}</span>
+          <span className="text-xs text-neutral-500 dark:text-neutral-400">
+            {GOAL_UNITS[goalType]}
+          </span>
           <div className="flex gap-1 ml-auto flex-wrap">
             {PRESETS[goalType].map(value => (
               <button
@@ -146,7 +148,7 @@ export function PlateCalculator({ onAddToMeal }: PlateCalculatorProps) {
                 className={`px-2 py-1 text-xs rounded transition-colors ${
                   targetAmount === value
                     ? 'bg-primary-600 text-white'
-                    : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
+                    : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700'
                 }`}
               >
                 {value}
@@ -157,7 +159,7 @@ export function PlateCalculator({ onAddToMeal }: PlateCalculatorProps) {
 
         {!selectedFood ? (
           <div
-            className="flex items-center gap-2 px-3 py-2 bg-white border border-neutral-200 rounded-lg cursor-pointer hover:border-primary-300"
+            className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg cursor-pointer hover:border-primary-300 dark:hover:border-primary-700"
             onClick={() => setPickerOpen(true)}
           >
             <Search className="h-4 w-4 text-neutral-400 flex-shrink-0" />
@@ -166,13 +168,13 @@ export function PlateCalculator({ onAddToMeal }: PlateCalculatorProps) {
             </span>
           </div>
         ) : (
-          <div className="border-2 border-primary-200 rounded-lg p-2.5 bg-primary-50/50">
+          <div className="border-2 border-primary-200 dark:border-primary-800 rounded-lg p-2.5 bg-primary-50/50 dark:bg-primary-900/25">
             <div className="flex items-center gap-2">
-              <Check className="h-4 w-4 text-primary-600 flex-shrink-0" />
-              <span className="text-sm font-medium text-neutral-900 flex-1 min-w-0">
+              <Check className="h-4 w-4 text-primary-600 dark:text-primary-400 flex-shrink-0" />
+              <span className="text-sm font-medium text-neutral-900 dark:text-neutral-100 flex-1 min-w-0">
                 {selectedFood.name}
               </span>
-              <span className="text-xs text-neutral-500 flex-shrink-0">
+              <span className="text-xs text-neutral-500 dark:text-neutral-400 flex-shrink-0">
                 {selectedFood.calories} kcal/{selectedFood.default_amount}
                 {selectedFood.default_unit}
               </span>
@@ -189,8 +191,8 @@ export function PlateCalculator({ onAddToMeal }: PlateCalculatorProps) {
         )}
 
         {calculation && selectedFood && (
-          <div className="bg-gradient-to-br from-primary-50 to-accent-50 rounded-xl p-3">
-            <p className="text-xs text-neutral-600 text-center mb-2">
+          <div className="bg-gradient-to-br from-primary-50 to-accent-50 dark:from-primary-900/25 dark:to-accent-900/25 rounded-xl p-3">
+            <p className="text-xs text-neutral-600 dark:text-neutral-300 text-center mb-2">
               {t('plateCalculator.forAmount', {
                 amount: typeof targetAmount === 'number' ? targetAmount : 0,
                 unit: GOAL_UNITS[goalType],
@@ -198,7 +200,7 @@ export function PlateCalculator({ onAddToMeal }: PlateCalculatorProps) {
               {goalType !== 'kcal' && ` (${calculation.calories} kcal)`}:
             </p>
 
-            <div className="bg-white rounded-lg py-2 px-3 text-center shadow-sm mb-2">
+            <div className="bg-white dark:bg-neutral-850 rounded-lg py-2 px-3 text-center shadow-sm dark:shadow-black/30 mb-2">
               {(() => {
                 const displayMode = localStorage.getItem(`food-display-mode:${selectedFood.id}`)
                 const preferVolume =
@@ -212,11 +214,11 @@ export function PlateCalculator({ onAddToMeal }: PlateCalculatorProps) {
 
                 if (calculation.unitName === 'g') {
                   return (
-                    <span className="text-2xl font-bold text-primary-600">
+                    <span className="text-2xl font-bold text-primary-600 dark:text-primary-300">
                       {mlFromGrams && preferVolume ? (
                         <>
                           {mlFromGrams} ml{' '}
-                          <span className="text-sm text-neutral-500">
+                          <span className="text-sm text-neutral-500 dark:text-neutral-400">
                             ({calculation.weightGrams}g)
                           </span>
                         </>
@@ -224,7 +226,7 @@ export function PlateCalculator({ onAddToMeal }: PlateCalculatorProps) {
                         <>
                           {calculation.weightGrams} g
                           {mlFromGrams && (
-                            <span className="text-sm text-neutral-500 ml-2">
+                            <span className="text-sm text-neutral-500 dark:text-neutral-400 ml-2">
                               ({mlFromGrams} ml)
                             </span>
                           )}
@@ -234,18 +236,20 @@ export function PlateCalculator({ onAddToMeal }: PlateCalculatorProps) {
                   )
                 } else if (isVolumeUnit && mlFromGrams) {
                   return (
-                    <span className="text-2xl font-bold text-primary-600">
+                    <span className="text-2xl font-bold text-primary-600 dark:text-primary-300">
                       {preferVolume ? (
                         <>
                           {mlFromGrams} ml{' '}
-                          <span className="text-sm text-neutral-500">
+                          <span className="text-sm text-neutral-500 dark:text-neutral-400">
                             ({calculation.weightGrams}g)
                           </span>
                         </>
                       ) : (
                         <>
                           {calculation.weightGrams} g{' '}
-                          <span className="text-sm text-neutral-500">({mlFromGrams} ml)</span>
+                          <span className="text-sm text-neutral-500 dark:text-neutral-400">
+                            ({mlFromGrams} ml)
+                          </span>
                         </>
                       )}
                     </span>
@@ -253,10 +257,10 @@ export function PlateCalculator({ onAddToMeal }: PlateCalculatorProps) {
                 } else {
                   return (
                     <>
-                      <span className="text-2xl font-bold text-primary-600">
+                      <span className="text-2xl font-bold text-primary-600 dark:text-primary-300">
                         {calculation.unitsNeeded} {calculation.unitName}
                       </span>
-                      <span className="text-sm text-neutral-500 ml-2">
+                      <span className="text-sm text-neutral-500 dark:text-neutral-400 ml-2">
                         ({calculation.weightGrams}g{mlFromGrams && `, ${mlFromGrams} ml`})
                       </span>
                     </>
@@ -296,7 +300,9 @@ export function PlateCalculator({ onAddToMeal }: PlateCalculatorProps) {
         )}
 
         {!selectedFood && !calculation && (
-          <p className="text-xs text-neutral-400 text-center">{t('plateCalculator.helpText')}</p>
+          <p className="text-xs text-neutral-400 dark:text-neutral-400 text-center">
+            {t('plateCalculator.helpText')}
+          </p>
         )}
       </CardContent>
 

@@ -373,7 +373,7 @@ export default function TodayPage() {
       <div className="mb-6 md:mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent mb-1 md:mb-2 flex items-center gap-2 md:gap-3">
-            <Calendar className="h-6 w-6 md:h-8 md:w-8 text-primary-600" />
+            <Calendar className="h-6 w-6 md:h-8 md:w-8 text-primary-600 dark:text-primary-400" />
             {t('today.pageTitle')}
           </h1>
           <div className="flex items-center gap-2">
@@ -383,7 +383,7 @@ export default function TodayPage() {
                   type="date"
                   value={editingDateValue}
                   onChange={e => setEditingDateValue(e.target.value)}
-                  className="text-sm md:text-base text-neutral-600 border rounded px-2 py-0.5"
+                  className="text-sm md:text-base text-neutral-600 dark:text-neutral-300 dark:bg-neutral-800 dark:[color-scheme:dark] border dark:border-neutral-700 rounded px-2 py-0.5"
                   onKeyDown={e => {
                     if (e.key === 'Enter') handleConfirmEditDate()
                     if (e.key === 'Escape') handleCancelEditDate()
@@ -392,24 +392,26 @@ export default function TodayPage() {
                 />
                 <button
                   onClick={handleConfirmEditDate}
-                  className="text-success-600 hover:text-success-700 transition-colors"
+                  className="text-success-600 dark:text-success-400 hover:text-success-700 dark:hover:text-success-300 transition-colors"
                 >
                   <Check className="h-4 w-4" />
                 </button>
                 <button
                   onClick={handleCancelEditDate}
-                  className="text-neutral-400 hover:text-neutral-600 transition-colors"
+                  className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition-colors"
                 >
                   <X className="h-4 w-4" />
                 </button>
               </div>
             ) : (
               <>
-                <p className="text-sm md:text-base text-neutral-600 capitalize">{dateDisplay}</p>
+                <p className="text-sm md:text-base text-neutral-600 dark:text-neutral-300 capitalize">
+                  {dateDisplay}
+                </p>
                 {todayLog && !todayLog.is_completed && (
                   <button
                     onClick={handleStartEditingDate}
-                    className="text-neutral-400 hover:text-neutral-600 transition-colors"
+                    className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition-colors"
                     title={t('today.changeDate')}
                   >
                     <Pencil className="h-3.5 w-3.5" />
@@ -448,16 +450,18 @@ export default function TodayPage() {
 
       {/* Goal mismatch warning */}
       {goalsFromDifferentProfile && !todayLog?.is_completed && (
-        <Card className="mb-6 bg-amber-50 border-amber-200">
+        <Card className="mb-6 bg-amber-50 dark:bg-amber-900/25 border-amber-200 dark:border-amber-800">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
-                  <AlertTriangle className="h-5 w-5 text-amber-600" />
+                <div className="h-10 w-10 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center flex-shrink-0">
+                  <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-300" />
                 </div>
                 <div>
-                  <p className="font-medium text-amber-900">{t('today.goalMismatchTitle')}</p>
-                  <p className="text-sm text-amber-700">
+                  <p className="font-medium text-amber-900 dark:text-amber-200">
+                    {t('today.goalMismatchTitle')}
+                  </p>
+                  <p className="text-sm text-amber-700 dark:text-amber-300">
                     {t('today.goalMismatchText', {
                       logMin: Math.round(goalCaloriesMin),
                       logMax: Math.round(goalCalories),
@@ -470,7 +474,7 @@ export default function TodayPage() {
               <Button
                 variant="outline"
                 size="sm"
-                className="flex-shrink-0 border-amber-300 text-amber-800 hover:bg-amber-100"
+                className="flex-shrink-0 border-amber-300 dark:border-amber-700 text-amber-800 dark:text-amber-200 hover:bg-amber-100 dark:hover:bg-amber-900/40"
                 disabled={updateDailyLogGoals.isPending}
                 onClick={() => {
                   if (!todayLog?.id || !profile) return
@@ -503,7 +507,7 @@ export default function TodayPage() {
       )}
 
       {todayLog?.is_completed && (
-        <Card className="mb-6 bg-gradient-to-br from-success-50 to-success-100 border-success-200">
+        <Card className="mb-6 bg-gradient-to-br from-success-50 to-success-100 dark:from-success-900/25 dark:to-success-900/30 border-success-200 dark:border-success-800">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-3">
@@ -511,8 +515,10 @@ export default function TodayPage() {
                   <Check className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <p className="font-semibold text-success-900">{t('today.dayCompleteTitle')}</p>
-                  <p className="text-sm text-success-700">
+                  <p className="font-semibold text-success-900 dark:text-success-200">
+                    {t('today.dayCompleteTitle')}
+                  </p>
+                  <p className="text-sm text-success-700 dark:text-success-300">
                     {goalCaloriesMin && goalCalories ? (
                       <>
                         {t('today.dayCompleteRange', {
@@ -535,7 +541,7 @@ export default function TodayPage() {
               <Button
                 size="sm"
                 variant="outline"
-                className="shrink-0 gap-2 border-success-400 text-success-800 hover:bg-success-200"
+                className="shrink-0 gap-2 border-success-400 dark:border-success-700 text-success-800 dark:text-success-200 hover:bg-success-200 dark:hover:bg-success-900/40"
                 onClick={() => startNewDay.mutate(todayLog.log_date)}
                 disabled={startNewDay.isPending}
               >
@@ -554,7 +560,7 @@ export default function TodayPage() {
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-primary-600" />
+                <Sparkles className="h-5 w-5 text-primary-600 dark:text-primary-400" />
                 {t('today.dailyProgress')}
               </CardTitle>
             </CardHeader>
@@ -573,7 +579,7 @@ export default function TodayPage() {
 
                 {/* Right: Makromål + Energitäthet + Kaloritäthet */}
                 <div className="flex-1 min-w-0 space-y-2">
-                  <h4 className="text-sm font-semibold text-neutral-700">
+                  <h4 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300">
                     {t('today.macroGoals')}
                   </h4>
                   {dailySummary && profile ? (
@@ -598,7 +604,7 @@ export default function TodayPage() {
                       />
                     </>
                   ) : (
-                    <div className="space-y-2 text-sm text-neutral-500">
+                    <div className="space-y-2 text-sm text-neutral-500 dark:text-neutral-400">
                       <div className="flex justify-between">
                         <span>{t('today.fat')}</span>
                         <span className="font-medium">{todayLog?.total_fat_g || 0}g</span>
@@ -616,7 +622,7 @@ export default function TodayPage() {
 
                   {/* Energitäthet — styrs av profilinställningen show_energy_density */}
                   {profile?.show_energy_density && (dailySummary?.energyDensity ?? 0) > 0 && (
-                    <div className="pt-4 mt-2 border-t border-neutral-200">
+                    <div className="pt-4 mt-2 border-t border-neutral-200 dark:border-neutral-700">
                       <EnergyDensityIndicator density={dailySummary!.energyDensity} size="sm" />
                     </div>
                   )}
@@ -625,7 +631,7 @@ export default function TodayPage() {
                   {profile?.show_energy_density &&
                     dailySummary &&
                     (dailySummary.energyDensity ?? 0) > 0 && (
-                      <div className="pt-4 mt-2 border-t border-neutral-200">
+                      <div className="pt-4 mt-2 border-t border-neutral-200 dark:border-neutral-700">
                         <div className="flex items-start justify-between gap-2">
                           <div className="flex-1">
                             <ColorBalanceCard
@@ -645,7 +651,7 @@ export default function TodayPage() {
                           <button
                             type="button"
                             onClick={() => setEnergyDensityInfoOpen(true)}
-                            className="shrink-0 mt-0.5 text-neutral-400 hover:text-neutral-600 transition-colors"
+                            className="shrink-0 mt-0.5 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition-colors"
                             aria-label="Info om matbalans"
                           >
                             <Info className="h-4 w-4" />
@@ -657,9 +663,11 @@ export default function TodayPage() {
               </div>
 
               {/* Måltider loggade */}
-              <div className="flex justify-between items-center pt-4 border-t text-sm">
-                <span className="text-neutral-600">{t('today.mealsLogged')}</span>
-                <span className="font-semibold text-neutral-900">
+              <div className="flex justify-between items-center pt-4 border-t dark:border-neutral-700 text-sm">
+                <span className="text-neutral-600 dark:text-neutral-300">
+                  {t('today.mealsLogged')}
+                </span>
+                <span className="font-semibold text-neutral-900 dark:text-neutral-100">
                   {todayLog?.meals?.filter(m => m.items && m.items.length > 0).length || 0} /{' '}
                   {mealSettings?.length || 0}
                 </span>
@@ -730,7 +738,7 @@ export default function TodayPage() {
                   {adHocPicker === 'closed' && (
                     <button
                       onClick={() => setAdHocPicker('chips')}
-                      className="flex items-center gap-1.5 text-sm text-neutral-400 hover:text-neutral-600 transition-colors py-2"
+                      className="flex items-center gap-1.5 text-sm text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition-colors py-2"
                     >
                       <Plus className="h-4 w-4" />
                       {t('adHoc.addButton')}
@@ -744,7 +752,7 @@ export default function TodayPage() {
                           key={p.key}
                           onClick={() => handleCreateAdHoc(t(`adHoc.${p.key}`))}
                           disabled={addAdHocMeal.isPending}
-                          className="px-4 py-2 text-sm rounded-full border border-neutral-200 bg-white hover:border-primary-300 hover:bg-primary-50 transition-colors text-neutral-700 disabled:opacity-50"
+                          className="px-4 py-2 text-sm rounded-full border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-850 hover:border-primary-300 dark:hover:border-primary-700 hover:bg-primary-50 dark:hover:bg-primary-900/25 transition-colors text-neutral-700 dark:text-neutral-300 disabled:opacity-50"
                         >
                           {t(`adHoc.${p.key}`)}
                         </button>
@@ -752,13 +760,13 @@ export default function TodayPage() {
                       <button
                         onClick={() => setAdHocPicker('freetext')}
                         disabled={addAdHocMeal.isPending}
-                        className="px-4 py-2 text-sm rounded-full border border-dashed border-neutral-300 text-neutral-500 hover:border-neutral-400 transition-colors disabled:opacity-50"
+                        className="px-4 py-2 text-sm rounded-full border border-dashed border-neutral-300 dark:border-neutral-600 text-neutral-500 dark:text-neutral-400 hover:border-neutral-400 dark:hover:border-neutral-500 transition-colors disabled:opacity-50"
                       >
                         {t('adHoc.other')}
                       </button>
                       <button
                         onClick={() => setAdHocPicker('closed')}
-                        className="text-xs text-neutral-400 hover:text-neutral-600 px-2"
+                        className="text-xs text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 px-2"
                       >
                         {t('today.cancel')}
                       </button>
@@ -780,7 +788,7 @@ export default function TodayPage() {
                         }}
                         placeholder={t('adHoc.placeholder')}
                         autoFocus
-                        className="flex-1 text-sm border border-neutral-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary-300"
+                        className="flex-1 text-sm border border-neutral-200 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder:text-neutral-400 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary-300"
                       />
                       <Button
                         size="sm"
@@ -826,11 +834,11 @@ export default function TodayPage() {
           <RecentFoodsCard dailyLogId={todayLog?.id} onFoodSelect={handleAddFromSidebar} />
 
           {/* Tips */}
-          <Card className="bg-gradient-to-br from-primary-50 to-accent-50 border-primary-200">
+          <Card className="bg-gradient-to-br from-primary-50 to-accent-50 dark:from-primary-900/25 dark:to-accent-900/25 border-primary-200 dark:border-primary-800">
             <CardHeader>
               <CardTitle className="text-lg">{t('today.tipsTitle')}</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-2 text-sm text-neutral-700">
+            <CardContent className="space-y-2 text-sm text-neutral-700 dark:text-neutral-300">
               <p>• {t('today.tip1')}</p>
               {profile?.show_energy_density && <p>• {t('today.tip2')}</p>}
               <p>• {t('today.tip3')}</p>

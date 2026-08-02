@@ -64,7 +64,7 @@ export default function AdvancedSettingsSection({
   }
 
   return (
-    <Card className="border-2 border-neutral-300">
+    <Card className="border-2 border-neutral-300 dark:border-neutral-600">
       <CardHeader className="pb-3">
         <button
           onClick={() => setIsOpen(!isOpen)}
@@ -72,7 +72,7 @@ export default function AdvancedSettingsSection({
           type="button"
         >
           <CardTitle className="flex items-center gap-2">
-            <Settings className="h-5 w-5 text-neutral-600" />
+            <Settings className="h-5 w-5 text-neutral-600 dark:text-neutral-400" />
             {t('advancedSettings.title')}
           </CardTitle>
           <ChevronDown
@@ -99,8 +99,8 @@ export default function AdvancedSettingsSection({
           <Separator className="my-6" />
 
           {/* Farozon */}
-          <div className="rounded-lg border-2 border-error-200 bg-error-50/50 p-4 space-y-3">
-            <h3 className="text-sm font-semibold text-error-700 flex items-center gap-2">
+          <div className="rounded-lg border-2 border-error-200 bg-error-50/50 p-4 space-y-3 dark:border-error-800">
+            <h3 className="text-sm font-semibold text-error-700 flex items-center gap-2 dark:text-error-300">
               <AlertTriangle className="h-4 w-4" />
               {t('dangerZone.title')}
             </h3>
@@ -108,7 +108,7 @@ export default function AdvancedSettingsSection({
             {deleteStep === 0 && (
               <button
                 onClick={() => setDeleteStep(1)}
-                className="w-full rounded-lg border-2 border-error-300 bg-white px-4 py-2.5 text-sm font-medium text-error-600 hover:bg-error-50 transition-colors"
+                className="w-full rounded-lg border-2 border-error-300 bg-white px-4 py-2.5 text-sm font-medium text-error-600 hover:bg-error-50 transition-colors dark:border-error-800 dark:bg-neutral-850 dark:text-error-300 dark:hover:bg-error-900/25"
                 type="button"
               >
                 {t('dangerZone.deleteAccount')}
@@ -117,13 +117,13 @@ export default function AdvancedSettingsSection({
 
             {deleteStep === 1 && (
               <div className="space-y-3">
-                <p className="text-sm text-error-700">
+                <p className="text-sm text-error-700 dark:text-error-300">
                   {t('dangerZone.deleteWarning')}
                 </p>
                 <div className="flex gap-2">
                   <button
                     onClick={resetDeleteFlow}
-                    className="flex-1 rounded-lg border border-neutral-300 bg-white px-4 py-2.5 text-sm font-medium text-neutral-600 hover:bg-neutral-50 transition-colors"
+                    className="flex-1 rounded-lg border border-neutral-300 bg-white px-4 py-2.5 text-sm font-medium text-neutral-600 hover:bg-neutral-50 transition-colors dark:border-neutral-600 dark:bg-neutral-850 dark:text-neutral-400 dark:hover:bg-neutral-800"
                     type="button"
                   >
                     {t('dangerZone.cancel')}
@@ -141,7 +141,7 @@ export default function AdvancedSettingsSection({
 
             {deleteStep === 2 && (
               <div className="space-y-3">
-                <p className="text-sm text-error-700">
+                <p className="text-sm text-error-700 dark:text-error-300">
                   {t('dangerZone.deleteConfirm')}
                 </p>
                 <input
@@ -149,13 +149,13 @@ export default function AdvancedSettingsSection({
                   value={confirmText}
                   onChange={e => setConfirmText(e.target.value)}
                   placeholder={t('dangerZone.deleteConfirmPlaceholder')}
-                  className="w-full rounded-lg border-2 border-error-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-error-500 focus:border-error-500"
+                  className="w-full rounded-lg border-2 border-error-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-error-500 focus:border-error-500 dark:border-error-800 dark:bg-neutral-850"
                   autoFocus
                 />
                 <div className="flex gap-2">
                   <button
                     onClick={resetDeleteFlow}
-                    className="flex-1 rounded-lg border border-neutral-300 bg-white px-4 py-2.5 text-sm font-medium text-neutral-600 hover:bg-neutral-50 transition-colors"
+                    className="flex-1 rounded-lg border border-neutral-300 bg-white px-4 py-2.5 text-sm font-medium text-neutral-600 hover:bg-neutral-50 transition-colors dark:border-neutral-600 dark:bg-neutral-850 dark:text-neutral-400 dark:hover:bg-neutral-800"
                     type="button"
                     disabled={isDeleting}
                   >

@@ -109,41 +109,47 @@ export function TDEEStatusCard({ profile }: TDEEStatusCardProps) {
 
         {/* TDEE Display */}
         <div className="grid grid-cols-3 gap-4">
-          <div className="text-center p-4 bg-blue-50 rounded-lg border border-blue-200">
-            <p className="text-xs text-neutral-600 mb-1">BMR</p>
-            <p className="text-2xl font-bold text-blue-700">{Math.round(profile.bmr || 0)}</p>
-            <p className="text-xs text-neutral-500 mt-1">kcal</p>
+          <div className="text-center p-4 bg-blue-50 rounded-lg border border-blue-200 dark:bg-blue-900/25 dark:border-blue-800">
+            <p className="text-xs text-neutral-600 mb-1 dark:text-neutral-400">BMR</p>
+            <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">
+              {Math.round(profile.bmr || 0)}
+            </p>
+            <p className="text-xs text-neutral-500 mt-1 dark:text-neutral-400">kcal</p>
           </div>
-          <div className="text-center p-4 bg-green-50 rounded-lg border border-green-200">
-            <p className="text-xs text-neutral-600 mb-1">TDEE</p>
-            <p className="text-2xl font-bold text-green-700">{Math.round(profile.tdee || 0)}</p>
-            <p className="text-xs text-neutral-500 mt-1">kcal</p>
+          <div className="text-center p-4 bg-green-50 rounded-lg border border-green-200 dark:bg-green-900/25 dark:border-green-800">
+            <p className="text-xs text-neutral-600 mb-1 dark:text-neutral-400">TDEE</p>
+            <p className="text-2xl font-bold text-green-700 dark:text-green-300">
+              {Math.round(profile.tdee || 0)}
+            </p>
+            <p className="text-xs text-neutral-500 mt-1 dark:text-neutral-400">kcal</p>
           </div>
-          <div className="text-center p-4 bg-orange-50 rounded-lg border border-orange-200">
-            <p className="text-xs text-neutral-600 mb-1">Kalorimål</p>
-            <p className="text-lg font-bold text-orange-700">
+          <div className="text-center p-4 bg-orange-50 rounded-lg border border-orange-200 dark:bg-orange-900/25 dark:border-orange-800">
+            <p className="text-xs text-neutral-600 mb-1 dark:text-neutral-400">Kalorimål</p>
+            <p className="text-lg font-bold text-orange-700 dark:text-orange-300">
               {Math.round(profile.calories_min || 0)}-{Math.round(profile.calories_max || 0)}
             </p>
-            <p className="text-xs text-neutral-500 mt-1">kcal</p>
+            <p className="text-xs text-neutral-500 mt-1 dark:text-neutral-400">kcal</p>
           </div>
         </div>
 
         {/* Metadata */}
         <div className="space-y-2 text-sm">
           <div className="flex items-center gap-2">
-            <span className="text-neutral-600">📊 Beräknad:</span>
+            <span className="text-neutral-600 dark:text-neutral-400">📊 Beräknad:</span>
             <span className="font-medium">{formatDate(profile.tdee_calculated_at)}</span>
             {statusInfo.daysOld !== undefined && statusInfo.daysOld > 0 && (
-              <span className="text-neutral-500">({statusInfo.daysOld} dagar)</span>
+              <span className="text-neutral-500 dark:text-neutral-400">
+                ({statusInfo.daysOld} dagar)
+              </span>
             )}
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-neutral-600">🔬 Metod:</span>
+            <span className="text-neutral-600 dark:text-neutral-400">🔬 Metod:</span>
             <span className="font-medium">{getCalculationMethod()}</span>
           </div>
           {getParametersSummary() && (
             <div className="flex items-center gap-2">
-              <span className="text-neutral-600">⚖️ Baserad på:</span>
+              <span className="text-neutral-600 dark:text-neutral-400">⚖️ Baserad på:</span>
               <span className="font-medium">{getParametersSummary()}</span>
             </div>
           )}

@@ -18,7 +18,7 @@ export default function MetabolicCalibrationGuide() {
     <Dialog>
       <DialogTrigger asChild>
         <Button variant="ghost" size="icon" className="h-8 w-8">
-          <HelpCircle className="h-5 w-5 text-neutral-500 hover:text-neutral-700 transition-colors" />
+          <HelpCircle className="h-5 w-5 text-neutral-500 hover:text-neutral-700 transition-colors dark:text-neutral-400 dark:hover:text-neutral-200" />
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl">
@@ -36,18 +36,18 @@ export default function MetabolicCalibrationGuide() {
               <Info className="h-4 w-4 text-primary-500" />
               Vad är metabolisk kalibrering?
             </h3>
-            <p className="text-neutral-700 leading-relaxed">
+            <p className="text-neutral-700 leading-relaxed dark:text-neutral-200">
               Metabolisk kalibrering uppskattar ditt faktiska <strong>underhålls-TDEE</strong> — hur
               många kalorier din kropp förbrukar för att hålla vikten stabil — genom att analysera
               hur din kroppsvikt förändras i relation till ditt faktiska kaloriintag över tid.
             </p>
-            <p className="text-neutral-700 leading-relaxed mt-2">
+            <p className="text-neutral-700 leading-relaxed mt-2 dark:text-neutral-200">
               <strong>Viktigt att förstå:</strong> Kalibreringen estimerar din faktiska
               energiförbrukning, inte ditt kalorimål. Ditt kaloriintervall räknas sedan om
               automatiskt utifrån ditt valda energimål (bibehåll vikt, gå ner, gå upp). Det är
               alltså två separata steg.
             </p>
-            <p className="text-neutral-700 leading-relaxed mt-2">
+            <p className="text-neutral-700 leading-relaxed mt-2 dark:text-neutral-200">
               Istället för att enbart använda uppskattningar från BMR-formler och aktivitetsnivåer
               använder systemet verklig data från din loggning. Det gör att kalibreringen kan fånga
               upp individuella skillnader som standardformler missar — som NEAT-variation,
@@ -56,12 +56,12 @@ export default function MetabolicCalibrationGuide() {
           </section>
 
           {/* Section 2: How does it work? */}
-          <section className="bg-neutral-50 p-4 rounded-lg border border-neutral-200">
+          <section className="bg-neutral-50 p-4 rounded-lg border border-neutral-200 dark:bg-neutral-900 dark:border-neutral-700">
             <h3 className="font-semibold text-base mb-2">Hur beräkningen fungerar</h3>
-            <div className="space-y-3 text-neutral-700">
+            <div className="space-y-3 text-neutral-700 dark:text-neutral-200">
               <div>
                 <p>Kalibreringen bygger på energibalansprincipen:</p>
-                <p className="text-neutral-600 italic ml-2 mt-1">
+                <p className="text-neutral-600 italic ml-2 mt-1 dark:text-neutral-400">
                   Energi in − energi ut = förändring i kroppens energilager.
                 </p>
               </div>
@@ -69,7 +69,7 @@ export default function MetabolicCalibrationGuide() {
                 Om vikten förändras över tid kan vi uppskatta hur stort ditt faktiska energibehov
                 är. I förenklad form:
               </p>
-              <p className="font-medium text-primary-600 text-center py-1">
+              <p className="font-medium text-primary-600 text-center py-1 dark:text-primary-300">
                 TDEE ≈ Genomsnittliga kalorier − (viktförändring × kcal per kg / antal dagar)
               </p>
               <p>
@@ -112,25 +112,25 @@ export default function MetabolicCalibrationGuide() {
               <Info className="h-4 w-4 text-primary-500" />
               Hur vikttrenden beräknas
             </h3>
-            <p className="text-neutral-700 leading-relaxed">
+            <p className="text-neutral-700 leading-relaxed dark:text-neutral-200">
               Istället för att jämföra två enskilda vägningar beräknar systemet en trendlinje
               (linjär regression) genom alla viktmätningar i perioden. Det ger ett stabilare estimat
               av den verkliga viktförändringen och mäter dessutom hur stark och konsekvent trenden
               är.
             </p>
-            <p className="text-neutral-700 leading-relaxed mt-2">
+            <p className="text-neutral-700 leading-relaxed mt-2 dark:text-neutral-200">
               Som robusthetskontroll beräknas även en alternativ trend med{' '}
               <strong>Theil–Sen-estimatorn</strong>, som tar medianen av alla möjliga parvisa slopes
               mellan mätpunkterna. Den är mer okänslig för enstaka extremvärden än linjär
               regression. Om de två metoderna visar tydligt olika resultat kan systemet varna för
               att viktutvecklingen var oregelbunden under perioden.
             </p>
-            <p className="text-neutral-700 leading-relaxed mt-2">
+            <p className="text-neutral-700 leading-relaxed mt-2 dark:text-neutral-200">
               Som ytterligare diagnostik beräknas en exponentiellt utjämnad trend (EMA). Den används
               inte som primär beräkningsmetod utan enbart för att detektera kraftigt icke-linjär
               viktutveckling — t.ex. en refeed-period mitt i perioden.
             </p>
-            <p className="text-neutral-700 leading-relaxed mt-2">
+            <p className="text-neutral-700 leading-relaxed mt-2 dark:text-neutral-200">
               Viktmätningar som avviker kraftigt från resten av datan filtreras automatiskt bort
               innan trendberäkningen, för att minska påverkan från enstaka extrema mätningar.
             </p>
@@ -142,11 +142,11 @@ export default function MetabolicCalibrationGuide() {
               <Info className="h-4 w-4 text-primary-500" />
               Hur datakvalitet påverkar resultatet
             </h3>
-            <p className="text-neutral-700 leading-relaxed">
+            <p className="text-neutral-700 leading-relaxed dark:text-neutral-200">
               Alla kalibreringar får ett <strong>Data Quality Index (DQI)</strong> som bedömer hur
               pålitlig datan är. Det beräknas från tre faktorer:
             </p>
-            <ul className="list-disc list-inside space-y-1 ml-2 mt-2 text-neutral-700">
+            <ul className="list-disc list-inside space-y-1 ml-2 mt-2 text-neutral-700 dark:text-neutral-200">
               <li>
                 <strong>Matloggskvalitet (45%)</strong> — andelen loggade dagar och hur konsekvent
                 kalorier registrerats
@@ -160,12 +160,12 @@ export default function MetabolicCalibrationGuide() {
                 start- och slutkluster
               </li>
             </ul>
-            <p className="text-neutral-700 leading-relaxed mt-2">
+            <p className="text-neutral-700 leading-relaxed mt-2 dark:text-neutral-200">
               DQI styr direkt hur stor justering som tillåts: från ±75 kcal vid låg kvalitet till
               ±200 kcal vid hög. Det innebär att bättre data inte bara ger ett mer tillförlitligt
               resultat — det ger också möjlighet till snabbare konvergens mot ditt faktiska TDEE.
             </p>
-            <div className="mt-3 p-3 bg-neutral-100 rounded text-neutral-600 text-xs">
+            <div className="mt-3 p-3 bg-neutral-100 rounded text-neutral-600 text-xs dark:bg-neutral-800 dark:text-neutral-400">
               <p className="font-medium mb-1">Val av tidsperiod</p>
               <p>
                 Du kan välja mellan 14, 21 och 28 dagar. Längre perioder ger mer data och tillåter
@@ -177,9 +177,9 @@ export default function MetabolicCalibrationGuide() {
           </section>
 
           {/* Section 5: Clamping and convergence */}
-          <section className="bg-neutral-50 p-4 rounded-lg border border-neutral-200">
+          <section className="bg-neutral-50 p-4 rounded-lg border border-neutral-200 dark:bg-neutral-900 dark:border-neutral-700">
             <h3 className="font-semibold text-base mb-2">Begränsning av extrema justeringar</h3>
-            <div className="space-y-3 text-neutral-700">
+            <div className="space-y-3 text-neutral-700 dark:text-neutral-200">
               <div>
                 <p className="font-medium">Justeringsgränser (clamp)</p>
                 <p className="mt-1">
@@ -232,16 +232,16 @@ export default function MetabolicCalibrationGuide() {
               <Info className="h-4 w-4 text-primary-500" />
               Osäkerhet och konfidensintervall
             </h3>
-            <p className="text-neutral-700 leading-relaxed">
+            <p className="text-neutral-700 leading-relaxed dark:text-neutral-200">
               Eftersom verklig viktdata innehåller variation beräknar modellen ett{' '}
               <strong>90%-konfidensintervall</strong> för TDEE-uppskattningen. Det innebär att om du
               upprepade samma kalibrering med liknande data, skulle det sanna underhålls-TDEE hamna
               inom intervallet i 90% av fallen.
             </p>
-            <p className="text-neutral-700 leading-relaxed mt-2">
+            <p className="text-neutral-700 leading-relaxed mt-2 dark:text-neutral-200">
               Intervallets bredd bestäms av tre konkreta osäkerhetskällor:
             </p>
-            <ul className="list-disc list-inside space-y-1 ml-2 mt-1 text-neutral-700">
+            <ul className="list-disc list-inside space-y-1 ml-2 mt-1 text-neutral-700 dark:text-neutral-200">
               <li>
                 <strong>Viktvariation</strong> — hur mycket vikten svänger runt trendlinjen
                 (residualvarians från regressionen); hög dag-till-dag-variation ger brett intervall
@@ -256,7 +256,7 @@ export default function MetabolicCalibrationGuide() {
                 korrigeringsfaktor
               </li>
             </ul>
-            <p className="text-neutral-700 leading-relaxed mt-2">
+            <p className="text-neutral-700 leading-relaxed mt-2 dark:text-neutral-200">
               Om kroppsvikten är mycket stabil under perioden kan konfidensintervallet bli relativt
               brett. Det beror på att dagliga viktvariationer från vätska, salt och glykogen då kan
               vara lika stora som den faktiska trendförändringen — systemet har helt enkelt svårt
@@ -268,35 +268,37 @@ export default function MetabolicCalibrationGuide() {
           {/* Section 7: When to use */}
           <section>
             <h3 className="font-semibold text-base mb-3 flex items-center gap-2">
-              <CheckCircle className="h-4 w-4 text-success-600" />
+              <CheckCircle className="h-4 w-4 text-success-600 dark:text-success-300" />
               När bör du använda metabolisk kalibrering?
             </h3>
-            <p className="text-neutral-700 mb-2">
+            <p className="text-neutral-700 mb-2 dark:text-neutral-200">
               Kalibreringen fungerar bäst när du har samlat in tillräckligt med konsekvent data.
             </p>
-            <p className="text-neutral-700 font-medium mb-1">Bra förutsättningar:</p>
+            <p className="text-neutral-700 font-medium mb-1 dark:text-neutral-200">
+              Bra förutsättningar:
+            </p>
             <ul className="space-y-2">
               <li className="flex items-start gap-2">
-                <span className="text-success-600 mt-0.5">✓</span>
-                <span className="text-neutral-700">
+                <span className="text-success-600 mt-0.5 dark:text-success-300">✓</span>
+                <span className="text-neutral-700 dark:text-neutral-200">
                   Du har loggat ditt kaloriintag i minst <strong>2–3 veckor</strong>
                 </span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-success-600 mt-0.5">✓</span>
-                <span className="text-neutral-700">
+                <span className="text-success-600 mt-0.5 dark:text-success-300">✓</span>
+                <span className="text-neutral-700 dark:text-neutral-200">
                   Du väger dig regelbundet (helst <strong>morgon före frukost</strong>)
                 </span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-success-600 mt-0.5">✓</span>
-                <span className="text-neutral-700">
+                <span className="text-success-600 mt-0.5 dark:text-success-300">✓</span>
+                <span className="text-neutral-700 dark:text-neutral-200">
                   Du har loggat <strong>majoriteten av dagarna</strong>
                 </span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-success-600 mt-0.5">✓</span>
-                <span className="text-neutral-700">
+                <span className="text-success-600 mt-0.5 dark:text-success-300">✓</span>
+                <span className="text-neutral-700 dark:text-neutral-200">
                   Din vikt <strong>förändras inte som förväntat</strong>
                 </span>
               </li>
@@ -304,36 +306,38 @@ export default function MetabolicCalibrationGuide() {
           </section>
 
           {/* Section 8: When NOT to use */}
-          <section className="bg-orange-50 p-4 rounded-lg border border-orange-200">
+          <section className="bg-orange-50 p-4 rounded-lg border border-orange-200 dark:bg-orange-900/25 dark:border-orange-800">
             <h3 className="font-semibold text-base mb-2 flex items-center gap-2">
-              <XCircle className="h-4 w-4 text-orange-600" />
+              <XCircle className="h-4 w-4 text-orange-600 dark:text-orange-300" />
               När bör kalibrering undvikas?
             </h3>
-            <p className="text-neutral-700 mb-2">
+            <p className="text-neutral-700 mb-2 dark:text-neutral-200">
               Kalibrering kan bli missvisande om datan inte representerar en stabil period.
             </p>
-            <p className="text-neutral-700 font-medium mb-1">Undvik att kalibrera när:</p>
-            <ul className="space-y-2 text-neutral-700">
+            <p className="text-neutral-700 font-medium mb-1 dark:text-neutral-200">
+              Undvik att kalibrera när:
+            </p>
+            <ul className="space-y-2 text-neutral-700 dark:text-neutral-200">
               <li className="flex items-start gap-2">
-                <span className="text-orange-600 mt-0.5 font-bold">×</span>
+                <span className="text-orange-600 mt-0.5 font-bold dark:text-orange-300">×</span>
                 <span>
                   Du precis startat en ny diet <strong>(&lt;2 veckor)</strong>
                 </span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-orange-600 mt-0.5 font-bold">×</span>
+                <span className="text-orange-600 mt-0.5 font-bold dark:text-orange-300">×</span>
                 <span>
                   Du nyligen <strong>ändrat träningsvolym kraftigt</strong>
                 </span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-orange-600 mt-0.5 font-bold">×</span>
+                <span className="text-orange-600 mt-0.5 font-bold dark:text-orange-300">×</span>
                 <span>
                   Du har loggat mat <strong>mycket oregelbundet</strong>
                 </span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-orange-600 mt-0.5 font-bold">×</span>
+                <span className="text-orange-600 mt-0.5 font-bold dark:text-orange-300">×</span>
                 <span>
                   Viktmätningar saknas under <strong>stora delar av perioden</strong>
                 </span>
@@ -342,22 +346,22 @@ export default function MetabolicCalibrationGuide() {
           </section>
 
           {/* Section 9: Important */}
-          <section className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+          <section className="bg-blue-50 p-4 rounded-lg border border-blue-200 dark:bg-blue-900/25 dark:border-blue-800">
             <h3 className="font-semibold text-base mb-2 flex items-center gap-2">
-              <AlertTriangle className="h-4 w-4 text-blue-600" />
+              <AlertTriangle className="h-4 w-4 text-blue-600 dark:text-blue-300" />
               Viktigt att förstå
             </h3>
-            <p className="text-neutral-700 leading-relaxed">
+            <p className="text-neutral-700 leading-relaxed dark:text-neutral-200">
               Metabolisk kalibrering är en långsiktig finjustering, inte en snabb korrigering.
             </p>
-            <p className="text-neutral-700 leading-relaxed mt-2">
+            <p className="text-neutral-700 leading-relaxed mt-2 dark:text-neutral-200">
               Kroppsvikt påverkas dagligen av många faktorer som inte är kopplade till
               fettförändring. Därför är modellen medvetet konservativ och trendbaserad — den
               kombinerar klustrad viktförändring, regressionstrend och datakvalitetsvägning, vilket
               gör den mer robust än appar som enbart jämför start- och slutvikt eller använder enkla
               rullande medelvärden.
             </p>
-            <p className="text-neutral-700 leading-relaxed mt-2">
+            <p className="text-neutral-700 leading-relaxed mt-2 dark:text-neutral-200">
               Ju mer konsekvent du loggar mat och vikt över tid, desto mer exakt kan systemet
               uppskatta ditt verkliga energibehov.
             </p>

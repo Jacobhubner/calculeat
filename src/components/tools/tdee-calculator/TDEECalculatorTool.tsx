@@ -509,16 +509,23 @@ export default function TDEECalculatorTool() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">{t('tdeeCalc.header.title')}</h2>
-          <p className="text-neutral-600 mt-1">{t('tdeeCalc.header.description')}</p>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-neutral-100">
+            {t('tdeeCalc.header.title')}
+          </h2>
+          <p className="text-neutral-600 dark:text-neutral-300 mt-1">
+            {t('tdeeCalc.header.description')}
+          </p>
         </div>
-        <Badge variant="secondary" className="bg-orange-100 text-orange-700">
+        <Badge
+          variant="secondary"
+          className="bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300"
+        >
           {t('tdeeCalc.header.badge')}
         </Badge>
       </div>
 
       {/* Tab switcher */}
-      <div className="flex border-b border-neutral-200">
+      <div className="flex border-b border-neutral-200 dark:border-neutral-700">
         {(['kalkylator', 'jämförelse'] as const).map(tab => (
           <button
             key={tab}
@@ -527,7 +534,7 @@ export default function TDEECalculatorTool() {
             className={`px-5 py-2.5 text-sm font-medium border-b-2 transition-colors capitalize ${
               activeTab === tab
                 ? 'border-primary-600 text-primary-600'
-                : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'
+                : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300 dark:text-neutral-400 dark:hover:text-neutral-200 dark:hover:border-neutral-600'
             }`}
           >
             {tab === 'kalkylator' ? t('tdeeCalc.tabs.calculator') : t('tdeeCalc.tabs.comparison')}
@@ -574,10 +581,12 @@ export default function TDEECalculatorTool() {
                 to={to}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-between gap-2 rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm font-medium text-neutral-700 hover:border-primary-300 hover:text-primary-700 transition-colors"
+                className="flex items-center justify-between gap-2 rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm font-medium text-neutral-700 hover:border-primary-300 hover:text-primary-700 transition-colors dark:border-neutral-700 dark:bg-neutral-850 dark:text-neutral-300 dark:hover:border-primary-700"
               >
                 {label}
-                <span className="text-xs text-primary-600 whitespace-nowrap">Läs mer →</span>
+                <span className="text-xs text-primary-600 dark:text-primary-400 whitespace-nowrap">
+                  Läs mer →
+                </span>
               </Link>
             ))}
           </div>
@@ -592,7 +601,7 @@ export default function TDEECalculatorTool() {
               {/* Radio buttons for weight choice - only show if weight history exists */}
               {latestLoggedWeight && (
                 <div className="space-y-3">
-                  <label className="flex items-center gap-3 p-3 border-2 rounded-lg cursor-pointer hover:bg-primary-50 transition-colors">
+                  <label className="flex items-center gap-3 p-3 border-2 rounded-lg cursor-pointer hover:bg-primary-50 transition-colors dark:border-neutral-700 dark:hover:bg-primary-900/25">
                     <input
                       type="radio"
                       checked={useLoggedWeight}
@@ -600,16 +609,16 @@ export default function TDEECalculatorTool() {
                       className="h-4 w-4 text-primary-600 focus:ring-primary-500"
                     />
                     <div className="flex-1">
-                      <p className="font-medium text-neutral-900">
+                      <p className="font-medium text-neutral-900 dark:text-neutral-100">
                         {t('tdeeCalc.weight.useLogged')}
                       </p>
-                      <p className="text-sm text-neutral-600">
+                      <p className="text-sm text-neutral-600 dark:text-neutral-300">
                         {t('tdeeCalc.weight.useLoggedDetail', { weight: latestLoggedWeight })}
                       </p>
                     </div>
                   </label>
 
-                  <label className="flex items-center gap-3 p-3 border-2 rounded-lg cursor-pointer hover:bg-primary-50 transition-colors">
+                  <label className="flex items-center gap-3 p-3 border-2 rounded-lg cursor-pointer hover:bg-primary-50 transition-colors dark:border-neutral-700 dark:hover:bg-primary-900/25">
                     <input
                       type="radio"
                       checked={!useLoggedWeight}
@@ -617,10 +626,10 @@ export default function TDEECalculatorTool() {
                       className="h-4 w-4 text-primary-600 focus:ring-primary-500"
                     />
                     <div className="flex-1">
-                      <p className="font-medium text-neutral-900">
+                      <p className="font-medium text-neutral-900 dark:text-neutral-100">
                         {t('tdeeCalc.weight.useManual')}
                       </p>
-                      <p className="text-sm text-neutral-600">
+                      <p className="text-sm text-neutral-600 dark:text-neutral-300">
                         {t('tdeeCalc.weight.useManualDetail')}
                       </p>
                     </div>
@@ -631,20 +640,21 @@ export default function TDEECalculatorTool() {
               {/* Weight input field - shown when manual entry is selected or no logged weight exists */}
               {(!useLoggedWeight || !latestLoggedWeight) && (
                 <div className="mt-4">
-                  <label className="block text-sm font-medium text-neutral-900 mb-2">
-                    {t('tdeeCalc.weight.fieldLabel')} <span className="text-red-600">*</span>
+                  <label className="block text-sm font-medium text-neutral-900 dark:text-neutral-100 mb-2">
+                    {t('tdeeCalc.weight.fieldLabel')}{' '}
+                    <span className="text-red-600 dark:text-red-400">*</span>
                   </label>
                   <input
                     type="number"
                     value={localWeight}
                     onChange={e => setLocalWeight(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 font-medium"
+                    className="w-full px-3 py-2 rounded-lg border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 font-medium dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100"
                     placeholder="75"
                     min="20"
                     max="300"
                     step="0.1"
                   />
-                  <p className="mt-2 text-xs text-neutral-600">
+                  <p className="mt-2 text-xs text-neutral-600 dark:text-neutral-300">
                     {t('tdeeCalc.weight.fieldHint')}
                     {!latestLoggedWeight && t('tdeeCalc.weight.logHint')}
                   </p>
@@ -653,8 +663,8 @@ export default function TDEECalculatorTool() {
 
               {/* Display selected weight */}
               {useLoggedWeight && latestLoggedWeight && (
-                <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                  <p className="text-sm text-blue-900">
+                <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg dark:bg-blue-900/25 dark:border-blue-800">
+                  <p className="text-sm text-blue-900 dark:text-blue-300">
                     <strong>{t('tdeeCalc.weight.selectedWeight')}</strong> {latestLoggedWeight} kg
                   </p>
                 </div>
@@ -672,9 +682,9 @@ export default function TDEECalculatorTool() {
               <div className="space-y-4">
                 <div>
                   {/* Läsrad: vilken formel som används (standard = Mifflin). */}
-                  <p className="text-sm text-neutral-600">
+                  <p className="text-sm text-neutral-600 dark:text-neutral-300">
                     {t('tdeeCalc.bmr.usingLabel')}:{' '}
-                    <span className="font-medium text-neutral-900">
+                    <span className="font-medium text-neutral-900 dark:text-neutral-100">
                       {bmrFormula && BMR_FORMULA_I18N_KEY[bmrFormula]
                         ? (t as (k: string) => string)(
                             `tdeeCalc.bmr.formulas.${BMR_FORMULA_I18N_KEY[bmrFormula]}`
@@ -682,25 +692,29 @@ export default function TDEECalculatorTool() {
                         : t('tdeeCalc.bmr.placeholder')}
                     </span>
                     {bmrFormula === 'Mifflin-St Jeor equation' && (
-                      <span className="text-neutral-500"> ({t('tdeeCalc.bmr.usingStandard')})</span>
+                      <span className="text-neutral-500 dark:text-neutral-400">
+                        {' '}
+                        ({t('tdeeCalc.bmr.usingStandard')})
+                      </span>
                     )}
                   </p>
 
                   {/* Expertval — göms bakom "Avancerat" (grepp 2). */}
                   <details className="mt-3 group">
-                    <summary className="cursor-pointer text-sm text-primary-600 hover:text-primary-700 select-none">
+                    <summary className="cursor-pointer text-sm text-primary-600 hover:text-primary-700 select-none dark:text-primary-400 dark:hover:text-primary-300">
                       {t('tdeeCalc.bmr.advancedToggle')}
                     </summary>
                     <div className="mt-3">
                       <div className="flex items-center gap-2 mb-2">
-                        <label className="block text-sm font-medium text-neutral-700">
-                          {t('tdeeCalc.bmr.fieldLabel')} <span className="text-red-600">*</span>
+                        <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                          {t('tdeeCalc.bmr.fieldLabel')}{' '}
+                          <span className="text-red-600 dark:text-red-400">*</span>
                         </label>
                         {bmrFormula && (
                           <button
                             type="button"
                             onClick={() => setShowBMRModal(true)}
-                            className="text-sm text-primary-600 hover:text-primary-700 underline transition-colors"
+                            className="text-sm text-primary-600 hover:text-primary-700 underline transition-colors dark:text-primary-400 dark:hover:text-primary-300"
                           >
                             {t('tdeeCalc.bmr.factLink')}
                           </button>
@@ -709,7 +723,7 @@ export default function TDEECalculatorTool() {
                       <select
                         value={bmrFormula}
                         onChange={e => handleBmrFormulaChange(e.target.value as BMRFormula | '')}
-                        className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                        className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100"
                       >
                         <option value="">{t('tdeeCalc.bmr.placeholder')}</option>
                         <option value="Mifflin-St Jeor equation">
@@ -757,8 +771,8 @@ export default function TDEECalculatorTool() {
 
                   {/* Body fat — shown inline when formula requires it */}
                   {bmrFormula && requiresBodyFat(bmrFormula) && (
-                    <div className="mt-4 pt-4 border-t border-neutral-100 space-y-3">
-                      <p className="text-sm font-medium text-neutral-700">
+                    <div className="mt-4 pt-4 border-t border-neutral-100 dark:border-neutral-700 space-y-3">
+                      <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
                         {t('tdeeCalc.bodyFat.title')}
                       </p>
                       {profileData?.body_fat_percentage && (
@@ -768,8 +782,8 @@ export default function TDEECalculatorTool() {
                             onClick={() => setUseSavedBodyFat(true)}
                             className={`flex-1 px-3 py-2 rounded-lg border text-sm font-medium transition-colors ${
                               useSavedBodyFat
-                                ? 'border-primary-500 bg-primary-50 text-primary-700'
-                                : 'border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300'
+                                ? 'border-primary-500 bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300'
+                                : 'border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300 dark:border-neutral-700 dark:bg-neutral-850 dark:text-neutral-300 dark:hover:border-neutral-600'
                             }`}
                           >
                             {t('tdeeCalc.bodyFat.savedLabel')} {profileData.body_fat_percentage}%
@@ -779,8 +793,8 @@ export default function TDEECalculatorTool() {
                             onClick={() => setUseSavedBodyFat(false)}
                             className={`flex-1 px-3 py-2 rounded-lg border text-sm font-medium transition-colors ${
                               !useSavedBodyFat
-                                ? 'border-primary-500 bg-primary-50 text-primary-700'
-                                : 'border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300'
+                                ? 'border-primary-500 bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300'
+                                : 'border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300 dark:border-neutral-700 dark:bg-neutral-850 dark:text-neutral-300 dark:hover:border-neutral-600'
                             }`}
                           >
                             {(t as (k: string) => string)('tdeeCalc.bodyFat.otherValue')}
@@ -793,21 +807,23 @@ export default function TDEECalculatorTool() {
                             type="number"
                             value={manualBodyFat}
                             onChange={e => setManualBodyFat(e.target.value)}
-                            className="w-full px-3 py-2 rounded-lg border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 font-medium"
+                            className="w-full px-3 py-2 rounded-lg border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 font-medium dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100"
                             placeholder={t('tdeeCalc.bodyFat.fieldLabel')}
                             min="3"
                             max="60"
                             step="0.1"
                           />
-                          <p className="mt-1.5 text-xs text-neutral-500">
+                          <p className="mt-1.5 text-xs text-neutral-500 dark:text-neutral-400">
                             {t('tdeeCalc.bodyFat.fieldHint')}
                           </p>
                         </div>
                       )}
                       {!localBodyFat && (
-                        <div className="flex gap-3 p-3 bg-amber-50 border border-amber-200 rounded-xl">
-                          <span className="text-amber-600 flex-shrink-0">⚠</span>
-                          <p className="text-sm text-amber-800">
+                        <div className="flex gap-3 p-3 bg-amber-50 border border-amber-200 rounded-xl dark:bg-amber-900/25 dark:border-amber-800">
+                          <span className="text-amber-600 dark:text-amber-300 flex-shrink-0">
+                            ⚠
+                          </span>
+                          <p className="text-sm text-amber-800 dark:text-amber-300">
                             {t('tdeeCalc.bmr.bodyFatWarning')}
                           </p>
                         </div>
@@ -829,31 +845,35 @@ export default function TDEECalculatorTool() {
               <div className="space-y-4">
                 <div>
                   {/* Läsrad: vilket system som används (standard = Grundläggande PAL). */}
-                  <p className="text-sm text-neutral-600">
+                  <p className="text-sm text-neutral-600 dark:text-neutral-300">
                     {t('tdeeCalc.pal.usingLabel')}:{' '}
-                    <span className="font-medium text-neutral-900">
+                    <span className="font-medium text-neutral-900 dark:text-neutral-100">
                       {palSystem ? palSystemName(palSystem) : t('tdeeCalc.pal.placeholder')}
                     </span>
                     {palSystem === 'Basic internet PAL values' && (
-                      <span className="text-neutral-500"> ({t('tdeeCalc.pal.usingStandard')})</span>
+                      <span className="text-neutral-500 dark:text-neutral-400">
+                        {' '}
+                        ({t('tdeeCalc.pal.usingStandard')})
+                      </span>
                     )}
                   </p>
 
                   {/* Expertval — göms bakom "Avancerat" (grepp 5). */}
                   <details className="mt-3">
-                    <summary className="cursor-pointer text-sm text-primary-600 hover:text-primary-700 select-none">
+                    <summary className="cursor-pointer text-sm text-primary-600 hover:text-primary-700 select-none dark:text-primary-400 dark:hover:text-primary-300">
                       {t('tdeeCalc.pal.advancedToggle')}
                     </summary>
                     <div className="mt-3">
                       <div className="flex items-center gap-2 mb-2">
-                        <label className="block text-sm font-medium text-neutral-700">
-                          {t('tdeeCalc.pal.fieldLabel')} <span className="text-red-600">*</span>
+                        <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                          {t('tdeeCalc.pal.fieldLabel')}{' '}
+                          <span className="text-red-600 dark:text-red-400">*</span>
                         </label>
                         {palSystem && (
                           <button
                             type="button"
                             onClick={() => setShowPALModal(true)}
-                            className="text-sm text-primary-600 hover:text-primary-700 underline transition-colors"
+                            className="text-sm text-primary-600 hover:text-primary-700 underline transition-colors dark:text-primary-400 dark:hover:text-primary-300"
                           >
                             {t('tdeeCalc.pal.factLink')}
                           </button>
@@ -862,7 +882,7 @@ export default function TDEECalculatorTool() {
                       <select
                         value={palSystem}
                         onChange={e => handlePalSystemChange(e.target.value as PALSystem | '')}
-                        className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                        className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100"
                       >
                         <option value="">{t('tdeeCalc.pal.placeholder')}</option>
                         <option value="Basic internet PAL values">
@@ -913,7 +933,7 @@ export default function TDEECalculatorTool() {
 
           {/* BMR & TDEE Results - Combined Clean Display */}
           {(bmr || tdee) && (
-            <Card className="border-2 border-primary-200">
+            <Card className="border-2 border-primary-200 dark:border-primary-800">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <span className="text-2xl">📊</span> {t('tdeeCalc.results.title')}
@@ -925,17 +945,23 @@ export default function TDEECalculatorTool() {
                 <div className="grid gap-4 md:grid-cols-2">
                   {/* BMR Result */}
                   {bmr && (
-                    <div className="bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-blue-200 rounded-xl p-6 text-center">
-                      <p className="text-xs font-medium text-neutral-600 mb-1">
+                    <div className="bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-blue-200 rounded-xl p-6 text-center dark:from-blue-900/25 dark:to-purple-900/25 dark:border-blue-800">
+                      <p className="text-xs font-medium text-neutral-600 dark:text-neutral-300 mb-1">
                         {t('tdeeCalc.results.bmrLabel')}
                       </p>
-                      <p className="text-sm text-blue-600 font-semibold mb-2">BMR</p>
-                      <p className="text-5xl font-bold text-blue-700 mb-1">{Math.round(bmr)}</p>
-                      <p className="text-sm text-neutral-500">{t('tdeeCalc.results.kcalPerDay')}</p>
-                      <p className="mt-2 text-xs text-neutral-600 leading-relaxed">
+                      <p className="text-sm text-blue-600 dark:text-blue-300 font-semibold mb-2">
+                        BMR
+                      </p>
+                      <p className="text-5xl font-bold text-blue-700 dark:text-blue-300 mb-1">
+                        {Math.round(bmr)}
+                      </p>
+                      <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                        {t('tdeeCalc.results.kcalPerDay')}
+                      </p>
+                      <p className="mt-2 text-xs text-neutral-600 dark:text-neutral-300 leading-relaxed">
                         {t('tdeeCalc.results.bmrExplain')}
                       </p>
-                      <p className="mt-3 text-xs text-neutral-500 border-t border-blue-200 pt-3">
+                      <p className="mt-3 text-xs text-neutral-500 dark:text-neutral-400 border-t border-blue-200 dark:border-blue-800 pt-3">
                         {bmrFormula}
                       </p>
                     </div>
@@ -943,17 +969,23 @@ export default function TDEECalculatorTool() {
 
                   {/* TDEE Result */}
                   {tdee && (
-                    <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-6 text-center">
-                      <p className="text-xs font-medium text-neutral-600 mb-1">
+                    <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-6 text-center dark:from-green-900/25 dark:to-emerald-900/25 dark:border-green-800">
+                      <p className="text-xs font-medium text-neutral-600 dark:text-neutral-300 mb-1">
                         {t('tdeeCalc.results.tdeeLabel')}
                       </p>
-                      <p className="text-sm text-green-600 font-semibold mb-2">TDEE</p>
-                      <p className="text-5xl font-bold text-green-700 mb-1">{Math.round(tdee)}</p>
-                      <p className="text-sm text-neutral-500">{t('tdeeCalc.results.kcalPerDay')}</p>
-                      <p className="mt-2 text-xs text-neutral-600 leading-relaxed">
+                      <p className="text-sm text-green-600 dark:text-green-300 font-semibold mb-2">
+                        TDEE
+                      </p>
+                      <p className="text-5xl font-bold text-green-700 dark:text-green-300 mb-1">
+                        {Math.round(tdee)}
+                      </p>
+                      <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                        {t('tdeeCalc.results.kcalPerDay')}
+                      </p>
+                      <p className="mt-2 text-xs text-neutral-600 dark:text-neutral-300 leading-relaxed">
                         {t('tdeeCalc.results.tdeeExplain')}
                       </p>
-                      <p className="mt-3 text-xs text-neutral-500 border-t border-green-200 pt-3">
+                      <p className="mt-3 text-xs text-neutral-500 dark:text-neutral-400 border-t border-green-200 dark:border-green-800 pt-3">
                         {palSystemName(palSystem as PALSystem)}
                       </p>
                     </div>

@@ -41,12 +41,22 @@ export function EnergyDensityIndicator({
   const content = (
     <div className={cn('space-y-1', className)}>
       <div className={cn('flex items-center justify-between', sizeClasses[size].gap)}>
-        <span className={cn('font-medium text-neutral-700', sizeClasses[size].text)}>
+        <span
+          className={cn(
+            'font-medium text-neutral-700 dark:text-neutral-300',
+            sizeClasses[size].text
+          )}
+        >
           {t('energyDensity.label')}
         </span>
         <div className="flex items-center gap-2">
           {showValue && (
-            <span className={cn('font-semibold text-neutral-900', sizeClasses[size].text)}>
+            <span
+              className={cn(
+                'font-semibold text-neutral-900 dark:text-neutral-100',
+                sizeClasses[size].text
+              )}
+            >
               {density.toFixed(1)} {t('energyDensity.unit')}
             </span>
           )}
@@ -55,11 +65,11 @@ export function EnergyDensityIndicator({
               className={cn(
                 'font-medium',
                 sizeClasses[size].text,
-                color === 'cyan' && 'text-cyan-600',
-                color === 'green' && 'text-green-600',
-                color === 'yellow' && 'text-yellow-600',
-                color === 'orange' && 'text-orange-600',
-                color === 'red' && 'text-red-600',
+                color === 'cyan' && 'text-cyan-600 dark:text-cyan-400',
+                color === 'green' && 'text-green-600 dark:text-green-400',
+                color === 'yellow' && 'text-yellow-600 dark:text-yellow-400',
+                color === 'orange' && 'text-orange-600 dark:text-orange-400',
+                color === 'red' && 'text-red-600 dark:text-red-400',
                 color === 'neutral' && 'text-neutral-400'
               )}
             >
@@ -74,7 +84,10 @@ export function EnergyDensityIndicator({
       <div className="relative">
         {/* Background scale showing all zones */}
         <div
-          className={cn('flex rounded-full overflow-hidden bg-neutral-100', sizeClasses[size].bar)}
+          className={cn(
+            'flex rounded-full overflow-hidden bg-neutral-100 dark:bg-neutral-700',
+            sizeClasses[size].bar
+          )}
         >
           {/* Cyan zone: 0-0.5 (16.7%) */}
           <div className="bg-cyan-200" style={{ width: '16.7%' }} />
@@ -132,10 +145,10 @@ export function EnergyDensityCompact({ density, className }: EnergyDensityCompac
           color === 'yellow' && 'bg-yellow-500',
           color === 'orange' && 'bg-orange-500',
           color === 'red' && 'bg-red-500',
-          color === 'neutral' && 'bg-neutral-300'
+          color === 'neutral' && 'bg-neutral-300 dark:bg-neutral-600'
         )}
       />
-      <span className="text-sm text-neutral-600">
+      <span className="text-sm text-neutral-600 dark:text-neutral-300">
         {density > 0
           ? `${density.toFixed(1)} ${t('energyDensity.unit')}`
           : t('energyDensity.noData')}
@@ -143,11 +156,11 @@ export function EnergyDensityCompact({ density, className }: EnergyDensityCompac
       <span
         className={cn(
           'text-xs font-medium',
-          color === 'cyan' && 'text-cyan-600',
-          color === 'green' && 'text-green-600',
-          color === 'yellow' && 'text-yellow-600',
-          color === 'orange' && 'text-orange-600',
-          color === 'red' && 'text-red-600',
+          color === 'cyan' && 'text-cyan-600 dark:text-cyan-400',
+          color === 'green' && 'text-green-600 dark:text-green-400',
+          color === 'yellow' && 'text-yellow-600 dark:text-yellow-400',
+          color === 'orange' && 'text-orange-600 dark:text-orange-400',
+          color === 'red' && 'text-red-600 dark:text-red-400',
           color === 'neutral' && 'text-neutral-400'
         )}
       >
@@ -177,15 +190,15 @@ export function EnergyDensityLegend({ className }: EnergyDensityLegendProps) {
 
   return (
     <div className={cn('space-y-2', className)}>
-      <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide">
+      <p className="text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wide">
         {t('energyDensity.legendTitle')}
       </p>
       <div className="grid grid-cols-5 gap-1">
         {zones.map(zone => (
           <div key={zone.label} className="text-center">
             <div className={cn('h-2 rounded-sm mb-1', zone.color)} />
-            <p className="text-xs text-neutral-600">{zone.label}</p>
-            <p className="text-xs text-neutral-400">{zone.desc}</p>
+            <p className="text-xs text-neutral-600 dark:text-neutral-300">{zone.label}</p>
+            <p className="text-xs text-neutral-400 dark:text-neutral-400">{zone.desc}</p>
           </div>
         ))}
       </div>

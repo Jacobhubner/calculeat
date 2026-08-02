@@ -20,6 +20,7 @@ import { calculateCaloriesBurned, getIntensityLevel } from '@/lib/calculations/m
 import { useMETTranslation } from '@/lib/constants/metTranslations'
 import { toast } from 'sonner'
 import { useTranslation } from 'react-i18next'
+import { cn } from '@/lib/utils'
 
 interface SelectedActivity extends METActivity {
   durationMinutes: number
@@ -119,15 +120,20 @@ export default function METCalculatorTool() {
       {/* Header */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div className="flex-1 min-w-0">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-neutral-100">
             {t('metCalc.header.title')}
           </h2>
-          <p className="text-neutral-600 mt-1 text-sm md:text-base">
+          <p className="text-neutral-600 dark:text-neutral-300 mt-1 text-sm md:text-base">
             {t('metCalc.header.description')}
           </p>
-          <p className="text-xs text-neutral-500 mt-1">{t('metCalc.header.source')}</p>
+          <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
+            {t('metCalc.header.source')}
+          </p>
         </div>
-        <Badge variant="secondary" className="bg-orange-100 text-orange-700 shrink-0">
+        <Badge
+          variant="secondary"
+          className="bg-orange-100 text-orange-700 shrink-0 dark:bg-orange-900/30 dark:text-orange-300"
+        >
           {t('metCalc.header.badge')}
         </Badge>
       </div>
@@ -166,7 +172,7 @@ export default function METCalculatorTool() {
               <div>
                 <Label htmlFor="search">{t('metCalc.search.searchLabel')}</Label>
                 <div className="relative">
-                  <Search className="absolute left-3 top-3 h-4 w-4 text-neutral-400" />
+                  <Search className="absolute left-3 top-3 h-4 w-4 text-neutral-400 dark:text-neutral-400" />
                   <Input
                     id="search"
                     placeholder={t('metCalc.search.searchPlaceholder')}
@@ -175,12 +181,14 @@ export default function METCalculatorTool() {
                     className="pl-9"
                   />
                 </div>
-                <p className="text-xs text-neutral-500 mt-1">{t('metCalc.search.searchTip')}</p>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
+                  {t('metCalc.search.searchTip')}
+                </p>
               </div>
 
               {/* Resultaträknare */}
               {(searchTerm || selectedCategory !== 'All') && filteredActivities.length > 0 && (
-                <div className="text-sm text-neutral-600">
+                <div className="text-sm text-neutral-600 dark:text-neutral-300">
                   {t(
                     filteredActivities.length === 1
                       ? 'metCalc.search.resultsFound_one'
@@ -193,7 +201,7 @@ export default function METCalculatorTool() {
               {/* Aktivitetslista */}
               <div className="max-h-96 overflow-y-auto border rounded-lg">
                 {filteredActivities.length === 0 ? (
-                  <div className="p-8 text-center text-neutral-500">
+                  <div className="p-8 text-center text-neutral-500 dark:text-neutral-400">
                     {t('metCalc.search.noResults')}
                   </div>
                 ) : (
@@ -223,16 +231,19 @@ export default function METCalculatorTool() {
             <CardContent className="space-y-4">
               {/* Viktväljare */}
               <div className="space-y-2">
-                <p className="text-sm font-medium text-neutral-700">{t('metCalc.weight.title')}</p>
+                <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                  {t('metCalc.weight.title')}
+                </p>
                 {profileData?.weight_kg ? (
                   <div className="space-y-2">
                     <label
-                      className="flex items-center gap-3 p-3 border-2 rounded-lg cursor-pointer hover:bg-primary-50 transition-colors"
-                      style={{
-                        borderColor: useLoggedWeight
-                          ? 'var(--color-primary-500, #22c55e)'
-                          : '#e5e7eb',
-                      }}
+                      className={cn(
+                        'flex items-center gap-3 p-3 border-2 rounded-lg cursor-pointer transition-colors',
+                        'hover:bg-primary-50 dark:hover:bg-primary-900/25',
+                        useLoggedWeight
+                          ? 'border-primary-500'
+                          : 'border-neutral-200 dark:border-neutral-700'
+                      )}
                     >
                       <input
                         type="radio"
@@ -241,21 +252,22 @@ export default function METCalculatorTool() {
                         className="h-4 w-4 text-primary-600 focus:ring-primary-500"
                       />
                       <div className="flex-1">
-                        <p className="font-medium text-neutral-900 text-sm">
+                        <p className="font-medium text-neutral-900 dark:text-neutral-100 text-sm">
                           {t('metCalc.weight.useLogged')}
                         </p>
-                        <p className="text-xs text-neutral-500">
+                        <p className="text-xs text-neutral-500 dark:text-neutral-400">
                           {t('metCalc.weight.useLoggedDetail', { weight: profileData.weight_kg })}
                         </p>
                       </div>
                     </label>
                     <label
-                      className="flex items-center gap-3 p-3 border-2 rounded-lg cursor-pointer hover:bg-primary-50 transition-colors"
-                      style={{
-                        borderColor: !useLoggedWeight
-                          ? 'var(--color-primary-500, #22c55e)'
-                          : '#e5e7eb',
-                      }}
+                      className={cn(
+                        'flex items-center gap-3 p-3 border-2 rounded-lg cursor-pointer transition-colors',
+                        'hover:bg-primary-50 dark:hover:bg-primary-900/25',
+                        !useLoggedWeight
+                          ? 'border-primary-500'
+                          : 'border-neutral-200 dark:border-neutral-700'
+                      )}
                     >
                       <input
                         type="radio"
@@ -264,10 +276,10 @@ export default function METCalculatorTool() {
                         className="h-4 w-4 text-primary-600 focus:ring-primary-500"
                       />
                       <div className="flex-1">
-                        <p className="font-medium text-neutral-900 text-sm">
+                        <p className="font-medium text-neutral-900 dark:text-neutral-100 text-sm">
                           {t('metCalc.weight.useManual')}
                         </p>
-                        <p className="text-xs text-neutral-500">
+                        <p className="text-xs text-neutral-500 dark:text-neutral-400">
                           {t('metCalc.weight.useManualDetail')}
                         </p>
                       </div>
@@ -289,7 +301,9 @@ export default function METCalculatorTool() {
                   </div>
                 ) : (
                   <div className="space-y-1">
-                    <p className="text-xs text-neutral-500">{t('metCalc.weight.noWeight')}</p>
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                      {t('metCalc.weight.noWeight')}
+                    </p>
                     <Input
                       type="number"
                       inputMode="decimal"
@@ -304,21 +318,27 @@ export default function METCalculatorTool() {
                 )}
               </div>
 
-              <div className="border-t pt-3 space-y-3">
+              <div className="border-t dark:border-neutral-700 pt-3 space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-neutral-600">{t('metCalc.summary.activities')}</span>
+                  <span className="text-neutral-600 dark:text-neutral-300">
+                    {t('metCalc.summary.activities')}
+                  </span>
                   <span className="font-bold">{selectedActivities.length}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-neutral-600">{t('metCalc.summary.time')}</span>
+                  <span className="text-neutral-600 dark:text-neutral-300">
+                    {t('metCalc.summary.time')}
+                  </span>
                   <span className="font-bold">
                     {totalDuration} {t('metCalc.summary.minuteUnit')}
                   </span>
                 </div>
-                <div className="pt-3 border-t">
+                <div className="pt-3 border-t dark:border-neutral-700">
                   <div className="flex justify-between items-baseline">
-                    <span className="text-neutral-600">{t('metCalc.summary.calories')}</span>
-                    <span className="text-3xl font-bold text-orange-600">
+                    <span className="text-neutral-600 dark:text-neutral-300">
+                      {t('metCalc.summary.calories')}
+                    </span>
+                    <span className="text-3xl font-bold text-orange-600 dark:text-orange-300">
                       {totalCalories.toFixed(0)}
                     </span>
                   </div>
@@ -348,19 +368,19 @@ export default function METCalculatorTool() {
                   {selectedActivities.map((activity, index) => (
                     <div
                       key={index}
-                      className="flex items-center justify-between p-3 bg-neutral-50 rounded-lg border border-neutral-200"
+                      className="flex items-center justify-between p-3 bg-neutral-50 rounded-lg border border-neutral-200 dark:bg-neutral-900 dark:border-neutral-700"
                     >
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-neutral-900 truncate">
+                        <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100 truncate">
                           {getActivityName(activity)}
                         </p>
-                        <p className="text-xs text-neutral-500">
+                        <p className="text-xs text-neutral-500 dark:text-neutral-400">
                           {activity.durationMinutes} {t('metCalc.selected.minuteAbbr')} ·{' '}
                           {activity.met} MET
                         </p>
                       </div>
                       <div className="flex items-center gap-3 ml-3">
-                        <span className="text-sm font-bold text-neutral-900">
+                        <span className="text-sm font-bold text-neutral-900 dark:text-neutral-100">
                           {activity.calories.toFixed(0)} kcal
                         </span>
                         <Button
@@ -398,14 +418,17 @@ function IntensityTable({ t }: { t: (key: string, opts?: any) => string }) {
   return (
     <Card>
       <CardContent className="pt-4 pb-3">
-        <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-2">
+        <p className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wide mb-2">
           {t('metCalc.intensityTable.title')}
         </p>
         <div className="flex flex-wrap gap-x-4 gap-y-1">
           {rows.map(row => {
             const intensity = getIntensityLevel(row.met)
             return (
-              <div key={row.key} className="flex items-center gap-1.5 text-xs text-neutral-500">
+              <div
+                key={row.key}
+                className="flex items-center gap-1.5 text-xs text-neutral-500 dark:text-neutral-400"
+              >
                 <Badge variant="secondary" className={`text-xs px-1.5 py-0 ${intensity.color}`}>
                   {intensity.label}
                 </Badge>
@@ -446,12 +469,16 @@ function ActivityRow({
   }
 
   return (
-    <div className="p-3 hover:bg-neutral-50 transition-colors">
+    <div className="p-3 hover:bg-neutral-50 transition-colors dark:hover:bg-neutral-800">
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-neutral-900">{getActivityName(activity)}</p>
+          <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+            {getActivityName(activity)}
+          </p>
           <div className="flex items-center gap-2 mt-1">
-            <span className="text-xs text-neutral-500">{getCategoryName(activity.category)}</span>
+            <span className="text-xs text-neutral-500 dark:text-neutral-400">
+              {getCategoryName(activity.category)}
+            </span>
             <Badge variant="secondary" className={`text-xs ${intensity.color}`}>
               {activity.met} MET
             </Badge>
@@ -471,7 +498,7 @@ function ActivityRow({
         ) : (
           <div className="flex items-center gap-2 shrink-0">
             <div className="flex flex-col">
-              <label className="text-xs text-neutral-500 mb-1">
+              <label className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">
                 {t('metCalc.activityRow.minutesLabel')}
               </label>
               <Input

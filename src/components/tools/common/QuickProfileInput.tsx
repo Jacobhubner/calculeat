@@ -76,7 +76,10 @@ export default function QuickProfileInput({
   return (
     <div className="flex items-end gap-2">
       <div className="flex-1">
-        <Label htmlFor={`quick-${field}`} className="text-sm font-medium text-gray-700">
+        <Label
+          htmlFor={`quick-${field}`}
+          className="text-sm font-medium text-gray-700 dark:text-neutral-300"
+        >
           {label}
         </Label>
         {type === 'select' && options ? (

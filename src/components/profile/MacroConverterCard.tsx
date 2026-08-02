@@ -188,7 +188,9 @@ export default function MacroConverterCard({ profile }: MacroConverterCardProps)
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-neutral-500">{t('macroConverter.noTdee')}</p>
+          <p className="text-sm text-neutral-500 dark:text-neutral-400">
+            {t('macroConverter.noTdee')}
+          </p>
         </CardContent>
       </Card>
     )
@@ -204,7 +206,9 @@ export default function MacroConverterCard({ profile }: MacroConverterCardProps)
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-neutral-500">{t('macroConverter.noWeight')}</p>
+          <p className="text-sm text-neutral-500 dark:text-neutral-400">
+            {t('macroConverter.noWeight')}
+          </p>
         </CardContent>
       </Card>
     )
@@ -259,7 +263,7 @@ export default function MacroConverterCard({ profile }: MacroConverterCardProps)
 
         {/* Warning for high percentage */}
         {unit === 'percent' && numericValue > 100 && (
-          <div className="text-xs text-amber-600 flex items-start gap-1">
+          <div className="text-xs text-amber-600 flex items-start gap-1 dark:text-amber-300">
             <span>ℹ️</span>
             <span>{t('macroConverter.warningOver100')}</span>
           </div>
@@ -270,7 +274,7 @@ export default function MacroConverterCard({ profile }: MacroConverterCardProps)
           <div className="border-t pt-4 space-y-3">
             <div className="flex items-center gap-2">
               <Flame className="h-5 w-5 text-orange-500" />
-              <h3 className="text-sm font-semibold text-neutral-800">
+              <h3 className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
                 {t('macroConverter.tdeeHeader', {
                   kcal: profile.tdee ? Math.round(profile.tdee) : '',
                 })}
@@ -280,36 +284,48 @@ export default function MacroConverterCard({ profile }: MacroConverterCardProps)
             <div
               className={`grid gap-3 ${hasBodyFat && tdeeResults.gPerKgFFM !== undefined ? 'grid-cols-3 sm:grid-cols-5' : 'grid-cols-2 sm:grid-cols-4'}`}
             >
-              <div className="text-center p-3 bg-orange-50 rounded-lg border border-orange-200">
-                <p className="text-xs text-neutral-600 mb-1">{t('macroConverter.labelPercent')}</p>
-                <p className="text-lg font-bold text-orange-700">
+              <div className="text-center p-3 bg-orange-50 rounded-lg border border-orange-200 dark:bg-orange-900/25 dark:border-orange-800">
+                <p className="text-xs text-neutral-600 mb-1 dark:text-neutral-400">
+                  {t('macroConverter.labelPercent')}
+                </p>
+                <p className="text-lg font-bold text-orange-700 dark:text-orange-300">
                   {tdeeResults.percent.toFixed(1)}%
                 </p>
               </div>
-              <div className="text-center p-3 bg-orange-50 rounded-lg border border-orange-200">
-                <p className="text-xs text-neutral-600 mb-1">{t('macroConverter.labelGrams')}</p>
-                <p className="text-lg font-bold text-orange-700">{tdeeResults.grams.toFixed(0)}g</p>
+              <div className="text-center p-3 bg-orange-50 rounded-lg border border-orange-200 dark:bg-orange-900/25 dark:border-orange-800">
+                <p className="text-xs text-neutral-600 mb-1 dark:text-neutral-400">
+                  {t('macroConverter.labelGrams')}
+                </p>
+                <p className="text-lg font-bold text-orange-700 dark:text-orange-300">
+                  {tdeeResults.grams.toFixed(0)}g
+                </p>
               </div>
-              <div className="text-center p-3 bg-orange-50 rounded-lg border border-orange-200">
-                <p className="text-xs text-neutral-600 mb-1">{t('macroConverter.labelKcal')}</p>
-                <p className="text-lg font-bold text-orange-700">
+              <div className="text-center p-3 bg-orange-50 rounded-lg border border-orange-200 dark:bg-orange-900/25 dark:border-orange-800">
+                <p className="text-xs text-neutral-600 mb-1 dark:text-neutral-400">
+                  {t('macroConverter.labelKcal')}
+                </p>
+                <p className="text-lg font-bold text-orange-700 dark:text-orange-300">
                   {tdeeResults.kcal.toFixed(0)} kcal
                 </p>
               </div>
-              <div className="text-center p-3 bg-orange-50 rounded-lg border border-orange-200">
-                <p className="text-xs text-neutral-600 mb-1">{t('macroConverter.labelPerKg')}</p>
-                <p className="text-lg font-bold text-orange-700">{tdeeResults.gPerKg.toFixed(2)}</p>
-                <p className="text-xs text-neutral-500">g/kg</p>
+              <div className="text-center p-3 bg-orange-50 rounded-lg border border-orange-200 dark:bg-orange-900/25 dark:border-orange-800">
+                <p className="text-xs text-neutral-600 mb-1 dark:text-neutral-400">
+                  {t('macroConverter.labelPerKg')}
+                </p>
+                <p className="text-lg font-bold text-orange-700 dark:text-orange-300">
+                  {tdeeResults.gPerKg.toFixed(2)}
+                </p>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">g/kg</p>
               </div>
               {hasBodyFat && tdeeResults.gPerKgFFM !== undefined && (
-                <div className="text-center p-3 bg-orange-50 rounded-lg border border-orange-200">
-                  <p className="text-xs text-neutral-600 mb-1">
+                <div className="text-center p-3 bg-orange-50 rounded-lg border border-orange-200 dark:bg-orange-900/25 dark:border-orange-800">
+                  <p className="text-xs text-neutral-600 mb-1 dark:text-neutral-400">
                     {t('macroConverter.labelPerKgFFM')}
                   </p>
-                  <p className="text-lg font-bold text-orange-700">
+                  <p className="text-lg font-bold text-orange-700 dark:text-orange-300">
                     {tdeeResults.gPerKgFFM.toFixed(2)}
                   </p>
-                  <p className="text-xs text-neutral-500">g/kg FFM</p>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">g/kg FFM</p>
                 </div>
               )}
             </div>
@@ -321,7 +337,7 @@ export default function MacroConverterCard({ profile }: MacroConverterCardProps)
           <div className="border-t pt-4 space-y-3">
             <div className="flex items-center gap-2">
               <Target className="h-5 w-5 text-accent-500" />
-              <h3 className="text-sm font-semibold text-neutral-800">
+              <h3 className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
                 {t('macroConverter.energyGoalHeader', {
                   min: profile.calories_min ? Math.round(profile.calories_min) : '',
                   max: profile.calories_max ? Math.round(profile.calories_max) : '',
@@ -332,50 +348,58 @@ export default function MacroConverterCard({ profile }: MacroConverterCardProps)
             <div
               className={`grid gap-3 ${hasBodyFat && energyGoalResults.gPerKgFFM !== undefined ? 'grid-cols-3 sm:grid-cols-5' : 'grid-cols-2 sm:grid-cols-4'}`}
             >
-              <div className="text-center p-3 bg-primary-50 rounded-lg border border-primary-200">
-                <p className="text-xs text-neutral-600 mb-1">{t('macroConverter.labelPercent')}</p>
-                <p className="text-lg font-bold text-primary-700">
+              <div className="text-center p-3 bg-primary-50 rounded-lg border border-primary-200 dark:bg-primary-900/25 dark:border-primary-800">
+                <p className="text-xs text-neutral-600 mb-1 dark:text-neutral-400">
+                  {t('macroConverter.labelPercent')}
+                </p>
+                <p className="text-lg font-bold text-primary-700 dark:text-primary-300">
                   {typeof energyGoalResults.percent === 'number'
                     ? `${energyGoalResults.percent.toFixed(1)}%`
                     : `${energyGoalResults.percent.min.toFixed(1)}-${energyGoalResults.percent.max.toFixed(1)}%`}
                 </p>
               </div>
-              <div className="text-center p-3 bg-primary-50 rounded-lg border border-primary-200">
-                <p className="text-xs text-neutral-600 mb-1">{t('macroConverter.labelGrams')}</p>
-                <p className="text-lg font-bold text-primary-700">
+              <div className="text-center p-3 bg-primary-50 rounded-lg border border-primary-200 dark:bg-primary-900/25 dark:border-primary-800">
+                <p className="text-xs text-neutral-600 mb-1 dark:text-neutral-400">
+                  {t('macroConverter.labelGrams')}
+                </p>
+                <p className="text-lg font-bold text-primary-700 dark:text-primary-300">
                   {typeof energyGoalResults.grams === 'number'
                     ? `${energyGoalResults.grams.toFixed(0)}g`
                     : `${energyGoalResults.grams.min.toFixed(0)}-${energyGoalResults.grams.max.toFixed(0)}g`}
                 </p>
               </div>
-              <div className="text-center p-3 bg-primary-50 rounded-lg border border-primary-200">
-                <p className="text-xs text-neutral-600 mb-1">{t('macroConverter.labelKcal')}</p>
-                <p className="text-lg font-bold text-primary-700">
+              <div className="text-center p-3 bg-primary-50 rounded-lg border border-primary-200 dark:bg-primary-900/25 dark:border-primary-800">
+                <p className="text-xs text-neutral-600 mb-1 dark:text-neutral-400">
+                  {t('macroConverter.labelKcal')}
+                </p>
+                <p className="text-lg font-bold text-primary-700 dark:text-primary-300">
                   {typeof energyGoalResults.kcal === 'number'
                     ? `${energyGoalResults.kcal.toFixed(0)} kcal`
                     : `${energyGoalResults.kcal.min.toFixed(0)}-${energyGoalResults.kcal.max.toFixed(0)} kcal`}
                 </p>
               </div>
-              <div className="text-center p-3 bg-primary-50 rounded-lg border border-primary-200">
-                <p className="text-xs text-neutral-600 mb-1">{t('macroConverter.labelPerKg')}</p>
-                <p className="text-lg font-bold text-primary-700">
+              <div className="text-center p-3 bg-primary-50 rounded-lg border border-primary-200 dark:bg-primary-900/25 dark:border-primary-800">
+                <p className="text-xs text-neutral-600 mb-1 dark:text-neutral-400">
+                  {t('macroConverter.labelPerKg')}
+                </p>
+                <p className="text-lg font-bold text-primary-700 dark:text-primary-300">
                   {typeof energyGoalResults.gPerKg === 'number'
                     ? energyGoalResults.gPerKg.toFixed(2)
                     : `${energyGoalResults.gPerKg.min.toFixed(2)}-${energyGoalResults.gPerKg.max.toFixed(2)}`}
                 </p>
-                <p className="text-xs text-neutral-500">g/kg</p>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">g/kg</p>
               </div>
               {hasBodyFat && energyGoalResults.gPerKgFFM !== undefined && (
-                <div className="text-center p-3 bg-primary-50 rounded-lg border border-primary-200">
-                  <p className="text-xs text-neutral-600 mb-1">
+                <div className="text-center p-3 bg-primary-50 rounded-lg border border-primary-200 dark:bg-primary-900/25 dark:border-primary-800">
+                  <p className="text-xs text-neutral-600 mb-1 dark:text-neutral-400">
                     {t('macroConverter.labelPerKgFFM')}
                   </p>
-                  <p className="text-lg font-bold text-primary-700">
+                  <p className="text-lg font-bold text-primary-700 dark:text-primary-300">
                     {typeof energyGoalResults.gPerKgFFM === 'number'
                       ? energyGoalResults.gPerKgFFM.toFixed(2)
                       : `${energyGoalResults.gPerKgFFM.min.toFixed(2)}-${energyGoalResults.gPerKgFFM.max.toFixed(2)}`}
                   </p>
-                  <p className="text-xs text-neutral-500">g/kg FFM</p>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">g/kg FFM</p>
                 </div>
               )}
             </div>

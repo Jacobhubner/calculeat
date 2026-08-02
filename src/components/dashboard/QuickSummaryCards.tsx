@@ -33,19 +33,21 @@ export function QuickSummaryCards({
         <CardContent className="p-6">
           <div className="flex items-start justify-between mb-3">
             <div>
-              <p className="text-xs font-medium text-neutral-600 mb-1 uppercase tracking-wider">
+              <p className="text-xs font-medium text-neutral-600 dark:text-neutral-300 mb-1 uppercase tracking-wider">
                 {t('summary.calorieGoal')}
               </p>
-              <p className="text-2xl font-bold text-primary-600">{getGoalLabel()}</p>
-              <p className="text-xs text-neutral-500 mt-1">
+              <p className="text-2xl font-bold text-primary-600 dark:text-primary-300">
+                {getGoalLabel()}
+              </p>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
                 {t('summary.tdee')}: {tdee} kcal/dag
               </p>
             </div>
-            <div className="p-2 rounded-lg bg-primary-100">
-              <TrendingDown className="h-5 w-5 text-primary-600" />
+            <div className="p-2 rounded-lg bg-primary-100 dark:bg-primary-900/30">
+              <TrendingDown className="h-5 w-5 text-primary-600 dark:text-primary-300" />
             </div>
           </div>
-          <p className="text-xs text-neutral-600">
+          <p className="text-xs text-neutral-600 dark:text-neutral-300">
             {calorieDeficit > 0
               ? t('summary.deficitAmount', { amount: Math.abs(calorieDeficit) })
               : calorieDeficit < 0
@@ -60,15 +62,15 @@ export function QuickSummaryCards({
         <CardContent className="p-6">
           <div className="flex items-start justify-between mb-3">
             <div>
-              <p className="text-xs font-medium text-neutral-600 mb-1 uppercase tracking-wider">
+              <p className="text-xs font-medium text-neutral-600 dark:text-neutral-300 mb-1 uppercase tracking-wider">
                 {t('summary.weightTrend') || 'Weight Trend'}
               </p>
               <div className="flex items-baseline gap-1">
                 <p
                   className={cn('text-3xl font-bold', {
-                    'text-success-600': isWeightTrendingDown,
-                    'text-error-600': !isWeightTrendingDown && weightChange > 0,
-                    'text-neutral-600': weightChange === 0,
+                    'text-success-600 dark:text-success-300': isWeightTrendingDown,
+                    'text-error-600 dark:text-error-300': !isWeightTrendingDown && weightChange > 0,
+                    'text-neutral-600 dark:text-neutral-300': weightChange === 0,
                   })}
                 >
                   {isWeightTrendingDown ? '-' : '+'}
@@ -76,40 +78,40 @@ export function QuickSummaryCards({
                 </p>
                 <p
                   className={cn('text-sm font-semibold', {
-                    'text-success-600': isWeightTrendingDown,
-                    'text-error-600': !isWeightTrendingDown && weightChange > 0,
-                    'text-neutral-600': weightChange === 0,
+                    'text-success-600 dark:text-success-300': isWeightTrendingDown,
+                    'text-error-600 dark:text-error-300': !isWeightTrendingDown && weightChange > 0,
+                    'text-neutral-600 dark:text-neutral-300': weightChange === 0,
                   })}
                 >
                   kg
                 </p>
               </div>
-              <p className="text-xs text-neutral-500 mt-1">this month</p>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">this month</p>
             </div>
             <div
               className={cn('p-2 rounded-lg', {
-                'bg-success-100': isWeightTrendingDown,
-                'bg-error-100': !isWeightTrendingDown && weightChange > 0,
-                'bg-neutral-100': weightChange === 0,
+                'bg-success-100 dark:bg-success-900/30': isWeightTrendingDown,
+                'bg-error-100 dark:bg-error-900/30': !isWeightTrendingDown && weightChange > 0,
+                'bg-neutral-100 dark:bg-neutral-800': weightChange === 0,
               })}
             >
               {isWeightTrendingDown ? (
                 <TrendingDown
                   className={cn('h-5 w-5', {
-                    'text-success-600': isWeightTrendingDown,
+                    'text-success-600 dark:text-success-300': isWeightTrendingDown,
                   })}
                 />
               ) : (
                 <TrendingUp
                   className={cn('h-5 w-5', {
-                    'text-error-600': !isWeightTrendingDown && weightChange > 0,
-                    'text-neutral-600': weightChange === 0,
+                    'text-error-600 dark:text-error-300': !isWeightTrendingDown && weightChange > 0,
+                    'text-neutral-600 dark:text-neutral-300': weightChange === 0,
                   })}
                 />
               )}
             </div>
           </div>
-          <p className="text-xs text-neutral-600">
+          <p className="text-xs text-neutral-600 dark:text-neutral-300">
             {isWeightTrendingDown ? '↘ Losing' : '↗ Gaining'} weight
           </p>
         </CardContent>

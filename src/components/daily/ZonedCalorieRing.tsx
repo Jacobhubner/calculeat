@@ -79,13 +79,14 @@ export function ZonedCalorieRing({
               <stop offset="55%" stopColor="#7bbe2a" stopOpacity="0.12" />
               <stop offset="100%" stopColor="#fc8518" stopOpacity="0" />
             </radialGradient>
-            {/* Mörka bakgrunder slukar svaga toner, så glöden får högre
-                opacitet i mörkt läge. Två gradienter i stället för en:
-                stopOpacity är ett SVG-attribut och kan inte styras av
-                dark:-klasser, bara valet av vilken cirkel som visas. */}
+            {/* Mörkt läge: gult mot nästan svart lyser betydligt mer än mot
+                vitt, så glöden ska vara SVAGARE här — inte starkare. Den ska
+                anas bakom ringen, inte läsas som en lampa. Två gradienter
+                behövs eftersom stopOpacity är ett SVG-attribut som dark:
+                inte kan nå; bara valet av vilken cirkel som visas. */}
             <radialGradient id={glowDarkId}>
-              <stop offset="0%" stopColor="#edbe0c" stopOpacity="0.38" />
-              <stop offset="55%" stopColor="#7bbe2a" stopOpacity="0.22" />
+              <stop offset="0%" stopColor="#edbe0c" stopOpacity="0.10" />
+              <stop offset="55%" stopColor="#7bbe2a" stopOpacity="0.07" />
               <stop offset="100%" stopColor="#fc8518" stopOpacity="0" />
             </radialGradient>
           </defs>

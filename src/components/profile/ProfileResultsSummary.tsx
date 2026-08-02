@@ -103,7 +103,7 @@ export default function ProfileResultsSummary({ profile, onTDEEEdit }: ProfileRe
     <Card className="group">
       <CardHeader>
         <CardTitle className="text-base flex items-center gap-2">
-          <Activity className="h-5 w-5 text-success-600" />
+          <Activity className="h-5 w-5 text-success-600 dark:text-success-300" />
           {t('results.title')}
         </CardTitle>
       </CardHeader>
@@ -114,18 +114,24 @@ export default function ProfileResultsSummary({ profile, onTDEEEdit }: ProfileRe
             <div className="flex items-center gap-2">
               <Flame className="h-4 w-4 text-orange-500" />
               <div>
-                <p className="text-sm font-medium text-neutral-700">
+                <p className="text-sm font-medium text-neutral-700 dark:text-neutral-200">
                   {bmrFormula ? getMetabolicRateLabel(bmrFormula) : 'BMR/RMR'}
                 </p>
-                <p className="text-xs text-neutral-500">{t('results.basalMetabolism')}</p>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                  {t('results.basalMetabolism')}
+                </p>
                 {bmrFormula ? (
-                  <p className="text-xs text-neutral-400">{getFormulaDisplayName(bmrFormula)}</p>
+                  <p className="text-xs text-neutral-400 dark:text-neutral-500">
+                    {getFormulaDisplayName(bmrFormula)}
+                  </p>
                 ) : isEstimatedBmr ? (
-                  <p className="text-xs text-neutral-400">{t('results.estimatedBmr')}</p>
+                  <p className="text-xs text-neutral-400 dark:text-neutral-500">
+                    {t('results.estimatedBmr')}
+                  </p>
                 ) : null}
               </div>
             </div>
-            <p className="text-sm font-semibold text-neutral-900 whitespace-nowrap">
+            <p className="text-sm font-semibold text-neutral-900 whitespace-nowrap dark:text-neutral-100">
               {Math.round(bmr)} kcal
             </p>
           </div>
@@ -136,8 +142,10 @@ export default function ProfileResultsSummary({ profile, onTDEEEdit }: ProfileRe
           <div className="flex items-center gap-2 shrink-0">
             <Activity className="h-4 w-4 text-primary-500" />
             <div>
-              <p className="text-sm font-medium text-neutral-700">TDEE</p>
-              <p className="text-xs text-neutral-500">{t('results.totalEnergyNeed')}</p>
+              <p className="text-sm font-medium text-neutral-700 dark:text-neutral-200">TDEE</p>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                {t('results.totalEnergyNeed')}
+              </p>
             </div>
           </div>
           {editing ? (
@@ -153,21 +161,23 @@ export default function ProfileResultsSummary({ profile, onTDEEEdit }: ProfileRe
                   }
                 }}
                 onBlur={() => setEditing(false)}
-                className="w-20 text-right text-sm font-semibold border border-neutral-300 rounded px-1 py-0.5"
+                className="w-20 text-right text-sm font-semibold border border-neutral-300 rounded px-1 py-0.5 dark:border-neutral-600"
                 autoFocus
                 min={500}
                 max={10000}
               />
-              <span className="text-xs text-neutral-500">kcal</span>
+              <span className="text-xs text-neutral-500 dark:text-neutral-400">kcal</span>
             </div>
           ) : (
             <div className="flex items-center gap-1">
-              <p className="text-sm font-semibold text-neutral-900">{Math.round(tdee)} kcal</p>
+              <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                {Math.round(tdee)} kcal
+              </p>
               {onTDEEEdit && (
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-6 w-6 p-0 text-neutral-400 hover:text-neutral-600 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
+                  className="h-6 w-6 p-0 text-neutral-400 hover:text-neutral-600 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity dark:text-neutral-500 dark:hover:text-neutral-300"
                   onClick={() => {
                     setEditValue(Math.round(tdee).toString())
                     setEditing(true)
@@ -186,9 +196,11 @@ export default function ProfileResultsSummary({ profile, onTDEEEdit }: ProfileRe
             <div className="flex items-center gap-2">
               <Target className="h-4 w-4 text-accent-500" />
               <div>
-                <p className="text-sm font-medium text-neutral-700">{t('results.calorieRange')}</p>
+                <p className="text-sm font-medium text-neutral-700 dark:text-neutral-200">
+                  {t('results.calorieRange')}
+                </p>
                 {calorieGoal && (
-                  <p className="text-xs text-neutral-500">
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">
                     {calorieGoal === 'Maintain weight'
                       ? t('calorieGoal.maintain')
                       : calorieGoal === 'Weight loss'
@@ -200,7 +212,7 @@ export default function ProfileResultsSummary({ profile, onTDEEEdit }: ProfileRe
                 )}
               </div>
             </div>
-            <p className="text-sm font-semibold text-neutral-900">
+            <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
               {Math.round(caloriesMin)}–{Math.round(caloriesMax)} kcal
             </p>
           </div>

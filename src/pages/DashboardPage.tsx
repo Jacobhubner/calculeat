@@ -148,15 +148,17 @@ export default function DashboardPage() {
         {/* Header - Professional */}
         <div className="mb-8">
           <div>
-            <p className="text-xs font-semibold text-neutral-500 uppercase tracking-widest mb-1">
+            <p className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-widest mb-1">
               {t('greeting.welcomeBack')}
             </p>
-            <h1 className="text-3xl md:text-4xl font-black text-neutral-900">
+            <h1 className="text-3xl md:text-4xl font-black text-neutral-900 dark:text-neutral-100">
               {authProfile?.profile_name || t('greeting.user')}
             </h1>
           </div>
           {!hasBasicInfo && (
-            <p className="text-neutral-600 text-sm mt-3">{t('greeting.fillProfile')}</p>
+            <p className="text-neutral-600 dark:text-neutral-300 text-sm mt-3">
+              {t('greeting.fillProfile')}
+            </p>
           )}
         </div>
 
@@ -236,12 +238,12 @@ export default function DashboardPage() {
                   <button
                     key={to}
                     onClick={() => navigate(to)}
-                    className="flex flex-col items-center gap-3 p-4 rounded-2xl bg-gradient-to-br from-white to-neutral-50 border border-neutral-200 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                    className="flex flex-col items-center gap-3 p-4 rounded-2xl bg-gradient-to-br from-white to-neutral-50 dark:from-neutral-850 dark:to-neutral-900 border border-neutral-200 dark:border-neutral-700 hover:shadow-lg dark:hover:shadow-black/30 hover:-translate-y-1 transition-all duration-300"
                   >
-                    <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary-100 to-accent-100 flex items-center justify-center">
-                      <Icon className="h-5 w-5 text-primary-600" />
+                    <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary-100 to-accent-100 dark:from-primary-900/30 dark:to-accent-900/30 flex items-center justify-center">
+                      <Icon className="h-5 w-5 text-primary-600 dark:text-primary-300" />
                     </div>
-                    <span className="text-center text-sm font-medium text-neutral-800 leading-tight">
+                    <span className="text-center text-sm font-medium text-neutral-800 dark:text-neutral-200 leading-tight">
                       {label}
                     </span>
                   </button>

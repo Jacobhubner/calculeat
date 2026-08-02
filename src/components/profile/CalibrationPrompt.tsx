@@ -28,15 +28,15 @@ export default function CalibrationPrompt({
   const getTrendIcon = () => {
     switch (availability.weightTrend) {
       case 'losing':
-        return <TrendingDown className="h-4 w-4 text-green-600" />
+        return <TrendingDown className="h-4 w-4 text-green-600 dark:text-green-300" />
       case 'gaining':
-        return <TrendingUp className="h-4 w-4 text-amber-600" />
+        return <TrendingUp className="h-4 w-4 text-amber-600 dark:text-amber-300" />
       case 'erratic':
-        return <AlertTriangle className="h-4 w-4 text-orange-600" />
+        return <AlertTriangle className="h-4 w-4 text-orange-600 dark:text-orange-300" />
       case 'stable':
-        return <CheckCircle className="h-4 w-4 text-blue-600" />
+        return <CheckCircle className="h-4 w-4 text-blue-600 dark:text-blue-300" />
       default:
-        return <Minus className="h-4 w-4 text-neutral-500" />
+        return <Minus className="h-4 w-4 text-neutral-500 dark:text-neutral-400" />
     }
   }
 
@@ -66,8 +66,8 @@ export default function CalibrationPrompt({
       className={cn(
         'rounded-lg border p-4',
         availability.isRecommended
-          ? 'border-primary-200 bg-primary-50'
-          : 'border-neutral-200 bg-neutral-50',
+          ? 'border-primary-200 bg-primary-50 dark:border-primary-800 dark:bg-primary-900/25'
+          : 'border-neutral-200 bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-900',
         className
       )}
     >
@@ -75,32 +75,38 @@ export default function CalibrationPrompt({
         <div
           className={cn(
             'rounded-full p-2',
-            availability.isRecommended ? 'bg-primary-100' : 'bg-neutral-100'
+            availability.isRecommended
+              ? 'bg-primary-100 dark:bg-primary-900/30'
+              : 'bg-neutral-100 dark:bg-neutral-800'
           )}
         >
           <Zap
             className={cn(
               'h-4 w-4',
-              availability.isRecommended ? 'text-primary-600' : 'text-neutral-500'
+              availability.isRecommended
+                ? 'text-primary-600 dark:text-primary-300'
+                : 'text-neutral-500 dark:text-neutral-400'
             )}
           />
         </div>
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <h4 className="text-sm font-semibold text-neutral-900">
+            <h4 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
               {availability.isRecommended ? 'Kalibrering rekommenderas' : 'Kalibrering tillgänglig'}
             </h4>
-            <div className="flex items-center gap-1 text-xs text-neutral-500">
+            <div className="flex items-center gap-1 text-xs text-neutral-500 dark:text-neutral-400">
               {getTrendIcon()}
               <span>{getTrendText()}</span>
             </div>
           </div>
 
-          <p className="text-xs text-neutral-600 mb-3">{availability.reason}</p>
+          <p className="text-xs text-neutral-600 mb-3 dark:text-neutral-400">
+            {availability.reason}
+          </p>
 
           <div className="flex items-center justify-between">
-            <div className="text-xs text-neutral-500">
+            <div className="text-xs text-neutral-500 dark:text-neutral-400">
               {lastCalibration ? (
                 <span>Senast: {formatLastCalibration()}</span>
               ) : (
@@ -111,7 +117,7 @@ export default function CalibrationPrompt({
               )}
               {availability.daysUntilNextRecommended !== null &&
                 availability.daysUntilNextRecommended > 0 && (
-                  <span className="ml-1 text-neutral-400">
+                  <span className="ml-1 text-neutral-400 dark:text-neutral-500">
                     · nästa om {availability.daysUntilNextRecommended} dag
                     {availability.daysUntilNextRecommended !== 1 ? 'ar' : ''}
                   </span>

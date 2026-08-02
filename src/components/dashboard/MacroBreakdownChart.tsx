@@ -1,6 +1,7 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
 import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { useChartTheme } from '@/hooks/useChartTheme'
 import { cn } from '@/lib/utils'
 
 interface MacroBreakdownChartProps {
@@ -11,6 +12,8 @@ interface MacroBreakdownChartProps {
 
 export function MacroBreakdownChart({ protein, fat, carbs }: MacroBreakdownChartProps) {
   const { t } = useTranslation('dashboard')
+  // Recharts tar färger som props — dark:-klasser når dem inte
+  const chartTheme = useChartTheme()
 
   // Determine status colors for each macro
   const getStatusColor = (current: number, min: number, max: number): string => {
@@ -89,6 +92,9 @@ export function MacroBreakdownChart({ protein, fat, carbs }: MacroBreakdownChart
                 dataKey="value"
                 label={renderCustomizedLabel}
                 labelLine={false}
+                // Etiketterna ritas som SVG-text — färgen måste sättas i JS,
+                // dark:-klasser når inte in i recharts.
+                style={{ fill: chartTheme.isDark ? '#e5eae0' : '#374151' }}
               >
                 {pieData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />
@@ -96,7 +102,9 @@ export function MacroBreakdownChart({ protein, fat, carbs }: MacroBreakdownChart
               </Pie>
               <Tooltip
                 formatter={(value?: number) => `${value ?? 0}%`}
-                contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e5e7eb' }}
+                contentStyle={chartTheme.tooltip}
+                itemStyle={{ color: chartTheme.tooltip.color }}
+                labelStyle={{ color: chartTheme.tooltip.color }}
               />
             </PieChart>
           </ResponsiveContainer>
@@ -109,23 +117,25 @@ export function MacroBreakdownChart({ protein, fat, carbs }: MacroBreakdownChart
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="h-3 w-3 rounded-full" style={{ backgroundColor: macro.color }} />
-                  <span className="text-sm font-medium text-neutral-700">{macro.name}</span>
+                  <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                    {macro.name}
+                  </span>
                 </div>
                 <span
                   className={cn('text-sm font-semibold', {
-                    'text-success-600': macro.status === '✓',
-                    'text-error-600': macro.status === '⚠',
-                    'text-amber-600': macro.status === '○',
+                    'text-success-600 dark:text-success-300': macro.status === '✓',
+                    'text-error-600 dark:text-error-300': macro.status === '⚠',
+                    'text-amber-600 dark:text-amber-300': macro.status === '○',
                   })}
                 >
                   {macro.status}
                 </span>
               </div>
-              <div className="flex items-center justify-between text-xs text-neutral-600">
+              <div className="flex items-center justify-between text-xs text-neutral-600 dark:text-neutral-300">
                 <span>
                   {Math.round(macro.current)}g of {macro.min}-{macro.max}g
                 </span>
-                <span className="text-neutral-500">
+                <span className="text-neutral-500 dark:text-neutral-400">
                   {Math.round((macro.current / (macro.max || 1)) * 100)}%
                 </span>
               </div>

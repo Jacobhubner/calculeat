@@ -61,10 +61,10 @@ export default function BodyCompositionHubPage() {
       <div className="space-y-8">
         {/* Header */}
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-neutral-900 mb-1 md:mb-2">
+          <h1 className="text-2xl md:text-3xl font-bold text-neutral-900 dark:text-neutral-100 mb-1 md:mb-2">
             {t('hub.title')}
           </h1>
-          <p className="text-neutral-600">{t('hub.subtitle')}</p>
+          <p className="text-neutral-600 dark:text-neutral-300">{t('hub.subtitle')}</p>
         </div>
 
         {/* Navigation Cards */}
@@ -102,11 +102,13 @@ export default function BodyCompositionHubPage() {
 
         {/* Visa alltid referenstabellerna även om data saknas */}
         <div className="space-y-6">
-          <h2 className="text-2xl font-bold text-neutral-900">{t('hub.referenceValues')}</h2>
+          <h2 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
+            {t('hub.referenceValues')}
+          </h2>
 
           {/* Body Fat % Table (full width) */}
           <div>
-            <h3 className="text-base font-semibold text-neutral-800 mb-2">
+            <h3 className="text-base font-semibold text-neutral-800 dark:text-neutral-200 mb-2">
               {t('hub.bodyFatTableTitle')}
             </h3>
             <BodyFatReferenceTable userBodyFat={null} gender={profile?.gender} fullWidthImages />
@@ -114,7 +116,7 @@ export default function BodyCompositionHubPage() {
 
           {/* FFMI Interpretation Table */}
           <div>
-            <h3 className="text-base font-semibold text-neutral-800 mb-2">
+            <h3 className="text-base font-semibold text-neutral-800 dark:text-neutral-200 mb-2">
               {t('hub.ffmiCategories')}
             </h3>
             <FFMIInterpretationTable gender={profile?.gender ?? 'male'} />
@@ -129,10 +131,10 @@ export default function BodyCompositionHubPage() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-2xl md:text-3xl font-bold text-neutral-900 mb-1 md:mb-2">
+        <h1 className="text-2xl md:text-3xl font-bold text-neutral-900 dark:text-neutral-100 mb-1 md:mb-2">
           {t('hub.title')}
         </h1>
-        <p className="text-neutral-600">{t('hub.subtitle')}</p>
+        <p className="text-neutral-600 dark:text-neutral-300">{t('hub.subtitle')}</p>
       </div>
 
       {/* Navigation Cards */}
@@ -162,7 +164,9 @@ export default function BodyCompositionHubPage() {
       {/* Current Stats Section */}
       {metrics && (
         <div className="space-y-6">
-          <h2 className="text-2xl font-bold text-neutral-900">{t('hub.currentValues')}</h2>
+          <h2 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
+            {t('hub.currentValues')}
+          </h2>
 
           {/* Main layout: Fettfri massa column on left, other cards on right */}
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -190,10 +194,10 @@ export default function BodyCompositionHubPage() {
                 />
                 <button
                   onClick={() => setShowFFMIModal(true)}
-                  className="absolute top-2 right-2 p-1 hover:bg-neutral-100 rounded-full transition-colors"
+                  className="absolute top-2 right-2 p-1 hover:bg-neutral-100 rounded-full transition-colors dark:hover:bg-neutral-800"
                   aria-label={t('hub.showFFMIInfo')}
                 >
-                  <Info className="h-4 w-4 text-neutral-600" />
+                  <Info className="h-4 w-4 text-neutral-600 dark:text-neutral-300" />
                 </button>
               </div>
 
@@ -207,10 +211,10 @@ export default function BodyCompositionHubPage() {
                 />
                 <button
                   onClick={() => setShowNormalizedFFMIModal(true)}
-                  className="absolute top-2 right-2 p-1 hover:bg-neutral-100 rounded-full transition-colors"
+                  className="absolute top-2 right-2 p-1 hover:bg-neutral-100 rounded-full transition-colors dark:hover:bg-neutral-800"
                   aria-label={t('hub.showNormalizedFFMIInfo')}
                 >
-                  <Info className="h-4 w-4 text-neutral-600" />
+                  <Info className="h-4 w-4 text-neutral-600 dark:text-neutral-300" />
                 </button>
               </div>
             </div>
@@ -220,7 +224,7 @@ export default function BodyCompositionHubPage() {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             {/* Left column: Kroppsfett % table - compact */}
             <div>
-              <h3 className="text-sm font-semibold text-neutral-800 mb-2">
+              <h3 className="text-sm font-semibold text-neutral-800 dark:text-neutral-200 mb-2">
                 {t('hub.bodyFatTableShort')}
               </h3>
               <BodyFatReferenceTable
@@ -232,7 +236,7 @@ export default function BodyCompositionHubPage() {
 
             {/* Right column: FFMI Interpretation Table */}
             <div className="lg:col-span-3">
-              <h3 className="text-base font-semibold text-neutral-800 mb-2">
+              <h3 className="text-base font-semibold text-neutral-800 dark:text-neutral-200 mb-2">
                 {t('hub.ffmiCategories')}
               </h3>
               <FFMIInterpretationTable

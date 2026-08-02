@@ -38,23 +38,25 @@ export default function MaxFatMetabolismCard({ profile }: MaxFatMetabolismCardPr
       <Card className="relative">
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
-            <Flame className="h-5 w-5 text-red-600" />
+            <Flame className="h-5 w-5 text-red-600 dark:text-red-300" />
             Maximal fettmetabolism
           </CardTitle>
           <button
             onClick={() => setShowModal(true)}
-            className="absolute top-4 right-4 p-1 hover:bg-neutral-100 rounded-full transition-colors"
+            className="absolute top-4 right-4 p-1 hover:bg-neutral-100 rounded-full transition-colors dark:hover:bg-neutral-800"
             aria-label="Visa information om Maximal fettmetabolism"
           >
-            <Info className="h-4 w-4 text-neutral-600" />
+            <Info className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
           </button>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="flex items-start justify-between">
-            <p className="text-sm font-semibold text-neutral-900">
+            <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
               {maxFatMetabolism.practicalMax} kcal/dag
             </p>
-            <p className="text-xs text-neutral-500">{maxFatMetabolism.percentOfTDEE}% av TDEE</p>
+            <p className="text-xs text-neutral-500 dark:text-neutral-400">
+              {maxFatMetabolism.percentOfTDEE}% av TDEE
+            </p>
           </div>
         </CardContent>
       </Card>

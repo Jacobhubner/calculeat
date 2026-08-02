@@ -161,7 +161,7 @@ export default function BasicInfoFields({
   const lockTitle = t('basicInfo.lockTitle')
 
   return (
-    <Card className="border-2 border-neutral-300">
+    <Card className="border-2 border-neutral-300 dark:border-neutral-600">
       <CardHeader className="pb-3">
         <button
           onClick={() => setIsOpen(!isOpen)}
@@ -169,7 +169,7 @@ export default function BasicInfoFields({
           type="button"
         >
           <CardTitle className="flex items-center gap-2">
-            <Info className="h-5 w-5 text-neutral-600" />
+            <Info className="h-5 w-5 text-neutral-600 dark:text-neutral-400" />
             {t('basicInfo.title')}
           </CardTitle>
           <ChevronDown
@@ -188,8 +188,10 @@ export default function BasicInfoFields({
               <Lock className="h-4 w-4" />
               <AlertDescription>
                 <div className="flex-1">
-                  <h4 className="font-semibold text-blue-900 mb-1">{t('basicInfo.allLocked')}</h4>
-                  <p className="text-sm text-blue-800">
+                  <h4 className="font-semibold text-blue-900 mb-1 dark:text-blue-300">
+                    {t('basicInfo.allLocked')}
+                  </h4>
+                  <p className="text-sm text-blue-800 dark:text-blue-300">
                     {t('basicInfo.lockedDesc')}
                   </p>
                 </div>
@@ -199,10 +201,10 @@ export default function BasicInfoFields({
 
           {/* Birth Date */}
           <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-2 flex items-center gap-2">
-              {t('birthDate.label')} <span className="text-red-600">*</span>
+            <label className="block text-sm font-medium text-neutral-700 mb-2 flex items-center gap-2 dark:text-neutral-200">
+              {t('birthDate.label')} <span className="text-red-600 dark:text-red-300">*</span>
               {locked && (
-                <span className="flex items-center gap-1 text-xs text-neutral-500 font-normal">
+                <span className="flex items-center gap-1 text-xs text-neutral-500 font-normal dark:text-neutral-400">
                   <Lock className="h-3 w-3" />
                   {t('basicInfo.locked')}
                 </span>
@@ -212,7 +214,7 @@ export default function BasicInfoFields({
               {/* Day Dropdown */}
               <div className="relative">
                 {locked && (
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400 z-10 pointer-events-none" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400 z-10 pointer-events-none dark:text-neutral-500" />
                 )}
                 <select
                   value={birthDay}
@@ -220,8 +222,8 @@ export default function BasicInfoFields({
                   disabled={locked}
                   className={`block w-full rounded-xl shadow-sm focus:border-primary-500 focus:ring-primary-500 ${
                     locked
-                      ? 'bg-neutral-200 cursor-not-allowed text-neutral-400 border-dashed border-2 border-neutral-300 pl-9'
-                      : 'border-neutral-300'
+                      ? 'bg-neutral-200 cursor-not-allowed text-neutral-400 border-dashed border-2 border-neutral-300 pl-9 dark:bg-neutral-700 dark:text-neutral-500 dark:border-neutral-600'
+                      : 'border-neutral-300 dark:border-neutral-600'
                   }`}
                   title={locked ? lockTitle : ''}
                 >
@@ -237,7 +239,7 @@ export default function BasicInfoFields({
               {/* Month Dropdown */}
               <div className="relative">
                 {locked && (
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400 z-10 pointer-events-none" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400 z-10 pointer-events-none dark:text-neutral-500" />
                 )}
                 <select
                   value={birthMonth}
@@ -245,8 +247,8 @@ export default function BasicInfoFields({
                   disabled={locked}
                   className={`block w-full rounded-xl shadow-sm focus:border-primary-500 focus:ring-primary-500 ${
                     locked
-                      ? 'bg-neutral-200 cursor-not-allowed text-neutral-400 border-dashed border-2 border-neutral-300 pl-9'
-                      : 'border-neutral-300'
+                      ? 'bg-neutral-200 cursor-not-allowed text-neutral-400 border-dashed border-2 border-neutral-300 pl-9 dark:bg-neutral-700 dark:text-neutral-500 dark:border-neutral-600'
+                      : 'border-neutral-300 dark:border-neutral-600'
                   }`}
                   title={locked ? lockTitle : ''}
                 >
@@ -262,7 +264,7 @@ export default function BasicInfoFields({
               {/* Year Dropdown */}
               <div className="relative">
                 {locked && (
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400 z-10 pointer-events-none" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400 z-10 pointer-events-none dark:text-neutral-500" />
                 )}
                 <select
                   value={birthYear}
@@ -270,8 +272,8 @@ export default function BasicInfoFields({
                   disabled={locked}
                   className={`block w-full rounded-xl shadow-sm focus:border-primary-500 focus:ring-primary-500 ${
                     locked
-                      ? 'bg-neutral-200 cursor-not-allowed text-neutral-400 border-dashed border-2 border-neutral-300 pl-9'
-                      : 'border-neutral-300'
+                      ? 'bg-neutral-200 cursor-not-allowed text-neutral-400 border-dashed border-2 border-neutral-300 pl-9 dark:bg-neutral-700 dark:text-neutral-500 dark:border-neutral-600'
+                      : 'border-neutral-300 dark:border-neutral-600'
                   }`}
                   title={locked ? lockTitle : ''}
                 >
@@ -288,10 +290,10 @@ export default function BasicInfoFields({
 
           {/* Gender Selection */}
           <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-2 flex items-center gap-2">
-              {t('fields.gender')} <span className="text-red-600">*</span>
+            <label className="block text-sm font-medium text-neutral-700 mb-2 flex items-center gap-2 dark:text-neutral-200">
+              {t('fields.gender')} <span className="text-red-600 dark:text-red-300">*</span>
               {locked && (
-                <span className="flex items-center gap-1 text-xs text-neutral-500 font-normal">
+                <span className="flex items-center gap-1 text-xs text-neutral-500 font-normal dark:text-neutral-400">
                   <Lock className="h-3 w-3" />
                   {t('basicInfo.locked')}
                 </span>
@@ -299,7 +301,9 @@ export default function BasicInfoFields({
             </label>
             <div
               className={`flex gap-4 p-3 rounded-xl ${
-                locked ? 'bg-neutral-200 border-dashed border-2 border-neutral-300' : ''
+                locked
+                  ? 'bg-neutral-200 border-dashed border-2 border-neutral-300 dark:bg-neutral-700 dark:border-neutral-600'
+                  : ''
               }`}
             >
               <label
@@ -313,9 +317,17 @@ export default function BasicInfoFields({
                   checked={gender === 'male'}
                   onChange={e => handleGenderChange(e.target.value as Gender)}
                   disabled={locked}
-                  className="mr-2 h-4 w-4 text-primary-600 focus:ring-primary-500 disabled:cursor-not-allowed"
+                  className="mr-2 h-4 w-4 text-primary-600 focus:ring-primary-500 disabled:cursor-not-allowed dark:text-primary-300"
                 />
-                <span className={locked ? 'text-neutral-400' : 'text-neutral-700'}>{t('gender.male')}</span>
+                <span
+                  className={
+                    locked
+                      ? 'text-neutral-400 dark:text-neutral-500'
+                      : 'text-neutral-700 dark:text-neutral-200'
+                  }
+                >
+                  {t('gender.male')}
+                </span>
               </label>
               <label
                 className={`flex items-center ${locked ? 'cursor-not-allowed' : 'cursor-pointer'}`}
@@ -328,19 +340,27 @@ export default function BasicInfoFields({
                   checked={gender === 'female'}
                   onChange={e => handleGenderChange(e.target.value as Gender)}
                   disabled={locked}
-                  className="mr-2 h-4 w-4 text-primary-600 focus:ring-primary-500 disabled:cursor-not-allowed"
+                  className="mr-2 h-4 w-4 text-primary-600 focus:ring-primary-500 disabled:cursor-not-allowed dark:text-primary-300"
                 />
-                <span className={locked ? 'text-neutral-400' : 'text-neutral-700'}>{t('gender.female')}</span>
+                <span
+                  className={
+                    locked
+                      ? 'text-neutral-400 dark:text-neutral-500'
+                      : 'text-neutral-700 dark:text-neutral-200'
+                  }
+                >
+                  {t('gender.female')}
+                </span>
               </label>
             </div>
           </div>
 
           {/* Height */}
           <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-2 flex items-center gap-2">
-              {t('fields.height')} <span className="text-red-600">*</span>
+            <label className="block text-sm font-medium text-neutral-700 mb-2 flex items-center gap-2 dark:text-neutral-200">
+              {t('fields.height')} <span className="text-red-600 dark:text-red-300">*</span>
               {locked && (
-                <span className="flex items-center gap-1 text-xs text-neutral-500 font-normal">
+                <span className="flex items-center gap-1 text-xs text-neutral-500 font-normal dark:text-neutral-400">
                   <Lock className="h-3 w-3" />
                   {t('basicInfo.locked')}
                 </span>
@@ -348,7 +368,7 @@ export default function BasicInfoFields({
             </label>
             <div className="relative">
               {locked && (
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400 z-10 pointer-events-none" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400 z-10 pointer-events-none dark:text-neutral-500" />
               )}
               <input
                 type="number"
@@ -358,8 +378,8 @@ export default function BasicInfoFields({
                 disabled={locked}
                 className={`mt-1 block w-full rounded-xl shadow-sm focus:border-primary-500 focus:ring-primary-500 ${
                   locked
-                    ? 'bg-neutral-200 cursor-not-allowed text-neutral-400 border-dashed border-2 border-neutral-300 pl-10'
-                    : 'border-neutral-300'
+                    ? 'bg-neutral-200 cursor-not-allowed text-neutral-400 border-dashed border-2 border-neutral-300 pl-10 dark:bg-neutral-700 dark:text-neutral-500 dark:border-neutral-600'
+                    : 'border-neutral-300 dark:border-neutral-600'
                 }`}
                 placeholder="180"
                 min="100"
@@ -372,15 +392,15 @@ export default function BasicInfoFields({
           {/* Weight - never locked, always editable */}
           {onWeightChange && (
             <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-2">
-                {t('fields.weight')} <span className="text-red-600">*</span>
+              <label className="block text-sm font-medium text-neutral-700 mb-2 dark:text-neutral-200">
+                {t('fields.weight')} <span className="text-red-600 dark:text-red-300">*</span>
               </label>
               <input
                 type="number"
                 value={weightString}
                 onChange={e => handleWeightInput(e.target.value)}
                 onBlur={handleWeightBlur}
-                className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:border-neutral-600"
                 placeholder="80"
                 min="30"
                 max="300"
