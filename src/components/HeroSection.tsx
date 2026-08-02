@@ -17,7 +17,7 @@ export function HeroSection() {
   const { t } = useTranslation('marketing')
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-green-50 via-blue-50 to-white pt-20 pb-48 md:pt-32 md:pb-56">
+    <section className="relative overflow-hidden bg-gradient-to-br from-green-50 via-blue-50 to-white pt-20 pb-48 md:pt-32 md:pb-56 dark:to-neutral-850 dark:from-green-900/30 dark:via-blue-900/25">
       {/* Bold gradient background */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(37,189,0,0.15),transparent_60%)] mix-blend-multiply" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_60%,rgba(14,165,233,0.1),transparent_60%)] mix-blend-screen" />
@@ -27,10 +27,10 @@ export function HeroSection() {
           {/* Left column - Text content */}
           <div className="text-center lg:text-left space-y-8">
             <div className="space-y-4">
-              <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-primary-700">
+              <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-primary-700 dark:text-primary-300">
                 {t('home.hero.tagline')}
               </p>
-              <h1 className="text-lg md:text-2xl lg:text-3xl font-medium text-neutral-600 max-w-2xl leading-relaxed">
+              <h1 className="text-lg md:text-2xl lg:text-3xl font-medium text-neutral-600 max-w-2xl leading-relaxed dark:text-neutral-400">
                 {t('home.hero.h1')}
                 <br />
                 {t('home.hero.h1Intro')}
@@ -43,10 +43,10 @@ export function HeroSection() {
                   className="h-52 sm:h-60 md:h-80 lg:h-96 xl:h-[28rem] object-contain"
                 />
               </div>
-              <p className="text-lg md:text-xl text-neutral-700 max-w-2xl mx-auto lg:mx-0">
+              <p className="text-lg md:text-xl text-neutral-700 max-w-2xl mx-auto lg:mx-0 dark:text-neutral-200">
                 {t('home.hero.body')}
               </p>
-              <p className="text-sm text-neutral-500 max-w-2xl mx-auto lg:mx-0">
+              <p className="text-sm text-neutral-500 max-w-2xl mx-auto lg:mx-0 dark:text-neutral-400">
                 {t('home.hero.subtext')}
               </p>
             </div>
@@ -69,7 +69,7 @@ export function HeroSection() {
                 asChild
                 size="lg"
                 variant="outline"
-                className="text-base font-semibold bg-white border-neutral-300 hover:bg-neutral-50 text-neutral-900"
+                className="text-base font-semibold bg-white border-neutral-300 hover:bg-neutral-50 text-neutral-900 dark:hover:bg-neutral-800 dark:border-neutral-600 dark:bg-neutral-850 dark:text-neutral-100"
               >
                 <Link to="/kalkylatorer/tdee-kalkylator">
                   <Calculator className="mr-2 h-5 w-5" />
@@ -82,45 +82,77 @@ export function HeroSection() {
           {/* Right column - Feature tiles preview */}
           <div className="hidden lg:flex justify-center lg:justify-end">
             <div className="w-full max-w-md">
-              <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:-translate-y-1">
+              <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:-translate-y-1 dark:border-neutral-700 dark:bg-neutral-850">
                 {/* Card header */}
                 <div className="flex items-center gap-2 mb-5 pb-4 border-b border-neutral-100">
-                  <LayoutGrid className="h-4 w-4 text-primary-600" />
-                  <span className="text-sm font-semibold text-neutral-700">
+                  <LayoutGrid className="h-4 w-4 text-primary-600 dark:text-primary-300" />
+                  <span className="text-sm font-semibold text-neutral-700 dark:text-neutral-200">
                     {t('home.hero.cardHeader')}
                   </span>
                 </div>
 
                 {/* 3x2 feature tile grid */}
                 <div className="grid grid-cols-2 gap-3 mb-5">
-                  <div className="rounded-xl bg-primary-50 border border-primary-200 p-4 flex flex-col gap-2">
-                    <Scan className="h-5 w-5 text-primary-600" strokeWidth={2} />
-                    <p className="text-sm font-medium text-neutral-700">{t('home.hero.tile1')}</p>
+                  <div className="rounded-xl bg-primary-50 border border-primary-200 p-4 flex flex-col gap-2 dark:bg-primary-900/25 dark:border-primary-800">
+                    <Scan
+                      className="h-5 w-5 text-primary-600 dark:text-primary-300"
+                      strokeWidth={2}
+                    />
+                    <p className="text-sm font-medium text-neutral-700 dark:text-neutral-200">
+                      {t('home.hero.tile1')}
+                    </p>
                   </div>
-                  <div className="rounded-xl bg-accent-50 border border-accent-200 p-4 flex flex-col gap-2">
-                    <Database className="h-5 w-5 text-accent-600" strokeWidth={2} />
-                    <p className="text-sm font-medium text-neutral-700">{t('home.hero.tile2')}</p>
+                  <div className="rounded-xl bg-accent-50 border border-accent-200 p-4 flex flex-col gap-2 dark:bg-accent-900/25 dark:border-accent-800">
+                    <Database
+                      className="h-5 w-5 text-accent-600 dark:text-accent-300"
+                      strokeWidth={2}
+                    />
+                    <p className="text-sm font-medium text-neutral-700 dark:text-neutral-200">
+                      {t('home.hero.tile2')}
+                    </p>
                   </div>
-                  <div className="rounded-xl bg-primary-50 border border-primary-200 p-4 flex flex-col gap-2">
-                    <Activity className="h-5 w-5 text-primary-600" strokeWidth={2} />
-                    <p className="text-sm font-medium text-neutral-700">{t('home.hero.tile3')}</p>
+                  <div className="rounded-xl bg-primary-50 border border-primary-200 p-4 flex flex-col gap-2 dark:bg-primary-900/25 dark:border-primary-800">
+                    <Activity
+                      className="h-5 w-5 text-primary-600 dark:text-primary-300"
+                      strokeWidth={2}
+                    />
+                    <p className="text-sm font-medium text-neutral-700 dark:text-neutral-200">
+                      {t('home.hero.tile3')}
+                    </p>
                   </div>
-                  <div className="rounded-xl bg-accent-50 border border-accent-200 p-4 flex flex-col gap-2">
-                    <Users className="h-5 w-5 text-accent-600" strokeWidth={2} />
-                    <p className="text-sm font-medium text-neutral-700">{t('home.hero.tile4')}</p>
+                  <div className="rounded-xl bg-accent-50 border border-accent-200 p-4 flex flex-col gap-2 dark:bg-accent-900/25 dark:border-accent-800">
+                    <Users
+                      className="h-5 w-5 text-accent-600 dark:text-accent-300"
+                      strokeWidth={2}
+                    />
+                    <p className="text-sm font-medium text-neutral-700 dark:text-neutral-200">
+                      {t('home.hero.tile4')}
+                    </p>
                   </div>
-                  <div className="rounded-xl bg-primary-50 border border-primary-200 p-4 flex flex-col gap-2">
-                    <ChefHat className="h-5 w-5 text-primary-600" strokeWidth={2} />
-                    <p className="text-sm font-medium text-neutral-700">{t('home.hero.tile5')}</p>
+                  <div className="rounded-xl bg-primary-50 border border-primary-200 p-4 flex flex-col gap-2 dark:bg-primary-900/25 dark:border-primary-800">
+                    <ChefHat
+                      className="h-5 w-5 text-primary-600 dark:text-primary-300"
+                      strokeWidth={2}
+                    />
+                    <p className="text-sm font-medium text-neutral-700 dark:text-neutral-200">
+                      {t('home.hero.tile5')}
+                    </p>
                   </div>
-                  <div className="rounded-xl bg-accent-50 border border-accent-200 p-4 flex flex-col gap-2">
-                    <Scale className="h-5 w-5 text-accent-600" strokeWidth={2} />
-                    <p className="text-sm font-medium text-neutral-700">{t('home.hero.tile6')}</p>
+                  <div className="rounded-xl bg-accent-50 border border-accent-200 p-4 flex flex-col gap-2 dark:bg-accent-900/25 dark:border-accent-800">
+                    <Scale
+                      className="h-5 w-5 text-accent-600 dark:text-accent-300"
+                      strokeWidth={2}
+                    />
+                    <p className="text-sm font-medium text-neutral-700 dark:text-neutral-200">
+                      {t('home.hero.tile6')}
+                    </p>
                   </div>
                 </div>
 
                 {/* Footer line */}
-                <div className="text-xs text-neutral-400">{t('home.hero.cardFooter')}</div>
+                <div className="text-xs text-neutral-400 dark:text-neutral-500">
+                  {t('home.hero.cardFooter')}
+                </div>
               </div>
             </div>
           </div>

@@ -32,7 +32,7 @@ export default function LegalPage({ pageKey }: LegalPageProps) {
   const sections = t(`${pageKey}.sections`, { returnObjects: true }) as unknown as LegalSection[]
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="min-h-screen flex flex-col bg-white dark:bg-neutral-850">
       <Seo
         title={t(`${pageKey}.seo.title`)}
         description={t(`${pageKey}.seo.description`)}
@@ -46,26 +46,37 @@ export default function LegalPage({ pageKey }: LegalPageProps) {
       <main className="flex-1">
         <div className="container mx-auto px-4 py-12 max-w-2xl">
           {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-sm text-neutral-500 mb-8">
-            <Link to="/" className="hover:text-neutral-700 transition-colors">
+          <nav className="flex items-center gap-2 text-sm text-neutral-500 mb-8 dark:text-neutral-400">
+            <Link
+              to="/"
+              className="hover:text-neutral-700 transition-colors dark:hover:text-neutral-200"
+            >
               Calculeat
             </Link>
             <span>/</span>
-            <span className="text-neutral-700">{t(`${pageKey}.breadcrumb`)}</span>
+            <span className="text-neutral-700 dark:text-neutral-200">
+              {t(`${pageKey}.breadcrumb`)}
+            </span>
           </nav>
 
-          <h1 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-2">
+          <h1 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-2 dark:text-neutral-100">
             {t(`${pageKey}.h1`)}
           </h1>
-          <p className="text-sm text-neutral-400 mb-6">{t(`${pageKey}.updated`)}</p>
+          <p className="text-sm text-neutral-400 mb-6 dark:text-neutral-500">
+            {t(`${pageKey}.updated`)}
+          </p>
 
-          <p className="text-lg text-neutral-600 leading-relaxed mb-10">{t(`${pageKey}.intro`)}</p>
+          <p className="text-lg text-neutral-600 leading-relaxed mb-10 dark:text-neutral-400">
+            {t(`${pageKey}.intro`)}
+          </p>
 
           <section className="space-y-8">
             {sections.map(section => (
               <div key={section.h2}>
-                <h2 className="text-xl font-semibold text-neutral-900 mb-3">{section.h2}</h2>
-                <p className="text-neutral-600 leading-relaxed whitespace-pre-line">
+                <h2 className="text-xl font-semibold text-neutral-900 mb-3 dark:text-neutral-100">
+                  {section.h2}
+                </h2>
+                <p className="text-neutral-600 leading-relaxed whitespace-pre-line dark:text-neutral-400">
                   {section.body}
                 </p>
               </div>

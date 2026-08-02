@@ -52,8 +52,10 @@ export function ProcessStep({
 
         {/* Content */}
         <div className="flex-1 space-y-2 pt-2">
-          <h3 className="text-xl md:text-2xl font-bold text-neutral-800">{title}</h3>
-          <p className="text-neutral-600 leading-relaxed">{description}</p>
+          <h3 className="text-xl md:text-2xl font-bold text-neutral-800 dark:text-neutral-200">
+            {title}
+          </h3>
+          <p className="text-neutral-600 leading-relaxed dark:text-neutral-400">{description}</p>
         </div>
       </div>
     </div>

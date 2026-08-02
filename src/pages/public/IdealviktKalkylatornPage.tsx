@@ -42,19 +42,19 @@ function getPosition(currentWeight: number, rangeMin: number, rangeMax: number):
 
 // Color/bg classes stay in TSX — not content
 const POSITION_COLORS: Record<Position, string> = {
-  underweight: 'text-blue-700',
+  underweight: 'text-blue-700 dark:text-blue-300',
   below_ideal: 'text-cyan-700',
-  within: 'text-green-700',
-  above_ideal: 'text-yellow-700',
-  overweight: 'text-orange-700',
+  within: 'text-green-700 dark:text-green-300',
+  above_ideal: 'text-yellow-700 dark:text-yellow-300',
+  overweight: 'text-orange-700 dark:text-orange-300',
 }
 
 const POSITION_BG: Record<Position, string> = {
-  underweight: 'bg-blue-50 border-blue-200',
-  below_ideal: 'bg-cyan-50 border-cyan-200',
-  within: 'bg-green-50 border-green-200',
-  above_ideal: 'bg-yellow-50 border-yellow-200',
-  overweight: 'bg-orange-50 border-orange-200',
+  underweight: 'bg-blue-50 border-blue-200 dark:bg-blue-900/25 dark:border-blue-800',
+  below_ideal: 'bg-cyan-50 border-cyan-200 dark:bg-cyan-900/25 dark:border-cyan-800',
+  within: 'bg-green-50 border-green-200 dark:bg-green-900/25 dark:border-green-800',
+  above_ideal: 'bg-yellow-50 border-yellow-200 dark:bg-yellow-900/25 dark:border-yellow-800',
+  overweight: 'bg-orange-50 border-orange-200 dark:bg-orange-900/25 dark:border-orange-800',
 }
 
 const pageConfig = getPageConfigByKey('idealweight-calculator')!
@@ -161,45 +161,48 @@ export default function IdealviktKalkylatornPage() {
 
       <main className="flex-1">
         {/* Hero section */}
-        <section className="relative overflow-hidden bg-white border-b border-neutral-100">
+        <section className="relative overflow-hidden bg-white border-b border-neutral-100 dark:bg-neutral-850">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(37,189,0,0.07),transparent_60%)]" />
           <div className="relative container mx-auto px-4 pt-16 pb-14 max-w-3xl">
-            <nav className="flex items-center gap-2 text-sm text-neutral-500 mb-6">
-              <Link to="/" className="hover:text-neutral-700 transition-colors">
+            <nav className="flex items-center gap-2 text-sm text-neutral-500 mb-6 dark:text-neutral-400">
+              <Link
+                to="/"
+                className="hover:text-neutral-700 transition-colors dark:hover:text-neutral-200"
+              >
                 Calculeat
               </Link>
               <span>/</span>
               <Link
                 to={t('idealweight-calculator.schema.breadcrumb.hubPath')}
-                className="hover:text-neutral-700 transition-colors"
+                className="hover:text-neutral-700 transition-colors dark:hover:text-neutral-200"
               >
                 {t('idealweight-calculator.schema.breadcrumb.hubLabel')}
               </Link>
               <span>/</span>
-              <span className="text-neutral-700">
+              <span className="text-neutral-700 dark:text-neutral-200">
                 {t('idealweight-calculator.schema.breadcrumb.pageLabel')}
               </span>
             </nav>
 
-            <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-5 leading-tight">
+            <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-5 leading-tight dark:text-neutral-100">
               <span className="bg-gradient-to-r from-primary-600 to-accent-500 bg-clip-text text-transparent">
                 {t('idealweight-calculator.h1Prefix')}
               </span>{' '}
               {t('idealweight-calculator.h1Suffix')}
             </h1>
-            <p className="text-lg md:text-xl text-neutral-600 leading-relaxed max-w-2xl">
+            <p className="text-lg md:text-xl text-neutral-600 leading-relaxed max-w-2xl dark:text-neutral-400">
               {t('idealweight-calculator.intro')}
             </p>
           </div>
         </section>
 
         {/* Calculator section */}
-        <section className="bg-neutral-50 py-14 border-b border-neutral-100">
+        <section className="bg-neutral-50 py-14 border-b border-neutral-100 dark:bg-neutral-900">
           <div className="container mx-auto px-4 max-w-2xl">
-            <div className="rounded-2xl border border-neutral-200 shadow-sm overflow-hidden">
-              <div className="bg-primary-50 px-6 py-4 border-b border-primary-100 flex items-center gap-2">
-                <Calculator className="h-5 w-5 text-primary-600" />
-                <span className="font-semibold text-primary-900">
+            <div className="rounded-2xl border border-neutral-200 shadow-sm overflow-hidden dark:border-neutral-700">
+              <div className="bg-primary-50 px-6 py-4 border-b border-primary-100 flex items-center gap-2 dark:bg-primary-900/25">
+                <Calculator className="h-5 w-5 text-primary-600 dark:text-primary-300" />
+                <span className="font-semibold text-primary-900 dark:text-primary-300">
                   {t('idealweight-calculator.calculator.header')}
                 </span>
               </div>
@@ -207,7 +210,7 @@ export default function IdealviktKalkylatornPage() {
               <div className="p-6 space-y-5">
                 {/* Gender */}
                 <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-2">
+                  <label className="block text-sm font-medium text-neutral-700 mb-2 dark:text-neutral-200">
                     {t('idealweight-calculator.calculator.genderLabel')}
                   </label>
                   <div className="grid grid-cols-2 gap-2">
@@ -230,7 +233,7 @@ export default function IdealviktKalkylatornPage() {
                         className={`py-2.5 rounded-xl text-sm font-medium border transition-colors ${
                           gender === opt.value
                             ? 'bg-primary-600 text-white border-primary-600'
-                            : 'bg-white text-neutral-700 border-neutral-200 hover:border-primary-300'
+                            : 'bg-white text-neutral-700 border-neutral-200 hover:border-primary-300 dark:border-neutral-700 dark:bg-neutral-850 dark:text-neutral-200'
                         }`}
                       >
                         {opt.label}
@@ -264,10 +267,10 @@ export default function IdealviktKalkylatornPage() {
                     },
                   ].map(({ label, unit, value, setter, placeholder }) => (
                     <div key={label}>
-                      <label className="block text-sm font-medium text-neutral-700 mb-1">
+                      <label className="block text-sm font-medium text-neutral-700 mb-1 dark:text-neutral-200">
                         {label}
                       </label>
-                      <div className="flex items-center border border-neutral-200 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-primary-300 focus-within:border-primary-400">
+                      <div className="flex items-center border border-neutral-200 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-primary-300 focus-within:border-primary-400 dark:border-neutral-700">
                         <input
                           type="number"
                           inputMode="decimal"
@@ -275,9 +278,9 @@ export default function IdealviktKalkylatornPage() {
                           onChange={e => setter(e.target.value)}
                           onFocus={e => e.target.select()}
                           placeholder={placeholder}
-                          className="flex-1 px-3 py-2.5 text-sm text-neutral-900 bg-white outline-none min-w-0"
+                          className="flex-1 px-3 py-2.5 text-sm text-neutral-900 bg-white outline-none min-w-0 dark:bg-neutral-850 dark:text-neutral-100"
                         />
-                        <span className="px-2 text-xs text-neutral-400 bg-neutral-50 border-l border-neutral-200 py-2.5">
+                        <span className="px-2 text-xs text-neutral-400 bg-neutral-50 border-l border-neutral-200 py-2.5 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-500">
                           {unit}
                         </span>
                       </div>
@@ -296,25 +299,27 @@ export default function IdealviktKalkylatornPage() {
 
               {/* Results */}
               {hasResult && result && (
-                <div className="border-t border-neutral-100 bg-neutral-50 px-6 py-6 space-y-4">
-                  <h2 className="font-semibold text-neutral-800">
+                <div className="border-t border-neutral-100 bg-neutral-50 px-6 py-6 space-y-4 dark:bg-neutral-900">
+                  <h2 className="font-semibold text-neutral-800 dark:text-neutral-200">
                     {t('idealweight-calculator.calculator.resultsTitle')}
                   </h2>
 
                   {/* Main range card */}
-                  <div className="rounded-xl border bg-white border-neutral-200 p-5">
-                    <div className="text-xs text-neutral-500 font-medium uppercase tracking-wider mb-3">
+                  <div className="rounded-xl border bg-white border-neutral-200 p-5 dark:border-neutral-700 dark:bg-neutral-850">
+                    <div className="text-xs text-neutral-500 font-medium uppercase tracking-wider mb-3 dark:text-neutral-400">
                       {t('idealweight-calculator.calculator.rangeLabel')}
                     </div>
                     <div className="flex items-end gap-2">
-                      <span className="text-4xl font-bold text-neutral-900">
+                      <span className="text-4xl font-bold text-neutral-900 dark:text-neutral-100">
                         {result.range.min}–{result.range.max}
                       </span>
-                      <span className="text-neutral-500 mb-1">kg</span>
+                      <span className="text-neutral-500 mb-1 dark:text-neutral-400">kg</span>
                     </div>
-                    <div className="text-sm text-neutral-500 mt-1">
+                    <div className="text-sm text-neutral-500 mt-1 dark:text-neutral-400">
                       {t('idealweight-calculator.calculator.formulaLabel')}{' '}
-                      <strong className="text-neutral-700">{result.ideal} kg</strong>
+                      <strong className="text-neutral-700 dark:text-neutral-200">
+                        {result.ideal} kg
+                      </strong>
                     </div>
                   </div>
 
@@ -329,9 +334,11 @@ export default function IdealviktKalkylatornPage() {
                           <div className={`font-semibold mb-1 ${POSITION_COLORS[result.position]}`}>
                             {posLabel.label}
                           </div>
-                          <p className="text-sm text-neutral-700">{posLabel.desc}</p>
+                          <p className="text-sm text-neutral-700 dark:text-neutral-200">
+                            {posLabel.desc}
+                          </p>
                           {result.diff !== null && result.diff !== 0 && (
-                            <div className="mt-2 text-sm font-medium text-neutral-600">
+                            <div className="mt-2 text-sm font-medium text-neutral-600 dark:text-neutral-400">
                               {result.diff > 0
                                 ? `${result.diff} ${t('idealweight-calculator.calculator.diffOverLabel')}`
                                 : `${Math.abs(result.diff)} ${t('idealweight-calculator.calculator.diffUnderLabel')}`}
@@ -342,24 +349,24 @@ export default function IdealviktKalkylatornPage() {
                     })()}
 
                   {/* Key insight box */}
-                  <div className="rounded-xl bg-amber-50 border border-amber-200 p-4 flex gap-3">
-                    <AlertTriangle className="h-4 w-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                  <div className="rounded-xl bg-amber-50 border border-amber-200 p-4 flex gap-3 dark:bg-amber-900/25 dark:border-amber-800">
+                    <AlertTriangle className="h-4 w-4 text-amber-600 flex-shrink-0 mt-0.5 dark:text-amber-300" />
                     <div>
-                      <p className="text-sm font-medium text-amber-900 mb-1">
+                      <p className="text-sm font-medium text-amber-900 mb-1 dark:text-amber-300">
                         {t('idealweight-calculator.calculator.insightTitle')}
                       </p>
-                      <p className="text-xs text-amber-700">
+                      <p className="text-xs text-amber-700 dark:text-amber-300">
                         {t('idealweight-calculator.calculator.insightBody')}
                       </p>
                     </div>
                   </div>
 
                   <GuestOnly>
-                    <div className="rounded-xl bg-white border border-primary-200 p-4">
-                      <p className="text-sm font-medium text-neutral-800 mb-1">
+                    <div className="rounded-xl bg-white border border-primary-200 p-4 dark:bg-neutral-850">
+                      <p className="text-sm font-medium text-neutral-800 mb-1 dark:text-neutral-200">
                         {t('idealweight-calculator.calculator.nextStepTitle')}
                       </p>
-                      <p className="text-xs text-neutral-500 mb-3">
+                      <p className="text-xs text-neutral-500 mb-3 dark:text-neutral-400">
                         {t('idealweight-calculator.calculator.nextStepBody')}
                       </p>
                       <div className="flex flex-col sm:flex-row gap-2">
@@ -375,7 +382,7 @@ export default function IdealviktKalkylatornPage() {
                         </Link>
                         <Link
                           to="/register"
-                          className="inline-flex items-center justify-center gap-2 border border-neutral-200 text-neutral-700 text-sm font-medium px-4 py-2 rounded-lg hover:bg-neutral-50 transition-colors"
+                          className="inline-flex items-center justify-center gap-2 border border-neutral-200 text-neutral-700 text-sm font-medium px-4 py-2 rounded-lg hover:bg-neutral-50 transition-colors dark:hover:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-200"
                         >
                           {t('idealweight-calculator.calculator.nextStepSecondary')}
                         </Link>
@@ -389,16 +396,16 @@ export default function IdealviktKalkylatornPage() {
         </section>
 
         {/* Explanation section */}
-        <section className="bg-white py-14 border-b border-neutral-100">
+        <section className="bg-white py-14 border-b border-neutral-100 dark:bg-neutral-850">
           <div className="container mx-auto px-4 max-w-3xl">
-            <div className="space-y-4 text-neutral-700 text-base leading-relaxed">
-              <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900">
+            <div className="space-y-4 text-neutral-700 text-base leading-relaxed dark:text-neutral-200">
+              <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900 dark:text-neutral-100">
                 {t('idealweight-calculator.explanation.h2_1')}
               </h2>
               <p>{t('idealweight-calculator.explanation.p_1')}</p>
               <p>{t('idealweight-calculator.explanation.p_2')}</p>
 
-              <h3 className="text-lg font-semibold text-neutral-800 mt-4">
+              <h3 className="text-lg font-semibold text-neutral-800 mt-4 dark:text-neutral-200">
                 {t('idealweight-calculator.explanation.h3_1')}
               </h3>
               <ul className="space-y-1.5 pl-4 list-disc">
@@ -419,11 +426,11 @@ export default function IdealviktKalkylatornPage() {
                 })}
               </ul>
 
-              <div className="rounded-xl bg-primary-50 border border-primary-200 p-5 mt-4">
-                <div className="font-semibold text-neutral-800 mb-2">
+              <div className="rounded-xl bg-primary-50 border border-primary-200 p-5 mt-4 dark:bg-primary-900/25 dark:border-primary-800">
+                <div className="font-semibold text-neutral-800 mb-2 dark:text-neutral-200">
                   {t('idealweight-calculator.explanation.box_title')}
                 </div>
-                <ol className="space-y-1.5 pl-4 list-decimal text-base text-neutral-700">
+                <ol className="space-y-1.5 pl-4 list-decimal text-base text-neutral-700 dark:text-neutral-200">
                   {(
                     t('idealweight-calculator.explanation.box_steps', {
                       returnObjects: true,
@@ -447,7 +454,7 @@ export default function IdealviktKalkylatornPage() {
         </section>
 
         {/* FAQ section */}
-        <section className="bg-neutral-50 py-14 border-b border-neutral-100">
+        <section className="bg-neutral-50 py-14 border-b border-neutral-100 dark:bg-neutral-900">
           <div className="container mx-auto px-4 max-w-3xl">
             <FaqBlock items={faqItems} title={t('idealweight-calculator.faqTitle')} />
           </div>
@@ -460,7 +467,7 @@ export default function IdealviktKalkylatornPage() {
               <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
                 {t('idealweight-calculator.cta.bottom.h2')}
               </h2>
-              <p className="text-neutral-400 text-base mb-8 max-w-md mx-auto">
+              <p className="text-neutral-400 text-base mb-8 max-w-md mx-auto dark:text-neutral-500">
                 {t('idealweight-calculator.cta.bottom.body')}
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -485,11 +492,11 @@ export default function IdealviktKalkylatornPage() {
         </GuestOnly>
 
         {/* Related links section */}
-        <section className="bg-white py-14">
+        <section className="bg-white py-14 dark:bg-neutral-850">
           <div className="container mx-auto px-4 max-w-5xl">
             <div className="grid sm:grid-cols-2 gap-10">
               <div>
-                <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3">
+                <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3 dark:text-neutral-400">
                   {t('idealweight-calculator.related.calculatorsTitle')}
                 </h3>
                 <div className="grid gap-3">
@@ -497,7 +504,7 @@ export default function IdealviktKalkylatornPage() {
                     <Link
                       key={l.href}
                       to={l.href}
-                      className="flex items-center gap-3 rounded-xl border border-neutral-200 p-4 text-sm text-neutral-700 hover:shadow-md hover:border-primary-200 transition-all"
+                      className="flex items-center gap-3 rounded-xl border border-neutral-200 p-4 text-sm text-neutral-700 hover:shadow-md hover:border-primary-200 transition-all dark:border-neutral-700 dark:text-neutral-200"
                     >
                       <ArrowRight className="h-4 w-4 text-primary-500 flex-shrink-0" />
                       {l.label}
@@ -506,7 +513,7 @@ export default function IdealviktKalkylatornPage() {
                 </div>
               </div>
               <div>
-                <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3">
+                <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3 dark:text-neutral-400">
                   {t('idealweight-calculator.related.articlesTitle')}
                 </h3>
                 <div className="grid gap-3">
@@ -514,7 +521,7 @@ export default function IdealviktKalkylatornPage() {
                     <Link
                       key={l.href}
                       to={l.href}
-                      className="flex items-center gap-3 rounded-xl border border-neutral-200 p-4 text-sm text-neutral-700 hover:shadow-md hover:border-primary-200 transition-all"
+                      className="flex items-center gap-3 rounded-xl border border-neutral-200 p-4 text-sm text-neutral-700 hover:shadow-md hover:border-primary-200 transition-all dark:border-neutral-700 dark:text-neutral-200"
                     >
                       <ArrowRight className="h-4 w-4 text-primary-500 flex-shrink-0" />
                       {l.label}

@@ -35,7 +35,8 @@ interface ArticleLayoutProps {
   tocItems?: TocItem[]
 }
 
-const KICKER = 'text-xs font-semibold uppercase tracking-[0.08em] text-neutral-400'
+const KICKER =
+  'text-xs font-semibold uppercase tracking-[0.08em] text-neutral-400 dark:text-neutral-500'
 
 export function ArticleLayout({
   children,
@@ -71,10 +72,10 @@ export function ArticleLayout({
 
       <main className="flex-1">
         {/* ── Hero: tonad grön premium-yta i tre lager ─────────────────────── */}
-        <section className="relative overflow-hidden border-b border-neutral-200/60 bg-white">
+        <section className="relative overflow-hidden border-b border-neutral-200/60 bg-white dark:bg-neutral-850">
           <div
             aria-hidden
-            className="absolute inset-0 bg-gradient-to-b from-primary-50/80 via-primary-50/30 to-white"
+            className="absolute inset-0 bg-gradient-to-b from-primary-50/80 via-primary-50/30 to-white dark:to-neutral-850 dark:from-primary-900/30 dark:via-primary-900/25"
           />
           <div
             aria-hidden
@@ -87,17 +88,26 @@ export function ArticleLayout({
 
           <div className="relative container mx-auto px-4 pt-10 pb-10 md:pt-16 md:pb-14 max-w-2xl">
             {breadcrumb && breadcrumb.length > 0 && (
-              <nav className="flex flex-wrap items-center gap-1.5 text-[13px] text-neutral-500 mb-6">
-                <Link data-layout-text to="/" className="hover:text-neutral-900 transition-colors">
+              <nav className="flex flex-wrap items-center gap-1.5 text-[13px] text-neutral-500 mb-6 dark:text-neutral-400">
+                <Link
+                  data-layout-text
+                  to="/"
+                  className="hover:text-neutral-900 transition-colors dark:hover:text-neutral-100"
+                >
                   Calculeat
                 </Link>
                 {breadcrumb.map((crumb, i) => (
                   <span key={i} className="flex items-center gap-1.5">
                     <ChevronRight aria-hidden className="h-3.5 w-3.5 text-neutral-300" />
                     {i === breadcrumb.length - 1 ? (
-                      <span className="font-medium text-neutral-800">{crumb.label}</span>
+                      <span className="font-medium text-neutral-800 dark:text-neutral-200">
+                        {crumb.label}
+                      </span>
                     ) : (
-                      <Link to={crumb.href} className="hover:text-neutral-900 transition-colors">
+                      <Link
+                        to={crumb.href}
+                        className="hover:text-neutral-900 transition-colors dark:hover:text-neutral-100"
+                      >
                         {crumb.label}
                       </Link>
                     )}
@@ -106,18 +116,18 @@ export function ArticleLayout({
               </nav>
             )}
 
-            <h1 className="text-[2rem] leading-[1.12] md:text-5xl md:leading-[1.08] font-bold tracking-tight text-neutral-900 text-balance mb-5">
+            <h1 className="text-[2rem] leading-[1.12] md:text-5xl md:leading-[1.08] font-bold tracking-tight text-neutral-900 text-balance mb-5 dark:text-neutral-100">
               {title}
             </h1>
 
-            <p className="text-lg md:text-xl text-neutral-600 leading-relaxed text-pretty max-w-[38rem]">
+            <p className="text-lg md:text-xl text-neutral-600 leading-relaxed text-pretty max-w-[38rem] dark:text-neutral-400">
               {intro}
             </p>
 
             {(formattedDate || readingMinutes) && (
               <p
                 data-byline
-                className="mt-6 inline-flex items-center gap-2 rounded-full border border-neutral-200/80 bg-white/70 px-3.5 py-1.5 text-[13px] text-neutral-500 shadow-xs"
+                className="mt-6 inline-flex items-center gap-2 rounded-full border border-neutral-200/80 bg-white/70 px-3.5 py-1.5 text-[13px] text-neutral-500 shadow-xs dark:text-neutral-400"
               >
                 <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-primary-500" />
                 {formattedDate && (
@@ -135,7 +145,7 @@ export function ArticleLayout({
         </section>
 
         {/* ── Innehållszon (vit): byline-rad, TOC, brödtext ────────────────── */}
-        <section className="bg-white py-10 md:py-16">
+        <section className="bg-white py-10 md:py-16 dark:bg-neutral-850">
           <div className="xl:grid xl:grid-cols-[1fr_minmax(0,42rem)_1fr]">
             <div aria-hidden className="hidden xl:block" />
             <div className="container mx-auto px-4 max-w-2xl xl:max-w-none xl:w-full">
@@ -144,10 +154,15 @@ export function ArticleLayout({
               {authorName && (
                 <p
                   data-byline
-                  className="mb-10 flex flex-wrap items-center gap-x-2 gap-y-1 border-b border-neutral-200/70 pb-6 text-[13px] leading-relaxed text-neutral-500"
+                  className="mb-10 flex flex-wrap items-center gap-x-2 gap-y-1 border-b border-neutral-200/70 pb-6 text-[13px] leading-relaxed text-neutral-500 dark:text-neutral-400"
                 >
-                  <ShieldCheck aria-hidden className="h-4 w-4 text-primary-600 flex-shrink-0" />
-                  <span className="font-medium text-neutral-800">{t('byline.reviewedBy')}</span>
+                  <ShieldCheck
+                    aria-hidden
+                    className="h-4 w-4 text-primary-600 flex-shrink-0 dark:text-primary-300"
+                  />
+                  <span className="font-medium text-neutral-800 dark:text-neutral-200">
+                    {t('byline.reviewedBy')}
+                  </span>
                 </p>
               )}
 
@@ -155,7 +170,7 @@ export function ArticleLayout({
                 <ArticleToc items={tocItems} heading={t('toc.heading')} variant="inline" />
               )}
 
-              <article className="max-w-none text-[17px] leading-[1.75] text-neutral-700 [&_strong]:font-semibold [&_strong]:text-neutral-900">
+              <article className="max-w-none text-[17px] leading-[1.75] text-neutral-700 [&_strong]:font-semibold [&_strong]:text-neutral-900 dark:text-neutral-200">
                 {children}
               </article>
             </div>
@@ -169,7 +184,7 @@ export function ArticleLayout({
 
         {/* ── Money-CTA: sidans starkaste yta ──────────────────────────────── */}
         {moneyPageHref && moneyPageLabel && (
-          <section className="bg-white pb-16">
+          <section className="bg-white pb-16 dark:bg-neutral-850">
             <div className="container mx-auto px-4 max-w-2xl">
               <div className="rounded-2xl bg-gradient-to-br from-primary-600 to-primary-800 p-6 sm:p-8 shadow-card flex flex-col sm:flex-row items-start sm:items-center gap-5">
                 <div className="flex-1">
@@ -183,7 +198,7 @@ export function ArticleLayout({
                 <Link
                   data-layout-text
                   to={moneyPageHref}
-                  className="inline-flex items-center justify-center gap-2 bg-white text-primary-800 hover:bg-primary-50 font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm whitespace-nowrap shadow-xs w-full sm:w-auto"
+                  className="inline-flex items-center justify-center gap-2 bg-white text-primary-800 hover:bg-primary-50 font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm whitespace-nowrap shadow-xs w-full sm:w-auto dark:bg-neutral-850"
                 >
                   {t('moneyPageCta.button')}
                   <ArrowRight className="h-4 w-4" />
@@ -195,7 +210,7 @@ export function ArticleLayout({
 
         {/* ── FAQ ──────────────────────────────────────────────────────────── */}
         {faqItems && faqItems.length > 0 && (
-          <section className="bg-white pb-16">
+          <section className="bg-white pb-16 dark:bg-neutral-850">
             <div className="container mx-auto px-4 max-w-2xl">
               <FaqBlock items={faqItems} title={t('faqTitle')} />
             </div>
@@ -204,24 +219,30 @@ export function ArticleLayout({
 
         {/* ── Metazon (grå): källor + läs vidare ───────────────────────────── */}
         {sources && sources.length > 0 && (
-          <section className="bg-neutral-50 border-t border-neutral-200/70 py-10">
+          <section className="bg-neutral-50 border-t border-neutral-200/70 py-10 dark:bg-neutral-900">
             <div className="container mx-auto px-4 max-w-2xl">
               <h2 data-layout-text className={`${KICKER} mb-1 flex items-center gap-1.5`}>
-                <FlaskConical aria-hidden className="h-3.5 w-3.5 text-primary-600" />
+                <FlaskConical
+                  aria-hidden
+                  className="h-3.5 w-3.5 text-primary-600 dark:text-primary-300"
+                />
                 {t('sources.heading')}
               </h2>
-              <p data-layout-text className="text-[13px] text-neutral-400 mb-4">
+              <p
+                data-layout-text
+                className="text-[13px] text-neutral-400 mb-4 dark:text-neutral-500"
+              >
                 {t('sources.note')}
               </p>
               <ol className="space-y-2">
                 {sources.map((s, i) => (
                   <li
                     key={i}
-                    className="relative pl-7 text-[13px] leading-relaxed text-neutral-500"
+                    className="relative pl-7 text-[13px] leading-relaxed text-neutral-500 dark:text-neutral-400"
                   >
                     <span
                       data-layout-text
-                      className="absolute left-0 text-neutral-400 tabular-nums"
+                      className="absolute left-0 text-neutral-400 tabular-nums dark:text-neutral-500"
                     >
                       {i + 1}.
                     </span>
@@ -246,11 +267,11 @@ export function ArticleLayout({
 
         {((relatedArticles && relatedArticles.length > 0) ||
           (relatedCalculators && relatedCalculators.length > 0)) && (
-          <section className="bg-neutral-50 py-14">
+          <section className="bg-neutral-50 py-14 dark:bg-neutral-900">
             <div className="container mx-auto px-4 max-w-2xl">
               <h2
                 data-layout-text
-                className="text-2xl font-semibold tracking-tight text-neutral-900 mb-8"
+                className="text-2xl font-semibold tracking-tight text-neutral-900 mb-8 dark:text-neutral-100"
               >
                 {t('related.heading')}
               </h2>
@@ -265,9 +286,9 @@ export function ArticleLayout({
                       <Link
                         key={i}
                         to={l.href}
-                        className="group flex items-center gap-3 rounded-xl border border-neutral-200 bg-white p-4 text-sm font-medium text-neutral-800 shadow-xs hover:border-primary-300 hover:shadow-card transition-all"
+                        className="group flex items-center gap-3 rounded-xl border border-neutral-200 bg-white p-4 text-sm font-medium text-neutral-800 shadow-xs hover:border-primary-300 hover:shadow-card transition-all dark:border-neutral-700 dark:bg-neutral-850 dark:text-neutral-200"
                       >
-                        <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary-50 text-primary-600 flex-shrink-0 group-hover:bg-primary-100 transition-colors">
+                        <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary-50 text-primary-600 flex-shrink-0 group-hover:bg-primary-100 transition-colors dark:bg-primary-900/25 dark:text-primary-300">
                           <ArrowRight className="h-3.5 w-3.5" />
                         </span>
                         {l.label}
@@ -287,7 +308,7 @@ export function ArticleLayout({
                       <Link
                         key={i}
                         to={l.href}
-                        className="inline-flex items-center gap-1.5 rounded-full border border-primary-200/70 bg-white px-3.5 py-1.5 text-[13px] font-medium text-primary-800 shadow-xs hover:bg-primary-50 hover:border-primary-300 transition-colors"
+                        className="inline-flex items-center gap-1.5 rounded-full border border-primary-200/70 bg-white px-3.5 py-1.5 text-[13px] font-medium text-primary-800 shadow-xs hover:bg-primary-50 hover:border-primary-300 transition-colors dark:bg-neutral-850"
                       >
                         {l.label}
                       </Link>
@@ -312,7 +333,7 @@ export function ArticleLayout({
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white mb-4">
               {t('bottomCta.h2')}
             </h2>
-            <p className="text-neutral-400 text-base leading-relaxed mb-8 max-w-md mx-auto">
+            <p className="text-neutral-400 text-base leading-relaxed mb-8 max-w-md mx-auto dark:text-neutral-500">
               {t('bottomCta.body')}
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -336,11 +357,14 @@ export function ArticleLayout({
         </section>
 
         {/* ── Tillbaka-länk ────────────────────────────────────────────────── */}
-        <div data-layout-text className="bg-white py-8 border-t border-neutral-200/60">
+        <div
+          data-layout-text
+          className="bg-white py-8 border-t border-neutral-200/60 dark:bg-neutral-850"
+        >
           <div className="container mx-auto px-4 max-w-2xl">
             <Link
               to="/"
-              className="inline-flex items-center gap-2 text-sm text-neutral-500 hover:text-neutral-700 transition-colors"
+              className="inline-flex items-center gap-2 text-sm text-neutral-500 hover:text-neutral-700 transition-colors dark:hover:text-neutral-200 dark:text-neutral-400"
             >
               <ArrowLeft className="h-4 w-4" />
               {t('backLink')}

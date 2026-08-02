@@ -30,8 +30,12 @@ export function FeatureShowcase({
           {/* Content */}
           <div className={`space-y-6 ${isImageRight ? '' : 'lg:col-start-2'}`}>
             <div>
-              <h3 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-4">{title}</h3>
-              <p className="text-lg text-neutral-600 leading-relaxed">{description}</p>
+              <h3 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-4 dark:text-neutral-100">
+                {title}
+              </h3>
+              <p className="text-lg text-neutral-600 leading-relaxed dark:text-neutral-400">
+                {description}
+              </p>
             </div>
 
             {/* Highlights */}
@@ -39,9 +43,9 @@ export function FeatureShowcase({
               <ul className="space-y-3">
                 {highlights.map((highlight, index) => (
                   <li key={index} className="flex items-start gap-3">
-                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary-100 flex items-center justify-center mt-0.5">
+                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary-100 flex items-center justify-center mt-0.5 dark:bg-primary-900/25">
                       <svg
-                        className="w-4 h-4 text-primary-600"
+                        className="w-4 h-4 text-primary-600 dark:text-primary-300"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -54,7 +58,7 @@ export function FeatureShowcase({
                         />
                       </svg>
                     </div>
-                    <span className="text-neutral-700">{highlight}</span>
+                    <span className="text-neutral-700 dark:text-neutral-200">{highlight}</span>
                   </li>
                 ))}
               </ul>

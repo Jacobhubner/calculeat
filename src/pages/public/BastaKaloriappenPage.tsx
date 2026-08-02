@@ -53,35 +53,35 @@ const CELL_DATA: Record<App, CellType>[] = [
 ]
 
 const FOR_WHOM_COLORS = [
-  'bg-primary-50 border-primary-200',
-  'bg-green-50 border-green-200',
-  'bg-blue-50 border-blue-200',
-  'bg-orange-50 border-orange-200',
-  'bg-neutral-50 border-neutral-200',
+  'bg-primary-50 border-primary-200 dark:bg-primary-900/25 dark:border-primary-800',
+  'bg-green-50 border-green-200 dark:bg-green-900/25 dark:border-green-800',
+  'bg-blue-50 border-blue-200 dark:bg-blue-900/25 dark:border-blue-800',
+  'bg-orange-50 border-orange-200 dark:bg-orange-900/25 dark:border-orange-800',
+  'bg-neutral-50 border-neutral-200 dark:border-neutral-700 dark:bg-neutral-900',
 ]
 
 const WHY_FAIL_COLORS = [
-  'bg-red-50 border-red-200',
-  'bg-orange-50 border-orange-200',
-  'bg-yellow-50 border-yellow-200',
+  'bg-red-50 border-red-200 dark:bg-red-900/25 dark:border-red-800',
+  'bg-orange-50 border-orange-200 dark:bg-orange-900/25 dark:border-orange-800',
+  'bg-yellow-50 border-yellow-200 dark:bg-yellow-900/25 dark:border-yellow-800',
 ]
 
 function Cell({ type }: { type: CellType }) {
   if (type === 'yes')
     return (
-      <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-green-100">
-        <Check className="h-3.5 w-3.5 text-green-700" />
+      <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-green-100 dark:bg-green-900/25">
+        <Check className="h-3.5 w-3.5 text-green-700 dark:text-green-300" />
       </span>
     )
   if (type === 'no')
     return (
-      <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-red-100">
-        <X className="h-3.5 w-3.5 text-red-600" />
+      <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-red-100 dark:bg-red-900/25">
+        <X className="h-3.5 w-3.5 text-red-600 dark:text-red-300" />
       </span>
     )
   return (
-    <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-yellow-100">
-      <Minus className="h-3.5 w-3.5 text-yellow-600" />
+    <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-yellow-100 dark:bg-yellow-900/25">
+      <Minus className="h-3.5 w-3.5 text-yellow-600 dark:text-yellow-300" />
     </span>
   )
 }
@@ -140,7 +140,7 @@ export default function BastaKaloriappenPage() {
   ]
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="min-h-screen flex flex-col bg-white dark:bg-neutral-850">
       <Seo
         title={t('best-calorie-app.seo.title')}
         description={t('best-calorie-app.seo.description')}
@@ -155,41 +155,48 @@ export default function BastaKaloriappenPage() {
 
       <main className="flex-1">
         <div className="container mx-auto px-4 py-10 max-w-3xl">
-          <nav className="flex items-center gap-2 text-sm text-neutral-500 mb-6">
-            <Link to="/" className="hover:text-neutral-700 transition-colors">
+          <nav className="flex items-center gap-2 text-sm text-neutral-500 mb-6 dark:text-neutral-400">
+            <Link
+              to="/"
+              className="hover:text-neutral-700 transition-colors dark:hover:text-neutral-200"
+            >
               Calculeat
             </Link>
             <span>/</span>
-            <span className="text-neutral-700">{t('best-calorie-app.breadcrumb.pageLabel')}</span>
+            <span className="text-neutral-700 dark:text-neutral-200">
+              {t('best-calorie-app.breadcrumb.pageLabel')}
+            </span>
           </nav>
 
-          <h1 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-3 leading-tight">
+          <h1 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-3 leading-tight dark:text-neutral-100">
             {t('best-calorie-app.h1')}
           </h1>
-          <p className="text-lg text-neutral-600 leading-relaxed mb-3 border-l-4 border-primary-400 pl-4 bg-primary-50 py-3 rounded-r-lg">
+          <p className="text-lg text-neutral-600 leading-relaxed mb-3 border-l-4 border-primary-400 pl-4 bg-primary-50 py-3 rounded-r-lg dark:text-neutral-400">
             {t('best-calorie-app.intro')}
           </p>
-          <p className="text-sm text-neutral-500 mb-8 pl-4">
-            <strong className="text-neutral-700">{t('best-calorie-app.shortVersion')}</strong>{' '}
+          <p className="text-sm text-neutral-500 mb-8 pl-4 dark:text-neutral-400">
+            <strong className="text-neutral-700 dark:text-neutral-200">
+              {t('best-calorie-app.shortVersion')}
+            </strong>{' '}
             {t('best-calorie-app.shortVersionBody')}
           </p>
 
           {/* Comparison table */}
           <section className="mb-12">
-            <h2 className="text-xl font-semibold text-neutral-900 mb-4">
+            <h2 className="text-xl font-semibold text-neutral-900 mb-4 dark:text-neutral-100">
               {t('best-calorie-app.comparisonTable.h2')}
             </h2>
-            <div className="rounded-2xl border border-neutral-200 overflow-x-auto">
+            <div className="rounded-2xl border border-neutral-200 overflow-x-auto dark:border-neutral-700">
               <table className="w-full text-sm border-collapse">
                 <thead>
-                  <tr className="bg-neutral-50 border-b border-neutral-200">
-                    <th className="text-left px-4 py-3 text-xs font-semibold text-neutral-500 uppercase tracking-wider min-w-[160px]">
+                  <tr className="bg-neutral-50 border-b border-neutral-200 dark:border-neutral-700 dark:bg-neutral-900">
+                    <th className="text-left px-4 py-3 text-xs font-semibold text-neutral-500 uppercase tracking-wider min-w-[160px] dark:text-neutral-400">
                       {t('best-calorie-app.comparisonTable.colFeature')}
                     </th>
                     {APPS.map(app => (
                       <th
                         key={app}
-                        className={`px-3 py-3 text-xs font-semibold uppercase tracking-wider text-center w-24 ${app === 'Calculeat' ? 'text-primary-600' : 'text-neutral-500'}`}
+                        className={`px-3 py-3 text-xs font-semibold uppercase tracking-wider text-center w-24 ${app === 'Calculeat' ? 'text-primary-600 dark:text-primary-300' : 'text-neutral-500 dark:text-neutral-400'}`}
                       >
                         {app}
                       </th>
@@ -200,12 +207,16 @@ export default function BastaKaloriappenPage() {
                   {localeRows.map((row, i) => (
                     <tr
                       key={row.feature}
-                      className={`border-b border-neutral-100 last:border-0 ${i % 2 === 0 ? 'bg-white' : 'bg-neutral-50/50'}`}
+                      className={`border-b border-neutral-100 last:border-0 ${i % 2 === 0 ? 'bg-white dark:bg-neutral-850' : 'bg-neutral-50/50'}`}
                     >
                       <td className="px-4 py-3">
-                        <div className="text-neutral-800 font-medium">{row.feature}</div>
+                        <div className="text-neutral-800 font-medium dark:text-neutral-200">
+                          {row.feature}
+                        </div>
                         {row.note && (
-                          <div className="text-xs text-neutral-400 mt-0.5">{row.note}</div>
+                          <div className="text-xs text-neutral-400 mt-0.5 dark:text-neutral-500">
+                            {row.note}
+                          </div>
                         )}
                       </td>
                       {APPS.map(app => (
@@ -220,22 +231,22 @@ export default function BastaKaloriappenPage() {
                 </tbody>
               </table>
             </div>
-            <div className="flex items-center gap-4 mt-3 text-xs text-neutral-400">
+            <div className="flex items-center gap-4 mt-3 text-xs text-neutral-400 dark:text-neutral-500">
               <span className="flex items-center gap-1.5">
-                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-green-100">
-                  <Check className="h-3 w-3 text-green-700" />
+                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-green-100 dark:bg-green-900/25">
+                  <Check className="h-3 w-3 text-green-700 dark:text-green-300" />
                 </span>
                 {t('best-calorie-app.comparisonTable.legendYes')}
               </span>
               <span className="flex items-center gap-1.5">
-                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-yellow-100">
-                  <Minus className="h-3 w-3 text-yellow-600" />
+                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-yellow-100 dark:bg-yellow-900/25">
+                  <Minus className="h-3 w-3 text-yellow-600 dark:text-yellow-300" />
                 </span>
                 {t('best-calorie-app.comparisonTable.legendPartial')}
               </span>
               <span className="flex items-center gap-1.5">
-                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-red-100">
-                  <X className="h-3 w-3 text-red-600" />
+                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-red-100 dark:bg-red-900/25">
+                  <X className="h-3 w-3 text-red-600 dark:text-red-300" />
                 </span>
                 {t('best-calorie-app.comparisonTable.legendNo')}
               </span>
@@ -244,30 +255,34 @@ export default function BastaKaloriappenPage() {
 
           {/* For whom */}
           <section className="mb-12">
-            <h2 className="text-xl font-semibold text-neutral-900 mb-5">
+            <h2 className="text-xl font-semibold text-neutral-900 mb-5 dark:text-neutral-100">
               {t('best-calorie-app.forWhomH2')}
             </h2>
             <div className="space-y-4">
               {forWhom.map((item, i) => (
                 <div
                   key={item.title}
-                  className={`rounded-xl border p-5 ${FOR_WHOM_COLORS[i] ?? 'bg-neutral-50 border-neutral-200'}`}
+                  className={`rounded-xl border p-5 ${FOR_WHOM_COLORS[i] ?? 'bg-neutral-50 border-neutral-200 dark:border-neutral-700 dark:bg-neutral-900'}`}
                 >
                   <div className="flex items-start justify-between gap-3 mb-2">
-                    <div className="font-semibold text-neutral-800">{item.title}</div>
-                    <div className="text-xs font-semibold text-neutral-600 bg-white/70 rounded-lg px-2 py-1 whitespace-nowrap shrink-0">
+                    <div className="font-semibold text-neutral-800 dark:text-neutral-200">
+                      {item.title}
+                    </div>
+                    <div className="text-xs font-semibold text-neutral-600 bg-white/70 rounded-lg px-2 py-1 whitespace-nowrap shrink-0 dark:text-neutral-400">
                       {item.winner}
                     </div>
                   </div>
-                  <p className="text-sm text-neutral-700 leading-relaxed">{item.desc}</p>
+                  <p className="text-sm text-neutral-700 leading-relaxed dark:text-neutral-200">
+                    {item.desc}
+                  </p>
                 </div>
               ))}
             </div>
           </section>
 
           {/* Why classic apps fail */}
-          <section className="mb-12 space-y-4 text-sm text-neutral-700 leading-relaxed">
-            <h2 className="text-xl font-semibold text-neutral-900">
+          <section className="mb-12 space-y-4 text-sm text-neutral-700 leading-relaxed dark:text-neutral-200">
+            <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
               {t('best-calorie-app.whyFailH2')}
             </h2>
             <p>{t('best-calorie-app.whyFailIntro')}</p>
@@ -275,10 +290,12 @@ export default function BastaKaloriappenPage() {
               {whyFailCards.map((card, i) => (
                 <div
                   key={card.title}
-                  className={`rounded-xl border p-4 ${WHY_FAIL_COLORS[i] ?? 'bg-neutral-50 border-neutral-200'}`}
+                  className={`rounded-xl border p-4 ${WHY_FAIL_COLORS[i] ?? 'bg-neutral-50 border-neutral-200 dark:border-neutral-700 dark:bg-neutral-900'}`}
                 >
-                  <div className="font-semibold text-neutral-800 mb-1">{card.title}</div>
-                  <div className="text-neutral-700">{card.desc}</div>
+                  <div className="font-semibold text-neutral-800 mb-1 dark:text-neutral-200">
+                    {card.title}
+                  </div>
+                  <div className="text-neutral-700 dark:text-neutral-200">{card.desc}</div>
                 </div>
               ))}
             </div>
@@ -286,11 +303,13 @@ export default function BastaKaloriappenPage() {
           </section>
 
           {/* Internal link block */}
-          <section className="mb-12 rounded-2xl bg-neutral-50 border border-neutral-200 p-6">
-            <h2 className="text-base font-semibold text-neutral-800 mb-3">
+          <section className="mb-12 rounded-2xl bg-neutral-50 border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-900">
+            <h2 className="text-base font-semibold text-neutral-800 mb-3 dark:text-neutral-200">
               {t('best-calorie-app.internalCtaH2')}
             </h2>
-            <p className="text-sm text-neutral-600 mb-4">{t('best-calorie-app.internalCtaBody')}</p>
+            <p className="text-sm text-neutral-600 mb-4 dark:text-neutral-400">
+              {t('best-calorie-app.internalCtaBody')}
+            </p>
             <div className="flex flex-col sm:flex-row gap-2">
               <Link
                 to={calcHubHref}
@@ -301,7 +320,7 @@ export default function BastaKaloriappenPage() {
               </Link>
               <Link
                 to={deficitHref}
-                className="inline-flex items-center gap-2 border border-neutral-300 text-neutral-700 font-medium px-4 py-2.5 rounded-xl hover:bg-white transition-colors text-sm"
+                className="inline-flex items-center gap-2 border border-neutral-300 text-neutral-700 font-medium px-4 py-2.5 rounded-xl hover:bg-white transition-colors text-sm dark:border-neutral-600 dark:text-neutral-200"
               >
                 <ArrowRight className="h-4 w-4" />
                 {t('best-calorie-app.internalCtaSecondary')}
@@ -322,7 +341,7 @@ export default function BastaKaloriappenPage() {
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Link
                   to="/register"
-                  className="inline-flex items-center justify-center gap-2 bg-white text-primary-700 font-semibold px-6 py-3 rounded-xl hover:bg-primary-50 transition-colors text-sm"
+                  className="inline-flex items-center justify-center gap-2 bg-white text-primary-700 font-semibold px-6 py-3 rounded-xl hover:bg-primary-50 transition-colors text-sm dark:bg-neutral-850"
                 >
                   {t('best-calorie-app.bottomCta.primary')}
                   <ArrowRight className="h-4 w-4" />
@@ -337,9 +356,9 @@ export default function BastaKaloriappenPage() {
             </section>
           </GuestOnly>
 
-          <section className="mt-10 pt-8 border-t border-neutral-200 grid sm:grid-cols-2 gap-6">
+          <section className="mt-10 pt-8 border-t border-neutral-200 grid sm:grid-cols-2 gap-6 dark:border-neutral-700">
             <div>
-              <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3">
+              <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3 dark:text-neutral-400">
                 {t('best-calorie-app.related.calculatorsTitle')}
               </h3>
               <ul className="space-y-2">
@@ -347,7 +366,7 @@ export default function BastaKaloriappenPage() {
                   <li key={l.href}>
                     <Link
                       to={l.href}
-                      className="flex items-center gap-2 text-sm text-primary-600 hover:underline"
+                      className="flex items-center gap-2 text-sm text-primary-600 hover:underline dark:text-primary-300"
                     >
                       <ArrowRight className="h-3.5 w-3.5" />
                       {l.label}
@@ -357,7 +376,7 @@ export default function BastaKaloriappenPage() {
               </ul>
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3">
+              <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3 dark:text-neutral-400">
                 {t('best-calorie-app.related.articlesTitle')}
               </h3>
               <ul className="space-y-2">
@@ -365,7 +384,7 @@ export default function BastaKaloriappenPage() {
                   <li key={l.href}>
                     <Link
                       to={l.href}
-                      className="flex items-center gap-2 text-sm text-primary-600 hover:underline"
+                      className="flex items-center gap-2 text-sm text-primary-600 hover:underline dark:text-primary-300"
                     >
                       <ArrowRight className="h-3.5 w-3.5" />
                       {l.label}

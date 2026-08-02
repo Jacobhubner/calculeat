@@ -42,14 +42,14 @@ export function HowItWorks() {
   ]
 
   return (
-    <section className="py-20 md:py-28 bg-neutral-50">
+    <section className="py-20 md:py-28 bg-neutral-50 dark:bg-neutral-900">
       <div className="container mx-auto px-4">
         {/* Section header */}
         <div className="text-center max-w-3xl mx-auto mb-16 md:mb-20">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold text-neutral-900 mb-4">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold text-neutral-900 mb-4 dark:text-neutral-100">
             {t('howItWorks.title')}
           </h2>
-          <p className="text-lg md:text-xl text-neutral-600">
+          <p className="text-lg md:text-xl text-neutral-600 dark:text-neutral-400">
             {t('howItWorks.subtitle')}
           </p>
         </div>

@@ -38,14 +38,16 @@ export function SuccessStories() {
   ]
 
   return (
-    <section className="py-20 md:py-28 bg-neutral-50">
+    <section className="py-20 md:py-28 bg-neutral-50 dark:bg-neutral-900">
       <div className="container mx-auto px-4">
         {/* Section header */}
         <div className="text-center max-w-3xl mx-auto mb-16 md:mb-20">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-neutral-900 mb-4">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-neutral-900 mb-4 dark:text-neutral-100">
             {t('successStories.title')}
           </h2>
-          <p className="text-lg md:text-xl text-neutral-600">{t('successStories.subtitle')}</p>
+          <p className="text-lg md:text-xl text-neutral-600 dark:text-neutral-400">
+            {t('successStories.subtitle')}
+          </p>
         </div>
 
         {/* Testimonials grid */}
@@ -53,7 +55,7 @@ export function SuccessStories() {
           {testimonials.map((testimonial, index) => (
             <div
               key={index}
-              className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300 relative"
+              className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300 relative dark:bg-neutral-850"
             >
               {/* Quote icon */}
               <div className="absolute top-6 right-6 text-primary-200">
@@ -76,8 +78,10 @@ export function SuccessStories() {
               {/* Content */}
               <div className="space-y-4 text-center">
                 <div>
-                  <h3 className="text-lg font-bold text-neutral-900">{testimonial.name}</h3>
-                  <p className="text-sm font-semibold text-primary-600">
+                  <h3 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">
+                    {testimonial.name}
+                  </h3>
+                  <p className="text-sm font-semibold text-primary-600 dark:text-primary-300">
                     {testimonial.achievement}
                   </p>
                 </div>
@@ -90,7 +94,7 @@ export function SuccessStories() {
                 </div>
 
                 {/* Quote */}
-                <p className="text-neutral-600 italic leading-relaxed">
+                <p className="text-neutral-600 italic leading-relaxed dark:text-neutral-400">
                   &ldquo;{testimonial.quote}&rdquo;
                 </p>
               </div>
@@ -100,11 +104,11 @@ export function SuccessStories() {
 
         {/* Bottom CTA */}
         <div className="text-center mt-16">
-          <p className="text-lg text-neutral-700">
+          <p className="text-lg text-neutral-700 dark:text-neutral-200">
             {t('successStories.cta')}{' '}
             <a
               href="/register"
-              className="font-semibold text-primary-600 hover:text-primary-700 underline decoration-2 underline-offset-4"
+              className="font-semibold text-primary-600 hover:text-primary-700 underline decoration-2 underline-offset-4 dark:text-primary-300"
             >
               {t('successStories.ctaLink')}
             </a>

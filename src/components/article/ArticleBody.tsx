@@ -17,11 +17,16 @@ const COMPONENTS: Record<ComponentName, React.ComponentType> = {
 // Cards-färgerna i innehålls-JSON (får ej ändras där) normaliseras till
 // palettens nyanser här i renderern
 const CARD_COLORS: Record<string, string> = {
-  'bg-green-50 border-green-200': 'bg-primary-50/60 border-primary-200/70',
-  'bg-blue-50 border-blue-200': 'bg-neutral-50 border-neutral-200',
-  'bg-yellow-50 border-yellow-200': 'bg-accent-50/60 border-accent-200/70',
-  'bg-red-50 border-red-200': 'bg-error-50 border-error-200',
-  'bg-primary-50 border-primary-200': 'bg-primary-50/60 border-primary-200/70',
+  'bg-green-50 border-green-200 dark:bg-green-900/25 dark:border-green-800':
+    'bg-primary-50/60 border-primary-200/70',
+  'bg-blue-50 border-blue-200 dark:bg-blue-900/25 dark:border-blue-800':
+    'bg-neutral-50 border-neutral-200 dark:border-neutral-700 dark:bg-neutral-900',
+  'bg-yellow-50 border-yellow-200 dark:bg-yellow-900/25 dark:border-yellow-800':
+    'bg-accent-50/60 border-accent-200/70',
+  'bg-red-50 border-red-200 dark:bg-red-900/25 dark:border-red-800':
+    'bg-error-50 border-error-200 dark:bg-error-900/25 dark:border-error-800',
+  'bg-primary-50 border-primary-200 dark:bg-primary-900/25 dark:border-primary-800':
+    'bg-primary-50/60 border-primary-200/70',
 }
 
 function Rich({ text }: { text: RichText }) {
@@ -46,7 +51,7 @@ const LIST_GAP: Record<number, string> = {
 
 // OBS: ingen `uppercase` här — tabellrubriker är artikelinnehåll och
 // text-transform ändrar renderad text (bryter golden-garantin)
-const TH_CLASS = 'px-4 py-3 text-left text-xs font-semibold text-neutral-500'
+const TH_CLASS = 'px-4 py-3 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400'
 
 interface ArticleBodyProps {
   blocks: Block[]
@@ -73,7 +78,7 @@ export function ArticleBody({ blocks, headingIds, anchorCopyLabel }: ArticleBody
               <h2
                 key={i}
                 id={id}
-                className={`group relative text-2xl font-semibold tracking-tight text-neutral-900 ${block.tight ? 'mt-8' : 'mt-12'} mb-4 scroll-mt-8`}
+                className={`group relative text-2xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-100 ${block.tight ? 'mt-8' : 'mt-12'} mb-4 scroll-mt-8`}
               >
                 {id && (
                   <button
@@ -91,7 +96,10 @@ export function ArticleBody({ blocks, headingIds, anchorCopyLabel }: ArticleBody
           }
           case 'h3':
             return (
-              <h3 key={i} className="text-lg font-semibold text-neutral-900 mt-8 mb-3">
+              <h3
+                key={i}
+                className="text-lg font-semibold text-neutral-900 mt-8 mb-3 dark:text-neutral-100"
+              >
                 <Rich text={block.text} />
               </h3>
             )
@@ -107,8 +115,8 @@ export function ArticleBody({ blocks, headingIds, anchorCopyLabel }: ArticleBody
                 key={i}
                 className={
                   block.subtle
-                    ? 'text-[15px] leading-relaxed text-neutral-500'
-                    : 'mt-3 text-[15px] leading-relaxed text-neutral-500'
+                    ? 'text-[15px] leading-relaxed text-neutral-500 dark:text-neutral-400'
+                    : 'mt-3 text-[15px] leading-relaxed text-neutral-500 dark:text-neutral-400'
                 }
               >
                 <Rich text={block.text} />
@@ -118,9 +126,9 @@ export function ArticleBody({ blocks, headingIds, anchorCopyLabel }: ArticleBody
             return (
               <div
                 key={i}
-                className="my-6 rounded-xl border border-neutral-200 bg-neutral-50 px-5 py-4"
+                className="my-6 rounded-xl border border-neutral-200 bg-neutral-50 px-5 py-4 dark:border-neutral-700 dark:bg-neutral-900"
               >
-                <p className="font-mono text-[15px] leading-relaxed text-neutral-800">
+                <p className="font-mono text-[15px] leading-relaxed text-neutral-800 dark:text-neutral-200">
                   <Rich text={block.text} />
                 </p>
               </div>
@@ -129,7 +137,7 @@ export function ArticleBody({ blocks, headingIds, anchorCopyLabel }: ArticleBody
             return (
               <div
                 key={i}
-                className="mt-6 rounded-xl border border-primary-200/70 bg-primary-50/60 px-5 py-4 text-center font-medium text-primary-950"
+                className="mt-6 rounded-xl border border-primary-200/70 bg-primary-50/60 px-5 py-4 text-center font-medium text-primary-950 dark:border-primary-800 dark:bg-primary-900/25 dark:text-primary-100"
               >
                 <Rich text={block.text} />
               </div>
@@ -138,7 +146,7 @@ export function ArticleBody({ blocks, headingIds, anchorCopyLabel }: ArticleBody
             return (
               <div
                 key={i}
-                className="my-6 rounded-xl border border-neutral-200 bg-neutral-50 px-5 py-4 space-y-1.5 text-[15px] leading-relaxed text-neutral-700"
+                className="my-6 rounded-xl border border-neutral-200 bg-neutral-50 px-5 py-4 space-y-1.5 text-[15px] leading-relaxed text-neutral-700 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200"
               >
                 {block.items.map((item, j) => (
                   <p key={j}>
@@ -180,10 +188,10 @@ export function ArticleBody({ blocks, headingIds, anchorCopyLabel }: ArticleBody
             return (
               <div
                 key={i}
-                className="mt-6 overflow-x-auto rounded-xl border border-neutral-200 bg-white shadow-xs"
+                className="mt-6 overflow-x-auto rounded-xl border border-neutral-200 bg-white shadow-xs dark:border-neutral-700 dark:bg-neutral-850"
               >
                 <table className={`${block.variant === 'plain' ? 'min-w-full' : 'w-full'} text-sm`}>
-                  <thead className="bg-neutral-50 border-b border-neutral-200">
+                  <thead className="bg-neutral-50 border-b border-neutral-200 dark:border-neutral-700 dark:bg-neutral-900">
                     <tr>
                       {block.headers.map(h => (
                         <th key={h} className={TH_CLASS}>
@@ -197,7 +205,9 @@ export function ArticleBody({ blocks, headingIds, anchorCopyLabel }: ArticleBody
                       <tr
                         key={r}
                         className={
-                          block.variant === 'bordered' ? 'even:bg-neutral-50/60' : undefined
+                          block.variant === 'bordered'
+                            ? 'even:bg-neutral-50/60 dark:even:bg-neutral-900/50'
+                            : undefined
                         }
                       >
                         {row.map((cell, c) => (
@@ -206,7 +216,7 @@ export function ArticleBody({ blocks, headingIds, anchorCopyLabel }: ArticleBody
                             className={
                               c === 0
                                 ? `px-4 py-3 font-medium text-neutral-800 ${block.variant === 'plain' ? 'whitespace-nowrap' : ''}`
-                                : 'px-4 py-3 text-neutral-600 tabular-nums'
+                                : 'px-4 py-3 text-neutral-600 tabular-nums dark:text-neutral-400'
                             }
                           >
                             {cell}
@@ -224,17 +234,19 @@ export function ArticleBody({ blocks, headingIds, anchorCopyLabel }: ArticleBody
                 {block.tables.map((t, j) => (
                   <div
                     key={j}
-                    className="rounded-xl border border-neutral-200 bg-white shadow-xs overflow-hidden"
+                    className="rounded-xl border border-neutral-200 bg-white shadow-xs overflow-hidden dark:border-neutral-700 dark:bg-neutral-850"
                   >
-                    <div className="bg-neutral-50 border-b border-neutral-200 px-4 py-2.5 text-[13px] font-semibold text-neutral-800">
+                    <div className="bg-neutral-50 border-b border-neutral-200 px-4 py-2.5 text-[13px] font-semibold text-neutral-800 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200">
                       {t.header}
                     </div>
                     <table className="w-full text-sm">
                       <tbody>
                         {t.rows.map(([label, value], r) => (
                           <tr key={r} className="border-t border-neutral-100 first:border-t-0">
-                            <td className="px-4 py-2.5 text-neutral-600">{label}</td>
-                            <td className="px-4 py-2.5 text-right font-medium text-neutral-800 tabular-nums">
+                            <td className="px-4 py-2.5 text-neutral-600 dark:text-neutral-400">
+                              {label}
+                            </td>
+                            <td className="px-4 py-2.5 text-right font-medium text-neutral-800 tabular-nums dark:text-neutral-200">
                               {value}
                             </td>
                           </tr>
@@ -253,13 +265,15 @@ export function ArticleBody({ blocks, headingIds, anchorCopyLabel }: ArticleBody
                     key={j}
                     className={`rounded-xl border p-5 ${CARD_COLORS[card.color] ?? card.color}`}
                   >
-                    <div className="font-semibold text-neutral-900">{card.title}</div>
+                    <div className="font-semibold text-neutral-900 dark:text-neutral-100">
+                      {card.title}
+                    </div>
                     {card.label && (
-                      <div className="text-xs font-medium text-neutral-500 mt-0.5 mb-2">
+                      <div className="text-xs font-medium text-neutral-500 mt-0.5 mb-2 dark:text-neutral-400">
                         {card.label}
                       </div>
                     )}
-                    <div className="text-[15px] leading-relaxed text-neutral-700 mt-1">
+                    <div className="text-[15px] leading-relaxed text-neutral-700 mt-1 dark:text-neutral-200">
                       {card.text}
                     </div>
                   </div>

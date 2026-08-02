@@ -47,16 +47,16 @@ function getBfCategory(bf: number, gender: Gender): BfCategory {
       return {
         label: 'Essentiellt fett',
         description: 'Under nivå för normala fysiologiska funktioner. Inte ett hållbart mål.',
-        color: 'text-blue-700',
-        bg: 'bg-blue-50 border-blue-200',
+        color: 'text-blue-700 dark:text-blue-300',
+        bg: 'bg-blue-50 border-blue-200 dark:bg-blue-900/25 dark:border-blue-800',
         nextStep: 'Fokus bör ligga på att öka kalorier och nå athletic-zonen.',
       }
     if (bf < 14)
       return {
         label: 'Athletic',
         description: 'Typisk nivå för aktiva tränare och idrottare. Väldigt låg fettprocent.',
-        color: 'text-green-700',
-        bg: 'bg-green-50 border-green-200',
+        color: 'text-green-700 dark:text-green-300',
+        bg: 'bg-green-50 border-green-200 dark:bg-green-900/25 dark:border-green-800',
         nextStep: 'Du är i utmärkt form. TDEE och makroplanering håller dig här.',
       }
     if (bf < 18)
@@ -64,30 +64,30 @@ function getBfCategory(bf: number, gender: Gender): BfCategory {
         label: 'Fit',
         description: 'Hälsosam och aktiv nivå. Tydlig muskeldefiniton, låg hälsorisk.',
         color: 'text-teal-700',
-        bg: 'bg-teal-50 border-teal-200',
+        bg: 'bg-teal-50 border-teal-200 dark:bg-teal-900/25 dark:border-teal-800',
         nextStep: 'Bra utgångspunkt för cut mot athletic eller bulk mot mer muskelmassa.',
       }
     if (bf < 25)
       return {
         label: 'Genomsnitt',
         description: 'Normalt intervall för männen. Muskler syns men med lager fett ovanpå.',
-        color: 'text-yellow-700',
-        bg: 'bg-yellow-50 border-yellow-200',
+        color: 'text-yellow-700 dark:text-yellow-300',
+        bg: 'bg-yellow-50 border-yellow-200 dark:bg-yellow-900/25 dark:border-yellow-800',
         nextStep: 'En strukturerad cut med 300–500 kcal underskott per dag tar dig till fit-zonen.',
       }
     if (bf < 30)
       return {
         label: 'Övervikt',
         description: 'Ökad hälsorisk. Tydligt viktmål rekommenderas.',
-        color: 'text-orange-700',
-        bg: 'bg-orange-50 border-orange-200',
+        color: 'text-orange-700 dark:text-orange-300',
+        bg: 'bg-orange-50 border-orange-200 dark:bg-orange-900/25 dark:border-orange-800',
         nextStep: 'Räkna ut ditt TDEE och sätt ett kalorimål med 400–600 kcal underskott.',
       }
     return {
       label: 'Fetma',
       description: 'Hög hälsorisk. Medicinsk rådgivning rekommenderas.',
-      color: 'text-red-700',
-      bg: 'bg-red-50 border-red-200',
+      color: 'text-red-700 dark:text-red-300',
+      bg: 'bg-red-50 border-red-200 dark:bg-red-900/25 dark:border-red-800',
       nextStep:
         'Räkna ut ditt TDEE och börja med ett måttligt kaloriunderskott. Rådgör med läkare.',
     }
@@ -97,16 +97,16 @@ function getBfCategory(bf: number, gender: Gender): BfCategory {
     return {
       label: 'Essentiellt fett',
       description: 'Under nivå för normala fysiologiska funktioner. Inte ett hållbart mål.',
-      color: 'text-blue-700',
-      bg: 'bg-blue-50 border-blue-200',
+      color: 'text-blue-700 dark:text-blue-300',
+      bg: 'bg-blue-50 border-blue-200 dark:bg-blue-900/25 dark:border-blue-800',
       nextStep: 'Fokus bör ligga på att öka kalorier och nå athletic-zonen.',
     }
   if (bf < 21)
     return {
       label: 'Athletic',
       description: 'Typisk nivå för aktiva tränare och idrottare.',
-      color: 'text-green-700',
-      bg: 'bg-green-50 border-green-200',
+      color: 'text-green-700 dark:text-green-300',
+      bg: 'bg-green-50 border-green-200 dark:bg-green-900/25 dark:border-green-800',
       nextStep: 'Du är i utmärkt form. TDEE och makroplanering håller dig här.',
     }
   if (bf < 25)
@@ -114,30 +114,30 @@ function getBfCategory(bf: number, gender: Gender): BfCategory {
       label: 'Fit',
       description: 'Hälsosam och aktiv nivå. Låg hälsorisk.',
       color: 'text-teal-700',
-      bg: 'bg-teal-50 border-teal-200',
+      bg: 'bg-teal-50 border-teal-200 dark:bg-teal-900/25 dark:border-teal-800',
       nextStep: 'Bra utgångspunkt för cut eller bulk beroende på ditt mål.',
     }
   if (bf < 32)
     return {
       label: 'Genomsnitt',
       description: 'Normalt intervall för kvinnor. Hälsosam men med utrymme för förbättring.',
-      color: 'text-yellow-700',
-      bg: 'bg-yellow-50 border-yellow-200',
+      color: 'text-yellow-700 dark:text-yellow-300',
+      bg: 'bg-yellow-50 border-yellow-200 dark:bg-yellow-900/25 dark:border-yellow-800',
       nextStep: 'En strukturerad cut med 300–400 kcal underskott per dag tar dig till fit-zonen.',
     }
   if (bf < 40)
     return {
       label: 'Övervikt',
       description: 'Ökad hälsorisk. Tydligt viktmål rekommenderas.',
-      color: 'text-orange-700',
-      bg: 'bg-orange-50 border-orange-200',
+      color: 'text-orange-700 dark:text-orange-300',
+      bg: 'bg-orange-50 border-orange-200 dark:bg-orange-900/25 dark:border-orange-800',
       nextStep: 'Räkna ut ditt TDEE och sätt ett kalorimål med 400–600 kcal underskott.',
     }
   return {
     label: 'Fetma',
     description: 'Hög hälsorisk. Medicinsk rådgivning rekommenderas.',
-    color: 'text-red-700',
-    bg: 'bg-red-50 border-red-200',
+    color: 'text-red-700 dark:text-red-300',
+    bg: 'bg-red-50 border-red-200 dark:bg-red-900/25 dark:border-red-800',
     nextStep: 'Räkna ut ditt TDEE och börja med ett måttligt kaloriunderskott. Rådgör med läkare.',
   }
 }
@@ -159,9 +159,11 @@ function InputField({
 }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-neutral-700 mb-1">{label}</label>
-      {hint && <div className="text-xs text-neutral-400 mb-1">{hint}</div>}
-      <div className="flex items-center border border-neutral-200 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-primary-300 focus-within:border-primary-400">
+      <label className="block text-sm font-medium text-neutral-700 mb-1 dark:text-neutral-200">
+        {label}
+      </label>
+      {hint && <div className="text-xs text-neutral-400 mb-1 dark:text-neutral-500">{hint}</div>}
+      <div className="flex items-center border border-neutral-200 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-primary-300 focus-within:border-primary-400 dark:border-neutral-700">
         <input
           type="number"
           inputMode="decimal"
@@ -169,9 +171,9 @@ function InputField({
           onChange={e => onChange(e.target.value)}
           onFocus={e => e.target.select()}
           placeholder={placeholder}
-          className="flex-1 px-3 py-2.5 text-sm text-neutral-900 bg-white outline-none min-w-0"
+          className="flex-1 px-3 py-2.5 text-sm text-neutral-900 bg-white outline-none min-w-0 dark:bg-neutral-850 dark:text-neutral-100"
         />
-        <span className="px-2 text-xs text-neutral-400 bg-neutral-50 border-l border-neutral-200 py-2.5">
+        <span className="px-2 text-xs text-neutral-400 bg-neutral-50 border-l border-neutral-200 py-2.5 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-500">
           {unit}
         </span>
       </div>
@@ -286,49 +288,52 @@ export default function KroppsfettKalkylatornPage() {
 
       <main className="flex-1">
         {/* Hero section */}
-        <section className="relative overflow-hidden bg-white border-b border-neutral-100">
+        <section className="relative overflow-hidden bg-white border-b border-neutral-100 dark:bg-neutral-850">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(37,189,0,0.07),transparent_60%)]" />
           <div className="relative container mx-auto px-4 pt-16 pb-14 max-w-3xl">
             {/* Breadcrumb */}
-            <nav className="flex items-center gap-2 text-sm text-neutral-500 mb-6">
-              <Link to="/" className="hover:text-neutral-700 transition-colors">
+            <nav className="flex items-center gap-2 text-sm text-neutral-500 mb-6 dark:text-neutral-400">
+              <Link
+                to="/"
+                className="hover:text-neutral-700 transition-colors dark:hover:text-neutral-200"
+              >
                 Calculeat
               </Link>
               <span>/</span>
               <Link
                 to={t('bodyfat-calculator.schema.breadcrumb.hubPath')}
-                className="hover:text-neutral-700 transition-colors"
+                className="hover:text-neutral-700 transition-colors dark:hover:text-neutral-200"
               >
                 {t('bodyfat-calculator.schema.breadcrumb.hubLabel')}
               </Link>
               <span>/</span>
-              <span className="text-neutral-700">
+              <span className="text-neutral-700 dark:text-neutral-200">
                 {t('bodyfat-calculator.schema.breadcrumb.pageLabel')}
               </span>
             </nav>
 
-            <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-5 leading-tight">
+            <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-5 leading-tight dark:text-neutral-100">
               <span className="bg-gradient-to-r from-primary-600 to-accent-500 bg-clip-text text-transparent">
                 {t('bodyfat-calculator.h1Prefix')}
               </span>{' '}
               {t('bodyfat-calculator.h1Suffix')}
             </h1>
-            <p className="text-lg md:text-xl text-neutral-600 leading-relaxed max-w-2xl">
+            <p className="text-lg md:text-xl text-neutral-600 leading-relaxed max-w-2xl dark:text-neutral-400">
               {t('bodyfat-calculator.intro')}
             </p>
           </div>
         </section>
 
         {/* Calculator section */}
-        <section className="bg-neutral-50 py-14 border-b border-neutral-100">
+        <section className="bg-neutral-50 py-14 border-b border-neutral-100 dark:bg-neutral-900">
           <div className="container mx-auto px-4 max-w-2xl">
-            <div className="rounded-2xl border border-neutral-200 shadow-sm overflow-hidden">
-              <div className="bg-primary-50 px-6 py-4 border-b border-primary-100 flex items-center gap-2">
-                <Calculator className="h-5 w-5 text-primary-600" />
-                <span className="font-semibold text-primary-900">
+            <div className="rounded-2xl border border-neutral-200 shadow-sm overflow-hidden dark:border-neutral-700">
+              <div className="bg-primary-50 px-6 py-4 border-b border-primary-100 flex items-center gap-2 dark:bg-primary-900/25">
+                <Calculator className="h-5 w-5 text-primary-600 dark:text-primary-300" />
+                <span className="font-semibold text-primary-900 dark:text-primary-300">
                   {t('bodyfat-calculator.calculator.header')}
                 </span>
-                <span className="ml-auto text-xs text-neutral-400">
+                <span className="ml-auto text-xs text-neutral-400 dark:text-neutral-500">
                   {t('bodyfat-calculator.calculator.methodLabel')}
                 </span>
               </div>
@@ -336,7 +341,7 @@ export default function KroppsfettKalkylatornPage() {
               <div className="p-6 space-y-5">
                 {/* Gender */}
                 <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-2">
+                  <label className="block text-sm font-medium text-neutral-700 mb-2 dark:text-neutral-200">
                     {t('bodyfat-calculator.calculator.genderLabel')}
                   </label>
                   <div className="grid grid-cols-2 gap-2">
@@ -356,7 +361,7 @@ export default function KroppsfettKalkylatornPage() {
                         className={`py-2.5 rounded-xl text-sm font-medium border transition-colors ${
                           gender === opt.value
                             ? 'bg-primary-600 text-white border-primary-600'
-                            : 'bg-white text-neutral-700 border-neutral-200 hover:border-primary-300'
+                            : 'bg-white text-neutral-700 border-neutral-200 hover:border-primary-300 dark:border-neutral-700 dark:bg-neutral-850 dark:text-neutral-200'
                         }`}
                       >
                         {opt.label}
@@ -440,8 +445,8 @@ export default function KroppsfettKalkylatornPage() {
 
               {/* Results */}
               {hasResult && result && (
-                <div className="border-t border-neutral-100 bg-neutral-50 px-6 py-6 space-y-4">
-                  <h2 className="font-semibold text-neutral-800">
+                <div className="border-t border-neutral-100 bg-neutral-50 px-6 py-6 space-y-4 dark:bg-neutral-900">
+                  <h2 className="font-semibold text-neutral-800 dark:text-neutral-200">
                     {t('bodyfat-calculator.calculator.resultsTitle')}
                   </h2>
 
@@ -455,7 +460,7 @@ export default function KroppsfettKalkylatornPage() {
                         {bfLabels[gender]?.[result.category.label]?.label ?? result.category.label}
                       </span>
                     </div>
-                    <p className="text-sm text-neutral-700">
+                    <p className="text-sm text-neutral-700 dark:text-neutral-200">
                       {bfLabels[gender]?.[result.category.label]?.description ??
                         result.category.description}
                     </p>
@@ -477,40 +482,46 @@ export default function KroppsfettKalkylatornPage() {
                     ].map(stat => (
                       <div
                         key={stat.label}
-                        className="rounded-xl border border-neutral-200 bg-white p-4"
+                        className="rounded-xl border border-neutral-200 bg-white p-4 dark:border-neutral-700 dark:bg-neutral-850"
                       >
-                        <div className="text-xs text-neutral-500 mb-1">{stat.label}</div>
-                        <div className="text-2xl font-bold text-neutral-900">{stat.value}</div>
-                        <div className="text-xs text-neutral-400 mt-0.5">{stat.desc}</div>
+                        <div className="text-xs text-neutral-500 mb-1 dark:text-neutral-400">
+                          {stat.label}
+                        </div>
+                        <div className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
+                          {stat.value}
+                        </div>
+                        <div className="text-xs text-neutral-400 mt-0.5 dark:text-neutral-500">
+                          {stat.desc}
+                        </div>
                       </div>
                     ))}
                   </div>
 
                   {/* Next step */}
-                  <div className="rounded-xl bg-white border border-neutral-200 p-4">
-                    <div className="text-sm font-medium text-neutral-800 mb-1">
+                  <div className="rounded-xl bg-white border border-neutral-200 p-4 dark:border-neutral-700 dark:bg-neutral-850">
+                    <div className="text-sm font-medium text-neutral-800 mb-1 dark:text-neutral-200">
                       {t('bodyfat-calculator.calculator.nextStepTitle')}
                     </div>
-                    <p className="text-xs text-neutral-600 mb-3">
+                    <p className="text-xs text-neutral-600 mb-3 dark:text-neutral-400">
                       {bfLabels[gender]?.[result.category.label]?.nextStep ??
                         result.category.nextStep}
                     </p>
                   </div>
 
                   {/* Disclaimer */}
-                  <div className="rounded-xl bg-amber-50 border border-amber-200 p-4 flex gap-3">
-                    <AlertTriangle className="h-4 w-4 text-amber-600 flex-shrink-0 mt-0.5" />
-                    <p className="text-xs text-amber-700">
+                  <div className="rounded-xl bg-amber-50 border border-amber-200 p-4 flex gap-3 dark:bg-amber-900/25 dark:border-amber-800">
+                    <AlertTriangle className="h-4 w-4 text-amber-600 flex-shrink-0 mt-0.5 dark:text-amber-300" />
+                    <p className="text-xs text-amber-700 dark:text-amber-300">
                       {t('bodyfat-calculator.calculator.disclaimerBody')}
                     </p>
                   </div>
 
                   {/* CTA */}
-                  <div className="rounded-xl bg-white border border-primary-200 p-4">
-                    <p className="text-sm font-medium text-neutral-800 mb-1">
+                  <div className="rounded-xl bg-white border border-primary-200 p-4 dark:bg-neutral-850">
+                    <p className="text-sm font-medium text-neutral-800 mb-1 dark:text-neutral-200">
                       {t('bodyfat-calculator.calculator.ctaTitle')}
                     </p>
-                    <p className="text-xs text-neutral-500 mb-3">
+                    <p className="text-xs text-neutral-500 mb-3 dark:text-neutral-400">
                       {t('bodyfat-calculator.calculator.ctaBody')}
                     </p>
                     <div className="flex flex-col sm:flex-row gap-2">
@@ -525,7 +536,7 @@ export default function KroppsfettKalkylatornPage() {
                       </Link>
                       <Link
                         to={relatedCalcs[3]?.href ?? '/kalkylatorer/ffmi-kalkylator'}
-                        className="inline-flex items-center justify-center gap-2 border border-neutral-200 text-neutral-700 text-sm font-medium px-4 py-2 rounded-lg hover:bg-neutral-50 transition-colors"
+                        className="inline-flex items-center justify-center gap-2 border border-neutral-200 text-neutral-700 text-sm font-medium px-4 py-2 rounded-lg hover:bg-neutral-50 transition-colors dark:hover:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-200"
                       >
                         {t('bodyfat-calculator.calculator.ctaSecondary')}
                       </Link>
@@ -538,12 +549,12 @@ export default function KroppsfettKalkylatornPage() {
         </section>
 
         {/* Context/explanation section */}
-        <section className="bg-white py-14 border-b border-neutral-100">
+        <section className="bg-white py-14 border-b border-neutral-100 dark:bg-neutral-850">
           <div className="container mx-auto px-4 max-w-3xl">
-            <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900 mb-5">
+            <h2 className="text-2xl md:text-3xl font-semibold text-neutral-900 mb-5 dark:text-neutral-100">
               {t('bodyfat-calculator.explanation.h2_1')}
             </h2>
-            <p className="text-base text-neutral-700 leading-relaxed mb-6">
+            <p className="text-base text-neutral-700 leading-relaxed mb-6 dark:text-neutral-200">
               {t('bodyfat-calculator.explanation.p_1')}
             </p>
             <div className="space-y-3 mb-8">
@@ -553,23 +564,25 @@ export default function KroppsfettKalkylatornPage() {
                 }) as { title: string; desc: string }[]
               ).map(({ title, desc }, i) => {
                 const colors = [
-                  'bg-blue-50 border-blue-200',
-                  'bg-primary-50 border-primary-200',
-                  'bg-green-50 border-green-200',
+                  'bg-blue-50 border-blue-200 dark:bg-blue-900/25 dark:border-blue-800',
+                  'bg-primary-50 border-primary-200 dark:bg-primary-900/25 dark:border-primary-800',
+                  'bg-green-50 border-green-200 dark:bg-green-900/25 dark:border-green-800',
                 ]
                 return (
                   <div key={title} className={`rounded-xl border p-4 ${colors[i]}`}>
-                    <div className="font-semibold text-neutral-800 mb-1">{title}</div>
-                    <div className="text-base text-neutral-700">{desc}</div>
+                    <div className="font-semibold text-neutral-800 mb-1 dark:text-neutral-200">
+                      {title}
+                    </div>
+                    <div className="text-base text-neutral-700 dark:text-neutral-200">{desc}</div>
                   </div>
                 )
               })}
             </div>
 
-            <h3 className="text-lg font-semibold text-neutral-800 mb-3">
+            <h3 className="text-lg font-semibold text-neutral-800 mb-3 dark:text-neutral-200">
               {t('bodyfat-calculator.explanation.h3_1')}
             </h3>
-            <ul className="space-y-1.5 pl-4 list-disc text-base text-neutral-700 leading-relaxed">
+            <ul className="space-y-1.5 pl-4 list-disc text-base text-neutral-700 leading-relaxed dark:text-neutral-200">
               {(
                 t('bodyfat-calculator.explanation.list_1', { returnObjects: true }) as string[]
               ).map((item, i) => {
@@ -590,7 +603,7 @@ export default function KroppsfettKalkylatornPage() {
         </section>
 
         {/* FAQ section */}
-        <section className="bg-neutral-50 py-14 border-b border-neutral-100">
+        <section className="bg-neutral-50 py-14 border-b border-neutral-100 dark:bg-neutral-900">
           <div className="container mx-auto px-4 max-w-3xl">
             <FaqBlock items={faqItems} title={t('bodyfat-calculator.faqTitle')} />
           </div>
@@ -603,7 +616,7 @@ export default function KroppsfettKalkylatornPage() {
               <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
                 {t('bodyfat-calculator.cta.bottom.h2')}
               </h2>
-              <p className="text-neutral-400 text-base mb-8 max-w-md mx-auto">
+              <p className="text-neutral-400 text-base mb-8 max-w-md mx-auto dark:text-neutral-500">
                 {t('bodyfat-calculator.cta.bottom.body')}
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -625,11 +638,11 @@ export default function KroppsfettKalkylatornPage() {
         </GuestOnly>
 
         {/* Related links section */}
-        <section className="bg-white py-14">
+        <section className="bg-white py-14 dark:bg-neutral-850">
           <div className="container mx-auto px-4 max-w-5xl">
             <div className="grid sm:grid-cols-2 gap-10">
               <div>
-                <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3">
+                <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3 dark:text-neutral-400">
                   {t('bodyfat-calculator.related.calculatorsTitle')}
                 </h3>
                 <div className="grid gap-3">
@@ -637,7 +650,7 @@ export default function KroppsfettKalkylatornPage() {
                     <Link
                       key={l.href}
                       to={l.href}
-                      className="flex items-center gap-3 rounded-xl border border-neutral-200 p-4 text-sm text-neutral-700 hover:shadow-md hover:border-primary-200 transition-all"
+                      className="flex items-center gap-3 rounded-xl border border-neutral-200 p-4 text-sm text-neutral-700 hover:shadow-md hover:border-primary-200 transition-all dark:border-neutral-700 dark:text-neutral-200"
                     >
                       <ArrowRight className="h-4 w-4 text-primary-500 flex-shrink-0" />
                       {l.label}
@@ -646,7 +659,7 @@ export default function KroppsfettKalkylatornPage() {
                 </div>
               </div>
               <div>
-                <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3">
+                <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3 dark:text-neutral-400">
                   {t('bodyfat-calculator.related.articlesTitle')}
                 </h3>
                 <div className="grid gap-3">
@@ -654,7 +667,7 @@ export default function KroppsfettKalkylatornPage() {
                     <Link
                       key={l.href}
                       to={l.href}
-                      className="flex items-center gap-3 rounded-xl border border-neutral-200 p-4 text-sm text-neutral-700 hover:shadow-md hover:border-primary-200 transition-all"
+                      className="flex items-center gap-3 rounded-xl border border-neutral-200 p-4 text-sm text-neutral-700 hover:shadow-md hover:border-primary-200 transition-all dark:border-neutral-700 dark:text-neutral-200"
                     >
                       <ArrowRight className="h-4 w-4 text-primary-500 flex-shrink-0" />
                       {l.label}

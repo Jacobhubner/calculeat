@@ -18,15 +18,20 @@ export default function FAQ({ items }: FAQProps) {
   return (
     <div className="space-y-4">
       {items.map((item, index) => (
-        <div key={index} className="rounded-2xl border border-neutral-200 bg-white overflow-hidden">
+        <div
+          key={index}
+          className="rounded-2xl border border-neutral-200 bg-white overflow-hidden dark:border-neutral-700 dark:bg-neutral-850"
+        >
           <button
             onClick={() => setOpenIndex(openIndex === index ? null : index)}
-            className="w-full flex items-center justify-between p-6 text-left hover:bg-neutral-50 transition-colors"
+            className="w-full flex items-center justify-between p-6 text-left hover:bg-neutral-50 transition-colors dark:hover:bg-neutral-800"
           >
-            <span className="font-medium text-neutral-900 pr-8">{item.question}</span>
+            <span className="font-medium text-neutral-900 pr-8 dark:text-neutral-100">
+              {item.question}
+            </span>
             <ChevronDown
               className={cn(
-                'h-5 w-5 text-neutral-500 shrink-0 transition-transform duration-200',
+                'h-5 w-5 text-neutral-500 shrink-0 transition-transform duration-200 dark:text-neutral-400',
                 openIndex === index && 'rotate-180'
               )}
             />
@@ -40,7 +45,9 @@ export default function FAQ({ items }: FAQProps) {
                 transition={{ duration: 0.2 }}
                 className="overflow-hidden"
               >
-                <div className="px-6 pb-6 text-neutral-600">{item.answer}</div>
+                <div className="px-6 pb-6 text-neutral-600 dark:text-neutral-400">
+                  {item.answer}
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
